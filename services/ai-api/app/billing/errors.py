@@ -1,4 +1,4 @@
-"""The refusals of plans and billing (SQLSTATE SM821 to SM823 of the database, and two of our own). Each carries NO text from the data layer: the API maps it to a fixed sentence (app/main.py)."""
+"""The refusals of plans and billing (SQLSTATE SM821 to SM824 of the database, and two of our own). Each carries NO text from the data layer: the API maps it to a fixed sentence (app/main.py)."""
 
 from __future__ import annotations
 
@@ -31,6 +31,14 @@ class PlanLimitReachedError(RepositoryError):
 
 class WorkspaceReadOnlyError(RepositoryError):
     """The workspace is read-only (its trial or paid period ended unpaid): viewing and exporting stay, every change stops."""
+
+
+class WorkspaceWaitingForWhatsAppError(RepositoryError):
+    """The workspace chose a plan but has not connected WhatsApp: it can be set up, but sending, AI and calls stay off until it is connected."""
+
+
+class NotLapsedError(RepositoryError):
+    """SM824: the plan has not lapsed, so there is nothing to resume (a trial is running, a plan is active, or the workspace waits for WhatsApp)."""
 
 
 class NotSupportedError(Exception):

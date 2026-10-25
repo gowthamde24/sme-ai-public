@@ -50,13 +50,40 @@
             }
           ],
           "title": "Data Days Left"
+        },
+        "can_resume": {
+          "title": "Can Resume",
+          "type": "boolean"
+        },
+        "sending": {
+          "enum": [
+            "on",
+            "off"
+          ],
+          "title": "Sending",
+          "type": "string"
+        },
+        "waiting_for": {
+          "anyOf": [
+            {
+              "const": "whatsapp",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Waiting For"
         }
       },
       "required": [
         "access",
         "read_only_since",
         "delete_on",
-        "data_days_left"
+        "data_days_left",
+        "can_resume",
+        "sending",
+        "waiting_for"
       ],
       "title": "AccessOut",
       "type": "object"
@@ -92,6 +119,10 @@
         },
         "can_start_trial": {
           "title": "Can Start Trial",
+          "type": "boolean"
+        },
+        "can_resume": {
+          "title": "Can Resume",
           "type": "boolean"
         },
         "whatsapp_connected_at": {
@@ -157,6 +188,7 @@
         "usage",
         "notices",
         "can_start_trial",
+        "can_resume",
         "whatsapp_connected_at",
         "access",
         "read_only_since",
@@ -554,6 +586,29 @@
         "plans"
       ],
       "title": "PlansOut",
+      "type": "object"
+    },
+    "ResumeIn": {
+      "additionalProperties": false,
+      "properties": {
+        "plan_id": {
+          "pattern": "^[a-z][a-z0-9_]{1,30}$",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "checkout_ref": {
+          "maxLength": 100,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Checkout Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_id",
+        "checkout_ref"
+      ],
+      "title": "ResumeIn",
       "type": "object"
     },
     "SubscriptionOut": {

@@ -145,6 +145,12 @@ class AccessOut(_Strict):
     read_only_since: date | None
     delete_on: date | None
     data_days_left: int | None
+    # true when the plan has lapsed (the trial or the paid period ended unpaid, or it was cancelled): the Owner can pay again with POST /billing/resume, no new trial
+    can_resume: bool
+    # `off` while the workspace is read-only OR still waiting for WhatsApp: sending, AI, calls and campaigns are held (the API answers 403 workspace_read_only / waiting_for_whatsapp)
+    sending: Literal["on", "off"]
+    # `whatsapp` while the workspace chose a plan but has not connected WhatsApp (status trial_pending)
+    waiting_for: Literal["whatsapp"] | None
 
 
 class BillingOut(_Strict):
@@ -156,6 +162,8 @@ class BillingOut(_Strict):
     notices: list[NoticeOut]
     # false once a subscription exists (a trial is started once)
     can_start_trial: bool
+    # true when the plan has lapsed: show "Choose a plan to continue" and send POST /billing/resume (no new trial)
+    can_resume: bool
     # the day the workspace's WhatsApp was first connected (the trial's 14 days count from it); null while it is not connected
     whatsapp_connected_at: datetime | None
     # the plain word the web switches on: `read_only` = view and export only (see AccessOut)
@@ -169,4 +177,11 @@ class TrialStartIn(_Strict):
     # a plan of kind main or calls (not the trial plan itself)
     plan_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")
     # the reference the provider's checkout returned for the payment method (the fake provider: pm_fake_ok, pm_fake_declines_on_renewal, pm_fake_declined)
+    checkout_ref: str = Field(min_length=3, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+
+
+class ResumeIn(_Strict):
+    # a plan of kind main or calls
+    plan_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")
+    # the reference the provider's checkout returned for the payment method (the fake provider: pm_fake_ok, pm_fake_declined)
     checkout_ref: str = Field(min_length=3, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")

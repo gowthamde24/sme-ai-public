@@ -50,3 +50,23 @@ See `packages/contracts/billing.examples.json`, key `billing_trialing_notice_at_
 - Cancelling a `trial_pending` or `trialing` subscription ends it at once; nothing was ever charged.
 - A workspace with no subscription at all is read-only 14 days after WhatsApp was connected (30 days after it was made if it never connected), once the billing switch is on.
 - Examples: `billing_trial_pending_waiting_for_whatsapp`, `billing_trialing_notice_at_80` (its `whatsapp_connected_at` and `trial_ends_at`).
+
+
+## Read-only everywhere, the hold while waiting for WhatsApp, and paying again (job DP part 3, 26 Oct 2026; branch `api/dp-readonly-resume`)
+**One rule in one place** (`services/ai-api/app/billing/gate.py`), applied to every route under `/v1/tenants/{tenant_id}` (a test lists all of them). Three kinds of request:
+- **read** (every GET, and `/billing`, `/data-exports`, `/deletion-requests`, `/exports`): always open, also when read-only. The one GET that spends, `/leads/search` (the outside lead search), is held like a send.
+- **change** (every other POST, PUT, PATCH, DELETE): 403 **`workspace_read_only`** in a read-only workspace.
+- **spend** (sends a message, calls a model, starts a call, approves a campaign, reaches an outside service: the Ask dock `/assistant/*`, `/agent-runs`, drafts and their approvals, `/outbox/*` send and approve, `/call-requests/*` approve and connect, `/campaigns/*/approve|resume`, `/ai-assistant/test-call`, `/voice-notes/preview`, `/institution/marks-messages/send`, `/payment-links/*/send`, `/trips/*/notify` ...): 403 `workspace_read_only` when read-only, **and 403 `waiting_for_whatsapp` while the workspace has chosen a plan but not connected WhatsApp** (`trial_pending`). Everything else a waiting workspace does (catalogue, customers, assistant settings, connecting WhatsApp) works.
+The worker never runs a read-only or waiting workspace, and the outbox's claim already held its sends. Inbound events from outside (a customer's WhatsApp message, a payment provider's webhook) are still recorded; they send nothing.
+
+**`AccessOut` gains three fields** (build the banner and the button states from them):
+| Field | Meaning |
+|---|---|
+| `can_resume` | the plan has lapsed (trial or paid period ended unpaid, or it was cancelled): show "Choose a plan to continue" |
+| `sending` | `"off"` while the workspace is read-only OR still waiting for WhatsApp: switch the send, AI, call and campaign buttons off |
+| `waiting_for` | `"whatsapp"` while `trial_pending`, else null (word the hold: "Connect WhatsApp to start"; read-only gets its own words) |
+**`BillingOut` gains `can_resume`.** **`can_start_trial` is false after a lapse**: there is no new trial; pay again.
+
+**`POST /v1/tenants/{tenant_id}/billing/resume`** (Owner, second factor): body `ResumeIn` `{plan_id, checkout_ref}` (same values as the trial's) -> `BillingOut` with `subscription.status` `active`, `can_resume` false, `access` `full`. A paid plan starts **at once with no new trial**: the first month is recorded as paid, the period runs one month, the provider's next charge is one month ahead. Works from read-only (it is under `/billing`). Errors: **409 `not_lapsed`** (a trial is running, a plan is active, the workspace waits for WhatsApp, or it is exempt), 422 `plan_unknown`, 402 `payment_method_declined` (nothing starts), 403 `mfa_required`, 403 for anyone but the Owner. Example request: `resume_request`.
+
+**Exempt workspaces** (Customer Zero and the demo workspaces) never lapse: `access` is always `full` and `can_resume` false. The operator switch is `app.operator_billing_exempt(tenant, true)` (docs/runbooks/billing-exempt.md).

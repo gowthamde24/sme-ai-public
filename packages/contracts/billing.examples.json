@@ -240,6 +240,7 @@
   },
   "notices": [],
   "can_start_trial": true,
+  "can_resume": false,
   "access": "full",
   "read_only_since": null,
   "delete_on": null,
@@ -327,6 +328,7 @@
    }
   ],
   "can_start_trial": false,
+  "can_resume": false,
   "access": "full",
   "read_only_since": null,
   "delete_on": null,
@@ -414,6 +416,7 @@
    }
   ],
   "can_start_trial": false,
+  "can_resume": false,
   "access": "full",
   "read_only_since": null,
   "delete_on": null,
@@ -488,6 +491,7 @@
   },
   "notices": [],
   "can_start_trial": false,
+  "can_resume": false,
   "access": "full",
   "read_only_since": null,
   "delete_on": null,
@@ -562,6 +566,7 @@
   },
   "notices": [],
   "can_start_trial": false,
+  "can_resume": false,
   "access": "full",
   "read_only_since": null,
   "delete_on": null,
@@ -636,6 +641,7 @@
   },
   "notices": [],
   "can_start_trial": false,
+  "can_resume": false,
   "access": "full",
   "read_only_since": null,
   "delete_on": null,
@@ -747,6 +753,7 @@
   },
   "notices": [],
   "can_start_trial": false,
+  "can_resume": true,
   "access": "read_only",
   "read_only_since": "2026-10-14",
   "delete_on": "2027-01-12",
@@ -757,13 +764,19 @@
   "access": "full",
   "read_only_since": null,
   "delete_on": null,
-  "data_days_left": null
+  "data_days_left": null,
+  "can_resume": false,
+  "sending": "on",
+  "waiting_for": null
  },
  "access_read_only": {
   "access": "read_only",
   "read_only_since": "2026-10-14",
   "delete_on": "2027-01-12",
-  "data_days_left": 79
+  "data_days_left": 79,
+  "can_resume": true,
+  "sending": "off",
+  "waiting_for": null
  },
  "billing_trial_pending_waiting_for_whatsapp": {
   "plan": {
@@ -833,10 +846,15 @@
   },
   "notices": [],
   "can_start_trial": false,
+  "can_resume": false,
   "access": "full",
   "read_only_since": null,
   "delete_on": null,
   "data_days_left": null,
   "whatsapp_connected_at": null
+ },
+ "resume_request": {
+  "plan_id": "growth",
+  "checkout_ref": "pm_fake_ok"
  }
 }

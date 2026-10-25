@@ -6,6 +6,9 @@ export interface AccessOut {
   read_only_since: string | null;
   delete_on: string | null;
   data_days_left: number | null;
+  can_resume: boolean;
+  sending: "on" | "off";
+  waiting_for: "whatsapp" | null;
 }
 
 export interface BillingOut {
@@ -15,6 +18,7 @@ export interface BillingOut {
   usage: UsageOut;
   notices: NoticeOut[];
   can_start_trial: boolean;
+  can_resume: boolean;
   whatsapp_connected_at: string | null;
   access: "full" | "read_only";
   read_only_since: string | null;
@@ -85,6 +89,11 @@ export interface PlansOut {
   currency: "INR";
   trial: TrialRulesOut;
   plans: PlanOut[];
+}
+
+export interface ResumeIn {
+  plan_id: string;
+  checkout_ref: string;
 }
 
 export interface SubscriptionOut {

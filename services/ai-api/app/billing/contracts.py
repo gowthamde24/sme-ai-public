@@ -17,7 +17,7 @@ HEADER = (
     "// Plans, usage as counts and percentages, one notice at 80 and one at 100. AI is included under fair use: its rupees and tokens are never in these shapes.\n"
 )
 RESPONSES: list[type[BaseModel]] = [m.PlansOut, m.BillingOut, m.UsageViewOut, m.AccessOut]
-REQUESTS: list[type[BaseModel]] = [m.TrialStartIn]
+REQUESTS: list[type[BaseModel]] = [m.TrialStartIn, m.ResumeIn]
 
 
 def build_schema() -> dict[str, Any]:
