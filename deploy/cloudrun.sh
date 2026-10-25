@@ -56,6 +56,16 @@ build_api() {
       --config deploy/cloudbuild-api.yaml --substitutions "_IMAGE=$1" .
   fi
 }
+# The scheduler worker's image (job DJ): the same code as the API plus ffmpeg, a target of the same Dockerfile.
+build_worker() {
+  if [ "${BUILD:-cloudbuild}" = "docker" ]; then
+    run docker build --platform linux/amd64 -f deploy/Dockerfile.api --target worker -t "$1" .
+    run docker push "$1"
+  else
+    run gcloud builds submit --project "$PROJECT_ID" --region "$REGION" ${BUILD_SA:+--service-account "projects/$PROJECT_ID/serviceAccounts/$BUILD_SA"} --suppress-logs \
+      --config deploy/cloudbuild-api.yaml --substitutions "_IMAGE=$1,_TARGET=worker" .
+  fi
+}
 build_web() {
   if [ "${BUILD:-cloudbuild}" = "docker" ]; then
     run docker build --platform linux/amd64 -f deploy/Dockerfile.web -t "$1" \
@@ -115,7 +125,8 @@ if [ "$what" = "worker" ]; then
   { [ "$EVERY" -ge 1 ] && [ "$EVERY" -le 59 ]; } || { echo "WORKER_EVERY_MINUTES must be from 1 to 59" >&2; exit 2; }
   SCHEDULE="*/$EVERY * * * *"
   INTERVAL=$((EVERY * 60))
-  image="$registry/api:$TAG"
+  image="$registry/worker:$TAG"   # its own image since job DJ (ffmpeg); the API's stays small
+  build_worker "$image"
   run gcloud run jobs deploy sme-worker --project "$PROJECT_ID" --region "$REGION" --image "$image" \
     --command python --args=-m,app.scheduler.worker,--once --cpu 1 --memory 512Mi --max-retries 0 --task-timeout 120s \
     ${RUN_SA:+--service-account "$RUN_SA"} \

@@ -2,7 +2,9 @@
 # `python -m app.scheduler.worker --once` (deploy/cloudrun.sh worker), so there is one thing to build, scan and keep patched. Build from the REPOSITORY ROOT:
 #   docker build -f deploy/Dockerfile.api -t sme-api .
 # No secret is baked in: every setting arrives as an environment variable at run time (docs/runbooks/hosting-env-and-secrets.md). `make container-smoke` builds it and proves it starts, answers /health, runs as a non-root user and stops cleanly.
-FROM python:3.12-slim
+# Three stages (job DJ, ADR 0093): `base` is everything both images share; `worker` adds ffmpeg (only the scheduler worker makes voice notes); `api` is the last stage, so a plain `docker build -f deploy/Dockerfile.api .`
+# builds the small API image and `--target worker` builds the worker's.
+FROM python:3.12-slim AS base
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 WORKDIR /srv
@@ -15,9 +17,6 @@ ENV PYTHONPATH=/srv/packages/quote-engine/src:/srv/packages/pure
 # Job CK: the business-type packs (data). GET /v1/packs serves the sign-up cards from these files; PACKS_DIR points at them.
 COPY packages/packs ./packages/packs
 ENV PACKS_DIR=/srv/packages/packs
-# Job DJ (ADR 0093): ffmpeg codes a text-to-speech provider's WAV as the OGG/Opus mono that WhatsApp plays as a voice note (app/voice/convert.py; the worker runs from this same image). Debian's package, no extra
-# recommended packages. `python -m app.voice.convert` is the self-test that `make container-smoke` runs.
-RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
 # Not root: a fixed numeric user with no home and no shell; the code in /srv belongs to root and is read-only to it.
 RUN pip install . && useradd --system --no-create-home --shell /usr/sbin/nologin --uid 10001 api
 # job DE: PYTHONDONTWRITEBYTECODE is on (the image stays small and read-only), and /srv/app is copied as source, so every cold start compiled every module of the app again before the first request. Compile them once, here: Python reads
@@ -35,3 +34,13 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=3 \
 # (the agent pool stops) and exits 0. `exec` makes uvicorn process 1 so it receives the signal. No client address is taken from X-Forwarded-For by uvicorn: the API does that itself, for rate limits only, and only
 # as far as TRUSTED_PROXY_HOPS says (app/hardening/clientip.py).
 CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --no-server-header --no-proxy-headers --timeout-graceful-shutdown 8"]
+
+# The worker's image: the same code plus ffmpeg, which codes a text-to-speech provider's WAV as the OGG/Opus mono that WhatsApp plays as a voice note (app/voice/convert.py). Debian's package, no recommended
+# packages. `python -m app.voice.convert` is the self-test that `make container-smoke` runs on it. docker build --target worker -f deploy/Dockerfile.api -t <image> .
+FROM base AS worker
+USER root
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
+USER 10001
+
+# The API's image: no ffmpeg (the API never codes audio), so it stays small and starts fast.
+FROM base AS api

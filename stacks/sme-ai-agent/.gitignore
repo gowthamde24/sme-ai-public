@@ -1,9 +1,0 @@
-# copies made by scripts/gen_agent_stack.py --sync (the source is supabase/)
-supabase/migrations/
-supabase/tests/
-supabase/templates/
-supabase/.temp/
-supabase/.branches/
-supabase/.sync.lock
-supabase/.*.new/
-supabase/.config.toml.*

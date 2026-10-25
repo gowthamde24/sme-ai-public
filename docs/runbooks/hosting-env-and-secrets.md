@@ -85,8 +85,8 @@ Off or fake by default. The rehearsal sets none of them. A provider named withou
 | `SARVAM_API_KEY` | secret | api | Only for voice or Hindi/Indic models through Sarvam. |
 | `VOICE_STT_PROVIDER` | plain | api | `off` (default). Speech to text: `sarvam`, `bhashini`, `google`, `ai4bharat`. |
 | `VOICE_TTS_PROVIDER` | plain | api | `off` (default). Text to speech. |
-| `VOICE_NOTE_TTS_PROVIDER` | plain | worker | `auto` (default, job DJ, ADR 0093): Sarvam when `SARVAM_API_KEY` is set (it then also needs ffmpeg, which the image has), else `VOICE_TTS_PROVIDER` when it names one, else the fake provider in development and NONE in a deployment (every message then goes as text). `off`, `fake` (development only) or `sarvam` force a choice. |
-| `VOICE_NOTE_FFMPEG` | plain | worker | `ffmpeg` (default): the program that codes the speech as OGG/Opus mono for WhatsApp. The API image installs it. |
+| `VOICE_NOTE_TTS_PROVIDER` | plain | worker | `auto` (default, job DJ, ADR 0093): Sarvam when `SARVAM_API_KEY` is set (it then also needs ffmpeg, which the worker image has), else `VOICE_TTS_PROVIDER` when it names one, else the fake provider in development and NONE in a deployment (every message then goes as text). `off`, `fake` (development only) or `sarvam` force a choice. |
+| `VOICE_NOTE_FFMPEG` | plain | worker | `ffmpeg` (default): the program that codes the speech as OGG/Opus mono for WhatsApp. The worker image installs it (the API image does not). |
 | `SARVAM_STT_MODEL` | plain | api | Default `saaras:v4`. |
 | `SARVAM_TTS_MODEL` | plain | api | Default `bulbul:v3`. |
 | `SARVAM_TTS_SPEAKER` | plain | api | Optional speaker name. |
