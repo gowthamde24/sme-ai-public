@@ -1,6 +1,5 @@
-import { CATALOGUE, planById } from "@/lib/plan/catalogue";
 import { meterState, percent, trialDay, trialDaysLeft } from "@/lib/plan/meters";
-import type { BillingState, WorkspacePlan } from "@/lib/plan/types";
+import type { BillingState, PlanDef, WorkspacePlan } from "@/lib/plan/types";
 
 import { Pill } from "../parts";
 import { mutedText, surface } from "../ui";
@@ -17,7 +16,7 @@ const TONE: Record<BillingState, "neutral" | "green" | "red"> = { none: "neutral
  * meter passes 80 %, what happens when one is all used (calls and the messages the business starts pause; quotes, orders, follow-ups and customers never stop) and the moves. `plan` null = the plan could not be read
  * (the card says "Not available yet"). `mock` shows the test-mode label. The page draws this only when the feature flag is on, and only for an Owner or Admin.
  */
-export function PlanSection({ words, plan, now, canChange, mock, pickerHref, actions }: { words: Words; plan: WorkspacePlan | null; now: number; canChange: boolean; mock: boolean; pickerHref: string; actions: PlanActions }) {
+export function PlanSection({ words, plan, def, trialDays, now, canChange, mock, pickerHref, actions }: { words: Words; plan: WorkspacePlan | null; def: PlanDef | null; trialDays: number; now: number; canChange: boolean; mock: boolean; pickerHref: string; actions: PlanActions }) {
   const t = makeT(words);
   if (plan === null)
     return (
@@ -25,7 +24,6 @@ export function PlanSection({ words, plan, now, canChange, mock, pickerHref, act
         <p className="text-sm text-muted">{t("frame.notyet")}</p>
       </section>
     );
-  const def = planById(plan.planId);
   const today = new Date(now);
   const trial = plan.state === "trialing";
   const left = trialDaysLeft(plan.trialEndsAt, today);
@@ -33,7 +31,6 @@ export function PlanSection({ words, plan, now, canChange, mock, pickerHref, act
     { id: "minutes", what: "plan.what.minutes", label: t("plan.meter.minutes"), help: undefined, reading: { used: plan.usage.minutes, included: plan.included.minutes } },
     { id: "messages", what: "plan.what.messages", label: t("plan.meter.messages"), help: t("plan.meter.messages.help"), reading: { used: plan.usage.messages, included: plan.included.messages } },
   ];
-  const metered = plan.state !== "none";
   const paused = readings.filter((r) => meterState(r.reading) === "paused");
   const notices = readings.filter((r) => meterState(r.reading) === "notice");
   return (
@@ -54,46 +51,46 @@ export function PlanSection({ words, plan, now, canChange, mock, pickerHref, act
         {def && def.priceInr === null ? <p className={mutedText}>{t("plan.price.soon")}</p> : null}
         {trial ? (
           <>
-            <p className="mt-2 font-medium">{t("plan.trial.day", { n: trialDay(plan.trialEndsAt, today, CATALOGUE.trial.days), total: CATALOGUE.trial.days })}</p>
+            <p className="mt-2 font-medium">{t("plan.trial.day", { n: trialDay(plan.trialEndsAt, today, trialDays), total: trialDays })}</p>
             <p className="text-base">{left === 1 ? t("plan.trial.left.one") : t("plan.trial.left", { n: left })}</p>
             <p className={mutedText}>{t("plan.trial.cancel_note")}</p>
           </>
         ) : null}
         {plan.state === "cancelled" ? <p className="mt-2">{t(plan.cancelledInTrial ? "plan.cancelled.trial" : "plan.cancelled.paid")}</p> : null}
-        {plan.state === "active" && plan.periodEndsAt ? <p className={mutedText}>{t("plan.period.ends", { date: date(plan.periodEndsAt) })}</p> : null}
+        {plan.state === "active" && plan.periodEndsAt ? <p className={mutedText}>{t(plan.cancelAtPeriodEnd ? "plan.period.cancels" : "plan.period.ends", { date: date(plan.periodEndsAt) })}</p> : null}
         {plan.state === "past_due" ? (
           <div role="alert" className="mt-3 rounded-lg border border-red-text bg-red-bg p-3 text-red-text">
             <p className="font-semibold">{t("plan.pastdue.title")}</p>
             <p className="text-sm">{t("plan.pastdue.body")}</p>
+            {plan.graceUntil ? <p className="text-sm">{t("plan.pastdue.until", { date: date(plan.graceUntil) })}</p> : null}
+            {plan.cancelAtPeriodEnd && plan.periodEndsAt ? <p className="text-sm">{t("plan.period.cancels", { date: date(plan.periodEndsAt) })}</p> : null}
           </div>
         ) : null}
         <div className="mt-4">
-          <PlanMoves words={words} state={plan.state} canChange={canChange} pickerHref={pickerHref} actions={actions} />
+          <PlanMoves words={words} state={plan.state} canChange={canChange} canStart={plan.canStartTrial} cancelling={plan.cancelAtPeriodEnd} pickerHref={pickerHref} actions={actions} />
         </div>
       </section>
-      {metered ? (
-        <section className={surface} aria-labelledby="plan-meters-h">
-          <h2 id="plan-meters-h" className="mb-3 text-xl font-semibold">
-            {t("plan.meters.title")}
-          </h2>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {readings.map((r) => (
-              <Meter key={r.id} id={r.id} t={t} label={r.label} help={r.help} reading={r.reading} />
-            ))}
+      <section className={surface} aria-labelledby="plan-meters-h">
+        <h2 id="plan-meters-h" className="mb-3 text-xl font-semibold">
+          {t("plan.meters.title")}
+        </h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {readings.map((r) => (
+            <Meter key={r.id} id={r.id} t={t} label={r.label} help={r.help} reading={r.reading} />
+          ))}
+        </div>
+        {notices.length > 0 && paused.length === 0 ? (
+          <p role="status" className="mt-3 rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-sm font-medium text-amber-text">
+            {t("plan.notice.80", { n: percent(notices[0].reading) ?? 0, what: t(notices[0].what) })}
+          </p>
+        ) : null}
+        {paused.length > 0 ? (
+          <div role="alert" className="mt-3 rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-amber-text">
+            <p className="font-semibold">{t("plan.paused.title")}</p>
+            <p className="text-sm">{t("plan.paused.body", { what: t(paused[0].what) })}</p>
           </div>
-          {notices.length > 0 && paused.length === 0 ? (
-            <p role="status" className="mt-3 rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-sm font-medium text-amber-text">
-              {t("plan.notice.80", { n: percent(notices[0].reading) ?? 0, what: t(notices[0].what) })}
-            </p>
-          ) : null}
-          {paused.length > 0 ? (
-            <div role="alert" className="mt-3 rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-amber-text">
-              <p className="font-semibold">{t("plan.paused.title")}</p>
-              <p className="text-sm">{t("plan.paused.body", { what: t(paused[0].what) })}</p>
-            </div>
-          ) : null}
-        </section>
-      ) : null}
+        ) : null}
+      </section>
       <section className={surface} aria-labelledby="plan-100-h">
         <h2 id="plan-100-h" className="text-xl font-semibold">
           {t("plan.at100.title")}

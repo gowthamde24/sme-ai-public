@@ -6,7 +6,7 @@ import { parseMembers } from "@/lib/api/orders";
 import { MEMBERS_JSON, TENANT } from "@/lib/api/orders-fixtures";
 import { notFoundMock, redirectMock } from "@/test/helpers";
 
-const h = vi.hoisted(() => ({ requireUser: vi.fn(), fetchTenant: vi.fn(), jar: new Map<string, string>(), sets: [] as unknown[] }));
+const h = vi.hoisted(() => ({ requireUser: vi.fn(), fetchTenant: vi.fn(), api: vi.fn(), jar: new Map<string, string>(), sets: [] as unknown[] }));
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock(), useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("next/headers", () => ({
@@ -19,12 +19,13 @@ vi.mock("next/headers", () => ({
   }),
 }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.requireUser() }));
-vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.fetchTenant(...a) }));
+vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.fetchTenant(...a), apiRequest: (...a: unknown[]) => h.api(...a) }));
 vi.mock("@/lib/api/orders", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/orders")>()), fetchMembers: async () => parseMembers(MEMBERS_JSON) }));
 vi.mock("@/lib/api/plan", () => ({ getPlan: async () => ({ plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }) }));
 vi.mock("@/lib/api/ai-usage", () => ({ getAiUsage: async () => ({ today_percent: 7, month_percent: 3, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }) }));
 vi.mock("@/lib/api/gstin", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/gstin")>()), getBusinessProfile: async () => ({ gstin: null, state: null }) }));
 
+import { DRAFT_PLANS } from "@/lib/plan/catalogue";
 import { MOCK_COOKIE } from "@/lib/plan/mock";
 
 import PlansPage from "./plans/page";
@@ -72,18 +73,103 @@ describe("the flag is off by default", () => {
   });
 });
 
-describe("the flag is '1' (on, but the plans API is not built yet)", () => {
-  beforeEach(() => vi.stubEnv("PLAN_SCREENS", "1"));
-  it("the Plan part says 'Not available yet' and offers nothing to do", async () => {
+const meter = (kind: string, used: number, allowance: number | null, over: Record<string, unknown> = {}) => ({ kind, unit: kind === "call_minutes" ? "minutes" : "messages", used, allowance, remaining: null, percent: null, state: "ok", included: true, topup: 0, ...over });
+const billingBody = (over: Record<string, unknown> = {}) => ({
+  plan: DRAFT_PLANS.plans[0],
+  subscription: null,
+  period: { start: "2026-10-01", end: "2026-10-30", timezone: "Asia/Kolkata", days_left: 5 },
+  usage: { call_minutes: meter("call_minutes", 4.5, 30), whatsapp_messages: meter("whatsapp_messages", 12, 100) },
+  notices: [],
+  can_start_trial: true,
+  ...over,
+});
+const subscription = (over: Record<string, unknown> = {}) => ({ status: "trialing", plan_id: "growth", provider: "fake", trial_ends_at: "2026-11-12T10:00:00Z", current_period_end: null, cancel_at_period_end: false, grace_until: null, payment_method_on_file: true, ...over });
+const apiRoutes = (billing: unknown = billingBody()) =>
+  h.api.mockImplementation(async (path: string) => {
+    if (path === "/v1/plans") return DRAFT_PLANS;
+    if (/\/billing(\/trial|\/cancel)?$/.test(path)) return billing;
+    throw new ApiRequestError(404, "not_found", "x");
+  });
+
+describe("the flag is '1' (on: the plans and billing API of job DI)", () => {
+  beforeEach(() => {
+    vi.stubEnv("PLAN_SCREENS", "1");
+    h.api.mockReset();
+    apiRoutes();
+  });
+  it("the Plan part reads the billing answer: no plan yet, the trial's allowances, and the way to start the trial", async () => {
     render(await SettingsPage(settingsProps({ section: "plan" })));
     expect(tabNames()).toContain("Plan");
+    expect(h.api).toHaveBeenCalledWith(`/v1/tenants/${TENANT}/billing`, "tok");
     const part = within(screen.getByRole("main"));
-    expect(part.getByText("Not available yet")).toBeInTheDocument();
-    expect(part.queryByRole("button", { name: /plan|trial|payment|cancel/i })).toBeNull();
+    expect(part.getByText("No plan yet")).toBeInTheDocument();
+    expect(within(document.querySelector('[data-meter="minutes"]') as HTMLElement).getByText("4.5 of 30")).toBeInTheDocument();
+    expect(part.getByRole("link", { name: "Start 30-day trial" })).toBeInTheDocument();
+    expect(part.queryByRole("button", { name: /jump to day 30|Update payment/ })).toBeNull();
+    expect(document.body.textContent).not.toMatch(/₹|\btokens?\b/i);
   });
-  it("the moves still refuse (no fake provider is involved)", async () => {
-    expect(await startPlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error: "not_available" });
-    expect(h.jar.size).toBe(0);
+  it("a trial at 83 percent: the plan chosen, the days left, the gentle notice", async () => {
+    apiRoutes(billingBody({ subscription: subscription(), can_start_trial: false, usage: { call_minutes: meter("call_minutes", 25, 30, { percent: 83, state: "notice" }), whatsapp_messages: meter("whatsapp_messages", 83, 100, { percent: 83, state: "notice" }) } }));
+    render(await SettingsPage(settingsProps({ section: "plan" })));
+    expect(screen.getByText("Plan: Growth")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("You have used 83%");
+    expect(screen.queryByRole("link", { name: "Start 30-day trial" })).toBeNull();
+  });
+  it("the API cannot be reached: the Plan part says 'Not available yet', and /plans too, never a guess", async () => {
+    h.api.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
+    render(await SettingsPage(settingsProps({ section: "plan" })));
+    expect(within(screen.getByRole("main")).getByText("Not available yet")).toBeInTheDocument();
+    cleanup();
+    render(await PlansPage(plansProps()));
+    expect(screen.getByText("Not available yet")).toBeInTheDocument();
+  });
+  it("an answer that is not the contracted shape is not drawn", async () => {
+    apiRoutes({ nonsense: true });
+    render(await SettingsPage(settingsProps({ section: "plan" })));
+    expect(within(screen.getByRole("main")).getByText("Not available yet")).toBeInTheDocument();
+  });
+  it("starting the trial posts the plan and the checkout reference of the fake provider, and nothing else", async () => {
+    expect(await startPlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: true });
+    expect(h.api).toHaveBeenCalledWith(`/v1/tenants/${TENANT}/billing/trial`, "tok", { method: "POST", body: JSON.stringify({ plan_id: "growth", checkout_ref: "pm_fake_ok" }) });
+    expect(await startPlanAction(TENANT, "growth", "test_declined")).toEqual({ ok: true });
+    expect(h.api).toHaveBeenLastCalledWith(`/v1/tenants/${TENANT}/billing/trial`, "tok", { method: "POST", body: JSON.stringify({ plan_id: "growth", checkout_ref: "pm_fake_declined" }) });
+    expect(await startPlanAction(TENANT, "growth", "")).toEqual({ ok: false, error: "no_payment_method" });
+    expect(h.jar.size).toBe(0); // the cookie of the fake provider is not touched
+  });
+  it.each([
+    ["payment_method_declined", 402, "declined"],
+    ["trial_already_started", 409, "already"],
+    ["plan_unknown", 422, "invalid"],
+    ["forbidden", 403, "forbidden"],
+    ["api_unreachable", 503, "not_available"],
+    ["something_else", 500, "invalid"],
+  ])("the API's %s (HTTP %i) is our sentence %s", async (code, status, error) => {
+    h.api.mockRejectedValue(new ApiRequestError(status, code, "x"));
+    expect(await startPlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error });
+  });
+  it("cancelling posts to the API; the two moves the API has no endpoint for refuse", async () => {
+    expect(await cancelPlanAction(TENANT)).toEqual({ ok: true });
+    expect(h.api).toHaveBeenCalledWith(`/v1/tenants/${TENANT}/billing/cancel`, "tok", { method: "POST", body: JSON.stringify({}) });
+    expect(await fixPlanPaymentAction(TENANT)).toEqual({ ok: false, error: "not_available" });
+    expect(await endPlanTrialAction(TENANT)).toEqual({ ok: false, error: "not_available" });
+  });
+  it("an Admin sees the plan and the meters but no move, and the API is not asked to change anything", async () => {
+    h.fetchTenant.mockResolvedValue(tenant("admin"));
+    render(await SettingsPage(settingsProps({ section: "plan" })));
+    expect(screen.getByText("No plan yet")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Start 30-day trial" })).toBeNull();
+    h.api.mockClear();
+    expect(await startPlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error: "forbidden" });
+    expect(h.api).not.toHaveBeenCalled();
+  });
+  it("/plans: the catalogue from the API, a workspace that has had a trial cannot start another", async () => {
+    render(await PlansPage(plansProps()));
+    expect(screen.getAllByRole("heading", { level: 3 }).map((x) => x.textContent)).toEqual(["Starter", "Growth", "Business", "Pay-as-you-go", "Calls 300", "Calls 1,000"]);
+    cleanup();
+    apiRoutes(billingBody({ subscription: subscription({ status: "cancelled" }), can_start_trial: false }));
+    render(await PlansPage(plansProps()));
+    expect(screen.getByText("The free trial can be started only once for a workspace.")).toBeInTheDocument();
+    expect(screen.queryByRole("radio")).toBeNull();
   });
 });
 
@@ -121,7 +207,14 @@ describe("the flag is 'mock' (the fake provider)", () => {
     expect(await fixPlanPaymentAction(TENANT)).toEqual({ ok: false, error: "invalid" });
     expect(await cancelPlanAction(TENANT)).toEqual({ ok: true });
     render(await SettingsPage(settingsProps({ section: "plan" })));
-    expect(screen.getByText("Your plan was cancelled.")).toBeInTheDocument();
+    expect(screen.getByText(/Your plan ends on .*\. It will not renew\./)).toBeInTheDocument(); // a paid plan runs to the end of its period
+    cleanup();
+    expect(await cancelPlanAction(TENANT)).toEqual({ ok: false, error: "invalid" });
+    expect(await startPlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error: "already" });
+  });
+  it("a card refused at once starts no trial and leaves no plan", async () => {
+    expect(await startPlanAction(TENANT, "growth", "test_declined")).toEqual({ ok: false, error: "declined" });
+    expect(h.jar.size).toBe(0);
   });
   it("cancelling inside the trial says nothing was charged", async () => {
     await startPlanAction(TENANT, "starter", "test_ok");
@@ -140,8 +233,8 @@ describe("the flag is 'mock' (the fake provider)", () => {
     expect(screen.getByText("No plan yet")).toBeInTheDocument();
     expect(document.body.innerHTML).not.toContain("<img src=x>");
   });
-  it("a member and a viewer cannot move the plan", async () => {
-    for (const role of ["member", "viewer"]) {
+  it("an Admin, a member and a viewer cannot move the plan (the plan is the Owner's)", async () => {
+    for (const role of ["admin", "member", "viewer"]) {
       h.fetchTenant.mockResolvedValue(tenant(role));
       expect(await startPlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error: "forbidden" });
     }

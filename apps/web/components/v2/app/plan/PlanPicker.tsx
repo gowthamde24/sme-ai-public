@@ -21,9 +21,9 @@ function allowance(t: ReturnType<typeof makeT>, value: number | null, noCap: boo
 /**
  * The plan picker (job DK): the six plans side by side, from the plans data (no plan id is written here). Prices that are not set say "Price coming soon". Everything counted is call minutes, WhatsApp messages the business
  * starts, team members and workspaces; the AI is "included, fair use" and has no number. A business with no plan (or whose plan ended) can choose one and start the 30-day trial with a payment method (a test choice
- * in test mode); one that has a plan sees the comparison and its own plan marked, and is told to cancel before starting another.
+ * in test mode); one that has had a plan (a trial is started once per workspace) or is not the Owner sees the comparison, its own plan marked, and why it cannot start one.
  */
-export function PlanPicker({ words, main, calls, currentId, canStart, mock, actions, done }: { words: Words; main: readonly PlanDef[]; calls: readonly PlanDef[]; currentId: string | null; canStart: boolean; mock: boolean; actions: PlanActions; done: string }) {
+export function PlanPicker({ words, main, calls, currentId, canStart, blocked, mock, actions, done }: { words: Words; main: readonly PlanDef[]; calls: readonly PlanDef[]; currentId: string | null; canStart: boolean; blocked: "already" | "used" | "forbidden" | null; mock: boolean; actions: PlanActions; done: string }) {
   const t = makeT(words);
   const [chosen, setChosen] = React.useState<string>("");
   const [method, setMethod] = React.useState<string>("");
@@ -70,7 +70,7 @@ export function PlanPicker({ words, main, calls, currentId, canStart, mock, acti
           {t("plan.testmode")}
         </p>
       ) : null}
-      {currentId !== null && !canStart ? <p className="text-sm font-medium">{t("plan.err.already")}</p> : null}
+      {blocked !== null ? <p className="text-sm font-medium">{t(`plan.err.${blocked}`)}</p> : null}
       <section aria-labelledby="picker-main-h">
         <h2 id="picker-main-h" className="mb-3 font-display text-2xl font-bold">
           {t("plan.picker.main")}
@@ -95,10 +95,10 @@ export function PlanPicker({ words, main, calls, currentId, canStart, mock, acti
         >
           <fieldset>
             <legend className="mb-1.5 text-sm font-semibold">{t("plan.method.label")}</legend>
-            {(["test_ok", "test_fails"] as const).map((m) => (
+            {(["test_ok", "test_fails", "test_declined"] as const).map((m) => (
               <label key={m} className="flex min-h-11 items-center gap-3 text-base">
                 <input type="radio" name="method" value={m} checked={method === m} onChange={() => setMethod(m)} className="size-6 shrink-0 accent-brand-text" />
-                {t(m === "test_ok" ? "plan.method.ok" : "plan.method.fails")}
+                {t(m === "test_ok" ? "plan.method.ok" : m === "test_fails" ? "plan.method.fails" : "plan.method.declined")}
               </label>
             ))}
           </fieldset>

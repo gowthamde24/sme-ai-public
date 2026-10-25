@@ -6,15 +6,16 @@ import { NOTICE_AT, PAUSE_AT, meterState, percent, remaining, trialDay, trialDay
 import { FRESH, cancel, encodeMock, endTrial, fixPayment, parseMock, startTrial, toWorkspacePlan } from "./mock";
 
 describe("the plans as data", () => {
-  it("are the six of the owner's draft, and NO price is invented: every price is null until the owner sets it", () => {
+  it("are the six of C1's plans file (job DI), and NO price is invented: every price is null until the owner sets it", () => {
     expect(mainPlans().map((p) => p.name)).toEqual(["Starter", "Growth", "Business"]);
     expect(callsPlans().map((p) => p.name)).toEqual(["Pay-as-you-go", "Calls 300", "Calls 1,000"]);
     for (const p of CATALOGUE.plans) expect(p.priceInr, p.id).toBeNull();
   });
-  it("carry the draft allowances: trial 30 min and 100 messages for 30 days; Starter 0/300, Growth 100/1,000, Business 300/3,000; Calls 300 and 1,000 minutes; team 1/3/10 and workspaces 1/1/3", () => {
-    expect(CATALOGUE.trial).toEqual({ days: 30, callMinutes: 30, messages: 100 });
+  it("carry the allowances of C1's plans file: trial 30 min and 100 messages for 30 days; Starter 0/300, Growth 100/1,000, Business 300/3,000; Calls 300 and 1,000 minutes; team 1/3/10 and workspaces 1/1/3", () => {
+    expect(CATALOGUE.trial).toEqual({ days: 30, callMinutes: 30, messages: 100, graceDays: 7 });
     expect(mainPlans().map((p) => [p.callMinutes, p.messages, p.users, p.workspaces])).toEqual([[0, 300, 1, 1], [100, 1000, 3, 1], [300, 3000, 10, 3]]);
     expect(callsPlans().map((p) => p.callMinutes)).toEqual([null, 300, 1000]);
+    expect(callsPlans().map((p) => p.messages)).toEqual([0, 0, 0]);
     expect(planById("growth")?.name).toBe("Growth");
     expect(planById("nope")).toBeNull();
     expect(planById(null)).toBeNull();
@@ -77,9 +78,19 @@ describe("the fake provider", () => {
     expect(startTrial(FRESH, "growth", "none")).toEqual({ error: "no_payment_method" });
     expect(startTrial(FRESH, "growth", "")).toEqual({ error: "no_payment_method" });
     expect(startTrial(FRESH, "nope", "test_ok")).toEqual({ error: "invalid" });
+    expect(startTrial(FRESH, "growth", "test_declined")).toEqual({ error: "declined" }); // the card is refused at once: no trial
     const ok = startTrial(FRESH, "growth", "test_ok");
     expect("next" in ok && ok.next).toMatchObject({ state: "trialing", plan: "growth", method: "test_ok", day: 1 });
     expect(startTrial((ok as { next: typeof FRESH }).next, "business", "test_ok")).toEqual({ error: "already" });
+  });
+  it("a trial is started ONCE per workspace: not again after it was cancelled, like the API", () => {
+    const cancelled = cancel({ ...FRESH, state: "trialing", plan: "growth", method: "test_ok", day: 3 }) as { next: typeof FRESH };
+    expect(startTrial(cancelled.next, "growth", "test_ok")).toEqual({ error: "already" });
+    expect(toWorkspacePlan(cancelled.next, now).canStartTrial).toBe(false);
+    expect(toWorkspacePlan(FRESH, now).canStartTrial).toBe(true);
+  });
+  it("a workspace with no plan has the trial's allowances, like the API's", () => {
+    expect(toWorkspacePlan(FRESH, now).included).toEqual({ minutes: 30, messages: 100 });
   });
   it("a trial has the TRIAL allowances (30 min, 100 messages), not the plan's; 30 days left on day 1", () => {
     const w = toWorkspacePlan({ ...FRESH, state: "trialing", plan: "business", method: "test_ok", day: 1 }, now);
@@ -91,11 +102,14 @@ describe("the fake provider", () => {
     const t = cancel({ ...FRESH, state: "trialing", plan: "growth", method: "test_ok", day: 12 });
     const w = toWorkspacePlan((t as { next: typeof FRESH }).next, now);
     expect(w).toMatchObject({ state: "cancelled", cancelledInTrial: true });
-    const p = cancel({ ...FRESH, state: "active", plan: "growth", method: "test_ok" });
-    expect(toWorkspacePlan((p as { next: typeof FRESH }).next, now).cancelledInTrial).toBe(false);
+    const p = cancel({ ...FRESH, state: "active", plan: "growth", method: "test_ok" }) as { next: typeof FRESH };
+    const paid = toWorkspacePlan(p.next, now);
+    expect(paid).toMatchObject({ state: "active", cancelledInTrial: false, cancelAtPeriodEnd: true }); // runs to the end of the period it paid for
+    expect(cancel(p.next)).toEqual({ error: "invalid" });
     expect(cancel(FRESH)).toEqual({ error: "invalid" });
   });
-  it("a failed payment can be put right, and only then", () => {
+  it("a failed payment has a grace period, can be put right, and only then", () => {
+    expect(toWorkspacePlan({ ...FRESH, state: "past_due", plan: "growth", method: "test_fails" }, now).graceUntil).toBe("2026-11-01T10:00:00.000Z");
     const due = { ...FRESH, state: "past_due" as const, plan: "growth", method: "test_fails" as const };
     expect(fixPayment(due)).toMatchObject({ next: { state: "active", method: "test_ok" } });
     expect(fixPayment(FRESH)).toEqual({ error: "invalid" });
@@ -105,7 +119,7 @@ describe("the fake provider", () => {
     expect(parseMock("drop table;;;;;")).toEqual(FRESH);
     expect(parseMock("trialing;<script>;test_ok;99;-1;1e9;1")).toEqual(FRESH);
     expect(parseMock("trialing;growth;test_ok;99;-1;1e9;1")).toMatchObject({ state: "trialing", plan: "growth", method: "test_ok", day: 1, minutes: 0, messages: 0 });
-    expect(parseMock(encodeMock({ state: "active", plan: "growth", method: "test_ok", day: 5, minutes: 42, messages: 310, cancelledInTrial: false }))).toMatchObject({ plan: "growth", minutes: 42, messages: 310 });
+    expect(parseMock(encodeMock({ state: "active", plan: "growth", method: "test_ok", day: 5, minutes: 42, messages: 310, cancelled: false }))).toMatchObject({ plan: "growth", minutes: 42, messages: 310 });
   });
 });
 

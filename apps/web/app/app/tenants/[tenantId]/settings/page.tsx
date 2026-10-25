@@ -52,8 +52,9 @@ import { agentWords } from "./agent-words";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { BRAND_NAME } from "@/design/brand";
 import { PlanSection } from "@/components/v2/app/plan/PlanSection";
-import { planScreens } from "@/lib/plan/flag";
-import { readWorkspacePlan } from "@/lib/plan/source";
+import { FAKE_CHECKOUT, planScreens } from "@/lib/plan/flag";
+import { CATALOGUE, planById } from "@/lib/plan/catalogue";
+import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
 import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, startPlanAction } from "../plan-actions";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
@@ -176,7 +177,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       throw error;
     }
   }
-  const workspacePlan = section === "plan" ? await readWorkspacePlan() : null;
+  const planCtx = { token: user.accessToken, tenantId };
+  const [workspacePlan, planCatalogue] = section === "plan" ? await Promise.all([readWorkspacePlan(planCtx), readCatalogue(planCtx)]) : [null, null];
   let theme: ThemePick = "system";
   try {
     theme = readTheme((await cookies()).get(THEME_COOKIE)?.value) ?? "system";
@@ -239,11 +241,13 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           <PlanSection
             words={wordsFor(lang, ["plan."], ["frame.notyet"])}
             plan={workspacePlan}
+            def={planCatalogue ? planById(workspacePlan?.planId ?? null, planCatalogue) : null}
+            trialDays={planCatalogue?.trial.days ?? CATALOGUE.trial.days}
             now={clock()}
-            canChange={planScreens() === "mock"}
-            mock={planScreens() === "mock"}
+            canChange={tenant.role === "owner"}
+            mock={FAKE_CHECKOUT}
             pickerHref={`${base}/plans`}
-            actions={{ start: startPlanAction.bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: fixPlanPaymentAction.bind(null, tenantId), endTrial: planScreens() === "mock" ? endPlanTrialAction.bind(null, tenantId) : null }}
+            actions={{ start: startPlanAction.bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: planScreens() === "mock" ? fixPlanPaymentAction.bind(null, tenantId) : null, endTrial: planScreens() === "mock" ? endPlanTrialAction.bind(null, tenantId) : null }}
           />
         ) : null}
         {section === "members" ? (

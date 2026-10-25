@@ -1,12 +1,86 @@
 {
-  "_note": "DRAFT of the plans as data (job DK), until C1's plans file and API (job DI, api/di-plans-billing) replace it. Allowances are the owner's draft of 23 October; PRICES ARE NOT SET (null = the screens say 'Price coming soon'): never invent one. null allowance = no cap (pay for what you use); 0 = not included.",
-  "trial": { "days": 30, "callMinutes": 30, "messages": 100 },
-  "plans": [
-    { "id": "starter", "kind": "main", "name": "Starter", "priceInr": null, "callMinutes": 0, "messages": 300, "users": 1, "workspaces": 1 },
-    { "id": "growth", "kind": "main", "name": "Growth", "priceInr": null, "callMinutes": 100, "messages": 1000, "users": 3, "workspaces": 1 },
-    { "id": "business", "kind": "main", "name": "Business", "priceInr": null, "callMinutes": 300, "messages": 3000, "users": 10, "workspaces": 3 },
-    { "id": "payg", "kind": "calls", "name": "Pay-as-you-go", "priceInr": null, "callMinutes": null, "messages": 0, "users": null, "workspaces": null },
-    { "id": "calls300", "kind": "calls", "name": "Calls 300", "priceInr": null, "callMinutes": 300, "messages": 0, "users": null, "workspaces": null },
-    { "id": "calls1000", "kind": "calls", "name": "Calls 1,000", "priceInr": null, "callMinutes": 1000, "messages": 0, "users": null, "workspaces": null }
-  ]
+ "$schema": "./plans.schema.json",
+ "version": 1,
+ "status": "draft",
+ "currency": "INR",
+ "note": "DRAFT of 23 Oct 2026 (owner decisions, job DI). Prices are NOT decided: every price is null until the owner sets it from the usage tests. A published version is never edited: raise `version` and run `make plans-migration`.",
+ "trial": {
+  "plan": "free_trial",
+  "days": 30,
+  "payment_method_at_start": true,
+  "grace_days_after_failed_payment": 7
+ },
+ "plans": [
+  {
+   "id": "free_trial",
+   "kind": "trial",
+   "sort": 0,
+   "name": { "en": "Free trial" },
+   "price_paise_monthly": null,
+   "allowances": { "call_minutes": 30, "whatsapp_messages": 100 },
+   "limits": { "users": 1, "workspaces": 1 },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "starter",
+   "kind": "main",
+   "sort": 10,
+   "name": { "en": "Starter" },
+   "price_paise_monthly": null,
+   "allowances": { "call_minutes": 0, "whatsapp_messages": 300 },
+   "limits": { "users": 1, "workspaces": 1 },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "growth",
+   "kind": "main",
+   "sort": 20,
+   "name": { "en": "Growth" },
+   "price_paise_monthly": null,
+   "allowances": { "call_minutes": 100, "whatsapp_messages": 1000 },
+   "limits": { "users": 3, "workspaces": 1 },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "business",
+   "kind": "main",
+   "sort": 30,
+   "name": { "en": "Business" },
+   "price_paise_monthly": null,
+   "allowances": { "call_minutes": 300, "whatsapp_messages": 3000 },
+   "limits": { "users": 10, "workspaces": 3 },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "calls_payg",
+   "kind": "calls",
+   "sort": 40,
+   "name": { "en": "Pay-as-you-go" },
+   "price_paise_monthly": null,
+   "price_paise_per_minute": null,
+   "allowances": { "call_minutes": null, "whatsapp_messages": 0 },
+   "limits": { "users": 1, "workspaces": 1 },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "calls_300",
+   "kind": "calls",
+   "sort": 50,
+   "name": { "en": "Calls 300" },
+   "price_paise_monthly": null,
+   "allowances": { "call_minutes": 300, "whatsapp_messages": 0 },
+   "limits": { "users": 1, "workspaces": 1 },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "calls_1000",
+   "kind": "calls",
+   "sort": 60,
+   "name": { "en": "Calls 1,000" },
+   "price_paise_monthly": null,
+   "allowances": { "call_minutes": 1000, "whatsapp_messages": 0 },
+   "limits": { "users": 1, "workspaces": 1 },
+   "ai": "included_fair_use"
+  }
+ ]
 }

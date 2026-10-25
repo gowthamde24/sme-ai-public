@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { callsPlans, mainPlans } from "@/lib/plan/catalogue";
+import { CATALOGUE, callsPlans, mainPlans, planById } from "@/lib/plan/catalogue";
 import { toWorkspacePlan, FRESH, type MockState } from "@/lib/plan/mock";
 import type { PlanResult, WorkspacePlan } from "@/lib/plan/types";
 
@@ -20,7 +20,7 @@ const ok = async (): Promise<PlanResult> => ({ ok: true });
 const actions = (over: Partial<PlanActions> = {}): PlanActions => ({ start: vi.fn(ok), cancel: vi.fn(ok), fix: vi.fn(ok), endTrial: null, ...over });
 const plan = (m: Partial<MockState>): WorkspacePlan => toWorkspacePlan({ ...FRESH, ...m }, new Date(NOW));
 const draw = (p: WorkspacePlan | null, over: Partial<{ canChange: boolean; mock: boolean; a: PlanActions }> = {}) =>
-  render(<PlanSection words={words} plan={p} now={NOW} canChange={over.canChange ?? true} mock={over.mock ?? true} pickerHref="/app/tenants/t/plans" actions={over.a ?? actions()} />);
+  render(<PlanSection words={words} plan={p} def={planById(p?.planId ?? null)} trialDays={CATALOGUE.trial.days} now={NOW} canChange={over.canChange ?? true} mock={over.mock ?? true} pickerHref="/app/tenants/t/plans" actions={over.a ?? actions()} />);
 
 afterEach(() => {
   cleanup();
@@ -37,7 +37,9 @@ describe("Settings > Plan", () => {
     expect(screen.getByText("No plan yet")).toBeInTheDocument();
     expect(screen.getByText(/If you cancel before day 30, nothing is charged/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Start 30-day trial" })).toHaveAttribute("href", "/app/tenants/t/plans");
-    expect(screen.queryByRole("meter")).toBeNull();
+    // no plan yet: the trial's allowances apply, as the API says, and nothing is used
+    expect(within(document.querySelector('[data-meter="minutes"]') as HTMLElement).getByText("0 of 30")).toBeInTheDocument();
+    expect(within(document.querySelector('[data-meter="messages"]') as HTMLElement).getByText("0 of 100")).toBeInTheDocument();
   });
   it("in the trial: the plan, the day, the days left, and both meters as counts and percentages", () => {
     draw(plan({ state: "trialing", plan: "growth", method: "test_ok", day: 4, minutes: 6, messages: 25 }));
@@ -82,7 +84,7 @@ describe("Settings > Plan", () => {
     expect(within(document.querySelector('[data-meter="minutes"]') as HTMLElement).getByText("Not included in this plan.")).toBeInTheDocument();
     expect(within(document.querySelector('[data-meter="minutes"]') as HTMLElement).queryByRole("meter")).toBeNull();
     cleanup();
-    draw(plan({ state: "active", plan: "payg", method: "test_ok", minutes: 42 }));
+    draw(plan({ state: "active", plan: "calls_payg", method: "test_ok", minutes: 42 }));
     expect(within(document.querySelector('[data-meter="minutes"]') as HTMLElement).getByText("42 used. You pay for what you use.")).toBeInTheDocument();
   });
   it("past due: the failed payment, and the one move out of it", async () => {
@@ -92,6 +94,21 @@ describe("Settings > Plan", () => {
     fireEvent.click(screen.getByRole("button", { name: "Update payment method" }));
     await waitFor(() => expect(a.fix).toHaveBeenCalledOnce());
     await waitFor(() => expect(refresh).toHaveBeenCalled());
+  });
+  it("a failed payment names the day it can be put right by; where the provider has no such move there is no button for it", () => {
+    draw(plan({ state: "past_due", plan: "growth", method: "test_fails" }), { a: actions({ fix: null }) });
+    expect(screen.getByText("Please put it right by 1 Nov 2026.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Update payment method" })).toBeNull();
+  });
+  it("a paid plan that was cancelled says when it ends and offers no second cancel", () => {
+    draw(plan({ state: "active", plan: "growth", method: "test_ok", cancelled: true }));
+    expect(screen.getByText(/Your plan ends on 24 Nov 2026\. It will not renew\./)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Cancel plan" })).toBeNull();
+  });
+  it("a cancelled trial cannot start another (once per workspace): the link only goes to the plans", () => {
+    draw(plan({ state: "cancelled", plan: "growth", method: "test_ok", cancelled: true }));
+    expect(screen.queryByRole("link", { name: "Start 30-day trial" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Choose a plan" })).toHaveAttribute("href", "/app/tenants/t/plans");
   });
   it("cancelling in the trial asks once and says nothing is charged; 'Keep it' does nothing", async () => {
     const a = actions();
@@ -105,7 +122,7 @@ describe("Settings > Plan", () => {
     await waitFor(() => expect(a.cancel).toHaveBeenCalledOnce());
   });
   it("a trial cancelled before day 30 says nothing was charged", () => {
-    draw(plan({ state: "cancelled", plan: "growth", method: "test_ok", cancelledInTrial: true }));
+    draw(plan({ state: "cancelled", plan: "growth", method: "test_ok", cancelled: true }));
     expect(screen.getByText("Your trial was cancelled. Nothing was charged.")).toBeInTheDocument();
   });
   it("a refused move shows our sentence, never the code", async () => {
@@ -140,8 +157,8 @@ describe("Settings > Plan", () => {
 });
 
 describe("the plan picker", () => {
-  const pick = (over: Partial<{ canStart: boolean; currentId: string | null; a: PlanActions }> = {}) =>
-    render(<PlanPicker words={words} main={mainPlans()} calls={callsPlans()} currentId={over.currentId ?? null} canStart={over.canStart ?? true} mock actions={over.a ?? actions()} done="/app/tenants/t/settings?section=plan" />);
+  const pick = (over: Partial<{ canStart: boolean; currentId: string | null; blocked: "already" | "used" | "forbidden" | null; a: PlanActions }> = {}) =>
+    render(<PlanPicker words={words} main={mainPlans()} calls={callsPlans()} currentId={over.currentId ?? null} canStart={over.canStart ?? true} blocked={over.blocked ?? null} mock actions={over.a ?? actions()} done="/app/tenants/t/settings?section=plan" />);
 
   it("compares the six plans from the data, every price 'Price coming soon'", () => {
     pick();
@@ -153,7 +170,7 @@ describe("the plan picker", () => {
     expect(growth.getByText("1,000")).toBeInTheDocument();
     const starter = within(document.querySelector('[data-plan="starter"]') as HTMLElement);
     expect(starter.getByText("Not included")).toBeInTheDocument();
-    expect(within(document.querySelector('[data-plan="payg"]') as HTMLElement).getByText("Pay for the minutes you use")).toBeInTheDocument();
+    expect(within(document.querySelector('[data-plan="calls_payg"]') as HTMLElement).getByText("Pay for the minutes you use")).toBeInTheDocument();
     expect(screen.getByText(/your AI team \(fair use\)/)).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/₹|\btokens?\b/i);
   });
@@ -169,8 +186,25 @@ describe("the plan picker", () => {
     await waitFor(() => expect(a.start).toHaveBeenLastCalledWith("growth", "test_ok"));
     expect(await screen.findByText(/Your 30-day trial of Growth has started/)).toBeInTheDocument();
   });
+  it("offers the three test payment choices, one of them refused at once with its own sentence", async () => {
+    const a = actions({ start: vi.fn(async (_p: string, m: string): Promise<PlanResult> => (m === "test_declined" ? { ok: false, error: "declined" } : { ok: true })) });
+    pick({ a });
+    expect(screen.getAllByRole("radio", { name: /^Test card/ })).toHaveLength(3);
+    fireEvent.click(screen.getAllByRole("radio", { name: "Start the 30-day trial of Business" })[0]);
+    fireEvent.click(screen.getByRole("radio", { name: "Test card that is declined at once" }));
+    fireEvent.click(screen.getByRole("button", { name: "Start the 30-day trial of Business" }));
+    expect(await screen.findByText("The payment method was declined, so the trial did not start.")).toBeInTheDocument();
+  });
+  it("a workspace whose trial is over, or a person who is not the Owner, is told why and cannot start", () => {
+    pick({ canStart: false, blocked: "used" });
+    expect(screen.getByText("The free trial can be started only once for a workspace.")).toBeInTheDocument();
+    cleanup();
+    pick({ canStart: false, blocked: "forbidden" });
+    expect(screen.getByText("Only the Owner can change the plan.")).toBeInTheDocument();
+    expect(screen.queryByRole("radio")).toBeNull();
+  });
   it("a business that has a plan sees its own plan marked and no way to start another", () => {
-    pick({ canStart: false, currentId: "growth" });
+    pick({ canStart: false, currentId: "growth", blocked: "already" });
     expect(within(document.querySelector('[data-plan="growth"]') as HTMLElement).getByText("Your plan")).toBeInTheDocument();
     expect(screen.queryByRole("radio")).toBeNull();
     expect(screen.queryByRole("button", { name: /Start/ })).toBeNull();

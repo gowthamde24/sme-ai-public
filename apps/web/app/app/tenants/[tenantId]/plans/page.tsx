@@ -13,8 +13,9 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 import { BRAND_NAME } from "@/design/brand";
 import { callsPlans, mainPlans } from "@/lib/plan/catalogue";
+import { FAKE_CHECKOUT } from "@/lib/plan/flag";
 import { planScreens } from "@/lib/plan/flag";
-import { readWorkspacePlan } from "@/lib/plan/source";
+import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
 
 import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, startPlanAction } from "../plan-actions";
 
@@ -22,7 +23,7 @@ export const metadata = { title: `Plans · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /**
- * /app/tenants/[tenantId]/plans (job DK): the six plans side by side, and for an Owner or Admin with no plan the way to start the 30-day trial. A 404 while the feature flag is off (PLAN_SCREENS), like a page that
+ * /app/tenants/[tenantId]/plans (job DK): the plans side by side (read from the plans data), and for the Owner of a workspace that has not had a plan the way to start the 30-day trial. A 404 while the feature flag is off (PLAN_SCREENS), like a page that
  * does not exist. Owner and Admin only: the plan and what it costs are theirs; everyone else gets the same 404.
  */
 export default async function PlansPage({ params }: PageProps<"/app/tenants/[tenantId]/plans">) {
@@ -43,24 +44,32 @@ export default async function PlansPage({ params }: PageProps<"/app/tenants/[ten
   const lang = await getLang();
   const t = appT(lang);
   const base = `/app/tenants/${tenantId}`;
-  const plan = await readWorkspacePlan();
+  const ctx = { token: user.accessToken, tenantId };
+  const [catalogue, plan] = await Promise.all([readCatalogue(ctx), readWorkspacePlan(ctx)]);
   const mock = planScreens() === "mock";
-  const canStart = mock && (plan === null || plan.state === "none" || plan.state === "cancelled");
+  const owner = tenant.role === "owner";
+  const canStart = owner && plan !== null && plan.canStartTrial;
+  const blocked = !owner ? "forbidden" : plan !== null && !plan.canStartTrial ? (plan.state === "cancelled" ? "used" : "already") : null;
   return (
     <main className={pageMain} lang={lang}>
       <BackLink href={`${base}/settings?section=plan`} label={t("plan.title")} />
       <PageTop title={t("plan.picker.title")} />
       <div className="mt-6">
-        <PlanPicker
-          words={wordsFor(lang, ["plan."])}
-          main={mainPlans()}
-          calls={callsPlans()}
-          currentId={plan && plan.state !== "cancelled" ? plan.planId : null}
-          canStart={canStart}
-          mock={mock}
-          done={`${base}/settings?section=plan`}
-          actions={{ start: startPlanAction.bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: fixPlanPaymentAction.bind(null, tenantId), endTrial: mock ? endPlanTrialAction.bind(null, tenantId) : null }}
-        />
+        {catalogue === null ? (
+          <p className="text-sm text-muted">{t("frame.notyet")}</p>
+        ) : (
+          <PlanPicker
+            words={wordsFor(lang, ["plan."])}
+            main={mainPlans(catalogue)}
+            calls={callsPlans(catalogue)}
+            currentId={plan && plan.state !== "cancelled" ? plan.planId : null}
+            canStart={canStart}
+            blocked={blocked}
+            mock={FAKE_CHECKOUT}
+            done={`${base}/settings?section=plan`}
+            actions={{ start: startPlanAction.bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: mock ? fixPlanPaymentAction.bind(null, tenantId) : null, endTrial: mock ? endPlanTrialAction.bind(null, tenantId) : null }}
+          />
+        )}
       </div>
     </main>
   );

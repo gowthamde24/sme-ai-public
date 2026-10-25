@@ -51,18 +51,19 @@ async function waitForPort(port, ms = 60_000) {
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// state;plan;method;day;minutes;messages;cancelledInTrial  (lib/plan/mock.ts)
+// state;plan;method;day;minutes;messages;cancelled  (lib/plan/mock.ts; the plan ids are those of packages/plans/plans.json)
 const SCENARIOS = [
-  { id: "none", cookie: null, has: ["No plan yet", "Start 30-day trial"], hasNot: ["Call minutes"] },
+  { id: "none", cookie: null, has: ["No plan yet", "Start 30-day trial", "0 of 30", "0 of 100"], hasNot: [] },
   { id: "trial-day1", cookie: "trialing;growth;test_ok;1;0;0;0", has: ["Plan: Growth", "Day 1 of 30 of your trial", "30 days left", "Price coming soon", "0 of 30", "0 of 100", "Cancel trial", "Change plan"], hasNot: ["Calls and announcements are paused", "You have used"] },
   { id: "trial-80", cookie: "trialing;growth;test_ok;12;4;80;0", has: ["Day 12 of 30 of your trial", "19 days left", "80 of 100", "You have used 80% of your WhatsApp messages."], hasNot: ["Calls and announcements are paused"] },
   { id: "trial-100", cookie: "trialing;growth;test_ok;20;30;100;0", has: ["Calls and announcements are paused", "Quotes, orders, follow-ups and your customers keep working as usual"], hasNot: ["You have used 80%"] },
   { id: "trial-last-day", cookie: "trialing;growth;test_ok;30;10;20;0", has: ["1 day left"], hasNot: ["1 days left"] },
   { id: "active", cookie: "active;business;test_ok;5;120;900;0", has: ["Plan: Business", "Active", "120 of 300", "900 of 3,000"], hasNot: ["days left"] },
   { id: "starter-no-minutes", cookie: "active;starter;test_ok;3;0;120;0", has: ["Plan: Starter", "Not included in this plan.", "120 of 300"], hasNot: [] },
-  { id: "payg", cookie: "active;payg;test_ok;3;42;0;0", has: ["Plan: Pay-as-you-go", "42 used. You pay for what you use.", "Not included in this plan."], hasNot: [] },
+  { id: "payg", cookie: "active;calls_payg;test_ok;3;42;0;0", has: ["Plan: Pay-as-you-go", "42 used. You pay for what you use.", "Not included in this plan."], hasNot: [] },
   { id: "past-due", cookie: "past_due;growth;test_fails;30;0;0;0", has: ["Payment failed", "Your last payment did not go through", "Update payment method"], hasNot: [] },
-  { id: "cancelled-in-trial", cookie: "cancelled;growth;test_ok;6;0;0;1", has: ["Your trial was cancelled. Nothing was charged.", "Start 30-day trial"], hasNot: ["Cancel trial"] },
+  { id: "active-cancelled", cookie: "active;growth;test_ok;5;10;20;1", has: ["Plan: Growth", "It will not renew."], hasNot: ["Cancel plan"] },
+  { id: "cancelled-in-trial", cookie: "cancelled;growth;test_ok;6;0;0;1", has: ["Your trial was cancelled. Nothing was charged.", "Choose a plan"], hasNot: ["Cancel trial", "Start 30-day trial"] },
 ];
 const LANG_SCENARIO = SCENARIOS.find((s) => s.id === "trial-80");
 
@@ -170,7 +171,7 @@ async function main() {
           const text = await common(tag, id, page, errors, sizeName);
           for (const n of ["Starter", "Growth", "Business", "Pay-as-you-go", "Calls 300", "Calls 1,000"]) check(text.includes(n), `${tag} ${id}: plan ${n} is missing`);
           check((text.match(/Price coming soon/g) ?? []).length === 6, `${tag} ${id}: not six "Price coming soon"`);
-          check(id === "picker-new" ? (await page.locator('input[type="radio"]').count()) === 8 : (await page.locator('input[type="radio"]').count()) === 0, `${tag} ${id}: the start form is ${id === "picker-new" ? "missing" : "there although a plan exists"}`);
+          check(id === "picker-new" ? (await page.locator('input[type="radio"]').count()) === 9 : (await page.locator('input[type="radio"]').count()) === 0, `${tag} ${id}: the start form is ${id === "picker-new" ? "missing" : "there although a plan exists"}`);
           await save(page, id, tag, id === "picker-new" ? "the six plans and the start form" : "the six plans, the business's own plan marked, no start form");
           await context.close();
         }
@@ -221,8 +222,8 @@ async function main() {
       await page.getByRole("button", { name: "Cancel plan" }).click();
       await save(page, "walk-6-cancel-ask", tag, "walk: cancelling asks once");
       await page.getByRole("button", { name: "Yes, cancel" }).click();
-      await page.getByText("Your plan was cancelled.").waitFor({ timeout: 15000 });
-      await save(page, "walk-7-cancelled", tag, "walk: cancelled");
+      await page.getByText(/Your plan ends on .* It will not renew\./).waitFor({ timeout: 15000 });
+      await save(page, "walk-7-cancelled", tag, "walk: a paid plan cancelled runs to the end of its period");
       await common(tag, "walk", page, errors, sizeName);
       await context.close();
     }

@@ -11,10 +11,10 @@ import type { PlanActions } from "./types";
 import { usePlanMove } from "./use-plan-move";
 
 /**
- * What the owner can DO on the Plan part (job DK): update a payment method that failed, go to the plans, cancel (asks once, and says nothing is charged when it is inside the trial), and, in test mode only, jump to day 30.
- * Only an Owner or Admin gets these (the page passes `canChange`); the server refuses the others as well.
+ * What the owner can DO on the Plan part (job DK): put a payment that failed right (where the provider has that move), go to the plans, cancel (asks once, and says nothing is charged when it is inside the trial; a paid plan runs to the end of
+ * its period) and, in test mode only, jump to day 30. Only the Owner gets these (the page passes `canChange`); the server refuses the others as well. `canStart`: no plan has been started yet (a trial is started once per workspace).
  */
-export function PlanMoves({ words, state, canChange, pickerHref, actions }: { words: Words; state: BillingState; canChange: boolean; pickerHref: string; actions: PlanActions }) {
+export function PlanMoves({ words, state, canChange, canStart, cancelling, pickerHref, actions }: { words: Words; state: BillingState; canChange: boolean; canStart: boolean; cancelling: boolean; pickerHref: string; actions: PlanActions }) {
   const t = makeT(words);
   const { busy, error, run } = usePlanMove(t);
   const [asking, setAsking] = React.useState(false);
@@ -23,15 +23,15 @@ export function PlanMoves({ words, state, canChange, pickerHref, actions }: { wo
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
-        {state === "past_due" ? (
-          <button type="button" className={btnMain} disabled={busy} onClick={() => run(actions.fix)}>
+        {state === "past_due" && actions.fix ? (
+          <button type="button" className={btnMain} disabled={busy} onClick={() => run(actions.fix!)}>
             {t("plan.fix")}
           </button>
         ) : null}
         <Link href={pickerHref} className={live ? btnQuiet : btnMain}>
-          {state === "none" || state === "cancelled" ? t("plan.start") : t("plan.change")}
+          {canStart ? t("plan.start") : live ? t("plan.change") : t("plan.picker.title")}
         </Link>
-        {live && !asking ? (
+        {live && !cancelling && !asking ? (
           <button type="button" className={btnQuiet} disabled={busy} onClick={() => setAsking(true)}>
             {t(state === "trialing" ? "plan.cancel.trial" : "plan.cancel.paid")}
           </button>
