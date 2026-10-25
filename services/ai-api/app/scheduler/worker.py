@@ -197,11 +197,11 @@ def build_worker(settings: Settings) -> Worker:
         adapter,
         session,
         interval_seconds=settings.scheduler_interval_seconds,
+        billing_mail=BillingReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,
         voice=VoiceNotes(repository, build_tts(settings)),
-        billing_mail=BillingReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
     )
 
 
