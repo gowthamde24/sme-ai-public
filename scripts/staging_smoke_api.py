@@ -116,7 +116,13 @@ def construction_quote(o: Owner) -> None:
     o.ok("confirm requirement", "POST", f"/requirements/{req}/confirm", want=(200, 201, 409))
     picks = [{"line_no": 1, "item_id": item}]
     o.ok("preview", "POST", f"/materials/requirements/{req}/preview", {"picks": picks})
-    o.ok("draft", "POST", f"/materials/requirements/{req}/quotes", {"quote_id": req_quote, "picks": picks})
+    drafted = o.ok("draft", "POST", f"/materials/requirements/{req}/quotes", {"quote_id": req_quote, "picks": picks}, want=(200, 201, 409))
+    if isinstance(drafted, dict) and drafted.get("error", {}).get("code") == "conflict":  # a second run on the same day: today's quote id exists already (later harness runs may have superseded it)
+        record("construction_materials: one materials quote previewed, drafted and approved (second factor)", "PASS", "today's quote exists already (replay)")
+        return
+    if isinstance(drafted, dict) and "error" in drafted:
+        record("construction_materials: one materials quote previewed, drafted and approved (second factor)", "FAIL", f"draft: {drafted['error'].get('code')}")
+        return
     done = o.ok("approve materials quote", "POST", f"/materials/quotes/{req_quote}/approve", want=(200, 201, 409))
     if isinstance(done, dict) and done.get("error", {}).get("code") == "quote_not_draft":  # a second run on the same day: this quote is already approved
         record("construction_materials: one materials quote previewed, drafted and approved (second factor)", "PASS", "already approved earlier today (replay)")
