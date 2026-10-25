@@ -10,12 +10,12 @@ begin
   execute format('create or replace function app.outbox_now() returns timestamptz language sql stable security definer set search_path = '''' as $b$ select timestamptz %L $b$', p_instant::text);
 end $fn$;
 select pg_temp.pin('2026-11-01T12:00:00+05:30'::timestamptz);
-select app.operator_register_scheduler('x7@test.local');
+select app.operator_register_scheduler('x5@test.local');
 create function pg_temp.val(p_user text, p_sql text) returns text language plpgsql as $$
 begin perform tests.as_aal('aal2'); return tests.scalar_as(case when p_user = 'anon' then null else tests.uid(p_user) end, p_sql);
 exception when others then return 'ERR:' || sqlstate; end $$;
-create function pg_temp.due() returns jsonb language sql as $$ select pg_temp.val('x7', 'select public.scheduler_billing_trial_due()::text')::jsonb $$;
-create function pg_temp.mark(p_tenant text, p_day int) returns text language sql as $$ select pg_temp.val('x7', format($q$select public.scheduler_billing_trial_mark(%L, %s)::text$q$, tests.tid(p_tenant), p_day)) $$;
+create function pg_temp.due() returns jsonb language sql as $$ select pg_temp.val('x5', 'select public.scheduler_billing_trial_due()::text')::jsonb $$;
+create function pg_temp.mark(p_tenant text, p_day int) returns text language sql as $$ select pg_temp.val('x5', format($q$select public.scheduler_billing_trial_mark(%L, %s)::text$q$, tests.tid(p_tenant), p_day)) $$;
 
 -- tenant a: a 14-day trial that began 2026-11-01 12:00 IST (so it ends 2026-11-15 12:00)
 select app.billing_edit(true);
@@ -70,14 +70,14 @@ select app.billing_edit(true);
 update public.billing_subscriptions set status = 'trialing' where tenant_id = tests.tid('a');
 select app.billing_edit(false);
 select is(pg_temp.due() -> 0 ->> 'language', 'en', 'E1 no assistant settings saved: English');
-select is(pg_temp.val('x7', 'select public.scheduler_billing_pending_due()::text') like 'ERR%', false, 'E2 the pending reminders still answer (with the language too)');
+select is(pg_temp.val('x5', 'select public.scheduler_billing_pending_due()::text') like 'ERR%', false, 'E2 the pending reminders still answer (with the language too)');
 
 -- ============================================================================ F. doors
 select is(pg_temp.val('a_owner', 'select public.scheduler_billing_trial_due()::text'), 'ERR:42501', 'F1 DENY: an Owner cannot ask (the scheduler account only)');
 select is(pg_temp.val('anon', 'select public.scheduler_billing_trial_due()::text'), 'ERR:42501', 'F2 DENY: anon');
 select is(pg_temp.val('a_owner', format($q$select public.scheduler_billing_trial_mark(%L, 11)::text$q$, tests.tid('a'))), 'ERR:42501', 'F3 DENY: an Owner cannot mark');
 select is(pg_temp.mark('a', 12), 'ERR:22023', 'F4 only days 11 and 13 exist');
-select is(pg_temp.val('x7', 'select public.scheduler_billing_trial_due(0)::text'), 'ERR:22023', 'F5 a limit of 0 is invalid');
+select is(pg_temp.val('x5', 'select public.scheduler_billing_trial_due(0)::text'), 'ERR:22023', 'F5 a limit of 0 is invalid');
 
 select * from finish();
 rollback;
