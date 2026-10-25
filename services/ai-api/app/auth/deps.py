@@ -195,9 +195,9 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             raise forbidden()
         kind = gate.classify(request.method, gate.tail_of(request.url.path, tenant_id))
         if runtime.billing is not None and kind != "read":
-            # job DI / DP part 3: a workspace whose trial ended unpaid is read-only (viewing, signing
-            # in and exporting stay; every change, send, AI and call stops); one still waiting for
-            # WhatsApp holds the sends, AI and calls. Always "full" while the billing switch is off.
+            # job DI / DP part 3: a workspace whose trial ended unpaid is read-only (viewing,
+            # signing in and exporting stay; every change, send, AI and call stops); one still
+            # waiting for WhatsApp holds the sends, AI and calls. "full" while the switch is off.
             runtime.billing.ensure(principal.token, parsed, kind)
         if strong and membership.role in (Role.OWNER, Role.ADMIN) and principal.aal != "aal2":
             raise mfa_required()
