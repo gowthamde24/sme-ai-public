@@ -63,7 +63,8 @@ select is(pg_temp.v('a_owner', 'select (select count(*) from jsonb_array_element
 select is(pg_temp.path('a_owner', 'select public.billing_plans()::text', 'trial,days'), '30', 'B6 the trial is 30 days...');
 select is(pg_temp.path('a_owner', 'select public.billing_plans()::text', 'trial,payment_method_at_start'), 'true', 'B7 ...with a payment method at the start');
 select is(pg_temp.v('a_owner', 'select (select (p -> ''allowances'' ->> ''call_minutes'') || ''/'' || (p -> ''allowances'' ->> ''whatsapp_messages'') from jsonb_array_elements(public.billing_plans() -> ''plans'') p where p ->> ''id'' = ''growth'')'), '100/1000', 'B8 Growth: 100 minutes, 1,000 messages');
-select is(pg_temp.v('a_owner', 'select (select coalesce(p -> ''allowances'' ->> ''call_minutes'', ''none'') from jsonb_array_elements(public.billing_plans() -> ''plans'') p where p ->> ''id'' = ''calls_payg'')'), 'none', 'B9 pay as you go has no included minutes and no ceiling');
+select is(pg_temp.v('a_owner', 'select (select coalesce(p -> ''allowances'' ->> ''call_minutes'', ''none'') || ''/'' || coalesce(p -> ''allowances'' ->> ''whatsapp_messages'', ''none'') from jsonb_array_elements(public.billing_plans() -> ''plans'') p where p ->> ''id'' = ''calls_payg'')'), 'none/none', 'B9 pay as you go has no included minutes or messages and no ceiling (billed by use)');
+select is(pg_temp.v('a_owner', 'select (select (p -> ''allowances'' ->> ''whatsapp_messages'') from jsonb_array_elements(public.billing_plans() -> ''plans'') p where p ->> ''id'' = ''calls_300'')'), '300', 'B9b Calls 300 includes 300 business messages for call follow-ups');
 select is(pg_temp.sc($$update billing.plan_versions set whatsapp_messages = 1$$), '42501', 'B10 a synced catalogue is never edited (update)');
 select is(pg_temp.sc($$delete from billing.catalogue_versions$$), '42501', 'B11 ...or deleted');
 select is(pg_temp.sc($$truncate billing.plan_versions$$), '42501', 'B12 ...or truncated');
@@ -243,9 +244,12 @@ select is(pg_temp.v('a_owner', format($q$select public.billing_cancel(%L)::text$
 
 -- the calls-only plans and pay as you go
 update public.tenants set plan = 'calls_300' where id = tests.tid('b');
-select is(pg_temp.get('b_owner', 'usage,call_minutes,allowance', 'b') || '/' || pg_temp.get('b_owner', 'usage,whatsapp_messages,included', 'b') || '/' || pg_temp.get('b_owner', 'usage,whatsapp_messages,state', 'b'), '300/false/stopped', 'F38 Calls 300: 300 minutes; no business messages included (shown as not included, stopped)');
+select is(pg_temp.get('b_owner', 'usage,call_minutes,allowance', 'b') || '/' || pg_temp.get('b_owner', 'usage,whatsapp_messages,included', 'b') || '/' || pg_temp.get('b_owner', 'usage,whatsapp_messages,state', 'b'), '300/true/ok', 'F38 Calls 300: 300 minutes and 300 business messages for call follow-ups (owner decision 25 Oct)');
 update public.tenants set plan = 'calls_payg' where id = tests.tid('b');
 select is(coalesce(pg_temp.get('b_owner', 'usage,call_minutes,allowance', 'b'), '') || '/' || coalesce(pg_temp.get('b_owner', 'usage,call_minutes,percent', 'b'), 'null') || '/' || pg_temp.get('b_owner', 'usage,call_minutes,state', 'b') || '/' || pg_temp.get('b_owner', 'usage,call_minutes,included', 'b'), '/null/ok/true', 'F39 pay as you go: no ceiling (no allowance, no percent), never stopped');
+select is(coalesce(pg_temp.get('b_owner', 'usage,whatsapp_messages,allowance', 'b'), '') || '/' || pg_temp.get('b_owner', 'usage,whatsapp_messages,state', 'b') || '/' || pg_temp.get('b_owner', 'usage,whatsapp_messages,included', 'b'), '/ok/true', 'F39b pay as you go bills messages by use too: no ceiling, never stopped');
+update public.tenants set plan = 'calls_1000' where id = tests.tid('b');
+select is(pg_temp.get('b_owner', 'usage,whatsapp_messages,allowance', 'b'), '1000', 'F39c Calls 1,000 includes 1,000 business messages');
 update public.tenants set plan = 'free_trial' where id = tests.tid('b');
 
 -- ============================================================================ G. guards, audit

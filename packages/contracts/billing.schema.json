@@ -4,6 +4,63 @@
   "title": "Plans and billing: the catalogue, usage meters, the trial (job DI)",
   "description": "Generated from services/ai-api/app/billing/models.py by `make contracts`.",
   "$defs": {
+    "AccessOut": {
+      "additionalProperties": false,
+      "description": "Whether the workspace can be changed. `access` is `read_only` after the trial (or the paid period) ended unpaid: signing in, viewing and exporting stay; sending, AI, calls and every change stop,\nso the web shows view and export only and switches the edit buttons off. Always `full` while the platform's billing switch is off. The data is kept until `delete_on` (90 days after\n`read_only_since`).",
+      "properties": {
+        "access": {
+          "enum": [
+            "full",
+            "read_only"
+          ],
+          "title": "Access",
+          "type": "string"
+        },
+        "read_only_since": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Read Only Since"
+        },
+        "delete_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delete On"
+        },
+        "data_days_left": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Data Days Left"
+        }
+      },
+      "required": [
+        "access",
+        "read_only_since",
+        "delete_on",
+        "data_days_left"
+      ],
+      "title": "AccessOut",
+      "type": "object"
+    },
     "BillingOut": {
       "additionalProperties": false,
       "properties": {
@@ -36,6 +93,49 @@
         "can_start_trial": {
           "title": "Can Start Trial",
           "type": "boolean"
+        },
+        "access": {
+          "enum": [
+            "full",
+            "read_only"
+          ],
+          "title": "Access",
+          "type": "string"
+        },
+        "read_only_since": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Read Only Since"
+        },
+        "delete_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delete On"
+        },
+        "data_days_left": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Data Days Left"
         }
       },
       "required": [
@@ -44,7 +144,11 @@
         "period",
         "usage",
         "notices",
-        "can_start_trial"
+        "can_start_trial",
+        "access",
+        "read_only_since",
+        "delete_on",
+        "data_days_left"
       ],
       "title": "BillingOut",
       "type": "object"
@@ -223,8 +327,15 @@
           "title": "Call Minutes"
         },
         "whatsapp_messages": {
-          "title": "Whatsapp Messages",
-          "type": "integer"
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Whatsapp Messages"
         }
       },
       "required": [
@@ -348,6 +459,18 @@
           ],
           "default": null,
           "title": "Price Paise Per Minute"
+        },
+        "price_paise_per_message": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price Paise Per Message"
         },
         "price_set": {
           "title": "Price Set",

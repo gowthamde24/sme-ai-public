@@ -225,7 +225,7 @@ set search_path = ''
 as $$
   select jsonb_build_object(
     'id', pv.plan_id, 'kind', pv.kind, 'sort', pv.sort, 'name', pv.name,
-    'price_paise_monthly', pv.price_paise_monthly, 'price_paise_per_minute', pv.price_paise_per_minute, 'price_set', pv.price_paise_monthly is not null,
+    'price_paise_monthly', pv.price_paise_monthly, 'price_paise_per_minute', pv.price_paise_per_minute, 'price_paise_per_message', pv.price_paise_per_message, 'price_set', pv.price_paise_monthly is not null,
     'allowances', jsonb_build_object('call_minutes', pv.call_minutes, 'whatsapp_messages', pv.whatsapp_messages),
     'limits', jsonb_build_object('users', pv.users, 'workspaces', pv.workspaces),
     'ai', 'included_fair_use')

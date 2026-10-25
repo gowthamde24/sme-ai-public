@@ -22,6 +22,7 @@
     },
     "price_paise_monthly": null,
     "price_paise_per_minute": null,
+    "price_paise_per_message": null,
     "price_set": false,
     "allowances": {
      "call_minutes": 30,
@@ -45,6 +46,7 @@
     },
     "price_paise_monthly": null,
     "price_paise_per_minute": null,
+    "price_paise_per_message": null,
     "price_set": false,
     "allowances": {
      "call_minutes": 0,
@@ -68,6 +70,7 @@
     },
     "price_paise_monthly": null,
     "price_paise_per_minute": null,
+    "price_paise_per_message": null,
     "price_set": false,
     "allowances": {
      "call_minutes": 100,
@@ -91,6 +94,7 @@
     },
     "price_paise_monthly": null,
     "price_paise_per_minute": null,
+    "price_paise_per_message": null,
     "price_set": false,
     "allowances": {
      "call_minutes": 300,
@@ -114,10 +118,11 @@
     },
     "price_paise_monthly": null,
     "price_paise_per_minute": null,
+    "price_paise_per_message": null,
     "price_set": false,
     "allowances": {
      "call_minutes": null,
-     "whatsapp_messages": 0
+     "whatsapp_messages": null
     },
     "limits": {
      "users": 1,
@@ -137,10 +142,11 @@
     },
     "price_paise_monthly": null,
     "price_paise_per_minute": null,
+    "price_paise_per_message": null,
     "price_set": false,
     "allowances": {
      "call_minutes": 300,
-     "whatsapp_messages": 0
+     "whatsapp_messages": 300
     },
     "limits": {
      "users": 1,
@@ -160,10 +166,11 @@
     },
     "price_paise_monthly": null,
     "price_paise_per_minute": null,
+    "price_paise_per_message": null,
     "price_set": false,
     "allowances": {
      "call_minutes": 1000,
-     "whatsapp_messages": 0
+     "whatsapp_messages": 1000
     },
     "limits": {
      "users": 1,
@@ -186,6 +193,7 @@
    },
    "price_paise_monthly": null,
    "price_paise_per_minute": null,
+   "price_paise_per_message": null,
    "price_set": false,
    "allowances": {
     "call_minutes": 30,
@@ -229,7 +237,11 @@
    }
   },
   "notices": [],
-  "can_start_trial": true
+  "can_start_trial": true,
+  "access": "full",
+  "read_only_since": null,
+  "delete_on": null,
+  "data_days_left": null
  },
  "billing_trialing_notice_at_80": {
   "plan": {
@@ -244,6 +256,7 @@
    },
    "price_paise_monthly": null,
    "price_paise_per_minute": null,
+   "price_paise_per_message": null,
    "price_set": false,
    "allowances": {
     "call_minutes": 30,
@@ -309,7 +322,11 @@
     "at": "2026-10-23T11:02:00Z"
    }
   ],
-  "can_start_trial": false
+  "can_start_trial": false,
+  "access": "full",
+  "read_only_since": null,
+  "delete_on": null,
+  "data_days_left": null
  },
  "billing_active_messages_stopped": {
   "plan": {
@@ -324,6 +341,7 @@
    },
    "price_paise_monthly": null,
    "price_paise_per_minute": null,
+   "price_paise_per_message": null,
    "price_set": false,
    "allowances": {
     "call_minutes": 100,
@@ -389,7 +407,11 @@
     "at": "2026-10-25T08:15:00Z"
    }
   ],
-  "can_start_trial": false
+  "can_start_trial": false,
+  "access": "full",
+  "read_only_since": null,
+  "delete_on": null,
+  "data_days_left": null
  },
  "billing_starter_no_minutes_included": {
   "plan": {
@@ -404,6 +426,7 @@
    },
    "price_paise_monthly": null,
    "price_paise_per_minute": null,
+   "price_paise_per_message": null,
    "price_set": false,
    "allowances": {
     "call_minutes": 0,
@@ -456,7 +479,11 @@
    }
   },
   "notices": [],
-  "can_start_trial": false
+  "can_start_trial": false,
+  "access": "full",
+  "read_only_since": null,
+  "delete_on": null,
+  "data_days_left": null
  },
  "billing_pay_as_you_go": {
   "plan": {
@@ -471,10 +498,11 @@
    },
    "price_paise_monthly": null,
    "price_paise_per_minute": null,
+   "price_paise_per_message": null,
    "price_set": false,
    "allowances": {
     "call_minutes": null,
-    "whatsapp_messages": 0
+    "whatsapp_messages": null
    },
    "limits": {
     "users": 1,
@@ -513,17 +541,21 @@
    "whatsapp_messages": {
     "kind": "whatsapp_messages",
     "unit": "messages",
-    "used": 0,
-    "allowance": 0,
-    "remaining": 0,
-    "percent": 100,
-    "state": "stopped",
-    "included": false,
+    "used": 42,
+    "allowance": null,
+    "remaining": null,
+    "percent": null,
+    "state": "ok",
+    "included": true,
     "topup": 0
    }
   },
   "notices": [],
-  "can_start_trial": false
+  "can_start_trial": false,
+  "access": "full",
+  "read_only_since": null,
+  "delete_on": null,
+  "data_days_left": null
  },
  "billing_payment_failed_in_grace": {
   "plan": {
@@ -538,6 +570,7 @@
    },
    "price_paise_monthly": null,
    "price_paise_per_minute": null,
+   "price_paise_per_message": null,
    "price_set": false,
    "allowances": {
     "call_minutes": 100,
@@ -590,7 +623,11 @@
    }
   },
   "notices": [],
-  "can_start_trial": false
+  "can_start_trial": false,
+  "access": "full",
+  "read_only_since": null,
+  "delete_on": null,
+  "data_days_left": null
  },
  "usage_view": {
   "period": {
@@ -628,5 +665,89 @@
  "trial_start_request": {
   "plan_id": "growth",
   "checkout_ref": "pm_fake_ok"
+ },
+ "billing_read_only_trial_ended": {
+  "plan": {
+   "id": "free_trial",
+   "kind": "trial",
+   "sort": 0,
+   "name": {
+    "en": "Free trial",
+    "te": null,
+    "hi": null,
+    "kn": null
+   },
+   "price_paise_monthly": null,
+   "price_paise_per_minute": null,
+   "price_paise_per_message": null,
+   "price_set": false,
+   "allowances": {
+    "call_minutes": 30,
+    "whatsapp_messages": 100
+   },
+   "limits": {
+    "users": 1,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  "subscription": {
+   "status": "cancelled",
+   "plan_id": "growth",
+   "provider": "fake",
+   "trial_ends_at": "2026-10-14T10:00:00Z",
+   "current_period_end": null,
+   "cancel_at_period_end": false,
+   "grace_until": null,
+   "payment_method_on_file": false
+  },
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-30",
+   "timezone": "Asia/Kolkata",
+   "days_left": 5
+  },
+  "usage": {
+   "call_minutes": {
+    "kind": "call_minutes",
+    "unit": "minutes",
+    "used": 4.5,
+    "allowance": 30,
+    "remaining": 25.5,
+    "percent": 15,
+    "state": "ok",
+    "included": true,
+    "topup": 0
+   },
+   "whatsapp_messages": {
+    "kind": "whatsapp_messages",
+    "unit": "messages",
+    "used": 12,
+    "allowance": 100,
+    "remaining": 88,
+    "percent": 12,
+    "state": "ok",
+    "included": true,
+    "topup": 0
+   }
+  },
+  "notices": [],
+  "can_start_trial": false,
+  "access": "read_only",
+  "read_only_since": "2026-10-14",
+  "delete_on": "2027-01-12",
+  "data_days_left": 79
+ },
+ "access_full": {
+  "access": "full",
+  "read_only_since": null,
+  "delete_on": null,
+  "data_days_left": null
+ },
+ "access_read_only": {
+  "access": "read_only",
+  "read_only_since": "2026-10-14",
+  "delete_on": "2027-01-12",
+  "data_days_left": 79
  }
 }

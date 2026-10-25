@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import json
+import uuid
 from typing import Any
 
 import pytest
@@ -12,6 +13,7 @@ import pytest
 from app.billing import fake
 from app.billing.fake import FakeBillingProvider
 from app.billing.service import BillingService
+from app.tenancy.repository import UpstreamError
 from tests.di_fakes import FakeBillingRepository
 from tests.fakes import TENANT_A, auth, make_client
 
@@ -80,7 +82,7 @@ def test_the_billing_answer_is_the_contract_and_shows_no_ai_money() -> None:
     client, _ = world()
     r = client.get(B, headers=auth("a_owner"))
     body = r.json()
-    assert set(body) == {"plan", "subscription", "period", "usage", "notices", "can_start_trial"}
+    assert set(body) == {"plan", "subscription", "period", "usage", "notices", "can_start_trial", "access", "read_only_since", "delete_on", "data_days_left"}
     assert set(body["usage"]) == {"call_minutes", "whatsapp_messages"}
     text = json.dumps(body).lower()
     for word in ("token", "micro", "rupee", "cost", "spend", "ledger", "anthropic", "model"):
@@ -115,3 +117,56 @@ def test_without_a_billing_service_the_answer_is_a_plain_unavailable() -> None:
     client, _ = make_client()
     r = client.get(B, headers=auth("a_owner"))
     assert r.status_code == 503 and r.json()["error"]["code"] == "billing_unavailable"
+
+
+# ---------------------------------------------------------------------------------------------- read-only (the trial ended unpaid)
+def read_only_world() -> tuple[Any, FakeBillingRepository]:
+    client, repo = world()
+    repo.read_only.add(A)
+    return client, repo
+
+
+def test_a_read_only_workspace_can_be_viewed_and_exported_but_not_changed() -> None:
+    client, _ = read_only_world()
+    h = auth("a_owner")
+    contact = {"full_name": "Someone Synthetic", "phone": "+00 90000 00001"}
+    assert client.get(f"/v1/tenants/{A}/contacts", headers=h).status_code == 200, "viewing stays"
+    assert client.get(B, headers=h).json()["access"] == "read_only"
+    refused = client.post(f"/v1/tenants/{A}/contacts", json=contact, headers=h)
+    assert refused.status_code == 403 and refused.json()["error"]["code"] == "workspace_read_only", refused.text
+    assert client.delete(f"/v1/tenants/{A}/contacts/{uuid.uuid4()}", headers=h).status_code in (403, 405), "no other kind of change either"
+    assert client.post(f"/v1/tenants/{A}/assistant/messages", json={"message_id": str(uuid.uuid4()), "text": "hello"}, headers=h).json()["error"]["code"] == "workspace_read_only", "the AI stops"
+    for allowed in ("/billing/trial", "/billing/cancel"):
+        r = client.post(f"/v1/tenants/{A}{allowed}", json=TRIAL if "trial" in allowed else None, headers=h)
+        assert r.json().get("error", {}).get("code") != "workspace_read_only", f"{allowed}: choosing or leaving a plan stays possible"
+
+
+def test_exports_and_deletion_requests_stay_possible_when_read_only() -> None:
+    client, _ = read_only_world()
+    for tail in ("/data-exports", "/deletion-requests", "/exports/anything"):
+        r = client.post(f"/v1/tenants/{A}{tail}", json={}, headers=auth("a_owner"))
+        assert r.json().get("error", {}).get("code") != "workspace_read_only", tail
+
+
+def test_everybody_sees_the_access_state_and_a_full_workspace_changes_as_before() -> None:
+    client, repo = world()
+    for user in ("a_owner", "a_admin", "a_sales", "a_viewer"):
+        r = client.get(f"{B}/access", headers=auth(user))
+        assert r.status_code == 200 and r.json() == {"access": "full", "read_only_since": None, "delete_on": None, "data_days_left": None}, user
+    assert client.get(f"{B}/access", headers=auth("b_owner")).status_code == 404
+    assert client.post(f"/v1/tenants/{A}/contacts", json={"full_name": "Someone Synthetic", "phone": "+00 90000 00001"}, headers=auth("a_owner")).status_code != 403
+    repo.read_only.add(A)
+    body = client.get(f"{B}/access", headers=auth("a_viewer")).json()
+    assert body["access"] == "read_only" and body["delete_on"] == "2027-01-12" and body["data_days_left"] == 79
+
+
+def test_the_answer_is_kept_for_thirty_seconds_and_a_failure_to_ask_lets_the_change_through() -> None:
+    client, repo = world()
+    h = auth("a_owner")
+    contact = {"full_name": "Someone Synthetic", "phone": "+00 90000 00001"}
+    client.post(f"/v1/tenants/{A}/contacts", json=contact, headers=h)
+    client.post(f"/v1/tenants/{A}/contacts", json=contact, headers=h)
+    assert [n for n, _ in repo.calls].count("access") == 1, "one question for two changes"
+    client2, repo2 = world()
+    repo2.fail_access = UpstreamError("down")
+    assert client2.post(f"/v1/tenants/{A}/contacts", json=contact, headers=h).status_code != 403, "a billing hiccup never locks a business out"

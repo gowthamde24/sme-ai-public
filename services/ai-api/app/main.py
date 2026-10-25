@@ -441,6 +441,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     billing_errors.PaymentMethodDeclinedError: ApiError(
         402, "payment_method_declined", "The payment method was not accepted. Nothing was charged."
     ),
+    billing_errors.WorkspaceReadOnlyError: ApiError(
+        403,
+        "workspace_read_only",
+        "This workspace is read-only because its plan has ended. "
+        "You can still sign in, view and export your data. Choose a plan to continue.",
+    ),
     billing_errors.PlanLimitReachedError: ApiError(
         409,
         "plan_limit_reached",

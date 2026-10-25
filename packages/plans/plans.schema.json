@@ -2,7 +2,7 @@
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "$id": "plans.schema.json",
  "title": "The plans catalogue (job DI): plans are DATA, like packs",
- "description": "packages/plans/plans.json. Prices are null until the owner sets them. `allowances.call_minutes` null = no included minutes and no ceiling (pay as you go: billed by use). Only two things are metered and shown to owners: AI call minutes and business-initiated WhatsApp messages. AI itself is 'included, fair use' (the internal allowances of plan_ai_allowances, never shown in rupees).",
+ "description": "packages/plans/plans.json. Prices are null until the owner sets them. `allowances.call_minutes` and `allowances.whatsapp_messages` null = nothing included and no ceiling (pay as you go: billed by use, per minute and per message). Only two things are metered and shown to owners: AI call minutes and business-initiated WhatsApp messages. AI itself is 'included, fair use' (the internal allowances of plan_ai_allowances, never shown in rupees).",
  "type": "object",
  "additionalProperties": false,
  "required": ["version", "status", "currency", "trial", "plans"],
@@ -49,13 +49,14 @@
     "name": { "$ref": "#/$defs/text" },
     "price_paise_monthly": { "type": ["integer", "null"], "minimum": 0, "maximum": 100000000 },
     "price_paise_per_minute": { "type": ["integer", "null"], "minimum": 0, "maximum": 100000 },
+    "price_paise_per_message": { "type": ["integer", "null"], "minimum": 0, "maximum": 100000 },
     "allowances": {
      "type": "object",
      "additionalProperties": false,
      "required": ["call_minutes", "whatsapp_messages"],
      "properties": {
       "call_minutes": { "type": ["integer", "null"], "minimum": 0, "maximum": 100000 },
-      "whatsapp_messages": { "type": "integer", "minimum": 0, "maximum": 1000000 }
+      "whatsapp_messages": { "type": ["integer", "null"], "minimum": 0, "maximum": 1000000 }
      }
     },
     "limits": {

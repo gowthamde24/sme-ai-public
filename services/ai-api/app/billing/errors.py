@@ -29,5 +29,9 @@ class PlanLimitReachedError(RepositoryError):
         self.kind = kind
 
 
+class WorkspaceReadOnlyError(RepositoryError):
+    """The workspace is read-only (its trial or paid period ended unpaid): viewing and exporting stay, every change stops."""
+
+
 class NotSupportedError(Exception):
     """A provider does not do this (the fake provider receives no webhooks)."""

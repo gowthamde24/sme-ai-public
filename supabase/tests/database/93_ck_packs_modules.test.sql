@@ -140,7 +140,7 @@ insert into exempt (tbl, why) values
   ('public.tenant_data_policy', 'the real-data gate'), ('suppression.contact_keys', 'suppression applies to every business'), ('suppression.key_events', 'suppression'),
   ('team.invitations', 'the team'), ('workspace.profiles', 'the workspace profile'),
   ('public.billing_subscriptions', 'plans and billing: every business has a plan'), ('public.billing_events', 'plans and billing'), ('public.billing_usage_events', 'plans and billing: the meters'),
-  ('public.billing_topups', 'plans and billing'), ('public.billing_notices', 'plans and billing'),
+  ('public.billing_topups', 'plans and billing'), ('public.billing_notices', 'plans and billing'), ('public.billing_lapse_reminders', 'plans and billing'),
   ('packs.workspace_pack', 'the pack itself'), ('packs.example_batches', 'example data bookkeeping'), ('packs.example_rows', 'example data bookkeeping');
 select is((select coalesce(string_agg(c.table_schema || '.' || c.table_name, ', ' order by c.table_schema, c.table_name), '')
              from information_schema.columns c join information_schema.tables t on t.table_schema = c.table_schema and t.table_name = c.table_name and t.table_type = 'BASE TABLE'

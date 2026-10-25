@@ -9,6 +9,7 @@ Order of the two things that must agree, a subscription at the provider and its 
 from __future__ import annotations
 
 import logging
+import time
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -20,6 +21,7 @@ from app.billing.errors import (
     PlanLimitReachedError,
     PlanUnknownError,
     TrialAlreadyStartedError,
+    WorkspaceReadOnlyError,
 )
 from app.billing.provider import BillingProvider, CreateSubscription, ProviderEvent
 from app.billing.repository import BillingRepository
@@ -27,6 +29,7 @@ from app.crm.repository import NotFoundError
 from app.tenancy.repository import RepositoryError
 
 logger = logging.getLogger("app.billing")
+ACCESS_TTL_SECONDS = 30.0
 KINDS = ("call_minutes", "whatsapp_messages")
 
 
@@ -47,6 +50,7 @@ class BillingService:
         self._repo = repository
         self._provider = provider
         self._clock = clock
+        self._access_cache: dict[uuid.UUID, tuple[float, str]] = {}
 
     # ------------------------------------------------------------------ reads
     def plans(self, token: str) -> dict[str, Any]:
@@ -57,6 +61,29 @@ class BillingService:
 
     def usage(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         return self._repo.usage(token, tenant_id)
+
+    def access(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._repo.access(token, tenant_id)
+
+    def forget(self, tenant_id: uuid.UUID | str) -> None:
+        """Drop the remembered access state of a workspace (after its plan changed, and in tests)."""
+        self._access_cache.pop(uuid.UUID(str(tenant_id)), None)
+
+    def ensure_writable(self, token: str, tenant_id: uuid.UUID) -> None:
+        """The gate of every change a person makes (job DI): a read-only workspace refuses it. The answer is kept for 30 seconds per workspace; a failure to ask lets the change through (a billing hiccup must
+        never lock a business out: the database holds the sending anyway)."""
+        now = time.monotonic()
+        cached = self._access_cache.get(tenant_id)
+        if cached is None or cached[0] < now:
+            try:
+                state = str(self._repo.access(token, tenant_id).get("access"))
+            except RepositoryError as exc:
+                logger.warning("billing: the access state could not be read (%s); the change goes through", exc.__class__.__name__)
+                return
+            cached = (now + ACCESS_TTL_SECONDS, state)
+            self._access_cache[tenant_id] = cached
+        if cached[1] == "read_only":
+            raise WorkspaceReadOnlyError(str(tenant_id))
 
     # ------------------------------------------------------------------ the owner's two actions
     def start_trial(self, token: str, tenant_id: uuid.UUID, plan_id: str, checkout_ref: str) -> dict[str, Any]:
@@ -76,6 +103,7 @@ class BillingService:
                 started_at=self._clock(),
             )
         )
+        self.forget(tenant_id)
         try:
             return self._repo.start_trial(token, tenant_id, plan_id, created.provider, created.reference)
         except RepositoryError:
@@ -87,6 +115,7 @@ class BillingService:
         if sub is None or sub["status"] == "cancelled":
             raise NothingToCancelError(str(tenant_id))
         self._provider.cancel_subscription(str(sub["provider_ref"]), at_period_end=sub["status"] == "active", now=self._clock())
+        self.forget(tenant_id)
         return self._repo.cancel(token, tenant_id)
 
     # ------------------------------------------------------------------ the worker's: provider events -> our records

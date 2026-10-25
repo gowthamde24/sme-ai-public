@@ -10,6 +10,7 @@ import difflib
 from tests.test_migration_copies import definitions, normalised
 
 DI = "20261127090200_di_billing_meters.sql"
+DI4 = "20261127090300_di_read_only_lapse.sql"
 BR = "20261117090000_br_whatsapp.sql"
 ADDED = {
     "v_held boolean;",
@@ -20,15 +21,33 @@ ADDED = {
 
 def test_the_di_copy_is_the_last_definition_and_differs_from_the_br_copy_by_exactly_the_named_lines() -> None:
     defs = definitions("app.outbox_claim_due_core")
-    assert defs[-1][0] == DI, f"redefined after job DI's migration ({defs[-1][0]}): re-copy it from the latest definition"
-    assert defs[-2][0] == BR, "the definition before the DI copy is the BR one"
+    assert defs[-1][0] == DI4, f"redefined after job DI's migration ({defs[-1][0]}): re-copy it from the latest definition"
+    assert [d[0] for d in defs[-3:]] == [BR, DI, DI4]
+    diff = [
+        line
+        for line in difflib.unified_diff(normalised(defs[-3][1]), normalised(defs[-2][1]), lineterm="", n=0)
+        if line[:1] in "+-" and not line.startswith(("---", "+++"))
+    ]
+    assert {line[1:].strip() for line in diff if line[0] == "-"} == set(), "nothing is dropped"
+    assert {line[1:].strip() for line in diff if line[0] == "+"} == ADDED
+
+
+READ_ONLY_ADDED = {
+    "if app.billing_read_only(p_tenant_id) then",
+    "return v_out;   -- job DI: the trial ended unpaid; read-only: nothing is sent, nothing is lost",
+    "end if;",
+}
+
+
+def test_the_read_only_copy_of_the_claim_adds_exactly_the_read_only_hold() -> None:
+    defs = definitions("app.outbox_claim_due_core")
     diff = [
         line
         for line in difflib.unified_diff(normalised(defs[-2][1]), normalised(defs[-1][1]), lineterm="", n=0)
         if line[:1] in "+-" and not line.startswith(("---", "+++"))
     ]
-    assert {line[1:].strip() for line in diff if line[0] == "-"} == set(), "nothing is dropped"
-    assert {line[1:].strip() for line in diff if line[0] == "+"} == ADDED
+    assert {line[1:].strip() for line in diff if line[0] == "-"} == set()
+    assert {line[1:].strip() for line in diff if line[0] == "+"} == READ_ONLY_ADDED
 
 
 def test_only_the_claim_and_the_call_check_ask_the_meter_whether_a_kind_is_stopped() -> None:
@@ -37,6 +56,6 @@ def test_only_the_claim_and_the_call_check_ask_the_meter_whether_a_kind_is_stopp
     names = set()
     for path in sorted((Path(__file__).resolve().parents[3] / "supabase" / "migrations").glob("*.sql")):
         text = path.read_text(encoding="utf-8")
-        if "billing_stopped(" in text and path.name != DI:
+        if "billing_stopped(" in text and path.name not in (DI, DI4):
             names.add(path.name)
     assert names == set(), "no other migration consults the meter"

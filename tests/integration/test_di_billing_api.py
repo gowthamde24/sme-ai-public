@@ -155,3 +155,50 @@ def test_the_trial_a_failed_payment_and_the_cancel_through_http(client: Any, eva
     assert cancelled.json()["subscription"]["status"] == "cancelled" and cancelled.json()["subscription"]["payment_method_on_file"] is False
     assert client.post(b(w, "/cancel"), headers=owner).json()["error"]["code"] == "nothing_to_cancel"
     assert operator_sql.sql(f"select count(*) from public.billing_events where tenant_id = '{w.id}' and kind = 'charge_succeeded'").strip() == "0", "not one successful charge"
+
+
+def test_a_workspace_whose_trial_ended_unpaid_is_read_only_and_its_owners_are_told(client: Any, eval_world: Any, scene: Any, stack: Any, signup: Any) -> None:
+    from app.billing.mail import BillingReminders, FakeEmailSender, PostgrestBillingMailRepository
+
+    a = eval_world.a
+    owner = bearer(a.users["owner"])
+    sched = signup("di-sched", mfa=False)
+    operator_sql.sql(f"select app.operator_register_scheduler('{sched.email}')")
+    operator_sql.sql(f"update public.tenants set trial_started_at = now() - interval '45 days' where id = '{a.id}'")
+    try:
+        # the switch is OFF: the 45-day-old trial changes nothing
+        assert client.get(b(a, "/access"), headers=owner).json()["access"] == "full"
+        operator_sql.sql("select app.operator_set_billing_enforced(true)")
+        client.app.state.runtime.billing.forget(a.id)   # the API remembers an answer for 30 seconds, and this workspace was built a moment ago
+        access = client.get(b(a, "/access"), headers=bearer(a.users["viewer"]))
+        assert access.status_code == 200 and access.json()["access"] == "read_only", access.text
+        conforms(access.json(), "AccessOut")
+        assert access.json()["data_days_left"] == 90 - 15 and access.json()["read_only_since"] is not None
+        full_answer = client.get(b(a), headers=owner).json()
+        conforms(full_answer, "BillingOut")
+        assert full_answer["access"] == "read_only" and full_answer["delete_on"] == access.json()["delete_on"]
+        # viewing stays; changing stops
+        assert client.get(f"/v1/tenants/{a.id}/contacts", headers=owner).status_code == 200
+        refused = client.post(f"/v1/tenants/{a.id}/contacts", json={"full_name": "Someone Synthetic", "phone": "+00 90000 00042"}, headers=owner)
+        assert refused.status_code == 403 and refused.json()["error"]["code"] == "workspace_read_only", refused.text
+        ask = client.post(f"/v1/tenants/{a.id}/assistant/messages", json={"message_id": str(uuid.uuid4()), "text": "hello"}, headers=owner)
+        assert ask.status_code == 403 and ask.json()["error"]["code"] == "workspace_read_only", "the AI stops"
+        # the worker's reminder: day 15 of read-only is past day 1 only
+        mail = FakeEmailSender()
+        repo = PostgrestBillingMailRepository(stack.rest, stack.anon_key)
+        try:
+            with pytest.raises(Forbidden):
+                BillingReminders(repo, mail).run(a.users["owner"].token)   # an Owner is not the worker
+            assert BillingReminders(repo, mail).run(sched.token) >= 1
+            mine = [m for m in mail.sent if m.to == a.users["owner"].email]
+            assert len(mine) == 1 and "read-only" in mine[0].body and "Sending messages, the AI and calls are paused" in mine[0].body
+            sent_before = len(mail.sent)
+            BillingReminders(repo, mail).run(sched.token)
+            assert [m for m in mail.sent[sent_before:] if m.to == a.users["owner"].email] == [], "once"
+        finally:
+            repo.close()
+        assert operator_sql.sql(f"select string_agg(day::text, ',' order by day) from public.billing_lapse_reminders where tenant_id = '{a.id}'").strip() == "1"
+    finally:
+        operator_sql.sql("select app.operator_set_billing_enforced(false)")
+        operator_sql.sql(f"update public.tenants set trial_started_at = now() where id = '{a.id}'")
+        operator_sql.sql(f"select app.operator_remove_scheduler('{sched.email}')")

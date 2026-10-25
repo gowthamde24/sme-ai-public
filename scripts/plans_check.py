@@ -5,7 +5,7 @@
 
 What it proves:
   * plans.json is valid against plans.schema.json; ids and sort numbers are unique
-  * exactly one plan is the trial plan and `trial.plan` names it; pay as you go (call_minutes null) exists only on a calls-only plan and carries its per-minute price field
+  * exactly one plan is the trial plan and `trial.plan` names it; pay as you go (call_minutes AND whatsapp_messages null: billed by use) exists only on a calls-only plan and carries its per-minute and per-message price fields
   * the main plans grow: each allowance and limit is at least the one of the plan before it (Starter <= Growth <= Business)
   * NO PLAN ID IN CODE: no line of the API's application code or the web's non-test code that talks about a plan holds a string literal equal to a plan id (the code reads the catalogue, never a name)
   * the catalogue version is in a migration (scripts/plans_migration.py --check)
@@ -63,17 +63,19 @@ def check_catalogue(cat: dict[str, Any], schema: dict[str, Any]) -> list[str]:
         pay_as_you_go = p["allowances"]["call_minutes"] is None
         if pay_as_you_go and p["kind"] != "calls":
             errs.append(f"{p['id']}: only a calls-only plan may be pay as you go (call_minutes null)")
-        if pay_as_you_go and "price_paise_per_minute" not in p:
-            errs.append(f"{p['id']}: pay as you go needs its price_paise_per_minute (null until the owner sets it)")
-        if "price_paise_per_minute" in p and not pay_as_you_go:
-            errs.append(f"{p['id']}: price_paise_per_minute belongs to a pay-as-you-go plan only")
+        if pay_as_you_go and ("price_paise_per_minute" not in p or "price_paise_per_message" not in p):
+            errs.append(f"{p['id']}: pay as you go needs its price_paise_per_minute and price_paise_per_message (null until the owner sets them)")
+        if ("price_paise_per_minute" in p or "price_paise_per_message" in p) and not pay_as_you_go:
+            errs.append(f"{p['id']}: per-minute and per-message prices belong to a pay-as-you-go plan only")
+        if pay_as_you_go != (p["allowances"]["whatsapp_messages"] is None):
+            errs.append(f"{p['id']}: pay as you go is both minutes AND messages billed by use (both null), or neither")
         if p["kind"] != "calls" and p["allowances"]["call_minutes"] is None:
             errs.append(f"{p['id']}: call_minutes null is for a calls-only plan")
     mains = sorted((p for p in plans if p["kind"] == "main"), key=lambda p: p["sort"])
     for before, after in zip(mains, mains[1:], strict=False):
         for key in ("call_minutes", "whatsapp_messages"):
             a, b = after["allowances"][key], before["allowances"][key]
-            if a is not None and b is not None and a < b:
+            if a is not None and b is not None and a < b:   # a null allowance is pay as you go, on a calls-only plan, never compared here
                 errs.append(f"{after['id']} gives fewer {key} than {before['id']}")
         for key in ("users", "workspaces"):
             if after["limits"][key] < before["limits"][key]:

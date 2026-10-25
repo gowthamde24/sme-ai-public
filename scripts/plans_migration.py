@@ -83,8 +83,8 @@ def render(cat: dict[str, Any]) -> str:
         "insert into billing.catalogue_versions (version, status, trial_plan, trial_days, payment_method_at_start, grace_days, manifest, manifest_sha256) values",
         f"  ({cat['version']}, {_q(cat['status'])}, {_q(trial['plan'])}, {trial['days']}, {'true' if trial['payment_method_at_start'] else 'false'}, {trial['grace_days_after_failed_payment']}, "
         f"$plans_json${body}$plans_json$::jsonb, {_q(sha)});",
-        "insert into billing.plan_versions (catalogue_version, plan_id, kind, sort, name, price_paise_monthly, price_paise_per_minute, call_minutes, whatsapp_messages, users, workspaces)",
-        "select v.version, p ->> 'id', p ->> 'kind', (p ->> 'sort')::integer, p -> 'name', (p ->> 'price_paise_monthly')::integer, (p ->> 'price_paise_per_minute')::integer,",
+        "insert into billing.plan_versions (catalogue_version, plan_id, kind, sort, name, price_paise_monthly, price_paise_per_minute, price_paise_per_message, call_minutes, whatsapp_messages, users, workspaces)",
+        "select v.version, p ->> 'id', p ->> 'kind', (p ->> 'sort')::integer, p -> 'name', (p ->> 'price_paise_monthly')::integer, (p ->> 'price_paise_per_minute')::integer, (p ->> 'price_paise_per_message')::integer,",
         "       (p -> 'allowances' ->> 'call_minutes')::integer, (p -> 'allowances' ->> 'whatsapp_messages')::integer, (p -> 'limits' ->> 'users')::integer, (p -> 'limits' ->> 'workspaces')::integer",
         f"  from billing.catalogue_versions v, jsonb_array_elements(v.manifest -> 'plans') p where v.version = {cat['version']};",
         "",

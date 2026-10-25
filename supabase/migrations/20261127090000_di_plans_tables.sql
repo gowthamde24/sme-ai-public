@@ -36,13 +36,15 @@ create table billing.plan_versions (
   name                   jsonb not null,
   price_paise_monthly    integer check (price_paise_monthly between 0 and 100000000),
   price_paise_per_minute integer check (price_paise_per_minute between 0 and 100000),
+  price_paise_per_message integer check (price_paise_per_message between 0 and 100000),
   call_minutes           integer check (call_minutes between 0 and 100000),   -- null = pay as you go: no included minutes, no ceiling
-  whatsapp_messages      integer not null check (whatsapp_messages between 0 and 1000000),
+  whatsapp_messages      integer check (whatsapp_messages between 0 and 1000000),   -- null = pay as you go: nothing included, no ceiling, billed per message
   users                  integer not null check (users between 1 and 1000),
   workspaces             integer not null check (workspaces between 1 and 100),
   primary key (catalogue_version, plan_id),
   unique (catalogue_version, sort),
-  check (call_minutes is not null or kind = 'calls')
+  check (call_minutes is not null or kind = 'calls'),
+  check ((call_minutes is null) = (whatsapp_messages is null))   -- pay as you go is minutes AND messages billed by use, or neither
 );
 
 -- a synced version is never changed or removed

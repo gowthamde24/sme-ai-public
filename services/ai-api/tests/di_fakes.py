@@ -33,6 +33,8 @@ class FakeBillingRepository:
         self.stopped: set[str] = set()
         self.usage_records: list[tuple[str, uuid.UUID, str, uuid.UUID, int]] = []
         self.plan_of: dict[uuid.UUID, str] = {}
+        self.read_only: set[uuid.UUID] = set()
+        self.fail_access: Exception | None = None
 
     def _go(self, name: str, *args: Any) -> None:
         self.calls.append((name, args))
@@ -52,7 +54,16 @@ class FakeBillingRepository:
         sub = self.subs.get(tenant_id)
         base["subscription"] = None if sub is None else {k: v for k, v in sub.items() if k not in ("provider_ref",)}
         base["can_start_trial"] = sub is None
+        base.update(self.access(token, tenant_id))
         return base
+
+    def access(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        self._go("access", token)
+        if self.fail_access is not None:
+            raise self.fail_access
+        if tenant_id in self.read_only:
+            return {"access": "read_only", "read_only_since": "2026-10-14", "delete_on": "2027-01-12", "data_days_left": 79}
+        return {"access": "full", "read_only_since": None, "delete_on": None, "data_days_left": None}
 
     def usage(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("usage", token)

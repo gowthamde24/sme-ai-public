@@ -85,7 +85,7 @@ def plan_costs(catalogue: dict[str, Any], allowances: list[dict[str, Any]], ai: 
         for level in LEVELS:
             share = assumptions["use_levels"][level]
             minutes = assumptions["pay_as_you_go_minutes"][level] if plan["allowances"]["call_minutes"] is None else plan["allowances"]["call_minutes"] * share
-            messages = plan["allowances"]["whatsapp_messages"] * share
+            messages = assumptions["pay_as_you_go_messages"][level] if plan["allowances"]["whatsapp_messages"] is None else plan["allowances"]["whatsapp_messages"] * share
             ai_cost = ai[level] * assumptions["ai_active_days"][level] * days
             if row["ai_ceiling"] is not None:
                 ai_cost = min(ai_cost, row["ai_ceiling"])   # the fair use cannot cost more than the plan's monthly AI allowance
@@ -135,13 +135,14 @@ def build_report(data: dict[str, Any], catalogue: dict[str, Any], assumptions: d
         + [["Call minute, total", f"Rs {per_min}", "sum of the four lines above"], ["Use levels (share of the allowance used)", ", ".join(f"{k} {int(v * 100)}%" for k, v in assumptions["use_levels"].items()), "ASSUMPTION"],
            ["AI active days in a 30-day period", ", ".join(f"{k} {int(v * 100)}%" for k, v in assumptions["ai_active_days"].items()), "ASSUMPTION"],
            ["Target gross margin / payment fee", f"{assumptions['target_gross_margin_percent']}% / {assumptions['payment_fee_percent']}%", "ASSUMPTION (the payment fee is not verified)"],
-           ["Pay-as-you-go minutes (low / typical / heavy)", " / ".join(str(assumptions["pay_as_you_go_minutes"][k]) for k in LEVELS), assumptions["pay_as_you_go_minutes"]["source"]]],
+           ["Pay-as-you-go minutes (low / typical / heavy)", " / ".join(str(assumptions["pay_as_you_go_minutes"][k]) for k in LEVELS), assumptions["pay_as_you_go_minutes"]["source"]],
+           ["Pay-as-you-go messages (low / typical / heavy)", " / ".join(str(assumptions["pay_as_you_go_messages"][k]) for k in LEVELS), assumptions["pay_as_you_go_messages"]["source"]]],
         ["item", "value", "source"]))
     out += ["", "## Our monthly cost to serve one workspace, per plan (rupees)", ""]
     rows = []
     for c in costs:
         lv = c["levels"]
-        rows.append([c["id"], "no ceiling" if c["minutes"] is None else c["minutes"], c["messages"], f"Rs {c['ai_ceiling']:.0f}" if c["ai_ceiling"] is not None else "-",
+        rows.append([c["id"], "no ceiling" if c["minutes"] is None else c["minutes"], "no ceiling" if c["messages"] is None else c["messages"], f"Rs {c['ai_ceiling']:.0f}" if c["ai_ceiling"] is not None else "-",
                      " / ".join(f"{lv[k]['total']:.0f}" for k in LEVELS), " / ".join(f"{lv[k]['price_for_margin']:.0f}" for k in LEVELS)])
     out.append(table(rows, ["plan", "included minutes", "included messages", "AI fair-use ceiling a month", "cost low / typical / heavy", f"price for the target margin, low / typical / heavy"]))
     out += ["", "### Where each total comes from (typical use)", ""]

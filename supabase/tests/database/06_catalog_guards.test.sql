@@ -315,7 +315,7 @@ select is(
         -- job CV (ADR 0088): voice notes (settings, voices, the spoken disclosure, the campaign switch, the preview, the worker's two calls) and the one reports API
         'public.voice_settings_get', 'public.voice_settings_set', 'public.voice_voices_list', 'public.voice_choice_set', 'public.voice_disclosure_get', 'public.voice_usage_get', 'public.campaign_voice_get', 'public.campaign_voice_set', 'public.voice_preview_plan', 'public.voice_preview_record', 'public.scheduler_voice_plan', 'public.scheduler_voice_record', 'public.report_catalogue', 'public.report_run', 'public.construction_report',
         -- job DI (ADR 0092): plans and billing. The catalogue and the Owner's and Admin's reads need a signed-in member; the Owner (second factor) starts a trial and cancels; the CHANNEL account records call seconds and applies provider events
-        'public.billing_plans', 'public.billing_get', 'public.billing_usage_get', 'public.billing_check_usage', 'public.billing_start_trial', 'public.billing_subscription_ref', 'public.billing_cancel', 'public.billing_record_usage', 'public.billing_apply_event',
+        'public.billing_plans', 'public.billing_get', 'public.billing_usage_get', 'public.billing_check_usage', 'public.billing_start_trial', 'public.billing_subscription_ref', 'public.billing_cancel', 'public.billing_record_usage', 'public.billing_apply_event', 'public.billing_access', 'public.scheduler_billing_reminders_due', 'public.scheduler_billing_reminder_mark',
         'app.edu_terms_valid',  -- a CHECK on institution_profiles.terms runs with the writer's rights
         -- the proof-photo bucket's storage rules are evaluated as the caller, who must be able to run this one
         'app.pod_bucket_tenant')),
@@ -383,7 +383,7 @@ select is(
                      -- job CV: voice notes and the one reports API
                      'public.voice_settings_get', 'public.voice_settings_set', 'public.voice_voices_list', 'public.voice_choice_set', 'public.voice_disclosure_get', 'public.voice_usage_get', 'public.campaign_voice_get', 'public.campaign_voice_set', 'public.voice_preview_plan', 'public.voice_preview_record', 'public.scheduler_voice_plan', 'public.scheduler_voice_record', 'public.report_catalogue', 'public.report_run', 'public.construction_report',
                      -- job DI: plans and billing
-                     'public.billing_plans', 'public.billing_get', 'public.billing_usage_get', 'public.billing_check_usage', 'public.billing_start_trial', 'public.billing_subscription_ref', 'public.billing_cancel', 'public.billing_record_usage', 'public.billing_apply_event')),
+                     'public.billing_plans', 'public.billing_get', 'public.billing_usage_get', 'public.billing_check_usage', 'public.billing_start_trial', 'public.billing_subscription_ref', 'public.billing_cancel', 'public.billing_record_usage', 'public.billing_apply_event', 'public.billing_access', 'public.scheduler_billing_reminders_due', 'public.scheduler_billing_reminder_mark')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2) and the fourteen integration functions (job BI)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(

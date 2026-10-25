@@ -2,6 +2,7 @@
 
   GET  /v1/plans                                  the plans catalogue (any signed-in user). Prices are null until the owner of the product sets them.
   GET  /v1/tenants/{tenant_id}/billing            the plan in force, the subscription, the period, both meters, the notices (Owner, Admin)
+  GET  /v1/tenants/{tenant_id}/billing/access     whether the workspace is full or READ-ONLY (the trial ended unpaid), with the dates (any member)
   GET  /v1/tenants/{tenant_id}/billing/usage      the period, the meters and the notices only (Owner, Admin)
   POST /v1/tenants/{tenant_id}/billing/trial      start the 30-day trial with a payment method on file; nothing is charged (Owner, second factor)
   POST /v1/tenants/{tenant_id}/billing/cancel     cancel: during the trial no charge ever; an active plan ends at the end of the paid period (Owner, second factor)
@@ -14,8 +15,15 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.auth.deps import PrincipalDep, Runtime, TenantContext, get_runtime, require_tenant_role
-from app.billing.models import BillingOut, PlansOut, TrialStartIn, UsageViewOut
+from app.auth.deps import (
+    AnyMember,
+    PrincipalDep,
+    Runtime,
+    TenantContext,
+    get_runtime,
+    require_tenant_role,
+)
+from app.billing.models import AccessOut, BillingOut, PlansOut, TrialStartIn, UsageViewOut
 from app.billing.service import BillingService
 from app.errors import ApiError
 from app.tenancy.models import Role
@@ -41,6 +49,11 @@ def list_plans(principal: PrincipalDep, runtime: RuntimeDep) -> PlansOut:
 @router.get("", response_model=BillingOut)
 def get_billing(ctx: OwnerAdmin, runtime: RuntimeDep) -> BillingOut:
     return BillingOut.model_validate(_service(runtime).billing(ctx.principal.token, ctx.tenant.id))
+
+
+@router.get("/access", response_model=AccessOut)
+def get_access(ctx: AnyMember, runtime: RuntimeDep) -> AccessOut:
+    return AccessOut.model_validate(_service(runtime).access(ctx.principal.token, ctx.tenant.id))
 
 
 @router.get("/usage", response_model=UsageViewOut)

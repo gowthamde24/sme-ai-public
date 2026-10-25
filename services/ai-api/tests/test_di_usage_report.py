@@ -48,6 +48,8 @@ def test_pay_as_you_go_uses_assumed_minutes_and_the_price_covers_the_margin() ->
     ai = {"low": 1.0, "typical": 1.0, "heavy": 1.0}
     costs = {c["id"]: c for c in usage_report.plan_costs(CATALOGUE, FIXTURE["allowances"], ai, ASSUMPTIONS)}
     assert [costs["calls_payg"]["levels"][k]["minutes"] for k in usage_report.LEVELS] == [30, 100, 300]
+    assert [costs["calls_payg"]["levels"][k]["messages"] for k in usage_report.LEVELS] == [60, 200, 600]
+    assert costs["calls_300"]["levels"]["heavy"]["messages"] == 300 and costs["calls_1000"]["levels"]["heavy"]["messages"] == 1000
     heavy = costs["calls_300"]["levels"]["heavy"]
     assert heavy["minutes"] == 300 and heavy["calls"] == round(300 * usage_report.call_rupees_per_minute(ASSUMPTIONS), 2)
     margin = ASSUMPTIONS["target_gross_margin_percent"] / 100 + ASSUMPTIONS["payment_fee_percent"] / 100

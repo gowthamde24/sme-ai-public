@@ -40,8 +40,8 @@ def test_the_br_copy_is_the_last_definition_and_differs_by_exactly_the_named_lin
     want_dropped, want_added = BR_CHANGED[name]
     defs = definitions(name)
     # a later job may copy it again, if ITS pin says exactly what it changed (DI: test_migration_copies_di.py)
-    later = {"app.outbox_claim_due_core": "20261127090200_di_billing_meters.sql"}
-    assert defs[-1][0] in (BR, later.get(name)), f"{name} is redefined after job BR's migration ({defs[-1][0]}): re-copy it from the latest definition"
+    later = {"app.outbox_claim_due_core": ("20261127090200_di_billing_meters.sql", "20261127090300_di_read_only_lapse.sql")}
+    assert defs[-1][0] in (BR, *later.get(name, ())), f"{name} is redefined after job BR's migration ({defs[-1][0]}): re-copy it from the latest definition"
     at = next(i for i, d in enumerate(defs) if d[0] == BR)
     diff = [
         line

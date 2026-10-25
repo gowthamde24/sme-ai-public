@@ -34,6 +34,8 @@ def test_the_owner_decisions_are_in_the_data() -> None:
     messages = {i: p["allowances"]["whatsapp_messages"] for i, p in by_id.items()}
     assert minutes == {"free_trial": 30, "starter": 0, "growth": 100, "business": 300, "calls_payg": None, "calls_300": 300, "calls_1000": 1000}
     assert [messages[i] for i in ("free_trial", "starter", "growth", "business")] == [100, 300, 1000, 3000]
+    # owner decision 25 Oct: the calls-only plans include business messages for call follow-ups; pay as you go is billed per message like minutes
+    assert [messages[i] for i in ("calls_300", "calls_1000", "calls_payg")] == [300, 1000, None]
     assert [by_id[i]["limits"]["users"] for i in ("free_trial", "starter", "growth", "business")] == [1, 1, 3, 10]
     assert [by_id[i]["limits"]["workspaces"] for i in ("free_trial", "starter", "growth", "business")] == [1, 1, 1, 3]
 
@@ -80,7 +82,13 @@ def test_pay_as_you_go_is_for_a_calls_only_plan_and_needs_its_rate_field() -> No
     assert any("only a calls-only plan may be pay as you go" in e for e in errors(cat))
     cat = catalogue()
     del next(p for p in cat["plans"] if p["id"] == "calls_payg")["price_paise_per_minute"]
-    assert any("needs its price_paise_per_minute" in e for e in errors(cat))
+    assert any("needs its price_paise_per_minute and price_paise_per_message" in e for e in errors(cat))
+    cat = catalogue()
+    next(p for p in cat["plans"] if p["id"] == "calls_payg")["allowances"]["whatsapp_messages"] = 10
+    assert any("both null" in e for e in errors(cat))
+    cat = catalogue()
+    next(p for p in cat["plans"] if p["id"] == "calls_300")["price_paise_per_message"] = 1
+    assert any("belong to a pay-as-you-go plan only" in e for e in errors(cat))
 
 
 def test_the_checker_refuses_unknown_keys_and_a_price_that_is_not_a_number() -> None:

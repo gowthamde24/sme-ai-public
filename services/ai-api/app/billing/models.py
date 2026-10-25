@@ -31,8 +31,8 @@ class PlanNameOut(_Strict):
 class PlanAllowancesOut(_Strict):
     # minutes of AI calls in a billing period; null = pay as you go: no included minutes and no ceiling (billed by use)
     call_minutes: int | None
-    # business-initiated WhatsApp messages in a billing period
-    whatsapp_messages: int
+    # business-initiated WhatsApp messages in a billing period; null = pay as you go: nothing included, no ceiling, billed per message
+    whatsapp_messages: int | None
 
 
 class PlanLimitsOut(_Strict):
@@ -49,6 +49,8 @@ class PlanOut(_Strict):
     price_paise_monthly: int | None
     # pay-as-you-go plans only: paise a minute; null until set
     price_paise_per_minute: int | None = None
+    # pay-as-you-go plans only: paise a business-initiated WhatsApp message; null until set
+    price_paise_per_message: int | None = None
     price_set: bool
     allowances: PlanAllowancesOut
     limits: PlanLimitsOut
@@ -127,6 +129,17 @@ class UsageViewOut(_Strict):
     notices: list[NoticeOut]
 
 
+class AccessOut(_Strict):
+    """Whether the workspace can be changed. `access` is `read_only` after the trial (or the paid period) ended unpaid: signing in, viewing and exporting stay; sending, AI, calls and every change stop,
+    so the web shows view and export only and switches the edit buttons off. Always `full` while the platform's billing switch is off. The data is kept until `delete_on` (90 days after
+    `read_only_since`)."""
+
+    access: Literal["full", "read_only"]
+    read_only_since: date | None
+    delete_on: date | None
+    data_days_left: int | None
+
+
 class BillingOut(_Strict):
     # the plan whose allowances apply now (the trial plan while a subscription is trialing)
     plan: PlanOut
@@ -136,6 +149,11 @@ class BillingOut(_Strict):
     notices: list[NoticeOut]
     # false once a subscription exists (a trial is started once)
     can_start_trial: bool
+    # the plain word the web switches on: `read_only` = view and export only (see AccessOut)
+    access: Literal["full", "read_only"]
+    read_only_since: date | None
+    delete_on: date | None
+    data_days_left: int | None
 
 
 class TrialStartIn(_Strict):
