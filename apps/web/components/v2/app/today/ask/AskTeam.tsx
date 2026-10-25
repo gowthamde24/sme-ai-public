@@ -10,6 +10,7 @@ import { defaultAutoplay, makeAnswerPlayer, markNoticeSeen, noticeSeen, readAuto
 import { ERROR_CODES, type AskDraft, type AskEvent, type AskSource, type AskTransport, type Availability, type VoiceStatus, type VoiceTransport } from "./ask-types";
 import { AskCapabilities } from "./AskCapabilities";
 import type { AskWords } from "./ask-words";
+import { useFollowAnswer } from "./use-follow-answer";
 import { canRecord, clock } from "./recorder";
 import { fetchVoiceStatus, makeAskTransport, makeVoiceTransport } from "./transport";
 import { useRecorder, type RecorderProblem } from "./use-recorder";
@@ -65,6 +66,7 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
   const [asked, setAsked] = React.useState("");
   const [phase, setPhase] = React.useState<Phase>("idle");
   const [answer, setAnswer] = React.useState("");
+  const [runs, setRuns] = React.useState(0); // how many questions were asked: a new one makes the page follow the answer again (use-follow-answer.ts)
   const [sources, setSources] = React.useState<AskSource[]>([]);
   const [drafts, setDrafts] = React.useState<AskDraft[]>([]);
   const [problem, setProblem] = React.useState<Problem>(null);
@@ -94,6 +96,8 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
     () => false,
   );
   const live = availability === "live" && transport !== null;
+  // before any early return below: a hook is always called (use-follow-answer.ts)
+  const answerRef = useFollowAnswer(runs, phase === "asking", `${answer.length}|${sources.length}|${drafts.length}|${phase}`);
   const voiceEndpoint = `${base}/ask/voice`;
   const ownVoice = React.useMemo(() => (givenVoice === undefined && givenStatus === undefined ? makeVoiceTransport(voiceEndpoint) : null), [givenVoice, givenStatus, voiceEndpoint]);
   const voiceTransport = givenVoice === undefined ? ownVoice : givenVoice;
@@ -184,6 +188,7 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
     dropAudio();
     const controller = new AbortController();
     abort.current = controller;
+    setRuns((n) => n + 1);
     setAsked(question);
     setHeardByVoice(voice);
     setText("");
@@ -420,7 +425,7 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
       <AskCapabilities w={w} examples={[w("ask.chip.needs"), w("ask.chip.quotes"), w("ask.chip.team")]} onTry={(q) => void ask(q)} guideHref={`${base}/help/today`} />
 
       {phase !== "idle" ? (
-        <div className="mt-4 border-t border-line pt-4" aria-live="polite" aria-busy={asking}>
+        <div ref={answerRef} className="mt-4 border-t border-line pt-4" aria-live="polite" aria-busy={asking}>
           <p className="text-sm text-muted">{asked ? `${w(heardByVoice ? "ask.voice.said" : "ask.asked")} ${asked}` : heardByVoice ? w("ask.voice.working") : ""}</p>
           {answer ? <p className="mt-2 whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{answer}</p> : asking ? <p className="mt-2 text-base text-muted">{w("ask.thinking")}</p> : null}
           {hasAudio ? (
