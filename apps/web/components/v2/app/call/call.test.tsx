@@ -75,9 +75,9 @@ describe("the live call screen (Call.dc.html)", () => {
 
 describe("Live now on Today", () => {
   it("names who is called, with the circle speaking and a link to listen", () => {
-    render(<LiveNowCard words={words} callee="Ravi Kumar" info="Follow-up · తెలుగు" href="/app/tenants/t/call-list/live" />);
+    render(<LiveNowCard words={words} callee="Ravi Kumar" info="Follow-up · తెలుగు" href="/app/tenants/t/office/live" />);
     expect(screen.getByRole("heading", { name: "Calling Ravi Kumar" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Listen" })).toHaveAttribute("href", "/app/tenants/t/call-list/live");
+    expect(screen.getByRole("link", { name: "Listen" })).toHaveAttribute("href", "/app/tenants/t/office/live");
     expect(document.querySelector('[data-orb="speak"]')).not.toBeNull();
   });
 });

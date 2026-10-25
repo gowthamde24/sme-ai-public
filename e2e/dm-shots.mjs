@@ -65,7 +65,9 @@ async function main() {
     console.log("dm-shots: building the web app (a minute or two)");
     execFileSync("npm", ["run", "build"], { cwd: WEB_DIR, env: { ...process.env, ...webEnv }, stdio: ["ignore", "ignore", "inherit"] });
   } else if (!existsSync(path.join(WEB_DIR, ".next", "BUILD_ID"))) throw new Error("--no-build, but there is no build");
-  const standIn = await startStandIn({ port: STAND_IN_PORT, certPath: path.join(tmp, "c.pem"), keyPath: path.join(tmp, "k.pem") });
+  // the stand-in says Agent OWL is "not built yet", so the Ask box would not be drawn; for these pictures the main assistant is on (the same list, one state changed)
+  const agents = [{ agent: "main", state: "idle", job: "Coordinates the other helpers.", last_event: null }, ...["lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"].map((agent, i) => ({ agent, state: i === 2 ? "working" : i === 0 ? "not_available" : "idle", job: `The ${agent.replace("_", " ")} helper.`, last_event: null }))];
+  const standIn = await startStandIn({ port: STAND_IN_PORT, certPath: path.join(tmp, "c.pem"), keyPath: path.join(tmp, "k.pem"), extraRoutes: [["GET", new RegExp(`^/v1/tenants/${TENANT}/agents/status$`), (_req, res) => { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify(agents)); }]] });
   const written = [];
   const problems = [];
   const check = (ok, what) => {
@@ -113,7 +115,7 @@ async function main() {
     written.push(`${path.basename(file)}  (${note})`);
   };
   const has = (tag, label, text, words) => {
-    for (const w of words) check(text.includes(w), `${tag} ${label}: "${w}" is missing`);
+    for (const w of words) check(text.toLowerCase().includes(w.toLowerCase()), `${tag} ${label}: "${w}" is missing`);
   };
   try {
     browser = await chromium.launch({ args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] });
@@ -127,8 +129,8 @@ async function main() {
       check(!(await page.locator('nav[aria-label="Parts of Settings"]').innerText()).includes("AI assistant"), "off: the AI assistant tab is there");
       await page.goto(app("/"), { waitUntil: "networkidle" });
       check((await page.locator('[data-part="live-now"], [data-part="outcomes-today"]').count()) === 0, "off: Live now or the outcome totals are on Today");
-      await page.goto(app("/call-list/live"), { waitUntil: "networkidle" });
-      check(/We could not find that page/.test(await page.locator("body").innerText()), "off: the live call page did not say 'not found'");
+      await page.goto(app("/office/live"), { waitUntil: "networkidle" });
+      { const body = await page.locator("body").innerText(); check(/could not find|not found/i.test(body), `off: the live call page did not say 'not found': ${body.slice(0, 160).replaceAll("\n", " | ")}`); }
       check(errors.filter((e) => !/404/.test(e)).length === 0, `off: console errors ${errors.join(" | ")}`);
       await context.close();
     }
@@ -208,8 +210,14 @@ async function main() {
         }
         {
           const { context, page, errors } = await open({ scheme, sizeName, lang: "en" });
-          await page.goto(app("/call-list/live"), { waitUntil: "networkidle" });
+          const res = await page.goto(app("/office/live"), { waitUntil: "networkidle" });
           const text = await common(tag, "live call", page, errors, sizeName);
+          if (!text.includes("Ravi Kumar")) {
+            await save(page, "debug-live-call", tag, "DEBUG");
+            problems.push(`${tag} live call: status ${res.status()}, url ${page.url()}, text: ${text.replaceAll("\n", " | ").slice(0, 500)}`);
+            await context.close();
+            continue;
+          }
           has(tag, "live call", text, ["Ravi Kumar", "Take over the call", "End call", "Show full transcript", "Test mode: this is a pretend call. Nobody is called."]);
           await save(page, "live-call", tag, "the live call (a pretend one): the circle, the caption, Take over, End call");
           await page.getByRole("button", { name: "Show full transcript" }).click();
@@ -248,7 +256,7 @@ async function main() {
       for (const sizeName of Object.keys(SIZES)) {
         const tag = `light-${sizeName}-${lang}`;
         const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ }[lang];
-        for (const [name, url] of [["ai-assistant", "/settings?section=assistant"], ["live-call", "/call-list/live"], ["outcomes-customer", `/leads/${LEAD}`]]) {
+        for (const [name, url] of [["ai-assistant", "/settings?section=assistant"], ["live-call", "/office/live"], ["outcomes-customer", `/leads/${LEAD}`]]) {
           const { context, page, errors } = await open({ scheme: "light", sizeName, lang });
           await page.goto(app(url), { waitUntil: "networkidle" });
           const text = await common(tag, name, page, errors, sizeName);

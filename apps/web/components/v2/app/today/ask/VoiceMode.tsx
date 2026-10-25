@@ -39,7 +39,7 @@ export function VoiceMode({ phase, caption, left, words, onTapOrb, onDone, onCan
           <p className="font-display text-2xl font-semibold leading-snug [overflow-wrap:anywhere]">{line}</p>
           {phase === "listening" && left !== null ? (
             <p data-voice-mode="countdown" className="text-base tabular-nums text-muted">
-              {`${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`}
+              {`${Math.floor(Math.ceil(left) / 60)}:${String(Math.ceil(left) % 60).padStart(2, "0")}`}
             </p>
           ) : null}
           {phase === "error" ? <p className="text-base text-muted">{words.tap}</p> : null}

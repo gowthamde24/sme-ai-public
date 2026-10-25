@@ -23,7 +23,7 @@ import { MOCK_COOKIE as ASSISTANT_COOKIE } from "@/lib/assistant/source";
 import { MOCK_COOKIE as OUTCOME_COOKIE } from "@/lib/outcomes/mock";
 
 import { saveAssistantAction } from "./assistant-actions";
-import LiveCallPage from "./call-list/live/page";
+import LiveCallPage from "./office/live/page";
 import { correctOutcomeAction } from "./outcome-actions";
 import SettingsPage from "./settings/page";
 

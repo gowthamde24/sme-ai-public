@@ -18,10 +18,10 @@ export const metadata = { title: `Live call · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /**
- * /app/tenants/[tenantId]/call-list/live (job DM, from Call.dc.html): the live call screen. Behind CALL_SCREENS (off by default: the page is a 404). There is no telephony yet, so "mock" shows a PRETEND call and says so, and "1" says "Not
+ * /app/tenants/[tenantId]/office/live (job DM, from Call.dc.html): the live call screen. Behind CALL_SCREENS (off by default: the page is a 404). There is no telephony yet, so "mock" shows a PRETEND call and says so, and "1" says "Not
  * available yet" until the real call feed exists; a Viewer has no calls to listen to. Server side: requireUser runs first and the workspace is read with the person's own token.
  */
-export default async function LiveCallPage({ params }: PageProps<"/app/tenants/[tenantId]/call-list/live">) {
+export default async function LiveCallPage({ params }: PageProps<"/app/tenants/[tenantId]/office/live">) {
   const mode = callScreens();
   if (mode === "off") notFound();
   const user = await requireUser();

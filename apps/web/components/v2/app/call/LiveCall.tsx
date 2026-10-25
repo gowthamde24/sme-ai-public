@@ -44,7 +44,7 @@ export function LiveCall({ words, call, backHref, testMode }: { words: Words; ca
           {t("call.testmode")}
         </p>
       ) : null}
-      <section className="flex flex-1 flex-col items-center justify-center gap-7 text-center" aria-label={t("call.title")}>
+      <section className="flex flex-1 flex-col items-center justify-center gap-7 pt-8 text-center" aria-label={t("call.title")}>
         <Orb px={168} state={speaking ? "speak" : "still"} halo={speaking} />
         <div className="flex flex-col gap-1.5">
           <h1 className="font-display text-3xl font-extrabold leading-tight">{call.callee}</h1>

@@ -48,7 +48,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
   const line = sayLine(s.lang, s.style, s.name.trim() || initial.name, shop);
   const ok = parseSettings(s) !== null;
   return (
-    <div data-settings="assistant" data-assistant-saved={saved ? "true" : "false"} className="flex flex-col gap-5">
+    <div data-settings="assistant" data-assistant-saved={saved ? "true" : "false"} className="@container flex flex-col gap-5">
       <div>
         <h2 className="font-display text-2xl font-bold leading-tight">{t("asst.title")}</h2>
         <p className="mt-1 text-base text-muted">{t("asst.intro")}</p>
@@ -60,7 +60,8 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
         {!saved ? <p className="mt-2 text-sm text-muted">{t("asst.defaults")}</p> : null}
         {!canEdit ? <p className="mt-2 text-sm font-medium">{t("asst.forbidden")}</p> : null}
       </div>
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+      {/* the page keeps a narrow column: the preview stands above the form, and beside it only when the column is wide (a container query, not the screen) */}
+      <div className="flex flex-col gap-5 @5xl:flex-row @5xl:items-start">
         <form
           className="flex min-w-0 flex-1 flex-col gap-4"
           onSubmit={async (e) => {
@@ -217,7 +218,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
           </div>
         </form>
 
-        <aside aria-labelledby="asst-prev-h" className="flex flex-col gap-4 rounded-3xl bg-charcoal p-6 text-on-charcoal lg:sticky lg:top-24 lg:w-[380px] lg:flex-none">
+        <aside aria-labelledby="asst-prev-h" className="order-first flex flex-col gap-4 rounded-3xl bg-charcoal p-6 text-on-charcoal @5xl:sticky @5xl:top-24 @5xl:order-none @5xl:w-[380px] @5xl:flex-none">
           <h3 id="asst-prev-h" className="text-xs font-bold uppercase tracking-[0.14em] text-brand">{t("asst.preview")}</h3>
           <div className="flex justify-center py-2">
             <Orb px={120} state="speak" halo />
