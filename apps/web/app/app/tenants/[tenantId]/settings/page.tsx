@@ -62,7 +62,7 @@ export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "plan", "members", "fields", "data", "language", "agent", "security", "privacy"] as const;
+const SECTIONS = ["business", "plan", "members", "fields", "data", "language", "agent", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -114,7 +114,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const hasFields = admin && fieldEntities.length > 0 && (usesChecklist(pack) || (fieldList !== null && fieldList.length > 0));
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
   const hasPlan = admin && planScreens() !== "off";
-  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) ? (wanted as Section) : "business";
+  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   let members: Member[] | null = null;
   if (section === "members") {
