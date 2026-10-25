@@ -16,6 +16,7 @@ from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.billing import gate
 from app.billing.service import BillingService
 from app.businessprofile.repository import BusinessProfileRepository
+from app.callsettings.service import CallSettingsService
 from app.campaigns.repository import CampaignsRepository
 from app.catalogue.repository import CatalogueRepository
 from app.catalogue.storage import StorageClient
@@ -128,6 +129,8 @@ class Runtime:
     voice_notes: VoiceNotesRepository | None = None
     # job DI: plans and billing (catalogue, usage meters, trial and cancel; the FAKE provider)
     billing: BillingService | None = None
+    # job DP part 4: how the assistant behaves on calls, per workspace and per campaign
+    call_settings: CallSettingsService | None = None
     # job DM: outcomes of calls and WhatsApp follow-ups (positive, negative, unclear)
     outcomes: OutcomesRepository | None = None
     # job DM: the AI assistant's settings per workspace (Settings > AI assistant)
