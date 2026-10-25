@@ -13,6 +13,7 @@ from fastapi import Depends, Request
 from app.agent_runs.wiring import AgentsRuntime
 from app.assistant_settings.service import AssistantSettingsService
 from app.auth.jwt import AuthError, Principal, TokenVerifier
+from app.billing import gate
 from app.billing.service import BillingService
 from app.businessprofile.repository import BusinessProfileRepository
 from app.campaigns.repository import CampaignsRepository
@@ -162,16 +163,8 @@ def get_principal(request: Request, runtime: RuntimeDep) -> Principal:
         raise unauthorized() from exc
 
 
-READ_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
-# what a read-only workspace may still do (job DI): see its plan and choose one,
-# ask for a copy of its data, ask for its deletion, export
-READ_ONLY_OK = ("/billing", "/data-exports", "/deletion-requests", "/exports")
-
-
-def _read_only_ok(path: str, tenant_id: str) -> bool:
-    base = f"/v1/tenants/{tenant_id}"
-    tail = path[len(base) :] if path.startswith(base) else path
-    return tail.startswith(READ_ONLY_OK)
+# job DI / DP part 3: what a read-only workspace may still do, and what spends, is decided in ONE place
+# (app/billing/gate.py); this dependency is the only door to a tenant's address
 
 
 def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., TenantContext]:
@@ -200,12 +193,12 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             raise not_found()
         if allowed and membership.role not in allowed:
             raise forbidden()
-        path = request.url.path
-        changes = request.method not in READ_METHODS and not _read_only_ok(path, tenant_id)
-        if runtime.billing is not None and changes:
-            # job DI: a workspace whose trial ended unpaid is read-only (viewing, signing in and
-            # exporting stay; every change stops). Always "full" while the billing switch is off.
-            runtime.billing.ensure_writable(principal.token, parsed)
+        kind = gate.classify(request.method, gate.tail_of(request.url.path, tenant_id))
+        if runtime.billing is not None and kind != "read":
+            # job DI / DP part 3: a workspace whose trial ended unpaid is read-only (viewing, signing in and
+            # exporting stay; every change, send, AI and call stops); one still waiting for WhatsApp holds
+            # the sends, AI and calls. Always "full" while the billing switch is off.
+            runtime.billing.ensure(principal.token, parsed, kind)
         if strong and membership.role in (Role.OWNER, Role.ADMIN) and principal.aal != "aal2":
             raise mfa_required()
         if runtime.policy_gate is not None:

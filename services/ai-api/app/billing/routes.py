@@ -5,6 +5,7 @@
   GET  /v1/tenants/{tenant_id}/billing/access     whether the workspace is full or READ-ONLY (the trial ended unpaid), with the dates (any member)
   GET  /v1/tenants/{tenant_id}/billing/usage      the period, the meters and the notices only (Owner, Admin)
   POST /v1/tenants/{tenant_id}/billing/trial      start the 30-day trial with a payment method on file; nothing is charged (Owner, second factor)
+  POST /v1/tenants/{tenant_id}/billing/resume     pay again after the trial ended unpaid or the plan was cancelled: a paid plan starts at once, no new trial (Owner, second factor)
   POST /v1/tenants/{tenant_id}/billing/cancel     cancel: during the trial no charge ever; an active plan ends at the end of the paid period (Owner, second factor)
 
 A meter shows counts and percentages only: never the AI's rupees or tokens (AI is included under fair use).
@@ -23,7 +24,7 @@ from app.auth.deps import (
     get_runtime,
     require_tenant_role,
 )
-from app.billing.models import AccessOut, BillingOut, PlansOut, TrialStartIn, UsageViewOut
+from app.billing.models import AccessOut, BillingOut, PlansOut, ResumeIn, TrialStartIn, UsageViewOut
 from app.billing.service import BillingService
 from app.errors import ApiError
 from app.tenancy.models import Role
@@ -64,6 +65,11 @@ def get_usage(ctx: OwnerAdmin, runtime: RuntimeDep) -> UsageViewOut:
 @router.post("/trial", response_model=BillingOut)
 def start_trial(body: TrialStartIn, ctx: OwnerStrong, runtime: RuntimeDep) -> BillingOut:
     return BillingOut.model_validate(_service(runtime).start_trial(ctx.principal.token, ctx.tenant.id, body.plan_id, body.checkout_ref))
+
+
+@router.post("/resume", response_model=BillingOut)
+def resume(body: ResumeIn, ctx: OwnerStrong, runtime: RuntimeDep) -> BillingOut:
+    return BillingOut.model_validate(_service(runtime).resume(ctx.principal.token, ctx.tenant.id, body.plan_id, body.checkout_ref))
 
 
 @router.post("/cancel", response_model=BillingOut)

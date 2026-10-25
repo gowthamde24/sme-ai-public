@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from app.billing.errors import NothingToCancelError, PlanUnknownError, TrialAlreadyStartedError
+from app.billing.errors import NotLapsedError, NothingToCancelError, PlanUnknownError, TrialAlreadyStartedError
 from app.crm.repository import NotFoundError
 
 CONTRACTS = Path(__file__).resolve().parents[3] / "packages" / "contracts"
@@ -58,18 +58,39 @@ class FakeBillingRepository:
         sub = self.subs.get(tenant_id)
         base["subscription"] = None if sub is None else {k: v for k, v in sub.items() if k not in ("provider_ref",)}
         base["can_start_trial"] = sub is None
+        base["can_resume"] = self.can_resume(tenant_id)
         connected = self.connected.get(tenant_id)
         base["whatsapp_connected_at"] = connected.isoformat() if connected else None
-        base.update(self.access(token, tenant_id))
+        base.update({k: v for k, v in self.access(token, tenant_id).items() if k not in ("can_resume", "sending", "waiting_for")})
         return base
 
     def access(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("access", token)
         if self.fail_access is not None:
             raise self.fail_access
+        sub = self.subs.get(tenant_id)
+        waiting = "whatsapp" if sub is not None and sub["status"] == "trial_pending" else None
         if tenant_id in self.read_only:
-            return {"access": "read_only", "read_only_since": "2026-10-14", "delete_on": "2027-01-12", "data_days_left": 79}
-        return {"access": "full", "read_only_since": None, "delete_on": None, "data_days_left": None}
+            return {"access": "read_only", "read_only_since": "2026-10-14", "delete_on": "2027-01-12", "data_days_left": 79, "can_resume": self.can_resume(tenant_id), "sending": "off", "waiting_for": waiting}
+        return {"access": "full", "read_only_since": None, "delete_on": None, "data_days_left": None, "can_resume": self.can_resume(tenant_id), "sending": "off" if waiting else "on", "waiting_for": waiting}
+
+    def can_resume(self, tenant_id: uuid.UUID) -> bool:
+        sub = self.subs.get(tenant_id)
+        return sub is not None and sub["status"] != "trial_pending" and (sub["status"] == "cancelled" or tenant_id in self.read_only)
+
+    def resume(self, token: str, tenant_id: uuid.UUID, plan_id: str, provider: str, provider_ref: str) -> dict[str, Any]:
+        self._go("resume", token, plan_id, provider, provider_ref)
+        if self.fail_start is not None:
+            raise self.fail_start
+        if not any(p["id"] == plan_id and p["kind"] in ("main", "calls") for p in self.catalogue["plans"]):
+            raise PlanUnknownError(plan_id)
+        if not self.can_resume(tenant_id):
+            raise NotLapsedError(str(tenant_id))
+        sub = self.subs[tenant_id]
+        sub.update(status="active", plan_id=plan_id, provider=provider, provider_ref=provider_ref, cancel_at_period_end=False, grace_until=None, payment_method_on_file=True)
+        self.plan_of[tenant_id] = plan_id
+        self.read_only.discard(tenant_id)
+        return self.billing(token, tenant_id)
 
     def usage(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("usage", token)

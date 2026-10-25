@@ -457,6 +457,15 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "This workspace is read-only because its plan has ended. "
         "You can still sign in, view and export your data. Choose a plan to continue.",
     ),
+    billing_errors.WorkspaceWaitingForWhatsAppError: ApiError(
+        403,
+        "waiting_for_whatsapp",
+        "Connect your WhatsApp to start. Until then you can set everything up, but messages, "
+        "AI calls and campaigns stay off.",
+    ),
+    billing_errors.NotLapsedError: ApiError(
+        409, "not_lapsed", "Your plan has not ended, so there is nothing to start again."
+    ),
     billing_errors.PlanLimitReachedError: ApiError(
         409,
         "plan_limit_reached",
