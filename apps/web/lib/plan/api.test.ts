@@ -85,6 +85,14 @@ describe("the billing answer as the screens read it", () => {
     expect(payg.included).toEqual({ minutes: null, messages: 0 });
     expect(meterState({ used: 42, included: payg.included.minutes })).toBe("no_cap");
   });
+  it("coming change: calls-only plans that include WhatsApp follow-up messages (Calls 300 = 300, Calls 1,000 = 1,000) are drawn from the data, with a real messages meter and no code change", () => {
+    const withMessages = { ...DRAFT_PLANS, plans: DRAFT_PLANS.plans.map((p) => (p.id === "calls_300" ? { ...p, allowances: { ...p.allowances, whatsapp_messages: 300 } } : p.id === "calls_1000" ? { ...p, allowances: { ...p.allowances, whatsapp_messages: 1000 } } : p)) };
+    const cat = catalogueFrom(parsePlans(withMessages));
+    expect(callsPlans(cat).map((p) => [p.id, p.messages])).toEqual([["calls_payg", 0], ["calls_300", 300], ["calls_1000", 1000]]);
+    const w = toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "active", plan_id: "calls_300", trial_ends_at: null }), usage: { call_minutes: meter("call_minutes", 10, 300), whatsapp_messages: meter("whatsapp_messages", 240, 300, { state: "notice" }) } })));
+    expect(w.included).toEqual({ minutes: 300, messages: 300 });
+    expect(meterState({ used: w.usage.messages, included: w.included.messages })).toBe("notice");
+  });
   it("past due carries its grace day; a paid plan that was cancelled carries 'ends at the end of the period'; a cancelled trial is told apart from a cancelled paid plan", () => {
     expect(toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "past_due", trial_ends_at: null, grace_until: "2026-11-19T10:00:00Z" }) }))).graceUntil).toBe("2026-11-19T10:00:00Z");
     expect(toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "active", trial_ends_at: null, current_period_end: "2026-11-12T10:00:00Z", cancel_at_period_end: true }) }))).cancelAtPeriodEnd).toBe(true);

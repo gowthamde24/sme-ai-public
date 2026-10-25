@@ -160,6 +160,14 @@ describe("the plan picker", () => {
   const pick = (over: Partial<{ canStart: boolean; currentId: string | null; blocked: "already" | "used" | "forbidden" | null; a: PlanActions }> = {}) =>
     render(<PlanPicker words={words} main={mainPlans()} calls={callsPlans()} currentId={over.currentId ?? null} canStart={over.canStart ?? true} blocked={over.blocked ?? null} mock actions={over.a ?? actions()} done="/app/tenants/t/settings?section=plan" />);
 
+  it("coming change: Calls 300 and Calls 1,000 that include WhatsApp follow-up messages show their counts from the data (pay-as-you-go stays 'Not included')", () => {
+    const more = callsPlans().map((p) => (p.id === "calls_300" ? { ...p, messages: 300 } : p.id === "calls_1000" ? { ...p, messages: 1000 } : p));
+    render(<PlanPicker words={words} main={mainPlans()} calls={more} currentId={null} canStart blocked={null} mock actions={actions()} done="/app/tenants/t/settings?section=plan" />);
+    const row = (id: string) => (document.querySelector(`[data-plan="${id}"]`) as HTMLElement).textContent ?? "";
+    expect(row("calls_300")).toMatch(/WhatsApp messages you start, a month\s*300/);
+    expect(row("calls_1000")).toMatch(/WhatsApp messages you start, a month\s*1,000/);
+    expect(row("calls_payg")).toMatch(/WhatsApp messages you start, a month\s*Not included/);
+  });
   it("compares the six plans from the data, every price 'Price coming soon'", () => {
     pick();
     const names = screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent);
