@@ -92,9 +92,12 @@ def test_the_checker_catches_a_missing_language_and_a_foreign_placeholder(tmp_pa
 
 
 def test_the_assistants_name_is_an_allowed_placeholder(tmp_path: Path) -> None:
-    # job DN: the day steps say {assistant}, the name each workspace gave its assistant (the default on the public site)
+    # job DN: the day steps say {assistant}, the name each workspace gave its assistant
     dest = _copy(tmp_path)
-    _edit(dest / "textiles" / "landing.json", lambda d: d["hero"]["sub"].update(en="Ask {assistant}"))
+    _edit(
+        dest / "textiles" / "landing.json",
+        lambda d: d["hero"]["sub"].update(en="Ask {assistant}"),
+    )
     errs = pc.check_landing(pc.load_packs(dest), dest)
     assert not any("placeholder" in e for e in errs)
 
