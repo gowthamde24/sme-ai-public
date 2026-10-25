@@ -449,6 +449,9 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('billing_pending_reminders',
    $$insert into public.billing_pending_reminders (tenant_id, day) values (%1$L, 30) on conflict do nothing$$,
    'day = day', $$delete from public.billing_pending_reminders where tenant_id = %1$L$$, false),
+  ('billing_trial_reminders',
+   $$insert into public.billing_trial_reminders (tenant_id, day) values (%1$L, 11) on conflict do nothing$$,
+   'day = day', $$delete from public.billing_trial_reminders where tenant_id = %1$L$$, false),
   ('billing_notices',
    $$insert into public.billing_notices (tenant_id, kind, level, period_start) values (%1$L, 'call_minutes', 80, date '2026-10-01') on conflict do nothing$$,
    'level = level', $$delete from public.billing_notices where tenant_id = %1$L$$, false),
@@ -749,6 +752,8 @@ select t, r, s, i, u, d from (values
   ('billing_lapse_reminders', 'sales', false, false, false, false), ('billing_lapse_reminders', 'viewer', false, false, false, false),
   ('billing_pending_reminders', 'owner', true, false, false, false), ('billing_pending_reminders', 'admin', true, false, false, false),
   ('billing_pending_reminders', 'sales', false, false, false, false), ('billing_pending_reminders', 'viewer', false, false, false, false),
+  ('billing_trial_reminders', 'owner', true, false, false, false), ('billing_trial_reminders', 'admin', true, false, false, false),
+  ('billing_trial_reminders', 'sales', false, false, false, false), ('billing_trial_reminders', 'viewer', false, false, false, false),
   ('billing_notices', 'owner', true, false, false, false), ('billing_notices', 'admin', true, false, false, false),
   ('billing_notices', 'sales', false, false, false, false), ('billing_notices', 'viewer', false, false, false, false),
   -- T002 tables
