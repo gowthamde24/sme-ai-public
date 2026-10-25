@@ -9,6 +9,7 @@ from app.assistant_settings import data
 from app.assistant_settings.models import (
     AssistantOut,
     AssistantSettings,
+    LanguageWord,
     OptionOut,
     OptionsOut,
     OutcomePreviewOut,
@@ -21,7 +22,7 @@ from app.assistant_settings.models import (
 from app.assistant_settings.repository import AssistantSettingsRepository
 from app.errors import ApiError
 
-LANGUAGES = ("en", "te", "hi", "kn")
+LANGUAGES: tuple[LanguageWord, ...] = ("en", "te", "hi", "kn")
 NATIVE = {"en": "English", "te": "తెలుగు", "hi": "हिंदी", "kn": "ಕನ್ನಡ"}
 # the customer's side of the SIMULATED test call (a draft for native review, like every line here)
 CUSTOMER_LINES = {"en": "Yes, please send them.", "te": "అవును, పంపండి.", "hi": "हाँ, भेज दीजिए।", "kn": "ಹೌದು, ಕಳುಹಿಸಿ."}
@@ -51,7 +52,7 @@ class AssistantSettingsService:
             defaults=defaults,
             business_name=business,
             business_type=biz,
-            intro={lang: data.intro(lang, settings.name, business) for lang in LANGUAGES},  # type: ignore[misc]
+            intro={lang: data.intro(lang, settings.name, business) for lang in LANGUAGES},
             voice_notes_follow=bool(row.get("voice_notes")),
             locked=dict(row.get("locked") or {}),
             options=self._options(self._repo.voices(token, tenant_id)),
@@ -109,7 +110,7 @@ class AssistantSettingsService:
                 languages={
                     lang: VoiceAvailabilityOut(available=(p["id"], lang) in have, synthetic=have.get((p["id"], lang), False))
                     for lang in LANGUAGES
-                },  # type: ignore[misc]
+                },
             )
             for p in catalogue["personas"]
         ]

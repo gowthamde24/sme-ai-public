@@ -42,7 +42,7 @@ class FakeOutcomesRepository:
                 return dict(r)
         raise NotFoundError("23503")
 
-    def list(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID | None, day: date | None, limit: int, before: tuple[datetime, uuid.UUID] | None) -> dict[str, Any]:
+    def list_outcomes(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID | None, day: date | None, limit: int, before: tuple[datetime, uuid.UUID] | None) -> dict[str, Any]:
         self.calls.append(("list", (tenant_id, contact_id, day, limit)))
         rows = sorted(self.rows, key=lambda r: (r["occurred_at"], r["id"]), reverse=True)
         if contact_id:

@@ -1,7 +1,7 @@
 """The outcome API shapes (job DM, C1 part). Committed EARLY as a contract (packages/contracts/outcomes.*, docs/contracts/outcomes.md): the customer timeline and Today are built against it.
 
 An outcome is what came of one call or one WhatsApp follow-up conversation: positive, negative or unclear, a category and a short reason. The AI records it; the owner can correct it. NO CHILD DATA: nothing here
-refers to a student, and in an education workspace `reason` is always null (the web shows the category's fixed words)."""
+refers to a pupil's record, and in an education workspace `reason` is always null (the web shows the category's fixed words)."""
 
 from __future__ import annotations
 

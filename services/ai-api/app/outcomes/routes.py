@@ -68,7 +68,7 @@ def list_outcomes(
     contact = parse_uuid(contact_id) if contact_id else None
     if contact_id and contact is None:
         raise not_found()
-    answer = _repo(runtime).list(ctx.principal.token, ctx.tenant.id, contact, day, limit, decode_cursor(cursor) if cursor else None)
+    answer = _repo(runtime).list_outcomes(ctx.principal.token, ctx.tenant.id, contact, day, limit, decode_cursor(cursor) if cursor else None)
     items = [OutcomeOut.model_validate(r) for r in answer.get("items", [])]
     has_more = bool(answer.get("has_more"))
     return OutcomeListOut(items=items, has_more=has_more, next_cursor=encode_cursor(items[-1].occurred_at, items[-1].id) if has_more and items else None)

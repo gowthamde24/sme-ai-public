@@ -22,6 +22,7 @@ import httpx
 from app.billing.mail import (
     BillingReminders,
     EmailSender,
+    PendingReminders,
     PostgrestBillingMailRepository,
     build_sender,
 )
@@ -73,6 +74,7 @@ class Worker:
         voice: VoiceNotes | None = None,
         billing_mail: BillingReminders | None = None,
         billing_clocks: BillingService | None = None,
+        billing_pending_mail: PendingReminders | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -91,6 +93,8 @@ class Worker:
         self._billing_mail = billing_mail
         # job DM: the trial is 14 days from the day WhatsApp is connected; the provider is told the day the trial ends once it is known
         self._billing_clocks = billing_clocks
+        # job DM: the reminder e-mails to a workspace still waiting for WhatsApp (fake sender)
+        self._billing_pending_mail = billing_pending_mail
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -145,7 +149,8 @@ class Worker:
             return
         try:
             self._billing_mail.run(token)
-            self._billing_mail.run_pending(token)
+            if self._billing_pending_mail is not None:
+                self._billing_pending_mail.run(token)
         except TokenRejected:
             raise
         except Exception as exc:
@@ -223,6 +228,7 @@ def build_worker(settings: Settings) -> Worker:
         session,
         interval_seconds=settings.scheduler_interval_seconds,
         billing_mail=BillingReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
+        billing_pending_mail=PendingReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
         billing_clocks=BillingService(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_provider(settings)),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),

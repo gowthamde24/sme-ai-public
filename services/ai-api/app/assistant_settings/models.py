@@ -2,7 +2,7 @@
 
 One setting per workspace: the assistant's name, its voice, its languages, its way of talking and speed, what it may do on a call, when it hands over to the owner and when it may call. Until the owner saves,
 the API shows the DEFAULTS of the business type, so the screen can be skipped. The words "AI assistant" are always said: the introduction is composed from fixed wording (`intro`) and is not a field.
-No child data: nothing here refers to a student."""
+No child data: nothing here refers to a pupil's record."""
 
 from __future__ import annotations
 

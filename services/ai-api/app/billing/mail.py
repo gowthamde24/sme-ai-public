@@ -88,6 +88,9 @@ def compose_pending(business: str, day: int, to: str) -> Email:
 class BillingMailRepository(Protocol):
     def reminders_due(self, token: str, limit: int) -> list[dict[str, Any]]: ...
     def mark(self, token: str, tenant_id: uuid.UUID, day: int) -> None: ...
+
+
+class PendingMailRepository(Protocol):
     def pending_due(self, token: str, limit: int) -> list[dict[str, Any]]: ...
     def pending_mark(self, token: str, tenant_id: uuid.UUID, day: int) -> None: ...
 
@@ -139,7 +142,14 @@ class BillingReminders:
                 raise
         return sent
 
-    def run_pending(self, token: str) -> int:
+
+class PendingReminders:
+    """One pass of the worker: the reminders to workspaces still waiting for WhatsApp (30, 60 and 90 days after the plan was chosen), sent and marked like the others."""
+
+    def __init__(self, repository: PendingMailRepository, sender: EmailSender, *, limit: int = 50) -> None:
+        self._repo, self._sender, self._limit = repository, sender, limit
+
+    def run(self, token: str) -> int:
         """The reminders to workspaces still waiting for WhatsApp (30, 60 and 90 days after the plan was chosen), sent and marked like the others."""
         sent = 0
         for item in self._repo.pending_due(token, self._limit):

@@ -15,13 +15,16 @@ ASSISTANT_WORD = {"en": "assistant", "te": "అసిస్టెంట్", "hi
 
 @lru_cache(maxsize=1)
 def load() -> dict[str, Any]:
-    return json.loads(DATA.read_text(encoding="utf-8"))
+    loaded: dict[str, Any] = json.loads(DATA.read_text(encoding="utf-8"))
+    return loaded
 
 
 def business_type(code: str | None) -> str:
     """The pack's code when the data has defaults for it, else the first set of defaults in the file (the default pack's)."""
     defaults = load()["defaults"]
-    return code if code in defaults else next(iter(defaults))
+    if code is not None and code in defaults:
+        return code
+    return str(next(iter(defaults)))
 
 
 def defaults_for(code: str | None) -> dict[str, Any]:

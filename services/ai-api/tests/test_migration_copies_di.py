@@ -58,4 +58,5 @@ def test_only_the_claim_and_the_call_check_ask_the_meter_whether_a_kind_is_stopp
         text = path.read_text(encoding="utf-8")
         if "billing_stopped(" in text and path.name not in (DI, DI4):
             names.add(path.name)
-    assert names == set(), "no other migration consults the meter"
+    # job DM's pending hold redefines the check itself (migration 4); nothing else consults it
+    assert names == {"20261129090400_dm_trial_pending.sql"}, "no other migration consults the meter"
