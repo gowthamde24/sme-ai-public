@@ -4,7 +4,7 @@ import type { MaterialItemSummaryOut } from "@contracts";
 
 import { FreshPhotos } from "../catalogue/FreshPhotos";
 import { Photo } from "../catalogue/Photo";
-import { PlushStill } from "../owl/PlushStill";
+import { OrbMark } from "../mark/OrbMark";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
 import { badge, card, primary, secondary } from "../visits/styles";
@@ -55,7 +55,7 @@ export function ProductsView({ base, words, role, items, more, inStockOnly, help
         </div>
         {items === null ? (
           <div role="alert" className={`${card} flex-row items-center`} data-state="error">
-            <PlushStill px={56} mood="resting" className="size-14" />
+            <OrbMark px={56} mood="resting" className="size-14" />
             <div>
               <p className="font-semibold">{say(words, "frame.notyet")}</p>
               <p className="text-sm text-muted">{say(words, "mat.products.error")}</p>
@@ -64,7 +64,7 @@ export function ProductsView({ base, words, role, items, more, inStockOnly, help
         ) : items.length === 0 ? (
           <div className={`${card} items-start`} data-state={inStockOnly ? "nomatch" : "empty"}>
             <div className="flex items-center gap-3">
-              <PlushStill px={64} mood="idle" className="size-16" />
+              <OrbMark px={64} mood="idle" className="size-16" />
               <h2 className="font-display text-2xl font-bold leading-tight">{say(words, inStockOnly ? "mat.products.nomatch" : "mat.products.empty.title")}</h2>
             </div>
             {inStockOnly ? null : <p className="text-base text-muted">{say(words, admin ? "mat.products.empty.admin" : "mat.products.empty.other")}</p>}

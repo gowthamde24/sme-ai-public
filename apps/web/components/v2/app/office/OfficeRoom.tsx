@@ -1,15 +1,15 @@
 "use client";
 
-import { ArrowRight, Armchair, Boxes, Info, List } from "lucide-react";
+import { ArrowRight, Armchair, Boxes, List } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
 import { pageH1 } from "../ui";
-import { PlushStill } from "../owl/PlushStill";
-import { StateDot } from "../owl/StateDot";
+import { AgentMark } from "../mark/AgentMark";
+import { StateDot } from "../mark/StateDot";
 import { ALL_AGENT_IDS, type AgentId, type Pose } from "./ids";
 import { poseOf } from "./pose";
-import { PlushOffice } from "./PlushOffice";
+import { TeamBoard } from "./TeamBoard";
 import { readClientEnv, rememberView, type ClientEnv, type View } from "./view";
 
 /** One helper as the room and the list draw it: the API's row (`getAgentsStatus()`), and the "how long ago" worked out on the server so the first paint and the hydrated page agree. */
@@ -89,17 +89,10 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
         </div>
       </header>
 
-      {showRoom && env?.reducedMotion ? (
-        <p className="mt-4 flex items-center gap-2 text-sm text-muted">
-          <Info className="size-4 shrink-0" aria-hidden="true" />
-          {w("office.still")}
-        </p>
-      ) : null}
-
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-8">
           {showRoom ? (
-            <PlushOffice poses={poses} names={names} stateText={tagText} selected={selected} onSelect={select} lite={env?.lite ?? false} label={w("office.title")} hint={w("office.hint")} />
+            <TeamBoard poses={poses} names={names} stateText={tagText} selected={selected} onSelect={select} label={w("office.title")} hint={w("office.hint")} />
           ) : (
             <section aria-label={w("office.title")}>
               <p className="mb-3 flex items-center gap-2 text-base text-muted">
@@ -123,7 +116,7 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
                     >
                       <span className="flex items-start justify-between gap-2">
                         <span className="flex min-w-0 items-center gap-2">
-                          <PlushStill agent={a.agent} px={44} mood={a.state === "working" ? "thinking" : "idle"} off={dotOf(a.state) === "off"} className="size-11" />
+                          <AgentMark agent={a.agent} px={44} mood={a.state === "working" ? "thinking" : "idle"} off={dotOf(a.state) === "off"} className="size-11" />
                           <StateDot state={dotOf(a.state)} />
                           <span className="font-display text-lg font-semibold">{w(`agent.${a.agent}`)}</span>
                         </span>
@@ -164,7 +157,7 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
               <>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h2 className="flex items-center gap-2 font-display text-xl font-semibold">
-                    <PlushStill agent={chosen.agent} px={44} mood={chosen.state === "working" ? "thinking" : "idle"} off={dotOf(chosen.state) === "off"} className="size-11" />
+                    <AgentMark agent={chosen.agent} px={44} mood={chosen.state === "working" ? "thinking" : "idle"} off={dotOf(chosen.state) === "off"} className="size-11" />
                     <StateDot state={dotOf(chosen.state)} />
                     {w(`agent.${chosen.agent}`)}
                   </h2>

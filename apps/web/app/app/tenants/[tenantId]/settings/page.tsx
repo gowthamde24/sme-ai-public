@@ -53,6 +53,13 @@ import { partsWords, wordsFor } from "@/i18n/app-words";
 import { BRAND_NAME } from "@/design/brand";
 import { ADDRESSES } from "@/lib/site/business";
 import { PlanSection } from "@/components/v2/app/plan/PlanSection";
+import { AssistantSettings } from "@/components/v2/app/assistant/LazyAssistantSettings";
+import { assistantProfile } from "@/lib/assistant/defaults";
+import { readAssistant } from "@/lib/assistant/source";
+import { CALL_LANGS, VOICES } from "@/lib/assistant/types";
+import { LANGUAGE_NAMES } from "@/i18n/lang";
+import { assistantScreens } from "@/lib/screens/flag";
+import { saveAssistantAction } from "../assistant-actions";
 import { FAKE_CHECKOUT, planScreens } from "@/lib/plan/flag";
 import { CATALOGUE, planById } from "@/lib/plan/catalogue";
 import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
@@ -62,7 +69,7 @@ export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "plan", "members", "fields", "data", "language", "agent", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+const SECTIONS = ["business", "plan", "members", "fields", "data", "language", "assistant", "agent", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -114,7 +121,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const hasFields = admin && fieldEntities.length > 0 && (usesChecklist(pack) || (fieldList !== null && fieldList.length > 0));
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
   const hasPlan = admin && planScreens() !== "off";
-  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+  // Settings > AI assistant (job DM): only while its flag is on, and only for the Owner (the people who run the business may be admins, but the assistant is the Owner's to set up)
+  const hasAssistant = tenant.role === "owner" && assistantScreens() !== "off";
+  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   let members: Member[] | null = null;
   if (section === "members") {
@@ -180,6 +189,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   const planCtx = { token: user.accessToken, tenantId };
   const [workspacePlan, planCatalogue] = section === "plan" ? await Promise.all([readWorkspacePlan(planCtx), readCatalogue(planCtx)]) : [null, null];
+  const assistant = section === "assistant" ? await readAssistant(pack?.modules ?? null) : null;
   let theme: ThemePick = "system";
   try {
     theme = readTheme((await cookies()).get(THEME_COOKIE)?.value) ?? "system";
@@ -193,6 +203,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     ...(hasFields ? [{ key: "fields", label: t("settings.tab.fields") }] : []),
     { key: "data", label: t("settings.tab.data") },
     { key: "language", label: t("settings.tab.language") },
+    ...(hasAssistant ? [{ key: "assistant", label: t("asst.tab") }] : []),
     ...(tenant.role === "owner" ? [{ key: "agent", label: t("settings.tab.agent") }] : []),
     { key: "security", label: t("settings.tab.security") },
     { key: "privacy", label: t("settings.tab.privacy") },
@@ -251,6 +262,26 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             contactEmail={ADDRESSES.billing}
             actions={{ start: startPlanAction.bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: planScreens() === "mock" ? fixPlanPaymentAction.bind(null, tenantId) : null, endTrial: planScreens() === "mock" ? endPlanTrialAction.bind(null, tenantId) : null }}
           />
+        ) : null}
+        {section === "assistant" && assistant ? (
+          assistant.mode === "ok" ? (
+            <AssistantSettings
+              words={withModuleWords(wordsFor(lang, ["asst."]), pack)}
+              initial={assistant.settings}
+              profile={assistantProfile(pack?.modules ?? null)}
+              shop={tenant.name}
+              langs={Object.fromEntries(CALL_LANGS.map((l) => [l, LANGUAGE_NAMES[l].native])) as Record<(typeof CALL_LANGS)[number], string>}
+              voiceNames={Object.fromEntries(VOICES.map((v) => [v, t(`asst.voice.${v}` as "asst.voice.female_warm")])) as Record<(typeof VOICES)[number], string>}
+              canEdit={tenant.role === "owner"}
+              testMode={assistantScreens() === "mock"}
+              saved={assistant.saved}
+              actions={{ save: saveAssistantAction.bind(null, tenantId) }}
+            />
+          ) : (
+            <section className={surface} aria-label={t("asst.tab")}>
+              <p className="text-sm text-muted">{t("frame.notyet")}</p>
+            </section>
+          )
         ) : null}
         {section === "members" ? (
           <section className={surface} aria-label={t("settings.tab.members")}>

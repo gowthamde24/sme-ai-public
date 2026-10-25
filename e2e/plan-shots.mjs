@@ -1,12 +1,12 @@
 // Job DK: the Plan and usage screens in a real browser, on the real production web app and the visual tests' invented backend (e2e/visual/stand-in.mjs). The web is started twice from ONE build: with PLAN_SCREENS unset
 // (the flag OFF: Settings has no Plan part, /plans is a 404) and with PLAN_SCREENS=mock (the fake provider: its whole state is one cookie, so each scenario is drawn by setting that cookie). 1280 and 390 px, light and dark;
-// Telugu, Hindi and Kannada for one scenario; then one WALK with real clicks: start the trial (refused without a payment method), jump to day 30 with a card that fails, update the payment, cancel.
+// Telugu, Hindi and Kannada for one scenario; then one WALK with real clicks: start the trial (refused without a payment method), jump to the last day with a card that fails, update the payment, cancel.
 //   node e2e/plan-shots.mjs [--no-build] [--out DIR]      (DIR defaults to ~/Desktop/v2-overnight/shots-dk)
 // It CHECKS what it shows and exits 1 with the list if one fails: the expected words of each scenario, never a rupee sign, a price or the word "token", no {placeholder}, no sideways scroll at 390 px, no console error.
 // Port 3016 (web) and 54999 (the stand-in), like the other shots scripts: never run them at once; it stops only its own two processes.
 import { execFileSync, spawn } from "node:child_process";
 import { createRequire } from "node:module";
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import net from "node:net";
 import os from "node:os";
 import path from "node:path";
@@ -16,6 +16,8 @@ import { FIXED_NOW, SESSION_USER, TENANT } from "./visual/fixtures.mjs";
 import { startStandIn } from "./visual/stand-in.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
+/** The length of the trial, from the plans data the screens read (apps/web/lib/plan/plans.draft.json, a copy of packages/plans/plans.json). */
+const DAYS = JSON.parse(readFileSync(path.join(HERE, "..", "apps", "web", "lib", "plan", "plans.draft.json"), "utf8")).trial.days;
 const WEB_DIR = path.join(HERE, "..", "apps", "web");
 const require = createRequire(import.meta.url);
 const { chromium } = require(path.join(WEB_DIR, "node_modules", "playwright-core"));
@@ -53,9 +55,9 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // state;plan;method;day;minutes;messages;cancelled  (lib/plan/mock.ts; the plan ids are those of packages/plans/plans.json)
 const SCENARIOS = [
-  { id: "none", cookie: null, has: ["No plan yet", "Start 30-day trial", "0 of 30", "0 of 100"], hasNot: [] },
-  { id: "trial-day1", cookie: "trialing;growth;test_ok;1;0;0;0", has: ["Plan: Growth", "Day 1 of 30 of your trial", "30 days left", "Price coming soon", "0 of 30", "0 of 100", "Cancel trial", "Change plan"], hasNot: ["Calls and announcements are paused", "You have used"] },
-  { id: "trial-80", cookie: "trialing;growth;test_ok;12;4;80;0", has: ["Day 12 of 30 of your trial", "19 days left", "80 of 100", "You have used 80% of your WhatsApp messages."], hasNot: ["Calls and announcements are paused"] },
+  { id: "none", cookie: null, has: ["No plan yet", `Start ${DAYS}-day trial`, "0 of 30", "0 of 100"], hasNot: [] },
+  { id: "trial-day1", cookie: "trialing;growth;test_ok;1;0;0;0", has: ["Plan: Growth", `Day 1 of ${DAYS} of your trial`, `${DAYS} days left`, "Price coming soon", "0 of 30", "0 of 100", "Cancel trial", "Change plan"], hasNot: ["Calls and announcements are paused", "You have used"] },
+  { id: "trial-80", cookie: "trialing;growth;test_ok;12;4;80;0", has: [`Day 12 of ${DAYS} of your trial`, `${DAYS - 11} days left`, "80 of 100", "You have used 80% of your WhatsApp messages."], hasNot: ["Calls and announcements are paused"] },
   { id: "trial-100", cookie: "trialing;growth;test_ok;20;30;100;0", has: ["Calls and announcements are paused", "Quotes, orders, follow-ups and your customers keep working as usual"], hasNot: ["You have used 80%"] },
   { id: "trial-last-day", cookie: "trialing;growth;test_ok;30;10;20;0", has: ["1 day left"], hasNot: ["1 days left"] },
   { id: "active", cookie: "active;business;test_ok;5;120;900;0", has: ["Plan: Business", "Active", "120 of 300", "900 of 3,000"], hasNot: ["days left"] },
@@ -65,7 +67,7 @@ const SCENARIOS = [
   { id: "read-only", cookie: "cancelled;growth;test_ok;30;0;0;0;1", has: ["Read only", "Your workspace is read-only", "look at everything and export it", "Your data is kept until", "To go on, write to billing@stack19.com."], hasNot: ["Cancel trial", "Change plan", "Choose a plan", "Start 30-day trial", "Your plan was cancelled."] },
   { id: "past-due", cookie: "past_due;growth;test_fails;30;0;0;0", has: ["Payment failed", "Your last payment did not go through", "Update payment method"], hasNot: [] },
   { id: "active-cancelled", cookie: "active;growth;test_ok;5;10;20;1", has: ["Plan: Growth", "It will not renew."], hasNot: ["Cancel plan"] },
-  { id: "cancelled-in-trial", cookie: "cancelled;growth;test_ok;6;0;0;1", has: ["Your trial was cancelled. Nothing was charged.", "Choose a plan"], hasNot: ["Cancel trial", "Start 30-day trial"] },
+  { id: "cancelled-in-trial", cookie: "cancelled;growth;test_ok;6;0;0;1", has: ["Your trial was cancelled. Nothing was charged.", "Choose a plan"], hasNot: ["Cancel trial", `Start ${DAYS}-day trial`] },
 ];
 const LANG_SCENARIO = SCENARIOS.find((s) => s.id === "trial-80");
 
@@ -204,20 +206,20 @@ async function main() {
       const tag = `light-${sizeName}`;
       const { context, page, errors } = await open({ scheme: "light", sizeName, lang: "en", cookie: null });
       await page.goto(`${WEB_URL}/app/tenants/${TENANT}/plans`, { waitUntil: "networkidle" });
-      await page.getByRole("radio", { name: "Start the 30-day trial of Growth" }).check();
-      await page.getByRole("button", { name: "Start the 30-day trial of Growth" }).click();
+      await page.getByRole("radio", { name: `Start the ${DAYS}-day trial of Growth` }).check();
+      await page.getByRole("button", { name: `Start the ${DAYS}-day trial of Growth` }).click();
       await page.getByText("Choose a payment method to start the trial.").waitFor({ timeout: 15000 });
       await save(page, "walk-1-needs-method", tag, "walk: starting without a payment method is refused in words");
       await page.getByRole("radio", { name: "Test card that fails on renewal" }).check();
-      await page.getByRole("button", { name: "Start the 30-day trial of Growth" }).click();
-      await page.getByText(/Your 30-day trial of Growth has started/).waitFor({ timeout: 15000 });
+      await page.getByRole("button", { name: `Start the ${DAYS}-day trial of Growth` }).click();
+      await page.getByText(new RegExp(`Your ${DAYS}-day trial of Growth has started`)).waitFor({ timeout: 15000 });
       await save(page, "walk-2-started", tag, "walk: the trial has started");
       await page.goto(settingsUrl, { waitUntil: "networkidle" });
-      check((await page.locator("main").innerText()).includes("30 days left"), `${tag} walk: not 30 days left after starting`);
+      check((await page.locator("main").innerText()).includes(`${DAYS} days left`), `${tag} walk: not ${DAYS} days left after starting`);
       await save(page, "walk-3-trial", tag, "walk: Settings > Plan on day 1");
-      await page.getByRole("button", { name: "Test only: jump to day 30" }).click();
+      await page.getByRole("button", { name: "Test only: jump to the last day" }).click();
       await page.getByText("Your last payment did not go through").waitFor({ timeout: 15000 });
-      await save(page, "walk-4-past-due", tag, "walk: day 30 with a card that fails: the failed-payment state");
+      await save(page, "walk-4-past-due", tag, "walk: the last day with a card that fails: the failed-payment state");
       await page.getByRole("button", { name: "Update payment method" }).click();
       await page.getByText("Active", { exact: true }).waitFor({ timeout: 15000 });
       await save(page, "walk-5-active", tag, "walk: payment updated, the plan is active");

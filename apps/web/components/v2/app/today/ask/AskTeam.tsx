@@ -4,8 +4,11 @@ import { ArrowRight, Mic, Send, Square, Volume2, X } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
-import { AgentOwl } from "../../owl/AgentOwl";
-import { owlMood, type OwlMood } from "../../owl/owl-mood";
+import { Orb } from "@/components/v2/Orb";
+import { AgentOrb } from "../../mark/AgentOrb";
+import { orbStateOf } from "../../mark/AgentMark";
+import { useCollapsed } from "../../use-collapsed";
+import { aiMood, type AiMood } from "../../mark/mood";
 import { defaultAutoplay, makeAnswerPlayer, markNoticeSeen, noticeSeen, readAutoplay, saveAutoplay, subscribeStore, type AnswerPlayer } from "./answer-audio";
 import { ERROR_CODES, type AskDraft, type AskEvent, type AskSource, type AskTransport, type Availability, type VoiceStatus, type VoiceTransport } from "./ask-types";
 import { AskCapabilities } from "./AskCapabilities";
@@ -14,6 +17,7 @@ import { useFollowAnswer } from "./use-follow-answer";
 import { canRecord, clock } from "./recorder";
 import { fetchVoiceStatus, makeAskTransport, makeVoiceTransport } from "./transport";
 import { useRecorder, type RecorderProblem } from "./use-recorder";
+import { VoiceMode, type VoicePhase } from "./VoiceMode";
 
 const MAX_QUESTION = 500;
 const MAX_ANSWER = 8000;
@@ -58,7 +62,7 @@ const NONE: VoiceStatus = { available: false, speech: false };
  * person's own message, then the written answer, and the spoken answer when one was asked for. It is drawn only when the API says voice is on and the browser can record: no dead button.
  * While there is no Agent OWL to ask (it is not built, its switch is off, or the answer stream does not exist yet) the box says so and offers nothing to press.
  */
-export function AskTeam({ lang, base, words, availability, transport: given, voiceStatus: givenStatus, voiceTransport: givenVoice, variant = "box", onMood, chips: chipTexts }: { lang: string; base: string; words: AskWords; availability: Availability; transport?: AskTransport | null; /** Whether voice is on (tests give it; otherwise the box asks `<base>/ask/voice`). */ voiceStatus?: VoiceStatus | null; /** The recording's transport (tests give it; otherwise `<base>/ask/voice`). */ voiceTransport?: VoiceTransport | null; /** `box`: the card with the owl in its header. `hero`: only the question line, the chips and the answer, for the Agent OWL card of Today (the owl is drawn by the card, which learns the mood from `onMood`). */ variant?: "box" | "hero"; onMood?: (mood: OwlMood) => void; /** The suggestion chips, when the caller chooses them (`hero`: three). */ chips?: readonly string[] }) {
+export function AskTeam({ lang, base, words, availability, transport: given, voiceStatus: givenStatus, voiceTransport: givenVoice, variant = "box", onMood, chips: chipTexts }: { lang: string; base: string; words: AskWords; availability: Availability; transport?: AskTransport | null; /** Whether voice is on (tests give it; otherwise the box asks `<base>/ask/voice`). */ voiceStatus?: VoiceStatus | null; /** The recording's transport (tests give it; otherwise `<base>/ask/voice`). */ voiceTransport?: VoiceTransport | null; /** `box`: the card with the owl in its header. `hero`: only the question line, the chips and the answer, for the Agent OWL card of Today (the owl is drawn by the card, which learns the mood from `onMood`). */ variant?: "box" | "hero"; onMood?: (mood: AiMood) => void; /** The suggestion chips, when the caller chooses them (`hero`: three). */ chips?: readonly string[] }) {
   const w = (key: string) => words[key] ?? key;
   const own = React.useMemo(() => (availability === "live" && given === undefined ? makeAskTransport(`${base}/ask`) : null), [availability, given, base]);
   const transport = given === undefined ? own : given;
@@ -72,6 +76,8 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
   const [problem, setProblem] = React.useState<Problem>(null);
   const [errorCode, setErrorCode] = React.useState<string | null>(null);
   const [focused, setFocused] = React.useState(false);
+  const [voiceOpen, setVoiceOpen] = React.useState(false); // voice mode (job DM): the full-screen circle over the box, opened by the microphone
+  const [menuCollapsed] = useCollapsed(); // the menu beside the page decides where the bottom bar starts on a laptop
   const abort = React.useRef<AbortController | null>(null);
   const player = React.useRef<AnswerPlayer | null>(null);
   const [heardByVoice, setHeardByVoice] = React.useState(false);
@@ -145,20 +151,31 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
   React.useEffect(() => {
     if (recorder.state !== "recording") return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") recorder.cancel();
+      if (e.key === "Escape") {
+        recorder.cancel();
+        setVoiceOpen(false);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [recorder]);
+  React.useEffect(() => {
+    if (!voiceOpen || recorder.state !== "idle") return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setVoiceOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [voiceOpen, recorder.state]);
 
-  const mood = owlMood({ live, typing: focused && text.trim() !== "", micOn: recording, speaking: playing, phase, hasText: answer !== "", errorCode });
+  const mood = aiMood({ live, typing: focused && text.trim() !== "", micOn: recording, speaking: playing, phase, hasText: answer !== "", errorCode });
   React.useEffect(() => {
     onMood?.(mood);
   }, [mood, onMood]);
   const hero = variant === "hero";
   const title = hero ? null : (
     <div className="flex items-center gap-3 sm:gap-4">
-      <AgentOwl mood={mood} name={w("agent.main")} moodText={w(`owl.mood.${mood}`)} />
+      <AgentOrb mood={mood} name={w("agent.main")} moodText={w(`owl.mood.${mood}`)} />
       <div className="min-w-0">
         <h2 id="ask-heading" className="font-display text-xl font-semibold leading-tight">
           {w("ask.title")}
@@ -275,6 +292,7 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
     abort.current?.abort(); // a new question ends the old answer
     player.current?.stop();
     setProblem(null);
+    setVoiceOpen(true);
     void recorder.start();
   };
   // A finger held on the microphone is hold-to-talk (let go to send); a quick tap starts, and the next tap stops. A mouse or the keyboard always taps (click).
@@ -303,14 +321,17 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
     else if (recorder.state === "idle") startVoice();
   };
 
+  // voice mode: what it shows follows the recorder (listening), the request (thinking) and the answer (its last words, while it streams and when it is read out)
+  const voicePhase: VoicePhase = recorder.state === "starting" ? "starting" : recorder.state === "recording" ? "listening" : phase === "asking" ? (answer ? "answering" : "thinking") : playing ? "answering" : phase === "error" || problem ? "error" : "done";
+  const voiceCaption = problem || phase === "error" ? w("ask.voice.mode.problem") : "";
   const chips = chipTexts ?? [w("ask.chip.needs"), w("ask.chip.quotes"), w("ask.chip.money"), w("ask.chip.team")];
   const asking = phase === "asking";
   const Shell = hero ? "div" : "section";
   const shellProps = hero ? { "data-ask": "live" } : { "aria-labelledby": "ask-heading", "data-ask": "live", className: `${card} mx-auto mb-8 max-w-3xl p-4 sm:p-5` };
   // hero: on a phone the question line is fixed above the bottom bar (64 px and the safe area), on a laptop it sits in the card
-  const formClass = hero
-    ? "flex items-center gap-2 max-md:fixed max-md:inset-x-0 max-md:bottom-[calc(4rem+env(safe-area-inset-bottom))] max-md:z-30 max-md:border-t max-md:border-line max-md:bg-bg max-md:px-4 max-md:py-2.5"
-    : "mt-4 flex items-stretch gap-2";
+  // job DM: the question line is a bar at the BOTTOM of the screen on every size: above the bottom bar on a phone, floating over the page from the edge of the menu on a laptop (the page keeps room for it)
+  const heroBar = "flex items-center gap-2 fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 border-t border-line bg-bg px-4 py-2.5 md:inset-x-auto md:right-6 md:bottom-4 md:rounded-[18px] md:border md:bg-surface md:px-3 md:py-2 md:shadow-[0_10px_30px_rgba(30,30,36,0.08)]";
+  const formClass = hero ? `${heroBar} ${menuCollapsed ? "md:left-[calc(72px+1.5rem)]" : "md:left-[calc(16rem+1.5rem)]"}` : "mt-4 flex items-stretch gap-2";
   const inputClass = hero
     ? "min-h-12 min-w-0 flex-1 rounded-full border border-edge bg-bg px-5 text-base text-ink placeholder:text-muted focus:border-brand-edge md:min-h-14 md:bg-bg"
     : "min-h-12 min-w-0 flex-1 rounded-lg border border-edge bg-surface px-3 text-base text-ink placeholder:text-muted focus:border-brand-edge";
@@ -325,6 +346,7 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
           void ask(text);
         }}
       >
+        {hero ? <Orb px={32} state={orbStateOf(mood)} /> : null}
         <label htmlFor="ask-input" className="sr-only">
           {w("ask.label")}
         </label>
@@ -507,6 +529,24 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
             </ul>
           ) : null}
         </div>
+      ) : null}
+      {voiceOpen ? (
+        <VoiceMode
+          phase={voicePhase}
+          caption={voiceCaption}
+          left={recorder.state === "recording" ? recorder.left : null}
+          words={{ title: w("ask.voice.mode"), listening: w("ask.voice.mode.listening"), starting: w("ask.voice.mode.starting"), thinking: w("ask.voice.mode.thinking"), speaking: w("ask.voice.mode.answering"), done: w("ask.voice.done"), show: w("ask.voice.show"), cancel: w("ask.voice.mode.cancel"), tap: w("ask.voice.tap"), close: w("ask.voice.close") }}
+          onTapOrb={() => (recorder.state === "recording" ? recorder.stop() : recorder.state === "idle" ? startVoice() : undefined)}
+          onDone={() => recorder.stop()}
+          onCancel={() => {
+            recorder.cancel();
+            setVoiceOpen(false);
+          }}
+          onClose={() => {
+            if (recorder.state !== "idle") recorder.cancel();
+            setVoiceOpen(false);
+          }}
+        />
       ) : null}
     </Shell>
   );

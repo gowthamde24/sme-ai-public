@@ -2,7 +2,7 @@
  * The Help guides (job BT): which guides there are, the owl's mood for each, the screen each one opens, and which are English-only. The words are in the string store (`help.guide.<id>.t / .s / .1 ... .go`,
  * `help.tip.<screen>.1 ...`); a guide about what was sent, what is blocked, consent or erasure is English in every language until a person reviews it (`humanOnly` there, `englishOnly` here).
  */
-import type { OwlMood } from "@/components/v2/app/owl/owl-mood";
+import type { AiMood } from "@/components/v2/app/mark/mood";
 
 export const GUIDE_IDS = ["today", "approve", "visits", "catalogue", "outbox", "agent", "voice", "privacy"] as const;
 export type GuideId = (typeof GUIDE_IDS)[number];
@@ -11,7 +11,7 @@ export type Guide = {
   id: GuideId;
   /** The number of numbered steps. */
   steps: number;
-  mood: OwlMood;
+  mood: AiMood;
   /** Where the guide's button goes, relative to the workspace ("" = Today). */
   path: string;
   /** English in every language (money, consent, what was sent, erasure: not machine-translated). */

@@ -88,7 +88,7 @@ describe("AskTeam: asking", () => {
     box(playing([{ type: "text", delta: '<img src=x onerror="alert(1)"> **bold** <b>b</b>' }, { type: "done" }]));
     ask("x");
     await waitFor(() => expect(screen.getByText(/onerror/)).toBeInTheDocument());
-    expect(document.querySelector("img:not(.plush-still)")).toBeNull(); // the answer's markup is never run (the owl's own still picture is not part of it)
+    expect(document.querySelector("img")).toBeNull(); // the answer's markup is never run
     expect(document.querySelector("b")).toBeNull();
   });
   it("says it is working until the first word arrives", async () => {
@@ -266,7 +266,7 @@ describe("AskTeam: the real Agent OWL's shapes (Job AG)", () => {
 });
 
 describe("AskTeam: sources wrap, and the owl follows the box", () => {
-  const owlOf = () => document.querySelector(".plush")!.getAttribute("data-mood");
+  const owlOf = () => document.querySelector("[data-mood]")!.getAttribute("data-mood");
   it("a long source label is shown whole and may wrap, as a link and as a plain label", async () => {
     const long = "Quote Q-2041 · Pooja Sarees · total ₹12,48,500.00 incl. GST, advance ₹3,00,000.00 received, balance ₹9,48,500.00 due on dispatch";
     box(playing([{ type: "text", delta: "Ok." }, { type: "source", label: long, href: `${B}/quotes` }, { type: "source", label: `${long} (company)`, href: null }, { type: "done" }]));

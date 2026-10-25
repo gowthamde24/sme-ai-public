@@ -49,14 +49,21 @@ describe("honesty: no claims we cannot prove today", () => {
     }
   }
   const en = dictFor(site, "en") as Record<string, string>;
-  it("the English home copy says what it must: money talk waits for the owner, the trial can be cancelled before it ends, and sign-up is open", () => {
-    expect(en["hero.sub"]).toMatch(/Anything about money waits for your OK/);
-    expect(en["hero.h1"]).toBe("Every enquiry answered. Every quote sent. Every rupee followed up.");
+  it("the English home copy says what it must: the owner approves money and campaigns, the trial is 14 days from the day WhatsApp is connected and can be cancelled before it ends, and AI calls are early access (and nothing else is)", () => {
+    expect(en["hm.ctl.d"]).toMatch(/money reminders and discounts wait for your approval/);
+    expect(en["hero.h1"]).toBe("Your AI workforce for Indian SMEs.");
     expect(en["home.price.text"]).toMatch(/Cancel before the trial ends and you pay nothing/);
-    expect(en["hero.note"]).toMatch(/Cancel before the trial ends and you pay nothing/);
-    for (const k of Object.keys(en)) expect(en[k], k).not.toMatch(/invitation only|by invitation|early access/i); // sign-up is open (Job AC review)
-    expect(en["hero.cta"]).toBe("Start your 30-day trial");
-    expect(en["cta.start"]).toBe("Start your trial");
+    expect(en["hero.note"]).toMatch(/14 days to try it, counted from the day your WhatsApp is connected\. Cancel before the trial ends and you pay nothing/);
+    expect(en["hm.start.trial"]).toBe("Your 14-day trial starts the day your WhatsApp is connected, not the day you sign up.");
+    // "early access" is said only where it is true: the AI calls (job DM); nothing says sign-up is by invitation
+    const EARLY_OK = new Set(["hm.demo.note", "hm.wf.early", "hm.vc.eyebrow", "hm.vc.sub", "hm.vc.note", "hm.pl.cta.calls"]);
+    for (const k of Object.keys(en)) {
+      expect(en[k], k).not.toMatch(/invitation only|by invitation/i);
+      if (!EARLY_OK.has(k)) expect(en[k], k).not.toMatch(/early access/i);
+    }
+    expect(en["hero.cta"]).toBe("Start your 14-day trial");
+    expect(en["cta.start"]).toBe("Start 14-day trial");
+    for (const k of Object.keys(en)) expect(en[k], k).not.toMatch(/30-day|30 days|day 30/);
   });
   it("never says the trial needs no card, and holds no price in any website or sign-in string (job CX: the owner decides prices after usage tests)", () => {
     for (const set of [site, login] as unknown as Record<string, Entry>[])

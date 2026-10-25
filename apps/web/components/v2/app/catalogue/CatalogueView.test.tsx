@@ -125,7 +125,7 @@ describe("empty, no match, and unreadable", () => {
   it("an empty catalogue shows the owl and 'Add your first saree' (with the button for the owner and admin)", () => {
     show({ items: [] });
     expect(screen.getByRole("heading", { name: "Add your first saree" })).toBeInTheDocument();
-    expect(document.querySelector("[data-state=empty] img[data-plush-avatar]")).not.toBeNull();
+    expect(document.querySelector("[data-state=empty] [data-orb]")).not.toBeNull();
     expect(screen.getAllByRole("link", { name: "Add a saree" })).toHaveLength(1); // one call to action, not two
   });
 

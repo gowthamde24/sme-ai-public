@@ -1,12 +1,13 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+import { AgentMark } from "@/components/v2/app/mark/AgentMark";
+import { OrbMark } from "@/components/v2/app/mark/OrbMark";
 import { PackProp } from "@/components/v2/auth/PackCard";
 import { JsonLd, faqLd } from "@/components/v2/site/JsonLd";
 import { PaverCalculator } from "@/components/v2/site/LazyIslands";
 import type { CalcWords } from "@/components/v2/site/PaverCalculator";
 import { CtaBand, FaqList, FeatureGrid, OWLS, Section } from "@/components/v2/site/sections";
-import { SiteOwl } from "@/components/v2/site/SiteOwl";
 import { btnPrimary, card, chip, container, eyebrow, lead, linkQuiet } from "@/components/v2/site/ui";
 import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
@@ -49,7 +50,7 @@ export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT;
         </div>
         <div className="relative flex justify-center lg:justify-end">
           <span className="relative">
-            <SiteOwl agent="main" px={176} smPx={224} priority className="size-44 sm:size-56" />
+            <OrbMark px={224} mood="idle" className="size-44 sm:size-56" />
             <span data-accent={pack.accent} aria-hidden="true" className="absolute -bottom-1 -right-3 grid size-12 place-items-center rounded-full border-2 border-bg bg-pack-bg text-pack-text">
               <PackProp owlProp={pack.owlProp} className="size-6" />
             </span>
@@ -71,7 +72,7 @@ export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT;
         <ol className="flex flex-col gap-3" data-part="day">
           {pack.day.steps.map((s, i) => (
             <li key={i} className={`${card} flex items-start gap-4`}>
-              <SiteOwl agent={OWLS.includes(s.owl) ? s.owl : "main"} px={56} className="size-14" />
+              <AgentMark agent={OWLS.includes(s.owl) ? s.owl : undefined} px={56} className="size-14" />
               <div>
                 <p className="text-sm font-semibold text-muted">
                   <span className="tabular-nums">{s.time}</span> · {owlName(pack, s.owl, lang) ?? ""}

@@ -1,8 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import { PlushStill } from "../owl/PlushStill";
-import { StateDot } from "../owl/StateDot";
+import { AgentMark } from "../mark/AgentMark";
+import { StateDot } from "../mark/StateDot";
 import { ago, indiaClock } from "./time";
 import type { AgentRow, StoreVisit, T, TodayData } from "./types";
 
@@ -105,7 +105,7 @@ export function TeamSection({ team, base, t, now }: { team: readonly AgentRow[] 
         <ul className="grid grid-cols-2 gap-3 min-[420px]:grid-cols-3">
           {helpers.map((a) => (
             <li key={a.agent} className="flex min-w-0 flex-col items-center gap-1 text-center">
-              <PlushStill agent={a.agent} px={48} off={a.state !== "working" && a.state !== "idle"} mood={a.state === "working" ? "thinking" : a.state === "idle" ? "idle" : "resting"} className="size-12" />
+              <AgentMark agent={a.agent} px={48} off={a.state !== "working" && a.state !== "idle"} mood={a.state === "working" ? "thinking" : a.state === "idle" ? "idle" : "resting"} className="size-12" />
               <span className="inline-flex items-center gap-1.5 text-sm font-semibold">
                 <StateDot state={a.state === "working" ? "working" : a.state === "idle" ? "idle" : "off"} />
                 {t(`agent.${a.agent}`)}

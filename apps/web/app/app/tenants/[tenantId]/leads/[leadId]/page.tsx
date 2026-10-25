@@ -12,6 +12,8 @@ import { fetchLeadContactId } from "@/lib/api/lead-contact";
 import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
 import { ContactLead } from "@/components/v2/app/contact/ContactLead";
+import { OutcomesPanel } from "@/components/v2/app/outcomes/OutcomesPanel";
+import { readCustomerOutcomes } from "@/lib/outcomes/source";
 import { getLang } from "@/i18n/get-lang";
 import { wordsFor } from "@/i18n/app-words";
 
@@ -19,6 +21,7 @@ import { EnquiriesPanel } from "../../enquiries/enquiries-panel";
 import { indiaNowLocal } from "../../followups/followup-logic";
 import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
+import { correctOutcomeAction } from "../../outcome-actions";
 import { contactWhatsAppAction, requestCallAction } from "./contact-actions";
 import { contactWords } from "./contact-words";
 import { recordSentMessageAction } from "./sent-message-actions";
@@ -138,6 +141,8 @@ export default async function LeadPage({
   const originKey = `lead.origin.${lead.created_via}` as "lead.origin.manual";
   const statusText = lead.status in { new: 1, in_review: 1, qualified: 1, disqualified: 1 } ? t(statusKey) : lead.status;
   const originText = lead.created_via in { manual: 1, import: 1, agent: 1 } ? t(originKey) : lead.created_via;
+  // what happened after each call and follow-up (job DM): drawn only when the flag is on (OUTCOME_SCREENS); the owner and an Admin may correct a result
+  const outcomesRead = await readCustomerOutcomes({ token: user.accessToken, tenantId }, leadId);
   const sentId = crypto.randomUUID(); // one id per render: a second press of "Record this" is a retry
   const reviewIds = Object.fromEntries(
     (claims ?? []).map((c) => [c.id, { accept: crypto.randomUUID(), reject: crypto.randomUUID() }]),
@@ -186,6 +191,15 @@ export default async function LeadPage({
             <dd>{originText}</dd>
           </dl>
         </section>
+
+        {outcomesRead.mode === "off" ? null : (
+          <OutcomesPanel
+            words={wordsFor(lang, ["outcome."], ["frame.notyet"])}
+            lang={lang}
+            outcomes={outcomesRead.mode === "ok" ? outcomesRead.data : null}
+            correct={tenant.role === "owner" || tenant.role === "admin" ? correctOutcomeAction.bind(null, tenantId) : null}
+          />
+        )}
 
         <EnquiriesPanel
           words={words}

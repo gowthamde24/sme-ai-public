@@ -1006,10 +1006,10 @@
   }
  },
  "office.sub": {
-  "en": "Your team around one table. Agent OWL sits at the head.",
-  "te": "ఒక టేబుల్ చుట్టూ మీ టీమ్. Agent OWL టేబుల్ తలభాగంలో కూర్చుంటుంది.",
-  "hi": "एक मेज़ के चारों ओर आपकी टीम। Agent OWL सबसे आगे बैठता है।",
-  "kn": "ಒಂದು ಟೇಬಲ್ ಸುತ್ತ ನಿಮ್ಮ ಟೀಮ್. Agent OWL ತಲೆಯ ಸ್ಥಾನದಲ್ಲಿ ಕುಳಿತಿದೆ.",
+  "en": "Your AI team and what each one is doing.",
+  "te": "మీ AI టీమ్, ఒక్కొక్కరు ఇప్పుడు ఏం చేస్తున్నారు.",
+  "hi": "आपकी AI टीम और हर कोई अभी क्या कर रहा है।",
+  "kn": "ನಿಮ್ಮ AI ತಂಡ, ಪ್ರತಿಯೊಬ್ಬರು ಈಗ ಏನು ಮಾಡುತ್ತಿದ್ದಾರೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1039,10 +1039,10 @@
   }
  },
  "office.pick": {
-  "en": "Tap a teammate in the room, or choose one in the list, to read their latest events here.",
-  "te": "రూమ్‌లో లేదా లిస్ట్‌లో ఒక టీమ్ సభ్యుడిని ఎంచుకుంటే, వారి తాజా ఈవెంట్లు ఇక్కడ కనిపిస్తాయి.",
-  "hi": "रूम में या लिस्ट में किसी साथी को चुनें, उनकी ताज़ा घटनाएँ यहाँ दिखेंगी।",
-  "kn": "ರೂಮ್‌ನಲ್ಲಿ ಅಥವಾ ಲಿಸ್ಟ್‌ನಲ್ಲಿ ಒಬ್ಬ ಸಹೋದ್ಯೋಗಿಯನ್ನು ಆರಿಸಿ, ಅವರ ಇತ್ತೀಚಿನ ಘಟನೆಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
+  "en": "Tap a teammate on the board, or choose one in the list, to read their latest events here.",
+  "te": "బోర్డ్‌లో ఒక సహచరుడిని టాప్ చేయండి, లేదా లిస్ట్‌లో ఎంచుకోండి, వాళ్ల తాజా ఈవెంట్లు ఇక్కడ చదవవచ్చు.",
+  "hi": "बोर्ड पर या लिस्ट में किसी साथी को चुनें, उनकी ताज़ा घटनाएँ यहाँ दिखेंगी।",
+  "kn": "ಬೋರ್ಡ್‌ನಲ್ಲಿ ಅಥವಾ ಲಿಸ್ಟ್‌ನಲ್ಲಿ ಒಬ್ಬ ಸಹೋದ್ಯೋಗಿಯನ್ನು ಆರಿಸಿ, ಅವರ ಇತ್ತೀಚಿನ ಘಟನೆಗಳು ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1149,10 +1149,10 @@
   }
  },
  "office.viewroom": {
-  "en": "Office view",
-  "te": "ఆఫీస్ వ్యూ",
-  "hi": "ऑफिस व्यू",
-  "kn": "ಆಫೀಸ್ ವ್ಯೂ",
+  "en": "Board view",
+  "te": "బోర్డ్ వ్యూ",
+  "hi": "बोर्ड व्यू",
+  "kn": "ಬೋರ್ಡ್ ವ್ಯೂ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1192,17 +1192,6 @@
    "kn": "draft"
   }
  },
- "office.still": {
-  "en": "Your device asks for less motion, so the owls are still pictures.",
-  "te": "మీ డివైస్ తక్కువ కదలిక అడుగుతోంది, అందుకే గుడ్లగూబలు స్థిర చిత్రాలుగా ఉన్నాయి.",
-  "hi": "आपका डिवाइस कम मूवमेंट माँग रहा है, इसलिए उल्लू स्थिर तस्वीरें हैं।",
-  "kn": "ನಿಮ್ಮ ಡಿವೈಸ್ ಕಡಿಮೆ ಚಲನೆ ಕೇಳುತ್ತಿದೆ, ಆದ್ದರಿಂದ ಗೂಬೆಗಳು ಸ್ಥಿರ ಚಿತ್ರಗಳಾಗಿವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "office.feed": {
   "en": "Event feed",
   "te": "ఈవెంట్ ఫీడ్",
@@ -1215,10 +1204,10 @@
   }
  },
  "office.listintro": {
-  "en": "The same information as the office picture, as text.",
-  "te": "ఆఫీస్ చిత్రంలోని అదే సమాచారం, టెక్స్ట్‌గా.",
-  "hi": "ऑफिस की तस्वीर वाली वही जानकारी, टेक्स्ट में।",
-  "kn": "ಆಫೀಸ್ ಚಿತ್ರದ ಅದೇ ಮಾಹಿತಿ, ಪಠ್ಯವಾಗಿ.",
+  "en": "The same information as the board, as text.",
+  "te": "బోర్డ్‌లోని సమాచారమే, టెక్స్ట్‌గా.",
+  "hi": "बोर्ड वाली वही जानकारी, टेक्स्ट में।",
+  "kn": "ಬೋರ್ಡ್‌ನಲ್ಲಿರುವ ಅದೇ ಮಾಹಿತಿ, ಪಠ್ಯವಾಗಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -33831,10 +33820,10 @@
   }
  },
  "team.sub": {
-  "en": "Who is in your business, and who is invited. Each person has their own owl.",
-  "te": "మీ వ్యాపారంలో ఎవరున్నారు, ఎవరిని పిలిచారు. ప్రతి ఒక్కరికీ వారి సొంత గుడ్లగూబ ఉంటుంది.",
-  "hi": "आपके व्यापार में कौन है और किसे बुलाया गया है। हर किसी का अपना उल्लू है।",
-  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದಲ್ಲಿ ಯಾರಿದ್ದಾರೆ, ಯಾರನ್ನು ಕರೆದಿದ್ದೀರಿ. ಪ್ರತಿಯೊಬ್ಬರಿಗೂ ಅವರದೇ ಗೂಬೆ ಇದೆ.",
+  "en": "Who is in your business, and who is invited.",
+  "te": "మీ వ్యాపారంలో ఎవరున్నారు, ఎవరిని పిలిచారు.",
+  "hi": "आपके कारोबार में कौन है और किसे बुलाया गया है।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದಲ್ಲಿ ಯಾರಿದ್ದಾರೆ, ಯಾರನ್ನು ಆಹ್ವಾನಿಸಲಾಗಿದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53082,9 +53071,9 @@
  },
  "ask.can.step.1.t": {
   "en": "Find leads",
-  "te": "లీడ్‌లు వెతకడం",
+  "te": "లీడ్స్ వెతకడం",
   "hi": "लीड ढूँढना",
-  "kn": "ಲೀಡ್ ಹುಡುಕುವುದು",
+  "kn": "ಲೀಡ್ಸ್ ಹುಡುಕುವುದು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53092,10 +53081,10 @@
   }
  },
  "ask.can.step.1.d": {
-  "en": "New buyers nearby (shops, contractors, builders), plus every WhatsApp message, missed call and website enquiry captured.",
-  "te": "దగ్గరలోని కొత్త కొనుగోలుదారులు (షాపులు, కాంట్రాక్టర్లు, బిల్డర్లు), ప్లస్ ప్రతి వాట్సాప్ మెసేజ్, మిస్డ్ కాల్, వెబ్‌సైట్ ఎంక్వయిరీ నమోదు.",
-  "hi": "आसपास के नए खरीदार (दुकानें, ठेकेदार, बिल्डर), और हर व्हाट्सऐप मैसेज, मिस्ड कॉल और वेबसाइट पूछताछ दर्ज।",
-  "kn": "ಹತ್ತಿರದ ಹೊಸ ಖರೀದಿದಾರರು (ಅಂಗಡಿಗಳು, ಗುತ್ತಿಗೆದಾರರು, ಬಿಲ್ಡರ್‌ಗಳು), ಜೊತೆಗೆ ಪ್ರತಿ ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್, ಮಿಸ್ಡ್ ಕಾಲ್, ವೆಬ್‌ಸೈಟ್ ವಿಚಾರಣೆ ದಾಖಲು.",
+  "en": "Finds new leads and picks up every enquiry call and message, day or night.",
+  "te": "కొత్త లీడ్స్‌ని వెతుకుతుంది. పగలూ రాత్రీ ప్రతి ఎంక్వయిరీ కాల్, మెసేజ్ అందుకుంటుంది.",
+  "hi": "नए लीड ढूँढता है और दिन-रात हर पूछताछ का कॉल और मैसेज उठाता है।",
+  "kn": "ಹೊಸ ಲೀಡ್ಸ್ ಹುಡುಕುತ್ತದೆ. ಹಗಲೂ ರಾತ್ರಿ ಪ್ರತಿ ವಿಚಾರಣೆಯ ಕಾಲ್, ಮೆಸೇಜ್ ಎತ್ತಿಕೊಳ್ಳುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53104,9 +53093,9 @@
  },
  "ask.can.step.1.y": {
   "en": "You: nothing",
-  "te": "మీరు: ఏమీ లేదు",
+  "te": "మీరు: ఏమీ చేయక్కర్లేదు",
   "hi": "आप: कुछ नहीं",
-  "kn": "ನೀವು: ಏನೂ ಇಲ್ಲ",
+  "kn": "ನೀವು: ಏನೂ ಬೇಡ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53115,9 +53104,9 @@
  },
  "ask.can.step.2.t": {
   "en": "Research",
-  "te": "పరిశీలన",
-  "hi": "जाँच-पड़ताल",
-  "kn": "ಪರಿಶೀಲನೆ",
+  "te": "రీసెర్చ్",
+  "hi": "रिसर्च",
+  "kn": "ರಿಸರ್ಚ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53125,10 +53114,10 @@
   }
  },
  "ask.can.step.2.d": {
-  "en": "Checks the business before you call or quote.",
-  "te": "మీరు కాల్ చేసే ముందు, కోట్ ఇచ్చే ముందు వ్యాపారాన్ని పరిశీలిస్తుంది.",
-  "hi": "आपके कॉल या कोटेशन से पहले कारोबार की जाँच करता है।",
-  "kn": "ನೀವು ಕಾಲ್ ಮಾಡುವ ಅಥವಾ ಕೊಟೇಶನ್ ಕೊಡುವ ಮೊದಲು ವ್ಯಾಪಾರವನ್ನು ಪರಿಶೀಲಿಸುತ್ತದೆ.",
+  "en": "Researches each lead: what they need, their budget and their history with you.",
+  "te": "ప్రతి లీడ్ గురించి రీసెర్చ్ చేస్తుంది: వాళ్లకేం కావాలి, బడ్జెట్ ఎంత, మీతో ఇంతకుముందు ఏం జరిగింది.",
+  "hi": "हर लीड के बारे में रिसर्च करता है: उन्हें क्या चाहिए, बजट कितना है और आपके साथ पहले क्या हुआ।",
+  "kn": "ಪ್ರತಿ ಲೀಡ್ ಬಗ್ಗೆ ರಿಸರ್ಚ್ ಮಾಡುತ್ತದೆ: ಅವರಿಗೆ ಏನು ಬೇಕು, ಬಜೆಟ್ ಎಷ್ಟು, ನಿಮ್ಮೊಂದಿಗೆ ಹಿಂದೆ ಏನಾಯಿತು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53137,9 +53126,9 @@
  },
  "ask.can.step.2.y": {
   "en": "You: nothing",
-  "te": "మీరు: ఏమీ లేదు",
+  "te": "మీరు: ఏమీ చేయక్కర్లేదు",
   "hi": "आप: कुछ नहीं",
-  "kn": "ನೀವು: ಏನೂ ಇಲ್ಲ",
+  "kn": "ನೀವು: ಏನೂ ಬೇಡ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53147,10 +53136,10 @@
   }
  },
  "ask.can.step.3.t": {
-  "en": "Understand",
-  "te": "అర్థం చేసుకోవడం",
-  "hi": "ज़रूरत समझना",
-  "kn": "ಅರ್ಥ ಮಾಡಿಕೊಳ್ಳುವುದು",
+  "en": "AI calls",
+  "te": "AI కాల్స్",
+  "hi": "AI कॉल",
+  "kn": "AI ಕಾಲ್ಸ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53158,10 +53147,10 @@
   }
  },
  "ask.can.step.3.d": {
-  "en": "Asks what matters: colour, area, budget, class.",
-  "te": "ముఖ్యమైనవి అడుగుతుంది: రంగు, ఏరియా, బడ్జెట్, క్లాస్.",
-  "hi": "ज़रूरी बातें पूछता है: रंग, एरिया, बजट, क्लास।",
-  "kn": "ಮುಖ್ಯವಾದುದನ್ನು ಕೇಳುತ್ತದೆ: ಬಣ್ಣ, ಏರಿಯಾ, ಬಜೆಟ್, ಕ್ಲಾಸ್.",
+  "en": "Calls the lead in their language, answers questions and books a visit. Hands over to you on request.",
+  "te": "లీడ్‌కి వాళ్ల భాషలో కాల్ చేస్తుంది, ప్రశ్నలకు జవాబిస్తుంది, విజిట్ బుక్ చేస్తుంది. మీరు అడిగితే మీకు అప్పగిస్తుంది.",
+  "hi": "लीड को उनकी भाषा में कॉल करता है, सवालों के जवाब देता है और विज़िट बुक करता है। आप कहें तो आपको सौंप देता है।",
+  "kn": "ಲೀಡ್‌ಗೆ ಅವರ ಭಾಷೆಯಲ್ಲಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ, ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸುತ್ತದೆ, ವಿಸಿಟ್ ಬುಕ್ ಮಾಡುತ್ತದೆ. ನೀವು ಕೇಳಿದರೆ ನಿಮಗೆ ಒಪ್ಪಿಸುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53169,10 +53158,10 @@
   }
  },
  "ask.can.step.3.y": {
-  "en": "You: only if asked",
-  "te": "మీరు: అడిగితేనే",
-  "hi": "आप: पूछे तभी",
-  "kn": "ನೀವು: ಕೇಳಿದರೆ ಮಾತ್ರ",
+  "en": "You: approve the call list, take over any time",
+  "te": "మీరు: కాల్ లిస్ట్‌కి ఓకే చెప్పండి, ఎప్పుడైనా మీరే తీసుకోవచ్చు",
+  "hi": "आप: कॉल लिस्ट ओके करें, कभी भी खुद ले सकते हैं",
+  "kn": "ನೀವು: ಕಾಲ್ ಲಿಸ್ಟ್‌ಗೆ ಒಪ್ಪಿಗೆ ಕೊಡಿ, ಯಾವಾಗ ಬೇಕಾದರೂ ನೀವೇ ತೆಗೆದುಕೊಳ್ಳಬಹುದು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53180,10 +53169,10 @@
   }
  },
  "ask.can.step.4.t": {
-  "en": "Quote",
-  "te": "కోట్",
-  "hi": "कोटेशन",
-  "kn": "ಕೊಟೇಶನ್",
+  "en": "WhatsApp",
+  "te": "వాట్సాప్",
+  "hi": "व्हाट्सऐप",
+  "kn": "ವಾಟ್ಸಾಪ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53191,10 +53180,10 @@
   }
  },
  "ask.can.step.4.d": {
-  "en": "Prices from your own list, by fixed rules. For schools, the fee plan.",
-  "te": "మీ సొంత జాబితా నుంచి ఫిక్స్‌డ్ రూల్స్‌తో ధరలు. పాఠశాలలకు ఫీజు ప్లాన్.",
-  "hi": "आपकी अपनी सूची से तय नियमों से कीमतें। स्कूलों के लिए फ़ीस प्लान।",
-  "kn": "ನಿಮ್ಮದೇ ಪಟ್ಟಿಯಿಂದ ನಿಗದಿತ ನಿಯಮಗಳಿಂದ ಬೆಲೆ. ಶಾಲೆಗಳಿಗೆ ಫೀಸ್ ಪ್ಲಾನ್.",
+  "en": "When the lead asks, sends photos, samples, a quote or the location on WhatsApp.",
+  "te": "లీడ్ అడిగినప్పుడు వాట్సాప్‌లో ఫోటోలు, శాంపిల్స్, కోట్ లేదా లొకేషన్ ఇస్తుంది.",
+  "hi": "लीड के माँगने पर व्हाट्सऐप पर फ़ोटो, सैंपल, कोटेशन या लोकेशन देता है।",
+  "kn": "ಲೀಡ್ ಕೇಳಿದಾಗ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಫೋಟೋ, ಸ್ಯಾಂಪಲ್, ಕೊಟೇಶನ್ ಅಥವಾ ಲೊಕೇಶನ್ ಕೊಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53202,10 +53191,10 @@
   }
  },
  "ask.can.step.4.y": {
-  "en": "You: tap Approve",
-  "te": "మీరు: ఓకే నొక్కండి",
-  "hi": "आप: ओके दबाएँ",
-  "kn": "ನೀವು: ಓಕೆ ಒತ್ತಿ",
+  "en": "You: approve quotes and prices",
+  "te": "మీరు: కోట్స్, ధరలకు ఓకే చెప్పండి",
+  "hi": "आप: कोटेशन और रेट ओके करें",
+  "kn": "ನೀವು: ಕೊಟೇಶನ್, ದರಗಳಿಗೆ ಒಪ್ಪಿಗೆ ಕೊಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53213,7 +53202,40 @@
   }
  },
  "ask.can.step.5.t": {
-  "en": "Follow up",
+  "en": "Outcome",
+  "te": "ఫలితం",
+  "hi": "नतीजा",
+  "kn": "ಫಲಿತಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.step.5.d": {
+  "en": "Marks every call and chat positive or negative, with the reason, on your Today page.",
+  "te": "ప్రతి కాల్, చాట్‌ని పాజిటివ్ లేదా నెగటివ్ అని కారణంతో మీ Today పేజీలో రాస్తుంది.",
+  "hi": "हर कॉल और चैट को वजह के साथ पॉज़िटिव या नेगेटिव लिखता है, आपके Today पेज पर।",
+  "kn": "ಪ್ರತಿ ಕಾಲ್, ಚಾಟ್ ಅನ್ನು ಕಾರಣದೊಂದಿಗೆ ಪಾಸಿಟಿವ್ ಅಥವಾ ನೆಗೆಟಿವ್ ಎಂದು ನಿಮ್ಮ Today ಪುಟದಲ್ಲಿ ಬರೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.step.5.y": {
+  "en": "You: correct it if it is wrong",
+  "te": "మీరు: తప్పయితే సరిచేయండి",
+  "hi": "आप: गलत हो तो सुधारें",
+  "kn": "ನೀವು: ತಪ್ಪಾದರೆ ಸರಿಪಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.step.6.t": {
+  "en": "Follow-up",
   "te": "ఫాలో-అప్",
   "hi": "फ़ॉलो-अप",
   "kn": "ಫಾಲೋ-ಅಪ್",
@@ -53223,44 +53245,11 @@
    "kn": "draft"
   }
  },
- "ask.can.step.5.d": {
-  "en": "Politely, until they decide, by message or call list.",
-  "te": "వాళ్ళు నిర్ణయించే వరకు మర్యాదగా, మెసేజ్‌తో లేదా కాల్ లిస్ట్‌తో.",
-  "hi": "जब तक वे तय न करें, विनम्रता से, मैसेज से या कॉल लिस्ट से।",
-  "kn": "ಅವರು ತೀರ್ಮಾನಿಸುವವರೆಗೆ ವಿನಯದಿಂದ, ಮೆಸೇಜ್ ಅಥವಾ ಕಾಲ್ ಲಿಸ್ಟ್ ಮೂಲಕ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ask.can.step.5.y": {
-  "en": "You: nothing",
-  "te": "మీరు: ఏమీ లేదు",
-  "hi": "आप: कुछ नहीं",
-  "kn": "ನೀವು: ಏನೂ ಇಲ್ಲ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ask.can.step.6.t": {
-  "en": "Close & collect",
-  "te": "క్లోజ్, వసూలు",
-  "hi": "क्लोज़ और वसूली",
-  "kn": "ಕ್ಲೋಸ್ ಮತ್ತು ವಸೂಲಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "ask.can.step.6.d": {
-  "en": "Order, delivery updates, payment and fee reminders.",
-  "te": "ఆర్డర్, డెలివరీ అప్‌డేట్లు, పేమెంట్, ఫీజు రిమైండర్లు.",
-  "hi": "ऑर्डर, डिलीवरी अपडेट, पेमेंट और फ़ीस रिमाइंडर।",
-  "kn": "ಆರ್ಡರ್, ಡೆಲಿವರಿ ಅಪ್‌ಡೇಟ್, ಪೇಮೆಂಟ್ ಮತ್ತು ಫೀಸ್ ರಿಮೈಂಡರ್.",
+  "en": "Follows up at the right time: next steps for a yes, a gentle check-in later for a no. Stops at once if they say don't contact me.",
+  "te": "సరైన సమయంలో ఫాలో-అప్ చేస్తుంది: ఓకే అంటే తర్వాతి అడుగులు, వద్దంటే కొంతకాలం తర్వాత మెల్లగా అడగడం. \"నన్ను సంప్రదించకండి\" అంటే వెంటనే ఆపేస్తుంది.",
+  "hi": "सही समय पर फ़ॉलो-अप करता है: हाँ पर अगले कदम, ना पर बाद में नरमी से हालचाल। \"मुझे संपर्क न करें\" कहने पर तुरंत रुक जाता है।",
+  "kn": "ಸರಿಯಾದ ಸಮಯದಲ್ಲಿ ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತದೆ: ಹೌದು ಅಂದರೆ ಮುಂದಿನ ಹೆಜ್ಜೆ, ಬೇಡ ಅಂದರೆ ಸ್ವಲ್ಪ ಕಾಲದ ನಂತರ ನಯವಾಗಿ ವಿಚಾರಿಸುವುದು. \"ನನ್ನನ್ನು ಸಂಪರ್ಕಿಸಬೇಡಿ\" ಎಂದರೆ ತಕ್ಷಣ ನಿಲ್ಲಿಸುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53268,10 +53257,10 @@
   }
  },
  "ask.can.step.6.y": {
-  "en": "You: approve once",
-  "te": "మీరు: ఒక్కసారి ఓకే",
-  "hi": "आप: एक बार ओके",
-  "kn": "ನೀವು: ಒಮ್ಮೆ ಓಕೆ",
+  "en": "You: nothing, until a lead says yes",
+  "te": "మీరు: లీడ్ ఓకే అనే వరకు ఏమీ లేదు",
+  "hi": "आप: लीड के हाँ कहने तक कुछ नहीं",
+  "kn": "ನೀವು: ಲೀಡ್ ಹೌದು ಅನ್ನುವವರೆಗೆ ಏನೂ ಬೇಡ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53279,10 +53268,10 @@
   }
  },
  "ask.can.step.1.t@programmes": {
-  "en": "Admission enquiries captured",
-  "te": "అడ్మిషన్ ఎంక్వైరీలు పట్టుకోవడం",
-  "hi": "एडमिशन पूछताछ दर्ज",
-  "kn": "ಅಡ್ಮಿಷನ್ ವಿಚಾರಣೆ ದಾಖಲು",
+  "en": "Admission enquiries",
+  "te": "అడ్మిషన్ ఎంక్వయిరీలు",
+  "hi": "एडमिशन पूछताछ",
+  "kn": "ಅಡ್ಮಿಷನ್ ವಿಚಾರಣೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53290,10 +53279,10 @@
   }
  },
  "ask.can.step.1.d@programmes": {
-  "en": "Every WhatsApp message, missed call and website enquiry from parents and students, captured.",
-  "te": "తల్లిదండ్రులు, విద్యార్థుల నుంచి ప్రతి వాట్సాప్ మెసేజ్, మిస్డ్ కాల్, వెబ్‌సైట్ ఎంక్వయిరీ పట్టుకుంటుంది.",
-  "hi": "अभिभावकों और विद्यार्थियों के हर व्हाट्सऐप मैसेज, मिस्ड कॉल और वेबसाइट पूछताछ दर्ज।",
-  "kn": "ಪೋಷಕರು ಮತ್ತು ವಿದ್ಯಾರ್ಥಿಗಳ ಪ್ರತಿ ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್, ಮಿಸ್ಡ್ ಕಾಲ್, ವೆಬ್‌ಸೈಟ್ ವಿಚಾರಣೆ ದಾಖಲು.",
+  "en": "Every WhatsApp message, call and website enquiry from parents and students is picked up. A school does not search for leads: the enquiries come to it.",
+  "te": "తల్లిదండ్రులు, విద్యార్థుల నుంచి ప్రతి వాట్సాప్ మెసేజ్, కాల్, వెబ్‌సైట్ ఎంక్వయిరీ అందుతుంది. స్కూల్ లీడ్స్ వెతకదు: ఎంక్వయిరీలు స్కూల్‌కే వస్తాయి.",
+  "hi": "अभिभावकों और विद्यार्थियों के हर व्हाट्सऐप मैसेज, कॉल और वेबसाइट पूछताछ उठाई जाती है। स्कूल लीड नहीं ढूँढता: पूछताछ उसी के पास आती है।",
+  "kn": "ಪೋಷಕರು, ವಿದ್ಯಾರ್ಥಿಗಳ ಪ್ರತಿ ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್, ಕಾಲ್, ವೆಬ್‌ಸೈಟ್ ವಿಚಾರಣೆ ಸಿಗುತ್ತದೆ. ಶಾಲೆ ಲೀಡ್ಸ್ ಹುಡುಕುವುದಿಲ್ಲ: ವಿಚಾರಣೆಗಳು ಶಾಲೆಗೇ ಬರುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53411,10 +53400,10 @@
   }
  },
  "plan.none.body": {
-  "en": "Start a 30-day trial to use calls and WhatsApp messages. You add a payment method to start. If you cancel before day 30, nothing is charged.",
-  "te": "కాల్స్, WhatsApp మెసేజ్‌లు వాడటానికి 30 రోజుల ట్రయల్ మొదలుపెట్టండి. మొదలుపెట్టడానికి మీరు పేమెంట్ పద్ధతి యాడ్ చేయాలి. 30వ రోజు కంటే ముందే క్యాన్సిల్ చేస్తే, ఏమీ కట్ చేయరు.",
-  "hi": "कॉल और WhatsApp मैसेज इस्तेमाल करने के लिए 30 दिन का ट्रायल शुरू करें। शुरू करने के लिए आपको पेमेंट का तरीका जोड़ना होगा। 30वें दिन से पहले कैंसल कर दें तो कुछ चार्ज नहीं होगा।",
-  "kn": "30 ದಿನದ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ, ಕಾಲ್ ಮತ್ತು WhatsApp ಮೆಸೇಜ್‌ಗಳನ್ನು ಬಳಸಿ. ಶುರು ಮಾಡಲು ಪೇಮೆಂಟ್ ಮೆಥಡ್ ಸೇರಿಸಿ. 30ನೇ ದಿನದ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
+  "en": "Start a {days}-day trial to use calls and WhatsApp messages. You add a payment method to start. The {days} days count from the day your WhatsApp is connected. If you cancel before the trial ends, nothing is charged.",
+  "te": "కాల్స్, WhatsApp మెసేజ్‌లు వాడటానికి {days} రోజుల ట్రయల్ మొదలుపెట్టండి. మొదలుపెట్టడానికి మీరు పేమెంట్ పద్ధతి యాడ్ చేయాలి. మీ WhatsApp కనెక్ట్ అయిన రోజు నుంచి {days} రోజులు లెక్క. ట్రయల్ ముగిసేలోపు క్యాన్సిల్ చేస్తే, ఏమీ కట్ చేయరు.",
+  "hi": "कॉल और WhatsApp मैसेज इस्तेमाल करने के लिए {days} दिन का ट्रायल शुरू करें। शुरू करने के लिए आपको पेमेंट का तरीका जोड़ना होगा। {days} दिन की गिनती आपका WhatsApp कनेक्ट होने के दिन से होती है। ट्रायल खत्म होने से पहले कैंसल कर दें तो कुछ चार्ज नहीं होगा।",
+  "kn": "{days} ದಿನದ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ, ಕಾಲ್ ಮತ್ತು WhatsApp ಮೆಸೇಜ್‌ಗಳನ್ನು ಬಳಸಿ. ಶುರು ಮಾಡಲು ಪೇಮೆಂಟ್ ಮೆಥಡ್ ಸೇರಿಸಿ. {days} ದಿನಗಳ ಲೆಕ್ಕ ನಿಮ್ಮ WhatsApp ಕನೆಕ್ಟ್ ಆದ ದಿನದಿಂದ ಶುರುವಾಗುತ್ತದೆ. ಟ್ರಯಲ್ ಮುಗಿಯುವ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53477,10 +53466,10 @@
   }
  },
  "plan.trial.cancel_note": {
-  "en": "Cancel before day 30 and nothing is charged.",
-  "te": "30వ రోజు కంటే ముందే క్యాన్సిల్ చేస్తే ఏమీ కట్ చేయరు.",
-  "hi": "30वें दिन से पहले कैंसल कर दें तो कुछ चार्ज नहीं होगा।",
-  "kn": "30ನೇ ದಿನದ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
+  "en": "Cancel before the trial ends and nothing is charged.",
+  "te": "ట్రయల్ ముగిసేలోపు క్యాన్సిల్ చేస్తే ఏమీ కట్ చేయరు.",
+  "hi": "ट्रायल खत्म होने से पहले कैंसल कर दें तो कुछ चार्ज नहीं होगा।",
+  "kn": "ಟ್ರಯಲ್ ಮುಗಿಯುವ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53697,10 +53686,10 @@
   }
  },
  "plan.start": {
-  "en": "Start 30-day trial",
-  "te": "30 రోజుల ట్రయల్ మొదలుపెట్టండి",
-  "hi": "30 दिन का ट्रायल शुरू करें",
-  "kn": "30 ದಿನದ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
+  "en": "Start {days}-day trial",
+  "te": "{days} రోజుల ట్రయల్ మొదలుపెట్టండి",
+  "hi": "{days} दिन का ट्रायल शुरू करें",
+  "kn": "{days} ದಿನದ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -53851,10 +53840,10 @@
   }
  },
  "plan.picker.sub": {
-  "en": "Every plan starts with a 30-day trial. You add a payment method to start. If you cancel before day 30, nothing is charged.",
-  "te": "ప్రతి ప్లాన్ 30 రోజుల ట్రయల్‌తో మొదలవుతుంది. మొదలుపెట్టడానికి మీరు పేమెంట్ పద్ధతి యాడ్ చేయాలి. 30వ రోజు కంటే ముందే క్యాన్సిల్ చేస్తే, ఏమీ కట్ చేయరు.",
-  "hi": "हर प्लान 30 दिन के ट्रायल से शुरू होता है। शुरू करने के लिए आपको पेमेंट का तरीका जोड़ना होगा। 30वें दिन से पहले कैंसल कर दें तो कुछ चार्ज नहीं होगा।",
-  "kn": "ಪ್ರತಿ ಪ್ಲಾನ್ 30 ದಿನದ ಟ್ರಯಲ್‌ನಿಂದ ಶುರುವಾಗುತ್ತದೆ. ಶುರು ಮಾಡಲು ಪೇಮೆಂಟ್ ಮೆಥಡ್ ಸೇರಿಸಿ. 30ನೇ ದಿನದ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
+  "en": "Every plan starts with a {days}-day trial, counted from the day your WhatsApp is connected. You add a payment method to start. If you cancel before the trial ends, nothing is charged.",
+  "te": "ప్రతి ప్లాన్ {days} రోజుల ట్రయల్‌తో మొదలవుతుంది, మీ WhatsApp కనెక్ట్ అయిన రోజు నుంచి లెక్క. మొదలుపెట్టడానికి మీరు పేమెంట్ పద్ధతి యాడ్ చేయాలి. ట్రయల్ ముగిసేలోపు క్యాన్సిల్ చేస్తే, ఏమీ కట్ చేయరు.",
+  "hi": "हर प्लान {days} दिन के ट्रायल से शुरू होता है, गिनती आपका WhatsApp कनेक्ट होने के दिन से। शुरू करने के लिए आपको पेमेंट का तरीका जोड़ना होगा। ट्रायल खत्म होने से पहले कैंसल कर दें तो कुछ चार्ज नहीं होगा।",
+  "kn": "ಪ್ರತಿ ಪ್ಲಾನ್ {days} ದಿನದ ಟ್ರಯಲ್‌ನಿಂದ ಶುರುವಾಗುತ್ತದೆ, ನಿಮ್ಮ WhatsApp ಕನೆಕ್ಟ್ ಆದ ದಿನದಿಂದ ಲೆಕ್ಕ. ಶುರು ಮಾಡಲು ಪೇಮೆಂಟ್ ಮೆಥಡ್ ಸೇರಿಸಿ. ಟ್ರಯಲ್ ಮುಗಿಯುವ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -54016,10 +54005,10 @@
   }
  },
  "plan.start.for": {
-  "en": "Start the 30-day trial of {name}",
-  "te": "{name} 30 రోజుల ట్రయల్ మొదలుపెట్టండి",
-  "hi": "{name} का 30 दिन का ट्रायल शुरू करें",
-  "kn": "{name} 30 ದಿನದ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
+  "en": "Start the {days}-day trial of {name}",
+  "te": "{name} {days} రోజుల ట్రయల్ మొదలుపెట్టండి",
+  "hi": "{name} का {days} दिन का ट्रायल शुरू करें",
+  "kn": "{name} {days} ದಿನದ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -54038,10 +54027,10 @@
   }
  },
  "plan.start.done": {
-  "en": "Your 30-day trial of {name} has started.",
-  "te": "మీ {name} 30 రోజుల ట్రయల్ మొదలైంది.",
-  "hi": "{name} का आपका 30 दिन का ट्रायल शुरू हो गया है।",
-  "kn": "{name} ಪ್ಲಾನ್‌ನ 30 ದಿನದ ಟ್ರಯಲ್ ಶುರುವಾಗಿದೆ.",
+  "en": "Your {days}-day trial of {name} has started.",
+  "te": "మీ {name} {days} రోజుల ట్రయల్ మొదలైంది.",
+  "hi": "{name} का आपका {days} दिन का ट्रायल शुरू हो गया है।",
+  "kn": "{name} ಪ್ಲಾನ್‌ನ {days} ದಿನದ ಟ್ರಯಲ್ ಶುರುವಾಗಿದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -54104,10 +54093,10 @@
   }
  },
  "plan.testfwd": {
-  "en": "Test only: jump to day 30",
-  "te": "టెస్ట్ కోసం మాత్రమే: 30వ రోజుకి వెళ్ళండి",
-  "hi": "सिर्फ़ टेस्ट के लिए: दिन 30 पर जाएँ",
-  "kn": "ಟೆಸ್ಟ್ ಮಾತ್ರ: 30ನೇ ದಿನಕ್ಕೆ ಹೋಗಿ",
+  "en": "Test only: jump to the last day",
+  "te": "టెస్ట్ కోసం మాత్రమే: చివరి రోజుకి వెళ్ళండి",
+  "hi": "सिर्फ़ टेस्ट के लिए: आखिरी दिन पर जाएँ",
+  "kn": "ಟೆಸ್ಟ್ ಮಾತ್ರ: ಕೊನೆಯ ದಿನಕ್ಕೆ ಹೋಗಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -54273,6 +54262,1513 @@
   "te": "పంపిన మెసేజ్‌లకే చెల్లించండి",
   "hi": "जितने मैसेज भेजें, उतने का पेमेंट",
   "kn": "ಕಳುಹಿಸಿದ ಮೆಸೇಜ್‌ಗಳಿಗೆ ಮಾತ್ರ ಪೇಮೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.step.3.t@programmes": {
+  "en": "AI calls",
+  "te": "AI కాల్స్",
+  "hi": "AI कॉल",
+  "kn": "AI ಕಾಲ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.step.3.d@programmes": {
+  "en": "Answers admission calls and calls parents back in their language, and books a campus visit. It does not discuss a child's fees or marks.",
+  "te": "అడ్మిషన్ కాల్స్‌కి జవాబిస్తుంది, తల్లిదండ్రులకు వాళ్ల భాషలో తిరిగి కాల్ చేస్తుంది, క్యాంపస్ విజిట్ బుక్ చేస్తుంది. పిల్లల ఫీజు, మార్కుల గురించి మాట్లాడదు.",
+  "hi": "एडमिशन कॉल का जवाब देता है, अभिभावकों को उनकी भाषा में वापस कॉल करता है और कैंपस विज़िट बुक करता है। किसी बच्चे की फ़ीस या मार्क्स पर बात नहीं करता।",
+  "kn": "ಅಡ್ಮಿಷನ್ ಕಾಲ್‌ಗಳಿಗೆ ಉತ್ತರಿಸುತ್ತದೆ, ಪೋಷಕರಿಗೆ ಅವರ ಭಾಷೆಯಲ್ಲಿ ಮರಳಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ, ಕ್ಯಾಂಪಸ್ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡುತ್ತದೆ. ಮಗುವಿನ ಫೀಸ್, ಅಂಕಗಳ ಬಗ್ಗೆ ಮಾತನಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.step.4.t@programmes": {
+  "en": "WhatsApp",
+  "te": "వాట్సాప్",
+  "hi": "व्हाट्सऐप",
+  "kn": "ವಾಟ್ಸಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.step.4.d@programmes": {
+  "en": "When a parent asks, the brochure, the fee structure or the campus location goes on WhatsApp.",
+  "te": "తల్లిదండ్రులు అడిగినప్పుడు బ్రోషర్, ఫీజు వివరాలు లేదా క్యాంపస్ లొకేషన్ వాట్సాప్‌లో వెళ్తాయి.",
+  "hi": "अभिभावक के पूछने पर ब्रोशर, फ़ीस का ढाँचा या कैंपस की लोकेशन व्हाट्सऐप पर जाती है।",
+  "kn": "ಪೋಷಕರು ಕೇಳಿದಾಗ ಬ್ರೋಷರ್, ಫೀಸ್ ವಿವರ ಅಥವಾ ಕ್ಯಾಂಪಸ್ ಲೊಕೇಶನ್ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.step.5.t@programmes": {
+  "en": "Outcome",
+  "te": "ఫలితం",
+  "hi": "नतीजा",
+  "kn": "ಫಲಿತಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.step.5.d@programmes": {
+  "en": "Every enquiry is marked positive (visit booked, applied) or negative (not interested, later), with the reason.",
+  "te": "ప్రతి ఎంక్వయిరీ పాజిటివ్ (విజిట్ బుక్, అప్లై) లేదా నెగటివ్ (ఆసక్తి లేదు, తర్వాత) అని కారణంతో రాస్తుంది.",
+  "hi": "हर पूछताछ वजह के साथ पॉज़िटिव (विज़िट बुक, आवेदन) या नेगेटिव (दिलचस्पी नहीं, बाद में) लिखी जाती है।",
+  "kn": "ಪ್ರತಿ ವಿಚಾರಣೆಯನ್ನು ಕಾರಣದೊಂದಿಗೆ ಪಾಸಿಟಿವ್ (ವಿಸಿಟ್ ಬುಕ್, ಅರ್ಜಿ) ಅಥವಾ ನೆಗೆಟಿವ್ (ಆಸಕ್ತಿ ಇಲ್ಲ, ನಂತರ) ಎಂದು ಬರೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.step.6.t@programmes": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.step.6.d@programmes": {
+  "en": "Fee reminders on the due date, and marks and progress updates to parents. These are filled from your school records with fixed wording and are never written by the AI, so a child's name never reaches it. A parent who says stop is not messaged again.",
+  "te": "ఫీజు గడువు రోజున రిమైండర్లు, తల్లిదండ్రులకు మార్కులు, ప్రోగ్రెస్ అప్‌డేట్లు. ఇవి మీ స్కూల్ రికార్డుల నుంచి స్థిరమైన పదాలతో నింపబడతాయి, AI రాయదు, కాబట్టి పిల్లల పేరు AIకి చేరదు. ఆపమని చెప్పిన తల్లిదండ్రులకు మళ్ళీ మెసేజ్ వెళ్లదు.",
+  "hi": "फ़ीस की तारीख पर रिमाइंडर, और अभिभावकों को मार्क्स व प्रोग्रेस अपडेट। ये आपके स्कूल रिकॉर्ड से तय शब्दों में भरे जाते हैं, AI नहीं लिखता, इसलिए बच्चे का नाम AI तक नहीं पहुँचता। जो अभिभावक रुकने को कहे, उसे दोबारा मैसेज नहीं जाता।",
+  "kn": "ಫೀಸ್ ಗಡುವಿನ ದಿನ ರಿಮೈಂಡರ್, ಪೋಷಕರಿಗೆ ಅಂಕ ಮತ್ತು ಪ್ರೋಗ್ರೆಸ್ ಅಪ್‌ಡೇಟ್‌ಗಳು. ಇವು ನಿಮ್ಮ ಶಾಲೆಯ ರೆಕಾರ್ಡ್‌ಗಳಿಂದ ನಿಗದಿತ ಪದಗಳಲ್ಲಿ ತುಂಬಲ್ಪಡುತ್ತವೆ, AI ಬರೆಯುವುದಿಲ್ಲ, ಹಾಗಾಗಿ ಮಗುವಿನ ಹೆಸರು AIಗೆ ತಲುಪುವುದಿಲ್ಲ. ನಿಲ್ಲಿಸಿ ಎಂದ ಪೋಷಕರಿಗೆ ಮತ್ತೆ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode": {
+  "en": "Voice mode",
+  "te": "వాయిస్ మోడ్",
+  "hi": "वॉइस मोड",
+  "kn": "ವಾಯ್ಸ್ ಮೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.done": {
+  "en": "Done",
+  "te": "అయిపోయింది",
+  "hi": "हो गया",
+  "kn": "ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.show": {
+  "en": "Show the answer",
+  "te": "జవాబు చూపించు",
+  "hi": "जवाब दिखाएँ",
+  "kn": "ಉತ್ತರ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.tap": {
+  "en": "Tap the circle to talk",
+  "te": "మాట్లాడటానికి సర్కిల్‌ని టాప్ చేయండి",
+  "hi": "बोलने के लिए सर्कल पर टैप करें",
+  "kn": "ಮಾತನಾಡಲು ವೃತ್ತವನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.close": {
+  "en": "Close voice mode",
+  "te": "వాయిస్ మోడ్ మూసివేయి",
+  "hi": "वॉइस मोड बंद करें",
+  "kn": "ವಾಯ್ಸ್ ಮೋಡ್ ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.title": {
+  "en": "Outcomes",
+  "te": "ఫలితాలు",
+  "hi": "नतीजे",
+  "kn": "ಫಲಿತಾಂಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.sub": {
+  "en": "After every call and every WhatsApp follow-up: the result, and why.",
+  "te": "ప్రతి కాల్, ప్రతి వాట్సాప్ ఫాలో-అప్ తర్వాత: ఫలితం, ఎందుకో కారణం.",
+  "hi": "हर कॉल और हर व्हाट्सऐप फ़ॉलो-अप के बाद: नतीजा और उसकी वजह।",
+  "kn": "ಪ್ರತಿ ಕಾಲ್, ಪ್ರತಿ ವಾಟ್ಸಾಪ್ ಫಾಲೋ-ಅಪ್ ನಂತರ: ಫಲಿತಾಂಶ ಮತ್ತು ಕಾರಣ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.empty": {
+  "en": "No calls or follow-ups yet.",
+  "te": "ఇంకా కాల్స్, ఫాలో-అప్‌లు లేవు.",
+  "hi": "अभी कोई कॉल या फ़ॉलो-अप नहीं हुआ।",
+  "kn": "ಇನ್ನೂ ಕಾಲ್ಸ್, ಫಾಲೋ-ಅಪ್‌ಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.channel.call": {
+  "en": "Call",
+  "te": "కాల్",
+  "hi": "कॉल",
+  "kn": "ಕಾಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.channel.whatsapp": {
+  "en": "WhatsApp follow-up",
+  "te": "వాట్సాప్ ఫాలో-అప్",
+  "hi": "व्हाट्सऐप फ़ॉलो-अप",
+  "kn": "ವಾಟ್ಸಾಪ್ ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.result.positive": {
+  "en": "Positive",
+  "te": "పాజిటివ్",
+  "hi": "पॉज़िटिव",
+  "kn": "ಪಾಸಿಟಿವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.result.negative": {
+  "en": "Negative",
+  "te": "నెగటివ్",
+  "hi": "नेगेटिव",
+  "kn": "ನೆಗೆಟಿವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.result.unclear": {
+  "en": "Unclear",
+  "te": "స్పష్టంగా లేదు",
+  "hi": "साफ़ नहीं",
+  "kn": "ಸ್ಪಷ್ಟವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.cat.interested": {
+  "en": "Interested",
+  "te": "ఆసక్తి ఉంది",
+  "hi": "दिलचस्पी है",
+  "kn": "ಆಸಕ್ತಿ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.cat.visit_booked": {
+  "en": "Visit booked",
+  "te": "విజిట్ బుక్ అయింది",
+  "hi": "विज़िट बुक",
+  "kn": "ವಿಸಿಟ್ ಬುಕ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.cat.order_likely": {
+  "en": "Order likely",
+  "te": "ఆర్డర్ వచ్చే అవకాశం",
+  "hi": "ऑर्डर की उम्मीद",
+  "kn": "ಆರ್ಡರ್ ಬರುವ ಸಾಧ್ಯತೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.cat.not_interested": {
+  "en": "Not interested",
+  "te": "ఆసక్తి లేదు",
+  "hi": "दिलचस्पी नहीं",
+  "kn": "ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.cat.wrong_number": {
+  "en": "Wrong number",
+  "te": "తప్పు నంబర్",
+  "hi": "गलत नंबर",
+  "kn": "ತಪ್ಪು ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.cat.too_costly": {
+  "en": "Too costly",
+  "te": "ధర ఎక్కువ",
+  "hi": "बहुत महँगा",
+  "kn": "ತುಂಬಾ ದುಬಾರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.cat.call_back_later": {
+  "en": "Call back later",
+  "te": "తర్వాత కాల్ చేయండి",
+  "hi": "बाद में कॉल करें",
+  "kn": "ನಂತರ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.corrected": {
+  "en": "You corrected this.",
+  "te": "మీరు దీన్ని సరిచేశారు.",
+  "hi": "आपने इसे सुधारा है।",
+  "kn": "ನೀವು ಇದನ್ನು ಸರಿಪಡಿಸಿದ್ದೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.fix": {
+  "en": "Correct this",
+  "te": "దీన్ని సరిచేయండి",
+  "hi": "इसे सुधारें",
+  "kn": "ಇದನ್ನು ಸರಿಪಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.fix.result": {
+  "en": "Result",
+  "te": "ఫలితం",
+  "hi": "नतीजा",
+  "kn": "ಫಲಿತಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.fix.cat": {
+  "en": "What happened",
+  "te": "ఏం జరిగింది",
+  "hi": "क्या हुआ",
+  "kn": "ಏನಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.fix.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.fix.cancel": {
+  "en": "Cancel",
+  "te": "క్యాన్సిల్",
+  "hi": "कैंसल",
+  "kn": "ಕ್ಯಾನ್ಸಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.fix.err": {
+  "en": "That did not save. Try again.",
+  "te": "సేవ్ కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "सेव नहीं हुआ। फिर कोशिश करें।",
+  "kn": "ಸೇವ್ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.today.title": {
+  "en": "Outcomes today",
+  "te": "ఈ రోజు ఫలితాలు",
+  "hi": "आज के नतीजे",
+  "kn": "ಇಂದಿನ ಫಲಿತಾಂಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.today.none": {
+  "en": "No calls or follow-ups have finished yet today.",
+  "te": "ఈ రోజు ఇంకా కాల్స్, ఫాలో-అప్‌లు ముగియలేదు.",
+  "hi": "आज अभी कोई कॉल या फ़ॉलो-अप पूरा नहीं हुआ।",
+  "kn": "ಇಂದು ಇನ್ನೂ ಕಾಲ್ಸ್, ಫಾಲೋ-ಅಪ್‌ಗಳು ಮುಗಿದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.today.positive": {
+  "en": "{n} positive",
+  "te": "{n} పాజిటివ్",
+  "hi": "{n} पॉज़िटिव",
+  "kn": "{n} ಪಾಸಿಟಿವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.today.negative": {
+  "en": "{n} not interested",
+  "te": "{n} ఆసక్తి లేదు",
+  "hi": "{n} दिलचस्पी नहीं",
+  "kn": "{n} ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.today.unclear": {
+  "en": "{n} unclear",
+  "te": "{n} స్పష్టంగా లేదు",
+  "hi": "{n} साफ़ नहीं",
+  "kn": "{n} ಸ್ಪಷ್ಟವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.title": {
+  "en": "Live call",
+  "te": "లైవ్ కాల్",
+  "hi": "लाइव कॉल",
+  "kn": "ಲೈವ್ ಕಾಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.back": {
+  "en": "Back",
+  "te": "వెనక్కి",
+  "hi": "वापस",
+  "kn": "ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.live": {
+  "en": "Live",
+  "te": "లైవ్",
+  "hi": "लाइव",
+  "kn": "ಲೈವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.testmode": {
+  "en": "Test mode: this is a pretend call. Nobody is called.",
+  "te": "టెస్ట్ మోడ్: ఇది నకిలీ కాల్. ఎవరికీ కాల్ చేయడం లేదు.",
+  "hi": "टेस्ट मोड: यह नकली कॉल है। किसी को कॉल नहीं हो रहा।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಇದು ನಕಲಿ ಕಾಲ್. ಯಾರಿಗೂ ಕಾಲ್ ಆಗುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.kind.followup": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.kind.admission": {
+  "en": "Admission enquiry",
+  "te": "అడ్మిషన్ ఎంక్వయిరీ",
+  "hi": "एडमिशन पूछताछ",
+  "kn": "ಅಡ್ಮಿಷನ್ ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.kind.reminder": {
+  "en": "Reminder",
+  "te": "రిమైండర్",
+  "hi": "रिमाइंडर",
+  "kn": "ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.speaking": {
+  "en": "speaking",
+  "te": "మాట్లాడుతోంది",
+  "hi": "बोल रहा है",
+  "kn": "ಮಾತನಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.tookover.short": {
+  "en": "you have the call",
+  "te": "కాల్ మీ దగ్గర ఉంది",
+  "hi": "कॉल आपके पास है",
+  "kn": "ಕಾಲ್ ನಿಮ್ಮ ಬಳಿ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.tookover": {
+  "en": "You have the call now. The AI has stopped talking.",
+  "te": "ఇప్పుడు కాల్ మీ దగ్గర ఉంది. AI మాట్లాడటం ఆపింది.",
+  "hi": "अब कॉल आपके पास है। AI ने बोलना बंद कर दिया।",
+  "kn": "ಈಗ ಕಾಲ್ ನಿಮ್ಮ ಬಳಿ ಇದೆ. AI ಮಾತನಾಡುವುದನ್ನು ನಿಲ್ಲಿಸಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.ended.short": {
+  "en": "ended · {time}",
+  "te": "ముగిసింది · {time}",
+  "hi": "खत्म · {time}",
+  "kn": "ಮುಗಿಯಿತು · {time}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.ended": {
+  "en": "The call has ended.",
+  "te": "కాల్ ముగిసింది.",
+  "hi": "कॉल खत्म हो गया।",
+  "kn": "ಕಾಲ್ ಮುಗಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.transcript.show": {
+  "en": "Show full transcript",
+  "te": "పూర్తి ట్రాన్స్‌క్రిప్ట్ చూపించు",
+  "hi": "पूरा ट्रांसक्रिप्ट दिखाएँ",
+  "kn": "ಪೂರ್ಣ ಟ್ರಾನ್ಸ್‌ಕ್ರಿಪ್ಟ್ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.transcript.hide": {
+  "en": "Hide transcript",
+  "te": "ట్రాన్స్‌క్రిప్ట్ దాచు",
+  "hi": "ट्रांसक्रिप्ट छुपाएँ",
+  "kn": "ಟ್ರಾನ್ಸ್‌ಕ್ರಿಪ್ಟ್ ಮರೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.ai": {
+  "en": "AI assistant",
+  "te": "AI అసిస్టెంట్",
+  "hi": "AI असिस्टेंट",
+  "kn": "AI ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.takeover": {
+  "en": "Take over the call",
+  "te": "కాల్ మీరే తీసుకోండి",
+  "hi": "कॉल खुद लें",
+  "kn": "ಕಾಲ್ ನೀವೇ ತೆಗೆದುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.end": {
+  "en": "End call",
+  "te": "కాల్ ముగించండి",
+  "hi": "कॉल खत्म करें",
+  "kn": "ಕಾಲ್ ಮುಗಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.now.title": {
+  "en": "Calling {name}",
+  "te": "{name} గారికి కాల్ చేస్తోంది",
+  "hi": "{name} को कॉल कर रहा है",
+  "kn": "{name} ಅವರಿಗೆ ಕಾಲ್ ಮಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "call.now.listen": {
+  "en": "Listen",
+  "te": "వినండి",
+  "hi": "सुनें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tab": {
+  "en": "AI assistant",
+  "te": "AI అసిస్టెంట్",
+  "hi": "AI असिस्टेंट",
+  "kn": "AI ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.title": {
+  "en": "Set up your AI assistant",
+  "te": "మీ AI అసిస్టెంట్‌ని సెటప్ చేయండి",
+  "hi": "अपना AI असिस्टेंट सेट करें",
+  "kn": "ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್ ಸೆಟಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.intro": {
+  "en": "It already works with good defaults for your kind of business. Change anything you like, then try a test call.",
+  "te": "మీ వ్యాపార రకానికి మంచి డిఫాల్ట్‌లతో ఇది ఇప్పటికే పని చేస్తుంది. మీకు నచ్చినవి మార్చండి, తర్వాత టెస్ట్ కాల్ ప్రయత్నించండి.",
+  "hi": "आपके कारोबार के हिसाब से अच्छे डिफ़ॉल्ट के साथ यह पहले से काम करता है। जो चाहें बदलें, फिर टेस्ट कॉल करके देखें।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ರೀತಿಗೆ ಒಳ್ಳೆಯ ಡಿಫಾಲ್ಟ್‌ಗಳೊಂದಿಗೆ ಇದು ಈಗಾಗಲೇ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ನಿಮಗೆ ಇಷ್ಟವಾದದ್ದನ್ನು ಬದಲಿಸಿ, ನಂತರ ಟೆಸ್ಟ್ ಕಾಲ್ ಮಾಡಿ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.testmode": {
+  "en": "Test mode: your choices are kept on this device only.",
+  "te": "టెస్ట్ మోడ్: మీ ఎంపికలు ఈ డివైస్‌లో మాత్రమే ఉంటాయి.",
+  "hi": "टेस्ट मोड: आपकी पसंद सिर्फ़ इसी डिवाइस पर रहती है।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ನಿಮ್ಮ ಆಯ್ಕೆಗಳು ಈ ಡಿವೈಸ್‌ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.defaults": {
+  "en": "These are the standard settings for your kind of business. Nothing is saved until you press Save.",
+  "te": "ఇవి మీ వ్యాపార రకానికి ప్రామాణిక సెట్టింగ్‌లు. సేవ్ నొక్కే వరకు ఏదీ సేవ్ కాదు.",
+  "hi": "ये आपके कारोबार के हिसाब से स्टैंडर्ड सेटिंग हैं। सेव दबाने तक कुछ सेव नहीं होता।",
+  "kn": "ಇವು ನಿಮ್ಮ ವ್ಯಾಪಾರದ ರೀತಿಗೆ ಸ್ಟ್ಯಾಂಡರ್ಡ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು. ಸೇವ್ ಒತ್ತುವವರೆಗೆ ಏನೂ ಸೇವ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.forbidden": {
+  "en": "Only the Owner can change the assistant.",
+  "te": "అసిస్టెంట్‌ని ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "असिस्टेंट सिर्फ़ ओनर बदल सकते हैं।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಅನ್ನು ಓನರ್ ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.name.t": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.name.d": {
+  "en": "Customers hear: “{name}, the AI assistant of {shop}.” The words “AI assistant” are always said.",
+  "te": "కస్టమర్లు వినేది: “{name}, {shop} AI అసిస్టెంట్.” “AI అసిస్టెంట్” అనే మాటలు ఎప్పుడూ చెప్తారు.",
+  "hi": "ग्राहक सुनते हैं: “{name}, {shop} की AI असिस्टेंट।” “AI असिस्टेंट” शब्द हमेशा बोले जाते हैं।",
+  "kn": "ಗ್ರಾಹಕರು ಕೇಳುವುದು: “{name}, {shop} ನ AI ಅಸಿಸ್ಟೆಂಟ್.” “AI ಅಸಿಸ್ಟೆಂಟ್” ಎಂಬ ಮಾತು ಯಾವಾಗಲೂ ಹೇಳಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.name.label": {
+  "en": "Assistant name",
+  "te": "అసిస్టెంట్ పేరు",
+  "hi": "असिस्टेंट का नाम",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.name.err": {
+  "en": "Use letters and numbers, up to {n} characters.",
+  "te": "అక్షరాలు, అంకెలు వాడండి, {n} అక్షరాల వరకు.",
+  "hi": "अक्षर और अंक इस्तेमाल करें, {n} अक्षर तक।",
+  "kn": "ಅಕ್ಷರ, ಅಂಕೆಗಳನ್ನು ಬಳಸಿ, {n} ಅಕ್ಷರಗಳವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.t": {
+  "en": "Voice",
+  "te": "వాయిస్",
+  "hi": "आवाज़",
+  "kn": "ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.d": {
+  "en": "Natural Indian voices. Voice samples come with early access.",
+  "te": "సహజమైన భారతీయ గొంతులు. వాయిస్ శాంపిల్స్ ముందస్తు యాక్సెస్‌తో వస్తాయి.",
+  "hi": "नैचुरल भारतीय आवाज़ें। वॉइस सैंपल अर्ली एक्सेस के साथ आएँगे।",
+  "kn": "ಸಹಜ ಭಾರತೀಯ ಧ್ವನಿಗಳು. ವಾಯ್ಸ್ ಸ್ಯಾಂಪಲ್ ಅರ್ಲಿ ಆಕ್ಸೆಸ್‌ನೊಂದಿಗೆ ಬರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.female_warm": {
+  "en": "Female · warm",
+  "te": "మహిళ · ఆప్యాయంగా",
+  "hi": "महिला · अपनापन",
+  "kn": "ಮಹಿಳೆ · ಆತ್ಮೀಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.female_clear": {
+  "en": "Female · clear",
+  "te": "మహిళ · స్పష్టంగా",
+  "hi": "महिला · साफ़",
+  "kn": "ಮಹಿಳೆ · ಸ್ಪಷ್ಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.male_calm": {
+  "en": "Male · calm",
+  "te": "పురుషుడు · ప్రశాంతంగా",
+  "hi": "पुरुष · शांत",
+  "kn": "ಪುರುಷ · ಶಾಂತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.male_lively": {
+  "en": "Male · lively",
+  "te": "పురుషుడు · ఉత్సాహంగా",
+  "hi": "पुरुष · जोशीला",
+  "kn": "ಪುರುಷ · ಉತ್ಸಾಹ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.female_warm.d": {
+  "en": "Friendly, unhurried",
+  "te": "స్నేహంగా, తొందర లేకుండా",
+  "hi": "दोस्ताना, बिना जल्दबाज़ी",
+  "kn": "ಸ್ನೇಹದಿಂದ, ಆತುರವಿಲ್ಲದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.female_clear.d": {
+  "en": "Crisp and confident",
+  "te": "స్పష్టంగా, నమ్మకంగా",
+  "hi": "साफ़ और आत्मविश्वास भरी",
+  "kn": "ಸ್ಪಷ್ಟ ಮತ್ತು ಆತ್ಮವಿಶ್ವಾಸದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.male_calm.d": {
+  "en": "Steady and polite",
+  "te": "స్థిరంగా, మర్యాదగా",
+  "hi": "स्थिर और विनम्र",
+  "kn": "ಸ್ಥಿರ ಮತ್ತು ವಿನಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.male_lively.d": {
+  "en": "Energetic, upbeat",
+  "te": "ఉత్సాహంగా, చురుగ్గా",
+  "hi": "जोश भरी, चुस्त",
+  "kn": "ಚುರುಕು, ಉತ್ಸಾಹ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.lang.t": {
+  "en": "Languages",
+  "te": "భాషలు",
+  "hi": "भाषाएँ",
+  "kn": "ಭಾಷೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.lang.d": {
+  "en": "Main language for first calls. It switches to the customer's language when they reply in another one.",
+  "te": "మొదటి కాల్స్‌కి ప్రధాన భాష. కస్టమర్ వేరే భాషలో జవాబిస్తే వాళ్ల భాషకి మారుతుంది.",
+  "hi": "पहले कॉल की मुख्य भाषा। ग्राहक दूसरी भाषा में जवाब दें तो उनकी भाषा में बदल जाता है।",
+  "kn": "ಮೊದಲ ಕಾಲ್‌ಗಳ ಮುಖ್ಯ ಭಾಷೆ. ಗ್ರಾಹಕರು ಬೇರೆ ಭಾಷೆಯಲ್ಲಿ ಉತ್ತರಿಸಿದರೆ ಅವರ ಭಾಷೆಗೆ ಬದಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.lang.auto": {
+  "en": "Switch to the customer's language automatically",
+  "te": "కస్టమర్ భాషకి ఆటోమేటిక్‌గా మారండి",
+  "hi": "ग्राहक की भाषा में अपने आप बदलें",
+  "kn": "ಗ್ರಾಹಕರ ಭಾಷೆಗೆ ತಾನಾಗಿ ಬದಲಾಗಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.lang.mix": {
+  "en": "Allow mixing English words (Telugu-English, Hindi-English)",
+  "te": "ఇంగ్లీష్ పదాలు కలపడానికి అనుమతి (తెలుగు-ఇంగ్లీష్, హిందీ-ఇంగ్లీష్)",
+  "hi": "अंग्रेज़ी शब्द मिलाने दें (तेलुगु-अंग्रेज़ी, हिंदी-अंग्रेज़ी)",
+  "kn": "ಇಂಗ್ಲಿಷ್ ಪದಗಳನ್ನು ಬೆರೆಸಲು ಅನುಮತಿ (ತೆಲುಗು-ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ-ಇಂಗ್ಲಿಷ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.style.t": {
+  "en": "Way of talking",
+  "te": "మాట తీరు",
+  "hi": "बात करने का तरीका",
+  "kn": "ಮಾತಿನ ಶೈಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.style.d": {
+  "en": "How it greets and speaks to your customers.",
+  "te": "మీ కస్టమర్లను ఎలా పలకరించి, ఎలా మాట్లాడుతుంది.",
+  "hi": "ग्राहकों से कैसे नमस्ते करता है और कैसे बात करता है।",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರನ್ನು ಹೇಗೆ ಮಾತನಾಡಿಸುತ್ತದೆ, ಹೇಗೆ ಮಾತನಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.style.warm": {
+  "en": "Warm and friendly",
+  "te": "ఆప్యాయంగా, స్నేహంగా",
+  "hi": "अपनापन भरा, दोस्ताना",
+  "kn": "ಆತ್ಮೀಯ, ಸ್ನೇಹಪರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.style.resp": {
+  "en": "Respectful",
+  "te": "గౌరవంగా",
+  "hi": "आदर वाला",
+  "kn": "ಗೌರವಯುತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.style.quick": {
+  "en": "Short and quick",
+  "te": "క్లుప్తంగా, వేగంగా",
+  "hi": "छोटा और तेज़",
+  "kn": "ಚಿಕ್ಕದಾಗಿ, ವೇಗವಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.style.warm.d": {
+  "en": "Friendly, like a trusted shop assistant",
+  "te": "నమ్మకమైన షాప్ అసిస్టెంట్ లాగా స్నేహంగా",
+  "hi": "भरोसेमंद दुकान के साथी जैसा दोस्ताना",
+  "kn": "ನಂಬಿಕಸ್ಥ ಅಂಗಡಿ ಸಹಾಯಕನಂತೆ ಸ್ನೇಹದಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.style.resp.d": {
+  "en": "Uses garu, ji and polite forms",
+  "te": "గారు, జీ లాంటి మర్యాద పదాలు వాడుతుంది",
+  "hi": "जी और आदर वाले रूप इस्तेमाल करता है",
+  "kn": "ಅವರೇ, ಜೀ ಎಂಬ ವಿನಯದ ರೂಪ ಬಳಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.style.quick.d": {
+  "en": "Gets to the point in a few words",
+  "te": "కొన్ని మాటల్లో విషయానికి వస్తుంది",
+  "hi": "कुछ शब्दों में सीधे मुद्दे पर आता है",
+  "kn": "ಕೆಲವೇ ಮಾತುಗಳಲ್ಲಿ ವಿಷಯಕ್ಕೆ ಬರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.speed": {
+  "en": "Speaking speed",
+  "te": "మాట్లాడే వేగం",
+  "hi": "बोलने की रफ़्तार",
+  "kn": "ಮಾತನಾಡುವ ವೇಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.may.t": {
+  "en": "What it may do on calls",
+  "te": "కాల్స్‌లో అది ఏం చేయవచ్చు",
+  "hi": "कॉल पर यह क्या कर सकता है",
+  "kn": "ಕಾಲ್‌ಗಳಲ್ಲಿ ಅದು ಏನು ಮಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.may.prices": {
+  "en": "Answer prices from your catalogue",
+  "te": "మీ క్యాటలాగ్ నుంచి ధరలు చెప్పడం",
+  "hi": "आपके कैटलॉग से रेट बताना",
+  "kn": "ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನಿಂದ ಬೆಲೆ ಹೇಳುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.may.prices@programmes": {
+  "en": "Answer fee questions from your fee plan",
+  "te": "మీ ఫీజు ప్లాన్ నుంచి ఫీజు ప్రశ్నలకు జవాబు ఇవ్వడం",
+  "hi": "आपके फ़ीस प्लान से फ़ीस के सवालों के जवाब देना",
+  "kn": "ನಿಮ್ಮ ಫೀಸ್ ಪ್ಲಾನ್‌ನಿಂದ ಫೀಸ್ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರ ಕೊಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.may.visits": {
+  "en": "Book shop visits",
+  "te": "షాప్ విజిట్‌లు బుక్ చేయడం",
+  "hi": "दुकान की विज़िट बुक करना",
+  "kn": "ಅಂಗಡಿ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.may.visits@programmes": {
+  "en": "Book campus visits",
+  "te": "క్యాంపస్ విజిట్‌లు బుక్ చేయడం",
+  "hi": "कैंपस विज़िट बुक करना",
+  "kn": "ಕ್ಯಾಂಪಸ್ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.may.visits@materials": {
+  "en": "Book site and shop visits",
+  "te": "సైట్, షాప్ విజిట్‌లు బుక్ చేయడం",
+  "hi": "साइट और दुकान की विज़िट बुक करना",
+  "kn": "ಸೈಟ್, ಅಂಗಡಿ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.may.whatsapp": {
+  "en": "Send photos, samples and quotes on WhatsApp when asked",
+  "te": "అడిగినప్పుడు వాట్సాప్‌లో ఫోటోలు, శాంపిల్స్, కోట్లు ఇవ్వడం",
+  "hi": "पूछने पर व्हाट्सऐप पर फ़ोटो, सैंपल और कोटेशन देना",
+  "kn": "ಕೇಳಿದಾಗ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಫೋಟೋ, ಸ್ಯಾಂಪಲ್, ಕೊಟೇಶನ್ ಕೊಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.may.whatsapp@programmes": {
+  "en": "Send the brochure and fee structure on WhatsApp when asked",
+  "te": "అడిగినప్పుడు వాట్సాప్‌లో బ్రోషర్, ఫీజు వివరాలు ఇవ్వడం",
+  "hi": "पूछने पर व्हाट्सऐप पर ब्रोशर और फ़ीस का ढाँचा देना",
+  "kn": "ಕೇಳಿದಾಗ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಬ್ರೋಷರ್, ಫೀಸ್ ವಿವರ ಕೊಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.may.dues": {
+  "en": "Talk about dues",
+  "te": "బాకీల గురించి మాట్లాడటం",
+  "hi": "बकाया के बारे में बात करना",
+  "kn": "ಬಾಕಿಯ ಬಗ್ಗೆ ಮಾತನಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.discount": {
+  "en": "Highest discount it may offer",
+  "te": "అది ఇవ్వగల గరిష్ట డిస్కౌంట్",
+  "hi": "यह ज़्यादा से ज़्यादा कितना डिस्काउंट दे सकता है",
+  "kn": "ಅದು ಕೊಡಬಹುದಾದ ಗರಿಷ್ಠ ಡಿಸ್ಕೌಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.discount.help": {
+  "en": "0 means it may not offer a discount. A discount over this waits for you.",
+  "te": "0 అంటే డిస్కౌంట్ ఇవ్వకూడదు. దీని కంటే ఎక్కువ డిస్కౌంట్ మీ కోసం ఆగుతుంది.",
+  "hi": "0 का मतलब डिस्काउंट नहीं दे सकता। इससे ज़्यादा डिस्काउंट आपके ओके का इंतज़ार करता है।",
+  "kn": "0 ಎಂದರೆ ಡಿಸ್ಕೌಂಟ್ ಕೊಡುವಂತಿಲ್ಲ. ಇದಕ್ಕಿಂತ ಹೆಚ್ಚಿನ ಡಿಸ್ಕೌಂಟ್ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.handover.t": {
+  "en": "Hand over to you",
+  "te": "మీకు అప్పగించడం",
+  "hi": "आपको सौंपना",
+  "kn": "ನಿಮಗೆ ಒಪ್ಪಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.handover.d": {
+  "en": "The call or chat comes to your phone when:",
+  "te": "ఇవి జరిగినప్పుడు కాల్ లేదా చాట్ మీ ఫోన్‌కి వస్తుంది:",
+  "hi": "इन हालात में कॉल या चैट आपके फ़ोन पर आती है:",
+  "kn": "ಇವು ಆದಾಗ ಕಾಲ್ ಅಥವಾ ಚಾಟ್ ನಿಮ್ಮ ಫೋನ್‌ಗೆ ಬರುತ್ತದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.handover.owner": {
+  "en": "Customer asks for the owner",
+  "te": "కస్టమర్ ఓనర్‌ని అడిగినప్పుడు",
+  "hi": "ग्राहक ओनर से बात करना चाहे",
+  "kn": "ಗ್ರಾಹಕರು ಓನರ್ ಅವರನ್ನು ಕೇಳಿದಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.handover.upset": {
+  "en": "Customer sounds upset",
+  "te": "కస్టమర్ కోపంగా ఉన్నప్పుడు",
+  "hi": "ग्राहक नाराज़ लगे",
+  "kn": "ಗ್ರಾಹಕರು ಕೋಪದಲ್ಲಿದ್ದಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.handover.above": {
+  "en": "Order above (rupees)",
+  "te": "ఈ మొత్తం కంటే ఎక్కువ ఆర్డర్ (రూపాయలు)",
+  "hi": "इससे बड़ा ऑर्डर (रुपये)",
+  "kn": "ಈ ಮೊತ್ತಕ್ಕಿಂತ ದೊಡ್ಡ ಆರ್ಡರ್ (ರೂಪಾಯಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.handover.above.help": {
+  "en": "Leave empty for no limit.",
+  "te": "పరిమితి వద్దంటే ఖాళీగా వదలండి.",
+  "hi": "सीमा न चाहिए तो खाली छोड़ें।",
+  "kn": "ಮಿತಿ ಬೇಡವಾದರೆ ಖಾಲಿ ಬಿಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.hours.t": {
+  "en": "Calling hours",
+  "te": "కాల్ చేసే సమయాలు",
+  "hi": "कॉल करने का समय",
+  "kn": "ಕಾಲ್ ಮಾಡುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.hours.from": {
+  "en": "From",
+  "te": "నుంచి",
+  "hi": "से",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.hours.to": {
+  "en": "To",
+  "te": "వరకు",
+  "hi": "तक",
+  "kn": "ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.hours.err": {
+  "en": "The end must be after the start, and at least one day must be on.",
+  "te": "ముగింపు ప్రారంభం తర్వాత ఉండాలి, కనీసం ఒక రోజు ఆన్‌లో ఉండాలి.",
+  "hi": "खत्म होने का समय शुरू के बाद हो, और कम से कम एक दिन चालू हो।",
+  "kn": "ಮುಕ್ತಾಯ ಆರಂಭದ ನಂತರ ಇರಬೇಕು, ಕನಿಷ್ಠ ಒಂದು ದಿನ ಆನ್ ಆಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.day.mon": {
+  "en": "Mon",
+  "te": "సోమ",
+  "hi": "सोम",
+  "kn": "ಸೋಮ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.day.tue": {
+  "en": "Tue",
+  "te": "మంగళ",
+  "hi": "मंगल",
+  "kn": "ಮಂಗಳ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.day.wed": {
+  "en": "Wed",
+  "te": "బుధ",
+  "hi": "बुध",
+  "kn": "ಬುಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.day.thu": {
+  "en": "Thu",
+  "te": "గురు",
+  "hi": "गुरु",
+  "kn": "ಗುರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.day.fri": {
+  "en": "Fri",
+  "te": "శుక్ర",
+  "hi": "शुक्र",
+  "kn": "ಶುಕ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.day.sat": {
+  "en": "Sat",
+  "te": "శని",
+  "hi": "शनि",
+  "kn": "ಶನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.day.sun": {
+  "en": "Sun",
+  "te": "ఆది",
+  "hi": "रवि",
+  "kn": "ಭಾನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.preview": {
+  "en": "Preview",
+  "te": "ప్రివ్యూ",
+  "hi": "प्रीव्यू",
+  "kn": "ಪ್ರಿವ್ಯೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.preview.who": {
+  "en": "{name} · AI assistant",
+  "te": "{name} · AI అసిస్టెంట్",
+  "hi": "{name} · AI असिस्टेंट",
+  "kn": "{name} · AI ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.hear": {
+  "en": "Hear it",
+  "te": "వినండి",
+  "hi": "सुनें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.hear.soon": {
+  "en": "Voice samples come with early access.",
+  "te": "వాయిస్ శాంపిల్స్ ముందస్తు యాక్సెస్‌తో వస్తాయి.",
+  "hi": "वॉइस सैंपल अर्ली एक्सेस के साथ आएँगे।",
+  "kn": "ವಾಯ್ಸ್ ಸ್ಯಾಂಪಲ್ ಅರ್ಲಿ ಆಕ್ಸೆಸ್‌ನೊಂದಿಗೆ ಬರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test": {
+  "en": "Call me now for a test",
+  "te": "టెస్ట్ కోసం ఇప్పుడే నాకు కాల్ చేయండి",
+  "hi": "टेस्ट के लिए अभी मुझे कॉल करें",
+  "kn": "ಟೆಸ್ಟ್‌ಗಾಗಿ ಈಗಲೇ ನನಗೆ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.note": {
+  "en": "The test call goes to your own phone. You see the transcript and outcome afterwards.",
+  "te": "టెస్ట్ కాల్ మీ సొంత ఫోన్‌కి వెళ్తుంది. తర్వాత ట్రాన్స్‌క్రిప్ట్, ఫలితం చూడవచ్చు.",
+  "hi": "टेस्ट कॉल आपके अपने फ़ोन पर जाता है। बाद में ट्रांसक्रिप्ट और नतीजा देख सकते हैं।",
+  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ನಿಮ್ಮದೇ ಫೋನ್‌ಗೆ ಹೋಗುತ್ತದೆ. ನಂತರ ಟ್ರಾನ್ಸ್‌ಕ್ರಿಪ್ಟ್, ಫಲಿತಾಂಶ ನೋಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.soon": {
+  "en": "Test calls are not available yet. They come with AI calls (early access).",
+  "te": "టెస్ట్ కాల్స్ ఇంకా అందుబాటులో లేవు. అవి AI కాల్స్‌తో (ముందస్తు యాక్సెస్) వస్తాయి.",
+  "hi": "टेस्ट कॉल अभी उपलब्ध नहीं हैं। ये AI कॉल (अर्ली एक्सेस) के साथ आएँगे।",
+  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ಸ್ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ. ಅವು AI ಕಾಲ್ಸ್ (ಅರ್ಲಿ ಆಕ್ಸೆಸ್) ಜೊತೆ ಬರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.save.err": {
+  "en": "That did not save. Check the name, the hours and the numbers.",
+  "te": "సేవ్ కాలేదు. పేరు, సమయాలు, అంకెలు చూడండి.",
+  "hi": "सेव नहीं हुआ। नाम, समय और अंक देख लें।",
+  "kn": "ಸೇವ್ ಆಗಲಿಲ್ಲ. ಹೆಸರು, ಸಮಯ, ಅಂಕೆಗಳನ್ನು ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode.listening": {
+  "en": "I'm listening…",
+  "te": "వింటున్నాను…",
+  "hi": "मैं सुन रहा हूँ…",
+  "kn": "ಕೇಳುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode.starting": {
+  "en": "Getting the microphone ready…",
+  "te": "మైక్రోఫోన్ సిద్ధం చేస్తున్నాను…",
+  "hi": "माइक्रोफ़ोन तैयार कर रहा हूँ…",
+  "kn": "ಮೈಕ್ರೋಫೋನ್ ಸಿದ್ಧಪಡಿಸುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode.thinking": {
+  "en": "Thinking…",
+  "te": "ఆలోచిస్తున్నాను…",
+  "hi": "सोच रहा हूँ…",
+  "kn": "ಯೋಚಿಸುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode.answering": {
+  "en": "Answering…",
+  "te": "జవాబిస్తున్నాను…",
+  "hi": "जवाब दे रहा हूँ…",
+  "kn": "ಉತ್ತರಿಸುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode.cancel": {
+  "en": "Never mind",
+  "te": "వద్దులే",
+  "hi": "रहने दें",
+  "kn": "ಬೇಡ ಬಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode.problem": {
+  "en": "That did not work. Close this to see why.",
+  "te": "అది కాలేదు. కారణం చూడటానికి దీన్ని మూసివేయండి.",
+  "hi": "यह नहीं हो पाया। वजह देखने के लिए इसे बंद करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಕಾರಣ ನೋಡಲು ಇದನ್ನು ಮುಚ್ಚಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",

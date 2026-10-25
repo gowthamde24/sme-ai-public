@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import type { AppT } from "@/i18n/app";
 
-import { PlushStill } from "../owl/PlushStill";
+import { OrbMark } from "../mark/OrbMark";
 import { backLink, bodyText, pageH1, pageMain } from "../ui";
 
 /**
@@ -15,7 +15,7 @@ export function SoonPage({ which, base, lang, t }: { which: "fees" | "campaigns"
     <main className={pageMain} lang={lang} data-screen={`soon-${which}`}>
       <h1 className={pageH1}>{t(`soon.${which}.title` as "soon.fees.title")}</h1>
       <div className="mt-4 flex max-w-xl items-start gap-4 rounded-[20px] border border-line bg-surface p-4 md:p-5">
-        <PlushStill px={72} agent="main" className="size-[72px]" />
+        <OrbMark px={72} className="size-[72px]" />
         <div className="min-w-0">
           <p className="font-semibold">{t("frame.notyet")}</p>
           <p className={bodyText}>{t(`soon.${which}.body` as "soon.fees.body")}</p>

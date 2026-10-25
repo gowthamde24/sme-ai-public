@@ -12,7 +12,7 @@
 @import "./tokens.css";
 @import "./reset.css";
 @import "./base.css";
-@import "./owl.css";
+@import "./orb.css";
 
 @theme {
   /* the hero headline: tight in Latin, Telugu and Hindi; base.css raises it for Kannada */

@@ -4,7 +4,7 @@ import type { CampaignOut } from "@contracts";
 
 import { formatRupees } from "@/lib/money";
 
-import { PlushStill } from "../owl/PlushStill";
+import { OrbMark } from "../mark/OrbMark";
 import { Pill } from "../parts";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
@@ -31,7 +31,7 @@ export function CampaignsView({ base, words, role, campaigns, more, saved, help,
         <p role="alert" className="rounded-2xl border border-line p-4 text-base">{say(words, "camp.loaderr")}</p>
       ) : campaigns.length === 0 ? (
         <div className="flex max-w-xl items-start gap-4 rounded-[20px] border border-line bg-surface p-4 md:p-5" data-part="empty">
-          <PlushStill px={72} agent="main" className="size-[72px]" />
+          <OrbMark px={72} className="size-[72px]" />
           <div className="min-w-0">
             <p className="font-semibold">{say(words, announcements ? "camp.ann.empty.title" : "camp.empty.title")}</p>
             <p className="text-base text-muted">{say(words, announcements ? "camp.ann.empty.body" : "camp.empty.body")}</p>

@@ -21,7 +21,7 @@ describe("the friendly pages", () => {
   it.each(PROBLEM_KINDS)("%s has the owl, one title, one sentence and a way back", (kind) => {
     const { container } = render(<ProblemView kind={kind} />);
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
-    expect(container.querySelector("img[data-plush-avatar]")).not.toBeNull();
+    expect(container.querySelector("[data-orb]")).not.toBeNull();
     expect(screen.getByRole("link", { name: "Back to your workspaces" })).toHaveAttribute("href", "/app");
     expect(container.querySelector(`[data-problem="${kind}"]`)).not.toBeNull();
   });

@@ -54,7 +54,7 @@ describe("the Office", () => {
     expect(screen.getByRole("heading", { level: 2, name: "Quote Writer" })).toBeInTheDocument();
     document.body.innerHTML = "";
     render(await OfficePage(props({ agent: "<script>" })));
-    expect(screen.getByText("Tap a teammate in the room, or choose one in the list, to read their latest events here.")).toBeInTheDocument();
+    expect(screen.getByText("Tap a teammate on the board, or choose one in the list, to read their latest events here.")).toBeInTheDocument();
   });
   it("says 'Not available yet' and names no helper when the status cannot be read", async () => {
     getAgentsStatus.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));

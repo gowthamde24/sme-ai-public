@@ -5,7 +5,7 @@ import { useEffect, useSyncExternalStore } from "react";
 
 import { word, type Labels } from "@/components/v2/app/labels";
 import { SHORT_NAME } from "@/design/brand";
-import { PlushStill } from "@/components/v2/app/owl/PlushStill";
+import { OrbMark } from "@/components/v2/app/mark/OrbMark";
 import { EMPTY, HINT_KEY, dismiss, howTo, markInstalled, parseState, recordVisit, shouldShow, type HintState, type HowTo } from "@/lib/pwa/install-hint";
 
 type InstallPrompt = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
@@ -80,7 +80,7 @@ export function InstallHint({ labels }: { labels?: Labels }) {
   };
   return (
     <section data-part="install-hint" aria-label={word(labels, "pwa.hint.label", "Add to home screen")} className="mx-3 mb-2 flex items-start gap-3 rounded-2xl border border-line bg-surface p-3 shadow-[var(--v2-shadow-pop)]">
-      <PlushStill px={40} className="size-10" />
+      <OrbMark px={40} className="size-10" />
       <div className="min-w-0 flex-1">
         <p className="font-display text-base font-semibold">{word(labels, "pwa.hint.title", "Add {brand} to your home screen", { brand: SHORT_NAME })}</p>
         <p className="mt-0.5 text-sm text-muted">

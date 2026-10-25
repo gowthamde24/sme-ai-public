@@ -11,7 +11,7 @@ const card = "rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shad
 /** Every word the room needs, resolved here in the person's language (the client file holds no dictionary). */
 const WORD_KEYS = [
   "office.title", "office.sub", "office.idle", "office.working", "office.switchedoff", "frame.notyet", "office.latest", "office.noevents", "office.pick", "office.runs",
-  "office.viewroom", "office.viewlist", "office.listintro", "office.viewswitch", "office.hint", "office.still", "office.feed",
+  "office.viewroom", "office.viewlist", "office.listintro", "office.viewswitch", "office.hint", "office.feed",
   ...ALL_AGENT_IDS.map((id) => `agent.${id}`),
 ];
 

@@ -1,19 +1,11 @@
 import type { InvitedRole, Member, MemberRole } from "@/lib/api/team";
 import { whatsappShareLink } from "@/lib/whatsapp/share";
-import { OWL_AGENTS } from "../owl/owl-files";
 
 import type { Say } from "../words";
 
 /** The pure rules of the team screen (job CC, screen 4); the API and the database decide again. */
 export const DAYS = [3, 7, 14, 30] as const;
 export const REASONS = ["no_longer_works_here", "access_no_longer_needed", "security_concern", "other"] as const;
-
-/** Which of one's own owl a person gets: the same person always the same colour (the agents' owls are the only owls there are). */
-export function owlOf(userId: string): string {
-  let h = 0;
-  for (const ch of userId) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  return OWL_AGENTS[h % OWL_AGENTS.length];
-}
 
 /** The roles a person may invite: an Owner any, an Admin Sales and Viewer only. */
 export function invitableRoles(myRole: string): readonly InvitedRole[] {

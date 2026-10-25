@@ -5,7 +5,7 @@ import type { LateFeesPreviewOut } from "@contracts/education";
 import type { Report } from "@/lib/api/reports";
 
 import { LateFeesPanel, type LateFeesAction } from "./LateFeesPanel";
-import { PlushStill } from "../owl/PlushStill";
+import { OrbMark } from "../mark/OrbMark";
 import { KpiCards, ReportTableView, SeriesBars, formatValue } from "../reports/ReportParts";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
@@ -36,7 +36,7 @@ export function FeesDashboard({ base, words, role, collection, today, plans, lat
       </header>
       {noPlans ? (
         <div className="flex max-w-xl items-start gap-4 rounded-[20px] border border-line bg-surface p-4 md:p-5" data-part="no-plans">
-          <PlushStill px={72} agent="main" className="size-[72px]" />
+          <OrbMark px={72} className="size-[72px]" />
           <div className="min-w-0">
             <p className="font-semibold">{say(words, "edu.fees.noplans.title")}</p>
             <p className="text-base text-muted">{say(words, "edu.fees.noplans.body")}</p>

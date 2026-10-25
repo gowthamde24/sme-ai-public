@@ -25,7 +25,7 @@ vi.mock("@/lib/api/plan", () => ({ getPlan: async () => ({ plan: "free_trial", w
 vi.mock("@/lib/api/ai-usage", () => ({ getAiUsage: async () => ({ today_percent: 7, month_percent: 3, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }) }));
 vi.mock("@/lib/api/gstin", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/gstin")>()), getBusinessProfile: async () => ({ gstin: null, state: null }) }));
 
-import { DRAFT_PLANS } from "@/lib/plan/catalogue";
+import { CATALOGUE, DRAFT_PLANS } from "@/lib/plan/catalogue";
 import { MOCK_COOKIE } from "@/lib/plan/mock";
 
 import PlansPage from "./plans/page";
@@ -108,8 +108,8 @@ describe("the flag is '1' (on: the plans and billing API of job DI)", () => {
     const part = within(screen.getByRole("main"));
     expect(part.getByText("No plan yet")).toBeInTheDocument();
     expect(within(document.querySelector('[data-meter="minutes"]') as HTMLElement).getByText("4.5 of 30")).toBeInTheDocument();
-    expect(part.getByRole("link", { name: "Start 30-day trial" })).toBeInTheDocument();
-    expect(part.queryByRole("button", { name: /jump to day 30|Update payment/ })).toBeNull();
+    expect(part.getByRole("link", { name: `Start ${CATALOGUE.trial.days}-day trial` })).toBeInTheDocument();
+    expect(part.queryByRole("button", { name: /jump to the last day|Update payment/ })).toBeNull();
     expect(document.body.textContent).not.toMatch(/₹|\btokens?\b/i);
   });
   it("a trial at 83 percent: the plan chosen, the days left, the gentle notice", async () => {
@@ -117,7 +117,7 @@ describe("the flag is '1' (on: the plans and billing API of job DI)", () => {
     render(await SettingsPage(settingsProps({ section: "plan" })));
     expect(screen.getByText("Plan: Growth")).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveTextContent("You have used 83%");
-    expect(screen.queryByRole("link", { name: "Start 30-day trial" })).toBeNull();
+    expect(screen.queryByRole("link", { name: `Start ${CATALOGUE.trial.days}-day trial` })).toBeNull();
   });
   it("read-only (the trial ended unpaid): the Plan part says so with the API's dates, the contact is the billing address from lib/site/business, and no move is offered", async () => {
     apiRoutes(billingBody({ subscription: subscription({ status: "cancelled", payment_method_on_file: false }), can_start_trial: false, access: "read_only", read_only_since: "2026-10-14", delete_on: "2027-01-12", data_days_left: 79 }));
@@ -127,7 +127,7 @@ describe("the flag is '1' (on: the plans and billing API of job DI)", () => {
     expect(box.getByText("Read-only since 14 Oct 2026.")).toBeInTheDocument();
     expect(box.getByText("Your data is kept until 12 Jan 2027 and then deleted. Days left: 79.")).toBeInTheDocument();
     expect(box.getByText("To go on, write to billing@stack19.com.")).toBeInTheDocument();
-    expect(within(screen.getByRole("main")).queryByRole("link", { name: /Choose a plan|Change plan|Start 30-day trial/ })).toBeNull();
+    expect(within(screen.getByRole("main")).queryByRole("link", { name: new RegExp(`Choose a plan|Change plan|Start ${CATALOGUE.trial.days}-day trial`) })).toBeNull();
     expect(screen.queryByRole("button", { name: /cancel/i })).toBeNull();
   });
   it("the API cannot be reached: the Plan part says 'Not available yet', and /plans too, never a guess", async () => {
@@ -173,7 +173,7 @@ describe("the flag is '1' (on: the plans and billing API of job DI)", () => {
     h.fetchTenant.mockResolvedValue(tenant("admin"));
     render(await SettingsPage(settingsProps({ section: "plan" })));
     expect(screen.getByText("No plan yet")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Start 30-day trial" })).toBeNull();
+    expect(screen.queryByRole("link", { name: `Start ${CATALOGUE.trial.days}-day trial` })).toBeNull();
     h.api.mockClear();
     expect(await startPlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error: "forbidden" });
     expect(h.api).not.toHaveBeenCalled();
@@ -206,14 +206,14 @@ describe("the flag is 'mock' (the fake provider)", () => {
       expect(document.querySelector('[data-settings="plan"]')).toBeNull();
     }
   });
-  it("the whole walk: start the trial with a payment method, go to day 30 with a card that fails, update the payment, cancel", async () => {
+  it("the whole walk: start the trial with a payment method, go to the last day with a card that fails, update the payment, cancel", async () => {
     expect(await startPlanAction(TENANT, "growth", "")).toEqual({ ok: false, error: "no_payment_method" });
     expect(await startPlanAction(TENANT, "gold", "test_ok")).toEqual({ ok: false, error: "invalid" });
     expect(await startPlanAction(TENANT, "growth", "test_fails")).toEqual({ ok: true });
     expect(await startPlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error: "already" });
     render(await SettingsPage(settingsProps({ section: "plan" })));
     expect(screen.getByText("Plan: Growth")).toBeInTheDocument();
-    expect(screen.getByText("30 days left")).toBeInTheDocument();
+    expect(screen.getByText(`${CATALOGUE.trial.days} days left`)).toBeInTheDocument();
     cleanup();
     expect(await endPlanTrialAction(TENANT)).toEqual({ ok: true });
     render(await SettingsPage(settingsProps({ section: "plan" })));

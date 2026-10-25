@@ -5,8 +5,6 @@ import type { NextConfig } from "next";
 import { securityHeaders } from "./lib/security/headers";
 
 const PUBLIC_FILE_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
-// the plush owlets' pictures (jobs CI and CJ) live under /owl/v4/<agent>/ (job DA): a changed picture goes to /owl/v5/ (components/v2/app/owl/owl-files.ts OWL_DIR), so a year and "immutable" is safe
-const OWL_FILE_CACHE = "public, max-age=31536000, immutable";
 
 // job DE: the container image is built with NEXT_OUTPUT=standalone (deploy/Dockerfile.web): Next then traces what the server needs into .next/standalone, so the image holds that instead of the whole repository and every
 // development package (1.3 GB to a fraction), which is most of a Cloud Run cold start. Off by default: `next dev`, `next start` and the demo scripts are unchanged. The tracing root is the repository for the same reason as the turbopack root below.
@@ -39,7 +37,6 @@ const nextConfig: NextConfig = {
       // and the page heads name them by path), so a day is fresh and a week may be served while it is checked in the background; a changed icon reaches people within a day. The hashed files under /_next/static are already "immutable".
       { source: "/icons/:path*", headers: [{ key: "Cache-Control", value: PUBLIC_FILE_CACHE }] },
       { source: "/og/:path*", headers: [{ key: "Cache-Control", value: PUBLIC_FILE_CACHE }] },
-      { source: "/owl/:path*", headers: [{ key: "Cache-Control", value: OWL_FILE_CACHE }] },
     ];
   },
 };

@@ -1,4 +1,6 @@
-import { Layers, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
+
+import { Orb } from "@/components/v2/Orb";
 
 import type { AiUsage, Plan } from "./contract";
 import { word, type Labels } from "./labels";
@@ -9,13 +11,9 @@ const FILL: Record<number, string> = { 0: "w-[0%]", 5: "w-[5%]", 10: "w-[10%]", 
 /** The class of the meter's fill for a percentage (0 to 100), in steps of 5. */
 export const fillClass = (percent: number): string => FILL[Math.min(100, Math.max(0, Math.round(percent / 5) * 5))];
 
-/** The orange mark that stands for the business (the design-lab app's BrandMark). */
-export function BrandMark({ className = "size-10" }: { className?: string }) {
-  return (
-    <span aria-hidden="true" className={`grid shrink-0 place-items-center rounded-lg border border-brand-edge bg-brand text-on-brand ${className}`}>
-      <Layers className="size-5" />
-    </span>
-  );
+/** The mark that stands for the business in the frame (job DM): the AI circle, still. */
+export function BrandMark({ px = 32 }: { px?: number }) {
+  return <Orb px={px} state="still" />;
 }
 
 /** "free_trial" -> "Free trial plan": the plan's name from `getPlan()` (`frame.plan.<name>`, else the name with its underscores opened), inside the frame's own sentence. */

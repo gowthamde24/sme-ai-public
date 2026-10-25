@@ -44,14 +44,14 @@ describe("the Help guides (job BT)", () => {
 });
 
 describe("the Help screens", () => {
-  it("the index lists every guide as a link to its own page, with the owl in a mood that fits", () => {
+  it("the index lists every guide as a link to its own page, with the AI circle", () => {
     render(<HelpIndex t={appT("en")} base={BASE} lang="en" />);
     expect(screen.getByRole("heading", { level: 1, name: "Help" })).toBeInTheDocument();
     const list = screen.getByRole("list", { name: "Guides" });
     const links = within(list).getAllByRole("link");
     expect(links).toHaveLength(8);
     expect(links.map((a) => a.getAttribute("href"))).toEqual(GUIDE_IDS.map((id) => `${BASE}/help/${id}`));
-    expect(list.querySelectorAll("img[data-plush-avatar]").length).toBe(8);
+    expect(list.querySelectorAll("[data-orb]").length).toBe(8);
   });
   it("a guide has numbered steps, a button to its screen for a role that has it, and the next guide", () => {
     render(<HelpGuide id="visits" t={appT("en")} base={BASE} lang="en" role="sales" />);

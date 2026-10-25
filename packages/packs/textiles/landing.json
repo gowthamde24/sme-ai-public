@@ -10,7 +10,7 @@
       "kn": "ಸೀರೆ ಮತ್ತು ಟೆಕ್ಸ್‌ಟೈಲ್ ಅಂಗಡಿಗಳಿಗೆ {brand}: ವಾಟ್ಸಾಪ್ ವಿಚಾರಣೆ, ಕೊಟೇಶನ್, ಫಾಲೋ-ಅಪ್"
     },
     "description": {
-      "en": "An owl team that answers saree enquiries on WhatsApp, shows your catalogue, prepares quotes from your price list and chases follow-ups. You approve every price and promise.",
+      "en": "An AI team that answers saree enquiries on WhatsApp, shows your catalogue, prepares quotes from your price list and chases follow-ups. You approve every price and promise.",
       "te": "చీర ఎంక్వయిరీలకు వాట్సాప్‌లో జవాబిచ్చే, క్యాటలాగ్ చూపే, మీ ధరల జాబితా నుండి కోట్ తయారు చేసే, ఫాలో-అప్ చేసే గుడ్లగూబల టీమ్. ప్రతి ధర, ప్రామిస్ మీరే ఓకే చేస్తారు.",
       "hi": "साड़ी की पूछताछ का व्हाट्सऐप पर जवाब देने वाली, कैटलॉग दिखाने वाली, आपकी प्राइस लिस्ट से कोटेशन बनाने वाली और फ़ॉलो-अप करने वाली उल्लू टीम। हर कीमत और वादा आप ही ओके करते हैं।",
       "kn": "ಸೀರೆ ವಿಚಾರಣೆಗಳಿಗೆ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಉತ್ತರ ಕೊಡುವ, ಕ್ಯಾಟಲಾಗ್ ತೋರಿಸುವ, ನಿಮ್ಮ ಬೆಲೆ ಪಟ್ಟಿಯಿಂದ ಕೊಟೇಶನ್ ಮಾಡುವ, ಫಾಲೋ-ಅಪ್ ಮಾಡುವ ಗೂಬೆಗಳ ತಂಡ. ಪ್ರತಿ ಬೆಲೆ, ಮಾತನ್ನು ನೀವೇ ಒಪ್ಪುತ್ತೀರಿ."
@@ -30,7 +30,7 @@
       "kn": "ಪ್ರತಿ ಸೀರೆ ವಿಚಾರಣೆಗೆ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ, ನಿಮ್ಮ ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲಿ ಉತ್ತರ ಕೊಡಿ."
     },
     "sub": {
-      "en": "{brand}'s owls reply to enquiries, show your catalogue, prepare quotes and chase follow-ups. You approve every price and promise.",
+      "en": "{brand}'s AI team replies to enquiries, show your catalogue, prepare quotes and chase follow-ups. You approve every price and promise.",
       "te": "{brand} గుడ్లగూబలు ఎంక్వయిరీలకు జవాబిస్తాయి, క్యాటలాగ్ చూపిస్తాయి, కోట్లు తయారు చేస్తాయి, ఫాలో-అప్ చేస్తాయి. ప్రతి ధర, ప్రామిస్ మీరే ఓకే చేస్తారు.",
       "hi": "{brand} के उल्लू पूछताछ का जवाब देते हैं, कैटलॉग दिखाते हैं, कोटेशन बनाते हैं और फ़ॉलो-अप करते हैं। हर कीमत और वादा आप ही ओके करते हैं।",
       "kn": "{brand} ಗೂಬೆಗಳು ವಿಚಾರಣೆಗೆ ಉತ್ತರ ಕೊಡುತ್ತವೆ, ಕ್ಯಾಟಲಾಗ್ ತೋರಿಸುತ್ತವೆ, ಕೊಟೇಶನ್ ಮಾಡುತ್ತವೆ, ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತವೆ. ಪ್ರತಿ ಬೆಲೆ, ಮಾತನ್ನು ನೀವೇ ಒಪ್ಪುತ್ತೀರಿ."
@@ -86,10 +86,10 @@
   },
   "day": {
     "title": {
-      "en": "A day with your owls",
-      "te": "మీ గుడ్లగూబలతో ఒక రోజు",
-      "hi": "आपके उल्लुओं के साथ एक दिन",
-      "kn": "ನಿಮ್ಮ ಗೂಬೆಗಳ ಜೊತೆ ಒಂದು ದಿನ"
+      "en": "A day with your AI team",
+      "te": "మీ AI టీమ్‌తో ఒక రోజు",
+      "hi": "आपकी AI टीम के साथ एक दिन",
+      "kn": "ನಿಮ್ಮ AI ತಂಡದ ಜೊತೆ ಒಂದು ದಿನ"
     },
     "steps": [
       {

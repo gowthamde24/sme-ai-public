@@ -1,5 +1,5 @@
 # Team
-Who is in your business, and who is invited. Each person has their own owl.
+Who is in your business, and who is invited.
 ## People
 Too many tries. Wait 20 seconds, then try again. Nothing you typed is lost.
 [button type=button: Try again]

@@ -35,8 +35,9 @@ describe("Settings > Plan", () => {
   it("no plan yet: says how the trial starts and offers to start it", () => {
     draw(plan({}));
     expect(screen.getByText("No plan yet")).toBeInTheDocument();
-    expect(screen.getByText(/If you cancel before day 30, nothing is charged/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Start 30-day trial" })).toHaveAttribute("href", "/app/tenants/t/plans");
+    expect(screen.getByText(/If you cancel before the trial ends, nothing is charged/)).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(`The ${CATALOGUE.trial.days} days count from the day your WhatsApp is connected`))).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: `Start ${CATALOGUE.trial.days}-day trial` })).toHaveAttribute("href", "/app/tenants/t/plans");
     // no plan yet: the trial's allowances apply, as the API says, and nothing is used
     expect(within(document.querySelector('[data-meter="minutes"]') as HTMLElement).getByText("0 of 30")).toBeInTheDocument();
     expect(within(document.querySelector('[data-meter="messages"]') as HTMLElement).getByText("0 of 100")).toBeInTheDocument();
@@ -44,8 +45,8 @@ describe("Settings > Plan", () => {
   it("in the trial: the plan, the day, the days left, and both meters as counts and percentages", () => {
     draw(plan({ state: "trialing", plan: "growth", method: "test_ok", day: 4, minutes: 6, messages: 25 }));
     expect(screen.getByText("Plan: Growth")).toBeInTheDocument();
-    expect(screen.getByText("Day 4 of 30 of your trial")).toBeInTheDocument();
-    expect(screen.getByText("27 days left")).toBeInTheDocument();
+    expect(screen.getByText(`Day 4 of ${CATALOGUE.trial.days} of your trial`)).toBeInTheDocument();
+    expect(screen.getByText(`${CATALOGUE.trial.days - 3} days left`)).toBeInTheDocument();
     expect(screen.getByText("Price coming soon")).toBeInTheDocument();
     const minutes = within(document.querySelector('[data-meter="minutes"]') as HTMLElement);
     expect(minutes.getByText("6 of 30")).toBeInTheDocument();
@@ -136,7 +137,7 @@ describe("Settings > Plan", () => {
   });
   it("a cancelled trial cannot start another (once per workspace): the link only goes to the plans", () => {
     draw(plan({ state: "cancelled", plan: "growth", method: "test_ok", cancelled: true }));
-    expect(screen.queryByRole("link", { name: "Start 30-day trial" })).toBeNull();
+    expect(screen.queryByRole("link", { name: `Start ${CATALOGUE.trial.days}-day trial` })).toBeNull();
     expect(screen.getByRole("link", { name: "Choose a plan" })).toHaveAttribute("href", "/app/tenants/t/plans");
   });
   it("cancelling in the trial asks once and says nothing is charged; 'Keep it' does nothing", async () => {
@@ -150,7 +151,7 @@ describe("Settings > Plan", () => {
     fireEvent.click(screen.getByRole("button", { name: "Yes, cancel" }));
     await waitFor(() => expect(a.cancel).toHaveBeenCalledOnce());
   });
-  it("a trial cancelled before day 30 says nothing was charged", () => {
+  it("a trial cancelled before it ends says nothing was charged", () => {
     draw(plan({ state: "cancelled", plan: "growth", method: "test_ok", cancelled: true }));
     expect(screen.getByText("Your trial was cancelled. Nothing was charged.")).toBeInTheDocument();
   });
@@ -162,16 +163,16 @@ describe("Settings > Plan", () => {
     await waitFor(() => expect(screen.getByText("Not available yet.")).toBeInTheDocument());
     expect(refresh).not.toHaveBeenCalled();
   });
-  it("test mode: the label, and a button that jumps to day 30 only when the page gives it", async () => {
+  it("test mode: the label, and a button that jumps to the last day only when the page gives it", async () => {
     const endTrial = vi.fn(ok);
     draw(plan({ state: "trialing", plan: "growth", method: "test_fails" }), { a: actions({ endTrial }) });
     expect(screen.getByRole("note")).toHaveTextContent("no real payment is taken and no card details are asked for");
-    fireEvent.click(screen.getByRole("button", { name: "Test only: jump to day 30" }));
+    fireEvent.click(screen.getByRole("button", { name: "Test only: jump to the last day" }));
     await waitFor(() => expect(endTrial).toHaveBeenCalled());
     cleanup();
     draw(plan({ state: "trialing", plan: "growth", method: "test_ok" }), { mock: false });
     expect(screen.queryByRole("note")).toBeNull();
-    expect(screen.queryByRole("button", { name: /jump to day 30/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /jump to the last day/ })).toBeNull();
   });
   it("a person who may not change the plan sees the plan and the meters but no move", () => {
     draw(plan({ state: "trialing", plan: "growth", method: "test_ok" }), { canChange: false });
@@ -187,7 +188,7 @@ describe("Settings > Plan", () => {
 
 describe("the plan picker", () => {
   const pick = (over: Partial<{ canStart: boolean; currentId: string | null; blocked: "already" | "used" | "forbidden" | null; a: PlanActions }> = {}) =>
-    render(<PlanPicker words={words} main={mainPlans()} calls={callsPlans()} currentId={over.currentId ?? null} canStart={over.canStart ?? true} blocked={over.blocked ?? null} mock actions={over.a ?? actions()} done="/app/tenants/t/settings?section=plan" />);
+    render(<PlanPicker words={words} main={mainPlans()} calls={callsPlans()} currentId={over.currentId ?? null} canStart={over.canStart ?? true} blocked={over.blocked ?? null} mock trialDays={CATALOGUE.trial.days} actions={over.a ?? actions()} done="/app/tenants/t/settings?section=plan" />);
 
   it("Calls 300 and Calls 1,000 include WhatsApp follow-up messages; pay-as-you-go pays per message", () => {
     pick();
@@ -214,21 +215,21 @@ describe("the plan picker", () => {
     const a = actions({ start: vi.fn(async (_p: string, m: string): Promise<PlanResult> => (m ? { ok: true } : { ok: false, error: "no_payment_method" })) });
     pick({ a });
     expect(screen.getByRole("button", { name: "Start trial" })).toBeDisabled();
-    fireEvent.click(screen.getAllByRole("radio", { name: "Start the 30-day trial of Growth" })[0]);
-    fireEvent.click(screen.getByRole("button", { name: "Start the 30-day trial of Growth" }));
+    fireEvent.click(screen.getAllByRole("radio", { name: `Start the ${CATALOGUE.trial.days}-day trial of Growth` })[0]);
+    fireEvent.click(screen.getByRole("button", { name: `Start the ${CATALOGUE.trial.days}-day trial of Growth` }));
     expect(await screen.findByText("Choose a payment method to start the trial.")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("radio", { name: "Test card that works" }));
-    fireEvent.click(screen.getByRole("button", { name: "Start the 30-day trial of Growth" }));
+    fireEvent.click(screen.getByRole("button", { name: `Start the ${CATALOGUE.trial.days}-day trial of Growth` }));
     await waitFor(() => expect(a.start).toHaveBeenLastCalledWith("growth", "test_ok"));
-    expect(await screen.findByText(/Your 30-day trial of Growth has started/)).toBeInTheDocument();
+    expect(await screen.findByText(new RegExp(`Your ${CATALOGUE.trial.days}-day trial of Growth has started`))).toBeInTheDocument();
   });
   it("offers the three test payment choices, one of them refused at once with its own sentence", async () => {
     const a = actions({ start: vi.fn(async (_p: string, m: string): Promise<PlanResult> => (m === "test_declined" ? { ok: false, error: "declined" } : { ok: true })) });
     pick({ a });
     expect(screen.getAllByRole("radio", { name: /^Test card/ })).toHaveLength(3);
-    fireEvent.click(screen.getAllByRole("radio", { name: "Start the 30-day trial of Business" })[0]);
+    fireEvent.click(screen.getAllByRole("radio", { name: `Start the ${CATALOGUE.trial.days}-day trial of Business` })[0]);
     fireEvent.click(screen.getByRole("radio", { name: "Test card that is declined at once" }));
-    fireEvent.click(screen.getByRole("button", { name: "Start the 30-day trial of Business" }));
+    fireEvent.click(screen.getByRole("button", { name: `Start the ${CATALOGUE.trial.days}-day trial of Business` }));
     expect(await screen.findByText("The payment method was declined, so the trial did not start.")).toBeInTheDocument();
   });
   it("a workspace whose trial is over, or a person who is not the Owner, is told why and cannot start", () => {

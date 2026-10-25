@@ -4,7 +4,7 @@ import { ago } from "../today/time";
 import type { ConversationPage } from "@/lib/api/whatsapp";
 
 import { card, h2, pillClass } from "../cc/kit";
-import { PlushStill } from "../owl/PlushStill";
+import { OrbMark } from "../mark/OrbMark";
 import { makeT, type Words } from "../words";
 
 /**
@@ -16,7 +16,7 @@ export function ChatList({ tenantId, words, page, now, olderHref }: { tenantId: 
   if (page.conversations.length === 0)
     return (
       <section className={`${card} items-start`} data-chats="empty">
-        <PlushStill px={64} mood={"resting"} className="size-16" />
+        <OrbMark px={64} mood={"resting"} className="size-16" />
         <h2 className={h2}>{t("wa.chats.empty.title")}</h2>
         <p className="text-base text-muted">{t("wa.chats.empty.body")}</p>
       </section>

@@ -9,8 +9,8 @@ import { queryProblem } from "@/lib/api/retailers-checks";
 import { FailureNote } from "../cc/FailureNote";
 import { card, field, h2, h3, help, label as labelClass, muted, okLine, primary, quiet, secondary, type Failed, type Reply } from "../cc/kit";
 import { postJson } from "../cc/post";
-import { PlushStill } from "../owl/PlushStill";
-import { StateDot } from "../owl/StateDot";
+import { AgentMark } from "../mark/AgentMark";
+import { StateDot } from "../mark/StateDot";
 import { makeT, type Words } from "../words";
 
 export type ConfirmResult = { ok: true; data: { lead_id: string; created: boolean } } | Failed;
@@ -101,7 +101,7 @@ export function RetailersSearch({ tenantId, words, status, confirm }: { tenantId
 
       {busy ? (
         <section className={`${card} flex-row items-center`} role="status" aria-live="polite">
-          <PlushStill agent="researcher" px={48} mood="thinking" className="size-12" />
+          <AgentMark agent="researcher" px={48} mood="thinking" className="size-12" />
           <StateDot state="working" />
           <p className="text-base">{t("rtl.searching")}</p>
         </section>
