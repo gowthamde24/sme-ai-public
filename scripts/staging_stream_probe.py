@@ -20,6 +20,9 @@ import seed_staging as ss  # noqa: E402  # isort: skip
 QUESTION = "Go through my recent quotes and enquiries and, in one full sentence each, tell me where each one stands and what I should do next."
 
 
+TEXT: list[str] = []  # the answer text of the last run, to read it (synthetic workspaces only)
+
+
 def timed(url: str, token: str, body: dict, headers: dict[str, str] | None = None) -> list[tuple[float, str]]:
     req = urllib.request.Request(url, method="POST", data=json.dumps(body).encode(), headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json", **(headers or {})})  # noqa: S310 - https only
     t0 = time.time()
@@ -36,6 +39,8 @@ def timed(url: str, token: str, body: dict, headers: dict[str, str] | None = Non
                 continue
             try:
                 ev = json.loads(line)
+                if ev.get("type") == "text":
+                    TEXT.append(str(ev.get("delta", "")))
                 label = ev.get("type", "?") + (f" ({len(ev.get('delta', ''))} chars)" if ev.get("type") == "text" else "")
                 if ev.get("type") == "error":
                     label += f" code={ev.get('code')}"
@@ -55,6 +60,7 @@ def main() -> int:
     ap.add_argument("--project-ref", required=True)
     ap.add_argument("--api-url", required=True)
     ap.add_argument("--web-url", required=True)
+    ap.add_argument("--question", default=QUESTION)
     ap.add_argument("--pack", default="construction_materials", choices=["textiles", "construction_materials", "education"])
     args = ap.parse_args()
     ss.guard(argparse.Namespace(i_know_this_loads_demo_data_into_staging=args.i_know_this_is_staging, project_ref=args.project_ref))
@@ -62,9 +68,10 @@ def main() -> int:
     owner = sm.Owner(s, args.pack)
     tenant = owner.t.rsplit("/", 1)[1]
     print("A. directly at the API:")
-    ev = timed(f"{args.api_url}{owner.t}/assistant/messages", owner.token, {"message_id": str(uuid.uuid4()), "text": QUESTION})
+    ev = timed(f"{args.api_url}{owner.t}/assistant/messages", owner.token, {"message_id": str(uuid.uuid4()), "text": args.question})
     for at, what in ev:
         print(f"   {at:6.2f} s  {what}")
+    print("   answer: " + "".join(TEXT).strip())
     print(f"   -> {answer_chars(ev)} characters of answer; {len(ev)} events, first text at {next((a for a, w in ev if w.startswith('text')), float('nan')):.2f} s, done at {ev[-1][0]:.2f} s")
     return 0
 
