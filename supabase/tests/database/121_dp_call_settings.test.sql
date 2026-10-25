@@ -162,7 +162,7 @@ select is(pg_temp.sc(format($q$insert into public.call_settings (tenant_id, camp
 
 -- ============================================================================ G. hand-over rules (personal data)
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"handover": [{"topic": "pricing", "person_name": "Suresh (owner)", "phone": "+919876500001"}, {"topic": "complaint", "person_name": "Lakshmi", "phone": "9876500002"}]}')) like 'ERR%', false, 'G1 hand-over rules');
-select is((pg_temp.get('a_owner', 'a')::jsonb -> 'settings' -> 'handover' -> 0 ->> 'person_name'), 'Suresh (owner)', 'G2 they come back in the settings (Owner and Admin only)');
+select is((select e ->> 'person_name' from jsonb_array_elements(pg_temp.get('a_owner', 'a')::jsonb -> 'settings' -> 'handover') e where e ->> 'topic' = 'pricing'), 'Suresh (owner)', 'G2 they come back in the settings (Owner and Admin only), by topic');
 select is((select count(*)::int from public.call_handover_rules where tenant_id = tests.tid('a')), 2, 'G3 two rows in their own table');
 select pg_temp.save('a_owner', 'a', pg_temp.doc('{"handover": [{"topic": "delivery", "person_name": "Ravi", "phone": "+919876500003"}]}'));
 select is((select string_agg(topic, ',') from public.call_handover_rules where tenant_id = tests.tid('a')), 'delivery', 'G4 saving replaces the rules');
@@ -185,7 +185,7 @@ select is(pg_temp.val('a_owner', $q$update public.call_settings set settings = '
 select is(pg_temp.val('a_owner', $q$delete from public.call_settings$q$), 'ERR:42501', 'H3 nor delete');
 select is(pg_temp.val('a_owner', $q$insert into public.call_handover_rules (tenant_id, topic, person_name, updated_by) values (gen_random_uuid(), 'other', 'X', gen_random_uuid())$q$), 'ERR:42501', 'H4 nor the rules');
 select is(pg_temp.val('a_sales', 'select count(*)::text from public.call_settings'), '0', 'H5 Sales reads no settings row');
-select is(pg_temp.val('b_owner', 'select count(*)::text from public.call_settings'), '0', 'H6 another business reads none of A''s');
+select is(pg_temp.val('b_owner', format($q$select count(*)::text from public.call_settings where tenant_id = %L$q$, tests.tid('a'))), '0', 'H6 another business reads none of A''s');
 select is((select count(*)::int from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname like 'call\_settings\_%' and has_function_privilege('anon', p.oid, 'execute')), 0, 'H7 anon can run none of the functions');
 select is((select count(*)::int from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname like 'call\_settings\_%' and not p.prosecdef), 0, 'H8 every one is a pinned definer function');
 
