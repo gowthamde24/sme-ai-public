@@ -47,7 +47,7 @@ class FakeBillingRepository:
 
     def billing(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("billing", token)
-        base = copy.deepcopy(EXAMPLES["billing_no_subscription_ok"])
+        base: dict[str, Any] = copy.deepcopy(EXAMPLES["billing_no_subscription_ok"])
         base["plan"] = self._plan(tenant_id)
         sub = self.subs.get(tenant_id)
         base["subscription"] = None if sub is None else {k: v for k, v in sub.items() if k not in ("provider_ref",)}

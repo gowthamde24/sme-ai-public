@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
 import pytest
 
@@ -106,8 +107,17 @@ def test_cancel_tells_the_provider_before_the_record() -> None:
     service.start_trial(TOKEN, T, "growth", fake.OK)
     order: list[str] = []
     real_cancel, real_record = provider.cancel_subscription, repo.cancel
-    provider.cancel_subscription = lambda *a, **k: (order.append("provider"), real_cancel(*a, **k))[1]  # type: ignore[method-assign]
-    repo.cancel = lambda *a, **k: (order.append("record"), real_record(*a, **k))[1]  # type: ignore[method-assign]
+
+    def provider_first(*a: Any, **k: Any) -> None:
+        order.append("provider")
+        real_cancel(*a, **k)
+
+    def record_second(*a: Any, **k: Any) -> dict[str, Any]:
+        order.append("record")
+        return real_record(*a, **k)
+
+    provider.cancel_subscription = provider_first  # type: ignore[method-assign]
+    repo.cancel = record_second  # type: ignore[method-assign]
     service.cancel(TOKEN, T)
     assert order == ["provider", "record"]
 

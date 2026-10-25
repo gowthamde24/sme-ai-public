@@ -1,0 +1,17 @@
+{
+ "note": "ASSUMPTIONS for scripts/usage_report.py, NOT facts. Every rupee figure below that is not measured from the ledger is a placeholder the owner must replace from the real rate cards (Meta's India WhatsApp rates, the telephony provider, Sarvam, the model price). The report prints them next to its answer.",
+ "days_per_period": 30,
+ "target_gross_margin_percent": 70,
+ "payment_fee_percent": 2.0,
+ "use_levels": { "low": 0.2, "typical": 0.6, "heavy": 1.0 },
+ "ai_active_days": { "low": 0.3, "typical": 0.7, "heavy": 1.0 },
+ "ai_rupees_per_active_day_fallback": { "low": 0.5, "typical": 2.0, "heavy": 6.0, "source": "FALLBACK used only when staging has fewer than 5 active workspace-days of AI use" },
+ "whatsapp_rupees_per_business_message": { "value": 0.3, "source": "ASSUMPTION: one utility-template message; replace from Meta's current India rate card" },
+ "call_rupees_per_minute": {
+  "telephony": { "value": 1.0, "source": "ASSUMPTION: a cloud-telephony provider's per-minute rate in India" },
+  "speech_to_text": { "value": 0.6, "source": "ASSUMPTION: Saarika or similar, per minute of audio" },
+  "text_to_speech": { "value": 0.4, "source": "ASSUMPTION: Bulbul or similar, per minute of speech" },
+  "language_model": { "value": 0.5, "source": "ASSUMPTION: the model tokens of one minute of conversation" }
+ },
+ "pay_as_you_go_minutes": { "low": 30, "typical": 100, "heavy": 300, "source": "ASSUMPTION: pay as you go has no allowance, so a use level is a number of minutes" }
+}

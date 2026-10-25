@@ -39,10 +39,13 @@ BR_CHANGED: dict[str, tuple[set[str], set[str]]] = {
 def test_the_br_copy_is_the_last_definition_and_differs_by_exactly_the_named_lines(name: str) -> None:
     want_dropped, want_added = BR_CHANGED[name]
     defs = definitions(name)
-    assert defs[-1][0] == BR, f"{name} is redefined after job BR's migration ({defs[-1][0]}): re-copy it from the latest definition"
+    # a later job may copy it again, if ITS pin says exactly what it changed (DI: test_migration_copies_di.py)
+    later = {"app.outbox_claim_due_core": "20261127090200_di_billing_meters.sql"}
+    assert defs[-1][0] in (BR, later.get(name)), f"{name} is redefined after job BR's migration ({defs[-1][0]}): re-copy it from the latest definition"
+    at = next(i for i, d in enumerate(defs) if d[0] == BR)
     diff = [
         line
-        for line in difflib.unified_diff(normalised(defs[-2][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        for line in difflib.unified_diff(normalised(defs[at - 1][1]), normalised(defs[at][1]), lineterm="", n=0)
         if line[:1] in "+-" and not line.startswith(("---", "+++"))
     ]
     dropped = {line[1:].strip() for line in diff if line[0] == "-"}
