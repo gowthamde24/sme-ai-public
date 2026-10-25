@@ -29,6 +29,20 @@ export async function readAssistant(modules: readonly string[] | null | undefine
   return { mode: "ok", settings: assistantProfile(modules).defaults, saved: false };
 }
 
+/**
+ * The assistant's name for the workspace being drawn, or null (the default applies): the owner's own choice, only when the screens are on. For `mock` it is the cookie (checked like every read); for `on` it will be C1's setting,
+ * which is not published yet. Never throws: a name must not stop a page from drawing.
+ */
+export async function readAssistantName(): Promise<string | null> {
+  if (assistantScreens() !== "mock") return null;
+  try {
+    const raw = (await cookies()).get(MOCK_COOKIE)?.value;
+    return raw ? (parseSettings(JSON.parse(raw))?.name ?? null) : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function saveAssistant(input: unknown, modules: readonly string[] | null | undefined): Promise<SaveResult> {
   if (assistantScreens() !== "mock") return { ok: false, error: "not_available" };
   const settings = parseSettings(input);

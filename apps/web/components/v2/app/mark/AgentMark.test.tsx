@@ -33,8 +33,8 @@ describe("AgentMark: who is speaking", () => {
 
 describe("AgentOrb: the assistant where it talks", () => {
   it("carries the name and the mood as text and a polite live region, and the halo while it answers", () => {
-    const a = render(<AgentOrb mood="answering" name="Agent OWL" moodText="Answering" />).container;
-    expect(a.querySelector('[role="img"]')!.getAttribute("aria-label")).toBe("Agent OWL, Answering");
+    const a = render(<AgentOrb mood="answering" name="Vijaya" moodText="Answering" />).container;
+    expect(a.querySelector('[role="img"]')!.getAttribute("aria-label")).toBe("Vijaya, Answering");
     expect(a.querySelector('[role="img"]')!.getAttribute("data-mood")).toBe("answering");
     expect(a.querySelector(".orb-halo")).not.toBeNull();
     expect(a.querySelector('[aria-live="polite"]')!.textContent).toBe("Answering");

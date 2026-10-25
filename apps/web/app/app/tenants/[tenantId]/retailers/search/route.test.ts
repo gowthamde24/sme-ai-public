@@ -29,7 +29,7 @@ beforeEach(() => {
 });
 
 describe("POST retailers/search", () => {
-  it("makes the question itself (the browser cannot ask Agent OWL anything else through this door) and answers {ok, data}", async () => {
+  it("makes the question itself (the browser cannot ask Vijaya anything else through this door) and answers {ok, data}", async () => {
     const r = await post(GOOD);
     expect(r.status).toBe(200);
     expect(await r.json()).toMatchObject({ ok: true, data: { cards: [{ label: "Balaji" }], error: null } });

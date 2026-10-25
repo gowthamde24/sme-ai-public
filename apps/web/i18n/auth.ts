@@ -2,7 +2,7 @@ import login from "@/i18n/strings/login.json";
 
 import { fill, type Vars } from "@/i18n/fill";
 import type { Lang } from "@/i18n/lang";
-import { dictFor } from "@/i18n/strings";
+import { dictFor, namedDict } from "@/i18n/strings";
 
 /**
  * The CHROME words of the sign-in and account screens: the frame around the forms (skip link, language and theme
@@ -17,14 +17,13 @@ export type AuthKey = (typeof AUTH_CHROME_KEYS)[number];
 export type AuthDict = Record<AuthKey, string>;
 export type AuthT = (key: AuthKey, vars?: Vars) => string;
 
-const cache: Partial<Record<Lang, AuthDict>> = {};
+const cache = new Map<string, AuthDict>();
 
 export function authDict(lang: Lang): AuthDict {
-  if (!cache[lang]) {
+  return namedDict<AuthDict>(cache, lang, () => {
     const all = dictFor(login, lang) as Record<string, string>;
-    cache[lang] = Object.fromEntries(AUTH_CHROME_KEYS.map((k) => [k, all[k]])) as AuthDict;
-  }
-  return cache[lang]!;
+    return Object.fromEntries(AUTH_CHROME_KEYS.map((k) => [k, all[k]]));
+  });
 }
 
 export function authT(lang: Lang): AuthT {

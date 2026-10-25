@@ -148,7 +148,7 @@ export function LegalDoc({ id, summaryKeys, lang }: { id: DocId; summaryKeys?: r
               <Rich text={s.title} />
             </h2>
             {s.blocks.map((b, i) => (
-              <BlockView key={i} block={b} label={s.title.replace(/^\d+\.\s*/, "")} />
+              <BlockView key={i} block={b} label={fillLegal(s.title.replace(/^\d+\.\s*/, ""))} />
             ))}
           </section>
         ))}

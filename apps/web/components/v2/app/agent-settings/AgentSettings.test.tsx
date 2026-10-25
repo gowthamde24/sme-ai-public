@@ -18,8 +18,8 @@ describe("automatic sending", () => {
   const SETTINGS = { platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 };
   it("one plain sentence about what it means, the switch off until the Owner turns it on, and the daily limit", () => {
     render(<SendingForm words={WORDS} settings={SETTINGS} save={ok("Saved.")} />);
-    expect(screen.getByText("Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you.")).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: "Agent OWL may send routine replies by itself" })).not.toBeChecked();
+    expect(screen.getByText("Vijaya sends routine replies by itself. Anything about money, complaints or calls waits for you.")).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Vijaya may send routine replies by itself" })).not.toBeChecked();
     expect(screen.getByText("Off: new messages wait for you to approve them. Messages you approve still go out.")).toBeInTheDocument();
     expect(screen.getByLabelText("Messages per customer per day")).toHaveValue(3);
     expect(screen.getByText("Saving needs your authenticator app.")).toBeInTheDocument();
@@ -27,7 +27,7 @@ describe("automatic sending", () => {
   it("turning it on says what that means, and saving sends exactly the two settings", async () => {
     const save = ok("Saved. Automatic sending is on.");
     render(<SendingForm words={WORDS} settings={SETTINGS} save={save} />);
-    fireEvent.click(screen.getByRole("checkbox", { name: /Agent OWL may send/ }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /Vijaya may send/ }));
     expect(screen.getByText(/On: routine replies go out by themselves/)).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Messages per customer per day"), { target: { value: "5" } });
     await click("Save");
@@ -37,10 +37,10 @@ describe("automatic sending", () => {
   it("without the second factor it says so and points at Security, keeping what was set", async () => {
     const save = vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app. Nothing was changed.", mfa: true }));
     render(<SendingForm words={WORDS} settings={SETTINGS} save={save} />);
-    fireEvent.click(screen.getByRole("checkbox", { name: /Agent OWL may send/ }));
+    fireEvent.click(screen.getByRole("checkbox", { name: /Vijaya may send/ }));
     await click("Save");
     expect(within(screen.getByRole("alert")).getByRole("link", { name: "Open Security" })).toHaveAttribute("href", "/app/security");
-    expect(screen.getByRole("checkbox", { name: /Agent OWL may send/ })).toBeChecked();
+    expect(screen.getByRole("checkbox", { name: /Vijaya may send/ })).toBeChecked();
   });
   it.each(["0", "21", "2.5", ""])("a daily limit of %j cannot be saved", (v) => {
     render(<SendingForm words={WORDS} settings={SETTINGS} save={ok("x")} />);
@@ -195,7 +195,7 @@ describe("the system switch (read only)", () => {
   });
 });
 
-describe("Agent OWL's checks card", () => {
+describe("Vijaya's checks card", () => {
   it("shows the state, the last and next check, the last activity and today's counts", () => {
     render(<SchedulerCard words={WORDS} status={status({ next_run_at: "2026-10-14T04:31:00Z" })} now={NOW} />);
     expect(screen.getByText("Working for this business")).toBeInTheDocument();
@@ -214,7 +214,7 @@ describe("Agent OWL's checks card", () => {
   });
   it("a calm warning when it should be working and has not checked for more than five minutes", () => {
     render(<SchedulerCard words={WORDS} status={status({ last_run_at: "2026-10-14T04:10:00Z" })} now={NOW} />);
-    expect(document.querySelector('[data-scheduler="stale"]')).toHaveTextContent("Agent OWL has not checked for 20 minutes.");
+    expect(document.querySelector('[data-scheduler="stale"]')).toHaveTextContent("Vijaya has not checked for 20 minutes.");
   });
   it("says why it is idle when a switch is off, without a warning", () => {
     render(<SchedulerCard words={WORDS} status={status({ auto_send_enabled: false, active: false, last_run_at: "2026-10-14T00:00:00Z" })} now={NOW} />);

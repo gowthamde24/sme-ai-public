@@ -1,5 +1,6 @@
 import { BRAND_TEXT } from "@/design/brand";
 import type { Lang } from "@/i18n/lang";
+import { currentAssistantName } from "@/lib/assistant/name";
 import { LEGAL_TOKENS } from "@/lib/site/business";
 
 import { DATA_DELETION } from "./data-deletion-text";
@@ -35,6 +36,6 @@ export const languagesOf = (id: DocId): Lang[] => (["en", ...(["te", "hi", "kn"]
 
 /** A text with {brand} and the other {tokens} of lib/site/business.ts filled in (the facts are written there once). An unknown {word} stays as it is, so a typo shows on the page and a test catches it. */
 export function fillLegal(text: string): string {
-  const all: Record<string, string> = { brand: BRAND_TEXT, ...LEGAL_TOKENS };
+  const all: Record<string, string> = { brand: BRAND_TEXT, assistant: currentAssistantName(), ...LEGAL_TOKENS };
   return text.replace(/\{([a-z_]+)\}/g, (whole, key: string) => all[key] ?? whole);
 }

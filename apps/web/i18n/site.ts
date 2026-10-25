@@ -2,7 +2,7 @@ import site from "@/i18n/strings/site.json";
 
 import { fill, type Vars } from "@/i18n/fill";
 import type { Lang } from "@/i18n/lang";
-import { dictFor } from "@/i18n/strings";
+import { dictFor, namedDict } from "@/i18n/strings";
 
 /**
  * The public website's words for one language (job CM): the home page, pricing, how it works, security, contact, help and the calculator. SERVER ONLY, like landing.ts: all four dictionaries would land in the browser
@@ -13,10 +13,10 @@ export type SiteKey = keyof typeof site;
 export type SiteDict = Record<SiteKey, string>;
 export type SiteT = (key: SiteKey, vars?: Vars) => string;
 
-const cache: Partial<Record<Lang, SiteDict>> = {};
+const cache = new Map<string, SiteDict>();
 
 export function siteDict(lang: Lang): SiteDict {
-  return (cache[lang] ??= dictFor(site, lang) as SiteDict);
+  return namedDict<SiteDict>(cache, lang, () => dictFor(site, lang));
 }
 
 export function siteT(lang: Lang): SiteT {

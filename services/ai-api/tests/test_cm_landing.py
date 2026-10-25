@@ -88,7 +88,18 @@ def test_the_checker_catches_a_missing_language_and_a_foreign_placeholder(tmp_pa
     )
     errs = pc.check_landing(pc.load_packs(dest), dest)
     assert any("has no kn" in e for e in errs)
-    assert any("only {brand} may be a placeholder" in e for e in errs)
+    assert any("only {brand} and {assistant} may be a placeholder" in e for e in errs)
+
+
+def test_the_assistants_name_is_an_allowed_placeholder(tmp_path: Path) -> None:
+    # job DN: the day steps say {assistant}, the name each workspace gave its assistant
+    dest = _copy(tmp_path)
+    _edit(
+        dest / "textiles" / "landing.json",
+        lambda d: d["hero"]["sub"].update(en="Ask {assistant}"),
+    )
+    errs = pc.check_landing(pc.load_packs(dest), dest)
+    assert not any("placeholder" in e for e in errs)
 
 
 def test_the_checker_catches_an_unknown_key_and_a_wrong_pack_name(tmp_path: Path) -> None:

@@ -33,9 +33,9 @@ describe("a visit: what it shows", () => {
     expect(within(a).getByText("Coming with her mother")).toBeInTheDocument();
     expect(within(a).getByText("Waiting for the customer")).toBeInTheDocument();
   });
-  it("a visit Agent OWL proposed says so and waits for a person", () => {
+  it("a visit Vijaya proposed says so and waits for a person", () => {
     show(visit({ source: "assistant" }));
-    expect(screen.getByText("Proposed by Agent OWL · waiting for you")).toBeInTheDocument();
+    expect(screen.getByText("Proposed by Vijaya · waiting for you")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Confirm" })).toBeInTheDocument();
   });
   it("shows the advance in rupees only when it was asked for", () => {

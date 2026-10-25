@@ -7,17 +7,17 @@
 -
 [button type=button: Add your first sareeTo do]
 -
-[button type=button: See what Agent OWL doesTo do]
+[button type=button: See what Vijaya doesTo do]
 [button type=button: Continue setup]
 Tuesday, 6 October
 # Good morning
-Agent OWL this week : Not available yet
+Vijaya this week : Not available yet
 [button type=button: Help for this screen]
 {label="Not available yet"}
-{role=img label="Agent OWL, Resting"}
-Resting Resting Resting Agent OWL
+{role=img label="Vijaya, Resting"}
+Resting Resting Resting Vijaya
 ## Not available yet
-The overnight summary is not available yet. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing, and out loud if you turn voice on.
+The overnight summary is not available yet. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Vijaya answers in writing, and out loud if you turn voice on.
 {label="Needs you"}
 ## Needs you
 Not available yet

@@ -285,8 +285,8 @@ describe("Needs you: empty, unreadable, and the phone", () => {
 });
 
 
-describe("Needs you: a visit Agent OWL proposed", () => {
-  const card = () => cardOf(/^Agent OWL proposed a visit for Priya S\./);
+describe("Needs you: a visit Vijaya proposed", () => {
+  const card = () => cardOf(/^Vijaya proposed a visit for Priya S\./);
   it("shows who, when (the Indian day and clock), how many and what for, and says nothing was sent", () => {
     board([proposal()]);
     const a = card();

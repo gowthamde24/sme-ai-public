@@ -36,7 +36,7 @@ describe("the legal documents in four languages (job DB)", () => {
       for (const s of strings(legalDocument(id, lang).doc)) {
         expect(s.match(PLACEHOLDER), `${id}:${lang}: ${s.slice(0, 60)}`).toBeNull();
         expect(s, `${id}:${lang}`).not.toMatch(/\[(CONFIRM|LEGAL REVIEW|[A-Z ]+)\]/);
-        for (const t of tokens(s)) expect(["brand", ...Object.keys(LEGAL_TOKENS)], `${id}:${lang}: {${t}}`).toContain(t);
+        for (const t of tokens(s)) expect(["brand", "assistant", ...Object.keys(LEGAL_TOKENS)], `${id}:${lang}: {${t}}`).toContain(t);
       }
     }
   });
@@ -47,7 +47,7 @@ describe("the legal documents in four languages (job DB)", () => {
       expect((all.match(new RegExp(script.source, "g")) ?? []).length, `${id}:${lang}`).toBeGreaterThan(all.length / 4);
     }
     const privacy = strings(legalDocument("privacy", lang).doc).join("\n");
-    for (const keep of ["Agent OWL", "sb-<project>-auth-token", "sme_lang", "sme_theme", "sme_consent", "/data-deletion"]) expect(privacy, `${lang}: ${keep}`).toContain(keep);
+    for (const keep of ["{assistant}", "sb-<project>-auth-token", "sme_lang", "sme_theme", "sme_consent", "/data-deletion"]) expect(privacy, `${lang}: ${keep}`).toContain(keep);
   });
   it("fillLegal puts the facts of lib/site/business.ts into a text, and leaves an unknown {word} visible", () => {
     expect(fillLegal("Write to {privacy_email} within {grievance_days} days. {brand}. {nope}")).toBe(`Write to ${ADDRESSES.privacy} within 30 days. Stack19. {nope}`);

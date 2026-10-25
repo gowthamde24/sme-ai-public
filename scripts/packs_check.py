@@ -206,8 +206,8 @@ def check_landing(packs: dict[str, dict[str, Any]], packs_dir: Path = PACKS) -> 
                 if lang not in t:
                     errs.append(f"{name}/landing.json: a text has no {lang}: {t['en'][:50]!r}")
             for placeholder in re.findall(r"\{(\w+)\}", t["en"]):
-                if placeholder != "brand":
-                    errs.append(f"{name}/landing.json: only {{brand}} may be a placeholder ({placeholder!r} in {t['en'][:40]!r})")
+                if placeholder not in ("brand", "assistant"):
+                    errs.append(f"{name}/landing.json: only {{brand}} and {{assistant}} may be a placeholder ({placeholder!r} in {t['en'][:40]!r})")
             if re.search(r"\d\s?%|₹\s?\d", t["en"]):
                 errs.append(f"{name}/landing.json: a text states a price or a percentage ({t['en'][:50]!r})")
     return errs

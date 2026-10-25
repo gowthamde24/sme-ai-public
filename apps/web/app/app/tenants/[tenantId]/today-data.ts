@@ -3,12 +3,12 @@ import { NOTHING_TODAY } from "@/components/v2/app/today/types";
 import { ApiAuthError } from "@/lib/api/client";
 import { listCallRequests, listOutboxApprovals, type CallRequest, type OutboxMessage } from "@/lib/api/outbox";
 import { fetchMembers } from "@/lib/api/orders";
-import { getAgentsStatus, type NeedsYouItem as ApiItem } from "@/lib/api/today";
+import type { NeedsYouItem as ApiItem } from "@/lib/api/today";
 
 import { readDigest } from "./outbox-digest";
 import { readProposals, readSending, readStore, readWeek } from "./today-visits";
 import { targetPaths } from "./target-path";
-import { readTodayCached } from "./today-read";
+import { readAgentsCached, readTodayCached } from "./today-read";
 
 const CLASSIC: readonly string[] = ["quote_approval", "followup_due", "order_money_held"];
 const isClassic = (i: ApiItem): i is ApiItem & { kind: ClassicKind } => CLASSIC.includes(i.kind);
@@ -28,7 +28,7 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
   const digest = role === "viewer" ? null : readDigest(accessToken, tenantId, now); // a Viewer may not read the outbox: nothing to ask
   const [today, team, store, proposals, week, sending] = await Promise.allSettled([
     readTodayCached(accessToken, tenantId),
-    getAgentsStatus(accessToken, tenantId),
+    readAgentsCached(accessToken, tenantId),
     readStore(accessToken, tenantId, now()),
     role === "viewer" ? Promise.resolve([] as NeedsCard[]) : readProposals(accessToken, tenantId, now()),
     role === "owner" || role === "admin" ? readWeek(accessToken, tenantId) : Promise.resolve(null),

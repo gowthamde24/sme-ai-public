@@ -15,7 +15,7 @@ export const TERMS: LegalText = {
       id: "service",
       title: "1. What {brand} is",
       blocks: [
-        { p: "{brand} is a set of AI assistants for small and medium businesses. Today it helps a wholesale business keep its leads, enquiries, quotes, orders, store visits and catalogue in one place, helps a builders' merchant with sites, deliveries and what customers owe, and helps a school with admissions and fees. An assistant called Agent OWL reads those records to answer questions and to prepare drafts. Features may change, and some are marked as not yet available." },
+        { p: "{brand} is a set of AI assistants for small and medium businesses. Today it helps a wholesale business keep its leads, enquiries, quotes, orders, store visits and catalogue in one place, helps a builders' merchant with sites, deliveries and what customers owe, and helps a school with admissions and fees. An assistant called {assistant} reads those records to answer questions and to prepare drafts. Features may change, and some are marked as not yet available." },
       ],
     },
     {
@@ -61,7 +61,7 @@ export const TERMS: LegalText = {
       blocks: [
         {
           ul: [
-            "Agent OWL is an AI. It can be wrong, incomplete or out of date. Read what it prepares before you rely on it.",
+            "{assistant} is an AI. It can be wrong, incomplete or out of date. Read what it prepares before you rely on it.",
             "Messages it writes to your customers may be written by AI, and are labelled as coming from the business's AI assistant. You must not remove or hide that label.",
             "It does not set or change prices: prices come from your price list by fixed rules. It does not take a payment or make a financial commitment for you.",
             "Nothing is sent to your customers as a campaign (a batch of reminders or notices) until you, the Owner, have approved it. Anything about money, a promise or a complaint also waits for a person to approve it. You are responsible for what your business sends, including what you approve and what you allow to go automatically under the rules you switched on.",

@@ -56,11 +56,11 @@ describe("Today: the header", () => {
   });
 });
 
-describe("Today: the Agent OWL card", () => {
+describe("Today: the Vijaya card", () => {
   it("says in one sentence how many things need the person, built from the real cards", async () => {
     await view(data());
     const hero = screen.getByRole("region", { name: "3 things need you. The rest is handled." });
-    expect(within(hero).getByText("Agent OWL", { selector: "p" })).toBeInTheDocument();
+    expect(within(hero).getByText("Vijaya", { selector: "p" })).toBeInTheDocument();
     expect(hero).toHaveAttribute("data-part", "agent-owl");
   });
   it.each([
@@ -102,7 +102,7 @@ describe("Today: the Agent OWL card", () => {
     await view(data());
     const ask = document.querySelector('[data-ask="live"]')!;
     expect(ask.closest('[data-part="agent-owl"]')).not.toBeNull();
-    const input = within(ask as HTMLElement).getByRole("textbox", { name: "Your question for Agent OWL" });
+    const input = within(ask as HTMLElement).getByRole("textbox", { name: "Your question for Vijaya" });
     expect(input.className).toContain("md:min-h-14");
     expect(input).toHaveAttribute("placeholder", "Ask anything, in any language…");
     expect(within(ask as HTMLElement).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["What needs me today?", "Who should I call first?", "How much customer money is held?"]);
@@ -121,22 +121,22 @@ describe("Today: the Agent OWL card", () => {
     expect(form.className).toMatch(/md:left-\[calc\((72px|16rem)\+1\.5rem\)\]/);
     expect(form.querySelector("[data-orb]")).not.toBeNull();
   });
-  it("is 'Not available yet' while Agent OWL is not built, 'Switched off' when its switch is off, and the owl rests", async () => {
+  it("is 'Not available yet' while Vijaya is not built, 'Switched off' when its switch is off, and the owl rests", async () => {
     await view(data({ team: TEAM!.map((a) => (a.agent === "main" ? { ...a, state: "not_available" as const } : a)) }));
     expect(document.querySelector('[data-ask="unavailable"]')).toHaveTextContent("Not available yet");
-    expect(screen.getByRole("img", { name: "Agent OWL, Resting" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Vijaya, Resting" })).toBeInTheDocument();
     cleanup();
     await view(data({ team: TEAM!.map((a) => (a.agent === "main" ? { ...a, state: "switched_off" as const } : a)) }));
     expect(document.querySelector('[data-ask="unavailable"]')).toHaveTextContent("Switched off");
   });
-  it("the owl starts in the 'Ready' mood when Agent OWL is live", async () => {
+  it("the owl starts in the 'Ready' mood when Vijaya is live", async () => {
     await view(data());
-    expect(screen.getByRole("img", { name: "Agent OWL, Ready" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Vijaya, Ready" })).toBeInTheDocument();
   });
 });
 
 describe("Today: the order of the sections", () => {
-  it("header, then the Agent OWL card, then Needs you; the side sections follow in the document (below it on a phone)", async () => {
+  it("header, then the Vijaya card, then Needs you; the side sections follow in the document (below it on a phone)", async () => {
     await view(data({ store: ready([{ id: "v1", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 2, topic: "Bridal sarees", status: "confirmed", here: false }]), digest: Promise.resolve(READY) }));
     const at = (el: Element | null) => (el ? [...document.querySelectorAll("h1, h2")].indexOf(el.querySelector("h1, h2") ?? el) : -1);
     const order = ["h1", '[data-part="agent-owl"]', "#needs-you", '[data-part="visits"]', '[data-part="done"]', '[data-part="team"]'].map((sel) => document.querySelector(sel));
@@ -233,13 +233,13 @@ describe("Today: the side sections", () => {
     await view(data({ digest: Promise.resolve({ state: "none" }) }));
     expect(screen.queryByRole("heading", { name: "Done while you slept" })).toBeNull();
   });
-  it("'Your team' shows the six helpers as icons of their jobs, one live status line each, and not Agent OWL itself", async () => {
+  it("'Your team' shows the six helpers as icons of their jobs, one live status line each, and not Vijaya itself", async () => {
     await view(data());
     const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
     const rows = within(s).getAllByRole("listitem");
     expect(rows).toHaveLength(6);
     expect(rows.map((r) => r.querySelector("[data-agent-mark]")?.getAttribute("data-agent-mark"))).toEqual(["lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"]);
-    expect(within(s).queryByText("Agent OWL")).toBeNull();
+    expect(within(s).queryByText("Vijaya")).toBeNull();
     // the still has one pose, so each helper's state is also a dot beside its name (working, calm, off)
     expect(rows.map((r) => r.querySelector("[data-state-dot]")?.getAttribute("data-state-dot"))).toEqual(["off", "working", "off", "idle", "idle", "idle"]);
     expect(rows.map((r) => r.querySelector("span.line-clamp-2")?.textContent ?? r.textContent)).toEqual([
@@ -259,7 +259,7 @@ describe("Today: the side sections", () => {
 });
 
 describe("Today: the count is the cards", () => {
-  it("the badge and the sentence say 3 for three cards, one of them a visit Agent OWL proposed (the API already counts it)", async () => {
+  it("the badge and the sentence say 3 for three cards, one of them a visit Vijaya proposed (the API already counts it)", async () => {
     await view(data({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: [outbox(), call(), proposal()] }));
     expect(screen.getByRole("heading", { level: 2, name: "3 things need you. The rest is handled." })).toBeInTheDocument();
     expect(document.querySelector("[data-count]")).toHaveAttribute("data-count", "3");
@@ -271,7 +271,7 @@ describe("Today: the count is the cards", () => {
 });
 
 describe("Today: sending stopped", () => {
-  it("a clear banner above the Agent OWL card when sending is stopped for the whole system", async () => {
+  it("a clear banner above the Vijaya card when sending is stopped for the whole system", async () => {
     await view(data({ sending: { stopped: true } }));
     const banner = document.querySelector('[data-banner="sending-stopped"]') as HTMLElement;
     expect(banner).toHaveTextContent("Sending is stopped");

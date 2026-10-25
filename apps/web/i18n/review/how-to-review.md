@@ -15,7 +15,7 @@ Thank you for helping. You are checking the words of **Stack19**, a WhatsApp and
 
 ## Three rules that protect the app
 - **Keep anything in curly brackets exactly as it is**, for example `{name}`, `{n}`, `{brand}`, `{privacy_email}`. The app puts a name, a number or an address there. Move it where it fits your sentence, but do not translate, change or delete it.
-- Keep names as they are: **Stack19**, **Agent OWL**, **WhatsApp**, **GST**, **UPI**, plan names and business names in sample chats.
+- Keep names as they are: **Stack19**, **{assistant}** (the assistant's name, filled in by the product), **WhatsApp**, **GST**, **UPI**, plan names and business names in sample chats.
 - Do not add promises or numbers that are not in the English (no "guaranteed", no percentages, no "used by many").
 
 ## The legal pages

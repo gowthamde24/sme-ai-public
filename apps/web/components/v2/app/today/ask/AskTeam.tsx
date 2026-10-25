@@ -62,7 +62,7 @@ const NONE: VoiceStatus = { available: false, speech: false };
  * person's own message, then the written answer, and the spoken answer when one was asked for. It is drawn only when the API says voice is on and the browser can record: no dead button.
  * While there is no Agent OWL to ask (it is not built, its switch is off, or the answer stream does not exist yet) the box says so and offers nothing to press.
  */
-export function AskTeam({ lang, base, words, availability, transport: given, voiceStatus: givenStatus, voiceTransport: givenVoice, variant = "box", onMood, chips: chipTexts }: { lang: string; base: string; words: AskWords; availability: Availability; transport?: AskTransport | null; /** Whether voice is on (tests give it; otherwise the box asks `<base>/ask/voice`). */ voiceStatus?: VoiceStatus | null; /** The recording's transport (tests give it; otherwise `<base>/ask/voice`). */ voiceTransport?: VoiceTransport | null; /** `box`: the card with the owl in its header. `hero`: only the question line, the chips and the answer, for the Agent OWL card of Today (the owl is drawn by the card, which learns the mood from `onMood`). */ variant?: "box" | "hero"; onMood?: (mood: AiMood) => void; /** The suggestion chips, when the caller chooses them (`hero`: three). */ chips?: readonly string[] }) {
+export function AskTeam({ lang, base, words, availability, transport: given, voiceStatus: givenStatus, voiceTransport: givenVoice, variant = "box", onMood, chips: chipTexts, dock = false }: { lang: string; base: string; words: AskWords; availability: Availability; transport?: AskTransport | null; /** Whether voice is on (tests give it; otherwise the box asks `<base>/ask/voice`). */ voiceStatus?: VoiceStatus | null; /** The recording's transport (tests give it; otherwise `<base>/ask/voice`). */ voiceTransport?: VoiceTransport | null; /** `box`: the card with the owl in its header. `hero`: only the question line, the chips and the answer, for the Agent OWL card of Today (the owl is drawn by the card, which learns the mood from `onMood`). */ variant?: "box" | "hero"; onMood?: (mood: AiMood) => void; /** The suggestion chips, when the caller chooses them (`hero`: three). */ chips?: readonly string[]; /** The dock at the bottom of the other screens (job DN, AskDock.tsx): the same `hero` line, without the "What can it do?" card under it. */ dock?: boolean }) {
   const w = (key: string) => words[key] ?? key;
   const own = React.useMemo(() => (availability === "live" && given === undefined ? makeAskTransport(`${base}/ask`) : null), [availability, given, base]);
   const transport = given === undefined ? own : given;
@@ -444,7 +444,7 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
         </ul>
       ) : null}
 
-      <AskCapabilities w={w} examples={[w("ask.chip.needs"), w("ask.chip.quotes"), w("ask.chip.team")]} onTry={(q) => void ask(q)} guideHref={`${base}/help/today`} />
+      {dock ? null : <AskCapabilities w={w} examples={[w("ask.chip.needs"), w("ask.chip.quotes"), w("ask.chip.team")]} onTry={(q) => void ask(q)} guideHref={`${base}/help/today`} />}
 
       {phase !== "idle" ? (
         <div ref={answerRef} className="mt-4 border-t border-line pt-4" aria-live="polite" aria-busy={asking}>

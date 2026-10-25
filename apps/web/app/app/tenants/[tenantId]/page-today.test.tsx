@@ -7,7 +7,17 @@ import { parseQuoteSummary } from "@/lib/api/quotes";
 import { QUOTE, SUMMARY_JSON } from "@/lib/api/quotes-fixtures";
 import { agentsStatus, todayFor } from "@/test/screens/today-fixtures";
 import { CALL_JSON, PRICE_JSON, SENT_JSON, page } from "@/lib/api/outbox-fixtures";
+import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
+import { provideRequestAssistantName } from "@/lib/assistant/request-name";
 import { notFoundMock, redirectMock } from "@/test/helpers";
+
+// React's `cache` keeps the name per request on the server; this test has no request, so the name is kept in a variable here (the same provider hook).
+vi.mock("@/lib/assistant/request-name", async () => {
+  const { DEFAULT_ASSISTANT_NAME: first, setAssistantNameProvider } = await import("@/lib/assistant/name");
+  let name = first;
+  setAssistantNameProvider(() => name);
+  return { provideRequestAssistantName: (next: string) => void (name = next) };
+});
 
 const requireUser = vi.fn();
 const fetchTenant = vi.fn();
@@ -48,6 +58,7 @@ const props = (query: Record<string, string> = {}) => ({ params: Promise.resolve
 
 beforeEach(() => {
   vi.clearAllMocks();
+  provideRequestAssistantName(DEFAULT_ASSISTANT_NAME);
   requireUser.mockResolvedValue({ id: "user-1", email: "e@example.test", accessToken: "tok" });
   fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme Silks", slug: "acme", role: "owner" });
   getToday.mockResolvedValue(todayFor("owner"));
@@ -71,8 +82,23 @@ const show = async (props_: ReturnType<typeof props> = props()) => {
   await settle();
 };
 
+describe("the assistant's name on Today (job DN)", () => {
+  it("is Vijaya until the workspace gives its assistant a name, then that name, in the card and the Ask box, and nowhere the old one", async () => {
+    await show();
+    expect(document.body.textContent).toContain("Vijaya");
+    expect(document.body.textContent).not.toMatch(/Agent OWL|\{assistant\}/);
+  });
+
+  it("says the workspace's own name everywhere the assistant is named", async () => {
+    provideRequestAssistantName("Asha");
+    await show();
+    expect(document.body.textContent).toContain("Asha");
+    expect(document.body.textContent).not.toMatch(/Vijaya|Agent OWL|\{assistant\}/);
+  });
+});
+
 describe("the workspace home with no ?tab= is Today", () => {
-  it("draws the greeting, the Agent OWL card, what needs the person (a message, a call and the older kinds), the done list and the team from the API", async () => {
+  it("draws the greeting, the Vijaya card, what needs the person (a message, a call and the older kinds), the done list and the team from the API", async () => {
     await show();
     expect(getToday).toHaveBeenCalledWith("tok", TENANT);
     expect(getAgentsStatus).toHaveBeenCalledWith("tok", TENANT);

@@ -65,7 +65,7 @@ async function main() {
     console.log("dm-shots: building the web app (a minute or two)");
     execFileSync("npm", ["run", "build"], { cwd: WEB_DIR, env: { ...process.env, ...webEnv }, stdio: ["ignore", "ignore", "inherit"] });
   } else if (!existsSync(path.join(WEB_DIR, ".next", "BUILD_ID"))) throw new Error("--no-build, but there is no build");
-  // the stand-in says Agent OWL is "not built yet", so the Ask box would not be drawn; for these pictures the main assistant is on (the same list, one state changed)
+  // the stand-in says Vijaya is "not built yet", so the Ask box would not be drawn; for these pictures the main assistant is on (the same list, one state changed)
   const agents = [{ agent: "main", state: "idle", job: "Coordinates the other helpers.", last_event: null }, ...["lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"].map((agent, i) => ({ agent, state: i === 2 ? "working" : i === 0 ? "not_available" : "idle", job: `The ${agent.replace("_", " ")} helper.`, last_event: null }))];
   const standIn = await startStandIn({ port: STAND_IN_PORT, certPath: path.join(tmp, "c.pem"), keyPath: path.join(tmp, "k.pem"), extraRoutes: [["GET", new RegExp(`^/v1/tenants/${TENANT}/agents/status$`), (_req, res) => { res.writeHead(200, { "Content-Type": "application/json" }); res.end(JSON.stringify(agents)); }]] });
   const written = [];

@@ -25,9 +25,9 @@ afterEach(cleanup);
 describe("the usage card in the header (the week)", () => {
   it("shows what is LEFT of the week as a percentage and a bar, never a count of anything", async () => {
     await show(frame());
-    const meter = screen.getByRole("meter", { name: "Agent OWL usage this week: 62% left" });
+    const meter = screen.getByRole("meter", { name: "Vijaya usage this week: 62% left" });
     expect(meter).toHaveAttribute("aria-valuenow", "62");
-    expect(screen.getByText("Agent OWL this week")).toBeInTheDocument();
+    expect(screen.getByText("Vijaya this week")).toBeInTheDocument();
     expect(screen.getByText("62% left")).toBeInTheDocument();
     expect(meter.firstElementChild!.className).toContain("w-[60%]"); // the bar, in steps of 5
     expect(document.body.textContent).not.toMatch(/token|₹|month|\d+ (calls|requests|messages)/i);
@@ -38,7 +38,7 @@ describe("the usage card in the header (the week)", () => {
   });
   it("on a phone it is a small pill that opens Settings", async () => {
     await show(frame());
-    const link = screen.getByRole("link", { name: "Agent OWL usage this week: 62% left" });
+    const link = screen.getByRole("link", { name: "Vijaya usage this week: 62% left" });
     expect(link).toHaveAttribute("href", "/app/tenants/T/settings");
     expect(link.className).toContain("min-h-11");
     expect(link.className).toContain("md:hidden");
@@ -56,7 +56,7 @@ describe("the usage card in the header (the week)", () => {
   it("is not drawn for a role the API does not give it to", async () => {
     await show(frame({ showUsage: false }));
     expect(screen.queryByRole("meter")).toBeNull();
-    expect(screen.queryByText("Agent OWL this week")).toBeNull();
+    expect(screen.queryByText("Vijaya this week")).toBeNull();
   });
   it("still draws the week when the menu's card could not be read (no colour or note from it)", async () => {
     await show(frame({ usage: null }));
@@ -65,12 +65,12 @@ describe("the usage card in the header (the week)", () => {
   });
   it("says 'Not available yet' when the week could not be read, and never shows another window's number instead", async () => {
     await show(frame(), "error");
-    expect(screen.getByText(/Agent OWL this week: Not available yet/)).toBeInTheDocument();
+    expect(screen.getByText(/Vijaya this week: Not available yet/)).toBeInTheDocument();
     expect(screen.queryByRole("meter")).toBeNull();
     expect(screen.queryByText(/% left/)).toBeNull();
     cleanup();
     await show(frame(), null);
-    expect(screen.getByText(/Agent OWL this week: Not available yet/)).toBeInTheDocument();
+    expect(screen.getByText(/Vijaya this week: Not available yet/)).toBeInTheDocument();
     void within;
   });
 });

@@ -31,8 +31,8 @@ describe("Settings > AI assistant", () => {
     draw();
     expect(screen.getByRole("heading", { name: "Set up your AI assistant" })).toBeInTheDocument();
     expect(screen.getByText(/standard settings for your kind of business/)).toBeInTheDocument();
-    expect(screen.getByLabelText("Assistant name")).toHaveValue("Vani");
-    expect(screen.getByText(/Customers hear: “Vani, the AI assistant of Acme Silks\.” The words “AI assistant” are always said\./)).toBeInTheDocument();
+    expect(screen.getByLabelText("Assistant name")).toHaveValue("Vijaya");
+    expect(screen.getByText(/Customers hear: “Vijaya, the AI assistant of Acme Silks\.” The words “AI assistant” are always said\./)).toBeInTheDocument();
     expect(screen.getByText("Test mode: your choices are kept on this device only.")).toBeInTheDocument();
   });
   it("the preview follows the name, the language and the way of talking, and the circle speaks", () => {

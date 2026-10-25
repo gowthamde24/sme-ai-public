@@ -46,7 +46,7 @@ beforeEach(() => {
 });
 
 describe("POST /app/tenants/[id]/ask", () => {
-  it("asks the Agent OWL with the PERSON's token and ids, and returns one JSON event per line", async () => {
+  it("asks the Vijaya with the PERSON's token and ids, and returns one JSON event per line", async () => {
     h.send.mockImplementation(stream([{ type: "text", delta: "Hi" }, done]));
     const r = await post(good);
     expect(r.headers.get("content-type")).toContain("application/x-ndjson");
