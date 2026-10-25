@@ -58,6 +58,23 @@ def _schema_errors(pack: dict[str, Any], schema: dict[str, Any], name: str) -> l
     return [f"{name}: schema: {'/'.join(str(p) for p in e.absolute_path) or '(root)'}: {e.message[:160]}" for e in sorted(validator.iter_errors(pack), key=lambda e: list(e.absolute_path))]
 
 
+# Job DG: a pack that is not the textile one must not talk like it (DF found "saree type" on the construction enquiry page). Every STRING VALUE of such a pack (words, names, summaries, custom fields and their choices, the example data)
+# is searched for these words; keys are not (a key may keep an old name, e.g. `nav.item.sarees`, whose value is "Products").
+TEXTILE_WORDS = re.compile(r"saree|\bsari\b|textile|dupatta|blouse|kanjivaram|kanchipuram|dharmavaram|\bpattu\b|\bsilk\b|weaving|handloom", re.IGNORECASE)
+
+
+def string_values(node: Any, path: str = "") -> list[tuple[str, str]]:
+    if isinstance(node, dict):
+        return [hit for key, value in node.items() for hit in string_values(value, f"{path}/{key}")]
+    if isinstance(node, list):
+        return [hit for i, value in enumerate(node) for hit in string_values(value, f"{path}[{i}]")]
+    return [(path, node)] if isinstance(node, str) else []
+
+
+def textile_words_in(pack: dict[str, Any]) -> list[str]:
+    return [f"{path}: {text[:60]!r}" for path, text in string_values(pack) if TEXTILE_WORDS.search(text)]
+
+
 def check_pack(name: str, pack: dict[str, Any], modules: dict[str, bool], keys: list[str]) -> list[str]:
     errs: list[str] = []
     if pack.get("id") != name:
@@ -68,6 +85,9 @@ def check_pack(name: str, pack: dict[str, Any], modules: dict[str, bool], keys: 
             errs.append(f"{name}: module {m!r} is not in modules.json")
     if pack.get("core_tab") not in mods:
         errs.append(f"{name}: core_tab {pack.get('core_tab')!r} must be one of the pack's modules")
+    if name != "textiles":
+        for hit in textile_words_in(pack):
+            errs.append(f"{name}: textile wording in a pack that is not the textile one: {hit}")
     labels = pack.get("labels", {})
     missing = [k for k in keys if k not in labels.get("en", {})]
     if missing:
