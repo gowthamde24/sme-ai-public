@@ -92,3 +92,16 @@ def language_of_tag(tag: str | None) -> str | None:
         return None
     short = tag.split("-")[0].lower()
     return short if short in LANGUAGES else None
+
+
+class VoiceCloner(Protocol):
+    """Makes a voice that sounds like a person who gave their consent (job DP part 5). Behind the same interface as the other voice providers; only the FAKE one exists today.
+
+    `create` takes the sample (15 to 60 seconds of the person's voice) and returns the provider's opaque id for the new voice; `delete` removes the voice at the provider (safe to repeat). Neither takes or
+    returns anything but audio bytes and that id; the consent recording is never sent to the provider (it stays in the workspace's private storage and goes when the voice is deleted)."""
+
+    name: str
+
+    def create(self, sample: bytes, content_type: str, *, label: str) -> str: ...
+
+    def delete(self, voice_id: str) -> None: ...

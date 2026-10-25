@@ -39,6 +39,7 @@ from app.orders.repository import OrdersRepository
 from app.outbox.adapter import ChannelAdapter
 from app.outbox.repository import OutboxRepository
 from app.outcomes.repository import OutcomesRepository
+from app.ownvoice.service import OwnVoiceService
 from app.packs.models import AuthProvidersOut
 from app.packs.registry import PackRegistry
 from app.packs.repository import PacksRepository
@@ -124,6 +125,8 @@ class Runtime:
     reports: ReportsRepository | None = None
     # job CV: voice notes (settings, voices, the spoken disclosure, the fair-use meter)
     voice_notes: VoiceNotesRepository | None = None
+    # job DP part 5: the Owner's own voice, made with a recorded consent
+    own_voice: OwnVoiceService | None = None
     # job DI: plans and billing (catalogue, usage meters, trial and cancel; the FAKE provider)
     billing: BillingService | None = None
     # job DM: outcomes of calls and WhatsApp follow-ups (positive, negative, unclear)

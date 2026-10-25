@@ -103,6 +103,9 @@ from app.outbox.routes import router as outbox_router
 from app.outcomes.repository import PostgrestOutcomesRepository
 from app.outcomes.routes import customers_router as outcomes_customers_router
 from app.outcomes.routes import router as outcomes_router
+from app.ownvoice.repository import PostgrestOwnVoiceRepository
+from app.ownvoice.routes import router as own_voice_router
+from app.ownvoice.service import OwnVoiceService
 from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError
 from app.packs.providers import providers_from_settings
 from app.packs.registry import PackRegistry, default_directory
@@ -142,6 +145,7 @@ from app.visits import errors as visit_errors
 from app.visits.repository import PostgrestVisitsRepository
 from app.visits.routes import router as visits_router
 from app.voice.factory import build_voice
+from app.voice.fake import FakeVoiceCloner
 from app.voice.routes import router as voice_router
 from app.voice_notes.repository import PostgrestVoiceNotesRepository
 from app.voice_notes.routes import router as voice_notes_router
@@ -259,6 +263,11 @@ def build_runtime(settings: Settings) -> Runtime | None:
         education=PostgrestEducationRepository(config.rest_url, config.anon_key),
         reports=PostgrestReportsRepository(config.rest_url, config.anon_key),
         voice_notes=PostgrestVoiceNotesRepository(config.rest_url, config.anon_key),
+        own_voice=OwnVoiceService(
+            PostgrestOwnVoiceRepository(config.rest_url, config.anon_key),
+            HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key),
+            FakeVoiceCloner(),
+        ),
         billing=BillingService(
             PostgrestBillingRepository(config.rest_url, config.anon_key),
             _billing_provider(settings),
@@ -951,6 +960,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(education_router)
     app.include_router(reports_router)
     app.include_router(voice_notes_router)
+    app.include_router(own_voice_router)
     app.include_router(billing_plans_router)
     app.include_router(billing_router)
     app.include_router(outcomes_router)

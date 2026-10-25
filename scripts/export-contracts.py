@@ -17,6 +17,7 @@ from app.materials import contracts as materials
 from app.outcomes import contracts as outcomes
 from app.packs import contracts as packs
 from app.reports import contracts as reports
+from app.ownvoice import contracts as own_voice
 from app.voice_notes import contracts as voice_notes
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,6 +43,8 @@ ROOT = Path(__file__).resolve().parents[1]
 (ROOT / "packages/contracts/reports.ts").write_text(reports.ts_text())
 (ROOT / "packages/contracts/voice_notes.schema.json").write_text(voice_notes.schema_text())
 (ROOT / "packages/contracts/voice_notes.ts").write_text(voice_notes.ts_text())
+(ROOT / "packages/contracts/own_voice.schema.json").write_text(own_voice.schema_text())
+(ROOT / "packages/contracts/own_voice.ts").write_text(own_voice.ts_text())
 (ROOT / "packages/contracts/billing.schema.json").write_text(billing.schema_text())
 (ROOT / "packages/contracts/billing.ts").write_text(billing.ts_text())
 (ROOT / "packages/contracts/assistant_settings.schema.json").write_text(assistant_settings.schema_text())

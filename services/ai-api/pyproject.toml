@@ -88,6 +88,10 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "tests/test_cr_*.py" = ["E501"]
 "tests/test_migration_copies_cr.py" = ["E501"]
 "../../tests/integration/test_cr_*.py" = ["E501"]
+# job DP part 5: the Owner's own voice reads like the consent rules it implements (long lines)
+"app/ownvoice/*" = ["E501"]
+"tests/test_dp_own_voice.py" = ["E501"]
+"tests/dp_voice_fakes.py" = ["E501"]
 # job DM: outcomes, the AI assistant's settings, the school progress templates and their tests read like the ADR they implement (long lines)
 "app/outcomes/*" = ["E501"]
 "app/assistant_settings/*" = ["E501"]
