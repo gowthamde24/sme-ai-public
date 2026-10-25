@@ -57,7 +57,7 @@ comment on column public.outcomes.category is 'SAFE: a closed word. CLEAN-EXEMPT
 comment on column public.outcomes.recorded_by_kind is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
 comment on column public.outcomes.ai_outcome is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
 comment on column public.outcomes.ai_category is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
-comment on column public.outcomes.reason is 'The AI''s (or a person''s) one line on why. Free text about an adult customer; never stored in an education workspace. Erased with the workspace and swept on a contact''s erasure.';
+comment on column public.outcomes.reason is 'PII: the AI''s (or a person''s) one line on why. Free text about an adult customer; never stored in an education workspace. Erased with the workspace and swept on a contact''s erasure.';
 
 alter table public.outcomes enable row level security;
 alter table public.outcomes force row level security;
@@ -66,7 +66,7 @@ grant select on public.outcomes to authenticated;
 create policy outcomes_select on public.outcomes for select to authenticated
   using (tenant_id = any (((select app.my_tenant_ids_with_role(array['owner', 'admin', 'sales', 'viewer']::public.app_role[])))::uuid[]));
 create trigger outcomes_forbid_tenant_id_change before update on public.outcomes for each row execute function app.forbid_tenant_id_change();
-create trigger audit_outcomes after insert or update or delete on public.outcomes for each row execute function app.audit_row_change('outcome', '');
+create trigger audit_outcomes after insert or update or delete on public.outcomes for each row execute function app.audit_row_change('outcome', 'reason');
 
 -- what an outcome IS never changes (which call, which customer, when); only the outcome, the category, the reason and the correction marks do. (An erasure may blank the reason.)
 create function app.outcomes_immutable() returns trigger

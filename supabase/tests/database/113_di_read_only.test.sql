@@ -110,11 +110,12 @@ select pg_temp.pin('2026-10-14T11:00:00+05:30'::timestamptz);
 
 -- ============================================================================ G. every state of a subscription (workspace b)
 -- trialing: full until a day after the trial ends (the first charge is expected then)
+insert into integrations.whatsapp_accounts (tenant_id, waba_id, phone_number_id, display_phone, token_ref, status) values (tests.tid('b'), '1234567890', '555000413', '+910000000000', 'SYNTHETIC_TOKEN_REF', 'active');   -- job DM: the 14 days count from here
 select pg_temp.q(pg_temp.val('b_owner', format($q$select public.billing_start_trial(%L, 'growth', 'fake', 'sub_fake_ro1')::text$q$, tests.tid('b'))));
 select is(pg_temp.acc('b_owner', 'access', 'b'), 'full', 'G1 trialing: full');
-select pg_temp.pin('2026-11-13T11:00:00+05:30'::timestamptz);
+select pg_temp.pin('2026-10-28T11:00:00+05:30'::timestamptz);
 select is(pg_temp.acc('b_owner', 'access', 'b'), 'full', 'G2 the day the trial ends, the first charge is awaited: still full');
-select pg_temp.pin('2026-11-14T12:00:00+05:30'::timestamptz);
+select pg_temp.pin('2026-10-29T12:00:00+05:30'::timestamptz);
 select is(pg_temp.acc('b_owner', 'access', 'b'), 'read_only', 'G3 a day later with no charge: read-only');
 -- the charge arrives late: active again
 select pg_temp.q(pg_temp.val('x6', format($q$select public.billing_apply_event(%L, 'ro_ev_1', 'charge_succeeded', 0, '2026-11-14T12:00:00+05:30')::text$q$, tests.tid('b'))));

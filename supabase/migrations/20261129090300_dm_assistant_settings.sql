@@ -70,7 +70,7 @@ create table public.assistant_settings (
   created_at                timestamptz not null default now(),
   check (call_from_minute < call_to_minute)
 );
-comment on column public.assistant_settings.assistant_name is 'The name the assistant gives itself on calls ("Vani"): chosen by the owner, not a person''s data. Clean text; no markup characters.';
+comment on column public.assistant_settings.assistant_name is 'SAFE: the name the assistant gives itself on calls ("Vani"): chosen by the owner, not a person''s data. Clean text; no markup characters.';
 comment on column public.assistant_settings.voice_persona is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
 comment on column public.assistant_settings.main_language is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
 comment on column public.assistant_settings.style is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
