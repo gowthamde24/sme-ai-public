@@ -41,11 +41,6 @@ select = ["E", "F", "I", "B", "UP", "S"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101", "S105", "S106"]
-# job DJ: the voice-note converter and its tests read like the ADR they implement (long lines)
-"app/voice/convert.py" = ["E501"]
-"tests/test_dj_*.py" = ["E501"]
-"tests/test_migration_copies_dj.py" = ["E501"]
-"../../tests/integration/test_dj_*.py" = ["E501"]
 # job BZ: connectors read like their providers' documentation (long lines of fields and examples)
 "app/connectors/*" = ["E501"]
 "tests/test_bz_*.py" = ["E501"]
@@ -193,6 +188,11 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "tests/outbox_fakes.py" = ["E501"]
 "seeds/*" = ["E501"]
 "tests/test_quote_seed_script.py" = ["E501"]
+# job DJ: the voice-note converter and its tests read like the ADR they implement (long lines)
+"app/voice/convert.py" = ["E501"]
+"tests/test_dj_*.py" = ["E501"]
+"tests/test_migration_copies_dj.py" = ["E501"]
+"../../tests/integration/test_dj_*.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.11"
