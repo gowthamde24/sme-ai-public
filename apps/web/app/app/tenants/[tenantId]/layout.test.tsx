@@ -3,9 +3,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const readFrameData = vi.fn();
 const readAgents = vi.fn();
+const readAccess = vi.fn();
 const nav = { pathname: "/app/tenants/22222222-2222-2222-2222-222222222222" };
 vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname, useSearchParams: () => new URLSearchParams() }));
-vi.mock("./today-read", () => ({ readAgentsCached: (...a: unknown[]) => readAgents(...a) }));
+vi.mock("./today-read", () => ({ readAgentsCached: (...a: unknown[]) => readAgents(...a), readAccessCached: (...a: unknown[]) => readAccess(...a) }));
 vi.mock("../../frame-data", () => ({ readFrameData: (...a: unknown[]) => readFrameData(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ id: "u", accessToken: "tok", email: "a@b.test" }) }));
 const slot = vi.fn();
@@ -24,8 +25,27 @@ describe("the workspace layout", () => {
   beforeEach(() => {
     readAgents.mockReset();
     readAgents.mockResolvedValue([]);
+    readAccess.mockReset();
+    readAccess.mockResolvedValue({ readOnly: false });
     readFrameData.mockResolvedValue({ ...NO_FRAME_DATA });
     nav.pathname = `/app/tenants/${T}/orders`;
+  });
+  it("a read-only workspace (job DP) gets the one notice at the top and the scope that switches the controls off, and no Ask dock; a full one gets neither; a read that fails is 'full' (the API refuses every change anyway)", async () => {
+    readAgents.mockResolvedValue(teamWith("idle"));
+    readAccess.mockResolvedValue({ readOnly: true, since: "2026-10-20", deleteOn: "2027-01-18", daysLeft: 85 });
+    const { rerender } = render(await TenantLayout(props(T)));
+    expect(readAccess).toHaveBeenCalledWith("tok", T);
+    expect(document.querySelector("[data-readonly-banner]")).toHaveTextContent(/read-only/i);
+    expect(document.querySelector("[data-readonly-banner]")).toHaveTextContent("billing@");
+    expect(document.querySelector("[data-dock='ask']")).toBeNull();
+    expect(document.body.textContent).toContain("page");
+    readAccess.mockResolvedValue({ readOnly: false });
+    rerender(await TenantLayout(props(T)));
+    expect(document.querySelector("[data-readonly-banner]")).toBeNull();
+    expect(document.querySelector("[data-dock='ask']")).not.toBeNull();
+    readAccess.mockRejectedValue(new Error("not read"));
+    rerender(await TenantLayout(props(T)));
+    expect(document.querySelector("[data-readonly-banner]")).toBeNull();
   });
   it("draws the Ask dock (job DN) on a main screen when the assistant can be asked, and nowhere else", async () => {
     readAgents.mockResolvedValue(teamWith("idle"));

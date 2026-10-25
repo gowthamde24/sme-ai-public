@@ -340,6 +340,7 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
     <Shell {...shellProps}>
       {title}
       <form
+        data-write
         className={formClass}
         onSubmit={(e) => {
           e.preventDefault();

@@ -63,6 +63,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
       {/* the page keeps a narrow column: the preview stands above the form, and beside it only when the column is wide (a container query, not the screen) */}
       <div className="flex flex-col gap-5 @5xl:flex-row @5xl:items-start">
         <form
+          data-write
           className="flex min-w-0 flex-1 flex-col gap-4"
           onSubmit={async (e) => {
             e.preventDefault();

@@ -24,7 +24,7 @@ export function CorrectOutcomeForm({ words, outcome, options, correct }: { words
   };
   if (!open)
     return (
-      <button type="button" onClick={() => setOpen(true)} className={`${btnQuiet} mt-2 !min-h-11 !px-3 text-sm`}>
+      <button type="button" data-write onClick={() => setOpen(true)} className={`${btnQuiet} mt-2 !min-h-11 !px-3 text-sm`}>
         {t("outcome.fix")}
       </button>
     );
