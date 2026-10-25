@@ -14,6 +14,7 @@ from app.agent_runs.wiring import AgentsRuntime
 from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.billing.service import BillingService
 from app.outcomes.repository import OutcomesRepository
+from app.assistant_settings.service import AssistantSettingsService
 from app.businessprofile.repository import BusinessProfileRepository
 from app.campaigns.repository import CampaignsRepository
 from app.catalogue.repository import CatalogueRepository
@@ -127,6 +128,8 @@ class Runtime:
     billing: BillingService | None = None
     # job DM: outcomes of calls and WhatsApp follow-ups (positive | negative | unclear, a category, a short reason)
     outcomes: OutcomesRepository | None = None
+    # job DM: the AI assistant's settings per workspace (Settings > AI assistant)
+    assistant_settings: AssistantSettingsService | None = None
 
 
 @dataclass(frozen=True)

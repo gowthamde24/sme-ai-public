@@ -1,0 +1,503 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "assistant_settings.schema.json",
+  "title": "The AI assistant's settings (job DM)",
+  "description": "Generated from services/ai-api/app/assistant_settings/models.py by `make contracts`.",
+  "$defs": {
+    "AssistantOut": {
+      "additionalProperties": false,
+      "properties": {
+        "settings": {
+          "$ref": "#/$defs/AssistantSettings"
+        },
+        "saved": {
+          "title": "Saved",
+          "type": "boolean"
+        },
+        "defaults": {
+          "$ref": "#/$defs/AssistantSettings"
+        },
+        "business_name": {
+          "title": "Business Name",
+          "type": "string"
+        },
+        "business_type": {
+          "enum": [
+            "textiles",
+            "construction_materials",
+            "education"
+          ],
+          "title": "Business Type",
+          "type": "string"
+        },
+        "intro": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "propertyNames": {
+            "enum": [
+              "en",
+              "te",
+              "hi",
+              "kn"
+            ]
+          },
+          "title": "Intro",
+          "type": "object"
+        },
+        "voice_notes_follow": {
+          "title": "Voice Notes Follow",
+          "type": "boolean"
+        },
+        "options": {
+          "$ref": "#/$defs/OptionsOut"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Updated At"
+        },
+        "wording": {
+          "const": "draft",
+          "title": "Wording",
+          "type": "string"
+        }
+      },
+      "required": [
+        "settings",
+        "saved",
+        "defaults",
+        "business_name",
+        "business_type",
+        "intro",
+        "voice_notes_follow",
+        "options",
+        "updated_at",
+        "wording"
+      ],
+      "title": "AssistantOut",
+      "type": "object"
+    },
+    "AssistantSettings": {
+      "additionalProperties": false,
+      "description": "Every field, always. The same shape is read and saved.",
+      "properties": {
+        "name": {
+          "maxLength": 30,
+          "minLength": 1,
+          "pattern": "^[^<>{}@/\\\\|\\x00-\\x1f\\x7f]+$",
+          "title": "Name",
+          "type": "string"
+        },
+        "voice_persona": {
+          "enum": [
+            "female_warm",
+            "female_clear",
+            "male_calm",
+            "male_lively"
+          ],
+          "title": "Voice Persona",
+          "type": "string"
+        },
+        "main_language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn"
+          ],
+          "title": "Main Language",
+          "type": "string"
+        },
+        "auto_switch_language": {
+          "title": "Auto Switch Language",
+          "type": "boolean"
+        },
+        "allow_english_mixing": {
+          "title": "Allow English Mixing",
+          "type": "boolean"
+        },
+        "style": {
+          "enum": [
+            "warm",
+            "respectful",
+            "quick"
+          ],
+          "title": "Style",
+          "type": "string"
+        },
+        "speed": {
+          "maximum": 1.25,
+          "minimum": 0.75,
+          "multipleOf": 0.05,
+          "title": "Speed",
+          "type": "number"
+        },
+        "may_answer_prices": {
+          "title": "May Answer Prices",
+          "type": "boolean"
+        },
+        "may_book_visits": {
+          "title": "May Book Visits",
+          "type": "boolean"
+        },
+        "may_send_media": {
+          "title": "May Send Media",
+          "type": "boolean"
+        },
+        "may_talk_dues": {
+          "title": "May Talk Dues",
+          "type": "boolean"
+        },
+        "max_discount_percent": {
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Max Discount Percent",
+          "type": "integer"
+        },
+        "handover_owner_asked": {
+          "title": "Handover Owner Asked",
+          "type": "boolean"
+        },
+        "handover_upset": {
+          "title": "Handover Upset",
+          "type": "boolean"
+        },
+        "handover_order_above_paise": {
+          "anyOf": [
+            {
+              "maximum": 100000000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Handover Order Above Paise"
+        },
+        "call_days": {
+          "items": {
+            "maximum": 7,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxItems": 7,
+          "minItems": 1,
+          "title": "Call Days",
+          "type": "array"
+        },
+        "call_from_minute": {
+          "maximum": 1260,
+          "minimum": 540,
+          "multipleOf": 15,
+          "title": "Call From Minute",
+          "type": "integer"
+        },
+        "call_to_minute": {
+          "maximum": 1260,
+          "minimum": 540,
+          "multipleOf": 15,
+          "title": "Call To Minute",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "voice_persona",
+        "main_language",
+        "auto_switch_language",
+        "allow_english_mixing",
+        "style",
+        "speed",
+        "may_answer_prices",
+        "may_book_visits",
+        "may_send_media",
+        "may_talk_dues",
+        "max_discount_percent",
+        "handover_owner_asked",
+        "handover_upset",
+        "handover_order_above_paise",
+        "call_days",
+        "call_from_minute",
+        "call_to_minute"
+      ],
+      "title": "AssistantSettings",
+      "type": "object"
+    },
+    "OptionOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "title": "OptionOut",
+      "type": "object"
+    },
+    "OptionsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "personas": {
+          "items": {
+            "$ref": "#/$defs/PersonaOut"
+          },
+          "title": "Personas",
+          "type": "array"
+        },
+        "styles": {
+          "items": {
+            "$ref": "#/$defs/OptionOut"
+          },
+          "title": "Styles",
+          "type": "array"
+        },
+        "languages": {
+          "items": {
+            "$ref": "#/$defs/OptionOut"
+          },
+          "title": "Languages",
+          "type": "array"
+        }
+      },
+      "required": [
+        "personas",
+        "styles",
+        "languages"
+      ],
+      "title": "OptionsOut",
+      "type": "object"
+    },
+    "OutcomePreviewOut": {
+      "additionalProperties": false,
+      "properties": {
+        "outcome": {
+          "const": "positive",
+          "title": "Outcome",
+          "type": "string"
+        },
+        "category": {
+          "const": "interested",
+          "title": "Category",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "outcome",
+        "category",
+        "reason"
+      ],
+      "title": "OutcomePreviewOut",
+      "type": "object"
+    },
+    "PersonaOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "enum": [
+            "female_warm",
+            "female_clear",
+            "male_calm",
+            "male_lively"
+          ],
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "languages": {
+          "additionalProperties": {
+            "$ref": "#/$defs/VoiceAvailabilityOut"
+          },
+          "propertyNames": {
+            "enum": [
+              "en",
+              "te",
+              "hi",
+              "kn"
+            ]
+          },
+          "title": "Languages",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "description",
+        "languages"
+      ],
+      "title": "PersonaOut",
+      "type": "object"
+    },
+    "PreviewOut": {
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "style": {
+          "enum": [
+            "warm",
+            "respectful",
+            "quick"
+          ],
+          "title": "Style",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "intro": {
+          "title": "Intro",
+          "type": "string"
+        },
+        "wording": {
+          "const": "draft",
+          "title": "Wording",
+          "type": "string"
+        }
+      },
+      "required": [
+        "language",
+        "style",
+        "name",
+        "text",
+        "intro",
+        "wording"
+      ],
+      "title": "PreviewOut",
+      "type": "object"
+    },
+    "TestCallOut": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "fake",
+          "title": "Mode",
+          "type": "string"
+        },
+        "status": {
+          "const": "simulated",
+          "title": "Status",
+          "type": "string"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        },
+        "transcript": {
+          "items": {
+            "$ref": "#/$defs/TranscriptLineOut"
+          },
+          "title": "Transcript",
+          "type": "array"
+        },
+        "outcome": {
+          "$ref": "#/$defs/OutcomePreviewOut"
+        }
+      },
+      "required": [
+        "mode",
+        "status",
+        "note",
+        "transcript",
+        "outcome"
+      ],
+      "title": "TestCallOut",
+      "type": "object"
+    },
+    "TranscriptLineOut": {
+      "additionalProperties": false,
+      "properties": {
+        "speaker": {
+          "enum": [
+            "assistant",
+            "customer"
+          ],
+          "title": "Speaker",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "speaker",
+        "text"
+      ],
+      "title": "TranscriptLineOut",
+      "type": "object"
+    },
+    "VoiceAvailabilityOut": {
+      "additionalProperties": false,
+      "properties": {
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        },
+        "synthetic": {
+          "title": "Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "available",
+        "synthetic"
+      ],
+      "title": "VoiceAvailabilityOut",
+      "type": "object"
+    }
+  }
+}

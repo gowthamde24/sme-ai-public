@@ -1,0 +1,40 @@
+"""The assistant's data file (job DM): defaults per business type, the fixed introduction and the sample lines (data/assistant.json). Loaded once; a test checks it against the models and that every line states
+"AI assistant"."""
+
+from __future__ import annotations
+
+import json
+from functools import lru_cache
+from pathlib import Path
+from typing import Any
+
+DATA = Path(__file__).resolve().parent / "data" / "assistant.json"
+# the assistant word in each language: every introduction and every sample must contain it (and "AI")
+ASSISTANT_WORD = {"en": "assistant", "te": "అసిస్టెంట్", "hi": "असिस्टेंट", "kn": "ಅಸಿಸ್ಟೆಂಟ್"}
+DEFAULT_BUSINESS_TYPE = "textiles"
+
+
+@lru_cache(maxsize=1)
+def load() -> dict[str, Any]:
+    return json.loads(DATA.read_text(encoding="utf-8"))
+
+
+def business_type(code: str | None) -> str:
+    return code if code in load()["defaults"] else DEFAULT_BUSINESS_TYPE
+
+
+def defaults_for(code: str | None) -> dict[str, Any]:
+    return dict(load()["defaults"][business_type(code)])
+
+
+def _fill(template: str, name: str, business: str) -> str:
+    # plain replacement, not str.format: a name or a business name with braces must stay text
+    return template.replace("{name}", name).replace("{business}", business)
+
+
+def intro(language: str, name: str, business: str) -> str:
+    return _fill(load()["intro"][language], name, business)
+
+
+def sample(code: str | None, language: str, style: str, name: str, business: str) -> str:
+    return _fill(load()["samples"][business_type(code)][language][style], name, business)

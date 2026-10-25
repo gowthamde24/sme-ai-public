@@ -1,0 +1,677 @@
+{
+ "_comment": "Mock payloads for the AI assistant's settings API (job DM, C1 part). Generated from the real service with a fake repository, validated against assistant_settings.schema.json by a test. The wording is a DRAFT for native review.",
+ "assistant_defaults_textiles": {
+  "settings": {
+   "name": "Vani",
+   "voice_persona": "female_warm",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "warm",
+   "speed": 1.0,
+   "may_answer_prices": true,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": false,
+   "max_discount_percent": 5,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": 5000000,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1140
+  },
+  "saved": false,
+  "defaults": {
+   "name": "Vani",
+   "voice_persona": "female_warm",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "warm",
+   "speed": 1.0,
+   "may_answer_prices": true,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": false,
+   "max_discount_percent": 5,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": 5000000,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1140
+  },
+  "business_name": "Sri Lakshmi Silks",
+  "business_type": "textiles",
+  "intro": {
+   "en": "Vani, the AI assistant of Sri Lakshmi Silks",
+   "te": "Sri Lakshmi Silks AI అసిస్టెంట్ Vani",
+   "hi": "Sri Lakshmi Silks की AI असिस्टेंट Vani",
+   "kn": "Sri Lakshmi Silksನ AI ಅಸಿಸ್ಟೆಂಟ್ Vani"
+  },
+  "voice_notes_follow": false,
+  "options": {
+   "personas": [
+    {
+     "id": "female_warm",
+     "label": "Female · warm",
+     "description": "Friendly, unhurried",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    },
+    {
+     "id": "female_clear",
+     "label": "Female · clear",
+     "description": "Crisp and confident",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    },
+    {
+     "id": "male_calm",
+     "label": "Male · calm",
+     "description": "Steady and polite",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    },
+    {
+     "id": "male_lively",
+     "label": "Male · lively",
+     "description": "Energetic, upbeat",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    }
+   ],
+   "styles": [
+    {
+     "id": "warm",
+     "label": "Warm and friendly",
+     "description": "Friendly, like a trusted shop assistant"
+    },
+    {
+     "id": "respectful",
+     "label": "Respectful",
+     "description": "Uses garu, ji and polite forms"
+    },
+    {
+     "id": "quick",
+     "label": "Short and quick",
+     "description": "Gets to the point in a few words"
+    }
+   ],
+   "languages": [
+    {
+     "id": "en",
+     "label": "English",
+     "description": null
+    },
+    {
+     "id": "te",
+     "label": "తెలుగు",
+     "description": null
+    },
+    {
+     "id": "hi",
+     "label": "हिंदी",
+     "description": null
+    },
+    {
+     "id": "kn",
+     "label": "ಕನ್ನಡ",
+     "description": null
+    }
+   ]
+  },
+  "updated_at": null,
+  "wording": "draft"
+ },
+ "assistant_saved_construction": {
+  "settings": {
+   "name": "Ravi",
+   "voice_persona": "male_calm",
+   "main_language": "hi",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "respectful",
+   "speed": 1.0,
+   "may_answer_prices": true,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": true,
+   "max_discount_percent": 4,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "call_from_minute": 600,
+   "call_to_minute": 1050
+  },
+  "saved": true,
+  "defaults": {
+   "name": "Arun",
+   "voice_persona": "male_calm",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "respectful",
+   "speed": 1.0,
+   "may_answer_prices": true,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": true,
+   "max_discount_percent": 3,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": 20000000,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1080
+  },
+  "business_name": "Sri Ram Pavers",
+  "business_type": "construction_materials",
+  "intro": {
+   "en": "Ravi, the AI assistant of Sri Ram Pavers",
+   "te": "Sri Ram Pavers AI అసిస్టెంట్ Ravi",
+   "hi": "Sri Ram Pavers की AI असिस्टेंट Ravi",
+   "kn": "Sri Ram Paversನ AI ಅಸಿಸ್ಟೆಂಟ್ Ravi"
+  },
+  "voice_notes_follow": false,
+  "options": {
+   "personas": [
+    {
+     "id": "female_warm",
+     "label": "Female · warm",
+     "description": "Friendly, unhurried",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    },
+    {
+     "id": "female_clear",
+     "label": "Female · clear",
+     "description": "Crisp and confident",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    },
+    {
+     "id": "male_calm",
+     "label": "Male · calm",
+     "description": "Steady and polite",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    },
+    {
+     "id": "male_lively",
+     "label": "Male · lively",
+     "description": "Energetic, upbeat",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    }
+   ],
+   "styles": [
+    {
+     "id": "warm",
+     "label": "Warm and friendly",
+     "description": "Friendly, like a trusted shop assistant"
+    },
+    {
+     "id": "respectful",
+     "label": "Respectful",
+     "description": "Uses garu, ji and polite forms"
+    },
+    {
+     "id": "quick",
+     "label": "Short and quick",
+     "description": "Gets to the point in a few words"
+    }
+   ],
+   "languages": [
+    {
+     "id": "en",
+     "label": "English",
+     "description": null
+    },
+    {
+     "id": "te",
+     "label": "తెలుగు",
+     "description": null
+    },
+    {
+     "id": "hi",
+     "label": "हिंदी",
+     "description": null
+    },
+    {
+     "id": "kn",
+     "label": "ಕನ್ನಡ",
+     "description": null
+    }
+   ]
+  },
+  "updated_at": "2026-10-25T17:46:39.851975Z",
+  "wording": "draft"
+ },
+ "assistant_defaults_education": {
+  "settings": {
+   "name": "Meena",
+   "voice_persona": "female_clear",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "respectful",
+   "speed": 1.0,
+   "may_answer_prices": false,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": true,
+   "max_discount_percent": 0,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1020
+  },
+  "saved": false,
+  "defaults": {
+   "name": "Meena",
+   "voice_persona": "female_clear",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "respectful",
+   "speed": 1.0,
+   "may_answer_prices": false,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": true,
+   "max_discount_percent": 0,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1020
+  },
+  "business_name": "Little Flower School",
+  "business_type": "education",
+  "intro": {
+   "en": "Meena, the AI assistant of Little Flower School",
+   "te": "Little Flower School AI అసిస్టెంట్ Meena",
+   "hi": "Little Flower School की AI असिस्टेंट Meena",
+   "kn": "Little Flower Schoolನ AI ಅಸಿಸ್ಟೆಂಟ್ Meena"
+  },
+  "voice_notes_follow": false,
+  "options": {
+   "personas": [
+    {
+     "id": "female_warm",
+     "label": "Female · warm",
+     "description": "Friendly, unhurried",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    },
+    {
+     "id": "female_clear",
+     "label": "Female · clear",
+     "description": "Crisp and confident",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    },
+    {
+     "id": "male_calm",
+     "label": "Male · calm",
+     "description": "Steady and polite",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    },
+    {
+     "id": "male_lively",
+     "label": "Male · lively",
+     "description": "Energetic, upbeat",
+     "languages": {
+      "en": {
+       "available": true,
+       "synthetic": true
+      },
+      "te": {
+       "available": true,
+       "synthetic": true
+      },
+      "hi": {
+       "available": true,
+       "synthetic": true
+      },
+      "kn": {
+       "available": true,
+       "synthetic": true
+      }
+     }
+    }
+   ],
+   "styles": [
+    {
+     "id": "warm",
+     "label": "Warm and friendly",
+     "description": "Friendly, like a trusted shop assistant"
+    },
+    {
+     "id": "respectful",
+     "label": "Respectful",
+     "description": "Uses garu, ji and polite forms"
+    },
+    {
+     "id": "quick",
+     "label": "Short and quick",
+     "description": "Gets to the point in a few words"
+    }
+   ],
+   "languages": [
+    {
+     "id": "en",
+     "label": "English",
+     "description": null
+    },
+    {
+     "id": "te",
+     "label": "తెలుగు",
+     "description": null
+    },
+    {
+     "id": "hi",
+     "label": "हिंदी",
+     "description": null
+    },
+    {
+     "id": "kn",
+     "label": "ಕನ್ನಡ",
+     "description": null
+    }
+   ]
+  },
+  "updated_at": null,
+  "wording": "draft"
+ },
+ "preview_telugu_warm": {
+  "language": "te",
+  "style": "warm",
+  "name": "Vani",
+  "text": "హలో! నేను Sri Lakshmi Silks AI అసిస్టెంట్ Vani. కొత్త చీరలు వచ్చాయి, కొన్ని ఫోటోలు పంపమంటారా?",
+  "intro": "Sri Lakshmi Silks AI అసిస్టెంట్ Vani",
+  "wording": "draft"
+ },
+ "preview_unsaved_name": {
+  "language": "en",
+  "style": "quick",
+  "name": "Lakshmi",
+  "text": "Hi, Lakshmi here, AI assistant at Sri Lakshmi Silks. New sarees are in. Photos on WhatsApp?",
+  "intro": "Lakshmi, the AI assistant of Sri Lakshmi Silks",
+  "wording": "draft"
+ },
+ "test_call_simulated": {
+  "mode": "fake",
+  "status": "simulated",
+  "note": "This is a simulation. No call was made and nothing was sent or stored. A real test call to your own phone needs telephony, which is not built yet.",
+  "transcript": [
+   {
+    "speaker": "assistant",
+    "text": "హలో! నేను Sri Lakshmi Silks AI అసిస్టెంట్ Vani. కొత్త చీరలు వచ్చాయి, కొన్ని ఫోటోలు పంపమంటారా?"
+   },
+   {
+    "speaker": "customer",
+    "text": "అవును, పంపండి."
+   },
+   {
+    "speaker": "assistant",
+    "text": "వాట్సాప్‌లో పంపాను. ధన్యవాదాలు!"
+   }
+  ],
+  "outcome": {
+   "outcome": "positive",
+   "category": "interested",
+   "reason": "Showed interest or asked for details."
+  }
+ },
+ "settings_save_request": {
+  "name": "Ravi",
+  "voice_persona": "male_calm",
+  "main_language": "hi",
+  "auto_switch_language": true,
+  "allow_english_mixing": true,
+  "style": "respectful",
+  "speed": 1.0,
+  "may_answer_prices": true,
+  "may_book_visits": true,
+  "may_send_media": true,
+  "may_talk_dues": true,
+  "max_discount_percent": 4,
+  "handover_owner_asked": true,
+  "handover_upset": true,
+  "handover_order_above_paise": null,
+  "call_days": [
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "call_from_minute": 600,
+  "call_to_minute": 1050
+ }
+}
