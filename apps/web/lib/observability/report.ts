@@ -76,7 +76,7 @@ export async function reportServerError(err: unknown, ctx: ReportContext = {}, e
     const dsn = env.SENTRY_DSN;
     const parsed = parseDsn(dsn);
     if (!parsed || !dsn) return false;
-    const event = buildEvent(err, ctx, { release: env.SENTRY_RELEASE || env.NEXT_PUBLIC_APP_VERSION || "web", environment: env.SENTRY_ENVIRONMENT || env.NODE_ENV || "production" });
+    const event = buildEvent(err, ctx, { release: env.SENTRY_RELEASE || "web", environment: env.SENTRY_ENVIRONMENT || env.NODE_ENV || "production" });
     const response = await send(`https://${parsed.host}/api/${parsed.projectId}/envelope/`, {
       method: "POST",
       headers: { "content-type": "application/x-sentry-envelope", "x-sentry-auth": `Sentry sentry_version=7, sentry_key=${parsed.key}, sentry_client=stack19-web/1` },
