@@ -81,7 +81,7 @@ class Ai4BharatTts:
     def __repr__(self) -> str:
         return "Ai4BharatTts()"
 
-    def synthesize(self, text: str, language: str) -> Speech:
+    def synthesize(self, text: str, language: str, *, speaker: str | None = None, pace: float | None = None) -> Speech:   # speaker and pace: only a provider with named speakers uses them
         if language not in LANGUAGES:
             raise VoiceError("unsupported_language")
         body = call(

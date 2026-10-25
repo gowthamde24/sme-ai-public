@@ -147,6 +147,12 @@ class Settings(BaseSettings):
     sarvam_stt_model: str = "saaras:v4"
     sarvam_tts_model: str = "bulbul:v3"
     sarvam_tts_speaker: str | None = None
+    # Job DJ (ADR 0093): the speech of WhatsApp VOICE NOTES (the worker). auto = Sarvam when
+    # SARVAM_API_KEY is set, else VOICE_TTS_PROVIDER when it names one, else the fake provider in
+    # development and none elsewhere (the text then goes alone); off | fake (development only) |
+    # sarvam (needs the key AND ffmpeg). VOICE_NOTE_FFMPEG: the program that codes OGG/Opus.
+    voice_note_tts_provider: str = "auto"
+    voice_note_ffmpeg: str = "ffmpeg"
     bhashini_api_key: SecretStr | None = None
     bhashini_asr_service_id: str | None = None
     bhashini_tts_service_id: str | None = None

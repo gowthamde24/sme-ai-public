@@ -8,6 +8,7 @@ from __future__ import annotations
 from app.config import ConfigurationError, Settings
 from app.voice.ai4bharat import Ai4BharatStt, Ai4BharatTts
 from app.voice.bhashini import BhashiniStt, BhashiniTts
+from app.voice.convert import FfmpegConverter
 from app.voice.fake import FakeStt, FakeTts
 from app.voice.google import GoogleStt, GoogleTts
 from app.voice.interface import SpeechToText, TextToSpeech, VoiceStack
@@ -91,6 +92,46 @@ def build_tts(settings: Settings) -> TextToSpeech | None:
         return Ai4BharatTts(settings.ai4bharat_tts_url.strip(), _secret(settings.ai4bharat_token))
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
+
+
+NOTE_PROVIDERS = ("auto", "off", "fake", "sarvam")
+
+
+def build_note_voice(settings: Settings) -> tuple[TextToSpeech | None, FfmpegConverter | None]:
+    """The speech and the coder of WhatsApp voice notes (job DJ, ADR 0093): (text-to-speech, converter to OGG/Opus), either may be None.
+
+    A provider that makes real speech (Sarvam) is always paired with the converter, and the process stops at start when ffmpeg is not there: a voice note that WhatsApp cannot play would be sent as text only,
+    silently, for ever. The fake provider needs no converter. With nothing configured outside development there is no speech at all and every message goes as text."""
+    name = settings.voice_note_tts_provider.strip().lower()
+    if name not in NOTE_PROVIDERS:
+        raise ConfigurationError(f"VOICE_NOTE_TTS_PROVIDER must be one of {', '.join(NOTE_PROVIDERS)}")
+    key = _secret(settings.sarvam_api_key)
+    if name == "auto":
+        if key:
+            name = "sarvam"
+        elif settings.voice_tts_provider.strip().lower() not in ("off", ""):
+            return build_tts(settings), _converter_for(settings, build_tts(settings))
+        else:
+            name = "fake" if settings.is_development else "off"
+    if name == "off":
+        return None, None
+    if name == "fake":
+        if not settings.is_development:
+            raise ConfigurationError("VOICE_NOTE_TTS_PROVIDER=fake is for development only")
+        return FakeTts(), None
+    if not key:
+        raise ConfigurationError("VOICE_NOTE_TTS_PROVIDER=sarvam needs SARVAM_API_KEY")
+    tts = SarvamTts(key, settings.sarvam_tts_model, settings.sarvam_tts_speaker)
+    return tts, _converter_for(settings, tts)
+
+
+def _converter_for(settings: Settings, tts: TextToSpeech | None) -> FfmpegConverter | None:
+    if tts is None or tts.name == "fake":
+        return None
+    converter = FfmpegConverter(settings.voice_note_ffmpeg)
+    if not converter.available():
+        raise ConfigurationError("voice notes with a real speech provider need ffmpeg (VOICE_NOTE_FFMPEG names the program); it is in the API image")
+    return converter
 
 
 def build_voice(settings: Settings) -> VoiceStack | None:

@@ -34,7 +34,7 @@ from app.scheduler.repository import PostgrestSchedulerRepository, SchedulerRepo
 from app.scheduler.session import PrincipalSession, SignInError
 from app.scheduler.tick import TickResult, run_tick
 from app.tenancy.repository import TokenRejected
-from app.voice.factory import build_tts
+from app.voice.factory import build_note_voice
 
 logger = logging.getLogger("app.scheduler.worker")
 
@@ -173,7 +173,7 @@ def build_worker(settings: Settings) -> Worker:
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,
-        voice=VoiceNotes(repository, build_tts(settings)),
+        voice=VoiceNotes(repository, *build_note_voice(settings)),
     )
 
 

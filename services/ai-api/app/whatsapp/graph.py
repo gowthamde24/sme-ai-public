@@ -87,7 +87,7 @@ class GraphClient:
             response = self._client.post(
                 url,
                 data={"messaging_product": "whatsapp", "type": content_type},
-                files={"file": ("voice-note", content, content_type)},
+                files={"file": ("voice-note.ogg" if content_type.startswith("audio/ogg") else "voice-note", content, content_type)},
                 headers={"Authorization": f"Bearer {token}"},
             )
         except httpx.HTTPError as exc:

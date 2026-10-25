@@ -67,7 +67,11 @@ class TextToSpeech(Protocol):
     name: str
     price: Price
 
-    def synthesize(self, text: str, language: str) -> Speech: ...
+    def synthesize(
+        self, text: str, language: str, *, speaker: str | None = None, pace: float | None = None
+    ) -> Speech:
+        """Speak `text` in `language`. `speaker` is the provider's name for a voice and `pace` a speed (1.0 = normal); a provider that has neither ignores them."""
+        ...
 
 
 @dataclass(frozen=True)

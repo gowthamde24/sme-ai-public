@@ -15,6 +15,9 @@ ENV PYTHONPATH=/srv/packages/quote-engine/src:/srv/packages/pure
 # Job CK: the business-type packs (data). GET /v1/packs serves the sign-up cards from these files; PACKS_DIR points at them.
 COPY packages/packs ./packages/packs
 ENV PACKS_DIR=/srv/packages/packs
+# Job DJ (ADR 0093): ffmpeg codes a text-to-speech provider's WAV as the OGG/Opus mono that WhatsApp plays as a voice note (app/voice/convert.py; the worker runs from this same image). Debian's package, no extra
+# recommended packages. `python -m app.voice.convert` is the self-test that `make container-smoke` runs.
+RUN apt-get update && apt-get install -y --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/*
 # Not root: a fixed numeric user with no home and no shell; the code in /srv belongs to root and is read-only to it.
 RUN pip install . && useradd --system --no-create-home --shell /usr/sbin/nologin --uid 10001 api
 # job DE: PYTHONDONTWRITEBYTECODE is on (the image stays small and read-only), and /srv/app is copied as source, so every cold start compiled every module of the app again before the first request. Compile them once, here: Python reads

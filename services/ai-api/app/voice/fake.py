@@ -44,7 +44,7 @@ class FakeTts:
         self.fail = fail
         self.calls: list[tuple[int, str]] = []
 
-    def synthesize(self, text: str, language: str) -> Speech:
+    def synthesize(self, text: str, language: str, *, speaker: str | None = None, pace: float | None = None) -> Speech:   # speaker and pace: only a provider with named speakers uses them
         self.calls.append((len(text), language))
         if self.fail:
             raise VoiceError(self.fail)
