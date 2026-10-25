@@ -15,6 +15,10 @@ function sources(dir: string, out: string[] = []): string[] {
   return out;
 }
 
+// The ONE file allowed to name an error-reporting service: it runs on the server only (Next's onRequestError), reports a class name and a stack and nothing a person said, sets no cookie and loads no script
+// (lib/observability/report.ts; off unless SENTRY_DSN is set; ADR 0100). The browser still talks to this app only.
+const SERVER_ERROR_REPORTER = new Set(["lib/observability/report.ts"]);
+
 // the usual analytics, tag and session-replay vendors, and the calls that start them
 const VENDORS = /googletagmanager|google-analytics|gtag\s*\(|\bga\s*\(\s*['"]|plausible\.io|posthog|mixpanel|segment\.(com|io)|hotjar|clarity\.ms|fullstory|amplitude|matomo|umami|@vercel\/(analytics|speed-insights)|datadoghq|newrelic|sentry\.io|@sentry\/|facebook\.net\/en_US\/fbevents|connect\.facebook\.net|snap\.licdn|static\.ads-twitter|doubleclick|adsbygoogle/i;
 
@@ -22,8 +26,16 @@ describe("no analytics is loaded anywhere (job BH)", () => {
   const files = sources(ROOT);
   it("scans real source files", () => expect(files.length).toBeGreaterThan(200));
   it("no analytics, tag, advertising or session-replay library, address or call in the app's source", () => {
-    const hits = files.filter((f) => VENDORS.test(readFileSync(f, "utf8"))).map((f) => path.relative(ROOT, f));
+    const hits = files.filter((f) => VENDORS.test(readFileSync(f, "utf8"))).map((f) => path.relative(ROOT, f)).filter((f) => !SERVER_ERROR_REPORTER.has(f));
     expect(hits).toEqual([]);
+  });
+  it("the one named exception, the server-side error reporter (job DP part 6), is only ever called from the server: no client component, no page, no cookie, and the page policy still allows no outside connection", () => {
+    const importers = files.filter((f) => /observability\/report/.test(readFileSync(f, "utf8"))).map((f) => path.relative(ROOT, f)).sort();
+    expect(importers).toEqual(["instrumentation.ts"]);
+    expect(readFileSync(path.join(ROOT, "instrumentation.ts"), "utf8")).not.toMatch(/use client/);
+    const reporter = readFileSync(path.join(ROOT, "lib/observability/report.ts"), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+    expect(reporter).not.toMatch(/document\.|window\.|localStorage|sessionStorage|cookie/i);
+    expect(reporter).toMatch(/process\.env/);
   });
   it("no such package is a dependency", () => {
     const pkg = JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")) as Record<string, Record<string, string> | undefined>;
