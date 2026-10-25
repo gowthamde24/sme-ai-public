@@ -46,9 +46,9 @@ select is(jsonb_array_length(pg_temp.due()), 0, 'B3 none left');
 
 -- ============================================================================ D. what is not reminded
 select pg_temp.pin('2026-11-12T12:00:01+05:30'::timestamptz);
-select app.billing_edit(true);
+alter table public.billing_trial_reminders disable trigger billing_trial_reminders_guard;
 delete from public.billing_trial_reminders;
-select app.billing_edit(false);
+alter table public.billing_trial_reminders enable trigger billing_trial_reminders_guard;
 select is(jsonb_array_length(pg_temp.due()), 1, 'D1 (sanity) due again after the marks are cleared');
 select pg_temp.pin('2026-11-15T12:00:01+05:30'::timestamptz);
 select is(jsonb_array_length(pg_temp.due()), 0, 'D2 after the trial ended nothing is sent (the e-mail would be wrong)');
