@@ -25,7 +25,8 @@ def business_type(code: str | None) -> str:
 
 
 def defaults_for(code: str | None) -> dict[str, Any]:
-    return json.loads(json.dumps(load()["defaults"][business_type(code)]))
+    copied: dict[str, Any] = json.loads(json.dumps(load()["defaults"][business_type(code)]))
+    return copied
 
 
 def locked_for(code: str | None) -> dict[str, list[str]]:

@@ -13,7 +13,7 @@ import uuid
 from datetime import date, datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StringConstraints, model_validator
 
 DayNumber = Annotated[int, Field(ge=1, le=7)]
 BusinessType = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,40}$")]
@@ -81,9 +81,9 @@ class CallSettings(_Strict):
     retry_call_later: RetryRule
     # how many calls at once; a plan may allow fewer (the dialer applies the lower)
     concurrent_calls: Annotated[int, Field(ge=1, le=20)]
-    detect_voicemail: bool
+    detect_voicemail: StrictBool
     voicemail_action: VoicemailAction
-    detect_phone_menu: bool
+    detect_phone_menu: StrictBool
     phone_menu_action: PhoneMenuAction
     # hang up or ask "are you there?" after this much silence
     silence_timeout_seconds: Annotated[int, Field(ge=3, le=30)]
@@ -92,7 +92,7 @@ class CallSettings(_Strict):
     # how readily the customer can cut in
     interruption_sensitivity: Sensitivity
     # small sounds like "hmm" and "okay" while listening
-    listening_sounds: bool
+    listening_sounds: StrictBool
     pronunciations: Annotated[list[Pronunciation], Field(max_length=50)]
     # words and names the speech recognition should expect (product names, places)
     keywords: Annotated[list[Keyword], Field(max_length=100)]
@@ -104,7 +104,7 @@ class CallSettings(_Strict):
     # pause the campaign when this many calls are refused by the carrier within one hour; null = never pause on its own
     auto_pause_refusals_per_hour: Annotated[int, Field(ge=3, le=100)] | None
     # whether the assistant remembers what was said in earlier conversations with this customer
-    contact_memory: bool
+    contact_memory: StrictBool
     handover: Annotated[list[HandoverRule], Field(max_length=8)]
     # what the assistant may phone about
     allowed_purposes: Annotated[list[Purpose], Field(min_length=1, max_length=5)]
@@ -129,14 +129,14 @@ class CallSettingsOverride(_Strict):
     retry_no_answer: RetryRule | None = None
     retry_call_later: RetryRule | None = None
     concurrent_calls: Annotated[int, Field(ge=1, le=20)] | None = None
-    detect_voicemail: bool | None = None
+    detect_voicemail: StrictBool | None = None
     voicemail_action: VoicemailAction | None = None
-    detect_phone_menu: bool | None = None
+    detect_phone_menu: StrictBool | None = None
     phone_menu_action: PhoneMenuAction | None = None
     silence_timeout_seconds: Annotated[int, Field(ge=3, le=30)] | None = None
     max_call_seconds: Annotated[int, Field(ge=30, le=1800, multiple_of=30)] | None = None
     interruption_sensitivity: Sensitivity | None = None
-    listening_sounds: bool | None = None
+    listening_sounds: StrictBool | None = None
     # this campaign's own list REPLACES the workspace's (an empty list = none for this campaign)
     pronunciations: Annotated[list[Pronunciation], Field(max_length=50)] | None = None
     keywords: Annotated[list[Keyword], Field(max_length=100)] | None = None
@@ -144,8 +144,8 @@ class CallSettingsOverride(_Strict):
     max_calls_per_customer_per_week: Annotated[int, Field(ge=1, le=14)] | None = None
     auto_pause_refusals_per_hour: Annotated[int, Field(ge=3, le=100)] | None = None
     # `auto_pause_refusals_per_hour` null means inherit; to switch the pause OFF for one campaign set this true
-    auto_pause_off: bool | None = None
-    contact_memory: bool | None = None
+    auto_pause_off: StrictBool | None = None
+    contact_memory: StrictBool | None = None
 
 
 class EffectiveHours(_Strict):
