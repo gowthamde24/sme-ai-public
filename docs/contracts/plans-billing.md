@@ -20,7 +20,7 @@ All JSON. Errors use the usual `{error: {code, message, ...}}` shape.
 | `GET /v1/tenants/{tenant_id}/billing` | Owner, Admin | `BillingOut`: the plan in force, the subscription (or null), the period, both meters, the notices, `can_start_trial`, and **`access`** (`"full"` or `"read_only"`, with `read_only_since`, `delete_on`, `data_days_left`) |
 | `GET /v1/tenants/{tenant_id}/billing/access` | any member (a Viewer too) | `AccessOut`: just `access` and the three dates, small enough for every page's header |
 | `GET /v1/tenants/{tenant_id}/billing/usage` | Owner, Admin | `UsageViewOut`: the same period, meters and notices only (small; for a banner on Today) |
-| `POST /v1/tenants/{tenant_id}/billing/trial` | Owner | body `TrialStartIn` `{plan_id, checkout_ref}` -> `BillingOut` (status `trialing`). The 30-day trial starts with a payment method on file; **nothing is charged during the trial** |
+| `POST /v1/tenants/{tenant_id}/billing/trial` | Owner | body `TrialStartIn` `{plan_id, checkout_ref}` -> `BillingOut` (status `trialing`). The **14-day trial counts from the day the workspace's WhatsApp is connected** (owner decision 25 Oct 2026). Choosing a plan starts it with a payment method on file; **nothing is charged during the trial**. Chosen **before** WhatsApp is connected, the subscription is **`trial_pending`** (see below) |
 | `POST /v1/tenants/{tenant_id}/billing/cancel` | Owner | `BillingOut`. Cancelling during the trial = no charge, ever. Cancelling an active plan ends it at the end of the paid period (`cancel_at_period_end: true`) |
 
 `checkout_ref` is what the payment provider's checkout returns for the payment method. Only the **fake** provider exists now: use `pm_fake_ok` (charges succeed), `pm_fake_declined` (the trial cannot start: HTTP 402 `payment_method_declined`) or `pm_fake_declines_on_renewal` (the trial starts, the first charge fails: the subscription becomes `past_due`). A real provider (Razorpay) later changes only what the browser's checkout produces, not these shapes.
@@ -40,3 +40,13 @@ All JSON. Errors use the usual `{error: {code, message, ...}}` shape.
 
 ## Example (a Growth trial at 83 percent of its messages)
 See `packages/contracts/billing.examples.json`, key `billing_trialing_notice_at_80`.
+
+
+## The trial: 14 days from the day WhatsApp is connected (job DM, owner decisions 25 Oct 2026)
+- `PlansOut.trial`: `days` 14, **`starts_on`** `"whatsapp_connected"` (version 1 had `"sign_up"`), **`setup_days_without_whatsapp`** 30, `payment_method_at_start`, `grace_days_after_failed_payment`. All trial wording reads `trial.days`.
+- `SubscriptionOut.status` gains **`trial_pending`**: the plan is chosen and a payment method is on file, but WhatsApp is not connected, so **`trial_ends_at` is null** and **`trial_waiting_for` is `"whatsapp"`** (null in every other state; it replaces the earlier boolean). **Nothing is charged.** The workspace can set up everything (catalogue, customers, AI assistant settings): `access` stays `"full"`. **Sending, AI calls and campaign sends stay off until WhatsApp is connected** (messages stay queued; behind the billing switch, which is off today). The day WhatsApp becomes active the status turns **`trialing`** and `trial_ends_at` is that day + 14.
+- `BillingOut.whatsapp_connected_at`: the day the number first became active, or null.
+- A `trial_pending` workspace is never made read-only for waiting. If WhatsApp is still not connected 30, 60 and 90 days after the plan was chosen, the Owners get a reminder e-mail (fake sender for now).
+- Cancelling a `trial_pending` or `trialing` subscription ends it at once; nothing was ever charged.
+- A workspace with no subscription at all is read-only 14 days after WhatsApp was connected (30 days after it was made if it never connected), once the billing switch is on.
+- Examples: `billing_trial_pending_waiting_for_whatsapp`, `billing_trialing_notice_at_80` (its `whatsapp_connected_at` and `trial_ends_at`).

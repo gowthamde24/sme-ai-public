@@ -28,6 +28,14 @@ The category always belongs to its outcome (the API answers 422 for a wrong pair
 | `POST /v1/tenants/{tenant_id}/outcomes` | Owner, Admin, Sales | body `OutcomeIn` -> `OutcomeRecordedOut` (201). The same `(kind, source_id)` twice is one outcome (`replayed: true`, nothing changed) |
 | `PATCH /v1/tenants/{tenant_id}/outcomes/{outcome_id}` | Owner, Admin | body `OutcomeCorrectionIn` `{outcome, category, reason}` -> `OutcomeOut` with `corrected: true`; `ai_outcome` / `ai_category` keep what the AI said |
 
+**C2's shapes (the same data, drawn the way the screens read it):**
+
+| Method and path | Who | Answer |
+|---|---|---|
+| `GET /v1/tenants/{tenant_id}/customers/{lead_id}/outcomes` | Owner, Admin, Sales | `CustomerOutcomeOut[]` `[{id, channel: "call" \| "whatsapp", at, result, category, reason, corrected}]`, newest first (`limit` 1 to 100). The lead's own outcomes and its contact's. `id` matches `^[a-z0-9-]{1,40}$` (a UUID) |
+| `GET /v1/tenants/{tenant_id}/outcomes/totals?day=YYYY-MM-DD` | any member | the same `OutcomeTotalsOut` (one India day, default today); **read `total` for `{positive, negative, unclear}`**, `days[0].by_category` for the categories. `day` cannot be mixed with `from`/`to` |
+| `POST /v1/tenants/{tenant_id}/outcomes/{outcome_id}/correct` | Owner, Admin | body `{result, category, reason?}` -> `OutcomeOut` with `corrected: true`. The same act as `PATCH`; **the old reason is dropped** unless a new one is given (it described the old word). `category` may be null only for `unclear` |
+
 `OutcomeOut`: `id`, `contact_id`, `lead_id` (or null), `kind` (`call` | `whatsapp_followup`), `source_id`, `outcome`, `category`, `reason`, `recorded_by` (`ai` | `person`), `corrected`, `corrected_at`, `ai_outcome`, `ai_category`, `occurred_at`, `recorded_at`.
 
 ## How the AI records them (today and later)
