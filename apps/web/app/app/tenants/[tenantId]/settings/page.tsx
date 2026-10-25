@@ -51,12 +51,16 @@ import { cancelAccountDeletionAction, cancelWorkspaceDeletionAction, executeWork
 import { agentWords } from "./agent-words";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { BRAND_NAME } from "@/design/brand";
+import { PlanSection } from "@/components/v2/app/plan/PlanSection";
+import { planScreens } from "@/lib/plan/flag";
+import { readWorkspacePlan } from "@/lib/plan/source";
+import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, startPlanAction } from "../plan-actions";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "members", "fields", "data", "language", "agent", "security", "privacy"] as const;
+const SECTIONS = ["business", "plan", "members", "fields", "data", "language", "agent", "security", "privacy"] as const;
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -106,7 +110,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const fieldList: WorkspaceField[] | null = admin && fieldEntities.length > 0 ? await listCustomFields(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   // a workspace that existed before business types and has no field of its own keeps the Settings it always had; one made with a chosen business type, or that has fields, gets the tab
   const hasFields = admin && fieldEntities.length > 0 && (usesChecklist(pack) || (fieldList !== null && fieldList.length > 0));
-  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) ? (wanted as Section) : "business";
+  // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
+  const hasPlan = admin && planScreens() !== "off";
+  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) ? (wanted as Section) : "business";
 
   let members: Member[] | null = null;
   if (section === "members") {
@@ -170,6 +176,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       throw error;
     }
   }
+  const workspacePlan = section === "plan" ? await readWorkspacePlan() : null;
   let theme: ThemePick = "system";
   try {
     theme = readTheme((await cookies()).get(THEME_COOKIE)?.value) ?? "system";
@@ -178,6 +185,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   const tabs = [
     { key: "business", label: t("settings.tab.business") },
+    ...(hasPlan ? [{ key: "plan", label: t("plan.tab") }] : []),
     { key: "members", label: t("settings.tab.members") },
     ...(hasFields ? [{ key: "fields", label: t("settings.tab.fields") }] : []),
     { key: "data", label: t("settings.tab.data") },
@@ -226,6 +234,17 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               </section>
             ) : null}
           </>
+        ) : null}
+        {section === "plan" ? (
+          <PlanSection
+            words={wordsFor(lang, ["plan."], ["frame.notyet"])}
+            plan={workspacePlan}
+            now={clock()}
+            canChange={planScreens() === "mock"}
+            mock={planScreens() === "mock"}
+            pickerHref={`${base}/plans`}
+            actions={{ start: startPlanAction.bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: fixPlanPaymentAction.bind(null, tenantId), endTrial: planScreens() === "mock" ? endPlanTrialAction.bind(null, tenantId) : null }}
+          />
         ) : null}
         {section === "members" ? (
           <section className={surface} aria-label={t("settings.tab.members")}>

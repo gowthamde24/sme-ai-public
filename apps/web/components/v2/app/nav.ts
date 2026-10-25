@@ -108,7 +108,7 @@ export const NAV: readonly NavGroup[] = [
 
 /** Below the scrolling part of the menu: Settings (its tabs hold the business and plan, the members, language and look, security and privacy). */
 export const FOOT: readonly NavItem[] = [
-  { id: "settings", label: "Settings", icon: "settings", path: "/settings", also: ["/privacy", "/suppression"], roles: ALL_ROLES },
+  { id: "settings", label: "Settings", icon: "settings", path: "/settings", also: ["/plans", "/privacy", "/suppression"], roles: ALL_ROLES },
 ];
 
 export type VisibleGroup = { id: string; label: string; items: NavItem[] };
