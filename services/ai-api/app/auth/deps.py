@@ -33,6 +33,7 @@ from app.integrations.policy import PolicyVersions
 from app.integrations.repository import IntegrationsRepository
 from app.leads.repository import LeadsRepository
 from app.leadtools.repository import LeadSearchRepository
+from app.marksmessages.service import MarksSendService
 from app.materials.repository import MaterialsRepository
 from app.notifications.runtime import NotificationsRuntime
 from app.orders.repository import OrdersRepository
@@ -130,6 +131,8 @@ class Runtime:
     outcomes: OutcomesRepository | None = None
     # job DM: the AI assistant's settings per workspace (Settings > AI assistant)
     assistant_settings: AssistantSettingsService | None = None
+    # job DP: marks and report messages to guardians from a file that is never stored
+    marks_messages: MarksSendService | None = None
 
 
 @dataclass(frozen=True)

@@ -1,0 +1,537 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "marks_messages.schema.json",
+  "title": "Marks and report messages to guardians (job DP)",
+  "description": "Generated from services/ai-api/app/marksmessages/models.py by `make contracts`.",
+  "$defs": {
+    "BatchLineOut": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "format": "uuid",
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "approved_by": {
+          "format": "uuid",
+          "title": "Approved By",
+          "type": "string"
+        },
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        },
+        "sent": {
+          "title": "Sent",
+          "type": "integer"
+        },
+        "blocked": {
+          "title": "Blocked",
+          "type": "integer"
+        },
+        "failed": {
+          "title": "Failed",
+          "type": "integer"
+        },
+        "pending": {
+          "title": "Pending",
+          "type": "integer"
+        },
+        "templates": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Templates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "batch_id",
+        "started_at",
+        "approved_by",
+        "total",
+        "sent",
+        "blocked",
+        "failed",
+        "pending",
+        "templates"
+      ],
+      "title": "BatchLineOut",
+      "type": "object"
+    },
+    "BatchOut": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "format": "uuid",
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "approved_by": {
+          "format": "uuid",
+          "title": "Approved By",
+          "type": "string"
+        },
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        },
+        "sent": {
+          "title": "Sent",
+          "type": "integer"
+        },
+        "blocked": {
+          "title": "Blocked",
+          "type": "integer"
+        },
+        "failed": {
+          "title": "Failed",
+          "type": "integer"
+        },
+        "pending": {
+          "title": "Pending",
+          "type": "integer"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/LogRowOut"
+          },
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "batch_id",
+        "started_at",
+        "approved_by",
+        "total",
+        "sent",
+        "blocked",
+        "failed",
+        "pending",
+        "rows"
+      ],
+      "title": "BatchOut",
+      "type": "object"
+    },
+    "BatchesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/BatchLineOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "BatchesOut",
+      "type": "object"
+    },
+    "IssueOut": {
+      "additionalProperties": false,
+      "description": "One line of the file that will not be sent, and why. `field` names the column at fault (never its value).",
+      "properties": {
+        "line": {
+          "minimum": 1,
+          "title": "Line",
+          "type": "integer"
+        },
+        "code": {
+          "enum": [
+            "bad_phone",
+            "bad_value",
+            "bad_language",
+            "formula_cell",
+            "duplicate_row",
+            "unknown_guardian",
+            "blocked_guardian"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field"
+        }
+      },
+      "required": [
+        "line",
+        "code"
+      ],
+      "title": "IssueOut",
+      "type": "object"
+    },
+    "LogRowOut": {
+      "additionalProperties": false,
+      "properties": {
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "guardian_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Guardian Name"
+        },
+        "template_id": {
+          "title": "Template Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "pending",
+            "sent",
+            "blocked",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "suppressed",
+                "consent_withdrawn",
+                "erased",
+                "provider_refused",
+                "provider_unreachable"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        },
+        "sent_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sent At"
+        }
+      },
+      "required": [
+        "seq",
+        "contact_id",
+        "guardian_name",
+        "template_id",
+        "status",
+        "reason",
+        "sent_at"
+      ],
+      "title": "LogRowOut",
+      "type": "object"
+    },
+    "PreviewOut": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "marks",
+            "report_ready"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "file_sha256": {
+          "title": "File Sha256",
+          "type": "string"
+        },
+        "rows": {
+          "title": "Rows",
+          "type": "integer"
+        },
+        "will_send": {
+          "title": "Will Send",
+          "type": "integer"
+        },
+        "blocked": {
+          "title": "Blocked",
+          "type": "integer"
+        },
+        "unknown_guardian": {
+          "title": "Unknown Guardian",
+          "type": "integer"
+        },
+        "invalid": {
+          "title": "Invalid",
+          "type": "integer"
+        },
+        "duplicates": {
+          "title": "Duplicates",
+          "type": "integer"
+        },
+        "by_template": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "By Template",
+          "type": "object"
+        },
+        "issues": {
+          "items": {
+            "$ref": "#/$defs/IssueOut"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "issues_truncated": {
+          "title": "Issues Truncated",
+          "type": "boolean"
+        },
+        "example_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Example Text"
+        }
+      },
+      "required": [
+        "kind",
+        "file_sha256",
+        "rows",
+        "will_send",
+        "blocked",
+        "unknown_guardian",
+        "invalid",
+        "duplicates",
+        "by_template",
+        "issues",
+        "issues_truncated",
+        "example_text"
+      ],
+      "title": "PreviewOut",
+      "type": "object"
+    },
+    "SendOut": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "format": "uuid",
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "marks",
+            "report_ready"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "rows": {
+          "title": "Rows",
+          "type": "integer"
+        },
+        "sent": {
+          "title": "Sent",
+          "type": "integer"
+        },
+        "failed": {
+          "title": "Failed",
+          "type": "integer"
+        },
+        "blocked": {
+          "title": "Blocked",
+          "type": "integer"
+        },
+        "already_handled": {
+          "title": "Already Handled",
+          "type": "integer"
+        },
+        "skipped": {
+          "title": "Skipped",
+          "type": "integer"
+        },
+        "file_kept": {
+          "const": false,
+          "default": false,
+          "title": "File Kept",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "batch_id",
+        "kind",
+        "rows",
+        "sent",
+        "failed",
+        "blocked",
+        "already_handled",
+        "skipped"
+      ],
+      "title": "SendOut",
+      "type": "object"
+    },
+    "TemplateOut": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "marks",
+            "report_ready"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "template_id": {
+          "title": "Template Id",
+          "type": "string"
+        },
+        "columns": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Columns",
+          "type": "array"
+        },
+        "example_text": {
+          "title": "Example Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "language",
+        "template_id",
+        "columns",
+        "example_text"
+      ],
+      "title": "TemplateOut",
+      "type": "object"
+    },
+    "TemplatesOut": {
+      "additionalProperties": false,
+      "description": "The fixed, approved messages and the columns the file needs. `columns` are the English names; the same words in the school's language, `phone` / `mobile` / `whatsapp` ..., are accepted (see `aliases`).",
+      "properties": {
+        "kinds": {
+          "items": {
+            "enum": [
+              "marks",
+              "report_ready"
+            ],
+            "type": "string"
+          },
+          "title": "Kinds",
+          "type": "array"
+        },
+        "languages": {
+          "items": {
+            "enum": [
+              "en",
+              "te",
+              "hi",
+              "kn"
+            ],
+            "type": "string"
+          },
+          "title": "Languages",
+          "type": "array"
+        },
+        "templates": {
+          "items": {
+            "$ref": "#/$defs/TemplateOut"
+          },
+          "title": "Templates",
+          "type": "array"
+        },
+        "aliases": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Aliases",
+          "type": "object"
+        },
+        "max_rows": {
+          "title": "Max Rows",
+          "type": "integer"
+        },
+        "max_bytes": {
+          "title": "Max Bytes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kinds",
+        "languages",
+        "templates",
+        "aliases",
+        "max_rows",
+        "max_bytes"
+      ],
+      "title": "TemplatesOut",
+      "type": "object"
+    }
+  }
+}

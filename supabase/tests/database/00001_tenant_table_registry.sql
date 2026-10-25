@@ -377,6 +377,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('outcomes',
    $$insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, recorded_by_kind, recorded_by, occurred_at) values (%2$L, %1$L, %4$L, 'call', %2$L, 'unclear', null, 'person', %5$L, now())$$,
    'outcome = outcome', $$delete from public.outcomes where id = %2$L$$, false),
+  -- job DP part 2: the marks-message send log (written only by the Owner's functions; guarded by the module `programmes`, which is OFF for the default pack of the fixture tenants: tests 11 and 12 call tests.cn_guards_off() first)
+  ('marks_send_log',
+   $$insert into public.marks_send_log (id, tenant_id, batch_id, seq, contact_id, template_id, status, reason, approved_by) values (%2$L, %1$L, %2$L, 1, %4$L, 'marks.en', 'blocked', 'suppressed', %5$L)$$,
+   'status = status', $$delete from public.marks_send_log where id = %2$L$$, true),
   -- job CR: the education pack. Written only by definer functions; the modules that guard them (programmes, fees) are OFF for the default pack of the fixture tenants (tests 11 and 12 call
   -- tests.cn_guards_off() first); their own rules are proved in 104 to 107.
   ('institution_profiles',
@@ -711,6 +715,8 @@ select t, r, s, i, u, d from (values
   -- job CR: the programmes and the profile are read by every member; the students, the admissions and the fee tables (children and money) only by Owner / Admin / Sales; nobody writes directly.
   ('institution_profiles', 'owner', true, false, false, false), ('institution_profiles', 'admin', true, false, false, false),
   ('institution_profiles', 'sales', true, false, false, false), ('institution_profiles', 'viewer', true, false, false, false),
+  ('marks_send_log', 'owner', true, false, false, false), ('marks_send_log', 'admin', true, false, false, false),
+  ('marks_send_log', 'sales', false, false, false, false), ('marks_send_log', 'viewer', false, false, false, false),
   ('programmes', 'owner', true, false, false, false), ('programmes', 'admin', true, false, false, false),
   ('programmes', 'sales', true, false, false, false), ('programmes', 'viewer', true, false, false, false),
   ('programme_groups', 'owner', true, false, false, false), ('programme_groups', 'admin', true, false, false, false),

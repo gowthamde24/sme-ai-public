@@ -1,5 +1,5 @@
-"""Write packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings}.schema.json and
-{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings}.ts from the API models.
+"""Write packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.schema.json and
+{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.ts from the API models.
 Run through `make contracts` (uses the API virtualenv)."""
 
 from pathlib import Path
@@ -14,6 +14,7 @@ from app.erasure import contracts as erasure
 from app.evidence import contracts as evidence
 from app.leads import contracts as leads
 from app.materials import contracts as materials
+from app.marksmessages import contracts as marks_messages
 from app.outcomes import contracts as outcomes
 from app.packs import contracts as packs
 from app.reports import contracts as reports
@@ -48,7 +49,9 @@ ROOT = Path(__file__).resolve().parents[1]
 (ROOT / "packages/contracts/assistant_settings.ts").write_text(assistant_settings.ts_text())
 (ROOT / "packages/contracts/outcomes.schema.json").write_text(outcomes.schema_text())
 (ROOT / "packages/contracts/outcomes.ts").write_text(outcomes.ts_text())
+(ROOT / "packages/contracts/marks_messages.schema.json").write_text(marks_messages.schema_text())
+(ROOT / "packages/contracts/marks_messages.ts").write_text(marks_messages.ts_text())
 print(
-    "wrote packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings}.schema.json "
-    "and {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings}.ts"
+    "wrote packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.schema.json "
+    "and {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.ts"
 )

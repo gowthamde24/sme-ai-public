@@ -59,6 +59,10 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "../../tests/integration/test_ca_*.py" = ["E501"]
 # job CB: the hardening layer is documented in long lines
 "app/hardening/*" = ["E501"]
+# job DP part 2: marks messages to guardians (a file that is never stored) read like the owner decision they implement (long lines)
+"app/marksmessages/*" = ["E501"]
+"tests/test_dp_marks_send.py" = ["E501"]
+"tests/dp_fakes.py" = ["E501"]
 # job CK: packs, custom fields and their tests read like the blueprint and the ADR they implement (long lines)
 "app/packs/*" = ["E501"]
 "app/customfields/*" = ["E501"]
