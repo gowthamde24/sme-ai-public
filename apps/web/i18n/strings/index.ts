@@ -1,5 +1,6 @@
 import type { Lang } from "@/i18n/lang";
 import { currentAssistantName, withAssistantName } from "@/lib/assistant/name";
+import { withTrialDays } from "@/lib/plan/trial-days";
 
 /**
  * The master string store. Every translated string lives in one JSON file per area
@@ -34,7 +35,7 @@ export function namedDict<D>(store: Map<string, D>, lang: Lang, build: () => Rec
   let dict = store.get(key);
   if (!dict) {
     if (store.size >= 40) store.clear();
-    dict = Object.fromEntries(Object.entries(build()).map(([k, v]) => [k, withAssistantName(v, name)])) as D;
+    dict = Object.fromEntries(Object.entries(build()).map(([k, v]) => [k, withTrialDays(withAssistantName(v, name))])) as D;
     store.set(key, dict);
   }
   return dict;

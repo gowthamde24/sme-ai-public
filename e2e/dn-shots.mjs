@@ -228,7 +228,7 @@ async function main() {
       check(/\bVijaya\b/.test(home) && !home.includes(NAME) && !/Agent OWL|\{assistant\}/.test(home), `${tag} public home: not the default name (${NAME}: ${home.includes(NAME)}, Vijaya: ${/\bVijaya\b/.test(home)})`);
       await page.goto(`${WEB_URL}/privacy`, { waitUntil: "networkidle" });
       const privacy = await page.locator("body").innerText();
-      check(/\bVijaya\b/.test(privacy) && !privacy.includes(NAME) && !/Agent OWL|\{assistant\}/.test(privacy), `${tag} privacy: not the default name`);
+      check(/our AI assistant|Our assistant is an AI/i.test(privacy) && !privacy.includes(NAME) && !/Agent OWL|\{assistant\}|\bVijaya\b/.test(privacy), `${tag} privacy: says "our AI assistant" and names no assistant`);
       check(errors.filter((e) => !/404/.test(e)).length === 0, `${tag} named: console errors ${errors.join(" | ")}`);
       await context.close();
     }

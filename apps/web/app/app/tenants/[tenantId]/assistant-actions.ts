@@ -11,7 +11,7 @@ import { readPackCached } from "@/lib/packs/read";
 
 /**
  * Saving Settings > AI assistant (job DM): a signed-in person who is the Owner of the workspace (the API says which; the assistant is the Owner's to set up), the value checked by `parseSettings` (anything that is not in its shape is
- * `invalid`), then lib/assistant/source.ts: the fake cookie (ASSISTANT_SCREENS=mock) or, once C1's API exists, that. With the flag off or the API missing it answers `not_available` and changes nothing.
+ * `invalid`), then lib/assistant/source.ts: the fake cookie (ASSISTANT_SCREENS=mock) or C1's API (=1; the Owner needs the second factor: `mfa`). With the flag off or the API missing it answers `not_available` and changes nothing.
  */
 export async function saveAssistantAction(tenantId: string, input: unknown): Promise<SaveResult> {
   const user = await requireUser();
@@ -24,7 +24,7 @@ export async function saveAssistantAction(tenantId: string, input: unknown): Pro
     return { ok: false, error: "not_available" };
   }
   const pack = await readPackCached(user.accessToken, tenantId);
-  const result = await saveAssistant(input, pack?.modules ?? null);
+  const result = await saveAssistant({ token: user.accessToken, tenantId }, input, pack?.modules ?? null);
   if (result.ok) revalidatePath(`/app/tenants/${tenantId}/settings`);
   return result;
 }

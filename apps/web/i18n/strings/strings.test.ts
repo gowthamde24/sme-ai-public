@@ -5,6 +5,7 @@ import login from "@/i18n/strings/login.json";
 import { LANGS } from "@/i18n/lang";
 import { TRANSLATED_LANGS, dictFor, keepHyphenatedWordsWhole } from "@/i18n/strings";
 import { FORBIDDEN_CLAIMS as FORBIDDEN } from "@/i18n/strings/forbidden";
+import { withTrialDays } from "@/lib/plan/trial-days";
 
 type Entry = { en: string; te: string; hi: string; kn: string; status: Record<string, string>; only?: string[] };
 const SETS: Record<string, Record<string, Entry>> = { site, login, legal } as never;
@@ -48,7 +49,8 @@ describe("honesty: no claims we cannot prove today", () => {
       });
     }
   }
-  const en = dictFor(site, "en") as Record<string, string>;
+  // the words as a page draws them: {trial_days} is the plans data's number (lib/plan/trial-days.ts)
+  const en = Object.fromEntries(Object.entries(dictFor(site, "en") as Record<string, string>).map(([k, v]) => [k, withTrialDays(v)]));
   it("the English home copy says what it must: the owner approves money and campaigns, the trial is 14 days from the day WhatsApp is connected and can be cancelled before it ends, and AI calls are early access (and nothing else is)", () => {
     expect(en["hm.ctl.d"]).toMatch(/money reminders and discounts wait for your approval/);
     expect(en["hero.h1"]).toBe("Your AI workforce for Indian SMEs.");

@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { Orb } from "@/components/v2/Orb";
 import { sayLine } from "@/lib/assistant/lines";
-import { CALL_LANGS, DAYS, NAME_MAX, SPEED, STYLES, VOICES, parseSettings, validName, type AssistantSettings as Settings, type CallLang, type Day, type Voice } from "@/lib/assistant/types";
+import { CALL_LANGS, DAYS, HOURS, NAME_MAX, SPEED, STYLES, VOICES, parseSettings, validName, type AssistantSettings as Settings, type CallLang, type Day, type Voice } from "@/lib/assistant/types";
 import type { AssistantProfile } from "@/lib/assistant/defaults";
 
 import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, surface } from "../ui";
@@ -38,12 +38,14 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
   const [s, setS] = React.useState<Settings>(initial);
   const [busy, setBusy] = React.useState(false);
   const [note, setNote] = React.useState<"saved" | "error" | "test" | null>(null);
+  const [mfa, setMfa] = React.useState(false); // the save needs the authenticator app (the API asks the owner for the second factor)
   const set = (p: Partial<Settings>) => {
     setNote(null);
     setS((x) => ({ ...x, ...p }));
   };
   const nameOk = validName(s.name);
   const hoursOk = s.hours.from < s.hours.to && s.hours.days.length > 0;
+  const rangeOk = s.hours.from >= HOURS.min && s.hours.to <= HOURS.max && [s.hours.from, s.hours.to].every((h) => Number(h.slice(3, 5)) % HOURS.stepMinutes === 0);
   const toggleDay = (d: Day) => set({ hours: { ...s.hours, days: s.hours.days.includes(d) ? s.hours.days.filter((x) => x !== d) : DAYS.filter((x) => x === d || s.hours.days.includes(x)) } });
   const line = sayLine(s.lang, s.style, s.name.trim() || initial.name, shop);
   const ok = parseSettings(s) !== null;
@@ -69,12 +71,16 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
             if (!canEdit || !ok) return setNote("error");
             setBusy(true);
             let done = false;
+            let needsSecondFactor = false;
             try {
-              done = (await actions.save(s)).ok;
+              const r = await actions.save(s);
+              done = r.ok;
+              needsSecondFactor = !r.ok && r.error === "mfa";
             } catch {
               done = false;
             }
             setBusy(false);
+            setMfa(needsSecondFactor);
             setNote(done ? "saved" : "error");
             if (done) router.refresh();
           }}
@@ -158,7 +164,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
                 <div>
                   <label htmlFor="asst-discount" className={fieldLabel}>{t("asst.discount")}</label>
                   <div className="flex items-center gap-2">
-                    <input id="asst-discount" type="number" inputMode="numeric" min={0} max={100} step={1} value={s.maxDiscount} onChange={(e) => set({ maxDiscount: Math.max(0, Math.min(100, Math.trunc(Number(e.target.value) || 0))) })} className={`${fieldInput} max-w-[7rem]`} />
+                    <input id="asst-discount" type="number" inputMode="numeric" min={0} max={50} step={1} value={s.maxDiscount} onChange={(e) => set({ maxDiscount: Math.max(0, Math.min(50, Math.trunc(Number(e.target.value) || 0))) })} className={`${fieldInput} max-w-[7rem]`} />
                     <span aria-hidden="true" className="text-base font-semibold">%</span>
                   </div>
                   <p className={fieldHelp}>{t("asst.discount.help")}</p>
@@ -187,11 +193,11 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
                 <div className="mt-2 flex flex-wrap items-end gap-3">
                   <div>
                     <label htmlFor="asst-from" className={fieldLabel}>{t("asst.hours.from")}</label>
-                    <input id="asst-from" type="time" value={s.hours.from} onChange={(e) => set({ hours: { ...s.hours, from: e.target.value } })} className={fieldInput} />
+                    <input id="asst-from" type="time" min={HOURS.min} max={HOURS.max} step={HOURS.stepMinutes * 60} value={s.hours.from} onChange={(e) => set({ hours: { ...s.hours, from: e.target.value } })} className={fieldInput} />
                   </div>
                   <div>
                     <label htmlFor="asst-to" className={fieldLabel}>{t("asst.hours.to")}</label>
-                    <input id="asst-to" type="time" value={s.hours.to} onChange={(e) => set({ hours: { ...s.hours, to: e.target.value } })} className={fieldInput} />
+                    <input id="asst-to" type="time" min={HOURS.min} max={HOURS.max} step={HOURS.stepMinutes * 60} value={s.hours.to} onChange={(e) => set({ hours: { ...s.hours, to: e.target.value } })} className={fieldInput} />
                   </div>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={t("asst.hours.t")}>
@@ -206,6 +212,11 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
                     {t("asst.hours.err")}
                   </p>
                 )}
+                {rangeOk ? null : (
+                  <p role="alert" className="mt-2 text-sm font-medium text-red-text">
+                    {t("asst.hours.range")}
+                  </p>
+                )}
               </div>
             </section>
           </fieldset>
@@ -214,7 +225,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
               {t("asst.save")}
             </button>
             {note === "saved" ? <p role="status" className="text-base font-medium text-green-text">{t("asst.saved")}</p> : null}
-            {note === "error" ? <p role="alert" className="text-base font-medium text-red-text">{t("asst.save.err")}</p> : null}
+            {note === "error" ? <p role="alert" className="text-base font-medium text-red-text">{t(mfa ? "asst.save.mfa" : "asst.save.err")}</p> : null}
           </div>
         </form>
 

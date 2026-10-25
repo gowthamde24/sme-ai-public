@@ -55774,5 +55774,83 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "outcome.cat.none": {
+  "en": "Unclear",
+  "te": "స్పష్టంగా లేదు",
+  "hi": "साफ़ नहीं",
+  "kn": "ಸ್ಪಷ್ಟವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.today.other": {
+  "en": "{n} other negative",
+  "te": "{n} ఇతర నెగటివ్",
+  "hi": "{n} अन्य नेगेटिव",
+  "kn": "{n} ಇತರ ನೆಗೆಟಿವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.hours.range": {
+  "en": "Calling hours are between 09:00 and 21:00, in steps of 15 minutes.",
+  "te": "కాల్ సమయాలు 09:00 నుంచి 21:00 మధ్య, 15 నిమిషాల అడుగులలో ఉండాలి.",
+  "hi": "कॉल का समय 09:00 से 21:00 के बीच, 15 मिनट के अंतर पर होना चाहिए।",
+  "kn": "ಕಾಲ್ ಸಮಯ 09:00 ರಿಂದ 21:00 ರ ನಡುವೆ, 15 ನಿಮಿಷಗಳ ಹಂತದಲ್ಲಿ ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.save.mfa": {
+  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "te": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "hi": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "kn": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "plan.state.trial_pending": {
+  "en": "Waiting for WhatsApp",
+  "te": "వాట్సాప్ కోసం ఎదురుచూపు",
+  "hi": "व्हाट्सऐप का इंतज़ार",
+  "kn": "ವಾಟ್ಸಾಪ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.trial.pending": {
+  "en": "Your {days} days start when WhatsApp is connected.",
+  "te": "వాట్సాప్ కనెక్ట్ అయినప్పుడు మీ {days} రోజులు మొదలవుతాయి.",
+  "hi": "व्हाट्सऐप जुड़ते ही आपके {days} दिन शुरू होंगे।",
+  "kn": "ವಾಟ್ಸಾಪ್ ಸಂಪರ್ಕ ಆದಾಗ ನಿಮ್ಮ {days} ದಿನಗಳು ಶುರುವಾಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.trial.pending.note": {
+  "en": "Nothing is charged until then. You can set up everything now. Messages and calls start once WhatsApp is connected.",
+  "te": "అప్పటి వరకు ఏమీ ఛార్జ్ చేయరు. ఇప్పుడే అన్నీ సెటప్ చేసుకోవచ్చు. వాట్సాప్ కనెక్ట్ అయ్యాక మెసేజ్‌లు, కాల్స్ మొదలవుతాయి.",
+  "hi": "तब तक कुछ चार्ज नहीं होता। आप अभी सब कुछ सेट कर सकते हैं। व्हाट्सऐप जुड़ने के बाद मैसेज और कॉल शुरू होंगे।",
+  "kn": "ಅಲ್ಲಿಯವರೆಗೆ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ. ಈಗಲೇ ಎಲ್ಲವನ್ನೂ ಸೆಟಪ್ ಮಾಡಬಹುದು. ವಾಟ್ಸಾಪ್ ಸಂಪರ್ಕ ಆದ ನಂತರ ಮೆಸೇಜ್, ಕಾಲ್ ಶುರುವಾಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

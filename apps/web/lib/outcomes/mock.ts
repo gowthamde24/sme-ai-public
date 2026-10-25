@@ -50,4 +50,4 @@ export function mockOutcomes(leadId: string, now: Date, corrections: Corrections
 }
 
 /** Today's totals of the invented day. */
-export const mockTotals = (): OutcomeTotals => ({ positive: 7, negative: 3, unclear: 2 });
+export const mockTotals = (): OutcomeTotals => ({ positive: 7, negative: 3, unclear: 2, notInterested: 3 });

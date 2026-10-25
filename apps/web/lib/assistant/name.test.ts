@@ -56,7 +56,7 @@ describe("the assistant's name (job DN)", () => {
     provideRequestAssistantName("Asha");
     expect(fill("Ask {assistant}")).toBe("Ask Asha");
     expect(fill("Ask {assistant}", { assistant: "Ravi" })).toBe("Ask Ravi");
-    expect(fillLegal("{assistant} is an AI")).toBe("Asha is an AI");
+    expect(fillLegal("{assistant} is an AI")).toBe("{assistant} is an AI"); // the legal texts name no assistant (they say "our AI assistant"), so a stray token stays visible
   });
 
   it.each(LANGS)("%s: every dictionary says the workspace's name and never a bare {assistant}", (lang) => {

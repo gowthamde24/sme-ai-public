@@ -189,7 +189,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   const planCtx = { token: user.accessToken, tenantId };
   const [workspacePlan, planCatalogue] = section === "plan" ? await Promise.all([readWorkspacePlan(planCtx), readCatalogue(planCtx)]) : [null, null];
-  const assistant = section === "assistant" ? await readAssistant(pack?.modules ?? null) : null;
+  const assistant = section === "assistant" ? await readAssistant({ token: user.accessToken, tenantId }, pack?.modules ?? null) : null;
   let theme: ThemePick = "system";
   try {
     theme = readTheme((await cookies()).get(THEME_COOKIE)?.value) ?? "system";

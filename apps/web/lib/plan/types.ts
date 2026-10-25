@@ -22,8 +22,8 @@ export type PlanDef = {
 export type TrialDef = { days: number; callMinutes: number; messages: number; graceDays: number };
 export type PlanCatalogue = { trial: TrialDef; plans: readonly PlanDef[] };
 
-/** none: no plan yet; trialing: inside the 30 days; active: paying; past_due: the last payment failed; cancelled: ended (inside the trial it ended with nothing charged). */
-export type BillingState = "none" | "trialing" | "active" | "past_due" | "cancelled";
+/** none: no plan yet; trial_pending: a plan is chosen but WhatsApp is not connected yet, so the trial's days have not begun and nothing is charged; trialing: inside the trial; active: paying; past_due: the last payment failed; cancelled: ended (inside the trial it ended with nothing charged). */
+export type BillingState = "none" | "trial_pending" | "trialing" | "active" | "past_due" | "cancelled";
 export type PaymentMethod = "none" | "test_ok" | "test_fails" | "test_declined";
 
 export type WorkspacePlan = {
