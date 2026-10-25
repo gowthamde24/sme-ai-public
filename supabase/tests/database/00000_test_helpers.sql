@@ -573,12 +573,12 @@ begin
   -- job CP: a campaign's name and text are the owner's own words, not tied to one person (a campaign has many people): they carry a business canary, erased with the workspace and swept
   insert into public.campaigns (id, tenant_id, name, kind, language, message_text, steps, created_by) values
     (tests.rid(p || '_er_cmp'), t, 'Cmpq7 reminder', 'payment_due', 'en', 'Dear {{name}}, Cmpq7 shop reminds you of {{amount}} due on {{due_date}}', '[{"offset_days": 0, "time": "10:00"}]'::jsonb, tests.uid(p || '_owner'));
-  -- job DP part 5: the consenting person's name and the sentence they read (the Owner's) carry canaries, erased with the workspace
-  insert into public.own_voices (id, tenant_id, status, consenting_name, consent_sentence, consented_by, consented_at, bucket, sample_path, consent_path)
-  values (tests.rid(p || '_er_ovc'), t, 'pending', 'Ovcq7 Person', 'I, Ovcq7 Person, allow Stack19 to create an AI voice of me for Ovcq7 Shop', tests.uid(p || '_owner'), now(), 'ovc-' || t::text, tests.rid(p || '_er_ovc')::text || '/sample.wav', tests.rid(p || '_er_ovc')::text || '/consent.wav');
   -- job DM: an outcome's one-line reason is free text about an adult customer: it carries a canary, erased with the workspace and swept
   insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, reason, recorded_by_kind, ai_outcome, ai_category, occurred_at)
   values (tests.rid(p || '_er_out'), t, k, 'call', tests.rid(p || '_er_out'), 'unclear', 'call_back_later', 'Outq7 asked to be called later', 'ai', 'unclear', 'call_back_later', now());
+  -- job DP part 5: the consenting person's name and the sentence they read (the Owner's) carry canaries, erased with the workspace
+  insert into public.own_voices (id, tenant_id, status, consenting_name, consent_sentence, consented_by, consented_at, bucket, sample_path, consent_path)
+  values (tests.rid(p || '_er_ovc'), t, 'pending', 'Ovcq7 Person', 'I, Ovcq7 Person, allow Stack19 to create an AI voice of me for Ovcq7 Shop', tests.uid(p || '_owner'), now(), 'ovc-' || t::text, tests.rid(p || '_er_ovc')::text || '/sample.wav', tests.rid(p || '_er_ovc')::text || '/consent.wav');
 end $$;
 
 -- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).

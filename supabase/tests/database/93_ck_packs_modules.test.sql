@@ -136,10 +136,10 @@ insert into exempt (tbl, why) values
   ('public.data_exports', 'exports'), ('public.erasure_requests', 'erasure applies to every business'), ('public.evidence', 'research evidence'), ('public.evidence_links', 'research evidence'),
   ('public.icp_config_versions', 'lead scoring configuration'), ('public.import_batches', 'lead import batches'), ('public.import_rows', 'lead import rows'), ('public.lead_labels', 'lead review'),
   ('public.memberships', 'the team'), ('public.outbox_events', 'the outbox: policy, not a module'), ('public.outbox_message_media', 'the outbox'), ('public.outbox_messages', 'the outbox'),
+  ('public.own_voices', 'the owner''s own voice: every business type may have one (job DP)'),
   ('public.outbox_settings', 'the outbox'), ('public.scheduler_runs', 'the scheduler'), ('public.scheduler_settings', 'the scheduler'), ('public.tenant_agent_settings', 'agent switches'),
   ('public.tenant_data_policy', 'the real-data gate'), ('suppression.contact_keys', 'suppression applies to every business'), ('suppression.key_events', 'suppression'),
   ('team.invitations', 'the team'), ('workspace.profiles', 'the workspace profile'),
-  ('public.own_voices', 'the owner''s own voice: every business type may have one (job DP)'),
   ('public.billing_subscriptions', 'plans and billing: every business has a plan'), ('public.billing_events', 'plans and billing'), ('public.billing_usage_events', 'plans and billing: the meters'),
   ('public.billing_topups', 'plans and billing'), ('public.billing_notices', 'plans and billing'), ('public.billing_lapse_reminders', 'plans and billing'), ('public.billing_pending_reminders', 'plans and billing'), ('public.outcomes', 'outcomes of calls and follow-ups: the follow-ups module, always on, guards the writers (job DM)'), ('public.assistant_settings', 'the assistant settings of every business type (job DM)'),
   ('packs.workspace_pack', 'the pack itself'), ('packs.example_batches', 'example data bookkeeping'), ('packs.example_rows', 'example data bookkeeping');

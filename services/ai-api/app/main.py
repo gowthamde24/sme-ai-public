@@ -467,6 +467,11 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "This workspace is read-only because its plan has ended. "
         "You can still sign in, view and export your data. Choose a plan to continue.",
     ),
+    billing_errors.PlanLimitReachedError: ApiError(
+        409,
+        "plan_limit_reached",
+        "This plan's allowance for this is used up for now. It starts again with the next period.",
+    ),
     own_voice_repo.VoiceExistsError: ApiError(
         409, "voice_exists", "You already have a voice. Delete it first to make another."
     ),
@@ -477,11 +482,6 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         422,
         "consent_sentence_mismatch",
         "The sentence does not match the one to read. Ask for it again.",
-    ),
-    billing_errors.PlanLimitReachedError: ApiError(
-        409,
-        "plan_limit_reached",
-        "This plan's allowance for this is used up for now. It starts again with the next period.",
     ),
     repo.WorkspaceLimitReached: ApiError(
         409,

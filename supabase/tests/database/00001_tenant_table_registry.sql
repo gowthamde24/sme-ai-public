@@ -373,10 +373,6 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('assistant_settings',
    $$insert into public.assistant_settings (tenant_id, assistant_name, voice_persona, main_language, auto_switch_language, allow_english_mixing, style, speed, may_answer_prices, may_book_visits, may_send_media, may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute) values (%1$L, 'Generic', 'female_warm', 'te', true, true, 'warm', 1, true, true, true, true, 0, true, true, array[1], 540, 600) on conflict (tenant_id) do nothing$$,
    'max_discount_percent = max_discount_percent', $$delete from public.assistant_settings where tenant_id = %1$L$$, false),
-  -- job DM: outcomes (written only by the definer functions; no module guard, like the billing tables)
-  ('outcomes',
-   $$insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, recorded_by_kind, recorded_by, occurred_at) values (%2$L, %1$L, %4$L, 'call', %2$L, 'unclear', null, 'person', %5$L, now())$$,
-   'outcome = outcome', $$delete from public.outcomes where id = %2$L$$, false),
   -- job DP part 5: the Owner's own voice (written only by the Owner's functions; no module guard: every business type may have one)
   ('own_voices',
    $$insert into public.own_voices (id, tenant_id, status, consenting_name, consent_sentence, consented_by, consented_at, bucket, sample_path, consent_path) values (%2$L, %1$L, 'pending', 'Generic Person', 'I, Generic Person, allow Stack19 to create an AI voice of me for Generic Co', %5$L, now(), 'ovc-' || %1$L, %2$L || '/sample.wav', %2$L || '/consent.wav') on conflict do nothing$$,
@@ -397,6 +393,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with p as (insert into public.programmes (id, tenant_id, name, kind, group_kind, created_by) values (%2$L, %1$L, 'Generic ' || left(%2$L, 8), 'class', 'section', %5$L) returning id)
      insert into public.students (id, tenant_id, contact_id, programme_id, child_label, created_by) select %2$L, %1$L, %4$L, p.id, 'Generic', %5$L from p$$,
    'status = status', $$delete from public.students where id = %2$L$$, true),
+  -- job DM: outcomes (written only by the definer functions; no module guard, like the billing tables)
+  ('outcomes',
+   $$insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, recorded_by_kind, recorded_by, occurred_at) values (%2$L, %1$L, %4$L, 'call', %2$L, 'unclear', null, 'person', %5$L, now())$$,
+   'outcome = outcome', $$delete from public.outcomes where id = %2$L$$, false),
   ('admissions',
    $$insert into public.admissions (id, tenant_id, lead_id, contact_id, source, created_by) select %2$L, %1$L, (select l.id from public.leads l where l.tenant_id = %1$L order by l.id limit 1), %4$L, 'other', %5$L$$,
    'stage = stage', $$delete from public.admissions where id = %2$L$$, true),
@@ -694,6 +694,8 @@ select t, r, s, i, u, d from (values
   ('call_list_items', 'sales', true, false, false, false), ('call_list_items', 'viewer', false, false, false, false),
   ('assistant_settings', 'owner', true, false, false, false), ('assistant_settings', 'admin', true, false, false, false),
   ('assistant_settings', 'sales', false, false, false, false), ('assistant_settings', 'viewer', false, false, false, false),
+  ('own_voices', 'owner', true, false, false, false), ('own_voices', 'admin', true, false, false, false),
+  ('own_voices', 'sales', false, false, false, false), ('own_voices', 'viewer', false, false, false, false),
   ('outcomes', 'owner', true, false, false, false), ('outcomes', 'admin', true, false, false, false),
   ('outcomes', 'sales', true, false, false, false), ('outcomes', 'viewer', true, false, false, false),
   ('customer_credit_limits', 'owner', true, false, false, false), ('customer_credit_limits', 'admin', true, false, false, false),
@@ -715,8 +717,6 @@ select t, r, s, i, u, d from (values
   -- job CR: the programmes and the profile are read by every member; the students, the admissions and the fee tables (children and money) only by Owner / Admin / Sales; nobody writes directly.
   ('institution_profiles', 'owner', true, false, false, false), ('institution_profiles', 'admin', true, false, false, false),
   ('institution_profiles', 'sales', true, false, false, false), ('institution_profiles', 'viewer', true, false, false, false),
-  ('own_voices', 'owner', true, false, false, false), ('own_voices', 'admin', true, false, false, false),
-  ('own_voices', 'sales', false, false, false, false), ('own_voices', 'viewer', false, false, false, false),
   ('programmes', 'owner', true, false, false, false), ('programmes', 'admin', true, false, false, false),
   ('programmes', 'sales', true, false, false, false), ('programmes', 'viewer', true, false, false, false),
   ('programme_groups', 'owner', true, false, false, false), ('programme_groups', 'admin', true, false, false, false),
