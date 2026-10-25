@@ -55852,5 +55852,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ro.title": {
+  "en": "This workspace is read-only",
+  "te": "ఈ వర్క్‌స్పేస్ చదవడానికి మాత్రమే",
+  "hi": "यह वर्कस्पेस सिर्फ़ देखने के लिए है",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ನೋಡಲು ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ro.body": {
+  "en": "Your trial ended without a payment. You can look at everything and export it. Changes, messages, AI answers and calls are switched off.",
+  "te": "మీ ట్రయల్ చెల్లింపు లేకుండా ముగిసింది. అన్నీ చూడవచ్చు, ఎక్స్‌పోర్ట్ చేయవచ్చు. మార్పులు, మెసేజ్‌లు, AI జవాబులు, కాల్స్ ఆపివేయబడ్డాయి.",
+  "hi": "आपका ट्रायल बिना भुगतान के खत्म हुआ। आप सब कुछ देख और एक्सपोर्ट कर सकते हैं। बदलाव, मैसेज, AI जवाब और कॉल बंद हैं।",
+  "kn": "ನಿಮ್ಮ ಟ್ರಯಲ್ ಪಾವತಿ ಇಲ್ಲದೆ ಮುಗಿಯಿತು. ಎಲ್ಲವನ್ನೂ ನೋಡಬಹುದು, ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಬಹುದು. ಬದಲಾವಣೆ, ಮೆಸೇಜ್, AI ಉತ್ತರ, ಕಾಲ್ ಆಫ್ ಆಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ro.off": {
+  "en": "Read-only: this is switched off. To go on, write to {email}.",
+  "te": "చదవడానికి మాత్రమే: ఇది ఆపివేయబడింది. కొనసాగడానికి {email}కి రాయండి.",
+  "hi": "सिर्फ़ देखने के लिए: यह बंद है। आगे बढ़ने के लिए {email} को लिखें।",
+  "kn": "ನೋಡಲು ಮಾತ್ರ: ಇದು ಆಫ್ ಆಗಿದೆ. ಮುಂದುವರಿಯಲು {email} ಗೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ro.resume": {
+  "en": "Pay again and continue",
+  "te": "మళ్లీ చెల్లించి కొనసాగండి",
+  "hi": "फिर से भुगतान करके आगे बढ़ें",
+  "kn": "ಮತ್ತೆ ಪಾವತಿಸಿ ಮುಂದುವರಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

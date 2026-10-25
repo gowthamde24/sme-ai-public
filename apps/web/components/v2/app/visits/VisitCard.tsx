@@ -90,7 +90,7 @@ export function VisitCard({ visit: v, role, actions, words, lang, now, today, ba
 
   const statusWord = say(words, `visits.status.${v.status}`);
   return (
-    <article aria-labelledby={`visit-${v.id}`} data-status={v.status} className={card}>
+    <article aria-labelledby={`visit-${v.id}`} data-write data-status={v.status} className={card}>
       <div className="flex flex-wrap items-center gap-2">
         <span className={`${badge} ${TONE[v.status]}`}>{v.status === "booked" && v.source === "assistant" ? say(words, "visits.status.proposed") : statusWord}</span>
         {v.status === "confirmed" && v.reminder_sent ? <span className={`${badge} bg-surface-2 text-muted`}>{say(words, "visits.status.reminder")}</span> : null}

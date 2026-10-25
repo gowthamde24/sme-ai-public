@@ -99,7 +99,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   if (item.amount_paise !== null) facts.push([say(words, "today.fact.amount"), formatINR(item.amount_paise / 100, { decimals: 2 })]);
   facts.push([say(words, "today.fact.when"), ago(item.at, ctx.now)]);
   return (
-    <article aria-labelledby={`needs-${c.key}`} className={card}>
+    <article aria-labelledby={`needs-${c.key}`} data-write className={card}>
       <Head tone={k.tone} label={say(words, k.kind)} at={item.at} ctx={ctx} />
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
         {item.customer}
@@ -166,7 +166,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
   };
 
   return (
-    <article aria-labelledby={`needs-${c.key}`} className={card}>
+    <article aria-labelledby={`needs-${c.key}`} data-write className={card}>
       <Head tone={b.tone} label={say(words, b.key)} at={c.at} ctx={ctx} />
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
         {title}
@@ -252,7 +252,7 @@ function CallCard({ c, ctx }: { c: Extract<NeedsCard, { type: "call" }>; ctx: Ct
   const r: CallCardRequest | null = c.request;
   const owner = role === "owner" && actions !== null;
   return (
-    <article aria-labelledby={`needs-${c.key}`} className={card}>
+    <article aria-labelledby={`needs-${c.key}`} data-write className={card}>
       <Head tone="bg-info-bg text-info-text" label={say(words, "today.badge.call")} at={c.at} ctx={ctx} />
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
         {say(words, "today.title.call", { customer })}
@@ -320,7 +320,7 @@ function VisitProposalCard({ c, ctx }: { c: Extract<NeedsCard, { type: "visit" }
   };
 
   return (
-    <article aria-labelledby={`needs-${c.key}`} className={card}>
+    <article aria-labelledby={`needs-${c.key}`} data-write className={card}>
       <Head tone="bg-amber-bg text-amber-text" label={say(words, "today.badge.visit")} at={c.at} ctx={ctx} />
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug [overflow-wrap:anywhere]">
         {say(words, "today.title.visit.proposed", { who: v.who })}
