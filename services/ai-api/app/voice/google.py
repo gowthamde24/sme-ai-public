@@ -98,7 +98,7 @@ class GoogleTts:
     def __repr__(self) -> str:
         return "GoogleTts()"
 
-    def synthesize(self, text: str, language: str) -> Speech:
+    def synthesize(self, text: str, language: str, *, speaker: str | None = None, pace: float | None = None) -> Speech:   # speaker and pace: only a provider with named speakers uses them
         tag = TAGS.get(language)
         if tag is None:
             raise VoiceError("unsupported_language")

@@ -17,6 +17,8 @@ from app.voice.interface import TAGS, Price, Speech, Transcript, VoiceError, lan
 
 BASE = "https://api.sarvam.ai"
 MAX_KEYTERMS, MAX_KEYTERM_CHARS = 50, 64
+MIN_PACE, MAX_PACE = 0.5, 2.0   # Bulbul v3 / v4-flash (docs.sarvam.ai, text-to-speech)
+SAMPLE_RATE = 24000   # one of the rates the REST endpoint takes; plenty for speech that is then coded at 16 kHz
 
 
 class SarvamStt:
@@ -73,7 +75,7 @@ class SarvamTts:
     def __repr__(self) -> str:
         return f"SarvamTts(model={self._model})"
 
-    def synthesize(self, text: str, language: str) -> Speech:
+    def synthesize(self, text: str, language: str, *, speaker: str | None = None, pace: float | None = None) -> Speech:
         tag = TAGS.get(language)
         if tag is None:
             raise VoiceError("unsupported_language")
@@ -81,10 +83,14 @@ class SarvamTts:
             "text": text[:2500],
             "language_code": tag,
             "model": self._model,
-            "output_audio_codec": "wav",
+            "output_audio_codec": "wav",   # Bulbul v3 refuses `opus`; app.voice.convert turns the WAV into what WhatsApp plays
+            "speech_sample_rate": SAMPLE_RATE,
         }
-        if self._speaker:
-            payload["speaker"] = self._speaker
+        chosen = speaker or self._speaker
+        if chosen:
+            payload["speaker"] = chosen
+        if pace is not None:
+            payload["pace"] = min(MAX_PACE, max(MIN_PACE, float(pace)))
         body = call(
             self._client,
             "POST",
@@ -93,7 +99,8 @@ class SarvamTts:
             json=payload,
         )
         audios = body.get("audios") if isinstance(body, dict) else None
-        if not isinstance(audios, list) or not audios or not isinstance(audios[0], str):
+        # one text in, one clip out; a provider answer of several pieces would need joining and is refused rather than guessed at
+        if not isinstance(audios, list) or len(audios) != 1 or not isinstance(audios[0], str):
             raise VoiceError("bad_response")
         try:
             return Speech(base64.b64decode(audios[0], validate=True), "audio/wav")

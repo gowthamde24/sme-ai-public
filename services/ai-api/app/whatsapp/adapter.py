@@ -28,7 +28,7 @@ from app.whatsapp.tokens import TokenResolver
 logger = logging.getLogger("app.whatsapp.adapter")
 
 # what WhatsApp accepts as audio (a WAV is not among them): a provider's note in any other form is left out and the text goes alone (ADR 0088)
-AUDIO_TYPES = {"audio/ogg", "audio/mpeg", "audio/aac", "audio/mp4", "audio/amr"}
+AUDIO_TYPES = {"audio/ogg; codecs=opus", "audio/ogg", "audio/mpeg", "audio/aac", "audio/mp4", "audio/amr"}   # Meta: OGG only with the Opus codec and mono; our converter makes exactly that
 CAPTION_MAX = 1024  # Meta: image caption
 TEMPLATE_PARAM_MAX = 1000
 _SPACES = re.compile(r"\s+")

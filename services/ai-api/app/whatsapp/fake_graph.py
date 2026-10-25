@@ -139,9 +139,9 @@ class FakeGraph:
         content_type = headers.get("content-type", "")
         if not content_type.startswith("multipart/form-data") or b'name="messaging_product"' not in body or b"whatsapp" not in body or b'name="file"' not in body:
             return _error(400, 100, "Invalid media upload.")
-        found = re.search(rb'name="file".*?Content-Type: ([a-z/+.-]+)\r\n\r\n', body, re.S)
+        found = re.search(rb'name="file".*?Content-Type: ([a-z/+.;= -]+)\r\n\r\n', body, re.S)
         kind = found.group(1).decode() if found else ""
-        if kind not in ("audio/ogg", "audio/mpeg", "audio/aac", "audio/mp4", "audio/amr"):
+        if kind not in ("audio/ogg; codecs=opus", "audio/ogg", "audio/mpeg", "audio/aac", "audio/mp4", "audio/amr"):
             return _error(400, 131053, "Media upload error: unsupported type.")
         with self._lock:
             self._counter += 1

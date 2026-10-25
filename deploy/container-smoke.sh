@@ -32,6 +32,13 @@ size_mb=$(docker image inspect "$IMAGE" --format '{{.Size}}' | awk '{printf "%d"
 echo "INFO  image $IMAGE is $size_mb MB to pull (as Docker reports its content size)"
 check "the image is under 400 MB" "[ $size_mb -lt 400 ]"
 check "it runs as the numeric user 10001, not root" "[ \"\$(docker run --rm --entrypoint id $IMAGE -u)\" = 10001 ]"
+check "the API image has no ffmpeg (job DJ: only the worker codes audio, so the API stays small)" "! docker run --rm --entrypoint sh $IMAGE -c 'command -v ffmpeg'"
+WORKER_IMAGE="${WORKER_IMAGE:-sme-worker:smoke}"
+docker build -q -f deploy/Dockerfile.api --target worker -t "$WORKER_IMAGE" . >/dev/null
+worker_mb=$(docker image inspect "$WORKER_IMAGE" --format '{{.Size}}' | awk '{printf "%d", $1/1048576}')
+echo "INFO  worker image $WORKER_IMAGE is $worker_mb MB (the API image is $size_mb MB)"
+check "the worker image codes a spoken tone as OGG/Opus mono for WhatsApp voice notes (job DJ)" "docker run --rm --entrypoint python $WORKER_IMAGE -m app.voice.convert | grep -q 'self-test ok: ogg/opus mono'"
+check "the worker image runs as the numeric user 10001" "[ \"\$(docker run --rm --entrypoint id $WORKER_IMAGE -u)\" = 10001 ]"
 check "no .env file or secret is inside the image" "! docker run --rm --entrypoint sh $IMAGE -c 'find / -xdev \\( -name .env -o -name \"*.pem\" -o -name \"*.key\" \\) -not -path \"*/site-packages/*\" -not -path \"/usr/*\" -not -path \"/etc/*\" -not -path \"/proc/*\" 2>/dev/null | grep -q .'"
 
 echo "== outside development it refuses to start without its configuration =="

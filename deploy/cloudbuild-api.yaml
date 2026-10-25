@@ -1,8 +1,11 @@
-# Remote image build for the API (and the worker, which is the same image), job DC. Used by deploy/staging.sh; build from the repository root:
-#   gcloud builds submit --region asia-south1 --config deploy/cloudbuild-api.yaml --substitutions _IMAGE=<image> .
+# Remote image build for the API and for the scheduler worker (job DC; job DJ made the worker's image its own). Used by deploy/staging.sh; build from the repository root:
+#   gcloud builds submit --region asia-south1 --config deploy/cloudbuild-api.yaml --substitutions _IMAGE=<image>,_TARGET=api .      (the API; the default target)
+#   gcloud builds submit --region asia-south1 --config deploy/cloudbuild-api.yaml --substitutions _IMAGE=<image>,_TARGET=worker .   (the worker: the same code plus ffmpeg)
+substitutions:
+  _TARGET: api
 steps:
   - name: gcr.io/cloud-builders/docker
-    args: ["build", "-f", "deploy/Dockerfile.api", "-t", "${_IMAGE}", "."]
+    args: ["build", "-f", "deploy/Dockerfile.api", "--target", "${_TARGET}", "-t", "${_IMAGE}", "."]
 images: ["${_IMAGE}"]
 options:
   logging: CLOUD_LOGGING_ONLY
