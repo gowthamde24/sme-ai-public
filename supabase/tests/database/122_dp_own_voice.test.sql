@@ -146,7 +146,7 @@ select is(pg_temp.sc(format($q$update public.own_voices set consented_by = %L wh
 select is(pg_temp.sc(format($q$update public.own_voices set status = 'pending' where id = %L$q$, pg_temp.vid('1'))), '42501', 'G5 a deleted voice never comes back');
 select is((select count(*)::int from pg_policies where schemaname = 'storage' and tablename = 'objects' and policyname like 'ovc_objects_%'), 3, 'G6 the bucket has its three rules (read, add, remove): the Owner''s alone');
 select is(pg_temp.val('a_admin', format($q$select count(*)::text from storage.objects where bucket_id = %L$q$, app.ovc_bucket(tests.tid('a')))), '0', 'G7 an Admin cannot hear the recordings');
-select is(pg_temp.val('a_owner', format($q$select count(*)::text from storage.objects where bucket_id = %L$q$, app.ovc_bucket(tests.tid('a')))), '2', 'G8 the Owner sees their own two');
+select is(pg_temp.val('a_owner', format($q$select count(*)::text from storage.objects where bucket_id = %L and name like %L$q$, app.ovc_bucket(tests.tid('a')), pg_temp.vid('5')::text || '/%')), '2', 'G8 the Owner sees their own two recordings');
 select is(pg_temp.val('b_owner', format($q$select count(*)::text from storage.objects where bucket_id = %L$q$, app.ovc_bucket(tests.tid('a')))), '0', 'G9 another business''s Owner sees none');
 select is((select count(*)::int from information_schema.columns where table_schema = 'public' and table_name = 'own_voices' and column_name ~* '(audio|blob|bytea|embedding|raw)'), 0, 'G10 no column holds audio');
 select is((select count(*)::int from erasure.registry where table_name = 'own_voices' and scope = 'tenant'), 2, 'G11 the name and the sentence are in the erasure registry');
