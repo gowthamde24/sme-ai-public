@@ -138,7 +138,7 @@ def test_the_workspace_zip_holds_one_file_per_table_read_with_the_owners_token(w
     r = w.call("POST", T + "/data-exports", "a_owner", {"export_id": X1})
     assert r.status_code == 202
     reads = [c for c in w.db.calls if c[0] == "read_table_page"]
-    assert reads and all(c[1][1] in ("id", "tenant_id", "language", "ref_id") for c in reads)
+    assert reads and all(c[1][1] in ("id", "tenant_id", "language", "ref_id", "event_id", "at", "day") for c in reads)
     (upload,) = [c for c in w.storage.calls if c[0] == "upload"]
     with zipfile.ZipFile(io.BytesIO(w.storage.objects[(upload[2], f"{X1}.zip")])) as z:
         manifest = json.loads(z.read("manifest.json"))

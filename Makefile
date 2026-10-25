@@ -24,7 +24,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/prepare_channel_agent.py ../../scripts/whatsapp_test_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../scripts/stack_env.py ../../scripts/gen_agent_stack.py ../../scripts/packs_check.py ../../scripts/pack_migration.py ../../scripts/new_pack.py ../../scripts/fake_whatsapp_server.py ../../tools/mutation-followups
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/prepare_channel_agent.py ../../scripts/whatsapp_test_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../scripts/stack_env.py ../../scripts/gen_agent_stack.py ../../scripts/packs_check.py ../../scripts/pack_migration.py ../../scripts/plans_check.py ../../scripts/plans_migration.py ../../scripts/new_pack.py ../../scripts/fake_whatsapp_server.py ../../tools/mutation-followups
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -56,6 +56,21 @@ packs-check:
 	$(PY)/python scripts/pack_migration.py --check
 	node $(WEB)/scripts/site-packs.mjs --check   # job CM: the public site's copy of the landing blocks is fresh (`make site-packs` writes it)
 
+.PHONY: usage-report plans-check plans-migration
+# Job DI: the plans catalogue is DATA in packages/plans/plans.json (prices null until the owner sets them). `plans-check` validates it against plans.schema.json, its rules, that NO plan id is a string literal in code,
+# and that its version is in a migration (`make plans-migration` writes it). A synced version is never edited: raise `version`. ADR 0092.
+plans-check:
+	$(PY)/python scripts/plans_check.py
+	$(PY)/python scripts/plans_migration.py --check
+
+plans-migration:
+	$(PY)/python scripts/plans_migration.py
+
+# Job DI: what the staging workspaces used (AI ledger, business WhatsApp messages, call minutes) and what each plan would cost us at low / typical / heavy use; READ-ONLY, synthetic data, a markdown table for the owner
+# (the cost model is scripts/usage_assumptions.json: everything not measured is an ASSUMPTION and printed as one). Usage: make usage-report OUT=~/Desktop/v2-overnight/usage-report.md
+usage-report:
+	python3 -I scripts/usage_report.py --source staging --i-know-this-reads-staging --project-ref uiallwgywitryxatcqxf --days 14 --out "$(or $(OUT),usage-report.md)"
+
 site-packs:
 	node $(WEB)/scripts/site-packs.mjs
 
@@ -66,7 +81,7 @@ new-pack:
 	@test -n "$(ID)" || { echo "usage: make new-pack ID=<id>   (lower case, for example clinics)"; exit 2; }
 	$(PY)/python scripts/new_pack.py "$(ID)"
 
-check-fast: check-leftovers secret-scan packs-check lint typecheck test test-packages
+check-fast: check-leftovers secret-scan packs-check plans-check lint typecheck test test-packages
 
 # Definition of done. Needs Docker + the Supabase CLI (the DB isolation tests are the security gate).
 # db-reset first: audit rows of earlier integration runs are append-only, so a stale database could trip a pgTAP canary (T008 owner change I).

@@ -7,8 +7,8 @@ select tests.seed_crm();
 select tests.seed_agents();
 update public.agent_limits set limit_value = 1000 where limit_key in ('max_concurrent_runs', 'max_runs_per_hour');
 select results_eq($$select plan, daily_paise, monthly_paise from public.plan_ai_allowances order by plan$$,
-  $$values ('business'::text, 10000, 250000), ('free_trial', 2000, 30000), ('growth', 4000, 90000), ('starter', 1500, 30000)$$,
-  'the plans: free trial 20/300, starter 15/300, growth 40/900, business 100/2,500 rupees (a day / a month)');
+  $$values ('business'::text, 10000, 250000), ('calls_1000', 1500, 30000), ('calls_300', 1500, 30000), ('calls_payg', 1500, 30000), ('free_trial', 2000, 30000), ('growth', 4000, 90000), ('starter', 1500, 30000)$$,
+  'the plans: free trial 20/300, starter 15/300, growth 40/900, business 100/2,500 rupees (a day / a month); the three calls-only plans carry the same internal placeholder as Starter (job DI)');
 -- the two tests' plan: ₹10 a day, ₹30 a month (1,000 and 3,000 paise = 10,000,000 and 30,000,000 micros), on the free trial
 update public.plan_ai_allowances set daily_paise = 1000, monthly_paise = 3000 where plan = 'free_trial';
 
@@ -41,7 +41,7 @@ select is(tests.sqlstate_as(tests.uid('a_owner'), $$update public.plan_ai_allowa
 select throws_ok($$update public.plan_ai_allowances set daily_paise = 0 where plan = 'starter'$$, '23514', null, 'a zero allowance is refused');
 select throws_ok($$update public.plan_ai_allowances set monthly_paise = 1 where plan = 'starter'$$, '23514', null, 'a month smaller than a day is refused');
 select lives_ok(format($$update public.tenants set plan = 'business' where id = %L$$, tests.tid('b')), 'the plan list now has starter, growth and business');
-select throws_ok(format($$update public.tenants set plan = 'enterprise' where id = %L$$, tests.tid('b')), '23514', null, 'a plan outside the list is still refused');
+select throws_ok(format($$update public.tenants set plan = 'enterprise' where id = %L$$, tests.tid('b')), '23503', null, 'a plan outside the catalogue is still refused (a foreign key since job DI)');
 select is(tests.sqlstate_as(tests.uid('a_owner'), format($$update public.tenants set billing_anchor_at = now() where id = %L$$, tests.tid('a'))), '42501', 'DENY: even the Owner cannot move the billing date');
 
 -- ============================================================================ the month window: whole months from the trial start or the billing date

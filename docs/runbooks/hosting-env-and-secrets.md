@@ -41,6 +41,8 @@ The script writes these from the public values you export for one run. Nothing h
 | `TRUSTED_PROXY_HOPS` | plain | api | `1` on Cloud Run (the script's default): the one proxy that writes `X-Forwarded-For` is Google's. Behind Cloudflare or a load balancer it is more (2 or 3): measure in the rehearsal. `0` would make every public-route caller look like Google's front end. Used for rate limits and logs only. |
 | `LOG_FORMAT` | plain | api, worker | `json`: one line per request, readable by Cloud Logging. No name, phone or e-mail is ever in a log line. |
 | `OUTBOX_ADAPTER` | plain | worker | `fake` in the rehearsal and Customer Zero until WhatsApp is connected (`whatsapp` is the real adapter, section D). The script sets `fake` on the worker. |
+| `BILLING_PROVIDER` | plain | api | `fake` (the default and the only value that exists, job DI, ADR 0092): a deterministic stand-in, no network, no key. Any other value stops the process at start. A real provider (Razorpay) is added later, with its secrets in Secret Manager (ADR 0092 lists them). |
+| `BILLING_EMAIL_SENDER` | plain | worker | `fake` (the default and the only value that exists, job DI): the reminders of a read-only workspace are composed and handed to a sender that sends nothing. Anything else stops the worker at start. A real sender (SMTP) needs your written approval first (ADR 0017). |
 | `SCHEDULER_EMAIL` | plain | worker | The scheduler's own account (docs/runbooks/hosting-owner-runbook.md Part B). An address, not a secret. |
 | `SCHEDULER_INTERVAL_SECONDS` | plain | worker | `WORKER_EVERY_MINUTES` x 60 (300 for every 5 minutes), set by the script. It MUST match the Cloud Scheduler schedule: the status card says the worker is running while its last tick is under three intervals old. |
 
