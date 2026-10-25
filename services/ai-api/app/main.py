@@ -103,6 +103,7 @@ from app.outbox.routes import router as outbox_router
 from app.outcomes.repository import PostgrestOutcomesRepository
 from app.outcomes.routes import customers_router as outcomes_customers_router
 from app.outcomes.routes import router as outcomes_router
+from app.ownvoice import repository as own_voice_repo
 from app.ownvoice.repository import PostgrestOwnVoiceRepository
 from app.ownvoice.routes import router as own_voice_router
 from app.ownvoice.service import OwnVoiceService
@@ -465,6 +466,17 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "workspace_read_only",
         "This workspace is read-only because its plan has ended. "
         "You can still sign in, view and export your data. Choose a plan to continue.",
+    ),
+    own_voice_repo.VoiceExistsError: ApiError(
+        409, "voice_exists", "You already have a voice. Delete it first to make another."
+    ),
+    own_voice_repo.RecordingMissingError: ApiError(
+        422, "recording_missing", "A recording did not arrive, or it is not audio. Record again."
+    ),
+    own_voice_repo.SentenceMismatchError: ApiError(
+        422,
+        "consent_sentence_mismatch",
+        "The sentence does not match the one to read. Ask for it again.",
     ),
     billing_errors.PlanLimitReachedError: ApiError(
         409,

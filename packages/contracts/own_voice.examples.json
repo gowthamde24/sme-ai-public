@@ -1,0 +1,61 @@
+{
+  "$comment": "Mock payloads for the own-voice API (job DP part 5). One per state Settings > AI assistant > \"Use my own voice\" shows. Validated against own_voice.schema.json by a test. Names and ids are invented. No recording or link is ever in an answer; the request carries the two recordings as base64 (a short stand-in here).",
+  "sentence": {
+    "sentence": "I, Suresh Kumar, allow Stack19 to create an AI voice of me for Sri Lakshmi Silks"
+  },
+  "voice_none": {
+    "status": "none",
+    "id": null,
+    "consenting_name": null,
+    "consented_at": null,
+    "sample_seconds": null,
+    "consent_seconds": null,
+    "ready_at": null,
+    "deleted_at": null,
+    "languages": [],
+    "says_ai_assistant": true,
+    "fake": true
+  },
+  "voice_ready": {
+    "status": "ready",
+    "id": "5c4d3e2f-1a0b-4c8d-9e7f-6a5b4c3d2e11",
+    "consenting_name": "Suresh Kumar",
+    "consented_at": "2026-10-26T09:30:00Z",
+    "sample_seconds": 32.5,
+    "consent_seconds": 6.0,
+    "ready_at": "2026-10-26T09:30:04Z",
+    "deleted_at": null,
+    "languages": [
+      "en",
+      "te",
+      "hi",
+      "kn"
+    ],
+    "says_ai_assistant": true,
+    "fake": true
+  },
+  "voice_deleted": {
+    "status": "deleted",
+    "id": "5c4d3e2f-1a0b-4c8d-9e7f-6a5b4c3d2e11",
+    "consenting_name": null,
+    "consented_at": "2026-10-26T09:30:00Z",
+    "sample_seconds": null,
+    "consent_seconds": null,
+    "ready_at": null,
+    "deleted_at": "2026-10-27T10:00:00Z",
+    "languages": [],
+    "says_ai_assistant": true,
+    "fake": true
+  },
+  "create_request": {
+    "id": "5c4d3e2f-1a0b-4c8d-9e7f-6a5b4c3d2e11",
+    "name": "Suresh Kumar",
+    "consent_sentence": "I, Suresh Kumar, allow Stack19 to create an AI voice of me for Sri Lakshmi Silks",
+    "sample_base64": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "sample_type": "audio/wav",
+    "sample_seconds": 32.5,
+    "consent_base64": "UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "consent_type": "audio/wav",
+    "consent_seconds": 6.0
+  }
+}
