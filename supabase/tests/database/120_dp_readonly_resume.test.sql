@@ -13,7 +13,7 @@ select pg_temp.pin('2026-10-14T11:00:00+05:30'::timestamptz);
 -- workspace a began its free trial on 1 September and chose no plan (it ended long ago); workspace b began on 10 October
 update public.tenants set trial_started_at = '2026-09-01T09:00:00+05:30' where id = tests.tid('a');
 update public.tenants set trial_started_at = '2026-10-10T09:00:00+05:30' where id = tests.tid('b');
-select app.operator_register_scheduler('x8@test.local');
+select app.operator_register_scheduler('x5@test.local');
 
 create function pg_temp.sc(p_sql text) returns text language plpgsql as $$ begin execute p_sql; return 'ok'; exception when others then return sqlstate; end $$;
 create function pg_temp.val(p_user text, p_sql text) returns text language plpgsql as $$
@@ -104,14 +104,14 @@ select pg_temp.val('b_owner', format($q$select public.outbox_set_settings(%L, tr
 select app.billing_edit(true);
 update public.billing_subscriptions set status = 'active', cancelled_at = null, current_period_start = now(), current_period_end = now() + interval '1 month' where tenant_id in (tests.tid('a'), tests.tid('b'));
 select app.billing_edit(false);
-select is((select jsonb_array_length(pg_temp.val('x8', 'select public.scheduler_tenants()::text')::jsonb)), 2, 'G1 both workspaces are paid: the worker runs both');
+select is((select jsonb_array_length(pg_temp.val('x5', 'select public.scheduler_tenants()::text')::jsonb)), 2, 'G1 both workspaces are paid: the worker runs both');
 select app.billing_edit(true);
 update public.billing_subscriptions set status = 'cancelled', cancelled_at = now() where tenant_id = tests.tid('a');
 select app.billing_edit(false);
-select is((select jsonb_array_length(pg_temp.val('x8', 'select public.scheduler_tenants()::text')::jsonb)), 1, 'G2 a is read-only (cancelled): the worker leaves it alone');
-select is(pg_temp.val('x8', 'select public.scheduler_tenants()::text')::jsonb ->> 0, tests.tid('b')::text, 'G3 ...and runs b');
+select is((select jsonb_array_length(pg_temp.val('x5', 'select public.scheduler_tenants()::text')::jsonb)), 1, 'G2 a is read-only (cancelled): the worker leaves it alone');
+select is(pg_temp.val('x5', 'select public.scheduler_tenants()::text')::jsonb ->> 0, tests.tid('b')::text, 'G3 ...and runs b');
 select app.operator_set_billing_enforced(false);
-select is((select jsonb_array_length(pg_temp.val('x8', 'select public.scheduler_tenants()::text')::jsonb)), 2, 'G4 with the billing switch off nothing is held');
+select is((select jsonb_array_length(pg_temp.val('x5', 'select public.scheduler_tenants()::text')::jsonb)), 2, 'G4 with the billing switch off nothing is held');
 select is(pg_temp.val('a_owner', 'select public.scheduler_tenants()::text'), 'ERR:42501', 'G5 DENY: an Owner cannot ask (the scheduler account only)');
 
 select * from finish();
