@@ -13,6 +13,9 @@ from tests.test_migration_copies import definitions, normalised
 
 CLOCK = "20261129090100_dm_trial_clock.sql"
 PENDING = "20261129090400_dm_trial_pending.sql"
+# job DP part 3 (migration 20261130090100) re-copies these two once more: the DM copy is the one it was made from, and the test below says exactly what DP changed
+READONLY = "20261130090100_dp_readonly_gate.sql"
+NEWER = {"public.billing_start_trial": READONLY, "public.billing_get": READONLY}
 LAST = {
     "public.billing_start_trial": PENDING,
     "app.billing_access_until": PENDING,
@@ -29,7 +32,10 @@ LAST = {
 @pytest.mark.parametrize("name", sorted(LAST))
 def test_the_dm_copy_is_the_last_definition(name: str) -> None:
     defs = definitions(name)
-    assert defs[-1][0] == LAST[name], f"{name} is redefined after job DM's migration ({defs[-1][0]}): re-copy it from the latest definition"
+    expected = NEWER.get(name, LAST[name])
+    assert defs[-1][0] == expected, f"{name} is redefined after job DM's migration ({defs[-1][0]}): re-copy it from the latest definition"
+    if name in NEWER:
+        assert defs[-2][0] == LAST[name], f"{name}: job DP's copy must be made from job DM's ({defs[-2][0]})"
 
 
 def _diff(name: str) -> tuple[set[str], set[str]]:
@@ -50,3 +56,12 @@ def test_cancel_only_learns_the_pending_status() -> None:
     removed, added = _diff("public.billing_cancel")
     assert removed == {"if sub.status in ('trialing', 'past_due') then", "-- no paid period is running (the trial, or a payment that failed): it ends at once; a plan that was paid for goes back to the base plan"}
     assert all("trial_pending" in line or line.startswith("-- no paid period") for line in added)
+
+
+def test_the_readonly_copies_add_exactly_what_they_say() -> None:
+    removed, added = _diff("public.billing_get")
+    assert removed == {"'can_start_trial', not exists (select 1 from public.billing_subscriptions s where s.tenant_id = p_tenant_id),"}
+    assert len(added) == 2 and any("app.billing_can_resume(p_tenant_id)" in line for line in added) and any("'can_resume'" in line for line in added), added
+    removed, added = _diff("public.billing_start_trial")
+    assert removed == {"if exists (select 1 from public.billing_subscriptions s where s.tenant_id = p_tenant_id) then"}
+    assert added == {"if exists (select 1 from public.billing_subscriptions s where s.tenant_id = p_tenant_id) or app.billing_can_resume(p_tenant_id) then"}
