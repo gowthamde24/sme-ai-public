@@ -19,12 +19,12 @@ insert into packs.workspace_pack (tenant_id, pack_code, pack_version, source) se
 
 -- guardians of the school (invented numbers in the reserved range)
 insert into public.contacts (id, tenant_id, full_name, phone) values
-  (tests.rid('g1'), tests.tid('b'), 'Guardian One', '+00 90000 00001'),
-  (tests.rid('g2'), tests.tid('b'), 'Guardian Two', '+00 90000 00002'),
-  (tests.rid('g3'), tests.tid('b'), 'Guardian Three', '+00 90000 00003'),
-  (tests.rid('g4'), tests.tid('b'), 'Guardian Four', '+00 90000 00004'),
-  (tests.rid('g5'), tests.tid('b'), 'Guardian Five', '+00 90000 00005'),
-  (tests.rid('g1b'), tests.tid('b'), 'Guardian One Twin', '+00 90000 00001');
+  (tests.rid('g1'), tests.tid('b'), 'Guardian One', '+00 93000 00001'),
+  (tests.rid('g2'), tests.tid('b'), 'Guardian Two', '+00 93000 00002'),
+  (tests.rid('g3'), tests.tid('b'), 'Guardian Three', '+00 93000 00003'),
+  (tests.rid('g4'), tests.tid('b'), 'Guardian Four', '+00 93000 00004'),
+  (tests.rid('g5'), tests.tid('b'), 'Guardian Five', '+00 93000 00005'),
+  (tests.rid('g1b'), tests.tid('b'), 'Guardian One Twin', '+00 93000 00001');
 update public.contacts set suppressed_at = now(), suppression_reason = 'opted_out' where id = tests.rid('g3');
 update public.contacts set whatsapp_consent = 'withdrawn' where id = tests.rid('g4');
 alter table public.contacts disable trigger contacts_guard_erased;
@@ -41,7 +41,7 @@ create function pg_temp.item(p_seq int, p_contact text, p_template text default 
   select jsonb_build_object('seq', p_seq, 'contact_id', tests.rid(p_contact), 'template_id', p_template)::text $$;
 
 -- ============================================================================ A. school only
-select is(pg_temp.res('a_owner', 'a', '{9000000001}'), 'ERR:SM701', 'A1 a business without the school module cannot resolve guardians');
+select is(pg_temp.res('a_owner', 'a', '{9300000001}'), 'ERR:SM701', 'A1 a business without the school module cannot resolve guardians');
 select is(pg_temp.beg('a_owner', 'a', 'x1', '[' || pg_temp.item(1, 'a_contact') || ']'), 'ERR:SM701', 'A2 ...cannot approve a batch');
 select is(pg_temp.fin('a_owner', 'a', 'x1', '[{"seq":1,"status":"sent"}]'), 'ERR:SM701', 'A3 ...cannot finish one');
 select is(pg_temp.val('a_owner', format($q$select public.marks_send_batches(%L, 10, null)::text$q$, tests.tid('a'))), 'ERR:SM701', 'A4 ...cannot read the log');
@@ -49,12 +49,12 @@ select is(pg_temp.sc(format($q$insert into public.marks_send_log (tenant_id, bat
                             tests.tid('a'), tests.rid('x1'), tests.rid('a_contact'), tests.uid('a_owner'))), 'SM701', 'A5 and the table itself refuses a row (the module guard)');
 
 -- ============================================================================ B. who may
-select isnt(pg_temp.res('b_owner', 'b', '{9000000001}'), 'ERR:42501', 'B1 the Owner resolves');
-select isnt(pg_temp.res('b_admin', 'b', '{9000000001}'), 'ERR:42501', 'B2 an Admin resolves (the preview)');
-select is(pg_temp.res('b_sales', 'b', '{9000000001}'), 'ERR:42501', 'B3 DENY: Sales');
-select is(pg_temp.res('b_viewer', 'b', '{9000000001}'), 'ERR:42501', 'B4 DENY: a Viewer');
-select is(pg_temp.res('a_owner', 'b', '{9000000001}'), 'ERR:42501', 'B5 DENY: another business''s Owner');
-select is(pg_temp.res('anon', 'b', '{9000000001}'), 'ERR:42501', 'B6 DENY: anon');
+select isnt(pg_temp.res('b_owner', 'b', '{9300000001}'), 'ERR:42501', 'B1 the Owner resolves');
+select isnt(pg_temp.res('b_admin', 'b', '{9300000001}'), 'ERR:42501', 'B2 an Admin resolves (the preview)');
+select is(pg_temp.res('b_sales', 'b', '{9300000001}'), 'ERR:42501', 'B3 DENY: Sales');
+select is(pg_temp.res('b_viewer', 'b', '{9300000001}'), 'ERR:42501', 'B4 DENY: a Viewer');
+select is(pg_temp.res('a_owner', 'b', '{9300000001}'), 'ERR:42501', 'B5 DENY: another business''s Owner');
+select is(pg_temp.res('anon', 'b', '{9300000001}'), 'ERR:42501', 'B6 DENY: anon');
 select is(pg_temp.beg('b_admin', 'b', 'b1', '[' || pg_temp.item(1, 'g1') || ']'), 'ERR:42501', 'B7 DENY: an Admin cannot approve a send (the Owner does)');
 select is(pg_temp.beg('b_sales', 'b', 'b1', '[' || pg_temp.item(1, 'g1') || ']'), 'ERR:42501', 'B8 DENY: Sales');
 select is(pg_temp.beg('a_owner', 'b', 'b1', '[' || pg_temp.item(1, 'g1') || ']'), 'ERR:42501', 'B9 DENY: another business''s Owner');
@@ -63,18 +63,18 @@ select is(pg_temp.val1('b_owner', format($q$select public.marks_send_finish(%L, 
 select is((select count(*)::int from public.marks_send_log), 0, 'B12 nothing refused wrote a row');
 
 -- ============================================================================ C. guardians from phone numbers
-select is((select pg_temp.res('b_owner', 'b', '{9000000002,"+91 90000 00002","09000000002",99999,"९००००००००२"}')::jsonb -> 0 ->> 'state'), 'ok', 'C1 a ten-digit number finds the guardian');
-select is((select array_agg(e ->> 'contact_id' order by o)::text from jsonb_array_elements(pg_temp.res('b_owner', 'b', '{9000000002,"+91 90000 00002","09000000002","९००००००००२"}')::jsonb) with ordinality as t(e, o)),
+select is((select pg_temp.res('b_owner', 'b', '{9300000002,"+91 93000 00002","09300000002",99999,"९३०००००००२"}')::jsonb -> 0 ->> 'state'), 'ok', 'C1 a ten-digit number finds the guardian');
+select is((select array_agg(e ->> 'contact_id' order by o)::text from jsonb_array_elements(pg_temp.res('b_owner', 'b', '{9300000002,"+91 93000 00002","09300000002","९३०००००००२"}')::jsonb) with ordinality as t(e, o)),
           (select array_fill(tests.rid('g2')::text, array[4])::text), 'C2 +91, a leading 0 and Devanagari digits find the same guardian');
 select is((select pg_temp.res('b_owner', 'b', '{99999}')::jsonb -> 0 ->> 'state'), 'unknown', 'C3 a number nobody holds is unknown');
-select is((select pg_temp.res('b_owner', 'b', '{9000000001}')::jsonb -> 0 ->> 'contact_id'), tests.rid('g1')::text, 'C4 a number two contacts hold is the OLDEST contact''s');
-select is((select pg_temp.res('b_owner', 'b', '{9000000003}')::jsonb -> 0 ->> 'reason'), 'suppressed', 'C5 an opted-out guardian is blocked: suppressed');
-select is((select pg_temp.res('b_owner', 'b', '{9000000004}')::jsonb -> 0 ->> 'reason'), 'consent_withdrawn', 'C6 WhatsApp consent withdrawn is blocked');
-select is((select pg_temp.res('b_owner', 'b', '{9000000005}')::jsonb -> 0 ->> 'state'), 'blocked', 'C7 an erased guardian is blocked');
+select is((select pg_temp.res('b_owner', 'b', '{9300000001}')::jsonb -> 0 ->> 'contact_id'), tests.rid('g1')::text, 'C4 a number two contacts hold is the OLDEST contact''s');
+select is((select pg_temp.res('b_owner', 'b', '{9300000003}')::jsonb -> 0 ->> 'reason'), 'suppressed', 'C5 an opted-out guardian is blocked: suppressed');
+select is((select pg_temp.res('b_owner', 'b', '{9300000004}')::jsonb -> 0 ->> 'reason'), 'consent_withdrawn', 'C6 WhatsApp consent withdrawn is blocked');
+select is((select pg_temp.res('b_owner', 'b', '{9300000005}')::jsonb -> 0 ->> 'state'), 'blocked', 'C7 an erased guardian is blocked');
 select is(pg_temp.res('b_owner', 'b', '{}'), 'ERR:22023', 'C8 no numbers is invalid');
-select is((select jsonb_array_length(pg_temp.res('b_owner', 'b', '{9000000001,9000000002,9000000001}')::jsonb)), 3, 'C9 one answer per number, in order');
+select is((select jsonb_array_length(pg_temp.res('b_owner', 'b', '{9300000001,9300000002,9300000001}')::jsonb)), 3, 'C9 one answer per number, in order');
 select is(pg_temp.val('b_owner', format($q$select public.marks_send_resolve(%L, null::text[])::text$q$, tests.tid('b'))), 'ERR:22023', 'C10 null is invalid');
-select is((select pg_temp.res('a_owner', 'a', '{9000000001}')), 'ERR:SM701', 'C11 the other business does not see the school''s guardians');
+select is((select pg_temp.res('a_owner', 'a', '{9300000001}')), 'ERR:SM701', 'C11 the other business does not see the school''s guardians');
 
 -- ============================================================================ D. the Owner approves (begin)
 select is(pg_temp.beg('b_owner', 'b', 'd1', '[' || pg_temp.item(1, 'g1') || ',' || pg_temp.item(2, 'g2', 'marks.te') || ',' || pg_temp.item(3, 'g3') || ',' || pg_temp.item(4, 'g4', 'report_ready.hi') || ',' || pg_temp.item(5, 'g5') || ']')::jsonb,
