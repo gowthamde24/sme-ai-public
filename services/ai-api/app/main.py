@@ -93,6 +93,7 @@ from app.materials.routes import router as materials_router
 from app.notifications.routes import me_router as notifications_me_router
 from app.notifications.routes import router as notifications_router
 from app.notifications.wiring import build_notifications
+from app.observability.sentry import init_sentry
 from app.orders import errors as order_errors
 from app.orders.repository import PostgrestOrdersRepository
 from app.orders.routes import router as orders_router
@@ -820,6 +821,11 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     )
     metrics = Metrics()
     install_logging(settings.log_format)
+    init_sentry(
+        settings.sentry_dsn.get_secret_value() if settings.sentry_dsn is not None else None,
+        environment=settings.sentry_environment or settings.api_env,
+        release=settings.sentry_release or SERVICE_VERSION,
+    )
     app.state.runtime = runtime
     install_log_redaction()
     install_error_handlers(app)

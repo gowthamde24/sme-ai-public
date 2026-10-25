@@ -35,6 +35,8 @@ from app.notifications.repository import PostgrestNotificationsRepository
 from app.notifications.runner import PushRunner
 from app.notifications.webpush import WebPushSender
 from app.notifications.wiring import build_vapid
+from app.observability.sentry import capture as sentry_capture
+from app.observability.sentry import init_sentry
 from app.outbox.adapter import ChannelAdapter, build_adapter
 from app.outbox.service import media_signer
 from app.outbox.voice_hook import VoiceNotes
@@ -120,6 +122,7 @@ class Worker:
             logger.error("scheduler: %s", exc)
         except Exception as exc:  # a crashed tick must not stop the next one
             logger.error("scheduler tick crashed: %s", exc.__class__.__name__)
+            sentry_capture(exc)   # job DP part 6: a no-op unless SENTRY_DSN is set; class name and stack only
         return None
 
     def _privacy_housekeeping(self, token: str) -> None:
@@ -246,7 +249,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     logging.getLogger("httpx").setLevel(logging.WARNING)  # its request lines are noise here
     try:
-        worker = build_worker(Settings())
+        settings = Settings()
+        init_sentry(
+            settings.sentry_dsn.get_secret_value() if settings.sentry_dsn is not None else None,
+            environment=settings.sentry_environment or settings.api_env,
+            release=settings.sentry_release or "worker",
+        )
+        worker = build_worker(settings)
     except ConfigurationError as exc:
         print(f"scheduler: {exc}", file=sys.stderr)  # noqa: T201
         return 2

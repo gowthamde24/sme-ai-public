@@ -20,6 +20,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app.observability.sentry import capture as sentry_capture
+
 logger = logging.getLogger("app.errors")
 
 
@@ -222,6 +224,7 @@ def install_error_handlers(app: FastAPI) -> None:
     async def _unexpected(request: Request, _exc: Exception) -> JSONResponse:
         # Nothing about the failure reaches the client. The server still logs the exception itself (the handler runs in Starlette's outermost layer, which re-raises), and the access line carries the same request id.
         request_id = request_id_of(request.scope)
+        sentry_capture(_exc, request_id)   # job DP part 6: a no-op unless SENTRY_DSN is set; class name and stack only (app/observability/sentry.py)
         return JSONResponse(
             error_body("internal_error", "Something went wrong on our side.", request_id=request_id),
             status_code=500,
