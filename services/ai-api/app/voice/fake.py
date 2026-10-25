@@ -66,3 +66,29 @@ def tone(seconds: float, rate: int = 8000) -> bytes:
             )
         )
     return buffer.getvalue()
+
+
+class FakeVoiceCloner:
+    """A stand-in voice cloner for tests and local runs (job DP part 5): opens no socket, keeps no audio, returns a stable id for the same sample, and forgets a deleted voice."""
+
+    name = "fake"
+
+    def __init__(self, fail: str | None = None) -> None:
+        self.fail = fail
+        self.voices: dict[str, int] = {}   # id -> size of the sample it was made from (the audio itself is not kept)
+        self.deleted: list[str] = []
+
+    def create(self, sample: bytes, content_type: str, *, label: str) -> str:
+        if self.fail:
+            raise VoiceError(self.fail)
+        import hashlib
+
+        voice_id = "fake_clone_" + hashlib.sha256(sample).hexdigest()[:16]
+        self.voices[voice_id] = len(sample)
+        return voice_id
+
+    def delete(self, voice_id: str) -> None:
+        if self.fail == "delete_unreachable":
+            raise VoiceError("unreachable")
+        self.voices.pop(voice_id, None)
+        self.deleted.append(voice_id)

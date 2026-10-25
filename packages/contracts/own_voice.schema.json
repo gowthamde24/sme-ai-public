@@ -1,0 +1,249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "own_voice.schema.json",
+  "title": "The Owner's own voice (job DP)",
+  "description": "Generated from services/ai-api/app/ownvoice/models.py by `make contracts`.",
+  "$defs": {
+    "OwnVoiceIn": {
+      "additionalProperties": false,
+      "description": "Everything in one request: the two recordings are base64 (no multipart). `id` is a uuid the client makes (a retry with it is the same request).",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 80,
+          "minLength": 2,
+          "pattern": "^[^<>{}@/\\\\|\\x00-\\x1f\\x7f]+$",
+          "title": "Name",
+          "type": "string"
+        },
+        "consent_sentence": {
+          "maxLength": 300,
+          "minLength": 20,
+          "title": "Consent Sentence",
+          "type": "string"
+        },
+        "sample_base64": {
+          "maxLength": 14500000,
+          "minLength": 100,
+          "title": "Sample Base64",
+          "type": "string"
+        },
+        "sample_type": {
+          "enum": [
+            "audio/webm",
+            "audio/ogg",
+            "audio/wav",
+            "audio/x-wav",
+            "audio/mpeg",
+            "audio/mp4",
+            "audio/x-m4a",
+            "video/webm",
+            "video/mp4"
+          ],
+          "title": "Sample Type",
+          "type": "string"
+        },
+        "sample_seconds": {
+          "maximum": 60,
+          "minimum": 15,
+          "title": "Sample Seconds",
+          "type": "number"
+        },
+        "consent_base64": {
+          "maxLength": 4300000,
+          "minLength": 100,
+          "title": "Consent Base64",
+          "type": "string"
+        },
+        "consent_type": {
+          "enum": [
+            "audio/webm",
+            "audio/ogg",
+            "audio/wav",
+            "audio/x-wav",
+            "audio/mpeg",
+            "audio/mp4",
+            "audio/x-m4a",
+            "video/webm",
+            "video/mp4"
+          ],
+          "title": "Consent Type",
+          "type": "string"
+        },
+        "consent_seconds": {
+          "maximum": 30,
+          "minimum": 2,
+          "title": "Consent Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "consent_sentence",
+        "sample_base64",
+        "sample_type",
+        "sample_seconds",
+        "consent_base64",
+        "consent_type",
+        "consent_seconds"
+      ],
+      "title": "OwnVoiceIn",
+      "type": "object"
+    },
+    "OwnVoiceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "none",
+            "pending",
+            "ready",
+            "failed",
+            "deleted"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "consenting_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Consenting Name"
+        },
+        "consented_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Consented At"
+        },
+        "sample_seconds": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sample Seconds"
+        },
+        "consent_seconds": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Consent Seconds"
+        },
+        "ready_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ready At"
+        },
+        "deleted_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deleted At"
+        },
+        "languages": {
+          "items": {
+            "enum": [
+              "en",
+              "te",
+              "hi",
+              "kn"
+            ],
+            "type": "string"
+          },
+          "title": "Languages",
+          "type": "array"
+        },
+        "says_ai_assistant": {
+          "const": true,
+          "default": true,
+          "title": "Says Ai Assistant",
+          "type": "boolean"
+        },
+        "fake": {
+          "const": true,
+          "default": true,
+          "title": "Fake",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "status",
+        "languages"
+      ],
+      "title": "OwnVoiceOut",
+      "type": "object"
+    },
+    "SentenceOut": {
+      "additionalProperties": false,
+      "description": "The exact words to read aloud, with this person's name and this business's name filled in.",
+      "properties": {
+        "sentence": {
+          "title": "Sentence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sentence"
+      ],
+      "title": "SentenceOut",
+      "type": "object"
+    }
+  }
+}

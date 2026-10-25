@@ -96,7 +96,7 @@ def test_the_samples_cover_every_language_style_and_business_type() -> None:
         assert set(d["samples"][biz]) == set(LANGS)
         for lang in LANGS:
             assert set(d["samples"][biz][lang]) == set(STYLES)
-    assert [p["id"] for p in d["personas"]] == ["female_warm", "female_clear", "male_calm", "male_lively"]
+    assert [p["id"] for p in d["personas"]] == ["female_warm", "female_clear", "male_calm", "male_lively", "own_voice"]
     assert [s["id"] for s in d["styles"]] == list(STYLES)
 
 
@@ -231,7 +231,8 @@ def test_the_order_amount_may_be_off_and_the_name_may_have_spaces_and_dots() -> 
 def test_the_options_say_which_voices_exist_per_language() -> None:
     client, _ = world()
     options = client.get(B, headers=auth("a_owner")).json()["options"]
-    assert [p["id"] for p in options["personas"]] == ["female_warm", "female_clear", "male_calm", "male_lively"]
+    assert [p["id"] for p in options["personas"]] == ["female_warm", "female_clear", "male_calm", "male_lively", "own_voice"]
+    assert not any(v["available"] for v in next(p for p in options["personas"] if p["id"] == "own_voice")["languages"].values()), "the own voice is not available until the Owner has made one (job DP part 5)"
     first = options["personas"][0]
     assert first["languages"]["te"] == {"available": True, "synthetic": True}
     assert [s["id"] for s in options["styles"]] == list(STYLES) and [lang["id"] for lang in options["languages"]] == list(LANGS)

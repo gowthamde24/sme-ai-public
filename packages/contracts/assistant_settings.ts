@@ -17,7 +17,7 @@ export interface AssistantOut {
 
 export interface AssistantSettings {
   name: string;
-  voice_persona: "female_warm" | "female_clear" | "male_calm" | "male_lively";
+  voice_persona: "female_warm" | "female_clear" | "male_calm" | "male_lively" | "own_voice";
   main_language: "en" | "te" | "hi" | "kn";
   auto_switch_language: boolean;
   allow_english_mixing: boolean;
@@ -55,7 +55,7 @@ export interface OutcomePreviewOut {
 }
 
 export interface PersonaOut {
-  id: "female_warm" | "female_clear" | "male_calm" | "male_lively";
+  id: "female_warm" | "female_clear" | "male_calm" | "male_lively" | "own_voice";
   label: string;
   description: string;
   languages: Record<string, VoiceAvailabilityOut>;
