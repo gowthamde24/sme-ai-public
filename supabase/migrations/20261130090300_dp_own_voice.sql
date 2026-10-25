@@ -49,7 +49,8 @@ create table public.own_voices (
   ready_at         timestamptz,
   deleted_at       timestamptz,
   unique (tenant_id, id),
-  check (status = 'deleted' or (consenting_name is not null and consent_sentence is not null and bucket is not null and sample_path is not null and consent_path is not null)),
+  -- (the name and the sentence may be null on a live row: a workspace erasure takes them out; a voice that is not deleted always has its recordings)
+  check (status = 'deleted' or (bucket is not null and sample_path is not null and consent_path is not null)),
   check (status <> 'deleted' or (consenting_name is null and consent_sentence is null and sample_path is null and consent_path is null and provider_voice_id is null and deleted_at is not null)),
   check ((status = 'ready') = (ready_at is not null and provider_voice_id is not null) or status in ('deleted', 'failed'))
 );

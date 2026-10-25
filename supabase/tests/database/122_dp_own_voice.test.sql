@@ -121,6 +121,7 @@ select pg_temp.save('a_owner', 'a', 'own_voice');
 select is(pg_temp.val('a_admin', format($q$select public.own_voice_deleted(%L, %L)::text$q$, tests.tid('a'), pg_temp.vid('1'))), 'ERR:42501', 'F1 DENY: an Admin cannot delete');
 select is(pg_temp.val1('a_owner', format($q$select public.own_voice_deleted(%L, %L)::text$q$, tests.tid('a'), pg_temp.vid('1'))), 'ERR:SM306', 'F2 the Owner needs the second factor');
 select is(pg_temp.val('a_owner', format($q$select public.own_voice_deleted(%L, %L)::text$q$, tests.tid('a'), pg_temp.vid('1'))), 'ERR:SM832', 'F3 while a recording is still in the bucket the record cannot say deleted');
+select set_config('storage.allow_delete_query', 'true', true);   -- Storage refuses a direct delete unless this is set (the API deletes through the Storage service)
 delete from storage.objects where bucket_id = app.ovc_bucket(tests.tid('a')) and name like pg_temp.vid('1')::text || '/%';
 select is((pg_temp.val('a_owner', format($q$select public.own_voice_deleted(%L, %L)::text$q$, tests.tid('a'), pg_temp.vid('1')))::jsonb ->> 'status'), 'deleted', 'F4 with both recordings gone, the voice is deleted');
 select is((select consenting_name is null and consent_sentence is null and sample_path is null and consent_path is null and provider_voice_id is null and bucket is null and deleted_at is not null from public.own_voices where id = pg_temp.vid('1')), true, 'F5 the name, the sentence, the paths and the provider id are gone from the record');
