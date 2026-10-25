@@ -41,9 +41,9 @@ create table public.outcomes (
   foreign key (tenant_id, contact_id) references public.contacts (tenant_id, id),
   foreign key (tenant_id, lead_id) references public.leads (tenant_id, id),
   -- the category belongs to its outcome: positive = interested | visit_booked | order_likely; negative = not_interested | wrong_number | too_costly; unclear = call_back_later or no category
-  check ((outcome = 'positive' and category in ('interested', 'visit_booked', 'order_likely'))
-      or (outcome = 'negative' and category in ('not_interested', 'wrong_number', 'too_costly'))
-      or (outcome = 'unclear' and (category is null or category = 'call_back_later'))),
+  check (coalesce((outcome = 'positive' and category in ('interested', 'visit_booked', 'order_likely'))
+                or (outcome = 'negative' and category in ('not_interested', 'wrong_number', 'too_costly'))
+                or (outcome = 'unclear' and (category is null or category = 'call_back_later')), false)),
   check ((corrected_at is null) = (corrected_by is null)),
   check ((recorded_by_kind = 'ai') = (ai_outcome is not null))
 );
@@ -167,9 +167,9 @@ begin
      or (p_category is not null and p_category not in ('interested', 'visit_booked', 'order_likely', 'not_interested', 'wrong_number', 'too_costly', 'call_back_later'))
      or p_occurred_at is null or p_occurred_at > v_now + interval '5 minutes' or p_occurred_at < v_now - interval '30 days'
      or (p_reason is not null and (char_length(btrim(p_reason)) not between 2 and 200 or not app.text_is_clean(p_reason)))
-     or not ((p_outcome = 'positive' and p_category in ('interested', 'visit_booked', 'order_likely'))
-          or (p_outcome = 'negative' and p_category in ('not_interested', 'wrong_number', 'too_costly'))
-          or (p_outcome = 'unclear' and (p_category is null or p_category = 'call_back_later'))) then
+     or not coalesce((p_outcome = 'positive' and p_category in ('interested', 'visit_booked', 'order_likely'))
+                   or (p_outcome = 'negative' and p_category in ('not_interested', 'wrong_number', 'too_costly'))
+                   or (p_outcome = 'unclear' and (p_category is null or p_category = 'call_back_later')), false) then
     perform app.outcome_error('invalid');
   end if;
   if not exists (select 1 from public.contacts c where c.tenant_id = p_tenant_id and c.id = p_contact_id and c.erased_at is null)
@@ -179,7 +179,7 @@ begin
   -- the AI records the outcome of a follow-up conversation only when we actually wrote to this customer in the last 14 days (their reply to something we sent)
   if v_ai and p_kind = 'whatsapp_followup' and not exists (
        select 1 from public.outbox_messages m
-        where m.tenant_id = p_tenant_id and m.contact_id = p_contact_id and m.status = 'sent' and m.category <> 'reply_to_inbound' and m.updated_at >= v_now - interval '14 days') then
+        where m.tenant_id = p_tenant_id and m.contact_id = p_contact_id and m.status = 'sent' and m.category <> 'reply_to_inbound' and m.sent_at >= v_now - interval '14 days') then
     perform app.outcome_error('invalid');
   end if;
   perform pg_advisory_xact_lock(hashtextextended('outcome:' || p_tenant_id::text || ':' || p_kind || ':' || p_source_id::text, 0));
@@ -188,14 +188,15 @@ begin
     return app.outcome_json(o) || jsonb_build_object('replayed', true);   -- the same source twice is one outcome; a person's correction is never overwritten
   end if;
   v_reason := app.outcome_reason(p_tenant_id, p_reason);
-  -- one AI outcome per customer per conversation (24 hours): a later REPLY of the same conversation can only turn an unclear or positive word into a negative one; a person's correction is never overwritten
+  -- one outcome per customer per conversation (24 hours): when the AI records and the conversation has one already, a later REPLY can only turn the AI's own unclear or positive word into a negative one;
+  -- a person's outcome and a person's correction are never overwritten
   if v_ai and p_kind = 'whatsapp_followup' then
     select * into o from public.outcomes x
-     where x.tenant_id = p_tenant_id and x.contact_id = p_contact_id and x.kind = 'whatsapp_followup' and x.recorded_by_kind = 'ai' and x.corrected_at is null
+     where x.tenant_id = p_tenant_id and x.contact_id = p_contact_id and x.kind = 'whatsapp_followup'
        and x.occurred_at >= p_occurred_at - interval '24 hours' and x.occurred_at <= p_occurred_at
      order by x.occurred_at desc, x.id desc limit 1;
     if found then
-      if p_outcome = 'negative' and o.outcome <> 'negative' then
+      if p_outcome = 'negative' and o.outcome <> 'negative' and o.recorded_by_kind = 'ai' and o.corrected_at is null then
         update public.outcomes set outcome = p_outcome, category = p_category, reason = v_reason, ai_outcome = p_outcome, ai_category = p_category
          where tenant_id = p_tenant_id and id = o.id returning * into o;
         return app.outcome_json(o) || jsonb_build_object('replayed', false);
@@ -228,9 +229,9 @@ begin
   if p_id is null or p_outcome is null or p_outcome not in ('positive', 'negative', 'unclear')
      or (p_category is not null and p_category not in ('interested', 'visit_booked', 'order_likely', 'not_interested', 'wrong_number', 'too_costly', 'call_back_later'))
      or (p_reason is not null and (char_length(btrim(p_reason)) not between 2 and 200 or not app.text_is_clean(p_reason)))
-     or not ((p_outcome = 'positive' and p_category in ('interested', 'visit_booked', 'order_likely'))
-          or (p_outcome = 'negative' and p_category in ('not_interested', 'wrong_number', 'too_costly'))
-          or (p_outcome = 'unclear' and (p_category is null or p_category = 'call_back_later'))) then
+     or not coalesce((p_outcome = 'positive' and p_category in ('interested', 'visit_booked', 'order_likely'))
+                   or (p_outcome = 'negative' and p_category in ('not_interested', 'wrong_number', 'too_costly'))
+                   or (p_outcome = 'unclear' and (p_category is null or p_category = 'call_back_later')), false) then
     perform app.outcome_error('invalid');
   end if;
   select * into o from public.outcomes x where x.tenant_id = p_tenant_id and x.id = p_id for update;
