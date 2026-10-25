@@ -14,6 +14,9 @@ export { SETUP_LANGUAGES } from "./account";
  */
 export const SIGNUP_ERRORS = ["weak_password", "terms_required", "too_many_signups", "invalid"] as const;
 export type SignUpError = (typeof SIGNUP_ERRORS)[number];
+/** What the web itself can answer besides the API's four: "closed" (job DH: public sign-up is switched off, lib/auth/signup-open.ts). Not an API code, so it is not in SIGNUP_ERRORS (the contract's list). */
+export const WEB_SIGNUP_ERRORS = [...SIGNUP_ERRORS, "closed"] as const;
+export type WebSignUpError = (typeof WEB_SIGNUP_ERRORS)[number];
 
 export type SignUpInput = {
   /** Left out by the two-step sign-up (job CL): the server derives it from the address (it is asked nothing but the kind of business and how to sign in). */
@@ -29,7 +32,7 @@ export type SignUpInput = {
   policyVersions?: { terms: string; privacy: string };
 };
 
-export type SignUpResult = { ok: true; next: "check-email" } | { ok: false; error: SignUpError };
+export type SignUpResult = { ok: true; next: "check-email" } | { ok: false; error: WebSignUpError };
 
 export type CompleteSetupInput = { businessType: BusinessType; language: SetupLanguage };
 export type CompleteSetupResult = { ok: true } | { ok: false; error: string };

@@ -70,11 +70,11 @@ build_web() {
   if [ "${BUILD:-cloudbuild}" = "docker" ]; then
     run docker build --platform linux/amd64 -f deploy/Dockerfile.web -t "$1" \
       --build-arg "NEXT_PUBLIC_API_BASE_URL=$API_URL" --build-arg "NEXT_PUBLIC_SUPABASE_URL=$SUPABASE_URL" \
-      --build-arg "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$PUBLIC_KEY" --build-arg "NEXT_PUBLIC_SITE_URL=$WEB_ORIGIN" --build-arg "NEXT_PUBLIC_SITE_LIVE=${SITE_LIVE:-0}" .
+      --build-arg "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$PUBLIC_KEY" --build-arg "NEXT_PUBLIC_SITE_URL=$WEB_ORIGIN" --build-arg "NEXT_PUBLIC_SITE_LIVE=${SITE_LIVE:-0}" --build-arg "NEXT_PUBLIC_SIGNUP_OPEN=${SIGNUP_OPEN:-0}" .
     run docker push "$1"
   else
     run gcloud builds submit --project "$PROJECT_ID" --region "$REGION" ${BUILD_SA:+--service-account "projects/$PROJECT_ID/serviceAccounts/$BUILD_SA"} --suppress-logs \
-      --config deploy/cloudbuild-web.yaml --substitutions "_IMAGE=$1,_API_URL=$API_URL,_SUPABASE_URL=$SUPABASE_URL,_PUBLISHABLE_KEY=$PUBLIC_KEY,_SITE_URL=$WEB_ORIGIN" .
+      --config deploy/cloudbuild-web.yaml --substitutions "_IMAGE=$1,_API_URL=$API_URL,_SUPABASE_URL=$SUPABASE_URL,_PUBLISHABLE_KEY=$PUBLIC_KEY,_SITE_URL=$WEB_ORIGIN,_SIGNUP_OPEN=${SIGNUP_OPEN:-0}" .
   fi
 }
 

@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { isSignupOpen } from "@/lib/auth/signup-open";
 import { SITE_URL } from "@/lib/seo/site";
 import { providerIsOn } from "@/lib/supabase/authorize-probe";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -16,6 +17,7 @@ import { pickSignupPack, SIGNUP_PACK_COOKIE, SOCIAL_PROVIDERS, type SocialProvid
  * and the first-login setup records the versions in force (an account made through a provider has no sign-up form to carry them; job CK).
  */
 export async function continueWithProvider(formData: FormData): Promise<void> {
+  if (!isSignupOpen()) redirect("/signup"); // job DH: closed sign-up has no provider buttons; a forged post goes back to the closed note
   const provider = String(formData.get("provider") ?? "");
   // the kind must be one of the cards the API offers (a server that cannot say sends the person back to step 1, which says so)
   const pack = pickSignupPack(await listPacks().catch(() => []), formData.get("type"));

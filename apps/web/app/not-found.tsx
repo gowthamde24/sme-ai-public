@@ -1,7 +1,6 @@
 import { ProblemView } from "@/components/v2/app/robust/ProblemView";
 import { notFoundMain, notFoundRoot } from "@/components/v2/app/ui";
 import { V2Root } from "@/components/v2/V2Root";
-import { appDict } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 
 /**
@@ -11,6 +10,9 @@ import { getLang } from "@/i18n/get-lang";
  */
 export default async function NotFound() {
   const lang = await getLang();
+  // job DH: loaded only when a 404 is really drawn. A static import here put the whole app dictionary (1.7 MB of server code) into the server graph of EVERY route, because Next includes the not-found page in each one, so a cold
+  // render of /login or of a public page read and compiled it for nothing (measured in the job DH report).
+  const { appDict } = await import("@/i18n/app");
   const dict = appDict(lang) as Record<string, string>;
   const labels = Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("notfound.") || k.startsWith("problem.")));
   return (

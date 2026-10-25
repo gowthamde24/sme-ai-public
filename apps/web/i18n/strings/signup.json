@@ -520,5 +520,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "signup.closed.title": {
+  "en": "We are opening to businesses soon",
+  "te": "త్వరలో వ్యాపారాలకు తెరుస్తున్నాం",
+  "hi": "हम जल्द ही बिज़नेस के लिए खुल रहे हैं",
+  "kn": "ನಾವು ಶೀಘ್ರದಲ್ಲೇ ವ್ಯಾಪಾರಗಳಿಗೆ ತೆರೆಯುತ್ತಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.closed.body": {
+  "en": "New sign-ups are not open yet. If you would like to be one of the first, ask for early access.",
+  "te": "కొత్త సైన్-అప్‌లు ఇంకా తెరవలేదు. మొదటి వారిలో ఒకరు కావాలంటే, ముందస్తు యాక్సెస్ అడగండి.",
+  "hi": "नए साइन-अप अभी शुरू नहीं हुए हैं। अगर आप पहले बिज़नेस में से एक बनना चाहते हैं, तो अर्ली एक्सेस माँगें।",
+  "kn": "ಹೊಸ ಸೈನ್-ಅಪ್‌ಗಳು ಇನ್ನೂ ತೆರೆದಿಲ್ಲ. ಮೊದಲಿಗರಲ್ಲಿ ಒಬ್ಬರಾಗಬೇಕಾದರೆ, ಮುಂಚಿತ ಪ್ರವೇಶ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.closed.early": {
+  "en": "Request early access",
+  "te": "ముందస్తు యాక్సెస్ అడగండి",
+  "hi": "अर्ली एक्सेस माँगें",
+  "kn": "ಮುಂಚಿತ ಪ್ರವೇಶ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.closed.write": {
+  "en": "Write to this address and tell us about your business. There is no form: nothing is stored on this page.",
+  "te": "ఈ అడ్రస్‌కి రాసి మీ బిజినెస్ గురించి చెప్పండి. ఫారం లేదు: ఈ పేజీలో ఏదీ సేవ్ కాదు.",
+  "hi": "इस पते पर लिखकर अपने बिज़नेस के बारे में बताएँ। कोई फ़ॉर्म नहीं है: इस पेज पर कुछ भी सेव नहीं होता।",
+  "kn": "ಈ ವಿಳಾಸಕ್ಕೆ ಬರೆದು ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ತಿಳಿಸಿ. ಫಾರ್ಮ್ ಇಲ್ಲ: ಈ ಪುಟದಲ್ಲಿ ಏನೂ ಸೇವ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.err.closed": {
+  "en": "Sign-up is not open yet.",
+  "te": "సైన్-అప్ ఇంకా తెరవలేదు.",
+  "hi": "साइन-अप अभी शुरू नहीं हुआ है।",
+  "kn": "ಸೈನ್-ಅಪ್ ಇನ್ನೂ ತೆರೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

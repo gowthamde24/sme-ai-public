@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { DEFAULT_BUSINESS_NAME } from "@/lib/packs/signup";
 
 import { clientIp, sharedSignupLimiter } from "@/lib/auth/signup-limit";
+import { isSignupOpen } from "@/lib/auth/signup-open";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 import type { SignUpInput, SignUpResult } from "@/lib/api/signup";
@@ -18,6 +19,7 @@ import { runSignUp } from "./signup-logic";
  * The logic is in signup-logic.ts; this wrapper only supplies the Auth client, the per-address brake and the caller's address.
  */
 export async function signUp(input: SignUpInput): Promise<SignUpResult> {
+  if (!isSignupOpen()) return { ok: false, error: "closed" }; // job DH: a forged post to a closed sign-up gets no account and no call to the Auth server
   const supabase = await createSupabaseServerClient();
   // the two-step sign-up (job CL) asks only the kind of business and how to sign in: the name comes from the address, the business is called "My business" until the checklist asks the real name
   const text = (v: unknown): string => (typeof v === "string" ? v.trim() : ""); // a server action's input is whatever the browser sent
