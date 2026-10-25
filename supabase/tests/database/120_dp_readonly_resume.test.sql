@@ -32,7 +32,7 @@ create function pg_temp.resume(p_user text, p_tenant text, p_plan text default '
 -- ============================================================================ A. the answers
 select is(pg_temp.acc('a_owner', 'can_resume'), 'false', 'A1 the switch is OFF: nothing has lapsed (every workspace is full)');
 select is(pg_temp.acc('a_owner', 'sending'), 'on', 'A2 ...and sending is on');
-select is(pg_temp.get('a_owner', 'can_start_trial'), 'false', 'A3 (the free trial of a ended a fortnight ago: after a lapse there is no new trial, whatever the switch says)');
+select is(pg_temp.get('a_owner', 'can_start_trial'), 'true', 'A3 the switch is OFF: nothing has lapsed, so a plan with its trial can still be chosen');
 select app.operator_set_billing_enforced(true);
 select is(pg_temp.acc('a_owner', 'access'), 'read_only', 'A4 SWITCH ON: workspace a is read-only');
 select is(pg_temp.acc('a_owner', 'can_resume'), 'true', 'A5 ...and can pay again');

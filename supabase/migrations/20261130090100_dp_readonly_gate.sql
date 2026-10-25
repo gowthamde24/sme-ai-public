@@ -26,8 +26,8 @@ begin
 end;
 $$;
 
--- a lapsed workspace: its subscription was cancelled, or the date its access ran to has passed (a workspace that never chose a plan lapses with its free trial). An exempt workspace never lapses,
--- and one that waits for WhatsApp has not begun.
+-- a lapsed workspace: its subscription was cancelled, or it is read-only (the trial or the paid period ended unpaid, a workspace that never chose a plan lapses with its free trial: app.billing_lapse,
+-- which is "full" while the platform's billing switch is off and for an exempt workspace). One that waits for WhatsApp has not begun, so it has nothing to resume.
 create function app.billing_can_resume(p_tenant uuid) returns boolean
 language sql
 stable
@@ -36,7 +36,7 @@ set search_path = ''
 as $$
   select coalesce((
     select not t.billing_exempt and coalesce(s.status, 'none') <> 'trial_pending'
-           and (s.status = 'cancelled' or (app.billing_access_until(t.id) is not null and app.outbox_now() >= app.billing_access_until(t.id)))
+           and (s.status = 'cancelled' or app.billing_lapse(t.id) ->> 'access' = 'read_only')
       from public.tenants t left join public.billing_subscriptions s on s.tenant_id = t.id
      where t.id = p_tenant), false)
 $$;
