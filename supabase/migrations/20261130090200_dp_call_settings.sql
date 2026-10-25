@@ -44,7 +44,7 @@ create table public.call_handover_rules (
 );
 comment on column public.call_handover_rules.topic is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
 comment on column public.call_handover_rules.person_name is 'PII: the name of the person who takes over calls on this topic (a team member). Erased with the workspace.';
-comment on column public.call_handover_rules.phone is 'PII: that person''s phone number. Erased with the workspace.';
+comment on column public.call_handover_rules.phone is 'PII: that person''s phone number. Erased with the workspace. CLEAN-EXEMPT: strict pattern CHECK (+ and digits only)';
 
 do $$
 declare
@@ -64,7 +64,9 @@ create trigger audit_call_handover_rules after insert or update or delete on pub
 
 insert into erasure.registry (table_name, column_name, scope, strategy, replacement) values
   ('call_handover_rules', 'person_name', 'tenant', 'tombstone', 'erased:1'),
-  ('call_handover_rules', 'phone',       'tenant', 'null',      'erased:1');
+  ('call_handover_rules', 'phone',       'tenant', 'null',      'erased:1'),
+  ('call_handover_rules', 'person_name', 'sweep',  'substring', 'erased:1'),
+  ('call_handover_rules', 'phone',       'sweep',  'substring', 'erased:1');
 
 -- ---------------------------------------------------------------------------------------------------------------------------------
 -- 2. the validator
