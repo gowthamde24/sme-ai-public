@@ -789,9 +789,10 @@ const eduCardReads: Record<string, Handler> = {
   listCampaigns: () => parseCampaignList(LIST_JSON),
   listVisits: () => ({ from: "2026-10-06", to: "2026-10-06", items: [] }),
 };
-const edu = (path: "programmes" | "students" | "students/new" | "students/import" | "students/[studentId]" | "students/[studentId]/edit" | "admissions" | "admissions/new" | "admissions/[admissionId]" | "announcements" | "announcements/new" | "fees" | "fees/pending" | "fees/plans" | "fees/plans/new" | "fees/plans/[planId]" | "fees/plans/[planId]/edit" | "fees/students/[studentId]" | "fees/receipt/[entryId]", params: Record<string, string> = {}, query: Record<string, string> = {}) => async () => {
+const edu = (path: "programmes" | "marks" | "students" | "students/new" | "students/import" | "students/[studentId]" | "students/[studentId]/edit" | "admissions" | "admissions/new" | "admissions/[admissionId]" | "announcements" | "announcements/new" | "fees" | "fees/pending" | "fees/plans" | "fees/plans/new" | "fees/plans/[planId]" | "fees/plans/[planId]/edit" | "fees/students/[studentId]" | "fees/receipt/[entryId]", params: Record<string, string> = {}, query: Record<string, string> = {}) => async () => {
   const loaders = {
     programmes: () => import("@/app/app/tenants/[tenantId]/programmes/page"),
+    marks: () => import("@/app/app/tenants/[tenantId]/marks/page"),
     students: () => import("@/app/app/tenants/[tenantId]/students/page"),
     "students/new": () => import("@/app/app/tenants/[tenantId]/students/new/page"),
     "students/import": () => import("@/app/app/tenants/[tenantId]/students/import/page"),
@@ -821,6 +822,22 @@ const eduReads = (over: Record<string, Handler> = {}): Record<string, Handler> =
 });
 add({ id: "programmes-education", roles: ["owner", "sales"], render: edu("programmes"), handlers: (role) => ({ ...school(role), ...eduReads() }) });
 add({ id: "programmes-education-new", roles: ["owner"], render: edu("programmes"), handlers: (role) => ({ ...school(role), ...eduReads({ getInstitutionProfile: () => parseInstitution(EDU.PROFILE_NONE_JSON), listProgrammes: () => [] }) }) });
+// job DP: "Send marks to parents" (a school; the Owner and an Admin open it), drawn in test mode: the note that marks are not stored, the choices, and the empty log
+add({
+  id: "marks-education",
+  roles: ["owner", "admin"],
+  render: async () => {
+    const before = process.env.MARKS_SCREENS;
+    process.env.MARKS_SCREENS = "mock";
+    try {
+      return await edu("marks")();
+    } finally {
+      if (before === undefined) delete process.env.MARKS_SCREENS;
+      else process.env.MARKS_SCREENS = before;
+    }
+  },
+  handlers: (role) => ({ ...school(role), ...eduReads() }),
+});
 add({ id: "students-education", roles: ["owner", "sales"], render: edu("students", {}, { saved: "1" }), handlers: (role) => ({ ...school(role), ...eduReads({ listStudents: () => parseStudentList(EDU.STUDENT_LIST_JSON) }) }) });
 add({ id: "students-education-empty", roles: ["owner"], render: edu("students"), handlers: (role) => ({ ...school(role), ...eduReads({ listStudents: () => parseStudentList({ items: [], next_cursor: null }) }) }) });
 add({ id: "students-education-filtered", roles: ["admin"], render: edu("students", {}, { programme: EDU.PROGRAMME, status: "left" }), handlers: (role) => ({ ...school(role), ...eduReads({ listStudents: () => parseStudentList({ items: [EDU.STUDENT_LEFT_JSON], next_cursor: "c1" }) }) }) });

@@ -32,7 +32,7 @@ function Switch({ on, label, onChange, disabled }: { on: boolean; label: string;
  * may do on calls (and the highest discount), when it hands over to the owner, the calling hours, and on the right a live preview with the circle speaking. It starts from the defaults of the business type (`profile`), so an owner can
  * skip it; nothing is kept until "Save". Only the Owner can change it (`canEdit`). Voice samples and test calls do not exist yet, so "Hear it" is switched off and "Call me now for a test" says so. The words come in as props.
  */
-export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions }) {
+export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, ownVoiceReady = false }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ ownVoiceReady?: boolean }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<Settings>(initial);
@@ -107,7 +107,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
                 <p className="text-sm text-muted">{t("asst.voice.d")}</p>
               </div>
               <div role="radiogroup" aria-labelledby="asst-voice-h" className="grid gap-2.5 sm:grid-cols-2">
-                {VOICES.map((v) => (
+                {VOICES.filter((v) => v !== "own_voice" || ownVoiceReady || s.voice === "own_voice").map((v) => (
                   <button key={v} type="button" role="radio" aria-checked={s.voice === v} onClick={() => set({ voice: v })} className={opt(s.voice === v)}>
                     <span className="flex min-w-0 flex-col gap-0.5">
                       <strong className="text-[15px]">{voiceNames[v]}</strong>
