@@ -38,7 +38,7 @@ select is(pg_temp.acc('a_owner', 'access'), 'read_only', 'A4 SWITCH ON: workspac
 select is(pg_temp.acc('a_owner', 'can_resume'), 'true', 'A5 ...and can pay again');
 select is(pg_temp.acc('a_owner', 'sending'), 'off', 'A6 sending is off');
 select is(pg_temp.acc('a_owner', 'waiting_for'), null, 'A7 it is not waiting for WhatsApp');
-select is(pg_temp.acc('b_owner', 'access') || '/' || pg_temp.acc('b_owner', 'can_resume') || '/' || pg_temp.acc('b_owner', 'sending'), 'full/false/on', 'A8 workspace b (inside its free trial) is full, cannot resume, sends');
+select is(pg_temp.acc('b_owner', 'access', 'b') || '/' || pg_temp.acc('b_owner', 'can_resume', 'b') || '/' || pg_temp.acc('b_owner', 'sending', 'b'), 'full/false/on', 'A8 workspace b (inside its free trial) is full, cannot resume, sends');
 select is(pg_temp.acc('a_viewer', 'can_resume'), 'true', 'A9 every member sees the access answer');
 select is(pg_temp.get('a_owner', 'can_resume'), 'true', 'A10 the plan screen answer carries can_resume too');
 
@@ -75,13 +75,13 @@ select is(pg_temp.resume('a_owner', 'a'), 'ERR:SM824', 'B10 resuming again is re
 select is((select count(*)::int from public.billing_events where tenant_id = tests.tid('a')), 1, 'B11 ...and recorded nothing twice');
 
 -- ============================================================================ C. after a cancel (b chose a plan, then cancelled)
-select is((pg_temp.get('b_owner', 'subscription')::jsonb ->> 'status'), 'trial_pending', 'C0 b chose a plan and waits for WhatsApp');
+select is((pg_temp.get('b_owner', 'subscription', 'b')::jsonb ->> 'status'), 'trial_pending', 'C0 b chose a plan and waits for WhatsApp');
 select is(pg_temp.resume('b_owner', 'b', 'growth', 'sub_fake_resume2'), 'ERR:SM824', 'C1 a workspace still waiting for WhatsApp has nothing to resume');
-select is(pg_temp.acc('b_owner', 'waiting_for'), 'whatsapp', 'C2 the access answer says it waits for WhatsApp');
-select is(pg_temp.acc('b_owner', 'sending'), 'off', 'C3 ...and that sending is off (read-only is not the reason)');
-select is(pg_temp.acc('b_owner', 'access'), 'full', 'C4 ...it can still be set up');
+select is(pg_temp.acc('b_owner', 'waiting_for', 'b'), 'whatsapp', 'C2 the access answer says it waits for WhatsApp');
+select is(pg_temp.acc('b_owner', 'sending', 'b'), 'off', 'C3 ...and that sending is off (read-only is not the reason)');
+select is(pg_temp.acc('b_owner', 'access', 'b'), 'full', 'C4 ...it can still be set up');
 select pg_temp.val('b_owner', format($q$select public.billing_cancel(%L)::text$q$, tests.tid('b')));
-select is(pg_temp.acc('b_owner', 'can_resume'), 'true', 'C5 after a cancel it can start again');
+select is(pg_temp.acc('b_owner', 'can_resume', 'b'), 'true', 'C5 after a cancel it can start again');
 select is((pg_temp.resume('b_owner', 'b', 'starter', 'sub_fake_resume2')::jsonb -> 'subscription' ->> 'status'), 'active', 'C6 a cancelled plan is started again, active at once');
 select is((select (cancelled_at is null and not cancel_at_period_end and grace_until is null)::text from public.billing_subscriptions where tenant_id = tests.tid('b')), 'true', 'C7 with the cancel cleared');
 select is((select plan_id from public.billing_subscriptions where tenant_id = tests.tid('b')), 'starter', 'C8 on the plan now chosen');
