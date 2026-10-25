@@ -1,0 +1,668 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "outcomes.schema.json",
+  "title": "Outcomes of calls and WhatsApp follow-ups (job DM)",
+  "description": "Generated from services/ai-api/app/outcomes/models.py by `make contracts`.",
+  "$defs": {
+    "CategoryCountsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "interested": {
+          "title": "Interested",
+          "type": "integer"
+        },
+        "visit_booked": {
+          "title": "Visit Booked",
+          "type": "integer"
+        },
+        "order_likely": {
+          "title": "Order Likely",
+          "type": "integer"
+        },
+        "not_interested": {
+          "title": "Not Interested",
+          "type": "integer"
+        },
+        "wrong_number": {
+          "title": "Wrong Number",
+          "type": "integer"
+        },
+        "too_costly": {
+          "title": "Too Costly",
+          "type": "integer"
+        },
+        "call_back_later": {
+          "title": "Call Back Later",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "interested",
+        "visit_booked",
+        "order_likely",
+        "not_interested",
+        "wrong_number",
+        "too_costly",
+        "call_back_later"
+      ],
+      "title": "CategoryCountsOut",
+      "type": "object"
+    },
+    "OutcomeCorrectionIn": {
+      "additionalProperties": false,
+      "properties": {
+        "outcome": {
+          "enum": [
+            "positive",
+            "negative",
+            "unclear"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "interested",
+                "visit_booked",
+                "order_likely",
+                "not_interested",
+                "wrong_number",
+                "too_costly",
+                "call_back_later"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "outcome"
+      ],
+      "title": "OutcomeCorrectionIn",
+      "type": "object"
+    },
+    "OutcomeDayOut": {
+      "additionalProperties": false,
+      "properties": {
+        "day": {
+          "format": "date",
+          "title": "Day",
+          "type": "string"
+        },
+        "positive": {
+          "title": "Positive",
+          "type": "integer"
+        },
+        "negative": {
+          "title": "Negative",
+          "type": "integer"
+        },
+        "unclear": {
+          "title": "Unclear",
+          "type": "integer"
+        },
+        "by_category": {
+          "$ref": "#/$defs/CategoryCountsOut"
+        }
+      },
+      "required": [
+        "day",
+        "positive",
+        "negative",
+        "unclear",
+        "by_category"
+      ],
+      "title": "OutcomeDayOut",
+      "type": "object"
+    },
+    "OutcomeIn": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Id"
+        },
+        "kind": {
+          "enum": [
+            "call",
+            "whatsapp_followup"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "positive",
+            "negative",
+            "unclear"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "interested",
+                "visit_booked",
+                "order_likely",
+                "not_interested",
+                "wrong_number",
+                "too_costly",
+                "call_back_later"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "kind",
+        "source_id",
+        "outcome",
+        "occurred_at"
+      ],
+      "title": "OutcomeIn",
+      "type": "object"
+    },
+    "OutcomeListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/OutcomeOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "has_more": {
+          "title": "Has More",
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "has_more",
+        "next_cursor"
+      ],
+      "title": "OutcomeListOut",
+      "type": "object"
+    },
+    "OutcomeOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lead Id"
+        },
+        "kind": {
+          "enum": [
+            "call",
+            "whatsapp_followup"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "positive",
+            "negative",
+            "unclear"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "interested",
+                "visit_booked",
+                "order_likely",
+                "not_interested",
+                "wrong_number",
+                "too_costly",
+                "call_back_later"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Category"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        },
+        "recorded_by": {
+          "enum": [
+            "ai",
+            "person"
+          ],
+          "title": "Recorded By",
+          "type": "string"
+        },
+        "corrected": {
+          "title": "Corrected",
+          "type": "boolean"
+        },
+        "corrected_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Corrected At"
+        },
+        "ai_outcome": {
+          "anyOf": [
+            {
+              "enum": [
+                "positive",
+                "negative",
+                "unclear"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ai Outcome"
+        },
+        "ai_category": {
+          "anyOf": [
+            {
+              "enum": [
+                "interested",
+                "visit_booked",
+                "order_likely",
+                "not_interested",
+                "wrong_number",
+                "too_costly",
+                "call_back_later"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ai Category"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "contact_id",
+        "lead_id",
+        "kind",
+        "source_id",
+        "outcome",
+        "category",
+        "reason",
+        "recorded_by",
+        "corrected",
+        "corrected_at",
+        "ai_outcome",
+        "ai_category",
+        "occurred_at",
+        "recorded_at"
+      ],
+      "title": "OutcomeOut",
+      "type": "object"
+    },
+    "OutcomeRecordedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lead Id"
+        },
+        "kind": {
+          "enum": [
+            "call",
+            "whatsapp_followup"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "positive",
+            "negative",
+            "unclear"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "interested",
+                "visit_booked",
+                "order_likely",
+                "not_interested",
+                "wrong_number",
+                "too_costly",
+                "call_back_later"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Category"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        },
+        "recorded_by": {
+          "enum": [
+            "ai",
+            "person"
+          ],
+          "title": "Recorded By",
+          "type": "string"
+        },
+        "corrected": {
+          "title": "Corrected",
+          "type": "boolean"
+        },
+        "corrected_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Corrected At"
+        },
+        "ai_outcome": {
+          "anyOf": [
+            {
+              "enum": [
+                "positive",
+                "negative",
+                "unclear"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ai Outcome"
+        },
+        "ai_category": {
+          "anyOf": [
+            {
+              "enum": [
+                "interested",
+                "visit_booked",
+                "order_likely",
+                "not_interested",
+                "wrong_number",
+                "too_costly",
+                "call_back_later"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Ai Category"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "contact_id",
+        "lead_id",
+        "kind",
+        "source_id",
+        "outcome",
+        "category",
+        "reason",
+        "recorded_by",
+        "corrected",
+        "corrected_at",
+        "ai_outcome",
+        "ai_category",
+        "occurred_at",
+        "recorded_at",
+        "replayed"
+      ],
+      "title": "OutcomeRecordedOut",
+      "type": "object"
+    },
+    "OutcomeTotalOut": {
+      "additionalProperties": false,
+      "properties": {
+        "positive": {
+          "title": "Positive",
+          "type": "integer"
+        },
+        "negative": {
+          "title": "Negative",
+          "type": "integer"
+        },
+        "unclear": {
+          "title": "Unclear",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "positive",
+        "negative",
+        "unclear"
+      ],
+      "title": "OutcomeTotalOut",
+      "type": "object"
+    },
+    "OutcomeTotalsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "from_day": {
+          "format": "date",
+          "title": "From Day",
+          "type": "string"
+        },
+        "to_day": {
+          "format": "date",
+          "title": "To Day",
+          "type": "string"
+        },
+        "days": {
+          "items": {
+            "$ref": "#/$defs/OutcomeDayOut"
+          },
+          "title": "Days",
+          "type": "array"
+        },
+        "total": {
+          "$ref": "#/$defs/OutcomeTotalOut"
+        }
+      },
+      "required": [
+        "from_day",
+        "to_day",
+        "days",
+        "total"
+      ],
+      "title": "OutcomeTotalsOut",
+      "type": "object"
+    }
+  }
+}

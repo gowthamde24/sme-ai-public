@@ -235,6 +235,7 @@ def make_client(
     reports: Any = None,
     voice_notes: Any = None,
     billing: Any = None,
+    outcomes: Any = None,
     rate_limit: bool = False,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
@@ -296,6 +297,7 @@ def make_client(
             reports=reports,
             voice_notes=voice_notes,
             billing=billing,
+            outcomes=outcomes,
         ),
     )
     # a FIXED request id on every request: the error body carries it, and the tests that prove two

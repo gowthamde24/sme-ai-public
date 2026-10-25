@@ -13,6 +13,7 @@ from fastapi import Depends, Request
 from app.agent_runs.wiring import AgentsRuntime
 from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.billing.service import BillingService
+from app.outcomes.repository import OutcomesRepository
 from app.businessprofile.repository import BusinessProfileRepository
 from app.campaigns.repository import CampaignsRepository
 from app.catalogue.repository import CatalogueRepository
@@ -124,6 +125,8 @@ class Runtime:
     voice_notes: VoiceNotesRepository | None = None
     # job DI: plans and billing (catalogue, usage meters, trial and cancel; the FAKE provider)
     billing: BillingService | None = None
+    # job DM: outcomes of calls and WhatsApp follow-ups (positive | negative | unclear, a category, a short reason)
+    outcomes: OutcomesRepository | None = None
 
 
 @dataclass(frozen=True)

@@ -22,6 +22,8 @@ from app.billing.repository import PostgrestBillingRepository
 from app.billing.routes import plans_router as billing_plans_router
 from app.billing.routes import router as billing_router
 from app.billing.service import BillingService
+from app.outcomes.repository import PostgrestOutcomesRepository
+from app.outcomes.routes import router as outcomes_router
 from app.businessprofile.repository import PostgrestBusinessProfileRepository
 from app.businessprofile.routes import router as business_profile_router
 from app.campaigns import errors as campaign_errors
@@ -257,6 +259,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
             PostgrestBillingRepository(config.rest_url, config.anon_key),
             _billing_provider(settings),
         ),
+        outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -943,6 +946,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(voice_notes_router)
     app.include_router(billing_plans_router)
     app.include_router(billing_router)
+    app.include_router(outcomes_router)
     app.include_router(materials_public_router)
     app.include_router(materials_router)
     app.include_router(deliveries_router)

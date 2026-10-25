@@ -15,6 +15,7 @@ import unicodedata
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
+from app.outcomes.recorder import OutcomeRecorder
 from app.suppression.keys import PHONE, KeyRing
 from app.tenancy.repository import TokenRejected
 from app.whatsapp import optout
@@ -54,10 +55,11 @@ class IngestResult:
 
 
 class WhatsAppIngest:
-    def __init__(self, repository: WhatsAppRepository, session: TokenSource, key_ring: KeyRing) -> None:
+    def __init__(self, repository: WhatsAppRepository, session: TokenSource, key_ring: KeyRing, outcomes: OutcomeRecorder | None = None) -> None:
         self._repository = repository
         self._session = session
         self._keys = key_ring
+        self._outcomes = outcomes   # job DM: the outcome of a follow-up, read from the customer's reply
 
     def handle(self, events: list[Event]) -> IngestResult:
         result = IngestResult()
@@ -106,6 +108,8 @@ class WhatsAppIngest:
             result.stored += 1
             if answer.get("optout"):
                 result.optouts += 1
+            if self._outcomes is not None:
+                self._outcomes.after_inbound(token, answer, text, event.sent_at)
         elif outcome == "duplicate":
             result.duplicates += 1
         else:
