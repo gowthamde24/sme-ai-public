@@ -3,7 +3,7 @@
   GET    /voice-clone/sentence?name=   the exact consent sentence to read aloud, with that name and the business's name. Owner.
   GET    /voice-clone                  the status (none, pending, ready, failed, deleted), the consenting name and time, the languages. Owner, Admin. No recording is ever returned.
   POST   /voice-clone                  make the voice: the sample (15 to 60 s), the recorded consent sentence, the name; all in one JSON body (base64). Owner, second factor. A fake provider.
-  DELETE /voice-clone                  "delete my voice": the provider's voice, the sample, the consent recording and the name go. Owner, second factor.
+  POST   /voice-clone/delete           "delete my voice": the provider's voice, the sample, the consent recording and the name go. Owner, second factor. (The API has no DELETE verb anywhere.)
 
 Once ready, the voice is the persona `own_voice` in Settings > AI assistant (PUT /ai-assistant with voice_persona `own_voice`). The assistant still says it is the AI assistant.
 
@@ -51,6 +51,6 @@ def make_voice(request: Request, body: OwnVoiceIn, ctx: OwnerStrong, runtime: Ru
     return _service(runtime).create(ctx.principal.token, ctx.tenant.id, body)
 
 
-@router.delete("", response_model=OwnVoiceOut)
+@router.post("/delete", response_model=OwnVoiceOut)
 def delete_voice(ctx: OwnerStrong, runtime: RuntimeDep) -> OwnVoiceOut:
     return _service(runtime).delete(ctx.principal.token, ctx.tenant.id)

@@ -39,7 +39,7 @@ ROUTE_WORDS = frozenset(
         # job CV: the one reports API and the voice notes
         "run", "choices", "usage", "disclosure", "notes", "voice-notes", "voices",
         # job DP part 5: the Owner's own voice
-        "voice-clone", "sentence",
+        "voice-clone", "sentence", "delete",
         # job CK
         "packs", "auth", "providers", "pack", "modules", "example-data",
         "custom-fields", "custom", "security", "remove",

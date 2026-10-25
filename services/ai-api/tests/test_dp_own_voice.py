@@ -109,9 +109,9 @@ def test_only_the_owner_with_a_second_factor_makes_or_deletes_and_an_admin_may_l
     client, repo, storage, cloner = world()
     for user in ("a_admin", "a_sales", "a_viewer"):
         assert client.post(B, json=body(), headers=auth(user)).status_code == 403, user
-        assert client.delete(B, headers=auth(user)).status_code == 403, user
+        assert client.post(f"{B}/delete", headers=auth(user)).status_code == 403, user
     assert client.post(B, json=body(), headers=auth("a_owner", aal="aal1")).status_code == 403
-    assert client.delete(B, headers=auth("a_owner", aal="aal1")).status_code == 403
+    assert client.post(f"{B}/delete", headers=auth("a_owner", aal="aal1")).status_code == 403
     assert client.post(B, json=body(), headers=auth("b_owner")).status_code == 404
     assert client.post(B, json=body()).status_code == 401
     assert storage.files == {} and cloner.voices == {} and repo.row is None, "a refused caller touches nothing"
@@ -151,7 +151,7 @@ def test_a_second_voice_is_refused_while_one_lives_and_allowed_after_a_deletion(
     again = client.post(B, json=body(id=str(uuid.uuid4())), headers=auth("a_owner"))
     assert again.status_code == 409 and again.json()["error"]["code"] == "voice_exists"
     assert len(cloner.voices) == 1
-    assert client.delete(B, headers=auth("a_owner")).status_code == 200
+    assert client.post(f"{B}/delete", headers=auth("a_owner")).status_code == 200
     assert client.post(B, json=body(id=str(uuid.uuid4())), headers=auth("a_owner")).status_code == 200
 
 
@@ -225,7 +225,7 @@ def test_if_the_record_of_ready_fails_the_providers_voice_is_deleted_again() -> 
 def test_delete_my_voice_removes_the_provider_voice_both_recordings_and_the_name() -> None:
     client, repo, storage, cloner = world()
     client.post(B, json=body(), headers=auth("a_owner"))
-    r = client.delete(B, headers=auth("a_owner"))
+    r = client.post(f"{B}/delete", headers=auth("a_owner"))
     assert r.status_code == 200
     out = r.json()
     assert out["status"] == "deleted" and out["consenting_name"] is None and out["languages"] == [] and out["deleted_at"]
@@ -239,11 +239,11 @@ def test_delete_my_voice_removes_the_provider_voice_both_recordings_and_the_name
 
 def test_deleting_when_there_is_no_voice_changes_nothing() -> None:
     client, repo, storage, cloner = world()
-    r = client.delete(B, headers=auth("a_owner"))
+    r = client.post(f"{B}/delete", headers=auth("a_owner"))
     assert r.status_code == 200 and r.json()["status"] == "none" and cloner.deleted == []
     client.post(B, json=body(), headers=auth("a_owner"))
-    client.delete(B, headers=auth("a_owner"))
-    again = client.delete(B, headers=auth("a_owner"))
+    client.post(f"{B}/delete", headers=auth("a_owner"))
+    again = client.post(f"{B}/delete", headers=auth("a_owner"))
     assert again.status_code == 200 and again.json()["status"] == "deleted" and len(cloner.deleted) == 1, "a second delete does nothing more"
 
 
@@ -251,22 +251,22 @@ def test_a_provider_that_cannot_be_reached_stops_the_deletion_before_anything_el
     client, repo, storage, cloner = world()
     client.post(B, json=body(), headers=auth("a_owner"))
     cloner.fail = "delete_unreachable"
-    r = client.delete(B, headers=auth("a_owner"))
+    r = client.post(f"{B}/delete", headers=auth("a_owner"))
     assert r.status_code == 502 and r.json()["error"]["code"] == "voice_provider_unreachable"
     assert len(storage.files) == 2 and repo.row is not None and repo.row["status"] == "ready", "nothing changed: the Owner presses delete again"
     cloner.fail = None
-    assert client.delete(B, headers=auth("a_owner")).json()["status"] == "deleted"
+    assert client.post(f"{B}/delete", headers=auth("a_owner")).json()["status"] == "deleted"
 
 
 def test_recordings_that_cannot_be_removed_stop_the_record_from_saying_deleted() -> None:
     client, repo, storage, cloner = world()
     client.post(B, json=body(), headers=auth("a_owner"))
     storage.refuse_remove = True
-    r = client.delete(B, headers=auth("a_owner"))
+    r = client.post(f"{B}/delete", headers=auth("a_owner"))
     assert r.status_code == 502 and r.json()["error"]["code"] == "recordings_not_removed"
     assert repo.row is not None and repo.row["status"] == "ready" and repo.row["name"] == NAME and ("deleted", None) not in repo.calls
     storage.refuse_remove = False
-    assert client.delete(B, headers=auth("a_owner")).json()["status"] == "deleted" and storage.files == {}
+    assert client.post(f"{B}/delete", headers=auth("a_owner")).json()["status"] == "deleted" and storage.files == {}
 
 
 # ------------------------------------------------------------------------------------------------ nothing leaks
@@ -275,7 +275,7 @@ def test_nothing_of_a_recording_or_a_name_is_logged(caplog: pytest.LogCaptureFix
     with caplog.at_level(logging.DEBUG):
         client.post(B, json=body(), headers=auth("a_owner"))
         client.get(B, headers=auth("a_admin"))
-        client.delete(B, headers=auth("a_owner"))
+        client.post(f"{B}/delete", headers=auth("a_owner"))
         client.post(B, json=body(sample_type="image/png"), headers=auth("a_owner"))
     text = caplog.text
     for secret in (NAME, "Suresh", b64(SAMPLE)[:60], b64(CONSENT)[:60], "Sri Lakshmi"):
