@@ -40,10 +40,10 @@ export function OutcomesPanel({ words, lang, outcomes, correct }: { words: Words
                   <span className="text-sm text-muted">· {time(o.at, lang)}</span>
                   <span className="ml-auto flex flex-wrap items-center gap-2">
                     <span className={PILL[o.result]}>{t(`outcome.result.${o.result}`)}</span>
-                    <span className="text-sm font-semibold">{t(`outcome.cat.${o.category}`)}</span>
+                    <span className="text-sm font-semibold">{t(`outcome.cat.${o.category ?? "none"}`)}</span>
                   </span>
                 </div>
-                <p className="mt-2 text-base [overflow-wrap:anywhere]">{o.reason}</p>
+                {o.reason ? <p className="mt-2 text-base [overflow-wrap:anywhere]">{o.reason}</p> : null}
                 {o.corrected ? <p className="mt-1 text-sm font-medium text-muted">{t("outcome.corrected")}</p> : null}
                 {correct ? <CorrectOutcomeForm words={words} outcome={o} options={CATEGORIES_OF} correct={correct} /> : null}
               </li>

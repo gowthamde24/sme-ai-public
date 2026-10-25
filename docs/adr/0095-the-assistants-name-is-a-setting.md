@@ -15,4 +15,9 @@ The question line of Today (`AskTeam`, variant `hero`) is also drawn at the bott
 
 ## Not done / for the owner
 - The real name will come from C1's assistant-settings API; only `readAssistantName` in `lib/assistant/source.ts` changes then. Until `ASSISTANT_SCREENS` is on, every workspace says "Vijaya".
-- The legal texts changed in wording (the assistant is now `{assistant}`, "Vijaya" on the public pages). `LEGAL_VERSION` was NOT bumped, because the API holds its own list of known terms versions; a bump and the API's list have to move together.
+- The legal texts changed in wording (job DN: `{assistant}`; job DO: they say "our AI assistant", no name at all). `LEGAL_VERSION` was NOT bumped, because the API holds its own list of known terms versions; a bump and the API's list have to move together.
+
+## Amendments (job DO, 26 Oct 2026)
+- **The real API.** With `ASSISTANT_SCREENS=1` the name is read from `GET /v1/tenants/{id}/ai-assistant` (lib/api/ai-assistant.ts, one read per request, shared with the settings page) for the workspace in the address, with the person's own token; before the owner's first save it is "Vijaya", not the API's sample name. The API allows only Owner and Admin to read it, so for Sales and Viewer the default is said until the API gives the name to every member (asked of C1 in `c2-questions-2.md`).
+- **Legal texts say "our AI assistant"** (no name, no `{assistant}`); `LEGAL_VERSION` is unchanged. A test fails if a legal text names the assistant.
+- **`{trial_days}`** is the one way a public string, a sign-in word or a legal text names the trial's length (lib/plan/trial-days.ts, equal to the plans data by a test).

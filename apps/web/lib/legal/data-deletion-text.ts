@@ -39,7 +39,7 @@ export const DATA_DELETION: LegalText = {
       blocks: [
         {
           ul: [
-            "Deleted or made anonymous: your name, e-mail address, phone numbers, enquiry text, messages, drafts, notes and chats with {assistant}, and, for a school, the student's name or initials and admission number.",
+            "Deleted or made anonymous: your name, e-mail address, phone numbers, enquiry text, messages, drafts, notes and chats with our AI assistant, and, for a school, the student's name or initials and admission number.",
             "Kept, without your name: accounting records such as invoices, receipts and payment amounts, because the law requires them; the security log; and a keyed fingerprint (not readable) of a phone number or e-mail address that has asked not to be contacted, used only to make sure nothing is sent to it again.",
             "Backups age out after about 7 days. If a backup is restored, the deletion is repeated.",
             "A file you already downloaded is yours; we cannot delete it.",

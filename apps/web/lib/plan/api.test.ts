@@ -81,6 +81,10 @@ describe("the billing answer as the screens read it", () => {
     const w = toWorkspacePlan(parseBilling(billing({ subscription: sub(), can_start_trial: false })));
     expect(w).toMatchObject({ planId: "growth", state: "trialing", trialEndsAt: "2026-11-12T10:00:00Z", canStartTrial: false, cancelledInTrial: false, included: { minutes: 30, messages: 100 } });
   });
+  it("trial_pending: a plan chosen before WhatsApp is connected is its own state, with no end date, nothing used (job DO)", () => {
+    const w = toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "trial_pending", trial_ends_at: null, trial_waiting_for: "whatsapp" }), can_start_trial: false })));
+    expect(w).toMatchObject({ planId: "growth", state: "trial_pending", trialEndsAt: null, canStartTrial: false, cancelledInTrial: false, access: "full" });
+  });
   it("a plan that leaves minutes out reads as 0 included (an upgrade prompt, no bar); pay as you go reads as no ceiling", () => {
     const starter = toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "active", plan_id: "starter", trial_ends_at: null }), usage: { call_minutes: meter("call_minutes", 0, 0, { included: false, state: "stopped" }), whatsapp_messages: meter("whatsapp_messages", 10, 300) } })));
     expect(starter.included).toEqual({ minutes: 0, messages: 300 });
