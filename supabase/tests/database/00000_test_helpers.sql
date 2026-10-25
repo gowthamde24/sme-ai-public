@@ -573,6 +573,8 @@ begin
   -- job CP: a campaign's name and text are the owner's own words, not tied to one person (a campaign has many people): they carry a business canary, erased with the workspace and swept
   insert into public.campaigns (id, tenant_id, name, kind, language, message_text, steps, created_by) values
     (tests.rid(p || '_er_cmp'), t, 'Cmpq7 reminder', 'payment_due', 'en', 'Dear {{name}}, Cmpq7 shop reminds you of {{amount}} due on {{due_date}}', '[{"offset_days": 0, "time": "10:00"}]'::jsonb, tests.uid(p || '_owner'));
+  -- job DP part 4: the hand-over person's name and number (a team member) carry canaries, erased with the workspace
+  insert into public.call_handover_rules (tenant_id, topic, person_name, phone, updated_by) values (t, 'pricing', 'Hndq7 Person', '+917000011122', tests.uid(p || '_owner'));
   -- job DM: an outcome's one-line reason is free text about an adult customer: it carries a canary, erased with the workspace and swept
   insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, reason, recorded_by_kind, ai_outcome, ai_category, occurred_at)
   values (tests.rid(p || '_er_out'), t, k, 'call', tests.rid(p || '_er_out'), 'unclear', 'call_back_later', 'Outq7 asked to be called later', 'ai', 'unclear', 'call_back_later', now());

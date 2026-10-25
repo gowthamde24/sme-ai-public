@@ -23,6 +23,8 @@ ROUTE_WORDS = frozenset(
         "v1", "me", "tenants", "members", "audit-events", "health",
         # job DI: plans and billing
         "plans", "billing", "trial", "access",
+        # job DP part 4: call settings
+        "call-settings",
         # job DM: outcomes of calls and follow-ups
         "outcomes", "totals", "correct", "ai-assistant", "preview", "test-call",
         # job CN: sites, dues, material quotes, deliveries, the public calculator

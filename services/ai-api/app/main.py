@@ -27,6 +27,9 @@ from app.billing.routes import router as billing_router
 from app.billing.service import BillingService
 from app.businessprofile.repository import PostgrestBusinessProfileRepository
 from app.businessprofile.routes import router as business_profile_router
+from app.callsettings.repository import PostgrestCallSettingsRepository
+from app.callsettings.routes import router as call_settings_router
+from app.callsettings.service import CallSettingsService
 from app.campaigns import errors as campaign_errors
 from app.campaigns.repository import PostgrestCampaignsRepository
 from app.campaigns.routes import router as campaigns_router
@@ -262,6 +265,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         billing=BillingService(
             PostgrestBillingRepository(config.rest_url, config.anon_key),
             _billing_provider(settings),
+        ),
+        call_settings=CallSettingsService(
+            PostgrestCallSettingsRepository(config.rest_url, config.anon_key)
         ),
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
         assistant_settings=AssistantSettingsService(
@@ -953,6 +959,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(voice_notes_router)
     app.include_router(billing_plans_router)
     app.include_router(billing_router)
+    app.include_router(call_settings_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_settings_router)
