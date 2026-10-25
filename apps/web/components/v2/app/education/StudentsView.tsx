@@ -12,8 +12,8 @@ import { card, field, label, okLine, primary, quiet, secondary } from "../visits
  * The students of the school (job CS): the minimum record, nothing more. A row is the first name or initials, the class and section, the admission number, the adult we write to and whether the student is still here. Filters are
  * plain links and a form that works without scripts. Owner, Admin and Sales read; Owner and Admin add and change. A Viewer never reaches this page. An erased student shows as "erased" with no name.
  */
-export function StudentsView({ base, words, role, students, programmes, programme, status, more, saved, imported }: {
-  base: string; words: TodayWords; role: Role; students: readonly StudentOut[] | null; programmes: readonly ProgrammeOut[]; programme: string | null; status: "active" | "left" | null; more: string | null; saved: boolean; imported: boolean;
+export function StudentsView({ base, words, role, students, programmes, programme, status, more, saved, imported, marksHref = null }: {
+  base: string; words: TodayWords; role: Role; students: readonly StudentOut[] | null; programmes: readonly ProgrammeOut[]; programme: string | null; status: "active" | "left" | null; more: string | null; saved: boolean; imported: boolean; /** The way to "Send marks to parents" (job DP), when that screen is on. */ marksHref?: string | null;
 }) {
   const writer = role === "owner" || role === "admin";
   const filtered = programme !== null || status !== null;
@@ -26,6 +26,7 @@ export function StudentsView({ base, words, role, students, programmes, programm
         </div>
         {writer ? (
           <div className="flex flex-wrap gap-2">
+            {marksHref ? <Link href={marksHref} className={secondary}>{say(words, "marks.link")}</Link> : null}
             <Link href={`${base}/students/import`} className={secondary}>{say(words, "edu.stu.import")}</Link>
             <Link href={`${base}/students/new`} className={primary}>{say(words, "edu.stu.add")}</Link>
           </div>

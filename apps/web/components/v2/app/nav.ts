@@ -61,7 +61,7 @@ export const NAV: readonly NavGroup[] = [
       // job CS: the school's own pages (module `programmes`): the students (the minimum record), the admissions board and the messages to parents
       { id: "students", label: "Students", icon: "students", path: "/students", module: "programmes", packOnly: true, roles: WRITERS },
       { id: "admissions", label: "Admission board", icon: "admissions", path: "/admissions", module: "programmes", packOnly: true, roles: WRITERS },
-      { id: "announcements", label: "Announcements", icon: "announcements", path: "/announcements", module: "programmes", packOnly: true, roles: WRITERS },
+      { id: "announcements", label: "Announcements", icon: "announcements", path: "/announcements", also: ["/marks"], module: "programmes", packOnly: true, roles: WRITERS },
       { id: "orders", label: "Orders", icon: "orders", path: "/orders", module: "orders", roles: WRITERS },
       // job CL: reminder campaigns (construction dues, education fees); the screens come with the campaign jobs
       { id: "campaigns", label: "Campaigns", icon: "campaigns", path: "/campaigns", module: "campaigns", packOnly: true, roles: ADMINS },

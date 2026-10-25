@@ -154,7 +154,7 @@ export function CallsSection({ t }: { t: SiteT }) {
         </h2>
         <p className="text-base leading-relaxed text-muted">{t("hm.vc.sub")}</p>
         <ul className="flex flex-col gap-3.5 text-[15px] leading-relaxed text-muted">
-          {([1, 2, 3] as const).map((n) => (
+          {([1, 2, 3, 4] as const).map((n) => (
             <li key={n} className="relative pl-[18px] before:absolute before:left-0 before:top-2.5 before:size-[7px] before:rounded-full before:bg-brand">
               <strong className="text-ink">{t(`hm.vc.${n}.t`)}</strong> {t(`hm.vc.${n}.d`)}
             </li>

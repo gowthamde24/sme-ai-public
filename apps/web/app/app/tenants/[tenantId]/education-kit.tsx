@@ -43,7 +43,7 @@ export async function eduContext(tenantIdRaw: string, needs: "programmes" | "fee
 export function eduWords(lang: Lang): Record<string, string> {
   const dict = appDict(lang) as Record<string, string>;
   const keep = (k: string) =>
-    k.startsWith("edu.") || k.startsWith("fee.") || k.startsWith("due.") || k.startsWith("today.err.") || k.startsWith("today.lang.") || k.startsWith("camp.") || k.startsWith("dta.") || k.startsWith("rep.") ||
+    k.startsWith("edu.") || k.startsWith("marks.") || k.startsWith("fee.") || k.startsWith("due.") || k.startsWith("today.err.") || k.startsWith("today.lang.") || k.startsWith("camp.") || k.startsWith("dta.") || k.startsWith("rep.") ||
     ["today.act.working", "today.act.cancel", "frame.notyet", "mat.products.more", "mat.err.moduleoff", "mat.pdf.print", "mat.pdf.hint", "mat.s.inwords", "nav.item.fees", "nav.item.students", "nav.item.programmes", "nav.item.admissions", "nav.item.announcements", "nav.item.campaigns"].includes(k);
   return Object.fromEntries(Object.entries(dict).filter(([k]) => keep(k)));
 }

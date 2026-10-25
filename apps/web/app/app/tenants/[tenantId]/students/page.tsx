@@ -7,6 +7,7 @@ import { ApiAuthError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { listProgrammes, listStudents } from "@/lib/api/education";
 import { escalate } from "@/lib/api/failure";
+import { marksScreens } from "@/lib/screens/flag";
 
 import { eduContext, eduWords } from "../education-kit";
 import { BRAND_NAME } from "@/design/brand";
@@ -54,6 +55,7 @@ export default async function StudentsRoute({ params, searchParams }: PageProps<
         more={page?.next_cursor ? `${base}/students?${keep ? `${keep}&` : ""}after=${encodeURIComponent(page.next_cursor)}` : null}
         saved={pick(raw.saved) === "1"}
         imported={pick(raw.imported) === "1"}
+        marksHref={marksScreens() !== "off" ? `${base}/marks` : null}
       />
     </main>
   );

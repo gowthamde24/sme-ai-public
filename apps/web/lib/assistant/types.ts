@@ -3,7 +3,8 @@
  * screen edits; C1 stores them per workspace as data (it extends the voice data of job DJ), and until that exists the screen reads and keeps them in a cookie behind ASSISTANT_SCREENS=mock. Every value is checked (`parseSettings`): a
  * cookie, a form or an answer that is not in these shapes is ignored, never drawn. The words "AI assistant" are NOT a setting: customers always hear them after the name and the owner cannot remove them.
  */
-export const VOICES = ["female_warm", "female_clear", "male_calm", "male_lively"] as const;
+/** The four stock voices and, once the Owner has made one with their consent (job DP), their own: `own_voice`. */
+export const VOICES = ["female_warm", "female_clear", "male_calm", "male_lively", "own_voice"] as const;
 export type Voice = (typeof VOICES)[number];
 export const STYLES = ["warm", "resp", "quick"] as const;
 export type Style = (typeof STYLES)[number];
