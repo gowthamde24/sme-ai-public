@@ -69,7 +69,7 @@ def test_the_list_holds_no_value_that_looks_like_a_key() -> None:
 
 def test_the_example_env_file_names_only_known_settings_and_gives_no_secret_a_value() -> None:
     known = {n.upper() for n in Settings.model_fields} | set(doc_rows("## The web (Cloud Run or Vercel)"))
-    deploy_vars = {"PROJECT_ID", "REGION", "WEB_ORIGIN", "API_URL", "CPU_ALWAYS", "RUN_SA", "SITE_LIVE", "SCHEDULER_SA", "WORKER_EVERY_MINUTES", "BACKUP_DB_HOST", "BACKUP_DB_USER", "SECRET_SUPPRESSION", "SECRET_SCHEDULER", "EXTRA_SECRETS", "HOSTED_SUPABASE_URL"}
+    deploy_vars = {"PROJECT_ID", "REGION", "WEB_ORIGIN", "API_URL", "CPU_ALWAYS", "RUN_SA", "SITE_LIVE", "SIGNUP_OPEN", "SCHEDULER_SA", "WORKER_EVERY_MINUTES", "BACKUP_DB_HOST", "BACKUP_DB_USER", "SECRET_SUPPRESSION", "SECRET_SCHEDULER", "EXTRA_SECRETS", "HOSTED_SUPABASE_URL"}
     for line in (DEPLOY / "hosting.env.example").read_text().splitlines():
         m = re.match(r"^([A-Z][A-Z0-9_]+)=(.*)$", line)
         if not m:
@@ -178,10 +178,10 @@ def test_the_web_build_gets_the_public_values_and_the_site_address() -> None:
     for needed in ("_API_URL=https://api.example.test", "_SUPABASE_URL=https://abc.supabase.co", "_SITE_URL=https://app.example.test", "--startup-probe=httpGet.path=/login"):
         assert needed in out, needed
     built = (ROOT / "deploy" / "cloudbuild-web.yaml").read_text()
-    for arg in ("NEXT_PUBLIC_API_BASE_URL=${_API_URL}", "NEXT_PUBLIC_SUPABASE_URL=${_SUPABASE_URL}", "NEXT_PUBLIC_SITE_URL=${_SITE_URL}", "NEXT_PUBLIC_SITE_LIVE=0"):
+    for arg in ("NEXT_PUBLIC_API_BASE_URL=${_API_URL}", "NEXT_PUBLIC_SUPABASE_URL=${_SUPABASE_URL}", "NEXT_PUBLIC_SITE_URL=${_SITE_URL}", "NEXT_PUBLIC_SITE_LIVE=0", "NEXT_PUBLIC_SIGNUP_OPEN=${_SIGNUP_OPEN}"):
         assert arg in built, arg
     local = flat(dry("web", BUILD="docker").stdout)
-    for needed in ("NEXT_PUBLIC_API_BASE_URL=https://api.example.test", "NEXT_PUBLIC_SUPABASE_URL=https://abc.supabase.co", "NEXT_PUBLIC_SITE_URL=https://app.example.test", "NEXT_PUBLIC_SITE_LIVE=0"):
+    for needed in ("NEXT_PUBLIC_API_BASE_URL=https://api.example.test", "NEXT_PUBLIC_SUPABASE_URL=https://abc.supabase.co", "NEXT_PUBLIC_SITE_URL=https://app.example.test", "NEXT_PUBLIC_SITE_LIVE=0", "NEXT_PUBLIC_SIGNUP_OPEN=0"):
         assert needed in local, needed
 
 

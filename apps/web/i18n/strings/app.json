@@ -39130,6 +39130,50 @@
    "kn": "draft"
   }
  },
+ "mat.req.approving_needs": {
+  "en": "Approving needs a product type and an area (or a quantity) on the same line, approved by a person. Nothing here is ever sent.",
+  "te": "ఆమోదించాలంటే ఒకే లైన్‌లో ప్రొడక్ట్ రకం, విస్తీర్ణం (లేదా సంఖ్య) ఉండాలి, వ్యక్తి ఓకే చేయాలి. ఇక్కడ ఏదీ ఎప్పుడూ పంపబడదు.",
+  "hi": "मंज़ूर करने के लिए एक ही लाइन में प्रोडक्ट का प्रकार और क्षेत्रफल (या मात्रा) चाहिए, और इंसान का मंज़ूर किया होना ज़रूरी है। यहाँ से कुछ भी कभी नहीं भेजा जाता।",
+  "kn": "ಒಪ್ಪಿಗೆಗೆ ಒಂದೇ ಲೈನ್‌ನಲ್ಲಿ ಪ್ರಾಡಕ್ಟ್ ಪ್ರಕಾರ ಮತ್ತು ವಿಸ್ತೀರ್ಣ (ಅಥವಾ ಪ್ರಮಾಣ) ಇರಬೇಕು, ವ್ಯಕ್ತಿ ಒಪ್ಪಿರಬೇಕು. ಇಲ್ಲಿಂದ ಏನನ್ನೂ ಎಂದಿಗೂ ಕಳುಹಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mat.req.approve_or_correct": {
+  "en": "Approve (or correct) a product type and an area or quantity on the same line first.",
+  "te": "ముందు ఒకే లైన్‌లో ప్రొడక్ట్ రకం, విస్తీర్ణం లేదా సంఖ్యను ఓకే (లేదా సరిచేయండి) చేయండి.",
+  "hi": "पहले एक ही लाइन में प्रोडक्ट का प्रकार और क्षेत्रफल या मात्रा मंज़ूर (या ठीक) करें।",
+  "kn": "ಮೊದಲು ಒಂದೇ ಲೈನ್‌ನಲ್ಲಿ ಪ್ರಾಡಕ್ಟ್ ಪ್ರಕಾರ ಮತ್ತು ವಿಸ್ತೀರ್ಣ ಅಥವಾ ಪ್ರಮಾಣವನ್ನು ಒಪ್ಪಿಗೆ (ಅಥವಾ ತಿದ್ದುಪಡಿ) ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mat.req.approve_a_product": {
+  "en": "Approve a product type and an area or quantity for at least one line first.",
+  "te": "ముందు కనీసం ఒక లైన్‌కు ప్రొడక్ట్ రకం, విస్తీర్ణం లేదా సంఖ్యను ఓకే చేయండి.",
+  "hi": "पहले कम से कम एक लाइन के लिए प्रोडक्ट का प्रकार और क्षेत्रफल या मात्रा मंज़ूर करें।",
+  "kn": "ಮೊದಲು ಕನಿಷ್ಠ ಒಂದು ಲೈನ್‌ಗೆ ಪ್ರಾಡಕ್ಟ್ ಪ್ರಕಾರ ಮತ್ತು ವಿಸ್ತೀರ್ಣ ಅಥವಾ ಪ್ರಮಾಣವನ್ನು ಒಪ್ಪಿಗೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mat.req.line_fields": {
+  "en": "A product's type, area, thickness and quantity need a line (1 to 5); the other fields have none.",
+  "te": "ప్రొడక్ట్ రకం, విస్తీర్ణం, మందం, సంఖ్యకు లైన్ (1 నుంచి 5) కావాలి; మిగతా ఫీల్డ్‌లకు అవసరం లేదు.",
+  "hi": "प्रोडक्ट का प्रकार, क्षेत्रफल, मोटाई और मात्रा के लिए लाइन (1 से 5) चाहिए; बाकी फ़ील्ड के लिए नहीं।",
+  "kn": "ಪ್ರಾಡಕ್ಟ್ ಪ್ರಕಾರ, ವಿಸ್ತೀರ್ಣ, ದಪ್ಪ, ಪ್ರಮಾಣಕ್ಕೆ ಲೈನ್ (1 ರಿಂದ 5) ಬೇಕು; ಉಳಿದ ಫೀಲ್ಡ್‌ಗಳಿಗೆ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "mat.req.example.product_type": {
   "en": "For example: paver blocks",
   "te": "ఉదాహరణ: పేవర్ బ్లాక్స్",
@@ -53272,6 +53316,963 @@
   "te": "కుటుంబం చెప్పినది మాత్రమే చదువుతుంది, ఎవరు అడుగుతున్నారో మీకు తెలుస్తుంది. విద్యార్థుల కోసం వెబ్‌లో ఎప్పుడూ వెతకదు.",
   "hi": "सिर्फ़ वही पढ़ता है जो परिवार ने बताया है, ताकि आपको पता रहे कौन पूछ रहा है। विद्यार्थियों के लिए वेब पर कभी नहीं खोजता।",
   "kn": "ಕುಟುಂಬ ಹೇಳಿದ್ದನ್ನು ಮಾತ್ರ ಓದುತ್ತದೆ, ಯಾರು ಕೇಳುತ್ತಿದ್ದಾರೆ ಎಂದು ನಿಮಗೆ ತಿಳಿಯುತ್ತದೆ. ವಿದ್ಯಾರ್ಥಿಗಳಿಗಾಗಿ ವೆಬ್‌ನಲ್ಲಿ ಎಂದಿಗೂ ಹುಡುಕುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.tab": {
+  "en": "Plan",
+  "te": "ప్లాన్",
+  "hi": "प्लान",
+  "kn": "ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.title": {
+  "en": "Your plan",
+  "te": "మీ ప్లాన్",
+  "hi": "आपका प्लान",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.testmode": {
+  "en": "Test mode: no real payment is taken and no card details are asked for.",
+  "te": "టెస్ట్ మోడ్: నిజమైన పేమెంట్ తీసుకోరు, కార్డ్ వివరాలు కూడా అడగరు.",
+  "hi": "टेस्ट मोड: असली पेमेंट नहीं लिया जाता और कार्ड की कोई जानकारी नहीं माँगी जाती।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ನಿಜವಾದ ಪೇಮೆಂಟ್ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ, ಕಾರ್ಡ್ ವಿವರಗಳನ್ನೂ ಕೇಳುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.state.none": {
+  "en": "No plan yet",
+  "te": "ఇంకా ప్లాన్ లేదు",
+  "hi": "अभी कोई प्लान नहीं",
+  "kn": "ಇನ್ನೂ ಪ್ಲಾನ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.state.trialing": {
+  "en": "Free trial",
+  "te": "ఫ్రీ ట్రయల్",
+  "hi": "फ़्री ट्रायल",
+  "kn": "ಉಚಿತ ಟ್ರಯಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.state.active": {
+  "en": "Active",
+  "te": "యాక్టివ్",
+  "hi": "चालू",
+  "kn": "ಚಾಲ್ತಿಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.state.past_due": {
+  "en": "Payment failed",
+  "te": "పేమెంట్ ఫెయిల్ అయింది",
+  "hi": "पेमेंट फ़ेल हो गया",
+  "kn": "ಪೇಮೆಂಟ್ ಆಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.state.cancelled": {
+  "en": "Cancelled",
+  "te": "క్యాన్సిల్ అయింది",
+  "hi": "कैंसल हो गया",
+  "kn": "ಕ್ಯಾನ್ಸಲ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.none.body": {
+  "en": "Start a 30-day trial to use calls and WhatsApp messages. You add a payment method to start. If you cancel before day 30, nothing is charged.",
+  "te": "కాల్స్, WhatsApp మెసేజ్‌లు వాడటానికి 30 రోజుల ట్రయల్ మొదలుపెట్టండి. మొదలుపెట్టడానికి మీరు పేమెంట్ పద్ధతి యాడ్ చేయాలి. 30వ రోజు కంటే ముందే క్యాన్సిల్ చేస్తే, ఏమీ కట్ చేయరు.",
+  "hi": "कॉल और WhatsApp मैसेज इस्तेमाल करने के लिए 30 दिन का ट्रायल शुरू करें। शुरू करने के लिए आपको पेमेंट का तरीका जोड़ना होगा। 30वें दिन से पहले कैंसल कर दें तो कुछ चार्ज नहीं होगा।",
+  "kn": "30 ದಿನದ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ, ಕಾಲ್ ಮತ್ತು WhatsApp ಮೆಸೇಜ್‌ಗಳನ್ನು ಬಳಸಿ. ಶುರು ಮಾಡಲು ಪೇಮೆಂಟ್ ಮೆಥಡ್ ಸೇರಿಸಿ. 30ನೇ ದಿನದ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.name.line": {
+  "en": "Plan: {name}",
+  "te": "ప్లాన్: {name}",
+  "hi": "प्लान: {name}",
+  "kn": "ಪ್ಲಾನ್: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.price.soon": {
+  "en": "Price coming soon",
+  "te": "ధర త్వరలో వస్తుంది",
+  "hi": "कीमत जल्द आएगी",
+  "kn": "ಬೆಲೆ ಸ್ವಲ್ಪ ದಿನದಲ್ಲಿ ಬರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.trial.day": {
+  "en": "Day {n} of {total} of your trial",
+  "te": "మీ ట్రయల్ {total} రోజుల్లో {n}వ రోజు",
+  "hi": "आपके ट्रायल का दिन {n} ({total} में से)",
+  "kn": "ನಿಮ್ಮ ಟ್ರಯಲ್‌ನ {total} ದಿನಗಳಲ್ಲಿ {n}ನೇ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.trial.left": {
+  "en": "{n} days left",
+  "te": "ఇంకా {n} రోజులు ఉన్నాయి",
+  "hi": "{n} दिन बाकी",
+  "kn": "{n} ದಿನ ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.trial.left.one": {
+  "en": "1 day left",
+  "te": "ఇంకా 1 రోజు ఉంది",
+  "hi": "बस 1 दिन बाकी",
+  "kn": "ಇನ್ನು ಒಂದೇ ದಿನ ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.trial.cancel_note": {
+  "en": "Cancel before day 30 and nothing is charged.",
+  "te": "30వ రోజు కంటే ముందే క్యాన్సిల్ చేస్తే ఏమీ కట్ చేయరు.",
+  "hi": "30वें दिन से पहले कैंसल कर दें तो कुछ चार्ज नहीं होगा।",
+  "kn": "30ನೇ ದಿನದ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.period.ends": {
+  "en": "This period ends on {date}.",
+  "te": "ఈ పీరియడ్ {date}న ముగుస్తుంది.",
+  "hi": "यह पीरियड {date} को खत्म होगा।",
+  "kn": "ಈ ಅವಧಿ {date}ಕ್ಕೆ ಮುಗಿಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.meters.title": {
+  "en": "What you have used this period",
+  "te": "ఈ పీరియడ్‌లో మీరు వాడినవి",
+  "hi": "इस पीरियड में आपने क्या इस्तेमाल किया",
+  "kn": "ಈ ಅವಧಿಯಲ್ಲಿ ನೀವು ಬಳಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.meter.minutes": {
+  "en": "Call minutes",
+  "te": "కాల్ మినిట్స్",
+  "hi": "कॉल मिनट",
+  "kn": "ಕಾಲ್ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.meter.messages": {
+  "en": "WhatsApp messages you start",
+  "te": "మీరు మొదలుపెట్టే WhatsApp మెసేజ్‌లు",
+  "hi": "आपकी तरफ़ से शुरू किए WhatsApp मैसेज",
+  "kn": "ನೀವು ಶುರು ಮಾಡುವ WhatsApp ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.meter.messages.help": {
+  "en": "Messages your business sends first, such as reminders and announcements.",
+  "te": "రిమైండర్లు, ప్రకటనల లాగా మీ బిజినెస్ ముందుగా పంపే మెసేజ్‌లు.",
+  "hi": "वे मैसेज जो आपका बिज़नेस पहले भेजता है, जैसे रिमाइंडर और अनाउंसमेंट।",
+  "kn": "ರಿಮೈಂಡರ್ ಮತ್ತು ಅನೌನ್ಸ್‌ಮೆಂಟ್‌ಗಳಂತೆ, ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಮೊದಲು ಕಳುಹಿಸುವ ಮೆಸೇಜ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.meter.of": {
+  "en": "{used} of {included}",
+  "te": "{included}లో {used}",
+  "hi": "{included} में से {used}",
+  "kn": "{included} ಪೈಕಿ {used}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.meter.percent": {
+  "en": "{n}% used",
+  "te": "{n}% వాడారు",
+  "hi": "{n}% इस्तेमाल हुआ",
+  "kn": "{n}% ಬಳಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.meter.left": {
+  "en": "{n} left",
+  "te": "{n} మిగిలాయి",
+  "hi": "{n} बाकी",
+  "kn": "{n} ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.meter.no_cap": {
+  "en": "{used} used. You pay for what you use.",
+  "te": "{used} వాడారు. మీరు వాడినదానికే చెల్లిస్తారు.",
+  "hi": "{used} इस्तेमाल हुआ। आप जितना इस्तेमाल करते हैं, उतना ही देते हैं।",
+  "kn": "{used} ಬಳಸಿದ್ದೀರಿ. ಬಳಸಿದಷ್ಟಕ್ಕೆ ಮಾತ್ರ ಪೇಮೆಂಟ್ ಮಾಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.meter.not_included": {
+  "en": "Not included in this plan.",
+  "te": "ఈ ప్లాన్‌లో లేదు.",
+  "hi": "इस प्लान में शामिल नहीं।",
+  "kn": "ಈ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.notice.80": {
+  "en": "You have used {n}% of your {what}. When they are all used, calls and the messages your business starts pause. Everything else keeps working.",
+  "te": "మీ {what}లో {n}% వాడేశారు. అవన్నీ అయిపోతే, కాల్స్ మరియు మీ బిజినెస్ మొదలుపెట్టే మెసేజ్‌లు ఆగిపోతాయి. మిగతావన్నీ మామూలుగానే పనిచేస్తాయి.",
+  "hi": "आप अपने {what} का {n}% इस्तेमाल कर चुके हैं। सब खत्म होने पर कॉल और आपके बिज़नेस की तरफ़ से शुरू होने वाले मैसेज रुक जाएँगे। बाकी सब चलता रहेगा।",
+  "kn": "ನಿಮ್ಮ {what} ಪೈಕಿ {n}% ಬಳಸಿದ್ದೀರಿ. ಎಲ್ಲಾ ಮುಗಿದರೆ, ಕಾಲ್ ಮತ್ತು ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಶುರು ಮಾಡುವ ಮೆಸೇಜ್‌ಗಳು ನಿಲ್ಲುತ್ತವೆ. ಉಳಿದೆಲ್ಲವೂ ಎಂದಿನಂತೆ ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.what.minutes": {
+  "en": "call minutes",
+  "te": "కాల్ మినిట్స్",
+  "hi": "कॉल मिनट",
+  "kn": "ಕಾಲ್ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.what.messages": {
+  "en": "WhatsApp messages",
+  "te": "WhatsApp మెసేజ్‌లు",
+  "hi": "WhatsApp मैसेज",
+  "kn": "WhatsApp ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.paused.title": {
+  "en": "Calls and announcements are paused",
+  "te": "కాల్స్, ప్రకటనలు ఆగిపోయాయి",
+  "hi": "कॉल और अनाउंसमेंट रुके हुए हैं",
+  "kn": "ಕಾಲ್ ಮತ್ತು ಅನೌನ್ಸ್‌ಮೆಂಟ್‌ಗಳು ನಿಂತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.paused.body": {
+  "en": "You have used all your {what} for this period. Calls and the messages your business starts stay paused until the next period starts or you change your plan. Quotes, orders, follow-ups and your customers keep working as usual.",
+  "te": "ఈ పీరియడ్‌కి మీ {what} అన్నీ వాడేశారు. తర్వాతి పీరియడ్ మొదలయ్యే వరకు, లేదా మీరు ప్లాన్ మార్చే వరకు కాల్స్, మీ బిజినెస్ మొదలుపెట్టే మెసేజ్‌లు ఆగిపోయే ఉంటాయి. కోట్‌లు, ఆర్డర్లు, ఫాలోఅప్‌లు, మీ కస్టమర్లు మామూలుగానే పనిచేస్తాయి.",
+  "hi": "इस पीरियड के आपके सारे {what} इस्तेमाल हो चुके हैं। अगला पीरियड शुरू होने तक, या आपके प्लान बदलने तक, कॉल और आपके बिज़नेस की तरफ़ से शुरू होने वाले मैसेज रुके रहेंगे। Quote, ऑर्डर, फ़ॉलो-अप और आपके ग्राहक पहले की तरह चलते रहेंगे।",
+  "kn": "ಈ ಅವಧಿಯ ನಿಮ್ಮ ಎಲ್ಲಾ {what} ಮುಗಿದಿವೆ. ಮುಂದಿನ ಅವಧಿ ಶುರುವಾಗುವವರೆಗೆ ಅಥವಾ ನೀವು ಪ್ಲಾನ್ ಬದಲಾಯಿಸುವವರೆಗೆ ಕಾಲ್ ಮತ್ತು ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಶುರು ಮಾಡುವ ಮೆಸೇಜ್‌ಗಳು ನಿಲ್ಲುತ್ತವೆ. ಕೋಟ್‌ಗಳು, ಆರ್ಡರ್‌ಗಳು, ಫಾಲೋ-ಅಪ್‌ಗಳು ಮತ್ತು ನಿಮ್ಮ ಗ್ರಾಹಕರು ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.at100.title": {
+  "en": "When everything is used up",
+  "te": "అన్నీ అయిపోతే",
+  "hi": "जब सब इस्तेमाल हो जाए",
+  "kn": "ಎಲ್ಲವೂ ಮುಗಿದಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.at100.body": {
+  "en": "When the call minutes or the WhatsApp messages of your plan are all used, calls and the messages your business starts pause until the next period or until you change your plan. Quotes, orders, follow-ups and your customers never stop.",
+  "te": "మీ ప్లాన్‌లోని కాల్ మినిట్స్ లేదా WhatsApp మెసేజ్‌లు అన్నీ అయిపోతే, తర్వాతి పీరియడ్ వచ్చే వరకు, లేదా మీరు ప్లాన్ మార్చే వరకు కాల్స్, మీ బిజినెస్ మొదలుపెట్టే మెసేజ్‌లు ఆగిపోతాయి. కోట్‌లు, ఆర్డర్లు, ఫాలోఅప్‌లు, మీ కస్టమర్లు ఎప్పుడూ ఆగవు.",
+  "hi": "जब आपके प्लान के कॉल मिनट या WhatsApp मैसेज सब खत्म हो जाते हैं, तो अगले पीरियड तक, या आपके प्लान बदलने तक, कॉल और आपके बिज़नेस की तरफ़ से शुरू होने वाले मैसेज रुक जाते हैं। Quote, ऑर्डर, फ़ॉलो-अप और आपके ग्राहक कभी नहीं रुकते।",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನ ಕಾಲ್ ನಿಮಿಷಗಳು ಅಥವಾ WhatsApp ಮೆಸೇಜ್‌ಗಳು ಮುಗಿದರೆ, ಮುಂದಿನ ಅವಧಿ ಬರುವವರೆಗೆ ಅಥವಾ ನೀವು ಪ್ಲಾನ್ ಬದಲಾಯಿಸುವವರೆಗೆ ಕಾಲ್ ಮತ್ತು ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಶುರು ಮಾಡುವ ಮೆಸೇಜ್‌ಗಳು ನಿಲ್ಲುತ್ತವೆ. ಕೋಟ್‌ಗಳು, ಆರ್ಡರ್‌ಗಳು, ಫಾಲೋ-ಅಪ್‌ಗಳು ಮತ್ತು ನಿಮ್ಮ ಗ್ರಾಹಕರು ಯಾವತ್ತೂ ನಿಲ್ಲುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.change": {
+  "en": "Change plan",
+  "te": "ప్లాన్ మార్చండి",
+  "hi": "प्लान बदलें",
+  "kn": "ಪ್ಲಾನ್ ಬದಲಾಯಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.see_all": {
+  "en": "See all plans",
+  "te": "అన్ని ప్లాన్‌లు చూడండి",
+  "hi": "सारे प्लान देखें",
+  "kn": "ಎಲ್ಲಾ ಪ್ಲಾನ್‌ಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.start": {
+  "en": "Start 30-day trial",
+  "te": "30 రోజుల ట్రయల్ మొదలుపెట్టండి",
+  "hi": "30 दिन का ट्रायल शुरू करें",
+  "kn": "30 ದಿನದ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.cancel.trial": {
+  "en": "Cancel trial",
+  "te": "ట్రయల్ క్యాన్సిల్ చేయండి",
+  "hi": "ट्रायल कैंसल करें",
+  "kn": "ಟ್ರಯಲ್ ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.cancel.paid": {
+  "en": "Cancel plan",
+  "te": "ప్లాన్ క్యాన్సిల్ చేయండి",
+  "hi": "प्लान कैंसल करें",
+  "kn": "ಪ್ಲಾನ್ ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.cancel.ask.trial": {
+  "en": "Cancel your trial? Nothing will be charged.",
+  "te": "మీ ట్రయల్ క్యాన్సిల్ చేయాలా? ఏమీ కట్ చేయరు.",
+  "hi": "ट्रायल कैंसल करना है? कुछ चार्ज नहीं होगा।",
+  "kn": "ಟ್ರಯಲ್ ಕ್ಯಾನ್ಸಲ್ ಮಾಡಬೇಕೇ? ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.cancel.ask.paid": {
+  "en": "Cancel your plan?",
+  "te": "మీ ప్లాన్ క్యాన్సిల్ చేయాలా?",
+  "hi": "प्लान कैंसल करना है?",
+  "kn": "ಪ್ಲಾನ್ ಕ್ಯಾನ್ಸಲ್ ಮಾಡಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.cancel.yes": {
+  "en": "Yes, cancel",
+  "te": "అవును, క్యాన్సిల్ చేయండి",
+  "hi": "हाँ, कैंसल करें",
+  "kn": "ಹೌದು, ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.cancel.no": {
+  "en": "Keep it",
+  "te": "ఉంచండి",
+  "hi": "रहने दें",
+  "kn": "ಇರಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.cancelled.trial": {
+  "en": "Your trial was cancelled. Nothing was charged.",
+  "te": "మీ ట్రయల్ క్యాన్సిల్ అయింది. ఏమీ కట్ చేయలేదు.",
+  "hi": "आपका ट्रायल कैंसल हो गया। कुछ चार्ज नहीं हुआ।",
+  "kn": "ನಿಮ್ಮ ಟ್ರಯಲ್ ಕ್ಯಾನ್ಸಲ್ ಆಗಿದೆ. ಏನೂ ಚಾರ್ಜ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.cancelled.paid": {
+  "en": "Your plan was cancelled.",
+  "te": "మీ ప్లాన్ క్యాన్సిల్ అయింది.",
+  "hi": "आपका प्लान कैंसल हो गया।",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್ ಕ್ಯಾನ್ಸಲ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.pastdue.title": {
+  "en": "Your last payment did not go through",
+  "te": "మీ చివరి పేమెంట్ కాలేదు",
+  "hi": "आपका पिछला पेमेंट नहीं हो पाया",
+  "kn": "ನಿಮ್ಮ ಕೊನೆಯ ಪೇಮೆಂಟ್ ಆಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.pastdue.body": {
+  "en": "Update your payment method to keep your plan.",
+  "te": "ప్లాన్ కొనసాగాలంటే మీ పేమెంట్ పద్ధతి అప్‌డేట్ చేయండి.",
+  "hi": "अपना प्लान चालू रखने के लिए पेमेंट का तरीका अपडेट करें।",
+  "kn": "ಪ್ಲಾನ್ ಮುಂದುವರಿಯಲು ನಿಮ್ಮ ಪೇಮೆಂಟ್ ಮೆಥಡ್ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.fix": {
+  "en": "Update payment method",
+  "te": "పేమెంట్ పద్ధతి అప్‌డేట్ చేయండి",
+  "hi": "पेमेंट का तरीका अपडेट करें",
+  "kn": "ಪೇಮೆಂಟ್ ಮೆಥಡ್ ಅಪ್‌ಡೇಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.fixed": {
+  "en": "Payment method updated. Your plan is active.",
+  "te": "పేమెంట్ పద్ధతి అప్‌డేట్ అయింది. మీ ప్లాన్ యాక్టివ్‌గా ఉంది.",
+  "hi": "पेमेंट का तरीका अपडेट हो गया। आपका प्लान चालू है।",
+  "kn": "ಪೇಮೆಂಟ್ ಮೆಥಡ್ ಅಪ್‌ಡೇಟ್ ಆಗಿದೆ. ನಿಮ್ಮ ಪ್ಲಾನ್ ಚಾಲ್ತಿಯಲ್ಲಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.picker.title": {
+  "en": "Choose a plan",
+  "te": "ప్లాన్ ఎంచుకోండి",
+  "hi": "प्लान चुनें",
+  "kn": "ಪ್ಲಾನ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.picker.sub": {
+  "en": "Every plan starts with a 30-day trial. You add a payment method to start. If you cancel before day 30, nothing is charged.",
+  "te": "ప్రతి ప్లాన్ 30 రోజుల ట్రయల్‌తో మొదలవుతుంది. మొదలుపెట్టడానికి మీరు పేమెంట్ పద్ధతి యాడ్ చేయాలి. 30వ రోజు కంటే ముందే క్యాన్సిల్ చేస్తే, ఏమీ కట్ చేయరు.",
+  "hi": "हर प्लान 30 दिन के ट्रायल से शुरू होता है। शुरू करने के लिए आपको पेमेंट का तरीका जोड़ना होगा। 30वें दिन से पहले कैंसल कर दें तो कुछ चार्ज नहीं होगा।",
+  "kn": "ಪ್ರತಿ ಪ್ಲಾನ್ 30 ದಿನದ ಟ್ರಯಲ್‌ನಿಂದ ಶುರುವಾಗುತ್ತದೆ. ಶುರು ಮಾಡಲು ಪೇಮೆಂಟ್ ಮೆಥಡ್ ಸೇರಿಸಿ. 30ನೇ ದಿನದ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.picker.main": {
+  "en": "For your whole business",
+  "te": "మీ మొత్తం బిజినెస్ కోసం",
+  "hi": "आपके पूरे बिज़नेस के लिए",
+  "kn": "ನಿಮ್ಮ ಇಡೀ ಬಿಸಿನೆಸ್‌ಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.picker.calls": {
+  "en": "Calls only",
+  "te": "కాల్స్ మాత్రమే",
+  "hi": "सिर्फ़ कॉल",
+  "kn": "ಕಾಲ್ ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.picker.calls.sub": {
+  "en": "For businesses that only want calls.",
+  "te": "కాల్స్ మాత్రమే కావాలనుకునే బిజినెస్‌ల కోసం.",
+  "hi": "उन बिज़नेस के लिए जिन्हें सिर्फ़ कॉल चाहिए।",
+  "kn": "ಕಾಲ್ ಮಾತ್ರ ಬೇಕಾದ ಬಿಸಿನೆಸ್‌ಗಳಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.picker.includes": {
+  "en": "Every plan includes quotes, orders, follow-ups, your customers and your AI team (fair use).",
+  "te": "ప్రతి ప్లాన్‌లో కోట్‌లు, ఆర్డర్లు, ఫాలోఅప్‌లు, మీ కస్టమర్లు, మీ AI టీమ్ ఉంటాయి (సరైన వాడకానికి).",
+  "hi": "हर प्लान में quote, ऑर्डर, फ़ॉलो-अप, आपके ग्राहक और आपकी AI टीम शामिल हैं (सामान्य इस्तेमाल तक)।",
+  "kn": "ಪ್ರತಿ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಕೋಟ್‌ಗಳು, ಆರ್ಡರ್‌ಗಳು, ಫಾಲೋ-ಅಪ್‌ಗಳು, ನಿಮ್ಮ ಗ್ರಾಹಕರು ಮತ್ತು ನಿಮ್ಮ AI ಟೀಮ್ ಇರುತ್ತವೆ (ಸಾಮಾನ್ಯ ಬಳಕೆಗೆ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.picker.current": {
+  "en": "Your plan",
+  "te": "మీ ప్లాన్",
+  "hi": "आपका प्लान",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.row.minutes": {
+  "en": "Call minutes a month",
+  "te": "నెలకి కాల్ మినిట్స్",
+  "hi": "हर महीने कॉल मिनट",
+  "kn": "ತಿಂಗಳಿಗೆ ಕಾಲ್ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.row.messages": {
+  "en": "WhatsApp messages you start, a month",
+  "te": "నెలకి మీరు మొదలుపెట్టే WhatsApp మెసేజ్‌లు",
+  "hi": "आपकी तरफ़ से शुरू किए WhatsApp मैसेज, हर महीने",
+  "kn": "ತಿಂಗಳಿಗೆ ನೀವು ಶುರು ಮಾಡುವ WhatsApp ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.row.users": {
+  "en": "Team members",
+  "te": "టీమ్ సభ్యులు",
+  "hi": "टीम मेंबर",
+  "kn": "ಟೀಮ್ ಸದಸ್ಯರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.row.workspaces": {
+  "en": "Workspaces",
+  "te": "వర్క్‌స్పేస్‌లు",
+  "hi": "वर्कस्पेस",
+  "kn": "ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.value.payg": {
+  "en": "Pay for the minutes you use",
+  "te": "వాడిన మినిట్స్‌కే చెల్లించండి",
+  "hi": "जितने मिनट इस्तेमाल करें, उतने का पेमेंट",
+  "kn": "ಬಳಸಿದ ನಿಮಿಷಗಳಿಗೆ ಮಾತ್ರ ಪೇಮೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.value.none": {
+  "en": "Not included",
+  "te": "లేదు",
+  "hi": "शामिल नहीं",
+  "kn": "ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.method.label": {
+  "en": "Payment method (test mode)",
+  "te": "పేమెంట్ పద్ధతి (టెస్ట్ మోడ్)",
+  "hi": "पेमेंट का तरीका (टेस्ट मोड)",
+  "kn": "ಪೇಮೆಂಟ್ ಮೆಥಡ್ (ಟೆಸ್ಟ್ ಮೋಡ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.method.ok": {
+  "en": "Test card that works",
+  "te": "పనిచేసే టెస్ట్ కార్డ్",
+  "hi": "टेस्ट कार्ड जो चलता है",
+  "kn": "ಕೆಲಸ ಮಾಡುವ ಟೆಸ್ಟ್ ಕಾರ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.method.fails": {
+  "en": "Test card that fails on renewal",
+  "te": "రెన్యూవల్‌లో ఫెయిల్ అయ్యే టెస్ట్ కార్డ్",
+  "hi": "टेस्ट कार्ड जो रिन्यू पर फ़ेल होता है",
+  "kn": "ರಿನ್ಯೂವಲ್‌ನಲ್ಲಿ ಫೇಲ್ ಆಗುವ ಟೆಸ್ಟ್ ಕಾರ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.start.for": {
+  "en": "Start the 30-day trial of {name}",
+  "te": "{name} 30 రోజుల ట్రయల్ మొదలుపెట్టండి",
+  "hi": "{name} का 30 दिन का ट्रायल शुरू करें",
+  "kn": "{name} 30 ದಿನದ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.start.go": {
+  "en": "Start trial",
+  "te": "ట్రయల్ మొదలుపెట్టండి",
+  "hi": "ट्रायल शुरू करें",
+  "kn": "ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.start.done": {
+  "en": "Your 30-day trial of {name} has started.",
+  "te": "మీ {name} 30 రోజుల ట్రయల్ మొదలైంది.",
+  "hi": "{name} का आपका 30 दिन का ट्रायल शुरू हो गया है।",
+  "kn": "{name} ಪ್ಲಾನ್‌ನ 30 ದಿನದ ಟ್ರಯಲ್ ಶುರುವಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.err.not_available": {
+  "en": "Not available yet.",
+  "te": "ఇంకా అందుబాటులో లేదు.",
+  "hi": "अभी उपलब्ध नहीं है।",
+  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.err.forbidden": {
+  "en": "Only the Owner can change the plan.",
+  "te": "ప్లాన్ మార్చడం ఓనర్ మాత్రమే చేయగలరు.",
+  "hi": "प्लान सिर्फ़ ओनर बदल सकते हैं।",
+  "kn": "ಓನರ್ ಮಾತ್ರ ಪ್ಲಾನ್ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.err.invalid": {
+  "en": "That did not work. Try again.",
+  "te": "అది కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। फिर कोशिश करें।",
+  "kn": "ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.err.no_payment_method": {
+  "en": "Choose a payment method to start the trial.",
+  "te": "ట్రయల్ మొదలుపెట్టడానికి పేమెంట్ పద్ధతి ఎంచుకోండి.",
+  "hi": "ट्रायल शुरू करने के लिए पेमेंट का तरीका चुनें।",
+  "kn": "ಟ್ರಯಲ್ ಶುರು ಮಾಡಲು ಪೇಮೆಂಟ್ ಮೆಥಡ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.err.already": {
+  "en": "You already have a plan.",
+  "te": "మీకు ఇప్పటికే ప్లాన్ ఉంది.",
+  "hi": "आपके पास पहले से एक प्लान है।",
+  "kn": "ನಿಮಗೆ ಈಗಾಗಲೇ ಪ್ಲಾನ್ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.testfwd": {
+  "en": "Test only: jump to day 30",
+  "te": "టెస్ట్ కోసం మాత్రమే: 30వ రోజుకి వెళ్ళండి",
+  "hi": "सिर्फ़ टेस्ट के लिए: दिन 30 पर जाएँ",
+  "kn": "ಟೆಸ್ಟ್ ಮಾತ್ರ: 30ನೇ ದಿನಕ್ಕೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.testfwd.note": {
+  "en": "Test mode only. Moves the trial to its last day and takes the first payment with your test payment method.",
+  "te": "టెస్ట్ మోడ్‌లో మాత్రమే. ట్రయల్‌ని చివరి రోజుకి తీసుకెళ్ళి, మీ టెస్ట్ పేమెంట్ పద్ధతితో మొదటి పేమెంట్ తీసుకుంటుంది.",
+  "hi": "सिर्फ़ टेस्ट मोड में। ट्रायल को उसके आखिरी दिन पर ले जाता है और आपके टेस्ट पेमेंट तरीके से पहला पेमेंट लेता है।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್ ಮಾತ್ರ. ಟ್ರಯಲ್ ಅನ್ನು ಕೊನೆಯ ದಿನಕ್ಕೆ ಒಯ್ದು, ನಿಮ್ಮ ಟೆಸ್ಟ್ ಪೇಮೆಂಟ್ ಮೆಥಡ್‌ನಿಂದ ಮೊದಲ ಪೇಮೆಂಟ್ ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.billing.charged": {
+  "en": "The first payment was taken with your test payment method.",
+  "te": "మొదటి పేమెంట్ మీ టెస్ట్ పేమెంట్ పద్ధతితో తీసుకున్నాం.",
+  "hi": "पहला पेमेंट आपके टेस्ट पेमेंट तरीके से लिया गया।",
+  "kn": "ನಿಮ್ಮ ಟೆಸ್ಟ್ ಪೇಮೆಂಟ್ ಮೆಥಡ್‌ನಿಂದ ಮೊದಲ ಪೇಮೆಂಟ್ ತೆಗೆದುಕೊಂಡಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.method.declined": {
+  "en": "Test card that is declined at once",
+  "te": "వెంటనే రిజెక్ట్ అయ్యే టెస్ట్ కార్డ్",
+  "hi": "ऐसा टेस्ट कार्ड जो तुरंत रिजेक्ट हो जाता है",
+  "kn": "ತಕ್ಷಣ ರಿಜೆಕ್ಟ್ ಆಗುವ ಟೆಸ್ಟ್ ಕಾರ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.err.declined": {
+  "en": "The payment method was declined, so the trial did not start.",
+  "te": "పేమెంట్ పద్ధతి రిజెక్ట్ అయింది, కాబట్టి ట్రయల్ మొదలవలేదు.",
+  "hi": "पेमेंट का तरीका रिजेक्ट हो गया, इसलिए ट्रायल शुरू नहीं हुआ।",
+  "kn": "ಪೇಮೆಂಟ್ ಮೆಥಡ್ ರಿಜೆಕ್ಟ್ ಆಯಿತು, ಹಾಗಾಗಿ ಟ್ರಯಲ್ ಶುರುವಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.err.used": {
+  "en": "The free trial can be started only once for a workspace.",
+  "te": "ఒక వర్క్‌స్పేస్‌కి ఫ్రీ ట్రయల్ ఒక్కసారే మొదలుపెట్టగలరు.",
+  "hi": "एक वर्कस्पेस के लिए फ्री ट्रायल सिर्फ़ एक बार शुरू हो सकता है।",
+  "kn": "ಒಂದು ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ ಫ್ರೀ ಟ್ರಯಲ್ ಒಂದೇ ಬಾರಿ ಶುರು ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.pastdue.until": {
+  "en": "Please put it right by {date}.",
+  "te": "దయచేసి {date} లోపు సరిచేయండి.",
+  "hi": "कृपया इसे {date} तक ठीक करें।",
+  "kn": "ದಯವಿಟ್ಟು {date} ಒಳಗೆ ಸರಿಪಡಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.period.cancels": {
+  "en": "Your plan ends on {date}. It will not renew.",
+  "te": "మీ ప్లాన్ {date}న ముగుస్తుంది. మళ్ళీ రెన్యూ అవ్వదు.",
+  "hi": "आपका प्लान {date} को खत्म होगा। यह दोबारा रिन्यू नहीं होगा।",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್ {date}ಕ್ಕೆ ಮುಗಿಯುತ್ತದೆ. ಮತ್ತೆ ರಿನ್ಯೂ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.state.read_only": {
+  "en": "Read only",
+  "te": "చదవడానికి మాత్రమే",
+  "hi": "सिर्फ़ देखने के लिए",
+  "kn": "ನೋಡಲು ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.readonly.title": {
+  "en": "Your workspace is read-only",
+  "te": "మీ వర్క్‌స్పేస్ ఇప్పుడు చదవడానికి మాత్రమే",
+  "hi": "आपका वर्कस्पेस अभी सिर्फ़ देखने के लिए है",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಈಗ ನೋಡಲು ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.readonly.body": {
+  "en": "Your trial ended without a payment. You can look at everything and export it, ask for a copy of your data or ask us to delete it. Calls, messages, AI answers and every change are switched off.",
+  "te": "మీ ట్రయల్ పేమెంట్ లేకుండా ముగిసింది. అన్నీ చూడవచ్చు, ఎక్స్‌పోర్ట్ చేయవచ్చు, మీ డేటా కాపీ అడగవచ్చు లేదా డిలీట్ చేయమని అడగవచ్చు. కాల్స్, మెసేజ్‌లు, AI జవాబులు, ఏ మార్పులైనా ఆపివేయబడ్డాయి.",
+  "hi": "आपका ट्रायल पेमेंट के बिना खत्म हो गया। आप सब कुछ देख सकते हैं और एक्सपोर्ट कर सकते हैं, अपने डेटा की कॉपी मँगवा सकते हैं या उसे डिलीट करने को कह सकते हैं। कॉल, मैसेज, AI के जवाब और हर बदलाव बंद हैं।",
+  "kn": "ನಿಮ್ಮ ಟ್ರಯಲ್ ಪೇಮೆಂಟ್ ಇಲ್ಲದೆ ಮುಗಿದಿದೆ. ನೀವು ಎಲ್ಲವನ್ನೂ ನೋಡಬಹುದು ಮತ್ತು ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಬಹುದು, ನಿಮ್ಮ ಡೇಟಾದ ಕಾಪಿ ಕೇಳಬಹುದು ಅಥವಾ ಡಿಲೀಟ್ ಮಾಡಲು ಕೇಳಬಹುದು. ಕಾಲ್, ಮೆಸೇಜ್, AI ಉತ್ತರ ಮತ್ತು ಎಲ್ಲಾ ಬದಲಾವಣೆಗಳು ಆಫ್ ಆಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.readonly.since": {
+  "en": "Read-only since {date}.",
+  "te": "{date} నుండి చదవడానికి మాత్రమే.",
+  "hi": "{date} से सिर्फ़ देखने के लिए।",
+  "kn": "{date} ರಿಂದ ನೋಡಲು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.readonly.until": {
+  "en": "Your data is kept until {date} and then deleted. Days left: {n}.",
+  "te": "మీ డేటా {date} వరకు ఉంచబడుతుంది, తర్వాత డిలీట్ అవుతుంది. మిగిలిన రోజులు: {n}.",
+  "hi": "आपका डेटा {date} तक रखा जाएगा, फिर डिलीट हो जाएगा। बचे हुए दिन: {n}।",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾ {date} ವರೆಗೆ ಇರುತ್ತದೆ, ನಂತರ ಡಿಲೀಟ್ ಆಗುತ್ತದೆ. ಉಳಿದ ದಿನಗಳು: {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.readonly.go": {
+  "en": "To go on, write to {email}.",
+  "te": "కొనసాగాలంటే {email} కి రాయండి.",
+  "hi": "आगे बढ़ने के लिए {email} पर लिखें।",
+  "kn": "ಮುಂದುವರಿಯಲು {email} ಗೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.err.read_only": {
+  "en": "Your workspace is read-only, so this is switched off.",
+  "te": "మీ వర్క్‌స్పేస్ చదవడానికి మాత్రమే స్థితిలో ఉంది, అందుకే ఇది ఆపివేయబడింది.",
+  "hi": "आपका वर्कस्पेस सिर्फ़ देखने के लिए है, इसलिए यह बंद है।",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್ ನೋಡಲು ಮಾತ್ರ ಇದೆ, ಆದ್ದರಿಂದ ಇದು ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.value.payg_messages": {
+  "en": "Pay for the messages you send",
+  "te": "పంపిన మెసేజ్‌లకే చెల్లించండి",
+  "hi": "जितने मैसेज भेजें, उतने का पेमेंट",
+  "kn": "ಕಳುಹಿಸಿದ ಮೆಸೇಜ್‌ಗಳಿಗೆ ಮಾತ್ರ ಪೇಮೆಂಟ್",
   "status": {
    "te": "draft",
    "hi": "draft",

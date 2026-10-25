@@ -17,6 +17,7 @@
 # (the rehearsal with synthetic data: docs/runbooks/hosting-rehearsal-owner.md; every variable and secret: docs/runbooks/hosting-env-and-secrets.md).
 #
 # Optional: WEB_RUN_SA=<service account the WEB runs as; it needs no role at all: the web holds no secret>   (RUN_SA is the API's and the worker's)
+# Optional (worker, job DJ): WORKER_EXTRA_ENV="A=b" and WORKER_EXTRA_SECRETS="SARVAM_API_KEY=sme-sarvam-api-key:latest" (the voice-note speech key; docs/runbooks/voice-notes-real.md)
 # Optional (api): EXTRA_ENV="A=b,C=d" more PLAIN settings (no secret, no comma inside a value)   EXTRA_SECRETS="NAME=secret:latest,..." secrets from Secret Manager   MIN_INSTANCES=0 with CPU_ALWAYS=true
 # Optional: BUILD_SA=<service account the Cloud Build runs as>   BUILD=docker (build on this machine instead of Cloud Build)
 # Optional, all public values:  RUN_SA=<service account e-mail the service runs as; give it ONLY roles/secretmanager.secretAccessor>   TRUSTED_PROXY_HOPS=1 (how many proxies write X-Forwarded-For; 1 = Cloud Run itself)
@@ -55,15 +56,25 @@ build_api() {
       --config deploy/cloudbuild-api.yaml --substitutions "_IMAGE=$1" .
   fi
 }
+# The scheduler worker's image (job DJ): the same code as the API plus ffmpeg, a target of the same Dockerfile.
+build_worker() {
+  if [ "${BUILD:-cloudbuild}" = "docker" ]; then
+    run docker build --platform linux/amd64 -f deploy/Dockerfile.api --target worker -t "$1" .
+    run docker push "$1"
+  else
+    run gcloud builds submit --project "$PROJECT_ID" --region "$REGION" ${BUILD_SA:+--service-account "projects/$PROJECT_ID/serviceAccounts/$BUILD_SA"} --suppress-logs \
+      --config deploy/cloudbuild-api.yaml --substitutions "_IMAGE=$1,_TARGET=worker" .
+  fi
+}
 build_web() {
   if [ "${BUILD:-cloudbuild}" = "docker" ]; then
     run docker build --platform linux/amd64 -f deploy/Dockerfile.web -t "$1" \
       --build-arg "NEXT_PUBLIC_API_BASE_URL=$API_URL" --build-arg "NEXT_PUBLIC_SUPABASE_URL=$SUPABASE_URL" \
-      --build-arg "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$PUBLIC_KEY" --build-arg "NEXT_PUBLIC_SITE_URL=$WEB_ORIGIN" --build-arg "NEXT_PUBLIC_SITE_LIVE=${SITE_LIVE:-0}" .
+      --build-arg "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$PUBLIC_KEY" --build-arg "NEXT_PUBLIC_SITE_URL=$WEB_ORIGIN" --build-arg "NEXT_PUBLIC_SITE_LIVE=${SITE_LIVE:-0}" --build-arg "NEXT_PUBLIC_SIGNUP_OPEN=${SIGNUP_OPEN:-0}" .
     run docker push "$1"
   else
     run gcloud builds submit --project "$PROJECT_ID" --region "$REGION" ${BUILD_SA:+--service-account "projects/$PROJECT_ID/serviceAccounts/$BUILD_SA"} --suppress-logs \
-      --config deploy/cloudbuild-web.yaml --substitutions "_IMAGE=$1,_API_URL=$API_URL,_SUPABASE_URL=$SUPABASE_URL,_PUBLISHABLE_KEY=$PUBLIC_KEY,_SITE_URL=$WEB_ORIGIN" .
+      --config deploy/cloudbuild-web.yaml --substitutions "_IMAGE=$1,_API_URL=$API_URL,_SUPABASE_URL=$SUPABASE_URL,_PUBLISHABLE_KEY=$PUBLIC_KEY,_SITE_URL=$WEB_ORIGIN,_SIGNUP_OPEN=${SIGNUP_OPEN:-0}" .
   fi
 }
 
@@ -114,12 +125,13 @@ if [ "$what" = "worker" ]; then
   { [ "$EVERY" -ge 1 ] && [ "$EVERY" -le 59 ]; } || { echo "WORKER_EVERY_MINUTES must be from 1 to 59" >&2; exit 2; }
   SCHEDULE="*/$EVERY * * * *"
   INTERVAL=$((EVERY * 60))
-  image="$registry/api:$TAG"
+  image="$registry/worker:$TAG"   # its own image since job DJ (ffmpeg); the API's stays small
+  build_worker "$image"
   run gcloud run jobs deploy sme-worker --project "$PROJECT_ID" --region "$REGION" --image "$image" \
     --command python --args=-m,app.scheduler.worker,--once --cpu 1 --memory 512Mi --max-retries 0 --task-timeout 120s \
     ${RUN_SA:+--service-account "$RUN_SA"} \
-    --set-env-vars "$(common_env),OUTBOX_ADAPTER=fake,SCHEDULER_EMAIL=$SCHEDULER_EMAIL,SCHEDULER_INTERVAL_SECONDS=$INTERVAL" \
-    --set-secrets "SCHEDULER_PASSWORD=$SECRET_SCHEDULER:latest,SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest"
+    --set-env-vars "$(common_env),OUTBOX_ADAPTER=fake,SCHEDULER_EMAIL=$SCHEDULER_EMAIL,SCHEDULER_INTERVAL_SECONDS=$INTERVAL${WORKER_EXTRA_ENV:+,$WORKER_EXTRA_ENV}" \
+    --set-secrets "SCHEDULER_PASSWORD=$SECRET_SCHEDULER:latest,SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest${WORKER_EXTRA_SECRETS:+,$WORKER_EXTRA_SECRETS}"
   # create the schedule, or update it when it exists (a redeploy must not fail on it)
   verb=create
   if $execute && gcloud scheduler jobs describe sme-worker-tick --project "$PROJECT_ID" --location "$REGION" >/dev/null 2>&1; then verb=update; fi

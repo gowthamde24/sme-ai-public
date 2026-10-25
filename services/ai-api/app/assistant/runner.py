@@ -121,7 +121,11 @@ def _sha(obj: Any) -> str:
 
 
 def source_of(item: Item) -> SourceOut:
-    link = item.fields.get("map" if item.type == "place" else "address") if item.type in ("web", "place") else None
+    link = (
+        item.fields.get("map" if item.type == "place" else "address")
+        if item.type in ("web", "place")
+        else None
+    )
     return SourceOut.model_validate(
         {
             "kind": item.type,
@@ -129,7 +133,9 @@ def source_of(item: Item) -> SourceOut:
             "label": item.label,
             "target": {"type": item.open[0], "id": item.open[1]} if item.open else None,
             "url": str(link) if link else None,
-            "place_id": str(item.fields["place_id"]) if item.type == "place" and item.fields.get("place_id") else None,
+            "place_id": str(item.fields["place_id"])
+            if item.type == "place" and item.fields.get("place_id")
+            else None,
         }
     )
 
@@ -139,7 +145,9 @@ def web_sources_line(language: Language, items: list[Item]) -> str:
     pages = [i for i in items if i.type == "web"]
     if not pages:
         return ""
-    return f"{WEB_SOURCES[language]} " + "; ".join(f"{i.label} ({i.fields.get('address')})" for i in pages)
+    return f"{WEB_SOURCES[language]} " + "; ".join(
+        f"{i.label} ({i.fields.get('address')})" for i in pages
+    )
 
 
 def hide_places(text: str, state: State, language: Language) -> str:
@@ -201,6 +209,9 @@ class AssistantRunner:
             for turn in range(1, MAX_TURNS + 1):
                 turns = turn
                 self._guard()
+                # job DG: progress is told AS IT HAPPENS, so the first byte of the answer's stream does not wait for the whole run. The answer text itself is still sent only after the checks below
+                # (cited sources, amounts, hygiene), because a sentence that fails them must never have been shown
+                emit("step", {"type": "step", "step": "working"})
                 request = prompts.build_request(
                     turn=turn,
                     delimiter=self._delimiter,
@@ -285,6 +296,7 @@ class AssistantRunner:
                         continue
                     self._guard()
                     actions += 1 if tool.action else 0
+                    emit("step", {"type": "step", "step": "looking"})
                     status, items, note, facts = self._execute(tool, args)
                     self._db.record_step(
                         key,
@@ -344,7 +356,14 @@ class AssistantRunner:
             return frozenset()
         on = web.enabled()
         return frozenset(
-            name for name, key in (("web_search", "web_search"), ("read_page", "read_page"), ("find_retailers", "find_retailers"), ("get_metal_prices", "metal_prices")) if on[key] and name in WEB_TOOL_NAMES
+            name
+            for name, key in (
+                ("web_search", "web_search"),
+                ("read_page", "read_page"),
+                ("find_retailers", "find_retailers"),
+                ("get_metal_prices", "metal_prices"),
+            )
+            if on[key] and name in WEB_TOOL_NAMES
         )
 
     def _note_router_miss(self, what: str, language: str) -> None:
@@ -496,7 +515,11 @@ class AssistantRunner:
             message_id=message_id,
             text=reply.text,
             language=reply.language,
-            sources=[{"type": s.kind, "id": str(s.id)} for s in reply.sources if s.kind not in NOT_STORED_SOURCES],
+            sources=[
+                {"type": s.kind, "id": str(s.id)}
+                for s in reply.sources
+                if s.kind not in NOT_STORED_SOURCES
+            ],
             drafts=[{"type": d.kind, "id": str(d.id)} for d in reply.drafts],
         )
         words = reply.text.split(" ")

@@ -9,7 +9,7 @@ select is((select workspace_limit from public.tenants where id = tests.tid('a'))
 select ok((select trial_started_at from public.tenants where id = tests.tid('a')) between now() - interval '1 minute' and now() + interval '1 minute',
   'trial_started_at is set when the workspace is made');
 select throws_ok(
-  format($$update public.tenants set plan = 'nope' where id = %L$$, tests.tid('a')), '23514', null, 'a plan outside the list is refused');
+  format($$update public.tenants set plan = 'nope' where id = %L$$, tests.tid('a')), '23503', null, 'a plan outside the catalogue is refused (a foreign key since job DI)');
 select throws_ok(
   format($$update public.tenants set workspace_limit = 0 where id = %L$$, tests.tid('a')), '23514', null, 'a limit below 1 is refused by the check');
 select throws_ok(

@@ -12,6 +12,7 @@ from fastapi import Depends, Request
 
 from app.agent_runs.wiring import AgentsRuntime
 from app.auth.jwt import AuthError, Principal, TokenVerifier
+from app.billing.service import BillingService
 from app.businessprofile.repository import BusinessProfileRepository
 from app.campaigns.repository import CampaignsRepository
 from app.catalogue.repository import CatalogueRepository
@@ -121,6 +122,8 @@ class Runtime:
     reports: ReportsRepository | None = None
     # job CV: voice notes (settings, voices, the spoken disclosure, the fair-use meter)
     voice_notes: VoiceNotesRepository | None = None
+    # job DI: plans and billing (catalogue, usage meters, trial and cancel; the FAKE provider)
+    billing: BillingService | None = None
 
 
 @dataclass(frozen=True)
@@ -153,6 +156,18 @@ def get_principal(request: Request, runtime: RuntimeDep) -> Principal:
         raise unauthorized() from exc
 
 
+READ_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
+# what a read-only workspace may still do (job DI): see its plan and choose one,
+# ask for a copy of its data, ask for its deletion, export
+READ_ONLY_OK = ("/billing", "/data-exports", "/deletion-requests", "/exports")
+
+
+def _read_only_ok(path: str, tenant_id: str) -> bool:
+    base = f"/v1/tenants/{tenant_id}"
+    tail = path[len(base) :] if path.startswith(base) else path
+    return tail.startswith(READ_ONLY_OK)
+
+
 def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., TenantContext]:
     """Dependency factory. No roles given = any member of the tenant.
 
@@ -166,6 +181,7 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
 
     def dependency(
         tenant_id: str,
+        request: Request,
         principal: Annotated[Principal, Depends(get_principal)],
         runtime: RuntimeDep,
     ) -> TenantContext:
@@ -178,6 +194,12 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             raise not_found()
         if allowed and membership.role not in allowed:
             raise forbidden()
+        path = request.url.path
+        changes = request.method not in READ_METHODS and not _read_only_ok(path, tenant_id)
+        if runtime.billing is not None and changes:
+            # job DI: a workspace whose trial ended unpaid is read-only (viewing, signing in and
+            # exporting stay; every change stops). Always "full" while the billing switch is off.
+            runtime.billing.ensure_writable(principal.token, parsed)
         if strong and membership.role in (Role.OWNER, Role.ADMIN) and principal.aal != "aal2":
             raise mfa_required()
         if runtime.policy_gate is not None:

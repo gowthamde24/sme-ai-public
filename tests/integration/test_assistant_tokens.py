@@ -45,10 +45,12 @@ PATH_QUESTIONS: dict[str, dict[str, str]] = {
 # ceilings in ESTIMATED tokens, PER PATH: (a whole question = all its model calls, one call)
 # history: before job BB every question carried every tool: 3,705 to 3,986 a question and 1,855 to 2,190 a call (job AY: +2 catalogue tools = +600 a question over job AS's 3,450;
 # job AS: +1 visit tool = +154). Job BB, measured: core 2,982 to 3,263 a question and 1,494 to 1,829 a call; catalogue 3,679 to 3,693 and 2,037 to 2,044; visits 3,277 and 1,836; both 3,855 and 2,125.
+# Night merge 25 Oct (job DG put `get_figures` in the CORE tools, offered to every question): core 3,275 to 3,556 a question and 1,640 to 1,975 a call; visits 3,569 and 1,982 (catalogue and both did not grow past their ceilings).
+# The base and visits ceilings are raised to those numbers + about 3%; whether `get_figures` should be routed like the catalogue tools (only for fees, dues and trips) is the owner's call, see night-report.md.
 PATH_CEILINGS: dict[str, tuple[int, int]] = {
-    "base": (3350, 1880),
+    "base": (3660, 2040),
     "catalogue": (3780, 2100),
-    "visits": (3360, 1890),
+    "visits": (3680, 2050),
     "both": (3950, 2180),
 }
 

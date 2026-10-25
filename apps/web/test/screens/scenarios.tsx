@@ -671,6 +671,8 @@ const PRIVACY_HANDLERS = {
     counts: { whatsapp: { unknown: 1, granted: 1, withdrawn: 1 }, phone: { unknown: 3, granted: 0, withdrawn: 0 }, email: { unknown: 2, granted: 1, withdrawn: 0 } },
   }),
 };
+// the plan picker is a 404 while the feature flag is off (job DK); with it on, the screens are covered by app/app/tenants/[tenantId]/plan-screens.test.tsx
+add({ id: "plans-flag-off", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/plans/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "settings-data", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "data" })), handlers: (role) => ({ ...base(role), ...DATA_HANDLERS }) });
 add({ id: "settings-privacy", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "privacy" })), handlers: (role) => ({ ...base(role), ...PRIVACY_HANDLERS }) });
 add({ id: "settings-members", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "members" })), handlers: (role) => ({ ...base(role), fetchMembers: () => parseMembers(MEMBERS_JSON) }) });

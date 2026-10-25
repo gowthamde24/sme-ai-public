@@ -1,0 +1,143 @@
+{
+ "$schema": "./plans.schema.json",
+ "version": 1,
+ "status": "draft",
+ "currency": "INR",
+ "note": "DRAFT of 23 Oct 2026 (owner decisions, job DI). Prices are NOT decided: every price is null until the owner sets it from the usage tests. A published version is never edited: raise `version` and run `make plans-migration`.",
+ "trial": {
+  "plan": "free_trial",
+  "days": 30,
+  "payment_method_at_start": true,
+  "grace_days_after_failed_payment": 7
+ },
+ "plans": [
+  {
+   "id": "free_trial",
+   "kind": "trial",
+   "sort": 0,
+   "name": {
+    "en": "Free trial"
+   },
+   "price_paise_monthly": null,
+   "allowances": {
+    "call_minutes": 30,
+    "whatsapp_messages": 100
+   },
+   "limits": {
+    "users": 1,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "starter",
+   "kind": "main",
+   "sort": 10,
+   "name": {
+    "en": "Starter"
+   },
+   "price_paise_monthly": null,
+   "allowances": {
+    "call_minutes": 0,
+    "whatsapp_messages": 300
+   },
+   "limits": {
+    "users": 1,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "growth",
+   "kind": "main",
+   "sort": 20,
+   "name": {
+    "en": "Growth"
+   },
+   "price_paise_monthly": null,
+   "allowances": {
+    "call_minutes": 100,
+    "whatsapp_messages": 1000
+   },
+   "limits": {
+    "users": 3,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "business",
+   "kind": "main",
+   "sort": 30,
+   "name": {
+    "en": "Business"
+   },
+   "price_paise_monthly": null,
+   "allowances": {
+    "call_minutes": 300,
+    "whatsapp_messages": 3000
+   },
+   "limits": {
+    "users": 10,
+    "workspaces": 3
+   },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "calls_payg",
+   "kind": "calls",
+   "sort": 40,
+   "name": {
+    "en": "Pay-as-you-go"
+   },
+   "price_paise_monthly": null,
+   "price_paise_per_minute": null,
+   "price_paise_per_message": null,
+   "allowances": {
+    "call_minutes": null,
+    "whatsapp_messages": null
+   },
+   "limits": {
+    "users": 1,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "calls_300",
+   "kind": "calls",
+   "sort": 50,
+   "name": {
+    "en": "Calls 300"
+   },
+   "price_paise_monthly": null,
+   "allowances": {
+    "call_minutes": 300,
+    "whatsapp_messages": 300
+   },
+   "limits": {
+    "users": 1,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  {
+   "id": "calls_1000",
+   "kind": "calls",
+   "sort": 60,
+   "name": {
+    "en": "Calls 1,000"
+   },
+   "price_paise_monthly": null,
+   "allowances": {
+    "call_minutes": 1000,
+    "whatsapp_messages": 1000
+   },
+   "limits": {
+    "users": 1,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  }
+ ]
+}

@@ -55,6 +55,8 @@ describe("sources and draft cards", () => {
 
 describe("events", () => {
   it("parses every event the API sends, in the box's shape", () => {
+    expect(parseAssistantEvent("step", { type: "step", step: "looking" })).toEqual({ type: "step", step: "looking" });
+    expect(() => parseAssistantEvent("step", { type: "step", step: "anything else" })).toThrow();
     expect(parseAssistantEvent("text", { type: "text", delta: "ఈ రోజు" })).toEqual({ type: "text", delta: "ఈ రోజు" });
     expect(parseAssistantEvent("source", { type: "source", ...SOURCE })).toEqual({ type: "source", ...SOURCE });
     expect(parseAssistantEvent("draft", { type: "draft", ...DRAFT })).toEqual({ type: "draft", ...DRAFT });

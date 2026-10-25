@@ -19,6 +19,12 @@ from typing import Protocol
 
 import httpx
 
+from app.billing.mail import (
+    BillingReminders,
+    EmailSender,
+    PostgrestBillingMailRepository,
+    build_sender,
+)
 from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
 from app.notifications.repository import PostgrestNotificationsRepository
@@ -34,7 +40,7 @@ from app.scheduler.repository import PostgrestSchedulerRepository, SchedulerRepo
 from app.scheduler.session import PrincipalSession, SignInError
 from app.scheduler.tick import TickResult, run_tick
 from app.tenancy.repository import TokenRejected
-from app.voice.factory import build_tts
+from app.voice.factory import build_note_voice
 
 logger = logging.getLogger("app.scheduler.worker")
 
@@ -62,6 +68,7 @@ class Worker:
         housekeeping: Housekeeping | None = None,
         push: PushRunner | None = None,
         voice: VoiceNotes | None = None,
+        billing_mail: BillingReminders | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -76,6 +83,8 @@ class Worker:
         self._push = push
         # job CV: the spoken copy of a campaign message, made at send time by the text-to-speech provider (None = voice notes are not available in this process)
         self._voice = voice
+        # job DI: the e-mails of a workspace that went read-only (day 1, 30, 60, 83); the FAKE sender sends nothing; only while the platform's billing switch is on
+        self._billing_mail = billing_mail
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -91,6 +100,7 @@ class Worker:
             )
             self._privacy_housekeeping(token)
             self._push_to_the_team(token)
+            self._billing_reminders(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -123,6 +133,16 @@ class Worker:
         except Exception as exc:
             logger.error("push pass crashed: %s", exc.__class__.__name__)
 
+    def _billing_reminders(self, token: str) -> None:
+        if self._billing_mail is None:
+            return
+        try:
+            self._billing_mail.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("billing reminders crashed: %s", exc.__class__.__name__)
+
     def run_forever(self, stop: threading.Event) -> None:
         """Tick, then wait for the next deadline (not `interval` after the tick ended: a slow tick does not push the schedule back). Returns when `stop` is set."""
         deadline = self._monotonic()
@@ -136,6 +156,13 @@ class Worker:
                 deadline = self._monotonic()
                 wait = 0
             stop.wait(wait)
+
+
+def _billing_sender(settings: Settings) -> EmailSender:
+    try:
+        return build_sender(settings.billing_email_sender)
+    except ValueError as exc:
+        raise ConfigurationError(str(exc)) from None
 
 
 def build_worker(settings: Settings) -> Worker:
@@ -170,10 +197,11 @@ def build_worker(settings: Settings) -> Worker:
         adapter,
         session,
         interval_seconds=settings.scheduler_interval_seconds,
+        billing_mail=BillingReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,
-        voice=VoiceNotes(repository, build_tts(settings)),
+        voice=VoiceNotes(repository, *build_note_voice(settings)),
     )
 
 

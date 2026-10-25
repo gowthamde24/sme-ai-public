@@ -20,6 +20,8 @@ import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 import { serverT } from "@/i18n/server-t";
+import { hasModule } from "@/lib/packs/has";
+import { readPackCached } from "@/lib/packs/read";
 import type { Say } from "@/components/v2/app/words";
 
 export type EnquiryActionState = { ok?: boolean; error?: string; message?: string } | undefined;
@@ -34,7 +36,7 @@ function field(formData: FormData, name: string): string {
 const trimmed = (formData: FormData, name: string) => field(formData, name).trim();
 
 /** Every failure becomes a short sentence of OUR wording; nothing the API or the customer wrote is echoed. */
-function describe(error: unknown, t: Say): string {
+function describe(error: unknown, t: Say, materials = false): string {
   if (error instanceof ApiAuthError) redirect("/login");
   if (error instanceof ApiRequestError) {
     if (error.status === 403) return t("enq.write_roles");
@@ -47,13 +49,13 @@ function describe(error: unknown, t: Say): string {
       case "requirement_not_draft":
         return t("enq.this_requirement_is_no_longer_a");
       case "not_confirmable":
-        return t("enq.approve_a_saree_type_and_a");
+        return t(materials ? "mat.req.approve_a_product" : "enq.approve_a_saree_type_and_a");
       case "value_not_accepted":
         return t("enq.that_value_could_not_be_read");
       case "quote_not_found":
         return t("enq.that_quote_is_not_in_the");
       case "invalid_line":
-        return t("enq.saree_type_fabric_colour_and_quantity");
+        return t(materials ? "mat.req.line_fields" : "enq.saree_type_fabric_colour_and_quantity");
       case "invalid_value":
         return t("enq.that_field_already_has_a_value");
       case "empty_enquiry":
@@ -173,7 +175,7 @@ export async function addFieldAction(
   _prev: EnquiryActionState,
   formData: FormData,
 ): Promise<EnquiryActionState> {
-  const t = await serverT(["enq."]);
+  const t = await serverT(["enq.", "mat."]);
   const user = await requireUser();
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId)) return { ok: false, error: t("enq.this_enquiry_is_not_available") };
   const key = trimmed(formData, "field");
@@ -192,7 +194,7 @@ export async function addFieldAction(
   try {
     await addField(user.accessToken, tenantId, enquiryId, { line, field: fieldKey, value, quote: quote === "" ? null : quote });
   } catch (error) {
-    return { ok: false, error: describe(error, t) };
+    return { ok: false, error: describe(error, t, hasModule(await readPackCached(user.accessToken, tenantId).catch(() => null), "materials")) };
   }
   revalidatePath(`/app/tenants/${tenantId}/enquiries/${enquiryId}`);
   return { ok: true, message: t("enq.added_and_approved") };
@@ -203,14 +205,14 @@ export async function confirmRequirementAction(
   enquiryId: string,
   requirementId: string,
 ): Promise<EnquiryActionState> {
-  const t = await serverT(["enq."]);
+  const t = await serverT(["enq.", "mat."]);
   const user = await requireUser();
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId) || !isCanonicalUuid(requirementId))
     return { ok: false, error: t("enq.this_requirement_is_not_available") };
   try {
     await confirmRequirement(user.accessToken, tenantId, requirementId);
   } catch (error) {
-    return { ok: false, error: describe(error, t) };
+    return { ok: false, error: describe(error, t, hasModule(await readPackCached(user.accessToken, tenantId).catch(() => null), "materials")) };
   }
   revalidatePath(`/app/tenants/${tenantId}/enquiries/${enquiryId}`);
   return { ok: true, message: t("enq.approved_nothing_was_sent_to_anyone") };

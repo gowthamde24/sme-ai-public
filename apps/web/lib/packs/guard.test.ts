@@ -64,7 +64,7 @@ describe("every page of a workspace has been decided (a new page must say whethe
   const at = (p: string) => moduleForPath(`/app/tenants/${T}${p}`)?.module ?? null;
   const routes = walk(TENANT).map((f) => "/" + path.relative(TENANT, path.dirname(f)).replace(/\\/g, "/")).map((r) => (r === "/" ? "" : r));
   // Pages that need NO module on purpose: Today and its Start page, Settings, Help, the privacy and suppression pages, the team, the outbox: the places every business type has (the closed module list of packages/packs has no module for them).
-  const OPEN = ["", "/help", "/help/[guide]", "/outbox", "/privacy", "/settings", "/start", "/suppression", "/team"];
+  const OPEN = ["", "/help", "/help/[guide]", "/outbox", "/plans", "/privacy", "/settings", "/start", "/suppression", "/team"];
   it("finds the pages", () => {
     expect(routes.length).toBeGreaterThan(30);
   });

@@ -286,7 +286,9 @@ async function checkWorkspace(u, label, { offPath }) {
       await shot(page, `${label}-custom-field-no-companies`);
       return "the field is on the form; the form is switched off for a business type with no companies (said plainly)";
     }
-    await page.getByText(/was added|Added|saved/i).first().waitFor({ timeout: 60000 });
+    // wait for the form's OWN answer (the status message after it saved), not for any text on the page that happens to say "saved": the customer, its lead and its custom values are saved in steps, and a check made before the
+    // last one finds the contact without its value (job DG: this race was the con-9 failure that appeared once the web got slower to answer than it used to be)
+    await page.getByRole("status").filter({ hasText: /Added/ }).first().waitFor({ timeout: 60000 });
     const token = u.token || (await aal2Token(u.email));
     const contact = psql(`select id from public.contacts where tenant_id = '${u.tenant}' and full_name = 'E2E ${label} Customer'`);
     const values = await api("GET", `/v1/tenants/${u.tenant}/contacts/${contact}/custom`, null, token);

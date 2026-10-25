@@ -10,7 +10,7 @@ Oct 5, 2026, 3:30 PM (18 hours ago)
 Need paver blocks 1,000 sq ft for a driv eway at Ku k atpally. No laying. This is the customer's text, shown as plain text. Contact details were removed before it was saved. Marked words are the ones a field relies on.
 {label="Requirement"}
 ## Requirement
-Approved Cannot approve yet Ready for a quote Approving needs a saree type and a quantity on the same line, approved by a person. "Ready for a quote" also needs the delivery city, the date it is needed and the payment terms. Nothing here is ever sent. [Stored questions for the customer →](/app/tenants/22222222-2222-2222-2222-222222222222/requirements/66666666-6666-4666-8666-666666666666/questions)
+Approved Cannot approve yet Ready for a quote Approving needs a product type and an area (or a quantity) on the same line, approved by a person. Nothing here is ever sent. [Stored questions for the customer →](/app/tenants/22222222-2222-2222-2222-222222222222/requirements/66666666-6666-4666-8666-666666666666/questions)
 ### Line 1
 - Product Approved paver block suggested by the assistant ; stated in the enquiry From the enquiry: paver blocks
 - Area Approved 1,000 sq ft suggested by the assistant ; stated in the enquiry From the enquiry: 1,000 sq ft

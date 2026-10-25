@@ -1,0 +1,715 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "billing.schema.json",
+  "title": "Plans and billing: the catalogue, usage meters, the trial (job DI)",
+  "description": "Generated from services/ai-api/app/billing/models.py by `make contracts`.",
+  "$defs": {
+    "AccessOut": {
+      "additionalProperties": false,
+      "description": "Whether the workspace can be changed. `access` is `read_only` after the trial (or the paid period) ended unpaid: signing in, viewing and exporting stay; sending, AI, calls and every change stop,\nso the web shows view and export only and switches the edit buttons off. Always `full` while the platform's billing switch is off. The data is kept until `delete_on` (90 days after\n`read_only_since`).",
+      "properties": {
+        "access": {
+          "enum": [
+            "full",
+            "read_only"
+          ],
+          "title": "Access",
+          "type": "string"
+        },
+        "read_only_since": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Read Only Since"
+        },
+        "delete_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delete On"
+        },
+        "data_days_left": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Data Days Left"
+        }
+      },
+      "required": [
+        "access",
+        "read_only_since",
+        "delete_on",
+        "data_days_left"
+      ],
+      "title": "AccessOut",
+      "type": "object"
+    },
+    "BillingOut": {
+      "additionalProperties": false,
+      "properties": {
+        "plan": {
+          "$ref": "#/$defs/PlanOut"
+        },
+        "subscription": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SubscriptionOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "period": {
+          "$ref": "#/$defs/PeriodOut"
+        },
+        "usage": {
+          "$ref": "#/$defs/UsageOut"
+        },
+        "notices": {
+          "items": {
+            "$ref": "#/$defs/NoticeOut"
+          },
+          "title": "Notices",
+          "type": "array"
+        },
+        "can_start_trial": {
+          "title": "Can Start Trial",
+          "type": "boolean"
+        },
+        "access": {
+          "enum": [
+            "full",
+            "read_only"
+          ],
+          "title": "Access",
+          "type": "string"
+        },
+        "read_only_since": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Read Only Since"
+        },
+        "delete_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delete On"
+        },
+        "data_days_left": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Data Days Left"
+        }
+      },
+      "required": [
+        "plan",
+        "subscription",
+        "period",
+        "usage",
+        "notices",
+        "can_start_trial",
+        "access",
+        "read_only_since",
+        "delete_on",
+        "data_days_left"
+      ],
+      "title": "BillingOut",
+      "type": "object"
+    },
+    "MeterOut": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "call_minutes",
+            "whatsapp_messages"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "unit": {
+          "enum": [
+            "minutes",
+            "messages"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "used": {
+          "title": "Used",
+          "type": "number"
+        },
+        "allowance": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Allowance"
+        },
+        "remaining": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Remaining"
+        },
+        "percent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Percent"
+        },
+        "state": {
+          "enum": [
+            "ok",
+            "notice",
+            "stopped"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "included": {
+          "title": "Included",
+          "type": "boolean"
+        },
+        "topup": {
+          "title": "Topup",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "unit",
+        "used",
+        "allowance",
+        "remaining",
+        "percent",
+        "state",
+        "included",
+        "topup"
+      ],
+      "title": "MeterOut",
+      "type": "object"
+    },
+    "NoticeOut": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "call_minutes",
+            "whatsapp_messages"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            80,
+            100
+          ],
+          "title": "Level",
+          "type": "integer"
+        },
+        "period_start": {
+          "format": "date",
+          "title": "Period Start",
+          "type": "string"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "level",
+        "period_start",
+        "at"
+      ],
+      "title": "NoticeOut",
+      "type": "object"
+    },
+    "PeriodOut": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "format": "date",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date",
+          "title": "End",
+          "type": "string"
+        },
+        "timezone": {
+          "const": "Asia/Kolkata",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "days_left": {
+          "title": "Days Left",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "timezone",
+        "days_left"
+      ],
+      "title": "PeriodOut",
+      "type": "object"
+    },
+    "PlanAllowancesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "call_minutes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Call Minutes"
+        },
+        "whatsapp_messages": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Whatsapp Messages"
+        }
+      },
+      "required": [
+        "call_minutes",
+        "whatsapp_messages"
+      ],
+      "title": "PlanAllowancesOut",
+      "type": "object"
+    },
+    "PlanLimitsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "users": {
+          "title": "Users",
+          "type": "integer"
+        },
+        "workspaces": {
+          "title": "Workspaces",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "users",
+        "workspaces"
+      ],
+      "title": "PlanLimitsOut",
+      "type": "object"
+    },
+    "PlanNameOut": {
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "te": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Te"
+        },
+        "hi": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hi"
+        },
+        "kn": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kn"
+        }
+      },
+      "required": [
+        "en"
+      ],
+      "title": "PlanNameOut",
+      "type": "object"
+    },
+    "PlanOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "trial",
+            "main",
+            "calls"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "sort": {
+          "title": "Sort",
+          "type": "integer"
+        },
+        "name": {
+          "$ref": "#/$defs/PlanNameOut"
+        },
+        "price_paise_monthly": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Price Paise Monthly"
+        },
+        "price_paise_per_minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price Paise Per Minute"
+        },
+        "price_paise_per_message": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price Paise Per Message"
+        },
+        "price_set": {
+          "title": "Price Set",
+          "type": "boolean"
+        },
+        "allowances": {
+          "$ref": "#/$defs/PlanAllowancesOut"
+        },
+        "limits": {
+          "$ref": "#/$defs/PlanLimitsOut"
+        },
+        "ai": {
+          "const": "included_fair_use",
+          "title": "Ai",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "sort",
+        "name",
+        "price_paise_monthly",
+        "price_set",
+        "allowances",
+        "limits",
+        "ai"
+      ],
+      "title": "PlanOut",
+      "type": "object"
+    },
+    "PlansOut": {
+      "additionalProperties": false,
+      "properties": {
+        "catalogue_version": {
+          "title": "Catalogue Version",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "published"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "currency": {
+          "const": "INR",
+          "title": "Currency",
+          "type": "string"
+        },
+        "trial": {
+          "$ref": "#/$defs/TrialRulesOut"
+        },
+        "plans": {
+          "items": {
+            "$ref": "#/$defs/PlanOut"
+          },
+          "title": "Plans",
+          "type": "array"
+        }
+      },
+      "required": [
+        "catalogue_version",
+        "status",
+        "currency",
+        "trial",
+        "plans"
+      ],
+      "title": "PlansOut",
+      "type": "object"
+    },
+    "SubscriptionOut": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "trialing",
+            "active",
+            "past_due",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "plan_id": {
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "trial_ends_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trial Ends At"
+        },
+        "current_period_end": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Period End"
+        },
+        "cancel_at_period_end": {
+          "title": "Cancel At Period End",
+          "type": "boolean"
+        },
+        "grace_until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grace Until"
+        },
+        "payment_method_on_file": {
+          "title": "Payment Method On File",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "status",
+        "plan_id",
+        "provider",
+        "cancel_at_period_end",
+        "payment_method_on_file"
+      ],
+      "title": "SubscriptionOut",
+      "type": "object"
+    },
+    "TrialRulesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "days": {
+          "title": "Days",
+          "type": "integer"
+        },
+        "payment_method_at_start": {
+          "title": "Payment Method At Start",
+          "type": "boolean"
+        },
+        "grace_days_after_failed_payment": {
+          "title": "Grace Days After Failed Payment",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "days",
+        "payment_method_at_start",
+        "grace_days_after_failed_payment"
+      ],
+      "title": "TrialRulesOut",
+      "type": "object"
+    },
+    "TrialStartIn": {
+      "additionalProperties": false,
+      "properties": {
+        "plan_id": {
+          "pattern": "^[a-z][a-z0-9_]{1,30}$",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "checkout_ref": {
+          "maxLength": 100,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Checkout Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_id",
+        "checkout_ref"
+      ],
+      "title": "TrialStartIn",
+      "type": "object"
+    },
+    "UsageOut": {
+      "additionalProperties": false,
+      "properties": {
+        "call_minutes": {
+          "$ref": "#/$defs/MeterOut"
+        },
+        "whatsapp_messages": {
+          "$ref": "#/$defs/MeterOut"
+        }
+      },
+      "required": [
+        "call_minutes",
+        "whatsapp_messages"
+      ],
+      "title": "UsageOut",
+      "type": "object"
+    },
+    "UsageViewOut": {
+      "additionalProperties": false,
+      "properties": {
+        "period": {
+          "$ref": "#/$defs/PeriodOut"
+        },
+        "usage": {
+          "$ref": "#/$defs/UsageOut"
+        },
+        "notices": {
+          "items": {
+            "$ref": "#/$defs/NoticeOut"
+          },
+          "title": "Notices",
+          "type": "array"
+        }
+      },
+      "required": [
+        "period",
+        "usage",
+        "notices"
+      ],
+      "title": "UsageViewOut",
+      "type": "object"
+    }
+  }
+}

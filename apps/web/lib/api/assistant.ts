@@ -59,6 +59,8 @@ export interface DraftCard {
 }
 
 export type AssistantEvent =
+  /** Progress, told as it happens (job DG): the run has started a turn ("working") or is reading the business's records ("looking"). A closed word; it carries nothing else and is not part of the answer. */
+  | { type: "step"; step: "working" | "looking" }
   | { type: "text"; delta: string }
   | ({ type: "source" } & AssistantSource)
   | ({ type: "draft" } & DraftCard)
@@ -144,6 +146,8 @@ const list = <T>(v: unknown, f: (x: unknown) => T, what: string, max = 50): T[] 
 export function parseAssistantEvent(name: string, data: unknown): AssistantEvent | null {
   if (!isRecord(data) || data.type !== name) return bad("event");
   switch (name) {
+    case "step":
+      return { type: "step", step: oneOf(["working", "looking"] as const, data.step, "step") };
     case "text":
       return { type: "text", delta: str(data.delta, "delta") };
     case "source":

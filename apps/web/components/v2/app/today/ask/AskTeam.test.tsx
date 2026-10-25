@@ -435,3 +435,19 @@ describe("AskTeam: the hero variant (the Agent OWL card of Today)", () => {
     expect(onMood).toHaveBeenLastCalledWith("resting");
   });
 });
+
+describe("AskTeam: the answer stays in view while it streams (job DH)", () => {
+  it("scrolls the page as words arrive, because the answer area sits below the fold on a phone", async () => {
+    const scrollBy = vi.fn();
+    Object.defineProperty(window, "scrollBy", { configurable: true, writable: true, value: scrollBy });
+    Object.defineProperty(window, "innerHeight", { configurable: true, writable: true, value: 844 });
+    Object.defineProperty(window, "innerWidth", { configurable: true, writable: true, value: 390 });
+    vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({ top: 600, bottom: 1000, left: 0, right: 390, width: 390, height: 400, x: 0, y: 600, toJSON: () => ({}) });
+    box(playing([{ type: "text", delta: "Two quotes " }, { type: "text", delta: "wait for you." }, { type: "done" }]));
+    ask("What needs me?");
+    await waitFor(() => expect(screen.getByText("Two quotes wait for you.")).toBeInTheDocument());
+    expect(scrollBy).toHaveBeenCalled();
+    expect(scrollBy.mock.calls.every(([o]) => o.top > 0)).toBe(true);
+    vi.restoreAllMocks();
+  });
+});

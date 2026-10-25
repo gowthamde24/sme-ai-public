@@ -100,6 +100,12 @@ class Settings(BaseSettings):
     # Job AT (ADR 0066): the channel adapter of the outbox. Only "fake" exists (a local stand-in
     # that sends nothing to anyone); anything else stops the process at start.
     outbox_adapter: str = "fake"
+    # Job DI (ADR 0092): the billing provider. Only "fake" exists (no network);
+    # anything else stops the process at start.
+    billing_provider: str = "fake"
+    # The e-mails of a read-only workspace (ADR 0092 addendum). Only "fake" exists (it sends
+    # nothing); anything else stops the process at start.
+    billing_email_sender: str = "fake"
     # Job AW (ADR 0068): the scheduler worker (`make dev-worker-local`). It signs in as ITS OWN
     # account, which the operator registered in the database (no workspace, no key of any kind).
     # The address and the password come from the environment only, are never logged, and are
@@ -147,6 +153,12 @@ class Settings(BaseSettings):
     sarvam_stt_model: str = "saaras:v4"
     sarvam_tts_model: str = "bulbul:v3"
     sarvam_tts_speaker: str | None = None
+    # Job DJ (ADR 0093): the speech of WhatsApp VOICE NOTES (the worker). auto = Sarvam when
+    # SARVAM_API_KEY is set, else VOICE_TTS_PROVIDER when it names one, else the fake provider in
+    # development and none elsewhere (the text then goes alone); off | fake (development only) |
+    # sarvam (needs the key AND ffmpeg). VOICE_NOTE_FFMPEG: the program that codes OGG/Opus.
+    voice_note_tts_provider: str = "auto"
+    voice_note_ffmpeg: str = "ffmpeg"
     bhashini_api_key: SecretStr | None = None
     bhashini_asr_service_id: str | None = None
     bhashini_tts_service_id: str | None = None

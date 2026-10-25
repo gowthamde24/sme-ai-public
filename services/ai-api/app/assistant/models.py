@@ -27,8 +27,10 @@ SourceType = Literal[
     "web",
     "place",
     "metal_price",
+    # job DG: a total or a count from a report of the business (school fees, money owed, today's deliveries): shown now, never stored as a source (the figures are in the answer's text)
+    "report",
 ]
-NOT_STORED_SOURCES = frozenset({"web", "place", "metal_price"})
+NOT_STORED_SOURCES = frozenset({"web", "place", "metal_price", "report"})
 DraftType = Literal["quote", "followup_draft", "reply_draft", "enquiry", "store_visit"]
 OpenType = Literal[
     "quote", "lead", "enquiry", "order", "outbox_message", "call_request", "store_visit"

@@ -1,4 +1,4 @@
-.PHONY: docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: seed-demo-school docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -24,7 +24,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/prepare_channel_agent.py ../../scripts/whatsapp_test_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../scripts/stack_env.py ../../scripts/gen_agent_stack.py ../../scripts/packs_check.py ../../scripts/pack_migration.py ../../scripts/new_pack.py ../../scripts/fake_whatsapp_server.py ../../tools/mutation-followups
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/prepare_channel_agent.py ../../scripts/whatsapp_test_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../scripts/stack_env.py ../../scripts/gen_agent_stack.py ../../scripts/packs_check.py ../../scripts/pack_migration.py ../../scripts/plans_check.py ../../scripts/plans_migration.py ../../scripts/new_pack.py ../../scripts/fake_whatsapp_server.py ../../tools/mutation-followups
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -56,6 +56,21 @@ packs-check:
 	$(PY)/python scripts/pack_migration.py --check
 	node $(WEB)/scripts/site-packs.mjs --check   # job CM: the public site's copy of the landing blocks is fresh (`make site-packs` writes it)
 
+.PHONY: usage-report plans-check plans-migration
+# Job DI: the plans catalogue is DATA in packages/plans/plans.json (prices null until the owner sets them). `plans-check` validates it against plans.schema.json, its rules, that NO plan id is a string literal in code,
+# and that its version is in a migration (`make plans-migration` writes it). A synced version is never edited: raise `version`. ADR 0092.
+plans-check:
+	$(PY)/python scripts/plans_check.py
+	$(PY)/python scripts/plans_migration.py --check
+
+plans-migration:
+	$(PY)/python scripts/plans_migration.py
+
+# Job DI: what the staging workspaces used (AI ledger, business WhatsApp messages, call minutes) and what each plan would cost us at low / typical / heavy use; READ-ONLY, synthetic data, a markdown table for the owner
+# (the cost model is scripts/usage_assumptions.json: everything not measured is an ASSUMPTION and printed as one). Usage: make usage-report OUT=~/Desktop/v2-overnight/usage-report.md
+usage-report:
+	python3 -I scripts/usage_report.py --source staging --i-know-this-reads-staging --project-ref uiallwgywitryxatcqxf --days 14 --out "$(or $(OUT),usage-report.md)"
+
 site-packs:
 	node $(WEB)/scripts/site-packs.mjs
 
@@ -66,7 +81,7 @@ new-pack:
 	@test -n "$(ID)" || { echo "usage: make new-pack ID=<id>   (lower case, for example clinics)"; exit 2; }
 	$(PY)/python scripts/new_pack.py "$(ID)"
 
-check-fast: check-leftovers secret-scan packs-check lint typecheck test test-packages
+check-fast: check-leftovers secret-scan packs-check plans-check lint typecheck test test-packages
 
 # Definition of done. Needs Docker + the Supabase CLI (the DB isolation tests are the security gate).
 # db-reset first: audit rows of earlier integration runs are append-only, so a stale database could trip a pgTAP canary (T008 owner change I).
@@ -183,6 +198,11 @@ seed-demo:
 
 # Manual-price quote demo (slice 4b), LOCAL ONLY: a workspace named DEMO with twelve invented item types, a published quote policy and one invented enquiry, through the API as the demo owner.
 # Same sign-in as seed-demo (no service-role key, no new secret); refuses any URL that is not this machine; idempotent. Needs `make db-start` and `make dev-api`. Wipe: `make db-reset`.
+# Job DG (scripts/seed_demo_school.py, scripts/demo_data.py): the local twin of the hosted seed's extra demo data: a construction product (visible, with a generated placeholder picture) and a school (students, guardians with
+# FAKE +00 phones, fees with dues), each in its own workspace. Local stack only, idempotent, never overwrites. Needs the stack and `make dev-api-local`.
+seed-demo-school:
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo_school.py
+
 seed-demo-manual:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo_manual.py
 

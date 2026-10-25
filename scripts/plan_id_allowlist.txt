@@ -1,0 +1,5 @@
+# Files that still hold a plan id as a string literal on a line about a plan (scripts/plans_check.py). One path per line, then the reason. Remove a line when its file is fixed.
+services/ai-api/app/tenancy/models.py the old single-plan route (GET /plan answers the free trial only); the billing screens (job DI contract) replace it
+apps/web/lib/api/plan.ts the old single-plan reader of the same route
+apps/web/lib/site/plans.ts the public site's plan teaser (ids only, no numbers); it moves to the catalogue when prices are set
+apps/web/components/v2/app/frame-parts.tsx a comment that quotes the old plan name as an example

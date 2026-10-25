@@ -6,6 +6,7 @@ import type { AssistantEvent, Target } from "@/lib/api/assistant";
 import { ApiRequestError } from "@/lib/api/client";
 import type { VoiceAssistantEvent } from "@/lib/api/voice";
 
+import { ndjsonResponse } from "./ask-response";
 import { knownCode, MAX_DRAFTS, MAX_SOURCES, pathFor, toAskEvents, voiceErrorCode } from "./ask-stream";
 
 const B = "/app/tenants/T";
@@ -109,6 +110,31 @@ describe("toAskEvents", () => {
   });
   it("a stream that ends with neither done nor error is an error", async () => {
     expect(await run([{ type: "text", delta: "half" }])).toEqual([{ type: "text", delta: "half" }, { type: "error" }]);
+  });
+  it("a step opens the stream once and is never part of the answer (job DG)", async () => {
+    expect(await run([{ type: "step", step: "working" }, { type: "step", step: "looking" }, { type: "step", step: "working" }, { type: "text", delta: "Hi" }, done])).toEqual([{ type: "step" }, { type: "text", delta: "Hi" }, { type: "done" }]);
+  });
+  it("the route answers as soon as the first step arrives, not when the answer is ready (job DG)", async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    async function* slow(): AsyncGenerator<AskEvent> {
+      yield { type: "step" };
+      await gate; // the model is still working
+      yield { type: "text", delta: "late" };
+      yield { type: "done" };
+    }
+    const response = await ndjsonResponse(slow(), () => undefined); // resolves while the answer is still being made
+    const reader = (response.body as ReadableStream<Uint8Array>).getReader();
+    const first = await reader.read();
+    expect(new TextDecoder().decode(first.value)).toBe('{"type":"step"}\n');
+    release();
+    let rest = "";
+    for (;;) {
+      const { value, done: end } = await reader.read();
+      if (end) break;
+      rest += new TextDecoder().decode(value);
+    }
+    expect(rest).toBe('{"type":"text","delta":"late"}\n{"type":"done"}\n');
   });
   it("knownCode", () => {
     expect(["ai_paused_until", "run_limit_reached", "agents_disabled", "forbidden", "model_busy", "model_not_configured"].map(knownCode)).toEqual(["ai_paused_until", "run_limit_reached", "agents_disabled", "forbidden", "model_busy", "model_not_configured"]);
