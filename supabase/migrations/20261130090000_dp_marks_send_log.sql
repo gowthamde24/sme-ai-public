@@ -56,6 +56,7 @@ create policy marks_send_log_select on public.marks_send_log for select to authe
   using (tenant_id = any (((select app.my_tenant_ids_with_role(array['owner', 'admin']::public.app_role[])))::uuid[]));
 create trigger marks_send_log_forbid_tenant_id_change before update on public.marks_send_log for each row execute function app.forbid_tenant_id_change();
 create trigger module_guard before insert on public.marks_send_log for each row execute function app.module_guard('programmes');
+create trigger audit_marks_send_log after insert or update on public.marks_send_log for each row execute function app.audit_row_change('marks_send', '');
 
 -- a row says what happened once and never changes, except that a `pending` row becomes `sent` or `failed` (and only that); never deleted
 create function app.marks_send_log_guard() returns trigger

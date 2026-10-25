@@ -73,16 +73,16 @@ select is((select pg_temp.res('b_owner', 'b', '{9000000004}')::jsonb -> 0 ->> 'r
 select is((select pg_temp.res('b_owner', 'b', '{9000000005}')::jsonb -> 0 ->> 'state'), 'blocked', 'C7 an erased guardian is blocked');
 select is(pg_temp.res('b_owner', 'b', '{}'), 'ERR:22023', 'C8 no numbers is invalid');
 select is((select jsonb_array_length(pg_temp.res('b_owner', 'b', '{9000000001,9000000002,9000000001}')::jsonb)), 3, 'C9 one answer per number, in order');
-select is(pg_temp.res('b_owner', 'b', 'null'), 'ERR:22023', 'C10 null is invalid');
+select is(pg_temp.val('b_owner', format($q$select public.marks_send_resolve(%L, null::text[])::text$q$, tests.tid('b'))), 'ERR:22023', 'C10 null is invalid');
 select is((select pg_temp.res('a_owner', 'a', '{9000000001}')), 'ERR:SM701', 'C11 the other business does not see the school''s guardians');
 
 -- ============================================================================ D. the Owner approves (begin)
-select is(pg_temp.beg('b_owner', 'b', 'd1', '[' || pg_temp.item(1, 'g1') || ',' || pg_temp.item(2, 'g2', 'marks.te') || ',' || pg_temp.item(3, 'g3') || ',' || pg_temp.item(4, 'g4', 'report_ready.hi') || ',' || pg_temp.item(5, 'g5') || ']'),
-          '{"blocked": 3, "already": 0, "to_send": [1, 2]}', 'D1 two lines to send, three blocked (opted out, consent withdrawn, erased)');
+select is(pg_temp.beg('b_owner', 'b', 'd1', '[' || pg_temp.item(1, 'g1') || ',' || pg_temp.item(2, 'g2', 'marks.te') || ',' || pg_temp.item(3, 'g3') || ',' || pg_temp.item(4, 'g4', 'report_ready.hi') || ',' || pg_temp.item(5, 'g5') || ']')::jsonb,
+          '{"blocked": 3, "already": 0, "to_send": [1, 2]}'::jsonb, 'D1 two lines to send, three blocked (opted out, consent withdrawn, erased)');
 select is((select string_agg(seq || ':' || status || ':' || coalesce(reason, '-'), ',' order by seq) from public.marks_send_log where batch_id = tests.rid('d1')),
           '1:pending:-,2:pending:-,3:blocked:suppressed,4:blocked:consent_withdrawn,5:blocked:erased', 'D2 the log says so');
 select is((select approved_by from public.marks_send_log where batch_id = tests.rid('d1') and seq = 1), tests.uid('b_owner'), 'D3 it says who approved');
-select is(pg_temp.beg('b_owner', 'b', 'd1', '[' || pg_temp.item(1, 'g1') || ',' || pg_temp.item(2, 'g2', 'marks.te') || ',' || pg_temp.item(6, 'g1b') || ']'), '{"blocked": 0, "already": 2, "to_send": [6]}',
+select is(pg_temp.beg('b_owner', 'b', 'd1', '[' || pg_temp.item(1, 'g1') || ',' || pg_temp.item(2, 'g2', 'marks.te') || ',' || pg_temp.item(6, 'g1b') || ']')::jsonb, '{"blocked": 0, "already": 2, "to_send": [6]}'::jsonb,
           'D4 the same batch again: lines 1 and 2 are NOT sent again, a new line is');
 select is((select count(*)::int from public.marks_send_log where batch_id = tests.rid('d1')), 6, 'D5 six rows, none twice');
 select is(pg_temp.beg('b_owner', 'b', 'd2', '[' || pg_temp.item(1, 'g1', 'marks.ta') || ']'), 'ERR:22023', 'D6 a template id that does not exist is invalid');
