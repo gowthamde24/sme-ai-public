@@ -19,7 +19,8 @@ WHAT IT DOES (idempotent: a second run changes nothing)
      sme-demo-<pack>-totp), never in a file, a log or the output. The owner may read them with `gcloud secrets versions access latest --secret=...`.
   3. Signs each owner in (with the second factor, aal2), runs the first-login setup through OUR API (business type + language), and loads the pack's example data
      through OUR API. Everything after step 1 runs as the demo owner under row-level security, like a real person.
-  4. With --scheduler: creates the scheduler's own account (random password in Secret Manager as sme-scheduler-password) and registers it with
+  4. (job DG) A visible demo product for construction and a school with students, fake guardian phones and fees (scripts/demo_data.py; only what is absent, never an overwrite).
+  5. With --scheduler: creates the scheduler's own account (random password in Secret Manager as sme-scheduler-password) and registers it with
      app.operator_register_scheduler, so the Cloud Run worker job can sign in.
 
 It never calls: db reset, any delete, any wipe. Re-running with the accounts in place only signs in and reads.
@@ -40,7 +41,12 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from typing import Any
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import demo_data  # noqa: E402
 
 STAGING_REF = "uiallwgywitryxatcqxf"
 STAGING_NAME = "stack19-staging"
@@ -178,7 +184,17 @@ class Seeder:
             raise SeedError(f"The authenticator code was refused for {pack} (HTTP {st}).")
         return str(ver["access_token"])
 
-    def call(self, token: str, method: str, path: str, body: Any = None) -> tuple[int, Any]:
+    def call(self, token: str, method: str, path: str, body: Any = None, raw: tuple[bytes, str] | None = None) -> tuple[int, Any]:
+        if raw is not None:  # a file: the body is the file itself with its own type (a photo)
+            req = urllib.request.Request(f"{self.api}{path}", method=method, data=raw[0], headers={"Authorization": f"Bearer {token}", "Content-Type": raw[1], "User-Agent": "stack19-seed-staging"})  # noqa: S310 - https only, checked
+            try:
+                with urllib.request.urlopen(req, timeout=60) as r:  # noqa: S310
+                    return r.status, json.loads(r.read() or b"null")
+            except urllib.error.HTTPError as e:
+                try:
+                    return e.code, json.loads(e.read())
+                except ValueError:
+                    return e.code, None
         return http(method, f"{self.api}{path}", {"Authorization": f"Bearer {token}"}, body)
 
     def business(self, pack: str, name: str, language: str, terms: dict[str, str]) -> dict[str, Any]:
@@ -200,7 +216,19 @@ class Seeder:
             raise SeedError(f"Loading the example data failed for {pack} (HTTP {st}).")
         st, status = self.call(token, "GET", f"/v1/tenants/{tenant}/example-data")
         counts = status.get("counts") if st == 200 and isinstance(status, dict) else None
-        return {"pack": pack, "email": email, "account_created": created, "workspace_created": bool(setup.get("created")), "tenant_id": tenant, "example_data": counts}
+        # job DG: what example data cannot give (a visible construction product; a school with students, fake guardian phones and fees). Each piece only when absent: a re-seed never overwrites.
+        def call(method: str, path: str, body: Any = None, raw: tuple[bytes, str] | None = None) -> tuple[int, Any]:
+            return self.call(token, method, f"/v1/tenants/{tenant}{path}", body, raw)
+
+        extra: dict[str, str] = {}
+        try:
+            if pack == "construction_materials":
+                extra = demo_data.construction_materials(call)
+            elif pack == "education":
+                extra = demo_data.education(call, datetime.now(timezone(timedelta(hours=5, minutes=30))).date())
+        except demo_data.DemoError as e:
+            raise SeedError(f"the demo data of {pack} failed: {e}") from None
+        return {"pack": pack, "email": email, "account_created": created, "workspace_created": bool(setup.get("created")), "tenant_id": tenant, "example_data": counts, "demo_data": extra}
 
     def scheduler(self) -> str:
         password = secret_get(SCHEDULER_SECRET)

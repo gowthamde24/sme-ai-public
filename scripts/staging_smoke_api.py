@@ -94,7 +94,8 @@ def construction_quote(o: Owner) -> None:
     vectors = json.loads((ROOT / "packages/quote-engine/tests/fixtures/construction_vectors.json").read_text(encoding="utf-8"))["vectors"]
     policy = next(v for v in vectors if v["name"].startswith("worked_example"))["request"]["policy"]
     policy = {k: v for k, v in policy.items() if k != "laying"}  # no laying asked in this enquiry, so no laying rule is needed
-    item, enquiry, req_quote = sid("cm-item"), sid("cm-enquiry"), sid(f"cm-quote-{datetime.now(IST).date()}")
+    # the smoke test uses its OWN hidden item: the demo product (scripts/demo_data.py) is shown to customers and must never be touched by a test (DG found this script re-writing the one product on every run)
+    item, enquiry, req_quote = sid("cm-smoke-item"), sid("cm-enquiry"), sid(f"cm-quote-{datetime.now(IST).date()}")
     o.ok("materials policy", "POST", "/materials/policy", {"version_id": sid("cm-policy"), "policy": policy}, want=(200, 201, 409))
     o.ok("item", "PUT", f"/materials/items/{item}", {"name": "Smoke test paver block 80 mm (synthetic)", "sell_unit": "sq_ft", "area_unit": "sq_ft", "stock_status": "in_stock", "active": False, "price_paise": 6500})
     o.ok("item figures", "PUT", f"/catalogue/{item}/custom", {"values": {"product_type": "paver_block", "thickness_mm": "80", "size": "200 x 100 mm", "pieces_per_area": 4.5, "pieces_per_pallet": 500,
