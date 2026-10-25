@@ -4,6 +4,7 @@ begin;
 select no_plan();
 select tests.seed_two_tenants();
 select tests.seed_crm();
+select tests.cn_guards_off();
 
 create function pg_temp.pin(p_instant timestamptz) returns void language plpgsql as $fn$
 begin
