@@ -45,12 +45,12 @@ export function PlanPicker({ words, main, calls, currentId, canStart, mock, acti
           {mine ? <span className="rounded-full border border-brand-edge bg-brand-bg px-2.5 py-0.5 text-sm font-semibold text-brand-text">{t("plan.picker.current")}</span> : null}
         </div>
         <p className="mt-1 text-base">{p.priceInr === null ? t("plan.price.soon") : `₹${num(p.priceInr)}`}</p>
-        <dl className="mt-3 grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 text-sm">
+        <dl className="mt-3 flex flex-col gap-1.5 text-sm">
           {rows.map(([k, v]) => (
-            <React.Fragment key={k}>
+            <div key={k} className="flex flex-wrap items-baseline justify-between gap-x-4">
               <dt className="text-muted">{k}</dt>
-              <dd className="text-right font-medium tabular-nums">{v}</dd>
-            </React.Fragment>
+              <dd className="font-medium tabular-nums">{v}</dd>
+            </div>
           ))}
         </dl>
         {canStart ? (
