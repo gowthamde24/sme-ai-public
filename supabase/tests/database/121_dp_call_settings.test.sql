@@ -113,7 +113,7 @@ select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"keywords": ["a"]}')), 'ERR
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"keywords": ["fine", "Fine"]}')), 'ERR:22023', 'D8 a key word once');
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"keywords": ["bad@word"]}')), 'ERR:22023', 'D9 no at-sign in a key word');
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"keywords": [" padded"]}')), 'ERR:22023', 'D10 no padding');
-select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"keywords": ["a' || chr(8238) || 'bc"]}')), 'ERR:22023', 'D11 no direction override (clean text)');
+select is(pg_temp.save('a_owner', 'a', pg_temp.doc(('{"keywords": ["a' || chr(8238) || 'bc"]}')::jsonb)), 'ERR:22023', 'D11 no direction override (clean text)');
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"holidays": ["2026-11-09", "2026-12-25"]}')) like 'ERR%', false, 'D12 holidays');
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"holidays": ["2026-11-09", "2026-11-09"]}')), 'ERR:22023', 'D13 a day once');
 select is(pg_temp.save('a_owner', 'a', pg_temp.doc('{"holidays": ["2026-02-30"]}')), 'ERR:22023', 'D14 a real day');
