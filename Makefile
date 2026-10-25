@@ -1,4 +1,4 @@
-.PHONY: usage-report plans-check plans-migration docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -56,6 +56,7 @@ packs-check:
 	$(PY)/python scripts/pack_migration.py --check
 	node $(WEB)/scripts/site-packs.mjs --check   # job CM: the public site's copy of the landing blocks is fresh (`make site-packs` writes it)
 
+.PHONY: usage-report plans-check plans-migration
 # Job DI: the plans catalogue is DATA in packages/plans/plans.json (prices null until the owner sets them). `plans-check` validates it against plans.schema.json, its rules, that NO plan id is a string literal in code,
 # and that its version is in a migration (`make plans-migration` writes it). A synced version is never edited: raise `version`. ADR 0092.
 plans-check:
