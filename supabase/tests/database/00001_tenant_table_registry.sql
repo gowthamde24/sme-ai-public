@@ -369,6 +369,13 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
      insert into public.call_list_items (id, tenant_id, campaign_id, recipient_id, call_request_id, lead_id, contact_id, step_no)
        select %2$L, %1$L, cmp.id, rcp.id, cr.id, ld.lead_id, %4$L, 1 from cmp, rcp, cr, ld$$,
    'attempts = attempts', $$delete from public.call_list_items where id = %2$L$$, true),
+  -- job DP part 4: call settings (one workspace row, optional campaign overrides) and the hand-over rules; written only by the Owner's functions, no module guard (every business type has calls)
+  ('call_settings',
+   $$insert into public.call_settings (id, tenant_id, campaign_id, settings, updated_by) values (%2$L, %1$L, null, '{}'::jsonb, %5$L) on conflict (tenant_id) where campaign_id is null do nothing$$,
+   'settings = settings', $$delete from public.call_settings where tenant_id = %1$L$$, false),
+  ('call_handover_rules',
+   $$insert into public.call_handover_rules (id, tenant_id, topic, person_name, phone, updated_by) values (%2$L, %1$L, 'other', 'Generic Person', '+917000000001', %5$L) on conflict (tenant_id, topic) do nothing$$,
+   'topic = topic', $$delete from public.call_handover_rules where tenant_id = %1$L$$, false),
   -- job DM: the AI assistant's settings (one row per workspace; written only by the Owner's function)
   ('assistant_settings',
    $$insert into public.assistant_settings (tenant_id, assistant_name, voice_persona, main_language, auto_switch_language, allow_english_mixing, style, speed, may_answer_prices, may_book_visits, may_send_media, may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute) values (%1$L, 'Generic', 'female_warm', 'te', true, true, 'warm', 1, true, true, true, true, 0, true, true, array[1], 540, 600) on conflict (tenant_id) do nothing$$,
@@ -377,13 +384,6 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('outcomes',
    $$insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, recorded_by_kind, recorded_by, occurred_at) values (%2$L, %1$L, %4$L, 'call', %2$L, 'unclear', null, 'person', %5$L, now())$$,
    'outcome = outcome', $$delete from public.outcomes where id = %2$L$$, false),
-  -- job DP part 4: call settings (one workspace row, optional campaign overrides) and the hand-over rules; written only by the Owner's functions, no module guard (every business type has calls)
-  ('call_settings',
-   $$insert into public.call_settings (id, tenant_id, campaign_id, settings, updated_by) values (%2$L, %1$L, null, '{}'::jsonb, %5$L) on conflict (tenant_id) where campaign_id is null do nothing$$,
-   'settings = settings', $$delete from public.call_settings where tenant_id = %1$L$$, false),
-  ('call_handover_rules',
-   $$insert into public.call_handover_rules (id, tenant_id, topic, person_name, phone, updated_by) values (%2$L, %1$L, 'other', 'Generic Person', '+917000000001', %5$L) on conflict (tenant_id, topic) do nothing$$,
-   'topic = topic', $$delete from public.call_handover_rules where tenant_id = %1$L$$, false),
   -- job CR: the education pack. Written only by definer functions; the modules that guard them (programmes, fees) are OFF for the default pack of the fixture tenants (tests 11 and 12 call
   -- tests.cn_guards_off() first); their own rules are proved in 104 to 107.
   ('institution_profiles',
@@ -695,6 +695,10 @@ select t, r, s, i, u, d from (values
   ('campaign_steps', 'sales', true, false, false, false), ('campaign_steps', 'viewer', false, false, false, false),
   ('call_list_items', 'owner', true, false, false, false), ('call_list_items', 'admin', true, false, false, false),
   ('call_list_items', 'sales', true, false, false, false), ('call_list_items', 'viewer', false, false, false, false),
+  ('call_settings', 'owner', true, false, false, false), ('call_settings', 'admin', true, false, false, false),
+  ('call_settings', 'sales', false, false, false, false), ('call_settings', 'viewer', false, false, false, false),
+  ('call_handover_rules', 'owner', true, false, false, false), ('call_handover_rules', 'admin', true, false, false, false),
+  ('call_handover_rules', 'sales', false, false, false, false), ('call_handover_rules', 'viewer', false, false, false, false),
   ('assistant_settings', 'owner', true, false, false, false), ('assistant_settings', 'admin', true, false, false, false),
   ('assistant_settings', 'sales', false, false, false, false), ('assistant_settings', 'viewer', false, false, false, false),
   ('outcomes', 'owner', true, false, false, false), ('outcomes', 'admin', true, false, false, false),
@@ -718,10 +722,6 @@ select t, r, s, i, u, d from (values
   -- job CR: the programmes and the profile are read by every member; the students, the admissions and the fee tables (children and money) only by Owner / Admin / Sales; nobody writes directly.
   ('institution_profiles', 'owner', true, false, false, false), ('institution_profiles', 'admin', true, false, false, false),
   ('institution_profiles', 'sales', true, false, false, false), ('institution_profiles', 'viewer', true, false, false, false),
-  ('call_settings', 'owner', true, false, false, false), ('call_settings', 'admin', true, false, false, false),
-  ('call_settings', 'sales', false, false, false, false), ('call_settings', 'viewer', false, false, false, false),
-  ('call_handover_rules', 'owner', true, false, false, false), ('call_handover_rules', 'admin', true, false, false, false),
-  ('call_handover_rules', 'sales', false, false, false, false), ('call_handover_rules', 'viewer', false, false, false, false),
   ('programmes', 'owner', true, false, false, false), ('programmes', 'admin', true, false, false, false),
   ('programmes', 'sales', true, false, false, false), ('programmes', 'viewer', true, false, false, false),
   ('programme_groups', 'owner', true, false, false, false), ('programme_groups', 'admin', true, false, false, false),
