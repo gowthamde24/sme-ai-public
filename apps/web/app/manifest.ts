@@ -14,7 +14,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/app",
     name: APP_NAME,
     short_name: APP_NAME,
-    description: "Your AI team for the shop: Agent OWL helps with enquiries, quotes, visits and follow-ups. You stay in control.",
+    description: "Your AI team for the shop: your AI assistant helps with enquiries, quotes, visits and follow-ups. You stay in control.",
     start_url: "/app",
     scope: "/",
     display: "standalone",

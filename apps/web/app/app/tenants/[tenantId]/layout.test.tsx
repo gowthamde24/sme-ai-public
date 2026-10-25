@@ -1,9 +1,11 @@
 import { render } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const readFrameData = vi.fn();
+const readAgents = vi.fn();
 const nav = { pathname: "/app/tenants/22222222-2222-2222-2222-222222222222" };
 vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname, useSearchParams: () => new URLSearchParams() }));
+vi.mock("./today-read", () => ({ readAgentsCached: (...a: unknown[]) => readAgents(...a) }));
 vi.mock("../../frame-data", () => ({ readFrameData: (...a: unknown[]) => readFrameData(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ id: "u", accessToken: "tok", email: "a@b.test" }) }));
 const slot = vi.fn();
@@ -16,7 +18,34 @@ import TenantLayout from "./layout";
 const T = "22222222-2222-2222-2222-222222222222";
 const props = (id: string) => ({ children: <p>page</p>, params: Promise.resolve({ tenantId: id }) }) as unknown as Parameters<typeof TenantLayout>[0];
 
+const teamWith = (main: string) => [{ agent: "main", state: main }];
+
 describe("the workspace layout", () => {
+  beforeEach(() => {
+    readAgents.mockReset();
+    readAgents.mockResolvedValue([]);
+    readFrameData.mockResolvedValue({ ...NO_FRAME_DATA });
+    nav.pathname = `/app/tenants/${T}/orders`;
+  });
+  it("draws the Ask dock (job DN) on a main screen when the assistant can be asked, and nowhere else", async () => {
+    readAgents.mockResolvedValue(teamWith("idle"));
+    const { rerender } = render(await TenantLayout(props(T)));
+    expect(readAgents).toHaveBeenCalledWith("tok", T);
+    expect(document.querySelector("[data-dock='ask']")).not.toBeNull();
+    nav.pathname = `/app/tenants/${T}`;
+    rerender(await TenantLayout(props(T)));
+    expect(document.querySelector("[data-dock='ask']")).toBeNull(); // Today has its own line
+    nav.pathname = `/app/tenants/${T}/orders`;
+    for (const state of ["switched_off", "not_available"]) {
+      readAgents.mockResolvedValue(teamWith(state));
+      rerender(await TenantLayout(props(T)));
+      expect(document.querySelector("[data-dock='ask']"), state).toBeNull();
+    }
+    readAgents.mockRejectedValue(new Error("not read"));
+    rerender(await TenantLayout(props(T)));
+    expect(document.querySelector("[data-dock='ask']")).toBeNull();
+    expect(document.body.textContent).toContain("page"); // the page is drawn all the same
+  });
   it("reads the frame's numbers for THIS workspace with the signed-in person's token and hands them to the frame, then draws the page", async () => {
     const data = { ...NO_FRAME_DATA, waiting: 3 };
     readFrameData.mockResolvedValue(data);

@@ -172,7 +172,7 @@ describe("NotificationBell", () => {
     setHidden(true); // opted in: the first look still happens while hidden
     await ready();
     await waitFor(() => expect(Ctor).toHaveBeenCalledTimes(1));
-    expect(Ctor).toHaveBeenCalledWith("Agent OWL", expect.objectContaining({ body: "1 thing needs you." }));
+    expect(Ctor).toHaveBeenCalledWith("Vijaya", expect.objectContaining({ body: "1 thing needs you." }));
     expect(JSON.stringify(Ctor.mock.calls)).not.toMatch(/Secret Name|Asha|Ravi/);
     const popup = Ctor.mock.instances[0] as { onclick: () => void; close: () => void };
     popup.close = vi.fn();

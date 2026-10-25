@@ -2,7 +2,7 @@ import app from "@/i18n/strings/app.json";
 
 import { fill, type Vars } from "@/i18n/fill";
 import type { Lang } from "@/i18n/lang";
-import { dictFor } from "@/i18n/strings";
+import { dictFor, namedDict } from "@/i18n/strings";
 
 /**
  * The words of the workspace FRAME (workspace redesign, language track L0): the menu groups and items, the top bar, the bottom bar and its list, the workspace
@@ -16,10 +16,10 @@ export type AppKey = keyof typeof app;
 export type AppDict = Record<AppKey, string>;
 export type AppT = (key: AppKey, vars?: Vars) => string;
 
-const cache: Partial<Record<Lang, AppDict>> = {};
+const cache = new Map<string, AppDict>();
 
 export function appDict(lang: Lang): AppDict {
-  return (cache[lang] ??= dictFor(app, lang) as AppDict);
+  return namedDict<AppDict>(cache, lang, () => dictFor(app, lang));
 }
 
 export function appT(lang: Lang): AppT {

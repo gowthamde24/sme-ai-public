@@ -43,11 +43,11 @@ describe("the public site's copy of the landing blocks (generated from packages/
     }
     expect(bad).toEqual([]);
   });
-  it("keeps the same {placeholders} in every language, and only {brand}", () => {
+  it("keeps the same {placeholders} in every language, and only {brand} and {assistant}", () => {
     const ph = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
     for (const { path: p, text } of all) {
       for (const l of LANGS) expect(ph(text[l] ?? ""), `${p}:${l}`).toEqual(ph(text.en));
-      for (const name of ph(text.en)) expect(name, p).toBe("brand");
+      for (const name of ph(text.en)) expect(["brand", "assistant"], p).toContain(name);
     }
   });
   it("makes no claim we cannot prove, no price and no percentage (the honesty rules of every other page)", () => {

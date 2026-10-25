@@ -135,7 +135,7 @@ describe("the home page (job DM, the clean redesign)", () => {
     expect(voice.match(/role="tablist"/g)).toHaveLength(2);
     expect(voice.match(/role="tab"/g)).toHaveLength(7);
     expect(text(voice)).toContain("early access");
-    expect(voice).toContain("Vani");
+    expect(voice).toContain("Vijaya");
     expect(voice).not.toMatch(/Hear this sample|<audio/);
   });
   it("has the plans from the plans data, no price, the early-access button for AI calling only, and no plan marked most popular", () => {

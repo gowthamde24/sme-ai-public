@@ -15,7 +15,7 @@ the three other languages are **machine-written drafts** until the owner marks t
   the native script: quote, order, draft, follow-up, payment, advance, lead, message, WhatsApp,
   settings, password, login, privacy, GST. Do not replace them with a Sanskrit-origin or "pure" word.
   Latin letters are kept only for names and codes people read in Latin: *GST, UPI, CSV, AI, 3D, WhatsApp
-  (Hindi)*, and the product name *Agent OWL* (the owner's assistant: never translated or written in script). The glossary (`i18n/review/i18n-glossary.csv`) gives, for each term, a formal option (A), an
+  (Hindi)*, and the assistant's name (written `{assistant}` in a string: the workspace's own, set in Settings > AI assistant, "Vijaya" until then; never translated or written in script, and never typed into a string). The glossary (`i18n/review/i18n-glossary.csv`) gives, for each term, a formal option (A), an
   everyday option (B) and the English-in-script option (C), with the recommended one marked.
 - **Where a plain native word exists, use it.** Money coming back is "paisa wapas", not "refund
   processing". "Write it down" beats "record the entry".

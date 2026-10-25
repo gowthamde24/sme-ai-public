@@ -52,7 +52,7 @@ describe("the Outbox page", () => {
     expect(document.querySelector('[data-count="sent"]')).toHaveTextContent("4");
     expect(screen.getByRole("link", { name: /Waiting for you/ })).toHaveAttribute("aria-current", "page");
     expect(screen.getByText("Mentions a price")).toBeInTheDocument();
-    expect(screen.getByText(/Agent OWL last checked 2 min ago · next check 10:31/)).toBeInTheDocument();
+    expect(screen.getByText(/Vijaya last checked 2 min ago · next check 10:31/)).toBeInTheDocument();
   });
   it("?tab= chooses a tab and an unknown word chooses the first; the customer and the dates go to the SERVER", async () => {
     await draw({ tab: "sent", q: "Lak", from: "2026-10-01", to: "2026-10-04" });

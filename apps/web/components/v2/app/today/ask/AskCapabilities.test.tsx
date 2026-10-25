@@ -12,19 +12,19 @@ import { ASK_WORD_KEYS } from "./ask-words";
 const en = appT("en") as (k: string) => string;
 const w = (k: string) => en(k);
 
-describe("What can Agent OWL do? (job BT)", () => {
+describe("What can Vijaya do? (job BT)", () => {
   const setup = (onTry = vi.fn()) => ({ onTry, ...render(<AskCapabilities w={w} examples={["What needs me today?", "Which quotes are waiting for me?"]} onTry={onTry} guideHref="/guide" />) });
   it("is a closed 44 px button under the Ask box", () => {
     setup();
-    const button = screen.getByRole("button", { name: "What can Agent OWL do?" });
+    const button = screen.getByRole("button", { name: "What can Vijaya do?" });
     expect(button).toHaveAttribute("aria-expanded", "false");
     expect(button.className).toMatch(/min-h-11/);
     expect(screen.queryByRole("region")).toBeNull();
   });
   it("opens a card with what it can and cannot do, examples to try and the guide", () => {
     setup();
-    fireEvent.click(screen.getByRole("button", { name: "What can Agent OWL do?" }));
-    const card = screen.getByRole("region", { name: "What Agent OWL can do for you" });
+    fireEvent.click(screen.getByRole("button", { name: "What can Vijaya do?" }));
+    const card = screen.getByRole("region", { name: "What Vijaya can do for you" });
     expect(within(card).getByRole("heading", { name: "It can" })).toBeInTheDocument();
     expect(within(card).getByRole("heading", { name: "It cannot" })).toBeInTheDocument();
     expect(card).toHaveTextContent("Change your records or your prices.");
@@ -33,8 +33,8 @@ describe("What can Agent OWL do? (job BT)", () => {
   });
   it("shows the six steps in the order of the workflow, each with the icon of its job: title, line and what you do", () => {
     setup();
-    fireEvent.click(screen.getByRole("button", { name: "What can Agent OWL do?" }));
-    const card = screen.getByRole("region", { name: "What Agent OWL can do for you" });
+    fireEvent.click(screen.getByRole("button", { name: "What can Vijaya do?" }));
+    const card = screen.getByRole("region", { name: "What Vijaya can do for you" });
     const steps = within(card).getAllByRole("listitem").filter((li) => li.hasAttribute("data-step"));
     expect(steps.map((li) => li.getAttribute("data-step"))).toEqual(["1", "2", "3", "4", "5", "6"]);
     expect(steps.map((li) => li.querySelector("p")!.textContent)).toEqual(["1Find leads", "2Research", "3AI calls", "4WhatsApp", "5Outcome", "6Follow-up"]);
@@ -60,17 +60,17 @@ describe("What can Agent OWL do? (job BT)", () => {
   });
   it("asks an example when it is tapped, and closes", () => {
     const { onTry } = setup();
-    fireEvent.click(screen.getByRole("button", { name: "What can Agent OWL do?" }));
+    fireEvent.click(screen.getByRole("button", { name: "What can Vijaya do?" }));
     fireEvent.click(screen.getByRole("button", { name: "Which quotes are waiting for me?" }));
     expect(onTry).toHaveBeenCalledWith("Which quotes are waiting for me?");
     expect(screen.queryByRole("region")).toBeNull();
   });
   it("closes with Escape and with its button", () => {
     setup();
-    fireEvent.click(screen.getByRole("button", { name: "What can Agent OWL do?" }));
+    fireEvent.click(screen.getByRole("button", { name: "What can Vijaya do?" }));
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("region")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "What can Agent OWL do?" }));
+    fireEvent.click(screen.getByRole("button", { name: "What can Vijaya do?" }));
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(screen.queryByRole("region")).toBeNull();
   });

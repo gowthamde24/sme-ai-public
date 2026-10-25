@@ -6,12 +6,12 @@ import { siteDict } from "@/i18n/site";
 import { FORBIDDEN_CLAIMS } from "@/i18n/strings/forbidden";
 
 describe("the two copy fixes of job BJ", () => {
-  it("the Ask box line says Agent OWL answers in writing, and out loud if voice is turned on", () => {
-    expect(appDict("en")["ask.hero.note"]).toBe("Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing, and out loud if you turn voice on.");
+  it("the Ask box line says Vijaya answers in writing, and out loud if voice is turned on", () => {
+    expect(appDict("en")["ask.hero.note"]).toBe("Speak or type in Telugu, Hindi, Kannada or English. Vijaya answers in writing, and out loud if you turn voice on.");
     for (const lang of ["te", "hi", "kn"] as const) {
       const d = appDict(lang)["ask.hero.note"];
       expect(d, lang).not.toBe(appDict("en")["ask.hero.note"]);
-      expect(d, lang).toContain("Agent OWL");
+      expect(d, lang).toContain("Vijaya");
       expect(d, lang).toMatch(/వాయిస్|वॉइस|ವಾಯ್ಸ್/); // the voice switch is named in the language
     }
   });

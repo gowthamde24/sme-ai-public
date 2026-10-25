@@ -67,7 +67,7 @@ export function NotificationBell({ tenantId, labels }: { tenantId: string; label
       writeAnnounced(tenantId, [...known, ...fresh.map((n) => n.id)].slice(-300));
       const body = fresh.length === 1 ? word(labels, "notify.pop.one", "1 thing needs you.") : word(labels, "notify.pop.other", "{n} things need you.", { n: fresh.length });
       try {
-        const n = new Notification(word(labels, "notify.pop.title", "Agent OWL"), { body, tag: `sme-needs-you:${tenantId}` });
+        const n = new Notification(word(labels, "notify.pop.title", "{assistant}"), { body, tag: `sme-needs-you:${tenantId}` });
         n.onclick = () => {
           window.focus();
           router.push(`/app/tenants/${tenantId}#needs-you`);

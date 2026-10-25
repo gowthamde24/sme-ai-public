@@ -486,8 +486,8 @@ async function educationFees(size) {
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------ 6. Ask
-const CHIP_ANY = /What needs me today\?|Who should I call first\?|How much customer money is held\?|Who needs a call back today\?|What can Agent OWL do\?|ఈ రోజు నాకు ఏం కావాలి|ముందు ఎవరికి కాల్|आज मुझे क्या|पहले किसे कॉल|ಇಂದು ನನಗೆ ಏನು/;
-/** One question to Agent OWL on Today (any screen language): the answer text, the time to the answer, and how many different partial states the page showed (more than two means it streamed). */
+const CHIP_ANY = /What needs me today\?|Who should I call first\?|How much customer money is held\?|Who needs a call back today\?|What can Vijaya do\?|ఈ రోజు నాకు ఏం కావాలి|ముందు ఎవరికి కాల్|आज मुझे क्या|पहले किसे कॉल|ಇಂದು ನನಗೆ ಏನು/;
+/** One question to Vijaya on Today (any screen language): the answer text, the time to the answer, and how many different partial states the page showed (more than two means it streamed). */
 async function askOnce(s, question) {
   await open(s, "");
   const live = s.page.locator('[data-ask="live"]');

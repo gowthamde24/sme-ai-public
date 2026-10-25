@@ -46,7 +46,7 @@ describe("a translation function by module (job CU)", () => {
     expect(withModuleT(t, null, dict)).toBe(t);
     expect(withModuleT(t, { modules: ["today"] }, dict)).toBe(t);
   });
-  it("the real store: a school and a builder do not hear about sarees from Agent OWL", () => {
+  it("the real store: a school and a builder do not hear about sarees from Vijaya", () => {
     const en = appDict("en") as Record<string, string>;
     const real = (modules: string[]) => withModuleT(((k: string) => en[k]) as never, { modules }, en) as unknown as (k: string) => string;
     expect(real(["today"])("ask.can.y3")).toMatch(/sarees/);

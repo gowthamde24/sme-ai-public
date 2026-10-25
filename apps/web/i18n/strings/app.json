@@ -1072,10 +1072,10 @@
   }
  },
  "agent.main": {
-  "en": "Agent OWL",
-  "te": "Agent OWL",
-  "hi": "Agent OWL",
-  "kn": "Agent OWL",
+  "en": "{assistant}",
+  "te": "{assistant}",
+  "hi": "{assistant}",
+  "kn": "{assistant}",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1238,10 +1238,10 @@
   "humanOnly": true
  },
  "ask.label": {
-  "en": "Your question for Agent OWL",
-  "te": "Agent OWL కి మీ ప్రశ్న",
-  "hi": "Agent OWL के लिए आपका सवाल",
-  "kn": "Agent OWL ಗೆ ನಿಮ್ಮ ಪ್ರಶ್ನೆ",
+  "en": "Your question for {assistant}",
+  "te": "{assistant} కి మీ ప్రశ్న",
+  "hi": "{assistant} के लिए आपका सवाल",
+  "kn": "{assistant} ಗೆ ನಿಮ್ಮ ಪ್ರಶ್ನೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1505,10 +1505,10 @@
   }
  },
  "ask.err.busy": {
-  "en": "Agent OWL is busy right now. Try again in a minute.",
-  "te": "Agent OWL ఇప్పుడు బిజీగా ఉంది. ఒక నిమిషం ఆగి మళ్లీ ప్రయత్నించండి.",
-  "hi": "Agent OWL अभी व्यस्त है। एक मिनट रुककर फिर कोशिश करें।",
-  "kn": "Agent OWL ಈಗ ಬ್ಯುಸಿಯಾಗಿದೆ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "{assistant} is busy right now. Try again in a minute.",
+  "te": "{assistant} ఇప్పుడు బిజీగా ఉంది. ఒక నిమిషం ఆగి మళ్లీ ప్రయత్నించండి.",
+  "hi": "{assistant} अभी व्यस्त है। एक मिनट रुककर फिर कोशिश करें।",
+  "kn": "{assistant} ಈಗ ಬ್ಯುಸಿಯಾಗಿದೆ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1516,10 +1516,10 @@
   }
  },
  "ask.err.notset": {
-  "en": "Agent OWL isn't set up yet. Ask the owner to turn it on.",
-  "te": "Agent OWL ఇంకా సెటప్ చేయలేదు. ఓనర్‌ని ఆన్ చేయమని అడగండి.",
-  "hi": "Agent OWL अभी सेट अप नहीं है। ओनर से इसे चालू करने को कहें।",
-  "kn": "Agent OWL ಇನ್ನೂ ಸೆಟ್ ಅಪ್ ಆಗಿಲ್ಲ. ಓನರ್‌ಗೆ ಆನ್ ಮಾಡಲು ಹೇಳಿ.",
+  "en": "{assistant} isn't set up yet. Ask the owner to turn it on.",
+  "te": "{assistant} ఇంకా సెటప్ చేయలేదు. ఓనర్‌ని ఆన్ చేయమని అడగండి.",
+  "hi": "{assistant} अभी सेट अप नहीं है। ओनर से इसे चालू करने को कहें।",
+  "kn": "{assistant} ಇನ್ನೂ ಸೆಟ್ ಅಪ್ ಆಗಿಲ್ಲ. ಓನರ್‌ಗೆ ಆನ್ ಮಾಡಲು ಹೇಳಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1715,10 +1715,10 @@
   }
  },
  "today.usage.title": {
-  "en": "Agent OWL this week",
-  "te": "Agent OWL ఈ వారం",
-  "hi": "Agent OWL इस हफ़्ते",
-  "kn": "Agent OWL ಈ ವಾರ",
+  "en": "{assistant} this week",
+  "te": "{assistant} ఈ వారం",
+  "hi": "{assistant} इस हफ़्ते",
+  "kn": "{assistant} ಈ ವಾರ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1737,10 +1737,10 @@
   }
  },
  "today.usage.aria": {
-  "en": "Agent OWL usage this week: {percent}% left",
-  "te": "ఈ వారం Agent OWL వాడకం: {percent}% మిగిలింది",
-  "hi": "इस हफ़्ते Agent OWL का इस्तेमाल: {percent}% बचा है",
-  "kn": "ಈ ವಾರದ Agent OWL ಬಳಕೆ: {percent}% ಉಳಿದಿದೆ",
+  "en": "{assistant} usage this week: {percent}% left",
+  "te": "ఈ వారం {assistant} వాడకం: {percent}% మిగిలింది",
+  "hi": "इस हफ़्ते {assistant} का इस्तेमाल: {percent}% बचा है",
+  "kn": "ಈ ವಾರದ {assistant} ಬಳಕೆ: {percent}% ಉಳಿದಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1816,10 +1816,10 @@
   }
  },
  "ask.hero.note": {
-  "en": "Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing, and out loud if you turn voice on.",
-  "te": "తెలుగు, హిందీ, కన్నడ లేదా ఇంగ్లీష్‌లో మాట్లాడండి లేదా టైప్ చేయండి. Agent OWL రాతలో జవాబు ఇస్తుంది, మీరు వాయిస్ ఆన్ చేస్తే గట్టిగా చదివి వినిపిస్తుంది.",
-  "hi": "तेलुगु, हिंदी, कन्नड़ या अंग्रेज़ी में बोलें या लिखें। Agent OWL लिखकर जवाब देता है, और वॉइस चालू करने पर बोलकर भी।",
-  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಮಾತನಾಡಿ ಅಥವಾ ಟೈಪ್ ಮಾಡಿ. Agent OWL ಬರಹದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ, ಮತ್ತು ನೀವು ವಾಯ್ಸ್ ಆನ್ ಮಾಡಿದರೆ ಧ್ವನಿಯಲ್ಲಿಯೂ.",
+  "en": "Speak or type in Telugu, Hindi, Kannada or English. {assistant} answers in writing, and out loud if you turn voice on.",
+  "te": "తెలుగు, హిందీ, కన్నడ లేదా ఇంగ్లీష్‌లో మాట్లాడండి లేదా టైప్ చేయండి. {assistant} రాతలో జవాబు ఇస్తుంది, మీరు వాయిస్ ఆన్ చేస్తే గట్టిగా చదివి వినిపిస్తుంది.",
+  "hi": "तेलुगु, हिंदी, कन्नड़ या अंग्रेज़ी में बोलें या लिखें। {assistant} लिखकर जवाब देता है, और वॉइस चालू करने पर बोलकर भी।",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಮಾತನಾಡಿ ಅಥವಾ ಟೈಪ್ ಮಾಡಿ. {assistant} ಬರಹದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ, ಮತ್ತು ನೀವು ವಾಯ್ಸ್ ಆನ್ ಮಾಡಿದರೆ ಧ್ವನಿಯಲ್ಲಿಯೂ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -2999,10 +2999,10 @@
   "humanOnly": true
  },
  "today.title.visit.proposed": {
-  "en": "Agent OWL proposed a visit for {who}",
-  "te": "{who} కోసం Agent OWL ఒక విజిట్ సూచించింది",
-  "hi": "{who} के लिए Agent OWL ने एक विज़िट सुझाई है",
-  "kn": "{who} ಅವರಿಗೆ Agent OWL ಒಂದು ಭೇಟಿ ಸೂಚಿಸಿದೆ",
+  "en": "{assistant} proposed a visit for {who}",
+  "te": "{who} కోసం {assistant} ఒక విజిట్ సూచించింది",
+  "hi": "{who} के लिए {assistant} ने एक विज़िट सुझाई है",
+  "kn": "{who} ಅವರಿಗೆ {assistant} ಒಂದು ಭೇಟಿ ಸೂಚಿಸಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3462,10 +3462,10 @@
   }
  },
  "visits.status.proposed": {
-  "en": "Proposed by Agent OWL · waiting for you",
-  "te": "Agent OWL సూచించింది · మీ కోసం ఎదురుచూస్తోంది",
-  "hi": "Agent OWL ने सुझाई · आपका इंतज़ार है",
-  "kn": "Agent OWL ಸೂಚಿಸಿದೆ · ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "en": "Proposed by {assistant} · waiting for you",
+  "te": "{assistant} సూచించింది · మీ కోసం ఎదురుచూస్తోంది",
+  "hi": "{assistant} ने सुझाई · आपका इंतज़ार है",
+  "kn": "{assistant} ಸೂಚಿಸಿದೆ · ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3484,10 +3484,10 @@
   }
  },
  "visits.source.assistant": {
-  "en": "Proposed by Agent OWL",
-  "te": "Agent OWL సూచించింది",
-  "hi": "Agent OWL ने सुझाई",
-  "kn": "Agent OWL ಸೂಚಿಸಿದೆ",
+  "en": "Proposed by {assistant}",
+  "te": "{assistant} సూచించింది",
+  "hi": "{assistant} ने सुझाई",
+  "kn": "{assistant} ಸೂಚಿಸಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4950,10 +4950,10 @@
   }
  },
  "settings.tab.agent": {
-  "en": "Agent OWL",
-  "te": "Agent OWL",
-  "hi": "Agent OWL",
-  "kn": "Agent OWL",
+  "en": "Automation",
+  "te": "Automation",
+  "hi": "Automation",
+  "kn": "Automation",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5163,10 +5163,10 @@
   "humanOnly": true
  },
  "outbox.hist.made.assistant": {
-  "en": "Written by Agent OWL",
-  "te": "Written by Agent OWL",
-  "hi": "Written by Agent OWL",
-  "kn": "Written by Agent OWL",
+  "en": "Written by {assistant}",
+  "te": "Written by {assistant}",
+  "hi": "Written by {assistant}",
+  "kn": "Written by {assistant}",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5526,10 +5526,10 @@
   "humanOnly": true
  },
  "outbox.sched.ago": {
-  "en": "Agent OWL last checked {minutes} min ago",
-  "te": "Agent OWL {minutes} నిమిషాల క్రితం చూసింది",
-  "hi": "Agent OWL ने {minutes} मिनट पहले देखा",
-  "kn": "Agent OWL {minutes} ನಿಮಿಷ ಹಿಂದೆ ನೋಡಿತು",
+  "en": "{assistant} last checked {minutes} min ago",
+  "te": "{assistant} {minutes} నిమిషాల క్రితం చూసింది",
+  "hi": "{assistant} ने {minutes} मिनट पहले देखा",
+  "kn": "{assistant} {minutes} ನಿಮಿಷ ಹಿಂದೆ ನೋಡಿತು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5537,10 +5537,10 @@
   }
  },
  "outbox.sched.now": {
-  "en": "Agent OWL checked just now",
-  "te": "Agent OWL ఇప్పుడే చూసింది",
-  "hi": "Agent OWL ने अभी देखा",
-  "kn": "Agent OWL ಈಗಷ್ಟೇ ನೋಡಿತು",
+  "en": "{assistant} checked just now",
+  "te": "{assistant} ఇప్పుడే చూసింది",
+  "hi": "{assistant} ने अभी देखा",
+  "kn": "{assistant} ಈಗಷ್ಟೇ ನೋಡಿತು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5559,10 +5559,10 @@
   }
  },
  "outbox.sched.never": {
-  "en": "Agent OWL has not checked yet.",
-  "te": "Agent OWL ఇంకా చూడలేదు.",
-  "hi": "Agent OWL ने अभी तक नहीं देखा।",
-  "kn": "Agent OWL ಇನ್ನೂ ನೋಡಿಲ್ಲ.",
+  "en": "{assistant} has not checked yet.",
+  "te": "{assistant} ఇంకా చూడలేదు.",
+  "hi": "{assistant} ने अभी तक नहीं देखा।",
+  "kn": "{assistant} ಇನ್ನೂ ನೋಡಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5570,10 +5570,10 @@
   }
  },
  "outbox.sched.stale": {
-  "en": "Agent OWL has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
-  "te": "Agent OWL has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
-  "hi": "Agent OWL has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
-  "kn": "Agent OWL has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
+  "en": "{assistant} has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
+  "te": "{assistant} has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
+  "hi": "{assistant} has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
+  "kn": "{assistant} has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5604,10 +5604,10 @@
   }
  },
  "outbox.reason.auto_allowed": {
-  "en": "Sent by Agent OWL on its own",
-  "te": "Agent OWL తానే పంపింది",
-  "hi": "Agent OWL ने खुद भेजा",
-  "kn": "Agent OWL ತಾನೇ ಕಳುಹಿಸಿತು",
+  "en": "Sent by {assistant} on its own",
+  "te": "{assistant} తానే పంపింది",
+  "hi": "{assistant} ने खुद भेजा",
+  "kn": "{assistant} ತಾನೇ ಕಳುಹಿಸಿತು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5673,10 +5673,10 @@
   "humanOnly": true
  },
  "outbox.reason.model_flagged": {
-  "en": "Agent OWL was careful",
-  "te": "Agent OWL జాగ్రత్త పడింది",
-  "hi": "Agent OWL ने सावधानी रखी",
-  "kn": "Agent OWL ಎಚ್ಚರಿಕೆ ವಹಿಸಿತು",
+  "en": "{assistant} was careful",
+  "te": "{assistant} జాగ్రత్త పడింది",
+  "hi": "{assistant} ने सावधानी रखी",
+  "kn": "{assistant} ಎಚ್ಚರಿಕೆ ವಹಿಸಿತು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5854,10 +5854,10 @@
   "humanOnly": true
  },
  "agentset.sending.switch": {
-  "en": "Agent OWL may send routine replies by itself",
-  "te": "Agent OWL may send routine replies by itself",
-  "hi": "Agent OWL may send routine replies by itself",
-  "kn": "Agent OWL may send routine replies by itself",
+  "en": "{assistant} may send routine replies by itself",
+  "te": "{assistant} may send routine replies by itself",
+  "hi": "{assistant} may send routine replies by itself",
+  "kn": "{assistant} may send routine replies by itself",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5866,10 +5866,10 @@
   "humanOnly": true
  },
  "agentset.sending.what": {
-  "en": "Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you.",
-  "te": "Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you.",
-  "hi": "Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you.",
-  "kn": "Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you.",
+  "en": "{assistant} sends routine replies by itself. Anything about money, complaints or calls waits for you.",
+  "te": "{assistant} sends routine replies by itself. Anything about money, complaints or calls waits for you.",
+  "hi": "{assistant} sends routine replies by itself. Anything about money, complaints or calls waits for you.",
+  "kn": "{assistant} sends routine replies by itself. Anything about money, complaints or calls waits for you.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6027,10 +6027,10 @@
   }
  },
  "agentset.rem.note": {
-  "en": "Agent OWL reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
-  "te": "Agent OWL reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
-  "hi": "Agent OWL reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
-  "kn": "Agent OWL reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
+  "en": "{assistant} reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
+  "te": "{assistant} reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
+  "hi": "{assistant} reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
+  "kn": "{assistant} reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6206,10 +6206,10 @@
   "humanOnly": true
  },
  "agentset.sched.title": {
-  "en": "Agent OWL's checks",
-  "te": "Agent OWL చెక్‌లు",
-  "hi": "Agent OWL की जाँच",
-  "kn": "Agent OWL ಪರಿಶೀಲನೆಗಳು",
+  "en": "{assistant}'s checks",
+  "te": "{assistant} చెక్‌లు",
+  "hi": "{assistant} की जाँच",
+  "kn": "{assistant} ಪರಿಶೀಲನೆಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6626,10 +6626,10 @@
   }
  },
  "lead.origin.agent": {
-  "en": "Found by Agent OWL",
-  "te": "Agent OWL కనుగొంది",
-  "hi": "Agent OWL ने ढूँढा",
-  "kn": "Agent OWL ಕಂಡುಹಿಡಿದಿದೆ",
+  "en": "Found by {assistant}",
+  "te": "{assistant} కనుగొంది",
+  "hi": "{assistant} ने ढूँढा",
+  "kn": "{assistant} ಕಂಡುಹಿಡಿದಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9008,10 +9008,10 @@
   "humanOnly": true
  },
  "outbox.ev.made.assistant": {
-  "en": "Made by Agent OWL",
-  "te": "Made by Agent OWL",
-  "hi": "Made by Agent OWL",
-  "kn": "Made by Agent OWL",
+  "en": "Made by {assistant}",
+  "te": "Made by {assistant}",
+  "hi": "Made by {assistant}",
+  "kn": "Made by {assistant}",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9188,10 +9188,10 @@
   "humanOnly": true
  },
  "outbox.ev.sent.worker": {
-  "en": "Sent by Agent OWL's checks",
-  "te": "Sent by Agent OWL's checks",
-  "hi": "Sent by Agent OWL's checks",
-  "kn": "Sent by Agent OWL's checks",
+  "en": "Sent by {assistant}'s checks",
+  "te": "Sent by {assistant}'s checks",
+  "hi": "Sent by {assistant}'s checks",
+  "kn": "Sent by {assistant}'s checks",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9603,10 +9603,10 @@
   }
  },
  "setup.s1.text": {
-  "en": "A few quick steps and Agent OWL is ready to help. You can skip any step and come back to it later.",
-  "te": "కొన్ని చిన్న స్టెప్‌లతో Agent OWL సహాయానికి సిద్ధం. ఏ స్టెప్‌నైనా వదిలేసి, తర్వాత చేయవచ్చు.",
-  "hi": "कुछ छोटे स्टेप और Agent OWL मदद के लिए तैयार। कोई भी स्टेप छोड़कर बाद में कर सकते हैं।",
-  "kn": "ಕೆಲವು ಚಿಕ್ಕ ಹಂತಗಳಲ್ಲಿ Agent OWL ಸಹಾಯಕ್ಕೆ ಸಿದ್ಧ. ಯಾವುದೇ ಹಂತ ಬಿಟ್ಟು ನಂತರ ಮಾಡಬಹುದು.",
+  "en": "A few quick steps and {assistant} is ready to help. You can skip any step and come back to it later.",
+  "te": "కొన్ని చిన్న స్టెప్‌లతో {assistant} సహాయానికి సిద్ధం. ఏ స్టెప్‌నైనా వదిలేసి, తర్వాత చేయవచ్చు.",
+  "hi": "कुछ छोटे स्टेप और {assistant} मदद के लिए तैयार। कोई भी स्टेप छोड़कर बाद में कर सकते हैं।",
+  "kn": "ಕೆಲವು ಚಿಕ್ಕ ಹಂತಗಳಲ್ಲಿ {assistant} ಸಹಾಯಕ್ಕೆ ಸಿದ್ಧ. ಯಾವುದೇ ಹಂತ ಬಿಟ್ಟು ನಂತರ ಮಾಡಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9845,10 +9845,10 @@
   }
  },
  "setup.s4.title": {
-  "en": "Meet Agent OWL",
-  "te": "Agent OWL ని కలవండి",
-  "hi": "Agent OWL से मिलिए",
-  "kn": "Agent OWL ಅನ್ನು ಭೇಟಿಯಾಗಿ",
+  "en": "Meet {assistant}",
+  "te": "{assistant} ని కలవండి",
+  "hi": "{assistant} से मिलिए",
+  "kn": "{assistant} ಅನ್ನು ಭೇಟಿಯಾಗಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9856,10 +9856,10 @@
   }
  },
  "setup.s4.does": {
-  "en": "Agent OWL reads your records, answers your questions and prepares drafts: replies, follow-ups, quotes and store visits.",
-  "te": "Agent OWL మీ రికార్డులు చదివి, ప్రశ్నలకు జవాబు ఇస్తుంది, డ్రాఫ్ట్‌లు సిద్ధం చేస్తుంది: రిప్లైలు, ఫాలో-అప్‌లు, కొటేషన్లు, స్టోర్ విజిట్‌లు.",
-  "hi": "Agent OWL आपके रिकॉर्ड पढ़ता है, सवालों के जवाब देता है और ड्राफ़्ट बनाता है: रिप्लाई, फ़ॉलो-अप, कोटेशन और स्टोर विज़िट।",
-  "kn": "Agent OWL ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ಓದಿ, ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ, ಡ್ರಾಫ್ಟ್‌ಗಳನ್ನು ಸಿದ್ಧಪಡಿಸುತ್ತದೆ: ರಿಪ್ಲೈ, ಫಾಲೋ-ಅಪ್, ಕೊಟೇಶನ್, ಸ್ಟೋರ್ ಭೇಟಿ.",
+  "en": "{assistant} reads your records, answers your questions and prepares drafts: replies, follow-ups, quotes and store visits.",
+  "te": "{assistant} మీ రికార్డులు చదివి, ప్రశ్నలకు జవాబు ఇస్తుంది, డ్రాఫ్ట్‌లు సిద్ధం చేస్తుంది: రిప్లైలు, ఫాలో-అప్‌లు, కొటేషన్లు, స్టోర్ విజిట్‌లు.",
+  "hi": "{assistant} आपके रिकॉर्ड पढ़ता है, सवालों के जवाब देता है और ड्राफ़्ट बनाता है: रिप्लाई, फ़ॉलो-अप, कोटेशन और स्टोर विज़िट।",
+  "kn": "{assistant} ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ಓದಿ, ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ, ಡ್ರಾಫ್ಟ್‌ಗಳನ್ನು ಸಿದ್ಧಪಡಿಸುತ್ತದೆ: ರಿಪ್ಲೈ, ಫಾಲೋ-ಅಪ್, ಕೊಟೇಶನ್, ಸ್ಟೋರ್ ಭೇಟಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9903,10 +9903,10 @@
   "humanOnly": true
  },
  "setup.s4.waits.calls": {
-  "en": "Calls: Agent OWL asks you first",
-  "te": "Calls: Agent OWL asks you first",
-  "hi": "Calls: Agent OWL asks you first",
-  "kn": "Calls: Agent OWL asks you first",
+  "en": "Calls: {assistant} asks you first",
+  "te": "Calls: {assistant} asks you first",
+  "hi": "Calls: {assistant} asks you first",
+  "kn": "Calls: {assistant} asks you first",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9939,10 +9939,10 @@
   "humanOnly": true
  },
  "setup.s4.settings": {
-  "en": "Open Agent OWL settings",
-  "te": "Agent OWL సెట్టింగ్‌లు తెరవండి",
-  "hi": "Agent OWL सेटिंग खोलें",
-  "kn": "Agent OWL ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆಯಿರಿ",
+  "en": "Open Automation settings",
+  "te": "ఆటోమేషన్ సెట్టింగ్‌లు తెరవండి",
+  "hi": "ऑटोमेशन सेटिंग खोलें",
+  "kn": "ಆಟೋಮೇಶನ್ ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9972,10 +9972,10 @@
   }
  },
  "setup.ready.a1": {
-  "en": "Ask Agent OWL what needs you today",
-  "te": "ఈ రోజు మీరు ఏం చేయాలో Agent OWL ని అడగండి",
-  "hi": "आज आपको क्या देखना है, Agent OWL से पूछें",
-  "kn": "ಇಂದು ನೀವು ಏನು ಮಾಡಬೇಕು ಎಂದು Agent OWL ಅನ್ನು ಕೇಳಿ",
+  "en": "Ask {assistant} what needs you today",
+  "te": "ఈ రోజు మీరు ఏం చేయాలో {assistant} ని అడగండి",
+  "hi": "आज आपको क्या देखना है, {assistant} से पूछें",
+  "kn": "ಇಂದು ನೀವು ಏನು ಮಾಡಬೇಕು ಎಂದು {assistant} ಅನ್ನು ಕೇಳಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10060,10 +10060,10 @@
   }
  },
  "setup.check.agent": {
-  "en": "See what Agent OWL does",
-  "te": "Agent OWL ఏం చేస్తుందో చూడండి",
-  "hi": "देखें Agent OWL क्या करता है",
-  "kn": "Agent OWL ಏನು ಮಾಡುತ್ತದೆ ನೋಡಿ",
+  "en": "See what {assistant} does",
+  "te": "{assistant} ఏం చేస్తుందో చూడండి",
+  "hi": "देखें {assistant} क्या करता है",
+  "kn": "{assistant} ಏನು ಮಾಡುತ್ತದೆ ನೋಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28183,10 +28183,10 @@
   }
  },
  "help.sub": {
-  "en": "Short guides, with Agent OWL to show the way.",
-  "te": "చిన్న గైడ్‌లు, దారి చూపడానికి Agent OWL.",
-  "hi": "छोटी गाइड, रास्ता दिखाने के लिए Agent OWL।",
-  "kn": "ಚಿಕ್ಕ ಗೈಡ್‌ಗಳು, ದಾರಿ ತೋರಿಸಲು Agent OWL.",
+  "en": "Short guides, with {assistant} to show the way.",
+  "te": "చిన్న గైడ్‌లు, దారి చూపడానికి {assistant}.",
+  "hi": "छोटी गाइड, रास्ता दिखाने के लिए {assistant}।",
+  "kn": "ಚಿಕ್ಕ ಗೈಡ್‌ಗಳು, ದಾರಿ ತೋರಿಸಲು {assistant}.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28359,10 +28359,10 @@
   }
  },
  "help.guide.today.4": {
-  "en": "Below, Done while you slept shows what Agent OWL already handled.",
-  "te": "కింద, \"మీరు నిద్రపోతుండగా అయినవి\" Agent OWL ఇప్పటికే చేసినవి చూపిస్తుంది.",
-  "hi": "नीचे, \"आपके सोते हुए हुआ\" में दिखता है कि Agent OWL ने क्या संभाल लिया।",
-  "kn": "ಕೆಳಗೆ, \"ನೀವು ಮಲಗಿದ್ದಾಗ ಆದವು\" Agent OWL ಈಗಾಗಲೇ ಏನು ಮಾಡಿದೆ ಎಂದು ತೋರಿಸುತ್ತದೆ.",
+  "en": "Below, Done while you slept shows what {assistant} already handled.",
+  "te": "కింద, \"మీరు నిద్రపోతుండగా అయినవి\" {assistant} ఇప్పటికే చేసినవి చూపిస్తుంది.",
+  "hi": "नीचे, \"आपके सोते हुए हुआ\" में दिखता है कि {assistant} ने क्या संभाल लिया।",
+  "kn": "ಕೆಳಗೆ, \"ನೀವು ಮಲಗಿದ್ದಾಗ ಆದವು\" {assistant} ಈಗಾಗಲೇ ಏನು ಮಾಡಿದೆ ಎಂದು ತೋರಿಸುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28546,10 +28546,10 @@
   }
  },
  "help.guide.catalogue.s": {
-  "en": "Photos and details that Agent OWL can send.",
-  "te": "Agent OWL పంపగల ఫోటోలు, వివరాలు.",
-  "hi": "फ़ोटो और जानकारी जो Agent OWL भेज सकता है।",
-  "kn": "Agent OWL ಕಳುಹಿಸಬಹುದಾದ ಫೋಟೋ, ವಿವರಗಳು.",
+  "en": "Photos and details that {assistant} can send.",
+  "te": "{assistant} పంపగల ఫోటోలు, వివరాలు.",
+  "hi": "फ़ोटो और जानकारी जो {assistant} भेज सकता है।",
+  "kn": "{assistant} ಕಳುಹಿಸಬಹುದಾದ ಫೋಟೋ, ವಿವರಗಳು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28612,10 +28612,10 @@
   }
  },
  "help.guide.agent.t": {
-  "en": "Agent OWL settings",
-  "te": "Agent OWL సెట్టింగ్స్",
-  "hi": "Agent OWL की सेटिंग",
-  "kn": "Agent OWL ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "en": "Automation settings",
+  "te": "ఆటోమేషన్ సెట్టింగ్స్",
+  "hi": "ऑटोमेशन की सेटिंग",
+  "kn": "ಆಟೋಮೇಶನ್ ಸೆಟ್ಟಿಂಗ್ಸ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28623,10 +28623,10 @@
   }
  },
  "help.guide.agent.s": {
-  "en": "Choose how much Agent OWL does by itself.",
-  "te": "Agent OWL తనంతట తానే ఎంత చేయాలో ఎంచుకోండి.",
-  "hi": "तय करें कि Agent OWL अपने आप कितना करे।",
-  "kn": "Agent OWL ತಾನಾಗಿ ಎಷ್ಟು ಮಾಡಬೇಕು ಎಂದು ಆರಿಸಿ.",
+  "en": "Choose how much {assistant} does by itself.",
+  "te": "{assistant} తనంతట తానే ఎంత చేయాలో ఎంచుకోండి.",
+  "hi": "तय करें कि {assistant} अपने आप कितना करे।",
+  "kn": "{assistant} ತಾನಾಗಿ ಎಷ್ಟು ಮಾಡಬೇಕು ಎಂದು ಆರಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28634,10 +28634,10 @@
   }
  },
  "help.guide.agent.1": {
-  "en": "Open Settings, then the Agent OWL tab. Only the owner can change these, with the authenticator app.",
-  "te": "సెట్టింగ్స్ తెరిచి, Agent OWL ట్యాబ్‌కి వెళ్ళండి. వీటిని ఓనర్ మాత్రమే, ఆథెంటికేటర్ యాప్‌తో మార్చగలరు.",
-  "hi": "सेटिंग खोलें, फिर Agent OWL टैब। इन्हें सिर्फ़ ओनर, ऑथेंटिकेटर ऐप के साथ बदल सकते हैं।",
-  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆದು, Agent OWL ಟ್ಯಾಬ್‌ಗೆ ಹೋಗಿ. ಇವನ್ನು ಓನರ್ ಮಾತ್ರ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನೊಂದಿಗೆ ಬದಲಿಸಬಹುದು.",
+  "en": "Open Settings, then the Automation tab. Only the owner can change these, with the authenticator app.",
+  "te": "సెట్టింగ్స్ తెరిచి, ఆటోమేషన్ ట్యాబ్‌కి వెళ్ళండి. వీటిని ఓనర్ మాత్రమే, ఆథెంటికేటర్ యాప్‌తో మార్చగలరు.",
+  "hi": "सेटिंग खोलें, फिर ऑटोमेशन टैब। इन्हें सिर्फ़ ओनर, ऑथेंटिकेटर ऐप के साथ बदल सकते हैं।",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆದು, ಆಟೋಮೇಶನ್ ಟ್ಯಾಬ್‌ಗೆ ಹೋಗಿ. ಇವನ್ನು ಓನರ್ ಮಾತ್ರ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನೊಂದಿಗೆ ಬದಲಿಸಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28689,10 +28689,10 @@
   }
  },
  "help.guide.voice.t": {
-  "en": "Ask Agent OWL by voice",
-  "te": "Agent OWLని గొంతుతో అడగండి",
-  "hi": "Agent OWL से बोलकर पूछें",
-  "kn": "Agent OWL ಅನ್ನು ಧ್ವನಿಯಿಂದ ಕೇಳಿ",
+  "en": "Ask {assistant} by voice",
+  "te": "{assistant}ని గొంతుతో అడగండి",
+  "hi": "{assistant} से बोलकर पूछें",
+  "kn": "{assistant} ಅನ್ನು ಧ್ವನಿಯಿಂದ ಕೇಳಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28733,10 +28733,10 @@
   }
  },
  "help.guide.voice.3": {
-  "en": "You see what was heard as your message, then the written answer. If Agent OWL heard it wrong, type the question instead.",
-  "te": "ఏం వినిపించిందో మీ మెసేజ్‌గా కనిపిస్తుంది, తర్వాత రాతలో జవాబు. Agent OWLకి తప్పుగా వినిపిస్తే, బదులుగా ప్రశ్నని టైప్ చేయండి.",
-  "hi": "जो सुनाई दिया वह आपके मैसेज के रूप में दिखता है, फिर लिखा हुआ जवाब। अगर Agent OWL ने गलत सुना, तो सवाल टाइप कर दें।",
-  "kn": "ಏನು ಕೇಳಿಸಿತೋ ಅದು ನಿಮ್ಮ ಮೆಸೇಜ್ ಆಗಿ ಕಾಣುತ್ತದೆ, ನಂತರ ಬರೆದ ಉತ್ತರ. Agent OWL ತಪ್ಪಾಗಿ ಕೇಳಿದರೆ, ಪ್ರಶ್ನೆಯನ್ನು ಟೈಪ್ ಮಾಡಿ.",
+  "en": "You see what was heard as your message, then the written answer. If {assistant} heard it wrong, type the question instead.",
+  "te": "ఏం వినిపించిందో మీ మెసేజ్‌గా కనిపిస్తుంది, తర్వాత రాతలో జవాబు. {assistant}కి తప్పుగా వినిపిస్తే, బదులుగా ప్రశ్నని టైప్ చేయండి.",
+  "hi": "जो सुनाई दिया वह आपके मैसेज के रूप में दिखता है, फिर लिखा हुआ जवाब। अगर {assistant} ने गलत सुना, तो सवाल टाइप कर दें।",
+  "kn": "ಏನು ಕೇಳಿಸಿತೋ ಅದು ನಿಮ್ಮ ಮೆಸೇಜ್ ಆಗಿ ಕಾಣುತ್ತದೆ, ನಂತರ ಬರೆದ ಉತ್ತರ. {assistant} ತಪ್ಪಾಗಿ ಕೇಳಿದರೆ, ಪ್ರಶ್ನೆಯನ್ನು ಟೈಪ್ ಮಾಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28874,10 +28874,10 @@
   "humanOnly": true
  },
  "help.guide.privacy.1": {
-  "en": "A customer's agreement to WhatsApp messages is recorded. Agent OWL messages only customers who agreed.",
-  "te": "A customer's agreement to WhatsApp messages is recorded. Agent OWL messages only customers who agreed.",
-  "hi": "A customer's agreement to WhatsApp messages is recorded. Agent OWL messages only customers who agreed.",
-  "kn": "A customer's agreement to WhatsApp messages is recorded. Agent OWL messages only customers who agreed.",
+  "en": "A customer's agreement to WhatsApp messages is recorded. {assistant} messages only customers who agreed.",
+  "te": "A customer's agreement to WhatsApp messages is recorded. {assistant} messages only customers who agreed.",
+  "hi": "A customer's agreement to WhatsApp messages is recorded. {assistant} messages only customers who agreed.",
+  "kn": "A customer's agreement to WhatsApp messages is recorded. {assistant} messages only customers who agreed.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28910,10 +28910,10 @@
   "humanOnly": true
  },
  "help.guide.privacy.4": {
-  "en": "Messages from Agent OWL say that an AI assistant wrote them.",
-  "te": "Messages from Agent OWL say that an AI assistant wrote them.",
-  "hi": "Messages from Agent OWL say that an AI assistant wrote them.",
-  "kn": "Messages from Agent OWL say that an AI assistant wrote them.",
+  "en": "Messages from {assistant} say that an AI assistant wrote them.",
+  "te": "Messages from {assistant} say that an AI assistant wrote them.",
+  "hi": "Messages from {assistant} say that an AI assistant wrote them.",
+  "kn": "Messages from {assistant} say that an AI assistant wrote them.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28945,10 +28945,10 @@
   }
  },
  "help.tip.today.2": {
-  "en": "Done shows what Agent OWL already handled.",
-  "te": "\"అయినవి\" Agent OWL ఇప్పటికే చేసినవి చూపిస్తుంది.",
-  "hi": "\"हो गया\" में दिखता है कि Agent OWL ने क्या संभाल लिया।",
-  "kn": "\"ಆದವು\" Agent OWL ಈಗಾಗಲೇ ಏನು ಮಾಡಿದೆ ಎಂದು ತೋರಿಸುತ್ತದೆ.",
+  "en": "Done shows what {assistant} already handled.",
+  "te": "\"అయినవి\" {assistant} ఇప్పటికే చేసినవి చూపిస్తుంది.",
+  "hi": "\"हो गया\" में दिखता है कि {assistant} ने क्या संभाल लिया।",
+  "kn": "\"ಆದವು\" {assistant} ಈಗಾಗಲೇ ಏನು ಮಾಡಿದೆ ಎಂದು ತೋರಿಸುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28956,10 +28956,10 @@
   }
  },
  "help.tip.today.3": {
-  "en": "Ask Agent OWL anything about your shop in the Ask box.",
-  "te": "అడిగే బాక్స్‌లో మీ షాప్ గురించి ఏదైనా Agent OWLని అడగండి.",
-  "hi": "पूछने वाले बॉक्स में अपनी दुकान के बारे में Agent OWL से कुछ भी पूछें।",
-  "kn": "ಕೇಳುವ ಬಾಕ್ಸ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಅಂಗಡಿ ಬಗ್ಗೆ Agent OWL ಅನ್ನು ಏನು ಬೇಕಾದರೂ ಕೇಳಿ.",
+  "en": "Ask {assistant} anything about your shop in the Ask box.",
+  "te": "అడిగే బాక్స్‌లో మీ షాప్ గురించి ఏదైనా {assistant}ని అడగండి.",
+  "hi": "पूछने वाले बॉक्स में अपनी दुकान के बारे में {assistant} से कुछ भी पूछें।",
+  "kn": "ಕೇಳುವ ಬಾಕ್ಸ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಅಂಗಡಿ ಬಗ್ಗೆ {assistant} ಅನ್ನು ಏನು ಬೇಕಾದರೂ ಕೇಳಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -29025,10 +29025,10 @@
   }
  },
  "help.tip.visits.3": {
-  "en": "A visit proposed by Agent OWL waits for you to confirm it.",
-  "te": "Agent OWL సూచించిన విజిట్ మీరు కన్ఫర్మ్ చేసే వరకు ఆగుతుంది.",
-  "hi": "Agent OWL की सुझाई विज़िट आपके कन्फ़र्म करने तक रुकी रहती है।",
-  "kn": "Agent OWL ಸೂಚಿಸಿದ ವಿಸಿಟ್ ನೀವು ಕನ್ಫರ್ಮ್ ಮಾಡುವವರೆಗೆ ಕಾಯುತ್ತದೆ.",
+  "en": "A visit proposed by {assistant} waits for you to confirm it.",
+  "te": "{assistant} సూచించిన విజిట్ మీరు కన్ఫర్మ్ చేసే వరకు ఆగుతుంది.",
+  "hi": "{assistant} की सुझाई विज़िट आपके कन्फ़र्म करने तक रुकी रहती है।",
+  "kn": "{assistant} ಸೂಚಿಸಿದ ವಿಸಿಟ್ ನೀವು ಕನ್ಫರ್ಮ್ ಮಾಡುವವರೆಗೆ ಕಾಯುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -29069,10 +29069,10 @@
   }
  },
  "help.tip.settings.1": {
-  "en": "The Agent OWL tab holds automatic sending, messages per customer per day, quiet hours and visit reminders.",
-  "te": "Agent OWL ట్యాబ్‌లో ఆటోమేటిక్ పంపడం, కస్టమర్‌కి రోజుకి మెసేజ్‌లు, నిశ్శబ్ద వేళలు, విజిట్ రిమైండర్లు ఉంటాయి.",
-  "hi": "Agent OWL टैब में ऑटोमैटिक भेजना, ग्राहक को रोज़ के मैसेज, शांत घंटे और विज़िट रिमाइंडर हैं।",
-  "kn": "Agent OWL ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದು, ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಮೆಸೇಜ್, ಶಾಂತ ಸಮಯ, ವಿಸಿಟ್ ರಿಮೈಂಡರ್ ಇವೆ.",
+  "en": "The Automation tab holds automatic sending, messages per customer per day, quiet hours and visit reminders.",
+  "te": "ఆటోమేషన్ ట్యాబ్‌లో ఆటోమేటిక్ పంపడం, కస్టమర్‌కి రోజుకి మెసేజ్‌లు, నిశ్శబ్ద వేళలు, విజిట్ రిమైండర్లు ఉంటాయి.",
+  "hi": "ऑटोमेशन टैब में ऑटोमैटिक भेजना, ग्राहक को रोज़ के मैसेज, शांत घंटे और विज़िट रिमाइंडर हैं।",
+  "kn": "ಆಟೋಮೇಶನ್ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದು, ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಮೆಸೇಜ್, ಶಾಂತ ಸಮಯ, ವಿಸಿಟ್ ರಿಮೈಂಡರ್ ಇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -29102,10 +29102,10 @@
   }
  },
  "ask.can.button": {
-  "en": "What can Agent OWL do?",
-  "te": "Agent OWL ఏం చేయగలదు?",
-  "hi": "Agent OWL क्या कर सकता है?",
-  "kn": "Agent OWL ಏನು ಮಾಡಬಲ್ಲದು?",
+  "en": "What can {assistant} do?",
+  "te": "{assistant} ఏం చేయగలదు?",
+  "hi": "{assistant} क्या कर सकता है?",
+  "kn": "{assistant} ಏನು ಮಾಡಬಲ್ಲದು?",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -29113,10 +29113,10 @@
   }
  },
  "ask.can.title": {
-  "en": "What Agent OWL can do for you",
-  "te": "Agent OWL మీ కోసం ఏం చేయగలదు",
-  "hi": "Agent OWL आपके लिए क्या कर सकता है",
-  "kn": "Agent OWL ನಿಮಗಾಗಿ ಏನು ಮಾಡಬಲ್ಲದು",
+  "en": "What {assistant} can do for you",
+  "te": "{assistant} మీ కోసం ఏం చేయగలదు",
+  "hi": "{assistant} आपके लिए क्या कर सकता है",
+  "kn": "{assistant} ನಿಮಗಾಗಿ ಏನು ಮಾಡಬಲ್ಲದು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -29599,10 +29599,10 @@
   }
  },
  "notify.pop.title": {
-  "en": "Agent OWL",
-  "te": "Agent OWL",
-  "hi": "Agent OWL",
-  "kn": "Agent OWL",
+  "en": "{assistant}",
+  "te": "{assistant}",
+  "hi": "{assistant}",
+  "kn": "{assistant}",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -29666,10 +29666,10 @@
   }
  },
  "report.intro": {
-  "en": "What happened in your shop this week, Monday to Sunday, from the records you and Agent OWL keep.",
-  "te": "ఈ వారం, సోమవారం నుంచి ఆదివారం వరకు, మీ షాపులో ఏం జరిగిందో మీరు, Agent OWL రాసిన రికార్డుల నుంచి.",
-  "hi": "इस हफ़्ते, सोमवार से रविवार तक, आपकी दुकान में क्या हुआ, आपके और Agent OWL के रिकॉर्ड से।",
-  "kn": "ಈ ವಾರ, ಸೋಮವಾರದಿಂದ ಭಾನುವಾರದವರೆಗೆ, ನಿಮ್ಮ ಅಂಗಡಿಯಲ್ಲಿ ಏನಾಯಿತು ಎಂದು ನೀವು ಮತ್ತು Agent OWL ಇಟ್ಟ ದಾಖಲೆಗಳಿಂದ.",
+  "en": "What happened in your shop this week, Monday to Sunday, from the records you and {assistant} keep.",
+  "te": "ఈ వారం, సోమవారం నుంచి ఆదివారం వరకు, మీ షాపులో ఏం జరిగిందో మీరు, {assistant} రాసిన రికార్డుల నుంచి.",
+  "hi": "इस हफ़्ते, सोमवार से रविवार तक, आपकी दुकान में क्या हुआ, आपके और {assistant} के रिकॉर्ड से।",
+  "kn": "ಈ ವಾರ, ಸೋಮವಾರದಿಂದ ಭಾನುವಾರದವರೆಗೆ, ನಿಮ್ಮ ಅಂಗಡಿಯಲ್ಲಿ ಏನಾಯಿತು ಎಂದು ನೀವು ಮತ್ತು {assistant} ಇಟ್ಟ ದಾಖಲೆಗಳಿಂದ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -29974,10 +29974,10 @@
   }
  },
  "report.usage.title": {
-  "en": "Agent OWL this week",
-  "te": "Agent OWL ఈ వారం",
-  "hi": "Agent OWL इस हफ़्ते",
-  "kn": "Agent OWL ಈ ವಾರ",
+  "en": "{assistant} this week",
+  "te": "{assistant} ఈ వారం",
+  "hi": "{assistant} इस हफ़्ते",
+  "kn": "{assistant} ಈ ವಾರ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -29996,10 +29996,10 @@
   }
  },
  "report.usage.aria": {
-  "en": "Agent OWL usage this week: {percent}% used",
-  "te": "ఈ వారం Agent OWL వాడకం: {percent}% వాడారు",
-  "hi": "इस हफ़्ते Agent OWL का इस्तेमाल: {percent}% हुआ",
-  "kn": "ಈ ವಾರದ Agent OWL ಬಳಕೆ: {percent}% ಬಳಸಲಾಗಿದೆ",
+  "en": "{assistant} usage this week: {percent}% used",
+  "te": "ఈ వారం {assistant} వాడకం: {percent}% వాడారు",
+  "hi": "इस हफ़्ते {assistant} का इस्तेमाल: {percent}% हुआ",
+  "kn": "ಈ ವಾರದ {assistant} ಬಳಕೆ: {percent}% ಬಳಸಲಾಗಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -33488,10 +33488,10 @@
   }
  },
  "rtl.searching": {
-  "en": "Agent OWL is looking on the map. This can take a few seconds.",
-  "te": "Agent OWL మ్యాప్‌లో వెతుకుతోంది. కొన్ని సెకన్లు పట్టవచ్చు.",
-  "hi": "Agent OWL मैप पर खोज रहा है। कुछ सेकंड लग सकते हैं।",
-  "kn": "Agent OWL ಮ್ಯಾಪ್‌ನಲ್ಲಿ ಹುಡುಕುತ್ತಿದೆ. ಕೆಲವು ಸೆಕೆಂಡ್ ಬೇಕಾಗಬಹುದು.",
+  "en": "{assistant} is looking on the map. This can take a few seconds.",
+  "te": "{assistant} మ్యాప్‌లో వెతుకుతోంది. కొన్ని సెకన్లు పట్టవచ్చు.",
+  "hi": "{assistant} मैप पर खोज रहा है। कुछ सेकंड लग सकते हैं।",
+  "kn": "{assistant} ಮ್ಯಾಪ್‌ನಲ್ಲಿ ಹುಡುಕುತ್ತಿದೆ. ಕೆಲವು ಸೆಕೆಂಡ್ ಬೇಕಾಗಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -33532,10 +33532,10 @@
   }
  },
  "rtl.err.agents_disabled": {
-  "en": "Agent OWL is switched off for this business, so the map cannot be searched.",
-  "te": "ఈ వ్యాపారానికి Agent OWL ఆఫ్‌లో ఉంది, అందుకే మ్యాప్‌లో వెతకలేం.",
-  "hi": "इस व्यापार के लिए Agent OWL बंद है, इसलिए मैप में खोज नहीं हो सकती।",
-  "kn": "ಈ ವ್ಯಾಪಾರಕ್ಕೆ Agent OWL ಆಫ್ ಇದೆ, ಹಾಗಾಗಿ ಮ್ಯಾಪ್‌ನಲ್ಲಿ ಹುಡುಕಲಾಗದು.",
+  "en": "{assistant} is switched off for this business, so the map cannot be searched.",
+  "te": "ఈ వ్యాపారానికి {assistant} ఆఫ్‌లో ఉంది, అందుకే మ్యాప్‌లో వెతకలేం.",
+  "hi": "इस व्यापार के लिए {assistant} बंद है, इसलिए मैप में खोज नहीं हो सकती।",
+  "kn": "ಈ ವ್ಯಾಪಾರಕ್ಕೆ {assistant} ಆಫ್ ಇದೆ, ಹಾಗಾಗಿ ಮ್ಯಾಪ್‌ನಲ್ಲಿ ಹುಡುಕಲಾಗದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -33543,10 +33543,10 @@
   }
  },
  "rtl.err.ai_paused_until": {
-  "en": "Agent OWL's allowance is used up for now. Try again later.",
-  "te": "Agent OWL కి ఇప్పటికి ఇచ్చిన పరిమితి అయిపోయింది. తర్వాత మళ్ళీ ప్రయత్నించండి.",
-  "hi": "Agent OWL की अभी की सीमा पूरी हो गई। बाद में फिर कोशिश करें।",
-  "kn": "Agent OWL ಗೆ ಈಗಿನ ಮಿತಿ ಮುಗಿದಿದೆ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "{assistant}'s allowance is used up for now. Try again later.",
+  "te": "{assistant} కి ఇప్పటికి ఇచ్చిన పరిమితి అయిపోయింది. తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "{assistant} की अभी की सीमा पूरी हो गई। बाद में फिर कोशिश करें।",
+  "kn": "{assistant} ಗೆ ಈಗಿನ ಮಿತಿ ಮುಗಿದಿದೆ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -33565,10 +33565,10 @@
   }
  },
  "rtl.err.assistant_unavailable": {
-  "en": "Agent OWL is not available right now. Try again in a moment.",
-  "te": "Agent OWL ఇప్పుడు అందుబాటులో లేదు. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
-  "hi": "Agent OWL अभी उपलब्ध नहीं है। थोड़ी देर में फिर कोशिश करें।",
-  "kn": "Agent OWL ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "{assistant} is not available right now. Try again in a moment.",
+  "te": "{assistant} ఇప్పుడు అందుబాటులో లేదు. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "{assistant} अभी उपलब्ध नहीं है। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "{assistant} ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -33787,10 +33787,10 @@
   }
  },
  "rtl.answer.title": {
-  "en": "What Agent OWL said",
-  "te": "Agent OWL ఏం చెప్పింది",
-  "hi": "Agent OWL ने क्या कहा",
-  "kn": "Agent OWL ಏನು ಹೇಳಿತು",
+  "en": "What {assistant} said",
+  "te": "{assistant} ఏం చెప్పింది",
+  "hi": "{assistant} ने क्या कहा",
+  "kn": "{assistant} ಏನು ಹೇಳಿತು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -34369,10 +34369,10 @@
   "humanOnly": true
  },
  "team.share.text": {
-  "en": "{shop} invited you to join its team in Agent OWL. Open {url} and sign in. If you are asked for a code, type {code}. The code works once.",
-  "te": "{shop} మిమ్మల్ని Agent OWL లో తమ టీమ్‌లో చేరమని పిలిచింది. {url} తెరిచి సైన్ ఇన్ అవ్వండి. కోడ్ అడిగితే {code} టైప్ చేయండి. కోడ్ ఒకసారే పని చేస్తుంది.",
-  "hi": "{shop} ने आपको Agent OWL में अपनी टीम से जुड़ने के लिए बुलाया है। {url} खोलकर साइन इन करें। कोड माँगे तो {code} लिखें। कोड एक ही बार चलता है।",
-  "kn": "{shop} ನಿಮ್ಮನ್ನು Agent OWL ನಲ್ಲಿ ತಮ್ಮ ಟೀಮ್‌ಗೆ ಸೇರಲು ಕರೆದಿದೆ. {url} ತೆರೆದು ಸೈನ್ ಇನ್ ಆಗಿ. ಕೋಡ್ ಕೇಳಿದರೆ {code} ಬರೆಯಿರಿ. ಕೋಡ್ ಒಮ್ಮೆ ಮಾತ್ರ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "en": "{shop} invited you to join its team in {assistant}. Open {url} and sign in. If you are asked for a code, type {code}. The code works once.",
+  "te": "{shop} మిమ్మల్ని {assistant} లో తమ టీమ్‌లో చేరమని పిలిచింది. {url} తెరిచి సైన్ ఇన్ అవ్వండి. కోడ్ అడిగితే {code} టైప్ చేయండి. కోడ్ ఒకసారే పని చేస్తుంది.",
+  "hi": "{shop} ने आपको {assistant} में अपनी टीम से जुड़ने के लिए बुलाया है। {url} खोलकर साइन इन करें। कोड माँगे तो {code} लिखें। कोड एक ही बार चलता है।",
+  "kn": "{shop} ನಿಮ್ಮನ್ನು {assistant} ನಲ್ಲಿ ತಮ್ಮ ಟೀಮ್‌ಗೆ ಸೇರಲು ಕರೆದಿದೆ. {url} ತೆರೆದು ಸೈನ್ ಇನ್ ಆಗಿ. ಕೋಡ್ ಕೇಳಿದರೆ {code} ಬರೆಯಿರಿ. ಕೋಡ್ ಒಮ್ಮೆ ಮಾತ್ರ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

@@ -58,7 +58,7 @@ describe("the orb svg that the icons are drawn from", () => {
 
 describe("the offline pages", () => {
   const SENTENCE: Record<string, string> = {
-    en: "You're offline. Agent OWL will catch up when you're back.",
+    en: "You're offline. We'll catch up when you're back.",
     te: "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు.",
     hi: "आप ऑफ़लाइन हैं।",
     kn: "ನೀವು ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿದ್ದೀರಿ.",

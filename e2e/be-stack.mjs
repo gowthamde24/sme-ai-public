@@ -1,6 +1,6 @@
 // Real-stack end-to-end run (job BE): the REAL web (3002), the REAL API (8002) and the LOCAL Supabase with Storage. One throwaway account and workspace (e2e-<stamp>), invented data, nothing leaves this machine.
 //   sign up -> e-mail confirmed (local database) -> sign in with the authenticator -> Today -> approve a message -> Outbox (filters, counts, the English gloss, the real history, "Send what is due now")
-//   -> Settings (quiet hours) -> Visits: book and complete -> Catalogue: add a saree with a REAL photo upload -> send it to a customer -> Outbox with photo thumbnails -> Ask Agent OWL
+//   -> Settings (quiet hours) -> Visits: book and complete -> Catalogue: add a saree with a REAL photo upload -> send it to a customer -> Outbox with photo thumbnails -> Ask Vijaya
 // Run by `make e2e-local` (it starts and stops the API and the web and cleans up). Prints one line per step: PASS or FAIL, and a summary; exit code 1 if any step failed.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
@@ -239,7 +239,7 @@ await step("J1", "setup wizard on a phone (360 px, light and dark): every step i
       if (v.length) seen.push(`${scheme} ${name}: axe ${v.join(", ")}`);
       if (advance) await p.getByRole("button", { name: advance, exact: true }).tap();
     }
-    must(/^Welcome to E2E Silks/.test(titles[0]) && titles.slice(1).join("|") === "When is the shop open?|Add your first saree|Meet Agent OWL|You're ready", `the steps were ${titles.join(" | ")}`);
+    must(/^Welcome to E2E Silks/.test(titles[0]) && titles.slice(1).join("|") === "When is the shop open?|Add your first saree|Meet Vijaya|You're ready", `the steps were ${titles.join(" | ")}`);
     await ctx.close();
   }
   must(seen.length === 0, seen.slice(0, 4).join(" | "));
@@ -281,12 +281,12 @@ await step("J4", "step 3: add the first saree with a REAL photo (shrunk in the b
   await page.getByRole("button", { name: "Next", exact: true }).click();
 }, page);
 
-await step("J5", "step 4: what Agent OWL does, what always waits (money, complaints, calls), automatic sending OFF in one plain sentence, the quiet hours; then 'You're ready' with three next actions", async () => {
-  await page.getByRole("heading", { name: "Meet Agent OWL" }).waitFor();
+await step("J5", "step 4: what Vijaya does, what always waits (money, complaints, calls), automatic sending OFF in one plain sentence, the quiet hours; then 'You're ready' with three next actions", async () => {
+  await page.getByRole("heading", { name: "Meet Vijaya" }).waitFor();
   const t = await text(page);
   must(t.includes("Automatic sending is off. New messages wait for you to approve them."), "the sending sentence is missing");
   must(/Quiet hours: nothing goes out from \d\d:00 to \d\d:00 \(India time\)\./.test(t), "the quiet hours are missing");
-  for (const w of ["Money: prices, discounts, advances and refunds", "Complaints", "Calls: Agent OWL asks you first"]) must(t.includes(w), `missing: ${w}`);
+  for (const w of ["Money: prices, discounts, advances and refunds", "Complaints", "Calls: Vijaya asks you first"]) must(t.includes(w), `missing: ${w}`);
   await shot(page, "wizard-4-agent");
   await page.getByRole("button", { name: "Next", exact: true }).click();
   await page.getByRole("heading", { name: "You're ready" }).waitFor();
@@ -374,7 +374,7 @@ await step("D2", "open the row: the English gloss and the REAL history from the 
   await page.waitForSelector('[data-history="events"]', { timeout: 15000 });
   const history = (await page.locator('[data-history="events"] li').allInnerTexts()).map((s) => s.replace(/\s+/g, " "));
   must(history.length >= 3, `too few events: ${JSON.stringify(history)}`);
-  must(history.some((h) => /Made by Agent OWL/.test(h)), `no 'Made by Agent OWL': ${JSON.stringify(history)}`);
+  must(history.some((h) => /Made by Vijaya/.test(h)), `no 'Made by Vijaya': ${JSON.stringify(history)}`);
   must(history.some((h) => /Approved by E2E Owner/.test(h)), `no 'Approved by E2E Owner': ${JSON.stringify(history)}`);
   must(await row.locator("[data-part=gloss]").isVisible(), "no gloss in the row");
   if (quiet()) must(history.some((h) => /Held for the morning: nothing goes out from 21:00 to 09:00/.test(h)), `quiet hours not worded: ${JSON.stringify(history)}`);
@@ -435,7 +435,7 @@ await step("D5", "the Outbox in Hindi and Telugu: no hydration error, dates in o
 }, page);
 
 // ---- 5. Settings: quiet hours --------------------------------------------------------------------------------------------
-await step("E1", "Settings, Agent OWL: quiet hours are editable within the limits (start 19-23, end 7-10), saved with the second factor, and persist", async () => {
+await step("E1", "Settings, Vijaya: quiet hours are editable within the limits (start 19-23, end 7-10), saved with the second factor, and persist", async () => {
   await page.goto(`${BASE}/app/tenants/${tenant}/settings?section=agent`);
   await page.waitForSelector("#quiet-start");
   const options = async (id) => page.locator(`#${id} option`).allInnerTexts();
@@ -590,8 +590,8 @@ await step("G4", "Outbox: the catalogue message carries its photo as a thumbnail
   return quiet() ? "held for the morning" : "sent";
 }, page);
 
-// ---- 8. Ask Agent OWL ------------------------------------------------------------------------------------------------------
-await step("H1", "Ask Agent OWL (the scripted model of the local stack): the question is answered with sources, and nothing is invented", async () => {
+// ---- 8. Ask Vijaya ------------------------------------------------------------------------------------------------------
+await step("H1", "Ask Vijaya (the scripted model of the local stack): the question is answered with sources, and nothing is invented", async () => {
   await page.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" }); // the page must be hydrated before the box is typed in, or React resets it
   const box = page.locator("#ask-input");
   await box.fill("What needs me today?");
@@ -829,8 +829,8 @@ if (process.env.E2E_BEFORE_URL) {
   }, page);
 }
 
-// ---- 8a. Help (job BT): the guides, the "?" tips, "What can Agent OWL do?" -------------------------------------------------------------------
-await step("Q1", "Help: the menu opens the guides, a guide has its steps and in Telugu no raw key; the '?' tip of the Outbox opens and links to its guide; 'What can Agent OWL do?' opens under the Ask box and an example asks", async () => {
+// ---- 8a. Help (job BT): the guides, the "?" tips, "What can Vijaya do?" -------------------------------------------------------------------
+await step("Q1", "Help: the menu opens the guides, a guide has its steps and in Telugu no raw key; the '?' tip of the Outbox opens and links to its guide; 'What can Vijaya do?' opens under the Ask box and an example asks", async () => {
   const home = `${BASE}/app/tenants/${tenant}`;
   await page.goto(home, { waitUntil: "networkidle" });
   await page.getByRole("link", { name: "Help", exact: true }).first().click();
@@ -866,20 +866,20 @@ await step("Q1", "Help: the menu opens the guides, a guide has its steps and in 
     await page.goto(url, { waitUntil: "networkidle" });
     must((await page.getByRole("button", { name: "Help for this screen" }).count()) === 1, `${name}: no '?' tip`);
   }
-  // What can Agent OWL do? (the Ask box on Today)
+  // What can Vijaya do? (the Ask box on Today)
   await page.goto(home, { waitUntil: "networkidle" });
-  const can = page.getByRole("button", { name: "What can Agent OWL do?" });
+  const can = page.getByRole("button", { name: "What can Vijaya do?" });
   await can.waitFor({ timeout: 30000 });
   await can.click();
-  const sheet = page.getByRole("region", { name: "What Agent OWL can do for you" });
+  const sheet = page.getByRole("region", { name: "What Vijaya can do for you" });
   await sheet.waitFor();
-  must(/Change your records or your prices/.test(await sheet.innerText()), "the sheet does not say what Agent OWL cannot do");
+  must(/Change your records or your prices/.test(await sheet.innerText()), "the sheet does not say what Vijaya cannot do");
   await shot(page, "help-can-sheet");
   await sheet.getByRole("button", { name: "What needs me today?" }).click();
   await page.getByText("Looking at your records…").or(page.getByText("Where this came from")).first().waitFor({ timeout: 30000 });
 }, page);
 
-await step("Q2", "Help on a phone (360 px) and in the dark: the index, a guide, the open '?' tip and the open 'What can Agent OWL do?' card: no sideways scroll, targets >= 44 px, text >= 14 px, axe finds nothing", async () => {
+await step("Q2", "Help on a phone (360 px) and in the dark: the index, a guide, the open '?' tip and the open 'What can Vijaya do?' card: no sideways scroll, targets >= 44 px, text >= 14 px, axe finds nothing", async () => {
   let axe = "";
   try {
     axe = readFileSync(path.join(here, "..", "apps", "web", "node_modules", "axe-core", "axe.min.js"), "utf8");
@@ -899,8 +899,8 @@ await step("Q2", "Help on a phone (360 px) and in the dark: the index, a guide, 
       try {
         if (open === "tip") await p.getByRole("button", { name: "Help for this screen" }).click({ timeout: 15000 });
         if (open === "can") {
-          await p.getByRole("button", { name: "What can Agent OWL do?" }).click({ timeout: 15000 });
-          await p.getByRole("region", { name: "What Agent OWL can do for you" }).waitFor({ timeout: 15000 });
+          await p.getByRole("button", { name: "What can Vijaya do?" }).click({ timeout: 15000 });
+          await p.getByRole("region", { name: "What Vijaya can do for you" }).waitFor({ timeout: 15000 });
         }
       } catch (error) {
         await p.screenshot({ path: path.join(SHOTS, `Q-FAIL-${name}-${label}.png`) });
@@ -958,7 +958,7 @@ await step("P1", "installable: the manifest is served, the browser finds no inst
   const head = await page.evaluate(() => ({ manifest: document.querySelector('link[rel="manifest"]')?.getAttribute("href"), theme: [...document.querySelectorAll('meta[name="theme-color"]')].map((m) => m.getAttribute("content")), apple: document.querySelector('link[rel="apple-touch-icon"]')?.getAttribute("href") }));
   must(head.manifest === "/manifest.webmanifest" && head.theme.length === 2 && head.apple, `page head: ${JSON.stringify(head)}`);
   // English first, then Telugu (the worker is told the language by the page)
-  for (const [lang, phrase] of [["en", "You're offline. Agent OWL will catch up when you're back."], ["te", "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు."]]) {
+  for (const [lang, phrase] of [["en", "You're offline. Vijaya will catch up when you're back."], ["te", "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు."]]) {
     await context.addCookies([{ name: "sme_lang", value: lang, url: BASE }]);
     await page.goto(`${BASE}/login`, { waitUntil: "networkidle" });
     await page.waitForTimeout(500); // the language word reaches the worker
@@ -1145,7 +1145,7 @@ await step("R1", "This week: the menu link, the real numbers of the week (visits
   await page.getByRole("navigation", { name: "Workspace menu" }).getByRole("link", { name: "This week" }).click();
   await page.waitForURL(/\/report$/);
   await page.getByRole("heading", { level: 1, name: "This week" }).waitFor();
-  for (const name of ["Store visits", "WhatsApp messages", "How fast you say OK", "Sarees sent most", "Agent OWL this week"]) must((await page.getByRole("region", { name }).count()) === 1, `no card named ${name}`);
+  for (const name of ["Store visits", "WhatsApp messages", "How fast you say OK", "Sarees sent most", "Vijaya this week"]) must((await page.getByRole("region", { name }).count()) === 1, `no card named ${name}`);
   must(!(await text(page)).includes("Could not read this part"), "a part of the report could not be read");
   // the numbers are the API's
   const token = await aal2Token();
@@ -1160,7 +1160,7 @@ await step("R1", "This week: the menu link, the real numbers of the week (visits
   must((await rowOf("WhatsApp messages", "Blocked")).endsWith(` ${summary.body.blocked}`), "blocked differs from the API");
   const usage = await api("GET", `${T()}/ai-usage/week`, null, token);
   must(usage.status === 200, `ai usage ${usage.status}`);
-  must((await page.getByRole("region", { name: "Agent OWL this week" }).getByRole("meter").getAttribute("aria-valuenow")) === String(usage.body.week_percent), "the AI figure differs from the API");
+  must((await page.getByRole("region", { name: "Vijaya this week" }).getByRole("meter").getAttribute("aria-valuenow")) === String(usage.body.week_percent), "the AI figure differs from the API");
   await page.screenshot({ path: path.join(SHOTS, "R-report-desktop.png"), fullPage: true });
   // a phone, dark
   await page.setViewportSize({ width: 360, height: 780 });

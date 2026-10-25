@@ -24,7 +24,7 @@ function playing(events: AskEvent[], seen: { question: string; lang: string; sig
 }
 const box = (transport: AskTransport | null, availability: "live" | "not_available" | "switched_off" = "live", lang = "en") => render(<AskTeam lang={lang} base={B} words={WORDS} availability={availability} transport={transport} />);
 const ask = (text: string) => {
-  fireEvent.change(screen.getByRole("textbox", { name: "Your question for Agent OWL" }), { target: { value: text } });
+  fireEvent.change(screen.getByRole("textbox", { name: "Your question for Vijaya" }), { target: { value: text } });
   fireEvent.click(screen.getByRole("button", { name: "Ask" }));
 };
 afterEach(() => {
@@ -35,7 +35,7 @@ afterEach(() => {
 describe("AskTeam: not available", () => {
   it.each([
     ["no answer stream yet", null, "live", "Not available yet"],
-    ["the Agent OWL is not built", playing([]), "not_available", "Not available yet"],
+    ["the Vijaya is not built", playing([]), "not_available", "Not available yet"],
     ["its switch is off", playing([]), "switched_off", "Switched off"],
   ] as const)("%s: the title, the reason and nothing to press", (_l, transport, availability, reason) => {
     box(transport, availability);
@@ -53,7 +53,7 @@ describe("AskTeam: not available", () => {
 });
 
 describe("AskTeam: asking", () => {
-  it("shows the input, the four starter questions and the Agent OWL's name, and Ask stays off until something is typed", () => {
+  it("shows the input, the four starter questions and the Vijaya's name, and Ask stays off until something is typed", () => {
     box(playing([]));
     expect(screen.getByRole("region", { name: "Ask your team" })).toHaveAttribute("data-ask", "live");
     expect(screen.getByText("Answers from your own records. It changes nothing.")).toBeInTheDocument();
@@ -204,7 +204,7 @@ describe("AskTeam: drafts and what the answer may link to", () => {
   });
 });
 
-describe("AskTeam: the real Agent OWL's shapes (Job AG)", () => {
+describe("AskTeam: the real Vijaya's shapes (Job AG)", () => {
   it("a source with no screen of its own is a plain label, not a link", async () => {
     box(playing([{ type: "text", delta: "Ok." }, { type: "source", label: "Pooja Sarees (company)", href: null }, { type: "source", label: "Order 1", href: `${B}/orders/O1` }, { type: "done" }]));
     ask("x");
@@ -232,7 +232,7 @@ describe("AskTeam: the real Agent OWL's shapes (Job AG)", () => {
     expect(within(f).getByRole("link", { name: /Approve/ })).toHaveAttribute("href", `${B}/leads/L`);
     expect(within(screen.getByRole("article", { name: "Enquiry" })).getByText("Enquiry", { selector: "span" })).toBeInTheDocument();
   });
-  it("a visit Agent OWL proposed says it is a store visit and opens the Visits page at it", async () => {
+  it("a visit Vijaya proposed says it is a store visit and opens the Visits page at it", async () => {
     box(playing([{ type: "draft", id: "v", kind: "store_visit", title: "Proposed visit on 2026-10-14 at 11:30", summary: "A store visit I proposed. It is booked but not confirmed. Nothing has been sent.", href: `${B}/visits?visit=V` }, { type: "done" }]));
     ask("x");
     const v = await screen.findByRole("article", { name: "Proposed visit on 2026-10-14 at 11:30" });
@@ -244,8 +244,8 @@ describe("AskTeam: the real Agent OWL's shapes (Job AG)", () => {
     ["run_limit_reached", "Too many questions just now. Wait a little and ask again."],
     ["forbidden", "Your role cannot ask the team."],
     ["agents_disabled", "Switched off"],
-    ["model_busy", "Agent OWL is busy right now. Try again in a minute."],
-    ["model_not_configured", "Agent OWL isn't set up yet. Ask the owner to turn it on."],
+    ["model_busy", "Vijaya is busy right now. Try again in a minute."],
+    ["model_not_configured", "Vijaya isn't set up yet. Ask the owner to turn it on."],
     ["something_else", "The answer could not be completed. Nothing was changed."],
     [undefined, "The answer could not be completed. Nothing was changed."],
   ])("an error with code %s says its own fixed sentence", async (code, words) => {
@@ -302,7 +302,7 @@ describe("AskTeam: sources wrap, and the owl follows the box", () => {
   });
   it("the owl listens while the person is typing in the focused box, and is idle again when the box loses the focus or is empty", () => {
     box(playing([]));
-    const input = screen.getByRole("textbox", { name: "Your question for Agent OWL" });
+    const input = screen.getByRole("textbox", { name: "Your question for Vijaya" });
     expect(owlOf()).toBe("idle");
     fireEvent.focus(input);
     expect(owlOf()).toBe("idle"); // focused, nothing typed yet
@@ -328,13 +328,13 @@ describe("AskTeam: sources wrap, and the owl follows the box", () => {
     await screen.findByRole("alert");
     expect(owlOf()).toBe(mood);
   });
-  it("the owl has a name and its mood as text for a screen reader, and 'Agent OWL' is what the box calls it", async () => {
+  it("the owl has a name and its mood as text for a screen reader, and 'Vijaya' is what the box calls it", async () => {
     box(playing([]));
-    expect(screen.getByRole("img", { name: "Agent OWL, Ready" })).toBeTruthy();
-    expect(screen.getByRole("textbox", { name: "Your question for Agent OWL" })).toBeTruthy();
+    expect(screen.getByRole("img", { name: "Vijaya, Ready" })).toBeTruthy();
+    expect(screen.getByRole("textbox", { name: "Your question for Vijaya" })).toBeTruthy();
     cleanup();
     box(playing([]), "switched_off");
-    expect(screen.getByRole("img", { name: "Agent OWL, Resting" })).toBeTruthy();
+    expect(screen.getByRole("img", { name: "Vijaya, Resting" })).toBeTruthy();
   });
   it("the owl answers while text arrives", async () => {
     let release!: () => void;
@@ -361,14 +361,14 @@ describe("AskTeam: touch and reading", () => {
   });
   it("the input has a label a screen reader can find, and the answer area announces politely", async () => {
     box(playing([{ type: "text", delta: "Hi." }, { type: "done" }]));
-    expect(screen.getByLabelText("Your question for Agent OWL")).toBe(screen.getByRole("textbox"));
+    expect(screen.getByLabelText("Your question for Vijaya")).toBe(screen.getByRole("textbox"));
     ask("x");
     await screen.findByText("Hi.");
     expect(screen.getByText("Hi.").closest("[aria-live]")).toHaveAttribute("aria-live", "polite");
   });
 });
 
-describe("AskTeam: the hero variant (the Agent OWL card of Today)", () => {
+describe("AskTeam: the hero variant (the Vijaya card of Today)", () => {
   const hero = (transport: AskTransport | null, onMood = vi.fn(), availability: "live" | "not_available" | "switched_off" = "live", chips?: string[]) => {
     const out = render(<AskTeam variant="hero" lang="en" base={B} words={WORDS} availability={availability} transport={transport} onMood={onMood} chips={chips} />);
     return { ...out, onMood };
@@ -383,7 +383,7 @@ describe("AskTeam: the hero variant (the Agent OWL card of Today)", () => {
   });
   it("the question line is 56 px on a laptop, round, with the hero placeholder, and the chips are the three given", () => {
     hero(playing([]), vi.fn(), "live", ["One?", "Two?", "Three?"]);
-    const input = screen.getByRole("textbox", { name: "Your question for Agent OWL" });
+    const input = screen.getByRole("textbox", { name: "Your question for Vijaya" });
     expect(input).toHaveAttribute("placeholder", "Ask anything, in any language…");
     expect(input.className).toContain("md:min-h-14");
     expect(input.className).toContain("rounded-full");
@@ -408,7 +408,7 @@ describe("AskTeam: the hero variant (the Agent OWL card of Today)", () => {
     };
     const { onMood } = hero(slow);
     expect(onMood).toHaveBeenLastCalledWith("idle");
-    const input = screen.getByRole("textbox", { name: "Your question for Agent OWL" });
+    const input = screen.getByRole("textbox", { name: "Your question for Vijaya" });
     fireEvent.focus(input);
     fireEvent.change(input, { target: { value: "What needs me?" } });
     expect(onMood).toHaveBeenLastCalledWith("listening");
@@ -421,7 +421,7 @@ describe("AskTeam: the hero variant (the Agent OWL card of Today)", () => {
   });
   it("rests when the answer is refused for the cost, the switch or the limit", async () => {
     const { onMood } = hero(playing([{ type: "error", code: "ai_paused_until" }]));
-    fireEvent.change(screen.getByRole("textbox", { name: "Your question for Agent OWL" }), { target: { value: "Hi" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "Your question for Vijaya" }), { target: { value: "Hi" } });
     fireEvent.click(screen.getByRole("button", { name: "Ask" }));
     await waitFor(() => expect(onMood).toHaveBeenLastCalledWith("resting"));
   });

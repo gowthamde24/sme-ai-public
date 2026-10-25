@@ -152,14 +152,14 @@ export async function ccSteps(c) {
   }, page);
 
   // ---- CC3. Find retailers --------------------------------------------------------------------------------------------------------------------------------------
-  await step("CC3", "Find retailers: the page and its status, a real search through Agent OWL, a shop kept as a lead from what is typed (real places/confirm), the same shop twice is one lead", async () => {
+  await step("CC3", "Find retailers: the page and its status, a real search through Vijaya, a shop kept as a lead from what is typed (real places/confirm), the same shop twice is one lead", async () => {
     psql(`select app.operator_enable_assistant('${psql(`select slug from public.tenants where id = '${c.tenant}'`)}')`); // the local operator step the assistant needs (the full run does it in step B0)
     await page.goto(`${base()}/retailers`, { waitUntil: "networkidle" });
     await page.getByRole("heading", { level: 1, name: "Find retailers" }).waitFor();
     must((await text(page)).includes("Map search is on."), `the status says: ${(await page.locator("[data-retailers-status]").innerText()).slice(0, 80)}`);
     await page.screenshot({ path: path.join(SHOTS, "CC3-retailers-desktop.png"), fullPage: true });
 
-    // a real search: the question goes to Agent OWL of the local stack (its scripted model does not use the map tool, so there may be no cards: the page must still answer)
+    // a real search: the question goes to Vijaya of the local stack (its scripted model does not use the map tool, so there may be no cards: the page must still answer)
     await page.getByLabel("City or town").fill("Guntur");
     await page.getByRole("button", { name: "Search" }).click();
     await page.locator("[data-retailers-results]").waitFor({ timeout: 60000 });

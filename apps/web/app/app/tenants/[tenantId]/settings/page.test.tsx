@@ -69,7 +69,7 @@ beforeEach(() => {
 describe("Settings, one part at a time", () => {
   it("opens on the business: its name, URL name, plan and today's AI usage from the API; the members are not asked for", async () => {
     render(await SettingsPage(props()));
-    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "Members", "Data", "Language and look", "Agent OWL", "Security", "Privacy"]);
+    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "Members", "Data", "Language and look", "Automation", "Security", "Privacy"]);
     expect(tabs().getByRole("link", { name: "Business and plan" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByText("Acme Silks")).toBeInTheDocument();
     expect(screen.getByText("acme-silks")).toBeInTheDocument();
@@ -144,13 +144,13 @@ describe("Settings, one part at a time", () => {
   });
 });
 
-describe("Settings: Agent OWL (the Owner only)", () => {
+describe("Settings: Automation (the Owner only)", () => {
   it("is a tab for the Owner and for nobody else; a member who asks for it by hand gets the business", async () => {
     for (const role of ["admin", "sales", "viewer"]) {
       fetchTenant.mockResolvedValue(tenant(role));
       document.body.innerHTML = "";
       render(await SettingsPage(props({ section: "agent" })));
-      expect(tabs().queryByRole("link", { name: "Agent OWL" })).toBeNull();
+      expect(tabs().queryByRole("link", { name: "Automation" })).toBeNull();
       expect(tabs().getByRole("link", { name: "Business and plan" })).toHaveAttribute("aria-current", "page");
     }
     expect(getOutboxSettings).not.toHaveBeenCalled();
@@ -158,7 +158,7 @@ describe("Settings: Agent OWL (the Owner only)", () => {
   });
   it("reads the sending settings, the reminders and the status with the Owner's token and draws the five parts", async () => {
     render(await SettingsPage(props({ section: "agent" })));
-    expect(tabs().getByRole("link", { name: "Agent OWL" })).toHaveAttribute("aria-current", "page");
+    expect(tabs().getByRole("link", { name: "Automation" })).toHaveAttribute("aria-current", "page");
     expect(getOutboxSettings).toHaveBeenCalledWith("tok", TENANT);
     expect(getSchedulerSettings).toHaveBeenCalledWith("tok", TENANT);
     expect(getSchedulerStatus).toHaveBeenCalledWith("tok", TENANT);
@@ -166,8 +166,8 @@ describe("Settings: Agent OWL (the Owner only)", () => {
     expect(screen.getByRole("heading", { name: "Quiet hours" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Visit reminders" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "System-wide sending switch" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Agent OWL's checks" })).toBeInTheDocument();
-    expect(screen.getByRole("checkbox", { name: /Agent OWL may send routine replies/ })).not.toBeChecked();
+    expect(screen.getByRole("heading", { name: "Vijaya's checks" })).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: /Vijaya may send routine replies/ })).not.toBeChecked();
   });
   it("a part that cannot be read says 'Not available yet' in its own place and the rest is drawn", async () => {
     getOutboxSettings.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
@@ -176,7 +176,7 @@ describe("Settings: Agent OWL (the Owner only)", () => {
     render(await SettingsPage(props({ section: "agent" })));
     expect(screen.getAllByText("Not available yet").length).toBeGreaterThanOrEqual(4);
     expect(screen.queryByRole("heading", { name: "Quiet hours" })).toBeNull(); // the hours are read with the sending settings: if those cannot be read there is nothing to edit
-    expect(screen.getByRole("heading", { name: "Agent OWL's checks" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Vijaya's checks" })).toBeInTheDocument();
   });
   it("the quiet hours can be edited: the Owner's tab has the form with the hours on record", async () => {
     getOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: true, per_customer_daily_limit: 3, quiet_hours_start: 22, quiet_hours_end: 8 });

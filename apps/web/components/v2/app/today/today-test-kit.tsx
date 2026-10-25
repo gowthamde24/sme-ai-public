@@ -48,7 +48,7 @@ export const call = (over: Partial<Extract<NeedsCard, { type: "call" }>> = {}): 
 });
 
 export const VISIT_ID = "33333333-cccc-4ccc-8ccc-000000000001";
-/** A visit Agent OWL proposed: Wednesday 14 October, 11:00 in India. */
+/** A visit Vijaya proposed: Wednesday 14 October, 11:00 in India. */
 export const proposal = (over: Partial<Extract<NeedsCard, { type: "visit" }>> = {}): NeedsCard => ({
   type: "visit",
   key: `visit-${VISIT_ID}`,

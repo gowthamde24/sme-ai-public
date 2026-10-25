@@ -580,10 +580,10 @@
   }
  },
  "price.fair.3": {
-  "en": "At the limit, Agent OWL switches to a lighter mode until midnight. Quotes, orders and customers keep working.",
-  "te": "పరిమితి దగ్గర Agent OWL అర్ధరాత్రి వరకు తేలికైన మోడ్‌లోకి మారుతుంది. కోట్లు, ఆర్డర్లు, కస్టమర్లు పనిచేస్తూనే ఉంటాయి.",
-  "hi": "सीमा पर Agent OWL आधी रात तक हल्के मोड में चला जाता है। कोटेशन, ऑर्डर और ग्राहक चलते रहते हैं।",
-  "kn": "ಮಿತಿಯಲ್ಲಿ Agent OWL ಮಧ್ಯರಾತ್ರಿವರೆಗೆ ಹಗುರ ಮೋಡ್‌ಗೆ ಹೋಗುತ್ತದೆ. ಕೊಟೇಶನ್, ಆರ್ಡರ್, ಗ್ರಾಹಕರು ಕೆಲಸ ಮಾಡುತ್ತಲೇ ಇರುತ್ತಾರೆ.",
+  "en": "At the limit, {assistant} switches to a lighter mode until midnight. Quotes, orders and customers keep working.",
+  "te": "పరిమితి దగ్గర {assistant} అర్ధరాత్రి వరకు తేలికైన మోడ్‌లోకి మారుతుంది. కోట్లు, ఆర్డర్లు, కస్టమర్లు పనిచేస్తూనే ఉంటాయి.",
+  "hi": "सीमा पर {assistant} आधी रात तक हल्के मोड में चला जाता है। कोटेशन, ऑर्डर और ग्राहक चलते रहते हैं।",
+  "kn": "ಮಿತಿಯಲ್ಲಿ {assistant} ಮಧ್ಯರಾತ್ರಿವರೆಗೆ ಹಗುರ ಮೋಡ್‌ಗೆ ಹೋಗುತ್ತದೆ. ಕೊಟೇಶನ್, ಆರ್ಡರ್, ಗ್ರಾಹಕರು ಕೆಲಸ ಮಾಡುತ್ತಲೇ ಇರುತ್ತಾರೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3615,10 +3615,10 @@
   }
  },
  "hm.vc.who": {
-  "en": "Vani · AI assistant",
-  "te": "వాణి · AI అసిస్టెంట్",
-  "hi": "वाणी · AI असिस्टेंट",
-  "kn": "ವಾಣಿ · AI ಅಸಿಸ್ಟೆಂಟ್",
+  "en": "{assistant} · AI assistant",
+  "te": "{assistant} · AI అసిస్టెంట్",
+  "hi": "{assistant} · AI असिस्टेंट",
+  "kn": "{assistant} · AI ಅಸಿಸ್ಟೆಂಟ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3709,26 +3709,26 @@
   "only": []
  },
  "langs.sample.voice.en.warm": {
-  "en": "Hello! I'm Vani, the AI assistant at Sri Lakshmi Silks. Lovely new sarees just came in. Shall I send you a few photos?",
-  "te": "Hello! I'm Vani, the AI assistant at Sri Lakshmi Silks. Lovely new sarees just came in. Shall I send you a few photos?",
-  "hi": "Hello! I'm Vani, the AI assistant at Sri Lakshmi Silks. Lovely new sarees just came in. Shall I send you a few photos?",
-  "kn": "Hello! I'm Vani, the AI assistant at Sri Lakshmi Silks. Lovely new sarees just came in. Shall I send you a few photos?",
+  "en": "Hello! I'm {assistant}, the AI assistant at Sri Lakshmi Silks. Lovely new sarees just came in. Shall I send you a few photos?",
+  "te": "Hello! I'm {assistant}, the AI assistant at Sri Lakshmi Silks. Lovely new sarees just came in. Shall I send you a few photos?",
+  "hi": "Hello! I'm {assistant}, the AI assistant at Sri Lakshmi Silks. Lovely new sarees just came in. Shall I send you a few photos?",
+  "kn": "Hello! I'm {assistant}, the AI assistant at Sri Lakshmi Silks. Lovely new sarees just came in. Shall I send you a few photos?",
   "status": {},
   "only": []
  },
  "langs.sample.voice.en.resp": {
-  "en": "Namaste, I'm Vani, the AI assistant of Sri Lakshmi Silks. May I take a minute to tell you about our new collection?",
-  "te": "Namaste, I'm Vani, the AI assistant of Sri Lakshmi Silks. May I take a minute to tell you about our new collection?",
-  "hi": "Namaste, I'm Vani, the AI assistant of Sri Lakshmi Silks. May I take a minute to tell you about our new collection?",
-  "kn": "Namaste, I'm Vani, the AI assistant of Sri Lakshmi Silks. May I take a minute to tell you about our new collection?",
+  "en": "Namaste, I'm {assistant}, the AI assistant of Sri Lakshmi Silks. May I take a minute to tell you about our new collection?",
+  "te": "Namaste, I'm {assistant}, the AI assistant of Sri Lakshmi Silks. May I take a minute to tell you about our new collection?",
+  "hi": "Namaste, I'm {assistant}, the AI assistant of Sri Lakshmi Silks. May I take a minute to tell you about our new collection?",
+  "kn": "Namaste, I'm {assistant}, the AI assistant of Sri Lakshmi Silks. May I take a minute to tell you about our new collection?",
   "status": {},
   "only": []
  },
  "langs.sample.voice.en.quick": {
-  "en": "Hi, Vani here, AI assistant at Sri Lakshmi Silks. New sarees are in. Photos on WhatsApp?",
-  "te": "Hi, Vani here, AI assistant at Sri Lakshmi Silks. New sarees are in. Photos on WhatsApp?",
-  "hi": "Hi, Vani here, AI assistant at Sri Lakshmi Silks. New sarees are in. Photos on WhatsApp?",
-  "kn": "Hi, Vani here, AI assistant at Sri Lakshmi Silks. New sarees are in. Photos on WhatsApp?",
+  "en": "Hi, {assistant} here, AI assistant at Sri Lakshmi Silks. New sarees are in. Photos on WhatsApp?",
+  "te": "Hi, {assistant} here, AI assistant at Sri Lakshmi Silks. New sarees are in. Photos on WhatsApp?",
+  "hi": "Hi, {assistant} here, AI assistant at Sri Lakshmi Silks. New sarees are in. Photos on WhatsApp?",
+  "kn": "Hi, {assistant} here, AI assistant at Sri Lakshmi Silks. New sarees are in. Photos on WhatsApp?",
   "status": {},
   "only": []
  },

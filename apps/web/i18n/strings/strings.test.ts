@@ -27,7 +27,7 @@ describe("string store: four languages", () => {
     });
     it(`${name}: the other languages use their own script`, () => {
       const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.)/; // intentionally Latin or numeric (role.main.t is the product name "Agent OWL")
+      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.)/; // intentionally Latin or numeric (role.main.t is the product name "Vijaya")
       for (const lang of ["te", "hi", "kn"] as const) {
         const missing = keys.filter((k) => !exempt.test(k) && !script[lang].test(dicts[lang][k]));
         expect(missing, `${name}:${lang}`).toEqual([]);

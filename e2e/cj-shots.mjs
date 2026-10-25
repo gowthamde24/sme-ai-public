@@ -1,7 +1,7 @@
 // Job CJ: pictures of the plush owl team in the places people see it: Today, the Ask box, the team page, Agent settings (the scheduler card) and the plush Office, light and dark, on a laptop (1280 x 900) and on a
 // 390 px phone, from the real web app (a production build) on the visual tests' invented backend.
 //   node e2e/cj-shots.mjs [--no-build] [--out DIR]      (DIR defaults to ~/Desktop/v2-overnight/shots-cj)
-// For the Office the helpers' states are set the way the API gives them: Agent OWL idle, the quote writer WORKING (glowing laptop), the researcher SWITCHED OFF (faded, still), the lead finder not built, the rest idle.
+// For the Office the helpers' states are set the way the API gives them: Vijaya idle, the quote writer WORKING (glowing laptop), the researcher SWITCHED OFF (faded, still), the lead finder not built, the rest idle.
 // Port 3016 (web) and 54999 (the stand-in): the same as `make perf`, so never run both at once; it stops only its own two processes.
 import { execFileSync, spawn } from "node:child_process";
 import { createRequire } from "node:module";
@@ -35,7 +35,7 @@ const SIZES = { desktop: { width: 1280, height: 900 }, phone: { width: 390, heig
 // the main agent's state decides whether the owl rests (the fixture says "not_available": resting) or is idle; flipped in place
 const agents = API_ROUTES.find(([pattern]) => pattern.test(`/v1/tenants/${TENANT}/agents/status`))?.[1];
 if (!Array.isArray(agents) || agents[0]?.agent !== "main") throw new Error("the fixture's agents/status is not the list this script expects");
-// the scheduler card of Agent settings: the fixture says "not working"; the shot shows it working (Agent OWL with its dot lit)
+// the scheduler card of Agent settings: the fixture says "not working"; the shot shows it working (Vijaya with its dot lit)
 const scheduler = API_ROUTES.find(([pattern]) => pattern.test(`/v1/tenants/${TENANT}/scheduler/status`))?.[1];
 if (scheduler && typeof scheduler === "object") scheduler.active = true;
 const setState = (agent, state) => void (agents.find((a) => a.agent === agent).state = state);
@@ -125,14 +125,14 @@ async function main() {
         setOfficeStates();
         let s;
 
-        // Today (the whole page) and the Ask box (the Agent OWL card), Agent OWL sky blue and alive
+        // Today (the whole page) and the Ask box (the Vijaya card), Vijaya sky blue and alive
         if (want("today")) {
           s = await newPage();
           await s.page.goto(TODAY, { waitUntil: "networkidle" });
           await allLive(s.page, '[data-part="agent-owl"] .plush');
           await sleep(1200);
           await save(s.page, "today", "Today, whole page", { fullPage: true });
-          await save(s.page.locator('[data-part="agent-owl"]'), "ask-box", "the Agent OWL card with the Ask box, idle");
+          await save(s.page.locator('[data-part="agent-owl"]'), "ask-box", "the Vijaya card with the Ask box, idle");
           problems.push(...s.errors.map((e) => `${sizeName}/${scheme} today: ${e}`));
           await s.context.close();
         }
@@ -148,13 +148,13 @@ async function main() {
           await s.context.close();
         }
 
-        // Agent settings: Agent OWL's scheduler card
+        // Agent settings: Vijaya's scheduler card
         if (want("settings")) {
           s = await newPage();
           await s.page.goto(`${TODAY}/settings?section=agent`, { waitUntil: "networkidle" });
           await s.page.locator('[data-card="scheduler"]').waitFor({ timeout: 30_000 });
           await sleep(600);
-          await save(s.page, "agent-settings", "Agent settings, the scheduler card with Agent OWL", { fullPage: true });
+          await save(s.page, "agent-settings", "Agent settings, the scheduler card with Vijaya", { fullPage: true });
           problems.push(...s.errors.map((e) => `${sizeName}/${scheme} agent settings: ${e}`));
           await s.context.close();
         }

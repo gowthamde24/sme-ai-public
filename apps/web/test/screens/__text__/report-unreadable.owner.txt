@@ -1,5 +1,5 @@
 # This week
-Mon, 5 Oct to Sun, 11 Oct What happened in your shop this week, Monday to Sunday, from the records you and Agent OWL keep.
+Mon, 5 Oct to Sun, 11 Oct What happened in your shop this week, Monday to Sunday, from the records you and Vijaya keep.
 {label="Store visits"}
 ## Store visits
 {role=status} Could not read this part. Reload the page to try again.
@@ -13,6 +13,6 @@ How fast customers hear back from you is not available yet.
 {label="Sarees sent most"}
 ## Sarees sent most
 {role=status} Could not read this part. Reload the page to try again.
-{label="Agent OWL this week"}
-## Agent OWL this week
+{label="Vijaya this week"}
+## Vijaya this week
 {role=status} Could not read this part. Reload the page to try again.

@@ -1,3 +1,4 @@
+import { DEFAULT_ASSISTANT_NAME } from "./name";
 import type { AssistantSettings } from "./types";
 
 /**
@@ -8,7 +9,7 @@ import type { AssistantSettings } from "./types";
 export type AssistantProfile = { defaults: AssistantSettings; /** The rows of "what it may do" that this business type shows. */ mayRows: readonly ("prices" | "visits" | "whatsapp" | "dues")[]; discount: boolean; orderLimit: boolean };
 
 const BASE: AssistantSettings = {
-  name: "Vani",
+  name: DEFAULT_ASSISTANT_NAME,
   voice: "female_warm",
   lang: "te",
   autoSwitch: true,
