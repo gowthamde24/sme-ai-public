@@ -599,6 +599,12 @@ async function publicPages(size) {
   await step(s, size, "public", "signup", "/signup: what a visitor sees (no account is made)", async () => {
     await page.goto(`${WEB}/signup`, { waitUntil: "load" });
     const cards = await page.locator("[data-pack-card]").count();
+    // job DH: sign-up is CLOSED on purpose (the note and the early-access address, no form, no business cards, nothing asked of the API); the three cards belong to the open page
+    if (cards === 0) {
+      const closedText = (await page.locator("main").innerText()).replace(/\s+/g, " ");
+      must(/not open yet/i.test(closedText) && /hello@stack19\.com/.test(closedText) && (await page.locator("input").count()) === 0, `/signup shows neither the cards nor the closed note: ${closedText.slice(0, 160)}`);
+      return { status: "NOTE", note: "sign-up is closed on purpose: the early-access note and the address, no form and no business cards" };
+    }
     must(cards === 3, `${cards} business cards`);
     const step1 = (await page.locator("main").innerText()).replace(/\s+/g, " ").slice(0, 160);
     await page.locator("[data-pack-card]").first().click();

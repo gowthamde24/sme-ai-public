@@ -123,8 +123,22 @@ class BillingService:
         result = self._repo.apply_event(worker_token, uuid.UUID(event.tenant_id), event.event_id, event.kind, event.amount_paise, event.occurred_at)
         return AppliedEvent(event.event_id, event.tenant_id, event.kind, result.get("status"))
 
+    def sync_trial_clocks(self, worker_token: str, limit: int = 50) -> int:
+        """Tell the provider the day each trial ends. The 14 days count from the day the workspace's WhatsApp was connected (owner decision 25 Oct 2026), so a subscription is created at the provider WITHOUT an end
+        date and the date is given here, once the database knows it. Safe to run again: a date already given is not given twice (the database marks it) and the provider ignores a repeat."""
+        done = 0
+        for row in self._repo.trial_clocks_due(worker_token, limit):
+            try:
+                self._provider.set_trial_end(str(row["provider_ref"]), datetime.fromisoformat(str(row["trial_ends_at"])))
+                self._repo.trial_clock_mark(worker_token, uuid.UUID(str(row["tenant_id"])))
+                done += 1
+            except (KeyError, ValueError, RepositoryError) as exc:
+                logger.warning("billing: a trial end date could not be passed on (%s)", exc.__class__.__name__)   # tried again at the next tick
+        return done
+
     def advance(self, worker_token: str, now: datetime | None = None) -> list[AppliedEvent]:
         """Apply every event the provider says has fallen due (the fake provider's schedule; a real provider uses a webhook instead). Safe to run again: an applied event changes nothing."""
+        self.sync_trial_clocks(worker_token)
         applied: list[AppliedEvent] = []
         for event in self._provider.events_until(now or self._clock()):
             try:

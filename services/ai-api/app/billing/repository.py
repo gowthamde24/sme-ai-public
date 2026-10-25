@@ -24,6 +24,8 @@ class BillingRepository(Protocol):
     def cancel(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def record_usage(self, token: str, tenant_id: uuid.UUID, kind: str, ref_id: uuid.UUID, units: int) -> dict[str, Any]: ...
     def apply_event(self, token: str, tenant_id: uuid.UUID, event_id: str, kind: str, amount_paise: int | None, at: datetime) -> dict[str, Any]: ...
+    def trial_clocks_due(self, token: str, limit: int) -> list[dict[str, Any]]: ...
+    def trial_clock_mark(self, token: str, tenant_id: uuid.UUID) -> None: ...
 
 
 class PostgrestBillingRepository:
@@ -67,3 +69,10 @@ class PostgrestBillingRepository:
             "billing_apply_event",
             {"p_tenant_id": str(tenant_id), "p_event_id": event_id, "p_kind": kind, "p_amount_paise": amount_paise, "p_at": at.isoformat()},
         )
+
+    def trial_clocks_due(self, token: str, limit: int) -> list[dict[str, Any]]:
+        result = self._rpc.call(token, "scheduler_billing_trial_clocks_due", {"p_limit": limit})
+        return [r for r in result if isinstance(r, dict)] if isinstance(result, list) else []
+
+    def trial_clock_mark(self, token: str, tenant_id: uuid.UUID) -> None:
+        self._rpc.call(token, "scheduler_billing_trial_clock_mark", {"p_tenant_id": str(tenant_id)})

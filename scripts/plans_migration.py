@@ -80,8 +80,8 @@ def render(cat: dict[str, Any]) -> str:
         "-- The marker below is read back by the script and by tests (the manifest in the database must be the one in the repository, byte for byte).",
         f"-- plans-sync: {cat['version']} {sha}",
         "insert into billing.plans (id) values " + ", ".join(f"({_q(p['id'])})" for p in cat["plans"]) + " on conflict do nothing;",
-        "insert into billing.catalogue_versions (version, status, trial_plan, trial_days, payment_method_at_start, grace_days, manifest, manifest_sha256) values",
-        f"  ({cat['version']}, {_q(cat['status'])}, {_q(trial['plan'])}, {trial['days']}, {'true' if trial['payment_method_at_start'] else 'false'}, {trial['grace_days_after_failed_payment']}, "
+        "insert into billing.catalogue_versions (version, status, trial_plan, trial_days, trial_starts_on, setup_days, payment_method_at_start, grace_days, manifest, manifest_sha256) values",
+        f"  ({cat['version']}, {_q(cat['status'])}, {_q(trial['plan'])}, {trial['days']}, {_q(trial['starts_on'])}, {trial['setup_days_without_whatsapp']}, {'true' if trial['payment_method_at_start'] else 'false'}, {trial['grace_days_after_failed_payment']}, "
         f"$plans_json${body}$plans_json$::jsonb, {_q(sha)});",
         "insert into billing.plan_versions (catalogue_version, plan_id, kind, sort, name, price_paise_monthly, price_paise_per_minute, price_paise_per_message, call_minutes, whatsapp_messages, users, workspaces)",
         "select v.version, p ->> 'id', p ->> 'kind', (p ->> 'sort')::integer, p -> 'name', (p ->> 'price_paise_monthly')::integer, (p ->> 'price_paise_per_minute')::integer, (p ->> 'price_paise_per_message')::integer,",

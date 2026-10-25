@@ -35,6 +35,10 @@ class FakeBillingRepository:
         self.plan_of: dict[uuid.UUID, str] = {}
         self.read_only: set[uuid.UUID] = set()
         self.fail_access: Exception | None = None
+        # job DM: the trial is 14 days counted from the day WhatsApp is connected; tenant -> that day (a workspace not in here is waiting for WhatsApp)
+        self.trial_days = 14
+        self.connected: dict[uuid.UUID, datetime] = {}
+        self.clock_marked: set[uuid.UUID] = set()
 
     def _go(self, name: str, *args: Any) -> None:
         self.calls.append((name, args))
@@ -54,6 +58,8 @@ class FakeBillingRepository:
         sub = self.subs.get(tenant_id)
         base["subscription"] = None if sub is None else {k: v for k, v in sub.items() if k not in ("provider_ref",)}
         base["can_start_trial"] = sub is None
+        connected = self.connected.get(tenant_id)
+        base["whatsapp_connected_at"] = connected.isoformat() if connected else None
         base.update(self.access(token, tenant_id))
         return base
 
@@ -88,11 +94,32 @@ class FakeBillingRepository:
             raise PlanUnknownError(plan_id)
         if tenant_id in self.subs:
             raise TrialAlreadyStartedError(str(tenant_id))
+        connected = self.connected.get(tenant_id)
         self.subs[tenant_id] = {
-            "status": "trialing", "plan_id": plan_id, "provider": provider, "provider_ref": provider_ref, "trial_ends_at": None, "current_period_end": None,
-            "cancel_at_period_end": False, "grace_until": None, "payment_method_on_file": True,
+            "status": "trialing", "plan_id": plan_id, "provider": provider, "provider_ref": provider_ref,
+            "trial_ends_at": (connected + timedelta(days=self.trial_days)).isoformat() if connected else None, "current_period_end": None,
+            "cancel_at_period_end": False, "grace_until": None, "payment_method_on_file": True, "trial_waiting_for_whatsapp": connected is None,
         }
         return self.billing(token, tenant_id)
+
+    def connect_whatsapp(self, tenant_id: uuid.UUID, at: datetime) -> None:
+        """What the database trigger does when the number first becomes active: a trial that was waiting gets its end."""
+        self.connected.setdefault(tenant_id, at)
+        sub = self.subs.get(tenant_id)
+        if sub is not None and sub["status"] == "trialing" and sub["trial_ends_at"] is None:
+            sub.update(trial_ends_at=(at + timedelta(days=self.trial_days)).isoformat(), trial_waiting_for_whatsapp=False)
+
+    def trial_clocks_due(self, token: str, limit: int) -> list[dict[str, Any]]:
+        self._go("trial_clocks_due", token)
+        return [
+            {"tenant_id": str(t), "provider": s["provider"], "provider_ref": s["provider_ref"], "trial_ends_at": s["trial_ends_at"]}
+            for t, s in self.subs.items()
+            if s["status"] == "trialing" and s["trial_ends_at"] is not None and t not in self.clock_marked
+        ][:limit]
+
+    def trial_clock_mark(self, token: str, tenant_id: uuid.UUID) -> None:
+        self._go("trial_clock_mark", token)
+        self.clock_marked.add(tenant_id)
 
     def cancel(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._go("cancel", token)

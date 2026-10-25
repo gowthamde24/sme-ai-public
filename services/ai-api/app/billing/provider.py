@@ -2,7 +2,8 @@
 
 The shape follows how subscription providers actually work, so that the real one is an adapter and not a rewrite:
   * the browser's checkout (the provider's own page) collects the payment method and returns a REFERENCE (`checkout_ref`); our servers never see a card or a UPI detail;
-  * `create_subscription` registers the subscription at the provider with a start date after the trial; it charges NOTHING during the trial and refuses a payment method that cannot be authorised;
+  * `create_subscription` registers the subscription at the provider; it charges NOTHING during the trial and refuses a payment method that cannot be authorised. The trial is 14 days counted from the day the
+    workspace's WhatsApp is connected, so the day of the first charge is told later with `set_trial_end` (the worker does it);
   * the provider then runs the schedule (the first charge at the end of the trial, one every month, retries after a failure) and TELLS US with events: `charge_succeeded`, `charge_failed`, `halted`
     (it gave up) and `cancelled`. A real provider delivers them by webhook (`verify_webhook` checks the signature of the raw body); the fake provider produces the same events from a clock (`events_until`);
   * every event has an id; applying an event twice changes nothing (the database keeps the ids);
@@ -34,7 +35,8 @@ class CreateSubscription:
 class ProviderSubscription:
     provider: str
     reference: str
-    trial_ends_at: datetime
+    # None = the provider does not know yet when the trial ends: the 14 days count from the day the workspace's WhatsApp is connected (`set_trial_end` tells it then)
+    trial_ends_at: datetime | None = None
 
 
 @dataclass(frozen=True)
@@ -51,6 +53,11 @@ class BillingProvider(Protocol):
 
     def create_subscription(self, request: CreateSubscription) -> ProviderSubscription:
         """Register the subscription with a trial. Raises PaymentMethodDeclinedError when the payment method cannot be authorised. Charges nothing."""
+        ...
+
+    def set_trial_end(self, reference: str, trial_ends_at: datetime) -> None:
+        """Tell the provider the day the trial ends, which is the day of the first charge. The trial counts from the day the workspace's WhatsApp is connected (owner decision 25 Oct 2026), so this is known
+        only then. Safe to repeat for the same day."""
         ...
 
     def cancel_subscription(self, reference: str, *, at_period_end: bool, now: datetime) -> None:

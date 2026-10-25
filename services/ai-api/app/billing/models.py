@@ -60,6 +60,10 @@ class PlanOut(_Strict):
 
 class TrialRulesOut(_Strict):
     days: int
+    # when the trial days start counting: `whatsapp_connected` = the day the workspace's WhatsApp is connected (owner decision 25 Oct 2026); `sign_up` = the day of sign-up (catalogue version 1)
+    starts_on: Literal["sign_up", "whatsapp_connected"]
+    # a workspace that has not connected WhatsApp yet may set up this many days from the day it was made before it lapses (the trial clock only waits; nothing else does)
+    setup_days_without_whatsapp: int
     # the trial starts with a payment method on file (nothing is charged during the trial)
     payment_method_at_start: bool
     grace_days_after_failed_payment: int
@@ -121,6 +125,8 @@ class SubscriptionOut(_Strict):
     grace_until: datetime | None = None
     # true when a payment method is on file; the method itself is never stored here
     payment_method_on_file: bool
+    # true while the trial has been started but WhatsApp is not connected yet: `trial_ends_at` is null and the 14 days begin on the day WhatsApp is connected
+    trial_waiting_for_whatsapp: bool
 
 
 class UsageViewOut(_Strict):
@@ -149,6 +155,8 @@ class BillingOut(_Strict):
     notices: list[NoticeOut]
     # false once a subscription exists (a trial is started once)
     can_start_trial: bool
+    # the day the workspace's WhatsApp was first connected (the trial's 14 days count from it); null while it is not connected
+    whatsapp_connected_at: datetime | None
     # the plain word the web switches on: `read_only` = view and export only (see AccessOut)
     access: Literal["full", "read_only"]
     read_only_since: date | None
