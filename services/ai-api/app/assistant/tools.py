@@ -1039,7 +1039,8 @@ ACTION_TOOLS: tuple[Tool, ...] = (
         True,
     ),
 )
-# job BP: the web tools import this module's types, so they are added here
+# job BP: the web tools import this module's types, so they are added here; job DG: so is the figure tool (totals and counts of a school's fees, a construction business's dues and trips)
+from app.assistant.figure_tools import FIGURE_TOOLS  # noqa: E402
 from app.assistant.web_tools import WEB_TOOLS  # noqa: E402
 
-TOOLS: tuple[Tool, ...] = (*READ_TOOLS, *ACTION_TOOLS, *WEB_TOOLS)
+TOOLS: tuple[Tool, ...] = (*READ_TOOLS, *FIGURE_TOOLS, *ACTION_TOOLS, *WEB_TOOLS)

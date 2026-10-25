@@ -9,6 +9,7 @@ import pytest
 
 from app.agents.llm.interface import LlmRequest, Trust
 from app.assistant import runner
+from app.assistant.figure_tools import FIGURE_TOOL_NAMES
 from app.assistant.hygiene import STEP_NAMES, internal_names, leaked_names
 from app.assistant.language import (
     LANGUAGES,
@@ -140,7 +141,9 @@ def test_tool_surface_cannot_send_approve_or_price() -> None:
     names = {t.name for t in TOOLS}
     # job BP: plus the four web tools (they read the open web and the metal prices; none acts)
     read, action = {t.name for t in READ_TOOLS}, {t.name for t in ACTION_TOOLS}
-    assert names == read | action | set(WEB_TOOL_NAMES)
+    # job DG: plus the figure tool (totals and counts of fees, dues and trips; it only reads)
+    assert names == read | action | set(WEB_TOOL_NAMES) | set(FIGURE_TOOL_NAMES)
+    assert not any(t.action for t in TOOLS if t.name in FIGURE_TOOL_NAMES)
     assert len(names) == len(TOOLS)
     for forbidden in ("approve", "set_price", "delete", "pay", "create_order", "update"):
         assert not any(forbidden in n for n in names), forbidden
