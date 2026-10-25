@@ -34,6 +34,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('companies',
    $$insert into public.companies (id, tenant_id, name) values (%2$L, %1$L, 'Generic Co')$$,
    'name = name', $$delete from public.companies where id = %2$L$$, true),
+  -- job DP part 5: the Owner's own voice (written only by the Owner's functions; no module guard: every business type may have one)
+  ('own_voices',
+   $$insert into public.own_voices (id, tenant_id, status, consenting_name, consent_sentence, consented_by, consented_at, bucket, sample_path, consent_path) values (%2$L, %1$L, 'pending', 'Generic Person', 'I, Generic Person, allow Stack19 to create an AI voice of me for Generic Co', %5$L, now(), 'ovc-' || %1$L, %2$L || '/sample.wav', %2$L || '/consent.wav') on conflict do nothing$$,
+   'status = status', $$delete from public.own_voices where id = %2$L$$, true),
   ('contacts',
    $$insert into public.contacts (id, tenant_id, company_id, full_name) values (%2$L, %1$L, %3$L, 'Generic Contact')$$,
    'full_name = full_name', $$delete from public.contacts where id = %2$L$$, true),
@@ -373,10 +377,6 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('assistant_settings',
    $$insert into public.assistant_settings (tenant_id, assistant_name, voice_persona, main_language, auto_switch_language, allow_english_mixing, style, speed, may_answer_prices, may_book_visits, may_send_media, may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute) values (%1$L, 'Generic', 'female_warm', 'te', true, true, 'warm', 1, true, true, true, true, 0, true, true, array[1], 540, 600) on conflict (tenant_id) do nothing$$,
    'max_discount_percent = max_discount_percent', $$delete from public.assistant_settings where tenant_id = %1$L$$, false),
-  -- job DP part 5: the Owner's own voice (written only by the Owner's functions; no module guard: every business type may have one)
-  ('own_voices',
-   $$insert into public.own_voices (id, tenant_id, status, consenting_name, consent_sentence, consented_by, consented_at, bucket, sample_path, consent_path) values (%2$L, %1$L, 'pending', 'Generic Person', 'I, Generic Person, allow Stack19 to create an AI voice of me for Generic Co', %5$L, now(), 'ovc-' || %1$L, %2$L || '/sample.wav', %2$L || '/consent.wav') on conflict do nothing$$,
-   'status = status', $$delete from public.own_voices where id = %2$L$$, true),
   -- job CR: the education pack. Written only by definer functions; the modules that guard them (programmes, fees) are OFF for the default pack of the fixture tenants (tests 11 and 12 call
   -- tests.cn_guards_off() first); their own rules are proved in 104 to 107.
   ('institution_profiles',
