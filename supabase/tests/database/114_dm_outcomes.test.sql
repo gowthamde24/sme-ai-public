@@ -117,6 +117,14 @@ select is(pg_temp.val('a_viewer', format($q$select public.outcomes_totals(%L, da
 select is(pg_temp.val('a_viewer', format($q$select public.outcomes_totals(%L, date '2026-10-26', date '2026-10-25')::text$q$, tests.tid('a'))), 'ERR:22023', 'F18 to before from is refused');
 select is(pg_temp.val('b_viewer', format($q$select public.outcomes_totals(%L, null, null)::text$q$, tests.tid('a'))), 'ERR:42501', 'F19 DENY: another business');
 
+-- the customer page (a lead's): the lead's own and its contact's outcomes
+select is(jsonb_array_length(pg_temp.val('a_sales', format($q$select public.outcomes_for_lead(%L, %L, 100)::text$q$, tests.tid('a'), tests.rid('a_lead')))::jsonb), 10, 'F20 the customer page of a lead lists the outcomes of its contact (ten)');
+select is(pg_temp.val('a_sales', format($q$select (public.outcomes_for_lead(%L, %L, 1) -> 0 ->> 'source_id')$q$, tests.tid('a'), tests.rid('a_lead'))), tests.rid('d6')::text, 'F21 newest first');
+select is(pg_temp.val('a_viewer', format($q$select public.outcomes_for_lead(%L, %L, 10)::text$q$, tests.tid('a'), tests.rid('a_lead'))), 'ERR:42501', 'F22 DENY: a Viewer (Owner, Admin, Sales only)');
+select is(pg_temp.val('b_owner', format($q$select public.outcomes_for_lead(%L, %L, 10)::text$q$, tests.tid('a'), tests.rid('a_lead'))), 'ERR:42501', 'F23 DENY: another business');
+select is(pg_temp.val('a_owner', format($q$select public.outcomes_for_lead(%L, %L, 10)::text$q$, tests.tid('a'), tests.rid('b_lead'))), 'ERR:23503', 'F24 a lead of another business is "not found"');
+select is(pg_temp.val('a_owner', format($q$select public.outcomes_for_lead(%L, %L, 0)::text$q$, tests.tid('a'), tests.rid('a_lead'))), 'ERR:22023', 'F25 a limit of 1 to 100');
+
 -- ============================================================================ G. education: no reason, ever
 insert into packs.workspace_pack (tenant_id, pack_code, pack_version, source) select tests.tid('b'), 'education', max(version), 'operator' from packs.pack_versions where code = 'education'
   on conflict (tenant_id) do update set pack_code = excluded.pack_code, pack_version = excluded.pack_version;

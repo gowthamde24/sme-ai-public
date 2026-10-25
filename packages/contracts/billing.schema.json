@@ -561,6 +561,7 @@
       "properties": {
         "status": {
           "enum": [
+            "trial_pending",
             "trialing",
             "active",
             "past_due",
@@ -624,9 +625,17 @@
           "title": "Payment Method On File",
           "type": "boolean"
         },
-        "trial_waiting_for_whatsapp": {
-          "title": "Trial Waiting For Whatsapp",
-          "type": "boolean"
+        "trial_waiting_for": {
+          "anyOf": [
+            {
+              "const": "whatsapp",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Trial Waiting For"
         }
       },
       "required": [
@@ -635,7 +644,7 @@
         "provider",
         "cancel_at_period_end",
         "payment_method_on_file",
-        "trial_waiting_for_whatsapp"
+        "trial_waiting_for"
       ],
       "title": "SubscriptionOut",
       "type": "object"

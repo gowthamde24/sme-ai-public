@@ -63,19 +63,19 @@ select app.operator_set_billing_enforced(false);
 select is(pg_temp.access('a'), 'full', 'C7 with the switch OFF everything is full whatever the dates say');
 
 -- ============================================================================ D. starting the trial
-select is(pg_temp.start('a_owner', 'a', 'sub_fake_a1') like '%"trial_waiting_for_whatsapp": true%', true, 'D1 a trial started before WhatsApp is connected WAITS: trial_waiting_for_whatsapp = true');
+select is(pg_temp.start('a_owner', 'a', 'sub_fake_a1') like '%"trial_waiting_for": "whatsapp"%', true, 'D1 a plan chosen before WhatsApp is connected WAITS: trial_waiting_for = whatsapp');
 select is(pg_temp.sub('a', 'trial_ends_at'), null, 'D2 ...with no end date');
-select is(pg_temp.sub('a', 'status') || '/' || pg_temp.sub('a', 'payment_method_on_file'), 'trialing/true', 'D3 ...a payment method on file, trialing');
+select is(pg_temp.sub('a', 'status') || '/' || pg_temp.sub('a', 'payment_method_on_file'), 'trial_pending/true', 'D3 ...status trial_pending, a payment method on file');
 select is(pg_temp.sub('a', 'catalogue_version'), '2', 'D4 it started under version 2');
-select is(pg_temp.start('b_owner', 'b', 'sub_fake_b1') like '%"trial_waiting_for_whatsapp": false%', true, 'D5 with WhatsApp connected already the trial does not wait');
+select is(pg_temp.start('b_owner', 'b', 'sub_fake_b1') like '%"trial_waiting_for": null%' and pg_temp.sub('b', 'status') = 'trialing', true, 'D5 with WhatsApp connected already the trial does not wait: trialing');
 select is(pg_temp.sub('b', 'trial_ends_at')::timestamptz, '2026-11-09T12:00:00+05:30'::timestamptz, 'D6 ...and ends 14 days after the connected day (26 October + 14 = 9 November)');
 select is((select count(*)::int from public.billing_events where tenant_id = tests.tid('a') and kind = 'trial_started'), 1, 'D7 one trial_started event');
 
 -- ============================================================================ E. a trial that waits
 select app.operator_set_billing_enforced(true);
-select is(pg_temp.until('a'), '2026-11-25T12:00:00+05:30'::timestamptz, 'E1 a trial that waits for WhatsApp lapses after the 30 setup days from its start (26 October + 30)');
-select pg_temp.pin('2026-11-26T12:00:01+05:30'::timestamptz);
-select is(pg_temp.access('a'), 'read_only', 'E2 ...and then it is read-only');
+select is(pg_temp.until('a'), null, 'E1 a plan that waits for WhatsApp never lapses by waiting (it is reminded instead)');
+select pg_temp.pin('2027-03-01T12:00:01+05:30'::timestamptz);
+select is(pg_temp.access('a'), 'full', 'E2 ...not even months later: full');
 select pg_temp.pin('2026-11-10T11:00:00+05:30'::timestamptz);
 select is(pg_temp.until('b'), '2026-11-10T12:00:00+05:30'::timestamptz, 'E3 a trial with its end: access runs one day past the end (the first charge is expected then)');
 select is(pg_temp.access('b'), 'full', 'E4 ...so on 10 November at 11:00 it is still full');
@@ -98,7 +98,7 @@ update integrations.whatsapp_accounts set status = 'disabled' where tenant_id = 
 update integrations.whatsapp_accounts set status = 'active' where tenant_id = tests.tid('a');
 select is(pg_temp.sub('a', 'trial_ends_at')::timestamptz, '2026-11-15T12:00:00+05:30'::timestamptz, 'F4 switching the number off and on does not restart the trial');
 select is((select count(*)::int from public.billing_events where tenant_id = tests.tid('a') and kind = 'trial_clock_started'), 1, 'F5 ...and makes no second event');
-select is(pg_temp.sub('a', 'status'), 'trialing', 'F6 it is still trialing');
+select is(pg_temp.sub('a', 'status'), 'trialing', 'F6 the status turned from trial_pending to trialing');
 
 -- ============================================================================ G. the worker tells the provider
 select pg_temp.pin('2026-11-05T13:00:00+05:30'::timestamptz);
@@ -115,7 +115,7 @@ select is(pg_temp.val('anon', 'select public.scheduler_billing_trial_clocks_due(
 select is(pg_temp.val('x5', 'select public.scheduler_billing_trial_clocks_due(0)::text'), 'ERR:22023', 'G11 a limit of 0 is refused');
 
 -- ============================================================================ H. what the screens are told
-select is(pg_temp.val('a_owner', format($q$select (public.billing_get(%L) -> 'subscription' ->> 'trial_waiting_for_whatsapp')$q$, tests.tid('a'))), 'false', 'H1 billing_get: the trial no longer waits once WhatsApp is connected');
+select is(pg_temp.val('a_owner', format($q$select coalesce(public.billing_get(%L) -> 'subscription' ->> 'trial_waiting_for', 'none')$q$, tests.tid('a'))), 'none', 'H1 billing_get: the trial no longer waits once WhatsApp is connected');
 select is(pg_temp.val('a_owner', format($q$select (public.billing_get(%L) ->> 'whatsapp_connected_at')::timestamptz::text$q$, tests.tid('a'))), (select '2026-11-01 12:00:00+05:30'::timestamptz::text), 'H2 ...and says the day it was connected');
 select is(pg_temp.val('a_owner', 'select public.billing_plans() -> ''trial'' ->> ''starts_on'''), 'whatsapp_connected', 'H3 billing_plans: the rule is in the catalogue answer');
 select is(pg_temp.val('a_owner', 'select public.billing_plans() -> ''trial'' ->> ''days'''), '14', 'H4 ...14 days');

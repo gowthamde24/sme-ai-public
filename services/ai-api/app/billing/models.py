@@ -14,7 +14,8 @@ PlanKind = Literal["trial", "main", "calls"]
 MeterKind = Literal["call_minutes", "whatsapp_messages"]
 # ok: under 80 percent. notice: from 80 percent. stopped: 100 percent used (or nothing included): that kind stops for this workspace until a top-up or the next period.
 MeterState = Literal["ok", "notice", "stopped"]
-SubscriptionStatus = Literal["trialing", "active", "past_due", "cancelled"]
+# trial_pending: the plan is chosen and a payment method is on file, but WhatsApp is not connected yet, so the 14 days have not begun (nothing is charged; sending, AI calls and campaigns stay off until it is)
+SubscriptionStatus = Literal["trial_pending", "trialing", "active", "past_due", "cancelled"]
 
 
 class _Strict(BaseModel):
@@ -125,8 +126,8 @@ class SubscriptionOut(_Strict):
     grace_until: datetime | None = None
     # true when a payment method is on file; the method itself is never stored here
     payment_method_on_file: bool
-    # true while the trial has been started but WhatsApp is not connected yet: `trial_ends_at` is null and the 14 days begin on the day WhatsApp is connected
-    trial_waiting_for_whatsapp: bool
+    # "whatsapp" while the status is trial_pending: `trial_ends_at` is null and the 14 days begin on the day WhatsApp is connected; null otherwise
+    trial_waiting_for: Literal["whatsapp"] | None
 
 
 class UsageViewOut(_Strict):

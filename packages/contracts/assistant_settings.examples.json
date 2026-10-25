@@ -201,6 +201,7 @@
    ]
   },
   "updated_at": null,
+  "locked": {},
   "wording": "draft"
  },
  "assistant_saved_construction": {
@@ -402,7 +403,8 @@
     }
    ]
   },
-  "updated_at": "2026-10-25T17:46:39.851975Z",
+  "updated_at": "2026-10-25T18:13:36.968629Z",
+  "locked": {},
   "wording": "draft"
  },
  "assistant_defaults_education": {
@@ -417,7 +419,7 @@
    "may_answer_prices": false,
    "may_book_visits": true,
    "may_send_media": true,
-   "may_talk_dues": true,
+   "may_talk_dues": false,
    "max_discount_percent": 0,
    "handover_owner_asked": true,
    "handover_upset": true,
@@ -445,7 +447,7 @@
    "may_answer_prices": false,
    "may_book_visits": true,
    "may_send_media": true,
-   "may_talk_dues": true,
+   "may_talk_dues": false,
    "max_discount_percent": 0,
    "handover_owner_asked": true,
    "handover_upset": true,
@@ -606,6 +608,7 @@
    ]
   },
   "updated_at": null,
+  "locked": {},
   "wording": "draft"
  },
  "preview_telugu_warm": {

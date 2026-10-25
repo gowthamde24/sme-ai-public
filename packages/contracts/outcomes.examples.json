@@ -91,7 +91,11 @@
     "has_more": true,
     "next_cursor": "MjAyNi0xMC0yNlQxMjoyMDowMCswMDowMHw2ZjFjM2E1Mi0wZjBlLTRiNmUtOWQ3YS0xYTJiM2M0ZDVlMDM"
   },
-  "outcome_list_empty": { "items": [], "has_more": false, "next_cursor": null },
+  "outcome_list_empty": {
+    "items": [],
+    "has_more": false,
+    "next_cursor": null
+  },
   "totals_today": {
     "from_day": "2026-10-26",
     "to_day": "2026-10-26",
@@ -101,10 +105,22 @@
         "positive": 3,
         "negative": 2,
         "unclear": 1,
-        "by_category": { "interested": 2, "visit_booked": 1, "order_likely": 0, "not_interested": 1, "wrong_number": 0, "too_costly": 1, "call_back_later": 1 }
+        "by_category": {
+          "interested": 2,
+          "visit_booked": 1,
+          "order_likely": 0,
+          "not_interested": 1,
+          "wrong_number": 0,
+          "too_costly": 1,
+          "call_back_later": 1
+        }
       }
     ],
-    "total": { "positive": 3, "negative": 2, "unclear": 1 }
+    "total": {
+      "positive": 3,
+      "negative": 2,
+      "unclear": 1
+    }
   },
   "totals_empty_day": {
     "from_day": "2026-10-27",
@@ -115,10 +131,22 @@
         "positive": 0,
         "negative": 0,
         "unclear": 0,
-        "by_category": { "interested": 0, "visit_booked": 0, "order_likely": 0, "not_interested": 0, "wrong_number": 0, "too_costly": 0, "call_back_later": 0 }
+        "by_category": {
+          "interested": 0,
+          "visit_booked": 0,
+          "order_likely": 0,
+          "not_interested": 0,
+          "wrong_number": 0,
+          "too_costly": 0,
+          "call_back_later": 0
+        }
       }
     ],
-    "total": { "positive": 0, "negative": 0, "unclear": 0 }
+    "total": {
+      "positive": 0,
+      "negative": 0,
+      "unclear": 0
+    }
   },
   "record_request": {
     "contact_id": "0b9c1e6a-3d4f-4a52-8c10-5a6b7c8d9e01",
@@ -130,5 +158,42 @@
     "reason": "Will confirm the order after the family meeting.",
     "occurred_at": "2026-10-26T14:30:00Z"
   },
-  "correction_request": { "outcome": "negative", "category": "not_interested", "reason": "Said they bought elsewhere." }
+  "correction_request": {
+    "outcome": "negative",
+    "category": "not_interested",
+    "reason": "Said they bought elsewhere."
+  },
+  "customer_outcomes": [
+    {
+      "id": "6f1c3a52-0f0e-4b6e-9d7a-1a2b3c4d5e03",
+      "channel": "call",
+      "at": "2026-10-26T12:20:00Z",
+      "result": "unclear",
+      "category": null,
+      "reason": null,
+      "corrected": false
+    },
+    {
+      "id": "6f1c3a52-0f0e-4b6e-9d7a-1a2b3c4d5e02",
+      "channel": "call",
+      "at": "2026-10-26T10:15:00Z",
+      "result": "negative",
+      "category": "too_costly",
+      "reason": "Said the price is too high.",
+      "corrected": true
+    },
+    {
+      "id": "6f1c3a52-0f0e-4b6e-9d7a-1a2b3c4d5e01",
+      "channel": "whatsapp",
+      "at": "2026-10-26T09:42:00Z",
+      "result": "positive",
+      "category": "interested",
+      "reason": "Showed interest or asked for details.",
+      "corrected": false
+    }
+  ],
+  "customer_correction_request": {
+    "result": "negative",
+    "category": "not_interested"
+  }
 }

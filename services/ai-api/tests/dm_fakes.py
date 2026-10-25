@@ -19,6 +19,7 @@ class FakeOutcomesRepository:
         self.rows: list[dict[str, Any]] = []
         self.education = education
         self.calls: list[tuple[str, tuple[Any, ...]]] = []
+        self.lead_contacts: dict[str, uuid.UUID] = {}
 
     def record(self, token: str, tenant_id: uuid.UUID, body: dict[str, Any]) -> dict[str, Any]:
         self.calls.append(("record", (tenant_id, body["kind"], str(body["source_id"]))))
@@ -64,3 +65,8 @@ class FakeOutcomesRepository:
                          "by_category": {c: sum(1 for r in here if r["category"] == c) for c in CATEGORIES}})
         return {"from_day": start.isoformat(), "to_day": end.isoformat(), "days": days,
                 "total": {w: sum(d[w] for d in days) for w in ("positive", "negative", "unclear")}}
+
+    def for_lead(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, limit: int) -> list[dict[str, Any]]:
+        self.calls.append(("for_lead", (tenant_id, lead_id)))
+        rows = [r for r in self.rows if r["lead_id"] == str(lead_id) or r["contact_id"] == str(self.lead_contacts.get(str(lead_id)))]
+        return sorted(rows, key=lambda r: (r["occurred_at"], r["id"]), reverse=True)[:limit]

@@ -88,7 +88,7 @@ export interface PlansOut {
 }
 
 export interface SubscriptionOut {
-  status: "trialing" | "active" | "past_due" | "cancelled";
+  status: "trial_pending" | "trialing" | "active" | "past_due" | "cancelled";
   plan_id: string;
   provider: string;
   trial_ends_at?: string | null;
@@ -96,7 +96,7 @@ export interface SubscriptionOut {
   cancel_at_period_end: boolean;
   grace_until?: string | null;
   payment_method_on_file: boolean;
-  trial_waiting_for_whatsapp: boolean;
+  trial_waiting_for: "whatsapp" | null;
 }
 
 export interface TrialRulesOut {

@@ -32,7 +32,13 @@ export const DRAFT_PLANS: PlansOut = {
   catalogue_version: draft.version,
   status: "draft",
   currency: "INR",
-  trial: { days: draft.trial.days, payment_method_at_start: draft.trial.payment_method_at_start, grace_days_after_failed_payment: draft.trial.grace_days_after_failed_payment },
+  trial: {
+    days: draft.trial.days,
+    starts_on: draft.trial.starts_on as PlansOut["trial"]["starts_on"],
+    setup_days_without_whatsapp: draft.trial.setup_days_without_whatsapp,
+    payment_method_at_start: draft.trial.payment_method_at_start,
+    grace_days_after_failed_payment: draft.trial.grace_days_after_failed_payment,
+  },
   plans: (draft.plans as unknown as DraftPlan[]).map((p) => ({ ...p, name: { en: p.name.en, te: null, hi: null, kn: null }, price_paise_per_minute: p.price_paise_per_minute ?? null, price_paise_per_message: p.price_paise_per_message ?? null, price_set: p.price_paise_monthly !== null })),
 };
 

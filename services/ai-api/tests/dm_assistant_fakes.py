@@ -19,12 +19,13 @@ class FakeAssistantSettingsRepository:
         self.business_type, self.business_name, self.voice_notes = business_type, business_name, voice_notes
         self.calls: list[str] = []
         self.updated_at: str | None = None
+        self.locked: dict[str, Any] = {}
 
     def get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self.calls.append("get")
         return {
             "saved": self.row is not None, "settings": copy.deepcopy(self.row), "updated_at": self.updated_at, "business_name": self.business_name,
-            "business_type": self.business_type, "voice_notes": self.voice_notes,
+            "business_type": self.business_type, "voice_notes": self.voice_notes, "locked": self.locked,
         }
 
     def save(self, token: str, tenant_id: uuid.UUID, settings: dict[str, Any]) -> dict[str, Any]:

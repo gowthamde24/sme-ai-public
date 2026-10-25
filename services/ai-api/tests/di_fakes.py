@@ -96,9 +96,9 @@ class FakeBillingRepository:
             raise TrialAlreadyStartedError(str(tenant_id))
         connected = self.connected.get(tenant_id)
         self.subs[tenant_id] = {
-            "status": "trialing", "plan_id": plan_id, "provider": provider, "provider_ref": provider_ref,
+            "status": "trialing" if connected else "trial_pending", "plan_id": plan_id, "provider": provider, "provider_ref": provider_ref,
             "trial_ends_at": (connected + timedelta(days=self.trial_days)).isoformat() if connected else None, "current_period_end": None,
-            "cancel_at_period_end": False, "grace_until": None, "payment_method_on_file": True, "trial_waiting_for_whatsapp": connected is None,
+            "cancel_at_period_end": False, "grace_until": None, "payment_method_on_file": True, "trial_waiting_for": None if connected else "whatsapp",
         }
         return self.billing(token, tenant_id)
 
@@ -106,8 +106,8 @@ class FakeBillingRepository:
         """What the database trigger does when the number first becomes active: a trial that was waiting gets its end."""
         self.connected.setdefault(tenant_id, at)
         sub = self.subs.get(tenant_id)
-        if sub is not None and sub["status"] == "trialing" and sub["trial_ends_at"] is None:
-            sub.update(trial_ends_at=(at + timedelta(days=self.trial_days)).isoformat(), trial_waiting_for_whatsapp=False)
+        if sub is not None and sub["status"] == "trial_pending":
+            sub.update(status="trialing", trial_ends_at=(at + timedelta(days=self.trial_days)).isoformat(), trial_waiting_for=None)
 
     def trial_clocks_due(self, token: str, limit: int) -> list[dict[str, Any]]:
         self._go("trial_clocks_due", token)
@@ -126,7 +126,7 @@ class FakeBillingRepository:
         sub = self.subs.get(tenant_id)
         if sub is None or sub["status"] == "cancelled":
             raise NothingToCancelError(str(tenant_id))
-        if sub["status"] in ("trialing", "past_due"):
+        if sub["status"] in ("trial_pending", "trialing", "past_due"):
             sub.update(status="cancelled", payment_method_on_file=False, grace_until=None)
             self.plan_of[tenant_id] = "free_trial"
         else:

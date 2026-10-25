@@ -17,11 +17,21 @@ from fastapi import APIRouter, Depends, Query
 from app.auth.deps import AnyMember, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
-from app.outcomes.models import OutcomeCorrectionIn, OutcomeIn, OutcomeListOut, OutcomeOut, OutcomeRecordedOut, OutcomeTotalsOut
+from app.outcomes.models import (
+    CustomerCorrectionIn,
+    CustomerOutcomeOut,
+    OutcomeCorrectionIn,
+    OutcomeIn,
+    OutcomeListOut,
+    OutcomeOut,
+    OutcomeRecordedOut,
+    OutcomeTotalsOut,
+)
 from app.outcomes.repository import OutcomesRepository
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/outcomes", tags=["outcomes"])
+customers_router = APIRouter(prefix="/v1/tenants/{tenant_id}/customers", tags=["outcomes"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
 Sales = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
@@ -70,7 +80,12 @@ def totals(
     runtime: RuntimeDep,
     from_day: Annotated[date | None, Query(alias="from")] = None,
     to_day: Annotated[date | None, Query(alias="to")] = None,
+    day: Annotated[date | None, Query()] = None,
 ) -> OutcomeTotalsOut:
+    if day is not None:   # C2's shortcut: one India day
+        if from_day is not None or to_day is not None:
+            raise ApiError(422, "validation_error", "Give a day, or a from and a to, not both.")
+        from_day = to_day = day
     return OutcomeTotalsOut.model_validate(_repo(runtime).totals(ctx.principal.token, ctx.tenant.id, from_day, to_day))
 
 
@@ -85,3 +100,25 @@ def correct(outcome_id: str, body: OutcomeCorrectionIn, ctx: OwnerAdmin, runtime
     if parsed is None:
         raise not_found()
     return OutcomeOut.model_validate(_repo(runtime).correct(ctx.principal.token, ctx.tenant.id, parsed, body.outcome, body.category, body.reason))
+
+
+@router.post("/{outcome_id}/correct", response_model=OutcomeOut)
+def correct_as_posted(outcome_id: str, body: CustomerCorrectionIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> OutcomeOut:
+    """C2's shape of the correction: POST {result, category}. The same act as PATCH; the old reason is dropped unless a new one is given."""
+    parsed = parse_uuid(outcome_id)
+    if parsed is None:
+        raise not_found()
+    return OutcomeOut.model_validate(_repo(runtime).correct(ctx.principal.token, ctx.tenant.id, parsed, body.result, body.category, body.reason))
+
+
+@customers_router.get("/{lead_id}/outcomes", response_model=list[CustomerOutcomeOut])
+def customer_outcomes(lead_id: str, ctx: Sales, runtime: RuntimeDep, limit: Annotated[int, Query(ge=1, le=100)] = 50) -> list[CustomerOutcomeOut]:
+    """C2's shape: one customer page's outcomes, newest first (Owner, Admin, Sales)."""
+    parsed = parse_uuid(lead_id)
+    if parsed is None:
+        raise not_found()
+    rows = _repo(runtime).for_lead(ctx.principal.token, ctx.tenant.id, parsed, limit)
+    return [
+        CustomerOutcomeOut(id=r["id"], channel="call" if r["kind"] == "call" else "whatsapp", at=r["occurred_at"], result=r["outcome"], category=r["category"], reason=r["reason"], corrected=bool(r["corrected"]))
+        for r in rows
+    ]

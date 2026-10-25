@@ -14,6 +14,9 @@ from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agent_runs.routes import router as agent_runs_router
 from app.agent_runs.wiring import build_agents_runtime
 from app.assistant.routes import router as assistant_router
+from app.assistant_settings.repository import PostgrestAssistantSettingsRepository
+from app.assistant_settings.routes import router as assistant_settings_router
+from app.assistant_settings.service import AssistantSettingsService
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.billing import errors as billing_errors
@@ -22,11 +25,6 @@ from app.billing.repository import PostgrestBillingRepository
 from app.billing.routes import plans_router as billing_plans_router
 from app.billing.routes import router as billing_router
 from app.billing.service import BillingService
-from app.assistant_settings.repository import PostgrestAssistantSettingsRepository
-from app.assistant_settings.routes import router as assistant_settings_router
-from app.assistant_settings.service import AssistantSettingsService
-from app.outcomes.repository import PostgrestOutcomesRepository
-from app.outcomes.routes import router as outcomes_router
 from app.businessprofile.repository import PostgrestBusinessProfileRepository
 from app.businessprofile.routes import router as business_profile_router
 from app.campaigns import errors as campaign_errors
@@ -102,6 +100,9 @@ from app.outbox import errors as outbox_errors
 from app.outbox.adapter import ChannelAdapter, build_adapter
 from app.outbox.repository import PostgrestOutboxRepository
 from app.outbox.routes import router as outbox_router
+from app.outcomes.repository import PostgrestOutcomesRepository
+from app.outcomes.routes import customers_router as outcomes_customers_router
+from app.outcomes.routes import router as outcomes_router
 from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError
 from app.packs.providers import providers_from_settings
 from app.packs.registry import PackRegistry, default_directory
@@ -263,7 +264,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
             _billing_provider(settings),
         ),
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
-        assistant_settings=AssistantSettingsService(PostgrestAssistantSettingsRepository(config.rest_url, config.anon_key)),
+        assistant_settings=AssistantSettingsService(
+            PostgrestAssistantSettingsRepository(config.rest_url, config.anon_key)
+        ),
     )
 
 
@@ -951,6 +954,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(billing_plans_router)
     app.include_router(billing_router)
     app.include_router(outcomes_router)
+    app.include_router(outcomes_customers_router)
     app.include_router(assistant_settings_router)
     app.include_router(materials_public_router)
     app.include_router(materials_router)

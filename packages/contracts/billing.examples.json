@@ -280,7 +280,7 @@
    "cancel_at_period_end": false,
    "grace_until": null,
    "payment_method_on_file": true,
-   "trial_waiting_for_whatsapp": false
+   "trial_waiting_for": null
   },
   "period": {
    "start": "2026-10-01",
@@ -333,80 +333,6 @@
   "data_days_left": null,
   "whatsapp_connected_at": "2026-10-29T10:00:00Z"
  },
- "billing_trial_waiting_for_whatsapp": {
-  "plan": {
-   "id": "free_trial",
-   "kind": "trial",
-   "sort": 0,
-   "name": {
-    "en": "Free trial",
-    "te": null,
-    "hi": null,
-    "kn": null
-   },
-   "price_paise_monthly": null,
-   "price_paise_per_minute": null,
-   "price_paise_per_message": null,
-   "price_set": false,
-   "allowances": {
-    "call_minutes": 30,
-    "whatsapp_messages": 100
-   },
-   "limits": {
-    "users": 1,
-    "workspaces": 1
-   },
-   "ai": "included_fair_use"
-  },
-  "subscription": {
-   "status": "trialing",
-   "plan_id": "growth",
-   "provider": "fake",
-   "trial_ends_at": null,
-   "current_period_end": null,
-   "cancel_at_period_end": false,
-   "grace_until": null,
-   "payment_method_on_file": true,
-   "trial_waiting_for_whatsapp": true
-  },
-  "period": {
-   "start": "2026-10-01",
-   "end": "2026-10-30",
-   "timezone": "Asia/Kolkata",
-   "days_left": 5
-  },
-  "usage": {
-   "call_minutes": {
-    "kind": "call_minutes",
-    "unit": "minutes",
-    "used": 0,
-    "allowance": 30,
-    "remaining": 30,
-    "percent": 0,
-    "state": "ok",
-    "included": true,
-    "topup": 0
-   },
-   "whatsapp_messages": {
-    "kind": "whatsapp_messages",
-    "unit": "messages",
-    "used": 0,
-    "allowance": 100,
-    "remaining": 100,
-    "percent": 0,
-    "state": "ok",
-    "included": true,
-    "topup": 0
-   }
-  },
-  "notices": [],
-  "can_start_trial": false,
-  "access": "full",
-  "read_only_since": null,
-  "delete_on": null,
-  "data_days_left": null,
-  "whatsapp_connected_at": null
- },
  "billing_active_messages_stopped": {
   "plan": {
    "id": "growth",
@@ -441,7 +367,7 @@
    "cancel_at_period_end": false,
    "grace_until": null,
    "payment_method_on_file": true,
-   "trial_waiting_for_whatsapp": false
+   "trial_waiting_for": null
   },
   "period": {
    "start": "2026-10-01",
@@ -528,7 +454,7 @@
    "cancel_at_period_end": false,
    "grace_until": null,
    "payment_method_on_file": true,
-   "trial_waiting_for_whatsapp": false
+   "trial_waiting_for": null
   },
   "period": {
    "start": "2026-10-01",
@@ -602,7 +528,7 @@
    "cancel_at_period_end": false,
    "grace_until": null,
    "payment_method_on_file": true,
-   "trial_waiting_for_whatsapp": false
+   "trial_waiting_for": null
   },
   "period": {
    "start": "2026-10-01",
@@ -676,7 +602,7 @@
    "cancel_at_period_end": false,
    "grace_until": "2026-10-20T10:00:00Z",
    "payment_method_on_file": true,
-   "trial_waiting_for_whatsapp": false
+   "trial_waiting_for": null
   },
   "period": {
    "start": "2026-10-01",
@@ -787,7 +713,7 @@
    "cancel_at_period_end": false,
    "grace_until": null,
    "payment_method_on_file": false,
-   "trial_waiting_for_whatsapp": false
+   "trial_waiting_for": null
   },
   "period": {
    "start": "2026-10-01",
@@ -838,5 +764,79 @@
   "read_only_since": "2026-10-14",
   "delete_on": "2027-01-12",
   "data_days_left": 79
+ },
+ "billing_trial_pending_waiting_for_whatsapp": {
+  "plan": {
+   "id": "free_trial",
+   "kind": "trial",
+   "sort": 0,
+   "name": {
+    "en": "Free trial",
+    "te": null,
+    "hi": null,
+    "kn": null
+   },
+   "price_paise_monthly": null,
+   "price_paise_per_minute": null,
+   "price_paise_per_message": null,
+   "price_set": false,
+   "allowances": {
+    "call_minutes": 30,
+    "whatsapp_messages": 100
+   },
+   "limits": {
+    "users": 1,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  "subscription": {
+   "status": "trial_pending",
+   "plan_id": "growth",
+   "provider": "fake",
+   "trial_ends_at": null,
+   "current_period_end": null,
+   "cancel_at_period_end": false,
+   "grace_until": null,
+   "payment_method_on_file": true,
+   "trial_waiting_for": "whatsapp"
+  },
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-30",
+   "timezone": "Asia/Kolkata",
+   "days_left": 5
+  },
+  "usage": {
+   "call_minutes": {
+    "kind": "call_minutes",
+    "unit": "minutes",
+    "used": 0,
+    "allowance": 30,
+    "remaining": 30,
+    "percent": 0,
+    "state": "ok",
+    "included": true,
+    "topup": 0
+   },
+   "whatsapp_messages": {
+    "kind": "whatsapp_messages",
+    "unit": "messages",
+    "used": 0,
+    "allowance": 100,
+    "remaining": 100,
+    "percent": 0,
+    "state": "ok",
+    "included": true,
+    "topup": 0
+   }
+  },
+  "notices": [],
+  "can_start_trial": false,
+  "access": "full",
+  "read_only_since": null,
+  "delete_on": null,
+  "data_days_left": null,
+  "whatsapp_connected_at": null
  }
 }

@@ -87,6 +87,31 @@ class OutcomeRecordedOut(OutcomeOut):
     replayed: bool
 
 
+class CustomerOutcomeOut(_Strict):
+    """One line of a customer's page (C2's shape): the outcome as the screen draws it."""
+
+    id: str
+    channel: Literal["call", "whatsapp"]
+    at: datetime
+    result: OutcomeWord
+    category: CategoryWord | None
+    reason: str | None
+    corrected: bool
+
+
+class CustomerCorrectionIn(_Strict):
+    """C2's correction body: the result and the category; the old reason is dropped unless a new one is given (it described the old word)."""
+
+    result: OutcomeWord
+    category: CategoryWord | None = None
+    reason: str | None = Field(default=None, min_length=2, max_length=200)
+
+    @model_validator(mode="after")
+    def _pair(self) -> CustomerCorrectionIn:
+        _check_pair(self.result, self.category)
+        return self
+
+
 class OutcomeListOut(_Strict):
     items: list[OutcomeOut]
     has_more: bool

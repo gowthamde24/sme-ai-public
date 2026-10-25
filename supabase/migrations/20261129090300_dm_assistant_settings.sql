@@ -8,6 +8,8 @@
 --   public.assistant_voices              the four personas and, per language, whether a voice exists for it
 --   The words "AI assistant" are always said: the spoken introduction is composed in code from fixed wording ("{name}, the AI assistant of {business}") and is not a stored field; the name cannot carry markup.
 --   No child data: nothing here refers to a student.
+--   THE SCHOOL RULE (owner, 25 Oct 2026): an education workspace's assistant never discusses dues, fees or marks, offers no discount and has no order limit. Those go only as fixed template messages from the school's
+--   records. The save refuses any setting that would allow it, and the answer says which fields are locked (app.assistant_locked).
 
 -- ---------------------------------------------------------------------------------------------------------------------------------
 -- 1. the voices of the four personas
@@ -45,7 +47,7 @@ revoke all on function app.operator_set_voice_persona(text, text, text) from pub
 -- ---------------------------------------------------------------------------------------------------------------------------------
 create table public.assistant_settings (
   tenant_id                 uuid primary key references public.tenants (id) on delete restrict,
-  assistant_name            text not null check (char_length(assistant_name) between 1 and 30 and app.text_is_clean(assistant_name) and assistant_name ~ '^[^<>{}@/\\|]+$'),
+  assistant_name            text not null check (char_length(assistant_name) between 1 and 24 and app.text_is_clean(assistant_name) and assistant_name ~ '^[^<>{}@/\\|]+$'),
   voice_persona             text not null check (voice_persona in ('female_warm', 'female_clear', 'male_calm', 'male_lively')),
   main_language             text not null check (main_language in ('en', 'te', 'hi', 'kn', 'ta')),
   auto_switch_language      boolean not null,
@@ -125,6 +127,19 @@ as $$
 $$;
 revoke all on function app.assistant_json(public.assistant_settings) from public, anon, authenticated, service_role;
 
+-- the fields a business type may not change, with the value they are held at: a school's assistant does not talk about dues, fees or marks (so no prices), gives no discount and has no order limit
+create function app.assistant_locked(p_tenant uuid) returns jsonb
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select case when exists (select 1 from packs.workspace_pack w where w.tenant_id = p_tenant and w.pack_code = 'education')
+              then jsonb_build_object('may_talk_dues', false, 'may_answer_prices', false, 'max_discount_percent', 0, 'handover_order_above_paise', null)
+              else '{}'::jsonb end
+$$;
+revoke all on function app.assistant_locked(uuid) from public, anon, authenticated, service_role;
+
 -- ---------------------------------------------------------------------------------------------------------------------------------
 -- 3. read
 -- ---------------------------------------------------------------------------------------------------------------------------------
@@ -147,6 +162,7 @@ begin
     'updated_at', case when found then a.updated_at else null end,
     'business_name', (select t.name from public.tenants t where t.id = p_tenant_id),
     'business_type', coalesce((select w.pack_code from packs.workspace_pack w where w.tenant_id = p_tenant_id), 'textiles'),
+    'locked', app.assistant_locked(p_tenant_id),
     'voice_notes', app.module_enabled(p_tenant_id, 'voice_notes'));
 end;
 $$;
@@ -203,6 +219,10 @@ begin
      or exists (select 1 from unnest(array['speed', 'max_discount_percent', 'call_from_minute', 'call_to_minute']) k where jsonb_typeof(p_settings -> k) <> 'number')
      or jsonb_typeof(p_settings -> 'handover_order_above_paise') not in ('number', 'null')
      or exists (select 1 from jsonb_array_elements(p_settings -> 'call_days') d where jsonb_typeof(d) <> 'number') then
+    perform app.assistant_error('invalid');
+  end if;
+  -- the school rule: whatever the locked fields are held at, the save must say the same
+  if exists (select 1 from jsonb_each(app.assistant_locked(p_tenant_id)) l where p_settings -> l.key is distinct from l.value) then
     perform app.assistant_error('invalid');
   end if;
   begin

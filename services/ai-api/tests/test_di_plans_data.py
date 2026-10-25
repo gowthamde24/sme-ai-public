@@ -29,7 +29,7 @@ def test_the_catalogue_in_the_repository_is_valid() -> None:
 def test_the_owner_decisions_are_in_the_data() -> None:
     cat = catalogue()
     by_id = {p["id"]: p for p in cat["plans"]}
-    assert cat["trial"]["days"] == 30 and cat["trial"]["payment_method_at_start"] is True
+    assert cat["trial"]["days"] == 14 and cat["trial"]["starts_on"] == "whatsapp_connected" and cat["trial"]["payment_method_at_start"] is True
     minutes = {i: p["allowances"]["call_minutes"] for i, p in by_id.items()}
     messages = {i: p["allowances"]["whatsapp_messages"] for i, p in by_id.items()}
     assert minutes == {"free_trial": 30, "starter": 0, "growth": 100, "business": 300, "calls_payg": None, "calls_300": 300, "calls_1000": 1000}

@@ -25,6 +25,9 @@ from app.billing.mail import (
     PostgrestBillingMailRepository,
     build_sender,
 )
+from app.billing.provider import BillingProvider, build_provider
+from app.billing.repository import PostgrestBillingRepository
+from app.billing.service import BillingService
 from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
 from app.notifications.repository import PostgrestNotificationsRepository
@@ -69,6 +72,7 @@ class Worker:
         push: PushRunner | None = None,
         voice: VoiceNotes | None = None,
         billing_mail: BillingReminders | None = None,
+        billing_clocks: BillingService | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -85,6 +89,8 @@ class Worker:
         self._voice = voice
         # job DI: the e-mails of a workspace that went read-only (day 1, 30, 60, 83); the FAKE sender sends nothing; only while the platform's billing switch is on
         self._billing_mail = billing_mail
+        # job DM: the trial is 14 days from the day WhatsApp is connected; the provider is told the day the trial ends once it is known
+        self._billing_clocks = billing_clocks
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -101,6 +107,7 @@ class Worker:
             self._privacy_housekeeping(token)
             self._push_to_the_team(token)
             self._billing_reminders(token)
+            self._billing_trial_clocks(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -138,10 +145,21 @@ class Worker:
             return
         try:
             self._billing_mail.run(token)
+            self._billing_mail.run_pending(token)
         except TokenRejected:
             raise
         except Exception as exc:
             logger.error("billing reminders crashed: %s", exc.__class__.__name__)
+
+    def _billing_trial_clocks(self, token: str) -> None:
+        if self._billing_clocks is None:
+            return
+        try:
+            self._billing_clocks.sync_trial_clocks(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("billing trial clocks crashed: %s", exc.__class__.__name__)
 
     def run_forever(self, stop: threading.Event) -> None:
         """Tick, then wait for the next deadline (not `interval` after the tick ended: a slow tick does not push the schedule back). Returns when `stop` is set."""
@@ -161,6 +179,13 @@ class Worker:
 def _billing_sender(settings: Settings) -> EmailSender:
     try:
         return build_sender(settings.billing_email_sender)
+    except ValueError as exc:
+        raise ConfigurationError(str(exc)) from None
+
+
+def _billing_provider(settings: Settings) -> BillingProvider:
+    try:
+        return build_provider(settings.billing_provider)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
 
@@ -198,6 +223,7 @@ def build_worker(settings: Settings) -> Worker:
         session,
         interval_seconds=settings.scheduler_interval_seconds,
         billing_mail=BillingReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
+        billing_clocks=BillingService(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_provider(settings)),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,

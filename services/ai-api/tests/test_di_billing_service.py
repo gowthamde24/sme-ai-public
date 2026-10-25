@@ -92,13 +92,13 @@ def test_if_the_record_fails_the_providers_subscription_is_cancelled_at_once() -
 
 
 # ---------------------------------------------------------------------------------------------- the trial clock (job DM): 14 days from the day WhatsApp is connected
-def test_a_trial_started_before_whatsapp_is_connected_waits_and_charges_nothing() -> None:
+def test_a_plan_chosen_before_whatsapp_is_connected_is_trial_pending_and_charges_nothing() -> None:
     service, repo, _, clock = world(price=99900)
     del repo.connected[T]
     out = service.start_trial(TOKEN, T, "growth", fake.OK)
-    assert out["subscription"]["trial_waiting_for_whatsapp"] is True and out["subscription"]["trial_ends_at"] is None and out["whatsapp_connected_at"] is None
+    assert out["subscription"]["status"] == "trial_pending" and out["subscription"]["trial_waiting_for"] == "whatsapp" and out["subscription"]["trial_ends_at"] is None and out["whatsapp_connected_at"] is None
     assert events_for(service, 400, clock) == [], "no end date, no first charge: a year of waiting charges nothing"
-    assert repo.subs[T]["status"] == "trialing"
+    assert repo.subs[T]["status"] == "trial_pending"
 
 
 def test_connecting_whatsapp_starts_the_14_days_and_the_first_charge_falls_on_the_14th_day() -> None:
@@ -108,7 +108,7 @@ def test_connecting_whatsapp_starts_the_14_days_and_the_first_charge_falls_on_th
     assert events_for(service, 19, clock) == []
     repo.connect_whatsapp(T, T0 + timedelta(days=20))
     sub = service.billing(TOKEN, T)["subscription"]
-    assert sub["trial_waiting_for_whatsapp"] is False and sub["trial_ends_at"] == (T0 + timedelta(days=34)).isoformat()
+    assert sub["status"] == "trialing" and sub["trial_waiting_for"] is None and sub["trial_ends_at"] == (T0 + timedelta(days=34)).isoformat()
     assert events_for(service, 33, clock) == [], "the 14 days count from the day WhatsApp was connected, not from the start"
     assert events_for(service, 35, clock) == ["charge_succeeded:active"]
 

@@ -69,7 +69,7 @@ def test_there_are_defaults_for_every_business_type_and_they_are_valid_settings(
     d = data.load()
     packs = {p.name for p in PACKS.iterdir() if p.is_dir()}
     assert set(d["defaults"]) == packs, "one set of defaults for each pack (business type)"
-    for biz, values in d["defaults"].items():
+    for values in d["defaults"].values():
         models.AssistantSettings.model_validate(values)
         assert values["max_discount_percent"] >= 0
     assert d["defaults"]["education"]["max_discount_percent"] == 0 and d["defaults"]["education"]["may_answer_prices"] is False, "a school has no catalogue to quote and gives no discount"
@@ -170,7 +170,7 @@ def test_a_save_is_read_back_and_defaults_stay_available_for_reset() -> None:
 @pytest.mark.parametrize(
     "over",
     [
-        {"name": ""}, {"name": "x" * 31}, {"name": "<b>Vani</b>"}, {"name": "Vani {name}"}, {"name": "a@b"}, {"name": "a/b"}, {"name": "bad\x00name"},
+        {"name": ""}, {"name": "x" * 25}, {"name": "<b>Vani</b>"}, {"name": "Vani {name}"}, {"name": "a@b"}, {"name": "a/b"}, {"name": "bad\x00name"},
         {"speed": 1.3}, {"speed": 0.7}, {"speed": 1.03},
         {"max_discount_percent": 51}, {"max_discount_percent": -1},
         {"call_days": []}, {"call_days": [8]}, {"call_days": [0, 1]}, {"call_days": [1, 1]},
@@ -193,6 +193,33 @@ def test_every_field_is_required() -> None:
         del body[key]
         assert client.put(B, json=body, headers=auth("a_owner")).status_code == 422, key
     assert repo.row is None
+
+
+EDUCATION_LOCKED = {"may_talk_dues": False, "may_answer_prices": False, "max_discount_percent": 0, "handover_order_above_paise": None}
+
+
+def test_the_school_rule_the_assistant_never_discusses_dues_fees_or_marks_and_gives_no_discount() -> None:
+    client, repo = world(business_type="education", business_name="Little Flower School")
+    repo.locked = dict(EDUCATION_LOCKED)
+    out = client.get(B, headers=auth("a_owner")).json()
+    assert out["locked"] == EDUCATION_LOCKED
+    assert all(out["settings"][k] == v for k, v in EDUCATION_LOCKED.items()), "the defaults obey it"
+    for over in ({"may_talk_dues": True}, {"may_answer_prices": True}, {"max_discount_percent": 5}, {"handover_order_above_paise": 100}):
+        r = client.put(B, json=settings(**{**EDUCATION_LOCKED, **over}), headers=auth("a_owner"))
+        assert r.status_code == 422 and r.json()["error"]["code"] == "locked_for_business_type", over
+    assert repo.row is None and "save" not in repo.calls, "nothing reached the database"
+    ok = client.put(B, json=settings(**EDUCATION_LOCKED), headers=auth("a_owner"))
+    assert ok.status_code == 200 and ok.json()["saved"] is True
+
+
+def test_a_business_without_the_rule_has_nothing_locked() -> None:
+    client, _ = world()
+    assert client.get(B, headers=auth("a_owner")).json()["locked"] == {}
+
+
+def test_the_education_defaults_obey_the_school_rule() -> None:
+    d = data.load()["defaults"]["education"]
+    assert all(d[k] == v for k, v in EDUCATION_LOCKED.items())
 
 
 def test_the_order_amount_may_be_off_and_the_name_may_have_spaces_and_dots() -> None:

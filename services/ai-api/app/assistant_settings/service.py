@@ -19,6 +19,7 @@ from app.assistant_settings.models import (
     VoiceAvailabilityOut,
 )
 from app.assistant_settings.repository import AssistantSettingsRepository
+from app.errors import ApiError
 
 LANGUAGES = ("en", "te", "hi", "kn")
 NATIVE = {"en": "English", "te": "తెలుగు", "hi": "हिंदी", "kn": "ಕನ್ನಡ"}
@@ -49,16 +50,22 @@ class AssistantSettingsService:
             saved=saved,
             defaults=defaults,
             business_name=business,
-            business_type=biz,  # type: ignore[arg-type]
+            business_type=biz,
             intro={lang: data.intro(lang, settings.name, business) for lang in LANGUAGES},  # type: ignore[misc]
             voice_notes_follow=bool(row.get("voice_notes")),
+            locked=dict(row.get("locked") or {}),
             options=self._options(self._repo.voices(token, tenant_id)),
             updated_at=row.get("updated_at"),
             wording="draft",
         )
 
     def save(self, token: str, tenant_id: uuid.UUID, settings: AssistantSettings) -> AssistantOut:
-        self._repo.save(token, tenant_id, settings.model_dump())
+        locked = self._repo.get(token, tenant_id).get("locked") or {}
+        held = settings.model_dump()
+        if any(held.get(field) != value for field, value in locked.items()):
+            # the school rule (owner, 25 Oct 2026): the database refuses it too; this answers in plain words
+            raise ApiError(422, "locked_for_business_type", "This business type does not allow that: the assistant does not talk about dues, fees or marks, gives no discount and has no order limit.")
+        self._repo.save(token, tenant_id, held)
         return self.get(token, tenant_id)
 
     def preview(self, token: str, tenant_id: uuid.UUID, language: str, style: str, name: str | None) -> PreviewOut:

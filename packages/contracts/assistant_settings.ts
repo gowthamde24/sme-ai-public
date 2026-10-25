@@ -6,11 +6,12 @@ export interface AssistantOut {
   saved: boolean;
   defaults: AssistantSettings;
   business_name: string;
-  business_type: "textiles" | "construction_materials" | "education";
+  business_type: string;
   intro: Record<string, string>;
   voice_notes_follow: boolean;
   options: OptionsOut;
   updated_at: string | null;
+  locked: Record<string, boolean | number | null>;
   wording: "draft";
 }
 

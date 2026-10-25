@@ -44,7 +44,7 @@ describe("the catalogue from the API", () => {
     const out = parsePlans({ ...DRAFT_PLANS, plans: [...DRAFT_PLANS.plans].reverse() });
     const cat = catalogueFrom(out);
     expect(cat.plans.map((p) => p.id)).toEqual(["starter", "growth", "business", "calls_payg", "calls_300", "calls_1000"]);
-    expect(cat.trial).toEqual({ days: 30, callMinutes: 30, messages: 100, graceDays: 7 });
+    expect(cat.trial).toEqual({ days: 14, callMinutes: 30, messages: 100, graceDays: 7 });
     expect(mainPlans(cat)).toHaveLength(3);
     expect(callsPlans(cat)).toHaveLength(3);
   });

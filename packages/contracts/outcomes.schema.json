@@ -48,6 +48,139 @@
       "title": "CategoryCountsOut",
       "type": "object"
     },
+    "CustomerCorrectionIn": {
+      "additionalProperties": false,
+      "description": "C2's correction body: the result and the category; the old reason is dropped unless a new one is given (it described the old word).",
+      "properties": {
+        "result": {
+          "enum": [
+            "positive",
+            "negative",
+            "unclear"
+          ],
+          "title": "Result",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "interested",
+                "visit_booked",
+                "order_likely",
+                "not_interested",
+                "wrong_number",
+                "too_costly",
+                "call_back_later"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "title": "CustomerCorrectionIn",
+      "type": "object"
+    },
+    "CustomerOutcomeOut": {
+      "additionalProperties": false,
+      "description": "One line of a customer's page (C2's shape): the outcome as the screen draws it.",
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "channel": {
+          "enum": [
+            "call",
+            "whatsapp"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "result": {
+          "enum": [
+            "positive",
+            "negative",
+            "unclear"
+          ],
+          "title": "Result",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "interested",
+                "visit_booked",
+                "order_likely",
+                "not_interested",
+                "wrong_number",
+                "too_costly",
+                "call_back_later"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Category"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        },
+        "corrected": {
+          "title": "Corrected",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "channel",
+        "at",
+        "result",
+        "category",
+        "reason",
+        "corrected"
+      ],
+      "title": "CustomerOutcomeOut",
+      "type": "object"
+    },
     "OutcomeCorrectionIn": {
       "additionalProperties": false,
       "properties": {

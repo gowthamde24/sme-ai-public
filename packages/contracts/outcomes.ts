@@ -11,6 +11,22 @@ export interface CategoryCountsOut {
   call_back_later: number;
 }
 
+export interface CustomerCorrectionIn {
+  result: "positive" | "negative" | "unclear";
+  category?: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "call_back_later" | null;
+  reason?: string | null;
+}
+
+export interface CustomerOutcomeOut {
+  id: string;
+  channel: "call" | "whatsapp";
+  at: string;
+  result: "positive" | "negative" | "unclear";
+  category: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "call_back_later" | null;
+  reason: string | null;
+  corrected: boolean;
+}
+
 export interface OutcomeCorrectionIn {
   outcome: "positive" | "negative" | "unclear";
   category?: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "call_back_later" | null;

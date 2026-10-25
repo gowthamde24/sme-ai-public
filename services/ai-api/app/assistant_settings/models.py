@@ -14,10 +14,11 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_vali
 LanguageWord = Literal["en", "te", "hi", "kn"]
 PersonaWord = Literal["female_warm", "female_clear", "male_calm", "male_lively"]
 StyleWord = Literal["warm", "respectful", "quick"]
-BusinessType = Literal["textiles", "construction_materials", "education"]
+# the business type is the pack's code (data: packages/packs); code never lists them
+BusinessType = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,40}$")]
 
 # the name carries no markup, braces, at-signs or slashes (it is spoken and shown, never interpreted)
-AssistantName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=30, pattern=r"^[^<>{}@/\\|\x00-\x1f\x7f]+$")]
+AssistantName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=24, pattern=r"^[^<>{}@/\\|\x00-\x1f\x7f]+$")]
 
 
 class _Strict(BaseModel):
@@ -107,6 +108,9 @@ class AssistantOut(_Strict):
     voice_notes_follow: bool
     options: OptionsOut
     updated_at: datetime | None
+    # fields this business type may not change, with the value they are held at (the school rule: an education workspace's assistant never discusses dues, fees or marks, gives no discount and has no order
+    # limit; those go only as fixed template messages from the school's records). The screen shows them switched off; the API refuses a save that says otherwise.
+    locked: dict[str, bool | int | None]
     # a draft wording awaiting native review
     wording: Literal["draft"]
 

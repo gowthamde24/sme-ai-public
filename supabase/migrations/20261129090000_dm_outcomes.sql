@@ -8,6 +8,7 @@
 --   public.outcome_correct                Owner or Admin corrects the outcome, the category or the reason; what the AI first said is kept
 --   public.outcomes_list                  newest first, for one customer (the timeline) and/or one India day; keyset paging by (occurred_at, id)
 --   public.outcomes_totals                per India day, zero-filled: positive, negative, unclear and a count per category
+--   public.outcomes_for_lead              one customer page's outcomes (the lead's and its contact's), newest first
 --
 --   NO CHILD DATA: the table has no reference to a student; in an EDUCATION workspace the reason is never stored (null) and the web shows the category's fixed words instead. Outcomes concern the adult who
 --   enquired or the adult we write to, never a pupil.
@@ -326,3 +327,33 @@ end;
 $$;
 revoke all on function public.outcomes_totals(uuid, date, date) from public, anon;
 grant execute on function public.outcomes_totals(uuid, date, date) to authenticated;
+
+-- one customer's outcomes by LEAD (the customer page is a lead's): the outcomes of the lead and of its contact, newest first (Owner, Admin, Sales)
+create function public.outcomes_for_lead(p_tenant_id uuid, p_lead_id uuid, p_limit integer) returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  v_contact uuid;
+begin
+  if auth.uid() is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin', 'sales']::public.app_role[]) then
+    perform app.outcome_error('deny');
+  end if;
+  if p_limit is null or p_limit not between 1 and 100 then
+    perform app.outcome_error('invalid');
+  end if;
+  select l.contact_id into v_contact from public.leads l where l.tenant_id = p_tenant_id and l.id = p_lead_id;
+  if not found then
+    perform app.outcome_error('reference');
+  end if;
+  return coalesce((
+    select jsonb_agg(app.outcome_json(x) order by x.occurred_at desc, x.id desc)
+      from (select o.* from public.outcomes o
+             where o.tenant_id = p_tenant_id and (o.lead_id = p_lead_id or (v_contact is not null and o.contact_id = v_contact))
+             order by o.occurred_at desc, o.id desc limit p_limit) x), '[]'::jsonb);
+end;
+$$;
+revoke all on function public.outcomes_for_lead(uuid, uuid, integer) from public, anon;
+grant execute on function public.outcomes_for_lead(uuid, uuid, integer) to authenticated;

@@ -6,6 +6,7 @@ never breaks the webhook. The database's own rules are proved in supabase/tests/
 from __future__ import annotations
 
 import json
+import re
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
@@ -59,6 +60,7 @@ def test_no_shape_refers_to_a_student_or_a_child() -> None:
         ("totals_empty_day", models.OutcomeTotalsOut),
         ("record_request", models.OutcomeIn),
         ("correction_request", models.OutcomeCorrectionIn),
+        ("customer_correction_request", models.CustomerCorrectionIn),
     ],
 )
 def test_the_example_payloads_match_the_models_and_the_schema(example: str, model: type) -> None:
@@ -66,6 +68,14 @@ def test_the_example_payloads_match_the_models_and_the_schema(example: str, mode
     model.model_validate(payload)  # type: ignore[attr-defined]
     validator = jsonschema.Draft202012Validator({**SCHEMA, "$ref": f"#/$defs/{model.__name__}"})
     assert list(validator.iter_errors(payload)) == []
+
+
+def test_the_customer_page_examples_match_the_model_and_the_schema() -> None:
+    validator = jsonschema.Draft202012Validator({**SCHEMA, "$ref": "#/$defs/CustomerOutcomeOut"})
+    for item in EXAMPLES["customer_outcomes"]:
+        models.CustomerOutcomeOut.model_validate(item)
+        assert list(validator.iter_errors(item)) == []
+        assert re.fullmatch(r"[a-z0-9-]{1,40}", item["id"]), "C2's screens refuse any other id"
 
 
 def test_the_category_must_belong_to_the_outcome() -> None:
@@ -242,3 +252,38 @@ def test_the_recorder_ignores_an_unclear_reply_and_survives_a_refusal() -> None:
     assert repo.bodies == []
     assert OutcomeRecorder(_Repo(UpstreamError("down"))).after_inbound("t", STORED, "Interested", None) is False  # type: ignore[arg-type]
     assert OutcomeRecorder(_Repo()).after_inbound("t", {"outcome": "stored"}, "Interested", None) is False  # type: ignore[arg-type]
+
+
+# ------------------------------------------------------------------------------------------------ C2's shapes (the customer page, ?day=, POST .../correct)
+LEAD = "7a2d4b63-1a1f-4c7f-8e8b-2b3c4d5e6f02"
+
+
+def test_the_customer_page_list_is_c2s_shape_newest_first() -> None:
+    client, repo = world()
+    client.post(B, json=body(lead_id=LEAD, occurred_at="2026-10-20T10:00:00+00:00"), headers=auth("a_owner"))
+    client.post(B, json=body(lead_id=LEAD, kind="whatsapp_followup", occurred_at="2026-10-21T10:00:00+00:00", outcome="negative", category="too_costly"), headers=auth("a_owner"))
+    client.post(B, json=body(lead_id=str(uuid.uuid4())), headers=auth("a_owner"))
+    rows = client.get(f"/v1/tenants/{A}/customers/{LEAD}/outcomes", headers=auth("a_sales")).json()
+    assert [r["channel"] for r in rows] == ["whatsapp", "call"] and rows[0]["result"] == "negative" and rows[0]["at"].startswith("2026-10-21")
+    assert set(rows[0]) == {"id", "channel", "at", "result", "category", "reason", "corrected"}
+    assert all(re.fullmatch(r"[a-z0-9-]{1,40}", r["id"]) for r in rows)
+    assert client.get(f"/v1/tenants/{A}/customers/{LEAD}/outcomes", headers=auth("a_viewer")).status_code == 403, "Owner, Admin and Sales (C2's rule)"
+    assert client.get(f"/v1/tenants/{A}/customers/nope/outcomes", headers=auth("a_owner")).status_code == 404
+
+
+def test_totals_take_one_day_as_c2_asks() -> None:
+    client, _ = world()
+    now = datetime.now(UTC).isoformat()
+    client.post(B, json=body(occurred_at=now), headers=auth("a_owner"))
+    one = client.get(f"{B}/totals", params={"day": datetime.now(UTC).date().isoformat()}, headers=auth("a_owner")).json()
+    assert one["total"]["positive"] == 1 and len(one["days"]) == 1
+    assert client.get(f"{B}/totals", params={"day": "2026-10-26", "from": "2026-10-25"}, headers=auth("a_owner")).status_code == 422
+
+
+def test_the_correction_can_be_posted_as_c2_asks() -> None:
+    client, _ = world()
+    row = client.post(B, json=body(reason="Asked for the price list."), headers=auth("a_owner")).json()
+    fixed = client.post(f"{B}/{row['id']}/correct", json={"result": "negative", "category": "not_interested"}, headers=auth("a_admin")).json()
+    assert fixed["corrected"] is True and fixed["outcome"] == "negative" and fixed["reason"] is None, "the old reason described the old word"
+    assert client.post(f"{B}/{row['id']}/correct", json={"result": "negative", "category": "interested"}, headers=auth("a_owner")).status_code == 422
+    assert client.post(f"{B}/{row['id']}/correct", json={"result": "unclear"}, headers=auth("a_sales")).status_code == 403

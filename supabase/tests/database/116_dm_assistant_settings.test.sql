@@ -13,6 +13,8 @@ create function pg_temp.base() returns jsonb language sql as $$
   select jsonb_build_object('name', 'Vani', 'voice_persona', 'female_warm', 'main_language', 'te', 'auto_switch_language', true, 'allow_english_mixing', true, 'style', 'warm', 'speed', 1.0,
     'may_answer_prices', true, 'may_book_visits', true, 'may_send_media', true, 'may_talk_dues', false, 'max_discount_percent', 5, 'handover_owner_asked', true, 'handover_upset', true,
     'handover_order_above_paise', 5000000, 'call_days', jsonb_build_array(1, 2, 3, 4, 5, 6), 'call_from_minute', 540, 'call_to_minute', 1140) $$;
+create function pg_temp.edu() returns jsonb language sql as $$
+  select pg_temp.base() || '{"may_talk_dues": false, "may_answer_prices": false, "max_discount_percent": 0, "handover_order_above_paise": null}'::jsonb $$;
 create function pg_temp.save(p_user text, p_tenant text, p_settings jsonb, p_aal text default 'aal2') returns text language sql as $$
   select pg_temp.val(p_user, format($q$select public.assistant_settings_save(%L, %L::jsonb)::text$q$, tests.tid(p_tenant), p_settings::text), p_aal) $$;
 create function pg_temp.get(p_user text, p_tenant text, p_key text default null) returns text language sql as $$
@@ -41,7 +43,7 @@ select is(pg_temp.save('a_owner', 'a', pg_temp.base()) is not null and pg_temp.f
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"extra": 1}'), 'ERR:22023', 'B1 an unknown key');
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() - 'style'), 'ERR:22023', 'B2 a missing key');
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"name": ""}'), 'ERR:22023', 'B3 an empty name');
-select is(pg_temp.save('a_owner', 'a', pg_temp.base() || jsonb_build_object('name', repeat('x', 31))), 'ERR:22023', 'B4 a name of at most 30 characters');
+select is(pg_temp.save('a_owner', 'a', pg_temp.base() || jsonb_build_object('name', repeat('x', 25))), 'ERR:22023', 'B4 a name of at most 24 characters');
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"name": "<b>Vani</b>"}'), 'ERR:22023', 'B5 a name carries no markup');
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"name": "Vani {name}"}'), 'ERR:22023', 'B6 ...no braces');
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"name": "a@b"}'), 'ERR:22023', 'B7 ...no at-sign');
@@ -85,15 +87,25 @@ insert into packs.workspace_pack (tenant_id, pack_code, pack_version, source) se
 insert into public.voice_settings (tenant_id, enabled, speed, call_from_hour, call_to_hour) values (tests.tid('b'), true, 1.00, 9, 21);
 select is(pg_temp.get('b_owner', 'b', 'voice_notes'), 'true', 'D1 the education workspace has voice notes');
 select is(pg_temp.get('b_owner', 'b', 'business_type'), 'education', 'D2 ...and says what business it is');
-select is(pg_temp.save('b_owner', 'b', pg_temp.base() || '{"speed": 0.9, "call_from_minute": 630, "call_to_minute": 1185, "voice_persona": "male_calm", "main_language": "hi"}') is not null, true, 'D3 the Owner of b saves');
+select is(pg_temp.save('b_owner', 'b', pg_temp.edu() || '{"speed": 0.9, "call_from_minute": 630, "call_to_minute": 1185, "voice_persona": "male_calm", "main_language": "hi"}') is not null, true, 'D3 the Owner of b saves');
 select is((select speed::text || '/' || call_from_hour || '/' || call_to_hour from public.voice_settings where tenant_id = tests.tid('b')), '0.90/10/20', 'D4 the voice notes follow: speed 0.9, hours 10 and 20 (10:30 rounds down, 19:45 rounds up)');
 select is((select count(*)::int from public.voice_choices where tenant_id = tests.tid('b')), 5, 'D5 the persona''s voice is chosen for every language that has one');
 select is((select voice_code from public.voice_choices where tenant_id = tests.tid('b') and language = 'te'), 'fake-te', 'D6 ...the one the operator mapped');
 select is((select enabled from public.voice_settings where tenant_id = tests.tid('b')), true, 'D7 the switch of the voice notes is not touched');
 select is((select count(*)::int from public.voice_settings where tenant_id = tests.tid('a')), 0, 'D8 a business without voice notes gets no voice settings made by a save');
 select is((select count(*)::int from public.voice_choices where tenant_id = tests.tid('a')), 0, 'D9 ...and no voice choices');
-select is(left(pg_temp.save('b_owner', 'b', pg_temp.base() || '{"call_from_minute": 1245, "call_to_minute": 1260}'), 12), '{"saved": tr', 'D10 the latest hours (20:45 to 21:00) can be saved');
+select is(left(pg_temp.save('b_owner', 'b', pg_temp.edu() || '{"call_from_minute": 1245, "call_to_minute": 1260}'), 12), '{"saved": tr', 'D10 the latest hours (20:45 to 21:00) can be saved');
 select is((select call_from_hour || '/' || call_to_hour from public.voice_settings where tenant_id = tests.tid('b')), '20/21', 'D11 ...and stay inside the voice notes'' own 9 to 21 rule');
+
+-- ============================================================================ D2. the school rule (owner, 25 Oct 2026)
+select is(pg_temp.get('b_owner', 'b', 'locked'), '{"may_talk_dues": false, "may_answer_prices": false, "max_discount_percent": 0, "handover_order_above_paise": null}', 'D11 a school''s answer says which fields are locked');
+select is(pg_temp.get('a_owner', 'a', 'locked'), '{}', 'D12 a textile shop has none locked');
+select is(pg_temp.save('b_owner', 'b', pg_temp.edu() || '{"may_talk_dues": true}'), 'ERR:22023', 'D13 a school''s assistant cannot be allowed to talk about dues');
+select is(pg_temp.save('b_owner', 'b', pg_temp.edu() || '{"may_answer_prices": true}'), 'ERR:22023', 'D14 ...nor about prices (fees)');
+select is(pg_temp.save('b_owner', 'b', pg_temp.edu() || '{"max_discount_percent": 1}'), 'ERR:22023', 'D15 ...nor offer a discount');
+select is(pg_temp.save('b_owner', 'b', pg_temp.edu() || '{"handover_order_above_paise": 100}'), 'ERR:22023', 'D16 ...nor have an order limit');
+select is(pg_temp.save('b_owner', 'b', pg_temp.base()), 'ERR:22023', 'D17 the ordinary defaults of a shop are refused for a school');
+select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"may_talk_dues": true, "max_discount_percent": 9}') is not null and pg_temp.field('a', 'may_talk_dues') = 'true', true, 'D18 a shop may (the rule belongs to the business type)');
 
 -- ============================================================================ E. the voices of the personas
 select is(jsonb_array_length(pg_temp.val('a_owner', format($q$select public.assistant_voices(%L)::text$q$, tests.tid('a')))::jsonb), 20, 'E1 four personas in five languages (fake voices today)');

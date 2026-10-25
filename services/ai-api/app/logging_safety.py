@@ -24,7 +24,7 @@ ROUTE_WORDS = frozenset(
         # job DI: plans and billing
         "plans", "billing", "trial", "access",
         # job DM: outcomes of calls and follow-ups
-        "outcomes", "totals", "ai-assistant", "preview", "test-call",
+        "outcomes", "totals", "correct", "ai-assistant", "preview", "test-call",
         # job CN: sites, dues, material quotes, deliveries, the public calculator
         "calculate", "materials", "sites", "dues", "customers", "invoices", "payments",
         "credit-limit", "credit-check", "ledger", "items", "photos", "order", "trips", "delivered",
@@ -37,7 +37,7 @@ ROUTE_WORDS = frozenset(
         "erase", "fee-plans", "fee-assignments", "fees", "adjustments", "concessions",
         "guardians", "late-fees", "post", "pending", "announcements", "audience",
         # job CV: the one reports API and the voice notes
-        "run", "choices", "preview", "usage", "disclosure", "notes", "voice-notes", "voices",
+        "run", "choices", "usage", "disclosure", "notes", "voice-notes", "voices",
         # job CK
         "packs", "auth", "providers", "pack", "modules", "example-data",
         "custom-fields", "custom", "security", "remove",

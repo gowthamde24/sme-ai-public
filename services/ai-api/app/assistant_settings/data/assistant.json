@@ -215,7 +215,7 @@
    "may_answer_prices": false,
    "may_book_visits": true,
    "may_send_media": true,
-   "may_talk_dues": true,
+   "may_talk_dues": false,
    "max_discount_percent": 0,
    "handover_owner_asked": true,
    "handover_upset": true,

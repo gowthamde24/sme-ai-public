@@ -12,7 +12,14 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from app.assistant_settings.models import AssistantOut, AssistantSettings, LanguageWord, PreviewOut, StyleWord, TestCallOut
+from app.assistant_settings.models import (
+    AssistantOut,
+    AssistantSettings,
+    LanguageWord,
+    PreviewOut,
+    StyleWord,
+    TestCallOut,
+)
 from app.assistant_settings.service import AssistantSettingsService
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError
@@ -46,7 +53,7 @@ def preview(
     runtime: RuntimeDep,
     language: Annotated[LanguageWord, Query()],
     style: Annotated[StyleWord, Query()],
-    name: Annotated[str | None, Query(min_length=1, max_length=30, pattern=r"^[^<>{}@/\\|\x00-\x1f\x7f]+$")] = None,
+    name: Annotated[str | None, Query(min_length=1, max_length=24, pattern=r"^[^<>{}@/\\|\x00-\x1f\x7f]+$")] = None,
 ) -> PreviewOut:
     return _service(runtime).preview(ctx.principal.token, ctx.tenant.id, language, style, name.strip() if name else None)
 

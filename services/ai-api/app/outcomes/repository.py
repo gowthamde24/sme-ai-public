@@ -17,6 +17,7 @@ class OutcomesRepository(Protocol):
     def correct(self, token: str, tenant_id: uuid.UUID, outcome_id: uuid.UUID, outcome: str, category: str | None, reason: str | None) -> dict[str, Any]: ...
     def list(self, token: str, tenant_id: uuid.UUID, contact_id: uuid.UUID | None, day: date | None, limit: int, before: tuple[datetime, uuid.UUID] | None) -> dict[str, Any]: ...
     def totals(self, token: str, tenant_id: uuid.UUID, from_day: date | None, to_day: date | None) -> dict[str, Any]: ...
+    def for_lead(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, limit: int) -> list[dict[str, Any]]: ...
 
 
 class PostgrestOutcomesRepository:
@@ -66,3 +67,6 @@ class PostgrestOutcomesRepository:
             "outcomes_totals",
             {"p_tenant_id": str(tenant_id), "p_from": from_day.isoformat() if from_day else None, "p_to": to_day.isoformat() if to_day else None},
         )
+
+    def for_lead(self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID, limit: int) -> list[dict[str, Any]]:
+        return self._rpc.array(token, "outcomes_for_lead", {"p_tenant_id": str(tenant_id), "p_lead_id": str(lead_id), "p_limit": limit})
