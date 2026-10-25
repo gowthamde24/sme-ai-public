@@ -106,7 +106,7 @@ update public.billing_subscriptions set status = 'active', cancelled_at = null, 
 select app.billing_edit(false);
 select is((select jsonb_array_length(pg_temp.val('x5', 'select public.scheduler_tenants()::text')::jsonb)), 2, 'G1 both workspaces are paid: the worker runs both');
 select app.billing_edit(true);
-update public.billing_subscriptions set status = 'cancelled', cancelled_at = now() where tenant_id = tests.tid('a');
+update public.billing_subscriptions set status = 'cancelled', cancelled_at = timestamptz '2026-10-01 10:00+05:30', current_period_end = timestamptz '2026-10-05 10:00+05:30' where tenant_id = tests.tid('a');   -- its paid period ended on 5 October
 select app.billing_edit(false);
 select is((select jsonb_array_length(pg_temp.val('x5', 'select public.scheduler_tenants()::text')::jsonb)), 1, 'G2 a is read-only (cancelled): the worker leaves it alone');
 select is(pg_temp.val('x5', 'select public.scheduler_tenants()::text')::jsonb ->> 0, tests.tid('b')::text, 'G3 ...and runs b');
