@@ -2,7 +2,7 @@ import { CATALOGUE, planById } from "./catalogue";
 import type { BillingState, PaymentMethod, PlanResult, WorkspacePlan } from "./types";
 
 /**
- * The FAKE billing provider (job DK), only for NEXT_PUBLIC_PLAN_SCREENS=mock: start the 30-day trial with a payment method, cancel before day 30 (nothing is charged), a payment that fails and the way out of it. Its whole
+ * The FAKE billing provider (job DK), only for PLAN_SCREENS=mock: start the 30-day trial with a payment method, cancel before day 30 (nothing is charged), a payment that fails and the way out of it. Its whole
  * state is ONE cookie of seven fields, read with allow-lists and integer bounds (nothing in it is trusted): no server holds anything, no network is called, no card number exists anywhere (the "payment method" is a test choice).
  * Superseded by C1's fake provider on the API (job DI) when its contract is there; the screens do not change, only lib/plan/source.ts.
  */

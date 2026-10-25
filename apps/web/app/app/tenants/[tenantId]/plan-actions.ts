@@ -11,7 +11,7 @@ import type { PlanResult } from "@/lib/plan/types";
 
 /**
  * The moves of the plan screens (job DK). Each one: a signed-in person, a workspace they belong to as Owner or Admin (the API says which; anything else is `forbidden`), then lib/plan/source.ts, which refuses with
- * `not_available` unless the fake provider is switched on (NEXT_PUBLIC_PLAN_SCREENS=mock). Nothing here talks to a payment company; no card number is asked for anywhere.
+ * `not_available` unless the fake provider is switched on (PLAN_SCREENS=mock). Nothing here talks to a payment company; no card number is asked for anywhere.
  */
 async function allowed(tenantId: string): Promise<PlanResult | null> {
   const user = await requireUser();

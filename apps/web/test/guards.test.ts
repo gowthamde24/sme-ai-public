@@ -59,7 +59,6 @@ const ALLOWED_PUBLIC = new Set([
   "NEXT_PUBLIC_SUPABASE_ANON_KEY", // legacy name, still accepted
   "NEXT_PUBLIC_SITE_URL", // the public address of the site (links in the sitemap and the share pictures; job BS)
   "NEXT_PUBLIC_SITE_LIVE", // "1" opens the public pages to search engines at launch (job BS)
-  "NEXT_PUBLIC_PLAN_SCREENS", // "1" or "mock" shows the Plan and usage screens; unset = off until billing is real (job DK)
 ]);
 
 describe("no secrets in apps/web", () => {

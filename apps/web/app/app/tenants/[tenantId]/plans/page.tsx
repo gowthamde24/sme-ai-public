@@ -22,7 +22,7 @@ export const metadata = { title: `Plans · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /**
- * /app/tenants/[tenantId]/plans (job DK): the six plans side by side, and for an Owner or Admin with no plan the way to start the 30-day trial. A 404 while the feature flag is off (NEXT_PUBLIC_PLAN_SCREENS), like a page that
+ * /app/tenants/[tenantId]/plans (job DK): the six plans side by side, and for an Owner or Admin with no plan the way to start the 30-day trial. A 404 while the feature flag is off (PLAN_SCREENS), like a page that
  * does not exist. Owner and Admin only: the plan and what it costs are theirs; everyone else gets the same 404.
  */
 export default async function PlansPage({ params }: PageProps<"/app/tenants/[tenantId]/plans">) {

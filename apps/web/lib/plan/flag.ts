@@ -4,6 +4,6 @@
  * Read when the server handles a request (not baked into the bundle), like lib/auth/signup-open.ts.
  */
 export type PlanScreens = "off" | "on" | "mock";
-export function planScreens(value: string | undefined = process.env.NEXT_PUBLIC_PLAN_SCREENS): PlanScreens {
+export function planScreens(value: string | undefined = process.env.PLAN_SCREENS): PlanScreens {
   return value === "mock" ? "mock" : value === "1" ? "on" : "off";
 }

@@ -59,7 +59,7 @@ describe("the flag is off by default", () => {
     expect(notFoundMock).toHaveBeenCalled();
   });
   it.each(["0", "", "yes", "true", "MOCK"])("%j is off too", async (v) => {
-    vi.stubEnv("NEXT_PUBLIC_PLAN_SCREENS", v);
+    vi.stubEnv("PLAN_SCREENS", v);
     render(await SettingsPage(settingsProps()));
     expect(tabNames()).not.toContain("Plan");
   });
@@ -73,7 +73,7 @@ describe("the flag is off by default", () => {
 });
 
 describe("the flag is '1' (on, but the plans API is not built yet)", () => {
-  beforeEach(() => vi.stubEnv("NEXT_PUBLIC_PLAN_SCREENS", "1"));
+  beforeEach(() => vi.stubEnv("PLAN_SCREENS", "1"));
   it("the Plan part says 'Not available yet' and offers nothing to do", async () => {
     render(await SettingsPage(settingsProps({ section: "plan" })));
     expect(tabNames()).toContain("Plan");
@@ -88,7 +88,7 @@ describe("the flag is '1' (on, but the plans API is not built yet)", () => {
 });
 
 describe("the flag is 'mock' (the fake provider)", () => {
-  beforeEach(() => vi.stubEnv("NEXT_PUBLIC_PLAN_SCREENS", "mock"));
+  beforeEach(() => vi.stubEnv("PLAN_SCREENS", "mock"));
   it("shows the Plan part to an Owner and an Admin, not to anyone else", async () => {
     render(await SettingsPage(settingsProps()));
     expect(tabNames()).toContain("Plan");
