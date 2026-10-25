@@ -15,7 +15,7 @@ describe("the plans as data", () => {
     expect(CATALOGUE.trial).toEqual({ days: 30, callMinutes: 30, messages: 100, graceDays: 7 });
     expect(mainPlans().map((p) => [p.callMinutes, p.messages, p.users, p.workspaces])).toEqual([[0, 300, 1, 1], [100, 1000, 3, 1], [300, 3000, 10, 3]]);
     expect(callsPlans().map((p) => p.callMinutes)).toEqual([null, 300, 1000]);
-    expect(callsPlans().map((p) => p.messages)).toEqual([0, 0, 0]);
+    expect(callsPlans().map((p) => p.messages)).toEqual([null, 300, 1000]);
     expect(planById("growth")?.name).toBe("Growth");
     expect(planById("nope")).toBeNull();
     expect(planById(null)).toBeNull();
@@ -119,7 +119,7 @@ describe("the fake provider", () => {
     expect(parseMock("drop table;;;;;")).toEqual(FRESH);
     expect(parseMock("trialing;<script>;test_ok;99;-1;1e9;1")).toEqual(FRESH);
     expect(parseMock("trialing;growth;test_ok;99;-1;1e9;1")).toMatchObject({ state: "trialing", plan: "growth", method: "test_ok", day: 1, minutes: 0, messages: 0 });
-    expect(parseMock(encodeMock({ state: "active", plan: "growth", method: "test_ok", day: 5, minutes: 42, messages: 310, cancelled: false }))).toMatchObject({ plan: "growth", minutes: 42, messages: 310 });
+    expect(parseMock(encodeMock({ state: "active", plan: "growth", method: "test_ok", day: 5, minutes: 42, messages: 310, cancelled: false, readOnly: false }))).toMatchObject({ plan: "growth", minutes: 42, messages: 310 });
   });
 });
 
@@ -137,3 +137,19 @@ describe("the fake provider's test move to day 30", () => {
   });
 });
 
+
+describe("the fake provider's read-only workspace (the trial ended unpaid)", () => {
+  it("the cookie's eighth field marks it; only a workspace that has had a plan can be read-only; a missing field is full access", () => {
+    const m = parseMock("cancelled;growth;test_ok;30;0;0;0;1");
+    expect(m).toMatchObject({ state: "cancelled", readOnly: true });
+    expect(parseMock(encodeMock(m)).readOnly).toBe(true);
+    expect(parseMock("trialing;growth;test_ok;3;0;0;0;1").readOnly).toBe(false);
+    expect(parseMock("none;;none;1;0;0;0;1")).toEqual(FRESH);
+    expect(parseMock("cancelled;growth;test_ok;30;0;0;0").readOnly).toBe(false);
+  });
+  it("draws as access read_only with the 90 days the data is kept, and cannot start another trial", () => {
+    const w = toWorkspacePlan({ ...parseMock("cancelled;growth;test_ok;30;0;0;0;1") }, new Date("2026-10-25T06:00:00Z"));
+    expect(w).toMatchObject({ access: "read_only", readOnlySince: "2026-10-25", deleteOn: "2027-01-23", dataDaysLeft: 90, canStartTrial: false });
+    expect(toWorkspacePlan(FRESH, new Date("2026-10-25T06:00:00Z"))).toMatchObject({ access: "full", readOnlySince: null, deleteOn: null, dataDaysLeft: null });
+  });
+});

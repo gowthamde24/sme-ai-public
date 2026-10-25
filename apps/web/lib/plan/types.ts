@@ -13,6 +13,7 @@ export type PlanDef = {
   priceInr: number | null;
   /** null = no cap (pay for what you use); 0 = not included in the plan. */
   callMinutes: number | null;
+  /** The same for the WhatsApp messages the business starts: calls-only plans include them for call follow-ups, pay-as-you-go pays per message (null). */
   messages: number | null;
   users: number | null;
   workspaces: number | null;
@@ -44,9 +45,15 @@ export type WorkspacePlan = {
   usage: { minutes: number; messages: number };
   included: { minutes: number | null; messages: number | null };
   paymentMethod: PaymentMethod;
+  /** "read_only" (the trial ended unpaid, owner decision of 25 Oct): view and export only; every edit, send, AI and call is off. Always "full" while the platform's billing switch is off. */
+  access: "full" | "read_only";
+  /** Plain dates (YYYY-MM-DD, India): the day it began, the day the data is deleted, the days still left. All null while access is full. */
+  readOnlySince: string | null;
+  deleteOn: string | null;
+  dataDaysLeft: number | null;
 };
 
-export type PlanResult = { ok: true } | { ok: false; error: "not_available" | "forbidden" | "invalid" | "no_payment_method" | "already" | "declined" };
+export type PlanResult = { ok: true } | { ok: false; error: "not_available" | "forbidden" | "invalid" | "no_payment_method" | "already" | "declined" | "read_only" };
 
 /** What the person is working with: the signed-in person's token and the workspace (the API says what they may do there). */
 export type PlanCtx = { token: string; tenantId: string };

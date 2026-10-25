@@ -13,8 +13,8 @@ import { usePlanMove } from "./use-plan-move";
 const num = (n: number): string => new Intl.NumberFormat("en-IN").format(n);
 
 /** One allowance as words: a count, "pay for what you use" (no cap), "not included" (0) or a dash (the plan does not say). */
-function allowance(t: ReturnType<typeof makeT>, value: number | null, noCap: boolean): string {
-  if (value === null) return noCap ? t("plan.value.payg") : "—";
+function allowance(t: ReturnType<typeof makeT>, value: number | null, noCap: "plan.value.payg" | "plan.value.payg_messages" | null): string {
+  if (value === null) return noCap ? t(noCap) : "—";
   return value === 0 ? t("plan.value.none") : num(value);
 }
 
@@ -33,9 +33,9 @@ export function PlanPicker({ words, main, calls, currentId, canStart, blocked, m
   const pick = all.find((p) => p.id === chosen) ?? null;
   const card = (p: PlanDef) => {
     const rows: [string, string][] = [
-      [t("plan.row.minutes"), allowance(t, p.callMinutes, true)],
-      [t("plan.row.messages"), allowance(t, p.messages, false)],
-      ...(p.kind === "main" ? ([[t("plan.row.users"), allowance(t, p.users, false)], [t("plan.row.workspaces"), allowance(t, p.workspaces, false)]] as [string, string][]) : []),
+      [t("plan.row.minutes"), allowance(t, p.callMinutes, "plan.value.payg")],
+      [t("plan.row.messages"), allowance(t, p.messages, "plan.value.payg_messages")],
+      ...(p.kind === "main" ? ([[t("plan.row.users"), allowance(t, p.users, null)], [t("plan.row.workspaces"), allowance(t, p.workspaces, null)]] as [string, string][]) : []),
     ];
     const mine = p.id === currentId;
     return (

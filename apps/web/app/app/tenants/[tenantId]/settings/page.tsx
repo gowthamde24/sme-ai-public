@@ -51,6 +51,7 @@ import { cancelAccountDeletionAction, cancelWorkspaceDeletionAction, executeWork
 import { agentWords } from "./agent-words";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { BRAND_NAME } from "@/design/brand";
+import { ADDRESSES } from "@/lib/site/business";
 import { PlanSection } from "@/components/v2/app/plan/PlanSection";
 import { FAKE_CHECKOUT, planScreens } from "@/lib/plan/flag";
 import { CATALOGUE, planById } from "@/lib/plan/catalogue";
@@ -247,6 +248,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             canChange={tenant.role === "owner"}
             mock={FAKE_CHECKOUT}
             pickerHref={`${base}/plans`}
+            contactEmail={ADDRESSES.billing}
             actions={{ start: startPlanAction.bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: planScreens() === "mock" ? fixPlanPaymentAction.bind(null, tenantId) : null, endTrial: planScreens() === "mock" ? endPlanTrialAction.bind(null, tenantId) : null }}
           />
         ) : null}

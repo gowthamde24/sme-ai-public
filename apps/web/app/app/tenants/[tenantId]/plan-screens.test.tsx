@@ -81,6 +81,10 @@ const billingBody = (over: Record<string, unknown> = {}) => ({
   usage: { call_minutes: meter("call_minutes", 4.5, 30), whatsapp_messages: meter("whatsapp_messages", 12, 100) },
   notices: [],
   can_start_trial: true,
+  access: "full",
+  read_only_since: null,
+  delete_on: null,
+  data_days_left: null,
   ...over,
 });
 const subscription = (over: Record<string, unknown> = {}) => ({ status: "trialing", plan_id: "growth", provider: "fake", trial_ends_at: "2026-11-12T10:00:00Z", current_period_end: null, cancel_at_period_end: false, grace_until: null, payment_method_on_file: true, ...over });
@@ -115,6 +119,17 @@ describe("the flag is '1' (on: the plans and billing API of job DI)", () => {
     expect(screen.getByRole("status")).toHaveTextContent("You have used 83%");
     expect(screen.queryByRole("link", { name: "Start 30-day trial" })).toBeNull();
   });
+  it("read-only (the trial ended unpaid): the Plan part says so with the API's dates, the contact is the billing address from lib/site/business, and no move is offered", async () => {
+    apiRoutes(billingBody({ subscription: subscription({ status: "cancelled", payment_method_on_file: false }), can_start_trial: false, access: "read_only", read_only_since: "2026-10-14", delete_on: "2027-01-12", data_days_left: 79 }));
+    render(await SettingsPage(settingsProps({ section: "plan" })));
+    const box = within(document.querySelector("[data-readonly]") as HTMLElement);
+    expect(box.getByText("Your workspace is read-only")).toBeInTheDocument();
+    expect(box.getByText("Read-only since 14 Oct 2026.")).toBeInTheDocument();
+    expect(box.getByText("Your data is kept until 12 Jan 2027 and then deleted. Days left: 79.")).toBeInTheDocument();
+    expect(box.getByText("To go on, write to billing@stack19.com.")).toBeInTheDocument();
+    expect(within(screen.getByRole("main")).queryByRole("link", { name: /Choose a plan|Change plan|Start 30-day trial/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /cancel/i })).toBeNull();
+  });
   it("the API cannot be reached: the Plan part says 'Not available yet', and /plans too, never a guess", async () => {
     h.api.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
     render(await SettingsPage(settingsProps({ section: "plan" })));
@@ -141,6 +156,7 @@ describe("the flag is '1' (on: the plans and billing API of job DI)", () => {
     ["trial_already_started", 409, "already"],
     ["plan_unknown", 422, "invalid"],
     ["forbidden", 403, "forbidden"],
+    ["workspace_read_only", 403, "read_only"],
     ["api_unreachable", 503, "not_available"],
     ["something_else", 500, "invalid"],
   ])("the API's %s (HTTP %i) is our sentence %s", async (code, status, error) => {
@@ -225,7 +241,7 @@ describe("the flag is 'mock' (the fake provider)", () => {
   it("the cookie is private to the browser: httpOnly, same-site, no card detail", async () => {
     await startPlanAction(TENANT, "growth", "test_ok");
     expect(h.sets[0]).toMatchObject({ httpOnly: true, sameSite: "lax", path: "/" });
-    expect(h.jar.get(MOCK_COOKIE)).toMatch(/^trialing;growth;test_ok;1;0;0;0$/);
+    expect(h.jar.get(MOCK_COOKIE)).toMatch(/^trialing;growth;test_ok;1;0;0;0;0$/);
   });
   it("a hostile cookie is read as a fresh workspace", async () => {
     h.jar.set(MOCK_COOKIE, "active;<img src=x>;test_ok;9999;-5;NaN;1");

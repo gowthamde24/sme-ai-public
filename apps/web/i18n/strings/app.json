@@ -54146,5 +54146,93 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "plan.state.read_only": {
+  "en": "Read only",
+  "te": "చదవడానికి మాత్రమే",
+  "hi": "सिर्फ़ देखने के लिए",
+  "kn": "ನೋಡಲು ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.readonly.title": {
+  "en": "Your workspace is read-only",
+  "te": "మీ వర్క్‌స్పేస్ ఇప్పుడు చదవడానికి మాత్రమే",
+  "hi": "आपका वर्कस्पेस अभी सिर्फ़ देखने के लिए है",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಈಗ ನೋಡಲು ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.readonly.body": {
+  "en": "Your trial ended without a payment. You can look at everything and export it, ask for a copy of your data or ask us to delete it. Calls, messages, AI answers and every change are switched off.",
+  "te": "మీ ట్రయల్ పేమెంట్ లేకుండా ముగిసింది. అన్నీ చూడవచ్చు, ఎక్స్‌పోర్ట్ చేయవచ్చు, మీ డేటా కాపీ అడగవచ్చు లేదా డిలీట్ చేయమని అడగవచ్చు. కాల్స్, మెసేజ్‌లు, AI జవాబులు, ఏ మార్పులైనా ఆపివేయబడ్డాయి.",
+  "hi": "आपका ट्रायल पेमेंट के बिना खत्म हो गया। आप सब कुछ देख सकते हैं और एक्सपोर्ट कर सकते हैं, अपने डेटा की कॉपी मँगवा सकते हैं या उसे डिलीट करने को कह सकते हैं। कॉल, मैसेज, AI के जवाब और हर बदलाव बंद हैं।",
+  "kn": "ನಿಮ್ಮ ಟ್ರಯಲ್ ಪೇಮೆಂಟ್ ಇಲ್ಲದೆ ಮುಗಿದಿದೆ. ನೀವು ಎಲ್ಲವನ್ನೂ ನೋಡಬಹುದು ಮತ್ತು ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಬಹುದು, ನಿಮ್ಮ ಡೇಟಾದ ಕಾಪಿ ಕೇಳಬಹುದು ಅಥವಾ ಡಿಲೀಟ್ ಮಾಡಲು ಕೇಳಬಹುದು. ಕಾಲ್, ಮೆಸೇಜ್, AI ಉತ್ತರ ಮತ್ತು ಎಲ್ಲಾ ಬದಲಾವಣೆಗಳು ಆಫ್ ಆಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.readonly.since": {
+  "en": "Read-only since {date}.",
+  "te": "{date} నుండి చదవడానికి మాత్రమే.",
+  "hi": "{date} से सिर्फ़ देखने के लिए।",
+  "kn": "{date} ರಿಂದ ನೋಡಲು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.readonly.until": {
+  "en": "Your data is kept until {date} and then deleted. Days left: {n}.",
+  "te": "మీ డేటా {date} వరకు ఉంచబడుతుంది, తర్వాత డిలీట్ అవుతుంది. మిగిలిన రోజులు: {n}.",
+  "hi": "आपका डेटा {date} तक रखा जाएगा, फिर डिलीट हो जाएगा। बचे हुए दिन: {n}।",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾ {date} ವರೆಗೆ ಇರುತ್ತದೆ, ನಂತರ ಡಿಲೀಟ್ ಆಗುತ್ತದೆ. ಉಳಿದ ದಿನಗಳು: {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.readonly.go": {
+  "en": "To go on, write to {email}.",
+  "te": "కొనసాగాలంటే {email} కి రాయండి.",
+  "hi": "आगे बढ़ने के लिए {email} पर लिखें।",
+  "kn": "ಮುಂದುವರಿಯಲು {email} ಗೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.err.read_only": {
+  "en": "Your workspace is read-only, so this is switched off.",
+  "te": "మీ వర్క్‌స్పేస్ చదవడానికి మాత్రమే స్థితిలో ఉంది, అందుకే ఇది ఆపివేయబడింది.",
+  "hi": "आपका वर्कस्पेस सिर्फ़ देखने के लिए है, इसलिए यह बंद है।",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್ ನೋಡಲು ಮಾತ್ರ ಇದೆ, ಆದ್ದರಿಂದ ಇದು ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.value.payg_messages": {
+  "en": "Pay for the messages you send",
+  "te": "పంపిన మెసేజ్‌లకే చెల్లించండి",
+  "hi": "जितने मैसेज भेजें, उतने का पेमेंट",
+  "kn": "ಕಳುಹಿಸಿದ ಮೆಸೇಜ್‌ಗಳಿಗೆ ಮಾತ್ರ ಪೇಮೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

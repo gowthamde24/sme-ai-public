@@ -25,7 +25,7 @@ function validPlan(p: unknown): p is PlanOut {
     numOrNull(p.price_paise_monthly) &&
     isRecord(p.allowances) &&
     numOrNull(p.allowances.call_minutes) &&
-    isNum(p.allowances.whatsapp_messages) &&
+    numOrNull(p.allowances.whatsapp_messages) &&
     isRecord(p.limits) &&
     isNum(p.limits.users) &&
     isNum(p.limits.workspaces)
@@ -60,7 +60,11 @@ export function parseBilling(json: unknown): BillingOut {
     isRecord(json.usage) &&
     validMeter(json.usage.call_minutes) &&
     validMeter(json.usage.whatsapp_messages) &&
-    typeof json.can_start_trial === "boolean";
+    typeof json.can_start_trial === "boolean" &&
+    (json.access === "full" || json.access === "read_only") &&
+    strOrNull(json.read_only_since) &&
+    strOrNull(json.delete_on) &&
+    (json.data_days_left === undefined || numOrNull(json.data_days_left));
   if (!ok) throw new ApiContractError("Unexpected billing response.");
   return json as unknown as BillingOut;
 }
@@ -84,6 +88,10 @@ export function toWorkspacePlan(b: BillingOut): WorkspacePlan {
     usage: { minutes: b.usage.call_minutes.used, messages: b.usage.whatsapp_messages.used },
     included: { minutes: includedOf(b.usage.call_minutes), messages: includedOf(b.usage.whatsapp_messages) },
     paymentMethod: sub?.payment_method_on_file ? "test_ok" : "none",
+    access: b.access,
+    readOnlySince: b.read_only_since ?? null,
+    deleteOn: b.delete_on ?? null,
+    dataDaysLeft: b.data_days_left ?? null,
   };
 }
 

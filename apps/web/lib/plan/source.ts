@@ -14,7 +14,7 @@ import type { PlanCatalogue, PlanCtx, PlanResult, WorkspacePlan } from "./types"
  * GET /v1/plans, GET /v1/tenants/{id}/billing, POST …/billing/trial, POST …/billing/cancel. `off` reads nothing. The API has no move to put a failed payment right and none to jump the trial forward, so those two
  * are `not_available` outside the fake cookie. SERVER ONLY.
  */
-const REFUSALS: Record<string, Extract<PlanResult, { ok: false }>["error"]> = { plan_unknown: "invalid", trial_already_started: "already", payment_method_declined: "declined", forbidden: "forbidden", api_unreachable: "not_available" };
+const REFUSALS: Record<string, Extract<PlanResult, { ok: false }>["error"]> = { plan_unknown: "invalid", trial_already_started: "already", payment_method_declined: "declined", forbidden: "forbidden", workspace_read_only: "read_only", api_unreachable: "not_available" };
 
 /** A call to the API that gives an answer, or null (the card says "Not available yet"); a session the API refused goes to the sign-in page. */
 async function read<T>(call: () => Promise<T>): Promise<T | null> {

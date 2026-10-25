@@ -31,6 +31,10 @@ const billing = (over: Record<string, unknown> = {}): BillingOut =>
     usage: { call_minutes: meter("call_minutes", 4.5, 30), whatsapp_messages: meter("whatsapp_messages", 12, 100) },
     notices: [],
     can_start_trial: true,
+    access: "full",
+    read_only_since: null,
+    delete_on: null,
+    data_days_left: null,
     ...over,
   }) as unknown as BillingOut;
 const sub = (over: Record<string, unknown> = {}) => ({ status: "trialing", plan_id: "growth", provider: "fake", trial_ends_at: "2026-11-12T10:00:00Z", current_period_end: null, cancel_at_period_end: false, grace_until: null, payment_method_on_file: true, ...over });
@@ -81,17 +85,26 @@ describe("the billing answer as the screens read it", () => {
     const starter = toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "active", plan_id: "starter", trial_ends_at: null }), usage: { call_minutes: meter("call_minutes", 0, 0, { included: false, state: "stopped" }), whatsapp_messages: meter("whatsapp_messages", 10, 300) } })));
     expect(starter.included).toEqual({ minutes: 0, messages: 300 });
     expect(meterState({ used: starter.usage.minutes, included: starter.included.minutes })).toBe("not_included");
-    const payg = toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "active", plan_id: "calls_payg", trial_ends_at: null }), usage: { call_minutes: meter("call_minutes", 42, null), whatsapp_messages: meter("whatsapp_messages", 0, 0, { included: false, state: "stopped" }) } })));
-    expect(payg.included).toEqual({ minutes: null, messages: 0 });
+    const payg = toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "active", plan_id: "calls_payg", trial_ends_at: null }), usage: { call_minutes: meter("call_minutes", 42, null), whatsapp_messages: meter("whatsapp_messages", 7, null) } })));
+    expect(payg.included).toEqual({ minutes: null, messages: null });
+    expect(meterState({ used: 7, included: payg.included.messages })).toBe("no_cap");
     expect(meterState({ used: 42, included: payg.included.minutes })).toBe("no_cap");
   });
-  it("coming change: calls-only plans that include WhatsApp follow-up messages (Calls 300 = 300, Calls 1,000 = 1,000) are drawn from the data, with a real messages meter and no code change", () => {
-    const withMessages = { ...DRAFT_PLANS, plans: DRAFT_PLANS.plans.map((p) => (p.id === "calls_300" ? { ...p, allowances: { ...p.allowances, whatsapp_messages: 300 } } : p.id === "calls_1000" ? { ...p, allowances: { ...p.allowances, whatsapp_messages: 1000 } } : p)) };
-    const cat = catalogueFrom(parsePlans(withMessages));
-    expect(callsPlans(cat).map((p) => [p.id, p.messages])).toEqual([["calls_payg", 0], ["calls_300", 300], ["calls_1000", 1000]]);
+  it("calls-only plans include WhatsApp follow-up messages (Calls 300 = 300, Calls 1,000 = 1,000); pay as you go has no ceiling on either kind", () => {
+    const cat = catalogueFrom(parsePlans(DRAFT_PLANS));
+    expect(callsPlans(cat).map((p) => [p.id, p.callMinutes, p.messages])).toEqual([["calls_payg", null, null], ["calls_300", 300, 300], ["calls_1000", 1000, 1000]]);
     const w = toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "active", plan_id: "calls_300", trial_ends_at: null }), usage: { call_minutes: meter("call_minutes", 10, 300), whatsapp_messages: meter("whatsapp_messages", 240, 300, { state: "notice" }) } })));
     expect(w.included).toEqual({ minutes: 300, messages: 300 });
     expect(meterState({ used: w.usage.messages, included: w.included.messages })).toBe("notice");
+  });
+  it("access: full by default; read_only carries the day it began, the day the data is deleted and the days left; a body without or with a wrong access is refused", () => {
+    expect(toWorkspacePlan(parseBilling(billing()))).toMatchObject({ access: "full", readOnlySince: null, deleteOn: null, dataDaysLeft: null });
+    const ro = toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "cancelled", payment_method_on_file: false }), can_start_trial: false, access: "read_only", read_only_since: "2026-10-14", delete_on: "2027-01-12", data_days_left: 79 })));
+    expect(ro).toMatchObject({ access: "read_only", readOnlySince: "2026-10-14", deleteOn: "2027-01-12", dataDaysLeft: 79, canStartTrial: false });
+    const noAccess = { ...billing() } as unknown as Record<string, unknown>;
+    delete noAccess.access;
+    expect(() => parseBilling(noAccess)).toThrow();
+    expect(() => parseBilling(billing({ access: "frozen" }))).toThrow();
   });
   it("past due carries its grace day; a paid plan that was cancelled carries 'ends at the end of the period'; a cancelled trial is told apart from a cancelled paid plan", () => {
     expect(toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "past_due", trial_ends_at: null, grace_until: "2026-11-19T10:00:00Z" }) }))).graceUntil).toBe("2026-11-19T10:00:00Z");

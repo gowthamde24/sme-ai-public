@@ -20,7 +20,7 @@ const ok = async (): Promise<PlanResult> => ({ ok: true });
 const actions = (over: Partial<PlanActions> = {}): PlanActions => ({ start: vi.fn(ok), cancel: vi.fn(ok), fix: vi.fn(ok), endTrial: null, ...over });
 const plan = (m: Partial<MockState>): WorkspacePlan => toWorkspacePlan({ ...FRESH, ...m }, new Date(NOW));
 const draw = (p: WorkspacePlan | null, over: Partial<{ canChange: boolean; mock: boolean; a: PlanActions }> = {}) =>
-  render(<PlanSection words={words} plan={p} def={planById(p?.planId ?? null)} trialDays={CATALOGUE.trial.days} now={NOW} canChange={over.canChange ?? true} mock={over.mock ?? true} pickerHref="/app/tenants/t/plans" actions={over.a ?? actions()} />);
+  render(<PlanSection words={words} plan={p} def={planById(p?.planId ?? null)} trialDays={CATALOGUE.trial.days} now={NOW} canChange={over.canChange ?? true} mock={over.mock ?? true} pickerHref="/app/tenants/t/plans" contactEmail="billing@example.test" actions={over.a ?? actions()} />);
 
 afterEach(() => {
   cleanup();
@@ -86,6 +86,35 @@ describe("Settings > Plan", () => {
     cleanup();
     draw(plan({ state: "active", plan: "calls_payg", method: "test_ok", minutes: 42 }));
     expect(within(document.querySelector('[data-meter="minutes"]') as HTMLElement).getByText("42 used. You pay for what you use.")).toBeInTheDocument();
+  });
+  it("pay as you go: both meters have no ceiling (minutes and messages are paid for as used)", () => {
+    draw(plan({ state: "active", plan: "calls_payg", method: "test_ok", minutes: 42, messages: 7 }));
+    expect(within(document.querySelector('[data-meter="messages"]') as HTMLElement).getByText("7 used. You pay for what you use.")).toBeInTheDocument();
+  });
+  it("calls-only plan with messages: a real messages meter and its 80% notice", () => {
+    draw(plan({ state: "active", plan: "calls_300", method: "test_ok", minutes: 10, messages: 240 }));
+    expect(within(document.querySelector('[data-meter="messages"]') as HTMLElement).getByText("240 of 300")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("You have used 80% of your WhatsApp messages.");
+  });
+  it("read-only (the trial ended unpaid): says so first with the dates, shows the meters to look at, and offers no change, cancel or start", () => {
+    draw(plan({ state: "cancelled", plan: "growth", method: "test_ok", day: 30, readOnly: true }));
+    expect(document.querySelector("[data-plan-access]")).toHaveAttribute("data-plan-access", "read_only");
+    const box = within(document.querySelector("[data-readonly]") as HTMLElement);
+    expect(box.getByText("Your workspace is read-only")).toBeInTheDocument();
+    expect(box.getByText(/look at everything and export it/)).toBeInTheDocument();
+    expect(box.getByText(/Read-only since \d{1,2} \w{3} 2026\./)).toBeInTheDocument();
+    expect(box.getByText(/Your data is kept until .* and then deleted\. Days left: 90\./)).toBeInTheDocument();
+    expect(box.getByText("To go on, write to billing@example.test.")).toBeInTheDocument();
+    expect(screen.getByText("Read only")).toBeInTheDocument();
+    expect(screen.queryByText("Your plan was cancelled.")).toBeNull();
+    expect(screen.queryByRole("link")).toBeNull();
+    expect(screen.queryByRole("button")).toBeNull();
+    expect(document.querySelector('[data-meter="minutes"]')).not.toBeNull();
+  });
+  it("read-only is told apart from a plain cancelled plan (access full)", () => {
+    draw(plan({ state: "cancelled", plan: "growth", method: "test_ok", day: 6, cancelled: true }));
+    expect(document.querySelector("[data-readonly]")).toBeNull();
+    expect(screen.getByText("Your trial was cancelled. Nothing was charged.")).toBeInTheDocument();
   });
   it("past due: the failed payment, and the one move out of it", async () => {
     const a = actions();
@@ -160,13 +189,12 @@ describe("the plan picker", () => {
   const pick = (over: Partial<{ canStart: boolean; currentId: string | null; blocked: "already" | "used" | "forbidden" | null; a: PlanActions }> = {}) =>
     render(<PlanPicker words={words} main={mainPlans()} calls={callsPlans()} currentId={over.currentId ?? null} canStart={over.canStart ?? true} blocked={over.blocked ?? null} mock actions={over.a ?? actions()} done="/app/tenants/t/settings?section=plan" />);
 
-  it("coming change: Calls 300 and Calls 1,000 that include WhatsApp follow-up messages show their counts from the data (pay-as-you-go stays 'Not included')", () => {
-    const more = callsPlans().map((p) => (p.id === "calls_300" ? { ...p, messages: 300 } : p.id === "calls_1000" ? { ...p, messages: 1000 } : p));
-    render(<PlanPicker words={words} main={mainPlans()} calls={more} currentId={null} canStart blocked={null} mock actions={actions()} done="/app/tenants/t/settings?section=plan" />);
+  it("Calls 300 and Calls 1,000 include WhatsApp follow-up messages; pay-as-you-go pays per message", () => {
+    pick();
     const row = (id: string) => (document.querySelector(`[data-plan="${id}"]`) as HTMLElement).textContent ?? "";
     expect(row("calls_300")).toMatch(/WhatsApp messages you start, a month\s*300/);
     expect(row("calls_1000")).toMatch(/WhatsApp messages you start, a month\s*1,000/);
-    expect(row("calls_payg")).toMatch(/WhatsApp messages you start, a month\s*Not included/);
+    expect(row("calls_payg")).toMatch(/WhatsApp messages you start, a month\s*Pay for the messages you send/);
   });
   it("compares the six plans from the data, every price 'Price coming soon'", () => {
     pick();
