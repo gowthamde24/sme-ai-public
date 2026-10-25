@@ -62,16 +62,16 @@ class FakeEmailSender:
         return True
 
 
-def build_sender(name: str, api_key: str | None = None) -> EmailSender:
-    """BILLING_EMAIL_SENDER: `fake` (sends nothing) or `resend` (Resend's HTTP API; needs RESEND_API_KEY, which comes from Secret Manager and is never logged). Anything else stops the process at start."""
+def build_sender(name: str, api_key: str | None = None, mail_from: str | None = None, reply_to: str | None = None) -> EmailSender:
+    """BILLING_EMAIL_SENDER: `fake` (sends nothing) or `resend` (Resend's HTTP API; needs RESEND_API_KEY, which comes from Secret Manager and is never logged, and MAIL_FROM). Anything else stops the process at start."""
     if name == "fake":
         return FakeEmailSender()
     if name == "resend":
-        if not api_key:
-            raise ValueError("BILLING_EMAIL_SENDER=resend needs RESEND_API_KEY")
+        if not api_key or not mail_from:
+            raise ValueError("BILLING_EMAIL_SENDER=resend needs RESEND_API_KEY and MAIL_FROM")
         from app.billing.resend_sender import ResendEmailSender
 
-        return ResendEmailSender(api_key)
+        return ResendEmailSender(api_key, mail_from, reply_to)
     raise ValueError("BILLING_EMAIL_SENDER must be 'fake' or 'resend'")
 
 

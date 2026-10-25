@@ -108,6 +108,9 @@ class Settings(BaseSettings):
     # stops the process at start.
     billing_email_sender: str = "fake"
     resend_api_key: SecretStr | None = None
+    # The address app e-mails are sent from, and the address a reply goes to (addresses live in the environment, never in code: apps/web/lib/site/business.ts). Needed when the sender is "resend".
+    mail_from: str | None = None
+    mail_reply_to: str | None = None
     # Job AW (ADR 0068): the scheduler worker (`make dev-worker-local`). It signs in as ITS OWN
     # account, which the operator registered in the database (no workspace, no key of any kind).
     # The address and the password come from the environment only, are never logged, and are

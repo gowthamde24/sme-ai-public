@@ -22,9 +22,11 @@ from app.billing.mail import (
     compose_trial,
     mail_language,
 )
-from app.billing.resend_sender import FROM_ADDRESS, REPLY_TO, ResendEmailSender
+from app.billing.resend_sender import ResendEmailSender
 
 KEY = "re_TESTKEY_not_a_real_key_0123456789"
+FROM = "noreply@mail.example.test"
+REPLY = "help@mail.example.test"
 TENANT = uuid.UUID(int=0xB)
 
 
@@ -39,7 +41,7 @@ def stub(status: int = 200, seen: list[httpx.Request] | None = None) -> httpx.Cl
 
 def test_the_sender_posts_to_resend_with_the_key_the_from_the_reply_to_and_both_bodies() -> None:
     seen: list[httpx.Request] = []
-    sender = ResendEmailSender(KEY, client=stub(200, seen))
+    sender = ResendEmailSender(KEY, FROM, REPLY, client=stub(200, seen))
     message = compose_trial("Sri Lakshmi Silks", 11, "owner@example.test", "te", str(TENANT))
     assert sender.send(message) is True
     request = seen[0]
@@ -47,8 +49,8 @@ def test_the_sender_posts_to_resend_with_the_key_the_from_the_reply_to_and_both_
     assert str(request.url) == "https://api.resend.com/emails"
     assert request.headers["authorization"] == f"Bearer {KEY}"
     assert request.headers["idempotency-key"] == message.idempotency_key
-    assert body["from"] == FROM_ADDRESS == "Stack19 <noreply@stack19.com>"
-    assert body["reply_to"] == REPLY_TO == "support@stack19.com"
+    assert body["from"] == f"Stack19 <{FROM}>"
+    assert body["reply_to"] == REPLY
     assert body["to"] == ["owner@example.test"] and body["subject"] == message.subject
     assert body["text"] == message.body and body["html"] == message.html
     assert "tracking" not in json.dumps(body).lower()
@@ -56,7 +58,7 @@ def test_the_sender_posts_to_resend_with_the_key_the_from_the_reply_to_and_both_
 
 @pytest.mark.parametrize("status", [400, 401, 422, 429, 500])
 def test_a_refusal_is_false_and_logs_only_the_status(status: int, caplog: pytest.LogCaptureFixture) -> None:
-    sender = ResendEmailSender(KEY, client=stub(status))
+    sender = ResendEmailSender(KEY, FROM, REPLY, client=stub(status))
     with caplog.at_level(logging.INFO):
         assert sender.send(compose_trial("Synthetic Silks", 13, "owner@example.test", "en")) is False
     assert str(status) in caplog.text
@@ -68,14 +70,30 @@ def test_an_unreachable_resend_is_false_and_logs_no_address(caplog: pytest.LogCa
     def boom(request: httpx.Request) -> httpx.Response:
         raise httpx.ConnectError("no route", request=request)
 
-    sender = ResendEmailSender(KEY, client=httpx.Client(transport=httpx.MockTransport(boom)))
+    sender = ResendEmailSender(KEY, FROM, REPLY, client=httpx.Client(transport=httpx.MockTransport(boom)))
     with caplog.at_level(logging.INFO):
         assert sender.send(compose_trial("Synthetic Silks", 13, "owner@example.test", "en")) is False
     assert "owner@example.test" not in caplog.text and KEY not in caplog.text
 
 
+def test_the_addresses_must_be_plain_addresses_and_none_is_written_into_the_code() -> None:
+    for bad in ("not an address", "a@b", "Stack19 <a@b.test>", "a@b.test, c@d.test", ""):
+        with pytest.raises(ValueError, match="plain address"):
+            ResendEmailSender(KEY, bad, REPLY)
+    with pytest.raises(ValueError, match="plain address"):
+        ResendEmailSender(KEY, FROM, "x y@z.test")
+    seen: list[httpx.Request] = []
+    only_from = ResendEmailSender(KEY, FROM, None, client=stub(200, seen))
+    assert only_from.send(compose_trial("X", 11, "o@example.test", "en")) is True
+    assert "reply_to" not in json.loads(seen[0].content)
+    from pathlib import Path
+
+    source = (Path(__file__).resolve().parents[1] / "app" / "billing" / "resend_sender.py").read_text()
+    assert "@stack19" not in source and "stack19.com" not in source
+
+
 def test_the_key_is_never_in_a_repr_or_a_log(caplog: pytest.LogCaptureFixture) -> None:
-    sender = ResendEmailSender(KEY, client=stub())
+    sender = ResendEmailSender(KEY, FROM, REPLY, client=stub())
     assert KEY not in repr(sender) and KEY not in str(sender)
     with caplog.at_level(logging.DEBUG):
         sender.send(compose_trial("Synthetic Silks", 11, "owner@example.test", "hi"))
@@ -84,11 +102,10 @@ def test_the_key_is_never_in_a_repr_or_a_log(caplog: pytest.LogCaptureFixture) -
 
 def test_the_sender_is_chosen_at_start() -> None:
     assert build_sender("fake").name == "fake"
-    assert build_sender("resend", KEY).name == "resend"
-    with pytest.raises(ValueError, match="RESEND_API_KEY"):
-        build_sender("resend", None)
-    with pytest.raises(ValueError, match="RESEND_API_KEY"):
-        build_sender("resend", "")
+    assert build_sender("resend", KEY, FROM, REPLY).name == "resend"
+    for key, sender in ((None, FROM), ("", FROM), (KEY, None), (KEY, "")):
+        with pytest.raises(ValueError, match="RESEND_API_KEY"):
+            build_sender("resend", key, sender)
     for name in ("smtp", "sendgrid", ""):
         with pytest.raises(ValueError, match="fake"):
             build_sender(name)

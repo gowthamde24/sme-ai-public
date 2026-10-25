@@ -190,7 +190,7 @@ class Worker:
 def _billing_sender(settings: Settings) -> EmailSender:
     try:
         key = settings.resend_api_key.get_secret_value() if settings.resend_api_key is not None else None
-        return build_sender(settings.billing_email_sender, key)
+        return build_sender(settings.billing_email_sender, key, settings.mail_from, settings.mail_reply_to)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
 
