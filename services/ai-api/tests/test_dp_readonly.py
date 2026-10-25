@@ -8,7 +8,6 @@ supabase/tests/database/120_dp_readonly_resume.test.sql."""
 from __future__ import annotations
 
 import re
-import uuid
 from datetime import datetime, timedelta
 from typing import Any
 

@@ -163,8 +163,8 @@ def get_principal(request: Request, runtime: RuntimeDep) -> Principal:
         raise unauthorized() from exc
 
 
-# job DI / DP part 3: what a read-only workspace may still do, and what spends, is decided in ONE place
-# (app/billing/gate.py); this dependency is the only door to a tenant's address
+# job DI / DP part 3: what a read-only workspace may still do, and what spends, is decided in
+# ONE place (app/billing/gate.py); this dependency is the only door to a tenant's address
 
 
 def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., TenantContext]:
@@ -195,9 +195,9 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             raise forbidden()
         kind = gate.classify(request.method, gate.tail_of(request.url.path, tenant_id))
         if runtime.billing is not None and kind != "read":
-            # job DI / DP part 3: a workspace whose trial ended unpaid is read-only (viewing, signing in and
-            # exporting stay; every change, send, AI and call stops); one still waiting for WhatsApp holds
-            # the sends, AI and calls. Always "full" while the billing switch is off.
+            # job DI / DP part 3: a workspace whose trial ended unpaid is read-only (viewing, signing
+            # in and exporting stay; every change, send, AI and call stops); one still waiting for
+            # WhatsApp holds the sends, AI and calls. Always "full" while the billing switch is off.
             runtime.billing.ensure(principal.token, parsed, kind)
         if strong and membership.role in (Role.OWNER, Role.ADMIN) and principal.aal != "aal2":
             raise mfa_required()

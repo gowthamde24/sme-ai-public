@@ -12,7 +12,12 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 
-from app.billing.errors import NotLapsedError, NothingToCancelError, PlanUnknownError, TrialAlreadyStartedError
+from app.billing.errors import (
+    NothingToCancelError,
+    NotLapsedError,
+    PlanUnknownError,
+    TrialAlreadyStartedError,
+)
 from app.crm.repository import NotFoundError
 
 CONTRACTS = Path(__file__).resolve().parents[3] / "packages" / "contracts"
