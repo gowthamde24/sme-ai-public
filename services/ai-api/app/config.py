@@ -100,6 +100,9 @@ class Settings(BaseSettings):
     # Job AT (ADR 0066): the channel adapter of the outbox. Only "fake" exists (a local stand-in
     # that sends nothing to anyone); anything else stops the process at start.
     outbox_adapter: str = "fake"
+    # Job DI (ADR 0092): the billing provider. Only "fake" exists (no network);
+    # anything else stops the process at start.
+    billing_provider: str = "fake"
     # Job AW (ADR 0068): the scheduler worker (`make dev-worker-local`). It signs in as ITS OWN
     # account, which the operator registered in the database (no workspace, no key of any kind).
     # The address and the password come from the environment only, are never logged, and are

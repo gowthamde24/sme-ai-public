@@ -47,8 +47,8 @@ select is((select count(*) from information_schema.role_table_grants where table
 select is((select count(*) from information_schema.role_table_grants where table_schema = 'public' and table_name in ('billing_subscriptions', 'billing_events', 'billing_usage_events', 'billing_topups', 'billing_notices') and grantee in ('anon', 'public', 'service_role')), 0::bigint, 'A3 anon, public and service_role have nothing');
 select is((select count(*) from information_schema.role_table_grants where table_schema = 'billing' and grantee in ('anon', 'authenticated', 'public', 'service_role')), 0::bigint, 'A4 the catalogue tables (schema billing) have no client grant');
 select is((select count(*) from unnest(array['anon', 'authenticated', 'service_role']) r where has_schema_privilege(r, 'billing', 'usage')), 0::bigint, 'A5 no client role has USAGE on schema billing');
-select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname in ('billing_plans', 'billing_get', 'billing_usage_get', 'billing_check_usage', 'billing_start_trial', 'billing_cancel', 'billing_record_usage', 'billing_apply_event')
-            and p.prosecdef and p.proconfig @> array['search_path=""']), 8::bigint, 'A6 all eight public functions are SECURITY DEFINER with an empty search_path');
+select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname in ('billing_plans', 'billing_get', 'billing_usage_get', 'billing_check_usage', 'billing_start_trial', 'billing_subscription_ref', 'billing_cancel', 'billing_record_usage', 'billing_apply_event')
+            and p.prosecdef and p.proconfig @> array['search_path=""']), 9::bigint, 'A6 all nine public functions are SECURITY DEFINER with an empty search_path');
 select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname like 'billing\_%' and has_function_privilege('anon', p.oid, 'execute')), 0::bigint, 'A7 anon can run none of them');
 select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'app' and (p.proname like 'billing\_%' or p.proname like 'operator\_%billing%') and (has_function_privilege('authenticated', p.oid, 'execute') or has_function_privilege('anon', p.oid, 'execute') or has_function_privilege('service_role', p.oid, 'execute'))), 0::bigint, 'A8 no app.billing_* or operator function is callable by a client');
 select is((select count(*) from pg_constraint where conrelid = 'public.tenants'::regclass and conname = 'tenants_plan_fkey'), 1::bigint, 'A9 a workspace''s plan is a reference to the catalogue, not a list in a CHECK');
@@ -198,6 +198,9 @@ select is(pg_temp.v('a_owner', format($q$select public.billing_start_trial(%L, '
 select is(pg_temp.path('a_owner', format($q$select public.billing_start_trial(%L, 'growth', 'fake', 'sub_fake_a1')::text$q$, tests.tid('a')), 'subscription,status'), 'trialing', 'F7 ALLOW: the Owner starts a Growth trial');
 select is(pg_temp.ts('a_owner', 'subscription,trial_ends_at'), '2026-11-13 11:00', 'F8 it ends 30 days later (the 13th of November, 11:00 India time)');
 select is(pg_temp.get('a_owner', 'plan,id') || '/' || pg_temp.get('a_owner', 'can_start_trial') || '/' || pg_temp.get('a_owner', 'subscription,payment_method_on_file'), 'free_trial/false/true', 'F9 while trialing the TRIAL plan''s allowances apply; a payment method is on file; no second trial');
+select is(pg_temp.path('a_owner', format($q$select public.billing_subscription_ref(%L)::text$q$, tests.tid('a')), 'provider_ref') || '/' || pg_temp.path('a_owner', format($q$select public.billing_subscription_ref(%L)::text$q$, tests.tid('a')), 'status'), 'sub_fake_a1/trialing', 'F9b the Owner can read the provider''s reference of the subscription (to cancel it at the provider first)');
+select is(pg_temp.v('a_admin', format($q$select public.billing_subscription_ref(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'F9c DENY: an Admin cannot');
+select is(pg_temp.v('a_owner', format($q$select public.billing_subscription_ref(%L)::text$q$, tests.tid('b'))), 'ERR:42501', 'F9d DENY: another business');
 select is(pg_temp.v('a_owner', format($q$select public.billing_start_trial(%L, 'business', 'fake', 'sub_fake_a2')::text$q$, tests.tid('a'))), 'ERR:SM822', 'F10 a trial is started once (SM822)');
 select is((select count(*) from public.billing_events where tenant_id = tests.tid('a') and kind like 'charge%'), 0::bigint, 'F11 nothing has been charged');
 select is(pg_temp.v('a_owner', format($q$select public.billing_apply_event(%L, 'ev_a_1', 'charge_failed', null, now())::text$q$, tests.tid('a'))), 'ERR:42501', 'F12 DENY: an Owner cannot apply a provider event (it could give itself a plan)');
@@ -221,6 +224,13 @@ select is(pg_temp.path('a_owner', format($q$select public.billing_cancel(%L)::te
 select is(pg_temp.path('x6', format($q$select public.billing_apply_event(%L, 'ev_a_3', 'cancelled', null, '2026-12-15T11:00:00+05:30')::text$q$, tests.tid('a')), 'status'), 'cancelled', 'F27 the provider confirms the end: cancelled');
 select is(pg_temp.get('a_owner', 'plan,id'), 'free_trial', 'F28 the workspace is back on the base plan');
 select is(pg_temp.path('x6', format($q$select public.billing_apply_event(%L, 'ev_a_4', 'charge_succeeded', 0, '2026-12-16T11:00:00+05:30')::text$q$, tests.tid('a')), 'status') || '/' || pg_temp.get('a_owner', 'plan,id'), 'cancelled/free_trial', 'F29 a late charge after a cancel never revives the subscription');
+-- a payment that failed: cancelling ends it at once (nothing was paid for, nothing to wait for)
+update public.tenants set plan = 'free_trial' where id = tests.tid('a');
+select app.billing_edit(true);
+update public.billing_subscriptions set status = 'past_due', cancelled_at = null, cancel_at_period_end = false, payment_method_on_file = true, grace_until = now() + interval '5 days' where tenant_id = tests.tid('a');
+select app.billing_edit(false);
+update public.tenants set plan = 'growth' where id = tests.tid('a');
+select is(pg_temp.path('a_owner', format($q$select public.billing_cancel(%L)::text$q$, tests.tid('a')), 'subscription,status') || '/' || pg_temp.get('a_owner', 'plan,id') || '/' || coalesce(pg_temp.get('a_owner', 'subscription,grace_until'), 'no grace'), 'cancelled/free_trial/no grace', 'F29b CANCEL AFTER A FAILED PAYMENT: ends at once, back to the base plan, no grace period left');
 -- workspace b: the cancel before day 30 means no charge at all
 select is(pg_temp.path('b_owner', format($q$select public.billing_start_trial(%L, 'business', 'fake', 'sub_fake_b1')::text$q$, tests.tid('b')), 'subscription,status'), 'trialing', 'F30 workspace b starts a Business trial');
 select is(pg_temp.v('b_sales', format($q$select public.billing_cancel(%L)::text$q$, tests.tid('b'))), 'ERR:42501', 'F31 DENY: Sales cannot cancel');

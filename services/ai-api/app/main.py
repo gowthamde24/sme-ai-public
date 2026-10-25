@@ -16,6 +16,12 @@ from app.agent_runs.wiring import build_agents_runtime
 from app.assistant.routes import router as assistant_router
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
+from app.billing import errors as billing_errors
+from app.billing.provider import BillingProvider, build_provider
+from app.billing.repository import PostgrestBillingRepository
+from app.billing.routes import plans_router as billing_plans_router
+from app.billing.routes import router as billing_router
+from app.billing.service import BillingService
 from app.businessprofile.repository import PostgrestBusinessProfileRepository
 from app.businessprofile.routes import router as business_profile_router
 from app.campaigns import errors as campaign_errors
@@ -166,6 +172,14 @@ def _outbox_adapter(settings: Settings) -> ChannelAdapter:
         raise ConfigurationError(str(exc)) from None
 
 
+def _billing_provider(settings: Settings) -> BillingProvider:
+    """The billing provider: only the fake one exists; any other name stops us."""
+    try:
+        return build_provider(settings.billing_provider)
+    except ValueError as exc:
+        raise ConfigurationError(str(exc)) from None
+
+
 def build_runtime(settings: Settings) -> Runtime | None:
     """Wire the verifier and repository from settings.
 
@@ -239,6 +253,10 @@ def build_runtime(settings: Settings) -> Runtime | None:
         education=PostgrestEducationRepository(config.rest_url, config.anon_key),
         reports=PostgrestReportsRepository(config.rest_url, config.anon_key),
         voice_notes=PostgrestVoiceNotesRepository(config.rest_url, config.anon_key),
+        billing=BillingService(
+            PostgrestBillingRepository(config.rest_url, config.anon_key),
+            _billing_provider(settings),
+        ),
     )
 
 
@@ -410,6 +428,23 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         422,
         "proof_incomplete",
         "A proof of delivery needs a photo and the name of the person who received the goods.",
+    ),
+    billing_errors.PlanUnknownError: ApiError(
+        422, "plan_unknown", "That plan does not exist or cannot be chosen."
+    ),
+    billing_errors.TrialAlreadyStartedError: ApiError(
+        409, "trial_already_started", "This workspace has already started its trial."
+    ),
+    billing_errors.NothingToCancelError: ApiError(
+        409, "nothing_to_cancel", "There is no active plan to cancel."
+    ),
+    billing_errors.PaymentMethodDeclinedError: ApiError(
+        402, "payment_method_declined", "The payment method was not accepted. Nothing was charged."
+    ),
+    billing_errors.PlanLimitReachedError: ApiError(
+        409,
+        "plan_limit_reached",
+        "This plan's allowance for this is used up for now. It starts again with the next period.",
     ),
     repo.WorkspaceLimitReached: ApiError(
         409,
@@ -900,6 +935,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(education_router)
     app.include_router(reports_router)
     app.include_router(voice_notes_router)
+    app.include_router(billing_plans_router)
+    app.include_router(billing_router)
     app.include_router(materials_public_router)
     app.include_router(materials_router)
     app.include_router(deliveries_router)

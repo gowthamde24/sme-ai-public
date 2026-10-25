@@ -698,7 +698,24 @@ $$;
 revoke all on function public.billing_start_trial(uuid, text, text, text) from public, anon;
 grant execute on function public.billing_start_trial(uuid, text, text, text) to authenticated;
 
--- cancel: during the trial the subscription ends at once and nothing is ever charged; an active plan ends at the end of the paid period
+-- the provider's reference of the subscription, for the API to cancel it at the provider BEFORE the database records the cancel (an opaque token; no card or UPI detail exists here). Owner only.
+create function public.billing_subscription_ref(p_tenant_id uuid) returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+begin
+  if auth.uid() is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner']::public.app_role[]) then
+    perform app.billing_error('deny');
+  end if;
+  return coalesce((select jsonb_build_object('provider', s.provider, 'provider_ref', s.provider_ref, 'status', s.status, 'trial_ends_at', s.trial_ends_at) from public.billing_subscriptions s where s.tenant_id = p_tenant_id), 'null'::jsonb);
+end;
+$$;
+revoke all on function public.billing_subscription_ref(uuid) from public, anon;
+grant execute on function public.billing_subscription_ref(uuid) to authenticated;
+
+-- cancel: during the trial, or after a failed payment, the subscription ends at once and nothing is ever charged; an active plan ends at the end of the paid period
 create function public.billing_cancel(p_tenant_id uuid) returns jsonb
 language plpgsql
 security definer
@@ -718,8 +735,10 @@ begin
     perform app.billing_error('nothing');
   end if;
   perform app.billing_edit(true);
-  if sub.status = 'trialing' then
-    update public.billing_subscriptions set status = 'cancelled', cancelled_at = v_now, payment_method_on_file = false, cancel_at_period_end = false, updated_by = v_uid, updated_at = now() where tenant_id = p_tenant_id;
+  if sub.status in ('trialing', 'past_due') then
+    -- no paid period is running (the trial, or a payment that failed): it ends at once; a plan that was paid for goes back to the base plan
+    update public.billing_subscriptions set status = 'cancelled', cancelled_at = v_now, payment_method_on_file = false, cancel_at_period_end = false, grace_until = null, updated_by = v_uid, updated_at = now() where tenant_id = p_tenant_id;
+    update public.tenants set plan = (select c.trial_plan from billing.catalogue_versions c where c.version = sub.catalogue_version) where id = p_tenant_id;
     insert into public.billing_events (tenant_id, event_id, kind, at) values (p_tenant_id, 'cancelled:' || sub.provider_ref, 'cancelled', v_now) on conflict do nothing;
   else
     update public.billing_subscriptions set cancel_at_period_end = true, updated_by = v_uid, updated_at = now() where tenant_id = p_tenant_id;
