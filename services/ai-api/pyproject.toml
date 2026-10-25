@@ -11,6 +11,8 @@ dependencies = [
     "pyjwt[crypto]>=2.9",
     # job AY (ADR 0069): resize catalogue photos, make thumbnails and strip EXIF/location data on the server
     "pillow>=11.3",
+    # job DP part 6: error reporting (Sentry). Imported and started ONLY when SENTRY_DSN is set; scrubbed before anything leaves (app/observability/sentry.py)
+    "sentry-sdk>=2.30,<3",
 ]
 
 [project.optional-dependencies]
@@ -58,6 +60,9 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "tests/test_ca_*.py" = ["E501"]
 "tests/test_migration_copies_ca.py" = ["E501"]
 "../../tests/integration/test_ca_*.py" = ["E501"]
+# job DP part 6: the error-reporting module explains what leaves the server in long lines
+"app/observability/*" = ["E501"]
+"tests/test_dp_sentry.py" = ["E501"]
 # job CB: the hardening layer is documented in long lines
 "app/hardening/*" = ["E501"]
 # job DP part 2: marks messages to guardians (a file that is never stored) read like the owner decision they implement (long lines)

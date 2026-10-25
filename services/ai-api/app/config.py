@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     trusted_proxy_hops: int = 0
     # /metrics answers 404 unless this is set, and then only to `Authorization: Bearer <it>`
     metrics_token: SecretStr | None = None
+    # Job DP part 6: error reporting. Unset (the default) = nothing is imported or sent.
+    # The DSN is a project address with a public key, set per environment; never logged.
+    sentry_dsn: SecretStr | None = None
+    sentry_environment: str | None = None
+    sentry_release: str | None = None
     log_format: str = "text"  # text | json
     # /docs, /redoc and /openapi.json: on in development, off elsewhere unless this is true
     expose_api_docs: bool = False
