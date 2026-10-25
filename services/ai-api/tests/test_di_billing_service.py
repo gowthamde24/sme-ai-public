@@ -41,6 +41,7 @@ class Clock:
 
 def world(price: int | None = None) -> tuple[BillingService, FakeBillingRepository, FakeBillingProvider, Clock]:
     repo, provider, clock = FakeBillingRepository(price_paise=price), FakeBillingProvider(), Clock()
+    repo.connected[T] = T0   # WhatsApp is connected on the day the trial starts (the trial is 14 days from that day); the waiting case has its own tests
     return BillingService(repo, provider, clock=clock), repo, provider, clock
 
 
@@ -55,7 +56,7 @@ def test_a_trial_starts_with_a_payment_method_and_charges_nothing() -> None:
     out = service.start_trial(TOKEN, T, "growth", fake.OK)
     assert out["subscription"]["status"] == "trialing" and out["can_start_trial"] is False
     assert len(provider._subs) == 1 and repo.events == []
-    assert events_for(service, 29, clock) == [], "nothing happens, nothing is charged, during the 30 days"
+    assert events_for(service, 13, clock) == [], "nothing happens, nothing is charged, during the 14 days"
 
 
 def test_the_trial_plan_and_unknown_plans_cannot_be_subscribed_to() -> None:
@@ -90,8 +91,49 @@ def test_if_the_record_fails_the_providers_subscription_is_cancelled_at_once() -
     assert events_for(service, 400, clock) == [], "the orphan can never charge: it was cancelled"
 
 
+# ---------------------------------------------------------------------------------------------- the trial clock (job DM): 14 days from the day WhatsApp is connected
+def test_a_plan_chosen_before_whatsapp_is_connected_is_trial_pending_and_charges_nothing() -> None:
+    service, repo, _, clock = world(price=99900)
+    del repo.connected[T]
+    out = service.start_trial(TOKEN, T, "growth", fake.OK)
+    assert out["subscription"]["status"] == "trial_pending" and out["subscription"]["trial_waiting_for"] == "whatsapp" and out["subscription"]["trial_ends_at"] is None and out["whatsapp_connected_at"] is None
+    assert events_for(service, 400, clock) == [], "no end date, no first charge: a year of waiting charges nothing"
+    assert repo.subs[T]["status"] == "trial_pending"
+
+
+def test_connecting_whatsapp_starts_the_14_days_and_the_first_charge_falls_on_the_14th_day() -> None:
+    service, repo, _, clock = world(price=99900)
+    del repo.connected[T]
+    service.start_trial(TOKEN, T, "growth", fake.OK)
+    assert events_for(service, 19, clock) == []
+    repo.connect_whatsapp(T, T0 + timedelta(days=20))
+    sub = service.billing(TOKEN, T)["subscription"]
+    assert sub["status"] == "trialing" and sub["trial_waiting_for"] is None and sub["trial_ends_at"] == (T0 + timedelta(days=34)).isoformat()
+    assert events_for(service, 33, clock) == [], "the 14 days count from the day WhatsApp was connected, not from the start"
+    assert events_for(service, 35, clock) == ["charge_succeeded:active"]
+
+
+def test_the_provider_is_told_the_end_date_once() -> None:
+    service, repo, provider, clock = world(price=99900)
+    service.start_trial(TOKEN, T, "growth", fake.OK)
+    clock.now = T0 + timedelta(days=1)
+    assert service.sync_trial_clocks(WORKER) == 1
+    assert service.sync_trial_clocks(WORKER) == 0, "marked: not given twice"
+    assert [c for c in repo.calls if c[0] == "trial_clock_mark"] and next(iter(provider._subs.values())).first_charge_at == T0 + timedelta(days=14)
+
+
+def test_cancelling_while_waiting_for_whatsapp_ends_it_and_nothing_is_ever_charged() -> None:
+    service, repo, _, clock = world(price=99900)
+    del repo.connected[T]
+    service.start_trial(TOKEN, T, "growth", fake.OK)
+    out = service.cancel(TOKEN, T)
+    assert out["subscription"]["status"] == "cancelled"
+    repo.connect_whatsapp(T, T0 + timedelta(days=2))
+    assert all(not a.startswith("charge") for a in events_for(service, 400, clock))
+
+
 # ---------------------------------------------------------------------------------------------- cancel
-def test_cancel_before_day_30_is_no_charge_ever() -> None:
+def test_cancel_before_the_trial_ends_is_no_charge_ever() -> None:
     service, repo, provider, clock = world(price=99900)
     service.start_trial(TOKEN, T, "growth", fake.OK)
     clock.now = T0 + timedelta(days=12)
@@ -136,10 +178,10 @@ def test_nothing_to_cancel_without_a_subscription_or_twice() -> None:
 def test_the_first_charge_comes_at_the_end_of_the_trial_and_then_every_month() -> None:
     service, repo, _, clock = world(price=99900)
     service.start_trial(TOKEN, T, "growth", fake.OK)
-    assert events_for(service, 31, clock) == ["charge_succeeded:active"]
+    assert events_for(service, 15, clock) == ["charge_succeeded:active"]
     assert repo.plan_of[T] == "growth", "the chosen plan starts"
-    assert events_for(service, 31, clock) == [], "asked again: the same event is not handed out twice"
-    assert events_for(service, 61, clock) == ["charge_succeeded:active"], "the renewal one month later"
+    assert events_for(service, 15, clock) == [], "asked again: the same event is not handed out twice"
+    assert events_for(service, 45, clock) == ["charge_succeeded:active"], "the renewal one month later"
     assert [e[2] for e in repo.events] == ["charge_succeeded", "charge_succeeded"]
 
 
@@ -153,10 +195,10 @@ def test_with_no_price_set_nothing_is_ever_charged() -> None:
 def test_a_failed_first_payment_is_past_due_then_the_provider_gives_up() -> None:
     service, repo, _, clock = world(price=99900)
     service.start_trial(TOKEN, T, "growth", fake.DECLINES_ON_RENEWAL)
-    assert events_for(service, 31, clock) == ["charge_failed:past_due"]
+    assert events_for(service, 15, clock) == ["charge_failed:past_due"]
     assert repo.plan_of.get(T, "free_trial") == "free_trial", "the plan has not changed"
-    assert events_for(service, 34, clock) == ["charge_failed:past_due"], "the retry three days later fails too"
-    assert events_for(service, 38, clock) == ["halted:cancelled"], "after the grace period the provider gives up"
+    assert events_for(service, 18, clock) == ["charge_failed:past_due"], "the retry three days later fails too"
+    assert events_for(service, 22, clock) == ["halted:cancelled"], "after the grace period the provider gives up"
     assert repo.plan_of[T] == "free_trial"
     assert events_for(service, 100, clock) == [], "a halted subscription charges nothing more"
 
@@ -164,10 +206,10 @@ def test_a_failed_first_payment_is_past_due_then_the_provider_gives_up() -> None
 def test_cancelling_after_a_failed_payment_ends_it_at_once_and_stops_the_retries() -> None:
     service, repo, _, clock = world(price=99900)
     service.start_trial(TOKEN, T, "growth", fake.DECLINES_ON_RENEWAL)
-    assert events_for(service, 31, clock) == ["charge_failed:past_due"]
+    assert events_for(service, 15, clock) == ["charge_failed:past_due"]
     out = service.cancel(TOKEN, T)
     assert out["subscription"]["status"] == "cancelled" and out["subscription"]["payment_method_on_file"] is False
-    later = events_for(service, 60, clock)
+    later = events_for(service, 44, clock)
     assert later == ["cancelled:cancelled"], later   # no retry, no halt, no charge: only the end
     assert [e[2] for e in repo.events] == ["charge_failed", "cancelled"]
 
@@ -175,29 +217,30 @@ def test_cancelling_after_a_failed_payment_ends_it_at_once_and_stops_the_retries
 def test_a_failed_renewal_after_a_good_first_payment() -> None:
     service, repo, _, clock = world(price=99900)
     service.start_trial(TOKEN, T, "growth", fake.DECLINES_AFTER_FIRST)
-    assert events_for(service, 31, clock) == ["charge_succeeded:active"]
-    assert events_for(service, 61, clock) == ["charge_failed:past_due"]
+    assert events_for(service, 15, clock) == ["charge_succeeded:active"]
+    assert events_for(service, 45, clock) == ["charge_failed:past_due"]
     assert repo.plan_of[T] == "growth", "the plan is kept during the grace period"
-    assert events_for(service, 68, clock) == ["charge_failed:past_due", "halted:cancelled"]
+    assert events_for(service, 52, clock) == ["charge_failed:past_due", "halted:cancelled"]
     assert repo.plan_of[T] == "free_trial"
 
 
 def test_cancelling_an_active_plan_ends_it_at_the_end_of_the_paid_period() -> None:
     service, repo, _, clock = world(price=99900)
     service.start_trial(TOKEN, T, "growth", fake.OK)
-    assert events_for(service, 31, clock) == ["charge_succeeded:active"]
-    clock.now = T0 + timedelta(days=40)
+    assert events_for(service, 15, clock) == ["charge_succeeded:active"]
+    clock.now = T0 + timedelta(days=24)
     out = service.cancel(TOKEN, T)
     assert out["subscription"]["cancel_at_period_end"] is True and out["subscription"]["status"] == "active"
-    assert events_for(service, 55, clock) == [], "the paid period runs on"
-    assert events_for(service, 62, clock) == ["cancelled:cancelled"], "and ends at its end, with no further charge"
+    assert events_for(service, 40, clock) == [], "the paid period runs on"
+    assert events_for(service, 46, clock) == ["cancelled:cancelled"], "and ends at its end, with no further charge"
     assert [e[2] for e in repo.events] == ["charge_succeeded", "cancelled"]
 
 
 def test_the_same_event_applied_twice_changes_nothing() -> None:
     service, repo, provider, clock = world(price=99900)
     service.start_trial(TOKEN, T, "growth", fake.OK)
-    clock.now = T0 + timedelta(days=31)
+    clock.now = T0 + timedelta(days=15)
+    service.sync_trial_clocks(WORKER)
     event = provider.events_until(clock.now)[0]
     service.apply(WORKER, event)
     service.apply(WORKER, event)

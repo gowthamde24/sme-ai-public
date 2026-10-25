@@ -14,7 +14,8 @@ PlanKind = Literal["trial", "main", "calls"]
 MeterKind = Literal["call_minutes", "whatsapp_messages"]
 # ok: under 80 percent. notice: from 80 percent. stopped: 100 percent used (or nothing included): that kind stops for this workspace until a top-up or the next period.
 MeterState = Literal["ok", "notice", "stopped"]
-SubscriptionStatus = Literal["trialing", "active", "past_due", "cancelled"]
+# trial_pending: the plan is chosen and a payment method is on file, but WhatsApp is not connected yet, so the 14 days have not begun (nothing is charged; sending, AI calls and campaigns stay off until it is)
+SubscriptionStatus = Literal["trial_pending", "trialing", "active", "past_due", "cancelled"]
 
 
 class _Strict(BaseModel):
@@ -60,6 +61,10 @@ class PlanOut(_Strict):
 
 class TrialRulesOut(_Strict):
     days: int
+    # when the trial days start counting: `whatsapp_connected` = the day the workspace's WhatsApp is connected (owner decision 25 Oct 2026); `sign_up` = the day of sign-up (catalogue version 1)
+    starts_on: Literal["sign_up", "whatsapp_connected"]
+    # a workspace that has not connected WhatsApp yet may set up this many days from the day it was made before it lapses (the trial clock only waits; nothing else does)
+    setup_days_without_whatsapp: int
     # the trial starts with a payment method on file (nothing is charged during the trial)
     payment_method_at_start: bool
     grace_days_after_failed_payment: int
@@ -121,6 +126,8 @@ class SubscriptionOut(_Strict):
     grace_until: datetime | None = None
     # true when a payment method is on file; the method itself is never stored here
     payment_method_on_file: bool
+    # "whatsapp" while the status is trial_pending: `trial_ends_at` is null and the 14 days begin on the day WhatsApp is connected; null otherwise
+    trial_waiting_for: Literal["whatsapp"] | None
 
 
 class UsageViewOut(_Strict):
@@ -149,6 +156,8 @@ class BillingOut(_Strict):
     notices: list[NoticeOut]
     # false once a subscription exists (a trial is started once)
     can_start_trial: bool
+    # the day the workspace's WhatsApp was first connected (the trial's 14 days count from it); null while it is not connected
+    whatsapp_connected_at: datetime | None
     # the plain word the web switches on: `read_only` = view and export only (see AccessOut)
     access: Literal["full", "read_only"]
     read_only_since: date | None

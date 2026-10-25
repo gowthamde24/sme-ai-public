@@ -1,0 +1,199 @@
+{
+  "$comment": "Mock payloads for the outcomes API (job DM, C1 part). One per state the customer timeline and Today show. Validated against outcomes.schema.json by a test. Ids and times are invented.",
+  "outcome_positive_by_ai": {
+    "id": "6f1c3a52-0f0e-4b6e-9d7a-1a2b3c4d5e01",
+    "contact_id": "0b9c1e6a-3d4f-4a52-8c10-5a6b7c8d9e01",
+    "lead_id": "7a2d4b63-1a1f-4c7f-8e8b-2b3c4d5e6f02",
+    "kind": "whatsapp_followup",
+    "source_id": "3d5e7f81-2b3c-4d5e-9f10-3c4d5e6f7a03",
+    "outcome": "positive",
+    "category": "interested",
+    "reason": "Showed interest or asked for details.",
+    "recorded_by": "ai",
+    "corrected": false,
+    "corrected_at": null,
+    "ai_outcome": "positive",
+    "ai_category": "interested",
+    "occurred_at": "2026-10-26T09:42:00Z",
+    "recorded_at": "2026-10-26T09:42:03Z"
+  },
+  "outcome_negative_corrected_by_owner": {
+    "id": "6f1c3a52-0f0e-4b6e-9d7a-1a2b3c4d5e02",
+    "contact_id": "0b9c1e6a-3d4f-4a52-8c10-5a6b7c8d9e02",
+    "lead_id": null,
+    "kind": "call",
+    "source_id": "3d5e7f81-2b3c-4d5e-9f10-3c4d5e6f7a04",
+    "outcome": "negative",
+    "category": "too_costly",
+    "reason": "Said the price is too high.",
+    "recorded_by": "ai",
+    "corrected": true,
+    "corrected_at": "2026-10-26T11:05:00Z",
+    "ai_outcome": "unclear",
+    "ai_category": "call_back_later",
+    "occurred_at": "2026-10-26T10:15:00Z",
+    "recorded_at": "2026-10-26T10:15:30Z"
+  },
+  "outcome_unclear": {
+    "id": "6f1c3a52-0f0e-4b6e-9d7a-1a2b3c4d5e03",
+    "contact_id": "0b9c1e6a-3d4f-4a52-8c10-5a6b7c8d9e03",
+    "lead_id": null,
+    "kind": "call",
+    "source_id": "3d5e7f81-2b3c-4d5e-9f10-3c4d5e6f7a05",
+    "outcome": "unclear",
+    "category": null,
+    "reason": null,
+    "recorded_by": "ai",
+    "corrected": false,
+    "corrected_at": null,
+    "ai_outcome": "unclear",
+    "ai_category": null,
+    "occurred_at": "2026-10-26T12:20:00Z",
+    "recorded_at": "2026-10-26T12:20:40Z"
+  },
+  "outcome_education_no_reason": {
+    "id": "6f1c3a52-0f0e-4b6e-9d7a-1a2b3c4d5e04",
+    "contact_id": "0b9c1e6a-3d4f-4a52-8c10-5a6b7c8d9e04",
+    "lead_id": null,
+    "kind": "call",
+    "source_id": "3d5e7f81-2b3c-4d5e-9f10-3c4d5e6f7a06",
+    "outcome": "positive",
+    "category": "visit_booked",
+    "reason": null,
+    "recorded_by": "ai",
+    "corrected": false,
+    "corrected_at": null,
+    "ai_outcome": "positive",
+    "ai_category": "visit_booked",
+    "occurred_at": "2026-10-26T13:00:00Z",
+    "recorded_at": "2026-10-26T13:00:20Z"
+  },
+  "outcome_list_page": {
+    "items": [
+      {
+        "id": "6f1c3a52-0f0e-4b6e-9d7a-1a2b3c4d5e03",
+        "contact_id": "0b9c1e6a-3d4f-4a52-8c10-5a6b7c8d9e03",
+        "lead_id": null,
+        "kind": "call",
+        "source_id": "3d5e7f81-2b3c-4d5e-9f10-3c4d5e6f7a05",
+        "outcome": "unclear",
+        "category": null,
+        "reason": null,
+        "recorded_by": "ai",
+        "corrected": false,
+        "corrected_at": null,
+        "ai_outcome": "unclear",
+        "ai_category": null,
+        "occurred_at": "2026-10-26T12:20:00Z",
+        "recorded_at": "2026-10-26T12:20:40Z"
+      }
+    ],
+    "has_more": true,
+    "next_cursor": "MjAyNi0xMC0yNlQxMjoyMDowMCswMDowMHw2ZjFjM2E1Mi0wZjBlLTRiNmUtOWQ3YS0xYTJiM2M0ZDVlMDM"
+  },
+  "outcome_list_empty": {
+    "items": [],
+    "has_more": false,
+    "next_cursor": null
+  },
+  "totals_today": {
+    "from_day": "2026-10-26",
+    "to_day": "2026-10-26",
+    "days": [
+      {
+        "day": "2026-10-26",
+        "positive": 3,
+        "negative": 2,
+        "unclear": 1,
+        "by_category": {
+          "interested": 2,
+          "visit_booked": 1,
+          "order_likely": 0,
+          "not_interested": 1,
+          "wrong_number": 0,
+          "too_costly": 1,
+          "call_back_later": 1
+        }
+      }
+    ],
+    "total": {
+      "positive": 3,
+      "negative": 2,
+      "unclear": 1
+    }
+  },
+  "totals_empty_day": {
+    "from_day": "2026-10-27",
+    "to_day": "2026-10-27",
+    "days": [
+      {
+        "day": "2026-10-27",
+        "positive": 0,
+        "negative": 0,
+        "unclear": 0,
+        "by_category": {
+          "interested": 0,
+          "visit_booked": 0,
+          "order_likely": 0,
+          "not_interested": 0,
+          "wrong_number": 0,
+          "too_costly": 0,
+          "call_back_later": 0
+        }
+      }
+    ],
+    "total": {
+      "positive": 0,
+      "negative": 0,
+      "unclear": 0
+    }
+  },
+  "record_request": {
+    "contact_id": "0b9c1e6a-3d4f-4a52-8c10-5a6b7c8d9e01",
+    "lead_id": null,
+    "kind": "call",
+    "source_id": "3d5e7f81-2b3c-4d5e-9f10-3c4d5e6f7a07",
+    "outcome": "positive",
+    "category": "order_likely",
+    "reason": "Will confirm the order after the family meeting.",
+    "occurred_at": "2026-10-26T14:30:00Z"
+  },
+  "correction_request": {
+    "outcome": "negative",
+    "category": "not_interested",
+    "reason": "Said they bought elsewhere."
+  },
+  "customer_outcomes": [
+    {
+      "id": "6f1c3a52-0f0e-4b6e-9d7a-1a2b3c4d5e03",
+      "channel": "call",
+      "at": "2026-10-26T12:20:00Z",
+      "result": "unclear",
+      "category": null,
+      "reason": null,
+      "corrected": false
+    },
+    {
+      "id": "6f1c3a52-0f0e-4b6e-9d7a-1a2b3c4d5e02",
+      "channel": "call",
+      "at": "2026-10-26T10:15:00Z",
+      "result": "negative",
+      "category": "too_costly",
+      "reason": "Said the price is too high.",
+      "corrected": true
+    },
+    {
+      "id": "6f1c3a52-0f0e-4b6e-9d7a-1a2b3c4d5e01",
+      "channel": "whatsapp",
+      "at": "2026-10-26T09:42:00Z",
+      "result": "positive",
+      "category": "interested",
+      "reason": "Showed interest or asked for details.",
+      "corrected": false
+    }
+  ],
+  "customer_correction_request": {
+    "result": "negative",
+    "category": "not_interested"
+  }
+}

@@ -42,6 +42,7 @@ def test_no_shape_shows_ai_money_tokens_or_models() -> None:
         ("plans", models.PlansOut),
         ("billing_no_subscription_ok", models.BillingOut),
         ("billing_trialing_notice_at_80", models.BillingOut),
+        ("billing_trial_pending_waiting_for_whatsapp", models.BillingOut),
         ("billing_active_messages_stopped", models.BillingOut),
         ("billing_starter_no_minutes_included", models.BillingOut),
         ("billing_pay_as_you_go", models.BillingOut),

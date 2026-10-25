@@ -19,6 +19,7 @@ from app.tenancy.repository import RepositoryError
 
 logger = logging.getLogger("app.billing.mail")
 DAYS = (1, 30, 60, 83)
+PENDING_DAYS = (30, 60, 90)
 
 
 @dataclass(frozen=True)
@@ -74,9 +75,24 @@ def compose(business: str, day: int, delete_on: str, to: str) -> Email:
     return Email(to=to, subject=subject, body=body)
 
 
+def compose_pending(business: str, day: int, to: str) -> Email:
+    """The reminder to a workspace that chose a plan but has not connected WhatsApp (job DM, owner decision 25 Oct 2026): nothing is charged and the trial has not begun; it begins the day WhatsApp is connected."""
+    subject = "Connect your WhatsApp to start your free trial"
+    body = (
+        f"Workspace: {business}\n\nYou chose a plan {day} days ago, but your WhatsApp is not connected yet. Your free trial has not started and nothing has been charged: the 14 days begin on the day your WhatsApp is connected.\n\n"
+        "Until then you can set up your catalogue, your customers and your AI assistant, but messages, AI calls and campaigns stay off. Open Settings in the app to connect your WhatsApp.\n"
+    )
+    return Email(to=to, subject=subject, body=body)
+
+
 class BillingMailRepository(Protocol):
     def reminders_due(self, token: str, limit: int) -> list[dict[str, Any]]: ...
     def mark(self, token: str, tenant_id: uuid.UUID, day: int) -> None: ...
+
+
+class PendingMailRepository(Protocol):
+    def pending_due(self, token: str, limit: int) -> list[dict[str, Any]]: ...
+    def pending_mark(self, token: str, tenant_id: uuid.UUID, day: int) -> None: ...
 
 
 class PostgrestBillingMailRepository:
@@ -91,6 +107,12 @@ class PostgrestBillingMailRepository:
 
     def mark(self, token: str, tenant_id: uuid.UUID, day: int) -> None:
         self._rpc.object(token, "scheduler_billing_reminder_mark", {"p_tenant_id": str(tenant_id), "p_day": day})
+
+    def pending_due(self, token: str, limit: int) -> list[dict[str, Any]]:
+        return self._rpc.array(token, "scheduler_billing_pending_due", {"p_limit": limit})
+
+    def pending_mark(self, token: str, tenant_id: uuid.UUID, day: int) -> None:
+        self._rpc.object(token, "scheduler_billing_pending_mark", {"p_tenant_id": str(tenant_id), "p_day": day})
 
 
 class BillingReminders:
@@ -116,6 +138,35 @@ class BillingReminders:
                     sent += 1
             except (KeyError, ValueError):
                 logger.error("billing reminders: an unexpected item was skipped")
+            except RepositoryError:
+                raise
+        return sent
+
+
+class PendingReminders:
+    """One pass of the worker: the reminders to workspaces still waiting for WhatsApp (30, 60 and 90 days after the plan was chosen), sent and marked like the others."""
+
+    def __init__(self, repository: PendingMailRepository, sender: EmailSender, *, limit: int = 50) -> None:
+        self._repo, self._sender, self._limit = repository, sender, limit
+
+    def run(self, token: str) -> int:
+        """The reminders to workspaces still waiting for WhatsApp (30, 60 and 90 days after the plan was chosen), sent and marked like the others."""
+        sent = 0
+        for item in self._repo.pending_due(token, self._limit):
+            try:
+                tenant = uuid.UUID(str(item["tenant_id"]))
+                day = int(item["day"])
+                emails = [str(e) for e in item.get("emails") or [] if isinstance(e, str) and "@" in e]
+                if day not in PENDING_DAYS:
+                    raise ValueError("unexpected reminder day")
+                ok = bool(emails)
+                for address in emails:
+                    ok = self._sender.send(compose_pending(str(item.get("tenant_name") or "your workspace"), day, address)) and ok
+                if ok:
+                    self._repo.pending_mark(token, tenant, day)
+                    sent += 1
+            except (KeyError, ValueError):
+                logger.error("billing pending reminders: an unexpected item was skipped")
             except RepositoryError:
                 raise
         return sent

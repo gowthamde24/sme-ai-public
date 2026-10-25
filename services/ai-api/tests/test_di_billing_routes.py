@@ -75,14 +75,14 @@ def test_the_catalogue_is_for_any_signed_in_user_and_has_no_price() -> None:
     body = r.json()
     assert [p["id"] for p in body["plans"]][:4] == ["free_trial", "starter", "growth", "business"]
     assert all(p["price_paise_monthly"] is None and p["price_set"] is False for p in body["plans"])
-    assert body["trial"] == {"days": 30, "payment_method_at_start": True, "grace_days_after_failed_payment": 7}
+    assert body["trial"] == {"days": 14, "starts_on": "whatsapp_connected", "setup_days_without_whatsapp": 30, "payment_method_at_start": True, "grace_days_after_failed_payment": 7}
 
 
 def test_the_billing_answer_is_the_contract_and_shows_no_ai_money() -> None:
     client, _ = world()
     r = client.get(B, headers=auth("a_owner"))
     body = r.json()
-    assert set(body) == {"plan", "subscription", "period", "usage", "notices", "can_start_trial", "access", "read_only_since", "delete_on", "data_days_left"}
+    assert set(body) == {"plan", "subscription", "period", "usage", "notices", "can_start_trial", "whatsapp_connected_at", "access", "read_only_since", "delete_on", "data_days_left"}
     assert set(body["usage"]) == {"call_minutes", "whatsapp_messages"}
     text = json.dumps(body).lower()
     for word in ("token", "micro", "rupee", "cost", "spend", "ledger", "anthropic", "model"):
@@ -92,7 +92,8 @@ def test_the_billing_answer_is_the_contract_and_shows_no_ai_money() -> None:
 def test_starting_the_trial_and_the_refusals_have_fixed_sentences() -> None:
     client, repo = world()
     r = client.post(f"{B}/trial", json=TRIAL, headers=auth("a_owner"))
-    assert r.status_code == 200 and r.json()["subscription"]["status"] == "trialing"
+    assert r.status_code == 200 and r.json()["subscription"]["status"] == "trial_pending", "WhatsApp is not connected: the plan is chosen, the 14 days have not begun"
+    assert r.json()["subscription"]["trial_waiting_for"] == "whatsapp" and r.json()["subscription"]["trial_ends_at"] is None
     again = client.post(f"{B}/trial", json={**TRIAL, "plan_id": "business"}, headers=auth("a_owner"))
     assert again.status_code == 409 and again.json()["error"]["code"] == "trial_already_started"
     client2, _ = world()

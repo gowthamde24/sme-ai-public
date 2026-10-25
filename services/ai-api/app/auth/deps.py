@@ -11,6 +11,7 @@ from typing import Annotated
 from fastapi import Depends, Request
 
 from app.agent_runs.wiring import AgentsRuntime
+from app.assistant_settings.service import AssistantSettingsService
 from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.billing.service import BillingService
 from app.businessprofile.repository import BusinessProfileRepository
@@ -37,6 +38,7 @@ from app.notifications.runtime import NotificationsRuntime
 from app.orders.repository import OrdersRepository
 from app.outbox.adapter import ChannelAdapter
 from app.outbox.repository import OutboxRepository
+from app.outcomes.repository import OutcomesRepository
 from app.packs.models import AuthProvidersOut
 from app.packs.registry import PackRegistry
 from app.packs.repository import PacksRepository
@@ -124,6 +126,10 @@ class Runtime:
     voice_notes: VoiceNotesRepository | None = None
     # job DI: plans and billing (catalogue, usage meters, trial and cancel; the FAKE provider)
     billing: BillingService | None = None
+    # job DM: outcomes of calls and WhatsApp follow-ups (positive, negative, unclear)
+    outcomes: OutcomesRepository | None = None
+    # job DM: the AI assistant's settings per workspace (Settings > AI assistant)
+    assistant_settings: AssistantSettingsService | None = None
 
 
 @dataclass(frozen=True)

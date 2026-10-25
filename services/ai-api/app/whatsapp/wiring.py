@@ -8,6 +8,8 @@ from typing import Any
 import httpx
 
 from app.config import Settings
+from app.outcomes.recorder import OutcomeRecorder
+from app.outcomes.repository import PostgrestOutcomesRepository
 from app.scheduler.session import PrincipalSession
 from app.suppression.keys import KeyRing
 from app.whatsapp.factory import token_resolver
@@ -29,7 +31,7 @@ def build_whatsapp(settings: Settings, config: Any, key_ring: KeyRing | None = N
             settings.channel_agent_password.get_secret_value(),
             client=httpx.Client(timeout=httpx.Timeout(10.0, connect=5.0)),
         )
-        ingest = WhatsAppIngest(repository, session, key_ring)
+        ingest = WhatsAppIngest(repository, session, key_ring, OutcomeRecorder(PostgrestOutcomesRepository(config.rest_url, config.anon_key)))
     return WhatsAppRuntime(
         repository=repository,
         ingest=ingest,

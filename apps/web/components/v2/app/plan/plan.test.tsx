@@ -56,7 +56,7 @@ describe("Settings > Plan", () => {
     expect(screen.queryByRole("status")).toBeNull();
   });
   it("says '1 day left' in the singular on the last day", () => {
-    draw(plan({ state: "trialing", plan: "growth", method: "test_ok", day: 30 }));
+    draw(plan({ state: "trialing", plan: "growth", method: "test_ok", day: CATALOGUE.trial.days }));
     expect(screen.getByText("1 day left")).toBeInTheDocument();
   });
   it("one gentle notice at 80, naming the meter; nothing below it", () => {

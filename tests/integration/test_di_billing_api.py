@@ -129,8 +129,16 @@ def test_the_trial_a_failed_payment_and_the_cancel_through_http(client: Any, eva
     assert r.status_code == 200, r.text
     conforms(r.json(), "BillingOut")
     sub = r.json()["subscription"]
-    assert sub["status"] == "trialing" and sub["payment_method_on_file"] is True and sub["provider"] == "fake"
-    assert r.json()["plan"]["id"] == "free_trial" and r.json()["can_start_trial"] is False
+    # job DM: WhatsApp is not connected yet, so the plan is chosen but the 14 days have not begun
+    assert sub["status"] == "trial_pending" and sub["trial_waiting_for"] == "whatsapp" and sub["trial_ends_at"] is None
+    assert sub["payment_method_on_file"] is True and sub["provider"] == "fake"
+    assert r.json()["plan"]["id"] == "free_trial" and r.json()["can_start_trial"] is False and r.json()["whatsapp_connected_at"] is None
+    operator_sql.sql(f"insert into integrations.whatsapp_accounts (tenant_id, waba_id, phone_number_id, display_phone, token_ref, status) values ('{w.id}', '1234567890', '{abs(hash(str(w.id))) % 10**9 + 10**9}', '+910000000000', 'SYNTHETIC_TOKEN_REF', 'active')")
+    connected = client.get(b(w), headers=owner).json()
+    conforms(connected, "BillingOut")
+    assert connected["subscription"]["status"] == "trialing" and connected["subscription"]["trial_waiting_for"] is None, "the day WhatsApp is connected the 14 days begin"
+    ends = datetime.fromisoformat(connected["subscription"]["trial_ends_at"])
+    assert 13 * 86400 < (ends - datetime.now(UTC)).total_seconds() <= 14 * 86400 + 60 and connected["whatsapp_connected_at"] is not None
     again = client.post(b(w, "/trial"), json={"plan_id": "business", "checkout_ref": fake.OK}, headers=owner)
     assert again.status_code == 409 and again.json()["error"]["code"] == "trial_already_started"
     unknown = client.post(b(w, "/trial"), json={"plan_id": "platinum", "checkout_ref": fake.OK}, headers=owner)

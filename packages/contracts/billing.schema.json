@@ -94,6 +94,18 @@
           "title": "Can Start Trial",
           "type": "boolean"
         },
+        "whatsapp_connected_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Whatsapp Connected At"
+        },
         "access": {
           "enum": [
             "full",
@@ -145,6 +157,7 @@
         "usage",
         "notices",
         "can_start_trial",
+        "whatsapp_connected_at",
         "access",
         "read_only_since",
         "delete_on",
@@ -548,6 +561,7 @@
       "properties": {
         "status": {
           "enum": [
+            "trial_pending",
             "trialing",
             "active",
             "past_due",
@@ -610,6 +624,18 @@
         "payment_method_on_file": {
           "title": "Payment Method On File",
           "type": "boolean"
+        },
+        "trial_waiting_for": {
+          "anyOf": [
+            {
+              "const": "whatsapp",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Trial Waiting For"
         }
       },
       "required": [
@@ -617,7 +643,8 @@
         "plan_id",
         "provider",
         "cancel_at_period_end",
-        "payment_method_on_file"
+        "payment_method_on_file",
+        "trial_waiting_for"
       ],
       "title": "SubscriptionOut",
       "type": "object"
@@ -627,6 +654,18 @@
       "properties": {
         "days": {
           "title": "Days",
+          "type": "integer"
+        },
+        "starts_on": {
+          "enum": [
+            "sign_up",
+            "whatsapp_connected"
+          ],
+          "title": "Starts On",
+          "type": "string"
+        },
+        "setup_days_without_whatsapp": {
+          "title": "Setup Days Without Whatsapp",
           "type": "integer"
         },
         "payment_method_at_start": {
@@ -640,6 +679,8 @@
       },
       "required": [
         "days",
+        "starts_on",
+        "setup_days_without_whatsapp",
         "payment_method_at_start",
         "grace_days_after_failed_payment"
       ],

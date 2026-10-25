@@ -135,7 +135,9 @@ begin
                                                             -- job CR: the education tables change only inside their functions (the door app.edu_edit)
                                                             'edu_rows_guard', 'admissions_guard', 'fee_rows_guard',
                                                             -- job CV: voice settings, choices and the campaign switch change only through their functions; the ledger never
-                                                            'voice_rows_guard'));
+                                                            'voice_rows_guard',
+                                                            -- job DM: an outcome keeps its source, its customer and its time (its immutability guard)
+                                                            'outcomes_immutable'));
     -- agent_runs.lead_id / enquiry_id / conversation_id: the fixture run already has a company target, so re-pointing lead_id trips the exactly-one-target
     -- CHECK (23514) before the foreign key; foreign and missing still fail identically (next assertion). The INSERT path of the
     -- same references is attacked in 30_agent_runs_schema.

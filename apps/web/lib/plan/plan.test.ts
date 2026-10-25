@@ -11,8 +11,8 @@ describe("the plans as data", () => {
     expect(callsPlans().map((p) => p.name)).toEqual(["Pay-as-you-go", "Calls 300", "Calls 1,000"]);
     for (const p of CATALOGUE.plans) expect(p.priceInr, p.id).toBeNull();
   });
-  it("carry the allowances of C1's plans file: trial 30 min and 100 messages for 30 days; Starter 0/300, Growth 100/1,000, Business 300/3,000; Calls 300 and 1,000 minutes; team 1/3/10 and workspaces 1/1/3", () => {
-    expect(CATALOGUE.trial).toEqual({ days: 30, callMinutes: 30, messages: 100, graceDays: 7 });
+  it("carry the allowances of C1's plans file: trial 30 min and 100 messages for 14 days (counted from the day WhatsApp is connected); Starter 0/300, Growth 100/1,000, Business 300/3,000; Calls 300 and 1,000 minutes; team 1/3/10 and workspaces 1/1/3", () => {
+    expect(CATALOGUE.trial).toEqual({ days: 14, callMinutes: 30, messages: 100, graceDays: 7 });
     expect(mainPlans().map((p) => [p.callMinutes, p.messages, p.users, p.workspaces])).toEqual([[0, 300, 1, 1], [100, 1000, 3, 1], [300, 3000, 10, 3]]);
     expect(callsPlans().map((p) => p.callMinutes)).toEqual([null, 300, 1000]);
     expect(callsPlans().map((p) => p.messages)).toEqual([null, 300, 1000]);
@@ -92,10 +92,10 @@ describe("the fake provider", () => {
   it("a workspace with no plan has the trial's allowances, like the API's", () => {
     expect(toWorkspacePlan(FRESH, now).included).toEqual({ minutes: 30, messages: 100 });
   });
-  it("a trial has the TRIAL allowances (30 min, 100 messages), not the plan's; 30 days left on day 1", () => {
+  it("a trial has the TRIAL allowances (30 min, 100 messages), not the plan's; 14 days left on day 1", () => {
     const w = toWorkspacePlan({ ...FRESH, state: "trialing", plan: "business", method: "test_ok", day: 1 }, now);
     expect(w.included).toEqual({ minutes: 30, messages: 100 });
-    expect(trialDaysLeft(w.trialEndsAt, now)).toBe(30);
+    expect(trialDaysLeft(w.trialEndsAt, now)).toBe(14);
     expect(toWorkspacePlan({ ...FRESH, state: "trialing", plan: "business", method: "test_ok", day: 30 }, now).trialEndsAt).not.toBeNull();
   });
   it("cancelling inside the trial charges nothing and says so; cancelling a paid plan does not claim that", () => {
@@ -126,7 +126,7 @@ describe("the fake provider", () => {
 describe("the fake provider's test move to day 30", () => {
   const trial = (method: "test_ok" | "test_fails") => ({ ...FRESH, state: "trialing" as const, plan: "growth", method, day: 3, minutes: 5, messages: 9 });
   it("a card that works makes the plan active and starts the new period's meters at zero", () => {
-    expect(endTrial(trial("test_ok"))).toEqual({ next: expect.objectContaining({ state: "active", day: 30, minutes: 0, messages: 0 }) });
+    expect(endTrial(trial("test_ok"))).toEqual({ next: expect.objectContaining({ state: "active", day: 14, minutes: 0, messages: 0 }) });
   });
   it("a card that fails leaves it past due", () => {
     expect(endTrial(trial("test_fails"))).toEqual({ next: expect.objectContaining({ state: "past_due" }) });

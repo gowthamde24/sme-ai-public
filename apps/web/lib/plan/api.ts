@@ -40,7 +40,8 @@ const METER_STATES = ["ok", "notice", "stopped"];
 function validMeter(m: unknown): m is MeterOut {
   return isRecord(m) && isNum(m.used) && numOrNull(m.allowance) && typeof m.included === "boolean" && isStr(m.state) && METER_STATES.includes(m.state);
 }
-const STATUSES = ["trialing", "active", "past_due", "cancelled"];
+// "trial_pending" (job DM): a plan chosen before WhatsApp is connected; until the screens have its own words it is read as a trial with no end date yet
+const STATUSES = ["trial_pending", "trialing", "active", "past_due", "cancelled"];
 export function parseBilling(json: unknown): BillingOut {
   const ok =
     isRecord(json) &&
@@ -78,7 +79,7 @@ export function toWorkspacePlan(b: BillingOut): WorkspacePlan {
   const cancelledInTrial = sub?.status === "cancelled" && !!sub.trial_ends_at && !sub.current_period_end;
   return {
     planId: sub ? sub.plan_id : null,
-    state: sub ? sub.status : "none",
+    state: sub ? (sub.status === "trial_pending" ? "trialing" : sub.status) : "none",
     trialEndsAt: sub && (sub.status === "trialing" || cancelledInTrial) ? (sub.trial_ends_at ?? null) : null,
     cancelledInTrial,
     cancelAtPeriodEnd: !!sub && sub.cancel_at_period_end && (sub.status === "active" || sub.status === "past_due"),

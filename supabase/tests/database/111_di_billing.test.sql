@@ -55,12 +55,12 @@ select is((select count(*) from pg_constraint where conrelid = 'public.tenants':
 select is((select enabled from public.platform_flags where key = 'billing_enforced'), false, 'A10 enforcement is OFF until the owner of the product turns it on');
 
 -- ============================================================================ B. the catalogue
-select is(pg_temp.path('a_owner', 'select public.billing_plans()::text', 'catalogue_version'), '1', 'B1 the catalogue is version 1');
+select is(pg_temp.path('a_owner', 'select public.billing_plans()::text', 'catalogue_version'), '2', 'B1 the catalogue is version 2 (job DM: the trial is 14 days from the day WhatsApp is connected; version 1 is kept as it was)');
 select is(pg_temp.v('a_viewer', 'select jsonb_array_length(public.billing_plans() -> ''plans'')::text'), '7', 'B2 seven plans, readable by any signed-in user');
 select is(pg_temp.v('anon', 'select public.billing_plans()::text'), 'ERR:42501', 'B3 anon reads nothing');
 select is(pg_temp.v('a_owner', 'select (select string_agg(p ->> ''id'', '','' order by (p ->> ''sort'')::int) from jsonb_array_elements(public.billing_plans() -> ''plans'') p)'), 'free_trial,starter,growth,business,calls_payg,calls_300,calls_1000', 'B4 the plans, in order');
 select is(pg_temp.v('a_owner', 'select (select count(*) from jsonb_array_elements(public.billing_plans() -> ''plans'') p where (p ->> ''price_set'')::boolean or p ->> ''price_paise_monthly'' is not null)::text'), '0', 'B5 no price is set: every price is null until the owner decides');
-select is(pg_temp.path('a_owner', 'select public.billing_plans()::text', 'trial,days'), '30', 'B6 the trial is 30 days...');
+select is(pg_temp.path('a_owner', 'select public.billing_plans()::text', 'trial,days'), '14', 'B6 the trial is 14 days...');
 select is(pg_temp.path('a_owner', 'select public.billing_plans()::text', 'trial,payment_method_at_start'), 'true', 'B7 ...with a payment method at the start');
 select is(pg_temp.v('a_owner', 'select (select (p -> ''allowances'' ->> ''call_minutes'') || ''/'' || (p -> ''allowances'' ->> ''whatsapp_messages'') from jsonb_array_elements(public.billing_plans() -> ''plans'') p where p ->> ''id'' = ''growth'')'), '100/1000', 'B8 Growth: 100 minutes, 1,000 messages');
 select is(pg_temp.v('a_owner', 'select (select coalesce(p -> ''allowances'' ->> ''call_minutes'', ''none'') || ''/'' || coalesce(p -> ''allowances'' ->> ''whatsapp_messages'', ''none'') from jsonb_array_elements(public.billing_plans() -> ''plans'') p where p ->> ''id'' = ''calls_payg'')'), 'none/none', 'B9 pay as you go has no included minutes or messages and no ceiling (billed by use)');
@@ -188,6 +188,9 @@ select app.operator_set_billing_enforced(false);
 select is((select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname in ('public', 'app') and p.prosrc like '%billing\_stopped(%' and p.proname <> 'billing_stopped'), 'billing_check_usage,outbox_claim_due_core',
           'E17 ONLY the call start check and the outbox claim ask the meter: quotes, orders, follow-ups and customers never consult it, so they never stop');
 select pg_temp.pin('2026-10-14T11:00:00+05:30'::timestamptz);
+-- job DM: the 14 days count from the day WhatsApp is connected: both workspaces connect today
+insert into integrations.whatsapp_accounts (tenant_id, waba_id, phone_number_id, display_phone, token_ref, status) values
+  (tests.tid('a'), '1234567890', '555000411', '+910000000000', 'SYNTHETIC_TOKEN_REF', 'active'), (tests.tid('b'), '1234567890', '555000412', '+910000000000', 'SYNTHETIC_TOKEN_REF', 'active');
 
 -- ============================================================================ F. the trial, the charges, the cancel (the fake provider's events)
 select is(pg_temp.val('aal1', 'a_owner', format($q$select public.billing_start_trial(%L, 'growth', 'fake', 'sub_fake_a1')::text$q$, tests.tid('a'))), 'ERR:SM306', 'F1 a second factor is needed to start a trial');
@@ -197,7 +200,7 @@ select is(pg_temp.v('a_owner', format($q$select public.billing_start_trial(%L, '
 select is(pg_temp.v('a_owner', format($q$select public.billing_start_trial(%L, 'growth', 'razorpay', 'sub_fake_a1')::text$q$, tests.tid('a'))), 'ERR:22023', 'F5 only the fake provider exists (a real one arrives with a new migration)');
 select is(pg_temp.v('a_owner', format($q$select public.billing_start_trial(%L, 'growth', 'fake', 'x y')::text$q$, tests.tid('a'))), 'ERR:22023', 'F6 the provider reference is a plain token');
 select is(pg_temp.path('a_owner', format($q$select public.billing_start_trial(%L, 'growth', 'fake', 'sub_fake_a1')::text$q$, tests.tid('a')), 'subscription,status'), 'trialing', 'F7 ALLOW: the Owner starts a Growth trial');
-select is(pg_temp.ts('a_owner', 'subscription,trial_ends_at'), '2026-11-13 11:00', 'F8 it ends 30 days later (the 13th of November, 11:00 India time)');
+select is(pg_temp.ts('a_owner', 'subscription,trial_ends_at'), '2026-10-28 11:00', 'F8 it ends 14 days after WhatsApp was connected (the 28th of October, 11:00 India time)');
 select is(pg_temp.get('a_owner', 'plan,id') || '/' || pg_temp.get('a_owner', 'can_start_trial') || '/' || pg_temp.get('a_owner', 'subscription,payment_method_on_file'), 'free_trial/false/true', 'F9 while trialing the TRIAL plan''s allowances apply; a payment method is on file; no second trial');
 select is(pg_temp.path('a_owner', format($q$select public.billing_subscription_ref(%L)::text$q$, tests.tid('a')), 'provider_ref') || '/' || pg_temp.path('a_owner', format($q$select public.billing_subscription_ref(%L)::text$q$, tests.tid('a')), 'status'), 'sub_fake_a1/trialing', 'F9b the Owner can read the provider''s reference of the subscription (to cancel it at the provider first)');
 select is(pg_temp.v('a_admin', format($q$select public.billing_subscription_ref(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'F9c DENY: an Admin cannot');

@@ -15,10 +15,12 @@
   "trial": {
    "type": "object",
    "additionalProperties": false,
-   "required": ["plan", "days", "payment_method_at_start", "grace_days_after_failed_payment"],
+   "required": ["plan", "days", "starts_on", "setup_days_without_whatsapp", "payment_method_at_start", "grace_days_after_failed_payment"],
    "properties": {
     "plan": { "$ref": "#/$defs/planId" },
     "days": { "type": "integer", "minimum": 1, "maximum": 90 },
+    "starts_on": { "enum": ["sign_up", "whatsapp_connected"] },
+    "setup_days_without_whatsapp": { "type": "integer", "minimum": 1, "maximum": 90 },
     "payment_method_at_start": { "type": "boolean" },
     "grace_days_after_failed_payment": { "type": "integer", "minimum": 0, "maximum": 30 }
    }

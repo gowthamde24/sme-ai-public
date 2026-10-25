@@ -369,6 +369,14 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
      insert into public.call_list_items (id, tenant_id, campaign_id, recipient_id, call_request_id, lead_id, contact_id, step_no)
        select %2$L, %1$L, cmp.id, rcp.id, cr.id, ld.lead_id, %4$L, 1 from cmp, rcp, cr, ld$$,
    'attempts = attempts', $$delete from public.call_list_items where id = %2$L$$, true),
+  -- job DM: the AI assistant's settings (one row per workspace; written only by the Owner's function)
+  ('assistant_settings',
+   $$insert into public.assistant_settings (tenant_id, assistant_name, voice_persona, main_language, auto_switch_language, allow_english_mixing, style, speed, may_answer_prices, may_book_visits, may_send_media, may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute) values (%1$L, 'Generic', 'female_warm', 'te', true, true, 'warm', 1, true, true, true, true, 0, true, true, array[1], 540, 600) on conflict (tenant_id) do nothing$$,
+   'max_discount_percent = max_discount_percent', $$delete from public.assistant_settings where tenant_id = %1$L$$, false),
+  -- job DM: outcomes (written only by the definer functions; no module guard, like the billing tables)
+  ('outcomes',
+   $$insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, recorded_by_kind, recorded_by, occurred_at) values (%2$L, %1$L, %4$L, 'call', %2$L, 'unclear', null, 'person', %5$L, now())$$,
+   'outcome = outcome', $$delete from public.outcomes where id = %2$L$$, false),
   -- job CR: the education pack. Written only by definer functions; the modules that guard them (programmes, fees) are OFF for the default pack of the fixture tenants (tests 11 and 12 call
   -- tests.cn_guards_off() first); their own rules are proved in 104 to 107.
   ('institution_profiles',
@@ -438,6 +446,9 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('billing_lapse_reminders',
    $$insert into public.billing_lapse_reminders (tenant_id, day) values (%1$L, 30) on conflict do nothing$$,
    'day = day', $$delete from public.billing_lapse_reminders where tenant_id = %1$L$$, false),
+  ('billing_pending_reminders',
+   $$insert into public.billing_pending_reminders (tenant_id, day) values (%1$L, 30) on conflict do nothing$$,
+   'day = day', $$delete from public.billing_pending_reminders where tenant_id = %1$L$$, false),
   ('billing_notices',
    $$insert into public.billing_notices (tenant_id, kind, level, period_start) values (%1$L, 'call_minutes', 80, date '2026-10-01') on conflict do nothing$$,
    'level = level', $$delete from public.billing_notices where tenant_id = %1$L$$, false),
@@ -677,6 +688,10 @@ select t, r, s, i, u, d from (values
   ('campaign_steps', 'sales', true, false, false, false), ('campaign_steps', 'viewer', false, false, false, false),
   ('call_list_items', 'owner', true, false, false, false), ('call_list_items', 'admin', true, false, false, false),
   ('call_list_items', 'sales', true, false, false, false), ('call_list_items', 'viewer', false, false, false, false),
+  ('assistant_settings', 'owner', true, false, false, false), ('assistant_settings', 'admin', true, false, false, false),
+  ('assistant_settings', 'sales', false, false, false, false), ('assistant_settings', 'viewer', false, false, false, false),
+  ('outcomes', 'owner', true, false, false, false), ('outcomes', 'admin', true, false, false, false),
+  ('outcomes', 'sales', true, false, false, false), ('outcomes', 'viewer', true, false, false, false),
   ('customer_credit_limits', 'owner', true, false, false, false), ('customer_credit_limits', 'admin', true, false, false, false),
   ('customer_credit_limits', 'sales', true, false, false, false), ('customer_credit_limits', 'viewer', false, false, false, false),
   ('material_quote_policies', 'owner', true, false, false, false), ('material_quote_policies', 'admin', true, false, false, false),
@@ -732,6 +747,8 @@ select t, r, s, i, u, d from (values
   ('billing_topups', 'sales', false, false, false, false), ('billing_topups', 'viewer', false, false, false, false),
   ('billing_lapse_reminders', 'owner', true, false, false, false), ('billing_lapse_reminders', 'admin', true, false, false, false),
   ('billing_lapse_reminders', 'sales', false, false, false, false), ('billing_lapse_reminders', 'viewer', false, false, false, false),
+  ('billing_pending_reminders', 'owner', true, false, false, false), ('billing_pending_reminders', 'admin', true, false, false, false),
+  ('billing_pending_reminders', 'sales', false, false, false, false), ('billing_pending_reminders', 'viewer', false, false, false, false),
   ('billing_notices', 'owner', true, false, false, false), ('billing_notices', 'admin', true, false, false, false),
   ('billing_notices', 'sales', false, false, false, false), ('billing_notices', 'viewer', false, false, false, false),
   -- T002 tables

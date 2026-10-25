@@ -32,7 +32,7 @@ class _Subscription:
     tenant_id: str
     checkout_ref: str
     price_paise: int | None
-    first_charge_at: datetime
+    first_charge_at: datetime | None   # None until set_trial_end: the trial counts from the day WhatsApp is connected
     cancelled_at: datetime | None = None
     ends_at: datetime | None = None   # a cancel at the end of the paid period: when it ends
     handed_out: set[str] = field(default_factory=set)
@@ -50,16 +50,20 @@ class FakeBillingProvider:
         # a reference that does not repeat for the same request but is stable for it: the idempotency of a retried start
         digest = hashlib.sha256(f"{request.tenant_id}:{request.plan_id}:{request.checkout_ref}:{request.started_at.isoformat()}".encode()).hexdigest()[:20]
         reference = f"sub_fake_{digest}"
-        trial_ends_at = request.started_at + timedelta(days=request.trial_days)
-        self._subs.setdefault(reference, _Subscription(request.tenant_id, request.checkout_ref, request.price_paise, trial_ends_at))
-        return ProviderSubscription(self.name, reference, trial_ends_at)
+        self._subs.setdefault(reference, _Subscription(request.tenant_id, request.checkout_ref, request.price_paise, None))
+        return ProviderSubscription(self.name, reference, None)
+
+    def set_trial_end(self, reference: str, trial_ends_at: datetime) -> None:
+        sub = self._subs.get(reference)
+        if sub is not None and sub.first_charge_at is None and sub.cancelled_at is None:
+            sub.first_charge_at = trial_ends_at
 
     def cancel_subscription(self, reference: str, *, at_period_end: bool, now: datetime) -> None:
         sub = self._subs.get(reference)
         if sub is None or sub.cancelled_at is not None:
             return
         sub.cancelled_at = now
-        if at_period_end and now >= sub.first_charge_at:
+        if at_period_end and sub.first_charge_at is not None and now >= sub.first_charge_at:
             elapsed = (now - sub.first_charge_at) // MONTH + 1
             sub.ends_at = sub.first_charge_at + elapsed * MONTH
         else:
@@ -86,8 +90,8 @@ class FakeBillingProvider:
                 sub.handed_out.add(event_id)
                 events.append(ProviderEvent(event_id, sub.tenant_id, kind, amount, at))
 
-        if sub.price_paise is None:
-            return events   # no price, no charge: the schedule does not run until the owner of the product sets one
+        if sub.price_paise is None or sub.first_charge_at is None:
+            return events   # no price, no charge: the schedule does not run until the owner of the product sets one; and none runs until the trial's end is known (WhatsApp connected)
         end = sub.ends_at
         cycle = 0
         while True:
