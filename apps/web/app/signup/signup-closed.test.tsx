@@ -41,10 +41,14 @@ afterEach(() => {
 
 describe("the one setting (job DH)", () => {
   it("only \"0\" closes sign-up: unset and anything else leave it open, as it always was", () => {
-    expect(isSignupOpen({})).toBe(true);
-    expect(isSignupOpen({ NEXT_PUBLIC_SIGNUP_OPEN: "1" })).toBe(true);
-    expect(isSignupOpen({ NEXT_PUBLIC_SIGNUP_OPEN: "" })).toBe(true);
-    expect(isSignupOpen({ NEXT_PUBLIC_SIGNUP_OPEN: "0" })).toBe(false);
+    expect(isSignupOpen(undefined)).toBe(true);
+    expect(isSignupOpen("1")).toBe(true);
+    expect(isSignupOpen("")).toBe(true);
+    expect(isSignupOpen("0")).toBe(false);
+    delete process.env.NEXT_PUBLIC_SIGNUP_OPEN;
+    expect(isSignupOpen()).toBe(true); // with no argument it reads the environment when it is called
+    process.env.NEXT_PUBLIC_SIGNUP_OPEN = "0";
+    expect(isSignupOpen()).toBe(false);
   });
 });
 

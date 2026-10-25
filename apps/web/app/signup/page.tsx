@@ -9,7 +9,7 @@ import { BRAND_NAME } from "@/design/brand";
 import { getLang } from "@/i18n/get-lang";
 import { signupT } from "@/i18n/signup";
 import { getCurrentPolicies, type CurrentPolicies } from "@/lib/api/policy";
-import { SIGNUP_ERRORS } from "@/lib/api/signup";
+import { WEB_SIGNUP_ERRORS } from "@/lib/api/signup";
 import { MIN_PASSWORD } from "@/lib/auth/password-policy";
 import { isSignupOpen } from "@/lib/auth/signup-open";
 import { getAuthProviders, listPacks } from "@/lib/api/pack";
@@ -106,7 +106,7 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
   const chosen = cards.find((c) => c.id === type)!;
   // the versions of the Terms and the Privacy Policy in force, sent with the sign-up so the acceptance is recorded (job CF); if they cannot be read the sign-up still works and the person is asked on the accept page
   const [policyVersions, providers] = await Promise.all([getCurrentPolicies().catch((): CurrentPolicies | null => null), getAuthProviders()]);
-  const errors: Record<string, string> = Object.fromEntries(SIGNUP_ERRORS.map((code) => [code, t(`signup.err.${code}` as "signup.err.invalid", { n: MIN_PASSWORD })]));
+  const errors: Record<string, string> = Object.fromEntries(WEB_SIGNUP_ERRORS.map((code) => [code, t(`signup.err.${code}` as "signup.err.invalid", { n: MIN_PASSWORD })]));
   errors.unknown = t("signup.err.unknown");
   const providerFailed = (Array.isArray(query.error) ? query.error[0] : query.error) === "provider";
   return (

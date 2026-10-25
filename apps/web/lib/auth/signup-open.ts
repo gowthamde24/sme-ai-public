@@ -5,6 +5,6 @@
  * Supabase's own sign-up switch is a separate setting (off on staging).
  * When closed, /signup shows a friendly note and the early-access address instead of the form, and the sign-up actions refuse. Read at call time so a test can flip it.
  */
-export function isSignupOpen(env: Record<string, string | undefined> = process.env): boolean {
-  return env.NEXT_PUBLIC_SIGNUP_OPEN !== "0";
+export function isSignupOpen(value: string | undefined = process.env.NEXT_PUBLIC_SIGNUP_OPEN): boolean {
+  return value !== "0";
 }
