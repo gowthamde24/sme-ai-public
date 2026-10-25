@@ -49,8 +49,8 @@ export function LiveCall({ words, call, backHref, testMode }: { words: Words; ca
         <div className="flex flex-col gap-1.5">
           <h1 className="font-display text-3xl font-extrabold leading-tight">{call.callee}</h1>
           <p className="text-[15px] text-muted">
-            {t(`call.kind.${call.kind}` as "call.kind.followup")} · {call.langName} ·{" "}
-            <span className="font-semibold text-brand-text">{status === "live" ? t("call.speaking") : status === "took_over" ? t("call.tookover.short") : t("call.ended.short", { time: clock(seconds) })}</span>
+            {t(`call.kind.${call.kind}` as "call.kind.followup")} · {call.langName}
+            {status === "ended" ? null : <span className="font-semibold text-brand-text"> · {status === "live" ? t("call.speaking") : t("call.tookover.short")}</span>}
           </p>
         </div>
         {status === "live" ? (

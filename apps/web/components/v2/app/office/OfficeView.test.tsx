@@ -49,7 +49,7 @@ describe("OfficeView", () => {
   });
   it("the chosen agent's job and latest event are read beside the cards; with none chosen it says how to choose", () => {
     view(sample);
-    expect(screen.getByText("Tap a teammate in the room, or choose one in the list, to read their latest events here.")).toBeInTheDocument();
+    expect(screen.getByText("Tap a teammate on the board, or choose one in the list, to read their latest events here.")).toBeInTheDocument();
     cleanup();
     view(sample, "quote_writer");
     expect(screen.getByRole("heading", { level: 2, name: "Quote Writer" })).toBeInTheDocument();
@@ -62,7 +62,7 @@ describe("OfficeView", () => {
   });
   it("an unknown ?agent= chooses nobody", () => {
     view(sample, "<script>");
-    expect(screen.getByText(/Tap a teammate in the room/)).toBeInTheDocument();
+    expect(screen.getByText(/Tap a teammate on the board/)).toBeInTheDocument();
   });
   it("cards are tall enough to touch (44px)", () => {
     view(sample);

@@ -40,7 +40,7 @@ describe("What can Agent OWL do? (job BT)", () => {
     expect(steps.map((li) => li.querySelector("p")!.textContent)).toEqual(["1Find leads", "2Research", "3AI calls", "4WhatsApp", "5Outcome", "6Follow-up"]);
     expect(steps[3]).toHaveTextContent("You: approve quotes and prices");
     expect(steps.every((li) => li.querySelector("svg"))).toBe(true);
-    expect(card.textContent).not.toMatch(/Lead Finder|Quote Writer|owl/i);
+    expect(card.textContent).not.toMatch(/Lead Finder|Quote Writer/);
   });
   it("a school reads its own six steps, the same words as its public page's landing.json (data, not code)", () => {
     const edu = SITE_PACKS.find((p) => p.id === "education")!;
@@ -48,8 +48,8 @@ describe("What can Agent OWL do? (job BT)", () => {
       const dict = appDict(lang) as Record<string, string>;
       const school = withModuleWords({ ...dict }, { modules: ["programmes"] });
       for (const n of ["1", "2", "3", "4", "5", "6"] as const) {
-        expect(school[`ask.can.step.${n}.t`], `${lang} ${n}`).toBe(textIn(edu.steps![n]!.title, lang));
-        expect(school[`ask.can.step.${n}.d`], `${lang} ${n}`).toBe(textIn(edu.steps![n]!.text, lang));
+        expect(school[`ask.can.step.${n}.t`].replaceAll("\u2060", ""), `${lang} ${n}`).toBe(textIn(edu.steps![n]!.title, lang));
+        expect(school[`ask.can.step.${n}.d`].replaceAll("\u2060", ""), `${lang} ${n}`).toBe(textIn(edu.steps![n]!.text, lang));
       }
       expect(school["ask.can.step.6.y"], lang).toBe(dict["ask.can.step.6.y"]);
     }

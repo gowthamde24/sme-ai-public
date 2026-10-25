@@ -1,4 +1,4 @@
-import { AgentMark } from "../mark/AgentMark";
+import { OrbMark } from "../mark/OrbMark";
 import { StateDot } from "../mark/StateDot";
 import { schedulerView } from "../outbox/scheduler-line";
 import { indiaClock } from "../today/time";
@@ -32,7 +32,7 @@ export function SchedulerCard({ words, status, now }: { words: TodayWords; statu
   return (
     <section aria-labelledby="sched-heading" className={card} data-card="scheduler">
       <div className="flex items-center gap-3">
-        <AgentMark px={56} mood={status?.active ? "thinking" : "resting"} off={status !== null && !status.active} className="size-14" />
+        <OrbMark px={56} mood={status?.active ? "thinking" : "resting"} off={status !== null && !status.active} className="size-14" />
         <h2 id="sched-heading" className="font-display text-xl font-semibold">
           {say(words, "agentset.sched.title")}
         </h2>

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import type { TripOut } from "@contracts";
 
-import { AgentMark } from "../mark/AgentMark";
+import { OrbMark } from "../mark/OrbMark";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
 import { card, okLine, secondary } from "../visits/styles";
@@ -47,7 +47,7 @@ export function TripBoard({ base, words, role, day, today, trips, sites, actions
       </nav>
       {trips === null ? (
         <div role="alert" className={`${card} flex-row items-center`} data-state="error">
-          <AgentMark px={56} mood="resting" className="size-14" />
+          <OrbMark px={56} mood="resting" className="size-14" />
           <div>
             <p className="font-semibold">{say(words, "frame.notyet")}</p>
             <p className="text-sm text-muted">{say(words, "trip.board.error")}</p>
@@ -56,7 +56,7 @@ export function TripBoard({ base, words, role, day, today, trips, sites, actions
       ) : trips.length === 0 ? (
         <div className={`${card} items-start`} data-state="empty">
           <div className="flex items-center gap-3">
-            <AgentMark px={64} mood="idle" className="size-16" />
+            <OrbMark px={64} mood="idle" className="size-16" />
             <h2 className="font-display text-2xl font-bold leading-tight">{say(words, "trip.board.empty.title")}</h2>
           </div>
           <p className="text-base text-muted">{say(words, "trip.board.empty.body")}</p>

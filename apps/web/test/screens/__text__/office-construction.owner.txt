@@ -1,9 +1,9 @@
 # Agent office
-Your team around one table. Agent OWL sits at the head.
+Your AI team and what each one is doing.
 {role=group label="Choose a view"}
-[button type=button: Office view]
+[button type=button: Board view]
 [button type=button: List view]
-{label="Agent office"} The same information as the office picture, as text.
+{label="Agent office"} The same information as the board, as text.
 - [Agent OWL Not available yet Coordinates the other helpers. Not built yet.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=main)
 - [Lead Finder Not available yet Finds new businesses that may want to buy. Not built yet.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=lead_finder)
 - [Researcher Idle Reads public pages about a lead and writes down what it finds, with sources.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=researcher)
@@ -16,5 +16,5 @@ Your team around one table. Agent OWL sits at the head.
 - 1m · Follow-up Desk Drafted follow-up message number 2
 - 30m · Dispatch Desk Order started
 - 2h · Quote Writer Prepared quote 3
-{label="Tap a teammate in the room, or choose one in the list, to read their latest events here."} Tap a teammate in the room, or choose one in the list, to read their latest events here.
+{label="Tap a teammate on the board, or choose one in the list, to read their latest events here."} Tap a teammate on the board, or choose one in the list, to read their latest events here.
 [Runs and cost](/app/tenants/22222222-2222-2222-2222-222222222222/agents)

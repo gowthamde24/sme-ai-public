@@ -48,8 +48,8 @@ describe("/privacy and /terms (job BH)", () => {
     expect(screen.getByRole("heading", { level: 1, name: title })).toHaveAttribute("lang", "en");
     expect(screen.queryByRole("note")).toBeNull();
     expect(document.body.textContent).toContain(`Version ${LEGAL_VERSION}`);
-    expect(LEGAL_UPDATED).toBe("2026-10-24");
-    expect(document.body.textContent).toContain("Last updated: 24 October 2026");
+    expect(LEGAL_UPDATED).toBe("2026-10-25");
+    expect(document.body.textContent).toContain("Last updated: 25 October 2026");
     expect(document.body.textContent).not.toMatch(/pending legal review|\[EFFECTIVE DATE\]|\[CONFIRM|\[LEGAL REVIEW/);
   });
   it("the draft banner comes back, in English, when the flag is switched on again, and nothing else changes", async () => {

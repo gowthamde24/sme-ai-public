@@ -53,7 +53,7 @@ import { partsWords, wordsFor } from "@/i18n/app-words";
 import { BRAND_NAME } from "@/design/brand";
 import { ADDRESSES } from "@/lib/site/business";
 import { PlanSection } from "@/components/v2/app/plan/PlanSection";
-import { AssistantSettings } from "@/components/v2/app/assistant/AssistantSettings";
+import { AssistantSettings } from "@/components/v2/app/assistant/LazyAssistantSettings";
 import { assistantProfile } from "@/lib/assistant/defaults";
 import { readAssistant } from "@/lib/assistant/source";
 import { CALL_LANGS, VOICES } from "@/lib/assistant/types";

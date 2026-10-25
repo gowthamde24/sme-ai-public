@@ -11,7 +11,7 @@ const h = vi.hoisted(() => ({ env: {} as Record<string, unknown> }));
 vi.mock("./view", async (orig) => ({ ...(await orig<typeof import("./view")>()), readClientEnv: () => h.env }));
 const en = appT("en");
 const W = (k: string) => en(k as "frame.notyet");
-const KEYS = ["office.title", "office.sub", "office.idle", "office.working", "office.switchedoff", "frame.notyet", "office.latest", "office.noevents", "office.pick", "office.runs", "office.viewroom", "office.viewlist", "office.listintro", "office.viewswitch", "office.hint", "office.still", "office.feed", ...AGENT_KEYS.map((a) => `agent.${a}`)];
+const KEYS = ["office.title", "office.sub", "office.idle", "office.working", "office.switchedoff", "frame.notyet", "office.latest", "office.noevents", "office.pick", "office.runs", "office.viewroom", "office.viewlist", "office.listintro", "office.viewswitch", "office.hint", "office.feed", ...AGENT_KEYS.map((a) => `agent.${a}`)];
 const WORDS = Object.fromEntries(KEYS.map((k) => [k, W(k)]));
 const NOW = Date.UTC(2026, 9, 9, 12, 0, 0);
 const at = (minutesAgo: number) => new Date(NOW - minutesAgo * 60_000).toISOString();
@@ -115,7 +115,7 @@ describe("OfficeRoom: choosing a helper, the feed, the switch", () => {
   });
   it("tapping a helper in the room opens their panel (state, job, latest event) and writes ?agent= into the address; tapping again closes it", () => {
     room(mixed);
-    expect(screen.getByText(/Tap a teammate in the room/)).toBeInTheDocument();
+    expect(screen.getByText(/Tap a teammate on the board/)).toBeInTheDocument();
     fireEvent.click(tag("quote_writer", "Quote Writer Working"));
     const panel = screen.getByRole("heading", { level: 2, name: "Quote Writer" }).closest("section")!;
     expect(panel).toHaveTextContent("Working");
@@ -123,7 +123,7 @@ describe("OfficeRoom: choosing a helper, the feed, the switch", () => {
     expect(panel).toHaveTextContent("Prepared quote 3 · 3h");
     expect(window.location.search).toBe("?agent=quote_writer");
     fireEvent.click(tag("quote_writer", "Quote Writer Working"));
-    expect(screen.getByText(/Tap a teammate in the room/)).toBeInTheDocument();
+    expect(screen.getByText(/Tap a teammate on the board/)).toBeInTheDocument();
     expect(window.location.search).toBe("");
     // a tile is one button: pressing it chooses the helper
     fireEvent.click(tag("researcher", "Researcher Switched off"));

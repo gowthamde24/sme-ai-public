@@ -4,7 +4,7 @@ vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
 
 // next/dynamic loads a chunk on the client; a test renders the real components at once
-vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm }));
+vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, Workforce: (await import("./Workforce")).Workforce, NaturalCalls: (await import("./NaturalCalls")).NaturalCalls, PlansPreview: (await import("./PlansPreview")).PlansPreview }));
 
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -96,7 +96,7 @@ describe("the home page (job DM, the clean redesign)", () => {
     expect(home).toContain('data-orb="speak"'); // the call card
   });
   it("has the hero example: a tablist of four conversations, one chat on a phone and a call card, all said to be made up", () => {
-    const hero = home.match(/data-part="hero-demo"[\s\S]*?<\/p><\/div>/)![0];
+    const hero = home.match(/data-part="hero-demo"[\s\S]*?made-up names[^<]*<\/p>/)![0];
     expect(hero.match(/role="tab"/g)).toHaveLength(4);
     expect(hero.match(/aria-selected="true"/g)).toHaveLength(1);
     expect(hero).toContain('role="tabpanel"');

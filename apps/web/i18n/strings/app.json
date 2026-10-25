@@ -55708,5 +55708,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ask.voice.mode.listening": {
+  "en": "I'm listening…",
+  "te": "వింటున్నాను…",
+  "hi": "मैं सुन रहा हूँ…",
+  "kn": "ಕೇಳುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode.starting": {
+  "en": "Getting the microphone ready…",
+  "te": "మైక్రోఫోన్ సిద్ధం చేస్తున్నాను…",
+  "hi": "माइक्रोफ़ोन तैयार कर रहा हूँ…",
+  "kn": "ಮೈಕ್ರೋಫೋನ್ ಸಿದ್ಧಪಡಿಸುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode.thinking": {
+  "en": "Thinking…",
+  "te": "ఆలోచిస్తున్నాను…",
+  "hi": "सोच रहा हूँ…",
+  "kn": "ಯೋಚಿಸುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode.answering": {
+  "en": "Answering…",
+  "te": "జవాబిస్తున్నాను…",
+  "hi": "जवाब दे रहा हूँ…",
+  "kn": "ಉತ್ತರಿಸುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode.cancel": {
+  "en": "Never mind",
+  "te": "వద్దులే",
+  "hi": "रहने दें",
+  "kn": "ಬೇಡ ಬಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.mode.problem": {
+  "en": "That did not work. Close this to see why.",
+  "te": "అది కాలేదు. కారణం చూడటానికి దీన్ని మూసివేయండి.",
+  "hi": "यह नहीं हो पाया। वजह देखने के लिए इसे बंद करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಕಾರಣ ನೋಡಲು ಇದನ್ನು ಮುಚ್ಚಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

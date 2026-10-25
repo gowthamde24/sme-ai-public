@@ -17,11 +17,11 @@ describe("the two copy fixes of job BJ", () => {
   });
   it("the public site says that money waits for the owner, that automatic sending is a switch, and that calls always wait, in all four languages", () => {
     // job CX took the FAQ off the home page: the home hero and the How it works page now carry these facts
-    expect(siteDict("en")["hero.sub"]).toMatch(/Anything about money waits for your OK/);
+    expect(siteDict("en")["hm.ctl.d"]).toMatch(/money reminders and discounts wait for your approval/); // job DM: the redesigned home page says it in the "You stay in control" line
     expect(siteDict("en")["how.habits.5"]).toMatch(/One switch turns automatic sending off\. Then every message waits for you/);
-    expect(siteDict("en")["how.waits.4"]).toMatch(/Calls: the owl asks you first/);
+    expect(siteDict("en")["how.waits.4"]).toMatch(/Calls: you approve the call list first/);
     for (const lang of LANGS) {
-      for (const key of ["hero.sub", "how.habits.5", "how.waits.4"] as const) {
+      for (const key of ["hm.ctl.d", "how.habits.5", "how.waits.4"] as const) {
         const a = siteDict(lang)[key];
         expect(a, `${lang} ${key}`).not.toMatch(/Nothing is sent automatically|ఏదీ దానంతట అదే వెళ్ళదు|कुछ भी अपने आप नहीं जाता|ಏನೂ ತಾನಾಗಿ ಹೋಗುವುದಿಲ್ಲ/); // the old, no-longer-true answer
         for (const [re, label] of FORBIDDEN_CLAIMS) expect(re.test(a), `${lang} ${key} ${label}`).toBe(false);

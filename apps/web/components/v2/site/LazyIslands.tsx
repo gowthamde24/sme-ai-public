@@ -9,3 +9,8 @@ import dynamic from "next/dynamic";
  */
 export const PaverCalculator = dynamic(() => import("./PaverCalculator").then((m) => m.PaverCalculator));
 export const ContactForm = dynamic(() => import("./ContactForm").then((m) => m.ContactForm));
+// job DM: the three animated blocks of the home page below the first screen (the six AI workers, the natural-calls card, the plan tabs) are chunks of their own too: the home page is the page most people open, and the route-JS budget counts what it
+// loads at first. They are drawn on the server like the rest (the markup is in the page), and become live when the chunk arrives. The example beside the headline (HeroDemo) is on the first screen and stays in the page.
+export const Workforce = dynamic(() => import("./Workforce").then((m) => m.Workforce));
+export const NaturalCalls = dynamic(() => import("./NaturalCalls").then((m) => m.NaturalCalls));
+export const PlansPreview = dynamic(() => import("./PlansPreview").then((m) => m.PlansPreview));

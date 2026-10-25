@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import type { ProgrammeOut, StudentOut } from "@contracts/education";
 
-import { AgentMark } from "../mark/AgentMark";
+import { OrbMark } from "../mark/OrbMark";
 import { Pill } from "../parts";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
@@ -56,7 +56,7 @@ export function StudentsView({ base, words, role, students, programmes, programm
         <p role="alert" className="rounded-2xl border border-line p-4 text-base">{say(words, "edu.loaderr")}</p>
       ) : students.length === 0 ? (
         <div className="flex max-w-xl items-start gap-4 rounded-[20px] border border-line bg-surface p-4 md:p-5" data-part="empty">
-          <AgentMark px={72} agent="main" className="size-[72px]" />
+          <OrbMark px={72} className="size-[72px]" />
           <div className="min-w-0">
             <p className="font-semibold">{say(words, filtered ? "edu.stu.none.filtered" : "edu.stu.none.title")}</p>
             {!filtered ? <p className="text-base text-muted">{say(words, "edu.stu.none.body")}</p> : null}

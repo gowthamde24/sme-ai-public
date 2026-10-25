@@ -47,6 +47,8 @@ describe("a new workspace sees the wizard instead of an empty Today (job BJ)", (
     expect(screen.getAllByText("Step 1 of 4").length).toBeGreaterThan(0); // shown, and said to a screen reader in the progress list
     expect(screen.queryByTestId("today")).toBeNull();
     expect(document.querySelector('[data-setup="wizard"]')).not.toBeNull();
+    // job DM: the empty first screen is the big centred circle with a short welcome
+    expect(document.querySelector('[data-part="welcome"] .orb-halo [data-orb]')).not.toBeNull();
     for (const b of screen.getAllByRole("button")) expect(b.className, b.textContent ?? "").toMatch(/min-h-11|size-11/);
     for (const r of screen.getAllByRole("radio")) expect(r.closest("label")!.className).toMatch(/min-h-11/);
   });

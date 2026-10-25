@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { AgentMark } from "@/components/v2/app/mark/AgentMark";
+import { OrbMark } from "@/components/v2/app/mark/OrbMark";
 import { PackProp } from "@/components/v2/auth/PackCard";
 import { JsonLd, faqLd } from "@/components/v2/site/JsonLd";
 import { PaverCalculator } from "@/components/v2/site/LazyIslands";
@@ -49,7 +50,7 @@ export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT;
         </div>
         <div className="relative flex justify-center lg:justify-end">
           <span className="relative">
-            <AgentMark px={224} mood="idle" className="size-44 sm:size-56" />
+            <OrbMark px={224} mood="idle" className="size-44 sm:size-56" />
             <span data-accent={pack.accent} aria-hidden="true" className="absolute -bottom-1 -right-3 grid size-12 place-items-center rounded-full border-2 border-bg bg-pack-bg text-pack-text">
               <PackProp owlProp={pack.owlProp} className="size-6" />
             </span>

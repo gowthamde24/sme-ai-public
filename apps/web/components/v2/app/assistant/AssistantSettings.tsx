@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { Orb } from "@/components/v2/Orb";
 import { sayLine } from "@/lib/assistant/lines";
-import { CALL_LANGS, DAYS, NAME_MAX, SPEED, STYLES, VOICES, parseSettings, validName, type AssistantSettings as Settings, type CallLang, type Day, type Style, type Voice } from "@/lib/assistant/types";
+import { CALL_LANGS, DAYS, NAME_MAX, SPEED, STYLES, VOICES, parseSettings, validName, type AssistantSettings as Settings, type CallLang, type Day, type Voice } from "@/lib/assistant/types";
 import type { AssistantProfile } from "@/lib/assistant/defaults";
 
 import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, surface } from "../ui";
@@ -133,7 +133,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
               </div>
               <div role="radiogroup" aria-labelledby="asst-style-h" className="grid gap-2.5 sm:grid-cols-3">
                 {STYLES.map((st) => (
-                  <button key={st} type="button" role="radio" aria-checked={s.style === st} onClick={() => set({ style: st })} className={`${opt(s.style === st)} flex-col !items-start`}>
+                  <button key={st} type="button" role="radio" aria-checked={st === s.style} onClick={() => set({ style: st })} className={`${opt(st === s.style)} flex-col !items-start`}>
                     <strong className="text-[15px]">{t(`asst.style.${st}` as "asst.style.warm")}</strong>
                     <span className="text-[13px] leading-snug text-muted">{t(`asst.style.${st}.d` as "asst.style.warm.d")}</span>
                   </button>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { EmailDisclosure } from "@/components/v2/auth/EmailDisclosure";
 import { SignupClosed } from "@/components/v2/auth/SignupClosed";
 import { PackCard } from "@/components/v2/auth/PackCard";
-import { AgentMark } from "@/components/v2/app/mark/AgentMark";
+import { OrbMark } from "@/components/v2/app/mark/OrbMark";
 import { authAlert, authH1, authHint, authLead, authLink, authMain, authSecondary } from "@/components/v2/auth/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { getLang } from "@/i18n/get-lang";
@@ -114,7 +114,7 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
       <p className="text-sm font-semibold text-muted">{t("signup.step", { n: 2 })}</p>
       <h1 className={authH1}>{t("signup.title")}</h1>
       <div className="mb-4 flex items-center gap-3 rounded-xl border border-line bg-surface-2 p-2">
-        <AgentMark px={40} agent="main" className="size-10" />
+        <OrbMark px={40} className="size-10" />
         <p className="min-w-0 flex-1 truncate text-base font-semibold" data-chosen-pack={type}>
           {chosen.name}
         </p>

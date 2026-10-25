@@ -323,7 +323,7 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
 
   // voice mode: what it shows follows the recorder (listening), the request (thinking) and the answer (its last words, while it streams and when it is read out)
   const voicePhase: VoicePhase = recorder.state === "starting" ? "starting" : recorder.state === "recording" ? "listening" : phase === "asking" ? (answer ? "answering" : "thinking") : playing ? "answering" : phase === "error" || problem ? "error" : "done";
-  const voiceCaption = problem ? w(PROBLEM_WORD[problem]) : phase === "error" ? (errorCode !== null && ERROR_WORD[errorCode] ? w(ERROR_WORD[errorCode]) : w("ask.error")) : answer.length > 200 ? `…${answer.slice(-200)}` : answer;
+  const voiceCaption = problem || phase === "error" ? w("ask.voice.mode.problem") : "";
   const chips = chipTexts ?? [w("ask.chip.needs"), w("ask.chip.quotes"), w("ask.chip.money"), w("ask.chip.team")];
   const asking = phase === "asking";
   const Shell = hero ? "div" : "section";
@@ -535,7 +535,7 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
           phase={voicePhase}
           caption={voiceCaption}
           left={recorder.state === "recording" ? recorder.left : null}
-          words={{ title: w("ask.voice.mode"), listening: w("ask.listening"), starting: w("ask.voice.starting"), thinking: w("ask.thinking"), speaking: w("ask.voice.speaking"), left: w("ask.voice.left"), done: w("ask.voice.done"), show: w("ask.voice.show"), cancel: w("ask.voice.cancel"), tap: w("ask.voice.tap"), close: w("ask.voice.close") }}
+          words={{ title: w("ask.voice.mode"), listening: w("ask.voice.mode.listening"), starting: w("ask.voice.mode.starting"), thinking: w("ask.voice.mode.thinking"), speaking: w("ask.voice.mode.answering"), done: w("ask.voice.done"), show: w("ask.voice.show"), cancel: w("ask.voice.mode.cancel"), tap: w("ask.voice.tap"), close: w("ask.voice.close") }}
           onTapOrb={() => (recorder.state === "recording" ? recorder.stop() : recorder.state === "idle" ? startVoice() : undefined)}
           onDone={() => recorder.stop()}
           onCancel={() => {

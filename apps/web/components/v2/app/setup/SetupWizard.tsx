@@ -66,8 +66,9 @@ export function SetupWizard({ base, lang, facts, local, words, actions, step, go
       </div>
 
       <div className={`${card} gap-5`}>
-        <div className="flex items-center gap-4">
-          <Orb px={72} state={orbStateOf(MOOD[id])} halo={MOOD[id] === "answering"} />
+        {/* the first screen a new owner sees: the circle, centred and big, with the welcome (job DM); the later steps keep it small beside the title */}
+        <div className={id === "shop" ? "flex flex-col items-center gap-5 py-2 text-center" : "flex items-center gap-4"} data-part={id === "shop" ? "welcome" : undefined}>
+          {id === "shop" ? <Orb px={120} state="ambient" halo /> : <Orb px={72} state={orbStateOf(MOOD[id])} halo={MOOD[id] === "answering"} />}
           <div className="min-w-0">
             {numbered ? <p className="text-sm font-semibold text-muted">{say(words, "setup.step", { n: step + 1, total: NUMBERED })}</p> : null}
             <h1 id="setup-h" ref={headingRef} tabIndex={-1} className="font-display text-[26px] font-semibold leading-[1.15] outline-none [overflow-wrap:anywhere] md:text-3xl">

@@ -16,7 +16,8 @@ export async function readCustomerOutcomes(_ctx: CtxOutcomes, leadId: string, no
   return { mode: "ok", data: mockOutcomes(leadId, now, parseCorrections((await cookies()).get(MOCK_COOKIE)?.value)) };
 }
 
-export async function readOutcomeTotals(_ctx: CtxOutcomes): Promise<Read<OutcomeTotals>> {
+export async function readOutcomeTotals(ctx: CtxOutcomes): Promise<Read<OutcomeTotals>> {
+  void ctx; // the fake data needs none; the API of C1 will ask for the workspace
   const mode = outcomeScreens();
   if (mode === "off") return { mode: "off" };
   if (mode === "on") return { mode: "unavailable" };

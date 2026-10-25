@@ -19,7 +19,7 @@ export function Orb({ px, state = "ambient", halo = false, className = "" }: { p
       {sphere}
     </span>
   ) : (
-    <span className={`inline-flex shrink-0 ${className}`} aria-hidden="true">
+    <span className={`inline-flex shrink-0 items-center justify-center ${className}`} aria-hidden="true">
       {sphere}
     </span>
   );

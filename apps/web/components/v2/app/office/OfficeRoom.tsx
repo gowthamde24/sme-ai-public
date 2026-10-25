@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Armchair, Boxes, Info, List } from "lucide-react";
+import { ArrowRight, Armchair, Boxes, List } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 

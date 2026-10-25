@@ -1,7 +1,7 @@
 import { ArrowRight, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
-import { AgentMark } from "@/components/v2/app/mark/AgentMark";
+import { OrbMark } from "@/components/v2/app/mark/OrbMark";
 import { pageH1, pageSub, surface } from "@/components/v2/app/ui";
 import type { AppKey, AppT } from "@/i18n/app";
 import type { Lang } from "@/i18n/lang";
@@ -17,7 +17,7 @@ export function HelpIndex({ t, base, lang }: { t: AppT; base: string; lang: Lang
   return (
     <div data-screen="help" className="flex flex-col gap-6">
       <header className="flex items-center gap-4">
-        <AgentMark px={80} mood={"answering"} className="size-20 shrink-0 sm:size-24" />
+        <OrbMark px={80} mood={"answering"} className="size-20 shrink-0 sm:size-24" />
         <div className="min-w-0">
           <h1 className={`${pageH1} mt-0`}>{t("help.title")}</h1>
           <p className={pageSub}>{t("help.sub")}</p>
@@ -27,7 +27,7 @@ export function HelpIndex({ t, base, lang }: { t: AppT; base: string; lang: Lang
         {GUIDES.map((g) => (
           <li key={g.id}>
             <Link href={`${base}/help/${g.id}`} className={card}>
-              <AgentMark px={48} mood={g.mood} className="size-12" />
+              <OrbMark px={48} mood={g.mood} className="size-12" />
               <span className="font-display text-xl font-semibold leading-tight">{t(key(`help.guide.${g.id}.t`))}</span>
               <span className="text-base text-muted">{t(key(`help.guide.${g.id}.s`))}</span>
               {g.englishOnly && lang !== "en" ? <span lang="en" className="mt-auto text-sm text-muted">English</span> : null}
@@ -54,7 +54,7 @@ export function HelpGuide({ id, t, base, lang, role }: { id: GuideId; t: AppT; b
         {t("help.back")}
       </Link>
       <header className="flex items-center gap-4">
-        <AgentMark px={96} mood={g.mood} className="size-24 shrink-0 sm:size-28" />
+        <OrbMark px={96} mood={g.mood} className="size-24 shrink-0 sm:size-28" />
         <div className="min-w-0">
           <h1 className={`${pageH1} mt-0`}>{t(key(`help.guide.${id}.t`))}</h1>
           <p className={pageSub}>{t(key(`help.guide.${id}.s`))}</p>

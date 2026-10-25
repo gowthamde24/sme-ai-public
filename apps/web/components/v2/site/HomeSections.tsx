@@ -3,9 +3,9 @@ import Link from "next/link";
 
 import { Orb } from "@/components/v2/Orb";
 import { HeroDemo, type DemoSample } from "@/components/v2/site/HeroDemo";
-import { NaturalCalls } from "@/components/v2/site/NaturalCalls";
-import { PlansPreview, type PlanTab } from "@/components/v2/site/PlansPreview";
-import { Workforce, type WorkerCard } from "@/components/v2/site/Workforce";
+import { NaturalCalls, PlansPreview, Workforce } from "@/components/v2/site/LazyIslands";
+import type { PlanTab } from "@/components/v2/site/PlansPreview";
+import type { WorkerCard } from "@/components/v2/site/Workforce";
 import { EARLY, WORKERS } from "@/components/v2/app/mark/workers";
 import { btnPrimary, container } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";

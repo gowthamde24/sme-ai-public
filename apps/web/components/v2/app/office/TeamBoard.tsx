@@ -29,7 +29,7 @@ export function TeamBoard({ poses, names, stateText, selected, onSelect, label, 
               >
                 <AgentMark agent={id === "main" ? undefined : id} px={id === "main" ? 64 : 48} mood={id === "main" && pose === "working" ? "thinking" : undefined} off={pose === "off"} />
                 <span className="flex min-w-0 flex-col gap-0.5">
-                  <span className="text-base font-semibold [overflow-wrap:anywhere]">{names[id]}</span>
+                  <span className="text-base font-semibold [overflow-wrap:anywhere]">{names[id]}</span>{" "}
                   <span className="flex items-center gap-2 text-sm text-muted">
                     <StateDot state={pose} />
                     <span>{stateText[id]}</span>
