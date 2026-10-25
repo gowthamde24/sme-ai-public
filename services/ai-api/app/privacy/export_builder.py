@@ -41,6 +41,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "catalogue_items", "catalogue_photos", "custom_field_defs", "custom_field_values",
     "customer_sites", "ledger_accounts", "ledger_entries", "customer_credit_limits",
     "campaigns", "campaign_recipients", "campaign_steps", "call_list_items",
+    "marks_send_log",
     "material_quote_policies", "material_quotes", "material_quote_lines",
     "delivery_trips", "delivery_trip_lines", "delivery_trip_events", "delivery_proofs",
     "institution_profiles", "programmes", "programme_groups", "students", "admissions", "admission_events", "fee_plans", "fee_plan_lines", "fee_assignments",
