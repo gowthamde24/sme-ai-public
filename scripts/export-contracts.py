@@ -1,10 +1,11 @@
-"""Write packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes}.schema.json and
-{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes}.ts from the API models.
+"""Write packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing}.schema.json and
+{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing}.ts from the API models.
 Run through `make contracts` (uses the API virtualenv)."""
 
 from pathlib import Path
 
 from app.agent_runs import contracts as agents
+from app.billing import contracts as billing
 from app.campaigns import contracts as campaigns
 from app.crm.contracts import schema_text, ts_text
 from app.education import contracts as education
@@ -39,7 +40,9 @@ ROOT = Path(__file__).resolve().parents[1]
 (ROOT / "packages/contracts/reports.ts").write_text(reports.ts_text())
 (ROOT / "packages/contracts/voice_notes.schema.json").write_text(voice_notes.schema_text())
 (ROOT / "packages/contracts/voice_notes.ts").write_text(voice_notes.ts_text())
+(ROOT / "packages/contracts/billing.schema.json").write_text(billing.schema_text())
+(ROOT / "packages/contracts/billing.ts").write_text(billing.ts_text())
 print(
-    "wrote packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes}.schema.json "
-    "and {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes}.ts"
+    "wrote packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing}.schema.json "
+    "and {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing}.ts"
 )

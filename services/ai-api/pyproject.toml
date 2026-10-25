@@ -41,6 +41,12 @@ select = ["E", "F", "I", "B", "UP", "S"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101", "S105", "S106"]
+# job DI: plans, billing and their tests read like the ADR they implement (long lines)
+"app/billing/*" = ["E501"]
+"tests/test_di_*.py" = ["E501"]
+"../../tests/integration/test_di_*.py" = ["E501"]
+"../../scripts/plans_check.py" = ["E501"]
+"../../scripts/plans_migration.py" = ["E501"]
 # job BZ: connectors read like their providers' documentation (long lines of fields and examples)
 "app/connectors/*" = ["E501"]
 "tests/test_bz_*.py" = ["E501"]

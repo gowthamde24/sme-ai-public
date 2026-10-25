@@ -1,0 +1,632 @@
+{
+ "_note": "Example payloads of the billing contract (job DI), one per screen state, for mocks. They are validated against billing.schema.json by a test. Prices are null until the owner sets them.",
+ "plans": {
+  "catalogue_version": 1,
+  "status": "draft",
+  "currency": "INR",
+  "trial": {
+   "days": 30,
+   "payment_method_at_start": true,
+   "grace_days_after_failed_payment": 7
+  },
+  "plans": [
+   {
+    "id": "free_trial",
+    "kind": "trial",
+    "sort": 0,
+    "name": {
+     "en": "Free trial",
+     "te": null,
+     "hi": null,
+     "kn": null
+    },
+    "price_paise_monthly": null,
+    "price_paise_per_minute": null,
+    "price_set": false,
+    "allowances": {
+     "call_minutes": 30,
+     "whatsapp_messages": 100
+    },
+    "limits": {
+     "users": 1,
+     "workspaces": 1
+    },
+    "ai": "included_fair_use"
+   },
+   {
+    "id": "starter",
+    "kind": "main",
+    "sort": 10,
+    "name": {
+     "en": "Starter",
+     "te": null,
+     "hi": null,
+     "kn": null
+    },
+    "price_paise_monthly": null,
+    "price_paise_per_minute": null,
+    "price_set": false,
+    "allowances": {
+     "call_minutes": 0,
+     "whatsapp_messages": 300
+    },
+    "limits": {
+     "users": 1,
+     "workspaces": 1
+    },
+    "ai": "included_fair_use"
+   },
+   {
+    "id": "growth",
+    "kind": "main",
+    "sort": 20,
+    "name": {
+     "en": "Growth",
+     "te": null,
+     "hi": null,
+     "kn": null
+    },
+    "price_paise_monthly": null,
+    "price_paise_per_minute": null,
+    "price_set": false,
+    "allowances": {
+     "call_minutes": 100,
+     "whatsapp_messages": 1000
+    },
+    "limits": {
+     "users": 3,
+     "workspaces": 1
+    },
+    "ai": "included_fair_use"
+   },
+   {
+    "id": "business",
+    "kind": "main",
+    "sort": 30,
+    "name": {
+     "en": "Business",
+     "te": null,
+     "hi": null,
+     "kn": null
+    },
+    "price_paise_monthly": null,
+    "price_paise_per_minute": null,
+    "price_set": false,
+    "allowances": {
+     "call_minutes": 300,
+     "whatsapp_messages": 3000
+    },
+    "limits": {
+     "users": 10,
+     "workspaces": 3
+    },
+    "ai": "included_fair_use"
+   },
+   {
+    "id": "calls_payg",
+    "kind": "calls",
+    "sort": 40,
+    "name": {
+     "en": "Pay-as-you-go",
+     "te": null,
+     "hi": null,
+     "kn": null
+    },
+    "price_paise_monthly": null,
+    "price_paise_per_minute": null,
+    "price_set": false,
+    "allowances": {
+     "call_minutes": null,
+     "whatsapp_messages": 0
+    },
+    "limits": {
+     "users": 1,
+     "workspaces": 1
+    },
+    "ai": "included_fair_use"
+   },
+   {
+    "id": "calls_300",
+    "kind": "calls",
+    "sort": 50,
+    "name": {
+     "en": "Calls 300",
+     "te": null,
+     "hi": null,
+     "kn": null
+    },
+    "price_paise_monthly": null,
+    "price_paise_per_minute": null,
+    "price_set": false,
+    "allowances": {
+     "call_minutes": 300,
+     "whatsapp_messages": 0
+    },
+    "limits": {
+     "users": 1,
+     "workspaces": 1
+    },
+    "ai": "included_fair_use"
+   },
+   {
+    "id": "calls_1000",
+    "kind": "calls",
+    "sort": 60,
+    "name": {
+     "en": "Calls 1,000",
+     "te": null,
+     "hi": null,
+     "kn": null
+    },
+    "price_paise_monthly": null,
+    "price_paise_per_minute": null,
+    "price_set": false,
+    "allowances": {
+     "call_minutes": 1000,
+     "whatsapp_messages": 0
+    },
+    "limits": {
+     "users": 1,
+     "workspaces": 1
+    },
+    "ai": "included_fair_use"
+   }
+  ]
+ },
+ "billing_no_subscription_ok": {
+  "plan": {
+   "id": "free_trial",
+   "kind": "trial",
+   "sort": 0,
+   "name": {
+    "en": "Free trial",
+    "te": null,
+    "hi": null,
+    "kn": null
+   },
+   "price_paise_monthly": null,
+   "price_paise_per_minute": null,
+   "price_set": false,
+   "allowances": {
+    "call_minutes": 30,
+    "whatsapp_messages": 100
+   },
+   "limits": {
+    "users": 1,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  "subscription": null,
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-30",
+   "timezone": "Asia/Kolkata",
+   "days_left": 5
+  },
+  "usage": {
+   "call_minutes": {
+    "kind": "call_minutes",
+    "unit": "minutes",
+    "used": 4.5,
+    "allowance": 30,
+    "remaining": 25.5,
+    "percent": 15,
+    "state": "ok",
+    "included": true,
+    "topup": 0
+   },
+   "whatsapp_messages": {
+    "kind": "whatsapp_messages",
+    "unit": "messages",
+    "used": 12,
+    "allowance": 100,
+    "remaining": 88,
+    "percent": 12,
+    "state": "ok",
+    "included": true,
+    "topup": 0
+   }
+  },
+  "notices": [],
+  "can_start_trial": true
+ },
+ "billing_trialing_notice_at_80": {
+  "plan": {
+   "id": "free_trial",
+   "kind": "trial",
+   "sort": 0,
+   "name": {
+    "en": "Free trial",
+    "te": null,
+    "hi": null,
+    "kn": null
+   },
+   "price_paise_monthly": null,
+   "price_paise_per_minute": null,
+   "price_set": false,
+   "allowances": {
+    "call_minutes": 30,
+    "whatsapp_messages": 100
+   },
+   "limits": {
+    "users": 1,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  "subscription": {
+   "status": "trialing",
+   "plan_id": "growth",
+   "provider": "fake",
+   "trial_ends_at": "2026-11-12T10:00:00Z",
+   "current_period_end": null,
+   "cancel_at_period_end": false,
+   "grace_until": null,
+   "payment_method_on_file": true
+  },
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-30",
+   "timezone": "Asia/Kolkata",
+   "days_left": 5
+  },
+  "usage": {
+   "call_minutes": {
+    "kind": "call_minutes",
+    "unit": "minutes",
+    "used": 25,
+    "allowance": 30,
+    "remaining": 5,
+    "percent": 83,
+    "state": "notice",
+    "included": true,
+    "topup": 0
+   },
+   "whatsapp_messages": {
+    "kind": "whatsapp_messages",
+    "unit": "messages",
+    "used": 83,
+    "allowance": 100,
+    "remaining": 17,
+    "percent": 83,
+    "state": "notice",
+    "included": true,
+    "topup": 0
+   }
+  },
+  "notices": [
+   {
+    "kind": "call_minutes",
+    "level": 80,
+    "period_start": "2026-10-01",
+    "at": "2026-10-24T08:15:00Z"
+   },
+   {
+    "kind": "whatsapp_messages",
+    "level": 80,
+    "period_start": "2026-10-01",
+    "at": "2026-10-23T11:02:00Z"
+   }
+  ],
+  "can_start_trial": false
+ },
+ "billing_active_messages_stopped": {
+  "plan": {
+   "id": "growth",
+   "kind": "main",
+   "sort": 20,
+   "name": {
+    "en": "Growth",
+    "te": null,
+    "hi": null,
+    "kn": null
+   },
+   "price_paise_monthly": null,
+   "price_paise_per_minute": null,
+   "price_set": false,
+   "allowances": {
+    "call_minutes": 100,
+    "whatsapp_messages": 1000
+   },
+   "limits": {
+    "users": 3,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  "subscription": {
+   "status": "active",
+   "plan_id": "growth",
+   "provider": "fake",
+   "trial_ends_at": null,
+   "current_period_end": "2026-11-12T10:00:00Z",
+   "cancel_at_period_end": false,
+   "grace_until": null,
+   "payment_method_on_file": true
+  },
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-30",
+   "timezone": "Asia/Kolkata",
+   "days_left": 5
+  },
+  "usage": {
+   "call_minutes": {
+    "kind": "call_minutes",
+    "unit": "minutes",
+    "used": 40,
+    "allowance": 100,
+    "remaining": 60,
+    "percent": 40,
+    "state": "ok",
+    "included": true,
+    "topup": 0
+   },
+   "whatsapp_messages": {
+    "kind": "whatsapp_messages",
+    "unit": "messages",
+    "used": 1000,
+    "allowance": 1000,
+    "remaining": 0,
+    "percent": 100,
+    "state": "stopped",
+    "included": true,
+    "topup": 0
+   }
+  },
+  "notices": [
+   {
+    "kind": "whatsapp_messages",
+    "level": 80,
+    "period_start": "2026-10-01",
+    "at": "2026-10-20T08:15:00Z"
+   },
+   {
+    "kind": "whatsapp_messages",
+    "level": 100,
+    "period_start": "2026-10-01",
+    "at": "2026-10-25T08:15:00Z"
+   }
+  ],
+  "can_start_trial": false
+ },
+ "billing_starter_no_minutes_included": {
+  "plan": {
+   "id": "starter",
+   "kind": "main",
+   "sort": 10,
+   "name": {
+    "en": "Starter",
+    "te": null,
+    "hi": null,
+    "kn": null
+   },
+   "price_paise_monthly": null,
+   "price_paise_per_minute": null,
+   "price_set": false,
+   "allowances": {
+    "call_minutes": 0,
+    "whatsapp_messages": 300
+   },
+   "limits": {
+    "users": 1,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  "subscription": {
+   "status": "active",
+   "plan_id": "starter",
+   "provider": "fake",
+   "trial_ends_at": null,
+   "current_period_end": "2026-11-12T10:00:00Z",
+   "cancel_at_period_end": false,
+   "grace_until": null,
+   "payment_method_on_file": true
+  },
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-30",
+   "timezone": "Asia/Kolkata",
+   "days_left": 5
+  },
+  "usage": {
+   "call_minutes": {
+    "kind": "call_minutes",
+    "unit": "minutes",
+    "used": 0,
+    "allowance": 0,
+    "remaining": 0,
+    "percent": 100,
+    "state": "stopped",
+    "included": false,
+    "topup": 0
+   },
+   "whatsapp_messages": {
+    "kind": "whatsapp_messages",
+    "unit": "messages",
+    "used": 120,
+    "allowance": 300,
+    "remaining": 180,
+    "percent": 40,
+    "state": "ok",
+    "included": true,
+    "topup": 0
+   }
+  },
+  "notices": [],
+  "can_start_trial": false
+ },
+ "billing_pay_as_you_go": {
+  "plan": {
+   "id": "calls_payg",
+   "kind": "calls",
+   "sort": 40,
+   "name": {
+    "en": "Pay-as-you-go",
+    "te": null,
+    "hi": null,
+    "kn": null
+   },
+   "price_paise_monthly": null,
+   "price_paise_per_minute": null,
+   "price_set": false,
+   "allowances": {
+    "call_minutes": null,
+    "whatsapp_messages": 0
+   },
+   "limits": {
+    "users": 1,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  "subscription": {
+   "status": "active",
+   "plan_id": "calls_payg",
+   "provider": "fake",
+   "trial_ends_at": null,
+   "current_period_end": "2026-11-12T10:00:00Z",
+   "cancel_at_period_end": false,
+   "grace_until": null,
+   "payment_method_on_file": true
+  },
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-30",
+   "timezone": "Asia/Kolkata",
+   "days_left": 5
+  },
+  "usage": {
+   "call_minutes": {
+    "kind": "call_minutes",
+    "unit": "minutes",
+    "used": 61.5,
+    "allowance": null,
+    "remaining": null,
+    "percent": null,
+    "state": "ok",
+    "included": true,
+    "topup": 0
+   },
+   "whatsapp_messages": {
+    "kind": "whatsapp_messages",
+    "unit": "messages",
+    "used": 0,
+    "allowance": 0,
+    "remaining": 0,
+    "percent": 100,
+    "state": "stopped",
+    "included": false,
+    "topup": 0
+   }
+  },
+  "notices": [],
+  "can_start_trial": false
+ },
+ "billing_payment_failed_in_grace": {
+  "plan": {
+   "id": "growth",
+   "kind": "main",
+   "sort": 20,
+   "name": {
+    "en": "Growth",
+    "te": null,
+    "hi": null,
+    "kn": null
+   },
+   "price_paise_monthly": null,
+   "price_paise_per_minute": null,
+   "price_set": false,
+   "allowances": {
+    "call_minutes": 100,
+    "whatsapp_messages": 1000
+   },
+   "limits": {
+    "users": 3,
+    "workspaces": 1
+   },
+   "ai": "included_fair_use"
+  },
+  "subscription": {
+   "status": "past_due",
+   "plan_id": "growth",
+   "provider": "fake",
+   "trial_ends_at": null,
+   "current_period_end": "2026-11-12T10:00:00Z",
+   "cancel_at_period_end": false,
+   "grace_until": "2026-10-20T10:00:00Z",
+   "payment_method_on_file": true
+  },
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-30",
+   "timezone": "Asia/Kolkata",
+   "days_left": 5
+  },
+  "usage": {
+   "call_minutes": {
+    "kind": "call_minutes",
+    "unit": "minutes",
+    "used": 10,
+    "allowance": 100,
+    "remaining": 90,
+    "percent": 10,
+    "state": "ok",
+    "included": true,
+    "topup": 0
+   },
+   "whatsapp_messages": {
+    "kind": "whatsapp_messages",
+    "unit": "messages",
+    "used": 100,
+    "allowance": 1000,
+    "remaining": 900,
+    "percent": 10,
+    "state": "ok",
+    "included": true,
+    "topup": 0
+   }
+  },
+  "notices": [],
+  "can_start_trial": false
+ },
+ "usage_view": {
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-30",
+   "timezone": "Asia/Kolkata",
+   "days_left": 5
+  },
+  "usage": {
+   "call_minutes": {
+    "kind": "call_minutes",
+    "unit": "minutes",
+    "used": 25,
+    "allowance": 30,
+    "remaining": 5,
+    "percent": 83,
+    "state": "notice",
+    "included": true,
+    "topup": 0
+   },
+   "whatsapp_messages": {
+    "kind": "whatsapp_messages",
+    "unit": "messages",
+    "used": 83,
+    "allowance": 100,
+    "remaining": 17,
+    "percent": 83,
+    "state": "notice",
+    "included": true,
+    "topup": 0
+   }
+  },
+  "notices": []
+ },
+ "trial_start_request": {
+  "plan_id": "growth",
+  "checkout_ref": "pm_fake_ok"
+ }
+}

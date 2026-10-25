@@ -1,0 +1,74 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "plans.schema.json",
+ "title": "The plans catalogue (job DI): plans are DATA, like packs",
+ "description": "packages/plans/plans.json. Prices are null until the owner sets them. `allowances.call_minutes` null = no included minutes and no ceiling (pay as you go: billed by use). Only two things are metered and shown to owners: AI call minutes and business-initiated WhatsApp messages. AI itself is 'included, fair use' (the internal allowances of plan_ai_allowances, never shown in rupees).",
+ "type": "object",
+ "additionalProperties": false,
+ "required": ["version", "status", "currency", "trial", "plans"],
+ "properties": {
+  "$schema": { "type": "string" },
+  "version": { "type": "integer", "minimum": 1 },
+  "status": { "enum": ["draft", "published"] },
+  "currency": { "const": "INR" },
+  "note": { "type": "string", "maxLength": 600 },
+  "trial": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["plan", "days", "payment_method_at_start", "grace_days_after_failed_payment"],
+   "properties": {
+    "plan": { "$ref": "#/$defs/planId" },
+    "days": { "type": "integer", "minimum": 1, "maximum": 90 },
+    "payment_method_at_start": { "type": "boolean" },
+    "grace_days_after_failed_payment": { "type": "integer", "minimum": 0, "maximum": 30 }
+   }
+  },
+  "plans": { "type": "array", "minItems": 1, "maxItems": 20, "items": { "$ref": "#/$defs/plan" } }
+ },
+ "$defs": {
+  "planId": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,30}$" },
+  "text": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["en"],
+   "properties": {
+    "en": { "type": "string", "minLength": 1, "maxLength": 60 },
+    "te": { "type": "string", "minLength": 1, "maxLength": 60 },
+    "hi": { "type": "string", "minLength": 1, "maxLength": 60 },
+    "kn": { "type": "string", "minLength": 1, "maxLength": 60 }
+   }
+  },
+  "plan": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["id", "kind", "sort", "name", "price_paise_monthly", "allowances", "limits", "ai"],
+   "properties": {
+    "id": { "$ref": "#/$defs/planId" },
+    "kind": { "enum": ["trial", "main", "calls"] },
+    "sort": { "type": "integer", "minimum": 0, "maximum": 1000 },
+    "name": { "$ref": "#/$defs/text" },
+    "price_paise_monthly": { "type": ["integer", "null"], "minimum": 0, "maximum": 100000000 },
+    "price_paise_per_minute": { "type": ["integer", "null"], "minimum": 0, "maximum": 100000 },
+    "allowances": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["call_minutes", "whatsapp_messages"],
+     "properties": {
+      "call_minutes": { "type": ["integer", "null"], "minimum": 0, "maximum": 100000 },
+      "whatsapp_messages": { "type": "integer", "minimum": 0, "maximum": 1000000 }
+     }
+    },
+    "limits": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["users", "workspaces"],
+     "properties": {
+      "users": { "type": "integer", "minimum": 1, "maximum": 1000 },
+      "workspaces": { "type": "integer", "minimum": 1, "maximum": 100 }
+     }
+    },
+    "ai": { "const": "included_fair_use" }
+   }
+  }
+ }
+}
