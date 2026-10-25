@@ -293,14 +293,14 @@ def test_a_campaign_list_replaces_the_workspaces_list_and_auto_pause_can_be_swit
     assert out["effective"]["overridden"] == ["auto_pause_refusals_per_hour", "keywords"]
 
 
-def test_an_empty_override_removes_it_and_delete_removes_it() -> None:
+def test_an_empty_override_removes_it_and_clear_removes_it() -> None:
     client, repo = world()
     client.put(f"{B}/campaigns/{CAMPAIGN}", json={"max_call_seconds": 120}, headers=auth("a_owner"))
     assert CAMPAIGN in repo.overrides
     out = client.put(f"{B}/campaigns/{CAMPAIGN}", json={}, headers=auth("a_owner")).json()
     assert out["saved"] is False and CAMPAIGN not in repo.overrides
     client.put(f"{B}/campaigns/{CAMPAIGN}", json={"max_call_seconds": 120}, headers=auth("a_owner"))
-    gone = client.delete(f"{B}/campaigns/{CAMPAIGN}", headers=auth("a_owner"))
+    gone = client.post(f"{B}/campaigns/{CAMPAIGN}/clear", headers=auth("a_owner"))
     assert gone.status_code == 200 and gone.json()["saved"] is False and CAMPAIGN not in repo.overrides
 
 
@@ -312,7 +312,7 @@ def test_campaign_roles_and_unknown_campaigns() -> None:
         assert client.get(url, headers=auth(user)).status_code == 403, user
     for headers in (auth("a_admin"), auth("a_owner", aal="aal1")):
         assert client.put(url, json={}, headers=headers).status_code == 403
-        assert client.delete(url, headers=headers).status_code == 403
+        assert client.post(f"{url}/clear", headers=headers).status_code == 403
     assert client.get(f"{B}/campaigns/{uuid.uuid4()}", headers=auth("a_owner")).status_code == 404, "a campaign that is not this workspace's"
     assert client.get(f"{B}/campaigns/not-an-id", headers=auth("a_owner")).status_code == 404
     assert client.put(f"{B}/campaigns/{uuid.uuid4()}", json={"max_call_seconds": 60}, headers=auth("a_owner")).status_code == 404

@@ -4,7 +4,7 @@
   PUT    /call-settings                          save all of them. Owner with a second factor. 422 `locked_for_business_type` for a school asking for sales or dues calls.
   GET    /call-settings/campaigns/{campaign_id}  that campaign's override and the EFFECTIVE settings a dialer applies to it. Owner, Admin.
   PUT    /call-settings/campaigns/{campaign_id}  save the override (a partial document: null or absent = inherit; an empty one removes it). Owner with a second factor.
-  DELETE /call-settings/campaigns/{campaign_id}  remove the override. Owner with a second factor.
+  POST   /call-settings/campaigns/{campaign_id}/clear  remove the override (the API has no DELETE verb anywhere). Owner with a second factor.
 
 Telephony does not exist yet: nothing here places a call.
 
@@ -66,6 +66,6 @@ def put_campaign(campaign_id: str, body: CallSettingsOverride, ctx: OwnerStrong,
     return _service(runtime).campaign_save(ctx.principal.token, ctx.tenant.id, _campaign(campaign_id), body)
 
 
-@router.delete("/campaigns/{campaign_id}", response_model=CampaignCallSettingsOut)
-def delete_campaign(campaign_id: str, ctx: OwnerStrong, runtime: RuntimeDep) -> CampaignCallSettingsOut:
+@router.post("/campaigns/{campaign_id}/clear", response_model=CampaignCallSettingsOut)
+def clear_campaign(campaign_id: str, ctx: OwnerStrong, runtime: RuntimeDep) -> CampaignCallSettingsOut:
     return _service(runtime).campaign_clear(ctx.principal.token, ctx.tenant.id, _campaign(campaign_id))

@@ -19,7 +19,7 @@ Base `/v1/tenants/{tenant_id}/call-settings`.
 | `PUT /` | **Owner, second factor** | body `CallSettings` (every field, always) -> `CallSettingsOut` |
 | `GET /campaigns/{campaign_id}` | Owner, Admin | `CampaignCallSettingsOut` |
 | `PUT /campaigns/{campaign_id}` | **Owner, second factor** | body `CallSettingsOverride` (null or absent = inherit; `{}` removes the override) -> `CampaignCallSettingsOut` |
-| `DELETE /campaigns/{campaign_id}` | **Owner, second factor** | removes the override -> `CampaignCallSettingsOut` |
+| `POST /campaigns/{campaign_id}/clear` | **Owner, second factor** | removes the override -> `CampaignCallSettingsOut` (the API has no DELETE verb anywhere) |
 
 Errors: 403 `mfa_required` (save without a second factor), 403 `workspace_read_only` (the plan ended), 404 (a campaign that is not this workspace's), 422 (a value out of range; the body names the field), 422 `locked_for_business_type`.
 
