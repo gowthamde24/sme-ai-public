@@ -47,13 +47,14 @@ describe("call settings (job DP; contract-call-settings.md)", () => {
     for (const b of bad) expect(parseCallSettings({ ...SHOP, ...(b ?? {}), ...(b === null ? { retry_busy: null } : {}) }), JSON.stringify(b)).toBeNull();
     expect(parseCallSettings({ ...SHOP, auto_pause_refusals_per_hour: null, hours: { days: [6, 1], from_minute: 555, to_minute: 1260 } })).toMatchObject({ auto_pause_refusals_per_hour: null, hours: { days: [1, 6], from_minute: 555, to_minute: 1260 } });
   });
-  it("what is spoken or listened for carries no markup or control characters, a name once, a topic to one person, a phone with + and 7 to 15 digits", () => {
+  it("what is spoken or listened for carries no markup or control characters, a name once, a topic to one person, a phone of 7 to 15 digits with an optional +", () => {
     const bad = [
       { pronunciations: [{ written: "<b>", spoken: "x" }] }, { pronunciations: [{ written: "Kanchi", spoken: "a" }, { written: "kanchi", spoken: "b" }] }, { pronunciations: Array.from({ length: 51 }, (_, i) => ({ written: `n${i}`, spoken: "x" })) },
       { keywords: ["a"] }, { keywords: ["x".repeat(41)] }, { keywords: Array(101).fill("word") }, { keywords: ["a{b}"] },
-      { handover: [{ topic: "pricing", person_name: "Ravi", phone: "9876543210" }] }, { handover: [{ topic: "pricing", person_name: "Ravi", phone: "+123" }] }, { handover: [{ topic: "pricing", person_name: "Ravi", phone: "+919876543210" }, { topic: "pricing", person_name: "Asha", phone: "+919876543211" }] }, { handover: [{ topic: "refunds", person_name: "R", phone: "+919876543210" }] },
+      { handover: [{ topic: "pricing", person_name: "Ravi", phone: "98765" }] }, { handover: [{ topic: "pricing", person_name: "Ravi", phone: "+123" }] }, { handover: [{ topic: "pricing", person_name: "Ravi", phone: "+91 98765 43210" }] }, { handover: [{ topic: "pricing", person_name: "Ravi", phone: "+919876543210" }, { topic: "pricing", person_name: "Asha", phone: "+919876543211" }] }, { handover: [{ topic: "refunds", person_name: "R", phone: "+919876543210" }] },
     ];
     for (const b of bad) expect(parseCallSettings({ ...SHOP, ...b }), JSON.stringify(b)).toBeNull();
+    expect(parseCallSettings({ ...SHOP, handover: [{ topic: "pricing", person_name: "Ravi", phone: "9876543210" }] })).not.toBeNull();
     expect(parseCallSettings({ ...SHOP, pronunciations: [{ written: " Kanchipuram ", spoken: "Kanchi-puram" }], keywords: [" pattu "], handover: [{ topic: "pricing", person_name: "Ravi", phone: "+919876543210" }] })).toMatchObject({ pronunciations: [{ written: "Kanchipuram", spoken: "Kanchi-puram" }], keywords: ["pattu"] });
   });
   it("reads the API's answer: the settings, and the purposes a school is held to (from the answer, else from the business type)", () => {

@@ -23,7 +23,7 @@ function allowance(t: ReturnType<typeof makeT>, value: number | null, noCap: "pl
  * starts, team members and workspaces; the AI is "included, fair use" and has no number. A business with no plan (or whose plan ended) can choose one and start the 30-day trial with a payment method (a test choice
  * in test mode); one that has had a plan (a trial is started once per workspace) or is not the Owner sees the comparison, its own plan marked, and why it cannot start one.
  */
-export function PlanPicker({ words, main, calls, currentId, canStart, blocked, mock, trialDays, actions, done, resuming = false }: { words: Words; main: readonly PlanDef[]; calls: readonly PlanDef[]; currentId: string | null; canStart: boolean; blocked: "already" | "used" | "forbidden" | null; mock: boolean; trialDays: number; actions: PlanActions; done: string }) {
+export function PlanPicker({ words, main, calls, currentId, canStart, blocked, mock, trialDays, actions, done, resuming = false }: { words: Words; main: readonly PlanDef[]; calls: readonly PlanDef[]; currentId: string | null; canStart: boolean; /** The plan has lapsed: the words say "pay again", no new trial (job DP). */ resuming?: boolean; blocked: "already" | "used" | "forbidden" | null; mock: boolean; trialDays: number; actions: PlanActions; done: string }) {
   const t = makeT(words);
   const [chosen, setChosen] = React.useState<string>("");
   const [method, setMethod] = React.useState<string>("");

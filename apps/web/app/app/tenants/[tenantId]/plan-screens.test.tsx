@@ -167,7 +167,7 @@ describe("the flag is '1' (on: the plans and billing API of job DI)", () => {
   it("a lapsed plan is paid for again (job DP): /plans says there is no new trial and offers the choice, and the move posts to resume with the same references", async () => {
     apiRoutes(billingBody({ subscription: subscription({ status: "cancelled" }), can_start_trial: false, can_resume: true, access: "read_only", read_only_since: "2026-10-14", delete_on: "2027-01-12", data_days_left: 79 }));
     render(await PlansPage(plansProps()));
-    expect(screen.getByText(/there is no new trial/)).toBeInTheDocument();
+    expect(screen.getAllByText(/there is no new trial/).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("radio").length).toBeGreaterThan(0);
     expect(screen.queryByText("The free trial can be started only once for a workspace.")).toBeNull();
     expect(await resumePlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: true });

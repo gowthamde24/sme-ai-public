@@ -46,7 +46,7 @@ const oneOf = <T extends string>(list: readonly T[], v: unknown): v is T => type
 /** Strings that are spoken or listened for carry no `< > { } @ / \ |` and no control characters. */
 export const spokenOk = (v: unknown, min: number, max: number): v is string => typeof v === "string" && v.trim().length >= min && v.trim().length <= max && !/[<>{}@/\\|\u0000-\u001f\u007f]/.test(v);
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
-const PHONE = /^\+\d{7,15}$/;
+const PHONE = /^\+?\d{7,15}$/; // the API's own pattern: an optional +, then 7 to 15 digits
 
 function retry(v: unknown): Retry | null {
   return isRecord(v) && int(v.count, 0, 5) && int(v.gap_minutes, 5, 1440, 5) ? { count: v.count, gap_minutes: v.gap_minutes } : null;
