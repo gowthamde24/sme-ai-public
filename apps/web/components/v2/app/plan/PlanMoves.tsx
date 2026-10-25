@@ -14,7 +14,7 @@ import { usePlanMove } from "./use-plan-move";
  * What the owner can DO on the Plan part (job DK): put a payment that failed right (where the provider has that move), go to the plans, cancel (asks once, and says nothing is charged when it is inside the trial; a paid plan runs to the end of
  * its period) and, in test mode only, jump to day 30. Only the Owner gets these (the page passes `canChange`); the server refuses the others as well. `canStart`: no plan has been started yet (a trial is started once per workspace).
  */
-export function PlanMoves({ words, state, canChange, canStart, cancelling, pickerHref, actions }: { words: Words; state: BillingState; canChange: boolean; canStart: boolean; cancelling: boolean; pickerHref: string; actions: PlanActions }) {
+export function PlanMoves({ words, state, canChange, canStart, cancelling, pickerHref, trialDays, actions }: { words: Words; state: BillingState; canChange: boolean; canStart: boolean; cancelling: boolean; pickerHref: string; trialDays: number; actions: PlanActions }) {
   const t = makeT(words);
   const { busy, error, run } = usePlanMove(t);
   const [asking, setAsking] = React.useState(false);
@@ -29,7 +29,7 @@ export function PlanMoves({ words, state, canChange, canStart, cancelling, picke
           </button>
         ) : null}
         <Link href={pickerHref} className={live ? btnQuiet : btnMain}>
-          {canStart ? t("plan.start") : live ? t("plan.change") : t("plan.picker.title")}
+          {canStart ? t("plan.start", { days: trialDays }) : live ? t("plan.change") : t("plan.picker.title")}
         </Link>
         {live && !cancelling && !asking ? (
           <button type="button" className={btnQuiet} disabled={busy} onClick={() => setAsking(true)}>

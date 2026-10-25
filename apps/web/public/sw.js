@@ -1,7 +1,7 @@
 /* The offline shell worker (job BL). Served from /sw.js, scope "/".
  *
  * What it does, and (more important) what it never does:
- *  - It keeps ONE small thing for offline use: the "You're offline" page (four languages), its stylesheet and the owl picture. Nothing else is needed to show it.
+ *  - It keeps ONE small thing for offline use: the "You're offline" page (four languages), its stylesheet and the circle picture. Nothing else is needed to show it.
  *  - A page the person opens is always fetched from the network. If the network is gone, the offline page is shown instead. A page is NEVER stored: pages and API answers carry customer data.
  *  - It stores the application's own files under /_next/static/ (the code and fonts, named by their content, no customer data) so the app starts faster on a bad connection. Never in development,
  *    where those files change under the same name.
@@ -13,7 +13,7 @@ const SHELL = "sme-shell-" + VERSION;
 const STATIC = "sme-static-" + VERSION;
 const PREFS = "sme-prefs";
 const LANGS = ["en", "te", "hi", "kn"];
-const SHELL_URLS = ["/offline/en.html", "/offline/te.html", "/offline/hi.html", "/offline/kn.html", "/offline/offline.css", "/icons/owl.svg"];
+const SHELL_URLS = ["/offline/en.html", "/offline/te.html", "/offline/hi.html", "/offline/kn.html", "/offline/offline.css", "/icons/orb.svg"];
 const MAX_STATIC = 150;
 // development builds register with ?dev=1: their files are not named by content, so they are never kept
 const DEV = new URL(self.location.href).searchParams.get("dev") === "1";

@@ -1,8 +1,8 @@
 # Team
-Who is in your business, and who is invited. Each person has their own owl.
+Who is in your business, and who is invited.
 {label="People"}
 ## People
-- Asha Rao Joined Oct 1, 2026, 9:30 AM (5 days ago) Owner
-- Ravi Kumar Joined Oct 3, 2026, 9:30 AM (3 days ago) Sales
-- Team member Viewer
+- A Asha Rao Joined Oct 1, 2026, 9:30 AM (5 days ago) Owner
+- R Ravi Kumar Joined Oct 3, 2026, 9:30 AM (3 days ago) Sales
+- T Team member Viewer
 Owners are added by the operator, not here.

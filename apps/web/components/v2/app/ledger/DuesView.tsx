@@ -4,7 +4,7 @@ import type { SummaryRowOut } from "@contracts";
 
 import { formatRupees } from "@/lib/money";
 
-import { PlushStill } from "../owl/PlushStill";
+import { AgentMark } from "../mark/AgentMark";
 import { Pill } from "../parts";
 import { say, type TodayWords } from "../today/today-words";
 import { card, secondary } from "../visits/styles";
@@ -26,7 +26,7 @@ export function DuesView({ base, words, rows, more, help }: { base: string; word
       {help}
       {rows === null ? (
         <div role="alert" className={`${card} flex-row items-center`} data-state="error">
-          <PlushStill px={56} mood="resting" className="size-14" />
+          <AgentMark px={56} mood="resting" className="size-14" />
           <div>
             <p className="font-semibold">{say(words, "frame.notyet")}</p>
             <p className="text-sm text-muted">{say(words, "due.error")}</p>
@@ -35,7 +35,7 @@ export function DuesView({ base, words, rows, more, help }: { base: string; word
       ) : rows.length === 0 ? (
         <div className={`${card} items-start`} data-state="empty">
           <div className="flex items-center gap-3">
-            <PlushStill px={64} mood="idle" className="size-16" />
+            <AgentMark px={64} mood="idle" className="size-16" />
             <h2 className="font-display text-2xl font-bold leading-tight">{say(words, "due.empty.title")}</h2>
           </div>
           <p className="text-base text-muted">{say(words, "due.empty.body")}</p>

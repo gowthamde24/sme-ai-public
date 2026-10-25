@@ -66,6 +66,7 @@ export default async function PlansPage({ params }: PageProps<"/app/tenants/[ten
             canStart={canStart}
             blocked={blocked}
             mock={FAKE_CHECKOUT}
+            trialDays={catalogue.trial.days}
             done={`${base}/settings?section=plan`}
             actions={{ start: startPlanAction.bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: mock ? fixPlanPaymentAction.bind(null, tenantId) : null, endTrial: mock ? endPlanTrialAction.bind(null, tenantId) : null }}
           />

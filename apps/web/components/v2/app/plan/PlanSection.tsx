@@ -58,7 +58,7 @@ export function PlanSection({ words, plan, def, trialDays, now, canChange, mock,
             <p className="text-sm">{t("plan.readonly.go", { email: contactEmail })}</p>
           </div>
         ) : null}
-        {plan.state === "none" ? <p className={mutedText}>{t("plan.none.body")}</p> : null}
+        {plan.state === "none" ? <p className={mutedText}>{t("plan.none.body", { days: trialDays })}</p> : null}
         {def && def.priceInr === null ? <p className={mutedText}>{t("plan.price.soon")}</p> : null}
         {trial ? (
           <>
@@ -78,7 +78,7 @@ export function PlanSection({ words, plan, def, trialDays, now, canChange, mock,
           </div>
         ) : null}
         <div className="mt-4">
-          <PlanMoves words={words} state={plan.state} canChange={canChange && !readOnly} canStart={plan.canStartTrial} cancelling={plan.cancelAtPeriodEnd} pickerHref={pickerHref} actions={actions} />
+          <PlanMoves words={words} state={plan.state} canChange={canChange && !readOnly} canStart={plan.canStartTrial} cancelling={plan.cancelAtPeriodEnd} pickerHref={pickerHref} trialDays={trialDays} actions={actions} />
         </div>
       </section>
       <section className={surface} aria-labelledby="plan-meters-h">

@@ -346,6 +346,6 @@ describe("empty tabs", () => {
   ] as const)("%s says so, with the owl", (tab, text) => {
     show([], { tab });
     expect(screen.getByText(text)).toBeInTheDocument();
-    expect(document.querySelector(`[data-empty="${tab}"] img[data-plush-avatar]`)).not.toBeNull();
+    expect(document.querySelector(`[data-empty="${tab}"] [data-orb]`)).not.toBeNull();
   });
 });

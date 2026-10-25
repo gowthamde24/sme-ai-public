@@ -231,12 +231,12 @@ describe("Today: the side sections", () => {
     await view(data({ digest: Promise.resolve({ state: "none" }) }));
     expect(screen.queryByRole("heading", { name: "Done while you slept" })).toBeNull();
   });
-  it("'Your team' shows the six helpers as plush owls in their own colours, one live status line each, and not Agent OWL itself", async () => {
+  it("'Your team' shows the six helpers as icons of their jobs, one live status line each, and not Agent OWL itself", async () => {
     await view(data());
     const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
     const rows = within(s).getAllByRole("listitem");
     expect(rows).toHaveLength(6);
-    expect(rows.map((r) => r.querySelector("img[data-plush-avatar]")?.getAttribute("data-agent"))).toEqual(["lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"]);
+    expect(rows.map((r) => r.querySelector("[data-agent-mark]")?.getAttribute("data-agent-mark"))).toEqual(["lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"]);
     expect(within(s).queryByText("Agent OWL")).toBeNull();
     // the still has one pose, so each helper's state is also a dot beside its name (working, calm, off)
     expect(rows.map((r) => r.querySelector("[data-state-dot]")?.getAttribute("data-state-dot"))).toEqual(["off", "working", "off", "idle", "idle", "idle"]);

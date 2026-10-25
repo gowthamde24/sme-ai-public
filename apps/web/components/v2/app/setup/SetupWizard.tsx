@@ -7,8 +7,9 @@ import * as React from "react";
 import { LANGS, LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { LANG_COOKIE, readLang, serializePreference } from "@/i18n/preferences";
 
-import { PlushOwl } from "../owl/PlushOwl";
-import type { OwlMood } from "../owl/owl-mood";
+import { Orb } from "@/components/v2/Orb";
+import { orbStateOf } from "../mark/AgentMark";
+import type { AiMood } from "../mark/mood";
 import { say, type TodayWords } from "../today/today-words";
 import { card, primary, quiet, secondary } from "../visits/styles";
 import { HoursStep } from "./HoursStep";
@@ -18,7 +19,7 @@ import type { SetupActions, SetupFacts } from "./types";
 import type { Uploader } from "../catalogue/catalogue-types";
 import type { preparePhoto } from "../catalogue/prepare-photo";
 
-const MOOD: Record<StepId, OwlMood> = { shop: "idle", hours: "listening", saree: "listening", agent: "answering", ready: "answering" };
+const MOOD: Record<StepId, AiMood> = { shop: "idle", hours: "listening", saree: "listening", agent: "answering", ready: "answering" };
 
 /**
  * The first-run setup (job BJ): shown to the Owner of a brand-new workspace instead of an empty Today, until it is finished or skipped. One short step at a time (four, then "You're ready"), each one
@@ -66,7 +67,7 @@ export function SetupWizard({ base, lang, facts, local, words, actions, step, go
 
       <div className={`${card} gap-5`}>
         <div className="flex items-center gap-4">
-          <PlushOwl mood={MOOD[id]} sizes="(min-width: 768px) 96px, 80px" className="size-20 shrink-0 md:size-24" />
+          <Orb px={72} state={orbStateOf(MOOD[id])} halo={MOOD[id] === "answering"} />
           <div className="min-w-0">
             {numbered ? <p className="text-sm font-semibold text-muted">{say(words, "setup.step", { n: step + 1, total: NUMBERED })}</p> : null}
             <h1 id="setup-h" ref={headingRef} tabIndex={-1} className="font-display text-[26px] font-semibold leading-[1.15] outline-none [overflow-wrap:anywhere] md:text-3xl">

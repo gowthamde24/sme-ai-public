@@ -7,16 +7,8 @@ import { AGENT_KEYS } from "@/lib/api/today";
 import { OfficeRoom, type RoomRow } from "./OfficeRoom";
 import type { ClientEnv } from "./view";
 
-const h = vi.hoisted(() => ({ env: {} as Record<string, unknown>, owls: [] as Record<string, unknown>[] }));
+const h = vi.hoisted(() => ({ env: {} as Record<string, unknown> }));
 vi.mock("./view", async (orig) => ({ ...(await orig<typeof import("./view")>()), readClientEnv: () => h.env }));
-// jsdom has no layout, no IntersectionObserver and no canvas: the owl is replaced by a stand-in that shows what the room gave it
-vi.mock("../owl/PlushOwl", () => ({
-  PlushOwl: (props: { agent?: string; mood: string; still?: boolean; working?: boolean; follow?: boolean; sizes?: string }) => {
-    h.owls.push(props);
-    return <div data-testid="owl" data-agent={props.agent} data-mood={props.mood} data-still={String(Boolean(props.still))} data-working={String(Boolean(props.working))} data-follow={String(props.follow)} />;
-  },
-}));
-
 const en = appT("en");
 const W = (k: string) => en(k as "frame.notyet");
 const KEYS = ["office.title", "office.sub", "office.idle", "office.working", "office.switchedoff", "frame.notyet", "office.latest", "office.noevents", "office.pick", "office.runs", "office.viewroom", "office.viewlist", "office.listintro", "office.viewswitch", "office.hint", "office.still", "office.feed", ...AGENT_KEYS.map((a) => `agent.${a}`)];
@@ -26,26 +18,23 @@ const at = (minutesAgo: number) => new Date(NOW - minutesAgo * 60_000).toISOStri
 const rows = (patch: Partial<Record<(typeof AGENT_KEYS)[number], Partial<RoomRow>>> = {}): RoomRow[] =>
   AGENT_KEYS.map((agent) => ({ agent, state: "idle" as const, job: `Job of ${agent}.`, event: null, ...patch[agent] }));
 const CAPABLE: ClientEnv = { reducedMotion: false, lite: false, remembered: null };
-const LITE: ClientEnv = { reducedMotion: true, lite: true, remembered: null };
 const room = (r: RoomRow[] = rows(), selected: RoomRow["agent"] | null = null) => render(<OfficeRoom rows={r} selected={selected} base="/app/tenants/T" words={WORDS} />);
 const switchBtn = (name: string) => screen.getByRole("button", { name });
-const seat = (id: string) => document.querySelector<HTMLElement>(`.office-seat[data-agent="${id}"]`)!;
-const owlOf = (id: string) => within(seat(id)).getByTestId("owl");
+const seat = (id: string) => document.querySelector<HTMLElement>(`[data-office="team"] li[data-agent="${id}"]`)!;
 const tag = (id: string, text: string) => within(seat(id)).getByRole("button", { name: text });
 
 beforeEach(() => {
   h.env = { ...CAPABLE };
-  h.owls = [];
   window.localStorage.clear();
   window.history.replaceState(null, "", "/app/tenants/T/office");
 });
 afterEach(cleanup);
 
 describe("OfficeRoom: which view first", () => {
-  it("the plush room is the first view on every device, and the switch says so", () => {
+  it("the team board is the first view on every device, and the switch says so", () => {
     room();
-    expect(document.querySelector('[data-office="plush"]')).not.toBeNull();
-    expect(switchBtn("Office view")).toHaveAttribute("aria-pressed", "true");
+    expect(document.querySelector('[data-office="team"]')).not.toBeNull();
+    expect(switchBtn("Board view")).toHaveAttribute("aria-pressed", "true");
     expect(switchBtn("List view")).toHaveAttribute("aria-pressed", "false");
     expect(screen.queryByRole("region", { name: "Agent office" })).toBeNull();
   });
@@ -53,21 +42,20 @@ describe("OfficeRoom: which view first", () => {
     h.env = null as unknown as Record<string, unknown>;
     expect(() => room()).not.toThrow();
   });
-  it("seven owls sit at the table, Agent OWL first and the six in the API's order, each with its own agent's pictures, none following the pointer", () => {
+  it("seven tiles: the main assistant first and the six helpers in the API's order, each with its own picture (the circle, or the icon of its job)", () => {
     room();
-    expect(h.owls.map((o) => o.agent)).toEqual([...AGENT_KEYS]);
-    expect(h.owls.every((o) => o.follow === false)).toBe(true);
-    expect(document.querySelectorAll(".office-seat")).toHaveLength(7);
-    expect(document.querySelector(".office-table")).not.toBeNull();
+    expect([...document.querySelectorAll('[data-office="team"] li')].map((li) => li.getAttribute("data-agent"))).toEqual([...AGENT_KEYS]);
+    expect(seat("main").querySelector('[data-orb]')).not.toBeNull();
+    for (const id of AGENT_KEYS.filter((k) => k !== "main")) expect(seat(id).querySelector(`[data-agent-mark="${id}"]`), id).not.toBeNull();
   });
   it("the person can leave the room for the List (and it is remembered), and come back", () => {
     room();
     fireEvent.click(switchBtn("List view"));
-    expect(document.querySelector('[data-office="plush"]')).toBeNull();
+    expect(document.querySelector('[data-office="team"]')).toBeNull();
     expect(screen.getByRole("region", { name: "Agent office" })).toBeInTheDocument();
     expect(window.localStorage.getItem("sme_office_view")).toBe("list");
-    fireEvent.click(switchBtn("Office view"));
-    expect(document.querySelector('[data-office="plush"]')).not.toBeNull();
+    fireEvent.click(switchBtn("Board view"));
+    expect(document.querySelector('[data-office="team"]')).not.toBeNull();
     expect(window.localStorage.getItem("sme_office_view")).toBe("room");
   });
   it("what the person chose last time wins; the old view's name (3d) is forgotten, not an error", () => {
@@ -78,50 +66,26 @@ describe("OfficeRoom: which view first", () => {
     h.env = { ...CAPABLE, remembered: null };
     window.localStorage.setItem("sme_office_view", "3d");
     room();
-    expect(document.querySelector('[data-office="plush"]')).not.toBeNull();
-  });
-  it("with reduced motion every owl is a still picture and the room says so", () => {
-    h.env = { ...LITE };
-    room();
-    expect(h.owls.every((o) => o.still === true && o.working === false)).toBe(true);
-    expect(screen.getByText("Your device asks for less motion, so the owls are still pictures.")).toBeInTheDocument();
-    cleanup();
-    h.env = { ...CAPABLE };
-    room();
-    expect(screen.queryByText(/asks for less motion/)).toBeNull();
+    expect(document.querySelector('[data-office="team"]')).not.toBeNull();
   });
 });
 
-describe("OfficeRoom: the pose of each owl follows the API's state", () => {
+describe("OfficeRoom: the pose of each helper follows the API's state", () => {
   const mixed = rows({
     main: { state: "not_available" },
     lead_finder: { state: "not_available" },
     researcher: { state: "switched_off" },
     quote_writer: { state: "working", event: { text: "Prepared quote 3", ago: "3h", at: at(180) } },
   });
-  it("working types at a glowing laptop, idle breathes and blinks, switched off and not built are still and faded", () => {
+  it("working pulses its dot, idle is calm, switched off and not built are faded", () => {
     room(mixed);
-    const qw = owlOf("quote_writer");
-    expect(qw).toHaveAttribute("data-working", "true");
-    expect(qw).toHaveAttribute("data-still", "false");
-    expect(seat("quote_writer").querySelector("[data-office-laptop]")).not.toBeNull();
-    expect(owlOf("order_desk")).toHaveAttribute("data-working", "false");
-    expect(owlOf("order_desk")).toHaveAttribute("data-still", "false");
-    expect(seat("order_desk").querySelector("[data-office-laptop]")).toBeNull();
+    expect(seat("quote_writer").querySelector('[data-state-dot="working"]')).not.toBeNull();
+    expect(seat("order_desk").querySelector('[data-state-dot="idle"]')).not.toBeNull();
     for (const id of ["main", "lead_finder", "researcher"]) {
-      expect(owlOf(id)).toHaveAttribute("data-still", "true");
-      expect(owlOf(id)).toHaveAttribute("data-working", "false");
-      expect(seat(id).querySelector(".office-owl")!.className).toContain("opacity-45");
-      expect(seat(id).querySelector("[data-office-laptop]")).toBeNull();
+      expect(seat(id).querySelector('[data-state-dot="off"]'), id).not.toBeNull();
+      expect(seat(id).innerHTML, id).toContain("opacity-45");
     }
-    expect(seat("order_desk").querySelector(".office-owl")!.className).not.toContain("opacity-45");
-  });
-  it("with reduced motion a working helper is a still picture with its laptop lit", () => {
-    h.env = { ...LITE };
-    room(mixed);
-    expect(owlOf("quote_writer")).toHaveAttribute("data-still", "true");
-    expect(owlOf("quote_writer")).toHaveAttribute("data-working", "false");
-    expect(seat("quote_writer").querySelector("[data-office-laptop]")).not.toBeNull();
+    expect(seat("order_desk").innerHTML).not.toContain("opacity-45");
   });
   it("each tag carries the helper's name and state (Working, Idle, Switched off, Not available yet)", () => {
     room(mixed);
@@ -161,8 +125,8 @@ describe("OfficeRoom: choosing a helper, the feed, the switch", () => {
     fireEvent.click(tag("quote_writer", "Quote Writer Working"));
     expect(screen.getByText(/Tap a teammate in the room/)).toBeInTheDocument();
     expect(window.location.search).toBe("");
-    // tapping the owl itself chooses it too
-    fireEvent.click(seat("researcher").querySelector(".office-owl")!);
+    // a tile is one button: pressing it chooses the helper
+    fireEvent.click(tag("researcher", "Researcher Switched off"));
     expect(screen.getByRole("heading", { level: 2, name: "Researcher" })).toBeInTheDocument();
     expect(tag("researcher", "Researcher Switched off")).toHaveAttribute("aria-pressed", "true");
   });

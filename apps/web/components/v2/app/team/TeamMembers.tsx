@@ -8,13 +8,13 @@ import type { Member } from "@/lib/api/team";
 
 import { FailureNote } from "../cc/FailureNote";
 import { card, danger, h2, help, label as labelClass, okLine, pillClass, primary, quiet, secondary, selectClass, type Failed } from "../cc/kit";
-import { PlushStill } from "../owl/PlushStill";
+import { PersonMark } from "../mark/PersonMark";
 import { makeT, type Words } from "../words";
-import { canRemove, changeableTo, owlOf, REASONS, roleWord, teamSentence } from "./team-model";
+import { canRemove, changeableTo, REASONS, roleWord, teamSentence } from "./team-model";
 import type { TeamActions } from "./team-types";
 
 /**
- * The people in the business (job CC, screen 4): each with their own owl, their role in words, "you" on one's own row and, for the Owner and Admin, what they may do about that person: change the role, or remove them (with a
+ * The people in the business (job CC, screen 4): each with a circle of their own, their role in words, "you" on one's own row and, for the Owner and Admin, what they may do about that person: change the role, or remove them (with a
  * reason from a short list). Anyone but an Owner can leave. Changing and removing need the second factor (the API says so, and the page says how to give it). What is tidied when someone goes is said in counts. Owners are
  * added by the operator, not here.
  */
@@ -96,7 +96,7 @@ function MemberRow({ words, member, myRole, actions, onRole, onGone }: { words: 
   return (
     <li className="flex flex-col gap-3 py-4" data-member={member.role}>
       <div className="flex items-center gap-3">
-        <PlushStill agent={owlOf(member.user_id)} px={48} mood="idle" className="size-12" />
+        <PersonMark userId={member.user_id} name={name} />
         <div className="min-w-0 flex-1">
           <p className="truncate text-base font-semibold">
             {name}

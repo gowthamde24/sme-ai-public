@@ -4,8 +4,8 @@ import { Check, CircleHelp, Minus, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 
-import { PlushStill } from "@/components/v2/app/owl/PlushStill";
-import { HELPER_AGENTS } from "@/components/v2/app/owl/owl-files";
+import { AgentMark } from "@/components/v2/app/mark/AgentMark";
+import { WORKERS, WORKER_ICONS } from "@/components/v2/app/mark/workers";
 
 import type { AskWords } from "./ask-words";
 
@@ -43,7 +43,7 @@ export function AskCapabilities({ w, examples, onTry, guideHref }: { w: (key: st
       {open ? (
         <section id={id} aria-label={w("ask.can.title")} className="w-full rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5">
           <div className="flex items-start gap-3">
-            <PlushStill px={48} mood="answering" className="size-12" />
+            <AgentMark px={48} mood="answering" className="size-12" />
             <h3 className="min-w-0 flex-1 pt-1 font-display text-xl font-semibold leading-tight">{w("ask.can.title")}</h3>
             <button type="button" onClick={() => setOpen(false)} aria-label={w("ask.can.close")} className="grid size-11 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-2">
               <X className="size-5" aria-hidden="true" />
@@ -76,22 +76,26 @@ export function AskCapabilities({ w, examples, onTry, guideHref }: { w: (key: st
           <div className="mt-5" data-ask-can="steps">
             <h4 className="text-base font-semibold">{w("ask.can.steps")}</h4>
             <ol className="mt-2 grid gap-2 sm:grid-cols-2">
-              {HELPER_AGENTS.map((owl, i) => (
-                <li key={owl} data-step={i + 1} data-owl={owl} className="flex items-start gap-3 rounded-xl border border-line bg-surface-2 p-3">
-                  <PlushStill agent={owl} px={48} className="size-12" />
-                  <div className="min-w-0 text-sm">
-                    <p className="text-base font-semibold leading-tight">
-                      <span aria-hidden="true" className="mr-1 text-muted">
-                        {i + 1}
-                      </span>
-                      {w(`ask.can.step.${i + 1}.t`)}
-                    </p>
-                    <p className="font-semibold text-brand-text">{w(`agent.${owl}`)}</p>
-                    <p className="text-muted">{w(`ask.can.step.${i + 1}.d`)}</p>
-                    <p className="font-semibold text-muted">{w(`ask.can.step.${i + 1}.y`)}</p>
-                  </div>
-                </li>
-              ))}
+              {WORKERS.map((n) => {
+                const Icon = WORKER_ICONS[n - 1];
+                return (
+                  <li key={n} data-step={n} className="flex items-start gap-3 rounded-xl border border-line bg-surface-2 p-3">
+                    <span aria-hidden="true" className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-brand-bg text-brand-text">
+                      <Icon className="size-6" />
+                    </span>
+                    <div className="min-w-0 text-sm">
+                      <p className="text-base font-semibold leading-tight">
+                        <span aria-hidden="true" className="mr-1 text-muted">
+                          {n}
+                        </span>
+                        {w(`ask.can.step.${n}.t`)}
+                      </p>
+                      <p className="text-muted">{w(`ask.can.step.${n}.d`)}</p>
+                      <p className="font-semibold text-muted">{w(`ask.can.step.${n}.y`)}</p>
+                    </div>
+                  </li>
+                );
+              })}
             </ol>
           </div>
           <div className="mt-5">

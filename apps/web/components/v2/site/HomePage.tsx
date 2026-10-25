@@ -1,10 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import { HERO_WIDTHS } from "@/components/v2/app/owl/owl-files";
 import { JsonLd } from "@/components/v2/site/JsonLd";
-import { BuiltFor, CallsSection, FinalCta, HowSection, LanguagesSection, PricingBox } from "@/components/v2/site/HomeSections";
-import { SiteOwl } from "@/components/v2/site/SiteOwl";
+import { BuiltFor, CallsSection, FinalCta, HeroExample, HowSection, PlansSection, TrustBand, WorkforceSection } from "@/components/v2/site/HomeSections";
 import { btnPrimary, container } from "@/components/v2/site/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { fillPlain } from "@/i18n/fill";
@@ -16,17 +14,17 @@ import { sitePath } from "@/lib/site/paths";
 const badge = "inline-flex items-center text-sm font-semibold text-muted";
 
 /**
- * The home page (job CX, from the approved design): the hero with the one owl of the page (Agent OWL), the business types it is built for (three plain cards), the six steps (animated, still with reduced motion), the dark
- * band of sample chats in the four languages, the phone line (what is available and what is coming), the trial box (no price anywhere: the plans are announced later), and the last call to action. Every word is a string
- * of i18n/strings/site.json or a field of a business type's landing.json; the two animated blocks are the only client code.
+ * The home page (job DM, from the approved "clean redesign"): the hero (headline, the two buttons and an example: a WhatsApp chat with a call card), the six AI workers in the order of the workflow, how you start, the business types it is
+ * built for, natural AI calls (early access), the plans (no price), four promises and the last call to action. Every word is a string of i18n/strings/site.json or a field of a business type's landing.json; the four animated blocks
+ * (the example, the workers, the voice card, the plan tabs) are the only client code, and each stands still with "reduce motion".
  */
 export function HomePage({ t, lang }: { t: SiteT; lang: Lang }) {
   return (
     <>
-      <section aria-labelledby="h1" className={`${container} flex flex-wrap items-center gap-10 pb-10 pt-10 sm:pb-12 sm:pt-16`}>
-        <div className="flex min-w-0 flex-[1_1_540px] flex-col items-start gap-5">
+      <section aria-labelledby="h1" className={`${container} flex flex-wrap items-center gap-12 pb-12 pt-10 sm:pb-16 sm:pt-16`}>
+        <div className="flex min-w-0 flex-[1_1_460px] flex-col items-start gap-6">
           <p className="inline-flex rounded-full bg-brand-bg px-3.5 py-1.5 text-sm font-bold text-brand-text">{t("hero.eyebrow")}</p>
-          <h1 id="h1" className="font-display text-[2.5rem] font-extrabold leading-[1.04] tracking-tight [text-wrap:balance] sm:text-5xl lg:text-6xl">
+          <h1 id="h1" className="font-display text-[2.5rem] font-extrabold leading-[1.05] tracking-tight [text-wrap:balance] sm:text-5xl lg:text-6xl">
             {t("hero.h1")}
           </h1>
           <p className="max-w-[34em] text-lg leading-relaxed text-muted sm:text-xl">{t("hero.sub")}</p>
@@ -39,22 +37,25 @@ export function HomePage({ t, lang }: { t: SiteT; lang: Lang }) {
               {t("hero.secondary")}
             </Link>
           </div>
+          <p className="text-sm text-muted" data-part="trial-note">
+            {t("hero.note")}
+          </p>
           <p className="flex flex-wrap gap-x-5 gap-y-2" data-part="badges">
             <span className={badge}>{t("hero.badge.channels")}</span>
             <span className={badge}>{t("hero.badge.langs")}</span>
             <span className={badge}>{t("hero.badge.evening")}</span>
           </p>
         </div>
-        <div className="flex min-w-0 flex-[0_1_380px] justify-center">
-          <SiteOwl agent="main" px={240} smPx={340} widths={HERO_WIDTHS} priority className="size-60 sm:size-[340px]" />
-          <span className="sr-only">{t("owl.name.main")}, {t("hero.owl.mood")}</span>
+        <div className="flex min-w-0 flex-[1_1_380px] justify-center">
+          <HeroExample t={t} />
         </div>
       </section>
-      <BuiltFor t={t} lang={lang} />
+      <WorkforceSection t={t} />
       <HowSection t={t} />
-      <LanguagesSection t={t} />
+      <BuiltFor t={t} lang={lang} />
       <CallsSection t={t} />
-      <PricingBox t={t} lang={lang} />
+      <PlansSection t={t} lang={lang} />
+      <TrustBand t={t} />
       <FinalCta t={t} lang={lang} />
       <JsonLd
         data={{

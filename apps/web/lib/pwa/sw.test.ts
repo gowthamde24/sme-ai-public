@@ -98,10 +98,10 @@ function boot(search = "") {
 }
 
 describe("the offline worker", () => {
-  it("on install keeps only the offline pages, their stylesheet and the owl", async () => {
+  it("on install keeps only the offline pages, their stylesheet and the circle", async () => {
     const w = boot();
     await w.run("install");
-    expect([...w.caches.get("sme-shell-v1")!.store.keys()].sort()).toEqual(["/icons/owl.svg", "/offline/en.html", "/offline/hi.html", "/offline/kn.html", "/offline/offline.css", "/offline/te.html"]);
+    expect([...w.caches.get("sme-shell-v1")!.store.keys()].sort()).toEqual(["/icons/orb.svg", "/offline/en.html", "/offline/hi.html", "/offline/kn.html", "/offline/offline.css", "/offline/te.html"]);
   });
 
   it("a page is fetched from the network and is never stored; with no network the offline page speaks the remembered language", async () => {

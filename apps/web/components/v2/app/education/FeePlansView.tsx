@@ -4,7 +4,7 @@ import type { FeePlanDetailOut, FeePlanOut, ProgrammeOut } from "@contracts/educ
 
 import { formatRupees } from "@/lib/money";
 
-import { PlushStill } from "../owl/PlushStill";
+import { AgentMark } from "../mark/AgentMark";
 import { Pill } from "../parts";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
@@ -29,7 +29,7 @@ export function FeePlansView({ base, words, role, plans, programmes }: { base: s
         <p role="alert" className="rounded-2xl border border-line p-4 text-base">{say(words, "edu.loaderr")}</p>
       ) : plans.length === 0 ? (
         <div className="flex max-w-xl items-start gap-4 rounded-[20px] border border-line bg-surface p-4 md:p-5" data-part="empty">
-          <PlushStill px={72} agent="main" className="size-[72px]" />
+          <AgentMark px={72} agent="main" className="size-[72px]" />
           <div className="min-w-0">
             <p className="font-semibold">{say(words, "edu.plans.none.title")}</p>
             <p className="text-base text-muted">{say(words, "edu.plans.none.body")}</p>

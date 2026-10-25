@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { COLOURS, FABRICS, OCCASIONS, PRICE_BANDS, type ItemSummary } from "@/lib/api/catalogue";
 
-import { PlushStill } from "../owl/PlushStill";
+import { AgentMark } from "../mark/AgentMark";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
 import { card, field, primary, secondary } from "../visits/styles";
@@ -151,7 +151,7 @@ export function CatalogueView({ base, words, role, query, items, more, lead, hel
 
         {items === null ? (
           <div role="alert" className={`${card} flex-row items-center`} data-state="error">
-            <PlushStill px={56} mood={"resting"} className="size-14" />
+            <AgentMark px={56} mood={"resting"} className="size-14" />
             <div>
               <p className="font-semibold">{say(words, "frame.notyet")}</p>
               <p className="text-sm text-muted">{say(words, "catalogue.error.body")}</p>
@@ -160,7 +160,7 @@ export function CatalogueView({ base, words, role, query, items, more, lead, hel
         ) : items.length === 0 ? (
           isFiltered(query) ? (
             <div className={`${card} flex-row items-center`} data-state="nomatch">
-              <PlushStill px={56} mood={"idle"} className="size-14" />
+              <AgentMark px={56} mood={"idle"} className="size-14" />
               <div>
                 <p className="font-semibold">{say(words, "catalogue.nomatch.title")}</p>
                 <p className="text-sm text-muted">{say(words, "catalogue.nomatch.body")}</p>
@@ -169,7 +169,7 @@ export function CatalogueView({ base, words, role, query, items, more, lead, hel
           ) : (
             <div className={`${card} items-start`} data-state="empty">
               <div className="flex items-center gap-3">
-                <PlushStill px={64} mood={"idle"} className="size-16" />
+                <AgentMark px={64} mood={"idle"} className="size-16" />
                 <h2 className="font-display text-2xl font-bold leading-tight">{say(words, "catalogue.empty.title")}</h2>
               </div>
               <p className="text-base text-muted">{say(words, admin ? "catalogue.empty.admin" : "catalogue.empty.other")}</p>

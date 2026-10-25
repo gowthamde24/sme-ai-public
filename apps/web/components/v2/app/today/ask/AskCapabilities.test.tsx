@@ -1,7 +1,6 @@
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { HELPER_AGENTS } from "@/components/v2/app/owl/plush-rig";
 import { appDict, appT } from "@/i18n/app";
 import { LANGS } from "@/i18n/lang";
 import { withModuleWords } from "@/lib/packs/module-words";
@@ -32,31 +31,32 @@ describe("What can Agent OWL do? (job BT)", () => {
     expect(card).toHaveTextContent("Send or approve a message from this box.");
     expect(within(card).getByRole("link", { name: "Read the guide" })).toHaveAttribute("href", "/guide");
   });
-  it("shows the six steps with their helper owls: title, helper name, line and what you do", () => {
+  it("shows the six steps in the order of the workflow, each with the icon of its job: title, line and what you do", () => {
     setup();
     fireEvent.click(screen.getByRole("button", { name: "What can Agent OWL do?" }));
     const card = screen.getByRole("region", { name: "What Agent OWL can do for you" });
     const steps = within(card).getAllByRole("listitem").filter((li) => li.hasAttribute("data-step"));
-    expect(steps.map((li) => li.getAttribute("data-owl"))).toEqual([...HELPER_AGENTS]);
-    expect(steps.map((li) => li.querySelector("p")!.textContent)).toEqual(["1Find leads", "2Research", "3Understand", "4Quote", "5Follow up", "6Close & collect"]);
-    expect(steps[0]).toHaveTextContent("Lead Finder");
-    expect(steps[3]).toHaveTextContent("You: tap Approve");
-    expect(steps.every((li) => li.querySelector("img[data-plush-avatar]"))).toBe(true);
+    expect(steps.map((li) => li.getAttribute("data-step"))).toEqual(["1", "2", "3", "4", "5", "6"]);
+    expect(steps.map((li) => li.querySelector("p")!.textContent)).toEqual(["1Find leads", "2Research", "3AI calls", "4WhatsApp", "5Outcome", "6Follow-up"]);
+    expect(steps[3]).toHaveTextContent("You: approve quotes and prices");
+    expect(steps.every((li) => li.querySelector("svg"))).toBe(true);
+    expect(card.textContent).not.toMatch(/Lead Finder|Quote Writer|owl/i);
   });
-  it("a school reads its own steps 1 and 2, the same words as its public page's landing.json (data, not code), and the other four steps are the shared ones", () => {
+  it("a school reads its own six steps, the same words as its public page's landing.json (data, not code)", () => {
     const edu = SITE_PACKS.find((p) => p.id === "education")!;
     for (const lang of LANGS) {
       const dict = appDict(lang) as Record<string, string>;
       const school = withModuleWords({ ...dict }, { modules: ["programmes"] });
-      expect(school["ask.can.step.1.t"], lang).toBe(textIn(edu.steps!["1"]!.title, lang));
-      expect(school["ask.can.step.1.d"], lang).toBe(textIn(edu.steps!["1"]!.text, lang));
-      expect(school["ask.can.step.2.t"], lang).toBe(textIn(edu.steps!["2"]!.title, lang));
-      expect(school["ask.can.step.2.d"], lang).toBe(textIn(edu.steps!["2"]!.text, lang));
-      for (const k of ["ask.can.step.3.t", "ask.can.step.4.d", "ask.can.step.6.y"]) expect(school[k], `${lang} ${k}`).toBe(dict[k]);
+      for (const n of ["1", "2", "3", "4", "5", "6"] as const) {
+        expect(school[`ask.can.step.${n}.t`], `${lang} ${n}`).toBe(textIn(edu.steps![n]!.title, lang));
+        expect(school[`ask.can.step.${n}.d`], `${lang} ${n}`).toBe(textIn(edu.steps![n]!.text, lang));
+      }
+      expect(school["ask.can.step.6.y"], lang).toBe(dict["ask.can.step.6.y"]);
     }
     const en = withModuleWords({ ...(appDict("en") as Record<string, string>) }, { modules: ["programmes"] });
-    expect([en["ask.can.step.1.t"], en["ask.can.step.2.t"]]).toEqual(["Admission enquiries captured", "Know who's asking"]);
+    expect([en["ask.can.step.1.t"], en["ask.can.step.2.t"], en["ask.can.step.3.t"]]).toEqual(["Admission enquiries", "Know who's asking", "AI calls"]);
     expect(en["ask.can.step.2.d"]).toContain("never searches the web for students");
+    expect(en["ask.can.step.6.d"]).toContain("never written by the AI");
   });
   it("asks an example when it is tapped, and closes", () => {
     const { onTry } = setup();

@@ -2,8 +2,8 @@
 
 import * as React from "react";
 
-import { AgentOwl } from "../owl/AgentOwl";
-import type { OwlMood } from "../owl/owl-mood";
+import { AgentOrb } from "../mark/AgentOrb";
+import type { AiMood } from "../mark/mood";
 import { AskTeam } from "./ask/AskTeam";
 import type { AskWords } from "./ask/ask-words";
 import type { Availability } from "./ask/ask-types";
@@ -30,13 +30,13 @@ function Headline({ words }: { words: TodayWords }) {
 }
 
 /**
- * The Agent OWL card of Today (job AU): the plush owlet and a mood pill on the left (see AgentOwl); on the right the name, ONE sentence built from the real
- * list ("3 things need you. The rest is handled." / "Nothing needs you right now."), the overnight line from the outbox log, the Ask box and three suggestion chips. The owl's mood follows the Ask box
+ * The assistant card of Today (job AU): the AI circle and a mood pill on the left (see AgentOrb); on the right the name, ONE sentence built from the real
+ * list ("3 things need you. The rest is handled." / "Nothing needs you right now."), the overnight line from the outbox log, the Ask box and three suggestion chips. The circle's mood follows the Ask box
  * (typing, the microphone, the request, the streaming answer, a refusal), exactly as before. On a phone the card is compact (the owl beside the sentence) and the question line is fixed above the
  * bottom bar; the answer opens under the card, full width.
  */
 export function AgentHero({ lang, base, availability, askWords, words, chips, digest }: { lang: string; base: string; availability: Availability; askWords: AskWords; words: TodayWords; chips: readonly string[]; digest: Promise<Digest> | null }) {
-  const [mood, setMood] = React.useState<OwlMood>(availability === "live" ? "idle" : "resting");
+  const [mood, setMood] = React.useState<AiMood>(availability === "live" ? "idle" : "resting");
   const moodText = say(words, `owl.mood.${mood}`);
   const resting = mood === "resting";
   const pill = (
@@ -48,7 +48,7 @@ export function AgentHero({ lang, base, availability, askWords, words, chips, di
   return (
     <section aria-labelledby="agent-owl-heading" data-part="agent-owl" className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-x-3 gap-y-3 rounded-3xl border border-line bg-surface p-4 md:grid-cols-[220px_minmax(0,1fr)] md:gap-x-8 md:gap-y-4 md:rounded-[28px] md:p-8">
       <div className="flex flex-col items-center gap-3 md:row-span-2 md:self-center">
-        <AgentOwl priority mood={mood} name={say(words, "agent.main")} moodText={moodText} className="md:size-[220px]" />
+        <AgentOrb mood={mood} name={say(words, "agent.main")} moodText={moodText} />
         <span className="max-md:hidden">{pill}</span>
       </div>
       <div className="flex min-w-0 flex-col gap-1.5 md:gap-4 md:self-end">

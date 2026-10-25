@@ -7,7 +7,7 @@ import { connectionState, type WhatsappAccount } from "@/lib/api/whatsapp";
 
 import { FailureNote } from "../cc/FailureNote";
 import { card, field, h2, h3, help, label as labelClass, okLine, pillClass, primary, secondary, type Failed } from "../cc/kit";
-import { PlushStill } from "../owl/PlushStill";
+import { AgentMark } from "../mark/AgentMark";
 import { makeT, type Words } from "../words";
 import { accountProblem, STATE_MOOD, STATE_TONE, waSentence } from "./wa-model";
 import type { AccountActions } from "./wa-types";
@@ -50,7 +50,7 @@ export function ConnectWhatsapp({ words, account: initial, canEdit, actions }: {
     <div className="flex flex-col gap-5" data-whatsapp="connect">
       <section className={card} aria-labelledby={`${id}-state`} data-wa-state={state}>
         <div className="flex items-start gap-3">
-          <PlushStill px={56} mood={STATE_MOOD[state]} className="size-14" />
+          <AgentMark px={56} mood={STATE_MOOD[state]} className="size-14" />
           <div className="min-w-0">
             <h2 id={`${id}-state`} className={h2}>
               {t("wa.state.title")}

@@ -86,7 +86,7 @@ function box(opts: { status?: VoiceStatus | null; voice?: VoiceTransport | null;
   return render(<AskTeam variant={opts.variant} lang={opts.lang ?? "en"} base={B} words={WORDS} availability="live" transport={typed} voiceStatus={opts.status === undefined ? ON : opts.status} voiceTransport={opts.voice === undefined ? voicePlaying(ANSWER) : opts.voice} />);
 }
 const micButton = () => screen.getByRole("button", { name: "Speak your question" });
-const owlOf = () => document.querySelector(".plush")!.getAttribute("data-mood");
+const owlOf = () => document.querySelector("[data-mood]")!.getAttribute("data-mood");
 const tick = (ms: number) => act(async () => void vi.advanceTimersByTime(ms));
 /** Taps the microphone and lets the browser "give" it. */
 async function startRecording() {

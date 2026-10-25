@@ -9,7 +9,8 @@ import { InviteForm } from "./InviteForm";
 import { Invitations } from "./Invitations";
 import { JoinForm } from "./JoinForm";
 import { TeamMembers } from "./TeamMembers";
-import { canRemove, changeableTo, invitableRoles, labelProblem, mailShare, owlOf, shareText, whatsappShare } from "./team-model";
+import { tintOf } from "../mark/PersonMark";
+import { canRemove, changeableTo, invitableRoles, labelProblem, mailShare, shareText, whatsappShare } from "./team-model";
 import type { TeamActions } from "./team-types";
 import { makeT } from "../words";
 
@@ -58,9 +59,9 @@ describe("who may do what (the API decides again)", () => {
     expect(canRemove("admin", { role: "sales", is_you: false })).toBe(true);
     expect(canRemove("sales", { role: "viewer", is_you: false })).toBe(false);
   });
-  it("gives a person the same owl every time, one of the seven", () => {
-    expect(owlOf(U(1))).toBe(owlOf(U(1)));
-    expect(new Set(Array.from({ length: 60 }, (_, i) => owlOf(U(i)))).size).toBeGreaterThan(3);
+  it("gives a person the same circle tint every time, one of four", () => {
+    expect(tintOf(U(1))).toBe(tintOf(U(1)));
+    expect(new Set(Array.from({ length: 60 }, (_, i) => tintOf(U(i)))).size).toBe(4);
   });
   it("a label with an @ or seven digits is refused as the API would", () => {
     expect(labelProblem("for the new cutter")).toBe(false);
@@ -78,9 +79,9 @@ describe("who may do what (the API decides again)", () => {
 
 describe("the people", () => {
   const members = [member(1, { role: "owner", is_you: true, display_name: "Asha" }), member(2, { role: "sales" }), member(3, { role: "admin" }), member(4, { role: "viewer", display_name: null })];
-  it("shows each person with an owl, their role in words, 'you' on one's own row", () => {
+  it("shows each person with a circle, their role in words, 'you' on one's own row", () => {
     const { container } = render(<TeamMembers words={WORDS} members={members} myRole="owner" actions={actions()} />);
-    expect(container.querySelectorAll("img[data-plush-avatar]")).toHaveLength(4);
+    expect(container.querySelectorAll("[data-person-mark]")).toHaveLength(4);
     expect(screen.getByText("Asha")).toBeInTheDocument();
     expect(screen.getByText("(you)")).toBeInTheDocument();
     expect(screen.getByText("Team member")).toBeInTheDocument(); // a person with no name
