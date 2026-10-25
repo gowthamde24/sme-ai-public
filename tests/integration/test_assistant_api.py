@@ -73,7 +73,7 @@ def test_it_answers_from_the_owners_own_business_with_sources_and_streams(
     )
     evts = events(r)
     names = [e for e, _ in evts]
-    assert set(names) <= {"text", "source", "draft", "error", "done"}, names
+    assert set(names) <= {"step", "text", "source", "draft", "error", "done"}, names  # job DG: "step" = early progress (working, looking), before any text
     assert names[-1] == "done" and names.count("done") == 1 and "text" in names
     assert names.index("source") > max(i for i, n in enumerate(names) if n == "text")
     assert all(d["type"] == e for e, d in evts), "every data line repeats its event name as `type`"
