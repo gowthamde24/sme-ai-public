@@ -76,7 +76,9 @@ create trigger audit_own_voices after insert or update on public.own_voices for 
 
 insert into erasure.registry (table_name, column_name, scope, strategy, replacement) values
   ('own_voices', 'consenting_name',  'tenant', 'null', 'erased:1'),
-  ('own_voices', 'consent_sentence', 'tenant', 'null', 'erased:1');
+  ('own_voices', 'consent_sentence', 'tenant', 'null', 'erased:1'),
+  ('own_voices', 'consenting_name',  'sweep',  'substring', 'erased:1'),
+  ('own_voices', 'consent_sentence', 'sweep',  'substring', 'erased:1');
 
 -- a row is never deleted; a ready or failed or pending row changes only through the functions below
 create function app.own_voices_guard() returns trigger
