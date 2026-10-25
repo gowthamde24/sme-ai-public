@@ -78,10 +78,14 @@ export function voiceErrorCode(error: ApiRequestError): string | undefined {
 export async function* toAskEvents(events: AsyncIterable<VoiceAssistantEvent>, base: string, enquiryOfQuote: QuoteLookup, options: { voice?: boolean } = {}): AsyncGenerator<AskEvent> {
   let sources = 0;
   let drafts = 0;
+  let steps = 0;
   let finished = false;
   for await (const e of events) {
     if (finished && e.type !== "audio" && e.type !== "audio_error") continue; // voice: after `done` only the spoken answer may still come
     switch (e.type) {
+      case "step":
+        if (!steps++) yield { type: "step" }; // one is enough to open the stream; the rest only keep the line warm on the API side
+        break;
       case "transcript":
         yield { type: "heard", text: e.text.slice(0, 4000) };
         break;
