@@ -26,17 +26,19 @@ begin
 end;
 $$;
 
--- a lapsed workspace: its subscription was cancelled, or the date its access ran to has passed. An exempt workspace never lapses.
+-- a lapsed workspace: its subscription was cancelled, or the date its access ran to has passed (a workspace that never chose a plan lapses with its free trial). An exempt workspace never lapses,
+-- and one that waits for WhatsApp has not begun.
 create function app.billing_can_resume(p_tenant uuid) returns boolean
 language sql
 stable
 security definer
 set search_path = ''
 as $$
-  select exists (
-    select 1 from public.billing_subscriptions s join public.tenants t on t.id = s.tenant_id
-     where s.tenant_id = p_tenant and not t.billing_exempt and s.status <> 'trial_pending'
-       and (s.status = 'cancelled' or (app.billing_access_until(p_tenant) is not null and app.outbox_now() >= app.billing_access_until(p_tenant))))
+  select coalesce((
+    select not t.billing_exempt and coalesce(s.status, 'none') <> 'trial_pending'
+           and (s.status = 'cancelled' or (app.billing_access_until(t.id) is not null and app.outbox_now() >= app.billing_access_until(t.id)))
+      from public.tenants t left join public.billing_subscriptions s on s.tenant_id = t.id
+     where t.id = p_tenant), false)
 $$;
 revoke all on function app.billing_can_resume(uuid) from public, anon, authenticated, service_role;
 
@@ -59,7 +61,7 @@ begin
     'period', app.billing_period_json(p_tenant_id),
     'usage', app.billing_usage_json(p_tenant_id),
     'notices', app.billing_notices_json(p_tenant_id),
-    'can_start_trial', not exists (select 1 from public.billing_subscriptions s where s.tenant_id = p_tenant_id),
+    'can_start_trial', not exists (select 1 from public.billing_subscriptions s where s.tenant_id = p_tenant_id) and not app.billing_can_resume(p_tenant_id),   -- after a lapse there is no new trial: pay again (billing_resume)
     'can_resume', app.billing_can_resume(p_tenant_id),
     'whatsapp_connected_at', (select a.connected_at from integrations.whatsapp_accounts a where a.tenant_id = p_tenant_id))
     || app.billing_lapse(p_tenant_id);   -- flat: access ('full' | 'read_only'), read_only_since, delete_on, data_days_left
@@ -116,10 +118,16 @@ begin
     perform app.billing_error('not_lapsed');
   end if;
   perform app.billing_edit(true);
-  update public.billing_subscriptions
-     set plan_id = p_plan_id, catalogue_version = v.version, status = 'active', provider = p_provider, provider_ref = p_provider_ref, payment_method_on_file = true,
-         current_period_start = v_now, current_period_end = v_now + interval '1 month', cancel_at_period_end = false, cancelled_at = null, grace_until = null, updated_by = v_uid, updated_at = now()
-   where tenant_id = p_tenant_id;
+  if exists (select 1 from public.billing_subscriptions s where s.tenant_id = p_tenant_id) then
+    update public.billing_subscriptions
+       set plan_id = p_plan_id, catalogue_version = v.version, status = 'active', provider = p_provider, provider_ref = p_provider_ref, payment_method_on_file = true,
+           current_period_start = v_now, current_period_end = v_now + interval '1 month', cancel_at_period_end = false, cancelled_at = null, grace_until = null, updated_by = v_uid, updated_at = now()
+     where tenant_id = p_tenant_id;
+  else
+    -- the free trial ended without a plan: the plan starts now, with no trial of its own
+    insert into public.billing_subscriptions (tenant_id, plan_id, catalogue_version, status, provider, provider_ref, payment_method_on_file, trial_started_at, trial_ends_at, current_period_start, current_period_end, updated_by)
+    values (p_tenant_id, p_plan_id, v.version, 'active', p_provider, p_provider_ref, true, v_now, null, v_now, v_now + interval '1 month', v_uid);
+  end if;
   update public.tenants set plan = p_plan_id, billing_anchor_at = v_now where id = p_tenant_id;
   perform app.billing_edit(false);
   insert into public.billing_events (tenant_id, event_id, kind, amount_paise, at) values (p_tenant_id, 'resume:' || p_provider_ref, 'charge_succeeded', coalesce(v_price, 0), v_now) on conflict do nothing;
@@ -128,6 +136,45 @@ end;
 $$;
 revoke all on function public.billing_resume(uuid, text, text, text) from public, anon;
 grant execute on function public.billing_resume(uuid, text, text, text) to authenticated;
+
+-- a full copy of job DM's function with ONE added rule: after a lapse there is no new trial (pay again with billing_resume)
+create or replace function public.billing_start_trial(p_tenant_id uuid, p_plan_id text, p_provider text, p_provider_ref text) returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_uid uuid := auth.uid();
+  v     billing.catalogue_versions;
+  v_now timestamptz := app.outbox_now();
+  v_end timestamptz;
+begin
+  if v_uid is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner']::public.app_role[]) then
+    perform app.billing_error('deny');
+  end if;
+  perform app.require_aal2();
+  if p_plan_id is null or p_provider is null or p_provider not in ('fake') or p_provider_ref is null or p_provider_ref !~ '^[A-Za-z0-9_-]{3,100}$' then
+    perform app.billing_error('invalid');
+  end if;
+  select * into v from billing.catalogue_versions x order by x.version desc limit 1;
+  if not exists (select 1 from billing.plan_versions pv where pv.catalogue_version = v.version and pv.plan_id = p_plan_id and pv.kind in ('main', 'calls')) then
+    perform app.billing_error('plan');
+  end if;
+  perform pg_advisory_xact_lock(hashtextextended('billing:' || p_tenant_id::text, 0));
+  if exists (select 1 from public.billing_subscriptions s where s.tenant_id = p_tenant_id) or app.billing_can_resume(p_tenant_id) then
+    perform app.billing_error('started');
+  end if;
+  v_end := case when v.trial_starts_on = 'whatsapp_connected'
+                then (select a.connected_at + make_interval(days => v.trial_days) from integrations.whatsapp_accounts a where a.tenant_id = p_tenant_id and a.connected_at is not null)   -- null = waiting for WhatsApp
+                else v_now + make_interval(days => v.trial_days) end;
+  perform app.billing_edit(true);
+  insert into public.billing_subscriptions (tenant_id, plan_id, catalogue_version, status, provider, provider_ref, payment_method_on_file, trial_started_at, trial_ends_at, updated_by)
+  values (p_tenant_id, p_plan_id, v.version, case when v_end is null then 'trial_pending' else 'trialing' end, p_provider, p_provider_ref, true, v_now, v_end, v_uid);
+  perform app.billing_edit(false);
+  insert into public.billing_events (tenant_id, event_id, kind, at) values (p_tenant_id, 'trial_started:' || p_provider_ref, 'trial_started', v_now);
+  return public.billing_get(p_tenant_id);
+end;
+$$;
 
 -- ---------------------------------------------------------------------------------------------------------------------------------
 -- the worker leaves a read-only (or waiting) workspace alone: a full copy of job AY's function with one added condition

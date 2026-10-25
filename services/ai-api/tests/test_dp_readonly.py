@@ -341,3 +341,14 @@ def test_the_contract_files_carry_the_new_fields() -> None:
     assert {"can_resume", "sending", "waiting_for"} <= set(schema["$defs"]["AccessOut"]["properties"])
     assert "can_resume" in schema["$defs"]["BillingOut"]["properties"]
     assert set(schema["$defs"]["ResumeIn"]["properties"]) == {"plan_id", "checkout_ref"}
+
+
+def test_a_workspace_whose_free_trial_ended_without_a_plan_pays_and_gets_no_new_trial() -> None:
+    client, repo, _ = world()
+    repo.read_only.add(A)   # never chose a plan; the free trial ended
+    out = client.get(f"{B}", headers=auth("a_owner")).json()
+    assert out["can_resume"] is True and out["can_start_trial"] is False, "after a lapse there is no new trial"
+    refused = client.post(f"{B}/trial", json={"plan_id": "growth", "checkout_ref": fake.OK}, headers=auth("a_owner"))
+    assert refused.status_code == 409 and code_of(refused) == "trial_already_started"
+    r = client.post(f"{B}/resume", json=RESUME, headers=auth("a_owner"))
+    assert r.status_code == 200 and r.json()["subscription"]["status"] == "active"

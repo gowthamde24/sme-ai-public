@@ -57,7 +57,7 @@ class FakeBillingRepository:
         base["plan"] = self._plan(tenant_id)
         sub = self.subs.get(tenant_id)
         base["subscription"] = None if sub is None else {k: v for k, v in sub.items() if k not in ("provider_ref",)}
-        base["can_start_trial"] = sub is None
+        base["can_start_trial"] = sub is None and not self.can_resume(tenant_id)
         base["can_resume"] = self.can_resume(tenant_id)
         connected = self.connected.get(tenant_id)
         base["whatsapp_connected_at"] = connected.isoformat() if connected else None
@@ -76,7 +76,9 @@ class FakeBillingRepository:
 
     def can_resume(self, tenant_id: uuid.UUID) -> bool:
         sub = self.subs.get(tenant_id)
-        return sub is not None and sub["status"] != "trial_pending" and (sub["status"] == "cancelled" or tenant_id in self.read_only)
+        if sub is None:
+            return tenant_id in self.read_only   # the free trial ended without a plan
+        return sub["status"] != "trial_pending" and (sub["status"] == "cancelled" or tenant_id in self.read_only)
 
     def resume(self, token: str, tenant_id: uuid.UUID, plan_id: str, provider: str, provider_ref: str) -> dict[str, Any]:
         self._go("resume", token, plan_id, provider, provider_ref)
@@ -86,7 +88,7 @@ class FakeBillingRepository:
             raise PlanUnknownError(plan_id)
         if not self.can_resume(tenant_id):
             raise NotLapsedError(str(tenant_id))
-        sub = self.subs[tenant_id]
+        sub = self.subs.setdefault(tenant_id, {"status": "active", "plan_id": plan_id, "provider": provider, "provider_ref": provider_ref, "trial_ends_at": None, "current_period_end": None, "cancel_at_period_end": False, "grace_until": None, "payment_method_on_file": True, "trial_waiting_for": None})
         sub.update(status="active", plan_id=plan_id, provider=provider, provider_ref=provider_ref, cancel_at_period_end=False, grace_until=None, payment_method_on_file=True)
         self.plan_of[tenant_id] = plan_id
         self.read_only.discard(tenant_id)
@@ -113,7 +115,7 @@ class FakeBillingRepository:
             raise self.fail_start
         if not any(p["id"] == plan_id and p["kind"] in ("main", "calls") for p in self.catalogue["plans"]):
             raise PlanUnknownError(plan_id)
-        if tenant_id in self.subs:
+        if tenant_id in self.subs or self.can_resume(tenant_id):
             raise TrialAlreadyStartedError(str(tenant_id))
         connected = self.connected.get(tenant_id)
         self.subs[tenant_id] = {
