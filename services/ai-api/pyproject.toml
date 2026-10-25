@@ -59,15 +59,15 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "tests/test_ca_*.py" = ["E501"]
 "tests/test_migration_copies_ca.py" = ["E501"]
 "../../tests/integration/test_ca_*.py" = ["E501"]
+# job DP part 6: the error-reporting module explains what leaves the server in long lines
+"app/observability/*" = ["E501"]
+"tests/test_dp_sentry.py" = ["E501"]
 # job CB: the hardening layer is documented in long lines
 "app/hardening/*" = ["E501"]
 # job CK: packs, custom fields and their tests read like the blueprint and the ADR they implement (long lines)
 "app/packs/*" = ["E501"]
 "app/customfields/*" = ["E501"]
 "app/units.py" = ["E501"]
-# job DP part 6: the error-reporting module explains what leaves the server in long lines
-"app/observability/*" = ["E501"]
-"tests/test_dp_sentry.py" = ["E501"]
 "tests/test_ck_*.py" = ["E501"]
 "tests/test_migration_copies_ck.py" = ["E501"]
 "../../tests/integration/test_ck_*.py" = ["E501"]
