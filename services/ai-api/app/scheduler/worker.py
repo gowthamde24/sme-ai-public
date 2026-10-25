@@ -24,6 +24,7 @@ from app.billing.mail import (
     EmailSender,
     PendingReminders,
     PostgrestBillingMailRepository,
+    TrialReminders,
     build_sender,
 )
 from app.billing.provider import BillingProvider, build_provider
@@ -75,6 +76,7 @@ class Worker:
         billing_mail: BillingReminders | None = None,
         billing_clocks: BillingService | None = None,
         billing_pending_mail: PendingReminders | None = None,
+        billing_trial_mail: TrialReminders | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -95,6 +97,8 @@ class Worker:
         self._billing_clocks = billing_clocks
         # job DM: the reminder e-mails to a workspace still waiting for WhatsApp (fake sender)
         self._billing_pending_mail = billing_pending_mail
+        # job RESEND: the reminders on day 11 and day 13 of the trial
+        self._billing_trial_mail = billing_trial_mail
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -151,6 +155,8 @@ class Worker:
             self._billing_mail.run(token)
             if self._billing_pending_mail is not None:
                 self._billing_pending_mail.run(token)
+            if self._billing_trial_mail is not None:
+                self._billing_trial_mail.run(token)
         except TokenRejected:
             raise
         except Exception as exc:
@@ -183,7 +189,8 @@ class Worker:
 
 def _billing_sender(settings: Settings) -> EmailSender:
     try:
-        return build_sender(settings.billing_email_sender)
+        key = settings.resend_api_key.get_secret_value() if settings.resend_api_key is not None else None
+        return build_sender(settings.billing_email_sender, key, settings.mail_from, settings.mail_reply_to)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
 
@@ -229,6 +236,7 @@ def build_worker(settings: Settings) -> Worker:
         interval_seconds=settings.scheduler_interval_seconds,
         billing_mail=BillingReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
         billing_pending_mail=PendingReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
+        billing_trial_mail=TrialReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
         billing_clocks=BillingService(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_provider(settings)),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),

@@ -143,6 +143,7 @@ insert into exempt (tbl, why) values
   ('public.call_settings', 'call settings: every business type has calls (job DP)'), ('public.call_handover_rules', 'call settings: every business type has calls (job DP)'),
   ('public.billing_subscriptions', 'plans and billing: every business has a plan'), ('public.billing_events', 'plans and billing'), ('public.billing_usage_events', 'plans and billing: the meters'),
   ('public.billing_topups', 'plans and billing'), ('public.billing_notices', 'plans and billing'), ('public.billing_lapse_reminders', 'plans and billing'), ('public.billing_pending_reminders', 'plans and billing'), ('public.outcomes', 'outcomes of calls and follow-ups: the follow-ups module, always on, guards the writers (job DM)'), ('public.assistant_settings', 'the assistant settings of every business type (job DM)'),
+  ('public.billing_trial_reminders', 'plans and billing: the trial reminder e-mails (job RESEND)'),
   ('packs.workspace_pack', 'the pack itself'), ('packs.example_batches', 'example data bookkeeping'), ('packs.example_rows', 'example data bookkeeping');
 select is((select coalesce(string_agg(c.table_schema || '.' || c.table_name, ', ' order by c.table_schema, c.table_name), '')
              from information_schema.columns c join information_schema.tables t on t.table_schema = c.table_schema and t.table_name = c.table_name and t.table_type = 'BASE TABLE'

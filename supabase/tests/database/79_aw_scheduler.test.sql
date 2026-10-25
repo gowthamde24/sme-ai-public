@@ -83,7 +83,7 @@ select is((select count(*) from information_schema.role_table_grants where table
           'no client role holds any right on the worker''s own tables (principals, heartbeat)');
 select is((select count(*) from unnest(array['anon', 'authenticated', 'service_role']) r where has_schema_privilege(r, 'scheduler', 'usage')), 0::bigint, 'no client role can even reach schema scheduler');
 select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-            where n.nspname = 'public' and p.proname like 'scheduler\_%' and p.prosecdef and 'search_path=""' = any (p.proconfig)), 24::bigint,
+            where n.nspname = 'public' and p.proname like 'scheduler\_%' and p.prosecdef and 'search_path=""' = any (p.proconfig)), 26::bigint,
           'the eleven scheduler functions (and the three the connectors added, job BZ, the campaign run, job CP, the student retention, job CR, the two voice-note calls, job CV, and the two billing-reminder calls, job DI, and the four trial-clock and pending-reminder calls, job DM) are SECURITY DEFINER with an empty search_path');
 select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
             where n.nspname = 'public' and p.proname like 'scheduler\_%' and has_function_privilege('anon', p.oid, 'execute')), 0::bigint, 'anon cannot execute any scheduler function');

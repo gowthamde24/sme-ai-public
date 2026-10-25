@@ -1,5 +1,14 @@
-<h2>Your Stack19 sign-in link</h2>
-<p>Press the link below to sign in to Stack19.</p>
-<p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/app">Sign in to Stack19</a></p>
-<p>If you did not ask to sign in, you can ignore this message. Nothing happens until the link is used.</p>
-<p>Stack19</p>
+<!doctype html>
+<html lang="en"><body style="margin:0;padding:0;background:#faf7f2;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#faf7f2;padding:24px 12px;">
+<tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#ffffff;border:1px solid #eadfd3;border-radius:12px;font-family:Arial,Helvetica,sans-serif;color:#1c1917;">
+<tr><td style="padding:24px 28px 0 28px;font-size:20px;font-weight:bold;color:#c2410c;">Stack19</td></tr>
+<tr><td style="padding:16px 28px 0 28px;font-size:18px;font-weight:bold;">Your sign-in link</td></tr>
+<tr><td style="padding:12px 28px 0 28px;font-size:15px;line-height:22px;">Press the button to sign in to Stack19.</td></tr>
+<tr><td style="padding:20px 28px 0 28px;"><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/app" style="display:inline-block;background:#c2410c;color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px;padding:12px 22px;border-radius:8px;">Sign in to Stack19</a></td></tr>
+<tr><td style="padding:16px 28px 0 28px;font-size:13px;line-height:19px;color:#57534e;">If you did not ask to sign in, ignore this message. Nothing happens until the button is used.</td></tr>
+<tr><td style="padding:20px 28px 24px 28px;font-size:15px;line-height:22px;">Thank you,<br>Stack19 Team</td></tr>
+</table>
+</td></tr></table>
+</body></html>

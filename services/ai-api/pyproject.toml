@@ -43,6 +43,7 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "tests/*" = ["S101", "S105", "S106"]
 # job DI: plans, billing and their tests read like the ADR they implement (long lines)
 "app/billing/*" = ["E501"]
+"tests/test_resend_mail.py" = ["E501"]
 "tests/test_di_*.py" = ["E501"]
 "../../tests/integration/test_di_*.py" = ["E501"]
 "../../scripts/plans_check.py" = ["E501"]
