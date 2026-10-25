@@ -21,6 +21,7 @@ import { recordQuoteSentAction } from "../sent-on-whatsapp-actions";
 import { loadWhatsappView, type WhatsappView } from "../whatsapp-view";
 import { RequirementPanel } from "../requirement-panel";
 import { makeT } from "@/components/v2/app/words";
+import { withMaterialWords } from "@/lib/packs/material-words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { BRAND_NAME } from "@/design/brand";
@@ -129,7 +130,11 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   const canView = canQuote && selected !== null;
   const canMake = canQuote && setup !== null;
   const wanted = pick(query.section);
-  if (materials) return MaterialEnquiry({ t, words, lang, tenant, tenantId, enquiry, enquiryId, view, notice, canQuote });
+  if (materials) {
+    // the same screens with the building-materials sentences (no "saree type"): job DG
+    const materialWords = withMaterialWords(words);
+    return MaterialEnquiry({ t: makeT(materialWords), words: materialWords, lang, tenant, tenantId, enquiry, enquiryId, view, notice, canQuote });
+  }
   // `?section=all` draws every part on one page (the way the screen was before it was split, for printing and for the tests that pin the whole screen).
   const section: "all" | "request" | "make" | "view" | "send" =
     wanted === "all" ? "all" : wanted === "send" && canSend ? "send" : wanted === "view" && canView ? "view" : wanted === "make" && canMake ? "make" : wanted === "request" ? "request" : pick(query.whatsapp) && canSend ? "send" : canView ? "view" : "request";

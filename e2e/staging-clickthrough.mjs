@@ -428,7 +428,11 @@ async function educationFees(size) {
         await s.page.waitForURL(/\/fees\/plans\/[0-9a-f-]{36}/, { timeout: 40000 });
         await open(s, `/fees/students/${e.student}`);
       }
-      await s.page.getByLabel("Choose a plan").selectOption({ index: 0 });
+      // its own plan by name: the demo school now has a plan of its own (job DG), and "the first in the list" is no longer this one
+      const plans = await s.page.getByLabel("Choose a plan").locator("option").allInnerTexts();
+      const own = plans.find((t) => /Class 5 fees 20/.test(t) && !/Demo/.test(t));
+      must(own, `the plan "Class 5 fees 2026-27" is not offered: ${plans.join(" | ").slice(0, 200)}`);
+      await s.page.getByLabel("Choose a plan").selectOption({ label: own });
       await s.page.getByRole("button", { name: "Give this plan" }).click();
       await s.page.getByRole("button", { name: "Give the plan" }).click();
       await s.page.getByText("Instalments pending").first().waitFor({ timeout: 40000 });

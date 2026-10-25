@@ -37,7 +37,8 @@ def template(pack_id: str, default: dict[str, Any]) -> dict[str, Any]:
         "modules": list(BASE_MODULES),
         "units": [],
         "default_unit": None,
-        "labels": {"en": dict(default["labels"]["en"])},
+        # the default pack's English words are the placeholders, except the two that name the textile business's goods (job DG: packs_check refuses textile words in any other pack)
+        "labels": {"en": {**default["labels"]["en"], "word.item": "Item", "word.items": "Items"}},
         "language_review": {"te": "draft", "hi": "draft", "kn": "draft"},
         "custom_fields": [],
         "example_data": {},

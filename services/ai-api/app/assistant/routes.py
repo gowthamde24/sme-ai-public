@@ -17,6 +17,7 @@ import json
 import logging
 import queue
 import threading
+import time
 import uuid
 from collections.abc import Callable, Iterator
 from datetime import UTC
@@ -269,11 +270,22 @@ def start_message(
 
     threading.Thread(target=work, daemon=True).start()
 
+    began_at = time.monotonic()
+
     def stream() -> Iterator[str]:
+        first = True
         while True:
             item = events.get()
             if item is None:
                 break
+            if first:  # job DG: when the first event of a run is ready (the number only, no content), to show where a slow start is
+                first = False
+                logger.info(
+                    "assistant run %s: first event %s after %d ms",
+                    run_id,
+                    item[0],
+                    (time.monotonic() - began_at) * 1000,
+                )
             yield _sse(item[0], item[1])
         outcome = outcome_box[0] if outcome_box else Outcome("failed", "tool_failed")
         if outcome.reply is None:

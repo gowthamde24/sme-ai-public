@@ -28,6 +28,7 @@ CORE: frozenset[str] = frozenset(
         "list_enquiries",
         "find_price",
         "list_followups",
+        "get_figures",  # job DG: fees, dues and trips totals (answers "not available" for a business type that has none of them)
         "draft_quote",
         "draft_followup",
         "draft_reply",

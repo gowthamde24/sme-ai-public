@@ -5,6 +5,8 @@
  * Everything an event carries is untrusted text (it can quote a customer's e-mail): the box draws it as plain text, never as markup, and follows a link only when it points inside this workspace.
  */
 export type AskEvent =
+  /** Progress, sent at once so the answer's stream opens before the answer is ready (job DG). The box shows its own waiting line and ignores it; it is never part of the answer. */
+  | { type: "step" }
   /** The next piece of the answer, in the order it was written. */
   | { type: "text"; delta: string }
   /** Where a fact in the answer came from. `href` is a path inside this workspace, or null when the record has no screen of its own (a company, a price item). */
