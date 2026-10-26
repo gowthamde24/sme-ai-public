@@ -176,16 +176,17 @@ comment on table public.lead_intakes is 'Job DR / A2: the ledger of imports (one
 comment on column public.lead_intakes.kind is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
 comment on column public.lead_intakes.source_tag is 'SAFE: a closed source tag. CLEAN-EXEMPT: closed CHECK list';
 comment on column public.lead_intakes.content_sha is 'SAFE: sha-256 of the rows. CLEAN-EXEMPT: pattern CHECK';
-comment on column public.lead_intakes.counts is 'SAFE: numbers only.';
-comment on column public.lead_intakes.problems is 'SAFE: row numbers and closed reasons only.';
+comment on column public.lead_intakes.counts is 'SAFE: numbers only. CLEAN-EXEMPT: not client-writable (written only by lead_intake_apply)';
+comment on column public.lead_intakes.problems is 'SAFE: row numbers and closed reasons only. CLEAN-EXEMPT: not client-writable (written only by lead_intake_apply)';
 
 create table public.lead_flags (
+  id         uuid primary key default gen_random_uuid(),
   tenant_id  uuid not null references public.tenants (id) on delete restrict,
   contact_id uuid not null,
   flag       text not null check (flag in ('dnd', 'invalid_number')),
   set_by     text not null check (set_by in ('provider', 'import')),
   set_at     timestamptz not null default app.outbox_now(),
-  primary key (tenant_id, contact_id, flag),
+  unique (tenant_id, contact_id, flag),
   foreign key (tenant_id, contact_id) references public.contacts (tenant_id, id)
 );
 comment on table public.lead_flags is 'Job DR / A2: dnd (the number is on the Do-Not-Disturb register: WhatsApp only, no promotional calls) and invalid_number (a number was given but cannot be called). Written only by the intake functions.';
@@ -223,7 +224,7 @@ create table if not exists public.lead_source_costs (
   primary key (tenant_id, source)
 );
 comment on table public.lead_source_costs is 'Job DR / A2 (columns agreed with A3): what a lead from a source costs the business, in paise. Written by lead_intake_apply (an import that states a cost) and by A3''s PUT /outreach/source-costs.';
-comment on column public.lead_source_costs.source is 'SAFE: a source tag (leads.source). CLEAN-EXEMPT: checked by app.text_is_clean in the table';
+comment on column public.lead_source_costs.source is 'SAFE: a source tag (leads.source).';
 
 create table public.lead_sheet_links (
   id              uuid primary key,
@@ -253,10 +254,10 @@ comment on table public.lead_sheet_links is 'Job DR / A2: a Google Sheet kept in
 comment on column public.lead_sheet_links.sheet_id is 'SAFE: the sheet''s id in its address (not a secret that grants anything: the sheet is public). CLEAN-EXEMPT: pattern CHECK';
 comment on column public.lead_sheet_links.gid is 'SAFE: the tab number. CLEAN-EXEMPT: pattern CHECK';
 comment on column public.lead_sheet_links.source_tag is 'SAFE: a closed source tag. CLEAN-EXEMPT: closed CHECK list';
-comment on column public.lead_sheet_links.mapping is 'SAFE: field name to column number; no cell values.';
+comment on column public.lead_sheet_links.mapping is 'SAFE: field name to column number; no cell values. CLEAN-EXEMPT: not client-writable (written only by lead_sheet_link_create)';
 comment on column public.lead_sheet_links.header_sha is 'SAFE: sha-256 of the header row. CLEAN-EXEMPT: pattern CHECK';
 comment on column public.lead_sheet_links.status is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
-comment on column public.lead_sheet_links.last_result is 'SAFE: numbers only.';
+comment on column public.lead_sheet_links.last_result is 'SAFE: numbers only. CLEAN-EXEMPT: not client-writable (written only by the worker''s function)';
 comment on column public.lead_sheet_links.last_error is 'SAFE: a closed word. CLEAN-EXEMPT: closed CHECK list';
 
 create table public.lead_unparsed (

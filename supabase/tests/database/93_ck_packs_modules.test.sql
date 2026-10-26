@@ -123,7 +123,7 @@ select pg_temp.set_pack('b', 'textiles');
 -- ============================================================================ F. every tenant table is guarded or exempt, with a reason
 create temp table exempt (tbl text primary key, why text not null);
 insert into exempt (tbl, why) values
-  ('integrations.calendar_tokens', 'the calendar feed: a credential, not a module'), ('integrations.call_bridges', 'telephony account settings'), ('integrations.missed_calls', 'inbound calls are recorded whatever the pack'),
+  ('integrations.lead_items', 'lead sources: the idempotency ledger, every business type (job DR)'), ('integrations.calendar_tokens', 'the calendar feed: a credential, not a module'), ('integrations.call_bridges', 'telephony account settings'), ('integrations.missed_calls', 'inbound calls are recorded whatever the pack'),
   ('integrations.pull_state', 'connector cursor'), ('integrations.wa_conversation_state', 'inbox: inbound messages are never refused'), ('integrations.wa_events', 'inbox: inbound events are never refused'),
   ('integrations.wa_message_status', 'delivery receipts'), ('integrations.wa_templates', 'WhatsApp templates'), ('integrations.whatsapp_accounts', 'the WhatsApp connection (second factor)'),
   ('notify.member_state', 'notifications'), ('notify.push_prefs', 'notifications'), ('notify.push_sent', 'notifications'),

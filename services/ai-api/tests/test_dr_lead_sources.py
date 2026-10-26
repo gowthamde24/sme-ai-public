@@ -432,7 +432,8 @@ def test_the_access_modes_say_a_service_account_is_not_set_up() -> None:
 def make_source(client: Any, kind: str = "website_form", **extra: Any) -> dict[str, Any]:
     r = client.post(T + "/lead-sources", json={"source_id": str(uuid.uuid4()), "kind": kind, "label": "Website form", **extra}, headers=auth("a_owner"))
     assert r.status_code == 201, r.text
-    return r.json()
+    out: dict[str, Any] = r.json()
+    return out
 
 
 def test_a_source_shows_its_secret_address_once_and_only_its_hash_is_kept() -> None:
@@ -631,7 +632,7 @@ class ConnRepo:
 def test_the_indiamart_pull_goes_through_the_pipeline_with_the_consent_of_its_source() -> None:
     repo = FakeLeadSourcesRepository()
     service = LeadSourcesService(repo, receiver=Receiver(), indiamart_available=True)
-    connectors = Connectors(repo=ConnRepo(), tenant_id=TENANT_A.id, leads=FixtureLeadSource([]))  # type: ignore[arg-type]
+    connectors = Connectors(repo=ConnRepo(), tenant_id=TENANT_A.id, leads=FixtureLeadSource([]))
     client, _ = make_client(lead_sources=service, connectors=connectors)
     from app.connectors.indiamart import ExternalLead
 
