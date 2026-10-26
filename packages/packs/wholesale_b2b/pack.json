@@ -1,0 +1,339 @@
+{
+  "$schema": "../pack.schema.json",
+  "id": "wholesale_b2b",
+  "version": 1,
+  "status": "preview",
+  "default_for_existing_workspaces": false,
+  "reviewed_by": null,
+  "names": {
+    "en": "Wholesale and B2B",
+    "te": "హోల్‌సేల్, B2B",
+    "hi": "होलसेल और B2B",
+    "kn": "ಹೋಲ್‌ಸೇಲ್, B2B"
+  },
+  "summary": {
+    "en": "Distributors, wholesalers and suppliers: business buyers and quotes",
+    "te": "Distributors, wholesalers, suppliers: business buyers, quotes",
+    "hi": "Distributors, wholesalers, suppliers: business buyers, quotes",
+    "kn": "Distributors, wholesalers, suppliers: business buyers, quotes"
+  },
+  "accent": "leads_orange",
+  "owl_prop": "delivery_truck",
+  "core_tab": "campaigns",
+  "modules": [
+    "today",
+    "inbox",
+    "contacts",
+    "enquiries",
+    "followups",
+    "visits",
+    "campaigns",
+    "call_list",
+    "voice_notes",
+    "reports",
+    "office",
+    "integrations",
+    "companies"
+  ],
+  "units": [],
+  "default_unit": null,
+  "labels": {
+    "en": {
+      "nav.item.today": "Today",
+      "nav.item.leads": "Leads",
+      "nav.item.quotes": "Quotes",
+      "nav.item.orders": "Orders",
+      "nav.item.customers": "Buyers",
+      "nav.item.catalogue": "Offers",
+      "nav.item.sarees": "Offers",
+      "nav.item.visits": "Buyer meetings",
+      "nav.tab.visits": "Buyer meetings",
+      "nav.item.chats": "Customer chats",
+      "nav.item.retailers": "Find leads",
+      "nav.item.report": "This week",
+      "nav.item.team": "Team",
+      "nav.item.office": "Office",
+      "nav.item.integrations": "Integrations",
+      "nav.item.settings": "Settings",
+      "agent.lead_finder": "Lead Desk",
+      "agent.researcher": "Researcher",
+      "agent.requirement_analyst": "Enquiry Analyst",
+      "agent.quote_writer": "Quote Writer",
+      "agent.followup_desk": "Follow-up Desk",
+      "agent.order_desk": "Order Desk",
+      "word.customer": "Buyer",
+      "word.customers": "Buyers",
+      "word.lead": "Lead",
+      "word.leads": "Leads",
+      "word.enquiry": "Enquiry",
+      "word.enquiries": "Enquiries",
+      "word.item": "Offer",
+      "word.items": "Offers",
+      "word.quote": "Quote",
+      "word.quotes": "Quotes",
+      "word.order": "Order",
+      "word.orders": "Orders",
+      "word.visit": "Buyer meeting",
+      "word.visits": "Buyer meetings",
+      "word.contact": "Contact",
+      "word.contacts": "Contacts",
+      "pack.core_tab": "Campaigns",
+      "pack.not_validated": "Not validated by a real owner yet"
+    }
+  },
+  "language_review": {
+    "te": "draft",
+    "hi": "draft",
+    "kn": "draft"
+  },
+  "custom_fields": [
+    {
+      "entity": "contact",
+      "code": "preferred_language",
+      "kind": "choice",
+      "label": {
+        "en": "Language for calls and messages"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "en",
+          "label": {
+            "en": "English"
+          }
+        },
+        {
+          "code": "te",
+          "label": {
+            "en": "Telugu"
+          }
+        },
+        {
+          "code": "hi",
+          "label": {
+            "en": "Hindi"
+          }
+        },
+        {
+          "code": "kn",
+          "label": {
+            "en": "Kannada"
+          }
+        },
+        {
+          "code": "ta",
+          "label": {
+            "en": "Tamil"
+          }
+        },
+        {
+          "code": "ml",
+          "label": {
+            "en": "Malayalam"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "best_time_to_call",
+      "kind": "choice",
+      "label": {
+        "en": "Best time to call"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "morning",
+          "label": {
+            "en": "Morning"
+          }
+        },
+        {
+          "code": "afternoon",
+          "label": {
+            "en": "Afternoon"
+          }
+        },
+        {
+          "code": "evening",
+          "label": {
+            "en": "Evening"
+          }
+        },
+        {
+          "code": "any",
+          "label": {
+            "en": "Any time"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "buyer_kind",
+      "kind": "choice",
+      "label": {
+        "en": "Kind of buyer"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "retailer",
+          "label": {
+            "en": "Retailer"
+          }
+        },
+        {
+          "code": "distributor",
+          "label": {
+            "en": "Distributor"
+          }
+        },
+        {
+          "code": "institution",
+          "label": {
+            "en": "Institution or company"
+          }
+        },
+        {
+          "code": "contractor",
+          "label": {
+            "en": "Contractor"
+          }
+        },
+        {
+          "code": "other",
+          "label": {
+            "en": "Other"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "product_interest_text",
+      "kind": "text",
+      "label": {
+        "en": "Products they need"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    },
+    {
+      "entity": "contact",
+      "code": "volume_band",
+      "kind": "choice",
+      "label": {
+        "en": "Order size"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "small",
+          "label": {
+            "en": "Small"
+          }
+        },
+        {
+          "code": "medium",
+          "label": {
+            "en": "Medium"
+          }
+        },
+        {
+          "code": "large",
+          "label": {
+            "en": "Large"
+          }
+        },
+        {
+          "code": "not_sure",
+          "label": {
+            "en": "Not sure"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "buy_frequency",
+      "kind": "choice",
+      "label": {
+        "en": "How often"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "weekly",
+          "label": {
+            "en": "Weekly"
+          }
+        },
+        {
+          "code": "monthly",
+          "label": {
+            "en": "Monthly"
+          }
+        },
+        {
+          "code": "seasonal",
+          "label": {
+            "en": "Seasonal"
+          }
+        },
+        {
+          "code": "one_time",
+          "label": {
+            "en": "One time"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "gst_registered",
+      "kind": "yes_no",
+      "label": {
+        "en": "Has a GST registration"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": false
+    },
+    {
+      "entity": "contact",
+      "code": "delivery_city",
+      "kind": "text",
+      "label": {
+        "en": "Delivery city"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    },
+    {
+      "entity": "contact",
+      "code": "quote_by_day",
+      "kind": "date",
+      "label": {
+        "en": "Quote needed by"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    }
+  ],
+  "example_data": {}
+}

@@ -1,0 +1,333 @@
+{
+  "$schema": "../pack.schema.json",
+  "id": "travel",
+  "version": 1,
+  "status": "preview",
+  "default_for_existing_workspaces": false,
+  "reviewed_by": null,
+  "names": {
+    "en": "Travel and tours",
+    "te": "ట్రావెల్, టూర్లు",
+    "hi": "ट्रैवल और टूर",
+    "kn": "ಟ್ರಾವೆಲ್, ಟೂರ್"
+  },
+  "summary": {
+    "en": "Travel agents and tour operators: holidays, pilgrimages, group trips",
+    "te": "Travel agents, tour operators: holidays, pilgrimages, group trips",
+    "hi": "Travel agents, tour operators: holidays, pilgrimages, group trips",
+    "kn": "Travel agents, tour operators: holidays, pilgrimages, group trips"
+  },
+  "accent": "leads_orange",
+  "owl_prop": "paper_plane",
+  "core_tab": "campaigns",
+  "modules": [
+    "today",
+    "inbox",
+    "contacts",
+    "enquiries",
+    "followups",
+    "visits",
+    "campaigns",
+    "call_list",
+    "voice_notes",
+    "reports",
+    "office",
+    "integrations"
+  ],
+  "units": [],
+  "default_unit": null,
+  "labels": {
+    "en": {
+      "nav.item.today": "Today",
+      "nav.item.leads": "Leads",
+      "nav.item.quotes": "Quotes",
+      "nav.item.orders": "Orders",
+      "nav.item.customers": "Travellers",
+      "nav.item.catalogue": "Offers",
+      "nav.item.sarees": "Offers",
+      "nav.item.visits": "Trip meetings",
+      "nav.tab.visits": "Trip meetings",
+      "nav.item.chats": "Customer chats",
+      "nav.item.retailers": "Find leads",
+      "nav.item.report": "This week",
+      "nav.item.team": "Team",
+      "nav.item.office": "Office",
+      "nav.item.integrations": "Integrations",
+      "nav.item.settings": "Settings",
+      "agent.lead_finder": "Lead Desk",
+      "agent.researcher": "Researcher",
+      "agent.requirement_analyst": "Enquiry Analyst",
+      "agent.quote_writer": "Quote Writer",
+      "agent.followup_desk": "Follow-up Desk",
+      "agent.order_desk": "Order Desk",
+      "word.customer": "Traveller",
+      "word.customers": "Travellers",
+      "word.lead": "Lead",
+      "word.leads": "Leads",
+      "word.enquiry": "Enquiry",
+      "word.enquiries": "Enquiries",
+      "word.item": "Offer",
+      "word.items": "Offers",
+      "word.quote": "Quote",
+      "word.quotes": "Quotes",
+      "word.order": "Order",
+      "word.orders": "Orders",
+      "word.visit": "Trip meeting",
+      "word.visits": "Trip meetings",
+      "word.contact": "Contact",
+      "word.contacts": "Contacts",
+      "pack.core_tab": "Campaigns",
+      "pack.not_validated": "Not validated by a real owner yet"
+    }
+  },
+  "language_review": {
+    "te": "draft",
+    "hi": "draft",
+    "kn": "draft"
+  },
+  "custom_fields": [
+    {
+      "entity": "contact",
+      "code": "preferred_language",
+      "kind": "choice",
+      "label": {
+        "en": "Language for calls and messages"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "en",
+          "label": {
+            "en": "English"
+          }
+        },
+        {
+          "code": "te",
+          "label": {
+            "en": "Telugu"
+          }
+        },
+        {
+          "code": "hi",
+          "label": {
+            "en": "Hindi"
+          }
+        },
+        {
+          "code": "kn",
+          "label": {
+            "en": "Kannada"
+          }
+        },
+        {
+          "code": "ta",
+          "label": {
+            "en": "Tamil"
+          }
+        },
+        {
+          "code": "ml",
+          "label": {
+            "en": "Malayalam"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "best_time_to_call",
+      "kind": "choice",
+      "label": {
+        "en": "Best time to call"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "morning",
+          "label": {
+            "en": "Morning"
+          }
+        },
+        {
+          "code": "afternoon",
+          "label": {
+            "en": "Afternoon"
+          }
+        },
+        {
+          "code": "evening",
+          "label": {
+            "en": "Evening"
+          }
+        },
+        {
+          "code": "any",
+          "label": {
+            "en": "Any time"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "destination_text",
+      "kind": "text",
+      "label": {
+        "en": "Where do they want to go"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    },
+    {
+      "entity": "contact",
+      "code": "trip_type",
+      "kind": "choice",
+      "label": {
+        "en": "Type of trip"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "family",
+          "label": {
+            "en": "Family"
+          }
+        },
+        {
+          "code": "couple",
+          "label": {
+            "en": "Couple"
+          }
+        },
+        {
+          "code": "friends",
+          "label": {
+            "en": "Friends or group"
+          }
+        },
+        {
+          "code": "solo",
+          "label": {
+            "en": "Solo"
+          }
+        },
+        {
+          "code": "pilgrimage",
+          "label": {
+            "en": "Pilgrimage"
+          }
+        },
+        {
+          "code": "corporate",
+          "label": {
+            "en": "Corporate"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "travel_when",
+      "kind": "choice",
+      "label": {
+        "en": "When"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "this_month",
+          "label": {
+            "en": "This month"
+          }
+        },
+        {
+          "code": "next_month",
+          "label": {
+            "en": "Next month"
+          }
+        },
+        {
+          "code": "three_months",
+          "label": {
+            "en": "Within 3 months"
+          }
+        },
+        {
+          "code": "later",
+          "label": {
+            "en": "Later"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "travellers_count",
+      "kind": "number",
+      "label": {
+        "en": "Number of travellers"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    },
+    {
+      "entity": "contact",
+      "code": "budget_band",
+      "kind": "choice",
+      "label": {
+        "en": "Budget per person"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "economy",
+          "label": {
+            "en": "Economy"
+          }
+        },
+        {
+          "code": "standard",
+          "label": {
+            "en": "Standard"
+          }
+        },
+        {
+          "code": "premium",
+          "label": {
+            "en": "Premium"
+          }
+        },
+        {
+          "code": "not_sure",
+          "label": {
+            "en": "Not sure"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "quote_by_day",
+      "kind": "date",
+      "label": {
+        "en": "Quote needed by"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    }
+  ],
+  "example_data": {}
+}

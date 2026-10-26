@@ -315,6 +315,9 @@ select is(
         'public.scheduler_public_intake_due', 'public.scheduler_public_intake_mark', 'public.scheduler_lapse_due', 'public.scheduler_lapse_warned', 'public.scheduler_lapse_erase', 'public.lapse_erasure_status', 'public.privacy_worker_purge_logs',
         -- job DS: how the assistant talks (every member reads, the Owner with a second factor sets)
         'public.speaking_style_get', 'public.speaking_style_set',
+        -- job DR / A1: the lead playbook (any member reads, the Owner with a second factor saves) and the knowledge base (Owner/Admin manage, every member reads the approved facts)
+        'public.lead_playbook_get', 'public.lead_playbook_save', 'public.lead_playbook_reset', 'public.knowledge_source_add', 'public.knowledge_sources_list', 'public.knowledge_source_text', 'public.knowledge_source_discard',
+        'public.knowledge_facts_draft_replace', 'public.knowledge_fact_add', 'public.knowledge_fact_edit', 'public.knowledge_fact_decide', 'public.knowledge_facts_list', 'public.knowledge_facts_approved',
         -- job CP: reminder campaigns, the call list and the results
         'public.campaign_save', 'public.campaign_get', 'public.campaigns_list', 'public.campaign_recipients_add', 'public.campaign_recipients_from_ledger', 'public.campaign_recipient_remove', 'public.campaign_recipients_list', 'public.campaign_preview', 'public.campaign_approve', 'public.campaign_set_state', 'public.scheduler_campaign_run', 'public.call_list', 'public.call_list_outcome', 'public.campaign_results',
         -- job DP part 4: call settings (the Owner with a second factor saves; Owner and Admin read)
@@ -407,6 +410,9 @@ select is(
         'public.scheduler_public_intake_due', 'public.scheduler_public_intake_mark', 'public.scheduler_lapse_due', 'public.scheduler_lapse_warned', 'public.scheduler_lapse_erase', 'public.lapse_erasure_status', 'public.privacy_worker_purge_logs',
         -- job DS: how the assistant talks (every member reads, the Owner with a second factor sets)
         'public.speaking_style_get', 'public.speaking_style_set',
+        -- job DR / A1: the lead playbook (any member reads, the Owner with a second factor saves) and the knowledge base (Owner/Admin manage, every member reads the approved facts)
+        'public.lead_playbook_get', 'public.lead_playbook_save', 'public.lead_playbook_reset', 'public.knowledge_source_add', 'public.knowledge_sources_list', 'public.knowledge_source_text', 'public.knowledge_source_discard',
+        'public.knowledge_facts_draft_replace', 'public.knowledge_fact_add', 'public.knowledge_fact_edit', 'public.knowledge_fact_decide', 'public.knowledge_facts_list', 'public.knowledge_facts_approved',
                      -- job CP: the shared ledger
                      'public.ledger_entry_record', 'public.ledger_entry_void', 'public.ledger_charges_import', 'public.ledger_statement', 'public.ledger_summary', 'public.ledger_entries_list', 'public.ledger_receipt_get',
                      'public.campaign_save', 'public.campaign_get', 'public.campaigns_list', 'public.campaign_recipients_add', 'public.campaign_recipients_from_ledger', 'public.campaign_recipient_remove', 'public.campaign_recipients_list', 'public.campaign_preview', 'public.campaign_approve', 'public.campaign_set_state', 'public.scheduler_campaign_run', 'public.call_list', 'public.call_list_outcome', 'public.campaign_results',

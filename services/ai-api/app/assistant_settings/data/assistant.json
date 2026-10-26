@@ -191,6 +191,38 @@
     "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ admissions നെ പറ്റി ഒരു minute പറയട്ടെ?",
     "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. Admissions open ആയി. WhatsApp ൽ details അയക്കട്ടെ?"
    }
+  },
+  "leads": {
+   "en": {
+    "warm": "Hello! I'm {name}, the AI assistant at {business}. Thank you for your enquiry. May I ask a couple of quick questions so we can help you better?",
+    "respectful": "Namaste, I'm {name}, the AI assistant of {business}. You enquired with us. May I take a minute to understand what you need?",
+    "quick": "Hi, {name} here, AI assistant at {business}. About your enquiry: may I ask two quick questions?"
+   },
+   "te": {
+    "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మీ enquiry కి thanks అండీ, మీకు ఏం కావాలో రెండు మాటలు అడగొచ్చా?",
+    "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మీరు enquiry చేశారు కదా, మీ requirement గురించి ఒక్క నిమిషం మాట్లాడొచ్చా?",
+    "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. మీ enquiry గురించి రెండు quick questions అడగొచ్చా?"
+   },
+   "hi": {
+    "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। आपकी enquiry के लिए thanks जी, आपको क्या चाहिए, दो बातें पूछ सकती हूँ?",
+    "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। आपने enquiry की थी, आपकी requirement के बारे में एक minute बात कर सकती हूँ?",
+    "quick": "हाय जी, {business} से AI assistant {name}। आपकी enquiry के बारे में दो quick सवाल पूछ लूँ?"
+   },
+   "kn": {
+    "warm": "ನಮಸ್ಕಾರ, ನಾನು {name}, {business} ನಿಂದ AI assistant. ನಿಮ್ಮ enquiry ಗೆ thanks, ನಿಮಗೆ ಏನು ಬೇಕು ಅಂತ ಎರಡು ಮಾತು ಕೇಳಬಹುದಾ?",
+    "respectful": "ನಮಸ್ಕಾರ, ನಾನು {name}, {business} ನಿಂದ AI assistant. ನೀವು enquiry ಮಾಡಿದ್ರಲ್ವಾ, ನಿಮ್ಮ requirement ಬಗ್ಗೆ ಒಂದು ನಿಮಿಷ ಮಾತಾಡಬಹುದಾ?",
+    "quick": "ಹಾಯ್, {business} ನಿಂದ AI assistant {name}. ನಿಮ್ಮ enquiry ಬಗ್ಗೆ ಎರಡು quick questions ಕೇಳಬಹುದಾ?"
+   },
+   "ta": {
+    "warm": "வணக்கம், நான் {name}, {business} இல் இருந்து AI assistant பேசுறேன். உங்க enquiry க்கு thanks, உங்களுக்கு என்ன வேணும்னு ரெண்டு விஷயம் கேக்கலாமா?",
+    "respectful": "வணக்கம், நான் {name}, {business} இல் இருந்து AI assistant பேசுறேன். நீங்க enquiry பண்ணீங்க, உங்க requirement பத்தி ஒரு நிமிஷம் பேசலாமா?",
+    "quick": "ஹாய், {business} இல் இருந்து AI assistant {name}. உங்க enquiry பத்தி ரெண்டு quick questions கேக்கலாமா?"
+   },
+   "ml": {
+    "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. നിങ്ങളുടെ enquiry ക്ക് thanks, നിങ്ങൾക്ക് എന്താണ് വേണ്ടതെന്ന് രണ്ട് കാര്യം ചോദിക്കട്ടെ?",
+    "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. നിങ്ങൾ enquiry ചെയ്തിരുന്നല്ലോ, നിങ്ങളുടെ requirement നെ പറ്റി ഒരു minute സംസാരിക്കാമോ?",
+    "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. നിങ്ങളുടെ enquiry യെ പറ്റി രണ്ട് quick questions ചോദിക്കട്ടെ?"
+   }
   }
  },
  "defaults": {
@@ -274,6 +306,249 @@
    "call_from_minute": 540,
    "call_to_minute": 1020,
    "name": "Meena"
+  },
+  "real_estate": {
+   "voice_persona": "female_warm",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "warm",
+   "speed": 1.0,
+   "may_answer_prices": false,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": false,
+   "max_discount_percent": 0,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1080,
+   "name": "Anita"
+  },
+  "coaching": {
+   "voice_persona": "female_clear",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "warm",
+   "speed": 1.0,
+   "may_answer_prices": false,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": false,
+   "max_discount_percent": 0,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1080,
+   "name": "Meena"
+  },
+  "clinic": {
+   "voice_persona": "female_clear",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "warm",
+   "speed": 1.0,
+   "may_answer_prices": false,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": false,
+   "max_discount_percent": 0,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1080,
+   "name": "Kavya"
+  },
+  "insurance_loans": {
+   "voice_persona": "male_calm",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "warm",
+   "speed": 1.0,
+   "may_answer_prices": false,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": false,
+   "max_discount_percent": 0,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1080,
+   "name": "Ravi"
+  },
+  "auto_dealer": {
+   "voice_persona": "male_calm",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "warm",
+   "speed": 1.0,
+   "may_answer_prices": false,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": false,
+   "max_discount_percent": 0,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1080,
+   "name": "Arjun"
+  },
+  "interiors_solar": {
+   "voice_persona": "female_warm",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "warm",
+   "speed": 1.0,
+   "may_answer_prices": false,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": false,
+   "max_discount_percent": 0,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1080,
+   "name": "Divya"
+  },
+  "travel": {
+   "voice_persona": "female_warm",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "warm",
+   "speed": 1.0,
+   "may_answer_prices": false,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": false,
+   "max_discount_percent": 0,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1080,
+   "name": "Sneha"
+  },
+  "gym": {
+   "voice_persona": "male_calm",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "warm",
+   "speed": 1.0,
+   "may_answer_prices": false,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": false,
+   "max_discount_percent": 0,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1080,
+   "name": "Karthik"
+  },
+  "wholesale_b2b": {
+   "voice_persona": "male_calm",
+   "main_language": "te",
+   "auto_switch_language": true,
+   "allow_english_mixing": true,
+   "style": "warm",
+   "speed": 1.0,
+   "may_answer_prices": false,
+   "may_book_visits": true,
+   "may_send_media": true,
+   "may_talk_dues": false,
+   "max_discount_percent": 0,
+   "handover_owner_asked": true,
+   "handover_upset": true,
+   "handover_order_above_paise": null,
+   "call_days": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "call_from_minute": 540,
+   "call_to_minute": 1080,
+   "name": "Arun"
   }
  }
 }

@@ -52,6 +52,7 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("subprocessors", "/v1/privacy/subprocessors", True, 60),
     PublicRule("grievance", "/v1/privacy/grievance", True, 6),  # a person filing a grievance (the hour's allowance is in the route)
     PublicRule("waitlist", "/v1/public/waitlist", True, 6),
+    PublicRule("lead_templates", "/v1/lead-templates", False, 60),  # job DR / A1: the nine business types and their templates (static data)
     PublicRule("webhooks", "/v1/webhooks/", False, 300),
     PublicRule("docs", "/docs", False, 20),
     PublicRule("redoc", "/redoc", False, 20),

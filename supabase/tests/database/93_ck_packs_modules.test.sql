@@ -25,8 +25,8 @@ select is((select count(*) from packs.modules), 26::bigint, 'A5 twenty-six modul
 select is((select count(*) from packs.modules where guard not in ('tables', 'agents', 'flag', 'future')), 0::bigint, 'A6 every module says how the database refuses it');
 select is((select string_agg(code, ',' order by position) from packs.units), 'piece,set,sq_ft,sq_m,box,bag,tonne,cft,truckload', 'A7 the closed list of selling units');
 select is((select string_agg(enumlabel, ',' order by enumlabel) from pg_enum where enumtypid = 'public.quote_sale_unit'::regtype), (select string_agg(code, ',' order by code) from packs.units), 'A8 the quote sale unit enum carries exactly the same units');
-select is((select count(*) from packs.pack_versions), 4::bigint, 'A9 three packs, four versions (construction_materials has a second version: job CN)');
-select is((select string_agg(code || ':' || version || ':' || status, ',' order by code) from packs.pack_versions), 'construction_materials:1:preview,construction_materials:2:preview,education:1:preview,textiles:1:published', 'A10 textiles is published, the two new business types are previews');
+select is((select count(*) from packs.pack_versions), 13::bigint, 'A9 twelve packs, thirteen versions (construction_materials has a second version: job CN; nine leads packs: job DR)');
+select is((select string_agg(code || ':' || version || ':' || status, ',' order by code, version) from packs.pack_versions), 'auto_dealer:1:preview,clinic:1:preview,coaching:1:preview,construction_materials:1:preview,construction_materials:2:preview,education:1:preview,gym:1:preview,insurance_loans:1:preview,interiors_solar:1:preview,real_estate:1:preview,textiles:1:published,travel:1:preview,wholesale_b2b:1:preview', 'A10 textiles is published, the two new business types are previews');
 select is((select count(*) from packs.pack_versions where is_default), 1::bigint, 'A11 exactly one default pack');
 select is((select code from packs.pack_versions where is_default), 'textiles', 'A12 and it is textiles (today''s behaviour)');
 select is((select count(*) from packs.pack_versions where manifest ->> 'id' <> code or (manifest ->> 'version')::integer <> version or manifest ->> 'status' <> status), 0::bigint, 'A13 each manifest agrees with its row');
@@ -142,6 +142,7 @@ insert into exempt (tbl, why) values
   ('public.tenant_data_policy', 'the real-data gate'), ('suppression.contact_keys', 'suppression applies to every business'), ('suppression.key_events', 'suppression'),
   ('team.invitations', 'the team'), ('workspace.profiles', 'the workspace profile'),
   ('public.call_settings', 'call settings: every business type has calls (job DP)'),
+  ('public.lead_playbooks', 'the lead playbook: every business type (job DR)'), ('public.knowledge_sources', 'the knowledge base: every business type (job DR)'), ('public.knowledge_facts', 'the knowledge base: every business type (job DR)'),
   ('public.speaking_styles', 'how the assistant talks: every business type (job DS)'), ('public.call_handover_rules', 'call settings: every business type has calls (job DP)'),
   ('public.billing_subscriptions', 'plans and billing: every business has a plan'), ('public.billing_events', 'plans and billing'), ('public.billing_usage_events', 'plans and billing: the meters'),
   ('public.billing_topups', 'plans and billing'), ('public.billing_notices', 'plans and billing'), ('public.billing_lapse_reminders', 'plans and billing'), ('public.billing_pending_reminders', 'plans and billing'), ('public.outcomes', 'outcomes of calls and follow-ups: the follow-ups module, always on, guards the writers (job DM)'), ('public.assistant_settings', 'the assistant settings of every business type (job DM)'),
@@ -166,7 +167,7 @@ select is(tests.sqlstate_as(null, format($$select public.workspace_pack_get(%L)$
 select is((tests.scalar_as(tests.uid('a_viewer'), format($$select (select count(*) from jsonb_array_elements(public.workspace_modules(%L)) e where (e ->> 'enabled')::boolean)::text$$, tests.tid('a')))), '17', 'G8 the modules list says which are on');
 select is((tests.scalar_as(tests.uid('a_viewer'), format($$select jsonb_array_length(public.workspace_modules(%L))::text$$, tests.tid('a')))), '26', 'G9 and lists all twenty-six');
 select is(tests.sqlstate_as(tests.uid('b_viewer'), format($$select public.workspace_modules(%L)$$, tests.tid('a'))), '42501', 'G10 DENY: another business reads no module list');
-select is((tests.scalar_as(tests.uid('outsider'), $$select jsonb_array_length(public.pack_catalogue())::text$$)), '3', 'G11 any signed-in person sees the three business types');
+select is((tests.scalar_as(tests.uid('outsider'), $$select jsonb_array_length(public.pack_catalogue())::text$$)), '12', 'G11 any signed-in person sees the twelve business types');
 select is((tests.scalar_as(tests.uid('outsider'), $$select (select e ->> 'validated' from jsonb_array_elements(public.pack_catalogue()) e where e ->> 'pack_id' = 'education')$$)), 'false', 'G12 and which have been validated by a real owner (education has not)');
 select is(tests.sqlstate_as(null, 'select public.pack_catalogue()'), '42501', 'G13 DENY: no identity');
 select is(has_function_privilege('anon', 'public.pack_catalogue()', 'execute'), false, 'G14 anon cannot execute the catalogue');

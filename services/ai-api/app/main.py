@@ -87,8 +87,17 @@ from app.integrations.routes_calendar import public_router as calendar_public_ro
 from app.integrations.routes_contacts import router as contacts_by_phone_router
 from app.integrations.routes_import import router as spreadsheet_import_router
 from app.integrations.routes_policy import router as policy_router
+from app.knowledge import errors as knowledge_errors
+from app.knowledge.repository import PostgrestKnowledgeRepository
+from app.knowledge.routes import router as knowledge_router
+from app.knowledge.service import KnowledgeService
 from app.leads.repository import PostgrestLeadsRepository
 from app.leads.routes import router as leads_router
+from app.leadspack.repository import PostgrestPlaybookRepository
+from app.leadspack.routes import public_router as lead_templates_router
+from app.leadspack.routes import router as lead_playbook_router
+from app.leadspack.service import LeadPlaybookService
+from app.leadspack.templates import default_templates
 from app.leadtools.repository import PostgrestLeadSearchRepository
 from app.leadtools.routes import router as leadtools_router
 from app.logging_safety import install_log_redaction
@@ -258,6 +267,10 @@ def build_runtime(settings: Settings) -> Runtime | None:
         team=PostgrestTeamRepository(config.rest_url, config.anon_key),
         dpdp=build_dpdp(settings, config.rest_url, config.anon_key),
         speaking=SpeakingService(PostgrestSpeakingRepository(config.rest_url, config.anon_key)),
+        lead_playbook=LeadPlaybookService(
+            PostgrestPlaybookRepository(config.rest_url, config.anon_key), default_templates()
+        ),
+        knowledge=KnowledgeService(PostgrestKnowledgeRepository(config.rest_url, config.anon_key)),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         notifications=build_notifications(settings, config),
         research_web=build_research_web(settings),
@@ -657,6 +670,10 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "import_file_changed",
         "This is not the file (or the column choices) that was checked. Check it again.",
     ),
+    # Knowledge base (job DR / A1). A fixed message: nothing from the data layer reaches a client.
+    knowledge_errors.KnowledgeLimitError: ApiError(
+        409, "limit_reached", "That is the most this workspace can hold. Remove something first."
+    ),
     # Privacy rights (job BN, ADR 0075). Fixed messages: no data-layer text reaches clients.
     privacy_errors.SoleOwnerError: ApiError(
         409,
@@ -1029,6 +1046,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(dpdp_public_router)
     app.include_router(dpdp_me_router)
     app.include_router(speaking_router)
+    app.include_router(lead_templates_router)
+    app.include_router(lead_playbook_router)
+    app.include_router(knowledge_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)
