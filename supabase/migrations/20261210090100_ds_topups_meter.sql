@@ -236,7 +236,7 @@ stable
 security definer
 set search_path = ''
 as $$
-  select app.billing_enforced() and app.billing_blocked(p_tenant, p_kind)
+  select app.billing_pending(p_tenant) or (app.billing_enforced() and app.billing_blocked(p_tenant, p_kind))   -- job DM's hold while the plan waits for WhatsApp stays
 $$;
 
 -- ---------------------------------------------------------------------------------------------------------------------------------
@@ -283,7 +283,7 @@ declare
   v_mult   numeric := app.topup_mult(p_kind);
   v_plan   bigint := app.billing_plan_units(p_tenant, p_kind);
   v_bal    bigint := app.topup_balance(p_tenant, p_kind);
-  v_blocked boolean := app.billing_enforced() and app.billing_blocked(p_tenant, p_kind);
+  v_blocked boolean := app.billing_pending(p_tenant) or (app.billing_enforced() and app.billing_blocked(p_tenant, p_kind));
   v_state  text := m ->> 'state';
   v_proj   date := app.topup_projection(p_tenant, p_kind);
   v_exp    date;

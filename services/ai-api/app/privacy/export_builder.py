@@ -50,6 +50,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "institution_profiles", "programmes", "programme_groups", "students", "admissions", "admission_events", "fee_plans", "fee_plan_lines", "fee_assignments",
     "voice_settings", "voice_choices", "campaign_voice", "voice_note_usage",
     "billing_subscriptions", "billing_events", "billing_usage_events", "billing_topups", "billing_notices", "billing_lapse_reminders", "billing_pending_reminders", "billing_trial_reminders",
+    "billing_invoices", "billing_topup_purchases", "billing_topup_draws", "billing_topup_settings", "billing_alert_sends",
     "outcomes", "assistant_settings",
     "evidence", "evidence_links", "claims", "claim_reviews", "icp_config_versions", "mapper_config_versions", "import_batches", "import_rows",
     "assistant_conversations", "assistant_messages", "assistant_reply_drafts",
@@ -58,7 +59,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "data_exports", "erasure_requests", "memberships", "audit_events", "business_profile",
 )  # fmt: skip
 # the tables whose primary key is the workspace id itself (no `id` column)
-ORDER_BY_TENANT = frozenset({"tenant_agent_settings", "tenant_data_policy", "outbox_settings", "store_settings", "scheduler_settings", "business_profile", "institution_profiles", "voice_settings", "billing_subscriptions", "assistant_settings"})
+ORDER_BY_TENANT = frozenset({"tenant_agent_settings", "tenant_data_policy", "outbox_settings", "store_settings", "scheduler_settings", "business_profile", "institution_profiles", "voice_settings", "billing_subscriptions", "billing_topup_settings", "assistant_settings"})
 # the tables whose key is not `id`: the column that is unique within one workspace (job CV)
 ORDER_BY_OTHER = {"voice_choices": "language", "voice_note_usage": "ref_id", "billing_events": "event_id", "billing_usage_events": "ref_id", "billing_notices": "at", "billing_lapse_reminders": "day", "billing_pending_reminders": "day", "billing_trial_reminders": "day"}
 

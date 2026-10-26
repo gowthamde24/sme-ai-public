@@ -168,6 +168,8 @@ begin
                                                             'edu_rows_guard', 'admissions_guard', 'fee_rows_guard',
                                                             -- job DP part 2: the marks send log changes only from pending to sent or failed
                                                             'marks_send_log_guard',
+                                                            -- job DS part E2: invoices, packs and draws are written once and never changed
+                                                            'billing_rows_guard',
                                                             -- job CV: voice settings, choices and the campaign switch change only through their functions; the ledger never
                                                             'voice_rows_guard',
                                                             -- job DM: an outcome keeps its source, its customer and its time (its immutability guard)
