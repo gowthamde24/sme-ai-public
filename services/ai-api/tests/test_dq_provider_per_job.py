@@ -68,14 +68,14 @@ def test_a_job_on_sarvam_gets_its_own_client_and_the_others_keep_the_default() -
     assert set(jobs) == {"whatsapp_reply"}
     client = jobs["whatsapp_reply"]()
     assert isinstance(client, ChatCompletionsClient) and client.model_id == "sarvam-105b" and KEY not in repr(client)
-    default = lambda: "the default"   # noqa: E731
+    default: Any = lambda: "the default"   # noqa: E731
     runtime = AgentsRuntime(repository=None, executor=None, unavailable=None, assistant_llm=default, job_llm=jobs)   # type: ignore[arg-type]
     assert runtime.llm_for("whatsapp_reply") is jobs["whatsapp_reply"]
     assert runtime.llm_for("ask") is default and runtime.llm_for("call_turn") is default
 
 
 def test_a_runtime_without_job_choices_answers_every_job_with_the_assistants_model() -> None:
-    marker = lambda: "x"   # noqa: E731
+    marker: Any = lambda: "x"   # noqa: E731
     runtime = AgentsRuntime(repository=None, executor=None, unavailable=None, assistant_llm=marker)   # type: ignore[arg-type]
     assert all(runtime.llm_for(job) is marker for job in JOBS)
     assert AgentsRuntime(repository=None, executor=None, unavailable="x").llm_for("ask") is None   # type: ignore[arg-type]
