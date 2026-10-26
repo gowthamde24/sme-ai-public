@@ -98,6 +98,7 @@ Off or fake by default. The rehearsal sets none of them. A provider named withou
 | `SARVAM_STT_MODEL` | plain | api | Default `saaras:v4`. |
 | `SARVAM_TTS_MODEL` | plain | api | Default `bulbul:v3`. |
 | `SARVAM_TTS_SPEAKER` | plain | api | Optional speaker name. |
+| `SPEECH_PROVIDER` | plain | api, worker | Night 3, ADR 0101: ONE switch for the speech stack. Empty (default) = each `VOICE_*_PROVIDER` decides, as before; `sarvam` = Sarvam for speech-to-text, text-to-speech and voice notes (needs `SARVAM_API_KEY`; set on staging by `deploy/staging.sh`); `fake` = development only. |
 | `BHASHINI_API_KEY` | secret | api | Only with Bhashini voice. |
 | `BHASHINI_ASR_SERVICE_ID` | plain | api | Bhashini's service id for speech to text. |
 | `BHASHINI_TTS_SERVICE_ID` | plain | api | Bhashini's service id for text to speech. |
