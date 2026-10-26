@@ -19,7 +19,7 @@ from app.outreach.runner import DialResult, FakeDialer, OutreachRunner
 from app.outreach.service import OutreachService
 from app.outreach.wiring import build_dialer
 from app.scheduler.worker import Worker
-from tests.dr_fakes import SHA, FakeOutreachRepository
+from tests.dr_outreach_fakes import SHA, FakeOutreachRepository
 from tests.fakes import TENANT_A, TENANT_B, auth, make_client
 from tests.scheduler_fakes import FakeScheduler
 from tests.test_scheduler_tick import FakeSession
