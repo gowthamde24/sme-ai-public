@@ -406,7 +406,7 @@ def test_voice_status_says_what_is_switched_on_and_touches_no_provider() -> None
     stt, tts = FakeStt("hello", "en"), FakeTts()
     on, _ = make_client(voice=VoiceStack(stt=stt, tts=tts))
     body = on.get(T + "/assistant/voice/status", headers=auth("a_sales")).json()
-    assert body["available"] is True and body["speech_available"] is True and body["languages"] == ["en", "te", "hi", "kn", "ta"] and "audio/webm" in body["content_types"]
+    assert body["available"] is True and body["speech_available"] is True and body["languages"] == ["en", "te", "hi", "kn", "ta", "ml"] and "audio/webm" in body["content_types"]
     only_stt, _ = make_client(voice=VoiceStack(stt=stt))
     assert only_stt.get(T + "/assistant/voice/status", headers=auth("a_sales")).json()["speech_available"] is False
     assert not stt.calls if hasattr(stt, "calls") else True
