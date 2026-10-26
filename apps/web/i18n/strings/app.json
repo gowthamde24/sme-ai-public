@@ -62060,5 +62060,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "li.pv.more": {
+  "en": "and {n} more rows with problems",
+  "te": "ఇంకా {n} వరుసలలో సమస్యలు ఉన్నాయి",
+  "hi": "और {n} पंक्तियों में समस्या है",
+  "kn": "ಇನ್ನೂ {n} ಸಾಲುಗಳಲ್ಲಿ ಸಮಸ್ಯೆ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
