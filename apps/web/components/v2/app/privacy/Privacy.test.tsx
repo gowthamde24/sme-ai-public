@@ -5,8 +5,6 @@ import { wordsFor } from "@/i18n/app-words";
 import type { ConsentList } from "@/lib/api/consent-list";
 import type { DataExport, Deletion } from "@/lib/api/privacy";
 
-vi.mock("../settings/LazyTabs", () => import("../settings/LazyTabs.eager"));
-
 import { ConsentListView } from "./ConsentList";
 import { DeleteData } from "./DeleteData";
 import { ExportMyData } from "./ExportMyData";
