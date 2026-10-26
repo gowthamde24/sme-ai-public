@@ -12,7 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictInt, StringConstraints
 TripStatus = Literal["planned", "loaded", "on_the_way", "delivered", "problem", "cancelled"]
 SettableStatus = Literal["planned", "loaded", "on_the_way", "problem", "cancelled"]
 ProblemCode = Literal["truck_breakdown", "customer_not_ready", "site_closed", "wrong_material", "road_blocked", "other"]
-Language = Literal["en", "te", "hi", "kn", "ta"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
 Vehicle = Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^[A-Za-z0-9][A-Za-z0-9 -]{2,19}$")]
 DriverName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)]
 DriverPhone = Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^[+]?[0-9][0-9 -]{6,18}$")]

@@ -69,6 +69,7 @@ class FakeRepository:
     raise_on_next: RepositoryError | None = None
     created: dict[str, tuple[uuid.UUID, TenantOut]] = field(default_factory=dict)
     plans: dict[uuid.UUID, TenantPlanOut] = field(default_factory=dict)
+    assistant_names: dict[uuid.UUID, str] = field(default_factory=dict)
     # job AD / D2: per user (the token's sub), what is left to do; every complete_setup call
     setups: dict[uuid.UUID, AccountSetupOut] = field(default_factory=dict)
     setup_calls: list[tuple[str, str]] = field(default_factory=list)
@@ -143,6 +144,11 @@ class FakeRepository:
             workspace_limit=1,
             trial_started_at=datetime(2026, 10, 1, 9, 0, tzinfo=UTC),
         )
+
+    def get_assistant_name(self, token: str, tenant_id: uuid.UUID) -> str | None:
+        self.tokens_seen.append(token)
+        self._maybe_raise()
+        return self.assistant_names.get(tenant_id)
 
     def list_members(self, token: str, tenant_id: uuid.UUID) -> MemberListOut:
         self.tokens_seen.append(token)

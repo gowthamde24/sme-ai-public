@@ -59,7 +59,8 @@
         "role": { "$ref": "#/$defs/Role" },
         "plan": { "type": "string", "enum": ["free_trial"] },
         "workspace_limit": { "type": "integer", "minimum": 1 },
-        "trial_started_at": { "type": "string", "format": "date-time" }
+        "trial_started_at": { "type": "string", "format": "date-time" },
+        "assistant_name": { "type": ["string", "null"] }
       }
     },
     "AccountSetup": {

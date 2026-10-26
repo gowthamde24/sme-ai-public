@@ -14,7 +14,7 @@ import unicodedata
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 
-LANGUAGES = ("en", "te", "hi", "kn")
+LANGUAGES = ("en", "te", "hi", "kn", "ta", "ml")
 KINDS = ("marks", "report_ready")
 # kind -> the merge fields it needs, in the order the screen asks for them
 FIELDS: dict[str, tuple[str, ...]] = {
@@ -27,12 +27,16 @@ TEMPLATES: dict[str, dict[str, str]] = {
         "te": "{student} {term}లో {subject}లో {out_of}కి {marks} మార్కులు సాధించారు. - {school}",
         "hi": "{student} ने {term} में {subject} में {out_of} में से {marks} अंक प्राप्त किए। - {school}",
         "kn": "{student} {term}ದಲ್ಲಿ {subject}ದಲ್ಲಿ {out_of}ಕ್ಕೆ {marks} ಅಂಕಗಳನ್ನು ಪಡೆದಿದ್ದಾರೆ. - {school}",
+        "ta": "{student} {term} தேர்வில் {subject} பாடத்தில் {out_of}க்கு {marks} மதிப்பெண்கள் பெற்றார். - {school}",
+        "ml": "{student} {term} ൽ {subject} ൽ {out_of} ൽ {marks} മാർക്ക് നേടി. - {school}",
     },
     "report_ready": {
         "en": "{student}'s progress report for {term} is ready. Please collect it from the school. - {school}",
         "te": "{student} యొక్క {term} ప్రోగ్రెస్ రిపోర్ట్ సిద్ధంగా ఉంది. దయచేసి పాఠశాలలో తీసుకోండి. - {school}",
         "hi": "{student} की {term} की प्रोग्रेस रिपोर्ट तैयार है। कृपया स्कूल से ले लें। - {school}",
         "kn": "{student} ಅವರ {term} ಪ್ರೋಗ್ರೆಸ್ ರಿಪೋರ್ಟ್ ಸಿದ್ಧವಾಗಿದೆ. ದಯವಿಟ್ಟು ಶಾಲೆಯಲ್ಲಿ ಪಡೆಯಿರಿ. - {school}",
+        "ta": "{student} இன் {term} முன்னேற்ற அறிக்கை தயாராக உள்ளது. தயவுசெய்து பள்ளியில் பெற்றுக்கொள்ளவும். - {school}",
+        "ml": "{student} ന്റെ {term} പ്രോഗ്രസ് റിപ്പോർട്ട് തയ്യാറാണ്. ദയവായി സ്കൂളിൽ നിന്ന് വാങ്ങുക. - {school}",
     },
 }
 _PLACEHOLDER = re.compile(r"\{([a-z_]+)\}")

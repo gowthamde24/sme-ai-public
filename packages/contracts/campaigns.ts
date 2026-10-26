@@ -43,7 +43,7 @@ export interface CampaignDetailOut {
   name: string;
   kind: "payment_due" | "delivery_update" | "fee_due" | "event" | "exam" | "holiday";
   status: "draft" | "approved" | "running" | "paused" | "done" | "cancelled";
-  language: "en" | "te" | "hi" | "kn" | "ta";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
   wa_template_id: string | null;
   message_text: string;
   steps: StepOut[];
@@ -70,7 +70,7 @@ export interface CampaignDetailOut {
 export interface CampaignIn {
   name: string;
   kind: "payment_due" | "delivery_update" | "fee_due" | "event" | "exam" | "holiday";
-  language: "en" | "te" | "hi" | "kn" | "ta";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
   wa_template_id?: string | null;
   message_text: string;
   steps: StepIn[];
@@ -88,7 +88,7 @@ export interface CampaignOut {
   name: string;
   kind: "payment_due" | "delivery_update" | "fee_due" | "event" | "exam" | "holiday";
   status: "draft" | "approved" | "running" | "paused" | "done" | "cancelled";
-  language: "en" | "te" | "hi" | "kn" | "ta";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
   wa_template_id: string | null;
   message_text: string;
   steps: StepOut[];

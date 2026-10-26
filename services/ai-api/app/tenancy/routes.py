@@ -71,7 +71,9 @@ def create_tenant(
 @router.get("/tenants/{tenant_id}", response_model=TenantWithPlanOut)
 def get_tenant(ctx: AnyMember, runtime: RuntimeDep) -> TenantWithPlanOut:
     plan = runtime.repository.get_plan(ctx.principal.token, ctx.tenant.id)
+    assistant_name = runtime.repository.get_assistant_name(ctx.principal.token, ctx.tenant.id)
     return TenantWithPlanOut(
+        assistant_name=assistant_name,
         id=ctx.tenant.id,
         name=ctx.tenant.name,
         slug=ctx.tenant.slug,

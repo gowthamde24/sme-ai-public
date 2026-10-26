@@ -25,7 +25,7 @@ from pydantic import (
 from app.dues.models import AgeingOut, OpenInvoiceOut, OverdueAgeingOut
 
 InstitutionType = Literal["school", "junior_college", "degree_college", "university", "coaching", "training"]
-Language = Literal["en", "te", "hi", "kn", "ta"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
 ProgrammeKind = Literal["class", "course"]
 GroupKind = Literal["section", "year", "semester", "batch", "none"]
 StudentStatus = Literal["active", "left"]

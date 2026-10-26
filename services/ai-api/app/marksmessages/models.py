@@ -11,7 +11,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 Kind = Literal["marks", "report_ready"]
-Language = Literal["en", "te", "hi", "kn"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
 LogStatus = Literal["pending", "sent", "blocked", "failed"]
 Reason = Literal["suppressed", "consent_withdrawn", "erased", "provider_refused", "provider_unreachable"]
 # a problem with the FILE, never a copy of what the file says

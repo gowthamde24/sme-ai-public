@@ -15,7 +15,7 @@ SoldPer = Literal["piece", "sq_ft", "sq_m", "box", "bag", "tonne", "cft", "truck
 AreaUnit = Literal["sq_ft", "sq_m"]
 Rounding = Literal["half_up", "half_even", "down"]
 Stock = Literal["in_stock", "few_left", "made_to_order"]
-Language = Literal["en", "te", "hi", "kn", "ta"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
 QuoteStatus = Literal["draft", "approved", "rejected", "superseded"]
 RejectCode = Literal["wrong_prices", "customer_changed", "duplicate", "withdrawn", "other"]
 Name120 = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
