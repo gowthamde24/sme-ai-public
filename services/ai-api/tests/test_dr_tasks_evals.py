@@ -16,7 +16,7 @@ from app.tasks import evals
 from app.tasks.models import PlanDraft
 from app.tasks.planner import Planned, build_plan
 from app.tasks.resolver import DbContactSource
-from tests.dr_fakes import plan_answer
+from tests.dr_tasks_fakes import plan_answer
 
 
 def load_script() -> Any:

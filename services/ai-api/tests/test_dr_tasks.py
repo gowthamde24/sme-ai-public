@@ -25,7 +25,7 @@ from app.tasks.resolver import DbContactSource, last10, resolve
 from app.tasks.runner import TaskRunner
 from app.tasks.service import TasksService
 from app.tenancy.repository import TokenRejected
-from tests.dr_fakes import FakeDb, FakeOutbox, FakeTasksRepository, Scripted, plan_answer, uid
+from tests.dr_tasks_fakes import FakeDb, FakeOutbox, FakeTasksRepository, Scripted, plan_answer, uid
 from tests.fakes import TENANT_A, auth, make_client
 
 BASE = f"/v1/tenants/{TENANT_A.id}/tasks"
