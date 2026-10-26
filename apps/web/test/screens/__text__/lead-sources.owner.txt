@@ -1,0 +1,29 @@
+# Lead sources
+Places where new leads arrive by themselves. Each one has its own address.
+{role=note} Test mode: nothing is received and the addresses are made up.
+{label="Meta Lead Ads (Facebook and Instagram)"}
+## Meta Lead Ads (Facebook and Instagram)
+Leads from your Meta lead forms arrive here as soon as they are filled in. Nothing set up yet.
+[button type=button: Set it up]
+{label="IndiaMART"}
+## IndiaMART
+Bring your IndiaMART leads in, with duplicates merged. Nothing set up yet.
+[button type=button: Set it up]
+{label="JustDial and other portals"}
+## JustDial and other portals
+Forward the portal's lead e-mails to your own address. We read them and add the lead. Nothing set up yet.
+[button type=button: Set it up]
+{label="Your website form"}
+## Your website form
+Paste this form into any page of your website. Each answer becomes a lead. Nothing set up yet.
+[button type=button: Set it up]
+{label="Google Sheets"}
+## Google Sheets
+Keep a sheet in sync: new rows become leads. [Set up a sheet in Add leads](/app/tenants/22222222-2222-2222-2222-222222222222/import)
+{label="Zapier, n8n or Make"}
+## Zapier, n8n or Make
+Send leads from any other tool to this address. Nothing set up yet.
+[button type=button: Set it up]
+{label="Mails we could not read"}
+## Mails we could not read
+Add these leads by hand, then discard the mail. No unread mails.

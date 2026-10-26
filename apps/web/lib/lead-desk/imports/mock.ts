@@ -38,11 +38,16 @@ export function splitCsv(text: string): string[][] {
     const c = text[i];
     if (quoted) {
       if (c === '"') {
-        if (text[i + 1] === '"') (cell += '"'), i++;
-        else quoted = false;
+        if (text[i + 1] === '"') {
+          cell += '"';
+          i++;
+        } else quoted = false;
       } else cell += c;
     } else if (c === '"' && cell === "") quoted = true;
-    else if (c === delim) (row.push(cell), (cell = ""));
+    else if (c === delim) {
+      row.push(cell);
+      cell = "";
+    }
     else if (c === "\n" || c === "\r") {
       if (c === "\r" && text[i + 1] === "\n") i++;
       row.push(cell);
@@ -174,8 +179,13 @@ export function suggestColumns(headers: string[], rows: string[][]): { columns: 
     if (picks[i].field) return;
     const values = rows.map((r) => r[i] ?? "").filter((v) => v !== "").slice(0, 20);
     if (values.length === 0) return;
-    if (!taken.has("phone") && values.every((v) => normalizeIndianMobile(v) !== null)) (picks[i] = { field: "phone", confidence: "weak" }), taken.add("phone");
-    else if (!taken.has("email") && values.every(isEmail)) (picks[i] = { field: "email", confidence: "weak" }), taken.add("email");
+    if (!taken.has("phone") && values.every((v) => normalizeIndianMobile(v) !== null)) {
+      picks[i] = { field: "phone", confidence: "weak" };
+      taken.add("phone");
+    } else if (!taken.has("email") && values.every(isEmail)) {
+      picks[i] = { field: "email", confidence: "weak" };
+      taken.add("email");
+    }
   });
   const mapping: Mapping = {};
   picks.forEach((p, i) => {

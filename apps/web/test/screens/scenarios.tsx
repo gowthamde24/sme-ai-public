@@ -992,6 +992,20 @@ add({ id: "report-run-funnel", roles: ["admin"], render: runPage("education.funn
 // night 4: each part adds its screens under its own marker, so the branches merge without touching the same lines
 // -- scenarios: tasks (web/dr-tasks)
 // -- scenarios: import and lead sources (web/dr-leads-import)
+const withLeadsFlag = (value: string | undefined, load: () => Promise<ReactElement>) => async () => {
+  const before = process.env.LEADS_SCREENS;
+  if (value === undefined) delete process.env.LEADS_SCREENS;
+  else process.env.LEADS_SCREENS = value;
+  try {
+    return await load();
+  } finally {
+    if (before === undefined) delete process.env.LEADS_SCREENS;
+    else process.env.LEADS_SCREENS = before;
+  }
+};
+add({ id: "import-leads", render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/import/page")).default(props({}))), handlers: base });
+add({ id: "import-leads-off", roles: ["owner"], render: withLeadsFlag(undefined, async () => (await import("@/app/app/tenants/[tenantId]/import/page")).default(props({}))), handlers: base });
+add({ id: "lead-sources", render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/lead-sources/page")).default(props({}))), handlers: base });
 // -- scenarios: top-ups (web/ds-topups)
 // -- scenarios: lead desk site (web/ds-lead-desk)
 // -- scenarios: leads core (web/dr-leads)
