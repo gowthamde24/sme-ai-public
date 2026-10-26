@@ -21,7 +21,7 @@ describe("/auth/mfa", () => {
     render(await MfaPage(props({ next: "/app/tenants/1" })));
     expect(screen.getByLabelText(/code from your authenticator/i)).toHaveAttribute("autocomplete", "one-time-code");
     expect((document.querySelector('input[name="next"]') as HTMLInputElement).value).toBe("/app/tenants/1");
-    expect(screen.getByText(/Lost your phone\? Ask the operator/)).toBeInTheDocument();
+    expect(screen.getByText(/Lost your phone\? Write to the Stack19 team/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sign out" })).toBeInTheDocument();
   });
 

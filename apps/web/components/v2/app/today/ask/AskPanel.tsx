@@ -29,7 +29,7 @@ export function AskPanel({ session, chips, onClose }: { session: AskSession; chi
       return;
     }
     if (e.key !== "Tab" || !box.current) return;
-    const items = [...box.current.querySelectorAll<HTMLElement>(FOCUSABLE)].filter((el) => el.offsetParent !== null || el === document.activeElement);
+    const items = [...box.current.querySelectorAll<HTMLElement>(FOCUSABLE)]; // nothing in the panel is display:none, so every match can take the focus
     if (items.length === 0) return;
     const first = items[0];
     const last = items[items.length - 1];

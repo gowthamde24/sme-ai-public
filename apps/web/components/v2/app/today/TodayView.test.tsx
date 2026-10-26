@@ -22,7 +22,7 @@ const TEAM: TodayData["team"] = [
 const CARDS: NeedsCard[] = [outbox(), call(), classic()];
 const ready = (visits: StoreVisit[], over: Partial<StoreToday> = {}): TodayData["store"] => ({ state: "ready", visits, slots: "unknown", nextFree: null, ...over });
 const data = (over: Partial<TodayData> = {}): TodayData => ({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: CARDS, recent: [], team: TEAM, store: null, week: null, sending: null, digest: Promise.resolve(READY), ...over });
-const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; outboxHref?: string | null; calendarHref?: string | null } = {}) => {
+const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; demo?: boolean; outboxHref?: string | null; calendarHref?: string | null } = {}) => {
   const words = rest.lang && rest.lang !== "en" ? appT(rest.lang as "te") : null;
   // rendered inside an awaited act, so the parts that read a promise (use) settle before the test looks
   let out!: ReturnType<typeof render>;
@@ -98,28 +98,26 @@ describe("Today: the Vijaya card", () => {
     expect(document.querySelector('[data-part="overnight"]')).toBeNull();
     expect(document.querySelector('[data-part="done"]')).toBeNull();
   });
-  it("the Ask box is in the card, 56 px high, with a microphone slot and three chips, the middle one in English and the last in the person's language", async () => {
+  it("the Ask box is IN the card (job DQ part 0), 56 px high, with the chips under it, in the person's language", async () => {
     await view(data());
     const ask = document.querySelector('[data-ask="live"]')!;
     expect(ask.closest('[data-part="agent-owl"]')).not.toBeNull();
     const input = within(ask as HTMLElement).getByRole("textbox", { name: "Your question for Vijaya" });
     expect(input.className).toContain("md:min-h-14");
-    expect(input).toHaveAttribute("placeholder", "Ask anything, in any language…");
+    expect(input).toHaveAttribute("placeholder", "Ask Vijaya anything, in any language…");
+    expect(document.querySelectorAll("input[type=text], input:not([type])")).toHaveLength(1); // exactly one input on the page
     expect(within(ask as HTMLElement).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["What needs me today?", "Who should I call first?", "How much customer money is held?"]);
     cleanup();
     await view(data(), { lang: "te" });
     const chips = within(document.querySelector('[data-ask="live"]') as HTMLElement).getAllByRole("listitem").map((li) => li.textContent);
-    expect(chips.slice(0, 2)).toEqual(["What needs me today?", "Who should I call first?"]); // always English
-    expect(chips[2]).toBe(appT("te")("ask.chip.money")); // the person's language
+    expect(chips).toEqual([appT("te")("ask.chip.needs"), appT("te")("ask.chip.call"), appT("te")("ask.chip.money")]); // the person's language, all three
   });
-  it("the question line is a bar at the BOTTOM of the screen on every size (job DM): fixed above the bottom bar on a phone, floating from the edge of the menu on a laptop, with the AI circle at its left", async () => {
+  it("the question line is a line in the card, not a bar fixed to the screen (the bar of job DM is gone)", async () => {
     await view(data());
     const form = document.querySelector('[data-ask="live"] form')!;
-    expect(form.className).toContain("fixed");
-    expect(form.className).toContain("bottom-[calc(4rem+env(safe-area-inset-bottom))]");
-    expect(form.className).toContain("md:bottom-4");
-    expect(form.className).toMatch(/md:left-\[calc\((72px|16rem)\+1\.5rem\)\]/);
-    expect(form.querySelector("[data-orb]")).not.toBeNull();
+    expect(form.className).not.toContain("fixed");
+    expect(form.closest('[data-part="agent-owl"]')).not.toBeNull();
+    expect(document.querySelector('[data-screen="today"] form.fixed')).toBeNull();
   });
   it("is 'Not available yet' while Vijaya is not built, 'Switched off' when its switch is off, and the owl rests", async () => {
     await view(data({ team: TEAM!.map((a) => (a.agent === "main" ? { ...a, state: "not_available" as const } : a)) }));
@@ -148,10 +146,9 @@ describe("Today: the order of the sections", () => {
     await view(data({ store: ready([{ id: "v1", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 0, topic: null, status: "confirmed", here: false }]) }));
     expect([...document.querySelectorAll('[data-screen="today"] section[data-part]:not([data-part="agent-owl"])')].map((s) => s.getAttribute("data-part"))).toEqual(["visits", "done", "team"]);
   });
-  it("leaves a room under the content for the fixed question line and, on a phone, the bottom bar", async () => {
+  it("has no spacer for a bottom bar any more: there is none", async () => {
     const { container } = await view(data());
-    const spacer = container.querySelector('[data-screen="today"] > div[aria-hidden="true"]')!;
-    expect(spacer.className).toContain("h-24");
+    expect(container.querySelector('[data-screen="today"] > div[aria-hidden="true"]')).toBeNull();
   });
 });
 
@@ -275,8 +272,17 @@ describe("Today: sending stopped", () => {
     await view(data({ sending: { stopped: true } }));
     const banner = document.querySelector('[data-banner="sending-stopped"]') as HTMLElement;
     expect(banner).toHaveTextContent("Sending is stopped");
-    expect(banner).toHaveTextContent("Nothing goes out and everything waits until the operator switches sending back on.");
+    expect(banner).toHaveTextContent("Nothing goes out and everything waits until the Stack19 team switches sending back on.");
     expect(banner.compareDocumentPosition(document.querySelector('[data-part="agent-owl"]') as Element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+  it("a demo workspace says it is a demo and that nothing goes out, and never says 'operator' (fix-today-ask)", async () => {
+    await view(data({ sending: { stopped: true } }), { demo: true });
+    const banner = document.querySelector('[data-banner="sending-stopped"]') as HTMLElement;
+    expect(banner).toHaveTextContent("Demo workspace: sending is switched off. Nothing goes out; you can still read and edit messages.");
+    expect(banner.textContent ?? "").not.toMatch(/operator/i);
+    cleanup();
+    await view(data({ sending: { stopped: true } }));
+    expect((document.querySelector('[data-banner="sending-stopped"]')!.textContent ?? "")).not.toMatch(/operator/i);
   });
   it("no banner when sending is on, or when it is not known (a Sales, a Viewer, a read that failed)", async () => {
     await view(data({ sending: { stopped: false } }));

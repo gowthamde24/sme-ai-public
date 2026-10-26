@@ -5514,10 +5514,10 @@
   "humanOnly": true
  },
  "outbox.stopped.body": {
-  "en": "Nothing goes out and everything waits until the Stack19 team switches sending back on. You can still read and edit messages.",
-  "te": "Nothing goes out and everything waits until the Stack19 team switches sending back on. You can still read and edit messages.",
-  "hi": "Nothing goes out and everything waits until the Stack19 team switches sending back on. You can still read and edit messages.",
-  "kn": "Nothing goes out and everything waits until the Stack19 team switches sending back on. You can still read and edit messages.",
+  "en": "Nothing goes out and everything waits until the {brand} team switches sending back on. You can still read and edit messages.",
+  "te": "Nothing goes out and everything waits until the {brand} team switches sending back on. You can still read and edit messages.",
+  "hi": "Nothing goes out and everything waits until the {brand} team switches sending back on. You can still read and edit messages.",
+  "kn": "Nothing goes out and everything waits until the {brand} team switches sending back on. You can still read and edit messages.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6182,10 +6182,10 @@
   }
  },
  "agentset.system.on.note": {
-  "en": "Sending is allowed for the whole system. The Stack19 team owns this switch; you can only see it.",
-  "te": "Sending is allowed for the whole system. The Stack19 team owns this switch; you can only see it.",
-  "hi": "Sending is allowed for the whole system. The Stack19 team owns this switch; you can only see it.",
-  "kn": "Sending is allowed for the whole system. The Stack19 team owns this switch; you can only see it.",
+  "en": "Sending is allowed for the whole system. The {brand} team owns this switch; you can only see it.",
+  "te": "Sending is allowed for the whole system. The {brand} team owns this switch; you can only see it.",
+  "hi": "Sending is allowed for the whole system. The {brand} team owns this switch; you can only see it.",
+  "kn": "Sending is allowed for the whole system. The {brand} team owns this switch; you can only see it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6194,10 +6194,10 @@
   "humanOnly": true
  },
  "agentset.system.off.note": {
-  "en": "Sending is stopped for the whole system by the Stack19 team. Nothing goes out and everything waits.",
-  "te": "Sending is stopped for the whole system by the Stack19 team. Nothing goes out and everything waits.",
-  "hi": "Sending is stopped for the whole system by the Stack19 team. Nothing goes out and everything waits.",
-  "kn": "Sending is stopped for the whole system by the Stack19 team. Nothing goes out and everything waits.",
+  "en": "Sending is stopped for the whole system by the {brand} team. Nothing goes out and everything waits.",
+  "te": "Sending is stopped for the whole system by the {brand} team. Nothing goes out and everything waits.",
+  "hi": "Sending is stopped for the whole system by the {brand} team. Nothing goes out and everything waits.",
+  "kn": "Sending is stopped for the whole system by the {brand} team. Nothing goes out and everything waits.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -25476,10 +25476,10 @@
   "humanOnly": true
  },
  "ws.synthetic_body": {
-  "en": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The Stack19 team opens this once the privacy checks are done.",
-  "te": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The Stack19 team opens this once the privacy checks are done.",
-  "hi": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The Stack19 team opens this once the privacy checks are done.",
-  "kn": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The Stack19 team opens this once the privacy checks are done.",
+  "en": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The {brand} team opens this once the privacy checks are done.",
+  "te": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The {brand} team opens this once the privacy checks are done.",
+  "hi": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The {brand} team opens this once the privacy checks are done.",
+  "kn": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The {brand} team opens this once the privacy checks are done.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27883,10 +27883,10 @@
   }
  },
  "acct.there_are_no_backup_codes_ask": {
-  "en": "There are no backup codes. Write to the Stack19 team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
-  "te": "There are no backup codes. Write to the Stack19 team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
-  "hi": "There are no backup codes. Write to the Stack19 team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
-  "kn": "There are no backup codes. Write to the Stack19 team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "en": "There are no backup codes. Write to the {brand} team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "te": "There are no backup codes. Write to the {brand} team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "hi": "There are no backup codes. Write to the {brand} team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "kn": "There are no backup codes. Write to the {brand} team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -33996,10 +33996,10 @@
   }
  },
  "team.owners_note": {
-  "en": "Owners are added by the Stack19 team, not here.",
-  "te": "Owners are added by the Stack19 team, not here.",
-  "hi": "Owners are added by the Stack19 team, not here.",
-  "kn": "Owners are added by the Stack19 team, not here.",
+  "en": "Owners are added by the {brand} team, not here.",
+  "te": "Owners are added by the {brand} team, not here.",
+  "hi": "Owners are added by the {brand} team, not here.",
+  "kn": "Owners are added by the {brand} team, not here.",
   "status": {
    "te": "draft",
    "hi": "draft",

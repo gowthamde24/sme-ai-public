@@ -6,4 +6,4 @@ Not set up. Owners and Admins need an authenticator app to erase data, export, c
 [button type=button: Set up an authenticator]
 {label="If you lose your phone"}
 ## If you lose your phone
-There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.
+There are no backup codes. Write to the Stack19 team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.

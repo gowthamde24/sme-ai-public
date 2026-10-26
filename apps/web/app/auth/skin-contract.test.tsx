@@ -141,7 +141,7 @@ describe("/auth/mfa", () => {
     expect(forms).toHaveLength(2);
     expect(forms[0].querySelector('button[type="submit"]')!.textContent).toBe("Verify");
     expect(forms[1].querySelector('button[type="submit"]')!.textContent).toBe("Sign out");
-    expect(text(container)).toContain("Lost your phone? Ask the operator of this system.");
+    expect(text(container)).toContain("Lost your phone? Write to the Stack19 team.");
     expect(text(container)).toContain("Until then you can sign in, but not erase data, export, or change members and settings.");
   });
 });

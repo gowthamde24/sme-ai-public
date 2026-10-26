@@ -23,7 +23,7 @@ Vijaya this week 88% left
 {role=meter label="Vijaya usage this week: 88% left"}
 [88 %](/app/tenants/22222222-2222-2222-2222-222222222222/settings label="Vijaya usage this week: 88% left")
 [button type=button: Help for this screen]
-{role=status} Sending is stopped Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.
+{role=status} Sending is stopped Nothing goes out and everything waits until the Stack19 team switches sending back on. You can still read and edit messages.
 {label="5 things need you. The rest is handled."}
 {role=img label="Vijaya, Resting"}
 Resting Resting Resting Vijaya

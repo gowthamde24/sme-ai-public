@@ -9,6 +9,7 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
   Work: [
     ["Today", "", "today", [true, true, true, true]],
     ["Leads", "/review", "leads", [true, true, true, true]],
+    ["Follow-ups", "/followups", "followups", [true, true, true, true]],
     ["Quotes", "/quotes", "quotes", [true, true, true, false]],
     ["Store visits", "/visits", "visits", [true, true, true, true]],
     ["Orders", "/orders", "orders", [true, true, true, false]],
@@ -111,8 +112,8 @@ describe("which item a page belongs to", () => {
     expect(at("/app/security")).toBe("settings");
   });
   it("puts the pages that have no menu row of their own under the item they are reached from", () => {
-    expect(at(`/app/tenants/${T}/followups`)).toBe("leads");
-    expect(at(`/app/tenants/${T}/followups/policy`)).toBe("leads");
+    expect(at(`/app/tenants/${T}/followups`)).toBe("followups"); // job DQ part 0: Follow-ups is a page of Calls, not a corner of Leads
+    expect(at(`/app/tenants/${T}/followups/policy`)).toBe("followups");
     expect(at(`/app/tenants/${T}/suggestions`)).toBe("leads");
     expect(at(`/app/tenants/${T}/leads/x`)).toBe("leads");
     expect(at(`/app/tenants/${T}/leads/x/followup`)).toBe("leads");

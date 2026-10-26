@@ -41,7 +41,7 @@ Only for a confirmed visit. Off unless you switch it on.
 Saving needs your authenticator app.
 {label="System-wide sending switch"}
 ## System-wide sending switch
-On Sending is allowed for the whole system. The operator owns this switch; you can only see it.
+On Sending is allowed for the whole system. The {brand} team owns this switch; you can only see it.
 {label="Vijaya's checks"}
 ## Vijaya's checks
 Approved messages still go out when automatic sending is off.
