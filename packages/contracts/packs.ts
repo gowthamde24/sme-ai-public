@@ -101,7 +101,7 @@ export interface ExampleDataStatusOut {
 export interface ModuleStateOut {
   module: string;
   enabled: boolean;
-  reason: "pack";
+  reason: "pack" | "core";
 }
 
 export interface PackListOut {

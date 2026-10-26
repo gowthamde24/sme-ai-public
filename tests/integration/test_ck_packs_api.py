@@ -86,6 +86,7 @@ def test_a_workspace_made_through_the_api_runs_todays_textile_behaviour(eval_wor
     mods = w.client.get(url(a, "/modules"), headers=bearer(owner))
     conforms(mods.json(), "WorkspaceModulesOut")
     assert sum(1 for m in mods.json()["modules"] if m["enabled"]) == 18 and len(mods.json()["modules"]) == 27
+    assert {m["module"]: m["reason"] for m in mods.json()["modules"]}["lead_desk"] == "core" and {m["module"]: m["reason"] for m in mods.json()["modules"]}["quotes"] == "pack"
     assert w.client.get(url(a, "/custom-fields"), headers=bearer(owner)).json() == {"fields": []}
     for role in ("admin", "sales", "viewer"):
         assert w.client.get(url(a, "/pack"), headers=bearer(a.users[role])).status_code == 200, role
