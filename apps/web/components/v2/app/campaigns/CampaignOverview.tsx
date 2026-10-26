@@ -6,8 +6,11 @@ import { say, type TodayWords } from "../today/today-words";
 import { card, secondary } from "../visits/styles";
 import { stepPhrase } from "./campaign-logic";
 
+/** The campaign's own call settings, as the overview shows them (job DQ part 3): which fields differ from the AI assistant's call settings, and the way to change them. */
+export type CampaignCallsCard = { overridden: readonly string[] };
+
 /** What a campaign says and when (job CQ): the text with its merge fields as written, each step in plain words, the call plan, and what stops it from going out (the API's own checks, in our sentences). */
-export function CampaignOverview({ base, campaign, words, canEdit }: { base: string; campaign: CampaignDetailOut; words: TodayWords; canEdit: boolean }) {
+export function CampaignOverview({ base, campaign, words, canEdit, calls = null }: { base: string; campaign: CampaignDetailOut; words: TodayWords; canEdit: boolean; /** Owner and Admin, while the call settings are on: null = not drawn. */ calls?: CampaignCallsCard | null }) {
   const phrase = { before: (n: number) => say(words, "camp.step.before", { n }), on: () => say(words, "camp.step.on"), after: (n: number) => say(words, "camp.step.after", { n }) };
   return (
     <div data-part="overview" className="flex flex-col gap-4">
@@ -29,6 +32,13 @@ export function CampaignOverview({ base, campaign, words, canEdit }: { base: str
         </ol>
         {campaign.call_after_step ? <p className="text-base">{say(words, "camp.ov.call", { step: campaign.call_after_step, hours: campaign.call_wait_hours })}</p> : <p className="text-sm text-muted">{say(words, "camp.ov.nocall")}</p>}
       </section>
+      {calls ? (
+        <section className={card} data-part="campaign-calls" aria-labelledby="ov-calls">
+          <h2 id="ov-calls" className="font-display text-lg font-bold">{say(words, "calls.c.card.title")}</h2>
+          <p className="text-base">{calls.overridden.length > 0 ? say(words, "calls.c.summary", { fields: calls.overridden.map((f) => say(words, `calls.f.${f}`)).join(", ") }) : say(words, "calls.c.same")}</p>
+          <p><Link href={`${base}/campaigns/${campaign.id}/call-settings`} className={secondary}>{say(words, "calls.c.link")}</Link></p>
+        </section>
+      ) : null}
       {canEdit && (campaign.status === "draft" || campaign.status === "approved") ? (
         <p><Link href={`${base}/campaigns/${campaign.id}/edit`} className={secondary}>{say(words, "camp.ov.edit")}</Link></p>
       ) : null}

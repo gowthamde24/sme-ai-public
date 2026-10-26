@@ -882,6 +882,22 @@ add({ id: "campaigns-construction-empty", roles: ["owner"], render: async () => 
 add({ id: "campaign-new-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/new/page")).default(props({})), handlers: (role) => ({ ...cons(role), listTemplates: () => parseTemplates({ templates: [{ id: "7e000000-0000-4000-8000-000000000001", name: "payment_reminder_en", language: "en", purpose: "reminder", status: "approved" }] }) }) });
 add({ id: "campaign-new-education", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), listTemplates: () => parseTemplates({ templates: [] }) }) });
 add({ id: "campaign-edit-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/[campaignId]/edit/page")).default(props({ campaignId: CAMPAIGN })), handlers: (role) => ({ ...cons(role), ...campaignReads(), listTemplates: () => parseTemplates({ templates: [] }) }) });
+// job DQ part 3: one campaign's own call settings (the Owner saves, an Admin reads), in test mode
+add({
+  id: "campaign-call-settings-construction",
+  roles: ["owner", "admin"],
+  render: async () => {
+    const before = process.env.CALL_SETTINGS_SCREENS;
+    process.env.CALL_SETTINGS_SCREENS = "mock";
+    try {
+      return await (await import("@/app/app/tenants/[tenantId]/campaigns/[campaignId]/call-settings/page")).default(props({ campaignId: CAMPAIGN }));
+    } finally {
+      if (before === undefined) delete process.env.CALL_SETTINGS_SCREENS;
+      else process.env.CALL_SETTINGS_SCREENS = before;
+    }
+  },
+  handlers: (role) => ({ ...cons(role), ...campaignReads() }),
+});
 add({ id: "campaign-overview-issues", roles: ["owner", "sales"], render: campaignOf(null), handlers: (role) => ({ ...cons(role), ...campaignReads(DETAIL_ISSUES_JSON) }) });
 add({ id: "campaign-audience", roles: ["owner", "sales"], render: campaignOf("audience"), handlers: (role) => ({ ...cons(role), ...campaignReads() }) });
 add({ id: "campaign-approve", roles: ["owner", "sales"], render: campaignOf("approve"), handlers: (role) => ({ ...cons(role), ...campaignReads() }) });

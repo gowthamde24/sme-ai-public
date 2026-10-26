@@ -72,7 +72,8 @@ describe("the fake send of the test screens", () => {
     const p = mockPreview(bytes(FILE), "marks", "te", "");
     await send({ token: "t", tenantId: "x" }, bytes(FILE), "text/csv", { kind: "marks", language: "te", term: "", batchId: "11111111-1111-4111-8111-111111111111", sha256: p.fileSha256, count: p.willSend });
     const stored = h.jar.get(MOCK_COOKIE)!;
-    expect(stored).not.toMatch(/Asha|Ravi|Maths|45|9876|Term/);
+    // the log line holds an id, a time and counts; the time is cut out before looking for a mark ("45" is a minute of the clock one day in sixty)
+    expect(stored.replace(/\d{4}-\d{2}-\d{2}T[\d:.]+Z/g, "")).not.toMatch(/Asha|Ravi|Maths|45|9876|Term/);
     expect(await readLog({ token: "t", tenantId: "x" })).toEqual([expect.objectContaining({ batchId: "11111111-1111-4111-8111-111111111111", sent: 2, blocked: 1 })]);
     expect(parseLog("{broken")).toEqual([]);
     expect(parseLog(encodeLog([]))).toEqual([]);

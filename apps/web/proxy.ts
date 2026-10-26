@@ -1,12 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 import { buildCsp, newNonce, storageOrigin } from "@/lib/security/csp";
+import { isClosedPath, websiteOnly } from "@/lib/site/mode";
 import { refreshSession } from "@/lib/supabase/proxy-session";
 
 /**
  * Next.js 16 "proxy" (formerly middleware). Three jobs:
  *  1. give EVERY page a Content-Security-Policy with a fresh nonce (lib/security/csp.ts);
  *  2. keep the Supabase session fresh (rotates tokens, rewrites cookies);
+ *  0. in website mode (SITE_MODE=website, job DQ) the app and every sign-in page answer with "Opening soon — book a demo" (the page /opening-soon), and /landing is the home page; nothing below runs;
  *  3. send signed-out visitors of /app to /login, signed-in visitors of /login to /app, and a person who has an
  *     authenticator but a password-only session to the code challenge (ADR 0016).
  *
@@ -23,6 +25,13 @@ export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   // where the person is, for requireUser(): a signed-out redirect from deep in a page can then carry ?next= (job BW). Always set here, so a caller cannot choose it.
   request.headers.set("x-sme-path", pathname + search);
+  if (websiteOnly()) {
+    const closed = isClosedPath(pathname) ? NextResponse.rewrite(new URL("/opening-soon", request.url), { request }) : pathname === "/landing" ? NextResponse.redirect(new URL("/", request.url), 308) : null;
+    if (closed) {
+      closed.headers.set("Content-Security-Policy", csp);
+      return closed;
+    }
+  }
   const needsSession =
     pathname.startsWith("/app") ||
     pathname === "/login" ||

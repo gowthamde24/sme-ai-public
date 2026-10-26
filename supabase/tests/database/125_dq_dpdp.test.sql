@@ -136,6 +136,12 @@ select is(pg_temp.val('x5', $q$select jsonb_array_length(public.scheduler_lapse_
 select is(pg_temp.val('a_owner', format($q$select public.lapse_erasure_status(%L) ->> 'erasure_warning_sent_at' is not null$q$, tests.tid('a'))), 'true', 'F11 the Owner''s screen can see that the warning went');
 select is(pg_temp.val('a_viewer', format($q$select public.lapse_erasure_status(%L) ->> 'erasure_warning_sent_at' is not null$q$, tests.tid('a'))), 'true', 'F12 ... and so can every member');
 select is(pg_temp.val('outsider', format($q$select public.lapse_erasure_status(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'F13 ... but not a stranger');
+select is(pg_temp.val('a_viewer', format($q$select public.lapse_erasure_status(%L) ->> 'demo'$q$, tests.tid('a'))), 'false', 'F13a an ordinary workspace is not a demo');
+select app.operator_set_demo(tests.tid('b'), true);
+select is(pg_temp.val('b_viewer', format($q$select public.lapse_erasure_status(%L) ->> 'demo'$q$, tests.tid('b'))), 'true', 'F13b a demo workspace says so (every member can read it)');
+select is(pg_temp.val('b_viewer', format($q$select public.lapse_erasure_status(%L) ->> 'exempt'$q$, tests.tid('b'))), 'true', 'F13c ... and a demo is exempt from billing');
+select app.operator_set_demo(tests.tid('b'), false);
+select app.operator_billing_exempt(tests.tid('b'), false);
 select is(pg_temp.val('x5', format($q$select public.scheduler_lapse_erase(%L)::text$q$, tests.tid('a'))), 'ERR:SM613', 'F14 before the day: refused');
 select pg_temp.pin('2026-09-29T11:00:00+05:30'::timestamptz);
 select is(pg_temp.val('x5', format($q$select public.scheduler_lapse_erase(%L)::text$q$, tests.tid('a'))), 'ERR:SM613', 'F15 an hour before the day: refused');

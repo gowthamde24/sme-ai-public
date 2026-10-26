@@ -31,10 +31,10 @@ describe("SEO (job BS)", () => {
     expect(["te", "hi", "kn"].every(isRouteLang)).toBe(true);
     expect(isRouteLang("en")).toBe(false);
   });
-  it("before launch (the switch is off) robots.txt turns every crawler away and the sitemap is empty", () => {
+  it("before launch (the switch is off) robots.txt turns every crawler away and the sitemap is empty", async () => {
     expect(SITE_LIVE).toBe(false);
-    expect(robots()).toEqual({ rules: [{ userAgent: "*", disallow: "/" }] });
-    expect(sitemap()).toEqual([]);
+    expect(await robots()).toEqual({ rules: [{ userAgent: "*", disallow: "/" }] });
+    expect(await sitemap()).toEqual([]);
   });
 });
 
@@ -47,8 +47,8 @@ describe("SEO with the launch switch on", () => {
     const { vi } = await import("vitest");
     vi.resetModules();
     const live = await import("@/lib/seo/site");
-    const r = (await import("@/app/robots")).default();
-    const s = (await import("@/app/sitemap")).default();
+    const r = await (await import("@/app/robots")).default();
+    const s = await (await import("@/app/sitemap")).default();
     process.env.NEXT_PUBLIC_SITE_LIVE = prev;
     delete process.env.NEXT_PUBLIC_SITE_URL;
     vi.resetModules();

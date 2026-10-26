@@ -67,6 +67,16 @@ export function toApiSettings(s: AssistantSettings): Record<string, unknown> {
   };
 }
 
+import { parseTestCall, type TestCall } from "@/lib/assistant/test-call";
+
+/** `POST /test-call` (Owner, second factor): a SIMULATION until telephony exists (`mode: "fake"`): a transcript and the outcome it would record. Nothing is called, sent or stored. */
+export async function postTestCall(accessToken: string, tenantId: string): Promise<TestCall> {
+  if (!isCanonicalUuid(tenantId)) throw new ApiContractError("id");
+  const call = parseTestCall(await apiRequest(`/v1/tenants/${tenantId}/ai-assistant/test-call`, accessToken, { method: "POST", body: JSON.stringify({}) }));
+  if (!call) throw new ApiContractError("Unexpected test call response.");
+  return call;
+}
+
 export type AssistantFromApi = { settings: AssistantSettings; saved: boolean };
 
 /**
