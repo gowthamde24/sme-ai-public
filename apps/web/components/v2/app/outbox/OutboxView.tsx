@@ -15,6 +15,8 @@ import { presetDates, type LogFilters } from "./outbox-time";
 import { schedulerView } from "./scheduler-line";
 
 export type OutboxViewProps = {
+  /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */
+  demo?: boolean;
   /** The "?" tip of the screen (job BT): drawn under the heading. */
   help?: React.ReactNode;
   tab: OutboxTab;
@@ -89,7 +91,7 @@ export function OutboxView(p: OutboxViewProps) {
         {admin && p.scheduler ? <SchedulerLine s={p.scheduler} now={p.now} words={words} /> : null}
       </header>
       {p.help}
-      {p.settings?.platform_switch_on === false ? <SendingBanner words={words} /> : null}
+      {p.settings?.platform_switch_on === false ? <SendingBanner words={words} demo={p.demo} /> : null}
       {p.settings && p.settings.platform_switch_on && !p.settings.auto_send_enabled ? (
         <p data-note="auto-off" className="rounded-2xl bg-surface-2 px-4 py-3 text-sm">
           {say(words, "outbox.autooff")}

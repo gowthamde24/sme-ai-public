@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 
 import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { saveAssistant, type SaveResult } from "@/lib/assistant/source";
+import { saveAssistant, testCall, type SaveResult } from "@/lib/assistant/source";
+import type { TestCallResult } from "@/lib/assistant/test-call";
 import { requireUser } from "@/lib/auth/session";
 import { readPackCached } from "@/lib/packs/read";
 
@@ -27,4 +28,21 @@ export async function saveAssistantAction(tenantId: string, input: unknown): Pro
   const result = await saveAssistant({ token: user.accessToken, tenantId }, input, pack?.modules ?? null);
   if (result.ok) revalidatePath(`/app/tenants/${tenantId}/settings`);
   return result;
+}
+
+/** The simulated test call (job DQ part 3): the Owner of the workspace only; no call is made, nothing is sent or stored. */
+export async function testCallAction(tenantId: string): Promise<TestCallResult> {
+  const user = await requireUser();
+  if (!isCanonicalUuid(tenantId)) return { ok: false, error: "not_available" };
+  let shop = "";
+  try {
+    const tenant = await fetchTenant(user.accessToken, tenantId);
+    if (tenant.role !== "owner") return { ok: false, error: "not_available" };
+    shop = tenant.name;
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    return { ok: false, error: "not_available" };
+  }
+  const pack = await readPackCached(user.accessToken, tenantId);
+  return testCall({ token: user.accessToken, tenantId }, shop, pack?.modules ?? null);
 }

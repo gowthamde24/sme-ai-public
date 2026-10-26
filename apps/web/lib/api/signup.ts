@@ -30,6 +30,8 @@ export type SignUpInput = {
   acceptTerms: boolean;
   /** The versions of the Terms and the Privacy Policy the page showed (job CF). Kept with the account and recorded, as accepted at sign-up, when the first-login setup makes the business. Left out when the page could not read them. */
   policyVersions?: { terms: string; privacy: string };
+  /** The person ticked the separate, UNTICKED box for news and offers (job DQ part 2). Only `true` counts; kept in the account's metadata until the first sign-in records it with the API (PUT /v1/me/consents/marketing, via "signup"). */
+  marketingOptIn?: boolean;
 };
 
 export type SignUpResult = { ok: true; next: "check-email" } | { ok: false; error: WebSignUpError };

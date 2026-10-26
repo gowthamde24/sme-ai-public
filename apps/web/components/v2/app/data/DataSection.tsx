@@ -6,9 +6,7 @@ import { card, h2, type Failed } from "../cc/kit";
 import { PartProblem } from "../cc/PartProblem";
 import { makeT, type Words } from "../words";
 import { dataTable, dataTd, dataThCol, dataTr, mutedText } from "../ui";
-import { CalendarFeed } from "./CalendarFeed";
-import { DataExport } from "./DataExport";
-import { DataImport } from "./DataImport";
+import { CalendarFeed, DataExport, DataImport } from "../settings/LazyTabs";
 
 type FeedResult = { ok: true; feed: NewCalendarFeed } | Failed;
 

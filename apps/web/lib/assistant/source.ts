@@ -2,10 +2,11 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 
 import { ApiRequestError } from "@/lib/api/client";
-import { getAiAssistant, putAiAssistant, type AssistantFromApi } from "@/lib/api/ai-assistant";
+import { getAiAssistant, postTestCall, putAiAssistant, type AssistantFromApi } from "@/lib/api/ai-assistant";
 import { assistantScreens } from "@/lib/screens/flag";
 
 import { assistantProfile, enforceProfile } from "./defaults";
+import { mockTestCall, type TestCallResult } from "./test-call";
 import { parseSettings, type AssistantSettings } from "./types";
 
 /**
@@ -77,4 +78,21 @@ export async function saveAssistant(ctx: CtxAssistant, input: unknown, modules: 
   }
   (await cookies()).set(MOCK_COOKIE, JSON.stringify(kept), { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 30, path: "/" });
   return { ok: true };
+}
+
+/** The simulated test call (job DQ part 3): the Owner, second factor on the API. `mock` answers from the saved settings (or the defaults); no call is made in either mode. */
+export async function testCall(ctx: CtxAssistant, shop: string, modules: readonly string[] | null | undefined): Promise<TestCallResult> {
+  const mode = assistantScreens();
+  if (mode === "off") return { ok: false, error: "not_available" };
+  if (mode === "on") {
+    try {
+      return { ok: true, call: await postTestCall(ctx.token, ctx.tenantId) };
+    } catch (error) {
+      if (error instanceof ApiRequestError && error.code === "mfa_required") return { ok: false, error: "mfa" };
+      if (error instanceof ApiRequestError && error.code === "workspace_read_only") return { ok: false, error: "read_only" };
+      return { ok: false, error: "not_available" };
+    }
+  }
+  const read = await readAssistant(ctx, modules);
+  return read.mode === "ok" ? { ok: true, call: mockTestCall(read.settings, shop) } : { ok: false, error: "not_available" };
 }

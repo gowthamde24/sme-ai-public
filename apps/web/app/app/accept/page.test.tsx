@@ -24,7 +24,7 @@ beforeEach(() => {
 describe("/app/accept", () => {
   it("shows what needs accepting", async () => {
     render(await AcceptPage(props()));
-    expect(screen.getByRole("heading", { level: 1, name: "Terms and Privacy Policy" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Terms and Privacy notice" })).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: /Terms/ })).toBeInTheDocument();
     expect(getPolicyStatus).toHaveBeenCalledWith("tok");
   });

@@ -166,7 +166,7 @@ async function main() {
             await s.page.goto(`${WEB_URL}/signup?type=${id}`, { waitUntil: "networkidle" });
             await s.page.getByRole("button", { name: "Continue with Google" }).waitFor({ timeout: 30_000 });
             check(await s.page.getByRole("button", { name: "Continue with Facebook" }).isVisible(), `${id} sign-up step 2: no Facebook button`);
-            check(await s.page.getByText("By continuing you agree to the").isVisible(), `${id} sign-up step 2: no terms line`);
+            check(await s.page.getByText("By continuing, you agree to the").isVisible(), `${id} sign-up step 2: no terms line`);
             check((await s.page.locator('input[type="checkbox"]').count()) === 0, `${id} sign-up step 2: a tick box is there`);
             await save(s.page, `signup-2-${id}`, `sign-up step 2 for ${id}: Google, Facebook, e-mail and the terms line`, { fullPage: true });
             await s.page.locator("details[data-signup=email] summary").click();

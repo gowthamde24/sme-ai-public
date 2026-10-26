@@ -10,7 +10,7 @@ import { frameBand } from "./frame-style";
 import { UsageCard } from "./frame-parts";
 import { itemBase, itemCurrent, itemIdle, NavGroups, NavLink } from "./NavGroups";
 import { word, withPackWords, type Labels } from "./labels";
-import { footItems, visibleGroups } from "./nav";
+import { menuFoot, menuGroups } from "./nav";
 import { useCollapsed } from "./use-collapsed";
 import { useWorkspace, type Membership } from "./use-workspace";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
@@ -23,20 +23,20 @@ export { itemCurrent };
  * Outside a workspace (the workspaces page, the security page) the groups give way to the two account pages.
  */
 export function SideNav({ memberships, labels: given_labels, frame: given, email, signOut }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void> }) {
-  const { current, pathname, active } = useWorkspace(memberships);
+  const { current, pathname, activeMenu } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const labels = withPackWords(given_labels, frame.pack);
   const [collapsed, toggle] = useCollapsed();
   const aria = word(labels, "frame.menu.workspace", "Workspace menu");
   const help = word(labels, "frame.help", "Help");
-  const foot = current ? footItems(current.role) : [];
+  const foot = current ? menuFoot(current.role, frame.pack) : [];
   const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
   return (
     <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-64"} print:hidden`}>
       <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} />
       <nav aria-label={aria} className="min-h-0 flex-1 overflow-y-auto p-2">
         {current ? (
-          <NavGroups groups={visibleGroups(current.role, frame.pack)} tenantId={current.id} activeItemId={active?.item.id ?? null} labels={labels} waiting={frame.waiting} collapsed={collapsed} />
+          <NavGroups groups={menuGroups(current.role, frame.pack)} tenantId={current.id} activeItemId={activeMenu} labels={labels} waiting={frame.waiting} collapsed={collapsed} />
         ) : (
           <div className="space-y-1">
             {[
@@ -52,7 +52,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
       </nav>
       <div className="space-y-1.5 border-t border-line p-2">
         {collapsed || !current || !frame.showUsage ? null : <UsageCard usage={frame.usage} loading={!frame.ready} labels={labels} />}
-        {current ? foot.map((i) => <NavLink key={i.id} item={i} tenantId={current.id} on={active?.item.id === i.id} labels={labels} collapsed={collapsed} />) : null}
+        {current ? foot.map((i) => <NavLink key={i.id} item={i} tenantId={current.id} on={activeMenu === i.id} labels={labels} collapsed={collapsed} />) : null}
         {current ? (
           <Link href={`/app/tenants/${current.id}/help`} aria-current={pathname.startsWith(`/app/tenants/${current.id}/help`) ? "page" : undefined} title={collapsed ? help : undefined} className={`${itemBase} w-full ${pathname.startsWith(`/app/tenants/${current.id}/help`) ? itemCurrent : itemIdle} ${collapsed ? "justify-center px-0" : ""}`}>
             <CircleHelp className="size-5 shrink-0" aria-hidden="true" />

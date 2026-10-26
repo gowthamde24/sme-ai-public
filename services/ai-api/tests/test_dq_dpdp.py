@@ -448,8 +448,16 @@ def test_a_read_only_workspace_shows_when_the_erasure_warning_went() -> None:
     assert body["erasure_warning_sent_at"].startswith("2026-09-27")
 
 
-def test_a_full_workspace_has_no_warning_and_costs_no_extra_call() -> None:
+def test_the_access_answer_says_whether_the_workspace_is_a_demo_or_exempt() -> None:
+    repo = FakeDpdpRepository()
+    repo.demo, repo.exempt = True, True
+    client, _ = make_client(dpdp=DpdpRuntime(repo), billing=SimpleNamespace(access=lambda token, tenant: {**ACCESS, "access": "full", "can_resume": False, "sending": "on"}, ensure=lambda *a, **k: None))
+    body = client.get(f"/v1/tenants/{TENANT_A.id}/billing/access", headers=auth("a_viewer")).json()
+    assert (body["demo"], body["exempt"], body["erasure_warning_sent_at"]) == (True, True, None)
+
+
+def test_a_full_workspace_has_no_warning_and_a_normal_one_is_not_a_demo() -> None:
     repo = FakeDpdpRepository()
     client, _ = make_client(dpdp=DpdpRuntime(repo), billing=SimpleNamespace(access=lambda token, tenant: {**ACCESS, "access": "full", "can_resume": False, "sending": "on"}, ensure=lambda *a, **k: None))
     body = client.get(f"/v1/tenants/{TENANT_A.id}/billing/access", headers=auth("a_viewer")).json()
-    assert body["erasure_warning_sent_at"] is None and repo.calls == []
+    assert body["erasure_warning_sent_at"] is None and body["demo"] is False and body["exempt"] is False

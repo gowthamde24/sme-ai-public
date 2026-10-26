@@ -93,7 +93,7 @@ const quiet = () => {
 };
 
 // ---- 1. sign up, confirm, sign in, set up the business ---------------------------------------------------------------------
-if (!(await step("A1", "sign up with the real two-step sign-up page (the kind of business, then the e-mail way with an address and a password; the terms are the line 'By continuing you agree')", async () => {
+if (!(await step("A1", "sign up with the real two-step sign-up page (the kind of business, then the e-mail way with an address and a password; the terms are the line 'By continuing, you agree')", async () => {
   await page.goto(`${BASE}/signup`);
   const card = page.locator("[data-pack-card]").first(); // the first card the API lists: the reviewed business type, the one the product always was
   await card.waitFor();

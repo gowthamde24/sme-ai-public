@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 import type { Lang } from "@/i18n/lang";
 import { legalT } from "@/i18n/legal";
@@ -83,7 +83,7 @@ type SummaryKey = "legal.sum.privacy.1" | "legal.sum.privacy.2" | "legal.sum.pri
  * The full text is in the visitor's language where one exists (the Privacy Policy and the data-deletion page; a machine-written draft, said so in a note, the English text counts) and in English otherwise (the Terms; then the
  * summary note says the English text is the one that counts). Every block of text carries the `lang` of the text it holds.
  */
-export function LegalDoc({ id, summaryKeys, lang }: { id: DocId; summaryKeys?: readonly SummaryKey[]; lang: Lang }) {
+export function LegalDoc({ id, summaryKeys, lang, extras }: { id: DocId; summaryKeys?: readonly SummaryKey[]; lang: Lang; /** Something drawn from live data, inserted after the FIRST block of a section by its id (the Privacy notice's list of processors comes from the API). */ extras?: Readonly<Record<string, ReactNode>> }) {
   const t = legalT(lang);
   const { doc, lang: docLang } = legalDocument(id, lang);
   const translated = docLang !== "en";
@@ -148,7 +148,10 @@ export function LegalDoc({ id, summaryKeys, lang }: { id: DocId; summaryKeys?: r
               <Rich text={s.title} />
             </h2>
             {s.blocks.map((b, i) => (
-              <BlockView key={i} block={b} label={fillLegal(s.title.replace(/^\d+\.\s*/, ""))} />
+              <Fragment key={i}>
+                <BlockView block={b} label={fillLegal(s.title.replace(/^\d+\.\s*/, ""))} />
+                {i === 0 && extras?.[s.id] ? <div lang={lang}>{extras[s.id]}</div> : null}
+              </Fragment>
             ))}
           </section>
         ))}

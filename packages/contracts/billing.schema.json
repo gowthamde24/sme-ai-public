@@ -87,6 +87,16 @@
           ],
           "default": null,
           "title": "Erasure Warning Sent At"
+        },
+        "demo": {
+          "default": false,
+          "title": "Demo",
+          "type": "boolean"
+        },
+        "exempt": {
+          "default": false,
+          "title": "Exempt",
+          "type": "boolean"
         }
       },
       "required": [
