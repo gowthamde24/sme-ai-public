@@ -93,6 +93,19 @@ class Settings(BaseSettings):
     anthropic_base_url: str = "https://api.anthropic.com"
     llm_input_micros_per_mtok: int | None = None
     llm_output_micros_per_mtok: int | None = None
+    # Night 3 (ADR 0102): the model per AI job. claude (default) = the main model as LLM_PROVIDER
+    # configures it; sarvam = Sarvam's chat model, only for the jobs that allow it
+    # (app.agents.llm.jobs). A wrong value, or sarvam on a job that refuses it, stops the process.
+    ai_job_ask: str = "claude"
+    ai_job_research: str = "claude"
+    ai_job_outcome_classify: str = "claude"
+    ai_job_followup_plan: str = "claude"
+    ai_job_call_turn: str = "claude"
+    ai_job_whatsapp_reply: str = "claude"
+    sarvam_chat_model: str = "sarvam-105b"
+    # Rs 15 in, Rs 60 out per million tokens (sarvam.ai/api-pricing)
+    sarvam_chat_input_micros_per_mtok: int = 15_000_000
+    sarvam_chat_output_micros_per_mtok: int = 60_000_000
     llm_spend_cap_confirmed: bool = False
     # The "light" model (job AK K2b, ADR 0064): a workspace that has used 100 % of its daily or
     # monthly AI allowance is served by this cheaper model until the window resets (the same

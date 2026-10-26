@@ -11,8 +11,8 @@ from __future__ import annotations
 import dataclasses
 import logging
 import uuid
-from collections.abc import Callable
-from dataclasses import dataclass
+from collections.abc import Callable, Mapping
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TypeVar
 
@@ -24,6 +24,7 @@ from app.agents.llm.fake import FakeProvider, research_script, selftest_script
 from app.agents.llm.fake_requirement import requirement_script
 from app.agents.llm.gemini import GeminiClient, GeminiConfig
 from app.agents.llm.interface import LlmClient
+from app.agents.llm.jobs import DEFAULT_PROVIDER, JOBS, check_choices
 from app.agents.llm.openai_compat import (
     ChatCompletionsClient,
     ChatCompletionsConfig,
@@ -66,6 +67,13 @@ class AgentsRuntime:
     # provider, in development only) and the database door per message
     assistant_llm: Callable[[], LlmClient | ModelRouter] | None = None
     assistant_db: Callable[[str, uuid.UUID], AssistantDb] | None = None
+    # night 3 (ADR 0102): a job whose setting names another model than the default has its own
+    # client factory here; every other job uses assistant_llm
+    job_llm: Mapping[str, Callable[[], LlmClient | ModelRouter]] = field(default_factory=dict)
+
+    def llm_for(self, job: str) -> Callable[[], LlmClient | ModelRouter] | None:
+        """The client factory of one AI job (app.agents.llm.jobs), or None without a model."""
+        return self.job_llm.get(job) or self.assistant_llm
 
 
 def _anthropic_config(settings: Settings) -> AnthropicConfig | str:
@@ -283,7 +291,51 @@ def research_fixture_root(settings: Settings) -> Path | None:
     return root if root.is_dir() else None
 
 
+def job_providers(settings: Settings) -> dict[str, str]:
+    """The model choice of every AI job, checked: a wrong word, or `sarvam` for a job that
+    refuses it, stops the process (AgentSettingsError)."""
+    choices = {job: str(getattr(settings, f"ai_job_{job}")).strip().lower() for job in JOBS}
+    problems = check_choices(choices)
+    if problems:
+        raise AgentSettingsError("; ".join(problems))
+    return choices
+
+
+def sarvam_job_model(settings: Settings) -> Callable[[], LlmClient | ModelRouter]:
+    """Sarvam's chat model for the jobs that choose it. Needs SARVAM_API_KEY and the owner's
+    confirmation of the provider's spend cap, like every hosted model; no light model."""
+    key = settings.sarvam_api_key.get_secret_value().strip() if settings.sarvam_api_key else ""
+    if not key:
+        raise AgentSettingsError("an AI_JOB_* setting names sarvam but SARVAM_API_KEY is not set")
+    if not settings.llm_spend_cap_confirmed:
+        raise AgentSettingsError(
+            "an AI_JOB_* setting names sarvam but LLM_SPEND_CAP_CONFIRMED is not set"
+        )
+    try:
+        config = sarvam_config(
+            key,
+            settings.sarvam_chat_model.strip(),
+            settings.sarvam_chat_input_micros_per_mtok,
+            settings.sarvam_chat_output_micros_per_mtok,
+        )
+    except ValueError:
+        raise AgentSettingsError("the Sarvam chat model configuration is invalid") from None
+    return lambda: ChatCompletionsClient(config)
+
+
+def build_job_llms(settings: Settings) -> dict[str, Callable[[], LlmClient | ModelRouter]]:
+    """Only the jobs that chose something other than the default get an entry; with every job
+    on claude this is empty and nothing changes."""
+    choices = job_providers(settings)
+    chosen = [job for job, value in choices.items() if value != DEFAULT_PROVIDER]
+    if not chosen:
+        return {}
+    factory = sarvam_job_model(settings)
+    return dict.fromkeys(chosen, factory)
+
+
 def build_agents_runtime(settings: Settings, config: AuthConfig) -> AgentsRuntime:
+    job_llm = build_job_llms(settings)   # a wrong job setting stops the process, agents on or off
     repository = PostgrestAgentRunsRepository(config.rest_url, config.anon_key)
     reason = llm_unavailable_reason(settings)
     if reason is not None:
@@ -341,4 +393,5 @@ def build_agents_runtime(settings: Settings, config: AuthConfig) -> AgentsRuntim
         research_available=fixtures is not None,
         assistant_llm=(lambda: DevAssistantModel()) if settings.llm_provider == "fake" else factory,
         assistant_db=assistant_db,
+        job_llm=job_llm,
     )

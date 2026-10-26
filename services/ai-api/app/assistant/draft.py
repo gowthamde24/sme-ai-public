@@ -136,12 +136,8 @@ def draft_for_lead(
 ) -> Suggestion:
     """`refusal(exc)` turns an AgentDbError into the API's ApiError (the assistant's own mapping)."""
     agents = runtime.agents
-    if (
-        agents is None
-        or agents.assistant_db is None
-        or agents.assistant_llm is None
-        or runtime.crm is None
-    ):
+    llm_factory = agents.llm_for("whatsapp_reply") if agents is not None else None   # the setting AI_JOB_WHATSAPP_REPLY decides which model (ADR 0102)
+    if agents is None or agents.assistant_db is None or llm_factory is None or runtime.crm is None:
         raise ApiError(503, "assistant_unavailable", "The assistant is not available right now.")
     lead = runtime.crm.get_row(token, "leads", tenant_id, lead_id)
     if lead is None or getattr(lead, "archived_at", None) is not None:
@@ -194,7 +190,7 @@ def draft_for_lead(
         except AgentDbError as exc:
             raise refusal(exc) from None
         began = True
-        router = as_router(agents.assistant_llm())
+        router = as_router(llm_factory())
         suggestion: Suggestion | None = None
         status, code = "failed", "invalid_output"
         try:
