@@ -44,10 +44,10 @@ describe("SideNav", () => {
   it("lists the groups for the role, marks the current page, and links inside the workspace", () => {
     side(owner);
     const menu = screen.getByRole("navigation", { name: "Workspace menu" });
-    expect(within(menu).getByRole("link", { name: "Orders" })).toHaveAttribute("aria-current", "page");
-    expect(within(menu).getByRole("link", { name: "Orders" })).toHaveAttribute("href", `/app/tenants/${A}/orders`);
-    for (const name of ["Work", "Your business", "Your team", "Connect"]) expect(within(menu).getByRole("group", { name })).toBeInTheDocument();
-    expect(within(menu).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads", "Quotes", "Store visits", "Orders", "Outbox", "Customer chats", "This week", "Customers", "Find retailers", "Catalogue", "Prices and products", "Team", "Office", "Integrations"]);
+    expect(within(menu).getByRole("link", { name: "Sales" })).toHaveAttribute("aria-current", "page"); // Orders is a tab of Sales
+    expect(within(menu).getByRole("link", { name: "Sales" })).toHaveAttribute("href", `/app/tenants/${A}/quotes`);
+    expect(within(menu).queryByRole("group")).toBeNull(); // seven rows in one plain list (job DQ part 0)
+    expect(within(menu).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", "Calls", "Sales", "Catalogue", "Reports"]);
   });
   it("the foot holds the AI usage card, Settings, Help (a link to the guides), the user card and Collapse menu", () => {
     side(owner, loaded);
@@ -100,8 +100,8 @@ describe("SideNav", () => {
   });
   it("a viewer is not offered what the plan hides from them, and a workspace not in the list gets no menu", () => {
     side(only("viewer"));
-    for (const hidden of ["Quotes", "Orders", "Catalogue and prices", "Integrations"]) expect(screen.queryByRole("link", { name: hidden })).toBeNull();
-    expect(screen.getByRole("link", { name: "Leads" })).toBeInTheDocument();
+    for (const hidden of ["Chats", "Reports"]) expect(screen.queryByRole("link", { name: hidden })).toBeNull();
+    expect(screen.getByRole("link", { name: "Customers" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Settings" })).toBeInTheDocument();
     cleanup();
     nav.pathname = `/app/tenants/${B}`;
@@ -133,13 +133,14 @@ describe("TabBar", () => {
   it("shows the five daily tabs (the phone calls Store visits \"Visits\") and More, then the rest of the menu in a sheet that closes with Escape", () => {
     bar(owner, loaded);
     const quick = screen.getByRole("navigation", { name: "Quick menu" });
-    expect(within(quick).getAllByRole("link").map((a) => a.textContent)).toEqual(["Waiting for you: 5Today", "Leads", "Quotes", "Visits", "Office"]);
-    expect(within(quick).getByRole("link", { name: "Visits" })).toHaveAttribute("href", `/app/tenants/${A}/visits`);
-    expect(within(quick).getByRole("button", { name: "More" }).className).toContain("text-brand-text"); // Orders (the page we are on) is in More
+    expect(within(quick).getAllByRole("link").map((a) => a.textContent)).toEqual(["Waiting for you: 5Today", "Customers", "Chats", "Sales"]);
+    expect(within(quick).getByRole("link", { name: "Sales" })).toHaveAttribute("href", `/app/tenants/${A}/quotes`);
+    expect(within(quick).getByRole("link", { name: "Sales" })).toHaveAttribute("aria-current", "page"); // Orders (the page we are on) is a tab of Sales
+    expect(within(quick).getByRole("button", { name: "More" }).className).not.toContain("text-brand-text");
     fireEvent.click(within(quick).getByRole("button", { name: "More" }));
     const dialog = screen.getByRole("dialog", { name: "All of the menu" });
-    expect(within(dialog).getAllByRole("link").map((a) => a.textContent).slice(0, 7)).toEqual(["Orders", "Outbox", "Customer chats", "This week", "Customers", "Find retailers", "Catalogue"]);
-    expect(within(dialog).getByRole("link", { name: "Orders" })).toHaveAttribute("aria-current", "page");
+    expect(within(dialog).getAllByRole("link").map((a) => a.textContent).slice(0, 5)).toEqual(["Calls", "Catalogue", "Reports", "Settings", "Help"]);
+    expect(within(dialog).getByRole("link", { name: "Calls" })).not.toHaveAttribute("aria-current");
     expect(within(dialog).getByRole("link", { name: "Settings" })).toHaveAttribute("href", `/app/tenants/${A}/settings`);
     expect(within(dialog).getByText("AI usage today")).toBeInTheDocument();
     expect(within(dialog).getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
@@ -151,10 +152,10 @@ describe("TabBar", () => {
   it("a viewer has only the tabs their role is offered, and one business has no list in the sheet", () => {
     bar(only("viewer"));
     const quick = screen.getByRole("navigation", { name: "Quick menu" });
-    expect(within(quick).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads", "Visits", "Office"]);
+    expect(within(quick).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Sales"]);
     fireEvent.click(within(quick).getByRole("button", { name: "More" }));
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getAllByRole("link").map((a) => a.textContent)).toEqual(["Customers", "Catalogue", "Team", "Settings", "Help"]);
+    expect(within(dialog).getAllByRole("link").map((a) => a.textContent)).toEqual(["Calls", "Catalogue", "Settings", "Help"]);
     expect(within(dialog).queryByText("Your workspaces")).toBeNull();
   });
   it("draws nothing outside a workspace", () => {
@@ -264,17 +265,13 @@ describe("the menu of a business type (job CL)", () => {
   const names = () => within(screen.getByRole("navigation", { name: "Workspace menu" })).getAllByRole("link").map((a) => a.textContent);
   it("shows the pack's words, leaves out the modules it does not have, and offers what only a pack brings", () => {
     side(only("owner"), view());
-    expect(names()).toContain(real.labels["nav.item.orders"]);
-    expect(names()).toContain(real.labels["nav.item.customers"]);
-    expect(names()).toContain("Campaigns");
+    // the menu is the same seven items for every business type; the pack's own words are the tabs inside them (GroupTabs.test.tsx)
+    expect(names()).toEqual(["Today", "Customers", "Chats", "Calls", "Sales", "Catalogue", "Reports"]);
     expect(names()).not.toContain("Fees");
-    expect(names()).not.toContain("Orders"); // the pack's word replaces the plain one
-    expect(names()).not.toContain("Catalogue"); // the pack here has the catalogue module: it is "Products" in its own words
   });
   it("leaves out a part whose module is off", () => {
-    side(only("owner"), view({ modules: real.modules.filter((m) => m !== "catalogue" && m !== "lead_finder") }));
-    expect(names()).not.toContain(real.labels["nav.item.sarees"]);
-    expect(names()).not.toContain(real.labels["nav.item.retailers"]);
+    side(only("owner"), view({ modules: real.modules.filter((m) => m !== "reports") }));
+    expect(names()).not.toContain("Reports"); // its only page needs the module
   });
   it("marks a business type no real owner has reviewed under the name (a small badge in its accent), but not a reviewed one", () => {
     const { container, unmount } = side(only("owner"), view());
@@ -284,18 +281,18 @@ describe("the menu of a business type (job CL)", () => {
     const again = side(only("owner"), view({ validated: true }));
     expect(again.container.querySelector("[data-accent]")).toBeNull();
   });
-  it("draws the phone's tabs with the core tab in the pack's own word, then More with the rest", () => {
+  it("draws the phone's four tabs (the same words for every business type), then More with the rest", () => {
     bar(only("owner"), view());
     const tabs = within(screen.getByRole("navigation", { name: "Quick menu" }));
-    expect(tabs.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Inbox", real.labels["pack.core_tab"], "Contacts"]);
+    expect(tabs.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", "Sales"]); // the same four words for every business type (the owner's list); the pack's own word for its core work is the tab inside Sales
     expect(tabs.getByRole("button", { name: "More" })).toBeInTheDocument();
     fireEvent.click(tabs.getByRole("button", { name: "More" }));
     const sheet = within(screen.getByRole("dialog"));
-    expect(sheet.getByRole("link", { name: "Campaigns" })).toBeInTheDocument();
-    expect(sheet.getByRole("link", { name: real.labels["nav.item.quotes"] })).toBeInTheDocument();
-    expect(sheet.queryByRole("link", { name: real.labels["pack.core_tab"] })).toBeNull(); // it is a tab, not in the sheet
+    expect(sheet.getByRole("link", { name: "Calls" })).toBeInTheDocument(); // Campaigns is a tab of Calls
+    expect(sheet.getByRole("link", { name: "Reports" })).toBeInTheDocument();
+    expect(sheet.queryByRole("link", { name: "Sales" })).toBeNull(); // it is a tab of the bar, not in the sheet
   });
-  it("the default pack's frame is the menu the product always had, with the same five tabs", () => {
+  it("the default pack's frame is the menu the product always had, with the same four tabs", () => {
     const defaultView = { ...NO_FRAME_DATA, pack: packFrame(defaultWorkspacePack(), "en") };
     const first = side(owner);
     const plain = names();
@@ -304,15 +301,15 @@ describe("the menu of a business type (job CL)", () => {
     expect(names()).toEqual(plain);
     cleanup();
     bar(owner, defaultView);
-    expect(within(screen.getByRole("navigation", { name: "Quick menu" })).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads", "Quotes", "Visits", "Office"]);
+    expect(within(screen.getByRole("navigation", { name: "Quick menu" })).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", "Sales"]);
   });
   it("is what the workspace's slot brought in that wins over what the first paint had (no flash of the wrong menu after the client takes over)", async () => {
     const { act } = await import("@testing-library/react");
     render(<SideNav memberships={only("owner")} frame={view()} email="o@example.test" signOut={noSignOut} />);
-    expect(names()).toContain(real.labels["nav.item.orders"]);
+    expect(names()).toContain("Reports");
     await act(async () => {
-      render(<FrameDataSlot data={view({ labels: { ...real.labels, "nav.item.orders": "Dispatch" } })} />);
+      render(<FrameDataSlot data={view({ modules: real.modules.filter((m) => m !== "reports") })} />);
     });
-    expect(names()).toContain("Dispatch");
+    expect(names()).not.toContain("Reports");
   });
 });

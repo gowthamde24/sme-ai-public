@@ -2,7 +2,7 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { NavGroups } from "./NavGroups";
-import { visibleGroups } from "./nav";
+import { menuGroups, visibleGroups } from "./nav";
 
 const T = "22222222-2222-2222-2222-222222222222";
 afterEach(cleanup);
@@ -17,13 +17,20 @@ describe("NavGroups", () => {
     expect(document.querySelector("details")).toBeNull(); // nothing opens or closes: every row is one look away
   });
   it("shows the count of what is waiting on Today only when there is one, with the words for a screen reader", () => {
-    const { rerender } = render(<NavGroups groups={visibleGroups("owner")} tenantId={T} activeItemId="today" waiting={5} />);
+    const { rerender } = render(<NavGroups groups={menuGroups("owner")} tenantId={T} activeItemId="m-today" waiting={5} />);
     expect(within(screen.getByRole("link", { name: /Today/ })).getByText("5")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Today/ })).toHaveTextContent("Waiting for you: 5");
-    rerender(<NavGroups groups={visibleGroups("owner")} tenantId={T} activeItemId="today" waiting={null} />);
+    rerender(<NavGroups groups={menuGroups("owner")} tenantId={T} activeItemId="m-today" waiting={null} />);
     expect(screen.getByRole("link", { name: "Today" })).toHaveTextContent(/^Today$/);
-    rerender(<NavGroups groups={visibleGroups("owner")} tenantId={T} activeItemId="today" waiting={0} />);
+    rerender(<NavGroups groups={menuGroups("owner")} tenantId={T} activeItemId="m-today" waiting={0} />);
     expect(screen.getByRole("link", { name: "Today" })).toHaveTextContent(/^Today$/);
+  });
+  it("the seven-item menu is one plain list: no group headings, the current row is marked", () => {
+    render(<NavGroups groups={menuGroups("owner")} tenantId={T} activeItemId="m-sales" />);
+    expect(screen.queryByRole("group")).toBeNull();
+    expect(screen.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", "Calls", "Sales", "Catalogue", "Reports"]);
+    expect(screen.getByRole("link", { name: "Sales" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Sales" })).toHaveAttribute("href", `/app/tenants/${T}/quotes`);
   });
   it("in the narrow rail the rows keep their words for a screen reader and a tooltip", () => {
     render(<NavGroups groups={visibleGroups("sales")} tenantId={T} activeItemId="leads" collapsed />);

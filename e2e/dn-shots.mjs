@@ -121,7 +121,7 @@ async function main() {
     browser = await chromium.launch({ args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] });
     const NAME = "Asha";
     const DOCK_SCREENS = ["/orders", "/quotes", "/outbox", "/visits"];
-    const NO_DOCK = ["/", "/settings", "/settings?section=assistant", "/quotes/new", "/office/live", "/help"];
+    const NO_DOCK = ["/", "/office/live"]; // no floating orb here: Today has the line in its card, the live call needs the whole screen
     const answerFor = (route) => route.fulfill({ status: 200, headers: { "Content-Type": "application/x-ndjson; charset=utf-8" }, body: [{ type: "text", delta: "Two quotes wait for your OK and one customer asked for a call. " }, { type: "text", delta: "Nothing else needs you today." }, { type: "done" }].map((e) => JSON.stringify(e)).join("\n") + "\n" });
     const around = (text, re) => { const m = re.exec(text); return m ? `…${text.slice(Math.max(0, m.index - 50), m.index + 60).replaceAll("\n", " | ")}…` : ""; };
     const dockWords = async (page) => page.locator('[data-dock="ask"]').innerText().catch(() => "");
@@ -144,34 +144,22 @@ async function main() {
           await context.close();
         }
         for (const route of DOCK_SCREENS) {
+          // job DQ part 0: the dock is gone; the other screens have the floating orb, which opens the panel
           const { context, page, errors } = await open({ scheme, sizeName, lang: "en" });
           await page.route("**/tenants/*/ask", answerFor);
           await page.goto(app(route), { waitUntil: "networkidle" });
-          const label = `dock ${route}`;
-          await page.locator('[data-dock="ask"] [data-ask="live"] form').waitFor({ timeout: 20000 });
+          const label = `orb ${route}`;
+          await page.locator('[data-ask="orb"]').waitFor({ timeout: 20000 });
           const text = await common(tag, label, page, errors, sizeName);
           check(!/Agent OWL/.test(text), `${tag} ${label}: Agent OWL is on the page`);
-          const bar = await page.locator('[data-ask="live"] form').boundingBox();
-          const view = page.viewportSize();
-          const nav = sizeName === "phone" ? await page.locator('nav[aria-label]').last().boundingBox() : null;
-          check(bar !== null && bar.y + bar.height > view.height - 140 && bar.y + bar.height <= view.height + 1, `${tag} ${label}: the line is not at the bottom (y ${bar && Math.round(bar.y)}, height ${view.height})`);
-          if (nav && bar) check(bar.y + bar.height <= nav.y + 1, `${tag} ${label}: the line is under the bottom bar (${Math.round(bar.y + bar.height)} > ${Math.round(nav.y)})`);
-          check((await page.locator('[data-ask-can]').count()) === 0, `${tag} ${label}: the "What can it do?" card is under the dock`);
-          check((await page.locator('[data-dock="room"]').count()) === 1, `${tag} ${label}: no room under the last row`);
-          if (route === "/quotes") await save(page, "dock-quotes", tag, "a main screen with the Ask dock at the bottom", { fullPage: false });
-          // ask: the answer opens in a sheet above the line, never over the line
+          check((await page.locator("[data-dock]").count()) === 0, `${tag} ${label}: the dock is drawn (it is gone)`);
+          if (route === "/quotes") await save(page, "orb-quotes", tag, "a main screen with the floating Ask orb", { fullPage: false });
+          await page.locator('[data-ask="orb"]').click();
+          await page.getByRole("dialog").waitFor({ timeout: 15000 });
           await page.getByLabel(/^Your question for/).fill("What needs me today?");
           await page.keyboard.press("Enter");
-          await page.getByText("Nothing else needs you today.").waitFor({ timeout: 15000 }).catch(async (e) => {
-            await save(page, "debug-dock-answer", tag, "DEBUG");
-            throw new Error(`${tag} ${label}: no answer in the dock. Dock text: ${(await dockWords(page)).replaceAll("\n", " | ").slice(0, 400)}; ${e.message.split("\n")[0]}`);
-          });
-          const sheet = await page.locator('[data-dock="ask"] [aria-live="polite"]').boundingBox();
-          const line = await page.locator('[data-ask="live"] form').boundingBox();
-          check(sheet !== null && line !== null && sheet.y + sheet.height <= line.y + 2, `${tag} ${label}: the answer is over the line`);
-          check(sheet !== null && sheet.height <= view.height * 0.62, `${tag} ${label}: the answer sheet is taller than 60% of the screen`);
-          check(sheet !== null && sheet.y >= 0, `${tag} ${label}: the answer starts above the top of the screen`);
-          if (route === "/quotes") await save(page, "dock-quotes-answer", tag, "the dock with an answer open above the line", { fullPage: false });
+          await page.getByRole("dialog").getByText("Nothing else needs you today.").waitFor({ timeout: 15000 });
+          if (route === "/quotes") await save(page, "orb-quotes-answer", tag, "the panel with an answer", { fullPage: false });
           check(errors.length === 0, `${tag} ${label}: console errors ${errors.join(" | ")}`);
           await context.close();
         }
@@ -182,8 +170,8 @@ async function main() {
         const tag = `light-${sizeName}-en`;
         const { context, page, errors } = await open({ scheme: "light", sizeName, lang: "en" });
         await page.goto(app(route), { waitUntil: "networkidle" });
-        await page.waitForTimeout(1800); // longer than the dock needs to appear
-        check((await page.locator('[data-dock]').count()) === 0, `${tag} ${route}: the dock is drawn here`);
+        await page.waitForTimeout(1800);
+        check((await page.locator('[data-dock]').count()) === 0 && (await page.locator('[data-ask="orb"]').count()) === 0, `${tag} ${route}: the dock or the orb is drawn here`);
         check(errors.filter((e) => !/404/.test(e)).length === 0, `${tag} ${route}: console errors ${errors.join(" | ")}`);
         await context.close();
       }
@@ -212,11 +200,13 @@ async function main() {
       check(!/\bVijaya\b|Agent OWL/.test(today), `${tag} named: Vijaya or Agent OWL is still on Today ${around(today, /\bVijaya\b|Agent OWL/)}`);
       await save(page, "today-named", tag, `Today with the owner's name for the assistant (${NAME})`, { fullPage: false });
       await page.goto(app("/quotes"), { waitUntil: "networkidle" });
-      await page.locator('[data-dock="ask"] [data-ask="live"] form').waitFor({ timeout: 20000 });
+      await page.locator('[data-ask="orb"]').waitFor({ timeout: 20000 });
       const orders = await common(tag, "quotes (named)", page, errors, sizeName);
+      await page.locator('[data-ask="orb"]').click();
+      await page.getByRole("dialog").waitFor({ timeout: 15000 });
       check(!/\bVijaya\b|Agent OWL/.test(orders), `${tag} named: Vijaya or Agent OWL is on Quotes`);
-      check((await page.getByLabel(`Your question for ${NAME}`).count()) === 1, `${tag} named: the dock's question line is not labelled with ${NAME}`);
-      await save(page, "dock-named", tag, `the dock with the owner's name (${NAME}) for the assistant`, { fullPage: false });
+      check((await page.getByLabel(`Your question for ${NAME}`).count()) === 1, `${tag} named: the panel's question line is not labelled with ${NAME}`);
+      await save(page, "orb-named", tag, `the panel with the owner's name (${NAME}) for the assistant`, { fullPage: false });
       for (const url of ["/help", "/settings?section=agent", "/office"]) {
         await page.goto(app(url), { waitUntil: "networkidle" });
         const text = await page.locator("body").innerText();

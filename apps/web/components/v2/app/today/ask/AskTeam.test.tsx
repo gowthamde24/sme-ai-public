@@ -384,17 +384,18 @@ describe("AskTeam: the hero variant (the Vijaya card of Today)", () => {
   it("the question line is 56 px on a laptop, round, with the hero placeholder, and the chips are the three given", () => {
     hero(playing([]), vi.fn(), "live", ["One?", "Two?", "Three?"]);
     const input = screen.getByRole("textbox", { name: "Your question for Vijaya" });
-    expect(input).toHaveAttribute("placeholder", "Ask anything, in any language…");
+    expect(input).toHaveAttribute("placeholder", "Ask Vijaya anything, in any language…");
     expect(input.className).toContain("md:min-h-14");
     expect(input.className).toContain("rounded-full");
     expect(screen.getAllByRole("listitem").map((li) => li.textContent)).toEqual(["One?", "Two?", "Three?"]);
     const send = screen.getByRole("button", { name: "Ask" });
     expect(send.className).toContain("md:size-14");
   });
-  it("on a phone the chips are out of the way (the bar is fixed above the tab bar) and a chip asks its question", async () => {
+  it("the line is in the card and not fixed to the screen (job DQ part 0), the chips show on every size, and a chip asks its question", async () => {
     const seen: { question: string; lang: string; signal: AbortSignal }[] = [];
     hero(playing([{ type: "text", delta: "ok" }, { type: "done" }], seen), vi.fn(), "live", ["One?", "Two?", "Three?"]);
-    expect(document.querySelector("ul")!.className).toContain("max-md:hidden");
+    expect(document.querySelector("ul")!.className).not.toContain("max-md:hidden");
+    expect(document.querySelector("form")!.className).not.toContain("fixed");
     fireEvent.click(screen.getByRole("button", { name: "Two?" }));
     await waitFor(() => expect(seen[0]?.question).toBe("Two?"));
   });

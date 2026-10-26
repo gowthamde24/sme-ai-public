@@ -48,17 +48,17 @@ describe("the frame in Telugu", () => {
     nav.pathname = `/app/tenants/${A}/orders`;
     const { container } = frame("te");
     const menu = screen.getByRole("navigation", { name: "వర్క్‌స్పేస్ మెనూ" });
-    expect(within(menu).getByRole("link", { name: "ఆర్డర్లు" })).toHaveAttribute("href", `/app/tenants/${A}/orders`);
+    expect(within(menu).getByRole("link", { name: "సేల్స్" })).toHaveAttribute("href", `/app/tenants/${A}/quotes`); // Sales: Quotes, Store visits and Orders are its tabs
     expect(container.querySelector("[data-ui='v2']")).toHaveAttribute("lang", "te");
     expect(container.querySelector("#main-content")).toHaveAttribute("lang", "en");
     expect(screen.getByRole("region", { name: "అనువాద సూచన" })).toHaveTextContent("యంత్రం రాసింది");
     expect(screen.getByText("The page")).toBeInTheDocument();
   });
-  it("draws the words of the new frame in Telugu too: the groups, the foot and Help", () => {
+  it("draws the words of the new frame in Telugu too: the seven items, the foot and Help", () => {
     nav.pathname = `/app/tenants/${A}/orders`;
     frame("te");
     const menu = screen.getByRole("navigation", { name: "వర్క్‌స్పేస్ మెనూ" });
-    expect(within(menu).getByRole("group", { name: "పని" })).toBeInTheDocument();
+    for (const word of ["ఈరోజు", "కస్టమర్లు", "చాట్‌లు", "కాల్స్", "సేల్స్", "క్యాటలాగ్", "రిపోర్టులు"]) expect(within(menu).getByRole("link", { name: word })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "సెట్టింగ్స్" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "సహాయం" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
   });
