@@ -1,0 +1,20 @@
+# Send marks to parents
+Upload one file, check what will be sent, then approve. Each parent gets a fixed message about their child.
+{role=note} Test mode: nothing is sent. The preview is made from your file in this session.
+{label="Marks are not stored. The file is deleted after sending."} Marks are not stored. The file is deleted after sending. The file is read once to show you the preview and once to send, and nothing of it is kept. Only a log stays: which parent got which message, and when. It holds no marks and no child's name.
+form:
+What to send
+<select label="What to send">
+  options: Marks of an exam=marks* | The report card is ready=report_ready
+Language for lines that name none
+<select label="Language for lines that name none">
+  options: English=en | తెలుగు=te* | हिन्दी=hi | ಕನ್ನಡ=kn
+Exam name (if the file has no exam column)
+<text label="Exam name (if the file has no exam column)" maxlength=40>
+The file (CSV or Excel)
+<file label="The file (CSV or Excel)" accept=.csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet>
+Columns: phone, student (first name or initials), subject, marks, out of, and the exam if you did not write it above.
+[button type=submit disabled: Show what will be sent]
+{label="Earlier sends"}
+## Earlier sends
+Not available yet

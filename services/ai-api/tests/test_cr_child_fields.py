@@ -39,6 +39,7 @@ ALLOWED = {
     "campaigns/models.py": "the ledger filter can name `student` as a party kind: a word, never a label",
     "dues/models.py": "the statement of a student's own ledger account carries a student_id: an id, never a label",
     "logging_safety.py": "route words only",
+    "marksmessages/": "marks messages to guardians (job DP part 2, ADR 0096): a child's first name is read from the school's own file in memory for one request and put into a fixed template; never stored, never logged, never given to a model (tests/test_dp_marks_send.py)",
 }
 
 

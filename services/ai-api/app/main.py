@@ -27,6 +27,9 @@ from app.billing.routes import router as billing_router
 from app.billing.service import BillingService
 from app.businessprofile.repository import PostgrestBusinessProfileRepository
 from app.businessprofile.routes import router as business_profile_router
+from app.callsettings.repository import PostgrestCallSettingsRepository
+from app.callsettings.routes import router as call_settings_router
+from app.callsettings.service import CallSettingsService
 from app.campaigns import errors as campaign_errors
 from app.campaigns.repository import PostgrestCampaignsRepository
 from app.campaigns.routes import router as campaigns_router
@@ -86,6 +89,10 @@ from app.leads.routes import router as leads_router
 from app.leadtools.repository import PostgrestLeadSearchRepository
 from app.leadtools.routes import router as leadtools_router
 from app.logging_safety import install_log_redaction
+from app.marksmessages.repository import PostgrestMarksSendRepository
+from app.marksmessages.routes import router as marks_messages_router
+from app.marksmessages.sender import FakeGuardianSender
+from app.marksmessages.service import MarksSendService
 from app.materials import errors as material_errors
 from app.materials.repository import PostgrestMaterialsRepository
 from app.materials.routes import public_router as materials_public_router
@@ -93,6 +100,7 @@ from app.materials.routes import router as materials_router
 from app.notifications.routes import me_router as notifications_me_router
 from app.notifications.routes import router as notifications_router
 from app.notifications.wiring import build_notifications
+from app.observability.sentry import init_sentry
 from app.orders import errors as order_errors
 from app.orders.repository import PostgrestOrdersRepository
 from app.orders.routes import router as orders_router
@@ -103,6 +111,10 @@ from app.outbox.routes import router as outbox_router
 from app.outcomes.repository import PostgrestOutcomesRepository
 from app.outcomes.routes import customers_router as outcomes_customers_router
 from app.outcomes.routes import router as outcomes_router
+from app.ownvoice import repository as own_voice_repo
+from app.ownvoice.repository import PostgrestOwnVoiceRepository
+from app.ownvoice.routes import router as own_voice_router
+from app.ownvoice.service import OwnVoiceService
 from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError
 from app.packs.providers import providers_from_settings
 from app.packs.registry import PackRegistry, default_directory
@@ -142,6 +154,7 @@ from app.visits import errors as visit_errors
 from app.visits.repository import PostgrestVisitsRepository
 from app.visits.routes import router as visits_router
 from app.voice.factory import build_voice
+from app.voice.fake import FakeVoiceCloner
 from app.voice.routes import router as voice_router
 from app.voice_notes.repository import PostgrestVoiceNotesRepository
 from app.voice_notes.routes import router as voice_notes_router
@@ -259,13 +272,24 @@ def build_runtime(settings: Settings) -> Runtime | None:
         education=PostgrestEducationRepository(config.rest_url, config.anon_key),
         reports=PostgrestReportsRepository(config.rest_url, config.anon_key),
         voice_notes=PostgrestVoiceNotesRepository(config.rest_url, config.anon_key),
+        own_voice=OwnVoiceService(
+            PostgrestOwnVoiceRepository(config.rest_url, config.anon_key),
+            HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key),
+            FakeVoiceCloner(),
+        ),
         billing=BillingService(
             PostgrestBillingRepository(config.rest_url, config.anon_key),
             _billing_provider(settings),
         ),
+        call_settings=CallSettingsService(
+            PostgrestCallSettingsRepository(config.rest_url, config.anon_key)
+        ),
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
         assistant_settings=AssistantSettingsService(
             PostgrestAssistantSettingsRepository(config.rest_url, config.anon_key)
+        ),
+        marks_messages=MarksSendService(
+            PostgrestMarksSendRepository(config.rest_url, config.anon_key), FakeGuardianSender()
         ),
     )
 
@@ -457,10 +481,30 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "This workspace is read-only because its plan has ended. "
         "You can still sign in, view and export your data. Choose a plan to continue.",
     ),
+    billing_errors.WorkspaceWaitingForWhatsAppError: ApiError(
+        403,
+        "waiting_for_whatsapp",
+        "Connect your WhatsApp to start. Until then you can set everything up, but messages, "
+        "AI calls and campaigns stay off.",
+    ),
+    billing_errors.NotLapsedError: ApiError(
+        409, "not_lapsed", "Your plan has not ended, so there is nothing to start again."
+    ),
     billing_errors.PlanLimitReachedError: ApiError(
         409,
         "plan_limit_reached",
         "This plan's allowance for this is used up for now. It starts again with the next period.",
+    ),
+    own_voice_repo.VoiceExistsError: ApiError(
+        409, "voice_exists", "You already have a voice. Delete it first to make another."
+    ),
+    own_voice_repo.RecordingMissingError: ApiError(
+        422, "recording_missing", "A recording did not arrive, or it is not audio. Record again."
+    ),
+    own_voice_repo.SentenceMismatchError: ApiError(
+        422,
+        "consent_sentence_mismatch",
+        "The sentence does not match the one to read. Ask for it again.",
     ),
     repo.WorkspaceLimitReached: ApiError(
         409,
@@ -820,6 +864,11 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     )
     metrics = Metrics()
     install_logging(settings.log_format)
+    init_sentry(
+        settings.sentry_dsn.get_secret_value() if settings.sentry_dsn is not None else None,
+        environment=settings.sentry_environment or settings.api_env,
+        release=settings.sentry_release or SERVICE_VERSION,
+    )
     app.state.runtime = runtime
     install_log_redaction()
     install_error_handlers(app)
@@ -951,11 +1000,14 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(education_router)
     app.include_router(reports_router)
     app.include_router(voice_notes_router)
+    app.include_router(own_voice_router)
     app.include_router(billing_plans_router)
     app.include_router(billing_router)
+    app.include_router(call_settings_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_settings_router)
+    app.include_router(marks_messages_router)
     app.include_router(materials_public_router)
     app.include_router(materials_router)
     app.include_router(deliveries_router)

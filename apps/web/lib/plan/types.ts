@@ -22,8 +22,8 @@ export type PlanDef = {
 export type TrialDef = { days: number; callMinutes: number; messages: number; graceDays: number };
 export type PlanCatalogue = { trial: TrialDef; plans: readonly PlanDef[] };
 
-/** none: no plan yet; trialing: inside the 30 days; active: paying; past_due: the last payment failed; cancelled: ended (inside the trial it ended with nothing charged). */
-export type BillingState = "none" | "trialing" | "active" | "past_due" | "cancelled";
+/** none: no plan yet; trial_pending: a plan is chosen but WhatsApp is not connected yet, so the trial's days have not begun and nothing is charged; trialing: inside the trial; active: paying; past_due: the last payment failed; cancelled: ended (inside the trial it ended with nothing charged). */
+export type BillingState = "none" | "trial_pending" | "trialing" | "active" | "past_due" | "cancelled";
 export type PaymentMethod = "none" | "test_ok" | "test_fails" | "test_declined";
 
 export type WorkspacePlan = {
@@ -42,6 +42,8 @@ export type WorkspacePlan = {
   periodEndsAt: string | null;
   /** A trial is started once per workspace: false once any plan has been started. */
   canStartTrial: boolean;
+  /** The plan has lapsed (the trial or the paid period ended unpaid, or it was cancelled): there is no new trial, the way back is to pay again (`POST /billing/resume`, job DP). */
+  canResume: boolean;
   usage: { minutes: number; messages: number };
   included: { minutes: number | null; messages: number | null };
   paymentMethod: PaymentMethod;

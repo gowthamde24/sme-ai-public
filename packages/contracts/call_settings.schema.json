@@ -1,0 +1,840 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "call_settings.schema.json",
+  "title": "Call settings (job DP)",
+  "description": "Generated from services/ai-api/app/callsettings/models.py by `make contracts`.",
+  "$defs": {
+    "CallHours": {
+      "additionalProperties": false,
+      "description": "Calling days (Monday = 1 to Sunday = 7) and hours as minutes after midnight, in steps of 15, from 09:00 (540) to 21:00 (1260).",
+      "properties": {
+        "days": {
+          "items": {
+            "maximum": 7,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxItems": 7,
+          "minItems": 1,
+          "title": "Days",
+          "type": "array"
+        },
+        "from_minute": {
+          "maximum": 1260,
+          "minimum": 540,
+          "multipleOf": 15,
+          "title": "From Minute",
+          "type": "integer"
+        },
+        "to_minute": {
+          "maximum": 1260,
+          "minimum": 540,
+          "multipleOf": 15,
+          "title": "To Minute",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "days",
+        "from_minute",
+        "to_minute"
+      ],
+      "title": "CallHours",
+      "type": "object"
+    },
+    "CallSettings": {
+      "additionalProperties": false,
+      "description": "Every field, always. The same shape is read and saved (the workspace's).",
+      "properties": {
+        "retry_busy": {
+          "$ref": "#/$defs/RetryRule"
+        },
+        "retry_no_answer": {
+          "$ref": "#/$defs/RetryRule"
+        },
+        "retry_call_later": {
+          "$ref": "#/$defs/RetryRule"
+        },
+        "concurrent_calls": {
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Concurrent Calls",
+          "type": "integer"
+        },
+        "detect_voicemail": {
+          "title": "Detect Voicemail",
+          "type": "boolean"
+        },
+        "voicemail_action": {
+          "enum": [
+            "hang_up",
+            "leave_message",
+            "retry_later"
+          ],
+          "title": "Voicemail Action",
+          "type": "string"
+        },
+        "detect_phone_menu": {
+          "title": "Detect Phone Menu",
+          "type": "boolean"
+        },
+        "phone_menu_action": {
+          "enum": [
+            "hang_up",
+            "retry_later"
+          ],
+          "title": "Phone Menu Action",
+          "type": "string"
+        },
+        "silence_timeout_seconds": {
+          "maximum": 30,
+          "minimum": 3,
+          "title": "Silence Timeout Seconds",
+          "type": "integer"
+        },
+        "max_call_seconds": {
+          "maximum": 1800,
+          "minimum": 30,
+          "multipleOf": 30,
+          "title": "Max Call Seconds",
+          "type": "integer"
+        },
+        "interruption_sensitivity": {
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ],
+          "title": "Interruption Sensitivity",
+          "type": "string"
+        },
+        "listening_sounds": {
+          "title": "Listening Sounds",
+          "type": "boolean"
+        },
+        "pronunciations": {
+          "items": {
+            "$ref": "#/$defs/Pronunciation"
+          },
+          "maxItems": 50,
+          "title": "Pronunciations",
+          "type": "array"
+        },
+        "keywords": {
+          "items": {
+            "maxLength": 40,
+            "minLength": 2,
+            "pattern": "^[^<>{}@/\\\\|\\x00-\\x1f\\x7f]+$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Keywords",
+          "type": "array"
+        },
+        "hours": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CallHours"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "holidays": {
+          "items": {
+            "format": "date",
+            "type": "string"
+          },
+          "maxItems": 60,
+          "title": "Holidays",
+          "type": "array"
+        },
+        "max_calls_per_customer_per_week": {
+          "maximum": 14,
+          "minimum": 1,
+          "title": "Max Calls Per Customer Per Week",
+          "type": "integer"
+        },
+        "auto_pause_refusals_per_hour": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 3,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Auto Pause Refusals Per Hour"
+        },
+        "contact_memory": {
+          "title": "Contact Memory",
+          "type": "boolean"
+        },
+        "handover": {
+          "items": {
+            "$ref": "#/$defs/HandoverRule"
+          },
+          "maxItems": 8,
+          "title": "Handover",
+          "type": "array"
+        },
+        "allowed_purposes": {
+          "items": {
+            "enum": [
+              "sales_followup",
+              "payment_reminder",
+              "admission_followup",
+              "visit_reminder",
+              "event_reminder"
+            ],
+            "type": "string"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Allowed Purposes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "retry_busy",
+        "retry_no_answer",
+        "retry_call_later",
+        "concurrent_calls",
+        "detect_voicemail",
+        "voicemail_action",
+        "detect_phone_menu",
+        "phone_menu_action",
+        "silence_timeout_seconds",
+        "max_call_seconds",
+        "interruption_sensitivity",
+        "listening_sounds",
+        "pronunciations",
+        "keywords",
+        "hours",
+        "holidays",
+        "max_calls_per_customer_per_week",
+        "auto_pause_refusals_per_hour",
+        "contact_memory",
+        "handover",
+        "allowed_purposes"
+      ],
+      "title": "CallSettings",
+      "type": "object"
+    },
+    "CallSettingsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "settings": {
+          "$ref": "#/$defs/CallSettings"
+        },
+        "saved": {
+          "title": "Saved",
+          "type": "boolean"
+        },
+        "defaults": {
+          "$ref": "#/$defs/CallSettings"
+        },
+        "business_type": {
+          "pattern": "^[a-z][a-z0-9_]{1,40}$",
+          "title": "Business Type",
+          "type": "string"
+        },
+        "effective": {
+          "$ref": "#/$defs/EffectiveCallSettings"
+        },
+        "options": {
+          "$ref": "#/$defs/OptionsOut"
+        },
+        "assistant_hours": {
+          "$ref": "#/$defs/CallHours"
+        },
+        "locked": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "Locked",
+          "type": "object"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Updated At"
+        },
+        "wording": {
+          "const": "draft",
+          "title": "Wording",
+          "type": "string"
+        }
+      },
+      "required": [
+        "settings",
+        "saved",
+        "defaults",
+        "business_type",
+        "effective",
+        "options",
+        "assistant_hours",
+        "locked",
+        "updated_at",
+        "wording"
+      ],
+      "title": "CallSettingsOut",
+      "type": "object"
+    },
+    "CallSettingsOverride": {
+      "additionalProperties": false,
+      "description": "What ONE campaign changes. Every field may be null = inherit the workspace's. Not overridable: holidays, handover and the allowed purposes (they belong to the business, not to a campaign).",
+      "properties": {
+        "retry_busy": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RetryRule"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "retry_no_answer": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RetryRule"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "retry_call_later": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RetryRule"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "concurrent_calls": {
+          "anyOf": [
+            {
+              "maximum": 20,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Concurrent Calls"
+        },
+        "detect_voicemail": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detect Voicemail"
+        },
+        "voicemail_action": {
+          "anyOf": [
+            {
+              "enum": [
+                "hang_up",
+                "leave_message",
+                "retry_later"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voicemail Action"
+        },
+        "detect_phone_menu": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detect Phone Menu"
+        },
+        "phone_menu_action": {
+          "anyOf": [
+            {
+              "enum": [
+                "hang_up",
+                "retry_later"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Menu Action"
+        },
+        "silence_timeout_seconds": {
+          "anyOf": [
+            {
+              "maximum": 30,
+              "minimum": 3,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Silence Timeout Seconds"
+        },
+        "max_call_seconds": {
+          "anyOf": [
+            {
+              "maximum": 1800,
+              "minimum": 30,
+              "multipleOf": 30,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Call Seconds"
+        },
+        "interruption_sensitivity": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interruption Sensitivity"
+        },
+        "listening_sounds": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Listening Sounds"
+        },
+        "pronunciations": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Pronunciation"
+              },
+              "maxItems": 50,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pronunciations"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "items": {
+                "maxLength": 40,
+                "minLength": 2,
+                "pattern": "^[^<>{}@/\\\\|\\x00-\\x1f\\x7f]+$",
+                "type": "string"
+              },
+              "maxItems": 100,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Keywords"
+        },
+        "hours": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CallHours"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "max_calls_per_customer_per_week": {
+          "anyOf": [
+            {
+              "maximum": 14,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Calls Per Customer Per Week"
+        },
+        "auto_pause_refusals_per_hour": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 3,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Pause Refusals Per Hour"
+        },
+        "auto_pause_off": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Auto Pause Off"
+        },
+        "contact_memory": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Memory"
+        }
+      },
+      "title": "CallSettingsOverride",
+      "type": "object"
+    },
+    "CampaignCallSettingsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "overrides": {
+          "$ref": "#/$defs/CallSettingsOverride"
+        },
+        "saved": {
+          "title": "Saved",
+          "type": "boolean"
+        },
+        "effective": {
+          "$ref": "#/$defs/EffectiveCallSettings"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Updated At"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "overrides",
+        "saved",
+        "effective",
+        "updated_at"
+      ],
+      "title": "CampaignCallSettingsOut",
+      "type": "object"
+    },
+    "EffectiveCallSettings": {
+      "additionalProperties": false,
+      "description": "The settings a dialer applies to one campaign (or to the workspace's own calls): the workspace's with the campaign's override on top, and the hours resolved.",
+      "properties": {
+        "settings": {
+          "$ref": "#/$defs/CallSettings"
+        },
+        "hours": {
+          "$ref": "#/$defs/EffectiveHours"
+        },
+        "overridden": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Overridden",
+          "type": "array"
+        }
+      },
+      "required": [
+        "settings",
+        "hours",
+        "overridden"
+      ],
+      "title": "EffectiveCallSettings",
+      "type": "object"
+    },
+    "EffectiveHours": {
+      "additionalProperties": false,
+      "properties": {
+        "days": {
+          "items": {
+            "maximum": 7,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "title": "Days",
+          "type": "array"
+        },
+        "from_minute": {
+          "title": "From Minute",
+          "type": "integer"
+        },
+        "to_minute": {
+          "title": "To Minute",
+          "type": "integer"
+        },
+        "source": {
+          "enum": [
+            "assistant",
+            "workspace",
+            "campaign"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "days",
+        "from_minute",
+        "to_minute",
+        "source"
+      ],
+      "title": "EffectiveHours",
+      "type": "object"
+    },
+    "HandoverRule": {
+      "additionalProperties": false,
+      "description": "When the customer raises this topic, the call is handed to this person's phone.",
+      "properties": {
+        "topic": {
+          "enum": [
+            "pricing",
+            "payment",
+            "delivery",
+            "complaint",
+            "visit",
+            "other"
+          ],
+          "title": "Topic",
+          "type": "string"
+        },
+        "person_name": {
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "^[^<>{}@/\\\\|\\x00-\\x1f\\x7f]+$",
+          "title": "Person Name",
+          "type": "string"
+        },
+        "phone": {
+          "pattern": "^\\+?[0-9]{7,15}$",
+          "title": "Phone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "topic",
+        "person_name",
+        "phone"
+      ],
+      "title": "HandoverRule",
+      "type": "object"
+    },
+    "OptionOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "title": "OptionOut",
+      "type": "object"
+    },
+    "OptionsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "voicemail_actions": {
+          "items": {
+            "$ref": "#/$defs/OptionOut"
+          },
+          "title": "Voicemail Actions",
+          "type": "array"
+        },
+        "phone_menu_actions": {
+          "items": {
+            "$ref": "#/$defs/OptionOut"
+          },
+          "title": "Phone Menu Actions",
+          "type": "array"
+        },
+        "sensitivities": {
+          "items": {
+            "$ref": "#/$defs/OptionOut"
+          },
+          "title": "Sensitivities",
+          "type": "array"
+        },
+        "topics": {
+          "items": {
+            "$ref": "#/$defs/OptionOut"
+          },
+          "title": "Topics",
+          "type": "array"
+        },
+        "purposes": {
+          "items": {
+            "$ref": "#/$defs/OptionOut"
+          },
+          "title": "Purposes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "voicemail_actions",
+        "phone_menu_actions",
+        "sensitivities",
+        "topics",
+        "purposes"
+      ],
+      "title": "OptionsOut",
+      "type": "object"
+    },
+    "Pronunciation": {
+      "additionalProperties": false,
+      "description": "How a shop or product name is said: `written` is what appears in the records, `spoken` is how it should sound (in the Latin script or the language's own).",
+      "properties": {
+        "written": {
+          "maxLength": 40,
+          "minLength": 1,
+          "pattern": "^[^<>{}@/\\\\|\\x00-\\x1f\\x7f]+$",
+          "title": "Written",
+          "type": "string"
+        },
+        "spoken": {
+          "maxLength": 60,
+          "minLength": 1,
+          "pattern": "^[^<>{}@/\\\\|\\x00-\\x1f\\x7f]+$",
+          "title": "Spoken",
+          "type": "string"
+        }
+      },
+      "required": [
+        "written",
+        "spoken"
+      ],
+      "title": "Pronunciation",
+      "type": "object"
+    },
+    "RetryRule": {
+      "additionalProperties": false,
+      "description": "How often to try again, and how long to wait between tries. `count` 0 = never try again.",
+      "properties": {
+        "count": {
+          "maximum": 5,
+          "minimum": 0,
+          "title": "Count",
+          "type": "integer"
+        },
+        "gap_minutes": {
+          "maximum": 1440,
+          "minimum": 5,
+          "multipleOf": 5,
+          "title": "Gap Minutes",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "count",
+        "gap_minutes"
+      ],
+      "title": "RetryRule",
+      "type": "object"
+    }
+  }
+}

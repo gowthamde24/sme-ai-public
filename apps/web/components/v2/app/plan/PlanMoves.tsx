@@ -19,7 +19,7 @@ export function PlanMoves({ words, state, canChange, canStart, cancelling, picke
   const { busy, error, run } = usePlanMove(t);
   const [asking, setAsking] = React.useState(false);
   if (!canChange) return null;
-  const live = state === "trialing" || state === "active" || state === "past_due";
+  const live = state === "trial_pending" || state === "trialing" || state === "active" || state === "past_due";
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-3">
@@ -33,7 +33,7 @@ export function PlanMoves({ words, state, canChange, canStart, cancelling, picke
         </Link>
         {live && !cancelling && !asking ? (
           <button type="button" className={btnQuiet} disabled={busy} onClick={() => setAsking(true)}>
-            {t(state === "trialing" ? "plan.cancel.trial" : "plan.cancel.paid")}
+            {t(state === "trialing" || state === "trial_pending" ? "plan.cancel.trial" : "plan.cancel.paid")}
           </button>
         ) : null}
         {live && state === "trialing" && actions.endTrial ? (
@@ -44,8 +44,8 @@ export function PlanMoves({ words, state, canChange, canStart, cancelling, picke
       </div>
       {live && state === "trialing" && actions.endTrial ? <p className={fieldHelp}>{t("plan.testfwd.note")}</p> : null}
       {asking ? (
-        <div role="alertdialog" aria-label={t(state === "trialing" ? "plan.cancel.ask.trial" : "plan.cancel.ask.paid")} className="rounded-lg border border-edge bg-surface-2 p-3">
-          <p className="font-medium">{t(state === "trialing" ? "plan.cancel.ask.trial" : "plan.cancel.ask.paid")}</p>
+        <div role="alertdialog" aria-label={t(state === "trialing" || state === "trial_pending" ? "plan.cancel.ask.trial" : "plan.cancel.ask.paid")} className="rounded-lg border border-edge bg-surface-2 p-3">
+          <p className="font-medium">{t(state === "trialing" || state === "trial_pending" ? "plan.cancel.ask.trial" : "plan.cancel.ask.paid")}</p>
           <div className="mt-3 flex flex-wrap gap-3">
             <button type="button" className={btnMain} disabled={busy} onClick={() => run(actions.cancel, () => setAsking(false))}>
               {t("plan.cancel.yes")}

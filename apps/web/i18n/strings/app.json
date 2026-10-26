@@ -55774,5 +55774,1997 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "outcome.cat.none": {
+  "en": "Unclear",
+  "te": "స్పష్టంగా లేదు",
+  "hi": "साफ़ नहीं",
+  "kn": "ಸ್ಪಷ್ಟವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outcome.today.other": {
+  "en": "{n} other negative",
+  "te": "{n} ఇతర నెగటివ్",
+  "hi": "{n} अन्य नेगेटिव",
+  "kn": "{n} ಇತರ ನೆಗೆಟಿವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.hours.range": {
+  "en": "Calling hours are between 09:00 and 21:00, in steps of 15 minutes.",
+  "te": "కాల్ సమయాలు 09:00 నుంచి 21:00 మధ్య, 15 నిమిషాల అడుగులలో ఉండాలి.",
+  "hi": "कॉल का समय 09:00 से 21:00 के बीच, 15 मिनट के अंतर पर होना चाहिए।",
+  "kn": "ಕಾಲ್ ಸಮಯ 09:00 ರಿಂದ 21:00 ರ ನಡುವೆ, 15 ನಿಮಿಷಗಳ ಹಂತದಲ್ಲಿ ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.save.mfa": {
+  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "te": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "hi": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "kn": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "plan.state.trial_pending": {
+  "en": "Waiting for WhatsApp",
+  "te": "వాట్సాప్ కోసం ఎదురుచూపు",
+  "hi": "व्हाट्सऐप का इंतज़ार",
+  "kn": "ವಾಟ್ಸಾಪ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.trial.pending": {
+  "en": "Your {days} days start when WhatsApp is connected.",
+  "te": "వాట్సాప్ కనెక్ట్ అయినప్పుడు మీ {days} రోజులు మొదలవుతాయి.",
+  "hi": "व्हाट्सऐप जुड़ते ही आपके {days} दिन शुरू होंगे।",
+  "kn": "ವಾಟ್ಸಾಪ್ ಸಂಪರ್ಕ ಆದಾಗ ನಿಮ್ಮ {days} ದಿನಗಳು ಶುರುವಾಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.trial.pending.note": {
+  "en": "Nothing is charged until then. You can set up everything now. Messages and calls start once WhatsApp is connected.",
+  "te": "అప్పటి వరకు ఏమీ ఛార్జ్ చేయరు. ఇప్పుడే అన్నీ సెటప్ చేసుకోవచ్చు. వాట్సాప్ కనెక్ట్ అయ్యాక మెసేజ్‌లు, కాల్స్ మొదలవుతాయి.",
+  "hi": "तब तक कुछ चार्ज नहीं होता। आप अभी सब कुछ सेट कर सकते हैं। व्हाट्सऐप जुड़ने के बाद मैसेज और कॉल शुरू होंगे।",
+  "kn": "ಅಲ್ಲಿಯವರೆಗೆ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ. ಈಗಲೇ ಎಲ್ಲವನ್ನೂ ಸೆಟಪ್ ಮಾಡಬಹುದು. ವಾಟ್ಸಾಪ್ ಸಂಪರ್ಕ ಆದ ನಂತರ ಮೆಸೇಜ್, ಕಾಲ್ ಶುರುವಾಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ro.title": {
+  "en": "This workspace is read-only",
+  "te": "ఈ వర్క్‌స్పేస్ చదవడానికి మాత్రమే",
+  "hi": "यह वर्कस्पेस सिर्फ़ देखने के लिए है",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ನೋಡಲು ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ro.body": {
+  "en": "Your trial ended without a payment. You can look at everything and export it. Changes, messages, AI answers and calls are switched off.",
+  "te": "మీ ట్రయల్ చెల్లింపు లేకుండా ముగిసింది. అన్నీ చూడవచ్చు, ఎక్స్‌పోర్ట్ చేయవచ్చు. మార్పులు, మెసేజ్‌లు, AI జవాబులు, కాల్స్ ఆపివేయబడ్డాయి.",
+  "hi": "आपका ट्रायल बिना भुगतान के खत्म हुआ। आप सब कुछ देख और एक्सपोर्ट कर सकते हैं। बदलाव, मैसेज, AI जवाब और कॉल बंद हैं।",
+  "kn": "ನಿಮ್ಮ ಟ್ರಯಲ್ ಪಾವತಿ ಇಲ್ಲದೆ ಮುಗಿಯಿತು. ಎಲ್ಲವನ್ನೂ ನೋಡಬಹುದು, ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಬಹುದು. ಬದಲಾವಣೆ, ಮೆಸೇಜ್, AI ಉತ್ತರ, ಕಾಲ್ ಆಫ್ ಆಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ro.off": {
+  "en": "Read-only: this is switched off. To go on, write to {email}.",
+  "te": "చదవడానికి మాత్రమే: ఇది ఆపివేయబడింది. కొనసాగడానికి {email}కి రాయండి.",
+  "hi": "सिर्फ़ देखने के लिए: यह बंद है। आगे बढ़ने के लिए {email} को लिखें।",
+  "kn": "ನೋಡಲು ಮಾತ್ರ: ಇದು ಆಫ್ ಆಗಿದೆ. ಮುಂದುವರಿಯಲು {email} ಗೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ro.resume": {
+  "en": "Pay again and continue",
+  "te": "మళ్లీ చెల్లించి కొనసాగండి",
+  "hi": "फिर से भुगतान करके आगे बढ़ें",
+  "kn": "ಮತ್ತೆ ಪಾವತಿಸಿ ಮುಂದುವರಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.link": {
+  "en": "Send marks to parents",
+  "te": "తల్లిదండ్రులకు మార్కులు పంపండి",
+  "hi": "अभिभावकों को अंक भेजें",
+  "kn": "ಪೋಷಕರಿಗೆ ಅಂಕಗಳನ್ನು ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.title": {
+  "en": "Send marks to parents",
+  "te": "తల్లిదండ్రులకు మార్కులు పంపండి",
+  "hi": "अभिभावकों को अंक भेजें",
+  "kn": "ಪೋಷಕರಿಗೆ ಅಂಕಗಳನ್ನು ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.sub": {
+  "en": "Upload one file, check what will be sent, then approve. Each parent gets a fixed message about their child.",
+  "te": "ఒక ఫైల్ అప్‌లోడ్ చేసి, ఏమి వెళ్తుందో చూసి, ఆమోదించండి. ప్రతి తల్లిదండ్రికి వారి పిల్లల గురించి ఒక ఖచ్చితమైన మెసేజ్ వెళ్తుంది.",
+  "hi": "एक फ़ाइल अपलोड करें, देखें क्या भेजा जाएगा, फिर मंज़ूर करें। हर अभिभावक को उनके बच्चे के बारे में एक तय मैसेज मिलता है।",
+  "kn": "ಒಂದು ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ಏನು ಹೋಗುತ್ತದೆ ನೋಡಿ, ನಂತರ ಒಪ್ಪಿಗೆ ಕೊಡಿ. ಪ್ರತಿ ಪೋಷಕರಿಗೆ ಅವರ ಮಗುವಿನ ಬಗ್ಗೆ ನಿಗದಿತ ಮೆಸೇಜ್ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.note": {
+  "en": "Marks are not stored. The file is deleted after sending.",
+  "te": "మార్కులు నిల్వ చేయం. పంపిన తర్వాత ఫైల్ తొలగించబడుతుంది.",
+  "hi": "अंक सहेजे नहीं जाते। भेजने के बाद फ़ाइल मिटा दी जाती है।",
+  "kn": "ಅಂಕಗಳನ್ನು ಉಳಿಸುವುದಿಲ್ಲ. ಕಳುಹಿಸಿದ ನಂತರ ಫೈಲ್ ಅಳಿಸಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.note.more": {
+  "en": "The file is read once to show you the preview and once to send, and nothing of it is kept. Only a log stays: which parent got which message, and when. It holds no marks and no child's name.",
+  "te": "ప్రివ్యూ చూపడానికి ఒకసారి, పంపడానికి ఒకసారి ఫైల్ చదువుతాం; దానిలో ఏదీ ఉంచం. ఒక లాగ్ మాత్రమే ఉంటుంది: ఏ తల్లిదండ్రికి ఏ మెసేజ్, ఎప్పుడు. దానిలో మార్కులు, పిల్లల పేరు ఉండవు.",
+  "hi": "फ़ाइल एक बार प्रीव्यू दिखाने के लिए और एक बार भेजने के लिए पढ़ी जाती है, उसका कुछ नहीं रखा जाता। सिर्फ़ एक लॉग रहता है: किस अभिभावक को कौन सा मैसेज, कब। उसमें न अंक हैं न बच्चे का नाम।",
+  "kn": "ಪ್ರಿವ್ಯೂ ತೋರಿಸಲು ಒಮ್ಮೆ, ಕಳುಹಿಸಲು ಒಮ್ಮೆ ಫೈಲ್ ಓದುತ್ತೇವೆ; ಅದರಲ್ಲಿ ಏನನ್ನೂ ಇಟ್ಟುಕೊಳ್ಳುವುದಿಲ್ಲ. ಒಂದು ಲಾಗ್ ಮಾತ್ರ ಉಳಿಯುತ್ತದೆ: ಯಾವ ಪೋಷಕರಿಗೆ ಯಾವ ಮೆಸೇಜ್, ಯಾವಾಗ. ಅದರಲ್ಲಿ ಅಂಕಗಳು, ಮಗುವಿನ ಹೆಸರು ಇರುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.mock": {
+  "en": "Test mode: nothing is sent. The preview is made from your file in this session.",
+  "te": "టెస్ట్ మోడ్: ఏదీ పంపరు. ప్రివ్యూ ఈ సెషన్‌లో మీ ఫైల్ నుంచి తయారవుతుంది.",
+  "hi": "टेस्ट मोड: कुछ नहीं भेजा जाता। प्रीव्यू इसी सेशन में आपकी फ़ाइल से बनता है।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ. ಪ್ರಿವ್ಯೂ ಈ ಸೆಷನ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಫೈಲ್‌ನಿಂದ ತಯಾರಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.kind": {
+  "en": "What to send",
+  "te": "ఏమి పంపాలి",
+  "hi": "क्या भेजना है",
+  "kn": "ಏನು ಕಳುಹಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.kind.marks": {
+  "en": "Marks of an exam",
+  "te": "పరీక్ష మార్కులు",
+  "hi": "परीक्षा के अंक",
+  "kn": "ಪರೀಕ್ಷೆಯ ಅಂಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.kind.report_ready": {
+  "en": "The report card is ready",
+  "te": "రిపోర్ట్ కార్డ్ సిద్ధంగా ఉంది",
+  "hi": "रिपोर्ट कार्ड तैयार है",
+  "kn": "ರಿಪೋರ್ಟ್ ಕಾರ್ಡ್ ಸಿದ್ಧವಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.language": {
+  "en": "Language for lines that name none",
+  "te": "భాష చెప్పని లైన్లకు భాష",
+  "hi": "जिन पंक्तियों में भाषा नहीं है उनकी भाषा",
+  "kn": "ಭಾಷೆ ಹೇಳದ ಸಾಲುಗಳಿಗೆ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.term": {
+  "en": "Exam name (if the file has no exam column)",
+  "te": "పరీక్ష పేరు (ఫైల్‌లో పరీక్ష కాలమ్ లేకపోతే)",
+  "hi": "परीक्षा का नाम (अगर फ़ाइल में परीक्षा का कॉलम नहीं है)",
+  "kn": "ಪರೀಕ್ಷೆಯ ಹೆಸರು (ಫೈಲ್‌ನಲ್ಲಿ ಪರೀಕ್ಷೆಯ ಕಾಲಮ್ ಇಲ್ಲದಿದ್ದರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.file": {
+  "en": "The file (CSV or Excel)",
+  "te": "ఫైల్ (CSV లేదా Excel)",
+  "hi": "फ़ाइल (CSV या Excel)",
+  "kn": "ಫೈಲ್ (CSV ಅಥವಾ Excel)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.cols.marks": {
+  "en": "Columns: phone, student (first name or initials), subject, marks, out of, and the exam if you did not write it above.",
+  "te": "కాలమ్‌లు: ఫోన్, విద్యార్థి (మొదటి పేరు లేదా ఇనీషియల్స్), సబ్జెక్ట్, మార్కులు, ఎంతకు, పైన రాయకపోతే పరీక్ష.",
+  "hi": "कॉलम: फ़ोन, छात्र (पहला नाम या इनिशियल), विषय, अंक, कुल अंक, और ऊपर न लिखा हो तो परीक्षा।",
+  "kn": "ಕಾಲಮ್‌ಗಳು: ಫೋನ್, ವಿದ್ಯಾರ್ಥಿ (ಮೊದಲ ಹೆಸರು ಅಥವಾ ಇನಿಷಿಯಲ್), ವಿಷಯ, ಅಂಕ, ಎಷ್ಟರಲ್ಲಿ, ಮೇಲೆ ಬರೆಯದಿದ್ದರೆ ಪರೀಕ್ಷೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.cols.report_ready": {
+  "en": "Columns: phone, student (first name or initials) and the exam if you did not write it above.",
+  "te": "కాలమ్‌లు: ఫోన్, విద్యార్థి (మొదటి పేరు లేదా ఇనీషియల్స్), పైన రాయకపోతే పరీక్ష.",
+  "hi": "कॉलम: फ़ोन, छात्र (पहला नाम या इनिशियल) और ऊपर न लिखा हो तो परीक्षा।",
+  "kn": "ಕಾಲಮ್‌ಗಳು: ಫೋನ್, ವಿದ್ಯಾರ್ಥಿ (ಮೊದಲ ಹೆಸರು ಅಥವಾ ಇನಿಷಿಯಲ್), ಮೇಲೆ ಬರೆಯದಿದ್ದರೆ ಪರೀಕ್ಷೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.preview": {
+  "en": "Show what will be sent",
+  "te": "ఏమి వెళ్తుందో చూపించు",
+  "hi": "दिखाएँ क्या भेजा जाएगा",
+  "kn": "ಏನು ಹೋಗುತ್ತದೆ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.previewing": {
+  "en": "Reading the file…",
+  "te": "ఫైల్ చదువుతున్నాం…",
+  "hi": "फ़ाइल पढ़ रहे हैं…",
+  "kn": "ಫೈಲ್ ಓದುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.title": {
+  "en": "What will be sent",
+  "te": "ఏమి వెళ్తుంది",
+  "hi": "क्या भेजा जाएगा",
+  "kn": "ಏನು ಹೋಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.rows": {
+  "en": "Lines read: {n}",
+  "te": "{n} లైన్లు చదివాం",
+  "hi": "{n} पंक्तियाँ पढ़ीं",
+  "kn": "{n} ಸಾಲುಗಳನ್ನು ಓದಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.send": {
+  "en": "Messages to send: {n}",
+  "te": "{n} మెసేజ్‌లు వెళ్తాయి",
+  "hi": "{n} मैसेज भेजे जाएँगे",
+  "kn": "{n} ಮೆಸೇಜ್‌ಗಳು ಹೋಗುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.blocked": {
+  "en": "Parents who will not get a message: {n} (they opted out, withdrew WhatsApp consent or were erased).",
+  "te": "{n} మంది తల్లిదండ్రులకు మెసేజ్ వెళ్లదు (వారు వద్దన్నారు, వాట్సాప్ సమ్మతి వెనక్కి తీసుకున్నారు లేదా తొలగించబడ్డారు).",
+  "hi": "{n} अभिभावकों को मैसेज नहीं मिलेगा (उन्होंने मना किया, व्हाट्सऐप सहमति वापस ली या वे मिटाए जा चुके हैं)।",
+  "kn": "{n} ಪೋಷಕರಿಗೆ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ (ಅವರು ಬೇಡವೆಂದರು, ವಾಟ್ಸಾಪ್ ಒಪ್ಪಿಗೆ ಹಿಂತೆಗೆದರು ಅಥವಾ ಅಳಿಸಲಾಗಿದ್ದಾರೆ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.unknown": {
+  "en": "Lines whose phone number is not a parent of this school: {n}. Add the parent first.",
+  "te": "{n} లైన్లలో ఈ స్కూల్ తల్లిదండ్రి కాని ఫోన్ నంబర్ ఉంది. ముందు తల్లిదండ్రిని చేర్చండి.",
+  "hi": "{n} पंक्तियों में ऐसा फ़ोन नंबर है जो इस स्कूल का अभिभावक नहीं है। पहले अभिभावक जोड़ें।",
+  "kn": "{n} ಸಾಲುಗಳಲ್ಲಿ ಈ ಶಾಲೆಯ ಪೋಷಕರಲ್ಲದ ಫೋನ್ ನಂಬರ್ ಇದೆ. ಮೊದಲು ಪೋಷಕರನ್ನು ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.invalid": {
+  "en": "Lines that could not be read: {n}.",
+  "te": "{n} లైన్లు చదవలేకపోయాం.",
+  "hi": "{n} पंक्तियाँ पढ़ी नहीं जा सकीं।",
+  "kn": "{n} ಸಾಲುಗಳನ್ನು ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.dups": {
+  "en": "Repeated lines: {n}.",
+  "te": "{n} లైన్లు మళ్లీ వచ్చాయి.",
+  "hi": "{n} पंक्तियाँ दोहराई गई हैं।",
+  "kn": "{n} ಸಾಲುಗಳು ಪುನರಾವರ್ತನೆಯಾಗಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.issues": {
+  "en": "What to look at",
+  "te": "చూడాల్సినవి",
+  "hi": "क्या देखना है",
+  "kn": "ನೋಡಬೇಕಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.issue": {
+  "en": "Line {line}: {what} (column {field})",
+  "te": "లైన్ {line}: {what} (కాలమ్ {field})",
+  "hi": "पंक्ति {line}: {what} (कॉलम {field})",
+  "kn": "ಸಾಲು {line}: {what} (ಕಾಲಮ್ {field})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.moreissues": {
+  "en": "There are more problems than are listed here.",
+  "te": "ఇక్కడ చూపినవి కంటే ఎక్కువ సమస్యలున్నాయి.",
+  "hi": "यहाँ दिखाई गई से ज़्यादा समस्याएँ हैं।",
+  "kn": "ಇಲ್ಲಿ ತೋರಿಸಿದ್ದಕ್ಕಿಂತ ಹೆಚ್ಚು ಸಮಸ್ಯೆಗಳಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.example": {
+  "en": "The first message, as the parent will read it",
+  "te": "మొదటి మెసేజ్, తల్లిదండ్రి చదివేలా",
+  "hi": "पहला मैसेज, जैसा अभिभावक पढ़ेगा",
+  "kn": "ಮೊದಲ ಮೆಸೇಜ್, ಪೋಷಕರು ಓದುವಂತೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.issue.bad_phone": {
+  "en": "the phone number is wrong",
+  "te": "ఫోన్ నంబర్ తప్పు",
+  "hi": "फ़ोन नंबर गलत है",
+  "kn": "ಫೋನ್ ನಂಬರ್ ತಪ್ಪಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.issue.bad_value": {
+  "en": "a value is wrong",
+  "te": "ఒక విలువ తప్పు",
+  "hi": "एक मान गलत है",
+  "kn": "ಒಂದು ಮೌಲ್ಯ ತಪ್ಪಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.issue.bad_language": {
+  "en": "the language is not one of en, te, hi, kn",
+  "te": "భాష en, te, hi, kn లో ఒకటి కాదు",
+  "hi": "भाषा en, te, hi, kn में से नहीं है",
+  "kn": "ಭಾಷೆ en, te, hi, kn ರಲ್ಲಿ ಒಂದಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.issue.formula_cell": {
+  "en": "a cell is a formula; write the value instead",
+  "te": "ఒక సెల్ ఫార్ములా; బదులు విలువ రాయండి",
+  "hi": "एक सेल फ़ॉर्मूला है; उसकी जगह मान लिखें",
+  "kn": "ಒಂದು ಸೆಲ್ ಫಾರ್ಮುಲಾ; ಬದಲಿಗೆ ಮೌಲ್ಯ ಬರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.issue.duplicate_row": {
+  "en": "this line is repeated",
+  "te": "ఈ లైన్ మళ్లీ వచ్చింది",
+  "hi": "यह पंक्ति दोहराई गई है",
+  "kn": "ಈ ಸಾಲು ಪುನರಾವರ್ತನೆಯಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.issue.unknown_guardian": {
+  "en": "this phone number is not a parent of this school",
+  "te": "ఈ ఫోన్ నంబర్ ఈ స్కూల్ తల్లిదండ్రిది కాదు",
+  "hi": "यह फ़ोन नंबर इस स्कूल के अभिभावक का नहीं है",
+  "kn": "ಈ ಫೋನ್ ನಂಬರ್ ಈ ಶಾಲೆಯ ಪೋಷಕರದ್ದಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.issue.blocked_guardian": {
+  "en": "this parent will not get messages",
+  "te": "ఈ తల్లిదండ్రికి మెసేజ్‌లు వెళ్లవు",
+  "hi": "इस अभिभावक को मैसेज नहीं मिलेंगे",
+  "kn": "ಈ ಪೋಷಕರಿಗೆ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.go": {
+  "en": "Send messages ({n})",
+  "te": "{n} మెసేజ్‌లు పంపండి",
+  "hi": "{n} मैसेज भेजें",
+  "kn": "{n} ಮೆಸೇಜ್‌ಗಳನ್ನು ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.go.none": {
+  "en": "Nothing to send. Fix the file and check it again.",
+  "te": "పంపడానికి ఏమీ లేదు. ఫైల్ సరిచేసి మళ్లీ చూడండి.",
+  "hi": "भेजने को कुछ नहीं है। फ़ाइल ठीक करके फिर देखें।",
+  "kn": "ಕಳುಹಿಸಲು ಏನೂ ಇಲ್ಲ. ಫೈಲ್ ಸರಿಪಡಿಸಿ ಮತ್ತೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.go.owner": {
+  "en": "Only the Owner can send. Ask the Owner to approve this.",
+  "te": "ఓనర్ మాత్రమే పంపగలరు. ఆమోదించమని ఓనర్‌ని అడగండి.",
+  "hi": "सिर्फ़ ओनर भेज सकते हैं। ओनर से मंज़ूर करने को कहें।",
+  "kn": "ಓನರ್ ಮಾತ್ರ ಕಳುಹಿಸಬಹುದು. ಒಪ್ಪಿಗೆ ಕೊಡಲು ಓನರ್‌ರನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.sending": {
+  "en": "Sending…",
+  "te": "పంపుతున్నాం…",
+  "hi": "भेज रहे हैं…",
+  "kn": "ಕಳುಹಿಸುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.done.title": {
+  "en": "Done",
+  "te": "అయింది",
+  "hi": "हो गया",
+  "kn": "ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.done": {
+  "en": "{sent} sent, {failed} could not be sent, {blocked} blocked, {skipped} skipped.",
+  "te": "{sent} పంపాం, {failed} పంపలేకపోయాం, {blocked} ఆపాం, {skipped} వదిలేశాం.",
+  "hi": "{sent} भेजे, {failed} भेजे नहीं जा सके, {blocked} रोके, {skipped} छोड़े।",
+  "kn": "{sent} ಕಳುಹಿಸಿದೆವು, {failed} ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ, {blocked} ತಡೆದೆವು, {skipped} ಬಿಟ್ಟೆವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.done.dup": {
+  "en": "{n} had been sent before and were not sent twice.",
+  "te": "{n} ముందే పంపాం, రెండోసారి పంపలేదు.",
+  "hi": "{n} पहले भेजे जा चुके थे, दोबारा नहीं भेजे।",
+  "kn": "{n} ಮೊದಲೇ ಕಳುಹಿಸಲಾಗಿತ್ತು, ಎರಡನೇ ಬಾರಿ ಕಳುಹಿಸಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.done.file": {
+  "en": "The file was not saved.",
+  "te": "ఫైల్ సేవ్ చేయలేదు.",
+  "hi": "फ़ाइल सहेजी नहीं गई।",
+  "kn": "ಫೈಲ್ ಉಳಿಸಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.again": {
+  "en": "Send another file",
+  "te": "మరో ఫైల్ పంపండి",
+  "hi": "दूसरी फ़ाइल भेजें",
+  "kn": "ಇನ್ನೊಂದು ಫೈಲ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.err.changed": {
+  "en": "The file is not the one you checked. Nothing was sent. Check it again.",
+  "te": "ఇది మీరు చూసిన ఫైల్ కాదు. ఏదీ పంపలేదు. మళ్లీ చూడండి.",
+  "hi": "यह वह फ़ाइल नहीं है जो आपने देखी थी। कुछ नहीं भेजा गया। फिर से देखें।",
+  "kn": "ಇದು ನೀವು ನೋಡಿದ ಫೈಲ್ ಅಲ್ಲ. ಏನೂ ಕಳುಹಿಸಿಲ್ಲ. ಮತ್ತೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.err.big": {
+  "en": "The file is too large (3 MB at most).",
+  "te": "ఫైల్ చాలా పెద్దది (గరిష్టం 3 MB).",
+  "hi": "फ़ाइल बहुत बड़ी है (ज़्यादा से ज़्यादा 3 MB)।",
+  "kn": "ಫೈಲ್ ತುಂಬಾ ದೊಡ್ಡದು (ಗರಿಷ್ಠ 3 MB).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.err.rows": {
+  "en": "The file has too many lines (5,000 at most).",
+  "te": "ఫైల్‌లో లైన్లు చాలా ఎక్కువ (గరిష్టం 5,000).",
+  "hi": "फ़ाइल में बहुत ज़्यादा पंक्तियाँ हैं (ज़्यादा से ज़्यादा 5,000)।",
+  "kn": "ಫೈಲ್‌ನಲ್ಲಿ ಸಾಲುಗಳು ತುಂಬಾ ಹೆಚ್ಚು (ಗರಿಷ್ಠ 5,000).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.err.format": {
+  "en": "This is not a CSV or Excel file we can read.",
+  "te": "ఇది మేము చదవగల CSV లేదా Excel ఫైల్ కాదు.",
+  "hi": "यह ऐसी CSV या Excel फ़ाइल नहीं है जिसे हम पढ़ सकें।",
+  "kn": "ಇದು ನಾವು ಓದಬಲ್ಲ CSV ಅಥವಾ Excel ಫೈಲ್ ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.err.column": {
+  "en": "The file is missing a column. Check the column names.",
+  "te": "ఫైల్‌లో ఒక కాలమ్ లేదు. కాలమ్ పేర్లు చూడండి.",
+  "hi": "फ़ाइल में एक कॉलम नहीं है। कॉलम के नाम देखें।",
+  "kn": "ಫೈಲ್‌ನಲ್ಲಿ ಒಂದು ಕಾಲಮ್ ಇಲ್ಲ. ಕಾಲಮ್ ಹೆಸರುಗಳನ್ನು ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.err.module": {
+  "en": "Only a school can send marks.",
+  "te": "స్కూల్ మాత్రమే మార్కులు పంపగలదు.",
+  "hi": "सिर्फ़ स्कूल अंक भेज सकता है।",
+  "kn": "ಶಾಲೆ ಮಾತ್ರ ಅಂಕಗಳನ್ನು ಕಳುಹಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.err.readonly": {
+  "en": "This workspace is read-only, so nothing can be sent.",
+  "te": "ఈ వర్క్‌స్పేస్ చదవడానికి మాత్రమే, కాబట్టి ఏదీ పంపలేరు.",
+  "hi": "यह वर्कस्पेस सिर्फ़ देखने के लिए है, इसलिए कुछ नहीं भेजा जा सकता।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ನೋಡಲು ಮಾತ್ರ, ಆದ್ದರಿಂದ ಏನನ್ನೂ ಕಳುಹಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.err.generic": {
+  "en": "That did not work. Nothing was sent.",
+  "te": "అది పని చేయలేదు. ఏదీ పంపలేదు.",
+  "hi": "यह नहीं हुआ। कुछ नहीं भेजा गया।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಏನೂ ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.log.title": {
+  "en": "Earlier sends",
+  "te": "ఇంతకు ముందు పంపినవి",
+  "hi": "पहले के भेजे गए",
+  "kn": "ಹಿಂದೆ ಕಳುಹಿಸಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.log.none": {
+  "en": "Nothing has been sent yet.",
+  "te": "ఇంకా ఏదీ పంపలేదు.",
+  "hi": "अभी कुछ नहीं भेजा गया।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.log.row": {
+  "en": "{when}: {sent} sent, {failed} failed, {blocked} blocked",
+  "te": "{when}: {sent} పంపాం, {failed} విఫలం, {blocked} ఆపాం",
+  "hi": "{when}: {sent} भेजे, {failed} विफल, {blocked} रोके",
+  "kn": "{when}: {sent} ಕಳುಹಿಸಿದೆವು, {failed} ವಿಫಲ, {blocked} ತಡೆದೆವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.own_voice": {
+  "en": "My own voice",
+  "te": "నా సొంత గొంతు",
+  "hi": "मेरी अपनी आवाज़",
+  "kn": "ನನ್ನ ಸ್ವಂತ ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.title": {
+  "en": "Use my own voice",
+  "te": "నా సొంత గొంతు వాడండి",
+  "hi": "अपनी आवाज़ इस्तेमाल करें",
+  "kn": "ನನ್ನ ಸ್ವಂತ ಧ್ವನಿ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.intro": {
+  "en": "Record a short sample and say one sentence of consent. The assistant can then speak in a voice made from yours. It still says it is the AI assistant.",
+  "te": "చిన్న శాంపిల్ రికార్డ్ చేసి, ఒక సమ్మతి వాక్యం చెప్పండి. అప్పుడు అసిస్టెంట్ మీ గొంతు నుంచి చేసిన గొంతుతో మాట్లాడగలదు. అది AI అసిస్టెంట్ అని ఇంకా చెబుతుంది.",
+  "hi": "एक छोटा सैंपल रिकॉर्ड करें और सहमति का एक वाक्य बोलें। फिर असिस्टेंट आपकी आवाज़ से बनी आवाज़ में बोल सकता है। वह अब भी बताता है कि वह AI असिस्टेंट है।",
+  "kn": "ಚಿಕ್ಕ ಸ್ಯಾಂಪಲ್ ರೆಕಾರ್ಡ್ ಮಾಡಿ, ಒಪ್ಪಿಗೆಯ ಒಂದು ವಾಕ್ಯ ಹೇಳಿ. ಆಮೇಲೆ ಅಸಿಸ್ಟೆಂಟ್ ನಿಮ್ಮ ಧ್ವನಿಯಿಂದ ಮಾಡಿದ ಧ್ವನಿಯಲ್ಲಿ ಮಾತನಾಡಬಲ್ಲದು. ಅದು ಈಗಲೂ AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.fake": {
+  "en": "Test voice: no real voice is made yet.",
+  "te": "టెస్ట్ గొంతు: నిజమైన గొంతు ఇంకా తయారవదు.",
+  "hi": "टेस्ट आवाज़: अभी असली आवाज़ नहीं बनती।",
+  "kn": "ಟೆಸ್ಟ್ ಧ್ವನಿ: ನಿಜವಾದ ಧ್ವನಿ ಇನ್ನೂ ತಯಾರಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.owner": {
+  "en": "Only the Owner can make or delete the voice.",
+  "te": "గొంతును ఓనర్ మాత్రమే తయారు చేయగలరు లేదా తొలగించగలరు.",
+  "hi": "आवाज़ सिर्फ़ ओनर बना या हटा सकते हैं।",
+  "kn": "ಧ್ವನಿಯನ್ನು ಓನರ್ ಮಾತ್ರ ಮಾಡಬಹುದು ಅಥವಾ ಅಳಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.name": {
+  "en": "Your full name (it is part of the consent)",
+  "te": "మీ పూర్తి పేరు (ఇది సమ్మతిలో భాగం)",
+  "hi": "आपका पूरा नाम (यह सहमति का हिस्सा है)",
+  "kn": "ನಿಮ್ಮ ಪೂರ್ಣ ಹೆಸರು (ಇದು ಒಪ್ಪಿಗೆಯ ಭಾಗ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.s1": {
+  "en": "1. Read this sentence aloud",
+  "te": "1. ఈ వాక్యాన్ని గట్టిగా చదవండి",
+  "hi": "1. यह वाक्य ज़ोर से पढ़ें",
+  "kn": "1. ಈ ವಾಕ್ಯವನ್ನು ಗಟ್ಟಿಯಾಗಿ ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.sentence.get": {
+  "en": "Show the sentence",
+  "te": "వాక్యాన్ని చూపించు",
+  "hi": "वाक्य दिखाएँ",
+  "kn": "ವಾಕ್ಯ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.s2": {
+  "en": "2. Record a sample, 15 to 60 seconds. Read something natural, like a page of a book or a few lines about your shop.",
+  "te": "2. 15 నుంచి 60 సెకన్ల శాంపిల్ రికార్డ్ చేయండి. పుస్తకంలోని ఒక పేజీ లేదా మీ షాప్ గురించి కొన్ని లైన్లు సహజంగా చదవండి.",
+  "hi": "2. 15 से 60 सेकंड का सैंपल रिकॉर्ड करें। किताब का एक पन्ना या अपनी दुकान के बारे में कुछ पंक्तियाँ सहज ढंग से पढ़ें।",
+  "kn": "2. 15 ರಿಂದ 60 ಸೆಕೆಂಡ್‌ಗಳ ಸ್ಯಾಂಪಲ್ ರೆಕಾರ್ಡ್ ಮಾಡಿ. ಪುಸ್ತಕದ ಒಂದು ಪುಟ ಅಥವಾ ನಿಮ್ಮ ಅಂಗಡಿಯ ಬಗ್ಗೆ ಕೆಲವು ಸಾಲುಗಳನ್ನು ಸಹಜವಾಗಿ ಓದಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.rec.consent": {
+  "en": "Record the sentence",
+  "te": "వాక్యాన్ని రికార్డ్ చేయండి",
+  "hi": "वाक्य रिकॉर्ड करें",
+  "kn": "ವಾಕ್ಯವನ್ನು ರೆಕಾರ್ಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.rec.sample": {
+  "en": "Record the sample",
+  "te": "శాంపిల్ రికార్డ్ చేయండి",
+  "hi": "सैंपल रिकॉर्ड करें",
+  "kn": "ಸ್ಯಾಂಪಲ್ ರೆಕಾರ್ಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.rec.stop": {
+  "en": "Stop",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.rec.left": {
+  "en": "{n} seconds left",
+  "te": "{n} సెకన్లు మిగిలాయి",
+  "hi": "{n} सेकंड बाकी",
+  "kn": "{n} ಸೆಕೆಂಡ್ ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.rec.length": {
+  "en": "{n} seconds recorded",
+  "te": "{n} సెకన్లు రికార్డ్ అయ్యాయి",
+  "hi": "{n} सेकंड रिकॉर्ड हुए",
+  "kn": "{n} ಸೆಕೆಂಡ್ ರೆಕಾರ್ಡ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.rec.again": {
+  "en": "Record again",
+  "te": "మళ్లీ రికార్డ్ చేయండి",
+  "hi": "फिर से रिकॉर्ड करें",
+  "kn": "ಮತ್ತೆ ರೆಕಾರ್ಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.upload": {
+  "en": "Or choose a sound file",
+  "te": "లేదా సౌండ్ ఫైల్ ఎంచుకోండి",
+  "hi": "या साउंड फ़ाइल चुनें",
+  "kn": "ಅಥವಾ ಸೌಂಡ್ ಫೈಲ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.listen": {
+  "en": "Listen",
+  "te": "వినండి",
+  "hi": "सुनें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.create": {
+  "en": "Create my voice",
+  "te": "నా గొంతును తయారు చేయండి",
+  "hi": "मेरी आवाज़ बनाएँ",
+  "kn": "ನನ್ನ ಧ್ವನಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.creating": {
+  "en": "Making your voice…",
+  "te": "మీ గొంతు తయారవుతోంది…",
+  "hi": "आपकी आवाज़ बन रही है…",
+  "kn": "ನಿಮ್ಮ ಧ್ವನಿ ತಯಾರಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.rule": {
+  "en": "Deleting removes the voice and both recordings.",
+  "te": "తొలగిస్తే గొంతు, రెండు రికార్డింగ్‌లు పోతాయి.",
+  "hi": "हटाने पर आवाज़ और दोनों रिकॉर्डिंग मिट जाती हैं।",
+  "kn": "ಅಳಿಸಿದರೆ ಧ್ವನಿ ಮತ್ತು ಎರಡೂ ರೆಕಾರ್ಡಿಂಗ್ ಹೋಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.ready.title": {
+  "en": "Your own voice",
+  "te": "మీ సొంత గొంతు",
+  "hi": "आपकी अपनी आवाज़",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.ready.by": {
+  "en": "Made with the consent of {name} on {date}.",
+  "te": "{name} సమ్మతితో {date} న తయారైంది.",
+  "hi": "{name} की सहमति से {date} को बनी।",
+  "kn": "{name} ಅವರ ಒಪ್ಪಿಗೆಯಿಂದ {date} ರಂದು ಮಾಡಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.ready.use": {
+  "en": "Choose \"My own voice\" for the assistant below, then save.",
+  "te": "కింద అసిస్టెంట్ కోసం \"నా సొంత గొంతు\" ఎంచుకుని, సేవ్ చేయండి.",
+  "hi": "नीचे असिस्टेंट के लिए \"मेरी अपनी आवाज़\" चुनें, फिर सेव करें।",
+  "kn": "ಕೆಳಗೆ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ \"ನನ್ನ ಸ್ವಂತ ಧ್ವನಿ\" ಆರಿಸಿ, ನಂತರ ಉಳಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.pending": {
+  "en": "Your voice is being made.",
+  "te": "మీ గొంతు తయారవుతోంది.",
+  "hi": "आपकी आवाज़ बन रही है।",
+  "kn": "ನಿಮ್ಮ ಧ್ವನಿ ತಯಾರಾಗುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.failed": {
+  "en": "The last try did not work. Nothing was kept. You can try again.",
+  "te": "చివరి ప్రయత్నం పని చేయలేదు. ఏదీ ఉంచలేదు. మళ్లీ ప్రయత్నించవచ్చు.",
+  "hi": "पिछली कोशिश नहीं चली। कुछ नहीं रखा गया। आप फिर कोशिश कर सकते हैं।",
+  "kn": "ಕೊನೆಯ ಪ್ರಯತ್ನ ಆಗಲಿಲ್ಲ. ಏನೂ ಇಟ್ಟುಕೊಂಡಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.delete": {
+  "en": "Delete my voice",
+  "te": "నా గొంతును తొలగించండి",
+  "hi": "मेरी आवाज़ हटाएँ",
+  "kn": "ನನ್ನ ಧ್ವನಿ ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.delete.ask": {
+  "en": "Delete your voice? This removes the voice and both recordings. An assistant that used it goes back to a stock voice.",
+  "te": "మీ గొంతును తొలగించాలా? గొంతు, రెండు రికార్డింగ్‌లు పోతాయి. దాన్ని వాడిన అసిస్టెంట్ మామూలు గొంతుకు వెళ్తుంది.",
+  "hi": "अपनी आवाज़ हटाएँ? आवाज़ और दोनों रिकॉर्डिंग मिट जाएँगी। जो असिस्टेंट इसे इस्तेमाल करता था वह सामान्य आवाज़ पर लौट जाएगा।",
+  "kn": "ನಿಮ್ಮ ಧ್ವನಿ ಅಳಿಸುವುದೇ? ಧ್ವನಿ ಮತ್ತು ಎರಡೂ ರೆಕಾರ್ಡಿಂಗ್ ಹೋಗುತ್ತವೆ. ಅದನ್ನು ಬಳಸಿದ ಅಸಿಸ್ಟೆಂಟ್ ಸಾಮಾನ್ಯ ಧ್ವನಿಗೆ ಹಿಂತಿರುಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.delete.yes": {
+  "en": "Yes, delete it",
+  "te": "అవును, తొలగించండి",
+  "hi": "हाँ, हटाएँ",
+  "kn": "ಹೌದು, ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.delete.no": {
+  "en": "Keep it",
+  "te": "ఉంచండి",
+  "hi": "रहने दें",
+  "kn": "ಇರಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.deleted": {
+  "en": "Your voice and both recordings were deleted.",
+  "te": "మీ గొంతు, రెండు రికార్డింగ్‌లు తొలగించబడ్డాయి.",
+  "hi": "आपकी आवाज़ और दोनों रिकॉर्डिंग हटा दी गईं।",
+  "kn": "ನಿಮ್ಮ ಧ್ವನಿ ಮತ್ತು ಎರಡೂ ರೆಕಾರ್ಡಿಂಗ್ ಅಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.mic": {
+  "en": "We could not use the microphone. Allow it in your browser and try again.",
+  "te": "మైక్రోఫోన్ వాడలేకపోయాం. బ్రౌజర్‌లో అనుమతించి మళ్లీ ప్రయత్నించండి.",
+  "hi": "माइक्रोफ़ोन इस्तेमाल नहीं हो सका। ब्राउज़र में अनुमति दें और फिर कोशिश करें।",
+  "kn": "ಮೈಕ್ರೋಫೋನ್ ಬಳಸಲಾಗಲಿಲ್ಲ. ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಅನುಮತಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.short": {
+  "en": "That was too short.",
+  "te": "అది చాలా చిన్నది.",
+  "hi": "यह बहुत छोटा था।",
+  "kn": "ಅದು ತುಂಬಾ ಚಿಕ್ಕದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.len.sample": {
+  "en": "The sample must be between 15 and 60 seconds.",
+  "te": "శాంపిల్ 15 నుంచి 60 సెకన్ల మధ్య ఉండాలి.",
+  "hi": "सैंपल 15 से 60 सेकंड के बीच होना चाहिए।",
+  "kn": "ಸ್ಯಾಂಪಲ್ 15 ರಿಂದ 60 ಸೆಕೆಂಡ್‌ಗಳ ನಡುವೆ ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.len.consent": {
+  "en": "Reading the sentence takes 2 to 30 seconds.",
+  "te": "వాక్యం చదవడానికి 2 నుంచి 30 సెకన్లు పడుతుంది.",
+  "hi": "वाक्य पढ़ने में 2 से 30 सेकंड लगते हैं।",
+  "kn": "ವಾಕ್ಯ ಓದಲು 2 ರಿಂದ 30 ಸೆಕೆಂಡ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.upload": {
+  "en": "We could not read that file as sound, or it is too large (10 MB at most).",
+  "te": "ఆ ఫైల్‌ను సౌండ్‌గా చదవలేకపోయాం, లేదా అది చాలా పెద్దది (గరిష్టం 10 MB).",
+  "hi": "उस फ़ाइल को आवाज़ की तरह नहीं पढ़ सके, या वह बहुत बड़ी है (ज़्यादा से ज़्यादा 10 MB)।",
+  "kn": "ಆ ಫೈಲ್ ಅನ್ನು ಧ್ವನಿಯಾಗಿ ಓದಲಾಗಲಿಲ್ಲ, ಅಥವಾ ಅದು ತುಂಬಾ ದೊಡ್ಡದು (ಗರಿಷ್ಠ 10 MB).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.exists": {
+  "en": "A voice exists already. Delete it first.",
+  "te": "గొంతు ఇప్పటికే ఉంది. ముందు తొలగించండి.",
+  "hi": "आवाज़ पहले से है। पहले उसे हटाएँ।",
+  "kn": "ಧ್ವನಿ ಈಗಾಗಲೇ ಇದೆ. ಮೊದಲು ಅಳಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.mismatch": {
+  "en": "The sentence changed. Show it again and record it again.",
+  "te": "వాక్యం మారింది. మళ్లీ చూపించి, మళ్లీ రికార్డ్ చేయండి.",
+  "hi": "वाक्य बदल गया। उसे फिर दिखाएँ और फिर रिकॉर्ड करें।",
+  "kn": "ವಾಕ್ಯ ಬದಲಾಗಿದೆ. ಮತ್ತೆ ತೋರಿಸಿ, ಮತ್ತೆ ರೆಕಾರ್ಡ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.audio": {
+  "en": "A recording could not be accepted. Record it again.",
+  "te": "ఒక రికార్డింగ్ అంగీకరించలేకపోయాం. మళ్లీ రికార్డ్ చేయండి.",
+  "hi": "एक रिकॉर्डिंग स्वीकार नहीं हुई। उसे फिर रिकॉर्ड करें।",
+  "kn": "ಒಂದು ರೆಕಾರ್ಡಿಂಗ್ ಸ್ವೀಕರಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ರೆಕಾರ್ಡ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.provider": {
+  "en": "The voice could not be made. Nothing was kept.",
+  "te": "గొంతు తయారు చేయలేకపోయాం. ఏదీ ఉంచలేదు.",
+  "hi": "आवाज़ नहीं बन सकी। कुछ नहीं रखा गया।",
+  "kn": "ಧ್ವನಿ ಮಾಡಲಾಗಲಿಲ್ಲ. ಏನೂ ಇಟ್ಟುಕೊಂಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.delete": {
+  "en": "The deletion stopped part-way. Press delete again.",
+  "te": "తొలగింపు మధ్యలో ఆగింది. మళ్లీ తొలగించండి నొక్కండి.",
+  "hi": "हटाना बीच में रुक गया। फिर से हटाएँ दबाएँ।",
+  "kn": "ಅಳಿಸುವಿಕೆ ಮಧ್ಯದಲ್ಲಿ ನಿಂತಿತು. ಮತ್ತೆ ಅಳಿಸಿ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.readonly": {
+  "en": "This workspace is read-only, so the voice cannot be changed.",
+  "te": "ఈ వర్క్‌స్పేస్ చదవడానికి మాత్రమే, కాబట్టి గొంతు మార్చలేరు.",
+  "hi": "यह वर्कस्पेस सिर्फ़ देखने के लिए है, इसलिए आवाज़ बदली नहीं जा सकती।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ನೋಡಲು ಮಾತ್ರ, ಆದ್ದರಿಂದ ಧ್ವನಿ ಬದಲಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ov.err.generic": {
+  "en": "That did not work. Nothing was changed.",
+  "te": "అది పని చేయలేదు. ఏదీ మారలేదు.",
+  "hi": "यह नहीं हुआ। कुछ नहीं बदला।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.title": {
+  "en": "Advanced: how calls behave",
+  "te": "అధునాతనం: కాల్స్ ఎలా జరుగుతాయి",
+  "hi": "एडवांस्ड: कॉल कैसे होते हैं",
+  "kn": "ಅಡ್ವಾನ್ಸ್ಡ್: ಕಾಲ್ಸ್ ಹೇಗೆ ನಡೆಯುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.intro": {
+  "en": "For people who want control. The defaults suit most businesses, so you can leave this closed.",
+  "te": "నియంత్రణ కావాలనుకునే వారి కోసం. చాలా వ్యాపారాలకు డిఫాల్ట్‌లు సరిపోతాయి, కాబట్టి దీన్ని మూసి ఉంచవచ్చు.",
+  "hi": "जो नियंत्रण चाहते हैं उनके लिए। ज़्यादातर बिज़नेस के लिए डिफ़ॉल्ट ठीक हैं, इसलिए इसे बंद रख सकते हैं।",
+  "kn": "ನಿಯಂತ್ರಣ ಬೇಕಾದವರಿಗಾಗಿ. ಹೆಚ್ಚಿನ ಬಿಸಿನೆಸ್‌ಗಳಿಗೆ ಡಿಫಾಲ್ಟ್ ಸಾಕು, ಹಾಗಾಗಿ ಇದನ್ನು ಮುಚ್ಚಿಯೇ ಇಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.mock": {
+  "en": "Test mode: these choices are kept on this device only.",
+  "te": "టెస్ట్ మోడ్: ఈ ఎంపికలు ఈ డివైస్‌లోనే ఉంటాయి.",
+  "hi": "टेस्ट मोड: ये चुनाव सिर्फ़ इसी डिवाइस पर रहते हैं।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಈ ಆಯ್ಕೆಗಳು ಈ ಡಿವೈಸ್‌ನಲ್ಲೇ ಇರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.g.retry": {
+  "en": "Trying again",
+  "te": "మళ్లీ ప్రయత్నించడం",
+  "hi": "फिर कोशिश",
+  "kn": "ಮತ್ತೆ ಪ್ರಯತ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.g.line": {
+  "en": "On the line",
+  "te": "కాల్ సమయంలో",
+  "hi": "कॉल के दौरान",
+  "kn": "ಕಾಲ್ ಸಮಯದಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.g.words": {
+  "en": "Names and words",
+  "te": "పేర్లు, పదాలు",
+  "hi": "नाम और शब्द",
+  "kn": "ಹೆಸರುಗಳು, ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.g.when": {
+  "en": "When it calls",
+  "te": "ఎప్పుడు కాల్ చేస్తుంది",
+  "hi": "कब कॉल करता है",
+  "kn": "ಯಾವಾಗ ಕಾಲ್ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.g.safety": {
+  "en": "Safety",
+  "te": "భద్రత",
+  "hi": "सुरक्षा",
+  "kn": "ಸುರಕ್ಷತೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.g.handover": {
+  "en": "Hand-over by topic",
+  "te": "అంశం ప్రకారం అప్పగింత",
+  "hi": "विषय के हिसाब से हैंड-ओवर",
+  "kn": "ವಿಷಯದ ಪ್ರಕಾರ ಹಸ್ತಾಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.g.memory": {
+  "en": "Memory and what it may call about",
+  "te": "జ్ఞాపకం, ఏ విషయాల గురించి కాల్ చేయవచ్చు",
+  "hi": "याददाश्त और किस बारे में कॉल कर सकता है",
+  "kn": "ನೆನಪು, ಯಾವ ವಿಷಯಗಳ ಬಗ್ಗೆ ಕಾಲ್ ಮಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.retry.busy": {
+  "en": "Line busy",
+  "te": "లైన్ బిజీ",
+  "hi": "लाइन व्यस्त",
+  "kn": "ಲೈನ್ ಬ್ಯುಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.retry.no_answer": {
+  "en": "No answer",
+  "te": "జవాబు లేదు",
+  "hi": "जवाब नहीं",
+  "kn": "ಉತ್ತರ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.retry.call_later": {
+  "en": "Asked to call later (no time given)",
+  "te": "తర్వాత కాల్ చేయమన్నారు (సమయం చెప్పలేదు)",
+  "hi": "बाद में कॉल करने को कहा (समय नहीं बताया)",
+  "kn": "ನಂತರ ಕಾಲ್ ಮಾಡಲು ಹೇಳಿದರು (ಸಮಯ ಹೇಳಲಿಲ್ಲ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.retry.count": {
+  "en": "Tries (0 = never again)",
+  "te": "ప్రయత్నాలు (0 = మళ్లీ చేయదు)",
+  "hi": "कोशिशें (0 = दोबारा नहीं)",
+  "kn": "ಪ್ರಯತ್ನಗಳು (0 = ಮತ್ತೆ ಮಾಡುವುದಿಲ್ಲ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.retry.gap": {
+  "en": "Minutes between tries",
+  "te": "ప్రయత్నాల మధ్య నిమిషాలు",
+  "hi": "कोशिशों के बीच मिनट",
+  "kn": "ಪ್ರಯತ್ನಗಳ ನಡುವೆ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.concurrent": {
+  "en": "Calls at the same time (1 to 20)",
+  "te": "ఒకే సమయంలో కాల్స్ (1 నుంచి 20)",
+  "hi": "एक साथ कॉल (1 से 20)",
+  "kn": "ಒಂದೇ ಸಮಯದಲ್ಲಿ ಕಾಲ್ಸ್ (1 ರಿಂದ 20)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.voicemail": {
+  "en": "Recognise voicemail",
+  "te": "వాయిస్‌మెయిల్‌ను గుర్తించు",
+  "hi": "वॉइसमेल पहचानें",
+  "kn": "ವಾಯ್ಸ್‌ಮೇಲ್ ಗುರುತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.voicemail.action": {
+  "en": "When it is voicemail",
+  "te": "వాయిస్‌మెయిల్ అయితే",
+  "hi": "वॉइसमेल हो तो",
+  "kn": "ವಾಯ್ಸ್‌ಮೇಲ್ ಆದರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.menu": {
+  "en": "Recognise phone menus",
+  "te": "ఫోన్ మెనూలను గుర్తించు",
+  "hi": "फ़ोन मेन्यू पहचानें",
+  "kn": "ಫೋನ್ ಮೆನು ಗುರುತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.menu.action": {
+  "en": "When it is a phone menu",
+  "te": "ఫోన్ మెనూ అయితే",
+  "hi": "फ़ोन मेन्यू हो तो",
+  "kn": "ಫೋನ್ ಮೆನು ಆದರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.act.hang_up": {
+  "en": "Hang up",
+  "te": "కట్ చేయి",
+  "hi": "कॉल काटें",
+  "kn": "ಕಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.act.leave_message": {
+  "en": "Leave a short message (never prices)",
+  "te": "చిన్న మెసేజ్ వదులు (ధరలు ఎప్పుడూ కాదు)",
+  "hi": "छोटा मैसेज छोड़ें (कीमतें कभी नहीं)",
+  "kn": "ಚಿಕ್ಕ ಮೆಸೇಜ್ ಬಿಡಿ (ಬೆಲೆ ಎಂದೂ ಇಲ್ಲ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.act.retry_later": {
+  "en": "Try again later",
+  "te": "తర్వాత మళ్లీ ప్రయత్నించు",
+  "hi": "बाद में फिर कोशिश करें",
+  "kn": "ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.silence": {
+  "en": "Silence before it speaks again (3 to 30 seconds)",
+  "te": "మళ్లీ మాట్లాడే ముందు నిశ్శబ్దం (3 నుంచి 30 సెకన్లు)",
+  "hi": "दोबारा बोलने से पहले चुप्पी (3 से 30 सेकंड)",
+  "kn": "ಮತ್ತೆ ಮಾತನಾಡುವ ಮೊದಲು ಮೌನ (3 ರಿಂದ 30 ಸೆಕೆಂಡ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.maxlen": {
+  "en": "Longest call (seconds, steps of 30)",
+  "te": "అతి పొడవైన కాల్ (సెకన్లు, 30 చొప్పున)",
+  "hi": "सबसे लंबा कॉल (सेकंड, 30 के कदम में)",
+  "kn": "ಅತಿ ಉದ್ದದ ಕಾಲ್ (ಸೆಕೆಂಡ್, 30 ರ ಹಂತ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.interrupt": {
+  "en": "How easily the customer can interrupt",
+  "te": "కస్టమర్ ఎంత సులభంగా మధ్యలో మాట్లాడగలరు",
+  "hi": "ग्राहक कितनी आसानी से बीच में बोल सकता है",
+  "kn": "ಗ್ರಾಹಕರು ಎಷ್ಟು ಸುಲಭವಾಗಿ ಮಧ್ಯದಲ್ಲಿ ಮಾತನಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.int.low": {
+  "en": "Not easily",
+  "te": "సులభంగా కాదు",
+  "hi": "आसानी से नहीं",
+  "kn": "ಸುಲಭವಾಗಿ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.int.medium": {
+  "en": "Normal",
+  "te": "సాధారణం",
+  "hi": "सामान्य",
+  "kn": "ಸಾಮಾನ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.int.high": {
+  "en": "Very easily",
+  "te": "చాలా సులభంగా",
+  "hi": "बहुत आसानी से",
+  "kn": "ತುಂಬಾ ಸುಲಭವಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.sounds": {
+  "en": "Say \"hmm\" and \"okay\" while listening",
+  "te": "వింటున్నప్పుడు \"హ్మ్\", \"ఓకే\" అనండి",
+  "hi": "सुनते समय \"हम्म\" और \"ओके\" बोलें",
+  "kn": "ಕೇಳುವಾಗ \"ಹ್ಮ್\", \"ಓಕೆ\" ಎನ್ನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.pron": {
+  "en": "How to say names (shop and product names)",
+  "te": "పేర్లు ఎలా పలకాలి (షాప్, ప్రొడక్ట్ పేర్లు)",
+  "hi": "नाम कैसे बोलने हैं (दुकान और प्रोडक्ट के नाम)",
+  "kn": "ಹೆಸರುಗಳನ್ನು ಹೇಗೆ ಹೇಳಬೇಕು (ಅಂಗಡಿ, ಪ್ರೊಡಕ್ಟ್ ಹೆಸರುಗಳು)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.pron.written": {
+  "en": "Written",
+  "te": "రాసినది",
+  "hi": "लिखा हुआ",
+  "kn": "ಬರೆದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.pron.spoken": {
+  "en": "Said as",
+  "te": "ఇలా పలకాలి",
+  "hi": "ऐसे बोलें",
+  "kn": "ಹೀಗೆ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.add": {
+  "en": "Add",
+  "te": "చేర్చు",
+  "hi": "जोड़ें",
+  "kn": "ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.remove": {
+  "en": "Remove",
+  "te": "తొలగించు",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆದುಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.keywords": {
+  "en": "Words to listen for (one on each line, up to 100)",
+  "te": "వినాల్సిన పదాలు (ప్రతి లైన్‌కు ఒకటి, గరిష్టం 100)",
+  "hi": "सुनने के शब्द (हर पंक्ति में एक, ज़्यादा से ज़्यादा 100)",
+  "kn": "ಕೇಳಬೇಕಾದ ಪದಗಳು (ಪ್ರತಿ ಸಾಲಿಗೆ ಒಂದು, ಗರಿಷ್ಠ 100)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.hours.follow": {
+  "en": "Same hours as the AI assistant",
+  "te": "AI అసిస్టెంట్ సమయాలే",
+  "hi": "AI असिस्टेंट के घंटे ही",
+  "kn": "AI ಅಸಿಸ್ಟೆಂಟ್‌ನ ಸಮಯವೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.hours.own": {
+  "en": "Hours for calls only",
+  "te": "కాల్స్‌కు మాత్రమే సమయాలు",
+  "hi": "सिर्फ़ कॉल के घंटे",
+  "kn": "ಕಾಲ್ಸ್‌ಗೆ ಮಾತ್ರ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.holidays": {
+  "en": "Days it never calls",
+  "te": "కాల్ చేయని రోజులు",
+  "hi": "जिन दिनों कॉल नहीं करता",
+  "kn": "ಕಾಲ್ ಮಾಡದ ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.holidays.date": {
+  "en": "Date",
+  "te": "తేదీ",
+  "hi": "तारीख",
+  "kn": "ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.perweek": {
+  "en": "Most calls to one customer in a week (1 to 14)",
+  "te": "ఒక కస్టమర్‌కు వారంలో గరిష్ట కాల్స్ (1 నుంచి 14)",
+  "hi": "एक ग्राहक को हफ़्ते में ज़्यादा से ज़्यादा कॉल (1 से 14)",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ವಾರದಲ್ಲಿ ಗರಿಷ್ಠ ಕಾಲ್ಸ್ (1 ರಿಂದ 14)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.autopause": {
+  "en": "Pause by itself when the phone company refuses this many calls in an hour (3 to 100)",
+  "te": "ఫోన్ కంపెనీ గంటలో ఇన్ని కాల్స్ తిరస్కరిస్తే తానే ఆగుతుంది (3 నుంచి 100)",
+  "hi": "फ़ोन कंपनी एक घंटे में इतने कॉल रोके तो खुद रुक जाए (3 से 100)",
+  "kn": "ಫೋನ್ ಕಂಪನಿ ಒಂದು ಗಂಟೆಯಲ್ಲಿ ಇಷ್ಟು ಕಾಲ್ ತಿರಸ್ಕರಿಸಿದರೆ ತಾನೇ ನಿಲ್ಲುತ್ತದೆ (3 ರಿಂದ 100)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.autopause.never": {
+  "en": "Never pause by itself",
+  "te": "తానే ఎప్పుడూ ఆగదు",
+  "hi": "खुद कभी न रुके",
+  "kn": "ತಾನೇ ಎಂದೂ ನಿಲ್ಲುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.handover.topic": {
+  "en": "Topic",
+  "te": "అంశం",
+  "hi": "विषय",
+  "kn": "ವಿಷಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.handover.person": {
+  "en": "Person",
+  "te": "వ్యక్తి",
+  "hi": "व्यक्ति",
+  "kn": "ವ್ಯಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.handover.phone": {
+  "en": "Phone, with +",
+  "te": "ఫోన్, + తో",
+  "hi": "फ़ोन, + के साथ",
+  "kn": "ಫೋನ್, + ಸಹಿತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.handover.note": {
+  "en": "Only the Owner and Admin see these names and numbers. A topic goes to one person.",
+  "te": "ఈ పేర్లు, నంబర్లు ఓనర్, అడ్మిన్‌కు మాత్రమే కనిపిస్తాయి. ఒక అంశం ఒక వ్యక్తికి వెళ్తుంది.",
+  "hi": "ये नाम और नंबर सिर्फ़ ओनर और एडमिन देखते हैं। एक विषय एक व्यक्ति को जाता है।",
+  "kn": "ಈ ಹೆಸರು, ನಂಬರ್‌ಗಳನ್ನು ಓನರ್, ಅಡ್ಮಿನ್ ಮಾತ್ರ ನೋಡುತ್ತಾರೆ. ಒಂದು ವಿಷಯ ಒಬ್ಬ ವ್ಯಕ್ತಿಗೆ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.topic.pricing": {
+  "en": "Prices",
+  "te": "ధరలు",
+  "hi": "कीमतें",
+  "kn": "ಬೆಲೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.topic.payment": {
+  "en": "Payment",
+  "te": "చెల్లింపు",
+  "hi": "भुगतान",
+  "kn": "ಪಾವತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.topic.delivery": {
+  "en": "Delivery",
+  "te": "డెలివరీ",
+  "hi": "डिलीवरी",
+  "kn": "ಡೆಲಿವರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.topic.complaint": {
+  "en": "Complaint",
+  "te": "ఫిర్యాదు",
+  "hi": "शिकायत",
+  "kn": "ದೂರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.topic.visit": {
+  "en": "Visit",
+  "te": "విజిట్",
+  "hi": "विज़िट",
+  "kn": "ವಿಸಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.topic.other": {
+  "en": "Anything else",
+  "te": "ఇంకేదైనా",
+  "hi": "और कुछ भी",
+  "kn": "ಬೇರೆ ಏನಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.memory": {
+  "en": "Remember earlier conversations with this customer",
+  "te": "ఈ కస్టమర్‌తో ముందటి సంభాషణలు గుర్తుంచుకో",
+  "hi": "इस ग्राहक से पहले की बातचीत याद रखें",
+  "kn": "ಈ ಗ್ರಾಹಕರೊಂದಿಗಿನ ಹಿಂದಿನ ಮಾತುಕತೆ ನೆನಪಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.purposes": {
+  "en": "What it may call about",
+  "te": "దేని గురించి కాల్ చేయవచ్చు",
+  "hi": "किस बारे में कॉल कर सकता है",
+  "kn": "ಯಾವ ವಿಷಯದ ಬಗ್ಗೆ ಕಾಲ್ ಮಾಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.purpose.sales_followup": {
+  "en": "Sales follow-up",
+  "te": "సేల్స్ ఫాలో-అప్",
+  "hi": "सेल्स फ़ॉलो-अप",
+  "kn": "ಸೇಲ್ಸ್ ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.purpose.payment_reminder": {
+  "en": "Payment reminder",
+  "te": "చెల్లింపు రిమైండర్",
+  "hi": "भुगतान रिमाइंडर",
+  "kn": "ಪಾವತಿ ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.purpose.admission_followup": {
+  "en": "Admission follow-up",
+  "te": "అడ్మిషన్ ఫాలో-అప్",
+  "hi": "एडमिशन फ़ॉलो-अप",
+  "kn": "ಅಡ್ಮಿಷನ್ ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.purpose.visit_reminder": {
+  "en": "Visit reminder",
+  "te": "విజిట్ రిమైండర్",
+  "hi": "विज़िट रिमाइंडर",
+  "kn": "ವಿಸಿಟ್ ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.purpose.event_reminder": {
+  "en": "Event reminder",
+  "te": "ఈవెంట్ రిమైండర్",
+  "hi": "इवेंट रिमाइंडर",
+  "kn": "ಈವೆಂಟ್ ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.school": {
+  "en": "A school makes no sales calls and none about dues or fees.",
+  "te": "స్కూల్ సేల్స్ కాల్స్ చేయదు, బకాయిలు లేదా ఫీజుల గురించి కూడా చేయదు.",
+  "hi": "स्कूल बिक्री के कॉल नहीं करता, और बकाया या फ़ीस के बारे में भी नहीं।",
+  "kn": "ಶಾಲೆ ಸೇಲ್ಸ್ ಕಾಲ್ ಮಾಡುವುದಿಲ್ಲ, ಬಾಕಿ ಅಥವಾ ಫೀಸ್ ಬಗ್ಗೆಯೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.save": {
+  "en": "Save call settings",
+  "te": "కాల్ సెట్టింగ్‌లను సేవ్ చేయండి",
+  "hi": "कॉल सेटिंग सेव करें",
+  "kn": "ಕಾಲ್ ಸೆಟ್ಟಿಂಗ್ ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.err": {
+  "en": "That did not save. Check the numbers, the dates and the phone numbers.",
+  "te": "అది సేవ్ కాలేదు. సంఖ్యలు, తేదీలు, ఫోన్ నంబర్లు చూడండి.",
+  "hi": "यह सेव नहीं हुआ। संख्याएँ, तारीखें और फ़ोन नंबर देखें।",
+  "kn": "ಅದು ಉಳಿಯಲಿಲ್ಲ. ಸಂಖ್ಯೆಗಳು, ದಿನಾಂಕಗಳು, ಫೋನ್ ನಂಬರ್‌ಗಳನ್ನು ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.err.locked": {
+  "en": "A school cannot switch that on.",
+  "te": "స్కూల్ దాన్ని ఆన్ చేయలేదు.",
+  "hi": "स्कूल उसे चालू नहीं कर सकता।",
+  "kn": "ಶಾಲೆ ಅದನ್ನು ಆನ್ ಮಾಡಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.err.readonly": {
+  "en": "This workspace is read-only, so nothing can be saved.",
+  "te": "ఈ వర్క్‌స్పేస్ చదవడానికి మాత్రమే, కాబట్టి ఏదీ సేవ్ చేయలేరు.",
+  "hi": "यह वर्कस्पेस सिर्फ़ देखने के लिए है, इसलिए कुछ सेव नहीं हो सकता।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ನೋಡಲು ಮಾತ್ರ, ಆದ್ದರಿಂದ ಏನನ್ನೂ ಉಳಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "marks.pv.issue.line": {
+  "en": "Line {line}: {what}",
+  "te": "లైన్ {line}: {what}",
+  "hi": "पंक्ति {line}: {what}",
+  "kn": "ಸಾಲು {line}: {what}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.resume.sub": {
+  "en": "Your trial or plan has ended, so there is no new trial. Choose a plan and pay again to continue: everything you did is still here.",
+  "te": "మీ ట్రయల్ లేదా ప్లాన్ ముగిసింది, కాబట్టి కొత్త ట్రయల్ లేదు. కొనసాగడానికి ప్లాన్ ఎంచుకుని మళ్లీ చెల్లించండి: మీరు చేసినదంతా ఇక్కడే ఉంది.",
+  "hi": "आपका ट्रायल या प्लान खत्म हो गया है, इसलिए नया ट्रायल नहीं है। आगे बढ़ने के लिए प्लान चुनें और फिर भुगतान करें: आपका सब किया हुआ यहीं है।",
+  "kn": "ನಿಮ್ಮ ಟ್ರಯಲ್ ಅಥವಾ ಪ್ಲಾನ್ ಮುಗಿದಿದೆ, ಆದ್ದರಿಂದ ಹೊಸ ಟ್ರಯಲ್ ಇಲ್ಲ. ಮುಂದುವರಿಯಲು ಪ್ಲಾನ್ ಆರಿಸಿ ಮತ್ತೆ ಪಾವತಿಸಿ: ನೀವು ಮಾಡಿದ್ದೆಲ್ಲ ಇಲ್ಲೇ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.resume.for": {
+  "en": "Pay again and continue with {name}",
+  "te": "మళ్లీ చెల్లించి {name}తో కొనసాగండి",
+  "hi": "फिर भुगतान करके {name} के साथ आगे बढ़ें",
+  "kn": "ಮತ್ತೆ ಪಾವತಿಸಿ {name} ಜೊತೆ ಮುಂದುವರಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.resume.go": {
+  "en": "Pay and continue",
+  "te": "చెల్లించి కొనసాగండి",
+  "hi": "भुगतान करके आगे बढ़ें",
+  "kn": "ಪಾವತಿಸಿ ಮುಂದುವರಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "plan.resume.done": {
+  "en": "Your plan {name} is active again. No new trial was started.",
+  "te": "మీ ప్లాన్ {name} మళ్లీ యాక్టివ్ అయింది. కొత్త ట్రయల్ మొదలవలేదు.",
+  "hi": "आपका प्लान {name} फिर चालू है। नया ट्रायल शुरू नहीं हुआ।",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್ {name} ಮತ್ತೆ ಸಕ್ರಿಯವಾಗಿದೆ. ಹೊಸ ಟ್ರಯಲ್ ಶುರುವಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.read_only": {
+  "en": "This workspace is read-only, so this cannot be done. To go on, pay again or write to the billing address.",
+  "te": "ఈ వర్క్‌స్పేస్ చదవడానికి మాత్రమే, కాబట్టి ఇది చేయలేరు. కొనసాగడానికి మళ్లీ చెల్లించండి లేదా బిల్లింగ్ అడ్రస్‌కి రాయండి.",
+  "hi": "यह वर्कस्पेस सिर्फ़ देखने के लिए है, इसलिए यह नहीं हो सकता। आगे बढ़ने के लिए फिर भुगतान करें या बिलिंग पते पर लिखें।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ನೋಡಲು ಮಾತ್ರ, ಆದ್ದರಿಂದ ಇದನ್ನು ಮಾಡಲಾಗುವುದಿಲ್ಲ. ಮುಂದುವರಿಯಲು ಮತ್ತೆ ಪಾವತಿಸಿ ಅಥವಾ ಬಿಲ್ಲಿಂಗ್ ವಿಳಾಸಕ್ಕೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "apierr.waiting_whatsapp": {
+  "en": "Messages and calls start once your WhatsApp is connected. Nothing was sent.",
+  "te": "మీ వాట్సాప్ కనెక్ట్ అయ్యాక మెసేజ్‌లు, కాల్స్ మొదలవుతాయి. ఏదీ పంపలేదు.",
+  "hi": "आपका व्हाट्सऐप जुड़ने के बाद मैसेज और कॉल शुरू होंगे। कुछ नहीं भेजा गया।",
+  "kn": "ನಿಮ್ಮ ವಾಟ್ಸಾಪ್ ಸಂಪರ್ಕ ಆದ ನಂತರ ಮೆಸೇಜ್, ಕಾಲ್ ಶುರುವಾಗುತ್ತವೆ. ಏನೂ ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.own_voice.d": {
+  "en": "Made from your own recording, with your consent",
+  "te": "మీ సొంత రికార్డింగ్ నుంచి, మీ సమ్మతితో",
+  "hi": "आपकी अपनी रिकॉर्डिंग से, आपकी सहमति से",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ರೆಕಾರ್ಡಿಂಗ್‌ನಿಂದ, ನಿಮ್ಮ ಒಪ್ಪಿಗೆಯೊಂದಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

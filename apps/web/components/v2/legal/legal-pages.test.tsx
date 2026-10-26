@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const jarValues: Record<string, string> = {};
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: (name: string) => (name in jarValues ? { name, value: jarValues[name] } : undefined) }) }));
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }), usePathname: () => "/privacy" }));
 const draft = vi.hoisted(() => ({ on: false }));
 vi.mock("@/lib/legal/version", async (orig) => {
   const real = await orig<typeof import("@/lib/legal/version")>();
@@ -99,12 +99,12 @@ describe("/privacy and /terms (job BH)", () => {
   });
   it("it names what we really keep and who handles it: every group of the data inventory, the processors, voice, the AI, cookies, backups, the do-not-contact keys", () => {
     const all = textOf(PRIVACY);
-    for (const word of ["phone number", "e-mail", "job title", "enquiries", "store visits", "call requests", "{assistant}", "Supabase", "Google Cloud", "WhatsApp", "speech", "Meta", "recording", "backup", "do-not-contact", "sb-<project>-auth-token", "sme_lang", "sme_theme", "sme_consent", "Settings, Privacy", "24-hour"]) expect(all, word).toContain(word);
+    for (const word of ["phone number", "e-mail", "job title", "enquiries", "store visits", "call requests", "AI assistant", "Supabase", "Google Cloud", "WhatsApp", "speech", "Meta", "recording", "backup", "do-not-contact", "sb-<project>-auth-token", "sme_lang", "sme_theme", "sme_consent", "Settings, Privacy", "24-hour"]) expect(all, word).toContain(word);
   });
   it("it says the assistant is an AI and that messages to customers may be written by AI and are labelled, in both texts", () => {
     for (const doc of [PRIVACY, TERMS]) {
       const all = textOf(doc);
-      expect(all).toMatch(/\{assistant\}[^"]*(is an AI|, the assistant in \{brand\}, is an AI)/);
+      expect(all).toMatch(/(Our assistant is an AI|The assistant in \{brand\} is an AI|The assistant is an AI)/);
       expect(all).toMatch(/written by AI[^"]*labelled/);
     }
   });

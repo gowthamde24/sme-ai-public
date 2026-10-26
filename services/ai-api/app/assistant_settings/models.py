@@ -12,7 +12,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
 LanguageWord = Literal["en", "te", "hi", "kn"]
-PersonaWord = Literal["female_warm", "female_clear", "male_calm", "male_lively"]
+PersonaWord = Literal["female_warm", "female_clear", "male_calm", "male_lively", "own_voice"]
 StyleWord = Literal["warm", "respectful", "quick"]
 # the business type is the pack's code (data: packages/packs); code never lists them
 BusinessType = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,40}$")]

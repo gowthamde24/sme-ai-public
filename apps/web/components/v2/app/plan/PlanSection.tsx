@@ -9,7 +9,7 @@ import { PlanMoves } from "./PlanMoves";
 import type { PlanActions } from "./types";
 
 const date = (iso: string): string => new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
-const TONE: Record<BillingState, "neutral" | "green" | "red"> = { none: "neutral", trialing: "green", active: "green", past_due: "red", cancelled: "neutral" };
+const TONE: Record<BillingState, "neutral" | "green" | "red"> = { none: "neutral", trial_pending: "neutral", trialing: "green", active: "green", past_due: "red", cancelled: "neutral" };
 
 /**
  * Settings > Plan (job DK): the plan the business is on, the days left of the trial, the two meters (call minutes and WhatsApp messages the business starts: counts and percentages, never money), one gentle notice when a
@@ -60,6 +60,12 @@ export function PlanSection({ words, plan, def, trialDays, now, canChange, mock,
         ) : null}
         {plan.state === "none" ? <p className={mutedText}>{t("plan.none.body", { days: trialDays })}</p> : null}
         {def && def.priceInr === null ? <p className={mutedText}>{t("plan.price.soon")}</p> : null}
+        {plan.state === "trial_pending" ? (
+          <>
+            <p className="mt-2 font-medium">{t("plan.trial.pending", { days: trialDays })}</p>
+            <p className={mutedText}>{t("plan.trial.pending.note")}</p>
+          </>
+        ) : null}
         {trial ? (
           <>
             <p className="mt-2 font-medium">{t("plan.trial.day", { n: trialDay(plan.trialEndsAt, today, trialDays), total: trialDays })}</p>

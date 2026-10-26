@@ -25,7 +25,7 @@ describe("what happened after each call and follow-up (on a customer)", () => {
     const items = screen.getAllByRole("listitem");
     expect(items).toHaveLength(outcomes.length);
     expect(items[0]).toHaveAttribute("data-outcome", outcomes[0].result);
-    expect(items[0]).toHaveTextContent(outcomes[0].reason);
+    expect(items[0]).toHaveTextContent(outcomes[0].reason ?? "");
     expect(items[0]).toHaveTextContent(/Call|WhatsApp follow-up/);
     expect(items[0]).toHaveTextContent(/Positive|Negative|Unclear/);
     expect(screen.queryByRole("button", { name: "Correct this" })).toBeNull(); // a person who may only read has no button
@@ -71,7 +71,7 @@ describe("what happened after each call and follow-up (on a customer)", () => {
 
 describe("today's totals on Today", () => {
   it("says '[N] positive · [N] not interested' and only mentions the unclear when there are some", () => {
-    render(<OutcomesToday words={words} totals={{ positive: 7, negative: 3, unclear: 0 }} />);
+    render(<OutcomesToday words={words} totals={{ positive: 7, negative: 3, unclear: 0, notInterested: 3 }} />);
     const line = document.querySelector("[data-totals]")!;
     expect(line.textContent).toBe("7 positive·3 not interested");
     expect(screen.getByRole("heading", { name: "Outcomes today" })).toBeInTheDocument();
@@ -80,7 +80,7 @@ describe("today's totals on Today", () => {
     expect(document.querySelector("[data-totals]")!.textContent).toBe("7 positive·3 not interested·2 unclear");
   });
   it("says so when nothing has finished and 'Not available yet' when it cannot be read", () => {
-    const { rerender } = render(<OutcomesToday words={words} totals={{ positive: 0, negative: 0, unclear: 0 }} />);
+    const { rerender } = render(<OutcomesToday words={words} totals={{ positive: 0, negative: 0, unclear: 0, notInterested: 0 }} />);
     expect(screen.getByText("No calls or follow-ups have finished yet today.")).toBeInTheDocument();
     rerender(<OutcomesToday words={words} totals={null} />);
     expect(screen.getByText("Not available yet")).toBeInTheDocument();

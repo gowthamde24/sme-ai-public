@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import * as React from "react";
 
 import type { Consent } from "@/lib/consent/consent";
@@ -124,10 +125,12 @@ function Panel({ words, consent }: { words: CookieWords; consent: Consent }) {
  */
 export function CookieConsent({ initial, words }: { initial: Consent; words: CookieWords }) {
   const { consent, settingsOpen } = useConsentState(initial);
+  // inside the app a phone has a bottom bar (64 px and the safe area): the notice sits above it, not over it (found by the staging smoke of 26 Oct: on a first visit the notice hid the "More" button)
+  const aboveBar = (usePathname() ?? "").startsWith("/app");
   return (
     <>
       {!consent.decided && !settingsOpen ? (
-        <section role="region" aria-labelledby="cookie-notice-h" data-cookie="notice" className="mx-3 mb-3 rounded-xl border border-edge bg-surface p-4 text-ink shadow-[var(--v2-shadow)] sm:ml-auto sm:mr-4 sm:max-w-md">
+        <section role="region" aria-labelledby="cookie-notice-h" data-cookie="notice" className={`mx-3 mb-3 rounded-xl border border-edge bg-surface p-4 text-ink shadow-[var(--v2-shadow)] sm:ml-auto sm:mr-4 sm:max-w-md ${aboveBar ? "max-md:mb-[calc(4rem+env(safe-area-inset-bottom)+0.75rem)]" : ""}`}>
           <h2 id="cookie-notice-h" className="text-base font-semibold">
             {words["cookie.notice.title"]}
           </h2>

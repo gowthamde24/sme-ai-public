@@ -17,7 +17,7 @@ import { FAKE_CHECKOUT } from "@/lib/plan/flag";
 import { planScreens } from "@/lib/plan/flag";
 import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
 
-import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, startPlanAction } from "../plan-actions";
+import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, resumePlanAction, startPlanAction } from "../plan-actions";
 
 export const metadata = { title: `Plans · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -48,8 +48,10 @@ export default async function PlansPage({ params }: PageProps<"/app/tenants/[ten
   const [catalogue, plan] = await Promise.all([readCatalogue(ctx), readWorkspacePlan(ctx)]);
   const mock = planScreens() === "mock";
   const owner = tenant.role === "owner";
-  const canStart = owner && plan !== null && plan.canStartTrial;
-  const blocked = !owner ? "forbidden" : plan !== null && !plan.canStartTrial ? (plan.state === "cancelled" ? "used" : "already") : null;
+  // a lapsed plan has no new trial: the way back is to pay again (job DP; C1's POST /billing/resume)
+  const resuming = owner && plan !== null && plan.canResume;
+  const canStart = owner && plan !== null && (plan.canStartTrial || plan.canResume);
+  const blocked = !owner ? "forbidden" : plan !== null && !plan.canStartTrial && !plan.canResume ? (plan.state === "cancelled" ? "used" : "already") : null;
   return (
     <main className={pageMain} lang={lang}>
       <BackLink href={`${base}/settings?section=plan`} label={t("plan.title")} />
@@ -64,11 +66,12 @@ export default async function PlansPage({ params }: PageProps<"/app/tenants/[ten
             calls={callsPlans(catalogue)}
             currentId={plan && plan.state !== "cancelled" ? plan.planId : null}
             canStart={canStart}
+            resuming={resuming}
             blocked={blocked}
             mock={FAKE_CHECKOUT}
             trialDays={catalogue.trial.days}
             done={`${base}/settings?section=plan`}
-            actions={{ start: startPlanAction.bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: mock ? fixPlanPaymentAction.bind(null, tenantId) : null, endTrial: mock ? endPlanTrialAction.bind(null, tenantId) : null }}
+            actions={{ start: (resuming ? resumePlanAction : startPlanAction).bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: mock ? fixPlanPaymentAction.bind(null, tenantId) : null, endTrial: mock ? endPlanTrialAction.bind(null, tenantId) : null }}
           />
         )}
       </div>

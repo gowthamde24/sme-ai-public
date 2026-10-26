@@ -29,7 +29,7 @@ import { CATALOGUE, DRAFT_PLANS } from "@/lib/plan/catalogue";
 import { MOCK_COOKIE } from "@/lib/plan/mock";
 
 import PlansPage from "./plans/page";
-import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, startPlanAction } from "./plan-actions";
+import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, resumePlanAction, startPlanAction } from "./plan-actions";
 import SettingsPage from "./settings/page";
 
 const settingsProps = (query: Record<string, string> = {}) => ({ params: Promise.resolve({ tenantId: TENANT }), searchParams: Promise.resolve(query) }) as unknown as Parameters<typeof SettingsPage>[0];
@@ -65,6 +65,7 @@ describe("the flag is off by default", () => {
     expect(tabNames()).not.toContain("Plan");
   });
   it("every move refuses with not_available and stores nothing", async () => {
+    expect(await resumePlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error: "not_available" });
     expect(await startPlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error: "not_available" });
     expect(await cancelPlanAction(TENANT)).toEqual({ ok: false, error: "not_available" });
     expect(await fixPlanPaymentAction(TENANT)).toEqual({ ok: false, error: "not_available" });
@@ -91,7 +92,7 @@ const subscription = (over: Record<string, unknown> = {}) => ({ status: "trialin
 const apiRoutes = (billing: unknown = billingBody()) =>
   h.api.mockImplementation(async (path: string) => {
     if (path === "/v1/plans") return DRAFT_PLANS;
-    if (/\/billing(\/trial|\/cancel)?$/.test(path)) return billing;
+    if (/\/billing(\/trial|\/cancel|\/resume)?$/.test(path)) return billing;
     throw new ApiRequestError(404, "not_found", "x");
   });
 
@@ -162,6 +163,20 @@ describe("the flag is '1' (on: the plans and billing API of job DI)", () => {
   ])("the API's %s (HTTP %i) is our sentence %s", async (code, status, error) => {
     h.api.mockRejectedValue(new ApiRequestError(status, code, "x"));
     expect(await startPlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error });
+  });
+  it("a lapsed plan is paid for again (job DP): /plans says there is no new trial and offers the choice, and the move posts to resume with the same references", async () => {
+    apiRoutes(billingBody({ subscription: subscription({ status: "cancelled" }), can_start_trial: false, can_resume: true, access: "read_only", read_only_since: "2026-10-14", delete_on: "2027-01-12", data_days_left: 79 }));
+    render(await PlansPage(plansProps()));
+    expect(screen.getAllByText(/there is no new trial/).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("radio").length).toBeGreaterThan(0);
+    expect(screen.queryByText("The free trial can be started only once for a workspace.")).toBeNull();
+    expect(await resumePlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: true });
+    expect(h.api).toHaveBeenCalledWith(`/v1/tenants/${TENANT}/billing/resume`, "tok", { method: "POST", body: JSON.stringify({ plan_id: "growth", checkout_ref: "pm_fake_ok" }) });
+    expect(await resumePlanAction(TENANT, "growth", "")).toEqual({ ok: false, error: "no_payment_method" });
+    h.api.mockRejectedValue(new ApiRequestError(409, "not_lapsed", "x"));
+    expect(await resumePlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error: "invalid" });
+    h.fetchTenant.mockResolvedValue(tenant("admin"));
+    expect(await resumePlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error: "forbidden" });
   });
   it("cancelling posts to the API; the two moves the API has no endpoint for refuse", async () => {
     expect(await cancelPlanAction(TENANT)).toEqual({ ok: true });

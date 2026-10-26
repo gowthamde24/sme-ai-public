@@ -5,6 +5,7 @@ import login from "@/i18n/strings/login.json";
 import { LANGS } from "@/i18n/lang";
 import { TRANSLATED_LANGS, dictFor, keepHyphenatedWordsWhole } from "@/i18n/strings";
 import { FORBIDDEN_CLAIMS as FORBIDDEN } from "@/i18n/strings/forbidden";
+import { withTrialDays } from "@/lib/plan/trial-days";
 
 type Entry = { en: string; te: string; hi: string; kn: string; status: Record<string, string>; only?: string[] };
 const SETS: Record<string, Record<string, Entry>> = { site, login, legal } as never;
@@ -48,7 +49,8 @@ describe("honesty: no claims we cannot prove today", () => {
       });
     }
   }
-  const en = dictFor(site, "en") as Record<string, string>;
+  // the words as a page draws them: {trial_days} is the plans data's number (lib/plan/trial-days.ts)
+  const en = Object.fromEntries(Object.entries(dictFor(site, "en") as Record<string, string>).map(([k, v]) => [k, withTrialDays(v)]));
   it("the English home copy says what it must: the owner approves money and campaigns, the trial is 14 days from the day WhatsApp is connected and can be cancelled before it ends, and AI calls are early access (and nothing else is)", () => {
     expect(en["hm.ctl.d"]).toMatch(/money reminders and discounts wait for your approval/);
     expect(en["hero.h1"]).toBe("Your AI workforce for Indian SMEs.");
@@ -56,7 +58,7 @@ describe("honesty: no claims we cannot prove today", () => {
     expect(en["hero.note"]).toMatch(/14 days to try it, counted from the day your WhatsApp is connected\. Cancel before the trial ends and you pay nothing/);
     expect(en["hm.start.trial"]).toBe("Your 14-day trial starts the day your WhatsApp is connected, not the day you sign up.");
     // "early access" is said only where it is true: the AI calls (job DM); nothing says sign-up is by invitation
-    const EARLY_OK = new Set(["hm.demo.note", "hm.wf.early", "hm.vc.eyebrow", "hm.vc.sub", "hm.vc.note", "hm.pl.cta.calls"]);
+    const EARLY_OK = new Set(["hm.demo.note", "hm.wf.early", "hm.vc.eyebrow", "hm.vc.sub", "hm.vc.4.d", "hm.vc.note", "hm.pl.cta.calls"]);
     for (const k of Object.keys(en)) {
       expect(en[k], k).not.toMatch(/invitation only|by invitation/i);
       if (!EARLY_OK.has(k)) expect(en[k], k).not.toMatch(/early access/i);

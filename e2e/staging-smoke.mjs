@@ -77,6 +77,9 @@ export async function main() {
       const body = (await page.locator("body").innerText()).replace(/\s+/g, " ");
       await page.screenshot({ path: path.join(SHOTS, `${pack}-today.png`), fullPage: true });
       record(`${pack}: Today opens`, body.length > 200 && !/something went wrong|application error/i.test(body) ? "PASS" : "FAIL", `${body.length} characters; ${new URL(page.url()).pathname}`);
+      // the cookie notice sits over the phone's bottom bar until it is answered (job DM): accept it, as a visitor would
+      const accept = page.getByRole("button", { name: /^OK, got it$/ });
+      if (await accept.isVisible().catch(() => false)) await accept.click();
       // sign out: the phone's "More" sheet, then the session must be gone (a signed-out visit to /app goes to /login)
       await page.getByRole("button", { name: /^More$/ }).or(page.getByText(/^More$/)).first().click();
       await Promise.all([page.waitForURL(/\/login/, { timeout: 20000 }).catch(() => null), page.getByRole("button", { name: /Sign out/ }).first().click()]);

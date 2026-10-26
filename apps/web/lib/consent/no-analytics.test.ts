@@ -23,7 +23,9 @@ describe("no analytics is loaded anywhere (job BH)", () => {
   it("scans real source files", () => expect(files.length).toBeGreaterThan(200));
   it("no analytics, tag, advertising or session-replay library, address or call in the app's source", () => {
     const hits = files.filter((f) => VENDORS.test(readFileSync(f, "utf8"))).map((f) => path.relative(ROOT, f));
-    expect(hits).toEqual([]);
+    // ONE file is exempt (job DP part 6, C1): the web server's error reporting. It is OFF unless SENTRY_DSN is set, it runs on the server only (the browser's policy stays `connect-src 'self'`), it sends a scrubbed envelope (the error's class
+    // name and stack frames: no message, address, header, cookie, body, user or breadcrumb) and only to the host of the DSN the owner gives. It is not analytics and no visitor is followed; the owner decides to switch it on (docs/runbooks/error-reporting-sentry.md).
+    expect(hits).toEqual(["lib/observability/report.ts"]);
   });
   it("no such package is a dependency", () => {
     const pkg = JSON.parse(readFileSync(path.join(ROOT, "package.json"), "utf8")) as Record<string, Record<string, string> | undefined>;

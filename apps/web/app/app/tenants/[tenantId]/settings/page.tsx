@@ -54,12 +54,18 @@ import { BRAND_NAME } from "@/design/brand";
 import { ADDRESSES } from "@/lib/site/business";
 import { PlanSection } from "@/components/v2/app/plan/PlanSection";
 import { AssistantSettings } from "@/components/v2/app/assistant/LazyAssistantSettings";
+import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSettingsAdvanced";
+import { OwnVoice } from "@/components/v2/app/assistant/LazyOwnVoice";
 import { assistantProfile } from "@/lib/assistant/defaults";
 import { readAssistant } from "@/lib/assistant/source";
 import { CALL_LANGS, VOICES } from "@/lib/assistant/types";
 import { LANGUAGE_NAMES } from "@/i18n/lang";
-import { assistantScreens } from "@/lib/screens/flag";
+import { readCallSettings } from "@/lib/call-settings/source";
+import { readOwnVoice } from "@/lib/own-voice/source";
+import { assistantScreens, callSettingsScreens, ownVoiceScreens } from "@/lib/screens/flag";
 import { saveAssistantAction } from "../assistant-actions";
+import { saveCallSettingsAction } from "../call-settings-actions";
+import { deleteVoiceAction, sentenceAction } from "../own-voice-actions";
 import { FAKE_CHECKOUT, planScreens } from "@/lib/plan/flag";
 import { CATALOGUE, planById } from "@/lib/plan/catalogue";
 import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
@@ -122,7 +128,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
   const hasPlan = admin && planScreens() !== "off";
   // Settings > AI assistant (job DM): only while its flag is on, and only for the Owner (the people who run the business may be admins, but the assistant is the Owner's to set up)
-  const hasAssistant = tenant.role === "owner" && assistantScreens() !== "off";
+  const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off");
   const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   let members: Member[] | null = null;
@@ -189,7 +195,11 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   const planCtx = { token: user.accessToken, tenantId };
   const [workspacePlan, planCatalogue] = section === "plan" ? await Promise.all([readWorkspacePlan(planCtx), readCatalogue(planCtx)]) : [null, null];
-  const assistant = section === "assistant" ? await readAssistant(pack?.modules ?? null) : null;
+  const assistant = section === "assistant" ? await readAssistant({ token: user.accessToken, tenantId }, pack?.modules ?? null) : null;
+  // under the assistant (job DP): its own voice, with consent, and the advanced call settings; each behind its own flag, the Owner only
+  const assistantCtx = { token: user.accessToken, tenantId };
+  const ownVoice = section === "assistant" && ownVoiceScreens() !== "off" ? await readOwnVoice(assistantCtx) : null;
+  const callSettings = section === "assistant" && callSettingsScreens() !== "off" ? await readCallSettings(assistantCtx, pack?.modules ?? null) : null;
   let theme: ThemePick = "system";
   try {
     theme = readTheme((await cookies()).get(THEME_COOKIE)?.value) ?? "system";
@@ -264,7 +274,13 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           />
         ) : null}
         {section === "assistant" && assistant ? (
-          assistant.mode === "ok" ? (
+          <>
+            {assistant.mode === "unavailable" ? (
+              <section className={surface} aria-label={t("asst.tab")}>
+                <p className="text-sm text-muted">{t("frame.notyet")}</p>
+              </section>
+            ) : null}
+            {assistant.mode === "ok" ? (
             <AssistantSettings
               words={withModuleWords(wordsFor(lang, ["asst."]), pack)}
               initial={assistant.settings}
@@ -276,12 +292,35 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               testMode={assistantScreens() === "mock"}
               saved={assistant.saved}
               actions={{ save: saveAssistantAction.bind(null, tenantId) }}
+              ownVoiceReady={ownVoice?.mode === "ok" && ownVoice.voice.status === "ready"}
             />
-          ) : (
-            <section className={surface} aria-label={t("asst.tab")}>
-              <p className="text-sm text-muted">{t("frame.notyet")}</p>
-            </section>
-          )
+            ) : null}
+            {ownVoice?.mode === "ok" ? (
+              <OwnVoice
+                words={wordsFor(lang, ["ov."], ["today.err.mfa", "today.err.mfa.link"])}
+                voice={ownVoice.voice}
+                canEdit={tenant.role === "owner"}
+                endpoint={`${base}/own-voice`}
+                actions={{ sentence: sentenceAction.bind(null, tenantId), remove: deleteVoiceAction.bind(null, tenantId) }}
+              />
+            ) : null}
+            {callSettings?.mode === "ok" ? (
+              <CallSettingsAdvanced
+                words={wordsFor(lang, ["calls."], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link"])}
+                initial={callSettings.settings}
+                locked={callSettings.lockedPurposes}
+                canEdit={tenant.role === "owner"}
+                mock={callSettingsScreens() === "mock"}
+                saved={callSettings.saved}
+                actions={{ save: saveCallSettingsAction.bind(null, tenantId) }}
+              />
+            ) : null}
+            {ownVoice?.mode === "unavailable" || callSettings?.mode === "unavailable" ? (
+              <section className={surface}>
+                <p className="text-sm text-muted">{t("frame.notyet")}</p>
+              </section>
+            ) : null}
+          </>
         ) : null}
         {section === "members" ? (
           <section className={surface} aria-label={t("settings.tab.members")}>

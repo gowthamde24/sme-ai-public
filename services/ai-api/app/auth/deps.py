@@ -13,8 +13,10 @@ from fastapi import Depends, Request
 from app.agent_runs.wiring import AgentsRuntime
 from app.assistant_settings.service import AssistantSettingsService
 from app.auth.jwt import AuthError, Principal, TokenVerifier
+from app.billing import gate
 from app.billing.service import BillingService
 from app.businessprofile.repository import BusinessProfileRepository
+from app.callsettings.service import CallSettingsService
 from app.campaigns.repository import CampaignsRepository
 from app.catalogue.repository import CatalogueRepository
 from app.catalogue.storage import StorageClient
@@ -33,12 +35,14 @@ from app.integrations.policy import PolicyVersions
 from app.integrations.repository import IntegrationsRepository
 from app.leads.repository import LeadsRepository
 from app.leadtools.repository import LeadSearchRepository
+from app.marksmessages.service import MarksSendService
 from app.materials.repository import MaterialsRepository
 from app.notifications.runtime import NotificationsRuntime
 from app.orders.repository import OrdersRepository
 from app.outbox.adapter import ChannelAdapter
 from app.outbox.repository import OutboxRepository
 from app.outcomes.repository import OutcomesRepository
+from app.ownvoice.service import OwnVoiceService
 from app.packs.models import AuthProvidersOut
 from app.packs.registry import PackRegistry
 from app.packs.repository import PacksRepository
@@ -124,12 +128,18 @@ class Runtime:
     reports: ReportsRepository | None = None
     # job CV: voice notes (settings, voices, the spoken disclosure, the fair-use meter)
     voice_notes: VoiceNotesRepository | None = None
+    # job DP part 5: the Owner's own voice, made with a recorded consent
+    own_voice: OwnVoiceService | None = None
     # job DI: plans and billing (catalogue, usage meters, trial and cancel; the FAKE provider)
     billing: BillingService | None = None
+    # job DP part 4: how the assistant behaves on calls, per workspace and per campaign
+    call_settings: CallSettingsService | None = None
     # job DM: outcomes of calls and WhatsApp follow-ups (positive, negative, unclear)
     outcomes: OutcomesRepository | None = None
     # job DM: the AI assistant's settings per workspace (Settings > AI assistant)
     assistant_settings: AssistantSettingsService | None = None
+    # job DP: marks and report messages to guardians from a file that is never stored
+    marks_messages: MarksSendService | None = None
 
 
 @dataclass(frozen=True)
@@ -162,16 +172,8 @@ def get_principal(request: Request, runtime: RuntimeDep) -> Principal:
         raise unauthorized() from exc
 
 
-READ_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
-# what a read-only workspace may still do (job DI): see its plan and choose one,
-# ask for a copy of its data, ask for its deletion, export
-READ_ONLY_OK = ("/billing", "/data-exports", "/deletion-requests", "/exports")
-
-
-def _read_only_ok(path: str, tenant_id: str) -> bool:
-    base = f"/v1/tenants/{tenant_id}"
-    tail = path[len(base) :] if path.startswith(base) else path
-    return tail.startswith(READ_ONLY_OK)
+# job DI / DP part 3: what a read-only workspace may still do, and what spends, is decided in
+# ONE place (app/billing/gate.py); this dependency is the only door to a tenant's address
 
 
 def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., TenantContext]:
@@ -200,12 +202,12 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             raise not_found()
         if allowed and membership.role not in allowed:
             raise forbidden()
-        path = request.url.path
-        changes = request.method not in READ_METHODS and not _read_only_ok(path, tenant_id)
-        if runtime.billing is not None and changes:
-            # job DI: a workspace whose trial ended unpaid is read-only (viewing, signing in and
-            # exporting stay; every change stops). Always "full" while the billing switch is off.
-            runtime.billing.ensure_writable(principal.token, parsed)
+        kind = gate.classify(request.method, gate.tail_of(request.url.path, tenant_id))
+        if runtime.billing is not None and kind != "read":
+            # job DI / DP part 3: a workspace whose trial ended unpaid is read-only (viewing,
+            # signing in and exporting stay; every change, send, AI and call stops); one still
+            # waiting for WhatsApp holds the sends, AI and calls. "full" while the switch is off.
+            runtime.billing.ensure(principal.token, parsed, kind)
         if strong and membership.role in (Role.OWNER, Role.ADMIN) and principal.aal != "aal2":
             raise mfa_required()
         if runtime.policy_gate is not None:

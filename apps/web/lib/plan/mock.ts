@@ -47,6 +47,7 @@ export function toWorkspacePlan(m: MockState, now: Date): WorkspacePlan {
     cancelAtPeriodEnd: (m.state === "active" || m.state === "past_due") && m.cancelled,
     graceUntil: m.state === "past_due" ? new Date(now.getTime() + CATALOGUE.trial.graceDays * DAY).toISOString() : null,
     periodEndsAt: new Date(now.getTime() + (m.state === "trialing" ? left : 30) * DAY).toISOString(),
+    canResume: false, // the fake provider never lapses a plan into "pay again"
     canStartTrial: m.state === "none",
     usage: { minutes: m.minutes, messages: m.messages },
     included,

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import type { Outcome, OutcomeCategory, OutcomeResult } from "@/lib/outcomes/types";
+import { NO_CATEGORY, type Outcome, type OutcomeCategory, type OutcomeResult } from "@/lib/outcomes/types";
 
 import { btnMain, btnQuiet, fieldInput, fieldLabel } from "../ui";
 import { makeT, type Words } from "../words";
@@ -15,16 +15,19 @@ export function CorrectOutcomeForm({ words, outcome, options, correct }: { words
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [result, setResult] = React.useState<OutcomeResult>(outcome.result);
-  const [category, setCategory] = React.useState<OutcomeCategory>(outcome.category);
+  // an outcome the AI left without a kind (the API\'s null) may stay that way: "unclear" alone
+  type Pick = OutcomeCategory | typeof NO_CATEGORY;
+  const choices = (r: OutcomeResult): readonly Pick[] => (r === "unclear" && outcome.category === null ? [...options[r], NO_CATEGORY] : options[r]);
+  const [category, setCategory] = React.useState<Pick>(outcome.category ?? NO_CATEGORY);
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState(false);
   const pick = (r: OutcomeResult) => {
     setResult(r);
-    if (!options[r].includes(category)) setCategory(options[r][0]);
+    if (!choices(r).includes(category)) setCategory(choices(r)[0]);
   };
   if (!open)
     return (
-      <button type="button" onClick={() => setOpen(true)} className={`${btnQuiet} mt-2 !min-h-11 !px-3 text-sm`}>
+      <button type="button" data-write onClick={() => setOpen(true)} className={`${btnQuiet} mt-2 !min-h-11 !px-3 text-sm`}>
         {t("outcome.fix")}
       </button>
     );
@@ -64,8 +67,8 @@ export function CorrectOutcomeForm({ words, outcome, options, correct }: { words
         <label htmlFor={`fix-cat-${outcome.id}`} className={fieldLabel}>
           {t("outcome.fix.cat")}
         </label>
-        <select id={`fix-cat-${outcome.id}`} value={category} onChange={(e) => setCategory(e.target.value as OutcomeCategory)} className={fieldInput}>
-          {options[result].map((c) => (
+        <select id={`fix-cat-${outcome.id}`} value={category} onChange={(e) => setCategory(e.target.value as Pick)} className={fieldInput}>
+          {choices(result).map((c) => (
             <option key={c} value={c}>
               {t(`outcome.cat.${c}`)}
             </option>

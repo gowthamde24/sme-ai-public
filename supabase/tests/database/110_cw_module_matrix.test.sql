@@ -89,7 +89,7 @@ select n.nspname || '.' || c.relname as tbl, (regexp_split_to_array(encode(t.tga
   from pg_trigger t join pg_class c on c.oid = t.tgrelid join pg_namespace n on n.oid = c.relnamespace
  where t.tgfoid = 'app.module_guard()'::regprocedure and not t.tgisinternal;
 select is((select string_agg(tbl || ':' || module, ',' order by tbl) from guards where module in ('programmes', 'fees', 'voice_notes')),
-  'public.admission_events:programmes,public.admissions:programmes,public.campaign_voice:voice_notes,public.fee_assignments:fees,public.fee_plan_lines:fees,public.fee_plans:fees,public.institution_profiles:programmes,public.programme_groups:programmes,public.programmes:programmes,public.students:programmes,public.voice_choices:voice_notes,public.voice_note_usage:voice_notes,public.voice_settings:voice_notes',
+  'public.admission_events:programmes,public.admissions:programmes,public.campaign_voice:voice_notes,public.fee_assignments:fees,public.fee_plan_lines:fees,public.fee_plans:fees,public.institution_profiles:programmes,public.marks_send_log:programmes,public.programme_groups:programmes,public.programmes:programmes,public.students:programmes,public.voice_choices:voice_notes,public.voice_note_usage:voice_notes,public.voice_settings:voice_notes',
   'D1 each table is guarded by the module that owns it (an insert for a business without the module is SM701)');
 select is((select count(*) from guards g join pg_class c on c.oid = g.tbl::regclass where g.module in ('programmes', 'fees', 'voice_notes') and not (c.relrowsecurity and c.relforcerowsecurity)), 0::bigint, 'D2 row-level security is enabled and forced on each');
 select is((select count(*) from guards g where g.module in ('programmes', 'fees', 'voice_notes')

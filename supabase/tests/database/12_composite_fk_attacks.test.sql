@@ -134,6 +134,8 @@ begin
                                                             'dues_rows_guard', 'ledger_entries_guard', 'ledger_accounts_guard', 'campaign_steps_guard', 'call_list_items_guard', 'material_quotes_guard', 'material_quote_lines_guard', 'delivery_events_guard', 'delivery_proofs_guard', 'material_policy_immutable',
                                                             -- job CR: the education tables change only inside their functions (the door app.edu_edit)
                                                             'edu_rows_guard', 'admissions_guard', 'fee_rows_guard',
+                                                            -- job DP part 2: the marks send log changes only from pending to sent or failed
+                                                            'marks_send_log_guard',
                                                             -- job CV: voice settings, choices and the campaign switch change only through their functions; the ledger never
                                                             'voice_rows_guard',
                                                             -- job DM: an outcome keeps its source, its customer and its time (its immutability guard)

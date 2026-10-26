@@ -42,6 +42,16 @@ describe("Settings > Plan", () => {
     expect(within(document.querySelector('[data-meter="minutes"]') as HTMLElement).getByText("0 of 30")).toBeInTheDocument();
     expect(within(document.querySelector('[data-meter="messages"]') as HTMLElement).getByText("0 of 100")).toBeInTheDocument();
   });
+  it("waiting for WhatsApp (trial_pending): says the days start when WhatsApp is connected, that nothing is charged, and no day count; the owner may still cancel (job DO)", () => {
+    const w: WorkspacePlan = { ...plan({ state: "trialing", plan: "growth", method: "test_ok", day: 1 }), state: "trial_pending", trialEndsAt: null };
+    draw(w);
+    expect(document.querySelector("[data-plan-state='trial_pending']")).not.toBeNull();
+    expect(screen.getByText(`Your ${CATALOGUE.trial.days} days start when WhatsApp is connected.`)).toBeInTheDocument();
+    expect(screen.getByText(/Nothing is charged until then/)).toBeInTheDocument();
+    expect(screen.getByText("Waiting for WhatsApp")).toBeInTheDocument();
+    expect(screen.queryByText(/of your trial/)).toBeNull();
+    expect(screen.getByRole("button", { name: "Cancel trial" })).toBeInTheDocument();
+  });
   it("in the trial: the plan, the day, the days left, and both meters as counts and percentages", () => {
     draw(plan({ state: "trialing", plan: "growth", method: "test_ok", day: 4, minutes: 6, messages: 25 }));
     expect(screen.getByText("Plan: Growth")).toBeInTheDocument();

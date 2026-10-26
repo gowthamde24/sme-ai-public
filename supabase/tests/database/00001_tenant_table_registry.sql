@@ -34,6 +34,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('companies',
    $$insert into public.companies (id, tenant_id, name) values (%2$L, %1$L, 'Generic Co')$$,
    'name = name', $$delete from public.companies where id = %2$L$$, true),
+  -- job DP part 5: the Owner's own voice (written only by the Owner's functions; no module guard: every business type may have one)
+  ('own_voices',
+   $$insert into public.own_voices (id, tenant_id, status, consenting_name, consent_sentence, consented_by, consented_at, bucket, sample_path, consent_path) values (%2$L, %1$L, 'pending', 'Generic Person', 'I, Generic Person, allow Stack19 to create an AI voice of me for Generic Co', %5$L, now(), 'ovc-' || %1$L, %2$L || '/sample.wav', %2$L || '/consent.wav') on conflict do nothing$$,
+   'status = status', $$delete from public.own_voices where id = %2$L$$, true),
   ('contacts',
    $$insert into public.contacts (id, tenant_id, company_id, full_name) values (%2$L, %1$L, %3$L, 'Generic Contact')$$,
    'full_name = full_name', $$delete from public.contacts where id = %2$L$$, true),
@@ -369,6 +373,13 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
      insert into public.call_list_items (id, tenant_id, campaign_id, recipient_id, call_request_id, lead_id, contact_id, step_no)
        select %2$L, %1$L, cmp.id, rcp.id, cr.id, ld.lead_id, %4$L, 1 from cmp, rcp, cr, ld$$,
    'attempts = attempts', $$delete from public.call_list_items where id = %2$L$$, true),
+  -- job DP part 4: call settings (one workspace row, optional campaign overrides) and the hand-over rules; written only by the Owner's functions, no module guard (every business type has calls)
+  ('call_settings',
+   $$insert into public.call_settings (id, tenant_id, campaign_id, settings, updated_by) values (%2$L, %1$L, null, '{}'::jsonb, %5$L) on conflict (tenant_id) where campaign_id is null do nothing$$,
+   'settings = settings', $$delete from public.call_settings where tenant_id = %1$L$$, false),
+  ('call_handover_rules',
+   $$insert into public.call_handover_rules (id, tenant_id, topic, person_name, phone, updated_by) values (%2$L, %1$L, 'other', 'Generic Person', '+917000000001', %5$L) on conflict (tenant_id, topic) do nothing$$,
+   'topic = topic', $$delete from public.call_handover_rules where tenant_id = %1$L$$, false),
   -- job DM: the AI assistant's settings (one row per workspace; written only by the Owner's function)
   ('assistant_settings',
    $$insert into public.assistant_settings (tenant_id, assistant_name, voice_persona, main_language, auto_switch_language, allow_english_mixing, style, speed, may_answer_prices, may_book_visits, may_send_media, may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute) values (%1$L, 'Generic', 'female_warm', 'te', true, true, 'warm', 1, true, true, true, true, 0, true, true, array[1], 540, 600) on conflict (tenant_id) do nothing$$,
@@ -377,6 +388,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('outcomes',
    $$insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, recorded_by_kind, recorded_by, occurred_at) values (%2$L, %1$L, %4$L, 'call', %2$L, 'unclear', null, 'person', %5$L, now())$$,
    'outcome = outcome', $$delete from public.outcomes where id = %2$L$$, false),
+  -- job DP part 2: the marks-message send log (written only by the Owner's functions; guarded by the module `programmes`, which is OFF for the default pack of the fixture tenants: tests 11 and 12 call tests.cn_guards_off() first)
+  ('marks_send_log',
+   $$insert into public.marks_send_log (id, tenant_id, batch_id, seq, contact_id, template_id, status, reason, approved_by) values (%2$L, %1$L, %2$L, 1, %4$L, 'marks.en', 'blocked', 'suppressed', %5$L)$$,
+   'status = status', $$delete from public.marks_send_log where id = %2$L$$, true),
   -- job CR: the education pack. Written only by definer functions; the modules that guard them (programmes, fees) are OFF for the default pack of the fixture tenants (tests 11 and 12 call
   -- tests.cn_guards_off() first); their own rules are proved in 104 to 107.
   ('institution_profiles',
@@ -449,6 +464,9 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('billing_pending_reminders',
    $$insert into public.billing_pending_reminders (tenant_id, day) values (%1$L, 30) on conflict do nothing$$,
    'day = day', $$delete from public.billing_pending_reminders where tenant_id = %1$L$$, false),
+  ('billing_trial_reminders',
+   $$insert into public.billing_trial_reminders (tenant_id, day) values (%1$L, 11) on conflict do nothing$$,
+   'day = day', $$delete from public.billing_trial_reminders where tenant_id = %1$L$$, false),
   ('billing_notices',
    $$insert into public.billing_notices (tenant_id, kind, level, period_start) values (%1$L, 'call_minutes', 80, date '2026-10-01') on conflict do nothing$$,
    'level = level', $$delete from public.billing_notices where tenant_id = %1$L$$, false),
@@ -688,8 +706,14 @@ select t, r, s, i, u, d from (values
   ('campaign_steps', 'sales', true, false, false, false), ('campaign_steps', 'viewer', false, false, false, false),
   ('call_list_items', 'owner', true, false, false, false), ('call_list_items', 'admin', true, false, false, false),
   ('call_list_items', 'sales', true, false, false, false), ('call_list_items', 'viewer', false, false, false, false),
+  ('call_settings', 'owner', true, false, false, false), ('call_settings', 'admin', true, false, false, false),
+  ('call_settings', 'sales', false, false, false, false), ('call_settings', 'viewer', false, false, false, false),
+  ('call_handover_rules', 'owner', true, false, false, false), ('call_handover_rules', 'admin', true, false, false, false),
+  ('call_handover_rules', 'sales', false, false, false, false), ('call_handover_rules', 'viewer', false, false, false, false),
   ('assistant_settings', 'owner', true, false, false, false), ('assistant_settings', 'admin', true, false, false, false),
   ('assistant_settings', 'sales', false, false, false, false), ('assistant_settings', 'viewer', false, false, false, false),
+  ('own_voices', 'owner', true, false, false, false), ('own_voices', 'admin', true, false, false, false),
+  ('own_voices', 'sales', false, false, false, false), ('own_voices', 'viewer', false, false, false, false),
   ('outcomes', 'owner', true, false, false, false), ('outcomes', 'admin', true, false, false, false),
   ('outcomes', 'sales', true, false, false, false), ('outcomes', 'viewer', true, false, false, false),
   ('customer_credit_limits', 'owner', true, false, false, false), ('customer_credit_limits', 'admin', true, false, false, false),
@@ -711,6 +735,8 @@ select t, r, s, i, u, d from (values
   -- job CR: the programmes and the profile are read by every member; the students, the admissions and the fee tables (children and money) only by Owner / Admin / Sales; nobody writes directly.
   ('institution_profiles', 'owner', true, false, false, false), ('institution_profiles', 'admin', true, false, false, false),
   ('institution_profiles', 'sales', true, false, false, false), ('institution_profiles', 'viewer', true, false, false, false),
+  ('marks_send_log', 'owner', true, false, false, false), ('marks_send_log', 'admin', true, false, false, false),
+  ('marks_send_log', 'sales', false, false, false, false), ('marks_send_log', 'viewer', false, false, false, false),
   ('programmes', 'owner', true, false, false, false), ('programmes', 'admin', true, false, false, false),
   ('programmes', 'sales', true, false, false, false), ('programmes', 'viewer', true, false, false, false),
   ('programme_groups', 'owner', true, false, false, false), ('programme_groups', 'admin', true, false, false, false),
@@ -749,6 +775,8 @@ select t, r, s, i, u, d from (values
   ('billing_lapse_reminders', 'sales', false, false, false, false), ('billing_lapse_reminders', 'viewer', false, false, false, false),
   ('billing_pending_reminders', 'owner', true, false, false, false), ('billing_pending_reminders', 'admin', true, false, false, false),
   ('billing_pending_reminders', 'sales', false, false, false, false), ('billing_pending_reminders', 'viewer', false, false, false, false),
+  ('billing_trial_reminders', 'owner', true, false, false, false), ('billing_trial_reminders', 'admin', true, false, false, false),
+  ('billing_trial_reminders', 'sales', false, false, false, false), ('billing_trial_reminders', 'viewer', false, false, false, false),
   ('billing_notices', 'owner', true, false, false, false), ('billing_notices', 'admin', true, false, false, false),
   ('billing_notices', 'sales', false, false, false, false), ('billing_notices', 'viewer', false, false, false, false),
   -- T002 tables

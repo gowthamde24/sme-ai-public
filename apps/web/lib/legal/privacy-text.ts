@@ -37,7 +37,7 @@ export const PRIVACY: LegalText = {
               ["Account", "Your name, e-mail address, password (kept only as a one-way hash by our sign-in provider; nobody can read it), the secret of your authenticator app (second factor), your role in a business (Owner, Admin, Sales, Viewer), language and light/dark choice, the version of these terms you accepted and when. If you sign in with Google or Facebook, the name and verified e-mail address that account shares with us.", "You and your team"],
               ["Business", "The business name, its team members and roles, the type of business, plan, opening times, quiet hours, sending settings.", "Your business"],
               ["Your customers", "Name, phone number, e-mail address, job title; company name, website, city and region; whether each person agreed to be contacted by e-mail, WhatsApp or phone, and do-not-contact marks; where a lead came from and notes about it; the text of enquiries (up to 6,000 characters, with a subject); delivery city; quotes, orders and amounts; store visits (date, time, number of people, purpose, notes); call requests.", "Your customers, entered by your team or taken from an enquiry"],
-              ["Messages", "Messages drafted for or sent to your customers, their English meaning, their status and history, who approved them; your chats with {assistant} (what you ask and what it answers).", "Your business and your customers"],
+              ["Messages", "Messages drafted for or sent to your customers, their English meaning, their status and history, who approved them; your chats with our AI assistant (what you ask and what it answers).", "Your business and your customers"],
               ["Your voice", "If you use the microphone, the recording is sent to a speech service to be turned into text (section 6). We do not keep the recording; the text becomes a chat message.", "You"],
               ["Records of use", "A security log of who did what in a workspace and when (sensitive values are logged by name only, not by content); a count of AI use and its cost (not its content); a short-lived record of sign-up attempts, to stop abuse; and, kept by our sign-in provider for each session, the time, your IP address and your browser type.", "You and your team"],
               ["Billing", "When you start a trial or a paid plan, the details needed to invoice you (business name, GST number if you give one, billing e-mail). Card or UPI details are taken by the payment provider and are not stored by us.", "You and your business"],
@@ -84,9 +84,9 @@ export const PRIVACY: LegalText = {
     },
     {
       id: "ai",
-      title: "5. {assistant} is an AI assistant",
+      title: "5. Our assistant is an AI",
       blocks: [
-        { p: "{assistant}, the assistant in {brand}, is an AI. It reads your business's records to answer your questions and to prepare drafts: replies, follow-ups, quotes, visit bookings and reminders. Messages it writes to your customers may be written by AI, and they are labelled as coming from the business's AI assistant." },
+        { p: "The assistant in {brand} is an AI. It reads your business's records to answer your questions and to prepare drafts: replies, follow-ups, quotes, visit bookings and reminders. Messages it writes to your customers may be written by AI, and they are labelled as coming from the business's AI assistant." },
         { p: "The AI does not set or change prices (prices come from your price list by fixed rules). A message to a customer goes out only under the rules your business has switched on: money, promises and complaints always wait for a person's approval, a campaign is sent only after the Owner approves it, and a customer who has said stop is never contacted. A person stays responsible for what is sent." },
         { p: "To do this, your question and the records it needs (for example company names, message text and amounts) are sent to an AI model provider and processed there. The service is designed not to pass customer contact details (names, phone numbers, e-mail addresses) to the model, but free text such as enquiry messages and company names can contain personal data. A school's student records, and the names of children, are never sent to a model (section 10). We choose model providers whose terms do not allow them to train their models on the data we send." },
       ],
@@ -137,7 +137,7 @@ export const PRIVACY: LegalText = {
             rows: [
               ["Account data", "While your account exists, and until we have finished deleting it after you ask."],
               ["A business's records (customers, enquiries, quotes, orders, messages, visits, catalogue)", "Until the Owner erases them (see section 11). There is no automatic deletion, except the student rule in section 10."],
-              ["Chats with {assistant}", "Until erased, as above."],
+              ["Chats with the AI assistant", "Until erased, as above."],
               ["Voice recordings", "Not kept."],
               ["Security log and usage counts", "Kept as a record of what happened. It holds no contact details or message text; the erasure of a company also removes that company's identity from it."],
               ["Do-not-contact keys", "When a customer is erased, a keyed fingerprint (not readable) of their phone number or e-mail address is kept so they are not contacted again. It is used only to block messages. This is arguably personal data, kept on purpose to honour their choice."],

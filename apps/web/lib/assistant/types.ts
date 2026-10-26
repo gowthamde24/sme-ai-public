@@ -3,7 +3,8 @@
  * screen edits; C1 stores them per workspace as data (it extends the voice data of job DJ), and until that exists the screen reads and keeps them in a cookie behind ASSISTANT_SCREENS=mock. Every value is checked (`parseSettings`): a
  * cookie, a form or an answer that is not in these shapes is ignored, never drawn. The words "AI assistant" are NOT a setting: customers always hear them after the name and the owner cannot remove them.
  */
-export const VOICES = ["female_warm", "female_clear", "male_calm", "male_lively"] as const;
+/** The four stock voices and, once the Owner has made one with their consent (job DP), their own: `own_voice`. */
+export const VOICES = ["female_warm", "female_clear", "male_calm", "male_lively", "own_voice"] as const;
 export type Voice = (typeof VOICES)[number];
 export const STYLES = ["warm", "resp", "quick"] as const;
 export type Style = (typeof STYLES)[number];
@@ -33,7 +34,9 @@ export type AssistantSettings = {
 const isBool = (v: unknown): v is boolean => typeof v === "boolean";
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const oneOf = <T extends string>(list: readonly T[], v: unknown): v is T => typeof v === "string" && (list as readonly string[]).includes(v);
-const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
+/** The API takes calling hours from 09:00 to 21:00 in steps of 15 minutes only (job DO). */
+export const HOURS = { min: "09:00", max: "21:00", stepMinutes: 15 } as const;
+const TIME = /^(09|1\d|20):(00|15|30|45)$|^21:00$/;
 
 /** A name a person may give the assistant: letters (any script), digits and spaces, at most NAME_MAX, at least one letter; no markup and no punctuation. */
 export const validName = (v: unknown): v is string => typeof v === "string" && v.trim().length > 0 && Array.from(v.trim()).length <= NAME_MAX && /^[\p{L}\p{M}\p{N} ]+$/u.test(v.trim()) && /\p{L}/u.test(v);
@@ -46,7 +49,7 @@ export function parseSettings(value: unknown): AssistantSettings | null {
   if (!validName(value.name) || !oneOf(VOICES, value.voice) || !oneOf(CALL_LANGS, value.lang) || !oneOf(STYLES, value.style)) return null;
   if (!isBool(value.autoSwitch) || !isBool(value.mixEnglish) || typeof value.speed !== "number" || !(value.speed >= SPEED.min && value.speed <= SPEED.max)) return null;
   if (!isBool(may.prices) || !isBool(may.visits) || !isBool(may.whatsapp) || !isBool(may.dues)) return null;
-  if (typeof value.maxDiscount !== "number" || !Number.isInteger(value.maxDiscount) || value.maxDiscount < 0 || value.maxDiscount > 100) return null;
+  if (typeof value.maxDiscount !== "number" || !Number.isInteger(value.maxDiscount) || value.maxDiscount < 0 || value.maxDiscount > 50) return null;
   if (!isBool(h.owner) || !isBool(h.upset) || !(h.orderAbove === null || (typeof h.orderAbove === "number" && Number.isInteger(h.orderAbove) && h.orderAbove >= 0 && h.orderAbove <= 100_000_000))) return null;
   if (typeof hours.from !== "string" || !TIME.test(hours.from) || typeof hours.to !== "string" || !TIME.test(hours.to) || hours.from >= hours.to) return null;
   if (!Array.isArray(days) || days.length === 0 || days.length > 7 || !days.every((d) => oneOf(DAYS, d)) || new Set(days).size !== days.length) return null;

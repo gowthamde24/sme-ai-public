@@ -19,12 +19,20 @@ export function OutcomesToday({ words, totals }: { words: Words; totals: Outcome
       ) : !any ? (
         <p className="text-base text-muted">{t("outcome.today.none")}</p>
       ) : (
-        <p className="font-display text-xl font-semibold" data-totals={`${totals.positive}-${totals.negative}-${totals.unclear}`}>
+        <p className="font-display text-xl font-semibold" data-totals={`${totals.positive}-${totals.notInterested}-${totals.unclear}`}>
           <span className="text-green-text">{t("outcome.today.positive", { n: totals.positive })}</span>
           <span aria-hidden="true" className="px-2 text-muted">
             ·
           </span>
-          <span>{t("outcome.today.negative", { n: totals.negative })}</span>
+          <span>{t("outcome.today.negative", { n: totals.notInterested })}</span>
+          {totals.negative > totals.notInterested ? (
+            <>
+              <span aria-hidden="true" className="px-2 text-muted">
+                ·
+              </span>
+              <span>{t("outcome.today.other", { n: totals.negative - totals.notInterested })}</span>
+            </>
+          ) : null}
           {totals.unclear > 0 ? (
             <>
               <span aria-hidden="true" className="px-2 text-muted">

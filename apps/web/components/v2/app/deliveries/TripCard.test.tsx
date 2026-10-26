@@ -66,6 +66,7 @@ describe("moving a trip along", () => {
   it("a problem needs a reason from the closed list", async () => {
     const a = show();
     await click("There is a problem");
+    await screen.findByRole("dialog"); // the sheets are a chunk of their own (job DO)
     fireEvent.change(screen.getByLabelText("Reason"), { target: { value: "road_blocked" } });
     await click("Mark the problem");
     expect(a.setStatus).toHaveBeenCalledWith(TRIP, "problem", "road_blocked");
@@ -76,6 +77,7 @@ describe("delivered, with the proof", () => {
   const open = async () => {
     show(TRIP_ON_THE_WAY_JSON);
     await click("Delivered, add the proof");
+    await screen.findByRole("dialog"); // the sheets are a chunk of their own (job DO)
   };
   it("asks for the name and the photo and sends nothing without them", async () => {
     await open();
@@ -117,6 +119,7 @@ describe("telling the site", () => {
   it("sends a fixed kind of message, with the time when it has left, and says what the outbox did with it", async () => {
     const a = show(TRIP_ON_THE_WAY_JSON);
     await click("Tell the site");
+    await screen.findByRole("dialog"); // the sheets are a chunk of their own (job DO)
     fireEvent.change(screen.getByLabelText(/About what time/), { target: { value: "3 pm" } });
     await act(async () => void fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Tell the site" })));
     expect(a.notify).toHaveBeenCalledWith(TRIP_ON_THE_WAY_JSON.id, "left", "3 pm", "en");
@@ -125,6 +128,7 @@ describe("telling the site", () => {
   it("a time that is not a time is refused before anything is sent", async () => {
     const a = show(TRIP_ON_THE_WAY_JSON);
     await click("Tell the site");
+    await screen.findByRole("dialog"); // the sheets are a chunk of their own (job DO)
     fireEvent.change(screen.getByLabelText(/About what time/), { target: { value: "evening-ish" } });
     await act(async () => void fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Tell the site" })));
     expect(screen.getByRole("alert")).toHaveTextContent("Write the time like");
@@ -133,6 +137,7 @@ describe("telling the site", () => {
   it("a held message says it waits for the owner's OK", async () => {
     show(TRIP_ON_THE_WAY_JSON, "owner", acts({ notify: vi.fn(async () => ({ ok: true as const, text: "x", status: "needs_approval" })) as never }));
     await click("Tell the site");
+    await screen.findByRole("dialog"); // the sheets are a chunk of their own (job DO)
     fireEvent.click(screen.getByRole("radio", { name: "The truck is delayed" }));
     await act(async () => void fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Tell the site" })));
     expect(screen.getByRole("status")).toHaveTextContent("waits in the outbox for your OK");

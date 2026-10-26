@@ -1,0 +1,1144 @@
+{
+  "$comment": "Mock payloads for the call settings API (job DP part 4). One per state Settings > Calls and a campaign's call settings show. Validated against call_settings.schema.json by a test. Names, numbers and ids are invented. Telephony does not exist: nothing here places a call.",
+  "settings_defaults_textiles": {
+    "settings": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 300,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "payment_reminder",
+        "visit_reminder"
+      ]
+    },
+    "saved": false,
+    "defaults": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 300,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "payment_reminder",
+        "visit_reminder"
+      ]
+    },
+    "business_type": "textiles",
+    "effective": {
+      "settings": {
+        "retry_busy": {
+          "count": 2,
+          "gap_minutes": 30
+        },
+        "retry_no_answer": {
+          "count": 3,
+          "gap_minutes": 120
+        },
+        "retry_call_later": {
+          "count": 2,
+          "gap_minutes": 60
+        },
+        "concurrent_calls": 1,
+        "detect_voicemail": true,
+        "voicemail_action": "retry_later",
+        "detect_phone_menu": true,
+        "phone_menu_action": "hang_up",
+        "silence_timeout_seconds": 8,
+        "max_call_seconds": 300,
+        "interruption_sensitivity": "medium",
+        "listening_sounds": true,
+        "pronunciations": [],
+        "keywords": [],
+        "hours": null,
+        "holidays": [],
+        "max_calls_per_customer_per_week": 2,
+        "auto_pause_refusals_per_hour": 10,
+        "contact_memory": true,
+        "handover": [],
+        "allowed_purposes": [
+          "sales_followup",
+          "payment_reminder",
+          "visit_reminder"
+        ]
+      },
+      "hours": {
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "from_minute": 540,
+        "to_minute": 1140,
+        "source": "assistant"
+      },
+      "overridden": []
+    },
+    "options": {
+      "voicemail_actions": [
+        {
+          "id": "hang_up",
+          "label": "Hang up",
+          "description": "End the call and count it as no answer."
+        },
+        {
+          "id": "leave_message",
+          "label": "Leave a short message",
+          "description": "Say who is calling and that you will try again. Never says prices or amounts."
+        },
+        {
+          "id": "retry_later",
+          "label": "Try again later",
+          "description": "Hang up and call again by the 'no answer' rule."
+        }
+      ],
+      "phone_menu_actions": [
+        {
+          "id": "hang_up",
+          "label": "Hang up",
+          "description": "A phone menu ('press 1 for...') is not a person."
+        },
+        {
+          "id": "retry_later",
+          "label": "Try again later",
+          "description": "Hang up and call again by the 'no answer' rule."
+        }
+      ],
+      "sensitivities": [
+        {
+          "id": "low",
+          "label": "Low",
+          "description": "Finishes its sentence unless the customer keeps talking."
+        },
+        {
+          "id": "medium",
+          "label": "Medium",
+          "description": "Stops when the customer clearly starts to speak."
+        },
+        {
+          "id": "high",
+          "label": "High",
+          "description": "Stops at the first sound; best for quick, impatient callers."
+        }
+      ],
+      "topics": [
+        {
+          "id": "pricing",
+          "label": "Price talks",
+          "description": null
+        },
+        {
+          "id": "payment",
+          "label": "Payment and dues",
+          "description": null
+        },
+        {
+          "id": "delivery",
+          "label": "Delivery",
+          "description": null
+        },
+        {
+          "id": "complaint",
+          "label": "A complaint",
+          "description": null
+        },
+        {
+          "id": "visit",
+          "label": "A visit",
+          "description": null
+        },
+        {
+          "id": "other",
+          "label": "Anything else",
+          "description": null
+        }
+      ],
+      "purposes": [
+        {
+          "id": "sales_followup",
+          "label": "Follow up an enquiry or quote",
+          "description": null
+        },
+        {
+          "id": "payment_reminder",
+          "label": "Remind about a payment",
+          "description": null
+        },
+        {
+          "id": "admission_followup",
+          "label": "Follow up an admission enquiry",
+          "description": null
+        },
+        {
+          "id": "visit_reminder",
+          "label": "Remind about a visit",
+          "description": null
+        },
+        {
+          "id": "event_reminder",
+          "label": "Remind about an event or holiday",
+          "description": null
+        }
+      ]
+    },
+    "assistant_hours": {
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "from_minute": 540,
+      "to_minute": 1140
+    },
+    "locked": {},
+    "updated_at": null,
+    "wording": "draft"
+  },
+  "settings_saved_textiles": {
+    "settings": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 300,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [
+        {
+          "written": "Kanchipuram",
+          "spoken": "Kanchee-puram"
+        },
+        {
+          "written": "Mysore silk",
+          "spoken": "My-sore silk"
+        }
+      ],
+      "keywords": [
+        "Kanchipuram",
+        "Banarasi",
+        "Mysore silk",
+        "jari"
+      ],
+      "hours": {
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "from_minute": 600,
+        "to_minute": 1080
+      },
+      "holidays": [
+        "2026-11-09",
+        "2026-11-10"
+      ],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": null,
+      "contact_memory": true,
+      "handover": [
+        {
+          "topic": "pricing",
+          "person_name": "Suresh (owner)",
+          "phone": "+919876500001"
+        },
+        {
+          "topic": "complaint",
+          "person_name": "Lakshmi",
+          "phone": "9876500002"
+        }
+      ],
+      "allowed_purposes": [
+        "sales_followup",
+        "payment_reminder",
+        "visit_reminder"
+      ]
+    },
+    "saved": true,
+    "defaults": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 300,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "payment_reminder",
+        "visit_reminder"
+      ]
+    },
+    "business_type": "textiles",
+    "effective": {
+      "settings": {
+        "retry_busy": {
+          "count": 2,
+          "gap_minutes": 30
+        },
+        "retry_no_answer": {
+          "count": 3,
+          "gap_minutes": 120
+        },
+        "retry_call_later": {
+          "count": 2,
+          "gap_minutes": 60
+        },
+        "concurrent_calls": 1,
+        "detect_voicemail": true,
+        "voicemail_action": "retry_later",
+        "detect_phone_menu": true,
+        "phone_menu_action": "hang_up",
+        "silence_timeout_seconds": 8,
+        "max_call_seconds": 300,
+        "interruption_sensitivity": "medium",
+        "listening_sounds": true,
+        "pronunciations": [
+          {
+            "written": "Kanchipuram",
+            "spoken": "Kanchee-puram"
+          },
+          {
+            "written": "Mysore silk",
+            "spoken": "My-sore silk"
+          }
+        ],
+        "keywords": [
+          "Kanchipuram",
+          "Banarasi",
+          "Mysore silk",
+          "jari"
+        ],
+        "hours": {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "from_minute": 600,
+          "to_minute": 1080
+        },
+        "holidays": [
+          "2026-11-09",
+          "2026-11-10"
+        ],
+        "max_calls_per_customer_per_week": 2,
+        "auto_pause_refusals_per_hour": null,
+        "contact_memory": true,
+        "handover": [
+          {
+            "topic": "pricing",
+            "person_name": "Suresh (owner)",
+            "phone": "+919876500001"
+          },
+          {
+            "topic": "complaint",
+            "person_name": "Lakshmi",
+            "phone": "9876500002"
+          }
+        ],
+        "allowed_purposes": [
+          "sales_followup",
+          "payment_reminder",
+          "visit_reminder"
+        ]
+      },
+      "hours": {
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "from_minute": 600,
+        "to_minute": 1080,
+        "source": "workspace"
+      },
+      "overridden": []
+    },
+    "options": {
+      "voicemail_actions": [
+        {
+          "id": "hang_up",
+          "label": "Hang up",
+          "description": "End the call and count it as no answer."
+        },
+        {
+          "id": "leave_message",
+          "label": "Leave a short message",
+          "description": "Say who is calling and that you will try again. Never says prices or amounts."
+        },
+        {
+          "id": "retry_later",
+          "label": "Try again later",
+          "description": "Hang up and call again by the 'no answer' rule."
+        }
+      ],
+      "phone_menu_actions": [
+        {
+          "id": "hang_up",
+          "label": "Hang up",
+          "description": "A phone menu ('press 1 for...') is not a person."
+        },
+        {
+          "id": "retry_later",
+          "label": "Try again later",
+          "description": "Hang up and call again by the 'no answer' rule."
+        }
+      ],
+      "sensitivities": [
+        {
+          "id": "low",
+          "label": "Low",
+          "description": "Finishes its sentence unless the customer keeps talking."
+        },
+        {
+          "id": "medium",
+          "label": "Medium",
+          "description": "Stops when the customer clearly starts to speak."
+        },
+        {
+          "id": "high",
+          "label": "High",
+          "description": "Stops at the first sound; best for quick, impatient callers."
+        }
+      ],
+      "topics": [
+        {
+          "id": "pricing",
+          "label": "Price talks",
+          "description": null
+        },
+        {
+          "id": "payment",
+          "label": "Payment and dues",
+          "description": null
+        },
+        {
+          "id": "delivery",
+          "label": "Delivery",
+          "description": null
+        },
+        {
+          "id": "complaint",
+          "label": "A complaint",
+          "description": null
+        },
+        {
+          "id": "visit",
+          "label": "A visit",
+          "description": null
+        },
+        {
+          "id": "other",
+          "label": "Anything else",
+          "description": null
+        }
+      ],
+      "purposes": [
+        {
+          "id": "sales_followup",
+          "label": "Follow up an enquiry or quote",
+          "description": null
+        },
+        {
+          "id": "payment_reminder",
+          "label": "Remind about a payment",
+          "description": null
+        },
+        {
+          "id": "admission_followup",
+          "label": "Follow up an admission enquiry",
+          "description": null
+        },
+        {
+          "id": "visit_reminder",
+          "label": "Remind about a visit",
+          "description": null
+        },
+        {
+          "id": "event_reminder",
+          "label": "Remind about an event or holiday",
+          "description": null
+        }
+      ]
+    },
+    "assistant_hours": {
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "from_minute": 540,
+      "to_minute": 1140
+    },
+    "locked": {},
+    "updated_at": "2026-10-26T08:00:00Z",
+    "wording": "draft"
+  },
+  "settings_defaults_school": {
+    "settings": {
+      "retry_busy": {
+        "count": 1,
+        "gap_minutes": 60
+      },
+      "retry_no_answer": {
+        "count": 2,
+        "gap_minutes": 180
+      },
+      "retry_call_later": {
+        "count": 1,
+        "gap_minutes": 120
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "hang_up",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 300,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 1,
+      "auto_pause_refusals_per_hour": 5,
+      "contact_memory": false,
+      "handover": [],
+      "allowed_purposes": [
+        "admission_followup",
+        "visit_reminder",
+        "event_reminder"
+      ]
+    },
+    "saved": false,
+    "defaults": {
+      "retry_busy": {
+        "count": 1,
+        "gap_minutes": 60
+      },
+      "retry_no_answer": {
+        "count": 2,
+        "gap_minutes": 180
+      },
+      "retry_call_later": {
+        "count": 1,
+        "gap_minutes": 120
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "hang_up",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 300,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 1,
+      "auto_pause_refusals_per_hour": 5,
+      "contact_memory": false,
+      "handover": [],
+      "allowed_purposes": [
+        "admission_followup",
+        "visit_reminder",
+        "event_reminder"
+      ]
+    },
+    "business_type": "education",
+    "effective": {
+      "settings": {
+        "retry_busy": {
+          "count": 1,
+          "gap_minutes": 60
+        },
+        "retry_no_answer": {
+          "count": 2,
+          "gap_minutes": 180
+        },
+        "retry_call_later": {
+          "count": 1,
+          "gap_minutes": 120
+        },
+        "concurrent_calls": 1,
+        "detect_voicemail": true,
+        "voicemail_action": "hang_up",
+        "detect_phone_menu": true,
+        "phone_menu_action": "hang_up",
+        "silence_timeout_seconds": 8,
+        "max_call_seconds": 300,
+        "interruption_sensitivity": "medium",
+        "listening_sounds": true,
+        "pronunciations": [],
+        "keywords": [],
+        "hours": null,
+        "holidays": [],
+        "max_calls_per_customer_per_week": 1,
+        "auto_pause_refusals_per_hour": 5,
+        "contact_memory": false,
+        "handover": [],
+        "allowed_purposes": [
+          "admission_followup",
+          "visit_reminder",
+          "event_reminder"
+        ]
+      },
+      "hours": {
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "from_minute": 540,
+        "to_minute": 1020,
+        "source": "assistant"
+      },
+      "overridden": []
+    },
+    "options": {
+      "voicemail_actions": [
+        {
+          "id": "hang_up",
+          "label": "Hang up",
+          "description": "End the call and count it as no answer."
+        },
+        {
+          "id": "leave_message",
+          "label": "Leave a short message",
+          "description": "Say who is calling and that you will try again. Never says prices or amounts."
+        },
+        {
+          "id": "retry_later",
+          "label": "Try again later",
+          "description": "Hang up and call again by the 'no answer' rule."
+        }
+      ],
+      "phone_menu_actions": [
+        {
+          "id": "hang_up",
+          "label": "Hang up",
+          "description": "A phone menu ('press 1 for...') is not a person."
+        },
+        {
+          "id": "retry_later",
+          "label": "Try again later",
+          "description": "Hang up and call again by the 'no answer' rule."
+        }
+      ],
+      "sensitivities": [
+        {
+          "id": "low",
+          "label": "Low",
+          "description": "Finishes its sentence unless the customer keeps talking."
+        },
+        {
+          "id": "medium",
+          "label": "Medium",
+          "description": "Stops when the customer clearly starts to speak."
+        },
+        {
+          "id": "high",
+          "label": "High",
+          "description": "Stops at the first sound; best for quick, impatient callers."
+        }
+      ],
+      "topics": [
+        {
+          "id": "pricing",
+          "label": "Price talks",
+          "description": null
+        },
+        {
+          "id": "payment",
+          "label": "Payment and dues",
+          "description": null
+        },
+        {
+          "id": "delivery",
+          "label": "Delivery",
+          "description": null
+        },
+        {
+          "id": "complaint",
+          "label": "A complaint",
+          "description": null
+        },
+        {
+          "id": "visit",
+          "label": "A visit",
+          "description": null
+        },
+        {
+          "id": "other",
+          "label": "Anything else",
+          "description": null
+        }
+      ],
+      "purposes": [
+        {
+          "id": "sales_followup",
+          "label": "Follow up an enquiry or quote",
+          "description": null
+        },
+        {
+          "id": "payment_reminder",
+          "label": "Remind about a payment",
+          "description": null
+        },
+        {
+          "id": "admission_followup",
+          "label": "Follow up an admission enquiry",
+          "description": null
+        },
+        {
+          "id": "visit_reminder",
+          "label": "Remind about a visit",
+          "description": null
+        },
+        {
+          "id": "event_reminder",
+          "label": "Remind about an event or holiday",
+          "description": null
+        }
+      ]
+    },
+    "assistant_hours": {
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "from_minute": 540,
+      "to_minute": 1020
+    },
+    "locked": {
+      "allowed_purposes": [
+        "admission_followup",
+        "visit_reminder",
+        "event_reminder"
+      ]
+    },
+    "updated_at": null,
+    "wording": "draft"
+  },
+  "campaign_with_override": {
+    "campaign_id": "c0ffee00-0000-4000-8000-00000000c001",
+    "overrides": {
+      "retry_busy": null,
+      "retry_no_answer": {
+        "count": 1,
+        "gap_minutes": 240
+      },
+      "retry_call_later": null,
+      "concurrent_calls": null,
+      "detect_voicemail": null,
+      "voicemail_action": null,
+      "detect_phone_menu": null,
+      "phone_menu_action": null,
+      "silence_timeout_seconds": null,
+      "max_call_seconds": 180,
+      "interruption_sensitivity": null,
+      "listening_sounds": false,
+      "pronunciations": null,
+      "keywords": null,
+      "hours": {
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "from_minute": 660,
+        "to_minute": 960
+      },
+      "max_calls_per_customer_per_week": null,
+      "auto_pause_refusals_per_hour": null,
+      "auto_pause_off": true,
+      "contact_memory": null
+    },
+    "saved": true,
+    "effective": {
+      "settings": {
+        "retry_busy": {
+          "count": 2,
+          "gap_minutes": 30
+        },
+        "retry_no_answer": {
+          "count": 1,
+          "gap_minutes": 240
+        },
+        "retry_call_later": {
+          "count": 2,
+          "gap_minutes": 60
+        },
+        "concurrent_calls": 1,
+        "detect_voicemail": true,
+        "voicemail_action": "retry_later",
+        "detect_phone_menu": true,
+        "phone_menu_action": "hang_up",
+        "silence_timeout_seconds": 8,
+        "max_call_seconds": 180,
+        "interruption_sensitivity": "medium",
+        "listening_sounds": false,
+        "pronunciations": [
+          {
+            "written": "Kanchipuram",
+            "spoken": "Kanchee-puram"
+          },
+          {
+            "written": "Mysore silk",
+            "spoken": "My-sore silk"
+          }
+        ],
+        "keywords": [
+          "Kanchipuram",
+          "Banarasi",
+          "Mysore silk",
+          "jari"
+        ],
+        "hours": {
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "from_minute": 660,
+          "to_minute": 960
+        },
+        "holidays": [
+          "2026-11-09",
+          "2026-11-10"
+        ],
+        "max_calls_per_customer_per_week": 2,
+        "auto_pause_refusals_per_hour": null,
+        "contact_memory": true,
+        "handover": [
+          {
+            "topic": "pricing",
+            "person_name": "Suresh (owner)",
+            "phone": "+919876500001"
+          },
+          {
+            "topic": "complaint",
+            "person_name": "Lakshmi",
+            "phone": "9876500002"
+          }
+        ],
+        "allowed_purposes": [
+          "sales_followup",
+          "payment_reminder",
+          "visit_reminder"
+        ]
+      },
+      "hours": {
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "from_minute": 660,
+        "to_minute": 960,
+        "source": "campaign"
+      },
+      "overridden": [
+        "auto_pause_refusals_per_hour",
+        "hours",
+        "listening_sounds",
+        "max_call_seconds",
+        "retry_no_answer"
+      ]
+    },
+    "updated_at": "2026-10-26T09:00:00Z"
+  },
+  "campaign_inherits_everything": {
+    "campaign_id": "c0ffee00-0000-4000-8000-00000000c001",
+    "overrides": {
+      "retry_busy": null,
+      "retry_no_answer": null,
+      "retry_call_later": null,
+      "concurrent_calls": null,
+      "detect_voicemail": null,
+      "voicemail_action": null,
+      "detect_phone_menu": null,
+      "phone_menu_action": null,
+      "silence_timeout_seconds": null,
+      "max_call_seconds": null,
+      "interruption_sensitivity": null,
+      "listening_sounds": null,
+      "pronunciations": null,
+      "keywords": null,
+      "hours": null,
+      "max_calls_per_customer_per_week": null,
+      "auto_pause_refusals_per_hour": null,
+      "auto_pause_off": null,
+      "contact_memory": null
+    },
+    "saved": false,
+    "effective": {
+      "settings": {
+        "retry_busy": {
+          "count": 2,
+          "gap_minutes": 30
+        },
+        "retry_no_answer": {
+          "count": 3,
+          "gap_minutes": 120
+        },
+        "retry_call_later": {
+          "count": 2,
+          "gap_minutes": 60
+        },
+        "concurrent_calls": 1,
+        "detect_voicemail": true,
+        "voicemail_action": "retry_later",
+        "detect_phone_menu": true,
+        "phone_menu_action": "hang_up",
+        "silence_timeout_seconds": 8,
+        "max_call_seconds": 300,
+        "interruption_sensitivity": "medium",
+        "listening_sounds": true,
+        "pronunciations": [],
+        "keywords": [],
+        "hours": null,
+        "holidays": [],
+        "max_calls_per_customer_per_week": 2,
+        "auto_pause_refusals_per_hour": 10,
+        "contact_memory": true,
+        "handover": [],
+        "allowed_purposes": [
+          "sales_followup",
+          "payment_reminder",
+          "visit_reminder"
+        ]
+      },
+      "hours": {
+        "days": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "from_minute": 540,
+        "to_minute": 1140,
+        "source": "assistant"
+      },
+      "overridden": []
+    },
+    "updated_at": null
+  },
+  "save_request": {
+    "retry_busy": {
+      "count": 2,
+      "gap_minutes": 30
+    },
+    "retry_no_answer": {
+      "count": 3,
+      "gap_minutes": 120
+    },
+    "retry_call_later": {
+      "count": 2,
+      "gap_minutes": 60
+    },
+    "concurrent_calls": 1,
+    "detect_voicemail": true,
+    "voicemail_action": "retry_later",
+    "detect_phone_menu": true,
+    "phone_menu_action": "hang_up",
+    "silence_timeout_seconds": 8,
+    "max_call_seconds": 300,
+    "interruption_sensitivity": "medium",
+    "listening_sounds": true,
+    "pronunciations": [
+      {
+        "written": "Kanchipuram",
+        "spoken": "Kanchee-puram"
+      },
+      {
+        "written": "Mysore silk",
+        "spoken": "My-sore silk"
+      }
+    ],
+    "keywords": [
+      "Kanchipuram",
+      "Banarasi",
+      "Mysore silk",
+      "jari"
+    ],
+    "hours": {
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "from_minute": 600,
+      "to_minute": 1080
+    },
+    "holidays": [
+      "2026-11-09",
+      "2026-11-10"
+    ],
+    "max_calls_per_customer_per_week": 2,
+    "auto_pause_refusals_per_hour": null,
+    "contact_memory": true,
+    "handover": [
+      {
+        "topic": "pricing",
+        "person_name": "Suresh (owner)",
+        "phone": "+919876500001"
+      },
+      {
+        "topic": "complaint",
+        "person_name": "Lakshmi",
+        "phone": "9876500002"
+      }
+    ],
+    "allowed_purposes": [
+      "sales_followup",
+      "payment_reminder",
+      "visit_reminder"
+    ]
+  },
+  "override_request": {
+    "retry_no_answer": {
+      "count": 1,
+      "gap_minutes": 240
+    },
+    "max_call_seconds": 180,
+    "listening_sounds": false,
+    "hours": {
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "from_minute": 660,
+      "to_minute": 960
+    },
+    "auto_pause_off": true
+  }
+}

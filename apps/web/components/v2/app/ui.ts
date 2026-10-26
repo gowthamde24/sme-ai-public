@@ -28,7 +28,8 @@ export const fieldTextarea = `${fieldInput} py-2`;
 export const fieldHelp = "mt-1.5 text-sm text-muted";
 export const checkRow = "flex min-h-11 items-center gap-3 text-base";
 export const checkBox = "size-6 shrink-0 accent-brand-text";
-export const btnMain = `${btnPrimary} disabled:opacity-60`;
+/** The main button of a screen. `write-ctl` is the mark a read-only workspace switches off (components/v2/app/readonly): a main button is a change, a send, an AI answer or a call. */
+export const btnMain = `${btnPrimary} write-ctl disabled:opacity-60`;
 export const btnQuiet =
   "inline-flex min-h-12 items-center justify-center rounded-lg border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
 export const stickyActions = "sticky bottom-20 z-10 mt-6 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3 md:bottom-4";

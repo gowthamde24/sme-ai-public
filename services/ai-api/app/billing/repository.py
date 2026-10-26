@@ -9,7 +9,12 @@ from typing import Any, Protocol
 
 import httpx
 
-from app.billing.errors import NothingToCancelError, PlanUnknownError, TrialAlreadyStartedError
+from app.billing.errors import (
+    NothingToCancelError,
+    NotLapsedError,
+    PlanUnknownError,
+    TrialAlreadyStartedError,
+)
 from app.rpc_base import RpcClient
 
 
@@ -22,6 +27,7 @@ class BillingRepository(Protocol):
     def subscription_ref(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None: ...
     def start_trial(self, token: str, tenant_id: uuid.UUID, plan_id: str, provider: str, provider_ref: str) -> dict[str, Any]: ...
     def cancel(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def resume(self, token: str, tenant_id: uuid.UUID, plan_id: str, provider: str, provider_ref: str) -> dict[str, Any]: ...
     def record_usage(self, token: str, tenant_id: uuid.UUID, kind: str, ref_id: uuid.UUID, units: int) -> dict[str, Any]: ...
     def apply_event(self, token: str, tenant_id: uuid.UUID, event_id: str, kind: str, amount_paise: int | None, at: datetime) -> dict[str, Any]: ...
     def trial_clocks_due(self, token: str, limit: int) -> list[dict[str, Any]]: ...
@@ -30,7 +36,7 @@ class BillingRepository(Protocol):
 
 class PostgrestBillingRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
-        self._rpc = RpcClient(rest_url, anon_key, {"SM821": PlanUnknownError, "SM822": TrialAlreadyStartedError, "SM823": NothingToCancelError}, client=client)
+        self._rpc = RpcClient(rest_url, anon_key, {"SM821": PlanUnknownError, "SM822": TrialAlreadyStartedError, "SM823": NothingToCancelError, "SM824": NotLapsedError}, client=client)
 
     def close(self) -> None:
         self._rpc.close()
@@ -59,6 +65,9 @@ class PostgrestBillingRepository:
 
     def cancel(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "billing_cancel", {"p_tenant_id": str(tenant_id)})
+
+    def resume(self, token: str, tenant_id: uuid.UUID, plan_id: str, provider: str, provider_ref: str) -> dict[str, Any]:
+        return self._rpc.object(token, "billing_resume", {"p_tenant_id": str(tenant_id), "p_plan_id": plan_id, "p_provider": provider, "p_provider_ref": provider_ref})
 
     def record_usage(self, token: str, tenant_id: uuid.UUID, kind: str, ref_id: uuid.UUID, units: int) -> dict[str, Any]:
         return self._rpc.object(token, "billing_record_usage", {"p_tenant_id": str(tenant_id), "p_kind": kind, "p_ref_id": str(ref_id), "p_units": units})

@@ -40,7 +40,7 @@ const METER_STATES = ["ok", "notice", "stopped"];
 function validMeter(m: unknown): m is MeterOut {
   return isRecord(m) && isNum(m.used) && numOrNull(m.allowance) && typeof m.included === "boolean" && isStr(m.state) && METER_STATES.includes(m.state);
 }
-// "trial_pending" (job DM): a plan chosen before WhatsApp is connected; until the screens have its own words it is read as a trial with no end date yet
+// "trial_pending" (job DM): a plan chosen before WhatsApp is connected: no end date yet, nothing is charged; the Plan card says "Your {days} days start when WhatsApp is connected" (job DO)
 const STATUSES = ["trial_pending", "trialing", "active", "past_due", "cancelled"];
 export function parseBilling(json: unknown): BillingOut {
   const ok =
@@ -79,13 +79,14 @@ export function toWorkspacePlan(b: BillingOut): WorkspacePlan {
   const cancelledInTrial = sub?.status === "cancelled" && !!sub.trial_ends_at && !sub.current_period_end;
   return {
     planId: sub ? sub.plan_id : null,
-    state: sub ? (sub.status === "trial_pending" ? "trialing" : sub.status) : "none",
+    state: sub ? sub.status : "none",
     trialEndsAt: sub && (sub.status === "trialing" || cancelledInTrial) ? (sub.trial_ends_at ?? null) : null,
     cancelledInTrial,
     cancelAtPeriodEnd: !!sub && sub.cancel_at_period_end && (sub.status === "active" || sub.status === "past_due"),
     graceUntil: sub?.grace_until ?? null,
     periodEndsAt: `${b.period.end}T12:00:00+05:30`,
     canStartTrial: b.can_start_trial,
+    canResume: b.can_resume === true,
     usage: { minutes: b.usage.call_minutes.used, messages: b.usage.whatsapp_messages.used },
     included: { minutes: includedOf(b.usage.call_minutes), messages: includedOf(b.usage.whatsapp_messages) },
     paymentMethod: sub?.payment_method_on_file ? "test_ok" : "none",
@@ -101,6 +102,9 @@ export const getPlans = async (c: PlanCtx): Promise<PlansOut> => parsePlans(awai
 export const getBilling = async (c: PlanCtx): Promise<BillingOut> => parseBilling(await apiRequest(tenantPath(c), c.token));
 export const postTrial = async (c: PlanCtx, planId: string, checkoutRef: string): Promise<BillingOut> =>
   parseBilling(await apiRequest(`${tenantPath(c)}/trial`, c.token, { method: "POST", body: JSON.stringify({ plan_id: planId, checkout_ref: checkoutRef }) }));
+/** Pay again after a lapse: a paid plan starts at once, no new trial (the Owner, with the second factor). */
+export const postResume = async (c: PlanCtx, planId: string, checkoutRef: string): Promise<BillingOut> =>
+  parseBilling(await apiRequest(`${tenantPath(c)}/resume`, c.token, { method: "POST", body: JSON.stringify({ plan_id: planId, checkout_ref: checkoutRef }) }));
 export const postCancel = async (c: PlanCtx): Promise<BillingOut> => parseBilling(await apiRequest(`${tenantPath(c)}/cancel`, c.token, { method: "POST", body: JSON.stringify({}) }));
 
 /** The test choices the picker offers, and the checkout_ref the fake provider of the API knows each one by. */

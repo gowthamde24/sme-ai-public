@@ -13,15 +13,17 @@ import time
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from app.billing.errors import (
     NothingToCancelError,
+    NotLapsedError,
     PlanLimitReachedError,
     PlanUnknownError,
     TrialAlreadyStartedError,
     WorkspaceReadOnlyError,
+    WorkspaceWaitingForWhatsAppError,
 )
 from app.billing.provider import BillingProvider, CreateSubscription, ProviderEvent
 from app.billing.repository import BillingRepository
@@ -50,7 +52,7 @@ class BillingService:
         self._repo = repository
         self._provider = provider
         self._clock = clock
-        self._access_cache: dict[uuid.UUID, tuple[float, str]] = {}
+        self._access_cache: dict[uuid.UUID, tuple[float, str, str]] = {}
 
     # ------------------------------------------------------------------ reads
     def plans(self, token: str) -> dict[str, Any]:
@@ -69,21 +71,24 @@ class BillingService:
         """Drop the remembered access state of a workspace (after its plan changed, and in tests)."""
         self._access_cache.pop(uuid.UUID(str(tenant_id)), None)
 
-    def ensure_writable(self, token: str, tenant_id: uuid.UUID) -> None:
-        """The gate of every change a person makes (job DI): a read-only workspace refuses it. The answer is kept for 30 seconds per workspace; a failure to ask lets the change through (a billing hiccup must
-        never lock a business out: the database holds the sending anyway)."""
+    def ensure(self, token: str, tenant_id: uuid.UUID, kind: str) -> None:
+        """The gate of every request that is not a plain read (app/billing/gate.py decides the `kind`): `change` is held in a read-only workspace; `spend` (send, AI, call, campaign, outside service) is held in a
+        read-only workspace AND in one that is still waiting for WhatsApp. The answer is kept for 30 seconds per workspace; a failure to ask lets the request through (a billing hiccup must never lock a
+        business out: the database holds the sending anyway)."""
         now = time.monotonic()
         cached = self._access_cache.get(tenant_id)
         if cached is None or cached[0] < now:
             try:
-                state = str(self._repo.access(token, tenant_id).get("access"))
+                row = self._repo.access(token, tenant_id)
             except RepositoryError as exc:
-                logger.warning("billing: the access state could not be read (%s); the change goes through", exc.__class__.__name__)
+                logger.warning("billing: the access state could not be read (%s); the request goes through", exc.__class__.__name__)
                 return
-            cached = (now + ACCESS_TTL_SECONDS, state)
+            cached = (now + ACCESS_TTL_SECONDS, str(row.get("access")), "waiting" if row.get("waiting_for") else "")
             self._access_cache[tenant_id] = cached
         if cached[1] == "read_only":
             raise WorkspaceReadOnlyError(str(tenant_id))
+        if kind == "spend" and cached[2]:
+            raise WorkspaceWaitingForWhatsAppError(str(tenant_id))
 
     # ------------------------------------------------------------------ the owner's two actions
     def start_trial(self, token: str, tenant_id: uuid.UUID, plan_id: str, checkout_ref: str) -> dict[str, Any]:
@@ -108,6 +113,34 @@ class BillingService:
             return self._repo.start_trial(token, tenant_id, plan_id, created.provider, created.reference)
         except RepositoryError:
             self._provider.cancel_subscription(created.reference, at_period_end=False, now=self._clock())
+            raise
+
+    def resume(self, token: str, tenant_id: uuid.UUID, plan_id: str, checkout_ref: str) -> dict[str, Any]:
+        """Pay again after the trial ended unpaid or the plan was cancelled: a paid plan starts at once, with NO new trial. Registered at the provider first (the fake one charges nothing real); its next charge
+        is set one month ahead, the first month being paid now. If the record fails the provider's subscription is cancelled at once, like a start."""
+        catalogue = self._repo.plans(token)
+        plan = next((p for p in catalogue["plans"] if p["id"] == plan_id and p["kind"] in ("main", "calls")), None)
+        if plan is None:
+            raise PlanUnknownError(plan_id)
+        if not self._repo.billing(token, tenant_id).get("can_resume"):
+            raise NotLapsedError(str(tenant_id))
+        now = self._clock()
+        created = self._provider.create_subscription(
+            CreateSubscription(
+                tenant_id=str(tenant_id),
+                plan_id=plan_id,
+                checkout_ref=checkout_ref,
+                trial_days=0,
+                price_paise=plan["price_paise_monthly"],
+                started_at=now,
+            )
+        )
+        self._provider.set_trial_end(created.reference, now + timedelta(days=30))   # the first month is paid now: the provider's next charge is one month ahead
+        self.forget(tenant_id)
+        try:
+            return self._repo.resume(token, tenant_id, plan_id, created.provider, created.reference)
+        except RepositoryError:
+            self._provider.cancel_subscription(created.reference, at_period_end=False, now=now)
             raise
 
     def cancel(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:

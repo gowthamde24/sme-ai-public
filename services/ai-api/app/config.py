@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     trusted_proxy_hops: int = 0
     # /metrics answers 404 unless this is set, and then only to `Authorization: Bearer <it>`
     metrics_token: SecretStr | None = None
+    # Job DP part 6: error reporting. Unset (the default) = nothing is imported or sent.
+    # The DSN is a project address with a public key, set per environment; never logged.
+    sentry_dsn: SecretStr | None = None
+    sentry_environment: str | None = None
+    sentry_release: str | None = None
     log_format: str = "text"  # text | json
     # /docs, /redoc and /openapi.json: on in development, off elsewhere unless this is true
     expose_api_docs: bool = False
@@ -103,9 +108,15 @@ class Settings(BaseSettings):
     # Job DI (ADR 0092): the billing provider. Only "fake" exists (no network);
     # anything else stops the process at start.
     billing_provider: str = "fake"
-    # The e-mails of a read-only workspace (ADR 0092 addendum). Only "fake" exists (it sends
-    # nothing); anything else stops the process at start.
+    # The app's e-mails (reminders; ADR 0092 addendum, job RESEND): "fake" sends nothing,
+    # "resend" uses Resend's HTTP API with RESEND_API_KEY (from Secret Manager). Anything else
+    # stops the process at start.
     billing_email_sender: str = "fake"
+    resend_api_key: SecretStr | None = None
+    # The address app e-mails are sent from, and where a reply goes (addresses live in the
+    # environment, never in code). Needed when the sender is "resend".
+    mail_from: str | None = None
+    mail_reply_to: str | None = None
     # Job AW (ADR 0068): the scheduler worker (`make dev-worker-local`). It signs in as ITS OWN
     # account, which the operator registered in the database (no workspace, no key of any kind).
     # The address and the password come from the environment only, are never logged, and are

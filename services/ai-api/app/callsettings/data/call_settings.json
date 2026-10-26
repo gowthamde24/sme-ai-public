@@ -1,0 +1,221 @@
+{
+  "$schema": "call settings data (job DP part 4)",
+  "version": 1,
+  "status": "draft: the numbers are sensible starting points, to be tuned with real calls; labels await native review",
+  "note": "Defaults per business type (the pack code). The first key is the default for a code that is not listed. The numbers are data, not code. A school never makes sales calls and never calls about dues or fees.",
+  "locked": {
+    "education": {
+      "allowed_purposes": [
+        "admission_followup",
+        "visit_reminder",
+        "event_reminder"
+      ]
+    }
+  },
+  "options": {
+    "voicemail_actions": [
+      {
+        "id": "hang_up",
+        "label": "Hang up",
+        "description": "End the call and count it as no answer."
+      },
+      {
+        "id": "leave_message",
+        "label": "Leave a short message",
+        "description": "Say who is calling and that you will try again. Never says prices or amounts."
+      },
+      {
+        "id": "retry_later",
+        "label": "Try again later",
+        "description": "Hang up and call again by the 'no answer' rule."
+      }
+    ],
+    "phone_menu_actions": [
+      {
+        "id": "hang_up",
+        "label": "Hang up",
+        "description": "A phone menu ('press 1 for...') is not a person."
+      },
+      {
+        "id": "retry_later",
+        "label": "Try again later",
+        "description": "Hang up and call again by the 'no answer' rule."
+      }
+    ],
+    "sensitivities": [
+      {
+        "id": "low",
+        "label": "Low",
+        "description": "Finishes its sentence unless the customer keeps talking."
+      },
+      {
+        "id": "medium",
+        "label": "Medium",
+        "description": "Stops when the customer clearly starts to speak."
+      },
+      {
+        "id": "high",
+        "label": "High",
+        "description": "Stops at the first sound; best for quick, impatient callers."
+      }
+    ],
+    "topics": [
+      {
+        "id": "pricing",
+        "label": "Price talks"
+      },
+      {
+        "id": "payment",
+        "label": "Payment and dues"
+      },
+      {
+        "id": "delivery",
+        "label": "Delivery"
+      },
+      {
+        "id": "complaint",
+        "label": "A complaint"
+      },
+      {
+        "id": "visit",
+        "label": "A visit"
+      },
+      {
+        "id": "other",
+        "label": "Anything else"
+      }
+    ],
+    "purposes": [
+      {
+        "id": "sales_followup",
+        "label": "Follow up an enquiry or quote"
+      },
+      {
+        "id": "payment_reminder",
+        "label": "Remind about a payment"
+      },
+      {
+        "id": "admission_followup",
+        "label": "Follow up an admission enquiry"
+      },
+      {
+        "id": "visit_reminder",
+        "label": "Remind about a visit"
+      },
+      {
+        "id": "event_reminder",
+        "label": "Remind about an event or holiday"
+      }
+    ]
+  },
+  "defaults": {
+    "textiles": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 300,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "payment_reminder",
+        "visit_reminder"
+      ]
+    },
+    "construction_materials": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 2,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 10,
+      "max_call_seconds": 420,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "payment_reminder",
+        "visit_reminder"
+      ]
+    },
+    "education": {
+      "retry_busy": {
+        "count": 1,
+        "gap_minutes": 60
+      },
+      "retry_no_answer": {
+        "count": 2,
+        "gap_minutes": 180
+      },
+      "retry_call_later": {
+        "count": 1,
+        "gap_minutes": 120
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "hang_up",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 300,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 1,
+      "auto_pause_refusals_per_hour": 5,
+      "contact_memory": false,
+      "handover": [],
+      "allowed_purposes": [
+        "admission_followup",
+        "visit_reminder",
+        "event_reminder"
+      ]
+    }
+  }
+}

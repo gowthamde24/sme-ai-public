@@ -45,6 +45,15 @@
    "description": {
     "en": "Energetic, upbeat"
    }
+  },
+  {
+   "id": "own_voice",
+   "label": {
+    "en": "Your own voice"
+   },
+   "description": {
+    "en": "Your own recorded voice, made with your consent in Settings. The assistant still says it is the AI assistant."
+   }
   }
  ],
  "styles": [

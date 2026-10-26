@@ -93,7 +93,7 @@ function Row({ m, ctx, open, onToggle }: { m: OutboxMessage; ctx: Ctx; open: boo
   }
 
   return (
-    <li className="flex flex-col rounded-[20px] border border-line bg-surface" data-status={m.status} data-reason={m.reason}>
+    <li className="flex flex-col rounded-[20px] border border-line bg-surface" data-write data-status={m.status} data-reason={m.reason}>
       <button
         type="button"
         aria-expanded={open}

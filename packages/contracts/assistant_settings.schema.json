@@ -115,7 +115,8 @@
             "female_warm",
             "female_clear",
             "male_calm",
-            "male_lively"
+            "male_lively",
+            "own_voice"
           ],
           "title": "Voice Persona",
           "type": "string"
@@ -344,7 +345,8 @@
             "female_warm",
             "female_clear",
             "male_calm",
-            "male_lively"
+            "male_lively",
+            "own_voice"
           ],
           "title": "Id",
           "type": "string"

@@ -142,6 +142,8 @@ export const API_ROUTES = [
   route("/today", TODAY),
   route("/agents/status", AGENTS),
   route("/ai-usage", { today_percent: 12, month_percent: 31, resets_at_today: "2026-10-14T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }),
+  // job DP: the workspace's layout asks whether it is read-only; the pictures are of a workspace that pays
+  route("/billing/access", { access: "full", read_only_since: null, delete_on: null, data_days_left: null, can_resume: false, sending: "on", waiting_for: null }),
   route("/ai-usage/week", { week_percent: 18, resets_at_week: "2026-10-18T18:30:00Z" }),
   // job CU: the Settings page also reads the business profile (the GSTIN card)
   route("/business-profile", { gstin: null, state: null }),

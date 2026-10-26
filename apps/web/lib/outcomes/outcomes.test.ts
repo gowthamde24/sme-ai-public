@@ -45,7 +45,7 @@ describe("what happened after a call or a follow-up (fake data)", () => {
     expect(parseCorrections(encodeCorrections({ q1: ["unclear", "call_back_later"] }))).toEqual({ q1: ["unclear", "call_back_later"] });
   });
   it("totals are counts only", () => {
-    expect(Object.keys(mockTotals()).sort()).toEqual(["negative", "positive", "unclear"]);
+    expect(Object.keys(mockTotals()).sort()).toEqual(["negative", "notInterested", "positive", "unclear"]);
   });
 });
 

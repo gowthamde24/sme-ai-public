@@ -1,6 +1,9 @@
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+const nav = vi.hoisted(() => ({ path: "/privacy" }));
+vi.mock("next/navigation", () => ({ usePathname: () => nav.path }));
+
 import { legalT } from "@/i18n/legal";
 import { CONSENT_COOKIE, NOT_ASKED, readConsent, cookieFrom } from "@/lib/consent/consent";
 import { resetConsentStore } from "@/lib/consent/store";
@@ -24,6 +27,7 @@ const footerLink = () => within(document.querySelector("footer")!).getByRole("bu
 const notice = () => document.querySelector('[data-cookie="notice"]');
 
 beforeEach(() => {
+  nav.path = "/privacy";
   document.cookie = `${CONSENT_COOKIE}=; Path=/; Max-Age=0`;
   resetConsentStore();
 });
@@ -177,5 +181,18 @@ describe("a second window of the same page", () => {
       fireEvent.click(screen.getByRole("button", { name: "OK, got it" }));
     });
     expect(notice()).toBeNull();
+  });
+});
+
+describe("the notice and the phone's bottom bar (found by the staging smoke of 26 Oct)", () => {
+  it("inside the app the notice sits above the bottom bar (64 px and the safe area), not over its More button; on the public pages it is where it was", () => {
+    nav.path = "/app/tenants/T/orders";
+    mount();
+    expect(notice()?.className).toContain("max-md:mb-[calc(4rem+env(safe-area-inset-bottom)+0.75rem)]");
+    cleanup();
+    resetConsentStore();
+    nav.path = "/pricing";
+    mount();
+    expect(notice()?.className).not.toContain("safe-area-inset-bottom");
   });
 });

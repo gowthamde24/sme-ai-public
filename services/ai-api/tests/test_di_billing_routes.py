@@ -82,7 +82,7 @@ def test_the_billing_answer_is_the_contract_and_shows_no_ai_money() -> None:
     client, _ = world()
     r = client.get(B, headers=auth("a_owner"))
     body = r.json()
-    assert set(body) == {"plan", "subscription", "period", "usage", "notices", "can_start_trial", "whatsapp_connected_at", "access", "read_only_since", "delete_on", "data_days_left"}
+    assert set(body) == {"plan", "subscription", "period", "usage", "notices", "can_start_trial", "can_resume", "whatsapp_connected_at", "access", "read_only_since", "delete_on", "data_days_left"}
     assert set(body["usage"]) == {"call_minutes", "whatsapp_messages"}
     text = json.dumps(body).lower()
     for word in ("token", "micro", "rupee", "cost", "spend", "ledger", "anthropic", "model"):
@@ -153,7 +153,7 @@ def test_everybody_sees_the_access_state_and_a_full_workspace_changes_as_before(
     client, repo = world()
     for user in ("a_owner", "a_admin", "a_sales", "a_viewer"):
         r = client.get(f"{B}/access", headers=auth(user))
-        assert r.status_code == 200 and r.json() == {"access": "full", "read_only_since": None, "delete_on": None, "data_days_left": None}, user
+        assert r.status_code == 200 and r.json() == {"access": "full", "read_only_since": None, "delete_on": None, "data_days_left": None, "can_resume": False, "sending": "on", "waiting_for": None}, user
     assert client.get(f"{B}/access", headers=auth("b_owner")).status_code == 404
     assert client.post(f"/v1/tenants/{A}/contacts", json={"full_name": "Someone Synthetic", "phone": "+00 90000 00001"}, headers=auth("a_owner")).status_code != 403
     repo.read_only.add(A)

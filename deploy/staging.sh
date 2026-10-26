@@ -60,6 +60,7 @@ SUPABASE_PUBLISHABLE_KEY="$(supabase projects api-keys --project-ref "$SUPABASE_
 [ -n "$SUPABASE_PUBLISHABLE_KEY" ] || { echo "could not read the publishable key: run \`supabase login\`" >&2; exit 1; }
 export SUPABASE_URL SUPABASE_PUBLISHABLE_KEY
 export API_URL="https://sme-api-$PROJECT_NUMBER.$REGION.run.app"
+export MAIL_DOMAIN="${MAIL_DOMAIN:-stack19.com}"   # the domain verified at the e-mail provider; the addresses are made from it here, never written out (job RESEND)
 export WEB_ORIGIN="${WEB_ORIGIN:-https://staging.stack19.com}"   # the address the web is served from (the API's CORS fence, the sitemap): the custom domain, a Cloudflare Worker in front of the run.app address (docs/ops/staging.md)
 export BUILD_SA="sme-build@$PROJECT_ID.iam.gserviceaccount.com"
 dirty=""; git diff --quiet HEAD -- . 2>/dev/null || dirty="-dirty$(date +%H%M%S)"
@@ -70,7 +71,7 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
   # CPU is allocated while an instance is up (the agents run in threads) but min-instances 0 means no fixed cost: it scales to zero when idle.
   RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=0 \
     EXTRA_ENV="TERMS_VERSION=2026-10-25,PRIVACY_VERSION=2026-10-25,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4" \
-    EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest" \
+    EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest" \
     ./deploy/cloudrun.sh api $execute
 fi
 if [ "$what" = "web" ] || [ "$what" = "all" ]; then
@@ -79,6 +80,7 @@ fi
 if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
   # the worker has its own image (the API's code plus ffmpeg, job DJ), built here with the same TAG
   RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="scheduler@demo.example.test" WORKER_EVERY_MINUTES=5 \
+    WORKER_EXTRA_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN}" WORKER_EXTRA_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest" \
     ./deploy/cloudrun.sh worker $execute
 fi
 echo "staging: $WEB_ORIGIN  (api: $API_URL)  tag $TAG"
