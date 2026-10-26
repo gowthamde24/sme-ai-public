@@ -58903,5 +58903,533 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.leaddesk": {
+  "en": "Lead Desk",
+  "te": "లీడ్ డెస్క్",
+  "hi": "लीड डेस्क",
+  "kn": "ಲೀಡ್ ಡೆಸ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.import": {
+  "en": "Add leads",
+  "te": "లీడ్‌లను చేర్చండి",
+  "hi": "लीड जोड़ें",
+  "kn": "ಲೀಡ್‌ಗಳನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.outreach": {
+  "en": "Lead plans",
+  "te": "లీడ్ ప్లాన్లు",
+  "hi": "लीड प्लान",
+  "kn": "ಲೀಡ್ ಯೋಜನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.tasks": {
+  "en": "Tasks",
+  "te": "పనులు",
+  "hi": "काम",
+  "kn": "ಕೆಲಸಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.leadreport": {
+  "en": "Lead report",
+  "te": "లీడ్ రిపోర్ట్",
+  "hi": "लीड रिपोर्ट",
+  "kn": "ಲೀಡ್ ವರದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.lead-sources": {
+  "en": "Lead sources",
+  "te": "లీడ్ మూలాలు",
+  "hi": "लीड स्रोत",
+  "kn": "ಲೀಡ್ ಮೂಲಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.who": {
+  "en": "Who",
+  "te": "ఎవరు",
+  "hi": "कौन",
+  "kn": "ಯಾರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.who.count": {
+  "en": "{n} people",
+  "te": "{n} మంది",
+  "hi": "{n} लोग",
+  "kn": "{n} ಜನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.who.one": {
+  "en": "1 person",
+  "te": "1 వ్యక్తి",
+  "hi": "1 व्यक्ति",
+  "kn": "1 ವ್ಯಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.who.more": {
+  "en": "and {n} more",
+  "te": "ఇంకా {n} మంది",
+  "hi": "और {n} लोग",
+  "kn": "ಇನ್ನೂ {n} ಜನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.who.hint": {
+  "en": "Untick anyone you do not want included.",
+  "te": "వద్దనుకున్నవారి టిక్ తీసేయండి.",
+  "hi": "जिन्हें शामिल नहीं करना, उनका निशान हटाएँ।",
+  "kn": "ಬೇಡವಾದವರ ಟಿಕ್ ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.skipped": {
+  "en": "Left out already: {list}",
+  "te": "ఇప్పటికే వదిలినవారు: {list}",
+  "hi": "पहले से छोड़े गए: {list}",
+  "kn": "ಈಗಾಗಲೇ ಬಿಟ್ಟವರು: {list}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.goal": {
+  "en": "Goal",
+  "te": "లక్ష్యం",
+  "hi": "लक्ष्य",
+  "kn": "ಗುರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.channel": {
+  "en": "How",
+  "te": "ఎలా",
+  "hi": "कैसे",
+  "kn": "ಹೇಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.channel.call": {
+  "en": "Phone calls",
+  "te": "ఫోన్ కాల్స్",
+  "hi": "फोन कॉल",
+  "kn": "ಫೋನ್ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.channel.whatsapp": {
+  "en": "WhatsApp messages",
+  "te": "వాట్సాప్ సందేశాలు",
+  "hi": "व्हाट्सऐप संदेश",
+  "kn": "ವಾಟ್ಸಾಪ್ ಸಂದೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.channel.both": {
+  "en": "Phone calls and WhatsApp",
+  "te": "ఫోన్ కాల్స్ మరియు వాట్సాప్",
+  "hi": "फोन कॉल और व्हाट्सऐप",
+  "kn": "ಫೋನ್ ಕರೆಗಳು ಮತ್ತು ವಾಟ್ಸಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.questions": {
+  "en": "What Vijaya asks",
+  "te": "విజయ అడిగేవి",
+  "hi": "विजया क्या पूछेगी",
+  "kn": "ವಿಜಯ ಕೇಳುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.when": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.estimate": {
+  "en": "Estimate",
+  "te": "అంచనా",
+  "hi": "अनुमान",
+  "kn": "ಅಂದಾಜು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.estimate.minutes": {
+  "en": "{n} minutes of calls",
+  "te": "{n} నిమిషాల కాల్స్",
+  "hi": "{n} मिनट की कॉल",
+  "kn": "{n} ನಿಮಿಷಗಳ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.estimate.calls": {
+  "en": "{n} calls",
+  "te": "{n} కాల్స్",
+  "hi": "{n} कॉल",
+  "kn": "{n} ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.estimate.messages": {
+  "en": "{n} messages",
+  "te": "{n} సందేశాలు",
+  "hi": "{n} संदेश",
+  "kn": "{n} ಸಂದೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.estimate.cost": {
+  "en": "about {cost}",
+  "te": "సుమారు {cost}",
+  "hi": "लगभग {cost}",
+  "kn": "ಸುಮಾರು {cost}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.estimate.none": {
+  "en": "No estimate yet.",
+  "te": "ఇంకా అంచనా లేదు.",
+  "hi": "अभी अनुमान नहीं है।",
+  "kn": "ಇನ್ನೂ ಅಂದಾಜು ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.estimate.note": {
+  "en": "An estimate worked out by the system from today's prices. The real figure can differ a little.",
+  "te": "ఈ రోజు ధరలతో వ్యవస్థ లెక్కించిన అంచనా. అసలు మొత్తం కొంచెం తేడా ఉండవచ్చు.",
+  "hi": "आज की कीमतों से सिस्टम का निकाला अनुमान। असली रकम थोड़ी अलग हो सकती है।",
+  "kn": "ಇಂದಿನ ಬೆಲೆಗಳಿಂದ ವ್ಯವಸ್ಥೆ ಲೆಕ್ಕಿಸಿದ ಅಂದಾಜು. ನಿಜವಾದ ಮೊತ್ತ ಸ್ವಲ್ಪ ಬದಲಾಗಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.limits": {
+  "en": "Limits",
+  "te": "పరిమితులు",
+  "hi": "सीमाएँ",
+  "kn": "ಮಿತಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.limits.calls": {
+  "en": "Up to {n} calls a day",
+  "te": "రోజుకు గరిష్ఠంగా {n} కాల్స్",
+  "hi": "एक दिन में अधिकतम {n} कॉल",
+  "kn": "ದಿನಕ್ಕೆ ಗರಿಷ್ಠ {n} ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.limits.minutes": {
+  "en": "Up to {n} minutes in all",
+  "te": "మొత్తం గరిష్ఠంగా {n} నిమిషాలు",
+  "hi": "कुल अधिकतम {n} मिनट",
+  "kn": "ಒಟ್ಟು ಗರಿಷ್ಠ {n} ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.limits.cap": {
+  "en": "It stops when it has spent {cost}",
+  "te": "{cost} ఖర్చయ్యాక ఆగుతుంది",
+  "hi": "{cost} खर्च होने पर रुक जाएगा",
+  "kn": "{cost} ಖರ್ಚಾದ ಮೇಲೆ ನಿಲ್ಲುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.approve": {
+  "en": "Approve all ({n})",
+  "te": "అందరినీ ఆమోదించండి ({n})",
+  "hi": "सबको मंज़ूर करें ({n})",
+  "kn": "ಎಲ್ಲರನ್ನೂ ಒಪ್ಪಿಕೊಳ್ಳಿ ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.approving": {
+  "en": "Approving...",
+  "te": "ఆమోదిస్తున్నాం...",
+  "hi": "मंज़ूर कर रहे हैं...",
+  "kn": "ಒಪ್ಪಿಕೊಳ್ಳುತ್ತಿದ್ದೇವೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.approve.help": {
+  "en": "One approval covers everyone who is ticked. Nothing is called or sent before you approve.",
+  "te": "టిక్ ఉన్న అందరికీ ఒకే ఆమోదం. మీరు ఆమోదించే వరకు ఏ కాల్ లేదా సందేశం వెళ్ళదు.",
+  "hi": "निशान लगे सभी के लिए एक ही मंज़ूरी। आपके मंज़ूर करने से पहले कोई कॉल या संदेश नहीं जाता।",
+  "kn": "ಟಿಕ್ ಇರುವ ಎಲ್ಲರಿಗೂ ಒಂದೇ ಒಪ್ಪಿಗೆ. ನೀವು ಒಪ್ಪುವವರೆಗೆ ಯಾವ ಕರೆ ಅಥವಾ ಸಂದೇಶವೂ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.approve.owner": {
+  "en": "Only the Owner can approve. You can look at the plan and leave people out.",
+  "te": "యజమాని మాత్రమే ఆమోదించగలరు. మీరు ప్లాన్ చూడవచ్చు, కొందరిని వదలవచ్చు.",
+  "hi": "केवल मालिक मंज़ूर कर सकते हैं। आप प्लान देख सकते हैं और कुछ लोगों को छोड़ सकते हैं।",
+  "kn": "ಮಾಲೀಕರು ಮಾತ್ರ ಒಪ್ಪಬಹುದು. ನೀವು ಯೋಜನೆ ನೋಡಿ ಕೆಲವರನ್ನು ಬಿಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.approved": {
+  "en": "Approved. It starts now.",
+  "te": "ఆమోదించాం. ఇప్పుడే మొదలవుతుంది.",
+  "hi": "मंज़ूर हो गया। अभी शुरू होता है।",
+  "kn": "ಒಪ್ಪಿಗೆ ಆಯಿತು. ಈಗಲೇ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.err.mfa": {
+  "en": "Approving needs your second sign-in step.",
+  "te": "ఆమోదించడానికి మీ రెండో సైన్-ఇన్ దశ కావాలి.",
+  "hi": "मंज़ूर करने के लिए आपका दूसरा साइन-इन चरण चाहिए।",
+  "kn": "ಒಪ್ಪಲು ನಿಮ್ಮ ಎರಡನೇ ಸೈನ್-ಇನ್ ಹಂತ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.err.mfa.link": {
+  "en": "Set it up",
+  "te": "సెట్ చేయండి",
+  "hi": "सेट करें",
+  "kn": "ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.err.changed": {
+  "en": "The plan changed while you were looking. Look at it again, then approve.",
+  "te": "మీరు చూస్తుండగా ప్లాన్ మారింది. మళ్ళీ చూసి, ఆమోదించండి.",
+  "hi": "आपके देखते-देखते प्लान बदल गया। फिर से देखकर मंज़ूर करें।",
+  "kn": "ನೀವು ನೋಡುತ್ತಿರುವಾಗ ಯೋಜನೆ ಬದಲಾಯಿತು. ಮತ್ತೆ ನೋಡಿ, ನಂತರ ಒಪ್ಪಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.err.read_only": {
+  "en": "This workspace is read-only, so nothing can be approved.",
+  "te": "ఈ వర్క్‌స్పేస్ చదవడానికి మాత్రమే, కాబట్టి ఏదీ ఆమోదించలేరు.",
+  "hi": "यह वर्कस्पेस केवल पढ़ने के लिए है, इसलिए कुछ मंज़ूर नहीं हो सकता।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಓದಲು ಮಾತ್ರ, ಆದ್ದರಿಂದ ಏನನ್ನೂ ಒಪ್ಪಲು ಸಾಧ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.err.nobody": {
+  "en": "Nobody to contact yet. Say who, or give a list.",
+  "te": "ఇంకా ఎవరూ లేరు. ఎవరో చెప్పండి, లేదా జాబితా ఇవ్వండి.",
+  "hi": "अभी कोई नहीं है। बताइए कौन, या सूची दीजिए।",
+  "kn": "ಇನ್ನೂ ಯಾರೂ ಇಲ್ಲ. ಯಾರು ಎಂದು ಹೇಳಿ, ಅಥವಾ ಪಟ್ಟಿ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.err.down": {
+  "en": "That did not work. Nothing was approved. Try again.",
+  "te": "ఇది పని చేయలేదు. ఏదీ ఆమోదించలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हुआ। कुछ मंज़ूर नहीं हुआ। फिर कोशिश करें।",
+  "kn": "ಇದು ಆಗಲಿಲ್ಲ. ಏನೂ ಒಪ್ಪಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.simulated": {
+  "en": "Test mode: the calls are simulated. Nothing real is dialled.",
+  "te": "టెస్ట్ మోడ్: కాల్స్ అనుకరణ మాత్రమే. నిజమైన కాల్ ఏదీ చేయరు.",
+  "hi": "टेस्ट मोड: कॉल नकली हैं। कोई असली कॉल नहीं होती।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಕರೆಗಳು ಅನುಕರಣೆ ಮಾತ್ರ. ನಿಜವಾದ ಕರೆ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.state.planned": {
+  "en": "Waiting for your approval",
+  "te": "మీ ఆమోదం కోసం ఎదురుచూస్తోంది",
+  "hi": "आपकी मंज़ूरी का इंतज़ार",
+  "kn": "ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗೆ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.state.approved": {
+  "en": "Approved",
+  "te": "ఆమోదించారు",
+  "hi": "मंज़ूर",
+  "kn": "ಒಪ್ಪಿಗೆಯಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.state.running": {
+  "en": "Running",
+  "te": "నడుస్తోంది",
+  "hi": "चल रहा है",
+  "kn": "ನಡೆಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.state.paused": {
+  "en": "Paused",
+  "te": "ఆపారు",
+  "hi": "रुका हुआ",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.state.done": {
+  "en": "Finished",
+  "te": "పూర్తయింది",
+  "hi": "पूरा हुआ",
+  "kn": "ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pc.state.cancelled": {
+  "en": "Cancelled",
+  "te": "రద్దయింది",
+  "hi": "रद्द",
+  "kn": "ರದ್ದಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
