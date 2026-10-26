@@ -6,6 +6,7 @@ import { OrbMark } from "@/components/v2/app/mark/OrbMark";
 import { PackProp } from "@/components/v2/auth/PackCard";
 import { JsonLd, faqLd } from "@/components/v2/site/JsonLd";
 import { PaverCalculator } from "@/components/v2/site/LazyIslands";
+import { PackLeadDesk } from "@/components/v2/site/PackLeadDesk";
 import type { CalcWords } from "@/components/v2/site/PaverCalculator";
 import { CtaBand, FaqList, FeatureGrid, OWLS, Section } from "@/components/v2/site/sections";
 import { hasWaitlist, WaitlistSection, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
@@ -61,6 +62,8 @@ export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT;
           </span>
         </div>
       </section>
+
+      <PackLeadDesk packId={pack.id} t={t} lang={lang} />
 
       <Section id="problem" title={say(pack.problem.title, lang)} tone="soft">
         <ul className="grid gap-4 md:grid-cols-3">

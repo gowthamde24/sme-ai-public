@@ -16,6 +16,7 @@ const { chromium } = require("playwright");
 const site = JSON.parse(readFileSync(path.join(web, "i18n/strings/site.json"), "utf8"));
 const packs = JSON.parse(readFileSync(path.join(web, "lib/site/site-packs.generated.json"), "utf8")).packs;
 const brand = /BRAND_NAME = "([^"]+)"/.exec(readFileSync(path.join(web, "design/brand.ts"), "utf8"))[1].split(" ")[0];
+const assistant = /DEFAULT_ASSISTANT_NAME = "([^"]+)"/.exec(readFileSync(path.join(web, "lib/assistant/name.ts"), "utf8"))[1]; // {assistant} in a headline is the default name here (the public site never has a workspace's own)
 const orb = `data:image/svg+xml;base64,${readFileSync(path.join(web, "public/icons/orb.svg")).toString("base64")}`;
 const out = path.join(web, "public/og");
 mkdirSync(out, { recursive: true });
@@ -23,7 +24,7 @@ mkdirSync(out, { recursive: true });
 // the accent tokens of design/tokens.css (--v2-pack-*-edge / -text), light theme
 const ACCENT = { rose_silk: { edge: "#be3455", text: "#9f1d3d" }, terracotta: { edge: "#b4532a", text: "#8f3c14" }, sky_blue: { edge: "#2f7db5", text: "#14527f" } };
 const HOME = { edge: "#ff773c", text: "#c2410c" };
-const clean = (s) => s.replaceAll("⁠", "").replaceAll("&", "&amp;").replaceAll("<", "&lt;");
+const clean = (s) => s.replaceAll("{assistant}", assistant).replaceAll("⁠", "").replaceAll("&", "&amp;").replaceAll("<", "&lt;");
 const fonts = { en: "system-ui, sans-serif", te: "'Noto Sans Telugu', 'Telugu MN', system-ui, sans-serif", hi: "'Noto Sans Devanagari', 'Devanagari Sangam MN', system-ui, sans-serif", kn: "'Noto Sans Kannada', 'Kannada Sangam MN', system-ui, sans-serif" };
 
 const jobs = [];

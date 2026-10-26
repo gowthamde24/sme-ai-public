@@ -1,5 +1,5 @@
 // Job DP (night of 26 Oct): the night's screens in a real browser, on the real production web app and the visual tests' invented backend (e2e/visual/stand-in.mjs). It CHECKS what it shows and exits 1 with the list if one fails:
-//  - the landing page's "Calls in your own voice" in four languages;
+//  - the landing page (Lead Desk, night 4: the "Natural AI calls" block with "Calls in your own voice" is no longer on it) in four languages;
 //  - Settings > AI assistant: the Advanced call settings (closed, opened, a change saved and kept), the own-voice card (name, the sentence, a recorded sentence and sample, create, the voice is chosen among the voices, delete);
 //  - a school's "Send marks to parents" (the note that marks are not stored, a file, the preview, the send, the log);
 //  - a READ-ONLY workspace: the one notice, every main button off, the person's own Settings parts still on, the way to pay again.
@@ -124,7 +124,7 @@ async function main() {
     browser = await chromium.launch({ args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] });
     const sizes = Object.keys(SIZES);
 
-    // 1. the landing page: "Calls in your own voice", early access, in four languages
+    // 1. the landing page (reworked for Lead Desk in night 4: the natural-calls block is gone, the own voice lives in Settings > AI assistant, checked in part 2), in four languages
     await startWeb(FLAGS);
     for (const lang of ["en", ...LANGS]) {
       for (const sizeName of sizes) {
@@ -132,11 +132,11 @@ async function main() {
         const { context, page, errors } = await open({ scheme: "light", sizeName, lang });
         await page.goto(`${WEB_URL}/`, { waitUntil: "networkidle" });
         const text = await common(tag, "landing", page, errors, sizeName, { noMoney: true });
-        if (lang === "en") has(tag, "landing", text, ["Calls in your own voice.", "Early access: record a short sample and say one sentence of consent"]);
-        else check(!/Calls in your own voice/.test(text), `${tag} landing: the English line is on the ${lang} page`);
-        check((await page.locator('[data-part="natural-calls"]').count()) === 1, `${tag} landing: the natural calls card is missing`);
-        if (lang === "en") await save(page, "landing-own-voice", tag, "the home page: Natural AI calls with 'Calls in your own voice'", { fullPage: false });
-        await page.locator("#voice").scrollIntoViewIfNeeded().catch(() => null);
+        if (lang === "en") has(tag, "landing", text, ["calls your leads in 2 minutes", "A lead arrives"]);
+        else check(!/calls your leads in 2 minutes/.test(text), `${tag} landing: the English headline is on the ${lang} page`);
+        check((await page.locator('[data-part="ld-steps"] li').count()) === 6, `${tag} landing: the six Lead Desk steps are missing`);
+        check((await page.locator("#voice").count()) === 0, `${tag} landing: the natural calls block is still on the page`);
+        if (lang === "en") await save(page, "landing-lead-desk", tag, "the home page: the six steps of Lead Desk", { fullPage: false });
         await context.close();
       }
     }

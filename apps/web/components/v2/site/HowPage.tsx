@@ -1,5 +1,6 @@
 import { Repeat } from "lucide-react";
 
+import { LeadDeskSteps } from "@/components/v2/site/LeadDeskSteps";
 import { CtaBand, Section } from "@/components/v2/site/sections";
 import { workerSteps } from "@/components/v2/site/steps";
 import { WORKER_ICONS } from "@/components/v2/app/mark/workers";
@@ -8,7 +9,7 @@ import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import { SITE_PACKS, say, textIn } from "@/lib/site/packs";
 
-/** How it works (job CM; the six AI workers in the order of the workflow since job DM): the six steps, each with the icon of its job and, where a kind of business uses other words, those words (a school's own steps), then what always waits for the owner and the habits that keep a WhatsApp number safe. */
+/** How it works (job CM; the six AI workers in the order of the workflow since job DM; Lead Desk's own six steps first since night 4): the six steps of Lead Desk, then the six AI workers of the full team, each with the icon of its job and, where a kind of business uses other words, those words (a school's own steps), then what always waits for the owner and the habits that keep a WhatsApp number safe. */
 export function HowPage({ t, lang }: { t: SiteT; lang: Lang }) {
   return (
     <>
@@ -18,7 +19,13 @@ export function HowPage({ t, lang }: { t: SiteT; lang: Lang }) {
         </h1>
         <p className={lead}>{t("how.sub")}</p>
       </section>
-      <Section id="steps" title={t("how.steps.t")}>
+      <Section id="lead-desk" title={t("ld.steps.title")} sub={t("ld.steps.sub")}>
+        <LeadDeskSteps t={t} />
+        <p className="mt-4 text-base font-semibold text-ink" data-part="calling-rules">
+          {t("ld.rules")}
+        </p>
+      </Section>
+      <Section id="steps" title={t("how.steps.t")} tone="soft">
         <ol className="flex flex-col gap-3" data-part="steps">
           {workerSteps(t).map((s) => {
             const Icon = WORKER_ICONS[s.n - 1];
@@ -59,7 +66,7 @@ export function HowPage({ t, lang }: { t: SiteT; lang: Lang }) {
           {t("hm.loop")}
         </p>
       </Section>
-      <Section id="waits" title={t("how.waits.t")} tone="soft" narrow>
+      <Section id="waits" title={t("how.waits.t")} narrow>
         <ul className="flex flex-col gap-3" data-part="waits">
           {([1, 2, 3, 4, 5] as const).map((n) => (
             <li key={n} className={card}>
@@ -68,7 +75,7 @@ export function HowPage({ t, lang }: { t: SiteT; lang: Lang }) {
           ))}
         </ul>
       </Section>
-      <Section id="habits" title={t("how.habits.t")} narrow>
+      <Section id="habits" title={t("how.habits.t")} tone="soft" narrow>
         <ul className="flex flex-col gap-3">
           {([1, 2, 3, 4, 5] as const).map((n) => (
             <li key={n} className={card}>
