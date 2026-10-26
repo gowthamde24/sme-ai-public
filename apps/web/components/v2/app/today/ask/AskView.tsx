@@ -6,7 +6,8 @@ import * as React from "react";
 
 import { clock } from "./recorder";
 import { useFollowAnswer } from "./use-follow-answer";
-import { MAX_QUESTION, type AskSession, type Exchange } from "./use-ask-session";
+import { MAX_QUESTION } from "./ask-constants";
+import type { AskSession, Exchange } from "./use-ask-session";
 import { VoiceMode } from "./VoiceMode";
 import type { RecorderProblem } from "./use-recorder";
 

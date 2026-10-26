@@ -2,7 +2,8 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testi
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 beforeAll(async () => {
-  await import("./AskPanel"); // the panel is a lazy chunk on a real page; a test loads it once, up front
+  await import("./AskPanel"); // the panel and the conversation's code are lazy chunks on a real page; a test loads them once, up front
+  await import("./AskSessionHost");
 });
 const nav = { pathname: "/app/tenants/22222222-2222-2222-2222-222222222222/leads", search: "" };
 vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname, useSearchParams: () => new URLSearchParams(nav.search), useRouter: () => ({ refresh: vi.fn() }) }));
@@ -146,7 +147,7 @@ describe("the floating orb (job DQ part 0)", () => {
     rerender(harness(playing(ANSWER, seen)));
     expect(screen.queryByRole("dialog")).toBeNull();
     const card = document.querySelector('[data-ask-where="card"]') as HTMLElement;
-    expect(within(card).getByText(/second question/)).toBeInTheDocument();
+    expect(await within(card).findByText(/second question/)).toBeInTheDocument();
     expect(within(card).getByText("Nothing needs you today: 0 approvals waiting.")).toBeInTheDocument();
     expect(within(card).queryByText(/first question/)).toBeNull();
     fireEvent.click(within(card).getByRole("button", { name: "Show earlier (1)" }));
@@ -199,7 +200,7 @@ describe("the floating orb (job DQ part 0)", () => {
     rerender(harness(playing(ANSWER)));
     fireEvent.keyDown(window, { key: "/" });
     expect(screen.queryByRole("dialog")).toBeNull();
-    expect(screen.getByRole("textbox", { name: "Your question for Vijaya" })).toHaveFocus();
+    expect(await screen.findByRole("textbox", { name: "Your question for Vijaya" })).toHaveFocus();
   });
 
   it("the focus stays inside the panel: Tab from the last control goes to the first, Shift+Tab the other way", async () => {

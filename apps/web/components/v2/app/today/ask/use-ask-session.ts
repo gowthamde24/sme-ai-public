@@ -11,7 +11,9 @@ import { fetchVoiceStatus, makeAskTransport, makeVoiceTransport } from "./transp
 import { useRecorder, type RecorderProblem } from "./use-recorder";
 import type { VoicePhase } from "./VoiceMode";
 
-export const MAX_QUESTION = 500;
+import { MAX_QUESTION } from "./ask-constants";
+
+export { MAX_QUESTION };
 const MAX_ANSWER = 8000;
 const MAX_SOURCES = 8;
 const MAX_DRAFTS = 5;

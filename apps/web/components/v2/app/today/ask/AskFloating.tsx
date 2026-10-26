@@ -9,8 +9,8 @@ import { Orb } from "@/components/v2/Orb";
 import { workspaceOf } from "../../nav";
 import { orbStateOf } from "../../mark/orb-state";
 import { chipsForPath, orbHidden } from "./ask-chips";
+import { useStoredAsk } from "./ask-store";
 import type { AskWords } from "./ask-words";
-import type { AskSession } from "./use-ask-session";
 
 /** The panel is a chunk of its own: it is drawn only after the orb is pressed (the route-JS budget counts what a page loads at first). */
 const AskPanel = dynamic(() => import("./AskPanel").then((m) => m.AskPanel), { ssr: false });
@@ -27,7 +27,9 @@ function typing(target: EventTarget | null): boolean {
  * arrived that the person has not seen). Pressed, it opens the panel (AskPanel): a small chat bottom right on a laptop, a sheet 70 % high on a phone. "/" or Cmd/Ctrl+K opens it from the keyboard; Esc or the close button returns to the circle.
  * On Today the same keys put the cursor in the card's own line. Nothing here is fixed to the bottom as a bar: there is no bar.
  */
-export function AskFloating({ session, chipWords }: { session: AskSession; chipWords: AskWords }) {
+export function AskFloating({ words, chipWords }: { words: AskWords; chipWords: AskWords }) {
+  const session = useStoredAsk(); // null until the conversation's code has arrived: the orb is on the page at once, the panel opens as soon as there is something to open
+  const finished = session?.finished ?? 0;
   const pathname = usePathname();
   const tab = useSearchParams()?.get("tab") ?? null;
   const rest = workspaceOf(pathname ?? "")?.rest ?? null;
@@ -41,16 +43,16 @@ export function AskFloating({ session, chipWords }: { session: AskSession; chipW
     setShownFor(pathname);
     if (open) setOpen(false);
   }
-  const unseen = !open && session.finished > seenAt;
+  const unseen = !open && finished > seenAt;
   const openPanel = React.useCallback(() => {
     setOpen(true);
-    setSeenAt(session.finished);
-  }, [session.finished]);
+    setSeenAt(finished);
+  }, [finished]);
   const closePanel = React.useCallback(() => {
     setOpen(false);
-    setSeenAt(session.finished);
+    setSeenAt(finished);
     window.setTimeout(() => orbRef.current?.focus(), 0);
-  }, [session.finished]);
+  }, [finished]);
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const cmdK = (e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === "k";
@@ -64,8 +66,8 @@ export function AskFloating({ session, chipWords }: { session: AskSession; chipW
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [rest, here, openPanel]);
-  if (!here) return null;
-  const w = session.w;
+  if (!here || (session && !session.live)) return null; // (a conversation that has nothing to ask with draws no orb)
+  const w = (key: string) => words[key] ?? key;
   const name = w("ask.orb.open");
   return (
     <>
@@ -82,10 +84,10 @@ export function AskFloating({ session, chipWords }: { session: AskSession; chipW
         onFocus={() => void import("./AskPanel")}
         className={`fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-line bg-surface shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 motion-reduce:transition-none md:bottom-6 md:right-6 print:hidden ${open ? "max-md:hidden" : ""}`}
       >
-        <Orb px={44} state={session.asking && !session.answer ? "think" : session.playing || session.asking ? "speak" : "ambient"} />
+        <Orb px={44} state={session?.asking && !session.answer ? "think" : session?.playing || session?.asking ? "speak" : "ambient"} />
         {unseen ? <span data-ask="dot" aria-hidden="true" className="absolute right-0 top-0 size-3.5 rounded-full border-2 border-surface bg-brand" /> : null}
       </button>
-      {open ? <AskPanel session={session} chips={chipsForPath(rest ?? "", tab).map((k) => chipWords[k] ?? k)} onClose={closePanel} /> : null}
+      {open && session ? <AskPanel session={session} chips={chipsForPath(rest ?? "", tab).map((k) => chipWords[k] ?? k)} onClose={closePanel} /> : null}
     </>
   );
 }
