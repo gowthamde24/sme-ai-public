@@ -2,7 +2,7 @@
 
 Goal: the public website is live on **https://stack19.com** and **https://www.stack19.com** this week; the app stays closed. Nothing in this page has been run: it is the exact list for the owner and C1. Where a step changes Cloudflare, Google Cloud or the domain, the owner does it (the night run is not allowed to).
 
-What "website only" is: the same web image, started with one setting, `SITE_MODE=website` (ADR 0101). It serves the home page, the three business pages, plans, contact, privacy, terms and data deletion in English, Telugu, Hindi and Kannada. `/app`, sign-in and sign-up answer "Opening soon — book a demo". The pages say they may be indexed only when they are served from stack19.com or www.stack19.com.
+What "website only" is: the same web image, started with one setting, `SITE_MODE=website` (ADR 0110). It serves the home page, the three business pages, plans, contact, privacy, terms and data deletion in English, Telugu, Hindi and Kannada. `/app`, sign-in and sign-up answer "Opening soon — book a demo". The pages say they may be indexed only when they are served from stack19.com or www.stack19.com.
 
 ## Step 0. Decisions only the owner can make (before anything else)
 

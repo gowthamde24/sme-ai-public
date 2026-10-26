@@ -1,4 +1,4 @@
-# ADR 0102: the assistant is in Today's card, a floating orb elsewhere, and the menu has seven items (job DQ, part 0)
+# ADR 0111: the assistant is in Today's card, a floating orb elsewhere, and the menu has seven items (job DQ, part 0)
 
 Status: built on branch `web/dq-today-ask` (night run 27 Oct 2026). Replaces the Ask dock of job DN and the bottom bar of job DM. Owner feedback of 26 Oct: "the assistant in the middle does nothing, we can't type anything. Then why do we have a search bar at the bottom?"
 

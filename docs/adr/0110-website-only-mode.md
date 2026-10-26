@@ -1,4 +1,4 @@
-# ADR 0101: the website can be live while the app stays closed (job DQ, part 1)
+# ADR 0110: the website can be live while the app stays closed (job DQ, part 1)
 
 Status: built on branch `web/dq-site-live` (night run 27 Oct 2026).
 

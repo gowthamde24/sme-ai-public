@@ -70,7 +70,7 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
                   </span>
                 ) : null}
               </span>
-              <span className="max-w-full break-words">{word(labels, `nav.tab.${i.id}`, i.short ?? word(labels, `nav.item.${i.id}`, i.label))}</span>
+              <span className="max-w-full break-words tracking-tighter">{word(labels, `nav.tab.${i.id}`, i.short ?? word(labels, `nav.item.${i.id}`, i.label))}</span>
             </Link>
           );
         })}
