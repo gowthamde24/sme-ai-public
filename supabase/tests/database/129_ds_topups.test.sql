@@ -134,7 +134,7 @@ select is(pg_temp.j(pg_temp.buy('a_owner', 'a', 'p3', 'messages_100'), 'created'
 -- ============================================================================ F. the projected run-out (workspace b: the plan only)
 select is(pg_temp.m('b', 'call_minutes', 'projected_run_out_on'), null, 'F1 nothing used yet: no projection');
 select pg_temp.use('b', 'call_minutes', 'bu1', 180);
-select is(pg_temp.m('b', 'call_minutes', 'projected_run_out_on') || '/' || pg_temp.m('b', 'call_minutes', 'runs_out_before_period_end'), '/false', 'F2 3 minutes in 14 days: the 30 last past the period: no date');
+select is(coalesce(pg_temp.m('b', 'call_minutes', 'projected_run_out_on'), 'none') || '/' || pg_temp.m('b', 'call_minutes', 'runs_out_before_period_end'), 'none/false', 'F2 3 minutes in 14 days: the 30 last past the period: no date');
 select pg_temp.use('b', 'call_minutes', 'bu2', 1080);
 select is(pg_temp.m('b', 'call_minutes', 'used'), '21.0', 'F3 21 minutes used in 14 days (1.5 a day)');
 select is(pg_temp.m('b', 'call_minutes', 'projected_run_out_on') || '/' || pg_temp.m('b', 'call_minutes', 'runs_out_before_period_end'), '2026-11-08/true', 'F4 at 1.5 minutes a day the remaining 9 last 6 days: 8 November');
@@ -142,7 +142,7 @@ select is(pg_temp.m('b', 'call_minutes', 'state') || '/' || (select count(*) fro
 
 -- ============================================================================ G. alerts, Today, enforcement
 select pg_temp.use('b', 'call_minutes', 'bu3', 420);
-select is(pg_temp.m('b', 'call_minutes', 'state') || '/' || pg_temp.m('b', 'call_minutes', 'percent'), 'notice/90', 'G1 28 of 30 minutes: 90 percent: notice');
+select is(pg_temp.m('b', 'call_minutes', 'state') || '/' || pg_temp.m('b', 'call_minutes', 'percent'), 'notice/93', 'G1 28 of 30 minutes: 93 percent: notice');
 select pg_temp.use('b', 'call_minutes', 'bu4', 120);
 select is(pg_temp.m('b', 'call_minutes', 'state') || '/' || pg_temp.m('b', 'call_minutes', 'blocked') || '/' || pg_temp.m('b', 'call_minutes', 'projected_run_out_on'), 'stopped/false/2026-11-02', 'G2 30 of 30: stopped (not blocked while billing is off); the run-out date is today');
 select is((select string_agg(level::text, ',' order by level) from public.billing_notices where tenant_id = tests.tid('b')), '80,100', 'G3 the notices at 80 and 100 were made once each');
@@ -276,7 +276,8 @@ select is((select r ->> 'days_in_period' || '/' || (r ->> 'days_left') from prev
 select is((select r ->> 'prorated_paise' || '/' || (r ->> 'gst_paise') || '/' || (r ->> 'total_paise') from prev1), '116129/20903/137032', 'K15 (300,000 - 100,000) x 18 / 31 = 116,129 paise, 18 percent GST 20,903, total 137,032');
 select is((select r -> 'new_allowances' ->> 'call_minutes' || '/' || (r -> 'new_allowances' ->> 'whatsapp_messages') from prev1), '100/1000', 'K16 the new allowances are shown');
 select is((select r ->> 'price_set' from prev1), 'true', 'K17 prices are set');
-insert into public.business_profile (tenant_id, gstin) values (tests.tid('a'), '36ABCDE1234F1Z5');
+insert into public.business_profile (tenant_id, gstin)
+select tests.tid('a'), '36ABCDE1234F1Z' || c from unnest(string_to_array('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', null)) c where app.gstin_is_valid('36ABCDE1234F1Z' || c);
 update public.outreach_items set status = 'waiting_for_minutes' where batch_id = tests.rid('qb1') and contact_id = tests.rid('bc2') and false;
 create temp table up1 as select pg_temp.val('a_owner', format($q$select public.billing_upgrade(%L, 'growth')::text$q$, tests.tid('a')))::jsonb as r;
 select is((select r -> 'billing' -> 'plan' ->> 'id' from up1), 'growth', 'K18 the plan in force is growth now');

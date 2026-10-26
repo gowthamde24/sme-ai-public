@@ -63,7 +63,7 @@ Pro-rata = (new monthly price - old monthly price) x days_left / days_in_period,
 `GET /billing/invoices?cursor=` (Owner, Admin) -> `{ items: [Invoice], next_cursor }` newest first; `GET /billing/invoices/{id}` -> `Invoice`:
 ```json
 { "id": "uuid", "number": "S19-2610-000001", "kind": "topup"|"upgrade"|"overage", "description": "Top-up: 300 minutes", "issued_at": "ts", "period_start": "2026-10-01"|null,
-  "taxable_paise": 108000, "gst_rate_bp": 1800, "cgst_paise": 0, "sgst_paise": 0, "igst_paise": 194400, "total_paise": 1274400,
+  "taxable_paise": 108000, "gst_rate_bp": 1800, "cgst_paise": 0, "sgst_paise": 0, "igst_paise": 19440, "total_paise": 127440,
   "seller": { "name": "...", "state_code": "36", "gstin": null }, "buyer": { "gstin": "29ABCDE1234F1Z5"|null, "state_code": "29"|null },
   "fake": true, "payment_status": "paid_fake" }
 ```
@@ -71,3 +71,13 @@ Maths in whole paise: GST = round half up (taxable x rate_bp / 10000); **same st
 
 ## 8. Roles and gates
 Owner and Admin read (`GET`s); the Owner with a second factor changes anything (purchase, settings, upgrade). A Sales member or Viewer: 403. Billing routes stay open in a read-only workspace. These are NOT "spend" requests (they are payments).
+
+## 9. As built (added after the first publication; nothing above changed meaning)
+- **Shapes** are in `packages/contracts/billing.schema.json` / `billing.ts` / `billing.examples.json` (keys `topups_get`, `topup_buy_request`, `topup_buy_response`, `topup_settings_request`, `invoices`, `upgrade_preview`, `upgrade_request`, `usage_view_queued`); the meter's new fields have defaults, so an older answer still reads.
+- `POST /billing/topups` answers `201` for a new purchase and `200` for the same purchase id again. `GET /billing/invoices` pages 50 at a time (`?cursor=`, opaque).
+- **Plan chosen but WhatsApp not connected** (`trial_pending`) counts as a trial for the upgrade: nothing is charged, the chosen plan changes. A cancelled or past-due subscription cannot upgrade or buy (`409 no_subscription`).
+- **Allowance maths:** `allowance` = the plan's part (+ the operator's top-ups of the period, as before) + the pack units already drawn this period + the unexpired, unused pack units. Packs are drawn only when the period's use passes the plan's part, oldest pack first (a draw is recorded per pack). Unused pack units carry into the next period and expire 90 days after purchase.
+- **One monthly overage cap for the workspace**, shared by minutes and messages (`overage_monthly_cap_paise`); a started minute counts as a minute. The overage invoice (`kind: "overage"`, `period_start` = the first day of the period it closes) is made by the worker once the period has ended, only while billing is on, at most the cap.
+- **Alerts** go out only while billing is ON (like every other reminder), never for an exempt (demo) workspace; the Today items (`topup_low`, `topup_empty`, customer label "Your plan", target `{type:"billing", id:<tenant id>}`) show only while billing is ON and only to the Owner and Admin; `topup_low` is replaced by `topup_empty` at 100 percent, and `topup_empty` stays only while no pack balance is left.
+- **The alert e-mail and the WhatsApp message to the owner** are in English, Telugu or Hindi (drafts; Kannada falls back to English); the database has no owner-language column yet, so the worker asks for `en`.
+- **Queued calls:** an outreach item the worker cannot start for want of minutes becomes `waiting_for_minutes` (its next step is kept); it is `waiting` again on a top-up, an upgrade, a change of the overage setting, or when the meter is open at the next worker minute (the next period). The batch `progress` keeps counting it in `waiting` and adds `waiting_for_minutes` (the subset); excluding a person or cancelling the batch stops it too. A call that connected puts its seconds on the meter.
