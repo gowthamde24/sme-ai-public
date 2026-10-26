@@ -8,6 +8,8 @@
 export const WRITE_SELECTOR = ".write-ctl, [data-write], button[type='submit'], input[type='submit']";
 export const READ_OK_SELECTOR = "[data-read-ok]";
 const CONTROLS = "button, input, select, textarea";
+/** What a switched-off control looks like (a link has no `disabled` look of its own): paler, and the pointer says no. Written out here so Tailwind sees the classes. */
+const OFF_LOOK = ["opacity-60", "cursor-not-allowed"] as const;
 
 /** Whether the screen at this address keeps its controls (the person's own and the data's: they are never workspace changes). */
 export function keepsControls(pathname: string, section: string | null): boolean {
@@ -30,6 +32,7 @@ export function switchOff(root: ParentNode, why: string): number {
       control.disabled = true;
       c.setAttribute("data-readonly-off", "");
       c.setAttribute("title", why);
+      c.classList.add(...OFF_LOOK);
       n++;
     }
     if (el.matches("a")) {
@@ -37,6 +40,7 @@ export function switchOff(root: ParentNode, why: string): number {
       el.setAttribute("tabindex", "-1");
       el.setAttribute("data-readonly-off", "");
       el.setAttribute("title", why);
+      el.classList.add(...OFF_LOOK);
       n++;
     }
   });
@@ -51,5 +55,7 @@ export function switchOn(root: ParentNode): void {
     el.removeAttribute("aria-disabled");
     if (el.getAttribute("tabindex") === "-1" && el.matches("a")) el.removeAttribute("tabindex");
     el.removeAttribute("title");
+    el.classList.remove(...OFF_LOOK);
+    if (el.classList.length === 0) el.removeAttribute("class"); // an element that had no class attribute gets none back
   });
 }

@@ -8,11 +8,20 @@ import { LINES, sayLine } from "./lines";
 import { ApiRequestError } from "@/lib/api/client";
 
 import { MOCK_COOKIE, readAssistant, readAssistantName, saveAssistant } from "./source";
-import { CALL_LANGS, DAYS, NAME_MAX, STYLES, parseSettings, validName } from "./types";
+import { appDict } from "@/i18n/app";
+
+import { CALL_LANGS, DAYS, NAME_MAX, STYLES, VOICES, parseSettings, validName } from "./types";
 
 beforeEach(() => {
   h.jar.clear();
   vi.unstubAllEnvs();
+});
+
+describe("every voice has its words (a missing word would be drawn as its key)", () => {
+  it.each(["en", "te", "hi", "kn"] as const)("%s: the name and the description of each voice, own voice included", (lang) => {
+    const dict = appDict(lang) as Record<string, string>;
+    for (const v of VOICES) for (const key of [`asst.voice.${v}`, `asst.voice.${v}.d`]) expect(dict[key], `${lang} ${key}`).toBeTruthy();
+  });
 });
 
 describe("the assistant's name", () => {

@@ -53,8 +53,8 @@ describe("Send marks to parents", () => {
     expect(init.method).toBe("POST");
     expect((init.body as File).name).toBe("marks.csv");
     expect(init.headers["Content-Type"]).toBe("text/csv");
-    expect(await screen.findByText("2 messages will be sent")).toBeInTheDocument();
-    expect(screen.getByText(/1 parents will not get a message/)).toBeInTheDocument();
+    expect(await screen.findByText("Messages to send: 2")).toBeInTheDocument();
+    expect(screen.getByText(/Parents who will not get a message: 1/)).toBeInTheDocument();
     expect(screen.getByText(/Line 3: this phone number is not a parent of this school \(column phone\)/)).toBeInTheDocument();
     expect(screen.getByText("Line 4: this line is repeated")).toBeInTheDocument(); // a problem about the whole line has no column
     expect(screen.getByText("Asha scored 45 out of 50 in Maths.")).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe("Send marks to parents", () => {
     reply(200, { ok: true, data: PREVIEW });
     await check();
     reply(200, { ok: true, data: SENT });
-    await act(async () => void fireEvent.click(await screen.findByRole("button", { name: "Send 2 messages" })));
+    await act(async () => void fireEvent.click(await screen.findByRole("button", { name: "Send messages (2)" })));
     const [url, init] = fetchMock.mock.calls[1];
     const q = new URL(`https://x${url}`).searchParams;
     expect(url).toContain("/marks/send?");
@@ -83,14 +83,14 @@ describe("Send marks to parents", () => {
     reply(200, { ok: true, data: PREVIEW });
     await check();
     expect(await screen.findByText("Only the Owner can send. Ask the Owner to approve this.")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /^Send \d+ messages$/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /^Send messages \(\d+\)$/ })).toBeNull();
   });
   it("nothing to send: the button is off and says to fix the file", async () => {
     draw();
     choose();
     reply(200, { ok: true, data: { ...PREVIEW, willSend: 0 } });
     await check();
-    expect(await screen.findByRole("button", { name: "Send 0 messages" })).toBeDisabled();
+    expect(await screen.findByRole("button", { name: "Send messages (0)" })).toBeDisabled();
     expect(screen.getByText("Nothing to send. Fix the file and check it again.")).toBeInTheDocument();
   });
   it.each([
@@ -116,10 +116,10 @@ describe("Send marks to parents", () => {
     reply(200, { ok: true, data: PREVIEW });
     await check();
     reply(403, { ok: false, kind: "mfa", mfa: true, code: "mfa_required", error: "x" });
-    await act(async () => void fireEvent.click(await screen.findByRole("button", { name: "Send 2 messages" })));
+    await act(async () => void fireEvent.click(await screen.findByRole("button", { name: "Send messages (2)" })));
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/authenticator app/));
     expect(screen.getByRole("link", { name: /Security|authenticator/i })).toHaveAttribute("href", "/app/security");
-    expect(screen.getByRole("button", { name: "Send 2 messages" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Send messages (2)" })).toBeEnabled();
   });
   it("a file over 3 MB is refused before it is sent anywhere", async () => {
     draw();

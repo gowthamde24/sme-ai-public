@@ -177,24 +177,25 @@ async function main() {
       await card.locator('[data-part="consent-sentence"]').waitFor({ timeout: 15000 });
       check(/^I, Anil Reddy, allow Stack19 to create an AI voice of me for /.test(await card.locator('[data-part="consent-sentence"]').innerText()), `${tag} own voice: the consent sentence is not the fixed one`);
       await page.getByRole("button", { name: "Record the sentence" }).click();
-      await page.waitForTimeout(3500);
+      await page.waitForTimeout(6500);
       await page.getByRole("button", { name: "Stop" }).click();
       await page.getByRole("button", { name: "Record the sample" }).click();
       await page.waitForTimeout(16500);
       await page.getByRole("button", { name: "Stop" }).click();
       await page.getByText(/seconds recorded/).first().waitFor({ timeout: 10000 });
+      await card.locator("audio").nth(1).waitFor({ timeout: 10000 });
       check((await card.locator("audio").count()) === 2, `${tag} own voice: both recordings should have a player`);
       await save(page, "own-voice-recorded", tag, "own voice: the sentence and the sample recorded and ready to create");
       await page.getByRole("button", { name: "Create my voice" }).click();
       await card.locator('[data-part="own-voice-ready"]').waitFor({ timeout: 20000 });
       has(tag, "own voice", await card.innerText(), ["Your own voice", "Made with the consent of Anil Reddy", "Delete my voice", "Deleting removes the voice and both recordings."]);
-      check((await page.getByRole("button", { name: /My own voice/ }).count()) === 1, `${tag} own voice: "My own voice" is not among the voices`);
+      check((await page.getByRole("radio", { name: /My own voice/ }).count()) === 1, `${tag} own voice: "My own voice" is not among the voices`);
       await save(page, "own-voice-ready", tag, "own voice: made, with who consented and when");
       await card.getByRole("button", { name: "Delete my voice" }).click();
       check((await card.getByRole("alertdialog").innerText()).includes("removes the voice and both recordings"), `${tag} own voice: the question does not say what goes`);
       await card.getByRole("button", { name: "Yes, delete it" }).click();
       await page.getByText("Your voice and both recordings were deleted.").waitFor({ timeout: 15000 });
-      check((await page.getByRole("button", { name: /My own voice/ }).count()) === 0, `${tag} own voice: "My own voice" is still a choice after deleting`);
+      check((await page.getByRole("radio", { name: /My own voice/ }).count()) === 0, `${tag} own voice: "My own voice" is still a choice after deleting`);
       check(errors.length === 0, `${tag} own voice: console errors ${errors.join(" | ")}`);
       await context.close();
     }
@@ -215,9 +216,9 @@ async function main() {
       await page.getByRole("button", { name: "Show what will be sent" }).click();
       await page.locator('[data-part="marks-preview"]').waitFor({ timeout: 15000 });
       const pv = await page.locator('[data-part="marks-preview"]').innerText();
-      has(tag, "marks preview", pv, ["2 messages will be sent", "1 parents will not get a message", "this phone number is not a parent of this school", "the phone number is wrong", "Asha"]);
+      has(tag, "marks preview", pv, ["Messages to send: 2", "Parents who will not get a message: 1", "this phone number is not a parent of this school", "the phone number is wrong", "Asha"]);
       await save(page, "marks-preview", tag, "Send marks to parents: counts, problems and the first message as the parent will read it");
-      await page.getByRole("button", { name: "Send 2 messages" }).click();
+      await page.getByRole("button", { name: "Send messages (2)" }).click();
       await page.locator('[data-part="marks-done"]').waitFor({ timeout: 15000 });
       has(tag, "marks done", await page.locator('[data-part="marks-done"]').innerText(), ["2 sent", "The file was not saved."]);
       await save(page, "marks-done", tag, "Send marks to parents: sent, and the file was not saved");
@@ -255,9 +256,13 @@ async function main() {
       await page.goto(app("/settings?section=data"), { waitUntil: "networkidle" });
       await page.waitForTimeout(600);
       check((await page.locator("[data-readonly-off]").count()) === 0, `${tag} read-only data: a control of the Data part is switched off`);
-      await page.goto(app("/settings?section=business"), { waitUntil: "networkidle" });
-      await page.waitForTimeout(600);
-      check((await page.locator("[data-readonly-off]").count()) >= 1, `${tag} read-only business: nothing is switched off`);
+      let offInSettings = 0;
+      for (const part of ["members", "agent"]) {
+        await page.goto(app(`/settings?section=${part}`), { waitUntil: "networkidle" });
+        await page.waitForTimeout(600);
+        offInSettings += await page.locator("[data-readonly-off]").count();
+      }
+      check(offInSettings >= 1, `${tag} read-only Settings (members, automation): nothing is switched off`);
       check(errors.filter((e) => !/404/.test(e)).length === 0, `${tag} read-only: console errors ${errors.join(" | ")}`);
       await context.close();
     }

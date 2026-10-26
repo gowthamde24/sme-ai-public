@@ -56085,7 +56085,7 @@
   }
  },
  "marks.pv.rows": {
-  "en": "{n} lines read",
+  "en": "Lines read: {n}",
   "te": "{n} లైన్లు చదివాం",
   "hi": "{n} पंक्तियाँ पढ़ीं",
   "kn": "{n} ಸಾಲುಗಳನ್ನು ಓದಿದ್ದೇವೆ",
@@ -56096,7 +56096,7 @@
   }
  },
  "marks.pv.send": {
-  "en": "{n} messages will be sent",
+  "en": "Messages to send: {n}",
   "te": "{n} మెసేజ్‌లు వెళ్తాయి",
   "hi": "{n} मैसेज भेजे जाएँगे",
   "kn": "{n} ಮೆಸೇಜ್‌ಗಳು ಹೋಗುತ್ತವೆ",
@@ -56107,7 +56107,7 @@
   }
  },
  "marks.pv.blocked": {
-  "en": "{n} parents will not get a message (they opted out, withdrew WhatsApp consent or were erased).",
+  "en": "Parents who will not get a message: {n} (they opted out, withdrew WhatsApp consent or were erased).",
   "te": "{n} మంది తల్లిదండ్రులకు మెసేజ్ వెళ్లదు (వారు వద్దన్నారు, వాట్సాప్ సమ్మతి వెనక్కి తీసుకున్నారు లేదా తొలగించబడ్డారు).",
   "hi": "{n} अभिभावकों को मैसेज नहीं मिलेगा (उन्होंने मना किया, व्हाट्सऐप सहमति वापस ली या वे मिटाए जा चुके हैं)।",
   "kn": "{n} ಪೋಷಕರಿಗೆ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ (ಅವರು ಬೇಡವೆಂದರು, ವಾಟ್ಸಾಪ್ ಒಪ್ಪಿಗೆ ಹಿಂತೆಗೆದರು ಅಥವಾ ಅಳಿಸಲಾಗಿದ್ದಾರೆ).",
@@ -56118,7 +56118,7 @@
   }
  },
  "marks.pv.unknown": {
-  "en": "{n} lines have a phone number that is not a parent of this school. Add the parent first.",
+  "en": "Lines whose phone number is not a parent of this school: {n}. Add the parent first.",
   "te": "{n} లైన్లలో ఈ స్కూల్ తల్లిదండ్రి కాని ఫోన్ నంబర్ ఉంది. ముందు తల్లిదండ్రిని చేర్చండి.",
   "hi": "{n} पंक्तियों में ऐसा फ़ोन नंबर है जो इस स्कूल का अभिभावक नहीं है। पहले अभिभावक जोड़ें।",
   "kn": "{n} ಸಾಲುಗಳಲ್ಲಿ ಈ ಶಾಲೆಯ ಪೋಷಕರಲ್ಲದ ಫೋನ್ ನಂಬರ್ ಇದೆ. ಮೊದಲು ಪೋಷಕರನ್ನು ಸೇರಿಸಿ.",
@@ -56129,7 +56129,7 @@
   }
  },
  "marks.pv.invalid": {
-  "en": "{n} lines could not be read.",
+  "en": "Lines that could not be read: {n}.",
   "te": "{n} లైన్లు చదవలేకపోయాం.",
   "hi": "{n} पंक्तियाँ पढ़ी नहीं जा सकीं।",
   "kn": "{n} ಸಾಲುಗಳನ್ನು ಓದಲಾಗಲಿಲ್ಲ.",
@@ -56140,7 +56140,7 @@
   }
  },
  "marks.pv.dups": {
-  "en": "{n} lines are repeated.",
+  "en": "Repeated lines: {n}.",
   "te": "{n} లైన్లు మళ్లీ వచ్చాయి.",
   "hi": "{n} पंक्तियाँ दोहराई गई हैं।",
   "kn": "{n} ಸಾಲುಗಳು ಪುನರಾವರ್ತನೆಯಾಗಿವೆ.",
@@ -56272,7 +56272,7 @@
   }
  },
  "marks.go": {
-  "en": "Send {n} messages",
+  "en": "Send messages ({n})",
   "te": "{n} మెసేజ్‌లు పంపండి",
   "hi": "{n} मैसेज भेजें",
   "kn": "{n} ಮೆಸೇಜ್‌ಗಳನ್ನು ಕಳುಹಿಸಿ",
@@ -57750,6 +57750,17 @@
   "te": "మీ వాట్సాప్ కనెక్ట్ అయ్యాక మెసేజ్‌లు, కాల్స్ మొదలవుతాయి. ఏదీ పంపలేదు.",
   "hi": "आपका व्हाट्सऐप जुड़ने के बाद मैसेज और कॉल शुरू होंगे। कुछ नहीं भेजा गया।",
   "kn": "ನಿಮ್ಮ ವಾಟ್ಸಾಪ್ ಸಂಪರ್ಕ ಆದ ನಂತರ ಮೆಸೇಜ್, ಕಾಲ್ ಶುರುವಾಗುತ್ತವೆ. ಏನೂ ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.voice.own_voice.d": {
+  "en": "Made from your own recording, with your consent",
+  "te": "మీ సొంత రికార్డింగ్ నుంచి, మీ సమ్మతితో",
+  "hi": "आपकी अपनी रिकॉर्डिंग से, आपकी सहमति से",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ರೆಕಾರ್ಡಿಂಗ್‌ನಿಂದ, ನಿಮ್ಮ ಒಪ್ಪಿಗೆಯೊಂದಿಗೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
