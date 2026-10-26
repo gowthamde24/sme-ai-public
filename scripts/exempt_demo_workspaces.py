@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 STAGING_REF = "uiallwgywitryxatcqxf"
-DEMO_OWNERS = ("demo-textiles@demo.example.test", "demo-construction-materials@demo.example.test", "demo-education@demo.example.test")
+DEMO_OWNERS = ("demo-textiles@demo.example.test", "demo-construction-materials@demo.example.test", "demo-education@demo.example.test", "demo-real-estate@demo.example.test", "demo-coaching@demo.example.test")
 
 
 def query(sql: str) -> list[dict[str, object]]:
@@ -46,7 +46,8 @@ def main() -> int:
     ids = ", ".join("'" + str(r["id"]) + "'" for r in rows)
     if ids:
         query(f"select app.operator_billing_exempt(t.id, true) from public.tenants t where t.id in ({ids})")
-    print(f"applied: {len(rows)} workspaces are exempt")
+        query(f"select app.operator_set_demo(t.id, true) from public.tenants t where t.id in ({ids})")   # job DQ: a demo workspace is never lapse-erased and shows the demo banner
+    print(f"applied: {len(rows)} workspaces are exempt and marked demo")
     return 0
 
 
