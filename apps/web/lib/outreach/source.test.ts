@@ -102,6 +102,7 @@ describe("speed to lead, from the API", () => {
       return approve(CTX, B.batchId, "hash");
     };
     expect(await refuse(403, "mfa_required")).toEqual({ ok: false, error: "mfa" });
+    expect(await refuse(422, "not_for_schools")).toEqual({ ok: false, error: "not_for_schools" });
     expect(await refuse(409, "plan_changed")).toEqual({ ok: false, error: "changed" });
     expect(await refuse(403, "workspace_read_only")).toEqual({ ok: false, error: "read_only" });
     expect(await refuse(409, "outreach_state")).toEqual({ ok: false, error: "state" });

@@ -44,7 +44,7 @@ describe("the frame's string store (language track L0)", () => {
       for (const [re, label] of FORBIDDEN) expect(re.test(dicts[l][k]), `${l}:${k} contains ${label}`).toBe(false);
       expect(dicts[l][k]).not.toMatch(/sme-?ai/i);
     }
-  });
+  }, 60_000); // a few thousand keys x four languages x every forbidden phrase: slow on a busy machine
   it("English parity: the English words are exactly the menu table's words", () => {
     for (const g of NAV) {
       expect(appDict("en")[`nav.group.${g.id}` as keyof typeof app], g.id).toBe(g.label);

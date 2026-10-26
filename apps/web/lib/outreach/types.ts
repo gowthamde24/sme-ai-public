@@ -113,7 +113,7 @@ export type Policy = {
 };
 
 /** A refusal in the closed words the screens turn into sentences. */
-export type Refusal = "mfa" | "changed" | "read_only" | "invalid" | "forbidden" | "state" | "down" | "not_available";
+export type Refusal = "not_for_schools" | "mfa" | "changed" | "read_only" | "invalid" | "forbidden" | "state" | "down" | "not_available";
 export type Done<T> = { ok: true; value: T } | { ok: false; error: Refusal };
 
 export const goalWord = (g: Goal): string => `ld.goal.${g}`;

@@ -126,7 +126,7 @@ function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguag
     const out = await save({ ruleId: id, source, action, withinMinutes: minutes, goal, channel, language, questions: questions.split("\n").map((q) => q.trim()).filter(Boolean), messageText: needsMessage ? message : null, maxCallsPerDay: num(callsPerDay), maxTotalMinutes: num(totalMinutes) }).catch((): Done<Rule> => ({ ok: false, error: "down" }));
     setBusy(false);
     if (out.ok) onDone();
-    else setError({ text: t(out.error === "mfa" ? "pc.err.mfa" : out.error === "read_only" ? "pc.err.read_only" : out.error === "state" ? "ol.rule.err.exists" : out.error === "invalid" ? "ol.new.err.invalid" : "ol.new.err.down"), mfa: out.error === "mfa" });
+    else setError({ text: t(out.error === "not_for_schools" ? "ol.err.not_for_schools" : out.error === "mfa" ? "pc.err.mfa" : out.error === "read_only" ? "pc.err.read_only" : out.error === "state" ? "ol.rule.err.exists" : out.error === "invalid" ? "ol.new.err.invalid" : "ol.new.err.down"), mfa: out.error === "mfa" });
   };
 
   return (

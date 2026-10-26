@@ -54,7 +54,7 @@ export function BatchForm({ words, source, sourceLabel, defaultName, defaultGoal
     }).catch((): Done<BatchAnswer> => ({ ok: false, error: "down" }));
     setBusy(false);
     if (out.ok) router.push(`${backHref}/batches/${out.value.batch.id}`);
-    else setError(t(out.error === "invalid" ? "ol.new.err.invalid" : out.error === "read_only" ? "pc.err.read_only" : "ol.new.err.down"));
+    else setError(t(out.error === "not_for_schools" ? "ol.err.not_for_schools" : out.error === "invalid" ? "ol.new.err.invalid" : out.error === "read_only" ? "pc.err.read_only" : "ol.new.err.down"));
   };
 
   return (

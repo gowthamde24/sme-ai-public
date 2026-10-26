@@ -18,6 +18,7 @@ export function refusalOf(error: unknown): Refusal {
   if (error instanceof ApiAuthError) throw error;
   if (error instanceof ApiRequestError) {
     if (error.code === "mfa_required") return "mfa";
+    if (error.code === "not_for_schools") return "not_for_schools";
     if (error.code === "plan_changed") return "changed";
     if (error.code === "workspace_read_only") return "read_only";
     if (error.code === "outreach_state") return "state";
