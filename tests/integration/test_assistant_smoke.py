@@ -545,7 +545,7 @@ def everything_the_run_changes(slug: str) -> dict[str, Any]:
 
     return {
         "flags": operator_sql.sql(
-            "select json_object_agg(key, enabled)::text from public.platform_flags"
+            "select json_object_agg(key, enabled order by key)::text from public.platform_flags"
         ),
         "assistant": operator_sql.sql(
             "select row_to_json(d)::text from (select allowed_tenants, max_cost_micros, max_input_tokens, max_output_tokens, max_tool_calls, max_writes, requires_flag from public.agent_definitions where agent_name = 'assistant') d"
