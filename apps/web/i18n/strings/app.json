@@ -59431,5 +59431,2634 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "li.title": {
+  "en": "Add leads",
+  "te": "లీడ్స్ చేర్చండి",
+  "hi": "लीड जोड़ें",
+  "kn": "ಲೀಡ್ಸ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.sub": {
+  "en": "Bring in a list of people who asked about your business. Check it, say you may contact them, and add them.",
+  "te": "మీ బిజినెస్ గురించి అడిగిన వాళ్ల లిస్ట్ తీసుకురండి. చూసుకోండి, వాళ్లను సంప్రదించవచ్చని చెప్పండి, చేర్చండి.",
+  "hi": "आपके बिज़नेस के बारे में पूछने वालों की लिस्ट लाइए। देख लें, बताइए कि उनसे बात कर सकते हैं, फिर जोड़ें।",
+  "kn": "ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಬಗ್ಗೆ ಕೇಳಿದವರ ಲಿಸ್ಟ್ ತನ್ನಿ. ನೋಡಿಕೊಳ್ಳಿ, ಅವರನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು ಎಂದು ಹೇಳಿ, ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.mock": {
+  "en": "Test mode: your leads stay in this browser and nothing is sent to anyone.",
+  "te": "టెస్ట్ మోడ్: మీ లీడ్స్ ఈ బ్రౌజర్‌లోనే ఉంటాయి, ఎవరికీ ఏమీ పంపరు.",
+  "hi": "टेस्ट मोड: आपकी लीड इसी ब्राउज़र में रहती हैं, किसी को कुछ नहीं भेजा जाता।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ನಿಮ್ಮ ಲೀಡ್ಸ್ ಈ ಬ್ರೌಸರ್‌ನಲ್ಲೇ ಇರುತ್ತವೆ, ಯಾರಿಗೂ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.src.title": {
+  "en": "Where is your list?",
+  "te": "మీ లిస్ట్ ఎక్కడ ఉంది?",
+  "hi": "आपकी लिस्ट कहाँ है?",
+  "kn": "ನಿಮ್ಮ ಲಿಸ್ಟ್ ಎಲ್ಲಿದೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.src.file": {
+  "en": "Excel or CSV file",
+  "te": "ఎక్సెల్ లేదా CSV ఫైల్",
+  "hi": "एक्सेल या CSV फ़ाइल",
+  "kn": "ಎಕ್ಸೆಲ್ ಅಥವಾ CSV ಫೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.src.sheet": {
+  "en": "Google Sheet",
+  "te": "గూగుల్ షీట్",
+  "hi": "गूगल शीट",
+  "kn": "ಗೂಗಲ್ ಶೀಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.src.paste": {
+  "en": "Paste a list",
+  "te": "లిస్ట్ పేస్ట్ చేయండి",
+  "hi": "लिस्ट पेस्ट करें",
+  "kn": "ಲಿಸ್ಟ್ ಪೇಸ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.src.vcard": {
+  "en": "Contacts file (.vcf)",
+  "te": "కాంటాక్ట్స్ ఫైల్ (.vcf)",
+  "hi": "कॉन्टैक्ट्स फ़ाइल (.vcf)",
+  "kn": "ಕಾಂಟಾಕ್ಟ್ಸ್ ಫೈಲ್ (.vcf)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.file.drop": {
+  "en": "Drop your file here, or choose it",
+  "te": "మీ ఫైల్‌ను ఇక్కడ వదలండి, లేదా ఎంచుకోండి",
+  "hi": "अपनी फ़ाइल यहाँ छोड़ें, या चुनें",
+  "kn": "ನಿಮ್ಮ ಫೈಲ್ ಇಲ್ಲಿ ಬಿಡಿ, ಅಥವಾ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.file.choose": {
+  "en": "Choose a file",
+  "te": "ఫైల్ ఎంచుకోండి",
+  "hi": "फ़ाइल चुनें",
+  "kn": "ಫೈಲ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.file.hint": {
+  "en": "An Excel (.xlsx) or CSV file, up to 3 MB and 5,000 rows.",
+  "te": "ఎక్సెల్ (.xlsx) లేదా CSV ఫైల్, 3 MB వరకు, 5,000 వరుసల వరకు.",
+  "hi": "एक्सेल (.xlsx) या CSV फ़ाइल, 3 MB तक और 5,000 पंक्तियाँ तक।",
+  "kn": "ಎಕ್ಸೆಲ್ (.xlsx) ಅಥವಾ CSV ಫೈಲ್, 3 MB ವರೆಗೆ, 5,000 ಸಾಲುಗಳವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.file.picked": {
+  "en": "File: {name}",
+  "te": "ఫైల్: {name}",
+  "hi": "फ़ाइल: {name}",
+  "kn": "ಫೈಲ್: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.file.big": {
+  "en": "That file is over 3 MB. Please split it into smaller files.",
+  "te": "ఆ ఫైల్ 3 MB కంటే పెద్దది. చిన్న ఫైళ్లుగా విడగొట్టండి.",
+  "hi": "वह फ़ाइल 3 MB से बड़ी है। उसे छोटी फ़ाइलों में बाँट लें।",
+  "kn": "ಆ ಫೈಲ್ 3 MB ಗಿಂತ ದೊಡ್ಡದು. ಚಿಕ್ಕ ಫೈಲ್‌ಗಳಾಗಿ ಒಡೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.file.fail": {
+  "en": "This device could not read that file. Try another file.",
+  "te": "ఈ డివైస్ ఆ ఫైల్‌ను చదవలేకపోయింది. మరో ఫైల్ ప్రయత్నించండి.",
+  "hi": "यह डिवाइस वह फ़ाइल नहीं पढ़ पाया। दूसरी फ़ाइल आज़माएँ।",
+  "kn": "ಈ ಡಿವೈಸ್ ಆ ಫೈಲ್ ಓದಲಾಗಲಿಲ್ಲ. ಬೇರೆ ಫೈಲ್ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.vcf.hint": {
+  "en": "A .vcf file saved from your phone's contacts. Each contact becomes a lead.",
+  "te": "ఫోన్ కాంటాక్ట్స్ నుండి సేవ్ చేసిన .vcf ఫైల్. ప్రతి కాంటాక్ట్ ఒక లీడ్ అవుతుంది.",
+  "hi": "फ़ोन के कॉन्टैक्ट्स से सेव की .vcf फ़ाइल। हर कॉन्टैक्ट एक लीड बनता है।",
+  "kn": "ಫೋನ್ ಕಾಂಟಾಕ್ಟ್ಸ್‌ನಿಂದ ಸೇವ್ ಮಾಡಿದ .vcf ಫೈಲ್. ಪ್ರತಿ ಕಾಂಟಾಕ್ಟ್ ಒಂದು ಲೀಡ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.vcf.choose": {
+  "en": "Choose a .vcf file",
+  "te": "ఒక .vcf ఫైల్ ఎంచుకోండి",
+  "hi": "एक .vcf फ़ाइल चुनें",
+  "kn": "ಒಂದು .vcf ಫೈಲ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.paste.label": {
+  "en": "Your list, one lead per line",
+  "te": "మీ లిస్ట్, ప్రతి లైన్‌లో ఒక లీడ్",
+  "hi": "आपकी लिस्ट, हर लाइन में एक लीड",
+  "kn": "ನಿಮ್ಮ ಲಿಸ್ಟ್, ಪ್ರತಿ ಸಾಲಿನಲ್ಲಿ ಒಂದು ಲೀಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.paste.hint": {
+  "en": "Write the name and the phone number on each line, like: Ravi, 90000 00001. A line with only a number also works.",
+  "te": "ప్రతి లైన్‌లో పేరు, ఫోన్ నంబర్ రాయండి, ఇలా: రవి, 90000 00001. నంబర్ మాత్రమే ఉన్న లైన్ కూడా సరే.",
+  "hi": "हर लाइन में नाम और फ़ोन नंबर लिखें, जैसे: रवि, 90000 00001। सिर्फ़ नंबर वाली लाइन भी चलेगी।",
+  "kn": "ಪ್ರತಿ ಸಾಲಿನಲ್ಲಿ ಹೆಸರು, ಫೋನ್ ನಂಬರ್ ಬರೆಯಿರಿ, ಹೀಗೆ: ರವಿ, 90000 00001. ನಂಬರ್ ಮಾತ್ರ ಇರುವ ಸಾಲೂ ಸರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.sheet.url": {
+  "en": "Link to your Google Sheet",
+  "te": "మీ గూగుల్ షీట్ లింక్",
+  "hi": "आपकी गूगल शीट का लिंक",
+  "kn": "ನಿಮ್ಮ ಗೂಗಲ್ ಶೀಟ್ ಲಿಂಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.sheet.once": {
+  "en": "Add the list once",
+  "te": "లిస్ట్‌ను ఒక్కసారి చేర్చండి",
+  "hi": "लिस्ट एक बार जोड़ें",
+  "kn": "ಲಿಸ್ಟ್ ಒಮ್ಮೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.sheet.keep": {
+  "en": "Keep syncing: new rows are added every 15 minutes",
+  "te": "సింక్ చేస్తూ ఉండండి: కొత్త వరుసలు ప్రతి 15 నిమిషాలకు చేరతాయి",
+  "hi": "सिंक करते रहें: नई पंक्तियाँ हर 15 मिनट में जुड़ती हैं",
+  "kn": "ಸಿಂಕ್ ಮಾಡುತ್ತಿರಿ: ಹೊಸ ಸಾಲುಗಳು ಪ್ರತಿ 15 ನಿಮಿಷಕ್ಕೆ ಸೇರುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.sheet.keep.owner": {
+  "en": "Keeping a sheet in sync is for the Owner and Admin.",
+  "te": "షీట్‌ను సింక్ చేస్తూ ఉంచడం ఓనర్, అడ్మిన్‌లకే.",
+  "hi": "शीट को सिंक रखना सिर्फ़ ओनर और एडमिन के लिए है।",
+  "kn": "ಶೀಟ್ ಸಿಂಕ್ ಮಾಡಿ ಇಡುವುದು ಓನರ್ ಮತ್ತು ಅಡ್ಮಿನ್‌ಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.sheet.how": {
+  "en": "So that we can read your sheet",
+  "te": "మేము మీ షీట్ చదవగలిగేలా",
+  "hi": "ताकि हम आपकी शीट पढ़ सकें",
+  "kn": "ನಾವು ನಿಮ್ಮ ಶೀಟ್ ಓದಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.sheet.mode.anyone_with_link": {
+  "en": "Share it with: Anyone with the link can view.",
+  "te": "ఇలా షేర్ చేయండి: లింక్ ఉన్న ఎవరైనా చూడవచ్చు.",
+  "hi": "ऐसे शेयर करें: लिंक वाला कोई भी देख सकता है।",
+  "kn": "ಹೀಗೆ ಶೇರ್ ಮಾಡಿ: ಲಿಂಕ್ ಇರುವ ಯಾರಾದರೂ ನೋಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.sheet.mode.published_csv": {
+  "en": "Or publish it to the web (File, Share, Publish to web).",
+  "te": "లేదా వెబ్‌కి పబ్లిష్ చేయండి (File, Share, Publish to web).",
+  "hi": "या इसे वेब पर पब्लिश करें (File, Share, Publish to web)।",
+  "kn": "ಅಥವಾ ವೆಬ್‌ಗೆ ಪಬ್ಲಿಶ್ ಮಾಡಿ (File, Share, Publish to web).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.sheet.mode.service_account.off": {
+  "en": "Sharing it with our own address: ask our team to turn it on.",
+  "te": "మా అడ్రస్‌కి షేర్ చేయడం: దీన్ని ఆన్ చేయమని మా టీమ్‌ని అడగండి.",
+  "hi": "हमारे अपने पते पर शेयर करना: इसे चालू करने के लिए हमारी टीम से कहें।",
+  "kn": "ನಮ್ಮ ವಿಳಾಸಕ್ಕೆ ಶೇರ್ ಮಾಡುವುದು: ಇದನ್ನು ಆನ್ ಮಾಡಲು ನಮ್ಮ ಟೀಮ್‌ಗೆ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.sheet.mode.service_account.on": {
+  "en": "Or share it with this address: {email}",
+  "te": "లేదా ఈ అడ్రస్‌కి షేర్ చేయండి: {email}",
+  "hi": "या इस पते पर शेयर करें: {email}",
+  "kn": "ಅಥವಾ ಈ ವಿಳಾಸಕ್ಕೆ ಶೇರ್ ಮಾಡಿ: {email}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.read": {
+  "en": "Read the list",
+  "te": "లిస్ట్ చదవండి",
+  "hi": "लिस्ट पढ़ें",
+  "kn": "ಲಿಸ್ಟ್ ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.reading": {
+  "en": "Reading your list...",
+  "te": "మీ లిస్ట్ చదువుతున్నాం...",
+  "hi": "आपकी लिस्ट पढ़ रहे हैं...",
+  "kn": "ನಿಮ್ಮ ಲಿಸ್ಟ್ ಓದುತ್ತಿದ್ದೇವೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.read.found": {
+  "en": "{n} rows found.",
+  "te": "{n} వరుసలు దొరికాయి.",
+  "hi": "{n} पंक्तियाँ मिलीं।",
+  "kn": "{n} ಸಾಲುಗಳು ಸಿಕ್ಕವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.read.leads": {
+  "en": "{n} leads found.",
+  "te": "{n} లీడ్స్ దొరికాయి.",
+  "hi": "{n} लीड मिलीं।",
+  "kn": "{n} ಲೀಡ್ಸ್ ಸಿಕ್ಕವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.title": {
+  "en": "Which column is what?",
+  "te": "ఏ కాలమ్ ఏమిటి?",
+  "hi": "कौन सा कॉलम क्या है?",
+  "kn": "ಯಾವ ಕಾಲಮ್ ಏನು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.hint": {
+  "en": "Check what we guessed and change it if it is wrong. A phone number or an e-mail must be matched.",
+  "te": "మా అంచనా చూడండి, తప్పయితే మార్చండి. ఫోన్ నంబర్ లేదా ఈమెయిల్ తప్పనిసరిగా సరిపోల్చాలి.",
+  "hi": "हमारा अंदाज़ा देखें, गलत हो तो बदलें। फ़ोन नंबर या ईमेल का मिलान ज़रूरी है।",
+  "kn": "ನಮ್ಮ ಅಂದಾಜು ನೋಡಿ, ತಪ್ಪಿದ್ದರೆ ಬದಲಿಸಿ. ಫೋನ್ ನಂಬರ್ ಅಥವಾ ಇಮೇಲ್ ಹೊಂದಿಸಲೇಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.col": {
+  "en": "Column",
+  "te": "కాలమ్",
+  "hi": "कॉलम",
+  "kn": "ಕಾಲಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.samples": {
+  "en": "First values",
+  "te": "మొదటి విలువలు",
+  "hi": "पहली वैल्यू",
+  "kn": "ಮೊದಲ ಮೌಲ್ಯಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.means": {
+  "en": "This column is",
+  "te": "ఈ కాలమ్",
+  "hi": "यह कॉलम है",
+  "kn": "ಈ ಕಾಲಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.empty": {
+  "en": "(empty)",
+  "te": "(ఖాళీ)",
+  "hi": "(खाली)",
+  "kn": "(ಖಾಲಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.conf.exact": {
+  "en": "sure",
+  "te": "ఖచ్చితం",
+  "hi": "पक्का",
+  "kn": "ಖಚಿತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.conf.partial": {
+  "en": "probably",
+  "te": "బహుశా",
+  "hi": "शायद",
+  "kn": "ಬಹುಶಃ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.conf.weak": {
+  "en": "not sure",
+  "te": "ఖచ్చితం కాదు",
+  "hi": "पक्का नहीं",
+  "kn": "ಖಚಿತವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.conf.ai": {
+  "en": "guessed",
+  "te": "అంచనా",
+  "hi": "अंदाज़ा",
+  "kn": "ಅಂದಾಜು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.conf.none": {
+  "en": "no guess",
+  "te": "అంచనా లేదు",
+  "hi": "कोई अंदाज़ा नहीं",
+  "kn": "ಅಂದಾಜು ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.ai": {
+  "en": "Some columns were guessed with AI help. Please check them.",
+  "te": "కొన్ని కాలమ్‌లను AI సహాయంతో అంచనా వేశాం. దయచేసి చూడండి.",
+  "hi": "कुछ कॉलम का अंदाज़ा AI की मदद से लगाया है। उन्हें ज़रूर देखें।",
+  "kn": "ಕೆಲವು ಕಾಲಮ್‌ಗಳನ್ನು AI ಸಹಾಯದಿಂದ ಅಂದಾಜಿಸಿದ್ದೇವೆ. ದಯವಿಟ್ಟು ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.map.need": {
+  "en": "Match one column to Phone or to E-mail to go on.",
+  "te": "ముందుకు వెళ్లడానికి ఒక కాలమ్‌ను ఫోన్ లేదా ఈమెయిల్‌కి సరిపోల్చండి.",
+  "hi": "आगे बढ़ने के लिए एक कॉलम को फ़ोन या ईमेल से मिलाएँ।",
+  "kn": "ಮುಂದೆ ಹೋಗಲು ಒಂದು ಕಾಲಮ್ ಅನ್ನು ಫೋನ್ ಅಥವಾ ಇಮೇಲ್‌ಗೆ ಹೊಂದಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.field.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.field.phone": {
+  "en": "Phone or WhatsApp number",
+  "te": "ఫోన్ లేదా వాట్సాప్ నంబర్",
+  "hi": "फ़ोन या व्हाट्सऐप नंबर",
+  "kn": "ಫೋನ್ ಅಥವಾ ವಾಟ್ಸಾಪ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.field.email": {
+  "en": "E-mail",
+  "te": "ఈమెయిల్",
+  "hi": "ईमेल",
+  "kn": "ಇಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.field.city": {
+  "en": "City",
+  "te": "నగరం",
+  "hi": "शहर",
+  "kn": "ನಗರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.field.message": {
+  "en": "Message",
+  "te": "మెసేజ్",
+  "hi": "मैसेज",
+  "kn": "ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.field.external_id": {
+  "en": "Lead number (id)",
+  "te": "లీడ్ నంబర్ (id)",
+  "hi": "लीड नंबर (id)",
+  "kn": "ಲೀಡ್ ನಂಬರ್ (id)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.field.received_at": {
+  "en": "Date and time received",
+  "te": "వచ్చిన తేదీ, సమయం",
+  "hi": "आने की तारीख़ और समय",
+  "kn": "ಬಂದ ದಿನಾಂಕ, ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.field.source_note": {
+  "en": "Source note",
+  "te": "సోర్స్ నోట్",
+  "hi": "सोर्स नोट",
+  "kn": "ಸೋರ್ಸ್ ನೋಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.field.ignore": {
+  "en": "Ignore this column",
+  "te": "ఈ కాలమ్‌ను వదిలేయండి",
+  "hi": "इस कॉलम को छोड़ दें",
+  "kn": "ಈ ಕಾಲಮ್ ಬಿಟ್ಟುಬಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.warn.cells_cut": {
+  "en": "Very long cells were cut short.",
+  "te": "చాలా పొడవైన సెల్స్‌ను కుదించాం.",
+  "hi": "बहुत लंबे सेल छोटे कर दिए गए हैं।",
+  "kn": "ತುಂಬ ಉದ್ದದ ಸೆಲ್‌ಗಳನ್ನು ಕತ್ತರಿಸಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.warn.formulas_ignored": {
+  "en": "Formulas are not calculated: only the values shown in the file are used.",
+  "te": "ఫార్ములాలు లెక్కించం: ఫైల్‌లో కనిపించే విలువలు మాత్రమే వాడతాం.",
+  "hi": "फ़ॉर्मूले नहीं गिने जाते: फ़ाइल में दिखने वाली वैल्यू ही ली जाती हैं।",
+  "kn": "ಫಾರ್ಮುಲಾಗಳನ್ನು ಲೆಕ್ಕಿಸುವುದಿಲ್ಲ: ಫೈಲ್‌ನಲ್ಲಿ ಕಾಣುವ ಮೌಲ್ಯಗಳನ್ನು ಮಾತ್ರ ಬಳಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.title": {
+  "en": "May you contact these people?",
+  "te": "ఈ వాళ్లను మీరు సంప్రదించవచ్చా?",
+  "hi": "क्या आप इन लोगों से बात कर सकते हैं?",
+  "kn": "ಈ ಜನರನ್ನು ನೀವು ಸಂಪರ್ಕಿಸಬಹುದೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.check": {
+  "en": "I confirm these people may be contacted for the reason below.",
+  "te": "కింది కారణం కోసం వీళ్లను సంప్రదించవచ్చని నేను నిర్ధారిస్తున్నాను.",
+  "hi": "मैं पुष्टि करता/करती हूँ कि नीचे दिए कारण से इनसे बात की जा सकती है।",
+  "kn": "ಕೆಳಗಿನ ಕಾರಣಕ್ಕಾಗಿ ಇವರನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು ಎಂದು ನಾನು ಖಚಿತಪಡಿಸುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.list_name": {
+  "en": "Name of this list",
+  "te": "ఈ లిస్ట్ పేరు",
+  "hi": "इस लिस्ट का नाम",
+  "kn": "ಈ ಲಿಸ್ಟ್‌ನ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.purpose": {
+  "en": "What you will contact them about",
+  "te": "వాళ్లను దేని గురించి సంప్రదిస్తారు",
+  "hi": "आप उनसे किस बारे में बात करेंगे",
+  "kn": "ಅವರನ್ನು ಯಾವ ವಿಷಯಕ್ಕೆ ಸಂಪರ್ಕಿಸುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.basis": {
+  "en": "Why you may contact them",
+  "te": "వాళ్లను ఎందుకు సంప్రదించవచ్చు",
+  "hi": "आप उनसे क्यों बात कर सकते हैं",
+  "kn": "ಅವರನ್ನು ಏಕೆ ಸಂಪರ್ಕಿಸಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.basis.explicit_consent": {
+  "en": "They said yes (explicit consent)",
+  "te": "వాళ్లు సరే అన్నారు (స్పష్టమైన అనుమతి)",
+  "hi": "उन्होंने हाँ कहा (साफ़ अनुमति)",
+  "kn": "ಅವರು ಸರಿ ಎಂದರು (ಸ್ಪಷ್ಟ ಅನುಮತಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.basis.legitimate_use": {
+  "en": "They asked us about this (legitimate use)",
+  "te": "వాళ్లే మమ్మల్ని అడిగారు (న్యాయమైన వాడకం)",
+  "hi": "उन्होंने खुद हमसे पूछा (जायज़ इस्तेमाल)",
+  "kn": "ಅವರೇ ನಮ್ಮನ್ನು ಕೇಳಿದರು (ನ್ಯಾಯಸಮ್ಮತ ಬಳಕೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.basis.contractual": {
+  "en": "They are our customers (contract)",
+  "te": "వాళ్లు మా కస్టమర్లు (ఒప్పందం)",
+  "hi": "वे हमारे ग्राहक हैं (अनुबंध)",
+  "kn": "ಅವರು ನಮ್ಮ ಗ್ರಾಹಕರು (ಒಪ್ಪಂದ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.how": {
+  "en": "How you got these numbers",
+  "te": "ఈ నంబర్లు మీకు ఎలా వచ్చాయి",
+  "hi": "ये नंबर आपको कैसे मिले",
+  "kn": "ಈ ನಂಬರ್‌ಗಳು ನಿಮಗೆ ಹೇಗೆ ಸಿಕ್ಕವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.help": {
+  "en": "This is your own word. We keep it with the list: who said it, when, and what you wrote.",
+  "te": "ఇది మీ స్వంత మాట. దీన్ని లిస్ట్‌తో పాటు ఉంచుతాం: ఎవరు చెప్పారు, ఎప్పుడు, మీరు ఏం రాశారు.",
+  "hi": "यह आपका अपना वादा है। हम इसे लिस्ट के साथ रखते हैं: किसने कहा, कब, और आपने क्या लिखा।",
+  "kn": "ಇದು ನಿಮ್ಮ ಸ್ವಂತ ಮಾತು. ಇದನ್ನು ಲಿಸ್ಟ್‌ನೊಂದಿಗೆ ಇಡುತ್ತೇವೆ: ಯಾರು ಹೇಳಿದರು, ಯಾವಾಗ, ನೀವು ಏನು ಬರೆದಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.incomplete": {
+  "en": "Fill in all four to confirm.",
+  "te": "నిర్ధారించడానికి నాలుగూ నింపండి.",
+  "hi": "पुष्टि के लिए चारों भरें।",
+  "kn": "ಖಚಿತಪಡಿಸಲು ನಾಲ್ಕನ್ನೂ ತುಂಬಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.none": {
+  "en": "Without this confirmation the leads are saved, but nothing is sent to them.",
+  "te": "ఈ నిర్ధారణ లేకపోతే లీడ్స్ సేవ్ అవుతాయి, కానీ వాళ్లకు ఏమీ పంపరు.",
+  "hi": "इस पुष्टि के बिना लीड सेव हो जाती हैं, पर उन्हें कुछ नहीं भेजा जाता।",
+  "kn": "ಈ ದೃಢೀಕರಣ ಇಲ್ಲದಿದ್ದರೆ ಲೀಡ್ಸ್ ಸೇವ್ ಆಗುತ್ತವೆ, ಆದರೆ ಅವರಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.consent.sales": {
+  "en": "Only the Owner or an Admin can confirm this. You can add the leads, but nothing is sent to them until the Owner or an Admin confirms.",
+  "te": "దీన్ని ఓనర్ లేదా అడ్మిన్ మాత్రమే నిర్ధారించగలరు. మీరు లీడ్స్ చేర్చవచ్చు, కానీ ఓనర్ లేదా అడ్మిన్ నిర్ధారించే వరకు వాళ్లకు ఏమీ పంపరు.",
+  "hi": "इसकी पुष्टि सिर्फ़ ओनर या एडमिन कर सकते हैं। आप लीड जोड़ सकते हैं, पर ओनर या एडमिन के पुष्टि करने तक उन्हें कुछ नहीं भेजा जाएगा।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಖಚಿತಪಡಿಸಬಹುದು. ನೀವು ಲೀಡ್ಸ್ ಸೇರಿಸಬಹುದು, ಆದರೆ ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಖಚಿತಪಡಿಸುವವರೆಗೆ ಅವರಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.source.title": {
+  "en": "Where did these leads come from?",
+  "te": "ఈ లీడ్స్ ఎక్కడి నుండి వచ్చాయి?",
+  "hi": "ये लीड कहाँ से आईं?",
+  "kn": "ಈ ಲೀಡ್ಸ್ ಎಲ್ಲಿಂದ ಬಂದವು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.source.hint": {
+  "en": "Reports show results for each source.",
+  "te": "రిపోర్ట్‌లు ప్రతి సోర్స్ ఫలితాలను చూపిస్తాయి.",
+  "hi": "रिपोर्ट हर सोर्स का नतीजा दिखाती हैं।",
+  "kn": "ರಿಪೋರ್ಟ್‌ಗಳು ಪ್ರತಿ ಸೋರ್ಸ್‌ನ ಫಲಿತಾಂಶ ತೋರಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.excel_upload": {
+  "en": "Excel or CSV file",
+  "te": "ఎక్సెల్ లేదా CSV ఫైల్",
+  "hi": "एक्सेल या CSV फ़ाइल",
+  "kn": "ಎಕ್ಸೆಲ್ ಅಥವಾ CSV ಫೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.pasted_list": {
+  "en": "Pasted list",
+  "te": "పేస్ట్ చేసిన లిస్ట్",
+  "hi": "पेस्ट की हुई लिस्ट",
+  "kn": "ಪೇಸ್ಟ್ ಮಾಡಿದ ಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.vcard": {
+  "en": "Contacts file",
+  "te": "కాంటాక్ట్స్ ఫైల్",
+  "hi": "कॉन्टैक्ट्स फ़ाइल",
+  "kn": "ಕಾಂಟಾಕ್ಟ್ಸ್ ಫೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.google_sheet": {
+  "en": "Google Sheet",
+  "te": "గూగుల్ షీట్",
+  "hi": "गूगल शीट",
+  "kn": "ಗೂಗಲ್ ಶೀಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.indiamart": {
+  "en": "IndiaMART",
+  "te": "ఇండియామార్ట్ (IndiaMART)",
+  "hi": "इंडियामार्ट (IndiaMART)",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್ (IndiaMART)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.justdial": {
+  "en": "JustDial",
+  "te": "జస్ట్‌డయల్ (JustDial)",
+  "hi": "जस्टडायल (JustDial)",
+  "kn": "ಜಸ್ಟ್‌ಡಯಲ್ (JustDial)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.99acres": {
+  "en": "99acres",
+  "te": "99 ఎకర్స్ (99acres)",
+  "hi": "99 एकर्स (99acres)",
+  "kn": "99 ಎಕರ್ಸ್ (99acres)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.magicbricks": {
+  "en": "MagicBricks",
+  "te": "మ్యాజిక్‌బ్రిక్స్ (MagicBricks)",
+  "hi": "मैजिकब्रिक्स (MagicBricks)",
+  "kn": "ಮ್ಯಾಜಿಕ್‌ಬ್ರಿಕ್ಸ್ (MagicBricks)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.housing": {
+  "en": "Housing.com",
+  "te": "హౌసింగ్.కామ్ (Housing.com)",
+  "hi": "हाउसिंग.कॉम (Housing.com)",
+  "kn": "ಹೌಸಿಂಗ್.ಕಾಮ್ (Housing.com)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.meta_lead_ads": {
+  "en": "Meta Lead Ads",
+  "te": "మెటా లీడ్ యాడ్స్",
+  "hi": "मेटा लीड ऐड्स",
+  "kn": "ಮೆಟಾ ಲೀಡ್ ಆಡ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.website_form": {
+  "en": "Your website form",
+  "te": "మీ వెబ్‌సైట్ ఫారం",
+  "hi": "आपके वेबसाइट का फ़ॉर्म",
+  "kn": "ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್ ಫಾರ್ಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.tag.webhook": {
+  "en": "Zapier, n8n or Make",
+  "te": "Zapier, n8n లేదా Make",
+  "hi": "Zapier, n8n या Make",
+  "kn": "Zapier, n8n ಅಥವಾ Make",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.cost.label": {
+  "en": "Cost per lead in rupees (optional)",
+  "te": "ఒక లీడ్‌కి ఖర్చు రూపాయల్లో (ఐచ్ఛికం)",
+  "hi": "एक लीड की लागत रुपये में (वैकल्पिक)",
+  "kn": "ಒಂದು ಲೀಡ್‌ಗೆ ವೆಚ್ಚ ರೂಪಾಯಿಗಳಲ್ಲಿ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.cost.hint": {
+  "en": "If you paid for these leads, write the price of one. Reports then show what each booking cost.",
+  "te": "ఈ లీడ్స్‌కి డబ్బు ఇచ్చి ఉంటే, ఒక్కదాని ధర రాయండి. అప్పుడు రిపోర్ట్‌లో ఒక్కో బుకింగ్ ఖర్చు కనిపిస్తుంది.",
+  "hi": "इन लीड के लिए पैसे दिए हों तो एक का दाम लिखें। तब रिपोर्ट में हर बुकिंग की लागत दिखेगी।",
+  "kn": "ಈ ಲೀಡ್ಸ್‌ಗೆ ಹಣ ಕೊಟ್ಟಿದ್ದರೆ ಒಂದರ ಬೆಲೆ ಬರೆಯಿರಿ. ಆಗ ರಿಪೋರ್ಟ್‌ನಲ್ಲಿ ಪ್ರತಿ ಬುಕಿಂಗ್ ವೆಚ್ಚ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.cost.bad": {
+  "en": "Write an amount like 12 or 12.50.",
+  "te": "12 లేదా 12.50 లాగా మొత్తం రాయండి.",
+  "hi": "12 या 12.50 जैसी रकम लिखें।",
+  "kn": "12 ಅಥವಾ 12.50 ಹಾಗೆ ಮೊತ್ತ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.check": {
+  "en": "Check the list",
+  "te": "లిస్ట్ చెక్ చేయండి",
+  "hi": "लिस्ट जाँचें",
+  "kn": "ಲಿಸ್ಟ್ ಪರಿಶೀಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.checking": {
+  "en": "Checking...",
+  "te": "చెక్ చేస్తున్నాం...",
+  "hi": "जाँच रहे हैं...",
+  "kn": "ಪರಿಶೀಲಿಸುತ್ತಿದ್ದೇವೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.title": {
+  "en": "What will happen",
+  "te": "ఏం జరుగుతుంది",
+  "hi": "क्या होगा",
+  "kn": "ಏನಾಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.ready": {
+  "en": "{n} ready",
+  "te": "{n} సిద్ధం",
+  "hi": "{n} तैयार",
+  "kn": "{n} ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.dups": {
+  "en": "{n} duplicates merged",
+  "te": "{n} డూప్లికేట్స్ కలిపాం",
+  "hi": "{n} डुप्लिकेट मिला दिए",
+  "kn": "{n} ಡೂಪ್ಲಿಕೇಟ್ ಸೇರಿಸಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.seen": {
+  "en": "{n} added before",
+  "te": "{n} ముందే చేర్చినవి",
+  "hi": "{n} पहले जोड़े जा चुके",
+  "kn": "{n} ಮೊದಲೇ ಸೇರಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.invalid": {
+  "en": "{n} invalid",
+  "te": "{n} తప్పు",
+  "hi": "{n} गलत",
+  "kn": "{n} ತಪ್ಪು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.dnd": {
+  "en": "{n} on the Do-Not-Disturb list (WhatsApp only)",
+  "te": "{n} డు-నాట్-డిస్టర్బ్ లిస్ట్‌లో (వాట్సాప్ మాత్రమే)",
+  "hi": "{n} डू-नॉट-डिस्टर्ब लिस्ट में (सिर्फ़ व्हाट्सऐप)",
+  "kn": "{n} ಡು-ನಾಟ್-ಡಿಸ್ಟರ್ಬ್ ಲಿಸ್ಟ್‌ನಲ್ಲಿ (ವಾಟ್ಸಾಪ್ ಮಾತ್ರ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.noconsent": {
+  "en": "{n} saved, nothing is sent to them (no confirmation)",
+  "te": "{n} సేవ్ అయ్యాయి, వాళ్లకు ఏమీ పంపరు (నిర్ధారణ లేదు)",
+  "hi": "{n} सेव हुईं, उन्हें कुछ नहीं भेजा जाएगा (पुष्टि नहीं)",
+  "kn": "{n} ಸೇವ್ ಆದವು, ಅವರಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ (ದೃಢೀಕರಣ ಇಲ್ಲ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.blocked": {
+  "en": "{n} not taken",
+  "te": "{n} తీసుకోలేదు",
+  "hi": "{n} नहीं ली गईं",
+  "kn": "{n} ತೆಗೆದುಕೊಂಡಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.estimate": {
+  "en": "About {minutes} minutes of calls, {messages} messages, {cost}",
+  "te": "సుమారు {minutes} నిమిషాల కాల్స్, {messages} మెసేజ్‌లు, {cost}",
+  "hi": "लगभग {minutes} मिनट की कॉल, {messages} मैसेज, {cost}",
+  "kn": "ಸುಮಾರು {minutes} ನಿಮಿಷಗಳ ಕಾಲ್‌ಗಳು, {messages} ಮೆಸೇಜ್‌ಗಳು, {cost}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.estimate.note": {
+  "en": "This is an estimate. The real figure can differ a little.",
+  "te": "ఇది అంచనా మాత్రమే. నిజమైన లెక్క కొంచెం తేడా ఉండవచ్చు.",
+  "hi": "यह सिर्फ़ अंदाज़ा है। असली आँकड़ा थोड़ा अलग हो सकता है।",
+  "kn": "ಇದು ಅಂದಾಜು ಮಾತ್ರ. ನಿಜವಾದ ಲೆಕ್ಕ ಸ್ವಲ್ಪ ಬೇರೆ ಇರಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.dnd_off": {
+  "en": "The Do-Not-Disturb check is not switched on yet, so numbers on that list are not marked.",
+  "te": "డు-నాట్-డిస్టర్బ్ చెక్ ఇంకా ఆన్ కాలేదు, కాబట్టి ఆ లిస్ట్‌లోని నంబర్లను గుర్తించలేదు.",
+  "hi": "डू-नॉट-डिस्टर्ब जाँच अभी चालू नहीं है, इसलिए उस लिस्ट के नंबर चिह्नित नहीं हुए।",
+  "kn": "ಡು-ನಾಟ್-ಡಿಸ್ಟರ್ಬ್ ಪರಿಶೀಲನೆ ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ, ಆದ್ದರಿಂದ ಆ ಲಿಸ್ಟ್‌ನ ನಂಬರ್‌ಗಳನ್ನು ಗುರುತಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.problems": {
+  "en": "The first problems",
+  "te": "మొదటి సమస్యలు",
+  "hi": "पहली समस्याएँ",
+  "kn": "ಮೊದಲ ಸಮಸ್ಯೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.row": {
+  "en": "Row {n}",
+  "te": "వరుస {n}",
+  "hi": "पंक्ति {n}",
+  "kn": "ಸಾಲು {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.pv.nothing": {
+  "en": "Nothing can be added: every row has a problem.",
+  "te": "ఏదీ చేర్చలేం: ప్రతి వరుసలో సమస్య ఉంది.",
+  "hi": "कुछ भी नहीं जोड़ा जा सकता: हर पंक्ति में समस्या है।",
+  "kn": "ಏನನ್ನೂ ಸೇರಿಸಲಾಗದು: ಪ್ರತಿ ಸಾಲಿನಲ್ಲೂ ಸಮಸ್ಯೆ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.problem.invalid_number": {
+  "en": "Not a valid phone number",
+  "te": "సరైన ఫోన్ నంబర్ కాదు",
+  "hi": "सही फ़ोन नंबर नहीं है",
+  "kn": "ಸರಿಯಾದ ಫೋನ್ ನಂಬರ್ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.problem.no_contact_way": {
+  "en": "No phone number or e-mail",
+  "te": "ఫోన్ నంబర్ లేదా ఈమెయిల్ లేదు",
+  "hi": "फ़ोन नंबर या ईमेल नहीं है",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಅಥವಾ ಇಮೇಲ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.problem.duplicate_in_file": {
+  "en": "Same number as an earlier row",
+  "te": "ముందు వరుసలోని అదే నంబర్",
+  "hi": "पहले की पंक्ति वाला ही नंबर",
+  "kn": "ಹಿಂದಿನ ಸಾಲಿನ ಅದೇ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.problem.already_imported": {
+  "en": "Added before",
+  "te": "ముందే చేర్చారు",
+  "hi": "पहले जोड़ा जा चुका है",
+  "kn": "ಮೊದಲೇ ಸೇರಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.problem.real_data_gate": {
+  "en": "This workspace takes made-up data only for now",
+  "te": "ఈ వర్క్‌స్పేస్ ప్రస్తుతానికి కల్పిత డేటా మాత్రమే తీసుకుంటుంది",
+  "hi": "यह वर्कस्पेस अभी सिर्फ़ बनावटी डेटा लेता है",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಸದ್ಯಕ್ಕೆ ಕಲ್ಪಿತ ಡೇಟಾ ಮಾತ್ರ ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.problem.opted_out": {
+  "en": "This person asked not to be contacted",
+  "te": "ఈ వ్యక్తి సంప్రదించవద్దని కోరారు",
+  "hi": "इस व्यक्ति ने बात न करने को कहा है",
+  "kn": "ಈ ವ್ಯಕ್ತಿ ಸಂಪರ್ಕಿಸಬೇಡಿ ಎಂದಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.problem.row_refused": {
+  "en": "This row could not be used",
+  "te": "ఈ వరుసను వాడలేకపోయాం",
+  "hi": "इस पंक्ति का इस्तेमाल नहीं हो सका",
+  "kn": "ಈ ಸಾಲನ್ನು ಬಳಸಲಾಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.import": {
+  "en": "Add these leads",
+  "te": "ఈ లీడ్స్ చేర్చండి",
+  "hi": "ये लीड जोड़ें",
+  "kn": "ಈ ಲೀಡ್ಸ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.importing": {
+  "en": "Adding...",
+  "te": "చేరుస్తున్నాం...",
+  "hi": "जोड़ रहे हैं...",
+  "kn": "ಸೇರಿಸುತ್ತಿದ್ದೇವೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.keep": {
+  "en": "Keep this sheet in sync",
+  "te": "ఈ షీట్‌ను సింక్ చేస్తూ ఉంచండి",
+  "hi": "इस शीट को सिंक रखें",
+  "kn": "ಈ ಶೀಟ್ ಸಿಂಕ್ ಮಾಡಿ ಇಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.keeping": {
+  "en": "Setting up...",
+  "te": "సెట్ చేస్తున్నాం...",
+  "hi": "सेट कर रहे हैं...",
+  "kn": "ಸೆಟ್ ಮಾಡುತ್ತಿದ್ದೇವೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.done.title": {
+  "en": "Done. Your leads are in.",
+  "te": "అయింది. మీ లీడ్స్ చేరాయి.",
+  "hi": "हो गया। आपकी लीड जुड़ गईं।",
+  "kn": "ಆಯ್ತು. ನಿಮ್ಮ ಲೀಡ್ಸ್ ಸೇರಿದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.done.kept": {
+  "en": "The sheet is now kept in sync. New rows are added every 15 minutes.",
+  "te": "షీట్ ఇప్పుడు సింక్‌లో ఉంది. కొత్త వరుసలు ప్రతి 15 నిమిషాలకు చేరతాయి.",
+  "hi": "शीट अब सिंक में है। नई पंक्तियाँ हर 15 मिनट में जुड़ती हैं।",
+  "kn": "ಶೀಟ್ ಈಗ ಸಿಂಕ್‌ನಲ್ಲಿದೆ. ಹೊಸ ಸಾಲುಗಳು ಪ್ರತಿ 15 ನಿಮಿಷಕ್ಕೆ ಸೇರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.next.hint": {
+  "en": "What next with these leads?",
+  "te": "ఈ లీడ్స్‌తో తర్వాత ఏం చేద్దాం?",
+  "hi": "इन लीड के साथ आगे क्या करें?",
+  "kn": "ಈ ಲೀಡ್ಸ್‌ನೊಂದಿಗೆ ಮುಂದೆ ಏನು ಮಾಡೋಣ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.next.campaign": {
+  "en": "Start a campaign",
+  "te": "క్యాంపెయిన్ మొదలుపెట్టండి",
+  "hi": "कैंपेन शुरू करें",
+  "kn": "ಕ್ಯಾಂಪೇನ್ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.next.vijaya": {
+  "en": "Tell Vijaya what to do",
+  "te": "విజయకు ఏం చేయాలో చెప్పండి",
+  "hi": "विजया को बताइए क्या करना है",
+  "kn": "ವಿಜಯಾಗೆ ಏನು ಮಾಡಬೇಕೆಂದು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.again": {
+  "en": "Add another list",
+  "te": "మరో లిస్ట్ చేర్చండి",
+  "hi": "एक और लिस्ट जोड़ें",
+  "kn": "ಇನ್ನೊಂದು ಲಿಸ್ಟ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.not_available": {
+  "en": "This is not available right now.",
+  "te": "ఇది ఇప్పుడు అందుబాటులో లేదు.",
+  "hi": "यह अभी उपलब्ध नहीं है।",
+  "kn": "ಇದು ಈಗ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.forbidden": {
+  "en": "Your role cannot do this.",
+  "te": "మీ పాత్రకు ఇది చేసే అనుమతి లేదు.",
+  "hi": "आपकी भूमिका यह नहीं कर सकती।",
+  "kn": "ನಿಮ್ಮ ಪಾತ್ರಕ್ಕೆ ಇದನ್ನು ಮಾಡಲು ಅನುಮತಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.read_only": {
+  "en": "This workspace is read-only, so nothing was changed.",
+  "te": "ఈ వర్క్‌స్పేస్ చదవడానికి మాత్రమే, కాబట్టి ఏదీ మారలేదు.",
+  "hi": "यह वर्कस्पेस सिर्फ़ पढ़ने के लिए है, इसलिए कुछ नहीं बदला।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಓದಲು ಮಾತ್ರ, ಆದ್ದರಿಂದ ಏನೂ ಬದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.mfa": {
+  "en": "This needs your second sign-in step.",
+  "te": "దీనికి మీ రెండో సైన్-ఇన్ స్టెప్ కావాలి.",
+  "hi": "इसके लिए आपका दूसरा साइन-इन स्टेप चाहिए।",
+  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಎರಡನೇ ಸೈನ್-ಇನ್ ಹಂತ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.mfa.link": {
+  "en": "Set it up",
+  "te": "సెట్ చేయండి",
+  "hi": "सेट करें",
+  "kn": "ಸೆಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.invalid": {
+  "en": "Something in the form is not right. Check it and try again.",
+  "te": "ఫారంలో ఏదో సరిగా లేదు. చూసి మళ్లీ ప్రయత్నించండి.",
+  "hi": "फ़ॉर्म में कुछ ठीक नहीं है। देखकर फिर कोशिश करें।",
+  "kn": "ಫಾರ್ಮ್‌ನಲ್ಲಿ ಏನೋ ಸರಿಯಿಲ್ಲ. ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.too_large": {
+  "en": "That is too big. Use a file under 3 MB.",
+  "te": "ఇది చాలా పెద్దది. 3 MB కంటే చిన్న ఫైల్ వాడండి.",
+  "hi": "यह बहुत बड़ा है। 3 MB से छोटी फ़ाइल लें।",
+  "kn": "ಇದು ತುಂಬ ದೊಡ್ಡದು. 3 MB ಗಿಂತ ಚಿಕ್ಕ ಫೈಲ್ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.consent_owner_only": {
+  "en": "Only the Owner or an Admin can confirm consent. Remove the confirmation and add the leads without it.",
+  "te": "అనుమతిని ఓనర్ లేదా అడ్మిన్ మాత్రమే నిర్ధారించగలరు. నిర్ధారణ తీసేసి లీడ్స్ చేర్చండి.",
+  "hi": "अनुमति की पुष्टि सिर्फ़ ओनर या एडमिन कर सकते हैं। पुष्टि हटाकर लीड जोड़ें।",
+  "kn": "ಅನುಮತಿಯನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಖಚಿತಪಡಿಸಬಹುದು. ದೃಢೀಕರಣ ತೆಗೆದು ಲೀಡ್ಸ್ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.sheet_refused": {
+  "en": "That file could not be used.",
+  "te": "ఆ ఫైల్‌ను వాడలేకపోయాం.",
+  "hi": "वह फ़ाइल इस्तेमाल नहीं हो सकी।",
+  "kn": "ಆ ಫೈಲ್ ಬಳಸಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.sheet_not_public": {
+  "en": "The sheet is private. Change its sharing to Anyone with the link can view, then try again.",
+  "te": "షీట్ ప్రైవేట్‌గా ఉంది. ‘లింక్ ఉన్న ఎవరైనా చూడవచ్చు’ అని షేర్ చేసి మళ్లీ ప్రయత్నించండి.",
+  "hi": "शीट प्राइवेट है। उसे 'लिंक वाला कोई भी देख सकता है' पर शेयर करके फिर कोशिश करें।",
+  "kn": "ಶೀಟ್ ಖಾಸಗಿಯಾಗಿದೆ. 'ಲಿಂಕ್ ಇರುವ ಯಾರಾದರೂ ನೋಡಬಹುದು' ಎಂದು ಶೇರ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.sheet_link_invalid": {
+  "en": "That is not a Google Sheets link.",
+  "te": "అది గూగుల్ షీట్స్ లింక్ కాదు.",
+  "hi": "वह गूगल शीट का लिंक नहीं है।",
+  "kn": "ಅದು ಗೂಗಲ್ ಶೀಟ್ಸ್ ಲಿಂಕ್ ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.sheet_unreachable": {
+  "en": "We could not reach the sheet. Try again in a little while.",
+  "te": "షీట్‌ను చేరుకోలేకపోయాం. కొంచెం సేపటి తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "हम शीट तक नहीं पहुँच पाए। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಶೀಟ್ ತಲುಪಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.mapping_required_missing": {
+  "en": "Match one column to Phone or to E-mail first.",
+  "te": "ముందుగా ఒక కాలమ్‌ను ఫోన్ లేదా ఈమెయిల్‌కి సరిపోల్చండి.",
+  "hi": "पहले एक कॉलम को फ़ोन या ईमेल से मिलाएँ।",
+  "kn": "ಮೊದಲು ಒಂದು ಕಾಲಮ್ ಅನ್ನು ಫೋನ್ ಅಥವಾ ಇಮೇಲ್‌ಗೆ ಹೊಂದಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.import_id_used": {
+  "en": "This import was already started with other content. Start again from the beginning.",
+  "te": "ఈ ఇంపోర్ట్ వేరే కంటెంట్‌తో ఇప్పటికే మొదలైంది. మొదటి నుండి మళ్లీ మొదలుపెట్టండి.",
+  "hi": "यह इंपोर्ट पहले से किसी और कंटेंट के साथ शुरू हो चुका है। शुरू से फिर करें।",
+  "kn": "ಈ ಇಂಪೋರ್ಟ್ ಬೇರೆ ಕಂಟೆಂಟ್‌ನೊಂದಿಗೆ ಈಗಾಗಲೇ ಶುರುವಾಗಿದೆ. ಮೊದಲಿನಿಂದ ಮತ್ತೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.real_data_gate": {
+  "en": "This workspace takes made-up data only for now. Real numbers and e-mails are not accepted yet.",
+  "te": "ఈ వర్క్‌స్పేస్ ప్రస్తుతానికి కల్పిత డేటా మాత్రమే తీసుకుంటుంది. నిజమైన నంబర్లు, ఈమెయిల్స్ ఇంకా తీసుకోం.",
+  "hi": "यह वर्कस्पेस अभी सिर्फ़ बनावटी डेटा लेता है। असली नंबर और ईमेल अभी नहीं लिए जाते।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಸದ್ಯಕ್ಕೆ ಕಲ್ಪಿತ ಡೇಟಾ ಮಾತ್ರ ತೆಗೆದುಕೊಳ್ಳುತ್ತದೆ. ನಿಜವಾದ ನಂಬರ್, ಇಮೇಲ್ ಇನ್ನೂ ಸ್ವೀಕರಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.rate_limited": {
+  "en": "Too many tries. Wait a minute and try again.",
+  "te": "చాలా సార్లు ప్రయత్నించారు. ఒక నిమిషం ఆగి మళ్లీ ప్రయత్నించండి.",
+  "hi": "बहुत कोशिशें हो गईं। एक मिनट रुककर फिर कोशिश करें।",
+  "kn": "ತುಂಬ ಬಾರಿ ಪ್ರಯತ್ನಿಸಿದ್ದೀರಿ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.csv_only": {
+  "en": "Test mode reads CSV files and pasted lists only. An Excel file needs the real service.",
+  "te": "టెస్ట్ మోడ్ CSV ఫైళ్లు, పేస్ట్ చేసిన లిస్ట్‌లు మాత్రమే చదువుతుంది. ఎక్సెల్ ఫైల్‌కి అసలు సర్వీస్ కావాలి.",
+  "hi": "टेस्ट मोड सिर्फ़ CSV फ़ाइल और पेस्ट की लिस्ट पढ़ता है। एक्सेल फ़ाइल के लिए असली सर्विस चाहिए।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್ CSV ಫೈಲ್ ಮತ್ತು ಪೇಸ್ಟ್ ಮಾಡಿದ ಲಿಸ್ಟ್ ಮಾತ್ರ ಓದುತ್ತದೆ. ಎಕ್ಸೆಲ್ ಫೈಲ್‌ಗೆ ನಿಜವಾದ ಸರ್ವೀಸ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.connector_not_available": {
+  "en": "This is not switched on yet. Ask our team to turn it on.",
+  "te": "ఇది ఇంకా ఆన్ కాలేదు. ఆన్ చేయమని మా టీమ్‌ని అడగండి.",
+  "hi": "यह अभी चालू नहीं है। इसे चालू करने के लिए हमारी टीम से कहें।",
+  "kn": "ಇದು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ. ಆನ್ ಮಾಡಲು ನಮ್ಮ ಟೀಮ್‌ಗೆ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.too_many": {
+  "en": "Test mode cannot keep more than this in the browser. Remove one first.",
+  "te": "టెస్ట్ మోడ్ బ్రౌజర్‌లో దీనికంటే ఎక్కువ ఉంచలేదు. ముందు ఒకటి తీసేయండి.",
+  "hi": "टेस्ट मोड ब्राउज़र में इससे ज़्यादा नहीं रख सकता। पहले एक हटाएँ।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಇದಕ್ಕಿಂತ ಹೆಚ್ಚು ಇಡಲಾಗದು. ಮೊದಲು ಒಂದನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.err.down": {
+  "en": "That did not work. Nothing was changed. Try again.",
+  "te": "అది పని చేయలేదు. ఏదీ మారలేదు. మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। कुछ नहीं बदला। फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.refused.empty": {
+  "en": "The file is empty.",
+  "te": "ఫైల్ ఖాళీగా ఉంది.",
+  "hi": "फ़ाइल खाली है।",
+  "kn": "ಫೈಲ್ ಖಾಲಿಯಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.refused.too_large": {
+  "en": "The file is too big.",
+  "te": "ఫైల్ చాలా పెద్దది.",
+  "hi": "फ़ाइल बहुत बड़ी है।",
+  "kn": "ಫೈಲ್ ತುಂಬ ದೊಡ್ಡದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.refused.not_utf8": {
+  "en": "The file's letters could not be read. Save it as CSV (UTF-8) and try again.",
+  "te": "ఫైల్‌లోని అక్షరాలను చదవలేకపోయాం. CSV (UTF-8) గా సేవ్ చేసి మళ్లీ ప్రయత్నించండి.",
+  "hi": "फ़ाइल के अक्षर पढ़े नहीं जा सके। उसे CSV (UTF-8) में सेव करके फिर कोशिश करें।",
+  "kn": "ಫೈಲ್‌ನ ಅಕ್ಷರಗಳನ್ನು ಓದಲಾಗಲಿಲ್ಲ. CSV (UTF-8) ಆಗಿ ಸೇವ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.refused.malformed_csv": {
+  "en": "The CSV file is broken. Open it in Excel, save it again, and retry.",
+  "te": "CSV ఫైల్ పాడైంది. ఎక్సెల్‌లో తెరిచి మళ్లీ సేవ్ చేసి ప్రయత్నించండి.",
+  "hi": "CSV फ़ाइल खराब है। उसे एक्सेल में खोलकर फिर सेव करें और दोबारा कोशिश करें।",
+  "kn": "CSV ಫೈಲ್ ಹಾಳಾಗಿದೆ. ಎಕ್ಸೆಲ್‌ನಲ್ಲಿ ತೆರೆದು ಮತ್ತೆ ಸೇವ್ ಮಾಡಿ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.refused.too_many_rows": {
+  "en": "The file has more than 5,000 rows. Split it and add the parts one by one.",
+  "te": "ఫైల్‌లో 5,000 కంటే ఎక్కువ వరుసలు ఉన్నాయి. విడగొట్టి ఒక్కొక్కటిగా చేర్చండి.",
+  "hi": "फ़ाइल में 5,000 से ज़्यादा पंक्तियाँ हैं। उसे बाँटकर एक-एक करके जोड़ें।",
+  "kn": "ಫೈಲ್‌ನಲ್ಲಿ 5,000 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಸಾಲುಗಳಿವೆ. ಒಡೆದು ಒಂದೊಂದಾಗಿ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.refused.too_many_columns": {
+  "en": "The file has too many columns.",
+  "te": "ఫైల్‌లో కాలమ్‌లు చాలా ఎక్కువ.",
+  "hi": "फ़ाइल में कॉलम बहुत ज़्यादा हैं।",
+  "kn": "ಫೈಲ್‌ನಲ್ಲಿ ಕಾಲಮ್‌ಗಳು ತುಂಬ ಹೆಚ್ಚು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.refused.no_header": {
+  "en": "The first row should name the columns (Name, Phone...).",
+  "te": "మొదటి వరుసలో కాలమ్‌ల పేర్లు (Name, Phone...) ఉండాలి.",
+  "hi": "पहली पंक्ति में कॉलम के नाम (Name, Phone...) होने चाहिए।",
+  "kn": "ಮೊದಲ ಸಾಲಿನಲ್ಲಿ ಕಾಲಮ್‌ಗಳ ಹೆಸರು (Name, Phone...) ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.refused.not_xlsx": {
+  "en": "This is not a real Excel (.xlsx) file.",
+  "te": "ఇది నిజమైన ఎక్సెల్ (.xlsx) ఫైల్ కాదు.",
+  "hi": "यह असली एक्सेल (.xlsx) फ़ाइल नहीं है।",
+  "kn": "ಇದು ನಿಜವಾದ ಎಕ್ಸೆಲ್ (.xlsx) ಫೈಲ್ ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.refused.encrypted": {
+  "en": "The file has a password. Remove the password and try again.",
+  "te": "ఫైల్‌కి పాస్‌వర్డ్ ఉంది. పాస్‌వర్డ్ తీసేసి మళ్లీ ప్రయత్నించండి.",
+  "hi": "फ़ाइल पर पासवर्ड है। पासवर्ड हटाकर फिर कोशिश करें।",
+  "kn": "ಫೈಲ್‌ಗೆ ಪಾಸ್‌ವರ್ಡ್ ಇದೆ. ಪಾಸ್‌ವರ್ಡ್ ತೆಗೆದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.refused.unsafe_xml": {
+  "en": "The file has parts we do not accept. Save it again as plain CSV.",
+  "te": "ఫైల్‌లో మేము అంగీకరించని భాగాలు ఉన్నాయి. సాదా CSV గా మళ్లీ సేవ్ చేయండి.",
+  "hi": "फ़ाइल में ऐसे हिस्से हैं जो हम नहीं लेते। उसे सादे CSV में फिर सेव करें।",
+  "kn": "ಫೈಲ್‌ನಲ್ಲಿ ನಾವು ಸ್ವೀಕರಿಸದ ಭಾಗಗಳಿವೆ. ಸಾದಾ CSV ಆಗಿ ಮತ್ತೆ ಸೇವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.refused.unreadable": {
+  "en": "The file could not be read.",
+  "te": "ఫైల్‌ను చదవలేకపోయాం.",
+  "hi": "फ़ाइल पढ़ी नहीं जा सकी।",
+  "kn": "ಫೈಲ್ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.recent.title": {
+  "en": "Lists you added",
+  "te": "మీరు చేర్చిన లిస్ట్‌లు",
+  "hi": "आपकी जोड़ी हुई लिस्ट",
+  "kn": "ನೀವು ಸೇರಿಸಿದ ಲಿಸ್ಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.recent.empty": {
+  "en": "No list added yet.",
+  "te": "ఇంకా ఏ లిస్ట్ చేర్చలేదు.",
+  "hi": "अभी कोई लिस्ट नहीं जोड़ी गई।",
+  "kn": "ಇನ್ನೂ ಯಾವ ಲಿಸ್ಟ್ ಸೇರಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.recent.unavailable": {
+  "en": "The lists you added could not be loaded.",
+  "te": "మీరు చేర్చిన లిస్ట్‌లను లోడ్ చేయలేకపోయాం.",
+  "hi": "आपकी जोड़ी हुई लिस्ट लोड नहीं हो सकीं।",
+  "kn": "ನೀವು ಸೇರಿಸಿದ ಲಿಸ್ಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.col.when": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.col.source": {
+  "en": "Source",
+  "te": "సోర్స్",
+  "hi": "सोर्स",
+  "kn": "ಸೋರ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.col.rows": {
+  "en": "Rows",
+  "te": "వరుసలు",
+  "hi": "पंक्तियाँ",
+  "kn": "ಸಾಲುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.col.added": {
+  "en": "Added",
+  "te": "చేరాయి",
+  "hi": "जुड़ीं",
+  "kn": "ಸೇರಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.col.dups": {
+  "en": "Duplicates",
+  "te": "డూప్లికేట్స్",
+  "hi": "डुप्लिकेट",
+  "kn": "ಡೂಪ್ಲಿಕೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.col.invalid": {
+  "en": "Invalid",
+  "te": "తప్పు",
+  "hi": "गलत",
+  "kn": "ತಪ್ಪು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.col.by": {
+  "en": "By",
+  "te": "ఎవరు",
+  "hi": "किसने",
+  "kn": "ಯಾರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.links.title": {
+  "en": "Sheets kept in sync",
+  "te": "సింక్‌లో ఉన్న షీట్‌లు",
+  "hi": "सिंक में रखी शीट",
+  "kn": "ಸಿಂಕ್‌ನಲ್ಲಿರುವ ಶೀಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.links.empty": {
+  "en": "No sheet is kept in sync yet.",
+  "te": "ఇంకా ఏ షీట్ సింక్‌లో లేదు.",
+  "hi": "अभी कोई शीट सिंक में नहीं है।",
+  "kn": "ಇನ್ನೂ ಯಾವ ಶೀಟ್ ಸಿಂಕ್‌ನಲ್ಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.links.unavailable": {
+  "en": "The sheets kept in sync could not be loaded.",
+  "te": "సింక్‌లో ఉన్న షీట్‌లను లోడ్ చేయలేకపోయాం.",
+  "hi": "सिंक में रखी शीट लोड नहीं हो सकीं।",
+  "kn": "ಸಿಂಕ್‌ನಲ್ಲಿರುವ ಶೀಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.name": {
+  "en": "Google Sheet, added {when}",
+  "te": "గూగుల్ షీట్, {when} న చేర్చారు",
+  "hi": "गूगल शीट, {when} को जोड़ी",
+  "kn": "ಗೂಗಲ್ ಶೀಟ್, {when} ಸೇರಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.status.active": {
+  "en": "Active",
+  "te": "నడుస్తోంది",
+  "hi": "चालू",
+  "kn": "ಚಾಲನೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.status.paused": {
+  "en": "Paused",
+  "te": "ఆపారు",
+  "hi": "रुकी हुई",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.status.needs_attention": {
+  "en": "Needs attention",
+  "te": "చూడాలి",
+  "hi": "ध्यान चाहिए",
+  "kn": "ಗಮನ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.last": {
+  "en": "Last sync: {when}, {n} rows",
+  "te": "చివరి సింక్: {when}, {n} వరుసలు",
+  "hi": "आख़िरी सिंक: {when}, {n} पंक्तियाँ",
+  "kn": "ಕೊನೆಯ ಸಿಂಕ್: {when}, {n} ಸಾಲುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.never": {
+  "en": "Not synced yet.",
+  "te": "ఇంకా సింక్ కాలేదు.",
+  "hi": "अभी सिंक नहीं हुई।",
+  "kn": "ಇನ್ನೂ ಸಿಂಕ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.err.sheet_not_public": {
+  "en": "The sheet is not shared any more.",
+  "te": "షీట్ ఇప్పుడు షేర్ చేయలేదు.",
+  "hi": "शीट अब शेयर नहीं है।",
+  "kn": "ಶೀಟ್ ಈಗ ಶೇರ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.err.columns_changed": {
+  "en": "The columns changed. Check the sheet.",
+  "te": "కాలమ్‌లు మారాయి. షీట్ చూడండి.",
+  "hi": "कॉलम बदल गए हैं। शीट देखें।",
+  "kn": "ಕಾಲಮ್‌ಗಳು ಬದಲಾಗಿವೆ. ಶೀಟ್ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.err.unreachable": {
+  "en": "We could not reach the sheet.",
+  "te": "షీట్‌ను చేరుకోలేకపోయాం.",
+  "hi": "हम शीट तक नहीं पहुँच पाए।",
+  "kn": "ಶೀಟ್ ತಲುಪಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.err.too_large": {
+  "en": "The sheet is too big.",
+  "te": "షీట్ చాలా పెద్దది.",
+  "hi": "शीट बहुत बड़ी है।",
+  "kn": "ಶೀಟ್ ತುಂಬ ದೊಡ್ಡದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.sync": {
+  "en": "Sync now",
+  "te": "ఇప్పుడే సింక్ చేయండి",
+  "hi": "अभी सिंक करें",
+  "kn": "ಈಗಲೇ ಸಿಂಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.pause": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.resume": {
+  "en": "Resume",
+  "te": "మళ్లీ మొదలుపెట్టండి",
+  "hi": "फिर शुरू करें",
+  "kn": "ಮತ್ತೆ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "li.link.queued": {
+  "en": "Queued. It is pulled within a minute.",
+  "te": "వరుసలో ఉంది. ఒక నిమిషంలో తీసుకుంటాం.",
+  "hi": "कतार में है। एक मिनट में ले ली जाएगी।",
+  "kn": "ಸರದಿಯಲ್ಲಿದೆ. ಒಂದು ನಿಮಿಷದಲ್ಲಿ ತೆಗೆದುಕೊಳ್ಳುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.title": {
+  "en": "Lead sources",
+  "te": "లీడ్ సోర్స్‌లు",
+  "hi": "लीड सोर्स",
+  "kn": "ಲೀಡ್ ಸೋರ್ಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.sub": {
+  "en": "Places where new leads arrive by themselves. Each one has its own address.",
+  "te": "కొత్త లీడ్స్ వాటంతట అవే వచ్చే చోట్లు. ప్రతిదానికి దాని స్వంత అడ్రస్ ఉంటుంది.",
+  "hi": "वे जगहें जहाँ नई लीड अपने-आप आती हैं। हर एक का अपना पता होता है।",
+  "kn": "ಹೊಸ ಲೀಡ್ಸ್ ತಾನಾಗಿ ಬರುವ ಜಾಗಗಳು. ಪ್ರತಿಯೊಂದಕ್ಕೂ ತನ್ನದೇ ವಿಳಾಸ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.mock": {
+  "en": "Test mode: nothing is received and the addresses are made up.",
+  "te": "టెస్ట్ మోడ్: ఏదీ రాదు, అడ్రస్‌లు కల్పితం.",
+  "hi": "टेस्ट मोड: कुछ नहीं आता और पते बनावटी हैं।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಏನೂ ಬರುವುದಿಲ್ಲ, ವಿಳಾಸಗಳು ಕಲ್ಪಿತ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.unavailable": {
+  "en": "The lead sources could not be loaded. Try again in a little while.",
+  "te": "లీడ్ సోర్స్‌లను లోడ్ చేయలేకపోయాం. కొంచెం సేపటి తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "लीड सोर्स लोड नहीं हो सके। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಲೀಡ್ ಸೋರ್ಸ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.status.active": {
+  "en": "Active",
+  "te": "నడుస్తోంది",
+  "hi": "चालू",
+  "kn": "ಚಾಲನೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.status.paused": {
+  "en": "Paused",
+  "te": "ఆపారు",
+  "hi": "रुका हुआ",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.status.unavailable": {
+  "en": "Not switched on yet",
+  "te": "ఇంకా ఆన్ కాలేదు",
+  "hi": "अभी चालू नहीं है",
+  "kn": "ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.unavailable.note": {
+  "en": "Not switched on yet: it receives nothing until our team turns it on.",
+  "te": "ఇంకా ఆన్ కాలేదు: మా టీమ్ ఆన్ చేసే వరకు ఇది ఏదీ అందుకోదు.",
+  "hi": "अभी चालू नहीं है: हमारी टीम के चालू करने तक यह कुछ नहीं लेगा।",
+  "kn": "ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ: ನಮ್ಮ ಟೀಮ್ ಆನ್ ಮಾಡುವವರೆಗೆ ಇದು ಏನನ್ನೂ ಪಡೆಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.meta.title": {
+  "en": "Meta Lead Ads (Facebook and Instagram)",
+  "te": "మెటా లీడ్ యాడ్స్ (ఫేస్‌బుక్, ఇన్‌స్టాగ్రామ్)",
+  "hi": "मेटा लीड ऐड्स (फ़ेसबुक और इंस्टाग्राम)",
+  "kn": "ಮೆಟಾ ಲೀಡ್ ಆಡ್ಸ್ (ಫೇಸ್‌ಬುಕ್, ಇನ್‌ಸ್ಟಾಗ್ರಾಮ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.meta.body": {
+  "en": "Leads from your Meta lead forms arrive here as soon as they are filled in.",
+  "te": "మీ మెటా లీడ్ ఫారాల నుండి లీడ్స్ నింపిన వెంటనే ఇక్కడికి వస్తాయి.",
+  "hi": "आपके मेटा लीड फ़ॉर्म की लीड भरते ही यहाँ आ जाती हैं।",
+  "kn": "ನಿಮ್ಮ ಮೆಟಾ ಲೀಡ್ ಫಾರ್ಮ್‌ಗಳ ಲೀಡ್ಸ್ ತುಂಬಿದ ಕೂಡಲೇ ಇಲ್ಲಿಗೆ ಬರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.indiamart.title": {
+  "en": "IndiaMART",
+  "te": "ఇండియామార్ట్ (IndiaMART)",
+  "hi": "इंडियामार्ट (IndiaMART)",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್ (IndiaMART)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.indiamart.body": {
+  "en": "Bring your IndiaMART leads in, with duplicates merged.",
+  "te": "మీ IndiaMART లీడ్స్‌ను డూప్లికేట్స్ కలిపి తీసుకురండి.",
+  "hi": "अपनी IndiaMART लीड डुप्लिकेट मिलाकर लाइए।",
+  "kn": "ನಿಮ್ಮ IndiaMART ಲೀಡ್ಸ್ ಅನ್ನು ಡೂಪ್ಲಿಕೇಟ್ ಸೇರಿಸಿ ತನ್ನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.portals.title": {
+  "en": "JustDial and other portals",
+  "te": "జస్ట్‌డయల్, ఇతర పోర్టల్స్",
+  "hi": "जस्टडायल और दूसरे पोर्टल",
+  "kn": "ಜಸ್ಟ್‌ಡಯಲ್ ಮತ್ತು ಇತರ ಪೋರ್ಟಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.portals.body": {
+  "en": "Forward the portal's lead e-mails to your own address. We read them and add the lead.",
+  "te": "పోర్టల్ లీడ్ ఈమెయిల్స్‌ను మీ స్వంత అడ్రస్‌కి ఫార్వర్డ్ చేయండి. మేము చదివి లీడ్ చేరుస్తాం.",
+  "hi": "पोर्टल की लीड ईमेल अपने पते पर फ़ॉरवर्ड करें। हम उन्हें पढ़कर लीड जोड़ देंगे।",
+  "kn": "ಪೋರ್ಟಲ್‌ನ ಲೀಡ್ ಇಮೇಲ್‌ಗಳನ್ನು ನಿಮ್ಮ ವಿಳಾಸಕ್ಕೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ. ನಾವು ಓದಿ ಲೀಡ್ ಸೇರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.website.title": {
+  "en": "Your website form",
+  "te": "మీ వెబ్‌సైట్ ఫారం",
+  "hi": "आपकी वेबसाइट का फ़ॉर्म",
+  "kn": "ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್ ಫಾರ್ಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.website.body": {
+  "en": "Paste this form into any page of your website. Each answer becomes a lead.",
+  "te": "ఈ ఫారంను మీ వెబ్‌సైట్ ఏ పేజీలోనైనా పేస్ట్ చేయండి. ప్రతి జవాబు ఒక లీడ్ అవుతుంది.",
+  "hi": "इस फ़ॉर्म को अपनी वेबसाइट के किसी भी पेज पर पेस्ट करें। हर जवाब एक लीड बनता है।",
+  "kn": "ಈ ಫಾರ್ಮ್ ಅನ್ನು ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್‌ನ ಯಾವುದೇ ಪುಟದಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ. ಪ್ರತಿ ಉತ್ತರ ಒಂದು ಲೀಡ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.sheets.title": {
+  "en": "Google Sheets",
+  "te": "గూగుల్ షీట్స్",
+  "hi": "गूगल शीट्स",
+  "kn": "ಗೂಗಲ್ ಶೀಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.sheets.body": {
+  "en": "Keep a sheet in sync: new rows become leads.",
+  "te": "షీట్‌ను సింక్‌లో ఉంచండి: కొత్త వరుసలు లీడ్స్ అవుతాయి.",
+  "hi": "शीट को सिंक रखें: नई पंक्तियाँ लीड बन जाती हैं।",
+  "kn": "ಶೀಟ್ ಅನ್ನು ಸಿಂಕ್‌ನಲ್ಲಿ ಇಡಿ: ಹೊಸ ಸಾಲುಗಳು ಲೀಡ್ಸ್ ಆಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.sheets.link": {
+  "en": "Set up a sheet in Add leads",
+  "te": "లీడ్స్ చేర్చడంలో షీట్ సెట్ చేయండి",
+  "hi": "लीड जोड़ें में शीट सेट करें",
+  "kn": "ಲೀಡ್ಸ್ ಸೇರಿಸಿಯಲ್ಲಿ ಶೀಟ್ ಸೆಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.webhook.title": {
+  "en": "Zapier, n8n or Make",
+  "te": "Zapier, n8n లేదా Make",
+  "hi": "Zapier, n8n या Make",
+  "kn": "Zapier, n8n ಅಥವಾ Make",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.card.webhook.body": {
+  "en": "Send leads from any other tool to this address.",
+  "te": "ఏ ఇతర టూల్ నుండైనా లీడ్స్‌ను ఈ అడ్రస్‌కి పంపండి.",
+  "hi": "किसी भी दूसरे टूल से लीड इस पते पर भेजें।",
+  "kn": "ಬೇರೆ ಯಾವುದೇ ಟೂಲ್‌ನಿಂದ ಲೀಡ್ಸ್ ಅನ್ನು ಈ ವಿಳಾಸಕ್ಕೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.none": {
+  "en": "Nothing set up yet.",
+  "te": "ఇంకా ఏదీ సెట్ చేయలేదు.",
+  "hi": "अभी कुछ सेट नहीं है।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಸೆಟ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.set_up": {
+  "en": "Set it up",
+  "te": "సెట్ చేయండి",
+  "hi": "सेट करें",
+  "kn": "ಸೆಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.name": {
+  "en": "A name for this source",
+  "te": "ఈ సోర్స్‌కి ఒక పేరు",
+  "hi": "इस सोर्स का एक नाम",
+  "kn": "ಈ ಸೋರ್ಸ್‌ಗೆ ಒಂದು ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.portal": {
+  "en": "Which portal?",
+  "te": "ఏ పోర్టల్?",
+  "hi": "कौन सा पोर्टल?",
+  "kn": "ಯಾವ ಪೋರ್ಟಲ್?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.portal.any": {
+  "en": "Any other (the same address works for all)",
+  "te": "ఇతర ఏదైనా (అదే అడ్రస్ అన్నిటికీ పనిచేస్తుంది)",
+  "hi": "कोई और (वही पता सबके लिए चलता है)",
+  "kn": "ಬೇರೆ ಯಾವುದಾದರೂ (ಅದೇ ವಿಳಾಸ ಎಲ್ಲಕ್ಕೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.add": {
+  "en": "Add this source",
+  "te": "ఈ సోర్స్ చేర్చండి",
+  "hi": "यह सोर्स जोड़ें",
+  "kn": "ಈ ಸೋರ್ಸ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.adding": {
+  "en": "Adding...",
+  "te": "చేరుస్తున్నాం...",
+  "hi": "जोड़ रहे हैं...",
+  "kn": "ಸೇರಿಸುತ್ತಿದ್ದೇವೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.consent.hint": {
+  "en": "You can also confirm that you may contact the people who come in. Without it their leads are saved, but nothing is sent to them.",
+  "te": "వచ్చే వాళ్లను సంప్రదించవచ్చని కూడా నిర్ధారించవచ్చు. లేకపోతే వాళ్ల లీడ్స్ సేవ్ అవుతాయి, కానీ వాళ్లకు ఏమీ పంపరు.",
+  "hi": "आप यह भी पुष्टि कर सकते हैं कि आने वालों से बात कर सकते हैं। इसके बिना उनकी लीड सेव होती हैं, पर उन्हें कुछ नहीं भेजा जाता।",
+  "kn": "ಬರುವವರನ್ನು ಸಂಪರ್ಕಿಸಬಹುದು ಎಂದೂ ಖಚಿತಪಡಿಸಬಹುದು. ಇಲ್ಲದಿದ್ದರೆ ಅವರ ಲೀಡ್ಸ್ ಸೇವ್ ಆಗುತ್ತವೆ, ಆದರೆ ಅವರಿಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.last": {
+  "en": "Last lead: {when}",
+  "te": "చివరి లీడ్: {when}",
+  "hi": "आख़िरी लीड: {when}",
+  "kn": "ಕೊನೆಯ ಲೀಡ್: {when}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.last.never": {
+  "en": "No lead yet",
+  "te": "ఇంకా లీడ్ రాలేదు",
+  "hi": "अभी कोई लीड नहीं आई",
+  "kn": "ಇನ್ನೂ ಲೀಡ್ ಬಂದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.received": {
+  "en": "{n} received",
+  "te": "{n} వచ్చాయి",
+  "hi": "{n} आईं",
+  "kn": "{n} ಬಂದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.cost": {
+  "en": "Cost per lead: {cost}",
+  "te": "ఒక లీడ్ ఖర్చు: {cost}",
+  "hi": "एक लीड की लागत: {cost}",
+  "kn": "ಒಂದು ಲೀಡ್ ವೆಚ್ಚ: {cost}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.cost.none": {
+  "en": "Cost per lead: not set",
+  "te": "ఒక లీడ్ ఖర్చు: సెట్ చేయలేదు",
+  "hi": "एक लीड की लागत: सेट नहीं",
+  "kn": "ಒಂದು ಲೀಡ್ ವೆಚ್ಚ: ಸೆಟ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.hint": {
+  "en": "Its address ends in {hint}",
+  "te": "దీని అడ్రస్ {hint} తో ముగుస్తుంది",
+  "hi": "इसका पता {hint} पर खत्म होता है",
+  "kn": "ಇದರ ವಿಳಾಸ {hint} ಯಲ್ಲಿ ಮುಗಿಯುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.pause": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.resume": {
+  "en": "Resume",
+  "te": "మళ్లీ మొదలుపెట్టండి",
+  "hi": "फिर शुरू करें",
+  "kn": "ಮತ್ತೆ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.rotate": {
+  "en": "Make a new address",
+  "te": "కొత్త అడ్రస్ చేయండి",
+  "hi": "नया पता बनाएँ",
+  "kn": "ಹೊಸ ವಿಳಾಸ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.rotate.ask": {
+  "en": "Make a new address? The old one stops working at once.",
+  "te": "కొత్త అడ్రస్ చేయాలా? పాతది వెంటనే పనిచేయదు.",
+  "hi": "नया पता बनाएँ? पुराना पता तुरंत काम करना बंद कर देगा।",
+  "kn": "ಹೊಸ ವಿಳಾಸ ಮಾಡಬೇಕೇ? ಹಳೆಯದು ತಕ್ಷಣ ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.rotate.yes": {
+  "en": "Yes, make a new one",
+  "te": "అవును, కొత్తది చేయండి",
+  "hi": "हाँ, नया बनाएँ",
+  "kn": "ಹೌದು, ಹೊಸದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.rotate.no": {
+  "en": "No, keep it",
+  "te": "వద్దు, ఉంచండి",
+  "hi": "नहीं, रहने दें",
+  "kn": "ಬೇಡ, ಇರಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.pull": {
+  "en": "Pull now",
+  "te": "ఇప్పుడే తీసుకురండి",
+  "hi": "अभी लाएँ",
+  "kn": "ಈಗಲೇ ತನ್ನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.pulling": {
+  "en": "Pulling...",
+  "te": "తీసుకొస్తున్నాం...",
+  "hi": "ला रहे हैं...",
+  "kn": "ತರುತ್ತಿದ್ದೇವೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.pull.done": {
+  "en": "Fetched {fetched}: {created} new, {merged} merged, {invalid} invalid, {existing} already had.",
+  "te": "{fetched} తెచ్చాం: {created} కొత్తవి, {merged} కలిపాం, {invalid} తప్పు, {existing} ముందే ఉన్నాయి.",
+  "hi": "{fetched} लाए: {created} नई, {merged} मिलाईं, {invalid} गलत, {existing} पहले से थीं।",
+  "kn": "{fetched} ತಂದಿದ್ದೇವೆ: {created} ಹೊಸದು, {merged} ಸೇರಿಸಿದ್ದು, {invalid} ತಪ್ಪು, {existing} ಮೊದಲೇ ಇದ್ದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.secret.title": {
+  "en": "Copy it now: it is not shown again",
+  "te": "ఇప్పుడే కాపీ చేయండి: మళ్లీ చూపించం",
+  "hi": "अभी कॉपी कर लें: यह दोबारा नहीं दिखाया जाएगा",
+  "kn": "ಈಗಲೇ ಕಾಪಿ ಮಾಡಿ: ಇದನ್ನು ಮತ್ತೆ ತೋರಿಸುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.secret.help": {
+  "en": "Anyone with this can send leads in. Keep it private. If it leaks, make a new address.",
+  "te": "ఇది ఉన్న ఎవరైనా లీడ్స్ పంపవచ్చు. దీన్ని రహస్యంగా ఉంచండి. లీక్ అయితే కొత్త అడ్రస్ చేయండి.",
+  "hi": "यह जिसके पास हो वह लीड भेज सकता है। इसे गुप्त रखें। लीक हो जाए तो नया पता बनाएँ।",
+  "kn": "ಇದು ಇರುವ ಯಾರಾದರೂ ಲೀಡ್ಸ್ ಕಳುಹಿಸಬಹುದು. ಗುಪ್ತವಾಗಿಡಿ. ಲೀಕ್ ಆದರೆ ಹೊಸ ವಿಳಾಸ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.secret.url": {
+  "en": "Address",
+  "te": "అడ్రస్",
+  "hi": "पता",
+  "kn": "ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.secret.email": {
+  "en": "E-mail address to forward to",
+  "te": "ఫార్వర్డ్ చేయాల్సిన ఈమెయిల్ అడ్రస్",
+  "hi": "जिस पते पर फ़ॉरवर्ड करना है वह ईमेल",
+  "kn": "ಫಾರ್ವರ್ಡ್ ಮಾಡಬೇಕಾದ ಇಮೇಲ್ ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.secret.email.none": {
+  "en": "The e-mail address is not switched on yet. Ask our team to turn it on.",
+  "te": "ఈమెయిల్ అడ్రస్ ఇంకా ఆన్ కాలేదు. ఆన్ చేయమని మా టీమ్‌ని అడగండి.",
+  "hi": "ईमेल पता अभी चालू नहीं है। इसे चालू करने के लिए हमारी टीम से कहें।",
+  "kn": "ಇಮೇಲ್ ವಿಳಾಸ ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ. ಆನ್ ಮಾಡಲು ನಮ್ಮ ಟೀಮ್‌ಗೆ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.secret.snippet": {
+  "en": "Form to paste into your page",
+  "te": "మీ పేజీలో పేస్ట్ చేయాల్సిన ఫారం",
+  "hi": "अपने पेज में पेस्ट करने का फ़ॉर्म",
+  "kn": "ನಿಮ್ಮ ಪುಟದಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಬೇಕಾದ ಫಾರ್ಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.secret.meta_callback": {
+  "en": "Callback address for Meta",
+  "te": "మెటా కోసం కాల్‌బ్యాక్ అడ్రస్",
+  "hi": "मेटा के लिए कॉलबैक पता",
+  "kn": "ಮೆಟಾಗಾಗಿ ಕಾಲ್‌ಬ್ಯಾಕ್ ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.secret.meta_verify": {
+  "en": "Verify token for Meta",
+  "te": "మెటా కోసం వెరిఫై టోకెన్",
+  "hi": "मेटा के लिए वेरिफ़ाई टोकन",
+  "kn": "ಮೆಟಾಗಾಗಿ ವೆರಿಫೈ ಟೋಕನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.secret.done": {
+  "en": "I have copied it",
+  "te": "నేను కాపీ చేశాను",
+  "hi": "मैंने कॉपी कर लिया",
+  "kn": "ನಾನು ಕಾಪಿ ಮಾಡಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.secret.before": {
+  "en": "The address was shown before and cannot be shown again. To get a new one, press Make a new address.",
+  "te": "అడ్రస్ ముందే చూపించాం, మళ్లీ చూపించలేం. కొత్తది కావాలంటే ‘కొత్త అడ్రస్ చేయండి’ నొక్కండి.",
+  "hi": "पता पहले दिखाया जा चुका है, दोबारा नहीं दिखा सकते। नया चाहिए तो 'नया पता बनाएँ' दबाएँ।",
+  "kn": "ವಿಳಾಸ ಮೊದಲೇ ತೋರಿಸಿದ್ದೇವೆ, ಮತ್ತೆ ತೋರಿಸಲಾಗದು. ಹೊಸದು ಬೇಕಿದ್ದರೆ 'ಹೊಸ ವಿಳಾಸ ಮಾಡಿ' ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.secret.nothing": {
+  "en": "There is nothing to copy for this source. It uses the key already set up for your workspace.",
+  "te": "ఈ సోర్స్‌కి కాపీ చేయడానికి ఏదీ లేదు. ఇది మీ వర్క్‌స్పేస్‌కి ఇప్పటికే సెట్ చేసిన కీని వాడుతుంది.",
+  "hi": "इस सोर्स के लिए कॉपी करने को कुछ नहीं है। यह आपके वर्कस्पेस की पहले से सेट की गई की इस्तेमाल करता है।",
+  "kn": "ಈ ಸೋರ್ಸ್‌ಗೆ ಕಾಪಿ ಮಾಡಲು ಏನೂ ಇಲ್ಲ. ಇದು ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ ಈಗಾಗಲೇ ಸೆಟ್ ಮಾಡಿದ ಕೀ ಬಳಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.copy": {
+  "en": "Copy",
+  "te": "కాపీ",
+  "hi": "कॉपी",
+  "kn": "ಕಾಪಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.copied": {
+  "en": "Copied",
+  "te": "కాపీ అయింది",
+  "hi": "कॉपी हो गया",
+  "kn": "ಕಾಪಿ ಆಯ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.copy.fail": {
+  "en": "Could not copy. Select the text and copy it yourself.",
+  "te": "కాపీ చేయలేకపోయాం. టెక్స్ట్ సెలెక్ట్ చేసి మీరే కాపీ చేయండి.",
+  "hi": "कॉपी नहीं हो सका। टेक्स्ट चुनकर खुद कॉपी करें।",
+  "kn": "ಕಾಪಿ ಮಾಡಲಾಗಲಿಲ್ಲ. ಟೆಕ್ಸ್ಟ್ ಆರಿಸಿ ನೀವೇ ಕಾಪಿ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.unparsed.title": {
+  "en": "Mails we could not read",
+  "te": "మేము చదవలేని మెయిల్స్",
+  "hi": "जो मेल हम नहीं पढ़ पाए",
+  "kn": "ನಾವು ಓದಲಾಗದ ಮೇಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.unparsed.hint": {
+  "en": "Add these leads by hand, then discard the mail.",
+  "te": "ఈ లీడ్స్‌ను చేతితో చేర్చి, తర్వాత మెయిల్‌ను తొలగించండి.",
+  "hi": "इन लीड को हाथ से जोड़ें, फिर मेल हटा दें।",
+  "kn": "ಈ ಲೀಡ್ಸ್ ಅನ್ನು ಕೈಯಿಂದ ಸೇರಿಸಿ, ನಂತರ ಮೇಲ್ ತೆಗೆದುಹಾಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.unparsed.empty": {
+  "en": "No unread mails.",
+  "te": "చదవని మెయిల్స్ లేవు.",
+  "hi": "कोई अनपढ़ा मेल नहीं।",
+  "kn": "ಓದದ ಮೇಲ್‌ಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.unparsed.discard": {
+  "en": "Discard",
+  "te": "తొలగించండి",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆದುಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lsrc.unparsed.nosubject": {
+  "en": "(no subject)",
+  "te": "(సబ్జెక్ట్ లేదు)",
+  "hi": "(विषय नहीं)",
+  "kn": "(ವಿಷಯ ಇಲ್ಲ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
