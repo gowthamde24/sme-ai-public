@@ -30,9 +30,14 @@ class _Manifest(BaseModel):
     owl_prop: str
 
 
+def candidate_directories(here: Path) -> list[Path]:
+    """Where the packs may be: next to the source tree (development), or where the image puts them. In the image the source sits at /srv/app/packs, which is too shallow for the repository layout: look only as high as the path goes."""
+    found = [here.parents[4] / "packages" / "packs"] if len(here.parents) > 4 else []
+    return [*found, Path("/srv/packages/packs")]
+
+
 def default_directory() -> Path | None:
-    here = Path(__file__).resolve()
-    for candidate in (here.parents[4] / "packages" / "packs", Path("/srv/packages/packs")):
+    for candidate in candidate_directories(Path(__file__).resolve()):
         if (candidate / "modules.json").is_file():
             return candidate
     return None

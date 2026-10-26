@@ -545,3 +545,14 @@ def test_the_templates_class_can_be_pointed_at_a_folder_without_templates(tmp_pa
     empty = Templates(tmp_path)
     assert empty.ids() == [] and empty.get("real_estate") is None and empty.summaries().templates == [] and empty.defaults_playbook("gym") is None
     assert Templates(None).ids() == []
+
+
+def test_the_pack_folder_is_looked_for_only_as_high_as_the_path_goes() -> None:
+    """In the image the source is at /srv/app/packs/registry.py: a fixed `parents[4]` raised IndexError at start-up on the first staging deploy of this job."""
+    from pathlib import Path
+
+    from app.packs.registry import candidate_directories
+
+    assert candidate_directories(Path("/srv/app/packs/registry.py")) == [Path("/srv/packages/packs")]
+    deep = candidate_directories(Path("/work/repo/services/ai-api/app/packs/registry.py"))
+    assert deep[0] == Path("/work/repo/packages/packs") and deep[-1] == Path("/srv/packages/packs")
