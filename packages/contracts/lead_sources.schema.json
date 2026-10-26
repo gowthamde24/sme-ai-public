@@ -1,0 +1,1789 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lead_sources.schema.json",
+  "title": "Lead imports and sources (job DR / A2)",
+  "description": "Generated from services/ai-api/app/lead_sources/models.py by `make contracts`.",
+  "$defs": {
+    "ColumnOut": {
+      "additionalProperties": false,
+      "properties": {
+        "index": {
+          "title": "Index",
+          "type": "integer"
+        },
+        "header": {
+          "title": "Header",
+          "type": "string"
+        },
+        "samples": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Samples",
+          "type": "array"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Field"
+        },
+        "confidence": {
+          "enum": [
+            "exact",
+            "partial",
+            "weak",
+            "ai",
+            "none"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "header",
+        "samples",
+        "field",
+        "confidence"
+      ],
+      "title": "ColumnOut",
+      "type": "object"
+    },
+    "ConsentIn": {
+      "additionalProperties": false,
+      "properties": {
+        "confirmed": {
+          "const": true,
+          "title": "Confirmed",
+          "type": "boolean"
+        },
+        "list_name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "List Name",
+          "type": "string"
+        },
+        "purpose": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Purpose",
+          "type": "string"
+        },
+        "basis": {
+          "enum": [
+            "explicit_consent",
+            "legitimate_use",
+            "contractual"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
+        "how_collected": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "How Collected",
+          "type": "string"
+        }
+      },
+      "required": [
+        "confirmed",
+        "list_name",
+        "purpose",
+        "basis",
+        "how_collected"
+      ],
+      "title": "ConsentIn",
+      "type": "object"
+    },
+    "Counts": {
+      "additionalProperties": false,
+      "properties": {
+        "ready": {
+          "default": 0,
+          "title": "Ready",
+          "type": "integer"
+        },
+        "duplicates_merged": {
+          "default": 0,
+          "title": "Duplicates Merged",
+          "type": "integer"
+        },
+        "duplicates_in_file": {
+          "default": 0,
+          "title": "Duplicates In File",
+          "type": "integer"
+        },
+        "already_imported": {
+          "default": 0,
+          "title": "Already Imported",
+          "type": "integer"
+        },
+        "invalid": {
+          "default": 0,
+          "title": "Invalid",
+          "type": "integer"
+        },
+        "dnd": {
+          "default": 0,
+          "title": "Dnd",
+          "type": "integer"
+        },
+        "no_consent": {
+          "default": 0,
+          "title": "No Consent",
+          "type": "integer"
+        },
+        "blocked": {
+          "default": 0,
+          "title": "Blocked",
+          "type": "integer"
+        }
+      },
+      "title": "Counts",
+      "type": "object"
+    },
+    "Estimate": {
+      "additionalProperties": false,
+      "properties": {
+        "messages": {
+          "title": "Messages",
+          "type": "integer"
+        },
+        "call_minutes": {
+          "title": "Call Minutes",
+          "type": "integer"
+        },
+        "cost_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cost Paise"
+        },
+        "basis": {
+          "const": "estimate",
+          "default": "estimate",
+          "title": "Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "messages",
+        "call_minutes",
+        "cost_paise"
+      ],
+      "title": "Estimate",
+      "type": "object"
+    },
+    "FieldOut": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "field",
+        "label",
+        "required"
+      ],
+      "title": "FieldOut",
+      "type": "object"
+    },
+    "ImportIn": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "file",
+            "paste",
+            "vcard",
+            "sheet"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "content_base64": {
+          "anyOf": [
+            {
+              "maxLength": 4000016,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Base64"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "maxLength": 600000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "sheet_url": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sheet Url"
+        },
+        "use_ai": {
+          "default": true,
+          "title": "Use Ai",
+          "type": "boolean"
+        },
+        "mapping": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mapping"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "indiamart",
+                "justdial",
+                "99acres",
+                "magicbricks",
+                "housing",
+                "meta_lead_ads",
+                "website_form",
+                "webhook",
+                "excel_upload",
+                "google_sheet",
+                "pasted_list",
+                "vcard"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "consent_confirmed": {
+          "default": false,
+          "title": "Consent Confirmed",
+          "type": "boolean"
+        },
+        "import_id": {
+          "format": "uuid",
+          "title": "Import Id",
+          "type": "string"
+        },
+        "consent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ConsentIn"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "cost_per_lead_paise": {
+          "anyOf": [
+            {
+              "maximum": 10000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Per Lead Paise"
+        }
+      },
+      "required": [
+        "kind",
+        "import_id"
+      ],
+      "title": "ImportIn",
+      "type": "object"
+    },
+    "ImportItem": {
+      "additionalProperties": false,
+      "properties": {
+        "import_id": {
+          "format": "uuid",
+          "title": "Import Id",
+          "type": "string"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "rows_read": {
+          "title": "Rows Read",
+          "type": "integer"
+        },
+        "counts": {
+          "$ref": "#/$defs/Counts"
+        },
+        "problems": {
+          "items": {
+            "$ref": "#/$defs/Problem"
+          },
+          "title": "Problems",
+          "type": "array"
+        },
+        "consent_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Consent Id"
+        },
+        "by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "By"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "import_id",
+        "kind",
+        "source",
+        "rows_read",
+        "counts",
+        "problems",
+        "consent_id",
+        "by",
+        "created_at"
+      ],
+      "title": "ImportItem",
+      "type": "object"
+    },
+    "ImportOut": {
+      "additionalProperties": false,
+      "properties": {
+        "import_id": {
+          "format": "uuid",
+          "title": "Import Id",
+          "type": "string"
+        },
+        "status": {
+          "const": "done",
+          "default": "done",
+          "title": "Status",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "consent_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Consent Id"
+        },
+        "counts": {
+          "$ref": "#/$defs/Counts"
+        },
+        "problems": {
+          "items": {
+            "$ref": "#/$defs/Problem"
+          },
+          "title": "Problems",
+          "type": "array"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "import_id",
+        "source",
+        "consent_id",
+        "counts",
+        "problems",
+        "created_at"
+      ],
+      "title": "ImportOut",
+      "type": "object"
+    },
+    "ImportsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ImportItem"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "ImportsOut",
+      "type": "object"
+    },
+    "IndiaMartPullOut": {
+      "additionalProperties": false,
+      "properties": {
+        "fetched": {
+          "title": "Fetched",
+          "type": "integer"
+        },
+        "created": {
+          "title": "Created",
+          "type": "integer"
+        },
+        "merged": {
+          "title": "Merged",
+          "type": "integer"
+        },
+        "invalid": {
+          "title": "Invalid",
+          "type": "integer"
+        },
+        "existing": {
+          "title": "Existing",
+          "type": "integer"
+        },
+        "window_start": {
+          "format": "date-time",
+          "title": "Window Start",
+          "type": "string"
+        },
+        "window_end": {
+          "format": "date-time",
+          "title": "Window End",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fetched",
+        "created",
+        "merged",
+        "invalid",
+        "existing",
+        "window_start",
+        "window_end"
+      ],
+      "title": "IndiaMartPullOut",
+      "type": "object"
+    },
+    "MailIn": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "maxLength": 320,
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "To"
+        },
+        "subject": {
+          "default": "",
+          "maxLength": 500,
+          "title": "Subject",
+          "type": "string"
+        },
+        "text": {
+          "default": "",
+          "maxLength": 200000,
+          "title": "Text",
+          "type": "string"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "maxLength": 400000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Html"
+        },
+        "message_id": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Id"
+        }
+      },
+      "required": [
+        "from"
+      ],
+      "title": "MailIn",
+      "type": "object"
+    },
+    "MailOut": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "received",
+            "unrecognised"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "MailOut",
+      "type": "object"
+    },
+    "PreviewIn": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "file",
+            "paste",
+            "vcard",
+            "sheet"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "content_base64": {
+          "anyOf": [
+            {
+              "maxLength": 4000016,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Base64"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "maxLength": 600000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "sheet_url": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sheet Url"
+        },
+        "use_ai": {
+          "default": true,
+          "title": "Use Ai",
+          "type": "boolean"
+        },
+        "mapping": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mapping"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "indiamart",
+                "justdial",
+                "99acres",
+                "magicbricks",
+                "housing",
+                "meta_lead_ads",
+                "website_form",
+                "webhook",
+                "excel_upload",
+                "google_sheet",
+                "pasted_list",
+                "vcard"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "consent_confirmed": {
+          "default": false,
+          "title": "Consent Confirmed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "PreviewIn",
+      "type": "object"
+    },
+    "PreviewOut": {
+      "additionalProperties": false,
+      "properties": {
+        "rows_read": {
+          "title": "Rows Read",
+          "type": "integer"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "counts": {
+          "$ref": "#/$defs/Counts"
+        },
+        "estimate": {
+          "$ref": "#/$defs/Estimate"
+        },
+        "problems": {
+          "items": {
+            "$ref": "#/$defs/Problem"
+          },
+          "title": "Problems",
+          "type": "array"
+        },
+        "dnd_lookup": {
+          "enum": [
+            "checked",
+            "not_configured"
+          ],
+          "title": "Dnd Lookup",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rows_read",
+        "source",
+        "counts",
+        "estimate",
+        "problems",
+        "dnd_lookup"
+      ],
+      "title": "PreviewOut",
+      "type": "object"
+    },
+    "Problem": {
+      "additionalProperties": false,
+      "properties": {
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "row",
+        "reason"
+      ],
+      "title": "Problem",
+      "type": "object"
+    },
+    "ReadIn": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "file",
+            "paste",
+            "vcard",
+            "sheet"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "content_base64": {
+          "anyOf": [
+            {
+              "maxLength": 4000016,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Base64"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "maxLength": 600000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "sheet_url": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sheet Url"
+        },
+        "use_ai": {
+          "default": true,
+          "title": "Use Ai",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "ReadIn",
+      "type": "object"
+    },
+    "ReadOut": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "file",
+            "paste",
+            "vcard",
+            "sheet"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "rows": {
+          "title": "Rows",
+          "type": "integer"
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/ColumnOut"
+          },
+          "title": "Columns",
+          "type": "array"
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/FieldOut"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "mapping": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "integer"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Mapping"
+        },
+        "mapped_by": {
+          "enum": [
+            "rules",
+            "rules+ai",
+            "none"
+          ],
+          "title": "Mapped By",
+          "type": "string"
+        },
+        "needs_confirmation": {
+          "title": "Needs Confirmation",
+          "type": "boolean"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "rows",
+        "columns",
+        "fields",
+        "mapping",
+        "mapped_by",
+        "needs_confirmation",
+        "warnings"
+      ],
+      "title": "ReadOut",
+      "type": "object"
+    },
+    "ReceivedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "const": "received",
+          "default": "received",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "title": "ReceivedOut",
+      "type": "object"
+    },
+    "SecretOut": {
+      "additionalProperties": false,
+      "properties": {
+        "shown_once": {
+          "const": true,
+          "default": true,
+          "title": "Shown Once",
+          "type": "boolean"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Url"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Email Address"
+        },
+        "snippet_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Snippet Html"
+        },
+        "meta_callback_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Meta Callback Url"
+        },
+        "meta_verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Meta Verify Token"
+        }
+      },
+      "required": [
+        "url",
+        "email_address",
+        "snippet_html",
+        "meta_callback_url",
+        "meta_verify_token"
+      ],
+      "title": "SecretOut",
+      "type": "object"
+    },
+    "SheetAccessOut": {
+      "additionalProperties": false,
+      "properties": {
+        "modes": {
+          "items": {
+            "$ref": "#/$defs/SheetModeOut"
+          },
+          "title": "Modes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "modes"
+      ],
+      "title": "SheetAccessOut",
+      "type": "object"
+    },
+    "SheetLinkIn": {
+      "additionalProperties": false,
+      "properties": {
+        "link_id": {
+          "format": "uuid",
+          "title": "Link Id",
+          "type": "string"
+        },
+        "sheet_url": {
+          "maxLength": 500,
+          "minLength": 10,
+          "title": "Sheet Url",
+          "type": "string"
+        },
+        "mapping": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Mapping",
+          "type": "object"
+        },
+        "consent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ConsentIn"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "cost_per_lead_paise": {
+          "anyOf": [
+            {
+              "maximum": 10000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Per Lead Paise"
+        }
+      },
+      "required": [
+        "link_id",
+        "sheet_url",
+        "mapping"
+      ],
+      "title": "SheetLinkIn",
+      "type": "object"
+    },
+    "SheetLinkOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "paused",
+            "needs_attention"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "last_synced_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Synced At"
+        },
+        "last_row_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Row Count"
+        },
+        "last_result": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Result"
+        },
+        "last_error": {
+          "anyOf": [
+            {
+              "enum": [
+                "sheet_not_public",
+                "columns_changed",
+                "unreachable",
+                "too_large"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Error"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "next_sync_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Sync At"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "source",
+        "last_synced_at",
+        "last_row_count",
+        "last_result",
+        "last_error",
+        "created_at",
+        "next_sync_at"
+      ],
+      "title": "SheetLinkOut",
+      "type": "object"
+    },
+    "SheetLinksOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/SheetLinkOut"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "SheetLinksOut",
+      "type": "object"
+    },
+    "SheetModeOut": {
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "enum": [
+            "anyone_with_link",
+            "published_csv",
+            "service_account"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        },
+        "service_account_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Service Account Email"
+        }
+      },
+      "required": [
+        "mode",
+        "available"
+      ],
+      "title": "SheetModeOut",
+      "type": "object"
+    },
+    "SourceCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "website_form",
+            "webhook",
+            "email_forward",
+            "meta_lead_ads",
+            "indiamart"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "portal": {
+          "anyOf": [
+            {
+              "enum": [
+                "indiamart",
+                "justdial",
+                "99acres",
+                "magicbricks",
+                "housing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Portal"
+        },
+        "consent": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ConsentIn"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "cost_per_lead_paise": {
+          "anyOf": [
+            {
+              "maximum": 10000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cost Per Lead Paise"
+        }
+      },
+      "required": [
+        "source_id",
+        "kind",
+        "label"
+      ],
+      "title": "SourceCreate",
+      "type": "object"
+    },
+    "SourceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "website_form",
+            "webhook",
+            "email_forward",
+            "meta_lead_ads",
+            "indiamart"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "tag": {
+          "enum": [
+            "indiamart",
+            "justdial",
+            "99acres",
+            "magicbricks",
+            "housing",
+            "meta_lead_ads",
+            "website_form",
+            "webhook",
+            "excel_upload",
+            "google_sheet",
+            "pasted_list",
+            "vcard"
+          ],
+          "title": "Tag",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "paused"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "last_received_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Received At"
+        },
+        "received_count": {
+          "title": "Received Count",
+          "type": "integer"
+        },
+        "token_hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Token Hint"
+        },
+        "cost_per_lead_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cost Per Lead Paise"
+        },
+        "consent_confirmed": {
+          "title": "Consent Confirmed",
+          "type": "boolean"
+        },
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "tag",
+        "label",
+        "status",
+        "created_at",
+        "last_received_at",
+        "received_count",
+        "token_hint",
+        "cost_per_lead_paise",
+        "consent_confirmed",
+        "available"
+      ],
+      "title": "SourceOut",
+      "type": "object"
+    },
+    "SourceWithSecretOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "website_form",
+            "webhook",
+            "email_forward",
+            "meta_lead_ads",
+            "indiamart"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "tag": {
+          "enum": [
+            "indiamart",
+            "justdial",
+            "99acres",
+            "magicbricks",
+            "housing",
+            "meta_lead_ads",
+            "website_form",
+            "webhook",
+            "excel_upload",
+            "google_sheet",
+            "pasted_list",
+            "vcard"
+          ],
+          "title": "Tag",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "paused"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "last_received_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Received At"
+        },
+        "received_count": {
+          "title": "Received Count",
+          "type": "integer"
+        },
+        "token_hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Token Hint"
+        },
+        "cost_per_lead_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cost Per Lead Paise"
+        },
+        "consent_confirmed": {
+          "title": "Consent Confirmed",
+          "type": "boolean"
+        },
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        },
+        "secret": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SecretOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "tag",
+        "label",
+        "status",
+        "created_at",
+        "last_received_at",
+        "received_count",
+        "token_hint",
+        "cost_per_lead_paise",
+        "consent_confirmed",
+        "available"
+      ],
+      "title": "SourceWithSecretOut",
+      "type": "object"
+    },
+    "SourcesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/SourceOut"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "SourcesOut",
+      "type": "object"
+    },
+    "TouchOut": {
+      "additionalProperties": false,
+      "properties": {
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "first",
+            "repeat"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Message"
+        }
+      },
+      "required": [
+        "at",
+        "kind",
+        "source",
+        "message"
+      ],
+      "title": "TouchOut",
+      "type": "object"
+    },
+    "TouchesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/TouchOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "flags": {
+          "items": {
+            "enum": [
+              "dnd",
+              "invalid_number"
+            ],
+            "type": "string"
+          },
+          "title": "Flags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items",
+        "flags"
+      ],
+      "title": "TouchesOut",
+      "type": "object"
+    },
+    "UnparsedListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/UnparsedOut"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "UnparsedListOut",
+      "type": "object"
+    },
+    "UnparsedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "received_at": {
+          "format": "date-time",
+          "title": "Received At",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Subject"
+        },
+        "preview": {
+          "title": "Preview",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source_id",
+        "received_at",
+        "subject",
+        "preview"
+      ],
+      "title": "UnparsedOut",
+      "type": "object"
+    }
+  }
+}

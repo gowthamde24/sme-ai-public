@@ -33,6 +33,14 @@ values (tests.rid('b_fk_def'), tests.tid('b'), 'contact', 'b_fk_def', '{"en": "S
 insert into public.knowledge_sources (id, tenant_id, kind, title, text, chars, status, created_by)
 values (tests.rid('b_fk_ksrc'), tests.tid('b'), 'paste', 'Synthetic source', 'Synthetic text', 14, 'read', tests.uid('b_owner'));
 
+-- job DR part A2: a consent confirmation, an import part and an unparsed mail reference a live source / a consent; the generic attack needs tenant-B parents to aim at
+insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, token_hint, created_by)
+values (tests.rid('b_fk_lsrc'), tests.tid('b'), 'webhook', 'webhook', 'Synthetic source', repeat('a', 64), 'abcd', tests.uid('b_owner'));
+insert into public.lead_consents (id, tenant_id, list_name, purpose, basis, how_collected, statement_version, confirmed_by)
+values (tests.rid('b_fk_lcn'), tests.tid('b'), 'Synthetic list', 'Synthetic purpose', 'explicit_consent', 'Synthetic way', 'dr-2026-10-27', tests.uid('b_owner'));
+insert into public.lead_intakes (id, tenant_id, import_id, kind, source_tag, content_sha, rows_read, counts, created_by)
+values (tests.rid('b_fk_lint'), tests.tid('b'), tests.rid('b_fk_lint'), 'paste', 'pasted_list', repeat('b', 64), 1, '{}'::jsonb, tests.uid('b_owner'));
+
 -- job AY: the photos of a message reference a catalogue photo of the business, and a photo its item; the generic attack needs a tenant-B item and photo to aim at
 insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by)
 values (tests.rid('b_fk_item'), tests.tid('b'), 'Synthetic saree', 'soft_silk', array['red'], '5k_10k', tests.uid('b_owner'));

@@ -165,6 +165,15 @@ class Settings(BaseSettings):
     cashfree_client_secret: SecretStr | None = None
     cashfree_env: str = "sandbox"  # sandbox | production
     public_base_url: str | None = None  # https address of this API as providers reach it
+    # Job DR / A2: lead sources. Off or unset by default (an unset door answers "not available").
+    # The website form, the webhook and a public Google Sheet need no key.
+    lead_inbound_domain: str | None = None  # domain of leads+TOKEN@domain; unset: no address
+    lead_inbound_secret: SecretStr | None = None  # header of the one global inbound address
+    lead_dnd_provider: str = "off"  # off | fake (no real Do-Not-Disturb lookup is chosen yet)
+    meta_lead_provider: str = "off"  # off | fake | graph (graph only after Meta's app verification)
+    meta_app_secret: SecretStr | None = None
+    meta_page_token: SecretStr | None = None
+    google_sheets_service_account_email: str | None = None  # shown to share a private sheet with
     calls_provider: str = "off"  # off | fake | exotel
     exotel_sid: str | None = None
     exotel_api_key: str | None = None
