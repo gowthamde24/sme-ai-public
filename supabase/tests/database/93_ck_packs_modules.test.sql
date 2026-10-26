@@ -153,7 +153,6 @@ insert into exempt (tbl, why) values
   ('public.outreach_attempts', 'speed to lead and approve once: every business type (job DR A3)'),
   ('public.outreach_handoffs', 'speed to lead and approve once: every business type (job DR A3)'),
   ('public.outcome_details', 'speed to lead and approve once: every business type (job DR A3)'),
-  ('public.lead_source_costs', 'speed to lead and approve once: every business type (job DR A3)'),
   ('public.speaking_styles', 'how the assistant talks: every business type (job DS)'), ('public.call_handover_rules', 'call settings: every business type has calls (job DP)'),
   ('public.billing_subscriptions', 'plans and billing: every business has a plan'), ('public.billing_events', 'plans and billing'), ('public.billing_usage_events', 'plans and billing: the meters'),
   ('public.billing_topups', 'plans and billing'), ('public.billing_notices', 'plans and billing'), ('public.billing_lapse_reminders', 'plans and billing'), ('public.billing_pending_reminders', 'plans and billing'), ('public.outcomes', 'outcomes of calls and follow-ups: the follow-ups module, always on, guards the writers (job DM)'), ('public.assistant_settings', 'the assistant settings of every business type (job DM)'),
