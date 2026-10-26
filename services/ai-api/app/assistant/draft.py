@@ -27,6 +27,7 @@ from app.assistant.language import Language, detect_language, reply_matches
 from app.assistant.runner import _sha, money_amounts
 from app.auth.deps import Runtime
 from app.errors import ApiError
+from app.knowledge.prompt import facts_block
 
 logger = logging.getLogger("app.assistant.draft")
 
@@ -89,7 +90,12 @@ def _first_name(full_name: Any) -> str | None:
 
 
 def build_request(
-    delimiter: str, language: Language, facts: list[str], repair: bool, register_text: str | None = None
+    delimiter: str,
+    language: Language,
+    facts: list[str],
+    repair: bool,
+    register_text: str | None = None,
+    knowledge_text: str | None = None,
 ) -> LlmRequest:
     data = "\n".join(("<<<DATA " + delimiter, *facts, "DATA " + delimiter + ">>>"))
     blocks = [
@@ -100,6 +106,8 @@ def build_request(
         blocks.append(Block(Trust.TRUSTED, NOTE_REPAIR))
     if register_text:   # job DS: how people really talk in this language (the workspace's speaking style)
         blocks.append(Block(Trust.TRUSTED, register_text))
+    if knowledge_text:   # job DR / A1: the facts the owner approved (never a price: a message states no amount)
+        blocks.append(Block(Trust.TRUSTED, knowledge_text))
     blocks.append(Block(Trust.UNTRUSTED, data))
     return LlmRequest(
         blocks=tuple(blocks),
@@ -129,6 +137,21 @@ def accept(structured: dict[str, Any] | None, language: Language) -> Suggestion 
     if language != "en" and not reply_matches(reply.gloss_en, "en"):  # the gloss is in English
         return None
     return Suggestion(reply.text.strip(), language, reply.gloss_en.strip())
+
+
+def _approved_facts(runtime: Runtime, token: str, tenant_id: uuid.UUID) -> str | None:
+    """The block of facts the owner approved (no price), or None when there are none or they cannot be read: a message is never held up by the knowledge base."""
+    knowledge = getattr(runtime, "knowledge", None)
+    if knowledge is None:
+        return None
+    try:
+        approved = knowledge.approved(token, tenant_id)
+    except Exception as exc:
+        logger.warning("approved facts unreadable (%s); the draft goes without them", exc.__class__.__name__)
+        return None
+    if not any(f.get("kind") != "price" for f in approved):
+        return None
+    return facts_block(approved, allow_prices=False)
 
 
 def draft_for_lead(
@@ -178,6 +201,7 @@ def draft_for_lead(
         speaking = getattr(runtime, "speaking", None)
         style, region = speaking.style_for(token, tenant_id, chosen) if speaking is not None else (register.DEFAULT_STYLE, "neutral")
         register_text = register.register_block(chosen, style, region)
+        knowledge_text = _approved_facts(runtime, token, tenant_id)
         facts = [
             f"customer business: {escape_value(getattr(company, 'name', None), delimiter)}",
             f"customer city: {escape_value(getattr(company, 'city', None), delimiter)}",
@@ -203,7 +227,7 @@ def draft_for_lead(
         status, code = "failed", "invalid_output"
         try:
             for attempt in range(1, MAX_ATTEMPTS + 1):
-                request = build_request(delimiter, chosen, facts, attempt > 1, register_text)
+                request = build_request(delimiter, chosen, facts, attempt > 1, register_text, knowledge_text)
                 llm = router.choose(request.task_class, db.ai_mode)
                 db.reserve_cost(
                     f"usage-{attempt}",

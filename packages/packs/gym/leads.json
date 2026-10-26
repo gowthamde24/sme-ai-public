@@ -1,0 +1,234 @@
+{
+  "$schema": "../leads.schema.json",
+  "pack": "gym",
+  "version": 1,
+  "goal": {
+    "code": "trial_session",
+    "label": {
+      "en": "Book a free trial session",
+      "te": "Free trial session book చేయడం",
+      "hi": "Free trial session book कराना",
+      "kn": "Free trial session book ಮಾಡಿಸುವುದು"
+    },
+    "ask": {
+      "en": "Invite the person for a free trial session and fix a day and time."
+    }
+  },
+  "questions": [
+    {
+      "code": "fitness_goal",
+      "field": "fitness_goal",
+      "ask": {
+        "en": "What is your main goal: weight loss, muscle, or general fitness?"
+      },
+      "required": true
+    },
+    {
+      "code": "experience",
+      "field": "experience",
+      "ask": {
+        "en": "Are you a beginner or have you trained before?"
+      },
+      "required": false
+    },
+    {
+      "code": "preferred_slot",
+      "field": "preferred_slot",
+      "ask": {
+        "en": "Do you prefer mornings or evenings?"
+      },
+      "required": true
+    },
+    {
+      "code": "plan_interest",
+      "field": "plan_interest",
+      "ask": {
+        "en": "Are you looking at a monthly or a longer plan?"
+      },
+      "required": false
+    },
+    {
+      "code": "trial_day",
+      "field": "trial_day",
+      "ask": {
+        "en": "Which day would you like to try a free session?"
+      },
+      "required": true
+    }
+  ],
+  "objections": [
+    {
+      "code": "fees_high",
+      "hears": [
+        "costly",
+        "fees are high"
+      ],
+      "answer": {
+        "en": "I understand. The front desk will explain the plans and what each includes at your trial. The trial itself is free. Which day suits you?"
+      }
+    },
+    {
+      "code": "no_time",
+      "hears": [
+        "no time",
+        "too busy"
+      ],
+      "answer": {
+        "en": "We have early morning and late evening slots. Which time could work for you?"
+      }
+    },
+    {
+      "code": "tried_before",
+      "hears": [
+        "joined before and left",
+        "did not continue"
+      ],
+      "answer": {
+        "en": "That happens to many people. The trainer will help you plan something realistic for you. Shall we book a free session?"
+      }
+    },
+    {
+      "code": "far_away",
+      "hears": [
+        "too far",
+        "not near me"
+      ],
+      "answer": {
+        "en": "Thanks for telling me. Which area do you live in? I will check which branch is closest."
+      }
+    },
+    {
+      "code": "health_concern",
+      "hears": [
+        "medical condition",
+        "injury"
+      ],
+      "answer": {
+        "en": "Please tell the trainer in person; I cannot advise on health. The trainer will plan around it. Shall I book the session?"
+      }
+    }
+  ],
+  "followups": [
+    {
+      "when": "no_answer",
+      "after_minutes": 30,
+      "channel": "call",
+      "max_attempts": 3,
+      "message": null
+    },
+    {
+      "when": "no_answer",
+      "after_minutes": 1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Hello, this is Vijaya, the AI assistant of the gym. I tried calling about your trial session. When can I call you?"
+      }
+    },
+    {
+      "when": "interested",
+      "after_minutes": 2,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Thank you. Here are our timings and address. Shall we fix your free trial?"
+      }
+    },
+    {
+      "when": "callback",
+      "after_minutes": 0,
+      "channel": "call",
+      "max_attempts": 2,
+      "message": null
+    },
+    {
+      "when": "booked",
+      "after_minutes": -1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "A reminder: your free trial session is tomorrow. Bring a towel and water."
+      }
+    },
+    {
+      "when": "booked",
+      "after_minutes": -120,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Your trial session is in two hours. See you soon."
+      }
+    }
+  ],
+  "outcome_reasons": {
+    "not_interested": [
+      {
+        "code": "fees_concern",
+        "label": {
+          "en": "Concern about the fees"
+        }
+      },
+      {
+        "code": "too_far",
+        "label": {
+          "en": "Gym is too far"
+        }
+      },
+      {
+        "code": "joined_elsewhere",
+        "label": {
+          "en": "Joined another gym"
+        }
+      },
+      {
+        "code": "no_time",
+        "label": {
+          "en": "Cannot spare the time"
+        }
+      },
+      {
+        "code": "health_reasons",
+        "label": {
+          "en": "Not able to start now"
+        }
+      },
+      {
+        "code": "just_browsing",
+        "label": {
+          "en": "Just browsing"
+        }
+      },
+      {
+        "code": "not_now",
+        "label": {
+          "en": "Not now, maybe later"
+        }
+      }
+    ],
+    "interested": [
+      {
+        "code": "trial_booked",
+        "label": {
+          "en": "Free trial booked"
+        }
+      },
+      {
+        "code": "wants_plans_on_whatsapp",
+        "label": {
+          "en": "Wants the plans on WhatsApp"
+        }
+      },
+      {
+        "code": "wants_visit_first",
+        "label": {
+          "en": "Wants to visit the gym first"
+        }
+      }
+    ]
+  },
+  "safety": [
+    "Do not quote fees or discounts unless they are in the approved facts.",
+    "Do not give medical or diet advice and do not ask about health conditions; the trainer does that in person.",
+    "Do not promise results such as weight loss in a number of weeks."
+  ]
+}

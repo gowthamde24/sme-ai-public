@@ -46,6 +46,7 @@ _SPEND = (
     ("POST", r"/campaigns/[^/]+/(approve|resume)"),
     ("POST", r"/voice-notes/preview"),
     ("POST", r"/ai-assistant/test-call"),
+    ("POST", r"/knowledge/sources/[^/]+/draft-facts"),   # job DR / A1: a model call
     ("POST", r"/institution/marks-messages/send"),
     ("POST", r"/trips/[^/]+/notify"),
     ("GET", r"/leads/search"),   # the outside lead search

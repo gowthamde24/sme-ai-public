@@ -1,0 +1,227 @@
+{
+  "$schema": "../leads.schema.json",
+  "pack": "insurance_loans",
+  "version": 1,
+  "goal": {
+    "code": "qualify",
+    "label": {
+      "en": "Qualify and book an advisor call",
+      "te": "Qualify చేసి advisor call book చేయడం",
+      "hi": "Qualify करके advisor call book कराना",
+      "kn": "Qualify ಮಾಡಿ advisor call book ಮಾಡಿಸುವುದು"
+    },
+    "ask": {
+      "en": "Find out what the person needs and, if it fits, book a call with a licensed advisor."
+    }
+  },
+  "questions": [
+    {
+      "code": "product",
+      "field": "product",
+      "ask": {
+        "en": "Which product are you looking at: insurance or a loan?"
+      },
+      "required": true
+    },
+    {
+      "code": "need_band",
+      "field": "need_band",
+      "ask": {
+        "en": "Roughly how big is the need?"
+      },
+      "required": false
+    },
+    {
+      "code": "employment",
+      "field": "employment",
+      "ask": {
+        "en": "Are you salaried, self-employed or a business owner?"
+      },
+      "required": true
+    },
+    {
+      "code": "has_existing_cover",
+      "field": "has_existing_cover",
+      "ask": {
+        "en": "Do you already have a policy or loan for this?"
+      },
+      "required": false
+    },
+    {
+      "code": "city_text",
+      "field": "city_text",
+      "ask": {
+        "en": "Which city are you in?"
+      },
+      "required": false
+    },
+    {
+      "code": "advisor_call_day",
+      "field": "advisor_call_day",
+      "ask": {
+        "en": "When would you like our advisor to call you?"
+      },
+      "required": true
+    }
+  ],
+  "objections": [
+    {
+      "code": "already_have",
+      "hears": [
+        "already have",
+        "already covered"
+      ],
+      "answer": {
+        "en": "That is good. An advisor can check whether anything is missing or can be improved, with no obligation. Shall I book a short call?"
+      }
+    },
+    {
+      "code": "rates_question",
+      "hears": [
+        "what is the interest rate",
+        "what is the premium"
+      ],
+      "answer": {
+        "en": "The advisor will explain the exact figures for your case. I cannot quote them on this call. Shall I book the advisor call?"
+      }
+    },
+    {
+      "code": "trust",
+      "hears": [
+        "is this genuine",
+        "who are you"
+      ],
+      "answer": {
+        "en": "I am the AI assistant of the advisory firm. The advisor who calls will share the firm and licence details. You decide at every step."
+      }
+    },
+    {
+      "code": "busy",
+      "hears": [
+        "busy now",
+        "not a good time"
+      ],
+      "answer": {
+        "en": "No problem. When should I call you back?"
+      }
+    },
+    {
+      "code": "not_needed",
+      "hears": [
+        "no need",
+        "not interested"
+      ],
+      "answer": {
+        "en": "Understood, thank you for your time. If you ever need help with insurance or a loan, just message us."
+      }
+    }
+  ],
+  "followups": [
+    {
+      "when": "no_answer",
+      "after_minutes": 60,
+      "channel": "call",
+      "max_attempts": 3,
+      "message": null
+    },
+    {
+      "when": "no_answer",
+      "after_minutes": 1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Hello, this is Vijaya, the AI assistant of the advisory firm. I tried calling about your enquiry. When is a good time to call?"
+      }
+    },
+    {
+      "when": "interested",
+      "after_minutes": 2,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Thank you. Our advisor will call you at the time we agreed. Reply here if you need to change it."
+      }
+    },
+    {
+      "when": "callback",
+      "after_minutes": 0,
+      "channel": "call",
+      "max_attempts": 2,
+      "message": null
+    },
+    {
+      "when": "booked",
+      "after_minutes": -120,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Your call with our advisor is in two hours."
+      }
+    }
+  ],
+  "outcome_reasons": {
+    "not_interested": [
+      {
+        "code": "already_covered",
+        "label": {
+          "en": "Already has this cover or loan"
+        }
+      },
+      {
+        "code": "rates_concern",
+        "label": {
+          "en": "Worried about cost or rates"
+        }
+      },
+      {
+        "code": "does_not_trust_phone",
+        "label": {
+          "en": "Does not want to talk on the phone"
+        }
+      },
+      {
+        "code": "not_eligible",
+        "label": {
+          "en": "Does not seem eligible"
+        }
+      },
+      {
+        "code": "later",
+        "label": {
+          "en": "Wants to decide later"
+        }
+      },
+      {
+        "code": "just_browsing",
+        "label": {
+          "en": "Just browsing"
+        }
+      },
+      {
+        "code": "not_now",
+        "label": {
+          "en": "Not now, maybe later"
+        }
+      }
+    ],
+    "interested": [
+      {
+        "code": "advisor_call_booked",
+        "label": {
+          "en": "Advisor call booked"
+        }
+      },
+      {
+        "code": "wants_details_on_whatsapp",
+        "label": {
+          "en": "Wants details on WhatsApp first"
+        }
+      }
+    ]
+  },
+  "safety": [
+    "Never promise approval, a rate, a premium, returns or a bonus.",
+    "Never ask for PAN, Aadhaar, account numbers, card numbers, OTPs or passwords, on a call or in a chat.",
+    "Say that a licensed advisor will explain the details; the assistant does not advise."
+  ]
+}

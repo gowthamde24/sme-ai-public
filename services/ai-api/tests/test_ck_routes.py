@@ -120,8 +120,9 @@ def test_the_sign_up_cards_need_no_sign_in_and_list_the_three_business_types() -
     r = client.get("/v1/packs")
     assert r.status_code == 200, r.text
     body = r.json()["packs"]
-    assert [p["pack_id"] for p in body] == ["textiles", "construction_materials", "education"]
-    assert [p["validated"] for p in body] == [True, False, False]
+    # job DR: the nine leads-and-calls types are previews too, listed after the published one by id
+    assert [p["pack_id"] for p in body] == ["textiles", "auto_dealer", "clinic", "coaching", "construction_materials", "education", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]
+    assert [p["validated"] for p in body] == [True] + [False] * 11
     assert all(p["names"]["en"] and p["summary"]["en"] and p["status"] in ("preview", "published") for p in body)
 
 
@@ -142,7 +143,7 @@ def test_a_draft_pack_and_an_unreadable_pack_are_never_served(tmp_path: Path) ->
     (tmp_path / "p" / "education" / "pack.json").write_text(json.dumps(draft), encoding="utf-8")
     (tmp_path / "p" / "construction_materials" / "pack.json").write_text("{not json", encoding="utf-8")
     listed = PackRegistry(tmp_path / "p").selectable()
-    assert [p.pack_id for p in listed.packs] == ["textiles"]
+    assert [p.pack_id for p in listed.packs] == ["textiles", "auto_dealer", "clinic", "coaching", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]  # job DR: the nine previews stay
 
 
 def test_the_default_directory_is_the_checkouts_packs() -> None:
@@ -401,7 +402,7 @@ def test_the_database_refusals_have_their_plain_words() -> None:
 def test_no_model_path_reads_a_custom_value() -> None:
     """ADR 0084 principle 6: a model never sees a field the business marked personal and never any child's field. Today NOTHING outside the custom-field routes, the import and the wiring reads these values."""
     app_dir = ROOT / "services" / "ai-api" / "app"
-    allowed = {"customfields", "packs"}
+    allowed = {"customfields", "packs", "leadspack"}  # job DR: leadspack reads a pack's custom field DEFINITIONS (never values)
     allowed_files = {app_dir / "main.py", app_dir / "auth" / "deps.py", app_dir / "integrations" / "routes_import.py", app_dir / "integrations" / "importer.py", app_dir / "integrations" / "mapping.py", app_dir / "privacy" / "export_builder.py"}  # (the export is the owner's own download of their data)
     pattern = re.compile(r"custom_field_values|custom_values_|customfields|custom_fields")
     offenders = []

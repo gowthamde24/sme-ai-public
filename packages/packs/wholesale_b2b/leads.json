@@ -1,0 +1,241 @@
+{
+  "$schema": "../leads.schema.json",
+  "pack": "wholesale_b2b",
+  "version": 1,
+  "goal": {
+    "code": "wholesale_quote",
+    "label": {
+      "en": "Send a wholesale quote",
+      "te": "Wholesale quote పంపడం",
+      "hi": "Wholesale quote भेजना",
+      "kn": "Wholesale quote ಕಳುಹಿಸುವುದು"
+    },
+    "ask": {
+      "en": "Understand what the business buyer needs and agree when the sales team will send a quote."
+    }
+  },
+  "questions": [
+    {
+      "code": "buyer_kind",
+      "field": "buyer_kind",
+      "ask": {
+        "en": "Are you a retailer, a distributor or buying for a company?"
+      },
+      "required": true
+    },
+    {
+      "code": "product_interest_text",
+      "field": "product_interest_text",
+      "ask": {
+        "en": "Which products do you need?"
+      },
+      "required": true
+    },
+    {
+      "code": "volume_band",
+      "field": "volume_band",
+      "ask": {
+        "en": "Roughly how much do you buy at a time?"
+      },
+      "required": true
+    },
+    {
+      "code": "buy_frequency",
+      "field": "buy_frequency",
+      "ask": {
+        "en": "How often do you buy: weekly, monthly or seasonal?"
+      },
+      "required": false
+    },
+    {
+      "code": "gst_registered",
+      "field": "gst_registered",
+      "ask": {
+        "en": "Do you have a GST registration?"
+      },
+      "required": false
+    },
+    {
+      "code": "delivery_city",
+      "field": "delivery_city",
+      "ask": {
+        "en": "Where should we deliver?"
+      },
+      "required": true
+    },
+    {
+      "code": "quote_by_day",
+      "field": "quote_by_day",
+      "ask": {
+        "en": "By when do you need our quote?"
+      },
+      "required": false
+    }
+  ],
+  "objections": [
+    {
+      "code": "price_high",
+      "hears": [
+        "your rate is high",
+        "supplier gives cheaper"
+      ],
+      "answer": {
+        "en": "I understand. Our sales team can look at your volume and give their best quote. Shall they send one?"
+      }
+    },
+    {
+      "code": "minimum_order",
+      "hears": [
+        "what is the minimum order",
+        "moq"
+      ],
+      "answer": {
+        "en": "The sales team will confirm the minimum quantity for your products with the quote. Shall I note your requirement?"
+      }
+    },
+    {
+      "code": "credit_terms",
+      "hears": [
+        "credit",
+        "payment terms"
+      ],
+      "answer": {
+        "en": "Terms are agreed with the sales team after they know your business. I will pass on that you asked."
+      }
+    },
+    {
+      "code": "have_supplier",
+      "hears": [
+        "already have a supplier",
+        "happy with my supplier"
+      ],
+      "answer": {
+        "en": "That is fine. A second quote costs nothing and helps you compare. Shall the team send one?"
+      }
+    },
+    {
+      "code": "sample_request",
+      "hears": [
+        "send a sample",
+        "can i see samples"
+      ],
+      "answer": {
+        "en": "I will ask the team about samples and how they work. Where should they send them?"
+      }
+    }
+  ],
+  "followups": [
+    {
+      "when": "no_answer",
+      "after_minutes": 60,
+      "channel": "call",
+      "max_attempts": 3,
+      "message": null
+    },
+    {
+      "when": "no_answer",
+      "after_minutes": 1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Hello, this is Vijaya, the AI assistant of the supplier. I tried calling about your requirement. When can I call you?"
+      }
+    },
+    {
+      "when": "interested",
+      "after_minutes": 2,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Thank you. Our sales team will send your quote by the time we discussed."
+      }
+    },
+    {
+      "when": "callback",
+      "after_minutes": 0,
+      "channel": "call",
+      "max_attempts": 2,
+      "message": null
+    },
+    {
+      "when": "booked",
+      "after_minutes": -1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "A reminder about your call with our sales team tomorrow."
+      }
+    }
+  ],
+  "outcome_reasons": {
+    "not_interested": [
+      {
+        "code": "price_high",
+        "label": {
+          "en": "Prices are higher than their supplier"
+        }
+      },
+      {
+        "code": "have_supplier",
+        "label": {
+          "en": "Happy with the current supplier"
+        }
+      },
+      {
+        "code": "product_not_available",
+        "label": {
+          "en": "Product not available"
+        }
+      },
+      {
+        "code": "minimum_order_too_high",
+        "label": {
+          "en": "Minimum order too high"
+        }
+      },
+      {
+        "code": "delivery_area",
+        "label": {
+          "en": "We do not deliver to their city"
+        }
+      },
+      {
+        "code": "just_browsing",
+        "label": {
+          "en": "Just browsing"
+        }
+      },
+      {
+        "code": "not_now",
+        "label": {
+          "en": "Not now, maybe later"
+        }
+      }
+    ],
+    "interested": [
+      {
+        "code": "quote_requested",
+        "label": {
+          "en": "Quote requested"
+        }
+      },
+      {
+        "code": "sample_requested",
+        "label": {
+          "en": "Sample requested"
+        }
+      },
+      {
+        "code": "meeting_booked",
+        "label": {
+          "en": "Call with the sales team booked"
+        }
+      }
+    ]
+  },
+  "safety": [
+    "Do not quote a price, a discount or credit terms unless they are in the approved facts.",
+    "Do not promise stock, a delivery date or a minimum order.",
+    "Do not ask for bank details or any payment on a call or chat."
+  ]
+}

@@ -41,4 +41,7 @@ def intro(language: str, name: str, business: str) -> str:
 
 
 def sample(code: str | None, language: str, style: str, name: str, business: str) -> str:
-    return _fill(load()["samples"][business_type(code)][language][style], name, business)
+    # job DR: the nine leads-and-calls business types share one set of lines ("leads"); the older types have their own
+    samples = load()["samples"]
+    key = business_type(code)
+    return _fill(samples[key if key in samples else "leads"][language][style], name, business)

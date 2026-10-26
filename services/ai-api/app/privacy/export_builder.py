@@ -55,6 +55,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "assistant_conversations", "assistant_messages", "assistant_reply_drafts",
     "own_voices",
     "speaking_styles",
+    "lead_playbooks", "knowledge_sources", "knowledge_facts",
     "agent_runs", "agent_run_steps", "agent_cost_reservations", "tenant_agent_settings", "tenant_data_policy",
     "data_exports", "erasure_requests", "memberships", "audit_events", "business_profile",
 )  # fmt: skip

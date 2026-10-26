@@ -23,9 +23,10 @@ export function defaultWorkspacePack(source: "default" | "legacy" = "legacy"): W
   return workspacePack(defaultPackId(), source);
 }
 
-/** The ids of the packs a test can use as "another business type": every selectable pack but the default. */
+/** The ids of the packs a test can use as "another business type": every selectable pack but the default that carries its words in all four languages (job DR: the nine leads packs ship English words only until a native reader has been through them). */
 export function otherPackIds(): string[] {
-  return selectableIds().filter((id) => id !== defaultPackId());
+  const files = packFiles() as Record<string, { labels?: Record<string, unknown> }>;
+  return selectableIds().filter((id) => id !== defaultPackId() && ["en", "te", "hi", "kn"].every((lang) => Object.keys(files[id]?.labels?.[lang] ?? {}).length > 0));
 }
 
 /** Those fields, parsed the way the web parses the API's answer. */
@@ -35,7 +36,8 @@ export function packFields(id: string): WorkspaceField[] {
 
 /** The id of the first selectable pack that has custom fields of this entity (a test that needs fields asks for one by what it has, not by name). */
 export function packWithFields(entity: "contact" | "catalogue_item", atLeast = 1): string {
-  const id = selectableIds().find((i) => packFields(i).filter((f) => f.entity === entity).length >= atLeast);
+  const order = [defaultPackId(), ...otherPackIds(), ...selectableIds()];   // the reviewed packs first: the tests assert on their words
+  const id = order.find((i) => packFields(i).filter((f) => f.entity === entity).length >= atLeast);
   if (!id) throw new Error(`no pack has ${atLeast} ${entity} fields`);
   return id;
 }
