@@ -2,7 +2,7 @@
 
 Branch `api/dr-lead-sources` (stacked on `api/dr-leads-pack`). Base: the API, all paths under `/v1`. Errors have the one shape `{error:{code,message,retry_after,request_id}}` (some add a closed `reason`).
 The API has no DELETE verb and no multipart: files go as base64 inside JSON. Wording the API sends for the owner is for native review where it is not English.
-Roles: **import and preview** = Owner, Admin, Sales. **Sources, sheet links, rotate/pause** = Owner, Admin. **Read lists** = Owner, Admin (Sales sees `GET /lead-imports` only).
+Roles: **import and preview** = Owner, Admin, Sales; **the consent confirmation** (an import with `consent`, a preview with `consent_confirmed:true`) = Owner and Admin only (it is the owner's word: a Sales member's import without it stores the leads and sends nothing to them; with it, 403). **Sources, sheet links, rotate/pause** = Owner, Admin. **Read lists** = Owner, Admin (Sales sees `GET /lead-imports` only).
 Synthetic data only while the workspace's real-data gate is closed: a real number or e-mail is refused row by row with `reason:"real_data_gate"` (nothing else changes).
 
 ## 0. The source tags (`leads.source`, exact strings; the cost table and the reports use the same)
