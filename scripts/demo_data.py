@@ -108,7 +108,7 @@ def education(call: Call, today: date) -> dict[str, str]:
     for i, student in enumerate(students):
         _ok("fee assignment", call("PUT", f"{I}/fee-assignments/{did(f'school-assignment-{i}')}", {"student_id": student, "plan_id": plan}))
     # one part payment, so the three families do not owe the same
-    _ok("payment", call("PUT", f"{I}/students/{students[0]}/payments/{did('school-payment-0')}", {"received_on": today.isoformat(), "amount_paise": 400_000, "method": "upi"}))
+    _ok("payment", call("PUT", f"{I}/students/{students[0]}/payments/{did('school-payment-0')}", {"received_on": today.isoformat(), "amount_paise": 400_000, "method": "upi"}), (200, 201, 409))   # 409: the same payment id already exists with another date (a re-seed on another day); it stays as it is
     out["students"] = "three, with a guardian each (fake +00 numbers); one part payment of Rs 4,000"
     return out
 
