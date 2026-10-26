@@ -17,6 +17,7 @@ from app.leads import contracts as leads
 from app.marksmessages import contracts as marks_messages
 from app.materials import contracts as materials
 from app.outcomes import contracts as outcomes
+from app.outreach import contracts as outreach
 from app.ownvoice import contracts as own_voice
 from app.packs import contracts as packs
 from app.reports import contracts as reports
@@ -60,6 +61,8 @@ ROOT = Path(__file__).resolve().parents[1]
 (ROOT / "packages/contracts/marks_messages.ts").write_text(marks_messages.ts_text())
 (ROOT / "packages/contracts/speaking_style.schema.json").write_text(speaking.schema_text())
 (ROOT / "packages/contracts/speaking_style.ts").write_text(speaking.ts_text())
+(ROOT / "packages/contracts/outreach.schema.json").write_text(outreach.schema_text())
+(ROOT / "packages/contracts/outreach.ts").write_text(outreach.ts_text())
 print(
     "wrote packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.schema.json "
     "and {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.ts"

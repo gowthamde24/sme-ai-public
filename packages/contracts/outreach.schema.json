@@ -1,0 +1,1799 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "outreach.schema.json",
+  "title": "Speed to lead and approve once (job DR A3)",
+  "description": "Generated from services/ai-api/app/outreach/models.py by `make contracts`.",
+  "$defs": {
+    "ApproveIn": {
+      "additionalProperties": false,
+      "properties": {
+        "plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Plan Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_sha256"
+      ],
+      "title": "ApproveIn",
+      "type": "object"
+    },
+    "BatchAnswer": {
+      "properties": {
+        "batch": {
+          "$ref": "#/$defs/BatchOut"
+        },
+        "plan": {
+          "$ref": "#/$defs/PlanOut"
+        },
+        "progress": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProgressOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "batch",
+        "plan"
+      ],
+      "title": "BatchAnswer",
+      "type": "object"
+    },
+    "BatchIn": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "format": "uuid",
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "goal": {
+          "enum": [
+            "site_visit",
+            "counselling",
+            "appointment",
+            "qualify",
+            "test_drive",
+            "site_measurement",
+            "quote",
+            "trial",
+            "callback",
+            "general"
+          ],
+          "title": "Goal",
+          "type": "string"
+        },
+        "channel": {
+          "enum": [
+            "call",
+            "whatsapp",
+            "both"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta",
+            "ml"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "who": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WhoContacts"
+            },
+            {
+              "$ref": "#/$defs/WhoLeads"
+            },
+            {
+              "$ref": "#/$defs/WhoSource"
+            }
+          ],
+          "title": "Who"
+        },
+        "questions": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 2,
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Questions",
+          "type": "array"
+        },
+        "message_text": {
+          "anyOf": [
+            {
+              "maxLength": 600,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Text"
+        },
+        "window_days": {
+          "default": 7,
+          "maximum": 14,
+          "minimum": 1,
+          "title": "Window Days",
+          "type": "integer"
+        },
+        "max_calls_per_day": {
+          "anyOf": [
+            {
+              "maximum": 5000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Calls Per Day"
+        },
+        "max_total_minutes": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Total Minutes"
+        }
+      },
+      "required": [
+        "batch_id",
+        "name",
+        "goal",
+        "channel",
+        "language",
+        "who"
+      ],
+      "title": "BatchIn",
+      "type": "object"
+    },
+    "BatchOut": {
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "running",
+            "paused",
+            "done",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "paused_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "owner",
+                "cap_calls",
+                "cap_minutes",
+                "billing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Paused Reason"
+        },
+        "goal": {
+          "enum": [
+            "site_visit",
+            "counselling",
+            "appointment",
+            "qualify",
+            "test_drive",
+            "site_measurement",
+            "quote",
+            "trial",
+            "callback",
+            "general"
+          ],
+          "title": "Goal",
+          "type": "string"
+        },
+        "channel": {
+          "enum": [
+            "call",
+            "whatsapp",
+            "both"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta",
+            "ml"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "questions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Questions",
+          "type": "array"
+        },
+        "message_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Message Text"
+        },
+        "window_days": {
+          "title": "Window Days",
+          "type": "integer"
+        },
+        "max_calls_per_day": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Calls Per Day"
+        },
+        "max_total_minutes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Total Minutes"
+        },
+        "plan_sha256": {
+          "title": "Plan Sha256",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "approved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved At"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Finished At"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "status",
+        "paused_reason",
+        "goal",
+        "channel",
+        "language",
+        "questions",
+        "message_text",
+        "window_days",
+        "max_calls_per_day",
+        "max_total_minutes",
+        "plan_sha256",
+        "created_at",
+        "approved_at",
+        "finished_at"
+      ],
+      "title": "BatchOut",
+      "type": "object"
+    },
+    "CapsIn": {
+      "additionalProperties": false,
+      "properties": {
+        "max_calls_per_day": {
+          "anyOf": [
+            {
+              "maximum": 5000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Calls Per Day"
+        },
+        "max_total_minutes": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Total Minutes"
+        }
+      },
+      "title": "CapsIn",
+      "type": "object"
+    },
+    "ExcludeIn": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 2000,
+          "minItems": 1,
+          "title": "Contact Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_ids"
+      ],
+      "title": "ExcludeIn",
+      "type": "object"
+    },
+    "HandoffOut": {
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lead Id"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "contact_name": {
+          "title": "Contact Name",
+          "type": "string"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "assigned_to": {
+          "format": "uuid",
+          "title": "Assigned To",
+          "type": "string"
+        },
+        "notified_at": {
+          "format": "date-time",
+          "title": "Notified At",
+          "type": "string"
+        },
+        "reminder_sent_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reminder Sent At"
+        },
+        "acted_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Acted At"
+        }
+      },
+      "required": [
+        "id",
+        "lead_id",
+        "contact_id",
+        "contact_name",
+        "summary",
+        "assigned_to",
+        "notified_at",
+        "reminder_sent_at",
+        "acted_at"
+      ],
+      "title": "HandoffOut",
+      "type": "object"
+    },
+    "HoursOut": {
+      "properties": {
+        "days": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Days",
+          "type": "array"
+        },
+        "from_minute": {
+          "title": "From Minute",
+          "type": "integer"
+        },
+        "to_minute": {
+          "title": "To Minute",
+          "type": "integer"
+        },
+        "from": {
+          "enum": [
+            "assistant",
+            "call_settings",
+            "default"
+          ],
+          "title": "From",
+          "type": "string"
+        }
+      },
+      "required": [
+        "days",
+        "from_minute",
+        "to_minute",
+        "from"
+      ],
+      "title": "HoursOut",
+      "type": "object"
+    },
+    "ItemOut": {
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lead Id"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "waiting",
+            "done",
+            "stopped",
+            "skipped"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        },
+        "attempts": {
+          "title": "Attempts",
+          "type": "integer"
+        },
+        "next_action": {
+          "anyOf": [
+            {
+              "enum": [
+                "call",
+                "whatsapp"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Action"
+        },
+        "next_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next At"
+        },
+        "last_result": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Result"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "contact_id",
+        "lead_id",
+        "name",
+        "status",
+        "reason",
+        "attempts",
+        "next_action",
+        "next_at",
+        "last_result",
+        "created_at"
+      ],
+      "title": "ItemOut",
+      "type": "object"
+    },
+    "ItemsOut": {
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ItemOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "ItemsOut",
+      "type": "object"
+    },
+    "OutcomeResultIn": {
+      "additionalProperties": false,
+      "properties": {
+        "outcome": {
+          "enum": [
+            "positive",
+            "negative",
+            "unclear"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "enum": [
+                "interested",
+                "visit_booked",
+                "order_likely",
+                "not_interested",
+                "wrong_number",
+                "too_costly",
+                "already_bought",
+                "call_back_later"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Category"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "callback_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Callback At"
+        },
+        "captured": {
+          "anyOf": [
+            {
+              "patternProperties": {
+                "^[a-z][a-z0-9_]{0,31}$": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
+                }
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Captured"
+        }
+      },
+      "required": [
+        "outcome"
+      ],
+      "title": "OutcomeResultIn",
+      "type": "object"
+    },
+    "PlanOut": {
+      "properties": {
+        "count": {
+          "title": "Count",
+          "type": "integer"
+        },
+        "ready": {
+          "title": "Ready",
+          "type": "integer"
+        },
+        "skipped": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Skipped",
+          "type": "object"
+        },
+        "sample": {
+          "items": {
+            "$ref": "#/$defs/SampleOut"
+          },
+          "title": "Sample",
+          "type": "array"
+        },
+        "window": {
+          "additionalProperties": {
+            "format": "date",
+            "type": "string"
+          },
+          "title": "Window",
+          "type": "object"
+        },
+        "estimated_minutes": {
+          "title": "Estimated Minutes",
+          "type": "integer"
+        },
+        "estimated_messages": {
+          "title": "Estimated Messages",
+          "type": "integer"
+        },
+        "estimated_cost_paise": {
+          "title": "Estimated Cost Paise",
+          "type": "integer"
+        },
+        "caps": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Caps",
+          "type": "object"
+        }
+      },
+      "required": [
+        "count",
+        "ready",
+        "skipped",
+        "sample",
+        "window",
+        "estimated_minutes",
+        "estimated_messages",
+        "estimated_cost_paise",
+        "caps"
+      ],
+      "title": "PlanOut",
+      "type": "object"
+    },
+    "PolicyIn": {
+      "additionalProperties": false,
+      "properties": {
+        "night_call_minute": {
+          "anyOf": [
+            {
+              "maximum": 720,
+              "minimum": 540,
+              "multipleOf": 15,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Night Call Minute"
+        },
+        "max_attempts": {
+          "anyOf": [
+            {
+              "maximum": 6,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Attempts"
+        },
+        "retry_gap_hours": {
+          "anyOf": [
+            {
+              "maximum": 48,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retry Gap Hours"
+        },
+        "then_whatsapp": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Then Whatsapp"
+        },
+        "whatsapp_after_hours": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Whatsapp After Hours"
+        },
+        "handoff_reminder_minutes": {
+          "anyOf": [
+            {
+              "maximum": 120,
+              "minimum": 5,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Handoff Reminder Minutes"
+        },
+        "call_paise_per_minute": {
+          "anyOf": [
+            {
+              "maximum": 5000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Call Paise Per Minute"
+        }
+      },
+      "title": "PolicyIn",
+      "type": "object"
+    },
+    "PolicyOut": {
+      "properties": {
+        "night_call_minute": {
+          "title": "Night Call Minute",
+          "type": "integer"
+        },
+        "max_attempts": {
+          "title": "Max Attempts",
+          "type": "integer"
+        },
+        "retry_gap_hours": {
+          "title": "Retry Gap Hours",
+          "type": "integer"
+        },
+        "then_whatsapp": {
+          "title": "Then Whatsapp",
+          "type": "boolean"
+        },
+        "whatsapp_after_hours": {
+          "title": "Whatsapp After Hours",
+          "type": "boolean"
+        },
+        "handoff_reminder_minutes": {
+          "title": "Handoff Reminder Minutes",
+          "type": "integer"
+        },
+        "call_paise_per_minute": {
+          "title": "Call Paise Per Minute",
+          "type": "integer"
+        },
+        "hours": {
+          "$ref": "#/$defs/HoursOut"
+        },
+        "saved": {
+          "title": "Saved",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "night_call_minute",
+        "max_attempts",
+        "retry_gap_hours",
+        "then_whatsapp",
+        "whatsapp_after_hours",
+        "handoff_reminder_minutes",
+        "call_paise_per_minute",
+        "hours",
+        "saved"
+      ],
+      "title": "PolicyOut",
+      "type": "object"
+    },
+    "ProgressOut": {
+      "properties": {
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        },
+        "waiting": {
+          "title": "Waiting",
+          "type": "integer"
+        },
+        "done": {
+          "title": "Done",
+          "type": "integer"
+        },
+        "calls_made": {
+          "title": "Calls Made",
+          "type": "integer"
+        },
+        "connected": {
+          "title": "Connected",
+          "type": "integer"
+        },
+        "interested": {
+          "title": "Interested",
+          "type": "integer"
+        },
+        "minutes_used": {
+          "title": "Minutes Used",
+          "type": "number"
+        }
+      },
+      "required": [
+        "total",
+        "waiting",
+        "done",
+        "calls_made",
+        "connected",
+        "interested",
+        "minutes_used"
+      ],
+      "title": "ProgressOut",
+      "type": "object"
+    },
+    "ReportOut": {
+      "properties": {
+        "from_day": {
+          "format": "date",
+          "title": "From Day",
+          "type": "string"
+        },
+        "to_day": {
+          "format": "date",
+          "title": "To Day",
+          "type": "string"
+        },
+        "by_source": {
+          "items": {
+            "$ref": "#/$defs/SourceRowOut"
+          },
+          "title": "By Source",
+          "type": "array"
+        },
+        "total": {
+          "$ref": "#/$defs/TotalOut"
+        }
+      },
+      "required": [
+        "from_day",
+        "to_day",
+        "by_source",
+        "total"
+      ],
+      "title": "ReportOut",
+      "type": "object"
+    },
+    "ResultIn": {
+      "additionalProperties": false,
+      "properties": {
+        "result": {
+          "enum": [
+            "no_answer",
+            "busy",
+            "voicemail",
+            "connected",
+            "failed"
+          ],
+          "title": "Result",
+          "type": "string"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OutcomeResultIn"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "minutes": {
+          "default": 0,
+          "maximum": 120,
+          "minimum": 0,
+          "title": "Minutes",
+          "type": "number"
+        },
+        "stop": {
+          "default": false,
+          "title": "Stop",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "result"
+      ],
+      "title": "ResultIn",
+      "type": "object"
+    },
+    "ResultOut": {
+      "properties": {
+        "item_id": {
+          "format": "uuid",
+          "title": "Item Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "waiting",
+            "stopped"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "next_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next At"
+        }
+      },
+      "required": [
+        "item_id",
+        "status"
+      ],
+      "title": "ResultOut",
+      "type": "object"
+    },
+    "RuleIn": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "format": "uuid",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "source": {
+          "pattern": "^[a-z0-9_.-]{1,64}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "call_within_minutes",
+            "whatsapp_first",
+            "whatsapp_then_call"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "within_minutes": {
+          "default": 2,
+          "maximum": 120,
+          "minimum": 1,
+          "title": "Within Minutes",
+          "type": "integer"
+        },
+        "goal": {
+          "enum": [
+            "site_visit",
+            "counselling",
+            "appointment",
+            "qualify",
+            "test_drive",
+            "site_measurement",
+            "quote",
+            "trial",
+            "callback",
+            "general"
+          ],
+          "title": "Goal",
+          "type": "string"
+        },
+        "channel": {
+          "enum": [
+            "call",
+            "whatsapp",
+            "both"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta",
+            "ml"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "questions": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 2,
+            "type": "string"
+          },
+          "maxItems": 8,
+          "title": "Questions",
+          "type": "array"
+        },
+        "message_text": {
+          "anyOf": [
+            {
+              "maxLength": 600,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message Text"
+        },
+        "max_calls_per_day": {
+          "anyOf": [
+            {
+              "maximum": 5000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Calls Per Day"
+        },
+        "max_total_minutes": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Total Minutes"
+        }
+      },
+      "required": [
+        "rule_id",
+        "source",
+        "action",
+        "goal",
+        "channel",
+        "language"
+      ],
+      "title": "RuleIn",
+      "type": "object"
+    },
+    "RuleOut": {
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "call_within_minutes",
+            "whatsapp_first",
+            "whatsapp_then_call"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "within_minutes": {
+          "title": "Within Minutes",
+          "type": "integer"
+        },
+        "goal": {
+          "enum": [
+            "site_visit",
+            "counselling",
+            "appointment",
+            "qualify",
+            "test_drive",
+            "site_measurement",
+            "quote",
+            "trial",
+            "callback",
+            "general"
+          ],
+          "title": "Goal",
+          "type": "string"
+        },
+        "channel": {
+          "enum": [
+            "call",
+            "whatsapp",
+            "both"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta",
+            "ml"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "questions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Questions",
+          "type": "array"
+        },
+        "message_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Message Text"
+        },
+        "max_calls_per_day": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Calls Per Day"
+        },
+        "max_total_minutes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Total Minutes"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "paused_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "owner",
+                "cap_calls",
+                "cap_minutes",
+                "billing"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Paused Reason"
+        },
+        "paused_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Paused At"
+        },
+        "approved_at": {
+          "format": "date-time",
+          "title": "Approved At",
+          "type": "string"
+        },
+        "usage": {
+          "$ref": "#/$defs/UsageOut"
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "action",
+        "within_minutes",
+        "goal",
+        "channel",
+        "language",
+        "questions",
+        "message_text",
+        "max_calls_per_day",
+        "max_total_minutes",
+        "active",
+        "paused_reason",
+        "paused_at",
+        "approved_at",
+        "usage"
+      ],
+      "title": "RuleOut",
+      "type": "object"
+    },
+    "SampleOut": {
+      "properties": {
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "name_masked": {
+          "title": "Name Masked",
+          "type": "string"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "City"
+        }
+      },
+      "required": [
+        "contact_id",
+        "name_masked",
+        "city"
+      ],
+      "title": "SampleOut",
+      "type": "object"
+    },
+    "SourceCostIn": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "pattern": "^[a-z0-9_.-]{1,64}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "cost_per_lead_paise": {
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Cost Per Lead Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source",
+        "cost_per_lead_paise"
+      ],
+      "title": "SourceCostIn",
+      "type": "object"
+    },
+    "SourceCostOut": {
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "cost_per_lead_paise": {
+          "title": "Cost Per Lead Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source",
+        "cost_per_lead_paise"
+      ],
+      "title": "SourceCostOut",
+      "type": "object"
+    },
+    "SourceCostsIn": {
+      "additionalProperties": false,
+      "properties": {
+        "costs": {
+          "items": {
+            "$ref": "#/$defs/SourceCostIn"
+          },
+          "maxItems": 50,
+          "title": "Costs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "costs"
+      ],
+      "title": "SourceCostsIn",
+      "type": "object"
+    },
+    "SourceFilter": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "pattern": "^[a-z0-9_.-]{1,64}$",
+          "title": "Source",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "new",
+                "contacted",
+                "qualified",
+                "disqualified"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Since"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "SourceFilter",
+      "type": "object"
+    },
+    "SourceRowOut": {
+      "properties": {
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "leads": {
+          "title": "Leads",
+          "type": "integer"
+        },
+        "first_touch_median_seconds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "First Touch Median Seconds"
+        },
+        "calls": {
+          "title": "Calls",
+          "type": "integer"
+        },
+        "connected_rate": {
+          "title": "Connected Rate",
+          "type": "number"
+        },
+        "interested_pct": {
+          "title": "Interested Pct",
+          "type": "number"
+        },
+        "bookings": {
+          "title": "Bookings",
+          "type": "integer"
+        },
+        "call_cost_paise": {
+          "title": "Call Cost Paise",
+          "type": "integer"
+        },
+        "lead_cost_paise": {
+          "title": "Lead Cost Paise",
+          "type": "integer"
+        },
+        "cost_per_booking_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cost Per Booking Paise"
+        }
+      },
+      "required": [
+        "source",
+        "leads",
+        "first_touch_median_seconds",
+        "calls",
+        "connected_rate",
+        "interested_pct",
+        "bookings",
+        "call_cost_paise",
+        "lead_cost_paise",
+        "cost_per_booking_paise"
+      ],
+      "title": "SourceRowOut",
+      "type": "object"
+    },
+    "TotalOut": {
+      "properties": {
+        "leads": {
+          "title": "Leads",
+          "type": "integer"
+        },
+        "calls": {
+          "title": "Calls",
+          "type": "integer"
+        },
+        "connected_rate": {
+          "title": "Connected Rate",
+          "type": "number"
+        },
+        "interested_pct": {
+          "title": "Interested Pct",
+          "type": "number"
+        },
+        "bookings": {
+          "title": "Bookings",
+          "type": "integer"
+        },
+        "call_cost_paise": {
+          "title": "Call Cost Paise",
+          "type": "integer"
+        },
+        "lead_cost_paise": {
+          "title": "Lead Cost Paise",
+          "type": "integer"
+        },
+        "cost_per_booking_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cost Per Booking Paise"
+        }
+      },
+      "required": [
+        "leads",
+        "calls",
+        "connected_rate",
+        "interested_pct",
+        "bookings",
+        "call_cost_paise",
+        "lead_cost_paise",
+        "cost_per_booking_paise"
+      ],
+      "title": "TotalOut",
+      "type": "object"
+    },
+    "UsageOut": {
+      "properties": {
+        "leads": {
+          "title": "Leads",
+          "type": "integer"
+        },
+        "calls_today": {
+          "title": "Calls Today",
+          "type": "integer"
+        },
+        "minutes_used": {
+          "title": "Minutes Used",
+          "type": "number"
+        }
+      },
+      "required": [
+        "leads",
+        "calls_today",
+        "minutes_used"
+      ],
+      "title": "UsageOut",
+      "type": "object"
+    },
+    "WhoContacts": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 2000,
+          "minItems": 1,
+          "title": "Contact Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contact_ids"
+      ],
+      "title": "WhoContacts",
+      "type": "object"
+    },
+    "WhoLeads": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 2000,
+          "minItems": 1,
+          "title": "Lead Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "lead_ids"
+      ],
+      "title": "WhoLeads",
+      "type": "object"
+    },
+    "WhoSource": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "$ref": "#/$defs/SourceFilter"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "WhoSource",
+      "type": "object"
+    }
+  }
+}

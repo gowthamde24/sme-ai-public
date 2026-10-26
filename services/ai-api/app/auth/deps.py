@@ -43,6 +43,7 @@ from app.orders.repository import OrdersRepository
 from app.outbox.adapter import ChannelAdapter
 from app.outbox.repository import OutboxRepository
 from app.outcomes.repository import OutcomesRepository
+from app.outreach.service import OutreachService
 from app.ownvoice.service import OwnVoiceService
 from app.packs.models import AuthProvidersOut
 from app.packs.registry import PackRegistry
@@ -146,6 +147,8 @@ class Runtime:
     dpdp: DpdpRuntime | None = None
     # job DS: how the assistant talks (everyday spoken style per language)
     speaking: SpeakingService | None = None
+    # job DR A3: speed to lead and approve once
+    outreach: OutreachService | None = None
 
 
 @dataclass(frozen=True)

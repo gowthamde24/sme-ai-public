@@ -581,6 +581,9 @@ begin
   -- job DP part 5: the consenting person's name and the sentence they read (the Owner's) carry canaries, erased with the workspace
   insert into public.own_voices (id, tenant_id, status, consenting_name, consent_sentence, consented_by, consented_at, bucket, sample_path, consent_path)
   values (tests.rid(p || '_er_ovc'), t, 'pending', 'Ovcq7 Person', 'I, Ovcq7 Person, allow Stack19 to create an AI voice of me for Ovcq7 Shop', tests.uid(p || '_owner'), now(), 'ovc-' || t::text, tests.rid(p || '_er_ovc')::text || '/sample.wav', tests.rid(p || '_er_ovc')::text || '/consent.wav');
+  -- job DR A3: what a call captured (the customer's words) and the one-line hand-off about them carry canaries, erased with the workspace and swept
+  insert into public.outcome_details (outcome_id, tenant_id, callback_at, captured) values (tests.rid(p || '_er_out'), t, now() + interval '1 day', '{"budget": "Oqdr7 50 lakh"}'::jsonb);
+  insert into public.outreach_handoffs (id, tenant_id, contact_id, assigned_to, summary) values (tests.rid(p || '_er_ho'), t, k, tests.uid(p || '_owner'), 'Hodr7 is interested in a site visit');
 end $$;
 
 -- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).

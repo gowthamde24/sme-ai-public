@@ -44,6 +44,9 @@ _SPEND = (
     ("POST", r"/payment-links/[^/]+/send"),
     ("POST", r"/missed-calls/[^/]+/handle"),
     ("POST", r"/campaigns/[^/]+/(approve|resume)"),
+    ("POST", r"/outreach/batches/[^/]+/(approve|resume)"),   # job DR A3: calling and messaging a whole batch
+    ("POST", r"/outreach/rules"),
+    ("POST", r"/outreach/rules/[^/]+/resume"),
     ("POST", r"/voice-notes/preview"),
     ("POST", r"/ai-assistant/test-call"),
     ("POST", r"/institution/marks-messages/send"),

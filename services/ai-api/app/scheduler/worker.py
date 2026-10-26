@@ -43,6 +43,8 @@ from app.observability.sentry import init_sentry
 from app.outbox.adapter import ChannelAdapter, build_adapter
 from app.outbox.service import media_signer
 from app.outbox.voice_hook import VoiceNotes
+from app.outreach.runner import OutreachRunner
+from app.outreach.wiring import build_outreach_runner
 from app.privacy.housekeeping import Housekeeping
 from app.privacy.repository import PostgrestPrivacyRepository
 from app.scheduler.repository import PostgrestSchedulerRepository, SchedulerRepository
@@ -82,6 +84,7 @@ class Worker:
         billing_pending_mail: PendingReminders | None = None,
         billing_trial_mail: TrialReminders | None = None,
         dpdp_jobs: DpdpJobs | None = None,
+        outreach: OutreachRunner | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -106,6 +109,8 @@ class Worker:
         self._billing_trial_mail = billing_trial_mail
         # job DQ (DPDP): the e-mails of the public privacy doors, the lapse warnings and erasures, the purge of old logs
         self._dpdp_jobs = dpdp_jobs
+        # job DR A3: new leads for the standing rules, the calls that are due (fake dialer only), the hand-off reminders
+        self._outreach = outreach
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -124,6 +129,7 @@ class Worker:
             self._billing_reminders(token)
             self._billing_trial_clocks(token)
             self._dpdp(token)
+            self._outreach_pass(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -180,6 +186,16 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("dpdp jobs crashed: %s", exc.__class__.__name__)
+
+    def _outreach_pass(self, token: str) -> None:
+        if self._outreach is None:
+            return
+        try:
+            self._outreach.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("outreach pass crashed: %s", exc.__class__.__name__)
 
     def _billing_trial_clocks(self, token: str) -> None:
         if self._billing_clocks is None:
@@ -258,6 +274,7 @@ def build_worker(settings: Settings) -> Worker:
         billing_trial_mail=TrialReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
         billing_clocks=BillingService(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_provider(settings)),
         dpdp_jobs=build_dpdp_jobs(settings, config.rest_url, config.anon_key, _billing_sender(settings)),
+        outreach=build_outreach_runner(settings, config.rest_url, config.anon_key),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,

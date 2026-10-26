@@ -8,12 +8,13 @@ export interface CategoryCountsOut {
   not_interested: number;
   wrong_number: number;
   too_costly: number;
+  already_bought: number;
   call_back_later: number;
 }
 
 export interface CustomerCorrectionIn {
   result: "positive" | "negative" | "unclear";
-  category?: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "call_back_later" | null;
+  category?: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "already_bought" | "call_back_later" | null;
   reason?: string | null;
 }
 
@@ -22,14 +23,16 @@ export interface CustomerOutcomeOut {
   channel: "call" | "whatsapp";
   at: string;
   result: "positive" | "negative" | "unclear";
-  category: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "call_back_later" | null;
+  category: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "already_bought" | "call_back_later" | null;
   reason: string | null;
   corrected: boolean;
+  callback_at?: string | null;
+  captured?: Record<string, boolean | number | string>;
 }
 
 export interface OutcomeCorrectionIn {
   outcome: "positive" | "negative" | "unclear";
-  category?: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "call_back_later" | null;
+  category?: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "already_bought" | "call_back_later" | null;
   reason?: string | null;
 }
 
@@ -47,7 +50,7 @@ export interface OutcomeIn {
   kind: "call" | "whatsapp_followup";
   source_id: string;
   outcome: "positive" | "negative" | "unclear";
-  category?: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "call_back_later" | null;
+  category?: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "already_bought" | "call_back_later" | null;
   reason?: string | null;
   occurred_at: string;
 }
@@ -65,15 +68,17 @@ export interface OutcomeOut {
   kind: "call" | "whatsapp_followup";
   source_id: string;
   outcome: "positive" | "negative" | "unclear";
-  category: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "call_back_later" | null;
+  category: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "already_bought" | "call_back_later" | null;
   reason: string | null;
   recorded_by: "ai" | "person";
   corrected: boolean;
   corrected_at: string | null;
   ai_outcome: "positive" | "negative" | "unclear" | null;
-  ai_category: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "call_back_later" | null;
+  ai_category: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "already_bought" | "call_back_later" | null;
   occurred_at: string;
   recorded_at: string;
+  callback_at?: string | null;
+  captured?: Record<string, boolean | number | string>;
 }
 
 export interface OutcomeRecordedOut {
@@ -83,15 +88,17 @@ export interface OutcomeRecordedOut {
   kind: "call" | "whatsapp_followup";
   source_id: string;
   outcome: "positive" | "negative" | "unclear";
-  category: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "call_back_later" | null;
+  category: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "already_bought" | "call_back_later" | null;
   reason: string | null;
   recorded_by: "ai" | "person";
   corrected: boolean;
   corrected_at: string | null;
   ai_outcome: "positive" | "negative" | "unclear" | null;
-  ai_category: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "call_back_later" | null;
+  ai_category: "interested" | "visit_booked" | "order_likely" | "not_interested" | "wrong_number" | "too_costly" | "already_bought" | "call_back_later" | null;
   occurred_at: string;
   recorded_at: string;
+  callback_at?: string | null;
+  captured?: Record<string, boolean | number | string>;
   replayed: boolean;
 }
 
