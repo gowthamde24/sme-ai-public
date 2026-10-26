@@ -390,6 +390,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('knowledge_facts',
    $$insert into public.knowledge_facts (id, tenant_id, kind, text, created_by) values (%2$L, %1$L, 'other', 'Generic fact', %5$L)$$,
    'text = text', $$delete from public.knowledge_facts where id = %2$L$$, false),
+  -- job DR / A2: 'integrations.lead_items' (a tenant ledger outside the public schema: no client can reach it, no audit trigger because of its volume, no personal data) is classified here by this note
   -- job DR / A2: lead sources and imports (written only by the intake functions; no module guard: every business type may receive leads)
   ('lead_sources',
    $$insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, token_hint, created_by) values (%2$L, %1$L, 'webhook', 'webhook', 'Generic source', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), 'abcd', %5$L)$$,
