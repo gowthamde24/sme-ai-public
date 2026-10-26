@@ -231,6 +231,7 @@ def world(db: FakeDb, llm: Scripted | None) -> tuple[Any, Scripted | None]:
     agents = SimpleNamespace(
         assistant_db=lambda token, run_id: db,
         assistant_llm=(lambda: llm) if llm is not None else None,
+        llm_for=lambda job: (lambda: llm) if llm is not None else None,
         unavailable=None,
     )
     client, _ = make_client(agents=agents, crm=CrmFake())  # type: ignore[arg-type]
