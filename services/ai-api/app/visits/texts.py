@@ -13,7 +13,7 @@ from typing import Literal
 from app.today.service import format_rupees
 
 IST = timezone(timedelta(hours=5, minutes=30))
-Language = Literal["en", "te", "hi", "kn", "ta"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
 Kind = Literal["confirmation", "reminder", "offer"]
 
 # languages whose templates a native reader has read. Empty until the owner's family has: every non-English message waits for a person.
@@ -25,6 +25,7 @@ WEEKDAYS: dict[str, tuple[str, ...]] = {  # Monday first (datetime.weekday())
     "hi": ("सोमवार", "मंगलवार", "बुधवार", "गुरुवार", "शुक्रवार", "शनिवार", "रविवार"),
     "kn": ("ಸೋಮವಾರ", "ಮಂಗಳವಾರ", "ಬುಧವಾರ", "ಗುರುವಾರ", "ಶುಕ್ರವಾರ", "ಶನಿವಾರ", "ಭಾನುವಾರ"),
     "ta": ("திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி", "ஞாயிறு"),
+    "ml": ("തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി", "ഞായർ"),
 }
 MONTHS: dict[str, tuple[str, ...]] = {
     "en": ("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"),
@@ -32,6 +33,7 @@ MONTHS: dict[str, tuple[str, ...]] = {
     "hi": ("जनवरी", "फ़रवरी", "मार्च", "अप्रैल", "मई", "जून", "जुलाई", "अगस्त", "सितंबर", "अक्टूबर", "नवंबर", "दिसंबर"),
     "kn": ("ಜನವರಿ", "ಫೆಬ್ರವರಿ", "ಮಾರ್ಚ್", "ಏಪ್ರಿಲ್", "ಮೇ", "ಜೂನ್", "ಜುಲೈ", "ಆಗಸ್ಟ್", "ಸೆಪ್ಟೆಂಬರ್", "ಅಕ್ಟೋಬರ್", "ನವೆಂಬರ್", "ಡಿಸೆಂಬರ್"),
     "ta": ("ஜனவரி", "பிப்ரவரி", "மார்ச்", "ஏப்ரல்", "மே", "ஜூன்", "ஜூலை", "ஆகஸ்ட்", "செப்டம்பர்", "அக்டோபர்", "நவம்பர்", "டிசம்பர்"),
+    "ml": ("ജനുവരി", "ഫെബ്രുവരി", "മാർച്ച്", "ഏപ്രിൽ", "മേയ്", "ജൂൺ", "ജൂലൈ", "ഓഗസ്റ്റ്", "സെപ്റ്റംബർ", "ഒക്ടോബർ", "നവംബർ", "ഡിസംബർ"),
 }  # fmt: skip
 
 # {when} = "<weekday>, <day> <month> at <time>" in the language's order; {amount} = "₹500.00".
@@ -73,6 +75,13 @@ TEMPLATES: dict[str, dict[str, str]] = {
         "offer": "உங்கள் ஆர்வத்திற்கு நன்றி. எங்கள் கடைக்கு உங்களை வரவேற்க மகிழ்ச்சி. உங்களுக்கு வசதியான நாள் மற்றும் நேரத்தை தெரிவிக்கவும்.",
         "advance": " இடத்திற்காக {amount} முன்பணம் தேவை.",
         "when": "{weekday}, {day}-{monthnum}-{year}, நேரம் {time}",
+    },
+    "ml": {
+        "confirmation": "നിങ്ങളുടെ സന്ദർശനം {when} ന് സ്ഥിരീകരിച്ചിരിക്കുന്നു. ഞങ്ങളുടെ കടയിൽ നിങ്ങളെ കാണാൻ കാത്തിരിക്കുന്നു. നിങ്ങളുടെ പദ്ധതി മാറിയാൽ ദയവായി ഞങ്ങളെ അറിയിക്കുക.",
+        "reminder": "ഓർമ്മപ്പെടുത്തൽ: നിങ്ങളുടെ സന്ദർശനം {when} ന് ആണ്. നിങ്ങളെ പ്രതീക്ഷിക്കുന്നു.",
+        "offer": "താൽപര്യം കാണിച്ചതിന് നന്ദി. ഞങ്ങളുടെ കടയിലേക്ക് നിങ്ങളെ സ്വാഗതം ചെയ്യാൻ സന്തോഷമുണ്ട്. നിങ്ങൾക്ക് സൗകര്യമുള്ള ദിവസവും സമയവും അറിയിക്കുക.",
+        "advance": " ഈ സമയം മാറ്റിവെക്കാൻ {amount} മുൻകൂർ വേണം.",
+        "when": "{weekday}, {day} {month}, സമയം {time}",
     },
 }  # fmt: skip
 

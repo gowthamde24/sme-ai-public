@@ -24,7 +24,7 @@ EXAMPLES = json.loads((CONTRACTS / "assistant_settings.examples.json").read_text
 PACKS = Path(__file__).resolve().parents[3] / "packages" / "packs"
 A = TENANT_A.id
 B = f"/v1/tenants/{A}/ai-assistant"
-LANGS = ("en", "te", "hi", "kn")
+LANGS = ("en", "te", "hi", "kn", "ta", "ml")
 STYLES = ("warm", "respectful", "quick")
 
 

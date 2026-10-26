@@ -89,7 +89,7 @@ select is(pg_temp.get('b_owner', 'b', 'voice_notes'), 'true', 'D1 the education 
 select is(pg_temp.get('b_owner', 'b', 'business_type'), 'education', 'D2 ...and says what business it is');
 select is(pg_temp.save('b_owner', 'b', pg_temp.edu() || '{"speed": 0.9, "call_from_minute": 630, "call_to_minute": 1185, "voice_persona": "male_calm", "main_language": "hi"}') is not null, true, 'D3 the Owner of b saves');
 select is((select speed::text || '/' || call_from_hour || '/' || call_to_hour from public.voice_settings where tenant_id = tests.tid('b')), '0.90/10/20', 'D4 the voice notes follow: speed 0.9, hours 10 and 20 (10:30 rounds down, 19:45 rounds up)');
-select is((select count(*)::int from public.voice_choices where tenant_id = tests.tid('b')), 5, 'D5 the persona''s voice is chosen for every language that has one');
+select is((select count(*)::int from public.voice_choices where tenant_id = tests.tid('b')), 6, 'D5 the persona''s voice is chosen for every language that has one');
 select is((select voice_code from public.voice_choices where tenant_id = tests.tid('b') and language = 'te'), 'fake-te', 'D6 ...the one the operator mapped');
 select is((select enabled from public.voice_settings where tenant_id = tests.tid('b')), true, 'D7 the switch of the voice notes is not touched');
 select is((select count(*)::int from public.voice_settings where tenant_id = tests.tid('a')), 0, 'D8 a business without voice notes gets no voice settings made by a save');
@@ -108,7 +108,7 @@ select is(pg_temp.save('b_owner', 'b', pg_temp.base()), 'ERR:22023', 'D17 the or
 select is(pg_temp.save('a_owner', 'a', pg_temp.base() || '{"may_talk_dues": true, "max_discount_percent": 9}') is not null and pg_temp.field('a', 'may_talk_dues') = 'true', true, 'D18 a shop may (the rule belongs to the business type)');
 
 -- ============================================================================ E. the voices of the personas
-select is(jsonb_array_length(pg_temp.val('a_owner', format($q$select public.assistant_voices(%L)::text$q$, tests.tid('a')))::jsonb), 20, 'E1 four personas in five languages (fake voices today)');
+select is(jsonb_array_length(pg_temp.val('a_owner', format($q$select public.assistant_voices(%L)::text$q$, tests.tid('a')))::jsonb), 24, 'E1 four personas in six languages (fake voices today)');
 select is(pg_temp.val('a_admin', format($q$select (public.assistant_voices(%L) -> 0 ->> 'synthetic')$q$, tests.tid('a'))), 'true', 'E2 an Admin reads them; they are machine voices');
 select is(pg_temp.val('a_sales', format($q$select public.assistant_voices(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'E3 DENY: a Sales person');
 select is(pg_temp.val('a_owner', $$select app.operator_set_voice_persona('female_warm', 'te', 'fake-te')$$), 'ERR:42501', 'E4 DENY: a client cannot map a voice (the operator''s)');

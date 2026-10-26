@@ -23,6 +23,7 @@ LANGUAGE_NAMES: dict[str, str] = {
     "hi": "Hindi",
     "kn": "Kannada",
     "ta": "Tamil",
+    "ml": "Malayalam",
 }
 
 
@@ -39,7 +40,7 @@ class FinalReply(BaseModel):
     # answer: an answer drawn from the tool results; refusal: it will not (or cannot) do what was asked; clarify: it needs one more thing from the owner
     kind: Literal["answer", "refusal", "clarify"]
     answer: str = Field(min_length=1, max_length=6000)
-    language: Literal["en", "te", "hi", "kn", "ta"]
+    language: Literal["en", "te", "hi", "kn", "ta", "ml"]
     # the handles (s1, s2, ...) of the tool results the answer rests on
     sources: list[str] = Field(default_factory=list, max_length=20)
 

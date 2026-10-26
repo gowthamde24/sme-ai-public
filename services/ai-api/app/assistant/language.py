@@ -1,6 +1,6 @@
 """Which language an owner wrote in, and whether a reply is in it. Pure functions, decided by SCRIPT (the Unicode block of the letters), not by a model.
 
-The assistant answers in the language of the owner's message: English, Telugu, Hindi, Kannada or Tamil. A message that mixes English words with an Indian script
+The assistant answers in the language of the owner's message: English, Telugu, Hindi, Kannada, Tamil or Malayalam. A message that mixes English words with an Indian script
 (very common) counts as that script's language when at least two fifths of its words are in it. A message in Latin letters only is English (a romanised sentence
 gets an English reply: the reply's script is what the check looks at). The code checks the reply too: a reply whose letters are not in the script of its stated
 language is refused and asked for again, whatever the model says it wrote in."""
@@ -10,20 +10,21 @@ from __future__ import annotations
 import unicodedata
 from typing import Literal
 
-Language = Literal["en", "te", "hi", "kn", "ta"]
-LANGUAGES: tuple[Language, ...] = ("en", "te", "hi", "kn", "ta")
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+LANGUAGES: tuple[Language, ...] = ("en", "te", "hi", "kn", "ta", "ml")
 
 _BLOCKS: dict[Language, tuple[int, int]] = {
     "hi": (0x0900, 0x097F),  # Devanagari
     "ta": (0x0B80, 0x0BFF),  # Tamil
     "te": (0x0C00, 0x0C7F),  # Telugu
     "kn": (0x0C80, 0x0CFF),  # Kannada
+    "ml": (0x0D00, 0x0D7F),  # Malayalam
 }
 INDIAN_SHARE = 0.25  # of all the letters of a REPLY (names and product words stay in Latin letters)
 
 
 def _counts(text: str) -> tuple[dict[Language, int], int]:
-    per: dict[Language, int] = {"en": 0, "hi": 0, "ta": 0, "te": 0, "kn": 0}
+    per: dict[Language, int] = {"en": 0, "hi": 0, "ta": 0, "te": 0, "kn": 0, "ml": 0}
     letters = 0
     for ch in text:
         category = unicodedata.category(ch)
@@ -75,7 +76,7 @@ def detect_language(text: str) -> Language:
     words = _tokens(text)
     if not words:
         return "en"
-    best: Language = max(("hi", "ta", "te", "kn"), key=lambda lang: words.count(lang))
+    best: Language = max(("hi", "ta", "te", "kn", "ml"), key=lambda lang: words.count(lang))
     return best if words.count(best) / len(words) >= INDIAN_WORD_SHARE else "en"
 
 
@@ -97,6 +98,7 @@ NO_ANSWER: dict[Language, str] = {
     "hi": "यह मुझे आपके रिकॉर्ड में नहीं मिला, इसलिए मैं अंदाज़ा नहीं लगाऊँगा।",
     "kn": "ಇದು ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ನನಗೆ ಸಿಗಲಿಲ್ಲ, ಹಾಗಾಗಿ ನಾನು ಊಹಿಸುವುದಿಲ್ಲ.",
     "ta": "இது உங்கள் பதிவுகளில் எனக்குக் கிடைக்கவில்லை, அதனால் நான் ஊகிக்க மாட்டேன்.",
+    "ml": "ഇത് നിങ്ങളുടെ രേഖകളിൽ എനിക്ക് കണ്ടെത്താനായില്ല, അതിനാൽ ഞാൻ ഊഹിച്ചു പറയില്ല.",
 }
 
 # What the assistant says in place of an answer that named a tool, a function or an internal field (see hygiene.py). Not model output.
@@ -106,6 +108,7 @@ PLAIN_WORDS: dict[Language, str] = {
     "hi": "मैं इसे साफ़ शब्दों में नहीं कह पाया। कृपया दूसरे शब्दों में फिर से पूछिए।",
     "kn": "ನನಗೆ ಇದನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಹೇಳಲು ಆಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಬೇರೆ ಮಾತುಗಳಲ್ಲಿ ಮತ್ತೆ ಕೇಳಿ.",
     "ta": "இதை எனக்குத் தெளிவாகச் சொல்ல முடியவில்லை. தயவுசெய்து வேறு வார்த்தைகளில் மீண்டும் கேளுங்கள்.",
+    "ml": "ഇത് വ്യക്തമായി പറയാൻ എനിക്ക് കഴിഞ്ഞില്ല. ദയവായി മറ്റു വാക്കുകളിൽ വീണ്ടും ചോദിക്കൂ.",
 }
 
 # job BP: said before the web pages an answer rests on (the answer's text is stored; a web page's address is what lets the owner check it later), and in place of a shop's name or address on the map,
@@ -116,6 +119,7 @@ WEB_SOURCES: dict[Language, str] = {
     "hi": "वेब से:",
     "kn": "ವೆಬ್‌ನಿಂದ:",
     "ta": "இணையத்திலிருந்து:",
+    "ml": "വെബിൽ നിന്ന്:",
 }
 SEE_CARDS: dict[Language, str] = {
     "en": "(see the cards)",
@@ -123,6 +127,7 @@ SEE_CARDS: dict[Language, str] = {
     "hi": "(कार्ड देखें)",
     "kn": "(ಕಾರ್ಡ್‌ಗಳನ್ನು ನೋಡಿ)",
     "ta": "(அட்டைகளைப் பாருங்கள்)",
+    "ml": "(കാർഡുകൾ കാണുക)",
 }
 
 # Said before the items an answer about "what is waiting for me" left out, which the code then adds from the tool's own list (see runner.py, job AO). Not model output.
@@ -132,4 +137,5 @@ WAITING_ALSO: dict[Language, str] = {
     "hi": "आपके लिए ये भी इंतज़ार कर रहे हैं:",
     "kn": "ನಿಮಗಾಗಿ ಇವು ಕೂಡ ಕಾಯುತ್ತಿವೆ:",
     "ta": "உங்களுக்காக இவையும் காத்திருக்கின்றன:",
+    "ml": "നിങ്ങൾക്കായി ഇവയും കാത്തിരിക്കുന്നു:",
 }

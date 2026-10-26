@@ -73,6 +73,7 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/packs/*" = ["E501"]
 "app/customfields/*" = ["E501"]
 "app/units.py" = ["E501"]
+"tests/test_dq_languages.py" = ["E501"]
 # job DP part 4: call settings read like the owner decision they implement (long lines)
 "app/callsettings/*" = ["E501"]
 "tests/test_dp_call_settings.py" = ["E501"]
