@@ -138,6 +138,7 @@ insert into exempt (tbl, why) values
   ('public.icp_config_versions', 'lead scoring configuration'), ('public.import_batches', 'lead import batches'), ('public.import_rows', 'lead import rows'), ('public.lead_labels', 'lead review'),
   ('public.memberships', 'the team'), ('public.outbox_events', 'the outbox: policy, not a module'), ('public.outbox_message_media', 'the outbox'), ('public.outbox_messages', 'the outbox'),
   ('public.own_voices', 'the owner''s own voice: every business type may have one (job DP)'),
+  ('public.tasks', 'tasks: every business type may give the assistant a task (job DR)'), ('public.task_contacts', 'tasks (job DR)'),
   ('public.outbox_settings', 'the outbox'), ('public.scheduler_runs', 'the scheduler'), ('public.scheduler_settings', 'the scheduler'), ('public.tenant_agent_settings', 'agent switches'),
   ('public.tenant_data_policy', 'the real-data gate'), ('suppression.contact_keys', 'suppression applies to every business'), ('suppression.key_events', 'suppression'),
   ('team.invitations', 'the team'), ('workspace.profiles', 'the workspace profile'),

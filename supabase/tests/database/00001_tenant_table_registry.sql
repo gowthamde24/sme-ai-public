@@ -458,6 +458,15 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, recorded_by_kind, recorded_by, occurred_at) values (%2$L, %1$L, %4$L, 'call', %2$L, 'unclear', null, 'person', %5$L, now())$$,
    'outcome = outcome', $$delete from public.outcomes where id = %2$L$$, false),
   -- job DP part 2: the marks-message send log (written only by the Owner's functions; guarded by the module `programmes`, which is OFF for the default pack of the fixture tenants: tests 11 and 12 call tests.cn_guards_off() first)
+  -- job DR B1: tasks ("Ask Vijaya to do it") and their people (written only by the task functions; no module guard: every business type may give the assistant a task)
+  ('tasks',
+   $$insert into public.tasks (id, tenant_id, instruction, language, created_by) values (%2$L, %1$L, 'Generic task', 'en', %5$L)$$,
+   'status = status', $$delete from public.tasks where id = %2$L$$, false),
+  ('task_contacts',
+   $$with tk as (insert into public.tasks (id, tenant_id, instruction, language, created_by) values (%2$L, %1$L, 'Generic task', 'en', %5$L) returning id),
+          ld as (select l.id as lead_id from public.leads l where l.tenant_id = %1$L order by l.id limit 1)
+     insert into public.task_contacts (id, tenant_id, task_id, contact_id, lead_id) select %2$L, %1$L, tk.id, %4$L, ld.lead_id from tk, ld$$,
+   'status = status', $$delete from public.task_contacts where id = %2$L$$, false),
   ('marks_send_log',
    $$insert into public.marks_send_log (id, tenant_id, batch_id, seq, contact_id, template_id, status, reason, approved_by) values (%2$L, %1$L, %2$L, 1, %4$L, 'marks.en', 'blocked', 'suppressed', %5$L)$$,
    'status = status', $$delete from public.marks_send_log where id = %2$L$$, true),
@@ -767,6 +776,10 @@ select t, r, s, i, u, d from (values
   ('ledger_accounts', 'sales', true, false, false, false), ('ledger_accounts', 'viewer', false, false, false, false),
   ('ledger_entries', 'owner', true, false, false, false), ('ledger_entries', 'admin', true, false, false, false),
   ('ledger_entries', 'sales', true, false, false, false), ('ledger_entries', 'viewer', false, false, false, false),
+  ('tasks', 'owner', true, false, false, false), ('tasks', 'admin', true, false, false, false),
+  ('tasks', 'sales', true, false, false, false), ('tasks', 'viewer', true, false, false, false),
+  ('task_contacts', 'owner', true, false, false, false), ('task_contacts', 'admin', true, false, false, false),
+  ('task_contacts', 'sales', true, false, false, false), ('task_contacts', 'viewer', true, false, false, false),
   ('campaigns', 'owner', true, false, false, false), ('campaigns', 'admin', true, false, false, false),
   ('campaigns', 'sales', true, false, false, false), ('campaigns', 'viewer', false, false, false, false),
   ('campaign_recipients', 'owner', true, false, false, false), ('campaign_recipients', 'admin', true, false, false, false),
