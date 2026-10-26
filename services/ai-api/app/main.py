@@ -126,6 +126,9 @@ from app.outbox.routes import router as outbox_router
 from app.outcomes.repository import PostgrestOutcomesRepository
 from app.outcomes.routes import customers_router as outcomes_customers_router
 from app.outcomes.routes import router as outcomes_router
+from app.outreach import errors as outreach_errors
+from app.outreach.routes import router as outreach_router
+from app.outreach.wiring import build_outreach
 from app.ownvoice import repository as own_voice_repo
 from app.ownvoice.repository import PostgrestOwnVoiceRepository
 from app.ownvoice.routes import router as own_voice_router
@@ -277,6 +280,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         lead_sources=build_lead_sources(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, key_ring
         ),
+        outreach=build_outreach(config.rest_url, config.anon_key),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         notifications=build_notifications(settings, config),
         research_web=build_research_web(settings),
@@ -423,6 +427,15 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     ),
     campaign_errors.CampaignNotReadyError: ApiError(
         409, "campaign_not_ready", "The campaign is not ready to approve."
+    ),
+    # Speed to lead and approve once (job DR A3). Fixed sentences: nothing from the data layer.
+    outreach_errors.OutreachStateError: ApiError(
+        409, "outreach_state", "That is not possible in the state it is in now."
+    ),
+    outreach_errors.PlanChangedError: ApiError(
+        409,
+        "plan_changed",
+        "The plan changed since you looked at it. Look at it again before approving.",
     ),
     # Education: programmes, students, admissions, fees (job CR). Fixed sentences only.
     education_errors.AdmissionNumberUsedError: ApiError(
@@ -1057,6 +1070,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(knowledge_router)
     app.include_router(lead_sources_router)
     app.include_router(lead_intake_router)
+    app.include_router(outreach_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)

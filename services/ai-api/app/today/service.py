@@ -68,6 +68,10 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         return "A WhatsApp message to a customer is waiting for your approval."
     if kind == "call_approval":
         return "A request to phone a customer is waiting for your approval."
+    if kind == "outreach_paused":
+        return "Calling is paused: you reached the minutes you allowed." if ref == "cap_minutes" else "Calling is paused: you reached the day's limit."
+    if kind == "hot_lead_waiting":
+        return "An interested customer is waiting: nobody has called back yet."
     held = format_rupees(amount) if amount is not None else "money"
     return f"Order {ref} is closed but still holds {held}. A refund may be owed."
 

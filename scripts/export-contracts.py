@@ -19,6 +19,7 @@ from app.leadspack import contracts as leads_pack
 from app.marksmessages import contracts as marks_messages
 from app.materials import contracts as materials
 from app.outcomes import contracts as outcomes
+from app.outreach import contracts as outreach
 from app.ownvoice import contracts as own_voice
 from app.packs import contracts as packs
 from app.reports import contracts as reports
@@ -66,6 +67,8 @@ ROOT = Path(__file__).resolve().parents[1]
 (ROOT / "packages/contracts/leads_pack.ts").write_text(leads_pack.ts_text())
 (ROOT / "packages/contracts/lead_sources.schema.json").write_text(lead_sources.schema_text())
 (ROOT / "packages/contracts/lead_sources.ts").write_text(lead_sources.ts_text())
+(ROOT / "packages/contracts/outreach.schema.json").write_text(outreach.schema_text())
+(ROOT / "packages/contracts/outreach.ts").write_text(outreach.ts_text())
 print(
     "wrote packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.schema.json "
     "and {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.ts"

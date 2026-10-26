@@ -591,6 +591,9 @@ begin
   values (tests.rid(p || '_er_ksrc'), t, 'file', 'Knwq7 brochure', 'knwq7-brochure.pdf', 'application/pdf', 'Knwq7 Traders, open all week', 28, 'read', tests.uid(p || '_owner'));
   insert into public.knowledge_facts (id, tenant_id, source_id, kind, text, created_by)
   values (tests.rid(p || '_er_kfact'), t, tests.rid(p || '_er_ksrc'), 'hours', 'Knwq7 Traders is open all week', tests.uid(p || '_owner'));
+  -- job DR A3: what a call captured (the customer's words) and the one-line hand-off about them carry canaries, erased with the workspace and swept
+  insert into public.outcome_details (outcome_id, tenant_id, callback_at, captured) values (tests.rid(p || '_er_out'), t, now() + interval '1 day', '{"budget": "Oqdr7 50 lakh"}'::jsonb);
+  insert into public.outreach_handoffs (id, tenant_id, contact_id, assigned_to, summary) values (tests.rid(p || '_er_ho'), t, k, tests.uid(p || '_owner'), 'Hodr7 is interested in a site visit');
 end $$;
 
 -- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).

@@ -265,7 +265,7 @@ def test_the_customer_page_list_is_c2s_shape_newest_first() -> None:
     client.post(B, json=body(lead_id=str(uuid.uuid4())), headers=auth("a_owner"))
     rows = client.get(f"/v1/tenants/{A}/customers/{LEAD}/outcomes", headers=auth("a_sales")).json()
     assert [r["channel"] for r in rows] == ["whatsapp", "call"] and rows[0]["result"] == "negative" and rows[0]["at"].startswith("2026-10-21")
-    assert set(rows[0]) == {"id", "channel", "at", "result", "category", "reason", "corrected"}
+    assert set(rows[0]) == {"id", "channel", "at", "result", "category", "reason", "corrected", "callback_at", "captured"}
     assert all(re.fullmatch(r"[a-z0-9-]{1,40}", r["id"]) for r in rows)
     assert client.get(f"/v1/tenants/{A}/customers/{LEAD}/outcomes", headers=auth("a_viewer")).status_code == 403, "Owner, Admin and Sales (C2's rule)"
     assert client.get(f"/v1/tenants/{A}/customers/nope/outcomes", headers=auth("a_owner")).status_code == 404

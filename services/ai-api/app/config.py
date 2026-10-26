@@ -198,6 +198,10 @@ class Settings(BaseSettings):
     # WhatsApp voice notes (needs SARVAM_API_KEY). A VOICE_STT_PROVIDER / VOICE_TTS_PROVIDER /
     # VOICE_NOTE_TTS_PROVIDER named explicitly still wins over it.
     speech_provider: str = ""
+    # Night 4 (ADR 0108): who makes the calls of speed to lead. "" = nobody (calls wait; new leads
+    # and hand-off reminders still run), "fake" = a table-driven fake that dials nobody (staging
+    # and development, chosen explicitly). No real telephony exists yet.
+    outreach_dialer: str = ""
     # Job DJ (ADR 0093): the speech of WhatsApp VOICE NOTES (the worker). auto = Sarvam when
     # SARVAM_API_KEY is set, else VOICE_TTS_PROVIDER when it names one, else the fake provider in
     # development and none elsewhere (the text then goes alone); off | fake (development only) |

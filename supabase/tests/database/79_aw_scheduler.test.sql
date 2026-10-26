@@ -85,6 +85,8 @@ select is((select count(*) from unnest(array['anon', 'authenticated', 'service_r
 select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
             where n.nspname = 'public' and p.proname like 'scheduler\_%' and p.prosecdef and 'search_path=""' = any (p.proconfig)), 36::bigint,
           'the eleven scheduler functions (and the three the connectors added, job BZ, the campaign run, job CP, the student retention, job CR, the two voice-note calls, job CV, and the two billing-reminder calls, job DI, and the four trial-clock and pending-reminder calls, job DM, and the five public-intake and lapse-erasure calls, job DQ, and the five lead-intake and sheet-sync calls, job DR) are SECURITY DEFINER with an empty search_path');
+            where n.nspname = 'public' and p.proname like 'scheduler\_%' and p.prosecdef and 'search_path=""' = any (p.proconfig)), 34::bigint,
+          'the eleven scheduler functions (and the three the connectors added, job BZ, the campaign run, job CP, the student retention, job CR, the two voice-note calls, job CV, and the two billing-reminder calls, job DI, and the four trial-clock and pending-reminder calls, job DM, and the five public-intake and lapse-erasure calls, job DQ, and the three speed-to-lead calls, job DR) are SECURITY DEFINER with an empty search_path');
 select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
             where n.nspname = 'public' and p.proname like 'scheduler\_%' and has_function_privilege('anon', p.oid, 'execute')), 0::bigint, 'anon cannot execute any scheduler function');
 select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
