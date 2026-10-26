@@ -156,7 +156,7 @@ def build_request(conv: Conversation, job: str, max_output_tokens: int) -> LlmRe
 
 # ------------------------------------------------------------------------------------------------ the rules, checked by code
 def _numbers(text: str) -> set[str]:
-    folded = text.translate(INDIC_DIGITS).replace(",", "")
+    folded = re.sub(r":00(?!\d)", "", text.translate(INDIC_DIGITS)).replace(",", "")   # "10:00" is the hour 10 (the rule must not read the 00 as a number)
     return set(re.findall(r"\d+", folded))
 
 

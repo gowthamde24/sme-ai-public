@@ -124,6 +124,8 @@ def test_rules_language_script_and_digits() -> None:
     assert compare.check(c, "whatsapp_reply", "అవును, ధర 9999 రూపాయలు.")["stays_in_data"] is False, "an invented number is a failure"
     assert compare.check(c, "whatsapp_reply", "అవును, ధర 8,500 రూపాయలు.")["stays_in_data"] is True
     assert compare.check(c, "whatsapp_reply", "అవును, ఉంది. రాత్రి 8 వరకు తెరిచి ఉంటాం.")["stays_in_data"] is True, "the closing time said the 12-hour way is fine"
+    assert compare.check(c, "whatsapp_reply", "అవును, ఉంది. 10:00 నుండి 20:00 వరకు తెరిచి ఉంటుంది.")["stays_in_data"] is True, "10:00 is the hour 10"
+    assert compare.check(c, "whatsapp_reply", "అవును, ఉంది. 10:30 వరకు.")["stays_in_data"] is False
     assert compare.check(c, "whatsapp_reply", "అవును, ధర ఎనిమిది వేల ఐదు వందలు.")["gives_listed_fact"] is None, "spelled-out numbers: the rule cannot decide, a person reads it"
     assert compare.check(c, "whatsapp_reply", "అవును, 7 ఉన్నాయి.")["gives_listed_fact"] is False
 
@@ -266,3 +268,24 @@ def test_the_script_calls_only_claude_haiku_and_a_dry_run_reads_no_key(tmp_path:
     monkeypatch.setattr(script, "secret", boom)
     script.run(tmp_path, None, limit=None, dry=True)
     assert not (tmp_path / "raw.json").exists()
+
+
+def test_retry_truncated_repeats_only_the_calls_that_hit_their_limit_with_more_room(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    script = load_script()
+    monkeypatch.setattr(script.time, "sleep", lambda s: None)
+    sizes: list[int] = []
+
+    class Truncated(Scripted):
+        def complete(self, request: LlmRequest) -> LlmResponse:
+            sizes.append(request.max_output_tokens)
+            self.calls += 1
+            if request.max_output_tokens < 2000:   # ran into its limit: no tool call, every token used
+                return LlmResponse((), None, Usage(100, request.max_output_tokens, 500))
+            return LlmResponse((), {"text": "అవును"}, Usage(100, 60, 500))
+
+    claude, sarvam = Truncated("x"), Scripted("సరే")
+    raw = script.run(tmp_path, {"claude": claude, "sarvam": sarvam}, limit=1, dry=False)
+    assert {v["error"] for k, v in raw.items() if k.startswith("claude")} == {"no_reply_tool_call"} and claude.calls == 2
+    raw = script.run(tmp_path, {"claude": claude, "sarvam": sarvam}, limit=1, dry=False, retry_truncated=True)
+    assert claude.calls == 4 and sarvam.calls == 2, "only the truncated Claude calls were repeated, Sarvam's good replies were not"
+    assert {v["error"] for k, v in raw.items() if k.startswith("claude")} == {None} and sizes[-1] == script.CLAUDE_OUT_RETRY

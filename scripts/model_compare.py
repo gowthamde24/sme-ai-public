@@ -33,6 +33,7 @@ from app.agents.llm.openai_compat import ChatCompletionsClient, sarvam_config  #
 PROJECT = "project-2757c07e-37d2-4167-88f"
 DEFAULT_OUT = Path.home() / "Desktop" / "stack19-jobs" / "model-compare"
 CLAUDE_OUT, SARVAM_OUT = 900, 1500   # output limits per call
+CLAUDE_OUT_RETRY, SARVAM_OUT_RETRY = 2400, 3500   # for a call that ran into the limit (--retry-truncated): Kannada on Claude and the reasoning of Sarvam 105B need more room
 CLAUDE_PRICE = (9_000_000, 45_000_000)    # micro-rupees per million tokens: Haiku 5.5 at $0.10 in / $0.50 out, 90 rupees to the dollar (the staging prices)
 SARVAM_PRICE = (15_000_000, 60_000_000)   # Rs 15 in, Rs 60 out per million tokens (sarvam.ai/api-pricing)
 
@@ -67,20 +68,29 @@ def save(out: Path, raw: dict, usage: dict) -> None:
     (out / "usage.json").write_text(json.dumps(usage, indent=1))
 
 
-def run(out: Path, clients: dict[str, LlmClient] | None, *, limit: int | None, dry: bool, sleep: float = 0.3) -> dict:
+def run(out: Path, clients: dict[str, LlmClient] | None, *, limit: int | None, dry: bool, sleep: float = 0.3, retry_truncated: bool = False) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     raw, usage = load(out)
     budget = TokenBudget(SARVAM_TOKEN_CAP, usage["sarvam_tokens_total"])
+    bigger: set[str] = set()
+    if retry_truncated:   # the calls that stopped at their output limit are made again with more room (the first attempt's tokens stay in the totals)
+        for key, item in list(raw.items()):
+            first = SARVAM_OUT if item["model"] == "sarvam" else CLAUDE_OUT
+            if item["error"] == "no_reply_tool_call" and item["output_tokens"] >= first * 0.95:
+                bigger.add(key)   # the first attempt stays in raw.json until a retry replaces it (a retry the cap does not allow leaves it as it was)
     convs = compare.conversations()[:limit]
-    todo = [(c, job, m) for c in convs for job in JOBS for m in ("claude", "sarvam") if f"{m}|{job}|{c.id}" not in raw]
+    todo = [(c, job, m) for c in convs for job in JOBS for m in ("claude", "sarvam") if f"{m}|{job}|{c.id}" not in raw or f"{m}|{job}|{c.id}" in bigger]
     print(f"{len(convs)} conversations x {len(JOBS)} jobs x 2 models; {len(todo)} calls to make; Sarvam tokens already spent: {budget.used} of {SARVAM_TOKEN_CAP}")
     if dry:
         return raw
     assert clients is not None
     this_run = {"claude": 0, "sarvam": 0, "calls": 0, "stopped_at_cap": False}
+    todo.sort(key=lambda t: t[2] != "claude")   # the cheap model first, so the Sarvam cap is the only thing that can leave a call undone
     for conv, job, model in todo:
-        request = compare.build_request(conv, job, SARVAM_OUT if model == "sarvam" else CLAUDE_OUT)
-        if model == "sarvam" and not budget.allows(compare.estimate_input_tokens(request) + SARVAM_OUT):
+        key = f"{model}|{job}|{conv.id}"
+        limit_out = (SARVAM_OUT_RETRY if model == "sarvam" else CLAUDE_OUT_RETRY) if key in bigger else (SARVAM_OUT if model == "sarvam" else CLAUDE_OUT)
+        request = compare.build_request(conv, job, limit_out)
+        if model == "sarvam" and not budget.allows(compare.estimate_input_tokens(request) + limit_out):
             this_run["stopped_at_cap"] = True
             continue   # a later (shorter) call may still fit; the cap itself is never passed
         started = time.monotonic()
@@ -97,7 +107,7 @@ def run(out: Path, clients: dict[str, LlmClient] | None, *, limit: int | None, d
         latency = int((time.monotonic() - started) * 1000)
         result = Result(conv.id, job, model, reply, error, latency, tin, tout, cost)
         result.rules = compare.check(conv, job, reply)
-        raw[f"{model}|{job}|{conv.id}"] = asdict(result)
+        raw[key] = asdict(result)
         if model == "sarvam":
             budget.spend(tin + tout)
         this_run[model] += tin + tout
@@ -162,7 +172,11 @@ def report(out: Path, raw: dict, usage: dict) -> None:
         for r in paired[m]:
             if r.failed_rules() or r.error:
                 lines.append(f"- {m} {r.conv_id} {r.job}: {', '.join(r.failed_rules()) or r.error}")
-    lines += ["", "Read side-by-side.html for the wording itself: the rules cannot judge naturalness, politeness or whether a native speaker would say it that way."]
+    lines += ["", "## How to read this", "",
+              "- A call that ran into its output limit (Kannada runs long on Claude's tokenizer; Sarvam 105B spends many tokens reasoning before it answers) was made again with a larger limit (Claude 2400, Sarvam 3500) when the cap allowed. Cost per 1,000 turns counts the final attempt only; every first attempt's tokens are in usage.json.",
+              "- The rules read digits, scripts and a few fixed words. They cannot read number words (a reply that spells the price out is 'not decided' for the price rule), nor judge grammar, politeness or whether a native speaker would say it. That is what the side-by-side page is for.",
+              "- Latency is the whole call from this laptop, one call at a time; a live call needs a first word within about a second or two, which neither model gives without streaming.", "",
+              "Read side-by-side.html for the wording itself: the rules cannot judge naturalness, politeness or whether a native speaker would say it that way."]
     (out / "results.md").write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines[:22]))
 
@@ -172,9 +186,10 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--retry-truncated", action="store_true", help="make again, with a larger output limit, the calls that stopped at their limit")
     args = ap.parse_args()
     clients = None if args.dry_run else build_clients()
-    raw = run(args.out, clients, limit=args.limit, dry=args.dry_run)
+    raw = run(args.out, clients, limit=args.limit, dry=args.dry_run, retry_truncated=args.retry_truncated)
     if not args.dry_run:
         report(args.out, raw, load(args.out)[1])
 
