@@ -9,7 +9,7 @@ import { readUsageCached } from "@/lib/topups/source";
  * Today's two cards for the minutes and messages running out (night 4, part F2): the "Needs you" card at 80 and 100 percent and "12 leads waiting for calls · Top up". Markup only, no script, nothing at all while TOPUP_SCREENS is off or
  * both meters are below 80 percent and no call waits. Owner and Admin only (the usage is theirs; the caller checks). A read that fails draws nothing.
  */
-export async function TopupsToday({ token, tenantId, lang, owner }: { token: string; tenantId: string; lang: Lang; owner: boolean }) {
+export async function topupsToday({ token, tenantId, lang, owner }: { token: string; tenantId: string; lang: Lang; owner: boolean }) {
   if (topupScreens() === "off") return null;
   const usage = await readUsageCached(token, tenantId).catch(() => null);
   if (!usage) return null;

@@ -71,7 +71,7 @@ import { FAKE_CHECKOUT, planScreens } from "@/lib/plan/flag";
 import { CATALOGUE, planById } from "@/lib/plan/catalogue";
 import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
 import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, startPlanAction } from "../plan-actions";
-import { TopupsPart } from "./topups-part";
+import { topupsPart } from "./topups-part";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -199,6 +199,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   const planCtx = { token: user.accessToken, tenantId };
   const [workspacePlan, planCatalogue] = section === "plan" ? await Promise.all([readWorkspacePlan(planCtx), readCatalogue(planCtx)]) : [null, null];
+  const topups = section === "plan" ? await topupsPart({ token: user.accessToken, tenantId, lang, owner: tenant.role === "owner", plan: workspacePlan, catalogue: planCatalogue }) : null;
   const assistant = section === "assistant" ? await readAssistant({ token: user.accessToken, tenantId }, pack?.modules ?? null) : null;
   // under the assistant (job DP): its own voice, with consent, and the advanced call settings; each behind its own flag, the Owner only
   const assistantCtx = { token: user.accessToken, tenantId };
@@ -278,7 +279,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             actions={{ start: startPlanAction.bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: planScreens() === "mock" ? fixPlanPaymentAction.bind(null, tenantId) : null, endTrial: planScreens() === "mock" ? endPlanTrialAction.bind(null, tenantId) : null }}
           />
         ) : null}
-        {section === "plan" ? <TopupsPart token={user.accessToken} tenantId={tenantId} lang={lang} owner={tenant.role === "owner"} plan={workspacePlan} catalogue={planCatalogue} /> : null}
+        {topups}
         {section === "assistant" && assistant ? (
           <>
             {assistant.mode === "unavailable" ? (

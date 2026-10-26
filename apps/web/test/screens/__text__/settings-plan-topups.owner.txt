@@ -1,0 +1,63 @@
+# Settings
+[button type=button: Help for this screen]
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=plan current=page) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Automation](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Usage and top-ups"}
+## Usage and top-ups
+Call minutes and the WhatsApp messages your business starts are counted for each month. AI itself is included (fair use).
+{role=note} Test mode: no money is taken and nothing is charged. Amounts marked test price are only for trying the screens.
+This month: 1 Oct to 31 Oct. 26 days left. Call minutes 241.5 of 300 used
+{role=meter label="Call minutes"}
+80% used · 58.5 left At this pace it runs out on 7 Oct. WhatsApp messages you start 120 of 300 used
+{role=meter label="WhatsApp messages you start"}
+40% used · 180 left At this pace it runs out on 14 Oct.
+{role=status} Your calls are at 80% of this month's minutes. At this pace they run out on 7 Oct.
+{label="Top up"}
+### Top up
+Add call minutes
+-
+[button type=button: +100 minutestest price ₹472 with GST]
+-
+[button type=button: +300 minutestest price ₹1,274.40 with GST]
+-
+[button type=button: +1,000 minutestest price ₹3,776 with GST]
+Add WhatsApp messages
+-
+[button type=button: +100 messagestest price ₹82.60 with GST]
+-
+[button type=button: +300 messagestest price ₹212.40 with GST]
+-
+[button type=button: +1,000 messagestest price ₹649 with GST]
+Unused top-up units carry over for 90 days. Your plan's own allowance starts again each month. Your plan's allowance is used first, then the oldest top-up.
+{label="Auto top-up"}
+### Auto top-up
+Off until you turn it on. When minutes or messages are used up, it buys the pack you choose, and never goes past your monthly limit.
+<checkbox label="Top up by itself when they run outOff">
+Top up by itself when they run out Off
+### Pay per use after the packs
+Off until you turn it on. Calls and messages carry on and are charged per use, up to your monthly limit. At the limit they wait again. Billed once when the month ends.
+<checkbox label="Pay per minute when minutes run outOff">
+Pay per minute when minutes run out Off
+<checkbox label="Pay per message when messages run outOff">
+Pay per message when messages run out Off
+[button type=submit: Save]
+{label="Upgrade this month"}
+### Upgrade this month
+Move to a bigger plan now. You pay only the difference for the days left, and the new allowance starts at once. Your plan now: Lead Desk 300 Move to
+<select label="Move to">
+  options: Choose a plan=* | Lead Desk 1,000=calls_1000
+[button type=button disabled: See the difference]
+{label="Test only: set the pretend usage"}
+### Test only: set the pretend usage
+Changes the pretend usage so you can see the notices and the queue.
+[button type=button: Set to 50%]
+[button type=button: Set to 80%]
+[button type=button: Set to 100%]
+[button type=button: New month]
+{label="Bought and invoices"}
+## Bought and invoices
+{label="Top-ups bought"}
+### Top-ups bought
+Nothing bought yet.
+{label="Invoices"}
+### Invoices
+No invoices yet.

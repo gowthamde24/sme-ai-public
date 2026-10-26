@@ -993,5 +993,22 @@ add({ id: "report-run-funnel", roles: ["admin"], render: runPage("education.funn
 // -- scenarios: tasks (web/dr-tasks)
 // -- scenarios: import and lead sources (web/dr-leads-import)
 // -- scenarios: top-ups (web/ds-topups)
+// Night 4 F2 (TOPUP_SCREENS=mock): Settings > Plan with Usage and top-ups, and Today. The fake provider's cookie cannot be read outside a request, so every scenario shows its review default (80 percent of the minutes); the other states are in the unit tests.
+const withEnv = async <T,>(vars: Record<string, string>, run: () => Promise<T>): Promise<T> => {
+  const before = Object.fromEntries(Object.keys(vars).map((k) => [k, process.env[k]]));
+  Object.assign(process.env, vars);
+  try {
+    return await run();
+  } finally {
+    for (const [k, v] of Object.entries(before)) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+  }
+};
+// (the Plan part's own fake provider reads a cookie without a guard, so these scenarios turn only TOPUP_SCREENS on: Settings then shows just the usage and top-ups)
+const TOPUP_ENV = { TOPUP_SCREENS: "mock" };
+add({ id: "settings-plan-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "plan" }))), handlers: (role) => ({ ...base(role), getBusinessProfile: () => ({ gstin: null, state: null }) }) });
+add({ id: "today-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, todayPage()), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 // -- scenarios: lead desk site (web/ds-lead-desk)
 // -- scenarios: leads core (web/dr-leads)

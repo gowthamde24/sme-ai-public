@@ -37,7 +37,10 @@ function Switch({ t, id, label, checked, onChange, disabled }: { t: Say; id: str
  */
 export function TopupControls({ words, packs, settings, upgrades, currentName, canChange, readOnly, mock, actions }: { words: Words; packs: readonly Pack[]; settings: TopupSettings; upgrades: readonly UpgradeTarget[]; currentName: string | null; canChange: boolean; readOnly: boolean; mock: boolean; actions: TopupActions }) {
   const t = makeT(words);
-  const move = useTopupMove(t);
+  const move = useTopupMove(t); // the checkout sheet
+  const saveMove = useTopupMove(t);
+  const upMove = useTopupMove(t);
+  const simMove = useTopupMove(t);
   const [sheet, setSheet] = React.useState<Sheet | null>(null);
   const [done, setDone] = React.useState<string | null>(null);
   const [saved, setSaved] = React.useState(false);
@@ -93,10 +96,10 @@ export function TopupControls({ words, packs, settings, upgrades, currentName, c
   const doPreview = async () => {
     setPreview(null);
     if (!target) return;
-    move.setError(null);
+    upMove.setError(null);
     const r = await actions.preview(target).catch(() => ({ ok: false as const, error: "not_available" as const }));
     if (r.ok) setPreview(r.preview);
-    else move.setError(t(`tu.err.${r.error}`));
+    else upMove.setError(t(`tu.err.${r.error}`));
   };
   const upgradeSheet = (p: UpgradePreview, name: string) => {
     const total = p.totalPaise ?? 0;
@@ -120,14 +123,14 @@ export function TopupControls({ words, packs, settings, upgrades, currentName, c
     e.preventDefault();
     setSaved(false);
     setFormError(null);
-    move.setError(null);
+    saveMove.setError(null);
     const aCap = autoCap.trim() === "" ? 0 : rupeesToPaise(autoCap);
     const oCap = overCap.trim() === "" ? 0 : rupeesToPaise(overCap);
     if (aCap === null || oCap === null) return setFormError(t("tu.err.invalid"));
     if (autoOn && !autoMin && !autoMsg) return setFormError(t("tu.set.pick_pack"));
     if ((autoOn && aCap <= 0) || ((overMin || overMsg) && oCap <= 0)) return setFormError(t("tu.err.cap_required"));
     const input: SettingsInput = { autoMinutesPack: autoOn && autoMin ? autoMin : null, autoMessagesPack: autoOn && autoMsg ? autoMsg : null, autoMonthlyCapPaise: aCap, overageMinutes: overMin, overageMessages: overMsg, overageMonthlyCapPaise: oCap };
-    if (await move.run(() => actions.save(input))) setSaved(true);
+    if (await saveMove.run(() => actions.save(input))) setSaved(true);
   };
 
   const byKind = (kind: Pack["kind"]) => packs.filter((p) => p.kind === kind);
@@ -167,7 +170,7 @@ export function TopupControls({ words, packs, settings, upgrades, currentName, c
           {t("tu.auto.title")}
         </h3>
         <p className={fieldHelp}>{t("tu.auto.sub")}</p>
-        <Switch t={t} id="tu-auto" label={t("tu.auto.switch")} checked={autoOn} disabled={move.busy} onChange={(v) => {
+        <Switch t={t} id="tu-auto" label={t("tu.auto.switch")} checked={autoOn} disabled={saveMove.busy} onChange={(v) => {
           setAutoOn(v);
           if (v && !autoMin && !autoMsg) setAutoMin(byKind("call_minutes")[0]?.code ?? "");
         }} />
@@ -204,8 +207,8 @@ export function TopupControls({ words, packs, settings, upgrades, currentName, c
 
         <h3 className="mt-6 font-display text-lg font-semibold">{t("tu.over.title")}</h3>
         <p className={fieldHelp}>{t("tu.over.sub")}</p>
-        <Switch t={t} id="tu-over-minutes" label={t("tu.over.minutes")} checked={overMin} disabled={move.busy} onChange={setOverMin} />
-        <Switch t={t} id="tu-over-messages" label={t("tu.over.messages")} checked={overMsg} disabled={move.busy} onChange={setOverMsg} />
+        <Switch t={t} id="tu-over-minutes" label={t("tu.over.minutes")} checked={overMin} disabled={saveMove.busy} onChange={setOverMin} />
+        <Switch t={t} id="tu-over-messages" label={t("tu.over.messages")} checked={overMsg} disabled={saveMove.busy} onChange={setOverMsg} />
         {overMin || overMsg ? (
           <div className="mt-2">
             <label htmlFor="tu-over-cap" className={fieldLabel}>
@@ -218,7 +221,7 @@ export function TopupControls({ words, packs, settings, upgrades, currentName, c
         ) : null}
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <button type="submit" className={btnMain} disabled={move.busy}>
+          <button type="submit" className={btnMain} disabled={saveMove.busy}>
             {t("tu.set.save")}
           </button>
           {saved ? (
@@ -227,9 +230,9 @@ export function TopupControls({ words, packs, settings, upgrades, currentName, c
             </span>
           ) : null}
         </div>
-        {formError || (move.error && !sheet) ? (
+        {formError || saveMove.error ? (
           <p role="alert" className="mt-2 text-sm font-medium text-red-text">
-            {formError ?? move.error}
+            {formError ?? saveMove.error}
           </p>
         ) : null}
       </form>
@@ -266,7 +269,7 @@ export function TopupControls({ words, packs, settings, upgrades, currentName, c
                   ))}
                 </select>
               </div>
-              <button type="button" className={btnQuiet} disabled={!target || move.busy} onClick={doPreview}>
+              <button type="button" className={btnQuiet} disabled={!target || upMove.busy} onClick={doPreview}>
                 {t("tu.up.see")}
               </button>
             </div>
@@ -290,15 +293,15 @@ export function TopupControls({ words, packs, settings, upgrades, currentName, c
                 </p>
                 <p className="text-sm text-muted">{t("tu.up.same")}</p>
                 <div className="mt-3">
-                  <button type="button" className={`${btnMain}`} disabled={move.busy} onClick={() => upgradeSheet(preview, upgrades.find((u) => u.id === preview.toPlanId)?.name ?? preview.toPlanId)}>
+                  <button type="button" className={`${btnMain}`} disabled={upMove.busy} onClick={() => upgradeSheet(preview, upgrades.find((u) => u.id === preview.toPlanId)?.name ?? preview.toPlanId)}>
                     {t("tu.up.go", { name: upgrades.find((u) => u.id === preview.toPlanId)?.name ?? preview.toPlanId })}
                   </button>
                 </div>
               </div>
             ) : null}
-            {move.error && !sheet ? (
+            {upMove.error ? (
               <p role="alert" className="mt-2 text-sm font-medium text-red-text">
-                {move.error}
+                {upMove.error}
               </p>
             ) : null}
           </>
@@ -313,14 +316,19 @@ export function TopupControls({ words, packs, settings, upgrades, currentName, c
           <p className={fieldHelp}>{t("tu.sim.note")}</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {[50, 80, 100].map((p) => (
-              <button key={p} type="button" className={btnQuiet} disabled={move.busy} onClick={() => void move.run(() => actions.simulate!(p))}>
+              <button key={p} type="button" className={btnQuiet} disabled={simMove.busy} onClick={() => void simMove.run(() => actions.simulate!(p))}>
                 {t("tu.sim.set", { n: p })}
               </button>
             ))}
-            <button type="button" className={btnQuiet} disabled={move.busy} onClick={() => void move.run(() => actions.simulate!(0))}>
+            <button type="button" className={btnQuiet} disabled={simMove.busy} onClick={() => void simMove.run(() => actions.simulate!(0))}>
               {t("tu.sim.month")}
             </button>
           </div>
+          {simMove.error ? (
+            <p role="alert" className="mt-2 text-sm font-medium text-red-text">
+              {simMove.error}
+            </p>
+          ) : null}
         </section>
       ) : null}
 

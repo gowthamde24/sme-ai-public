@@ -10,10 +10,10 @@ import { readTopups } from "@/lib/topups/source";
 import { buyTopupAction, previewUpgradeAction, saveTopupSettingsAction, simulateUsageAction, upgradeAction } from "../topup-actions";
 
 /**
- * Usage and top-ups under the Plan part of Settings (night 4, part F2), read and drawn on the server: only while TOPUP_SCREENS is on, for the people who run the business; the buttons are bound to this workspace here (server
+ * (A plain async function, not a component: the page awaits it, so the snapshot tests and the browser tree hold no async component.) Usage and top-ups under the Plan part of Settings (night 4, part F2), read and drawn on the server: only while TOPUP_SCREENS is on, for the people who run the business; the buttons are bound to this workspace here (server
  * actions: the Owner only, the API asks for the second factor). The plan in force comes from the test provider or, with the API, from the Plan part's own read.
  */
-export async function TopupsPart({ token, tenantId, lang, owner, plan, catalogue }: { token: string; tenantId: string; lang: Lang; owner: boolean; plan: WorkspacePlan | null; catalogue: PlanCatalogue | null }) {
+export async function topupsPart({ token, tenantId, lang, owner, plan, catalogue }: { token: string; tenantId: string; lang: Lang; owner: boolean; plan: WorkspacePlan | null; catalogue: PlanCatalogue | null }) {
   const mode = topupScreens();
   if (mode === "off") return null;
   const view = await readTopups({ token, tenantId });

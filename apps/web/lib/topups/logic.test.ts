@@ -59,9 +59,10 @@ describe("alerts", () => {
     expect(alertLevel({ state: "stopped" })).toBe(100);
   });
   it("the worst meter first; null while both are fine; level ties go to the first", () => {
-    const a = { state: "notice" as const, id: "a" };
-    const b = { state: "stopped" as const, id: "b" };
-    const c = { state: "ok" as const, id: "c" };
+    type S = { state: "ok" | "notice" | "stopped"; id: string };
+    const a: S = { state: "notice", id: "a" };
+    const b: S = { state: "stopped", id: "b" };
+    const c: S = { state: "ok", id: "c" };
     expect(worstMeter(a, b)).toBe(b);
     expect(worstMeter(b, a)).toBe(b);
     expect(worstMeter(a, { ...a, id: "a2" })).toBe(a);
