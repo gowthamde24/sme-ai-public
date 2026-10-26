@@ -16,7 +16,7 @@ import secrets
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import TYPE_CHECKING, Any
+from typing import Any, Protocol
 
 from app.errors import ApiError, not_found
 from app.integrations.sheet import MAX_UPLOAD_BYTES, Grid, SheetRefused, load_grid
@@ -29,10 +29,14 @@ from app.lead_sources.repository import LeadSourcesRepository
 from app.lead_sources.sheets import SheetError, SheetFetcher, SheetRef, parse_sheet_url
 from app.suppression.keys import KeyRing
 
-if TYPE_CHECKING:
-    from app.scheduler.session import PrincipalSession
-
 logger = logging.getLogger("app.lead_sources")
+
+
+class TokenSource(Protocol):
+    """The registered worker account's sign-in (app.scheduler.session.PrincipalSession): a token that is good now."""
+
+    def token(self) -> str: ...
+
 PART_ROWS = 500
 AVG_CALL_MINUTES = 3
 _NS = uuid.UUID("5c1f2f55-0d0b-4b8e-9a3b-6a1d5f0c7e21")
@@ -97,7 +101,7 @@ class LeadSourcesService:
         sheets: SheetFetcher | None = None,
         dnd: DndLookup | None = None,
         key_ring: KeyRing | None = None,
-        receiver: PrincipalSession | None = None,
+        receiver: TokenSource | None = None,
         meta: MetaLeadFetcher | None = None,
         meta_app_secret: str | None = None,
         inbound_domain: str | None = None,
