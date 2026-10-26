@@ -53,7 +53,9 @@ export const NAV: readonly NavGroup[] = [
     label: "Work",
     items: [
       { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start"], bar: true, roles: ALL_ROLES },
-      { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/followups", "/suggestions", "/requirements"], bar: true, module: "enquiries", roles: ALL_ROLES },
+      { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/suggestions", "/requirements"], bar: true, module: "enquiries", roles: ALL_ROLES },
+      // job DQ part 0: the follow-ups were reached from Leads; they are the first part of Calls now
+      { id: "followups", label: "Follow-ups", icon: "calls", path: "/followups", module: "enquiries", roles: ALL_ROLES },
       { id: "quotes", label: "Quotes", icon: "quotes", path: "/quotes", also: ["/enquiries"], bar: true, core: true, module: "quotes", roles: WRITERS },
       { id: "visits", label: "Store visits", short: "Visits", icon: "visits", path: "/visits", bar: true, module: "visits", roles: ALL_ROLES },
       // job CL: the fee page of the education business type (blueprint 2, the phone's core tab); only a pack whose modules include "fees" offers it
@@ -112,6 +114,74 @@ export const FOOT: readonly NavItem[] = [
 ];
 
 export type VisibleGroup = { id: string; label: string; items: NavItem[] };
+
+/**
+ * THE MENU (job DQ part 0, owner decision of 26 Oct 2026): seven items, the same for all three business types, instead of the twenty-odd pages of NAV. Each item is a group of the pages above, shown as tabs when it is open
+ * (components/v2/app/GroupTabs.tsx), so no page and no address is lost: a page that the business type or the role does not have is simply not a tab, and an item with no page at all is not in the menu. Team, Office and Integrations are
+ * parts of Settings. `members` are NAV (and FOOT) item ids, in the order of the tabs; the first one the person is offered is where the menu item goes. The ids of the menu items are `m-<id>` (their words are `nav.item.m-<id>`).
+ */
+export type MenuId = "today" | "customers" | "chats" | "calls" | "sales" | "catalogue" | "reports" | "settings";
+export type MenuEntry = { id: MenuId; label: string; icon: IconKey; members: readonly string[]; /** A tab of the phone's bottom bar (the rest are in "More"). */ bar?: boolean };
+export const MENU: readonly MenuEntry[] = [
+  { id: "today", label: "Today", icon: "today", members: ["today"], bar: true },
+  { id: "customers", label: "Customers", icon: "customers", members: ["leads", "customers", "retailers", "students", "sites"], bar: true },
+  { id: "chats", label: "Chats", icon: "chats", members: ["chats", "outbox", "announcements"], bar: true },
+  { id: "calls", label: "Calls", icon: "calls", members: ["followups", "calllist", "campaigns"] },
+  { id: "sales", label: "Sales", icon: "quotes", members: ["quotes", "visits", "orders", "fees", "admissions", "dues"], bar: true },
+  { id: "catalogue", label: "Catalogue", icon: "sarees", members: ["sarees", "catalogue", "programmes"] },
+  { id: "reports", label: "Reports", icon: "report", members: ["report"] },
+  // Settings is the foot of the menu (FOOT), not one of the seven; its tabs are Settings itself and the three parts that moved into it
+  { id: "settings", label: "Settings", icon: "settings", members: ["settings", "team", "office", "integrations"] },
+];
+/** The ids of the seven items above the foot (Settings is the foot): a test pins "at most seven". */
+export const MENU_ITEMS: readonly MenuEntry[] = MENU.filter((m) => m.id !== "settings");
+
+const PAGES = (): readonly NavItem[] => [...NAV.flatMap((g) => g.items), ...FOOT];
+/** The menu item a page (a NAV item id) belongs to, or null (a page no menu item holds). */
+export function menuOfPage(pageId: string): MenuEntry | null {
+  return MENU.find((m) => m.members.includes(pageId)) ?? null;
+}
+/** The id the menu draws for an entry: `m-<id>`, and `settings` for the foot (the id of its own row). */
+export const menuItemId = (m: MenuEntry): string => (m.id === "settings" ? "settings" : `m-${m.id}`);
+
+/** The pages of a menu item that this role and business type are offered, in the order of the tabs. */
+export function tabsOf(menu: MenuEntry, role: Role, view?: PackFrame | null): NavItem[] {
+  const pages = PAGES();
+  return menu.members.flatMap((id) => pages.filter((p) => p.id === id)).filter((p) => p.roles.includes(role) && offered(p, view));
+}
+
+/** One menu row as a NavItem: it goes to the first page the person is offered, and belongs to all of the group's paths (`also`), so the marker and the way back stay right. */
+function menuRow(menu: MenuEntry, role: Role, view?: PackFrame | null): NavItem | null {
+  const tabs = tabsOf(menu, role, view);
+  const first = tabs[0];
+  if (!first) return null;
+  return { id: menuItemId(menu), label: menu.label, icon: menu.icon, path: first.path, ...(first.tab !== undefined ? { tab: first.tab } : {}), also: tabs.flatMap((t) => [t.path, ...(t.also ?? [])]).filter((p) => p !== ""), bar: menu.bar, roles: ALL_ROLES };
+}
+
+/** The seven menu items a role is offered, drawn as one plain list (no group headings). An item whose pages the role or the business type does not have is left out. */
+export function menuGroups(role: Role, view?: PackFrame | null): VisibleGroup[] {
+  const items = MENU_ITEMS.map((m) => menuRow(m, role, view)).filter((i): i is NavItem => i !== null);
+  return items.length ? [{ id: "menu", label: "", items }] : [];
+}
+
+/** The foot of the menu: Settings (Team, Office and Integrations are its tabs), when the role is offered any page of it. */
+export function menuFoot(role: Role, view?: PackFrame | null): NavItem[] {
+  const settings = MENU.find((m) => m.id === "settings")!;
+  const row = menuRow(settings, role, view);
+  return row ? [{ ...row, label: settings.label }] : [];
+}
+
+/** The menu row the current page belongs to (`m-sales`, `settings`), or null. */
+export function activeMenuId(pathname: string, tab: string | null): string | null {
+  const page = itemFor(pathname, tab);
+  const menu = page ? menuOfPage(page.item.id) : null;
+  return menu ? menuItemId(menu) : null;
+}
+
+/** The phone's bottom bar: Today, Customers, Chats and Sales (and More, which holds Calls, Catalogue, Reports and Settings), only those the role is offered. */
+export function menuBar(role: Role, view?: PackFrame | null): NavItem[] {
+  return menuGroups(role, view).flatMap((g) => g.items).filter((i) => i.bar);
+}
 
 /**
  * What the menu needs to know about the workspace's business type (job CL; a plain object, so the client never imports more than it draws): the modules that are ON (the API's answer), the module of the phone's

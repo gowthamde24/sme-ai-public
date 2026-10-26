@@ -1,0 +1,59 @@
+# Call settings for this campaign
+October payment reminders (synthetic) [Back to the campaign](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001)
+details (open):
+summary: Call settings for this campaign Everything you do not change here follows the call settings of your AI assistant. What you change applies to this campaign only.
+form:
+{role=note} Test mode: these choices are kept on this device only.
+Same as your AI assistant's call settings.
+legend: Trying again
+Line busy Tries (0 = never again)
+<number label="Tries (0 = never again)" min=0 max=5 inputmode=numeric step=1 value=2>
+Minutes between tries
+<number label="Minutes between tries" min=5 max=1440 inputmode=numeric step=5 value=30>
+No answer Tries (0 = never again)
+<number label="Tries (0 = never again)" min=0 max=5 inputmode=numeric step=1 value=3>
+Minutes between tries
+<number label="Minutes between tries" min=5 max=1440 inputmode=numeric step=5 value=120>
+Asked to call later (no time given) Tries (0 = never again)
+<number label="Tries (0 = never again)" min=0 max=5 inputmode=numeric step=1 value=2>
+Minutes between tries
+<number label="Minutes between tries" min=5 max=1440 inputmode=numeric step=5 value=60>
+Calls at the same time (1 to 20)
+<number label="Calls at the same time (1 to 20)" min=1 max=20 inputmode=numeric step=1 value=1>
+legend: On the line
+<checkbox label="Recognise voicemail" checked>
+Recognise voicemail When it is voicemail
+<select label="When it is voicemail">
+  options: Hang up=hang_up | Leave a short message (never prices)=leave_message | Try again later=retry_later*
+<checkbox label="Recognise phone menus" checked>
+Recognise phone menus When it is a phone menu
+<select label="When it is a phone menu">
+  options: Hang up=hang_up* | Try again later=retry_later
+Silence before it speaks again (3 to 30 seconds)
+<number label="Silence before it speaks again (3 to 30 seconds)" min=3 max=30 inputmode=numeric step=1 value=8>
+Longest call (seconds, steps of 30)
+<number label="Longest call (seconds, steps of 30)" min=30 max=1800 inputmode=numeric step=30 value=300>
+How easily the customer can interrupt
+<select label="How easily the customer can interrupt">
+  options: Not easily=low | Normal=medium* | Very easily=high
+<checkbox label="Say "hmm" and "okay" while listening" checked>
+Say "hmm" and "okay" while listening
+legend: Names and words
+How to say names (shop and product names)
+[button type=button: Add]
+Words to listen for (one on each line, up to 100)
+<textarea label="Words to listen for (one on each line, up to 100)">
+legend: When it calls
+<checkbox label="Same hours as the AI assistant" checked>
+Same hours as the AI assistant Most calls to one customer in a week (1 to 14)
+<number label="Most calls to one customer in a week (1 to 14)" min=1 max=14 inputmode=numeric step=1 value=2>
+legend: Safety
+<checkbox label="Never pause by itself">
+Never pause by itself Pause by itself when the phone company refuses this many calls in an hour (3 to 100)
+<number label="Pause by itself when the phone company refuses this many calls in an hour (3 to 100)" min=3 max=100 inputmode=numeric step=1 value=10>
+legend: Memory and what it may call about
+<checkbox label="Remember earlier conversations with this customer" checked>
+Remember earlier conversations with this customer Holidays, the people calls are handed over to, and what the assistant may call about are set for the whole workspace, in Settings.
+[button type=submit: Save call settings]
+[button type=button disabled: Use my assistant's settings]
+[Change the settings for every campaign](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=assistant)

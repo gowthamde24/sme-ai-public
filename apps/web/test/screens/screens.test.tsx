@@ -15,6 +15,8 @@ import { SCENARIOS, ROLES } from "./scenarios";
 import { screenText } from "./screen-text";
 import { fixtureErrors, setHandlers } from "./state";
 
+// a lazy chunk (next/dynamic) may or may not have arrived when the snapshot is taken: draw the form itself, always
+vi.mock("@/components/v2/app/assistant/LazyCallSettingsAdvanced", async () => ({ CallSettingsAdvanced: (await import("@/components/v2/app/assistant/CallSettingsAdvanced")).CallSettingsAdvanced }));
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => {
     throw new (class extends Error {

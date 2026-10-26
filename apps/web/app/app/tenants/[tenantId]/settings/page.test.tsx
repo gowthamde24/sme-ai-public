@@ -21,6 +21,7 @@ const listMyDeletions = vi.fn();
 const listWorkspaceDeletions = vi.fn();
 const readConsentList = vi.fn();
 const getBusinessProfile = vi.fn();
+const readConsentsMock = vi.fn();
 const getOutboxSettings = vi.fn();
 const getSchedulerSettings = vi.fn();
 const getSchedulerStatus = vi.fn();
@@ -36,6 +37,7 @@ vi.mock("@/lib/api/ai-usage", () => ({ getAiUsage: (...a: unknown[]) => getAiUsa
 vi.mock("@/lib/api/data", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/data")>()), getCalendarFeed: (...a: unknown[]) => getCalendarFeed(...a), getExportFormats: (...a: unknown[]) => getExportFormats(...a), listImportJobs: (...a: unknown[]) => listImportJobs(...a) }));
 
 vi.mock("@/lib/api/privacy", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/privacy")>()), listMyExports: (...a: unknown[]) => listMyExports(...a), listMyDeletions: (...a: unknown[]) => listMyDeletions(...a), listWorkspaceDeletions: (...a: unknown[]) => listWorkspaceDeletions(...a) }));
+vi.mock("@/lib/dpdp/source", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/dpdp/source")>()), readConsents: (...a: unknown[]) => readConsentsMock(...a) }));
 vi.mock("@/lib/api/consent-list", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/consent-list")>()), readConsentList: (...a: unknown[]) => readConsentList(...a) }));
 
 vi.mock("@/lib/api/gstin", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/gstin")>()), getBusinessProfile: (...a: unknown[]) => getBusinessProfile(...a) }));
@@ -69,7 +71,7 @@ beforeEach(() => {
 describe("Settings, one part at a time", () => {
   it("opens on the business: its name, URL name, plan and today's AI usage from the API; the members are not asked for", async () => {
     render(await SettingsPage(props()));
-    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "Members", "Data", "Language and look", "Automation", "Security", "Privacy"]);
+    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "Members", "Data", "Language and look", "Automation", "Security", "Privacy and data"]);
     expect(tabs().getByRole("link", { name: "Business and plan" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByText("Acme Silks")).toBeInTheDocument();
     expect(screen.getByText("acme-silks")).toBeInTheDocument();
@@ -254,6 +256,34 @@ describe("Settings > Privacy (job CC)", () => {
     expect(screen.getByText("Your role does not include this page. Ask the owner if you need it.")).toBeInTheDocument();
     expect(screen.getByText(/Wait 25 seconds/)).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Delete my account" })).toBeInTheDocument();
+  });
+  it("the tab is called 'Privacy and data' and, while the consent API is off, has neither the marketing switch nor the grievance form (job DQ part 2)", async () => {
+    render(await SettingsPage(props({ section: "privacy" })));
+    expect(screen.getByRole("link", { name: "Privacy and data" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "News and offers" })).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Raise a grievance" })).toBeNull();
+  });
+  it("with the consent API on (here the fake one) every role gets the marketing switch, off, and the grievance form filled with the account's address", async () => {
+    vi.stubEnv("DPDP_SCREENS", "mock");
+    readConsentsMock.mockResolvedValue({ noticeVersion: "2026-10-27", marketing: { state: "not_given", since: null }, history: [] });
+    for (const role of ["owner", "admin", "sales", "viewer"] as const) {
+      fetchTenant.mockResolvedValue(tenant(role));
+      render(await SettingsPage(props({ section: "privacy" })));
+      expect(screen.getByRole("heading", { name: "News and offers" })).toBeInTheDocument();
+      expect(screen.getByRole("switch", { name: /news and offers/i })).toHaveAttribute("aria-checked", "false");
+      expect(screen.getByRole("heading", { name: "Raise a grievance" })).toBeInTheDocument();
+      expect(screen.getByLabelText("Your e-mail address or phone number")).toHaveValue("e@example.test");
+      cleanup();
+    }
+    vi.unstubAllEnvs();
+  });
+  it("a consent record that cannot be read says so in its place and the grievance form still works", async () => {
+    vi.stubEnv("DPDP_SCREENS", "1");
+    readConsentsMock.mockResolvedValue(null);
+    render(await SettingsPage(props({ section: "privacy" })));
+    expect(screen.getByRole("heading", { name: "Raise a grievance" })).toBeInTheDocument();
+    expect(screen.queryByRole("switch")).toBeNull();
+    vi.unstubAllEnvs();
   });
   it("a rejected session on a read goes to sign-in", async () => {
     listMyDeletions.mockRejectedValue(new ApiAuthError("x"));

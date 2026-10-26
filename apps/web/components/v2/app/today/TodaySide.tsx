@@ -81,7 +81,7 @@ function statusLine(a: AgentRow, t: T, now: number): string {
 }
 
 /**
- * "Your team" (job AU): the six helpers as plush owls in their own colours (owl/v4/<agent>/), each with a dot for its state, the name and ONE live status line each, from the helpers' status (`GET /agents/status`): working, switched off, not
+ * "Your team" (job AU): the six helpers, each a row (job DQ part 0: they were three narrow columns whose status lines were cut off and overlapped at both desktop and phone widths): the picture, a dot for its state, the name and ONE live status line, in full, wrapping, from the helpers' status (`GET /agents/status`): working, switched off, not
  * available, or the last thing the helper did and how long ago. Agent OWL itself is the card above, so it is not repeated here. `team` null (could not be read) says so; the link opens the Office.
  */
 export function TeamSection({ team, base, t, now }: { team: readonly AgentRow[] | null; base: string; t: T; now: number }) {
@@ -102,15 +102,17 @@ export function TeamSection({ team, base, t, now }: { team: readonly AgentRow[] 
       ) : helpers.length === 0 ? (
         <p className="text-sm text-muted">{t("frame.notyet")}</p>
       ) : (
-        <ul className="grid grid-cols-2 gap-3 min-[420px]:grid-cols-3">
+        <ul className="flex flex-col divide-y divide-line" data-part="team-list">
           {helpers.map((a) => (
-            <li key={a.agent} className="flex min-w-0 flex-col items-center gap-1 text-center">
-              <AgentMark agent={a.agent} px={48} off={a.state !== "working" && a.state !== "idle"} mood={a.state === "working" ? "thinking" : a.state === "idle" ? "idle" : "resting"} className="size-12" />
-              <span className="inline-flex items-center gap-1.5 text-sm font-semibold">
-                <StateDot state={a.state === "working" ? "working" : a.state === "idle" ? "idle" : "off"} />
-                {t(`agent.${a.agent}`)}
-              </span>
-              <span className={`line-clamp-2 text-sm leading-snug [overflow-wrap:anywhere] ${a.state === "working" ? "font-semibold text-brand-text" : "text-muted"}`}>{statusLine(a, t, now)}</span>
+            <li key={a.agent} className="flex min-w-0 items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+              <AgentMark agent={a.agent} px={40} off={a.state !== "working" && a.state !== "idle"} mood={a.state === "working" ? "thinking" : a.state === "idle" ? "idle" : "resting"} className="size-10 shrink-0" />
+              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span data-part="team-name" className="inline-flex min-w-0 items-center gap-1.5 text-base font-semibold leading-tight">
+                  <StateDot state={a.state === "working" ? "working" : a.state === "idle" ? "idle" : "off"} />
+                  <span className="min-w-0 [overflow-wrap:anywhere]">{t(`agent.${a.agent}`)}</span>
+                </span>
+                <span data-part="team-status" className={`text-sm leading-snug [overflow-wrap:anywhere] ${a.state === "working" ? "font-semibold text-brand-text" : "text-muted"}`}>{statusLine(a, t, now)}</span>
+              </div>
             </li>
           ))}
         </ul>

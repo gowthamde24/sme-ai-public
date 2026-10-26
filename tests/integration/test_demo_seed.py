@@ -651,7 +651,7 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
             operator_sql.sql(
                 "select string_agg(enabled::text, ',' order by key) from public.platform_flags"
             )
-            == "true,false,false,false,false,false,true"
+            == "true,false,false,false,false,false,false,true"
         ), (
             "agents and selftest are on; the assistant, research and requirement switches (agents_enabled, assistant_enabled, requirement_enabled, research_enabled, selftest_enabled) are not touched"
         )

@@ -30,7 +30,7 @@ describe("the workspace layout", () => {
     readFrameData.mockResolvedValue({ ...NO_FRAME_DATA });
     nav.pathname = `/app/tenants/${T}/orders`;
   });
-  it("a read-only workspace (job DP) gets the one notice at the top and the scope that switches the controls off, and no Ask dock; a full one gets neither; a read that fails is 'full' (the API refuses every change anyway)", async () => {
+  it("a read-only workspace (job DP) gets the one notice at the top and the scope that switches the controls off, and no floating Ask orb; a full one gets neither; a read that fails is 'full' (the API refuses every change anyway)", async () => {
     readAgents.mockResolvedValue(teamWith("idle"));
     readAccess.mockResolvedValue({ readOnly: true, since: "2026-10-20", deleteOn: "2027-01-18", daysLeft: 85, canResume: true });
     const { rerender } = render(await TenantLayout(props(T)));
@@ -39,34 +39,38 @@ describe("the workspace layout", () => {
     expect(document.querySelector("[data-readonly-banner]")).toHaveTextContent("billing@");
     expect(document.querySelector("[data-readonly-banner] a[href$='/plans']")).toHaveTextContent("Pay again and continue"); // the plan can be paid for again: the way to it
     expect(document.querySelector("[data-readonly-banner]")).toHaveAttribute("data-read-ok"); // the scope never switches the way out off
-    expect(document.querySelector("[data-dock='ask']")).toBeNull();
+    expect(document.querySelector("[data-ask='orb']")).toBeNull();
     expect(document.body.textContent).toContain("page");
     readAccess.mockResolvedValue({ readOnly: false });
     rerender(await TenantLayout(props(T)));
     expect(document.querySelector("[data-readonly-banner]")).toBeNull();
-    expect(document.querySelector("[data-dock='ask']")).not.toBeNull();
+    expect(document.querySelector("[data-ask='orb']")).not.toBeNull();
     readAccess.mockRejectedValue(new Error("not read"));
     rerender(await TenantLayout(props(T)));
     expect(document.querySelector("[data-readonly-banner]")).toBeNull();
   });
-  it("draws the Ask dock (job DN) on a main screen when the assistant can be asked, and nowhere else", async () => {
+  it("draws the floating Ask orb (job DQ part 0) on a screen when the assistant can be asked, and not on Today (its card is the assistant) or the live call; there is no bar at the bottom", async () => {
     readAgents.mockResolvedValue(teamWith("idle"));
     const { rerender } = render(await TenantLayout(props(T)));
     expect(readAgents).toHaveBeenCalledWith("tok", T);
-    expect(document.querySelector("[data-dock='ask']")).not.toBeNull();
+    expect(document.querySelector("[data-ask='orb']")).not.toBeNull();
     nav.pathname = `/app/tenants/${T}`;
     rerender(await TenantLayout(props(T)));
-    expect(document.querySelector("[data-dock='ask']")).toBeNull(); // Today has its own line
+    expect(document.querySelector("[data-ask='orb']")).toBeNull(); // Today has its own line, in the card
+    nav.pathname = `/app/tenants/${T}/office/live`;
+    rerender(await TenantLayout(props(T)));
+    expect(document.querySelector("[data-ask='orb']")).toBeNull(); // the live call needs the whole screen
     nav.pathname = `/app/tenants/${T}/orders`;
     for (const state of ["switched_off", "not_available"]) {
       readAgents.mockResolvedValue(teamWith(state));
       rerender(await TenantLayout(props(T)));
-      expect(document.querySelector("[data-dock='ask']"), state).toBeNull();
+      expect(document.querySelector("[data-ask='orb']"), state).toBeNull();
     }
     readAgents.mockRejectedValue(new Error("not read"));
     rerender(await TenantLayout(props(T)));
-    expect(document.querySelector("[data-dock='ask']")).toBeNull();
+    expect(document.querySelector("[data-ask='orb']")).toBeNull();
     expect(document.body.textContent).toContain("page"); // the page is drawn all the same
+    expect(document.querySelector("[data-dock]")).toBeNull(); // the bar at the bottom is gone
   });
   it("reads the frame's numbers for THIS workspace with the signed-in person's token and hands them to the frame, then draws the page", async () => {
     const data = { ...NO_FRAME_DATA, waiting: 3 };

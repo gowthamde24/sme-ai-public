@@ -8,7 +8,7 @@ import type { LegalText } from "./types";
 export const TERMS: LegalText = {
   title: "Terms of Use",
   intro: [
-    "These terms are the agreement between you and Stack19, {business_description} (\"we\", \"us\"), for using {brand}. By ticking the box when you sign up, you agree to them and to the Privacy Policy. If you use {brand} for a business, you confirm that you may agree on its behalf.",
+    "These terms are the agreement between you and Stack19, {business_description} (\"we\", \"us\"), for using {brand}. By ticking the box when you sign up, you agree to them and to the Privacy notice. If you use {brand} for a business, you confirm that you may agree on its behalf.",
   ],
   sections: [
     {
@@ -50,7 +50,7 @@ export const TERMS: LegalText = {
       id: "yourdata",
       title: "4. Your data and your customers",
       blocks: [
-        { p: "Your business's records stay yours. You give us the right to store and process them only to run {brand} for you, as the Privacy Policy describes." },
+        { p: "Your business's records stay yours. You give us the right to store and process them only to run {brand} for you, as the Privacy notice describes." },
         { p: "You are responsible for having the right to hold and use the details of the people you enter, and for contacting them lawfully. That includes getting their consent where the law needs it (for example for WhatsApp, e-mail and calls), recording it, honouring do-not-contact requests, and following the rules of WhatsApp and of the telecom regulator. {brand} records consent and do-not-contact choices and will not draft to someone who has said stop, but it does not decide for you whether you may contact someone." },
         { p: "Do not enter other people's data that you have no reason to hold. Do not put in anything unlawful. If you run a school, you are responsible for the consent of the parents or guardians of your students." },
       ],
@@ -89,7 +89,7 @@ export const TERMS: LegalText = {
       id: "third",
       title: "7. Other services",
       blocks: [
-        { p: "{brand} relies on other companies for hosting, sign-in, AI models, speech, payments and, if you connect it, WhatsApp (see the Privacy Policy). Their own terms apply to their part. We are not responsible for an outage or change on their side, though we will try to limit its effect on you." },
+        { p: "{brand} relies on other companies for hosting, sign-in, AI models, speech, payments and, if you connect it, WhatsApp (see the Privacy notice). Their own terms apply to their part. We are not responsible for an outage or change on their side, though we will try to limit its effect on you." },
       ],
     },
     {
@@ -113,7 +113,7 @@ export const TERMS: LegalText = {
       id: "end",
       title: "11. Ending the agreement",
       blocks: [
-        { p: "You can stop using {brand} at any time and ask us to delete your account and data (Privacy Policy, section 11, and the page /data-deletion). We may suspend or end your access if you break these terms or the law, or if we stop offering the service, and where we can we will tell you first and give you time to export your records." },
+        { p: "You can stop using {brand} at any time and ask us to delete your account and data (Privacy notice, section 9, and the page /data-deletion). We may suspend or end your access if you break these terms or the law, or if we stop offering the service, and where we can we will tell you first and give you time to export your records." },
       ],
     },
     {
@@ -135,7 +135,7 @@ export const TERMS: LegalText = {
             "General questions: {hello}",
             "Help with the app: {support}",
             "Payments and invoices: {billing}",
-            "Privacy and grievances: {privacy_email} (Grievance Officer: {proprietor}, see the Privacy Policy, section 12)",
+            "Privacy and grievances: {privacy_email} (Grievance Officer: {proprietor}, see the Privacy notice, section 10)",
           ],
         },
       ],

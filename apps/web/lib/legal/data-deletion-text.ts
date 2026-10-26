@@ -16,9 +16,9 @@ export const DATA_DELETION: LegalText = {
       blocks: [
         {
           ul: [
-            "Your account: sign in, open Settings, then Privacy, then delete my account. You type your e-mail address to confirm. The deletion happens after 14 days, so you can change your mind; you can cancel it in the same place during those days.",
-            "Your business's records (Owners only, with the second factor): in Settings, Privacy, you can erase one customer, one company, or the whole workspace. A whole-workspace erasure also has a cancel window of 24 hours.",
-            "Download first, if you want a copy: Settings, Privacy, download my data.",
+            "Your account: sign in, open Settings, then Privacy, then delete my account. You type your e-mail address to confirm. The deletion happens after {cancel_days} days, so you can change your mind; you can cancel it in the same place during those days.",
+            "Your business's records (Owners only, with the second factor): in Settings, Privacy, you can erase one customer, one company, or the whole workspace. A whole-workspace erasure has the same {cancel_days}-day cancel window.",
+            "Download first, if you want a copy: Settings, Privacy and data, download my data (a file with each table as JSON and CSV).",
           ],
         },
       ],
@@ -45,7 +45,7 @@ export const DATA_DELETION: LegalText = {
             "A file you already downloaded is yours; we cannot delete it.",
           ],
         },
-        { p: "More detail is in the Privacy Policy, sections 9 and 11." },
+        { p: "More detail is in the Privacy notice, sections 7 and 9." },
       ],
     },
   ],

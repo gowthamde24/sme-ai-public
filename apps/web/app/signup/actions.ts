@@ -6,6 +6,7 @@ import { DEFAULT_BUSINESS_NAME } from "@/lib/packs/signup";
 
 import { clientIp, sharedSignupLimiter } from "@/lib/auth/signup-limit";
 import { isSignupOpen } from "@/lib/auth/signup-open";
+import { dpdpScreens } from "@/lib/screens/flag";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 import type { SignUpInput, SignUpResult } from "@/lib/api/signup";
@@ -27,6 +28,8 @@ export async function signUp(input: SignUpInput): Promise<SignUpResult> {
     ...input,
     name: text(input?.name) || text(input?.email).split("@")[0].slice(0, 100),
     businessName: text(input?.businessName) || DEFAULT_BUSINESS_NAME,
+    // the marketing box only counts as exactly true, and only while the consent API is on (job DQ part 2)
+    marketingOptIn: input?.marketingOptIn === true && dpdpScreens() !== "off",
   };
   return runSignUp(filled, {
     auth: supabase.auth,

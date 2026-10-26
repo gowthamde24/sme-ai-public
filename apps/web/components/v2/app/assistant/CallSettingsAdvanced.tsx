@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
+import { FIELD_GROUP, diffOverride, overriddenFields, type OverridableField } from "@/lib/call-settings/campaign";
 import { ACTIONS, MENU_ACTIONS, PURPOSES, SENSITIVITY, TOPICS, parseCallSettings, type CallSettings, type Purpose, type Topic } from "@/lib/call-settings/types";
 import { DAYS } from "@/lib/assistant/types";
 
@@ -11,6 +12,9 @@ import { alertBox, btnMain, btnQuiet, fieldInput, fieldLabel, mutedText, okBox, 
 import { makeT, type Words } from "../words";
 
 export type CallSettingsActions = { save: (input: unknown) => Promise<{ ok: true } | { ok: false; error: string }> };
+/** The same form for ONE campaign (job DQ part 3): it starts from what the campaign uses now, saves only what differs from the workspace's `base`, marks what is different here, hides the holidays, the hand-over people and what it may call about (those are the workspace's), and can go back to following the workspace. */
+export type CampaignMode = { base: CallSettings; clear: () => Promise<{ ok: true } | { ok: false; error: string }>; settingsHref: string; backHref: string };
+type Group = "retry" | "line" | "words" | "when" | "safety" | "memory";
 const group = "flex flex-col gap-4 rounded-xl border border-line p-4";
 const legend = "px-1 text-base font-semibold";
 const clock = (minute: number): string => `${String(Math.floor(minute / 60)).padStart(2, "0")}:${String(minute % 60).padStart(2, "0")}`;
@@ -57,11 +61,11 @@ function Pick<T extends string>({ id, label, value, options, text, onChange }: {
  * Hand-over by topic and Memory and what it may call about. Only the Owner saves (the API asks for the second factor); an Admin reads. A school sees the calls it may not make switched off, with the reason, and never as a
  * choice. The names and numbers of hand-over people are personal data: this part is drawn for Owner and Admin only (the page decides). `locked` = the only purposes the business type may switch on, or null.
  */
-export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, saved, actions }: { words: Words; initial: CallSettings; locked: readonly Purpose[] | null; canEdit: boolean; mock: boolean; saved: boolean; actions: CallSettingsActions }) {
+export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, saved, actions, campaign }: { /** Set for a campaign's own call settings (a page of its own, drawn open). */ campaign?: CampaignMode; words: Words; initial: CallSettings; locked: readonly Purpose[] | null; canEdit: boolean; mock: boolean; saved: boolean; actions: CallSettingsActions }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<CallSettings>(initial);
-  const [note, setNote] = React.useState<null | "saved" | "error" | "locked" | "read_only" | "mfa">(null);
+  const [note, setNote] = React.useState<null | "saved" | "cleared" | "error" | "locked" | "read_only" | "mfa">(null);
   const [busy, setBusy] = React.useState(false);
   const set = (p: Partial<CallSettings>) => (setNote(null), setS((x) => ({ ...x, ...p })));
   const ok = parseCallSettings(s) !== null;
@@ -73,12 +77,30 @@ export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, sa
     </div>
   );
   const hours = s.hours;
+  const differs: readonly OverridableField[] = campaign ? overriddenFields(campaign.base, s) : [];
+  const badge = (g: Group) => (differs.some((f) => FIELD_GROUP[f] === g) ? <span data-different="" className="ml-2 rounded-full bg-brand-bg px-2.5 py-0.5 text-xs font-semibold text-brand-text">{t("calls.c.diff")}</span> : null);
+  /** "Use my assistant's settings": removes the campaign's override and puts the workspace's values back in the form. */
+  const clearIt = async (c: CampaignMode) => {
+    setBusy(true);
+    let out: { ok: true } | { ok: false; error: string };
+    try {
+      out = await c.clear();
+    } catch {
+      out = { ok: false, error: "not_available" };
+    }
+    setBusy(false);
+    setNote(out.ok ? "cleared" : out.error === "mfa" ? "mfa" : out.error === "read_only" ? "read_only" : "error");
+    if (out.ok) {
+      setS(c.base);
+      router.refresh();
+    }
+  };
   const allowed = (p: Purpose) => locked === null || locked.includes(p);
   return (
-    <details data-settings="call-settings" data-call-settings-saved={saved ? "true" : "false"} className={`${surface} group`}>
+    <details data-settings={campaign ? "campaign-call-settings" : "call-settings"} data-call-settings-saved={saved ? "true" : "false"} open={campaign ? true : undefined} className={`${surface} group`}>
       <summary className="flex min-h-12 cursor-pointer list-none flex-col justify-center">
-        <span className="font-display text-xl font-semibold">{t("calls.title")}</span>
-        <span className={mutedText + " !mt-0"}>{t("calls.intro")}</span>
+        <span className="font-display text-xl font-semibold">{t(campaign ? "calls.c.title" : "calls.title")}</span>
+        <span className={mutedText + " !mt-0"}>{t(campaign ? "calls.c.intro" : "calls.intro")}</span>
       </summary>
       <form
         data-write
@@ -89,7 +111,7 @@ export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, sa
           setBusy(true);
           let out: { ok: true } | { ok: false; error: string };
           try {
-            out = await actions.save(s);
+            out = await actions.save(campaign ? diffOverride(campaign.base, s) : s);
           } catch {
             out = { ok: false, error: "not_available" };
           }
@@ -103,15 +125,20 @@ export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, sa
             {t("calls.mock")}
           </p>
         ) : null}
+        {campaign ? (
+          <p data-part="campaign-diff" className={`${mutedText} !mt-0`}>
+            {differs.length > 0 ? t("calls.c.summary", { fields: differs.map((f) => t(`calls.f.${f}` as "calls.f.retry_busy")).join(", ") }) : t("calls.c.same")}
+          </p>
+        ) : null}
         <fieldset disabled={!canEdit || busy} className="contents">
           <fieldset className={group}>
-            <legend className={legend}>{t("calls.g.retry")}</legend>
+            <legend className={legend}>{t("calls.g.retry")}{badge("retry")}</legend>
             {(["retry_busy", "retry_no_answer", "retry_call_later"] as const).map(retry)}
             <Num id="cs-concurrent" label={t("calls.concurrent")} value={s.concurrent_calls} min={1} max={20} onChange={(concurrent_calls) => set({ concurrent_calls })} />
           </fieldset>
 
           <fieldset className={group}>
-            <legend className={legend}>{t("calls.g.line")}</legend>
+            <legend className={legend}>{t("calls.g.line")}{badge("line")}</legend>
             <Check id="cs-vm" label={t("calls.voicemail")} on={s.detect_voicemail} onChange={(detect_voicemail) => set({ detect_voicemail })} />
             {s.detect_voicemail ? <Pick id="cs-vm-a" label={t("calls.voicemail.action")} value={s.voicemail_action} options={ACTIONS} text={(o) => t(`calls.act.${o}` as "calls.act.hang_up")} onChange={(voicemail_action) => set({ voicemail_action })} /> : null}
             <Check id="cs-menu" label={t("calls.menu")} on={s.detect_phone_menu} onChange={(detect_phone_menu) => set({ detect_phone_menu })} />
@@ -123,7 +150,7 @@ export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, sa
           </fieldset>
 
           <fieldset className={group}>
-            <legend className={legend}>{t("calls.g.words")}</legend>
+            <legend className={legend}>{t("calls.g.words")}{badge("words")}</legend>
             <p className="font-medium">{t("calls.pron")}</p>
             {s.pronunciations.map((p, i) => (
               <div key={i} className="flex flex-wrap items-end gap-3">
@@ -160,7 +187,7 @@ export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, sa
           </fieldset>
 
           <fieldset className={group}>
-            <legend className={legend}>{t("calls.g.when")}</legend>
+            <legend className={legend}>{t("calls.g.when")}{badge("when")}</legend>
             <Check id="cs-follow" label={t("calls.hours.follow")} on={hours === null} onChange={(follow) => set({ hours: follow ? null : { days: [1, 2, 3, 4, 5, 6], from_minute: 540, to_minute: 1140 } })} />
             {hours ? (
               <>
@@ -187,8 +214,8 @@ export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, sa
                 </div>
               </>
             ) : null}
-            <p className="font-medium">{t("calls.holidays")}</p>
-            {s.holidays.map((d, i) => (
+            {campaign ? null : <p className="font-medium">{t("calls.holidays")}</p>}
+            {(campaign ? [] : s.holidays).map((d, i) => (
               <div key={i} className="flex flex-wrap items-end gap-3">
                 <div>
                   <label htmlFor={`cs-h-${i}`} className={fieldLabel}>
@@ -201,7 +228,7 @@ export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, sa
                 </button>
               </div>
             ))}
-            {s.holidays.length < 60 ? (
+            {!campaign && s.holidays.length < 60 ? (
               <div>
                 <button type="button" className={btnQuiet} onClick={() => set({ holidays: [...s.holidays, new Date().toISOString().slice(0, 10)] })}>
                   {t("calls.add")}
@@ -212,12 +239,12 @@ export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, sa
           </fieldset>
 
           <fieldset className={group}>
-            <legend className={legend}>{t("calls.g.safety")}</legend>
+            <legend className={legend}>{t("calls.g.safety")}{badge("safety")}</legend>
             <Check id="cs-never" label={t("calls.autopause.never")} on={s.auto_pause_refusals_per_hour === null} onChange={(never) => set({ auto_pause_refusals_per_hour: never ? null : 10 })} />
             {s.auto_pause_refusals_per_hour !== null ? <Num id="cs-pause" label={t("calls.autopause")} value={s.auto_pause_refusals_per_hour} min={3} max={100} onChange={(auto_pause_refusals_per_hour) => set({ auto_pause_refusals_per_hour })} /> : null}
           </fieldset>
 
-          <fieldset className={group}>
+          {campaign ? null : <fieldset className={group}>
             <legend className={legend}>{t("calls.g.handover")}</legend>
             <p className={mutedText + " !mt-0"}>{t("calls.handover.note")}</p>
             {s.handover.map((h, i) => (
@@ -247,22 +274,22 @@ export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, sa
                 </button>
               </div>
             ) : null}
-          </fieldset>
+          </fieldset>}
 
           <fieldset className={group}>
-            <legend className={legend}>{t("calls.g.memory")}</legend>
+            <legend className={legend}>{t("calls.g.memory")}{badge("memory")}</legend>
             <Check id="cs-memory" label={t("calls.memory")} on={s.contact_memory} onChange={(contact_memory) => set({ contact_memory })} />
-            <p className="font-medium">{t("calls.purposes")}</p>
-            {PURPOSES.map((p) => (
+            {campaign ? <p className={mutedText + " !mt-0"}>{t("calls.c.hidden")}</p> : <p className="font-medium">{t("calls.purposes")}</p>}
+            {(campaign ? [] : PURPOSES).map((p) => (
               <Check key={p} id={`cs-p-${p}`} label={t(`calls.purpose.${p}` as "calls.purpose.sales_followup")} on={s.allowed_purposes.includes(p) && allowed(p)} onChange={(on) => allowed(p) && set({ allowed_purposes: on ? PURPOSES.filter((x) => x === p || s.allowed_purposes.includes(x)) : s.allowed_purposes.filter((x) => x !== p) })} />
             ))}
             {locked !== null ? <p className={mutedText + " !mt-0"}>{t("calls.school")}</p> : null}
           </fieldset>
         </fieldset>
 
-        {note === "saved" ? (
+        {note === "saved" || note === "cleared" ? (
           <p role="status" className={okBox + " !mt-0"}>
-            {t("calls.saved")}
+            {t(note === "cleared" ? "calls.c.cleared" : "calls.saved")}
           </p>
         ) : null}
         {note === "error" || note === "locked" || note === "read_only" || note === "mfa" ? (
@@ -275,10 +302,20 @@ export function CallSettingsAdvanced({ words, initial, locked, canEdit, mock, sa
             ) : null}
           </p>
         ) : null}
-        <div>
+        <div className="flex flex-wrap items-center gap-3">
           <button type="submit" className={btnMain} disabled={!canEdit || busy || !ok}>
             {t("calls.save")}
           </button>
+          {campaign ? (
+            <>
+              <button type="button" className={btnQuiet} disabled={!canEdit || busy || (differs.length === 0 && !saved)} onClick={() => void clearIt(campaign)}>
+                {t("calls.c.clear")}
+              </button>
+              <Link href={campaign.settingsHref} className="font-semibold text-brand-text underline">
+                {t("calls.c.ws")}
+              </Link>
+            </>
+          ) : null}
         </div>
       </form>
     </details>

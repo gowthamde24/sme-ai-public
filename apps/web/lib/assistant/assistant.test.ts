@@ -38,7 +38,7 @@ describe("the settings are checked as a whole", () => {
     expect(parseSettings(good)).toEqual({ ...good, hours: { ...good.hours, days: [...good.hours.days] } });
   });
   it("a value that is not in its shape is refused, never half accepted", () => {
-    const bad: unknown[] = [null, "x", [], { ...good, name: "<x>" }, { ...good, voice: "robot" }, { ...good, lang: "ta" }, { ...good, style: "rude" }, { ...good, speed: 2 }, { ...good, speed: "1" }, { ...good, maxDiscount: 101 }, { ...good, maxDiscount: 1.5 }, { ...good, may: { ...good.may, dues: "yes" } }, { ...good, handover: { ...good.handover, orderAbove: -1 } }, { ...good, hours: { ...good.hours, from: "19:00", to: "09:00" } }, { ...good, hours: { ...good.hours, from: "25:00" } }, { ...good, hours: { ...good.hours, days: [] } }, { ...good, hours: { ...good.hours, days: ["mon", "mon"] } }, { ...good, hours: { ...good.hours, days: ["funday"] } }];
+    const bad: unknown[] = [null, "x", [], { ...good, name: "<x>" }, { ...good, voice: "robot" }, { ...good, lang: "xx" }, { ...good, style: "rude" }, { ...good, speed: 2 }, { ...good, speed: "1" }, { ...good, maxDiscount: 101 }, { ...good, maxDiscount: 1.5 }, { ...good, may: { ...good.may, dues: "yes" } }, { ...good, handover: { ...good.handover, orderAbove: -1 } }, { ...good, hours: { ...good.hours, from: "19:00", to: "09:00" } }, { ...good, hours: { ...good.hours, from: "25:00" } }, { ...good, hours: { ...good.hours, days: [] } }, { ...good, hours: { ...good.hours, days: ["mon", "mon"] } }, { ...good, hours: { ...good.hours, days: ["funday"] } }];
     for (const b of bad) expect(parseSettings(b), JSON.stringify(b)).toBeNull();
   });
   it("trims the name, rounds the speed and puts the days in week order", () => {

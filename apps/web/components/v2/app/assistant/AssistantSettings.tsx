@@ -5,13 +5,17 @@ import * as React from "react";
 
 import { Orb } from "@/components/v2/Orb";
 import { sayLine } from "@/lib/assistant/lines";
+import { TONES, sampleUrl, type Tone } from "@/lib/voice-samples/types";
+import type { TestCall, TestCallResult } from "@/lib/assistant/test-call";
 import { CALL_LANGS, DAYS, HOURS, NAME_MAX, SPEED, STYLES, VOICES, parseSettings, validName, type AssistantSettings as Settings, type CallLang, type Day, type Voice } from "@/lib/assistant/types";
 import type { AssistantProfile } from "@/lib/assistant/defaults";
 
 import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, surface } from "../ui";
 import { makeT, type Words } from "../words";
 
-export type AssistantActions = { save: (input: unknown) => Promise<{ ok: true } | { ok: false; error: string }> };
+export type AssistantActions = { save: (input: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; /** The simulated test call (job DQ part 3); absent = the button is not drawn. */ testCall?: () => Promise<TestCallResult> };
+/** The voice samples (job DQ part 3): where the browser asks for one (our own route), and whether it is the fake sound of the test screens. null = no "Hear it" anywhere. */
+export type SampleSource = { endpoint: string; mock: boolean };
 const block = `${surface} flex flex-col gap-4`;
 const opt = (on: boolean) => `flex items-center gap-3 rounded-2xl border p-3.5 text-left ${on ? "border-brand-edge bg-brand-bg ring-2 ring-brand/25" : "border-line bg-surface hover:bg-surface-2"}`;
 const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
@@ -32,12 +36,37 @@ function Switch({ on, label, onChange, disabled }: { on: boolean; label: string;
  * may do on calls (and the highest discount), when it hands over to the owner, the calling hours, and on the right a live preview with the circle speaking. It starts from the defaults of the business type (`profile`), so an owner can
  * skip it; nothing is kept until "Save". Only the Owner can change it (`canEdit`). Voice samples and test calls do not exist yet, so "Hear it" is switched off and "Call me now for a test" says so. The words come in as props.
  */
-export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, ownVoiceReady = false }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ ownVoiceReady?: boolean }) {
+export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, ownVoiceReady = false, samples = null }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ ownVoiceReady?: boolean; /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<Settings>(initial);
   const [busy, setBusy] = React.useState(false);
   const [note, setNote] = React.useState<"saved" | "error" | "test" | null>(null);
+  const [tone, setTone] = React.useState<Tone>("warm");
+  const [playing, setPlaying] = React.useState<Voice | null>(null);
+  const [sampleErr, setSampleErr] = React.useState(false);
+  const audio = React.useRef<HTMLAudioElement | null>(null);
+  const [test, setTest] = React.useState<{ state: "idle" } | { state: "running" } | { state: "error" } | { state: "done"; call: TestCall }>({ state: "idle" });
+  React.useEffect(() => () => audio.current?.pause(), []);
+  /** Plays one voice's sample in the language and tone now chosen; the one that was playing stops. A browser that will not play it, or a sample that is not there, says so. */
+  const hear = (v: Voice) => {
+    if (!samples) return;
+    audio.current?.pause();
+    if (playing === v) return setPlaying(null);
+    setSampleErr(false);
+    const a = new Audio(sampleUrl(samples.endpoint, { voice: v, lang: s.lang, tone, name: s.name.trim() || initial.name }));
+    audio.current = a;
+    a.onended = () => setPlaying(null);
+    a.onerror = () => {
+      setPlaying(null);
+      setSampleErr(true);
+    };
+    setPlaying(v);
+    a.play().catch(() => {
+      setPlaying(null);
+      setSampleErr(true);
+    });
+  };
   const [mfa, setMfa] = React.useState(false); // the save needs the authenticator app (the API asks the owner for the second factor)
   const set = (p: Partial<Settings>) => {
     setNote(null);
@@ -108,14 +137,36 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
               </div>
               <div role="radiogroup" aria-labelledby="asst-voice-h" className="grid gap-2.5 sm:grid-cols-2">
                 {VOICES.filter((v) => v !== "own_voice" || ownVoiceReady || s.voice === "own_voice").map((v) => (
-                  <button key={v} type="button" role="radio" aria-checked={s.voice === v} onClick={() => set({ voice: v })} className={opt(s.voice === v)}>
-                    <span className="flex min-w-0 flex-col gap-0.5">
-                      <strong className="text-[15px]">{voiceNames[v]}</strong>
-                      <span className="text-[13px] text-muted">{t(`asst.voice.${v}.d` as "asst.voice.female_warm.d")}</span>
-                    </span>
-                  </button>
+                  <div key={v} className="flex items-stretch gap-2">
+                    <button type="button" role="radio" aria-checked={s.voice === v} onClick={() => set({ voice: v })} className={`${opt(s.voice === v)} min-w-0 flex-1`}>
+                      <span className="flex min-w-0 flex-col gap-0.5">
+                        <strong className="text-[15px]">{voiceNames[v]}</strong>
+                        <span className="text-[13px] text-muted">{t(`asst.voice.${v}.d` as "asst.voice.female_warm.d")}</span>
+                      </span>
+                    </button>
+                    {samples && v !== "own_voice" ? (
+                      <button type="button" data-sample={v} aria-pressed={playing === v} aria-label={t("asst.sample.hear", { voice: voiceNames[v] })} title={t("asst.sample.hear", { voice: voiceNames[v] })} onClick={() => hear(v)} className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-2xl border border-edge bg-surface text-lg hover:bg-surface-2">
+                        <span aria-hidden="true">{playing === v ? "■" : "▶"}</span>
+                      </button>
+                    ) : null}
+                  </div>
                 ))}
               </div>
+              {samples ? (
+                <div data-part="sample-tone">
+                  <p id="asst-tone-h" className="text-sm font-semibold">{t("asst.tone.t")}</p>
+                  <div role="radiogroup" aria-labelledby="asst-tone-h" className="mt-1 flex flex-wrap gap-2">
+                    {TONES.map((x) => (
+                      <button key={x} type="button" role="radio" aria-checked={tone === x} onClick={() => setTone(x)} className={chip(tone === x)}>
+                        {t(`asst.tone.${x}` as "asst.tone.warm")}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-sm text-muted">{t("asst.sample.note", { language: langs[s.lang] })} {t("asst.tone.note")}</p>
+                  {samples.mock ? <p role="note" className="mt-1 text-sm text-muted">{t("asst.sample.mock")}</p> : null}
+                  {sampleErr ? <p role="alert" className="mt-1 text-sm font-medium text-red-text">{t("asst.sample.err")}</p> : null}
+                </div>
+              ) : null}
             </section>
 
             <section className={block} aria-labelledby="asst-lang-h">
@@ -244,14 +295,51 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
           <p lang={s.lang} data-part="preview-line" className="m-0 text-center text-[17px] leading-relaxed">
             “{line}”
           </p>
-          <button type="button" disabled className={`${btnQuiet} !border-white/30 !bg-transparent !text-on-charcoal opacity-60`}>
+          <p data-part="disclosure" className="text-center text-xs opacity-80">{t("asst.disclosure")}</p>
+          <button type="button" disabled={!samples} onClick={() => hear(s.voice === "own_voice" ? "female_warm" : s.voice)} className={`${btnQuiet} !border-white/30 !bg-transparent !text-on-charcoal ${samples ? "" : "opacity-60"}`}>
             ▶ {t("asst.hear")}
           </button>
-          <p className="text-center text-xs opacity-80">{t("asst.hear.soon")}</p>
-          <button type="button" disabled={!canEdit} onClick={() => setNote("test")} className="inline-flex min-h-12 items-center justify-center rounded-xl bg-brand px-4 text-[15px] font-bold text-ink disabled:opacity-60">
-            {t("asst.test")}
-          </button>
-          <p className="text-center text-xs opacity-80">{note === "test" ? t("asst.test.soon") : t("asst.test.note")}</p>
+          {samples ? null : <p className="text-center text-xs opacity-80">{t("asst.hear.soon")}</p>}
+          {actions.testCall ? (
+            <button
+              type="button"
+              disabled={!canEdit || test.state === "running"}
+              onClick={async () => {
+                setTest({ state: "running" });
+                try {
+                  const r = await actions.testCall!();
+                  setTest(r.ok ? { state: "done", call: r.call } : { state: "error" });
+                } catch {
+                  setTest({ state: "error" });
+                }
+              }}
+              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-brand px-4 text-[15px] font-bold text-ink disabled:opacity-60"
+            >
+              {t("asst.test")}
+            </button>
+          ) : (
+            <button type="button" disabled={!canEdit} onClick={() => setNote("test")} className="inline-flex min-h-12 items-center justify-center rounded-xl bg-brand px-4 text-[15px] font-bold text-ink disabled:opacity-60">
+              {t("asst.test")}
+            </button>
+          )}
+          <p className="text-center text-xs opacity-80">{!actions.testCall && note === "test" ? t("asst.test.soon") : t("asst.test.note")}</p>
+          {test.state === "running" ? <p role="status" className="text-center text-sm">{t("asst.test.running")}</p> : null}
+          {test.state === "error" ? <p role="alert" className="text-center text-sm font-medium text-red-text">{t("asst.test.err")}</p> : null}
+          {test.state === "done" ? (
+            <div data-part="test-call" role="status" className="rounded-2xl border border-white/20 p-3 text-left">
+              <h4 className="text-sm font-bold">{t("asst.test.title")}</h4>
+              <p className="mt-1 text-xs opacity-80">{test.call.note}</p>
+              <ol className="mt-2 flex flex-col gap-2">
+                {test.call.transcript.map((row, i) => (
+                  <li key={i} lang={s.lang} className="text-sm">
+                    <span className="font-semibold">{t(`asst.test.who.${row.speaker}` as "asst.test.who.assistant")}: </span>
+                    {row.text}
+                  </li>
+                ))}
+              </ol>
+              {test.call.outcome ? <p className="mt-2 text-sm font-semibold">{t("asst.test.outcome", { reason: test.call.outcome.reason })}</p> : null}
+            </div>
+          ) : null}
         </aside>
       </div>
     </div>

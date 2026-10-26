@@ -11,6 +11,7 @@ import { signupT } from "@/i18n/signup";
 import { getCurrentPolicies, type CurrentPolicies } from "@/lib/api/policy";
 import { WEB_SIGNUP_ERRORS } from "@/lib/api/signup";
 import { MIN_PASSWORD } from "@/lib/auth/password-policy";
+import { dpdpScreens } from "@/lib/screens/flag";
 import { isSignupOpen } from "@/lib/auth/signup-open";
 import { getAuthProviders, listPacks } from "@/lib/api/pack";
 import { pickSignupPack, signupCards } from "@/lib/packs/signup";
@@ -128,7 +129,7 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
         </p>
       ) : null}
       {providers.google || providers.facebook ? (
-        <form action={continueWithProvider} className="flex flex-col">
+        <form id="signup-provider-form" action={continueWithProvider} className="flex flex-col">
           <input type="hidden" name="type" value={type} />
           {providers.google ? (
             <button type="submit" name="provider" value="google" className={authSecondary}>
@@ -150,6 +151,13 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
           words={{ email: t("signup.email"), password: t("signup.password"), passwordHint: t("signup.password.hint", { n: MIN_PASSWORD }), submit: t("signup.submit"), errors }}
         />
       </EmailDisclosure>
+      {dpdpScreens() !== "off" ? (
+        <label className="flex items-start gap-3 text-sm" data-part="signup-marketing">
+          {/* the separate, UNTICKED box for news and offers (job DQ part 2): nothing depends on it; it belongs to whichever way the person signs in */}
+          <input id="signup-marketing" type="checkbox" name="marketing" form="signup-provider-form" className="mt-0.5 size-6 shrink-0 accent-brand-text" />
+          <span>{t("signup.marketing")}</span>
+        </label>
+      ) : null}
       <TermsLine text={t("signup.terms.continue")} termsLink={t("signup.terms.link")} privacyLink={t("signup.privacy.link")} />
       <p className={`${authHint} text-center`}>
         {t("signup.have")}{" "}

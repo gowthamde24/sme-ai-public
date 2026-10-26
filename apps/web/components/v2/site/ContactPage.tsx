@@ -5,6 +5,7 @@ import { EmailAddress } from "@/components/v2/site/EmailAddress";
 import { emailWords } from "@/components/v2/site/email-words";
 import { ContactForm } from "@/components/v2/site/LazyIslands";
 import { Section } from "@/components/v2/site/sections";
+import { WaitlistSection, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { container, lead } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
@@ -16,7 +17,7 @@ import { SITE_PACKS, textIn } from "@/lib/site/packs";
  * Contact (jobs CM, DB): the four public e-mail addresses as selectable text with a Copy button and a mailto: link as an extra (lib/site/business.ts: no phone number and no postal address are published), then WhatsApp click-to-chat and a small form with consent. Both end in OUR WhatsApp number with a message filled in; nothing typed is stored on the site, and when our number is not set up the page says so
  * and shows no button. Our number is not in the page's HTML: the server hands back the chat address only after the visitor has ticked consent.
  */
-export function ContactPage({ t, lang, chatAvailable, action }: { t: SiteT; lang: Lang; chatAvailable: boolean; action: (input: unknown) => Promise<LeadResult> }) {
+export function ContactPage({ t, lang, chatAvailable, action, waitlist }: { t: SiteT; lang: Lang; chatAvailable: boolean; action: (input: unknown) => Promise<LeadResult>; waitlist?: WaitlistAction }) {
   const words: ContactWords = { name: t("contact.name"), type: t("contact.type"), other: t("contact.type.other"), what: t("contact.what"), consent: t("contact.consent"), privacy: t("contact.privacy"), submit: t("contact.submit"), nosave: t("contact.nosave"), errConsent: t("contact.err.consent"), errName: t("contact.err.name"), errRate: t("contact.err.rate"), errGeneric: t("contact.err.generic"), unavailable: t("contact.unavailable") };
   return (
     <>
@@ -30,6 +31,7 @@ export function ContactPage({ t, lang, chatAvailable, action }: { t: SiteT; lang
           {t("contact.hours")}
         </p>
       </section>
+      <WaitlistSection t={t} lang={lang} action={waitlist} />
       <Section id="email" title={t("contact.addr.title")}>
         <p className="max-w-2xl text-base text-muted">{t("contact.addr.sub")}</p>
         <dl className="mt-4 grid max-w-2xl gap-4" data-part="addresses">

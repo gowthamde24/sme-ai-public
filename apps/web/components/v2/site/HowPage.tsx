@@ -78,7 +78,7 @@ export function HowPage({ t, lang }: { t: SiteT; lang: Lang }) {
         </ul>
         <p className="mt-4 text-sm text-muted">{t("how.habits.note")}</p>
       </Section>
-      <CtaBand t={t} />
+      <CtaBand t={t} lang={lang} />
     </>
   );
 }

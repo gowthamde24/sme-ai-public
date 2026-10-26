@@ -5,7 +5,7 @@ import { Pill } from "../parts";
 import { mutedText, surface } from "../ui";
 import { makeT, type Words } from "../words";
 import { Meter } from "./Meter";
-import { PlanMoves } from "./PlanMoves";
+import { PlanMoves } from "../settings/LazyTabs";
 import type { PlanActions } from "./types";
 
 const date = (iso: string): string => new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));

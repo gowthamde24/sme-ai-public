@@ -27,10 +27,10 @@ export function pageText(lang: Lang, target: SiteTarget): { title: string; descr
 
 /**
  * The head of one public page in one language (job CM, extending job BS): a plain title and description in that language, the page's own address as canonical, the same page in the other languages as alternates, a share
- * picture with the owl (Open Graph and Twitter; a business type's page has its own), and the robots rule: noindex until the launch switch is on (lib/seo/site.ts). `canonical` is the address this response is served at ("/"
+ * picture with the owl (Open Graph and Twitter; a business type's page has its own), and the robots rule: noindex unless `index` (lib/seo/index-rule.ts: the launch switch, or website mode served from stack19.com). `canonical` is the address this response is served at ("/"
  * is cookie-driven, so it is "/" whatever language the cookie says; "/te" is always Telugu).
  */
-export function siteMetadata(lang: Lang, target: SiteTarget, canonical: string = sitePath(lang, target)): Metadata {
+export function siteMetadata(lang: Lang, target: SiteTarget, canonical: string = sitePath(lang, target), index: boolean = SITE_LIVE): Metadata {
   const { title, description, image, imageAlt } = pageText(lang, target);
   const img = { url: image, width: OG_SIZE.width, height: OG_SIZE.height, alt: imageAlt };
   return {
@@ -40,7 +40,7 @@ export function siteMetadata(lang: Lang, target: SiteTarget, canonical: string =
       canonical,
       languages: { ...Object.fromEntries(LANDING_LANGS.map((l) => [HREFLANG[l], sitePath(l, target)])), "x-default": sitePath("en", target) },
     },
-    robots: SITE_LIVE ? { index: true, follow: true } : { index: false, follow: false },
+    robots: index ? { index: true, follow: true } : { index: false, follow: false },
     openGraph: { type: "website", siteName: BRAND_NAME, title, description, url: canonical, locale: LOCALE[lang], images: [img] },
     twitter: { card: "summary_large_image", title, description, images: [img.url] },
   };
