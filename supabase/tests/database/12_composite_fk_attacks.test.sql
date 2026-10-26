@@ -61,6 +61,16 @@ begin
   end loop;
 end $$;
 
+-- job DR A3: an outcome's details, an attempt and an item reference outcomes, items, batches and rules; the generic attack needs tenant-B rows of each kind to aim at
+do $$
+declare
+  r record;
+begin
+  for r in select * from tests.tenant_table_registry where table_name in ('outcomes', 'outreach_batches', 'outreach_rules', 'outreach_items') order by table_name loop
+    execute format(r.insert_sql, tests.tid('b'), gen_random_uuid(), tests.rid('b_company'), tests.rid('b_contact'), tests.pool_uid(3));
+  end loop;
+end $$;
+
 -- privileged equivalent of tests.error_shape_as
 create function pg_temp.err_shape(p_sql text) returns text
 language plpgsql as $$
@@ -159,6 +169,8 @@ begin
                                         when k.child = 'agent_runs' and k.child_col in ('lead_id', 'enquiry_id', 'conversation_id') then '23514:%'
                                         -- job CK: a contact's value re-pointed at an item trips the exactly-one-entity CHECK first (the insert path of the same reference is attacked in section B)
                                         when k.child = 'custom_field_values' and k.child_col = 'catalogue_item_id' then '23514:%'
+                                        -- job DR A3: an item belongs to exactly one of a batch or a rule, so re-pointing the rule of a batch's item trips that CHECK first
+                                        when k.child = 'outreach_items' and k.child_col = 'rule_id' then '23514:%'
                                         else '23503:%' end),
                    label || ': privileged re-point at tenant B is refused (' || p_foreign || ')');
     return next is(p_foreign, p_missing, label || ': privileged, foreign id fails exactly like a nonexistent id');

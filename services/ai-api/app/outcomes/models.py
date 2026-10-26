@@ -12,13 +12,13 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 OutcomeWord = Literal["positive", "negative", "unclear"]
-CategoryWord = Literal["interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "too_costly", "call_back_later"]
+CategoryWord = Literal["interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "too_costly", "already_bought", "call_back_later"]
 KindWord = Literal["call", "whatsapp_followup"]
 
 # the category belongs to its outcome (the database holds the same rule)
 CATEGORIES_OF: dict[str, tuple[str | None, ...]] = {
     "positive": ("interested", "visit_booked", "order_likely"),
-    "negative": ("not_interested", "wrong_number", "too_costly"),
+    "negative": ("not_interested", "wrong_number", "too_costly", "already_bought"),
     "unclear": (None, "call_back_later"),
 }
 
@@ -80,6 +80,9 @@ class OutcomeOut(_Strict):
     ai_category: CategoryWord | None
     occurred_at: datetime
     recorded_at: datetime
+    # job DR A3: when the customer asked to be called back (call_back_later), and the fields the call captured (budget, area, ...)
+    callback_at: datetime | None = None
+    captured: dict[str, str | int | float | bool] = Field(default_factory=dict)
 
 
 class OutcomeRecordedOut(OutcomeOut):
@@ -97,6 +100,8 @@ class CustomerOutcomeOut(_Strict):
     category: CategoryWord | None
     reason: str | None
     corrected: bool
+    callback_at: datetime | None = None
+    captured: dict[str, str | int | float | bool] = Field(default_factory=dict)
 
 
 class CustomerCorrectionIn(_Strict):
@@ -126,6 +131,7 @@ class CategoryCountsOut(_Strict):
     not_interested: int
     wrong_number: int
     too_costly: int
+    already_bought: int
     call_back_later: int
 
 

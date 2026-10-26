@@ -45,7 +45,7 @@ class TodayCards(_Out):
 class Target(_Out):
     """Where "Open" goes for an item: a quote, a lead (its follow-ups), an enquiry, an order, a message held for approval or a call request."""
 
-    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request"]
+    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch"]
     id: uuid.UUID
 
 
@@ -56,6 +56,8 @@ class NeedsYouItem(_Out):
         "order_money_held",
         "outbox_approval",
         "call_approval",
+        "outreach_paused",
+        "hot_lead_waiting",
     ]
     id: uuid.UUID
     customer: str

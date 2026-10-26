@@ -112,6 +112,7 @@
           "not_interested": 1,
           "wrong_number": 0,
           "too_costly": 1,
+          "already_bought": 0,
           "call_back_later": 1
         }
       }
@@ -138,6 +139,7 @@
           "not_interested": 0,
           "wrong_number": 0,
           "too_costly": 0,
+          "already_bought": 0,
           "call_back_later": 0
         }
       }

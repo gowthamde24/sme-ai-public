@@ -119,6 +119,6 @@ def customer_outcomes(lead_id: str, ctx: Sales, runtime: RuntimeDep, limit: Anno
         raise not_found()
     rows = _repo(runtime).for_lead(ctx.principal.token, ctx.tenant.id, parsed, limit)
     return [
-        CustomerOutcomeOut(id=r["id"], channel="call" if r["kind"] == "call" else "whatsapp", at=r["occurred_at"], result=r["outcome"], category=r["category"], reason=r["reason"], corrected=bool(r["corrected"]))
+        CustomerOutcomeOut(id=r["id"], channel="call" if r["kind"] == "call" else "whatsapp", at=r["occurred_at"], result=r["outcome"], category=r["category"], reason=r["reason"], corrected=bool(r["corrected"]), callback_at=r.get("callback_at"), captured=r.get("captured") or {})
         for r in rows
     ]
