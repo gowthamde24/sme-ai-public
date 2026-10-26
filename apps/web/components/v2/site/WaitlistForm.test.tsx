@@ -80,7 +80,7 @@ describe("Book a demo / join the waitlist (job DQ)", () => {
     fill(t);
     fireEvent.click(screen.getByRole("button", { name: t("demo.submit") }));
     expect(await screen.findByRole("alert")).toHaveTextContent(t(key));
-    expect(screen.getByRole("button", { name: t("demo.submit") })).toBeEnabled();
+    await waitFor(() => expect(screen.getByRole("button", { name: t("demo.submit") })).toBeEnabled());
   });
 
   it("a script that fills the hidden field is passed on so the server can drop it; a person never sees the field", () => {
