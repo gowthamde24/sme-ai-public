@@ -9,8 +9,7 @@ import { PartProblem } from "../cc/PartProblem";
 import { link, listPlain } from "../ui";
 import { makeT, type Words } from "../words";
 import { ConsentListView } from "./ConsentList";
-import { DeleteData } from "./DeleteData";
-import { ExportMyData } from "./ExportMyData";
+import { DeleteData, ExportMyData } from "../settings/LazyTabs";
 import type { PrivacyActions } from "./types";
 
 /**
