@@ -24,8 +24,21 @@ def _secret(value: object) -> str | None:
     return text.strip() if isinstance(text, str) and text.strip() else None
 
 
+SPEECH_SWITCH = ("", "fake", "sarvam")
+
+
+def _speech_default(settings: Settings) -> str:
+    """The provider the ONE switch SPEECH_PROVIDER names (night 3, ADR 0101); "off" when it is not set. A provider named explicitly in VOICE_STT_PROVIDER / VOICE_TTS_PROVIDER wins over it."""
+    switch = settings.speech_provider.strip().lower()
+    if switch not in SPEECH_SWITCH:
+        raise ConfigurationError("SPEECH_PROVIDER must be empty, fake or sarvam")
+    return switch or "off"
+
+
 def build_stt(settings: Settings) -> SpeechToText | None:
     name = settings.voice_stt_provider.strip().lower()
+    if name == "off":
+        name = _speech_default(settings)
     if name not in STT_PROVIDERS:
         raise ConfigurationError(f"VOICE_STT_PROVIDER must be one of {', '.join(STT_PROVIDERS)}")
     if name == "off":
@@ -61,6 +74,8 @@ def build_stt(settings: Settings) -> SpeechToText | None:
 
 def build_tts(settings: Settings) -> TextToSpeech | None:
     name = settings.voice_tts_provider.strip().lower()
+    if name == "off":
+        name = _speech_default(settings)
     if name not in TTS_PROVIDERS:
         raise ConfigurationError(f"VOICE_TTS_PROVIDER must be one of {', '.join(TTS_PROVIDERS)}")
     if name == "off":
@@ -106,6 +121,8 @@ def build_note_voice(settings: Settings) -> tuple[TextToSpeech | None, FfmpegCon
     if name not in NOTE_PROVIDERS:
         raise ConfigurationError(f"VOICE_NOTE_TTS_PROVIDER must be one of {', '.join(NOTE_PROVIDERS)}")
     key = _secret(settings.sarvam_api_key)
+    if name == "auto" and _speech_default(settings) != "off":
+        name = _speech_default(settings)   # the one switch decides, key or no key (SPEECH_PROVIDER=fake keeps a staging worker with a key silent)
     if name == "auto":
         if key:
             name = "sarvam"

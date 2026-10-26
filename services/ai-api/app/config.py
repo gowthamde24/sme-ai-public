@@ -164,6 +164,12 @@ class Settings(BaseSettings):
     sarvam_stt_model: str = "saaras:v4"
     sarvam_tts_model: str = "bulbul:v3"
     sarvam_tts_speaker: str | None = None
+    # Night 3 (ADR 0101): ONE switch for the whole speech stack. "" = as before (each
+    # VOICE_*_PROVIDER decides; off unless named), "fake" = the fake provider everywhere
+    # (development and tests only), "sarvam" = Sarvam for speech-to-text, text-to-speech and
+    # WhatsApp voice notes (needs SARVAM_API_KEY). A VOICE_STT_PROVIDER / VOICE_TTS_PROVIDER /
+    # VOICE_NOTE_TTS_PROVIDER named explicitly still wins over it.
+    speech_provider: str = ""
     # Job DJ (ADR 0093): the speech of WhatsApp VOICE NOTES (the worker). auto = Sarvam when
     # SARVAM_API_KEY is set, else VOICE_TTS_PROVIDER when it names one, else the fake provider in
     # development and none elsewhere (the text then goes alone); off | fake (development only) |
