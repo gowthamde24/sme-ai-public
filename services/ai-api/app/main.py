@@ -183,6 +183,8 @@ from app.voice.fake import FakeVoiceCloner
 from app.voice.routes import router as voice_router
 from app.voice_notes.repository import PostgrestVoiceNotesRepository
 from app.voice_notes.routes import router as voice_notes_router
+from app.voicesample.routes import router as voice_sample_router
+from app.voicesample.service import VoiceSampleService
 from app.websearch.repository import PostgrestResearchUsageRepository
 from app.websearch.routes import router as research_router
 from app.websearch.wiring import build_research_web
@@ -245,6 +247,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         settings.privacy_effective_from,
     )
     key_ring = build_key_ring(settings)
+    voice_stack = build_voice(settings)
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
@@ -268,7 +271,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         catalogue=PostgrestCatalogueRepository(config.rest_url, config.anon_key),
         catalogue_storage=HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key),
         lead_search=PostgrestLeadSearchRepository(config.rest_url, config.anon_key),
-        voice=build_voice(settings),
+        voice=voice_stack,
         integrations=PostgrestIntegrationsRepository(config.rest_url, config.anon_key),
         policies=policies,
         privacy=PostgrestPrivacyRepository(config.rest_url, config.anon_key),
@@ -286,6 +289,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         outreach=build_outreach(config.rest_url, config.anon_key),
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
+        voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         notifications=build_notifications(settings, config),
         research_web=build_research_web(settings),
@@ -1094,6 +1098,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_intake_router)
     app.include_router(outreach_router)
     app.include_router(tasks_router)
+    app.include_router(voice_sample_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)
