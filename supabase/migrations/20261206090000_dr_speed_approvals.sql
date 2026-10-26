@@ -50,7 +50,8 @@ end;
 $$;
 
 create table public.outcome_details (
-  outcome_id  uuid primary key,
+  id          uuid primary key default gen_random_uuid(),
+  outcome_id  uuid not null unique,
   tenant_id   uuid not null references public.tenants (id) on delete restrict,
   callback_at timestamptz,
   captured    jsonb check (captured is null or (jsonb_typeof(captured) = 'object' and octet_length(captured::text) <= 3000)),

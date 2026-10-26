@@ -404,7 +404,7 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    'summary = summary', $$delete from public.outreach_handoffs where id = %2$L$$, false),
   ('outcome_details',
    $$with o as (insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, recorded_by_kind, recorded_by, occurred_at) values (%2$L, %1$L, %4$L, 'call', %2$L, 'unclear', 'call_back_later', 'person', %5$L, now()) returning id)
-     insert into public.outcome_details (outcome_id, tenant_id, callback_at) select o.id, %1$L, now() + interval '1 day' from o$$,
+     insert into public.outcome_details (id, outcome_id, tenant_id, callback_at) select %2$L, o.id, %1$L, now() + interval '1 day' from o$$,
    'callback_at = callback_at', $$delete from public.outcome_details where outcome_id = %2$L$$, false),
   ('lead_source_costs',
    $$insert into public.lead_source_costs (tenant_id, source, cost_per_lead_paise, updated_by) values (%1$L, 'generic_' || left(%2$L, 8), 0, %5$L)$$,

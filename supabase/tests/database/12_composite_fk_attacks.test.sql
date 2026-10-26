@@ -157,6 +157,8 @@ begin
                                         when k.child = 'agent_runs' and k.child_col in ('lead_id', 'enquiry_id', 'conversation_id') then '23514:%'
                                         -- job CK: a contact's value re-pointed at an item trips the exactly-one-entity CHECK first (the insert path of the same reference is attacked in section B)
                                         when k.child = 'custom_field_values' and k.child_col = 'catalogue_item_id' then '23514:%'
+                                        -- job DR A3: an item belongs to exactly one of a batch or a rule, so re-pointing the rule of a batch's item trips that CHECK first
+                                        when k.child = 'outreach_items' and k.child_col = 'rule_id' then '23514:%'
                                         else '23503:%' end),
                    label || ': privileged re-point at tenant B is refused (' || p_foreign || ')');
     return next is(p_foreign, p_missing, label || ': privileged, foreign id fails exactly like a nonexistent id');
