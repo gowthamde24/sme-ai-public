@@ -32,6 +32,8 @@ from app.billing.repository import PostgrestBillingRepository
 from app.billing.service import BillingService
 from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
+from app.dpdp.mail import DpdpJobs
+from app.dpdp.wiring import build_dpdp_jobs
 from app.notifications.repository import PostgrestNotificationsRepository
 from app.notifications.runner import PushRunner
 from app.notifications.webpush import WebPushSender
@@ -79,6 +81,7 @@ class Worker:
         billing_clocks: BillingService | None = None,
         billing_pending_mail: PendingReminders | None = None,
         billing_trial_mail: TrialReminders | None = None,
+        dpdp_jobs: DpdpJobs | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -101,6 +104,8 @@ class Worker:
         self._billing_pending_mail = billing_pending_mail
         # job RESEND: the reminders on day 11 and day 13 of the trial
         self._billing_trial_mail = billing_trial_mail
+        # job DQ (DPDP): the e-mails of the public privacy doors, the lapse warnings and erasures, the purge of old logs
+        self._dpdp_jobs = dpdp_jobs
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -118,6 +123,7 @@ class Worker:
             self._push_to_the_team(token)
             self._billing_reminders(token)
             self._billing_trial_clocks(token)
+            self._dpdp(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -164,6 +170,16 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("billing reminders crashed: %s", exc.__class__.__name__)
+
+    def _dpdp(self, token: str) -> None:
+        if self._dpdp_jobs is None:
+            return
+        try:
+            self._dpdp_jobs.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("dpdp jobs crashed: %s", exc.__class__.__name__)
 
     def _billing_trial_clocks(self, token: str) -> None:
         if self._billing_clocks is None:
@@ -241,6 +257,7 @@ def build_worker(settings: Settings) -> Worker:
         billing_pending_mail=PendingReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
         billing_trial_mail=TrialReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
         billing_clocks=BillingService(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_provider(settings)),
+        dpdp_jobs=build_dpdp_jobs(settings, config.rest_url, config.anon_key, _billing_sender(settings)),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,

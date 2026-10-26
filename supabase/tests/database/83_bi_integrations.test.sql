@@ -37,7 +37,7 @@ select is((select count(*) from information_schema.role_table_grants where table
 select is((select count(*) from information_schema.schemata where schema_name = 'integrations' and (has_schema_privilege('anon', schema_name, 'usage') or has_schema_privilege('authenticated', schema_name, 'usage'))), 0::bigint,
           'A: no client role can even use the integrations schema');
 select is((select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-            where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')), 'calendar_feed_read', 'A: the calendar read is the only public function anon can execute');
+            where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')), 'calendar_feed_read,public_grievance_submit,waitlist_join', 'A: anon can execute the calendar read and the two public doors of job DQ (a grievance, the waitlist), nothing else');
 select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public'
             and p.proname in ('export_accounting_data', 'import_job_preview_save', 'import_job_get', 'import_job_list', 'import_job_begin', 'import_job_finish', 'catalogue_stock_list', 'catalogue_stock_apply',
                               'calendar_feed_create', 'calendar_feed_status', 'calendar_feed_revoke', 'calendar_feed_read', 'policy_accept', 'policy_acceptances_mine')

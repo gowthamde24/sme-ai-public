@@ -129,6 +129,7 @@ insert into exempt (tbl, why) values
   ('notify.member_state', 'notifications'), ('notify.push_prefs', 'notifications'), ('notify.push_sent', 'notifications'),
   ('privacy.data_exports', 'privacy rights apply to every business'), ('privacy.deletion_requests', 'privacy rights'), ('privacy.grievances', 'privacy rights'),
   ('privacy.retention_runs', 'privacy rights'), ('privacy.retention_settings', 'privacy rights'),
+  ('privacy.lapse_erasures', 'privacy rights: the lapse erasure follows the workspace, every business (job DQ)'),
   ('public.agent_runs', 'guarded by app.module_guard_agent through packs.agent_modules'), ('public.agent_cost_reservations', 'agent ledger: follows its run'), ('public.agent_run_steps', 'agent ledger: follows its run'), ('public.assistant_conversations', 'Agent OWL chats'),
   ('public.assistant_messages', 'Agent OWL chats'), ('public.assistant_reply_drafts', 'Agent OWL chats'), ('public.audit_events', 'the audit trail'), ('public.business_profile', 'the business itself'),
   ('public.claim_reviews', 'research evidence follows its (guarded) agent run'), ('public.claims', 'research evidence follows its (guarded) agent run'), ('public.consent_events', 'the consent ledger: every business'),
