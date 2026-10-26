@@ -33,9 +33,14 @@ describe("the meters and the usage view", () => {
     expect(m).toMatchObject({ allowance: null, remaining: null, percent: null, overage: { enabled: true, units: 12, spentPaise: 6000, capPaise: 50000, ratePaisePerUnit: 500 } });
   });
   it("refuses a meter that is not the contract: a bad state, a bad date, a negative count, a missing field", () => {
-    for (const bad of [{ ...METER, state: "paused" }, { ...METER, projected_run_out_on: "21 Nov" }, { ...METER, used: -1 }, { ...METER, kind: "ai_tokens" }, { ...METER, queued: 1.5 }, { ...METER, blocked: "no" }, { ...METER, topup_balance: undefined }, "x", null]) {
+    for (const bad of [{ ...METER, state: "paused" }, { ...METER, projected_run_out_on: "21 Nov" }, { ...METER, used: -1 }, { ...METER, kind: "ai_tokens" }, { ...METER, queued: 1.5 }, { ...METER, blocked: "no" }, { ...METER, topup_balance: "3" }, "x", null]) {
       expect(() => parseMeter(bad), JSON.stringify(bad)).toThrow(ApiContractError);
     }
+  });
+  it("the top-up fields of a meter are optional in the generated type: missing ones read as nothing", () => {
+    const old = { kind: "call_minutes", unit: "minutes", used: 10, allowance: 30, remaining: 20, percent: 33, state: "ok", included: true, topup: 7 };
+    expect(parseMeter(old)).toEqual({ kind: "call_minutes", used: 10, allowance: 30, remaining: 20, percent: 33, state: "ok", included: true, planAllowance: 30, topupBalance: 7, nextTopupExpiry: null, projectedRunOutOn: null, runsOutBeforePeriodEnd: false, blocked: false, overage: null, queued: 0 });
+    expect(parseMeter({ ...old, state: "stopped" }).blocked).toBe(true);
   });
   it("the usage view carries the period, both meters and the queued calls", () => {
     const u = parseUsageView(USAGE);

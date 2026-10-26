@@ -23,25 +23,28 @@ function parseOverage(v: unknown): Meter["overage"] {
   return { enabled: bool(o.enabled, "overage.enabled"), units: num(o.units, "overage.units"), spentPaise: int(o.spent_paise, "overage.spent_paise"), capPaise: int(o.cap_paise, "overage.cap_paise"), ratePaisePerUnit: int(o.rate_paise_per_unit, "overage.rate_paise_per_unit") };
 }
 
+/** The generated type (origin/api/ds-topups, packages/contracts/billing.ts) marks the top-up fields of a meter OPTIONAL (an older route may leave them out): a missing one reads as "nothing" (no top-up, not blocked beyond its state, nothing queued). A field that is there must be right. */
 export function parseMeter(json: unknown): Meter {
   const m = rec(json, "meter");
   const allowance = optNum(m.allowance, "meter.allowance");
+  const state = oneOf(m.state, ["ok", "notice", "stopped"] as const, "meter.state");
+  const projected = optDay(m.projected_run_out_on, "meter.projected_run_out_on");
   return {
     kind: kind(m.kind, "meter.kind"),
     used: num(m.used, "meter.used"),
     allowance,
     remaining: optNum(m.remaining, "meter.remaining"),
     percent: optNum(m.percent, "meter.percent"),
-    state: oneOf(m.state, ["ok", "notice", "stopped"] as const, "meter.state"),
+    state,
     included: bool(m.included, "meter.included"),
-    planAllowance: optNum(m.plan_allowance, "meter.plan_allowance"),
-    topupBalance: num(m.topup_balance, "meter.topup_balance"),
+    planAllowance: m.plan_allowance === undefined ? allowance : optNum(m.plan_allowance, "meter.plan_allowance"),
+    topupBalance: m.topup_balance === undefined ? num(m.topup ?? 0, "meter.topup") : num(m.topup_balance, "meter.topup_balance"),
     nextTopupExpiry: optDay(m.next_topup_expiry, "meter.next_topup_expiry"),
-    projectedRunOutOn: optDay(m.projected_run_out_on, "meter.projected_run_out_on"),
-    runsOutBeforePeriodEnd: bool(m.runs_out_before_period_end, "meter.runs_out_before_period_end"),
-    blocked: bool(m.blocked, "meter.blocked"),
+    projectedRunOutOn: projected,
+    runsOutBeforePeriodEnd: m.runs_out_before_period_end === undefined ? projected !== null : bool(m.runs_out_before_period_end, "meter.runs_out_before_period_end"),
+    blocked: m.blocked === undefined ? state === "stopped" : bool(m.blocked, "meter.blocked"),
     overage: parseOverage(m.overage),
-    queued: int(m.queued, "meter.queued"),
+    queued: m.queued === undefined ? 0 : int(m.queued, "meter.queued"),
   };
 }
 
