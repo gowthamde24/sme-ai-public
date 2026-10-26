@@ -57,15 +57,14 @@ import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSett
 import { OwnVoice } from "@/components/v2/app/assistant/LazyOwnVoice";
 import { assistantProfile } from "@/lib/assistant/defaults";
 import { readAssistant } from "@/lib/assistant/source";
-import { CALL_LANGS, VOICES } from "@/lib/assistant/types";
-import { LANGUAGE_NAMES } from "@/i18n/lang";
+import { CALL_LANG_NAMES, VOICES } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { assistantScreens, callSettingsScreens, dpdpScreens, ownVoiceScreens } from "@/lib/screens/flag";
+import { assistantScreens, callSettingsScreens, dpdpScreens, ownVoiceScreens, voiceSampleScreens } from "@/lib/screens/flag";
 import { readConsents } from "@/lib/dpdp/source";
 import { RESPONSE_DAYS } from "@/lib/site/business";
 import { grievanceAction, setMarketingAction } from "../dpdp-actions";
-import { saveAssistantAction } from "../assistant-actions";
+import { saveAssistantAction, testCallAction } from "../assistant-actions";
 import { saveCallSettingsAction } from "../call-settings-actions";
 import { deleteVoiceAction, sentenceAction } from "../own-voice-actions";
 import { FAKE_CHECKOUT, planScreens } from "@/lib/plan/flag";
@@ -290,12 +289,13 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               initial={assistant.settings}
               profile={assistantProfile(pack?.modules ?? null)}
               shop={tenant.name}
-              langs={Object.fromEntries(CALL_LANGS.map((l) => [l, LANGUAGE_NAMES[l].native])) as Record<(typeof CALL_LANGS)[number], string>}
+              langs={CALL_LANG_NAMES}
               voiceNames={Object.fromEntries(VOICES.map((v) => [v, t(`asst.voice.${v}` as "asst.voice.female_warm")])) as Record<(typeof VOICES)[number], string>}
               canEdit={tenant.role === "owner"}
               testMode={assistantScreens() === "mock"}
               saved={assistant.saved}
-              actions={{ save: saveAssistantAction.bind(null, tenantId) }}
+              actions={{ save: saveAssistantAction.bind(null, tenantId), testCall: testCallAction.bind(null, tenantId) }}
+              samples={voiceSampleScreens() !== "off" ? { endpoint: `/app/tenants/${tenantId}/voice-sample`, mock: voiceSampleScreens() === "mock" } : null}
               ownVoiceReady={ownVoice?.mode === "ok" && ownVoice.voice.status === "ready"}
             />
             ) : null}

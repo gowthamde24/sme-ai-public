@@ -55644,10 +55644,10 @@
   }
  },
  "asst.test": {
-  "en": "Call me now for a test",
-  "te": "టెస్ట్ కోసం ఇప్పుడే నాకు కాల్ చేయండి",
-  "hi": "टेस्ट के लिए अभी मुझे कॉल करें",
-  "kn": "ಟೆಸ್ಟ್‌ಗಾಗಿ ಈಗಲೇ ನನಗೆ ಕಾಲ್ ಮಾಡಿ",
+  "en": "Try a test call (a simulation)",
+  "te": "టెస్ట్ కాల్ ప్రయత్నించండి (సిమ్యులేషన్)",
+  "hi": "टेस्ट कॉल आज़माएँ (सिमुलेशन)",
+  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ಪ್ರಯತ್ನಿಸಿ (ಸಿಮ್ಯುಲೇಶನ್)",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -55655,10 +55655,10 @@
   }
  },
  "asst.test.note": {
-  "en": "The test call goes to your own phone. You see the transcript and outcome afterwards.",
-  "te": "టెస్ట్ కాల్ మీ సొంత ఫోన్‌కి వెళ్తుంది. తర్వాత ట్రాన్స్‌క్రిప్ట్, ఫలితం చూడవచ్చు.",
-  "hi": "टेस्ट कॉल आपके अपने फ़ोन पर जाता है। बाद में ट्रांसक्रिप्ट और नतीजा देख सकते हैं।",
-  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ನಿಮ್ಮದೇ ಫೋನ್‌ಗೆ ಹೋಗುತ್ತದೆ. ನಂತರ ಟ್ರಾನ್ಸ್‌ಕ್ರಿಪ್ಟ್, ಫಲಿತಾಂಶ ನೋಡಬಹುದು.",
+  "en": "No call is made: you see what the assistant would say to a customer and what it would record. A real test call to your own phone comes with AI calls.",
+  "te": "ఏ కాల్ చేయరు: అసిస్టెంట్ కస్టమర్‌కి ఏం చెబుతుందో, ఏం రికార్డ్ చేస్తుందో మీరు చూస్తారు. మీ సొంత ఫోన్‌కి నిజమైన టెస్ట్ కాల్ AI కాల్స్‌తో వస్తుంది.",
+  "hi": "कोई कॉल नहीं होता: आप देखते हैं कि असिस्टेंट ग्राहक से क्या कहेगा और क्या दर्ज करेगा। आपके अपने फ़ोन पर असली टेस्ट कॉल AI कॉल के साथ आएगा।",
+  "kn": "ಯಾವುದೇ ಕರೆ ಮಾಡುವುದಿಲ್ಲ: ಅಸಿಸ್ಟೆಂಟ್ ಗ್ರಾಹಕರಿಗೆ ಏನು ಹೇಳುತ್ತದೆ, ಏನು ದಾಖಲಿಸುತ್ತದೆ ಎಂದು ನೀವು ನೋಡುತ್ತೀರಿ. ನಿಮ್ಮ ಸ್ವಂತ ಫೋನ್‌ಗೆ ನಿಜವಾದ ಟೆಸ್ಟ್ ಕಾಲ್ AI ಕರೆಗಳೊಂದಿಗೆ ಬರುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -58375,5 +58375,533 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "calls.c.title": {
+  "en": "Call settings for this campaign",
+  "te": "ఈ క్యాంపెయిన్ కాల్ సెట్టింగ్స్",
+  "hi": "इस कैंपेन की कॉल सेटिंग्स",
+  "kn": "ಈ ಕ್ಯಾಂಪೇನ್‌ನ ಕರೆ ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.intro": {
+  "en": "Everything you do not change here follows the call settings of your AI assistant. What you change applies to this campaign only.",
+  "te": "ఇక్కడ మీరు మార్చనివన్నీ మీ AI అసిస్టెంట్ కాల్ సెట్టింగ్స్‌నే అనుసరిస్తాయి. మీరు మార్చేది ఈ క్యాంపెయిన్‌కి మాత్రమే.",
+  "hi": "जो आप यहाँ नहीं बदलते वह सब आपके AI असिस्टेंट की कॉल सेटिंग्स के अनुसार चलता है। जो बदलते हैं वह सिर्फ़ इस कैंपेन पर लागू होता है।",
+  "kn": "ಇಲ್ಲಿ ನೀವು ಬದಲಾಯಿಸದ್ದೆಲ್ಲ ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್‌ನ ಕರೆ ಸೆಟ್ಟಿಂಗ್ಸ್ ಪ್ರಕಾರವೇ ನಡೆಯುತ್ತದೆ. ನೀವು ಬದಲಾಯಿಸಿದ್ದು ಈ ಕ್ಯಾಂಪೇನ್‌ಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.diff": {
+  "en": "Different here",
+  "te": "ఇక్కడ వేరు",
+  "hi": "यहाँ अलग",
+  "kn": "ಇಲ್ಲಿ ಬೇರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.summary": {
+  "en": "Different here: {fields}.",
+  "te": "ఇక్కడ వేరుగా ఉన్నవి: {fields}.",
+  "hi": "यहाँ अलग: {fields}।",
+  "kn": "ಇಲ್ಲಿ ಬೇರೆ ಇರುವುದು: {fields}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.same": {
+  "en": "Same as your AI assistant's call settings.",
+  "te": "మీ AI అసిస్టెంట్ కాల్ సెట్టింగ్స్‌లాగే.",
+  "hi": "आपके AI असिस्टेंट की कॉल सेटिंग्स जैसा ही।",
+  "kn": "ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್‌ನ ಕರೆ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಂತೆಯೇ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.clear": {
+  "en": "Use my assistant's settings",
+  "te": "నా అసిస్టెంట్ సెట్టింగ్స్ వాడండి",
+  "hi": "मेरे असिस्टेंट की सेटिंग्स इस्तेमाल करें",
+  "kn": "ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್‌ನ ಸೆಟ್ಟಿಂಗ್ಸ್ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.cleared": {
+  "en": "This campaign now follows your assistant's call settings.",
+  "te": "ఈ క్యాంపెయిన్ ఇప్పుడు మీ అసిస్టెంట్ కాల్ సెట్టింగ్స్‌నే అనుసరిస్తుంది.",
+  "hi": "यह कैंपेन अब आपके असिस्टेंट की कॉल सेटिंग्स के अनुसार चलेगा।",
+  "kn": "ಈ ಕ್ಯಾಂಪೇನ್ ಈಗ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ನ ಕರೆ ಸೆಟ್ಟಿಂಗ್ಸ್ ಪ್ರಕಾರ ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.link": {
+  "en": "Edit call settings for this campaign",
+  "te": "ఈ క్యాంపెయిన్ కాల్ సెట్టింగ్స్ మార్చండి",
+  "hi": "इस कैंपेन की कॉल सेटिंग्स बदलें",
+  "kn": "ಈ ಕ್ಯಾಂಪೇನ್‌ನ ಕರೆ ಸೆಟ್ಟಿಂಗ್ಸ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.card.title": {
+  "en": "Calls for this campaign",
+  "te": "ఈ క్యాంపెయిన్ కాల్స్",
+  "hi": "इस कैंपेन के कॉल",
+  "kn": "ಈ ಕ್ಯಾಂಪೇನ್‌ನ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.back": {
+  "en": "Back to the campaign",
+  "te": "క్యాంపెయిన్‌కి తిరిగి",
+  "hi": "कैंपेन पर वापस",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.ws": {
+  "en": "Change the settings for every campaign",
+  "te": "అన్ని క్యాంపెయిన్‌ల సెట్టింగ్స్ మార్చండి",
+  "hi": "सभी कैंपेन की सेटिंग्स बदलें",
+  "kn": "ಎಲ್ಲಾ ಕ್ಯಾಂಪೇನ್‌ಗಳ ಸೆಟ್ಟಿಂಗ್ಸ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.hidden": {
+  "en": "Holidays, the people calls are handed over to, and what the assistant may call about are set for the whole workspace, in Settings.",
+  "te": "సెలవులు, కాల్స్ అప్పగించే వ్యక్తులు, అసిస్టెంట్ ఏ విషయాల కోసం కాల్ చేయవచ్చు అనేవి మొత్తం వర్క్‌స్పేస్‌కి సెట్టింగ్స్‌లో ఉంటాయి.",
+  "hi": "छुट्टियाँ, कॉल जिन लोगों को सौंपे जाते हैं, और असिस्टेंट किन बातों पर कॉल कर सकता है, ये पूरे वर्कस्पेस के लिए सेटिंग्स में तय होते हैं।",
+  "kn": "ರಜೆಗಳು, ಕರೆಗಳನ್ನು ಯಾರಿಗೆ ಒಪ್ಪಿಸುವುದು, ಅಸಿಸ್ಟೆಂಟ್ ಯಾವ ವಿಷಯಗಳಿಗೆ ಕರೆ ಮಾಡಬಹುದು ಎಂಬುದು ಇಡೀ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.retry_busy": {
+  "en": "Tries when busy",
+  "te": "బిజీగా ఉన్నప్పుడు ప్రయత్నాలు",
+  "hi": "व्यस्त होने पर कोशिशें",
+  "kn": "ಬ್ಯುಸಿ ಇದ್ದಾಗ ಪ್ರಯತ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.retry_no_answer": {
+  "en": "Tries when nobody answers",
+  "te": "ఎవరూ ఎత్తనప్పుడు ప్రయత్నాలు",
+  "hi": "कोई न उठाए तो कोशिशें",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದಾಗ ಪ್ರಯತ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.retry_call_later": {
+  "en": "Tries for 'call later'",
+  "te": "'తర్వాత కాల్ చేయండి' ప్రయత్నాలు",
+  "hi": "'बाद में कॉल करें' की कोशिशें",
+  "kn": "'ನಂತರ ಕರೆ ಮಾಡಿ' ಪ್ರಯತ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.concurrent_calls": {
+  "en": "Calls at once",
+  "te": "ఒకేసారి కాల్స్",
+  "hi": "एक साथ कॉल",
+  "kn": "ಒಂದೇ ಬಾರಿ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.detect_voicemail": {
+  "en": "Voicemail",
+  "te": "వాయిస్‌మెయిల్",
+  "hi": "वॉइसमेल",
+  "kn": "ವಾಯ್ಸ್‌ಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.voicemail_action": {
+  "en": "What to do at voicemail",
+  "te": "వాయిస్‌మెయిల్‌లో ఏం చేయాలి",
+  "hi": "वॉइसमेल पर क्या करें",
+  "kn": "ವಾಯ್ಸ್‌ಮೇಲ್‌ನಲ್ಲಿ ಏನು ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.detect_phone_menu": {
+  "en": "Phone menus",
+  "te": "ఫోన్ మెనూలు",
+  "hi": "फ़ोन मेन्यू",
+  "kn": "ಫೋನ್ ಮೆನುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.phone_menu_action": {
+  "en": "What to do at a phone menu",
+  "te": "ఫోన్ మెనూలో ఏం చేయాలి",
+  "hi": "फ़ोन मेन्यू पर क्या करें",
+  "kn": "ಫೋನ್ ಮೆನುವಿನಲ್ಲಿ ಏನು ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.silence_timeout_seconds": {
+  "en": "Silence before it speaks",
+  "te": "మాట్లాడే ముందు నిశ్శబ్దం",
+  "hi": "बोलने से पहले की चुप्पी",
+  "kn": "ಮಾತನಾಡುವ ಮೊದಲು ಮೌನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.max_call_seconds": {
+  "en": "Longest call",
+  "te": "అతి పొడవైన కాల్",
+  "hi": "सबसे लंबा कॉल",
+  "kn": "ಅತಿ ದೀರ್ಘ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.interruption_sensitivity": {
+  "en": "Interruption",
+  "te": "అడ్డుకోవడం",
+  "hi": "बीच में टोकना",
+  "kn": "ಅಡ್ಡಿಪಡಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.listening_sounds": {
+  "en": "Listening sounds",
+  "te": "వింటున్నప్పటి శబ్దాలు",
+  "hi": "सुनते समय की आवाज़ें",
+  "kn": "ಕೇಳುವಾಗಿನ ಶಬ್ದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.pronunciations": {
+  "en": "Pronunciations",
+  "te": "ఉచ్చారణలు",
+  "hi": "उच्चारण",
+  "kn": "ಉಚ್ಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.keywords": {
+  "en": "Key words",
+  "te": "కీ పదాలు",
+  "hi": "खास शब्द",
+  "kn": "ಮುಖ್ಯ ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.hours": {
+  "en": "Calling hours",
+  "te": "కాల్ చేసే వేళలు",
+  "hi": "कॉल के घंटे",
+  "kn": "ಕರೆ ಮಾಡುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.max_calls_per_customer_per_week": {
+  "en": "Calls per customer a week",
+  "te": "ఒక కస్టమర్‌కి వారానికి కాల్స్",
+  "hi": "एक ग्राहक को हफ़्ते में कॉल",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ವಾರಕ್ಕೆ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.auto_pause_refusals_per_hour": {
+  "en": "Automatic pause",
+  "te": "ఆటోమేటిక్ పాజ్",
+  "hi": "अपने-आप रुकना",
+  "kn": "ತಾನಾಗಿ ನಿಲ್ಲಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.contact_memory": {
+  "en": "Memory of earlier conversations",
+  "te": "ముందటి సంభాషణల జ్ఞాపకం",
+  "hi": "पिछली बातचीत की याद",
+  "kn": "ಹಿಂದಿನ ಮಾತುಕತೆಗಳ ನೆನಪು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.running": {
+  "en": "Running the test…",
+  "te": "టెస్ట్ నడుస్తోంది…",
+  "hi": "टेस्ट चल रहा है…",
+  "kn": "ಟೆಸ್ಟ್ ನಡೆಯುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.title": {
+  "en": "What the test call would be",
+  "te": "టెస్ట్ కాల్ ఎలా ఉంటుందో",
+  "hi": "टेस्ट कॉल कैसा होगा",
+  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ಹೇಗಿರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.who.assistant": {
+  "en": "Assistant",
+  "te": "అసిస్టెంట్",
+  "hi": "असिस्टेंट",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.who.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.outcome": {
+  "en": "It would record: {reason}",
+  "te": "ఇది రికార్డ్ చేస్తుంది: {reason}",
+  "hi": "यह दर्ज करेगा: {reason}",
+  "kn": "ಇದು ದಾಖಲಿಸುತ್ತದೆ: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.err": {
+  "en": "The test could not run. Nothing was changed. Try again.",
+  "te": "టెస్ట్ నడవలేదు. ఏదీ మారలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "टेस्ट नहीं चल सका। कुछ नहीं बदला। फिर कोशिश करें।",
+  "kn": "ಟೆಸ್ಟ್ ನಡೆಯಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.sample.hear": {
+  "en": "Hear {voice}",
+  "te": "{voice} వినండి",
+  "hi": "{voice} सुनें",
+  "kn": "{voice} ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.sample.playing": {
+  "en": "Playing…",
+  "te": "ప్లే అవుతోంది…",
+  "hi": "चल रहा है…",
+  "kn": "ಪ್ಲೇ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.sample.err": {
+  "en": "The sample could not be played.",
+  "te": "శాంపిల్ ప్లే కాలేదు.",
+  "hi": "सैंपल नहीं चल सका।",
+  "kn": "ಸ್ಯಾಂಪಲ್ ಪ್ಲೇ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.sample.note": {
+  "en": "The samples play in {language}. Choose another language above to hear the voices in it.",
+  "te": "శాంపిల్స్ {language}లో వినిపిస్తాయి. ఇంకో భాషలో వినాలంటే పైన ఆ భాషను ఎంచుకోండి.",
+  "hi": "सैंपल {language} में चलते हैं। किसी और भाषा में सुनने के लिए ऊपर वह भाषा चुनें।",
+  "kn": "ಸ್ಯಾಂಪಲ್‌ಗಳು {language} ನಲ್ಲಿ ಪ್ಲೇ ಆಗುತ್ತವೆ. ಬೇರೆ ಭಾಷೆಯಲ್ಲಿ ಕೇಳಲು ಮೇಲೆ ಆ ಭಾಷೆಯನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.sample.mock": {
+  "en": "In test mode the sample is only a short sound that tells the voices apart. It is not how they will sound.",
+  "te": "టెస్ట్ మోడ్‌లో శాంపిల్ అంటే గొంతులను వేరు చేసే చిన్న శబ్దం మాత్రమే. నిజంగా ఎలా వినిపిస్తాయో కాదు.",
+  "hi": "टेस्ट मोड में सैंपल सिर्फ़ एक छोटी आवाज़ है जो आवाज़ों को अलग बताती है। असली आवाज़ ऐसी नहीं होगी।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್‌ನಲ್ಲಿ ಸ್ಯಾಂಪಲ್ ಧ್ವನಿಗಳನ್ನು ಬೇರೆ ಮಾಡುವ ಚಿಕ್ಕ ಶಬ್ದ ಮಾತ್ರ. ನಿಜವಾಗಿ ಹೀಗೆ ಕೇಳಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tone.t": {
+  "en": "How the voice sounds",
+  "te": "గొంతు ఎలా వినిపించాలి",
+  "hi": "आवाज़ कैसी सुनाई दे",
+  "kn": "ಧ್ವನಿ ಹೇಗೆ ಕೇಳಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tone.warm": {
+  "en": "Warm",
+  "te": "వెచ్చగా",
+  "hi": "गर्मजोशी भरी",
+  "kn": "ಆತ್ಮೀಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tone.crisp": {
+  "en": "Crisp",
+  "te": "స్పష్టంగా",
+  "hi": "साफ़ और तेज़",
+  "kn": "ಸ್ಪಷ್ಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tone.note": {
+  "en": "This is for listening: it changes the samples you hear. The way of talking below is what is saved.",
+  "te": "ఇది వినడానికి మాత్రమే: మీరు వినే శాంపిల్స్‌ని మారుస్తుంది. కింద ఉన్న మాట్లాడే తీరే సేవ్ అవుతుంది.",
+  "hi": "यह सिर्फ़ सुनने के लिए है: इससे आपके सुने सैंपल बदलते हैं। नीचे का बोलने का तरीका ही सेव होता है।",
+  "kn": "ಇದು ಕೇಳಲು ಮಾತ್ರ: ನೀವು ಕೇಳುವ ಸ್ಯಾಂಪಲ್‌ಗಳನ್ನು ಬದಲಿಸುತ್ತದೆ. ಕೆಳಗಿನ ಮಾತನಾಡುವ ರೀತಿಯೇ ಸೇವ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.disclosure": {
+  "en": "Every call opens like this: the assistant says it is an AI assistant, and whose it is.",
+  "te": "ప్రతి కాల్ ఇలాగే మొదలవుతుంది: అసిస్టెంట్ తాను AI అసిస్టెంట్ అని, ఎవరిదో చెబుతుంది.",
+  "hi": "हर कॉल ऐसे ही शुरू होता है: असिस्टेंट बताता है कि वह AI असिस्टेंट है और किसका है।",
+  "kn": "ಪ್ರತಿ ಕರೆ ಹೀಗೆಯೇ ಆರಂಭವಾಗುತ್ತದೆ: ಅಸಿಸ್ಟೆಂಟ್ ತಾನು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು, ಯಾರದು ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.lang.ta": {
+  "en": "Tamil",
+  "te": "తమిళం",
+  "hi": "तमिल",
+  "kn": "ತಮಿಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.lang.ml": {
+  "en": "Malayalam",
+  "te": "మలయాళం",
+  "hi": "मलयालम",
+  "kn": "ಮಲಯಾಳಂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
