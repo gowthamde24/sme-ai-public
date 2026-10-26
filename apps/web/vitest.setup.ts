@@ -16,6 +16,9 @@ vi.mock("next/font/google", () => {
 });
 vi.mock("next/font/local", () => ({ default: () => ({ variable: "font-var", className: "font-class" }) }));
 
+// the forms of each Settings tab are lazy chunks on a real page (components/v2/app/settings/LazyTabs.tsx); a unit test draws a tab and reads it at once, so every test gets the same parts loaded at once
+vi.mock("@/components/v2/app/settings/LazyTabs", () => import("@/components/v2/app/settings/LazyTabs.eager"));
+
 afterEach(() => {
   cleanup();
 });

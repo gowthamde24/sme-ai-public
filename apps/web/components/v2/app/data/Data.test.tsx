@@ -3,8 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { wordsFor } from "@/i18n/app-words";
 
-vi.mock("../settings/LazyTabs", () => import("../settings/LazyTabs.eager"));
-
 import { CalendarFeed } from "./CalendarFeed";
 import { DataExport } from "./DataExport";
 import { DataImport } from "./DataImport";
