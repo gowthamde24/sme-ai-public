@@ -14,6 +14,7 @@ from app.education import contracts as education
 from app.erasure import contracts as erasure
 from app.evidence import contracts as evidence
 from app.leads import contracts as leads
+from app.lead_sources import contracts as lead_sources
 from app.leadspack import contracts as leads_pack
 from app.marksmessages import contracts as marks_messages
 from app.materials import contracts as materials
@@ -63,6 +64,8 @@ ROOT = Path(__file__).resolve().parents[1]
 (ROOT / "packages/contracts/speaking_style.ts").write_text(speaking.ts_text())
 (ROOT / "packages/contracts/leads_pack.schema.json").write_text(leads_pack.schema_text())
 (ROOT / "packages/contracts/leads_pack.ts").write_text(leads_pack.ts_text())
+(ROOT / "packages/contracts/lead_sources.schema.json").write_text(lead_sources.schema_text())
+(ROOT / "packages/contracts/lead_sources.ts").write_text(lead_sources.ts_text())
 print(
     "wrote packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.schema.json "
     "and {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.ts"

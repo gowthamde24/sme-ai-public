@@ -318,6 +318,10 @@ select is(
         -- job DR / A1: the lead playbook (any member reads, the Owner with a second factor saves) and the knowledge base (Owner/Admin manage, every member reads the approved facts)
         'public.lead_playbook_get', 'public.lead_playbook_save', 'public.lead_playbook_reset', 'public.knowledge_source_add', 'public.knowledge_sources_list', 'public.knowledge_source_text', 'public.knowledge_source_discard',
         'public.knowledge_facts_draft_replace', 'public.knowledge_fact_add', 'public.knowledge_fact_edit', 'public.knowledge_fact_decide', 'public.knowledge_facts_list', 'public.knowledge_facts_approved',
+        -- job DR / A2: lead sources and imports (a person imports; Owner/Admin manage sources; the worker account is the door for the public arrivals and the sheets)
+        'public.lead_consent_confirm', 'public.lead_intake_apply', 'public.lead_intakes_list', 'public.lead_source_create', 'public.lead_sources_list', 'public.lead_source_rotate', 'public.lead_source_set_status',
+        'public.scheduler_lead_intake_live', 'public.scheduler_lead_unparsed_add', 'public.lead_unparsed_list', 'public.lead_unparsed_discard', 'public.lead_arrivals_list',
+        'public.lead_sheet_link_create', 'public.lead_sheet_links_list', 'public.lead_sheet_link_action', 'public.scheduler_sheet_links_due', 'public.scheduler_lead_sheet_apply', 'public.scheduler_lead_sheet_failed',
         -- job CP: reminder campaigns, the call list and the results
         'public.campaign_save', 'public.campaign_get', 'public.campaigns_list', 'public.campaign_recipients_add', 'public.campaign_recipients_from_ledger', 'public.campaign_recipient_remove', 'public.campaign_recipients_list', 'public.campaign_preview', 'public.campaign_approve', 'public.campaign_set_state', 'public.scheduler_campaign_run', 'public.call_list', 'public.call_list_outcome', 'public.campaign_results',
         -- job DP part 4: call settings (the Owner with a second factor saves; Owner and Admin read)
@@ -413,6 +417,10 @@ select is(
         -- job DR / A1: the lead playbook (any member reads, the Owner with a second factor saves) and the knowledge base (Owner/Admin manage, every member reads the approved facts)
         'public.lead_playbook_get', 'public.lead_playbook_save', 'public.lead_playbook_reset', 'public.knowledge_source_add', 'public.knowledge_sources_list', 'public.knowledge_source_text', 'public.knowledge_source_discard',
         'public.knowledge_facts_draft_replace', 'public.knowledge_fact_add', 'public.knowledge_fact_edit', 'public.knowledge_fact_decide', 'public.knowledge_facts_list', 'public.knowledge_facts_approved',
+        -- job DR / A2: lead sources and imports (a person imports; Owner/Admin manage sources; the worker account is the door for the public arrivals and the sheets)
+        'public.lead_consent_confirm', 'public.lead_intake_apply', 'public.lead_intakes_list', 'public.lead_source_create', 'public.lead_sources_list', 'public.lead_source_rotate', 'public.lead_source_set_status',
+        'public.scheduler_lead_intake_live', 'public.scheduler_lead_unparsed_add', 'public.lead_unparsed_list', 'public.lead_unparsed_discard', 'public.lead_arrivals_list',
+        'public.lead_sheet_link_create', 'public.lead_sheet_links_list', 'public.lead_sheet_link_action', 'public.scheduler_sheet_links_due', 'public.scheduler_lead_sheet_apply', 'public.scheduler_lead_sheet_failed',
                      -- job CP: the shared ledger
                      'public.ledger_entry_record', 'public.ledger_entry_void', 'public.ledger_charges_import', 'public.ledger_statement', 'public.ledger_summary', 'public.ledger_entries_list', 'public.ledger_receipt_get',
                      'public.campaign_save', 'public.campaign_get', 'public.campaigns_list', 'public.campaign_recipients_add', 'public.campaign_recipients_from_ledger', 'public.campaign_recipient_remove', 'public.campaign_recipients_list', 'public.campaign_preview', 'public.campaign_approve', 'public.campaign_set_state', 'public.scheduler_campaign_run', 'public.call_list', 'public.call_list_outcome', 'public.campaign_results',
