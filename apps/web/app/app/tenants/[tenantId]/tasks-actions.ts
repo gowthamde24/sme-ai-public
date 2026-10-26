@@ -6,9 +6,10 @@ import { redirect } from "next/navigation";
 import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { readPackCached } from "@/lib/packs/read";
 import { taskScreens } from "@/lib/screens/flag";
-import { answerIt, approveIt, capIt, excludeThem, moveIt, planIt, readReport, readTask, type Ctx } from "@/lib/tasks/source";
-import { TASK_LANGS, type Done, type ReportOut, type TaskError, type TaskLang, type TaskOut } from "@/lib/tasks/types";
+import { answerIt, approveIt, capIt, excludeThem, moveIt, planIt, readReport, readTask, readTemplates, type Ctx } from "@/lib/tasks/source";
+import { TASK_LANGS, templateOffered, type Done, type ListedPerson, type ReportOut, type TaskError, type TaskLang, type TaskOut } from "@/lib/tasks/types";
 
 /**
  * "Ask Vijaya to do it", the moves (night 4, job DR part B). Who may do what (the API is the real gate, this is the first): Owner, Admin and Sales plan, answer the one question and leave people out; ONLY the Owner approves or changes the
@@ -16,6 +17,8 @@ import { TASK_LANGS, type Done, type ReportOut, type TaskError, type TaskLang, t
  * session goes to sign-in. A refusal comes back as a closed word the screens have a sentence for (lib/tasks/source.ts `mapError`: changed, mfa, read_only, waiting_for_whatsapp, not_for_schools, nobody, state ...), never as free text.
  */
 export type TaskResult = { ok: true; task: TaskOut } | { ok: false; error: TaskError };
+export type TemplateChoice = { id: string; label: string; example: string; promotional: boolean };
+export type TemplatesResult = { ok: true; templates: TemplateChoice[] } | { ok: false; error: TaskError };
 export type ReportResult = { ok: true; report: ReportOut } | { ok: false; error: TaskError };
 
 const PLANNERS = new Set(["owner", "admin", "sales"]);
@@ -44,11 +47,11 @@ function result(done: Done<TaskOut>, tenantId: string): TaskResult {
 }
 
 /** The owner's instruction becomes a plan (or ONE question). `taskId` is made by the browser: the same id again is a replay, so a double press makes one task. */
-export async function planTaskAction(tenantId: string, taskId: string, instruction: string, language: TaskLang | null = null): Promise<TaskResult> {
+export async function planTaskAction(tenantId: string, taskId: string, instruction: string, language: TaskLang | null = null, contacts: ListedPerson[] = []): Promise<TaskResult> {
   const got = await who(tenantId, PLANNERS);
   if (typeof got === "string") return { ok: false, error: got };
-  if (typeof instruction !== "string" || typeof taskId !== "string" || (language !== null && !(TASK_LANGS as readonly string[]).includes(language))) return { ok: false, error: "invalid" };
-  return result(await planIt(got.ctx, { taskId, instruction, language }), tenantId);
+  if (typeof instruction !== "string" || typeof taskId !== "string" || (language !== null && !(TASK_LANGS as readonly string[]).includes(language)) || !Array.isArray(contacts) || contacts.some((c) => typeof c !== "object" || c === null)) return { ok: false, error: "invalid" };
+  return result(await planIt(got.ctx, { taskId, instruction, language, ...(contacts.length > 0 ? { contacts } : {}) }), tenantId);
 }
 
 export async function answerTaskAction(tenantId: string, taskId: string, answer: string): Promise<TaskResult> {
@@ -108,4 +111,14 @@ export async function reportTaskAction(tenantId: string, taskId: string): Promis
   if (typeof taskId !== "string") return { ok: false, error: "invalid" };
   const done = await readReport(got.ctx, taskId);
   return done.ok ? { ok: true, report: done.value } : { ok: false, error: done.error };
+}
+
+/** The ready-made tasks this workspace is offered (the ones for its business type: a school has no payment reminder), for the chips of the Ask box. A read: every member. */
+export async function templatesTaskAction(tenantId: string): Promise<TemplatesResult> {
+  const got = await who(tenantId, null);
+  if (typeof got === "string") return { ok: false, error: got };
+  const done = await readTemplates(got.ctx);
+  if (!done.ok) return { ok: false, error: done.error };
+  const pack = await readPackCached(got.ctx.token, tenantId).catch(() => null);
+  return { ok: true, templates: done.value.templates.filter((x) => templateOffered(x, pack?.packId ?? null)).map((x) => ({ id: x.id, label: x.label, example: x.example_instruction, promotional: x.promotional })) };
 }

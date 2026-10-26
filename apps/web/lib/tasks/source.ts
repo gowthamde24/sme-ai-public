@@ -5,7 +5,7 @@ import { readJar, writeJar } from "@/lib/mock/jar";
 import { taskScreens } from "@/lib/screens/flag";
 
 import { answerMockTask, approveMock, deriveContacts, deriveReport, deriveTask, indexOfContact, mockTemplates, MOCK_KEEP, moveMock, newMockTask, parseMockJar, planSha, settle, type MockTask } from "./mock";
-import { ANSWER_MAX, INSTRUCTION_MAX, INSTRUCTION_MIN, TASK_LANGS, type Done, type ReportOut, type TaskContactsOut, type TaskError, type TaskLang, type TaskOut, type TaskStatus, type TemplatesOut } from "./types";
+import { ANSWER_MAX, INSTRUCTION_MAX, INSTRUCTION_MIN, LIST_MAX, TASK_LANGS, type Done, type ListedPerson, type ReportOut, type TaskContactsOut, type TaskError, type TaskLang, type TaskOut, type TaskStatus, type TemplatesOut } from "./types";
 
 /**
  * Where the tasks come from and go (night 4, job DR part B). `mock` = the browser's ONE small cookie plus a deterministic fake (lib/tasks/mock.ts; nothing is sent), `on` = C1's API (lib/api/tasks.ts), `off` = the part is not there:
@@ -122,20 +122,24 @@ export async function readReport(ctx: Ctx, id: string): Promise<Done<ReportOut>>
 }
 
 // ---- moves -------------------------------------------------------------------------------------------------------------------
-export async function planIt(ctx: Ctx, input: { taskId: string; instruction: string; language: TaskLang | null }): Promise<Done<TaskOut>> {
+const PHONE = /^\+?[0-9(][0-9 ()-]{5,18}[0-9]$/;
+
+export async function planIt(ctx: Ctx, input: { taskId: string; instruction: string; language: TaskLang | null; contacts?: readonly ListedPerson[] }): Promise<Done<TaskOut>> {
   const mode = taskScreens();
   if (mode === "off") return fail("not_available");
   const instruction = input.instruction.trim();
   if (instruction.length < INSTRUCTION_MIN || instruction.length > INSTRUCTION_MAX || !isCanonicalUuid(input.taskId) || (input.language !== null && !(TASK_LANGS as readonly string[]).includes(input.language))) return fail("invalid");
+  const listed = input.contacts ?? [];
+  if (listed.length > LIST_MAX || listed.some((c) => typeof c.phone !== "string" || !PHONE.test(c.phone.trim()) || (c.name != null && (typeof c.name !== "string" || c.name.length > 80)))) return fail("invalid");
   if (mode === "mock") {
     const all = await readMock();
     const now = Date.now();
     const same = all.find((t) => t.id === input.taskId);
     if (same) return ok(deriveTask(same, now)); // the same id again is a replay
-    const made = newMockTask(input.taskId, instruction, input.language, now);
+    const made = newMockTask(input.taskId, instruction, input.language, now, listed.length > 0);
     return (await saveMock([...all, made])) ? ok(deriveTask(made, now)) : fail("down");
   }
-  return guarded(() => planTask(ctx.token, ctx.tenantId, { taskId: input.taskId, instruction, language: input.language }));
+  return guarded(() => planTask(ctx.token, ctx.tenantId, { taskId: input.taskId, instruction, language: input.language, contacts: listed.map((c) => ({ name: c.name ?? null, phone: c.phone.trim() })) }));
 }
 
 export async function answerIt(ctx: Ctx, id: string, answer: string): Promise<Done<TaskOut>> {

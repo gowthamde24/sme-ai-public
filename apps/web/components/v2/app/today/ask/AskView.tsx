@@ -8,6 +8,7 @@ import { clock } from "./recorder";
 import { useFollowAnswer } from "./use-follow-answer";
 import { MAX_QUESTION } from "./ask-constants";
 import type { AskSession, Exchange } from "./use-ask-session";
+import { DoItEntry } from "./AskDoItLazy";
 import { VoiceMode } from "./VoiceMode";
 import type { RecorderProblem } from "./use-recorder";
 
@@ -212,12 +213,13 @@ function Drafts({ drafts, w }: { drafts: Exchange["drafts"]; w: (k: string) => s
 }
 
 /** One earlier exchange, in the list that "Show earlier" opens: the question, the answer, the screens it came from. */
-function EarlierOne({ x, w }: { x: Exchange; w: (k: string) => string }) {
+function EarlierOne({ x, w, session }: { x: Exchange; w: (k: string) => string; session: AskSession }) {
   return (
     <li data-ask="earlier-item" className="rounded-lg border border-line bg-surface-2 p-3">
       <p className="text-sm text-muted">{x.asked ? `${w(x.heardByVoice ? "ask.voice.said" : "ask.asked")} ${x.asked}` : ""}</p>
+      {x.task ? <DoItEntry session={session} entry={x.task} /> : null}
       {x.answer ? <p className="mt-1 whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{x.answer}</p> : null}
-      {x.failed && !x.answer ? <p className="mt-1 text-base font-medium text-red-text">{x.errorCode !== null && ERROR_WORD[x.errorCode] ? w(ERROR_WORD[x.errorCode]) : w("ask.error")}</p> : null}
+      {x.failed && !x.answer && !x.task ? <p className="mt-1 text-base font-medium text-red-text">{x.errorCode !== null && ERROR_WORD[x.errorCode] ? w(ERROR_WORD[x.errorCode]) : w("ask.error")}</p> : null}
       <Sources sources={x.sources} w={w} />
     </li>
   );
@@ -245,7 +247,7 @@ export function AskAnswer({ session, chips = [], earlierWord, scrollRoot = false
           {showEarlier ? (
             <ul className="mt-2 space-y-3" data-ask="earlier">
               {s.earlier.map((x, i) => (
-                <EarlierOne key={i} x={x} w={w} />
+                <EarlierOne key={i} x={x} w={w} session={s} />
               ))}
             </ul>
           ) : null}
@@ -254,7 +256,7 @@ export function AskAnswer({ session, chips = [], earlierWord, scrollRoot = false
       {has ? (
         <div ref={answerRef} data-ask="answer" className={scrollRoot ? "" : "border-t border-line pt-4"} aria-live="polite" aria-busy={s.asking}>
           <p className="text-sm text-muted">{s.asked ? `${w(s.heardByVoice ? "ask.voice.said" : "ask.asked")} ${s.asked}` : s.heardByVoice ? w("ask.voice.working") : ""}</p>
-          {s.answer ? <p className="mt-2 whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{s.answer}</p> : s.asking ? <p className="mt-2 text-base text-muted">{w("ask.thinking")}</p> : null}
+          {s.taskEntry ? <DoItEntry session={s} entry={s.taskEntry} /> : s.answer ? <p className="mt-2 whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{s.answer}</p> : s.asking ? <p className="mt-2 text-base text-muted">{s.mode === "do" ? (s.doIt?.words["tk.d.planning"] ?? w("ask.thinking")) : w("ask.thinking")}</p> : null}
           {s.hasAudio ? (
             <button type="button" data-voice="play" onClick={s.togglePlay} className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-lg border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
               {s.playing ? <Square className="size-4" aria-hidden="true" /> : <Volume2 className="size-5" aria-hidden="true" />}
@@ -263,14 +265,14 @@ export function AskAnswer({ session, chips = [], earlierWord, scrollRoot = false
           ) : null}
           {s.audioPending ? <p className="mt-2 text-sm text-muted">{w("ask.voice.speaking")}</p> : null}
           {s.audioFailed ? <p className="mt-2 text-sm text-muted">{w("ask.voice.audioerr")}</p> : null}
-          {s.phase === "error" ? (
+          {s.phase === "error" && !s.taskEntry ? (
             <p role="alert" className="mt-2 text-base font-medium text-red-text">
               {s.errorCode !== null && ERROR_WORD[s.errorCode] ? w(ERROR_WORD[s.errorCode]) : w("ask.error")}
             </p>
           ) : null}
           <Sources sources={s.sources} w={w} />
           <Drafts drafts={s.drafts} w={w} />
-          {s.phase !== "asking" ? <AskChips session={s} chips={chips} className="mt-4" /> : null}
+          {s.phase !== "asking" && s.mode !== "do" ? <AskChips session={s} chips={chips} className="mt-4" /> : null}
         </div>
       ) : null}
     </div>

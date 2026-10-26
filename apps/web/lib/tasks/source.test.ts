@@ -66,6 +66,10 @@ describe("mock (TASK_SCREENS=mock): plan, approve, watch, report", () => {
     expect(h.api).not.toHaveBeenCalled();
     expect(h.jar.get(MOCK_COOKIE)!.length).toBeLessThan(3500);
   });
+  it("a list given with a vague instruction says who, so it plans for those people", async () => {
+    const t = await planIt(CTX, { taskId: A, instruction: "Do something nice for me", language: null, contacts: [{ phone: "9876543211" }] });
+    expect(t.ok && t.value).toMatchObject({ status: "planned", template: "call_new_leads" });
+  });
   it("refuses bad input", async () => {
     expect(await planIt(CTX, { taskId: A, instruction: "ab", language: null })).toEqual({ ok: false, error: "invalid" });
     expect(await planIt(CTX, { taskId: A, instruction: "x".repeat(1501), language: null })).toEqual({ ok: false, error: "invalid" });
@@ -146,7 +150,7 @@ describe("on (TASK_SCREENS=1): the API", () => {
   it("passes each call on with the token and the workspace", async () => {
     h.api.mockResolvedValue({ marker: true });
     await planIt(CTX, { taskId: A, instruction: ` ${SUPPLIERS} `, language: "te" });
-    expect(h.api).toHaveBeenLastCalledWith("plan", "tok", CTX.tenantId, { taskId: A, instruction: SUPPLIERS, language: "te" });
+    expect(h.api).toHaveBeenLastCalledWith("plan", "tok", CTX.tenantId, { taskId: A, instruction: SUPPLIERS, language: "te", contacts: [] });
     await approveIt(CTX, A, "ab".repeat(32), 4000);
     expect(h.api).toHaveBeenLastCalledWith("approve", "tok", CTX.tenantId, A, "ab".repeat(32), 4000);
     await moveIt(CTX, A, "resume");
@@ -166,6 +170,15 @@ describe("on (TASK_SCREENS=1): the API", () => {
     expect(await approveIt(CTX, A, "ab".repeat(32), null)).toEqual({ ok: false, error: "changed" });
     h.api.mockRejectedValueOnce(new ApiAuthError());
     await expect(readTask(CTX, A)).rejects.toBeInstanceOf(ApiAuthError);
+  });
+  it("sends a pasted list with the plan and refuses a bad one", async () => {
+    h.api.mockResolvedValue({});
+    await planIt(CTX, { taskId: A, instruction: SUPPLIERS, language: null, contacts: [{ name: "Ravi", phone: " +91 98765 43210 " }, { phone: "9876543211" }] });
+    expect(h.api).toHaveBeenLastCalledWith("plan", "tok", CTX.tenantId, { taskId: A, instruction: SUPPLIERS, language: null, contacts: [{ name: "Ravi", phone: "+91 98765 43210" }, { name: null, phone: "9876543211" }] });
+    h.api.mockClear();
+    expect(await planIt(CTX, { taskId: A, instruction: SUPPLIERS, language: null, contacts: [{ phone: "abc" }] })).toEqual({ ok: false, error: "invalid" });
+    expect(await planIt(CTX, { taskId: A, instruction: SUPPLIERS, language: null, contacts: Array.from({ length: 501 }, () => ({ phone: "9876543211" })) })).toEqual({ ok: false, error: "invalid" });
+    expect(h.api).not.toHaveBeenCalled();
   });
   it("checks the input before it asks the API", async () => {
     expect(await approveIt(CTX, A, "not hex", null)).toEqual({ ok: false, error: "invalid" });

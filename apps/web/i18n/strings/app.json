@@ -59431,5 +59431,1776 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tk.title": {
+  "en": "Ask Vijaya to do it",
+  "te": "Vijaya కి పని చెప్పండి",
+  "hi": "Vijaya को काम बताइए",
+  "kn": "Vijaya ಗೆ ಕೆಲಸ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.sub": {
+  "en": "Say what you want done, in your own words. You see a plan first. Nothing is called or sent until you approve.",
+  "te": "మీకు ఏం కావాలో మీ మాటల్లో చెప్పండి. ముందు ప్లాన్ చూపిస్తాం. మీరు ఓకే చేసే వరకు ఎవరికీ కాల్ లేదా మెసేజ్ వెళ్లదు.",
+  "hi": "आपको क्या करवाना है, अपने शब्दों में बताइए। पहले प्लान दिखेगा। आपके ओके करने तक किसी को कॉल या मैसेज नहीं जाएगा।",
+  "kn": "ನಿಮಗೆ ಏನು ಮಾಡಿಸಬೇಕು ಅಂತ ನಿಮ್ಮ ಮಾತಿನಲ್ಲಿ ಹೇಳಿ. ಮೊದಲು ಪ್ಲಾನ್ ತೋರಿಸುತ್ತೇವೆ. ನೀವು ಓಕೆ ಮಾಡುವವರೆಗೆ ಯಾರಿಗೂ ಕಾಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.detail.title": {
+  "en": "Task",
+  "te": "టాస్క్",
+  "hi": "टास्क",
+  "kn": "ಟಾಸ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.back": {
+  "en": "All tasks",
+  "te": "అన్ని టాస్క్‌లు",
+  "hi": "सभी टास्क",
+  "kn": "ಎಲ್ಲಾ ಟಾಸ್ಕ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.composer.label": {
+  "en": "What should Vijaya do?",
+  "te": "Vijaya ఏం చేయాలి?",
+  "hi": "Vijaya को क्या करना है?",
+  "kn": "Vijaya ಏನು ಮಾಡಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.composer.placeholder": {
+  "en": "For example: call my cement suppliers and ask today's price per bag",
+  "te": "ఉదాహరణ: నా సిమెంట్ సప్లయర్లకు కాల్ చేసి ఈ రోజు బస్తా ధర అడగండి",
+  "hi": "जैसे: मेरे सीमेंट सप्लायर्स को कॉल करके आज का भाव प्रति बैग पूछो",
+  "kn": "ಉದಾಹರಣೆ: ನನ್ನ ಸಿಮೆಂಟ್ ಸಪ್ಲೈಯರ್‌ಗಳಿಗೆ ಕಾಲ್ ಮಾಡಿ ಇವತ್ತಿನ ಚೀಲದ ಬೆಲೆ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.composer.chips": {
+  "en": "Ready-made tasks",
+  "te": "రెడీ టాస్క్‌లు",
+  "hi": "तैयार टास्क",
+  "kn": "ರೆಡಿ ಟಾಸ್ಕ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.composer.language": {
+  "en": "Customers' language",
+  "te": "కస్టమర్ల భాష",
+  "hi": "ग्राहकों की भाषा",
+  "kn": "ಗ್ರಾಹಕರ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.composer.language.auto": {
+  "en": "Same as I wrote",
+  "te": "నేను రాసిన భాషే",
+  "hi": "जिसमें मैंने लिखा",
+  "kn": "ನಾನು ಬರೆದ ಭಾಷೆಯೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.composer.list": {
+  "en": "Or give a list (optional)",
+  "te": "లేదా లిస్ట్ ఇవ్వండి (ఐచ్ఛికం)",
+  "hi": "या लिस्ट दीजिए (जरूरी नहीं)",
+  "kn": "ಅಥವಾ ಲಿಸ್ಟ್ ಕೊಡಿ (ಬೇಕಿದ್ದರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.composer.list.help": {
+  "en": "One person per line: name, phone number. Only people already in your contacts are used.",
+  "te": "ఒక లైన్‌కి ఒకరు: పేరు, ఫోన్ నంబర్. మీ కాంటాక్ట్స్‌లో ఉన్నవాళ్లనే తీసుకుంటాం.",
+  "hi": "हर लाइन में एक व्यक्ति: नाम, फोन नंबर। सिर्फ आपके कॉन्टैक्ट्स में जो हैं वही लिए जाते हैं।",
+  "kn": "ಒಂದು ಲೈನ್‌ಗೆ ಒಬ್ಬರು: ಹೆಸರು, ಫೋನ್ ನಂಬರ್. ನಿಮ್ಮ ಕಾಂಟ್ಯಾಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಇರುವವರನ್ನೇ ಬಳಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.composer.list.count": {
+  "en": "{n} numbers read, {skipped} lines skipped.",
+  "te": "{n} నంబర్లు చదివాం, {skipped} లైన్లు వదిలేశాం.",
+  "hi": "{n} नंबर पढ़े, {skipped} लाइनें छोड़ी।",
+  "kn": "{n} ನಂಬರ್ ಓದಿದೆವು, {skipped} ಲೈನ್ ಬಿಟ್ಟೆವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.composer.submit": {
+  "en": "Make a plan",
+  "te": "ప్లాన్ చేయండి",
+  "hi": "प्लान बनाइए",
+  "kn": "ಪ್ಲಾನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.composer.working": {
+  "en": "Making a plan...",
+  "te": "ప్లాన్ చేస్తున్నాం...",
+  "hi": "प्लान बन रहा है...",
+  "kn": "ಪ್ಲಾನ್ ಮಾಡುತ್ತಿದ್ದೇವೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.composer.note": {
+  "en": "You can write in Telugu, Hindi, Kannada, Tamil, Malayalam or English. You approve the plan before anything happens.",
+  "te": "తెలుగు, హిందీ, కన్నడ, తమిళం, మలయాళం లేదా ఇంగ్లీష్‌లో రాయవచ్చు. ప్లాన్‌ని మీరు ఓకే చేసిన తర్వాతే ఏదైనా జరుగుతుంది.",
+  "hi": "आप तेलुगु, हिंदी, कन्नड़, तमिल, मलयालम या अंग्रेजी में लिख सकते हैं। प्लान आपके ओके करने के बाद ही आगे बढ़ता है।",
+  "kn": "ನೀವು ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ, ತಮಿಳು, ಮಲಯಾಳಂ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಬರೆಯಬಹುದು. ನೀವು ಪ್ಲಾನ್ ಓಕೆ ಮಾಡಿದ ಮೇಲೆಯೇ ಏನಾದರೂ ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.viewer": {
+  "en": "You can read tasks here. The Owner, an Admin or Sales can ask Vijaya to do one.",
+  "te": "ఇక్కడ మీరు టాస్క్‌లు చూడవచ్చు. Vijaya కి పని చెప్పడం ఓనర్, అడ్మిన్ లేదా సేల్స్ చేయగలరు.",
+  "hi": "यहाँ आप टास्क देख सकते हैं। Vijaya को काम ओनर, एडमिन या सेल्स बता सकते हैं।",
+  "kn": "ಇಲ್ಲಿ ನೀವು ಟಾಸ್ಕ್‌ಗಳನ್ನು ನೋಡಬಹುದು. Vijaya ಗೆ ಕೆಲಸ ಹೇಳಲು ಓನರ್, ಅಡ್ಮಿನ್ ಅಥವಾ ಸೇಲ್ಸ್‌ಗೆ ಮಾತ್ರ ಸಾಧ್ಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.offer.note": {
+  "en": "Only people who agreed to offers are included. WhatsApp only for now.",
+  "te": "ఆఫర్లకు ఒప్పుకున్నవాళ్లు మాత్రమే ఉంటారు. ప్రస్తుతానికి WhatsApp మాత్రమే.",
+  "hi": "सिर्फ वही लोग जिन्होंने ऑफर के लिए हां कहा है। अभी सिर्फ WhatsApp।",
+  "kn": "ಆಫರ್‌ಗೆ ಒಪ್ಪಿದವರು ಮಾತ್ರ ಇರುತ್ತಾರೆ. ಸದ್ಯಕ್ಕೆ WhatsApp ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.t.call_new_leads": {
+  "en": "Call new leads",
+  "te": "కొత్త లీడ్స్‌కి కాల్",
+  "hi": "नए लीड्स को कॉल",
+  "kn": "ಹೊಸ ಲೀಡ್ಸ್‌ಗೆ ಕಾಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.t.reengage_old_leads": {
+  "en": "Re-engage old leads",
+  "te": "పాత లీడ్స్‌తో మళ్లీ మాట్లాడండి",
+  "hi": "पुराने लीड्स से फिर बात",
+  "kn": "ಹಳೆಯ ಲೀಡ್ಸ್ ಜೊತೆ ಮತ್ತೆ ಮಾತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.t.confirm_appointments": {
+  "en": "Confirm appointments",
+  "te": "అపాయింట్‌మెంట్లు కన్ఫర్మ్ చేయండి",
+  "hi": "अपॉइंटमेंट कन्फर्म करें",
+  "kn": "ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್ ಕನ್ಫರ್ಮ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.t.collect_feedback": {
+  "en": "Collect feedback",
+  "te": "ఫీడ్‌బ్యాక్ తీసుకోండి",
+  "hi": "फीडबैक लीजिए",
+  "kn": "ಫೀಡ್‌ಬ್ಯಾಕ್ ತೆಗೆದುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.t.supplier_price_enquiry": {
+  "en": "Supplier price enquiry",
+  "te": "సప్లయర్ ధరల ఎంక్వైరీ",
+  "hi": "सप्लायर भाव पूछताछ",
+  "kn": "ಸಪ್ಲೈಯರ್ ಬೆಲೆ ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.t.payment_reminder": {
+  "en": "Payment reminder",
+  "te": "పేమెంట్ రిమైండర్",
+  "hi": "पेमेंट रिमाइंडर",
+  "kn": "ಪೇಮೆಂಟ್ ರಿಮೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.t.offer_invite": {
+  "en": "Offer or event invite",
+  "te": "ఆఫర్ లేదా ఈవెంట్ ఆహ్వానం",
+  "hi": "ऑफर या इवेंट का न्योता",
+  "kn": "ಆಫರ್ ಅಥವಾ ಈವೆಂಟ್ ಆಹ್ವಾನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ex.call_new_leads": {
+  "en": "Call everyone who enquired this week and ask what they need and when to call again.",
+  "te": "ఈ వారం ఎంక్వైరీ చేసిన అందరికీ కాల్ చేసి, వాళ్లకు ఏం కావాలో, మళ్లీ ఎప్పుడు కాల్ చేయాలో అడగండి.",
+  "hi": "इस हफ्ते जिन्होंने पूछताछ की, सबको कॉल करके पूछो कि क्या चाहिए और दोबारा कब कॉल करें।",
+  "kn": "ಈ ವಾರ ವಿಚಾರಿಸಿದ ಎಲ್ಲರಿಗೂ ಕಾಲ್ ಮಾಡಿ, ಏನು ಬೇಕು ಮತ್ತು ಮತ್ತೆ ಯಾವಾಗ ಕಾಲ್ ಮಾಡಬೇಕು ಅಂತ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ex.reengage_old_leads": {
+  "en": "Call the leads that went quiet last month and ask if they are still interested.",
+  "te": "గత నెలలో సైలెంట్ అయిన లీడ్స్‌కి కాల్ చేసి ఇంకా ఆసక్తి ఉందా అని అడగండి.",
+  "hi": "पिछले महीने चुप हो गए लीड्स को कॉल करके पूछो कि अब भी रुचि है या नहीं।",
+  "kn": "ಕಳೆದ ತಿಂಗಳು ಸುಮ್ಮನಾದ ಲೀಡ್ಸ್‌ಗೆ ಕಾಲ್ ಮಾಡಿ ಇನ್ನೂ ಆಸಕ್ತಿ ಇದೆಯಾ ಅಂತ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ex.confirm_appointments": {
+  "en": "Confirm tomorrow's appointments and offer another time to anyone who cannot come.",
+  "te": "రేపటి అపాయింట్‌మెంట్లు కన్ఫర్మ్ చేసి, రాలేనివాళ్లకు వేరే టైమ్ ఇవ్వండి.",
+  "hi": "कल की अपॉइंटमेंट कन्फर्म करो और जो न आ सके उसे दूसरा समय दो।",
+  "kn": "ನಾಳೆಯ ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್ ಕನ್ಫರ್ಮ್ ಮಾಡಿ, ಬರಲಾಗದವರಿಗೆ ಬೇರೆ ಸಮಯ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ex.collect_feedback": {
+  "en": "Ask last week's customers how it went and note anything they want changed.",
+  "te": "గత వారం కస్టమర్లను ఎలా అనిపించిందో అడిగి, మార్చాలనుకున్నది రాసుకోండి.",
+  "hi": "पिछले हफ्ते के ग्राहकों से पूछो कैसा रहा, और जो बदलवाना चाहें वो लिखो।",
+  "kn": "ಕಳೆದ ವಾರದ ಗ್ರಾಹಕರಿಗೆ ಹೇಗಿತ್ತು ಅಂತ ಕೇಳಿ, ಬದಲಾಯಿಸಬೇಕಾದದ್ದನ್ನು ಬರೆದುಕೊಳ್ಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ex.supplier_price_enquiry": {
+  "en": "Call my cement suppliers, ask the price per bag and the delivery day, and tell me the cheapest.",
+  "te": "నా సిమెంట్ సప్లయర్లకు కాల్ చేసి బస్తా ధర, డెలివరీ రోజు అడిగి, తక్కువ ధర ఎవరిదో చెప్పండి.",
+  "hi": "मेरे सीमेंट सप्लायर्स को कॉल करके प्रति बैग भाव और डिलीवरी का दिन पूछो, और बताओ सबसे सस्ता कौन है।",
+  "kn": "ನನ್ನ ಸಿಮೆಂಟ್ ಸಪ್ಲೈಯರ್‌ಗಳಿಗೆ ಕಾಲ್ ಮಾಡಿ ಚೀಲದ ಬೆಲೆ, ಡೆಲಿವರಿ ದಿನ ಕೇಳಿ, ಯಾರದು ಕಡಿಮೆ ಅಂತ ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ex.payment_reminder": {
+  "en": "Remind customers with pending payments and ask when they will pay.",
+  "te": "పేమెంట్ బాకీ ఉన్న కస్టమర్లకు గుర్తు చేసి, ఎప్పుడు ఇస్తారో అడగండి.",
+  "hi": "जिन ग्राहकों का पेमेंट बाकी है उन्हें याद दिलाओ और पूछो कब देंगे।",
+  "kn": "ಪೇಮೆಂಟ್ ಬಾಕಿ ಇರುವ ಗ್ರಾಹಕರಿಗೆ ನೆನಪಿಸಿ, ಯಾವಾಗ ಕೊಡುತ್ತಾರೆ ಅಂತ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ex.offer_invite": {
+  "en": "Invite customers who agreed to offers to our festival sale on Saturday.",
+  "te": "ఆఫర్లకు ఒప్పుకున్న కస్టమర్లను శనివారం మా పండుగ సేల్‌కి ఆహ్వానించండి.",
+  "hi": "जिन ग्राहकों ने ऑफर के लिए हां कहा है उन्हें शनिवार की हमारी फेस्टिवल सेल का न्योता दो।",
+  "kn": "ಆಫರ್‌ಗೆ ಒಪ್ಪಿದ ಗ್ರಾಹಕರನ್ನು ಶನಿವಾರದ ನಮ್ಮ ಹಬ್ಬದ ಸೇಲ್‌ಗೆ ಆಹ್ವಾನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.lists.title": {
+  "en": "Your tasks",
+  "te": "మీ టాస్క్‌లు",
+  "hi": "आपके टास्क",
+  "kn": "ನಿಮ್ಮ ಟಾಸ್ಕ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.tab.running": {
+  "en": "Running",
+  "te": "నడుస్తున్నవి",
+  "hi": "चल रहे",
+  "kn": "ನಡೆಯುತ್ತಿರುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.tab.waiting": {
+  "en": "Waiting for your approval",
+  "te": "మీ ఓకే కోసం",
+  "hi": "आपके ओके का इंतजार",
+  "kn": "ನಿಮ್ಮ ಓಕೆಗೆ ಕಾಯುತ್ತಿರುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.tab.finished": {
+  "en": "Finished",
+  "te": "పూర్తయినవి",
+  "hi": "पूरे हुए",
+  "kn": "ಮುಗಿದಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.empty.running": {
+  "en": "Nothing is running right now.",
+  "te": "ఇప్పుడు ఏదీ నడవడం లేదు.",
+  "hi": "अभी कुछ नहीं चल रहा।",
+  "kn": "ಈಗ ಏನೂ ನಡೆಯುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.empty.waiting": {
+  "en": "Nothing is waiting for your approval.",
+  "te": "మీ ఓకే కోసం ఏదీ లేదు.",
+  "hi": "आपके ओके के लिए कुछ नहीं रुका है।",
+  "kn": "ನಿಮ್ಮ ಓಕೆಗೆ ಏನೂ ಕಾಯುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.empty.finished": {
+  "en": "No finished tasks yet.",
+  "te": "ఇంకా పూర్తయిన టాస్క్‌లు లేవు.",
+  "hi": "अभी कोई टास्क पूरा नहीं हुआ।",
+  "kn": "ಇನ್ನೂ ಯಾವುದೇ ಟಾಸ್ಕ್ ಮುಗಿದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.list.people": {
+  "en": "{n} people",
+  "te": "{n} మంది",
+  "hi": "{n} लोग",
+  "kn": "{n} ಜನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.list.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलिए",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.list.review": {
+  "en": "Look at the plan",
+  "te": "ప్లాన్ చూడండి",
+  "hi": "प्लान देखिए",
+  "kn": "ಪ್ಲಾನ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.list.report": {
+  "en": "Open the report",
+  "te": "రిపోర్ట్ తెరవండి",
+  "hi": "रिपोर्ट खोलिए",
+  "kn": "ರಿಪೋರ್ಟ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.status.needs_answer": {
+  "en": "Needs your answer",
+  "te": "మీ జవాబు కావాలి",
+  "hi": "आपका जवाब चाहिए",
+  "kn": "ನಿಮ್ಮ ಉತ್ತರ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.not_available": {
+  "en": "This is not available right now.",
+  "te": "ఇది ఇప్పుడు అందుబాటులో లేదు.",
+  "hi": "यह अभी उपलब्ध नहीं है।",
+  "kn": "ಇದು ಈಗ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.forbidden": {
+  "en": "Your role cannot do this.",
+  "te": "మీ రోల్‌కి ఇది చేయడానికి అనుమతి లేదు.",
+  "hi": "आपके रोल को यह करने की अनुमति नहीं है।",
+  "kn": "ನಿಮ್ಮ ರೋಲ್‌ಗೆ ಇದನ್ನು ಮಾಡಲು ಅನುಮತಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.invalid": {
+  "en": "That is not right. Check it and try again.",
+  "te": "ఇది సరిగా లేదు. చూసి మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह सही नहीं है। देखकर फिर कोशिश कीजिए।",
+  "kn": "ಇದು ಸರಿಯಿಲ್ಲ. ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.changed": {
+  "en": "The plan changed while you were looking. Look at it again, then approve.",
+  "te": "మీరు చూస్తుండగా ప్లాన్ మారింది. మళ్లీ చూసి ఓకే చేయండి.",
+  "hi": "आप देख रहे थे तब प्लान बदल गया। फिर से देखकर ओके कीजिए।",
+  "kn": "ನೀವು ನೋಡುತ್ತಿದ್ದಾಗ ಪ್ಲಾನ್ ಬದಲಾಯಿತು. ಮತ್ತೆ ನೋಡಿ ಓಕೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.mfa": {
+  "en": "This needs your second sign-in step.",
+  "te": "దీనికి మీ రెండో సైన్-ఇన్ స్టెప్ కావాలి.",
+  "hi": "इसके लिए आपका दूसरा साइन-इन स्टेप चाहिए।",
+  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಎರಡನೇ ಸೈನ್-ಇನ್ ಸ್ಟೆಪ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.read_only": {
+  "en": "This workspace is read-only, so nothing can be changed.",
+  "te": "ఈ వర్క్‌స్పేస్ రీడ్-ఓన్లీ, కాబట్టి ఏదీ మార్చలేరు.",
+  "hi": "यह वर्कस्पेस रीड-ओनली है, इसलिए कुछ नहीं बदल सकते।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ರೀಡ್-ಓನ್ಲಿ, ಹಾಗಾಗಿ ಏನೂ ಬದಲಾಯಿಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.waiting_for_whatsapp": {
+  "en": "WhatsApp is not ready for this workspace yet, so this cannot start.",
+  "te": "ఈ వర్క్‌స్పేస్‌కి WhatsApp ఇంకా సిద్ధంగా లేదు, కాబట్టి ఇది మొదలవదు.",
+  "hi": "इस वर्कस्पेस के लिए WhatsApp अभी तैयार नहीं है, इसलिए यह शुरू नहीं हो सकता।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ WhatsApp ಇನ್ನೂ ಸಿದ್ಧವಿಲ್ಲ, ಹಾಗಾಗಿ ಇದು ಶುರುವಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.not_for_schools": {
+  "en": "For a school, a task cannot mention fees, marks or dues. Change the words and try again.",
+  "te": "స్కూల్‌కి టాస్క్‌లో ఫీజులు, మార్కులు, బాకీల ప్రస్తావన ఉండకూడదు. మాటలు మార్చి మళ్లీ ప్రయత్నించండి.",
+  "hi": "स्कूल के लिए टास्क में फीस, मार्क्स या बकाया नहीं आ सकता। शब्द बदलकर फिर कोशिश कीजिए।",
+  "kn": "ಸ್ಕೂಲ್‌ಗೆ ಟಾಸ್ಕ್‌ನಲ್ಲಿ ಫೀಸ್, ಮಾರ್ಕ್ಸ್ ಅಥವಾ ಬಾಕಿ ಬರಬಾರದು. ಮಾತು ಬದಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.nobody": {
+  "en": "Nobody to contact yet. Say who, or give a list.",
+  "te": "ఇంకా ఎవరూ లేరు. ఎవరో చెప్పండి, లేదా లిస్ట్ ఇవ్వండి.",
+  "hi": "अभी कोई नहीं है। बताइए कौन, या लिस्ट दीजिए।",
+  "kn": "ಇನ್ನೂ ಯಾರೂ ಇಲ್ಲ. ಯಾರು ಅಂತ ಹೇಳಿ, ಅಥವಾ ಲಿಸ್ಟ್ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.state": {
+  "en": "This task has moved on, so that is not possible now. Open it again to see where it is.",
+  "te": "ఈ టాస్క్ ముందుకు వెళ్లింది, కాబట్టి ఇప్పుడు కుదరదు. మళ్లీ తెరిచి ఎక్కడ ఉందో చూడండి.",
+  "hi": "यह टास्क आगे बढ़ चुका है, इसलिए अब नहीं हो सकता। फिर खोलकर देखिए कहाँ है।",
+  "kn": "ಈ ಟಾಸ್ಕ್ ಮುಂದೆ ಹೋಗಿದೆ, ಹಾಗಾಗಿ ಈಗ ಆಗದು. ಮತ್ತೆ ತೆರೆದು ಎಲ್ಲಿದೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.not_found": {
+  "en": "That task was not found.",
+  "te": "ఆ టాస్క్ కనిపించలేదు.",
+  "hi": "वह टास्क नहीं मिला।",
+  "kn": "ಆ ಟಾಸ್ಕ್ ಸಿಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.busy": {
+  "en": "The assistant is busy. Try again in a minute.",
+  "te": "అసిస్టెంట్ బిజీగా ఉంది. ఒక నిమిషం తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "असिस्टेंट अभी व्यस्त है। एक मिनट बाद फिर कोशिश कीजिए।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಬ್ಯುಸಿ ಇದ್ದಾರೆ. ಒಂದು ನಿಮಿಷ ಬಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.err.down": {
+  "en": "That did not work. Nothing was changed. Try again.",
+  "te": "ఇది కాలేదు. ఏదీ మారలేదు. మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। कुछ नहीं बदला। फिर कोशिश कीजिए।",
+  "kn": "ಇದು ಆಗಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.q.title": {
+  "en": "Vijaya has one question",
+  "te": "Vijaya కి ఒక ప్రశ్న ఉంది",
+  "hi": "Vijaya का एक सवाल है",
+  "kn": "Vijaya ಗೆ ಒಂದು ಪ್ರಶ್ನೆ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.q.label": {
+  "en": "Your answer",
+  "te": "మీ జవాబు",
+  "hi": "आपका जवाब",
+  "kn": "ನಿಮ್ಮ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.q.send": {
+  "en": "Answer",
+  "te": "జవాబివ్వండి",
+  "hi": "जवाब दीजिए",
+  "kn": "ಉತ್ತರ ಕೊಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.q.sending": {
+  "en": "Sending...",
+  "te": "పంపుతున్నాం...",
+  "hi": "भेज रहे हैं...",
+  "kn": "ಕಳುಹಿಸುತ್ತಿದ್ದೇವೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.q.once": {
+  "en": "Vijaya asks only once. Then you see the plan.",
+  "te": "Vijaya ఒక్కసారే అడుగుతుంది. తర్వాత ప్లాన్ కనిపిస్తుంది.",
+  "hi": "Vijaya सिर्फ एक बार पूछती है। फिर आपको प्लान दिखेगा।",
+  "kn": "Vijaya ಒಂದೇ ಬಾರಿ ಕೇಳುತ್ತದೆ. ನಂತರ ಪ್ಲಾನ್ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.nobody.title": {
+  "en": "Nobody found yet",
+  "te": "ఇంకా ఎవరూ దొరకలేదు",
+  "hi": "अभी कोई नहीं मिला",
+  "kn": "ಇನ್ನೂ ಯಾರೂ ಸಿಕ್ಕಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.nobody.text": {
+  "en": "Nobody in your contacts fits this yet. Say who, or give a list.",
+  "te": "మీ కాంటాక్ట్స్‌లో ఇంకా ఎవరూ దీనికి సరిపోరు. ఎవరో చెప్పండి, లేదా లిస్ట్ ఇవ్వండి.",
+  "hi": "आपके कॉन्टैक्ट्स में अभी कोई इसमें फिट नहीं बैठता। बताइए कौन, या लिस्ट दीजिए।",
+  "kn": "ನಿಮ್ಮ ಕಾಂಟ್ಯಾಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಇನ್ನೂ ಯಾರೂ ಇದಕ್ಕೆ ಹೊಂದುವುದಿಲ್ಲ. ಯಾರು ಅಂತ ಹೇಳಿ, ಅಥವಾ ಲಿಸ್ಟ್ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.nobody.again": {
+  "en": "Plan again",
+  "te": "మళ్లీ ప్లాన్ చేయండి",
+  "hi": "फिर से प्लान बनाइए",
+  "kn": "ಮತ್ತೆ ಪ್ಲಾನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.lang.title": {
+  "en": "Customers' language",
+  "te": "కస్టమర్ల భాష",
+  "hi": "ग्राहकों की भाषा",
+  "kn": "ಗ್ರಾಹಕರ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.lang.now": {
+  "en": "Vijaya will speak {lang}.",
+  "te": "Vijaya {lang} లో మాట్లాడుతుంది.",
+  "hi": "Vijaya {lang} में बात करेगी।",
+  "kn": "Vijaya {lang} ನಲ್ಲಿ ಮಾತಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.lang.label": {
+  "en": "Choose another language",
+  "te": "వేరే భాష ఎంచుకోండి",
+  "hi": "दूसरी भाषा चुनिए",
+  "kn": "ಬೇರೆ ಭಾಷೆ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.lang.replan": {
+  "en": "Plan again in this language",
+  "te": "ఈ భాషలో మళ్లీ ప్లాన్ చేయండి",
+  "hi": "इस भाषा में फिर प्लान बनाइए",
+  "kn": "ಈ ಭಾಷೆಯಲ್ಲಿ ಮತ್ತೆ ಪ್ಲಾನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.lang.help": {
+  "en": "The language cannot change on a plan that exists, so this makes a new plan from the same words.",
+  "te": "ఉన్న ప్లాన్‌లో భాష మార్చలేం, కాబట్టి అవే మాటలతో కొత్త ప్లాన్ చేస్తాం.",
+  "hi": "बने हुए प्लान में भाषा नहीं बदल सकते, इसलिए इन्हीं शब्दों से नया प्लान बनेगा।",
+  "kn": "ಇರುವ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಭಾಷೆ ಬದಲಾಯಿಸಲಾಗದು, ಹಾಗಾಗಿ ಅದೇ ಮಾತುಗಳಿಂದ ಹೊಸ ಪ್ಲಾನ್ ಮಾಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.plan.title": {
+  "en": "Plan: {what}",
+  "te": "ప్లాన్: {what}",
+  "hi": "प्लान: {what}",
+  "kn": "ಪ್ಲಾನ್: {what}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.plan.title.custom": {
+  "en": "Your plan",
+  "te": "మీ ప్లాన్",
+  "hi": "आपका प्लान",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.plan.show": {
+  "en": "Show the plan",
+  "te": "ప్లాన్ చూపండి",
+  "hi": "प्लान दिखाइए",
+  "kn": "ಪ್ಲಾನ್ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.when": {
+  "en": "{date}, {from} to {to}",
+  "te": "{date}, {from} నుండి {to} వరకు",
+  "hi": "{date}, {from} से {to} तक",
+  "kn": "{date}, {from} ರಿಂದ {to} ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.message.title": {
+  "en": "WhatsApp message (draft)",
+  "te": "WhatsApp మెసేజ్ (డ్రాఫ్ట్)",
+  "hi": "WhatsApp मैसेज (ड्राफ्ट)",
+  "kn": "WhatsApp ಮೆಸೇಜ್ (ಡ್ರಾಫ್ಟ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.everyone": {
+  "en": "See everyone ({n})",
+  "te": "అందరినీ చూడండి ({n})",
+  "hi": "सबको देखिए ({n})",
+  "kn": "ಎಲ್ಲರನ್ನೂ ನೋಡಿ ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cap.default": {
+  "en": "The limit is the estimate plus a little extra: {cap}.",
+  "te": "లిమిట్ అంచనా కంటే కొంచెం ఎక్కువ: {cap}.",
+  "hi": "लिमिट अनुमान से थोड़ी ज्यादा है: {cap}।",
+  "kn": "ಲಿಮಿಟ್ ಅಂದಾಜಿಗಿಂತ ಸ್ವಲ್ಪ ಹೆಚ್ಚು: {cap}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.unmatched": {
+  "en": "{n} numbers are not in your contacts and will not be contacted ({last}).",
+  "te": "{n} నంబర్లు మీ కాంటాక్ట్స్‌లో లేవు, వాళ్లని సంప్రదించం ({last}).",
+  "hi": "{n} नंबर आपके कॉन्टैक्ट्स में नहीं हैं, उनसे संपर्क नहीं होगा ({last})।",
+  "kn": "{n} ನಂಬರ್‌ಗಳು ನಿಮ್ಮ ಕಾಂಟ್ಯಾಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಇಲ್ಲ, ಅವರನ್ನು ಸಂಪರ್ಕಿಸುವುದಿಲ್ಲ ({last}).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.note.promo": {
+  "en": "Promotional calls are off: WhatsApp only. Only people who agreed to offers are included.",
+  "te": "ప్రమోషనల్ కాల్స్ ఆఫ్: WhatsApp మాత్రమే. ఆఫర్లకు ఒప్పుకున్నవాళ్లు మాత్రమే ఉంటారు.",
+  "hi": "प्रमोशनल कॉल बंद हैं: सिर्फ WhatsApp। सिर्फ ऑफर के लिए हां कहने वाले शामिल हैं।",
+  "kn": "ಪ್ರಮೋಷನಲ್ ಕಾಲ್ ಆಫ್: WhatsApp ಮಾತ್ರ. ಆಫರ್‌ಗೆ ಒಪ್ಪಿದವರು ಮಾತ್ರ ಇದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.note.unmatched": {
+  "en": "Some numbers did not match your contacts and will not be contacted.",
+  "te": "కొన్ని నంబర్లు మీ కాంటాక్ట్స్‌తో సరిపోలేదు, వాళ్లని సంప్రదించం.",
+  "hi": "कुछ नंबर आपके कॉन्टैक्ट्स से नहीं मिले, उनसे संपर्क नहीं होगा।",
+  "kn": "ಕೆಲವು ನಂಬರ್‌ಗಳು ನಿಮ್ಮ ಕಾಂಟ್ಯಾಕ್ಟ್ಸ್‌ಗೆ ಹೊಂದಲಿಲ್ಲ, ಅವರನ್ನು ಸಂಪರ್ಕಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.note.capped": {
+  "en": "The list was cut to the first 500 people.",
+  "te": "లిస్ట్‌ని మొదటి 500 మందికి కుదించాం.",
+  "hi": "लिस्ट को पहले 500 लोगों तक सीमित किया गया।",
+  "kn": "ಲಿಸ್ಟ್ ಅನ್ನು ಮೊದಲ 500 ಜನರಿಗೆ ಕಡಿಮೆ ಮಾಡಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.note.skipped": {
+  "en": "Some people are left out already: they asked to stop, or their record was erased or archived.",
+  "te": "కొందరు ఇప్పటికే లేరు: వాళ్లు ఆపమన్నారు, లేదా వాళ్ల రికార్డ్ తొలగించారు.",
+  "hi": "कुछ लोग पहले से बाहर हैं: उन्होंने रोकने को कहा, या उनका रिकॉर्ड हटाया गया है।",
+  "kn": "ಕೆಲವರು ಈಗಾಗಲೇ ಹೊರಗಿದ್ದಾರೆ: ಅವರು ನಿಲ್ಲಿಸಲು ಹೇಳಿದ್ದಾರೆ, ಅಥವಾ ಅವರ ರೆಕಾರ್ಡ್ ತೆಗೆದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.note.nobody": {
+  "en": "Nobody in your contacts fits this yet. Say who, or give a list.",
+  "te": "మీ కాంటాక్ట్స్‌లో ఇంకా ఎవరూ దీనికి సరిపోరు. ఎవరో చెప్పండి, లేదా లిస్ట్ ఇవ్వండి.",
+  "hi": "आपके कॉन्टैक्ट्स में अभी कोई इसमें फिट नहीं बैठता। बताइए कौन, या लिस्ट दीजिए।",
+  "kn": "ನಿಮ್ಮ ಕಾಂಟ್ಯಾಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಇನ್ನೂ ಯಾರೂ ಇದಕ್ಕೆ ಹೊಂದುವುದಿಲ್ಲ. ಯಾರು ಅಂತ ಹೇಳಿ, ಅಥವಾ ಲಿಸ್ಟ್ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cs.waiting": {
+  "en": "Waiting",
+  "te": "ఎదురుచూస్తున్నారు",
+  "hi": "इंतजार में",
+  "kn": "ಕಾಯುತ್ತಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cs.excluded": {
+  "en": "Left out",
+  "te": "వదిలేశాం",
+  "hi": "छोड़ा गया",
+  "kn": "ಬಿಟ್ಟಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cs.in_progress": {
+  "en": "Calling now",
+  "te": "ఇప్పుడు మాట్లాడుతున్నాం",
+  "hi": "अभी बात हो रही है",
+  "kn": "ಈಗ ಮಾತಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cs.done": {
+  "en": "Done",
+  "te": "అయింది",
+  "hi": "हो गया",
+  "kn": "ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cs.failed": {
+  "en": "Did not work",
+  "te": "కాలేదు",
+  "hi": "नहीं हो पाया",
+  "kn": "ಆಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cs.skipped": {
+  "en": "Skipped",
+  "te": "వదిలేశాం",
+  "hi": "छोड़ दिया",
+  "kn": "ಬಿಟ್ಟಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.title": {
+  "en": "Progress",
+  "te": "ప్రోగ్రెస్",
+  "hi": "प्रोग्रेस",
+  "kn": "ಪ್ರೋಗ್ರೆಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.bar": {
+  "en": "Progress of the task",
+  "te": "టాస్క్ ప్రోగ్రెస్",
+  "hi": "टास्क की प्रोग्रेस",
+  "kn": "ಟಾಸ್ಕ್ ಪ್ರೋಗ್ರೆಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.of": {
+  "en": "{done} of {total}",
+  "te": "{total} లో {done}",
+  "hi": "{total} में से {done}",
+  "kn": "{total} ರಲ್ಲಿ {done}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.working": {
+  "en": "Vijaya is working through the list.",
+  "te": "Vijaya లిస్ట్‌లో ఒక్కొక్కరితో మాట్లాడుతోంది.",
+  "hi": "Vijaya लिस्ट में एक-एक से बात कर रही है।",
+  "kn": "Vijaya ಲಿಸ್ಟ್‌ನಲ್ಲಿ ಒಬ್ಬೊಬ್ಬರ ಜೊತೆ ಮಾತಾಡುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.paused.owner": {
+  "en": "Paused. Press Continue to go on.",
+  "te": "ఆపాం. కొనసాగించడానికి Continue నొక్కండి.",
+  "hi": "रोका गया है। आगे बढ़ाने के लिए Continue दबाइए।",
+  "kn": "ನಿಲ್ಲಿಸಿದೆ. ಮುಂದುವರಿಸಲು Continue ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.paused.cap": {
+  "en": "Stopped: it has spent {spent}, the limit you set ({cap}). Raise the limit to go on.",
+  "te": "ఆగింది: {spent} ఖర్చయింది, మీరు పెట్టిన లిమిట్ ({cap}). కొనసాగాలంటే లిమిట్ పెంచండి.",
+  "hi": "रुक गया: {spent} खर्च हो गए, यानी आपकी लिमिट ({cap})। आगे बढ़ाने के लिए लिमिट बढ़ाइए।",
+  "kn": "ನಿಂತಿದೆ: {spent} ಖರ್ಚಾಗಿದೆ, ನೀವು ಇಟ್ಟ ಲಿಮಿಟ್ ({cap}). ಮುಂದುವರಿಸಲು ಲಿಮಿಟ್ ಹೆಚ್ಚಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.done": {
+  "en": "All finished.",
+  "te": "అంతా పూర్తయింది.",
+  "hi": "सब पूरा हो गया।",
+  "kn": "ಎಲ್ಲಾ ಮುಗಿಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.cancelled": {
+  "en": "Cancelled. People not reached yet were not contacted.",
+  "te": "రద్దు చేశాం. ఇంకా సంప్రదించనివాళ్లకు ఏదీ వెళ్లలేదు.",
+  "hi": "रद्द किया गया। जिन तक नहीं पहुंचे उनसे संपर्क नहीं हुआ।",
+  "kn": "ರದ್ದು ಮಾಡಿದೆ. ಇನ್ನೂ ಸಂಪರ್ಕಿಸದವರಿಗೆ ಏನೂ ಹೋಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.finished": {
+  "en": "Finished. The report is below.",
+  "te": "పూర్తయింది. రిపోర్ట్ కింద ఉంది.",
+  "hi": "पूरा हुआ। रिपोर्ट नीचे है।",
+  "kn": "ಮುಗಿಯಿತು. ರಿಪೋರ್ಟ್ ಕೆಳಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.spent": {
+  "en": "Spent so far: {spent} of {cap}",
+  "te": "ఇప్పటి వరకు ఖర్చు: {cap} లో {spent}",
+  "hi": "अब तक खर्च: {cap} में से {spent}",
+  "kn": "ಇಲ್ಲಿಯವರೆಗೆ ಖರ್ಚು: {cap} ರಲ್ಲಿ {spent}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.reached": {
+  "en": "{reached} reached, {positive} interested",
+  "te": "{reached} మందితో మాట్లాడాం, {positive} మంది ఆసక్తి చూపారు",
+  "hi": "{reached} से बात हुई, {positive} ने रुचि दिखाई",
+  "kn": "{reached} ಜನರ ಜೊತೆ ಮಾತಾಡಿದೆವು, {positive} ಜನ ಆಸಕ್ತಿ ತೋರಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.live.failed": {
+  "en": "Could not refresh just now. Trying again.",
+  "te": "ఇప్పుడు రిఫ్రెష్ కాలేదు. మళ్లీ ప్రయత్నిస్తున్నాం.",
+  "hi": "अभी रिफ्रेश नहीं हो पाया। फिर कोशिश कर रहे हैं।",
+  "kn": "ಈಗ ರಿಫ್ರೆಶ್ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.btn.pause": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकिए",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.btn.continue": {
+  "en": "Continue",
+  "te": "కొనసాగించండి",
+  "hi": "जारी रखिए",
+  "kn": "ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.btn.run": {
+  "en": "It seems stuck: continue",
+  "te": "ఆగినట్టుంది: కొనసాగించండి",
+  "hi": "अटका लगता है: जारी रखिए",
+  "kn": "ನಿಂತಂತಿದೆ: ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.btn.cancel": {
+  "en": "Cancel the task",
+  "te": "టాస్క్ రద్దు చేయండి",
+  "hi": "टास्क रद्द कीजिए",
+  "kn": "ಟಾಸ್ಕ್ ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cancel.title": {
+  "en": "Cancel the task?",
+  "te": "టాస్క్ రద్దు చేయాలా?",
+  "hi": "टास्क रद्द करें?",
+  "kn": "ಟಾಸ್ಕ್ ರದ್ದು ಮಾಡಬೇಕೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cancel.ask": {
+  "en": "Cancel this task? People not reached yet will not be contacted.",
+  "te": "ఈ టాస్క్ రద్దు చేయాలా? ఇంకా సంప్రదించనివాళ్లని సంప్రదించం.",
+  "hi": "यह टास्क रद्द करें? जिन तक अभी नहीं पहुंचे उनसे संपर्क नहीं होगा।",
+  "kn": "ಈ ಟಾಸ್ಕ್ ರದ್ದು ಮಾಡಬೇಕೆ? ಇನ್ನೂ ಸಂಪರ್ಕಿಸದವರನ್ನು ಸಂಪರ್ಕಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cancel.yes": {
+  "en": "Yes, cancel it",
+  "te": "అవును, రద్దు చేయండి",
+  "hi": "हां, रद्द कीजिए",
+  "kn": "ಹೌದು, ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cancel.no": {
+  "en": "No, keep it",
+  "te": "వద్దు, ఉంచండి",
+  "hi": "नहीं, रहने दीजिए",
+  "kn": "ಬೇಡ, ಇರಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cap.label": {
+  "en": "New limit in rupees",
+  "te": "కొత్త లిమిట్ (రూపాయల్లో)",
+  "hi": "नई लिमिट (रुपये में)",
+  "kn": "ಹೊಸ ಲಿಮಿಟ್ (ರೂಪಾಯಿಗಳಲ್ಲಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cap.save": {
+  "en": "Raise the limit and continue",
+  "te": "లిమిట్ పెంచి కొనసాగించండి",
+  "hi": "लिमिट बढ़ाकर जारी रखिए",
+  "kn": "ಲಿಮಿಟ್ ಹೆಚ್ಚಿಸಿ ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cap.help": {
+  "en": "Only the Owner can raise it, with the second sign-in step.",
+  "te": "ఓనర్ మాత్రమే పెంచగలరు, రెండో సైన్-ఇన్ స్టెప్‌తో.",
+  "hi": "सिर्फ ओनर बढ़ा सकते हैं, दूसरे साइन-इन स्टेप के साथ।",
+  "kn": "ಓನರ್ ಮಾತ್ರ ಹೆಚ್ಚಿಸಬಹುದು, ಎರಡನೇ ಸೈನ್-ಇನ್ ಸ್ಟೆಪ್‌ನೊಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cap.owner": {
+  "en": "Ask the Owner to raise the limit.",
+  "te": "లిమిట్ పెంచమని ఓనర్‌ని అడగండి.",
+  "hi": "लिमिट बढ़ाने के लिए ओनर से कहिए।",
+  "kn": "ಲಿಮಿಟ್ ಹೆಚ್ಚಿಸಲು ಓನರ್‌ಗೆ ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.title": {
+  "en": "Report",
+  "te": "రిపోర్ట్",
+  "hi": "रिपोर्ट",
+  "kn": "ರಿಪೋರ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.simulated": {
+  "en": "Simulated: no real call was made.",
+  "te": "సిమ్యులేటెడ్: నిజమైన కాల్ చేయలేదు.",
+  "hi": "सिमुलेटेड: कोई असली कॉल नहीं हुई।",
+  "kn": "ಸಿಮ್ಯುಲೇಟೆಡ್: ನಿಜವಾದ ಕಾಲ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.draft": {
+  "en": "The wording is a draft.",
+  "te": "మాటలు డ్రాఫ్ట్.",
+  "hi": "शब्द ड्राफ्ट हैं।",
+  "kn": "ಮಾತುಗಳು ಡ್ರಾಫ್ಟ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.loading": {
+  "en": "Loading the report...",
+  "te": "రిపోర్ట్ వస్తోంది...",
+  "hi": "रिपोर्ट आ रही है...",
+  "kn": "ರಿಪೋರ್ಟ್ ಬರುತ್ತಿದೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.failed": {
+  "en": "The report could not be loaded. Open the page again.",
+  "te": "రిపోర్ట్ రాలేదు. పేజీ మళ్లీ తెరవండి.",
+  "hi": "रिपोर्ट नहीं आ पाई। पेज फिर खोलिए।",
+  "kn": "ರಿಪೋರ್ಟ್ ಬರಲಿಲ್ಲ. ಪೇಜ್ ಮತ್ತೆ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.empty": {
+  "en": "Nobody has been reached yet.",
+  "te": "ఇంకా ఎవరినీ సంప్రదించలేదు.",
+  "hi": "अभी किसी से संपर्क नहीं हुआ।",
+  "kn": "ಇನ್ನೂ ಯಾರನ್ನೂ ಸಂಪರ್ಕಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.table": {
+  "en": "Result for each person",
+  "te": "ప్రతి ఒక్కరి ఫలితం",
+  "hi": "हर व्यक्ति का नतीजा",
+  "kn": "ಪ್ರತಿಯೊಬ್ಬರ ಫಲಿತಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.t.contacts": {
+  "en": "People",
+  "te": "మంది",
+  "hi": "लोग",
+  "kn": "ಜನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.t.reached": {
+  "en": "Reached",
+  "te": "మాట్లాడినవారు",
+  "hi": "बात हुई",
+  "kn": "ಮಾತಾಡಿದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.t.positive": {
+  "en": "Interested",
+  "te": "ఆసక్తి చూపినవారు",
+  "hi": "रुचि दिखाई",
+  "kn": "ಆಸಕ್ತಿ ತೋರಿದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.t.negative": {
+  "en": "Said no",
+  "te": "వద్దన్నవారు",
+  "hi": "मना किया",
+  "kn": "ಬೇಡ ಅಂದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.t.unclear": {
+  "en": "Not clear",
+  "te": "స్పష్టత లేదు",
+  "hi": "साफ नहीं",
+  "kn": "ಸ್ಪಷ್ಟವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.t.no_answer": {
+  "en": "No answer",
+  "te": "ఎత్తలేదు",
+  "hi": "जवाब नहीं",
+  "kn": "ಎತ್ತಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.t.spent": {
+  "en": "Spent",
+  "te": "ఖర్చు",
+  "hi": "खर्च",
+  "kn": "ಖರ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.h.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.h.phone": {
+  "en": "Phone",
+  "te": "ఫోన్",
+  "hi": "फोन",
+  "kn": "ಫೋನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.h.outcome": {
+  "en": "Outcome",
+  "te": "ఫలితం",
+  "hi": "नतीजा",
+  "kn": "ಫಲಿತಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.h.captured": {
+  "en": "What was noted",
+  "te": "రాసుకున్నది",
+  "hi": "क्या लिखा गया",
+  "kn": "ಬರೆದುಕೊಂಡದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.h.message": {
+  "en": "Message",
+  "te": "మెసేజ్",
+  "hi": "मैसेज",
+  "kn": "ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.h.transcript": {
+  "en": "Transcript",
+  "te": "ట్రాన్స్‌క్రిప్ట్",
+  "hi": "ट्रांसक्रिप्ट",
+  "kn": "ಟ್ರಾನ್ಸ್‌ಕ್ರಿಪ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.none": {
+  "en": "Nothing",
+  "te": "ఏమీ లేదు",
+  "hi": "कुछ नहीं",
+  "kn": "ಏನೂ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.notranscript": {
+  "en": "No transcript",
+  "te": "ట్రాన్స్‌క్రిప్ట్ లేదు",
+  "hi": "ट्रांसक्रिप्ट नहीं",
+  "kn": "ಟ್ರಾನ್ಸ್‌ಕ್ರಿಪ್ಟ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.transcript": {
+  "en": "Transcript (simulated)",
+  "te": "ట్రాన్స్‌క్రిప్ట్ (సిమ్యులేటెడ్)",
+  "hi": "ट्रांसक्रिप्ट (सिमुलेटेड)",
+  "kn": "ಟ್ರಾನ್ಸ್‌ಕ್ರಿಪ್ಟ್ (ಸಿಮ್ಯುಲೇಟೆಡ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.who.assistant": {
+  "en": "Vijaya",
+  "te": "విజయ",
+  "hi": "विजया",
+  "kn": "ವಿಜಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.r.who.contact": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.o.positive": {
+  "en": "Interested",
+  "te": "ఆసక్తి చూపారు",
+  "hi": "रुचि दिखाई",
+  "kn": "ಆಸಕ್ತಿ ತೋರಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.o.negative": {
+  "en": "Said no",
+  "te": "వద్దన్నారు",
+  "hi": "मना किया",
+  "kn": "ಬೇಡ ಅಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.o.unclear": {
+  "en": "Not clear",
+  "te": "స్పష్టత లేదు",
+  "hi": "साफ नहीं",
+  "kn": "ಸ್ಪಷ್ಟವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.o.no_answer": {
+  "en": "No answer",
+  "te": "ఎత్తలేదు",
+  "hi": "जवाब नहीं",
+  "kn": "ಎತ್ತಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.o.failed": {
+  "en": "Did not work",
+  "te": "కాలేదు",
+  "hi": "नहीं हो पाया",
+  "kn": "ಆಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.o.skipped": {
+  "en": "Skipped",
+  "te": "వదిలేశాం",
+  "hi": "छोड़ दिया",
+  "kn": "ಬಿಟ್ಟಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cat.interested": {
+  "en": "Interested",
+  "te": "ఆసక్తి",
+  "hi": "रुचि",
+  "kn": "ಆಸಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.cat.not_interested": {
+  "en": "Not interested",
+  "te": "ఆసక్తి లేదు",
+  "hi": "रुचि नहीं",
+  "kn": "ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ms.sent": {
+  "en": "Sent",
+  "te": "పంపాం",
+  "hi": "भेजा",
+  "kn": "ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ms.queued": {
+  "en": "Waiting to be sent",
+  "te": "పంపడానికి ఎదురుచూస్తోంది",
+  "hi": "भेजने की कतार में",
+  "kn": "ಕಳುಹಿಸಲು ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ms.needs_approval": {
+  "en": "Waits for your OK in the outbox",
+  "te": "అవుట్‌బాక్స్‌లో మీ ఓకే కోసం ఉంది",
+  "hi": "आउटबॉक्स में आपके ओके का इंतजार",
+  "kn": "ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಓಕೆಗೆ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ms.blocked": {
+  "en": "Blocked",
+  "te": "ఆపాం",
+  "hi": "रोका गया",
+  "kn": "ತಡೆದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.ms.failed": {
+  "en": "Did not go",
+  "te": "వెళ్లలేదు",
+  "hi": "नहीं गया",
+  "kn": "ಹೋಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.d.mode": {
+  "en": "What do you want?",
+  "te": "మీకు ఏం కావాలి?",
+  "hi": "आपको क्या चाहिए?",
+  "kn": "ನಿಮಗೆ ಏನು ಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.d.ask": {
+  "en": "Ask",
+  "te": "అడగండి",
+  "hi": "पूछिए",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.d.do": {
+  "en": "Do it",
+  "te": "చేయించండి",
+  "hi": "करवाइए",
+  "kn": "ಮಾಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.d.hint": {
+  "en": "Say what to do. You see a plan first; nothing is called or sent until you approve.",
+  "te": "ఏం చేయాలో చెప్పండి. ముందు ప్లాన్ కనిపిస్తుంది; మీరు ఓకే చేసే వరకు ఏదీ వెళ్లదు.",
+  "hi": "बताइए क्या करना है। पहले प्लान दिखेगा; आपके ओके तक कुछ नहीं जाएगा।",
+  "kn": "ಏನು ಮಾಡಬೇಕು ಹೇಳಿ. ಮೊದಲು ಪ್ಲಾನ್ ಕಾಣುತ್ತದೆ; ನೀವು ಓಕೆ ಮಾಡುವವರೆಗೆ ಏನೂ ಹೋಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.d.placeholder": {
+  "en": "Tell Vijaya what to do",
+  "te": "Vijaya కి ఏం చేయాలో చెప్పండి",
+  "hi": "Vijaya को बताइए क्या करना है",
+  "kn": "Vijaya ಗೆ ಏನು ಮಾಡಬೇಕು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.d.planning": {
+  "en": "Making a plan...",
+  "te": "ప్లాన్ చేస్తున్నాం...",
+  "hi": "प्लान बन रहा है...",
+  "kn": "ಪ್ಲಾನ್ ಮಾಡುತ್ತಿದ್ದೇವೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.d.nochips": {
+  "en": "The ready-made tasks could not be loaded. You can still type.",
+  "te": "రెడీ టాస్క్‌లు రాలేదు. మీరు ఇంకా టైప్ చేయవచ్చు.",
+  "hi": "तैयार टास्क नहीं आ पाए। आप टाइप कर सकते हैं।",
+  "kn": "ರೆಡಿ ಟಾಸ್ಕ್‌ಗಳು ಬರಲಿಲ್ಲ. ನೀವು ಇನ್ನೂ ಟೈಪ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.d.edit": {
+  "en": "Change it and try again",
+  "te": "మార్చి మళ్లీ ప్రయత్నించండి",
+  "hi": "बदलकर फिर कोशिश कीजिए",
+  "kn": "ಬದಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.d.openplan": {
+  "en": "Open the full plan",
+  "te": "పూర్తి ప్లాన్ తెరవండి",
+  "hi": "पूरा प्लान खोलिए",
+  "kn": "ಪೂರ್ತಿ ಪ್ಲಾನ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.d.open": {
+  "en": "Open the task",
+  "te": "టాస్క్ తెరవండి",
+  "hi": "टास्क खोलिए",
+  "kn": "ಟಾಸ್ಕ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tk.d.openreport": {
+  "en": "Open the full report",
+  "te": "పూర్తి రిపోర్ట్ తెరవండి",
+  "hi": "पूरी रिपोर्ट खोलिए",
+  "kn": "ಪೂರ್ತಿ ರಿಪೋರ್ಟ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

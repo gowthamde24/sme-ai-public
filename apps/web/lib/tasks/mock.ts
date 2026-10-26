@@ -70,9 +70,10 @@ export function detectLanguage(text: string): TaskLang {
   return best[1] > 0 ? best[0] : "en";
 }
 
-export function newMockTask(id: string, instruction: string, language: TaskLang | null, now: number): MockTask {
+export function newMockTask(id: string, instruction: string, language: TaskLang | null, now: number, listed = false): MockTask {
   const ins = instruction.trim().slice(0, INS_KEEP);
-  const tpl = templateOf(ins);
+  // a list given with the instruction says who: a vague instruction then plans as a call to those people
+  const tpl = templateOf(ins) === "custom" && listed ? "call_new_leads" : templateOf(ins);
   return { id, ins, lang: language ?? detectLanguage(ins), tpl, st: tpl === "custom" ? "needs_answer" : "planned", ca: now, ap: null, el: 0, si: null, ex: [], cap: null, pr: null, ans: null };
 }
 

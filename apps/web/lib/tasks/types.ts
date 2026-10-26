@@ -128,3 +128,7 @@ export function percentDone(p: Progress): number {
 export function progressCounts(p: Progress): { finished: number; of: number } {
   return { finished: Math.min(p.done + p.failed + p.skipped, Math.max(0, p.total - p.excluded)), of: Math.max(0, p.total - p.excluded) };
 }
+
+/** A person the owner typed or pasted into the list: only the workspace's OWN contacts with these numbers are used, the API matches them; the others are never contacted. */
+export type ListedPerson = { name?: string | null; phone: string };
+export const LIST_MAX = 500;

@@ -9,16 +9,21 @@ import { ProblemView } from "@/components/v2/app/robust/ProblemView";
 import type { Availability } from "@/components/v2/app/today/ask/ask-types";
 import { AskProvider } from "@/components/v2/app/today/ask/AskProvider";
 import { ASK_WORD_KEYS } from "@/components/v2/app/today/ask/ask-words";
+import type { DoItOptions } from "@/components/v2/app/today/ask/use-do-it";
+import { powersOf } from "@/components/v2/app/tasks/task-actions";
 import { appDict, appT } from "@/i18n/app";
 import { withModuleWords } from "@/lib/packs/module-words";
 import { FrameDataSlot } from "@/components/v2/app/frame-store";
 import { type Access } from "@/lib/api/billing-access";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { getLang } from "@/i18n/get-lang";
+import { fetchTenant } from "@/lib/api/client";
 import { requireUser } from "@/lib/auth/session";
+import { taskScreens } from "@/lib/screens/flag";
 import { ADDRESSES } from "@/lib/site/business";
 
 import { readFrameData } from "../../frame-data";
+import { boundTaskActions } from "./tasks-bound";
 import { readAccessCached, readAgentsCached } from "./today-read";
 
 /**
@@ -39,6 +44,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   const access = isCanonicalUuid(tenantId) ? await workspaceAccess(user.accessToken, tenantId) : { readOnly: false as const };
   const availability: Availability = isCanonicalUuid(tenantId) ? await assistantAvailability(user.accessToken, tenantId) : "not_available";
   const t = appT(lang);
+  const doIt = isCanonicalUuid(tenantId) && !access.readOnly ? await doItFor(user.accessToken, tenantId, dict) : null;
   const askWords = Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]));
   // the suggestion chips of the screens, in the person's language and for the business type (`ask.chip.quotes@programmes`)
   const chipWords = withModuleWords(Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("ask.chip."))), data.pack);
@@ -57,7 +63,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
         </>
       ) : null}
       {/* ONE conversation for the workspace (job DQ part 0): Today's card and the floating panel of the other screens read the same thread */}
-      <AskProvider lang={lang} base={`/app/tenants/${tenantId}`} words={askWords} chipWords={chipWords} availability={availability} readOnly={access.readOnly}>
+      <AskProvider lang={lang} base={`/app/tenants/${tenantId}`} words={askWords} chipWords={chipWords} availability={availability} readOnly={access.readOnly} doIt={doIt}>
         {/* a server with no pack routes gives no pack: the product as it always was, every page on */}
         {data.pack ? (
           <ModuleGate modules={data.pack.modules} fallback={<ProblemView kind={403} variant="module" labels={labels} homeHref={`/app/tenants/${tenantId}`} />}>
@@ -87,5 +93,20 @@ async function assistantAvailability(accessToken: string, tenantId: string): Pro
     return state === "idle" || state === "working" ? "live" : state === "switched_off" ? "switched_off" : "not_available";
   } catch {
     return "not_available";
+  }
+}
+
+/**
+ * "Ask Vijaya to do it" inside the one conversation (night 4, tasks): the "Ask | Do it" switch exists only while TASK_SCREENS is on, the workspace is not read-only and the person may make a plan (Owner, Admin, Sales). The server reads the
+ * flag and the role; the browser only receives the actions (with the workspace bound) and the words, never the environment.
+ */
+async function doItFor(accessToken: string, tenantId: string, dict: Record<string, string>): Promise<DoItOptions | null> {
+  if (taskScreens() === "off") return null;
+  try {
+    const powers = powersOf((await fetchTenant(accessToken, tenantId)).role);
+    if (!powers.plan) return null;
+    return { actions: boundTaskActions(tenantId), powers, words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("tk.") || k.startsWith("pc."))) };
+  } catch {
+    return null; // a failed role read: the switch is left out, never guessed
   }
 }
