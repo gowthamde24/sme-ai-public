@@ -115,7 +115,7 @@ select is(
       and fq not in ('public.calendar_feed_read', 'public.public_grievance_submit', 'public.waitlist_join')),
   '', 'anon can execute none of our functions except the calendar feed read');
 select is(
-  (select coalesce(string_agg(sig, ', '), '') from our_functions where has_function_privilege('anon', oid, 'execute')),
+  (select coalesce(string_agg(sig, ', ' order by sig), '') from our_functions where has_function_privilege('anon', oid, 'execute')),
   'calendar_feed_read(text), public_grievance_submit(uuid,text,text,text,text,text), waitlist_join(text,text,text,text,text,text,boolean,text)', 'anon can execute the calendar feed read (job BI, ADR 0073) and the two public doors of job DQ (a grievance, the waitlist; they hold their own caps)');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions

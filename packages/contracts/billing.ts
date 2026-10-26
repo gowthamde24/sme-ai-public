@@ -10,6 +10,8 @@ export interface AccessOut {
   sending: "on" | "off";
   waiting_for: "whatsapp" | null;
   erasure_warning_sent_at?: string | null;
+  demo?: boolean;
+  exempt?: boolean;
 }
 
 export interface BillingOut {

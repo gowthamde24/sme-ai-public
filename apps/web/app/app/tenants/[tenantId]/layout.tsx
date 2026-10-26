@@ -6,9 +6,11 @@ import { ReadOnlyBanner } from "@/components/v2/app/readonly/ReadOnlyBanner";
 import { ReadOnlyScope } from "@/components/v2/app/readonly/ReadOnlyScope";
 import { ModuleGate } from "@/components/v2/app/frame-store";
 import { ProblemView } from "@/components/v2/app/robust/ProblemView";
-import { AskDock } from "@/components/v2/app/today/ask/AskDock";
+import type { Availability } from "@/components/v2/app/today/ask/ask-types";
+import { AskProvider } from "@/components/v2/app/today/ask/AskProvider";
 import { ASK_WORD_KEYS } from "@/components/v2/app/today/ask/ask-words";
 import { appDict, appT } from "@/i18n/app";
+import { withModuleWords } from "@/lib/packs/module-words";
 import { FrameDataSlot } from "@/components/v2/app/frame-store";
 import { type Access } from "@/lib/api/billing-access";
 import { isCanonicalUuid } from "@/lib/api/crm";
@@ -23,8 +25,8 @@ import { readAccessCached, readAgentsCached } from "./today-read";
  * The layout of one workspace. It draws nothing of its own: the frame is drawn by the layout of /app, which cannot know which workspace the address is in, so this one reads
  * what the frame shows for THIS workspace (the plan, the AI usage, the count on Today) and hands it to the frame. A page decides access as before; if a read fails the
  * frame says "Not available yet" in that one place and the page shows its own error.
- * It also draws the Ask dock (job DN): the question line of Today at the bottom of the main screens, only when the assistant can be asked (the same rule as Today's box: its state is idle or working).
- * And when the workspace is READ-ONLY (its trial ended without a payment: job DP) it draws the one explanation at the top and switches off every edit, send, AI and call control (components/v2/app/readonly); the dock is left out.
+ * It also holds the ONE conversation with the assistant (job DQ part 0, AskProvider): Today draws it in the assistant's card and every other screen as the floating orb and its panel; there is no bar at the bottom any more (the Ask dock of job DN is gone).
+ * And when the workspace is READ-ONLY (its trial ended without a payment: job DP) it draws the one explanation at the top and switches off every edit, send, AI and call control (components/v2/app/readonly); the orb is left out.
  */
 export default async function TenantLayout({ children, params }: LayoutProps<"/app/tenants/[tenantId]">) {
   const { tenantId } = await params;
@@ -35,8 +37,11 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   const dict = appDict(lang) as Record<string, string>;
   const labels = Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("problem.")));
   const access = isCanonicalUuid(tenantId) ? await workspaceAccess(user.accessToken, tenantId) : { readOnly: false as const };
-  const askable = isCanonicalUuid(tenantId) && !access.readOnly ? await assistantAskable(user.accessToken, tenantId) : false;
+  const availability: Availability = isCanonicalUuid(tenantId) ? await assistantAvailability(user.accessToken, tenantId) : "not_available";
   const t = appT(lang);
+  const askWords = Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]));
+  // the suggestion chips of the screens, in the person's language and for the business type (`ask.chip.quotes@programmes`)
+  const chipWords = withModuleWords(Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("ask.chip."))), data.pack);
   return (
     <>
       <FrameDataSlot data={data} />
@@ -51,15 +56,17 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
           <ReadOnlyScope why={t("ro.off", { email: ADDRESSES.billing })} />
         </>
       ) : null}
-      {/* a server with no pack routes gives no pack: the product as it always was, every page on */}
-      {data.pack ? (
-        <ModuleGate modules={data.pack.modules} fallback={<ProblemView kind={403} variant="module" labels={labels} homeHref={`/app/tenants/${tenantId}`} />}>
-          {children}
-        </ModuleGate>
-      ) : (
-        children
-      )}
-      {askable ? <AskDock lang={lang} base={`/app/tenants/${tenantId}`} words={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} /> : null}
+      {/* ONE conversation for the workspace (job DQ part 0): Today's card and the floating panel of the other screens read the same thread */}
+      <AskProvider lang={lang} base={`/app/tenants/${tenantId}`} words={askWords} chipWords={chipWords} availability={availability} readOnly={access.readOnly}>
+        {/* a server with no pack routes gives no pack: the product as it always was, every page on */}
+        {data.pack ? (
+          <ModuleGate modules={data.pack.modules} fallback={<ProblemView kind={403} variant="module" labels={labels} homeHref={`/app/tenants/${tenantId}`} />}>
+            {children}
+          </ModuleGate>
+        ) : (
+          children
+        )}
+      </AskProvider>
     </>
   );
 }
@@ -73,12 +80,12 @@ async function workspaceAccess(accessToken: string, tenantId: string): Promise<A
   }
 }
 
-/** Whether the assistant can be asked right now. A read that fails says no: the dock is left out rather than shown with nothing behind it. */
-async function assistantAskable(accessToken: string, tenantId: string): Promise<boolean> {
+/** Whether the assistant can be asked right now, and if not why. A read that fails says "not available": the orb is left out rather than shown with nothing behind it. */
+async function assistantAvailability(accessToken: string, tenantId: string): Promise<Availability> {
   try {
     const state = (await readAgentsCached(accessToken, tenantId)).find((a) => a.agent === "main")?.state;
-    return state === "idle" || state === "working";
+    return state === "idle" || state === "working" ? "live" : state === "switched_off" ? "switched_off" : "not_available";
   } catch {
-    return false;
+    return "not_available";
   }
 }
