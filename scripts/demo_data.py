@@ -211,6 +211,8 @@ def lead_desk(call: Call, spec: dict[str, Any], today: date, *, tasks: bool = Tr
     out["batch"] = f"{spec['batch_name']}: approved once; {reported} outcomes reported now"
     # 5. tasks ("Ask Vijaya to do it"): the suppliers of the business are contacts first, then one finished enquiry and one left running
     if tasks:
+        # the assistant plans a task, so the workspace's own switch for it must be on (the Owner's; the demo owner holds the second factor)
+        _ok("assistant switch", call("PUT", "/agent-settings", {"enabled": True}), (200, 201))
         out.update(_tasks(call, spec, today))
     return out
 
