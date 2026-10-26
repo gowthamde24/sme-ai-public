@@ -2,6 +2,7 @@
  * What the screen snapshot renders: one entry per screen under /app, with the API answers it needs. See screens.test.tsx.
  * Everything here is synthetic. The fixtures come from lib/api/*-fixtures.ts where they exist.
  */
+import { parseBatchAnswer, parseHandoffs as parseOutreachHandoffs, parseItems as parseOutreachItems, parsePolicy as parseOutreachPolicy, parseReport as parseOutreachReport, parseRule as parseOutreachRule } from "@/lib/api/outreach";
 import type { ReactElement } from "react";
 
 import { ApiRequestError, parseMe } from "@/lib/api/client";
@@ -995,3 +996,58 @@ add({ id: "report-run-funnel", roles: ["admin"], render: runPage("education.funn
 // -- scenarios: top-ups (web/ds-topups)
 // -- scenarios: lead desk site (web/ds-lead-desk)
 // -- scenarios: leads core (web/dr-leads)
+const withEnv = async <T,>(env: Record<string, string>, run: () => Promise<T>): Promise<T> => {
+  const before: Record<string, string | undefined> = {};
+  for (const [k, v] of Object.entries(env)) {
+    before[k] = process.env[k];
+    process.env[k] = v;
+  }
+  try {
+    return await run();
+  } finally {
+    for (const [k, v] of Object.entries(before)) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
+  }
+};
+const OUT_BATCH = "ba000000-0000-4000-8000-0000000000b1";
+const OUT_CONTACT = "ca000000-0000-4000-8000-0000000000c1";
+const outBatch = (status: string, progress: unknown) => parseBatchAnswer({ batch: { id: OUT_BATCH, name: "IndiaMART leads, 27 Oct (synthetic)", status, paused_reason: null, goal: "site_visit", channel: "call", language: "te", questions: ["What budget range are you comfortable with?"], message_text: null, window_days: 7, max_calls_per_day: 50, max_total_minutes: null, plan_sha256: "abc123def456", created_at: "2026-10-27T05:00:00Z", approved_at: status === "planned" ? null : "2026-10-27T05:05:00Z", finished_at: null }, plan: { count: 12, ready: 9, skipped: { no_consent: 2, stopped: 1 }, sample: [{ contact_id: OUT_CONTACT, name_masked: "Ravi K.", city: "Guntur" }], window: { from: "2026-10-27", to: "2026-11-03" }, estimated_minutes: 27, estimated_messages: 0, estimated_cost_paise: 10800, caps: { max_calls_per_day: 50, max_total_minutes: null } }, progress });
+const OUT_RULE = parseOutreachRule({ id: "ca000000-0000-4000-8000-0000000000d1", source: "website_form", action: "call_within_minutes", within_minutes: 2, goal: "general", channel: "call", language: "en", questions: [], message_text: null, max_calls_per_day: 50, max_total_minutes: null, active: true, paused_reason: null, paused_at: null, approved_at: "2026-10-26T05:00:00Z", usage: { leads: 4, calls_today: 2, minutes_used: 6 } });
+const OUT_HANDOFF = { id: "ca000000-0000-4000-8000-0000000000e1", lead_id: null, contact_id: OUT_CONTACT, contact_name: "Ravi K. (synthetic)", summary: "Wants to see the site on Saturday morning.", assigned_to: "11111111-1111-4111-8111-111111111111", notified_at: "2026-10-27T05:10:00Z", reminder_sent_at: null, acted_at: null };
+const outreachReads = (role: Role): Record<string, Handler> => ({
+  ...cons(role),
+  listBatches: () => [outBatch("planned", null), outBatch("running", { total: 9, waiting: 6, done: 3, calls_made: 3, connected: 2, interested: 1, minutes_used: 9 })],
+  listHandoffs: () => parseOutreachHandoffs([OUT_HANDOFF]),
+  listRules: () => [OUT_RULE],
+  getPolicy: () => parseOutreachPolicy({ night_call_minute: 570, max_attempts: 3, retry_gap_hours: 18, then_whatsapp: true, whatsapp_after_hours: true, handoff_reminder_minutes: 15, call_paise_per_minute: 400, hours: { days: [1, 2, 3, 4, 5, 6], from_minute: 540, to_minute: 1140, from: "assistant" }, saved: true }),
+});
+add({ id: "outreach-plans", roles: ["owner", "admin", "sales"], render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/page")).default(props({}))), handlers: outreachReads });
+add({ id: "outreach-new", roles: ["owner", "sales"], render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/new/page")).default(props({}, { source: "indiamart", goal: "site_visit" }))), handlers: (role) => cons(role) });
+add({ id: "outreach-batch-planned", roles: ["owner", "admin"], render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/batches/[batchId]/page")).default(props({ batchId: OUT_BATCH }))), handlers: (role) => ({ ...cons(role), getBatch: () => outBatch("planned", null), getBatchItems: () => parseOutreachItems({ items: [{ id: "ca000000-0000-4000-8000-0000000000f1", contact_id: OUT_CONTACT, lead_id: null, name: "Ravi K.", status: "planned", reason: null, attempts: 0, next_action: "call", next_at: null, last_result: null }], next_cursor: null }) }) });
+add({ id: "outreach-batch-running", roles: ["owner"], render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/batches/[batchId]/page")).default(props({ batchId: OUT_BATCH }))), handlers: (role) => ({ ...cons(role), getBatch: () => outBatch("running", { total: 9, waiting: 6, done: 3, calls_made: 3, connected: 2, interested: 1, minutes_used: 9 }), getBatchItems: () => parseOutreachItems({ items: [], next_cursor: null }) }) });
+add({
+  id: "lead-report",
+  roles: ["owner", "admin"],
+  render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-report/page")).default(props({}, { from: "2026-10-20", to: "2026-10-26" }))),
+  handlers: (role) => ({ ...cons(role), getOutreachReport: () => parseOutreachReport({ from_day: "2026-10-20", to_day: "2026-10-26", by_source: [{ source: "meta_lead_ads", leads: 120, first_touch_median_seconds: 96, calls: 140, connected_rate: 61, interested_pct: 24, bookings: 14, call_cost_paise: 168000, lead_cost_paise: 1080000, cost_per_booking_paise: 89143 }, { source: "indiamart", leads: 40, first_touch_median_seconds: 45, calls: 44, connected_rate: 55, interested_pct: 30, bookings: 0, call_cost_paise: 52800, lead_cost_paise: 600000, cost_per_booking_paise: null }], total: { leads: 160, calls: 184, connected_rate: 59.5, interested_pct: 25.5, bookings: 14, call_cost_paise: 220800, lead_cost_paise: 1680000, cost_per_booking_paise: 135771 } }) }),
+});
+add({
+  id: "lead-desk",
+  render: () => withEnv({ LEADS_SCREENS: "1", OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}))),
+  handlers: (role) => ({
+    ...outreachReads(role),
+    fetchMembers: () => [{ user_id: "11111111-1111-4111-8111-111111111111", role: "owner", display_name: "Asha (synthetic)" }, { user_id: "22222222-2222-4222-8222-222222222223", role: "sales", display_name: "Ravi (synthetic)" }],
+    listDeskLeads: () => ({ leads: [{ id: LEAD, contactId: OUT_CONTACT, name: "Ravi K. (synthetic)", source: "meta_lead_ads", status: "new", ownerUserId: null, createdAt: "2026-10-27T05:00:00Z", hot: false }, { id: "ca000000-0000-4000-8000-0000000000a2", contactId: null, name: "Anitha R. (synthetic)", source: "indiamart", status: "contacted", ownerUserId: "22222222-2222-4222-8222-222222222223", createdAt: "2026-10-26T05:00:00Z", hot: false }], nextCursor: null }),
+  }),
+});
+for (const step of [1, 2, 3, 4, 5, 6]) {
+  add({
+    id: `lead-setup-step-${step}`,
+    roles: step === 1 ? ["owner", "admin"] : ["owner"],
+    render: () => withEnv({ LEADS_SCREENS: "mock", ASSISTANT_SCREENS: "mock", OUTREACH_SCREENS: "off" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-setup/page")).default(props({}, { step: String(step) }))),
+    handlers: (role) => cons(role),
+  });
+}
+

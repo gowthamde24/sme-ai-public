@@ -1,0 +1,20 @@
+# Lead Desk
+Every lead that arrives: where it came from, what state it is in, and who has it.
+form:
+Where from
+<select name=source label="Where from">
+  options: Any=* | IndiaMART=indiamart | JustDial=justdial | 99acres | MagicBricks=magicbricks | Housing.com=housing | Meta lead ads=meta_lead_ads | Your website form=website_form | Webhook (Zapier, n8n)=webhook | Excel or CSV file=excel_upload | Google Sheet=google_sheet | Pasted list=pasted_list | Contacts file=vcard
+State
+<select name=status label="State">
+  options: Any=* | New=new | Contacted=contacted | Qualified=qualified | Not suitable=disqualified
+<checkbox name=mine label="Handed to me" value=1>
+Handed to me
+<checkbox name=hot label="Hot leads only" value=1>
+Hot leads only
+[button type=submit: Show]
+- [Ravi K. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333) Hot New Meta lead ads · Oct 27 Handed to Handed to
+<select label="Handed to">
+  options: Nobody yet=* | Asha (synthetic)=11111111-1111-4111-8111-111111111111 | Ravi (synthetic)=22222222-2222-4222-8222-222222222223
+- [Anitha R. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/leads/ca000000-0000-4000-8000-0000000000a2) Contacted IndiaMART · Oct 26 Handed to Handed to
+<select label="Handed to">
+  options: Nobody yet= | Asha (synthetic)=11111111-1111-4111-8111-111111111111 | Ravi (synthetic)=22222222-2222-4222-8222-222222222223*

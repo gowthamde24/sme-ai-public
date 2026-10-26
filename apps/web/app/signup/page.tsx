@@ -14,6 +14,9 @@ import { MIN_PASSWORD } from "@/lib/auth/password-policy";
 import { dpdpScreens } from "@/lib/screens/flag";
 import { isSignupOpen } from "@/lib/auth/signup-open";
 import { getAuthProviders, listPacks } from "@/lib/api/pack";
+import { readTemplates } from "@/lib/lead-desk/source";
+import { LEADS_CARD_ID, toPackSummary } from "@/lib/lead-desk/templates";
+import { leadsScreens } from "@/lib/screens/flag";
 import { pickSignupPack, signupCards } from "@/lib/packs/signup";
 
 import { signUp } from "./actions";
@@ -78,17 +81,49 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
       </main>
     );
   }
-  const type = pickSignupPack(packs, query.type);
-  const cards = signupCards(packs, lang);
+  // night 4 (Lead Desk): the nine "any business with leads" types are grouped under ONE card; the picker lists them. With the flag off, or no templates, nothing changes.
+  const templates = await readTemplates();
+  const templateIds = new Set(templates.map((x) => x.packId));
+  const known = new Set(packs.map((p) => p.packId));
+  // in the test screens the API does not list the made-up nine, so they are added here (the real sign-up refuses them)
+  const allPacks = leadsScreens() === "mock" ? [...packs, ...templates.filter((x) => !known.has(x.packId)).map(toPackSummary)] : packs;
+  const wantedType = Array.isArray(query.type) ? query.type[0] : query.type;
+  const type = pickSignupPack(allPacks, wantedType);
+  const cards = signupCards(allPacks, lang);
+  const leadsCard = { id: LEADS_CARD_ID, name: t("signup.leads.name"), tagline: t("signup.leads.tagline"), accent: "leads_orange", owlProp: "phone_headset", validated: true };
+
+  if (!type && templates.length > 0 && wantedType === LEADS_CARD_ID) {
+    return (
+      <main id="main" className={authMain} lang={lang}>
+        <p className="text-sm font-semibold text-muted">{t("signup.step", { n: 1 })}</p>
+        <h1 className={authH1}>{t("signup.leads.title")}</h1>
+        <p className={authLead}>{t("signup.leads.sub")}</p>
+        <ul className="flex flex-col gap-3" aria-label={t("signup.leads.title")} data-part="lead-templates">
+          {cards.filter((c) => templateIds.has(c.id)).map((card) => (
+            <li key={card.id}>
+              <PackCard card={card} href={`/signup?type=${card.id}`} hint={t("signup.pack.choose", { name: card.name })} notValidated={t("signup.pack.preview")} />
+            </li>
+          ))}
+        </ul>
+        <p className={`${authHint} mt-6`}>
+          <Link href="/signup" className={authLink}>
+            {t("signup.leads.back")}
+          </Link>
+        </p>
+      </main>
+    );
+  }
 
   if (!type) {
+    const first = templates.length > 0 ? cards.filter((c) => !templateIds.has(c.id)) : cards;
+    const shown = templates.length > 0 ? [...first, leadsCard] : first;
     return (
       <main id="main" className={authMain} lang={lang}>
         <p className="text-sm font-semibold text-muted">{t("signup.step", { n: 1 })}</p>
         <h1 className={authH1}>{t("signup.pack.title")}</h1>
         <p className={authLead}>{t("signup.pack.sub")}</p>
         <ul className="flex flex-col gap-3" aria-label={t("signup.pack.title")}>
-          {cards.map((card) => (
+          {shown.map((card) => (
             <li key={card.id}>
               <PackCard card={card} href={`/signup?type=${card.id}`} hint={t("signup.pack.choose", { name: card.name })} notValidated={t("signup.pack.preview")} />
             </li>

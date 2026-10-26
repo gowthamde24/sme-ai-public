@@ -1,0 +1,26 @@
+# Lead report
+How fast your leads are reached and what comes of it, for each place they come from.
+form:
+From
+<date name=from label="From" value=2026-10-20>
+To
+<date name=to label="To" value=2026-10-26>
+[button type=submit: Show]
+## All sources together
+160 leads, 184 calls, 14 bookings. Answered
+{label="Answered: 60%"}
+60% Interested
+{label="Interested: 26%"}
+26% Cost of one booking : ₹1,357.71
+## Each source
+- Meta lead ads 120 leads, 140 calls Time to the first call or message (the middle one) : 1 min 36 s Answered
+{label="Answered: 61%"}
+61% Interested
+{label="Interested: 24%"}
+24% Bookings : 14 · Cost of one booking : ₹891.43
+- IndiaMART 40 leads, 44 calls Time to the first call or message (the middle one) : 45 seconds Answered
+{label="Answered: 55%"}
+55% Interested
+{label="Interested: 30%"}
+30% Bookings : 0 · Cost of one booking : Not known yet
+The cost of a booking is the cost of the calls plus what you paid for the leads. It is shown only when there is at least one booking. [Go to lead plans](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)

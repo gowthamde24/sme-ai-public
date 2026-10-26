@@ -1,0 +1,33 @@
+# Set up Lead Desk
+Six short steps. You can skip any step and come back later. Step 1 of 6
+{label="Step 1 of 6"}
+- [1 . What you sell](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=1 current=step)
+- [2 . Your business type](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=2)
+- [3 . Goal and questions](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=3)
+- [4 . Your assistant](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=4)
+- [5 . Test call](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=5)
+- [6 . Go live](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=6)
+## What do you sell?
+Give Vijaya something to read. She drafts facts about your business; she only states the ones you approve. Paste text from your website or Instagram, or upload a brochure, a price list or an FAQ. Vijaya drafts facts from it. You approve, change or reject each fact.
+{label="Give Vijaya something to read"}
+### Give Vijaya something to read
+form:
+A name for it (optional)
+<text label="A name for it (optional)" maxlength=120>
+Paste the text here
+<textarea label="Paste the text here" maxlength=60000>
+A website page, an Instagram caption, a price message. Up to 60,000 characters.
+[button type=submit disabled: Add this text]
+Or upload a file
+<file label="Or upload a file" accept=.pdf,.docx,.txt,.md,.csv>
+PDF, Word or plain text, up to 5 MB. Photos and scanned pages are not read yet: type or paste them instead. The file itself is not kept, only its text.
+{label="Facts Vijaya may state (0 approved)"}
+### Facts Vijaya may state (0 approved)
+No facts yet. Add some text above and draft the facts.
+form:
+Or write a fact yourself
+<textarea label="Or write a fact yourself" maxlength=500>
+One plain sentence, no links. You still approve it.
+[button type=submit disabled: Add the fact]
+[Next step](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=2)
+{label="Setup steps"} [Skip this step](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=2) Nothing here is required.
