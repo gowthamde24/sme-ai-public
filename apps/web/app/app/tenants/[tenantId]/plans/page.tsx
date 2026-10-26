@@ -16,6 +16,9 @@ import { callsPlans, mainPlans } from "@/lib/plan/catalogue";
 import { FAKE_CHECKOUT } from "@/lib/plan/flag";
 import { planScreens } from "@/lib/plan/flag";
 import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
+import { topupScreens } from "@/lib/screens/flag";
+import { readUsageCached } from "@/lib/topups/source";
+import { WaitingCard } from "@/components/v2/app/topups/WaitingCard";
 
 import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, resumePlanAction, startPlanAction } from "../plan-actions";
 
@@ -46,6 +49,8 @@ export default async function PlansPage({ params }: PageProps<"/app/tenants/[ten
   const base = `/app/tenants/${tenantId}`;
   const ctx = { token: user.accessToken, tenantId };
   const [catalogue, plan] = await Promise.all([readCatalogue(ctx), readWorkspacePlan(ctx)]);
+  // "12 leads waiting for calls · Top up" (night 4, TOPUP_SCREENS): the calls wait for minutes, whatever plan the business looks at
+  const waiting = topupScreens() === "off" ? 0 : ((await readUsageCached(user.accessToken, tenantId))?.queuedCalls ?? 0);
   const mock = planScreens() === "mock";
   const owner = tenant.role === "owner";
   // a lapsed plan has no new trial: the way back is to pay again (job DP; C1's POST /billing/resume)
@@ -57,11 +62,12 @@ export default async function PlansPage({ params }: PageProps<"/app/tenants/[ten
       <BackLink href={`${base}/settings?section=plan`} label={t("plan.title")} />
       <PageTop title={t("plan.picker.title")} />
       <div className="mt-6">
+        <WaitingCard words={wordsFor(lang, ["tu.cta.", "tu.wait."])} waiting={waiting} href={`${base}/settings?section=plan#topups`} canBuy={tenant.role === "owner"} />
         {catalogue === null ? (
           <p className="text-sm text-muted">{t("frame.notyet")}</p>
         ) : (
           <PlanPicker
-            words={wordsFor(lang, ["plan."])}
+            words={wordsFor(lang, ["plan.", "tu.picker."])}
             main={mainPlans(catalogue)}
             calls={callsPlans(catalogue)}
             currentId={plan && plan.state !== "cancelled" ? plan.planId : null}

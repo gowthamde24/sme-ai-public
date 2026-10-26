@@ -19,6 +19,7 @@ import { requireUser } from "@/lib/auth/session";
 import { ADDRESSES } from "@/lib/site/business";
 
 import { readFrameData } from "../../frame-data";
+import { TopupLayoutBanner } from "./topup-banner";
 import { readAccessCached, readAgentsCached } from "./today-read";
 
 /**
@@ -56,6 +57,8 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
           <ReadOnlyScope why={t("ro.off", { email: ADDRESSES.billing })} />
         </>
       ) : null}
+      {/* the notice at 80 and 100 percent of the minutes or messages (night 4, TOPUP_SCREENS): markup only, nothing when the flag is off */}
+      <TopupLayoutBanner token={user.accessToken} tenantId={tenantId} lang={lang} />
       {/* ONE conversation for the workspace (job DQ part 0): Today's card and the floating panel of the other screens read the same thread */}
       <AskProvider lang={lang} base={`/app/tenants/${tenantId}`} words={askWords} chipWords={chipWords} availability={availability} readOnly={access.readOnly}>
         {/* a server with no pack routes gives no pack: the product as it always was, every page on */}

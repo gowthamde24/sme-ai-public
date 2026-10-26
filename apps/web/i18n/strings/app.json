@@ -59431,5 +59431,1545 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tu.title": {
+  "en": "Usage and top-ups",
+  "te": "వాడకం మరియు టాప్-అప్‌లు",
+  "hi": "इस्तेमाल और टॉप-अप",
+  "kn": "ಬಳಕೆ ಮತ್ತು ಟಾಪ್-ಅಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.sub": {
+  "en": "Call minutes and the WhatsApp messages your business starts are counted for each month. AI itself is included (fair use).",
+  "te": "కాల్ మినిట్స్, మీ బిజినెస్ మొదలుపెట్టే WhatsApp మెసేజ్‌లు నెలనెలా లెక్కిస్తాం. AI మాత్రం ప్లాన్‌లోనే ఉంటుంది (సరైన వాడకం వరకు).",
+  "hi": "कॉल मिनट और आपके बिज़नेस से शुरू होने वाले WhatsApp मैसेज हर महीने गिने जाते हैं। AI प्लान में शामिल है (सही इस्तेमाल तक)।",
+  "kn": "ಕಾಲ್ ನಿಮಿಷಗಳು ಮತ್ತು ನಿಮ್ಮ ಬಿಸಿನೆಸ್ ಶುರುಮಾಡುವ WhatsApp ಮೆಸೇಜ್‌ಗಳನ್ನು ತಿಂಗಳಿಗೆ ಲೆಕ್ಕ ಹಾಕುತ್ತೇವೆ. AI ಪ್ಲಾನ್‌ನಲ್ಲೇ ಸೇರಿದೆ (ಸರಿಯಾದ ಬಳಕೆಯವರೆಗೆ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.testmode": {
+  "en": "Test mode: no money is taken and nothing is charged. Amounts marked test price are only for trying the screens.",
+  "te": "టెస్ట్ మోడ్: డబ్బు తీసుకోరు, ఏదీ చార్జ్ చేయరు. టెస్ట్ ధర అని ఉన్న మొత్తాలు స్క్రీన్‌లను చూడటానికే.",
+  "hi": "टेस्ट मोड: कोई पैसा नहीं लिया जाता, कुछ चार्ज नहीं होता। टेस्ट कीमत लिखी रकम सिर्फ़ स्क्रीन देखने के लिए है।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ಹಣ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ, ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ. ಟೆಸ್ಟ್ ಬೆಲೆ ಎಂದಿರುವ ಮೊತ್ತಗಳು ಸ್ಕ್ರೀನ್ ನೋಡಲು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.unavailable": {
+  "en": "Not available yet.",
+  "te": "ఇంకా అందుబాటులో లేదు.",
+  "hi": "अभी उपलब्ध नहीं है।",
+  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.owner_only": {
+  "en": "Only the owner can buy top-ups or change these settings.",
+  "te": "టాప్-అప్ కొనడం, ఈ సెట్టింగ్‌లు మార్చడం ఓనర్ మాత్రమే చేయగలరు.",
+  "hi": "टॉप-अप खरीदना या ये सेटिंग्स बदलना सिर्फ़ ओनर कर सकते हैं।",
+  "kn": "ಟಾಪ್-ಅಪ್ ಕೊಳ್ಳುವುದು, ಈ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಬದಲಾಯಿಸುವುದು ಓನರ್ ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.off": {
+  "en": "Off",
+  "te": "ఆఫ్",
+  "hi": "बंद",
+  "kn": "ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.period": {
+  "en": "This month: {start} to {end}. {n} days left.",
+  "te": "ఈ నెల: {start} నుండి {end} వరకు. {n} రోజులు మిగిలాయి.",
+  "hi": "इस महीने: {start} से {end} तक। {n} दिन बाकी हैं।",
+  "kn": "ಈ ತಿಂಗಳು: {start} ರಿಂದ {end} ವರೆಗೆ. {n} ದಿನ ಉಳಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.record.title": {
+  "en": "Bought and invoices",
+  "te": "కొన్నవి, ఇన్వాయిస్‌లు",
+  "hi": "खरीदे हुए और इनवॉइस",
+  "kn": "ಕೊಂಡಿದ್ದು ಮತ್ತು ಇನ್‌ವಾಯ್ಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.kind.minutes": {
+  "en": "Call minutes",
+  "te": "కాల్ మినిట్స్",
+  "hi": "कॉल मिनट",
+  "kn": "ಕಾಲ್ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.kind.messages": {
+  "en": "WhatsApp messages you start",
+  "te": "మీరు మొదలుపెట్టే WhatsApp మెసేజ్‌లు",
+  "hi": "आपके शुरू किए WhatsApp मैसेज",
+  "kn": "ನೀವು ಶುರುಮಾಡುವ WhatsApp ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.of": {
+  "en": "{used} of {total} used",
+  "te": "{total} లో {used} వాడారు",
+  "hi": "{total} में से {used} इस्तेमाल हुए",
+  "kn": "{total} ರಲ್ಲಿ {used} ಬಳಸಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.percent": {
+  "en": "{n}% used",
+  "te": "{n}% వాడారు",
+  "hi": "{n}% इस्तेमाल हुए",
+  "kn": "{n}% ಬಳಸಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.left": {
+  "en": "{n} left",
+  "te": "{n} మిగిలాయి",
+  "hi": "{n} बाकी",
+  "kn": "{n} ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.nocap": {
+  "en": "{used} used. This plan has no limit; you pay for what you use.",
+  "te": "{used} వాడారు. ఈ ప్లాన్‌కి లిమిట్ లేదు; వాడినంతకే చెల్లిస్తారు.",
+  "hi": "{used} इस्तेमाल हुए। इस प्लान में कोई लिमिट नहीं; जितना इस्तेमाल करें उतना ही देना है।",
+  "kn": "{used} ಬಳಸಿದ್ದೀರಿ. ಈ ಪ್ಲಾನ್‌ಗೆ ಮಿತಿ ಇಲ್ಲ; ಬಳಸಿದಷ್ಟಕ್ಕೆ ಮಾತ್ರ ಕೊಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.notincluded": {
+  "en": "Not included in your plan. A top-up still works.",
+  "te": "మీ ప్లాన్‌లో లేదు. టాప్-అప్ మాత్రం పనిచేస్తుంది.",
+  "hi": "आपके प्लान में शामिल नहीं है। टॉप-अप फिर भी चलता है।",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ. ಟಾಪ್-ಅಪ್ ಆದರೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.parts": {
+  "en": "Plan: {plan}. Top-ups left: {topup}.",
+  "te": "ప్లాన్: {plan}. టాప్-అప్‌లో మిగిలినవి: {topup}.",
+  "hi": "प्लान: {plan}। टॉप-अप में बाकी: {topup}।",
+  "kn": "ಪ್ಲಾನ್: {plan}. ಟಾಪ್-ಅಪ್‌ನಲ್ಲಿ ಉಳಿದಿದ್ದು: {topup}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.pace.run_out": {
+  "en": "At this pace it runs out on {date}.",
+  "te": "ఇదే వేగంతో {date} నాటికి అయిపోతుంది.",
+  "hi": "इसी रफ़्तार से यह {date} तक खत्म हो जाएगा।",
+  "kn": "ಇದೇ ವೇಗದಲ್ಲಿ {date} ಹೊತ್ತಿಗೆ ಮುಗಿಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.pace.ok": {
+  "en": "At this pace it lasts to the end of the month.",
+  "te": "ఇదే వేగంతో నెల చివరి వరకు సరిపోతుంది.",
+  "hi": "इसी रफ़्तार से यह महीने के आखिर तक चलेगा।",
+  "kn": "ಇದೇ ವೇಗದಲ್ಲಿ ತಿಂಗಳ ಕೊನೆಯವರೆಗೆ ಸಾಕಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.out.minutes": {
+  "en": "All used. New calls wait in a queue until you top up or the month starts again.",
+  "te": "అన్నీ వాడేశారు. టాప్-అప్ చేసే వరకు లేదా కొత్త నెల మొదలయ్యే వరకు కొత్త కాల్స్ క్యూలో ఆగుతాయి.",
+  "hi": "सब इस्तेमाल हो गए। टॉप-अप करने या नया महीना शुरू होने तक नई कॉल कतार में रुकेंगी।",
+  "kn": "ಎಲ್ಲವೂ ಬಳಕೆಯಾಗಿದೆ. ಟಾಪ್-ಅಪ್ ಮಾಡುವವರೆಗೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾಗುವವರೆಗೆ ಹೊಸ ಕಾಲ್‌ಗಳು ಸರದಿಯಲ್ಲಿ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.out.messages": {
+  "en": "All used. Messages you start wait in the outbox until you top up or the month starts again.",
+  "te": "అన్నీ వాడేశారు. టాప్-అప్ చేసే వరకు లేదా కొత్త నెల మొదలయ్యే వరకు మీరు మొదలుపెట్టే మెసేజ్‌లు ఔట్‌బాక్స్‌లో ఆగుతాయి.",
+  "hi": "सब इस्तेमाल हो गए। टॉप-अप करने या नया महीना शुरू होने तक आपके शुरू किए मैसेज आउटबॉक्स में रुकेंगे।",
+  "kn": "ಎಲ್ಲವೂ ಬಳಕೆಯಾಗಿದೆ. ಟಾಪ್-ಅಪ್ ಮಾಡುವವರೆಗೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾಗುವವರೆಗೆ ನೀವು ಶುರುಮಾಡುವ ಮೆಸೇಜ್‌ಗಳು ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.expiry": {
+  "en": "Unused top-up units stay until {date}, then they expire.",
+  "te": "వాడని టాప్-అప్ యూనిట్లు {date} వరకు ఉంటాయి, ఆ తర్వాత ముగిసిపోతాయి.",
+  "hi": "बिना इस्तेमाल हुए टॉप-अप यूनिट {date} तक रहते हैं, फिर खत्म हो जाते हैं।",
+  "kn": "ಬಳಸದ ಟಾಪ್-ಅಪ್ ಯೂನಿಟ್‌ಗಳು {date} ವರೆಗೆ ಇರುತ್ತವೆ, ಆಮೇಲೆ ಮುಗಿದುಹೋಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.bar.overage": {
+  "en": "Pay per use: {units} used beyond the packs. {spent} of your {cap} limit.",
+  "te": "వాడినంతకు చెల్లింపు: ప్యాక్‌లకు మించి {units} వాడారు. మీ {cap} లిమిట్‌లో {spent}.",
+  "hi": "इस्तेमाल पर पेमेंट: पैक से ऊपर {units} इस्तेमाल हुए। आपकी {cap} लिमिट में से {spent}।",
+  "kn": "ಬಳಕೆಗೆ ತಕ್ಕ ಪಾವತಿ: ಪ್ಯಾಕ್‌ಗಳಿಗಿಂತ ಹೆಚ್ಚು {units} ಬಳಸಿದ್ದೀರಿ. ನಿಮ್ಮ {cap} ಮಿತಿಯಲ್ಲಿ {spent}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.alert.80.minutes": {
+  "en": "Your calls are at {n}% of this month's minutes.",
+  "te": "ఈ నెల మినిట్స్‌లో మీ కాల్స్ {n}% వాడారు.",
+  "hi": "इस महीने के मिनट का {n}% आपकी कॉल में लग चुका है।",
+  "kn": "ಈ ತಿಂಗಳ ನಿಮಿಷಗಳಲ್ಲಿ ನಿಮ್ಮ ಕಾಲ್‌ಗಳು {n}% ಬಳಸಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.alert.80.messages": {
+  "en": "Your messages are at {n}% of this month's WhatsApp messages.",
+  "te": "ఈ నెల WhatsApp మెసేజ్‌లలో మీవి {n}% వాడారు.",
+  "hi": "इस महीने के WhatsApp मैसेज का {n}% आप इस्तेमाल कर चुके हैं।",
+  "kn": "ಈ ತಿಂಗಳ WhatsApp ಮೆಸೇಜ್‌ಗಳಲ್ಲಿ ನೀವು {n}% ಬಳಸಿದ್ದೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.alert.100.minutes": {
+  "en": "Your minutes are used up. Calls are queued ({n} waiting). Top up to continue.",
+  "te": "మీ మినిట్స్ అయిపోయాయి. కాల్స్ క్యూలో ఉన్నాయి ({n} ఆగాయి). కొనసాగాలంటే టాప్-అప్ చేయండి.",
+  "hi": "आपके मिनट खत्म हो गए। कॉल कतार में हैं ({n} रुकी हैं)। जारी रखने के लिए टॉप-अप करें।",
+  "kn": "ನಿಮ್ಮ ನಿಮಿಷಗಳು ಮುಗಿದಿವೆ. ಕಾಲ್‌ಗಳು ಸರದಿಯಲ್ಲಿವೆ ({n} ಕಾಯುತ್ತಿವೆ). ಮುಂದುವರಿಯಲು ಟಾಪ್-ಅಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.alert.100.messages": {
+  "en": "Your WhatsApp messages are used up. Messages you start are held in the outbox ({n} held). Top up to continue.",
+  "te": "మీ WhatsApp మెసేజ్‌లు అయిపోయాయి. మీరు మొదలుపెట్టే మెసేజ్‌లు ఔట్‌బాక్స్‌లో ఆగాయి ({n}). కొనసాగాలంటే టాప్-అప్ చేయండి.",
+  "hi": "आपके WhatsApp मैसेज खत्म हो गए। आपके शुरू किए मैसेज आउटबॉक्स में रुके हैं ({n})। जारी रखने के लिए टॉप-अप करें।",
+  "kn": "ನಿಮ್ಮ WhatsApp ಮೆಸೇಜ್‌ಗಳು ಮುಗಿದಿವೆ. ನೀವು ಶುರುಮಾಡುವ ಮೆಸೇಜ್‌ಗಳು ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ನಿಂತಿವೆ ({n}). ಮುಂದುವರಿಯಲು ಟಾಪ್-ಅಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.alert.runout": {
+  "en": "At this pace they run out on {date}.",
+  "te": "ఇదే వేగంతో {date} నాటికి అయిపోతాయి.",
+  "hi": "इसी रफ़्तार से ये {date} तक खत्म हो जाएँगे।",
+  "kn": "ಇದೇ ವೇಗದಲ್ಲಿ {date} ಹೊತ್ತಿಗೆ ಮುಗಿಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.cta.topup": {
+  "en": "Top up",
+  "te": "టాప్-అప్ చేయండి",
+  "hi": "टॉप-अप करें",
+  "kn": "ಟಾಪ್-ಅಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.cta.see": {
+  "en": "See usage",
+  "te": "వాడకం చూడండి",
+  "hi": "इस्तेमाल देखें",
+  "kn": "ಬಳಕೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.needs.badge": {
+  "en": "Needs you",
+  "te": "మీరు చూడాలి",
+  "hi": "आपको देखना है",
+  "kn": "ನೀವು ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.needs.low.minutes": {
+  "en": "Call minutes are running low",
+  "te": "కాల్ మినిట్స్ తగ్గిపోతున్నాయి",
+  "hi": "कॉल मिनट कम पड़ रहे हैं",
+  "kn": "ಕಾಲ್ ನಿಮಿಷಗಳು ಕಡಿಮೆಯಾಗುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.needs.low.messages": {
+  "en": "WhatsApp messages are running low",
+  "te": "WhatsApp మెసేజ్‌లు తగ్గిపోతున్నాయి",
+  "hi": "WhatsApp मैसेज कम पड़ रहे हैं",
+  "kn": "WhatsApp ಮೆಸೇಜ್‌ಗಳು ಕಡಿಮೆಯಾಗುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.needs.empty.minutes": {
+  "en": "Call minutes are used up",
+  "te": "కాల్ మినిట్స్ అయిపోయాయి",
+  "hi": "कॉल मिनट खत्म हो गए",
+  "kn": "ಕಾಲ್ ನಿಮಿಷಗಳು ಮುಗಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.needs.empty.messages": {
+  "en": "WhatsApp messages are used up",
+  "te": "WhatsApp మెసేజ్‌లు అయిపోయాయి",
+  "hi": "WhatsApp मैसेज खत्म हो गए",
+  "kn": "WhatsApp ಮೆಸೇಜ್‌ಗಳು ಮುಗಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.needs.body.80.minutes": {
+  "en": "Your calls are at {n}% of this month's minutes. Top up to keep calling without a break.",
+  "te": "ఈ నెల మినిట్స్‌లో మీ కాల్స్ {n}% వాడారు. ఆగకుండా కాల్ చేయడానికి టాప్-అప్ చేయండి.",
+  "hi": "इस महीने के मिनट का {n}% कॉल में लग चुका है। बिना रुके कॉल जारी रखने के लिए टॉप-अप करें।",
+  "kn": "ಈ ತಿಂಗಳ ನಿಮಿಷಗಳಲ್ಲಿ ಕಾಲ್‌ಗಳು {n}% ಬಳಸಿವೆ. ನಿಲ್ಲದೆ ಕಾಲ್ ಮಾಡಲು ಟಾಪ್-ಅಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.needs.body.80.messages": {
+  "en": "Your messages are at {n}% of this month's WhatsApp messages. Top up so none are held.",
+  "te": "ఈ నెల WhatsApp మెసేజ్‌లలో మీవి {n}% వాడారు. ఏవీ ఆగకుండా టాప్-అప్ చేయండి.",
+  "hi": "इस महीने के WhatsApp मैसेज का {n}% लग चुका है। कोई रुके नहीं, इसलिए टॉप-अप करें।",
+  "kn": "ಈ ತಿಂಗಳ WhatsApp ಮೆಸೇಜ್‌ಗಳಲ್ಲಿ {n}% ಬಳಸಿದ್ದೀರಿ. ಯಾವುದೂ ನಿಲ್ಲದಿರಲು ಟಾಪ್-ಅಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.needs.body.100.minutes": {
+  "en": "{n} leads wait for a call. They are called by themselves after a top-up or when the month starts again.",
+  "te": "{n} లీడ్స్ కాల్ కోసం ఆగి ఉన్నారు. టాప్-అప్ తర్వాత లేదా కొత్త నెలలో వాళ్లకి కాల్స్ వాటంతటవే మొదలవుతాయి.",
+  "hi": "{n} लीड कॉल के इंतज़ार में हैं। टॉप-अप के बाद या नया महीना शुरू होने पर उन्हें अपने आप कॉल जाएगी।",
+  "kn": "{n} ಲೀಡ್‌ಗಳು ಕಾಲ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ. ಟಾಪ್-ಅಪ್ ಆದ ಮೇಲೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾದಾಗ ಅವರಿಗೆ ತಾನಾಗಿ ಕಾಲ್ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.needs.body.100.messages": {
+  "en": "{n} messages wait in the outbox. They can go once you top up or the month starts again.",
+  "te": "{n} మెసేజ్‌లు ఔట్‌బాక్స్‌లో ఆగి ఉన్నాయి. టాప్-అప్ చేశాక లేదా కొత్త నెలలో అవి వెళ్లగలవు.",
+  "hi": "{n} मैसेज आउटबॉक्स में रुके हैं। टॉप-अप करने या नया महीना शुरू होने पर वे जा सकेंगे।",
+  "kn": "{n} ಮೆಸೇಜ್‌ಗಳು ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಕಾಯುತ್ತಿವೆ. ಟಾಪ್-ಅಪ್ ಆದ ಮೇಲೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳಲ್ಲಿ ಅವು ಹೋಗಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.wait.title": {
+  "en": "{n} leads waiting for calls",
+  "te": "{n} లీడ్స్ కాల్స్ కోసం ఆగి ఉన్నారు",
+  "hi": "{n} लीड कॉल के इंतज़ार में",
+  "kn": "{n} ಲೀಡ್‌ಗಳು ಕಾಲ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.wait.title.one": {
+  "en": "1 lead waiting for a call",
+  "te": "1 లీడ్ కాల్ కోసం ఆగి ఉన్నారు",
+  "hi": "1 लीड कॉल के इंतज़ार में",
+  "kn": "1 ಲೀಡ್ ಕಾಲ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.wait.body": {
+  "en": "Calls are queued and start again by themselves after a top-up or when the new month begins. Leads are still captured, and free WhatsApp replies within 24 hours carry on.",
+  "te": "కాల్స్ క్యూలో ఉన్నాయి; టాప్-అప్ తర్వాత లేదా కొత్త నెల మొదలైనప్పుడు వాటంతటవే మళ్లీ మొదలవుతాయి. లీడ్స్ ఇప్పటికీ నమోదవుతాయి, 24 గంటల్లోపు ఉచిత WhatsApp జవాబులు కొనసాగుతాయి.",
+  "hi": "कॉल कतार में हैं और टॉप-अप के बाद या नया महीना शुरू होने पर अपने आप फिर शुरू होंगी। लीड अब भी दर्ज होती हैं, और 24 घंटे के अंदर मुफ़्त WhatsApp जवाब चलते रहते हैं।",
+  "kn": "ಕಾಲ್‌ಗಳು ಸರದಿಯಲ್ಲಿವೆ; ಟಾಪ್-ಅಪ್ ಆದ ಮೇಲೆ ಅಥವಾ ಹೊಸ ತಿಂಗಳು ಶುರುವಾದಾಗ ತಾನಾಗಿ ಮತ್ತೆ ಶುರುವಾಗುತ್ತವೆ. ಲೀಡ್‌ಗಳು ಈಗಲೂ ದಾಖಲಾಗುತ್ತವೆ, 24 ಗಂಟೆಯೊಳಗಿನ ಉಚಿತ WhatsApp ಉತ್ತರಗಳು ಮುಂದುವರಿಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.packs.title": {
+  "en": "Top up",
+  "te": "టాప్-అప్",
+  "hi": "टॉप-अप",
+  "kn": "ಟಾಪ್-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.packs.minutes": {
+  "en": "Add call minutes",
+  "te": "కాల్ మినిట్స్ కలపండి",
+  "hi": "कॉल मिनट जोड़ें",
+  "kn": "ಕಾಲ್ ನಿಮಿಷ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.packs.messages": {
+  "en": "Add WhatsApp messages",
+  "te": "WhatsApp మెసేజ్‌లు కలపండి",
+  "hi": "WhatsApp मैसेज जोड़ें",
+  "kn": "WhatsApp ಮೆಸೇಜ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.packs.carry": {
+  "en": "Unused top-up units carry over for 90 days. Your plan's own allowance starts again each month.",
+  "te": "వాడని టాప్-అప్ యూనిట్లు 90 రోజులు కొనసాగుతాయి. మీ ప్లాన్ సొంత కోటా ప్రతి నెలా కొత్తగా మొదలవుతుంది.",
+  "hi": "बिना इस्तेमाल हुए टॉप-अप यूनिट 90 दिन आगे चलते हैं। आपके प्लान का अपना कोटा हर महीने नए सिरे से शुरू होता है।",
+  "kn": "ಬಳಸದ ಟಾಪ್-ಅಪ್ ಯೂನಿಟ್‌ಗಳು 90 ದಿನ ಮುಂದುವರಿಯುತ್ತವೆ. ನಿಮ್ಮ ಪ್ಲಾನ್‌ನ ಸ್ವಂತ ಕೋಟಾ ಪ್ರತಿ ತಿಂಗಳು ಹೊಸದಾಗಿ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.packs.first": {
+  "en": "Your plan's allowance is used first, then the oldest top-up.",
+  "te": "ముందు మీ ప్లాన్ కోటా వాడతాం, తర్వాత అత్యంత పాత టాప్-అప్.",
+  "hi": "पहले आपके प्लान का कोटा इस्तेमाल होता है, फिर सबसे पुराना टॉप-अप।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಪ್ಲಾನ್ ಕೋಟಾ ಬಳಕೆಯಾಗುತ್ತದೆ, ಆಮೇಲೆ ಅತಿ ಹಳೆಯ ಟಾಪ್-ಅಪ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pack.minutes": {
+  "en": "+{n} minutes",
+  "te": "+{n} మినిట్స్",
+  "hi": "+{n} मिनट",
+  "kn": "+{n} ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pack.messages": {
+  "en": "+{n} messages",
+  "te": "+{n} మెసేజ్‌లు",
+  "hi": "+{n} मैसेज",
+  "kn": "+{n} ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pack.price": {
+  "en": "{total} with GST",
+  "te": "GST తో {total}",
+  "hi": "GST के साथ {total}",
+  "kn": "GST ಸೇರಿ {total}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pack.price.test": {
+  "en": "test price {total} with GST",
+  "te": "టెస్ట్ ధర GST తో {total}",
+  "hi": "टेस्ट कीमत GST के साथ {total}",
+  "kn": "ಟೆಸ್ಟ್ ಬೆಲೆ GST ಸೇರಿ {total}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.title": {
+  "en": "Pay for {what}",
+  "te": "{what} కోసం చెల్లించండి",
+  "hi": "{what} के लिए पेमेंट करें",
+  "kn": "{what} ಗಾಗಿ ಪಾವತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.test": {
+  "en": "TEST",
+  "te": "టెస్ట్",
+  "hi": "टेस्ट",
+  "kn": "ಟೆಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.nomoney": {
+  "en": "No money is taken. This is a test payment sheet.",
+  "te": "డబ్బు తీసుకోరు. ఇది టెస్ట్ పేమెంట్ షీట్.",
+  "hi": "कोई पैसा नहीं लिया जाता। यह टेस्ट पेमेंट शीट है।",
+  "kn": "ಹಣ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ. ಇದು ಟೆಸ್ಟ್ ಪೇಮೆಂಟ್ ಶೀಟ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.gst": {
+  "en": "GST ({rate}%)",
+  "te": "GST ({rate}%) పన్ను",
+  "hi": "GST ({rate}%) टैक्स",
+  "kn": "GST ({rate}%) ತೆರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.total": {
+  "en": "Total",
+  "te": "మొత్తం",
+  "hi": "कुल",
+  "kn": "ಒಟ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.method": {
+  "en": "Pay with",
+  "te": "ఇలా చెల్లించండి",
+  "hi": "इससे पेमेंट करें",
+  "kn": "ಇದರಿಂದ ಪಾವತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.upi": {
+  "en": "UPI (test)",
+  "te": "UPI (టెస్ట్)",
+  "hi": "UPI (टेस्ट)",
+  "kn": "UPI (ಟೆಸ್ಟ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.card": {
+  "en": "Card (test)",
+  "te": "కార్డ్ (టెస్ట్)",
+  "hi": "कार्ड (टेस्ट)",
+  "kn": "ಕಾರ್ಡ್ (ಟೆಸ್ಟ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.fail": {
+  "en": "Test: make this payment fail",
+  "te": "టెస్ట్: ఈ పేమెంట్ ఫెయిల్ అయ్యేలా చేయండి",
+  "hi": "टेस्ट: यह पेमेंट फ़ेल कराएँ",
+  "kn": "ಟೆಸ್ಟ್: ಈ ಪೇಮೆಂಟ್ ವಿಫಲವಾಗುವಂತೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.nodetails": {
+  "en": "No UPI ID or card number is asked for.",
+  "te": "UPI ID కానీ కార్డ్ నంబర్ కానీ అడగం.",
+  "hi": "UPI ID या कार्ड नंबर नहीं माँगा जाता।",
+  "kn": "UPI ID ಆಗಲಿ ಕಾರ್ಡ್ ನಂಬರ್ ಆಗಲಿ ಕೇಳುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.go": {
+  "en": "Pay {amount} (test)",
+  "te": "{amount} చెల్లించండి (టెస్ట్)",
+  "hi": "{amount} पेमेंट करें (टेस्ट)",
+  "kn": "{amount} ಪಾವತಿಸಿ (ಟೆಸ್ಟ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.paying": {
+  "en": "Paying...",
+  "te": "చెల్లిస్తోంది...",
+  "hi": "पेमेंट हो रहा है...",
+  "kn": "ಪಾವತಿ ನಡೆಯುತ್ತಿದೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.done": {
+  "en": "Done: {what}.",
+  "te": "అయింది: {what}.",
+  "hi": "हो गया: {what}।",
+  "kn": "ಆಯಿತು: {what}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.pay.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.auto.title": {
+  "en": "Auto top-up",
+  "te": "ఆటో టాప్-అప్",
+  "hi": "ऑटो टॉप-अप",
+  "kn": "ಆಟೋ ಟಾಪ್-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.auto.sub": {
+  "en": "Off until you turn it on. When minutes or messages are used up, it buys the pack you choose, and never goes past your monthly limit.",
+  "te": "మీరు ఆన్ చేసే వరకు ఆఫ్‌లో ఉంటుంది. మినిట్స్ లేదా మెసేజ్‌లు అయిపోతే మీరు ఎంచుకున్న ప్యాక్ కొంటుంది, నెలవారీ లిమిట్ దాటదు.",
+  "hi": "आप चालू करें तभी चलेगा। मिनट या मैसेज खत्म होने पर आपका चुना पैक खरीद लेगा, और महीने की लिमिट से ऊपर नहीं जाएगा।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡುವವರೆಗೆ ಆಫ್ ಇರುತ್ತದೆ. ನಿಮಿಷ ಅಥವಾ ಮೆಸೇಜ್ ಮುಗಿದಾಗ ನೀವು ಆರಿಸಿದ ಪ್ಯಾಕ್ ಕೊಳ್ಳುತ್ತದೆ, ತಿಂಗಳ ಮಿತಿಯನ್ನು ಮೀರುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.auto.switch": {
+  "en": "Top up by itself when they run out",
+  "te": "అయిపోయినప్పుడు తనంతట తానే టాప్-అప్ చేయి",
+  "hi": "खत्म होने पर अपने आप टॉप-अप करें",
+  "kn": "ಮುಗಿದಾಗ ತಾನಾಗಿ ಟಾಪ್-ಅಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.auto.minutes": {
+  "en": "Pack for minutes",
+  "te": "మినిట్స్ కోసం ప్యాక్",
+  "hi": "मिनट के लिए पैक",
+  "kn": "ನಿಮಿಷಗಳಿಗೆ ಪ್ಯಾಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.auto.messages": {
+  "en": "Pack for messages",
+  "te": "మెసేజ్‌ల కోసం ప్యాక్",
+  "hi": "मैसेज के लिए पैक",
+  "kn": "ಮೆಸೇಜ್‌ಗಳಿಗೆ ಪ್ಯಾಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.auto.none": {
+  "en": "None",
+  "te": "ఏదీ వద్దు",
+  "hi": "कोई नहीं",
+  "kn": "ಯಾವುದೂ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.auto.cap": {
+  "en": "Monthly limit in rupees (with GST)",
+  "te": "నెలవారీ లిమిట్ రూపాయల్లో (GST తో)",
+  "hi": "महीने की लिमिट रुपये में (GST के साथ)",
+  "kn": "ತಿಂಗಳ ಮಿತಿ ರೂಪಾಯಿಗಳಲ್ಲಿ (GST ಸೇರಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.auto.spent": {
+  "en": "Bought by itself this month: {amount}",
+  "te": "ఈ నెల తనంతట తానే కొన్నవి: {amount}",
+  "hi": "इस महीने अपने आप खरीदा: {amount}",
+  "kn": "ಈ ತಿಂಗಳು ತಾನಾಗಿ ಕೊಂಡಿದ್ದು: {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.over.title": {
+  "en": "Pay per use after the packs",
+  "te": "ప్యాక్‌ల తర్వాత వాడినంతకు చెల్లింపు",
+  "hi": "पैक के बाद इस्तेमाल पर पेमेंट",
+  "kn": "ಪ್ಯಾಕ್‌ಗಳ ನಂತರ ಬಳಕೆಗೆ ತಕ್ಕ ಪಾವತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.over.sub": {
+  "en": "Off until you turn it on. Calls and messages carry on and are charged per use, up to your monthly limit. At the limit they wait again. Billed once when the month ends.",
+  "te": "మీరు ఆన్ చేసే వరకు ఆఫ్‌లో ఉంటుంది. కాల్స్, మెసేజ్‌లు కొనసాగుతాయి, వాడినంతకు చార్జ్ అవుతుంది, నెలవారీ లిమిట్ వరకే. లిమిట్ రాగానే మళ్లీ ఆగుతాయి. నెల చివర ఒకేసారి బిల్ చేస్తాం.",
+  "hi": "आप चालू करें तभी चलेगा। कॉल और मैसेज चलते रहेंगे और इस्तेमाल के हिसाब से चार्ज होंगे, महीने की लिमिट तक। लिमिट पर फिर रुक जाएँगे। बिल महीने के आखिर में एक बार बनेगा।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡುವವರೆಗೆ ಆಫ್ ಇರುತ್ತದೆ. ಕಾಲ್, ಮೆಸೇಜ್ ಮುಂದುವರಿಯುತ್ತವೆ, ಬಳಸಿದಷ್ಟಕ್ಕೆ ಚಾರ್ಜ್ ಆಗುತ್ತದೆ, ತಿಂಗಳ ಮಿತಿಯವರೆಗೆ ಮಾತ್ರ. ಮಿತಿ ಬಂದರೆ ಮತ್ತೆ ನಿಲ್ಲುತ್ತವೆ. ತಿಂಗಳ ಕೊನೆಗೆ ಒಮ್ಮೆ ಬಿಲ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.over.minutes": {
+  "en": "Pay per minute when minutes run out",
+  "te": "మినిట్స్ అయిపోతే నిమిషానికి చెల్లింపు",
+  "hi": "मिनट खत्म होने पर हर मिनट का पेमेंट",
+  "kn": "ನಿಮಿಷ ಮುಗಿದರೆ ಪ್ರತಿ ನಿಮಿಷಕ್ಕೆ ಪಾವತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.over.messages": {
+  "en": "Pay per message when messages run out",
+  "te": "మెసేజ్‌లు అయిపోతే మెసేజ్‌కి చెల్లింపు",
+  "hi": "मैसेज खत्म होने पर हर मैसेज का पेमेंट",
+  "kn": "ಮೆಸೇಜ್ ಮುಗಿದರೆ ಪ್ರತಿ ಮೆಸೇಜ್‌ಗೆ ಪಾವತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.over.cap": {
+  "en": "Monthly limit in rupees",
+  "te": "నెలవారీ లిమిట్ రూపాయల్లో",
+  "hi": "महीने की लिमिट रुपये में",
+  "kn": "ತಿಂಗಳ ಮಿತಿ ರೂಪಾಯಿಗಳಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.over.rate": {
+  "en": "Rate: {minute} a minute, {message} a message.",
+  "te": "రేటు: నిమిషానికి {minute}, మెసేజ్‌కి {message}.",
+  "hi": "रेट: हर मिनट {minute}, हर मैसेज {message}।",
+  "kn": "ದರ: ನಿಮಿಷಕ್ಕೆ {minute}, ಮೆಸೇಜ್‌ಗೆ {message}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.over.rate.test": {
+  "en": "Test rate: {minute} a minute, {message} a message.",
+  "te": "టెస్ట్ రేటు: నిమిషానికి {minute}, మెసేజ్‌కి {message}.",
+  "hi": "टेस्ट रेट: हर मिनट {minute}, हर मैसेज {message}।",
+  "kn": "ಟೆಸ್ಟ್ ದರ: ನಿಮಿಷಕ್ಕೆ {minute}, ಮೆಸೇಜ್‌ಗೆ {message}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.over.spent": {
+  "en": "Charged this month: {amount}",
+  "te": "ఈ నెల చార్జ్ అయినది: {amount}",
+  "hi": "इस महीने चार्ज हुआ: {amount}",
+  "kn": "ಈ ತಿಂಗಳು ಚಾರ್ಜ್ ಆಗಿದ್ದು: {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.set.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.set.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.set.pick_pack": {
+  "en": "Choose a pack to buy, or turn auto top-up off.",
+  "te": "కొనాల్సిన ప్యాక్ ఎంచుకోండి, లేదా ఆటో టాప్-అప్ ఆఫ్ చేయండి.",
+  "hi": "खरीदने के लिए पैक चुनें, या ऑटो टॉप-अप बंद करें।",
+  "kn": "ಕೊಳ್ಳಬೇಕಾದ ಪ್ಯಾಕ್ ಆರಿಸಿ, ಇಲ್ಲವೇ ಆಟೋ ಟಾಪ್-ಅಪ್ ಆಫ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.title": {
+  "en": "Upgrade this month",
+  "te": "ఈ నెలలోనే అప్‌గ్రేడ్ చేయండి",
+  "hi": "इसी महीने अपग्रेड करें",
+  "kn": "ಈ ತಿಂಗಳೇ ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.sub": {
+  "en": "Move to a bigger plan now. You pay only the difference for the days left, and the new allowance starts at once.",
+  "te": "ఇప్పుడే పెద్ద ప్లాన్‌కి మారండి. మిగిలిన రోజులకు తేడా మొత్తమే చెల్లిస్తారు, కొత్త కోటా వెంటనే మొదలవుతుంది.",
+  "hi": "अभी बड़े प्लान पर जाएँ। बचे दिनों का सिर्फ़ फ़र्क देना होगा, और नया कोटा तुरंत शुरू हो जाता है।",
+  "kn": "ಈಗಲೇ ದೊಡ್ಡ ಪ್ಲಾನ್‌ಗೆ ಹೋಗಿ. ಉಳಿದ ದಿನಗಳ ವ್ಯತ್ಯಾಸ ಮಾತ್ರ ಕೊಡುತ್ತೀರಿ, ಹೊಸ ಕೋಟಾ ತಕ್ಷಣ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.current": {
+  "en": "Your plan now: {name}",
+  "te": "ఇప్పుడు మీ ప్లాన్: {name}",
+  "hi": "अभी आपका प्लान: {name}",
+  "kn": "ಈಗ ನಿಮ್ಮ ಪ್ಲಾನ್: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.none": {
+  "en": "There is no bigger plan to move to.",
+  "te": "మారడానికి ఇంకా పెద్ద ప్లాన్ లేదు.",
+  "hi": "आगे जाने के लिए इससे बड़ा प्लान नहीं है।",
+  "kn": "ಹೋಗಲು ಇದಕ್ಕಿಂತ ದೊಡ್ಡ ಪ್ಲಾನ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.pick": {
+  "en": "Move to",
+  "te": "ఇక్కడికి మారండి",
+  "hi": "इस पर जाएँ",
+  "kn": "ಇದಕ್ಕೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.choose": {
+  "en": "Choose a plan",
+  "te": "ప్లాన్ ఎంచుకోండి",
+  "hi": "प्लान चुनें",
+  "kn": "ಪ್ಲಾನ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.see": {
+  "en": "See the difference",
+  "te": "తేడా చూడండి",
+  "hi": "फ़र्क देखें",
+  "kn": "ವ್ಯತ್ಯಾಸ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.line.diff": {
+  "en": "Difference for the {left} days left (of {days})",
+  "te": "మిగిలిన {left} రోజులకు తేడా ({days} లో)",
+  "hi": "बचे {left} दिनों का फ़र्क ({days} में से)",
+  "kn": "ಉಳಿದ {left} ದಿನಗಳ ವ್ಯತ್ಯಾಸ ({days} ರಲ್ಲಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.line.gst": {
+  "en": "GST",
+  "te": "GST పన్ను",
+  "hi": "GST टैक्स",
+  "kn": "GST ತೆರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.line.total": {
+  "en": "To pay now",
+  "te": "ఇప్పుడు చెల్లించాల్సింది",
+  "hi": "अभी देना है",
+  "kn": "ಈಗ ಕೊಡಬೇಕಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.line.free": {
+  "en": "Nothing yet",
+  "te": "ఇంకా ఏమీ లేదు",
+  "hi": "अभी कुछ नहीं",
+  "kn": "ಇನ್ನೂ ಏನೂ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.noprice": {
+  "en": "The price of this plan is set at launch, so there is no amount to pay yet. The new allowance still starts now.",
+  "te": "ఈ ప్లాన్ ధర లాంచ్ సమయంలో ఖరారు అవుతుంది, కాబట్టి ఇప్పుడు చెల్లించాల్సిన మొత్తం లేదు. కొత్త కోటా మాత్రం ఇప్పుడే మొదలవుతుంది.",
+  "hi": "इस प्लान की कीमत लॉन्च पर तय होगी, इसलिए अभी देने के लिए कोई रकम नहीं है। नया कोटा फिर भी अभी शुरू हो जाता है।",
+  "kn": "ಈ ಪ್ಲಾನ್‌ನ ಬೆಲೆ ಲಾಂಚ್ ವೇಳೆ ನಿಗದಿಯಾಗುತ್ತದೆ, ಆದ್ದರಿಂದ ಈಗ ಕೊಡಬೇಕಾದ ಮೊತ್ತ ಇಲ್ಲ. ಹೊಸ ಕೋಟಾ ಆದರೂ ಈಗಲೇ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.testprice": {
+  "en": "These amounts are test prices.",
+  "te": "ఈ మొత్తాలు టెస్ట్ ధరలు.",
+  "hi": "ये रकमें टेस्ट कीमतें हैं।",
+  "kn": "ಈ ಮೊತ್ತಗಳು ಟೆಸ್ಟ್ ಬೆಲೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.allow": {
+  "en": "New allowance from now: {minutes} call minutes and {messages} messages.",
+  "te": "ఇప్పటి నుండి కొత్త కోటా: {minutes} కాల్ మినిట్స్, {messages} మెసేజ్‌లు.",
+  "hi": "अभी से नया कोटा: {minutes} कॉल मिनट और {messages} मैसेज।",
+  "kn": "ಈಗಿನಿಂದ ಹೊಸ ಕೋಟಾ: {minutes} ಕಾಲ್ ನಿಮಿಷ ಮತ್ತು {messages} ಮೆಸೇಜ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.payg": {
+  "en": "pay for what you use",
+  "te": "వాడినంతకే చెల్లింపు",
+  "hi": "जितना इस्तेमाल उतना पेमेंट",
+  "kn": "ಬಳಸಿದಷ್ಟಕ್ಕೆ ಪಾವತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.same": {
+  "en": "The month does not move: the period dates stay the same.",
+  "te": "నెల మారదు: తేదీలు అవే ఉంటాయి.",
+  "hi": "महीना नहीं बदलता: तारीखें वही रहती हैं।",
+  "kn": "ತಿಂಗಳು ಬದಲಾಗುವುದಿಲ್ಲ: ದಿನಾಂಕಗಳು ಅವೇ ಇರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.go": {
+  "en": "Upgrade to {name}",
+  "te": "{name} కి అప్‌గ్రేడ్ చేయండి",
+  "hi": "{name} पर अपग्रेड करें",
+  "kn": "{name} ಗೆ ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.up.go.free": {
+  "en": "Upgrade now (test)",
+  "te": "ఇప్పుడే అప్‌గ్రేడ్ చేయండి (టెస్ట్)",
+  "hi": "अभी अपग्रेड करें (टेस्ट)",
+  "kn": "ಈಗಲೇ ಅಪ್‌ಗ್ರೇಡ್ ಮಾಡಿ (ಟೆಸ್ಟ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.hist.title": {
+  "en": "Top-ups bought",
+  "te": "కొన్న టాప్-అప్‌లు",
+  "hi": "खरीदे गए टॉप-अप",
+  "kn": "ಕೊಂಡ ಟಾಪ್-ಅಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.hist.none": {
+  "en": "Nothing bought yet.",
+  "te": "ఇంకా ఏమీ కొనలేదు.",
+  "hi": "अभी कुछ नहीं खरीदा।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಕೊಂಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.hist.src.manual": {
+  "en": "bought by you",
+  "te": "మీరు కొన్నది",
+  "hi": "आपने खरीदा",
+  "kn": "ನೀವು ಕೊಂಡಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.hist.src.auto": {
+  "en": "bought by itself",
+  "te": "తనంతట తానే కొన్నది",
+  "hi": "अपने आप खरीदा गया",
+  "kn": "ತಾನಾಗಿ ಕೊಂಡಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.hist.src.operator": {
+  "en": "added by our team",
+  "te": "మా టీమ్ కలిపినది",
+  "hi": "हमारी टीम ने जोड़ा",
+  "kn": "ನಮ್ಮ ಟೀಮ್ ಸೇರಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.hist.left": {
+  "en": "{n} left, expires {date}",
+  "te": "{n} మిగిలాయి, {date} న ముగుస్తుంది",
+  "hi": "{n} बाकी, {date} को खत्म",
+  "kn": "{n} ಉಳಿದಿದೆ, {date} ರಂದು ಮುಗಿಯುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.inv.title": {
+  "en": "Invoices",
+  "te": "ఇన్వాయిస్‌లు",
+  "hi": "इनवॉइस",
+  "kn": "ಇನ್‌ವಾಯ್ಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.inv.none": {
+  "en": "No invoices yet.",
+  "te": "ఇంకా ఇన్వాయిస్‌లు లేవు.",
+  "hi": "अभी कोई इनवॉइस नहीं।",
+  "kn": "ಇನ್ನೂ ಇನ್‌ವಾಯ್ಸ್‌ಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.inv.fake": {
+  "en": "These are test invoices, not real tax invoices.",
+  "te": "ఇవి టెస్ట్ ఇన్వాయిస్‌లు, నిజమైన ట్యాక్స్ ఇన్వాయిస్‌లు కావు.",
+  "hi": "ये टेस्ट इनवॉइस हैं, असली टैक्स इनवॉइस नहीं।",
+  "kn": "ಇವು ಟೆಸ್ಟ್ ಇನ್‌ವಾಯ್ಸ್‌ಗಳು, ನಿಜವಾದ ಟ್ಯಾಕ್ಸ್ ಇನ್‌ವಾಯ್ಸ್‌ಗಳಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.inv.taxable": {
+  "en": "Amount",
+  "te": "మొత్తం విలువ",
+  "hi": "रकम",
+  "kn": "ಮೊತ್ತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.inv.cgst": {
+  "en": "CGST ({rate}%)",
+  "te": "CGST ({rate}%) పన్ను",
+  "hi": "CGST ({rate}%) टैक्स",
+  "kn": "CGST ({rate}%) ತೆರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.inv.sgst": {
+  "en": "SGST ({rate}%)",
+  "te": "SGST ({rate}%) పన్ను",
+  "hi": "SGST ({rate}%) टैक्स",
+  "kn": "SGST ({rate}%) ತೆರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.inv.igst": {
+  "en": "IGST ({rate}%)",
+  "te": "IGST ({rate}%) పన్ను",
+  "hi": "IGST ({rate}%) टैक्स",
+  "kn": "IGST ({rate}%) ತೆರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.inv.total": {
+  "en": "Total",
+  "te": "మొత్తం",
+  "hi": "कुल",
+  "kn": "ಒಟ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.inv.buyer": {
+  "en": "Your GSTIN: {gstin}",
+  "te": "మీ GSTIN: {gstin}",
+  "hi": "आपका GSTIN: {gstin}",
+  "kn": "ನಿಮ್ಮ GSTIN: {gstin}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.inv.nogstin": {
+  "en": "Your GSTIN: not set (add it in Settings > Business)",
+  "te": "మీ GSTIN: ఇవ్వలేదు (సెట్టింగ్స్ > బిజినెస్‌లో ఇవ్వండి)",
+  "hi": "आपका GSTIN: नहीं डाला (सेटिंग्स > बिज़नेस में डालें)",
+  "kn": "ನಿಮ್ಮ GSTIN: ಕೊಟ್ಟಿಲ್ಲ (ಸೆಟ್ಟಿಂಗ್ಸ್ > ಬಿಸಿನೆಸ್‌ನಲ್ಲಿ ಕೊಡಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.inv.seller": {
+  "en": "Seller: {name}",
+  "te": "అమ్మేవారు: {name}",
+  "hi": "बेचने वाला: {name}",
+  "kn": "ಮಾರಾಟಗಾರ: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.sim.title": {
+  "en": "Test only: set the pretend usage",
+  "te": "టెస్ట్ మాత్రమే: నకిలీ వాడకం సెట్ చేయండి",
+  "hi": "सिर्फ़ टेस्ट: नकली इस्तेमाल सेट करें",
+  "kn": "ಟೆಸ್ಟ್ ಮಾತ್ರ: ನಕಲಿ ಬಳಕೆ ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.sim.note": {
+  "en": "Changes the pretend usage so you can see the notices and the queue.",
+  "te": "నోటీసులు, క్యూ చూడటానికి నకిలీ వాడకాన్ని మారుస్తుంది.",
+  "hi": "नकली इस्तेमाल बदलता है ताकि आप नोटिस और कतार देख सकें।",
+  "kn": "ನೋಟಿಸ್ ಮತ್ತು ಸರದಿ ನೋಡಲು ನಕಲಿ ಬಳಕೆಯನ್ನು ಬದಲಾಯಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.sim.set": {
+  "en": "Set to {n}%",
+  "te": "{n}% కి సెట్ చేయండి",
+  "hi": "{n}% पर सेट करें",
+  "kn": "{n}% ಗೆ ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.sim.month": {
+  "en": "New month",
+  "te": "కొత్త నెల",
+  "hi": "नया महीना",
+  "kn": "ಹೊಸ ತಿಂಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.not_available": {
+  "en": "This is not available right now. Try again in a little while.",
+  "te": "ఇది ఇప్పుడు అందుబాటులో లేదు. కాసేపటి తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह अभी उपलब्ध नहीं है। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಇದು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.forbidden": {
+  "en": "Only the owner can do this.",
+  "te": "ఇది ఓనర్ మాత్రమే చేయగలరు.",
+  "hi": "यह सिर्फ़ ओनर कर सकते हैं।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.mfa": {
+  "en": "Confirm with your second step first, then try again.",
+  "te": "ముందు మీ రెండో స్టెప్‌తో నిర్ధారించండి, తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "पहले अपने दूसरे स्टेप से पक्का करें, फिर कोशिश करें।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಎರಡನೇ ಹಂತದಲ್ಲಿ ಖಚಿತಪಡಿಸಿ, ಆಮೇಲೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.mfa.link": {
+  "en": "Open Security",
+  "te": "సెక్యూరిటీ తెరవండి",
+  "hi": "सिक्योरिटी खोलें",
+  "kn": "ಸೆಕ್ಯೂರಿಟಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.read_only": {
+  "en": "Your workspace is read-only, so this is switched off.",
+  "te": "మీ వర్క్‌స్పేస్ చదవడానికి మాత్రమే, అందుకే ఇది ఆఫ్‌లో ఉంది.",
+  "hi": "आपका वर्कस्पेस सिर्फ़ देखने के लिए है, इसलिए यह बंद है।",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್ ನೋಡಲು ಮಾತ್ರ, ಆದ್ದರಿಂದ ಇದು ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.invalid": {
+  "en": "Something is not right in what you entered. Check it and try again.",
+  "te": "మీరు ఇచ్చినదాంట్లో ఏదో సరిగా లేదు. చూసి మళ్లీ ప్రయత్నించండి.",
+  "hi": "आपने जो भरा उसमें कुछ गड़बड़ है। देखकर फिर कोशिश करें।",
+  "kn": "ನೀವು ಕೊಟ್ಟಿದ್ದರಲ್ಲಿ ಏನೋ ಸರಿಯಿಲ್ಲ. ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.declined": {
+  "en": "The test payment was declined, so nothing was added.",
+  "te": "టెస్ట్ పేమెంట్ తిరస్కరించారు, అందుకే ఏదీ కలవలేదు.",
+  "hi": "टेस्ट पेमेंट नामंज़ूर हुआ, इसलिए कुछ नहीं जुड़ा।",
+  "kn": "ಟೆಸ್ಟ್ ಪೇಮೆಂಟ್ ತಿರಸ್ಕೃತವಾಯಿತು, ಆದ್ದರಿಂದ ಏನೂ ಸೇರಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.no_plan": {
+  "en": "You need a plan first. Choose one in Plans.",
+  "te": "ముందు ఒక ప్లాన్ కావాలి. ప్లాన్స్‌లో ఎంచుకోండి.",
+  "hi": "पहले एक प्लान चाहिए। प्लान्स में चुनें।",
+  "kn": "ಮೊದಲು ಒಂದು ಪ್ಲಾನ್ ಬೇಕು. ಪ್ಲಾನ್ಸ್‌ನಲ್ಲಿ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.pack_unknown": {
+  "en": "That pack is not available.",
+  "te": "ఆ ప్యాక్ అందుబాటులో లేదు.",
+  "hi": "वह पैक उपलब्ध नहीं है।",
+  "kn": "ಆ ಪ್ಯಾಕ್ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.cap_required": {
+  "en": "Enter a monthly limit in rupees above zero.",
+  "te": "నెలవారీ లిమిట్ రూపాయల్లో సున్నా కంటే ఎక్కువ ఇవ్వండి.",
+  "hi": "महीने की लिमिट रुपये में, शून्य से ऊपर भरें।",
+  "kn": "ತಿಂಗಳ ಮಿತಿಯನ್ನು ರೂಪಾಯಿಗಳಲ್ಲಿ ಸೊನ್ನೆಗಿಂತ ಹೆಚ್ಚು ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.not_an_upgrade": {
+  "en": "That plan is not a step up from your plan.",
+  "te": "ఆ ప్లాన్ మీ ప్లాన్ కంటే పెద్దది కాదు.",
+  "hi": "वह प्लान आपके प्लान से बड़ा नहीं है।",
+  "kn": "ಆ ಪ್ಲಾನ್ ನಿಮ್ಮ ಪ್ಲಾನ್‌ಗಿಂತ ದೊಡ್ಡದಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.err.conflict": {
+  "en": "That was already done with another choice. Close this and start again.",
+  "te": "అది ఇప్పటికే వేరే ఎంపికతో జరిగింది. దీన్ని మూసి మళ్లీ మొదలుపెట్టండి.",
+  "hi": "वह पहले ही दूसरे चुनाव के साथ हो चुका है। इसे बंद करके फिर से शुरू करें।",
+  "kn": "ಅದು ಈಗಾಗಲೇ ಬೇರೆ ಆಯ್ಕೆಯೊಂದಿಗೆ ಆಗಿದೆ. ಇದನ್ನು ಮುಚ್ಚಿ ಮತ್ತೆ ಶುರುಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.picker.main": {
+  "en": "Workforce plans",
+  "te": "వర్క్‌ఫోర్స్ ప్లాన్‌లు",
+  "hi": "वर्कफ़ोर्स प्लान",
+  "kn": "ವರ್ಕ್‌ಫೋರ್ಸ್ ಪ್ಲಾನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.picker.main.sub": {
+  "en": "Lead Desk plus your industry pack, lead finding and research.",
+  "te": "Lead Desk తో పాటు మీ ఇండస్ట్రీ ప్యాక్, లీడ్ ఫైండింగ్, రీసెర్చ్.",
+  "hi": "Lead Desk के साथ आपका इंडस्ट्री पैक, लीड ढूँढना और रिसर्च।",
+  "kn": "Lead Desk ಜೊತೆಗೆ ನಿಮ್ಮ ಇಂಡಸ್ಟ್ರಿ ಪ್ಯಾಕ್, ಲೀಡ್ ಹುಡುಕುವುದು ಮತ್ತು ರಿಸರ್ಚ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.picker.calls": {
+  "en": "Lead Desk plans",
+  "te": "Lead Desk ప్లాన్‌లు",
+  "hi": "Lead Desk प्लान",
+  "kn": "Lead Desk ಪ್ಲಾನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tu.picker.calls.sub": {
+  "en": "Lead Desk on its own: lead sources, AI calls, WhatsApp, follow-ups and reports.",
+  "te": "Lead Desk మాత్రమే: లీడ్ సోర్స్‌లు, AI కాల్స్, WhatsApp, ఫాలో-అప్‌లు, రిపోర్ట్‌లు.",
+  "hi": "सिर्फ़ Lead Desk: लीड सोर्स, AI कॉल, WhatsApp, फ़ॉलो-अप और रिपोर्ट।",
+  "kn": "ಕೇವಲ Lead Desk: ಲೀಡ್ ಮೂಲಗಳು, AI ಕಾಲ್, WhatsApp, ಫಾಲೋ-ಅಪ್ ಮತ್ತು ವರದಿಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -34,6 +34,7 @@ import { SetupGate } from "@/components/v2/app/setup/SetupGate";
 import type { SetupActions } from "@/components/v2/app/setup/types";
 import { saveItemAction } from "./catalogue/catalogue-actions";
 import { readSetupFacts } from "./setup-data";
+import { TopupsToday } from "./topups-today";
 import { setupWords } from "./setup-words";
 import { readDisplayName, readToday } from "./today-data";
 import { cancelVisitAction, confirmVisitAction, moveVisitAction, saveHoursAction, slotsAction } from "./visits/visits-actions";
@@ -95,6 +96,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const notice: ExampleNotice = example === "loaded" || example === "removed" || example === "unavailable" || example === "failed" ? example : null;
   return (
     <main className={pageMain} lang={lang}>
+      {manages ? <TopupsToday token={accessToken} tenantId={tenantId} lang={lang} owner={role === "owner"} /> : null}
       {showSample || (activation && activation.done < activation.total) ? (
         <div data-part="start" className="mb-6 flex flex-col gap-4">
           {showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} t={t} /> : null}
