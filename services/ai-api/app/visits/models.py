@@ -12,7 +12,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StringConstraints, field_validator
 
-Language = Literal["en", "te", "hi", "kn", "ta"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
 VisitStatus = Literal["booked", "confirmed", "arrived", "completed", "no_show", "cancelled"]
 Outcome = Literal["bought", "will_return", "not_interested"]
 Weekday = Literal["mon", "tue", "wed", "thu", "fri", "sat", "sun"]

@@ -109,7 +109,7 @@ create function pg_temp.save(p_user text, p_tenant text, p_persona text) returns
   select pg_temp.val(p_user, format($q$select public.assistant_settings_save(%L, %L::jsonb)::text$q$, tests.tid(p_tenant), pg_temp.settings(p_persona))) $$;
 select is((select count(*)::int from jsonb_array_elements(pg_temp.val('a_owner', format($q$select public.assistant_voices(%L)::text$q$, tests.tid('a')))::jsonb) e where e ->> 'persona' = 'own_voice'), 4, 'D1 the Owner''s own voice is listed as the persona own_voice in four languages');
 select is((select count(*)::int from jsonb_array_elements(pg_temp.val('b_owner', format($q$select public.assistant_voices(%L)::text$q$, tests.tid('b')))::jsonb) e where e ->> 'persona' = 'own_voice'), 0, 'D2 another business is not offered it');
-select is((select count(*)::int from jsonb_array_elements(pg_temp.val('a_owner', format($q$select public.assistant_voices(%L)::text$q$, tests.tid('a')))::jsonb) e where e ->> 'persona' = 'female_warm'), 5, 'D3 the stock personas are still there');
+select is((select count(*)::int from jsonb_array_elements(pg_temp.val('a_owner', format($q$select public.assistant_voices(%L)::text$q$, tests.tid('a')))::jsonb) e where e ->> 'persona' = 'female_warm'), 6, 'D3 the stock personas are still there');
 select is(pg_temp.save('b_owner', 'b', 'own_voice'), 'ERR:22023', 'D4 a business without a voice cannot choose it');
 select is((pg_temp.save('a_owner', 'a', 'own_voice')::jsonb -> 'settings' ->> 'voice_persona'), 'own_voice', 'D5 the Owner chooses it');
 select is((select voice_persona from public.assistant_settings where tenant_id = tests.tid('a')), 'own_voice', 'D6 and it is saved');

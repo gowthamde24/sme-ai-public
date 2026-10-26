@@ -39,6 +39,8 @@ export interface TenantWithPlan extends TenantDetail {
   workspace_limit: number;
   /** ISO 8601 */
   trial_started_at: string;
+  /** The name the Owner gave the AI assistant; null before the first save. Every member can read it (job DQ). */
+  assistant_name: string | null;
 }
 
 /** GET /v1/account/setup (job AD / D2): what a new account still has to do. `needed` carries the business name typed at sign-up. */

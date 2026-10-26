@@ -85,6 +85,8 @@ class TenantRepository(Protocol):
 
     def get_plan(self, token: str, tenant_id: uuid.UUID) -> TenantPlanOut: ...
 
+    def get_assistant_name(self, token: str, tenant_id: uuid.UUID) -> str | None: ...
+
     def get_account_setup(self, token: str) -> AccountSetupOut: ...
 
     def complete_setup(
@@ -225,6 +227,14 @@ class PostgrestTenantRepository:
         if not rows:  # a race with removal: the caller was a member a moment ago
             raise Forbidden("no tenant row")
         return TenantPlanOut(**rows[0])
+
+    def get_assistant_name(self, token: str, tenant_id: uuid.UUID) -> str | None:
+        """The assistant's display name (job DQ): any member may read it, nothing else of the
+        settings; null before the first save."""
+        answer = self._request(
+            "POST", "/rpc/assistant_name_get", token, json={"p_tenant_id": str(tenant_id)}
+        )
+        return answer if isinstance(answer, str) and answer else None
 
     def list_members(self, token: str, tenant_id: uuid.UUID) -> MemberListOut:
         rows = self._request(

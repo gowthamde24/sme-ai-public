@@ -42,7 +42,7 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["connectors"])
 
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 SalesPlus = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
-Language = Literal["en", "te", "hi", "kn"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
 
 
 class _Strict(BaseModel):

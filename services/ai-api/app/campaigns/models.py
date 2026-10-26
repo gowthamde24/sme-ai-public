@@ -23,7 +23,7 @@ from pydantic import (
 
 Kind = Literal["payment_due", "delivery_update", "fee_due", "event", "exam", "holiday"]
 Status = Literal["draft", "approved", "running", "paused", "done", "cancelled"]
-Language = Literal["en", "te", "hi", "kn", "ta"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
 Name = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=8, max_length=600)]
 Reference = Annotated[str, StringConstraints(strip_whitespace=True, pattern=r"^[A-Za-z0-9][A-Za-z0-9/._ -]{0,39}$")]

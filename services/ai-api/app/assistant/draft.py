@@ -29,7 +29,7 @@ from app.errors import ApiError
 
 logger = logging.getLogger("app.assistant.draft")
 
-LANGUAGE_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil"}
+LANGUAGE_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam"}
 MAX_ATTEMPTS = 2
 
 
@@ -40,7 +40,7 @@ class DraftReply(BaseModel):
     text: str = Field(min_length=2, max_length=1500)
     # the same message in English, for the person who does not read the customer's language
     gloss_en: str = Field(min_length=2, max_length=1500)
-    language: Literal["en", "te", "hi", "kn", "ta"]
+    language: Literal["en", "te", "hi", "kn", "ta", "ml"]
 
 
 DRAFT_TOOL = ToolSpec(
@@ -51,7 +51,7 @@ DRAFT_TOOL = ToolSpec(
         "properties": {
             "text": {"type": "string"},
             "gloss_en": {"type": "string"},
-            "language": {"type": "string", "enum": ["en", "te", "hi", "kn", "ta"]},
+            "language": {"type": "string", "enum": ["en", "te", "hi", "kn", "ta", "ml"]},
         },
         "required": ["text", "gloss_en", "language"],
     },

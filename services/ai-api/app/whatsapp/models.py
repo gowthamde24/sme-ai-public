@@ -8,7 +8,7 @@ from pydantic import StringConstraints
 
 from app.crm.models import ApiUuid, _Strict
 
-Language = Literal["en", "te", "hi", "kn", "ta"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
 
 
 class AccountIn(_Strict):

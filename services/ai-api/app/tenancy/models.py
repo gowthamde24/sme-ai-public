@@ -54,7 +54,13 @@ class TenantPlanOut(_Out):
 
 
 class TenantWithPlanOut(TenantDetailOut, TenantPlanOut):
-    """GET /v1/tenants/{id}: the tenant, the caller's role in it, and the plan."""
+    """GET /v1/tenants/{id}: the tenant, the caller's role in it, and the plan.
+
+    `assistant_name` is the name the Owner gave the AI assistant (null before the first save),
+    for every member.
+    """
+
+    assistant_name: str | None = None
 
 
 class AccountSetupOut(_Out):

@@ -148,7 +148,7 @@ def test_a_tool_definition_keeps_what_the_model_needs_and_loses_the_noise() -> N
     assert quote["properties"]["customer_kind"]["enum"] == ["new", "repeat"]
     assert quote["properties"]["enquiry_id"]["format"] == "uuid"
     reply_spec = specs["draft_reply"]
-    assert reply_spec["properties"]["language"]["enum"] == ["en", "te", "hi", "kn", "ta"]
+    assert reply_spec["properties"]["language"]["enum"] == ["en", "te", "hi", "kn", "ta", "ml"]
     assert set(reply_spec["required"]) == {"language", "text", "gloss_en"}
     text = json.dumps([specs, request(1).final_result.input_schema])
     for noise in ('"title"', '"default"', '"null"', "additionalProperties"):
