@@ -27,17 +27,17 @@ export function NavLink({ item, tenantId, on, labels, badge, collapsed = false, 
 }
 
 /**
- * The groups of the menu (Work, Your business, Your team, Connect), one drawing for the side menu and the phone's More sheet: a small heading, then the rows.
+ * The menu (job DQ part 0: seven rows in one plain list; the older groups Work, Your business, Your team and Connect had headings), one drawing for the side menu and the phone's More sheet.
  * Plain groups, nothing opens or closes: there are few rows, so everything is one look away (Hick's law).
  */
 export function NavGroups({ groups, tenantId, activeItemId, labels, waiting = null, collapsed = false, onNavigate }: { groups: readonly VisibleGroup[]; tenantId: string; activeItemId: string | null; labels?: Labels; waiting?: number | null; collapsed?: boolean; onNavigate?: () => void }) {
   return (
     <div className="space-y-3">
       {groups.map((g, gi) => (
-        <div key={g.id} role="group" aria-label={word(labels, `nav.group.${g.id}`, g.label)} className="space-y-0">
-          {collapsed ? gi > 0 ? <hr className="mx-3 border-line" /> : null : <p aria-hidden="true" className="px-3 pb-1 text-sm font-semibold text-muted">{word(labels, `nav.group.${g.id}`, g.label)}</p>}
+        <div key={g.id} {...(g.label ? { role: "group", "aria-label": word(labels, `nav.group.${g.id}`, g.label) } : {})} className="space-y-0">
+          {!g.label ? null : collapsed ? gi > 0 ? <hr className="mx-3 border-line" /> : null : <p aria-hidden="true" className="px-3 pb-1 text-sm font-semibold text-muted">{word(labels, `nav.group.${g.id}`, g.label)}</p>}
           {g.items.map((i) => (
-            <NavLink key={i.id} item={i} tenantId={tenantId} on={activeItemId === i.id} labels={labels} badge={i.id === "today" ? waiting : null} collapsed={collapsed} onNavigate={onNavigate} />
+            <NavLink key={i.id} item={i} tenantId={tenantId} on={activeItemId === i.id} labels={labels} badge={i.id === "m-today" ? waiting : null} collapsed={collapsed} onNavigate={onNavigate} />
           ))}
         </div>
       ))}

@@ -6,6 +6,7 @@ import { NeedsYou } from "./NeedsYou";
 import { TeamSection, StoreVisits } from "./TodaySide";
 import { TodayUsage } from "./TodayUsage";
 import type { TodayActions } from "./actions-types";
+import { TODAY_CHIPS } from "./ask/ask-chips";
 import { ASK_WORD_KEYS } from "./ask/ask-words";
 import type { Availability } from "./ask/ask-types";
 import { SendingBanner } from "../outbox/SendingBanner";
@@ -29,14 +30,13 @@ export function dayLine(now: number, lang: string): string {
  * phone), "At the store today", "Done while you slept" and "Your team". It only draws what `data` holds: a null part says "Not available yet"; a section with no data is not drawn. `actions` are the
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
-export function TodayView({ live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = null }: { /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS), drawn first in the side column. */ packCards?: React.ReactNode; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
+export function TodayView({ live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = null, demo = false }: { /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS), drawn first in the side column. */ packCards?: React.ReactNode; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
   const { cards, needs, team, store, week, sending, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
   const greet = t(hour < 12 ? "today.greeting.morning" : hour < 17 ? "today.greeting.afternoon" : "today.greeting.evening");
   const words = todayWords(t);
-  const en = appT("en");
-  const chips = [en("ask.chip.needs"), en("ask.chip.call"), t("ask.chip.money")];
+  const chips = TODAY_CHIPS.map((k) => t(k));
   return (
     <div data-screen="today" className="flex flex-col gap-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
@@ -47,7 +47,7 @@ export function TodayView({ live = null, outcomes = null, data, name, hour, now,
         <TodayUsage words={words} settingsHref={`${base}/settings`} week={week} />
       </header>
       {help}
-      {sending?.stopped ? <SendingBanner words={words} /> : null}
+      {sending?.stopped ? <SendingBanner words={words} demo={demo} /> : null}
       <NeedsProvider initial={needs} waiting={cards.waiting}>
         <AgentHero lang={lang} base={base} availability={availability} askWords={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} words={words} chips={chips} digest={digest} />
         {live}
@@ -62,8 +62,6 @@ export function TodayView({ live = null, outcomes = null, data, name, hour, now,
           </div>
         </div>
       </NeedsProvider>
-      {/* room for the question line, which is a bar fixed at the bottom of the screen (and the bottom bar on a phone) */}
-      <div aria-hidden="true" className="h-24" />
     </div>
   );
 }

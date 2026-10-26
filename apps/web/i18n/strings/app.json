@@ -1838,10 +1838,10 @@
   }
  },
  "ask.placeholder.hero": {
-  "en": "Ask anything, in any language…",
-  "te": "ఏదైనా అడగండి, ఏ భాషలోనైనా…",
-  "hi": "कुछ भी पूछें, किसी भी भाषा में…",
-  "kn": "ಏನಾದರೂ ಕೇಳಿ, ಯಾವ ಭಾಷೆಯಲ್ಲಾದರೂ…",
+  "en": "Ask {assistant} anything, in any language…",
+  "te": "{assistant} ని ఏదైనా అడగండి, ఏ భాషలోనైనా…",
+  "hi": "{assistant} से कुछ भी पूछें, किसी भी भाषा में…",
+  "kn": "{assistant} ಅವರನ್ನು ಏನಾದರೂ ಕೇಳಿ, ಯಾವ ಭಾಷೆಯಲ್ಲಾದರೂ…",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5514,10 +5514,10 @@
   "humanOnly": true
  },
  "outbox.stopped.body": {
-  "en": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
-  "te": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
-  "hi": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
-  "kn": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
+  "en": "Nothing goes out and everything waits until the Stack19 team switches sending back on. You can still read and edit messages.",
+  "te": "Nothing goes out and everything waits until the Stack19 team switches sending back on. You can still read and edit messages.",
+  "hi": "Nothing goes out and everything waits until the Stack19 team switches sending back on. You can still read and edit messages.",
+  "kn": "Nothing goes out and everything waits until the Stack19 team switches sending back on. You can still read and edit messages.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6182,10 +6182,10 @@
   }
  },
  "agentset.system.on.note": {
-  "en": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
-  "te": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
-  "hi": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
-  "kn": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
+  "en": "Sending is allowed for the whole system. The Stack19 team owns this switch; you can only see it.",
+  "te": "Sending is allowed for the whole system. The Stack19 team owns this switch; you can only see it.",
+  "hi": "Sending is allowed for the whole system. The Stack19 team owns this switch; you can only see it.",
+  "kn": "Sending is allowed for the whole system. The Stack19 team owns this switch; you can only see it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6194,10 +6194,10 @@
   "humanOnly": true
  },
  "agentset.system.off.note": {
-  "en": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
-  "te": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
-  "hi": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
-  "kn": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
+  "en": "Sending is stopped for the whole system by the Stack19 team. Nothing goes out and everything waits.",
+  "te": "Sending is stopped for the whole system by the Stack19 team. Nothing goes out and everything waits.",
+  "hi": "Sending is stopped for the whole system by the Stack19 team. Nothing goes out and everything waits.",
+  "kn": "Sending is stopped for the whole system by the Stack19 team. Nothing goes out and everything waits.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -25476,10 +25476,10 @@
   "humanOnly": true
  },
  "ws.synthetic_body": {
-  "en": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The operator opens this once the privacy checks are done.",
-  "te": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The operator opens this once the privacy checks are done.",
-  "hi": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The operator opens this once the privacy checks are done.",
-  "kn": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The operator opens this once the privacy checks are done.",
+  "en": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The Stack19 team opens this once the privacy checks are done.",
+  "te": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The Stack19 team opens this once the privacy checks are done.",
+  "hi": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The Stack19 team opens this once the privacy checks are done.",
+  "kn": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The Stack19 team opens this once the privacy checks are done.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27883,10 +27883,10 @@
   }
  },
  "acct.there_are_no_backup_codes_ask": {
-  "en": "There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
-  "te": "There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
-  "hi": "There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
-  "kn": "There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "en": "There are no backup codes. Write to the Stack19 team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "te": "There are no backup codes. Write to the Stack19 team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "hi": "There are no backup codes. Write to the Stack19 team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "kn": "There are no backup codes. Write to the Stack19 team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -33996,10 +33996,10 @@
   }
  },
  "team.owners_note": {
-  "en": "Owners are added by the operator, not here.",
-  "te": "Owners are added by the operator, not here.",
-  "hi": "Owners are added by the operator, not here.",
-  "kn": "Owners are added by the operator, not here.",
+  "en": "Owners are added by the Stack19 team, not here.",
+  "te": "Owners are added by the Stack19 team, not here.",
+  "hi": "Owners are added by the Stack19 team, not here.",
+  "kn": "Owners are added by the Stack19 team, not here.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -57766,5 +57766,171 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.m-today": {
+  "en": "Today",
+  "te": "ఈరోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-customers": {
+  "en": "Customers",
+  "te": "కస్టమర్లు",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-chats": {
+  "en": "Chats",
+  "te": "చాట్‌లు",
+  "hi": "चैट",
+  "kn": "ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-calls": {
+  "en": "Calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-sales": {
+  "en": "Sales",
+  "te": "సేల్స్",
+  "hi": "सेल्स",
+  "kn": "ಸೇಲ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-catalogue": {
+  "en": "Catalogue",
+  "te": "క్యాటలాగ్",
+  "hi": "कैटलॉग",
+  "kn": "ಕ್ಯಾಟಲಾಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-reports": {
+  "en": "Reports",
+  "te": "రిపోర్టులు",
+  "hi": "रिपोर्ट",
+  "kn": "ವರದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.followups": {
+  "en": "Follow-ups",
+  "te": "ఫాలో-అప్‌లు",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.tabs.label": {
+  "en": "Parts of this section",
+  "te": "ఈ విభాగం భాగాలు",
+  "hi": "इस हिस्से के भाग",
+  "kn": "ಈ ವಿಭಾಗದ ಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.earlier": {
+  "en": "Show earlier ({n})",
+  "te": "ముందటివి చూపించు ({n})",
+  "hi": "पहले के दिखाएँ ({n})",
+  "kn": "ಹಿಂದಿನವುಗಳನ್ನು ತೋರಿಸಿ ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.orb.open": {
+  "en": "Ask {assistant}",
+  "te": "{assistant} ని అడగండి",
+  "hi": "{assistant} से पूछें",
+  "kn": "{assistant} ಅವರನ್ನು ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.orb.new": {
+  "en": "New answer",
+  "te": "కొత్త జవాబు",
+  "hi": "नया जवाब",
+  "kn": "ಹೊಸ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.panel.title": {
+  "en": "Ask {assistant}",
+  "te": "{assistant} ని అడగండి",
+  "hi": "{assistant} से पूछें",
+  "kn": "{assistant} ಅವರನ್ನು ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.panel.close": {
+  "en": "Close",
+  "te": "మూసేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.stopped.demo": {
+  "en": "Demo workspace: sending is switched off. Nothing goes out; you can still read and edit messages.",
+  "te": "Demo workspace: sending is switched off. Nothing goes out; you can still read and edit messages.",
+  "hi": "Demo workspace: sending is switched off. Nothing goes out; you can still read and edit messages.",
+  "kn": "Demo workspace: sending is switched off. Nothing goes out; you can still read and edit messages.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }
