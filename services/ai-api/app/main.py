@@ -544,6 +544,22 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "plan_limit_reached",
         "This plan's allowance for this is used up for now. It starts again with the next period.",
     ),
+    # Running out before the month ends (job DS E2). Fixed sentences only.
+    billing_errors.PurchaseIdUsedError: ApiError(
+        409, "purchase_id_used", "That purchase number was already used for a different pack."
+    ),
+    billing_errors.PackUnknownError: ApiError(
+        422, "pack_unknown", "That top-up pack does not exist or is for the other kind."
+    ),
+    billing_errors.NoSubscriptionError: ApiError(
+        409, "no_subscription", "Choose a plan first: a top-up or an upgrade needs one."
+    ),
+    billing_errors.CapRequiredError: ApiError(
+        422, "cap_required", "Set a monthly limit above zero for this."
+    ),
+    billing_errors.NotAnUpgradeError: ApiError(
+        409, "not_an_upgrade", "That plan is not above the one you are on."
+    ),
     own_voice_repo.VoiceExistsError: ApiError(
         409, "voice_exists", "You already have a voice. Delete it first to make another."
     ),

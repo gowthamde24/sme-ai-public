@@ -71,6 +71,16 @@ begin
   end loop;
 end $$;
 
+-- job DS part E2: a pack references its invoice and a draw its pack; the generic attack needs tenant-B rows of each kind to aim at
+do $$
+declare
+  r record;
+begin
+  for r in select * from tests.tenant_table_registry where table_name in ('billing_invoices', 'billing_topup_purchases') order by table_name loop
+    execute format(r.insert_sql, tests.tid('b'), gen_random_uuid(), tests.rid('b_company'), tests.rid('b_contact'), tests.pool_uid(3));
+  end loop;
+end $$;
+
 -- privileged equivalent of tests.error_shape_as
 create function pg_temp.err_shape(p_sql text) returns text
 language plpgsql as $$

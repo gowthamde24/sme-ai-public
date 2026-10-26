@@ -315,6 +315,8 @@ select is(
         -- job DR A3: speed to lead and approve once (the Owner approves a plan once; staff report results; the worker scans, takes due calls and reminds)
         'public.outreach_batch_approve', 'public.outreach_batch_exclude', 'public.outreach_batch_get', 'public.outreach_batch_plan', 'public.outreach_batch_state', 'public.outreach_batches_list', 'public.outreach_caps_set', 'public.outreach_handoff_acted', 'public.outreach_handoffs_list', 'public.outreach_item_result', 'public.outreach_items_list',
         'public.outreach_policy_get', 'public.outreach_policy_set', 'public.outreach_report', 'public.outreach_rule_save', 'public.outreach_rule_state', 'public.outreach_rules_list', 'public.outreach_source_costs_get', 'public.outreach_source_costs_set', 'public.scheduler_outreach_reminders', 'public.scheduler_outreach_run', 'public.scheduler_outreach_scan',
+        -- job DS part E2: running out before the month ends (the Owner reads and buys; the worker closes periods and sends alerts)
+        'public.billing_topups_get', 'public.billing_topup_buy', 'public.billing_topup_settings_set', 'public.billing_invoices_list', 'public.billing_invoice_get', 'public.billing_upgrade_preview', 'public.billing_upgrade', 'public.scheduler_billing_topup_tick', 'public.scheduler_usage_alerts_due', 'public.scheduler_usage_alert_mark',
         -- job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors (open to the public key, with their own caps), the worker's intake, lapse and purge calls
         'public.consents_mine', 'public.consent_set_marketing', 'public.profile_get', 'public.profile_set', 'public.public_grievance_submit', 'public.waitlist_join',
         'public.scheduler_public_intake_due', 'public.scheduler_public_intake_mark', 'public.scheduler_lapse_due', 'public.scheduler_lapse_warned', 'public.scheduler_lapse_erase', 'public.lapse_erasure_status', 'public.privacy_worker_purge_logs',
@@ -350,6 +352,8 @@ select is(
         'app.pod_bucket_tenant',
         -- the archive guard runs as the caller and asks whether an erasure of the workspace is executing (job DQ part 4)
         'app.erasure_door_open',
+        -- Today runs as the caller and asks for the usage notices of the caller's own workspace (job DS part E2)
+        'app.today_usage_items',
         -- the own-voice bucket's storage rules are evaluated as the caller, who must be able to run this one (job DP part 5)
         'app.ovc_bucket_tenant')),
   '', 'authenticated can execute only the allow-listed functions');
@@ -419,6 +423,8 @@ select is(
         -- job DR A3: speed to lead and approve once (the Owner approves a plan once; staff report results; the worker scans, takes due calls and reminds)
         'public.outreach_batch_approve', 'public.outreach_batch_exclude', 'public.outreach_batch_get', 'public.outreach_batch_plan', 'public.outreach_batch_state', 'public.outreach_batches_list', 'public.outreach_caps_set', 'public.outreach_handoff_acted', 'public.outreach_handoffs_list', 'public.outreach_item_result', 'public.outreach_items_list',
         'public.outreach_policy_get', 'public.outreach_policy_set', 'public.outreach_report', 'public.outreach_rule_save', 'public.outreach_rule_state', 'public.outreach_rules_list', 'public.outreach_source_costs_get', 'public.outreach_source_costs_set', 'public.scheduler_outreach_reminders', 'public.scheduler_outreach_run', 'public.scheduler_outreach_scan',
+        -- job DS part E2: running out before the month ends (the Owner reads and buys; the worker closes periods and sends alerts)
+        'public.billing_topups_get', 'public.billing_topup_buy', 'public.billing_topup_settings_set', 'public.billing_invoices_list', 'public.billing_invoice_get', 'public.billing_upgrade_preview', 'public.billing_upgrade', 'public.scheduler_billing_topup_tick', 'public.scheduler_usage_alerts_due', 'public.scheduler_usage_alert_mark',
         -- job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors (open to the public key, with their own caps), the worker's intake, lapse and purge calls
         'public.consents_mine', 'public.consent_set_marketing', 'public.profile_get', 'public.profile_set', 'public.public_grievance_submit', 'public.waitlist_join',
         'public.scheduler_public_intake_due', 'public.scheduler_public_intake_mark', 'public.scheduler_lapse_due', 'public.scheduler_lapse_warned', 'public.scheduler_lapse_erase', 'public.lapse_erasure_status', 'public.privacy_worker_purge_logs',

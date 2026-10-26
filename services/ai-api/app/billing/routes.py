@@ -8,13 +8,23 @@
   POST /v1/tenants/{tenant_id}/billing/resume     pay again after the trial ended unpaid or the plan was cancelled: a paid plan starts at once, no new trial (Owner, second factor)
   POST /v1/tenants/{tenant_id}/billing/cancel     cancel: during the trial no charge ever; an active plan ends at the end of the paid period (Owner, second factor)
 
+Running out before the month ends (night 4, job DS part E2, docs/contracts/topups.md):
+  GET  /v1/tenants/{tenant_id}/billing/topups            packs (data), the unused balance by lot, the settings, the last purchases (Owner, Admin)
+  POST /v1/tenants/{tenant_id}/billing/topups            buy a pack with a (fake) payment; the purchase id makes a retry harmless (Owner, second factor)
+  PUT  /v1/tenants/{tenant_id}/billing/topups/settings   automatic top-up and overage, both OFF by default, each with a monthly cap (Owner, second factor)
+  GET  /v1/tenants/{tenant_id}/billing/invoices[/{id}]   fake invoices with GST (Owner, Admin)
+  GET  /v1/tenants/{tenant_id}/billing/upgrade-preview   the pro-rata of a mid-month upgrade (Owner, Admin)
+  POST /v1/tenants/{tenant_id}/billing/upgrade           upgrade now: the new allowance applies at once (Owner, second factor)
+
 A meter shows counts and percentages only: never the AI's rupees or tokens (AI is included under fair use).
 
 NOTE: no `from __future__ import annotations` here (request models are attached to the endpoint signatures at registration time)."""
 
+import uuid
+from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query, Response
 
 from app.auth.deps import (
     AnyMember,
@@ -24,9 +34,27 @@ from app.auth.deps import (
     get_runtime,
     require_tenant_role,
 )
-from app.billing.models import AccessOut, BillingOut, PlansOut, ResumeIn, TrialStartIn, UsageViewOut
+from app.billing.models import (
+    AccessOut,
+    BillingOut,
+    InvoiceOut,
+    InvoicesOut,
+    PlansOut,
+    ResumeIn,
+    TopupBuyIn,
+    TopupBuyOut,
+    TopupSettingsIn,
+    TopupSettingsOut,
+    TopupsOut,
+    TrialStartIn,
+    UpgradeIn,
+    UpgradeOut,
+    UpgradePreviewOut,
+    UsageViewOut,
+)
 from app.billing.service import BillingService
 from app.errors import ApiError
+from app.outbox.service import decode_cursor, encode_cursor
 from app.tenancy.models import Role
 
 plans_router = APIRouter(prefix="/v1/plans", tags=["billing"])
@@ -84,3 +112,46 @@ def resume(body: ResumeIn, ctx: OwnerStrong, runtime: RuntimeDep) -> BillingOut:
 @router.post("/cancel", response_model=BillingOut)
 def cancel(ctx: OwnerStrong, runtime: RuntimeDep) -> BillingOut:
     return BillingOut.model_validate(_service(runtime).cancel(ctx.principal.token, ctx.tenant.id))
+
+
+# ------------------------------------------------------------------------------------------------------------------ night 4, job DS part E2
+@router.get("/topups", response_model=TopupsOut)
+def get_topups(ctx: OwnerAdmin, runtime: RuntimeDep) -> TopupsOut:
+    return TopupsOut.model_validate(_service(runtime).topups(ctx.principal.token, ctx.tenant.id))
+
+
+@router.post("/topups", response_model=TopupBuyOut, status_code=201)
+def buy_topup(body: TopupBuyIn, ctx: OwnerStrong, runtime: RuntimeDep, response: Response) -> TopupBuyOut:
+    answer = dict(_service(runtime).buy_topup(ctx.principal.token, ctx.tenant.id, body.purchase_id, body.pack_code, body.checkout_ref))
+    if not answer.pop("created", True):
+        response.status_code = 200   # the same purchase id with the same pack: the same answer, nothing charged twice
+    return TopupBuyOut.model_validate(answer)
+
+
+@router.put("/topups/settings", response_model=TopupSettingsOut)
+def put_topup_settings(body: TopupSettingsIn, ctx: OwnerStrong, runtime: RuntimeDep) -> TopupSettingsOut:
+    return TopupSettingsOut.model_validate(_service(runtime).topup_settings(ctx.principal.token, ctx.tenant.id, body.model_dump()))
+
+
+@router.get("/invoices", response_model=InvoicesOut)
+def list_invoices(ctx: OwnerAdmin, runtime: RuntimeDep, cursor: Annotated[str | None, Query(max_length=200)] = None) -> InvoicesOut:
+    after = decode_cursor(cursor)
+    limit = 50
+    rows = _service(runtime).invoices(ctx.principal.token, ctx.tenant.id, limit, datetime.fromisoformat(after[0].replace("Z", "+00:00")) if after else None, after[1] if after else None)
+    items = [InvoiceOut.model_validate(r) for r in rows]
+    return InvoicesOut(items=items, next_cursor=encode_cursor(str(rows[-1]["issued_at"]), items[-1].id) if len(rows) == limit else None)
+
+
+@router.get("/invoices/{invoice_id}", response_model=InvoiceOut)
+def get_invoice(invoice_id: uuid.UUID, ctx: OwnerAdmin, runtime: RuntimeDep) -> InvoiceOut:
+    return InvoiceOut.model_validate(_service(runtime).invoice(ctx.principal.token, ctx.tenant.id, invoice_id))
+
+
+@router.get("/upgrade-preview", response_model=UpgradePreviewOut)
+def upgrade_preview(plan_id: Annotated[str, Query(pattern=r"^[a-z][a-z0-9_]{1,30}$")], ctx: OwnerAdmin, runtime: RuntimeDep) -> UpgradePreviewOut:
+    return UpgradePreviewOut.model_validate(_service(runtime).upgrade_preview(ctx.principal.token, ctx.tenant.id, plan_id))
+
+
+@router.post("/upgrade", response_model=UpgradeOut)
+def upgrade(body: UpgradeIn, ctx: OwnerStrong, runtime: RuntimeDep) -> UpgradeOut:
+    return UpgradeOut.model_validate(_service(runtime).upgrade(ctx.principal.token, ctx.tenant.id, body.plan_id, body.checkout_ref))

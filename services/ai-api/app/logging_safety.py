@@ -44,6 +44,8 @@ ROUTE_WORDS = frozenset(
         # job DP: marks and report messages to guardians (a file that is never stored)
         "marks-messages", "batches",
         # job CN: sites, dues, material quotes, deliveries, the public calculator
+        # job DS part E2: top-ups, the upgrade
+        "topups", "upgrade", "upgrade-preview",
         "calculate", "materials", "sites", "dues", "customers", "invoices", "payments",
         "credit-limit", "credit-check", "ledger", "items", "photos", "order", "trips", "delivered",
         "challan", "notify", "policy", "orders", "catalogue", "void",

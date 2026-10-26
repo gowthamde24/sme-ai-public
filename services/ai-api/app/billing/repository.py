@@ -4,15 +4,20 @@ role (and, for what changes the subscription, the second factor) first. The two 
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Protocol
 
 import httpx
 
 from app.billing.errors import (
+    CapRequiredError,
+    NoSubscriptionError,
+    NotAnUpgradeError,
     NothingToCancelError,
     NotLapsedError,
+    PackUnknownError,
     PlanUnknownError,
+    PurchaseIdUsedError,
     TrialAlreadyStartedError,
 )
 from app.rpc_base import RpcClient
@@ -32,11 +37,23 @@ class BillingRepository(Protocol):
     def apply_event(self, token: str, tenant_id: uuid.UUID, event_id: str, kind: str, amount_paise: int | None, at: datetime) -> dict[str, Any]: ...
     def trial_clocks_due(self, token: str, limit: int) -> list[dict[str, Any]]: ...
     def trial_clock_mark(self, token: str, tenant_id: uuid.UUID) -> None: ...
+    # night 4, job DS part E2: top-ups, settings, invoices, the upgrade, and the worker's alerts and period close
+    def topups(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def buy_topup(self, token: str, tenant_id: uuid.UUID, purchase_id: uuid.UUID, pack_code: str) -> dict[str, Any]: ...
+    def topup_settings(self, token: str, tenant_id: uuid.UUID, settings: dict[str, Any]) -> dict[str, Any]: ...
+    def invoices(self, token: str, tenant_id: uuid.UUID, limit: int, after_at: datetime | None, after_id: uuid.UUID | None) -> list[dict[str, Any]]: ...
+    def invoice(self, token: str, tenant_id: uuid.UUID, invoice_id: uuid.UUID) -> dict[str, Any]: ...
+    def upgrade_preview(self, token: str, tenant_id: uuid.UUID, plan_id: str) -> dict[str, Any]: ...
+    def upgrade(self, token: str, tenant_id: uuid.UUID, plan_id: str) -> dict[str, Any]: ...
+    def topup_tick(self, token: str, limit: int) -> dict[str, Any]: ...
+    def alerts_due(self, token: str, limit: int) -> list[dict[str, Any]]: ...
+    def alert_mark(self, token: str, tenant_id: uuid.UUID, kind: str, level: int, period_start: date, channel: str) -> None: ...
 
 
 class PostgrestBillingRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
-        self._rpc = RpcClient(rest_url, anon_key, {"SM821": PlanUnknownError, "SM822": TrialAlreadyStartedError, "SM823": NothingToCancelError, "SM824": NotLapsedError}, client=client)
+        self._rpc = RpcClient(rest_url, anon_key, {"SM821": PlanUnknownError, "SM822": TrialAlreadyStartedError, "SM823": NothingToCancelError, "SM824": NotLapsedError,
+                                                    "SM831": PurchaseIdUsedError, "SM832": PackUnknownError, "SM833": NoSubscriptionError, "SM834": CapRequiredError, "SM835": NotAnUpgradeError}, client=client)
 
     def close(self) -> None:
         self._rpc.close()
@@ -85,3 +102,34 @@ class PostgrestBillingRepository:
 
     def trial_clock_mark(self, token: str, tenant_id: uuid.UUID) -> None:
         self._rpc.call(token, "scheduler_billing_trial_clock_mark", {"p_tenant_id": str(tenant_id)})
+
+    # ------------------------------------------------------------------ night 4, job DS part E2
+    def topups(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "billing_topups_get", {"p_tenant_id": str(tenant_id)})
+
+    def buy_topup(self, token: str, tenant_id: uuid.UUID, purchase_id: uuid.UUID, pack_code: str) -> dict[str, Any]:
+        return self._rpc.object(token, "billing_topup_buy", {"p_tenant_id": str(tenant_id), "p_purchase_id": str(purchase_id), "p_pack_code": pack_code})
+
+    def topup_settings(self, token: str, tenant_id: uuid.UUID, settings: dict[str, Any]) -> dict[str, Any]:
+        return self._rpc.object(token, "billing_topup_settings_set", {"p_tenant_id": str(tenant_id), "p_settings": settings})
+
+    def invoices(self, token: str, tenant_id: uuid.UUID, limit: int, after_at: datetime | None, after_id: uuid.UUID | None) -> list[dict[str, Any]]:
+        return self._rpc.array(token, "billing_invoices_list", {"p_tenant_id": str(tenant_id), "p_limit": limit, "p_after_at": after_at.isoformat() if after_at else None, "p_after_id": str(after_id) if after_id else None})
+
+    def invoice(self, token: str, tenant_id: uuid.UUID, invoice_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "billing_invoice_get", {"p_tenant_id": str(tenant_id), "p_id": str(invoice_id)})
+
+    def upgrade_preview(self, token: str, tenant_id: uuid.UUID, plan_id: str) -> dict[str, Any]:
+        return self._rpc.object(token, "billing_upgrade_preview", {"p_tenant_id": str(tenant_id), "p_plan_id": plan_id})
+
+    def upgrade(self, token: str, tenant_id: uuid.UUID, plan_id: str) -> dict[str, Any]:
+        return self._rpc.object(token, "billing_upgrade", {"p_tenant_id": str(tenant_id), "p_plan_id": plan_id})
+
+    def topup_tick(self, token: str, limit: int) -> dict[str, Any]:
+        return self._rpc.object(token, "scheduler_billing_topup_tick", {"p_limit": limit})
+
+    def alerts_due(self, token: str, limit: int) -> list[dict[str, Any]]:
+        return self._rpc.array(token, "scheduler_usage_alerts_due", {"p_limit": limit})
+
+    def alert_mark(self, token: str, tenant_id: uuid.UUID, kind: str, level: int, period_start: date, channel: str) -> None:
+        self._rpc.object(token, "scheduler_usage_alert_mark", {"p_tenant_id": str(tenant_id), "p_kind": kind, "p_level": level, "p_period_start": period_start.isoformat(), "p_channel": channel})

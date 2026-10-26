@@ -19,6 +19,7 @@ from typing import Protocol
 
 import httpx
 
+from app.billing.alerts import FakeOwnerWhatsApp, UsageAlerts
 from app.billing.mail import (
     BillingReminders,
     EmailSender,
@@ -89,6 +90,7 @@ class Worker:
         billing_trial_mail: TrialReminders | None = None,
         dpdp_jobs: DpdpJobs | None = None,
         outreach: OutreachRunner | None = None,
+        usage_alerts: UsageAlerts | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -117,6 +119,8 @@ class Worker:
         self._dpdp_jobs = dpdp_jobs
         # job DR A3: new leads for the standing rules, the calls that are due (fake dialer only), the hand-off reminders
         self._outreach = outreach
+        # job DS part E2: the 80 and 100 percent alerts (e-mail and a FAKE WhatsApp message to the owner) and the close of a period (one overage invoice); only while the platform's billing switch is on
+        self._usage_alerts = usage_alerts
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -137,6 +141,7 @@ class Worker:
             self._billing_trial_clocks(token)
             self._dpdp(token)
             self._outreach_pass(token)
+            self._usage_alerts_pass(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -214,6 +219,16 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("outreach pass crashed: %s", exc.__class__.__name__)
+
+    def _usage_alerts_pass(self, token: str) -> None:
+        if self._usage_alerts is None:
+            return
+        try:
+            self._usage_alerts.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("usage alerts crashed: %s", exc.__class__.__name__)
 
     def _billing_trial_clocks(self, token: str) -> None:
         if self._billing_clocks is None:
@@ -293,6 +308,7 @@ def build_worker(settings: Settings) -> Worker:
         billing_clocks=BillingService(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_provider(settings)),
         dpdp_jobs=build_dpdp_jobs(settings, config.rest_url, config.anon_key, _billing_sender(settings)),
         outreach=build_outreach_runner(settings, config.rest_url, config.anon_key),
+        usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,

@@ -70,6 +70,10 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         return "A request to phone a customer is waiting for your approval."
     if kind == "outreach_paused":
         return "Calling is paused: you reached the minutes you allowed." if ref == "cap_minutes" else "Calling is paused: you reached the day's limit."
+    if kind == "topup_low":
+        return "Your call minutes are at 80 percent of this month's allowance. Top up before they run out." if ref == "call_minutes" else "Your business messages are at 80 percent of this month's allowance. Top up before they run out."
+    if kind == "topup_empty":
+        return "Your call minutes are used up. Calls wait in a queue until you top up." if ref == "call_minutes" else "Your business messages are used up. They wait in the outbox until you top up."
     if kind == "hot_lead_waiting":
         return "An interested customer is waiting: nobody has called back yet."
     held = format_rupees(amount) if amount is not None else "money"

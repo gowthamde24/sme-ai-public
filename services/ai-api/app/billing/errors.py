@@ -41,5 +41,25 @@ class NotLapsedError(RepositoryError):
     """SM824: the plan has not lapsed, so there is nothing to resume (a trial is running, a plan is active, or the workspace waits for WhatsApp)."""
 
 
+class PurchaseIdUsedError(RepositoryError):
+    """SM831: that purchase id was used for another pack."""
+
+
+class PackUnknownError(RepositoryError):
+    """SM832: no such top-up pack (or it is for the other kind)."""
+
+
+class NoSubscriptionError(RepositoryError):
+    """SM833: the workspace has no plan (trial, pending or active) to attach this to."""
+
+
+class CapRequiredError(RepositoryError):
+    """SM834: automatic top-up and overage need a monthly cap above zero."""
+
+
+class NotAnUpgradeError(RepositoryError):
+    """SM835: the plan asked for is not above the one in force."""
+
+
 class NotSupportedError(Exception):
     """A provider does not do this (the fake provider receives no webhooks)."""

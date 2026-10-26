@@ -856,5 +856,292 @@
  "resume_request": {
   "plan_id": "growth",
   "checkout_ref": "pm_fake_ok"
- }
+ },
+  "topups_get": {
+    "packs": [
+      {
+        "code": "minutes_100",
+        "kind": "call_minutes",
+        "units": 100,
+        "price_paise": 40000,
+        "gst_rate_bp": 1800,
+        "gst_paise": 7200,
+        "total_paise": 47200,
+        "price_is_placeholder": true
+      },
+      {
+        "code": "minutes_300",
+        "kind": "call_minutes",
+        "units": 300,
+        "price_paise": 108000,
+        "gst_rate_bp": 1800,
+        "gst_paise": 19440,
+        "total_paise": 127440,
+        "price_is_placeholder": true
+      },
+      {
+        "code": "minutes_1000",
+        "kind": "call_minutes",
+        "units": 1000,
+        "price_paise": 340000,
+        "gst_rate_bp": 1800,
+        "gst_paise": 61200,
+        "total_paise": 401200,
+        "price_is_placeholder": true
+      },
+      {
+        "code": "messages_100",
+        "kind": "whatsapp_messages",
+        "units": 100,
+        "price_paise": 6000,
+        "gst_rate_bp": 1800,
+        "gst_paise": 1080,
+        "total_paise": 7080,
+        "price_is_placeholder": true
+      },
+      {
+        "code": "messages_300",
+        "kind": "whatsapp_messages",
+        "units": 300,
+        "price_paise": 16200,
+        "gst_rate_bp": 1800,
+        "gst_paise": 2916,
+        "total_paise": 19116,
+        "price_is_placeholder": true
+      },
+      {
+        "code": "messages_1000",
+        "kind": "whatsapp_messages",
+        "units": 1000,
+        "price_paise": 51000,
+        "gst_rate_bp": 1800,
+        "gst_paise": 9180,
+        "total_paise": 60180,
+        "price_is_placeholder": true
+      }
+    ],
+    "balance": {
+      "call_minutes": {
+        "units": 300.0,
+        "lots": [
+          {
+            "purchase_id": "0d1b7a7a-3d2e-4f3b-8d52-2f6f2a0c9c11",
+            "units_left": 300.0,
+            "purchased_at": "2026-11-02T05:30:00+00:00",
+            "expires_at": "2027-01-31T05:30:00+00:00"
+          }
+        ]
+      },
+      "whatsapp_messages": {
+        "units": 0.0,
+        "lots": []
+      }
+    },
+    "settings": {
+      "auto_minutes_pack": null,
+      "auto_messages_pack": null,
+      "auto_monthly_cap_paise": 0,
+      "overage_minutes": false,
+      "overage_messages": false,
+      "overage_monthly_cap_paise": 0,
+      "overage_rate_paise_per_minute": 500,
+      "overage_rate_paise_per_message": 70,
+      "auto_spent_paise": 0,
+      "overage_spent_paise": 0
+    },
+    "history": [
+      {
+        "id": "0d1b7a7a-3d2e-4f3b-8d52-2f6f2a0c9c11",
+        "pack_code": "minutes_300",
+        "kind": "call_minutes",
+        "units": 300,
+        "source": "manual",
+        "price_paise": 108000,
+        "total_paise": 127440,
+        "purchased_at": "2026-11-02T05:30:00+00:00",
+        "expires_at": "2027-01-31T05:30:00+00:00",
+        "units_left": 300.0,
+        "expired": false,
+        "invoice_id": "6b1f0f2e-0d66-4f6e-9a39-6b6a2a5f1b01"
+      }
+    ]
+  },
+  "topup_buy_request": {
+    "purchase_id": "0d1b7a7a-3d2e-4f3b-8d52-2f6f2a0c9c11",
+    "pack_code": "minutes_300",
+    "checkout_ref": "pm_fake_ok"
+  },
+  "topup_buy_response": {
+    "purchase": {
+      "id": "0d1b7a7a-3d2e-4f3b-8d52-2f6f2a0c9c11",
+      "pack_code": "minutes_300",
+      "kind": "call_minutes",
+      "units": 300,
+      "source": "manual",
+      "price_paise": 108000,
+      "total_paise": 127440,
+      "purchased_at": "2026-11-02T05:30:00+00:00",
+      "expires_at": "2027-01-31T05:30:00+00:00",
+      "units_left": 300.0,
+      "expired": false,
+      "invoice_id": "6b1f0f2e-0d66-4f6e-9a39-6b6a2a5f1b01"
+    },
+    "invoice": {
+      "id": "6b1f0f2e-0d66-4f6e-9a39-6b6a2a5f1b01",
+      "number": "S19-2611-000001",
+      "kind": "topup",
+      "description": "Top-up: 300 call minutes",
+      "issued_at": "2026-11-02T05:30:00+00:00",
+      "period_start": null,
+      "taxable_paise": 108000,
+      "gst_rate_bp": 1800,
+      "cgst_paise": 0,
+      "sgst_paise": 0,
+      "igst_paise": 19440,
+      "total_paise": 127440,
+      "seller": {
+        "name": "Stack19 (seller details to be filled in by the owner of the product)",
+        "state_code": "36",
+        "gstin": null
+      },
+      "buyer": {
+        "gstin": null,
+        "state_code": null
+      },
+      "fake": true,
+      "payment_status": "paid_fake"
+    },
+    "usage": {
+      "call_minutes": {
+        "kind": "call_minutes",
+        "unit": "minutes",
+        "used": 25,
+        "allowance": 30,
+        "remaining": 5,
+        "percent": 83,
+        "state": "notice",
+        "included": true,
+        "topup": 0,
+        "plan_allowance": 30,
+        "topup_balance": 300.0,
+        "next_topup_expiry": "2027-01-31",
+        "projected_run_out_on": "2026-11-21",
+        "runs_out_before_period_end": true,
+        "blocked": false,
+        "overage": null,
+        "queued": 0
+      },
+      "whatsapp_messages": {
+        "kind": "whatsapp_messages",
+        "unit": "messages",
+        "used": 83,
+        "allowance": 100,
+        "remaining": 17,
+        "percent": 83,
+        "state": "notice",
+        "included": true,
+        "topup": 0
+      }
+    }
+  },
+  "topup_settings_request": {
+    "auto_minutes_pack": "minutes_100",
+    "auto_messages_pack": null,
+    "auto_monthly_cap_paise": 200000,
+    "overage_minutes": true,
+    "overage_messages": false,
+    "overage_monthly_cap_paise": 50000
+  },
+  "invoices": {
+    "items": [
+      {
+        "id": "6b1f0f2e-0d66-4f6e-9a39-6b6a2a5f1b01",
+        "number": "S19-2611-000001",
+        "kind": "topup",
+        "description": "Top-up: 300 call minutes",
+        "issued_at": "2026-11-02T05:30:00+00:00",
+        "period_start": null,
+        "taxable_paise": 108000,
+        "gst_rate_bp": 1800,
+        "cgst_paise": 0,
+        "sgst_paise": 0,
+        "igst_paise": 19440,
+        "total_paise": 127440,
+        "seller": {
+          "name": "Stack19 (seller details to be filled in by the owner of the product)",
+          "state_code": "36",
+          "gstin": null
+        },
+        "buyer": {
+          "gstin": null,
+          "state_code": null
+        },
+        "fake": true,
+        "payment_status": "paid_fake"
+      }
+    ],
+    "next_cursor": null
+  },
+  "upgrade_preview": {
+    "from_plan_id": "starter",
+    "to_plan_id": "growth",
+    "price_set": true,
+    "days_in_period": 31,
+    "days_left": 18,
+    "prorated_paise": 116129,
+    "gst_paise": 20903,
+    "total_paise": 137032,
+    "new_allowances": {
+      "call_minutes": 100,
+      "whatsapp_messages": 1000
+    },
+    "effective": "now",
+    "note": "Pro-rata for the days left in this period. The new allowance applies now."
+  },
+  "upgrade_request": {
+    "plan_id": "growth",
+    "checkout_ref": "pm_fake_ok"
+  },
+  "usage_view_queued": {
+    "period": {
+      "start": "2026-10-01",
+      "end": "2026-10-30",
+      "timezone": "Asia/Kolkata",
+      "days_left": 5
+    },
+    "usage": {
+      "call_minutes": {
+        "kind": "call_minutes",
+        "unit": "minutes",
+        "used": 30,
+        "allowance": 30,
+        "remaining": 0.0,
+        "percent": 100,
+        "state": "stopped",
+        "included": true,
+        "topup": 0,
+        "plan_allowance": 30,
+        "topup_balance": 0.0,
+        "next_topup_expiry": null,
+        "projected_run_out_on": "2026-11-02",
+        "runs_out_before_period_end": true,
+        "blocked": true,
+        "overage": null,
+        "queued": 12
+      },
+      "whatsapp_messages": {
+        "kind": "whatsapp_messages",
+        "unit": "messages",
+        "used": 83,
+        "allowance": 100,
+        "remaining": 17,
+        "percent": 83,
+        "state": "notice",
+        "included": true,
+        "topup": 0
+      }
+    },
+    "notices": [],
+    "queued_calls": 12
+  }
 }
