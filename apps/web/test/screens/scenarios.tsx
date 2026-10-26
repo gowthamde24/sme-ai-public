@@ -988,3 +988,10 @@ add({ id: "report-run-top-customers", roles: ["admin"], render: runPage("constru
 add({ id: "report-run-collection", roles: ["owner"], render: runPage("education.collection"), handlers: run(RPT.CATALOGUE_EDUCATION_JSON, EDU.COLLECTION_REPORT_JSON, packOf(EDUCATION)) });
 add({ id: "report-run-today", roles: ["owner"], render: runPage("education.today"), handlers: run(RPT.CATALOGUE_EDUCATION_JSON, EDU.TODAY_REPORT_JSON, packOf(EDUCATION)) });
 add({ id: "report-run-funnel", roles: ["admin"], render: runPage("education.funnel"), handlers: run(RPT.CATALOGUE_EDUCATION_JSON, EDU.FUNNEL_REPORT_JSON, packOf(EDUCATION)) });
+
+// night 4: each part adds its screens under its own marker, so the branches merge without touching the same lines
+// -- scenarios: tasks (web/dr-tasks)
+// -- scenarios: import and lead sources (web/dr-leads-import)
+// -- scenarios: top-ups (web/ds-topups)
+// -- scenarios: lead desk site (web/ds-lead-desk)
+// -- scenarios: leads core (web/dr-leads)
