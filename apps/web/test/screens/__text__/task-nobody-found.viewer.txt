@@ -1,0 +1,8 @@
+# Task
+Call my cement suppliers, ask the price per bag and the delivery day, and tell me the cheapest. [All tasks](/app/tenants/22222222-2222-2222-2222-222222222222/tasks)
+{label="Nobody found yet"}
+## Nobody found yet
+Nobody in your contacts fits this yet. Say who, or give a list.
+- Nobody in your contacts fits this yet. Say who, or give a list.
+You can read tasks here. The Owner, an Admin or Sales can ask Vijaya to do one.
+[All tasks](/app/tenants/22222222-2222-2222-2222-222222222222/tasks)

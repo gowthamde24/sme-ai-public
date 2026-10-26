@@ -59554,10 +59554,10 @@
   }
  },
  "tk.composer.list.count": {
-  "en": "{n} numbers read, {skipped} lines skipped.",
-  "te": "{n} నంబర్లు చదివాం, {skipped} లైన్లు వదిలేశాం.",
-  "hi": "{n} नंबर पढ़े, {skipped} लाइनें छोड़ी।",
-  "kn": "{n} ನಂಬರ್ ಓದಿದೆವು, {skipped} ಲೈನ್ ಬಿಟ್ಟೆವು.",
+  "en": "Numbers read: {n}. Lines skipped: {skipped}.",
+  "te": "చదివిన నంబర్లు: {n}. వదిలేసిన లైన్లు: {skipped}.",
+  "hi": "पढ़े गए नंबर: {n}। छोड़ी गई लाइनें: {skipped}।",
+  "kn": "ಓದಿದ ನಂಬರ್‌ಗಳು: {n}. ಬಿಟ್ಟ ಲೈನ್‌ಗಳು: {skipped}.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -59851,10 +59851,10 @@
   }
  },
  "tk.list.people": {
-  "en": "{n} people",
-  "te": "{n} మంది",
-  "hi": "{n} लोग",
-  "kn": "{n} ಜನ",
+  "en": "People: {n}",
+  "te": "మంది: {n}",
+  "hi": "लोग: {n}",
+  "kn": "ಜನ: {n}",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -60269,10 +60269,10 @@
   }
  },
  "tk.unmatched": {
-  "en": "{n} numbers are not in your contacts and will not be contacted ({last}).",
-  "te": "{n} నంబర్లు మీ కాంటాక్ట్స్‌లో లేవు, వాళ్లని సంప్రదించం ({last}).",
-  "hi": "{n} नंबर आपके कॉन्टैक्ट्स में नहीं हैं, उनसे संपर्क नहीं होगा ({last})।",
-  "kn": "{n} ನಂಬರ್‌ಗಳು ನಿಮ್ಮ ಕಾಂಟ್ಯಾಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಇಲ್ಲ, ಅವರನ್ನು ಸಂಪರ್ಕಿಸುವುದಿಲ್ಲ ({last}).",
+  "en": "Left out because they are not in your contacts: {n} ({last}).",
+  "te": "మీ కాంటాక్ట్స్‌లో లేనందున వదిలేసినవి: {n} ({last}).",
+  "hi": "आपके कॉन्टैक्ट्स में न होने से छोड़े गए: {n} ({last})।",
+  "kn": "ನಿಮ್ಮ ಕಾಂಟ್ಯಾಕ್ಟ್ಸ್‌ನಲ್ಲಿ ಇಲ್ಲದ ಕಾರಣ ಬಿಟ್ಟವು: {n} ({last}).",
   "status": {
    "te": "draft",
    "hi": "draft",

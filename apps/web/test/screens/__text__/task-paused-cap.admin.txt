@@ -1,0 +1,37 @@
+# Task
+Call my cement suppliers, ask the price per bag and the delivery day, and tell me the cheapest. [All tasks](/app/tenants/22222222-2222-2222-2222-222222222222/tasks)
+{label="Progress"}
+## Progress
+Paused
+{label="Progress of the task"} 33 %
+{role=status} 4 of 12
+Stopped: it has spent ₹10, the limit you set (₹10). Raise the limit to go on. Spent so far: ₹10 of ₹10 · 4 reached, 2 interested Test mode: the calls are simulated. Nothing real is dialled. Ask the Owner to raise the limit.
+[button type=button: Cancel the task]
+{label="Plan: Supplier price enquiry"}
+### Plan: Supplier price enquiry
+Paused
+{role=note} Test mode: the calls are simulated. Nothing real is dialled.
+Who
+12 people
+-
+<checkbox label="Sri Venkateswara Traders" disabled checked>
+Sri Venkateswara Traders
+-
+<checkbox label="Lakshmi Cement Depot" disabled checked>
+Lakshmi Cement Depot
+and 10 more
+Goal
+Ask each supplier today's price per bag and the delivery day.
+How
+Phone calls
+What Vijaya asks
+- What is your price per bag today?
+- Which day can you deliver?
+When
+6 Oct, 10:00 to 19:00
+Estimate
+24 minutes of calls · 12 calls · about ₹30 An estimate worked out by the system from today's prices. The real figure can differ a little.
+Limits
+It stops when it has spent ₹10
+- Left out because they are not in your contacts: 1 (…3210).
+[All tasks](/app/tenants/22222222-2222-2222-2222-222222222222/tasks)

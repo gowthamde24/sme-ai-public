@@ -88,7 +88,7 @@ export function TaskReport({ report, task, words }: { report: ReportOut; task: P
                     <td className={td}>{row.phone_last4 ? `…${row.phone_last4}` : ""}</td>
                     <td className={td}>
                       <span className={OUTCOME_PILL[row.outcome] ?? pillNeutral}>{codeText(t, "tk.o", row.outcome)}</span>
-                      {row.category && row.category !== row.outcome ? <span className="mt-1 block text-sm text-muted">{codeText(t, "tk.cat", row.category)}</span> : null}
+                      {row.category && codeText(t, "tk.cat", row.category) !== codeText(t, "tk.o", row.outcome) ? <span className="mt-1 block text-sm text-muted">{codeText(t, "tk.cat", row.category)}</span> : null}
                     </td>
                     <td className={`${td} [overflow-wrap:anywhere]`} lang={task.language}>
                       {captured.length === 0 ? (

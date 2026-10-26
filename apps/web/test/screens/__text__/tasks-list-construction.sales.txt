@@ -1,0 +1,31 @@
+# Ask Vijaya to do it
+Say what you want done, in your own words. You see a plan first. Nothing is called or sent until you approve.
+form:
+What should Vijaya do?
+<textarea label="What should Vijaya do?" placeholder="For example: call my cement suppliers and ask today's price per bag" maxlength=1500>
+Ready-made tasks
+-
+[button type=button: Call new leads]
+-
+[button type=button: Re-engage old leads]
+-
+[button type=button: Confirm appointments]
+-
+[button type=button: Collect feedback]
+-
+[button type=button: Supplier price enquiry]
+-
+[button type=button: Payment reminder]
+-
+[button type=button: Offer or event invite]
+Customers' language
+<select label="Customers' language">
+  options: Same as I wrote=auto* | తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn | English=en | தமிழ்=ta | മലയാളം=ml
+summary: Or give a list (optional)
+<textarea label="Or give a list (optional)">
+One person per line: name, phone number. Only people already in your contacts are used.
+[button type=submit disabled: Make a plan]
+You can write in Telugu, Hindi, Kannada, Tamil, Malayalam or English. You approve the plan before anything happens.
+## Your tasks
+{label="Your tasks"} [Running (1)](/app/tenants/22222222-2222-2222-2222-222222222222/tasks?tab=running current=page) [Waiting for your approval (1)](/app/tenants/22222222-2222-2222-2222-222222222222/tasks?tab=waiting) [Finished (1)](/app/tenants/22222222-2222-2222-2222-222222222222/tasks?tab=finished)
+- Call my cement suppliers, ask the price per bag and the delivery day, and tell me the cheapest. Running 3 of 12 People: 12 6 Oct [Open](/app/tenants/22222222-2222-2222-2222-222222222222/tasks/33333333-3333-4333-8333-333333333331)

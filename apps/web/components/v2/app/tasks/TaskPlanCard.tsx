@@ -130,7 +130,7 @@ export function TaskPlanCard({ task, words, lang, actions, powers, onTask, every
                 </ul>
               </details>
             ) : null}
-            {task.cap_paise !== null && task.estimate ? <p className={`${mutedText} !mt-1`}>{t("tk.cap.default", { cap: formatRupeesShort(task.cap_paise) })}</p> : null}
+            {task.status === "planned" && task.cap_paise !== null && task.estimate ? <p className={`${mutedText} !mt-1`}>{t("tk.cap.default", { cap: formatRupeesShort(task.cap_paise) })}</p> : null}
           </>
         }
       />

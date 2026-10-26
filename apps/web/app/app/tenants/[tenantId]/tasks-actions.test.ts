@@ -2,7 +2,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
   tenant: vi.fn(),
-  src: { planIt: vi.fn(), answerIt: vi.fn(), excludeThem: vi.fn(), approveIt: vi.fn(), capIt: vi.fn(), moveIt: vi.fn(), readTask: vi.fn(), readReport: vi.fn() },
+  src: { planIt: vi.fn(), answerIt: vi.fn(), excludeThem: vi.fn(), approveIt: vi.fn(), capIt: vi.fn(), moveIt: vi.fn(), readTask: vi.fn(), readReport: vi.fn(), readTemplates: vi.fn() },
+  pack: vi.fn(),
   revalidate: vi.fn(),
   redirect: vi.fn((to: string) => {
     throw new Error(`redirect:${to}`);
@@ -21,11 +22,13 @@ vi.mock("@/lib/tasks/source", () => ({
   moveIt: (...a: unknown[]) => h.src.moveIt(...a),
   readTask: (...a: unknown[]) => h.src.readTask(...a),
   readReport: (...a: unknown[]) => h.src.readReport(...a),
+  readTemplates: (...a: unknown[]) => h.src.readTemplates(...a),
 }));
+vi.mock("@/lib/packs/read", () => ({ readPackCached: (...a: unknown[]) => h.pack(...a) }));
 
 import { ApiAuthError } from "@/lib/api/client";
 
-import { answerTaskAction, approveTaskAction, cancelTaskAction, excludeContactsAction, pauseTaskAction, planTaskAction, progressTaskAction, reportTaskAction, resumeTaskAction, runTaskAction, setCapAction } from "./tasks-actions";
+import { answerTaskAction, approveTaskAction, cancelTaskAction, excludeContactsAction, pauseTaskAction, planTaskAction, progressTaskAction, reportTaskAction, resumeTaskAction, runTaskAction, setCapAction, templatesTaskAction } from "./tasks-actions";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const ID = "33333333-3333-4333-8333-333333333333";
@@ -39,6 +42,9 @@ beforeEach(() => {
   h.tenant.mockResolvedValue({ role: "owner" });
   for (const f of Object.values(h.src)) f.mockResolvedValue({ ok: true, value: TASK });
   h.src.readReport.mockResolvedValue({ ok: true, value: { task_id: ID } });
+  h.pack.mockResolvedValue({ packId: "shop" });
+  const t = (id: string, needs: string | null) => ({ id, label: id, channel_default: "call", needs_pack: needs, promotional: id === "offer_invite", example_instruction: `do ${id}` });
+  h.src.readTemplates.mockResolvedValue({ ok: true, value: { templates: [t("call_new_leads", null), t("payment_reminder", "not school")] } });
 });
 
 describe("the flag", () => {
@@ -107,6 +113,28 @@ describe("who may do what", () => {
     expect(await progressTaskAction(T, ID)).toEqual({ ok: true, task: TASK });
     expect(await reportTaskAction(T, ID)).toEqual({ ok: true, report: { task_id: ID } });
     expect(h.revalidate).not.toHaveBeenCalled();
+  });
+});
+
+describe("the ready-made tasks and a pasted list", () => {
+  it("gives a workspace the templates for its business type: a payment reminder is left out where the API says 'not <that type>'", async () => {
+    h.tenant.mockResolvedValue({ role: "viewer" });
+    expect(await templatesTaskAction(T)).toEqual({ ok: true, templates: [{ id: "call_new_leads", label: "call_new_leads", example: "do call_new_leads", promotional: false }, { id: "payment_reminder", label: "payment_reminder", example: "do payment_reminder", promotional: false }] });
+    h.pack.mockResolvedValue({ packId: "school" });
+    const school = await templatesTaskAction(T);
+    expect(school.ok && school.templates.map((x) => x.id)).toEqual(["call_new_leads"]);
+    h.pack.mockRejectedValueOnce(new Error("down"));
+    const unknown = await templatesTaskAction(T);
+    expect(unknown.ok && unknown.templates).toHaveLength(2);
+    h.src.readTemplates.mockResolvedValueOnce({ ok: false, error: "down" });
+    expect(await templatesTaskAction(T)).toEqual({ ok: false, error: "down" });
+  });
+  it("passes a pasted list on with the plan, and nothing when there is none", async () => {
+    await planTaskAction(T, ID, "Call them", null, [{ name: "Ravi", phone: "9876543210" }]);
+    expect(h.src.planIt).toHaveBeenLastCalledWith(CTX, { taskId: ID, instruction: "Call them", language: null, contacts: [{ name: "Ravi", phone: "9876543210" }] });
+    await planTaskAction(T, ID, "Call them");
+    expect(h.src.planIt).toHaveBeenLastCalledWith(CTX, { taskId: ID, instruction: "Call them", language: null });
+    expect(await planTaskAction(T, ID, "Call them", null, "x" as never)).toEqual({ ok: false, error: "invalid" });
   });
 });
 
