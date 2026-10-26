@@ -90,7 +90,7 @@ Off or fake by default. The rehearsal sets none of them. A provider named withou
 | `AI_JOB_FOLLOWUP_PLAN` | plain | api | Night 3, ADR 0102: the model of the followup_plan job: `claude` (default: the main model as `LLM_PROVIDER` configures it). `sarvam` is refused at start for this job (see `app/agents/llm/jobs.py`). |
 | `AI_JOB_CALL_TURN` | plain | api | Night 3, ADR 0102: the model of the call_turn job: `claude` (default: the main model as `LLM_PROVIDER` configures it) or `sarvam` (needs `SARVAM_API_KEY` and `LLM_SPEND_CAP_CONFIRMED`). |
 | `AI_JOB_WHATSAPP_REPLY` | plain | api | Night 3, ADR 0102: the model of the whatsapp_reply job: `claude` (default: the main model as `LLM_PROVIDER` configures it) or `sarvam` (needs `SARVAM_API_KEY` and `LLM_SPEND_CAP_CONFIRMED`). |
-| `SARVAM_CHAT_MODEL` | plain | api | The Sarvam chat model for the jobs that choose it (default `sarvam-105b`; it needs a row in `agent_model_prices`, migration 20261201090100). |
+| `SARVAM_CHAT_MODEL` | plain | api | The Sarvam chat model for the jobs that choose it (default `sarvam-105b`; the operator adds its row to `agent_model_prices` first: docs/adr/0102-model-per-job-and-claude-vs-sarvam.md). |
 | `SARVAM_CHAT_INPUT_MICROS_PER_MTOK` | plain | api | Its input price, millionths of a rupee per million tokens (default 15000000 = Rs 15). |
 | `SARVAM_CHAT_OUTPUT_MICROS_PER_MTOK` | plain | api | Its output price (default 60000000 = Rs 60). |
 | `LLM_LIGHT_MODEL` | plain | api | Optional cheaper model used after a workspace has used its allowance (ADR 0064). |

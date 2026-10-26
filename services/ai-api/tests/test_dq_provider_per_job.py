@@ -81,11 +81,11 @@ def test_a_runtime_without_job_choices_answers_every_job_with_the_assistants_mod
     assert AgentsRuntime(repository=None, executor=None, unavailable="x").llm_for("ask") is None   # type: ignore[arg-type]
 
 
-def test_the_price_of_sarvam_is_the_listed_one_and_the_ledger_has_a_row_for_it() -> None:
+def test_the_price_of_sarvam_is_the_listed_one_and_no_migration_adds_a_real_models_price() -> None:
     s = settings()
     assert (s.sarvam_chat_model, s.sarvam_chat_input_micros_per_mtok, s.sarvam_chat_output_micros_per_mtok) == ("sarvam-105b", 15_000_000, 60_000_000)
-    sql = (Path(__file__).resolve().parents[3] / "supabase" / "migrations" / "20261201090100_ai_job_sarvam_price.sql").read_text()
-    assert "'sarvam-105b', 15000000, 60000000" in sql and "on conflict (model) do nothing" in sql
+    migrations = (Path(__file__).resolve().parents[3] / "supabase" / "migrations")
+    assert not [m.name for m in migrations.glob("*ai_job*")], "a real model's price row is the operator's own action (pre-pilot checklist), not a migration"
 
 
 # ------------------------------------------------------------------------------------ the conversations and the prompt
