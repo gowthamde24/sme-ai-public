@@ -61,3 +61,14 @@ def test_the_coaching_demo_is_written_in_its_own_workspace(client: Any, eval_wor
     assert out["facts"] == "5 approved" and "10 from excel_upload" in out["leads"]
     report = call("GET", "/outreach/reports")[1]
     assert report["total"]["leads"] >= 27 and report["total"]["bookings"] >= 1
+
+
+def test_the_daily_fresh_leads_are_three_a_day_and_a_second_call_the_same_day_adds_none(client: Any, eval_world: Any) -> None:
+    a = eval_world.a
+    call = caller(client, a, a.users["owner"])
+    before = call("GET", "/lead-imports")[1]
+    count = len(before["items"]) if isinstance(before, dict) and "items" in before else len(before)
+    demo_data.fresh_leads(call, demo_data.REAL_ESTATE, TODAY)
+    demo_data.fresh_leads(call, demo_data.REAL_ESTATE, TODAY)
+    after = call("GET", "/lead-imports")[1]
+    assert (len(after["items"]) if isinstance(after, dict) and "items" in after else len(after)) == count + 1, "one import for the day"

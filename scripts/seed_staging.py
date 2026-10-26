@@ -136,9 +136,13 @@ class Seeder:
             raise SeedError("--api-url must be https.")
         self.api = api_url.rstrip("/")
         self.sb = f"https://{STAGING_REF}.supabase.co"
-        keys = json_from(run(["supabase", "projects", "api-keys", "--project-ref", STAGING_REF, "--agent", "no", "-o", "json"]))
-        self.pub = next(k["api_key"] for k in keys if k.get("type") == "publishable")
-        self.admin = next(k["api_key"] for k in keys if k.get("id") == "service_role")  # memory only
+        self._keys = json_from(run(["supabase", "projects", "api-keys", "--project-ref", STAGING_REF, "--agent", "no", "-o", "json"]))
+        self.pub = next(k["api_key"] for k in self._keys if k.get("type") == "publishable")
+
+    @property
+    def admin(self) -> str:
+        """The project's service_role key, read only when an account has to be CREATED (memory only; a sign-in, as the daily refresh does, never needs it)."""
+        return str(next(k["api_key"] for k in self._keys if k.get("id") == "service_role"))
 
     def admin_headers(self) -> dict[str, str]:
         return {"apikey": self.admin, "Authorization": f"Bearer {self.admin}"}

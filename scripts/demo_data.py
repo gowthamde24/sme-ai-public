@@ -320,3 +320,19 @@ def real_estate(call: Call, today: date, *, tasks: bool = True) -> dict[str, str
 def coaching(call: Call, today: date, *, tasks: bool = True) -> dict[str, str]:
     """Vidya Coaching Centre (synthetic): tuition and entrance coaching in Vijayawada."""
     return lead_desk(call, COACHING, today, tasks=tasks)
+
+
+FRESH_NAMES = ["Naveen", "Swapna", "Karthik", "Bindu", "Chandra", "Hema", "Raju", "Mounika", "Sagar", "Pallavi"]
+
+
+def fresh_leads(call: Call, spec: dict[str, Any], today: date) -> dict[str, str]:
+    """Three new leads of the day from the website form, so a demo workspace always has something that arrived today (the daily refresh calls this; a second call on the same day changes nothing: one import id per day)."""
+    rows = []
+    for i in range(3):
+        n = (today.toordinal() * 3 + i) % 900
+        rows.append([f"{FRESH_NAMES[(today.toordinal() + i) % len(FRESH_NAMES)]} {chr(65 + (n % 26))} (demo)", f"+00 000 000 {9000 + n}", spec["leads"]["website_form"][0][1], "New enquiry from the website today", datetime.now(IST).replace(microsecond=0).isoformat()])
+    body = {"import_id": did(f"{spec['key']}-fresh-{today.isoformat()}"), "kind": "file", "filename": "today.csv", "use_ai": False,
+            "content_base64": base64.b64encode(_csv(rows, ["Name", "Phone", "City", "Message", "Received"]).encode()).decode(),
+            "mapping": {"name": 0, "phone": 1, "city": 2, "message": 3, "received_at": 4}, "source": "website_form", "consent": CONSENT}
+    _ok("fresh leads", call("POST", "/lead-imports", body), (200, 201))
+    return {"fresh leads": f"3 from website_form on {today.isoformat()}"}
