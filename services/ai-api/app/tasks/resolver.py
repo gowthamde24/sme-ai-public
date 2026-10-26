@@ -120,8 +120,9 @@ class DbContactSource:
             chunk = [t for t in tails[i : i + 20] if len(t) >= 7]
             if not chunk:
                 continue
-            condition = "(" + ",".join(f"phone.ilike.*{t}*" for t in chunk) + ")"
-            rows = self._db.rest_rows("task_find", "/contacts", {"select": "id", "or": condition, "archived_at": "is.null", "limit": "100"})
+            # the last four digits only: a stored number may carry spaces ("+00 000 000 8190"), so a longer run of digits would miss it; the caller keeps only the people whose last ten digits are among the asked ones
+            condition = "(" + ",".join(f"phone.ilike.*{t[-4:]}*" for t in chunk) + ")"
+            rows = self._db.rest_rows("task_find", "/contacts", {"select": "id", "or": condition, "archived_at": "is.null", "limit": "300"})
             ids = [str(r["id"]) for r in rows]
             if ids:
                 leads = self._db.rest_rows("task_leads", "/leads", {"select": "id,contact_id,status,created_at", "contact_id": "in.(" + ",".join(ids) + ")", "archived_at": "is.null", "order": "created_at.desc"})
