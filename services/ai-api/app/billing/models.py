@@ -151,6 +151,8 @@ class AccessOut(_Strict):
     sending: Literal["on", "off"]
     # `whatsapp` while the workspace chose a plan but has not connected WhatsApp (status trial_pending)
     waiting_for: Literal["whatsapp"] | None
+    # job DQ (DPDP): when the e-mail went to the Owners that the workspace will be erased in 48 hours (null until it did; only read-only workspaces have one)
+    erasure_warning_sent_at: datetime | None = None
 
 
 class BillingOut(_Strict):

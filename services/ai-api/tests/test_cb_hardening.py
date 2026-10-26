@@ -64,6 +64,10 @@ def test_every_route_without_a_sign_in_has_a_rate_rule_and_is_on_the_known_list(
         "/health", "/ready", "/v1/calendar/feed/{token_ics}", "/v1/policies/current",
         "/v1/push/public-key",  # job BY: the browser's push key (public by design)
         "/v1/calculate/materials",  # job CN: the pure paver calculator (no business data; rate limited)
+        "/v1/privacy/notice",  # job DQ: the privacy notice facts (public, cached)
+        "/v1/privacy/subprocessors",  # job DQ: the processors as data (public, cached)
+        "/v1/privacy/grievance",  # job DQ: a grievance from anyone (rate limited; the database holds its own caps)
+        "/v1/public/waitlist",  # job DQ: the public site's waitlist (rate limited; the database holds its own caps)
         "/v1/packs", "/v1/auth/providers",  # job CK: the sign-up cards and the sign-up providers (public by design, no tenant data)
         "/v1/webhooks/whatsapp", "/v1/webhooks/razorpay", "/v1/webhooks/cashfree", "/v1/webhooks/fake-payments",  # jobs BR, BZ: signed or secret-path webhooks
         "/v1/webhooks/exotel/{token}/missed-call", "/v1/webhooks/exotel/{token}/call-status",

@@ -1,0 +1,64 @@
+{
+ "$comment": "Job DQ (DPDP): the companies that process personal data for Stack19, as data. The country is where the service processes or stores the data. First draft: the owner checks each line against the provider's current terms (docs/runbooks/dpdp-owner-checklist.md).",
+ "version": "2026-10-27",
+ "updated_on": "2026-10-27",
+ "wording": "draft",
+ "subprocessors": [
+  {
+   "id": "google_cloud",
+   "name": "Google Cloud",
+   "purpose": "Runs the app, its background worker and the files you upload",
+   "country": "India (Mumbai)",
+   "data": "Everything the app holds for your business",
+   "link": "https://cloud.google.com/terms/data-processing-addendum"
+  },
+  {
+   "id": "supabase",
+   "name": "Supabase",
+   "purpose": "Database, sign-in and file storage",
+   "country": "India (Mumbai)",
+   "data": "Your account, your business records and your customers' records",
+   "link": "https://supabase.com/legal/dpa"
+  },
+  {
+   "id": "resend",
+   "name": "Resend",
+   "purpose": "Sends the e-mails the app sends to you (sign-in links, reminders)",
+   "country": "United States",
+   "data": "Your e-mail address, your name and the text of the e-mail",
+   "link": "https://resend.com/legal/dpa"
+  },
+  {
+   "id": "zoho",
+   "name": "Zoho",
+   "purpose": "Company mailboxes (the addresses you write to and hear from)",
+   "country": "India",
+   "data": "What you write to us by e-mail",
+   "link": "https://www.zoho.com/gdpr.html"
+  },
+  {
+   "id": "anthropic",
+   "name": "Anthropic",
+   "purpose": "The AI that drafts replies and answers questions, when you switch it on",
+   "country": "United States",
+   "data": "The words of a question or message and the business facts needed to answer it; no payment details",
+   "link": "https://www.anthropic.com/legal/dpa"
+  },
+  {
+   "id": "meta_whatsapp",
+   "name": "Meta (WhatsApp Business Platform)",
+   "purpose": "Delivers WhatsApp messages between your business and your customers",
+   "country": "Global (Meta's data centres)",
+   "data": "Customers' phone numbers and the messages",
+   "link": "https://www.whatsapp.com/legal/business-data-processing-terms"
+  },
+  {
+   "id": "sarvam",
+   "name": "Sarvam AI",
+   "purpose": "Speaks and understands Indian languages on calls and voice notes, when you switch it on",
+   "country": "India",
+   "data": "The text to be spoken, or a short recording to be understood",
+   "link": "https://www.sarvam.ai/terms"
+  }
+ ]
+}

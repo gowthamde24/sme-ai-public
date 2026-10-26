@@ -27,6 +27,9 @@ ROUTE_WORDS = frozenset(
         "call-settings",
         # job DM: outcomes of calls and follow-ups
         "outcomes", "totals", "correct", "ai-assistant", "preview", "test-call",
+        # job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors
+        "consents", "marketing", "privacy", "notice", "subprocessors", "grievance", "public",
+        "waitlist",
         # job DP: marks and report messages to guardians (a file that is never stored)
         "marks-messages", "batches",
         # job CN: sites, dues, material quotes, deliveries, the public calculator

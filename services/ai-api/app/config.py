@@ -117,6 +117,12 @@ class Settings(BaseSettings):
     # environment, never in code). Needed when the sender is "resend".
     mail_from: str | None = None
     mail_reply_to: str | None = None
+    # Job DQ (DPDP): where a privacy grievance and a waitlist entry are e-mailed (addresses live in
+    # the environment, never in code), and the captcha of the two public doors (none | turnstile)
+    privacy_email: str | None = None
+    hello_email: str | None = None
+    captcha_provider: str = "none"
+    captcha_secret: SecretStr | None = None
     # Job AW (ADR 0068): the scheduler worker (`make dev-worker-local`). It signs in as ITS OWN
     # account, which the operator registered in the database (no workspace, no key of any kind).
     # The address and the password come from the environment only, are never logged, and are

@@ -51,6 +51,9 @@ from app.customfields.routes import router as custom_fields_router
 from app.deliveries import errors as delivery_errors
 from app.deliveries.repository import PostgrestDeliveriesRepository
 from app.deliveries.routes import router as deliveries_router
+from app.dpdp.routes import me_router as dpdp_me_router
+from app.dpdp.routes import public_router as dpdp_public_router
+from app.dpdp.wiring import build_dpdp
 from app.dues import errors as dues_errors
 from app.dues.ledger_routes import router as ledger_router
 from app.dues.repository import PostgrestDuesRepository
@@ -250,6 +253,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         policy_gate=PolicyGate(policies, enforce=settings.policy_enforce),
         whatsapp=build_whatsapp(settings, config, key_ring),
         team=PostgrestTeamRepository(config.rest_url, config.anon_key),
+        dpdp=build_dpdp(settings, config.rest_url, config.anon_key),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         notifications=build_notifications(settings, config),
         research_web=build_research_web(settings),
@@ -1018,6 +1022,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(policy_router)
     app.include_router(privacy_me_router)
     app.include_router(privacy_router)
+    app.include_router(dpdp_public_router)
+    app.include_router(dpdp_me_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)

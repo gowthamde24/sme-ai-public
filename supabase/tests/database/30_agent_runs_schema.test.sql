@@ -101,7 +101,7 @@ select throws_ok($$update public.agent_limits set limit_value = 500 where limit_
 select is((select column_default from information_schema.columns where table_schema = 'public' and table_name = 'platform_flags' and column_name = 'enabled'), 'false', 'platform switches default to OFF');
 select is((select column_default from information_schema.columns where table_schema = 'public' and table_name = 'tenant_agent_settings' and column_name = 'enabled'), 'false', 'the per-tenant switch defaults to OFF');
 select is((select count(*) from public.platform_flags where key in ('agents_enabled', 'selftest_enabled', 'research_enabled', 'requirement_enabled', 'assistant_enabled')), 5::bigint, 'the five platform switches exist');
-select results_eq($$select key, enabled from public.platform_flags order by key$$, $$values ('agents_enabled'::text, true), ('assistant_enabled', false), ('billing_enforced', false), ('outbox_enabled', false), ('requirement_enabled', false), ('research_enabled', false), ('selftest_enabled', true)$$,
+select results_eq($$select key, enabled from public.platform_flags order by key$$, $$values ('agents_enabled'::text, true), ('assistant_enabled', false), ('billing_enforced', false), ('lapse_erasure', false), ('outbox_enabled', false), ('requirement_enabled', false), ('research_enabled', false), ('selftest_enabled', true)$$,
   'sanity: seed_agents switched agents and selftest on for the tests; research, requirement and the assistant stay OFF');
 select results_eq(
   $$select agent_name, requires_flag, coalesce(array_length(allowed_tenants, 1), 0), allowed_predicates, max_writes

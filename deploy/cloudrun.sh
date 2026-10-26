@@ -84,6 +84,8 @@ cd "$(dirname "$0")/.."
 common_env() {
   printf 'API_ENV=production,LOG_FORMAT=json,SUPABASE_URL=%s,SUPABASE_PUBLISHABLE_KEY=%s,SUPABASE_JWT_ISSUER=%s/auth/v1,SUPABASE_JWT_AUDIENCE=authenticated,SUPABASE_JWKS_URL=%s/auth/v1/.well-known/jwks.json,SUPABASE_JWT_ALGORITHMS=ES256' \
     "$SUPABASE_URL" "$PUBLIC_KEY" "$SUPABASE_URL" "$SUPABASE_URL"
+  # job DQ (DPDP): the privacy and hello inboxes the API shows in the notice and the worker e-mails (set by deploy/staging.sh from MAIL_DOMAIN; empty = not set)
+  printf '%s' "${PRIVACY_EMAIL:+,PRIVACY_EMAIL=$PRIVACY_EMAIL}${HELLO_EMAIL:+,HELLO_EMAIL=$HELLO_EMAIL}"
 }
 
 if [ "$what" = "secrets" ]; then
