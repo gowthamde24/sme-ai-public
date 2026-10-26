@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import type { OutboxActions } from "@/components/v2/app/outbox/OutboxList";
 import { OutboxView } from "@/components/v2/app/outbox/OutboxView";
+import { isDemoWorkspace } from "@/lib/workspace-demo";
 import { TABS, type OutboxTab } from "@/components/v2/app/outbox/reasons";
 import { parseFilters } from "@/components/v2/app/outbox/outbox-time";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
@@ -81,7 +82,7 @@ export default async function OutboxPage({ params, searchParams }: PageProps<"/a
   };
   return (
     <main className={pageMain} lang={lang}>
-      <OutboxView help={helpTipFor(lang, base, "outbox")} tab={tab} filters={filters} role={tenant.role} now={now} lang={lang} base={base} words={outboxWords(lang)} items={data.items} counts={data.counts} more={data.more} settings={data.settings} scheduler={data.scheduler} actions={actions} />
+      <OutboxView demo={isDemoWorkspace(tenant.name)} help={helpTipFor(lang, base, "outbox")} tab={tab} filters={filters} role={tenant.role} now={now} lang={lang} base={base} words={outboxWords(lang)} items={data.items} counts={data.counts} more={data.more} settings={data.settings} scheduler={data.scheduler} actions={actions} />
     </main>
   );
 }

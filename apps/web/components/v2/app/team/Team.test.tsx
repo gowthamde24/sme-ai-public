@@ -85,7 +85,7 @@ describe("the people", () => {
     expect(screen.getByText("Asha")).toBeInTheDocument();
     expect(screen.getByText("(you)")).toBeInTheDocument();
     expect(screen.getByText("Team member")).toBeInTheDocument(); // a person with no name
-    expect(screen.getByText("Owners are added by the operator, not here.")).toBeInTheDocument();
+    expect(screen.getByText("Owners are added by our team, not here.")).toBeInTheDocument();
     const owner = container.querySelector('[data-member="owner"]')!;
     expect(within(owner as HTMLElement).queryByRole("button")).toBeNull(); // no way to change or remove an owner, or to leave as the owner
   });

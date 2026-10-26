@@ -25,7 +25,7 @@ export default async function MfaPage({ searchParams }: PageProps<"/auth/mfa">) 
       <p className={authLead}>Open your authenticator app and type the six digits it shows for this account.</p>
       <MfaForm next={next} />
       <p className={authHint}>
-        Lost your phone? Ask the operator of this system. They will check who you are some other way, remove the old
+        Lost your phone? Write to us. We will check who you are some other way, remove the old
         authenticator, and let you set up a new one. Until then you can sign in, but not erase data, export, or change members and settings.
       </p>
     </main>

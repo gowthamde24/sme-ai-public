@@ -10,7 +10,7 @@ import { useFrameData } from "./frame-store";
 import { UsageCard } from "./frame-parts";
 import { NavIcon } from "./icons";
 import { word, withPackWords, type Labels } from "./labels";
-import { barItems, coreItem, footItems, hrefOf, visibleGroups } from "./nav";
+import { hrefOf, menuBar, menuFoot, menuGroups } from "./nav";
 import { useWorkspace, type Membership } from "./use-workspace";
 
 const cell = "relative flex min-h-16 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 pb-1 pt-1.5 text-center text-sm font-medium leading-tight transition-colors duration-150 ease-out active:bg-surface-2";
@@ -18,12 +18,12 @@ const COLS: Record<number, string> = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "g
 const row = "flex min-h-12 w-full items-center gap-3 rounded-lg border border-line px-3 text-left text-base font-medium transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line";
 
 /**
- * The bottom bar on a phone (under 768px), as the design-lab app draws it: the daily pages (Today with the count of what is waiting, Leads, Quotes, Orders, Office:
- * each only when the role may open it) and "More", which opens a sheet with the rest of the menu (Customers, Catalogue and prices, Integrations, Settings),
+ * The bottom bar on a phone (under 768px): Today (with the count of what is waiting), Customers, Chats and Sales (job DQ part 0: the four daily items of the seven;
+ * each only when the role may open it) and "More", which opens a sheet with the rest of the menu (Calls, Catalogue, Reports, Settings),
  * the person, the AI usage card, Help ("Not available yet") and Sign out. Respects the phone's safe area. Outside a workspace the bar is not drawn.
  */
 export function TabBar({ memberships, labels: given_labels, frame: given, email, signOut }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void> }) {
-  const { current, pathname, active } = useWorkspace(memberships);
+  const { current, pathname, activeMenu } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const labels = withPackWords(given_labels, frame.pack);
   const [open, setOpen] = useState(false);
@@ -48,31 +48,29 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
   if (!current) return null;
-  const tabs = barItems(current.role, frame.pack);
-  const core = frame.pack ? coreItem(frame.pack) : null;
-  const coreWord = frame.pack?.labels["pack.core_tab"]; // the business type's own word for its core tab (it comes with the pack, not from the string store)
-  const rest = [...visibleGroups(current.role, frame.pack).flatMap((g) => g.items), ...footItems(current.role)].filter((i) => !tabs.some((t) => t.id === i.id));
-  const moreOn = active ? rest.some((i) => i.id === active.item.id) : false;
+  const tabs = menuBar(current.role, frame.pack);
+  const rest = [...menuGroups(current.role, frame.pack).flatMap((g) => g.items), ...menuFoot(current.role, frame.pack)].filter((i) => !tabs.some((t) => t.id === i.id));
+  const moreOn = activeMenu ? rest.some((i) => i.id === activeMenu) : false;
   const mark = <span aria-hidden="true" className="absolute inset-x-3 top-0 h-0.5 rounded-b-full bg-brand-edge" />;
   const help = word(labels, "frame.help", "Help");
   return (
     <>
       <nav aria-label={word(labels, "frame.menu.quick", "Quick menu")} className={`grid border-t border-line bg-surface pb-[env(safe-area-inset-bottom)] ${COLS[tabs.length + 1] ?? "grid-cols-6"}`}>
         {tabs.map((i) => {
-          const on = active?.item.id === i.id;
+          const on = activeMenu === i.id;
           return (
             <Link key={i.id} href={hrefOf(i, current.id)} aria-current={on ? "page" : undefined} className={`${cell} ${on ? "text-brand-text" : "text-muted"}`}>
               {on ? mark : null}
               <span className="relative">
                 <NavIcon name={i.icon} className="size-6" />
-                {i.id === "today" && frame.waiting && frame.waiting > 0 ? (
+                {i.id === "m-today" && frame.waiting && frame.waiting > 0 ? (
                   <span className="absolute -right-2.5 -top-1.5 grid min-w-5 place-items-center rounded-full bg-charcoal px-1 text-sm font-semibold leading-5 text-on-charcoal">
                     <span className="sr-only">{word(labels, "frame.waiting", "Waiting for you")}: </span>
                     {frame.waiting}
                   </span>
                 ) : null}
               </span>
-              <span className="max-w-full break-words">{core?.id === i.id && coreWord ? coreWord : word(labels, `nav.tab.${i.id}`, i.short ?? word(labels, `nav.item.${i.id}`, i.label))}</span>
+              <span className="max-w-full break-words">{word(labels, `nav.tab.${i.id}`, i.short ?? word(labels, `nav.item.${i.id}`, i.label))}</span>
             </Link>
           );
         })}
@@ -107,7 +105,7 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
               </div>
               <div className="space-y-2">
                 {rest.map((i) => (
-                  <Link key={i.id} href={hrefOf(i, current.id)} aria-current={active?.item.id === i.id ? "page" : undefined} onClick={() => setOpen(false)} className={`${row} ${active?.item.id === i.id ? "border-brand-edge bg-brand-bg text-brand-text" : ""}`}>
+                  <Link key={i.id} href={hrefOf(i, current.id)} aria-current={activeMenu === i.id ? "page" : undefined} onClick={() => setOpen(false)} className={`${row} ${activeMenu === i.id ? "border-brand-edge bg-brand-bg text-brand-text" : ""}`}>
                     <NavIcon name={i.icon} />
                     {word(labels, `nav.item.${i.id}`, i.label)}
                   </Link>

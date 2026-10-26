@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import * as eager from "./LazyTabs.eager";
-import * as lazy from "./LazyTabs";
+const lazy = await vi.importActual<typeof import("./LazyTabs")>("./LazyTabs");
 
 describe("Settings tabs as chunks", () => {
   it("the test copy has exactly the parts of the lazy file", () => {

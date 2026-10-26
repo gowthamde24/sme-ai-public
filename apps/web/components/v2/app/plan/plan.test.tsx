@@ -10,8 +10,6 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
 
 import { appDict } from "@/i18n/app";
 
-vi.mock("../settings/LazyTabs", () => import("../settings/LazyTabs.eager"));
-
 import { PlanPicker } from "./PlanPicker";
 import { PlanSection } from "./PlanSection";
 import type { PlanActions } from "./types";

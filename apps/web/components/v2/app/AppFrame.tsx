@@ -11,6 +11,7 @@ import type { Lang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
 
 import { FRAME_LOADING, type FrameData } from "./contract";
+import { GroupTabs } from "./GroupTabs";
 import { LabelsProvider } from "./robust/labels-context";
 import { RobustShell } from "./robust/RobustShell";
 import { SideNav } from "./SideNav";
@@ -56,6 +57,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
             </div>
           ) : null}
           <div id="main-content" lang="en" tabIndex={-1} className="min-w-0 flex-1 outline-none">
+            <GroupTabs memberships={list} labels={labels} frame={frame} />
             <LabelsProvider labels={labels}>{children}</LabelsProvider>
           </div>
           {/* Privacy Policy, Terms and Cookie settings (job BH); above the bottom bar on a phone */}
