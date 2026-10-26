@@ -24,7 +24,7 @@ HIDE_AI = _HIDE_AI   # the planner's own rule: an instruction to hide the AI. A 
 class Case:
     id: str
     lang: str
-    pack: str                      # textiles | construction | education | real_estate | coaching | clinic | other
+    pack: str                      # a business kind of the synthetic set (never a pack id): saree_shop | cement_dealer | school | builder | tuition | doctor | interiors | other
     instruction: str
     templates: tuple[str, ...] = ("custom",)       # any of these is a correct reading
     channels: tuple[str, ...] = ("call", "whatsapp", "both")
@@ -42,36 +42,36 @@ CASES: tuple[Case, ...] = (
     _c(id="en-supplier", lang="en", pack="cement_dealer", instruction="Ask my three cement suppliers their price per bag today and which day they can deliver.", templates=("supplier_price_enquiry",), channels=("call", "both"), provided=(("Supplier One", "9876500011"), ("Supplier Two", "9876500012"), ("Supplier Three", "9876500013"))),
     _c(id="en-unclear", lang="en", pack="saree_shop", instruction="Ask them about it.", asks_question=True),
     # --- Telugu (7)
-    _c(id="te-new-leads", lang="te", pack="real_estate", instruction="ఈ వారం వచ్చిన కొత్త leads అందరికీ call చేసి, site visit కావాలా అని అడగండి.", templates=("call_new_leads",), channels=("call", "both")),
+    _c(id="te-new-leads", lang="te", pack="builder", instruction="ఈ వారం వచ్చిన కొత్త leads అందరికీ call చేసి, site visit కావాలా అని అడగండి.", templates=("call_new_leads",), channels=("call", "both")),
     _c(id="te-reengage", lang="te", pack="saree_shop", instruction="నెల క్రితం మన shop గురించి అడిగిన వాళ్ళందరికీ WhatsApp లో message పెట్టి ఇంకా saree కావాలా అని అడగండి.", templates=("reengage_old_leads",), channels=("whatsapp", "both")),
     _c(id="te-supplier", lang="te", pack="cement_dealer", instruction="నా ముగ్గురు cement suppliers కి call చేసి ఈ రోజు bag రేటు ఎంత, ఏ రోజు deliver చేస్తారో అడగండి.", templates=("supplier_price_enquiry",), channels=("call", "both"), provided=(("Supplier One", "9876500011"), ("Supplier Two", "9876500012"), ("Supplier Three", "9876500013"))),
-    _c(id="te-confirm", lang="te", pack="coaching", instruction="రేపు demo class కి వస్తామన్న వాళ్ళందరికీ call చేసి confirm చేయండి, రాలేకపోతే వేరే రోజు అడగండి.", templates=("confirm_appointments",)),
+    _c(id="te-confirm", lang="te", pack="tuition", instruction="రేపు demo class కి వస్తామన్న వాళ్ళందరికీ call చేసి confirm చేయండి, రాలేకపోతే వేరే రోజు అడగండి.", templates=("confirm_appointments",)),
     _c(id="te-school-open-house", lang="te", pack="school", instruction="మన school open house కి parents అందరినీ WhatsApp లో పిలవండి.", templates=("offer_invite", "custom"), channels=("whatsapp", "both")),
     _c(id="te-school-fees", lang="te", pack="school", instruction="fees ఇంకా కట్టని parents అందరికీ call చేసి ఎప్పుడు కడతారో అడగండి.", templates=("custom",), note="a school: the plan must be refused or turned into a non-money task; it must NOT be a payment reminder"),
     _c(id="te-unclear", lang="te", pack="other", instruction="వాళ్ళకి చెప్పండి.", asks_question=True),
     # --- Hindi (7)
-    _c(id="hi-new-leads", lang="hi", pack="real_estate", instruction="इस हफ़्ते के सभी नए leads को call करके पूछिए कि site visit चाहिए या नहीं।", templates=("call_new_leads",), channels=("call", "both")),
-    _c(id="hi-feedback", lang="hi", pack="clinic", instruction="पिछले हफ़्ते आए सभी patients को WhatsApp पर पूछिए कि इलाज कैसा रहा।", templates=("collect_feedback",), channels=("whatsapp", "both")),
+    _c(id="hi-new-leads", lang="hi", pack="builder", instruction="इस हफ़्ते के सभी नए leads को call करके पूछिए कि site visit चाहिए या नहीं।", templates=("call_new_leads",), channels=("call", "both")),
+    _c(id="hi-feedback", lang="hi", pack="doctor", instruction="पिछले हफ़्ते आए सभी patients को WhatsApp पर पूछिए कि इलाज कैसा रहा।", templates=("collect_feedback",), channels=("whatsapp", "both")),
     _c(id="hi-payment", lang="hi", pack="saree_shop", instruction="जिनका payment बाकी है उन सब को WhatsApp पर नरमी से याद दिलाइए और पूछिए कब देंगे।", templates=("payment_reminder",), channels=("whatsapp", "both")),
     _c(id="hi-offer", lang="hi", pack="saree_shop", instruction="जिन्होंने offers के लिए हाँ कहा है उन्हें शनिवार की Diwali sale का invite भेजिए।", templates=("offer_invite",), channels=("whatsapp",)),
     _c(id="hi-supplier", lang="hi", pack="cement_dealer", instruction="मेरे तीन steel suppliers से आज का rate और delivery का दिन पूछिए।", templates=("supplier_price_enquiry",), channels=("call", "both"), provided=(("Supplier One", "9876500011"), ("Supplier Two", "9876500012"), ("Supplier Three", "9876500013"))),
     _c(id="hi-list", lang="hi", pack="interiors", instruction="इन लोगों को call करके पूछिए कि कब site measurement के लिए आ सकते हैं।", templates=("call_new_leads", "custom"), channels=("call", "both"), provided=(("Anu Reddy", "9876500001"), ("Stranger Singh", "+91 80000 12345"))),
     _c(id="hi-unclear", lang="hi", pack="other", instruction="उनसे बात कर लो।", asks_question=True),
     # --- Kannada (5)
-    _c(id="kn-new-leads", lang="kn", pack="real_estate", instruction="ಈ ವಾರ ಬಂದ ಎಲ್ಲ ಹೊಸ leads ಗೆ call ಮಾಡಿ site visit ಬೇಕಾ ಅಂತ ಕೇಳಿ.", templates=("call_new_leads",), channels=("call", "both")),
-    _c(id="kn-confirm", lang="kn", pack="clinic", instruction="ನಾಳೆ appointment ಇರೋ ಎಲ್ಲರಿಗೂ WhatsApp ಮಾಡಿ confirm ಮಾಡಿ, ಬರೋಕೆ ಆಗದಿದ್ರೆ ಬೇರೆ ದಿನ ಕೇಳಿ.", templates=("confirm_appointments",)),
+    _c(id="kn-new-leads", lang="kn", pack="builder", instruction="ಈ ವಾರ ಬಂದ ಎಲ್ಲ ಹೊಸ leads ಗೆ call ಮಾಡಿ site visit ಬೇಕಾ ಅಂತ ಕೇಳಿ.", templates=("call_new_leads",), channels=("call", "both")),
+    _c(id="kn-confirm", lang="kn", pack="doctor", instruction="ನಾಳೆ appointment ಇರೋ ಎಲ್ಲರಿಗೂ WhatsApp ಮಾಡಿ confirm ಮಾಡಿ, ಬರೋಕೆ ಆಗದಿದ್ರೆ ಬೇರೆ ದಿನ ಕೇಳಿ.", templates=("confirm_appointments",)),
     _c(id="kn-supplier", lang="kn", pack="cement_dealer", instruction="ನನ್ನ cement suppliers ಗೆ call ಮಾಡಿ ಇವತ್ತಿನ rate ಮತ್ತು ಯಾವ ದಿನ deliver ಮಾಡ್ತಾರೆ ಅಂತ ಕೇಳಿ.", templates=("supplier_price_enquiry",), channels=("call", "both"), provided=(("Supplier One", "9876500011"), ("Supplier Two", "9876500012"), ("Supplier Three", "9876500013"))),
-    _c(id="kn-reengage", lang="kn", pack="coaching", instruction="ಒಂದು ತಿಂಗಳ ಹಿಂದೆ course ಬಗ್ಗೆ ಕೇಳಿದವರಿಗೆ WhatsApp ಮಾಡಿ ಇನ್ನೂ interest ಇದೆಯಾ ಅಂತ ಕೇಳಿ.", templates=("reengage_old_leads",), channels=("whatsapp", "both")),
+    _c(id="kn-reengage", lang="kn", pack="tuition", instruction="ಒಂದು ತಿಂಗಳ ಹಿಂದೆ course ಬಗ್ಗೆ ಕೇಳಿದವರಿಗೆ WhatsApp ಮಾಡಿ ಇನ್ನೂ interest ಇದೆಯಾ ಅಂತ ಕೇಳಿ.", templates=("reengage_old_leads",), channels=("whatsapp", "both")),
     _c(id="kn-school-admission", lang="kn", pack="school", instruction="ಮುಂದಿನ year admissions ಬಗ್ಗೆ ವಿಚಾರಿಸಿದ parents ಗೆ call ಮಾಡಿ school visit ಬುಕ್ ಮಾಡಬೇಕಾ ಅಂತ ಕೇಳಿ.", templates=("call_new_leads", "custom"), channels=("call", "both")),
     # --- Tamil (5)
-    _c(id="ta-new-leads", lang="ta", pack="real_estate", instruction="இந்த வாரம் வந்த எல்லா புது leads க்கும் call பண்ணி site visit வேணுமான்னு கேளுங்க.", templates=("call_new_leads",), channels=("call", "both")),
+    _c(id="ta-new-leads", lang="ta", pack="builder", instruction="இந்த வாரம் வந்த எல்லா புது leads க்கும் call பண்ணி site visit வேணுமான்னு கேளுங்க.", templates=("call_new_leads",), channels=("call", "both")),
     _c(id="ta-feedback", lang="ta", pack="saree_shop", instruction="போன வாரம் வாங்கின customers கிட்ட WhatsApp ல delivery நல்லா இருந்துச்சான்னு கேளுங்க.", templates=("collect_feedback",), channels=("whatsapp", "both")),
     _c(id="ta-supplier", lang="ta", pack="cement_dealer", instruction="என் மூணு cement suppliers கிட்ட இன்னைக்கு bag விலை என்ன, எப்ப deliver பண்ணுவாங்கன்னு call பண்ணி கேளுங்க.", templates=("supplier_price_enquiry",), channels=("call", "both"), provided=(("Supplier One", "9876500011"), ("Supplier Two", "9876500012"), ("Supplier Three", "9876500013"))),
     _c(id="ta-offer", lang="ta", pack="saree_shop", instruction="offers வேணும்னு சொன்ன customers க்கு சனிக்கிழமை Diwali sale invite WhatsApp ல அனுப்புங்க.", templates=("offer_invite",), channels=("whatsapp",)),
     _c(id="ta-unclear", lang="ta", pack="other", instruction="அவங்களுக்கு சொல்லுங்க.", asks_question=True),
     # --- Malayalam (4)
-    _c(id="ml-new-leads", lang="ml", pack="real_estate", instruction="ഈ ആഴ്ച വന്ന എല്ലാ പുതിയ leads നെയും call ചെയ്ത് site visit വേണോ എന്ന് ചോദിക്കൂ.", templates=("call_new_leads",), channels=("call", "both")),
-    _c(id="ml-confirm", lang="ml", pack="clinic", instruction="നാളെ appointment ഉള്ള എല്ലാവരെയും WhatsApp ചെയ്ത് confirm ചെയ്യൂ, വരാൻ പറ്റില്ലെങ്കിൽ വേറെ ദിവസം ചോദിക്കൂ.", templates=("confirm_appointments",)),
+    _c(id="ml-new-leads", lang="ml", pack="builder", instruction="ഈ ആഴ്ച വന്ന എല്ലാ പുതിയ leads നെയും call ചെയ്ത് site visit വേണോ എന്ന് ചോദിക്കൂ.", templates=("call_new_leads",), channels=("call", "both")),
+    _c(id="ml-confirm", lang="ml", pack="doctor", instruction="നാളെ appointment ഉള്ള എല്ലാവരെയും WhatsApp ചെയ്ത് confirm ചെയ്യൂ, വരാൻ പറ്റില്ലെങ്കിൽ വേറെ ദിവസം ചോദിക്കൂ.", templates=("confirm_appointments",)),
     _c(id="ml-supplier", lang="ml", pack="cement_dealer", instruction="എന്റെ മൂന്ന് cement suppliers നെ call ചെയ്ത് ഇന്നത്തെ bag വിലയും ഏത് ദിവസം deliver ചെയ്യും എന്നും ചോദിക്കൂ.", templates=("supplier_price_enquiry",), channels=("call", "both"), provided=(("Supplier One", "9876500011"), ("Supplier Two", "9876500012"), ("Supplier Three", "9876500013"))),
     _c(id="ml-school-event", lang="ml", pack="school", instruction="ശനിയാഴ്ചത്തെ annual day ന് എല്ലാ parents നെയും WhatsApp ൽ ക്ഷണിക്കൂ.", templates=("offer_invite", "custom"), channels=("whatsapp", "both")),
 )

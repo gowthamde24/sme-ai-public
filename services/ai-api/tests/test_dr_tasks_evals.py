@@ -41,7 +41,7 @@ def test_the_set_is_thirty_instructions_in_six_languages_and_several_business_ty
     assert evals.eval_set_ok() == []
     counts = {lang: sum(1 for c in evals.CASES if c.lang == lang) for lang in ("en", "te", "hi", "kn", "ta", "ml")}
     assert counts == {"en": 2, "te": 7, "hi": 7, "kn": 5, "ta": 5, "ml": 4}
-    assert {c.pack for c in evals.CASES} >= {"saree_shop", "cement_dealer", "school", "real_estate", "coaching", "clinic"}
+    assert {c.pack for c in evals.CASES} >= {"saree_shop", "cement_dealer", "school", "builder", "tuition", "doctor"}
     assert sum(1 for c in evals.CASES if c.asks_question) == 4, "unclear instructions must get a question"
     assert {t for c in evals.CASES for t in c.templates} >= {"call_new_leads", "reengage_old_leads", "confirm_appointments", "collect_feedback", "payment_reminder", "supplier_price_enquiry", "offer_invite"}
 
