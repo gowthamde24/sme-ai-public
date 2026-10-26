@@ -14,3 +14,5 @@ export const ContactForm = dynamic(() => import("./ContactForm").then((m) => m.C
 export const Workforce = dynamic(() => import("./Workforce").then((m) => m.Workforce));
 export const NaturalCalls = dynamic(() => import("./NaturalCalls").then((m) => m.NaturalCalls));
 export const PlansPreview = dynamic(() => import("./PlansPreview").then((m) => m.PlansPreview));
+// job DQ: the "book a demo" form is on the home page, the business types' pages and the contact page; it is a chunk of its own like the contact form
+export const WaitlistForm = dynamic(() => import("./WaitlistForm").then((m) => m.WaitlistForm));

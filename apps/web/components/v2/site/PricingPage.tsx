@@ -7,6 +7,7 @@ import { btnPrimary, btnSecondary, card, chip, container, h2, lead, section } fr
 import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
+import { startEntry } from "@/lib/site/entry";
 import { PLANS, TRIAL_DAYS, type PlanId } from "@/lib/site/plans";
 import { SITE_PACKS, say, textIn } from "@/lib/site/packs";
 import { sitePath } from "@/lib/site/paths";
@@ -18,6 +19,7 @@ const NAME: Record<PlanId, "price.starter.t" | "price.growth.t" | "price.busines
  * plan fits. NO amount is shown anywhere: the owner decides the prices after usage tests, so each plan says "Pricing announced soon". No plan limit is stated because none is decided.
  */
 export function PricingPage({ t, lang }: { t: SiteT; lang: Lang }) {
+  const start = startEntry(t, lang, t("cta.start"));
   const faq = ([1, 2, 3] as const).map((n) => ({ q: t(`price.faq.${n}.q`), a: t(`price.faq.${n}.a`) }));
   return (
     <>
@@ -37,8 +39,8 @@ export function PricingPage({ t, lang }: { t: SiteT; lang: Lang }) {
             <h2 className="text-xl font-semibold">{t("price.trial.t")}</h2>
             <p className="mt-2 text-base text-muted">{t("price.trial.d", { days: String(TRIAL_DAYS) })}</p>
             <div className="mt-auto pt-4">
-              <Link href="/signup" className={`${btnPrimary} w-full`}>
-                {t("cta.start")}
+              <Link href={start.href} className={`${btnPrimary} w-full`}>
+                {start.label}
               </Link>
             </div>
           </li>
@@ -120,7 +122,7 @@ export function PricingPage({ t, lang }: { t: SiteT; lang: Lang }) {
       <Section id="faq" title={t("faq.title")} narrow tone="soft">
         <FaqList items={faq} />
       </Section>
-      <CtaBand t={t} />
+      <CtaBand t={t} lang={lang} />
       <JsonLd data={faqLd(faq.map((f) => ({ q: fillPlain(f.q), a: fillPlain(f.a) })))} />
     </>
   );

@@ -8,16 +8,19 @@ import { JsonLd, faqLd } from "@/components/v2/site/JsonLd";
 import { PaverCalculator } from "@/components/v2/site/LazyIslands";
 import type { CalcWords } from "@/components/v2/site/PaverCalculator";
 import { CtaBand, FaqList, FeatureGrid, OWLS, Section } from "@/components/v2/site/sections";
+import { hasWaitlist, WaitlistSection, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { btnPrimary, card, chip, container, eyebrow, lead, linkQuiet } from "@/components/v2/site/ui";
 import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import type { LeadResult } from "@/lib/site/lead";
+import { startEntry } from "@/lib/site/entry";
+import { websiteOnly } from "@/lib/site/mode";
 import { owlName, say, textIn } from "@/lib/site/packs";
 import { sitePath } from "@/lib/site/paths";
 import type { SitePack } from "@/lib/site/types";
 
-type Actions = { quoteChat: (input: unknown) => Promise<LeadResult>; chatAvailable: boolean };
+type Actions = { quoteChat: (input: unknown) => Promise<LeadResult>; chatAvailable: boolean; waitlist?: WaitlistAction };
 
 /**
  * The page of one business type (job CM, blueprint section 7), built ENTIRELY from its landing.json (and the pack's names and owl labels): the problem, a day with the owls, what it does, then the blocks the file asks for
@@ -25,6 +28,7 @@ type Actions = { quoteChat: (input: unknown) => Promise<LeadResult>; chatAvailab
  */
 export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT; lang: Lang; actions: Actions }) {
   const faq = pack.faq.map((f) => ({ q: say(f.q, lang), a: say(f.a, lang) }));
+  const start = startEntry(t, lang, t("hero.cta"), { hasForm: hasWaitlist(actions.waitlist) });
   return (
     <>
       <section aria-labelledby="h1" className={`${container} grid items-center gap-8 pb-10 pt-6 sm:pt-10 lg:grid-cols-[1.2fr_1fr] lg:gap-12 lg:pb-16`}>
@@ -37,15 +41,15 @@ export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT;
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">{say(pack.hero.sub, lang)}</p>
           <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Link href="/signup" className={`${btnPrimary} max-sm:min-h-12`}>
-              {t("hero.cta")}
+            <Link href={start.href} className={`${btnPrimary} max-sm:min-h-12`}>
+              {start.label}
               <ArrowRight className="size-5" aria-hidden="true" />
             </Link>
             <Link href={sitePath(lang, { kind: "page", page: "pricing" })} className={linkQuiet}>
               {t("nav.pricing")}
             </Link>
           </div>
-          <p className="mt-3 text-sm text-muted">{t("hero.note")}</p>
+          <p className="mt-3 text-sm text-muted">{websiteOnly() ? t("demo.note") : t("hero.note")}</p>
           {!pack.validated ? <p className="mt-2 text-sm font-medium text-pack-text" data-accent={pack.accent}>{t("packs.notValidated")}</p> : null}
         </div>
         <div className="relative flex justify-center lg:justify-end">
@@ -133,18 +137,21 @@ export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT;
             ))}
           </ul>
           <p className={`${lead} !max-w-none text-base`}>{say(pack.children_promise.note, lang)}</p>
-          <p className="mt-2">
-            <Link href={sitePath(lang, { kind: "page", page: "security" })} className={linkQuiet}>
-              {t("trust.more")}
-            </Link>
-          </p>
+          {websiteOnly() ? null : (
+            <p className="mt-2">
+              <Link href={sitePath(lang, { kind: "page", page: "security" })} className={linkQuiet}>
+                {t("trust.more")}
+              </Link>
+            </p>
+          )}
         </Section>
       ) : null}
 
       <Section id="faq" title={t("faq.title")} narrow>
         <FaqList items={faq} />
       </Section>
-      <CtaBand t={t} />
+      <WaitlistSection t={t} lang={lang} action={actions.waitlist} />
+      <CtaBand t={t} lang={lang} hasForm={hasWaitlist(actions.waitlist)} />
       <JsonLd data={faqLd(faq.map((f) => ({ q: fillPlain(f.q), a: fillPlain(f.a) })))} />
     </>
   );

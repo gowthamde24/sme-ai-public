@@ -376,12 +376,12 @@ export function publicApiBase(): string {
   return apiBaseUrl();
 }
 
-/** A GET of a public route (no sign-in: `GET /v1/policies/current`): no Authorization header. The status is judged as for every other request; a rejected session cannot happen here, so a 401 is just a refusal. */
-export async function apiPublicRequest(path: string): Promise<unknown> {
+/** A request to a public route (no sign-in: `GET /v1/policies/current`, `POST /v1/public/waitlist`): no Authorization header. The status is judged as for every other request; a rejected session cannot happen here, so a 401 is just a refusal. */
+export async function apiPublicRequest(path: string, init: { method?: "GET" | "POST"; body?: unknown; headers?: Record<string, string> } = {}): Promise<unknown> {
   const base = apiBaseUrl();
   let response: Response;
   try {
-    response = await fetch(`${base}${path}`, { cache: "no-store" });
+    response = await fetch(`${base}${path}`, { cache: "no-store", method: init.method ?? "GET", ...(init.body === undefined ? {} : { body: JSON.stringify(init.body) }), headers: { ...(init.body === undefined ? {} : { "Content-Type": "application/json" }), ...init.headers } });
   } catch {
     throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
   }

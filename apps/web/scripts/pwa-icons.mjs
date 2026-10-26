@@ -2,8 +2,9 @@
 //   icon-<size>.png            "any" icons, the circle on a transparent square (48 to 512)
 //   maskable-192/512.png        the circle in the middle 62% on the brand colour, full bleed, so any mask shape keeps the whole circle
 //   apple-touch-icon.png        180 px, opaque (iOS draws its own corners)
+//   ../../app/favicon.ico       16, 32 and 48 px circles in one .ico (job DQ: it was a flat black circle with a triangle)
 // The generated files are committed; run this only when the circle or the brand colour changes. A test (lib/pwa/pwa.test.ts) checks the set exists and the svg is a plain file.
-import { mkdirSync, readFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -34,4 +35,29 @@ for (const j of jobs) {
   await page.screenshot({ path: path.join(out, j.file), omitBackground: j.bg === null });
   console.log(j.file);
 }
+// the favicon: three PNGs in one .ico (a PNG entry is allowed in an .ico since Windows Vista; every browser reads it)
+const sizes = [16, 32, 48];
+const pngs = [];
+for (const size of sizes) {
+  await page.setViewportSize({ width: size, height: size });
+  await page.setContent(`<!doctype html><html><body style="margin:0;width:${size}px;height:${size}px;background:transparent">${svg.replace(' viewBox', ` style="display:block" viewBox`)}</body></html>`);
+  pngs.push(await page.screenshot({ omitBackground: true }));
+}
+const head = Buffer.alloc(6);
+head.writeUInt16LE(1, 2);
+head.writeUInt16LE(sizes.length, 4);
+let offset = 6 + 16 * sizes.length;
+const entries = sizes.map((size, i) => {
+  const e = Buffer.alloc(16);
+  e.writeUInt8(size, 0);
+  e.writeUInt8(size, 1);
+  e.writeUInt16LE(1, 4); // colour planes
+  e.writeUInt16LE(32, 6); // bits per pixel
+  e.writeUInt32LE(pngs[i].length, 8);
+  e.writeUInt32LE(offset, 12);
+  offset += pngs[i].length;
+  return e;
+});
+writeFileSync(path.join(web, "app/favicon.ico"), Buffer.concat([head, ...entries, ...pngs]));
+console.log("app/favicon.ico");
 await browser.close();

@@ -3995,5 +3995,192 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "demo.cta": {
+  "en": "Book a demo",
+  "te": "డెమో బుక్ చేయండి",
+  "hi": "डेमो बुक करें",
+  "kn": "ಡೆಮೊ ಬುಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.title": {
+  "en": "Book a demo or join the waitlist",
+  "te": "డెమో బుక్ చేయండి లేదా వెయిటింగ్ లిస్ట్‌లో చేరండి",
+  "hi": "डेमो बुक करें या वेटिंग लिस्ट में जुड़ें",
+  "kn": "ಡೆಮೊ ಬುಕ್ ಮಾಡಿ ಅಥವಾ ವೇಟಿಂಗ್ ಲಿಸ್ಟ್‌ಗೆ ಸೇರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.sub": {
+  "en": "Tell us about your business. We will contact you to show how it works and to tell you when your place opens.",
+  "te": "మీ వ్యాపారం గురించి చెప్పండి. ఇది ఎలా పనిచేస్తుందో చూపించడానికి, మీ చోటు ఎప్పుడు తెరుచుకుంటుందో చెప్పడానికి మేము మిమ్మల్ని సంప్రదిస్తాము.",
+  "hi": "अपने कारोबार के बारे में बताइए। हम आपसे संपर्क करके दिखाएँगे कि यह कैसे काम करता है और बताएँगे कि आपकी जगह कब खुलेगी।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ ಹೇಳಿ. ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂದು ತೋರಿಸಲು ಮತ್ತು ನಿಮ್ಮ ಸ್ಥಾನ ಯಾವಾಗ ತೆರೆಯುತ್ತದೆ ಎಂದು ತಿಳಿಸಲು ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.city": {
+  "en": "Your city or town",
+  "te": "మీ నగరం లేదా ఊరు",
+  "hi": "आपका शहर या गाँव",
+  "kn": "ನಿಮ್ಮ ನಗರ ಅಥವಾ ಊರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.contact": {
+  "en": "Phone number or e-mail",
+  "te": "ఫోన్ నంబర్ లేదా ఈమెయిల్",
+  "hi": "फ़ोन नंबर या ईमेल",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಅಥವಾ ಇಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.lang": {
+  "en": "The language you prefer",
+  "te": "మీరు ఇష్టపడే భాష",
+  "hi": "आपकी पसंदीदा भाषा",
+  "kn": "ನೀವು ಬಯಸುವ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.marketing": {
+  "en": "Also send me news and offers about {brand} (optional). These can be stopped at any time.",
+  "te": "{brand} గురించి వార్తలు, ఆఫర్లు కూడా పంపండి (ఐచ్ఛికం). వీటిని ఎప్పుడైనా ఆపవచ్చు.",
+  "hi": "{brand} की खबरें और ऑफ़र भी भेजें (वैकल्पिक)। इन्हें कभी भी बंद कराया जा सकता है।",
+  "kn": "{brand} ಬಗ್ಗೆ ಸುದ್ದಿ, ಆಫರ್‌ಗಳನ್ನೂ ಕಳುಹಿಸಿ (ಐಚ್ಛಿಕ). ಇವುಗಳನ್ನು ಯಾವಾಗ ಬೇಕಾದರೂ ನಿಲ್ಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.notice": {
+  "en": "We use these details only to get back to you about a demo and your place on the waitlist.",
+  "te": "ఈ వివరాలను డెమో గురించి, వెయిటింగ్ లిస్ట్‌లో మీ చోటు గురించి మీకు తిరిగి చెప్పడానికి మాత్రమే వాడతాము.",
+  "hi": "इन जानकारियों का उपयोग हम सिर्फ़ डेमो और वेटिंग लिस्ट में आपकी जगह के बारे में आपको जवाब देने के लिए करते हैं।",
+  "kn": "ಈ ವಿವರಗಳನ್ನು ಡೆಮೊ ಮತ್ತು ವೇಟಿಂಗ್ ಲಿಸ್ಟ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಸ್ಥಾನದ ಬಗ್ಗೆ ನಿಮಗೆ ಉತ್ತರಿಸಲು ಮಾತ್ರ ಬಳಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.submit": {
+  "en": "Send my details",
+  "te": "నా వివరాలు పంపండి",
+  "hi": "मेरी जानकारी भेजें",
+  "kn": "ನನ್ನ ವಿವರಗಳನ್ನು ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.thanks.t": {
+  "en": "Thank you. We have your details.",
+  "te": "ధన్యవాదాలు. మీ వివరాలు మాకు అందాయి.",
+  "hi": "धन्यवाद। आपकी जानकारी हमें मिल गई।",
+  "kn": "ಧನ್ಯವಾದಗಳು. ನಿಮ್ಮ ವಿವರಗಳು ನಮಗೆ ತಲುಪಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.thanks.d": {
+  "en": "We will get in touch about a demo. News and offers are sent only if you ticked the optional box.",
+  "te": "డెమో గురించి మేము మిమ్మల్ని సంప్రదిస్తాము. ఐచ్ఛిక బాక్స్‌ను టిక్ చేస్తేనే వార్తలు, ఆఫర్లు పంపుతాము.",
+  "hi": "हम डेमो के बारे में आपसे संपर्क करेंगे। खबरें और ऑफ़र तभी भेजे जाएँगे जब आपने वैकल्पिक बॉक्स पर टिक किया हो।",
+  "kn": "ಡೆಮೊ ಬಗ್ಗೆ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತೇವೆ. ಐಚ್ಛಿಕ ಬಾಕ್ಸ್‌ಗೆ ಟಿಕ್ ಮಾಡಿದರೆ ಮಾತ್ರ ಸುದ್ದಿ, ಆಫರ್‌ಗಳನ್ನು ಕಳುಹಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.err.contact": {
+  "en": "Give a phone number with 7 to 15 digits, or an e-mail address.",
+  "te": "7 నుంచి 15 అంకెల ఫోన్ నంబర్ లేదా ఈమెయిల్ చిరునామా ఇవ్వండి.",
+  "hi": "7 से 15 अंकों का फ़ोन नंबर या ईमेल पता दीजिए।",
+  "kn": "7 ರಿಂದ 15 ಅಂಕೆಗಳ ಫೋನ್ ನಂಬರ್ ಅಥವಾ ಇಮೇಲ್ ವಿಳಾಸ ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.err.down": {
+  "en": "We could not save your details just now. Write to us by e-mail instead.",
+  "te": "మీ వివరాలను ఇప్పుడు సేవ్ చేయలేకపోయాము. బదులుగా మాకు ఈమెయిల్ చేయండి.",
+  "hi": "आपकी जानकारी अभी सेव नहीं हो सकी। इसकी जगह हमें ईमेल कीजिए।",
+  "kn": "ನಿಮ್ಮ ವಿವರಗಳನ್ನು ಈಗ ಉಳಿಸಲು ಆಗಲಿಲ್ಲ. ಬದಲಿಗೆ ನಮಗೆ ಇಮೇಲ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "demo.note": {
+  "en": "Opening to businesses soon. Book a demo and we will tell you when your place is ready.",
+  "te": "త్వరలో వ్యాపారాలకు తెరుచుకుంటుంది. డెమో బుక్ చేయండి, మీ చోటు సిద్ధమైనప్పుడు చెబుతాము.",
+  "hi": "जल्द ही कारोबारों के लिए खुल रहा है। डेमो बुक करें, आपकी जगह तैयार होने पर हम बताएँगे।",
+  "kn": "ಶೀಘ್ರದಲ್ಲೇ ವ್ಯಾಪಾರಗಳಿಗೆ ತೆರೆಯುತ್ತಿದೆ. ಡೆಮೊ ಬುಕ್ ಮಾಡಿ, ನಿಮ್ಮ ಸ್ಥಾನ ಸಿದ್ಧವಾದಾಗ ತಿಳಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "soon.title": {
+  "en": "Opening soon — book a demo",
+  "te": "త్వరలో ప్రారంభం — డెమో బుక్ చేయండి",
+  "hi": "जल्द शुरू — डेमो बुक करें",
+  "kn": "ಶೀಘ್ರದಲ್ಲೇ ಆರಂಭ — ಡೆಮೊ ಬುಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "soon.sub": {
+  "en": "The app is not open to everyone yet. Tell us about your business and we will contact you when your place is ready.",
+  "te": "యాప్ ఇంకా అందరికీ తెరవలేదు. మీ వ్యాపారం గురించి చెప్పండి, మీ చోటు సిద్ధమైనప్పుడు సంప్రదిస్తాము.",
+  "hi": "ऐप अभी सबके लिए नहीं खुला है। अपने कारोबार के बारे में बताइए, आपकी जगह तैयार होने पर हम संपर्क करेंगे।",
+  "kn": "ಆ್ಯಪ್ ಇನ್ನೂ ಎಲ್ಲರಿಗೂ ತೆರೆದಿಲ್ಲ. ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ ಹೇಳಿ, ನಿಮ್ಮ ಸ್ಥಾನ ಸಿದ್ಧವಾದಾಗ ಸಂಪರ್ಕಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.soon.title": {
+  "en": "Opening soon: {brand}",
+  "te": "త్వరలో ప్రారంభం: {brand}",
+  "hi": "जल्द शुरू: {brand}",
+  "kn": "ಶೀಘ್ರದಲ್ಲೇ ಆರಂಭ: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
