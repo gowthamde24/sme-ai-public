@@ -3,12 +3,15 @@ import Link from "next/link";
 
 import { JsonLd } from "@/components/v2/site/JsonLd";
 import { BuiltFor, CallsSection, FinalCta, HeroExample, HowSection, PlansSection, TrustBand, WorkforceSection } from "@/components/v2/site/HomeSections";
+import { hasWaitlist, WaitlistSection, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { btnPrimary, container } from "@/components/v2/site/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import { PUBLIC_URL } from "@/lib/seo/site";
+import { startEntry } from "@/lib/site/entry";
+import { websiteOnly } from "@/lib/site/mode";
 import { sitePath } from "@/lib/site/paths";
 
 const badge = "inline-flex items-center text-sm font-semibold text-muted";
@@ -18,7 +21,8 @@ const badge = "inline-flex items-center text-sm font-semibold text-muted";
  * built for, natural AI calls (early access), the plans (no price), four promises and the last call to action. Every word is a string of i18n/strings/site.json or a field of a business type's landing.json; the four animated blocks
  * (the example, the workers, the voice card, the plan tabs) are the only client code, and each stands still with "reduce motion".
  */
-export function HomePage({ t, lang }: { t: SiteT; lang: Lang }) {
+export function HomePage({ t, lang, waitlist }: { t: SiteT; lang: Lang; waitlist?: WaitlistAction }) {
+  const start = startEntry(t, lang, t("hero.cta"), { hasForm: hasWaitlist(waitlist) });
   return (
     <>
       <section aria-labelledby="h1" className={`${container} flex flex-wrap items-center gap-12 pb-12 pt-10 sm:pb-16 sm:pt-16`}>
@@ -29,8 +33,8 @@ export function HomePage({ t, lang }: { t: SiteT; lang: Lang }) {
           </h1>
           <p className="max-w-[34em] text-lg leading-relaxed text-muted sm:text-xl">{t("hero.sub")}</p>
           <div className="flex flex-wrap items-center gap-3">
-            <Link href="/signup" className={`${btnPrimary} font-extrabold max-sm:w-full`}>
-              {t("hero.cta")}
+            <Link href={start.href} className={`${btnPrimary} font-extrabold max-sm:w-full`}>
+              {start.label}
               <ArrowRight className="size-5" aria-hidden="true" />
             </Link>
             <Link href="#how" className="inline-flex min-h-14 items-center justify-center rounded-lg border-[1.5px] border-edge px-5 text-base font-bold text-ink hover:bg-surface-2 max-sm:w-full">
@@ -38,7 +42,7 @@ export function HomePage({ t, lang }: { t: SiteT; lang: Lang }) {
             </Link>
           </div>
           <p className="text-sm text-muted" data-part="trial-note">
-            {t("hero.note")}
+            {websiteOnly() ? t("demo.note") : t("hero.note")}
           </p>
           <p className="flex flex-wrap gap-x-5 gap-y-2" data-part="badges">
             <span className={badge}>{t("hero.badge.channels")}</span>
@@ -56,6 +60,7 @@ export function HomePage({ t, lang }: { t: SiteT; lang: Lang }) {
       <CallsSection t={t} />
       <PlansSection t={t} lang={lang} />
       <TrustBand t={t} />
+      <WaitlistSection t={t} lang={lang} action={waitlist} />
       <FinalCta t={t} lang={lang} />
       <JsonLd
         data={{

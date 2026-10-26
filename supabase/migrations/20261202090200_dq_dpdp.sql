@@ -566,7 +566,25 @@ $$;
 revoke all on function public.scheduler_lapse_erase(uuid) from public, anon;
 grant execute on function public.scheduler_lapse_erase(uuid) to authenticated;
 
--- what the Owner's screen needs: has the warning gone, and for which day
+-- a demo workspace (synthetic data, sending switched off): the web shows the demo banner from this flag, not from the workspace's name. Set by the operator only; every demo is also billing_exempt.
+alter table public.tenants add column demo boolean not null default false;
+comment on column public.tenants.demo is 'SAFE: a flag set by the operator. CLEAN-EXEMPT: boolean';
+create function app.operator_set_demo(p_tenant uuid, p_demo boolean) returns void
+language plpgsql
+set search_path = ''
+as $$
+begin
+  if auth.uid() is not null then
+    raise exception 'operator only' using errcode = '42501';
+  end if;
+  update public.tenants set demo = coalesce(p_demo, false), billing_exempt = case when coalesce(p_demo, false) then true else billing_exempt end where id = p_tenant;
+end;
+$$;
+revoke all on function app.operator_set_demo(uuid, boolean) from public, anon, authenticated, service_role;
+-- the synthetic workspaces that exist today (the staging demos are named DEMO ... (synthetic) and are exempt already)
+update public.tenants set demo = true where billing_exempt and name ilike 'DEMO %';
+
+-- what the Owner's screen needs: has the warning gone, and for which day; and whether the workspace is a demo (and exempt from billing)
 create function public.lapse_erasure_status(p_tenant_id uuid) returns jsonb
 language plpgsql
 stable
@@ -578,7 +596,8 @@ begin
     perform app.privacy_error('deny');
   end if;
   return jsonb_build_object('erasure_warning_sent_at',
-    (select l.warned_at from privacy.lapse_erasures l where l.workspace_id = p_tenant_id and l.erased_at is null and l.erase_at is not distinct from app.lapse_erase_at(p_tenant_id)));
+    (select l.warned_at from privacy.lapse_erasures l where l.workspace_id = p_tenant_id and l.erased_at is null and l.erase_at is not distinct from app.lapse_erase_at(p_tenant_id)),
+    'demo', (select t.demo from public.tenants t where t.id = p_tenant_id), 'exempt', (select t.billing_exempt from public.tenants t where t.id = p_tenant_id));
 end;
 $$;
 revoke all on function public.lapse_erasure_status(uuid) from public, anon;

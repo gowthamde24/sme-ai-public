@@ -13,6 +13,8 @@ import type { Lang } from "@/i18n/lang";
 import { CATALOGUE } from "@/lib/plan/catalogue";
 import { planGroups } from "@/lib/site/home-plans";
 import { SITE_PACKS, say, textIn } from "@/lib/site/packs";
+import { startEntry } from "@/lib/site/entry";
+import { waitlistMode } from "@/lib/waitlist/mode";
 import { sitePath } from "@/lib/site/paths";
 
 const kicker = "text-sm font-extrabold uppercase tracking-[0.12em]";
@@ -175,7 +177,8 @@ export function CallsSection({ t }: { t: SiteT }) {
 export function PlansSection({ t, lang }: { t: SiteT; lang: Lang }) {
   const groups = planGroups(CATALOGUE, (key, vars) => t(key as "hm.pl.f.ai", vars as Record<string, string>));
   const contact = sitePath(lang, { kind: "page", page: "contact" });
-  const tabs: PlanTab[] = groups.map((g) => ({ key: g.kind, label: t(g.kind === "main" ? "hm.pl.tab.main" : "hm.pl.tab.calls"), plans: g.plans.map((p) => ({ ...p, cta: t(g.kind === "main" ? "hm.pl.cta.main" : "hm.pl.cta.calls"), href: g.kind === "main" ? "/signup" : contact })) }));
+  const main = startEntry(t, lang, t("hm.pl.cta.main"), { hasForm: waitlistMode() !== "off" });
+  const tabs: PlanTab[] = groups.map((g) => ({ key: g.kind, label: t(g.kind === "main" ? "hm.pl.tab.main" : "hm.pl.tab.calls"), plans: g.plans.map((p) => ({ ...p, cta: g.kind === "main" ? main.label : t("hm.pl.cta.calls"), href: g.kind === "main" ? main.href : contact })) }));
   return (
     <section id="pricing" aria-labelledby="pricing-h" className="scroll-mt-20 border-t border-line bg-surface-2">
       <div className={`${container} flex flex-col gap-9 py-14 sm:py-[72px]`}>
@@ -215,6 +218,7 @@ export function TrustBand({ t }: { t: SiteT }) {
 
 /** The last call to action, with the AI circle above it. */
 export function FinalCta({ t, lang }: { t: SiteT; lang: Lang }) {
+  const start = startEntry(t, lang, t("cta.start"), { hasForm: waitlistMode() !== "off" });
   return (
     <section id="start" aria-labelledby="start-h" className={`${container} flex scroll-mt-20 flex-col items-center gap-5 py-16 text-center sm:py-24`}>
       <Orb px={72} state="think" halo />
@@ -223,8 +227,8 @@ export function FinalCta({ t, lang }: { t: SiteT; lang: Lang }) {
       </h2>
       <p className="max-w-[34em] text-[17px] leading-relaxed text-muted">{t("cta.sub")}</p>
       <div className="flex flex-wrap justify-center gap-3">
-        <Link href="/signup" className={`${btnPrimary} font-extrabold`}>
-          {t("cta.start")}
+        <Link href={start.href} className={`${btnPrimary} font-extrabold`}>
+          {start.label}
         </Link>
         <Link href={sitePath(lang, { kind: "page", page: "contact" })} className={outline}>
           {t("cta.contact")}

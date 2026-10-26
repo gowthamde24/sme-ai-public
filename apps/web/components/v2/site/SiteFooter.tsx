@@ -10,6 +10,7 @@ import type { Lang } from "@/i18n/lang";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { LANGS } from "@/i18n/lang";
 import { ADDRESSES } from "@/lib/site/business";
+import { isServed } from "@/lib/site/mode";
 import { sitePath, SITE_PAGES, type SitePage, type SiteTarget } from "@/lib/site/paths";
 
 const row = "inline-flex min-h-11 min-w-11 items-center text-sm font-medium text-ink hover:underline";
@@ -43,7 +44,7 @@ export function SiteFooter({ t, lang, target = { kind: "home" } }: { t: SiteT; l
         <nav aria-label={t("foot.pages")}>
           <p className="text-sm font-semibold text-muted">{t("foot.pages")}</p>
           <ul className="mt-1 flex flex-col">
-            {SITE_PAGES.map((page) => (
+            {SITE_PAGES.filter((page) => isServed({ kind: "page", page })).map((page) => (
               <li key={page}>
                 <Link href={sitePath(lang, { kind: "page", page })} className={row}>
                   {t(LABEL[page])}

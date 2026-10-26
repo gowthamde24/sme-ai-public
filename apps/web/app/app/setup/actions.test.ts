@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const submitAccountSetup = vi.fn();
 const revalidatePath = vi.fn();
@@ -47,5 +47,58 @@ describe("the completeSetup action", () => {
     expect(await completeSetup({ businessType: "Bad Type" as never, language: "en" })).toMatchObject({ ok: false });
     expect(submitAccountSetup).not.toHaveBeenCalled();
     expect(revalidatePath).not.toHaveBeenCalled();
+  });
+});
+
+describe("the first sign-in records the unticked marketing box (job DQ part 2)", () => {
+  const cookieJar = new Map<string, string>();
+  const changeMarketing = vi.fn();
+  beforeEach(async () => {
+    cookieJar.clear();
+    changeMarketing.mockReset();
+    changeMarketing.mockResolvedValue({ ok: true, consents: {} });
+    submitAccountSetup.mockResolvedValue({ tenantId: "t", created: true });
+    vi.stubEnv("DPDP_SCREENS", "1");
+    vi.doMock("next/headers", () => ({ cookies: async () => ({ get: (n: string) => (cookieJar.has(n) ? { value: cookieJar.get(n) } : undefined), delete: (n: string) => cookieJar.delete(n) }) }));
+    vi.doMock("@/lib/dpdp/source", () => ({ changeMarketing: (...a: unknown[]) => changeMarketing(...a) }));
+    vi.resetModules();
+  });
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.doUnmock("next/headers");
+    vi.doUnmock("@/lib/dpdp/source");
+  });
+  const run = async () => (await import("./actions")).completeSetup({ businessType: "textiles", language: "en" });
+
+  it("by e-mail (the account's metadata says so): recorded once, 'signup', after the business is made", async () => {
+    user.mockReturnValue({ id: "u", accessToken: "tok", signupMarketing: true });
+    expect(await run()).toEqual({ ok: true });
+    expect(changeMarketing).toHaveBeenCalledTimes(1);
+    expect(changeMarketing).toHaveBeenCalledWith("tok", true, "signup");
+  });
+  it("through Google (the cookie of the browser that went there): 'google'; through Facebook: 'signup'; the cookie is used up", async () => {
+    user.mockReturnValue({ id: "u", accessToken: "tok" });
+    cookieJar.set("sme_signup_marketing", "google");
+    await run();
+    expect(changeMarketing).toHaveBeenLastCalledWith("tok", true, "google");
+    expect(cookieJar.has("sme_signup_marketing")).toBe(false);
+    cookieJar.set("sme_signup_marketing", "facebook");
+    await run();
+    expect(changeMarketing).toHaveBeenLastCalledWith("tok", true, "signup");
+  });
+  it("nothing is recorded when the box was not ticked, when the cookie is not ours, when the consent API is off, or when the business could not be made", async () => {
+    user.mockReturnValue({ id: "u", accessToken: "tok" });
+    await run();
+    cookieJar.set("sme_signup_marketing", "https://evil.example");
+    await run();
+    expect(changeMarketing).not.toHaveBeenCalled();
+    user.mockReturnValue({ id: "u", accessToken: "tok", signupMarketing: true });
+    vi.stubEnv("DPDP_SCREENS", "");
+    await run();
+    expect(changeMarketing).not.toHaveBeenCalled();
+    vi.stubEnv("DPDP_SCREENS", "1");
+    submitAccountSetup.mockRejectedValue(new Error("no"));
+    await run();
+    expect(changeMarketing).not.toHaveBeenCalled();
   });
 });

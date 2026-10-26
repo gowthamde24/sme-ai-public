@@ -21,7 +21,7 @@ describe("accepting a changed policy", () => {
   it("shows only what changed, with its version, a link to read it in a new tab, and a box nobody ticked for the person", () => {
     render(<AcceptForm words={WORDS} status={status({ terms: true, privacy: false })} accept={vi.fn()} next="/app" />);
     expect(screen.getByText("Terms of use")).toBeInTheDocument();
-    expect(screen.queryByText("Privacy Policy")).toBeNull();
+    expect(screen.queryByText("Privacy notice")).toBeNull();
     expect(screen.getByText(/Version 2026-11-01/)).toBeInTheDocument();
     expect(screen.getByText(/in force from 2026-11-10/)).toBeInTheDocument();
     const read = screen.getByRole("link", { name: /Read the Terms/ });
@@ -35,8 +35,8 @@ describe("accepting a changed policy", () => {
     const accept = vi.fn(async () => ok);
     render(<AcceptForm words={WORDS} status={status({ terms: true, privacy: true })} accept={accept} next="/app/tenants/x" />);
     fireEvent.click(screen.getByRole("checkbox", { name: /Terms/ }));
-    expect(screen.getByRole("button", { name: "Accept and continue" })).toBeDisabled(); // the Privacy Policy is not ticked yet
-    fireEvent.click(screen.getByRole("checkbox", { name: /Privacy Policy/ }));
+    expect(screen.getByRole("button", { name: "Accept and continue" })).toBeDisabled(); // the Privacy notice is not ticked yet
+    fireEvent.click(screen.getByRole("checkbox", { name: /Privacy notice/ }));
     await press("Accept and continue");
     expect(accept).toHaveBeenCalledWith({ terms: "2026-11-01", privacy: "2026-10-01" });
     expect(replace).toHaveBeenCalledWith("/app/tenants/x");

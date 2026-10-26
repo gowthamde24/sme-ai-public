@@ -46,7 +46,7 @@ describe("/app/security", () => {
     requireUser.mockResolvedValue(user(true, "aal2"));
     render(await SecurityPage(props()));
     expect(screen.getByRole("heading", { name: "If you lose your phone" })).toBeInTheDocument();
-    expect(screen.getByText(/There are no backup codes. Ask the operator/)).toBeInTheDocument();
+    expect(screen.getByText(/There are no backup codes. Write to us/)).toBeInTheDocument();
   });
 
   it("confirms what just happened", async () => {
