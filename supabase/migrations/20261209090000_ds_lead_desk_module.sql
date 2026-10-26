@@ -2,4 +2,4 @@
 -- The markers below are read back by the script and by tests/integration/test_ck_packs_db.py (the manifest in the database must be the one in the repository, byte for byte).
 
 -- module-sync: lead_desk
-insert into packs.modules (code, exists_today, guard, description) values ('lead_desk', false, 'flag', 'Lead Desk, the core of Stack19: lead sources, AI calls, WhatsApp, outcomes, follow-ups, reports and Ask Vijaya to do it. On for every business type (not listed by a pack: the database turns it on for every workspace that has a pack)');
+insert into packs.modules (code, exists_today, guard, description) values ('lead_desk', false, 'flag', 'Lead Desk, the core of Stack19: lead sources, AI calls, WhatsApp, outcomes, follow-ups, reports. On for every business type (core: no pack lists it)');

@@ -160,7 +160,7 @@
     {
       "code": "lead_desk",
       "exists_today": false,
-      "description": "Lead Desk, the core of Stack19: lead sources, AI calls, WhatsApp, outcomes, follow-ups, reports and Ask Vijaya to do it. On for every business type (not listed by a pack: the database turns it on for every workspace that has a pack)",
+      "description": "Lead Desk, the core of Stack19: lead sources, AI calls, WhatsApp, outcomes, follow-ups, reports. On for every business type (core: no pack lists it)",
       "guard": "flag"
     }
   ]
