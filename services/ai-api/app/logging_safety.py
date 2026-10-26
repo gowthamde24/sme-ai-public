@@ -30,6 +30,9 @@ ROUTE_WORDS = frozenset(
         # job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors
         "consents", "marketing", "privacy", "notice", "subprocessors", "grievance", "public",
         "waitlist", "speaking-style",
+        # job DR B1: tasks
+        "tasks", "plan", "answer", "exclude", "run", "pause", "resume", "cancel", "cap", "report",
+        "templates",
         # job DP: marks and report messages to guardians (a file that is never stored)
         "marks-messages", "batches",
         # job CN: sites, dues, material quotes, deliveries, the public calculator
@@ -38,13 +41,13 @@ ROUTE_WORDS = frozenset(
         "challan", "notify", "policy", "orders", "catalogue", "void",
         # job CP: the shared ledger, reminder campaigns, the call list
         "statement", "entries", "charges", "receipts", "campaigns", "recipients", "from-ledger",
-        "clear", "pause", "resume", "results", "call-list", "outcome",
+        "clear", "results", "call-list", "outcome",
         # job CR: the education pack (the school's own vocabulary, never a person)
         "institution", "programmes", "groups", "students", "admissions", "stage", "admit",
         "erase", "fee-plans", "fee-assignments", "fees", "adjustments", "concessions",
         "guardians", "late-fees", "post", "pending", "announcements", "audience",
         # job CV: the one reports API and the voice notes
-        "run", "choices", "usage", "disclosure", "notes", "voice-notes", "voices",
+        "choices", "usage", "disclosure", "notes", "voice-notes", "voices",
         # job DP part 5: the Owner's own voice
         "voice-clone", "sentence", "delete",
         # job CK
@@ -55,7 +58,7 @@ ROUTE_WORDS = frozenset(
         "archive", "restore", "record-consent", "suppress", "lift-suppression",
         "evidence", "evidence-links",
         "icp-configs", "active", "import", "review-queue", "labels", "exports",
-        "agent-claims", "agent-cost", "agent-runs", "agent-settings", "cancel", "claims", "reviews",
+        "agent-claims", "agent-cost", "agent-runs", "agent-settings", "claims", "reviews",
         "enquiries", "requirement", "requirement-fields", "requirements",
         "confirm", "decision", "discard",
         "quote-setup", "quotes", "picks", "approve", "reject", "withdraw", "text",
@@ -67,7 +70,7 @@ ROUTE_WORDS = frozenset(
         # job BN: privacy rights
         "data-exports", "deletion-requests", "retention", "grievances", "link",
         # job BR: WhatsApp (no secret in the path; the verify token travels in the query, redacted)
-        "webhooks", "whatsapp", "templates", "activate", "disable", "submit", "read",
+        "webhooks", "whatsapp", "activate", "disable", "submit", "read",
         # job BY: the team, the shop's basics, the report, notifications and push
         "team", "invitations", "accept", "role", "reports", "weekly", "profile",
         "notifications", "seen", "push", "push-subscriptions", "public-key",

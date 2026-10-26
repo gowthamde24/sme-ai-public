@@ -48,6 +48,7 @@ _SPEND = (
     ("POST", r"/ai-assistant/test-call"),
     ("POST", r"/institution/marks-messages/send"),
     ("POST", r"/trips/[^/]+/notify"),
+    ("POST", r"/tasks/(plan|[^/]+/(answer|approve|run|resume))"),   # job DR B1: calls the model, starts calls and messages
     ("GET", r"/leads/search"),   # the outside lead search
 )
 _SPEND_RE = tuple((method, re.compile(pattern + r"$")) for method, pattern in _SPEND)

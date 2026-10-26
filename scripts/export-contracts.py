@@ -21,6 +21,7 @@ from app.ownvoice import contracts as own_voice
 from app.packs import contracts as packs
 from app.reports import contracts as reports
 from app.speaking import contracts as speaking
+from app.tasks import contracts as tasks
 from app.voice_notes import contracts as voice_notes
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -60,6 +61,8 @@ ROOT = Path(__file__).resolve().parents[1]
 (ROOT / "packages/contracts/marks_messages.ts").write_text(marks_messages.ts_text())
 (ROOT / "packages/contracts/speaking_style.schema.json").write_text(speaking.schema_text())
 (ROOT / "packages/contracts/speaking_style.ts").write_text(speaking.ts_text())
+(ROOT / "packages/contracts/tasks.schema.json").write_text(tasks.schema_text())
+(ROOT / "packages/contracts/tasks.ts").write_text(tasks.ts_text())
 print(
     "wrote packages/contracts/{crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.schema.json "
     "and {crm,evidence,leads,agents,erasure,packs,materials,campaigns,education,reports,voice_notes,billing,outcomes,assistant_settings,marks_messages}.ts"

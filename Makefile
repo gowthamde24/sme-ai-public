@@ -206,6 +206,11 @@ voice-samples-spoken:
 register-ab:
 	$(API)/.venv/bin/python scripts/register_ab.py $(if $(DRY),--dry-run,)
 
+# job DR B1: the 30 task-planning instructions (six languages) planned by the real planner with Claude Haiku ONLY; 500,000 tokens at most
+.PHONY: tasks-eval
+tasks-eval:
+	$(API)/.venv/bin/python scripts/tasks_eval.py $(if $(DRY),--dry-run,)
+
 # OPT-IN, NEVER part of make check: fetches https://example.com/ and https://example.org/ through the REAL guarded page
 # fetcher (T007 M1) and prints status, bytes, content type and sanitised-text length only. No model, no key, no cost.
 smoke-fetch:

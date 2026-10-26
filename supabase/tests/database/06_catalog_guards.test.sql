@@ -304,6 +304,8 @@ select is(
         'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue',
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
         'public.example_data_status', 'public.example_data_load', 'public.example_data_remove',
+        -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)
+        'public.task_context', 'public.task_save', 'public.task_get', 'public.tasks_list', 'public.task_contacts_list', 'public.task_report', 'public.task_exclude', 'public.task_approve', 'public.task_set_cap', 'public.task_set_state', 'public.task_claim', 'public.task_contact_result',
         -- job CN (ADR 0085): sites, the building-materials catalogue item, dues, material quotes and their order, deliveries. Each proves the role first; money moves need aal2 where the file says so
         'public.catalogue_material_save', 'public.site_save', 'public.site_get', 'public.sites_list', 'public.invoice_record', 'public.invoices_import', 'public.invoice_void', 'public.payment_record', 'public.payment_void', 'public.credit_limit_set', 'public.dues_statement', 'public.dues_summary', 'public.credit_check', 'public.dues_ledger', 'public.material_item_inputs', 'public.material_policy_create', 'public.material_policy_get', 'public.material_quote_build', 'public.material_quote_draft', 'public.material_quote_approve', 'public.material_quote_reject', 'public.material_quote_get', 'public.material_quotes_list', 'public.create_order_from_material_quote', 'public.trip_plan', 'public.trip_update', 'public.trip_set_status', 'public.trip_deliver', 'public.pod_ensure_bucket', 'public.trip_get', 'public.trips_list', 'public.delivery_challan_get', 'public.trip_update_submit',
         -- job CP (ADR 0086): the shared ledger (entries, imports, statements, receipts)
@@ -395,6 +397,8 @@ select is(
         'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue',
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
         'public.example_data_status', 'public.example_data_load', 'public.example_data_remove',
+        -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)
+        'public.task_context', 'public.task_save', 'public.task_get', 'public.tasks_list', 'public.task_contacts_list', 'public.task_report', 'public.task_exclude', 'public.task_approve', 'public.task_set_cap', 'public.task_set_state', 'public.task_claim', 'public.task_contact_result',
                      -- job DP part 5: the Owner's own voice
                      'public.own_voice_sentence', 'public.own_voice_get', 'public.own_voice_private', 'public.own_voice_ensure_bucket', 'public.own_voice_begin', 'public.own_voice_ready', 'public.own_voice_failed', 'public.own_voice_deleted',
                      -- job DQ part 3: every member reads the assistant's name
