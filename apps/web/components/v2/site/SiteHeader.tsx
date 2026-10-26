@@ -9,7 +9,10 @@ import { BRAND_NAME } from "@/design/brand";
 import type { SiteT } from "@/i18n/site";
 import { LANGS, type Lang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
+import { startEntry } from "@/lib/site/entry";
+import { websiteOnly } from "@/lib/site/mode";
 import { sitePath, type SiteTarget } from "@/lib/site/paths";
+import { waitlistMode } from "@/lib/waitlist/mode";
 
 const link = "inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-3 text-[15px] font-semibold text-ink hover:bg-surface-2";
 
@@ -24,6 +27,9 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
   const onHome = target.kind === "home";
   const base = onHome ? "" : home;
   const pricingPage = sitePath(lang, { kind: "page", page: "pricing" });
+  // website mode (job DQ): the app is closed, so there is no sign-in and the one button is "Book a demo" (to the form on the pages that have it)
+  const web = websiteOnly();
+  const start = startEntry(t, lang, t("nav.start"), { hasForm: waitlistMode() !== "off" && (target.kind !== "page" || target.page === "contact") });
   const nav = [
     { href: `${base}#workforce`, label: t("nav.workforce"), here: false },
     { href: `${base}#how`, label: t("nav.how"), here: false },
@@ -45,14 +51,16 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
-          <Link href="/login" className="hidden min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-lg px-3 text-[15px] font-bold text-ink hover:bg-surface-2 md:inline-flex">
-            {t("nav.signin")}
-          </Link>
+          {web ? null : (
+            <Link href="/login" className="hidden min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-lg px-3 text-[15px] font-bold text-ink hover:bg-surface-2 md:inline-flex">
+              {t("nav.signin")}
+            </Link>
+          )}
           <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} />
           <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
           <span className="hidden sm:block">
-            <Link href="/signup" className={`${btnPrimary} !min-h-11 whitespace-nowrap px-[18px] text-[15px] font-bold`}>
-              {t("nav.start")}
+            <Link href={start.href} className={`${btnPrimary} !min-h-11 whitespace-nowrap px-[18px] text-[15px] font-bold`}>
+              {start.label}
             </Link>
           </span>
           <details className="group relative lg:hidden">
@@ -69,14 +77,16 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
                     </Link>
                   </li>
                 ))}
-                <li>
-                  <Link href="/login" className={`${link} w-full text-brand-text`}>
-                    {t("nav.signin")}
-                  </Link>
-                </li>
+                {web ? null : (
+                  <li>
+                    <Link href="/login" className={`${link} w-full text-brand-text`}>
+                      {t("nav.signin")}
+                    </Link>
+                  </li>
+                )}
                 <li className="sm:hidden">
-                  <Link href="/signup" className={`${link} w-full font-semibold text-brand-text`}>
-                    {t("nav.start")}
+                  <Link href={start.href} className={`${link} w-full font-semibold text-brand-text`}>
+                    {start.label}
                   </Link>
                 </li>
               </ul>

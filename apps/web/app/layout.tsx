@@ -10,6 +10,7 @@ import { legalT } from "@/i18n/legal";
 import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
 import { CONSENT_COOKIE, readConsent } from "@/lib/consent/consent";
 import { PUBLIC_URL } from "@/lib/seo/site";
+import { websiteOnly } from "@/lib/site/mode";
 
 import "./globals.css";
 
@@ -50,7 +51,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" data-theme={theme}>
       <body>
         {children}
-        <ServiceWorker lang={lang} />
+        {websiteOnly() ? null : <ServiceWorker lang={lang} />}
         <V2Root theme={theme} lang={lang} className="sticky bottom-0 z-[70]">
           <CookieConsent initial={readConsent(jar.get(CONSENT_COOKIE)?.value)} words={Object.fromEntries(COOKIE_WORD_KEYS.map((k) => [k, t(k)]))} />
         </V2Root>

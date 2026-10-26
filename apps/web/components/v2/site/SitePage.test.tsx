@@ -4,7 +4,7 @@ vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
 
 // next/dynamic loads a chunk on the client; a test renders the real components at once
-vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, Workforce: (await import("./Workforce")).Workforce, NaturalCalls: (await import("./NaturalCalls")).NaturalCalls, PlansPreview: (await import("./PlansPreview")).PlansPreview }));
+vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, Workforce: (await import("./Workforce")).Workforce, NaturalCalls: (await import("./NaturalCalls")).NaturalCalls, PlansPreview: (await import("./PlansPreview")).PlansPreview, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm }));
 
 import { renderToStaticMarkup } from "react-dom/server";
 

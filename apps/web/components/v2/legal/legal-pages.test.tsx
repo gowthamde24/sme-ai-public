@@ -3,7 +3,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const jarValues: Record<string, string> = {};
-vi.mock("next/headers", () => ({ cookies: async () => ({ get: (name: string) => (name in jarValues ? { name, value: jarValues[name] } : undefined) }) }));
+const hostName = vi.hoisted(() => ({ value: "localhost:3000" }));
+vi.mock("next/headers", () => ({ cookies: async () => ({ get: (name: string) => (name in jarValues ? { name, value: jarValues[name] } : undefined) }), headers: async () => ({ get: (name: string) => (name === "host" ? hostName.value : null) }) }));
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }), usePathname: () => "/privacy" }));
 const draft = vi.hoisted(() => ({ on: false }));
@@ -14,9 +15,9 @@ vi.mock("@/lib/legal/version", async (orig) => {
 
 import { LegalFrame } from "@/components/v2/legal/LegalFrame";
 import { BRAND_TEXT } from "@/design/brand";
-import PrivacyPage, { metadata as privacyMeta } from "@/app/(legal)/privacy/page";
-import TermsPage, { metadata as termsMeta } from "@/app/(legal)/terms/page";
-import DataDeletionPage, { metadata as deletionMeta } from "@/app/(legal)/data-deletion/page";
+import PrivacyPage, { generateMetadata as privacyMeta } from "@/app/(legal)/privacy/page";
+import TermsPage, { generateMetadata as termsMeta } from "@/app/(legal)/terms/page";
+import DataDeletionPage, { generateMetadata as deletionMeta } from "@/app/(legal)/data-deletion/page";
 import RootLayout from "@/app/layout";
 import { legalDict, legalT } from "@/i18n/legal";
 import { LANGS } from "@/i18n/lang";
@@ -118,8 +119,9 @@ describe("/privacy and /terms (job BH)", () => {
     expect(all).toContain("does not set or change prices");
     expect(all).toContain("until you, the Owner, have approved it");
   });
-  it("the pages are public, have a stable address as their canonical link and the share picture, and are not for search engines until launch", () => {
-    for (const [m, path, title] of [[privacyMeta, "/privacy", "Privacy Policy"], [termsMeta, "/terms", "Terms of Use"], [deletionMeta, "/data-deletion", "Delete your data"]] as const) {
+  it("the pages are public, have a stable address as their canonical link and the share picture, and are not for search engines until launch", async () => {
+    for (const [make, path, title] of [[privacyMeta, "/privacy", "Privacy Policy"], [termsMeta, "/terms", "Terms of Use"], [deletionMeta, "/data-deletion", "Delete your data"]] as const) {
+      const m = await make();
       expect(m.robots).toEqual({ index: false, follow: false });
       expect(m.title).toBe(`${title} · ${BRAND_TEXT}`);
       expect(m.alternates?.canonical).toBe(path);
