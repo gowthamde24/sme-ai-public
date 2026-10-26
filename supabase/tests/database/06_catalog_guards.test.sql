@@ -112,11 +112,11 @@ select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
     where has_function_privilege('anon', oid, 'execute')
       -- job BI (ADR 0073): a calendar app has no sign-in; the hash of a private token is its credential. This is the ONE exception.
-      and fq not in ('public.calendar_feed_read')),
+      and fq not in ('public.calendar_feed_read', 'public.public_grievance_submit', 'public.waitlist_join')),
   '', 'anon can execute none of our functions except the calendar feed read');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions where has_function_privilege('anon', oid, 'execute')),
-  'calendar_feed_read(text)', 'the calendar feed read is the only function anon can execute (job BI, ADR 0073)');
+  'calendar_feed_read(text), public_grievance_submit(uuid,text,text,text,text,text), waitlist_join(text,text,text,text,text,text,boolean,text)', 'anon can execute the calendar feed read (job BI, ADR 0073) and the two public doors of job DQ (a grievance, the waitlist; they hold their own caps)');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
     where has_function_privilege('authenticated', oid, 'execute')
@@ -310,6 +310,9 @@ select is(
         'public.ledger_entry_record', 'public.ledger_entry_void', 'public.ledger_charges_import', 'public.ledger_statement', 'public.ledger_summary', 'public.ledger_entries_list', 'public.ledger_receipt_get',
         -- job RESEND: the trial reminder e-mails (the scheduler's two calls)
         'public.scheduler_billing_trial_due', 'public.scheduler_billing_trial_mark',
+        -- job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors (open to the public key, with their own caps), the worker's intake, lapse and purge calls
+        'public.consents_mine', 'public.consent_set_marketing', 'public.profile_get', 'public.profile_set', 'public.public_grievance_submit', 'public.waitlist_join',
+        'public.scheduler_public_intake_due', 'public.scheduler_public_intake_mark', 'public.scheduler_lapse_due', 'public.scheduler_lapse_warned', 'public.scheduler_lapse_erase', 'public.lapse_erasure_status', 'public.privacy_worker_purge_logs',
         -- job CP: reminder campaigns, the call list and the results
         'public.campaign_save', 'public.campaign_get', 'public.campaigns_list', 'public.campaign_recipients_add', 'public.campaign_recipients_from_ledger', 'public.campaign_recipient_remove', 'public.campaign_recipients_list', 'public.campaign_preview', 'public.campaign_approve', 'public.campaign_set_state', 'public.scheduler_campaign_run', 'public.call_list', 'public.call_list_outcome', 'public.campaign_results',
         -- job DP part 4: call settings (the Owner with a second factor saves; Owner and Admin read)
@@ -331,6 +334,8 @@ select is(
         'app.edu_terms_valid',  -- a CHECK on institution_profiles.terms runs with the writer's rights
         -- the proof-photo bucket's storage rules are evaluated as the caller, who must be able to run this one
         'app.pod_bucket_tenant',
+        -- the archive guard runs as the caller and asks whether an erasure of the workspace is executing (job DQ part 4)
+        'app.erasure_door_open',
         -- the own-voice bucket's storage rules are evaluated as the caller, who must be able to run this one (job DP part 5)
         'app.ovc_bucket_tenant')),
   '', 'authenticated can execute only the allow-listed functions');
@@ -395,6 +400,9 @@ select is(
                      'public.catalogue_material_save', 'public.site_save', 'public.site_get', 'public.sites_list', 'public.invoice_record', 'public.invoices_import', 'public.invoice_void', 'public.payment_record', 'public.payment_void', 'public.credit_limit_set', 'public.dues_statement', 'public.dues_summary', 'public.credit_check', 'public.dues_ledger', 'public.material_item_inputs', 'public.material_policy_create', 'public.material_policy_get', 'public.material_quote_build', 'public.material_quote_draft', 'public.material_quote_approve', 'public.material_quote_reject', 'public.material_quote_get', 'public.material_quotes_list', 'public.create_order_from_material_quote', 'public.trip_plan', 'public.trip_update', 'public.trip_set_status', 'public.trip_deliver', 'public.pod_ensure_bucket', 'public.trip_get', 'public.trips_list', 'public.delivery_challan_get', 'public.trip_update_submit',
                      -- job RESEND: the trial reminder e-mails
                      'public.scheduler_billing_trial_due', 'public.scheduler_billing_trial_mark',
+        -- job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors (open to the public key, with their own caps), the worker's intake, lapse and purge calls
+        'public.consents_mine', 'public.consent_set_marketing', 'public.profile_get', 'public.profile_set', 'public.public_grievance_submit', 'public.waitlist_join',
+        'public.scheduler_public_intake_due', 'public.scheduler_public_intake_mark', 'public.scheduler_lapse_due', 'public.scheduler_lapse_warned', 'public.scheduler_lapse_erase', 'public.lapse_erasure_status', 'public.privacy_worker_purge_logs',
                      -- job CP: the shared ledger
                      'public.ledger_entry_record', 'public.ledger_entry_void', 'public.ledger_charges_import', 'public.ledger_statement', 'public.ledger_summary', 'public.ledger_entries_list', 'public.ledger_receipt_get',
                      'public.campaign_save', 'public.campaign_get', 'public.campaigns_list', 'public.campaign_recipients_add', 'public.campaign_recipients_from_ledger', 'public.campaign_recipient_remove', 'public.campaign_recipients_list', 'public.campaign_preview', 'public.campaign_approve', 'public.campaign_set_state', 'public.scheduler_campaign_run', 'public.call_list', 'public.call_list_outcome', 'public.campaign_results',

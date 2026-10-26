@@ -48,6 +48,10 @@ The script writes these from the public values you export for one run. Nothing h
 | `BILLING_EMAIL_SENDER` | plain | worker | `fake` (the default: the reminders are composed and handed to a sender that sends nothing) or `resend` (job RESEND: Resend's HTTP API from noreply@stack19.com, reply-to support@stack19.com; needs `RESEND_API_KEY`). Anything else stops the worker at start. Staging sets `resend`. Runbook: docs/runbooks/email-resend.md. |
 | `RESEND_API_KEY` | secret | api, worker | The Resend API key, from Secret Manager `sme-resend-api-key` (`--set-secrets`). Never in Git, a log or a chat. Without it `BILLING_EMAIL_SENDER=resend` stops the process at start. |
 | `MAIL_FROM` | plain | worker | The address app e-mails are sent from (a plain address on the domain verified at the e-mail provider; shown as "Stack19 <address>"). Staging: made from `MAIL_DOMAIN` by `deploy/staging.sh`. Needed when `BILLING_EMAIL_SENDER=resend`. |
+| `PRIVACY_EMAIL` | plain | api, worker | The privacy inbox (job DQ, DPDP): the notice shows it and the worker e-mails each public grievance to it. Unset = grievances are stored and acknowledged on screen but not e-mailed. |
+| `HELLO_EMAIL` | plain | api, worker | The hello inbox: the worker e-mails each waitlist entry to it. Unset = entries are stored only. |
+| `CAPTCHA_PROVIDER` | plain | api | `none` (the default) or `turnstile`: the check on the two public forms (grievance, waitlist). Needs `CAPTCHA_SECRET` when `turnstile`. |
+| `CAPTCHA_SECRET` | secret | api | The Turnstile secret key, from Secret Manager. The owner makes the Cloudflare widget; nothing is created here. |
 | `MAIL_REPLY_TO` | plain | worker | Where a reply to an app e-mail goes (a mailbox someone reads). Optional. |
 | `SCHEDULER_EMAIL` | plain | worker | The scheduler's own account (docs/runbooks/hosting-owner-runbook.md Part B). An address, not a secret. |
 | `SCHEDULER_INTERVAL_SECONDS` | plain | worker | `WORKER_EVERY_MINUTES` x 60 (300 for every 5 minutes), set by the script. It MUST match the Cloud Scheduler schedule: the status card says the worker is running while its last tick is under three intervals old. |

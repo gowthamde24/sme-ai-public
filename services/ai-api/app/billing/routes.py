@@ -54,7 +54,11 @@ def get_billing(ctx: OwnerAdmin, runtime: RuntimeDep) -> BillingOut:
 
 @router.get("/access", response_model=AccessOut)
 def get_access(ctx: AnyMember, runtime: RuntimeDep) -> AccessOut:
-    return AccessOut.model_validate(_service(runtime).access(ctx.principal.token, ctx.tenant.id))
+    access = _service(runtime).access(ctx.principal.token, ctx.tenant.id)
+    if access.get("access") == "read_only" and runtime.dpdp is not None:
+        status = runtime.dpdp.repository.lapse_status(ctx.principal.token, ctx.tenant.id)
+        access = {**access, "erasure_warning_sent_at": status.get("erasure_warning_sent_at")}
+    return AccessOut.model_validate(access)
 
 
 @router.get("/usage", response_model=UsageViewOut)

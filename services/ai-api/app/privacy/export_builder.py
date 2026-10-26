@@ -9,10 +9,12 @@ here logs a row: counts and sizes only.
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import io
 import json
 import logging
+import re
 import uuid
 import zipfile
 from collections.abc import Callable
@@ -80,6 +82,41 @@ def _json_bytes(value: Any) -> bytes:
     return (json.dumps(value, ensure_ascii=False, indent=1, sort_keys=True, default=str) + "\n").encode("utf-8")
 
 
+_NUMBER = re.compile(r"^[+-]?\d+(\.\d+)?$")
+
+
+def _cell(value: Any) -> str:
+    """One CSV cell. A spreadsheet reads a cell that starts with = + - @ as a formula, so such a text gets a leading apostrophe (a plain number is left as it is). Lists and objects are written as JSON."""
+    if value is None:
+        return ""
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, (list, dict)):
+        text = json.dumps(value, ensure_ascii=False, sort_keys=True, default=str)
+    else:
+        text = str(value)
+    if text[:1] in ("=", "+", "-", "@", "\t", "\r") and not _NUMBER.match(text):
+        return "'" + text
+    return text
+
+
+def _csv_bytes(value: Any) -> bytes:
+    """The same records as a CSV (job DQ, DPDP: a machine-readable copy that opens in a spreadsheet): the columns are the keys in the order they first appear; an object is one row."""
+    rows = value if isinstance(value, list) else [value]
+    rows = [r if isinstance(r, dict) else {"value": r} for r in rows]
+    columns: list[str] = []
+    for row in rows:
+        for key in row:
+            if key not in columns:
+                columns.append(key)
+    out = io.StringIO()
+    writer = csv.writer(out, lineterminator="\n")
+    writer.writerow(columns)
+    for row in rows:
+        writer.writerow([_cell(row.get(key)) for key in columns])
+    return ("\ufeff" + out.getvalue()).encode("utf-8")  # a byte-order mark so a spreadsheet reads Telugu, Hindi and Kannada text correctly
+
+
 def _zip(files: dict[str, bytes], generated_at: datetime) -> bytes:
     stamp = (max(generated_at.year, 1980), generated_at.month, generated_at.day, generated_at.hour, generated_at.minute, generated_at.second)
     buffer = io.BytesIO()
@@ -114,7 +151,9 @@ What is in this file (plain JSON; open it with any text editor):
   my_assistant_chat.json  what you typed to the assistant and what it answered
   my_exports.json         your earlier data downloads
   my_deletion_requests.json  any request to delete your account
+  consents.json           when you agreed to what (the service, marketing), under which notice, and when you withdrew
   manifest.json           the list of files and how many entries each holds
+Every .json file also comes as a .csv with the same content, which opens in a spreadsheet (a text that starts with = + - or @ has an apostrophe put in front of it, so a spreadsheet does not run it as a formula).
 
 What is NOT in this file: your business's own records (customers, quotes, orders). Those belong to the business; its Owner can download them from the workspace's privacy page. Backups are outside this file.
 
@@ -125,7 +164,7 @@ WORKSPACE_README = """YOUR BUSINESS'S DATA (a copy of the records of {workspace}
 
 Made on {generated_at} (UTC) at the Owner's request. The download link worked for a few minutes and the file is deleted from our storage 24 hours after it was made.
 
-Each file in tables/ is one table, as a JSON list, oldest first. Names, phone numbers and e-mail addresses of your customers are in contacts.json, companies.json and the message tables: treat the file as private.
+Each table in tables/ comes twice: as a JSON list (name.json) and as a spreadsheet file (name.csv), oldest first. In a .csv a text that starts with = + - or @ has an apostrophe put in front of it, so a spreadsheet does not run it as a formula. Names, phone numbers and e-mail addresses of your customers are in contacts.json, companies.json and the message tables: treat the file as private.
 Where a record was erased on request or by your retention settings, its text reads erased:1 and the row, its dates and its numbers remain.
 If your business keeps students (a school or college), students.json holds each student's first name or initials and admission number: they are children's data, so keep this file as private as you would the register itself.
 manifest.json lists every table with its row count; a table marked "not_readable" could not be read with your permissions and is not in this file.
@@ -144,6 +183,7 @@ def build_person_export(data: dict[str, Any], generated_at: datetime) -> BuiltEx
         "my_assistant_chat.json": data.get("my_assistant_chat") or [],
         "my_exports.json": data.get("my_exports") or [],
         "my_deletion_requests.json": data.get("my_deletion_requests") or [],
+        "consents.json": data.get("consents") or [],
     }
     manifest = {
         "scope": "person",
@@ -151,6 +191,7 @@ def build_person_export(data: dict[str, Any], generated_at: datetime) -> BuiltEx
         "files": {name: (len(v) if isinstance(v, list) else 1) for name, v in sorted(parts.items())},
     }
     files = {name: _json_bytes(value) for name, value in parts.items()}
+    files.update({name[: -len(".json")] + ".csv": _csv_bytes(value) for name, value in parts.items()})
     files["manifest.json"] = _json_bytes(manifest)
     files["README.txt"] = PERSON_README.format(generated_at=generated_at.strftime("%Y-%m-%d %H:%M")).encode("utf-8")
     return _finish(files, generated_at, manifest)
@@ -193,6 +234,7 @@ def build_workspace_export(
             continue
         counts[table] = len(rows)
         files[f"tables/{table}.json"] = _json_bytes(rows)
+        files[f"tables/{table}.csv"] = _csv_bytes(rows)
     manifest = {"scope": "workspace", "workspace": tenant_name, "workspace_id": str(tenant_id), "generated_at": generated_at.isoformat(), "tables": dict(sorted(counts.items()))}
     files["manifest.json"] = _json_bytes(manifest)
     files["README.txt"] = WORKSPACE_README.format(workspace=tenant_name, generated_at=generated_at.strftime("%Y-%m-%d %H:%M")).encode("utf-8")

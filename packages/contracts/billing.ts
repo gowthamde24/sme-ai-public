@@ -9,6 +9,7 @@ export interface AccessOut {
   can_resume: boolean;
   sending: "on" | "off";
   waiting_for: "whatsapp" | null;
+  erasure_warning_sent_at?: string | null;
 }
 
 export interface BillingOut {

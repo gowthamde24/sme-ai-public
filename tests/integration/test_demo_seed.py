@@ -637,7 +637,7 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
             operator_sql.sql(
                 "select string_agg(enabled::text, ',' order by key) from public.platform_flags"
             )
-            == "false,false,false,false,false,false,false"
+            == "false,false,false,false,false,false,false,false"
         ), "an unknown slug changed nothing"
 
         done = subprocess.run(  # noqa: S603 - our own script, fixed argv

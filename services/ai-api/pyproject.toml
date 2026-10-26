@@ -167,6 +167,8 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "tests/test_integrations_*.py" = ["E501"]
 # job BN: privacy rights (long explanatory docstrings, the one-line route and repository tables)
 "app/privacy/*" = ["E501"]
+"app/dpdp/*" = ["E501"]
+"tests/test_dq_dpdp.py" = ["E501"]
 "tests/test_privacy_*.py" = ["E501"]
 "tests/privacy_fakes.py" = ["E501"]
 # job BR: WhatsApp (long explanatory docstrings, one-line payload tables)

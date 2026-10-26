@@ -30,8 +30,8 @@ create function pg_temp.sch(p_sql text) returns text language sql as $$ select p
 -- ---------------------------------------------------------------------------------------------
 -- A. catalog
 -- ---------------------------------------------------------------------------------------------
-select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'privacy' and c.relkind = 'r' and c.relrowsecurity and c.relforcerowsecurity), 6::bigint,
-          'A: the six privacy tables have row-level security on and forced');
+select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'privacy' and c.relkind = 'r' and c.relrowsecurity and c.relforcerowsecurity), 10::bigint,
+          'A: the ten privacy tables have row-level security on and forced (job DQ added four)');
 select is((select count(*) from information_schema.role_table_grants where table_schema = 'privacy' and grantee in ('anon', 'authenticated', 'public', 'service_role')), 0::bigint,
           'A: no client role holds any privilege on a privacy table');
 select is((select count(*) from information_schema.schemata where schema_name = 'privacy' and (has_schema_privilege('anon', schema_name, 'usage') or has_schema_privilege('authenticated', schema_name, 'usage'))), 0::bigint,
@@ -160,7 +160,7 @@ select is(pg_temp.da('b_owner', 'd1', 'b_owner@test.local'), 'ERR:SM611', 'D: th
 select is(pg_temp.da('b_owner', 'd1', 'b_owner@test.local', 'aal1'), 'ERR:SM306', 'D: an Owner needs the second factor first (SM306)');
 select is(pg_temp.da('anon', 'd1', 'x@test.local'), 'ERR:42501', 'D: anon may not');
 select is(pg_temp.j(pg_temp.da('a_sales', 'd1', 'A_Sales@Test.Local ', 'aal1'), 'status'), 'scheduled', 'D: a Sales member (no second factor needed) schedules it; the e-mail is matched without case');
-select is((select execute_after from privacy.deletion_requests where id = tests.rid('d1')), pg_temp.base() + interval '14 days', 'D: ...for 14 days from now');
+select is((select execute_after from privacy.deletion_requests where id = tests.rid('d1')), pg_temp.base() + interval '7 days', 'D: ...for 7 days from now');
 select is(pg_temp.j(pg_temp.da('a_sales', 'd1', 'a_sales@test.local', 'aal1'), 'id'), tests.rid('d1')::text, 'D: asking again with the same id is a replay');
 select is(pg_temp.da('a_sales', 'd2', 'a_sales@test.local', 'aal1'), 'ERR:SM613', 'D: a second open request is refused (SM613)');
 select is(jsonb_array_length(pg_temp.sc('a_sales', 'select public.deletion_list()')::jsonb), 1, 'D: the person lists their own requests');
@@ -170,7 +170,7 @@ select is(pg_temp.sc('a_admin', format($q$select public.deletion_cancel(%L)$q$, 
 select is(pg_temp.j(pg_temp.sc('a_sales', format($q$select public.deletion_cancel(%L)$q$, tests.rid('d1')), 'aal1'), 'status'), 'cancelled', 'D: the person cancels during the cooling-off');
 select is(pg_temp.j(pg_temp.sc('a_sales', format($q$select public.deletion_cancel(%L)$q$, tests.rid('d1')), 'aal1'), 'status'), 'cancelled', 'D: ...cancelling twice is harmless');
 select is(pg_temp.j(pg_temp.da('a_sales', 'd3', 'a_sales@test.local', 'aal1'), 'status'), 'scheduled', 'D: after a cancellation a new request may be made');
--- the worker: nothing is due, then 14 days later it is
+-- the worker: nothing is due, then 7 days later it is
 select is(pg_temp.sch('select public.privacy_worker_execute_account_deletions()'), '{"blocked": 0, "executed": 0}', 'D: the worker finds nothing due in the cooling-off');
 select is(pg_temp.sc('a_owner', 'select public.privacy_worker_execute_account_deletions()'), 'ERR:42501', 'D: an Owner is not the worker (42501)');
 -- a second person asks, then becomes the only Owner of a new workspace before the day comes
@@ -179,8 +179,8 @@ insert into public.tenants (id, name, slug) values (tests.tid('z2'), 'Z Two', 'z
 insert into public.memberships (tenant_id, user_id, role) values (tests.tid('z2'), tests.uid('a_viewer'), 'owner');
 -- a grievance of the person who will go
 select is(pg_temp.j(pg_temp.sc('a_sales', format($q$select public.grievance_submit(%L, %L, 'complaint', 'Wrong number on file', 'details')$q$, tests.rid('g0'), tests.tid('a')), 'aal1'), 'status'), 'received', 'D: (a grievance by the person who will delete their account)');
-select pg_temp.pin(pg_temp.base() + interval '14 days 1 minute');
-select is(pg_temp.sch('select public.privacy_worker_execute_account_deletions()'), '{"blocked": 1, "executed": 1}', 'D: after 14 days: one account deleted, one blocked (it became the only Owner of a workspace)');
+select pg_temp.pin(pg_temp.base() + interval '7 days 1 minute');
+select is(pg_temp.sch('select public.privacy_worker_execute_account_deletions()'), '{"blocked": 1, "executed": 1}', 'D: after 7 days: one account deleted, one blocked (it became the only Owner of a workspace)');
 select is((select count(*) from auth.users where id = tests.uid('a_sales')), 0::bigint, 'D: the account is gone');
 select is((select count(*) from public.users where id = tests.uid('a_sales')), 0::bigint, 'D: ...and the profile');
 select is((select count(*) from public.memberships where user_id = tests.uid('a_sales')), 0::bigint, 'D: ...and the memberships');
@@ -205,7 +205,7 @@ select is(pg_temp.dw('b_owner', 'w1', 'Zed Silks'), 'ERR:42501', 'E: another bus
 select is(pg_temp.dw('x3', 'w1', 'Zed Silks', 'aal1'), 'ERR:SM306', 'E: the Owner needs the second factor (SM306)');
 select is(pg_temp.dw('x3', 'w1', 'zed'), 'ERR:SM615', 'E: the Owner must type the workspace name (SM615)');
 select is(pg_temp.j(pg_temp.dw('x3', 'w1', ' Zed Silks '), 'status'), 'scheduled', 'E: the Owner schedules it');
-select is((select execute_after from privacy.deletion_requests where id = tests.rid('w1')), pg_temp.base() + interval '14 days', 'E: ...in 14 days');
+select is((select execute_after from privacy.deletion_requests where id = tests.rid('w1')), pg_temp.base() + interval '7 days', 'E: ...in 7 days');
 select is((select status from public.erasure_requests where id = tests.rid('w1')), 'pending', 'E: the existing erasure request (tenant scope) was made with the same id');
 select is(pg_temp.dw('x3', 'w2', 'Zed Silks'), 'ERR:SM613', 'E: one open deletion per workspace (SM613)');
 select is(jsonb_array_length(pg_temp.sc('x4', format($q$select public.deletion_list(%L)$q$, tests.tid('z')))::jsonb), 1, 'E: an Admin can see that a deletion is scheduled');
@@ -218,10 +218,10 @@ select is(pg_temp.j(pg_temp.sc('x3', format($q$select public.deletion_cancel(%L)
 select is((select status from public.erasure_requests where id = tests.rid('w1')), 'cancelled', 'E: ...including the erasure request');
 select is(pg_temp.sc('x3', format($q$select public.deletion_execute_workspace(%L)$q$, tests.rid('w1'))), 'ERR:SM613', 'E: a cancelled deletion cannot be run (SM613)');
 select is(pg_temp.j(pg_temp.dw('x3', 'w3', 'Zed Silks'), 'status'), 'scheduled', 'E: a new one after a cancellation');
-select pg_temp.pin(pg_temp.base() + interval '14 days 1 minute');
+select pg_temp.pin(pg_temp.base() + interval '7 days 1 minute');
 -- the existing erasure keeps its own 24-hour wait on the real clock: the test backdates it (a privileged fixture write)
 update public.erasure_requests set execute_after = now() - interval '1 minute' where id = tests.rid('w3');
-select is(jsonb_typeof(pg_temp.sc('x3', format($q$select public.deletion_execute_workspace(%L)$q$, tests.rid('w3'))) :: jsonb -> 'erasure'), 'object', 'E: after 14 days the Owner (second factor) runs it: the existing erasure answers');
+select is(jsonb_typeof(pg_temp.sc('x3', format($q$select public.deletion_execute_workspace(%L)$q$, tests.rid('w3'))) :: jsonb -> 'erasure'), 'object', 'E: after 7 days the Owner (second factor) runs it: the existing erasure answers');
 select is((select status from public.erasure_requests where id = tests.rid('w3')), 'executed', 'E: the erasure request is executed');
 select is((select status from privacy.deletion_requests where id = tests.rid('w3')), 'executed', 'E: the deletion says executed');
 select is((select subject || '|' || details || '|' || coalesce(requester_name, 'null') || '|' || coalesce(requester_contact, 'null') from privacy.grievances where id = tests.rid('g1')), 'erased:1||null|null', 'E: what people wrote in the workspace''s grievances is erased with it');
