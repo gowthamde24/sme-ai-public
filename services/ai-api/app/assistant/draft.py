@@ -17,6 +17,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from app.agents import register
 from app.agents.errors import AgentDbError
 from app.agents.llm.interface import Block, LlmError, LlmRequest, TaskClass, ToolSpec, Trust
 from app.agents.llm.routing import as_router
@@ -87,7 +88,9 @@ def _first_name(full_name: Any) -> str | None:
     return full_name.strip().split()[0][:30]
 
 
-def build_request(delimiter: str, language: Language, facts: list[str], repair: bool) -> LlmRequest:
+def build_request(
+    delimiter: str, language: Language, facts: list[str], repair: bool, register_text: str | None = None
+) -> LlmRequest:
     data = "\n".join(("<<<DATA " + delimiter, *facts, "DATA " + delimiter + ">>>"))
     blocks = [
         Block(Trust.SYSTEM, SYSTEM),
@@ -95,6 +98,8 @@ def build_request(delimiter: str, language: Language, facts: list[str], repair: 
     ]
     if repair:
         blocks.append(Block(Trust.TRUSTED, NOTE_REPAIR))
+    if register_text:   # job DS: how people really talk in this language (the workspace's speaking style)
+        blocks.append(Block(Trust.TRUSTED, register_text))
     blocks.append(Block(Trust.UNTRUSTED, data))
     return LlmRequest(
         blocks=tuple(blocks),
@@ -170,6 +175,9 @@ def draft_for_lead(
         last = str(enquiries[0].get("body") or "")[:400] if enquiries else ""
         chosen: Language = language or (detect_language(last) if last else "en")
         delimiter = secrets.token_hex(8)
+        speaking = getattr(runtime, "speaking", None)
+        style, region = speaking.style_for(token, tenant_id, chosen) if speaking is not None else (register.DEFAULT_STYLE, "neutral")
+        register_text = register.register_block(chosen, style, region)
         facts = [
             f"customer business: {escape_value(getattr(company, 'name', None), delimiter)}",
             f"customer city: {escape_value(getattr(company, 'city', None), delimiter)}",
@@ -195,7 +203,7 @@ def draft_for_lead(
         status, code = "failed", "invalid_output"
         try:
             for attempt in range(1, MAX_ATTEMPTS + 1):
-                request = build_request(delimiter, chosen, facts, repair=attempt > 1)
+                request = build_request(delimiter, chosen, facts, attempt > 1, register_text)
                 llm = router.choose(request.task_class, db.ai_mode)
                 db.reserve_cost(
                     f"usage-{attempt}",

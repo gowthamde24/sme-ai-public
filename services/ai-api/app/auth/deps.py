@@ -54,6 +54,7 @@ from app.quotes.repository import QuotesRepository
 from app.reports.repository import ReportsRepository
 from app.scheduler.repository import SchedulerRepository
 from app.sites.repository import SitesRepository
+from app.speaking.service import SpeakingService
 from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
 from app.team.repository import TeamRepository
@@ -143,6 +144,8 @@ class Runtime:
     marks_messages: MarksSendService | None = None
     # job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors
     dpdp: DpdpRuntime | None = None
+    # job DS: how the assistant talks (everyday spoken style per language)
+    speaking: SpeakingService | None = None
 
 
 @dataclass(frozen=True)

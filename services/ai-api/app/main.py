@@ -141,6 +141,9 @@ from app.scheduler.routes import router as scheduler_router
 from app.sites import errors as site_errors
 from app.sites.repository import PostgrestSitesRepository
 from app.sites.routes import router as sites_router
+from app.speaking.repository import PostgrestSpeakingRepository
+from app.speaking.routes import router as speaking_router
+from app.speaking.service import SpeakingService
 from app.suppression.repository import PostgrestSuppressionRepository
 from app.suppression.routes import router as suppression_router
 from app.suppression.wiring import build_key_ring
@@ -254,6 +257,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         whatsapp=build_whatsapp(settings, config, key_ring),
         team=PostgrestTeamRepository(config.rest_url, config.anon_key),
         dpdp=build_dpdp(settings, config.rest_url, config.anon_key),
+        speaking=SpeakingService(PostgrestSpeakingRepository(config.rest_url, config.anon_key)),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         notifications=build_notifications(settings, config),
         research_web=build_research_web(settings),
@@ -1024,6 +1028,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(privacy_router)
     app.include_router(dpdp_public_router)
     app.include_router(dpdp_me_router)
+    app.include_router(speaking_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)

@@ -89,11 +89,11 @@
  ],
  "intro": {
   "en": "{name}, the AI assistant of {business}",
-  "te": "{business} AI అసిస్టెంట్ {name}",
-  "hi": "{business} की AI असिस्टेंट {name}",
-  "kn": "{business}ನ AI ಅಸಿಸ್ಟೆಂಟ್ {name}",
-  "ta": "{business} இன் AI உதவியாளர் {name}",
-  "ml": "{business} ന്റെ AI സഹായി {name}"
+  "te": "{business} నుంచి AI assistant {name}",
+  "hi": "{business} से AI assistant {name}",
+  "kn": "{business} ನಿಂದ AI assistant {name}",
+  "ta": "{business} ல இருந்து AI assistant {name}",
+  "ml": "{business} ൽ നിന്ന് AI assistant {name}"
  },
  "samples": {
   "textiles": {
@@ -103,29 +103,29 @@
     "quick": "Hi, {name} here, AI assistant at {business}. New sarees are in. Photos on WhatsApp?"
    },
    "te": {
-    "warm": "హలో! నేను {business} AI అసిస్టెంట్ {name}. కొత్త చీరలు వచ్చాయి, కొన్ని ఫోటోలు పంపమంటారా?",
-    "respectful": "నమస్కారం గారు, నేను {business} AI అసిస్టెంట్ {name}. మా కొత్త కలెక్షన్ గురించి ఒక నిమిషం చెప్పవచ్చా?",
-    "quick": "హాయ్, {business} AI అసిస్టెంట్ {name}. కొత్త చీరలు వచ్చాయి. వాట్సాప్‌లో ఫోటోలు పంపనా?"
+    "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. కొత్త sarees వచ్చాయండీ, కొన్ని photos పంపనా?",
+    "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మా కొత్త collection గురించి ఒక్క నిమిషం చెప్పొచ్చా?",
+    "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. కొత్త sarees వచ్చాయి. WhatsApp లో photos పంపనా?"
    },
    "hi": {
-    "warm": "हैलो! मैं {business} की AI असिस्टेंट {name} हूँ। नई साड़ियाँ आई हैं, कुछ फ़ोटो भेजूँ?",
-    "respectful": "नमस्ते जी, मैं {business} की AI असिस्टेंट {name} हूँ। क्या मैं एक मिनट में नए कलेक्शन के बारे में बता दूँ?",
-    "quick": "हाय, {business} की AI असिस्टेंट {name}। नई साड़ियाँ आ गई हैं। व्हाट्सऐप पर फ़ोटो भेजूँ?"
+    "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। नई sarees आई हैं जी, कुछ photos भेज दूँ?",
+    "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। हमारे नए collection के बारे में एक minute बता दूँ?",
+    "quick": "हाय जी, {business} से AI assistant {name}। नई sarees आ गई हैं। WhatsApp पर photos भेजूँ?"
    },
    "kn": {
-    "warm": "ಹಲೋ! ನಾನು {business}ನ AI ಅಸಿಸ್ಟೆಂಟ್ {name}. ಹೊಸ ಸೀರೆಗಳು ಬಂದಿವೆ, ಕೆಲವು ಫೋಟೋಗಳನ್ನು ಕಳುಹಿಸಲೇ?",
-    "respectful": "ನಮಸ್ಕಾರ, ನಾನು {business}ನ AI ಅಸಿಸ್ಟೆಂಟ್ {name}. ನಮ್ಮ ಹೊಸ ಸಂಗ್ರಹದ ಬಗ್ಗೆ ಒಂದು ನಿಮಿಷ ಹೇಳಬಹುದೇ?",
-    "quick": "ಹಾಯ್, {business}ನ AI ಅಸಿಸ್ಟೆಂಟ್ {name}. ಹೊಸ ಸೀರೆಗಳು ಬಂದಿವೆ. ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಫೋಟೋ ಕಳುಹಿಸಲೇ?"
+    "warm": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ಹೊಸ sarees ಬಂದಿವೆ ರೀ, ಕೆಲವು photos ಕಳಿಸ್ಲಾ?",
+    "respectful": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ನಮ್ಮ ಹೊಸ collection ಬಗ್ಗೆ ಒಂದು minute ಹೇಳ್ಲಾ?",
+    "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. ಹೊಸ sarees ಬಂದಿವೆ. WhatsApp ಗೆ photos ಕಳಿಸ್ಲಾ?"
    },
    "ta": {
-    "warm": "வணக்கம்! நான் {business} இன் AI உதவியாளர் {name}. புதிய புடவைகள் வந்துள்ளன, சில புகைப்படங்களை அனுப்பட்டுமா?",
-    "respectful": "வணக்கம், நான் {business} இன் AI உதவியாளர் {name}. எங்கள் புதிய சேகரிப்பைப் பற்றி ஒரு நிமிடம் சொல்லலாமா?",
-    "quick": "ஹாய், {business} இன் AI உதவியாளர் {name}. புதிய புடவைகள் வந்துள்ளன. வாட்ஸ்அப்பில் புகைப்படங்கள் அனுப்பட்டுமா?"
+    "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். புது sarees வந்திருக்கு சார், சில photos அனுப்பவா?",
+    "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க புது collection பத்தி ஒரு நிமிஷம் சொல்லவா?",
+    "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. புது sarees வந்திருக்கு. WhatsApp ல photos அனுப்பவா?"
    },
    "ml": {
-    "warm": "ഹലോ! ഞാൻ {business} ന്റെ AI സഹായി {name} ആണ്. പുതിയ സാരികൾ എത്തിയിട്ടുണ്ട്, കുറച്ച് ഫോട്ടോകൾ അയക്കട്ടെ?",
-    "respectful": "നമസ്കാരം, ഞാൻ {business} ന്റെ AI സഹായി {name} ആണ്. ഞങ്ങളുടെ പുതിയ ശേഖരത്തെക്കുറിച്ച് ഒരു മിനിറ്റ് പറയട്ടെ?",
-    "quick": "ഹായ്, {business} ന്റെ AI സഹായി {name}. പുതിയ സാരികൾ എത്തി. വാട്സാപ്പിൽ ഫോട്ടോ അയക്കട്ടെ?"
+    "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. പുതിയ sarees വന്നിട്ടുണ്ട്, കുറച്ച് photos അയക്കട്ടെ?",
+    "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ പുതിയ collection നെ പറ്റി ഒരു minute പറയട്ടെ?",
+    "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. പുതിയ sarees വന്നു. WhatsApp ൽ photos അയക്കട്ടെ?"
    }
   },
   "construction_materials": {
@@ -135,29 +135,29 @@
     "quick": "Hi, {name} here, AI assistant at {business}. Fresh stock is in. Rates on WhatsApp?"
    },
    "te": {
-    "warm": "హలో! నేను {business} AI అసిస్టెంట్ {name}. కొత్త స్టాక్ వచ్చింది, రేట్లు, ఫోటోలు పంపమంటారా?",
-    "respectful": "నమస్కారం గారు, నేను {business} AI అసిస్టెంట్ {name}. మా కొత్త స్టాక్, రేట్ల గురించి ఒక నిమిషం చెప్పవచ్చా?",
-    "quick": "హాయ్, {business} AI అసిస్టెంట్ {name}. కొత్త స్టాక్ వచ్చింది. వాట్సాప్‌లో రేట్లు పంపనా?"
+    "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. కొత్త stock వచ్చిందండీ, rates, photos WhatsApp లో పంపనా?",
+    "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మా కొత్త stock, rates గురించి ఒక్క నిమిషం చెప్పొచ్చా?",
+    "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. కొత్త stock వచ్చింది. WhatsApp లో rates పంపనా?"
    },
    "hi": {
-    "warm": "हैलो! मैं {business} की AI असिस्टेंट {name} हूँ। नया स्टॉक आया है, रेट और फ़ोटो भेजूँ?",
-    "respectful": "नमस्ते जी, मैं {business} की AI असिस्टेंट {name} हूँ। क्या मैं एक मिनट में नए स्टॉक और रेट के बारे में बता दूँ?",
-    "quick": "हाय, {business} की AI असिस्टेंट {name}। नया स्टॉक आ गया है। व्हाट्सऐप पर रेट भेजूँ?"
+    "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। नया stock आया है जी, rates और photos WhatsApp पर भेज दूँ?",
+    "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। हमारे नए stock और rates के बारे में एक minute बता दूँ?",
+    "quick": "हाय जी, {business} से AI assistant {name}। नया stock आ गया है। WhatsApp पर rates भेजूँ?"
    },
    "kn": {
-    "warm": "ಹಲೋ! ನಾನು {business}ನ AI ಅಸಿಸ್ಟೆಂಟ್ {name}. ಹೊಸ ಸ್ಟಾಕ್ ಬಂದಿದೆ, ದರ ಮತ್ತು ಫೋಟೋಗಳನ್ನು ಕಳುಹಿಸಲೇ?",
-    "respectful": "ನಮಸ್ಕಾರ, ನಾನು {business}ನ AI ಅಸಿಸ್ಟೆಂಟ್ {name}. ನಮ್ಮ ಹೊಸ ಸ್ಟಾಕ್ ಮತ್ತು ದರಗಳ ಬಗ್ಗೆ ಒಂದು ನಿಮಿಷ ಹೇಳಬಹುದೇ?",
-    "quick": "ಹಾಯ್, {business}ನ AI ಅಸಿಸ್ಟೆಂಟ್ {name}. ಹೊಸ ಸ್ಟಾಕ್ ಬಂದಿದೆ. ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ದರ ಕಳುಹಿಸಲೇ?"
+    "warm": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ಹೊಸ stock ಬಂದಿದೆ ರೀ, rates, photos WhatsApp ಗೆ ಕಳಿಸ್ಲಾ?",
+    "respectful": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ನಮ್ಮ ಹೊಸ stock, rates ಬಗ್ಗೆ ಒಂದು minute ಹೇಳ್ಲಾ?",
+    "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. ಹೊಸ stock ಬಂದಿದೆ. WhatsApp ಗೆ rates ಕಳಿಸ್ಲಾ?"
    },
    "ta": {
-    "warm": "வணக்கம்! நான் {business} இன் AI உதவியாளர் {name}. புதிய இருப்பு வந்துள்ளது, விலைகளையும் புகைப்படங்களையும் அனுப்பட்டுமா?",
-    "respectful": "வணக்கம், நான் {business} இன் AI உதவியாளர் {name}. எங்கள் புதிய இருப்பு மற்றும் விலைகளைப் பற்றி ஒரு நிமிடம் சொல்லலாமா?",
-    "quick": "ஹாய், {business} இன் AI உதவியாளர் {name}. புதிய இருப்பு வந்துள்ளது. வாட்ஸ்அப்பில் விலைகள் அனுப்பட்டுமா?"
+    "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். புது stock வந்திருக்கு சார், rates, photos WhatsApp ல அனுப்பவா?",
+    "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க புது stock, rates பத்தி ஒரு நிமிஷம் சொல்லவா?",
+    "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. புது stock வந்திருக்கு. WhatsApp ல rates அனுப்பவா?"
    },
    "ml": {
-    "warm": "ഹലോ! ഞാൻ {business} ന്റെ AI സഹായി {name} ആണ്. പുതിയ സ്റ്റോക്ക് എത്തിയിട്ടുണ്ട്, വിലയും ഫോട്ടോകളും അയക്കട്ടെ?",
-    "respectful": "നമസ്കാരം, ഞാൻ {business} ന്റെ AI സഹായി {name} ആണ്. ഞങ്ങളുടെ പുതിയ സ്റ്റോക്കിനെയും വിലയെയും കുറിച്ച് ഒരു മിനിറ്റ് പറയട്ടെ?",
-    "quick": "ഹായ്, {business} ന്റെ AI സഹായി {name}. പുതിയ സ്റ്റോക്ക് എത്തി. വാട്സാപ്പിൽ വില അയക്കട്ടെ?"
+    "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. പുതിയ stock വന്നിട്ടുണ്ട്, rates, photos WhatsApp ൽ അയക്കട്ടെ?",
+    "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ പുതിയ stock, rates നെ പറ്റി ഒരു minute പറയട്ടെ?",
+    "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. പുതിയ stock വന്നു. WhatsApp ൽ rates അയക്കട്ടെ?"
    }
   },
   "education": {
@@ -167,29 +167,29 @@
     "quick": "Hi, {name} here, AI assistant at {business}. Admissions are open. Details on WhatsApp?"
    },
    "te": {
-    "warm": "హలో! నేను {business} AI అసిస్టెంట్ {name}. కొత్త సంవత్సరానికి అడ్మిషన్లు మొదలయ్యాయి, వివరాలు వాట్సాప్‌లో పంపమంటారా?",
-    "respectful": "నమస్కారం గారు, నేను {business} AI అసిస్టెంట్ {name}. మా అడ్మిషన్ల గురించి ఒక నిమిషం చెప్పవచ్చా?",
-    "quick": "హాయ్, {business} AI అసిస్టెంట్ {name}. అడ్మిషన్లు మొదలయ్యాయి. వాట్సాప్‌లో వివరాలు పంపనా?"
+    "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. వచ్చే year admissions open అయ్యాయండీ, details WhatsApp లో పంపనా?",
+    "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మా admissions గురించి ఒక్క నిమిషం చెప్పొచ్చా?",
+    "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. Admissions open అయ్యాయి. WhatsApp లో details పంపనా?"
    },
    "hi": {
-    "warm": "हैलो! मैं {business} की AI असिस्टेंट {name} हूँ। नए साल के लिए एडमिशन खुल गए हैं, व्हाट्सऐप पर जानकारी भेजूँ?",
-    "respectful": "नमस्ते जी, मैं {business} की AI असिस्टेंट {name} हूँ। क्या मैं एक मिनट में हमारे एडमिशन के बारे में बता दूँ?",
-    "quick": "हाय, {business} की AI असिस्टेंट {name}। एडमिशन खुल गए हैं। व्हाट्सऐप पर जानकारी भेजूँ?"
+    "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। अगले साल के admissions खुल गए हैं जी, details WhatsApp पर भेज दूँ?",
+    "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। हमारे admissions के बारे में एक minute बता दूँ?",
+    "quick": "हाय जी, {business} से AI assistant {name}। Admissions खुल गए हैं। WhatsApp पर details भेजूँ?"
    },
    "kn": {
-    "warm": "ಹಲೋ! ನಾನು {business}ನ AI ಅಸಿಸ್ಟೆಂಟ್ {name}. ಹೊಸ ವರ್ಷಕ್ಕೆ ಪ್ರವೇಶ ಆರಂಭವಾಗಿದೆ, ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ವಿವರ ಕಳುಹಿಸಲೇ?",
-    "respectful": "ನಮಸ್ಕಾರ, ನಾನು {business}ನ AI ಅಸಿಸ್ಟೆಂಟ್ {name}. ನಮ್ಮ ಪ್ರವೇಶಗಳ ಬಗ್ಗೆ ಒಂದು ನಿಮಿಷ ಹೇಳಬಹುದೇ?",
-    "quick": "ಹಾಯ್, {business}ನ AI ಅಸಿಸ್ಟೆಂಟ್ {name}. ಪ್ರವೇಶ ಆರಂಭವಾಗಿದೆ. ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ವಿವರ ಕಳುಹಿಸಲೇ?"
+    "warm": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ಮುಂದಿನ year admissions open ಆಗಿದೆ ರೀ, details WhatsApp ಗೆ ಕಳಿಸ್ಲಾ?",
+    "respectful": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ನಮ್ಮ admissions ಬಗ್ಗೆ ಒಂದು minute ಹೇಳ್ಲಾ?",
+    "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. Admissions open ಆಗಿದೆ. WhatsApp ಗೆ details ಕಳಿಸ್ಲಾ?"
    },
    "ta": {
-    "warm": "வணக்கம்! நான் {business} இன் AI உதவியாளர் {name}. புதிய ஆண்டுக்கான சேர்க்கை தொடங்கிவிட்டது, விவரங்களை வாட்ஸ்அப்பில் அனுப்பட்டுமா?",
-    "respectful": "வணக்கம், நான் {business} இன் AI உதவியாளர் {name}. எங்கள் சேர்க்கையைப் பற்றி ஒரு நிமிடம் சொல்லலாமா?",
-    "quick": "ஹாய், {business} இன் AI உதவியாளர் {name}. சேர்க்கை தொடங்கிவிட்டது. வாட்ஸ்அப்பில் விவரங்கள் அனுப்பட்டுமா?"
+    "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். அடுத்த year admissions open ஆயிடுச்சு சார், details WhatsApp ல அனுப்பவா?",
+    "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க admissions பத்தி ஒரு நிமிஷம் சொல்லவா?",
+    "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. Admissions open ஆயிடுச்சு. WhatsApp ல details அனுப்பவா?"
    },
    "ml": {
-    "warm": "ഹലോ! ഞാൻ {business} ന്റെ AI സഹായി {name} ആണ്. പുതിയ വർഷത്തേക്കുള്ള പ്രവേശനം ആരംഭിച്ചു, വിവരങ്ങൾ വാട്സാപ്പിൽ അയക്കട്ടെ?",
-    "respectful": "നമസ്കാരം, ഞാൻ {business} ന്റെ AI സഹായി {name} ആണ്. ഞങ്ങളുടെ പ്രവേശനത്തെക്കുറിച്ച് ഒരു മിനിറ്റ് പറയട്ടെ?",
-    "quick": "ഹായ്, {business} ന്റെ AI സഹായി {name}. പ്രവേശനം ആരംഭിച്ചു. വാട്സാപ്പിൽ വിവരങ്ങൾ അയക്കട്ടെ?"
+    "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. അടുത്ത year admissions open ആയിട്ടുണ്ട്, details WhatsApp ൽ അയക്കട്ടെ?",
+    "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ admissions നെ പറ്റി ഒരു minute പറയട്ടെ?",
+    "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. Admissions open ആയി. WhatsApp ൽ details അയക്കട്ടെ?"
    }
   }
  },

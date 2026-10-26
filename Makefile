@@ -196,6 +196,16 @@ voice-samples:
 voice-stt-check:
 	$(API)/.venv/bin/python scripts/voice_samples.py --stt $(if $(DRY),--dry-run,)
 
+# job DS: the same lines as people really say them (everyday spoken style), 3,000 characters at most (kept in voice-samples/spoken/usage.json), before-vs-now page
+.PHONY: voice-samples-spoken
+voice-samples-spoken:
+	$(API)/.venv/bin/python scripts/voice_samples_spoken.py $(if $(DRY),--dry-run,)
+
+# job DS: Claude Haiku only (no Sarvam credit): the comparison conversations answered with and without the register block; 600,000 tokens at most
+.PHONY: register-ab
+register-ab:
+	$(API)/.venv/bin/python scripts/register_ab.py $(if $(DRY),--dry-run,)
+
 # OPT-IN, NEVER part of make check: fetches https://example.com/ and https://example.org/ through the REAL guarded page
 # fetcher (T007 M1) and prints status, bytes, content type and sanitised-text length only. No model, no key, no cost.
 smoke-fetch:

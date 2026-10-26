@@ -1,9 +1,9 @@
 """Discover stdlib unittest tests in every packages/* directory, offline."""
-from pathlib import Path
 import socket
 import subprocess
 import sys
 import unittest
+from pathlib import Path
 
 
 def no_network(*args, **kwargs):

@@ -162,7 +162,7 @@ def test_a_save_is_read_back_and_defaults_stay_available_for_reset() -> None:
     client, repo = world()
     out = client.put(B, json=settings(name="Priya", speed=1.1, max_discount_percent=7), headers=auth("a_owner")).json()
     assert out["saved"] is True and out["settings"]["name"] == "Priya" and out["settings"]["speed"] == 1.1 and out["defaults"]["name"] == "Vani"
-    assert out["intro"]["te"] == "Sri Lakshmi Silks AI అసిస్టెంట్ Priya", "the words AI assistant are in the introduction whatever the name"
+    assert out["intro"]["te"] == "Sri Lakshmi Silks నుంచి AI assistant Priya", "the words AI assistant are in the introduction whatever the name"
     again = client.get(B, headers=auth("a_admin")).json()
     assert again["settings"] == out["settings"] and repo.row is not None
 

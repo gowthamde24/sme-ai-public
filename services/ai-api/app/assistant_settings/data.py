@@ -10,7 +10,7 @@ from typing import Any
 
 DATA = Path(__file__).resolve().parent / "data" / "assistant.json"
 # the assistant word in each language: every introduction and every sample must contain it (and "AI")
-ASSISTANT_WORD = {"en": "assistant", "te": "అసిస్టెంట్", "hi": "असिस्टेंट", "kn": "ಅಸಿಸ್ಟೆಂಟ್", "ta": "உதவியாளர்", "ml": "സഹായി"}
+ASSISTANT_WORD = {lang: "assistant" for lang in ("en", "te", "hi", "kn", "ta", "ml")}   # job DS: in everyday speech the word stays in English (Latin letters) in every language
 
 
 @lru_cache(maxsize=1)

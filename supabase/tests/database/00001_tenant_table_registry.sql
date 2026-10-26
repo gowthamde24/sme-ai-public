@@ -380,6 +380,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('call_handover_rules',
    $$insert into public.call_handover_rules (id, tenant_id, topic, person_name, phone, updated_by) values (%2$L, %1$L, 'other', 'Generic Person', '+917000000001', %5$L) on conflict (tenant_id, topic) do nothing$$,
    'topic = topic', $$delete from public.call_handover_rules where tenant_id = %1$L$$, false),
+  -- job DS: how the assistant talks, per language (written only by the Owner's function; no module guard: every business type talks)
+  ('speaking_styles',
+   $$insert into public.speaking_styles (id, tenant_id, language, style, region, updated_by) values (%2$L, %1$L, 'en', 'everyday_mixed', 'neutral', %5$L) on conflict (tenant_id, language) do nothing$$,
+   'style = style', $$delete from public.speaking_styles where tenant_id = %1$L$$, false),
   -- job DM: the AI assistant's settings (one row per workspace; written only by the Owner's function)
   ('assistant_settings',
    $$insert into public.assistant_settings (tenant_id, assistant_name, voice_persona, main_language, auto_switch_language, allow_english_mixing, style, speed, may_answer_prices, may_book_visits, may_send_media, may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute) values (%1$L, 'Generic', 'female_warm', 'te', true, true, 'warm', 1, true, true, true, true, 0, true, true, array[1], 540, 600) on conflict (tenant_id) do nothing$$,
@@ -706,6 +710,8 @@ select t, r, s, i, u, d from (values
   ('campaign_steps', 'sales', true, false, false, false), ('campaign_steps', 'viewer', false, false, false, false),
   ('call_list_items', 'owner', true, false, false, false), ('call_list_items', 'admin', true, false, false, false),
   ('call_list_items', 'sales', true, false, false, false), ('call_list_items', 'viewer', false, false, false, false),
+  ('speaking_styles', 'owner', true, false, false, false), ('speaking_styles', 'admin', true, false, false, false),
+  ('speaking_styles', 'sales', false, false, false, false), ('speaking_styles', 'viewer', false, false, false, false),
   ('call_settings', 'owner', true, false, false, false), ('call_settings', 'admin', true, false, false, false),
   ('call_settings', 'sales', false, false, false, false), ('call_settings', 'viewer', false, false, false, false),
   ('call_handover_rules', 'owner', true, false, false, false), ('call_handover_rules', 'admin', true, false, false, false),
