@@ -1,4 +1,3 @@
-import { appT } from "@/i18n/app";
 
 import { AgentHero } from "./AgentHero";
 import { DoneSection } from "./DoneSection";

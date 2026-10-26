@@ -24,7 +24,7 @@ export function AskProvider({ lang, base, words, availability, readOnly = false,
   return (
     <AskContext.Provider value={session}>
       {children}
-      {session.live && !readOnly ? <AskFloating session={session} base={base} chipWords={chipWords ?? words} /> : null}
+      {session.live && !readOnly ? <AskFloating session={session} chipWords={chipWords ?? words} /> : null}
     </AskContext.Provider>
   );
 }

@@ -13,7 +13,7 @@ Who is in your business, and who is invited.
   options: Admin=admin | Sales=sales | Viewer=viewer*
 [button type=button disabled: Change role]
 [button type=button: Remove]
-Owners are added by the Stack19 team, not here.
+Owners are added by our team, not here.
 {label="Invite a person"}
 ## Invite a person
 Make a one-time code and give it to the person yourself. They sign in, type the code and join.

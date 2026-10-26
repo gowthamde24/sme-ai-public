@@ -5,6 +5,7 @@ import Link from "next/link";
 import * as React from "react";
 
 import { clock } from "./recorder";
+import { useFollowAnswer } from "./use-follow-answer";
 import { MAX_QUESTION, type AskSession, type Exchange } from "./use-ask-session";
 import { VoiceMode } from "./VoiceMode";
 import type { RecorderProblem } from "./use-recorder";
@@ -229,6 +230,8 @@ export function AskAnswer({ session, chips = [], earlierWord, scrollRoot = false
   const s = session;
   const { w } = s;
   const [showEarlier, setShowEarlier] = React.useState(false);
+  // keeps the newest words in view while an answer streams (use-follow-answer.ts); the view owns it, so it reads no ref of the session
+  const answerRef = useFollowAnswer(s.runs, s.asking, `${s.answer.length}|${s.sources.length}|${s.drafts.length}|${s.phase}`);
   const has = s.phase !== "idle";
   if (!has && s.earlier.length === 0) return null;
   return (
@@ -248,11 +251,11 @@ export function AskAnswer({ session, chips = [], earlierWord, scrollRoot = false
         </div>
       ) : null}
       {has ? (
-        <div ref={s.answerRef} data-ask="answer" className={scrollRoot ? "" : "border-t border-line pt-4"} aria-live="polite" aria-busy={s.asking}>
+        <div ref={answerRef} data-ask="answer" className={scrollRoot ? "" : "border-t border-line pt-4"} aria-live="polite" aria-busy={s.asking}>
           <p className="text-sm text-muted">{s.asked ? `${w(s.heardByVoice ? "ask.voice.said" : "ask.asked")} ${s.asked}` : s.heardByVoice ? w("ask.voice.working") : ""}</p>
           {s.answer ? <p className="mt-2 whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{s.answer}</p> : s.asking ? <p className="mt-2 text-base text-muted">{w("ask.thinking")}</p> : null}
           {s.hasAudio ? (
-            <button type="button" data-voice="play" onClick={() => (s.playing ? s.player.current?.stop() : void s.player.current?.play())} className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-lg border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
+            <button type="button" data-voice="play" onClick={s.togglePlay} className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-lg border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2">
               {s.playing ? <Square className="size-4" aria-hidden="true" /> : <Volume2 className="size-5" aria-hidden="true" />}
               {s.playing ? w("ask.stop") : w("ask.voice.play")}
             </button>

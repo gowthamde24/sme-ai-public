@@ -10,4 +10,4 @@ To remove it, type a current code from the app
 If you remove it you can no longer erase data, export, change members or roles, or change workspace settings until you set a new one.
 {label="If you lose your phone"}
 ## If you lose your phone
-There are no backup codes. Write to the Stack19 team. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.
+There are no backup codes. Write to us. We confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.

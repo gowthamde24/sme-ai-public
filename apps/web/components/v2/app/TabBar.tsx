@@ -10,7 +10,7 @@ import { useFrameData } from "./frame-store";
 import { UsageCard } from "./frame-parts";
 import { NavIcon } from "./icons";
 import { word, withPackWords, type Labels } from "./labels";
-import { coreItem, hrefOf, menuBar, menuFoot, menuGroups, menuOfPage, menuItemId } from "./nav";
+import { hrefOf, menuBar, menuFoot, menuGroups } from "./nav";
 import { useWorkspace, type Membership } from "./use-workspace";
 
 const cell = "relative flex min-h-16 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 pb-1 pt-1.5 text-center text-sm font-medium leading-tight transition-colors duration-150 ease-out active:bg-surface-2";
@@ -49,10 +49,6 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
   }, [open]);
   if (!current) return null;
   const tabs = menuBar(current.role, frame.pack);
-  // the business type's own word for its core tab (Fees, Orders and deliveries ...) names the menu item that holds that page
-  const coreMenu = frame.pack ? coreItem(frame.pack) : null;
-  const coreMenuId = coreMenu ? (() => { const m = menuOfPage(coreMenu.id); return m ? menuItemId(m) : null; })() : null;
-  const coreWord = frame.pack?.labels["pack.core_tab"]; // the business type's own word for its core tab (it comes with the pack, not from the string store)
   const rest = [...menuGroups(current.role, frame.pack).flatMap((g) => g.items), ...menuFoot(current.role, frame.pack)].filter((i) => !tabs.some((t) => t.id === i.id));
   const moreOn = activeMenu ? rest.some((i) => i.id === activeMenu) : false;
   const mark = <span aria-hidden="true" className="absolute inset-x-3 top-0 h-0.5 rounded-b-full bg-brand-edge" />;
@@ -74,7 +70,7 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
                   </span>
                 ) : null}
               </span>
-              <span className="max-w-full break-words">{coreMenuId === i.id && coreWord ? coreWord : word(labels, `nav.tab.${i.id}`, i.short ?? word(labels, `nav.item.${i.id}`, i.label))}</span>
+              <span className="max-w-full break-words">{word(labels, `nav.tab.${i.id}`, i.short ?? word(labels, `nav.item.${i.id}`, i.label))}</span>
             </Link>
           );
         })}

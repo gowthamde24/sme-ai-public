@@ -43,14 +43,15 @@ const FALLBACK: readonly ChipKey[] = ["ask.chip.needs", "ask.chip.call", "ask.ch
 /** The chips of Today's card: the three questions that must always work. */
 export const TODAY_CHIPS: readonly ChipKey[] = ["ask.chip.needs", "ask.chip.call", "ask.chip.money"];
 
-/** The chips for a path under the workspace (`/leads`, `/quotes/…`): by its first segment; the three common ones where the screen has none of its own. */
-export function chipsForPath(rest: string): readonly ChipKey[] {
+/** The chips for a path under the workspace (`/leads`, `/quotes/…`): by its first segment; the three common ones where the screen has none of its own. The workspace home with a records tab (`?tab=leads`, `?tab=companies`) is the Customers screen. */
+export function chipsForPath(rest: string, tab: string | null = null): readonly ChipKey[] {
   const first = rest.split("/").filter(Boolean)[0] ?? "";
+  if (first === "" && tab) return SCREENS.customers;
   return SCREENS[first] ?? FALLBACK;
 }
 
-/** Where the floating orb is not drawn: Today (its card is the assistant) and the live call. `rest` is the path under the workspace ("" = Today). */
-export function orbHidden(rest: string): boolean {
-  if (rest === "" || rest === "/") return true;
+/** Where the floating orb is not drawn: Today (its card is the assistant) and the live call. `rest` is the path under the workspace ("" = the home) and `tab` its `?tab=`: the home with a records tab is the Customers screen, not Today. */
+export function orbHidden(rest: string, tab: string | null = null): boolean {
+  if (rest === "" || rest === "/") return !tab;
   return rest === "/office/live" || rest.startsWith("/office/live/");
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import * as React from "react";
 
 import { Orb } from "@/components/v2/Orb";
@@ -27,10 +27,11 @@ function typing(target: EventTarget | null): boolean {
  * arrived that the person has not seen). Pressed, it opens the panel (AskPanel): a small chat bottom right on a laptop, a sheet 70 % high on a phone. "/" or Cmd/Ctrl+K opens it from the keyboard; Esc or the close button returns to the circle.
  * On Today the same keys put the cursor in the card's own line. Nothing here is fixed to the bottom as a bar: there is no bar.
  */
-export function AskFloating({ session, base, chipWords }: { session: AskSession; base: string; chipWords: AskWords }) {
+export function AskFloating({ session, chipWords }: { session: AskSession; chipWords: AskWords }) {
   const pathname = usePathname();
+  const tab = useSearchParams()?.get("tab") ?? null;
   const rest = workspaceOf(pathname ?? "")?.rest ?? null;
-  const here = rest !== null && !orbHidden(rest);
+  const here = rest !== null && !orbHidden(rest, tab);
   const [open, setOpen] = React.useState(false);
   const [seenAt, setSeenAt] = React.useState(0); // how many finished answers the person has seen
   const orbRef = React.useRef<HTMLButtonElement>(null);
@@ -84,7 +85,7 @@ export function AskFloating({ session, base, chipWords }: { session: AskSession;
         <Orb px={44} state={session.asking && !session.answer ? "think" : session.playing || session.asking ? "speak" : "ambient"} />
         {unseen ? <span data-ask="dot" aria-hidden="true" className="absolute right-0 top-0 size-3.5 rounded-full border-2 border-surface bg-brand" /> : null}
       </button>
-      {open ? <AskPanel session={session} chips={chipsForPath(rest ?? "").map((k) => chipWords[k] ?? k)} onClose={closePanel} /> : null}
+      {open ? <AskPanel session={session} chips={chipsForPath(rest ?? "", tab).map((k) => chipWords[k] ?? k)} onClose={closePanel} /> : null}
     </>
   );
 }

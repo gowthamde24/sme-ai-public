@@ -8,7 +8,6 @@ import { ERROR_CODES, type AskDraft, type AskEvent, type AskSource, type AskTran
 import type { AskWords } from "./ask-words";
 import { canRecord } from "./recorder";
 import { fetchVoiceStatus, makeAskTransport, makeVoiceTransport } from "./transport";
-import { useFollowAnswer } from "./use-follow-answer";
 import { useRecorder, type RecorderProblem } from "./use-recorder";
 import type { VoicePhase } from "./VoiceMode";
 
@@ -100,8 +99,9 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const live = availability === "live" && transport !== null;
   // the exchange on screen, readable from a handler made by an earlier render (a recording finishes long after the render that started it)
   const current = React.useRef<Exchange | null>(null);
-  current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error" };
-  const answerRef = useFollowAnswer(runs, phase === "asking", `${answer.length}|${sources.length}|${drafts.length}|${phase}`);
+  React.useEffect(() => {
+    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error" };
+  });
   const voiceEndpoint = `${base}/ask/voice`;
   const ownVoice = React.useMemo(() => (givenVoice === undefined && givenStatus === undefined ? makeVoiceTransport(voiceEndpoint) : null), [givenVoice, givenStatus, voiceEndpoint]);
   const voiceTransport = givenVoice === undefined ? ownVoice : givenVoice;
@@ -262,6 +262,9 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setPhase(answer || drafts.length || sources.length ? "done" : "idle");
   };
 
+  /** The Play / Stop button of a spoken answer. */
+  const togglePlay = () => (playing ? player.current?.stop() : void player.current?.play());
+
   const startVoice = () => {
     abort.current?.abort(); // a new question ends the old answer
     player.current?.stop();
@@ -303,7 +306,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     text, setText, focused, setFocused, asked, phase, answer, sources, drafts, problem, errorCode, heardByVoice, earlier, finished, mood,
     hasAudio, playing, audioPending, audioFailed, autoplay, setAutoplay, seen, showMic, status,
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, stop, answerRef, player,
+    ask, stop, togglePlay, runs,
     asking: phase === "asking",
   };
 }

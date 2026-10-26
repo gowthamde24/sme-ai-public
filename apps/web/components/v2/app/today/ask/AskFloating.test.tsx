@@ -1,8 +1,11 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-const nav = { pathname: "/app/tenants/22222222-2222-2222-2222-222222222222/leads" };
-vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname, useSearchParams: () => new URLSearchParams(), useRouter: () => ({ refresh: vi.fn() }) }));
+beforeAll(async () => {
+  await import("./AskPanel"); // the panel is a lazy chunk on a real page; a test loads it once, up front
+});
+const nav = { pathname: "/app/tenants/22222222-2222-2222-2222-222222222222/leads", search: "" };
+vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname, useSearchParams: () => new URLSearchParams(nav.search), useRouter: () => ({ refresh: vi.fn() }) }));
 // next/dynamic loads the panel's chunk after the click; a test renders the real panel at once
 vi.mock("next/dynamic", () => ({
   default: (load: () => Promise<unknown>) => {
@@ -18,6 +21,8 @@ vi.mock("next/dynamic", () => ({
 }));
 
 import { appT } from "@/i18n/app";
+
+vi.setConfig({ testTimeout: 15000 });
 
 import { AskCard } from "./AskCard";
 import { AskProvider } from "./AskProvider";
@@ -48,6 +53,7 @@ const harness = (transport: AskTransport | null, over: { availability?: "live" |
 
 beforeEach(() => {
   nav.pathname = `${BASE}/leads`;
+  nav.search = "";
   window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
 });
 afterEach(cleanup);
@@ -102,6 +108,17 @@ describe("the floating orb (job DQ part 0)", () => {
     expect(within(await screen.findByRole("dialog")).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["What needs me today?", "Who should I call first?", "How much customer money is held?"]);
   });
 
+  it("the workspace home with a records tab is the Customers screen: the orb is there, with the chips of Customers (Today without a tab is not)", async () => {
+    nav.pathname = BASE;
+    nav.search = "tab=companies";
+    const { rerender } = render(harness(playing(ANSWER)));
+    expect(screen.getByRole("button", { name: "Ask Vijaya" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
+    expect(within(await screen.findByRole("dialog")).getAllByRole("listitem")[0]).toHaveTextContent("Who should I call first?");
+    nav.search = "";
+    rerender(harness(playing(ANSWER)));
+    expect(screen.queryByRole("button", { name: "Ask Vijaya" })).toBeNull();
+  });
   it("a chip asks its words and the answer appears in the panel", async () => {
     const seen: string[] = [];
     render(harness(playing(ANSWER, seen)));

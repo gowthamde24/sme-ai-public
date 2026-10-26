@@ -1,6 +1,6 @@
 # Products
 The records of Demo Silks (synthetic), as saved.
-{role=note} Synthetic data only. This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as example.test ) and a phone number that starts with +00 . The Stack19 team opens this once the privacy checks are done.
+{role=note} Synthetic data only. This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as example.test ) and a phone number that starts with +00 . Our team opens this once the privacy checks are done.
 {label="Records"} [Companies](/app/tenants/22222222-2222-2222-2222-222222222222?tab=companies) [Contacts](/app/tenants/22222222-2222-2222-2222-222222222222?tab=contacts) [Products](/app/tenants/22222222-2222-2222-2222-222222222222?tab=products current=page) [Leads](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads) [Opportunities](/app/tenants/22222222-2222-2222-2222-222222222222?tab=opportunities)
 {label="Add a company"}
 [button type=button: Add a company]

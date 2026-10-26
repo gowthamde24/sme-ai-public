@@ -66,7 +66,7 @@ export function AskPanel({ session, chips, onClose }: { session: AskSession; chi
         </div>
         <div className="shrink-0 space-y-3 border-t border-line bg-surface px-4 pb-4 pt-3">
           <AskChips session={s} chips={chips} />
-          <AskForm session={s} look="panel" placeholder={w("ask.placeholder.hero")} />
+          <AskForm session={s} look="panel" placeholder={w("ask.panel.placeholder")} />
         </div>
       </div>
       <AskVoiceMode session={s} />

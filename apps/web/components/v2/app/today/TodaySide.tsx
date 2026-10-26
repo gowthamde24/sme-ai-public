@@ -107,11 +107,11 @@ export function TeamSection({ team, base, t, now }: { team: readonly AgentRow[] 
             <li key={a.agent} className="flex min-w-0 items-center gap-3 py-2.5 first:pt-0 last:pb-0">
               <AgentMark agent={a.agent} px={40} off={a.state !== "working" && a.state !== "idle"} mood={a.state === "working" ? "thinking" : a.state === "idle" ? "idle" : "resting"} className="size-10 shrink-0" />
               <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="inline-flex min-w-0 items-center gap-1.5 text-base font-semibold leading-tight">
+                <span data-part="team-name" className="inline-flex min-w-0 items-center gap-1.5 text-base font-semibold leading-tight">
                   <StateDot state={a.state === "working" ? "working" : a.state === "idle" ? "idle" : "off"} />
                   <span className="min-w-0 [overflow-wrap:anywhere]">{t(`agent.${a.agent}`)}</span>
                 </span>
-                <span className={`text-sm leading-snug [overflow-wrap:anywhere] ${a.state === "working" ? "font-semibold text-brand-text" : "text-muted"}`}>{statusLine(a, t, now)}</span>
+                <span data-part="team-status" className={`text-sm leading-snug [overflow-wrap:anywhere] ${a.state === "working" ? "font-semibold text-brand-text" : "text-muted"}`}>{statusLine(a, t, now)}</span>
               </div>
             </li>
           ))}

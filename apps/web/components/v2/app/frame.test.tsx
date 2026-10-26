@@ -281,16 +281,16 @@ describe("the menu of a business type (job CL)", () => {
     const again = side(only("owner"), view({ validated: true }));
     expect(again.container.querySelector("[data-accent]")).toBeNull();
   });
-  it("draws the phone's tabs with the core tab in the pack's own word, then More with the rest", () => {
+  it("draws the phone's four tabs (the same words for every business type), then More with the rest", () => {
     bar(only("owner"), view());
     const tabs = within(screen.getByRole("navigation", { name: "Quick menu" }));
-    expect(tabs.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", real.labels["pack.core_tab"]]); // Sales is named by the business type's own word for its core work
+    expect(tabs.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", "Sales"]); // the same four words for every business type (the owner's list); the pack's own word for its core work is the tab inside Sales
     expect(tabs.getByRole("button", { name: "More" })).toBeInTheDocument();
     fireEvent.click(tabs.getByRole("button", { name: "More" }));
     const sheet = within(screen.getByRole("dialog"));
     expect(sheet.getByRole("link", { name: "Calls" })).toBeInTheDocument(); // Campaigns is a tab of Calls
     expect(sheet.getByRole("link", { name: "Reports" })).toBeInTheDocument();
-    expect(sheet.queryByRole("link", { name: real.labels["pack.core_tab"] })).toBeNull(); // it is a tab of the bar, not in the sheet
+    expect(sheet.queryByRole("link", { name: "Sales" })).toBeNull(); // it is a tab of the bar, not in the sheet
   });
   it("the default pack's frame is the menu the product always had, with the same four tabs", () => {
     const defaultView = { ...NO_FRAME_DATA, pack: packFrame(defaultWorkspacePack(), "en") };
@@ -301,7 +301,7 @@ describe("the menu of a business type (job CL)", () => {
     expect(names()).toEqual(plain);
     cleanup();
     bar(owner, defaultView);
-    expect(within(screen.getByRole("navigation", { name: "Quick menu" })).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", "Quotes"]); // the core tab (Quotes) is the pack's own word for what Sales holds
+    expect(within(screen.getByRole("navigation", { name: "Quick menu" })).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", "Sales"]);
   });
   it("is what the workspace's slot brought in that wins over what the first paint had (no flash of the wrong menu after the client takes over)", async () => {
     const { act } = await import("@testing-library/react");

@@ -272,7 +272,7 @@ describe("Today: sending stopped", () => {
     await view(data({ sending: { stopped: true } }));
     const banner = document.querySelector('[data-banner="sending-stopped"]') as HTMLElement;
     expect(banner).toHaveTextContent("Sending is stopped");
-    expect(banner).toHaveTextContent("Nothing goes out and everything waits until the Stack19 team switches sending back on.");
+    expect(banner).toHaveTextContent("Nothing goes out and everything waits until our team switches sending back on.");
     expect(banner.compareDocumentPosition(document.querySelector('[data-part="agent-owl"]') as Element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
   it("a demo workspace says it is a demo and that nothing goes out, and never says 'operator' (fix-today-ask)", async () => {
