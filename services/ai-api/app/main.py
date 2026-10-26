@@ -162,6 +162,10 @@ from app.speaking.service import SpeakingService
 from app.suppression.repository import PostgrestSuppressionRepository
 from app.suppression.routes import router as suppression_router
 from app.suppression.wiring import build_key_ring
+from app.tasks import errors as task_errors
+from app.tasks.repository import PostgrestTasksRepository
+from app.tasks.routes import router as tasks_router
+from app.tasks.service import TasksService
 from app.team import errors as team_errors
 from app.team.repository import PostgrestTeamRepository
 from app.team.routes import public_router as team_public_router
@@ -281,6 +285,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, key_ring
         ),
         outreach=build_outreach(config.rest_url, config.anon_key),
+        tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         notifications=build_notifications(settings, config),
         research_web=build_research_web(settings),
@@ -742,6 +747,23 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     team_errors.InvitationNotPendingError: ApiError(
         409, "invitation_not_pending", "That invitation was already used."
     ),
+    # Tasks (job DR B1). Fixed messages: nothing from the data layer reaches a client.
+    task_errors.NotForSchoolsError: ApiError(
+        422,
+        "not_for_schools",
+        "A school's task cannot talk about fees, marks or dues, "
+        "and there is no payment reminder for schools.",
+    ),
+    task_errors.PlanChangedError: ApiError(
+        409,
+        "plan_changed",
+        "The plan changed since you saw it. Look at it again and approve the new one.",
+    ),
+    task_errors.TaskStateError: ApiError(
+        409,
+        "task_state",
+        "That cannot be done in the state the task is in now. Reload and look again.",
+    ),
     # Store visits (job AS, ADR 0067). Fixed messages: nothing from the data layer reaches a client.
     visit_errors.VisitStateError: ApiError(
         409,
@@ -1071,6 +1093,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_sources_router)
     app.include_router(lead_intake_router)
     app.include_router(outreach_router)
+    app.include_router(tasks_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)

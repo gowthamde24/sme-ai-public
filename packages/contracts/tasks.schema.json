@@ -1,0 +1,1127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tasks.schema.json",
+  "title": "Tasks (job DR B1)",
+  "description": "Generated from services/ai-api/app/tasks/models.py by `make contracts`.",
+  "$defs": {
+    "AnswerIn": {
+      "additionalProperties": false,
+      "properties": {
+        "answer": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Answer",
+          "type": "string"
+        }
+      },
+      "required": [
+        "answer"
+      ],
+      "title": "AnswerIn",
+      "type": "object"
+    },
+    "ApproveIn": {
+      "additionalProperties": false,
+      "properties": {
+        "plan_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Plan Sha256",
+          "type": "string"
+        },
+        "cap_paise": {
+          "anyOf": [
+            {
+              "maximum": 10000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cap Paise"
+        }
+      },
+      "required": [
+        "plan_sha256"
+      ],
+      "title": "ApproveIn",
+      "type": "object"
+    },
+    "CapIn": {
+      "additionalProperties": false,
+      "properties": {
+        "cap_paise": {
+          "maximum": 10000000,
+          "minimum": 0,
+          "title": "Cap Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "cap_paise"
+      ],
+      "title": "CapIn",
+      "type": "object"
+    },
+    "Estimate": {
+      "additionalProperties": false,
+      "properties": {
+        "contacts": {
+          "title": "Contacts",
+          "type": "integer"
+        },
+        "calls": {
+          "title": "Calls",
+          "type": "integer"
+        },
+        "messages": {
+          "title": "Messages",
+          "type": "integer"
+        },
+        "minutes": {
+          "title": "Minutes",
+          "type": "integer"
+        },
+        "cost_paise": {
+          "title": "Cost Paise",
+          "type": "integer"
+        },
+        "basis": {
+          "title": "Basis",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contacts",
+        "calls",
+        "messages",
+        "minutes",
+        "cost_paise",
+        "basis"
+      ],
+      "title": "Estimate",
+      "type": "object"
+    },
+    "ExcludeIn": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_ids": {
+          "items": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Contact Ids",
+          "type": "array"
+        },
+        "excluded": {
+          "default": true,
+          "title": "Excluded",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "contact_ids"
+      ],
+      "title": "ExcludeIn",
+      "type": "object"
+    },
+    "FollowUp": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "default": "none",
+          "enum": [
+            "none",
+            "whatsapp_summary",
+            "call_back"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "after_hours": {
+          "default": 24,
+          "maximum": 168,
+          "minimum": 1,
+          "title": "After Hours",
+          "type": "integer"
+        }
+      },
+      "title": "FollowUp",
+      "type": "object"
+    },
+    "PlanIn": {
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Task Id"
+        },
+        "instruction": {
+          "maxLength": 1500,
+          "minLength": 3,
+          "title": "Instruction",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "te",
+                "hi",
+                "kn",
+                "ta",
+                "ml"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "contacts": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ProvidedContact"
+              },
+              "maxItems": 500,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contacts"
+        }
+      },
+      "required": [
+        "instruction"
+      ],
+      "title": "PlanIn",
+      "type": "object"
+    },
+    "PlanOut": {
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "enum": [
+            "call",
+            "whatsapp",
+            "both"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "goal": {
+          "title": "Goal",
+          "type": "string"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/$defs/Question"
+          },
+          "title": "Questions",
+          "type": "array"
+        },
+        "script_notes": {
+          "title": "Script Notes",
+          "type": "string"
+        },
+        "message_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Message Text"
+        },
+        "window": {
+          "$ref": "#/$defs/Window"
+        },
+        "follow_up": {
+          "$ref": "#/$defs/FollowUp"
+        },
+        "contacts_total": {
+          "title": "Contacts Total",
+          "type": "integer"
+        },
+        "contacts_sample": {
+          "items": {
+            "$ref": "#/$defs/SampleContact"
+          },
+          "title": "Contacts Sample",
+          "type": "array"
+        },
+        "unmatched": {
+          "items": {
+            "$ref": "#/$defs/Unmatched"
+          },
+          "title": "Unmatched",
+          "type": "array"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "channel",
+        "goal",
+        "questions",
+        "script_notes",
+        "message_text",
+        "window",
+        "follow_up",
+        "contacts_total"
+      ],
+      "title": "PlanOut",
+      "type": "object"
+    },
+    "Progress": {
+      "additionalProperties": false,
+      "properties": {
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        },
+        "excluded": {
+          "title": "Excluded",
+          "type": "integer"
+        },
+        "waiting": {
+          "title": "Waiting",
+          "type": "integer"
+        },
+        "in_progress": {
+          "title": "In Progress",
+          "type": "integer"
+        },
+        "done": {
+          "title": "Done",
+          "type": "integer"
+        },
+        "failed": {
+          "title": "Failed",
+          "type": "integer"
+        },
+        "skipped": {
+          "title": "Skipped",
+          "type": "integer"
+        },
+        "reached": {
+          "title": "Reached",
+          "type": "integer"
+        },
+        "positive": {
+          "title": "Positive",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total",
+        "excluded",
+        "waiting",
+        "in_progress",
+        "done",
+        "failed",
+        "skipped",
+        "reached",
+        "positive"
+      ],
+      "title": "Progress",
+      "type": "object"
+    },
+    "ProvidedContact": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "phone": {
+          "maxLength": 32,
+          "minLength": 5,
+          "title": "Phone",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone"
+      ],
+      "title": "ProvidedContact",
+      "type": "object"
+    },
+    "Question": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 200,
+          "minLength": 2,
+          "title": "Text",
+          "type": "string"
+        },
+        "type": {
+          "default": "text",
+          "enum": [
+            "text",
+            "amount",
+            "date",
+            "yesno"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "text"
+      ],
+      "title": "Question",
+      "type": "object"
+    },
+    "ReportOut": {
+      "additionalProperties": false,
+      "properties": {
+        "task_id": {
+          "format": "uuid",
+          "title": "Task Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "needs_answer",
+            "planned",
+            "approved",
+            "running",
+            "paused",
+            "done",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "short_answer": {
+          "title": "Short Answer",
+          "type": "string"
+        },
+        "short_answer_kind": {
+          "enum": [
+            "cheapest",
+            "counts"
+          ],
+          "title": "Short Answer Kind",
+          "type": "string"
+        },
+        "totals": {
+          "$ref": "#/$defs/ReportTotals"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/ReportRow"
+          },
+          "title": "Rows",
+          "type": "array"
+        },
+        "simulated": {
+          "default": true,
+          "title": "Simulated",
+          "type": "boolean"
+        },
+        "wording": {
+          "const": "draft",
+          "default": "draft",
+          "title": "Wording",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id",
+        "status",
+        "short_answer",
+        "short_answer_kind",
+        "totals",
+        "rows"
+      ],
+      "title": "ReportOut",
+      "type": "object"
+    },
+    "ReportRow": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "phone_last4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Phone Last4"
+        },
+        "outcome": {
+          "title": "Outcome",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Category"
+        },
+        "captured": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Captured"
+        },
+        "transcript": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TranscriptLine"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Transcript"
+        },
+        "recording_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recording Url"
+        },
+        "simulated": {
+          "default": true,
+          "title": "Simulated",
+          "type": "boolean"
+        },
+        "message_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Message Status"
+        }
+      },
+      "required": [
+        "contact_id",
+        "name",
+        "phone_last4",
+        "outcome",
+        "category",
+        "captured",
+        "transcript",
+        "message_status"
+      ],
+      "title": "ReportRow",
+      "type": "object"
+    },
+    "ReportTotals": {
+      "additionalProperties": false,
+      "properties": {
+        "contacts": {
+          "title": "Contacts",
+          "type": "integer"
+        },
+        "reached": {
+          "title": "Reached",
+          "type": "integer"
+        },
+        "positive": {
+          "title": "Positive",
+          "type": "integer"
+        },
+        "negative": {
+          "title": "Negative",
+          "type": "integer"
+        },
+        "unclear": {
+          "title": "Unclear",
+          "type": "integer"
+        },
+        "no_answer": {
+          "title": "No Answer",
+          "type": "integer"
+        },
+        "spent_paise": {
+          "title": "Spent Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contacts",
+        "reached",
+        "positive",
+        "negative",
+        "unclear",
+        "no_answer",
+        "spent_paise"
+      ],
+      "title": "ReportTotals",
+      "type": "object"
+    },
+    "SampleContact": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Name"
+        }
+      },
+      "required": [
+        "contact_id",
+        "name"
+      ],
+      "title": "SampleContact",
+      "type": "object"
+    },
+    "TaskContactOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "phone_last4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Phone Last4"
+        },
+        "status": {
+          "enum": [
+            "waiting",
+            "excluded",
+            "in_progress",
+            "done",
+            "failed",
+            "skipped"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "skip_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Skip Reason"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Outcome"
+        },
+        "outcome_category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Outcome Category"
+        },
+        "captured": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Captured"
+        },
+        "simulated": {
+          "default": true,
+          "title": "Simulated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "contact_id",
+        "name",
+        "phone_last4",
+        "status",
+        "skip_reason",
+        "outcome",
+        "outcome_category",
+        "captured"
+      ],
+      "title": "TaskContactOut",
+      "type": "object"
+    },
+    "TaskContactsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "contacts": {
+          "items": {
+            "$ref": "#/$defs/TaskContactOut"
+          },
+          "title": "Contacts",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "contacts",
+        "next_cursor"
+      ],
+      "title": "TaskContactsOut",
+      "type": "object"
+    },
+    "TaskOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "needs_answer",
+            "planned",
+            "approved",
+            "running",
+            "paused",
+            "done",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "instruction": {
+          "title": "Instruction",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta",
+            "ml"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "template": {
+          "enum": [
+            "call_new_leads",
+            "reengage_old_leads",
+            "confirm_appointments",
+            "collect_feedback",
+            "payment_reminder",
+            "supplier_price_enquiry",
+            "offer_invite",
+            "custom"
+          ],
+          "title": "Template",
+          "type": "string"
+        },
+        "question": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Question"
+        },
+        "plan": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlanOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "estimate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Estimate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cap_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cap Paise"
+        },
+        "spent_paise": {
+          "title": "Spent Paise",
+          "type": "integer"
+        },
+        "pause_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "cap",
+                "owner"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pause Reason"
+        },
+        "progress": {
+          "$ref": "#/$defs/Progress"
+        },
+        "plan_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Plan Sha256"
+        },
+        "simulated": {
+          "default": true,
+          "title": "Simulated",
+          "type": "boolean"
+        },
+        "wording": {
+          "const": "draft",
+          "default": "draft",
+          "title": "Wording",
+          "type": "string"
+        },
+        "created_at": {
+          "title": "Created At",
+          "type": "string"
+        },
+        "approved_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved At"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Finished At"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "instruction",
+        "language",
+        "template",
+        "question",
+        "plan",
+        "estimate",
+        "cap_paise",
+        "spent_paise",
+        "pause_reason",
+        "progress",
+        "plan_sha256",
+        "created_at",
+        "approved_at",
+        "finished_at"
+      ],
+      "title": "TaskOut",
+      "type": "object"
+    },
+    "TemplateOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "channel_default": {
+          "enum": [
+            "call",
+            "whatsapp",
+            "both"
+          ],
+          "title": "Channel Default",
+          "type": "string"
+        },
+        "needs_pack": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Needs Pack"
+        },
+        "promotional": {
+          "title": "Promotional",
+          "type": "boolean"
+        },
+        "example_instruction": {
+          "title": "Example Instruction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "channel_default",
+        "needs_pack",
+        "promotional",
+        "example_instruction"
+      ],
+      "title": "TemplateOut",
+      "type": "object"
+    },
+    "TemplatesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "templates": {
+          "items": {
+            "$ref": "#/$defs/TemplateOut"
+          },
+          "title": "Templates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "templates"
+      ],
+      "title": "TemplatesOut",
+      "type": "object"
+    },
+    "TranscriptLine": {
+      "additionalProperties": false,
+      "properties": {
+        "who": {
+          "enum": [
+            "assistant",
+            "contact"
+          ],
+          "title": "Who",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "who",
+        "text"
+      ],
+      "title": "TranscriptLine",
+      "type": "object"
+    },
+    "Unmatched": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Name"
+        },
+        "phone_last4": {
+          "title": "Phone Last4",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "phone_last4"
+      ],
+      "title": "Unmatched",
+      "type": "object"
+    },
+    "Window": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "default": "today",
+          "title": "Date",
+          "type": "string"
+        },
+        "from_minute": {
+          "default": 600,
+          "maximum": 1260,
+          "minimum": 540,
+          "multipleOf": 15,
+          "title": "From Minute",
+          "type": "integer"
+        },
+        "to_minute": {
+          "default": 1140,
+          "maximum": 1260,
+          "minimum": 540,
+          "multipleOf": 15,
+          "title": "To Minute",
+          "type": "integer"
+        }
+      },
+      "title": "Window",
+      "type": "object"
+    }
+  }
+}

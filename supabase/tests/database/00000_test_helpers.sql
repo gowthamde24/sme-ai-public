@@ -594,6 +594,11 @@ begin
   -- job DR A3: what a call captured (the customer's words) and the one-line hand-off about them carry canaries, erased with the workspace and swept
   insert into public.outcome_details (outcome_id, tenant_id, callback_at, captured) values (tests.rid(p || '_er_out'), t, now() + interval '1 day', '{"budget": "Oqdr7 50 lakh"}'::jsonb);
   insert into public.outreach_handoffs (id, tenant_id, contact_id, assigned_to, summary) values (tests.rid(p || '_er_ho'), t, k, tests.uid(p || '_owner'), 'Hodr7 is interested in a site visit');
+  -- job DR B1: a task's words (the owner's instruction, the one question and its answer, the plan) and what a person said (captured fields, the transcript) carry a business canary, erased with the workspace and swept
+  insert into public.tasks (id, tenant_id, instruction, language, question, answer, plan, created_by) values
+    (tests.rid(p || '_er_task'), t, 'Tskq7 ask the suppliers for the price', 'en', 'Which Tskq7 suppliers?', 'The three Tskq7 ones', '{"goal": "Tskq7 prices"}'::jsonb, tests.uid(p || '_owner'));
+  insert into public.task_contacts (id, tenant_id, task_id, contact_id, lead_id, captured, transcript) values
+    (tests.rid(p || '_er_taskc'), t, tests.rid(p || '_er_task'), k, l, '{"price": "Tskq7"}'::jsonb, '[{"who": "contact", "text": "Tskq7 here"}]'::jsonb);
 end $$;
 
 -- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).

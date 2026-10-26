@@ -55,7 +55,7 @@ declare
   r record;
 begin
   for r in select * from tests.tenant_table_registry
-            where table_name in ('customer_sites', 'ledger_accounts', 'ledger_entries', 'campaigns', 'campaign_recipients', 'campaign_steps', 'call_list_items', 'material_quote_policies', 'material_quotes', 'material_quote_lines', 'delivery_trips', 'delivery_trip_lines', 'delivery_trip_events', 'programmes', 'programme_groups', 'students', 'admissions', 'admission_events', 'fee_plans', 'fee_plan_lines', 'fee_assignments')
+            where table_name in ('tasks', 'customer_sites', 'ledger_accounts', 'ledger_entries', 'campaigns', 'campaign_recipients', 'campaign_steps', 'call_list_items', 'material_quote_policies', 'material_quotes', 'material_quote_lines', 'delivery_trips', 'delivery_trip_lines', 'delivery_trip_events', 'programmes', 'programme_groups', 'students', 'admissions', 'admission_events', 'fee_plans', 'fee_plan_lines', 'fee_assignments')
             order by table_name loop
     execute format(r.insert_sql, tests.tid('b'), gen_random_uuid(), tests.rid('b_company'), tests.rid('b_contact'), tests.pool_uid(3));
   end loop;

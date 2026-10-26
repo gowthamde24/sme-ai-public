@@ -61,6 +61,7 @@ from app.sites.repository import SitesRepository
 from app.speaking.service import SpeakingService
 from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
+from app.tasks.service import TasksService
 from app.team.repository import TeamRepository
 from app.tenancy.models import Role, TenantOut
 from app.tenancy.repository import TenantRepository
@@ -157,6 +158,8 @@ class Runtime:
     lead_sources: LeadSourcesService | None = None
     # job DR A3: speed to lead and approve once
     outreach: OutreachService | None = None
+    # job DR B1: "Ask Vijaya to do it" (plan, approve once, run, report)
+    tasks: TasksService | None = None
 
 
 @dataclass(frozen=True)
