@@ -52,7 +52,7 @@ export default async function TaskRoute({ params }: PageProps<"/app/tenants/[ten
           {words["tk.back"] ?? "All tasks"}
         </a>
       </p>
-      <div className="mt-6 max-w-4xl">
+      <div className="mt-6 max-w-3xl">
         <TaskDetail
           initialTask={task}
           initialReport={report?.ok ? report.value : null}
