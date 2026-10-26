@@ -35,6 +35,7 @@ from app.followups.repository import FollowupsRepository
 from app.integrations.policy import PolicyVersions
 from app.integrations.repository import IntegrationsRepository
 from app.knowledge.service import KnowledgeService
+from app.lead_sources.service import LeadSourcesService
 from app.leads.repository import LeadsRepository
 from app.leadspack.service import LeadPlaybookService
 from app.leadtools.repository import LeadSearchRepository
@@ -151,6 +152,8 @@ class Runtime:
     # job DR / A1: the lead playbook of a workspace and its knowledge base
     lead_playbook: LeadPlaybookService | None = None
     knowledge: KnowledgeService | None = None
+    # job DR / A2: lead imports and live sources
+    lead_sources: LeadSourcesService | None = None
 
 
 @dataclass(frozen=True)

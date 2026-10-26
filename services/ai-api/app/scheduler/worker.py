@@ -34,6 +34,8 @@ from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
 from app.dpdp.mail import DpdpJobs
 from app.dpdp.wiring import build_dpdp_jobs
+from app.lead_sources.sync import SheetSync
+from app.lead_sources.wiring import build_lead_sources
 from app.notifications.repository import PostgrestNotificationsRepository
 from app.notifications.runner import PushRunner
 from app.notifications.webpush import WebPushSender
@@ -48,6 +50,7 @@ from app.privacy.repository import PostgrestPrivacyRepository
 from app.scheduler.repository import PostgrestSchedulerRepository, SchedulerRepository
 from app.scheduler.session import PrincipalSession, SignInError
 from app.scheduler.tick import TickResult, run_tick
+from app.suppression.wiring import build_key_ring
 from app.tenancy.repository import TokenRejected
 from app.voice.factory import build_note_voice
 
@@ -76,6 +79,7 @@ class Worker:
         storage: StorageClient | None = None,
         housekeeping: Housekeeping | None = None,
         push: PushRunner | None = None,
+        lead_sheets: SheetSync | None = None,
         voice: VoiceNotes | None = None,
         billing_mail: BillingReminders | None = None,
         billing_clocks: BillingService | None = None,
@@ -94,6 +98,8 @@ class Worker:
         self._sign_media = media_signer(storage)
         self._housekeeping = housekeeping
         self._push = push
+        # job DR / A2: the Google Sheets of leads that are kept in sync
+        self._lead_sheets = lead_sheets
         # job CV: the spoken copy of a campaign message, made at send time by the text-to-speech provider (None = voice notes are not available in this process)
         self._voice = voice
         # job DI: the e-mails of a workspace that went read-only (day 1, 30, 60, 83); the FAKE sender sends nothing; only while the platform's billing switch is on
@@ -121,6 +127,7 @@ class Worker:
             )
             self._privacy_housekeeping(token)
             self._push_to_the_team(token)
+            self._lead_sheet_sync(token)
             self._billing_reminders(token)
             self._billing_trial_clocks(token)
             self._dpdp(token)
@@ -156,6 +163,17 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("push pass crashed: %s", exc.__class__.__name__)
+
+    def _lead_sheet_sync(self, token: str) -> None:
+        """Job DR / A2: pull the Google Sheets of leads that are due. A failure here never fails the tick (a refused token does)."""
+        if self._lead_sheets is None:
+            return
+        try:
+            self._lead_sheets.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("lead sheet sync crashed: %s", exc.__class__.__name__)
 
     def _billing_reminders(self, token: str) -> None:
         if self._billing_mail is None:
@@ -261,6 +279,7 @@ def build_worker(settings: Settings) -> Worker:
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,
+        lead_sheets=SheetSync(build_lead_sources(settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, build_key_ring(settings))),
         voice=VoiceNotes(repository, *build_note_voice(settings)),
     )
 

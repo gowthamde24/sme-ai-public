@@ -56,13 +56,14 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "own_voices",
     "speaking_styles",
     "lead_playbooks", "knowledge_sources", "knowledge_facts",
+    "lead_sources", "lead_consents", "lead_intakes", "lead_flags", "lead_arrivals", "lead_source_costs", "lead_sheet_links", "lead_unparsed",
     "agent_runs", "agent_run_steps", "agent_cost_reservations", "tenant_agent_settings", "tenant_data_policy",
     "data_exports", "erasure_requests", "memberships", "audit_events", "business_profile",
 )  # fmt: skip
 # the tables whose primary key is the workspace id itself (no `id` column)
 ORDER_BY_TENANT = frozenset({"tenant_agent_settings", "tenant_data_policy", "outbox_settings", "store_settings", "scheduler_settings", "business_profile", "institution_profiles", "voice_settings", "billing_subscriptions", "assistant_settings"})
 # the tables whose key is not `id`: the column that is unique within one workspace (job CV)
-ORDER_BY_OTHER = {"voice_choices": "language", "voice_note_usage": "ref_id", "billing_events": "event_id", "billing_usage_events": "ref_id", "billing_notices": "at", "billing_lapse_reminders": "day", "billing_pending_reminders": "day", "billing_trial_reminders": "day"}
+ORDER_BY_OTHER = {"lead_source_costs": "source", "voice_choices": "language", "voice_note_usage": "ref_id", "billing_events": "event_id", "billing_usage_events": "ref_id", "billing_notices": "at", "billing_lapse_reminders": "day", "billing_pending_reminders": "day", "billing_trial_reminders": "day"}
 
 
 @dataclass(frozen=True)

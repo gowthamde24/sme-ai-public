@@ -150,6 +150,13 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `INTEGRATIONS_TENANT_ID` | plain | api | The ONE workspace the installation's connector credentials belong to. |
 | `INDIAMART_PROVIDER` | plain | api | `off` (default) | `fake` | `real`. |
 | `INDIAMART_CRM_KEY` | secret | api | Only with `real`. |
+| `LEAD_INBOUND_DOMAIN` | plain | api | Job DR / A2: the domain of the forwarding addresses `leads+TOKEN@domain`. Unset = no address is shown. |
+| `LEAD_INBOUND_SECRET` | secret | api | Job DR / A2: the header `X-Inbound-Secret` of the one global inbound mail address. Unset = that route answers 503. |
+| `LEAD_DND_PROVIDER` | plain | api | Job DR / A2: `off` (default) \| `fake` (development only). No real Do-Not-Disturb lookup is chosen yet. |
+| `META_LEAD_PROVIDER` | plain | api | Job DR / A2: `off` (default) \| `fake` (development only) \| `graph` (after Meta's app verification). |
+| `META_APP_SECRET` | secret | api | Job DR / A2: signs Meta's webhook. Only with `graph`. |
+| `META_PAGE_TOKEN` | secret | api | Job DR / A2: fetches a lead from the Graph API. Only with `graph`. |
+| `GOOGLE_SHEETS_SERVICE_ACCOUNT_EMAIL` | plain | api | Job DR / A2: shown to owners as the address to share a private sheet with (the key is not used yet). |
 | `PAYMENTS_PROVIDER` | plain | api | `off` (default) | `fake` | `razorpay` | `cashfree`. |
 | `RAZORPAY_KEY_ID` | plain | api | An identifier, not a secret (but keep it private). |
 | `RAZORPAY_KEY_SECRET` | secret | api | Only with `razorpay`. |
@@ -222,3 +229,4 @@ The web has **no server secret**: everything it needs is public. The `NEXT_PUBLI
 * **Secrets:** create once (`./deploy/cloudrun.sh secrets`, or `printf '%s' "$VALUE" | gcloud secrets create NAME --data-file=-` with the value typed hidden into a variable first), then reference: `--set-secrets NAME=secret-name:latest`. Give the service's account (`RUN_SA`, ideally a dedicated account with no other role) `roles/secretmanager.secretAccessor` on exactly those secrets. A new version of a secret is picked up at the next deploy of the service (`:latest` is resolved when an instance starts).
 * **Never:** a value in the repository, in `deploy/hosting.env.example`, in a Docker image, in a build argument (build arguments are visible in the image history; only the public `NEXT_PUBLIC_*` values are build arguments), or in the Cloud Run "plain" environment for something in the secret rows.
 * **On Vercel (if chosen):** the same `NEXT_PUBLIC_*` names as Project variables for Production; mark none as secret because none is, and set the function region to `bom1` (Mumbai).
+

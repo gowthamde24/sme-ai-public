@@ -47,6 +47,7 @@ _SPEND = (
     ("POST", r"/voice-notes/preview"),
     ("POST", r"/ai-assistant/test-call"),
     ("POST", r"/knowledge/sources/[^/]+/draft-facts"),   # job DR / A1: a model call
+    ("POST", r"/lead-imports/read"),   # job DR / A2: column matching may ask the model
     ("POST", r"/institution/marks-messages/send"),
     ("POST", r"/trips/[^/]+/notify"),
     ("GET", r"/leads/search"),   # the outside lead search

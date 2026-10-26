@@ -123,7 +123,7 @@ select pg_temp.set_pack('b', 'textiles');
 -- ============================================================================ F. every tenant table is guarded or exempt, with a reason
 create temp table exempt (tbl text primary key, why text not null);
 insert into exempt (tbl, why) values
-  ('integrations.calendar_tokens', 'the calendar feed: a credential, not a module'), ('integrations.call_bridges', 'telephony account settings'), ('integrations.missed_calls', 'inbound calls are recorded whatever the pack'),
+  ('integrations.lead_items', 'lead sources: the idempotency ledger, every business type (job DR)'), ('integrations.calendar_tokens', 'the calendar feed: a credential, not a module'), ('integrations.call_bridges', 'telephony account settings'), ('integrations.missed_calls', 'inbound calls are recorded whatever the pack'),
   ('integrations.pull_state', 'connector cursor'), ('integrations.wa_conversation_state', 'inbox: inbound messages are never refused'), ('integrations.wa_events', 'inbox: inbound events are never refused'),
   ('integrations.wa_message_status', 'delivery receipts'), ('integrations.wa_templates', 'WhatsApp templates'), ('integrations.whatsapp_accounts', 'the WhatsApp connection (second factor)'),
   ('notify.member_state', 'notifications'), ('notify.push_prefs', 'notifications'), ('notify.push_sent', 'notifications'),
@@ -143,6 +143,8 @@ insert into exempt (tbl, why) values
   ('team.invitations', 'the team'), ('workspace.profiles', 'the workspace profile'),
   ('public.call_settings', 'call settings: every business type has calls (job DP)'),
   ('public.lead_playbooks', 'the lead playbook: every business type (job DR)'), ('public.knowledge_sources', 'the knowledge base: every business type (job DR)'), ('public.knowledge_facts', 'the knowledge base: every business type (job DR)'),
+  ('public.lead_sources', 'lead sources: every business type (job DR)'), ('public.lead_consents', 'lead sources: every business type (job DR)'), ('public.lead_intakes', 'lead sources: every business type (job DR)'), ('public.lead_flags', 'lead sources: every business type (job DR)'),
+  ('public.lead_arrivals', 'lead sources: every business type (job DR)'), ('public.lead_source_costs', 'lead sources: every business type (job DR)'), ('public.lead_sheet_links', 'lead sources: every business type (job DR)'), ('public.lead_unparsed', 'lead sources: every business type (job DR)'),
   ('public.speaking_styles', 'how the assistant talks: every business type (job DS)'), ('public.call_handover_rules', 'call settings: every business type has calls (job DP)'),
   ('public.billing_subscriptions', 'plans and billing: every business has a plan'), ('public.billing_events', 'plans and billing'), ('public.billing_usage_events', 'plans and billing: the meters'),
   ('public.billing_topups', 'plans and billing'), ('public.billing_notices', 'plans and billing'), ('public.billing_lapse_reminders', 'plans and billing'), ('public.billing_pending_reminders', 'plans and billing'), ('public.outcomes', 'outcomes of calls and follow-ups: the follow-ups module, always on, guards the writers (job DM)'), ('public.assistant_settings', 'the assistant settings of every business type (job DM)'),
