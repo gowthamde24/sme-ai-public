@@ -284,6 +284,11 @@ select is(pg_temp.val('a_sales', format($q$select jsonb_array_length(public.outr
 -- ============================================================================ I. reports
 select is(pg_temp.val('a_owner', format($q$select public.outreach_source_costs_set(%L, '[{"source": "excel_upload", "cost_per_lead_paise": 2000}]')::text$q$, pg_temp.t('a'))) like '%excel_upload%', true, 'I1 the Owner sets a cost per lead');
 select is(pg_temp.val('a_admin', format($q$select public.outreach_source_costs_set(%L, '[]')::text$q$, pg_temp.t('a'))), 'ERR:42501', 'I2 an Admin cannot');
+-- the report counts the leads that arrived in the window: the leads of this file arrive on the day the (pinned) clock says
+update public.leads set created_at = '2026-11-02T10:00:00+05:30' where tenant_id = pg_temp.t('a');
+insert into public.contacts (id, tenant_id, company_id, full_name, phone, phone_consent) values (tests.rid('ix1'), tests.tid('a'), tests.rid('co'), 'Never Called', '+91 98000 00099', 'granted');
+insert into public.leads (id, tenant_id, company_id, contact_id, source, created_at) values (tests.rid('lix1'), tests.tid('a'), tests.rid('co'), tests.rid('ix1'), 'indiamart', '2026-11-03T10:00:00+05:30');
+select pg_temp.val('a_owner', format($q$select public.outreach_source_costs_set(%L, '[{"source": "excel_upload", "cost_per_lead_paise": 2000}, {"source": "indiamart", "cost_per_lead_paise": 3000}]')::text$q$, pg_temp.t('a')));
 create temp table rep as select pg_temp.val('a_owner', format($q$select public.outreach_report(%L, '2026-11-01', '2026-11-30')::text$q$, pg_temp.t('a')))::jsonb as r;
 select cmp_ok((select (r -> 'total' ->> 'calls')::int from rep), '>=', 5, 'I3 the total counts the calls made');
 select cmp_ok((select count(*)::int from rep, jsonb_array_elements(r -> 'by_source')), '>=', 2, 'I4 there is a row per source');
@@ -291,6 +296,8 @@ select is((select (e ->> 'first_touch_median_seconds') is not null from rep, jso
 select is((select (e ->> 'lead_cost_paise')::int from rep, jsonb_array_elements(r -> 'by_source') e where e ->> 'source' = 'excel_upload') > 0, true, 'I6 the lead cost comes from the source costs');
 select is(pg_temp.val('a_viewer', format($q$select (public.outreach_report(%L, null, null) -> 'total' ->> 'leads') is not null$q$, pg_temp.t('a'))), 'true', 'I7 a Viewer can read the report');
 select is(pg_temp.val('a_owner', format($q$select public.outreach_report(%L, '2026-12-01', '2026-11-01')::text$q$, pg_temp.t('a'))), 'ERR:22023', 'I8 a backwards range is invalid');
+select is((select (e ->> 'leads') || '/' || (e ->> 'calls') || '/' || (e ->> 'lead_cost_paise') from rep, jsonb_array_elements(r -> 'by_source') e where e ->> 'source' = 'indiamart'), '1/0/3000', 'I9 a source whose leads nobody has called yet is still listed, with its cost');
+select is((select (e ->> 'first_touch_median_seconds') is null from rep, jsonb_array_elements(r -> 'by_source') e where e ->> 'source' = 'indiamart'), true, 'I10 ... and has no speed to first touch');
 
 -- ============================================================================ J. doors
 select is((select count(*)::int from information_schema.role_table_grants where table_name in ('outreach_policy', 'outreach_batches', 'outreach_rules', 'outreach_items', 'outreach_attempts', 'outreach_handoffs', 'outcome_details', 'lead_source_costs')
