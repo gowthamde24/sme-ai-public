@@ -41,6 +41,7 @@ ROUTE_WORDS = frozenset(
         # job DR B1: tasks
         "tasks", "plan", "answer", "exclude", "run", "pause", "resume", "cancel", "cap", "report",
         "templates",
+        "waitlist", "speaking-style", "voice-sample",
         # job DP: marks and report messages to guardians (a file that is never stored)
         "marks-messages", "batches",
         # job CN: sites, dues, material quotes, deliveries, the public calculator

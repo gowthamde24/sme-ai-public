@@ -69,6 +69,7 @@ from app.today.repository import TodayRepository
 from app.visits.repository import VisitsRepository
 from app.voice.interface import VoiceStack
 from app.voice_notes.repository import VoiceNotesRepository
+from app.voicesample.service import VoiceSampleService
 from app.websearch.repository import ResearchUsageRepository
 from app.websearch.service import ResearchWeb
 from app.whatsapp.runtime import WhatsAppRuntime
@@ -160,6 +161,8 @@ class Runtime:
     outreach: OutreachService | None = None
     # job DR B1: "Ask Vijaya to do it" (plan, approve once, run, report)
     tasks: TasksService | None = None
+    # job DS: the voice picker's listening sample (one short clip, cached, capped)
+    voice_sample: VoiceSampleService | None = None
 
 
 @dataclass(frozen=True)
