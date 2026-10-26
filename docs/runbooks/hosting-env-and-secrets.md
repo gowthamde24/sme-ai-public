@@ -178,8 +178,8 @@ Change only when the published terms or privacy notice change.
 
 | Variable | Kind | Read by | Value or when to set it |
 |---|---|---|---|
-| `TERMS_VERSION` | plain | api | Default `2026-10-01`; staging sets `2026-10-25` (deploy/staging.sh: the legal texts of 25 Oct 2026, the 14-day trial counted from the day WhatsApp is connected). |
-| `PRIVACY_VERSION` | plain | api | Default `2026-10-01`; staging sets `2026-10-25` together with the terms. |
+| `TERMS_VERSION` | plain | api | Default `2026-10-01`; staging sets `2026-10-27` (deploy/staging.sh: the legal texts of 25 Oct 2026, the 14-day trial counted from the day WhatsApp is connected). |
+| `PRIVACY_VERSION` | plain | api | Default `2026-10-01`; staging sets `2026-10-27` together with the terms. |
 | `TERMS_EFFECTIVE_FROM` | plain | api | A date; empty = at once. |
 | `PRIVACY_EFFECTIVE_FROM` | plain | api | A date; empty = at once. |
 | `POLICY_ENFORCE` | plain | api | `false` until the first real version change is published. |
