@@ -102,11 +102,11 @@ describe("delete my account and the workspace", () => {
     expect(confirms("Acme Silks ", "Acme Silks", false)).toBe(true);
     expect(confirms("", "", true)).toBe(false);
   });
-  it("the button stays off until the e-mail is typed, then schedules the deletion and says there are 14 days", async () => {
+  it("the button stays off until the e-mail is typed, then schedules the deletion and says there are 7 days", async () => {
     const a = actions();
     render(<DeleteData {...base} actions={a} isOwner={false} accountDeletion={null} workspaceDeletion={null} />);
     expect(screen.queryByRole("heading", { name: "Delete this workspace" })).toBeNull();
-    expect(screen.getByText(/There are 14 days to change your mind/)).toBeInTheDocument();
+    expect(screen.getByText(/There are 7 days to change your mind/)).toBeInTheDocument();
     const button = screen.getByRole("button", { name: "Delete my account" });
     expect(button).toBeDisabled();
     fireEvent.change(screen.getByLabelText("Type your e-mail address (owner@example.test) to confirm."), { target: { value: "wrong@example.test" } });
@@ -116,7 +116,7 @@ describe("delete my account and the workspace", () => {
     await press("Delete my account");
     expect(a.requestAccountDeletion).toHaveBeenCalledWith(expect.stringMatching(/^[0-9a-f-]{36}$/), "OWNER@example.test");
     expect(screen.getByText("Deletion is scheduled")).toBeInTheDocument();
-    expect(screen.getByText(/Scheduled\. Your account will be deleted after the 14 days unless you cancel\./)).toBeInTheDocument();
+    expect(screen.getByText(/Scheduled\. Your account will be deleted after the 7 days unless you cancel\./)).toBeInTheDocument();
   });
   it("a scheduled deletion shows its day and can be cancelled", async () => {
     const a = actions();
@@ -140,7 +140,7 @@ describe("delete my account and the workspace", () => {
     expect(screen.getByRole("alert")).toHaveTextContent(words);
     expect(screen.getByLabelText(/Type your e-mail address/)).toHaveValue("owner@example.test");
   });
-  it("the owner can ask to delete the workspace: the name as written, 14 days, and nothing is erased yet", async () => {
+  it("the owner can ask to delete the workspace: the name as written, 7 days, and nothing is erased yet", async () => {
     const a = actions();
     render(<DeleteData {...base} actions={a} isOwner accountDeletion={null} workspaceDeletion={null} />);
     const section = within(screen.getByRole("heading", { name: "Delete this workspace" }).closest("section")!);
@@ -150,14 +150,14 @@ describe("delete my account and the workspace", () => {
     await act(async () => fireEvent.click(section.getByRole("button", { name: "Delete this workspace" })));
     expect(a.requestWorkspaceDeletion).toHaveBeenCalledWith(expect.stringMatching(/^[0-9a-f-]{36}$/), "Acme Silks");
     expect(a.executeWorkspaceDeletion).not.toHaveBeenCalled();
-    expect(section.getByText(/The 14 days are not over yet/)).toBeInTheDocument();
+    expect(section.getByText(/The 7 days are not over yet/)).toBeInTheDocument();
     expect(section.queryByRole("button", { name: "Erase the workspace now" })).toBeNull();
   });
-  it("after the 14 days the owner can erase it, by typing the name again; the result is said", async () => {
+  it("after the 7 days the owner can erase it, by typing the name again; the result is said", async () => {
     const a = actions();
     render(<DeleteData {...base} actions={a} isOwner accountDeletion={null} workspaceDeletion={del({ kind: "workspace", execute_after: "2026-10-12T09:00:00Z" })} />);
     const section = within(screen.getByRole("heading", { name: "Delete this workspace" }).closest("section")!);
-    expect(section.getByText("The 14 days are over. You can erase the workspace now.")).toBeInTheDocument();
+    expect(section.getByText("The 7 days are over. You can erase the workspace now.")).toBeInTheDocument();
     const go = section.getByRole("button", { name: "Erase the workspace now" });
     expect(go).toBeDisabled();
     fireEvent.change(section.getByLabelText(/Type the workspace name/), { target: { value: "Acme Silks" } });

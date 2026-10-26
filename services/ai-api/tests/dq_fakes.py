@@ -28,6 +28,8 @@ class FakeDpdpRepository:
         self.rate_limited = False
         self.fail: Exception | None = None
         self.warning_sent_at: str | None = None
+        self.demo = False
+        self.exempt = False
 
     def _note(self, name: str, *args: Any) -> None:
         self.calls.append((name, args))
@@ -64,7 +66,7 @@ class FakeDpdpRepository:
 
     def lapse_status(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         self._note("lapse_status", token, tenant_id)
-        return {"erasure_warning_sent_at": self.warning_sent_at}
+        return {"erasure_warning_sent_at": self.warning_sent_at, "demo": self.demo, "exempt": self.exempt}
 
     # the public doors
     def grievance_submit(self, args: dict[str, Any]) -> dict[str, Any]:

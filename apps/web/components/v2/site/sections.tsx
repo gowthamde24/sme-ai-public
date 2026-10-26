@@ -6,6 +6,7 @@ import { btnPrimary, card, chip, container, h2, lead, section } from "@/componen
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import { say } from "@/lib/site/packs";
+import { startEntry } from "@/lib/site/entry";
 import type { IconId, OwlId, SitePack, Text } from "@/lib/site/types";
 
 export const OWLS: readonly OwlId[] = ["main", "lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"];
@@ -45,7 +46,8 @@ export function FaqList({ items }: { items: readonly { q: string; a: string }[] 
 }
 
 /** The call to action at the foot of every inner page: start the trial (the sign-up asks which business). */
-export function CtaBand({ t }: { t: SiteT }) {
+export function CtaBand({ t, lang, hasForm = false }: { t: SiteT; lang: Lang; hasForm?: boolean }) {
+  const start = startEntry(t, lang, t("cta.start"), { hasForm });
   return (
     <section aria-labelledby="cta-h" className={`${section} bg-brand-bg`}>
       <div className={`${container} flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between`}>
@@ -55,8 +57,8 @@ export function CtaBand({ t }: { t: SiteT }) {
           </h2>
           <p className="mt-2 text-base text-muted">{t("cta.sub")}</p>
         </div>
-        <Link href="/signup" className={btnPrimary}>
-          {t("cta.start")}
+        <Link href={start.href} className={btnPrimary}>
+          {start.label}
         </Link>
       </div>
     </section>

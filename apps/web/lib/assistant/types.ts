@@ -8,8 +8,11 @@ export const VOICES = ["female_warm", "female_clear", "male_calm", "male_lively"
 export type Voice = (typeof VOICES)[number];
 export const STYLES = ["warm", "resp", "quick"] as const;
 export type Style = (typeof STYLES)[number];
-export const CALL_LANGS = ["te", "hi", "kn", "en"] as const;
+/** The languages a call or a voice message can be in: the three of the app, English, and (job DQ part 3) Tamil and Malayalam. The app's own screens stay in en, te, hi and kn; these two are for calls and messages only. */
+export const CALL_LANGS = ["te", "hi", "kn", "en", "ta", "ml"] as const;
 export type CallLang = (typeof CALL_LANGS)[number];
+/** Each call language in its own script (the language chips of Settings > AI assistant). */
+export const CALL_LANG_NAMES: Record<CallLang, string> = { te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ", en: "English", ta: "தமிழ்", ml: "മലയാളം" };
 export const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 export type Day = (typeof DAYS)[number];
 

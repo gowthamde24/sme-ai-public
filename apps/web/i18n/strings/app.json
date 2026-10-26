@@ -911,10 +911,10 @@
   "humanOnly": true
  },
  "settings.tab.privacy": {
-  "en": "Privacy",
-  "te": "Privacy",
-  "hi": "Privacy",
-  "kn": "Privacy",
+  "en": "Privacy and data",
+  "te": "Privacy and data",
+  "hi": "Privacy and data",
+  "kn": "Privacy and data",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1838,10 +1838,10 @@
   }
  },
  "ask.placeholder.hero": {
-  "en": "Ask anything, in any language…",
-  "te": "ఏదైనా అడగండి, ఏ భాషలోనైనా…",
-  "hi": "कुछ भी पूछें, किसी भी भाषा में…",
-  "kn": "ಏನಾದರೂ ಕೇಳಿ, ಯಾವ ಭಾಷೆಯಲ್ಲಾದರೂ…",
+  "en": "Ask {assistant} anything, in any language…",
+  "te": "{assistant} ని ఏదైనా అడగండి, ఏ భాషలోనైనా…",
+  "hi": "{assistant} से कुछ भी पूछें, किसी भी भाषा में…",
+  "kn": "{assistant} ಅವರನ್ನು ಏನಾದರೂ ಕೇಳಿ, ಯಾವ ಭಾಷೆಯಲ್ಲಾದರೂ…",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5514,10 +5514,10 @@
   "humanOnly": true
  },
  "outbox.stopped.body": {
-  "en": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
-  "te": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
-  "hi": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
-  "kn": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
+  "en": "Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.",
+  "te": "Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.",
+  "hi": "Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.",
+  "kn": "Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6182,10 +6182,10 @@
   }
  },
  "agentset.system.on.note": {
-  "en": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
-  "te": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
-  "hi": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
-  "kn": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
+  "en": "Sending is allowed for the whole system. Our team owns this switch; you can only see it.",
+  "te": "Sending is allowed for the whole system. Our team owns this switch; you can only see it.",
+  "hi": "Sending is allowed for the whole system. Our team owns this switch; you can only see it.",
+  "kn": "Sending is allowed for the whole system. Our team owns this switch; you can only see it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6194,10 +6194,10 @@
   "humanOnly": true
  },
  "agentset.system.off.note": {
-  "en": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
-  "te": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
-  "hi": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
-  "kn": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
+  "en": "Sending is stopped for the whole system by our team. Nothing goes out and everything waits.",
+  "te": "Sending is stopped for the whole system by our team. Nothing goes out and everything waits.",
+  "hi": "Sending is stopped for the whole system by our team. Nothing goes out and everything waits.",
+  "kn": "Sending is stopped for the whole system by our team. Nothing goes out and everything waits.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -25476,10 +25476,10 @@
   "humanOnly": true
  },
  "ws.synthetic_body": {
-  "en": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The operator opens this once the privacy checks are done.",
-  "te": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The operator opens this once the privacy checks are done.",
-  "hi": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The operator opens this once the privacy checks are done.",
-  "kn": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. The operator opens this once the privacy checks are done.",
+  "en": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. Our team opens this once the privacy checks are done.",
+  "te": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. Our team opens this once the privacy checks are done.",
+  "hi": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. Our team opens this once the privacy checks are done.",
+  "kn": "This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as {domain}) and a phone number that starts with {prefix}. Our team opens this once the privacy checks are done.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27883,10 +27883,10 @@
   }
  },
  "acct.there_are_no_backup_codes_ask": {
-  "en": "There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
-  "te": "There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
-  "hi": "There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
-  "kn": "There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "en": "There are no backup codes. Write to us. We confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "te": "There are no backup codes. Write to us. We confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "hi": "There are no backup codes. Write to us. We confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
+  "kn": "There are no backup codes. Write to us. We confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32466,10 +32466,10 @@
   }
  },
  "prx.exp.intro": {
-  "en": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
-  "te": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
-  "hi": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
-  "kn": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
+  "en": "A zip file with each table as JSON and CSV, and a README, of the information this system holds about you: your account, what you did here and your consent choices. It is made in the background; when it is ready you can download it.",
+  "te": "A zip file with each table as JSON and CSV, and a README, of the information this system holds about you: your account, what you did here and your consent choices. It is made in the background; when it is ready you can download it.",
+  "hi": "A zip file with each table as JSON and CSV, and a README, of the information this system holds about you: your account, what you did here and your consent choices. It is made in the background; when it is ready you can download it.",
+  "kn": "A zip file with each table as JSON and CSV, and a README, of the information this system holds about you: your account, what you did here and your consent choices. It is made in the background; when it is ready you can download it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32729,10 +32729,10 @@
   "humanOnly": true
  },
  "prx.err.cooling_off": {
-  "en": "The 14 days are not over yet. Nothing was changed.",
-  "te": "The 14 days are not over yet. Nothing was changed.",
-  "hi": "The 14 days are not over yet. Nothing was changed.",
-  "kn": "The 14 days are not over yet. Nothing was changed.",
+  "en": "The 7 days are not over yet. Nothing was changed.",
+  "te": "The 7 days are not over yet. Nothing was changed.",
+  "hi": "The 7 days are not over yet. Nothing was changed.",
+  "kn": "The 7 days are not over yet. Nothing was changed.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32799,10 +32799,10 @@
   "humanOnly": true
  },
  "prx.del.days": {
-  "en": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
-  "te": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
-  "hi": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
-  "kn": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
+  "en": "Nothing happens at once. There are 7 days to change your mind, and you can cancel until the day.",
+  "te": "Nothing happens at once. There are 7 days to change your mind, and you can cancel until the day.",
+  "hi": "Nothing happens at once. There are 7 days to change your mind, and you can cancel until the day.",
+  "kn": "Nothing happens at once. There are 7 days to change your mind, and you can cancel until the day.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32927,10 +32927,10 @@
   "humanOnly": true
  },
  "prx.del.account.asked": {
-  "en": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
-  "te": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
-  "hi": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
-  "kn": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
+  "en": "Scheduled. Your account will be deleted after the 7 days unless you cancel.",
+  "te": "Scheduled. Your account will be deleted after the 7 days unless you cancel.",
+  "hi": "Scheduled. Your account will be deleted after the 7 days unless you cancel.",
+  "kn": "Scheduled. Your account will be deleted after the 7 days unless you cancel.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32939,10 +32939,10 @@
   "humanOnly": true
  },
  "prx.del.workspace.asked": {
-  "en": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
-  "te": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
-  "hi": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
-  "kn": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
+  "en": "Scheduled. The workspace can be erased after the 7 days. Nothing is erased until you confirm it then.",
+  "te": "Scheduled. The workspace can be erased after the 7 days. Nothing is erased until you confirm it then.",
+  "hi": "Scheduled. The workspace can be erased after the 7 days. Nothing is erased until you confirm it then.",
+  "kn": "Scheduled. The workspace can be erased after the 7 days. Nothing is erased until you confirm it then.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32951,10 +32951,10 @@
   "humanOnly": true
  },
  "prx.del.workspace.wait": {
-  "en": "The 14 days are not over yet. The workspace can be erased after that day.",
-  "te": "The 14 days are not over yet. The workspace can be erased after that day.",
-  "hi": "The 14 days are not over yet. The workspace can be erased after that day.",
-  "kn": "The 14 days are not over yet. The workspace can be erased after that day.",
+  "en": "The 7 days are not over yet. The workspace can be erased after that day.",
+  "te": "The 7 days are not over yet. The workspace can be erased after that day.",
+  "hi": "The 7 days are not over yet. The workspace can be erased after that day.",
+  "kn": "The 7 days are not over yet. The workspace can be erased after that day.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32963,10 +32963,10 @@
   "humanOnly": true
  },
  "prx.del.workspace.ready": {
-  "en": "The 14 days are over. You can erase the workspace now.",
-  "te": "The 14 days are over. You can erase the workspace now.",
-  "hi": "The 14 days are over. You can erase the workspace now.",
-  "kn": "The 14 days are over. You can erase the workspace now.",
+  "en": "The 7 days are over. You can erase the workspace now.",
+  "te": "The 7 days are over. You can erase the workspace now.",
+  "hi": "The 7 days are over. You can erase the workspace now.",
+  "kn": "The 7 days are over. You can erase the workspace now.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -33996,10 +33996,10 @@
   }
  },
  "team.owners_note": {
-  "en": "Owners are added by the operator, not here.",
-  "te": "Owners are added by the operator, not here.",
-  "hi": "Owners are added by the operator, not here.",
-  "kn": "Owners are added by the operator, not here.",
+  "en": "Owners are added by our team, not here.",
+  "te": "Owners are added by our team, not here.",
+  "hi": "Owners are added by our team, not here.",
+  "kn": "Owners are added by our team, not here.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36278,10 +36278,10 @@
   }
  },
  "acpt.title": {
-  "en": "Terms and Privacy Policy",
-  "te": "Terms and Privacy Policy",
-  "hi": "Terms and Privacy Policy",
-  "kn": "Terms and Privacy Policy",
+  "en": "Terms and Privacy notice",
+  "te": "Terms and Privacy notice",
+  "hi": "Terms and Privacy notice",
+  "kn": "Terms and Privacy notice",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36314,10 +36314,10 @@
   "humanOnly": true
  },
  "acpt.privacy": {
-  "en": "Privacy Policy",
-  "te": "Privacy Policy",
-  "hi": "Privacy Policy",
-  "kn": "Privacy Policy",
+  "en": "Privacy notice",
+  "te": "Privacy notice",
+  "hi": "Privacy notice",
+  "kn": "Privacy notice",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36362,10 +36362,10 @@
   "humanOnly": true
  },
  "acpt.read.privacy": {
-  "en": "Read the Privacy Policy (opens in a new tab)",
-  "te": "Read the Privacy Policy (opens in a new tab)",
-  "hi": "Read the Privacy Policy (opens in a new tab)",
-  "kn": "Read the Privacy Policy (opens in a new tab)",
+  "en": "Read the Privacy notice (opens in a new tab)",
+  "te": "Read the Privacy notice (opens in a new tab)",
+  "hi": "Read the Privacy notice (opens in a new tab)",
+  "kn": "Read the Privacy notice (opens in a new tab)",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36386,10 +36386,10 @@
   "humanOnly": true
  },
  "acpt.agree.privacy": {
-  "en": "I have read the Privacy Policy and I agree.",
-  "te": "I have read the Privacy Policy and I agree.",
-  "hi": "I have read the Privacy Policy and I agree.",
-  "kn": "I have read the Privacy Policy and I agree.",
+  "en": "I have read the Privacy notice and I agree.",
+  "te": "I have read the Privacy notice and I agree.",
+  "hi": "I have read the Privacy notice and I agree.",
+  "kn": "I have read the Privacy notice and I agree.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -55644,10 +55644,10 @@
   }
  },
  "asst.test": {
-  "en": "Call me now for a test",
-  "te": "టెస్ట్ కోసం ఇప్పుడే నాకు కాల్ చేయండి",
-  "hi": "टेस्ट के लिए अभी मुझे कॉल करें",
-  "kn": "ಟೆಸ್ಟ್‌ಗಾಗಿ ಈಗಲೇ ನನಗೆ ಕಾಲ್ ಮಾಡಿ",
+  "en": "Try a test call (a simulation)",
+  "te": "టెస్ట్ కాల్ ప్రయత్నించండి (సిమ్యులేషన్)",
+  "hi": "टेस्ट कॉल आज़माएँ (सिमुलेशन)",
+  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ಪ್ರಯತ್ನಿಸಿ (ಸಿಮ್ಯುಲೇಶನ್)",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -55655,10 +55655,10 @@
   }
  },
  "asst.test.note": {
-  "en": "The test call goes to your own phone. You see the transcript and outcome afterwards.",
-  "te": "టెస్ట్ కాల్ మీ సొంత ఫోన్‌కి వెళ్తుంది. తర్వాత ట్రాన్స్‌క్రిప్ట్, ఫలితం చూడవచ్చు.",
-  "hi": "टेस्ट कॉल आपके अपने फ़ोन पर जाता है। बाद में ट्रांसक्रिप्ट और नतीजा देख सकते हैं।",
-  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ನಿಮ್ಮದೇ ಫೋನ್‌ಗೆ ಹೋಗುತ್ತದೆ. ನಂತರ ಟ್ರಾನ್ಸ್‌ಕ್ರಿಪ್ಟ್, ಫಲಿತಾಂಶ ನೋಡಬಹುದು.",
+  "en": "No call is made: you see what the assistant would say to a customer and what it would record. A real test call to your own phone comes with AI calls.",
+  "te": "ఏ కాల్ చేయరు: అసిస్టెంట్ కస్టమర్‌కి ఏం చెబుతుందో, ఏం రికార్డ్ చేస్తుందో మీరు చూస్తారు. మీ సొంత ఫోన్‌కి నిజమైన టెస్ట్ కాల్ AI కాల్స్‌తో వస్తుంది.",
+  "hi": "कोई कॉल नहीं होता: आप देखते हैं कि असिस्टेंट ग्राहक से क्या कहेगा और क्या दर्ज करेगा। आपके अपने फ़ोन पर असली टेस्ट कॉल AI कॉल के साथ आएगा।",
+  "kn": "ಯಾವುದೇ ಕರೆ ಮಾಡುವುದಿಲ್ಲ: ಅಸಿಸ್ಟೆಂಟ್ ಗ್ರಾಹಕರಿಗೆ ಏನು ಹೇಳುತ್ತದೆ, ಏನು ದಾಖಲಿಸುತ್ತದೆ ಎಂದು ನೀವು ನೋಡುತ್ತೀರಿ. ನಿಮ್ಮ ಸ್ವಂತ ಫೋನ್‌ಗೆ ನಿಜವಾದ ಟೆಸ್ಟ್ ಕಾಲ್ AI ಕರೆಗಳೊಂದಿಗೆ ಬರುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -57761,6 +57761,1143 @@
   "te": "మీ సొంత రికార్డింగ్ నుంచి, మీ సమ్మతితో",
   "hi": "आपकी अपनी रिकॉर्डिंग से, आपकी सहमति से",
   "kn": "ನಿಮ್ಮ ಸ್ವಂತ ರೆಕಾರ್ಡಿಂಗ್‌ನಿಂದ, ನಿಮ್ಮ ಒಪ್ಪಿಗೆಯೊಂದಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-today": {
+  "en": "Today",
+  "te": "ఈరోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-customers": {
+  "en": "Customers",
+  "te": "కస్టమర్లు",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-chats": {
+  "en": "Chats",
+  "te": "చాట్‌లు",
+  "hi": "चैट",
+  "kn": "ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-calls": {
+  "en": "Calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-sales": {
+  "en": "Sales",
+  "te": "సేల్స్",
+  "hi": "सेल्स",
+  "kn": "ಸೇಲ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-catalogue": {
+  "en": "Catalogue",
+  "te": "క్యాటలాగ్",
+  "hi": "कैटलॉग",
+  "kn": "ಕ್ಯಾಟಲಾಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-reports": {
+  "en": "Reports",
+  "te": "రిపోర్టులు",
+  "hi": "रिपोर्ट",
+  "kn": "ವರದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.followups": {
+  "en": "Follow-ups",
+  "te": "ఫాలో-అప్‌లు",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.tabs.label": {
+  "en": "Parts of this section",
+  "te": "ఈ విభాగం భాగాలు",
+  "hi": "इस हिस्से के भाग",
+  "kn": "ಈ ವಿಭಾಗದ ಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.earlier": {
+  "en": "Show earlier ({n})",
+  "te": "ముందటివి చూపించు ({n})",
+  "hi": "पहले के दिखाएँ ({n})",
+  "kn": "ಹಿಂದಿನವುಗಳನ್ನು ತೋರಿಸಿ ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.orb.open": {
+  "en": "Ask {assistant}",
+  "te": "{assistant} ని అడగండి",
+  "hi": "{assistant} से पूछें",
+  "kn": "{assistant} ಅವರನ್ನು ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.orb.new": {
+  "en": "New answer",
+  "te": "కొత్త జవాబు",
+  "hi": "नया जवाब",
+  "kn": "ಹೊಸ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.panel.title": {
+  "en": "Ask {assistant}",
+  "te": "{assistant} ని అడగండి",
+  "hi": "{assistant} से पूछें",
+  "kn": "{assistant} ಅವರನ್ನು ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.panel.close": {
+  "en": "Close",
+  "te": "మూసేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.stopped.demo": {
+  "en": "Demo workspace: sending is switched off. Nothing goes out; you can still read and edit messages.",
+  "te": "Demo workspace: sending is switched off. Nothing goes out; you can still read and edit messages.",
+  "hi": "Demo workspace: sending is switched off. Nothing goes out; you can still read and edit messages.",
+  "kn": "Demo workspace: sending is switched off. Nothing goes out; you can still read and edit messages.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ask.panel.placeholder": {
+  "en": "Ask {assistant}…",
+  "te": "{assistant} ని అడగండి…",
+  "hi": "{assistant} से पूछें…",
+  "kn": "{assistant} ಅವರನ್ನು ಕೇಳಿ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dpdp.mk.title": {
+  "en": "News and offers",
+  "te": "News and offers",
+  "hi": "News and offers",
+  "kn": "News and offers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.intro": {
+  "en": "News and offers about {brand}. This is a separate choice from your account: nothing depends on it, and you can change it at any time. It takes effect at once.",
+  "te": "News and offers about {brand}. This is a separate choice from your account: nothing depends on it, and you can change it at any time. It takes effect at once.",
+  "hi": "News and offers about {brand}. This is a separate choice from your account: nothing depends on it, and you can change it at any time. It takes effect at once.",
+  "kn": "News and offers about {brand}. This is a separate choice from your account: nothing depends on it, and you can change it at any time. It takes effect at once.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.label": {
+  "en": "Send me news and offers about {brand}",
+  "te": "Send me news and offers about {brand}",
+  "hi": "Send me news and offers about {brand}",
+  "kn": "Send me news and offers about {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.state.given": {
+  "en": "You said yes on {date}.",
+  "te": "You said yes on {date}.",
+  "hi": "You said yes on {date}.",
+  "kn": "You said yes on {date}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.state.withdrawn": {
+  "en": "You switched this off on {date}. We stopped at once.",
+  "te": "You switched this off on {date}. We stopped at once.",
+  "hi": "You switched this off on {date}. We stopped at once.",
+  "kn": "You switched this off on {date}. We stopped at once.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.state.not_given": {
+  "en": "You have not said yes, so we send none.",
+  "te": "You have not said yes, so we send none.",
+  "hi": "You have not said yes, so we send none.",
+  "kn": "You have not said yes, so we send none.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.on": {
+  "en": "Switched on. We may send you news and offers.",
+  "te": "Switched on. We may send you news and offers.",
+  "hi": "Switched on. We may send you news and offers.",
+  "kn": "Switched on. We may send you news and offers.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.off": {
+  "en": "Switched off. We have stopped.",
+  "te": "Switched off. We have stopped.",
+  "hi": "Switched off. We have stopped.",
+  "kn": "Switched off. We have stopped.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.err": {
+  "en": "That did not save. Nothing was changed. Try again.",
+  "te": "That did not save. Nothing was changed. Try again.",
+  "hi": "That did not save. Nothing was changed. Try again.",
+  "kn": "That did not save. Nothing was changed. Try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.history": {
+  "en": "Your earlier choices",
+  "te": "Your earlier choices",
+  "hi": "Your earlier choices",
+  "kn": "Your earlier choices",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.hist.given": {
+  "en": "Said yes",
+  "te": "Said yes",
+  "hi": "Said yes",
+  "kn": "Said yes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.hist.withdrawn": {
+  "en": "Switched off",
+  "te": "Switched off",
+  "hi": "Switched off",
+  "kn": "Switched off",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.via.signup": {
+  "en": "at sign-up",
+  "te": "at sign-up",
+  "hi": "at sign-up",
+  "kn": "at sign-up",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.via.google": {
+  "en": "with Google sign-in",
+  "te": "with Google sign-in",
+  "hi": "with Google sign-in",
+  "kn": "with Google sign-in",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.via.settings": {
+  "en": "in Settings",
+  "te": "in Settings",
+  "hi": "in Settings",
+  "kn": "in Settings",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.title": {
+  "en": "Raise a grievance",
+  "te": "Raise a grievance",
+  "hi": "Raise a grievance",
+  "kn": "Raise a grievance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.intro": {
+  "en": "Tell us what is wrong with how your personal data is handled. We acknowledge it at once and answer within {days} days. You can also write to {email}.",
+  "te": "Tell us what is wrong with how your personal data is handled. We acknowledge it at once and answer within {days} days. You can also write to {email}.",
+  "hi": "Tell us what is wrong with how your personal data is handled. We acknowledge it at once and answer within {days} days. You can also write to {email}.",
+  "kn": "Tell us what is wrong with how your personal data is handled. We acknowledge it at once and answer within {days} days. You can also write to {email}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.name": {
+  "en": "Your name",
+  "te": "Your name",
+  "hi": "Your name",
+  "kn": "Your name",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.contact": {
+  "en": "Your e-mail address or phone number",
+  "te": "Your e-mail address or phone number",
+  "hi": "Your e-mail address or phone number",
+  "kn": "Your e-mail address or phone number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind": {
+  "en": "What is it about?",
+  "te": "What is it about?",
+  "hi": "What is it about?",
+  "kn": "What is it about?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.access": {
+  "en": "See my data",
+  "te": "See my data",
+  "hi": "See my data",
+  "kn": "See my data",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.correction": {
+  "en": "Correct my data",
+  "te": "Correct my data",
+  "hi": "Correct my data",
+  "kn": "Correct my data",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.erasure": {
+  "en": "Erase my data",
+  "te": "Erase my data",
+  "hi": "Erase my data",
+  "kn": "Erase my data",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.withdraw_consent": {
+  "en": "Withdraw my consent",
+  "te": "Withdraw my consent",
+  "hi": "Withdraw my consent",
+  "kn": "Withdraw my consent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.complaint": {
+  "en": "A complaint",
+  "te": "A complaint",
+  "hi": "A complaint",
+  "kn": "A complaint",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.other": {
+  "en": "Something else",
+  "te": "Something else",
+  "hi": "Something else",
+  "kn": "Something else",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.details": {
+  "en": "What happened (optional)",
+  "te": "What happened (optional)",
+  "hi": "What happened (optional)",
+  "kn": "What happened (optional)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.submit": {
+  "en": "Send my grievance",
+  "te": "Send my grievance",
+  "hi": "Send my grievance",
+  "kn": "Send my grievance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.done.title": {
+  "en": "We have it.",
+  "te": "We have it.",
+  "hi": "We have it.",
+  "kn": "We have it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.done": {
+  "en": "Your reference is {ref}. We will answer by {date}.",
+  "te": "Your reference is {ref}. We will answer by {date}.",
+  "hi": "Your reference is {ref}. We will answer by {date}.",
+  "kn": "Your reference is {ref}. We will answer by {date}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.err.name": {
+  "en": "Type your name.",
+  "te": "Type your name.",
+  "hi": "Type your name.",
+  "kn": "Type your name.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.err.contact": {
+  "en": "Give an e-mail address or a phone number.",
+  "te": "Give an e-mail address or a phone number.",
+  "hi": "Give an e-mail address or a phone number.",
+  "kn": "Give an e-mail address or a phone number.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.err.rate": {
+  "en": "Too many tries. Wait a little and try again.",
+  "te": "Too many tries. Wait a little and try again.",
+  "hi": "Too many tries. Wait a little and try again.",
+  "kn": "Too many tries. Wait a little and try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.err.down": {
+  "en": "That did not send. Write to {email} instead.",
+  "te": "That did not send. Write to {email} instead.",
+  "hi": "That did not send. Write to {email} instead.",
+  "kn": "That did not send. Write to {email} instead.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.err.invalid": {
+  "en": "Check the form and try again.",
+  "te": "Check the form and try again.",
+  "hi": "Check the form and try again.",
+  "kn": "Check the form and try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.board": {
+  "en": "If you are not satisfied, you may complain to the Data Protection Board of India.",
+  "te": "If you are not satisfied, you may complain to the Data Protection Board of India.",
+  "hi": "If you are not satisfied, you may complain to the Data Protection Board of India.",
+  "kn": "If you are not satisfied, you may complain to the Data Protection Board of India.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "calls.c.title": {
+  "en": "Call settings for this campaign",
+  "te": "ఈ క్యాంపెయిన్ కాల్ సెట్టింగ్స్",
+  "hi": "इस कैंपेन की कॉल सेटिंग्स",
+  "kn": "ಈ ಕ್ಯಾಂಪೇನ್‌ನ ಕರೆ ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.intro": {
+  "en": "Everything you do not change here follows the call settings of your AI assistant. What you change applies to this campaign only.",
+  "te": "ఇక్కడ మీరు మార్చనివన్నీ మీ AI అసిస్టెంట్ కాల్ సెట్టింగ్స్‌నే అనుసరిస్తాయి. మీరు మార్చేది ఈ క్యాంపెయిన్‌కి మాత్రమే.",
+  "hi": "जो आप यहाँ नहीं बदलते वह सब आपके AI असिस्टेंट की कॉल सेटिंग्स के अनुसार चलता है। जो बदलते हैं वह सिर्फ़ इस कैंपेन पर लागू होता है।",
+  "kn": "ಇಲ್ಲಿ ನೀವು ಬದಲಾಯಿಸದ್ದೆಲ್ಲ ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್‌ನ ಕರೆ ಸೆಟ್ಟಿಂಗ್ಸ್ ಪ್ರಕಾರವೇ ನಡೆಯುತ್ತದೆ. ನೀವು ಬದಲಾಯಿಸಿದ್ದು ಈ ಕ್ಯಾಂಪೇನ್‌ಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.diff": {
+  "en": "Different here",
+  "te": "ఇక్కడ వేరు",
+  "hi": "यहाँ अलग",
+  "kn": "ಇಲ್ಲಿ ಬೇರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.summary": {
+  "en": "Different here: {fields}.",
+  "te": "ఇక్కడ వేరుగా ఉన్నవి: {fields}.",
+  "hi": "यहाँ अलग: {fields}।",
+  "kn": "ಇಲ್ಲಿ ಬೇರೆ ಇರುವುದು: {fields}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.same": {
+  "en": "Same as your AI assistant's call settings.",
+  "te": "మీ AI అసిస్టెంట్ కాల్ సెట్టింగ్స్‌లాగే.",
+  "hi": "आपके AI असिस्टेंट की कॉल सेटिंग्स जैसा ही।",
+  "kn": "ನಿಮ್ಮ AI ಅಸಿಸ್ಟೆಂಟ್‌ನ ಕರೆ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಂತೆಯೇ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.clear": {
+  "en": "Use my assistant's settings",
+  "te": "నా అసిస్టెంట్ సెట్టింగ్స్ వాడండి",
+  "hi": "मेरे असिस्टेंट की सेटिंग्स इस्तेमाल करें",
+  "kn": "ನನ್ನ ಅಸಿಸ್ಟೆಂಟ್‌ನ ಸೆಟ್ಟಿಂಗ್ಸ್ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.cleared": {
+  "en": "This campaign now follows your assistant's call settings.",
+  "te": "ఈ క్యాంపెయిన్ ఇప్పుడు మీ అసిస్టెంట్ కాల్ సెట్టింగ్స్‌నే అనుసరిస్తుంది.",
+  "hi": "यह कैंपेन अब आपके असिस्टेंट की कॉल सेटिंग्स के अनुसार चलेगा।",
+  "kn": "ಈ ಕ್ಯಾಂಪೇನ್ ಈಗ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ನ ಕರೆ ಸೆಟ್ಟಿಂಗ್ಸ್ ಪ್ರಕಾರ ನಡೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.link": {
+  "en": "Edit call settings for this campaign",
+  "te": "ఈ క్యాంపెయిన్ కాల్ సెట్టింగ్స్ మార్చండి",
+  "hi": "इस कैंपेन की कॉल सेटिंग्स बदलें",
+  "kn": "ಈ ಕ್ಯಾಂಪೇನ್‌ನ ಕರೆ ಸೆಟ್ಟಿಂಗ್ಸ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.card.title": {
+  "en": "Calls for this campaign",
+  "te": "ఈ క్యాంపెయిన్ కాల్స్",
+  "hi": "इस कैंपेन के कॉल",
+  "kn": "ಈ ಕ್ಯಾಂಪೇನ್‌ನ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.back": {
+  "en": "Back to the campaign",
+  "te": "క్యాంపెయిన్‌కి తిరిగి",
+  "hi": "कैंपेन पर वापस",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.ws": {
+  "en": "Change the settings for every campaign",
+  "te": "అన్ని క్యాంపెయిన్‌ల సెట్టింగ్స్ మార్చండి",
+  "hi": "सभी कैंपेन की सेटिंग्स बदलें",
+  "kn": "ಎಲ್ಲಾ ಕ್ಯಾಂಪೇನ್‌ಗಳ ಸೆಟ್ಟಿಂಗ್ಸ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.c.hidden": {
+  "en": "Holidays, the people calls are handed over to, and what the assistant may call about are set for the whole workspace, in Settings.",
+  "te": "సెలవులు, కాల్స్ అప్పగించే వ్యక్తులు, అసిస్టెంట్ ఏ విషయాల కోసం కాల్ చేయవచ్చు అనేవి మొత్తం వర్క్‌స్పేస్‌కి సెట్టింగ్స్‌లో ఉంటాయి.",
+  "hi": "छुट्टियाँ, कॉल जिन लोगों को सौंपे जाते हैं, और असिस्टेंट किन बातों पर कॉल कर सकता है, ये पूरे वर्कस्पेस के लिए सेटिंग्स में तय होते हैं।",
+  "kn": "ರಜೆಗಳು, ಕರೆಗಳನ್ನು ಯಾರಿಗೆ ಒಪ್ಪಿಸುವುದು, ಅಸಿಸ್ಟೆಂಟ್ ಯಾವ ವಿಷಯಗಳಿಗೆ ಕರೆ ಮಾಡಬಹುದು ಎಂಬುದು ಇಡೀ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.retry_busy": {
+  "en": "Tries when busy",
+  "te": "బిజీగా ఉన్నప్పుడు ప్రయత్నాలు",
+  "hi": "व्यस्त होने पर कोशिशें",
+  "kn": "ಬ್ಯುಸಿ ಇದ್ದಾಗ ಪ್ರಯತ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.retry_no_answer": {
+  "en": "Tries when nobody answers",
+  "te": "ఎవరూ ఎత్తనప్పుడు ప్రయత్నాలు",
+  "hi": "कोई न उठाए तो कोशिशें",
+  "kn": "ಯಾರೂ ಎತ್ತದಿದ್ದಾಗ ಪ್ರಯತ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.retry_call_later": {
+  "en": "Tries for 'call later'",
+  "te": "'తర్వాత కాల్ చేయండి' ప్రయత్నాలు",
+  "hi": "'बाद में कॉल करें' की कोशिशें",
+  "kn": "'ನಂತರ ಕರೆ ಮಾಡಿ' ಪ್ರಯತ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.concurrent_calls": {
+  "en": "Calls at once",
+  "te": "ఒకేసారి కాల్స్",
+  "hi": "एक साथ कॉल",
+  "kn": "ಒಂದೇ ಬಾರಿ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.detect_voicemail": {
+  "en": "Voicemail",
+  "te": "వాయిస్‌మెయిల్",
+  "hi": "वॉइसमेल",
+  "kn": "ವಾಯ್ಸ್‌ಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.voicemail_action": {
+  "en": "What to do at voicemail",
+  "te": "వాయిస్‌మెయిల్‌లో ఏం చేయాలి",
+  "hi": "वॉइसमेल पर क्या करें",
+  "kn": "ವಾಯ್ಸ್‌ಮೇಲ್‌ನಲ್ಲಿ ಏನು ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.detect_phone_menu": {
+  "en": "Phone menus",
+  "te": "ఫోన్ మెనూలు",
+  "hi": "फ़ोन मेन्यू",
+  "kn": "ಫೋನ್ ಮೆನುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.phone_menu_action": {
+  "en": "What to do at a phone menu",
+  "te": "ఫోన్ మెనూలో ఏం చేయాలి",
+  "hi": "फ़ोन मेन्यू पर क्या करें",
+  "kn": "ಫೋನ್ ಮೆನುವಿನಲ್ಲಿ ಏನು ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.silence_timeout_seconds": {
+  "en": "Silence before it speaks",
+  "te": "మాట్లాడే ముందు నిశ్శబ్దం",
+  "hi": "बोलने से पहले की चुप्पी",
+  "kn": "ಮಾತನಾಡುವ ಮೊದಲು ಮೌನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.max_call_seconds": {
+  "en": "Longest call",
+  "te": "అతి పొడవైన కాల్",
+  "hi": "सबसे लंबा कॉल",
+  "kn": "ಅತಿ ದೀರ್ಘ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.interruption_sensitivity": {
+  "en": "Interruption",
+  "te": "అడ్డుకోవడం",
+  "hi": "बीच में टोकना",
+  "kn": "ಅಡ್ಡಿಪಡಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.listening_sounds": {
+  "en": "Listening sounds",
+  "te": "వింటున్నప్పటి శబ్దాలు",
+  "hi": "सुनते समय की आवाज़ें",
+  "kn": "ಕೇಳುವಾಗಿನ ಶಬ್ದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.pronunciations": {
+  "en": "Pronunciations",
+  "te": "ఉచ్చారణలు",
+  "hi": "उच्चारण",
+  "kn": "ಉಚ್ಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.keywords": {
+  "en": "Key words",
+  "te": "కీ పదాలు",
+  "hi": "खास शब्द",
+  "kn": "ಮುಖ್ಯ ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.hours": {
+  "en": "Calling hours",
+  "te": "కాల్ చేసే వేళలు",
+  "hi": "कॉल के घंटे",
+  "kn": "ಕರೆ ಮಾಡುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.max_calls_per_customer_per_week": {
+  "en": "Calls per customer a week",
+  "te": "ఒక కస్టమర్‌కి వారానికి కాల్స్",
+  "hi": "एक ग्राहक को हफ़्ते में कॉल",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ವಾರಕ್ಕೆ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.auto_pause_refusals_per_hour": {
+  "en": "Automatic pause",
+  "te": "ఆటోమేటిక్ పాజ్",
+  "hi": "अपने-आप रुकना",
+  "kn": "ತಾನಾಗಿ ನಿಲ್ಲಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calls.f.contact_memory": {
+  "en": "Memory of earlier conversations",
+  "te": "ముందటి సంభాషణల జ్ఞాపకం",
+  "hi": "पिछली बातचीत की याद",
+  "kn": "ಹಿಂದಿನ ಮಾತುಕತೆಗಳ ನೆನಪು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.running": {
+  "en": "Running the test…",
+  "te": "టెస్ట్ నడుస్తోంది…",
+  "hi": "टेस्ट चल रहा है…",
+  "kn": "ಟೆಸ್ಟ್ ನಡೆಯುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.title": {
+  "en": "What the test call would be",
+  "te": "టెస్ట్ కాల్ ఎలా ఉంటుందో",
+  "hi": "टेस्ट कॉल कैसा होगा",
+  "kn": "ಟೆಸ್ಟ್ ಕಾಲ್ ಹೇಗಿರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.who.assistant": {
+  "en": "Assistant",
+  "te": "అసిస్టెంట్",
+  "hi": "असिस्टेंट",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.who.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.outcome": {
+  "en": "It would record: {reason}",
+  "te": "ఇది రికార్డ్ చేస్తుంది: {reason}",
+  "hi": "यह दर्ज करेगा: {reason}",
+  "kn": "ಇದು ದಾಖಲಿಸುತ್ತದೆ: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.test.err": {
+  "en": "The test could not run. Nothing was changed. Try again.",
+  "te": "టెస్ట్ నడవలేదు. ఏదీ మారలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "टेस्ट नहीं चल सका। कुछ नहीं बदला। फिर कोशिश करें।",
+  "kn": "ಟೆಸ್ಟ್ ನಡೆಯಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.sample.hear": {
+  "en": "Hear {voice}",
+  "te": "{voice} వినండి",
+  "hi": "{voice} सुनें",
+  "kn": "{voice} ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.sample.playing": {
+  "en": "Playing…",
+  "te": "ప్లే అవుతోంది…",
+  "hi": "चल रहा है…",
+  "kn": "ಪ್ಲೇ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.sample.err": {
+  "en": "The sample could not be played.",
+  "te": "శాంపిల్ ప్లే కాలేదు.",
+  "hi": "सैंपल नहीं चल सका।",
+  "kn": "ಸ್ಯಾಂಪಲ್ ಪ್ಲೇ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.sample.note": {
+  "en": "The samples play in {language}. Choose another language above to hear the voices in it.",
+  "te": "శాంపిల్స్ {language}లో వినిపిస్తాయి. ఇంకో భాషలో వినాలంటే పైన ఆ భాషను ఎంచుకోండి.",
+  "hi": "सैंपल {language} में चलते हैं। किसी और भाषा में सुनने के लिए ऊपर वह भाषा चुनें।",
+  "kn": "ಸ್ಯಾಂಪಲ್‌ಗಳು {language} ನಲ್ಲಿ ಪ್ಲೇ ಆಗುತ್ತವೆ. ಬೇರೆ ಭಾಷೆಯಲ್ಲಿ ಕೇಳಲು ಮೇಲೆ ಆ ಭಾಷೆಯನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.sample.mock": {
+  "en": "In test mode the sample is only a short sound that tells the voices apart. It is not how they will sound.",
+  "te": "టెస్ట్ మోడ్‌లో శాంపిల్ అంటే గొంతులను వేరు చేసే చిన్న శబ్దం మాత్రమే. నిజంగా ఎలా వినిపిస్తాయో కాదు.",
+  "hi": "टेस्ट मोड में सैंपल सिर्फ़ एक छोटी आवाज़ है जो आवाज़ों को अलग बताती है। असली आवाज़ ऐसी नहीं होगी।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್‌ನಲ್ಲಿ ಸ್ಯಾಂಪಲ್ ಧ್ವನಿಗಳನ್ನು ಬೇರೆ ಮಾಡುವ ಚಿಕ್ಕ ಶಬ್ದ ಮಾತ್ರ. ನಿಜವಾಗಿ ಹೀಗೆ ಕೇಳಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tone.t": {
+  "en": "How the voice sounds",
+  "te": "గొంతు ఎలా వినిపించాలి",
+  "hi": "आवाज़ कैसी सुनाई दे",
+  "kn": "ಧ್ವನಿ ಹೇಗೆ ಕೇಳಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tone.warm": {
+  "en": "Warm",
+  "te": "వెచ్చగా",
+  "hi": "गर्मजोशी भरी",
+  "kn": "ಆತ್ಮೀಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tone.crisp": {
+  "en": "Crisp",
+  "te": "స్పష్టంగా",
+  "hi": "साफ़ और तेज़",
+  "kn": "ಸ್ಪಷ್ಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tone.note": {
+  "en": "This is for listening: it changes the samples you hear. The way of talking below is what is saved.",
+  "te": "ఇది వినడానికి మాత్రమే: మీరు వినే శాంపిల్స్‌ని మారుస్తుంది. కింద ఉన్న మాట్లాడే తీరే సేవ్ అవుతుంది.",
+  "hi": "यह सिर्फ़ सुनने के लिए है: इससे आपके सुने सैंपल बदलते हैं। नीचे का बोलने का तरीका ही सेव होता है।",
+  "kn": "ಇದು ಕೇಳಲು ಮಾತ್ರ: ನೀವು ಕೇಳುವ ಸ್ಯಾಂಪಲ್‌ಗಳನ್ನು ಬದಲಿಸುತ್ತದೆ. ಕೆಳಗಿನ ಮಾತನಾಡುವ ರೀತಿಯೇ ಸೇವ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.disclosure": {
+  "en": "Every call opens like this: the assistant says it is an AI assistant, and whose it is.",
+  "te": "ప్రతి కాల్ ఇలాగే మొదలవుతుంది: అసిస్టెంట్ తాను AI అసిస్టెంట్ అని, ఎవరిదో చెబుతుంది.",
+  "hi": "हर कॉल ऐसे ही शुरू होता है: असिस्टेंट बताता है कि वह AI असिस्टेंट है और किसका है।",
+  "kn": "ಪ್ರತಿ ಕರೆ ಹೀಗೆಯೇ ಆರಂಭವಾಗುತ್ತದೆ: ಅಸಿಸ್ಟೆಂಟ್ ತಾನು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು, ಯಾರದು ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.lang.ta": {
+  "en": "Tamil",
+  "te": "తమిళం",
+  "hi": "तमिल",
+  "kn": "ತಮಿಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.lang.ml": {
+  "en": "Malayalam",
+  "te": "మలయాళం",
+  "hi": "मलयालम",
+  "kn": "ಮಲಯಾಳಂ",
   "status": {
    "te": "draft",
    "hi": "draft",

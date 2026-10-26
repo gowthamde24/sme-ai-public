@@ -101,7 +101,7 @@ async function signUpThrough(index, label) {
     await Promise.all([page.waitForURL(new RegExp(`/signup\\?type=${id}$`), { timeout: 30000 }), page.locator(`[data-pack-card="${id}"]`).click()]);
   }, page);
   await step(`${label}-2`, "step 2: the buttons the server offers (Google, Facebook), the e-mail way (an address and a password only) and the terms line with no tick box", async () => {
-    must(await page.getByText("By continuing you agree to the").isVisible(), "no terms line");
+    must(await page.getByText("By continuing, you agree to the").isVisible(), "no terms line");
     must((await page.locator('input[type="checkbox"]').count()) === 0, "a tick box is there");
     for (const [name, on] of [["Google", providers.google], ["Facebook", providers.facebook]]) must((await page.getByRole("button", { name: `Continue with ${name}` }).count()) === (on ? 1 : 0), `the ${name} button should be ${on ? "there" : "absent"} (the server says ${on})`);
     await page.locator("details[data-signup=email] summary").click();
@@ -154,20 +154,30 @@ async function checkWorkspace(u, label, { offPath }) {
     must((await page.locator('[data-start="card"]').count()) === 1, "the checklist is missing");
     must((await page.locator("[data-example=available]").count()) === 1, "the example-data offer is missing");
     const links = await page.locator('nav[aria-label="Workspace menu"] a').evaluateAll((els) => els.map((e) => ({ text: (e.textContent ?? "").replace(/\s*Waiting for you:.*$/, "").trim(), path: new URL(e.href).pathname.replace(/^\/app\/tenants\/[0-9a-f-]{36}/, "") })));
-    const menu = links.map((l) => l.text);
+    // job DQ part 0: the menu has seven items; the pages of a group are the tabs above its page ("Parts of this section"), so the business type's own words and its parts are looked for in the menu AND in the tabs of every group
+    const tabLinks = [];
+    for (const l of [...new Map(links.map((x) => [x.path, x])).values()]) {
+      if (l.path === "" || l.path === "/") continue;
+      await page.goto(`${T}${l.path}`, { waitUntil: "networkidle" });
+      tabLinks.push(...(await page.locator('[data-frame="group-tabs"] a').evaluateAll((els) => els.map((e) => ({ text: (e.textContent ?? "").trim(), path: new URL(e.href).pathname.replace(/^\/app\/tenants\/[0-9a-f-]{36}/, "") })))));
+    }
+    await page.goto(T, { waitUntil: "networkidle" });
+    await page.locator('[data-screen="today"]').waitFor();
+    const everywhere = [...links, ...tabLinks];
+    const menu = everywhere.map((l) => l.text);
     if (pack?.labels?.en) {
-      must(menu.includes(pack.labels.en["nav.item.leads"]), `the menu has no "${pack.labels.en["nav.item.leads"]}" (${menu.join(" | ")})`);
+      must(menu.includes(pack.labels.en["nav.item.leads"]), `the menu and the tabs have no "${pack.labels.en["nav.item.leads"]}" (${menu.join(" | ")})`);
       must(menu.includes(pack.labels.en["nav.item.customers"]), `the menu has no "${pack.labels.en["nav.item.customers"]}"`);
       // each part is on the menu exactly when its module is on (by where the link goes: a pack may call one part by another's name)
       for (const [module, where] of [["quotes", "/quotes"], ["orders", "/orders"], ["fees", "/fees"], ["campaigns", "/campaigns"], ["catalogue", "/catalogue"]]) {
-        const there = links.some((l) => l.path === where);
+        const there = everywhere.some((l) => l.path === where);
         must(there === pack.modules.includes(module), `${where} is ${there ? "on the menu" : "missing"} but the module ${module} is ${pack.modules.includes(module) ? "on" : "off"}`);
       }
-      must(menu.includes(pack.labels.en["pack.core_tab"]), `the core tab "${pack.labels.en["pack.core_tab"]}" is not on the menu`);
+      must(menu.includes(pack.labels.en["pack.core_tab"]), `the core tab "${pack.labels.en["pack.core_tab"]}" is not on the menu or in a group's tabs`);
     } else must(menu.length > 5, "no menu");
     must(!/saree/i.test(await page.locator("nav").first().innerText()), "the menu says saree");
     await shot(page, `${label}-today`);
-    return `${menu.length} menu items; ${body.includes("Get started") ? "checklist" : "no checklist"}`;
+    return `${links.length} menu items, ${tabLinks.length} tabs; ${body.includes("Get started") ? "checklist" : "no checklist"}`;
   }, page);
 
   await step(`${label}-5`, `a typed address to ${offPath} (a part this business type does not have) answers the 403 page, in the frame`, async () => {

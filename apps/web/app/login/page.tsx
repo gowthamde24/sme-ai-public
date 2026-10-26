@@ -1,4 +1,6 @@
-import { authH1, authMain } from "@/components/v2/auth/ui";
+import Link from "next/link";
+
+import { authH1, authHint, authMain } from "@/components/v2/auth/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { safeRedirectPath } from "@/lib/auth/redirect";
 
@@ -23,6 +25,20 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
     <main id="main" className={authMain}>
       <h1 className={authH1}>Sign in</h1>
       <LoginForm next={next} notice={NOTICES[notice ?? ""]} />
+      {/* the same line as the sign-up page (job DQ part 2): both links open in a new tab, so nobody loses the form */}
+      <p className={`${authHint} text-center`} data-part="terms-line">
+        By continuing, you agree to the{" "}
+        <Link href="/terms" target="_blank" rel="noopener" className="font-semibold text-brand-text underline underline-offset-2">
+          Terms
+          <span className="sr-only"> (opens in a new tab)</span>
+        </Link>{" "}
+        and have read the{" "}
+        <Link href="/privacy" target="_blank" rel="noopener" className="font-semibold text-brand-text underline underline-offset-2">
+          Privacy notice
+          <span className="sr-only"> (opens in a new tab)</span>
+        </Link>
+        .
+      </p>
     </main>
   );
 }

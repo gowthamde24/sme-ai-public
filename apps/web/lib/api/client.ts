@@ -371,17 +371,43 @@ export async function apiDownloadRequest(path: string, accessToken: string, body
   return { bytes: await response.arrayBuffer(), contentType: response.headers.get("Content-Type") ?? "application/octet-stream", filename: suggestedFilename(response.headers.get("Content-Disposition")), headers };
 }
 
+/** A GET whose good answer is a SOUND or another small file, as bytes (job DQ part 3: a voice sample). The status is judged first; an answer longer than `max` bytes is refused. */
+export async function apiBinaryRequest(path: string, accessToken: string, max: number): Promise<{ bytes: ArrayBuffer; contentType: string }> {
+  const base = apiBaseUrl();
+  let response: Response;
+  try {
+    response = await fetch(`${base}${path}`, { cache: "no-store", headers: { Authorization: `Bearer ${accessToken}` } });
+  } catch {
+    throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
+  }
+  if (response.status === 401) throw new ApiAuthError("The API rejected the session.");
+  if (!response.ok) {
+    let errBody: unknown = null;
+    try {
+      errBody = await response.json();
+    } catch {
+      // non-JSON body
+    }
+    throw refusal(response.status, errBody, response.headers.get("Retry-After"));
+  }
+  const length = Number(response.headers.get("Content-Length") ?? "0");
+  if (length > max) throw new ApiContractError("The file is too large.");
+  const bytes = await response.arrayBuffer();
+  if (bytes.byteLength > max) throw new ApiContractError("The file is too large.");
+  return { bytes, contentType: response.headers.get("Content-Type") ?? "application/octet-stream" };
+}
+
 /** The API's public address, as a calendar app or a phone must be given it (the browser never calls the API itself; this is only for a link a person copies). */
 export function publicApiBase(): string {
   return apiBaseUrl();
 }
 
-/** A GET of a public route (no sign-in: `GET /v1/policies/current`): no Authorization header. The status is judged as for every other request; a rejected session cannot happen here, so a 401 is just a refusal. */
-export async function apiPublicRequest(path: string): Promise<unknown> {
+/** A request to a public route (no sign-in: `GET /v1/policies/current`, `POST /v1/public/waitlist`): no Authorization header. The status is judged as for every other request; a rejected session cannot happen here, so a 401 is just a refusal. */
+export async function apiPublicRequest(path: string, init: { method?: "GET" | "POST"; body?: unknown; headers?: Record<string, string> } = {}): Promise<unknown> {
   const base = apiBaseUrl();
   let response: Response;
   try {
-    response = await fetch(`${base}${path}`, { cache: "no-store" });
+    response = await fetch(`${base}${path}`, { cache: "no-store", method: init.method ?? "GET", ...(init.body === undefined ? {} : { body: JSON.stringify(init.body) }), headers: { ...(init.body === undefined ? {} : { "Content-Type": "application/json" }), ...init.headers } });
   } catch {
     throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
   }

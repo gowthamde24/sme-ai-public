@@ -25,7 +25,7 @@ import type { SignUpResult } from "@/lib/api/signup";
 
 const words: SignUpWords = {
   email: "Email", password: "Password", passwordHint: "At least 12 characters.", submit: "Create account",
-  errors: { weak_password: "Choose a stronger password.", terms_required: "You need to agree to the Terms and the Privacy Policy.", unknown: "Something went wrong." },
+  errors: { weak_password: "Choose a stronger password.", terms_required: "You need to agree to the Terms and the Privacy notice.", unknown: "Something went wrong." },
 };
 const fill = () => {
   fireEvent.change(screen.getByLabelText("Email"), { target: { value: " asha@example.test " } });
@@ -61,7 +61,7 @@ describe("SignUpForm (the e-mail way of step 2)", () => {
     fill();
     fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
     await waitFor(() => expect(push).toHaveBeenCalledWith("/signup/check-email"));
-    expect(action).toHaveBeenCalledWith({ email: "asha@example.test", password: "a-long-password-1", businessType: THIRD, acceptTerms: true });
+    expect(action).toHaveBeenCalledWith({ email: "asha@example.test", password: "a-long-password-1", businessType: THIRD, acceptTerms: true, marketingOptIn: false });
   });
   it("shows the sentence of an error code, and the generic one for a code it does not know; nothing else happens", async () => {
     const action = vi.fn(async (): Promise<SignUpResult> => ({ ok: false, error: "weak_password" }));
@@ -92,7 +92,7 @@ describe("SignUpForm (the e-mail way of step 2)", () => {
     expect(pw).toHaveAttribute("autocomplete", "new-password");
     expect(screen.getByLabelText("Email")).toHaveAttribute("type", "email");
   });
-  it("sends the Terms and Privacy Policy versions the page showed (job CF), or none when the page could not read them", async () => {
+  it("sends the Terms and Privacy notice versions the page showed (job CF), or none when the page could not read them", async () => {
     signUp.mockResolvedValue({ ok: true, next: "check-email" });
     const { unmount } = render(<SignUpForm words={words} action={(i) => signUp(i)} businessType={FIRST} policyVersions={{ terms: "2026-11-01", privacy: "2026-10-01" }} />);
     fill();
@@ -154,10 +154,10 @@ describe("/signup step 2: Google, Facebook or e-mail, and the terms line", () =>
     expect(screen.getByText("Continue with e-mail")).toBeInTheDocument();
     const hidden = document.querySelector('form input[name="type"]') as HTMLInputElement;
     expect(hidden.value).toBe(SECOND);
-    const line = screen.getByText(/By continuing you agree/).closest("p")!;
+    const line = screen.getByText(/By continuing, you agree/).closest("p")!;
     expect(line).toHaveAttribute("lang", "en"); // the terms sentence stays English until a person reviews the translation
     expect(within(line).getByRole("link", { name: /^Terms/ })).toHaveAttribute("href", "/terms");
-    expect(within(line).getByRole("link", { name: /^Privacy Policy/ })).toHaveAttribute("href", "/privacy");
+    expect(within(line).getByRole("link", { name: /^Privacy notice/ })).toHaveAttribute("href", "/privacy");
     for (const a of within(line).getAllByRole("link")) {
       expect(a).toHaveAttribute("target", "_blank");
       expect(a.getAttribute("rel")).toContain("noopener");
@@ -175,7 +175,7 @@ describe("/signup step 2: Google, Facebook or e-mail, and the terms line", () =>
     expect(screen.queryByRole("button", { name: /Continue with (Google|Facebook)/ })).toBeNull();
     expect(document.querySelector('form input[name="type"]')).toBeNull(); // no provider form at all
     expect(screen.getByText("Continue with e-mail")).toBeInTheDocument();
-    expect(screen.getByText(/By continuing you agree/)).toBeInTheDocument();
+    expect(screen.getByText(/By continuing, you agree/)).toBeInTheDocument();
   });
   it("puts the e-mail form behind the third button (a native disclosure: no script needed) and wires it to the real action", async () => {
     signUp.mockResolvedValue({ ok: true, next: "check-email" });
@@ -224,5 +224,45 @@ describe("the check-your-email page", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Check your email" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Back to sign in" })).toHaveAttribute("href", "/login");
     expect(document.body.textContent).not.toMatch(/@/);
+  });
+});
+
+describe("the separate marketing box and the consent line (job DQ part 2)", () => {
+  afterEach(() => vi.unstubAllEnvs());
+  it("under the buttons: 'By continuing, you agree to the Terms and have read the Privacy notice.', both links", async () => {
+    render(await SignupPage(props({ type: SECOND })));
+    const line = screen.getByText(/By continuing, you agree/).closest("p")!;
+    expect(line.textContent).toBe("By continuing, you agree to the Terms (opens in a new tab) and have read the Privacy notice (opens in a new tab).");
+    expect(within(line).getAllByRole("link").map((a) => a.getAttribute("href"))).toEqual(["/terms", "/privacy"]);
+  });
+  it("no marketing box while the consent API is off (the page is as it was)", async () => {
+    render(await SignupPage(props({ type: SECOND })));
+    expect(screen.queryByRole("checkbox")).toBeNull();
+  });
+  it("with the consent API on there is ONE box for news and offers: not ticked, not required, separate from the terms line, and it belongs to the provider buttons' form", async () => {
+    vi.stubEnv("DPDP_SCREENS", "mock");
+    render(await SignupPage(props({ type: SECOND })));
+    const box = screen.getByRole("checkbox", { name: /news and offers/i });
+    expect(box).not.toBeChecked();
+    expect(box).not.toBeRequired();
+    expect(box).toHaveAttribute("name", "marketing");
+    expect(box).toHaveAttribute("form", "signup-provider-form");
+    expect(document.getElementById("signup-provider-form")).not.toBeNull();
+    expect(screen.getAllByRole("checkbox")).toHaveLength(1);
+    expect(screen.getByText("Also send me news and offers about Stack19 (optional).")).toBeInTheDocument();
+    expect(box.closest("p")).toBeNull(); // it is not part of the terms sentence
+  });
+  it("the e-mail way sends marketingOptIn true only when that box was ticked", async () => {
+    vi.stubEnv("DPDP_SCREENS", "mock");
+    signUp.mockResolvedValue({ ok: true, next: "check-email" });
+    render(await SignupPage(props({ type: THIRD })));
+    fill();
+    fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
+    await waitFor(() => expect(signUp).toHaveBeenCalledTimes(1));
+    expect(signUp.mock.calls[0][0]).toMatchObject({ marketingOptIn: false });
+    fireEvent.click(screen.getByRole("checkbox", { name: /news and offers/i }));
+    fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
+    await waitFor(() => expect(signUp).toHaveBeenCalledTimes(2));
+    expect(signUp.mock.calls[1][0]).toMatchObject({ marketingOptIn: true });
   });
 });

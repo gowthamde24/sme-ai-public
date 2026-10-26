@@ -25,6 +25,8 @@
 [data-ui="v2"] .orb-wave span:nth-child(4n) { animation-delay: 0.45s; }
 [data-ui="v2"] .orb-wave span:nth-child(5n) { animation-delay: 0.6s; }
 @keyframes orb-bar { 0%, 100% { transform: scaleY(0.25); } 50% { transform: scaleY(1); } }
+/* the panel of the floating ask orb (job DQ): a small rise; with "reduce motion" the class is not applied (motion-safe) */
+@keyframes ask-panel-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) {
   [data-ui="v2"] .orb, [data-ui="v2"] .orb-halo::before, [data-ui="v2"] .orb-halo::after, [data-ui="v2"] .orb-wave span { animation: none; }
 }

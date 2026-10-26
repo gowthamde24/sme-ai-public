@@ -23,6 +23,8 @@ import { listProgrammes } from "@/lib/api/education";
 import { listTemplates } from "@/lib/api/whatsapp";
 import { clock } from "@/lib/clock";
 import { hasModule } from "@/lib/packs/has";
+import { readCampaignCalls } from "@/lib/call-settings/campaign-source";
+import { callSettingsScreens } from "@/lib/screens/flag";
 
 import { addFromLedgerAction, announceAudienceAction, approveCampaignAction, callOutcomeAction, campaignStateAction, clearRecipientsAction, connectCallAction, importRecipientsAction, removeRecipientAction, saveCampaignAction } from "./actions";
 import { campaignWords } from "./campaign-words";
@@ -116,6 +118,9 @@ export async function CampaignPage({ accessToken, tenantId, tenant, pack, campai
     return signedOut(error);
   }
   const canEdit = campaign.status === "draft" || campaign.status === "approved";
+  // the campaign's own call settings (job DQ part 3): the overview says which fields differ from the assistant's, for the people who run the business, while that part is on
+  const callsRead = admin && tab === "overview" && callSettingsScreens() !== "off" ? await readCampaignCalls({ token: accessToken, tenantId }, campaignId, pack?.modules ?? null) : null;
+  const calls = callsRead?.mode === "ok" ? { overridden: callsRead.overridden } : null;
   type Data = { tab: "overview" } | { tab: "audience"; rows: Awaited<ReturnType<typeof listRecipients>>; programmes: Awaited<ReturnType<typeof listProgrammes>> } | { tab: "approve"; preview: Awaited<ReturnType<typeof getPreview>> } | { tab: "results"; results: Awaited<ReturnType<typeof getResults>> };
   let data: Data | null;
   try {
@@ -145,7 +150,7 @@ export async function CampaignPage({ accessToken, tenantId, tenant, pack, campai
     data === null ? (
       <p role="alert" className="rounded-2xl border border-line p-4 text-base">{words["camp.loaderr"]}</p>
     ) : data.tab === "overview" ? (
-      <CampaignOverview base={base} campaign={campaign} words={words} canEdit={canEdit} />
+      <CampaignOverview base={base} campaign={campaign} words={words} canEdit={canEdit} calls={calls} />
     ) : data.tab === "audience" ? (
       <AudiencePanel
         status={campaign.status}
