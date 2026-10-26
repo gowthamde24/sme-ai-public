@@ -5,7 +5,8 @@ import { redirectMock } from "@/test/helpers";
 const signInWithOAuth = vi.fn();
 const cookieSet = vi.fn();
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to) }));
-vi.mock("next/headers", () => ({ cookies: async () => ({ set: (...a: unknown[]) => cookieSet(...a) }) }));
+const cookieDelete = vi.fn();
+vi.mock("next/headers", () => ({ cookies: async () => ({ set: (...a: unknown[]) => cookieSet(...a), delete: (...a: unknown[]) => cookieDelete(...a) }) }));
 vi.mock("@/lib/supabase/server", () => ({ createSupabaseServerClient: async () => ({ auth: { signInWithOAuth: (...a: unknown[]) => signInWithOAuth(...a) } }) }));
 
 import { continueWithProvider } from "./oauth-actions";

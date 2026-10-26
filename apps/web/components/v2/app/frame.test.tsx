@@ -215,11 +215,11 @@ describe("AppFrame", () => {
         <main id="page">The page</main>
       </AppFrame>,
     );
-  it("has a footer with the Privacy Policy, the Terms and Cookie settings, after the page and above the phone's bottom bar (job BH)", () => {
+  it("has a footer with the Privacy notice, the Terms and Cookie settings, after the page and above the phone's bottom bar (job BH)", () => {
     const { container } = frame(owner);
     const footer = container.querySelector('[data-frame="legal"]') as HTMLElement;
     expect(footer.tagName).toBe("FOOTER");
-    expect(within(footer).getByRole("link", { name: "Privacy Policy" })).toHaveAttribute("href", "/privacy");
+    expect(within(footer).getByRole("link", { name: "Privacy notice" })).toHaveAttribute("href", "/privacy");
     expect(within(footer).getByRole("link", { name: "Terms of Use" })).toHaveAttribute("href", "/terms");
     expect(within(footer).getByRole("button", { name: "Cookie settings" })).toBeInTheDocument();
     expect(container.querySelector("#main-content")!.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

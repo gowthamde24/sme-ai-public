@@ -549,5 +549,82 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "legal.sp.caption": {
+  "en": "The companies that process personal data for us",
+  "te": "మా కోసం వ్యక్తిగత డేటాను ప్రాసెస్ చేసే కంపెనీలు",
+  "hi": "हमारे लिए निजी डेटा प्रोसेस करने वाली कंपनियाँ",
+  "kn": "ನಮ್ಮ ಪರವಾಗಿ ವೈಯಕ್ತಿಕ ಡೇಟಾ ಪ್ರಕ್ರಿಯೆ ಮಾಡುವ ಕಂಪನಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sp.name": {
+  "en": "Company",
+  "te": "కంపెనీ",
+  "hi": "कंपनी",
+  "kn": "ಕಂಪನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sp.purpose": {
+  "en": "What for",
+  "te": "దేనికి",
+  "hi": "किसलिए",
+  "kn": "ಯಾವುದಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sp.country": {
+  "en": "Country",
+  "te": "దేశం",
+  "hi": "देश",
+  "kn": "ದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sp.data": {
+  "en": "What data",
+  "te": "ఏ డేటా",
+  "hi": "कौन-सा डेटा",
+  "kn": "ಯಾವ ಡೇಟಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sp.version": {
+  "en": "List version {version}, updated {date}.",
+  "te": "జాబితా వెర్షన్ {version}, {date} న అప్‌డేట్ చేసినది.",
+  "hi": "सूची का वर्ज़न {version}, {date} को अपडेट की गई।",
+  "kn": "ಪಟ್ಟಿಯ ವರ್ಷನ್ {version}, {date} ರಂದು ಅಪ್‌ಡೇಟ್ ಮಾಡಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sp.none": {
+  "en": "The list of companies could not be loaded just now. Write to {privacy_email} and we will send it to you.",
+  "te": "కంపెనీల జాబితాను ఇప్పుడు లోడ్ చేయలేకపోయాము. {privacy_email} కి రాయండి, మేము మీకు పంపుతాం.",
+  "hi": "कंपनियों की सूची अभी लोड नहीं हो सकी। {privacy_email} पर लिखें, हम आपको भेज देंगे।",
+  "kn": "ಕಂಪನಿಗಳ ಪಟ್ಟಿಯನ್ನು ಈಗ ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ. {privacy_email} ಗೆ ಬರೆಯಿರಿ, ನಾವು ನಿಮಗೆ ಕಳುಹಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

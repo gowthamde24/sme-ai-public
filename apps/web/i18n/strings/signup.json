@@ -455,10 +455,10 @@
   }
  },
  "signup.terms.continue": {
-  "en": "By continuing you agree to the {terms} and the {privacy}.",
-  "te": "By continuing you agree to the {terms} and the {privacy}.",
-  "hi": "By continuing you agree to the {terms} and the {privacy}.",
-  "kn": "By continuing you agree to the {terms} and the {privacy}.",
+  "en": "By continuing, you agree to the {terms} and have read the {privacy}.",
+  "te": "By continuing, you agree to the {terms} and have read the {privacy}.",
+  "hi": "By continuing, you agree to the {terms} and have read the {privacy}.",
+  "kn": "By continuing, you agree to the {terms} and have read the {privacy}.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -570,6 +570,17 @@
   "te": "సైన్-అప్ ఇంకా తెరవలేదు.",
   "hi": "साइन-अप अभी शुरू नहीं हुआ है।",
   "kn": "ಸೈನ್-ಅಪ್ ಇನ್ನೂ ತೆರೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.marketing": {
+  "en": "Also send me news and offers about {brand} (optional).",
+  "te": "{brand} గురించి వార్తలు, ఆఫర్లు కూడా పంపండి (ఐచ్ఛికం).",
+  "hi": "{brand} की खबरें और ऑफ़र भी भेजें (वैकल्पिक)।",
+  "kn": "{brand} ಬಗ್ಗೆ ಸುದ್ದಿ, ಆಫರ್‌ಗಳನ್ನೂ ಕಳುಹಿಸಿ (ಐಚ್ಛಿಕ).",
   "status": {
    "te": "draft",
    "hi": "draft",

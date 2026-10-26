@@ -12,6 +12,8 @@ export const DataExport = dynamic(() => import("../data/DataExport").then((m) =>
 export const DataImport = dynamic(() => import("../data/DataImport").then((m) => m.DataImport));
 export const DeleteData = dynamic(() => import("../privacy/DeleteData").then((m) => m.DeleteData));
 export const ExportMyData = dynamic(() => import("../privacy/ExportMyData").then((m) => m.ExportMyData));
+export const MarketingSwitch = dynamic(() => import("../privacy/MarketingSwitch").then((m) => m.MarketingSwitch));
+export const GrievanceForm = dynamic(() => import("../privacy/GrievanceForm").then((m) => m.GrievanceForm));
 export const GstinForm = dynamic(() => import("../gstin/GstinForm").then((m) => m.GstinForm));
 export const SendingForm = dynamic(() => import("../agent-settings/AgentSettingsForms").then((m) => m.SendingForm));
 export const QuietHoursForm = dynamic(() => import("../agent-settings/AgentSettingsForms").then((m) => m.QuietHoursForm));

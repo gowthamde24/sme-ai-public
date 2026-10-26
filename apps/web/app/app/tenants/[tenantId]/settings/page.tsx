@@ -61,7 +61,10 @@ import { CALL_LANGS, VOICES } from "@/lib/assistant/types";
 import { LANGUAGE_NAMES } from "@/i18n/lang";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { assistantScreens, callSettingsScreens, ownVoiceScreens } from "@/lib/screens/flag";
+import { assistantScreens, callSettingsScreens, dpdpScreens, ownVoiceScreens } from "@/lib/screens/flag";
+import { readConsents } from "@/lib/dpdp/source";
+import { RESPONSE_DAYS } from "@/lib/site/business";
+import { grievanceAction, setMarketingAction } from "../dpdp-actions";
 import { saveAssistantAction } from "../assistant-actions";
 import { saveCallSettingsAction } from "../call-settings-actions";
 import { deleteVoiceAction, sentenceAction } from "../own-voice-actions";
@@ -176,6 +179,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     }
   }
   // Privacy (job CC): my exports and deletions, the workspace's deletion (the Owner's) and the consent list, each read on its own.
+  let dpdp: { consents: Awaited<ReturnType<typeof readConsents>> } | null = null;
   let privacy: { exports: Part<Awaited<ReturnType<typeof listMyExports>>>; mine: Part<Awaited<ReturnType<typeof listMyDeletions>>>; space: Part<Awaited<ReturnType<typeof listWorkspaceDeletions>>> | null; consent: Part<Awaited<ReturnType<typeof readConsentList>>> | null } | null = null;
   if (section === "privacy") {
     try {
@@ -186,6 +190,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         tenant.role === "viewer" ? null : settle(() => readConsentList(user.accessToken, tenantId)),
       ]);
       privacy = { exports, mine, space, consent };
+      if (dpdpScreens() !== "off") dpdp = { consents: await readConsents(user.accessToken) };
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       escalate(error);
@@ -397,7 +402,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         {section === "privacy" && privacy ? (
           <PrivacySection
             tenantId={tenantId}
-            words={wordsFor(lang, ["prx.", "apierr.", "problem."], ["dta.btn.working", "dta.col.name", "settings.privacy.erasure", "settings.privacy.suppression", "settings.privacy.note"])}
+            words={wordsFor(lang, ["prx.", "apierr.", "problem.", "dpdp."], ["dta.btn.working", "dta.col.name", "settings.privacy.erasure", "settings.privacy.suppression", "settings.privacy.note"])}
             role={tenant.role}
             email={user.email ?? ""}
             workspaceName={tenant.name}
@@ -406,6 +411,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             workspaceDeletions={privacy.space}
             consent={privacy.consent}
             now={clock()}
+            lang={lang}
+            dpdp={dpdp ? { consents: dpdp.consents, setMarketing: setMarketingAction.bind(null, tenantId), grievance: grievanceAction.bind(null, tenantId), days: RESPONSE_DAYS.grievances, privacyEmail: ADDRESSES.privacy, name: user.displayName ?? "" } : null}
             actions={{
               requestExport: requestExportAction.bind(null, tenantId),
               getExport: getExportAction.bind(null, tenantId),
