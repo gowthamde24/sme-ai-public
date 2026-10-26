@@ -38,7 +38,8 @@ select is((select count(*)::int from pg_proc p join pg_namespace n on n.oid = p.
 
 -- ============================================================================ B. the consent confirmation
 select is(pg_temp.val('a_owner', format($q$select public.lead_consent_confirm(%s, %s, 'Diwali list', 'Offers on our flats', 'explicit_consent', 'Collected on our stall form')::text$q$, pg_temp.tid('a'), pg_temp.rid('c1'))) like '%Diwali list%', true, 'B1 the Owner confirms consent for a list');
-select is(pg_temp.val('a_sales', format($q$select (public.lead_consent_confirm(%s, %s, 'Diwali list', 'Offers on our flats', 'explicit_consent', 'Collected on our stall form') ->> 'list_name')$q$, pg_temp.tid('a'), pg_temp.rid('c1'))), 'Diwali list', 'B2 a repeat of the same words is the same record (Sales may import, so Sales may confirm)');
+select is(pg_temp.val('a_admin', format($q$select (public.lead_consent_confirm(%s, %s, 'Diwali list', 'Offers on our flats', 'explicit_consent', 'Collected on our stall form') ->> 'list_name')$q$, pg_temp.tid('a'), pg_temp.rid('c1'))), 'Diwali list', 'B2 a repeat of the same words is the same record (an Admin may confirm too)');
+select is(pg_temp.val('a_sales', format($q$select public.lead_consent_confirm(%s, %s, 'Diwali list', 'Offers on our flats', 'explicit_consent', 'Collected on our stall form')::text$q$, pg_temp.tid('a'), pg_temp.rid('c1'))), 'ERR:42501', 'B2b consent is the owner''s word: Sales cannot confirm it');
 select is(pg_temp.val('a_owner', format($q$select public.lead_consent_confirm(%s, %s, 'Other list', 'Offers on our flats', 'explicit_consent', 'Collected on our stall form')::text$q$, pg_temp.tid('a'), pg_temp.rid('c1'))), 'ERR:23505', 'B3 other words under the same id: conflict');
 select is(pg_temp.val('a_viewer', format($q$select public.lead_consent_confirm(%s, %s, 'x', 'y', 'explicit_consent', 'z')::text$q$, pg_temp.tid('a'), pg_temp.rid('c9'))), 'ERR:42501', 'B4 a Viewer cannot');
 select is(pg_temp.val('a_owner', format($q$select public.lead_consent_confirm(%s, %s, 'x', 'y', 'other', 'z')::text$q$, pg_temp.tid('a'), pg_temp.rid('c9'))), 'ERR:22023', 'B5 a basis outside the three offered is invalid');
@@ -77,7 +78,9 @@ select is((select cost_per_lead_paise from public.lead_source_costs where tenant
 select is(pg_temp.val('a_owner', format($q$select jsonb_array_length(public.lead_intakes_list(%s, 25, null))::text$q$, pg_temp.tid('a'))), '1', 'C13 the history has one import');
 select is(pg_temp.val('a_owner', format($q$select (public.lead_intakes_list(%s, 25, null) -> 0 -> 'counts' ->> 'ready')$q$, pg_temp.tid('a'))), '3', 'C14 ... with its counts');
 select is(pg_temp.val('a_sales', format($q$select public.lead_intake_apply(%s, %s, %s, 1, 'paste', 'pasted_list', null, '[{"phone": "+919000000002"}]'::jsonb, null, true) #>> '{counts,ready}'$q$,
-  pg_temp.tid('a'), pg_temp.rid('i2'), pg_temp.rid('imp2'))), '1', 'C15 Sales may import');
+  pg_temp.tid('a'), pg_temp.rid('i2'), pg_temp.rid('imp2'))), '1', 'C15 Sales may import (without a consent)');
+select is(pg_temp.val('a_sales', format($q$select public.lead_intake_apply(%s, %s, %s, 1, 'paste', 'pasted_list', %s, '[{"phone": "+919000000002"}]'::jsonb, null, true)::text$q$,
+  pg_temp.tid('a'), pg_temp.rid('i2'), pg_temp.rid('imp2'), pg_temp.rid('c1'))), 'ERR:42501', 'C15b ... but not on the strength of a consent confirmation');
 select is(pg_temp.val('a_viewer', format($q$select public.lead_intake_apply(%s, %s, %s, 1, 'paste', 'pasted_list', null, '[{"phone": "+919000000002"}]'::jsonb, null, true)::text$q$,
   pg_temp.tid('a'), pg_temp.rid('i2'), pg_temp.rid('imp2'))), 'ERR:42501', 'C16 a Viewer may not');
 select is(pg_temp.val('a_owner', format($q$select public.lead_intake_apply(%s, %s, %s, 1, 'paste', 'unknown_tag', null, '[{"phone": "+919000000002"}]'::jsonb, null, true)::text$q$,

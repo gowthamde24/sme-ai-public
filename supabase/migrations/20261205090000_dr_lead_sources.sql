@@ -396,7 +396,8 @@ as $$
 declare
   c public.lead_consents;
 begin
-  if auth.uid() is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin', 'sales']::public.app_role[]) then
+  -- the consent is the OWNER's word: an Owner or an Admin confirms it (a Sales member imports without it, and nothing is sent to those leads)
+  if auth.uid() is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin']::public.app_role[]) then
     perform app.lead_error('deny');
   end if;
   c := app.lead_consent_store(p_tenant_id, p_id, null, p_list_name, p_purpose, p_basis, p_how_collected, auth.uid());
@@ -662,6 +663,9 @@ begin
   end if;
   if p_consent_id is not null and not exists (select 1 from public.lead_consents c where c.tenant_id = p_tenant_id and c.id = p_consent_id) then
     perform app.lead_error('reference');
+  end if;
+  if (p_consent_id is not null or coalesce(p_assume_consent, false)) and not app.has_tenant_role(p_tenant_id, array['owner', 'admin']::public.app_role[]) then
+    perform app.lead_error('deny');   -- only the Owner or an Admin imports on the strength of a consent confirmation
   end if;
   v_n := jsonb_array_length(p_rows);
   v_sha := encode(sha256(convert_to(p_rows::text || coalesce(p_tag, '') || coalesce(p_consent_id::text, ''), 'UTF8')), 'hex');
