@@ -47,6 +47,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "material_quote_policies", "material_quotes", "material_quote_lines",
     "delivery_trips", "delivery_trip_lines", "delivery_trip_events", "delivery_proofs",
     "call_settings", "call_handover_rules",
+    "outreach_policy", "outreach_batches", "outreach_rules", "outreach_items", "outreach_attempts", "outreach_handoffs", "outcome_details", "lead_source_costs",
     "institution_profiles", "programmes", "programme_groups", "students", "admissions", "admission_events", "fee_plans", "fee_plan_lines", "fee_assignments",
     "voice_settings", "voice_choices", "campaign_voice", "voice_note_usage",
     "billing_subscriptions", "billing_events", "billing_usage_events", "billing_topups", "billing_notices", "billing_lapse_reminders", "billing_pending_reminders", "billing_trial_reminders",
@@ -58,9 +59,9 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "data_exports", "erasure_requests", "memberships", "audit_events", "business_profile",
 )  # fmt: skip
 # the tables whose primary key is the workspace id itself (no `id` column)
-ORDER_BY_TENANT = frozenset({"tenant_agent_settings", "tenant_data_policy", "outbox_settings", "store_settings", "scheduler_settings", "business_profile", "institution_profiles", "voice_settings", "billing_subscriptions", "assistant_settings"})
+ORDER_BY_TENANT = frozenset({"tenant_agent_settings", "tenant_data_policy", "outbox_settings", "store_settings", "scheduler_settings", "business_profile", "institution_profiles", "voice_settings", "billing_subscriptions", "assistant_settings", "outreach_policy"})
 # the tables whose key is not `id`: the column that is unique within one workspace (job CV)
-ORDER_BY_OTHER = {"voice_choices": "language", "voice_note_usage": "ref_id", "billing_events": "event_id", "billing_usage_events": "ref_id", "billing_notices": "at", "billing_lapse_reminders": "day", "billing_pending_reminders": "day", "billing_trial_reminders": "day"}
+ORDER_BY_OTHER = {"lead_source_costs": "source", "voice_choices": "language", "voice_note_usage": "ref_id", "billing_events": "event_id", "billing_usage_events": "ref_id", "billing_notices": "at", "billing_lapse_reminders": "day", "billing_pending_reminders": "day", "billing_trial_reminders": "day"}
 
 
 @dataclass(frozen=True)
