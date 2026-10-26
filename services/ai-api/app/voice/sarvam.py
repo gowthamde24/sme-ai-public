@@ -18,6 +18,7 @@ from app.voice.interface import TAGS, Price, Speech, Transcript, VoiceError, lan
 BASE = "https://api.sarvam.ai"
 MAX_KEYTERMS, MAX_KEYTERM_CHARS = 50, 64
 MIN_PACE, MAX_PACE = 0.5, 2.0   # Bulbul v3 / v4-flash (docs.sarvam.ai, text-to-speech)
+MIN_TEMPERATURE, MAX_TEMPERATURE = 0.01, 1.0
 SAMPLE_RATE = 24000   # one of the rates the REST endpoint takes; plenty for speech that is then coded at 16 kHz
 
 
@@ -75,7 +76,7 @@ class SarvamTts:
     def __repr__(self) -> str:
         return f"SarvamTts(model={self._model})"
 
-    def synthesize(self, text: str, language: str, *, speaker: str | None = None, pace: float | None = None) -> Speech:
+    def synthesize(self, text: str, language: str, *, speaker: str | None = None, pace: float | None = None, temperature: float | None = None) -> Speech:
         tag = TAGS.get(language)
         if tag is None:
             raise VoiceError("unsupported_language")
@@ -83,12 +84,14 @@ class SarvamTts:
             "text": text[:2500],
             "language_code": tag,
             "model": self._model,
-            "output_audio_codec": "wav",   # Bulbul v3 refuses `opus`; app.voice.convert turns the WAV into what WhatsApp plays
+            "output_audio_codec": "wav",   # Bulbul v3 refuses `opus`; app.voice.convert turns the WAV into OGG/Opus, which is what WhatsApp plays
             "speech_sample_rate": SAMPLE_RATE,
         }
         chosen = speaker or self._speaker
         if chosen:
             payload["speaker"] = chosen
+        if temperature is not None:
+            payload["temperature"] = min(MAX_TEMPERATURE, max(MIN_TEMPERATURE, float(temperature)))
         if pace is not None:
             payload["pace"] = min(MAX_PACE, max(MIN_PACE, float(pace)))
         body = call(

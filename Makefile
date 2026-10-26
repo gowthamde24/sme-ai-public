@@ -179,6 +179,16 @@ model-bakeoff:
 stt-bakeoff:
 	cd $(API) && DIR="$(DIR)" ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/stt_bakeoff.py
 
+# OPT-IN, NEVER part of make check (night 3, ADR 0101): listening samples with the REAL Sarvam voice: the call opening and two follow-ups in en, te, hi, kn, ta, ml (3 voices, 2 styles) into
+# ~/Desktop/stack19-jobs/voice-samples/ with an index.html. HARD CAP 9,000 characters in total (kept in usage.json). The key is read from Secret Manager at run time, never printed. DRY=1 only counts.
+# voice-stt-check transcribes two of those clips per language back (cap 180 seconds of audio in total) and writes voice-samples/stt-report.md.
+.PHONY: voice-samples voice-stt-check
+voice-samples:
+	$(API)/.venv/bin/python scripts/voice_samples.py $(if $(DRY),--dry-run,)
+
+voice-stt-check:
+	$(API)/.venv/bin/python scripts/voice_samples.py --stt $(if $(DRY),--dry-run,)
+
 # OPT-IN, NEVER part of make check: fetches https://example.com/ and https://example.org/ through the REAL guarded page
 # fetcher (T007 M1) and prints status, bytes, content type and sanitised-text length only. No model, no key, no cost.
 smoke-fetch:
