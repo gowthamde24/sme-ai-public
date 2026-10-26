@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { ApiAuthError, fetchTenant } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { getVoiceSample } from "@/lib/api/voice-samples";
 import { requireUser } from "@/lib/auth/session";
@@ -38,7 +38,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const got = await getVoiceSample(user.accessToken, tenantId, query);
     if (!got) return new NextResponse(null, { status: 404 });
     return new NextResponse(got.bytes, { status: 200, headers: { ...headers, "Content-Type": got.contentType.split(";")[0] } });
-  } catch {
+  } catch (error) {
+    // C1: six samples a minute and a daily cap per workspace (429 + Retry-After); the page says the sample could not be played
+    if (error instanceof ApiRequestError && error.status === 429) return new NextResponse(null, { status: 429, headers: error.retryAfter ? { "Retry-After": String(error.retryAfter) } : {} });
     return new NextResponse(null, { status: 502 });
   }
 }

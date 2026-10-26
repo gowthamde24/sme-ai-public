@@ -6,7 +6,7 @@ vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
 vi.mock("@/lib/api/voice-samples", () => ({ getVoiceSample: (...a: unknown[]) => h.sample(...a) }));
 
-import { ApiAuthError } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
 import { GET } from "./route";
 
@@ -57,5 +57,9 @@ describe("GET voice-sample (job DQ part 3)", () => {
     expect((await get()).status).toBe(404);
     h.sample.mockRejectedValueOnce(new Error("down"));
     expect((await get()).status).toBe(502);
+    h.sample.mockRejectedValueOnce(new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 30));
+    const limited = await get();
+    expect(limited.status).toBe(429);
+    expect(limited.headers.get("Retry-After")).toBe("30");
   });
 });
