@@ -46,8 +46,10 @@ def main() -> int:
     ids = ", ".join("'" + str(r["id"]) + "'" for r in rows)
     if ids:
         query(f"select app.operator_billing_exempt(t.id, true) from public.tenants t where t.id in ({ids})")
-        query(f"select app.operator_set_demo(t.id, true) from public.tenants t where t.id in ({ids})")   # job DQ: a demo workspace is never lapse-erased and shows the demo banner
-    print(f"applied: {len(rows)} workspaces are exempt and marked demo")
+        query(f"select app.operator_set_demo(t.id, true) from public.tenants t where t.id in ({ids})")
+        # the assistant (and so "Ask Vijaya to do it") works only for workspaces on its allow-list: the demo workspaces are on it (app.operator_enable_assistant also keeps the platform switches on)
+        query(f"select app.operator_enable_assistant(t.slug) from public.tenants t where t.id in ({ids})")   # job DQ: a demo workspace is never lapse-erased and shows the demo banner
+    print(f"applied: {len(rows)} workspaces are exempt, marked demo and on the assistant's allow-list")
     return 0
 
 

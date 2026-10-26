@@ -277,7 +277,7 @@ REAL_ESTATE = {
     },
     "suppliers": ["Sai Cement Traders", "Venkateswara Steel", "Balaji Tiles and Sanitary", "Hanuman Sand and Aggregates"],
     "tasks": [
-        ("supplier-enquiry", "Ask my four suppliers for today's price per bag of cement and steel per tonne, and which day they can deliver.", True),
+        ("supplier-enquiry-2", "Ask my four suppliers for today's price per bag of cement and steel per tonne, and which day they can deliver.", True),
         ("call-new-leads", "Call the new leads from this week who have not been called yet and ask if they want to visit the Gachibowli site on Saturday.", False),
     ],
 }
@@ -308,7 +308,7 @@ COACHING = {
     },
     "suppliers": ["Sri Lakshmi Books and Stationery", "Rama Xerox and Printing", "Krishna Furniture Works", "Sai Projector Services"],
     "tasks": [
-        ("supplier-enquiry", "Ask my four suppliers for the price of 100 study material sets and the day they can deliver.", True),
+        ("supplier-enquiry-2", "Ask my four suppliers for the price of 100 study material sets and the day they can deliver.", True),
         ("call-new-leads", "Call the parents who enquired this week and ask if they want a free demo class on Saturday.", False),
     ],
 }
