@@ -55,7 +55,7 @@ select is((select count(*) from pg_constraint where conrelid = 'public.tenants':
 select is((select enabled from public.platform_flags where key = 'billing_enforced'), false, 'A10 enforcement is OFF until the owner of the product turns it on');
 
 -- ============================================================================ B. the catalogue
-select is(pg_temp.path('a_owner', 'select public.billing_plans()::text', 'catalogue_version'), '2', 'B1 the catalogue is version 2 (job DM: the trial is 14 days from the day WhatsApp is connected; version 1 is kept as it was)');
+select is(pg_temp.path('a_owner', 'select public.billing_plans()::text', 'catalogue_version'), '3', 'B1 the catalogue is version 3 (job DS: the calls plans carry the Lead Desk names; version 2: the trial is 14 days from the day WhatsApp is connected; the older versions are kept as they were)');
 select is(pg_temp.v('a_viewer', 'select jsonb_array_length(public.billing_plans() -> ''plans'')::text'), '7', 'B2 seven plans, readable by any signed-in user');
 select is(pg_temp.v('anon', 'select public.billing_plans()::text'), 'ERR:42501', 'B3 anon reads nothing');
 select is(pg_temp.v('a_owner', 'select (select string_agg(p ->> ''id'', '','' order by (p ->> ''sort'')::int) from jsonb_array_elements(public.billing_plans() -> ''plans'') p)'), 'free_trial,starter,growth,business,calls_payg,calls_300,calls_1000', 'B4 the plans, in order');

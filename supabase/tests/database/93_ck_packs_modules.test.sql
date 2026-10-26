@@ -169,13 +169,13 @@ select is((select coalesce(string_agg(e.tbl, ', '), '') from exempt e where not 
 -- ============================================================================ G. the readers
 select is((tests.scalar_as(tests.uid('a_owner'), format($$select public.workspace_pack_get(%L) ->> 'pack_id'$$, tests.tid('a')))), 'textiles', 'G1 a member reads their business''s pack');
 select is((tests.scalar_as(tests.uid('a_viewer'), format($$select public.workspace_pack_get(%L) ->> 'validated'$$, tests.tid('a')))), 'true', 'G2 a Viewer too, and it says the pack was validated by a real owner');
-select is((tests.scalar_as(tests.uid('a_owner'), format($$select jsonb_array_length(public.workspace_pack_get(%L) -> 'modules')::text$$, tests.tid('a')))), '17', 'G3 with its seventeen modules');
+select is((tests.scalar_as(tests.uid('a_owner'), format($$select jsonb_array_length(public.workspace_pack_get(%L) -> 'modules')::text$$, tests.tid('a')))), '18', 'G3 with its seventeen modules and the core lead_desk');
 select is((tests.scalar_as(tests.uid('a_owner'), format($$select (public.workspace_pack_get(%L) -> 'manifest') ? 'example_data'$$, tests.tid('a')))), 'false', 'G4 and without the bulky example data');
 select is(tests.sqlstate_as(tests.uid('b_owner'), format($$select public.workspace_pack_get(%L)$$, tests.tid('a'))), '42501', 'G5 DENY: another business''s Owner');
 select is(tests.sqlstate_as(tests.uid('outsider'), format($$select public.workspace_pack_get(%L)$$, tests.tid('a'))), '42501', 'G6 DENY: an outsider');
 select is(tests.sqlstate_as(null, format($$select public.workspace_pack_get(%L)$$, tests.tid('a'))), '42501', 'G7 DENY: no identity');
-select is((tests.scalar_as(tests.uid('a_viewer'), format($$select (select count(*) from jsonb_array_elements(public.workspace_modules(%L)) e where (e ->> 'enabled')::boolean)::text$$, tests.tid('a')))), '17', 'G8 the modules list says which are on');
-select is((tests.scalar_as(tests.uid('a_viewer'), format($$select jsonb_array_length(public.workspace_modules(%L))::text$$, tests.tid('a')))), '26', 'G9 and lists all twenty-six');
+select is((tests.scalar_as(tests.uid('a_viewer'), format($$select (select count(*) from jsonb_array_elements(public.workspace_modules(%L)) e where (e ->> 'enabled')::boolean)::text$$, tests.tid('a')))), '18', 'G8 the modules list says which are on (seventeen of the pack and the core lead_desk)');
+select is((tests.scalar_as(tests.uid('a_viewer'), format($$select jsonb_array_length(public.workspace_modules(%L))::text$$, tests.tid('a')))), '27', 'G9 and lists all twenty-seven');
 select is(tests.sqlstate_as(tests.uid('b_viewer'), format($$select public.workspace_modules(%L)$$, tests.tid('a'))), '42501', 'G10 DENY: another business reads no module list');
 select is((tests.scalar_as(tests.uid('outsider'), $$select jsonb_array_length(public.pack_catalogue())::text$$)), '12', 'G11 any signed-in person sees the twelve business types');
 select is((tests.scalar_as(tests.uid('outsider'), $$select (select e ->> 'validated' from jsonb_array_elements(public.pack_catalogue()) e where e ->> 'pack_id' = 'education')$$)), 'false', 'G12 and which have been validated by a real owner (education has not)');
