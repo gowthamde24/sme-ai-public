@@ -36278,10 +36278,10 @@
   }
  },
  "acpt.title": {
-  "en": "Terms and Privacy Policy",
-  "te": "Terms and Privacy Policy",
-  "hi": "Terms and Privacy Policy",
-  "kn": "Terms and Privacy Policy",
+  "en": "Terms and Privacy notice",
+  "te": "Terms and Privacy notice",
+  "hi": "Terms and Privacy notice",
+  "kn": "Terms and Privacy notice",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36314,10 +36314,10 @@
   "humanOnly": true
  },
  "acpt.privacy": {
-  "en": "Privacy Policy",
-  "te": "Privacy Policy",
-  "hi": "Privacy Policy",
-  "kn": "Privacy Policy",
+  "en": "Privacy notice",
+  "te": "Privacy notice",
+  "hi": "Privacy notice",
+  "kn": "Privacy notice",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36362,10 +36362,10 @@
   "humanOnly": true
  },
  "acpt.read.privacy": {
-  "en": "Read the Privacy Policy (opens in a new tab)",
-  "te": "Read the Privacy Policy (opens in a new tab)",
-  "hi": "Read the Privacy Policy (opens in a new tab)",
-  "kn": "Read the Privacy Policy (opens in a new tab)",
+  "en": "Read the Privacy notice (opens in a new tab)",
+  "te": "Read the Privacy notice (opens in a new tab)",
+  "hi": "Read the Privacy notice (opens in a new tab)",
+  "kn": "Read the Privacy notice (opens in a new tab)",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36386,10 +36386,10 @@
   "humanOnly": true
  },
  "acpt.agree.privacy": {
-  "en": "I have read the Privacy Policy and I agree.",
-  "te": "I have read the Privacy Policy and I agree.",
-  "hi": "I have read the Privacy Policy and I agree.",
-  "kn": "I have read the Privacy Policy and I agree.",
+  "en": "I have read the Privacy notice and I agree.",
+  "te": "I have read the Privacy notice and I agree.",
+  "hi": "I have read the Privacy notice and I agree.",
+  "kn": "I have read the Privacy notice and I agree.",
   "status": {
    "te": "draft",
    "hi": "draft",

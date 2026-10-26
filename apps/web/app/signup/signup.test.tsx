@@ -25,7 +25,7 @@ import type { SignUpResult } from "@/lib/api/signup";
 
 const words: SignUpWords = {
   email: "Email", password: "Password", passwordHint: "At least 12 characters.", submit: "Create account",
-  errors: { weak_password: "Choose a stronger password.", terms_required: "You need to agree to the Terms and the Privacy Policy.", unknown: "Something went wrong." },
+  errors: { weak_password: "Choose a stronger password.", terms_required: "You need to agree to the Terms and the Privacy notice.", unknown: "Something went wrong." },
 };
 const fill = () => {
   fireEvent.change(screen.getByLabelText("Email"), { target: { value: " asha@example.test " } });
@@ -92,7 +92,7 @@ describe("SignUpForm (the e-mail way of step 2)", () => {
     expect(pw).toHaveAttribute("autocomplete", "new-password");
     expect(screen.getByLabelText("Email")).toHaveAttribute("type", "email");
   });
-  it("sends the Terms and Privacy Policy versions the page showed (job CF), or none when the page could not read them", async () => {
+  it("sends the Terms and Privacy notice versions the page showed (job CF), or none when the page could not read them", async () => {
     signUp.mockResolvedValue({ ok: true, next: "check-email" });
     const { unmount } = render(<SignUpForm words={words} action={(i) => signUp(i)} businessType={FIRST} policyVersions={{ terms: "2026-11-01", privacy: "2026-10-01" }} />);
     fill();
@@ -157,7 +157,7 @@ describe("/signup step 2: Google, Facebook or e-mail, and the terms line", () =>
     const line = screen.getByText(/By continuing you agree/).closest("p")!;
     expect(line).toHaveAttribute("lang", "en"); // the terms sentence stays English until a person reviews the translation
     expect(within(line).getByRole("link", { name: /^Terms/ })).toHaveAttribute("href", "/terms");
-    expect(within(line).getByRole("link", { name: /^Privacy Policy/ })).toHaveAttribute("href", "/privacy");
+    expect(within(line).getByRole("link", { name: /^Privacy notice/ })).toHaveAttribute("href", "/privacy");
     for (const a of within(line).getAllByRole("link")) {
       expect(a).toHaveAttribute("target", "_blank");
       expect(a.getAttribute("rel")).toContain("noopener");

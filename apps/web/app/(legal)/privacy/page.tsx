@@ -6,7 +6,7 @@ import { legalMetadata } from "@/lib/legal/page-metadata";
 import { requestIndexable } from "@/lib/seo/index-rule";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return legalMetadata("/privacy", "Privacy Policy", "What personal data is kept, why, who handles it and how to use your rights.", await requestIndexable());
+  return legalMetadata("/privacy", "Privacy notice", "What personal data is kept, why, who handles it and how to use your rights.", await requestIndexable());
 }
 
 /** /privacy (jobs BH, DB): the Privacy Policy, from the data inventory of docs/data-inventory.md, in all four languages (Telugu, Hindi and Kannada are machine-written drafts awaiting a native reader; the page says so). A stable address: Meta and Google review it. */
