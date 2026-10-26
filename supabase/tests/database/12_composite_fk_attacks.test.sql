@@ -29,6 +29,10 @@ select tests.rid('b_fk_visit'), tests.tid('b'), l.id, l.contact_id, date '2026-1
 insert into public.custom_field_defs (id, tenant_id, entity, code, label, kind, source)
 values (tests.rid('b_fk_def'), tests.tid('b'), 'contact', 'b_fk_def', '{"en": "Synthetic field"}'::jsonb, 'text', 'owner');
 
+-- job DR part A1: a drafted fact references the source it was read from; the generic attack needs a tenant-B source to aim at
+insert into public.knowledge_sources (id, tenant_id, kind, title, text, chars, status, created_by)
+values (tests.rid('b_fk_ksrc'), tests.tid('b'), 'paste', 'Synthetic source', 'Synthetic text', 14, 'read', tests.uid('b_owner'));
+
 -- job AY: the photos of a message reference a catalogue photo of the business, and a photo its item; the generic attack needs a tenant-B item and photo to aim at
 insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by)
 values (tests.rid('b_fk_item'), tests.tid('b'), 'Synthetic saree', 'soft_silk', array['red'], '5k_10k', tests.uid('b_owner'));

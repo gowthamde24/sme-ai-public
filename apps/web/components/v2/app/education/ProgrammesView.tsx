@@ -22,6 +22,7 @@ export type ProgrammesActions = {
   saveGroup: (programmeId: string, id: string, input: GroupInput) => Promise<{ ok: true } | Refused>;
 };
 
+// eslint-disable-next-line no-restricted-syntax -- "coaching" here is a kind of institution (a coaching centre), not a business type of packages/packs
 const TYPES = ["school", "junior_college", "degree_college", "university", "coaching", "training"] as const;
 const LANGS = ["en", "te", "hi", "kn", "ta"] as const;
 const GROUP_KINDS = ["section", "year", "semester", "batch", "none"] as const;

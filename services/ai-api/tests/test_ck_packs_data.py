@@ -48,8 +48,11 @@ def test_every_pack_is_valid() -> None:
     assert pc.check_all() == []
 
 
-def test_there_are_exactly_the_three_business_types_of_the_blueprint() -> None:
-    assert sorted(pc.load_packs()) == ["construction_materials", "education", "textiles"]
+def test_there_are_the_three_deep_business_types_and_the_nine_leads_and_calls_types() -> None:
+    # job DR / A1: the three deep packs of the blueprint, plus the nine "Leads & calls" business types (data only, each with a leads.json)
+    deep = {"construction_materials", "education", "textiles"}
+    nine = {"real_estate", "coaching", "clinic", "insurance_loans", "auto_dealer", "interiors_solar", "travel", "gym", "wholesale_b2b"}
+    assert set(pc.load_packs()) == deep | nine
 
 
 def test_exactly_one_pack_is_the_default_and_it_is_the_published_textile_pack() -> None:
@@ -201,7 +204,8 @@ def test_the_allow_list_holds_only_files_that_still_need_it() -> None:
         if line.strip() and not line.startswith("#"):
             path = ROOT / line.split(maxsplit=1)[0]
             assert path.is_file(), f"{path} is gone: remove its line from the allow-list"
-            assert re.search(r"""["'](textiles|construction_materials|education)["']""", path.read_text(encoding="utf-8")), f"{path} no longer names a pack id: remove its line"
+            ids = "|".join(pc.pack_ids())
+            assert re.search(rf"""["'](\b{ids}\b)["']""", path.read_text(encoding="utf-8")), f"{path} no longer names a pack id: remove its line"
 
 
 # ------------------------------------------------------------------------------------------------------ negative tests on copies
@@ -309,7 +313,7 @@ def test_new_pack_refuses_a_bad_or_a_taken_id(tmp_path: Path) -> None:
             np.create_pack(bad, fake)
     with pytest.raises(SystemExit):
         np.create_pack("education", fake)
-    assert sorted(p.name for p in fake.iterdir() if p.is_dir()) == ["construction_materials", "education", "textiles"]
+    assert sorted(p.name for p in fake.iterdir() if p.is_dir()) == sorted(pc.load_packs()), "nothing was created for a refused id"
 
 
 def test_a_draft_pack_is_never_offered_at_sign_up(tmp_path: Path) -> None:

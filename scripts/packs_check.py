@@ -213,6 +213,61 @@ def check_landing(packs: dict[str, dict[str, Any]], packs_dir: Path = PACKS) -> 
     return errs
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------------- the leads template (job DR / A1)
+LEADS_OUTCOMES = ("no_answer", "interested", "callback", "booked", "not_interested")
+# a lead template states no price, no promise and no guarantee: prices come only from the facts the owner approved
+PRICE_OR_PROMISE = re.compile(r"₹|\brs\.?\s?\d|\d\s?%|\d+\s*(lakh|crore|rupees)|(?<!not )(?<!cannot )(?<!never )(?<!n't )(?<!no )\b(guarantee|guaranteed|promise|promised|assure|assured|warranty)\b", re.IGNORECASE)
+
+
+def check_leads(packs: dict[str, dict[str, Any]], packs_dir: Path = PACKS) -> list[str]:
+    """packages/packs/<id>/leads.json against leads.schema.json, plus what a schema cannot say: it belongs to its pack and version, every question fills a custom field of the pack, the texts state no price or promise,
+    the follow-ups make sense (a reminder is negative only for a booked outcome), the codes are unique. A pack without a leads.json has no template (the three deep packs)."""
+    schema_file = packs_dir / "leads.schema.json"
+    if not schema_file.is_file():
+        return []
+    schema = load_json(schema_file)
+    errs: list[str] = []
+    for name, pack in packs.items():
+        file = packs_dir / name / "leads.json"
+        if not file.is_file():
+            continue
+        leads = load_json(file)
+        schema_errs = _schema_errors(leads, schema, f"{name}/leads.json")
+        errs.extend(schema_errs)
+        if schema_errs:
+            continue
+        if leads["pack"] != name or leads["version"] != pack.get("version"):
+            errs.append(f"{name}/leads.json: pack and version must be the pack's own ({name} {pack.get('version')})")
+        if "enquiries" not in pack.get("modules", []):
+            errs.append(f"{name}/leads.json: a leads template needs the pack to have the enquiries module")
+        fields = {f["code"] for f in pack.get("custom_fields", []) if f["entity"] == "contact"}
+        for q in leads["questions"]:
+            if q["field"] not in fields:
+                errs.append(f"{name}/leads.json: question {q['code']!r} fills {q['field']!r}, which is not a contact custom field of the pack")
+        for kind, items in (("questions", leads["questions"]), ("objections", leads["objections"])):
+            codes = [i["code"] for i in items]
+            if len(codes) != len(set(codes)):
+                errs.append(f"{name}/leads.json: {kind} repeat a code")
+        texts = [t for t in string_values({k: v for k, v in leads.items() if k not in ("$schema", "pack", "version")})]
+        for path, text in texts:
+            if PRICE_OR_PROMISE.search(text) and "/questions" not in path and "/label" not in path and "/outcome_reasons" not in path:
+                errs.append(f"{name}/leads.json: states a price or a promise at {path}: {text[:60]!r}")
+            if TEXTILE_WORDS.search(text) and name != "textiles":
+                errs.append(f"{name}/leads.json: textile wording at {path}")
+        for f in leads["followups"]:
+            if f["after_minutes"] < 0 and f["when"] != "booked":
+                errs.append(f"{name}/leads.json: only a booked outcome can have a reminder before the time")
+            if f["channel"] == "whatsapp" and not f["message"]:
+                errs.append(f"{name}/leads.json: a WhatsApp follow-up needs its message")
+        for kind in ("not_interested", "interested"):
+            codes = [r["code"] for r in leads["outcome_reasons"][kind]]
+            if len(codes) != len(set(codes)):
+                errs.append(f"{name}/leads.json: outcome reasons for {kind} repeat a code")
+        if not any(f["when"] == "no_answer" and f["channel"] == "call" for f in leads["followups"]):
+            errs.append(f"{name}/leads.json: a no-answer follow-up by call (a retry) is needed")
+    return errs
+
+
 def check_all(packs_dir: Path = PACKS) -> list[str]:
     errs: list[str] = []
     schema = load_json(packs_dir / "pack.schema.json")
@@ -230,6 +285,7 @@ def check_all(packs_dir: Path = PACKS) -> list[str]:
         if not schema_errs:
             errs.extend(check_pack(name, pack, modules, keys))
     errs.extend(check_landing(packs, packs_dir))
+    errs.extend(check_leads(packs, packs_dir))
     defaults = [n for n, p in packs.items() if p.get("default_for_existing_workspaces")]
     if len(defaults) != 1:
         errs.append(f"exactly one pack must be the default for existing workspaces, found {defaults}")

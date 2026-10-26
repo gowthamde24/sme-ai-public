@@ -1,11 +1,15 @@
-import { BrickWall, ChevronRight, GraduationCap, Spool, Store, type LucideIcon } from "lucide-react";
+import { BookOpen, BrickWall, Building2, Car, ChevronRight, Dumbbell, GraduationCap, Plane, ShieldCheck, Sofa, Spool, Stethoscope, Store, Truck, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { createElement } from "react";
 
 import type { SignupCard } from "@/lib/packs/signup";
 
 /** The art for each owl prop a business type names (`owl_prop` of its pack). A prop this build has no art for draws a neutral shop until the art job gives the owl real props. */
-export const PROPS: Readonly<Record<string, LucideIcon>> = { fabric_roll: Spool, hard_hat_paver_block: BrickWall, graduation_cap: GraduationCap };
+export const PROPS: Readonly<Record<string, LucideIcon>> = {
+  fabric_roll: Spool, hard_hat_paver_block: BrickWall, graduation_cap: GraduationCap,
+  // job DR / A1: the nine "Leads & calls" business types (a stand-in lucide icon each until the art job draws the owl's own props)
+  building: Building2, open_book: BookOpen, stethoscope: Stethoscope, shield_check: ShieldCheck, car: Car, sofa_sun: Sofa, paper_plane: Plane, dumbbell: Dumbbell, delivery_truck: Truck,
+};
 
 /** The prop icon for an owl prop token (a neutral shop for one this build has no art for). Shared with the public site's business cards. */
 const propFor = (owlProp: string): LucideIcon => PROPS[owlProp] ?? Store;

@@ -1,0 +1,251 @@
+{
+  "$schema": "../leads.schema.json",
+  "pack": "auto_dealer",
+  "version": 1,
+  "goal": {
+    "code": "test_drive",
+    "label": {
+      "en": "Book a test drive",
+      "te": "Test drive book చేయడం",
+      "hi": "Test drive book कराना",
+      "kn": "Test drive book ಮಾಡಿಸುವುದು"
+    },
+    "ask": {
+      "en": "Invite the person for a test drive and fix a day and time at the showroom."
+    }
+  },
+  "questions": [
+    {
+      "code": "vehicle_type",
+      "field": "vehicle_type",
+      "ask": {
+        "en": "Which kind of vehicle are you looking for?"
+      },
+      "required": true
+    },
+    {
+      "code": "fuel_choice",
+      "field": "fuel_choice",
+      "ask": {
+        "en": "Petrol, diesel, CNG or electric?"
+      },
+      "required": false
+    },
+    {
+      "code": "budget_band",
+      "field": "budget_band",
+      "ask": {
+        "en": "What budget range are you comfortable with?"
+      },
+      "required": true
+    },
+    {
+      "code": "buy_timeline",
+      "field": "buy_timeline",
+      "ask": {
+        "en": "When do you plan to buy?"
+      },
+      "required": false
+    },
+    {
+      "code": "has_exchange",
+      "field": "has_exchange",
+      "ask": {
+        "en": "Do you have an old vehicle to exchange?"
+      },
+      "required": false
+    },
+    {
+      "code": "payment_mode",
+      "field": "payment_mode",
+      "ask": {
+        "en": "Will it be a loan or cash?"
+      },
+      "required": false
+    },
+    {
+      "code": "test_drive_day",
+      "field": "test_drive_day",
+      "ask": {
+        "en": "Which day suits you for a test drive?"
+      },
+      "required": true
+    }
+  ],
+  "objections": [
+    {
+      "code": "price_high",
+      "hears": [
+        "costly",
+        "too expensive",
+        "price is high"
+      ],
+      "answer": {
+        "en": "I understand. The sales executive can explain the current offers and the finance options on your visit. Shall I book a test drive?"
+      }
+    },
+    {
+      "code": "compare_brands",
+      "hears": [
+        "checking other brands",
+        "comparing"
+      ],
+      "answer": {
+        "en": "Comparing is the right thing to do. A test drive helps a lot. Which day can you come?"
+      }
+    },
+    {
+      "code": "wait_for_offer",
+      "hears": [
+        "waiting for a discount",
+        "festival offer"
+      ],
+      "answer": {
+        "en": "I will have the sales team call you about current offers. Meanwhile, shall we fix a test drive?"
+      }
+    },
+    {
+      "code": "loan_worry",
+      "hears": [
+        "loan",
+        "emi"
+      ],
+      "answer": {
+        "en": "The showroom works with several lenders. The executive will explain the options. Shall I book a visit?"
+      }
+    },
+    {
+      "code": "far_showroom",
+      "hears": [
+        "showroom is far",
+        "no time to visit"
+      ],
+      "answer": {
+        "en": "We can sometimes bring the car to you for a test drive. Shall I ask the executive to call you?"
+      }
+    }
+  ],
+  "followups": [
+    {
+      "when": "no_answer",
+      "after_minutes": 30,
+      "channel": "call",
+      "max_attempts": 3,
+      "message": null
+    },
+    {
+      "when": "no_answer",
+      "after_minutes": 1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Hello, this is Vijaya, the AI assistant of the showroom. I tried calling about your car enquiry. When can I call you?"
+      }
+    },
+    {
+      "when": "interested",
+      "after_minutes": 2,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Thank you. Here are the showroom address and timings. Shall we fix your test drive?"
+      }
+    },
+    {
+      "when": "callback",
+      "after_minutes": 0,
+      "channel": "call",
+      "max_attempts": 2,
+      "message": null
+    },
+    {
+      "when": "booked",
+      "after_minutes": -1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "A reminder: your test drive is tomorrow. Please bring your driving licence."
+      }
+    },
+    {
+      "when": "booked",
+      "after_minutes": -120,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Your test drive is in two hours."
+      }
+    }
+  ],
+  "outcome_reasons": {
+    "not_interested": [
+      {
+        "code": "price_high",
+        "label": {
+          "en": "Price is above budget"
+        }
+      },
+      {
+        "code": "bought_elsewhere",
+        "label": {
+          "en": "Bought from another dealer"
+        }
+      },
+      {
+        "code": "model_not_available",
+        "label": {
+          "en": "The model or colour is not available"
+        }
+      },
+      {
+        "code": "waiting_for_offer",
+        "label": {
+          "en": "Waiting for an offer"
+        }
+      },
+      {
+        "code": "postponed_plan",
+        "label": {
+          "en": "Postponed the plan"
+        }
+      },
+      {
+        "code": "just_browsing",
+        "label": {
+          "en": "Just browsing"
+        }
+      },
+      {
+        "code": "not_now",
+        "label": {
+          "en": "Not now, maybe later"
+        }
+      }
+    ],
+    "interested": [
+      {
+        "code": "test_drive_booked",
+        "label": {
+          "en": "Test drive booked"
+        }
+      },
+      {
+        "code": "wants_brochure",
+        "label": {
+          "en": "Wants the brochure on WhatsApp"
+        }
+      },
+      {
+        "code": "wants_quote_call",
+        "label": {
+          "en": "Wants a call about offers"
+        }
+      }
+    ]
+  },
+  "safety": [
+    "Do not quote an on-road price, a discount or an EMI unless it is in the approved facts.",
+    "Do not promise availability or a delivery date.",
+    "Do not ask for ID numbers, bank details or any advance on a call or chat."
+  ]
+}

@@ -1,0 +1,250 @@
+{
+  "$schema": "../leads.schema.json",
+  "pack": "interiors_solar",
+  "version": 1,
+  "goal": {
+    "code": "site_measurement",
+    "label": {
+      "en": "Book a site measurement",
+      "te": "Site measurement book చేయడం",
+      "hi": "Site measurement book कराना",
+      "kn": "Site measurement book ಮಾಡಿಸುವುದು"
+    },
+    "ask": {
+      "en": "Offer a free site visit to measure the space and fix a day and time."
+    }
+  },
+  "questions": [
+    {
+      "code": "service",
+      "field": "service",
+      "ask": {
+        "en": "What are you looking for: interiors, a kitchen, wardrobes or solar?"
+      },
+      "required": true
+    },
+    {
+      "code": "property_type",
+      "field": "property_type",
+      "ask": {
+        "en": "Is it an apartment, house or villa?"
+      },
+      "required": true
+    },
+    {
+      "code": "property_status",
+      "field": "property_status",
+      "ask": {
+        "en": "Is the property ready or under construction?"
+      },
+      "required": false
+    },
+    {
+      "code": "budget_band",
+      "field": "budget_band",
+      "ask": {
+        "en": "Do you have a rough budget in mind?"
+      },
+      "required": false
+    },
+    {
+      "code": "start_timeline",
+      "field": "start_timeline",
+      "ask": {
+        "en": "When do you want to start?"
+      },
+      "required": false
+    },
+    {
+      "code": "area_text",
+      "field": "area_text",
+      "ask": {
+        "en": "Which area is the property in?"
+      },
+      "required": true
+    },
+    {
+      "code": "measurement_day",
+      "field": "measurement_day",
+      "ask": {
+        "en": "Which day suits you for a free site visit to measure?"
+      },
+      "required": true
+    }
+  ],
+  "objections": [
+    {
+      "code": "price_high",
+      "hears": [
+        "too costly",
+        "costly"
+      ],
+      "answer": {
+        "en": "I understand. After the measurement our designer will suggest options in different budgets. The visit is free. Shall I book it?"
+      }
+    },
+    {
+      "code": "already_talking",
+      "hears": [
+        "talking to others",
+        "have a designer"
+      ],
+      "answer": {
+        "en": "Good. A second quote helps you compare. The visit is free and without obligation. Which day suits you?"
+      }
+    },
+    {
+      "code": "not_ready",
+      "hears": [
+        "property not ready",
+        "later"
+      ],
+      "answer": {
+        "en": "No problem. When should I call you back? I can send our past work on WhatsApp meanwhile."
+      }
+    },
+    {
+      "code": "trust_quality",
+      "hears": [
+        "quality",
+        "how long will it last"
+      ],
+      "answer": {
+        "en": "Our designer will show you materials and past work at the visit, and explain what is covered. Shall I book a time?"
+      }
+    },
+    {
+      "code": "subsidy_question",
+      "hears": [
+        "subsidy",
+        "government scheme"
+      ],
+      "answer": {
+        "en": "The team can explain which schemes may apply. I cannot promise a subsidy. Shall I ask them to call you?"
+      }
+    }
+  ],
+  "followups": [
+    {
+      "when": "no_answer",
+      "after_minutes": 30,
+      "channel": "call",
+      "max_attempts": 3,
+      "message": null
+    },
+    {
+      "when": "no_answer",
+      "after_minutes": 1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Hello, this is Vijaya, the AI assistant of the design team. I tried calling about your enquiry. When can I call you?"
+      }
+    },
+    {
+      "when": "interested",
+      "after_minutes": 2,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Thank you. Here is a link to some of our work. Shall we fix the site measurement?"
+      }
+    },
+    {
+      "when": "callback",
+      "after_minutes": 0,
+      "channel": "call",
+      "max_attempts": 2,
+      "message": null
+    },
+    {
+      "when": "booked",
+      "after_minutes": -1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "A reminder: our team will visit your site tomorrow for the measurement."
+      }
+    },
+    {
+      "when": "booked",
+      "after_minutes": -120,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Our team will reach your site in about two hours."
+      }
+    }
+  ],
+  "outcome_reasons": {
+    "not_interested": [
+      {
+        "code": "budget_high",
+        "label": {
+          "en": "Budget is higher than planned"
+        }
+      },
+      {
+        "code": "property_not_ready",
+        "label": {
+          "en": "The property is not ready yet"
+        }
+      },
+      {
+        "code": "chose_other_vendor",
+        "label": {
+          "en": "Chose another vendor"
+        }
+      },
+      {
+        "code": "diy_or_postponed",
+        "label": {
+          "en": "Will do it later or themselves"
+        }
+      },
+      {
+        "code": "not_in_service_area",
+        "label": {
+          "en": "Outside our service area"
+        }
+      },
+      {
+        "code": "just_browsing",
+        "label": {
+          "en": "Just browsing"
+        }
+      },
+      {
+        "code": "not_now",
+        "label": {
+          "en": "Not now, maybe later"
+        }
+      }
+    ],
+    "interested": [
+      {
+        "code": "measurement_booked",
+        "label": {
+          "en": "Site measurement booked"
+        }
+      },
+      {
+        "code": "wants_portfolio",
+        "label": {
+          "en": "Wants to see past work on WhatsApp"
+        }
+      },
+      {
+        "code": "wants_designer_call",
+        "label": {
+          "en": "Wants a call from a designer"
+        }
+      }
+    ]
+  },
+  "safety": [
+    "Do not quote a price, a rate per square foot or a saving unless it is in the approved facts.",
+    "Do not promise a subsidy, a payback period, a delivery or finish date.",
+    "Do not ask for any payment on a call or chat."
+  ]
+}

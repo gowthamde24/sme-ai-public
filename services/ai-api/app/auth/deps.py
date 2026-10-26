@@ -34,7 +34,9 @@ from app.evidence.repository import EvidenceRepository
 from app.followups.repository import FollowupsRepository
 from app.integrations.policy import PolicyVersions
 from app.integrations.repository import IntegrationsRepository
+from app.knowledge.service import KnowledgeService
 from app.leads.repository import LeadsRepository
+from app.leadspack.service import LeadPlaybookService
 from app.leadtools.repository import LeadSearchRepository
 from app.marksmessages.service import MarksSendService
 from app.materials.repository import MaterialsRepository
@@ -146,6 +148,9 @@ class Runtime:
     dpdp: DpdpRuntime | None = None
     # job DS: how the assistant talks (everyday spoken style per language)
     speaking: SpeakingService | None = None
+    # job DR / A1: the lead playbook of a workspace and its knowledge base
+    lead_playbook: LeadPlaybookService | None = None
+    knowledge: KnowledgeService | None = None
 
 
 @dataclass(frozen=True)

@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "leads.schema.json",
+  "title": "The leads-and-calls template of a business type (job DR / A1, night run 27 Oct 2026)",
+  "description": "packages/packs/<id>/leads.json sits next to a pack.json and says how the AI assistant works a LEAD for that kind of business: the goal of the call, the questions (each one fills a custom field of the pack), the objections and the honest answers, the follow-up timings, and the reasons an outcome can carry. It is DATA, English with the goal named in four languages (the assistant says it in the customer's language in the everyday spoken style). It can state no price, no promise and no guarantee: prices come only from facts the owner approved (the knowledge base). A workspace starts from this template and may edit it (public.lead_playbooks).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pack", "version", "goal", "questions", "objections", "followups", "outcome_reasons", "safety"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "pack": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,30}$" },
+    "version": { "type": "integer", "minimum": 1 },
+    "goal": {
+      "type": "object", "additionalProperties": false, "required": ["code", "label", "ask"],
+      "properties": {
+        "code": { "enum": ["site_visit", "counselling", "appointment", "qualify", "test_drive", "site_measurement", "quote", "trial_session", "wholesale_quote"] },
+        "label": { "$ref": "#/$defs/label4" },
+        "ask": { "$ref": "#/$defs/text_en" }
+      }
+    },
+    "questions": {
+      "type": "array", "minItems": 3, "maxItems": 8,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["code", "field", "ask", "required"],
+        "properties": {
+          "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,39}$" },
+          "field": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,39}$", "description": "The code of a custom field of the pack on contacts: the answer is stored there." },
+          "ask": { "$ref": "#/$defs/text_en" },
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "objections": {
+      "type": "array", "minItems": 3, "maxItems": 8,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["code", "hears", "answer"],
+        "properties": {
+          "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,39}$" },
+          "hears": { "type": "array", "minItems": 1, "maxItems": 6, "items": { "type": "string", "minLength": 2, "maxLength": 80 } },
+          "answer": { "$ref": "#/$defs/text_en" }
+        }
+      }
+    },
+    "followups": {
+      "type": "array", "minItems": 2, "maxItems": 10,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["when", "after_minutes", "channel", "max_attempts", "message"],
+        "properties": {
+          "when": { "enum": ["no_answer", "interested", "callback", "booked", "not_interested"], "description": "The outcome that starts it." },
+          "after_minutes": { "type": "integer", "minimum": -10080, "maximum": 43200, "description": "Minutes after the outcome; negative = before the booked time (a reminder), only for `booked`." },
+          "channel": { "enum": ["call", "whatsapp"] },
+          "max_attempts": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "message": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/text_en" }] }
+        }
+      }
+    },
+    "outcome_reasons": {
+      "type": "object", "additionalProperties": false, "required": ["not_interested", "interested"],
+      "properties": {
+        "not_interested": { "$ref": "#/$defs/reasons" },
+        "interested": { "$ref": "#/$defs/reasons" }
+      }
+    },
+    "safety": { "type": "array", "minItems": 2, "maxItems": 8, "items": { "type": "string", "minLength": 10, "maxLength": 240 }, "description": "Rules shown to the model in every prompt for this kind of business, in addition to the platform's own." }
+  },
+  "$defs": {
+    "text_en": { "type": "object", "additionalProperties": false, "required": ["en"], "properties": { "en": { "type": "string", "minLength": 5, "maxLength": 400 } } },
+    "label4": {
+      "type": "object", "additionalProperties": false, "required": ["en", "te", "hi", "kn"],
+      "properties": { "en": { "type": "string", "minLength": 3, "maxLength": 80 }, "te": { "type": "string", "minLength": 3, "maxLength": 80 }, "hi": { "type": "string", "minLength": 3, "maxLength": 80 }, "kn": { "type": "string", "minLength": 3, "maxLength": 80 } }
+    },
+    "reasons": {
+      "type": "array", "minItems": 2, "maxItems": 12, "uniqueItems": true,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["code", "label"],
+        "properties": { "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,39}$" }, "label": { "type": "object", "additionalProperties": false, "required": ["en"], "properties": { "en": { "type": "string", "minLength": 3, "maxLength": 100 } } } }
+      }
+    }
+  }
+}
