@@ -91,6 +91,9 @@ from app.knowledge import errors as knowledge_errors
 from app.knowledge.repository import PostgrestKnowledgeRepository
 from app.knowledge.routes import router as knowledge_router
 from app.knowledge.service import KnowledgeService
+from app.lead_sources.routes import public_router as lead_intake_router
+from app.lead_sources.routes import router as lead_sources_router
+from app.lead_sources.wiring import build_lead_sources
 from app.leads.repository import PostgrestLeadsRepository
 from app.leads.routes import router as leads_router
 from app.leadspack.repository import PostgrestPlaybookRepository
@@ -271,6 +274,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
             PostgrestPlaybookRepository(config.rest_url, config.anon_key), default_templates()
         ),
         knowledge=KnowledgeService(PostgrestKnowledgeRepository(config.rest_url, config.anon_key)),
+        lead_sources=build_lead_sources(
+            settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, key_ring
+        ),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         notifications=build_notifications(settings, config),
         research_web=build_research_web(settings),
@@ -1049,6 +1055,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_templates_router)
     app.include_router(lead_playbook_router)
     app.include_router(knowledge_router)
+    app.include_router(lead_sources_router)
+    app.include_router(lead_intake_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)
