@@ -11,6 +11,7 @@ import httpx
 
 from app.outreach.errors import OutreachStateError, PlanChangedError
 from app.rpc_base import RpcClient
+from app.tasks.errors import NotForSchoolsError
 
 
 class OutreachRepository(Protocol):
@@ -41,7 +42,7 @@ class OutreachRepository(Protocol):
 
 class PostgrestOutreachRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
-        self._rpc = RpcClient(rest_url, anon_key, {"SM811": OutreachStateError, "SM812": PlanChangedError}, client=client)
+        self._rpc = RpcClient(rest_url, anon_key, {"SM811": OutreachStateError, "SM812": PlanChangedError, "SM951": NotForSchoolsError}, client=client)
 
     def close(self) -> None:
         self._rpc.close()

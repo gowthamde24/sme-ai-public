@@ -21,7 +21,7 @@ select is((select count(*) from pg_namespace where nspname = 'packs'), 1::bigint
 select is((select count(*) from unnest(array['anon', 'authenticated', 'service_role']) r where has_schema_privilege(r, 'packs', 'usage')), 0::bigint, 'A2 no client role has usage on the packs schema');
 select is((select count(*) from information_schema.role_table_grants where table_schema = 'packs' and grantee in ('anon', 'authenticated', 'service_role', 'public')), 0::bigint, 'A3 no client role holds a privilege on any packs table');
 select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'packs' and c.relkind = 'r' and c.relrowsecurity and c.relforcerowsecurity), 8::bigint, 'A4 RLS is enabled and forced on all eight packs tables');
-select is((select count(*) from packs.modules), 26::bigint, 'A5 twenty-six modules (job CN added `materials`)');
+select is((select count(*) from packs.modules), 27::bigint, 'A5 twenty-seven modules (job CN added `materials`, job DS added the core `lead_desk`)');
 select is((select count(*) from packs.modules where guard not in ('tables', 'agents', 'flag', 'future')), 0::bigint, 'A6 every module says how the database refuses it');
 select is((select string_agg(code, ',' order by position) from packs.units), 'piece,set,sq_ft,sq_m,box,bag,tonne,cft,truckload', 'A7 the closed list of selling units');
 select is((select string_agg(enumlabel, ',' order by enumlabel) from pg_enum where enumtypid = 'public.quote_sale_unit'::regtype), (select string_agg(code, ',' order by code) from packs.units), 'A8 the quote sale unit enum carries exactly the same units');

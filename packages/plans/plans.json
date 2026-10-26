@@ -1,9 +1,9 @@
 {
  "$schema": "./plans.schema.json",
- "version": 2,
+ "version": 3,
  "status": "draft",
  "currency": "INR",
- "note": "DRAFT of 23 Oct 2026 (owner decisions, job DI); version 2 of 25 Oct 2026 (evening): the trial is 14 days, counted from the day the workspace's WhatsApp is connected. Prices are NOT decided: every price is null until the owner sets it from the usage tests. A published version is never edited: raise `version` and run `make plans-migration`.",
+ "note": "DRAFT of 23 Oct 2026 (owner decisions, job DI); version 2 of 25 Oct 2026 (evening): the trial is 14 days, counted from the day the workspace's WhatsApp is connected. Version 3 of 26 Oct 2026: only the names of the three calls plans change (Lead Desk 300, Lead Desk 1,000, Pay as you go). Prices are NOT decided: every price is null until the owner sets it from the usage tests. A published version is never edited: raise `version` and run `make plans-migration`.",
  "trial": {
   "plan": "free_trial",
   "days": 14,
@@ -90,7 +90,7 @@
    "kind": "calls",
    "sort": 40,
    "name": {
-    "en": "Pay-as-you-go"
+    "en": "Pay as you go"
    },
    "price_paise_monthly": null,
    "price_paise_per_minute": null,
@@ -110,7 +110,7 @@
    "kind": "calls",
    "sort": 50,
    "name": {
-    "en": "Calls 300"
+    "en": "Lead Desk 300"
    },
    "price_paise_monthly": null,
    "allowances": {
@@ -128,7 +128,7 @@
    "kind": "calls",
    "sort": 60,
    "name": {
-    "en": "Calls 1,000"
+    "en": "Lead Desk 1,000"
    },
    "price_paise_monthly": null,
    "allowances": {

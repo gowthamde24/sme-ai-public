@@ -113,7 +113,7 @@
     "kind": "calls",
     "sort": 40,
     "name": {
-     "en": "Pay-as-you-go",
+     "en": "Pay as you go",
      "te": null,
      "hi": null,
      "kn": null
@@ -137,7 +137,7 @@
     "kind": "calls",
     "sort": 50,
     "name": {
-     "en": "Calls 300",
+     "en": "Lead Desk 300",
      "te": null,
      "hi": null,
      "kn": null
@@ -161,7 +161,7 @@
     "kind": "calls",
     "sort": 60,
     "name": {
-     "en": "Calls 1,000",
+     "en": "Lead Desk 1,000",
      "te": null,
      "hi": null,
      "kn": null
@@ -504,7 +504,7 @@
    "kind": "calls",
    "sort": 40,
    "name": {
-    "en": "Pay-as-you-go",
+    "en": "Pay as you go",
     "te": null,
     "hi": null,
     "kn": null

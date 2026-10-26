@@ -156,6 +156,12 @@
       "exists_today": true,
       "description": "UPI and card payment links through a provider (ADR 0080)",
       "guard": "tables"
+    },
+    {
+      "code": "lead_desk",
+      "exists_today": false,
+      "description": "Lead Desk, the core of Stack19: lead sources, AI calls, WhatsApp, outcomes, follow-ups, reports and Ask Vijaya to do it. On for every business type (not listed by a pack: the database turns it on for every workspace that has a pack)",
+      "guard": "flag"
     }
   ]
 }

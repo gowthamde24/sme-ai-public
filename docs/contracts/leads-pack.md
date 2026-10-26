@@ -46,3 +46,5 @@ Fact kinds (closed): `price, offer, product_service, location, hours, policy, fa
 
 ## 4. Where the web should look
 The setup wizard: step 2 = `GET /v1/lead-templates` + the pack choice at sign-up; step 1 = knowledge sources + facts review (a card per draft fact with Approve / Edit / Reject; prices flagged "needs your second factor"); step 3 = `GET/PUT /lead-playbook`.
+
+> **Name (26 Oct 2026, part E1):** this family is part of **Lead Desk**, the core of Stack19 that is on for every business; see `lead-desk.md`. The nine business types are "template businesses"; the module `lead_desk` is core and not listed by any pack.
