@@ -40,7 +40,7 @@ const textOf = (doc: LegalText) => JSON.stringify(doc);
 
 describe("/privacy and /terms (job BH)", () => {
   it.each([
-    ["privacy", PrivacyPage, "Privacy Policy"],
+    ["privacy", PrivacyPage, "Privacy notice"],
     ["terms", TermsPage, "Terms of Use"],
     ["data-deletion", DataDeletionPage, "Delete your data"],
   ] as const)("%s: one h1, the version and the last-updated day, and no 'draft' or 'pending review' line on the page (owner decision, job DB)", async (_n, Page, title) => {
@@ -49,8 +49,8 @@ describe("/privacy and /terms (job BH)", () => {
     expect(screen.getByRole("heading", { level: 1, name: title })).toHaveAttribute("lang", "en");
     expect(screen.queryByRole("note")).toBeNull();
     expect(document.body.textContent).toContain(`Version ${LEGAL_VERSION}`);
-    expect(LEGAL_UPDATED).toBe("2026-10-25");
-    expect(document.body.textContent).toContain("Last updated: 25 October 2026");
+    expect(LEGAL_UPDATED).toBe("2026-10-27");
+    expect(document.body.textContent).toContain("Last updated: 27 October 2026");
     expect(document.body.textContent).not.toMatch(/pending legal review|\[EFFECTIVE DATE\]|\[CONFIRM|\[LEGAL REVIEW/);
   });
   it("the draft banner comes back, in English, when the flag is switched on again, and nothing else changes", async () => {
@@ -58,7 +58,7 @@ describe("/privacy and /terms (job BH)", () => {
     render(await PrivacyPage());
     expect(screen.getByRole("note")).toHaveTextContent("Draft, pending legal review.");
     expect(screen.getByRole("note")).toHaveAttribute("lang", "en");
-    expect(screen.getByRole("heading", { level: 1, name: "Privacy Policy" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Privacy notice" })).toBeInTheDocument();
   });
   it("no text has a missing fact: nothing is drawn highlighted, and every owner fact comes from lib/site/business.ts", async () => {
     render(await PrivacyPage());
@@ -94,19 +94,19 @@ describe("/privacy and /terms (job BH)", () => {
     expect(document.body.textContent).not.toMatch(/\{brand\}/);
     expect(document.body.textContent).toContain(BRAND_TEXT);
   });
-  it("the Privacy Policy covers what DPDP asks for: roles, purposes, consent and its withdrawal, access, correction, erasure, nomination, grievance, retention, transfers, children", () => {
+  it("the Privacy notice covers what DPDP asks for: roles, purposes, consent and its withdrawal, access, correction, erasure, nomination, grievance, retention, transfers, children", () => {
     const all = textOf(PRIVACY);
-    for (const word of ["data fiduciary", "data processor", "Why we use it", "consent", "withdraw", "access", "correction", "erasure", "nominat", "grievance", "How long we keep it", "transfers abroad", "Children", "Data Protection Board", "GDPR", "Grievance Officer", "{proprietor}", "{privacy_email}"]) expect(all.toLowerCase(), word).toContain(word.toLowerCase());
+    for (const word of ["data fiduciary", "data processor", "What data, and why", "consent", "withdraw", "access", "correction", "erasure", "nominat", "grievance", "How long we keep it", "abroad", "Children", "Data Protection Board", "GDPR", "Grievance Officer", "{proprietor}", "{privacy_email}"]) expect(all.toLowerCase(), word).toContain(word.toLowerCase());
   });
   it("it names what we really keep and who handles it: every group of the data inventory, the processors, voice, the AI, cookies, backups, the do-not-contact keys", () => {
     const all = textOf(PRIVACY);
-    for (const word of ["phone number", "e-mail", "job title", "enquiries", "store visits", "call requests", "AI assistant", "Supabase", "Google Cloud", "WhatsApp", "speech", "Meta", "recording", "backup", "do-not-contact", "sb-<project>-auth-token", "sme_lang", "sme_theme", "sme_consent", "Settings, Privacy", "24-hour"]) expect(all, word).toContain(word);
+    for (const word of ["phone number", "e-mail", "job title", "enquiries", "store visits", "AI assistant", "WhatsApp", "speech", "Meta", "recording", "backup", "do-not-contact", "sb-<project>-auth-token", "sme_lang", "sme_theme", "sme_consent", "Settings, Privacy and data", "read from our service"]) expect(all, word).toContain(word);
   });
   it("it says the assistant is an AI and that messages to customers may be written by AI and are labelled, in both texts", () => {
     for (const doc of [PRIVACY, TERMS]) {
       const all = textOf(doc);
       expect(all).toMatch(/(Our assistant is an AI|The assistant in \{brand\} is an AI|The assistant is an AI)/);
-      expect(all).toMatch(/written by AI[^"]*labelled/);
+      expect(all).toMatch(doc === PRIVACY ? /say they come from the business's AI assistant/ : /written by AI[^"]*labelled/);
     }
   });
   it("it makes no promise the product does not keep: no 'compliant', no 'we never', no 'guarantee' of security", () => {
@@ -120,7 +120,7 @@ describe("/privacy and /terms (job BH)", () => {
     expect(all).toContain("until you, the Owner, have approved it");
   });
   it("the pages are public, have a stable address as their canonical link and the share picture, and are not for search engines until launch", async () => {
-    for (const [make, path, title] of [[privacyMeta, "/privacy", "Privacy Policy"], [termsMeta, "/terms", "Terms of Use"], [deletionMeta, "/data-deletion", "Delete your data"]] as const) {
+    for (const [make, path, title] of [[privacyMeta, "/privacy", "Privacy notice"], [termsMeta, "/terms", "Terms of Use"], [deletionMeta, "/data-deletion", "Delete your data"]] as const) {
       const m = await make();
       expect(m.robots).toEqual({ index: false, follow: false });
       expect(m.title).toBe(`${title} · ${BRAND_TEXT}`);
@@ -131,7 +131,7 @@ describe("/privacy and /terms (job BH)", () => {
 });
 
 describe("in the visitor's language (job DB)", () => {
-  it.each(["te", "hi", "kn"] as const)("%s: the Privacy Policy is the whole text in that language, marked as a machine-written draft; the summary and the footer words are in that language too", async (lang) => {
+  it.each(["te", "hi", "kn"] as const)("%s: the Privacy notice is the whole text in that language, marked as a machine-written draft; the summary and the footer words are in that language too", async (lang) => {
     jarValues.sme_lang = lang;
     render(await PrivacyPage());
     const d = legalDict(lang);
@@ -144,7 +144,7 @@ describe("in the visitor's language (job DB)", () => {
     expect(note).toHaveAttribute("lang", lang);
     const h1 = screen.getByRole("heading", { level: 1 });
     expect(h1).toHaveAttribute("lang", lang);
-    expect(h1.textContent).not.toBe("Privacy Policy");
+    expect(h1.textContent).not.toBe("Privacy notice");
     expect(document.getElementById("collect")!.closest("div")).toHaveAttribute("lang", lang);
     expect(document.body.textContent).toContain("privacy@stack19.com");
     expect(document.body.textContent).not.toMatch(/\{[a-z_]+\}/);
@@ -212,7 +212,7 @@ describe("the legal pages' frame and the legal links", () => {
   it("LegalLinks: Privacy and Terms are links to the pages, Cookie settings is a button, each 44 px", () => {
     render(<LegalLinks lang="en" />);
     const nav = screen.getByRole("navigation", { name: "Legal" });
-    expect(within(nav).getByRole("link", { name: "Privacy Policy" })).toHaveAttribute("href", "/privacy");
+    expect(within(nav).getByRole("link", { name: "Privacy notice" })).toHaveAttribute("href", "/privacy");
     expect(within(nav).getByRole("link", { name: "Terms of Use" })).toHaveAttribute("href", "/terms");
     expect(within(nav).getByRole("link", { name: "Delete your data" })).toHaveAttribute("href", "/data-deletion");
     expect(within(nav).getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");

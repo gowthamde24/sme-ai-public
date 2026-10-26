@@ -5,5 +5,7 @@ export { DataExport } from "../data/DataExport";
 export { DataImport } from "../data/DataImport";
 export { DeleteData } from "../privacy/DeleteData";
 export { ExportMyData } from "../privacy/ExportMyData";
+export { MarketingSwitch } from "../privacy/MarketingSwitch";
+export { GrievanceForm } from "../privacy/GrievanceForm";
 export { GstinForm } from "../gstin/GstinForm";
 export { SendingForm, QuietHoursForm, RemindersForm } from "../agent-settings/AgentSettingsForms";

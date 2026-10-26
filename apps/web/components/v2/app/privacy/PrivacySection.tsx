@@ -9,14 +9,15 @@ import { PartProblem } from "../cc/PartProblem";
 import { link, listPlain } from "../ui";
 import { makeT, type Words } from "../words";
 import { ConsentListView } from "./ConsentList";
-import { DeleteData, ExportMyData } from "../settings/LazyTabs";
+import { DeleteData, ExportMyData, GrievanceForm, MarketingSwitch } from "../settings/LazyTabs";
+import type { Consents, GrievanceResult, MarketingResult } from "@/lib/dpdp/types";
 import type { PrivacyActions } from "./types";
 
 /**
  * The "Privacy" part of Settings (job CC, screen 2): download my data, delete my account (and the workspace, for the Owner), the consent and opt-out list, and the two older pages (erasing a customer's personal data; the
  * do-not-contact keys). Each part was read on its own: one that could not be read says so in its place (refused, too many tries, or not loaded) and the rest works.
  */
-export function PrivacySection({ tenantId, words, role, email, workspaceName, exports, myDeletions, workspaceDeletions, consent, actions, now }: { tenantId: string; words: Words; role: string; email: string; workspaceName: string; exports: Part<DataExport[]>; myDeletions: Part<Deletion[]>; workspaceDeletions: Part<Deletion[]> | null; consent: Part<ConsentList> | null; actions: PrivacyActions; now: number }) {
+export function PrivacySection({ tenantId, words, role, email, workspaceName, exports, myDeletions, workspaceDeletions, consent, actions, now, dpdp = null, lang = "en" }: { /** The DPDP parts (job DQ part 2): the marketing switch and the grievance form; null = the API is not there yet (DPDP_SCREENS off), neither is drawn. `consents` null = could not be read. */ dpdp?: { consents: Consents | null; setMarketing: (given: boolean) => Promise<MarketingResult>; grievance: (input: unknown) => Promise<GrievanceResult>; days: number; privacyEmail: string; name: string } | null; lang?: "en" | "te" | "hi" | "kn"; tenantId: string; words: Words; role: string; email: string; workspaceName: string; exports: Part<DataExport[]>; myDeletions: Part<Deletion[]>; workspaceDeletions: Part<Deletion[]> | null; consent: Part<ConsentList> | null; actions: PrivacyActions; now: number }) {
   const t = makeT(words);
   const isOwner = role === "owner";
   const admin = isOwner || role === "admin";
@@ -32,6 +33,8 @@ export function PrivacySection({ tenantId, words, role, email, workspaceName, ex
       ) : (
         <PartProblem kind={myDeletions.ok ? (workspaceDeletions && !workspaceDeletions.ok ? workspaceDeletions.kind : "other") : myDeletions.kind} retryAfter={myDeletions.ok ? undefined : myDeletions.retryAfter} words={words} title={t("prx.del.account.title")} />
       )}
+      {dpdp ? (dpdp.consents ? <MarketingSwitch words={words} lang={lang} initial={dpdp.consents} action={dpdp.setMarketing} /> : <PartProblem kind="other" words={words} title={t("dpdp.mk.title")} />) : null}
+      {dpdp ? <GrievanceForm words={words} lang={lang} action={dpdp.grievance} defaults={{ name: dpdp.name, contact: email }} days={dpdp.days} email={dpdp.privacyEmail} /> : null}
       {consent ? consent.ok ? <ConsentListView tenantId={tenantId} words={words} list={consent.data} /> : <PartProblem kind={consent.kind} retryAfter={consent.retryAfter} words={words} title={t("prx.consent.title")} /> : null}
       <section className={card} aria-labelledby="prx-more-h">
         <h2 id="prx-more-h" className={h2}>

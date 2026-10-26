@@ -911,10 +911,10 @@
   "humanOnly": true
  },
  "settings.tab.privacy": {
-  "en": "Privacy",
-  "te": "Privacy",
-  "hi": "Privacy",
-  "kn": "Privacy",
+  "en": "Privacy and data",
+  "te": "Privacy and data",
+  "hi": "Privacy and data",
+  "kn": "Privacy and data",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32466,10 +32466,10 @@
   }
  },
  "prx.exp.intro": {
-  "en": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
-  "te": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
-  "hi": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
-  "kn": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
+  "en": "A zip file with each table as JSON and CSV, and a README, of the information this system holds about you: your account, what you did here and your consent choices. It is made in the background; when it is ready you can download it.",
+  "te": "A zip file with each table as JSON and CSV, and a README, of the information this system holds about you: your account, what you did here and your consent choices. It is made in the background; when it is ready you can download it.",
+  "hi": "A zip file with each table as JSON and CSV, and a README, of the information this system holds about you: your account, what you did here and your consent choices. It is made in the background; when it is ready you can download it.",
+  "kn": "A zip file with each table as JSON and CSV, and a README, of the information this system holds about you: your account, what you did here and your consent choices. It is made in the background; when it is ready you can download it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32729,10 +32729,10 @@
   "humanOnly": true
  },
  "prx.err.cooling_off": {
-  "en": "The 14 days are not over yet. Nothing was changed.",
-  "te": "The 14 days are not over yet. Nothing was changed.",
-  "hi": "The 14 days are not over yet. Nothing was changed.",
-  "kn": "The 14 days are not over yet. Nothing was changed.",
+  "en": "The 7 days are not over yet. Nothing was changed.",
+  "te": "The 7 days are not over yet. Nothing was changed.",
+  "hi": "The 7 days are not over yet. Nothing was changed.",
+  "kn": "The 7 days are not over yet. Nothing was changed.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32799,10 +32799,10 @@
   "humanOnly": true
  },
  "prx.del.days": {
-  "en": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
-  "te": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
-  "hi": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
-  "kn": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
+  "en": "Nothing happens at once. There are 7 days to change your mind, and you can cancel until the day.",
+  "te": "Nothing happens at once. There are 7 days to change your mind, and you can cancel until the day.",
+  "hi": "Nothing happens at once. There are 7 days to change your mind, and you can cancel until the day.",
+  "kn": "Nothing happens at once. There are 7 days to change your mind, and you can cancel until the day.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32927,10 +32927,10 @@
   "humanOnly": true
  },
  "prx.del.account.asked": {
-  "en": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
-  "te": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
-  "hi": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
-  "kn": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
+  "en": "Scheduled. Your account will be deleted after the 7 days unless you cancel.",
+  "te": "Scheduled. Your account will be deleted after the 7 days unless you cancel.",
+  "hi": "Scheduled. Your account will be deleted after the 7 days unless you cancel.",
+  "kn": "Scheduled. Your account will be deleted after the 7 days unless you cancel.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32939,10 +32939,10 @@
   "humanOnly": true
  },
  "prx.del.workspace.asked": {
-  "en": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
-  "te": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
-  "hi": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
-  "kn": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
+  "en": "Scheduled. The workspace can be erased after the 7 days. Nothing is erased until you confirm it then.",
+  "te": "Scheduled. The workspace can be erased after the 7 days. Nothing is erased until you confirm it then.",
+  "hi": "Scheduled. The workspace can be erased after the 7 days. Nothing is erased until you confirm it then.",
+  "kn": "Scheduled. The workspace can be erased after the 7 days. Nothing is erased until you confirm it then.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32951,10 +32951,10 @@
   "humanOnly": true
  },
  "prx.del.workspace.wait": {
-  "en": "The 14 days are not over yet. The workspace can be erased after that day.",
-  "te": "The 14 days are not over yet. The workspace can be erased after that day.",
-  "hi": "The 14 days are not over yet. The workspace can be erased after that day.",
-  "kn": "The 14 days are not over yet. The workspace can be erased after that day.",
+  "en": "The 7 days are not over yet. The workspace can be erased after that day.",
+  "te": "The 7 days are not over yet. The workspace can be erased after that day.",
+  "hi": "The 7 days are not over yet. The workspace can be erased after that day.",
+  "kn": "The 7 days are not over yet. The workspace can be erased after that day.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32963,10 +32963,10 @@
   "humanOnly": true
  },
  "prx.del.workspace.ready": {
-  "en": "The 14 days are over. You can erase the workspace now.",
-  "te": "The 14 days are over. You can erase the workspace now.",
-  "hi": "The 14 days are over. You can erase the workspace now.",
-  "kn": "The 14 days are over. You can erase the workspace now.",
+  "en": "The 7 days are over. You can erase the workspace now.",
+  "te": "The 7 days are over. You can erase the workspace now.",
+  "hi": "The 7 days are over. You can erase the workspace now.",
+  "kn": "The 7 days are over. You can erase the workspace now.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36278,10 +36278,10 @@
   }
  },
  "acpt.title": {
-  "en": "Terms and Privacy Policy",
-  "te": "Terms and Privacy Policy",
-  "hi": "Terms and Privacy Policy",
-  "kn": "Terms and Privacy Policy",
+  "en": "Terms and Privacy notice",
+  "te": "Terms and Privacy notice",
+  "hi": "Terms and Privacy notice",
+  "kn": "Terms and Privacy notice",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36314,10 +36314,10 @@
   "humanOnly": true
  },
  "acpt.privacy": {
-  "en": "Privacy Policy",
-  "te": "Privacy Policy",
-  "hi": "Privacy Policy",
-  "kn": "Privacy Policy",
+  "en": "Privacy notice",
+  "te": "Privacy notice",
+  "hi": "Privacy notice",
+  "kn": "Privacy notice",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36362,10 +36362,10 @@
   "humanOnly": true
  },
  "acpt.read.privacy": {
-  "en": "Read the Privacy Policy (opens in a new tab)",
-  "te": "Read the Privacy Policy (opens in a new tab)",
-  "hi": "Read the Privacy Policy (opens in a new tab)",
-  "kn": "Read the Privacy Policy (opens in a new tab)",
+  "en": "Read the Privacy notice (opens in a new tab)",
+  "te": "Read the Privacy notice (opens in a new tab)",
+  "hi": "Read the Privacy notice (opens in a new tab)",
+  "kn": "Read the Privacy notice (opens in a new tab)",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36386,10 +36386,10 @@
   "humanOnly": true
  },
  "acpt.agree.privacy": {
-  "en": "I have read the Privacy Policy and I agree.",
-  "te": "I have read the Privacy Policy and I agree.",
-  "hi": "I have read the Privacy Policy and I agree.",
-  "kn": "I have read the Privacy Policy and I agree.",
+  "en": "I have read the Privacy notice and I agree.",
+  "te": "I have read the Privacy notice and I agree.",
+  "hi": "I have read the Privacy notice and I agree.",
+  "kn": "I have read the Privacy notice and I agree.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -57943,5 +57943,437 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "dpdp.mk.title": {
+  "en": "News and offers",
+  "te": "News and offers",
+  "hi": "News and offers",
+  "kn": "News and offers",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.intro": {
+  "en": "News and offers about {brand}. This is a separate choice from your account: nothing depends on it, and you can change it at any time. It takes effect at once.",
+  "te": "News and offers about {brand}. This is a separate choice from your account: nothing depends on it, and you can change it at any time. It takes effect at once.",
+  "hi": "News and offers about {brand}. This is a separate choice from your account: nothing depends on it, and you can change it at any time. It takes effect at once.",
+  "kn": "News and offers about {brand}. This is a separate choice from your account: nothing depends on it, and you can change it at any time. It takes effect at once.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.label": {
+  "en": "Send me news and offers about {brand}",
+  "te": "Send me news and offers about {brand}",
+  "hi": "Send me news and offers about {brand}",
+  "kn": "Send me news and offers about {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.state.given": {
+  "en": "You said yes on {date}.",
+  "te": "You said yes on {date}.",
+  "hi": "You said yes on {date}.",
+  "kn": "You said yes on {date}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.state.withdrawn": {
+  "en": "You switched this off on {date}. We stopped at once.",
+  "te": "You switched this off on {date}. We stopped at once.",
+  "hi": "You switched this off on {date}. We stopped at once.",
+  "kn": "You switched this off on {date}. We stopped at once.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.state.not_given": {
+  "en": "You have not said yes, so we send none.",
+  "te": "You have not said yes, so we send none.",
+  "hi": "You have not said yes, so we send none.",
+  "kn": "You have not said yes, so we send none.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.on": {
+  "en": "Switched on. We may send you news and offers.",
+  "te": "Switched on. We may send you news and offers.",
+  "hi": "Switched on. We may send you news and offers.",
+  "kn": "Switched on. We may send you news and offers.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.off": {
+  "en": "Switched off. We have stopped.",
+  "te": "Switched off. We have stopped.",
+  "hi": "Switched off. We have stopped.",
+  "kn": "Switched off. We have stopped.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.err": {
+  "en": "That did not save. Nothing was changed. Try again.",
+  "te": "That did not save. Nothing was changed. Try again.",
+  "hi": "That did not save. Nothing was changed. Try again.",
+  "kn": "That did not save. Nothing was changed. Try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.history": {
+  "en": "Your earlier choices",
+  "te": "Your earlier choices",
+  "hi": "Your earlier choices",
+  "kn": "Your earlier choices",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.hist.given": {
+  "en": "Said yes",
+  "te": "Said yes",
+  "hi": "Said yes",
+  "kn": "Said yes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.hist.withdrawn": {
+  "en": "Switched off",
+  "te": "Switched off",
+  "hi": "Switched off",
+  "kn": "Switched off",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.via.signup": {
+  "en": "at sign-up",
+  "te": "at sign-up",
+  "hi": "at sign-up",
+  "kn": "at sign-up",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.via.google": {
+  "en": "with Google sign-in",
+  "te": "with Google sign-in",
+  "hi": "with Google sign-in",
+  "kn": "with Google sign-in",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.mk.via.settings": {
+  "en": "in Settings",
+  "te": "in Settings",
+  "hi": "in Settings",
+  "kn": "in Settings",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.title": {
+  "en": "Raise a grievance",
+  "te": "Raise a grievance",
+  "hi": "Raise a grievance",
+  "kn": "Raise a grievance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.intro": {
+  "en": "Tell us what is wrong with how your personal data is handled. We acknowledge it at once and answer within {days} days. You can also write to {email}.",
+  "te": "Tell us what is wrong with how your personal data is handled. We acknowledge it at once and answer within {days} days. You can also write to {email}.",
+  "hi": "Tell us what is wrong with how your personal data is handled. We acknowledge it at once and answer within {days} days. You can also write to {email}.",
+  "kn": "Tell us what is wrong with how your personal data is handled. We acknowledge it at once and answer within {days} days. You can also write to {email}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.name": {
+  "en": "Your name",
+  "te": "Your name",
+  "hi": "Your name",
+  "kn": "Your name",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.contact": {
+  "en": "Your e-mail address or phone number",
+  "te": "Your e-mail address or phone number",
+  "hi": "Your e-mail address or phone number",
+  "kn": "Your e-mail address or phone number",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind": {
+  "en": "What is it about?",
+  "te": "What is it about?",
+  "hi": "What is it about?",
+  "kn": "What is it about?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.access": {
+  "en": "See my data",
+  "te": "See my data",
+  "hi": "See my data",
+  "kn": "See my data",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.correction": {
+  "en": "Correct my data",
+  "te": "Correct my data",
+  "hi": "Correct my data",
+  "kn": "Correct my data",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.erasure": {
+  "en": "Erase my data",
+  "te": "Erase my data",
+  "hi": "Erase my data",
+  "kn": "Erase my data",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.withdraw_consent": {
+  "en": "Withdraw my consent",
+  "te": "Withdraw my consent",
+  "hi": "Withdraw my consent",
+  "kn": "Withdraw my consent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.complaint": {
+  "en": "A complaint",
+  "te": "A complaint",
+  "hi": "A complaint",
+  "kn": "A complaint",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.kind.other": {
+  "en": "Something else",
+  "te": "Something else",
+  "hi": "Something else",
+  "kn": "Something else",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.details": {
+  "en": "What happened (optional)",
+  "te": "What happened (optional)",
+  "hi": "What happened (optional)",
+  "kn": "What happened (optional)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.submit": {
+  "en": "Send my grievance",
+  "te": "Send my grievance",
+  "hi": "Send my grievance",
+  "kn": "Send my grievance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.done.title": {
+  "en": "We have it.",
+  "te": "We have it.",
+  "hi": "We have it.",
+  "kn": "We have it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.done": {
+  "en": "Your reference is {ref}. We will answer by {date}.",
+  "te": "Your reference is {ref}. We will answer by {date}.",
+  "hi": "Your reference is {ref}. We will answer by {date}.",
+  "kn": "Your reference is {ref}. We will answer by {date}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.err.name": {
+  "en": "Type your name.",
+  "te": "Type your name.",
+  "hi": "Type your name.",
+  "kn": "Type your name.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.err.contact": {
+  "en": "Give an e-mail address or a phone number.",
+  "te": "Give an e-mail address or a phone number.",
+  "hi": "Give an e-mail address or a phone number.",
+  "kn": "Give an e-mail address or a phone number.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.err.rate": {
+  "en": "Too many tries. Wait a little and try again.",
+  "te": "Too many tries. Wait a little and try again.",
+  "hi": "Too many tries. Wait a little and try again.",
+  "kn": "Too many tries. Wait a little and try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.err.down": {
+  "en": "That did not send. Write to {email} instead.",
+  "te": "That did not send. Write to {email} instead.",
+  "hi": "That did not send. Write to {email} instead.",
+  "kn": "That did not send. Write to {email} instead.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.err.invalid": {
+  "en": "Check the form and try again.",
+  "te": "Check the form and try again.",
+  "hi": "Check the form and try again.",
+  "kn": "Check the form and try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dpdp.gr.board": {
+  "en": "If you are not satisfied, you may complain to the Data Protection Board of India.",
+  "te": "If you are not satisfied, you may complain to the Data Protection Board of India.",
+  "hi": "If you are not satisfied, you may complain to the Data Protection Board of India.",
+  "kn": "If you are not satisfied, you may complain to the Data Protection Board of India.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

@@ -28,6 +28,13 @@ export const RESPONSE_DAYS = { requests: 7, grievances: 30 } as const;
  */
 export const RESPONSE_HOURS = { withdrawal: 48 } as const;
 
+/**
+ * How long we keep what (job DQ, DPDP): the numbers the Privacy notice and the settings words state, the same ones the API enforces and publishes in `GET /v1/privacy/notice` (contract-dpdp.md, `retention`): a lapsed workspace
+ * is read-only for `lapsedReadOnlyDays`, the Owner is e-mailed `erasureWarningHours` before it is erased, an account or workspace deletion can be cancelled for `deletionCancelDays`, and the security and audit log is kept `securityLogDays`
+ * and then purged. Written here and nowhere else (a test checks).
+ */
+export const RETENTION = { lapsedReadOnlyDays: 90, erasureWarningHours: 48, deletionCancelDays: 7, securityLogDays: 365 } as const;
+
 /** The role of each public address, in the order the contact page lists them. */
 export const ADDRESS_KEYS = ["hello", "support", "billing", "privacy"] as const;
 export type AddressKey = (typeof ADDRESS_KEYS)[number];
@@ -53,5 +60,9 @@ export const LEGAL_TOKENS: Readonly<Record<string, string>> = {
   request_days: String(RESPONSE_DAYS.requests),
   grievance_days: String(RESPONSE_DAYS.grievances),
   withdrawal_hours: String(RESPONSE_HOURS.withdrawal),
+  lapsed_days: String(RETENTION.lapsedReadOnlyDays),
+  erasure_warning_hours: String(RETENTION.erasureWarningHours),
+  cancel_days: String(RETENTION.deletionCancelDays),
+  log_days: String(RETENTION.securityLogDays),
   domain: DOMAIN,
 };

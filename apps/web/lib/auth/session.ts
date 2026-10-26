@@ -18,6 +18,10 @@ export type AuthenticatedUser = {
   signupPolicies?: { terms?: string; privacy?: string };
   /** The kind of business chosen on the first sign-up step (job CL), kept in the account's metadata by the e-mail way. A pack id as written; the reader checks it against the packs. */
   signupPack?: string;
+  /** The name the account has (the e-mail way: the one derived at sign-up; Google or Facebook: the profile's), only to fill a form the person can change. */
+  displayName?: string;
+  /** The person ticked the separate, unticked marketing box at sign-up (job DQ part 2): kept in the account's metadata by the e-mail way until the first sign-in records it. */
+  signupMarketing?: boolean;
 };
 
 type Factor = { status?: string; factor_type?: string };
@@ -74,6 +78,11 @@ async function load(strict: boolean): Promise<AuthenticatedUser> {
     aal,
     hasSecondFactor,
     ...(signupPolicies.terms && signupPolicies.privacy ? { signupPolicies } : {}),
+    ...(() => {
+      const name = [meta.display_name, meta.full_name, meta.name].find((v): v is string => typeof v === "string" && v.trim() !== "" && v.length <= 100);
+      return name ? { displayName: name.trim() } : {};
+    })(),
+    ...(meta.signup_marketing_opt_in === "1" || meta.signup_marketing_opt_in === true ? { signupMarketing: true } : {}),
     ...(typeof meta.business_type === "string" && /^[a-z][a-z0-9_]{1,30}$/.test(meta.business_type) ? { signupPack: meta.business_type } : {}),
   };
 }

@@ -37,7 +37,7 @@ afterEach(() => {
 });
 
 describe("the cookie notice (job BH)", () => {
-  it("is shown to a first-time visitor: small, in plain words, with a link to the Privacy Policy and no blocking wall", () => {
+  it("is shown to a first-time visitor: small, in plain words, with a link to the Privacy notice and no blocking wall", () => {
     mount();
     const n = notice() as HTMLElement;
     expect(n).not.toBeNull();
@@ -45,7 +45,7 @@ describe("the cookie notice (job BH)", () => {
     expect(n).not.toHaveAttribute("aria-modal");
     expect(within(n).getByText(/only the cookies this site needs to work/)).toBeInTheDocument();
     expect(within(n).getByText(/no advertising or tracking cookies/)).toBeInTheDocument();
-    expect(within(n).getByRole("link", { name: "Read the Privacy Policy" })).toHaveAttribute("href", "/privacy");
+    expect(within(n).getByRole("link", { name: "Read the Privacy notice" })).toHaveAttribute("href", "/privacy");
     expect(n.className).not.toContain("fixed"); // in the flow of the page (the root layout makes its wrapper sticky), so it never covers the footer
     expect(document.querySelector('[role="dialog"]')).toBeNull(); // not a wall: no dialog, no backdrop
     expect(document.querySelector(".bg-black\\/50")).toBeNull();

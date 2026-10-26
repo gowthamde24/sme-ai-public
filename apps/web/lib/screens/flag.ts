@@ -17,3 +17,6 @@ export const assistantScreens = (value: string | undefined = process.env.ASSISTA
 export const callSettingsScreens = (value: string | undefined = process.env.CALL_SETTINGS_SCREENS): ScreenMode => screenMode(value);
 export const ownVoiceScreens = (value: string | undefined = process.env.OWN_VOICE_SCREENS): ScreenMode => screenMode(value);
 export const marksScreens = (value: string | undefined = process.env.MARKS_SCREENS): ScreenMode => screenMode(value);
+
+/** Job DQ part 2 (DPDP): the settings that need C1's consent and grievance API (the marketing switch, "Raise a grievance", the marketing box of sign-up). `mock` = fake data kept in a cookie (nothing is sent), `1` = the API (contract-dpdp.md). The Privacy notice and its processor list do not depend on it: they are always there. */
+export const dpdpScreens = (value: string | undefined = process.env.DPDP_SCREENS): ScreenMode => screenMode(value);

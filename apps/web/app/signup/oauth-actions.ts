@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { isSignupOpen } from "@/lib/auth/signup-open";
+import { SIGNUP_MARKETING_COOKIE } from "@/lib/dpdp/cookie";
+import { dpdpScreens } from "@/lib/screens/flag";
 import { SITE_URL } from "@/lib/seo/site";
 import { providerIsOn } from "@/lib/supabase/authorize-probe";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -25,6 +27,9 @@ export async function continueWithProvider(formData: FormData): Promise<void> {
   if (!(SOCIAL_PROVIDERS as readonly string[]).includes(provider)) redirect(`/signup?type=${pack}`);
   const jar = await cookies();
   jar.set(SIGNUP_PACK_COOKIE, pack, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60, path: "/" });
+  // the separate, unticked box for news and offers (job DQ part 2): only a ticked one counts, only while the consent API is on; remembered for the first sign-in, which records it
+  if (formData.get("marketing") === "on" && dpdpScreens() !== "off") jar.set(SIGNUP_MARKETING_COOKIE, provider, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60, path: "/" });
+  else jar.delete(SIGNUP_MARKETING_COOKIE);
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signInWithOAuth({ provider: provider as SocialProvider, options: { redirectTo: `${SITE_URL}/auth/callback`, skipBrowserRedirect: true } });
   if (error || !data?.url) redirect(`/signup?type=${pack}&error=provider`);
