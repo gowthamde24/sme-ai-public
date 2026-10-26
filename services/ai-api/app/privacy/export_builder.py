@@ -57,7 +57,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "own_voices",
     "speaking_styles",
     "lead_playbooks", "knowledge_sources", "knowledge_facts",
-    "lead_sources", "lead_consents", "lead_intakes", "lead_flags", "lead_arrivals", "lead_source_costs", "lead_sheet_links", "lead_unparsed",
+    "lead_sources", "lead_consents", "lead_intakes", "lead_flags", "lead_arrivals", "lead_sheet_links", "lead_unparsed",
     "agent_runs", "agent_run_steps", "agent_cost_reservations", "tenant_agent_settings", "tenant_data_policy",
     "tasks", "task_contacts",
     "data_exports", "erasure_requests", "memberships", "audit_events", "business_profile",

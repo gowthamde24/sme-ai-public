@@ -442,9 +442,6 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with o as (insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, recorded_by_kind, recorded_by, occurred_at) values (%2$L, %1$L, %4$L, 'call', %2$L, 'unclear', 'call_back_later', 'person', %5$L, now()) returning id)
      insert into public.outcome_details (id, outcome_id, tenant_id, callback_at) select %2$L, o.id, %1$L, now() + interval '1 day' from o$$,
    'callback_at = callback_at', $$delete from public.outcome_details where outcome_id = %2$L$$, false),
-  ('lead_source_costs',
-   $$insert into public.lead_source_costs (tenant_id, source, cost_per_lead_paise, updated_by) values (%1$L, 'generic_' || left(%2$L, 8), 0, %5$L)$$,
-   'cost_per_lead_paise = cost_per_lead_paise', $$delete from public.lead_source_costs where tenant_id = %1$L and source like 'generic\_%%'$$, false),
   -- job DS: how the assistant talks, per language (written only by the Owner's function; no module guard: every business type talks)
   ('speaking_styles',
    $$insert into public.speaking_styles (id, tenant_id, language, style, region, updated_by) values (%2$L, %1$L, 'en', 'everyday_mixed', 'neutral', %5$L) on conflict (tenant_id, language) do nothing$$,
@@ -813,8 +810,6 @@ select t, r, s, i, u, d from (values
   ('outreach_handoffs', 'sales', false, false, false, false), ('outreach_handoffs', 'viewer', false, false, false, false),
   ('outcome_details', 'owner', true, false, false, false), ('outcome_details', 'admin', true, false, false, false),
   ('outcome_details', 'sales', false, false, false, false), ('outcome_details', 'viewer', false, false, false, false),
-  ('lead_source_costs', 'owner', true, false, false, false), ('lead_source_costs', 'admin', true, false, false, false),
-  ('lead_source_costs', 'sales', false, false, false, false), ('lead_source_costs', 'viewer', false, false, false, false),
   ('speaking_styles', 'owner', true, false, false, false), ('speaking_styles', 'admin', true, false, false, false),
   ('speaking_styles', 'sales', false, false, false, false), ('speaking_styles', 'viewer', false, false, false, false),
   ('call_settings', 'owner', true, false, false, false), ('call_settings', 'admin', true, false, false, false),
