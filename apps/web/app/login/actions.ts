@@ -1,11 +1,17 @@
 "use server";
 
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { safeRedirectPath } from "@/lib/auth/redirect";
+import { clientIp } from "@/lib/auth/signup-limit";
+import { CHECK_AFTER, FAILS_COOKIE, FAILS_SECONDS } from "@/lib/auth/signin-fails";
+import { passesTurnstile, turnstileSiteKey } from "@/lib/security/turnstile";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export type AuthFormState = { error?: string; message?: string } | undefined;
+/** `check`: the form must now show the Turnstile box (three failures in a row). */
+export type AuthFormState = { error?: string; message?: string; check?: boolean } | undefined;
+
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_EMAIL = 254;
@@ -36,13 +42,23 @@ export async function signIn(
   const creds = credentials(formData);
   if (!creds) return { error: "Enter a valid email and password." };
 
+  const jar = await cookies();
+  const fails = Math.min(Number.parseInt(jar.get(FAILS_COOKIE)?.value ?? "0", 10) || 0, 99);
+  const checking = turnstileSiteKey() !== null && fails >= CHECK_AFTER;
+  if (checking && !(await passesTurnstile(field(formData, "cf-turnstile-response"), clientIp(await headers())))) return { error: "Tick the box that checks you are a person, then sign in again.", check: true };
+
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword(creds);
+  const failed = () => jar.set(FAILS_COOKIE, String(fails + 1), { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: FAILS_SECONDS });
   // A person who signed up and has not yet used the link we sent: said plainly (the password was right, so this reveals nothing).
   if (error?.code === "email_not_confirmed")
     return { error: "Confirm your email first: use the link we sent you." };
   // One generic message for unknown user and wrong password alike.
-  if (error) return { error: "Invalid email or password." };
+  if (error) {
+    failed();
+    return { error: "Invalid email or password.", ...(turnstileSiteKey() !== null && fails + 1 >= CHECK_AFTER ? { check: true } : {}) };
+  }
+  jar.delete(FAILS_COOKIE);
 
   const next = safeRedirectPath(field(formData, "next"));
   // A person with an authenticator is not signed in until they have used it (ADR 0016).

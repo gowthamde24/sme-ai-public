@@ -26,8 +26,8 @@ describe("AgentMark: who is speaking", () => {
     expect(render(<AgentMark agent="researcher" off />).container.innerHTML).toContain("opacity-45");
     expect(render(<AgentMark off />).container.innerHTML).toContain("opacity-45");
   });
-  it("the circle follows the mood: thinking and listening think, answering speaks, the rest is still", () => {
-    expect([orbStateOf("thinking"), orbStateOf("listening"), orbStateOf("answering"), orbStateOf("idle"), orbStateOf("resting"), orbStateOf(undefined)]).toEqual(["think", "think", "speak", "still", "still", "still"]);
+  it("the circle follows the mood: listening follows the microphone, thinking thinks, answering speaks, the rest is still", () => {
+    expect([orbStateOf("thinking"), orbStateOf("listening"), orbStateOf("answering"), orbStateOf("idle"), orbStateOf("resting"), orbStateOf(undefined)]).toEqual(["think", "listen", "speak", "still", "still", "still"]);
   });
 });
 

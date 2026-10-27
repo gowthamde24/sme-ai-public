@@ -13,9 +13,10 @@
  *  - media-src 'self' blob: (job BF): the spoken answer of the Ask box is played from a blob: made in the page from the API's audio, never from another address. Nothing else may be played.
  *  - worker-src 'self' (job BL): the offline worker (/sw.js). With 'strict-dynamic' a host source in script-src is ignored, so the worker needs its own directive; it may only come from this site.
  *  - 'unsafe-eval' only in development (React's debugging needs it), never in production.
+ *  - frame-src https://challenges.cloudflare.com only when Turnstile is on (lib/security/turnstile.ts): the check box of the public forms.
  *  - upgrade-insecure-requests only in production, so plain-http local development keeps working.
  */
-export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null = null): string {
+export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null = null, turnstile = false): string {
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
@@ -30,6 +31,8 @@ export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
+    // the Turnstile box is a frame of Cloudflare, allowed only where the check is on (its script is loaded by our own nonced script, which 'strict-dynamic' trusts)
+    ...(turnstile ? ["frame-src https://challenges.cloudflare.com"] : []),
     "frame-ancestors 'none'",
     ...(dev ? [] : ["upgrade-insecure-requests"]),
   ];

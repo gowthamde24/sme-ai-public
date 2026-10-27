@@ -33,3 +33,6 @@ export const taskScreens = (value: string | undefined = process.env.TASK_SCREENS
 export const topupScreens = (value: string | undefined = process.env.TOPUP_SCREENS): ScreenMode => screenMode(value);
 
 export const voiceSampleScreens = (value: string | undefined = process.env.VOICE_SAMPLE_SCREENS): ScreenMode => screenMode(value);
+
+/** Night 5: Settings > AI assistant > "Opening line" (the text of the greeting, with {customer} {assistant} {business} {agent_role}, a voice preview, the "mention that I am an AI assistant" switch, and a per-campaign override). C1's API ships separately (lib/api/opening-line.ts has the assumed contract): `mock` = fake data kept in a cookie (nothing is sent, no sound), `1` = the API, unset = the part is not there. */
+export const openingLineScreens = (value: string | undefined = process.env.OPENING_LINE_SCREENS): ScreenMode => screenMode(value);

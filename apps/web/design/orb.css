@@ -1,17 +1,11 @@
 /* ==========================================================================
-   The AI circle (job DM, from the approved clean redesign): the one mark of the product. A glowing orange sphere, CSS only (components/v2/Orb.tsx).
-   States: `still` = no motion (lists, the logo), `ambient` = it breathes and the light drifts, `think` = faster, `speak` = it pulses and its edge ripples; `halo` adds two rings that spread outwards.
+   Vijaya's circle (job DM; redrawn in night 5 as a glass sphere with flowing ribbons of light, drawn on a canvas by components/v2/VijayaOrb.tsx). This file is the dark sphere that is there before the canvas arrives, its glow per state, and the halo.
+   States: `still` = one frame (lists), `ambient` = calm ribbons, `listen` = they follow the microphone, `think` = faster, `speak` = they follow the voice; `halo` adds two rings that spread outwards.
    With "reduce motion" nothing moves. Every selector starts with [data-ui="v2"] (audit:leaks); the keyframes carry the orb- prefix.
    ========================================================================== */
-[data-ui="v2"] .orb { position: relative; display: block; width: 100%; height: 100%; flex: none; border-radius: 50%; isolation: isolate; background: radial-gradient(circle, rgba(255, 236, 224, 0.95) 0%, rgba(255, 236, 224, 0) 42%), radial-gradient(circle, rgba(176, 52, 8, 0.85) 0%, rgba(176, 52, 8, 0) 50%), radial-gradient(circle at 50% 50%, #ff8f52 0%, #f0652a 55%, #a53a0e 100%); background-size: 170% 170%, 170% 170%, 100% 100%; background-position: 15% 10%, 85% 90%, 50% 50%; box-shadow: 0 10px 36px rgba(255, 119, 60, 0.32); animation: orb-breathe 3.6s ease-in-out infinite, orb-drift 9s ease-in-out infinite; }
-[data-ui="v2"] .orb::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.18) 18%, rgba(255, 255, 255, 0) 40%); pointer-events: none; }
-[data-ui="v2"] .orb-still { animation: none; box-shadow: 0 2px 8px rgba(255, 119, 60, 0.35); }
-[data-ui="v2"] .orb-think { animation: orb-breathe 2.4s ease-in-out infinite, orb-drift 3.2s ease-in-out infinite; }
-[data-ui="v2"] .orb-speak { animation: orb-talk 1.5s ease-in-out infinite, orb-drift 4s ease-in-out infinite, orb-morph 2.2s ease-in-out infinite; }
-@keyframes orb-breathe { 0%, 100% { transform: scale(1); box-shadow: 0 10px 36px rgba(255, 119, 60, 0.3); } 50% { transform: scale(1.045); box-shadow: 0 14px 54px rgba(255, 119, 60, 0.48); } }
-@keyframes orb-drift { 0%, 100% { background-position: 15% 10%, 85% 90%, 50% 50%; } 35% { background-position: 80% 25%, 20% 75%, 50% 50%; } 70% { background-position: 40% 85%, 70% 15%, 50% 50%; } }
-@keyframes orb-talk { 0%, 100% { transform: scale(1); } 20% { transform: scale(1.07); } 45% { transform: scale(0.98); } 70% { transform: scale(1.05); } }
-@keyframes orb-morph { 0%, 100% { border-radius: 50%; } 33% { border-radius: 47% 53% 49% 51% / 53% 47% 52% 48%; } 66% { border-radius: 52% 48% 53% 47% / 47% 52% 48% 53%; } }
+[data-ui="v2"] .orb { position: relative; display: block; width: 100%; height: 100%; flex: none; border-radius: 50%; isolation: isolate; overflow: hidden; background: radial-gradient(circle at 80% 70%, #4a1a0c 0%, #24100b 55%, #120807 100%); box-shadow: 0 10px 34px rgba(255, 119, 60, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.06) inset; }
+[data-ui="v2"] .orb[data-orb="still"] { box-shadow: 0 2px 8px rgba(255, 119, 60, 0.3); }
+[data-ui="v2"] .orb[data-orb="think"], [data-ui="v2"] .orb[data-orb="speak"] { box-shadow: 0 12px 40px rgba(255, 119, 60, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.06) inset; }
 /* the halo: two rings that spread outwards from the orb */
 [data-ui="v2"] .orb-halo { position: relative; display: inline-flex; border-radius: 50%; }
 [data-ui="v2"] .orb-halo::before, [data-ui="v2"] .orb-halo::after { content: ""; position: absolute; inset: -14px; border-radius: 50%; border: 1.5px solid rgba(255, 119, 60, 0.32); animation: orb-ring 3s ease-out infinite; pointer-events: none; }
@@ -28,5 +22,5 @@
 /* the panel of the floating ask orb (job DQ): a small rise; with "reduce motion" the class is not applied (motion-safe) */
 @keyframes ask-panel-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) {
-  [data-ui="v2"] .orb, [data-ui="v2"] .orb-halo::before, [data-ui="v2"] .orb-halo::after, [data-ui="v2"] .orb-wave span { animation: none; }
+  [data-ui="v2"] .orb-halo::before, [data-ui="v2"] .orb-halo::after, [data-ui="v2"] .orb-wave span { animation: none; }
 }

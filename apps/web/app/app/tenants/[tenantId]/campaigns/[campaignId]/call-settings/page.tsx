@@ -11,9 +11,14 @@ import { ApiRequestError } from "@/lib/api/client";
 import { getCampaign } from "@/lib/api/campaigns";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { readCampaignCalls } from "@/lib/call-settings/campaign-source";
-import { callSettingsScreens } from "@/lib/screens/flag";
+import { callSettingsScreens, openingLineScreens } from "@/lib/screens/flag";
+import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
+import { CALL_LANG_NAMES } from "@/lib/assistant/types";
+import { currentAssistantName } from "@/lib/assistant/name";
+import { readCampaignOpeningLine } from "@/lib/opening-line/source";
 
 import { clearCampaignCallsAction, saveCampaignCallsAction } from "../../../campaign-call-settings-actions";
+import { previewOpeningLineAction, saveCampaignOpeningLineAction } from "../../../opening-line-actions";
 import { campaignContext } from "../../prelude";
 
 export const metadata = { title: `Call settings for a campaign · ${BRAND_NAME}` };
@@ -29,7 +34,7 @@ export default async function CampaignCallSettingsRoute({ params }: PageProps<"/
   const got = await campaignContext(tenantId);
   if (!got.ok) return got.page;
   const { accessToken, tenant, pack } = got.ctx;
-  if ((tenant.role !== "owner" && tenant.role !== "admin") || callSettingsScreens() === "off") notFound();
+  if ((tenant.role !== "owner" && tenant.role !== "admin") || (callSettingsScreens() === "off" && openingLineScreens() === "off")) notFound();
   let campaign;
   try {
     campaign = await getCampaign(accessToken, tenantId, campaignId);
@@ -39,7 +44,8 @@ export default async function CampaignCallSettingsRoute({ params }: PageProps<"/
   }
   const lang = await getLang();
   const base = `/app/tenants/${tenantId}`;
-  const read = await readCampaignCalls({ token: accessToken, tenantId }, campaignId, pack?.modules ?? null);
+  const opening = openingLineScreens() !== "off" ? await readCampaignOpeningLine({ token: accessToken, tenantId }, campaignId) : null;
+  const read = callSettingsScreens() !== "off" ? await readCampaignCalls({ token: accessToken, tenantId }, campaignId, pack?.modules ?? null) : null;
   const words = wordsFor(lang, ["calls."], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link", "frame.notyet", "nav.item.campaigns"]);
   return (
     <main className={pageMain} lang={lang}>
@@ -50,7 +56,7 @@ export default async function CampaignCallSettingsRoute({ params }: PageProps<"/
         </Link>
       </p>
       <div className="mt-6 max-w-3xl">
-        {read.mode === "ok" ? (
+        {read === null ? null : read.mode === "ok" ? (
           <CallSettingsAdvanced
             words={words}
             initial={read.effective}
@@ -64,6 +70,25 @@ export default async function CampaignCallSettingsRoute({ params }: PageProps<"/
         ) : (
           <p className="text-base text-muted">{words["frame.notyet"] ?? "Not available yet"}</p>
         )}
+        {opening?.mode === "ok" ? (
+          <div className={read === null ? "" : "mt-6"}>
+            <OpeningLine
+              words={wordsFor(lang, ["ope."])}
+              langNames={CALL_LANG_NAMES}
+              scope={{ kind: "campaign", backHref: `${base}/campaigns/${campaignId}` }}
+              lines={opening.data.lines}
+              fallback={opening.data.effective.lines}
+              mentionAi={opening.data.mentionAi}
+              effectiveAi={opening.data.effective.mentionAi}
+              names={{ assistant: currentAssistantName(), business: tenant.name }}
+              canEdit={tenant.role === "owner"}
+              mock={openingLineScreens() === "mock"}
+              actions={{ save: saveCampaignOpeningLineAction.bind(null, tenantId, campaignId), preview: previewOpeningLineAction.bind(null, tenantId) }}
+            />
+          </div>
+        ) : opening?.mode === "unavailable" ? (
+          <p className="mt-6 text-base text-muted">{words["frame.notyet"] ?? "Not available yet"}</p>
+        ) : null}
       </div>
     </main>
   );

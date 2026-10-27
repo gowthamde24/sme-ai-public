@@ -17,7 +17,7 @@ export const MAX_WAITLIST_NAME = 80;
 export const MAX_WAITLIST_CITY = 80;
 
 export type WaitlistInput = { name: string; businessType: BusinessType; city: string; phone: string | null; email: string | null; language: WaitlistLang; marketingOptIn: boolean };
-export type WaitlistError = "name" | "city" | "contact" | "rate" | "down" | "invalid";
+export type WaitlistError = "name" | "city" | "contact" | "rate" | "down" | "invalid" | "check";
 export type WaitlistResult = { ok: true } | { ok: false; error: WaitlistError };
 
 const EMAIL = /^[^\s@<>"',;:()[\]\\]{1,64}@[^\s@<>"',;:()[\]\\]{1,190}\.[A-Za-z]{2,24}$/;

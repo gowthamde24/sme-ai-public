@@ -17,7 +17,7 @@ import { waitlistMode } from "@/lib/waitlist/mode";
 const link = "inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-3 text-[15px] font-semibold text-ink hover:bg-surface-2";
 
 /**
- * The header of every public page (jobs CM, CX, DM): the AI circle and the name, four links (How it works, Lead sources, Built for, Pricing: the sections of the home page, so from another page they lead back to it; Pricing leads
+ * The header of every public page (jobs CM, CX, DM; the three-bar logo and five links in night 5): the logo and the name, five links (How it works, Lead Desk, Industries, Pricing, Questions: the sections of the home page, so from another page they lead back to it; Pricing leads
  * to the plans page there), Sign in, the language (this page in the other languages), the theme, and the one button of the site, "Start trial". From 1024 px the links sit in the bar; below that they are a native
  * disclosure (`<details>`, no script); the language, theme and the button stay in the bar.
  */
@@ -31,10 +31,11 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
   const web = websiteOnly();
   const start = startEntry(t, lang, t("nav.start"), { hasForm: waitlistMode() !== "off" && (target.kind !== "page" || target.page === "contact") });
   const nav = [
-    { href: `${base}#how`, label: t("nav.how"), here: false },
-    { href: `${base}#sources`, label: t("nav.sources"), here: false },
-    { href: `${base}#business`, label: t("nav.businesses"), here: false },
-    { href: onHome ? "#pricing" : pricingPage, label: t("nav.pricing"), here: target.kind === "page" && target.page === "pricing" },
+    { href: `${base}#day`, label: t("nav.how"), here: false },
+    { href: `${base}#leaddesk`, label: t("nav.leaddesk"), here: false },
+    { href: `${base}#industries`, label: t("nav.industries"), here: false },
+    { href: onHome ? "#plans" : pricingPage, label: t("nav.pricing"), here: target.kind === "page" && target.page === "pricing" },
+    { href: `${base}#faq`, label: t("nav.faq"), here: false },
   ];
   return (
     <header className="[position:sticky] top-0 z-30 border-b border-line bg-bg/90 backdrop-blur">

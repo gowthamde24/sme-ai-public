@@ -1,255 +1,372 @@
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+import { HeroCall } from "@/components/v2/site/HeroCall";
+import { Rich } from "@/components/v2/site/Rich";
+import { btnPrimary, h1Home, h2Home, h3Industry, h3Row, pillHome, wrapHome } from "@/components/v2/site/ui";
 import { Orb } from "@/components/v2/Orb";
-import { HeroDemo, type DemoSample } from "@/components/v2/site/HeroDemo";
-import { LeadDeskSteps } from "@/components/v2/site/LeadDeskSteps";
-import { btnPrimary, container } from "@/components/v2/site/ui";
+import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
+import { fill } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import { CATALOGUE } from "@/lib/plan/catalogue";
-import { planGroups } from "@/lib/site/home-plans";
-import { LD_CHIPS, LD_SOURCES, deepCardKeys, leadDeskPlanName } from "@/lib/site/lead-desk";
-import { SITE_PACKS, say, textIn } from "@/lib/site/packs";
+import { CALL_STORIES, DAY_BLOCKS, FAQ_ITEMS, FIND_SOURCES, GREETINGS, HAVE_SOURCES, IND_POINTS, PLAN_LD_FEATURES, PLAN_WF_FEATURES, PROMISES, SPEED_ROWS } from "@/lib/site/home-v3";
 import { startEntry } from "@/lib/site/entry";
-import { isServed } from "@/lib/site/mode";
+import { deepCardKeys, leadDeskPlanName, LD_CHIPS } from "@/lib/site/lead-desk";
+import { SITE_PACKS } from "@/lib/site/packs";
+import { websiteOnly } from "@/lib/site/mode";
 import { sitePath } from "@/lib/site/paths";
 import { waitlistMode } from "@/lib/waitlist/mode";
 
-const kicker = "text-sm font-extrabold uppercase tracking-[0.12em]";
-const h2 = "font-display text-3xl font-extrabold leading-[1.08] tracking-tight [text-wrap:balance] sm:text-4xl lg:text-[44px]";
-const DEMOS = [1, 2, 3, 4] as const;
-const outline = "inline-flex min-h-14 items-center justify-center rounded-lg border-[1.5px] border-edge px-5 text-base font-bold text-ink hover:bg-surface-2";
+const section = "scroll-mt-20 py-[84px] sm:py-[120px]";
+const outline = "inline-flex min-h-14 items-center justify-center rounded-full border-[1.5px] border-ink px-6 text-base font-semibold text-ink hover:bg-surface-2 max-sm:w-full";
+const slate = "text-muted";
+const uiCard = "mt-3.5 max-w-[460px] rounded-[18px] border border-line bg-surface px-4 py-3.5 text-[15px]";
+const uiWho = "mb-1 text-[12.5px] font-semibold text-muted";
 
-/** The four example conversations of the hero (each in its own language), drawn by the client component HeroDemo. */
-export function HeroExample({ t }: { t: SiteT }) {
-  const samples: DemoSample[] = DEMOS.map((n) => ({
-    code: (["te", "hi", "kn", "en"] as const)[n - 1],
-    label: `${t(`hm.demo.${n}.biz`)} · ${t(`langs.sample.${(["te", "hi", "kn", "en"] as const)[n - 1]}.label`)}`,
-    shop: t(`langs.sample.demo.${n}.shop`),
-    initials: t(`langs.sample.demo.${n}.shop`).split(/\s+/).slice(0, 2).map((w) => w[0]).join(""),
-    caller: n === 3 ? t("hm.demo.3.caller") : t(`langs.sample.demo.${n}.caller` as "langs.sample.demo.1.caller"),
-    info: t(`hm.demo.${n}.info`),
-    result: t(`hm.demo.${n}.result`),
-    msgs: ([1, 2, 3, 4] as const).map((m) => t(`langs.sample.demo.${n}.m${m}` as "langs.sample.demo.1.m1")),
-  }));
-  return <HeroDemo samples={samples} words={{ tabs: t("hm.demo.tabs"), assist: t("hm.demo.assist"), calling: t("hm.demo.calling"), note: t("hm.demo.note"), pause: t("hm.wf.pause"), play: t("hm.wf.play") }} />;
-}
-
-/** How it works: the six steps of Lead Desk, then the one honest line about whom we call and when. */
-export function HowSection({ t }: { t: SiteT }) {
+/** The hero: the headline in three lines, what it is, two buttons, and the one moving thing of the page: the assistant's wave orb over an example call (HeroCall). */
+export function HomeHero({ t, lang, hasForm }: { t: SiteT; lang: Lang; hasForm: boolean }) {
+  const start = startEntry(t, lang, t("hero.cta"), { hasForm });
+  const story = CALL_STORIES[0];
+  const lines = story.lines.map((l) => ({ ...l, te: fill(l.te), en: fill(l.en) }));
   return (
-    <section id="how" aria-labelledby="how-h" className={`${container} flex scroll-mt-20 flex-col gap-10 py-14 sm:py-[72px]`}>
-      <div className="flex max-w-3xl flex-col gap-3">
-        <p className={`${kicker} text-brand-text`}>{t("ld.steps.eyebrow")}</p>
-        <h2 id="how-h" className={h2}>
-          {t("ld.steps.title")}
-        </h2>
-        <p className="text-base text-muted">{t("ld.steps.sub")}</p>
+    <section aria-labelledby="h1" className="bg-surface pb-[84px] pt-10 sm:pb-[120px]">
+      <div className={`${wrapHome} grid items-center gap-10 lg:grid-cols-[minmax(0,1.22fr)_minmax(0,0.78fr)]`}>
+        <div>
+          <h1 id="h1" className={h1Home}>
+            <span className="block">{t("v3.h1.1")}</span>
+            <span className="block">{t("v3.h1.2")}</span>
+            <span className="block">{t("v3.h1.3")}</span>
+          </h1>
+          <p className={`mt-7 max-w-[31em] text-lg leading-relaxed sm:text-xl ${slate}`}>{t("v3.hero.sub")}</p>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Link href={start.href} className={`${btnPrimary} rounded-full font-bold max-sm:w-full`}>
+              {start.label}
+            </Link>
+            <Link href="#day" className={outline}>
+              {t("v3.hero.secondary")}
+            </Link>
+          </div>
+          <p className={`mt-5 text-[14.5px] ${slate}`} data-part="trial-note">
+            {websiteOnly() ? t("demo.note") : t("v3.hero.fine")}
+          </p>
+        </div>
+        <div aria-label={t("v3.call.label")} role="group" className="relative grid min-h-[560px] place-items-center max-lg:min-h-0 max-lg:pt-5">
+          <span aria-hidden="true" data-part="hero-orb" className="absolute right-[4%] top-0 aspect-square w-[min(400px,78%)] rounded-full bg-[radial-gradient(circle_at_80%_70%,#4a1a0c,#24100b_55%,#120807)] shadow-[0_40px_90px_-20px_rgba(255,106,43,0.55)] max-lg:static max-lg:w-[min(320px,70%)]">
+            <AssistantOrb state="speaking" />
+          </span>
+          <HeroCall
+            lines={lines}
+            seconds={story.seconds}
+            words={{ label: t("v3.call.label"), name: t("v3.call.who"), business: t("v3.call.biz"), speaking: t("v3.call.speaking"), result: t("v3.call.result"), note: t("hm.demo.note") }}
+          />
+        </div>
       </div>
-      <LeadDeskSteps t={t} />
-      <p className="rounded-2xl border border-brand-edge bg-brand-bg px-5 py-4 text-base font-semibold text-ink" data-part="calling-rules">
-        {t("ld.rules")}
-      </p>
     </section>
   );
 }
 
-/** Where leads already come from: plain text chips. No logo of any other company. */
-export function SourcesSection({ t }: { t: SiteT }) {
+/** Leads we find for you, and leads you already get: two short columns of text chips. No logo of any other company. */
+export function SourcesBand({ t }: { t: SiteT }) {
   return (
-    <section id="sources" aria-labelledby="sources-h" className="scroll-mt-20 border-y border-line bg-surface-2">
-      <div className={`${container} flex flex-col gap-8 py-14 sm:py-[72px]`}>
-        <div className="flex max-w-3xl flex-col gap-3">
-          <p className={`${kicker} text-brand-text`}>{t("ld.src.eyebrow")}</p>
-          <h2 id="sources-h" className={h2}>
-            {t("ld.src.title")}
-          </h2>
-          <p className="text-base text-muted">{t("ld.src.sub")}</p>
+    <section id="sources" aria-label={t("ld.src.list")} className="scroll-mt-20 border-y border-line bg-surface py-14">
+      <div className={`${wrapHome} grid gap-10 md:grid-cols-2`}>
+        <div data-part="find">
+          <h3 className="text-xl font-bold">{t("v3.src.find.t")}</h3>
+          <p className={`mt-1.5 text-[15.5px] ${slate}`}>{t("v3.src.find.d")}</p>
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {FIND_SOURCES.map((n) => (
+              <li key={n} className={`${pillHome} !border-transparent !bg-amber-bg`}>
+                {t(`v3.src.find.${n}`)}
+              </li>
+            ))}
+          </ul>
         </div>
-        <ul aria-label={t("ld.src.list")} className="flex flex-wrap gap-3" data-part="sources">
-          {LD_SOURCES.map((id) => (
-            <li key={id} className="rounded-full border border-edge bg-surface px-5 py-3 text-base font-bold text-ink">
-              {t(`ld.src.${id}`)}
+        <div data-part="have">
+          <h3 className="text-xl font-bold">{t("v3.src.have.t")}</h3>
+          <p className={`mt-1.5 text-[15.5px] ${slate}`}>{t("v3.src.have.d")}</p>
+          <ul className="mt-4 flex flex-wrap gap-2" data-part="sources">
+            {HAVE_SOURCES.map((s) => (
+              <li key={s.id} className={pillHome}>
+                {t(s.key)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const CARD_LOOK = { found: "border-transparent bg-amber-bg", wa: "border-transparent bg-green-bg", plain: "" } as const;
+
+/** "A day with {brand}": six moments, a time on the left and what happens, with a small example under some of them. Plain markup; nothing moves. */
+export function DaySection({ t }: { t: SiteT }) {
+  return (
+    <section id="day" aria-labelledby="day-h" className={`${section} bg-surface-2`}>
+      <div className={`${wrapHome} grid gap-12 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:gap-16`}>
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <h2 id="day-h" className={h2Home}>
+            {t("v3.day.t")}
+          </h2>
+          <p className={`mt-5 max-w-[36em] text-[19px] ${slate}`}>{t("v3.day.d")}</p>
+        </div>
+        <ol className="relative m-0 list-none p-0 before:absolute before:bottom-2 before:left-[70px] before:top-2 before:w-0.5 before:bg-line sm:before:left-[92px]" data-part="day">
+          {DAY_BLOCKS.map((b) => (
+            <li key={b.n} className="relative grid grid-cols-[70px_minmax(0,1fr)] gap-x-[26px] pb-11 last:pb-0 sm:grid-cols-[92px_minmax(0,1fr)] sm:gap-x-9 after:absolute after:left-16 after:top-[9px] after:size-3.5 after:rounded-full after:border-[3px] after:border-brand-text after:bg-surface-2 sm:after:left-[86px]">
+              <time className="pr-4 text-right font-display text-lg font-bold leading-tight tabular-nums sm:pr-[22px] sm:text-[22px]">
+                {t(`v3.day.${b.n}.time`)}
+                {b.small ? <small className={`block font-sans text-[13px] font-medium ${slate}`}>{t(`v3.day.${b.n}.small` as "v3.day.1.small")}</small> : null}
+              </time>
+              <div>
+                <h3 className="text-2xl font-bold tracking-[-0.01em]">{t(`v3.day.${b.n}.t`)}</h3>
+                <p className={`mt-1.5 ${slate}`}>
+                  <Rich text={t(`v3.day.${b.n}.d`)} />
+                </p>
+                {b.card ? (
+                  <div className={`${uiCard} ${CARD_LOOK[b.card]}`}>
+                    <div className={uiWho}>{t(`v3.day.${b.n}.who` as "v3.day.1.who")}</div>
+                    <Rich text={t(`v3.day.${b.n}.ui` as "v3.day.1.ui")} className="font-bold text-green-text" />
+                  </div>
+                ) : null}
+              </div>
             </li>
           ))}
-        </ul>
+        </ol>
       </div>
     </section>
   );
 }
 
-/** Made for your business: a deep card for each business type that has a page (its link kept), then a row of the other businesses Lead Desk is used for, as chips. */
-export function BuiltFor({ t, lang }: { t: SiteT; lang: Lang }) {
+function Row({ n, t, children }: { n: 1 | 2 | 3 | 4 | 5; t: SiteT; children: React.ReactNode }) {
   return (
-    <section id="business" aria-labelledby="business-h" className="scroll-mt-20 bg-night text-on-night">
-      <div className={`${container} flex flex-col gap-10 py-14 sm:py-[72px]`}>
-        <div className="flex max-w-3xl flex-col gap-3">
-          <p className={`${kicker} text-brand`}>{t("ld.biz.eyebrow")}</p>
-          <h2 id="business-h" className={h2}>
-            {t("ld.biz.title")}
-          </h2>
-          <p className="text-lg text-night-muted">{t("ld.biz.sub")}</p>
-        </div>
-        <ul className="grid gap-4 md:grid-cols-3" data-part="pack-cards">
-          {SITE_PACKS.map((p) => {
-            const keys = deepCardKeys(p.id);
-            const card = p.home_card;
-            const title = keys ? t(keys.title) : card ? textIn(card.title, lang) : textIn(p.names, lang);
-            const line = keys ? t(keys.line) : card ? textIn(card.line, lang) : say(p.hero.eyebrow, lang);
-            return (
-              <li key={p.slug}>
-                <Link href={sitePath(lang, { kind: "pack", slug: p.slug })} data-pack-card={p.slug} data-accent={p.accent} className="flex h-full flex-col gap-1.5 rounded-[22px] border border-line bg-pack-bg px-6 py-6 text-ink hover:border-edge">
-                  <span className="text-xs font-bold uppercase tracking-wide text-pack-text">{t("ld.deep.tag")}</span>
-                  <strong className="font-display text-2xl leading-snug">{title}</strong>
-                  <span className="text-base">{line}</span>
-                  <span className="mt-auto inline-flex min-h-11 items-center gap-1 pt-2 text-sm font-extrabold text-pack-text">
-                    {t("packs.see", { name: title })}
-                    <ArrowRight className="size-4" aria-hidden="true" />
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-        <div className="flex flex-col gap-4 rounded-[22px] border border-dashed border-night-line p-6 sm:p-7" data-part="industries">
-          <strong className="font-display text-xl">{t("ld.chips.t")}</strong>
-          <ul aria-label={t("ld.chips.t")} className="flex flex-wrap gap-2.5">
-            {LD_CHIPS.map((n) => (
-              <li key={n} className="rounded-full border border-night-line bg-night-2 px-3.5 py-2 text-sm font-semibold text-night-muted">
-                {t(`ld.chip.${n}`)}
-              </li>
-            ))}
-          </ul>
-          <Link href={sitePath(lang, { kind: "page", page: "contact" })} className="inline-flex min-h-12 w-fit items-center justify-center rounded-xl bg-bg px-5 text-[15px] font-semibold text-ink hover:bg-surface-2">
-            {t("hm.soon.cta")}
-          </Link>
-        </div>
+    <div data-row={n} className="grid items-center gap-7 border-t border-line py-14 lg:grid-cols-2 lg:gap-14">
+      <div>
+        <h3 className={h3Row}>{t(`v3.row.${n}.t`)}</h3>
+        <p className={`mt-3.5 max-w-[32em] ${slate}`}>{t(`v3.row.${n}.d`)}</p>
       </div>
-    </section>
-  );
-}
-
-type PlanCardData = { id: string; name: string; features: string[] };
-
-function PlanCards({ plans, price, cta, kind }: { plans: readonly PlanCardData[]; price: string; cta: { href: string; label: string }; kind: string }) {
-  return (
-    <div className="grid gap-5 lg:grid-cols-3" data-part="plans" data-plan-kind={kind}>
-      {plans.map((p) => (
-        <article key={p.id} data-plan-card="" className="flex flex-col gap-5 rounded-[22px] border border-line bg-surface p-7">
-          <h4 className="font-display text-2xl font-bold">{p.name}</h4>
-          <strong className="font-display text-2xl font-extrabold">{price}</strong>
-          <ul className="flex flex-col gap-2.5 text-[15px] leading-relaxed text-muted">
-            {p.features.map((f) => (
-              <li key={f} className="flex gap-2.5">
-                <span aria-hidden="true" className="font-bold text-brand-text">
-                  ✓
-                </span>
-                {f}
-              </li>
-            ))}
-          </ul>
-          <span className="flex-1" />
-          <Link href={cta.href} className="inline-flex min-h-12 items-center justify-center rounded-xl border border-edge bg-surface px-4 text-[15px] font-semibold text-ink hover:bg-surface-2">
-            {cta.label}
-          </Link>
-        </article>
-      ))}
+      <div className="min-w-0">{children}</div>
     </div>
   );
 }
 
-/** The plans, from the plans data, in the two kinds: Lead Desk plans (the calls plans) and Workforce plans (Lead Desk + industry pack + lead finding + research). No price: "Price at launch". No plan is marked "most popular". */
-export function PlansSection({ t, lang }: { t: SiteT; lang: Lang }) {
-  const groups = planGroups(CATALOGUE, (key, vars) => t(key as "hm.pl.f.ai", vars as Record<string, string>));
-  const start = startEntry(t, lang, t("hm.pl.cta.main"), { hasForm: waitlistMode() !== "off" });
-  const kinds = [
-    { kind: "calls" as const, title: t("ld.plans.ld.t"), text: t("ld.plans.ld.d"), note: null },
-    { kind: "main" as const, title: t("ld.plans.wf.t"), text: t("ld.plans.wf.d"), note: t("ld.plans.wf.note") },
-  ];
+const planBox = "flex flex-col gap-3 rounded-[22px] border border-line bg-surface p-5 shadow-[0_18px_40px_-24px_rgba(23,22,28,0.25)]";
+
+/** Lead Desk as five editorial rows: approve all, tell the assistant, languages, your opening line, speed by source. Each has a small picture of the real thing. */
+export function LeadDeskRows({ t }: { t: SiteT }) {
   return (
-    <section id="pricing" aria-labelledby="pricing-h" className="scroll-mt-20 border-t border-line bg-surface-2">
-      <div className={`${container} flex flex-col gap-10 py-14 sm:py-[72px]`}>
-        <div className="flex max-w-3xl flex-col gap-3">
-          <p className={`${kicker} text-brand-text`}>{t("hm.pl.eyebrow")}</p>
-          <h2 id="pricing-h" className={h2}>
-            {t("ld.plans.title")}
-          </h2>
-          <p className="text-base leading-relaxed text-muted">{t("hm.pl.sub")}</p>
-        </div>
-        {kinds.map((k) => {
-          const group = groups.find((g) => g.kind === k.kind);
-          if (!group) return null;
-          return (
-            <div key={k.kind} className="flex flex-col gap-5" data-plan-group={k.kind}>
-              <div className="flex max-w-3xl flex-col gap-1">
-                <h3 className="font-display text-2xl font-bold">{k.title}</h3>
-                <p className="text-base text-muted">{k.text}</p>
+    <section id="leaddesk" aria-labelledby="leaddesk-h" className={`${section} bg-surface`}>
+      <div className={wrapHome}>
+        <h2 id="leaddesk-h" className={h2Home}>
+          {t("v3.lead.t")}
+        </h2>
+        <p className={`mt-5 max-w-[36em] text-[19px] ${slate}`}>{t("v3.lead.d")}</p>
+        <div className="mt-[72px] flex flex-col">
+          <Row n={1} t={t}>
+            <div className={planBox} aria-label={t("v3.plan.aria")} role="group">
+              <dl className="m-0 grid grid-cols-[auto_minmax(0,1fr)] gap-x-[18px] gap-y-2 text-[15px]">
+                {(["leads", "goal", "q", "hours"] as const).map((k) => (
+                  <div key={k} className="contents">
+                    <dt className={slate}>{t(`v3.plan.${k}`)}</dt>
+                    <dd className="m-0 font-semibold">{t(`v3.plan.${k}.v` as "v3.plan.leads.v")}</dd>
+                  </div>
+                ))}
+              </dl>
+              <div aria-hidden="true" className="mt-1.5 grid h-12 place-items-center rounded-full bg-brand font-bold text-on-brand">
+                {t("v3.plan.go")}
               </div>
-              <PlanCards plans={group.plans.map((p) => ({ ...p, name: leadDeskPlanName(p.id, p.name) }))} price={t("hm.pl.price")} cta={start} kind={k.kind} />
-              {k.note ? <p className="text-sm text-muted">{k.note}</p> : null}
             </div>
-          );
-        })}
-        <ul className="flex flex-wrap gap-x-7 gap-y-2 text-sm text-muted" data-part="trust">
-          {([1, 2, 3] as const).map((n) => (
-            <li key={n}>✓ {t(`hm.pl.t${n}`)}</li>
-          ))}
-        </ul>
+          </Row>
+          <Row n={2} t={t}>
+            <div className="flex flex-col gap-2.5">
+              <p className="m-0 max-w-[88%] self-end rounded-[18px] rounded-br-md bg-ink px-4 py-3 text-[15.5px] text-bg">{t("v3.chat.me")}</p>
+              <div className="flex items-start gap-3">
+                <Orb px={36} state="ambient" />
+                <p className="m-0 rounded-[18px] rounded-bl-md bg-surface-2 px-4 py-3 text-[15.5px]">{t("v3.chat.her")}</p>
+              </div>
+            </div>
+          </Row>
+          <Row n={3} t={t}>
+            <ul aria-label={t("v3.greets.aria")} className="m-0 grid list-none grid-cols-2 gap-2.5 p-0 sm:grid-cols-3">
+              {GREETINGS.map((g) => (
+                <li key={g.code} className="rounded-2xl border border-line bg-surface p-3.5">
+                  <b lang={g.code} className="block text-[22px] font-medium">
+                    {g.word}
+                  </b>
+                  <span className={`text-[13px] ${slate}`}>{t(`v3.lang.${g.code}`)}</span>
+                </li>
+              ))}
+            </ul>
+          </Row>
+          <Row n={4} t={t}>
+            <p className="m-0 rounded-[18px] border-[1.5px] border-dashed border-line bg-surface p-[18px] text-[17px]" data-part="opening-example">
+              {t("v3.opening")
+                .split(/(\{\w+\})/)
+                .map((part, i) => (/^\{\w+\}$/.test(part) ? <em key={i} className="font-semibold not-italic text-brand-text">{part}</em> : part))}
+            </p>
+          </Row>
+          <Row n={5} t={t}>
+            <dl className={`${planBox} m-0 grid grid-cols-[auto_minmax(0,1fr)] gap-x-[18px] gap-y-2 text-[15px] max-sm:gap-y-0.5`}>
+              {SPEED_ROWS.map((n) => (
+                <div key={n} className="contents">
+                  <dt className={slate}>{t(`v3.speed.${n}.k`)}</dt>
+                  <dd className="m-0 font-semibold">{t(`v3.speed.${n}.v`)}</dd>
+                </div>
+              ))}
+            </dl>
+          </Row>
+        </div>
       </div>
     </section>
   );
 }
 
-/** Trust: four promises in plain words, that the owner stays in control, and the one line about whom we call and when. Links to the security page only where that page is served. */
-export function TrustBand({ t, lang }: { t: SiteT; lang: Lang }) {
+/** The three industries that have pages of their own, as columns (a name, who it is for, four things), each linking to its page; then the other businesses as chips. */
+export function IndustriesSection({ t, lang }: { t: SiteT; lang: Lang }) {
   return (
-    <section id="trust" aria-labelledby="trust-h" className="scroll-mt-20 border-b border-line">
-      <div className={`${container} flex flex-col gap-8 py-14 sm:py-[72px]`}>
-        <h2 id="trust-h" className={h2}>
-          {t("ld.trust.title")}
+    <section id="industries" aria-labelledby="industries-h" className={`${section} bg-surface-2`}>
+      <div className={wrapHome}>
+        <h2 id="industries-h" className={h2Home}>
+          {t("v3.ind.t")}
         </h2>
-        <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4" data-part="trust-band">
-          {([1, 2, 3, 4] as const).map((n) => (
-            <li key={n} className="flex flex-col gap-1.5">
-              <strong className="text-[17px]">{t(`home.trust.${n}`)}</strong>
-              <span className="text-[15px] leading-normal text-muted">{t(`hm.trust.${n}.d`)}</span>
+        <p className={`mt-5 max-w-[36em] text-[19px] ${slate}`}>{t("v3.ind.d")}</p>
+        <ul className="m-0 mt-16 grid list-none gap-0 border-t border-line p-0 lg:grid-cols-3" data-part="pack-cards">
+          {SITE_PACKS.filter((p) => deepCardKeys(p.id) !== null).map((p) => (
+            <li key={p.slug} className="border-b border-line py-8 lg:border-b-0 lg:border-r lg:py-9 lg:pl-8 lg:pr-8 lg:first:pl-0 lg:last:border-r-0">
+              <article>
+                <h3 className={h3Industry}>
+                  <Link href={sitePath(lang, { kind: "pack", slug: p.slug })} data-pack-card={p.slug} data-accent={p.accent} className="rounded-md hover:underline">
+                    {t(`ld.deep.${p.id}.t` as "ld.deep.textiles.t")}
+                  </Link>
+                </h3>
+                <p className={`mt-2.5 text-[15px] ${slate}`}>{t(`v3.ind.${p.id}.for` as "v3.ind.textiles.for")}</p>
+                <ul className="m-0 mt-5 flex list-none flex-col gap-2.5 p-0">
+                  {IND_POINTS.map((n) => (
+                    <li key={n} className="relative pl-[18px] before:absolute before:left-0 before:top-[11px] before:h-0.5 before:w-2 before:bg-brand-text">
+                      {t(`v3.ind.${p.id}.${n}` as "v3.ind.textiles.1")}
+                    </li>
+                  ))}
+                </ul>
+              </article>
             </li>
           ))}
         </ul>
-        <p className="text-base leading-normal" data-part="control">
-          <strong>{t("hm.ctl.t")}</strong> <span className="text-muted">{t("hm.ctl.d")}</span>
-        </p>
-        <p className="text-base leading-normal text-muted" data-part="trust-rules">
-          {t("ld.rules")}
-        </p>
-        {isServed({ kind: "page", page: "security" }) ? (
-          <Link href={sitePath(lang, { kind: "page", page: "security" })} className="inline-flex min-h-11 w-fit items-center text-base font-semibold text-brand-text hover:underline">
-            {t("trust.more")}
-          </Link>
-        ) : null}
+        <div className="mt-12 grid gap-10 border-t border-line pt-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]" data-part="industries">
+          <h3 className="text-[22px] font-bold">{t("v3.others.t")}</h3>
+          <div>
+            <p className={slate}>{t("v3.others.d")}</p>
+            <ul aria-label={t("ld.chips.t")} className="m-0 mt-4 flex list-none flex-wrap gap-2 p-0">
+              {LD_CHIPS.map((n) => (
+                <li key={n} className={pillHome}>
+                  {t(`ld.chip.${n}`)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-/** The last call to action, with the AI circle above it. */
-export function FinalCta({ t, lang }: { t: SiteT; lang: Lang }) {
+function PlanCard({ dark, title, who, tiers, features, price }: { dark?: boolean; title: string; who: string; tiers: string; features: readonly string[]; price: string }) {
+  return (
+    <article data-plan-card="" className={`flex flex-col gap-[18px] rounded-[28px] border p-7 sm:p-9 ${dark ? "border-transparent bg-night text-on-night" : "border-line bg-surface"}`}>
+      <h3 className="font-display text-4xl font-extrabold tracking-[-0.025em]">{title}</h3>
+      <p className={dark ? "text-night-muted" : slate}>{who}</p>
+      <p className="text-[15px] font-semibold">{tiers}</p>
+      <ul className="m-0 flex list-none flex-col gap-2.5 p-0">
+        {features.map((f) => (
+          <li key={f} className={`relative pl-[26px] before:absolute before:left-0 before:top-2 before:h-[7px] before:w-3 before:-rotate-45 before:border-b-2 before:border-l-2 ${dark ? "text-night-muted before:border-[#7be0a9]" : "text-muted before:border-green-text"}`}>
+            {f}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-auto font-semibold">{price}</p>
+    </article>
+  );
+}
+
+const joinNames = (names: string[], and: string): string => (names.length < 2 ? names.join("") : `${names.slice(0, -1).join(", ")} ${and} ${names[names.length - 1]}`);
+
+/** Two ways to start: Lead Desk, and the AI workforce. The tiers' names come from the plans data; no price (it says "Price at launch"), no plan is marked "most popular". */
+export function PlansBand({ t }: { t: SiteT }) {
+  const names = (kind: "calls" | "main") => CATALOGUE.plans.filter((p) => p.kind === kind).map((p) => leadDeskPlanName(p.id, p.name));
+  const or = t("v3.plans.or");
+  return (
+    <section id="plans" aria-labelledby="plans-h" className={`${section} bg-surface`}>
+      <div className={wrapHome}>
+        <h2 id="plans-h" className={h2Home}>
+          {t("v3.plans.t")}
+        </h2>
+        <p className={`mt-5 max-w-[36em] text-[19px] ${slate}`}>{t("v3.plans.d")}</p>
+        <div className="mt-16 grid gap-6 lg:grid-cols-2" data-part="plans">
+          <PlanCard title={t("v3.plan.ld.t")} who={t("v3.plan.ld.who")} tiers={joinNames(names("calls"), or)} features={PLAN_LD_FEATURES.map((n) => t(`v3.plan.ld.${n}`))} price={t("hm.pl.price")} />
+          <PlanCard dark title={t("v3.plan.wf.t")} who={t("v3.plan.wf.who")} tiers={joinNames(names("main"), or)} features={PLAN_WF_FEATURES.map((n) => t(`v3.plan.wf.${n}`))} price={t("hm.pl.price")} />
+        </div>
+        <p className={`mt-7 max-w-[52em] text-[15.5px] ${slate}`}>{t("v3.plans.small")}</p>
+      </div>
+    </section>
+  );
+}
+
+/** Four promises in plain words. */
+export function PromisesBand({ t }: { t: SiteT }) {
+  return (
+    <section id="trust" aria-label={t("ld.trust.title")} className="scroll-mt-20 border-t border-line bg-surface py-[84px] sm:py-[120px]">
+      <ul className={`${wrapHome} m-0 grid list-none gap-10 p-0 sm:grid-cols-2 lg:grid-cols-4`} data-part="trust-band">
+        {PROMISES.map((n) => (
+          <li key={n}>
+            <h3 className="text-[19px] font-bold">{t(`v3.pro.${n}.t`)}</h3>
+            <p className={`mt-2 text-[15.5px] ${slate}`}>{t(`v3.pro.${n}.d`)}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** Questions owners ask: native disclosures, no script. */
+export function FaqBand({ t }: { t: SiteT }) {
+  return (
+    <section id="faq" aria-labelledby="faq-h" className={`${section} bg-surface-2`}>
+      <div className={wrapHome}>
+        <h2 id="faq-h" className={h2Home}>
+          {t("v3.faq.t")}
+        </h2>
+        <div className="mt-12 max-w-[860px] border-t border-line">
+          {FAQ_ITEMS.map((n) => (
+            <details key={n} className="group border-b border-line">
+              <summary className="flex min-h-14 cursor-pointer list-none justify-between gap-5 py-6 text-[19px] font-semibold [&::-webkit-details-marker]:hidden">
+                {t(`v3.faq.${n}.q`)}
+                <span aria-hidden="true" className="mt-1.5 size-3.5 shrink-0 rotate-45 border-b-2 border-r-2 border-brand-text transition-transform duration-200 group-open:-rotate-[135deg]" />
+              </summary>
+              <p className={`max-w-[44em] pb-6 ${slate}`}>{t(`v3.faq.${n}.a`)}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** The closing band: the assistant's orb, the last line, one button. */
+export function CloseBand({ t, lang }: { t: SiteT; lang: Lang }) {
   const start = startEntry(t, lang, t("cta.start"), { hasForm: waitlistMode() !== "off" });
   return (
-    <section id="start" aria-labelledby="start-h" className={`${container} flex scroll-mt-20 flex-col items-center gap-5 py-16 text-center sm:py-24`}>
-      <Orb px={72} state="think" halo />
-      <h2 id="start-h" className="mt-3 max-w-[16em] font-display text-4xl font-extrabold leading-[1.06] tracking-tight [text-wrap:balance] sm:text-5xl">
-        {t("cta.title")}
-      </h2>
-      <p className="max-w-[34em] text-[17px] leading-relaxed text-muted">{t("cta.sub")}</p>
-      <div className="flex flex-wrap justify-center gap-3">
-        <Link href={start.href} className={`${btnPrimary} font-extrabold`}>
-          {start.label}
-        </Link>
-        <Link href={sitePath(lang, { kind: "page", page: "contact" })} className={outline}>
-          {t("cta.contact")}
-        </Link>
+    <section id="start" aria-labelledby="start-h" className="scroll-mt-20 bg-surface py-[84px] sm:py-[120px]">
+      <div className={wrapHome}>
+        <div className="grid items-center gap-9 rounded-[36px] bg-night p-7 text-on-night sm:p-12 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:gap-12 lg:p-[72px]">
+          <Orb px={140} state="speak" />
+          <div>
+            <h2 id="start-h" className="font-display text-[length:clamp(30px,calc(2.4vw_+_12px),46px)] font-extrabold leading-[1.08] tracking-[-0.025em] [text-wrap:balance]">
+              {t("v3.close.t")}
+            </h2>
+            <p className="mt-3.5 text-lg text-night-muted">{t("v3.close.d")}</p>
+          </div>
+          <Link href={start.href} className={`${btnPrimary} rounded-full font-bold`}>
+            {start.label}
+          </Link>
+        </div>
       </div>
     </section>
   );

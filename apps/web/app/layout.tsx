@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   // installable on a phone (job BL): the manifest is app/manifest.ts; the circle icons are in public/icons
   applicationName: SHORT_NAME,
   appleWebApp: { capable: true, title: SHORT_NAME, statusBarStyle: "default" },
-  icons: { icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }, { url: "/icons/orb.svg", type: "image/svg+xml" }], apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }] },
+  icons: { icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }, { url: "/icons/mark.svg", type: "image/svg+xml" }], apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }] },
 };
 
 // the colour of the phone's address bar and the installed app's title bar: the v2 background, light and dark (design/tokens.css)

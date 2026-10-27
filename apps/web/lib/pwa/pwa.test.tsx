@@ -47,12 +47,14 @@ describe("the web app manifest (installability)", () => {
   });
 });
 
-describe("the orb svg that the icons are drawn from", () => {
-  // job DM: the install icons, the favicon source and the share pictures are the AI circle, drawn from this file (npm run pwa:icons).
+describe("the logo svg that the icons are drawn from", () => {
+  // the install icons, the favicon source and the share pictures are the three-bar logo, drawn from this file (npm run pwa:icons).
   it("is a plain svg file with no script and no outside address", () => {
-    const file = readFileSync(pub("icons/orb.svg"), "utf8");
+    const file = readFileSync(pub("icons/mark.svg"), "utf8");
     expect(file).toMatch(/^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg"/);
     expect(file).not.toMatch(/<script|href=|onload/i);
+    expect(file.match(/<rect /g)).toHaveLength(3); // three bars
+    expect(file).not.toMatch(/c2pa|<metadata/i); // no embedded provenance blob
   });
 });
 

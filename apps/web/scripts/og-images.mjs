@@ -1,4 +1,4 @@
-// npm run og:images (job BS, extended by job CM): draws the share pictures (1200 x 630, Open Graph and Twitter) with a real browser: the AI circle, the headline and the product name.
+// npm run og:images (job BS, extended by job CM): draws the share pictures (1200 x 630, Open Graph and Twitter) with a real browser: the logo, the headline and the product name.
 //   public/og/og-<lang>.png            (4)  the home page and the fixed pages
 //   public/og/og-<slug>-<lang>.png     (12) one business type's page, in that type's colour
 // The words are the pages' own (i18n/strings/site.json hero.h1 / hero.eyebrow, and each business type's landing hero in lib/site/site-packs.generated.json, which `make site-packs` builds), so a picture never says what the page
@@ -17,7 +17,7 @@ const site = JSON.parse(readFileSync(path.join(web, "i18n/strings/site.json"), "
 const packs = JSON.parse(readFileSync(path.join(web, "lib/site/site-packs.generated.json"), "utf8")).packs;
 const brand = /BRAND_NAME = "([^"]+)"/.exec(readFileSync(path.join(web, "design/brand.ts"), "utf8"))[1].split(" ")[0];
 const assistant = /DEFAULT_ASSISTANT_NAME = "([^"]+)"/.exec(readFileSync(path.join(web, "lib/assistant/name.ts"), "utf8"))[1]; // {assistant} in a headline is the default name here (the public site never has a workspace's own)
-const orb = `data:image/svg+xml;base64,${readFileSync(path.join(web, "public/icons/orb.svg")).toString("base64")}`;
+const mark = `data:image/svg+xml;base64,${readFileSync(path.join(web, "public/icons/mark.svg")).toString("base64")}`;
 const out = path.join(web, "public/og");
 mkdirSync(out, { recursive: true });
 
@@ -39,7 +39,7 @@ for (const { file, lang, eyebrow, h1, colour } of jobs) {
   const size = h1.length > 60 ? (lang === "en" ? 50 : 44) : lang === "en" ? 58 : 50;
   await page.setContent(`<!doctype html><html lang="${lang}"><body style="margin:0;width:1200px;height:630px;background:#f9f8f6;font-family:${fonts[lang]};color:#1e1e24;display:grid;grid-template-columns:420px 1fr;align-items:center;position:relative;overflow:hidden">
 <div style="position:absolute;left:0;top:0;bottom:0;width:420px;background:${colour.edge}"></div>
-<div style="position:relative;display:grid;place-items:center;height:630px"><img src="${orb}" width="300" height="300" alt="" style="display:block;filter:drop-shadow(0 20px 40px rgba(0,0,0,.25))"></div>
+<div style="position:relative;display:grid;place-items:center;height:630px"><div style="width:300px;height:300px;border-radius:72px;background:#f9f8f6;display:grid;place-items:center;box-shadow:0 20px 40px rgba(0,0,0,.25)"><img src="${mark}" width="220" height="220" alt="" style="display:block"></div></div>
 <div style="padding:0 64px 0 56px">
 <p style="margin:0 0 18px;font-size:28px;font-weight:600;color:${colour.text}">${clean(eyebrow)}</p>
 <h1 style="margin:0;font-size:${size}px;line-height:1.22;font-weight:800;letter-spacing:-0.5px">${clean(h1)}</h1>

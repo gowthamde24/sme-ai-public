@@ -3,6 +3,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeSupabase, redirectMock, redirectTarget } from "@/test/helpers";
 
 const createClient = vi.fn();
+const publicRequest = vi.fn();
+vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), apiPublicRequest: (...a: unknown[]) => publicRequest(...a) }));
+const jar = new Map<string, string>();
+const setCookie = vi.fn((name: string, value: string) => void jar.set(name, value));
+vi.mock("next/headers", () => ({
+  cookies: async () => ({ get: (n: string) => (jar.has(n) ? { value: jar.get(n) } : undefined), set: setCookie, delete: (n: string) => void jar.delete(n) }),
+  headers: async () => new Headers({ "x-forwarded-for": "203.0.113.7" }),
+}));
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => redirectMock(to),
 }));
@@ -21,7 +29,11 @@ function form(values: Record<string, string>): FormData {
 const OK = { email: "a@example.test", password: "correct horse battery" };
 
 describe("signIn", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    jar.clear();
+    vi.unstubAllEnvs();
+  });
 
   it("redirects to a validated relative target after success", async () => {
     const supabase = fakeSupabase({
@@ -184,5 +196,49 @@ describe("sign-in with an authenticator (ADR 0016)", () => {
   it("has no sign-up: the module exports no signUp and the form has no way to create an account", async () => {
     const actions = await import("./actions");
     expect(Object.keys(actions)).toEqual(["signIn"]);
+  });
+});
+
+describe("signIn: the check box after three failures in a row (Turnstile)", () => {
+  const wrong = () => createClient.mockResolvedValue(fakeSupabase({ signInWithPassword: vi.fn(async () => ({ data: {}, error: { code: "invalid_credentials" } })) }));
+  beforeEach(() => {
+    jar.clear();
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
+  it("counts failures in a cookie only the server can read, and a good sign-in clears it", async () => {
+    wrong();
+    await signIn(undefined, form(OK));
+    expect(setCookie).toHaveBeenCalledWith("s19_signin_fails", "1", expect.objectContaining({ httpOnly: true, sameSite: "lax", maxAge: 900 }));
+    createClient.mockResolvedValue(fakeSupabase({ signInWithPassword: vi.fn(async () => ({ data: {}, error: null })) }));
+    await redirectTarget(() => signIn(undefined, form(OK)));
+    expect(jar.has("s19_signin_fails")).toBe(false);
+  });
+  it("with the check off, nothing changes however many failures", async () => {
+    jar.set("s19_signin_fails", "9");
+    wrong();
+    expect(await signIn(undefined, form(OK))).toEqual({ error: "Invalid email or password." });
+  });
+  it("with the check on, the third failure asks for the box, and a sign-in without a good token is refused before Supabase is asked", async () => {
+    vi.stubEnv("TURNSTILE_SITE_KEY", "site");
+    jar.set("s19_signin_fails", "2");
+    wrong();
+    expect(await signIn(undefined, form(OK))).toEqual({ error: "Invalid email or password.", check: true });
+    jar.set("s19_signin_fails", "3");
+    const asked = vi.fn();
+    createClient.mockImplementation(asked);
+    publicRequest.mockResolvedValue({ ok: false });
+    expect(await signIn(undefined, form({ ...OK, "cf-turnstile-response": "a-token-that-fails" }))).toMatchObject({ check: true });
+    expect(await signIn(undefined, form(OK))).toMatchObject({ check: true }); // no token at all
+    expect(asked).not.toHaveBeenCalled();
+    expect(publicRequest).toHaveBeenCalledTimes(1); // only the token that had the right shape was sent to the check, with the address
+  });
+  it("a good token lets the sign-in go on", async () => {
+    vi.stubEnv("TURNSTILE_SITE_KEY", "site");
+    jar.set("s19_signin_fails", "4");
+    publicRequest.mockResolvedValue({ ok: true });
+    createClient.mockResolvedValue(fakeSupabase({ signInWithPassword: vi.fn(async () => ({ data: {}, error: null })) }));
+    expect(await redirectTarget(() => signIn(undefined, form({ ...OK, "cf-turnstile-response": "a-good-token-123" })))).toBe("/app");
+    expect(publicRequest).toHaveBeenCalledWith("/v1/public/turnstile/verify", { method: "POST", body: { token: "a-good-token-123", ip: "203.0.113.7" } });
   });
 });

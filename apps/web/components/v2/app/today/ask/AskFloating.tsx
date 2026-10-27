@@ -23,7 +23,7 @@ function typing(target: EventTarget | null): boolean {
 }
 
 /**
- * The floating way to ask, on every screen but Today and the live call (job DQ part 0): a 56 px circle at the bottom right (the same AI circle, breathing while idle, thinking or speaking as the assistant is, with a small dot when an answer
+ * The floating way to ask (its small circle moves on its own; the panel it opens has the circle that follows the microphone and the voice), on every screen but Today and the live call (job DQ part 0): a 56 px circle at the bottom right (the same AI circle, breathing while idle, thinking or speaking as the assistant is, with a small dot when an answer
  * arrived that the person has not seen). Pressed, it opens the panel (AskPanel): a small chat bottom right on a laptop, a sheet 70 % high on a phone. "/" or Cmd/Ctrl+K opens it from the keyboard; Esc or the close button returns to the circle.
  * On Today the same keys put the cursor in the card's own line. Nothing here is fixed to the bottom as a bar: there is no bar.
  */
