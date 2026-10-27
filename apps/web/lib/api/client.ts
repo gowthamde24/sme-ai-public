@@ -82,14 +82,14 @@ export function parseTenantDetail(json: unknown): TenantDetail {
 }
 
 /**
- * Every call from the web's SERVER to the API goes through here. When ORIGIN_LOCK_SECRET is set (job DT, docs/runbooks/origin-lock.md) the API answers only requests that carry it in X-Stack19-Origin;
- * unset = nothing is added.
+ * Every call from the web's SERVER to the API goes through this `fetch`, which shadows the global one inside this file. When ORIGIN_LOCK_SECRET is set (job DT, docs/runbooks/origin-lock.md) the API answers only
+ * requests that carry it in X-Stack19-Origin; unset = nothing is added.
  */
-function fetchApi(url: string, init: RequestInit): Promise<Response> {
+const fetch = (url: string, init: RequestInit = {}): Promise<Response> => {
   const secret = process.env.ORIGIN_LOCK_SECRET;
-  if (!secret) return fetch(url, init);
-  return fetch(url, { ...init, headers: { ...(init.headers as Record<string, string> | undefined), "X-Stack19-Origin": secret } });
-}
+  if (!secret) return globalThis.fetch(url, init);
+  return globalThis.fetch(url, { ...init, headers: { ...(init.headers as Record<string, string> | undefined), "X-Stack19-Origin": secret } });
+};
 
 function apiBaseUrl(): string {
   const base = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -142,7 +142,7 @@ export async function apiRequest(
   const base = apiBaseUrl(); // misconfiguration must surface as itself, not as "unreachable"
   let response: Response;
   try {
-    response = await fetchApi(`${base}${path}`, {
+    response = await fetch(`${base}${path}`, {
       ...init,
       cache: "no-store",
       headers: {
@@ -225,7 +225,7 @@ async function streamPost(path: string, accessToken: string, contentType: string
   const base = apiBaseUrl();
   let response: Response;
   try {
-    response = await fetchApi(`${base}${path}`, {
+    response = await fetch(`${base}${path}`, {
       method: "POST",
       cache: "no-store",
       headers: { "Content-Type": contentType, Accept: "text/event-stream", Authorization: `Bearer ${accessToken}` },
@@ -263,7 +263,7 @@ export async function apiUploadRequest(path: string, accessToken: string, body: 
   const base = apiBaseUrl();
   let response: Response;
   try {
-    response = await fetchApi(`${base}${path}`, {
+    response = await fetch(`${base}${path}`, {
       method: "POST",
       cache: "no-store",
       headers: { "Content-Type": contentType, Authorization: `Bearer ${accessToken}` },
@@ -291,7 +291,7 @@ export async function apiExportRequest(
   const base = apiBaseUrl();
   let response: Response;
   try {
-    response = await fetchApi(`${base}${path}`, {
+    response = await fetch(`${base}${path}`, {
       method: "POST",
       cache: "no-store",
       headers: {
@@ -359,7 +359,7 @@ export async function apiDownloadRequest(path: string, accessToken: string, body
   const base = apiBaseUrl();
   let response: Response;
   try {
-    response = await fetchApi(`${base}${path}`, { method: "POST", cache: "no-store", headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` }, body: JSON.stringify(body) });
+    response = await fetch(`${base}${path}`, { method: "POST", cache: "no-store", headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` }, body: JSON.stringify(body) });
   } catch {
     throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
   }
@@ -386,7 +386,7 @@ export async function apiBinaryRequest(path: string, accessToken: string, max: n
   const base = apiBaseUrl();
   let response: Response;
   try {
-    response = await fetchApi(`${base}${path}`, { cache: "no-store", headers: { Authorization: `Bearer ${accessToken}` } });
+    response = await fetch(`${base}${path}`, { cache: "no-store", headers: { Authorization: `Bearer ${accessToken}` } });
   } catch {
     throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
   }
@@ -417,7 +417,7 @@ export async function apiPublicRequest(path: string, init: { method?: "GET" | "P
   const base = apiBaseUrl();
   let response: Response;
   try {
-    response = await fetchApi(`${base}${path}`, { cache: "no-store", method: init.method ?? "GET", ...(init.body === undefined ? {} : { body: JSON.stringify(init.body) }), headers: { ...(init.body === undefined ? {} : { "Content-Type": "application/json" }), ...init.headers } });
+    response = await fetch(`${base}${path}`, { cache: "no-store", method: init.method ?? "GET", ...(init.body === undefined ? {} : { body: JSON.stringify(init.body) }), headers: { ...(init.body === undefined ? {} : { "Content-Type": "application/json" }), ...init.headers } });
   } catch {
     throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
   }

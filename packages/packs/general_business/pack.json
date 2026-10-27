@@ -18,7 +18,7 @@
     "kn": "Leads ಇರುವ ಇತರ ವ್ಯವಹಾರ: generic Lead Desk"
   },
   "accent": "leads_orange",
-  "owl_prop": "open_book",
+  "owl_prop": "phone_headset",
   "core_tab": "campaigns",
   "modules": [
     "today",
