@@ -1,15 +1,15 @@
-import { VijayaOrb } from "@/components/v2/LazyVijayaOrb";
-import type { VijayaState } from "@/components/v2/VijayaOrb";
+import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
+import type { OrbMotion } from "@/components/v2/AssistantOrb";
 import type { AnalyserHolder } from "@/components/v2/orb-types";
 
 /** What the circle is doing: nothing (`still`: lists, empty states), calm (`ambient`), following the microphone (`listen`), thinking (faster) or speaking (it follows the voice). */
 export type OrbState = "still" | "ambient" | "listen" | "think" | "speak";
 
 const STATE_CLASS: Record<OrbState, string> = { still: "orb-still", ambient: "", listen: "", think: "orb-think", speak: "orb-speak" };
-const VIJAYA: Record<OrbState, VijayaState> = { still: "idle", ambient: "idle", listen: "listening", think: "thinking", speak: "speaking" };
+const MOTION: Record<OrbState, OrbMotion> = { still: "idle", ambient: "idle", listen: "listening", think: "thinking", speak: "speaking" };
 
 /**
- * Vijaya's circle (job DM, redrawn night 5 as the glass sphere with flowing ribbons: components/v2/VijayaOrb.tsx). This is the place every screen puts it: it keeps the size wrapper, the `data-orb` word of the state and the halo, and the canvas
+ * the assistant's circle (job DM, redrawn night 5 as the glass sphere with flowing ribbons: components/v2/AssistantOrb.tsx). This is the place every screen puts it: it keeps the size wrapper, the `data-orb` word of the state and the halo, and the canvas
  * arrives as a lazy chunk on top of a dark sphere that is already drawn by CSS (design/orb.css), so nothing jumps. `px` is its size in CSS pixels. `analyser` (Web Audio) makes the ribbons follow the microphone or the voice. It is decorative: the
  * name beside it says what it is. With "reduce motion", and for `still`, it is one frame. The size sits on its own wrapper because v2 code never puts a `style` and a `className` on one element (audit:leaks); `className` is for where it stands.
  */
@@ -17,7 +17,7 @@ export function Orb({ px, state = "ambient", halo = false, className = "", analy
   const sphere = (
     <span style={{ display: "block", width: px, height: px, flex: "none" }}>
       <span className={`orb ${STATE_CLASS[state]}`} data-orb={state} aria-hidden="true">
-        <VijayaOrb state={VIJAYA[state]} still={state === "still"} analyser={analyser} />
+        <AssistantOrb state={MOTION[state]} still={state === "still"} analyser={analyser} />
       </span>
     </span>
   );

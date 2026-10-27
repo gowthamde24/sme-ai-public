@@ -11,6 +11,5 @@ export const h1Home = "font-display font-extrabold leading-[1.04] tracking-[-0.0
 export const h2Home = "font-display font-extrabold leading-[1.06] tracking-[-0.025em] [text-wrap:balance] text-[length:clamp(32px,calc(2.6vw_+_14px),52px)]";
 export const h3Row = "font-display font-extrabold leading-[1.12] tracking-[-0.025em] text-[length:clamp(24px,calc(1.4vw_+_12px),32px)]";
 export const h3Industry = "font-display font-extrabold leading-[1.1] tracking-[-0.025em] text-[length:clamp(26px,calc(1.6vw_+_12px),34px)]";
-export const bodyHome = "text-base leading-relaxed sm:text-[17px]";
 export const pillHome = "rounded-full border border-line bg-surface px-3.5 py-2 text-[14.5px] font-medium";
 export const wrapHome = "mx-auto w-full max-w-[1200px] px-[18px] sm:px-6";

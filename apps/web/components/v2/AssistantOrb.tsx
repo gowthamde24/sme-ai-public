@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 /** What the orb is doing: calm ribbons (`idle`), ribbons that follow the microphone (`listening`), faster and tighter ones (`thinking`), ribbons that follow the voice (`speaking`). */
-export type VijayaState = "idle" | "listening" | "thinking" | "speaking";
+export type OrbMotion = "idle" | "listening" | "thinking" | "speaking";
 
 type Wave = { c: string; a: number; k: number; s: number; p: number; h: number; o: number; l: number };
 // the five ribbons: colour, size, wave count, speed, phase, thickness, height in the sphere, opacity (the brand's warm core, orange, peach, rose and cream)
@@ -25,7 +25,7 @@ function level(a: AnalyserNode | null, buf: Uint8Array<ArrayBuffer>): number {
   return Math.min(1, Math.sqrt(sum / buf.length) * 3.2);
 }
 
-function draw(ctx: CanvasRenderingContext2D, W: number, t: number, state: VijayaState, lv: number): void {
+function draw(ctx: CanvasRenderingContext2D, W: number, t: number, state: OrbMotion, lv: number): void {
   const r = W / 2;
   const speak = state === "speaking";
   // how much the ribbons rise (e), how fast they flow (sp) and how many waves fit (kk): calm, listening (the microphone), thinking (faster, tighter), speaking (the voice, or a pulse of its own)
@@ -95,15 +95,17 @@ function draw(ctx: CanvasRenderingContext2D, W: number, t: number, state: Vijaya
 }
 
 /**
- * Vijaya, the assistant's picture: a glass sphere with ribbons of warm light flowing inside, drawn on a canvas (the one orb of the product: the Today card, the floating orb, voice mode, the live call, the setup, the home page).
+ * the assistant, the assistant's picture: a glass sphere with ribbons of warm light flowing inside, drawn on a canvas (the one orb of the product: the Today card, the floating orb, voice mode, the live call, the setup, the home page).
  * `analyser` is a Web Audio analyser: while `listening` the ribbons follow the microphone, while `speaking` they follow the voice that is playing; without one, speaking pulses by itself and listening breathes. The drawing pauses while the orb is
  * off screen (IntersectionObserver), is capped at a device pixel ratio of 2, and with "reduce motion" (or `still`) is one frame and never moves. It fills its parent (`size` puts a width and height of its own on a wrapper), so nothing jumps
  * when it arrives. Decorative: the name beside it says what it is.
  */
-export function VijayaOrb({ state = "idle", size, still = false, analyser = null }: { state?: VijayaState; size?: number; still?: boolean; analyser?: AnalyserNode | null }) {
+export function AssistantOrb({ state = "idle", size, still = false, analyser = null }: { state?: OrbMotion; size?: number; still?: boolean; analyser?: AnalyserNode | null }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const live = useRef({ state, analyser });
-  live.current = { state, analyser };
+  useEffect(() => {
+    live.current = { state, analyser }; // read by the drawing loop, which must not restart when the state changes
+  });
   useEffect(() => {
     const el = canvas.current;
     const ctx = el?.getContext("2d");
@@ -136,7 +138,7 @@ export function VijayaOrb({ state = "idle", size, still = false, analyser = null
       ro?.disconnect();
     };
   }, [still, size]);
-  const orb = <canvas ref={canvas} aria-hidden="true" data-vijaya={state} className="block size-full rounded-full" />;
+  const orb = <canvas ref={canvas} aria-hidden="true" data-assistant-orb={state} className="block size-full rounded-full" />;
   return size ? (
     <span style={{ display: "block", width: size, height: size, flex: "none" }}>{orb}</span>
   ) : (

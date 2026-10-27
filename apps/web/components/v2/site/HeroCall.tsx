@@ -23,12 +23,7 @@ export function HeroCall({ lines, words, seconds }: { lines: readonly HeroCallLi
   const [secs, setSecs] = useState(seconds);
   const [done, setDone] = useState(true);
   useEffect(() => {
-    if (reduced) {
-      setShown(lines.length);
-      setSecs(seconds);
-      setDone(true);
-      return;
-    }
+    if (reduced) return; // nothing runs: the call is shown whole (below)
     const timers: ReturnType<typeof setTimeout>[] = [];
     let tick: ReturnType<typeof setInterval> | undefined;
     const run = () => {
@@ -54,6 +49,10 @@ export function HeroCall({ lines, words, seconds }: { lines: readonly HeroCallLi
       clearInterval(tick);
     };
   }, [reduced, lines, seconds]);
+  // a visitor who asked for less motion sees the whole call, the clock at its end and the result, whatever the timers did
+  const nShown = reduced ? lines.length : shown;
+  const clockSecs = reduced ? seconds : secs;
+  const finished = reduced || done;
   return (
     <div data-part="hero-call" className="relative mt-[300px] w-[min(420px,100%)] rounded-[28px] bg-night p-[22px] pb-[18px] text-on-night shadow-[0_30px_60px_-20px_rgba(23,22,28,0.45)] max-lg:-mt-14">
       <div className="flex items-center justify-between gap-3 text-sm text-night-muted">
@@ -63,7 +62,7 @@ export function HeroCall({ lines, words, seconds }: { lines: readonly HeroCallLi
         </div>
         <span className="inline-flex items-center gap-2 font-semibold tabular-nums text-brand">
           <i aria-hidden="true" className="size-2 rounded-full bg-brand" />
-          <span data-part="clock">{clock(secs)}</span>
+          <span data-part="clock">{clock(clockSecs)}</span>
         </span>
       </div>
       <div aria-live="polite" aria-label={words.label} className="mt-4 flex min-h-[212px] flex-col gap-2.5">
@@ -72,7 +71,7 @@ export function HeroCall({ lines, words, seconds }: { lines: readonly HeroCallLi
             key={i}
             lang="te"
             data-line={l.who}
-            className={`m-0 max-w-[92%] rounded-2xl px-3.5 py-2.5 text-[15px] leading-normal transition-[opacity,transform] duration-500 motion-reduce:transition-none ${l.who === "v" ? "rounded-tl-md bg-white/10" : "self-end rounded-tr-md bg-brand/20"} ${i < shown ? "translate-y-0 opacity-100" : "translate-y-1.5 opacity-0"}`}
+            className={`m-0 max-w-[92%] rounded-2xl px-3.5 py-2.5 text-[15px] leading-normal transition-[opacity,transform] duration-500 motion-reduce:transition-none ${l.who === "v" ? "rounded-tl-md bg-white/10" : "self-end rounded-tr-md bg-brand/20"} ${i < nShown ? "translate-y-0 opacity-100" : "translate-y-1.5 opacity-0"}`}
           >
             {l.te}
             <small lang="en" className="mt-0.5 block text-[12.5px] text-night-muted">
@@ -84,7 +83,7 @@ export function HeroCall({ lines, words, seconds }: { lines: readonly HeroCallLi
       <div className="mt-3.5 flex justify-between gap-2.5 border-t border-white/10 pt-3.5 text-sm text-night-muted">
         <span>{words.speaking}</span>
         <span data-part="call-result" className="font-semibold text-[#7be0a9]">
-          {done ? words.result : " "}
+          {finished ? words.result : " "}
         </span>
       </div>
       <p className="mt-2 text-xs text-night-muted">{words.note}</p>

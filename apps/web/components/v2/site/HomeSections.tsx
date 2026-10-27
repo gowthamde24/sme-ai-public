@@ -2,9 +2,9 @@ import Link from "next/link";
 
 import { HeroCall } from "@/components/v2/site/HeroCall";
 import { Rich } from "@/components/v2/site/Rich";
-import { bodyHome, btnPrimary, h1Home, h2Home, h3Industry, h3Row, pillHome, wrapHome } from "@/components/v2/site/ui";
+import { btnPrimary, h1Home, h2Home, h3Industry, h3Row, pillHome, wrapHome } from "@/components/v2/site/ui";
 import { Orb } from "@/components/v2/Orb";
-import { VijayaOrb } from "@/components/v2/LazyVijayaOrb";
+import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
 import { fill } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
@@ -23,7 +23,7 @@ const slate = "text-muted";
 const uiCard = "mt-3.5 max-w-[460px] rounded-[18px] border border-line bg-surface px-4 py-3.5 text-[15px]";
 const uiWho = "mb-1 text-[12.5px] font-semibold text-muted";
 
-/** The hero: the headline in three lines, what it is, two buttons, and the one moving thing of the page: Vijaya's wave orb over an example call (HeroCall). */
+/** The hero: the headline in three lines, what it is, two buttons, and the one moving thing of the page: the assistant's wave orb over an example call (HeroCall). */
 export function HomeHero({ t, lang, hasForm }: { t: SiteT; lang: Lang; hasForm: boolean }) {
   const start = startEntry(t, lang, t("hero.cta"), { hasForm });
   const story = CALL_STORIES[0];
@@ -52,7 +52,7 @@ export function HomeHero({ t, lang, hasForm }: { t: SiteT; lang: Lang; hasForm: 
         </div>
         <div aria-label={t("v3.call.label")} role="group" className="relative grid min-h-[560px] place-items-center max-lg:min-h-0 max-lg:pt-5">
           <span aria-hidden="true" data-part="hero-orb" className="absolute right-[4%] top-0 aspect-square w-[min(400px,78%)] rounded-full bg-[radial-gradient(circle_at_80%_70%,#4a1a0c,#24100b_55%,#120807)] shadow-[0_40px_90px_-20px_rgba(255,106,43,0.55)] max-lg:static max-lg:w-[min(320px,70%)]">
-            <VijayaOrb state="speaking" />
+            <AssistantOrb state="speaking" />
           </span>
           <HeroCall
             lines={lines}
@@ -349,7 +349,7 @@ export function FaqBand({ t }: { t: SiteT }) {
   );
 }
 
-/** The closing band: Vijaya's orb, the last line, one button. */
+/** The closing band: the assistant's orb, the last line, one button. */
 export function CloseBand({ t, lang }: { t: SiteT; lang: Lang }) {
   const start = startEntry(t, lang, t("cta.start"), { hasForm: waitlistMode() !== "off" });
   return (

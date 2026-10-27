@@ -69518,5 +69518,434 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ope.title": {
+  "en": "Opening line",
+  "te": "ఓపెనింగ్ లైన్",
+  "hi": "शुरुआती पंक्ति",
+  "kn": "ಆರಂಭದ ಸಾಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.sub": {
+  "en": "What {assistant} says first on a call, in each language. Use {customer}, {assistant}, {business} and {agent_role} and they are filled in for every call.",
+  "te": "కాల్‌లో {assistant} ముందుగా చెప్పేది, ప్రతి భాషలో. {customer}, {assistant}, {business}, {agent_role} వాడండి, ప్రతి కాల్‌కి అవి నింపబడతాయి.",
+  "hi": "कॉल में {assistant} सबसे पहले क्या बोलती है, हर भाषा में। {customer}, {assistant}, {business} और {agent_role} लिखें, हर कॉल में ये भर दिए जाते हैं।",
+  "kn": "ಕರೆಯಲ್ಲಿ {assistant} ಮೊದಲು ಹೇಳುವುದು, ಪ್ರತಿ ಭಾಷೆಯಲ್ಲಿ. {customer}, {assistant}, {business}, {agent_role} ಬಳಸಿ, ಪ್ರತಿ ಕರೆಗೆ ಅವು ತುಂಬಲ್ಪಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.mock": {
+  "en": "Test mode: your changes are kept in this browser only and no sound is made.",
+  "te": "టెస్ట్ మోడ్: మీ మార్పులు ఈ బ్రౌజర్‌లో మాత్రమే ఉంటాయి, శబ్దం రాదు.",
+  "hi": "टेस्ट मोड: आपके बदलाव सिर्फ़ इस ब्राउज़र में रहते हैं और आवाज़ नहीं बनती।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ನಿಮ್ಮ ಬದಲಾವಣೆಗಳು ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತವೆ, ಧ್ವನಿ ಬರುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.owneronly": {
+  "en": "Only the Owner can change this.",
+  "te": "దీన్ని ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ ओनर बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.lang": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.text": {
+  "en": "What is said",
+  "te": "చెప్పే మాటలు",
+  "hi": "जो बोला जाता है",
+  "kn": "ಹೇಳುವ ಮಾತುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.default": {
+  "en": "This is the default line. Change it to make it yours.",
+  "te": "ఇది డిఫాల్ట్ లైన్. మీ సొంతం చేయడానికి మార్చండి.",
+  "hi": "यह डिफ़ॉल्ट पंक्ति है। इसे अपनी बनाने के लिए बदलें।",
+  "kn": "ಇದು ಡೀಫಾಲ್ಟ್ ಸಾಲು. ನಿಮ್ಮದಾಗಿಸಲು ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.own": {
+  "en": "This is your own line for this language.",
+  "te": "ఈ భాషకు ఇది మీ సొంత లైన్.",
+  "hi": "इस भाषा के लिए यह आपकी अपनी पंक्ति है।",
+  "kn": "ಈ ಭಾಷೆಗೆ ಇದು ನಿಮ್ಮದೇ ಸಾಲು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.insert": {
+  "en": "Put in:",
+  "te": "చేర్చండి:",
+  "hi": "जोड़ें:",
+  "kn": "ಸೇರಿಸಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.reset": {
+  "en": "Reset to default",
+  "te": "డిఫాల్ట్‌కి మార్చండి",
+  "hi": "डिफ़ॉल्ट पर लौटाएँ",
+  "kn": "ಡೀಫಾಲ್ಟ್‌ಗೆ ಮರಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.preview": {
+  "en": "What the customer hears, with made-up names",
+  "te": "కస్టమర్ వినేది, ఊహాత్మక పేర్లతో",
+  "hi": "ग्राहक जो सुनता है, काल्पनिक नामों के साथ",
+  "kn": "ಗ್ರಾಹಕ ಕೇಳುವುದು, ಕಾಲ್ಪನಿಕ ಹೆಸರುಗಳೊಂದಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.hear": {
+  "en": "Hear it",
+  "te": "వినండి",
+  "hi": "सुनें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.hearing": {
+  "en": "Making the sound…",
+  "te": "శబ్దం తయారవుతోంది…",
+  "hi": "आवाज़ बन रही है…",
+  "kn": "ಧ್ವನಿ ತಯಾರಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.hear.note": {
+  "en": "Preview of the voice. In real calls {assistant} talks naturally and answers what the customer says.",
+  "te": "వాయిస్ ప్రివ్యూ. నిజమైన కాల్స్‌లో {assistant} సహజంగా మాట్లాడుతుంది, కస్టమర్ చెప్పినదానికి జవాబు ఇస్తుంది.",
+  "hi": "आवाज़ का प्रीव्यू। असली कॉल में {assistant} स्वाभाविक रूप से बात करती है और ग्राहक जो कहता है उसका जवाब देती है।",
+  "kn": "ಧ್ವನಿಯ ಪ್ರಿವ್ಯೂ. ನಿಜವಾದ ಕರೆಗಳಲ್ಲಿ {assistant} ಸಹಜವಾಗಿ ಮಾತನಾಡುತ್ತದೆ, ಗ್ರಾಹಕ ಹೇಳಿದ್ದಕ್ಕೆ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.hear.none": {
+  "en": "There is no sound in this mode. The words above are what would be said.",
+  "te": "ఈ మోడ్‌లో శబ్దం లేదు. పైన ఉన్న మాటలే చెప్పబడతాయి.",
+  "hi": "इस मोड में आवाज़ नहीं है। ऊपर लिखे शब्द ही बोले जाएँगे।",
+  "kn": "ಈ ಮೋಡ್‌ನಲ್ಲಿ ಧ್ವನಿ ಇಲ್ಲ. ಮೇಲಿನ ಮಾತುಗಳನ್ನೇ ಹೇಳಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.hear.err": {
+  "en": "Could not make the sound now. Try again in a moment.",
+  "te": "ఇప్పుడు శబ్దం చేయలేకపోయాం. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी आवाज़ नहीं बन पाई। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಈಗ ಧ್ವನಿ ಮಾಡಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.ai.label": {
+  "en": "Mention that I'm an AI assistant in the greeting",
+  "te": "గ్రీటింగ్‌లో నేను AI అసిస్టెంట్‌ని అని చెప్పండి",
+  "hi": "अभिवादन में बताएँ कि मैं AI असिस्टेंट हूँ",
+  "kn": "ಶುಭಾಶಯದಲ್ಲಿ ನಾನು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.ai.help": {
+  "en": "On by default. Off, the greeting is exactly your words.",
+  "te": "డిఫాల్ట్‌గా ఆన్. ఆఫ్ చేస్తే గ్రీటింగ్ ఖచ్చితంగా మీ మాటలే.",
+  "hi": "डिफ़ॉल्ट रूप से चालू। बंद करने पर अभिवादन ठीक आपके शब्द होते हैं।",
+  "kn": "ಡೀಫಾಲ್ಟ್ ಆಗಿ ಆನ್. ಆಫ್ ಮಾಡಿದರೆ ಶುಭಾಶಯ ನಿಮ್ಮ ಮಾತುಗಳೇ ಆಗಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.ai.warn": {
+  "en": "{assistant} will still answer honestly if someone asks whether it is an AI. Some regulators expect AI calls to be disclosed; check with your advisor.",
+  "te": "ఎవరైనా AI నా అని అడిగితే {assistant} నిజాయితీగా జవాబు ఇస్తుంది. కొన్ని నియంత్రణ సంస్థలు AI కాల్స్ చెప్పాలని ఆశిస్తాయి; మీ సలహాదారుని అడగండి.",
+  "hi": "अगर कोई पूछे कि क्या यह AI है, तो {assistant} ईमानदारी से जवाब देगी। कुछ नियामक AI कॉल बताने की उम्मीद करते हैं; अपने सलाहकार से पूछ लें।",
+  "kn": "ಯಾರಾದರೂ AI ಹೌದೇ ಎಂದು ಕೇಳಿದರೆ {assistant} ಪ್ರಾಮಾಣಿಕವಾಗಿ ಉತ್ತರಿಸುತ್ತದೆ. ಕೆಲವು ನಿಯಂತ್ರಕರು AI ಕರೆಗಳನ್ನು ತಿಳಿಸಬೇಕೆಂದು ನಿರೀಕ್ಷಿಸುತ್ತಾರೆ; ನಿಮ್ಮ ಸಲಹೆಗಾರರನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.ai.ok": {
+  "en": "Got it",
+  "te": "అర్థమైంది",
+  "hi": "समझ गया",
+  "kn": "ಅರ್ಥವಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.saving": {
+  "en": "Saving…",
+  "te": "సేవ్ అవుతోంది…",
+  "hi": "सेव हो रहा है…",
+  "kn": "ಸೇವ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.saved": {
+  "en": "Saved. New calls start with this line.",
+  "te": "సేవ్ అయింది. కొత్త కాల్స్ ఈ లైన్‌తో మొదలవుతాయి.",
+  "hi": "सेव हो गया। नई कॉल इसी पंक्ति से शुरू होंगी।",
+  "kn": "ಸೇವ್ ಆಯಿತು. ಹೊಸ ಕರೆಗಳು ಈ ಸಾಲಿನಿಂದ ಶುರುವಾಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.err.invalid": {
+  "en": "Check the words: at least {n} characters and only the four placeholders.",
+  "te": "మాటలు చూడండి: కనీసం {n} అక్షరాలు, నాలుగు ప్లేస్‌హోల్డర్లు మాత్రమే.",
+  "hi": "शब्द जाँचें: कम से कम {n} अक्षर और सिर्फ़ चार प्लेसहोल्डर।",
+  "kn": "ಮಾತುಗಳನ್ನು ನೋಡಿ: ಕನಿಷ್ಠ {n} ಅಕ್ಷರ, ನಾಲ್ಕು ಪ್ಲೇಸ್‌ಹೋಲ್ಡರ್ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.err.short": {
+  "en": "Write at least {n} characters.",
+  "te": "కనీసం {n} అక్షరాలు రాయండి.",
+  "hi": "कम से कम {n} अक्षर लिखें।",
+  "kn": "ಕನಿಷ್ಠ {n} ಅಕ್ಷರ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.err.long": {
+  "en": "Keep it under {n} characters.",
+  "te": "{n} అక్షరాల లోపు ఉంచండి.",
+  "hi": "इसे {n} अक्षरों से कम रखें।",
+  "kn": "{n} ಅಕ್ಷರಗಳೊಳಗೆ ಇಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.err.unknown": {
+  "en": "{names} is not one of the four placeholders.",
+  "te": "{names} నాలుగు ప్లేస్‌హోల్డర్లలో ఒకటి కాదు.",
+  "hi": "{names} चार प्लेसहोल्डर में से नहीं है।",
+  "kn": "{names} ನಾಲ್ಕು ಪ್ಲೇಸ್‌ಹೋಲ್ಡರ್‌ಗಳಲ್ಲಿ ಒಂದಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.err.forbidden": {
+  "en": "Only the Owner can change this.",
+  "te": "దీన్ని ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ ओनर बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.err.read_only": {
+  "en": "This workspace is read-only now, so nothing could be saved.",
+  "te": "ఈ వర్క్‌స్పేస్ ఇప్పుడు రీడ్-ఓన్లీ, అందుకే ఏమీ సేవ్ కాలేదు.",
+  "hi": "यह वर्कस्पेस अभी रीड-ओनली है, इसलिए कुछ सेव नहीं हुआ।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಈಗ ರೀಡ್-ಓನ್ಲಿ, ಹಾಗಾಗಿ ಏನೂ ಸೇವ್ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.err.not_available": {
+  "en": "Not available yet.",
+  "te": "ఇంకా అందుబాటులో లేదు.",
+  "hi": "अभी उपलब्ध नहीं है।",
+  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.err.down": {
+  "en": "Could not save now. Try again in a moment.",
+  "te": "ఇప్పుడు సేవ్ చేయలేకపోయాం. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी सेव नहीं हो पाया। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಈಗ ಸೇವ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.c.title": {
+  "en": "Opening line for this campaign",
+  "te": "ఈ క్యాంపెయిన్‌కి ఓపెనింగ్ లైన్",
+  "hi": "इस कैंपेन की शुरुआती पंक्ति",
+  "kn": "ಈ ಕ್ಯಾಂಪೇನ್‌ನ ಆರಂಭದ ಸಾಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.c.sub": {
+  "en": "Leave a language empty to use the business's line. Change only what is different for this campaign.",
+  "te": "ఒక భాషను ఖాళీగా ఉంచితే వ్యాపారం యొక్క లైన్ వాడతారు. ఈ క్యాంపెయిన్‌కి భిన్నమైనది మాత్రమే మార్చండి.",
+  "hi": "किसी भाषा को खाली छोड़ें तो कारोबार की पंक्ति इस्तेमाल होगी। सिर्फ़ वही बदलें जो इस कैंपेन के लिए अलग है।",
+  "kn": "ಒಂದು ಭಾಷೆಯನ್ನು ಖಾಲಿ ಬಿಟ್ಟರೆ ವ್ಯಾಪಾರದ ಸಾಲು ಬಳಕೆಯಾಗುತ್ತದೆ. ಈ ಕ್ಯಾಂಪೇನ್‌ಗೆ ಬೇರೆಯಾಗಿರುವುದನ್ನು ಮಾತ್ರ ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.c.following": {
+  "en": "This campaign follows the business's line.",
+  "te": "ఈ క్యాంపెయిన్ వ్యాపారం యొక్క లైన్‌ని అనుసరిస్తుంది.",
+  "hi": "यह कैंपेन कारोबार की पंक्ति का पालन करता है।",
+  "kn": "ಈ ಕ್ಯಾಂಪೇನ್ ವ್ಯಾಪಾರದ ಸಾಲನ್ನು ಅನುಸರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.c.reset": {
+  "en": "Follow the business",
+  "te": "వ్యాపారాన్ని అనుసరించండి",
+  "hi": "कारोबार की पंक्ति लें",
+  "kn": "ವ್ಯಾಪಾರವನ್ನು ಅನುಸರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.c.same": {
+  "en": "Same as the business",
+  "te": "వ్యాపారం లాగే",
+  "hi": "कारोबार जैसा ही",
+  "kn": "ವ್ಯಾಪಾರದಂತೆಯೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.c.yes": {
+  "en": "Mention it",
+  "te": "చెప్పండి",
+  "hi": "बताएँ",
+  "kn": "ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.c.no": {
+  "en": "Do not mention it",
+  "te": "చెప్పవద్దు",
+  "hi": "न बताएँ",
+  "kn": "ಹೇಳಬೇಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.c.back": {
+  "en": "Back to the campaign",
+  "te": "క్యాంపెయిన్‌కి తిరిగి",
+  "hi": "कैंपेन पर वापस",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

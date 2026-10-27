@@ -1,7 +1,7 @@
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { VijayaOrb } from "./VijayaOrb";
+import { AssistantOrb } from "./AssistantOrb";
 
 // jsdom has no canvas: a context that counts what is drawn
 const draws = vi.fn();
@@ -26,40 +26,40 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("Vijaya's orb", () => {
+describe("the assistant's orb", () => {
   it("is one decorative canvas that says its state, and fills its parent (or has a wrapper of its own size)", () => {
-    const a = render(<VijayaOrb state="thinking" />).container;
+    const a = render(<AssistantOrb state="thinking" />).container;
     const canvas = a.querySelector("canvas")!;
     expect(canvas.getAttribute("aria-hidden")).toBe("true");
-    expect(canvas.getAttribute("data-vijaya")).toBe("thinking");
+    expect(canvas.getAttribute("data-assistant-orb")).toBe("thinking");
     expect(canvas.hasAttribute("style")).toBe(false);
-    const b = render(<VijayaOrb size={60} />).container;
+    const b = render(<AssistantOrb size={60} />).container;
     expect((b.querySelector("canvas")!.parentElement as HTMLElement).style.width).toBe("60px");
   });
   it("draws a frame at once and keeps drawing while it plays", () => {
-    render(<VijayaOrb state="speaking" />);
+    render(<AssistantOrb state="speaking" />);
     expect(draws).toHaveBeenCalledTimes(1);
     raf.shift()!(performance.now() + 100);
     expect(draws).toHaveBeenCalledTimes(2);
   });
   it("stands still (one frame, no loop) when it is `still` or the visitor asked for less motion", () => {
-    render(<VijayaOrb still />);
+    render(<AssistantOrb still />);
     expect(draws).toHaveBeenCalledTimes(1);
     expect(raf).toHaveLength(0);
     cleanup();
     draws.mockClear();
     vi.stubGlobal("matchMedia", (q: string) => ({ matches: true, media: q, addEventListener: () => undefined, removeEventListener: () => undefined }));
-    render(<VijayaOrb state="speaking" />);
+    render(<AssistantOrb state="speaking" />);
     expect(draws).toHaveBeenCalledTimes(1);
     expect(raf).toHaveLength(0);
   });
   it("reads the loudness from an analyser while listening", () => {
     const getByteTimeDomainData = vi.fn((a: Uint8Array) => a.fill(200));
-    render(<VijayaOrb state="listening" analyser={{ getByteTimeDomainData } as unknown as AnalyserNode} />);
+    render(<AssistantOrb state="listening" analyser={{ getByteTimeDomainData } as unknown as AnalyserNode} />);
     expect(getByteTimeDomainData).toHaveBeenCalled();
   });
   it("does not fail where a canvas cannot be drawn", () => {
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
-    expect(() => render(<VijayaOrb />)).not.toThrow();
+    expect(() => render(<AssistantOrb />)).not.toThrow();
   });
 });
