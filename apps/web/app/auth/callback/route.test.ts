@@ -32,4 +32,11 @@ describe("the return from Google or Facebook", () => {
     expect(res.headers.get("location")).toBe("https://app.example.test/login?notice=provider");
     expect(res.headers.get("location")).not.toContain("invalid");
   });
+  it("tells a Google address without an account (the Auth server's sign-up is off) apart, with its own closed word and no echo, and never swaps a code for it", async () => {
+    const res = await ask("?error=unprocessable_entity&error_code=signup_disabled&error_description=Signups+not+allowed+for+this+instance");
+    expect(res.headers.get("location")).toBe("https://app.example.test/login?notice=nosignup");
+    expect(exchange).not.toHaveBeenCalled();
+    const other = await ask("?error=server_error&error_code=unexpected_failure");
+    expect(other.headers.get("location")).toBe("https://app.example.test/login?notice=provider");
+  });
 });
