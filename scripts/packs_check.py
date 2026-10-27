@@ -198,8 +198,6 @@ def check_landing(packs: dict[str, dict[str, Any]], packs_dir: Path = PACKS) -> 
         slugs[slug] = name
         if "calculator" in landing and "quotes" not in packs[name].get("modules", []):
             errs.append(f"{name}/landing.json: the calculator block needs the pack to have the quotes module")
-        if "fee_preview" in landing and "fees" not in packs[name].get("modules", []):
-            errs.append(f"{name}/landing.json: the fee_preview block needs the pack to have the fees module")
         texts = _landing_texts({k: v for k, v in landing.items() if k not in ("$schema", "pack", "slug")})
         for t in texts:
             for lang in LANDING_LANGS:

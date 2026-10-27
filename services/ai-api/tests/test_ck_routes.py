@@ -220,6 +220,7 @@ def test_every_member_reads_the_pack_with_its_words_units_and_modules() -> None:
     assert body["pack_id"] == "construction_materials" and body["validated"] is False and body["status"] == "preview"
     assert body["core_tab"] == "orders" and "deliveries" in body["modules"] and "sq_ft" in body["units"] and body["default_unit"] == "sq_ft"
     assert body["labels"]["en"]["nav.item.orders"] == "Orders & deliveries" and body["language_review"]["te"] == "draft"
+    assert body["has_example_data"] is False  # the fake pack has its example data taken out
     assert client.get(f"/v1/tenants/{A}/pack", headers=auth("outsider")).status_code == 404
     assert client.get(f"/v1/tenants/{A}/pack", headers=auth("b_owner")).status_code == 404
     assert client.get(f"/v1/tenants/{A}/pack").status_code == 401
@@ -480,3 +481,12 @@ def test_the_custom_fields_repository_maps_its_arguments_and_its_refusals() -> N
 def test_utc_is_what_the_fakes_use() -> None:
     assert datetime.fromisoformat(NOW).tzinfo == UTC
     assert USERS["a_owner"]
+
+
+def test_a_pack_has_example_data_only_when_one_of_its_lists_has_a_row() -> None:
+    from app.packs.routes import _has_example_data
+
+    assert _has_example_data({"example_data": {"contacts": [{"key": "a"}]}}) is True
+    assert _has_example_data({"example_data": {}}) is False
+    assert _has_example_data({"example_data": {"contacts": [], "leads": []}}) is False
+    assert _has_example_data({}) is False

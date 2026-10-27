@@ -34,7 +34,7 @@ import { DETAIL_JSON, MEMBERS_JSON, ORDER_JSON } from "@/lib/api/orders-fixtures
 import { parsePage } from "@/lib/api/crm";
 import { CLAIM, CLAIM_ACCEPTED, COMPANY, COMPANY2_JSON, COMPANY_JSON, CONTACT, CONTACT_JSON, ENQ, ENQUIRY, EVIDENCE_PAGE, LEAD, LEAD_JSON, OPPORTUNITY_JSON, PRODUCT_JSON, REQUIREMENT, REQUIREMENT_CONFIRMED, REQUIREMENT_DRAFT, TENANT, requirementJson } from "./fixtures";
 import { parsePolicyStatus } from "@/lib/api/policy";
-import { defaultPackId, otherPackIds, packFields, workspacePack } from "@/lib/packs/pack-test-kit";
+import { defaultPackId, otherPackIds, packFields, selectableIds, workspacePack } from "@/lib/packs/pack-test-kit";
 import { parseProfile } from "@/lib/api/profile";
 import { parseAccount, parseConversationPage, parseTemplates, parseThread } from "@/lib/api/whatsapp";
 import { parseItem as parseMaterialItem, parseItemList as parseMaterialItemList, parsePolicy as parseMaterialPolicy, parseQuoteDetail as parseMaterialQuoteDetail, parseQuoteList as parseMaterialQuoteList } from "@/lib/api/materials";
@@ -759,6 +759,8 @@ add({ id: "accept", roles: ["owner"], render: async () => (await import("@/app/a
 // The words, modules and fields are the real files of packages/packs through the API's shapes (lib/packs/pack-test-kit). Every scenario above runs with NO pack handler (a server with no pack routes: the product as it
 // always was), and `today-default-pack` below runs the default business type of an existing workspace and must read exactly like `today`.
 const CONSTRUCTION = otherPackIds().find((i) => workspacePack(i).modules.includes("deliveries"))!;
+// a business type that ships no example data (the Lead Desk types): Today must not offer to load an empty sample
+const NO_EXAMPLES = selectableIds().find((i) => !workspacePack(i).hasExampleData)!;
 const EDUCATION = otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!;
 const packOf = (id: string, source: "signup" | "default" | "legacy" = "signup") => () => workspacePack(id, source);
 const packCardReads: Record<string, Handler> = {
@@ -782,6 +784,7 @@ add({ id: "start-education-done-profile", roles: ["admin"], render: startPage, h
 add({ id: "today-default-pack", roles: ["owner"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 add({ id: "today-construction", roles: ["owner", "sales"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
 add({ id: "today-education-example-loaded", roles: ["owner"], render: todayPage({ example: "loaded" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(EDUCATION), ...eduCardReads, getExampleStatus: SAMPLE_LOADED, getProfile: PROFILE_DONE }) });
+add({ id: "today-no-example-data", roles: ["owner"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(NO_EXAMPLES), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 add({ id: "today-example-failed", roles: ["owner"], render: todayPage({ example: "unavailable" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 add({ id: "today-example-removed-some-kept", roles: ["owner"], render: todayPage({ example: "removed", kept: "3" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 const school = (role: Role): Record<string, Handler> => ({ ...base(role), getWorkspacePack: packOf(EDUCATION) });

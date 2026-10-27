@@ -25,7 +25,7 @@ type Actions = { quoteChat: (input: unknown) => Promise<LeadResult>; chatAvailab
 
 /**
  * The page of one business type (job CM, blueprint section 7), built ENTIRELY from its landing.json (and the pack's names and owl labels): the problem, a day with the owls, what it does, then the blocks the file asks for
- * (the calculator, the fee reminder preview, the children's data promise), the questions and the call to action. Nothing here names a business type: a new landing.json is a new page.
+ * (the calculator, the children's data promise), the questions and the call to action. Nothing here names a business type: a new landing.json is a new page.
  */
 export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT; lang: Lang; actions: Actions }) {
   const faq = pack.faq.map((f) => ({ q: say(f.q, lang), a: say(f.a, lang) }));
@@ -107,26 +107,6 @@ export function PackPage({ pack, t, lang, actions }: { pack: SitePack; t: SiteT;
             chatAvailable={actions.chatAvailable}
           />
           <p className="mt-3 max-w-3xl text-sm text-muted">{say(pack.calculator.note, lang)}</p>
-        </Section>
-      ) : null}
-
-      {pack.fee_preview ? (
-        <Section id="preview" title={say(pack.fee_preview.title, lang)} tone="soft">
-          <figure aria-label={t("preview.title")} className="max-w-xl rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5" data-part="fee-preview">
-            <figcaption className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted">
-              <span>{t("preview.title")}</span>
-              <span className={chip}>{say(pack.fee_preview.label, lang)}</span>
-            </figcaption>
-            <div className="mt-3 flex flex-col gap-2">
-              {pack.fee_preview.messages.map((m, i) => (
-                <p key={i} className={`max-w-[92%] rounded-2xl px-4 py-3 text-base leading-snug ${m.from === "parent" ? "self-end bg-brand-bg" : "self-start bg-surface-2"}`}>
-                  <span className="mb-0.5 block text-sm font-medium text-muted">{m.from === "parent" ? t("preview.parent") : t("preview.school")}</span>
-                  {say(m.text, lang)}
-                </p>
-              ))}
-            </div>
-          </figure>
-          <p className="mt-3 max-w-xl text-sm text-muted">{say(pack.fee_preview.note, lang)}</p>
         </Section>
       ) : null}
 

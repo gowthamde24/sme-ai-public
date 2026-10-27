@@ -13,7 +13,6 @@ export type CalculatorBlock = {
   default_wastage_bps: number;
   truck_capacity_pieces: number;
 };
-export type FeePreviewBlock = { title: Text; label: Text; note: Text; messages: readonly { from: "school" | "parent"; text: Text }[] };
 export type ChildrenPromiseBlock = { title: Text; points: readonly Text[]; note: Text };
 
 export type SitePack = {
@@ -39,7 +38,6 @@ export type SitePack = {
   faq: readonly { q: Text; a: Text }[];
   plan_fit: { starter: Text; growth: Text; business: Text };
   calculator?: CalculatorBlock;
-  fee_preview?: FeePreviewBlock;
   children_promise?: ChildrenPromiseBlock;
 };
 export type SitePacks = { packs: readonly SitePack[] };

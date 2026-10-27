@@ -66,6 +66,8 @@ describe("where the session stands on the second factor (GET /v1/account/securit
   });
 });
 
+const workspacePackHas = (id: string) => Object.values(packFiles()[id].example_data ?? {}).some((rows) => Array.isArray(rows) && rows.length > 0);
+
 describe("the business type of a workspace (GET .../pack and .../modules)", () => {
   const other = otherPackIds()[0];
   const answer = (path: string, id: string, source: "signup" | "default" | "legacy" = "signup", enabled?: string[]) => (path.endsWith("/pack") ? packWire(id, source) : modulesWire(enabled ?? packFiles()[id].modules));
@@ -80,6 +82,14 @@ describe("the business type of a workspace (GET .../pack and .../modules)", () =
     expect(p.modules).not.toContain("campaigns");
     expect(p.labels.en["pack.core_tab"]).toBe(packFiles()[other].labels.en["pack.core_tab"]);
     expect(Object.keys(p.labels)).toEqual(expect.arrayContaining(["en", "te", "hi", "kn"]));
+  });
+  it("says whether the pack ships example data, and takes a server that does not say as yes", () => {
+    const withData = selectableIds().find((i) => workspacePackHas(i));
+    const without = selectableIds().find((i) => !workspacePackHas(i));
+    expect(parseWorkspacePack(packWire(withData!, "signup")).hasExampleData).toBe(true);
+    expect(parseWorkspacePack(packWire(without!, "signup")).hasExampleData).toBe(false);
+    const old = Object.fromEntries(Object.entries(packWire(without!, "signup")).filter(([k]) => k !== "has_example_data"));
+    expect(parseWorkspacePack(old).hasExampleData).toBe(true);
   });
   it("uses the pack's own list when only the modules read fails", async () => {
     apiRequest.mockImplementation(async (path: string) => {

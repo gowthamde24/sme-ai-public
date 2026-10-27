@@ -22,7 +22,7 @@ function texts(node: unknown, found: { path: string; text: Text }[] = [], at = "
   }
   return found;
 }
-const all = SITE_PACKS.flatMap((p) => texts({ meta: p.meta, hero: p.hero, problem: p.problem, day: p.day, features: p.features, faq: p.faq, plan_fit: p.plan_fit, calculator: p.calculator, fee_preview: p.fee_preview, children_promise: p.children_promise }, [], p.slug));
+const all = SITE_PACKS.flatMap((p) => texts({ meta: p.meta, hero: p.hero, problem: p.problem, day: p.day, features: p.features, faq: p.faq, plan_fit: p.plan_fit, calculator: p.calculator, children_promise: p.children_promise }, [], p.slug));
 
 describe("the public site's copy of the landing blocks (generated from packages/packs)", () => {
   it("is fresh: it is exactly what pack.json and landing.json give (run `make site-packs`)", () => {
