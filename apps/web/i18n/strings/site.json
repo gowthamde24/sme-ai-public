@@ -3505,10 +3505,10 @@
   }
  },
  "ld.s.1.d": {
-  "en": "From an ad, a portal, a sheet, your website or a missed call, the lead lands in Lead Desk.",
-  "te": "యాడ్, పోర్టల్, షీట్, మీ వెబ్‌సైట్ లేదా మిస్డ్ కాల్ నుంచి లీడ్ Lead Desk లోకి వస్తుంది.",
-  "hi": "ऐड, पोर्टल, शीट, आपकी वेबसाइट या मिस्ड कॉल से लीड Lead Desk में आता है।",
-  "kn": "ಜಾಹೀರಾತು, ಪೋರ್ಟಲ್, ಶೀಟ್, ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್ ಅಥವಾ ಮಿಸ್ಡ್ ಕಾಲ್‌ನಿಂದ ಲೀಡ್ Lead Desk ಗೆ ಬರುತ್ತದೆ.",
+  "en": "From an ad, a portal, a sheet or your website, the lead lands in Lead Desk.",
+  "te": "యాడ్, పోర్టల్, షీట్ లేదా మీ వెబ్‌సైట్ నుంచి లీడ్ Lead Desk లోకి వస్తుంది.",
+  "hi": "ऐड, पोर्टल, शीट या आपकी वेबसाइट से लीड Lead Desk में आता है।",
+  "kn": "ಜಾಹೀರಾತು, ಪೋರ್ಟಲ್, ಶೀಟ್ ಅಥವಾ ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್‌ನಿಂದ ಲೀಡ್ Lead Desk ಗೆ ಬರುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

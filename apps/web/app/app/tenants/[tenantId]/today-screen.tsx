@@ -12,6 +12,7 @@ import { pageMain } from "@/components/v2/app/ui";
 import { ActivationCard } from "@/components/v2/app/start/ActivationCard";
 import { ExampleBanner, type ExampleNotice } from "@/components/v2/app/start/ExampleBanner";
 import { readActivation, usesChecklist, type Activation } from "@/lib/packs/activation";
+import { leadDeskSteps } from "@/lib/packs/lead-activation";
 import { getExampleStatus } from "@/lib/api/example-data";
 import { readPackCached } from "@/lib/packs/read";
 import { readIsDemo } from "./today-read";
@@ -63,7 +64,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
       readToday(accessToken, tenantId, role),
       readDisplayName(accessToken, tenantId, userId),
       role === "owner" && !usesChecklist(pack) ? readSetupFacts(accessToken, tenantId, shop) : Promise.resolve(null),
-      ownSteps && pack ? readActivation(accessToken, tenantId, pack, t) : Promise.resolve(null),
+      ownSteps && pack ? leadDeskSteps(pack).then((lead) => readActivation(accessToken, tenantId, pack, t, lead)) : Promise.resolve(null),
       manages && pack ? getExampleStatus(accessToken, tenantId) : Promise.resolve(null),
       readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupees }),
     ]);
