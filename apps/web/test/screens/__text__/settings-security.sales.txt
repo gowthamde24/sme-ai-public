@@ -1,4 +1,6 @@
 # Settings
 [button type=button: Help for this screen]
 {label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security current=page) [Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
-{label="Security"} 2-step sign-in is not set up yet. [Open the security page](/app/security)
+{label="Two-step sign-in (optional)"}
+## Two-step sign-in (optional)
+A second code from an authenticator app protects your account if your password or Google account is ever stolen. It is your choice. We recommend it for the Owner. 2-step sign-in is not set up yet. [Turn on two-step sign-in (authenticator app)](/app/security)

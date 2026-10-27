@@ -103,3 +103,31 @@ describe("recording the Terms and Privacy Policy accepted at sign-up (job CF)", 
     expect(submit).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("the name and what an 'Other' business is", () => {
+  const made = () => vi.fn(async () => ({ tenantId: TENANT, created: true }));
+  it("saves the name the Owner typed right after the business is made, for the business that was made", async () => {
+    const saveName = vi.fn(async () => undefined);
+    expect(await runCompleteSetup({ businessType: "gym", language: "en", businessName: "  Iron Gym " }, { token: "t", submit: made(), saveName })).toEqual({ ok: true });
+    expect(saveName).toHaveBeenCalledWith("t", TENANT, "Iron Gym");
+  });
+  it("a name that cannot be saved does not undo the set-up (it is changed in Settings), but a rejected session is passed on as such", async () => {
+    expect(await runCompleteSetup({ businessType: "gym", language: "en", businessName: "Iron Gym" }, { token: "t", submit: made(), saveName: async () => { throw new Error("down"); } })).toEqual({ ok: true });
+    expect(await runCompleteSetup({ businessType: "gym", language: "en", businessName: "Iron Gym" }, { token: "t", submit: made(), saveName: async () => { throw new ApiAuthError("x"); } })).toEqual({ ok: false, error: SETUP_TEXT.session });
+  });
+  it("no name is asked of the old callers: nothing is saved and nothing fails", async () => {
+    const saveName = vi.fn();
+    expect(await runCompleteSetup({ businessType: "gym", language: "en" }, { token: "t", submit: made(), saveName })).toEqual({ ok: true });
+    expect(saveName).not.toHaveBeenCalled();
+  });
+  it.each([[{ businessName: "" }, SETUP_TEXT.name], [{ businessName: "x".repeat(121) }, SETUP_TEXT.name], [{ businessLabel: "x" }, SETUP_TEXT.label], [{ businessLabel: "x".repeat(61) }, SETUP_TEXT.label]])("%j is refused before any request", async (extra, error) => {
+    const submit = made();
+    expect(await runCompleteSetup({ businessType: "other", language: "en", ...extra }, { token: "t", submit })).toEqual({ ok: false, error });
+    expect(submit).not.toHaveBeenCalled();
+  });
+  it("sends what the 'Other' business is with the choices", async () => {
+    const submit = made();
+    await runCompleteSetup({ businessType: "other", language: "te", businessName: "Rao", businessLabel: " Paver block dealer " }, { token: "t", submit });
+    expect(submit).toHaveBeenCalledWith("t", { businessType: "other", language: "te", businessLabel: "Paver block dealer" });
+  });
+});

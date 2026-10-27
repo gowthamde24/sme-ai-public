@@ -115,14 +115,17 @@ describe("Settings, one part at a time", () => {
     render(await SettingsPage(props({ section: "members" })));
     expect(screen.getByText("Not available yet")).toBeInTheDocument();
   });
-  it("says whether 2-step sign-in is on, and links to the security page", async () => {
+  it("says two-step sign-in is optional and whether it is on, and links to turn it on or off", async () => {
     render(await SettingsPage(props({ section: "security" })));
+    expect(screen.getByRole("heading", { name: "Two-step sign-in (optional)" })).toBeInTheDocument();
+    expect(screen.getByText(/It is your choice\. We recommend it for the Owner\./)).toBeInTheDocument();
     expect(screen.getByText("2-step sign-in is on.")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Open the security page" })).toHaveAttribute("href", "/app/security");
+    expect(screen.getByRole("link", { name: "Turn it off or manage it" })).toHaveAttribute("href", "/app/security");
     requireUser.mockResolvedValue({ id: "11111111-1111-4111-8111-111111111111", email: "e", accessToken: "tok", aal: "aal1", hasSecondFactor: false });
     document.body.innerHTML = "";
     render(await SettingsPage(props({ section: "security" })));
     expect(screen.getByText("2-step sign-in is not set up yet.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Turn on two-step sign-in (authenticator app)" })).toHaveAttribute("href", "/app/security");
   });
   it.each([
     ["owner", ["Privacy and erasure", "Suppression keys"]],

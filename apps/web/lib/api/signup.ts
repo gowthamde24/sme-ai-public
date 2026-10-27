@@ -36,5 +36,6 @@ export type SignUpInput = {
 
 export type SignUpResult = { ok: true; next: "check-email" } | { ok: false; error: WebSignUpError };
 
-export type CompleteSetupInput = { businessType: BusinessType; language: SetupLanguage };
+/** `businessName` (1 to 120): the name the Owner typed at first login, saved right after the business is made. `businessLabel` (2 to 60): what an "Other" business is, in the Owner's words (only for the type that asks it). */
+export type CompleteSetupInput = { businessType: BusinessType; language: SetupLanguage; businessName?: string; businessLabel?: string };
 export type CompleteSetupResult = { ok: true } | { ok: false; error: string };

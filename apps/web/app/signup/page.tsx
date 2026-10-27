@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import { EmailDisclosure } from "@/components/v2/auth/EmailDisclosure";
 import { SignupClosed } from "@/components/v2/auth/SignupClosed";
-import { PackCard } from "@/components/v2/auth/PackCard";
 import { OrbMark } from "@/components/v2/app/mark/OrbMark";
 import { authAlert, authH1, authHint, authLead, authLink, authMain, authSecondary } from "@/components/v2/auth/ui";
 import { BRAND_NAME } from "@/design/brand";
@@ -15,13 +14,16 @@ import { dpdpScreens } from "@/lib/screens/flag";
 import { isSignupOpen } from "@/lib/auth/signup-open";
 import { getAuthProviders, listPacks } from "@/lib/api/pack";
 import { readTemplates } from "@/lib/lead-desk/source";
-import { LEADS_CARD_ID, toPackSummary } from "@/lib/lead-desk/templates";
+import { toPackSummary } from "@/lib/lead-desk/templates";
+import { OTHER_TYPE, typeGroups } from "@/lib/packs/other";
+import { typeWords } from "@/components/v2/auth/type-words";
 import { leadsScreens } from "@/lib/screens/flag";
 import { pickSignupPack, signupCards } from "@/lib/packs/signup";
 
 import { signUp } from "./actions";
 import { continueWithProvider } from "./oauth-actions";
 import { SignUpForm } from "./sign-up-form";
+import { SignupTypePicker } from "./type-picker";
 
 export const metadata = { title: `Create your account · ${BRAND_NAME}` };
 
@@ -52,7 +54,7 @@ function TermsLine({ text, termsLink, privacyLink }: { text: string; termsLink: 
 
 /**
  * /signup, in two steps and nothing else (job CL, blueprint 3.1):
- *   1. "What kind of business do you run?": a card for each kind of business the API offers (`GET /v1/packs`), as plain links to `/signup?type=<id>`. No script.
+ *   1. "What kind of business do you run?": ONE searchable list of the kinds of business the API offers (`GET /v1/packs`), grouped (built especially for / Lead Desk / Other); choosing one goes to `/signup?type=<id>`.
  *   2. "Continue with Google / Facebook / e-mail", and the line "By continuing you agree to the Terms and the Privacy Policy". Google and Facebook are drawn only when the server says they are on (`GET /v1/auth/providers`).
  *      The e-mail way asks an address and a password only.
  * The kind of business is read from the address and checked against the cards (an unknown value shows step 1). Then the account goes straight to Today, laid out for the business type.
@@ -90,45 +92,14 @@ export default async function SignupPage({ searchParams }: PageProps<"/signup">)
   const wantedType = Array.isArray(query.type) ? query.type[0] : query.type;
   const type = pickSignupPack(allPacks, wantedType);
   const cards = signupCards(allPacks, lang);
-  const leadsCard = { id: LEADS_CARD_ID, name: t("signup.leads.name"), tagline: t("signup.leads.tagline"), accent: "leads_orange", owlProp: "phone_headset", validated: true };
-
-  if (!type && templates.length > 0 && wantedType === LEADS_CARD_ID) {
-    return (
-      <main id="main" className={authMain} lang={lang}>
-        <p className="text-sm font-semibold text-muted">{t("signup.step", { n: 1 })}</p>
-        <h1 className={authH1}>{t("signup.leads.title")}</h1>
-        <p className={authLead}>{t("signup.leads.sub")}</p>
-        <ul className="flex flex-col gap-3" aria-label={t("signup.leads.title")} data-part="lead-templates">
-          {cards.filter((c) => templateIds.has(c.id)).map((card) => (
-            <li key={card.id}>
-              <PackCard card={card} href={`/signup?type=${card.id}`} hint={t("signup.pack.choose", { name: card.name })} notValidated={t("signup.pack.preview")} />
-            </li>
-          ))}
-        </ul>
-        <p className={`${authHint} mt-6`}>
-          <Link href="/signup" className={authLink}>
-            {t("signup.leads.back")}
-          </Link>
-        </p>
-      </main>
-    );
-  }
-
   if (!type) {
-    const first = templates.length > 0 ? cards.filter((c) => !templateIds.has(c.id)) : cards;
-    const shown = templates.length > 0 ? [...first, leadsCard] : first;
+    const groups = typeGroups(cards, templateIds, { deep: t("signup.type.group.deep"), leads: t("signup.type.group.leads"), all: t("signup.type.group.all"), other: t("signup.type.other"), otherTagline: t("signup.type.other.tagline") });
     return (
       <main id="main" className={authMain} lang={lang}>
         <p className="text-sm font-semibold text-muted">{t("signup.step", { n: 1 })}</p>
         <h1 className={authH1}>{t("signup.pack.title")}</h1>
         <p className={authLead}>{t("signup.pack.sub")}</p>
-        <ul className="flex flex-col gap-3" aria-label={t("signup.pack.title")}>
-          {shown.map((card) => (
-            <li key={card.id}>
-              <PackCard card={card} href={`/signup?type=${card.id}`} hint={t("signup.pack.choose", { name: card.name })} notValidated={t("signup.pack.preview")} />
-            </li>
-          ))}
-        </ul>
+        <SignupTypePicker groups={groups} words={typeWords(t)} otherId={allPacks.some((p) => p.packId === OTHER_TYPE) ? OTHER_TYPE : null} />
         <p className={`${authHint} mt-6`}>
           {t("signup.have")}{" "}
           <Link href="/login" className={authLink}>

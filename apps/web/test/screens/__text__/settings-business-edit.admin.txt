@@ -1,0 +1,42 @@
+# Settings
+[button type=button: Help for this screen]
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business current=page) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Business details"}
+form:
+## Business details
+Business name
+<text name=name label="Business name" required maxlength=120 autocomplete=organization value=Pavers Corner (synthetic)>
+Customers see this name in messages and calls. You can change it any time. City or area
+<text name=town label="City or area" maxlength=80 minlength=2 autocomplete=address-level2 value=Guntur>
+legend: Languages you talk to customers in
+<checkbox name=languages label="English" value=en checked>
+English
+<checkbox name=languages label="తెలుగు" value=te checked>
+తెలుగు
+<checkbox name=languages label="हिन्दी" value=hi>
+हिन्दी
+<checkbox name=languages label="ಕನ್ನಡ" value=kn>
+ಕನ್ನಡ
+<checkbox name=languages label="தமிழ்" value=ta>
+தமிழ்
+<checkbox name=languages label="മലയാളം" value=ml>
+മലയാളം Pick at least one.
+[button type=submit: Save]
+### Where this name shows
+- The menu and the title of every page of your workspace
+- Messages and calls written for your customers
+- How Vijaya greets you and introduces your business
+{label="Business and plan"}
+Plan
+Free trial plan
+URL name
+demo-silks
+## Our GSTIN
+This part could not be loaded. The rest of the page is fine.
+[button type=button: Try again]
+{role=status}
+{label="AI usage today"}
+## AI usage today
+AI usage today 7% used
+{role=meter label="AI usage today"}
+3% of this month

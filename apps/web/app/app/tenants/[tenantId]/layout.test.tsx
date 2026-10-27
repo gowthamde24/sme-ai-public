@@ -61,11 +61,13 @@ describe("the workspace layout", () => {
     rerender(await TenantLayout(props(T)));
     expect(document.querySelector("[data-ask='orb']")).toBeNull(); // the live call needs the whole screen
     nav.pathname = `/app/tenants/${T}/orders`;
-    for (const state of ["switched_off", "not_available"]) {
-      readAgents.mockResolvedValue(teamWith(state));
-      rerender(await TenantLayout(props(T)));
-      expect(document.querySelector("[data-ask='orb']"), state).toBeNull();
-    }
+    // switched off for the workspace (the first-run state): the orb is there and opens the line with the button that turns the assistant on; a system with no assistant has no orb at all
+    readAgents.mockResolvedValue(teamWith("switched_off"));
+    rerender(await TenantLayout(props(T)));
+    expect(document.querySelector("[data-ask='orb'][data-ask-off='true']")).not.toBeNull();
+    readAgents.mockResolvedValue(teamWith("not_available"));
+    rerender(await TenantLayout(props(T)));
+    expect(document.querySelector("[data-ask='orb']")).toBeNull();
     readAgents.mockRejectedValue(new Error("not read"));
     rerender(await TenantLayout(props(T)));
     expect(document.querySelector("[data-ask='orb']")).toBeNull();

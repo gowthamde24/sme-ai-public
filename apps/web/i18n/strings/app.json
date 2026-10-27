@@ -69232,5 +69232,291 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ask.off.line": {
+  "en": "{assistant} is switched off for your workspace. Turn it on and you can type or speak here.",
+  "te": "మీ వర్క్‌స్పేస్‌లో {assistant} ఆఫ్‌లో ఉంది. ఆన్ చేస్తే ఇక్కడ టైప్ చేయవచ్చు, మాట్లాడవచ్చు.",
+  "hi": "आपके वर्कस्पेस में {assistant} बंद है। चालू करने पर आप यहाँ लिख या बोल सकते हैं।",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ನಲ್ಲಿ {assistant} ಆಫ್ ಆಗಿದೆ. ಆನ್ ಮಾಡಿದರೆ ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಬಹುದು, ಮಾತನಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.off.turnon": {
+  "en": "Turn on {assistant}",
+  "te": "{assistant}ని ఆన్ చేయండి",
+  "hi": "{assistant} को चालू करें",
+  "kn": "{assistant} ಅನ್ನು ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.off.working": {
+  "en": "Turning on…",
+  "te": "ఆన్ చేస్తున్నాను…",
+  "hi": "चालू कर रहे हैं…",
+  "kn": "ಆನ್ ಮಾಡಲಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.off.owner": {
+  "en": "Only the Owner or an Admin can turn {assistant} on. Ask them to do it.",
+  "te": "{assistant}ని ఆన్ చేయడం ఓనర్ లేదా అడ్మిన్ మాత్రమే చేయగలరు. వారిని అడగండి.",
+  "hi": "{assistant} को सिर्फ़ ओनर या एडमिन चालू कर सकते हैं। उनसे कहें।",
+  "kn": "{assistant} ಅನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಆನ್ ಮಾಡಬಹುದು. ಅವರನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.off.still": {
+  "en": "It is on for your workspace, but switched off for the whole system right now. Try again later.",
+  "te": "మీ వర్క్‌స్పేస్‌కి ఆన్ అయింది, కానీ ఇప్పుడు మొత్తం సిస్టమ్‌లో ఆఫ్‌లో ఉంది. కాసేపటి తర్వాత మళ్లీ చూడండి.",
+  "hi": "आपके वर्कस्पेस के लिए यह चालू है, पर अभी पूरे सिस्टम में बंद है। थोड़ी देर बाद फिर देखें।",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ ಆನ್ ಆಗಿದೆ, ಆದರೆ ಈಗ ಇಡೀ ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ಆಫ್ ಆಗಿದೆ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.off.failed": {
+  "en": "Could not turn it on. Try again.",
+  "te": "ఆన్ చేయలేకపోయాను. మళ్లీ ప్రయత్నించండి.",
+  "hi": "चालू नहीं हो सका। फिर कोशिश करें।",
+  "kn": "ಆನ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.title": {
+  "en": "Business details",
+  "te": "వ్యాపార వివరాలు",
+  "hi": "व्यवसाय की जानकारी",
+  "kn": "ವ್ಯಾಪಾರದ ವಿವರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.name": {
+  "en": "Business name",
+  "te": "వ్యాపారం పేరు",
+  "hi": "व्यवसाय का नाम",
+  "kn": "ವ್ಯಾಪಾರದ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.name.help": {
+  "en": "Customers see this name in messages and calls. You can change it any time.",
+  "te": "కస్టమర్లు ఈ పేరును మెసేజ్‌లలో, కాల్స్‌లో చూస్తారు. ఎప్పుడైనా మార్చవచ్చు.",
+  "hi": "ग्राहक यह नाम मैसेज और कॉल में देखते हैं। आप इसे कभी भी बदल सकते हैं।",
+  "kn": "ಗ್ರಾಹಕರು ಈ ಹೆಸರನ್ನು ಮೆಸೇಜ್ ಮತ್ತು ಕರೆಗಳಲ್ಲಿ ನೋಡುತ್ತಾರೆ. ಯಾವಾಗ ಬೇಕಾದರೂ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.town": {
+  "en": "City or area",
+  "te": "నగరం లేదా ప్రాంతం",
+  "hi": "शहर या इलाका",
+  "kn": "ನಗರ ಅಥವಾ ಪ್ರದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.langs": {
+  "en": "Languages you talk to customers in",
+  "te": "కస్టమర్లతో మాట్లాడే భాషలు",
+  "hi": "ग्राहकों से बात करने की भाषाएँ",
+  "kn": "ಗ್ರಾಹಕರೊಂದಿಗೆ ಮಾತನಾಡುವ ಭಾಷೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.langs.help": {
+  "en": "Pick at least one.",
+  "te": "కనీసం ఒకటి ఎంచుకోండి.",
+  "hi": "कम से कम एक चुनें।",
+  "kn": "ಕನಿಷ್ಠ ಒಂದನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सहेजें",
+  "kn": "ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.saved": {
+  "en": "Saved. The new name shows everywhere now.",
+  "te": "సేవ్ అయింది. కొత్త పేరు ఇప్పుడు అన్నిచోట్లా కనిపిస్తుంది.",
+  "hi": "सहेज लिया। नया नाम अब हर जगह दिखेगा।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ. ಹೊಸ ಹೆಸರು ಈಗ ಎಲ್ಲೆಡೆ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.invalid": {
+  "en": "Check the name (up to 120 letters), the city (at least 2 letters) and pick at least one language.",
+  "te": "పేరు (120 అక్షరాల వరకు), నగరం (కనీసం 2 అక్షరాలు) చూడండి, కనీసం ఒక భాష ఎంచుకోండి.",
+  "hi": "नाम (120 अक्षर तक), शहर (कम से कम 2 अक्षर) देखें और कम से कम एक भाषा चुनें।",
+  "kn": "ಹೆಸರು (120 ಅಕ್ಷರಗಳವರೆಗೆ), ನಗರ (ಕನಿಷ್ಠ 2 ಅಕ್ಷರ) ನೋಡಿ, ಕನಿಷ್ಠ ಒಂದು ಭಾಷೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.role": {
+  "en": "Only the Owner or an Admin can change this.",
+  "te": "ఇది ఓనర్ లేదా అడ్మిన్ మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ ओनर या एडमिन बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.failed": {
+  "en": "Could not save. Try again.",
+  "te": "సేవ్ చేయలేకపోయాను. మళ్లీ ప్రయత్నించండి.",
+  "hi": "सहेज नहीं सका। फिर कोशिश करें।",
+  "kn": "ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.session": {
+  "en": "Please sign in again.",
+  "te": "దయచేసి మళ్లీ సైన్ ఇన్ చేయండి.",
+  "hi": "कृपया फिर से साइन इन करें।",
+  "kn": "ದಯವಿಟ್ಟು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.used.title": {
+  "en": "Where this name shows",
+  "te": "ఈ పేరు ఎక్కడ కనిపిస్తుంది",
+  "hi": "यह नाम कहाँ दिखता है",
+  "kn": "ಈ ಹೆಸರು ಎಲ್ಲಿ ಕಾಣುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.used.1": {
+  "en": "The menu and the title of every page of your workspace",
+  "te": "మీ వర్క్‌స్పేస్ మెనూలో, ప్రతి పేజీ టైటిల్‌లో",
+  "hi": "आपके वर्कस्पेस के मेन्यू और हर पेज के शीर्षक में",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ನ ಮೆನು ಮತ್ತು ಪ್ರತಿ ಪುಟದ ಶೀರ್ಷಿಕೆಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.used.2": {
+  "en": "Messages and calls written for your customers",
+  "te": "మీ కస్టమర్ల కోసం రాసే మెసేజ్‌లలో, కాల్స్‌లో",
+  "hi": "आपके ग्राहकों के लिए लिखे मैसेज और कॉल में",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗಾಗಿ ಬರೆಯುವ ಮೆಸೇಜ್ ಮತ್ತು ಕರೆಗಳಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.used.3": {
+  "en": "How {assistant} greets you and introduces your business",
+  "te": "{assistant} మిమ్మల్ని పలకరించే విధానంలో, మీ వ్యాపారాన్ని పరిచయం చేసే విధానంలో",
+  "hi": "{assistant} आपका स्वागत और आपके व्यवसाय का परिचय कैसे देता है",
+  "kn": "{assistant} ನಿಮ್ಮನ್ನು ಹೇಗೆ ಸ್ವಾಗತಿಸುತ್ತದೆ ಮತ್ತು ನಿಮ್ಮ ವ್ಯಾಪಾರವನ್ನು ಹೇಗೆ ಪರಿಚಯಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.security.title": {
+  "en": "Two-step sign-in (optional)",
+  "te": "రెండు-దశల సైన్ ఇన్ (ఐచ్ఛికం)",
+  "hi": "दो-चरण साइन-इन (वैकल्पिक)",
+  "kn": "ಎರಡು-ಹಂತದ ಸೈನ್ ಇನ್ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.security.why": {
+  "en": "A second code from an authenticator app protects your account if your password or Google account is ever stolen. It is your choice. We recommend it for the Owner.",
+  "te": "మీ పాస్‌వర్డ్ లేదా గూగుల్ ఖాతా ఎప్పుడైనా దొంగిలించబడితే, ఆథెంటికేటర్ యాప్‌లోని రెండో కోడ్ మీ ఖాతాను కాపాడుతుంది. ఇది మీ ఇష్టం. ఓనర్‌కి ఇది సిఫార్సు చేస్తున్నాము.",
+  "hi": "अगर आपका पासवर्ड या गूगल खाता कभी चोरी हो जाए, तो ऑथेंटिकेटर ऐप का दूसरा कोड आपके खाते को बचाता है। यह आपकी मर्ज़ी है। ओनर के लिए हम इसकी सलाह देते हैं।",
+  "kn": "ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಅಥವಾ ಗೂಗಲ್ ಖಾತೆ ಎಂದಾದರೂ ಕಳವಾದರೆ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಎರಡನೇ ಕೋಡ್ ನಿಮ್ಮ ಖಾತೆಯನ್ನು ಕಾಪಾಡುತ್ತದೆ. ಇದು ನಿಮ್ಮ ಆಯ್ಕೆ. ಓನರ್‌ಗೆ ಇದನ್ನು ಶಿಫಾರಸು ಮಾಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.security.turnon": {
+  "en": "Turn on two-step sign-in (authenticator app)",
+  "te": "రెండు-దశల సైన్ ఇన్ ఆన్ చేయండి (ఆథెంటికేటర్ యాప్)",
+  "hi": "दो-चरण साइन-इन चालू करें (ऑथेंटिकेटर ऐप)",
+  "kn": "ಎರಡು-ಹಂತದ ಸೈನ್ ಇನ್ ಆನ್ ಮಾಡಿ (ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.security.manage": {
+  "en": "Turn it off or manage it",
+  "te": "ఆఫ్ చేయండి లేదా నిర్వహించండి",
+  "hi": "इसे बंद करें या संभालें",
+  "kn": "ಆಫ್ ಮಾಡಿ ಅಥವಾ ನಿರ್ವಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

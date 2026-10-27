@@ -110,19 +110,29 @@ describe("SignUpForm (the e-mail way of step 2)", () => {
 });
 
 describe("/signup step 1: what kind of business do you run?", () => {
-  it("shows a card for each kind of business as a plain link to step 2, and nothing else to fill in", async () => {
+  it("shows ONE searchable list of the kinds of business the API offers, grouped, and nothing else to fill in", async () => {
     render(await SignupPage(props()));
     expect(screen.getByRole("heading", { level: 1, name: "What kind of business do you run?" })).toBeInTheDocument();
     expect(screen.getByText("Step 1 of 2")).toBeInTheDocument();
-    const cards = screen.getAllByRole("link").filter((a) => a.hasAttribute("data-pack-card"));
-    expect(cards.map((a) => a.getAttribute("href"))).toEqual(IDS.map((id) => `/signup?type=${id}`));
-    expect(within(cards[1]).getByText(nameOf(SECOND))).toBeInTheDocument();
-    expect(within(cards[2]).getByText(SUMMARIES[2].summary.en)).toBeInTheDocument();
-    expect(within(cards[1]).getByText("Not validated by a real owner yet")).toBeInTheDocument(); // no real owner of that trade has reviewed it
-    expect(within(cards[0]).queryByText("Not validated by a real owner yet")).toBeNull();
-    expect(screen.queryByRole("textbox")).toBeNull();
-    expect(screen.queryByRole("button")).toBeNull();
+    const box = screen.getByRole("combobox", { name: "Business type" });
+    expect(box).toHaveAttribute("aria-expanded", "false");
+    fireEvent.focus(box);
+    const options = within(screen.getByRole("listbox")).getAllByRole("option");
+    expect(options.map((o) => o.getAttribute("data-pack-card"))).toEqual(IDS);
+    expect(within(options[1]).getByText(nameOf(SECOND))).toBeInTheDocument();
+    expect(within(options[2]).getByText(SUMMARIES[2].summary.en)).toBeInTheDocument();
+    expect(screen.queryAllByRole("link", { name: /Sign in/ })).toHaveLength(1);
     expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login");
+  });
+  it("typing filters the list; choosing a kind goes on to step 2 with it", async () => {
+    render(await SignupPage(props()));
+    const box = screen.getByRole("combobox", { name: "Business type" });
+    fireEvent.focus(box);
+    fireEvent.change(box, { target: { value: nameOf(SECOND).slice(0, 4) } });
+    const left = within(screen.getByRole("listbox")).getAllByRole("option");
+    expect(left.map((o) => o.getAttribute("data-pack-card"))).toContain(IDS[1]);
+    fireEvent.click(left.find((o) => o.getAttribute("data-pack-card") === IDS[1])!);
+    expect(push).toHaveBeenCalledWith(`/signup?type=${IDS[1]}`);
   });
   it("is the first step for a type it does not know (an address is never trusted, never echoed), even a well-formed one the API does not offer", async () => {
     render(await SignupPage(props({ type: "<script>" })));

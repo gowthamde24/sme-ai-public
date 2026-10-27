@@ -72,6 +72,9 @@ import { CATALOGUE, planById } from "@/lib/plan/catalogue";
 import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
 import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, startPlanAction } from "../plan-actions";
 import { topupsPart } from "./topups-part";
+import { BusinessForm } from "@/components/v2/app/settings/BusinessForm";
+import { getProfile, PROFILE_LANGUAGES, type BusinessProfile } from "@/lib/api/profile";
+import { saveBusinessAction } from "./business-actions";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -126,6 +129,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const fieldEntities = pack ? (([pack.modules.includes("contacts") ? "contact" : null, pack.modules.includes("catalogue") ? "catalogue_item" : null].filter(Boolean)) as FieldEntity[]) : [];
   const fieldList: WorkspaceField[] | null = admin && fieldEntities.length > 0 ? await listCustomFields(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   // a workspace that existed before business types and has no field of its own keeps the Settings it always had; one made with a chosen business type, or that has fields, gets the tab
+  // the business name, city and languages are editable by the people who run the business (read here; a failed read leaves the plain name)
+  const businessProfile: BusinessProfile | null = admin && (wanted === undefined || wanted === "business") ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const hasFields = admin && fieldEntities.length > 0 && (usesChecklist(pack) || (fieldList !== null && fieldList.length > 0));
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
   const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
@@ -231,12 +236,26 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       <div className="mt-6 max-w-3xl space-y-4">
         {section === "business" ? (
           <>
+            {businessProfile ? (
+              <section className={surface} aria-label={t("settings.biz.title")}>
+                <BusinessForm
+                  action={saveBusinessAction.bind(null, tenantId)}
+                  words={wordsFor(lang, ["settings.biz."])}
+                  name={businessProfile.name}
+                  town={businessProfile.town ?? ""}
+                  languages={businessProfile.languages}
+                  choices={PROFILE_LANGUAGES}
+                />
+              </section>
+            ) : null}
             <section className={surface} aria-label={t("settings.tab.business")}>
               <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {businessProfile ? null : (
                 <div>
                   <dt className="text-sm text-muted">{t("settings.business.name")}</dt>
                   <dd className="font-display text-xl font-semibold">{tenant.name}</dd>
                 </div>
+                )}
                 <div>
                   <dt className="text-sm text-muted">{t("settings.business.plan")}</dt>
                   <dd className="font-display text-xl font-semibold">{planText(plan, labels) ?? t("frame.notyet")}</dd>
@@ -395,12 +414,16 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           </div>
         ) : null}
         {section === "security" ? (
-          <section className={`${surface} flex flex-wrap items-center gap-3`} aria-label={t("settings.tab.security")}>
-            <ShieldCheck className={`size-6 shrink-0 ${user.hasSecondFactor ? "text-green-text" : "text-amber-text"}`} aria-hidden="true" />
-            <p className="min-w-0 flex-1 font-medium">{user.hasSecondFactor ? t("settings.security.on") : t("settings.security.off")}</p>
-            <Link href="/app/security" className={link}>
-              {t("settings.security.open")}
-            </Link>
+          <section className={`${surface} flex flex-col gap-3`} aria-label={t("settings.security.title")}>
+            <h2 className="text-xl font-semibold">{t("settings.security.title")}</h2>
+            <p className="text-base text-muted">{t("settings.security.why")}</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <ShieldCheck className={`size-6 shrink-0 ${user.hasSecondFactor ? "text-green-text" : "text-muted"}`} aria-hidden="true" />
+              <p className="min-w-0 flex-1 font-medium">{user.hasSecondFactor ? t("settings.security.on") : t("settings.security.off")}</p>
+              <Link href="/app/security" className={link}>
+                {user.hasSecondFactor ? t("settings.security.manage") : t("settings.security.turnon")}
+              </Link>
+            </div>
           </section>
         ) : null}
         {section === "privacy" && privacy ? (
