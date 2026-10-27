@@ -63,7 +63,7 @@ describe("Lead Desk on Today: what needs the person", () => {
   const kinds = (cards: NeedsCard[]) => cards.map((c) => (c.type === "item" ? c.item.kind : c.type));
 
   it("the Owner is shown a hot lead, the plans and tasks waiting for the one approval, the limits reached and the callbacks due", () => {
-    const cards = needsOf(parts, "owner", BASE, t);
+    const cards = needsOf(parts, "owner", BASE, t, sourceName);
     expect(kinds(cards).sort()).toEqual(["callback_due", "hot_lead_waiting", "outreach_paused", "outreach_paused", "outreach_paused", "plan_waiting", "plan_waiting"]);
     const by = (kind: string) => cards.flatMap((c) => (c.type === "item" && c.item.kind === kind ? [c.item] : []));
     expect(by("hot_lead_waiting")).toMatchObject([{ id: id(1), customer: "Ravi 1", href: `${BASE}/leads/${id(101)}`, summary: "Showed interest and nobody has called back yet." }]);
@@ -74,24 +74,38 @@ describe("Lead Desk on Today: what needs the person", () => {
     expect(by("outreach_paused").find((i) => i.customer === "IndiaMART")?.href).toBe(`${BASE}/outreach`);
   });
   it("a card has the same key as the API's own item of its kind, so one thing is one card", () => {
-    const keys = needsOf(parts, "owner", BASE, t).map((c) => c.key);
+    const keys = needsOf(parts, "owner", BASE, t, sourceName).map((c) => c.key);
     expect(keys).toContain(`hot_lead_waiting-${id(1)}`);
     expect(keys).toContain(`outreach_paused-${id(2)}`);
     expect(new Set(keys).size).toBe(keys.length);
   });
   it("an Admin sees the limits and callbacks but not the plans only the Owner approves; Sales see the hot leads only; a Viewer nothing", () => {
-    expect(kinds(needsOf(parts, "admin", BASE, t)).sort()).toEqual(["callback_due", "hot_lead_waiting", "outreach_paused", "outreach_paused", "outreach_paused"]);
-    expect(kinds(needsOf(parts, "sales", BASE, t))).toEqual(["hot_lead_waiting"]);
+    expect(kinds(needsOf(parts, "admin", BASE, t, sourceName)).sort()).toEqual(["callback_due", "hot_lead_waiting", "outreach_paused", "outreach_paused", "outreach_paused"]);
+    expect(kinds(needsOf(parts, "sales", BASE, t, sourceName))).toEqual(["hot_lead_waiting"]);
   });
   it("a hand-off with no lead opens the hot leads of the Lead Desk; an acted hand-off, a plan paused by its owner and a task that needs an answer are not listed", () => {
-    const cards = needsOf({ ...none, handoffs: [handoff(1, { leadId: null }), handoff(2, { actedAt: "2026-10-27T09:00:00Z" })], batches: [batch(3, { status: "paused", pausedReason: "owner" })], tasks: [task(4, { status: "needs_answer" })] }, "owner", BASE, t);
+    const cards = needsOf({ ...none, handoffs: [handoff(1, { leadId: null }), handoff(2, { actedAt: "2026-10-27T09:00:00Z" })], batches: [batch(3, { status: "paused", pausedReason: "owner" })], tasks: [task(4, { status: "needs_answer" })] }, "owner", BASE, t, sourceName);
     expect(cards).toHaveLength(1);
     expect(cards[0].type === "item" && cards[0].item.href).toBe(`${BASE}/lead-desk?hot=1`);
   });
   it("is newest first and empty when nothing waits", () => {
-    const cards = needsOf(parts, "owner", BASE, t);
+    const cards = needsOf(parts, "owner", BASE, t, sourceName);
     expect(cards.map((c) => Date.parse(c.at))).toEqual([...cards.map((c) => Date.parse(c.at))].sort((a, b) => b - a));
-    expect(needsOf(none, "owner", BASE, t)).toEqual([]);
+    expect(needsOf(none, "owner", BASE, t, sourceName)).toEqual([]);
+  });
+});
+
+describe("the plain name of a lead source (Today crashed for every business type with its own pages when a lead had a source the dictionary has no word for)", () => {
+  it("names the tags Lead Desk knows from the dictionary and shows any other source as it is, with no lookup that can miss", async () => {
+    const { sourceNameOf } = await import("./lead-desk-today");
+    expect(sourceNameOf(t, "indiamart")).toBe("IndiaMART");
+    expect(sourceNameOf(t, "whatsapp_inbound")).toBe("whatsapp inbound");
+    expect(sourceNameOf(t, "manual")).toBe("manual");
+    expect(sourceNameOf(t, "")).toBe("");
+  });
+  it("a rule of a source nobody has a word for is named as it is", () => {
+    const cards = needsOf({ ...none, rules: [rule(31, { source: "old_tag", active: false, pausedReason: "cap_calls" })] }, "owner", BASE, t, (tag) => tag.replace(/_/g, " "));
+    expect(cards[0].type === "item" && cards[0].item.customer).toBe("old tag");
   });
 });
 
@@ -153,6 +167,14 @@ describe("readLeadDesk", () => {
     readHandoffs.mockRejectedValue(new ApiAuthError());
     await expect(readLeadDesk(CTX, "owner", BASE, t, sourceName, NOW)).rejects.toBeInstanceOf(ApiAuthError);
   });
+  it("a business type with no lead template (withTeam false) gets the cards but its leads are not even read, and it has no Lead Desk workers", async () => {
+    readHandoffs.mockResolvedValue([handoff(1)]);
+    readDeskLeads.mockResolvedValue({ leads: [{ id: id(9), contactId: null, name: "Meena", source: "whatsapp_inbound", status: "new", ownerUserId: null, createdAt: "2026-10-27T09:00:00Z", hot: false }], nextCursor: null });
+    const { needs, team } = await readLeadDesk(CTX, "owner", BASE, t, sourceName, NOW, false);
+    expect(readDeskLeads).not.toHaveBeenCalled();
+    expect(team).toEqual([]);
+    expect(needs.map((c) => c.key)).toEqual([`hot_lead_waiting-${id(1)}`]);
+  });
   it("Sales ask for the hand-offs and the plans only: no rules, tasks or leads", async () => {
     await readLeadDesk(CTX, "sales", BASE, t, sourceName, NOW);
     expect(readHandoffs).toHaveBeenCalled();
@@ -165,7 +187,7 @@ describe("Lead Desk's items join Today's own, and the count is the truth", () =>
   const base = (over: Partial<TodayData> = {}): TodayData => ({ ...NOTHING_TODAY, cards: { waiting: 1, money_held_paise: 0, orders_open: 0 }, needs: [api(`hot_lead_waiting-${id(1)}`, "2026-10-27T08:05:00Z")], ...over });
 
   it("one thing the API listed too is one card (Lead Desk's words, the API's time); one only Lead Desk knows is added and counted", () => {
-    const desk = needsOf({ ...none, handoffs: [handoff(1), handoff(2, { notifiedAt: "2026-10-27T09:00:00Z" })] }, "owner", BASE, t);
+    const desk = needsOf({ ...none, handoffs: [handoff(1), handoff(2, { notifiedAt: "2026-10-27T09:00:00Z" })] }, "owner", BASE, t, sourceName);
     const merged = mergeDesk(base(), { needs: desk, team: [] });
     expect(merged.needs?.map((c) => c.key)).toEqual([`hot_lead_waiting-${id(2)}`, `hot_lead_waiting-${id(1)}`]);
     expect(merged.cards.waiting).toBe(2);
@@ -175,7 +197,7 @@ describe("Lead Desk's items join Today's own, and the count is the truth", () =>
   it("does not change a Today that Lead Desk adds nothing to, and a Today that could not be read stays unread", () => {
     const today = base();
     expect(mergeDesk(today, { needs: [], team: [] })).toMatchObject({ needs: today.needs, cards: today.cards, deskTeam: null });
-    expect(mergeDesk({ ...today, needs: null }, { needs: needsOf({ ...none, handoffs: [handoff(3)] }, "owner", BASE, t), team: [] }).needs).toBeNull();
+    expect(mergeDesk({ ...today, needs: null }, { needs: needsOf({ ...none, handoffs: [handoff(3)] }, "owner", BASE, t, sourceName), team: [] }).needs).toBeNull();
   });
   it("carries the workers for 'Your team' only when there are some", () => {
     const team = [{ key: "calls" as const, state: "idle" as const, name: "Caller", text: "No calling plan yet", at: null }];

@@ -18,6 +18,7 @@ import { parseOrderPage as parseOrders } from "@/lib/api/orders";
 import { parsePlan } from "@/lib/api/plan";
 import { parseAccountSetup } from "@/lib/api/account";
 import { parseAiUsage } from "@/lib/api/ai-usage";
+import { parseToday } from "@/lib/api/today";
 import { agentsStatus, todayFor } from "./today-fixtures";
 import { SETTINGS_JSON, STATUS_JSON } from "@/lib/api/scheduler-fixtures";
 import { SETTINGS, TODAY_VISITS, parseVisitFixture, slotsJson, visitJson } from "@/lib/api/visits-fixtures";
@@ -1090,6 +1091,28 @@ add({ id: "outreach-plans", roles: ["owner", "admin", "sales"], render: () => wi
 add({ id: "outreach-new", roles: ["owner", "sales"], render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/new/page")).default(props({}, { source: "indiamart", goal: "site_visit" }))), handlers: (role) => cons(role) });
 add({ id: "outreach-batch-planned", roles: ["owner", "admin"], render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/batches/[batchId]/page")).default(props({ batchId: OUT_BATCH }))), handlers: (role) => ({ ...cons(role), getBatch: () => outBatch("planned", null), getBatchItems: () => parseOutreachItems({ items: [{ id: "ca000000-0000-4000-8000-0000000000f1", contact_id: OUT_CONTACT, lead_id: null, name: "Ravi K.", status: "planned", reason: null, attempts: 0, next_action: "call", next_at: null, last_result: null }], next_cursor: null }) }) });
 add({ id: "outreach-batch-running", roles: ["owner"], render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/batches/[batchId]/page")).default(props({ batchId: OUT_BATCH }))), handlers: (role) => ({ ...cons(role), getBatch: () => outBatch("running", { total: 9, waiting: 6, done: 3, calls_made: 3, connected: 2, interested: 1, minutes_used: 9 }), getBatchItems: () => parseOutreachItems({ items: [], next_cursor: null }) }) });
+// Today of a business type with its own pages (textiles, construction materials, schools) with NOTHING waiting and the Lead Desk parts switched on, as on staging: a lead whose source the dictionary has no word for must not break the page
+const quietToday = () => parseToday({ cards: { waiting: 0, money_held_paise: 0, orders_open: 0 }, needs_you: [], recent: [] });
+const DEEP_TODAY: Record<string, () => string> = { textiles: () => defaultPackId(), construction: () => CONSTRUCTION, education: () => EDUCATION };
+for (const [name, packId] of Object.entries(DEEP_TODAY)) {
+  add({
+    id: `today-empty-${name}`,
+    roles: ["owner", "admin"],
+    render: () => withEnv({ LEADS_SCREENS: "1", OUTREACH_SCREENS: "1", TASK_SCREENS: "1" }, todayPage()),
+    handlers: (role) => ({
+      ...todayBase(role),
+      getToday: quietToday,
+      getWorkspacePack: () => workspacePack(packId(), "legacy"),
+      getExampleStatus: SAMPLE_NONE,
+      getProfile: PROFILE_DONE,
+      listBatches: () => [],
+      listHandoffs: () => parseOutreachHandoffs([]),
+      listRules: () => [],
+      listTasks: () => tkParsed("parseTaskList", []),
+      listDeskLeads: () => ({ leads: [{ id: LEAD, contactId: null, name: "Meena (synthetic)", source: "whatsapp_inbound", status: "new", ownerUserId: null, createdAt: "2026-10-06T04:00:00Z", hot: false }], nextCursor: null }),
+    }),
+  });
+}
 add({
   id: "lead-report",
   roles: ["owner", "admin"],
