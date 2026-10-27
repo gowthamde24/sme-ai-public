@@ -4,6 +4,11 @@
 export interface AccountSecurityOut {
   session_level: "aal1" | "aal2";
   asked_at_sign_up: false;
+  second_factor?: "optional";
+  second_factor_on?: boolean | null;
+  signed_in_at?: string | null;
+  recent_sign_in?: boolean;
+  provider?: "email" | "google" | "facebook" | null;
   needed_for: ("approvals" | "whatsapp_connect" | "rules_and_prices" | "imports_and_exports" | "team_and_privacy")[];
 }
 
@@ -128,7 +133,7 @@ export interface WorkspacePackOut {
   version: number;
   status: "draft" | "preview" | "published";
   validated: boolean;
-  source: "signup" | "default" | "legacy" | "operator";
+  source: "signup" | "default" | "legacy" | "operator" | "owner";
   chosen_at: string;
   names: Record<string, string>;
   summary: Record<string, string>;

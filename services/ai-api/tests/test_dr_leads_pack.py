@@ -57,8 +57,8 @@ def test_the_nine_types_are_packs_with_a_template_and_the_checker_passes() -> No
 
 def test_every_template_asks_questions_that_fill_a_field_and_states_no_price() -> None:
     templates = default_templates()
-    assert templates.ids() == sorted(NINE)
-    for name in NINE:
+    assert templates.ids() == sorted([*NINE, "general_business"])   # job DT: the generic type next to the nine
+    for name in [*NINE, "general_business"]:
         t = templates.get(name)
         assert t is not None and 3 <= len(t.questions) <= 8 and len(t.objections) >= 3 and t.safety
         fields = templates.contact_fields(name)
@@ -96,7 +96,7 @@ def test_the_public_template_routes() -> None:
     listing = client.get("/v1/lead-templates")
     assert listing.status_code == 200 and "max-age" in listing.headers["cache-control"]
     ids = [t["pack_id"] for t in listing.json()["templates"]]
-    assert ids == sorted(NINE)
+    assert ids == sorted([*NINE, "general_business"])
     first = listing.json()["templates"][0]
     assert first["goal"]["code"] == "test_drive" and first["goal"]["label"]["te"] and first["question_count"] >= 3 and first["validated"] is False
     one = client.get("/v1/lead-templates/real_estate").json()

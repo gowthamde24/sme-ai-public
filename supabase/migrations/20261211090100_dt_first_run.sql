@@ -409,9 +409,10 @@ create table workspace.member_profiles (
   language     text check (language is null or language in ('en', 'te', 'hi', 'kn', 'ta', 'ml')),
   avatar_path  text check (avatar_path is null or avatar_path ~ '^member/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.jpg$'),
   updated_at   timestamptz not null default now(),
-  primary key (workspace_id, user_id),
-  foreign key (workspace_id, user_id) references public.memberships (tenant_id, user_id) on delete cascade
+  primary key (workspace_id, user_id)
 );
+-- a member's profile goes when the membership goes
+alter table workspace.member_profiles add foreign key (workspace_id, user_id) references public.memberships (tenant_id, user_id) on delete cascade;
 alter table workspace.member_profiles enable row level security;
 alter table workspace.member_profiles force row level security;
 revoke all on workspace.member_profiles from public, anon, authenticated, service_role;

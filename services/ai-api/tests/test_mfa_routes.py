@@ -59,7 +59,7 @@ STALE = (
 )
 FRESH = (
     {"aal": "aal1", "iat": int(time.time())},  # a person with no second factor, signed in just now (Google or a password)
-    {"aal": None},  # no aal claim: the sign-in is recent, which is what is asked
+    {"aal": None, "iat": int(time.time())},  # no aal claim: the sign-in is recent, which is what is asked
     {"aal": "aal2"},
     {"aal": "aal1", "iat": OLD, "amr": [{"method": "oauth", "timestamp": int(time.time()) - 60}]},  # an old token, a Google sign-in a minute ago
 )

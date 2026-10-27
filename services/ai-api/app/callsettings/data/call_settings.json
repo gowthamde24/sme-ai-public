@@ -531,6 +531,41 @@
         "sales_followup",
         "visit_reminder"
       ]
+    },
+    "general_business": {
+      "retry_busy": {
+        "count": 2,
+        "gap_minutes": 30
+      },
+      "retry_no_answer": {
+        "count": 3,
+        "gap_minutes": 120
+      },
+      "retry_call_later": {
+        "count": 2,
+        "gap_minutes": 60
+      },
+      "concurrent_calls": 1,
+      "detect_voicemail": true,
+      "voicemail_action": "retry_later",
+      "detect_phone_menu": true,
+      "phone_menu_action": "hang_up",
+      "silence_timeout_seconds": 8,
+      "max_call_seconds": 360,
+      "interruption_sensitivity": "medium",
+      "listening_sounds": true,
+      "pronunciations": [],
+      "keywords": [],
+      "hours": null,
+      "holidays": [],
+      "max_calls_per_customer_per_week": 2,
+      "auto_pause_refusals_per_hour": 10,
+      "contact_memory": true,
+      "handover": [],
+      "allowed_purposes": [
+        "sales_followup",
+        "visit_reminder"
+      ]
     }
   }
 }

@@ -92,7 +92,7 @@ def test_every_introduction_and_every_sample_states_ai_assistant() -> None:
 def test_the_samples_cover_every_language_style_and_business_type() -> None:
     d = data.load()
     # job DR: the nine leads-and-calls types share the "leads" lines; every other type has its own
-    assert set(d["samples"]) | {"real_estate", "coaching", "clinic", "insurance_loans", "auto_dealer", "interiors_solar", "travel", "gym", "wholesale_b2b"} == set(d["defaults"]) | {"leads"}
+    assert set(d["samples"]) | {"real_estate", "coaching", "clinic", "insurance_loans", "auto_dealer", "interiors_solar", "travel", "gym", "wholesale_b2b", "general_business"} == set(d["defaults"]) | {"leads"}
     assert "leads" in d["samples"] and all(data.sample(biz, "en", "warm", "Asha", "Shop") for biz in d["defaults"])
     for biz in d["samples"]:
         assert set(d["samples"][biz]) == set(LANGS)
