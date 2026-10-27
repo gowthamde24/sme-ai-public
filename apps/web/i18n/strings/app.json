@@ -68880,5 +68880,357 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.kind.hot": {
+  "en": "Hot lead",
+  "te": "హాట్ లీడ్",
+  "hi": "हॉट लीड",
+  "kn": "ಹಾಟ್ ಲೀಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.hot": {
+  "en": "Call back now",
+  "te": "ఇప్పుడే తిరిగి కాల్ చేయండి",
+  "hi": "अभी वापस कॉल करें",
+  "kn": "ಈಗಲೇ ವಾಪಸ್ ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.plan": {
+  "en": "Plan to approve",
+  "te": "ఓకే చేయాల్సిన ప్లాన్",
+  "hi": "मंज़ूरी वाला प्लान",
+  "kn": "ಒಪ್ಪಿಗೆ ಬೇಕಾದ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.plan": {
+  "en": "Review and approve",
+  "te": "చూసి ఓకే చేయండి",
+  "hi": "देखकर मंज़ूर करें",
+  "kn": "ನೋಡಿ ಒಪ್ಪಿಗೆ ಕೊಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.callback": {
+  "en": "Callbacks due",
+  "te": "తిరిగి కాల్ చేయాల్సినవి",
+  "hi": "वापस कॉल का समय",
+  "kn": "ವಾಪಸ್ ಕರೆ ಮಾಡುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.callback": {
+  "en": "See the callbacks",
+  "te": "కాల్‌బ్యాక్‌లు చూడండి",
+  "hi": "कॉलबैक देखें",
+  "kn": "ಕಾಲ್‌ಬ್ಯಾಕ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.cap": {
+  "en": "Limit reached",
+  "te": "పరిమితి చేరింది",
+  "hi": "सीमा पूरी हुई",
+  "kn": "ಮಿತಿ ತಲುಪಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.cap": {
+  "en": "Review the limit",
+  "te": "పరిమితి చూడండి",
+  "hi": "सीमा देखें",
+  "kn": "ಮಿತಿ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.fact.plan": {
+  "en": "Plan",
+  "te": "ప్లాన్",
+  "hi": "प्लान",
+  "kn": "ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.hot": {
+  "en": "Showed interest and nobody has called back yet.",
+  "te": "ఆసక్తి చూపారు, ఇంకా ఎవరూ తిరిగి కాల్ చేయలేదు.",
+  "hi": "दिलचस्पी दिखाई है, अभी तक किसी ने वापस कॉल नहीं किया।",
+  "kn": "ಆಸಕ್ತಿ ತೋರಿಸಿದ್ದಾರೆ, ಇನ್ನೂ ಯಾರೂ ವಾಪಸ್ ಕರೆ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.plan": {
+  "en": "A plan for {n} people is ready. Approve it once and the calls and messages start.",
+  "te": "{n} మందికి ప్లాన్ సిద్ధంగా ఉంది. ఒక్కసారి ఓకే చేస్తే కాల్స్, మెసేజ్‌లు మొదలవుతాయి.",
+  "hi": "{n} लोगों का प्लान तैयार है। एक बार मंज़ूर करें, फिर कॉल और मैसेज शुरू हो जाएँगे।",
+  "kn": "{n} ಜನರಿಗೆ ಪ್ಲಾನ್ ಸಿದ್ಧವಾಗಿದೆ. ಒಮ್ಮೆ ಒಪ್ಪಿಗೆ ಕೊಟ್ಟರೆ ಕರೆ, ಮೆಸೇಜ್ ಶುರುವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.plan.task": {
+  "en": "This task is planned and waits for your one approval.",
+  "te": "ఈ పని ప్లాన్ అయింది, మీ ఒక్క ఓకే కోసం ఆగుతోంది.",
+  "hi": "यह काम प्लान हो चुका है और आपकी एक मंज़ूरी का इंतज़ार कर रहा है।",
+  "kn": "ಈ ಕೆಲಸದ ಪ್ಲಾನ್ ಆಗಿದೆ, ನಿಮ್ಮ ಒಂದೇ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.cap.minutes": {
+  "en": "Calling is paused: you reached the minutes you allowed.",
+  "te": "కాలింగ్ ఆగింది: మీరు పెట్టిన నిమిషాల పరిమితికి చేరింది.",
+  "hi": "कॉलिंग रुकी है: आपने जितने मिनट तय किए थे, वे पूरे हो गए।",
+  "kn": "ಕರೆ ನಿಂತಿದೆ: ನೀವು ಇಟ್ಟ ನಿಮಿಷಗಳ ಮಿತಿ ತಲುಪಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.cap.calls": {
+  "en": "Calling is paused: you reached the day's limit.",
+  "te": "కాలింగ్ ఆగింది: ఈ రోజు పరిమితికి చేరింది.",
+  "hi": "कॉलिंग रुकी है: आज की सीमा पूरी हो गई।",
+  "kn": "ಕರೆ ನಿಂತಿದೆ: ಇಂದಿನ ಮಿತಿ ತಲುಪಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.cap.task": {
+  "en": "This task is paused: it reached the spending limit you set.",
+  "te": "ఈ పని ఆగింది: మీరు పెట్టిన ఖర్చు పరిమితికి చేరింది.",
+  "hi": "यह काम रुका है: आपकी तय की हुई खर्च सीमा पूरी हो गई।",
+  "kn": "ಈ ಕೆಲಸ ನಿಂತಿದೆ: ನೀವು ಇಟ್ಟ ಖರ್ಚಿನ ಮಿತಿ ತಲುಪಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.callback": {
+  "en": "{n} people asked for a call back and their time has come.",
+  "te": "{n} మంది తిరిగి కాల్ చేయమన్నారు, వారి సమయం వచ్చింది.",
+  "hi": "{n} लोगों ने वापस कॉल करने को कहा था और उनका समय हो गया है।",
+  "kn": "{n} ಜನರು ವಾಪಸ್ ಕರೆ ಮಾಡಲು ಕೇಳಿದ್ದರು, ಅವರ ಸಮಯ ಬಂದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.leads": {
+  "en": "Lead catcher",
+  "te": "లీడ్ క్యాచర్",
+  "hi": "लीड कैचर",
+  "kn": "ಲೀಡ್ ಕ್ಯಾಚರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.leads.last": {
+  "en": "Last lead: {name} from {source}",
+  "te": "చివరి లీడ్: {name}, {source} నుండి",
+  "hi": "आख़िरी लीड: {name}, {source} से",
+  "kn": "ಕೊನೆಯ ಲೀಡ್: {name}, {source} ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.leads.last.nosource": {
+  "en": "Last lead: {name}",
+  "te": "చివరి లీడ్: {name}",
+  "hi": "आख़िरी लीड: {name}",
+  "kn": "ಕೊನೆಯ ಲೀಡ್: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.leads.none": {
+  "en": "No leads yet",
+  "te": "ఇంకా లీడ్లు లేవు",
+  "hi": "अभी कोई लीड नहीं",
+  "kn": "ಇನ್ನೂ ಲೀಡ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.calls": {
+  "en": "Caller",
+  "te": "కాలర్",
+  "hi": "कॉलर",
+  "kn": "ಕಾಲರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.calls.running": {
+  "en": "Calling {name}: {done} of {total} done",
+  "te": "{name}కి కాల్స్: {total}లో {done} అయ్యాయి",
+  "hi": "{name} को कॉल: {total} में से {done} हुए",
+  "kn": "{name} ಗೆ ಕರೆ: {total} ರಲ್ಲಿ {done} ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.calls.last": {
+  "en": "Last plan: {name}",
+  "te": "చివరి ప్లాన్: {name}",
+  "hi": "आख़िरी प्लान: {name}",
+  "kn": "ಕೊನೆಯ ಪ್ಲಾನ್: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.calls.none": {
+  "en": "No calling plan yet",
+  "te": "ఇంకా కాలింగ్ ప్లాన్ లేదు",
+  "hi": "अभी कोई कॉलिंग प्लान नहीं",
+  "kn": "ಇನ್ನೂ ಕರೆ ಪ್ಲಾನ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.rules": {
+  "en": "Standing rules",
+  "te": "స్టాండింగ్ రూల్స్",
+  "hi": "स्थायी नियम",
+  "kn": "ಸ್ಥಿರ ನಿಯಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.rules.one": {
+  "en": "1 rule is on, calling new leads by itself",
+  "te": "1 రూల్ ఆన్‌లో ఉంది, కొత్త లీడ్లకు దానంతట అదే కాల్ చేస్తోంది",
+  "hi": "1 नियम चालू है, नई लीड को अपने आप कॉल करता है",
+  "kn": "1 ನಿಯಮ ಆನ್ ಆಗಿದೆ, ಹೊಸ ಲೀಡ್‌ಗಳಿಗೆ ತಾನಾಗಿ ಕರೆ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.rules.other": {
+  "en": "{n} rules are on, calling new leads by themselves",
+  "te": "{n} రూల్స్ ఆన్‌లో ఉన్నాయి, కొత్త లీడ్లకు వాటంతట అవే కాల్ చేస్తున్నాయి",
+  "hi": "{n} नियम चालू हैं, नई लीड को अपने आप कॉल करते हैं",
+  "kn": "{n} ನಿಯಮಗಳು ಆನ್ ಆಗಿವೆ, ಹೊಸ ಲೀಡ್‌ಗಳಿಗೆ ತಾವಾಗಿ ಕರೆ ಮಾಡುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.rules.none": {
+  "en": "No rule is on",
+  "te": "ఏ రూల్ ఆన్‌లో లేదు",
+  "hi": "कोई नियम चालू नहीं",
+  "kn": "ಯಾವ ನಿಯಮವೂ ಆನ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.tasks": {
+  "en": "Task helper",
+  "te": "టాస్క్ హెల్పర్",
+  "hi": "टास्क हेल्पर",
+  "kn": "ಟಾಸ್ಕ್ ಹೆಲ್ಪರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.tasks.running": {
+  "en": "Working on: {name}",
+  "te": "చేస్తున్న పని: {name}",
+  "hi": "इस पर काम: {name}",
+  "kn": "ಮಾಡುತ್ತಿರುವ ಕೆಲಸ: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.tasks.last": {
+  "en": "Last task: {name}",
+  "te": "చివరి పని: {name}",
+  "hi": "आख़िरी काम: {name}",
+  "kn": "ಕೊನೆಯ ಕೆಲಸ: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dw.tasks.none": {
+  "en": "No task yet",
+  "te": "ఇంకా పని లేదు",
+  "hi": "अभी कोई काम नहीं",
+  "kn": "ಇನ್ನೂ ಕೆಲಸ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

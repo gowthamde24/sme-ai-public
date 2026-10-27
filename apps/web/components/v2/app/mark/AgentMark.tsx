@@ -24,15 +24,15 @@ export { orbStateOf };
  * Who is speaking, as a small picture beside a name (job DM, replacing the owl pictures): the main assistant is the AI circle; each of the six helpers is the icon of its job on a soft tile (the same shape, so a list of them reads as one team).
  * `px` is the width in CSS pixels. `mood` moves the circle (see orbStateOf); `off` is a helper that is switched off or not built yet (45 % opacity). Decorative: the name beside it is the label. A server component with no script.
  */
-export function AgentMark({ agent, px = 48, mood, off = false, className = "" }: { agent?: string; px?: number; mood?: AiMood; off?: boolean; className?: string }) {
-  const Icon = agent ? HELPER_ICONS[agent] : undefined;
+export function AgentMark({ agent, icon: own, px = 48, mood, off = false, className = "" }: { agent?: string; /** A picture of its own (a Lead Desk worker), instead of the one of a helper's job. */ icon?: LucideIcon; px?: number; mood?: AiMood; off?: boolean; className?: string }) {
+  const Icon = own ?? (agent ? HELPER_ICONS[agent] : undefined);
   const dim = off ? "opacity-45" : "";
   if (!Icon) return <OrbMark px={px} mood={mood} off={off} className={className} />;
-  const icon = Math.round(px * 0.5);
+  const size = Math.round(px * 0.5);
   return (
     <span data-agent-mark={agent} aria-hidden="true" className={`inline-flex shrink-0 items-center justify-center rounded-2xl bg-brand-bg text-brand-text ${dim} ${className}`}>
       <span style={{ display: "flex", width: px, height: px, alignItems: "center", justifyContent: "center" }}>
-        <Icon width={icon} height={icon} strokeWidth={1.9} aria-hidden="true" />
+        <Icon width={size} height={size} strokeWidth={1.9} aria-hidden="true" />
       </span>
     </span>
   );
