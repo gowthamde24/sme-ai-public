@@ -109,16 +109,14 @@ class AuthProvidersOut(_Out):
 
 
 class AccountSecurityOut(_Out):
-    """GET /v1/account/security: where the person's sign-in stands (ADR 0115). The second factor is OPTIONAL for everybody: never asked at sign-up or at setup, only when the person turned it on. A sensitive
-    action needs a RECENT sign-in (`recent_sign_in`: within 10 minutes), else the screen asks them to sign in again (Google again, or the password)."""
+    """GET /v1/account/security: where the person's second factor stands (ADR 0115). It is OPTIONAL for everybody: never asked at sign-up or at setup. A person who turned it on enters the code once per sign-in
+    session (the session is then aal2) and is asked for it on a sensitive action only before that."""
 
     session_level: Literal["aal1", "aal2"]
     asked_at_sign_up: Literal[False]
     second_factor: Literal["optional"] = "optional"
     # did the person turn the authenticator on (null when the database could not be asked)
     second_factor_on: bool | None = None
-    signed_in_at: datetime | None = None
-    recent_sign_in: bool = False
     provider: Literal["email", "google", "facebook"] | None = None
-    # the groups of actions that need a recent sign-in (and the code, for a person who turned the authenticator on)
+    # the groups of actions that need the code from a person who turned the authenticator on
     needed_for: list[Literal["approvals", "whatsapp_connect", "rules_and_prices", "imports_and_exports", "team_and_privacy"]]

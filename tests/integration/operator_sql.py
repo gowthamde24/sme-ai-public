@@ -14,7 +14,6 @@ import json
 import shutil
 import subprocess
 import sys
-import time
 from pathlib import Path
 
 import pytest
@@ -97,8 +96,7 @@ def as_user(user_id: str, body: str, *, hold_seconds: float = 0.0, aal: str = "a
     """One transaction that runs `body` (SQL statements) as the authenticated user `user_id`, the way PostgREST would
     (role + JWT claims), optionally HOLDING the transaction open for `hold_seconds` before it commits, then prints the
     commit time. The output is the statement results followed by the commit timestamp (the last line)."""
-    # ADR 0115: a sensitive action needs a recent sign-in (`iat` here, like the pgTAP helper): "aal1" is the old password-only session, which signed in an hour ago
-    claims = json.dumps({"sub": user_id, "role": "authenticated", "aal": aal, "iat": int(time.time()) - (0 if aal == "aal2" else 3600)})
+    claims = json.dumps({"sub": user_id, "role": "authenticated", "aal": aal})
     hold = f"select pg_sleep({hold_seconds});" if hold_seconds else ""
     return (
         "begin; set local role authenticated; "

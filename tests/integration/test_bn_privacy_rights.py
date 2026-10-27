@@ -72,8 +72,8 @@ def add_member(world: World, stack: Stack, tenant: Tenant, user: User, role: str
     assert r.status_code == 201, r.text
 
 
-def make_export(client: TestClient, path: str, headers: dict[str, str]) -> dict[str, Any]:
-    r = client.post(path, json={"export_id": uid()}, headers=headers)
+def make_export(client: TestClient, path: str, headers: dict[str, str], **more: Any) -> dict[str, Any]:
+    r = client.post(path, json={"export_id": uid(), **more}, headers=headers)
     assert r.status_code == 202, r.text
     export: dict[str, Any] = r.json()["export"]
     return export
@@ -118,11 +118,13 @@ def test_a_person_downloads_their_own_data_through_a_real_signed_link(client: Te
 
 def test_the_workspace_export_is_the_owners_alone_and_holds_only_their_business(client: TestClient, stack: Stack, world: World) -> None:
     a, b = world.a, world.b
+    typed = {"confirm_name": f"CRM {a.label}"}  # job DT (ADR 0115): the Owner types the business name
     for role in ("admin", "sales", "viewer"):
-        assert client.post(url(a, "/data-exports"), json={"export_id": uid()}, headers=bearer(a.users[role])).status_code == 403, role
-    assert client.post(url(a, "/data-exports"), json={"export_id": uid()}, headers=h(a.users["owner"], weak=True, stack=stack)).status_code == 403
-    assert client.post(url(a, "/data-exports"), json={"export_id": uid()}, headers=bearer(b.users["owner"])).status_code == 404
-    export = make_export(client, url(a, "/data-exports"), bearer(a.users["owner"]))
+        assert client.post(url(a, "/data-exports"), json={"export_id": uid(), **typed}, headers=bearer(a.users[role])).status_code == 403, role
+    assert client.post(url(a, "/data-exports"), json={"export_id": uid(), **typed}, headers=h(a.users["owner"], weak=True, stack=stack)).status_code == 403
+    assert client.post(url(a, "/data-exports"), json={"export_id": uid(), **typed}, headers=bearer(b.users["owner"])).status_code == 404
+    assert client.post(url(a, "/data-exports"), json={"export_id": uid(), "confirm_name": "wrong"}, headers=bearer(a.users["owner"])).status_code == 422, "a wrong name starts nothing"
+    export = make_export(client, url(a, "/data-exports"), bearer(a.users["owner"]), **typed)
     assert client.get(f"/v1/me/data-exports/{export['id']}", headers=bearer(a.users["owner"])).json()["export"]["status"] == "ready"
     content, _ = zip_of(client, a.users["owner"], export["id"])
     with zipfile.ZipFile(io.BytesIO(content)) as z:

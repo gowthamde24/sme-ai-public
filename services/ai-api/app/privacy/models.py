@@ -15,6 +15,13 @@ class ExportIn(_Strict):
     export_id: ApiUuid
 
 
+class WorkspaceExportIn(_Strict):
+    """A full copy of the workspace's data: the Owner types the business name (job DT, ADR 0115)."""
+
+    export_id: ApiUuid
+    confirm_name: Annotated[str, StringConstraints(min_length=1, max_length=200)]
+
+
 class AccountDeletionIn(_Strict):
     request_id: ApiUuid
     confirm_email: Annotated[str, StringConstraints(min_length=3, max_length=320)]

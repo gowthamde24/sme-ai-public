@@ -13,7 +13,6 @@ Rules (fail closed on every one):
 
 from __future__ import annotations
 
-import time
 import uuid
 from dataclasses import dataclass, field
 from typing import Any, Protocol
@@ -40,15 +39,9 @@ class Principal:
     # code. Anything else, or a missing claim, is "aal1". It is the one claim read besides the
     # subject; roles and tenants still come from the database.
     aal: str = "aal1"
-    # When the person last SIGNED IN (epoch seconds), from the signed token: the newest `amr`
-    # timestamp (a password, a Google sign-in or a code each leave one; a token refresh does
-    # not), else `iat`; 0 when the token carries neither. A sensitive action needs this to be
-    # recent (ADR 0115).
-    signed_in_at: int = 0
-
-    def signed_in_within(self, seconds: int, now: float | None = None) -> bool:
-        current = time.time() if now is None else now
-        return self.signed_in_at > 0 and self.signed_in_at >= current - seconds
+    # the address of the account (the token's `email` claim), used only to tell the person that
+    # a sensitive action was taken in their name; None when the token carries none
+    email: str | None = None
 
 
 class KeyProvider(Protocol):
@@ -191,19 +184,6 @@ def _principal_from_claims(claims: dict[str, Any], token: str) -> Principal:
     except ValueError as exc:
         raise AuthError("subject is not a uuid") from exc
     aal = "aal2" if claims.get("aal") == "aal2" else "aal1"
-    return Principal(user_id=user_id, token=token, aal=aal, signed_in_at=_signed_in_at(claims))
-
-
-def _signed_in_at(claims: dict[str, Any]) -> int:
-    """The newest sign-in time the token states: the `amr` timestamps, else `iat` (ADR 0115)."""
-    stamps: list[int] = []
-    amr = claims.get("amr")
-    if isinstance(amr, list):
-        for entry in amr:
-            ts = entry.get("timestamp") if isinstance(entry, dict) else None
-            if isinstance(ts, int) and not isinstance(ts, bool) and ts > 0:
-                stamps.append(ts)
-    if stamps:
-        return max(stamps)
-    iat = claims.get("iat")
-    return iat if isinstance(iat, int) and not isinstance(iat, bool) and iat > 0 else 0
+    email = claims.get("email")
+    address = email if isinstance(email, str) and "@" in email else None
+    return Principal(user_id=user_id, token=token, aal=aal, email=address)

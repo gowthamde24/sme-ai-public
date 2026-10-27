@@ -14,13 +14,11 @@ The module check itself is in the database (default deny, SM701 -> 403 `module_o
 
 NOTE: no `from __future__ import annotations` here (request models are attached to the endpoint signatures at registration time)."""
 
-from datetime import UTC, datetime
 from typing import Annotated, Any, cast
 
 from fastapi import APIRouter, Depends
 
 from app.auth.deps import (
-    RECENT_SIGN_IN_SECONDS,
     AnyMember,
     OwnerOrAdmin,
     PrincipalDep,
@@ -83,8 +81,6 @@ def account_security(principal: PrincipalDep, runtime: RuntimeDep) -> AccountSec
         session_level="aal2" if principal.aal == "aal2" else "aal1",
         asked_at_sign_up=False,
         second_factor_on=status.get("second_factor_on") if isinstance(status.get("second_factor_on"), bool) else None,
-        signed_in_at=datetime.fromtimestamp(principal.signed_in_at, tz=UTC) if principal.signed_in_at else None,
-        recent_sign_in=principal.signed_in_within(RECENT_SIGN_IN_SECONDS),
         provider=provider if provider in ("email", "google", "facebook") else None,
         needed_for=["approvals", "whatsapp_connect", "rules_and_prices", "imports_and_exports", "team_and_privacy"],
     )

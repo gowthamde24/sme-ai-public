@@ -70,10 +70,8 @@ def not_found() -> ApiError:
 
 
 def mfa_required(reason: str | None = None) -> ApiError:
-    """ADR 0016, changed by ADR 0115: a sensitive action meets a session that is not enough. The second factor is OPTIONAL now: `reason` is `recent_sign_in` (sign in again: Google again, or the password)
-    or `second_factor` (the person turned the authenticator on: enter the code); without it the database refused and the screen asks for the sign-in first, then the code if one is on."""
-    if reason == "recent_sign_in":
-        return ApiError(403, "mfa_required", "For your safety, sign in again to do this.", extra={"reason": "recent_sign_in"})
+    """ADR 0016, changed by ADR 0115: the authenticator is OPTIONAL; a person who turned it on enters the code once per sign-in session (the session then stays at aal2) and meets this on a sensitive action
+    before that. `reason` is `second_factor` when the API knows why; without it the database refused."""
     return ApiError(
         403,
         "mfa_required",

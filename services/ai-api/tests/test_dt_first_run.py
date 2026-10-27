@@ -92,7 +92,7 @@ def test_any_member_reads_the_profile_and_a_stranger_does_not() -> None:
     assert client.get(f"{BASE}/workspace/profile").status_code == 401
 
 
-def test_only_the_owner_edits_it_and_no_recent_sign_in_is_asked() -> None:
+def test_only_the_owner_edits_it_and_no_second_factor_is_asked() -> None:
     client, repo, _ = world()
     old = int(time.time()) - 7200
     r = client.patch(f"{BASE}/workspace/profile", json={"name": "Lakshmi Sarees", "city": "Guntur"}, headers=auth("a_owner", aal="aal1", iat=old))
@@ -183,15 +183,16 @@ def test_the_people_list_gives_every_member_a_name_and_the_right_kind_of_picture
     assert TENANT_B.id != TENANT_A.id and storage.calls[0][2] == BUCKET
 
 
-def test_the_sign_in_status_says_whether_the_second_factor_is_on_and_whether_the_sign_in_is_recent() -> None:
+def test_the_sign_in_status_says_whether_the_authenticator_is_on_and_nothing_about_a_time_window() -> None:
     client, repo, _ = world()
-    r = client.get("/v1/account/security", headers=auth("a_owner", aal="aal1", iat=int(time.time())))
+    r = client.get("/v1/account/security", headers=auth("a_owner", aal="aal1"))
     body = r.json()
-    assert r.status_code == 200 and body["second_factor"] == "optional" and body["second_factor_on"] is False and body["recent_sign_in"] is True and body["provider"] == "google"
+    assert r.status_code == 200 and body["second_factor"] == "optional" and body["second_factor_on"] is False and body["provider"] == "google"
     assert body["session_level"] == "aal1" and body["asked_at_sign_up"] is False
+    assert "recent_sign_in" not in body and "signed_in_at" not in body, "no 10-minute window (owner decision, 28 Oct)"
     repo.second_factor = True
-    r = client.get("/v1/account/security", headers=auth("a_owner", aal="aal2", iat=int(time.time()) - 3600))
-    assert r.json()["second_factor_on"] is True and r.json()["recent_sign_in"] is False and r.json()["session_level"] == "aal2"
+    r = client.get("/v1/account/security", headers=auth("a_owner", aal="aal2"))
+    assert r.json()["second_factor_on"] is True and r.json()["session_level"] == "aal2"
 
 
 def test_every_email_carries_the_three_bar_mark_from_our_own_domain_and_nothing_third_party() -> None:
@@ -211,18 +212,24 @@ def test_every_email_carries_the_three_bar_mark_from_our_own_domain_and_nothing_
         assert "{{ .SiteURL }}/brand/stack19-mark-email.png" in template.read_text(encoding="utf-8"), template.name
 
 
-def test_a_gated_route_asks_a_person_who_turned_the_authenticator_on_for_the_code_even_with_a_fresh_sign_in() -> None:
+def test_the_code_is_asked_once_per_session_and_only_of_a_person_who_turned_the_authenticator_on() -> None:
     client, repo, _ = world()
-    fresh = int(time.time())
     url = f"{BASE}/erasure-requests"
-    body = {"id": str(uuid.uuid4()), "scope": "tenant"}
-    ok = client.post(url, json=body, headers=auth("a_owner", aal="aal1", iat=fresh))
-    assert ok.status_code != 403 or ok.json()["error"].get("reason") != "second_factor", "no authenticator: a fresh sign-in is enough"
+
+    def attempt(**claims: Any) -> Any:
+        return client.post(url, json={"id": str(uuid.uuid4()), "scope": "tenant"}, headers=auth("a_owner", **claims))
+
+
+    def asked(r: Any) -> bool:
+        return bool(r.status_code == 403 and r.json()["error"].get("code") == "mfa_required")
+
+    assert not asked(attempt(aal="aal1")), "no authenticator: never asked, however old the sign-in"
+    assert not asked(attempt(aal="aal1", iat=int(time.time()) - 86_400)), "and a day-old session is no different (no time window)"
     repo.second_factor = True
-    asked = client.post(url, json={**body, "id": str(uuid.uuid4())}, headers=auth("a_owner", aal="aal1", iat=fresh))
-    assert asked.status_code == 403 and asked.json()["error"]["code"] == "mfa_required" and asked.json()["error"]["reason"] == "second_factor"
-    entered = client.post(url, json={**body, "id": str(uuid.uuid4())}, headers=auth("a_owner", aal="aal2", iat=fresh))
-    assert not (entered.status_code == 403 and entered.json()["error"].get("code") == "mfa_required")
+    r = attempt(aal="aal1")
+    assert asked(r) and r.json()["error"]["reason"] == "second_factor"
+    assert not asked(attempt(aal="aal2")), "once the code was entered the session stays aal2"
+    assert not asked(attempt(aal="aal2", iat=int(time.time()) - 86_400)), "...for as long as the session lives: no second question"
 
 
 def test_other_is_the_screens_name_for_the_generic_pack_in_the_lists_and_at_setup() -> None:

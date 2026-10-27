@@ -9,7 +9,7 @@
     GET  /v1/me/deletion-requests                                                  -> {deletions: [...]}
     POST /v1/me/deletion-requests/{id}/cancel                                      -> {deletion}
   A WORKSPACE
-    POST /v1/tenants/{t}/data-exports                 {export_id}      Owner + 2nd factor -> 202 {export}
+    POST /v1/tenants/{t}/data-exports                 {export_id, confirm_name}   Owner (+ the code if the authenticator is on) -> 202 {export}   the Owner types the business name; a notice e-mail follows
     POST /v1/tenants/{t}/deletion-requests            {request_id, confirm_name}   Owner + 2nd factor -> 201 {deletion}   (the existing erasure is requested at once and runs only after the cooling-off)
     GET  /v1/tenants/{t}/deletion-requests                                  Owner/Admin -> {deletions: [...]}
     POST /v1/tenants/{t}/deletion-requests/{id}/cancel                      Owner       -> {deletion}
@@ -43,7 +43,9 @@ from app.privacy.models import (
     GrievanceUpdateIn,
     RetentionIn,
     WorkspaceDeletionIn,
+    WorkspaceExportIn,
 )
+from app.privacy.notice import send_notice
 from app.privacy.repository import PrivacyRepository
 from app.tenancy.models import Role
 from app.tenancy.repository import UpstreamError
@@ -120,9 +122,17 @@ def my_export_link(export_id: str, principal: PrincipalDep, runtime: RuntimeDep)
     )
 
 
+def _typed_name_matches(typed: str, ctx: TenantContext) -> bool:
+    """The Owner typed the business name as it is written (surrounding spaces ignored): the same rule as the deletion request."""
+    return typed.strip() == ctx.tenant.name
+
+
 @router.post("/data-exports", status_code=202)
-def request_workspace_export(body: ExportIn, ctx: OwnerStrong, runtime: RuntimeDep, background: BackgroundTasks) -> JSONResponse:
+def request_workspace_export(body: WorkspaceExportIn, ctx: OwnerStrong, runtime: RuntimeDep, background: BackgroundTasks) -> JSONResponse:
+    if not _typed_name_matches(body.confirm_name, ctx):
+        raise ApiError(422, "confirmation_mismatch", "What you typed does not match. Check it and try again.")
     export = _privacy(runtime).export_request(ctx.principal.token, uuid.UUID(str(body.export_id)), "workspace", ctx.tenant.id)
+    background.add_task(send_notice, runtime.mail_sender, "export_requested", ctx.tenant.name, ctx.principal.email, f"export-notice-{body.export_id}")
     return _start_export(runtime, background, ctx.principal.token, export, "workspace", ctx.tenant.id, ctx.tenant.name)
 
 
@@ -143,8 +153,11 @@ def cancel_my_deletion(request_id: str, principal: PrincipalDep, runtime: Runtim
 
 
 @router.post("/deletion-requests", status_code=201)
-def request_workspace_deletion(body: WorkspaceDeletionIn, ctx: OwnerStrong, runtime: RuntimeDep) -> dict[str, Any]:
-    return {"deletion": _privacy(runtime).deletion_request(ctx.principal.token, uuid.UUID(str(body.request_id)), "workspace", ctx.tenant.id, body.confirm_name)}
+def request_workspace_deletion(body: WorkspaceDeletionIn, ctx: OwnerStrong, runtime: RuntimeDep, background: BackgroundTasks) -> dict[str, Any]:
+    # the typed business name is checked by the database (SM615 -> 422 confirmation_mismatch); the notice goes only after it passed
+    deletion = _privacy(runtime).deletion_request(ctx.principal.token, uuid.UUID(str(body.request_id)), "workspace", ctx.tenant.id, body.confirm_name)
+    background.add_task(send_notice, runtime.mail_sender, "deletion_requested", ctx.tenant.name, ctx.principal.email, f"deletion-notice-{body.request_id}")
+    return {"deletion": deletion}
 
 
 @router.get("/deletion-requests")
@@ -158,8 +171,9 @@ def cancel_workspace_deletion(request_id: str, ctx: OwnerOnly, runtime: RuntimeD
 
 
 @router.post("/deletion-requests/{request_id}/execute")
-def execute_workspace_deletion(request_id: str, ctx: OwnerStrong, runtime: RuntimeDep) -> dict[str, Any]:
+def execute_workspace_deletion(request_id: str, ctx: OwnerStrong, runtime: RuntimeDep, background: BackgroundTasks) -> dict[str, Any]:
     result = _privacy(runtime).deletion_execute_workspace(ctx.principal.token, _id(request_id))
+    background.add_task(send_notice, runtime.mail_sender, "deletion_executed", ctx.tenant.name, ctx.principal.email, f"deletion-done-{request_id}")
     logger.info("workspace deletion executed tenant=%s user=%s request=%s", ctx.tenant.id, ctx.principal.user_id, request_id)
     return result
 

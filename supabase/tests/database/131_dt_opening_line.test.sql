@@ -5,8 +5,7 @@ select tests.seed_two_tenants();
 
 create function pg_temp.sc(p_user text, p_sql text) returns text language plpgsql as $$
 begin
-  perform tests.as_aal('aal1');           -- a session that signed in an hour ago: the opening line asks for no recent sign-in and no second factor
-  perform tests.as_signin_age(3600);
+  perform tests.as_aal('aal1');           -- a password-only session of a person with the authenticator on: the opening line asks for no second factor
   return tests.scalar_as(case when p_user = 'anon' then null else tests.uid(p_user) end, p_sql);
 exception when others then return 'ERR:' || sqlstate;
 end $$;

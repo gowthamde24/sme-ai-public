@@ -20,6 +20,7 @@ from app.assistant_settings.service import AssistantSettingsService
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.billing import errors as billing_errors
+from app.billing.mail import EmailSender, build_sender
 from app.billing.provider import BillingProvider, build_provider
 from app.billing.repository import PostgrestBillingRepository
 from app.billing.routes import plans_router as billing_plans_router
@@ -294,6 +295,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
+        mail_sender=_notice_sender(settings),
         notifications=build_notifications(settings, config),
         research_web=build_research_web(settings),
         research_usage=PostgrestResearchUsageRepository(config.rest_url, config.anon_key),
@@ -858,6 +860,19 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "an exception needs the operator.",
     ),
 }
+
+
+def _notice_sender(settings: Settings) -> EmailSender | None:
+    """The sender of the privacy notices (the worker's provider settings); None when it cannot be
+    built: the actions still work, the notice is skipped and logged."""
+    try:
+        secret = settings.resend_api_key
+        key = secret.get_secret_value() if secret is not None else None
+        return build_sender(
+            settings.billing_email_sender, key, settings.mail_from, settings.mail_reply_to
+        )
+    except ValueError:
+        return None
 
 
 def create_app(settings: Settings | None = None, *, runtime: Runtime | None = None) -> FastAPI:

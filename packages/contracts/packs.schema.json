@@ -6,7 +6,7 @@
   "$defs": {
     "AccountSecurityOut": {
       "additionalProperties": false,
-      "description": "GET /v1/account/security: where the person's sign-in stands (ADR 0115). The second factor is OPTIONAL for everybody: never asked at sign-up or at setup, only when the person turned it on. A sensitive\naction needs a RECENT sign-in (`recent_sign_in`: within 10 minutes), else the screen asks them to sign in again (Google again, or the password).",
+      "description": "GET /v1/account/security: where the person's second factor stands (ADR 0115). It is OPTIONAL for everybody: never asked at sign-up or at setup. A person who turned it on enters the code once per sign-in\nsession (the session is then aal2) and is asked for it on a sensitive action only before that.",
       "properties": {
         "session_level": {
           "enum": [
@@ -38,24 +38,6 @@
           ],
           "default": null,
           "title": "Second Factor On"
-        },
-        "signed_in_at": {
-          "anyOf": [
-            {
-              "format": "date-time",
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Signed In At"
-        },
-        "recent_sign_in": {
-          "default": false,
-          "title": "Recent Sign In",
-          "type": "boolean"
         },
         "provider": {
           "anyOf": [

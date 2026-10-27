@@ -4,17 +4,16 @@ select no_plan();
 select tests.seed_two_tenants();
 select tests.seed_crm();
 
--- run as a person at a given sign-in age (seconds) and assurance level; returns the SQLSTATE or 'ok'
-create function pg_temp.at(p_user text, p_aal text, p_age bigint, p_sql text) returns text language plpgsql as $$
+-- run as a person at an assurance level; p_factor says whether the person has an authenticator on (an aal1 session of a person WHO HAS one is the old tests' password-only session); returns the SQLSTATE or 'ok'
+create function pg_temp.at(p_user text, p_aal text, p_factor boolean, p_sql text) returns text language plpgsql as $$
 begin
   perform tests.as_aal(p_aal);
-  perform tests.as_signin_age(p_age);
+  perform tests.as_no_factor(not p_factor);
   return tests.sqlstate_as(tests.uid(p_user), p_sql);
 end $$;
 create function pg_temp.val(p_user text, p_sql text) returns text language plpgsql as $$
 begin
   perform tests.as_aal('aal2');
-  perform tests.as_signin_age(null);
   return tests.scalar_as(case when p_user = 'anon' then null else tests.uid(p_user) end, p_sql);
 exception when others then return 'ERR:' || sqlstate;
 end $$;
@@ -48,48 +47,42 @@ select is(app.images_bucket_tenant('cat-' || tests.tid('a')::text), null, 'A: ..
 select is((select count(*) from pg_proc where pronamespace = 'app'::regnamespace and proname in ('require_aal2', 'guard_aal2_client_write')), 2::bigint, 'A: the two aal helpers keep their names');
 
 -- ---------------------------------------------------------------------------------------------
--- B. a second factor is optional; sensitive actions need a recent sign-in (probe: the agents switch, which calls app.require_aal2 after the role)
+-- B. the second factor is optional and asked ONCE per session, never on a timer (probe: the agents switch, which calls app.require_aal2 after the role)
 -- ---------------------------------------------------------------------------------------------
 create function pg_temp.sw(p_tenant text default 'a') returns text language sql as $$ select format('select public.set_tenant_agents_enabled(%L, true)', tests.tid(p_tenant)) $$;
-select is(pg_temp.at('a_owner', 'aal1', 0, pg_temp.sw()), 'ok', 'B1: an Owner with NO second factor, signed in just now, may do a sensitive action (a Google or a password sign-in alike)');
-select is(pg_temp.at('a_owner', 'aal1', 599, pg_temp.sw()), 'ok', 'B2: ...up to 10 minutes after signing in');
-select is(pg_temp.at('a_owner', 'aal1', 700, pg_temp.sw()), 'SM306', 'B3: ...and refused after that: sign in again');
-select is(pg_temp.at('a_owner', 'aal2', 700, pg_temp.sw()), 'SM306', 'B4: a session that entered a code is refused too when the sign-in is not recent');
-select is(pg_temp.at('a_sales', 'aal1', 0, pg_temp.sw()), '42501', 'B5: the role is still proven first (Sales: the generic refusal)');
-select is(pg_temp.at('b_owner', 'aal1', 0, pg_temp.sw()), '42501', 'B6: ...and another business''s Owner');
-select is(pg_temp.at('a_owner', 'absent', 0, pg_temp.sw()), 'SM306', 'B7: a token with no sign-in time at all is refused (fail closed)');
-select is(pg_temp.raw('a_owner', jsonb_build_object('aal', 'aal1', 'iat', extract(epoch from now())::bigint, 'amr', jsonb_build_array(jsonb_build_object('method', 'password', 'timestamp', extract(epoch from now())::bigint - 3600))), pg_temp.sw()),
-  'SM306', 'B8: the newest SIGN-IN time (amr) counts, not the token''s own issue time (a refresh makes a new token, not a new sign-in)');
-select is(pg_temp.raw('a_owner', jsonb_build_object('aal', 'aal1', 'iat', extract(epoch from now())::bigint - 7200, 'amr', jsonb_build_array(jsonb_build_object('method', 'oauth', 'timestamp', extract(epoch from now())::bigint - 60))), pg_temp.sw()),
-  'ok', 'B9: a Google sign-in a minute ago (amr oauth) is recent');
+select is(pg_temp.at('a_owner', 'aal1', false, pg_temp.sw()), 'ok', 'B1: a person with NO authenticator is never asked (a Google or a password sign-in alike), at the password-only level');
+select is(pg_temp.at('a_owner', 'absent', false, pg_temp.sw()), 'ok', 'B2: ...even with a token that carries no assurance claim');
+select is(pg_temp.at('a_owner', 'aal1', true, pg_temp.sw()), 'SM306', 'B3: a person who TURNED the authenticator ON, in a session that has not entered the code, is asked');
+select is(pg_temp.at('a_owner', 'absent', true, pg_temp.sw()), 'SM306', 'B4: ...and a token with no assurance claim counts as not entered (fail closed)');
+select is(pg_temp.at('a_owner', 'aal2', true, pg_temp.sw()), 'ok', 'B5: once the code was entered (aal2) the action goes through');
+select is(pg_temp.at('a_sales', 'aal1', true, pg_temp.sw()), '42501', 'B6: the role is still proven first (Sales: the generic refusal)');
+select is(pg_temp.at('b_owner', 'aal1', true, pg_temp.sw()), '42501', 'B7: ...and another business''s Owner');
+-- no window: an aal2 session keeps working however old the sign-in (a token of a day ago, a sign-in method time of a day ago)
 insert into auth.mfa_factors (id, user_id, friendly_name, factor_type, status, created_at, updated_at, secret)
-values (gen_random_uuid(), tests.uid('a_owner'), 'phone', 'totp', 'verified', now(), now(), 'JBSWY3DPEHPK3PXP');
-select is(pg_temp.at('a_owner', 'aal1', 0, pg_temp.sw()), 'SM306', 'B10: a person who TURNED the second factor ON must enter the code (aal1 is refused even when the sign-in is fresh)');
-select is(pg_temp.at('a_owner', 'aal2', 0, pg_temp.sw()), 'ok', 'B11: ...and with the code entered and a recent sign-in it passes');
-select is(pg_temp.at('a_admin', 'aal1', 0, pg_temp.sw()), 'ok', 'B12: another person without a factor is not affected by it');
-select is(pg_temp.val('a_owner', 'select public.account_security_get()::text')::jsonb ->> 'second_factor_on', 'true', 'B13: the sign-in status says the second factor is on');
-select is(pg_temp.val('a_admin', 'select public.account_security_get()::text')::jsonb ->> 'second_factor_on', 'false', 'B14: ...and off for the others');
-select is(pg_temp.val('a_admin', 'select public.account_security_get()::text')::jsonb ->> 'recent', 'true', 'B15: ...and that the sign-in is recent');
-select is(pg_temp.val('anon', 'select public.account_security_get()::text'), 'ERR:42501', 'B16: no status without a sign-in');
-delete from auth.mfa_factors where user_id = tests.uid('a_owner');
--- the client-write trigger on memberships and tenants asks only the recent-sign-in half
-select is(pg_temp.at('a_owner', 'aal1', 0, format($q$update public.tenants set name = 'Renamed by hand' where id = %L$q$, tests.tid('a'))), 'ok', 'B17: a fresh password-only Owner may write a tenant row straight through the API role');
-select is(pg_temp.at('a_owner', 'aal1', 3600, format($q$update public.memberships set role = 'admin' where tenant_id = %L and user_id = %L$q$, tests.tid('a'), tests.uid('a_sales'))), 'SM306', 'B18: ...but not a membership when the sign-in is old');
-insert into auth.mfa_factors (id, user_id, friendly_name, factor_type, status, created_at, updated_at, secret)
-values (gen_random_uuid(), tests.uid('a_owner'), 'phone', 'totp', 'verified', now(), now(), 'JBSWY3DPEHPK3PXP');
-select is(pg_temp.at('a_owner', 'aal1', 0, format($q$update public.tenants set name = 'Renamed again' where id = %L$q$, tests.tid('a'))), 'SM306', 'B19: a person who turned the second factor on is asked for the code there too (fresh sign-in, no code)');
-select is(pg_temp.at('a_owner', 'aal2', 0, format($q$update public.tenants set name = 'Renamed by hand' where id = %L$q$, tests.tid('a'))), 'ok', 'B20: ...and with the code entered it goes through');
+select gen_random_uuid(), tests.uid('a_owner'), 'phone', 'totp', 'verified', now(), now(), 'JBSWY3DPEHPK3PXP' where not exists (select 1 from auth.mfa_factors where user_id = tests.uid('a_owner'));
+select is(pg_temp.raw('a_owner', jsonb_build_object('aal', 'aal2', 'iat', extract(epoch from now())::bigint - 86400, 'amr', jsonb_build_array(jsonb_build_object('method', 'password', 'timestamp', extract(epoch from now())::bigint - 86400), jsonb_build_object('method', 'totp', 'timestamp', extract(epoch from now())::bigint - 86000))), pg_temp.sw()),
+  'ok', 'B8: NO time window: an aal2 session of a person with the authenticator on works a day after sign-in (owner decision, 28 Oct)');
+select is(pg_temp.raw('a_owner', jsonb_build_object('aal', 'aal1', 'iat', extract(epoch from now())::bigint), pg_temp.sw()), 'SM306', 'B9: and a FRESH aal1 session of that person is still asked (time does not matter either way)');
+select is(pg_temp.raw('a_admin', jsonb_build_object('aal', 'aal1', 'iat', extract(epoch from now())::bigint - 86400), pg_temp.sw()), 'ok', 'B10: a person without an authenticator is not asked after a day either');
+select is(pg_temp.val('a_owner', 'select public.account_security_get()::text')::jsonb ->> 'second_factor_on', 'true', 'B11: the status says the authenticator is on');
+select is(pg_temp.val('a_admin', 'select public.account_security_get()::text')::jsonb ->> 'second_factor_on', 'false', 'B12: ...and off for the others');
+select is(pg_temp.val('a_admin', 'select public.account_security_get()::text')::jsonb ? 'recent', false, 'B13: no "recent sign-in" in the status any more');
+select is(pg_temp.val('anon', 'select public.account_security_get()::text'), 'ERR:42501', 'B14: no status without a sign-in');
+select is((select count(*) from pg_proc where pronamespace = 'app'::regnamespace and proname = 'last_signin_at'), 0::bigint, 'B15: the sign-in time helper is gone');
+-- the client-write trigger on memberships and tenants asks the same single question
+select is(pg_temp.at('a_owner', 'aal1', true, format($q$update public.tenants set name = 'Renamed by hand' where id = %L$q$, tests.tid('a'))), 'SM306', 'B16: a person with the authenticator on, without the code, cannot write a tenant row straight through the API role');
+select is(pg_temp.at('a_owner', 'aal2', true, format($q$update public.tenants set name = 'Renamed by hand' where id = %L$q$, tests.tid('a'))), 'ok', 'B17: ...and with the code entered can');
+select is(pg_temp.at('a_owner2', 'aal1', false, format($q$update public.memberships set role = 'admin' where tenant_id = %L and user_id = %L$q$, tests.tid('a'), tests.uid('a_sales'))), 'ok', 'B18: an Owner without an authenticator may change a membership at the password-only level');
 delete from auth.mfa_factors where user_id = tests.uid('a_owner');
 
 -- ---------------------------------------------------------------------------------------------
 -- C. the business profile
 -- ---------------------------------------------------------------------------------------------
 create function pg_temp.bget(p_user text, p_tenant text default 'a') returns text language sql as $$ select pg_temp.val(p_user, format('select public.workspace_business_get(%L)::text', tests.tid(p_tenant))) $$;
--- the Owner saves with a session that signed in AN HOUR ago: no recent sign-in and no second factor are asked
+-- the Owner saves from a password-only session of a person who has the authenticator ON and never entered the code: the profile asks for no second factor at all
 create function pg_temp.bset(p_user text, p_patch text, p_tenant text default 'a') returns text language plpgsql as $$
 begin
   perform tests.as_aal('aal1');
-  perform tests.as_signin_age(3600);
   return tests.scalar_as(tests.uid(p_user), format('select public.workspace_business_set(%L, %L::jsonb)::text', tests.tid(p_tenant), p_patch));
 exception when others then return 'ERR:' || sqlstate;
 end $$;
