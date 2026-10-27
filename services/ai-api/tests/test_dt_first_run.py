@@ -106,7 +106,8 @@ def test_only_the_owner_edits_it_and_no_recent_sign_in_is_asked() -> None:
 def test_a_bad_patch_is_a_422_and_a_city_or_phone_can_be_cleared() -> None:
     client, repo, _ = world()
     h = auth("a_owner")
-    for body in ({}, {"name": ""}, {"name": None}, {"phone": "call me"}, {"languages": []}, {"languages": ["xx"]}, {"colour": "red"}, {"type": "Not A Code"}, {"type_label": "x"}):
+    bad_bodies: list[dict[str, Any]] = [{}, {"name": ""}, {"name": None}, {"phone": "call me"}, {"languages": []}, {"languages": ["xx"]}, {"colour": "red"}, {"type": "Not A Code"}, {"type_label": "x"}]
+    for body in bad_bodies:
         assert client.patch(f"{BASE}/workspace/profile", json=body, headers=h).status_code == 422, body
     assert not repo.calls
     r = client.patch(f"{BASE}/workspace/profile", json={"city": None, "phone": None}, headers=h)
@@ -166,7 +167,7 @@ def test_a_member_sets_their_own_name_language_and_picture() -> None:
     with Image.open(io.BytesIO(data)) as out:
         assert out.format == "JPEG" and max(out.size) <= 320
     assert repo.calls[-1] == ("save_my_profile", {"avatar_path": path})
-    assert client.post(f"{BASE}/me/picture/remove", headers=h).status_code == 200 and repo.calls[-1] == ("save_my_profile", {"avatar_path": None})
+    assert client.post(f"{BASE}/me/picture/remove", headers=h).status_code == 200 and repo.calls[-1] == ("save_my_profile", {"avatar_path": None})  # type: ignore[comparison-overlap]
     assert client.get(f"{BASE}/me/profile", headers=auth("b_owner")).status_code == 404
 
 

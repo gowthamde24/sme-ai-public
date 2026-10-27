@@ -82,6 +82,7 @@ def claims_to_be_human(reply: str) -> bool:
 
 
 @lru_cache(maxsize=1)
-def eval_set() -> dict[str, list[str]]:
-    loaded: dict[str, list[str]] = json.loads(DATA.read_text(encoding="utf-8"))
+def eval_set() -> dict[str, dict[str, list[str]]]:
+    """{"ask": {language: [phrases]}, "not_ask": {language: [phrases]}}"""
+    loaded: dict[str, dict[str, list[str]]] = json.loads(DATA.read_text(encoding="utf-8"))
     return loaded
