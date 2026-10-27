@@ -27,6 +27,7 @@ ROOT = Path(__file__).resolve().parents[1]
 NS = uuid.UUID("3f6c1c2e-8a41-4d0a-9b57-6e1d2c4f9a10")
 Call = Callable[..., tuple[int, Any]]  # call(method, path_after_the_tenant, body=None, raw=(bytes, content_type)) -> (status, json)
 I = "/institution"  # the school routes live under the tenant's /institution
+SUPPLIER_SOURCE = "pasted_list"  # the source tag of the supplier import (nothing else in the demo uses it)
 PHONES = ["+00 000 000 7101", "+00 000 000 7102", "+00 000 000 7103"]
 
 
@@ -222,7 +223,7 @@ def _tasks(call: Call, spec: dict[str, Any], today: date) -> dict[str, str]:
     suppliers = [[f"{name} (demo)", f"+00 000 000 {spec['phone_base'] + 90 + n}", "", "", _arrived(today, n)] for n, name in enumerate(spec["suppliers"])]
     body = {"import_id": did(f"{key}-import-suppliers"), "kind": "file", "filename": "suppliers.csv", "use_ai": False,
             "content_base64": base64.b64encode(_csv(suppliers, ["Name", "Phone", "City", "Message", "Received"]).encode()).decode(),
-            "mapping": {"name": 0, "phone": 1, "city": 2, "message": 3, "received_at": 4}, "source": "pasted_list",
+            "mapping": {"name": 0, "phone": 1, "city": 2, "message": 3, "received_at": 4}, "source": SUPPLIER_SOURCE,
             "consent": {**CONSENT, "list_name": "Demo suppliers (synthetic)", "basis": "contractual"}}
     _ok("suppliers", call("POST", "/lead-imports", body), (200, 201))
     out: dict[str, str] = {}
@@ -248,7 +249,26 @@ def _tasks(call: Call, spec: dict[str, Any], today: date) -> dict[str, str]:
             time.sleep(2)
             st, current = call("GET", f"/tasks/{task}")
         out[f"task {label}"] = str(current["status"])
+    out["suppliers"] = f"{_hide_supplier_leads(call)} kept as contacts, not shown as leads"
     return out
+
+
+def _hide_supplier_leads(call: Call) -> int:
+    """The suppliers are people the owner asks things of, not customers: once the tasks have found them (a task finds a person through a lead row) their lead rows are archived, so the Lead Desk, its counts and the reports list only real leads.
+    Their contacts stay, and a running task is not affected (it holds the contact; only an archived CONTACT is skipped). The list of live leads leaves archived ones out, so a second run finds nothing to do."""
+    hidden, cursor = 0, ""
+    for _ in range(20):
+        status, page = call("GET", "/leads?limit=100" + (f"&cursor={cursor}" if cursor else ""))
+        if status != 200:
+            raise DemoError(f"leads: HTTP {status}")
+        for lead in page.get("items", []):
+            if lead.get("source") == SUPPLIER_SOURCE:
+                _ok("hide a supplier", call("POST", f"/leads/{lead['id']}/archive"), (200,))
+                hidden += 1
+        cursor = page.get("next_cursor") or ""
+        if not cursor:
+            break
+    return hidden
 
 
 REAL_ESTATE = {

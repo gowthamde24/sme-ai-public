@@ -106,3 +106,20 @@ def test_the_placeholder_is_a_real_picture_and_small() -> None:
     image = Image.open(io.BytesIO(png))
     image.load()
     assert image.size == (640, 480) and len(png) < 10_000
+
+
+def test_suppliers_are_kept_as_contacts_but_hidden_from_the_leads_and_a_second_run_changes_nothing() -> None:
+    leads = [{"id": "l1", "source": "pasted_list"}, {"id": "l2", "source": "website_form"}, {"id": "l3", "source": "pasted_list"}]
+    archived: list[str] = []
+
+    def api(method: str, path: str, body: Any = None, raw: Any = None) -> tuple[int, Any]:
+        if method == "GET" and path.startswith("/leads?"):
+            return 200, {"items": [lead for lead in leads if lead["id"] not in archived], "next_cursor": None}
+        if method == "POST" and path.endswith("/archive"):
+            archived.append(path.split("/")[2])
+            return 200, {}
+        raise AssertionError((method, path))
+
+    assert demo_data._hide_supplier_leads(api) == 2
+    assert archived == ["l1", "l3"]  # only the supplier import's rows; the website lead stays
+    assert demo_data._hide_supplier_leads(api) == 0  # the list of live leads no longer holds them
