@@ -655,7 +655,10 @@
           "type": "boolean"
         },
         "reason": {
-          "const": "pack",
+          "enum": [
+            "pack",
+            "core"
+          ],
           "title": "Reason",
           "type": "string"
         }

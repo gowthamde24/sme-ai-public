@@ -11,7 +11,7 @@ from typing import Any
 
 from app.crm.repository import NotFoundError
 
-CATEGORIES = ("interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "too_costly", "call_back_later")
+CATEGORIES = ("interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "too_costly", "already_bought", "call_back_later")
 
 
 class FakeOutcomesRepository:

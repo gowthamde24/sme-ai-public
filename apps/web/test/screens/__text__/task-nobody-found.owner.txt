@@ -1,0 +1,13 @@
+# Task
+Call my cement suppliers, ask the price per bag and the delivery day, and tell me the cheapest. [All tasks](/app/tenants/22222222-2222-2222-2222-222222222222/tasks)
+{label="Nobody found yet"}
+## Nobody found yet
+Nobody in your contacts fits this yet. Say who, or give a list.
+- Nobody in your contacts fits this yet. Say who, or give a list.
+What should Vijaya do?
+<textarea label="What should Vijaya do?" maxlength=1500 value="Call my cement suppliers, ask the price per bag and the delivery day, and tell me the cheapest.">
+Or give a list (optional)
+<textarea label="Or give a list (optional)">
+One person per line: name, phone number. Only people already in your contacts are used.
+[button type=button: Plan again]
+[All tasks](/app/tenants/22222222-2222-2222-2222-222222222222/tasks)

@@ -586,5 +586,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "signup.leads.name": {
+  "en": "Any business with leads",
+  "te": "లీడ్‌లు వచ్చే ఏ వ్యాపారమైనా",
+  "hi": "लीड वाला कोई भी बिज़नेस",
+  "kn": "ಲೀಡ್‌ಗಳು ಬರುವ ಯಾವುದೇ ಬಿಸಿನೆಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.leads.tagline": {
+  "en": "Real estate, coaching, clinic, insurance, auto, interiors, travel, gym, wholesale",
+  "te": "రియల్ ఎస్టేట్, కోచింగ్, క్లినిక్, ఇన్సూరెన్స్, ఆటో, ఇంటీరియర్స్, ట్రావెల్, జిమ్, హోల్‌సేల్",
+  "hi": "रियल एस्टेट, कोचिंग, क्लिनिक, इंश्योरेंस, ऑटो, इंटीरियर, ट्रैवल, जिम, होलसेल",
+  "kn": "ರಿಯಲ್ ಎಸ್ಟೇಟ್, ಕೋಚಿಂಗ್, ಕ್ಲಿನಿಕ್, ಇನ್ಶೂರೆನ್ಸ್, ಆಟೋ, ಇಂಟೀರಿಯರ್ಸ್, ಟ್ರಾವೆಲ್, ಜಿಮ್, ಹೋಲ್‌ಸೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.leads.title": {
+  "en": "What kind of business is it?",
+  "te": "ఇది ఏ రకమైన వ్యాపారం?",
+  "hi": "यह किस तरह का बिज़नेस है?",
+  "kn": "ಇದು ಯಾವ ರೀತಿಯ ಬಿಸಿನೆಸ್?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.leads.sub": {
+  "en": "Pick the closest one. {assistant} starts with questions and follow-ups made for it, and you can change them.",
+  "te": "దగ్గరగా ఉన్నది ఎంచుకోండి. దానికి తగిన ప్రశ్నలు, ఫాలో-అప్‌లతో {assistant} మొదలుపెడుతుంది; మీరు వాటిని మార్చవచ్చు.",
+  "hi": "सबसे करीब वाला चुनें। {assistant} उसी के सवालों और फॉलो-अप से शुरू करती है, और आप उन्हें बदल सकते हैं।",
+  "kn": "ಹತ್ತಿರದದನ್ನು ಆರಿಸಿ. {assistant} ಅದಕ್ಕೆ ತಕ್ಕ ಪ್ರಶ್ನೆ, ಫಾಲೋ-ಅಪ್‌ಗಳಿಂದ ಶುರುಮಾಡುತ್ತಾರೆ; ನೀವು ಅವನ್ನು ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.leads.back": {
+  "en": "Back to all business types",
+  "te": "అన్ని వ్యాపార రకాలకు తిరిగి",
+  "hi": "सभी बिज़नेस प्रकारों पर वापस",
+  "kn": "ಎಲ್ಲಾ ಬಿಸಿನೆಸ್ ವಿಧಗಳಿಗೆ ಹಿಂತಿರುಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

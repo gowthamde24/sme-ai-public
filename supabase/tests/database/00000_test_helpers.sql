@@ -578,9 +578,27 @@ begin
   -- job DM: an outcome's one-line reason is free text about an adult customer: it carries a canary, erased with the workspace and swept
   insert into public.outcomes (id, tenant_id, contact_id, kind, source_id, outcome, category, reason, recorded_by_kind, ai_outcome, ai_category, occurred_at)
   values (tests.rid(p || '_er_out'), t, k, 'call', tests.rid(p || '_er_out'), 'unclear', 'call_back_later', 'Outq7 asked to be called later', 'ai', 'unclear', 'call_back_later', now());
+  -- job DR part A2: what a person wrote when they arrived (a touch of the canary lead) and a forwarded mail nobody could read: the business's words, a business canary, erased with the workspace and swept
+  insert into public.lead_arrivals (id, tenant_id, lead_id, contact_id, source_tag, kind, message) values (tests.rid(p || '_er_ltouch'), t, l, k, 'webhook', 'first', 'Lsrq7 wants a plot near the highway');
+  insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, token_hint, created_by)
+  values (tests.rid(p || '_er_lsrc'), t, 'email_forward', 'webhook', 'Lsrq7 mail', encode(sha256(convert_to(p || '_er_lsrc', 'UTF8')), 'hex'), 'wxyz', tests.uid(p || '_owner'));
+  insert into public.lead_unparsed (id, tenant_id, source_id, subject, body) values (tests.rid(p || '_er_lunp'), t, tests.rid(p || '_er_lsrc'), 'Lsrq7 enquiry', 'Lsrq7 wrote: please call me about the plot');
   -- job DP part 5: the consenting person's name and the sentence they read (the Owner's) carry canaries, erased with the workspace
   insert into public.own_voices (id, tenant_id, status, consenting_name, consent_sentence, consented_by, consented_at, bucket, sample_path, consent_path)
   values (tests.rid(p || '_er_ovc'), t, 'pending', 'Ovcq7 Person', 'I, Ovcq7 Person, allow Stack19 to create an AI voice of me for Ovcq7 Shop', tests.uid(p || '_owner'), now(), 'ovc-' || t::text, tests.rid(p || '_er_ovc')::text || '/sample.wav', tests.rid(p || '_er_ovc')::text || '/consent.wav');
+  -- job DR part A1: text the owner gave the assistant (a source and a fact) is the business's own words: a business canary, erased with the workspace and swept
+  insert into public.knowledge_sources (id, tenant_id, kind, title, filename, content_type, text, chars, status, created_by)
+  values (tests.rid(p || '_er_ksrc'), t, 'file', 'Knwq7 brochure', 'knwq7-brochure.pdf', 'application/pdf', 'Knwq7 Traders, open all week', 28, 'read', tests.uid(p || '_owner'));
+  insert into public.knowledge_facts (id, tenant_id, source_id, kind, text, created_by)
+  values (tests.rid(p || '_er_kfact'), t, tests.rid(p || '_er_ksrc'), 'hours', 'Knwq7 Traders is open all week', tests.uid(p || '_owner'));
+  -- job DR A3: what a call captured (the customer's words) and the one-line hand-off about them carry canaries, erased with the workspace and swept
+  insert into public.outcome_details (outcome_id, tenant_id, callback_at, captured) values (tests.rid(p || '_er_out'), t, now() + interval '1 day', '{"budget": "Oqdr7 50 lakh"}'::jsonb);
+  insert into public.outreach_handoffs (id, tenant_id, contact_id, assigned_to, summary) values (tests.rid(p || '_er_ho'), t, k, tests.uid(p || '_owner'), 'Hodr7 is interested in a site visit');
+  -- job DR B1: a task's words (the owner's instruction, the one question and its answer, the plan) and what a person said (captured fields, the transcript) carry a business canary, erased with the workspace and swept
+  insert into public.tasks (id, tenant_id, instruction, language, question, answer, plan, created_by) values
+    (tests.rid(p || '_er_task'), t, 'Tskq7 ask the suppliers for the price', 'en', 'Which Tskq7 suppliers?', 'The three Tskq7 ones', '{"goal": "Tskq7 prices"}'::jsonb, tests.uid(p || '_owner'));
+  insert into public.task_contacts (id, tenant_id, task_id, contact_id, lead_id, captured, transcript) values
+    (tests.rid(p || '_er_taskc'), t, tests.rid(p || '_er_task'), k, l, '{"price": "Tskq7"}'::jsonb, '[{"who": "contact", "text": "Tskq7 here"}]'::jsonb);
 end $$;
 
 -- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).

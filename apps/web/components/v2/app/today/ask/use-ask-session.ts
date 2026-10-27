@@ -10,6 +10,7 @@ import { canRecord } from "./recorder";
 import { fetchVoiceStatus, makeAskTransport, makeVoiceTransport } from "./transport";
 import { useRecorder, type RecorderProblem } from "./use-recorder";
 import type { VoicePhase } from "./VoiceMode";
+import { useDoIt, type DoItOptions, type Mode, type TaskEntry } from "./use-do-it";
 
 import { MAX_QUESTION } from "./ask-constants";
 
@@ -40,7 +41,7 @@ export function insideWorkspace(href: string, base: string): string | null {
 export type AskPhase = "idle" | "asking" | "done" | "error";
 export type AskProblem = RecorderProblem | null;
 /** One question and its answer, as the thread keeps it. */
-export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean };
+export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null };
 
 export type AskSessionOptions = {
   lang: string;
@@ -52,13 +53,15 @@ export type AskSessionOptions = {
   voiceStatus?: VoiceStatus | null;
   /** The recording's transport (tests give it; otherwise `<base>/ask/voice`). */
   voiceTransport?: VoiceTransport | null;
+  /** Night 4 (tasks): present only when "Ask Vijaya to do it" is on and the person may make a plan; adds the "Ask | Do it" switch. */
+  doIt?: DoItOptions | null;
 };
 
 /**
  * The state of the Ask box, in one place (job DQ part 0): the question, the streaming answer, the drafts and sources, the microphone, the spoken answer and the thread of earlier exchanges. The Today card and the floating panel
  * of the other screens are two views of the SAME session (AskProvider makes one per workspace layout), so a question asked on Leads is on Today: one conversation, one Ask API. `AskTeam` makes its own session when there is no provider.
  */
-export function useAskSession({ lang, base, words, availability, transport: given, voiceStatus: givenStatus, voiceTransport: givenVoice }: AskSessionOptions) {
+export function useAskSession({ lang, base, words, availability, transport: given, voiceStatus: givenStatus, voiceTransport: givenVoice, doIt: doItOptions }: AskSessionOptions) {
   const w = React.useCallback((key: string) => words[key] ?? key, [words]);
   const own = React.useMemo(() => (availability === "live" && given === undefined ? makeAskTransport(`${base}/ask`) : null), [availability, given, base]);
   const transport = given === undefined ? own : given;
@@ -74,6 +77,10 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const [focused, setFocused] = React.useState(false);
   const [voiceOpen, setVoiceOpen] = React.useState(false); // voice mode (job DM): the full-screen circle over the box, opened by the microphone
   const [earlier, setEarlier] = React.useState<Exchange[]>([]);
+  const doIt = useDoIt(doItOptions);
+  const [mode, setMode] = React.useState<Mode>("ask");
+  const [taskEntry, setTaskEntry] = React.useState<TaskEntry | null>(null);
+  const modeRef = React.useRef<Mode>("ask"); // read by a recording that finishes long after the render that started it
   const [finished, setFinished] = React.useState(0); // how many answers have finished: the floating orb shows a dot for one the person has not seen
   const abort = React.useRef<AbortController | null>(null);
   const player = React.useRef<AnswerPlayer | null>(null);
@@ -102,7 +109,8 @@ export function useAskSession({ lang, base, words, availability, transport: give
   // the exchange on screen, readable from a handler made by an earlier render (a recording finishes long after the render that started it)
   const current = React.useRef<Exchange | null>(null);
   React.useEffect(() => {
-    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error" };
+    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry };
+    modeRef.current = doIt ? mode : "ask";
   });
   const voiceEndpoint = `${base}/ask/voice`;
   const ownVoice = React.useMemo(() => (givenVoice === undefined && givenStatus === undefined ? makeVoiceTransport(voiceEndpoint) : null), [givenVoice, givenStatus, voiceEndpoint]);
@@ -190,6 +198,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setAnswer("");
     setSources([]);
     setDrafts([]);
+    setTaskEntry(null);
     setAudioPending(voice && speak);
     let failed = false;
     try {
@@ -231,6 +240,12 @@ export function useAskSession({ lang, base, words, availability, transport: give
         } else if (e.type === "audio_error") {
           setAudioPending(false);
           setAudioFailed(true);
+        } else if (e.type === "task") {
+          doIt?.adopt(e.task);
+          setTaskEntry({ id: e.task.id });
+        } else if (e.type === "task_error") {
+          failed = true;
+          setTaskEntry({ error: e.error });
         }
       }
     } catch {
@@ -244,15 +259,71 @@ export function useAskSession({ lang, base, words, availability, transport: give
     }
   };
 
+  /** "Do it" mode: the instruction becomes a plan. The browser makes the task's id, so a double press or a retry is a replay at the API, never a second task. */
+  async function* planEvents(instruction: string, taskId: string, signal: AbortSignal): AsyncGenerator<AskEvent> {
+    if (!doIt) return;
+    try {
+      const got = await doIt.actions.plan(taskId, instruction, null);
+      if (signal.aborted) return;
+      yield got.ok ? { type: "task", task: got.task } : { type: "task_error", error: got.error };
+    } catch {
+      if (!signal.aborted) yield { type: "task_error", error: "down" };
+    }
+    yield { type: "done" };
+  }
+
+  /** A recording in "Do it" mode: the voice route hears it (`heard`); once the words are known the rest of that request is dropped and the words become the instruction. */
+  async function* planFromVoice(blob: Blob, signal: AbortSignal): AsyncGenerator<AskEvent> {
+    if (!doIt || voiceTransport === null) return;
+    const inner = new AbortController();
+    const link = () => inner.abort();
+    signal.addEventListener("abort", link);
+    let heard = "";
+    try {
+      for await (const e of voiceTransport({ audio: blob, lang, speak: false, signal: inner.signal })) {
+        if (e.type === "heard") {
+          heard = e.text.slice(0, MAX_QUESTION).trim();
+          yield e;
+          inner.abort();
+          break;
+        }
+        if (e.type === "error") {
+          yield e;
+          return;
+        }
+      }
+    } catch {
+      if (signal.aborted) return;
+    } finally {
+      signal.removeEventListener("abort", link);
+    }
+    if (signal.aborted) return;
+    if (heard === "") {
+      yield { type: "error", code: "voice_no_speech" };
+      return;
+    }
+    yield* planEvents(heard, crypto.randomUUID(), signal);
+  }
+
   const ask = async (raw: string) => {
     const question = raw.trim().slice(0, MAX_QUESTION);
-    if (!question || transport === null) return;
+    if (!question) return;
+    if (modeRef.current === "do" && doIt) {
+      const taskId = crypto.randomUUID();
+      await run(question, (signal) => planEvents(question, taskId, signal), false, false);
+      return;
+    }
+    if (transport === null) return;
     await run(question, (signal) => transport({ question, lang, signal }), false, false);
   };
 
   /** A recording is the question. A spoken answer is asked for only when the person wants voice answers played (it is paid for by the same allowance, so it is not made to be thrown away). */
   const askVoice = async (blob: Blob) => {
     if (voiceTransport === null) return;
+    if (modeRef.current === "do" && doIt) {
+      await run("", (signal) => planFromVoice(blob, signal), true, false);
+      return;
+    }
     const speak = status.speech && autoplay;
     await run("", (signal) => voiceTransport({ audio: blob, lang, speak, signal }), true, speak);
   };
@@ -310,6 +381,11 @@ export function useAskSession({ lang, base, words, availability, transport: give
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
     ask, stop, togglePlay, runs,
     asking: phase === "asking",
+    /** Night 4 (tasks): "ask" unless "Ask Vijaya to do it" is on for this person; `doIt` carries the actions, the words and the tasks of this thread. */
+    mode: doIt ? mode : ("ask" as Mode),
+    setMode,
+    doIt,
+    taskEntry,
   };
 }
 

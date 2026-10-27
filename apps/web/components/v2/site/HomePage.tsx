@@ -2,7 +2,7 @@ import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { JsonLd } from "@/components/v2/site/JsonLd";
-import { BuiltFor, CallsSection, FinalCta, HeroExample, HowSection, PlansSection, TrustBand, WorkforceSection } from "@/components/v2/site/HomeSections";
+import { BuiltFor, FinalCta, HeroExample, HowSection, PlansSection, SourcesSection, TrustBand } from "@/components/v2/site/HomeSections";
 import { hasWaitlist, WaitlistSection, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { btnPrimary, container } from "@/components/v2/site/ui";
 import { BRAND_NAME } from "@/design/brand";
@@ -17,9 +17,9 @@ import { sitePath } from "@/lib/site/paths";
 const badge = "inline-flex items-center text-sm font-semibold text-muted";
 
 /**
- * The home page (job DM, from the approved "clean redesign"): the hero (headline, the two buttons and an example: a WhatsApp chat with a call card), the six AI workers in the order of the workflow, how you start, the business types it is
- * built for, natural AI calls (early access), the plans (no price), four promises and the last call to action. Every word is a string of i18n/strings/site.json or a field of a business type's landing.json; the four animated blocks
- * (the example, the workers, the voice card, the plan tabs) are the only client code, and each stands still with "reduce motion".
+ * The home page (job DM, reworked for Lead Desk in night 4, F1): the hero (headline, the two buttons, the 2-minute aim and an example: a WhatsApp chat with a call card), the six steps of Lead Desk, where leads already come from (text chips),
+ * the business it is made for (three deep cards and a row of industry chips), the plans in two kinds (Lead Desk plans, Workforce plans; no price), trust and the last call to action. Every word is a string of i18n/strings/site.json
+ * (or a field of a business type's landing.json); the hero example is the only client code, and it stands still with "reduce motion". Every section below the hero is server markup.
  */
 export function HomePage({ t, lang, waitlist }: { t: SiteT; lang: Lang; waitlist?: WaitlistAction }) {
   const start = startEntry(t, lang, t("hero.cta"), { hasForm: hasWaitlist(waitlist) });
@@ -32,6 +32,9 @@ export function HomePage({ t, lang, waitlist }: { t: SiteT; lang: Lang; waitlist
             {t("hero.h1")}
           </h1>
           <p className="max-w-[34em] text-lg leading-relaxed text-muted sm:text-xl">{t("hero.sub")}</p>
+          <p className="max-w-[34em] text-base font-semibold text-ink" data-part="aim">
+            {t("ld.aim")}
+          </p>
           <div className="flex flex-wrap items-center gap-3">
             <Link href={start.href} className={`${btnPrimary} font-extrabold max-sm:w-full`}>
               {start.label}
@@ -54,12 +57,11 @@ export function HomePage({ t, lang, waitlist }: { t: SiteT; lang: Lang; waitlist
           <HeroExample t={t} />
         </div>
       </section>
-      <WorkforceSection t={t} />
       <HowSection t={t} />
+      <SourcesSection t={t} />
       <BuiltFor t={t} lang={lang} />
-      <CallsSection t={t} />
       <PlansSection t={t} lang={lang} />
-      <TrustBand t={t} />
+      <TrustBand t={t} lang={lang} />
       <WaitlistSection t={t} lang={lang} action={waitlist} />
       <FinalCta t={t} lang={lang} />
       <JsonLd

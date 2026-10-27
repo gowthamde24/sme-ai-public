@@ -29,33 +29,46 @@ ROUTE_WORDS = frozenset(
         "outcomes", "totals", "correct", "ai-assistant", "preview", "test-call",
         # job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors
         "consents", "marketing", "privacy", "notice", "subprocessors", "grievance", "public",
-        "waitlist",
+        "waitlist", "speaking-style", "lead-templates", "lead-playbook", "knowledge",
+        "sources", "facts", "draft-facts", "decide", "reset",
+        # job DR / A2: lead imports, sheets kept in sync, live sources, the public intake doors
+        "lead-imports", "lead-sheet-links", "sync", "pause", "resume", "lead-sources",
+        "rotate", "indiamart", "pull", "unparsed",
+        "leads", "touches", "lead-intake", "email", "mail", "meta",
+        # job DR A3: speed to lead and approve once
+        "outreach", "exclude", "caps", "rules", "result", "handoffs", "acted", "source-costs",
+        # job DR B1: tasks
+        "tasks", "plan", "answer", "run", "cancel", "cap", "report",
+        "templates",
+        "voice-sample",
         # job DP: marks and report messages to guardians (a file that is never stored)
         "marks-messages", "batches",
         # job CN: sites, dues, material quotes, deliveries, the public calculator
+        # job DS part E2: top-ups, the upgrade
+        "topups", "upgrade", "upgrade-preview",
         "calculate", "materials", "sites", "dues", "customers", "invoices", "payments",
         "credit-limit", "credit-check", "ledger", "items", "photos", "order", "trips", "delivered",
         "challan", "notify", "policy", "orders", "catalogue", "void",
         # job CP: the shared ledger, reminder campaigns, the call list
         "statement", "entries", "charges", "receipts", "campaigns", "recipients", "from-ledger",
-        "clear", "pause", "resume", "results", "call-list", "outcome",
+        "clear", "results", "call-list", "outcome",
         # job CR: the education pack (the school's own vocabulary, never a person)
         "institution", "programmes", "groups", "students", "admissions", "stage", "admit",
         "erase", "fee-plans", "fee-assignments", "fees", "adjustments", "concessions",
         "guardians", "late-fees", "post", "pending", "announcements", "audience",
         # job CV: the one reports API and the voice notes
-        "run", "choices", "usage", "disclosure", "notes", "voice-notes", "voices",
+        "choices", "usage", "disclosure", "notes", "voice-notes", "voices",
         # job DP part 5: the Owner's own voice
         "voice-clone", "sentence", "delete",
         # job CK
         "packs", "auth", "providers", "pack", "modules", "example-data",
         "custom-fields", "custom", "security", "remove",
         "account", "setup", "today", "ai-usage", "agents", "assistant", "messages", "conversations",
-        "companies", "contacts", "products", "leads", "opportunities",
+        "companies", "contacts", "products", "opportunities",
         "archive", "restore", "record-consent", "suppress", "lift-suppression",
         "evidence", "evidence-links",
         "icp-configs", "active", "import", "review-queue", "labels", "exports",
-        "agent-claims", "agent-cost", "agent-runs", "agent-settings", "cancel", "claims", "reviews",
+        "agent-claims", "agent-cost", "agent-runs", "agent-settings", "claims", "reviews",
         "enquiries", "requirement", "requirement-fields", "requirements",
         "confirm", "decision", "discard",
         "quote-setup", "quotes", "picks", "approve", "reject", "withdraw", "text",
@@ -67,21 +80,20 @@ ROUTE_WORDS = frozenset(
         # job BN: privacy rights
         "data-exports", "deletion-requests", "retention", "grievances", "link",
         # job BR: WhatsApp (no secret in the path; the verify token travels in the query, redacted)
-        "webhooks", "whatsapp", "templates", "activate", "disable", "submit", "read",
+        "webhooks", "whatsapp", "activate", "disable", "submit", "read",
         # job BY: the team, the shop's basics, the report, notifications and push
         "team", "invitations", "accept", "role", "reports", "weekly", "profile",
         "notifications", "seen", "push", "push-subscriptions", "public-key",
         "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "item-types", "manual-quotes",
         "followup", "followups", "followup-drafts", "followup-policy-versions", "question-drafts",
-        "touches", "due", "sent", "sync",
-        "erasure-requests", "execute", "data-policy",
+        "due", "sent", "erasure-requests", "execute", "data-policy",
         "outbox", "approvals", "dispatch", "edit", "settings", "call-requests",
         "visits", "slots", "change", "arrive", "no-show", "complete", "offer-visit", "week",
         "scheduler", "search", "draft-message",
         "summary", "voice", "research", "places", "business-profile", "ready", "metrics",
         # job BZ: connectors and webhooks (a secret in an address is never a word: always redacted)
-        "connectors", "indiamart", "pull", "payment-links", "send", "record",
+        "connectors", "payment-links", "send", "record",
         "missed-calls", "handle", "connect",
         "razorpay", "cashfree", "fake-payments", "exotel", "missed-call", "call-status",
         "openapi.json", "docs", "redoc", "oauth2-redirect",

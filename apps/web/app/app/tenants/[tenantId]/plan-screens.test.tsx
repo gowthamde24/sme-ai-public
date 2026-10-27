@@ -195,7 +195,7 @@ describe("the flag is '1' (on: the plans and billing API of job DI)", () => {
   });
   it("/plans: the catalogue from the API, a workspace that has had a trial cannot start another", async () => {
     render(await PlansPage(plansProps()));
-    expect(screen.getAllByRole("heading", { level: 3 }).map((x) => x.textContent)).toEqual(["Starter", "Growth", "Business", "Pay-as-you-go", "Calls 300", "Calls 1,000"]);
+    expect(screen.getAllByRole("heading", { level: 3 }).map((x) => x.textContent)).toEqual(["Starter", "Growth", "Business", "Pay as you go", "Lead Desk 300", "Lead Desk 1,000"]);
     cleanup();
     apiRoutes(billingBody({ subscription: subscription({ status: "cancelled" }), can_start_trial: false }));
     render(await PlansPage(plansProps()));
@@ -281,7 +281,7 @@ describe("the flag is 'mock' (the fake provider)", () => {
   });
   it("/plans: the six plans for an Owner (with the start form), a 404 for a member", async () => {
     render(await PlansPage(plansProps()));
-    expect(screen.getAllByRole("heading", { level: 3 }).map((x) => x.textContent)).toEqual(["Starter", "Growth", "Business", "Pay-as-you-go", "Calls 300", "Calls 1,000"]);
+    expect(screen.getAllByRole("heading", { level: 3 }).map((x) => x.textContent)).toEqual(["Starter", "Growth", "Business", "Pay as you go", "Lead Desk 300", "Lead Desk 1,000"]);
     expect(screen.getAllByText("Price coming soon")).toHaveLength(6);
     expect(screen.getByRole("radio", { name: "Test card that fails on renewal" })).toBeInTheDocument();
     cleanup();

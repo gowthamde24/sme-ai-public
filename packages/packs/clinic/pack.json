@@ -1,0 +1,334 @@
+{
+  "$schema": "../pack.schema.json",
+  "id": "clinic",
+  "version": 1,
+  "status": "preview",
+  "default_for_existing_workspaces": false,
+  "reviewed_by": null,
+  "names": {
+    "en": "Clinic and diagnostics",
+    "te": "క్లినిక్, డయాగ్నోస్టిక్స్",
+    "hi": "क्लिनिक और डायग्नोस्टिक्स",
+    "kn": "ಕ್ಲಿನಿಕ್, ಡಯಾಗ್ನೋಸ್ಟಿಕ್ಸ್"
+  },
+  "summary": {
+    "en": "Clinics, dental, skin, eye and diagnostic centres: appointments",
+    "te": "Clinics, dental, skin, eye, diagnostic centres: appointments",
+    "hi": "Clinics, dental, skin, eye, diagnostic centres: appointments",
+    "kn": "Clinics, dental, skin, eye, diagnostic centres: appointments"
+  },
+  "accent": "leads_orange",
+  "owl_prop": "stethoscope",
+  "core_tab": "campaigns",
+  "modules": [
+    "today",
+    "inbox",
+    "contacts",
+    "enquiries",
+    "followups",
+    "visits",
+    "campaigns",
+    "call_list",
+    "voice_notes",
+    "reports",
+    "office",
+    "integrations"
+  ],
+  "units": [],
+  "default_unit": null,
+  "labels": {
+    "en": {
+      "nav.item.today": "Today",
+      "nav.item.leads": "Leads",
+      "nav.item.quotes": "Quotes",
+      "nav.item.orders": "Orders",
+      "nav.item.customers": "Patients",
+      "nav.item.catalogue": "Offers",
+      "nav.item.sarees": "Offers",
+      "nav.item.visits": "Appointments",
+      "nav.tab.visits": "Appointments",
+      "nav.item.chats": "Customer chats",
+      "nav.item.retailers": "Find leads",
+      "nav.item.report": "This week",
+      "nav.item.team": "Team",
+      "nav.item.office": "Office",
+      "nav.item.integrations": "Integrations",
+      "nav.item.settings": "Settings",
+      "agent.lead_finder": "Lead Desk",
+      "agent.researcher": "Researcher",
+      "agent.requirement_analyst": "Enquiry Analyst",
+      "agent.quote_writer": "Quote Writer",
+      "agent.followup_desk": "Follow-up Desk",
+      "agent.order_desk": "Order Desk",
+      "word.customer": "Patient",
+      "word.customers": "Patients",
+      "word.lead": "Lead",
+      "word.leads": "Leads",
+      "word.enquiry": "Enquiry",
+      "word.enquiries": "Enquiries",
+      "word.item": "Offer",
+      "word.items": "Offers",
+      "word.quote": "Quote",
+      "word.quotes": "Quotes",
+      "word.order": "Order",
+      "word.orders": "Orders",
+      "word.visit": "Appointment",
+      "word.visits": "Appointments",
+      "word.contact": "Contact",
+      "word.contacts": "Contacts",
+      "pack.core_tab": "Campaigns",
+      "pack.not_validated": "Not validated by a real owner yet"
+    }
+  },
+  "language_review": {
+    "te": "draft",
+    "hi": "draft",
+    "kn": "draft"
+  },
+  "custom_fields": [
+    {
+      "entity": "contact",
+      "code": "preferred_language",
+      "kind": "choice",
+      "label": {
+        "en": "Language for calls and messages"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "en",
+          "label": {
+            "en": "English"
+          }
+        },
+        {
+          "code": "te",
+          "label": {
+            "en": "Telugu"
+          }
+        },
+        {
+          "code": "hi",
+          "label": {
+            "en": "Hindi"
+          }
+        },
+        {
+          "code": "kn",
+          "label": {
+            "en": "Kannada"
+          }
+        },
+        {
+          "code": "ta",
+          "label": {
+            "en": "Tamil"
+          }
+        },
+        {
+          "code": "ml",
+          "label": {
+            "en": "Malayalam"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "best_time_to_call",
+      "kind": "choice",
+      "label": {
+        "en": "Best time to call"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "morning",
+          "label": {
+            "en": "Morning"
+          }
+        },
+        {
+          "code": "afternoon",
+          "label": {
+            "en": "Afternoon"
+          }
+        },
+        {
+          "code": "evening",
+          "label": {
+            "en": "Evening"
+          }
+        },
+        {
+          "code": "any",
+          "label": {
+            "en": "Any time"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "visit_reason",
+      "kind": "choice",
+      "label": {
+        "en": "Reason for the visit"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "check_up",
+          "label": {
+            "en": "Check-up"
+          }
+        },
+        {
+          "code": "follow_up",
+          "label": {
+            "en": "Follow-up visit"
+          }
+        },
+        {
+          "code": "new_consultation",
+          "label": {
+            "en": "New consultation"
+          }
+        },
+        {
+          "code": "report_review",
+          "label": {
+            "en": "Review of reports"
+          }
+        },
+        {
+          "code": "procedure_enquiry",
+          "label": {
+            "en": "Enquiry about a procedure"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "speciality",
+      "kind": "choice",
+      "label": {
+        "en": "Doctor or department"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "general",
+          "label": {
+            "en": "General"
+          }
+        },
+        {
+          "code": "dental",
+          "label": {
+            "en": "Dental"
+          }
+        },
+        {
+          "code": "skin",
+          "label": {
+            "en": "Skin"
+          }
+        },
+        {
+          "code": "eye",
+          "label": {
+            "en": "Eye"
+          }
+        },
+        {
+          "code": "child",
+          "label": {
+            "en": "Child health"
+          }
+        },
+        {
+          "code": "women",
+          "label": {
+            "en": "Women's health"
+          }
+        },
+        {
+          "code": "ortho",
+          "label": {
+            "en": "Bones and joints"
+          }
+        },
+        {
+          "code": "other",
+          "label": {
+            "en": "Other"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "first_visit",
+      "kind": "yes_no",
+      "label": {
+        "en": "First visit to the clinic"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": false
+    },
+    {
+      "entity": "contact",
+      "code": "preferred_day",
+      "kind": "date",
+      "label": {
+        "en": "Preferred day"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    },
+    {
+      "entity": "contact",
+      "code": "preferred_slot",
+      "kind": "choice",
+      "label": {
+        "en": "Preferred time"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "morning",
+          "label": {
+            "en": "Morning"
+          }
+        },
+        {
+          "code": "afternoon",
+          "label": {
+            "en": "Afternoon"
+          }
+        },
+        {
+          "code": "evening",
+          "label": {
+            "en": "Evening"
+          }
+        }
+      ]
+    }
+  ],
+  "example_data": {}
+}

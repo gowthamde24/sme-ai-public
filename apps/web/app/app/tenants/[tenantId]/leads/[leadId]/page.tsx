@@ -14,6 +14,10 @@ import { requireUser } from "@/lib/auth/session";
 import { ContactLead } from "@/components/v2/app/contact/ContactLead";
 import { OutcomesPanel } from "@/components/v2/app/outcomes/OutcomesPanel";
 import { readCustomerOutcomes } from "@/lib/outcomes/source";
+import { LeadTimeline } from "@/components/v2/app/lead-desk/LeadTimeline";
+import { readTouches } from "@/lib/lead-desk/leads-source";
+import { sourceNames } from "@/lib/outreach/words";
+import { leadsScreens } from "@/lib/screens/flag";
 import { getLang } from "@/i18n/get-lang";
 import { wordsFor } from "@/i18n/app-words";
 
@@ -143,6 +147,8 @@ export default async function LeadPage({
   const originText = lead.created_via in { manual: 1, import: 1, agent: 1 } ? t(originKey) : lead.created_via;
   // what happened after each call and follow-up (job DM): drawn only when the flag is on (OUTCOME_SCREENS); the owner and an Admin may correct a result
   const outcomesRead = await readCustomerOutcomes({ token: user.accessToken, tenantId }, leadId);
+  // night 4 (Lead Desk): every time this person arrived, with the source (only while LEADS_SCREENS is on)
+  const touches = leadsScreens() === "off" ? null : await readTouches({ token: user.accessToken, tenantId, userId: user.id }, leadId);
   const sentId = crypto.randomUUID(); // one id per render: a second press of "Record this" is a retry
   const reviewIds = Object.fromEntries(
     (claims ?? []).map((c) => [c.id, { accept: crypto.randomUUID(), reject: crypto.randomUUID() }]),
@@ -200,6 +206,7 @@ export default async function LeadPage({
             correct={tenant.role === "owner" || tenant.role === "admin" ? correctOutcomeAction.bind(null, tenantId) : null}
           />
         )}
+        {touches ? <LeadTimeline words={wordsFor(lang, ["ld.tl.", "ld.source."])} touches={touches.items} flags={touches.flags} lang={lang} sourceNames={sourceNames(wordsFor(lang, ["ld.source."]))} /> : null}
 
         <EnquiriesPanel
           words={words}

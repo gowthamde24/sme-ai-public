@@ -1,0 +1,48 @@
+# Task
+Call my cement suppliers, ask the price per bag and the delivery day, and tell me the cheapest. [All tasks](/app/tenants/22222222-2222-2222-2222-222222222222/tasks)
+{label="Plan: Supplier price enquiry"}
+### Plan: Supplier price enquiry
+Waiting for your approval
+{role=note} Test mode: the calls are simulated. Nothing real is dialled.
+Who
+11 people
+-
+<checkbox label="Sri Venkateswara Traders" checked>
+Sri Venkateswara Traders
+-
+<checkbox label="Lakshmi Cement Depot">
+Lakshmi Cement Depot
+and 10 more Untick anyone you do not want included. WhatsApp message (draft) Hello, may we have your price for today?
+summary: See everyone (2)
+-
+<checkbox label="Sri Venkateswara Traders …3210Waiting" checked>
+Sri Venkateswara Traders … 3210 Waiting
+-
+<checkbox label="Lakshmi Cement Depot …1111Left out">
+Lakshmi Cement Depot … 1111 Left out
+The limit is the estimate plus a little extra: ₹36.
+Goal
+Ask each supplier today's price per bag and the delivery day.
+How
+Phone calls
+What Vijaya asks
+- What is your price per bag today?
+- Which day can you deliver?
+When
+6 Oct, 10:00 to 19:00
+Estimate
+24 minutes of calls · 12 calls · about ₹30 An estimate worked out by the system from today's prices. The real figure can differ a little.
+Limits
+It stops when it has spent ₹36
+- Promotional calls are off: WhatsApp only. Only people who agreed to offers are included.
+- Left out because they are not in your contacts: 1 (…3210).
+[button type=button: Approve all (11)]
+One approval covers everyone who is ticked. Nothing is called or sent before you approve.
+{label="Customers' language"}
+## Customers' language
+Vijaya will speak తెలుగు. Choose another language
+<select label="Choose another language">
+  options: తెలుగు=te* | हिन्दी=hi | ಕನ್ನಡ=kn | English=en | தமிழ்=ta | മലയാളം=ml
+[button type=button disabled: Plan again in this language]
+The language cannot change on a plan that exists, so this makes a new plan from the same words.
+[All tasks](/app/tenants/22222222-2222-2222-2222-222222222222/tasks)

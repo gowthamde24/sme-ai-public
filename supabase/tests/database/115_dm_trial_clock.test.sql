@@ -66,7 +66,7 @@ select is(pg_temp.access('a'), 'full', 'C7 with the switch OFF everything is ful
 select is(pg_temp.start('a_owner', 'a', 'sub_fake_a1') like '%"trial_waiting_for": "whatsapp"%', true, 'D1 a plan chosen before WhatsApp is connected WAITS: trial_waiting_for = whatsapp');
 select is(pg_temp.sub('a', 'trial_ends_at'), null, 'D2 ...with no end date');
 select is(pg_temp.sub('a', 'status') || '/' || pg_temp.sub('a', 'payment_method_on_file'), 'trial_pending/true', 'D3 ...status trial_pending, a payment method on file');
-select is(pg_temp.sub('a', 'catalogue_version'), '2', 'D4 it started under version 2');
+select is(pg_temp.sub('a', 'catalogue_version'), '3', 'D4 it started under version 3 (the current catalogue)');
 select is(pg_temp.start('b_owner', 'b', 'sub_fake_b1') like '%"trial_waiting_for": null%' and pg_temp.sub('b', 'status') = 'trialing', true, 'D5 with WhatsApp connected already the trial does not wait: trialing');
 select is(pg_temp.sub('b', 'trial_ends_at')::timestamptz, '2026-11-09T12:00:00+05:30'::timestamptz, 'D6 ...and ends 14 days after the connected day (26 October + 14 = 9 November)');
 select is((select count(*)::int from public.billing_events where tenant_id = tests.tid('a') and kind = 'trial_started'), 1, 'D7 one trial_started event');

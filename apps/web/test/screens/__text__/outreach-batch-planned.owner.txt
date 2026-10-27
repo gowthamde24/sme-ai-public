@@ -1,0 +1,29 @@
+# IndiaMART leads, 27 Oct (synthetic)
+Look at who, what is asked, when and the estimate. Then approve everyone at once. [Back to lead plans](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)
+{label="IndiaMART leads, 27 Oct (synthetic)"}
+### IndiaMART leads, 27 Oct (synthetic)
+Waiting for your approval
+{role=note} Test mode: the calls are simulated. Nothing real is dialled.
+Who
+9 people
+-
+<checkbox label="Ravi K., Guntur" checked>
+Ravi K., Guntur
+and 8 more Untick anyone you do not want included. Left out already: no consent yet 2, asked us to stop 1
+Goal
+Book a site visit
+How
+Phone calls
+What Vijaya asks
+- What budget range are you comfortable with?
+When
+2026-10-27 to 2026-11-03, in your calling hours
+Estimate
+27 minutes of calls · about ₹108 An estimate worked out by the system from today's prices. The real figure can differ a little.
+Limits
+Up to 50 calls a day
+[button type=button: Approve all (9)]
+One approval covers everyone who is ticked. Nothing is called or sent before you approve.
+Nothing has been called or sent. The plan waits for your approval.
+summary: Everyone in this plan (1)
+- Ravi K. waiting for approval

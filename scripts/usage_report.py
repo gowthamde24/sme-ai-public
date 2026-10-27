@@ -156,8 +156,8 @@ def build_report(data: dict[str, Any], catalogue: dict[str, Any], assumptions: d
 
 
 def run_staging(project_ref: str, days: int) -> dict[str, Any]:
-    import seed_staging as ss
     import sb_mgmt
+    import seed_staging as ss
 
     ss.guard(argparse.Namespace(i_know_this_loads_demo_data_into_staging=True, project_ref=project_ref))
 

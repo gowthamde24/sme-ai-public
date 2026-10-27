@@ -127,7 +127,8 @@ def test_rules_language_script_and_digits() -> None:
     assert compare.check(c, "whatsapp_reply", "అవును, ఉంది. 10:00 నుండి 20:00 వరకు తెరిచి ఉంటుంది.")["stays_in_data"] is True, "10:00 is the hour 10"
     assert compare.check(c, "whatsapp_reply", "అవును, ఉంది. 10:30 వరకు.")["stays_in_data"] is False
     assert compare.check(c, "whatsapp_reply", "అవును, ధర ఎనిమిది వేల ఐదు వందలు.")["gives_listed_fact"] is None, "spelled-out numbers: the rule cannot decide, a person reads it"
-    assert compare.check(c, "whatsapp_reply", "అవును, 7 ఉన్నాయి.")["gives_listed_fact"] is False
+    wrong = compare.check(c, "whatsapp_reply", "అవును, 7 ఉన్నాయి.")
+    assert wrong["gives_listed_fact"] is None and wrong["stays_in_data"] is False, "a wrong digit is refused by stays_in_data (job DS: the fact rule no longer fails a price said in words)"
 
 
 def test_rules_empty_reply_and_length() -> None:

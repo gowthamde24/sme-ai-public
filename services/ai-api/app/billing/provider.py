@@ -48,6 +48,23 @@ class ProviderEvent:
     occurred_at: datetime
 
 
+@dataclass(frozen=True)
+class OneOffCharge:
+    """A single payment outside the monthly schedule (a top-up pack, the pro-rata of an upgrade). `idempotency_key` makes a retry harmless at the provider."""
+
+    tenant_id: str
+    checkout_ref: str
+    amount_paise: int
+    description: str
+    idempotency_key: str
+
+
+@dataclass(frozen=True)
+class ChargeResult:
+    provider: str
+    reference: str
+
+
 class BillingProvider(Protocol):
     name: str
 
@@ -62,6 +79,14 @@ class BillingProvider(Protocol):
 
     def cancel_subscription(self, reference: str, *, at_period_end: bool, now: datetime) -> None:
         """Stop the schedule. Unknown or already cancelled: nothing happens (cancelling is safe to repeat)."""
+        ...
+
+    def charge_once(self, charge: OneOffCharge) -> ChargeResult:
+        """Take one payment now. Raises PaymentMethodDeclinedError when the payment method is refused; then nothing was charged. The same idempotency key never charges twice."""
+        ...
+
+    def change_plan(self, reference: str, price_paise: int | None) -> None:
+        """From the next charge on, the subscription costs `price_paise` a month (an upgrade). Unknown reference: nothing happens."""
         ...
 
     def events_until(self, now: datetime) -> list[ProviderEvent]:

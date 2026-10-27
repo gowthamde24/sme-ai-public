@@ -98,7 +98,7 @@ describe("the other business types", () => {
       it("shows exactly the menu its modules allow (default deny), and nothing of a module that is off", () => {
         const shown = new Set(ids(frame));
         for (const i of NAV.flatMap((g) => g.items)) if (i.module && !m.modules.includes(i.module) && i.roles.includes("owner")) expect(shown.has(i.id), i.id).toBe(false);
-        for (const i of NAV.flatMap((g) => g.items)) if ((!i.module || m.modules.includes(i.module)) && !(i.unlessModule && m.modules.includes(i.unlessModule)) && i.roles.includes("owner")) expect(shown.has(i.id), i.id).toBe(true);
+        for (const i of NAV.flatMap((g) => g.items)) if (!i.feature && (!i.module || m.modules.includes(i.module)) && !(i.unlessModule && m.modules.includes(i.unlessModule)) && i.roles.includes("owner")) expect(shown.has(i.id), i.id).toBe(true);
       });
       it("puts its core tab on the phone's bar in the core slot and calls it by the pack's own word", () => {
         const core = coreItem(frame);

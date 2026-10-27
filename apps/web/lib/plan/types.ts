@@ -7,7 +7,7 @@ export type PlanKind = "main" | "calls";
 export type PlanDef = {
   id: string;
   kind: PlanKind;
-  /** Plan names are names (Starter, Growth, Calls 300): the same in every language, like the product's own name. */
+  /** Plan names are names (Starter, Growth, Lead Desk 300): the same in every language, like the product's own name. */
   name: string;
   /** null until the owner sets it: the screens say "Price coming soon". */
   priceInr: number | null;

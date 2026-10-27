@@ -1,0 +1,5 @@
+# Ask Vijaya to do it
+Say what you want done, in your own words. You see a plan first. Nothing is called or sent until you approve. You can read tasks here. The Owner, an Admin or Sales can ask Vijaya to do one.
+## Your tasks
+{label="Your tasks"} [Running (0)](/app/tenants/22222222-2222-2222-2222-222222222222/tasks?tab=running current=page) [Waiting for your approval (0)](/app/tenants/22222222-2222-2222-2222-222222222222/tasks?tab=waiting) [Finished (0)](/app/tenants/22222222-2222-2222-2222-222222222222/tasks?tab=finished)
+Nothing is running right now.

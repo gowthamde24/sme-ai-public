@@ -38,6 +38,8 @@ export type NavItem = {
   packOnly?: boolean;
   /** Hidden when the business type has this module ON: Dues is the education Fees page's own ledger, so a business with `fees` is not offered it twice (jobs CO and CS). */
   unlessModule?: string;
+  /** A part that exists only while its feature flag is on (night 4: Lead Desk, Ask Vijaya to do it). Offered only when the workspace's frame lists the feature; the page itself answers 404 when the flag is off. */
+  feature?: string;
 };
 export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
 
@@ -52,7 +54,7 @@ export const NAV: readonly NavGroup[] = [
     id: "work",
     label: "Work",
     items: [
-      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start"], bar: true, roles: ALL_ROLES },
+      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start", "/lead-setup"], bar: true, roles: ALL_ROLES },
       { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/suggestions", "/requirements"], bar: true, module: "enquiries", roles: ALL_ROLES },
       // job DQ part 0: the follow-ups were reached from Leads; they are the first part of Calls now
       { id: "followups", label: "Follow-ups", icon: "calls", path: "/followups", module: "enquiries", roles: ALL_ROLES },
@@ -79,6 +81,12 @@ export const NAV: readonly NavGroup[] = [
       { id: "dues", label: "Dues", icon: "dues", path: "/dues", module: "dues", unlessModule: "fees", packOnly: true, roles: WRITERS },
       // job CC: look for shops and wholesalers on Google Maps and keep the good ones as leads
       { id: "retailers", label: "Find retailers", icon: "retailers", path: "/retailers", module: "lead_finder", roles: WRITERS },
+      // night 4 (jobs DR, DS): Lead Desk, the core for every business, and "Ask Vijaya to do it". Each exists only while its feature flag is on (lib/screens/features.ts); they are tabs of Customers, Calls and Reports
+      { id: "leaddesk", label: "Lead Desk", icon: "leads", path: "/lead-desk", feature: "leads", roles: ALL_ROLES },
+      { id: "import", label: "Add leads", icon: "customers", path: "/import", feature: "leads", roles: WRITERS },
+      { id: "outreach", label: "Lead plans", icon: "campaigns", path: "/outreach", feature: "outreach", roles: WRITERS },
+      { id: "tasks", label: "Tasks", icon: "calls", path: "/tasks", feature: "tasks", roles: ALL_ROLES },
+      { id: "leadreport", label: "Lead report", icon: "report", path: "/lead-report", feature: "outreach", roles: ADMINS },
     ],
   },
   {
@@ -104,7 +112,11 @@ export const NAV: readonly NavGroup[] = [
   {
     id: "connect",
     label: "Connect",
-    items: [{ id: "integrations", label: "Integrations", icon: "integrations", path: "/integrations", module: "integrations", roles: ADMINS }],
+    items: [
+      { id: "integrations", label: "Integrations", icon: "integrations", path: "/integrations", module: "integrations", roles: ADMINS },
+      // night 4: where leads arrive from (Meta, IndiaMART, portals, the website form, a sheet, a webhook); a tab of Settings
+      { id: "lead-sources", label: "Lead sources", icon: "integrations", path: "/lead-sources", feature: "leads", roles: ADMINS },
+    ],
   },
 ];
 
@@ -124,14 +136,14 @@ export type MenuId = "today" | "customers" | "chats" | "calls" | "sales" | "cata
 export type MenuEntry = { id: MenuId; label: string; icon: IconKey; members: readonly string[]; /** A tab of the phone's bottom bar (the rest are in "More"). */ bar?: boolean };
 export const MENU: readonly MenuEntry[] = [
   { id: "today", label: "Today", icon: "today", members: ["today"], bar: true },
-  { id: "customers", label: "Customers", icon: "customers", members: ["leads", "customers", "retailers", "students", "sites"], bar: true },
+  { id: "customers", label: "Customers", icon: "customers", members: ["leads", "customers", "leaddesk", "import", "retailers", "students", "sites"], bar: true },
   { id: "chats", label: "Chats", icon: "chats", members: ["chats", "outbox", "announcements"], bar: true },
-  { id: "calls", label: "Calls", icon: "calls", members: ["followups", "calllist", "campaigns"] },
+  { id: "calls", label: "Calls", icon: "calls", members: ["followups", "calllist", "campaigns", "outreach", "tasks"] },
   { id: "sales", label: "Sales", icon: "quotes", members: ["quotes", "visits", "orders", "fees", "admissions", "dues"], bar: true },
   { id: "catalogue", label: "Catalogue", icon: "sarees", members: ["sarees", "catalogue", "programmes"] },
-  { id: "reports", label: "Reports", icon: "report", members: ["report"] },
+  { id: "reports", label: "Reports", icon: "report", members: ["report", "leadreport"] },
   // Settings is the foot of the menu (FOOT), not one of the seven; its tabs are Settings itself and the three parts that moved into it
-  { id: "settings", label: "Settings", icon: "settings", members: ["settings", "team", "office", "integrations"] },
+  { id: "settings", label: "Settings", icon: "settings", members: ["settings", "team", "office", "integrations", "lead-sources"] },
 ];
 /** The ids of the seven items above the foot (Settings is the foot): a test pins "at most seven". */
 export const MENU_ITEMS: readonly MenuEntry[] = MENU.filter((m) => m.id !== "settings");
@@ -200,10 +212,13 @@ export type PackFrame = {
   labels: Readonly<Record<string, string>>;
   /** The phone's bottom bar (job CU, blueprint 2): "classic" = Today, Leads, the core tab, Visits, Office (what the product always had); "core" = Today, Inbox, the core tab, Contacts, then More. Absent = classic. */
   bar?: "classic" | "core";
+  /** Night 4: the parts switched ON by a feature flag (lib/screens/features.ts); an item that names a `feature` is offered only when it is in this list. Absent = none are on. */
+  features?: readonly string[];
 };
 
 /** Is this item offered to a business of this type? Absent pack: everything but the items that only exist with a pack. */
 export function offered(item: NavItem, view?: PackFrame | null): boolean {
+  if (item.feature !== undefined && !(view?.features ?? []).includes(item.feature)) return false;
   if (!view) return !item.packOnly;
   if (item.unlessModule !== undefined && view.modules.includes(item.unlessModule)) return false;
   return item.module === undefined || view.modules.includes(item.module);

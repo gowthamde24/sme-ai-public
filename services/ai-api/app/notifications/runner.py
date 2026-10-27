@@ -23,6 +23,10 @@ SENTENCES = {
     "order_money_held": "Money is held on an order.",
     "outbox_approval": "A message is waiting for your approval.",
     "call_approval": "A call is waiting for your approval.",
+    "outreach_paused": "Calling is paused and waits for you.",
+    "hot_lead_waiting": "An interested customer is waiting for a call back.",
+    "topup_low": "Your minutes or messages are at 80 percent. Top up before they run out.",
+    "topup_empty": "Your minutes or messages are used up. Top up to carry on.",
 }
 
 

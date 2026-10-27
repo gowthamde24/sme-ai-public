@@ -60,7 +60,7 @@ import { readAssistant } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, VOICES } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { assistantScreens, callSettingsScreens, dpdpScreens, ownVoiceScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { assistantScreens, callSettingsScreens, dpdpScreens, ownVoiceScreens, topupScreens, voiceSampleScreens } from "@/lib/screens/flag";
 import { readConsents } from "@/lib/dpdp/source";
 import { RESPONSE_DAYS } from "@/lib/site/business";
 import { grievanceAction, setMarketingAction } from "../dpdp-actions";
@@ -71,6 +71,7 @@ import { FAKE_CHECKOUT, planScreens } from "@/lib/plan/flag";
 import { CATALOGUE, planById } from "@/lib/plan/catalogue";
 import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
 import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, startPlanAction } from "../plan-actions";
+import { topupsPart } from "./topups-part";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -127,7 +128,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // a workspace that existed before business types and has no field of its own keeps the Settings it always had; one made with a chosen business type, or that has fields, gets the tab
   const hasFields = admin && fieldEntities.length > 0 && (usesChecklist(pack) || (fieldList !== null && fieldList.length > 0));
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
-  const hasPlan = admin && planScreens() !== "off";
+  const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
   // Settings > AI assistant (job DM): only while its flag is on, and only for the Owner (the people who run the business may be admins, but the assistant is the Owner's to set up)
   const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off");
   const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
@@ -198,6 +199,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   const planCtx = { token: user.accessToken, tenantId };
   const [workspacePlan, planCatalogue] = section === "plan" ? await Promise.all([readWorkspacePlan(planCtx), readCatalogue(planCtx)]) : [null, null];
+  const topups = section === "plan" ? await topupsPart({ token: user.accessToken, tenantId, lang, owner: tenant.role === "owner", plan: workspacePlan, catalogue: planCatalogue }) : null;
   const assistant = section === "assistant" ? await readAssistant({ token: user.accessToken, tenantId }, pack?.modules ?? null) : null;
   // under the assistant (job DP): its own voice, with consent, and the advanced call settings; each behind its own flag, the Owner only
   const assistantCtx = { token: user.accessToken, tenantId };
@@ -262,7 +264,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             ) : null}
           </>
         ) : null}
-        {section === "plan" ? (
+        {section === "plan" && planScreens() !== "off" ? (
           <PlanSection
             words={wordsFor(lang, ["plan."], ["frame.notyet"])}
             plan={workspacePlan}
@@ -273,9 +275,11 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             mock={FAKE_CHECKOUT}
             pickerHref={`${base}/plans`}
             contactEmail={ADDRESSES.billing}
+            usageBars={topupScreens() === "off"}
             actions={{ start: startPlanAction.bind(null, tenantId), cancel: cancelPlanAction.bind(null, tenantId), fix: planScreens() === "mock" ? fixPlanPaymentAction.bind(null, tenantId) : null, endTrial: planScreens() === "mock" ? endPlanTrialAction.bind(null, tenantId) : null }}
           />
         ) : null}
+        {topups}
         {section === "assistant" && assistant ? (
           <>
             {assistant.mode === "unavailable" ? (

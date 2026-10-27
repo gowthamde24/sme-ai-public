@@ -1,0 +1,267 @@
+{
+  "$schema": "../leads.schema.json",
+  "pack": "real_estate",
+  "version": 1,
+  "goal": {
+    "code": "site_visit",
+    "label": {
+      "en": "Book a site visit",
+      "te": "Site visit book చేయడం",
+      "hi": "Site visit book कराना",
+      "kn": "Site visit book ಮಾಡಿಸುವುದು"
+    },
+    "ask": {
+      "en": "Invite the person to see the property and fix a day and time for a site visit."
+    }
+  },
+  "questions": [
+    {
+      "code": "interest",
+      "field": "interest",
+      "ask": {
+        "en": "Are you looking to buy, rent or invest?"
+      },
+      "required": true
+    },
+    {
+      "code": "property_type",
+      "field": "property_type",
+      "ask": {
+        "en": "What kind of property: flat, villa, plot or commercial?"
+      },
+      "required": true
+    },
+    {
+      "code": "budget_band",
+      "field": "budget_band",
+      "ask": {
+        "en": "What budget range are you comfortable with?"
+      },
+      "required": true
+    },
+    {
+      "code": "preferred_area",
+      "field": "preferred_area",
+      "ask": {
+        "en": "Which area or locality do you prefer?"
+      },
+      "required": false
+    },
+    {
+      "code": "timeline",
+      "field": "timeline",
+      "ask": {
+        "en": "When are you planning to decide?"
+      },
+      "required": false
+    },
+    {
+      "code": "financing",
+      "field": "financing",
+      "ask": {
+        "en": "Will it be a home loan or your own funds?"
+      },
+      "required": false
+    },
+    {
+      "code": "site_visit_day",
+      "field": "site_visit_day",
+      "ask": {
+        "en": "Which day suits you for a site visit?"
+      },
+      "required": true
+    }
+  ],
+  "objections": [
+    {
+      "code": "too_expensive",
+      "hears": [
+        "too costly",
+        "price is high",
+        "out of budget"
+      ],
+      "answer": {
+        "en": "I understand. Our team can show options in other budgets and payment plans. Can I fix a visit so you can see what suits you?"
+      }
+    },
+    {
+      "code": "location_far",
+      "hears": [
+        "too far",
+        "not my area"
+      ],
+      "answer": {
+        "en": "Fair point. We have other projects in different areas. Which area works best for you? I will share the closest options."
+      }
+    },
+    {
+      "code": "looking_elsewhere",
+      "hears": [
+        "already seeing other projects",
+        "have an agent"
+      ],
+      "answer": {
+        "en": "That is fine, comparing is wise. A short visit costs you nothing and you can compare with what you have seen. Shall I book a time?"
+      }
+    },
+    {
+      "code": "need_time",
+      "hears": [
+        "let me think",
+        "call me later"
+      ],
+      "answer": {
+        "en": "Of course. When should I call you back? I can also send the details on WhatsApp so you can look at them."
+      }
+    },
+    {
+      "code": "loan_worry",
+      "hears": [
+        "loan is a problem",
+        "not sure about loan"
+      ],
+      "answer": {
+        "en": "Our team can explain the loan process and which banks other buyers used. Would you like a call from them?"
+      }
+    },
+    {
+      "code": "want_details_first",
+      "hears": [
+        "send details first",
+        "send brochure"
+      ],
+      "answer": {
+        "en": "Sure, I will send the brochure and location on WhatsApp now. After you look at it, may I call to fix a visit?"
+      }
+    }
+  ],
+  "followups": [
+    {
+      "when": "no_answer",
+      "after_minutes": 30,
+      "channel": "call",
+      "max_attempts": 3,
+      "message": null
+    },
+    {
+      "when": "no_answer",
+      "after_minutes": 1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Hello, this is Vijaya, the AI assistant of the property team. I tried calling you about your property enquiry. When is a good time to talk?"
+      }
+    },
+    {
+      "when": "interested",
+      "after_minutes": 2,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Thank you for your time. Here are the project details and the location. Shall we fix a site visit?"
+      }
+    },
+    {
+      "when": "callback",
+      "after_minutes": 0,
+      "channel": "call",
+      "max_attempts": 2,
+      "message": null
+    },
+    {
+      "when": "booked",
+      "after_minutes": -1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "A reminder: your site visit is tomorrow. Reply here if you need to change the time."
+      }
+    },
+    {
+      "when": "booked",
+      "after_minutes": -120,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Your site visit is in two hours. We look forward to seeing you."
+      }
+    }
+  ],
+  "outcome_reasons": {
+    "not_interested": [
+      {
+        "code": "budget_high",
+        "label": {
+          "en": "Budget is higher than they planned"
+        }
+      },
+      {
+        "code": "location_not_suitable",
+        "label": {
+          "en": "Location does not suit"
+        }
+      },
+      {
+        "code": "already_bought",
+        "label": {
+          "en": "Already bought or booked elsewhere"
+        }
+      },
+      {
+        "code": "timeline_later",
+        "label": {
+          "en": "Plans to buy much later"
+        }
+      },
+      {
+        "code": "wrong_property_type",
+        "label": {
+          "en": "Looking for a different property type"
+        }
+      },
+      {
+        "code": "just_browsing",
+        "label": {
+          "en": "Just browsing"
+        }
+      },
+      {
+        "code": "not_now",
+        "label": {
+          "en": "Not now, maybe later"
+        }
+      },
+      {
+        "code": "already_decided",
+        "label": {
+          "en": "Already decided elsewhere"
+        }
+      }
+    ],
+    "interested": [
+      {
+        "code": "site_visit_booked",
+        "label": {
+          "en": "Site visit booked"
+        }
+      },
+      {
+        "code": "wants_brochure",
+        "label": {
+          "en": "Wants the brochure first"
+        }
+      },
+      {
+        "code": "wants_call_with_sales",
+        "label": {
+          "en": "Wants a call with the sales team"
+        }
+      }
+    ]
+  },
+  "safety": [
+    "Do not quote a price, a discount or a payment plan unless it is in the approved facts.",
+    "Do not promise availability, a possession date or a return on investment.",
+    "Do not ask for ID numbers, bank details or any payment on a call or chat."
+  ]
+}

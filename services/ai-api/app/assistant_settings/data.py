@@ -10,7 +10,7 @@ from typing import Any
 
 DATA = Path(__file__).resolve().parent / "data" / "assistant.json"
 # the assistant word in each language: every introduction and every sample must contain it (and "AI")
-ASSISTANT_WORD = {"en": "assistant", "te": "అసిస్టెంట్", "hi": "असिस्टेंट", "kn": "ಅಸಿಸ್ಟೆಂಟ್", "ta": "உதவியாளர்", "ml": "സഹായി"}
+ASSISTANT_WORD = {lang: "assistant" for lang in ("en", "te", "hi", "kn", "ta", "ml")}   # job DS: in everyday speech the word stays in English (Latin letters) in every language
 
 
 @lru_cache(maxsize=1)
@@ -41,4 +41,7 @@ def intro(language: str, name: str, business: str) -> str:
 
 
 def sample(code: str | None, language: str, style: str, name: str, business: str) -> str:
-    return _fill(load()["samples"][business_type(code)][language][style], name, business)
+    # job DR: the nine leads-and-calls business types share one set of lines ("leads"); the older types have their own
+    samples = load()["samples"]
+    key = business_type(code)
+    return _fill(samples[key if key in samples else "leads"][language][style], name, business)

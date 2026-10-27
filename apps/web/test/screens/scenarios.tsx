@@ -2,6 +2,7 @@
  * What the screen snapshot renders: one entry per screen under /app, with the API answers it needs. See screens.test.tsx.
  * Everything here is synthetic. The fixtures come from lib/api/*-fixtures.ts where they exist.
  */
+import { parseBatchAnswer, parseHandoffs as parseOutreachHandoffs, parseItems as parseOutreachItems, parsePolicy as parseOutreachPolicy, parseReport as parseOutreachReport, parseRule as parseOutreachRule } from "@/lib/api/outreach";
 import type { ReactElement } from "react";
 
 import { ApiRequestError, parseMe } from "@/lib/api/client";
@@ -988,3 +989,124 @@ add({ id: "report-run-top-customers", roles: ["admin"], render: runPage("constru
 add({ id: "report-run-collection", roles: ["owner"], render: runPage("education.collection"), handlers: run(RPT.CATALOGUE_EDUCATION_JSON, EDU.COLLECTION_REPORT_JSON, packOf(EDUCATION)) });
 add({ id: "report-run-today", roles: ["owner"], render: runPage("education.today"), handlers: run(RPT.CATALOGUE_EDUCATION_JSON, EDU.TODAY_REPORT_JSON, packOf(EDUCATION)) });
 add({ id: "report-run-funnel", roles: ["admin"], render: runPage("education.funnel"), handlers: run(RPT.CATALOGUE_EDUCATION_JSON, EDU.FUNNEL_REPORT_JSON, packOf(EDUCATION)) });
+
+// night 4: each part adds its screens under its own marker, so the branches merge without touching the same lines
+// -- scenarios: tasks (web/dr-tasks)
+import { vi } from "vitest";
+// "Ask Vijaya to do it" (night 4, job DR part B): the API reads are answered from the fixtures below; the flag is set around each render (on = the API, mock = the cookie fake, which has nothing to show without a browser)
+vi.mock("@/lib/api/tasks", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/tasks")>(), ["listTasks", "getTask", "getTaskContacts", "getTaskReport", "getTaskTemplates"]));
+const TK_ID = "33333333-3333-4333-8333-333333333333";
+const TK_C1 = "44444444-4444-4444-8444-444444444441";
+const TK_C2 = "44444444-4444-4444-8444-444444444442";
+const tkProgress = (done: number, extra: Record<string, number> = {}) => ({ total: 12, excluded: 0, waiting: 12 - done, in_progress: done < 12 ? 1 : 0, done, failed: 0, skipped: 0, reached: done, positive: Math.floor(done / 2), ...extra });
+const tkPlan = (over: Record<string, unknown> = {}) => ({ channel: "call", goal: "Ask each supplier today's price per bag and the delivery day.", questions: [{ key: "price_per_bag", text: "What is your price per bag today?", type: "amount" }, { key: "delivery_day", text: "Which day can you deliver?", type: "text" }], script_notes: "", message_text: null, window: { date: "2026-10-06", from_minute: 600, to_minute: 1140 }, follow_up: { kind: "whatsapp_summary", after_hours: 24 }, contacts_total: 12, contacts_sample: [{ contact_id: TK_C1, name: "Sri Venkateswara Traders" }, { contact_id: TK_C2, name: "Lakshmi Cement Depot" }], unmatched: [{ name: null, phone_last4: "3210" }], notes: [], ...over });
+const tkTask = (over: Record<string, unknown> = {}) => ({ id: TK_ID, status: "planned", instruction: "Call my cement suppliers, ask the price per bag and the delivery day, and tell me the cheapest.", language: "te", template: "supplier_price_enquiry", question: null, plan: tkPlan(), estimate: { contacts: 12, calls: 12, messages: 0, minutes: 24, cost_paise: 3000, basis: "fake rates" }, cap_paise: 3600, spent_paise: 0, pause_reason: null, progress: tkProgress(0), plan_sha256: "ab".repeat(32), simulated: true, wording: "draft", created_at: "2026-10-06T04:00:00Z", approved_at: null, finished_at: null, ...over });
+const tkRow = (id: string, name: string, extra: Record<string, unknown> = {}) => ({ contact_id: id, name, phone_last4: "3210", outcome: "positive", category: "interested", captured: { price_per_bag: 39500, delivery_day: "Thursday" }, transcript: [{ who: "assistant", text: "Hello, I am Vijaya, an AI assistant calling for the shop. What is your price per bag today?" }, { who: "contact", text: "It is 395 rupees a bag." }], recording_url: null, simulated: true, message_status: null, ...extra });
+const tkReport = { task_id: TK_ID, status: "done", short_answer: "Cheapest: Sri Venkateswara Traders ₹395/bag, delivery Thursday", short_answer_kind: "cheapest", totals: { contacts: 12, reached: 9, positive: 4, negative: 3, unclear: 2, no_answer: 3, spent_paise: 3000 }, rows: [tkRow(TK_C1, "Sri Venkateswara Traders"), tkRow(TK_C2, "Lakshmi Cement Depot", { outcome: "no_answer", category: null, captured: null, transcript: null }), tkRow("44444444-4444-4444-8444-444444444443", "Balaji Building Supplies", { outcome: "negative", category: "not_interested", captured: null })], simulated: true, wording: "draft" };
+const tkContacts = { contacts: [{ id: "55555555-5555-4555-8555-555555555551", contact_id: TK_C1, name: "Sri Venkateswara Traders", phone_last4: "3210", status: "waiting", skip_reason: null, outcome: null, outcome_category: null, captured: null, simulated: true }, { id: "55555555-5555-4555-8555-555555555552", contact_id: TK_C2, name: "Lakshmi Cement Depot", phone_last4: "1111", status: "excluded", skip_reason: null, outcome: null, outcome_category: null, captured: null, simulated: true }], next_cursor: null };
+const tkTemplates = { templates: [["call_new_leads", "Call new leads", "call", null, false], ["reengage_old_leads", "Re-engage old leads", "both", null, false], ["confirm_appointments", "Confirm appointments", "both", null, false], ["collect_feedback", "Collect feedback", "both", null, false], ["supplier_price_enquiry", "Supplier price enquiry", "call", null, false], ["payment_reminder", "Payment reminder", "both", "not education", false], ["offer_invite", "Offer or event invite", "whatsapp", null, true]].map(([id, label, channel_default, needs_pack, promotional]) => ({ id, label, channel_default, needs_pack, promotional, example_instruction: `Example: ${label}` })) };
+const tkParsed = async <K extends "parseTask" | "parseTaskList" | "parseTaskContacts" | "parseReport" | "parseTemplates">(fn: K, json: unknown) => (await import("@/lib/api/tasks"))[fn](json);
+const withTasks = (flag: "1" | "mock" | null, page: () => Promise<ReactElement>) => async () => {
+  const before = process.env.TASK_SCREENS;
+  if (flag === null) delete process.env.TASK_SCREENS;
+  else process.env.TASK_SCREENS = flag;
+  try {
+    return await page();
+  } finally {
+    if (before === undefined) delete process.env.TASK_SCREENS;
+    else process.env.TASK_SCREENS = before;
+  }
+};
+const tasksList = (query: Record<string, string> = {}) => async () => (await import("@/app/app/tenants/[tenantId]/tasks/page")).default(props({}, query));
+const taskOne = async () => (await import("@/app/app/tenants/[tenantId]/tasks/[taskId]/page")).default(props({ taskId: TK_ID }));
+const tkList = [tkTask({ id: "33333333-3333-4333-8333-333333333331", status: "running", progress: tkProgress(3), approved_at: "2026-10-06T04:30:00Z" }), tkTask({ id: "33333333-3333-4333-8333-333333333332" }), tkTask({ id: "33333333-3333-4333-8333-333333333333", status: "done", progress: tkProgress(12), approved_at: "2026-10-05T04:30:00Z", finished_at: "2026-10-05T04:45:00Z", created_at: "2026-10-05T04:00:00Z" })];
+const tkHandlers = (role: Role, task: Record<string, unknown>, extra: Record<string, Handler> = {}): Record<string, Handler> => ({ ...cons(role), getTask: () => tkParsed("parseTask", task), getTaskContacts: () => tkParsed("parseTaskContacts", tkContacts), getTaskReport: () => tkParsed("parseReport", tkReport), ...extra });
+add({ id: "tasks-off", roles: ["owner"], render: withTasks(null, tasksList()), handlers: (role) => cons(role) });
+add({ id: "tasks-mock-empty", roles: ["owner", "viewer"], render: withTasks("mock", tasksList()), handlers: (role) => ({ ...cons(role), getTaskTemplates: () => tkParsed("parseTemplates", tkTemplates) }) });
+add({ id: "tasks-list-construction", roles: ["owner", "admin", "sales", "viewer"], render: withTasks("1", tasksList()), handlers: (role) => ({ ...cons(role), listTasks: () => tkParsed("parseTaskList", tkList), getTaskTemplates: () => tkParsed("parseTemplates", tkTemplates) }) });
+add({ id: "tasks-list-waiting-prefilled", roles: ["owner"], render: withTasks("1", tasksList({ tab: "waiting", new: "1", instruction: "Call my cement suppliers" })), handlers: (role) => ({ ...cons(role), listTasks: () => tkParsed("parseTaskList", tkList), getTaskTemplates: () => tkParsed("parseTemplates", tkTemplates) }) });
+add({ id: "tasks-list-finished", roles: ["owner"], render: withTasks("1", tasksList({ tab: "finished" })), handlers: (role) => ({ ...cons(role), listTasks: () => tkParsed("parseTaskList", tkList), getTaskTemplates: () => tkParsed("parseTemplates", tkTemplates) }) });
+add({ id: "tasks-list-education", roles: ["owner"], render: withTasks("1", tasksList()), handlers: (role) => ({ ...school(role), listTasks: () => tkParsed("parseTaskList", []), getTaskTemplates: () => tkParsed("parseTemplates", tkTemplates) }) });
+add({ id: "task-planned", roles: ["owner", "admin", "viewer"], render: withTasks("1", taskOne), handlers: (role) => tkHandlers(role, tkTask({ plan: tkPlan({ message_text: "Hello, may we have your price for today?", notes: ["Promotional calls are off: WhatsApp only."] }) })) });
+add({ id: "task-needs-answer", roles: ["owner"], render: withTasks("1", taskOne), handlers: (role) => tkHandlers(role, tkTask({ status: "needs_answer", plan: null, estimate: null, cap_paise: null, plan_sha256: null, question: "Who should Vijaya contact, and about what?" })) });
+add({ id: "task-nobody-found", roles: ["owner", "viewer"], render: withTasks("1", taskOne), handlers: (role) => tkHandlers(role, tkTask({ template: "custom", plan: tkPlan({ contacts_total: 0, contacts_sample: [], unmatched: [], notes: ["Nobody in your contacts fits this yet. Say who, or give a list."] }) })) });
+add({ id: "task-running", roles: ["owner"], render: withTasks("1", taskOne), handlers: (role) => tkHandlers(role, tkTask({ status: "running", progress: tkProgress(3), spent_paise: 750, approved_at: "2026-10-06T04:30:00Z" })) });
+add({ id: "task-paused-cap", roles: ["owner", "admin"], render: withTasks("1", taskOne), handlers: (role) => tkHandlers(role, tkTask({ status: "paused", pause_reason: "cap", progress: tkProgress(4), spent_paise: 1000, cap_paise: 1000, approved_at: "2026-10-06T04:30:00Z" })) });
+add({ id: "task-done-report", roles: ["owner", "viewer"], render: withTasks("1", taskOne), handlers: (role) => tkHandlers(role, tkTask({ status: "done", progress: tkProgress(12), spent_paise: 3000, approved_at: "2026-10-05T04:30:00Z", finished_at: "2026-10-05T04:45:00Z" })) });
+add({ id: "task-not-found", roles: ["owner"], render: withTasks("1", taskOne), handlers: (role) => tkHandlers(role, {}, { getTask: () => { throw new ApiRequestError(404, "not_found", "x"); } }) });
+// -- scenarios: import and lead sources (web/dr-leads-import)
+const withLeadsFlag = (value: string | undefined, load: () => Promise<ReactElement>) => async () => {
+  const before = process.env.LEADS_SCREENS;
+  if (value === undefined) delete process.env.LEADS_SCREENS;
+  else process.env.LEADS_SCREENS = value;
+  try {
+    return await load();
+  } finally {
+    if (before === undefined) delete process.env.LEADS_SCREENS;
+    else process.env.LEADS_SCREENS = before;
+  }
+};
+add({ id: "import-leads", render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/import/page")).default(props({}))), handlers: base });
+add({ id: "import-leads-off", roles: ["owner"], render: withLeadsFlag(undefined, async () => (await import("@/app/app/tenants/[tenantId]/import/page")).default(props({}))), handlers: base });
+add({ id: "lead-sources", render: withLeadsFlag("mock", async () => (await import("@/app/app/tenants/[tenantId]/lead-sources/page")).default(props({}))), handlers: base });
+// -- scenarios: top-ups (web/ds-topups)
+// Night 4 F2 (TOPUP_SCREENS=mock): Settings > Plan with Usage and top-ups, and Today. The fake provider's cookie cannot be read outside a request, so every scenario shows its review default (80 percent of the minutes); the other states are in the unit tests.
+const withEnv = async <T,>(vars: Record<string, string>, run: () => Promise<T>): Promise<T> => {
+  const env = process.env as Record<string, string | undefined>; // (named once, so the guard on dynamic reads of process.env stays meaningful for the app code)
+  const before = Object.fromEntries(Object.keys(vars).map((k) => [k, env[k]]));
+  Object.assign(env, vars);
+  try {
+    return await run();
+  } finally {
+    for (const [k, v] of Object.entries(before)) {
+      if (v === undefined) delete env[k];
+      else env[k] = v;
+    }
+  }
+};
+// (the Plan part's own fake provider reads a cookie without a guard, so these scenarios turn only TOPUP_SCREENS on: Settings then shows just the usage and top-ups)
+const TOPUP_ENV = { TOPUP_SCREENS: "mock" };
+add({ id: "settings-plan-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "plan" }))), handlers: (role) => ({ ...base(role), getBusinessProfile: () => ({ gstin: null, state: null }) }) });
+add({ id: "today-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, todayPage()), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+// -- scenarios: lead desk site (web/ds-lead-desk)
+// -- scenarios: leads core (web/dr-leads)
+const OUT_BATCH = "ba000000-0000-4000-8000-0000000000b1";
+const OUT_CONTACT = "ca000000-0000-4000-8000-0000000000c1";
+const outBatch = (status: string, progress: unknown) => parseBatchAnswer({ batch: { id: OUT_BATCH, name: "IndiaMART leads, 27 Oct (synthetic)", status, paused_reason: null, goal: "site_visit", channel: "call", language: "te", questions: ["What budget range are you comfortable with?"], message_text: null, window_days: 7, max_calls_per_day: 50, max_total_minutes: null, plan_sha256: "abc123def456", created_at: "2026-10-27T05:00:00Z", approved_at: status === "planned" ? null : "2026-10-27T05:05:00Z", finished_at: null }, plan: { count: 12, ready: 9, skipped: { no_consent: 2, stopped: 1 }, sample: [{ contact_id: OUT_CONTACT, name_masked: "Ravi K.", city: "Guntur" }], window: { from: "2026-10-27", to: "2026-11-03" }, estimated_minutes: 27, estimated_messages: 0, estimated_cost_paise: 10800, caps: { max_calls_per_day: 50, max_total_minutes: null } }, progress });
+const OUT_RULE = parseOutreachRule({ id: "ca000000-0000-4000-8000-0000000000d1", source: "website_form", action: "call_within_minutes", within_minutes: 2, goal: "general", channel: "call", language: "en", questions: [], message_text: null, max_calls_per_day: 50, max_total_minutes: null, active: true, paused_reason: null, paused_at: null, approved_at: "2026-10-26T05:00:00Z", usage: { leads: 4, calls_today: 2, minutes_used: 6 } });
+const OUT_HANDOFF = { id: "ca000000-0000-4000-8000-0000000000e1", lead_id: null, contact_id: OUT_CONTACT, contact_name: "Ravi K. (synthetic)", summary: "Wants to see the site on Saturday morning.", assigned_to: "11111111-1111-4111-8111-111111111111", notified_at: "2026-10-27T05:10:00Z", reminder_sent_at: null, acted_at: null };
+const outreachReads = (role: Role): Record<string, Handler> => ({
+  ...cons(role),
+  listBatches: () => [outBatch("planned", null), outBatch("running", { total: 9, waiting: 6, done: 3, calls_made: 3, connected: 2, interested: 1, minutes_used: 9 })],
+  listHandoffs: () => parseOutreachHandoffs([OUT_HANDOFF]),
+  listRules: () => [OUT_RULE],
+  getPolicy: () => parseOutreachPolicy({ night_call_minute: 570, max_attempts: 3, retry_gap_hours: 18, then_whatsapp: true, whatsapp_after_hours: true, handoff_reminder_minutes: 15, call_paise_per_minute: 400, hours: { days: [1, 2, 3, 4, 5, 6], from_minute: 540, to_minute: 1140, from: "assistant" }, saved: true }),
+});
+add({ id: "outreach-plans", roles: ["owner", "admin", "sales"], render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/page")).default(props({}))), handlers: outreachReads });
+add({ id: "outreach-new", roles: ["owner", "sales"], render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/new/page")).default(props({}, { source: "indiamart", goal: "site_visit" }))), handlers: (role) => cons(role) });
+add({ id: "outreach-batch-planned", roles: ["owner", "admin"], render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/batches/[batchId]/page")).default(props({ batchId: OUT_BATCH }))), handlers: (role) => ({ ...cons(role), getBatch: () => outBatch("planned", null), getBatchItems: () => parseOutreachItems({ items: [{ id: "ca000000-0000-4000-8000-0000000000f1", contact_id: OUT_CONTACT, lead_id: null, name: "Ravi K.", status: "planned", reason: null, attempts: 0, next_action: "call", next_at: null, last_result: null }], next_cursor: null }) }) });
+add({ id: "outreach-batch-running", roles: ["owner"], render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/outreach/batches/[batchId]/page")).default(props({ batchId: OUT_BATCH }))), handlers: (role) => ({ ...cons(role), getBatch: () => outBatch("running", { total: 9, waiting: 6, done: 3, calls_made: 3, connected: 2, interested: 1, minutes_used: 9 }), getBatchItems: () => parseOutreachItems({ items: [], next_cursor: null }) }) });
+add({
+  id: "lead-report",
+  roles: ["owner", "admin"],
+  render: () => withEnv({ OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-report/page")).default(props({}, { from: "2026-10-20", to: "2026-10-26" }))),
+  handlers: (role) => ({ ...cons(role), getOutreachReport: () => parseOutreachReport({ from_day: "2026-10-20", to_day: "2026-10-26", by_source: [{ source: "meta_lead_ads", leads: 120, first_touch_median_seconds: 96, calls: 140, connected_rate: 61, interested_pct: 24, bookings: 14, call_cost_paise: 168000, lead_cost_paise: 1080000, cost_per_booking_paise: 89143 }, { source: "indiamart", leads: 40, first_touch_median_seconds: 45, calls: 44, connected_rate: 55, interested_pct: 30, bookings: 0, call_cost_paise: 52800, lead_cost_paise: 600000, cost_per_booking_paise: null }], total: { leads: 160, calls: 184, connected_rate: 59.5, interested_pct: 25.5, bookings: 14, call_cost_paise: 220800, lead_cost_paise: 1680000, cost_per_booking_paise: 135771 } }) }),
+});
+add({
+  id: "lead-desk",
+  render: () => withEnv({ LEADS_SCREENS: "1", OUTREACH_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-desk/page")).default(props({}))),
+  handlers: (role) => ({
+    ...outreachReads(role),
+    fetchMembers: () => [{ user_id: "11111111-1111-4111-8111-111111111111", role: "owner", display_name: "Asha (synthetic)" }, { user_id: "22222222-2222-4222-8222-222222222223", role: "sales", display_name: "Ravi (synthetic)" }],
+    listDeskLeads: () => ({ leads: [{ id: LEAD, contactId: OUT_CONTACT, name: "Ravi K. (synthetic)", source: "meta_lead_ads", status: "new", ownerUserId: null, createdAt: "2026-10-27T05:00:00Z", hot: false }, { id: "ca000000-0000-4000-8000-0000000000a2", contactId: null, name: "Anitha R. (synthetic)", source: "indiamart", status: "contacted", ownerUserId: "22222222-2222-4222-8222-222222222223", createdAt: "2026-10-26T05:00:00Z", hot: false }], nextCursor: null }),
+  }),
+});
+for (const step of [1, 2, 3, 4, 5, 6]) {
+  add({
+    id: `lead-setup-step-${step}`,
+    roles: step === 1 ? ["owner", "admin"] : ["owner"],
+    render: () => withEnv({ LEADS_SCREENS: "mock", ASSISTANT_SCREENS: "mock", OUTREACH_SCREENS: "off" }, async () => (await import("@/app/app/tenants/[tenantId]/lead-setup/page")).default(props({}, { step: String(step) }))),
+    handlers: (role) => cons(role),
+  });
+}
+

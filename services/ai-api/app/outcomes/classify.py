@@ -32,12 +32,13 @@ REASONS = {
     "not_interested": "Said they are not interested.",
     "wrong_number": "Said it is the wrong number.",
     "too_costly": "Said the price is too high.",
+    "already_bought": "Said they already bought it.",
     "call_back_later": "Asked to be contacted later.",
 }
 STOP_REASON = "Asked us to stop messaging."
 OUTCOME_OF = {
     "interested": "positive", "order_likely": "positive",
-    "not_interested": "negative", "wrong_number": "negative", "too_costly": "negative",
+    "not_interested": "negative", "wrong_number": "negative", "too_costly": "negative", "already_bought": "negative",
     "call_back_later": "unclear",
 }
 # the order of the words in each language: English, Hindi, Telugu, Kannada, and Hindi/Telugu/Kannada written in English letters
@@ -49,6 +50,10 @@ WORDS: dict[str, tuple[str, ...]] = {
     "not_interested": (
         "not interested", "no thanks", "no thank you", "dont call", "don t call", "do not call", "not needed", "no need", "not required", "nahi chahiye", "interest nahi", "interest ledu", "agatyam ledu",
         "रुचि नहीं", "नहीं चाहिए", "ज़रूरत नहीं", "जरूरत नहीं", "ఆసక్తి లేదు", "అవసరం లేదు", "ఇంట్రస్ట్ లేదు", "ಆಸಕ್ತಿ ಇಲ್ಲ", "ಬೇಕಿಲ್ಲ", "ಅಗತ್ಯವಿಲ್ಲ",
+    ),
+    "already_bought": (
+        "already bought", "already purchased", "already ordered", "already got", "have already taken", "pehle hi le liya", "pehle se le liya", "already le liya", "ippatike konnanu", "ippude konnanu",
+        "पहले ही ले लिया", "पहले ही खरीद", "पहले से ले लिया", "ఇప్పటికే కొన్నాను", "ఇప్పటికే కొన్నాం", "ఇప్పటికే తీసుకున్నాను", "ಈಗಾಗಲೇ ಖರೀದಿಸಿದ್ದೇನೆ", "ಈಗಾಗಲೇ ತೆಗೆದುಕೊಂಡಿದ್ದೇನೆ",
     ),
     "too_costly": (
         "too costly", "too expensive", "very expensive", "very costly", "costly", "expensive", "bahut mehnga", "bahut costly", "chala costly", "chala kharidu",
@@ -95,7 +100,7 @@ def classify_reply(text: str | None) -> Suggestion | None:
         return Suggestion("negative", "not_interested", STOP_REASON)
     rest = _norm(text)
     hits: list[str] = []
-    for category in ("wrong_number", "not_interested", "too_costly", "call_back_later", "order_likely", "interested"):
+    for category in ("wrong_number", "already_bought", "not_interested", "too_costly", "call_back_later", "order_likely", "interested"):
         found, rest = _present(rest, WORDS[category])   # a phrase taken out cannot be read again as a smaller one ("not interested" is not "interested")
         if found:
             hits.append(category)

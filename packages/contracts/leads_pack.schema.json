@@ -1,0 +1,1052 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "leads_pack.schema.json",
+  "title": "Leads pack, playbook and knowledge base (job DR / A1)",
+  "description": "Generated from services/ai-api/app/leadspack/models.py and app/knowledge/models.py by `make contracts`.",
+  "$defs": {
+    "ChoiceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Label",
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "label"
+      ],
+      "title": "ChoiceOut",
+      "type": "object"
+    },
+    "DecisionIn": {
+      "additionalProperties": false,
+      "properties": {
+        "decision": {
+          "enum": [
+            "approve",
+            "reject"
+          ],
+          "title": "Decision",
+          "type": "string"
+        }
+      },
+      "required": [
+        "decision"
+      ],
+      "title": "DecisionIn",
+      "type": "object"
+    },
+    "DraftOut": {
+      "additionalProperties": false,
+      "properties": {
+        "facts": {
+          "items": {
+            "$ref": "#/$defs/FactOut"
+          },
+          "title": "Facts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "facts"
+      ],
+      "title": "DraftOut",
+      "type": "object"
+    },
+    "FactEditIn": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 500,
+          "minLength": 3,
+          "title": "Text",
+          "type": "string"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "price",
+                "offer",
+                "product_service",
+                "location",
+                "hours",
+                "policy",
+                "faq",
+                "contact",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "FactEditIn",
+      "type": "object"
+    },
+    "FactIn": {
+      "additionalProperties": false,
+      "properties": {
+        "fact_id": {
+          "format": "uuid",
+          "title": "Fact Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "price",
+            "offer",
+            "product_service",
+            "location",
+            "hours",
+            "policy",
+            "faq",
+            "contact",
+            "other"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 500,
+          "minLength": 3,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fact_id",
+        "kind",
+        "text"
+      ],
+      "title": "FactIn",
+      "type": "object"
+    },
+    "FactOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "price",
+            "offer",
+            "product_service",
+            "location",
+            "hours",
+            "policy",
+            "faq",
+            "contact",
+            "other"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "approved",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "edited": {
+          "title": "Edited",
+          "type": "boolean"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Id"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "decided_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Decided At"
+        },
+        "decided_by_you": {
+          "title": "Decided By You",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "text",
+        "status",
+        "edited",
+        "source_id",
+        "created_at",
+        "decided_at",
+        "decided_by_you"
+      ],
+      "title": "FactOut",
+      "type": "object"
+    },
+    "FactsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "facts": {
+          "items": {
+            "$ref": "#/$defs/FactOut"
+          },
+          "title": "Facts",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "facts"
+      ],
+      "title": "FactsOut",
+      "type": "object"
+    },
+    "FieldDefinitionOut": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "text",
+            "number",
+            "date",
+            "choice",
+            "multi_choice",
+            "yes_no"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Label",
+          "type": "object"
+        },
+        "choices": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ChoiceOut"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Choices"
+        }
+      },
+      "required": [
+        "kind",
+        "label"
+      ],
+      "title": "FieldDefinitionOut",
+      "type": "object"
+    },
+    "FollowupBody": {
+      "additionalProperties": false,
+      "properties": {
+        "when": {
+          "enum": [
+            "no_answer",
+            "interested",
+            "callback",
+            "booked",
+            "not_interested"
+          ],
+          "title": "When",
+          "type": "string"
+        },
+        "after_minutes": {
+          "maximum": 43200,
+          "minimum": -10080,
+          "title": "After Minutes",
+          "type": "integer"
+        },
+        "channel": {
+          "enum": [
+            "call",
+            "whatsapp"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "max_attempts": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Max Attempts",
+          "type": "integer"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TextEn"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "when",
+        "after_minutes",
+        "channel",
+        "max_attempts"
+      ],
+      "title": "FollowupBody",
+      "type": "object"
+    },
+    "GoalOut": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label4"
+        },
+        "ask": {
+          "$ref": "#/$defs/TextEn"
+        }
+      },
+      "required": [
+        "code",
+        "label",
+        "ask"
+      ],
+      "title": "GoalOut",
+      "type": "object"
+    },
+    "GoalSummaryOut": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Label4"
+        }
+      },
+      "required": [
+        "code",
+        "label"
+      ],
+      "title": "GoalSummaryOut",
+      "type": "object"
+    },
+    "Label4": {
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "te": {
+          "title": "Te",
+          "type": "string"
+        },
+        "hi": {
+          "title": "Hi",
+          "type": "string"
+        },
+        "kn": {
+          "title": "Kn",
+          "type": "string"
+        }
+      },
+      "required": [
+        "en",
+        "te",
+        "hi",
+        "kn"
+      ],
+      "title": "Label4",
+      "type": "object"
+    },
+    "ObjectionBody": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[a-z][a-z0-9_]{1,39}$",
+          "title": "Code",
+          "type": "string"
+        },
+        "hears": {
+          "items": {
+            "maxLength": 80,
+            "minLength": 2,
+            "type": "string"
+          },
+          "maxItems": 6,
+          "minItems": 1,
+          "title": "Hears",
+          "type": "array"
+        },
+        "answer": {
+          "$ref": "#/$defs/TextEn"
+        }
+      },
+      "required": [
+        "code",
+        "hears",
+        "answer"
+      ],
+      "title": "ObjectionBody",
+      "type": "object"
+    },
+    "OutcomeReasonsBody": {
+      "additionalProperties": false,
+      "properties": {
+        "not_interested": {
+          "items": {
+            "$ref": "#/$defs/ReasonBody"
+          },
+          "maxItems": 12,
+          "minItems": 2,
+          "title": "Not Interested",
+          "type": "array"
+        },
+        "interested": {
+          "items": {
+            "$ref": "#/$defs/ReasonBody"
+          },
+          "maxItems": 12,
+          "minItems": 2,
+          "title": "Interested",
+          "type": "array"
+        }
+      },
+      "required": [
+        "not_interested",
+        "interested"
+      ],
+      "title": "OutcomeReasonsBody",
+      "type": "object"
+    },
+    "PlaybookBody": {
+      "additionalProperties": false,
+      "description": "What the Owner edits: the goal sentence, the questions (a subset and an order of the pack's contact fields), the objections, the follow-ups and the outcome reasons.",
+      "properties": {
+        "goal_ask": {
+          "$ref": "#/$defs/TextEn"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/$defs/PlaybookQuestion"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Questions",
+          "type": "array"
+        },
+        "objections": {
+          "items": {
+            "$ref": "#/$defs/ObjectionBody"
+          },
+          "maxItems": 8,
+          "title": "Objections",
+          "type": "array"
+        },
+        "followups": {
+          "items": {
+            "$ref": "#/$defs/FollowupBody"
+          },
+          "maxItems": 10,
+          "title": "Followups",
+          "type": "array"
+        },
+        "outcome_reasons": {
+          "$ref": "#/$defs/OutcomeReasonsBody"
+        }
+      },
+      "required": [
+        "goal_ask",
+        "questions",
+        "objections",
+        "followups",
+        "outcome_reasons"
+      ],
+      "title": "PlaybookBody",
+      "type": "object"
+    },
+    "PlaybookOut": {
+      "additionalProperties": false,
+      "properties": {
+        "template_pack": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Template Pack"
+        },
+        "saved": {
+          "title": "Saved",
+          "type": "boolean"
+        },
+        "playbook": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Playbook"
+        },
+        "defaults": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Defaults"
+        },
+        "safety": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Safety",
+          "type": "array"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Updated At"
+        },
+        "wording": {
+          "const": "draft",
+          "default": "draft",
+          "title": "Wording",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_pack",
+        "saved",
+        "playbook",
+        "defaults",
+        "safety",
+        "updated_at"
+      ],
+      "title": "PlaybookOut",
+      "type": "object"
+    },
+    "PlaybookQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "field": {
+          "pattern": "^[a-z][a-z0-9_]{1,39}$",
+          "title": "Field",
+          "type": "string"
+        },
+        "ask": {
+          "$ref": "#/$defs/TextEn"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "field",
+        "ask",
+        "required"
+      ],
+      "title": "PlaybookQuestion",
+      "type": "object"
+    },
+    "QuestionOut": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "field": {
+          "title": "Field",
+          "type": "string"
+        },
+        "ask": {
+          "$ref": "#/$defs/TextEn"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "field_definition": {
+          "$ref": "#/$defs/FieldDefinitionOut"
+        }
+      },
+      "required": [
+        "code",
+        "field",
+        "ask",
+        "required",
+        "field_definition"
+      ],
+      "title": "QuestionOut",
+      "type": "object"
+    },
+    "ReasonBody": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[a-z][a-z0-9_]{1,39}$",
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Label",
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "label"
+      ],
+      "title": "ReasonBody",
+      "type": "object"
+    },
+    "SourceFactsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "draft": {
+          "title": "Draft",
+          "type": "integer"
+        },
+        "approved": {
+          "title": "Approved",
+          "type": "integer"
+        },
+        "rejected": {
+          "title": "Rejected",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "draft",
+        "approved",
+        "rejected"
+      ],
+      "title": "SourceFactsOut",
+      "type": "object"
+    },
+    "SourceIn": {
+      "additionalProperties": false,
+      "properties": {
+        "source_id": {
+          "format": "uuid",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "paste",
+            "file"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "maxLength": 60000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filename"
+        },
+        "content_type": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "minLength": 3,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Type"
+        },
+        "content_base64": {
+          "anyOf": [
+            {
+              "maxLength": 6990522,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content Base64"
+        }
+      },
+      "required": [
+        "source_id",
+        "kind",
+        "title"
+      ],
+      "title": "SourceIn",
+      "type": "object"
+    },
+    "SourceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "paste",
+            "file"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Filename"
+        },
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Content Type"
+        },
+        "chars": {
+          "title": "Chars",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "read",
+            "drafted",
+            "discarded"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "facts": {
+          "$ref": "#/$defs/SourceFactsOut"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "kind",
+        "filename",
+        "content_type",
+        "chars",
+        "status",
+        "created_at",
+        "facts"
+      ],
+      "title": "SourceOut",
+      "type": "object"
+    },
+    "SourcesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceOut"
+          },
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sources"
+      ],
+      "title": "SourcesOut",
+      "type": "object"
+    },
+    "TemplateOut": {
+      "additionalProperties": false,
+      "properties": {
+        "pack_id": {
+          "title": "Pack Id",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "integer"
+        },
+        "names": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Names",
+          "type": "object"
+        },
+        "goal": {
+          "$ref": "#/$defs/GoalOut"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/$defs/QuestionOut"
+          },
+          "title": "Questions",
+          "type": "array"
+        },
+        "objections": {
+          "items": {
+            "$ref": "#/$defs/ObjectionBody"
+          },
+          "title": "Objections",
+          "type": "array"
+        },
+        "followups": {
+          "items": {
+            "$ref": "#/$defs/FollowupBody"
+          },
+          "title": "Followups",
+          "type": "array"
+        },
+        "outcome_reasons": {
+          "$ref": "#/$defs/OutcomeReasonsBody"
+        },
+        "safety": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Safety",
+          "type": "array"
+        }
+      },
+      "required": [
+        "pack_id",
+        "version",
+        "names",
+        "goal",
+        "questions",
+        "objections",
+        "followups",
+        "outcome_reasons",
+        "safety"
+      ],
+      "title": "TemplateOut",
+      "type": "object"
+    },
+    "TemplateSummaryOut": {
+      "additionalProperties": false,
+      "properties": {
+        "pack_id": {
+          "title": "Pack Id",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "integer"
+        },
+        "names": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Names",
+          "type": "object"
+        },
+        "summary": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Summary",
+          "type": "object"
+        },
+        "goal": {
+          "$ref": "#/$defs/GoalSummaryOut"
+        },
+        "question_count": {
+          "title": "Question Count",
+          "type": "integer"
+        },
+        "accent": {
+          "title": "Accent",
+          "type": "string"
+        },
+        "owl_prop": {
+          "title": "Owl Prop",
+          "type": "string"
+        },
+        "validated": {
+          "title": "Validated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "pack_id",
+        "version",
+        "names",
+        "summary",
+        "goal",
+        "question_count",
+        "accent",
+        "owl_prop",
+        "validated"
+      ],
+      "title": "TemplateSummaryOut",
+      "type": "object"
+    },
+    "TemplatesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "templates": {
+          "items": {
+            "$ref": "#/$defs/TemplateSummaryOut"
+          },
+          "title": "Templates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "templates"
+      ],
+      "title": "TemplatesOut",
+      "type": "object"
+    },
+    "TextEn": {
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "maxLength": 400,
+          "minLength": 5,
+          "title": "En",
+          "type": "string"
+        }
+      },
+      "required": [
+        "en"
+      ],
+      "title": "TextEn",
+      "type": "object"
+    }
+  }
+}

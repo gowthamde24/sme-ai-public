@@ -99,7 +99,7 @@ describe("the billing answer as the screens read it", () => {
     expect(meterState({ used: 7, included: payg.included.messages })).toBe("no_cap");
     expect(meterState({ used: 42, included: payg.included.minutes })).toBe("no_cap");
   });
-  it("calls-only plans include WhatsApp follow-up messages (Calls 300 = 300, Calls 1,000 = 1,000); pay as you go has no ceiling on either kind", () => {
+  it("calls-only plans include WhatsApp follow-up messages (Lead Desk 300 = 300, Lead Desk 1,000 = 1,000); pay as you go has no ceiling on either kind", () => {
     const cat = catalogueFrom(parsePlans(DRAFT_PLANS));
     expect(callsPlans(cat).map((p) => [p.id, p.callMinutes, p.messages])).toEqual([["calls_payg", null, null], ["calls_300", 300, 300], ["calls_1000", 1000, 1000]]);
     const w = toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "active", plan_id: "calls_300", trial_ends_at: null }), usage: { call_minutes: meter("call_minutes", 10, 300), whatsapp_messages: meter("whatsapp_messages", 240, 300, { state: "notice" }) } })));

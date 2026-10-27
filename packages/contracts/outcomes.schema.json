@@ -31,6 +31,10 @@
           "title": "Too Costly",
           "type": "integer"
         },
+        "already_bought": {
+          "title": "Already Bought",
+          "type": "integer"
+        },
         "call_back_later": {
           "title": "Call Back Later",
           "type": "integer"
@@ -43,6 +47,7 @@
         "not_interested",
         "wrong_number",
         "too_costly",
+        "already_bought",
         "call_back_later"
       ],
       "title": "CategoryCountsOut",
@@ -71,6 +76,7 @@
                 "not_interested",
                 "wrong_number",
                 "too_costly",
+                "already_bought",
                 "call_back_later"
               ],
               "type": "string"
@@ -143,6 +149,7 @@
                 "not_interested",
                 "wrong_number",
                 "too_costly",
+                "already_bought",
                 "call_back_later"
               ],
               "type": "string"
@@ -167,6 +174,39 @@
         "corrected": {
           "title": "Corrected",
           "type": "boolean"
+        },
+        "callback_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Callback At"
+        },
+        "captured": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "title": "Captured",
+          "type": "object"
         }
       },
       "required": [
@@ -203,6 +243,7 @@
                 "not_interested",
                 "wrong_number",
                 "too_costly",
+                "already_bought",
                 "call_back_later"
               ],
               "type": "string"
@@ -322,6 +363,7 @@
                 "not_interested",
                 "wrong_number",
                 "too_costly",
+                "already_bought",
                 "call_back_later"
               ],
               "type": "string"
@@ -454,6 +496,7 @@
                 "not_interested",
                 "wrong_number",
                 "too_costly",
+                "already_bought",
                 "call_back_later"
               ],
               "type": "string"
@@ -525,6 +568,7 @@
                 "not_interested",
                 "wrong_number",
                 "too_costly",
+                "already_bought",
                 "call_back_later"
               ],
               "type": "string"
@@ -544,6 +588,39 @@
           "format": "date-time",
           "title": "Recorded At",
           "type": "string"
+        },
+        "callback_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Callback At"
+        },
+        "captured": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "title": "Captured",
+          "type": "object"
         }
       },
       "required": [
@@ -623,6 +700,7 @@
                 "not_interested",
                 "wrong_number",
                 "too_costly",
+                "already_bought",
                 "call_back_later"
               ],
               "type": "string"
@@ -694,6 +772,7 @@
                 "not_interested",
                 "wrong_number",
                 "too_costly",
+                "already_bought",
                 "call_back_later"
               ],
               "type": "string"
@@ -713,6 +792,39 @@
           "format": "date-time",
           "title": "Recorded At",
           "type": "string"
+        },
+        "callback_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Callback At"
+        },
+        "captured": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "title": "Captured",
+          "type": "object"
         },
         "replayed": {
           "title": "Replayed",

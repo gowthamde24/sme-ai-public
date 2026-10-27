@@ -80,7 +80,7 @@ def test_every_introduction_and_every_sample_states_ai_assistant() -> None:
     for lang in LANGS:
         line = d["intro"][lang]
         assert "AI" in line and data.ASSISTANT_WORD[lang] in line and "{name}" in line and "{business}" in line, (lang, line)
-    for biz in d["defaults"]:
+    for biz in d["samples"]:
         for lang in LANGS:
             for style in STYLES:
                 text = d["samples"][biz][lang][style]
@@ -91,7 +91,9 @@ def test_every_introduction_and_every_sample_states_ai_assistant() -> None:
 
 def test_the_samples_cover_every_language_style_and_business_type() -> None:
     d = data.load()
-    assert set(d["samples"]) == set(d["defaults"])
+    # job DR: the nine leads-and-calls types share the "leads" lines; every other type has its own
+    assert set(d["samples"]) | {"real_estate", "coaching", "clinic", "insurance_loans", "auto_dealer", "interiors_solar", "travel", "gym", "wholesale_b2b"} == set(d["defaults"]) | {"leads"}
+    assert "leads" in d["samples"] and all(data.sample(biz, "en", "warm", "Asha", "Shop") for biz in d["defaults"])
     for biz in d["samples"]:
         assert set(d["samples"][biz]) == set(LANGS)
         for lang in LANGS:
@@ -162,7 +164,7 @@ def test_a_save_is_read_back_and_defaults_stay_available_for_reset() -> None:
     client, repo = world()
     out = client.put(B, json=settings(name="Priya", speed=1.1, max_discount_percent=7), headers=auth("a_owner")).json()
     assert out["saved"] is True and out["settings"]["name"] == "Priya" and out["settings"]["speed"] == 1.1 and out["defaults"]["name"] == "Vani"
-    assert out["intro"]["te"] == "Sri Lakshmi Silks AI అసిస్టెంట్ Priya", "the words AI assistant are in the introduction whatever the name"
+    assert out["intro"]["te"] == "Sri Lakshmi Silks నుంచి AI assistant Priya", "the words AI assistant are in the introduction whatever the name"
     again = client.get(B, headers=auth("a_admin")).json()
     assert again["settings"] == out["settings"] and repo.row is not None
 

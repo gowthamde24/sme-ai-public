@@ -22,4 +22,14 @@ export const marksScreens = (value: string | undefined = process.env.MARKS_SCREE
 export const dpdpScreens = (value: string | undefined = process.env.DPDP_SCREENS): ScreenMode => screenMode(value);
 
 /** Job DQ part 3: the voice picker's samples ("Hear it" beside each voice, per language and tone). `mock` = a short synthetic sound made on the server (no network, no provider: it says which voice is which, not how it will sound), `1` = C1's sample files or preview endpoint through our own route. Off: the buttons are not drawn. */
+/**
+ * Night 4 (jobs DR and DS), "Lead Desk" and "Ask Vijaya to do it", each behind its own flag because C1's APIs ship separately. `mock` = fake data kept in a cookie (nothing is sent), `1` = the API, unset = the part is not there.
+ * LEADS_SCREENS: the nine "any business with leads" types at sign-up, the setup wizard, the knowledge base and playbook, lead imports, lead sources, the Lead Desk list. OUTREACH_SCREENS: batch plans with "Approve all", standing rules,
+ * hot-lead hand-offs and the lead report. TASK_SCREENS: "Ask Vijaya to do it". TOPUP_SCREENS: top-ups of minutes and messages in Settings > Plan.
+ */
+export const leadsScreens = (value: string | undefined = process.env.LEADS_SCREENS): ScreenMode => screenMode(value);
+export const outreachScreens = (value: string | undefined = process.env.OUTREACH_SCREENS): ScreenMode => screenMode(value);
+export const taskScreens = (value: string | undefined = process.env.TASK_SCREENS): ScreenMode => screenMode(value);
+export const topupScreens = (value: string | undefined = process.env.TOPUP_SCREENS): ScreenMode => screenMode(value);
+
 export const voiceSampleScreens = (value: string | undefined = process.env.VOICE_SAMPLE_SCREENS): ScreenMode => screenMode(value);

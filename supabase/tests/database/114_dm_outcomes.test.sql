@@ -139,7 +139,7 @@ select is(tests.outcome_as(tests.uid('a_owner'), format($$insert into public.out
 select is(tests.outcome_as(tests.uid('a_owner'), format($$update public.outcomes set outcome = 'negative', category = 'not_interested' where tenant_id = %L$$, tests.tid('a'))), '42501', 'H2 DENY: nor update one');
 select is(tests.outcome_as(tests.uid('a_owner'), format($$delete from public.outcomes where tenant_id = %L$$, tests.tid('a'))), '42501', 'H3 DENY: nor delete one');
 select is(pg_temp.sc(format($$delete from public.outcomes where id = %L$$, (select id from public.outcomes limit 1))), '42501', 'H4 not even the table''s owner deletes (the guard)');
-select is(pg_temp.sc('truncate public.outcomes'), '42501', 'H5 nor truncates');
+select ok(pg_temp.sc('truncate public.outcomes') in ('42501', '0A000'), 'H5 nor truncates (no privilege, and since job DR a table references it)');
 select is(pg_temp.sc(format($$update public.outcomes set source_id = %L where source_id = %L$$, tests.rid('h2'), tests.rid('o2'))), '42501', 'H6 what an outcome IS (its source) never changes');
 select is(pg_temp.sc(format($$update public.outcomes set contact_id = %L where source_id = %L$$, tests.rid('a_contact'), tests.rid('o2'))), 'ok', 'H7 (the same value is no change)');
 select is(pg_temp.sc(format($$update public.outcomes set ai_outcome = 'negative' where source_id = %L$$, tests.rid('d1'))), '42501', 'H8 what the AI said is kept once a person corrected it');

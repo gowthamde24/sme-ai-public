@@ -15,7 +15,7 @@ describe("the seven-item menu (job DQ part 0, owner decision of 26 Oct)", () => 
   it("is Today, Customers, Chats, Calls, Sales, Catalogue and Reports, with Settings below them, in that order", () => {
     expect(MENU_ITEMS.map((m) => m.label)).toEqual(["Today", "Customers", "Chats", "Calls", "Sales", "Catalogue", "Reports"]);
     expect(MENU_ITEMS).toHaveLength(7);
-    expect(MENU.find((m) => m.id === "settings")?.members).toEqual(["settings", "team", "office", "integrations"]);
+    expect(MENU.find((m) => m.id === "settings")?.members).toEqual(["settings", "team", "office", "integrations", "lead-sources"]);
     expect(FOOT.map((i) => i.id)).toEqual(["settings"]);
   });
 
@@ -100,3 +100,43 @@ describe("the seven-item menu (job DQ part 0, owner decision of 26 Oct)", () => 
     expect(menuItemId(MENU[1])).toBe("m-customers");
   });
 });
+
+describe("the parts that need a feature flag (night 4: Lead Desk, Ask Vijaya to do it)", () => {
+  const withFeatures = (features: string[]): PackFrame => ({ ...TEXTILES, features });
+  it("are not offered while their flag is off, in any business type", () => {
+    for (const [, view] of PACKS) {
+      const ids = tabsOf(MENU.find((m) => m.id === "calls")!, "owner", view).map((t) => t.id);
+      expect(ids).not.toContain("tasks");
+      expect(ids).not.toContain("outreach");
+      expect(tabsOf(MENU.find((m) => m.id === "customers")!, "owner", view).map((t) => t.id)).not.toContain("leaddesk");
+      expect(tabsOf(MENU.find((m) => m.id === "settings")!, "owner", view).map((t) => t.id)).not.toContain("lead-sources");
+    }
+  });
+  it("show up as tabs of Customers, Calls, Reports and Settings when on, for the roles that may use them", () => {
+    const view = withFeatures(["leads", "outreach", "tasks"]);
+    const tab = (menu: string, role: "owner" | "admin" | "sales" | "viewer") => tabsOf(MENU.find((m) => m.id === menu)!, role, view).map((t) => t.id);
+    expect(tab("customers", "owner")).toEqual(expect.arrayContaining(["leaddesk", "import"]));
+    expect(tab("customers", "viewer")).toContain("leaddesk");
+    expect(tab("customers", "viewer")).not.toContain("import");
+    expect(tab("calls", "owner")).toEqual(expect.arrayContaining(["outreach", "tasks"]));
+    expect(tab("calls", "viewer")).toEqual(expect.arrayContaining(["tasks"]));
+    expect(tab("reports", "owner")).toEqual(["report", "leadreport"]);
+    expect(tab("reports", "sales")).not.toContain("leadreport");
+    expect(tab("settings", "admin")).toContain("lead-sources");
+    expect(tab("settings", "sales")).not.toContain("lead-sources");
+  });
+  it("each flag brings only its own parts", () => {
+    const tasksOnly = withFeatures(["tasks"]);
+    expect(tabsOf(MENU.find((m) => m.id === "calls")!, "owner", tasksOnly).map((t) => t.id)).toContain("tasks");
+    expect(tabsOf(MENU.find((m) => m.id === "calls")!, "owner", tasksOnly).map((t) => t.id)).not.toContain("outreach");
+    expect(tabsOf(MENU.find((m) => m.id === "customers")!, "owner", tasksOnly).map((t) => t.id)).not.toContain("import");
+  });
+  it("their addresses belong to the right menu item", () => {
+    const view = withFeatures(["leads", "outreach", "tasks"]);
+    void view;
+    for (const [path, menu] of [["/lead-desk", "m-customers"], ["/import", "m-customers"], ["/outreach", "m-calls"], ["/tasks", "m-calls"], ["/lead-report", "m-reports"], ["/lead-sources", "settings"], ["/lead-setup", "m-today"]] as const) {
+      expect(activeMenuId(`/app/tenants/11111111-1111-1111-1111-111111111111${path}`, null), path).toBe(menu);
+    }
+  });
+});
+

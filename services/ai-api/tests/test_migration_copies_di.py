@@ -59,4 +59,6 @@ def test_only_the_claim_and_the_call_check_ask_the_meter_whether_a_kind_is_stopp
         if "billing_stopped(" in text and path.name not in (DI, DI4):
             names.add(path.name)
     # job DM's pending hold redefines the check itself (migration 4); nothing else consults it
-    assert names == {"20261129090400_dm_trial_pending.sql"}, "no other migration consults the meter"
+    # job DR A3: the scheduler's outreach run is a call check of its own (calls are held for the hour when call minutes are stopped)
+    # job DS part E2: the re-created check (`billing_blocked` holds the overage rule) names it in its definition, and the outreach run is re-created from its own definition (queue instead of an hour's hold)
+    assert names == {"20261129090400_dm_trial_pending.sql", "20261206090000_dr_speed_approvals.sql", "20261210090100_ds_topups_meter.sql", "20261210090200_ds_topups_api.sql"}, "no other migration consults the meter"

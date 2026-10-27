@@ -200,7 +200,7 @@ describe("the plan picker", () => {
   const pick = (over: Partial<{ canStart: boolean; currentId: string | null; blocked: "already" | "used" | "forbidden" | null; a: PlanActions }> = {}) =>
     render(<PlanPicker words={words} main={mainPlans()} calls={callsPlans()} currentId={over.currentId ?? null} canStart={over.canStart ?? true} blocked={over.blocked ?? null} mock trialDays={CATALOGUE.trial.days} actions={over.a ?? actions()} done="/app/tenants/t/settings?section=plan" />);
 
-  it("Calls 300 and Calls 1,000 include WhatsApp follow-up messages; pay-as-you-go pays per message", () => {
+  it("Lead Desk 300 and Lead Desk 1,000 include WhatsApp follow-up messages; pay-as-you-go pays per message", () => {
     pick();
     const row = (id: string) => (document.querySelector(`[data-plan="${id}"]`) as HTMLElement).textContent ?? "";
     expect(row("calls_300")).toMatch(/WhatsApp messages you start, a month\s*300/);
@@ -210,7 +210,7 @@ describe("the plan picker", () => {
   it("compares the six plans from the data, every price 'Price coming soon'", () => {
     pick();
     const names = screen.getAllByRole("heading", { level: 3 }).map((h) => h.textContent);
-    expect(names).toEqual(["Starter", "Growth", "Business", "Pay-as-you-go", "Calls 300", "Calls 1,000"]);
+    expect(names).toEqual(["Starter", "Growth", "Business", "Pay as you go", "Lead Desk 300", "Lead Desk 1,000"]);
     expect(screen.getAllByText("Price coming soon")).toHaveLength(6);
     const growth = within(document.querySelector('[data-plan="growth"]') as HTMLElement);
     expect(growth.getByText("100")).toBeInTheDocument();

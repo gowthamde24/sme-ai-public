@@ -16,7 +16,13 @@ import { screenText } from "./screen-text";
 import { fixtureErrors, setHandlers } from "./state";
 
 // a lazy chunk (next/dynamic) may or may not have arrived when the snapshot is taken: draw the form itself, always
+// night 4 F2: the same for the lazy top-up controls of the Plan part
+vi.mock("@/components/v2/app/topups/LazyTopups", async () => ({ TopupControls: (await import("@/components/v2/app/topups/TopupControls")).TopupControls }));
 vi.mock("@/components/v2/app/assistant/LazyCallSettingsAdvanced", async () => ({ CallSettingsAdvanced: (await import("@/components/v2/app/assistant/CallSettingsAdvanced")).CallSettingsAdvanced }));
+vi.mock("@/lib/api/outreach", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/outreach")>(), ["listBatches", "getBatch", "getBatchItems", "listRules", "listHandoffs", "getOutreachReport", "getPolicy"]));
+vi.mock("@/lib/api/lead-desk", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-desk")>(), ["listDeskLeads", "getTouches"]));
+vi.mock("@/components/v2/app/lead-desk/LazyImportScreen", async () => ({ LazyImportScreen: (await import("@/components/v2/app/lead-desk/ImportScreen")).ImportScreen }));
+vi.mock("@/components/v2/app/lead-desk/LazyLeadSources", async () => ({ LazyLeadSources: (await import("@/components/v2/app/lead-desk/LeadSources")).LeadSources }));
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => {
     throw new (class extends Error {

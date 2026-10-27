@@ -1,0 +1,245 @@
+[
+ {
+  "packId": "auto_dealer",
+  "version": 1,
+  "names": {
+   "en": "Auto dealer",
+   "te": "ఆటో డీలర్",
+   "hi": "ऑटो डीलर",
+   "kn": "ಆಟೋ ಡೀಲರ್"
+  },
+  "summary": {
+   "en": "Cars and bikes: book a test drive.",
+   "te": "కార్లు, బైకులు: టెస్ట్ డ్రైవ్ బుక్ చేయండి.",
+   "hi": "कार और बाइक: टेस्ट ड्राइव बुक करें।",
+   "kn": "ಕಾರು, ಬೈಕ್: ಟೆಸ್ಟ್ ಡ್ರೈವ್ ಬುಕ್ ಮಾಡಿ."
+  },
+  "goalCode": "test_drive",
+  "goalLabel": {
+   "en": "Book a test drive",
+   "te": "టెస్ట్ డ్రైవ్ బుక్ చేయండి",
+   "hi": "टेस्ट ड्राइव बुक करें",
+   "kn": "ಟೆಸ್ಟ್ ಡ್ರೈವ್ ಬುಕ್ ಮಾಡಿ"
+  },
+  "questionCount": 6,
+  "accent": "leads_orange",
+  "owlProp": "car",
+  "validated": false
+ },
+ {
+  "packId": "clinic",
+  "version": 1,
+  "names": {
+   "en": "Clinic",
+   "te": "క్లినిక్",
+   "hi": "क्लिनिक",
+   "kn": "ಕ್ಲಿನಿಕ್"
+  },
+  "summary": {
+   "en": "Patients enquire: book an appointment.",
+   "te": "రోగులు అడుగుతారు: అపాయింట్‌మెంట్ బుక్ చేయండి.",
+   "hi": "मरीज पूछते हैं: अपॉइंटमेंट बुक करें।",
+   "kn": "ರೋಗಿಗಳು ಕೇಳುತ್ತಾರೆ: ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್ ಬುಕ್ ಮಾಡಿ."
+  },
+  "goalCode": "appointment",
+  "goalLabel": {
+   "en": "Book an appointment",
+   "te": "అపాయింట్‌మెంట్ బుక్ చేయండి",
+   "hi": "अपॉइंटमेंट बुक करें",
+   "kn": "ಅಪಾಯಿಂಟ್‌ಮೆಂಟ್ ಬುಕ್ ಮಾಡಿ"
+  },
+  "questionCount": 5,
+  "accent": "leads_orange",
+  "owlProp": "stethoscope",
+  "validated": false
+ },
+ {
+  "packId": "coaching",
+  "version": 1,
+  "names": {
+   "en": "Coaching classes",
+   "te": "కోచింగ్ క్లాసులు",
+   "hi": "कोचिंग क्लास",
+   "kn": "ಕೋಚಿಂಗ್ ಕ್ಲಾಸ್"
+  },
+  "summary": {
+   "en": "Students enquire: book a counselling session.",
+   "te": "విద్యార్థులు అడుగుతారు: కౌన్సెలింగ్ బుక్ చేయండి.",
+   "hi": "छात्र पूछते हैं: काउंसलिंग बुक करें।",
+   "kn": "ವಿದ್ಯಾರ್ಥಿಗಳು ಕೇಳುತ್ತಾರೆ: ಕೌನ್ಸೆಲಿಂಗ್ ಬುಕ್ ಮಾಡಿ."
+  },
+  "goalCode": "counselling",
+  "goalLabel": {
+   "en": "Book a counselling session",
+   "te": "కౌన్సెలింగ్ బుక్ చేయండి",
+   "hi": "काउंसलिंग बुक करें",
+   "kn": "ಕೌನ್ಸೆಲಿಂಗ್ ಬುಕ್ ಮಾಡಿ"
+  },
+  "questionCount": 6,
+  "accent": "leads_orange",
+  "owlProp": "open_book",
+  "validated": false
+ },
+ {
+  "packId": "gym",
+  "version": 1,
+  "names": {
+   "en": "Gym",
+   "te": "జిమ్",
+   "hi": "जिम",
+   "kn": "ಜಿಮ್"
+  },
+  "summary": {
+   "en": "Walk-in enquiries: book a trial visit.",
+   "te": "వచ్చే ఎంక్వైరీలు: ట్రయల్ విజిట్ బుక్ చేయండి.",
+   "hi": "आने वाली पूछताछ: ट्रायल विज़िट बुक करें।",
+   "kn": "ಬರುವ ವಿಚಾರಣೆ: ಟ್ರಯಲ್ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿ."
+  },
+  "goalCode": "trial",
+  "goalLabel": {
+   "en": "Book a trial visit",
+   "te": "ట్రయల్ విజిట్ బుక్ చేయండి",
+   "hi": "ट्रायल विज़िट बुक करें",
+   "kn": "ಟ್ರಯಲ್ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿ"
+  },
+  "questionCount": 4,
+  "accent": "leads_orange",
+  "owlProp": "dumbbell",
+  "validated": false
+ },
+ {
+  "packId": "insurance_loans",
+  "version": 1,
+  "names": {
+   "en": "Insurance and loans",
+   "te": "ఇన్సూరెన్స్, లోన్లు",
+   "hi": "इंश्योरेंस और लोन",
+   "kn": "ಇನ್ಶೂರೆನ್ಸ್, ಸಾಲಗಳು"
+  },
+  "summary": {
+   "en": "Find out what they need before an agent calls.",
+   "te": "ఏజెంట్ కాల్ చేసే ముందు వారికి ఏం కావాలో తెలుసుకోండి.",
+   "hi": "एजेंट के कॉल से पहले जानें कि उन्हें क्या चाहिए।",
+   "kn": "ಏಜೆಂಟ್ ಕರೆ ಮಾಡುವ ಮೊದಲು ಅವರಿಗೇನು ಬೇಕೆಂದು ತಿಳಿಯಿರಿ."
+  },
+  "goalCode": "qualify",
+  "goalLabel": {
+   "en": "Find out what they need",
+   "te": "వారికి ఏం కావాలో తెలుసుకోండి",
+   "hi": "जानें कि उन्हें क्या चाहिए",
+   "kn": "ಅವರಿಗೇನು ಬೇಕೆಂದು ತಿಳಿಯಿರಿ"
+  },
+  "questionCount": 7,
+  "accent": "leads_orange",
+  "owlProp": "shield_check",
+  "validated": false
+ },
+ {
+  "packId": "interiors_solar",
+  "version": 1,
+  "names": {
+   "en": "Interiors and solar",
+   "te": "ఇంటీరియర్స్, సోలార్",
+   "hi": "इंटीरियर और सोलर",
+   "kn": "ಇಂಟೀರಿಯರ್ಸ್, ಸೋಲಾರ್"
+  },
+  "summary": {
+   "en": "Book a site measurement.",
+   "te": "సైట్ మెజర్‌మెంట్ బుక్ చేయండి.",
+   "hi": "साइट मेज़रमेंट बुक करें।",
+   "kn": "ಸೈಟ್ ಮೆಷರ್‌ಮೆಂಟ್ ಬುಕ್ ಮಾಡಿ."
+  },
+  "goalCode": "site_measurement",
+  "goalLabel": {
+   "en": "Book a site measurement",
+   "te": "సైట్ మెజర్‌మెంట్ బుక్ చేయండి",
+   "hi": "साइट मेज़रमेंट बुक करें",
+   "kn": "ಸೈಟ್ ಮೆಷರ್‌ಮೆಂಟ್ ಬುಕ್ ಮಾಡಿ"
+  },
+  "questionCount": 6,
+  "accent": "leads_orange",
+  "owlProp": "sofa_sun",
+  "validated": false
+ },
+ {
+  "packId": "real_estate",
+  "version": 1,
+  "names": {
+   "en": "Real estate",
+   "te": "రియల్ ఎస్టేట్",
+   "hi": "रियल एस्टेट",
+   "kn": "ರಿಯಲ್ ಎಸ್ಟೇಟ್"
+  },
+  "summary": {
+   "en": "Property enquiries: book a site visit.",
+   "te": "ప్రాపర్టీ ఎంక్వైరీలు: సైట్ విజిట్ బుక్ చేయండి.",
+   "hi": "प्रॉपर्टी पूछताछ: साइट विज़िट बुक करें।",
+   "kn": "ಪ್ರಾಪರ್ಟಿ ವಿಚಾರಣೆ: ಸೈಟ್ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿ."
+  },
+  "goalCode": "site_visit",
+  "goalLabel": {
+   "en": "Book a site visit",
+   "te": "సైట్ విజిట్ బుక్ చేయండి",
+   "hi": "साइट विज़िट बुक करें",
+   "kn": "ಸೈಟ್ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿ"
+  },
+  "questionCount": 7,
+  "accent": "leads_orange",
+  "owlProp": "building",
+  "validated": false
+ },
+ {
+  "packId": "travel",
+  "version": 1,
+  "names": {
+   "en": "Travel",
+   "te": "ట్రావెల్",
+   "hi": "ट्रैवल",
+   "kn": "ಟ್ರಾವೆಲ್"
+  },
+  "summary": {
+   "en": "Trip enquiries: get the details for a quote.",
+   "te": "ట్రిప్ ఎంక్వైరీలు: కోట్ కోసం వివరాలు తీసుకోండి.",
+   "hi": "ट्रिप पूछताछ: कोट के लिए जानकारी लें।",
+   "kn": "ಟ್ರಿಪ್ ವಿಚಾರಣೆ: ಕೋಟ್‌ಗೆ ವಿವರ ಪಡೆಯಿರಿ."
+  },
+  "goalCode": "quote",
+  "goalLabel": {
+   "en": "Get the details for a quote",
+   "te": "కోట్ కోసం వివరాలు తీసుకోండి",
+   "hi": "कोट के लिए जानकारी लें",
+   "kn": "ಕೋಟ್‌ಗೆ ವಿವರ ಪಡೆಯಿರಿ"
+  },
+  "questionCount": 6,
+  "accent": "leads_orange",
+  "owlProp": "paper_plane",
+  "validated": false
+ },
+ {
+  "packId": "wholesale_b2b",
+  "version": 1,
+  "names": {
+   "en": "Wholesale and B2B",
+   "te": "హోల్‌సేల్, బి2బి",
+   "hi": "होलसेल और बी2बी",
+   "kn": "ಹೋಲ್‌ಸೇಲ್, ಬಿ2ಬಿ"
+  },
+  "summary": {
+   "en": "Business buyers: get the details for a quote.",
+   "te": "బిజినెస్ కొనుగోలుదారులు: కోట్ కోసం వివరాలు తీసుకోండి.",
+   "hi": "बिज़नेस खरीदार: कोट के लिए जानकारी लें।",
+   "kn": "ಬಿಸಿನೆಸ್ ಖರೀದಿದಾರರು: ಕೋಟ್‌ಗೆ ವಿವರ ಪಡೆಯಿರಿ."
+  },
+  "goalCode": "quote",
+  "goalLabel": {
+   "en": "Get the details for a quote",
+   "te": "కోట్ కోసం వివరాలు తీసుకోండి",
+   "hi": "कोट के लिए जानकारी लें",
+   "kn": "ಕೋಟ್‌ಗೆ ವಿವರ ಪಡೆಯಿರಿ"
+  },
+  "questionCount": 6,
+  "accent": "leads_orange",
+  "owlProp": "delivery_truck",
+  "validated": false
+ }
+]

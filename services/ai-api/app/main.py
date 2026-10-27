@@ -87,8 +87,20 @@ from app.integrations.routes_calendar import public_router as calendar_public_ro
 from app.integrations.routes_contacts import router as contacts_by_phone_router
 from app.integrations.routes_import import router as spreadsheet_import_router
 from app.integrations.routes_policy import router as policy_router
+from app.knowledge import errors as knowledge_errors
+from app.knowledge.repository import PostgrestKnowledgeRepository
+from app.knowledge.routes import router as knowledge_router
+from app.knowledge.service import KnowledgeService
+from app.lead_sources.routes import public_router as lead_intake_router
+from app.lead_sources.routes import router as lead_sources_router
+from app.lead_sources.wiring import build_lead_sources
 from app.leads.repository import PostgrestLeadsRepository
 from app.leads.routes import router as leads_router
+from app.leadspack.repository import PostgrestPlaybookRepository
+from app.leadspack.routes import public_router as lead_templates_router
+from app.leadspack.routes import router as lead_playbook_router
+from app.leadspack.service import LeadPlaybookService
+from app.leadspack.templates import default_templates
 from app.leadtools.repository import PostgrestLeadSearchRepository
 from app.leadtools.routes import router as leadtools_router
 from app.logging_safety import install_log_redaction
@@ -114,6 +126,9 @@ from app.outbox.routes import router as outbox_router
 from app.outcomes.repository import PostgrestOutcomesRepository
 from app.outcomes.routes import customers_router as outcomes_customers_router
 from app.outcomes.routes import router as outcomes_router
+from app.outreach import errors as outreach_errors
+from app.outreach.routes import router as outreach_router
+from app.outreach.wiring import build_outreach
 from app.ownvoice import repository as own_voice_repo
 from app.ownvoice.repository import PostgrestOwnVoiceRepository
 from app.ownvoice.routes import router as own_voice_router
@@ -141,9 +156,16 @@ from app.scheduler.routes import router as scheduler_router
 from app.sites import errors as site_errors
 from app.sites.repository import PostgrestSitesRepository
 from app.sites.routes import router as sites_router
+from app.speaking.repository import PostgrestSpeakingRepository
+from app.speaking.routes import router as speaking_router
+from app.speaking.service import SpeakingService
 from app.suppression.repository import PostgrestSuppressionRepository
 from app.suppression.routes import router as suppression_router
 from app.suppression.wiring import build_key_ring
+from app.tasks import errors as task_errors
+from app.tasks.repository import PostgrestTasksRepository
+from app.tasks.routes import router as tasks_router
+from app.tasks.service import TasksService
 from app.team import errors as team_errors
 from app.team.repository import PostgrestTeamRepository
 from app.team.routes import public_router as team_public_router
@@ -161,6 +183,8 @@ from app.voice.fake import FakeVoiceCloner
 from app.voice.routes import router as voice_router
 from app.voice_notes.repository import PostgrestVoiceNotesRepository
 from app.voice_notes.routes import router as voice_notes_router
+from app.voicesample.routes import router as voice_sample_router
+from app.voicesample.service import VoiceSampleService
 from app.websearch.repository import PostgrestResearchUsageRepository
 from app.websearch.routes import router as research_router
 from app.websearch.wiring import build_research_web
@@ -223,6 +247,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         settings.privacy_effective_from,
     )
     key_ring = build_key_ring(settings)
+    voice_stack = build_voice(settings)
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
@@ -246,7 +271,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         catalogue=PostgrestCatalogueRepository(config.rest_url, config.anon_key),
         catalogue_storage=HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key),
         lead_search=PostgrestLeadSearchRepository(config.rest_url, config.anon_key),
-        voice=build_voice(settings),
+        voice=voice_stack,
         integrations=PostgrestIntegrationsRepository(config.rest_url, config.anon_key),
         policies=policies,
         privacy=PostgrestPrivacyRepository(config.rest_url, config.anon_key),
@@ -254,6 +279,17 @@ def build_runtime(settings: Settings) -> Runtime | None:
         whatsapp=build_whatsapp(settings, config, key_ring),
         team=PostgrestTeamRepository(config.rest_url, config.anon_key),
         dpdp=build_dpdp(settings, config.rest_url, config.anon_key),
+        speaking=SpeakingService(PostgrestSpeakingRepository(config.rest_url, config.anon_key)),
+        lead_playbook=LeadPlaybookService(
+            PostgrestPlaybookRepository(config.rest_url, config.anon_key), default_templates()
+        ),
+        knowledge=KnowledgeService(PostgrestKnowledgeRepository(config.rest_url, config.anon_key)),
+        lead_sources=build_lead_sources(
+            settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, key_ring
+        ),
+        outreach=build_outreach(config.rest_url, config.anon_key),
+        tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
+        voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         notifications=build_notifications(settings, config),
         research_web=build_research_web(settings),
@@ -401,6 +437,15 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     campaign_errors.CampaignNotReadyError: ApiError(
         409, "campaign_not_ready", "The campaign is not ready to approve."
     ),
+    # Speed to lead and approve once (job DR A3). Fixed sentences: nothing from the data layer.
+    outreach_errors.OutreachStateError: ApiError(
+        409, "outreach_state", "That is not possible in the state it is in now."
+    ),
+    outreach_errors.PlanChangedError: ApiError(
+        409,
+        "plan_changed",
+        "The plan changed since you looked at it. Look at it again before approving.",
+    ),
     # Education: programmes, students, admissions, fees (job CR). Fixed sentences only.
     education_errors.AdmissionNumberUsedError: ApiError(
         409, "admission_no_used", "That admission number is already used by another student."
@@ -498,6 +543,22 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         409,
         "plan_limit_reached",
         "This plan's allowance for this is used up for now. It starts again with the next period.",
+    ),
+    # Running out before the month ends (job DS E2). Fixed sentences only.
+    billing_errors.PurchaseIdUsedError: ApiError(
+        409, "purchase_id_used", "That purchase number was already used for a different pack."
+    ),
+    billing_errors.PackUnknownError: ApiError(
+        422, "pack_unknown", "That top-up pack does not exist or is for the other kind."
+    ),
+    billing_errors.NoSubscriptionError: ApiError(
+        409, "no_subscription", "Choose a plan first: a top-up or an upgrade needs one."
+    ),
+    billing_errors.CapRequiredError: ApiError(
+        422, "cap_required", "Set a monthly limit above zero for this."
+    ),
+    billing_errors.NotAnUpgradeError: ApiError(
+        409, "not_an_upgrade", "That plan is not above the one you are on."
     ),
     own_voice_repo.VoiceExistsError: ApiError(
         409, "voice_exists", "You already have a voice. Delete it first to make another."
@@ -653,6 +714,10 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "import_file_changed",
         "This is not the file (or the column choices) that was checked. Check it again.",
     ),
+    # Knowledge base (job DR / A1). A fixed message: nothing from the data layer reaches a client.
+    knowledge_errors.KnowledgeLimitError: ApiError(
+        409, "limit_reached", "That is the most this workspace can hold. Remove something first."
+    ),
     # Privacy rights (job BN, ADR 0075). Fixed messages: no data-layer text reaches clients.
     privacy_errors.SoleOwnerError: ApiError(
         409,
@@ -701,6 +766,23 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     ),
     team_errors.InvitationNotPendingError: ApiError(
         409, "invitation_not_pending", "That invitation was already used."
+    ),
+    # Tasks (job DR B1). Fixed messages: nothing from the data layer reaches a client.
+    task_errors.NotForSchoolsError: ApiError(
+        422,
+        "not_for_schools",
+        "A school's task cannot talk about fees, marks or dues, "
+        "and there is no payment reminder for schools.",
+    ),
+    task_errors.PlanChangedError: ApiError(
+        409,
+        "plan_changed",
+        "The plan changed since you saw it. Look at it again and approve the new one.",
+    ),
+    task_errors.TaskStateError: ApiError(
+        409,
+        "task_state",
+        "That cannot be done in the state the task is in now. Reload and look again.",
     ),
     # Store visits (job AS, ADR 0067). Fixed messages: nothing from the data layer reaches a client.
     visit_errors.VisitStateError: ApiError(
@@ -1024,6 +1106,15 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(privacy_router)
     app.include_router(dpdp_public_router)
     app.include_router(dpdp_me_router)
+    app.include_router(speaking_router)
+    app.include_router(lead_templates_router)
+    app.include_router(lead_playbook_router)
+    app.include_router(knowledge_router)
+    app.include_router(lead_sources_router)
+    app.include_router(lead_intake_router)
+    app.include_router(outreach_router)
+    app.include_router(tasks_router)
+    app.include_router(voice_sample_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)

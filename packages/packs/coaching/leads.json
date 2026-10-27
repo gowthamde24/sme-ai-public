@@ -1,0 +1,248 @@
+{
+  "$schema": "../leads.schema.json",
+  "pack": "coaching",
+  "version": 1,
+  "goal": {
+    "code": "counselling",
+    "label": {
+      "en": "Book a counselling session",
+      "te": "Counselling session book చేయడం",
+      "hi": "Counselling session book कराना",
+      "kn": "Counselling session book ಮಾಡಿಸುವುದು"
+    },
+    "ask": {
+      "en": "Invite the person to a free counselling session with a counsellor and fix a day and time."
+    }
+  },
+  "questions": [
+    {
+      "code": "course_interest",
+      "field": "course_interest",
+      "ask": {
+        "en": "Which course or exam are you interested in?"
+      },
+      "required": true
+    },
+    {
+      "code": "who_for",
+      "field": "who_for",
+      "ask": {
+        "en": "Is it for you or for someone in your family?"
+      },
+      "required": true
+    },
+    {
+      "code": "preferred_mode",
+      "field": "preferred_mode",
+      "ask": {
+        "en": "Would you prefer classroom or online classes?"
+      },
+      "required": false
+    },
+    {
+      "code": "batch_timing",
+      "field": "batch_timing",
+      "ask": {
+        "en": "Which batch timing suits: morning, evening or weekend?"
+      },
+      "required": false
+    },
+    {
+      "code": "start_when",
+      "field": "start_when",
+      "ask": {
+        "en": "When would you like to start?"
+      },
+      "required": false
+    },
+    {
+      "code": "counselling_day",
+      "field": "counselling_day",
+      "ask": {
+        "en": "Which day suits you for a free counselling session?"
+      },
+      "required": true
+    }
+  ],
+  "objections": [
+    {
+      "code": "fees_high",
+      "hears": [
+        "fees are high",
+        "too costly"
+      ],
+      "answer": {
+        "en": "I understand. The counsellor will go through the options with you and what each includes. Shall I book a short counselling session?"
+      }
+    },
+    {
+      "code": "results_doubt",
+      "hears": [
+        "what are the results",
+        "is it worth it"
+      ],
+      "answer": {
+        "en": "A good question. The counsellor can explain how the course works and what past learners did. I will not make claims I cannot back up. Shall I book the session?"
+      }
+    },
+    {
+      "code": "time_problem",
+      "hears": [
+        "no time",
+        "too busy"
+      ],
+      "answer": {
+        "en": "We have different batch timings, including weekends and online. Which time would work for you?"
+      }
+    },
+    {
+      "code": "compare_other",
+      "hears": [
+        "checking other institutes",
+        "joined elsewhere"
+      ],
+      "answer": {
+        "en": "That is wise. A counselling session is free and you can compare with what you have seen. Shall I fix one?"
+      }
+    },
+    {
+      "code": "need_to_ask_family",
+      "hears": [
+        "will ask at home",
+        "need to discuss"
+      ],
+      "answer": {
+        "en": "Of course. Would you like the details on WhatsApp to share with them? We can also include them in the counselling session."
+      }
+    }
+  ],
+  "followups": [
+    {
+      "when": "no_answer",
+      "after_minutes": 30,
+      "channel": "call",
+      "max_attempts": 3,
+      "message": null
+    },
+    {
+      "when": "no_answer",
+      "after_minutes": 1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Hello, this is Vijaya, the AI assistant of the institute. I tried calling about your course enquiry. When can I call you?"
+      }
+    },
+    {
+      "when": "interested",
+      "after_minutes": 2,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Thank you for talking to us. Here are the course details. Shall we fix a free counselling session?"
+      }
+    },
+    {
+      "when": "callback",
+      "after_minutes": 0,
+      "channel": "call",
+      "max_attempts": 2,
+      "message": null
+    },
+    {
+      "when": "booked",
+      "after_minutes": -1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "A reminder: your counselling session is tomorrow."
+      }
+    },
+    {
+      "when": "booked",
+      "after_minutes": -120,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Your counselling session is in two hours. See you soon."
+      }
+    }
+  ],
+  "outcome_reasons": {
+    "not_interested": [
+      {
+        "code": "fees_high",
+        "label": {
+          "en": "Fees are higher than expected"
+        }
+      },
+      {
+        "code": "joined_elsewhere",
+        "label": {
+          "en": "Joined another institute"
+        }
+      },
+      {
+        "code": "no_time",
+        "label": {
+          "en": "Cannot spare the time now"
+        }
+      },
+      {
+        "code": "course_not_offered",
+        "label": {
+          "en": "The course they want is not offered"
+        }
+      },
+      {
+        "code": "decided_not_to_study",
+        "label": {
+          "en": "Decided not to take a course"
+        }
+      },
+      {
+        "code": "just_browsing",
+        "label": {
+          "en": "Just browsing"
+        }
+      },
+      {
+        "code": "not_now",
+        "label": {
+          "en": "Not now, maybe later"
+        }
+      },
+      {
+        "code": "already_decided",
+        "label": {
+          "en": "Already decided elsewhere"
+        }
+      }
+    ],
+    "interested": [
+      {
+        "code": "counselling_booked",
+        "label": {
+          "en": "Counselling booked"
+        }
+      },
+      {
+        "code": "wants_details_on_whatsapp",
+        "label": {
+          "en": "Wants details on WhatsApp first"
+        }
+      },
+      {
+        "code": "wants_demo_class",
+        "label": {
+          "en": "Wants a demo class"
+        }
+      }
+    ]
+  },
+  "safety": [
+    "Do not promise results, ranks, jobs or placements.",
+    "Do not quote fees or discounts unless they are in the approved facts.",
+    "Do not ask for or store a child's marks, name or school; speak to the adult only."
+  ]
+}

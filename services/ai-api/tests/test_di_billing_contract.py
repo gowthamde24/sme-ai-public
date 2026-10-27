@@ -52,6 +52,14 @@ def test_no_shape_shows_ai_money_tokens_or_models() -> None:
         ("access_read_only", models.AccessOut),
         ("usage_view", models.UsageViewOut),
         ("trial_start_request", models.TrialStartIn),
+        ("topups_get", models.TopupsOut),
+        ("topup_buy_request", models.TopupBuyIn),
+        ("topup_buy_response", models.TopupBuyOut),
+        ("topup_settings_request", models.TopupSettingsIn),
+        ("invoices", models.InvoicesOut),
+        ("upgrade_preview", models.UpgradePreviewOut),
+        ("upgrade_request", models.UpgradeIn),
+        ("usage_view_queued", models.UsageViewOut),
     ],
 )
 def test_the_example_payloads_match_the_models_and_the_schema(example: str, model: type) -> None:

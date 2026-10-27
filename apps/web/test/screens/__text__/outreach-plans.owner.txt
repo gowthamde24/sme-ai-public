@@ -1,0 +1,20 @@
+# Lead plans
+Speed to lead: who Vijaya calls and messages, approved once instead of one person at a time.
+## Hot leads waiting for you
+- Ravi K. (synthetic) New Wants to see the site on Saturday morning.
+[button type=button: I have called them]
+## Standing rules
+One rule per lead source. You approve it once; after that nobody clicks for each new lead. You can pause it any time.
+- New leads from Your website form: call within 2 minutes, in calling hours. On Talk and find out their interest · Phone calls · English · Up to 50 calls a day 4 leads handled, 2 calls today
+[button type=button: Pause this rule]
+[button type=button: Add a standing rule]
+## Plans for batches of leads
+form:
+Make a plan for the leads from
+<select name=source label="Make a plan for the leads from">
+  options: IndiaMART=indiamart | JustDial=justdial | 99acres | MagicBricks=magicbricks | Housing.com=housing | Meta lead ads=meta_lead_ads | Your website form=website_form | Webhook (Zapier, n8n)=webhook | Excel or CSV file=excel_upload* | Google Sheet=google_sheet | Pasted list=pasted_list | Contacts file=vcard
+[button type=submit: Make a plan]
+- [IndiaMART leads, 27 Oct (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/batches/ba000000-0000-4000-8000-0000000000b1) Book a site visit · 12 people · ₹108 Waiting for your approval
+- [IndiaMART leads, 27 Oct (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/batches/ba000000-0000-4000-8000-0000000000b1) Book a site visit · 12 people · ₹108 · 3 of 9 done Running
+## How calling works
+Calls go out on Mon, Tue, Wed, Thu, Fri, Sat, from 09:00 to 19:00. A lead that arrives after hours gets a WhatsApp message now and a call the next morning at 09:30. If nobody answers, Vijaya tries up to 3 times, about 18 hours apart, then sends a WhatsApp message and stops. When someone is interested, a team member is told at once and reminded after 15 minutes if nobody has called back. Anyone who says no, or sends STOP, is never contacted again. Only your own contacts are called. [Change the calling hours](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=assistant)

@@ -1,0 +1,31 @@
+# Make a plan
+The plan sends nothing. You look at it and approve it once. [Back to lead plans](/app/tenants/22222222-2222-2222-2222-222222222222/outreach)
+form:
+Who: the new leads from IndiaMART. Name of the plan
+<text label="Name of the plan" required maxlength=200 value=IndiaMART, 2026-10-06>
+Which leads
+<select label="Which leads">
+  options: New leads=new* | Leads already contacted=contacted | Qualified leads=qualified | Leads marked not suitable=disqualified
+Goal
+<select label="Goal">
+  options: Book a site visit=site_visit* | Book a counselling session=counselling | Book an appointment=appointment | Find out what they need=qualify | Book a test drive=test_drive | Book a site measurement=site_measurement | Get the details for a quote=quote | Book a trial visit=trial | Agree a time to call back=callback | Talk and find out their interest=general
+legend: How
+<radio name=bf-channel label="Phone calls" checked>
+Phone calls
+<radio name=bf-channel label="WhatsApp messages">
+WhatsApp messages
+<radio name=bf-channel label="Phone calls and WhatsApp">
+Phone calls and WhatsApp
+Language of the calls and messages
+<select label="Language of the calls and messages">
+  options: తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn | English=en* | தமிழ்=ta | മലയാളം=ml
+What should Vijaya ask?
+<textarea label="What should Vijaya ask?">
+One question on each line, up to 8. Leave empty to use the standard questions of your business type. Days to try
+<number label="Days to try" min=1 max=14 inputmode=numeric value=7>
+Starting 2026-10-06. Calls only go out in calling hours. Most calls in a day (optional)
+<number label="Most calls in a day (optional)" min=1 inputmode=numeric>
+Most minutes in all (optional)
+<number label="Most minutes in all (optional)" min=1 inputmode=numeric>
+When a limit is reached the plan pauses and you are told. You can raise it later.
+[button type=submit: Make the plan]

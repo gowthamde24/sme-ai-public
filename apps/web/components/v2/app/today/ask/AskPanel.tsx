@@ -6,6 +6,7 @@ import * as React from "react";
 import { Orb } from "@/components/v2/Orb";
 
 import { AskAnswer, AskChips, AskForm, AskVoiceMode } from "./AskView";
+import { DoItBar } from "./AskDoItLazy";
 import type { AskSession } from "./use-ask-session";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -65,8 +66,9 @@ export function AskPanel({ session, chips, onClose }: { session: AskSession; chi
           <AskAnswer session={s} earlierWord={w("ask.earlier")} scrollRoot />
         </div>
         <div className="shrink-0 space-y-3 border-t border-line bg-surface px-4 pb-4 pt-3">
-          <AskChips session={s} chips={chips} />
-          <AskForm session={s} look="panel" placeholder={w("ask.panel.placeholder")} />
+          {s.mode !== "do" ? <AskChips session={s} chips={chips} /> : null}
+          {s.doIt ? <DoItBar session={s} /> : null}
+          <AskForm session={s} look="panel" placeholder={s.mode === "do" ? (s.doIt?.words["tk.d.placeholder"] ?? w("ask.panel.placeholder")) : w("ask.panel.placeholder")} />
         </div>
       </div>
       <AskVoiceMode session={s} />

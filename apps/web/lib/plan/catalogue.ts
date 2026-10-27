@@ -26,6 +26,9 @@ export function catalogueFrom(out: PlansOut): PlanCatalogue {
   };
 }
 
+/** Night 4 (owner decision of 26 Oct): the calls-only plans are the Lead Desk plans. The API's catalogue version 3 carries these names itself; this is the same rename for the DRAFT file of the test provider (a copy of packages/plans/plans.json, which C1 renames). */
+const LEAD_DESK_NAMES: Record<string, string> = { calls_payg: "Pay as you go", calls_300: "Lead Desk 300", calls_1000: "Lead Desk 1,000" };
+
 type DraftPlan = Omit<PlanOut, "price_set" | "name"> & { name: { en: string } };
 /** The draft file in the shape of the API's answer, so the test-mode provider and the real API go through the same code. */
 export const DRAFT_PLANS: PlansOut = {
@@ -39,7 +42,7 @@ export const DRAFT_PLANS: PlansOut = {
     payment_method_at_start: draft.trial.payment_method_at_start,
     grace_days_after_failed_payment: draft.trial.grace_days_after_failed_payment,
   },
-  plans: (draft.plans as unknown as DraftPlan[]).map((p) => ({ ...p, name: { en: p.name.en, te: null, hi: null, kn: null }, price_paise_per_minute: p.price_paise_per_minute ?? null, price_paise_per_message: p.price_paise_per_message ?? null, price_set: p.price_paise_monthly !== null })),
+  plans: (draft.plans as unknown as DraftPlan[]).map((p) => ({ ...p, name: { en: LEAD_DESK_NAMES[p.id] ?? p.name.en, te: null, hi: null, kn: null }, price_paise_per_minute: p.price_paise_per_minute ?? null, price_paise_per_message: p.price_paise_per_message ?? null, price_set: p.price_paise_monthly !== null })),
 };
 
 export const CATALOGUE: PlanCatalogue = catalogueFrom(DRAFT_PLANS);

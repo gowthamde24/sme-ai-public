@@ -1,0 +1,223 @@
+{
+  "$schema": "../leads.schema.json",
+  "pack": "travel",
+  "version": 1,
+  "goal": {
+    "code": "quote",
+    "label": {
+      "en": "Send a trip quote",
+      "te": "Trip quote పంపడం",
+      "hi": "Trip quote भेजना",
+      "kn": "Trip quote ಕಳುಹಿಸುವುದು"
+    },
+    "ask": {
+      "en": "Collect the trip details and agree a time by which the travel team will send a quote."
+    }
+  },
+  "questions": [
+    {
+      "code": "destination_text",
+      "field": "destination_text",
+      "ask": {
+        "en": "Where would you like to go?"
+      },
+      "required": true
+    },
+    {
+      "code": "trip_type",
+      "field": "trip_type",
+      "ask": {
+        "en": "Is it a family trip, a couple, friends or a pilgrimage?"
+      },
+      "required": true
+    },
+    {
+      "code": "travel_when",
+      "field": "travel_when",
+      "ask": {
+        "en": "When are you planning to travel?"
+      },
+      "required": true
+    },
+    {
+      "code": "travellers_count",
+      "field": "travellers_count",
+      "ask": {
+        "en": "How many people will travel?"
+      },
+      "required": true
+    },
+    {
+      "code": "budget_band",
+      "field": "budget_band",
+      "ask": {
+        "en": "Do you prefer economy, standard or premium?"
+      },
+      "required": false
+    },
+    {
+      "code": "quote_by_day",
+      "field": "quote_by_day",
+      "ask": {
+        "en": "By when would you like our quote?"
+      },
+      "required": false
+    }
+  ],
+  "objections": [
+    {
+      "code": "price_high",
+      "hears": [
+        "costly",
+        "too expensive"
+      ],
+      "answer": {
+        "en": "I understand. The travel team can suggest options at different budgets. Shall I note your budget and have them send a quote?"
+      }
+    },
+    {
+      "code": "online_cheaper",
+      "hears": [
+        "found cheaper online",
+        "online is cheaper"
+      ],
+      "answer": {
+        "en": "Fair. Our team can compare what is included, since cheaper packages often leave things out. Shall they send a quote to compare?"
+      }
+    },
+    {
+      "code": "dates_not_fixed",
+      "hears": [
+        "dates not fixed",
+        "not sure of dates"
+      ],
+      "answer": {
+        "en": "No problem. We can plan with approximate dates and adjust later. What month are you thinking of?"
+      }
+    },
+    {
+      "code": "need_to_discuss",
+      "hears": [
+        "need to ask family",
+        "will discuss"
+      ],
+      "answer": {
+        "en": "Of course. I can send the details on WhatsApp so everyone can see them. When may I check back?"
+      }
+    }
+  ],
+  "followups": [
+    {
+      "when": "no_answer",
+      "after_minutes": 60,
+      "channel": "call",
+      "max_attempts": 3,
+      "message": null
+    },
+    {
+      "when": "no_answer",
+      "after_minutes": 1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Hello, this is Vijaya, the AI assistant of the travel team. I tried calling about your trip enquiry. When can I call you?"
+      }
+    },
+    {
+      "when": "interested",
+      "after_minutes": 2,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Thank you. Our team will prepare your quote and send it here by the time we discussed."
+      }
+    },
+    {
+      "when": "callback",
+      "after_minutes": 0,
+      "channel": "call",
+      "max_attempts": 2,
+      "message": null
+    },
+    {
+      "when": "booked",
+      "after_minutes": -1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "A reminder about your meeting with our travel team tomorrow."
+      }
+    }
+  ],
+  "outcome_reasons": {
+    "not_interested": [
+      {
+        "code": "budget_high",
+        "label": {
+          "en": "Budget is higher than planned"
+        }
+      },
+      {
+        "code": "booked_elsewhere",
+        "label": {
+          "en": "Booked with someone else"
+        }
+      },
+      {
+        "code": "trip_cancelled",
+        "label": {
+          "en": "Trip plan cancelled"
+        }
+      },
+      {
+        "code": "dates_unsure",
+        "label": {
+          "en": "Dates not fixed yet"
+        }
+      },
+      {
+        "code": "destination_not_offered",
+        "label": {
+          "en": "Destination not offered"
+        }
+      },
+      {
+        "code": "just_browsing",
+        "label": {
+          "en": "Just browsing"
+        }
+      },
+      {
+        "code": "not_now",
+        "label": {
+          "en": "Not now, maybe later"
+        }
+      }
+    ],
+    "interested": [
+      {
+        "code": "quote_requested",
+        "label": {
+          "en": "Quote requested"
+        }
+      },
+      {
+        "code": "meeting_booked",
+        "label": {
+          "en": "Meeting with the travel team booked"
+        }
+      },
+      {
+        "code": "wants_itinerary_on_whatsapp",
+        "label": {
+          "en": "Wants an itinerary on WhatsApp"
+        }
+      }
+    ]
+  },
+  "safety": [
+    "Do not quote a package price, a discount or a seat/room availability unless it is in the approved facts.",
+    "Do not promise visas, bookings or refunds.",
+    "Do not ask for passport numbers or any payment on a call or chat."
+  ]
+}

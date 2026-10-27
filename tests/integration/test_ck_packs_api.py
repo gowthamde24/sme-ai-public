@@ -66,7 +66,8 @@ def test_the_sign_up_cards_come_without_signing_in(client: TestClient) -> None:
     r = client.get("/v1/packs")
     assert r.status_code == 200
     conforms(r.json(), "PackListOut")
-    assert [p["pack_id"] for p in r.json()["packs"]] == ["textiles", "construction_materials", "education"]
+    # the published pack first, then by id (job DR / A1 added the nine "Leads & calls" business types, all preview)
+    assert [p["pack_id"] for p in r.json()["packs"]] == ["textiles", "auto_dealer", "clinic", "coaching", "construction_materials", "education", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]
     providers = client.get("/v1/auth/providers")
     conforms(providers.json(), "AuthProvidersOut")
     assert providers.json() == {"email": True, "google": False, "facebook": False}
@@ -81,10 +82,11 @@ def test_a_workspace_made_through_the_api_runs_todays_textile_behaviour(eval_wor
     conforms(pack.json(), "WorkspacePackOut")
     body = pack.json()
     assert (body["pack_id"], body["version"], body["status"], body["validated"], body["source"]) == ("textiles", 1, "published", True, "default")
-    assert body["units"] == ["piece", "set"] and body["core_tab"] == "quotes" and len(body["modules"]) == 17
+    assert body["units"] == ["piece", "set"] and body["core_tab"] == "quotes" and len(body["modules"]) == 18
     mods = w.client.get(url(a, "/modules"), headers=bearer(owner))
     conforms(mods.json(), "WorkspaceModulesOut")
-    assert sum(1 for m in mods.json()["modules"] if m["enabled"]) == 17 and len(mods.json()["modules"]) == 26
+    assert sum(1 for m in mods.json()["modules"] if m["enabled"]) == 18 and len(mods.json()["modules"]) == 27
+    assert {m["module"]: m["reason"] for m in mods.json()["modules"]}["lead_desk"] == "core" and {m["module"]: m["reason"] for m in mods.json()["modules"]}["quotes"] == "pack"
     assert w.client.get(url(a, "/custom-fields"), headers=bearer(owner)).json() == {"fields": []}
     for role in ("admin", "sales", "viewer"):
         assert w.client.get(url(a, "/pack"), headers=bearer(a.users[role])).status_code == 200, role

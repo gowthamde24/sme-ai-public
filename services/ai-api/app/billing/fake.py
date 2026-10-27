@@ -15,7 +15,14 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
 from app.billing.errors import NotSupportedError, PaymentMethodDeclinedError
-from app.billing.provider import CreateSubscription, EventKind, ProviderEvent, ProviderSubscription
+from app.billing.provider import (
+    ChargeResult,
+    CreateSubscription,
+    EventKind,
+    OneOffCharge,
+    ProviderEvent,
+    ProviderSubscription,
+)
 
 OK = "pm_fake_ok"
 DECLINED = "pm_fake_declined"
@@ -43,6 +50,7 @@ class FakeBillingProvider:
 
     def __init__(self) -> None:
         self._subs: dict[str, _Subscription] = {}
+        self.charges: dict[str, OneOffCharge] = {}   # the one-off payments taken (tests look here)
 
     def create_subscription(self, request: CreateSubscription) -> ProviderSubscription:
         if request.checkout_ref not in KNOWN or request.checkout_ref == DECLINED:
@@ -68,6 +76,20 @@ class FakeBillingProvider:
             sub.ends_at = sub.first_charge_at + elapsed * MONTH
         else:
             sub.ends_at = now   # during the trial, or at once: nothing will ever be charged
+
+    def charge_once(self, charge: OneOffCharge) -> ChargeResult:
+        """One payment: pm_fake_ok pays (and so does any known reference except pm_fake_declined); the same key answers the same reference."""
+        if charge.checkout_ref not in KNOWN or charge.checkout_ref == DECLINED:
+            raise PaymentMethodDeclinedError(charge.checkout_ref)
+        digest = hashlib.sha256(f"{charge.tenant_id}:{charge.idempotency_key}:{charge.amount_paise}".encode()).hexdigest()[:20]
+        reference = f"pay_fake_{digest}"
+        self.charges.setdefault(reference, charge)
+        return ChargeResult(self.name, reference)
+
+    def change_plan(self, reference: str, price_paise: int | None) -> None:
+        sub = self._subs.get(reference)
+        if sub is not None and sub.cancelled_at is None:
+            sub.price_paise = price_paise
 
     def verify_webhook(self, headers: Mapping[str, str], raw_body: bytes) -> list[ProviderEvent]:
         raise NotSupportedError("the fake provider receives no webhooks")
