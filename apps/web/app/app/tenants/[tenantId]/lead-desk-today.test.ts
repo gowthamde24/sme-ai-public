@@ -113,7 +113,7 @@ describe("Lead Desk on Today: the workers with their real status", () => {
   it("says so when there is nothing yet, and a part that is off or unread is not drawn at all", () => {
     const team = teamOf({ ...none, batches: [], rules: [], tasks: [], lead: null }, t, sourceName);
     expect(team.map((w) => [w.key, w.state, w.text])).toEqual([["leads", "idle", "No leads yet"], ["calls", "idle", "No calling plan yet"], ["rules", "off", "No rule is on"], ["tasks", "idle", "No task yet"]]);
-    expect(teamOf(none, t, sourceName)).toEqual([]);
+    expect(teamOf({ ...none, lead: undefined }, t, sourceName)).toEqual([]);
   });
 });
 
