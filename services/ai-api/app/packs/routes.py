@@ -41,6 +41,7 @@ from app.packs.models import (
     WorkspacePackOut,
 )
 from app.packs.repository import PacksRepository
+from app.workspace.other_type import public_id
 
 public_router = APIRouter(prefix="/v1", tags=["packs"])
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["packs"])
@@ -60,7 +61,8 @@ def list_packs(runtime: RuntimeDep) -> PackListOut:
     listed = runtime.pack_registry.selectable()
     if not listed.packs:
         raise ApiError(503, "packs_unavailable", "Business types are not available on this system.")
-    return listed
+    # job DT: the generic Lead Desk pack is called "other" on screens (app/workspace/other_type.py)
+    return listed.model_copy(update={"packs": [p.model_copy(update={"pack_id": public_id(p.pack_id)}) for p in listed.packs]})
 
 
 @public_router.get("/auth/providers", response_model=AuthProvidersOut)

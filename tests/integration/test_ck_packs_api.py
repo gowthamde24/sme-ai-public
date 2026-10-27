@@ -67,7 +67,7 @@ def test_the_sign_up_cards_come_without_signing_in(client: TestClient) -> None:
     assert r.status_code == 200
     conforms(r.json(), "PackListOut")
     # the published pack first, then by id (job DR / A1 added the nine "Leads & calls" business types, all preview; job DT the generic one)
-    assert [p["pack_id"] for p in r.json()["packs"]] == ["textiles", "auto_dealer", "clinic", "coaching", "construction_materials", "education", "general_business", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]
+    assert [p["pack_id"] for p in r.json()["packs"]] == ["textiles", "auto_dealer", "clinic", "coaching", "construction_materials", "education", "other", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]
     providers = client.get("/v1/auth/providers")
     conforms(providers.json(), "AuthProvidersOut")
     assert providers.json() == {"email": True, "google": False, "facebook": False}

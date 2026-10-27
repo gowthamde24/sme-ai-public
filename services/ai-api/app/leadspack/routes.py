@@ -22,6 +22,7 @@ from app.leadspack.models import PlaybookBody, PlaybookOut, TemplateOut, Templat
 from app.leadspack.service import LeadPlaybookService, NoTemplate, PlaybookInvalid, reason_of
 from app.leadspack.templates import default_templates
 from app.tenancy.models import Role
+from app.workspace.other_type import internal_code, public_id
 
 public_router = APIRouter(prefix="/v1", tags=["lead-templates"])
 router = APIRouter(prefix="/v1/tenants/{tenant_id}/lead-playbook", tags=["lead-playbook"])
@@ -38,15 +39,20 @@ def _service(runtime: Runtime) -> LeadPlaybookService:
 
 @public_router.get("/lead-templates", response_model=TemplatesOut)
 def list_templates() -> JSONResponse:
-    return JSONResponse(default_templates().summaries().model_dump(mode="json"), headers={"Cache-Control": "public, max-age=300"})
+    body = default_templates().summaries().model_dump(mode="json")
+    for item in body["templates"]:  # job DT: the generic pack is "other" on screens
+        item["pack_id"] = public_id(item["pack_id"])
+    return JSONResponse(body, headers={"Cache-Control": "public, max-age=300"})
 
 
 @public_router.get("/lead-templates/{pack_id}", response_model=TemplateOut)
 def get_template(pack_id: str) -> JSONResponse:
-    template = default_templates().get(pack_id)
+    template = default_templates().get(internal_code(pack_id))
     if template is None:
         raise not_found()
-    return JSONResponse(template.model_dump(mode="json"), headers={"Cache-Control": "public, max-age=300"})
+    body = template.model_dump(mode="json")
+    body["pack_id"] = public_id(body["pack_id"])
+    return JSONResponse(body, headers={"Cache-Control": "public, max-age=300"})
 
 
 @router.get("", response_model=PlaybookOut)

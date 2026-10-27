@@ -222,3 +222,23 @@ def test_a_gated_route_asks_a_person_who_turned_the_authenticator_on_for_the_cod
     assert asked.status_code == 403 and asked.json()["error"]["code"] == "mfa_required" and asked.json()["error"]["reason"] == "second_factor"
     entered = client.post(url, json={**body, "id": str(uuid.uuid4())}, headers=auth("a_owner", aal="aal2", iat=fresh))
     assert not (entered.status_code == 403 and entered.json()["error"].get("code") == "mfa_required")
+
+
+def test_other_is_the_screens_name_for_the_generic_pack_in_the_lists_and_at_setup() -> None:
+    from app.workspace import other_type
+
+    assert other_type.public_id("general_business") == "other" and other_type.internal_code("other") == "general_business"
+    assert other_type.public_id("coaching") == "coaching" and other_type.internal_code("coaching") == "coaching"
+    client, repo, _ = world()
+    # the lead templates answer to "other" (and still to the pack's own id)
+    listing = client.get("/v1/lead-templates").json()["templates"]
+    assert "other" in [t["pack_id"] for t in listing] and "general_business" not in [t["pack_id"] for t in listing]
+    assert client.get("/v1/lead-templates/other").json()["pack_id"] == "other"
+    # setup: "other" needs its words, a normal type takes none, and the words are saved as the type label
+    h = auth("outsider")
+    assert client.post("/v1/account/setup", json={"business_type": "other", "language": "en"}, headers=h).status_code == 422
+    assert client.post("/v1/account/setup", json={"business_type": "coaching", "language": "en", "business_label": "Pet shop"}, headers=h).status_code == 422
+    assert client.post("/v1/account/setup", json={"business_type": "other", "language": "en", "business_label": "x"}, headers=h).status_code == 422
+    ok = client.post("/v1/account/setup", json={"business_type": "other", "language": "en", "business_label": "Pet shop"}, headers=h)
+    assert ok.status_code == 200, ok.text
+    assert ("save_business", {"type": "other", "type_label": "Pet shop"}) in repo.calls

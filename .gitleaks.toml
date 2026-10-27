@@ -1,0 +1,26 @@
+# gitleaks configuration (job DT, security audit). The default rules stay ON. The allowlist names the files where the rule `generic-api-key` matches CODE, not secrets: tests and fixtures
+# with obviously fake values, and identifiers such as `get_secret_value()` or a React `key={...}`. The repository's history was also searched for real key formats (Anthropic, Stripe, Google, AWS,
+# GitHub, Resend, Slack, private keys, JWTs): none found (see ~/Desktop/stack19-jobs/security-report.md). A NEW finding in any other file fails the job.
+title = "Stack19"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "fake values in tests and fixtures"
+targetRules = ["generic-api-key"]
+paths = [
+  '''(^|/)tests?/''',
+  '''\.test\.(ts|tsx|mjs)$''',
+  '''(^|/)test_[A-Za-z0-9_]+\.py$''',
+]
+
+[[allowlists]]
+description = "identifiers that look like keys: secret accessors, React keys, a JWKS option"
+targetRules = ["generic-api-key"]
+paths = [
+  '''services/ai-api/app/scheduler/worker\.py''',
+  '''services/ai-api/app/auth/jwt\.py''',
+  '''apps/web/components/v2/legal/LegalDoc\.tsx''',
+  '''apps/web/scripts/audit-auth\.mjs''',
+]

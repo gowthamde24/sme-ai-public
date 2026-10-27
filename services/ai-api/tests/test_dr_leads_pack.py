@@ -96,13 +96,15 @@ def test_the_public_template_routes() -> None:
     listing = client.get("/v1/lead-templates")
     assert listing.status_code == 200 and "max-age" in listing.headers["cache-control"]
     ids = [t["pack_id"] for t in listing.json()["templates"]]
-    assert ids == sorted([*NINE, "general_business"])
+    assert ids == ["other" if i == "general_business" else i for i in sorted([*NINE, "general_business"])]   # job DT: the generic pack is "other" on screens
     first = listing.json()["templates"][0]
     assert first["goal"]["code"] == "test_drive" and first["goal"]["label"]["te"] and first["question_count"] >= 3 and first["validated"] is False
     one = client.get("/v1/lead-templates/real_estate").json()
     assert one["goal"]["code"] == "site_visit" and one["questions"][2]["field_definition"]["kind"] == "choice"
     assert one["questions"][2]["field_definition"]["choices"][0]["code"] == "under_30l"
     assert one["followups"][0] == {"when": "no_answer", "after_minutes": 30, "channel": "call", "max_attempts": 3, "message": None}
+    other = client.get("/v1/lead-templates/other")
+    assert other.status_code == 200 and other.json()["pack_id"] == "other" and client.get("/v1/lead-templates/general_business").status_code == 200
     assert client.get("/v1/lead-templates/textiles").status_code == 404 and client.get("/v1/lead-templates/nope").status_code == 404
 
 

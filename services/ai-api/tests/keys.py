@@ -47,8 +47,9 @@ def claims(sub: str | None = None, **overrides: Any) -> dict[str, Any]:
     # ADR 0115: a sensitive action needs a RECENT sign-in. A test token signed in just now, except
     # that `aal="aal1"` stays the old tests' "password-only session", which stays refused by having
     # signed in an hour ago; an `iat` or an `amr` list given by the test wins.
-    # (any explicit assurance level other than aal2, a missing or a garbled one included, keeps its old meaning of a weak session)
-    if "aal" in overrides and overrides["aal"] != "aal2" and "iat" not in overrides and "amr" not in overrides:
+    # (any explicit level other than aal2, a missing or garbled one included, stays a weak session)
+    weak = "aal" in overrides and overrides["aal"] != "aal2"
+    if weak and "iat" not in overrides and "amr" not in overrides:
         base["iat"] = now - 3600
     return {k: v for k, v in base.items() if v is not None}
 

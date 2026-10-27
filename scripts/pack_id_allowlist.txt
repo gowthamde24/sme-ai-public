@@ -2,3 +2,4 @@
 services/ai-api/app/education/models.py the education pack's InstitutionType names a kind of institution (a coaching centre) that is also the id of the leads-and-calls business type 'coaching'; it is a type of school, not a pack choice (job DR)
 apps/web/components/v2/app/education/ProgrammesView.tsx the same list of institution kinds in the programmes screen (job DR; the web lane owns it)
 apps/web/lib/api/education.ts the same list of institution kinds in the web's API client (job DR; the web lane owns it)
+services/ai-api/app/workspace/other_type.py the one place that maps the screens' business type "other" to the generic Lead Desk pack (a pack called `other` would collide with the word in every file the lint scans) (job DT)
