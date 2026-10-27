@@ -6,11 +6,19 @@ import type { AgentStatus, NeedsYouItem as ApiNeedsYouItem, RecentStep } from "@
  * item's `target` by the page's data file). Money is in paise. A part that cannot be read is null and the screen says "Not available yet" in its place: nothing is guessed.
  */
 export type { NeedsYouKind } from "@/lib/api/today";
-/** The three kinds that are decided on another page: their card says what it is and "Open" goes to the page that decides. */
-export type ClassicKind = "quote_approval" | "followup_due" | "order_money_held";
-export type NeedsYouItem = Omit<ApiNeedsYouItem, "kind"> & { kind: ClassicKind; href: string };
+/**
+ * The kinds that are decided on another page: their card says what it is and "Open" goes to the page that decides. The last four are Lead Desk's: a hot lead nobody has called back, a calling plan (or a task) waiting for the
+ * Owner's one approval, callbacks that are due, and calling paused by a limit. The first two of them come from the API; the others are read by the page's data file (`lead-desk-today.ts`) and have no `target`.
+ */
+export type ClassicKind = "quote_approval" | "followup_due" | "order_money_held" | "hot_lead_waiting" | "plan_waiting" | "callback_due" | "outreach_paused";
+export type NeedsYouItem = Omit<ApiNeedsYouItem, "kind" | "target"> & { kind: ClassicKind; href: string; target?: ApiNeedsYouItem["target"] };
 export type RecentItem = RecentStep & { href: string };
 export type AgentRow = AgentStatus;
+/**
+ * A worker of a Lead Desk workspace, as "Your team" draws it, from the real state of its part (the leads, the calling plans and rules, the tasks). `text` is the one status line in the person's language, already made by the server;
+ * `at` is when it last did something (ISO 8601). `off` = its part is switched off for this workspace; `not_available` = it could not be read.
+ */
+export type DeskWorker = { key: "leads" | "calls" | "rules" | "tasks"; state: "idle" | "working" | "off" | "not_available"; name: string; text: string | null; at: string | null };
 export type TodayCards = { waiting: number | null; money_held_paise: number | null; orders_open: number | null };
 
 /** The words of a WhatsApp message held for approval, as the card shows them. Only a person who may decide it is given them (the API sends them to the Owner and Admin only). */
@@ -55,6 +63,8 @@ export type TodayData = {
   needs: NeedsCard[] | null;
   recent: RecentItem[] | null;
   team: AgentRow[] | null;
+  /** The workers of a Lead Desk workspace (what "Your team" draws instead of the shop's helpers). null = this workspace has none (the helpers are drawn); a worker that could not be read says so in its own row. */
+  deskTeam: DeskWorker[] | null;
   /** The store today. null = not asked (the section is not drawn); `error` = it could not be read (the section says so). */
   store: ({ state: "ready" } & StoreToday) | { state: "error" } | null;
   /** The share of this week's AI allowance used (0 to 100), for the usage card. Owner and Admin only: null = not asked; `error` = could not be read. */
@@ -64,6 +74,6 @@ export type TodayData = {
   /** One promise for the last 24 hours of the outbox, never rejected: the overnight line and "Done while you slept" read it under a Suspense each. null = not asked. */
   digest: Promise<Digest> | null;
 };
-export const NOTHING_TODAY: TodayData = { cards: { waiting: null, money_held_paise: null, orders_open: null }, needs: null, recent: null, team: null, store: null, week: null, sending: null, digest: null };
+export const NOTHING_TODAY: TodayData = { cards: { waiting: null, money_held_paise: null, orders_open: null }, needs: null, recent: null, team: null, deskTeam: null, store: null, week: null, sending: null, digest: null };
 /** The words of the screen: the page resolves them in the person's language (server side) and passes this function. */
 export type T = (key: string, vars?: Record<string, string | number>) => string;

@@ -35,7 +35,7 @@ describe("agent state: switched off is not the same as not available", () => {
 
 describe("Today", () => {
   it("parses the contract's shape exactly", () => {
-    expect(parseToday(TODAY)).toEqual(TODAY);
+    expect(parseToday(TODAY)).toEqual({ ...TODAY, skipped: 0 });
     expect(parseToday({ cards: { waiting: 0, money_held_paise: 0, orders_open: 0 }, needs_you: [], recent: [] }).needs_you).toEqual([]);
   });
   it("accepts a missing city and no amount", () => {
@@ -86,7 +86,16 @@ describe("Today", () => {
     const today = parseToday({ ...TODAY, needs_you: [later, ITEM, { kind: "other_new" }, second, later] });
     expect(today.needs_you.map((i) => i.kind)).toEqual(["quote_approval", "followup_due"]);
     expect(today.cards).toEqual(parseToday(TODAY).cards);
+    expect(today.skipped).toBe(3);
     expect(parseToday({ ...TODAY, needs_you: [later] }).needs_you).toEqual([]);
+  });
+  it("knows a hot lead and a calling limit (Lead Desk) and counts only the kinds it leaves out as skipped", () => {
+    const hot = { ...ITEM, kind: "hot_lead_waiting", agent: "followup_desk", customer: null, target: { type: "lead", id: ID } };
+    const paused = { ...ITEM, kind: "outreach_paused", agent: "followup_desk", customer: "Diwali leads", target: { type: "outreach_batch", id: ID } };
+    const topup = { ...ITEM, kind: "topup_low", agent: "followup_desk", target: { type: "billing", id: ID } };
+    const today = parseToday({ ...TODAY, needs_you: [hot, paused, topup] });
+    expect(today.needs_you.map((i) => [i.kind, i.customer, i.target.type])).toEqual([["hot_lead_waiting", "", "lead"], ["outreach_paused", "Diwali leads", "outreach_batch"]]);
+    expect(today.skipped).toBe(1);
   });
   it("still fails on an item that is not an object, has no text kind, or is a known kind with a bad field", () => {
     for (const bad of ["x", 5, null, [], {}, { ...ITEM, kind: 5 }, { ...ITEM, kind: null }, { ...ITEM, id: "x" }, { ...ITEM, agent: "main" }, { ...ITEM, amount_paise: -1 }, { ...OUTBOX, target: { type: "outbox_message", id: "x" } }, { ...CALL, target: { type: "dashboard", id: ID } }]) {
@@ -108,7 +117,7 @@ describe("Today", () => {
   });
   it("reads with the person's token from the tenant's own path (encoded)", async () => {
     apiRequest.mockResolvedValue(TODAY);
-    expect(await getToday("tok", TENANT)).toEqual(TODAY);
+    expect(await getToday("tok", TENANT)).toEqual({ ...TODAY, skipped: 0 });
     expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${TENANT}/today`, "tok");
     await getToday("tok", "a/b?c");
     expect(apiRequest).toHaveBeenLastCalledWith("/v1/tenants/a%2Fb%3Fc/today", "tok");

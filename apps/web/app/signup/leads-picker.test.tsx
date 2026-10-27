@@ -1,7 +1,8 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+const push = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 vi.mock("./actions", () => ({ signUp: vi.fn() }));
 vi.mock("./oauth-actions", () => ({ continueWithProvider: vi.fn() }));
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
@@ -19,7 +20,6 @@ import SignupPage from "./page";
 
 const props = (query: Record<string, string | undefined> = {}) => ({ searchParams: Promise.resolve(query), params: Promise.resolve({}) }) as never;
 const DEEP = packsWire().packs.map(parsePackSummary).filter((p) => !MOCK_TEMPLATES.some((t) => t.packId === p.packId)); // the API now lists the nine too: the deep ones are the rest
-const cardIds = () => Array.from(document.querySelectorAll("[data-pack-card]")).map((e) => e.getAttribute("data-pack-card"));
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -29,32 +29,34 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-describe("sign-up step 1 with Lead Desk (night 4, part A1)", () => {
-  it("with the flag off nothing changes: every business type the API lists is a card, and no 'any business with leads'", async () => {
+const optionIds = () => {
+  fireEvent.focus(screen.getByRole("combobox"));
+  return within(screen.getByRole("listbox")).getAllByRole("option").map((e) => e.getAttribute("data-pack-card"));
+};
+const groupLabels = () => within(screen.getByRole("listbox")).getAllByRole("group").map((g) => g.querySelector("p")?.textContent);
+
+describe("sign-up step 1: one list, grouped (Built especially for / Lead Desk / Other)", () => {
+  it("with the Lead Desk flag off the types are one plain group, and the templates are not asked", async () => {
     render(await SignupPage(props()));
-    expect(cardIds()).toEqual([...DEEP, ...MOCK_TEMPLATES].map((p) => ("packId" in p ? p.packId : "")));
-    expect(screen.queryByText("Any business with leads")).toBeNull();
+    expect(optionIds()).toEqual([...DEEP, ...MOCK_TEMPLATES].map((p) => ("packId" in p ? p.packId : "")));
+    expect(groupLabels()).toEqual(["Business types"]);
     expect(templates).not.toHaveBeenCalled();
   });
-  it("with the flag on the nine become ONE card after the others, which opens the picker", async () => {
+  it("with the flag on the types with their own pages and the nine of Lead Desk are two groups, in that order", async () => {
     vi.stubEnv("LEADS_SCREENS", "1");
     render(await SignupPage(props()));
-    const ids = cardIds();
-    expect(ids).toHaveLength(DEEP.length + 1);
-    expect(ids[ids.length - 1]).toBe("leads");
-    for (const t of MOCK_TEMPLATES) expect(ids).not.toContain(t.packId);
-    const card = document.querySelector('[data-pack-card="leads"]') as HTMLAnchorElement;
-    expect(card).toHaveAttribute("href", "/signup?type=leads");
-    expect(within(card).getByText("Any business with leads")).toBeInTheDocument();
+    const ids = optionIds();
+    expect(ids).toEqual([...DEEP.map((p) => p.packId), ...MOCK_TEMPLATES.map((t) => t.packId)]);
+    expect(groupLabels()).toEqual(["Built especially for", "Lead Desk"]);
   });
-  it("the picker lists the nine, each leading to step 2 with its own business type, and a way back", async () => {
+  it("a business type the API lists as 'Other' is the last group, and choosing it goes on to step 2 like any other", async () => {
     vi.stubEnv("LEADS_SCREENS", "1");
-    render(await SignupPage(props({ type: "leads" })));
-    const list = document.querySelector("[data-part=lead-templates]") as HTMLElement;
-    expect(within(list).getAllByRole("link")).toHaveLength(9);
-    expect(list.querySelector('[data-pack-card="real_estate"]')).toHaveAttribute("href", "/signup?type=real_estate");
-    expect(screen.getAllByText("Not validated by a real owner yet", { exact: false })).toHaveLength(9);
-    expect(screen.getByRole("link", { name: "Back to all business types" })).toHaveAttribute("href", "/signup");
+    packList.mockResolvedValue([...DEEP, ...MOCK_TEMPLATES.map(toPackSummary), { ...toPackSummary(MOCK_TEMPLATES[0]), packId: "other", names: { en: "Other business" }, summary: { en: "x" } }]);
+    render(await SignupPage(props()));
+    expect(optionIds().at(-1)).toBe("other");
+    expect(groupLabels().at(-1)).toBe("Other");
+    fireEvent.click(within(screen.getByRole("listbox")).getByRole("option", { name: /Other/ }));
+    expect(push).toHaveBeenCalledWith("/signup?type=other");
   });
   it("one of the nine chosen goes to step 2 (the sign-in choices) as an ordinary business type", async () => {
     vi.stubEnv("LEADS_SCREENS", "1");
@@ -62,12 +64,12 @@ describe("sign-up step 1 with Lead Desk (night 4, part A1)", () => {
     expect(document.querySelector("[data-chosen-pack=clinic]")).not.toBeNull();
     expect(screen.getAllByText(/clinic/i).length).toBeGreaterThan(0);
   });
-  it("if the templates cannot be read the sign-up shows the business types as the API lists them, never a card that leads nowhere", async () => {
+  it("if the templates cannot be read the sign-up shows the business types as the API lists them, in one group", async () => {
     vi.stubEnv("LEADS_SCREENS", "1");
     templates.mockRejectedValueOnce(new Error("down"));
     render(await SignupPage(props()));
-    expect(cardIds()).toHaveLength(DEEP.length + MOCK_TEMPLATES.length);
-    expect(screen.queryByText("Any business with leads")).toBeNull();
+    expect(optionIds()).toHaveLength(DEEP.length + MOCK_TEMPLATES.length);
+    expect(groupLabels()).toEqual(["Business types"]);
   });
   it("in the test screens the made-up nine work even when the real API does not list them", async () => {
     vi.stubEnv("LEADS_SCREENS", "mock");

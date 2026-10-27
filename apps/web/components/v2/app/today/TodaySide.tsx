@@ -1,10 +1,10 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Inbox, ListChecks, PhoneCall, Repeat, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 
 import { AgentMark } from "../mark/AgentMark";
 import { StateDot } from "../mark/StateDot";
 import { ago, indiaClock } from "./time";
-import type { AgentRow, StoreVisit, T, TodayData } from "./types";
+import type { AgentRow, DeskWorker, StoreVisit, T, TodayData } from "./types";
 
 const card = "flex flex-col gap-3.5 rounded-[20px] border border-line bg-surface p-5";
 const STATUS_TONE: Record<StoreVisit["status"], string> = { confirmed: "bg-green-bg text-green-text", reminder_sent: "bg-surface-2 text-muted", requested: "bg-amber-bg text-amber-text" };
@@ -80,11 +80,19 @@ function statusLine(a: AgentRow, t: T, now: number): string {
   return a.last_event ? `${a.last_event.text} · ${ago(a.last_event.at, now)}` : t("office.idle");
 }
 
+const DESK_ICON: Record<DeskWorker["key"], LucideIcon> = { leads: Inbox, calls: PhoneCall, rules: Repeat, tasks: ListChecks };
+
+/** One short line about a Lead Desk worker: its words (made by the server from the real state of its part), and how long ago when it has a time; a part that could not be read says so. */
+function deskLine(w: DeskWorker, t: T, now: number): string {
+  if (w.state === "not_available" || w.text === null) return t("frame.notyet");
+  return w.at ? `${w.text} · ${ago(w.at, now)}` : w.text;
+}
+
 /**
  * "Your team" (job AU): the six helpers, each a row (job DQ part 0: they were three narrow columns whose status lines were cut off and overlapped at both desktop and phone widths): the picture, a dot for its state, the name and ONE live status line, in full, wrapping, from the helpers' status (`GET /agents/status`): working, switched off, not
  * available, or the last thing the helper did and how long ago. Agent OWL itself is the card above, so it is not repeated here. `team` null (could not be read) says so; the link opens the Office.
  */
-export function TeamSection({ team, base, t, now }: { team: readonly AgentRow[] | null; base: string; t: T; now: number }) {
+export function TeamSection({ team, deskTeam = null, base, t, now }: { team: readonly AgentRow[] | null; /** A Lead Desk workspace's workers, drawn instead of the shop's helpers (which are not its team). */ deskTeam?: readonly DeskWorker[] | null; base: string; t: T; now: number }) {
   const helpers = team?.filter((a) => a.agent !== "main") ?? null;
   return (
     <section aria-labelledby="team-heading" data-part="team" className={card}>
@@ -97,7 +105,22 @@ export function TeamSection({ team, base, t, now }: { team: readonly AgentRow[] 
           <ArrowRight className="size-4" aria-hidden="true" />
         </Link>
       </div>
-      {helpers === null ? (
+      {deskTeam !== null ? (
+        <ul className="flex flex-col divide-y divide-line" data-part="team-list" data-team="lead-desk">
+          {deskTeam.map((w) => (
+            <li key={w.key} className="flex min-w-0 items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+              <AgentMark icon={DESK_ICON[w.key]} px={40} off={w.state === "off" || w.state === "not_available"} className="size-10 shrink-0" />
+              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span data-part="team-name" className="inline-flex min-w-0 items-center gap-1.5 text-base font-semibold leading-tight">
+                  <StateDot state={w.state === "working" ? "working" : w.state === "idle" ? "idle" : "off"} />
+                  <span className="min-w-0 [overflow-wrap:anywhere]">{w.name}</span>
+                </span>
+                <span data-part="team-status" className={`text-sm leading-snug [overflow-wrap:anywhere] ${w.state === "working" ? "font-semibold text-brand-text" : "text-muted"}`}>{deskLine(w, t, now)}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : helpers === null ? (
         <p className="text-sm text-muted">{t("frame.notyet")}</p>
       ) : helpers.length === 0 ? (
         <p className="text-sm text-muted">{t("frame.notyet")}</p>

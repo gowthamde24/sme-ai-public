@@ -9,6 +9,7 @@ import { readDigest } from "./outbox-digest";
 import { readProposals, readSending, readStore, readWeek } from "./today-visits";
 import { targetPaths } from "./target-path";
 import { readAgentsCached, readTodayCached } from "./today-read";
+import type { LeadDeskToday } from "./lead-desk-today";
 
 const CLASSIC: readonly string[] = ["quote_approval", "followup_due", "order_money_held"];
 const isClassic = (i: ApiItem): i is ApiItem & { kind: ClassicKind } => CLASSIC.includes(i.kind);
@@ -51,7 +52,7 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
       wantsMessages ? listOutboxApprovals(accessToken, tenantId, { limit: 100 }).then((p) => new Map<string, OutboxMessage>(p.items.map((m) => [m.id, m]))).catch(rethrowAuth) : Promise.resolve(null),
       wantsCalls ? listCallRequests(accessToken, tenantId, { status: "requested", limit: 100 }).then((p) => new Map<string, CallRequest>(p.items.map((c) => [c.id, c]))).catch(rethrowAuth) : Promise.resolve(null),
     ]);
-    data.cards = { waiting: t.cards.waiting, money_held_paise: t.cards.money_held_paise, orders_open: t.cards.orders_open };
+    data.cards = { waiting: Math.max(0, t.cards.waiting - (t.skipped ?? 0)), money_held_paise: t.cards.money_held_paise, orders_open: t.cards.orders_open };
     data.needs = t.needs_you.map((i): NeedsCard => {
       const key = `${i.kind}-${i.id}`;
       if (isClassic(i)) return { type: "item", key, at: i.at, item: { ...i, href: where(i.target) } satisfies NeedsYouItem };
@@ -67,6 +68,25 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
     // the visits Agent OWL proposed wait for a person as well: they follow the API's own items. The API's `waiting` already counts them (job AY), so nothing is added to it here: the badge is the API's number.
     if (proposals.status === "fulfilled" && proposals.value.length > 0) data.needs = [...(data.needs ?? []), ...proposals.value];
   }
+  return data;
+}
+
+/**
+ * Lead Desk's items (`lead-desk-today.ts`) join the API's. One the API listed too (a hot lead, a plan paused by a limit: the same `kind-id` key) is one card: it keeps the words and address Lead Desk made and the time the API gave; one only Lead
+ * Desk knows is new and adds to the count (the API's `waiting` does not hold it). The cards are then newest first, so a hot lead is not buried under older things. The count is what the person is told: "All clear" is for 0 and only 0.
+ */
+export function mergeDesk(base: TodayData, desk: LeadDeskToday): TodayData {
+  const data: TodayData = { ...base, cards: { ...base.cards }, deskTeam: desk.team.length > 0 ? desk.team : null };
+  if (desk.needs.length === 0 || data.needs === null) return data;
+  const own = new Map(desk.needs.map((c) => [c.key, c]));
+  const merged = data.needs.map((c) => {
+    const mine = own.get(c.key);
+    return mine && mine.type === "item" ? ({ ...mine, at: c.at, item: { ...mine.item, at: c.at } } satisfies NeedsCard) : c;
+  });
+  const have = new Set(data.needs.map((c) => c.key));
+  const added = desk.needs.filter((c) => !have.has(c.key));
+  data.needs = [...merged, ...added].sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
+  data.cards = { ...data.cards, waiting: (data.cards.waiting ?? 0) + added.length };
   return data;
 }
 

@@ -75,7 +75,7 @@ describe("the floating orb (job DQ part 0)", () => {
     nav.pathname = `${BASE}/quotes`;
     rerender(harness(playing(ANSWER), { readOnly: true }));
     expect(screen.queryByRole("button", { name: "Ask Vijaya" })).toBeNull();
-    rerender(harness(playing(ANSWER), { availability: "switched_off" }));
+    rerender(harness(playing(ANSWER), { availability: "not_available" }));
     expect(screen.queryByRole("button", { name: "Ask Vijaya" })).toBeNull();
     rerender(harness(null));
     expect(screen.queryByRole("button", { name: "Ask Vijaya" })).toBeNull();

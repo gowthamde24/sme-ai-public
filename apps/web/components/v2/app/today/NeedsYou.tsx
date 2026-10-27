@@ -25,10 +25,15 @@ const secondary = "inline-flex min-h-11 items-center justify-center gap-2 rounde
 const quiet = "inline-flex min-h-11 items-center justify-center rounded-full px-[18px] text-[15px] font-semibold whitespace-nowrap text-muted hover:bg-surface-2 disabled:opacity-60";
 const MAX_WORDS = 3000;
 
-const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: string }> = {
-  quote_approval: { kind: "today.kind.quote", step: "today.step.quote", tone: "bg-brand-bg text-brand-text" },
-  followup_due: { kind: "today.kind.followup", step: "today.step.followup", tone: "bg-brand-bg text-brand-text" },
-  order_money_held: { kind: "today.kind.order", step: "today.step.order", tone: "bg-amber-bg text-amber-text" },
+/** `who` is what the first fact is called: a customer, or (Lead Desk's plans, callbacks and limits) the plan the card is about. */
+const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: string; who: string }> = {
+  quote_approval: { kind: "today.kind.quote", step: "today.step.quote", tone: "bg-brand-bg text-brand-text", who: "today.fact.customer" },
+  followup_due: { kind: "today.kind.followup", step: "today.step.followup", tone: "bg-brand-bg text-brand-text", who: "today.fact.customer" },
+  order_money_held: { kind: "today.kind.order", step: "today.step.order", tone: "bg-amber-bg text-amber-text", who: "today.fact.customer" },
+  hot_lead_waiting: { kind: "today.kind.hot", step: "today.step.hot", tone: "bg-red-bg text-red-text", who: "today.fact.customer" },
+  plan_waiting: { kind: "today.kind.plan", step: "today.step.plan", tone: "bg-brand-bg text-brand-text", who: "today.fact.plan" },
+  callback_due: { kind: "today.kind.callback", step: "today.step.callback", tone: "bg-amber-bg text-amber-text", who: "today.fact.plan" },
+  outreach_paused: { kind: "today.kind.cap", step: "today.step.cap", tone: "bg-amber-bg text-amber-text", who: "today.fact.plan" },
 };
 
 /** Which badge a message wears: what makes it wait for a person (money first, then a promise, then a complaint). */
@@ -94,7 +99,7 @@ function Head({ tone, label, at, ctx }: { tone: string; label: string; at: strin
 function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: Ctx }) {
   const { words } = ctx;
   const k = KIND[item.kind];
-  const facts: [string, string][] = [[say(words, "today.fact.customer"), item.customer]];
+  const facts: [string, string][] = [[say(words, k.who), item.customer === "" ? say(words, "today.customer.unknown") : item.customer]];
   if (item.city) facts.push([say(words, "today.fact.city"), item.city]);
   if (item.amount_paise !== null) facts.push([say(words, "today.fact.amount"), formatINR(item.amount_paise / 100, { decimals: 2 })]);
   facts.push([say(words, "today.fact.when"), ago(item.at, ctx.now)]);
@@ -102,7 +107,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
     <article aria-labelledby={`needs-${c.key}`} data-write className={card}>
       <Head tone={k.tone} label={say(words, k.kind)} at={item.at} ctx={ctx} />
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
-        {item.customer}
+        {item.customer === "" ? say(words, "today.customer.unknown") : item.customer}
         {item.city ? `, ${item.city}` : ""}
       </h3>
       <p className="text-base text-muted [overflow-wrap:anywhere]">
@@ -428,7 +433,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
         <div className={card}>
           <p className="text-sm text-muted">{say(words, "frame.notyet")}</p>
         </div>
-      ) : cards.length === 0 ? (
+      ) : cards.length === 0 && extra === 0 ? (
         <div className={`${card} flex-row items-center`} data-empty="needs">
           <OrbMark px={56} mood={"idle"} className="size-14" />
           <p className="font-medium">{say(words, "today.empty")}</p>

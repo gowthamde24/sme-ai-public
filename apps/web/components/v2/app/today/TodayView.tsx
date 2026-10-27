@@ -30,7 +30,7 @@ export function dayLine(now: number, lang: string): string {
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
 export function TodayView({ live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = null, demo = false }: { /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS), drawn first in the side column. */ packCards?: React.ReactNode; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
-  const { cards, needs, team, store, week, sending, digest } = data;
+  const { cards, needs, team, deskTeam, store, week, sending, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
   const greet = t(hour < 12 ? "today.greeting.morning" : hour < 17 ? "today.greeting.afternoon" : "today.greeting.evening");
@@ -57,7 +57,7 @@ export function TodayView({ live = null, outcomes = null, data, name, hour, now,
             {packCards}
             <StoreVisits store={store} calendarHref={calendarHref ?? `${base}/visits`} bookHref={role === "viewer" ? null : `${base}/visits#book`} t={t} />
             <DoneSection digest={digest} words={words} outboxHref={outboxHref} />
-            <TeamSection team={team} base={base} t={t} now={now} />
+            <TeamSection team={team} deskTeam={deskTeam} base={base} t={t} now={now} />
           </div>
         </div>
       </NeedsProvider>

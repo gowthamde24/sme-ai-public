@@ -36,7 +36,9 @@ import { saveItemAction } from "./catalogue/catalogue-actions";
 import { readSetupFacts } from "./setup-data";
 import { topupsToday } from "./topups-today";
 import { setupWords } from "./setup-words";
-import { readDisplayName, readToday } from "./today-data";
+import { readLeadDesk } from "./lead-desk-today";
+import { readTemplates } from "@/lib/lead-desk/source";
+import { mergeDesk, readDisplayName, readToday } from "./today-data";
 import { cancelVisitAction, confirmVisitAction, moveVisitAction, saveHoursAction, slotsAction } from "./visits/visits-actions";
 
 /** The hour in India, where the business is: the greeting does not depend on the server's clock zone. */
@@ -55,18 +57,25 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const t = pack ? withPackT(withModuleT(appT(lang), pack, appDict(lang)), pack, lang) : appT(lang);
   const now = clock();
   let data, name, setup = null, activation: Activation | null = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
+  const base = `/app/tenants/${tenantId}`;
   const manages = role === "owner" || role === "admin";
   const ownSteps = manages && usesChecklist(pack);
   try {
     // the Owner of a workspace that is not set up yet sees the setup wizard / checklist (job BJ): its facts are read here, with existing endpoints only
-    [data, name, setup, activation, sample, packCards] = await Promise.all([
+    // what Lead Desk adds (hot leads, plans waiting, callbacks due, limits reached) joins "Needs you" in any workspace; its workers replace the shop's helpers only in a business type that has a lead template (the API's own list: no type is named here)
+    let desk: Awaited<ReturnType<typeof readLeadDesk>>, deskPack: boolean;
+    [data, name, setup, activation, sample, packCards, desk, deskPack] = await Promise.all([
       readToday(accessToken, tenantId, role),
       readDisplayName(accessToken, tenantId, userId),
       role === "owner" && !usesChecklist(pack) ? readSetupFacts(accessToken, tenantId, shop) : Promise.resolve(null),
       ownSteps && pack ? readActivation(accessToken, tenantId, pack, t) : Promise.resolve(null),
       manages && pack ? getExampleStatus(accessToken, tenantId) : Promise.resolve(null),
       readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupees }),
+      readLeadDesk({ token: accessToken, tenantId, userId }, role, base, (key, vars) => t(key as "frame.notyet", vars), (tag) => t(`ld.source.${tag}` as "frame.notyet"), now),
+      pack ? readTemplates().then((all) => all.some((x) => x.packId === pack.packId)) : Promise.resolve(false),
     ]);
+    // Lead Desk's items and workers join what the API said (the merge keeps one card per thing and counts only what the API did not)
+    data = mergeDesk(data, { needs: desk.needs, team: deskPack ? desk.team : [] });
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     escalate(error);
