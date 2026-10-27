@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 
 import { postWaitlist } from "@/lib/api/waitlist";
 import { clientIp } from "@/lib/auth/signup-limit";
+import { passesTurnstile } from "@/lib/security/turnstile";
 import { sharedLeadLimiter } from "@/lib/site/lead-limit";
 import { waitlistMode } from "@/lib/waitlist/mode";
 import { readWaitlist, type WaitlistResult } from "@/lib/waitlist/types";
@@ -19,6 +20,8 @@ export async function joinWaitlist(input: unknown): Promise<WaitlistResult> {
   const read = readWaitlist(raw);
   if (!read.ok) return read;
   if (typeof raw.website === "string" && raw.website !== "") return { ok: true };
-  if (!sharedLeadLimiter().allow(clientIp(await headers()))) return { ok: false, error: "rate" };
+  const ip = clientIp(await headers());
+  if (!sharedLeadLimiter().allow(ip)) return { ok: false, error: "rate" };
+  if (!(await passesTurnstile(raw.turnstileToken, ip))) return { ok: false, error: "check" }; // the check box (when it is on): no good token, no form
   return mode === "mock" ? { ok: true } : postWaitlist(read.value);
 }

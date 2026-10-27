@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 import { buildCsp, newNonce, storageOrigin } from "@/lib/security/csp";
+import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { isClosedPath, websiteOnly } from "@/lib/site/mode";
 import { refreshSession } from "@/lib/supabase/proxy-session";
 
@@ -17,7 +18,7 @@ import { refreshSession } from "@/lib/supabase/proxy-session";
  */
 export async function proxy(request: NextRequest) {
   const nonce = newNonce();
-  const csp = buildCsp(nonce, process.env.NODE_ENV === "development", storageOrigin(process.env.NEXT_PUBLIC_SUPABASE_URL));
+  const csp = buildCsp(nonce, process.env.NODE_ENV === "development", storageOrigin(process.env.NEXT_PUBLIC_SUPABASE_URL), turnstileSiteKey() !== null);
   // Next.js reads the nonce from the REQUEST's policy header while it renders.
   request.headers.set("x-nonce", nonce);
   request.headers.set("Content-Security-Policy", csp);

@@ -46,6 +46,9 @@ export const ADDRESSES: Record<AddressKey, string> = {
   privacy: `privacy@${DOMAIN}`, // privacy requests and grievances
 };
 
+/** Where a security researcher or a customer reports a weakness (the Security page and /.well-known/security.txt). Not one of the contact page's addresses: it is only for reports. The owner makes the alias (security-report.md, "Needs owner"). */
+export const SECURITY_ADDRESS = `security@${DOMAIN}`;
+
 /** The Grievance Officer named in the Privacy Policy (DPDP Act 2023). */
 export const GRIEVANCE_OFFICER = { name: BUSINESS.proprietor, email: ADDRESSES.privacy } as const;
 

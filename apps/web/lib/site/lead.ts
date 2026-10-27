@@ -23,7 +23,7 @@ export function oneLine(raw: unknown, max: number): string | null {
 
 export const readSiteLang = (raw: unknown): Lang => (typeof raw === "string" && (LANGS as readonly string[]).includes(raw) ? (raw as Lang) : "en");
 
-export type LeadError = "consent" | "name" | "rate" | "unavailable" | "invalid";
+export type LeadError = "consent" | "name" | "rate" | "unavailable" | "invalid" | "check";
 export type LeadResult = { ok: true; url: string } | { ok: false; error: LeadError };
 
 /** The consent box arrives as "on" from a checkbox or true from a script; anything else is no consent. */

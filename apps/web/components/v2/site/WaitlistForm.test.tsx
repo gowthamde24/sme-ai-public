@@ -43,7 +43,7 @@ describe("Book a demo / join the waitlist (job DQ)", () => {
     fill(t);
     fireEvent.click(screen.getByRole("button", { name: t("demo.submit") }));
     await waitFor(() => expect(action).toHaveBeenCalledTimes(1));
-    expect(action).toHaveBeenLastCalledWith({ name: "Lakshmi", businessType: SITE_PACKS[0].slug, city: "Guntur", contact: "9876543210", language: "en", marketingOptIn: false, website: "" });
+    expect(action).toHaveBeenLastCalledWith({ name: "Lakshmi", businessType: SITE_PACKS[0].slug, city: "Guntur", contact: "9876543210", language: "en", marketingOptIn: false, website: "", turnstileToken: null });
     cleanup();
     const second = draw("en");
     fill(second.t);

@@ -4,6 +4,7 @@ import type { ContactWords } from "@/components/v2/site/ContactForm";
 import { EmailAddress } from "@/components/v2/site/EmailAddress";
 import { emailWords } from "@/components/v2/site/email-words";
 import { ContactForm } from "@/components/v2/site/LazyIslands";
+import { turnstileSiteKey } from "@/lib/security/turnstile";
 import { Section } from "@/components/v2/site/sections";
 import { WaitlistSection, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { container, lead } from "@/components/v2/site/ui";
@@ -18,7 +19,7 @@ import { SITE_PACKS, textIn } from "@/lib/site/packs";
  * and shows no button. Our number is not in the page's HTML: the server hands back the chat address only after the visitor has ticked consent.
  */
 export function ContactPage({ t, lang, chatAvailable, action, waitlist }: { t: SiteT; lang: Lang; chatAvailable: boolean; action: (input: unknown) => Promise<LeadResult>; waitlist?: WaitlistAction }) {
-  const words: ContactWords = { name: t("contact.name"), type: t("contact.type"), other: t("contact.type.other"), what: t("contact.what"), consent: t("contact.consent"), privacy: t("contact.privacy"), submit: t("contact.submit"), nosave: t("contact.nosave"), errConsent: t("contact.err.consent"), errName: t("contact.err.name"), errRate: t("contact.err.rate"), errGeneric: t("contact.err.generic"), unavailable: t("contact.unavailable") };
+  const words: ContactWords = { name: t("contact.name"), type: t("contact.type"), other: t("contact.type.other"), what: t("contact.what"), consent: t("contact.consent"), privacy: t("contact.privacy"), submit: t("contact.submit"), nosave: t("contact.nosave"), errConsent: t("contact.err.consent"), errName: t("contact.err.name"), errRate: t("contact.err.rate"), errGeneric: t("contact.err.generic"), errCheck: t("contact.err.check"), unavailable: t("contact.unavailable") };
   return (
     <>
       <section aria-labelledby="h1" className={`${container} pb-6 pt-8 sm:pt-12`}>
@@ -47,7 +48,7 @@ export function ContactPage({ t, lang, chatAvailable, action, waitlist }: { t: S
         </dl>
       </Section>
       <Section id="form" title={t("contact.form.title")}>
-        <ContactForm lang={lang} types={SITE_PACKS.map((p) => ({ slug: p.slug, name: textIn(p.names, lang) }))} words={words} action={action} privacyHref="/privacy" chatAvailable={chatAvailable} />
+        <ContactForm lang={lang} types={SITE_PACKS.map((p) => ({ slug: p.slug, name: textIn(p.names, lang) }))} words={words} action={action} privacyHref="/privacy" chatAvailable={chatAvailable} turnstile={turnstileSiteKey()} />
       </Section>
     </>
   );

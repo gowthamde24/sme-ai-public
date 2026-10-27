@@ -20,7 +20,7 @@ const words: CalcWords = {
   material: "Material before GST", delivered: "Covers", bad: "Enter an area from 1 to 100,000", cta: "Get exact quote on WhatsApp", ctaHelp: "We reply on WhatsApp", leadName: "Your name", leadCity: "City", leadConsent: "I agree to be contacted on WhatsApp.", privacy: "Privacy",
   errConsent: "Please tick to agree", errName: "Please add your name", errRate: "Too many tries", errGeneric: "Something went wrong", unavailable: "Chat is not set up yet",
 };
-const contactWords: ContactWords = { name: "Name", type: "Business", other: "Something else", what: "Question", consent: "I agree to be contacted.", privacy: "Privacy", submit: "Continue on WhatsApp", nosave: "Nothing is saved here", errConsent: "tick", errName: "name", errRate: "rate", errGeneric: "generic", unavailable: "Chat is not set up yet" };
+const contactWords: ContactWords = { name: "Name", type: "Business", other: "Something else", what: "Question", consent: "I agree to be contacted.", privacy: "Privacy", submit: "Continue on WhatsApp", nosave: "Nothing is saved here", errConsent: "tick", errName: "name", errRate: "rate", errGeneric: "generic", errCheck: "check", unavailable: "Chat is not set up yet" };
 
 const assign = vi.fn();
 beforeEach(() => {
@@ -104,7 +104,7 @@ describe("ContactForm", () => {
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.click(screen.getByRole("button", { name: /Continue on WhatsApp/ }));
     await waitFor(() => expect(assign).toHaveBeenCalledWith("https://wa.me/919876543210?text=x"));
-    expect(action).toHaveBeenCalledWith({ lang: "te", name: "Asha", type: "textiles", question: "Demo?", consent: true });
+    expect(action).toHaveBeenCalledWith({ lang: "te", name: "Asha", type: "textiles", question: "Demo?", consent: true, turnstileToken: null });
   });
   it("starts unticked (consent is never pre-ticked) and shows a refusal in words", async () => {
     form(vi.fn().mockResolvedValue({ ok: false, error: "consent" }));
