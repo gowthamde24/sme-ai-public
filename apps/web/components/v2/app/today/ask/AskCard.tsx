@@ -5,6 +5,7 @@ import * as React from "react";
 import type { AiMood } from "../../mark/mood";
 import { AskAnswer, AskChips, AskForm, AskVoiceMode } from "./AskView";
 import { DoItBar } from "./AskDoItLazy";
+import { AskOff } from "./AskOff";
 import { AskTeam } from "./AskTeam";
 import type { Availability } from "./ask-types";
 import type { AskWords } from "./ask-words";
@@ -38,9 +39,12 @@ export function AskCard({ lang, base, availability, words, chips, onMood }: { la
           ))}
         </ul>
       </div>
+    ) : availability === "switched_off" ? (
+      // first run: the workspace's own switch starts off, so the line is drawn where it will be, with the reason and (Owner, Admin) one button to turn it on
+      <AskOff look="card" words={words} />
     ) : (
       <p data-ask="unavailable" className="text-base text-muted">
-        {availability === "switched_off" ? (words["office.switchedoff"] ?? "") : (words["frame.notyet"] ?? "")}
+        {words["frame.notyet"] ?? ""}
       </p>
     );
   const w = shared.w;

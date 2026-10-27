@@ -57,9 +57,10 @@ describe("example data", () => {
 
 describe("the business profile", () => {
   it("reads the name, the town and whether the setup is complete; an empty town is no town", () => {
-    expect(parseProfile({ name: "Acme", town: "Guntur", languages: ["en"], setup_complete: true })).toEqual({ name: "Acme", town: "Guntur", setupComplete: true });
-    expect(parseProfile({ name: "Acme", town: "  ", setup_complete: false })).toEqual({ name: "Acme", town: null, setupComplete: false });
-    expect(parseProfile({ name: "Acme", town: null })).toEqual({ name: "Acme", town: null, setupComplete: false });
+    expect(parseProfile({ name: "Acme", town: "Guntur", languages: ["en"], setup_complete: true })).toEqual({ name: "Acme", town: "Guntur", languages: ["en"], setupComplete: true });
+    expect(parseProfile({ name: "Acme", town: "  ", setup_complete: false })).toEqual({ name: "Acme", town: null, languages: [], setupComplete: false });
+    expect(parseProfile({ name: "Acme", town: null })).toEqual({ name: "Acme", town: null, languages: [], setupComplete: false });
+    expect(parseProfile({ name: "Acme", languages: ["te", "xx", 4, "ml"] }).languages).toEqual(["te", "ml"]); // only languages the API knows
   });
   it.each([[null], [[]], [{}], [{ name: "" }], [{ name: 4 }], [{ name: "x", town: 4 }]])("%j is a contract error", (json) => {
     expect(() => parseProfile(json)).toThrow(ApiContractError);

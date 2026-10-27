@@ -641,5 +641,137 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "signup.type.label": {
+  "en": "Business type",
+  "te": "వ్యాపార రకం",
+  "hi": "व्यवसाय का प्रकार",
+  "kn": "ವ್ಯಾಪಾರದ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.placeholder": {
+  "en": "Choose or search your business type",
+  "te": "మీ వ్యాపార రకాన్ని ఎంచుకోండి లేదా వెతకండి",
+  "hi": "अपना व्यवसाय चुनें या खोजें",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಪ್ರಕಾರವನ್ನು ಆರಿಸಿ ಅಥವಾ ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.none": {
+  "en": "No match. Choose Other and tell us what you do.",
+  "te": "ఏదీ సరిపోలేదు. ఇతర ఎంచుకుని మీరు ఏమి చేస్తారో చెప్పండి.",
+  "hi": "कुछ नहीं मिला। अन्य चुनें और बताएँ कि आप क्या करते हैं।",
+  "kn": "ಯಾವುದೂ ಹೊಂದಿಕೆಯಾಗಲಿಲ್ಲ. ಇತರೆ ಆರಿಸಿ ಮತ್ತು ನೀವು ಏನು ಮಾಡುತ್ತೀರಿ ಎಂದು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.group.deep": {
+  "en": "Built especially for",
+  "te": "ప్రత్యేకంగా రూపొందించినవి",
+  "hi": "खास तौर पर बनाए गए",
+  "kn": "ವಿಶೇಷವಾಗಿ ರೂಪಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.group.leads": {
+  "en": "Lead Desk",
+  "te": "లీడ్ డెస్క్",
+  "hi": "लीड डेस्क",
+  "kn": "ಲೀಡ್ ಡೆಸ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.group.all": {
+  "en": "Business types",
+  "te": "వ్యాపార రకాలు",
+  "hi": "व्यवसाय के प्रकार",
+  "kn": "ವ್ಯಾಪಾರದ ಪ್ರಕಾರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.other": {
+  "en": "Other",
+  "te": "ఇతర",
+  "hi": "अन्य",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.other.tagline": {
+  "en": "Anything else that gets leads",
+  "te": "లీడ్లు వచ్చే ఏ ఇతర వ్యాపారమైనా",
+  "hi": "लीड पाने वाला कोई भी दूसरा व्यवसाय",
+  "kn": "ಲೀಡ್ ಬರುವ ಬೇರೆ ಯಾವುದೇ ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.other.ask": {
+  "en": "What is your business?",
+  "te": "మీ వ్యాపారం ఏమిటి?",
+  "hi": "आपका व्यवसाय क्या है?",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ ಯಾವುದು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.type.other.hint": {
+  "en": "2 to 60 letters, in your own words. We start you with the general Lead Desk set-up.",
+  "te": "2 నుండి 60 అక్షరాలు, మీ మాటల్లో. మేము సాధారణ లీడ్ డెస్క్ సెటప్‌తో మొదలుపెడతాము.",
+  "hi": "2 से 60 अक्षर, अपने शब्दों में। हम आपको सामान्य लीड डेस्क सेटअप से शुरू करते हैं।",
+  "kn": "2 ರಿಂದ 60 ಅಕ್ಷರ, ನಿಮ್ಮ ಮಾತಿನಲ್ಲಿ. ನಾವು ಸಾಮಾನ್ಯ ಲೀಡ್ ಡೆಸ್ಕ್ ಸೆಟಪ್‌ನೊಂದಿಗೆ ಶುರು ಮಾಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.name.label": {
+  "en": "Your business name",
+  "te": "మీ వ్యాపారం పేరు",
+  "hi": "आपके व्यवसाय का नाम",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.name.help": {
+  "en": "Customers see this name. You can change it any time in Settings.",
+  "te": "కస్టమర్లు ఈ పేరు చూస్తారు. సెట్టింగ్స్‌లో ఎప్పుడైనా మార్చవచ్చు.",
+  "hi": "ग्राहक यह नाम देखते हैं। आप इसे सेटिंग्स में कभी भी बदल सकते हैं।",
+  "kn": "ಗ್ರಾಹಕರು ಈ ಹೆಸರನ್ನು ನೋಡುತ್ತಾರೆ. ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಯಾವಾಗ ಬೇಕಾದರೂ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

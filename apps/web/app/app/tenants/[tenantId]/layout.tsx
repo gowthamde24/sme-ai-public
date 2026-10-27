@@ -23,6 +23,7 @@ import { taskScreens } from "@/lib/screens/flag";
 import { ADDRESSES } from "@/lib/site/business";
 
 import { readFrameData } from "../../frame-data";
+import { turnOnAssistantAction } from "./ask-switch-actions";
 import { boundTaskActions } from "./tasks-bound";
 import { topupLayoutBanner } from "./topup-banner";
 import { readAccessCached, readAgentsCached } from "./today-read";
@@ -45,6 +46,8 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   const access = isCanonicalUuid(tenantId) ? await workspaceAccess(user.accessToken, tenantId) : { readOnly: false as const };
   const availability: Availability = isCanonicalUuid(tenantId) ? await assistantAvailability(user.accessToken, tenantId) : "not_available";
   const t = appT(lang);
+  // a switched-off assistant (first run: the workspace's own switch starts off): the Owner and Admin get the button that turns it on, everyone else is told whom to ask
+  const turnOn = availability === "switched_off" && (await mayTurnOn(user.accessToken, tenantId)) ? turnOnAssistantAction.bind(null, tenantId) : null;
   const doIt = isCanonicalUuid(tenantId) && !access.readOnly ? await doItFor(user.accessToken, tenantId, dict) : null;
   const askWords = Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]));
   // the suggestion chips of the screens, in the person's language and for the business type (`ask.chip.quotes@programmes`)
@@ -67,7 +70,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
       {/* the notice at 80 and 100 percent of the minutes or messages (night 4, TOPUP_SCREENS): markup only, nothing when the flag is off */}
       {topupBanner}
       {/* ONE conversation for the workspace (job DQ part 0): Today's card and the floating panel of the other screens read the same thread */}
-      <AskProvider lang={lang} base={`/app/tenants/${tenantId}`} words={askWords} chipWords={chipWords} availability={availability} readOnly={access.readOnly} doIt={doIt}>
+      <AskProvider lang={lang} base={`/app/tenants/${tenantId}`} words={askWords} chipWords={chipWords} availability={availability} readOnly={access.readOnly} doIt={doIt} turnOn={turnOn}>
         {/* a server with no pack routes gives no pack: the product as it always was, every page on */}
         {data.pack ? (
           <ModuleGate modules={data.pack.modules} fallback={<ProblemView kind={403} variant="module" labels={labels} homeHref={`/app/tenants/${tenantId}`} />}>
@@ -87,6 +90,16 @@ async function workspaceAccess(accessToken: string, tenantId: string): Promise<A
     return await readAccessCached(accessToken, tenantId);
   } catch {
     return { readOnly: false };
+  }
+}
+
+/** May this person turn the assistant on for the workspace? Owner and Admin (the API checks again); a failed read of the role is "no", never a guess. */
+async function mayTurnOn(accessToken: string, tenantId: string): Promise<boolean> {
+  try {
+    const role = (await fetchTenant(accessToken, tenantId)).role;
+    return role === "owner" || role === "admin";
+  } catch {
+    return false;
   }
 }
 

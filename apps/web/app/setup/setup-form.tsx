@@ -1,15 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 
-import { authAlert, authChoice, authChoices, authForm, authLabel, authRow, authSubmit } from "@/components/v2/auth/ui";
+import { TypeCombobox, type TypeGroup, type TypeWords, OTHER_MAX, OTHER_MIN } from "@/components/v2/auth/TypeCombobox";
+import { authAlert, authChoice, authChoices, authField, authForm, authHint, authLabel, authRow, authSubmit } from "@/components/v2/auth/ui";
 import { LANGS, LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
 import { LANG_COOKIE, readLang, serializePreference } from "@/i18n/preferences";
 import type { CompleteSetupInput, CompleteSetupResult } from "@/lib/api/signup";
 
 export type CompleteSetupAction = (input: CompleteSetupInput) => Promise<CompleteSetupResult>;
-export type SetupWords = { type: string; types: { value: string; label: string }[]; language: string; submit: string; error: string; /** "Try again" and "Setting up your workspace" of the automatic setup (job CL). */ retry?: string; working?: string };
+export type SetupWords = { type: TypeWords; name: string; nameHelp: string; language: string; submit: string; error: string };
 
 /** The chosen language becomes the one the app speaks (the same functional cookie the language control writes). */
 function rememberLanguage(lang: Lang) {
@@ -17,56 +18,14 @@ function rememberLanguage(lang: Lang) {
 }
 
 /**
- * The first-login set-up: the kind of business and the language, then Today. `action` is the server action `completeSetup` (Job AD); pressing twice or in a second tab ends with the
- * same single business. A refusal the API explains is shown as it sent it (plain English); any other failure, the generic sentence. Language names are each language's own word for itself.
+ * The first-login set-up (first-run fixes): the only two things asked are the kind of business (one searchable list, with "Other") and its name; everything else of the set-up can be skipped and is found again as "Finish setting up" on Today.
+ * The language is a small choice with the language already in use ticked. `action` is the server action `completeSetup`; pressing twice or in a second tab ends with the same single business. A refusal the API explains is shown as it
+ * sent it (plain English); any other failure, the generic sentence. `remembered` is the kind chosen at sign-up (kept by the account or the browser), ticked at the start; `otherId` is the "Other" kind, which asks what the business is.
  */
-export function SetupForm({ action, words, lang, auto = null }: { action: CompleteSetupAction; words: SetupWords; lang: Lang; /** The kind of business chosen at sign-up (job CL): nothing is asked, the business is made with it and the language the person is reading, and the person lands on Today. */ auto?: string | null }) {
+export function SetupForm({ action, words, lang, groups, remembered = null, otherId = null }: { action: CompleteSetupAction; words: SetupWords; lang: Lang; groups: readonly TypeGroup[]; remembered?: string | null; otherId?: string | null }) {
   const router = useRouter();
   const [error, setError] = useState<{ text: string; english: boolean } | null>(null);
   const [pending, start] = useTransition();
-  const fired = useRef(false);
-  const run = (type: string, chosen: Lang) =>
-    start(async () => {
-      setError(null);
-      try {
-        const result = await action({ businessType: type, language: chosen });
-        if (result.ok) {
-          rememberLanguage(chosen);
-          router.push("/app");
-        } else setError(result.error ? { text: result.error, english: true } : { text: words.error, english: false }); // the API's own sentence is plain English
-      } catch {
-        setError({ text: words.error, english: false }); // the server could not be reached: nothing was saved
-      }
-    });
-  // the automatic setup runs once; the action is safe to repeat (one business per account), and "Try again" is the same call
-  useEffect(() => {
-    if (!auto || fired.current) return;
-    fired.current = true;
-    run(auto, lang);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, on arrival
-  }, []);
-  if (auto) {
-    return (
-      <div className={authForm} data-setup="auto">
-        {error ? (
-          <>
-            <p role="alert" lang={error.english ? "en" : undefined} className={authAlert}>
-              {error.text}
-            </p>
-            <div className={authRow}>
-              <button type="button" disabled={pending} onClick={() => run(auto, lang)} className={authSubmit}>
-                {words.retry ?? words.submit}
-              </button>
-            </div>
-          </>
-        ) : (
-          <p role="status" aria-live="polite" className="text-base text-muted">
-            {words.working ?? words.submit}
-          </p>
-        )}
-      </div>
-    );
-  }
   return (
     <form
       className={authForm}
@@ -74,10 +33,14 @@ export function SetupForm({ action, words, lang, auto = null }: { action: Comple
         e.preventDefault();
         const form = new FormData(e.currentTarget);
         setError(null);
+        const businessType = String(form.get("type") ?? "") || remembered || "";
+        const businessName = String(form.get("business_name") ?? "").trim();
+        const label = String(form.get("other_label") ?? "").trim();
+        if (businessType === "") return setError({ text: words.type.none, english: false });
         start(async () => {
           try {
             const chosen = readLang(String(form.get("language") ?? lang));
-            const result = await action({ businessType: String(form.get("type") ?? ""), language: chosen });
+            const result = await action({ businessType, language: chosen, businessName, ...(otherId !== null && businessType === otherId ? { businessLabel: label } : {}) });
             if (result.ok) {
               rememberLanguage(chosen);
               router.push("/app");
@@ -88,17 +51,12 @@ export function SetupForm({ action, words, lang, auto = null }: { action: Comple
         });
       }}
     >
-      <fieldset>
-        <legend className={authLabel}>{words.type}</legend>
-        <div className={authChoices}>
-          {words.types.map((o, i) => (
-            <label key={o.value} className={authChoice}>
-              <input type="radio" name="type" value={o.value} required defaultChecked={i === 0} />
-              {o.label}
-            </label>
-          ))}
-        </div>
-      </fieldset>
+      {groups.length > 0 ? <TypeCombobox groups={groups} words={words.type} otherId={otherId} initial={remembered} /> : <input type="hidden" name="type" value={remembered ?? ""} />}
+      <label htmlFor="setup-business-name" className={authLabel}>
+        {words.name}
+      </label>
+      <input id="setup-business-name" name="business_name" type="text" required maxLength={120} minLength={1} autoComplete="organization" className={authField} />
+      <p className={authHint}>{words.nameHelp}</p>
       <fieldset>
         <legend className={authLabel}>{words.language}</legend>
         <div className={authChoices}>
@@ -123,3 +81,5 @@ export function SetupForm({ action, words, lang, auto = null }: { action: Comple
     </form>
   );
 }
+
+export { OTHER_MAX, OTHER_MIN };
