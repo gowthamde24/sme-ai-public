@@ -11,6 +11,7 @@ export type NoticeKind = (typeof NOTICE_KINDS)[number];
 /** `code` is a closed word the bell has a sentence for; `who` is the customer's name when there is one (it is shown in the panel, never in a browser notification). */
 export const NOTICE_CODES = ["quote_approval", "followup_due", "order_money_held", "outbox_approval", "call_approval", "visit_proposed", "visit_here", "message_blocked"] as const;
 export type NoticeCode = (typeof NOTICE_CODES)[number];
+export const isNoticeCode = (code: string): code is NoticeCode => (NOTICE_CODES as readonly string[]).includes(code);
 
 export interface Notice {
   id: string;

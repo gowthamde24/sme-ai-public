@@ -21,7 +21,7 @@ const TEAM: TodayData["team"] = [
 ];
 const CARDS: NeedsCard[] = [outbox(), call(), classic()];
 const ready = (visits: StoreVisit[], over: Partial<StoreToday> = {}): TodayData["store"] => ({ state: "ready", visits, slots: "unknown", nextFree: null, ...over });
-const data = (over: Partial<TodayData> = {}): TodayData => ({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: CARDS, recent: [], team: TEAM, store: null, week: null, sending: null, digest: Promise.resolve(READY), ...over });
+const data = (over: Partial<TodayData> = {}): TodayData => ({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: CARDS, recent: [], team: TEAM, deskTeam: null, store: null, week: null, sending: null, digest: Promise.resolve(READY), ...over });
 const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; demo?: boolean; outboxHref?: string | null; calendarHref?: string | null } = {}) => {
   const words = rest.lang && rest.lang !== "en" ? appT(rest.lang as "te") : null;
   // rendered inside an awaited act, so the parts that read a promise (use) settle before the test looks
@@ -248,6 +248,21 @@ describe("Today: the side sections", () => {
       expect.stringContaining("Idle"),
     ]);
     expect(within(s).getByRole("link", { name: /Open the office/ })).toHaveAttribute("href", "/app/tenants/T/office");
+  });
+  it("'Your team' of a Lead Desk workspace lists its own workers with the real status line, never the shop's helpers or 'Not available yet'", async () => {
+    await view(data({ deskTeam: [
+      { key: "leads", state: "idle", name: "Lead catcher", text: "Last lead: Anita R. from IndiaMART", at: "2026-10-11T04:40:00Z" },
+      { key: "calls", state: "working", name: "Caller", text: "Calling Diwali leads: 12 of 40 done", at: null },
+      { key: "rules", state: "off", name: "Standing rules", text: "No rule is on", at: null },
+      { key: "tasks", state: "not_available", name: "Task helper", text: null, at: null },
+    ] }));
+    const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
+    const rows = within(s).getAllByRole("listitem");
+    expect(rows.map((r) => r.querySelector("[data-part=team-name]")?.textContent)).toEqual(["Lead catcher", "Caller", "Standing rules", "Task helper"]);
+    expect(rows.map((r) => r.querySelector("[data-part=team-status]")?.textContent)).toEqual(["Last lead: Anita R. from IndiaMART · 20m", "Calling Diwali leads: 12 of 40 done", "No rule is on", "Not available yet"]);
+    expect(rows.map((r) => r.querySelector("[data-state-dot]")?.getAttribute("data-state-dot"))).toEqual(["idle", "working", "off", "off"]);
+    expect(within(s).queryByText("Quote writer")).toBeNull();
+    expect(within(s).queryByText("Lead Finder")).toBeNull();
   });
   it("'Your team' says 'Not available yet' when the helpers could not be read", async () => {
     await view(data({ team: null }));

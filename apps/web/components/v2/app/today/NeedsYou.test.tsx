@@ -6,7 +6,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push: () => und
 
 import { NeedsYou } from "./NeedsYou";
 import { NeedsProvider } from "./needs-store";
-import { CALL_ID, MESSAGE_ID, NOW, VISIT_ID, WORDS, call, classic, fakeActions, outbox, proposal } from "./today-test-kit";
+import { CALL_ID, MESSAGE_ID, NOW, U, VISIT_ID, WORDS, call, classic, fakeActions, outbox, proposal } from "./today-test-kit";
 import type { NeedsCard, Role } from "./types";
 
 const board = (cards: NeedsCard[] | null, { role = "owner" as Role, actions = fakeActions(), waiting = cards?.length ?? null } = {}) => {
@@ -361,5 +361,45 @@ describe("Needs you: a visit Vijaya proposed", () => {
   it("offers no buttons when the server gave no actions for visits", () => {
     board([proposal()], { actions: fakeActions({ visit: null }) });
     expect(within(card()).queryByRole("button")).toBeNull();
+  });
+});
+
+describe("Needs you: Lead Desk (hot leads, plans, callbacks, limits) and the 'All clear' rule", () => {
+  const desk = (kind: "hot_lead_waiting" | "plan_waiting" | "callback_due" | "outreach_paused", over: Partial<Extract<NeedsCard, { type: "item" }>["item"]> = {}): NeedsCard => ({
+    type: "item",
+    key: `${kind}-${U}`,
+    at: "2026-10-11T03:12:00Z",
+    item: { kind, id: U, customer: "Ravi K.", city: null, agent: "followup_desk", summary: `summary of ${kind}`, at: "2026-10-11T03:12:00Z", amount_paise: null, href: "/app/tenants/T/outreach", ...over },
+  });
+  it.each([
+    ["hot_lead_waiting", "Hot lead", "Call back now", "Customer"],
+    ["plan_waiting", "Plan to approve", "Review and approve", "Plan"],
+    ["callback_due", "Callbacks due", "See the callbacks", "Plan"],
+    ["outreach_paused", "Limit reached", "Review the limit", "Plan"],
+  ] as const)("a %s card says what it is, names its first fact and opens the page that decides", (kind, label, step, who) => {
+    board([desk(kind)]);
+    const a = cardOf(/^Ravi K\./);
+    expect(within(a).getByText(label)).toBeInTheDocument();
+    expect(within(a).getByText(who)).toBeInTheDocument();
+    expect(within(a).getByRole("link", { name: step })).toHaveAttribute("href", "/app/tenants/T/outreach");
+    expect(within(a).getByText(`summary of ${kind}`)).toBeInTheDocument();
+  });
+  it("a hot lead with no name is 'a customer'", () => {
+    board([desk("hot_lead_waiting", { customer: "" })]);
+    expect(within(cardOf(/^a customer/i)).getByText("Hot lead")).toBeInTheDocument();
+  });
+  it("says 'All clear' when the count is 0 and only then", () => {
+    board([], { waiting: 0 });
+    expect(count()).toHaveAttribute("data-count", "0");
+    expect(screen.getByText(/All clear/)).toBeInTheDocument();
+    cleanup();
+    // two things wait but none is listed: the count says two and nobody is told it is all clear
+    board([], { waiting: 2 });
+    expect(count()).toHaveAttribute("data-count", "2");
+    expect(screen.queryByText(/All clear/)).toBeNull();
+    cleanup();
+    board([desk("hot_lead_waiting")], { waiting: 1 });
+    expect(count()).toHaveAttribute("data-count", "1");
+    expect(screen.queryByText(/All clear/)).toBeNull();
   });
 });

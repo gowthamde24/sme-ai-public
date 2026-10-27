@@ -2,7 +2,7 @@ import { ApiAuthError } from "@/lib/api/client";
 import { listOutboxMessages } from "@/lib/api/outbox";
 import { getTodayVisits } from "@/lib/api/visits";
 import type { NeedsYouItem } from "@/lib/api/today";
-import { MAX_NOTICES, kindOf, type Notice, type NoticeCode } from "@/lib/notifications/model";
+import { MAX_NOTICES, isNoticeCode, kindOf, type Notice, type NoticeCode } from "@/lib/notifications/model";
 
 import { readProposals } from "../today-visits";
 import { readTodayCached } from "../today-read";
@@ -45,7 +45,8 @@ export async function readNotices(accessToken: string, tenantId: string, role: R
   const out: Notice[] = [];
   const push = (id: string, code: NoticeCode, who: string, at: string, href: string) => out.push({ id, kind: kindOf(code), code, who, at, href });
   if (today.status === "fulfilled") {
-    for (const i of today.value.needs_you) push(`${i.kind}:${i.id}`, i.kind, i.customer, i.at, hrefOfNeeds(base, i));
+    // the bell has a sentence for the kinds of the shop's Today; a hot lead or a calling limit (Lead Desk) is on Today itself and is not announced here (yet)
+    for (const i of today.value.needs_you) if (isNoticeCode(i.kind)) push(`${i.kind}:${i.id}`, i.kind, i.customer, i.at, hrefOfNeeds(base, i));
   }
   if (proposals.status === "fulfilled") {
     for (const c of proposals.value) if (c.type === "visit") push(`visit_proposed:${c.id}`, "visit_proposed", c.visit.customer ?? c.visit.who, c.at, `${base}/visits?visit=${c.id}`);
