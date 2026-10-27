@@ -3,7 +3,8 @@
  * `blob:` only). The player is one object per answer: play, stop, and let go of the address when done. Browsers may refuse to start sound without a tap; `play()` then says false and the box shows its
  * Play button instead.
  */
-import { analyserOf, clearAnalyser, makeContext, setAnalyser } from "./audio-level";
+import { setAnalyser } from "./audio-level";
+import { analyserOf, clearAnalyser, makeContext } from "./audio-source";
 
 export type AnswerPlayer = {
   /** Starts the sound. True when it is playing; false when the browser would not start it (or the audio is unreadable). */

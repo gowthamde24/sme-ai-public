@@ -3,15 +3,15 @@ import { describe, expect, it, vi } from "vitest";
 import { buildCsp } from "./csp";
 import { passesTurnstile, turnstileSiteKey } from "./turnstile";
 
-const ON = { TURNSTILE_SITE_KEY: "0x4AAA-site", TURNSTILE_SECRET_KEY: "0x4AAA-secret" };
+const ON = { TURNSTILE_SITE_KEY: "0x4AAA-site", TURNSTILE_SECRET: "0x4AAA-secret" };
 const answer = (body: unknown, status = 200) => vi.fn(async () => new Response(JSON.stringify(body), { status }));
 
 describe("Turnstile on the public forms", () => {
   it("is on only when both keys are set; the site key is the only one ever given out", () => {
     expect(turnstileSiteKey({})).toBeNull();
     expect(turnstileSiteKey({ TURNSTILE_SITE_KEY: "s" })).toBeNull();
-    expect(turnstileSiteKey({ TURNSTILE_SECRET_KEY: "x" })).toBeNull();
-    expect(turnstileSiteKey({ TURNSTILE_SITE_KEY: " ", TURNSTILE_SECRET_KEY: "x" })).toBeNull();
+    expect(turnstileSiteKey({ TURNSTILE_SECRET: "x" })).toBeNull();
+    expect(turnstileSiteKey({ TURNSTILE_SITE_KEY: " ", TURNSTILE_SECRET: "x" })).toBeNull();
     expect(turnstileSiteKey(ON)).toBe("0x4AAA-site");
   });
   it("lets every form through when it is off (nothing is asked of Cloudflare)", async () => {

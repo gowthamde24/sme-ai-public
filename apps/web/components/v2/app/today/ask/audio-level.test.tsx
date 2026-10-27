@@ -1,7 +1,8 @@
 import { act, cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { analyserOf, clearAnalyser, makeContext, setAnalyser, useAnalyser } from "./audio-level";
+import { setAnalyser, useAnalyser } from "./audio-level";
+import { analyserOf, clearAnalyser, makeContext } from "./audio-source";
 
 const fake = () => ({ id: Math.random() }) as unknown as AnalyserNode;
 function Probe({ seen }: { seen: (a: AnalyserNode | null) => void }) {

@@ -4,3 +4,8 @@
 {label="Two-step sign-in (optional)"}
 ## Two-step sign-in (optional)
 A second code from an authenticator app protects your account if your password or Google account is ever stolen. It is your choice. We recommend it for the Owner. 2-step sign-in is on. [Turn it off or manage it](/app/security)
+{label="Sign out of all devices"}
+## Sign out of all devices
+Ends every sign-in of your account: this browser, your phone, anywhere you left it open. Use it if a device was lost or someone else may know your password. Other devices are signed out within the hour.
+form:
+[button type=submit: Sign out of all devices]

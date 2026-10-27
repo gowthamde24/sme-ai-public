@@ -6,7 +6,7 @@ const createClient = vi.fn();
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to) }));
 vi.mock("@/lib/supabase/server", () => ({ createSupabaseServerClient: () => createClient() }));
 
-import { signOutEverywhereAction } from "./security-actions";
+import { signOutEverywhereAction } from "../../../actions";
 
 beforeEach(() => vi.clearAllMocks());
 

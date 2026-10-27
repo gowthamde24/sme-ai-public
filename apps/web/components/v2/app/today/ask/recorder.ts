@@ -2,7 +2,8 @@
  * Recording a question in the browser (job BF): the microphone through `getUserMedia`, recorded by `MediaRecorder` as WebM/Opus (Chrome, Firefox, Edge) or M4A/MP4 (Safari), both of which the Agent OWL's
  * voice route reads. A low bit rate keeps a full minute of speech far below the route's 1.5 MB limit. Nothing here is sent anywhere; the caller gets a Blob, or throws a RecordError with a closed `problem`.
  */
-import { analyserOf, clearAnalyser, makeContext, setAnalyser } from "./audio-level";
+import { setAnalyser } from "./audio-level";
+import { analyserOf, clearAnalyser, makeContext } from "./audio-source";
 
 export const MAX_SECONDS = 60;
 /** A recording shorter than this is an accidental touch, not a question. */

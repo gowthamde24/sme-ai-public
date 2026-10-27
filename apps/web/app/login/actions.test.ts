@@ -219,7 +219,7 @@ describe("signIn: the check box after three failures in a row (Turnstile)", () =
   });
   it("with the check on, the third failure asks for the box, and a sign-in without a good token is refused before Supabase is asked", async () => {
     vi.stubEnv("TURNSTILE_SITE_KEY", "site");
-    vi.stubEnv("TURNSTILE_SECRET_KEY", "secret");
+    vi.stubEnv("TURNSTILE_SECRET", "secret");
     jar.set("s19_signin_fails", "2");
     wrong();
     expect(await signIn(undefined, form(OK))).toEqual({ error: "Invalid email or password.", check: true });
@@ -233,7 +233,7 @@ describe("signIn: the check box after three failures in a row (Turnstile)", () =
   });
   it("a good token lets the sign-in go on", async () => {
     vi.stubEnv("TURNSTILE_SITE_KEY", "site");
-    vi.stubEnv("TURNSTILE_SECRET_KEY", "secret");
+    vi.stubEnv("TURNSTILE_SECRET", "secret");
     jar.set("s19_signin_fails", "4");
     vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ success: true }))));
     createClient.mockResolvedValue(fakeSupabase({ signInWithPassword: vi.fn(async () => ({ data: {}, error: null })) }));

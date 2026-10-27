@@ -79,7 +79,7 @@ import { topupsPart } from "./topups-part";
 import { BusinessForm } from "@/components/v2/app/settings/BusinessForm";
 import { getProfile, PROFILE_LANGUAGES, type BusinessProfile } from "@/lib/api/profile";
 import { saveBusinessAction } from "./business-actions";
-import { signOutEverywhereAction } from "./security-actions";
+import { signOutEverywhereAction } from "../../../actions";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
