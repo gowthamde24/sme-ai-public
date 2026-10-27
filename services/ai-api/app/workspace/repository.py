@@ -23,6 +23,10 @@ class WorkspaceRepository(Protocol):
     def save_my_profile(self, token: str, tenant_id: uuid.UUID, patch: dict[str, Any]) -> dict[str, Any]: ...
     def people(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
     def account_security(self, token: str) -> dict[str, Any]: ...
+    # job DT (ADR 0116): the opening line and the "mention AI" switch
+    def opening(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def set_opening_line(self, token: str, tenant_id: uuid.UUID, language: str, campaign_id: str | None, text: str | None) -> dict[str, Any]: ...
+    def set_mention_ai(self, token: str, tenant_id: uuid.UUID, campaign_id: str | None, mention_ai: bool | None) -> dict[str, Any]: ...
 
 
 class PostgrestWorkspaceRepository:
@@ -63,3 +67,12 @@ class PostgrestWorkspaceRepository:
 
     def account_security(self, token: str) -> dict[str, Any]:
         return self._rpc.object(token, "account_security_get", {})
+
+    def opening(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "opening_get", {"p_tenant_id": str(tenant_id)})
+
+    def set_opening_line(self, token: str, tenant_id: uuid.UUID, language: str, campaign_id: str | None, text: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "opening_set_line", {"p_tenant_id": str(tenant_id), "p_language": language, "p_campaign_id": campaign_id, "p_text": text})
+
+    def set_mention_ai(self, token: str, tenant_id: uuid.UUID, campaign_id: str | None, mention_ai: bool | None) -> dict[str, Any]:
+        return self._rpc.object(token, "opening_set_mention", {"p_tenant_id": str(tenant_id), "p_campaign_id": campaign_id, "p_mention_ai": mention_ai})

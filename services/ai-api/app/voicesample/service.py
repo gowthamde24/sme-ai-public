@@ -61,10 +61,10 @@ REPLIES = {
 }
 
 
-def preview_text(language: str, style: str, name: str, business: str) -> str:
-    """What the preview says: the opening line with the workspace's REAL assistant name and business name, then one reply."""
+def preview_text(language: str, style: str, name: str, business: str, opening: str | None = None) -> str:
+    """What the preview says: the opening line with the workspace's REAL assistant name and business name (or the Owner's own line, already filled: job DT ADR 0116), then one reply."""
     reply = REPLIES.get(language)
-    opening = line_for(language, style, name, business)
+    opening = opening or line_for(language, style, name, business)
     return f"{opening} {reply}" if reply else opening
 
 
@@ -89,14 +89,14 @@ class VoiceSampleService:
             raise NoSample
         return self._speak(tenant_id, voice, language, style, line_for(language, style, chosen, business))
 
-    def preview(self, tenant_id: uuid.UUID, business: str, voice: str, language: str, style: str, name: str | None) -> tuple[str, Speech]:
+    def preview(self, tenant_id: uuid.UUID, business: str, voice: str, language: str, style: str, name: str | None, opening: str | None = None) -> tuple[str, Speech]:
         """The opening line and one reply, in the workspace's real names, language and way of sounding (the same cache, rate limit and daily cap as the sample)."""
         if not self.available() or self._tts is None or voice not in PERSONAS or language not in LANGUAGES or style not in STYLES:
             raise NoSample
         chosen = (name or DEFAULT_NAME).strip()
         if not NAME_OK.match(chosen):
             raise NoSample
-        text = preview_text(language, style, chosen, business)
+        text = preview_text(language, style, chosen, business, opening)
         return text, self._speak(tenant_id, voice, language, style, text)
 
     def _speak(self, tenant_id: uuid.UUID, voice: str, language: str, style: str, text: str) -> Speech:

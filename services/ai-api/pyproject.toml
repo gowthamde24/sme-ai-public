@@ -66,6 +66,10 @@ select = ["E", "F", "I", "B", "UP", "S"]
 # job DP part 6: the error-reporting module explains what leaves the server in long lines
 "app/observability/*" = ["E501"]
 "tests/test_dp_sentry.py" = ["E501"]
+# job DT (ADR 0115, 0116): the first-run, opening-line and parity modules read like the ADRs they implement (long lines)
+"app/opening/*" = ["E501"]
+"app/parity/*" = ["E501"]
+"tests/test_dt_*.py" = ["E501"]
 # job CB: the hardening layer is documented in long lines
 "app/hardening/*" = ["E501"]
 # job DP part 2: marks messages to guardians (a file that is never stored) read like the owner decision they implement (long lines)

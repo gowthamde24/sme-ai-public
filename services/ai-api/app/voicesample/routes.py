@@ -69,7 +69,8 @@ def voice_preview(
     if name is not None and not NAME_OK.match(name):
         raise ApiError(422, "validation_error", "Invalid input.")
     try:
-        _, speech = service.preview(ctx.tenant.id, ctx.tenant.name, voice, language, style, name)
+        opening = _owner_opening(runtime, ctx, language)
+        _, speech = service.preview(ctx.tenant.id, ctx.tenant.name, voice, language, style, name, opening)
     except NoSample:
         raise ApiError(404, "no_sample", "There is no preview for this voice.") from None
     except RateLimited as exc:
@@ -80,6 +81,7 @@ def voice_preview(
 @router.get("/voice-preview/text")
 def voice_preview_text(
     ctx: OwnerAdmin,
+    runtime: RuntimeDep,
     language: PreviewLanguage,
     style: Annotated[Literal["warm", "quick"], Query()] = "warm",
     name: Annotated[str | None, Query(max_length=24)] = None,
@@ -87,4 +89,16 @@ def voice_preview_text(
     chosen = (name or DEFAULT_NAME).strip()
     if not NAME_OK.match(chosen):
         raise ApiError(422, "validation_error", "Invalid input.")
-    return {"text": preview_text(language, style, chosen, ctx.tenant.name), "assistant_name": chosen, "business_name": ctx.tenant.name, "language": language, "style": style}
+    return {"text": preview_text(language, style, chosen, ctx.tenant.name, _owner_opening(runtime, ctx, language)), "assistant_name": chosen, "business_name": ctx.tenant.name, "language": language, "style": style}
+
+
+def _owner_opening(runtime: Runtime, ctx: TenantContext, language: str) -> str | None:
+    """The Owner's own opening line, filled and with the AI switch applied, when they wrote one for this language (the preview then speaks what a customer hears); else None (the standard line)."""
+    if runtime.workspace is None:
+        return None
+    row = runtime.workspace.opening(ctx.principal.token, ctx.tenant.id)
+    if not any(x.get("language") == language and x.get("campaign_id") is None for x in row.get("lines", [])):
+        return None
+    from app.opening.routes import rendered_opening
+
+    return rendered_opening(runtime, ctx, language, None, None, None)[0]

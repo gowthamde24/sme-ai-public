@@ -117,6 +117,7 @@ from app.notifications.routes import me_router as notifications_me_router
 from app.notifications.routes import router as notifications_router
 from app.notifications.wiring import build_notifications
 from app.observability.sentry import init_sentry
+from app.opening.routes import router as opening_router
 from app.orders import errors as order_errors
 from app.orders.repository import PostgrestOrdersRepository
 from app.orders.routes import router as orders_router
@@ -1129,6 +1130,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(team_public_router)
     app.include_router(workspace_router)
     app.include_router(workspace_business_router)
+    app.include_router(opening_router)
     app.include_router(notifications_router)
     app.include_router(notifications_me_router)
     app.include_router(suppression_router)
