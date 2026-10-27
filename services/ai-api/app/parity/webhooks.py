@@ -41,14 +41,19 @@ def retry_after(attempt: int) -> int | None:
     return RETRY_SECONDS[attempt] if attempt < len(RETRY_SECONDS) else None
 
 
-def new_api_key() -> tuple[str, str, str]:
-    """(the key to show ONCE, its sha-256 to store, a short prefix to recognise it). The key is never stored."""
+def _digest(key: str, pepper: str) -> str:
+    """A keyed digest (HMAC-SHA256 with a server-side pepper): the key is 256 random bits, so no slow hash is needed, and a copy of the table alone cannot be used to check a guess."""
+    return hmac.new(pepper.encode(), key.encode(), hashlib.sha256).hexdigest()
+
+
+def new_api_key(pepper: str) -> tuple[str, str, str]:
+    """(the key to show ONCE, its keyed digest to store, a short prefix to recognise it). The key itself is never stored."""
     key = "s19_" + secrets.token_urlsafe(32)
-    return key, hashlib.sha256(key.encode()).hexdigest(), key[:8]
+    return key, _digest(key, pepper), key[:8]
 
 
-def check_api_key(presented: str, stored_hash: str) -> bool:
-    return hmac.compare_digest(hashlib.sha256(presented.encode()).hexdigest(), stored_hash)
+def check_api_key(presented: str, stored_digest: str, pepper: str) -> bool:
+    return hmac.compare_digest(_digest(presented, pepper), stored_digest)
 
 
 def leads_csv(rows: list[dict[str, Any]]) -> bytes:

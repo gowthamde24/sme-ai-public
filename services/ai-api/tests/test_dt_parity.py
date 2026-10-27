@@ -105,8 +105,9 @@ def test_g_webhooks_are_signed_replay_checked_retried_and_keys_are_stored_only_a
     with pytest.raises(ValueError):
         webhooks.envelope("lead.deleted", "w1", {}, event_id="e", at="t")
     assert [webhooks.retry_after(i) for i in range(6)] == [0, 60, 300, 1800, 7200, None]
-    key, digest, prefix = webhooks.new_api_key()
-    assert key.startswith("s19_") and prefix == key[:8] and webhooks.check_api_key(key, digest) and not webhooks.check_api_key(key + "x", digest) and key not in digest
+    key, digest, prefix = webhooks.new_api_key("server-pepper")
+    assert key.startswith("s19_") and prefix == key[:8] and webhooks.check_api_key(key, digest, "server-pepper") and not webhooks.check_api_key(key + "x", digest, "server-pepper") and key not in digest
+    assert not webhooks.check_api_key(key, digest, "another-pepper"), "a copy of the table without the pepper checks nothing"
     csv_bytes = webhooks.leads_csv([{"lead_id": "1", "name": "=HYPERLINK(\"x\")", "phone": "+00 000 000 1", "source": "website_form"}])
     assert b"'=HYPERLINK" in csv_bytes and csv_bytes.startswith(b"lead_id,name")
     with pytest.raises(webhooks.NotConnected):
