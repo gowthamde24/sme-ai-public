@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import { Section } from "@/components/v2/site/sections";
+import { V3Section } from "@/components/v2/site/PackSections";
 import { linkQuiet } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
@@ -16,28 +16,28 @@ export function PackLeadDesk({ packId, t, lang }: { packId: string; t: SiteT; la
   const keys = packFlowKeys(packId);
   if (!keys) return null;
   return (
-    <Section id="lead-desk" title={t(keys.title)}>
-      <ol className="grid gap-4 md:grid-cols-2 lg:grid-cols-4" data-part="ld-flow" data-pack={packId}>
+    <V3Section id="lead-desk" title={t(keys.title)} tone="mist">
+      <ol className="m-0 grid list-none gap-0 border-t border-line p-0 md:grid-cols-2 lg:grid-cols-4" data-part="ld-flow" data-pack={packId}>
         {keys.steps.map((k, i) => (
-          <li key={k} className="flex items-start gap-3 rounded-xl border border-line bg-surface p-4">
-            <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-bg font-display text-base font-extrabold text-brand-text">
+          <li key={k} className="border-b border-line py-7 md:pr-7">
+            <span aria-hidden="true" className="font-display text-4xl font-extrabold leading-none tracking-[-0.025em] text-brand-text">
               {i + 1}
             </span>
-            <p className="text-base">{t(k)}</p>
+            <p className="mt-3 text-[17px]">{t(k)}</p>
           </li>
         ))}
       </ol>
       {keys.note ? (
-        <p className="mt-4 max-w-3xl rounded-xl border border-brand-edge bg-brand-bg px-4 py-3 text-base font-semibold text-ink" data-part="ld-note">
+        <p className="mt-8 max-w-3xl border-l-4 border-brand-text pl-4 text-[17px] font-semibold text-ink" data-part="ld-note">
           {t(keys.note)}
         </p>
       ) : null}
-      <p className="mt-3">
+      <p className="mt-6">
         <Link href={sitePath(lang, { kind: "page", page: "pricing" })} className={linkQuiet}>
           {t("ld.pack.plans")}
           <ArrowRight className="ml-1 size-4" aria-hidden="true" />
         </Link>
       </p>
-    </Section>
+    </V3Section>
   );
 }
