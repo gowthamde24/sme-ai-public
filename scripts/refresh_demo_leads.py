@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -24,7 +25,7 @@ def main() -> int:
     ap.add_argument("--api-url", required=True)
     args = ap.parse_args()
     try:
-        ss.guard(args)
+        (ss.guard_demo_refresh_job if os.environ.get("CLOUD_RUN_JOB") else ss.guard)(args)
         seeder = ss.Seeder(args.api_url)
         today = datetime.now(timezone(timedelta(hours=5, minutes=30))).date()
         for pack, spec in (("real_estate", demo_data.REAL_ESTATE), ("coaching", demo_data.COACHING)):

@@ -1,0 +1,9 @@
+# The image of the Cloud Run job sme-demo-refresh (STAGING only; deploy/demo-refresh.sh): it runs scripts/refresh_demo_leads.py once. The script reads the demo owners' passwords and authenticator
+# secrets with `gcloud secrets versions access` (the job's own service account), so the image is the Google Cloud CLI's plus three scripts. Nothing else: no API code, no key, no admin key.
+FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
+RUN command -v python3 >/dev/null 2>&1 || (apt-get update && apt-get install -y --no-install-recommends python3 && rm -rf /var/lib/apt/lists/*)
+RUN useradd --create-home --uid 10001 refresh
+WORKDIR /app
+COPY scripts/demo_data.py scripts/seed_staging.py scripts/refresh_demo_leads.py ./scripts/
+USER refresh
+ENTRYPOINT ["python3", "-I", "scripts/refresh_demo_leads.py"]
