@@ -21,12 +21,8 @@ export function Orb({ px, state = "ambient", halo = false, className = "", analy
       </span>
     </span>
   );
-  return halo ? (
-    <span className={`orb-halo ${className}`} aria-hidden="true">
-      {sphere}
-    </span>
-  ) : (
-    <span className={`inline-flex shrink-0 items-center justify-center ${className}`} aria-hidden="true">
+  return (
+    <span className={`${halo ? "orb-halo" : "inline-flex shrink-0 items-center justify-center"} ${className}`} aria-hidden="true">
       {sphere}
     </span>
   );
