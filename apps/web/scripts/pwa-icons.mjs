@@ -1,9 +1,9 @@
-// npm run pwa:icons (job BL): draws the AI-circle icon set (job DM) from public/icons/orb.svg with a real browser (Chromium, the one the e2e run installs: e2e/node_modules/playwright).
-//   icon-<size>.png            "any" icons, the circle on a transparent square (48 to 512)
-//   maskable-192/512.png        the circle in the middle 62% on the brand colour, full bleed, so any mask shape keeps the whole circle
+// npm run pwa:icons (job BL): draws the icon set from public/icons/mark.svg (the three-bar logo; night 5, it was the AI circle) with a real browser (Chromium, the one the e2e run installs: e2e/node_modules/playwright).
+//   icon-<size>.png            "any" icons, the logo on a transparent square (48 to 512)
+//   maskable-192/512.png        the logo in the middle 62% on the paper colour, full bleed, so any mask shape keeps the whole logo
 //   apple-touch-icon.png        180 px, opaque (iOS draws its own corners)
-//   ../../app/favicon.ico       16, 32 and 48 px circles in one .ico (job DQ: it was a flat black circle with a triangle)
-// The generated files are committed; run this only when the circle or the brand colour changes. A test (lib/pwa/pwa.test.ts) checks the set exists and the svg is a plain file.
+//   ../../app/favicon.ico       16, 32 and 48 px logos in one .ico
+// The generated files are committed; run this only when the logo or the paper colour changes. A test (lib/pwa/pwa.test.ts) checks the set exists and the svg is a plain file.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -14,15 +14,15 @@ const web = path.resolve(here, "..");
 const require = createRequire(path.resolve(web, "../../e2e/package.json"));
 const { chromium } = require("playwright");
 
-const BRAND = "#ff773c"; // --v2-brand (design/tokens.css)
-const svg = readFileSync(path.join(web, "public/icons/orb.svg"), "utf8").replace(' width="96" height="96"', ' width="100%" height="100%"');
+const PAPER = "#f9f8f6"; // --v2-bg (design/tokens.css): the three bars are saffron and ink, so they sit on paper, not on the brand orange
+const svg = readFileSync(path.join(web, "public/icons/mark.svg"), "utf8").replace(' width="96" height="96"', ' width="100%" height="100%"');
 const out = path.join(web, "public/icons");
 mkdirSync(out, { recursive: true });
 
 const jobs = [
   ...[48, 72, 96, 128, 144, 152, 167, 180, 192, 256, 384, 512].map((s) => ({ file: `icon-${s}.png`, size: s, bg: null, fill: 0.9 })),
-  ...[192, 512].map((s) => ({ file: `maskable-${s}.png`, size: s, bg: BRAND, fill: 0.62 })),
-  { file: "apple-touch-icon.png", size: 180, bg: BRAND, fill: 0.72 },
+  ...[192, 512].map((s) => ({ file: `maskable-${s}.png`, size: s, bg: PAPER, fill: 0.62 })),
+  { file: "apple-touch-icon.png", size: 180, bg: PAPER, fill: 0.72 },
 ];
 
 const browser = await chromium.launch();
