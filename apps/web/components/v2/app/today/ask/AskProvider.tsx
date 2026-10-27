@@ -7,11 +7,12 @@ import type { AskTransport, Availability, VoiceStatus, VoiceTransport } from "./
 import type { AskWords } from "./ask-words";
 import { AskProvidedContext } from "./ask-store";
 import { AskFloating } from "./AskFloating";
-import { AskOffFloating } from "./AskOffFloating";
-import { AskTurnOnContext, type TurnOn } from "./AskOff";
+import { AskTurnOnContext, type TurnOn } from "./ask-turn-on";
 import type { DoItOptions } from "./use-do-it";
 
 /** The conversation's code: a chunk of its own, loaded once the page is up (the route-JS budget counts what a page loads at first). */
+/** The orb of an assistant that is switched off, and the line it opens: a chunk of its own too (the route-JS budget counts what a page loads at first). */
+const AskOffFloating = dynamic(() => import("./AskOffFloating").then((m) => m.AskOffFloating), { ssr: false });
 const AskSessionHost = dynamic(() => import("./AskSessionHost").then((m) => m.AskSessionHost), { ssr: false });
 
 /**

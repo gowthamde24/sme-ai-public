@@ -4,11 +4,9 @@ import { Mic, SendHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
+import { AskTurnOnContext } from "./ask-turn-on";
 import type { AskWords } from "./ask-words";
 
-/** Turns the assistant on for the workspace: the server action of the tenant, bound. `null` = this person may not (the line says whom to ask). */
-export type TurnOn = () => Promise<{ ok: true; live: boolean } | { ok: false }>;
-export const AskTurnOnContext = React.createContext<TurnOn | null>(null);
 
 /**
  * The question line of an assistant that is switched OFF for the workspace (first run: the workspace's own switch starts off). The line, the microphone and Send are drawn where they will be, so the person sees where they type, but they cannot be pressed,

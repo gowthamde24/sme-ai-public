@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const readFrameData = vi.fn();
@@ -64,7 +64,7 @@ describe("the workspace layout", () => {
     // switched off for the workspace (the first-run state): the orb is there and opens the line with the button that turns the assistant on; a system with no assistant has no orb at all
     readAgents.mockResolvedValue(teamWith("switched_off"));
     rerender(await TenantLayout(props(T)));
-    expect(document.querySelector("[data-ask='orb'][data-ask-off='true']")).not.toBeNull();
+    await waitFor(() => expect(document.querySelector("[data-ask='orb'][data-ask-off='true']")).not.toBeNull()); // its code is a chunk of its own
     readAgents.mockResolvedValue(teamWith("not_available"));
     rerender(await TenantLayout(props(T)));
     expect(document.querySelector("[data-ask='orb']")).toBeNull();

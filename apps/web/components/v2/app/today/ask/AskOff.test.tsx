@@ -10,7 +10,7 @@ import { appT } from "@/i18n/app";
 import { AskCard } from "./AskCard";
 import { AskProvider } from "./AskProvider";
 import { ASK_WORD_KEYS } from "./ask-words";
-import type { TurnOn } from "./AskOff";
+import type { TurnOn } from "./ask-turn-on";
 
 const BASE = "/app/tenants/22222222-2222-2222-2222-222222222222";
 const en = appT("en");
@@ -60,7 +60,7 @@ describe("the assistant is switched off (first run): the line is where it will b
     nav.pathname = `${BASE}/leads`;
     const turnOn = vi.fn<TurnOn>(async () => ({ ok: true, live: true }));
     render(harness(turnOn));
-    const orb = screen.getByRole("button", { name: "Ask Vijaya" });
+    const orb = await screen.findByRole("button", { name: "Ask Vijaya" }); // the orb is a chunk of its own
     expect(orb).toHaveAttribute("data-ask-off", "true");
     fireEvent.click(orb);
     const dialog = screen.getByRole("dialog");
