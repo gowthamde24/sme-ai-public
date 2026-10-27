@@ -10,6 +10,7 @@ from __future__ import annotations
 import html
 import json
 import logging
+import os
 import re
 import uuid
 from dataclasses import dataclass, field
@@ -29,6 +30,9 @@ TRIAL_DAYS = (11, 13)
 MAIL_LANGUAGES = ("en", "te", "hi")
 MAIL_DATA = Path(__file__).resolve().parent / "data" / "mail.json"
 ACCENT = "#c2410c"
+# the header image of every e-mail (job DT): the three-bar Stack19 mark, a static file on OUR OWN domain (apps/web/public/brand): the same address for every recipient, so it identifies nobody; no third party, no
+# tracking pixel. EMAIL_LOGO_URL overrides it (staging).
+LOGO_URL = os.environ.get("EMAIL_LOGO_URL", "https://stack19.com/brand/stack19-mark-email.png")
 
 
 @dataclass(frozen=True)
@@ -111,11 +115,11 @@ def _fill(text: str, **values: str) -> str:
 
 
 def to_html(lines: list[str], signoff: str) -> str:
-    """The same words as simple HTML: paragraphs, the brand colour on the name, nothing loaded from anywhere (no image, no tracking)."""
+    """The same words as simple HTML: the three-bar mark (our own static image) and the name, paragraphs, the brand colour. No third party and no tracking pixel."""
     paragraphs = "".join(f'<p style="margin:0 0 14px 0;font-size:15px;line-height:22px;">{html.escape(line)}</p>' for line in lines)
     return (
         '<!doctype html><html><body style="margin:0;padding:24px 12px;background:#faf7f2;"><div style="max-width:480px;margin:0 auto;background:#ffffff;border:1px solid #eadfd3;border-radius:12px;'
-        f'padding:24px 28px;font-family:Arial,Helvetica,sans-serif;color:#1c1917;"><div style="font-size:20px;font-weight:bold;color:{ACCENT};margin-bottom:16px;">Stack19</div>{paragraphs}'
+        f'padding:24px 28px;font-family:Arial,Helvetica,sans-serif;color:#1c1917;"><div style="margin-bottom:16px;"><img src="{html.escape(LOGO_URL)}" width="36" height="36" alt="" style="vertical-align:middle;border:0;"> <span style="font-size:20px;font-weight:bold;color:{ACCENT};vertical-align:middle;margin-left:8px;">Stack19</span></div>{paragraphs}'
         f'<p style="margin:18px 0 0 0;font-size:15px;line-height:22px;">{html.escape(signoff)}</p></div></body></html>'
     )
 

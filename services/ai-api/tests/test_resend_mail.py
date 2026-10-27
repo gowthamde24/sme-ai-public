@@ -119,7 +119,9 @@ def test_the_trial_reminder_is_in_each_language_with_plain_text_and_html(languag
         assert m.html is not None and "Sri Lakshmi Silks" in m.html and "#c2410c" in m.html
         assert left in m.subject and m.subject != ""
         assert "Stack19" in m.body and "Stack19" in m.html
-        assert "<img" not in m.html and "http" not in m.html, "no image, no link, no tracking"
+        # job DT (the owner's decision, 28 Oct): the three-bar mark is the ONE image, a static file of our own domain; still no link, no tracking pixel, no third party
+        assert m.html.count("<img") == 1 and "<a " not in m.html, "one logo, no link, no tracking"
+        assert m.html.count("http") == 1 and "https://stack19.com/brand/stack19-mark-email.png" in m.html
 
 
 @pytest.mark.parametrize("language", ["en", "te", "hi"])

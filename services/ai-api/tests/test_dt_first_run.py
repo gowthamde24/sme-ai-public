@@ -191,3 +191,20 @@ def test_the_sign_in_status_says_whether_the_second_factor_is_on_and_whether_the
     repo.second_factor = True
     r = client.get("/v1/account/security", headers=auth("a_owner", aal="aal2", iat=int(time.time()) - 3600))
     assert r.json()["second_factor_on"] is True and r.json()["recent_sign_in"] is False and r.json()["session_level"] == "aal2"
+
+
+def test_every_email_carries_the_three_bar_mark_from_our_own_domain_and_nothing_third_party() -> None:
+    import re
+    from pathlib import Path
+
+    from app.billing import mail
+
+    out = mail.to_html(["Hello there."], "Thank you")
+    src = re.search(r'<img src="([^"]+)"', out)
+    assert src is not None and src.group(1).startswith("https://stack19.com/brand/") and "tracking" not in out.lower()
+    assert len(re.findall(r"<img ", out)) == 1
+    root = Path(__file__).resolve().parents[3]
+    png = (root / "apps" / "web" / "public" / "brand" / "stack19-mark-email.png").read_bytes()
+    assert png[:8] == b"\x89PNG\r\n\x1a\n" and len(png) < 20_000
+    for template in (root / "supabase" / "templates").glob("*.html"):
+        assert "{{ .SiteURL }}/brand/stack19-mark-email.png" in template.read_text(encoding="utf-8"), template.name
