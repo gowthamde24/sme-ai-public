@@ -331,7 +331,7 @@ def test_the_api_refuses_a_password_only_owner_or_admin_and_allows_a_second_fact
 
 # ------------------------------------------------------------------------------ the authenticator is OPTIONAL (ADR 0115); unenrol; the operator reset
 def test_no_authenticator_is_needed_until_the_person_turns_one_on(w: World, signup: Any) -> None:
-    owner: User = signup("mfa-lone-owner", mfa=False)
+    owner: User = signup(f"mfa-lone-{uid()[:6]}", mfa=False)  # a new person each run: the test enrols an authenticator
     made = w.client.post(
         "/v1/tenants", json={"name": "Lone", "slug": f"lone-{uid()[:8]}"}, headers=bearer(owner)
     )
@@ -339,12 +339,8 @@ def test_no_authenticator_is_needed_until_the_person_turns_one_on(w: World, sign
     tenant = made.json()["id"]
     base = f"/v1/tenants/{tenant}"
     # a person with NO authenticator, signed in just now, may do a sensitive action (the API and the database alike)
-    assert (
-        w.client.put(
-            base + "/agent-settings", json={"enabled": False}, headers=bearer(owner)
-        ).status_code
-        == 200
-    )
+    first = w.client.put(base + "/agent-settings", json={"enabled": False}, headers=bearer(owner))
+    assert first.status_code == 200, first.text
     renamed = pg(
         w.stack, owner, "PATCH", f"/tenants?id=eq.{tenant}", json={"name": "Lone 2"}, representation=False
     )

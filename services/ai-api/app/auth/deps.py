@@ -203,6 +203,19 @@ def get_principal(request: Request, runtime: RuntimeDep) -> Principal:
 # ONE place (app/billing/gate.py); this dependency is the only door to a tenant's address
 
 
+def _second_factor_on(runtime: Runtime, principal: Principal) -> bool:
+    """Did the person turn the authenticator on? Asked of the database only for a sensitive
+    action on a session that has not entered a code; if it cannot be asked: yes (fail closed)."""
+    if runtime.workspace is None:
+        return False
+    try:
+        status = runtime.workspace.account_security(principal.token)
+        return status.get("second_factor_on") is not False
+    except Exception:
+        logger.warning("second factor status unavailable: refusing the sensitive action")
+        return True
+
+
 def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., TenantContext]:
     """Dependency factory. No roles given = any member of the tenant.
 
@@ -242,6 +255,10 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             # ADR 0115: the second factor is optional; a sensitive action needs a RECENT sign-in.
             # (A person who turned the authenticator on is also asked for the code: the database.)
             raise mfa_required("recent_sign_in")
+        if needs_recent and principal.aal != "aal2" and _second_factor_on(runtime, principal):
+            # a person who turned the authenticator on must have entered the code in this session
+            # (some gated routes are checked here only, not again in the database)
+            raise mfa_required("second_factor")
         if runtime.policy_gate is not None:
             # job BN: a changed terms or privacy version must be accepted first (POLICY_ENFORCE)
             user = str(principal.user_id)

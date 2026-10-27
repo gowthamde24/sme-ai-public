@@ -208,3 +208,17 @@ def test_every_email_carries_the_three_bar_mark_from_our_own_domain_and_nothing_
     assert png[:8] == b"\x89PNG\r\n\x1a\n" and len(png) < 20_000
     for template in (root / "supabase" / "templates").glob("*.html"):
         assert "{{ .SiteURL }}/brand/stack19-mark-email.png" in template.read_text(encoding="utf-8"), template.name
+
+
+def test_a_gated_route_asks_a_person_who_turned_the_authenticator_on_for_the_code_even_with_a_fresh_sign_in() -> None:
+    client, repo, _ = world()
+    fresh = int(time.time())
+    url = f"{BASE}/erasure-requests"
+    body = {"id": str(uuid.uuid4()), "scope": "tenant"}
+    ok = client.post(url, json=body, headers=auth("a_owner", aal="aal1", iat=fresh))
+    assert ok.status_code != 403 or ok.json()["error"].get("reason") != "second_factor", "no authenticator: a fresh sign-in is enough"
+    repo.second_factor = True
+    asked = client.post(url, json={**body, "id": str(uuid.uuid4())}, headers=auth("a_owner", aal="aal1", iat=fresh))
+    assert asked.status_code == 403 and asked.json()["error"]["code"] == "mfa_required" and asked.json()["error"]["reason"] == "second_factor"
+    entered = client.post(url, json={**body, "id": str(uuid.uuid4())}, headers=auth("a_owner", aal="aal2", iat=fresh))
+    assert not (entered.status_code == 403 and entered.json()["error"].get("code") == "mfa_required")
