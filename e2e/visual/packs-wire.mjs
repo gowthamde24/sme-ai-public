@@ -49,7 +49,7 @@ export function packsWire() {
 export function packWire(id, source = "default") {
   const m = packFiles()[id];
   if (!m) throw new Error(`no pack ${id}`);
-  return { ...summary(m), source, chosen_at: "2026-10-01T00:00:00Z", core_tab: m.core_tab, modules: m.modules, units: m.units, default_unit: m.default_unit ?? null, labels: m.labels, language_review: m.language_review };
+  return { ...summary(m), source, chosen_at: "2026-10-01T00:00:00Z", core_tab: m.core_tab, modules: m.modules, units: m.units, default_unit: m.default_unit ?? null, labels: m.labels, language_review: m.language_review, has_example_data: Object.values(m.example_data ?? {}).some((rows) => Array.isArray(rows) && rows.length > 0) };
 }
 
 /** GET /v1/tenants/{id}/modules: all 25, the given ones ON. */

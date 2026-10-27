@@ -878,6 +878,10 @@
           },
           "title": "Language Review",
           "type": "object"
+        },
+        "has_example_data": {
+          "title": "Has Example Data",
+          "type": "boolean"
         }
       },
       "required": [
@@ -896,7 +900,8 @@
         "units",
         "default_unit",
         "labels",
-        "language_review"
+        "language_review",
+        "has_example_data"
       ],
       "title": "WorkspacePackOut",
       "type": "object"

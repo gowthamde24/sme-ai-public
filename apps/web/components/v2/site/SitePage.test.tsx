@@ -57,15 +57,14 @@ describe("the business type pages come from the pack data", () => {
       expect(ld.length).toBeGreaterThanOrEqual(1);
     }
   });
-  it("shows the calculator only on a page whose landing has one, and the fee preview and the children's promise only where they are", () => {
+  it("shows the calculator only on a page whose landing has one, and the children's promise only where it is", () => {
     for (const p of SITE_PACKS) {
       const html = render("en", { kind: "pack", slug: p.slug });
       expect(/id="calculator"/.test(html), `${p.slug} calculator`).toBe(Boolean(p.calculator));
-      expect(/data-part="fee-preview"/.test(html), `${p.slug} fee`).toBe(Boolean(p.fee_preview));
       expect(/data-part="children-promise"/.test(html), `${p.slug} children`).toBe(Boolean(p.children_promise));
     }
     expect(SITE_PACKS.some((p) => p.calculator)).toBe(true);
-    expect(SITE_PACKS.some((p) => p.fee_preview)).toBe(true);
+    expect(SITE_PACKS.some((p) => p.children_promise)).toBe(true);
   });
 });
 
@@ -119,11 +118,11 @@ describe("the home page (job DM, reworked for Lead Desk in night 4, F1)", () => 
     expect(text(list)).toContain("the leads you should call yourself");
     expect(text(section.match(/data-part="calling-rules">([\s\S]*?)<\/p>/)![1]).trim()).toBe("We call only people who gave their number to the business. We follow calling hours and do-not-disturb rules.");
   });
-  it("has the lead sources as plain text chips: Meta ads, IndiaMART, JustDial, Excel and Google Sheets, your website, missed calls (no logo, no picture, no link)", () => {
+  it("has the lead sources as plain text chips: Meta ads, IndiaMART, JustDial, Excel and Google Sheets, your website (no logo, no picture, no link)", () => {
     const section = home.match(/<section id="sources"[\s\S]*?<\/section>/)![0];
     expect(text(section)).toContain("Works with where your leads already come from.");
     const chips = section.match(/<ul[^>]*data-part="sources"[\s\S]*?<\/ul>/)![0];
-    expect([...chips.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["Meta ads", "IndiaMART", "JustDial", "Excel and Google Sheets", "Your website", "Missed calls"]);
+    expect([...chips.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["Meta ads", "IndiaMART", "JustDial", "Excel and Google Sheets", "Your website"]);
     expect(chips).not.toMatch(/<img|<svg|<a[\s>]|<picture/);
   });
   it("has made for your business: three deep cards that keep their links (sarees, building materials, schools), and a row of nine industry chips", () => {

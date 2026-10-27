@@ -93,7 +93,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   );
   const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   // the "example data" banner (blueprint 3.2) is the first-run offer of a workspace made with a chosen business type; a workspace that existed before business types sees it only while a sample is loaded (so it can be removed)
-  const showSample = sample !== null && (sample.loaded || usesChecklist(pack));
+  const showSample = sample !== null && (sample.loaded || (usesChecklist(pack) && pack?.hasExampleData !== false));
   const notice: ExampleNotice = example === "loaded" || example === "removed" || example === "unavailable" || example === "failed" ? example : null;
   return (
     <main className={pageMain} lang={lang}>

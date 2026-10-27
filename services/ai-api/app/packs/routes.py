@@ -74,6 +74,11 @@ def _words(manifest: dict[str, Any], key: str) -> dict[str, str]:
     return {str(k): str(v) for k, v in value.items()} if isinstance(value, dict) else {}
 
 
+def _has_example_data(manifest: dict[str, Any]) -> bool:
+    sample = manifest.get("example_data")
+    return isinstance(sample, dict) and any(isinstance(rows, list) and rows for rows in sample.values())
+
+
 @router.get("/pack", response_model=WorkspacePackOut)
 def get_pack(ctx: AnyMember, runtime: RuntimeDep) -> WorkspacePackOut:
     row = _repo(runtime).workspace_pack(ctx.principal.token, ctx.tenant.id)
@@ -84,6 +89,7 @@ def get_pack(ctx: AnyMember, runtime: RuntimeDep) -> WorkspacePackOut:
         names=_words(manifest, "names"), summary=_words(manifest, "summary"), accent=manifest.get("accent", ""), owl_prop=manifest.get("owl_prop", ""),
         core_tab=manifest.get("core_tab", ""), modules=[str(m) for m in row.get("modules") or []], units=[str(u) for u in manifest.get("units") or []],
         default_unit=manifest.get("default_unit"), labels=labels, language_review=cast("dict[str, LanguageReview]", _words(manifest, "language_review")),
+        has_example_data=_has_example_data(manifest),
     )  # fmt: skip
 
 

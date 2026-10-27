@@ -70,6 +70,8 @@ class WorkspacePackOut(_Out):
     # language -> label key -> word. English carries every key; the other languages may be partial and fall back to English per key.
     labels: dict[str, dict[str, str]]
     language_review: dict[str, LanguageReview]
+    # does the pack ship example data? A pack with none loads an empty batch, so the web does not offer the button (it is still shown while a sample is loaded, to remove it)
+    has_example_data: bool
 
 
 class ExampleCountsOut(_Out):

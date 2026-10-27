@@ -8,7 +8,7 @@ export const LD_STEPS = [1, 2, 3, 4, 5, 6] as const;
 export type LdStep = (typeof LD_STEPS)[number];
 
 /** The places leads already come from (text chips). The keys are `ld.src.<id>`. */
-export const LD_SOURCES = ["meta", "indiamart", "justdial", "sheets", "website", "missed"] as const;
+export const LD_SOURCES = ["meta", "indiamart", "justdial", "sheets", "website"] as const;
 
 /** The industries that use Lead Desk as it is (no pack of their own yet), as chips. The keys are `ld.chip.<n>`. */
 export const LD_CHIPS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;

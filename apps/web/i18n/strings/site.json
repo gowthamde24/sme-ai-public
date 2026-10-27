@@ -1712,39 +1712,6 @@
    "kn": "draft"
   }
  },
- "preview.school": {
-  "en": "School",
-  "te": "స్కూల్",
-  "hi": "स्कूल",
-  "kn": "ಶಾಲೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "preview.parent": {
-  "en": "Parent",
-  "te": "తల్లి/తండ్రి",
-  "hi": "अभिभावक",
-  "kn": "ಪೋಷಕರು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "preview.title": {
-  "en": "WhatsApp preview",
-  "te": "వాట్సాప్ ప్రివ్యూ",
-  "hi": "व्हाट्सऐप प्रिव्यू",
-  "kn": "ವಾಟ್ಸಾಪ್ ಪ್ರಿವ್ಯೂ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "meta.title": {
   "en": "{brand}: Lead Desk for your leads, calls and follow-ups",
   "te": "{brand}: మీ లీడ్స్, కాల్స్, ఫాలో-అప్ కోసం Lead Desk",
@@ -3751,17 +3718,6 @@
   "te": "మీ వెబ్‌సైట్",
   "hi": "आपकी वेबसाइट",
   "kn": "ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ld.src.missed": {
-  "en": "Missed calls",
-  "te": "మిస్డ్ కాల్స్",
-  "hi": "मिस्ड कॉल",
-  "kn": "ಮಿಸ್ಡ್ ಕಾಲ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",

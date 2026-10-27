@@ -166,3 +166,12 @@ describe("the default business type is the product as it was (job CL: textiles m
     expect(read("today-default-pack")).toBe(read("today"));
   });
 });
+
+describe("the example data offer (night 4 clean-up)", () => {
+  it("is drawn for a business type that ships example data and not for one that ships none (it would load an empty batch)", async () => {
+    const fs = await import("node:fs");
+    const read = (id: string) => fs.readFileSync(path.join(DIR, `${id}.owner.txt`), "utf8");
+    expect(read("today-construction")).toMatch(/example data/i);
+    expect(read("today-no-example-data")).not.toMatch(/example data/i);
+  });
+});

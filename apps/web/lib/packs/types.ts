@@ -46,6 +46,8 @@ export type WorkspacePack = PackSummary & {
   readonly modules: readonly string[];
   readonly units: readonly string[];
   readonly defaultUnit: string | null;
+  /** Does the pack ship example data? Without it the "Load example data" button would load an empty batch, so it is not offered. A server that does not say is taken as yes (the old behaviour). */
+  readonly hasExampleData: boolean;
   /** Words by language, then key (`nav.item.quotes`, `word.customer`, `pack.core_tab`, ...). English carries every key; the others may be partial. */
   readonly labels: Readonly<Record<string, Readonly<Record<string, string>>>>;
 };

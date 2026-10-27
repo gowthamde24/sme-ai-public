@@ -140,4 +140,5 @@ export interface WorkspacePackOut {
   default_unit: string | null;
   labels: Record<string, Record<string, string>>;
   language_review: Record<string, "draft" | "web_dictionary" | "native_reviewed">;
+  has_example_data: boolean;
 }

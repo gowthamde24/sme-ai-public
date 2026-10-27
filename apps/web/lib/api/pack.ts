@@ -119,6 +119,7 @@ export function parseWorkspacePack(json: unknown): WorkspacePack {
     modules: (r.modules as unknown[]).map((m) => parseCode(m, "module")),
     units: r.units as string[],
     defaultUnit: typeof r.default_unit === "string" ? r.default_unit : null,
+    hasExampleData: r.has_example_data !== false,
     labels: parseLabels(r.labels),
   };
 }
