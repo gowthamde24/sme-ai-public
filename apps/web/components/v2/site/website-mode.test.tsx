@@ -41,7 +41,7 @@ describe("website mode: the public pages (job DQ)", () => {
     expect(text(html)).toContain(d["demo.cta"]);
     expect(text(html)).not.toContain(d["nav.signin"]);
     expect(text(html)).not.toContain(d["nav.start"]);
-    expect(text(html)).not.toMatch(/\{[a-z_]+\}/);
+    expect(text(html)).not.toMatch(/\{(?!customer\}|business\})[a-z_]+\}/); // the home page's opening-line example shows {customer} and {business} as typed
     expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
   });
 

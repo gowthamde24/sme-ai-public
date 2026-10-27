@@ -28,7 +28,7 @@ describe("string store: four languages", () => {
     });
     it(`${name}: the other languages use their own script`, () => {
       const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.|ld\.src\.(indiamart|justdial)$)/; // intentionally Latin or numeric (role.main.t is the product name "Vijaya"; IndiaMART and JustDial are other companies' names)
+      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.|ld\.src\.(indiamart|justdial)$|v3\.(src\.(99acres|magicbricks)|day\.\d\.time|speed\.3\.k)$)/; // intentionally Latin or numeric (role.main.t is the product name "Vijaya"; IndiaMART and JustDial are other companies' names)
       for (const lang of ["te", "hi", "kn"] as const) {
         const missing = keys.filter((k) => !exempt.test(k) && !script[lang].test(dicts[lang][k]));
         expect(missing, `${name}:${lang}`).toEqual([]);
@@ -53,7 +53,8 @@ describe("honesty: no claims we cannot prove today", () => {
   const en = Object.fromEntries(Object.entries(dictFor(site, "en") as Record<string, string>).map(([k, v]) => [k, withTrialDays(v)]));
   it("the English home copy says what it must: the owner approves money and campaigns, the trial is 14 days from the day WhatsApp is connected and can be cancelled before it ends, and AI calls in the hero example are early access (and nothing else is)", () => {
     expect(en["hm.ctl.d"]).toMatch(/money reminders and discounts wait for your approval/);
-    expect(en["hero.h1"]).toBe("{assistant} calls your leads in 2 minutes, in your customer's language, and follows up until they say yes or no.");
+    // owner, 20:52 on 27 Oct: the headline makes no promise of a number; the fast first call is the Lead Desk row's explained "about a minute", by source
+    expect(en["hero.h1"]).toBe("Finds your leads. Calls them right away. Follows up until they decide.");
     expect(en["hero.note"]).toMatch(/14 days to try it, counted from the day your WhatsApp is connected\. Cancel before the trial ends and you pay nothing/);
     expect(en["hm.pl.sub"]).toMatch(/Every plan starts with a 14-day trial, counted from the day your WhatsApp is connected\. Prices are announced at launch\./);
     // "early access" is said only where it is true: the AI calls (job DM); nothing says sign-up is by invitation

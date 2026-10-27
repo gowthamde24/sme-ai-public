@@ -1,4 +1,5 @@
-import { VijayaOrb, type VijayaState } from "@/components/v2/LazyVijayaOrb";
+import { VijayaOrb } from "@/components/v2/LazyVijayaOrb";
+import type { VijayaState } from "@/components/v2/VijayaOrb";
 import type { AnalyserHolder } from "@/components/v2/orb-types";
 
 /** What the circle is doing: nothing (`still`: lists, empty states), calm (`ambient`), following the microphone (`listen`), thinking (faster) or speaking (it follows the voice). */
