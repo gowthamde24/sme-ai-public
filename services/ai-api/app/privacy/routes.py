@@ -172,9 +172,10 @@ def cancel_workspace_deletion(request_id: str, ctx: OwnerOnly, runtime: RuntimeD
 
 @router.post("/deletion-requests/{request_id}/execute")
 def execute_workspace_deletion(request_id: str, ctx: OwnerStrong, runtime: RuntimeDep, background: BackgroundTasks) -> dict[str, Any]:
-    result = _privacy(runtime).deletion_execute_workspace(ctx.principal.token, _id(request_id))
-    background.add_task(send_notice, runtime.mail_sender, "deletion_executed", ctx.tenant.name, ctx.principal.email, f"deletion-done-{request_id}")
-    logger.info("workspace deletion executed tenant=%s user=%s request=%s", ctx.tenant.id, ctx.principal.user_id, request_id)
+    parsed = _id(request_id)  # a UUID, never the raw path text, goes into the log and the notice key
+    result = _privacy(runtime).deletion_execute_workspace(ctx.principal.token, parsed)
+    background.add_task(send_notice, runtime.mail_sender, "deletion_executed", ctx.tenant.name, ctx.principal.email, f"deletion-done-{parsed}")
+    logger.info("workspace deletion executed tenant=%s user=%s request=%s", ctx.tenant.id, ctx.principal.user_id, parsed)
     return result
 
 

@@ -42,8 +42,8 @@ def retry_after(attempt: int) -> int | None:
 
 
 def _digest(key: str, pepper: str) -> str:
-    """A keyed digest (HMAC-SHA256 with a server-side pepper): the key is 256 random bits, so no slow hash is needed, and a copy of the table alone cannot be used to check a guess."""
-    return hmac.new(pepper.encode(), key.encode(), hashlib.sha256).hexdigest()
+    """A keyed digest (BLAKE2b in its keyed mode, a MAC, with a server-side pepper of at most 64 bytes): the key is 256 random bits, so no slow hash is needed, and a copy of the table alone cannot be used to check a guess."""
+    return hashlib.blake2b(key.encode(), key=pepper.encode(), digest_size=32).hexdigest()
 
 
 def new_api_key(pepper: str) -> tuple[str, str, str]:
