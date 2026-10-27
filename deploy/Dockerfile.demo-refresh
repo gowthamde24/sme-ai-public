@@ -4,6 +4,7 @@ FROM gcr.io/google.com/cloudsdktool/google-cloud-cli:slim
 RUN command -v python3 >/dev/null 2>&1 || (apt-get update && apt-get install -y --no-install-recommends python3 && rm -rf /var/lib/apt/lists/*)
 RUN useradd --create-home --uid 10001 refresh
 WORKDIR /app
-COPY scripts/demo_data.py scripts/seed_staging.py scripts/refresh_demo_leads.py ./scripts/
+# the build context is a small folder made by deploy/demo-refresh.sh (the repository's .dockerignore and .gcloudignore keep scripts/ out of every other image on purpose)
+COPY demo_data.py seed_staging.py refresh_demo_leads.py ./scripts/
 USER refresh
 ENTRYPOINT ["python3", "-I", "scripts/refresh_demo_leads.py"]

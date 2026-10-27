@@ -1,8 +1,9 @@
-# Remote image build for the staging job sme-demo-refresh (used by deploy/demo-refresh.sh), from the repository root:
-#   gcloud builds submit --region asia-south1 --config deploy/cloudbuild-demo-refresh.yaml --substitutions _IMAGE=<image> .
+# Remote image build for the staging job sme-demo-refresh (used by deploy/demo-refresh.sh). The source is NOT the repository root (its ignore files keep scripts/ out) but a small folder holding
+# Dockerfile.demo-refresh and the three scripts, which the script makes:
+#   gcloud builds submit --region asia-south1 --config deploy/cloudbuild-demo-refresh.yaml --substitutions _IMAGE=<image> <that folder>
 steps:
   - name: gcr.io/cloud-builders/docker
-    args: ["build", "-f", "deploy/Dockerfile.demo-refresh", "-t", "${_IMAGE}", "."]
+    args: ["build", "-f", "Dockerfile.demo-refresh", "-t", "${_IMAGE}", "."]
 images: ["${_IMAGE}"]
 options:
   logging: CLOUD_LOGGING_ONLY
