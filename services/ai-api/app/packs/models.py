@@ -11,7 +11,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
 PackStatus = Literal["draft", "preview", "published"]
-PackSource = Literal["signup", "default", "legacy", "operator"]
+PackSource = Literal["signup", "default", "legacy", "operator", "owner"]
 LanguageReview = Literal["draft", "web_dictionary", "native_reviewed"]
 PackCode = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,30}$")]
 
@@ -109,9 +109,16 @@ class AuthProvidersOut(_Out):
 
 
 class AccountSecurityOut(_Out):
-    """GET /v1/account/security: where the second factor stands for this session. It is NOT asked at sign-up; it is asked at the first action that needs one."""
+    """GET /v1/account/security: where the person's sign-in stands (ADR 0115). The second factor is OPTIONAL for everybody: never asked at sign-up or at setup, only when the person turned it on. A sensitive
+    action needs a RECENT sign-in (`recent_sign_in`: within 10 minutes), else the screen asks them to sign in again (Google again, or the password)."""
 
     session_level: Literal["aal1", "aal2"]
     asked_at_sign_up: Literal[False]
-    # the groups of actions that need an aal2 session for an Owner or Admin (the database refuses them otherwise, SM306)
+    second_factor: Literal["optional"] = "optional"
+    # did the person turn the authenticator on (null when the database could not be asked)
+    second_factor_on: bool | None = None
+    signed_in_at: datetime | None = None
+    recent_sign_in: bool = False
+    provider: Literal["email", "google", "facebook"] | None = None
+    # the groups of actions that need a recent sign-in (and the code, for a person who turned the authenticator on)
     needed_for: list[Literal["approvals", "whatsapp_connect", "rules_and_prices", "imports_and_exports", "team_and_privacy"]]

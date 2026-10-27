@@ -192,6 +192,7 @@ from app.whatsapp.repository import WhatsAppStateError
 from app.whatsapp.routes import public_router as whatsapp_public_router
 from app.whatsapp.routes import router as whatsapp_router
 from app.whatsapp.wiring import build_whatsapp
+from app.workspace.business import router as workspace_business_router
 from app.workspace.repository import PostgrestWorkspaceRepository
 from app.workspace.routes import router as workspace_router
 
@@ -1120,6 +1121,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(team_router)
     app.include_router(team_public_router)
     app.include_router(workspace_router)
+    app.include_router(workspace_business_router)
     app.include_router(notifications_router)
     app.include_router(notifications_me_router)
     app.include_router(suppression_router)

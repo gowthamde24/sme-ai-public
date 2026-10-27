@@ -1,12 +1,14 @@
-"""ADR 0016 at the API: an Owner or Admin with a password-only (aal1) session, or a token with no
-aal claim, is refused the privileged actions with 403 mfa_required; a second-factor (aal2) session
-is allowed; Sales and Viewers are never asked (they get the plain role refusal, so the session level
+"""ADR 0016 at the API, as changed by ADR 0115 (the second factor is OPTIONAL): an Owner or Admin whose sign-in is not recent (older than 10 minutes, or a token that states no sign-in time) is refused the
+privileged actions with 403 mfa_required (reason recent_sign_in); a recent sign-in is allowed whatever its assurance level (a person who turned the authenticator on is asked for the code by the database); Sales and Viewers are never asked (they get the plain role refusal, so the session level
 is no oracle); reads and ordinary work are unaffected. The database enforces the erasure actions and
 the agents switch again (pgTAP 47, tests/integration/test_mfa_enforcement.py)."""
+
+# ruff: noqa: E501
 
 from __future__ import annotations
 
 import json
+import time
 import uuid
 from pathlib import Path
 from typing import Any
@@ -49,16 +51,38 @@ def call(env: Env, who: str, method: str, path: str, body: Any, **claims: Any) -
     return env.client.request(method, BASE + path, json=body, headers=auth(who, **claims))
 
 
+OLD = int(time.time()) - 3600
+STALE = (
+    {"aal": "aal1"},  # the old tests' "password-only session": the helper makes it sign in an hour ago
+    {"aal": "aal2", "iat": OLD},  # a code was entered, but long ago
+    {"aal": "aal1", "iat": int(time.time()), "amr": [{"method": "password", "timestamp": OLD}]},  # a fresh token, an old sign-in
+)
+FRESH = (
+    {"aal": "aal1", "iat": int(time.time())},  # a person with no second factor, signed in just now (Google or a password)
+    {"aal": None},  # no aal claim: the sign-in is recent, which is what is asked
+    {"aal": "aal2"},
+    {"aal": "aal1", "iat": OLD, "amr": [{"method": "oauth", "timestamp": int(time.time()) - 60}]},  # an old token, a Google sign-in a minute ago
+)
+
+
 @pytest.mark.parametrize(("method", "path", "body"), ACTIONS)
 @pytest.mark.parametrize("who", ["a_owner", "a_admin"])
-def test_a_password_only_session_is_refused(method: str, path: str, body: Any, who: str) -> None:
+def test_a_sign_in_that_is_not_recent_is_refused(method: str, path: str, body: Any, who: str) -> None:
     env = Env()
-    for claim in ({"aal": "aal1"}, {"aal": None}, {"aal": "AAL2"}, {"aal": "aal3"}, {"aal": ""}):
+    for claim in STALE:
         r = call(env, who, method, path, body, **claim)
         assert r.status_code == 403, (who, path, claim, r.text)
         if who == "a_admin" and path.endswith("/execute"):
             continue  # only the Owner runs an erasure: the plain role refusal comes first
-        assert r.json()["error"]["code"] == "mfa_required", (who, path, claim)
+        assert r.json()["error"]["code"] == "mfa_required" and r.json()["error"]["reason"] == "recent_sign_in", (who, path, claim)
+
+
+@pytest.mark.parametrize(("method", "path", "body"), ACTIONS)
+def test_a_recent_sign_in_is_enough_whatever_its_assurance_level(method: str, path: str, body: Any) -> None:
+    for claim in FRESH:
+        env = Env()
+        r = call(env, "a_owner", method, path, body, **claim)
+        assert r.status_code < 400, (path, claim, r.status_code, r.text)
 
 
 @pytest.mark.parametrize(("method", "path", "body"), ACTIONS)

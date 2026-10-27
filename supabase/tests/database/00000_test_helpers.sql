@@ -35,7 +35,12 @@ begin
         -- the session's assurance level (ADR 0016): aal2 unless a test sets tests.jwt_aal to 'aal1', or to 'absent' to omit the claim
         || case coalesce(nullif(current_setting('tests.jwt_aal', true), ''), 'aal2')
              when 'absent' then '{}'::jsonb
-             else jsonb_build_object('aal', coalesce(nullif(current_setting('tests.jwt_aal', true), ''), 'aal2')) end)::text,
+             else jsonb_build_object('aal', coalesce(nullif(current_setting('tests.jwt_aal', true), ''), 'aal2')) end
+        -- job DT (ADR 0115): a sensitive action needs a RECENT sign-in (the newest `amr` timestamp, else `iat`, within 10 minutes). A test session signed in just now, except: 'aal1' is the old tests' "password-only
+        -- session", which stays refused by being an HOUR old; 'absent' has no sign-in time at all; tests.jwt_signin_age (seconds ago) sets it directly.
+        || case when coalesce(nullif(current_setting('tests.jwt_aal', true), ''), 'aal2') = 'absent' then '{}'::jsonb
+                else jsonb_build_object('iat', extract(epoch from now())::bigint - coalesce(nullif(current_setting('tests.jwt_signin_age', true), '')::bigint,
+                       case when coalesce(nullif(current_setting('tests.jwt_aal', true), ''), 'aal2') = 'aal1' then 3600 else 0 end)) end)::text,
       true
     );
     perform set_config('request.jwt.claim.sub', p_uid::text, true);
@@ -689,6 +694,13 @@ end $$;
 
 
 -- Run following statements at a given assurance level (ADR 0016): tests.as_aal('aal1') / 'aal2' / 'absent'. Transaction-local.
+-- Job DT: how long ago the session signed in, in seconds (null = the default of the assurance level). Transaction-local.
+create or replace function tests.as_signin_age(p bigint) returns void
+language plpgsql as $$
+begin
+  perform set_config('tests.jwt_signin_age', coalesce(p::text, ''), true);
+end $$;
+
 create or replace function tests.as_aal(p text) returns void
 language plpgsql as $$
 begin

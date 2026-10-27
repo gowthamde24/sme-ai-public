@@ -52,7 +52,8 @@ def test_there_are_the_three_deep_business_types_and_the_nine_leads_and_calls_ty
     # job DR / A1: the three deep packs of the blueprint, plus the nine "Leads & calls" business types (data only, each with a leads.json)
     deep = {"construction_materials", "education", "textiles"}
     nine = {"real_estate", "coaching", "clinic", "insurance_loans", "auto_dealer", "interiors_solar", "travel", "gym", "wholesale_b2b"}
-    assert set(pc.load_packs()) == deep | nine
+    general = {"general_business"}  # job DT: "Other business", the generic Lead Desk type
+    assert set(pc.load_packs()) == deep | nine | general
 
 
 def test_exactly_one_pack_is_the_default_and_it_is_the_published_textile_pack() -> None:

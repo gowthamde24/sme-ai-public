@@ -4,6 +4,7 @@ Sarvam credits are limited, so a sample is cached for 24 hours per (workspace, v
 
 from __future__ import annotations
 
+import hashlib
 import re
 import threading
 import time
@@ -50,12 +51,29 @@ def line_for(language: str, style: str, name: str, business: str) -> str:
     return settings_data.sample(None, language, "warm" if style == "warm" else "quick", name, business)
 
 
+# One reply after the opening line, so the preview sounds like a call and not a recording of one sentence ("call me later": the model line of native-lines/te.md; hi and kn are drafts for a native reader).
+# Tamil and Malayalam have no reply line yet: their preview is the opening line alone.
+REPLIES = {
+    "en": "Sure, no problem. Which time shall I call you? Six in the evening, is that okay?",
+    "te": "సరేనండీ, no problem. ఏ time కి call చేయమంటారు? సాయంత్రం ఆరు గంటలకి ఓకేనా?",
+    "hi": "ठीक है, कोई बात नहीं। मैं किस time पर call करूँ? शाम को छह बजे ठीक रहेगा?",
+    "kn": "ಸರಿ ಸರ್, no problem. ಯಾವ time ಗೆ call ಮಾಡಲಿ? ಸಂಜೆ ಆರು ಗಂಟೆಗೆ ಓಕೆನಾ?",
+}
+
+
+def preview_text(language: str, style: str, name: str, business: str) -> str:
+    """What the preview says: the opening line with the workspace's REAL assistant name and business name, then one reply."""
+    reply = REPLIES.get(language)
+    opening = line_for(language, style, name, business)
+    return f"{opening} {reply}" if reply else opening
+
+
 class VoiceSampleService:
     def __init__(self, tts: TextToSpeech | None, *, clock: Callable[[], float] = time.monotonic, today: Callable[[], str] | None = None) -> None:
         self._tts = tts
         self._clock = clock
         self._today = today or (lambda: time.strftime("%Y-%m-%d", time.gmtime()))
-        self._cache: dict[tuple[uuid.UUID, str, str, str, str], _Entry] = {}
+        self._cache: dict[tuple[uuid.UUID, str, str, str, str], _Entry] = {}   # (workspace, voice, language, style, sha-256 of the SPOKEN TEXT): a renamed business never hears an old name
         self._minute = SlidingWindow(PER_MINUTE, 60.0, clock=clock)
         self._spent: dict[tuple[uuid.UUID, str], int] = {}
         self._lock = threading.Lock()
@@ -69,7 +87,22 @@ class VoiceSampleService:
         chosen = (name or DEFAULT_NAME).strip()
         if not NAME_OK.match(chosen):
             raise NoSample
-        key = (tenant_id, voice, language, style, chosen)
+        return self._speak(tenant_id, voice, language, style, line_for(language, style, chosen, business))
+
+    def preview(self, tenant_id: uuid.UUID, business: str, voice: str, language: str, style: str, name: str | None) -> tuple[str, Speech]:
+        """The opening line and one reply, in the workspace's real names, language and way of sounding (the same cache, rate limit and daily cap as the sample)."""
+        if not self.available() or self._tts is None or voice not in PERSONAS or language not in LANGUAGES or style not in STYLES:
+            raise NoSample
+        chosen = (name or DEFAULT_NAME).strip()
+        if not NAME_OK.match(chosen):
+            raise NoSample
+        text = preview_text(language, style, chosen, business)
+        return text, self._speak(tenant_id, voice, language, style, text)
+
+    def _speak(self, tenant_id: uuid.UUID, voice: str, language: str, style: str, text: str) -> Speech:
+        if self._tts is None:
+            raise NoSample
+        key = (tenant_id, voice, language, style, hashlib.sha256(text.encode()).hexdigest())
         now = self._clock()
         with self._lock:
             hit = self._cache.get(key)
@@ -77,7 +110,6 @@ class VoiceSampleService:
                 return hit.speech
         if not self._minute.allow(str(tenant_id)):
             raise RateLimited(int(self._minute.retry_after(str(tenant_id))) or 1)
-        text = line_for(language, style, chosen, business)
         day = (tenant_id, self._today())
         with self._lock:
             if self._spent.get(day, 0) + len(text) > DAILY_CHAR_CAP:

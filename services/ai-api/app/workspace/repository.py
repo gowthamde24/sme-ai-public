@@ -7,17 +7,27 @@ from datetime import date
 from typing import Any, Protocol
 
 from app.rpc_base import RpcClient
+from app.workspace.errors import TypeChangeRefusedError
 
 
 class WorkspaceRepository(Protocol):
     def profile(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def save_profile(self, token: str, tenant_id: uuid.UUID, name: str | None, town: str | None, languages: list[str] | None) -> dict[str, Any]: ...
     def weekly_report(self, token: str, tenant_id: uuid.UUID, week_start: date | None) -> dict[str, Any]: ...
+    # job DT (ADR 0115): the business profile, the members' own profiles, the images bucket and the sign-in status
+    def business(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def save_business(self, token: str, tenant_id: uuid.UUID, patch: dict[str, Any]) -> dict[str, Any]: ...
+    def ensure_images_bucket(self, token: str, tenant_id: uuid.UUID) -> str: ...
+    def set_logo(self, token: str, tenant_id: uuid.UUID, path: str | None) -> dict[str, Any]: ...
+    def my_profile(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def save_my_profile(self, token: str, tenant_id: uuid.UUID, patch: dict[str, Any]) -> dict[str, Any]: ...
+    def people(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
+    def account_security(self, token: str) -> dict[str, Any]: ...
 
 
 class PostgrestWorkspaceRepository:
     def __init__(self, rest_url: str, anon_key: str, *, rpc: RpcClient | None = None) -> None:
-        self._rpc = rpc or RpcClient(rest_url, anon_key)
+        self._rpc = rpc or RpcClient(rest_url, anon_key, {"SM791": TypeChangeRefusedError})
 
     def profile(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "workspace_profile_get", {"p_tenant_id": str(tenant_id)})
@@ -27,3 +37,29 @@ class PostgrestWorkspaceRepository:
 
     def weekly_report(self, token: str, tenant_id: uuid.UUID, week_start: date | None) -> dict[str, Any]:
         return self._rpc.object(token, "weekly_report", {"p_tenant_id": str(tenant_id), "p_week_start": week_start.isoformat() if week_start else None})
+
+    def business(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "workspace_business_get", {"p_tenant_id": str(tenant_id)})
+
+    def save_business(self, token: str, tenant_id: uuid.UUID, patch: dict[str, Any]) -> dict[str, Any]:
+        return self._rpc.object(token, "workspace_business_set", {"p_tenant_id": str(tenant_id), "p_patch": patch})
+
+    def ensure_images_bucket(self, token: str, tenant_id: uuid.UUID) -> str:
+        bucket = self._rpc.call(token, "workspace_images_ensure_bucket", {"p_tenant_id": str(tenant_id)})
+        return str(bucket)
+
+    def set_logo(self, token: str, tenant_id: uuid.UUID, path: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "workspace_logo_set", {"p_tenant_id": str(tenant_id), "p_path": path})
+
+    def my_profile(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "my_profile_get", {"p_tenant_id": str(tenant_id)})
+
+    def save_my_profile(self, token: str, tenant_id: uuid.UUID, patch: dict[str, Any]) -> dict[str, Any]:
+        return self._rpc.object(token, "my_profile_set", {"p_tenant_id": str(tenant_id), "p_patch": patch})
+
+    def people(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
+        result = self._rpc.call(token, "people_profiles", {"p_tenant_id": str(tenant_id)})
+        return [r for r in result if isinstance(r, dict)] if isinstance(result, list) else []
+
+    def account_security(self, token: str) -> dict[str, Any]:
+        return self._rpc.object(token, "account_security_get", {})

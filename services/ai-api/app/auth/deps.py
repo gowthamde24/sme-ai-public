@@ -77,6 +77,10 @@ from app.workspace.repository import WorkspaceRepository
 
 logger = logging.getLogger("app.auth")
 
+# a sensitive action (export, delete, send marks, approvals, rules) needs a sign-in no newer
+# than this many seconds ago (ADR 0115)
+RECENT_SIGN_IN_SECONDS = 600
+
 
 @dataclass(frozen=True)
 class Runtime:
@@ -202,9 +206,11 @@ def get_principal(request: Request, runtime: RuntimeDep) -> Principal:
 def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., TenantContext]:
     """Dependency factory. No roles given = any member of the tenant.
 
-    `strong=True` (ADR 0016): an Owner or Admin must also hold an aal2 session (a second factor was
-    entered). It is checked AFTER the role, so a caller who may not do the action at all gets the
-    plain 403 and nothing about their session level. Sales and Viewers are never asked.
+    `strong=True` (ADR 0016, changed by ADR 0115): an Owner or Admin must have signed in RECENTLY
+    (10 minutes); the second factor is optional and, when the person turned it on, the database
+    asks for the code (SM306). It is checked AFTER the role, so a caller who may not do the
+    action at all gets the plain 403 and nothing about their session level. Sales and Viewers are
+    never asked.
 
     Unknown, malformed and foreign tenant ids all give the same 404, so a caller cannot probe for
     existence. A member whose role is too low gets 403: they already know the tenant exists.
@@ -231,8 +237,11 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             # signing in and exporting stay; every change, send, AI and call stops); one still
             # waiting for WhatsApp holds the sends, AI and calls. "full" while the switch is off.
             runtime.billing.ensure(principal.token, parsed, kind)
-        if strong and membership.role in (Role.OWNER, Role.ADMIN) and principal.aal != "aal2":
-            raise mfa_required()
+        needs_recent = strong and membership.role in (Role.OWNER, Role.ADMIN)
+        if needs_recent and not principal.signed_in_within(RECENT_SIGN_IN_SECONDS):
+            # ADR 0115: the second factor is optional; a sensitive action needs a RECENT sign-in.
+            # (A person who turned the authenticator on is also asked for the code: the database.)
+            raise mfa_required("recent_sign_in")
         if runtime.policy_gate is not None:
             # job BN: a changed terms or privacy version must be accepted first (POLICY_ENFORCE)
             user = str(principal.user_id)

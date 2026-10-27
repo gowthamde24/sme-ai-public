@@ -329,35 +329,42 @@ def test_the_api_refuses_a_password_only_owner_or_admin_and_allows_a_second_fact
     )
 
 
-# ------------------------------------------------------------------------------ no authenticator; unenrol; the operator reset
-def test_no_enrolment_no_action_then_enrolled_and_allowed(w: World, signup: Any) -> None:
+# ------------------------------------------------------------------------------ the authenticator is OPTIONAL (ADR 0115); unenrol; the operator reset
+def test_no_authenticator_is_needed_until_the_person_turns_one_on(w: World, signup: Any) -> None:
     owner: User = signup("mfa-lone-owner", mfa=False)
     made = w.client.post(
         "/v1/tenants", json={"name": "Lone", "slug": f"lone-{uid()[:8]}"}, headers=bearer(owner)
     )
-    assert made.status_code == 200, (
-        "creating a workspace is the trusted role's job: no factor needed yet"
-    )
+    assert made.status_code == 200, "creating a workspace is the trusted role's job"
     tenant = made.json()["id"]
     base = f"/v1/tenants/{tenant}"
-    assert api_is_mfa(
-        w.client.put(base + "/agent-settings", json={"enabled": False}, headers=bearer(owner))
+    # a person with NO authenticator, signed in just now, may do a sensitive action (the API and the database alike)
+    assert (
+        w.client.put(
+            base + "/agent-settings", json={"enabled": False}, headers=bearer(owner)
+        ).status_code
+        == 200
     )
-    assert is_mfa(
-        pg(
-            w.stack,
-            owner,
-            "PATCH",
-            f"/tenants?id=eq.{tenant}",
-            json={"name": "Lone 2"},
-            representation=False,
-        )
+    renamed = pg(
+        w.stack, owner, "PATCH", f"/tenants?id=eq.{tenant}", json={"name": "Lone 2"}, representation=False
     )
+    assert renamed.status_code in (200, 204), renamed.text
+    # ...and the Owner edits the business profile whatever the session
+    profile = w.client.patch(
+        base + "/workspace/profile", json={"name": "Lone 3"}, headers=bearer(owner)
+    )
+    assert profile.status_code == 200 and profile.json()["name"] == "Lone 3", profile.text
+    # turning an authenticator ON makes a password-only session of the same person refused
     factor_id, secret = enroll_totp(w.stack, owner.token)
     done = challenge_verify(w.stack, owner.token, factor_id, secret)
     assert done.status_code == 200
     upgraded = dataclasses.replace(owner, token=done.json()["access_token"])
     assert level(upgraded.token) == "aal2"
+    weak = at(w.stack, owner, "aal1")
+    assert api_is_mfa(w.client.put(base + "/agent-settings", json={"enabled": False}, headers=bearer(weak)))
+    assert is_mfa(
+        pg(w.stack, weak, "PATCH", f"/tenants?id=eq.{tenant}", json={"name": "Lone 4"}, representation=False)
+    )
     assert (
         w.client.put(
             base + "/agent-settings", json={"enabled": False}, headers=bearer(upgraded)
