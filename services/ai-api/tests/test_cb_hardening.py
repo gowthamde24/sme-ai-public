@@ -379,7 +379,7 @@ def test_the_documentation_is_on_in_development_and_off_in_production() -> None:
     exposed = TestClient(create_app(Settings(_env_file=None, **{**VALID_PROD, "expose_api_docs": True})))  # type: ignore[call-arg]
     assert exposed.get("/openapi.json").status_code == 200
     r = prod.get("/health")
-    assert r.headers["strict-transport-security"].startswith("max-age=31536000")
+    assert r.headers["strict-transport-security"].startswith("max-age=63072000")
 
 
 def test_cors_answers_only_the_configured_origins_and_never_with_credentials() -> None:

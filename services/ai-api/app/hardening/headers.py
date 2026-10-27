@@ -35,7 +35,7 @@ def api_headers(production: bool, documentation: bool) -> list[tuple[bytes, byte
     if not documentation:
         headers.append((b"cache-control", b"no-store"))
     if production:
-        headers.append((b"strict-transport-security", b"max-age=31536000; includeSubDomains"))
+        headers.append((b"strict-transport-security", b"max-age=63072000; includeSubDomains; preload"))
     return headers
 
 

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from collections.abc import Awaitable, Callable, MutableMapping
 from dataclasses import dataclass
 from typing import Any
@@ -61,6 +62,33 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
 )
 
 
+@dataclass(frozen=True)
+class AccountRule:
+    """A per-ACCOUNT allowance (a hash of the bearer token) for a route that spends money or work: the voice preview, Ask, a task plan, an import (job DT, security audit)."""
+
+    name: str
+    pattern: re.Pattern[str]
+    limit: int  # per minute per account
+
+
+ACCOUNT_RULES: tuple[AccountRule, ...] = (
+    AccountRule("voice_preview", re.compile(r"/ai-assistant/voice-(preview|sample)"), 12),
+    AccountRule("ask", re.compile(r"/assistant/messages$"), 20),
+    AccountRule("task_plan", re.compile(r"/tasks/plan$"), 10),
+    AccountRule("imports", re.compile(r"/lead-imports(/read|/preview)?$"), 20),
+    AccountRule("uploads", re.compile(r"/(workspace/logo|me/picture)$"), 10),
+)
+
+
+def account_rule(path: str, method: str) -> AccountRule | None:
+    if method != "POST" and not path.endswith(("voice-preview", "voice-sample")):
+        return None
+    for rule in ACCOUNT_RULES:
+        if rule.pattern.search(path):
+            return rule
+    return None
+
+
 def public_rule(path: str) -> PublicRule | None:
     for rule in PUBLIC_RULES:
         if (path == rule.prefix) if rule.exact else path.startswith(rule.prefix):
@@ -77,8 +105,9 @@ class RateLimiter:
         self._token = SlidingWindow(TOKEN_LIMIT, 60.0, **kw)
         self._failures = SlidingWindow(FAIL_LIMIT, FAIL_WINDOW, **kw)
         self._suspect = SlidingWindow(SUSPECT_LIMIT, 60.0, **kw)
+        self._account = {rule.name: SlidingWindow(rule.limit, 60.0, **kw) for rule in ACCOUNT_RULES}
 
-    def check(self, path: str, ip: str, authorization: str | None) -> tuple[str, int] | None:
+    def check(self, path: str, ip: str, authorization: str | None, method: str = "GET") -> tuple[str, int] | None:
         """None when the request may go; else (the name of the rule that refused it, seconds to wait)."""
         rule = public_rule(path)
         if rule is not None:
@@ -95,6 +124,11 @@ class RateLimiter:
             key = hashlib.sha256(authorization.encode()).hexdigest()[:24]
             if not self._token.allow(key):
                 return "token", self._token.retry_after(key)
+            account = account_rule(path, method)
+            if account is not None:
+                window = self._account[account.name]
+                if not window.allow(f"{account.name}:{key}"):
+                    return account.name, window.retry_after(f"{account.name}:{key}")
         return None
 
     def failed(self, ip: str) -> None:
@@ -119,7 +153,7 @@ class RateLimitMiddleware:
             return
         ip = client_ip(scope, self.hops)
         auth = next((v.decode("latin-1") for k, v in scope["headers"] if k == b"authorization"), None)
-        refused = self.limiter.check(scope["path"], ip, auth)
+        refused = self.limiter.check(scope["path"], ip, auth, scope["method"])
         if refused is not None:
             rule, wait = refused
             if self.on_limited is not None:

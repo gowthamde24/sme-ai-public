@@ -77,6 +77,7 @@ from app.followups.routes import router as followups_router
 from app.hardening.headers import SecurityHeadersMiddleware
 from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
 from app.hardening.ops_routes import build_router as build_ops_router
+from app.hardening.originlock import OriginLockMiddleware
 from app.hardening.ratelimit import RateLimitMiddleware
 from app.integrations import errors as integration_errors
 from app.integrations.policy import PolicyVersions
@@ -1035,6 +1036,12 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
             trusted_hops=settings.trusted_proxy_hops,
             on_limited=metrics.limit_hit,
         )
+    app.add_middleware(
+        OriginLockMiddleware,
+        secret=(
+            settings.origin_lock_secret.get_secret_value() if settings.origin_lock_secret else None
+        ),
+    )
     app.add_middleware(SecurityHeadersMiddleware, production=not settings.is_development)
     app.add_middleware(ObserveMiddleware, metrics=metrics, trusted_hops=settings.trusted_proxy_hops)
     app.include_router(

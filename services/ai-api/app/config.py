@@ -42,6 +42,10 @@ class Settings(BaseSettings):
     trusted_proxy_hops: int = 0
     # /metrics answers 404 unless this is set, and then only to `Authorization: Bearer <it>`
     metrics_token: SecretStr | None = None
+    # job DT (security): when set, the API answers only requests that carry this secret in
+    # X-Stack19-Origin (the Cloudflare Worker adds it), except /health and /ready; unset = no
+    # lock (docs/runbooks/origin-lock.md)
+    origin_lock_secret: SecretStr | None = None
     # Job DP part 6: error reporting. Unset (the default) = nothing is imported or sent.
     # The DSN is a project address with a public key, set per environment; never logged.
     sentry_dsn: SecretStr | None = None
