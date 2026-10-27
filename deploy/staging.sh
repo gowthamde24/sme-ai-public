@@ -62,14 +62,14 @@ export SUPABASE_URL SUPABASE_PUBLISHABLE_KEY
 export API_URL="https://sme-api-$PROJECT_NUMBER.$REGION.run.app"
 export MAIL_DOMAIN="${MAIL_DOMAIN:-stack19.com}"   # the domain verified at the e-mail provider; the addresses are made from it here, never written out (job RESEND)
 export PRIVACY_EMAIL="${PRIVACY_EMAIL:-privacy@${MAIL_DOMAIN}}" HELLO_EMAIL="${HELLO_EMAIL:-hello@${MAIL_DOMAIN}}"   # the inboxes of the privacy notice and the waitlist (job DQ, DPDP)
+# the privacy notices (a full export or a deletion of the workspace is e-mailed to the Owner afterwards, job DT) are sent by the API with the same provider settings as the worker (cloudrun.sh adds EXTRA_ENV_2 to the API)
+export EXTRA_ENV_2="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN}"
 export WEB_ORIGIN="${WEB_ORIGIN:-https://staging.stack19.com}"   # the address the web is served from (the API's CORS fence, the sitemap): the custom domain, a Cloudflare Worker in front of the run.app address (docs/ops/staging.md)
 export BUILD_SA="sme-build@$PROJECT_ID.iam.gserviceaccount.com"
 dirty=""; git diff --quiet HEAD -- . 2>/dev/null || dirty="-dirty$(date +%H%M%S)"
 export TAG="${TAG:-$(git rev-parse --short HEAD)$dirty}"   # TAG=<tag> names the tag to build and deploy
 
 if [ "$what" = "api" ] || [ "$what" = "all" ]; then
-  # the privacy notices (a full export or a deletion of the workspace is e-mailed to the Owner afterwards, job DT) are sent by the API with the same provider settings as the worker
-  export EXTRA_ENV_2="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN}"
   # AI: Anthropic's cheapest model, the key from Secret Manager, a low spend (prices in millionths of a rupee per million tokens at 90 rupees to the dollar: Haiku 5.5 is $0.10 in, $0.50 out per million).
   # CPU is allocated while an instance is up (the agents run in threads) but min-instances 0 means no fixed cost: it scales to zero when idle.
   RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=0 \
