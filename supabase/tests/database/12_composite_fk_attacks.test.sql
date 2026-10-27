@@ -29,6 +29,18 @@ select tests.rid('b_fk_visit'), tests.tid('b'), l.id, l.contact_id, date '2026-1
 insert into public.custom_field_defs (id, tenant_id, entity, code, label, kind, source)
 values (tests.rid('b_fk_def'), tests.tid('b'), 'contact', 'b_fk_def', '{"en": "Synthetic field"}'::jsonb, 'text', 'owner');
 
+-- job DR part A1: a drafted fact references the source it was read from; the generic attack needs a tenant-B source to aim at
+insert into public.knowledge_sources (id, tenant_id, kind, title, text, chars, status, created_by)
+values (tests.rid('b_fk_ksrc'), tests.tid('b'), 'paste', 'Synthetic source', 'Synthetic text', 14, 'read', tests.uid('b_owner'));
+
+-- job DR part A2: a consent confirmation, an import part and an unparsed mail reference a live source / a consent; the generic attack needs tenant-B parents to aim at
+insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, token_hint, created_by)
+values (tests.rid('b_fk_lsrc'), tests.tid('b'), 'webhook', 'webhook', 'Synthetic source', repeat('a', 64), 'abcd', tests.uid('b_owner'));
+insert into public.lead_consents (id, tenant_id, list_name, purpose, basis, how_collected, statement_version, confirmed_by)
+values (tests.rid('b_fk_lcn'), tests.tid('b'), 'Synthetic list', 'Synthetic purpose', 'explicit_consent', 'Synthetic way', 'dr-2026-10-27', tests.uid('b_owner'));
+insert into public.lead_intakes (id, tenant_id, import_id, kind, source_tag, content_sha, rows_read, counts, created_by)
+values (tests.rid('b_fk_lint'), tests.tid('b'), tests.rid('b_fk_lint'), 'paste', 'pasted_list', repeat('b', 64), 1, '{}'::jsonb, tests.uid('b_owner'));
+
 -- job AY: the photos of a message reference a catalogue photo of the business, and a photo its item; the generic attack needs a tenant-B item and photo to aim at
 insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by)
 values (tests.rid('b_fk_item'), tests.tid('b'), 'Synthetic saree', 'soft_silk', array['red'], '5k_10k', tests.uid('b_owner'));
@@ -43,8 +55,28 @@ declare
   r record;
 begin
   for r in select * from tests.tenant_table_registry
-            where table_name in ('customer_sites', 'ledger_accounts', 'ledger_entries', 'campaigns', 'campaign_recipients', 'campaign_steps', 'call_list_items', 'material_quote_policies', 'material_quotes', 'material_quote_lines', 'delivery_trips', 'delivery_trip_lines', 'delivery_trip_events', 'programmes', 'programme_groups', 'students', 'admissions', 'admission_events', 'fee_plans', 'fee_plan_lines', 'fee_assignments')
+            where table_name in ('tasks', 'customer_sites', 'ledger_accounts', 'ledger_entries', 'campaigns', 'campaign_recipients', 'campaign_steps', 'call_list_items', 'material_quote_policies', 'material_quotes', 'material_quote_lines', 'delivery_trips', 'delivery_trip_lines', 'delivery_trip_events', 'programmes', 'programme_groups', 'students', 'admissions', 'admission_events', 'fee_plans', 'fee_plan_lines', 'fee_assignments')
             order by table_name loop
+    execute format(r.insert_sql, tests.tid('b'), gen_random_uuid(), tests.rid('b_company'), tests.rid('b_contact'), tests.pool_uid(3));
+  end loop;
+end $$;
+
+-- job DR A3: an outcome's details, an attempt and an item reference outcomes, items, batches and rules; the generic attack needs tenant-B rows of each kind to aim at
+do $$
+declare
+  r record;
+begin
+  for r in select * from tests.tenant_table_registry where table_name in ('outcomes', 'outreach_batches', 'outreach_rules', 'outreach_items') order by table_name loop
+    execute format(r.insert_sql, tests.tid('b'), gen_random_uuid(), tests.rid('b_company'), tests.rid('b_contact'), tests.pool_uid(3));
+  end loop;
+end $$;
+
+-- job DS part E2: a pack references its invoice and a draw its pack; the generic attack needs tenant-B rows of each kind to aim at
+do $$
+declare
+  r record;
+begin
+  for r in select * from tests.tenant_table_registry where table_name in ('billing_invoices', 'billing_topup_purchases') order by table_name loop
     execute format(r.insert_sql, tests.tid('b'), gen_random_uuid(), tests.rid('b_company'), tests.rid('b_contact'), tests.pool_uid(3));
   end loop;
 end $$;
@@ -136,6 +168,8 @@ begin
                                                             'edu_rows_guard', 'admissions_guard', 'fee_rows_guard',
                                                             -- job DP part 2: the marks send log changes only from pending to sent or failed
                                                             'marks_send_log_guard',
+                                                            -- job DS part E2: invoices, packs and draws are written once and never changed
+                                                            'billing_rows_guard',
                                                             -- job CV: voice settings, choices and the campaign switch change only through their functions; the ledger never
                                                             'voice_rows_guard',
                                                             -- job DM: an outcome keeps its source, its customer and its time (its immutability guard)
@@ -147,6 +181,8 @@ begin
                                         when k.child = 'agent_runs' and k.child_col in ('lead_id', 'enquiry_id', 'conversation_id') then '23514:%'
                                         -- job CK: a contact's value re-pointed at an item trips the exactly-one-entity CHECK first (the insert path of the same reference is attacked in section B)
                                         when k.child = 'custom_field_values' and k.child_col = 'catalogue_item_id' then '23514:%'
+                                        -- job DR A3: an item belongs to exactly one of a batch or a rule, so re-pointing the rule of a batch's item trips that CHECK first
+                                        when k.child = 'outreach_items' and k.child_col = 'rule_id' then '23514:%'
                                         else '23503:%' end),
                    label || ': privileged re-point at tenant B is refused (' || p_foreign || ')');
     return next is(p_foreign, p_missing, label || ': privileged, foreign id fails exactly like a nonexistent id');

@@ -1,0 +1,58 @@
+{
+ "$comment": "Job DS (owner feedback 26 Oct): how the assistant TALKS. The register rules per language and speaking style, the regions, and a small list of formal or written forms that spoken language avoids (used by the model-compare check). Telugu is approved by the owner (native-lines/te.md); everything else is a draft for a native reader.",
+ "styles": ["everyday_mixed", "everyday_pure", "formal"],
+ "default_style": "everyday_mixed",
+ "regions": {
+  "te": ["neutral", "coastal", "telangana", "rayalaseema"],
+  "ta": ["neutral", "chennai", "kongu"],
+  "kn": ["neutral", "bengaluru", "north_karnataka"],
+  "hi": ["neutral"],
+  "ml": ["neutral"],
+  "en": ["neutral"]
+ },
+ "status": {"te": "approved", "hi": "draft", "kn": "draft", "ta": "draft", "ml": "draft", "en": "draft"},
+ "common": {
+  "everyday_mixed": [
+   "Talk the way people talk on the phone or in a WhatsApp chat, not the way a book is written.",
+   "Short sentences, one idea each. Never more than two sentences before asking something or stopping.",
+   "Use the spoken verb forms, never the written (literary) ones.",
+   "Keep everyday English nouns in English, written in Latin letters: saree, stock, offer, price, WhatsApp, photos, booking, site visit, fees, order, delivery, colour, shop, owner, call, message, OK, sorry, thank you.",
+   "Say numbers the way people say them: a price in words ('two thousand six hundred rupees' in the language) or digits with commas for big amounts; never read digits one by one.",
+   "Use the polite particle of the language in most sentences (the examples show it). No Sanskritised or literary words when an everyday word exists."
+  ],
+  "everyday_pure": [
+   "Talk the way people talk on the phone, but use the language's own everyday word where one exists instead of an English word.",
+   "Short sentences, one idea each. Use the spoken verb forms, never the written (literary) ones.",
+   "Keep only the English words people never translate (WhatsApp, OK, sorry, thank you, photos).",
+   "Say numbers the way people say them. Use the polite particle of the language. No Sanskritised words."
+  ],
+  "formal": [
+   "Use polite, complete written-style sentences, as in a letter to a customer.",
+   "Keep names and brand words as they are. Say numbers in words or digits with commas."
+  ]
+ },
+ "language_rules": {
+  "te": [
+   "Telugu: spoken forms such as 'మాట్లాడొచ్చా', 'పంపమంటారా', 'చేయమంటారా', 'చెప్తాను'; never 'మాట్లాడవచ్చా', 'పంపుతాను' as a bare formal verb, 'తెలియజేయండి', 'దయచేసి'.",
+   "Telugu: 'అండీ' (or 'గారు' for the owner) in most lines. 'AI assistant' stays in English; write 'AI assistant ని', not 'అసిస్టెంట్‌ని'. Thanks is 'Thank you అండీ' (not 'ధన్యవాదాలు'), sorry is 'sorry'."
+  ],
+  "hi": ["Hindi: everyday Hindi-English (Hinglish) with 'जी'; 'कृपया', 'धन्यवाद', 'प्रवेश', 'उपलब्ध' are written forms: say 'please', 'thank you', 'admission', 'available' in English as people do, or rephrase. Say 'class' (not 'कक्षा') and 'admission' (not 'प्रवेश')."],
+  "kn": ["Kannada: spoken forms such as 'ಮಾತಾಡ್ತೀನಿ', 'ಹೇಳ್ತೀನಿ', 'ಕಳಿಸ್ಲಾ' with 'ರೀ'; not 'ಮಾತನಾಡುತ್ತೇನೆ', 'ಕಳುಹಿಸುತ್ತೇನೆ', 'ದಯವಿಟ್ಟು', 'ಧನ್ಯವಾದಗಳು'."],
+  "ta": ["Tamil: neutral spoken forms such as 'பேசுறேன்', 'சொல்றேன்', 'இருக்கு', 'அனுப்பவா' with 'ங்க'; not 'பேசுகிறேன்', 'அனுப்புகிறேன்', 'உள்ளது', 'தயவுசெய்து'."],
+  "ml": ["Malayalam: spoken forms such as 'പറയാം', 'അയക്കാം', 'ഉണ്ട്', 'അയക്കട്ടെ'; not 'അറിയിക്കുക', 'ലഭ്യമാണ്', 'ദയവായി', 'ചെയ്യുക'."],
+  "en": ["English: contractions, plain words, no 'kindly' or 'do the needful'."]
+ },
+ "regions_hint": {
+  "te": {"coastal": "Lean to coastal Andhra speech where it does not hurt clarity.", "telangana": "Lean to Telangana speech (e.g. 'ఏం చేద్దాం', 'చెప్పండి సార్') where it does not hurt clarity.", "rayalaseema": "Lean lightly to Rayalaseema speech where it does not hurt clarity."},
+  "ta": {"chennai": "Lean to Chennai speech.", "kongu": "Lean to Kongu (Coimbatore) speech."},
+  "kn": {"bengaluru": "Lean to Bengaluru speech, with common English words.", "north_karnataka": "Lean to north Karnataka speech."}
+ },
+ "formal_forms": {
+  "te": ["మాట్లాడవచ్చా", "చేయవచ్చు", "తెలియజేయ", "దయచేసి", "ధన్యవాదాలు", "సంప్రదించ", "అభ్యర్థన", "అసిస్టెంట్‌ని", "తెరిచి ఉన్నాయి", "కృతజ్ఞతలు"],
+  "hi": ["कृपया", "धन्यवाद", "अवश्य", "सूचित", "उपलब्ध", "निवेदन", "हेतु", "पुनः", "प्रवेश", "कक्षा"],
+  "kn": ["ದಯವಿಟ್ಟು", "ಧನ್ಯವಾದ", "ಮಾತನಾಡ", "ಕಳುಹಿಸುತ್ತೇನೆ", "ಸಂಪರ್ಕಿಸ", "ತೆರೆದಿದೆ", "ಅರ್ಜಿ"],
+  "ta": ["தயவுசெய்து", "தயவு செய்து", "தெரிவிக்க", "அனுப்புகிறேன்", "உள்ளது", "திறந்துள்ளது", "கையிருப்பில்", "விரும்பிய", "பேசுகிறேன்"],
+  "ml": ["ദയവായി", "ചെയ്യുക", "അറിയിക്കുക", "ലഭ്യമാണ്", "തുറന്നിട്ടുണ്ട്", "സമ്പർക്ക"],
+  "en": ["kindly", "do the needful", "please be informed", "herewith"]
+ }
+}

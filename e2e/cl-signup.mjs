@@ -212,9 +212,17 @@ async function checkWorkspace(u, label, { offPath }) {
     await page.goto(T, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Load example data" }).click();
     await page.locator("[data-example=loaded]").waitFor({ timeout: 60000 });
-    const rows = psql(`select (select count(*) from public.companies where tenant_id = '${u.tenant}' and name like 'Example: %') || '|' || (select count(*) from public.contacts where tenant_id = '${u.tenant}' and full_name like 'Example: %') || '|' || (select count(*) from public.contacts where tenant_id = '${u.tenant}' and full_name like 'Example: %' and (email is not null or phone is not null))`);
+    const countRows = () => psql(`select (select count(*) from public.companies where tenant_id = '${u.tenant}' and name like 'Example: %') || '|' || (select count(*) from public.contacts where tenant_id = '${u.tenant}' and full_name like 'Example: %') || '|' || (select count(*) from public.contacts where tenant_id = '${u.tenant}' and full_name like 'Example: %' and (email is not null or phone is not null))`);
+    // the rows are written by the API a moment before the screen says "loaded" on a busy machine: look again for a few seconds before judging
+    let rows = countRows();
+    for (let k = 0; k < 6 && rows.startsWith("0|0|"); k++) {
+      await page.waitForTimeout(500);
+      rows = countRows();
+    }
     const [companies, contacts, withContact] = rows.split("|").map(Number);
-    must(companies + contacts > 0 && withContact === 0, `sample rows: ${rows}`);
+    // night 4: the nine "any business with leads" types ship NO example data (they start from a lead template), so for them a load makes an empty batch; the three deep types must make rows
+    const planned = Number(psql(`select coalesce(jsonb_array_length(v.manifest -> 'example_data' -> 'companies'), 0) + coalesce(jsonb_array_length(v.manifest -> 'example_data' -> 'contacts'), 0) from packs.workspace_pack w join packs.pack_versions v on v.code = w.pack_code and v.version = w.pack_version where w.tenant_id = '${u.tenant}'`));
+    must(withContact === 0 && (planned > 0 ? companies + contacts > 0 : companies + contacts === 0), `sample rows: ${rows} (the pack plans ${planned})`);
     await shot(page, `${label}-example-loaded`);
     await page.locator("details summary", { hasText: "Remove example data" }).click();
     await page.getByRole("button", { name: "Yes, remove the example data" }).click();

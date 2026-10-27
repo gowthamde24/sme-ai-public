@@ -559,7 +559,7 @@ async function publicPages(size) {
     ["textiles", "/textiles", /Stack19 for saree/, null],
     ["construction", "/construction", /Stack19 for construction/, null],
     ["education", "/education", /Stack19 for schools/, null],
-    ["privacy", "/privacy", /^Privacy Policy/, /within 7 days[\s\S]*within 30 days|within 7 days/],
+    ["privacy", "/privacy", /^Privacy (Policy|notice)/, /within 7 days[\s\S]*within 30 days|within 7 days/],
     ["terms", "/terms", /^Terms of Use/, null],
     ["data-deletion", "/data-deletion", /^Delete your data/, /within 7 days/],
     ["contact", "/contact", /^Contact/, /hello@stack19\.com/],

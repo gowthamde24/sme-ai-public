@@ -1,7 +1,11 @@
 {
   "$comment": "App e-mails (job RESEND): trial reminders (day 11 and 13 of the 14-day trial) and the 'WhatsApp not connected' reminders (30, 60, 90 days). English, Telugu, Hindi. Telugu and Hindi are DRAFTS awaiting native review. {business} is the workspace's name; {days_left} the days left in the trial. No amount, customer or child data.",
   "status": "draft",
-  "languages": ["en", "te", "hi"],
+  "languages": [
+    "en",
+    "te",
+    "hi"
+  ],
   "trial": {
     "subject": {
       "en": "Your Stack19 trial: {days_left} left",
@@ -9,14 +13,35 @@
       "hi": "आपका Stack19 ट्रायल: {days_left} बाकी"
     },
     "days_left": {
-      "en": {"3": "3 days", "1": "1 day"},
-      "te": {"3": "3 రోజులు", "1": "1 రోజు"},
-      "hi": {"3": "3 दिन", "1": "1 दिन"}
+      "en": {
+        "3": "3 days",
+        "1": "1 day"
+      },
+      "te": {
+        "3": "3 రోజులు",
+        "1": "1 రోజు"
+      },
+      "hi": {
+        "3": "3 दिन",
+        "1": "1 दिन"
+      }
     },
     "lines": {
-      "en": ["Workspace: {business}", "Your free trial ends in {days_left}. After that your plan starts and your first payment is taken, as you agreed when you chose the plan.", "To see your plan, or to cancel before the trial ends, open Plan in the app."],
-      "te": ["వర్క్‌స్పేస్: {business}", "మీ ఉచిత ట్రయల్ {days_left}లో ముగుస్తుంది. ఆ తర్వాత మీరు ప్లాన్ ఎంచుకున్నప్పుడు అంగీకరించినట్లు మీ ప్లాన్ మొదలై మొదటి చెల్లింపు తీసుకోబడుతుంది.", "మీ ప్లాన్ చూడడానికి, లేదా ట్రయల్ ముగిసేలోపు రద్దు చేయడానికి, యాప్‌లో Plan తెరవండి."],
-      "hi": ["वर्कस्पेस: {business}", "आपका मुफ़्त ट्रायल {days_left} में खत्म होगा। उसके बाद आपका प्लान शुरू होगा और पहला भुगतान लिया जाएगा, जैसा आपने प्लान चुनते समय माना था।", "अपना प्लान देखने या ट्रायल खत्म होने से पहले रद्द करने के लिए ऐप में Plan खोलें।"]
+      "en": [
+        "Workspace: {business}",
+        "Your free trial ends in {days_left}. After that your plan starts and your first payment is taken, as you agreed when you chose the plan.",
+        "To see your plan, or to cancel before the trial ends, open Plan in the app."
+      ],
+      "te": [
+        "వర్క్‌స్పేస్: {business}",
+        "మీ ఉచిత ట్రయల్ {days_left}లో ముగుస్తుంది. ఆ తర్వాత మీరు ప్లాన్ ఎంచుకున్నప్పుడు అంగీకరించినట్లు మీ ప్లాన్ మొదలై మొదటి చెల్లింపు తీసుకోబడుతుంది.",
+        "మీ ప్లాన్ చూడడానికి, లేదా ట్రయల్ ముగిసేలోపు రద్దు చేయడానికి, యాప్‌లో Plan తెరవండి."
+      ],
+      "hi": [
+        "वर्कस्पेस: {business}",
+        "आपका मुफ़्त ट्रायल {days_left} में खत्म होगा। उसके बाद आपका प्लान शुरू होगा और पहला भुगतान लिया जाएगा, जैसा आपने प्लान चुनते समय माना था।",
+        "अपना प्लान देखने या ट्रायल खत्म होने से पहले रद्द करने के लिए ऐप में Plan खोलें।"
+      ]
     }
   },
   "pending": {
@@ -26,10 +51,100 @@
       "hi": "अपना मुफ़्त ट्रायल शुरू करने के लिए WhatsApp जोड़ें"
     },
     "lines": {
-      "en": ["Workspace: {business}", "You chose a plan {day} days ago, but your WhatsApp is not connected yet. Your free trial has not started and nothing has been charged: the 14 days begin on the day your WhatsApp is connected.", "Until then you can set up your catalogue, your customers and your AI assistant, but messages, AI calls and campaigns stay off. Open Settings in the app to connect your WhatsApp."],
-      "te": ["వర్క్‌స్పేస్: {business}", "మీరు {day} రోజుల క్రితం ప్లాన్ ఎంచుకున్నారు, కానీ మీ WhatsApp ఇంకా కనెక్ట్ కాలేదు. మీ ఉచిత ట్రయల్ మొదలవలేదు, ఏమీ చార్జ్ చేయలేదు: WhatsApp కనెక్ట్ అయిన రోజు నుండి 14 రోజులు మొదలవుతాయి.", "అప్పటి వరకు మీరు కేటలాగ్, కస్టమర్లు, AI అసిస్టెంట్ సెట్ చేసుకోవచ్చు, కానీ సందేశాలు, AI కాల్స్, క్యాంపెయిన్లు ఆఫ్‌లో ఉంటాయి. WhatsApp కనెక్ట్ చేయడానికి యాప్‌లో Settings తెరవండి."],
-      "hi": ["वर्कस्पेस: {business}", "आपने {day} दिन पहले प्लान चुना था, लेकिन आपका WhatsApp अभी जुड़ा नहीं है। आपका मुफ़्त ट्रायल शुरू नहीं हुआ और कुछ चार्ज नहीं किया गया: 14 दिन उस दिन से शुरू होंगे जब आपका WhatsApp जुड़ेगा।", "तब तक आप अपना कैटलॉग, ग्राहक और AI असिस्टेंट सेट कर सकते हैं, लेकिन संदेश, AI कॉल और कैंपेन बंद रहेंगे। WhatsApp जोड़ने के लिए ऐप में Settings खोलें।"]
+      "en": [
+        "Workspace: {business}",
+        "You chose a plan {day} days ago, but your WhatsApp is not connected yet. Your free trial has not started and nothing has been charged: the 14 days begin on the day your WhatsApp is connected.",
+        "Until then you can set up your catalogue, your customers and your AI assistant, but messages, AI calls and campaigns stay off. Open Settings in the app to connect your WhatsApp."
+      ],
+      "te": [
+        "వర్క్‌స్పేస్: {business}",
+        "మీరు {day} రోజుల క్రితం ప్లాన్ ఎంచుకున్నారు, కానీ మీ WhatsApp ఇంకా కనెక్ట్ కాలేదు. మీ ఉచిత ట్రయల్ మొదలవలేదు, ఏమీ చార్జ్ చేయలేదు: WhatsApp కనెక్ట్ అయిన రోజు నుండి 14 రోజులు మొదలవుతాయి.",
+        "అప్పటి వరకు మీరు కేటలాగ్, కస్టమర్లు, AI అసిస్టెంట్ సెట్ చేసుకోవచ్చు, కానీ సందేశాలు, AI కాల్స్, క్యాంపెయిన్లు ఆఫ్‌లో ఉంటాయి. WhatsApp కనెక్ట్ చేయడానికి యాప్‌లో Settings తెరవండి."
+      ],
+      "hi": [
+        "वर्कस्पेस: {business}",
+        "आपने {day} दिन पहले प्लान चुना था, लेकिन आपका WhatsApp अभी जुड़ा नहीं है। आपका मुफ़्त ट्रायल शुरू नहीं हुआ और कुछ चार्ज नहीं किया गया: 14 दिन उस दिन से शुरू होंगे जब आपका WhatsApp जुड़ेगा।",
+        "तब तक आप अपना कैटलॉग, ग्राहक और AI असिस्टेंट सेट कर सकते हैं, लेकिन संदेश, AI कॉल और कैंपेन बंद रहेंगे। WhatsApp जोड़ने के लिए ऐप में Settings खोलें।"
+      ]
     }
   },
-  "signoff": {"en": "Stack19 Team", "te": "Stack19 బృందం", "hi": "Stack19 टीम"}
+  "signoff": {
+    "en": "Stack19 Team",
+    "te": "Stack19 బృందం",
+    "hi": "Stack19 टीम"
+  },
+  "usage": {
+    "what": {
+      "en": {
+        "call_minutes": "call minutes",
+        "whatsapp_messages": "business messages"
+      },
+      "te": {
+        "call_minutes": "కాల్ నిమిషాలు",
+        "whatsapp_messages": "బిజినెస్ మెసేజ్‌లు"
+      },
+      "hi": {
+        "call_minutes": "कॉल मिनट",
+        "whatsapp_messages": "बिज़नेस मैसेज"
+      }
+    },
+    "runout": {
+      "en": " At this pace they run out on {date}.",
+      "te": " ఈ వేగంతో అవి {date} నాటికి అయిపోతాయి.",
+      "hi": " इसी रफ़्तार से वे {date} तक खत्म हो जाएँगे।"
+    },
+    "queue": {
+      "en": " {n} calls are waiting in a queue and start again by themselves after a top-up.",
+      "te": " {n} కాల్స్ క్యూలో వేచి ఉన్నాయి; టాప్-అప్ తర్వాత అవి తమంతట అవే మొదలవుతాయి.",
+      "hi": " {n} कॉल कतार में रुकी हैं और टॉप-अप के बाद अपने-आप शुरू हो जाएँगी।"
+    },
+    "low": {
+      "subject": {
+        "en": "Your {what} are at 80 percent",
+        "te": "మీ {what} 80 శాతానికి చేరాయి",
+        "hi": "आपके {what} 80 प्रतिशत तक पहुँच गए"
+      },
+      "lines": {
+        "en": [
+          "Workspace: {business}",
+          "You have used 80 percent of this month's {what}.{runout}",
+          "To carry on without a break, top up in the app under Plan."
+        ],
+        "te": [
+          "వర్క్‌స్పేస్: {business}",
+          "ఈ నెల {what}లో 80 శాతం వాడారు.{runout}",
+          "అంతరాయం లేకుండా కొనసాగడానికి యాప్‌లో Plan లో టాప్-అప్ చేయండి."
+        ],
+        "hi": [
+          "वर्कस्पेस: {business}",
+          "आप इस महीने के {what} का 80 प्रतिशत इस्तेमाल कर चुके हैं।{runout}",
+          "बिना रुकावट जारी रखने के लिए ऐप में Plan के अंदर टॉप-अप करें।"
+        ]
+      }
+    },
+    "empty": {
+      "subject": {
+        "en": "Your {what} are used up",
+        "te": "మీ {what} అయిపోయాయి",
+        "hi": "आपके {what} खत्म हो गए"
+      },
+      "lines": {
+        "en": [
+          "Workspace: {business}",
+          "Your {what} for this month are used up.{queue}",
+          "Top up in the app under Plan to carry on."
+        ],
+        "te": [
+          "వర్క్‌స్పేస్: {business}",
+          "ఈ నెల మీ {what} అయిపోయాయి.{queue}",
+          "కొనసాగడానికి యాప్‌లో Plan లో టాప్-అప్ చేయండి."
+        ],
+        "hi": [
+          "वर्कस्पेस: {business}",
+          "इस महीने के आपके {what} खत्म हो गए हैं।{queue}",
+          "जारी रखने के लिए ऐप में Plan के अंदर टॉप-अप करें।"
+        ]
+      }
+    }
+  }
 }

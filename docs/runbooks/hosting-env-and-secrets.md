@@ -112,6 +112,7 @@ Off or fake by default. The rehearsal sets none of them. A provider named withou
 | `SARVAM_TTS_MODEL` | plain | api | Default `bulbul:v3`. |
 | `SARVAM_TTS_SPEAKER` | plain | api | Optional speaker name. |
 | `SPEECH_PROVIDER` | plain | api, worker | Night 3, ADR 0101: ONE switch for the speech stack. Empty (default) = each `VOICE_*_PROVIDER` decides, as before; `sarvam` = Sarvam for speech-to-text, text-to-speech and voice notes (needs `SARVAM_API_KEY`; set on staging by `deploy/staging.sh`); `fake` = development only. |
+| `OUTREACH_DIALER` | plain | worker | Night 4, ADR 0108: who makes the calls of speed to lead. Empty (default) = nobody (calls wait in the queue; new leads and the hand-off reminders still run); `fake` = a table-driven fake that dials nobody (set on staging by `deploy/staging.sh`). No real telephony exists yet. |
 | `BHASHINI_API_KEY` | secret | api | Only with Bhashini voice. |
 | `BHASHINI_ASR_SERVICE_ID` | plain | api | Bhashini's service id for speech to text. |
 | `BHASHINI_TTS_SERVICE_ID` | plain | api | Bhashini's service id for text to speech. |
@@ -150,6 +151,13 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `INTEGRATIONS_TENANT_ID` | plain | api | The ONE workspace the installation's connector credentials belong to. |
 | `INDIAMART_PROVIDER` | plain | api | `off` (default) | `fake` | `real`. |
 | `INDIAMART_CRM_KEY` | secret | api | Only with `real`. |
+| `LEAD_INBOUND_DOMAIN` | plain | api | Job DR / A2: the domain of the forwarding addresses `leads+TOKEN@domain`. Unset = no address is shown. |
+| `LEAD_INBOUND_SECRET` | secret | api | Job DR / A2: the header `X-Inbound-Secret` of the one global inbound mail address. Unset = that route answers 503. |
+| `LEAD_DND_PROVIDER` | plain | api | Job DR / A2: `off` (default) \| `fake` (development only). No real Do-Not-Disturb lookup is chosen yet. |
+| `META_LEAD_PROVIDER` | plain | api | Job DR / A2: `off` (default) \| `fake` (development only) \| `graph` (after Meta's app verification). |
+| `META_APP_SECRET` | secret | api | Job DR / A2: signs Meta's webhook. Only with `graph`. |
+| `META_PAGE_TOKEN` | secret | api | Job DR / A2: fetches a lead from the Graph API. Only with `graph`. |
+| `GOOGLE_SHEETS_SERVICE_ACCOUNT_EMAIL` | plain | api | Job DR / A2: shown to owners as the address to share a private sheet with (the key is not used yet). |
 | `PAYMENTS_PROVIDER` | plain | api | `off` (default) | `fake` | `razorpay` | `cashfree`. |
 | `RAZORPAY_KEY_ID` | plain | api | An identifier, not a secret (but keep it private). |
 | `RAZORPAY_KEY_SECRET` | secret | api | Only with `razorpay`. |
@@ -178,8 +186,8 @@ Change only when the published terms or privacy notice change.
 
 | Variable | Kind | Read by | Value or when to set it |
 |---|---|---|---|
-| `TERMS_VERSION` | plain | api | Default `2026-10-01`; staging sets `2026-10-25` (deploy/staging.sh: the legal texts of 25 Oct 2026, the 14-day trial counted from the day WhatsApp is connected). |
-| `PRIVACY_VERSION` | plain | api | Default `2026-10-01`; staging sets `2026-10-25` together with the terms. |
+| `TERMS_VERSION` | plain | api | Default `2026-10-01`; staging sets `2026-10-27` (deploy/staging.sh: the legal texts of 25 Oct 2026, the 14-day trial counted from the day WhatsApp is connected). |
+| `PRIVACY_VERSION` | plain | api | Default `2026-10-01`; staging sets `2026-10-27` together with the terms. |
 | `TERMS_EFFECTIVE_FROM` | plain | api | A date; empty = at once. |
 | `PRIVACY_EFFECTIVE_FROM` | plain | api | A date; empty = at once. |
 | `POLICY_ENFORCE` | plain | api | `false` until the first real version change is published. |
@@ -209,6 +217,10 @@ The web has **no server secret**: everything it needs is public. The `NEXT_PUBLI
 | `WAITLIST` | plain | RUN | Job DQ: the "Book a demo / join the waitlist" form of the public pages. Server, at request time. Unset: on in website mode, off otherwise. `off`: the form is not there. `mock`: it takes the details and keeps nothing (review and pictures). `1`: posts to the API's `POST /v1/public/waitlist` (no sign-in). |
 | `DPDP_SCREENS` | plain | RUN | Job DQ part 2, the feature flag of the screens that need C1's consent and grievance API (`contract-dpdp.md`): the marketing switch and "Raise a grievance" in Settings > Privacy and data, and the separate unticked marketing box of sign-up. Server, at request time (no rebuild). Unset or `0`: off (those parts are not drawn; the Privacy notice, its list of processors and the consent line under the buttons are always there). `mock`: on with fake data kept in a cookie, for review. `1`: on, with the API (`GET/PUT /v1/me/consents`, `POST /v1/privacy/grievance`). Turn it on after the API of job DQ is deployed. |
 | `VOICE_SAMPLE_SCREENS` | plain | RUN | Job DQ part 3, the feature flag of the voice picker's samples (the play buttons beside each voice and the warm/crisp choice in Settings > AI assistant). Server, at request time (no rebuild). Unset or `0`: off (no play buttons; the route `/app/tenants/<id>/voice-sample` answers 404). `mock`: a synthetic two-note sound that tells the voices apart by pitch, for review. `1`: on, with the API sample endpoint (assumed shape in `c2-questions-3.md`). The sound goes through our own route, so the person's token never reaches the browser. |
+| `LEADS_SCREENS` | plain | RUN | Night 4 (job DR), Lead Desk: the nine "any business with leads" types and their picker at sign-up, the setup wizard, the knowledge base and playbook, lead imports (Excel, sheet, pasted list, contacts), Settings > Lead sources and the Lead Desk list. Server, at request time (no rebuild). Unset or `0`: off (nothing of it is drawn; the nine types show as ordinary cards if the API lists them). `mock`: on with fake data kept in a cookie, for review. `1`: on, with the API (`/v1/lead-templates`, `/lead-playbook`, `/knowledge/*`, `/lead-imports/*`, `/lead-sources`, `/lead-sheet-links`). Turn it on after the API of job DR (A1, A2) is deployed. |
+| `OUTREACH_SCREENS` | plain | RUN | Night 4 (job DR part A3), speed to lead: batch plans with one "Approve all", standing rules per source, hot-lead hand-offs and the lead report. Server, at request time. Unset or `0`: off. `mock`: fake data in a cookie. `1`: the API (`/v1/tenants/{id}/outreach/*`). |
+| `TASK_SCREENS` | plain | RUN | Night 4 (job DR part B), "Ask Vijaya to do it": an instruction becomes a plan, one "Approve all", live progress and a report; Calls > Tasks. Server, at request time. Unset or `0`: off. `mock`: fake data in a cookie (every result is marked simulated). `1`: the API (`/v1/tenants/{id}/tasks/*`). |
+| `TOPUP_SCREENS` | plain | RUN | Night 4 (job DS part F2): top-ups of minutes and messages, usage alerts and the test checkout in Settings > Plan. Server, at request time. Unset or `0`: off. `mock`: fake data in a cookie (the checkout is a clearly marked test). `1`: the API of C1's top-up job. Payments stay fake until the owner's billing gates. |
 | `SIGNUP_MAX_PER_HOUR` | plain | RUN | Default 5. A brake in one server instance's memory. |
 | `STACK19_WHATSAPP` | plain | RUN | Job CM: OUR OWN WhatsApp number (digits with the country code, for example `919876543210`), for the public site's contact form and the calculator's "Get exact quote on WhatsApp". It is a public number, read on the server only (not `NEXT_PUBLIC_`, so it is not in any page's HTML until a visitor has ticked consent and asked for the chat). Unset: the pages say chat is not set up and show no button. |
 | `SITE_LEAD_MAX_PER_HOUR` | plain | RUN | Job CM: how many times one address may ask for that chat in an hour (default 10). A brake in one server instance's memory, like `SIGNUP_MAX_PER_HOUR`. |
@@ -222,3 +234,4 @@ The web has **no server secret**: everything it needs is public. The `NEXT_PUBLI
 * **Secrets:** create once (`./deploy/cloudrun.sh secrets`, or `printf '%s' "$VALUE" | gcloud secrets create NAME --data-file=-` with the value typed hidden into a variable first), then reference: `--set-secrets NAME=secret-name:latest`. Give the service's account (`RUN_SA`, ideally a dedicated account with no other role) `roles/secretmanager.secretAccessor` on exactly those secrets. A new version of a secret is picked up at the next deploy of the service (`:latest` is resolved when an instance starts).
 * **Never:** a value in the repository, in `deploy/hosting.env.example`, in a Docker image, in a build argument (build arguments are visible in the image history; only the public `NEXT_PUBLIC_*` values are build arguments), or in the Cloud Run "plain" environment for something in the secret rows.
 * **On Vercel (if chosen):** the same `NEXT_PUBLIC_*` names as Project variables for Production; mark none as secret because none is, and set the function region to `bom1` (Mumbai).
+

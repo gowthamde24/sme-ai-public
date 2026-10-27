@@ -36,7 +36,7 @@ describe("the menu table", () => {
   it("has exactly the groups and items of the plan, in order, with the same words", () => {
     expect(NAV.map((g) => g.label)).toEqual(Object.keys(PLAN));
     // the two items only a business type brings (job CL: Fees, Campaigns) are not part of the plan the product always had; they are pinned below
-    for (const g of NAV) expect(g.items.filter((i) => !i.packOnly).map((i) => [i.label, i.path, i.id]), g.label).toEqual(PLAN[g.label].map(([l, p, id]) => [l, p, id]));
+    for (const g of NAV) expect(g.items.filter((i) => !i.packOnly && !i.feature).map((i) => [i.label, i.path, i.id]), g.label).toEqual(PLAN[g.label].map(([l, p, id]) => [l, p, id]));
     expect(FOOT.map((i) => [i.label, i.path, i.id])).toEqual([[PLAN_FOOT[0], PLAN_FOOT[1], PLAN_FOOT[2]]]);
   });
 
@@ -91,7 +91,7 @@ describe("the items only a business type brings (job CL)", () => {
   it("every item that has a module is hidden when the pack does not have it", () => {
     const none = { name: "X", accent: "sky_blue", validated: false, coreTab: "fees", modules: ["today"], labels: {} };
     const ids = visibleGroups("owner", none).flatMap((g) => g.items.map((i) => i.id));
-    expect(ids).toEqual(flat.filter((i) => !i.module).map((i) => i.id));
+    expect(ids).toEqual(flat.filter((i) => !i.module && !i.feature).map((i) => i.id));
   });
 });
 

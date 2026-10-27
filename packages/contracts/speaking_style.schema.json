@@ -1,0 +1,212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "speaking_style.schema.json",
+  "title": "Speaking style (job DS)",
+  "description": "Generated from services/ai-api/app/speaking/models.py by `make contracts`.",
+  "$defs": {
+    "LanguageStyle": {
+      "additionalProperties": false,
+      "properties": {
+        "style": {
+          "enum": [
+            "everyday_mixed",
+            "everyday_pure",
+            "formal"
+          ],
+          "title": "Style",
+          "type": "string"
+        },
+        "region": {
+          "default": "neutral",
+          "enum": [
+            "neutral",
+            "coastal",
+            "telangana",
+            "rayalaseema",
+            "chennai",
+            "kongu",
+            "bengaluru",
+            "north_karnataka"
+          ],
+          "title": "Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "style"
+      ],
+      "title": "LanguageStyle",
+      "type": "object"
+    },
+    "LanguageStyleOut": {
+      "additionalProperties": false,
+      "properties": {
+        "style": {
+          "enum": [
+            "everyday_mixed",
+            "everyday_pure",
+            "formal"
+          ],
+          "title": "Style",
+          "type": "string"
+        },
+        "region": {
+          "enum": [
+            "neutral",
+            "coastal",
+            "telangana",
+            "rayalaseema",
+            "chennai",
+            "kongu",
+            "bengaluru",
+            "north_karnataka"
+          ],
+          "title": "Region",
+          "type": "string"
+        },
+        "saved": {
+          "title": "Saved",
+          "type": "boolean"
+        },
+        "examples": {
+          "enum": [
+            "approved",
+            "draft"
+          ],
+          "title": "Examples",
+          "type": "string"
+        }
+      },
+      "required": [
+        "style",
+        "region",
+        "saved",
+        "examples"
+      ],
+      "title": "LanguageStyleOut",
+      "type": "object"
+    },
+    "OptionsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "styles": {
+          "items": {
+            "enum": [
+              "everyday_mixed",
+              "everyday_pure",
+              "formal"
+            ],
+            "type": "string"
+          },
+          "title": "Styles",
+          "type": "array"
+        },
+        "default_style": {
+          "enum": [
+            "everyday_mixed",
+            "everyday_pure",
+            "formal"
+          ],
+          "title": "Default Style",
+          "type": "string"
+        },
+        "regions": {
+          "additionalProperties": {
+            "items": {
+              "enum": [
+                "neutral",
+                "coastal",
+                "telangana",
+                "rayalaseema",
+                "chennai",
+                "kongu",
+                "bengaluru",
+                "north_karnataka"
+              ],
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "propertyNames": {
+            "enum": [
+              "en",
+              "te",
+              "hi",
+              "kn",
+              "ta",
+              "ml"
+            ]
+          },
+          "title": "Regions",
+          "type": "object"
+        }
+      },
+      "required": [
+        "styles",
+        "default_style",
+        "regions"
+      ],
+      "title": "OptionsOut",
+      "type": "object"
+    },
+    "SpeakingStyleIn": {
+      "additionalProperties": false,
+      "description": "All languages at once; a language left out goes back to the default (everyday_mixed, neutral).",
+      "properties": {
+        "languages": {
+          "additionalProperties": {
+            "$ref": "#/$defs/LanguageStyle"
+          },
+          "propertyNames": {
+            "enum": [
+              "en",
+              "te",
+              "hi",
+              "kn",
+              "ta",
+              "ml"
+            ]
+          },
+          "title": "Languages",
+          "type": "object"
+        }
+      },
+      "required": [
+        "languages"
+      ],
+      "title": "SpeakingStyleIn",
+      "type": "object"
+    },
+    "SpeakingStyleOut": {
+      "additionalProperties": false,
+      "properties": {
+        "languages": {
+          "additionalProperties": {
+            "$ref": "#/$defs/LanguageStyleOut"
+          },
+          "propertyNames": {
+            "enum": [
+              "en",
+              "te",
+              "hi",
+              "kn",
+              "ta",
+              "ml"
+            ]
+          },
+          "title": "Languages",
+          "type": "object"
+        },
+        "options": {
+          "$ref": "#/$defs/OptionsOut"
+        }
+      },
+      "required": [
+        "languages",
+        "options"
+      ],
+      "title": "SpeakingStyleOut",
+      "type": "object"
+    }
+  }
+}

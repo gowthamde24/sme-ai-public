@@ -1,3 +1,5 @@
+import type { TaskError, TaskOut } from "@/lib/tasks/types";
+
 /**
  * What the "Ask your team" box needs from the Agent OWL, as the box reads it. The answer of the real Agent OWL (Job AG, `POST /v1/tenants/{id}/assistant/messages`, server-sent events
  * of `text`, `source`, `draft`, `error` and `done`) is read by this app's own route (`app/app/tenants/[tenantId]/ask/route.ts`, with the signed-in person's token, which the browser never
@@ -24,7 +26,10 @@ export type AskEvent =
   /** Voice only: the spoken answer (base64, after the written one). The written answer stands without it. */
   | { type: "audio"; contentType: string; data: string }
   /** Voice only: the spoken answer could not be made. The written answer stands. */
-  | { type: "audio_error"; code?: string };
+  | { type: "audio_error"; code?: string }
+  /** "Do it" mode only (night 4, tasks): made in the browser by the session, never read from the wire. The instruction became this plan (a task), or `task_error` says why it did not. */
+  | { type: "task"; task: TaskOut }
+  | { type: "task_error"; error: TaskError };
 
 /** Why an answer was refused or failed, in the words the box has a fixed sentence for. */
 export const ERROR_CODES = [

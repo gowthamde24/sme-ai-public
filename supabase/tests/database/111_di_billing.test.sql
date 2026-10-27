@@ -55,7 +55,7 @@ select is((select count(*) from pg_constraint where conrelid = 'public.tenants':
 select is((select enabled from public.platform_flags where key = 'billing_enforced'), false, 'A10 enforcement is OFF until the owner of the product turns it on');
 
 -- ============================================================================ B. the catalogue
-select is(pg_temp.path('a_owner', 'select public.billing_plans()::text', 'catalogue_version'), '2', 'B1 the catalogue is version 2 (job DM: the trial is 14 days from the day WhatsApp is connected; version 1 is kept as it was)');
+select is(pg_temp.path('a_owner', 'select public.billing_plans()::text', 'catalogue_version'), '3', 'B1 the catalogue is version 3 (job DS: the calls plans carry the Lead Desk names; version 2: the trial is 14 days from the day WhatsApp is connected; the older versions are kept as they were)');
 select is(pg_temp.v('a_viewer', 'select jsonb_array_length(public.billing_plans() -> ''plans'')::text'), '7', 'B2 seven plans, readable by any signed-in user');
 select is(pg_temp.v('anon', 'select public.billing_plans()::text'), 'ERR:42501', 'B3 anon reads nothing');
 select is(pg_temp.v('a_owner', 'select (select string_agg(p ->> ''id'', '','' order by (p ->> ''sort'')::int) from jsonb_array_elements(public.billing_plans() -> ''plans'') p)'), 'free_trial,starter,growth,business,calls_payg,calls_300,calls_1000', 'B4 the plans, in order');
@@ -185,7 +185,7 @@ select is(pg_temp.get('a_owner', 'usage,whatsapp_messages,allowance') || '/' || 
 select pg_temp.q(app.outbox_claim_due_core(tests.tid('a'), 10, false));
 select isnt((select status || '/' || attempts::text from public.outbox_messages where id = tests.rid('h4')), 'queued/0', 'E16 and the held message is handed out at the next claim');
 select app.operator_set_billing_enforced(false);
-select is((select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname in ('public', 'app') and p.prosrc like '%billing\_stopped(%' and p.proname <> 'billing_stopped'), 'billing_check_usage,outbox_claim_due_core',
+select is((select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname in ('public', 'app') and p.prosrc like '%billing\_stopped(%' and p.proname <> 'billing_stopped'), 'billing_check_usage,outbox_claim_due_core,scheduler_outreach_run',
           'E17 ONLY the call start check and the outbox claim ask the meter: quotes, orders, follow-ups and customers never consult it, so they never stop');
 select pg_temp.pin('2026-10-14T11:00:00+05:30'::timestamptz);
 -- job DM: the 14 days count from the day WhatsApp is connected: both workspaces connect today

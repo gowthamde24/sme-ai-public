@@ -40,6 +40,9 @@ export const pillGreen = `${pill} border-green-text bg-green-bg text-green-text`
 export const pillAmber = `${pill} border-amber-text bg-amber-bg text-amber-text`;
 export const pillRed = `${pill} border-red-text bg-red-bg text-red-text`;
 export const pillInfo = `${pill} border-info-text bg-info-bg text-info-text`;
+// night 4 (Lead Desk): a lead row (name, then who has it) and a bar row of the lead report (label, bar, number); here so Tailwind sees the classes
+export const leadRow = "grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center";
+export const barRow = "grid grid-cols-[minmax(6rem,9rem)_1fr_auto] items-center gap-2";
 export const tableWrap = "mt-3 overflow-x-auto rounded-xl border border-line bg-surface";
 export const table = "w-full border-collapse text-left text-base";
 export const th = "border-b border-line bg-surface-2 px-3 py-2 text-sm font-semibold";

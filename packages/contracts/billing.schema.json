@@ -111,6 +111,45 @@
       "title": "AccessOut",
       "type": "object"
     },
+    "BalanceKindOut": {
+      "additionalProperties": false,
+      "properties": {
+        "units": {
+          "title": "Units",
+          "type": "number"
+        },
+        "lots": {
+          "items": {
+            "$ref": "#/$defs/LotOut"
+          },
+          "title": "Lots",
+          "type": "array"
+        }
+      },
+      "required": [
+        "units",
+        "lots"
+      ],
+      "title": "BalanceKindOut",
+      "type": "object"
+    },
+    "BalanceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "call_minutes": {
+          "$ref": "#/$defs/BalanceKindOut"
+        },
+        "whatsapp_messages": {
+          "$ref": "#/$defs/BalanceKindOut"
+        }
+      },
+      "required": [
+        "call_minutes",
+        "whatsapp_messages"
+      ],
+      "title": "BalanceOut",
+      "type": "object"
+    },
     "BillingOut": {
       "additionalProperties": false,
       "properties": {
@@ -221,6 +260,203 @@
       "title": "BillingOut",
       "type": "object"
     },
+    "BuyerOut": {
+      "additionalProperties": false,
+      "properties": {
+        "gstin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Gstin"
+        },
+        "state_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "State Code"
+        }
+      },
+      "required": [
+        "gstin",
+        "state_code"
+      ],
+      "title": "BuyerOut",
+      "type": "object"
+    },
+    "InvoiceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "number": {
+          "title": "Number",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "topup",
+            "upgrade",
+            "overage"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "issued_at": {
+          "format": "date-time",
+          "title": "Issued At",
+          "type": "string"
+        },
+        "period_start": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Period Start"
+        },
+        "taxable_paise": {
+          "title": "Taxable Paise",
+          "type": "integer"
+        },
+        "gst_rate_bp": {
+          "title": "Gst Rate Bp",
+          "type": "integer"
+        },
+        "cgst_paise": {
+          "title": "Cgst Paise",
+          "type": "integer"
+        },
+        "sgst_paise": {
+          "title": "Sgst Paise",
+          "type": "integer"
+        },
+        "igst_paise": {
+          "title": "Igst Paise",
+          "type": "integer"
+        },
+        "total_paise": {
+          "title": "Total Paise",
+          "type": "integer"
+        },
+        "seller": {
+          "$ref": "#/$defs/SellerOut"
+        },
+        "buyer": {
+          "$ref": "#/$defs/BuyerOut"
+        },
+        "fake": {
+          "title": "Fake",
+          "type": "boolean"
+        },
+        "payment_status": {
+          "const": "paid_fake",
+          "title": "Payment Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "number",
+        "kind",
+        "description",
+        "issued_at",
+        "period_start",
+        "taxable_paise",
+        "gst_rate_bp",
+        "cgst_paise",
+        "sgst_paise",
+        "igst_paise",
+        "total_paise",
+        "seller",
+        "buyer",
+        "fake",
+        "payment_status"
+      ],
+      "title": "InvoiceOut",
+      "type": "object"
+    },
+    "InvoicesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/InvoiceOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "InvoicesOut",
+      "type": "object"
+    },
+    "LotOut": {
+      "additionalProperties": false,
+      "properties": {
+        "purchase_id": {
+          "format": "uuid",
+          "title": "Purchase Id",
+          "type": "string"
+        },
+        "units_left": {
+          "title": "Units Left",
+          "type": "number"
+        },
+        "purchased_at": {
+          "format": "date-time",
+          "title": "Purchased At",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "purchase_id",
+        "units_left",
+        "purchased_at",
+        "expires_at"
+      ],
+      "title": "LotOut",
+      "type": "object"
+    },
     "MeterOut": {
       "additionalProperties": false,
       "properties": {
@@ -293,6 +529,75 @@
         "topup": {
           "title": "Topup",
           "type": "integer"
+        },
+        "plan_allowance": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plan Allowance"
+        },
+        "topup_balance": {
+          "default": 0.0,
+          "title": "Topup Balance",
+          "type": "number"
+        },
+        "next_topup_expiry": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Topup Expiry"
+        },
+        "projected_run_out_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Projected Run Out On"
+        },
+        "runs_out_before_period_end": {
+          "default": false,
+          "title": "Runs Out Before Period End",
+          "type": "boolean"
+        },
+        "blocked": {
+          "default": false,
+          "title": "Blocked",
+          "type": "boolean"
+        },
+        "overage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OverageOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "queued": {
+          "default": 0,
+          "title": "Queued",
+          "type": "integer"
         }
       },
       "required": [
@@ -307,6 +612,39 @@
         "topup"
       ],
       "title": "MeterOut",
+      "type": "object"
+    },
+    "NewAllowancesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "call_minutes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Call Minutes"
+        },
+        "whatsapp_messages": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Whatsapp Messages"
+        }
+      },
+      "required": [
+        "call_minutes",
+        "whatsapp_messages"
+      ],
+      "title": "NewAllowancesOut",
       "type": "object"
     },
     "NoticeOut": {
@@ -346,6 +684,40 @@
         "at"
       ],
       "title": "NoticeOut",
+      "type": "object"
+    },
+    "OverageOut": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "units": {
+          "title": "Units",
+          "type": "number"
+        },
+        "spent_paise": {
+          "title": "Spent Paise",
+          "type": "integer"
+        },
+        "cap_paise": {
+          "title": "Cap Paise",
+          "type": "integer"
+        },
+        "rate_paise_per_unit": {
+          "title": "Rate Paise Per Unit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enabled",
+        "units",
+        "spent_paise",
+        "cap_paise",
+        "rate_paise_per_unit"
+      ],
+      "title": "OverageOut",
       "type": "object"
     },
     "PeriodOut": {
@@ -634,6 +1006,37 @@
       "title": "ResumeIn",
       "type": "object"
     },
+    "SellerOut": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "state_code": {
+          "title": "State Code",
+          "type": "string"
+        },
+        "gstin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Gstin"
+        }
+      },
+      "required": [
+        "name",
+        "state_code",
+        "gstin"
+      ],
+      "title": "SellerOut",
+      "type": "object"
+    },
     "SubscriptionOut": {
       "additionalProperties": false,
       "properties": {
@@ -727,6 +1130,355 @@
       "title": "SubscriptionOut",
       "type": "object"
     },
+    "TopupBuyIn": {
+      "additionalProperties": false,
+      "properties": {
+        "purchase_id": {
+          "format": "uuid",
+          "title": "Purchase Id",
+          "type": "string"
+        },
+        "pack_code": {
+          "pattern": "^[a-z0-9_]{3,30}$",
+          "title": "Pack Code",
+          "type": "string"
+        },
+        "checkout_ref": {
+          "maxLength": 100,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Checkout Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "purchase_id",
+        "pack_code",
+        "checkout_ref"
+      ],
+      "title": "TopupBuyIn",
+      "type": "object"
+    },
+    "TopupBuyOut": {
+      "additionalProperties": false,
+      "properties": {
+        "purchase": {
+          "$ref": "#/$defs/TopupPurchaseOut"
+        },
+        "invoice": {
+          "$ref": "#/$defs/InvoiceOut"
+        },
+        "usage": {
+          "$ref": "#/$defs/UsageOut"
+        }
+      },
+      "required": [
+        "purchase",
+        "invoice",
+        "usage"
+      ],
+      "title": "TopupBuyOut",
+      "type": "object"
+    },
+    "TopupPackOut": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "call_minutes",
+            "whatsapp_messages"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "units": {
+          "title": "Units",
+          "type": "integer"
+        },
+        "price_paise": {
+          "title": "Price Paise",
+          "type": "integer"
+        },
+        "gst_rate_bp": {
+          "title": "Gst Rate Bp",
+          "type": "integer"
+        },
+        "gst_paise": {
+          "title": "Gst Paise",
+          "type": "integer"
+        },
+        "total_paise": {
+          "title": "Total Paise",
+          "type": "integer"
+        },
+        "price_is_placeholder": {
+          "title": "Price Is Placeholder",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "kind",
+        "units",
+        "price_paise",
+        "gst_rate_bp",
+        "gst_paise",
+        "total_paise",
+        "price_is_placeholder"
+      ],
+      "title": "TopupPackOut",
+      "type": "object"
+    },
+    "TopupPurchaseOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "pack_code": {
+          "title": "Pack Code",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "call_minutes",
+            "whatsapp_messages"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "units": {
+          "title": "Units",
+          "type": "integer"
+        },
+        "source": {
+          "enum": [
+            "manual",
+            "auto"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "price_paise": {
+          "title": "Price Paise",
+          "type": "integer"
+        },
+        "total_paise": {
+          "title": "Total Paise",
+          "type": "integer"
+        },
+        "purchased_at": {
+          "format": "date-time",
+          "title": "Purchased At",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "units_left": {
+          "title": "Units Left",
+          "type": "number"
+        },
+        "expired": {
+          "title": "Expired",
+          "type": "boolean"
+        },
+        "invoice_id": {
+          "format": "uuid",
+          "title": "Invoice Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "pack_code",
+        "kind",
+        "units",
+        "source",
+        "price_paise",
+        "total_paise",
+        "purchased_at",
+        "expires_at",
+        "units_left",
+        "expired",
+        "invoice_id"
+      ],
+      "title": "TopupPurchaseOut",
+      "type": "object"
+    },
+    "TopupSettingsIn": {
+      "additionalProperties": false,
+      "properties": {
+        "auto_minutes_pack": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9_]{3,30}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Auto Minutes Pack"
+        },
+        "auto_messages_pack": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9_]{3,30}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Auto Messages Pack"
+        },
+        "auto_monthly_cap_paise": {
+          "maximum": 1000000000,
+          "minimum": 0,
+          "title": "Auto Monthly Cap Paise",
+          "type": "integer"
+        },
+        "overage_minutes": {
+          "title": "Overage Minutes",
+          "type": "boolean"
+        },
+        "overage_messages": {
+          "title": "Overage Messages",
+          "type": "boolean"
+        },
+        "overage_monthly_cap_paise": {
+          "maximum": 1000000000,
+          "minimum": 0,
+          "title": "Overage Monthly Cap Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "auto_minutes_pack",
+        "auto_messages_pack",
+        "auto_monthly_cap_paise",
+        "overage_minutes",
+        "overage_messages",
+        "overage_monthly_cap_paise"
+      ],
+      "title": "TopupSettingsIn",
+      "type": "object"
+    },
+    "TopupSettingsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "auto_minutes_pack": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Auto Minutes Pack"
+        },
+        "auto_messages_pack": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Auto Messages Pack"
+        },
+        "auto_monthly_cap_paise": {
+          "title": "Auto Monthly Cap Paise",
+          "type": "integer"
+        },
+        "overage_minutes": {
+          "title": "Overage Minutes",
+          "type": "boolean"
+        },
+        "overage_messages": {
+          "title": "Overage Messages",
+          "type": "boolean"
+        },
+        "overage_monthly_cap_paise": {
+          "title": "Overage Monthly Cap Paise",
+          "type": "integer"
+        },
+        "overage_rate_paise_per_minute": {
+          "title": "Overage Rate Paise Per Minute",
+          "type": "integer"
+        },
+        "overage_rate_paise_per_message": {
+          "title": "Overage Rate Paise Per Message",
+          "type": "integer"
+        },
+        "auto_spent_paise": {
+          "title": "Auto Spent Paise",
+          "type": "integer"
+        },
+        "overage_spent_paise": {
+          "title": "Overage Spent Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "auto_minutes_pack",
+        "auto_messages_pack",
+        "auto_monthly_cap_paise",
+        "overage_minutes",
+        "overage_messages",
+        "overage_monthly_cap_paise",
+        "overage_rate_paise_per_minute",
+        "overage_rate_paise_per_message",
+        "auto_spent_paise",
+        "overage_spent_paise"
+      ],
+      "title": "TopupSettingsOut",
+      "type": "object"
+    },
+    "TopupsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "packs": {
+          "items": {
+            "$ref": "#/$defs/TopupPackOut"
+          },
+          "title": "Packs",
+          "type": "array"
+        },
+        "balance": {
+          "$ref": "#/$defs/BalanceOut"
+        },
+        "settings": {
+          "$ref": "#/$defs/TopupSettingsOut"
+        },
+        "history": {
+          "items": {
+            "$ref": "#/$defs/TopupPurchaseOut"
+          },
+          "title": "History",
+          "type": "array"
+        }
+      },
+      "required": [
+        "packs",
+        "balance",
+        "settings",
+        "history"
+      ],
+      "title": "TopupsOut",
+      "type": "object"
+    },
     "TrialRulesOut": {
       "additionalProperties": false,
       "properties": {
@@ -788,6 +1540,138 @@
       "title": "TrialStartIn",
       "type": "object"
     },
+    "UpgradeIn": {
+      "additionalProperties": false,
+      "properties": {
+        "plan_id": {
+          "pattern": "^[a-z][a-z0-9_]{1,30}$",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "checkout_ref": {
+          "maxLength": 100,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9_-]+$",
+          "title": "Checkout Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "plan_id",
+        "checkout_ref"
+      ],
+      "title": "UpgradeIn",
+      "type": "object"
+    },
+    "UpgradeOut": {
+      "additionalProperties": false,
+      "properties": {
+        "billing": {
+          "$ref": "#/$defs/BillingOut"
+        },
+        "invoice": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InvoiceOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "billing",
+        "invoice"
+      ],
+      "title": "UpgradeOut",
+      "type": "object"
+    },
+    "UpgradePreviewOut": {
+      "additionalProperties": false,
+      "properties": {
+        "from_plan_id": {
+          "title": "From Plan Id",
+          "type": "string"
+        },
+        "to_plan_id": {
+          "title": "To Plan Id",
+          "type": "string"
+        },
+        "price_set": {
+          "title": "Price Set",
+          "type": "boolean"
+        },
+        "days_in_period": {
+          "title": "Days In Period",
+          "type": "integer"
+        },
+        "days_left": {
+          "title": "Days Left",
+          "type": "integer"
+        },
+        "prorated_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Prorated Paise"
+        },
+        "gst_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Gst Paise"
+        },
+        "total_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Total Paise"
+        },
+        "new_allowances": {
+          "$ref": "#/$defs/NewAllowancesOut"
+        },
+        "effective": {
+          "const": "now",
+          "title": "Effective",
+          "type": "string"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "from_plan_id",
+        "to_plan_id",
+        "price_set",
+        "days_in_period",
+        "days_left",
+        "prorated_paise",
+        "gst_paise",
+        "total_paise",
+        "new_allowances",
+        "effective",
+        "note"
+      ],
+      "title": "UpgradePreviewOut",
+      "type": "object"
+    },
     "UsageOut": {
       "additionalProperties": false,
       "properties": {
@@ -820,6 +1704,11 @@
           },
           "title": "Notices",
           "type": "array"
+        },
+        "queued_calls": {
+          "default": 0,
+          "title": "Queued Calls",
+          "type": "integer"
         }
       },
       "required": [

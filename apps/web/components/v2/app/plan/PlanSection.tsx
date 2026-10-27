@@ -17,7 +17,7 @@ const TONE: Record<BillingState, "neutral" | "green" | "red"> = { none: "neutral
  * (`plan.access`, owner decision of 25 Oct): the card says so first, with the dates the API gives (since when, the day the data is deleted, the days left), and the moves are off. `plan` null = the plan could not be read
  * (the card says "Not available yet"). `mock` shows the test-mode label. The page draws this only when the feature flag is on, and only for an Owner or Admin.
  */
-export function PlanSection({ words, plan, def, trialDays, now, canChange, mock, pickerHref, contactEmail, actions }: { words: Words; plan: WorkspacePlan | null; def: PlanDef | null; trialDays: number; now: number; canChange: boolean; mock: boolean; pickerHref: string; contactEmail: string; actions: PlanActions }) {
+export function PlanSection({ words, plan, def, trialDays, now, canChange, mock, pickerHref, contactEmail, actions, usageBars = true }: { words: Words; plan: WorkspacePlan | null; def: PlanDef | null; trialDays: number; now: number; canChange: boolean; mock: boolean; pickerHref: string; contactEmail: string; actions: PlanActions; /** False when the Usage and top-ups part (night 4, TOPUP_SCREENS) draws the two bars itself, so they are not shown twice. */ usageBars?: boolean }) {
   const t = makeT(words);
   if (plan === null)
     return (
@@ -87,6 +87,7 @@ export function PlanSection({ words, plan, def, trialDays, now, canChange, mock,
           <PlanMoves words={words} state={plan.state} canChange={canChange && !readOnly} canStart={plan.canStartTrial} cancelling={plan.cancelAtPeriodEnd} pickerHref={pickerHref} trialDays={trialDays} actions={actions} />
         </div>
       </section>
+      {usageBars ? (
       <section className={surface} aria-labelledby="plan-meters-h">
         <h2 id="plan-meters-h" className="mb-3 text-xl font-semibold">
           {t("plan.meters.title")}
@@ -108,12 +109,15 @@ export function PlanSection({ words, plan, def, trialDays, now, canChange, mock,
           </div>
         ) : null}
       </section>
+      ) : null}
+      {usageBars ? (
       <section className={surface} aria-labelledby="plan-100-h">
         <h2 id="plan-100-h" className="text-xl font-semibold">
           {t("plan.at100.title")}
         </h2>
         <p className={mutedText}>{t("plan.at100.body")}</p>
       </section>
+      ) : null}
     </div>
   );
 }

@@ -21,12 +21,12 @@ select is((select count(*) from pg_namespace where nspname = 'packs'), 1::bigint
 select is((select count(*) from unnest(array['anon', 'authenticated', 'service_role']) r where has_schema_privilege(r, 'packs', 'usage')), 0::bigint, 'A2 no client role has usage on the packs schema');
 select is((select count(*) from information_schema.role_table_grants where table_schema = 'packs' and grantee in ('anon', 'authenticated', 'service_role', 'public')), 0::bigint, 'A3 no client role holds a privilege on any packs table');
 select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'packs' and c.relkind = 'r' and c.relrowsecurity and c.relforcerowsecurity), 8::bigint, 'A4 RLS is enabled and forced on all eight packs tables');
-select is((select count(*) from packs.modules), 26::bigint, 'A5 twenty-six modules (job CN added `materials`)');
+select is((select count(*) from packs.modules), 27::bigint, 'A5 twenty-seven modules (job CN added `materials`, job DS added the core `lead_desk`)');
 select is((select count(*) from packs.modules where guard not in ('tables', 'agents', 'flag', 'future')), 0::bigint, 'A6 every module says how the database refuses it');
 select is((select string_agg(code, ',' order by position) from packs.units), 'piece,set,sq_ft,sq_m,box,bag,tonne,cft,truckload', 'A7 the closed list of selling units');
 select is((select string_agg(enumlabel, ',' order by enumlabel) from pg_enum where enumtypid = 'public.quote_sale_unit'::regtype), (select string_agg(code, ',' order by code) from packs.units), 'A8 the quote sale unit enum carries exactly the same units');
-select is((select count(*) from packs.pack_versions), 4::bigint, 'A9 three packs, four versions (construction_materials has a second version: job CN)');
-select is((select string_agg(code || ':' || version || ':' || status, ',' order by code) from packs.pack_versions), 'construction_materials:1:preview,construction_materials:2:preview,education:1:preview,textiles:1:published', 'A10 textiles is published, the two new business types are previews');
+select is((select count(*) from packs.pack_versions), 13::bigint, 'A9 twelve packs, thirteen versions (construction_materials has a second version: job CN; nine leads packs: job DR)');
+select is((select string_agg(code || ':' || version || ':' || status, ',' order by code, version) from packs.pack_versions), 'auto_dealer:1:preview,clinic:1:preview,coaching:1:preview,construction_materials:1:preview,construction_materials:2:preview,education:1:preview,gym:1:preview,insurance_loans:1:preview,interiors_solar:1:preview,real_estate:1:preview,textiles:1:published,travel:1:preview,wholesale_b2b:1:preview', 'A10 textiles is published, the two new business types are previews');
 select is((select count(*) from packs.pack_versions where is_default), 1::bigint, 'A11 exactly one default pack');
 select is((select code from packs.pack_versions where is_default), 'textiles', 'A12 and it is textiles (today''s behaviour)');
 select is((select count(*) from packs.pack_versions where manifest ->> 'id' <> code or (manifest ->> 'version')::integer <> version or manifest ->> 'status' <> status), 0::bigint, 'A13 each manifest agrees with its row');
@@ -123,7 +123,7 @@ select pg_temp.set_pack('b', 'textiles');
 -- ============================================================================ F. every tenant table is guarded or exempt, with a reason
 create temp table exempt (tbl text primary key, why text not null);
 insert into exempt (tbl, why) values
-  ('integrations.calendar_tokens', 'the calendar feed: a credential, not a module'), ('integrations.call_bridges', 'telephony account settings'), ('integrations.missed_calls', 'inbound calls are recorded whatever the pack'),
+  ('integrations.lead_items', 'lead sources: the idempotency ledger, every business type (job DR)'), ('integrations.calendar_tokens', 'the calendar feed: a credential, not a module'), ('integrations.call_bridges', 'telephony account settings'), ('integrations.missed_calls', 'inbound calls are recorded whatever the pack'),
   ('integrations.pull_state', 'connector cursor'), ('integrations.wa_conversation_state', 'inbox: inbound messages are never refused'), ('integrations.wa_events', 'inbox: inbound events are never refused'),
   ('integrations.wa_message_status', 'delivery receipts'), ('integrations.wa_templates', 'WhatsApp templates'), ('integrations.whatsapp_accounts', 'the WhatsApp connection (second factor)'),
   ('notify.member_state', 'notifications'), ('notify.push_prefs', 'notifications'), ('notify.push_sent', 'notifications'),
@@ -138,12 +138,24 @@ insert into exempt (tbl, why) values
   ('public.icp_config_versions', 'lead scoring configuration'), ('public.import_batches', 'lead import batches'), ('public.import_rows', 'lead import rows'), ('public.lead_labels', 'lead review'),
   ('public.memberships', 'the team'), ('public.outbox_events', 'the outbox: policy, not a module'), ('public.outbox_message_media', 'the outbox'), ('public.outbox_messages', 'the outbox'),
   ('public.own_voices', 'the owner''s own voice: every business type may have one (job DP)'),
+  ('public.tasks', 'tasks: every business type may give the assistant a task (job DR)'), ('public.task_contacts', 'tasks (job DR)'),
   ('public.outbox_settings', 'the outbox'), ('public.scheduler_runs', 'the scheduler'), ('public.scheduler_settings', 'the scheduler'), ('public.tenant_agent_settings', 'agent switches'),
   ('public.tenant_data_policy', 'the real-data gate'), ('suppression.contact_keys', 'suppression applies to every business'), ('suppression.key_events', 'suppression'),
   ('team.invitations', 'the team'), ('workspace.profiles', 'the workspace profile'),
-  ('public.call_settings', 'call settings: every business type has calls (job DP)'), ('public.call_handover_rules', 'call settings: every business type has calls (job DP)'),
+  ('public.call_settings', 'call settings: every business type has calls (job DP)'),
+  ('public.lead_playbooks', 'the lead playbook: every business type (job DR)'), ('public.knowledge_sources', 'the knowledge base: every business type (job DR)'), ('public.knowledge_facts', 'the knowledge base: every business type (job DR)'),
+  ('public.lead_sources', 'lead sources: every business type (job DR)'), ('public.lead_consents', 'lead sources: every business type (job DR)'), ('public.lead_intakes', 'lead sources: every business type (job DR)'), ('public.lead_flags', 'lead sources: every business type (job DR)'),
+  ('public.lead_arrivals', 'lead sources: every business type (job DR)'), ('public.lead_source_costs', 'lead sources: every business type (job DR)'), ('public.lead_sheet_links', 'lead sources: every business type (job DR)'), ('public.lead_unparsed', 'lead sources: every business type (job DR)'),
+  ('public.outreach_policy', 'speed to lead and approve once: every business type (job DR A3)'),
+  ('public.outreach_batches', 'speed to lead and approve once: every business type (job DR A3)'),
+  ('public.outreach_rules', 'speed to lead and approve once: every business type (job DR A3)'),
+  ('public.outreach_items', 'speed to lead and approve once: every business type (job DR A3)'),
+  ('public.outreach_attempts', 'speed to lead and approve once: every business type (job DR A3)'),
+  ('public.outreach_handoffs', 'speed to lead and approve once: every business type (job DR A3)'),
+  ('public.outcome_details', 'speed to lead and approve once: every business type (job DR A3)'),
+  ('public.speaking_styles', 'how the assistant talks: every business type (job DS)'), ('public.call_handover_rules', 'call settings: every business type has calls (job DP)'),
   ('public.billing_subscriptions', 'plans and billing: every business has a plan'), ('public.billing_events', 'plans and billing'), ('public.billing_usage_events', 'plans and billing: the meters'),
-  ('public.billing_topups', 'plans and billing'), ('public.billing_notices', 'plans and billing'), ('public.billing_lapse_reminders', 'plans and billing'), ('public.billing_pending_reminders', 'plans and billing'), ('public.outcomes', 'outcomes of calls and follow-ups: the follow-ups module, always on, guards the writers (job DM)'), ('public.assistant_settings', 'the assistant settings of every business type (job DM)'),
+  ('public.billing_topups', 'plans and billing'), ('public.billing_notices', 'plans and billing'), ('public.billing_invoices', 'plans and billing'), ('public.billing_topup_purchases', 'plans and billing'), ('public.billing_topup_draws', 'plans and billing'), ('public.billing_topup_settings', 'plans and billing'), ('public.billing_alert_sends', 'plans and billing'), ('public.billing_lapse_reminders', 'plans and billing'), ('public.billing_pending_reminders', 'plans and billing'), ('public.outcomes', 'outcomes of calls and follow-ups: the follow-ups module, always on, guards the writers (job DM)'), ('public.assistant_settings', 'the assistant settings of every business type (job DM)'),
   ('public.billing_trial_reminders', 'plans and billing: the trial reminder e-mails (job RESEND)'),
   ('packs.workspace_pack', 'the pack itself'), ('packs.example_batches', 'example data bookkeeping'), ('packs.example_rows', 'example data bookkeeping');
 select is((select coalesce(string_agg(c.table_schema || '.' || c.table_name, ', ' order by c.table_schema, c.table_name), '')
@@ -157,15 +169,15 @@ select is((select coalesce(string_agg(e.tbl, ', '), '') from exempt e where not 
 -- ============================================================================ G. the readers
 select is((tests.scalar_as(tests.uid('a_owner'), format($$select public.workspace_pack_get(%L) ->> 'pack_id'$$, tests.tid('a')))), 'textiles', 'G1 a member reads their business''s pack');
 select is((tests.scalar_as(tests.uid('a_viewer'), format($$select public.workspace_pack_get(%L) ->> 'validated'$$, tests.tid('a')))), 'true', 'G2 a Viewer too, and it says the pack was validated by a real owner');
-select is((tests.scalar_as(tests.uid('a_owner'), format($$select jsonb_array_length(public.workspace_pack_get(%L) -> 'modules')::text$$, tests.tid('a')))), '17', 'G3 with its seventeen modules');
+select is((tests.scalar_as(tests.uid('a_owner'), format($$select jsonb_array_length(public.workspace_pack_get(%L) -> 'modules')::text$$, tests.tid('a')))), '18', 'G3 with its seventeen modules and the core lead_desk');
 select is((tests.scalar_as(tests.uid('a_owner'), format($$select (public.workspace_pack_get(%L) -> 'manifest') ? 'example_data'$$, tests.tid('a')))), 'false', 'G4 and without the bulky example data');
 select is(tests.sqlstate_as(tests.uid('b_owner'), format($$select public.workspace_pack_get(%L)$$, tests.tid('a'))), '42501', 'G5 DENY: another business''s Owner');
 select is(tests.sqlstate_as(tests.uid('outsider'), format($$select public.workspace_pack_get(%L)$$, tests.tid('a'))), '42501', 'G6 DENY: an outsider');
 select is(tests.sqlstate_as(null, format($$select public.workspace_pack_get(%L)$$, tests.tid('a'))), '42501', 'G7 DENY: no identity');
-select is((tests.scalar_as(tests.uid('a_viewer'), format($$select (select count(*) from jsonb_array_elements(public.workspace_modules(%L)) e where (e ->> 'enabled')::boolean)::text$$, tests.tid('a')))), '17', 'G8 the modules list says which are on');
-select is((tests.scalar_as(tests.uid('a_viewer'), format($$select jsonb_array_length(public.workspace_modules(%L))::text$$, tests.tid('a')))), '26', 'G9 and lists all twenty-six');
+select is((tests.scalar_as(tests.uid('a_viewer'), format($$select (select count(*) from jsonb_array_elements(public.workspace_modules(%L)) e where (e ->> 'enabled')::boolean)::text$$, tests.tid('a')))), '18', 'G8 the modules list says which are on (seventeen of the pack and the core lead_desk)');
+select is((tests.scalar_as(tests.uid('a_viewer'), format($$select jsonb_array_length(public.workspace_modules(%L))::text$$, tests.tid('a')))), '27', 'G9 and lists all twenty-seven');
 select is(tests.sqlstate_as(tests.uid('b_viewer'), format($$select public.workspace_modules(%L)$$, tests.tid('a'))), '42501', 'G10 DENY: another business reads no module list');
-select is((tests.scalar_as(tests.uid('outsider'), $$select jsonb_array_length(public.pack_catalogue())::text$$)), '3', 'G11 any signed-in person sees the three business types');
+select is((tests.scalar_as(tests.uid('outsider'), $$select jsonb_array_length(public.pack_catalogue())::text$$)), '12', 'G11 any signed-in person sees the twelve business types');
 select is((tests.scalar_as(tests.uid('outsider'), $$select (select e ->> 'validated' from jsonb_array_elements(public.pack_catalogue()) e where e ->> 'pack_id' = 'education')$$)), 'false', 'G12 and which have been validated by a real owner (education has not)');
 select is(tests.sqlstate_as(null, 'select public.pack_catalogue()'), '42501', 'G13 DENY: no identity');
 select is(has_function_privilege('anon', 'public.pack_catalogue()', 'execute'), false, 'G14 anon cannot execute the catalogue');

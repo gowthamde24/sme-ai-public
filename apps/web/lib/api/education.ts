@@ -13,6 +13,7 @@ import { bad, bool, int, iso, list, nstr, oneOf, optInt, optStr, rec, str, uuid 
  * the fee ledger of each student. Server side only, with the signed-in user's own token. Owner, Admin and Sales read; Owner and Admin write (an admission and a payment may also be written by Sales). A student is a first name or
  * initials, a placement and the adult we write to: nothing else exists, and these readers accept nothing else a child could be named by. Money is integer paise.
  */
+// eslint-disable-next-line no-restricted-syntax -- "coaching" here is a kind of institution (a coaching centre), not a business type of packages/packs
 export const INSTITUTION_TYPES = ["school", "junior_college", "degree_college", "university", "coaching", "training"] as const;
 export const PARENT_LANGUAGES = ["en", "te", "hi", "kn", "ta"] as const;
 export const PROGRAMME_KINDS = ["class", "course"] as const;

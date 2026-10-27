@@ -1,0 +1,19 @@
+# Add leads
+Bring in a list of people who asked about your business. Check it, say you may contact them, and add them.
+{role=note} Test mode: your leads stay in this browser and nothing is sent to anyone.
+{label="Where is your list?"}
+## Where is your list?
+{role=radiogroup label="Where is your list?"}
+[button type=button: Excel or CSV file]
+[button type=button: Google Sheet]
+[button type=button: Paste a list]
+[button type=button: Contacts file (.vcf)]
+Drop your file here, or choose it Choose a file
+<file label="Choose a file" accept=.csv,.tsv,.txt,.xlsx,.xls,text/csv>
+An Excel (.xlsx) or CSV file, up to 3 MB and 5,000 rows.
+[button type=button disabled: Read the list]
+{label="Sheets kept in sync"}
+## Sheets kept in sync
+No sheet is kept in sync yet.
+## Lists you added
+No list added yet.

@@ -4,6 +4,7 @@ import * as React from "react";
 
 import type { AiMood } from "../../mark/mood";
 import { AskAnswer, AskChips, AskForm, AskVoiceMode } from "./AskView";
+import { DoItBar } from "./AskDoItLazy";
 import { AskTeam } from "./AskTeam";
 import type { Availability } from "./ask-types";
 import type { AskWords } from "./ask-words";
@@ -51,8 +52,9 @@ export function AskCard({ lang, base, availability, words, chips, onMood }: { la
     );
   return (
     <div data-ask="live" data-ask-where="card" className="flex min-w-0 flex-col gap-3">
-      <AskForm session={shared} look="card" placeholder={w("ask.placeholder.hero")} />
-      {shared.phase === "idle" ? <AskChips session={shared} chips={chips} /> : null}
+      <AskForm session={shared} look="card" placeholder={shared.mode === "do" ? (shared.doIt?.words["tk.d.placeholder"] ?? w("ask.placeholder.hero")) : w("ask.placeholder.hero")} />
+      {shared.doIt ? <DoItBar session={shared} /> : null}
+      {shared.phase === "idle" && shared.mode !== "do" ? <AskChips session={shared} chips={chips} /> : null}
       <AskAnswer session={shared} chips={chips} earlierWord={w("ask.earlier")} />
       <AskVoiceMode session={shared} />
     </div>

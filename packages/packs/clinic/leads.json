@@ -1,0 +1,235 @@
+{
+  "$schema": "../leads.schema.json",
+  "pack": "clinic",
+  "version": 1,
+  "goal": {
+    "code": "appointment",
+    "label": {
+      "en": "Book an appointment",
+      "te": "Appointment book చేయడం",
+      "hi": "Appointment book कराना",
+      "kn": "Appointment book ಮಾಡಿಸುವುದು"
+    },
+    "ask": {
+      "en": "Offer an appointment slot at the clinic and confirm the day and time."
+    }
+  },
+  "questions": [
+    {
+      "code": "speciality",
+      "field": "speciality",
+      "ask": {
+        "en": "Which doctor or department would you like to see?"
+      },
+      "required": true
+    },
+    {
+      "code": "visit_reason",
+      "field": "visit_reason",
+      "ask": {
+        "en": "Is it a check-up, a follow-up or a new consultation?"
+      },
+      "required": true
+    },
+    {
+      "code": "first_visit",
+      "field": "first_visit",
+      "ask": {
+        "en": "Is this your first visit to us?"
+      },
+      "required": false
+    },
+    {
+      "code": "preferred_day",
+      "field": "preferred_day",
+      "ask": {
+        "en": "Which day would suit you?"
+      },
+      "required": true
+    },
+    {
+      "code": "preferred_slot",
+      "field": "preferred_slot",
+      "ask": {
+        "en": "Morning, afternoon or evening?"
+      },
+      "required": true
+    }
+  ],
+  "objections": [
+    {
+      "code": "fees_question",
+      "hears": [
+        "what is the fee",
+        "consultation charge"
+      ],
+      "answer": {
+        "en": "The front desk will tell you the exact fee when they confirm your slot. Shall I book a time for you?"
+      }
+    },
+    {
+      "code": "urgent",
+      "hears": [
+        "it is urgent",
+        "emergency",
+        "pain"
+      ],
+      "answer": {
+        "en": "If this is an emergency, please go to the nearest hospital or call the emergency number. For a normal visit I can find you the earliest slot."
+      }
+    },
+    {
+      "code": "far_away",
+      "hears": [
+        "too far",
+        "different city"
+      ],
+      "answer": {
+        "en": "I understand. Some visits can be handled over a call with the doctor. Our team can tell you which. Shall I ask them to call you?"
+      }
+    },
+    {
+      "code": "not_sure_which_doctor",
+      "hears": [
+        "which doctor",
+        "do not know"
+      ],
+      "answer": {
+        "en": "No problem. The front desk can guide you to the right doctor. Shall I book a general consultation first?"
+      }
+    },
+    {
+      "code": "later",
+      "hears": [
+        "call later",
+        "not now"
+      ],
+      "answer": {
+        "en": "Of course. When should I call you back? I can also send our timings on WhatsApp."
+      }
+    }
+  ],
+  "followups": [
+    {
+      "when": "no_answer",
+      "after_minutes": 60,
+      "channel": "call",
+      "max_attempts": 2,
+      "message": null
+    },
+    {
+      "when": "no_answer",
+      "after_minutes": 1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Hello, this is Vijaya, the AI assistant of the clinic. I tried calling about your appointment request. Reply with a good time to call."
+      }
+    },
+    {
+      "when": "interested",
+      "after_minutes": 2,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Thank you. Here are the clinic address, map and timings. Shall I confirm your appointment slot?"
+      }
+    },
+    {
+      "when": "callback",
+      "after_minutes": 0,
+      "channel": "call",
+      "max_attempts": 2,
+      "message": null
+    },
+    {
+      "when": "booked",
+      "after_minutes": -1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "A reminder: your appointment is tomorrow. Reply here to change the time."
+      }
+    },
+    {
+      "when": "booked",
+      "after_minutes": -120,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Your appointment is in two hours. Please reach 10 minutes early."
+      }
+    }
+  ],
+  "outcome_reasons": {
+    "not_interested": [
+      {
+        "code": "went_elsewhere",
+        "label": {
+          "en": "Went to another clinic"
+        }
+      },
+      {
+        "code": "resolved_on_its_own",
+        "label": {
+          "en": "No longer needs the visit"
+        }
+      },
+      {
+        "code": "too_far",
+        "label": {
+          "en": "Clinic is too far"
+        }
+      },
+      {
+        "code": "fee_concern",
+        "label": {
+          "en": "Concern about the fee"
+        }
+      },
+      {
+        "code": "timing_does_not_suit",
+        "label": {
+          "en": "Clinic timings do not suit"
+        }
+      },
+      {
+        "code": "just_browsing",
+        "label": {
+          "en": "Just browsing"
+        }
+      },
+      {
+        "code": "not_now",
+        "label": {
+          "en": "Not now, maybe later"
+        }
+      }
+    ],
+    "interested": [
+      {
+        "code": "appointment_booked",
+        "label": {
+          "en": "Appointment booked"
+        }
+      },
+      {
+        "code": "wants_timings_on_whatsapp",
+        "label": {
+          "en": "Wants timings on WhatsApp"
+        }
+      },
+      {
+        "code": "wants_doctor_to_call",
+        "label": {
+          "en": "Wants the clinic to call"
+        }
+      }
+    ]
+  },
+  "safety": [
+    "Never ask for, discuss or record symptoms, medicines, diagnoses or test results; the clinic staff do that.",
+    "Never give medical advice. For an emergency say to go to the nearest hospital.",
+    "Do not quote a fee unless it is in the approved facts."
+  ]
+}

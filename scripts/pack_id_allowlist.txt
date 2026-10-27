@@ -1,1 +1,4 @@
 # Files that still hold a pack id as a string literal and belong to another lane (scripts/packs_check.py). One path per line, then the reason. Remove a line when its file is fixed.
+services/ai-api/app/education/models.py the education pack's InstitutionType names a kind of institution (a coaching centre) that is also the id of the leads-and-calls business type 'coaching'; it is a type of school, not a pack choice (job DR)
+apps/web/components/v2/app/education/ProgrammesView.tsx the same list of institution kinds in the programmes screen (job DR; the web lane owns it)
+apps/web/lib/api/education.ts the same list of institution kinds in the web's API client (job DR; the web lane owns it)

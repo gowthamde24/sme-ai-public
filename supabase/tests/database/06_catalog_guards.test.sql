@@ -304,15 +304,31 @@ select is(
         'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue',
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
         'public.example_data_status', 'public.example_data_load', 'public.example_data_remove',
+        -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)
+        'public.task_context', 'public.task_save', 'public.task_get', 'public.tasks_list', 'public.task_contacts_list', 'public.task_report', 'public.task_exclude', 'public.task_approve', 'public.task_set_cap', 'public.task_set_state', 'public.task_claim', 'public.task_contact_result',
         -- job CN (ADR 0085): sites, the building-materials catalogue item, dues, material quotes and their order, deliveries. Each proves the role first; money moves need aal2 where the file says so
         'public.catalogue_material_save', 'public.site_save', 'public.site_get', 'public.sites_list', 'public.invoice_record', 'public.invoices_import', 'public.invoice_void', 'public.payment_record', 'public.payment_void', 'public.credit_limit_set', 'public.dues_statement', 'public.dues_summary', 'public.credit_check', 'public.dues_ledger', 'public.material_item_inputs', 'public.material_policy_create', 'public.material_policy_get', 'public.material_quote_build', 'public.material_quote_draft', 'public.material_quote_approve', 'public.material_quote_reject', 'public.material_quote_get', 'public.material_quotes_list', 'public.create_order_from_material_quote', 'public.trip_plan', 'public.trip_update', 'public.trip_set_status', 'public.trip_deliver', 'public.pod_ensure_bucket', 'public.trip_get', 'public.trips_list', 'public.delivery_challan_get', 'public.trip_update_submit',
         -- job CP (ADR 0086): the shared ledger (entries, imports, statements, receipts)
         'public.ledger_entry_record', 'public.ledger_entry_void', 'public.ledger_charges_import', 'public.ledger_statement', 'public.ledger_summary', 'public.ledger_entries_list', 'public.ledger_receipt_get',
         -- job RESEND: the trial reminder e-mails (the scheduler's two calls)
         'public.scheduler_billing_trial_due', 'public.scheduler_billing_trial_mark',
+        -- job DR A3: speed to lead and approve once (the Owner approves a plan once; staff report results; the worker scans, takes due calls and reminds)
+        'public.outreach_batch_approve', 'public.outreach_batch_exclude', 'public.outreach_batch_get', 'public.outreach_batch_plan', 'public.outreach_batch_state', 'public.outreach_batches_list', 'public.outreach_caps_set', 'public.outreach_handoff_acted', 'public.outreach_handoffs_list', 'public.outreach_item_result', 'public.outreach_items_list',
+        'public.outreach_policy_get', 'public.outreach_policy_set', 'public.outreach_report', 'public.outreach_rule_save', 'public.outreach_rule_state', 'public.outreach_rules_list', 'public.outreach_source_costs_get', 'public.outreach_source_costs_set', 'public.scheduler_outreach_reminders', 'public.scheduler_outreach_run', 'public.scheduler_outreach_scan',
+        -- job DS part E2: running out before the month ends (the Owner reads and buys; the worker closes periods and sends alerts)
+        'public.billing_topups_get', 'public.billing_topup_buy', 'public.billing_topup_settings_set', 'public.billing_invoices_list', 'public.billing_invoice_get', 'public.billing_upgrade_preview', 'public.billing_upgrade', 'public.scheduler_billing_topup_tick', 'public.scheduler_usage_alerts_due', 'public.scheduler_usage_alert_mark',
         -- job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors (open to the public key, with their own caps), the worker's intake, lapse and purge calls
         'public.consents_mine', 'public.consent_set_marketing', 'public.profile_get', 'public.profile_set', 'public.public_grievance_submit', 'public.waitlist_join',
         'public.scheduler_public_intake_due', 'public.scheduler_public_intake_mark', 'public.scheduler_lapse_due', 'public.scheduler_lapse_warned', 'public.scheduler_lapse_erase', 'public.lapse_erasure_status', 'public.privacy_worker_purge_logs',
+        -- job DS: how the assistant talks (every member reads, the Owner with a second factor sets)
+        'public.speaking_style_get', 'public.speaking_style_set',
+        -- job DR / A1: the lead playbook (any member reads, the Owner with a second factor saves) and the knowledge base (Owner/Admin manage, every member reads the approved facts)
+        'public.lead_playbook_get', 'public.lead_playbook_save', 'public.lead_playbook_reset', 'public.knowledge_source_add', 'public.knowledge_sources_list', 'public.knowledge_source_text', 'public.knowledge_source_discard',
+        'public.knowledge_facts_draft_replace', 'public.knowledge_fact_add', 'public.knowledge_fact_edit', 'public.knowledge_fact_decide', 'public.knowledge_facts_list', 'public.knowledge_facts_approved',
+        -- job DR / A2: lead sources and imports (a person imports; Owner/Admin manage sources; the worker account is the door for the public arrivals and the sheets)
+        'public.lead_consent_confirm', 'public.lead_intake_apply', 'public.lead_intakes_list', 'public.lead_source_create', 'public.lead_sources_list', 'public.lead_source_rotate', 'public.lead_source_set_status',
+        'public.scheduler_lead_intake_live', 'public.scheduler_lead_unparsed_add', 'public.lead_unparsed_list', 'public.lead_unparsed_discard', 'public.lead_arrivals_list',
+        'public.lead_sheet_link_create', 'public.lead_sheet_links_list', 'public.lead_sheet_link_action', 'public.scheduler_sheet_links_due', 'public.scheduler_lead_sheet_apply', 'public.scheduler_lead_sheet_failed',
         -- job CP: reminder campaigns, the call list and the results
         'public.campaign_save', 'public.campaign_get', 'public.campaigns_list', 'public.campaign_recipients_add', 'public.campaign_recipients_from_ledger', 'public.campaign_recipient_remove', 'public.campaign_recipients_list', 'public.campaign_preview', 'public.campaign_approve', 'public.campaign_set_state', 'public.scheduler_campaign_run', 'public.call_list', 'public.call_list_outcome', 'public.campaign_results',
         -- job DP part 4: call settings (the Owner with a second factor saves; Owner and Admin read)
@@ -336,6 +352,8 @@ select is(
         'app.pod_bucket_tenant',
         -- the archive guard runs as the caller and asks whether an erasure of the workspace is executing (job DQ part 4)
         'app.erasure_door_open',
+        -- Today runs as the caller and asks for the usage notices of the caller's own workspace (job DS part E2)
+        'app.today_usage_items',
         -- the own-voice bucket's storage rules are evaluated as the caller, who must be able to run this one (job DP part 5)
         'app.ovc_bucket_tenant')),
   '', 'authenticated can execute only the allow-listed functions');
@@ -393,6 +411,8 @@ select is(
         'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue',
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
         'public.example_data_status', 'public.example_data_load', 'public.example_data_remove',
+        -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)
+        'public.task_context', 'public.task_save', 'public.task_get', 'public.tasks_list', 'public.task_contacts_list', 'public.task_report', 'public.task_exclude', 'public.task_approve', 'public.task_set_cap', 'public.task_set_state', 'public.task_claim', 'public.task_contact_result',
                      -- job DP part 5: the Owner's own voice
                      'public.own_voice_sentence', 'public.own_voice_get', 'public.own_voice_private', 'public.own_voice_ensure_bucket', 'public.own_voice_begin', 'public.own_voice_ready', 'public.own_voice_failed', 'public.own_voice_deleted',
                      -- job DQ part 3: every member reads the assistant's name
@@ -400,9 +420,23 @@ select is(
                      'public.catalogue_material_save', 'public.site_save', 'public.site_get', 'public.sites_list', 'public.invoice_record', 'public.invoices_import', 'public.invoice_void', 'public.payment_record', 'public.payment_void', 'public.credit_limit_set', 'public.dues_statement', 'public.dues_summary', 'public.credit_check', 'public.dues_ledger', 'public.material_item_inputs', 'public.material_policy_create', 'public.material_policy_get', 'public.material_quote_build', 'public.material_quote_draft', 'public.material_quote_approve', 'public.material_quote_reject', 'public.material_quote_get', 'public.material_quotes_list', 'public.create_order_from_material_quote', 'public.trip_plan', 'public.trip_update', 'public.trip_set_status', 'public.trip_deliver', 'public.pod_ensure_bucket', 'public.trip_get', 'public.trips_list', 'public.delivery_challan_get', 'public.trip_update_submit',
                      -- job RESEND: the trial reminder e-mails
                      'public.scheduler_billing_trial_due', 'public.scheduler_billing_trial_mark',
+        -- job DR A3: speed to lead and approve once (the Owner approves a plan once; staff report results; the worker scans, takes due calls and reminds)
+        'public.outreach_batch_approve', 'public.outreach_batch_exclude', 'public.outreach_batch_get', 'public.outreach_batch_plan', 'public.outreach_batch_state', 'public.outreach_batches_list', 'public.outreach_caps_set', 'public.outreach_handoff_acted', 'public.outreach_handoffs_list', 'public.outreach_item_result', 'public.outreach_items_list',
+        'public.outreach_policy_get', 'public.outreach_policy_set', 'public.outreach_report', 'public.outreach_rule_save', 'public.outreach_rule_state', 'public.outreach_rules_list', 'public.outreach_source_costs_get', 'public.outreach_source_costs_set', 'public.scheduler_outreach_reminders', 'public.scheduler_outreach_run', 'public.scheduler_outreach_scan',
+        -- job DS part E2: running out before the month ends (the Owner reads and buys; the worker closes periods and sends alerts)
+        'public.billing_topups_get', 'public.billing_topup_buy', 'public.billing_topup_settings_set', 'public.billing_invoices_list', 'public.billing_invoice_get', 'public.billing_upgrade_preview', 'public.billing_upgrade', 'public.scheduler_billing_topup_tick', 'public.scheduler_usage_alerts_due', 'public.scheduler_usage_alert_mark',
         -- job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors (open to the public key, with their own caps), the worker's intake, lapse and purge calls
         'public.consents_mine', 'public.consent_set_marketing', 'public.profile_get', 'public.profile_set', 'public.public_grievance_submit', 'public.waitlist_join',
         'public.scheduler_public_intake_due', 'public.scheduler_public_intake_mark', 'public.scheduler_lapse_due', 'public.scheduler_lapse_warned', 'public.scheduler_lapse_erase', 'public.lapse_erasure_status', 'public.privacy_worker_purge_logs',
+        -- job DS: how the assistant talks (every member reads, the Owner with a second factor sets)
+        'public.speaking_style_get', 'public.speaking_style_set',
+        -- job DR / A1: the lead playbook (any member reads, the Owner with a second factor saves) and the knowledge base (Owner/Admin manage, every member reads the approved facts)
+        'public.lead_playbook_get', 'public.lead_playbook_save', 'public.lead_playbook_reset', 'public.knowledge_source_add', 'public.knowledge_sources_list', 'public.knowledge_source_text', 'public.knowledge_source_discard',
+        'public.knowledge_facts_draft_replace', 'public.knowledge_fact_add', 'public.knowledge_fact_edit', 'public.knowledge_fact_decide', 'public.knowledge_facts_list', 'public.knowledge_facts_approved',
+        -- job DR / A2: lead sources and imports (a person imports; Owner/Admin manage sources; the worker account is the door for the public arrivals and the sheets)
+        'public.lead_consent_confirm', 'public.lead_intake_apply', 'public.lead_intakes_list', 'public.lead_source_create', 'public.lead_sources_list', 'public.lead_source_rotate', 'public.lead_source_set_status',
+        'public.scheduler_lead_intake_live', 'public.scheduler_lead_unparsed_add', 'public.lead_unparsed_list', 'public.lead_unparsed_discard', 'public.lead_arrivals_list',
+        'public.lead_sheet_link_create', 'public.lead_sheet_links_list', 'public.lead_sheet_link_action', 'public.scheduler_sheet_links_due', 'public.scheduler_lead_sheet_apply', 'public.scheduler_lead_sheet_failed',
                      -- job CP: the shared ledger
                      'public.ledger_entry_record', 'public.ledger_entry_void', 'public.ledger_charges_import', 'public.ledger_statement', 'public.ledger_summary', 'public.ledger_entries_list', 'public.ledger_receipt_get',
                      'public.campaign_save', 'public.campaign_get', 'public.campaigns_list', 'public.campaign_recipients_add', 'public.campaign_recipients_from_ledger', 'public.campaign_recipient_remove', 'public.campaign_recipients_list', 'public.campaign_preview', 'public.campaign_approve', 'public.campaign_set_state', 'public.scheduler_campaign_run', 'public.call_list', 'public.call_list_outcome', 'public.campaign_results',

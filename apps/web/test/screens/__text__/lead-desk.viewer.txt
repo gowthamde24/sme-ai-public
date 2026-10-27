@@ -1,0 +1,14 @@
+# Lead Desk
+Every lead that arrives: where it came from, what state it is in, and who has it.
+form:
+Where from
+<select name=source label="Where from">
+  options: Any=* | IndiaMART=indiamart | JustDial=justdial | 99acres | MagicBricks=magicbricks | Housing.com=housing | Meta lead ads=meta_lead_ads | Your website form=website_form | Webhook (Zapier, n8n)=webhook | Excel or CSV file=excel_upload | Google Sheet=google_sheet | Pasted list=pasted_list | Contacts file=vcard
+State
+<select name=status label="State">
+  options: Any=* | New=new | Contacted=contacted | Qualified=qualified | Not suitable=disqualified
+<checkbox name=mine label="Handed to me" value=1>
+Handed to me
+[button type=submit: Show]
+- [Ravi K. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333) New Meta lead ads · Oct 27 Handed to Nobody yet
+- [Anitha R. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/leads/ca000000-0000-4000-8000-0000000000a2) Contacted IndiaMART · Oct 26 Handed to Ravi (synthetic)

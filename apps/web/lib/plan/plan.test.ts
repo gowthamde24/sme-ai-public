@@ -8,10 +8,10 @@ import { FRESH, cancel, encodeMock, endTrial, fixPayment, parseMock, startTrial,
 describe("the plans as data", () => {
   it("are the six of C1's plans file (job DI), and NO price is invented: every price is null until the owner sets it", () => {
     expect(mainPlans().map((p) => p.name)).toEqual(["Starter", "Growth", "Business"]);
-    expect(callsPlans().map((p) => p.name)).toEqual(["Pay-as-you-go", "Calls 300", "Calls 1,000"]);
+    expect(callsPlans().map((p) => p.name)).toEqual(["Pay as you go", "Lead Desk 300", "Lead Desk 1,000"]);
     for (const p of CATALOGUE.plans) expect(p.priceInr, p.id).toBeNull();
   });
-  it("carry the allowances of C1's plans file: trial 30 min and 100 messages for 14 days (counted from the day WhatsApp is connected); Starter 0/300, Growth 100/1,000, Business 300/3,000; Calls 300 and 1,000 minutes; team 1/3/10 and workspaces 1/1/3", () => {
+  it("carry the allowances of C1's plans file: trial 30 min and 100 messages for 14 days (counted from the day WhatsApp is connected); Starter 0/300, Growth 100/1,000, Business 300/3,000; Lead Desk 300 and 1,000 minutes; team 1/3/10 and workspaces 1/1/3", () => {
     expect(CATALOGUE.trial).toEqual({ days: 14, callMinutes: 30, messages: 100, graceDays: 7 });
     expect(mainPlans().map((p) => [p.callMinutes, p.messages, p.users, p.workspaces])).toEqual([[0, 300, 1, 1], [100, 1000, 3, 1], [300, 3000, 10, 3]]);
     expect(callsPlans().map((p) => p.callMinutes)).toEqual([null, 300, 1000]);

@@ -29,7 +29,12 @@ export async function readAssistant(ctx: CtxAssistant, modules: readonly string[
     const got = await readApiCached(ctx.token, ctx.tenantId);
     return got ? { mode: "ok", settings: enforceProfile(got.settings, assistantProfile(modules)), saved: got.saved } : { mode: "unavailable" };
   }
-  const raw = (await cookies()).get(MOCK_COOKIE)?.value;
+  let raw: string | undefined;
+  try {
+    raw = (await cookies()).get(MOCK_COOKIE)?.value;
+  } catch {
+    raw = undefined; // outside a request (a test): the defaults
+  }
   if (raw) {
     try {
       const own = parseSettings(JSON.parse(raw));

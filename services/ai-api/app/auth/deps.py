@@ -34,7 +34,10 @@ from app.evidence.repository import EvidenceRepository
 from app.followups.repository import FollowupsRepository
 from app.integrations.policy import PolicyVersions
 from app.integrations.repository import IntegrationsRepository
+from app.knowledge.service import KnowledgeService
+from app.lead_sources.service import LeadSourcesService
 from app.leads.repository import LeadsRepository
+from app.leadspack.service import LeadPlaybookService
 from app.leadtools.repository import LeadSearchRepository
 from app.marksmessages.service import MarksSendService
 from app.materials.repository import MaterialsRepository
@@ -43,6 +46,7 @@ from app.orders.repository import OrdersRepository
 from app.outbox.adapter import ChannelAdapter
 from app.outbox.repository import OutboxRepository
 from app.outcomes.repository import OutcomesRepository
+from app.outreach.service import OutreachService
 from app.ownvoice.service import OwnVoiceService
 from app.packs.models import AuthProvidersOut
 from app.packs.registry import PackRegistry
@@ -54,8 +58,10 @@ from app.quotes.repository import QuotesRepository
 from app.reports.repository import ReportsRepository
 from app.scheduler.repository import SchedulerRepository
 from app.sites.repository import SitesRepository
+from app.speaking.service import SpeakingService
 from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
+from app.tasks.service import TasksService
 from app.team.repository import TeamRepository
 from app.tenancy.models import Role, TenantOut
 from app.tenancy.repository import TenantRepository
@@ -63,6 +69,7 @@ from app.today.repository import TodayRepository
 from app.visits.repository import VisitsRepository
 from app.voice.interface import VoiceStack
 from app.voice_notes.repository import VoiceNotesRepository
+from app.voicesample.service import VoiceSampleService
 from app.websearch.repository import ResearchUsageRepository
 from app.websearch.service import ResearchWeb
 from app.whatsapp.runtime import WhatsAppRuntime
@@ -143,6 +150,19 @@ class Runtime:
     marks_messages: MarksSendService | None = None
     # job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors
     dpdp: DpdpRuntime | None = None
+    # job DS: how the assistant talks (everyday spoken style per language)
+    speaking: SpeakingService | None = None
+    # job DR / A1: the lead playbook of a workspace and its knowledge base
+    lead_playbook: LeadPlaybookService | None = None
+    knowledge: KnowledgeService | None = None
+    # job DR / A2: lead imports and live sources
+    lead_sources: LeadSourcesService | None = None
+    # job DR A3: speed to lead and approve once
+    outreach: OutreachService | None = None
+    # job DR B1: "Ask Vijaya to do it" (plan, approve once, run, report)
+    tasks: TasksService | None = None
+    # job DS: the voice picker's listening sample (one short clip, cached, capped)
+    voice_sample: VoiceSampleService | None = None
 
 
 @dataclass(frozen=True)

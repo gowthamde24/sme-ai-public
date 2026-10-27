@@ -19,6 +19,7 @@ from typing import Protocol
 
 import httpx
 
+from app.billing.alerts import FakeOwnerWhatsApp, UsageAlerts
 from app.billing.mail import (
     BillingReminders,
     EmailSender,
@@ -34,6 +35,8 @@ from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
 from app.dpdp.mail import DpdpJobs
 from app.dpdp.wiring import build_dpdp_jobs
+from app.lead_sources.sync import SheetSync
+from app.lead_sources.wiring import build_lead_sources
 from app.notifications.repository import PostgrestNotificationsRepository
 from app.notifications.runner import PushRunner
 from app.notifications.webpush import WebPushSender
@@ -43,11 +46,14 @@ from app.observability.sentry import init_sentry
 from app.outbox.adapter import ChannelAdapter, build_adapter
 from app.outbox.service import media_signer
 from app.outbox.voice_hook import VoiceNotes
+from app.outreach.runner import OutreachRunner
+from app.outreach.wiring import build_outreach_runner
 from app.privacy.housekeeping import Housekeeping
 from app.privacy.repository import PostgrestPrivacyRepository
 from app.scheduler.repository import PostgrestSchedulerRepository, SchedulerRepository
 from app.scheduler.session import PrincipalSession, SignInError
 from app.scheduler.tick import TickResult, run_tick
+from app.suppression.wiring import build_key_ring
 from app.tenancy.repository import TokenRejected
 from app.voice.factory import build_note_voice
 
@@ -76,12 +82,15 @@ class Worker:
         storage: StorageClient | None = None,
         housekeeping: Housekeeping | None = None,
         push: PushRunner | None = None,
+        lead_sheets: SheetSync | None = None,
         voice: VoiceNotes | None = None,
         billing_mail: BillingReminders | None = None,
         billing_clocks: BillingService | None = None,
         billing_pending_mail: PendingReminders | None = None,
         billing_trial_mail: TrialReminders | None = None,
         dpdp_jobs: DpdpJobs | None = None,
+        outreach: OutreachRunner | None = None,
+        usage_alerts: UsageAlerts | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -94,6 +103,8 @@ class Worker:
         self._sign_media = media_signer(storage)
         self._housekeeping = housekeeping
         self._push = push
+        # job DR / A2: the Google Sheets of leads that are kept in sync
+        self._lead_sheets = lead_sheets
         # job CV: the spoken copy of a campaign message, made at send time by the text-to-speech provider (None = voice notes are not available in this process)
         self._voice = voice
         # job DI: the e-mails of a workspace that went read-only (day 1, 30, 60, 83); the FAKE sender sends nothing; only while the platform's billing switch is on
@@ -106,6 +117,10 @@ class Worker:
         self._billing_trial_mail = billing_trial_mail
         # job DQ (DPDP): the e-mails of the public privacy doors, the lapse warnings and erasures, the purge of old logs
         self._dpdp_jobs = dpdp_jobs
+        # job DR A3: new leads for the standing rules, the calls that are due (fake dialer only), the hand-off reminders
+        self._outreach = outreach
+        # job DS part E2: the 80 and 100 percent alerts (e-mail and a FAKE WhatsApp message to the owner) and the close of a period (one overage invoice); only while the platform's billing switch is on
+        self._usage_alerts = usage_alerts
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -121,9 +136,12 @@ class Worker:
             )
             self._privacy_housekeeping(token)
             self._push_to_the_team(token)
+            self._lead_sheet_sync(token)
             self._billing_reminders(token)
             self._billing_trial_clocks(token)
             self._dpdp(token)
+            self._outreach_pass(token)
+            self._usage_alerts_pass(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -157,6 +175,17 @@ class Worker:
         except Exception as exc:
             logger.error("push pass crashed: %s", exc.__class__.__name__)
 
+    def _lead_sheet_sync(self, token: str) -> None:
+        """Job DR / A2: pull the Google Sheets of leads that are due. A failure here never fails the tick (a refused token does)."""
+        if self._lead_sheets is None:
+            return
+        try:
+            self._lead_sheets.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("lead sheet sync crashed: %s", exc.__class__.__name__)
+
     def _billing_reminders(self, token: str) -> None:
         if self._billing_mail is None:
             return
@@ -180,6 +209,26 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("dpdp jobs crashed: %s", exc.__class__.__name__)
+
+    def _outreach_pass(self, token: str) -> None:
+        if self._outreach is None:
+            return
+        try:
+            self._outreach.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("outreach pass crashed: %s", exc.__class__.__name__)
+
+    def _usage_alerts_pass(self, token: str) -> None:
+        if self._usage_alerts is None:
+            return
+        try:
+            self._usage_alerts.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("usage alerts crashed: %s", exc.__class__.__name__)
 
     def _billing_trial_clocks(self, token: str) -> None:
         if self._billing_clocks is None:
@@ -258,9 +307,12 @@ def build_worker(settings: Settings) -> Worker:
         billing_trial_mail=TrialReminders(PostgrestBillingMailRepository(config.rest_url, config.anon_key), _billing_sender(settings)),
         billing_clocks=BillingService(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_provider(settings)),
         dpdp_jobs=build_dpdp_jobs(settings, config.rest_url, config.anon_key, _billing_sender(settings)),
+        outreach=build_outreach_runner(settings, config.rest_url, config.anon_key),
+        usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,
+        lead_sheets=SheetSync(build_lead_sources(settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, build_key_ring(settings))),
         voice=VoiceNotes(repository, *build_note_voice(settings)),
     )
 

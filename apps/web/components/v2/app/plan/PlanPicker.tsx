@@ -72,16 +72,17 @@ export function PlanPicker({ words, main, calls, currentId, canStart, blocked, m
       ) : null}
       {blocked !== null ? <p className="text-sm font-medium">{t(`plan.err.${blocked}`)}</p> : null}
       <section aria-labelledby="picker-main-h">
-        <h2 id="picker-main-h" className="mb-3 font-display text-2xl font-bold">
-          {t("plan.picker.main")}
+        <h2 id="picker-main-h" className="font-display text-2xl font-bold">
+          {t("tu.picker.main")}
         </h2>
+        <p className="mb-3 text-sm text-muted">{t("tu.picker.main.sub")}</p>
         <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">{main.map(card)}</ul>
       </section>
       <section aria-labelledby="picker-calls-h">
         <h2 id="picker-calls-h" className="font-display text-2xl font-bold">
-          {t("plan.picker.calls")}
+          {t("tu.picker.calls")}
         </h2>
-        <p className="mb-3 text-sm text-muted">{t("plan.picker.calls.sub")}</p>
+        <p className="mb-3 text-sm text-muted">{t("tu.picker.calls.sub")}</p>
         <ul className="grid grid-cols-1 gap-3 md:grid-cols-3">{calls.map(card)}</ul>
       </section>
       <p className="text-sm text-muted">{t("plan.picker.includes")}</p>

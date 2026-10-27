@@ -48,3 +48,7 @@ The category always belongs to its outcome (the API answers 422 for a wrong pair
 - Today: `GET .../outcomes/totals` once; empty day = all zeros, show nothing or "no calls yet".
 - A Viewer may read both; do not offer them the controls.
 - A **read-only** workspace (`access: "read_only"`, billing switch) refuses the POST and the PATCH with 403 `workspace_read_only`; reads keep working.
+
+## Night 4 (job DR A3): the generic pack's words
+- New category `already_bought` (outcome `negative`). `by_category` in the totals has the key (0 when none).
+- Every outcome, the customer's timeline rows and the list carry `callback_at` (timestamp or null; set for `call_back_later`) and `captured` (an object of the pack's fields from the call, for example `{"budget": "50 lakh", "area": "Gachibowli"}`, or null).

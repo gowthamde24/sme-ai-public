@@ -74,7 +74,7 @@ select app.operator_set_billing_enforced(false);
 select pg_temp.q(app.outbox_claim_due_core(tests.tid('a'), 10, false));
 select isnt((select status || '/' || attempts::text from public.outbox_messages where id = tests.rid('r1')), 'queued/0', 'D4 with the switch OFF the held message is served at the next claim: nothing was lost');
 select app.operator_set_billing_enforced(true);
-select is((select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname in ('public', 'app') and p.prosrc like '%billing\_read\_only(%' and p.proname <> 'billing_read_only'), 'billing_access,outbox_claim_due_core,scheduler_tenants', 'D5 only the outbox claim, the worker''s tenant list and the access answer consult the read-only state in the database (the API gate reads it through public.billing_access)');
+select is((select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname in ('public', 'app') and p.prosrc like '%billing\_read\_only(%' and p.proname <> 'billing_read_only'), 'billing_access,outbox_claim_due_core,scheduler_outreach_run,scheduler_outreach_scan,scheduler_tenants', 'D5 only the outbox claim, the worker''s tenant list and the access answer consult the read-only state in the database (the API gate reads it through public.billing_access)');
 
 -- ============================================================================ E. the reminders (14 October: day 13 of read-only)
 select pg_temp.pin('2026-10-14T11:00:00+05:30'::timestamptz);

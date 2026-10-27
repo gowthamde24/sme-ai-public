@@ -1,0 +1,13 @@
+# Set up Lead Desk
+Six short steps. You can skip any step and come back later. Step 5 of 6
+{label="Step 5 of 6"}
+- [1 . What you sell](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=1)
+- [2 . Your business type](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=2)
+- [3 . Goal and questions](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=3)
+- [4 . Your assistant](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=4)
+- [5 . Test call](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=5 current=step)
+- [6 . Go live](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=6)
+## Try a test call
+See what the assistant would say to a customer, and what she would record. No call is made: you see what the assistant would say to a customer and what it would record. A real test call to your own phone comes with AI calls.
+[button type=button: Try a test call (a simulation)]
+{label="Setup steps"} [Back](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=4) [Skip this step](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=6) Nothing here is required.

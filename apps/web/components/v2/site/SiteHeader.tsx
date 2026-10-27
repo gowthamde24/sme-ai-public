@@ -17,7 +17,7 @@ import { waitlistMode } from "@/lib/waitlist/mode";
 const link = "inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-3 text-[15px] font-semibold text-ink hover:bg-surface-2";
 
 /**
- * The header of every public page (jobs CM, CX, DM): the AI circle and the name, five links (AI workforce, How it works, AI calls, Built for, Pricing: the sections of the home page, so from another page they lead back to it; Pricing leads
+ * The header of every public page (jobs CM, CX, DM): the AI circle and the name, four links (How it works, Lead sources, Built for, Pricing: the sections of the home page, so from another page they lead back to it; Pricing leads
  * to the plans page there), Sign in, the language (this page in the other languages), the theme, and the one button of the site, "Start trial". From 1024 px the links sit in the bar; below that they are a native
  * disclosure (`<details>`, no script); the language, theme and the button stay in the bar.
  */
@@ -31,9 +31,8 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
   const web = websiteOnly();
   const start = startEntry(t, lang, t("nav.start"), { hasForm: waitlistMode() !== "off" && (target.kind !== "page" || target.page === "contact") });
   const nav = [
-    { href: `${base}#workforce`, label: t("nav.workforce"), here: false },
     { href: `${base}#how`, label: t("nav.how"), here: false },
-    { href: `${base}#voice`, label: t("nav.calls"), here: false },
+    { href: `${base}#sources`, label: t("nav.sources"), here: false },
     { href: `${base}#business`, label: t("nav.businesses"), here: false },
     { href: onHome ? "#pricing" : pricingPage, label: t("nav.pricing"), here: target.kind === "page" && target.page === "pricing" },
   ];

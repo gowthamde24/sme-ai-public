@@ -13,9 +13,14 @@ from pathlib import Path
 from typing import Any
 
 from app.billing.errors import (
+    CapRequiredError,
+    NoSubscriptionError,
+    NotAnUpgradeError,
     NothingToCancelError,
     NotLapsedError,
+    PackUnknownError,
     PlanUnknownError,
+    PurchaseIdUsedError,
     TrialAlreadyStartedError,
 )
 from app.crm.repository import NotFoundError
@@ -44,6 +49,13 @@ class FakeBillingRepository:
         self.trial_days = 14
         self.connected: dict[uuid.UUID, datetime] = {}
         self.clock_marked: set[uuid.UUID] = set()
+        # night 4, job DS part E2: top-ups, settings, invoices, the upgrade, the alerts (the database's own rules are proved in 129_ds_topups.test.sql)
+        self.purchases: dict[uuid.UUID, dict[str, Any]] = {}
+        self.invoice_rows: list[dict[str, Any]] = []
+        self.topup_settings_row: dict[str, Any] | None = None
+        self.alert_rows: list[dict[str, Any]] = []
+        self.alerts_marked: list[tuple[uuid.UUID, str, int, str, str]] = []
+        self.tick_invoices = 0
 
     def _go(self, name: str, *args: Any) -> None:
         self.calls.append((name, args))
@@ -185,3 +197,109 @@ class FakeBillingRepository:
             sub.update(status="cancelled", payment_method_on_file=False, grace_until=None)
             self.plan_of[tenant_id] = "free_trial"
         return {k: v for k, v in sub.items() if k != "provider_ref"}
+
+
+    # ------------------------------------------------------------------------------------------------ night 4, job DS part E2
+    PACKS = (("minutes_100", "call_minutes", 100, 40000), ("minutes_300", "call_minutes", 300, 108000), ("minutes_1000", "call_minutes", 1000, 340000),
+             ("messages_100", "whatsapp_messages", 100, 6000), ("messages_300", "whatsapp_messages", 300, 16200), ("messages_1000", "whatsapp_messages", 1000, 51000))
+
+    def _settings(self) -> dict[str, Any]:
+        row = self.topup_settings_row or {"auto_minutes_pack": None, "auto_messages_pack": None, "auto_monthly_cap_paise": 0, "overage_minutes": False, "overage_messages": False, "overage_monthly_cap_paise": 0}
+        return {**row, "overage_rate_paise_per_minute": 500, "overage_rate_paise_per_message": 70, "auto_spent_paise": 0, "overage_spent_paise": 0}
+
+    def topups(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        self._go("topups", token)
+        packs = [{"code": c, "kind": k, "units": u, "price_paise": p, "gst_rate_bp": 1800, "gst_paise": (p * 1800 + 5000) // 10000, "total_paise": p + (p * 1800 + 5000) // 10000, "price_is_placeholder": True} for c, k, u, p in self.PACKS]
+        empty = {"units": 0.0, "lots": []}
+        return {"packs": packs, "balance": {"call_minutes": dict(empty), "whatsapp_messages": dict(empty)}, "settings": self._settings(),
+                "history": [h["purchase"] for h in reversed(list(self.purchases.values()))][:20]}
+
+    def _invoice(self, kind: str, description: str, taxable: int) -> dict[str, Any]:
+        gst = (taxable * 1800 + 5000) // 10000
+        row = {"id": str(uuid.uuid4()), "number": f"S19-2611-{len(self.invoice_rows) + 1:06d}", "kind": kind, "description": description, "issued_at": "2026-11-02T05:30:00+00:00", "period_start": None,
+               "taxable_paise": taxable, "gst_rate_bp": 1800, "cgst_paise": 0, "sgst_paise": 0, "igst_paise": gst, "total_paise": taxable + gst,
+               "seller": {"name": "Stack19 (test seller)", "state_code": "36", "gstin": None}, "buyer": {"gstin": None, "state_code": None}, "fake": True, "payment_status": "paid_fake"}
+        self.invoice_rows.append(row)
+        return row
+
+    def buy_topup(self, token: str, tenant_id: uuid.UUID, purchase_id: uuid.UUID, pack_code: str) -> dict[str, Any]:
+        self._go("buy_topup", token, purchase_id, pack_code)
+        pack = next((p for p in self.PACKS if p[0] == pack_code), None)
+        if pack is None:
+            raise PackUnknownError(pack_code)
+        have = self.purchases.get(purchase_id)
+        if have is not None:
+            if have["purchase"]["pack_code"] != pack_code:
+                raise PurchaseIdUsedError(str(purchase_id))
+            return {"created": False, "purchase": have["purchase"], "invoice": have["invoice"], "usage": self.billing(token, tenant_id)["usage"]}
+        if tenant_id not in self.subs or self.subs[tenant_id]["status"] not in ("trial_pending", "trialing", "active"):
+            raise NoSubscriptionError(str(tenant_id))
+        invoice = self._invoice("topup", f"Top-up: {pack[2]}", pack[3])
+        purchase = {"id": str(purchase_id), "pack_code": pack[0], "kind": pack[1], "units": pack[2], "source": "manual", "price_paise": pack[3], "total_paise": invoice["total_paise"],
+                    "purchased_at": "2026-11-02T05:30:00+00:00", "expires_at": "2027-01-31T05:30:00+00:00", "units_left": float(pack[2]), "expired": False, "invoice_id": invoice["id"]}
+        self.purchases[purchase_id] = {"purchase": purchase, "invoice": invoice}
+        return {"created": True, "purchase": purchase, "invoice": invoice, "usage": self.billing(token, tenant_id)["usage"]}
+
+    def topup_settings(self, token: str, tenant_id: uuid.UUID, settings: dict[str, Any]) -> dict[str, Any]:
+        self._go("topup_settings", token, settings)
+        for key, kind in (("auto_minutes_pack", "call_minutes"), ("auto_messages_pack", "whatsapp_messages")):
+            if settings[key] is not None and not any(p[0] == settings[key] and p[1] == kind for p in self.PACKS):
+                raise PackUnknownError(str(settings[key]))
+        if ((settings["auto_minutes_pack"] or settings["auto_messages_pack"]) and settings["auto_monthly_cap_paise"] == 0) or ((settings["overage_minutes"] or settings["overage_messages"]) and settings["overage_monthly_cap_paise"] == 0):
+            raise CapRequiredError("cap")
+        self.topup_settings_row = dict(settings)
+        return self._settings()
+
+    def invoices(self, token: str, tenant_id: uuid.UUID, limit: int, after_at: datetime | None, after_id: uuid.UUID | None) -> list[dict[str, Any]]:
+        self._go("invoices", token, limit)
+        return list(reversed(self.invoice_rows))[:limit]
+
+    def invoice(self, token: str, tenant_id: uuid.UUID, invoice_id: uuid.UUID) -> dict[str, Any]:
+        self._go("invoice", token, invoice_id)
+        row = next((r for r in self.invoice_rows if r["id"] == str(invoice_id)), None)
+        if row is None:
+            raise NotFoundError("23503")
+        return row
+
+    def upgrade_preview(self, token: str, tenant_id: uuid.UUID, plan_id: str) -> dict[str, Any]:
+        self._go("upgrade_preview", token, plan_id)
+        sub = self.subs.get(tenant_id)
+        if sub is None or sub["status"] not in ("trial_pending", "trialing", "active"):
+            raise NoSubscriptionError(str(tenant_id))
+        target = next((p for p in self.catalogue["plans"] if p["id"] == plan_id and p["kind"] in ("main", "calls")), None)
+        if target is None:
+            raise PlanUnknownError(plan_id)
+        current = next(p for p in self.catalogue["plans"] if p["id"] == sub["plan_id"])
+        if target["sort"] <= current["sort"]:
+            raise NotAnUpgradeError(plan_id)
+        priced = target["price_paise_monthly"] is not None and current["price_paise_monthly"] is not None
+        pro = None if not priced or sub["status"] != "active" else ((target["price_paise_monthly"] - current["price_paise_monthly"]) * 18 * 2 + 31) // 62
+        if sub["status"] != "active":
+            pro = 0
+        gst = None if pro is None else (pro * 1800 + 5000) // 10000
+        return {"from_plan_id": sub["plan_id"], "to_plan_id": plan_id, "price_set": priced, "days_in_period": 31, "days_left": 18, "prorated_paise": pro, "gst_paise": gst,
+                "total_paise": None if pro is None else pro + (gst or 0), "new_allowances": {"call_minutes": target["allowances"]["call_minutes"], "whatsapp_messages": target["allowances"]["whatsapp_messages"]},
+                "effective": "now", "note": "test"}
+
+    def upgrade(self, token: str, tenant_id: uuid.UUID, plan_id: str) -> dict[str, Any]:
+        self._go("upgrade", token, plan_id)
+        preview = self.upgrade_preview(token, tenant_id, plan_id)
+        sub = self.subs[tenant_id]
+        sub["plan_id"] = plan_id
+        invoice = None
+        if sub["status"] == "active":
+            self.plan_of[tenant_id] = plan_id
+            invoice = self._invoice("upgrade", f"Upgrade to {plan_id}", int(preview["prorated_paise"] or 0))
+        return {"billing": self.billing(token, tenant_id), "invoice": invoice}
+
+    def topup_tick(self, token: str, limit: int) -> dict[str, Any]:
+        self._go("topup_tick", token)
+        return {"invoices": self.tick_invoices}
+
+    def alerts_due(self, token: str, limit: int) -> list[dict[str, Any]]:
+        self._go("alerts_due", token)
+        return list(self.alert_rows)[:limit]
+
+    def alert_mark(self, token: str, tenant_id: uuid.UUID, kind: str, level: int, period_start: Any, channel: str) -> None:
+        self._go("alert_mark", token, channel)
+        self.alerts_marked.append((tenant_id, kind, level, str(period_start), channel))

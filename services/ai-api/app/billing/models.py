@@ -5,10 +5,11 @@ one at 100. AI itself is "included, fair use": its rupees, tokens and allowances
 
 from __future__ import annotations
 
+import uuid
 from datetime import date, datetime
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 PlanKind = Literal["trial", "main", "calls"]
 MeterKind = Literal["call_minutes", "whatsapp_messages"]
@@ -78,6 +79,15 @@ class PlansOut(_Strict):
     plans: list[PlanOut]
 
 
+class OverageOut(_Strict):
+    enabled: bool
+    # units beyond the plan and every pack this period (minutes with one decimal, or messages)
+    units: float
+    spent_paise: int
+    cap_paise: int
+    rate_paise_per_unit: int
+
+
 class MeterOut(_Strict):
     kind: MeterKind
     unit: Literal["minutes", "messages"]
@@ -91,8 +101,23 @@ class MeterOut(_Strict):
     state: MeterState
     # false when the plan includes none of this kind (allowance 0): the screen offers an upgrade instead of a bar
     included: bool
-    # extra units added by top-up in this period (already inside `allowance`)
+    # extra units added by the operator's top-up in this period (already inside `allowance`)
     topup: int
+    # night 4 (job DS part E2, docs/contracts/topups.md): all additive, with defaults so an older answer still reads
+    # the plan's own part of `allowance` (minutes or messages); null = pay as you go
+    plan_allowance: int | None = None
+    # unexpired top-up pack units still unused
+    topup_balance: float = 0.0
+    # the India date the oldest unused pack expires
+    next_topup_expiry: date | None = None
+    # the India date the allowance runs out at this period's pace; null when nothing is used, when it will last, or when there is no ceiling
+    projected_run_out_on: date | None = None
+    runs_out_before_period_end: bool = False
+    # a new unit of this kind really cannot start now (billing on, used up, no overage covering it)
+    blocked: bool = False
+    overage: OverageOut | None = None
+    # call_minutes: leads whose call waits for minutes; whatsapp_messages: messages held in the outbox
+    queued: int = 0
 
 
 class UsageOut(_Strict):
@@ -134,6 +159,8 @@ class UsageViewOut(_Strict):
     period: PeriodOut
     usage: UsageOut
     notices: list[NoticeOut]
+    # leads whose call waits for minutes (status waiting_for_minutes)
+    queued_calls: int = 0
 
 
 class AccessOut(_Strict):
@@ -190,3 +217,159 @@ class ResumeIn(_Strict):
     plan_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")
     # the reference the provider's checkout returned for the payment method (the fake provider: pm_fake_ok, pm_fake_declined)
     checkout_ref: str = Field(min_length=3, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+
+
+# --------------------------------------------------------------------------------------------------- night 4, job DS part E2: top-ups, auto top-up, overage, upgrade, invoices
+PackCode = Annotated[str, StringConstraints(pattern=r"^[a-z0-9_]{3,30}$")]
+
+
+class TopupPackOut(_Strict):
+    code: str
+    kind: MeterKind
+    units: int
+    # GST-exclusive price in paise; a placeholder until the owner of the product sets it
+    price_paise: int
+    gst_rate_bp: int
+    gst_paise: int
+    total_paise: int
+    price_is_placeholder: bool
+
+
+class LotOut(_Strict):
+    purchase_id: uuid.UUID
+    units_left: float
+    purchased_at: datetime
+    expires_at: datetime
+
+
+class BalanceKindOut(_Strict):
+    units: float
+    lots: list[LotOut]
+
+
+class BalanceOut(_Strict):
+    call_minutes: BalanceKindOut
+    whatsapp_messages: BalanceKindOut
+
+
+class TopupSettingsOut(_Strict):
+    auto_minutes_pack: str | None
+    auto_messages_pack: str | None
+    auto_monthly_cap_paise: int
+    overage_minutes: bool
+    overage_messages: bool
+    overage_monthly_cap_paise: int
+    overage_rate_paise_per_minute: int
+    overage_rate_paise_per_message: int
+    auto_spent_paise: int
+    overage_spent_paise: int
+
+
+class TopupPurchaseOut(_Strict):
+    id: uuid.UUID
+    pack_code: str
+    kind: MeterKind
+    units: int
+    source: Literal["manual", "auto"]
+    price_paise: int
+    total_paise: int
+    purchased_at: datetime
+    expires_at: datetime
+    units_left: float
+    expired: bool
+    invoice_id: uuid.UUID
+
+
+class TopupsOut(_Strict):
+    packs: list[TopupPackOut]
+    balance: BalanceOut
+    settings: TopupSettingsOut
+    history: list[TopupPurchaseOut]
+
+
+class SellerOut(_Strict):
+    name: str
+    state_code: str
+    gstin: str | None
+
+
+class BuyerOut(_Strict):
+    gstin: str | None
+    state_code: str | None
+
+
+class InvoiceOut(_Strict):
+    id: uuid.UUID
+    number: str
+    kind: Literal["topup", "upgrade", "overage"]
+    description: str
+    issued_at: datetime
+    period_start: date | None
+    taxable_paise: int
+    gst_rate_bp: int
+    cgst_paise: int
+    sgst_paise: int
+    igst_paise: int
+    total_paise: int
+    seller: SellerOut
+    buyer: BuyerOut
+    fake: bool
+    payment_status: Literal["paid_fake"]
+
+
+class InvoicesOut(_Strict):
+    items: list[InvoiceOut]
+    next_cursor: str | None
+
+
+class TopupBuyIn(_Strict):
+    # chosen by the client: the same id with the same pack changes nothing
+    purchase_id: uuid.UUID
+    pack_code: PackCode
+    # the reference the (fake) checkout returned: pm_fake_ok or pm_fake_declined
+    checkout_ref: str = Field(min_length=3, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+
+
+class TopupBuyOut(_Strict):
+    purchase: TopupPurchaseOut
+    invoice: InvoiceOut
+    usage: UsageOut
+
+
+class TopupSettingsIn(_Strict):
+    auto_minutes_pack: PackCode | None
+    auto_messages_pack: PackCode | None
+    auto_monthly_cap_paise: Annotated[int, Field(ge=0, le=1_000_000_000, strict=True)]
+    overage_minutes: Annotated[bool, Field(strict=True)]
+    overage_messages: Annotated[bool, Field(strict=True)]
+    overage_monthly_cap_paise: Annotated[int, Field(ge=0, le=1_000_000_000, strict=True)]
+
+
+class NewAllowancesOut(_Strict):
+    call_minutes: int | None
+    whatsapp_messages: int | None
+
+
+class UpgradePreviewOut(_Strict):
+    from_plan_id: str
+    to_plan_id: str
+    price_set: bool
+    days_in_period: int
+    days_left: int
+    # (new monthly price - old monthly price) x days left / days in the period, whole paise, half up; 0 during the trial; null while a price is not set
+    prorated_paise: int | None
+    gst_paise: int | None
+    total_paise: int | None
+    new_allowances: NewAllowancesOut
+    effective: Literal["now"]
+    note: str
+
+
+class UpgradeIn(_Strict):
+    plan_id: str = Field(pattern=r"^[a-z][a-z0-9_]{1,30}$")
+    checkout_ref: str = Field(min_length=3, max_length=100, pattern=r"^[A-Za-z0-9_-]+$")
+
+
+class UpgradeOut(_Strict):
+    billing: BillingOut
+    invoice: InvoiceOut | None

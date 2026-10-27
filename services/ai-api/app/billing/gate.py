@@ -44,10 +44,16 @@ _SPEND = (
     ("POST", r"/payment-links/[^/]+/send"),
     ("POST", r"/missed-calls/[^/]+/handle"),
     ("POST", r"/campaigns/[^/]+/(approve|resume)"),
+    ("POST", r"/outreach/batches/[^/]+/(approve|resume)"),   # job DR A3: calling and messaging a whole batch
+    ("POST", r"/outreach/rules"),
+    ("POST", r"/outreach/rules/[^/]+/resume"),
     ("POST", r"/voice-notes/preview"),
     ("POST", r"/ai-assistant/test-call"),
+    ("POST", r"/knowledge/sources/[^/]+/draft-facts"),   # job DR / A1: a model call
+    ("POST", r"/lead-imports/read"),   # job DR / A2: column matching may ask the model
     ("POST", r"/institution/marks-messages/send"),
     ("POST", r"/trips/[^/]+/notify"),
+    ("POST", r"/tasks/(plan|[^/]+/(answer|approve|run|resume))"),   # job DR B1: calls the model, starts calls and messages
     ("GET", r"/leads/search"),   # the outside lead search
 )
 _SPEND_RE = tuple((method, re.compile(pattern + r"$")) for method, pattern in _SPEND)

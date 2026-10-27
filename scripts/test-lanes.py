@@ -1,11 +1,11 @@
 """Smoke tests for lane plumbing; stdlib only, all mutations in temporary repos."""
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 import unittest
+from pathlib import Path
 
 SOURCE = Path(__file__).resolve().parents[1]
 

@@ -41,8 +41,8 @@ class PackListOut(_Out):
 class ModuleStateOut(_Out):
     module: str
     enabled: bool
-    # why: only `pack` today; plan entitlements and operator overrides will add reasons (ADR 0084 part 6)
-    reason: Literal["pack"]
+    # why: `pack` (the business type's pack lists it) or `core` (Lead Desk: on for every business); plan entitlements and operator overrides will add reasons (ADR 0084 part 6)
+    reason: Literal["pack", "core"]
 
 
 class WorkspaceModulesOut(_Out):

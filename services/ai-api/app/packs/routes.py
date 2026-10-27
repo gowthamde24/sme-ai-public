@@ -90,7 +90,7 @@ def get_pack(ctx: AnyMember, runtime: RuntimeDep) -> WorkspacePackOut:
 @router.get("/modules", response_model=WorkspaceModulesOut)
 def get_modules(ctx: AnyMember, runtime: RuntimeDep) -> WorkspaceModulesOut:
     rows = _repo(runtime).workspace_modules(ctx.principal.token, ctx.tenant.id)
-    return WorkspaceModulesOut(modules=[ModuleStateOut(module=r["module"], enabled=bool(r["enabled"]), reason="pack") for r in rows])
+    return WorkspaceModulesOut(modules=[ModuleStateOut(module=r["module"], enabled=bool(r["enabled"]), reason="core" if r.get("reason") == "core" else "pack") for r in rows])
 
 
 def _counts(raw: Any) -> ExampleCountsOut:

@@ -19,13 +19,14 @@ from typing import Any
 from app.billing.errors import (
     NothingToCancelError,
     NotLapsedError,
+    PackUnknownError,
     PlanLimitReachedError,
     PlanUnknownError,
     TrialAlreadyStartedError,
     WorkspaceReadOnlyError,
     WorkspaceWaitingForWhatsAppError,
 )
-from app.billing.provider import BillingProvider, CreateSubscription, ProviderEvent
+from app.billing.provider import BillingProvider, CreateSubscription, OneOffCharge, ProviderEvent
 from app.billing.repository import BillingRepository
 from app.crm.repository import NotFoundError
 from app.tenancy.repository import RepositoryError
@@ -150,6 +151,51 @@ class BillingService:
         self._provider.cancel_subscription(str(sub["provider_ref"]), at_period_end=sub["status"] == "active", now=self._clock())
         self.forget(tenant_id)
         return self._repo.cancel(token, tenant_id)
+
+    # ------------------------------------------------------------------ night 4, job DS part E2: top-ups, settings, invoices, the upgrade
+    def topups(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._repo.topups(token, tenant_id)
+
+    def buy_topup(self, token: str, tenant_id: uuid.UUID, purchase_id: uuid.UUID, pack_code: str, checkout_ref: str) -> dict[str, Any]:
+        """The FAKE payment first, then the record. A retry with the same purchase id charges nothing again: the pack is looked up and the purchase id checked BEFORE the charge, the provider keeps the
+        idempotency key, and the database answers the purchase it already has. A refusal (an unknown pack, a purchase id used for another pack, no plan) comes from the database; nothing is taken when the
+        pack is unknown or the purchase is already there."""
+        catalogue = self._repo.topups(token, tenant_id)
+        pack = next((p for p in catalogue["packs"] if p["code"] == pack_code), None)
+        if pack is None:
+            raise PackUnknownError(pack_code)
+        existing = next((h for h in catalogue["history"] if h["id"] == str(purchase_id)), None)
+        if existing is None:
+            self._provider.charge_once(OneOffCharge(tenant_id=str(tenant_id), checkout_ref=checkout_ref, amount_paise=int(pack["total_paise"]), description=f"Top-up {pack_code}", idempotency_key=f"topup:{purchase_id}"))
+        return self._repo.buy_topup(token, tenant_id, purchase_id, pack_code)
+
+    def topup_settings(self, token: str, tenant_id: uuid.UUID, settings: dict[str, Any]) -> dict[str, Any]:
+        return self._repo.topup_settings(token, tenant_id, settings)
+
+    def invoices(self, token: str, tenant_id: uuid.UUID, limit: int, after_at: datetime | None, after_id: uuid.UUID | None) -> list[dict[str, Any]]:
+        return self._repo.invoices(token, tenant_id, limit, after_at, after_id)
+
+    def invoice(self, token: str, tenant_id: uuid.UUID, invoice_id: uuid.UUID) -> dict[str, Any]:
+        return self._repo.invoice(token, tenant_id, invoice_id)
+
+    def upgrade_preview(self, token: str, tenant_id: uuid.UUID, plan_id: str) -> dict[str, Any]:
+        return self._repo.upgrade_preview(token, tenant_id, plan_id)
+
+    def upgrade(self, token: str, tenant_id: uuid.UUID, plan_id: str, checkout_ref: str) -> dict[str, Any]:
+        """The preview is asked first, so a refusal (not an upgrade, no plan) comes before any payment. The pro-rata is taken at the (fake) provider, the plan and the invoice are recorded, then the monthly
+        price at the provider is changed. During the trial nothing is charged and the provider is not touched."""
+        preview = self._repo.upgrade_preview(token, tenant_id, plan_id)
+        sub = self._repo.subscription_ref(token, tenant_id)
+        amount = int(preview.get("total_paise") or 0)
+        trialing = sub is None or sub["status"] != "active"   # a trial, or a plan chosen and waiting for WhatsApp: nothing is charged yet
+        if amount > 0 and not trialing:
+            self._provider.charge_once(OneOffCharge(tenant_id=str(tenant_id), checkout_ref=checkout_ref, amount_paise=amount, description=f"Upgrade to {plan_id}", idempotency_key=f"upgrade:{tenant_id}:{plan_id}:{sub['provider_ref'] if sub else ''}"))
+        result = self._repo.upgrade(token, tenant_id, plan_id)
+        if sub is not None and not trialing:
+            plan = next((p for p in self._repo.plans(token)["plans"] if p["id"] == plan_id), None)
+            self._provider.change_plan(str(sub["provider_ref"]), plan["price_paise_monthly"] if plan else None)
+        self.forget(tenant_id)
+        return result
 
     # ------------------------------------------------------------------ the worker's: provider events -> our records
     def apply(self, worker_token: str, event: ProviderEvent) -> AppliedEvent:

@@ -144,7 +144,7 @@ async function main() {
         const { context, page, errors } = await open({ scheme, sizeName, lang: "en" });
         await page.goto(`${WEB_URL}/`, { waitUntil: "networkidle" });
         const text = await common(tag, "landing", page, errors, sizeName, { noMoney: true });
-        has(tag, "landing", text, ["Your AI workforce for Indian SMEs.", "Find leads", "AI calls", "Outcome", "Follow-up", "Up and running in an afternoon.", "Natural AI calls", "Price at launch", "Put your AI workforce to work.", "Start your 14-day trial"]);
+        has(tag, "landing", text, ["calls your leads in 2 minutes, in your customer's language, and follows up until they say yes or no.", "A lead arrives", "Follow-ups until yes or no", "Works with where your leads already come from.", "Made for your business.", "Lead Desk plans", "Workforce plans", "Price at launch", "Let Vijaya call your next lead.", "Start your 14-day trial"]);
         check((await page.locator("h1").count()) === 1, `${tag} landing: not one h1`);
         check((await page.locator('[data-orb="still"]').count()) >= 1, `${tag} landing: the circle logo is missing`);
         await save(page, "landing", `${tag}-en`, "the new landing page");
@@ -159,7 +159,7 @@ async function main() {
         const text = await common(tag, "landing", page, errors, sizeName, { noMoney: true });
         const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ }[lang];
         check(script.test(text), `${tag} landing: no ${lang} script`);
-        check(!/Your AI workforce for Indian SMEs/.test(text), `${tag} landing: the English headline is on the ${lang} page`);
+        check(!/calls your leads in 2 minutes/.test(text), `${tag} landing: the English headline is on the ${lang} page`);
         await save(page, "landing", tag, `the landing page in ${lang} (draft words)`);
         await context.close();
       }
@@ -236,7 +236,7 @@ async function main() {
           const { context, page, errors } = await open({ scheme, sizeName, lang: "en" });
           await page.goto(app("/settings?section=assistant"), { waitUntil: "networkidle" });
           const text = await common(tag, "assistant", page, errors, sizeName);
-          has(tag, "assistant", text, ["Set up your AI assistant", "Voice", "Languages", "Way of talking", "What it may do on calls", "Hand over to you", "Calling hours", "Call me now for a test", "Preview"]);
+          has(tag, "assistant", text, ["Set up your AI assistant", "Voice", "Languages", "Way of talking", "What it may do on calls", "Hand over to you", "Calling hours", "Try a test call (a simulation)", "Preview"]);
           check(/the AI assistant of /.test(text), `${tag} assistant: the name line does not say "the AI assistant of ..."`);
           await save(page, "ai-assistant", tag, "Settings > AI assistant: the defaults, the live preview with the circle");
           await context.close();

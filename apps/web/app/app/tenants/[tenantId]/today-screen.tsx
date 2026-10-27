@@ -34,6 +34,7 @@ import { SetupGate } from "@/components/v2/app/setup/SetupGate";
 import type { SetupActions } from "@/components/v2/app/setup/types";
 import { saveItemAction } from "./catalogue/catalogue-actions";
 import { readSetupFacts } from "./setup-data";
+import { topupsToday } from "./topups-today";
 import { setupWords } from "./setup-words";
 import { readDisplayName, readToday } from "./today-data";
 import { cancelVisitAction, confirmVisitAction, moveVisitAction, saveHoursAction, slotsAction } from "./visits/visits-actions";
@@ -85,6 +86,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const outcomes = totals.mode === "off" ? null : <OutcomesToday words={wordsFor(lang, ["outcome.today."], ["frame.notyet"])} totals={totals.mode === "ok" ? totals.data : null} />;
   // "Live now" (job DM): a call that is going on. There is no telephony yet, so only the pretend call of CALL_SCREENS=mock is ever shown; nothing is drawn with the flag off
   const live = callScreens() === "mock" && role !== "viewer" ? <LiveNowCard words={wordsFor(lang, ["call.now."])} callee={MOCK_CALL.callee} info={`${t(`call.kind.${MOCK_CALL.kind}` as "call.kind.followup")} · ${LANGUAGE_NAMES[MOCK_CALL.lang].native}`} href={`/app/tenants/${tenantId}/office/live`} /> : null;
+  const topups = manages ? await topupsToday({ token: accessToken, tenantId, lang, owner: role === "owner" }) : null;
   const demo = await readIsDemo(accessToken, tenantId, shop);
   const view = (
       <TodayView demo={demo} live={live} outcomes={outcomes} packCards={<PackCards cards={packCards} t={(key, vars) => t(key as "frame.notyet", vars)} />} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
@@ -95,6 +97,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const notice: ExampleNotice = example === "loaded" || example === "removed" || example === "unavailable" || example === "failed" ? example : null;
   return (
     <main className={pageMain} lang={lang}>
+      {topups}
       {showSample || (activation && activation.done < activation.total) ? (
         <div data-part="start" className="mb-6 flex flex-col gap-4">
           {showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} t={t} /> : null}

@@ -60,7 +60,11 @@ BUSINESSES = [
     ("textiles", "DEMO Staging Textiles (synthetic)", "en"),
     ("construction_materials", "DEMO Staging Construction Materials (synthetic)", "en"),
     ("education", "DEMO Staging Education (synthetic)", "en"),
+    # night 4 (job DR part B2): two "Leads & calls" businesses with a working Lead Desk (leads from four sources, outcomes, a standing rule, a batch approved once, tasks)
+    ("real_estate", "DEMO Sri Sai Homes (synthetic)", "en"),
+    ("coaching", "DEMO Vidya Coaching Centre (synthetic)", "en"),
 ]
+LEAD_DESK_PACKS = ("real_estate", "coaching")
 
 
 class SeedError(Exception):
@@ -132,9 +136,13 @@ class Seeder:
             raise SeedError("--api-url must be https.")
         self.api = api_url.rstrip("/")
         self.sb = f"https://{STAGING_REF}.supabase.co"
-        keys = json_from(run(["supabase", "projects", "api-keys", "--project-ref", STAGING_REF, "--agent", "no", "-o", "json"]))
-        self.pub = next(k["api_key"] for k in keys if k.get("type") == "publishable")
-        self.admin = next(k["api_key"] for k in keys if k.get("id") == "service_role")  # memory only
+        self._keys = json_from(run(["supabase", "projects", "api-keys", "--project-ref", STAGING_REF, "--agent", "no", "-o", "json"]))
+        self.pub = next(k["api_key"] for k in self._keys if k.get("type") == "publishable")
+
+    @property
+    def admin(self) -> str:
+        """The project's service_role key, read only when an account has to be CREATED (memory only; a sign-in, as the daily refresh does, never needs it)."""
+        return str(next(k["api_key"] for k in self._keys if k.get("id") == "service_role"))
 
     def admin_headers(self) -> dict[str, str]:
         return {"apikey": self.admin, "Authorization": f"Bearer {self.admin}"}
@@ -211,11 +219,13 @@ class Seeder:
         if st != 200 or not isinstance(setup, dict):
             raise SeedError(f"The first-login setup failed for {pack} (HTTP {st}).")
         tenant = str(setup["tenant_id"])
-        st, ex = self.call(token, "POST", f"/v1/tenants/{tenant}/example-data")
-        if st not in (201, 409):
-            raise SeedError(f"Loading the example data failed for {pack} (HTTP {st}).")
-        st, status = self.call(token, "GET", f"/v1/tenants/{tenant}/example-data")
-        counts = status.get("counts") if st == 200 and isinstance(status, dict) else None
+        counts = None
+        if pack not in LEAD_DESK_PACKS:   # the Lead Desk businesses have their own demo data below, not the packs' labelled example rows
+            st, ex = self.call(token, "POST", f"/v1/tenants/{tenant}/example-data")
+            if st not in (201, 409):
+                raise SeedError(f"Loading the example data failed for {pack} (HTTP {st}).")
+            st, status = self.call(token, "GET", f"/v1/tenants/{tenant}/example-data")
+            counts = status.get("counts") if st == 200 and isinstance(status, dict) else None
         # job DG: what example data cannot give (a visible construction product; a school with students, fake guardian phones and fees). Each piece only when absent: a re-seed never overwrites.
         def call(method: str, path: str, body: Any = None, raw: tuple[bytes, str] | None = None) -> tuple[int, Any]:
             return self.call(token, method, f"/v1/tenants/{tenant}{path}", body, raw)
@@ -226,6 +236,9 @@ class Seeder:
                 extra = demo_data.construction_materials(call)
             elif pack == "education":
                 extra = demo_data.education(call, datetime.now(timezone(timedelta(hours=5, minutes=30))).date())
+            elif pack in LEAD_DESK_PACKS:
+                today = datetime.now(timezone(timedelta(hours=5, minutes=30))).date()
+                extra = (demo_data.real_estate if pack == "real_estate" else demo_data.coaching)(call, today)
         except demo_data.DemoError as e:
             raise SeedError(f"the demo data of {pack} failed: {e}") from None
         return {"pack": pack, "email": email, "account_created": created, "workspace_created": bool(setup.get("created")), "tenant_id": tenant, "example_data": counts, "demo_data": extra}
