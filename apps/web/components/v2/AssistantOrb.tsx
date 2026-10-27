@@ -100,7 +100,11 @@ function draw(ctx: CanvasRenderingContext2D, W: number, t: number, state: OrbMot
  * off screen (IntersectionObserver), is capped at a device pixel ratio of 2, and with "reduce motion" (or `still`) is one frame and never moves. It fills its parent (`size` puts a width and height of its own on a wrapper), so nothing jumps
  * when it arrives. Decorative: the name beside it says what it is.
  */
-export function AssistantOrb({ state = "idle", size, still = false, analyser = null }: { state?: OrbMotion; size?: number; still?: boolean; analyser?: AnalyserNode | null }) {
+/** The words the screens use for the circle (components/v2/Orb.tsx) and the motion each one means; mapped HERE, in the lazy chunk, so the screens carry no table of it. */
+const MOTION_OF: Record<string, OrbMotion> = { still: "idle", ambient: "idle", listen: "listening", think: "thinking", speak: "speaking" };
+
+export function AssistantOrb({ state: given = "idle", size, still = false, analyser = null }: { state?: OrbMotion | "still" | "ambient" | "listen" | "think" | "speak"; size?: number; still?: boolean; analyser?: AnalyserNode | null }) {
+  const state = MOTION_OF[given] ?? (given as OrbMotion);
   const canvas = useRef<HTMLCanvasElement>(null);
   const live = useRef({ state, analyser });
   useEffect(() => {

@@ -4,8 +4,8 @@
    With "reduce motion" nothing moves. Every selector starts with [data-ui="v2"] (audit:leaks); the keyframes carry the orb- prefix.
    ========================================================================== */
 [data-ui="v2"] .orb { position: relative; display: block; width: 100%; height: 100%; flex: none; border-radius: 50%; isolation: isolate; overflow: hidden; background: radial-gradient(circle at 80% 70%, #4a1a0c 0%, #24100b 55%, #120807 100%); box-shadow: 0 10px 34px rgba(255, 119, 60, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.06) inset; }
-[data-ui="v2"] .orb-still { box-shadow: 0 2px 8px rgba(255, 119, 60, 0.3); }
-[data-ui="v2"] .orb-think, [data-ui="v2"] .orb-speak { box-shadow: 0 12px 40px rgba(255, 119, 60, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.06) inset; }
+[data-ui="v2"] .orb[data-orb="still"] { box-shadow: 0 2px 8px rgba(255, 119, 60, 0.3); }
+[data-ui="v2"] .orb[data-orb="think"], [data-ui="v2"] .orb[data-orb="speak"] { box-shadow: 0 12px 40px rgba(255, 119, 60, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.06) inset; }
 /* the halo: two rings that spread outwards from the orb */
 [data-ui="v2"] .orb-halo { position: relative; display: inline-flex; border-radius: 50%; }
 [data-ui="v2"] .orb-halo::before, [data-ui="v2"] .orb-halo::after { content: ""; position: absolute; inset: -14px; border-radius: 50%; border: 1.5px solid rgba(255, 119, 60, 0.32); animation: orb-ring 3s ease-out infinite; pointer-events: none; }

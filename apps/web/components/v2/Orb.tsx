@@ -1,12 +1,8 @@
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
-import type { OrbMotion } from "@/components/v2/AssistantOrb";
 import type { AnalyserHolder } from "@/components/v2/orb-types";
 
 /** What the circle is doing: nothing (`still`: lists, empty states), calm (`ambient`), following the microphone (`listen`), thinking (faster) or speaking (it follows the voice). */
 export type OrbState = "still" | "ambient" | "listen" | "think" | "speak";
-
-const STATE_CLASS: Record<OrbState, string> = { still: "orb-still", ambient: "", listen: "", think: "orb-think", speak: "orb-speak" };
-const MOTION: Record<OrbState, OrbMotion> = { still: "idle", ambient: "idle", listen: "listening", think: "thinking", speak: "speaking" };
 
 /**
  * the assistant's circle (job DM, redrawn night 5 as the glass sphere with flowing ribbons: components/v2/AssistantOrb.tsx). This is the place every screen puts it: it keeps the size wrapper, the `data-orb` word of the state and the halo, and the canvas
@@ -16,8 +12,8 @@ const MOTION: Record<OrbState, OrbMotion> = { still: "idle", ambient: "idle", li
 export function Orb({ px, state = "ambient", halo = false, className = "", analyser = null }: { px: number; state?: OrbState; halo?: boolean; className?: string } & AnalyserHolder) {
   const sphere = (
     <span style={{ display: "block", width: px, height: px, flex: "none" }}>
-      <span className={`orb ${STATE_CLASS[state]}`} data-orb={state} aria-hidden="true">
-        <AssistantOrb state={MOTION[state]} still={state === "still"} analyser={analyser} />
+      <span className="orb" data-orb={state} aria-hidden="true">
+        <AssistantOrb state={state} still={state === "still"} analyser={analyser} />
       </span>
     </span>
   );

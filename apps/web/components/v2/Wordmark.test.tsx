@@ -11,7 +11,7 @@ describe("Wordmark", () => {
     expect(screen.getByText("Rename Test").textContent).toBe("Rename Test");
     const mark = container.querySelector("[data-mark]");
     expect(mark?.getAttribute("aria-hidden")).toBe("true");
-    expect(mark?.querySelectorAll("rect")).toHaveLength(3);
+    expect(mark?.querySelectorAll("path")).toHaveLength(3);
     expect(container.querySelector("[data-orb]")).toBeNull(); // the circle is Vijaya's, not the logo
     expect(document.body.textContent).not.toMatch(/sme-?ai|working name/i);
   });

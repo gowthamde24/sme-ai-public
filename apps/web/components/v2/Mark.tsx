@@ -4,10 +4,10 @@
  */
 export function Mark({ px = 28, className = "" }: { px?: number; className?: string }) {
   return (
-    <svg width={px} height={px} viewBox="0 0 96 96" aria-hidden="true" data-mark="" className={`shrink-0 ${className}`}>
-      <rect x="14" y="14" width="46" height="18" rx="9" className="fill-brand-text" />
-      <rect x="14" y="39" width="68" height="18" rx="9" className="fill-ink" />
-      <rect x="36" y="64" width="46" height="18" rx="9" fillOpacity="0.55" className="fill-brand-text" />
+    <svg width={px} height={px} viewBox="0 0 96 96" aria-hidden="true" data-mark="" strokeWidth="18" strokeLinecap="round" className={`shrink-0 ${className}`}>
+      <path d="M23 23h28" className="stroke-brand-text" />
+      <path d="M23 48h50" className="stroke-ink" />
+      <path d="M45 73h28" className="stroke-brand-text/55" />
     </svg>
   );
 }
