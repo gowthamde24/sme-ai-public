@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { NextRequest, NextResponse } from "next/server";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const refreshSession = vi.fn();
 vi.mock("@/lib/supabase/proxy-session", () => ({
@@ -134,5 +134,44 @@ describe("proxy", () => {
     for (const yes of ["/", "/login", "/app", "/app/tenants/1", "/auth/confirm"]) expect(re.test(yes), yes).toBe(true);
     for (const no of ["/_next/static/x.js", "/_next/image", "/favicon.ico", "/api/x"]) expect(re.test(no), no).toBe(false);
     expect(entry.missing.map((m) => m.key)).toContain("next-router-prefetch");
+  });
+});
+
+describe("proxy in website mode (job DQ)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubEnv("SITE_MODE", "website");
+  });
+  afterEach(() => vi.unstubAllEnvs());
+
+  it.each(["/app", "/app/tenants/x/outbox", "/login", "/signup", "/signup/check-email", "/setup", "/auth/mfa", "/auth/callback"])("%s shows \"Opening soon\" (a rewrite to /opening-soon), never the session", async (path) => {
+    const response = await proxy(request(path));
+    expect(response.headers.get("x-middleware-rewrite")).toBe("http://localhost:3000/opening-soon");
+    expect(response.headers.get("location")).toBeNull();
+    expect(response.headers.get("Content-Security-Policy")).toContain("nonce-");
+    expect(refreshSession).not.toHaveBeenCalled();
+  });
+
+  it.each(["/", "/te", "/pricing", "/hi/construction", "/contact", "/privacy", "/terms", "/data-deletion", "/opening-soon", "/loginx"])("%s is served as before", async (path) => {
+    const response = await proxy(request(path));
+    expect(response.headers.get("x-middleware-rewrite")).toBeNull();
+    expect(response.headers.get("location")).toBeNull();
+  });
+
+  it("/landing is the home page (a permanent redirect)", async () => {
+    const response = await proxy(request("/landing"));
+    expect(response.status).toBe(308);
+    expect(new URL(response.headers.get("location") ?? "").pathname).toBe("/");
+  });
+
+  it("without the setting everything is as it was: /app sends a signed-out visitor to /login", async () => {
+    vi.unstubAllEnvs();
+    refreshSession.mockResolvedValue(signedOut());
+    const response = await proxy(request("/app"));
+    expect(new URL(response.headers.get("location") ?? "").pathname).toBe("/login");
+    for (const value of ["", "app", "WEBSITE", "1"]) {
+      vi.stubEnv("SITE_MODE", value);
+      expect((await proxy(request("/signup"))).headers.get("x-middleware-rewrite")).toBeNull();
+    }
   });
 });

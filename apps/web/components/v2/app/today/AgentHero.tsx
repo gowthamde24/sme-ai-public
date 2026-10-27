@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { AgentOrb } from "../mark/AgentOrb";
 import type { AiMood } from "../mark/mood";
-import { AskTeam } from "./ask/AskTeam";
+import { AskCard } from "./ask/AskCard";
 import type { AskWords } from "./ask/ask-words";
 import type { Availability } from "./ask/ask-types";
 import { useNeeds } from "./needs-store";
@@ -32,8 +32,8 @@ function Headline({ words }: { words: TodayWords }) {
 /**
  * The assistant card of Today (job AU): the AI circle and a mood pill on the left (see AgentOrb); on the right the name, ONE sentence built from the real
  * list ("3 things need you. The rest is handled." / "Nothing needs you right now."), the overnight line from the outbox log, the Ask box and three suggestion chips. The circle's mood follows the Ask box
- * (typing, the microphone, the request, the streaming answer, a refusal), exactly as before. On a phone the card is compact (the owl beside the sentence) and the question line is fixed above the
- * bottom bar; the answer opens under the card, full width.
+ * (typing, the microphone, the request, the streaming answer, a refusal), exactly as before. On a phone the card is compact (the circle beside the sentence). The question line is INSIDE the card (job DQ: it used to be a bar
+ * fixed to the bottom of the screen, and the card had no line of its own); the answer opens under it, in the card, with "Show earlier" for the thread.
  */
 export function AgentHero({ lang, base, availability, askWords, words, chips, digest }: { lang: string; base: string; availability: Availability; askWords: AskWords; words: TodayWords; chips: readonly string[]; digest: Promise<Digest> | null }) {
   const [mood, setMood] = React.useState<AiMood>(availability === "live" ? "idle" : "resting");
@@ -67,7 +67,7 @@ export function AgentHero({ lang, base, availability, askWords, words, chips, di
         ) : null}
       </div>
       <div className="col-span-2 flex min-w-0 flex-col gap-3 md:col-span-1 md:col-start-2 md:self-start">
-        <AskTeam variant="hero" lang={lang} base={base} availability={availability} words={askWords} onMood={setMood} chips={chips} />
+        <AskCard lang={lang} base={base} availability={availability} words={askWords} chips={chips} onMood={setMood} />
         <p className="text-sm text-muted max-md:hidden">{say(words, "ask.hero.note")}</p>
       </div>
     </section>

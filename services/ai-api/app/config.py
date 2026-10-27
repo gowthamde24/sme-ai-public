@@ -93,6 +93,19 @@ class Settings(BaseSettings):
     anthropic_base_url: str = "https://api.anthropic.com"
     llm_input_micros_per_mtok: int | None = None
     llm_output_micros_per_mtok: int | None = None
+    # Night 3 (ADR 0102): the model per AI job. claude (default) = the main model as LLM_PROVIDER
+    # configures it; sarvam = Sarvam's chat model, only for the jobs that allow it
+    # (app.agents.llm.jobs). A wrong value, or sarvam on a job that refuses it, stops the process.
+    ai_job_ask: str = "claude"
+    ai_job_research: str = "claude"
+    ai_job_outcome_classify: str = "claude"
+    ai_job_followup_plan: str = "claude"
+    ai_job_call_turn: str = "claude"
+    ai_job_whatsapp_reply: str = "claude"
+    sarvam_chat_model: str = "sarvam-105b"
+    # Rs 15 in, Rs 60 out per million tokens (sarvam.ai/api-pricing)
+    sarvam_chat_input_micros_per_mtok: int = 15_000_000
+    sarvam_chat_output_micros_per_mtok: int = 60_000_000
     llm_spend_cap_confirmed: bool = False
     # The "light" model (job AK K2b, ADR 0064): a workspace that has used 100 % of its daily or
     # monthly AI allowance is served by this cheaper model until the window resets (the same
@@ -117,6 +130,12 @@ class Settings(BaseSettings):
     # environment, never in code). Needed when the sender is "resend".
     mail_from: str | None = None
     mail_reply_to: str | None = None
+    # Job DQ (DPDP): where a privacy grievance and a waitlist entry are e-mailed (addresses live in
+    # the environment, never in code), and the captcha of the two public doors (none | turnstile)
+    privacy_email: str | None = None
+    hello_email: str | None = None
+    captcha_provider: str = "none"
+    captcha_secret: SecretStr | None = None
     # Job AW (ADR 0068): the scheduler worker (`make dev-worker-local`). It signs in as ITS OWN
     # account, which the operator registered in the database (no workspace, no key of any kind).
     # The address and the password come from the environment only, are never logged, and are
@@ -164,6 +183,12 @@ class Settings(BaseSettings):
     sarvam_stt_model: str = "saaras:v4"
     sarvam_tts_model: str = "bulbul:v3"
     sarvam_tts_speaker: str | None = None
+    # Night 3 (ADR 0101): ONE switch for the whole speech stack. "" = as before (each
+    # VOICE_*_PROVIDER decides; off unless named), "fake" = the fake provider everywhere
+    # (development and tests only), "sarvam" = Sarvam for speech-to-text, text-to-speech and
+    # WhatsApp voice notes (needs SARVAM_API_KEY). A VOICE_STT_PROVIDER / VOICE_TTS_PROVIDER /
+    # VOICE_NOTE_TTS_PROVIDER named explicitly still wins over it.
+    speech_provider: str = ""
     # Job DJ (ADR 0093): the speech of WhatsApp VOICE NOTES (the worker). auto = Sarvam when
     # SARVAM_API_KEY is set, else VOICE_TTS_PROVIDER when it names one, else the fake provider in
     # development and none elsewhere (the text then goes alone); off | fake (development only) |

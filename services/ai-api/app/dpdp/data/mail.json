@@ -1,0 +1,35 @@
+{
+ "$comment": "Job DQ (DPDP): the e-mails of the privacy and waitlist doors and the 48-hour erasure warning. First drafts; a native reader should check te, hi and kn.",
+ "signoff": {
+  "en": "Stack19 Team",
+  "te": "Stack19 బృందం",
+  "hi": "Stack19 टीम",
+  "kn": "Stack19 ತಂಡ"
+ },
+ "grievance_ack": {
+  "subject": {
+   "en": "We received your request {reference}",
+   "te": "మీ అభ్యర్థన {reference} మాకు అందింది",
+   "hi": "आपका अनुरोध {reference} हमें मिल गया है",
+   "kn": "ನಿಮ್ಮ ವಿನಂತಿ {reference} ನಮಗೆ ತಲುಪಿದೆ"
+  },
+  "lines": {
+   "en": ["Thank you for writing to us about your personal data.", "Your reference is {reference}. We will answer you by {due} (within {days} days). If you need to add something, reply to this e-mail and quote the reference."],
+   "te": ["మీ వ్యక్తిగత డేటా గురించి మాకు రాసినందుకు ధన్యవాదాలు.", "మీ రిఫరెన్స్ {reference}. మేము {due} లోపు (అంటే {days} రోజుల్లో) మీకు సమాధానం ఇస్తాము. ఏదైనా జోడించాలంటే ఈ ఇ-మెయిల్‌కు రిఫరెన్స్‌తో సహా సమాధానం ఇవ్వండి."],
+   "hi": ["आपके व्यक्तिगत डेटा के बारे में हमें लिखने के लिए धन्यवाद।", "आपका संदर्भ {reference} है। हम {due} तक ({days} दिनों के भीतर) आपको उत्तर देंगे। कुछ जोड़ना हो तो इस ई-मेल का उत्तर दें और संदर्भ लिखें।"],
+   "kn": ["ನಿಮ್ಮ ವೈಯಕ್ತಿಕ ಡೇಟಾ ಬಗ್ಗೆ ನಮಗೆ ಬರೆದಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು.", "ನಿಮ್ಮ ಉಲ್ಲೇಖ {reference}. ನಾವು {due} ರೊಳಗೆ ({days} ದಿನಗಳೊಳಗೆ) ಉತ್ತರಿಸುತ್ತೇವೆ. ಏನಾದರೂ ಸೇರಿಸಬೇಕಾದರೆ ಈ ಇ-ಮೇಲ್‌ಗೆ ಉಲ್ಲೇಖದೊಂದಿಗೆ ಉತ್ತರಿಸಿ."]
+  }
+ },
+ "lapse_warning": {
+  "subject": {
+   "en": "Your Stack19 workspace {business} will be deleted on {date}",
+   "te": "మీ Stack19 వర్క్‌స్పేస్ {business} {date} న తొలగించబడుతుంది",
+   "hi": "आपका Stack19 वर्कस्पेस {business} {date} को हटा दिया जाएगा"
+  },
+  "lines": {
+   "en": ["Workspace: {business}", "Your workspace has been read-only since your plan ended, and the 90 days we keep it are almost over. On {date} it will be permanently deleted: your customers, catalogue, messages and settings cannot be brought back afterwards.", "To keep it, choose a plan in the app before then (Settings, Plan). To download your data first, use Settings, Privacy, Download my data. If you do not want it kept, you need do nothing."],
+   "te": ["వర్క్‌స్పేస్: {business}", "మీ ప్లాన్ ముగిసినప్పటి నుండి మీ వర్క్‌స్పేస్ చదవడానికి మాత్రమే ఉంది, మేము ఉంచే 90 రోజులు దాదాపు ముగిశాయి. {date} న అది శాశ్వతంగా తొలగించబడుతుంది: మీ కస్టమర్లు, కేటలాగ్, సందేశాలు, సెట్టింగ్‌లను తర్వాత తిరిగి తీసుకురాలేము.", "ఉంచుకోవాలంటే ముందుగా యాప్‌లో ఒక ప్లాన్ ఎంచుకోండి (సెట్టింగ్‌లు, ప్లాన్). ముందు మీ డేటా డౌన్‌లోడ్ చేసుకోవాలంటే సెట్టింగ్‌లు, గోప్యత, నా డేటాను డౌన్‌లోడ్ చేయండి. ఉంచుకోవద్దనుకుంటే మీరు ఏమీ చేయనవసరం లేదు."],
+   "hi": ["वर्कस्पेस: {business}", "आपका प्लान समाप्त होने के बाद से आपका वर्कस्पेस केवल पढ़ने योग्य है, और हम जो 90 दिन रखते हैं वे लगभग पूरे हो चुके हैं। {date} को यह हमेशा के लिए हटा दिया जाएगा: आपके ग्राहक, कैटलॉग, संदेश और सेटिंग्स बाद में वापस नहीं लाए जा सकते।", "इसे रखने के लिए उससे पहले ऐप में कोई प्लान चुनें (सेटिंग्स, प्लान)। पहले अपना डेटा डाउनलोड करने के लिए सेटिंग्स, प्राइवेसी, मेरा डेटा डाउनलोड करें। यदि आप इसे नहीं रखना चाहते तो कुछ करने की ज़रूरत नहीं है।"]
+  }
+ }
+}

@@ -24,6 +24,7 @@ from app.connectors.runtime import Connectors
 from app.crm.repository import CrmRepository
 from app.customfields.repository import CustomFieldsRepository
 from app.deliveries.repository import DeliveriesRepository
+from app.dpdp.runtime import DpdpRuntime
 from app.dues.repository import DuesRepository
 from app.education.repository import EducationRepository
 from app.enquiries.repository import EnquiriesRepository
@@ -140,6 +141,8 @@ class Runtime:
     assistant_settings: AssistantSettingsService | None = None
     # job DP: marks and report messages to guardians from a file that is never stored
     marks_messages: MarksSendService | None = None
+    # job DQ part 4 (DPDP): consent, profile, the public grievance and waitlist doors
+    dpdp: DpdpRuntime | None = None
 
 
 @dataclass(frozen=True)

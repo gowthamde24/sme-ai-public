@@ -11,7 +11,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StringConstraints
 
-Language = Literal["en", "te", "hi", "kn", "ta"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
 Category = Literal["reply_to_inbound", "info", "visit", "followup", "order_status", "other"]
 # what a message can BE once made: the same list plus the reminder a campaign's worker makes (job CP); a client may not ask for it (`Category` is what a client may send)
 MessageCategory = Literal[

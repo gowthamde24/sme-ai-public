@@ -240,7 +240,7 @@ def start_message(
     state = State()
     runner = AssistantRunner(
         db=db,
-        llm=agents.assistant_llm(),
+        llm=agents.llm_for("ask")(),   # the setting AI_JOB_ASK decides which model (ADR 0102)
         ctx=Ctx(db, runtime, token, tenant, run_id, state),
         on_reply=(lambda text, lang: on_reply(db, text, lang)) if on_reply is not None else None,
     )

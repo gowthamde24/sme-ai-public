@@ -48,6 +48,10 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("packs", "/v1/packs", True, 60),  # job CK: the sign-up cards
     PublicRule("auth_providers", "/v1/auth/providers", True, 60),  # job CK: which sign-up buttons to show
     PublicRule("calculate_materials", "/v1/calculate/materials", True, 30),  # job CN: the public paver calculator (pure; no business data)
+    PublicRule("privacy_notice", "/v1/privacy/notice", True, 60),  # job DQ: the privacy notice facts
+    PublicRule("subprocessors", "/v1/privacy/subprocessors", True, 60),
+    PublicRule("grievance", "/v1/privacy/grievance", True, 6),  # a person filing a grievance (the hour's allowance is in the route)
+    PublicRule("waitlist", "/v1/public/waitlist", True, 6),
     PublicRule("webhooks", "/v1/webhooks/", False, 300),
     PublicRule("docs", "/docs", False, 20),
     PublicRule("redoc", "/redoc", False, 20),

@@ -450,7 +450,7 @@ export interface ProfileIn {
   institution_type: "school" | "junior_college" | "degree_college" | "university" | "coaching" | "training";
   year_start_month: number;
   terms?: TermIn[];
-  parent_languages: ("en" | "te" | "hi" | "kn" | "ta")[];
+  parent_languages: ("en" | "te" | "hi" | "kn" | "ta" | "ml")[];
   student_retention_months?: number | null;
 }
 
@@ -459,7 +459,7 @@ export interface ProfileOut {
   institution_type?: "school" | "junior_college" | "degree_college" | "university" | "coaching" | "training" | null;
   year_start_month?: number | null;
   terms?: TermOut[];
-  parent_languages?: ("en" | "te" | "hi" | "kn" | "ta")[];
+  parent_languages?: ("en" | "te" | "hi" | "kn" | "ta" | "ml")[];
   student_retention_months?: number | null;
   updated_at?: string | null;
 }

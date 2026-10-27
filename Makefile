@@ -172,12 +172,29 @@ assistant-smoke:
 model-bakeoff:
 	cd $(API) && MODELS="$(MODELS)" LIMIT="$(LIMIT)" ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/model_bakeoff.py
 
+# OPT-IN, NEVER part of make check (night 3, ADR 0102): Claude Haiku against Sarvam 105B on 40 synthetic conversations (te 12, hi 12, kn 6, ta 5, ml 5) for the call_turn and whatsapp_reply jobs: rules checked by code,
+# latency, tokens and cost per 1,000 turns, and a blind side-by-side page for a native speaker. Writes ~/Desktop/stack19-jobs/model-compare/{results.md,side-by-side.html,raw.json,usage.json}. HARD CAP 150,000 Sarvam
+# tokens in total (kept in usage.json), Claude Haiku only, finished calls are cached. Keys are read from Secret Manager at run time, never printed. DRY=1 only counts; LIMIT=n runs the first n conversations.
+.PHONY: model-compare
+model-compare:
+	$(API)/.venv/bin/python scripts/model_compare.py $(if $(DRY),--dry-run,) $(if $(LIMIT),--limit $(LIMIT),)
+
 # OPT-IN, NEVER part of make check (job AK / K3, extended by job BD): which speech engine hears your shop talk best. DIR is a folder of .wav/.m4a samples OUTSIDE the repository (default ~/Desktop/voice-samples; refused if
 # inside), named <language>-<nn>.m4a (te, hi, kn, en) with <name>.truth.txt (what was said) and optionally <name>.txt (Chrome's result). Engines (each only by its own variables): Sarvam (SARVAM_API_KEY), Bhashini
 # (BHASHINI_API_KEY + BHASHINI_ASR_SERVICE_ID), Google (GOOGLE_API_KEY), an AI4Bharat model (AI4BHARAT_STT_URL), Chrome. Word and character error, time and price per language; text-to-speech samples to listen to. The report is
 # written to ~/Desktop/v2-overnight/voice-bakeoff.md (REPORT=...), never into the repository. See docs/runbooks/voice-local.md.
 stt-bakeoff:
 	cd $(API) && DIR="$(DIR)" ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/stt_bakeoff.py
+
+# OPT-IN, NEVER part of make check (night 3, ADR 0101): listening samples with the REAL Sarvam voice: the call opening and two follow-ups in en, te, hi, kn, ta, ml (3 voices, 2 styles) into
+# ~/Desktop/stack19-jobs/voice-samples/ with an index.html. HARD CAP 9,000 characters in total (kept in usage.json). The key is read from Secret Manager at run time, never printed. DRY=1 only counts.
+# voice-stt-check transcribes two of those clips per language back (cap 180 seconds of audio in total) and writes voice-samples/stt-report.md.
+.PHONY: voice-samples voice-stt-check
+voice-samples:
+	$(API)/.venv/bin/python scripts/voice_samples.py $(if $(DRY),--dry-run,)
+
+voice-stt-check:
+	$(API)/.venv/bin/python scripts/voice_samples.py --stt $(if $(DRY),--dry-run,)
 
 # OPT-IN, NEVER part of make check: fetches https://example.com/ and https://example.org/ through the REAL guarded page
 # fetcher (T007 M1) and prints status, bytes, content type and sanitised-text length only. No model, no key, no cost.

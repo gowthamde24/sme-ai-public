@@ -36,7 +36,8 @@
             "te",
             "hi",
             "kn",
-            "ta"
+            "ta",
+            "ml"
           ],
           "title": "Language",
           "type": "string"
@@ -100,7 +101,8 @@
             "te",
             "hi",
             "kn",
-            "ta"
+            "ta",
+            "ml"
           ],
           "title": "Language",
           "type": "string"
@@ -171,7 +173,8 @@
             "te",
             "hi",
             "kn",
-            "ta"
+            "ta",
+            "ml"
           ],
           "title": "Language",
           "type": "string"
@@ -194,7 +197,8 @@
             "te",
             "hi",
             "kn",
-            "ta"
+            "ta",
+            "ml"
           ],
           "title": "Language",
           "type": "string"
@@ -308,7 +312,8 @@
             "te",
             "hi",
             "kn",
-            "ta"
+            "ta",
+            "ml"
           ],
           "title": "Language",
           "type": "string"

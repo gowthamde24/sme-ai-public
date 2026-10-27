@@ -8,7 +8,7 @@ export interface CampaignVoiceIn {
 export interface CampaignVoiceOut {
   campaign_id: string;
   enabled: boolean;
-  language: "en" | "te" | "hi" | "kn" | "ta";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
   voice_code?: string | null;
   disclosure: DisclosureOut;
   issues: string[];
@@ -17,7 +17,7 @@ export interface CampaignVoiceOut {
 }
 
 export interface DisclosureOut {
-  language: "en" | "te" | "hi" | "kn" | "ta";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
   version?: number | null;
   status?: "draft" | "reviewed" | null;
   text?: string | null;
@@ -26,11 +26,11 @@ export interface DisclosureOut {
 
 export interface PreviewIn {
   preview_id: string;
-  language: "en" | "te" | "hi" | "kn" | "ta";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
 }
 
 export interface PreviewOut {
-  language: "en" | "te" | "hi" | "kn" | "ta";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
   voice_code: string;
   content_type: string;
   encoding: "base64";
@@ -53,7 +53,7 @@ export interface VoiceChoiceIn {
 
 export interface VoiceOut {
   code: string;
-  language: "en" | "te" | "hi" | "kn" | "ta";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
   label: string;
   synthetic: boolean;
 }

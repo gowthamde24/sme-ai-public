@@ -69,7 +69,7 @@ select is((select count(*) from information_schema.columns where table_schema = 
 select is((select count(*) from public.audit_events where tenant_id = tests.tid('a') and entity_type = 'voice_settings'), 1::bigint, 'B15 the change is in the audit trail');
 
 -- ============================================================================ C. voices and choices
-select is(pg_temp.val('a_owner', format($q$select jsonb_array_length(public.voice_voices_list(%L))::text$q$, tests.tid('a'))), '5', 'C1 five synthetic voices (the fake provider; no human voice)');
+select is(pg_temp.val('a_owner', format($q$select jsonb_array_length(public.voice_voices_list(%L))::text$q$, tests.tid('a'))), '6', 'C1 six synthetic voices (the fake provider; no human voice)');
 select is(pg_temp.val('a_owner', format($q$select (public.voice_voices_list(%L) -> 0 ->> 'synthetic')$q$, tests.tid('a'))), 'true', 'C2 each says it is synthetic');
 select is(pg_temp.val('a_sales', format($q$select public.voice_voices_list(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'C3 DENY: Sales');
 select is(pg_temp.choose('a_owner', 'en', 'fake-en'), 'ok', 'C4 ALLOW: the Owner chooses a voice for English');
@@ -84,7 +84,7 @@ select is(pg_temp.choose('a_owner', 'te', null), 'ok', 'C12 a choice can be remo
 select is(pg_temp.val('a_owner', format($q$select (public.voice_settings_get(%L) -> 'choices')::text$q$, tests.tid('a'))), '{"en": "fake-en"}', 'C13 (gone)');
 select is(pg_temp.sc(format($q$insert into voice.voices (code, provider, language, label) values ('real-hi', 'sarvam', 'hi', 'A real voice nobody listened to')$q$)), '23514', 'C14 a voice that is not synthetic needs a native speaker''s review (23514)');
 select is(pg_temp.sc(format($q$insert into voice.voices (code, provider, language, label, reviewed_by, reviewed_at) values ('real-hi', 'sarvam', 'hi', 'Reviewed Hindi voice', 'a native speaker', now())$q$)), 'ok', 'C15 a reviewed one can be added by the operator');
-select is(pg_temp.val('a_owner', format($q$select jsonb_array_length(public.voice_voices_list(%L))::text$q$, tests.tid('a'))), '6', 'C16 and is offered');
+select is(pg_temp.val('a_owner', format($q$select jsonb_array_length(public.voice_voices_list(%L))::text$q$, tests.tid('a'))), '7', 'C16 and is offered');
 
 -- ============================================================================ D. the spoken disclosure
 select is(pg_temp.val('a_sales', format($q$select (public.voice_disclosure_get(%L, 'en') ->> 'text')$q$, tests.tid('a'))), 'This is an automated voice message from the AI assistant of ' || (select name from public.tenants where id = tests.tid('a')) || '.', 'D1 the line names the business');

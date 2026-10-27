@@ -80,7 +80,7 @@ export async function runSignUp(
       email,
       password,
       options: {
-        data: { display_name: name, business_name: businessName, ...(businessType ? { business_type: businessType } : {}), terms_version: TERMS_VERSION, ...(versions ? { accepted_terms_version: versions.terms, accepted_privacy_version: versions.privacy } : {}) },
+        data: { display_name: name, business_name: businessName, ...(businessType ? { business_type: businessType } : {}), terms_version: TERMS_VERSION, ...(raw.marketingOptIn === true ? { signup_marketing_opt_in: "1" } : {}), ...(versions ? { accepted_terms_version: versions.terms, accepted_privacy_version: versions.privacy } : {}) },
       },
     });
   } catch {

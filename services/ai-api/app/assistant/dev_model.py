@@ -19,6 +19,7 @@ _INTRO = {
     "hi": "मुझे यह मिला:",
     "kn": "ನನಗೆ ಸಿಕ್ಕಿದ್ದು ಇದು:",
     "ta": "எனக்குக் கிடைத்தவை:",
+    "ml": "എനിക്ക് കിട്ടിയത് ഇതാണ്:",
 }
 _NONE = {
     "en": "I found nothing for that in your records.",
@@ -26,6 +27,7 @@ _NONE = {
     "hi": "इसके बारे में आपके रिकॉर्ड में कुछ नहीं मिला।",
     "kn": "ಇದರ ಬಗ್ಗೆ ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ಏನೂ ಸಿಗಲಿಲ್ಲ.",
     "ta": "இதைப் பற்றி உங்கள் பதிவுகளில் எதுவும் இல்லை.",
+    "ml": "ഇതിനെക്കുറിച്ച് നിങ്ങളുടെ രേഖകളിൽ ഒന്നും കണ്ടില്ല.",
 }
 _KEYWORDS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"price|rate|cost|ధర|कीमत|ದರ|விலை", re.I), "find_price"),
@@ -58,7 +60,7 @@ def catalogue_args(question: str) -> dict[str, str]:
 
 _DRAFT_LANG = re.compile(r"Write the message in [A-Za-z]+ \(([a-z]{2})\)")
 _FIRST_NAME = re.compile(r"customer first name: ([^\n]+)")
-# a draft for a lead (job AY): a fixed, boring greeting in the customer's language. No amount, no promise. Telugu, Hindi, Kannada and Tamil are machine drafts like every non-English template.
+# a draft for a lead (job AY): a fixed, boring greeting in the customer's language. No amount, no promise. Telugu, Hindi, Kannada, Tamil and Malayalam are machine drafts like every non-English template.
 _DRAFTS = {
     "en": (
         "Hello{name}, thank you for writing to us. Please tell us what you are looking for and we will be glad to help.",
@@ -78,6 +80,10 @@ _DRAFTS = {
     ),
     "ta": (
         "வணக்கம்{name}, எங்களுக்கு எழுதியதற்கு நன்றி. உங்களுக்கு என்ன வேண்டும் என்று சொல்லுங்கள், மகிழ்ச்சியுடன் உதவுவோம்.",
+        "Hello{name}, thank you for writing to us. Please tell us what you need and we will be glad to help.",
+    ),
+    "ml": (
+        "നമസ്കാരം{name}, ഞങ്ങൾക്ക് എഴുതിയതിന് നന്ദി. നിങ്ങൾക്ക് എന്താണ് വേണ്ടതെന്ന് പറയൂ, സന്തോഷത്തോടെ സഹായിക്കാം.",
         "Hello{name}, thank you for writing to us. Please tell us what you need and we will be glad to help.",
     ),
 }

@@ -30,7 +30,7 @@ export function SignUpForm({ action, words, businessType, policyVersions }: { ac
         setError(null);
         start(async () => {
           try {
-            const result = await action({ email: String(form.get("email") ?? "").trim(), password: String(form.get("password") ?? ""), businessType, acceptTerms: true, ...(policyVersions ? { policyVersions } : {}) });
+            const result = await action({ email: String(form.get("email") ?? "").trim(), password: String(form.get("password") ?? ""), businessType, acceptTerms: true, marketingOptIn: (document.getElementById("signup-marketing") as HTMLInputElement | null)?.checked === true, ...(policyVersions ? { policyVersions } : {}) });
             if (result.ok) router.push(`/signup/${result.next}`);
             else setError(words.errors[result.error] ?? words.errors.unknown);
           } catch {

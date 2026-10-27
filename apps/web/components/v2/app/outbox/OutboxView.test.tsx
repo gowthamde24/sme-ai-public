@@ -97,7 +97,7 @@ describe("the Outbox page: the kill switch and automatic sending", () => {
     await show({ settings: { platform_switch_on: false, auto_send_enabled: true, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 } });
     const banner = document.querySelector('[data-banner="sending-stopped"]') as HTMLElement;
     expect(banner).toHaveTextContent("Sending is stopped");
-    expect(banner).toHaveTextContent("Nothing goes out and everything waits until the operator switches sending back on.");
+    expect(banner).toHaveTextContent("Nothing goes out and everything waits until our team switches sending back on.");
   });
   it("no banner when sending is on, and none for what could not be read", async () => {
     await show();

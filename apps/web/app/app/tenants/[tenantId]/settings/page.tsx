@@ -14,7 +14,7 @@ import { authT } from "@/i18n/auth";
 import { getLang } from "@/i18n/get-lang";
 import { THEME_COOKIE, readTheme } from "@/i18n/preferences";
 import { SchedulerCard, SystemSwitchCard } from "@/components/v2/app/agent-settings/AgentStatusCards";
-import { QuietHoursForm, RemindersForm, SendingForm } from "@/components/v2/app/agent-settings/AgentSettingsForms";
+import { GstinForm, QuietHoursForm, RemindersForm, SendingForm } from "@/components/v2/app/settings/LazyTabs";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { getOutboxSettings, type OutboxSettings } from "@/lib/api/outbox";
@@ -28,7 +28,6 @@ import { requireUser } from "@/lib/auth/session";
 import { readPlanCached, readUsageCached } from "../../../frame-data";
 import { PartProblem } from "@/components/v2/app/cc/PartProblem";
 import { DataSection } from "@/components/v2/app/data/DataSection";
-import { GstinForm } from "@/components/v2/app/gstin/GstinForm";
 import { getBusinessProfile } from "@/lib/api/gstin";
 import { PrivacySection } from "@/components/v2/app/privacy/PrivacySection";
 import { readConsentList } from "@/lib/api/consent-list";
@@ -58,12 +57,14 @@ import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSett
 import { OwnVoice } from "@/components/v2/app/assistant/LazyOwnVoice";
 import { assistantProfile } from "@/lib/assistant/defaults";
 import { readAssistant } from "@/lib/assistant/source";
-import { CALL_LANGS, VOICES } from "@/lib/assistant/types";
-import { LANGUAGE_NAMES } from "@/i18n/lang";
+import { CALL_LANG_NAMES, VOICES } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { assistantScreens, callSettingsScreens, ownVoiceScreens } from "@/lib/screens/flag";
-import { saveAssistantAction } from "../assistant-actions";
+import { assistantScreens, callSettingsScreens, dpdpScreens, ownVoiceScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { readConsents } from "@/lib/dpdp/source";
+import { RESPONSE_DAYS } from "@/lib/site/business";
+import { grievanceAction, setMarketingAction } from "../dpdp-actions";
+import { saveAssistantAction, testCallAction } from "../assistant-actions";
 import { saveCallSettingsAction } from "../call-settings-actions";
 import { deleteVoiceAction, sentenceAction } from "../own-voice-actions";
 import { FAKE_CHECKOUT, planScreens } from "@/lib/plan/flag";
@@ -177,6 +178,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     }
   }
   // Privacy (job CC): my exports and deletions, the workspace's deletion (the Owner's) and the consent list, each read on its own.
+  let dpdp: { consents: Awaited<ReturnType<typeof readConsents>> } | null = null;
   let privacy: { exports: Part<Awaited<ReturnType<typeof listMyExports>>>; mine: Part<Awaited<ReturnType<typeof listMyDeletions>>>; space: Part<Awaited<ReturnType<typeof listWorkspaceDeletions>>> | null; consent: Part<Awaited<ReturnType<typeof readConsentList>>> | null } | null = null;
   if (section === "privacy") {
     try {
@@ -187,6 +189,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         tenant.role === "viewer" ? null : settle(() => readConsentList(user.accessToken, tenantId)),
       ]);
       privacy = { exports, mine, space, consent };
+      if (dpdpScreens() !== "off") dpdp = { consents: await readConsents(user.accessToken) };
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       escalate(error);
@@ -286,12 +289,13 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               initial={assistant.settings}
               profile={assistantProfile(pack?.modules ?? null)}
               shop={tenant.name}
-              langs={Object.fromEntries(CALL_LANGS.map((l) => [l, LANGUAGE_NAMES[l].native])) as Record<(typeof CALL_LANGS)[number], string>}
+              langs={CALL_LANG_NAMES}
               voiceNames={Object.fromEntries(VOICES.map((v) => [v, t(`asst.voice.${v}` as "asst.voice.female_warm")])) as Record<(typeof VOICES)[number], string>}
               canEdit={tenant.role === "owner"}
               testMode={assistantScreens() === "mock"}
               saved={assistant.saved}
-              actions={{ save: saveAssistantAction.bind(null, tenantId) }}
+              actions={{ save: saveAssistantAction.bind(null, tenantId), testCall: testCallAction.bind(null, tenantId) }}
+              samples={voiceSampleScreens() !== "off" ? { endpoint: `/app/tenants/${tenantId}/voice-sample`, mock: voiceSampleScreens() === "mock" } : null}
               ownVoiceReady={ownVoice?.mode === "ok" && ownVoice.voice.status === "ready"}
             />
             ) : null}
@@ -398,7 +402,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         {section === "privacy" && privacy ? (
           <PrivacySection
             tenantId={tenantId}
-            words={wordsFor(lang, ["prx.", "apierr.", "problem."], ["dta.btn.working", "dta.col.name", "settings.privacy.erasure", "settings.privacy.suppression", "settings.privacy.note"])}
+            words={wordsFor(lang, ["prx.", "apierr.", "problem.", "dpdp."], ["dta.btn.working", "dta.col.name", "settings.privacy.erasure", "settings.privacy.suppression", "settings.privacy.note"])}
             role={tenant.role}
             email={user.email ?? ""}
             workspaceName={tenant.name}
@@ -407,6 +411,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             workspaceDeletions={privacy.space}
             consent={privacy.consent}
             now={clock()}
+            lang={lang}
+            dpdp={dpdp ? { consents: dpdp.consents, setMarketing: setMarketingAction.bind(null, tenantId), grievance: grievanceAction.bind(null, tenantId), days: RESPONSE_DAYS.grievances, privacyEmail: ADDRESSES.privacy, name: user.displayName ?? "" } : null}
             actions={{
               requestExport: requestExportAction.bind(null, tenantId),
               getExport: getExportAction.bind(null, tenantId),

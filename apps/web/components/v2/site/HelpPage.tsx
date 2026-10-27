@@ -47,7 +47,7 @@ export function HelpPage({ t, lang }: { t: SiteT; lang: Lang }) {
           </Link>
         </p>
       </Section>
-      <CtaBand t={t} />
+      <CtaBand t={t} lang={lang} />
     </>
   );
 }
