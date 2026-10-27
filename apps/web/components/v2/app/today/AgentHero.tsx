@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { AgentOrb } from "../mark/AgentOrb";
+import { useAnalyser } from "./ask/audio-level";
 import type { AiMood } from "../mark/mood";
 import { AskCard } from "./ask/AskCard";
 import type { AskWords } from "./ask/ask-words";
@@ -39,6 +40,7 @@ export function AgentHero({ lang, base, availability, askWords, words, chips, di
   const [mood, setMood] = React.useState<AiMood>(availability === "live" ? "idle" : "resting");
   const moodText = say(words, `owl.mood.${mood}`);
   const resting = mood === "resting";
+  const analyser = useAnalyser(); // the microphone while it listens, the voice while it speaks
   const pill = (
     <span aria-hidden="true" className="inline-flex min-h-8 items-center gap-2 rounded-full bg-surface-2 px-3.5 text-sm font-semibold">
       <span className={`size-2 rounded-full ${resting ? "bg-muted" : "bg-green-text"}`} />
@@ -48,7 +50,7 @@ export function AgentHero({ lang, base, availability, askWords, words, chips, di
   return (
     <section aria-labelledby="agent-owl-heading" data-part="agent-owl" className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-x-3 gap-y-3 rounded-3xl border border-line bg-surface p-4 md:grid-cols-[220px_minmax(0,1fr)] md:gap-x-8 md:gap-y-4 md:rounded-[28px] md:p-8">
       <div className="flex flex-col items-center gap-3 md:row-span-2 md:self-center">
-        <AgentOrb mood={mood} name={say(words, "agent.main")} moodText={moodText} />
+        <AgentOrb mood={mood} name={say(words, "agent.main")} moodText={moodText} analyser={analyser} />
         <span className="max-md:hidden">{pill}</span>
       </div>
       <div className="flex min-w-0 flex-col gap-1.5 md:gap-4 md:self-end">

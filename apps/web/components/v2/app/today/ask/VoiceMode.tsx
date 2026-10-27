@@ -5,11 +5,13 @@ import * as React from "react";
 
 import { Orb, type OrbState } from "@/components/v2/Orb";
 
+import { useAnalyser } from "./audio-level";
+
 export type VoicePhase = "starting" | "listening" | "thinking" | "answering" | "done" | "error";
 export type VoiceModeWords = { title: string; listening: string; starting: string; thinking: string; speaking: string; done: string; show: string; cancel: string; tap: string; close: string };
 
-/** The orb's state for each phase: it breathes while it listens, thinks faster, and ripples while it speaks (the circle is the whole picture of voice mode). */
-const ORB: Record<VoicePhase, OrbState> = { starting: "think", listening: "ambient", thinking: "think", answering: "speak", done: "still", error: "still" };
+/** The orb's state for each phase: it follows the microphone while it listens, thinks faster, and ripples while it speaks (the circle is the whole picture of voice mode). */
+const ORB: Record<VoicePhase, OrbState> = { starting: "think", listening: "listen", thinking: "think", answering: "speak", done: "still", error: "still" };
 
 /**
  * Voice mode (job DM): the full-screen screen that opens when the person taps the microphone in the Ask bar. One big centred circle (job DM's orb), one line under it that says what is happening (listening, thinking, answering; never the words of
@@ -18,6 +20,7 @@ const ORB: Record<VoicePhase, OrbState> = { starting: "think", listening: "ambie
  * "reduce motion" (the circle's own CSS). The words come in as props.
  */
 export function VoiceMode({ phase, caption, left, words, onTapOrb, onDone, onCancel, onClose }: { phase: VoicePhase; caption: string; /** Seconds left of the recording (shown only while it listens). */ left: number | null; words: VoiceModeWords; onTapOrb: () => void; onDone: () => void; onCancel: () => void; onClose: () => void }) {
+  const analyser = useAnalyser();
   const button = React.useRef<HTMLButtonElement | null>(null);
   React.useEffect(() => {
     button.current?.focus();
@@ -33,7 +36,7 @@ export function VoiceMode({ phase, caption, left, words, onTapOrb, onDone, onCan
       </div>
       <div className="flex w-full flex-1 flex-col items-center justify-center gap-8 text-center">
         <button type="button" onClick={onTapOrb} aria-label={recording ? words.listening : words.tap} data-voice="orb" className="rounded-full">
-          <Orb px={220} state={ORB[phase]} halo={phase === "listening" || phase === "answering"} />
+          <Orb px={220} state={ORB[phase]} halo={phase === "listening" || phase === "answering"} analyser={analyser} />
         </button>
         <div aria-live="polite" className="flex max-w-md flex-col gap-2">
           <p className="font-display text-2xl font-semibold leading-snug [overflow-wrap:anywhere]">{line}</p>

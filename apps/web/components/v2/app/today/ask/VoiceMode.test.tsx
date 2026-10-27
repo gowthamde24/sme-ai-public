@@ -13,7 +13,7 @@ afterEach(cleanup);
 
 describe("voice mode: the full-screen circle", () => {
   it("is a modal dialog with one big centred circle, which listens (halo), thinks, speaks (halo) and then stands still", () => {
-    const expected: Record<VoicePhase, [string, boolean]> = { starting: ["think", false], listening: ["ambient", true], thinking: ["think", false], answering: ["speak", true], done: ["still", false], error: ["still", false] };
+    const expected: Record<VoicePhase, [string, boolean]> = { starting: ["think", false], listening: ["listen", true], thinking: ["think", false], answering: ["speak", true], done: ["still", false], error: ["still", false] };
     for (const [phase, [orb, halo]] of Object.entries(expected) as [VoicePhase, [string, boolean]][]) {
       draw(phase);
       expect(screen.getByRole("dialog", { name: "Voice mode" })).toHaveAttribute("aria-modal", "true");

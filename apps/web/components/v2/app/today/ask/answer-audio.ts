@@ -3,6 +3,8 @@
  * `blob:` only). The player is one object per answer: play, stop, and let go of the address when done. Browsers may refuse to start sound without a tap; `play()` then says false and the box shows its
  * Play button instead.
  */
+import { analyserOf, clearAnalyser, makeContext, setAnalyser } from "./audio-level";
+
 export type AnswerPlayer = {
   /** Starts the sound. True when it is playing; false when the browser would not start it (or the audio is unreadable). */
   play(): Promise<boolean>;
@@ -24,13 +26,31 @@ export function makeAnswerPlayer(contentType: string, base64: string, onChange: 
   }
   const audio = new Audio(url);
   let disposed = false;
-  audio.addEventListener("ended", () => onChange(false));
-  audio.addEventListener("error", () => onChange(false));
-  audio.addEventListener("pause", () => onChange(false));
+  // the circle follows the voice while it plays: the audio goes through an analyser to the speakers (made on the first Play, which is a tap, so the browser lets the context run)
+  let ctx: AudioContext | null = null;
+  let level: AnalyserNode | null = null;
+  const follow = () => {
+    if (level !== null) return setAnalyser(level);
+    try {
+      ctx = makeContext();
+      if (!ctx) return;
+      level = analyserOf(ctx, ctx.createMediaElementSource(audio));
+      level.connect(ctx.destination);
+      setAnalyser(level);
+    } catch {
+      level = null; // no Web Audio here: the sound plays as before and the circle keeps its own motion
+    }
+  };
+  const unfollow = () => clearAnalyser(level);
+  audio.addEventListener("ended", () => (unfollow(), onChange(false)));
+  audio.addEventListener("error", () => (unfollow(), onChange(false)));
+  audio.addEventListener("pause", () => (unfollow(), onChange(false)));
   return {
     async play() {
       if (disposed) return false;
       try {
+        follow();
+        void ctx?.resume?.();
         await audio.play();
         onChange(true);
         return true;
@@ -56,6 +76,8 @@ export function makeAnswerPlayer(contentType: string, base64: string, onChange: 
       } catch {
         // nothing is playing
       }
+      unfollow();
+      void ctx?.close().catch(() => undefined);
       URL.revokeObjectURL(url);
       onChange(false);
     },

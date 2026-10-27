@@ -126,3 +126,34 @@ describe("recorder (job BF)", () => {
     expect([60, 59.2, 42, 9.1, 0.2, 0, -3].map(clock)).toEqual(["1:00", "1:00", "0:42", "0:10", "0:01", "0:00", "0:00"]);
   });
 });
+
+describe("the microphone's level for the circle", () => {
+  it("puts an analyser of the microphone where the circles read it, and takes it away when the recording is released", async () => {
+    const { setAnalyser } = await import("./audio-level");
+    const analyser = {} as AnalyserNode;
+    const closed = vi.fn(async () => undefined);
+    vi.stubGlobal("AudioContext", class { createMediaStreamSource() { return { connect: vi.fn() }; } createAnalyser() { return Object.assign(analyser, { fftSize: 0, smoothingTimeConstant: 0 }); } close = closed; });
+    const track = { stop: vi.fn() };
+    const stream = { getTracks: () => [track] };
+    vi.stubGlobal("navigator", { mediaDevices: { getUserMedia: vi.fn(async () => stream) } });
+    class FakeRecorder { static isTypeSupported = () => true; mimeType = "audio/webm"; state = "inactive"; ondataavailable: unknown = null; onstop: (() => void) | null = null; onerror: unknown = null; start() { this.state = "recording"; } stop() { this.state = "inactive"; this.onstop?.(); } }
+    vi.stubGlobal("MediaRecorder", FakeRecorder);
+    const seen: (AnalyserNode | null)[] = [];
+    const { useAnalyser } = await import("./audio-level");
+    const { render, cleanup, act } = await import("@testing-library/react");
+    const Probe = () => (seen.push(useAnalyser()), null);
+    const { createElement } = await import("react");
+    render(createElement(Probe));
+    const { startRecording } = await import("./recorder");
+    let rec!: Awaited<ReturnType<typeof startRecording>>;
+    await act(async () => void (rec = await startRecording()));
+    expect(seen.at(-1)).toBe(analyser);
+    act(() => rec.cancel());
+    expect(seen.at(-1)).toBeNull();
+    expect(track.stop).toHaveBeenCalled();
+    expect(closed).toHaveBeenCalled();
+    setAnalyser(null);
+    cleanup();
+    vi.unstubAllGlobals();
+  });
+});

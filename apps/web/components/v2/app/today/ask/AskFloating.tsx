@@ -9,6 +9,7 @@ import { Orb } from "@/components/v2/Orb";
 import { workspaceOf } from "../../nav";
 import { orbStateOf } from "../../mark/orb-state";
 import { chipsForPath, orbHidden } from "./ask-chips";
+import { useAnalyser } from "./audio-level";
 import { useStoredAsk } from "./ask-store";
 import type { AskWords } from "./ask-words";
 
@@ -30,6 +31,7 @@ function typing(target: EventTarget | null): boolean {
 export function AskFloating({ words, chipWords }: { words: AskWords; chipWords: AskWords }) {
   const session = useStoredAsk(); // null until the conversation's code has arrived: the orb is on the page at once, the panel opens as soon as there is something to open
   const finished = session?.finished ?? 0;
+  const analyser = useAnalyser();
   const pathname = usePathname();
   const tab = useSearchParams()?.get("tab") ?? null;
   const rest = workspaceOf(pathname ?? "")?.rest ?? null;
@@ -84,7 +86,7 @@ export function AskFloating({ words, chipWords }: { words: AskWords; chipWords: 
         onFocus={() => void import("./AskPanel")}
         className={`fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-line bg-surface shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 motion-reduce:transition-none md:bottom-6 md:right-6 print:hidden ${open ? "max-md:hidden" : ""}`}
       >
-        <Orb px={44} state={session?.asking && !session.answer ? "think" : session?.playing || session?.asking ? "speak" : "ambient"} />
+        <Orb px={44} state={session?.mood === "listening" ? "listen" : session?.asking && !session.answer ? "think" : session?.playing || session?.asking ? "speak" : "ambient"} analyser={analyser} />
         {unseen ? <span data-ask="dot" aria-hidden="true" className="absolute right-0 top-0 size-3.5 rounded-full border-2 border-surface bg-brand" /> : null}
       </button>
       {open && session ? <AskPanel session={session} chips={chipsForPath(rest ?? "", tab).map((k) => chipWords[k] ?? k)} onClose={closePanel} /> : null}
