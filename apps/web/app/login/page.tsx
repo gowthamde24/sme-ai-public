@@ -3,6 +3,7 @@ import Link from "next/link";
 import { authH1, authHint, authMain } from "@/components/v2/auth/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { safeRedirectPath } from "@/lib/auth/redirect";
+import { turnstileSiteKey } from "@/lib/security/turnstile";
 
 import { LoginForm } from "./login-form";
 
@@ -12,6 +13,7 @@ const NOTICES: Record<string, string> = {
   link: "That link has expired or was already used. Request a new one from \"Forgot your password?\".",
   reset: "Your password was changed. Sign in with the new one.",
   provider: "We could not sign you in with that provider. Try again, or use your e-mail address.",
+  everywhere: "You were signed out of all devices. Sign in again here.",
 };
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
@@ -24,7 +26,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
     <main id="main" className={authMain}>
       <h1 className={authH1}>Sign in</h1>
-      <LoginForm next={next} notice={NOTICES[notice ?? ""]} />
+      <LoginForm next={next} notice={NOTICES[notice ?? ""]} turnstile={turnstileSiteKey()} />
       {/* the same line as the sign-up page (job DQ part 2): both links open in a new tab, so nobody loses the form */}
       <p className={`${authHint} text-center`} data-part="terms-line">
         By continuing, you agree to the{" "}

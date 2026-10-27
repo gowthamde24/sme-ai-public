@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { fillPlain } from "@/i18n/fill";
 import { siteT } from "@/i18n/site";
 import { clientIp } from "@/lib/auth/signup-limit";
+import { passesTurnstile } from "@/lib/security/turnstile";
 import { consented, MAX_CITY, MAX_NAME, MAX_QUESTION, oneLine, readSiteLang, type LeadResult } from "@/lib/site/lead";
 import { sharedLeadLimiter } from "@/lib/site/lead-limit";
 import { SITE_PACKS, packBySlug, textIn } from "@/lib/site/packs";
@@ -30,6 +31,7 @@ export async function prepareContactChat(input: unknown): Promise<LeadResult> {
   const digits = ourWhatsappDigits();
   if (digits === null) return { ok: false, error: "unavailable" };
   if (!(await allowed())) return { ok: false, error: "rate" };
+  if (!(await passesTurnstile(raw.turnstileToken, clientIp(await headers())))) return { ok: false, error: "check" }; // the check box (when it is on)
   const t = siteT(lang);
   const pack = typeof raw.type === "string" ? packBySlug(raw.type) : null;
   const type = pack ? textIn(pack.names, lang) : t("contact.type.other");

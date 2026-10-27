@@ -3,12 +3,13 @@
 import { CheckCircle2 } from "lucide-react";
 import { useState, useTransition } from "react";
 
+import { Turnstile } from "@/components/v2/controls/Turnstile";
 import { btnPrimary } from "@/components/v2/site/ui";
 import type { WaitlistLang, WaitlistResult } from "@/lib/waitlist/types";
 
 export type WaitlistWords = {
   name: string; type: string; city: string; contact: string; language: string; marketing: string; notice: string; privacy: string; submit: string; thanksTitle: string; thanksBody: string;
-  errName: string; errCity: string; errContact: string; errRate: string; errDown: string; errGeneric: string;
+  errName: string; errCity: string; errContact: string; errRate: string; errDown: string; errGeneric: string; errCheck: string;
 };
 
 const field = "min-h-12 w-full rounded-lg border border-edge bg-surface px-3 text-base text-ink focus:border-brand-edge";
@@ -19,7 +20,7 @@ const label = "mb-1.5 block text-sm font-semibold";
  * posts it to the API; this file holds no dictionary and names no business type (the words, the business types and the languages come from the server as props). A hidden field that only a script fills is the trap for bots.
  * After a good answer the form is replaced by the thank-you.
  */
-export function WaitlistForm({ lang, types, langs, words, action, privacyHref, idPrefix = "wl" }: { lang: string; types: readonly { slug: string; name: string }[]; langs: readonly { code: WaitlistLang; name: string }[]; words: WaitlistWords; action: (input: unknown) => Promise<WaitlistResult>; privacyHref: string; idPrefix?: string }) {
+export function WaitlistForm({ lang, types, langs, words, action, privacyHref, idPrefix = "wl", turnstile = null }: { /** The Turnstile site key when the check is on (the server decides): the form then needs its token. */ turnstile?: string | null; lang: string; types: readonly { slug: string; name: string }[]; langs: readonly { code: WaitlistLang; name: string }[]; words: WaitlistWords; action: (input: unknown) => Promise<WaitlistResult>; privacyHref: string; idPrefix?: string }) {
   const [name, setName] = useState("");
   const [type, setType] = useState(types[0]?.slug ?? "other");
   const [city, setCity] = useState("");
@@ -30,7 +31,9 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
   const [problem, setProblem] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [pending, start] = useTransition();
-  const errors: Record<string, string> = { name: words.errName, city: words.errCity, contact: words.errContact, rate: words.errRate, down: words.errDown, invalid: words.errGeneric };
+  const [token, setToken] = useState<string | null>(null);
+  const [again, setAgain] = useState(0);
+  const errors: Record<string, string> = { name: words.errName, city: words.errCity, contact: words.errContact, rate: words.errRate, down: words.errDown, invalid: words.errGeneric, check: words.errCheck };
   if (done)
     return (
       <div role="status" className="flex max-w-xl items-start gap-3 rounded-xl border border-line bg-surface p-5" data-part="waitlist-thanks">
@@ -50,11 +53,15 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
         setProblem(null);
         start(async () => {
           try {
-            const out = await action({ name, businessType: type, city, contact, language, marketingOptIn: marketing, website: trap });
+            const out = await action({ name, businessType: type, city, contact, language, marketingOptIn: marketing, website: trap, turnstileToken: token });
             if (out.ok) setDone(true);
-            else setProblem(errors[out.error] ?? words.errGeneric);
+            else {
+              setProblem(errors[out.error] ?? words.errGeneric);
+              setAgain((n) => n + 1); // a token is good for one try
+            }
           } catch {
             setProblem(words.errGeneric);
+            setAgain((n) => n + 1);
           }
         });
       }}
@@ -102,7 +109,8 @@ export function WaitlistForm({ lang, types, langs, words, action, privacyHref, i
         <a href={privacyHref} target="_blank" rel="noopener" className="font-semibold text-brand-text underline underline-offset-2">{words.privacy}</a>
       </p>
       {problem ? <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-sm font-medium text-danger-text">{problem}</p> : null}
-      <button type="submit" disabled={pending} className={`${btnPrimary} self-start disabled:opacity-60`}>
+      {turnstile ? <Turnstile siteKey={turnstile} lang={lang} onToken={setToken} again={again} /> : null}
+      <button type="submit" disabled={pending || (turnstile !== null && token === null)} className={`${btnPrimary} self-start disabled:opacity-60`}>
         {words.submit}
       </button>
     </form>

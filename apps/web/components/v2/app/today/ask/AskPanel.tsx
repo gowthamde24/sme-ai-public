@@ -5,6 +5,7 @@ import * as React from "react";
 
 import { Orb } from "@/components/v2/Orb";
 
+import { useAnalyser } from "./audio-level";
 import { AskAnswer, AskChips, AskForm, AskVoiceMode } from "./AskView";
 import { DoItBar } from "./AskDoItLazy";
 import type { AskSession } from "./use-ask-session";
@@ -18,6 +19,7 @@ const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), selec
 export function AskPanel({ session, chips, onClose }: { session: AskSession; chips: readonly string[]; onClose: () => void }) {
   const s = session;
   const { w } = s;
+  const analyser = useAnalyser();
   const box = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
     document.getElementById("ask-input")?.focus();
@@ -55,7 +57,7 @@ export function AskPanel({ session, chips, onClose }: { session: AskSession; chi
         className="absolute inset-x-0 bottom-0 flex h-[70dvh] flex-col overflow-hidden rounded-t-2xl border border-line bg-bg shadow-[var(--v2-shadow-pop)] motion-safe:animate-[ask-panel-in_160ms_ease-out] md:inset-x-auto md:bottom-6 md:right-6 md:h-[560px] md:max-h-[calc(100dvh-3rem)] md:w-[380px] md:rounded-2xl"
       >
         <div className="flex min-h-14 shrink-0 items-center gap-3 border-b border-line px-4">
-          <Orb px={28} state={s.asking && !s.answer ? "think" : s.playing || s.asking ? "speak" : "ambient"} />
+          <Orb px={28} state={s.mood === "listening" ? "listen" : s.asking && !s.answer ? "think" : s.playing || s.asking ? "speak" : "ambient"} analyser={analyser} />
           <h2 className="min-w-0 flex-1 truncate font-display text-lg font-semibold">{w("ask.panel.title")}</h2>
           <button type="button" onClick={onClose} aria-label={w("ask.panel.close")} title={w("ask.panel.close")} data-ask="panel-close" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-edge bg-surface hover:bg-surface-2">
             <X className="size-5" aria-hidden="true" />

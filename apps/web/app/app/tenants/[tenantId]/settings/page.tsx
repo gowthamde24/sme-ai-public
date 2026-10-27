@@ -79,6 +79,7 @@ import { topupsPart } from "./topups-part";
 import { BusinessForm } from "@/components/v2/app/settings/BusinessForm";
 import { getProfile, PROFILE_LANGUAGES, type BusinessProfile } from "@/lib/api/profile";
 import { saveBusinessAction } from "./business-actions";
+import { signOutEverywhereAction } from "../../../actions";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -444,6 +445,22 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 {user.hasSecondFactor ? t("settings.security.manage") : t("settings.security.turnon")}
               </Link>
             </div>
+          </section>
+        ) : null}
+        {section === "security" ? (
+          <section className={`${surface} flex flex-col gap-3`} aria-label={t("settings.security.all.t")} data-part="signout-all">
+            <h2 className="text-xl font-semibold">{t("settings.security.all.t")}</h2>
+            <p className="text-base text-muted">{t("settings.security.all.d")}</p>
+            {pick(query.signout) === "failed" ? (
+              <p role="alert" className="rounded-lg border border-red-text bg-red-bg px-3 py-2 text-sm font-medium text-red-text">
+                {t("settings.security.all.failed")}
+              </p>
+            ) : null}
+            <form action={signOutEverywhereAction}>
+              <button type="submit" className="inline-flex min-h-11 items-center justify-center rounded-full border border-red-text bg-red-bg px-[18px] text-[15px] font-semibold text-red-text hover:brightness-95">
+                {t("settings.security.all.btn")}
+              </button>
+            </form>
           </section>
         ) : null}
         {section === "privacy" && privacy ? (

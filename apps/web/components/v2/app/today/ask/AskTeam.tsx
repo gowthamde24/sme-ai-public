@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import { AgentOrb } from "../../mark/AgentOrb";
+import { useAnalyser } from "./audio-level";
 import type { AiMood } from "../../mark/mood";
 import { AskAnswer, AskChips, AskForm, AskVoiceMode } from "./AskView";
 import { AskCapabilities } from "./AskCapabilities";
@@ -26,6 +27,7 @@ const card = "rounded-xl border border-line bg-surface shadow-[var(--v2-shadow)]
 export function AskTeam({ lang, base, words, availability, transport, voiceStatus, voiceTransport, variant = "box", onMood, chips: chipTexts }: { lang: string; base: string; words: AskWords; availability: Availability; transport?: AskTransport | null; voiceStatus?: VoiceStatus | null; voiceTransport?: VoiceTransport | null; /** `box`: the card with the circle in its header. `hero`: only the question line, the chips and the answer. */ variant?: "box" | "hero"; onMood?: (mood: AiMood) => void; /** The suggestion chips, when the caller chooses them (`hero`: three). */ chips?: readonly string[] }) {
   const s = useAskSession({ lang, base, words, availability, transport, voiceStatus, voiceTransport });
   const { w, mood } = s;
+  const analyser = useAnalyser();
   React.useEffect(() => {
     onMood?.(mood);
   }, [mood, onMood]);
@@ -40,7 +42,7 @@ export function AskTeam({ lang, base, words, availability, transport, voiceStatu
     return (
       <section aria-labelledby="ask-heading" data-ask="unavailable" className={`${card} mx-auto mb-8 max-w-3xl p-4 sm:p-5`}>
         <div className="flex items-center gap-3 sm:gap-4">
-          <AgentOrb mood={mood} name={w("agent.main")} moodText={w(`owl.mood.${mood}`)} />
+          <AgentOrb mood={mood} name={w("agent.main")} moodText={w(`owl.mood.${mood}`)} analyser={analyser} />
           <div className="min-w-0">
             <h2 id="ask-heading" className="font-display text-xl font-semibold leading-tight">
               {w("ask.title")}
@@ -65,7 +67,7 @@ export function AskTeam({ lang, base, words, availability, transport, voiceStatu
   return (
     <section aria-labelledby="ask-heading" data-ask="live" className={`${card} mx-auto mb-8 max-w-3xl p-4 sm:p-5`}>
       <div className="flex items-center gap-3 sm:gap-4">
-        <AgentOrb mood={mood} name={w("agent.main")} moodText={w(`owl.mood.${mood}`)} />
+        <AgentOrb mood={mood} name={w("agent.main")} moodText={w(`owl.mood.${mood}`)} analyser={analyser} />
         <div className="min-w-0">
           <h2 id="ask-heading" className="font-display text-xl font-semibold leading-tight">
             {w("ask.title")}

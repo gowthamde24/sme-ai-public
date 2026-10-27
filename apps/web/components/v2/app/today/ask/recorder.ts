@@ -2,6 +2,9 @@
  * Recording a question in the browser (job BF): the microphone through `getUserMedia`, recorded by `MediaRecorder` as WebM/Opus (Chrome, Firefox, Edge) or M4A/MP4 (Safari), both of which the Agent OWL's
  * voice route reads. A low bit rate keeps a full minute of speech far below the route's 1.5 MB limit. Nothing here is sent anywhere; the caller gets a Blob, or throws a RecordError with a closed `problem`.
  */
+import { setAnalyser } from "./audio-level";
+import { analyserOf, clearAnalyser, makeContext } from "./audio-source";
+
 export const MAX_SECONDS = 60;
 /** A recording shorter than this is an accidental touch, not a question. */
 export const MIN_MS = 700;
@@ -51,7 +54,24 @@ export async function startRecording(): Promise<Recording> {
   } catch (error) {
     throw new RecordError(problemOf(error));
   }
-  const release = () => stream.getTracks().forEach((t) => t.stop());
+  // the circle follows the microphone while it is on (the analyser is put where the circles read it and taken away on release)
+  let level: AnalyserNode | null = null;
+  let ctx: AudioContext | null = null;
+  try {
+    ctx = makeContext();
+    if (ctx) {
+      level = analyserOf(ctx, ctx.createMediaStreamSource(stream));
+      setAnalyser(level);
+    }
+  } catch {
+    level = null; // no Web Audio here: the circle keeps its own motion
+  }
+  const release = () => {
+    stream.getTracks().forEach((t) => t.stop());
+    clearAnalyser(level);
+    void ctx?.close().catch(() => undefined);
+    ctx = null;
+  };
   let recorder: MediaRecorder;
   try {
     recorder = new MediaRecorder(stream, { mimeType: mime, audioBitsPerSecond: BITS_PER_SECOND });
