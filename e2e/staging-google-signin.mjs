@@ -24,8 +24,10 @@ for (const [size, viewport] of [["phone", { width: 390, height: 844 }], ["deskto
   const context = await browser.newContext({ viewport });
   const page = await context.newPage();
   const authorize = [];
+  let googleAsk = null; // Google's first request (the Auth server's redirect): it carries the client and the return address, which Google's own pages later move into other parameters
   page.on("request", (r) => {
     if (r.url().includes("/auth/v1/authorize")) authorize.push(r.url());
+    if (!googleAsk && r.url().startsWith("https://accounts.google.com/o/oauth2/")) googleAsk = new URL(r.url());
   });
   try {
     await page.goto(`${WEB}/login`);
@@ -33,15 +35,16 @@ for (const [size, viewport] of [["phone", { width: 390, height: 844 }], ["deskto
     record(`${size}: /login shows Continue with Google`, await button.isVisible(), "the button is there");
 
     // the cookie notice may sit over the bottom of a phone: answer it as a visitor would
-    const accept = page.getByRole("button", { name: /accept|ok|got it/i }).first();
+    const accept = page.getByRole("button", { name: /^OK, got it$/ });
     if (await accept.isVisible().catch(() => false)) await accept.click().catch(() => null);
 
     // the click ends on Google's page and stops there
-    await Promise.all([page.waitForURL(/^https:\/\/accounts\.google\.com\//, { timeout: 30000 }), button.click()]);
+    // "commit": the navigation has started on Google's side; Google's own page is heavy and its load event is not what is being tested
+    await Promise.all([page.waitForURL(/^https:\/\/accounts\.google\.com\//, { timeout: 30000, waitUntil: "commit" }), button.click()]);
     const g = new URL(page.url());
     record(`${size}: the click lands on Google's page`, g.host === "accounts.google.com", `${g.host}${g.pathname}`);
-    record(`${size}: Google is asked to return to the Auth server's callback`, g.searchParams.get("redirect_uri") === `https://${SUPABASE_REF}.supabase.co/auth/v1/callback`, "redirect_uri");
-    record(`${size}: the OAuth client is the staging one`, /^620338396268-[a-z0-9]+\.apps\.googleusercontent\.com$/.test(g.searchParams.get("client_id") || ""), "client_id shape");
+    record(`${size}: Google is asked to return to the Auth server's callback`, googleAsk?.searchParams.get("redirect_uri") === `https://${SUPABASE_REF}.supabase.co/auth/v1/callback`, "redirect_uri");
+    record(`${size}: the OAuth client is the staging one`, /^620338396268-[a-z0-9]+\.apps\.googleusercontent\.com$/.test(googleAsk?.searchParams.get("client_id") || ""), "client_id shape");
     const asked = authorize.map((u) => new URL(u)).find((u) => u.host === `${SUPABASE_REF}.supabase.co`);
     record(`${size}: the Auth server was asked to come back to /auth/callback of the web`, asked?.searchParams.get("redirect_to") === "https://staging.stack19.com/auth/callback", `redirect_to ${asked?.searchParams.get("redirect_to") ?? "(none)"}`);
     record(`${size}: PKCE is used (no token ever comes back in an address)`, Boolean(asked?.searchParams.get("code_challenge")), "code_challenge present");
