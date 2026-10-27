@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import random
+import time
 from typing import Any
 
 import operator_sql
@@ -412,7 +413,7 @@ def test_an_agent_context_cannot_type_a_price(mq: QuoteWorld) -> None:
         f"select public.create_manual_quote_draft('{uid()}', '{eid}', 'new', null, '{engine_port.engine_version()}', '{{\"as_of\": \"2026-01-01\"}}', '{{}}', "
         f'\'[{{"item_type_code": "MQ1", "qty": 1, "unit_price_paise": 1000}}]\'::jsonb);'
     )
-    claims = json.dumps({"sub": str(mq.owner.id), "role": "authenticated", "aal": "aal2"})
+    claims = json.dumps({"sub": str(mq.owner.id), "role": "authenticated", "aal": "aal2", "iat": int(time.time())})
     for setting in (
         "select set_config('app.agent_run_id', gen_random_uuid()::text, true);",
         "select set_config('app.created_via', 'agent', true);",

@@ -47,7 +47,7 @@ class Held:
         docker = shutil.which("docker")
         assert docker is not None, "docker is required for the integration tests"
         self.marker = f"hold-{uuid.uuid4().hex}"
-        claims = json.dumps({"sub": str(user.id), "role": "authenticated", "aal": "aal2"})
+        claims = json.dumps({"sub": str(user.id), "role": "authenticated", "aal": "aal2", "iat": int(time.time())})
         script = (
             # the marker comes FIRST: pg_stat_activity.query is cut at 1,024 characters, and a quote's request text alone is longer
             f"/* {self.marker} */ begin; select set_config('request.jwt.claims', '{claims}', true); set local role authenticated; "
