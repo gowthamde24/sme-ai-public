@@ -19,7 +19,8 @@ import { packsWire } from "@/lib/packs/pack-test-kit";
 import SignupPage from "./page";
 
 const props = (query: Record<string, string | undefined> = {}) => ({ searchParams: Promise.resolve(query), params: Promise.resolve({}) }) as never;
-const DEEP = packsWire().packs.map(parsePackSummary).filter((p) => !MOCK_TEMPLATES.some((t) => t.packId === p.packId)); // the API now lists the nine too: the deep ones are the rest
+// the API now lists the nine too: the deep ones are the rest. (The generic pack of "Other" (job DT) is not one of them: the API calls it "other", which this file adds itself where it needs it.)
+const DEEP = packsWire().packs.map(parsePackSummary).filter((p) => p.packId !== "general_business" && !MOCK_TEMPLATES.some((t) => t.packId === p.packId));
 
 beforeEach(() => {
   vi.clearAllMocks();
