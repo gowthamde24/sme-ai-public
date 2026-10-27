@@ -21,13 +21,13 @@ const viaApi: Verify = async (token, ip) => {
 };
 
 /** The public site key if the check is on, else null. */
-export function turnstileSiteKey(env: Record<string, string | undefined> = process.env): string | null {
-  return env.TURNSTILE_SITE_KEY?.trim() || null;
+export function turnstileSiteKey(key: string | undefined = process.env.TURNSTILE_SITE_KEY): string | null {
+  return key?.trim() || null;
 }
 
-/** Did this token come from a person? True when the check is off. `verify` is for tests. */
-export async function passesTurnstile(token: unknown, ip: string | null, env: Record<string, string | undefined> = process.env, verify: Verify = viaApi): Promise<boolean> {
-  if (turnstileSiteKey(env) === null) return true;
+/** Did this token come from a person? True when the check is off. `siteKey` and `verify` are for tests. */
+export async function passesTurnstile(token: unknown, ip: string | null, siteKey: string | undefined = process.env.TURNSTILE_SITE_KEY, verify: Verify = viaApi): Promise<boolean> {
+  if (turnstileSiteKey(siteKey) === null) return true;
   if (typeof token !== "string" || token.length < 10 || token.length > MAX_TOKEN) return false;
   return verify(token, ip);
 }

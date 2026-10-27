@@ -3,17 +3,17 @@ import { describe, expect, it, vi } from "vitest";
 import { buildCsp } from "./csp";
 import { passesTurnstile, turnstileSiteKey } from "./turnstile";
 
-const ON = { TURNSTILE_SITE_KEY: "0x4AAA-site" };
+const ON = "0x4AAA-site";
 
 describe("Turnstile on the public forms", () => {
   it("is on when the (public) site key is set; the web holds no secret", () => {
-    expect(turnstileSiteKey({})).toBeNull();
-    expect(turnstileSiteKey({ TURNSTILE_SITE_KEY: " " })).toBeNull();
+    expect(turnstileSiteKey(undefined)).toBeNull();
+    expect(turnstileSiteKey(" ")).toBeNull();
     expect(turnstileSiteKey(ON)).toBe("0x4AAA-site");
   });
   it("lets every form through when it is off (nobody is asked anything)", async () => {
     const verify = vi.fn(async () => false);
-    expect(await passesTurnstile(undefined, null, {}, verify)).toBe(true);
+    expect(await passesTurnstile(undefined, null, undefined, verify)).toBe(true);
     expect(verify).not.toHaveBeenCalled();
   });
   it("hands a token of the right shape and the address to the check, and passes only what it passes", async () => {
