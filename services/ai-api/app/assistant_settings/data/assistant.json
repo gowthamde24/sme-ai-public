@@ -254,7 +254,7 @@
       "call_to_minute": 1140
     },
     "construction_materials": {
-      "voice_persona": "male_calm",
+      "voice_persona": "female_clear",
       "main_language": "te",
       "auto_switch_language": true,
       "allow_english_mixing": true,
@@ -278,7 +278,7 @@
       ],
       "call_from_minute": 540,
       "call_to_minute": 1080,
-      "name": "Arun"
+      "name": "Aruna"
     },
     "education": {
       "voice_persona": "female_clear",
@@ -389,7 +389,7 @@
       "name": "Kavya"
     },
     "insurance_loans": {
-      "voice_persona": "male_calm",
+      "voice_persona": "female_clear",
       "main_language": "te",
       "auto_switch_language": true,
       "allow_english_mixing": true,
@@ -413,10 +413,10 @@
       ],
       "call_from_minute": 540,
       "call_to_minute": 1080,
-      "name": "Ravi"
+      "name": "Rekha"
     },
     "auto_dealer": {
-      "voice_persona": "male_calm",
+      "voice_persona": "female_clear",
       "main_language": "te",
       "auto_switch_language": true,
       "allow_english_mixing": true,
@@ -440,7 +440,7 @@
       ],
       "call_from_minute": 540,
       "call_to_minute": 1080,
-      "name": "Arjun"
+      "name": "Anjali"
     },
     "interiors_solar": {
       "voice_persona": "female_warm",
@@ -497,7 +497,7 @@
       "name": "Sneha"
     },
     "gym": {
-      "voice_persona": "male_calm",
+      "voice_persona": "female_warm",
       "main_language": "te",
       "auto_switch_language": true,
       "allow_english_mixing": true,
@@ -521,10 +521,10 @@
       ],
       "call_from_minute": 540,
       "call_to_minute": 1080,
-      "name": "Karthik"
+      "name": "Kavitha"
     },
     "wholesale_b2b": {
-      "voice_persona": "male_calm",
+      "voice_persona": "female_clear",
       "main_language": "te",
       "auto_switch_language": true,
       "allow_english_mixing": true,
@@ -548,7 +548,7 @@
       ],
       "call_from_minute": 540,
       "call_to_minute": 1080,
-      "name": "Arun"
+      "name": "Aruna"
     },
     "general_business": {
       "voice_persona": "female_clear",

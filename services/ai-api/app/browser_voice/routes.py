@@ -20,6 +20,7 @@ from starlette.websockets import WebSocketDisconnect
 
 from app.assistant.models import MessageIn
 from app.assistant.routes import start_message
+from app.assistant_settings import data as settings_data
 from app.auth.deps import Runtime, TenantContext
 from app.auth.jwt import AuthError
 from app.browser_voice.limits import Usage
@@ -52,7 +53,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
     token, tenant = ctx.principal.token, ctx.tenant.id
     chosen = choices_of(runtime, ctx)
     tts = FallbackTts(bv.config, bv.factory, chosen=chosen, pronunciations=default_pronunciations())
-    name = "Vijaya"
+    name = settings_data.default_name()
     if runtime.assistant_settings is not None:
         name = str(runtime.assistant_settings.get(token, tenant).settings.name)
     opening_cache: dict[str, tuple[str, bool]] = {}
