@@ -16,7 +16,7 @@ const chipClass = "inline-flex min-h-11 items-center rounded-full border border-
 const KIND_WORD: Readonly<Record<string, string>> = { quote: "today.kind.quote", followup_draft: "today.kind.followup", reply_draft: "ask.kind.reply", enquiry: "ask.kind.enquiry", store_visit: "ask.kind.visit" };
 const PROBLEM_WORD: Readonly<Record<RecorderProblem, string>> = { denied: "ask.mic.denied", nomic: "ask.voice.nomic", short: "ask.voice.short", unsupported: "ask.mic.failed", failed: "ask.mic.failed" };
 /** What a failed answer says, by the code the route gave (typed and spoken questions share the first six). */
-const ERROR_WORD: Readonly<Record<string, string>> = {
+export const ERROR_WORD: Readonly<Record<string, string>> = {
   ai_paused_until: "ask.err.cost", run_limit_reached: "ask.err.limit", forbidden: "ask.err.role", agents_disabled: "office.switchedoff", model_busy: "ask.err.busy", model_not_configured: "ask.err.notset",
   voice_too_long: "ask.voice.toolong", voice_too_short: "ask.voice.short", voice_no_speech: "ask.mic.silent", voice_unavailable: "ask.voice.err.unavailable", voice_failed: "ask.voice.err.failed", network: "ask.voice.err.network",
 };
@@ -150,7 +150,7 @@ export function AskChips({ session, chips, className = "" }: { session: AskSessi
   );
 }
 
-function Sources({ sources, w }: { sources: Exchange["sources"]; w: (k: string) => string }) {
+export function Sources({ sources, w }: { sources: Exchange["sources"]; w: (k: string) => string }) {
   if (!sources.length) return null;
   return (
     <div className="mt-3">
@@ -172,7 +172,7 @@ function Sources({ sources, w }: { sources: Exchange["sources"]; w: (k: string) 
   );
 }
 
-function Drafts({ drafts, w }: { drafts: Exchange["drafts"]; w: (k: string) => string }) {
+export function Drafts({ drafts, w }: { drafts: Exchange["drafts"]; w: (k: string) => string }) {
   if (!drafts.length) return null;
   return (
     <div className="mt-4">

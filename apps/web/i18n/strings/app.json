@@ -71520,5 +71520,148 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.chat.title": {
+  "en": "Your assistant",
+  "te": "మీ అసిస్టెంట్",
+  "hi": "आपकी असिस्टेंट",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.new": {
+  "en": "New conversation",
+  "te": "కొత్త సంభాషణ",
+  "hi": "नई बातचीत",
+  "kn": "ಹೊಸ ಸಂಭಾಷಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.copy": {
+  "en": "Copy",
+  "te": "కాపీ",
+  "hi": "कॉपी",
+  "kn": "ಕಾಪಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.copied": {
+  "en": "Copied",
+  "te": "కాపీ అయింది",
+  "hi": "कॉपी हो गया",
+  "kn": "ಕಾಪಿ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.you": {
+  "en": "You",
+  "te": "మీరు",
+  "hi": "आप",
+  "kn": "ನೀವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.stop": {
+  "en": "Stop talking",
+  "te": "మాట్లాడటం ఆపండి",
+  "hi": "बोलना रोकें",
+  "kn": "ಮಾತು ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.mic": {
+  "en": "Talk",
+  "te": "మాట్లాడండి",
+  "hi": "बोलें",
+  "kn": "ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.micstop": {
+  "en": "Stop listening",
+  "te": "వినడం ఆపండి",
+  "hi": "सुनना रोकें",
+  "kn": "ಕೇಳುವುದು ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.edit": {
+  "en": "Edit what I heard",
+  "te": "విన్నది సరిచేయండి",
+  "hi": "जो सुना उसे बदलें",
+  "kn": "ಕೇಳಿದ್ದನ್ನು ಸರಿಪಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.placeholder": {
+  "en": "Type, or tap the microphone",
+  "te": "టైప్ చేయండి, లేదా మైక్ నొక్కండి",
+  "hi": "टाइप करें, या माइक छुएँ",
+  "kn": "ಟೈಪ್ ಮಾಡಿ, ಅಥವಾ ಮೈಕ್ ಒತ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.send": {
+  "en": "Send",
+  "te": "పంపండి",
+  "hi": "भेजें",
+  "kn": "ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.empty": {
+  "en": "Ask anything about your business, or just talk. Try one of these.",
+  "te": "మీ వ్యాపారం గురించి ఏదైనా అడగండి, లేదా మాట్లాడండి. వీటిలో ఒకటి ప్రయత్నించండి.",
+  "hi": "अपने कारोबार के बारे में कुछ भी पूछें, या बस बोलें। इनमें से कोई आज़माएँ।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ ಏನನ್ನಾದರೂ ಕೇಳಿ, ಅಥವಾ ಮಾತಾಡಿ. ಇವುಗಳಲ್ಲಿ ಒಂದನ್ನು ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.working": {
+  "en": "Working on it…",
+  "te": "చేస్తున్నాను…",
+  "hi": "हो रहा है…",
+  "kn": "ಮಾಡುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -1,0 +1,118 @@
+"use client";
+
+import * as React from "react";
+
+import { browserAudio } from "@/lib/browser-voice/audio-io";
+import { VoiceClient, type AudioIO, type Snapshot, type SocketLike } from "@/lib/browser-voice/client";
+import type { EndWord } from "@/lib/browser-voice/protocol";
+import { askVoiceToken } from "@/lib/browser-voice/token";
+
+import type { BrowserVoice } from "./browser-voice";
+import type { AskSession } from "./use-ask-session";
+
+export type PanelVoiceOptions = { audioFactory?: () => AudioIO; socketFactory?: (url: string) => SocketLike };
+export type PanelVoice = {
+  /** A spoken conversation is open (connecting, listening, thinking or speaking). */
+  active: boolean;
+  state: Snapshot["state"];
+  step: Snapshot["step"];
+  /** What the person is saying right now, word by word, until it is final; "" when nobody is. */
+  interim: string;
+  /** The turn in progress: the words heard and the reply so far (the reply streams in as it is spoken). null when no turn has begun. */
+  live: { asked: string; answer: string } | null;
+  end: EndWord | null;
+  micDenied: boolean;
+  start: () => Promise<void>;
+  stop: () => void;
+  /** A tap while it talks. */
+  bargeIn: () => void;
+  analyser: (which: "mic" | "voice") => AnalyserNode | null;
+};
+
+const TOKEN_FRESH_MS = 20 * 60_000;
+
+/**
+ * The spoken conversation INSIDE the chat panel (never full screen): the API's socket (lib/browser-voice) with the person's words shown LIVE as they speak (the interim caption, replaced by the final one) and the reply streaming below as text while it is spoken.
+ * A finished turn joins the SAME thread as the typed messages (`session.addExchange`). The floating circle follows what the conversation is doing (`session.setVoiceOrb`). The sign-in is asked for before the tap, so the tap itself can open the microphone.
+ */
+export function usePanelVoice(session: AskSession, voice: BrowserVoice, options: PanelVoiceOptions = {}): PanelVoice {
+  const { audioFactory = browserAudio, socketFactory = (u: string) => new WebSocket(u) as unknown as SocketLike } = options;
+  const [snap, setSnap] = React.useState<Snapshot | null>(null);
+  const [live, setLive] = React.useState<{ asked: string; answer: string; interim: string } | null>(null);
+  const client = React.useRef<VoiceClient | null>(null);
+  const audio = React.useRef<AudioIO | null>(null);
+  const token = React.useRef<{ value: string; at: number } | null>(null);
+  const done = React.useRef(0); // captions already turned into the thread
+  const turn = React.useRef<{ asked: string; answer: string } | null>(null);
+  const sourcesSeen = React.useRef(0);
+  const { addExchange, setVoiceOrb } = session;
+  const { tokenUrl, url, language } = voice;
+
+  React.useEffect(() => {
+    let alive = true;
+    void askVoiceToken(tokenUrl).then((out) => {
+      if (alive && out.ok) token.current = { value: out.token, at: Date.now() };
+    });
+    return () => {
+      alive = false;
+    };
+  }, [tokenUrl]);
+  React.useEffect(
+    () => () => {
+      client.current?.stop();
+      setVoiceOrb(null);
+    },
+    [setVoiceOrb],
+  );
+
+  /** Every change of the conversation (the socket's events, not a render): finished turns join the thread, the floating circle and the live line follow. */
+  const onChange = (next: Snapshot) => {
+    const flush = () => {
+      const t = turn.current;
+      if (!t || (t.asked === "" && t.answer === "")) return;
+      const mine = next.sources.slice(sourcesSeen.current).map((x) => ({ label: x.label, href: null }));
+      sourcesSeen.current = next.sources.length;
+      addExchange({ asked: t.asked, heardByVoice: true, answer: t.answer, sources: mine, drafts: [], errorCode: null, failed: false, task: null });
+      turn.current = null;
+    };
+    for (const c of next.captions.slice(done.current)) {
+      if (!c.final) break; // a partial is shown live; it joins the thread when it is final
+      done.current += 1;
+      const t = turn.current;
+      if (c.who === "user") {
+        if (t && t.answer !== "") flush();
+        turn.current = { asked: c.text, answer: "" };
+      } else turn.current = { asked: t?.asked ?? "", answer: t && t.answer !== "" ? `${t.answer}\n\n${c.text}` : c.text };
+    }
+    if (next.state === "listening" || next.phase === "ended") flush();
+    setVoiceOrb(next.phase === "ended" ? null : next.state === "listening" ? "listen" : next.state === "speaking" ? "speak" : next.state === "thinking" || next.phase === "connecting" ? "think" : null);
+    const partial = next.captions.slice(done.current).find((c) => !c.final);
+    const t = turn.current;
+    setLive(next.phase !== "ended" && (t || partial) ? { asked: partial?.who === "user" ? partial.text : (t?.asked ?? ""), answer: partial?.who === "assistant" ? `${t?.answer ? `${t.answer}\n\n` : ""}${partial.text}` : (t?.answer ?? ""), interim: partial?.who === "user" ? partial.text : "" } : null);
+    setSnap(next);
+  };
+
+  const start = async () => {
+    if (client.current && snap && snap.phase !== "ended") return;
+    if (token.current === null || Date.now() - token.current.at > TOKEN_FRESH_MS) {
+      const out = await askVoiceToken(tokenUrl);
+      if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false });
+      token.current = { value: out.token, at: Date.now() };
+    }
+    done.current = 0;
+    turn.current = null;
+    sourcesSeen.current = 0;
+    audio.current = audioFactory();
+    const c = new VoiceClient({ url, token: token.current.value, language, audio: audio.current, socket: socketFactory, onChange });
+    client.current = c;
+    setSnap(c.snapshot);
+    await c.start();
+  };
+
+  const stop = () => client.current?.stop();
+  const bargeIn = () => client.current?.bargeIn();
+  const analyser = (which: "mic" | "voice") => audio.current?.analyser(which) ?? null;
+
+  const active = snap !== null && snap.phase !== "ended";
+  return { active, state: snap?.state ?? null, step: snap?.step ?? null, interim: live?.interim ?? "", live: live ? { asked: live.asked, answer: live.answer } : null, end: snap?.end ?? null, micDenied: snap?.micDenied ?? false, start, stop, bargeIn, analyser };
+}

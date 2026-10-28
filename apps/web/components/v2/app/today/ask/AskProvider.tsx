@@ -26,7 +26,7 @@ export function AskProvider({ lang, base, words, availability, readOnly = false,
   return (
     <AskProvidedContext.Provider value={true}>
       <AskTurnOnContext.Provider value={turnOn}>
-      {live ? <AskSessionHost lang={lang} base={base} words={words} availability={availability} transport={transport} voiceStatus={voiceStatus} voiceTransport={voiceTransport} doIt={doIt} /> : null}
+      {live ? <AskSessionHost lang={lang} base={base} words={words} availability={availability} transport={transport} voiceStatus={voiceStatus} voiceTransport={voiceTransport} doIt={voice ? null : doIt} /> : null}
       {children}
       {live && !readOnly ? <AskFloating words={words} chipWords={chipWords ?? words} voice={voice} /> : null}
       {availability === "switched_off" && !readOnly ? <AskOffFloating words={words} /> : null}

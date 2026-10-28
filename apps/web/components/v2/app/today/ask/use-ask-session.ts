@@ -328,6 +328,33 @@ export function useAskSession({ lang, base, words, availability, transport: give
     await run("", (signal) => voiceTransport({ audio: blob, lang, speak, signal }), true, speak);
   };
 
+  /** The conversation panel: a turn that was spoken (the socket's captions) joins the thread like a typed one, and "new conversation" empties it. */
+  const addExchange = (x: Exchange) => {
+    const before = current.current; // a typed exchange that is still on screen goes first: the thread keeps the order things happened in
+    const keep = before && (before.asked !== "" || before.answer !== "") && phase !== "asking";
+    setEarlier((list) => [...list, ...(keep ? [before] : []), x].slice(-MAX_EARLIER));
+    if (keep) {
+      setAsked("");
+      setAnswer("");
+      setSources([]);
+      setDrafts([]);
+      setErrorCode(null);
+      setPhase("idle");
+    }
+  };
+  const newChat = () => {
+    abort.current?.abort();
+    dropAudio();
+    setEarlier([]);
+    setAsked("");
+    setAnswer("");
+    setSources([]);
+    setDrafts([]);
+    setErrorCode(null);
+    setText("");
+    setPhase("idle");
+  };
+  const [voiceOrb, setVoiceOrb] = React.useState<"listen" | "think" | "speak" | null>(null); // what the spoken conversation is doing, for the floating circle
   const stop = () => {
     abort.current?.abort();
     player.current?.stop();
@@ -379,7 +406,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     text, setText, focused, setFocused, asked, phase, answer, sources, drafts, problem, errorCode, heardByVoice, earlier, finished, mood,
     hasAudio, playing, audioPending, audioFailed, autoplay, setAutoplay, seen, showMic, status,
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, stop, togglePlay, runs,
+    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb,
     asking: phase === "asking",
     /** Night 4 (tasks): "ask" unless "Ask Vijaya to do it" is on for this person; `doIt` carries the actions, the words and the tasks of this thread. */
     mode: doIt ? mode : ("ask" as Mode),

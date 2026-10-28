@@ -85,6 +85,15 @@ export class VoiceClient {
     this.finish({ code: 1000, reason: "" });
   }
 
+  /** A tap while the assistant talks: the sound stops HERE, the API is told, and the microphone goes on (the same as speaking over it). */
+  bargeIn(): void {
+    if (!this.ws || this.ws.readyState !== 1 || this.serverState !== "speaking") return;
+    this.o.audio.flush();
+    this.ws.send(BARGE_IN);
+    this.serverState = "listening";
+    this.set({ state: "listening" });
+  }
+
   setLanguage(language: VoiceLang): void {
     this.set({ language });
     if (this.ws && this.ws.readyState === 1) this.ws.send(setLanguageMessage(language));

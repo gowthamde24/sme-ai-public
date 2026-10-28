@@ -1,17 +1,15 @@
 "use client";
 
-import * as React from "react";
-
-import { VoiceChat } from "../../voice-chat/VoiceChat";
 import { AskPanel } from "./AskPanel";
 import type { BrowserVoice } from "./browser-voice";
+import { ChatPanel } from "./ChatPanel";
 import type { AskSession } from "./use-ask-session";
 
 /**
- * What the floating orb opens, in ONE lazy chunk (the route-JS budget counts every byte the orb's own file adds to a page): the written panel, or, where "Talk to your assistant" is on, the voice chat first ("Type instead" there shows the panel).
+ * What the floating circle opens, in ONE lazy chunk (the route-JS budget counts every byte the circle's own file adds to a page). Where the spoken conversation is on (BROWSER_VOICE) it is the conversation panel: one line to write in, the microphone working in place,
+ * one thread for typed and spoken turns (never a full-screen screen). Otherwise it is the written panel.
  */
 export default function AskPanelHost({ session, chips, onClose, voice }: { session: AskSession | null; chips: readonly string[]; onClose: () => void; voice?: BrowserVoice | null }) {
-  const [typed, setTyped] = React.useState(false);
-  if (voice && !typed) return <VoiceChat {...voice} onClose={onClose} onType={() => setTyped(true)} />;
-  return session ? <AskPanel session={session} chips={chips} onClose={onClose} /> : null;
+  if (!session) return null;
+  return voice ? <ChatPanel session={session} chips={chips} voice={voice} onClose={onClose} /> : <AskPanel session={session} chips={chips} onClose={onClose} />;
 }
