@@ -17,9 +17,12 @@ import { FrameDataSlot } from "@/components/v2/app/frame-store";
 import { type Access } from "@/lib/api/billing-access";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { getLang } from "@/i18n/get-lang";
-import { fetchTenant } from "@/lib/api/client";
+import { fetchTenant, publicApiBase } from "@/lib/api/client";
+import { isVoiceLang, voiceSocketUrl, VOICE_LANGS } from "@/lib/browser-voice/protocol";
+import { CALL_LANG_NAMES } from "@/lib/assistant/types";
+import { browserVoiceTokenAction } from "./browser-voice-actions";
 import { requireUser } from "@/lib/auth/session";
-import { guidedDemo, taskScreens } from "@/lib/screens/flag";
+import { browserVoice, guidedDemo, taskScreens } from "@/lib/screens/flag";
 import { readIsDemo } from "./today-read";
 import { routesFor } from "@/lib/guided-demo/script";
 import { GuidedDemo } from "@/components/v2/app/guided-demo/LazyGuidedDemo";
@@ -58,6 +61,11 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   const chipWords = withModuleWords(Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("ask.chip."))), data.pack);
   // the guided demo (GUIDED_DEMO): only in a workspace that says it is a DEMO one, for its Owner and Admins
   const demoRoutes = guidedDemo() && isCanonicalUuid(tenantId) ? await demoRoutesFor(user.accessToken, tenantId, data.pack?.modules ?? null) : null;
+  // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales)
+  const url = browserVoice() && isCanonicalUuid(tenantId) ? voiceSocketUrl(publicApiBase(), tenantId) : null;
+  const voice = url && (await mayTalk(user.accessToken, tenantId))
+    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv."))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, getToken: browserVoiceTokenAction.bind(null, tenantId) }
+    : null;
   const topupBanner = isCanonicalUuid(tenantId) ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
   return (
     <>
@@ -76,7 +84,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
       {/* the notice at 80 and 100 percent of the minutes or messages (night 4, TOPUP_SCREENS): markup only, nothing when the flag is off */}
       {topupBanner}
       {/* ONE conversation for the workspace (job DQ part 0): Today's card and the floating panel of the other screens read the same thread */}
-      <AskProvider lang={lang} base={`/app/tenants/${tenantId}`} words={askWords} chipWords={chipWords} availability={availability} readOnly={access.readOnly} doIt={doIt} turnOn={turnOn}>
+      <AskProvider lang={lang} base={`/app/tenants/${tenantId}`} words={askWords} chipWords={chipWords} availability={availability} voice={voice} readOnly={access.readOnly} doIt={doIt} turnOn={turnOn}>
         {/* a server with no pack routes gives no pack: the product as it always was, every page on */}
         {data.pack ? (
           <ModuleGate modules={data.pack.modules} fallback={<ProblemView kind={403} variant="module" labels={labels} homeHref={`/app/tenants/${tenantId}`} />}>
@@ -89,6 +97,16 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
       {demoRoutes ? <GuidedDemo words={Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("gd.")))} routes={demoRoutes} actions={{ run: runDemoStepAction.bind(null, tenantId) }} /> : null}
     </>
   );
+}
+
+/** May this person talk to the assistant by voice? Owner, Admin or Sales (the API checks again); a failed read is "no". */
+async function mayTalk(accessToken: string, tenantId: string): Promise<boolean> {
+  try {
+    const role = (await fetchTenant(accessToken, tenantId)).role;
+    return role === "owner" || role === "admin" || role === "sales";
+  } catch {
+    return false;
+  }
 }
 
 /** The screens of the guided demo's steps, when this workspace is a DEMO one and the person may run it (Owner or Admin); else nothing. A failed read is "no". */

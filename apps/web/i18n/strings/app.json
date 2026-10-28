@@ -71190,5 +71190,324 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.title": {
+  "en": "Talk to {assistant}",
+  "te": "{assistant}తో మాట్లాడండి",
+  "hi": "{assistant} से बात करें",
+  "kn": "{assistant} ಜೊತೆ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.open": {
+  "en": "Talk to the assistant",
+  "te": "అసిస్టెంట్‌తో మాట్లాడండి",
+  "hi": "असिस्टेंट से बात करें",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಜೊತೆ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.tap": {
+  "en": "Tap the circle and speak",
+  "te": "సర్కిల్ నొక్కి మాట్లాడండి",
+  "hi": "गोले को छुएँ और बोलें",
+  "kn": "ವೃತ್ತ ಒತ್ತಿ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.tap.stop": {
+  "en": "Tap the circle to stop",
+  "te": "ఆపడానికి సర్కిల్ నొక్కండి",
+  "hi": "रोकने के लिए गोले को छुएँ",
+  "kn": "ನಿಲ್ಲಿಸಲು ವೃತ್ತ ಒತ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.connecting": {
+  "en": "Connecting…",
+  "te": "కలుపుతున్నాను…",
+  "hi": "जोड़ रहा है…",
+  "kn": "ಸಂಪರ್ಕಿಸುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.listening": {
+  "en": "Listening…",
+  "te": "వింటున్నాను…",
+  "hi": "सुन रहा है…",
+  "kn": "ಕೇಳಿಸಿಕೊಳ್ಳುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.thinking": {
+  "en": "Thinking…",
+  "te": "ఆలోచిస్తున్నాను…",
+  "hi": "सोच रहा है…",
+  "kn": "ಯೋಚಿಸುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.looking": {
+  "en": "Looking at your records…",
+  "te": "మీ రికార్డులు చూస్తున్నాను…",
+  "hi": "आपके रिकॉर्ड देख रहा है…",
+  "kn": "ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ನೋಡುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.speaking": {
+  "en": "Speaking. Talk to interrupt.",
+  "te": "చెప్తున్నాను. మధ్యలో మాట్లాడవచ్చు.",
+  "hi": "बोल रहा है। बीच में बोल सकते हैं।",
+  "kn": "ಹೇಳುತ್ತಿದೆ. ಮಧ್ಯದಲ್ಲಿ ಮಾತಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.mic.why": {
+  "en": "Your browser will ask to use the microphone. Your voice goes to the assistant only while it listens, and the sound is not kept.",
+  "te": "మైక్ వాడటానికి మీ బ్రౌజర్ అడుగుతుంది. అసిస్టెంట్ వింటున్నప్పుడు మాత్రమే మీ గొంతు వెళ్తుంది. ఆ శబ్దాన్ని దాచరు.",
+  "hi": "आपका ब्राउज़र माइक्रोफ़ोन की अनुमति माँगेगा। आपकी आवाज़ सिर्फ़ तब जाती है जब असिस्टेंट सुन रहा हो, और रिकॉर्डिंग रखी नहीं जाती।",
+  "kn": "ಮೈಕ್ ಬಳಸಲು ನಿಮ್ಮ ಬ್ರೌಸರ್ ಕೇಳುತ್ತದೆ. ಅಸಿಸ್ಟೆಂಟ್ ಕೇಳುತ್ತಿರುವಾಗ ಮಾತ್ರ ನಿಮ್ಮ ಧ್ವನಿ ಹೋಗುತ್ತದೆ, ಶಬ್ದವನ್ನು ಉಳಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.mic.denied": {
+  "en": "The microphone is blocked. Allow it in your browser settings, or type instead.",
+  "te": "మైక్ ఆపి ఉంది. బ్రౌజర్ సెట్టింగ్స్‌లో అనుమతించండి, లేదా టైప్ చేయండి.",
+  "hi": "माइक्रोफ़ोन बंद है। ब्राउज़र सेटिंग में अनुमति दें, या टाइप करें।",
+  "kn": "ಮೈಕ್ ತಡೆಹಿಡಿಯಲಾಗಿದೆ. ಬ್ರೌಸರ್ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಅನುಮತಿಸಿ, ಅಥವಾ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.type": {
+  "en": "Type instead",
+  "te": "బదులుగా టైప్ చేయండి",
+  "hi": "इसके बजाय टाइप करें",
+  "kn": "ಬದಲಿಗೆ ಟೈಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.you": {
+  "en": "You",
+  "te": "మీరు",
+  "hi": "आप",
+  "kn": "ನೀವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.notspoken": {
+  "en": "Shown here, not read aloud",
+  "te": "ఇక్కడ కనిపిస్తుంది, గట్టిగా చదవరు",
+  "hi": "यहाँ दिखता है, बोलकर नहीं पढ़ा जाता",
+  "kn": "ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ, ಗಟ್ಟಿಯಾಗಿ ಓದುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.sources": {
+  "en": "This is based on",
+  "te": "దీనికి ఆధారం",
+  "hi": "इसका आधार",
+  "kn": "ಇದರ ಆಧಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.lang": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.captions": {
+  "en": "What was said",
+  "te": "చెప్పినది",
+  "hi": "जो कहा गया",
+  "kn": "ಹೇಳಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.err.turn": {
+  "en": "That did not work. Try asking again.",
+  "te": "అది జరగలేదు. మళ్ళీ అడగండి.",
+  "hi": "यह नहीं हो सका। फिर से पूछें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.end.session": {
+  "en": "That was the 5 minute limit of one chat. Tap the circle to start again.",
+  "te": "ఒక చాట్‌కు 5 నిమిషాల పరిమితి అయిపోయింది. మళ్ళీ మొదలుపెట్టడానికి సర్కిల్ నొక్కండి.",
+  "hi": "एक चैट की 5 मिनट की सीमा पूरी हुई। फिर से शुरू करने के लिए गोले को छुएँ।",
+  "kn": "ಒಂದು ಚಾಟ್‌ನ 5 ನಿಮಿಷದ ಮಿತಿ ಮುಗಿಯಿತು. ಮತ್ತೆ ಶುರು ಮಾಡಲು ವೃತ್ತ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.end.daily": {
+  "en": "That is enough talking for today. You can still type your questions.",
+  "te": "ఈరోజుకు మాట్లాడటం చాలు. టైప్ చేసి అడగవచ్చు.",
+  "hi": "आज के लिए बोलना बस। आप टाइप करके पूछ सकते हैं।",
+  "kn": "ಇಂದಿಗೆ ಮಾತು ಸಾಕು. ಟೈಪ್ ಮಾಡಿ ಕೇಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.end.idle": {
+  "en": "It went quiet, so the chat ended. Tap the circle to start again.",
+  "te": "నిశ్శబ్దంగా ఉండటంతో చాట్ ముగిసింది. మళ్ళీ మొదలుపెట్టడానికి సర్కిల్ నొక్కండి.",
+  "hi": "चुप्पी रही, इसलिए चैट खत्म हुई। फिर से शुरू करने के लिए गोले को छुएँ।",
+  "kn": "ಮೌನವಾದ್ದರಿಂದ ಚಾಟ್ ಮುಗಿಯಿತು. ಮತ್ತೆ ಶುರು ಮಾಡಲು ವೃತ್ತ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.end.busy": {
+  "en": "A voice chat of this workspace is already open, maybe in another tab.",
+  "te": "ఈ వర్క్‌స్పేస్ వాయిస్ చాట్ ఇప్పటికే తెరిచి ఉంది, బహుశా మరో ట్యాబ్‌లో.",
+  "hi": "इस वर्कस्पेस की वॉइस चैट पहले से खुली है, शायद दूसरे टैब में।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ನ ವಾಯ್ಸ್ ಚಾಟ್ ಈಗಾಗಲೇ ತೆರೆದಿದೆ, ಬಹುಶಃ ಇನ್ನೊಂದು ಟ್ಯಾಬ್‌ನಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.end.rate": {
+  "en": "Too many starts. Wait a minute and try again.",
+  "te": "చాలాసార్లు మొదలుపెట్టారు. ఒక నిమిషం ఆగి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "बहुत बार शुरू किया। एक मिनट रुककर फिर कोशिश करें।",
+  "kn": "ತುಂಬಾ ಬಾರಿ ಶುರು ಮಾಡಿದ್ದೀರಿ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.end.signin": {
+  "en": "Please sign in again.",
+  "te": "దయచేసి మళ్ళీ సైన్ ఇన్ అవ్వండి.",
+  "hi": "कृपया फिर से साइन इन करें।",
+  "kn": "ದಯವಿಟ್ಟು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.end.refused": {
+  "en": "Voice chat is not allowed here, or the microphone is blocked.",
+  "te": "ఇక్కడ వాయిస్ చాట్ అనుమతి లేదు, లేదా మైక్ ఆపి ఉంది.",
+  "hi": "यहाँ वॉइस चैट की अनुमति नहीं है, या माइक्रोफ़ोन बंद है।",
+  "kn": "ಇಲ್ಲಿ ವಾಯ್ಸ್ ಚಾಟ್‌ಗೆ ಅನುಮತಿ ಇಲ್ಲ, ಅಥವಾ ಮೈಕ್ ತಡೆಹಿಡಿಯಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.end.gone": {
+  "en": "This workspace was not found.",
+  "te": "ఈ వర్క్‌స్పేస్ కనిపించలేదు.",
+  "hi": "यह वर्कस्पेस नहीं मिला।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಸಿಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.end.unavailable": {
+  "en": "Voice chat is not available right now. You can type instead.",
+  "te": "వాయిస్ చాట్ ఇప్పుడు అందుబాటులో లేదు. టైప్ చేయవచ్చు.",
+  "hi": "वॉइस चैट अभी उपलब्ध नहीं है। आप टाइप कर सकते हैं।",
+  "kn": "ವಾಯ್ಸ್ ಚಾಟ್ ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಟೈಪ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.end.left": {
+  "en": "The chat has ended. Tap the circle to start again.",
+  "te": "చాట్ ముగిసింది. మళ్ళీ మొదలుపెట్టడానికి సర్కిల్ నొక్కండి.",
+  "hi": "चैट खत्म हुई। फिर से शुरू करने के लिए गोले को छुएँ।",
+  "kn": "ಚಾಟ್ ಮುಗಿಯಿತು. ಮತ್ತೆ ಶುರು ಮಾಡಲು ವೃತ್ತ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

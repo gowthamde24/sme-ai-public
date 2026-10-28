@@ -20,7 +20,7 @@
 /** Where Google keeps the profile photos of the people who sign in with Google (an image address only). */
 export const GOOGLE_PHOTOS = "https://lh3.googleusercontent.com";
 
-export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null = null, turnstile = false): string {
+export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null = null, turnstile = false, voiceSocket: string | null = null): string {
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
@@ -31,7 +31,7 @@ export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null
     "media-src 'self' blob:",
     "worker-src 'self'",
     "font-src 'self'",
-    `connect-src 'self'${dev ? " ws: wss:" : ""}`,
+    `connect-src 'self'${dev ? " ws: wss:" : ""}${voiceSocket ? ` ${voiceSocket}` : ""}`, // the API's socket address too where "Talk to your assistant" is on (BROWSER_VOICE): nothing else
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -61,6 +61,21 @@ export function storageOrigin(url: string | undefined): string | null {
   try {
     const u = new URL(url);
     return u.protocol === "https:" || u.protocol === "http:" ? u.origin : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The origin of the API's WebSocket for "Talk to your assistant" (`wss://host`), made from the API's own address and given to `connect-src` only where the feature is on (job DV: the page may open a socket to the API and to nothing else).
+ * null for anything that is not a plain http(s) address.
+ */
+export function voiceSocketOrigin(apiBase: string | undefined): string | null {
+  if (!apiBase) return null;
+  try {
+    const u = new URL(apiBase);
+    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+    return `${u.protocol === "https:" ? "wss:" : "ws:"}//${u.host}`;
   } catch {
     return null;
   }
