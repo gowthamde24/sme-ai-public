@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildCsp, newNonce, storageOrigin } from "./csp";
+import { buildCsp, voiceSocketOrigin, newNonce, storageOrigin } from "./csp";
 import { securityHeaders } from "./headers";
 
 const directive = (csp: string, name: string) =>
@@ -51,6 +51,14 @@ describe("buildCsp", () => {
   it("allows the authenticator QR code (a data URI image) and nothing remote", () => {
     expect(directive(prod, "img-src")).toBe("img-src 'self' blob: data: https://lh3.googleusercontent.com"); // + the one Google address of profile photos
     expect(directive(prod, "media-src")).toBe("media-src 'self' blob:"); // the spoken answer, played from a blob: only (job BF)
+  });
+
+  it("opens connect-src to the API's socket only where Talk to your assistant is on (job DV), and only to that address", () => {
+    expect(directive(prod, "connect-src")).toBe("connect-src 'self'");
+    const on = buildCsp("n", false, null, false, voiceSocketOrigin("https://sme-api-1.asia-south1.run.app/"));
+    expect(directive(on, "connect-src")).toBe("connect-src 'self' wss://sme-api-1.asia-south1.run.app");
+    expect(voiceSocketOrigin("http://localhost:8000")).toBe("ws://localhost:8000");
+    for (const bad of [undefined, "", "ftp://x.example", "not a url", "javascript:alert(1)"]) expect(voiceSocketOrigin(bad)).toBeNull();
   });
 
   it("lets the offline worker come from this site only (job BL)", () => {

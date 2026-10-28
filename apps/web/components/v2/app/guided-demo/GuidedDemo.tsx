@@ -22,7 +22,7 @@ const AREA = ["main [data-part]", "main section", "main table", "main ul", "main
  * appears line by line (the assistant's real voice sound for the call) and Pause, Back, Next. Each step does its work through the real API as the signed-in person (the action; lib/guided-demo/events.ts) and then opens the screen that shows the result. It
  * lives in the workspace's layout, so it stays while the person's screens change. Made-up data only; nothing is sent.
  */
-export function GuidedDemo({ words, routes, actions }: { words?: Words; routes: Record<StepKey, string>; actions: GuidedDemoActions }) {
+export default function GuidedDemo({ words, routes, actions }: { words?: Words; routes: Record<StepKey, string>; actions: GuidedDemoActions }) {
   const t = makeT(words);
   const router = useRouter();
   const [step, setStep] = React.useState<number | null>(null); // null = not playing

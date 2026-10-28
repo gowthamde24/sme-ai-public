@@ -2,7 +2,7 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testi
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 beforeAll(async () => {
-  await import("./AskPanel"); // the panel and the conversation's code are lazy chunks on a real page; a test loads them once, up front
+  await import("./AskPanelHost"); // the panel and the conversation's code are lazy chunks on a real page; a test loads them once, up front
   await import("./AskSessionHost");
 });
 const nav = { pathname: "/app/tenants/22222222-2222-2222-2222-222222222222/leads", search: "" };
@@ -12,7 +12,8 @@ vi.mock("next/dynamic", () => ({
   default: (load: () => Promise<unknown>) => {
     let part: React.ComponentType<Record<string, unknown>> | null = null;
     void load().then((m) => {
-      part = m as React.ComponentType<Record<string, unknown>>;
+      const mod = m as { default?: React.ComponentType<Record<string, unknown>> } & React.ComponentType<Record<string, unknown>>;
+      part = mod.default ?? mod;
     });
     return function Lazy(props: Record<string, unknown>) {
       const Part = part;
