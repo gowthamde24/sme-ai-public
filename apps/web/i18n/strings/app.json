@@ -73588,5 +73588,225 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ar.title": {
+  "en": "Automatic replies",
+  "te": "ఆటోమేటిక్ రిప్లైలు",
+  "hi": "अपने आप जवाब",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.off": {
+  "en": "Off",
+  "te": "ఆఫ్",
+  "hi": "बंद",
+  "kn": "ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.what": {
+  "en": "When a customer writes to you on WhatsApp, {assistant} can answer by itself, in the customer's language, using only the facts you approved. Nothing is invented.",
+  "te": "కస్టమర్ వాట్సాప్‌లో రాసినప్పుడు, మీరు ఆమోదించిన వివరాలతో మాత్రమే, కస్టమర్ భాషలో {assistant} తానే సమాధానం ఇవ్వగలదు. ఏదీ కల్పించదు.",
+  "hi": "जब कोई ग्राहक आपको WhatsApp पर लिखता है, तो {assistant} सिर्फ़ आपके मंज़ूर किए तथ्यों से, ग्राहक की भाषा में अपने आप जवाब दे सकती है। कुछ भी गढ़ा नहीं जाता।",
+  "kn": "ಗ್ರಾಹಕರು ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಬರೆದಾಗ, ನೀವು ಒಪ್ಪಿದ ವಿವರಗಳಿಂದ ಮಾತ್ರ, ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲಿ {assistant} ತಾನಾಗಿ ಉತ್ತರಿಸಬಹುದು. ಏನನ್ನೂ ಕಲ್ಪಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.rules": {
+  "en": "It always follows these rules:",
+  "te": "ఇది ఎప్పుడూ ఈ నియమాలు పాటిస్తుంది:",
+  "hi": "यह हमेशा ये नियम मानती है:",
+  "kn": "ಇದು ಯಾವಾಗಲೂ ಈ ನಿಯಮಗಳನ್ನು ಪಾಲಿಸುತ್ತದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.rule.answers_within_24_hours": {
+  "en": "It answers only within 24 hours of the customer's message.",
+  "te": "కస్టమర్ మెసేజ్ చేసిన 24 గంటల్లోపే సమాధానం ఇస్తుంది.",
+  "hi": "ग्राहक के संदेश के 24 घंटे के भीतर ही जवाब देती है।",
+  "kn": "ಗ್ರಾಹಕರ ಸಂದೇಶದ 24 ಗಂಟೆಗಳೊಳಗೆ ಮಾತ್ರ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.rule.asks_you_before_prices_and_promises": {
+  "en": "A price, a discount or a promise always waits for you.",
+  "te": "ధర, డిస్కౌంట్ లేదా మాట ఇవ్వడం ఎప్పుడూ మీ కోసం ఆగుతుంది.",
+  "hi": "दाम, छूट या कोई वादा हमेशा आपका इंतज़ार करता है।",
+  "kn": "ಬೆಲೆ, ರಿಯಾಯಿತಿ ಅಥವಾ ಭರವಸೆ ಯಾವಾಗಲೂ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.rule.hands_over_when_unsure_or_asked_for_a_person": {
+  "en": "If it is unsure, the customer is upset, or asks for a person, it hands over to you.",
+  "te": "తెలియకపోయినా, కస్టమర్ కోపంగా ఉన్నా, మనిషిని అడిగినా, మీకు అప్పగిస్తుంది.",
+  "hi": "अगर पक्का न हो, ग्राहक नाराज़ हो या इंसान से बात माँगे, तो यह आपको सौंप देती है।",
+  "kn": "ಖಚಿತವಿಲ್ಲದಿದ್ದರೆ, ಗ್ರಾಹಕರು ಕೋಪಗೊಂಡರೆ ಅಥವಾ ವ್ಯಕ್ತಿಯನ್ನು ಕೇಳಿದರೆ, ನಿಮಗೆ ಒಪ್ಪಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.today": {
+  "en": "Today: {answered} answered by itself, {held} waiting for you (at most {limit} a day).",
+  "te": "ఈ రోజు: {answered} తానే సమాధానం ఇచ్చింది, {held} మీ కోసం ఆగాయి (రోజుకు గరిష్ఠంగా {limit}).",
+  "hi": "आज: {answered} का जवाब अपने आप दिया, {held} आपका इंतज़ार कर रहे हैं (दिन में अधिकतम {limit})।",
+  "kn": "ಇಂದು: {answered} ತಾನಾಗಿ ಉತ್ತರಿಸಿದೆ, {held} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ (ದಿನಕ್ಕೆ ಗರಿಷ್ಠ {limit}).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.needs": {
+  "en": "A reply goes out only while automatic sending is on in your message settings; otherwise it waits for your approval.",
+  "te": "మీ మెసేజ్ సెట్టింగ్స్‌లో ఆటోమేటిక్ సెండింగ్ ఆన్‌లో ఉన్నప్పుడే రిప్లై వెళ్తుంది; లేకపోతే మీ ఆమోదం కోసం ఆగుతుంది.",
+  "hi": "जवाब तभी जाता है जब आपकी मैसेज सेटिंग में अपने आप भेजना चालू हो; नहीं तो वह आपकी मंज़ूरी का इंतज़ार करता है।",
+  "kn": "ನಿಮ್ಮ ಸಂದೇಶ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ತಾನಾಗಿ ಕಳುಹಿಸುವುದು ಆನ್ ಇದ್ದಾಗ ಮಾತ್ರ ಉತ್ತರ ಹೋಗುತ್ತದೆ; ಇಲ್ಲದಿದ್ದರೆ ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.approve": {
+  "en": "Turning it on is your approval of these rules, for every message.",
+  "te": "ఆన్ చేయడం అంటే ప్రతి మెసేజ్‌కీ ఈ నియమాలకు మీ ఆమోదం.",
+  "hi": "इसे चालू करना हर संदेश के लिए इन नियमों की आपकी मंज़ूरी है।",
+  "kn": "ಆನ್ ಮಾಡುವುದು ಪ್ರತಿ ಸಂದೇಶಕ್ಕೂ ಈ ನಿಯಮಗಳಿಗೆ ನಿಮ್ಮ ಒಪ್ಪಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.turnon": {
+  "en": "Turn on automatic replies",
+  "te": "ఆటోమేటిక్ రిప్లైలు ఆన్ చేయండి",
+  "hi": "अपने आप जवाब चालू करें",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳನ್ನು ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.turnoff": {
+  "en": "Turn off automatic replies",
+  "te": "ఆటోమేటిక్ రిప్లైలు ఆఫ్ చేయండి",
+  "hi": "अपने आप जवाब बंद करें",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳನ್ನು ಆಫ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.owneronly": {
+  "en": "Only the Owner can turn this on or off.",
+  "te": "దీన్ని ఓనర్ మాత్రమే ఆన్ లేదా ఆఫ్ చేయగలరు.",
+  "hi": "इसे सिर्फ़ मालिक चालू या बंद कर सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಆನ್ ಅಥವಾ ಆಫ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.done.on": {
+  "en": "Automatic replies are on.",
+  "te": "ఆటోమేటిక్ రిప్లైలు ఆన్ అయ్యాయి.",
+  "hi": "अपने आप जवाब चालू हो गए।",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು ಆನ್ ಆದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.done.off": {
+  "en": "Automatic replies are off. Every message waits for you again.",
+  "te": "ఆటోమేటిక్ రిప్లైలు ఆఫ్ అయ్యాయి. ప్రతి మెసేజ్ మళ్ళీ మీ కోసం ఆగుతుంది.",
+  "hi": "अपने आप जवाब बंद हो गए। हर संदेश फिर आपका इंतज़ार करेगा।",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು ಆಫ್ ಆದವು. ಪ್ರತಿ ಸಂದೇಶ ಮತ್ತೆ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.err.mfa": {
+  "en": "This needs your two-step code first. Sign in again with the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "దీనికి ముందుగా మీ టూ-స్టెప్ కోడ్ కావాలి. ఆథెంటికేటర్ యాప్ కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, ఇంకోసారి ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "इसके लिए पहले आपका टू-स्टेप कोड चाहिए। ऑथेंटिकेटर ऐप के कोड से फिर साइन इन करके दोबारा कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಟೂ-ಸ್ಟೆಪ್ ಕೋಡ್ ಬೇಕು. ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಕೋಡ್‌ನಿಂದ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.err.forbidden": {
+  "en": "Only the Owner can change this.",
+  "te": "దీన్ని ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ मालिक बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.err.not_available": {
+  "en": "This is not available on this system yet.",
+  "te": "ఇది ఈ సిస్టమ్‌లో ఇంకా అందుబాటులో లేదు.",
+  "hi": "यह अभी इस सिस्टम पर उपलब्ध नहीं है।",
+  "kn": "ಇದು ಈ ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.err.down": {
+  "en": "That did not work just now. Nothing was changed. Please try again.",
+  "te": "ఇప్పుడు అది పని చేయలేదు. ఏదీ మారలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी यह नहीं हो पाया। कुछ नहीं बदला। कृपया फिर कोशिश करें।",
+  "kn": "ಈಗ ಅದು ಆಗಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

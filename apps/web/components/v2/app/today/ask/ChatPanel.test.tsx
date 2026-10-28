@@ -162,6 +162,28 @@ describe("the conversation panel", () => {
     expect(document.querySelector('[data-chat="live"]')).toBeNull();
     expect(screen.getByText("Enquiries today")).toBeInTheDocument();
   });
+  it("a spoken action: the words show live as transcripts, the plan joins the thread with Yes / No, and a spoken yes (the API's answer) flips the card", async () => {
+    draw();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    await act(async () => void sock.say({ type: "transcript", text: "call the new", final: false, seq: 1, t_ms: 250 }));
+    expect(screen.getByLabelText("Type, or tap the microphone")).toHaveValue("call the new");
+    await act(async () => void sock.say({ type: "transcript", text: "call the new leads", final: true, seq: 2, t_ms: 700 }));
+    await act(async () => void sock.say({ type: "caption", who: "user", text: "call the new leads", final: true, spoken: true }));
+    await act(async () => void sock.say({ type: "state", state: "speaking" }));
+    await act(async () => void sock.say({ type: "caption", who: "assistant", text: "I will call 12 new leads today. Shall I go ahead?", final: true, spoken: true }));
+    await act(async () => void sock.say({ type: "confirm_action", action_id: PLAN.actionId, title: PLAN.title, summary: PLAN.summary, steps: PLAN.steps, count: 12, channel: "call", estimate: { messages: 0, call_minutes: 30, cost_paise: 1200 }, needs_second_factor: false, expires_at: "2026-10-28T20:00:00Z", status: "proposed" }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    const card = document.querySelector('[data-chat="plan"]') as HTMLElement;
+    expect(card).toHaveTextContent("Call 12 new leads");
+    expect(within(card).getByRole("button", { name: "Yes, do it" })).toBeInTheDocument();
+    expect([...document.querySelectorAll('[data-chat="you"]')].map((e) => e.textContent).filter((t) => t?.includes("call the new leads"))).toHaveLength(1); // not twice
+    await act(async () => void sock.say({ type: "action", action_id: PLAN.actionId, status: "confirmed", task: { id: "t", status: "approved" } }));
+    expect(document.querySelector('[data-chat="plan"]')).toHaveTextContent("Approved. It is being done.");
+    expect(within(document.querySelector('[data-chat="plan"]') as HTMLElement).queryByRole("button", { name: "Yes, do it" })).toBeNull();
+  });
   it("a tap while it talks stops the speech (barge-in); the words heard can be edited if misheard; Escape ends the conversation and closes", async () => {
     const onClose = vi.fn();
     draw({ onClose });

@@ -51,3 +51,6 @@ export const aboutBusinessScreens = (value: string | undefined = process.env.ABO
 
 /** Lead sources as big simple cards (job context-and-easy-sources part B, contract-context-sources.md): one clear action and a live status each (Meta, IndiaMART, forwarded e-mails, website, files, WhatsApp, missed calls). `mock` = made-up cards kept in the memory of the server (nothing is sent), `1` = the API (`/lead-sources/cards` and its connect calls), unset = the part is not there. */
 export const sourceCardsScreens = (value: string | undefined = process.env.SOURCE_CARDS_SCREENS): ScreenMode => screenMode(value);
+
+/** Settings > AI assistant > "Automatic replies" (job DY, C1's `GET/PUT /ai-assistant/auto-reply`, Owner with the second factor): the switch that lets the assistant answer customers' WhatsApp messages on its own, with the standing rules in plain words and today's counts. `mock` = the switch kept in a cookie of the browser (nothing is sent), `1` = the API, unset = the part is not there. */
+export const autoReplyScreens = (value: string | undefined = process.env.AUTO_REPLY_SCREENS): ScreenMode => screenMode(value);

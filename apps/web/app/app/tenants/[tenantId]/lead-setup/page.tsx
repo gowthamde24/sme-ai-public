@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { AssistantSettings } from "@/components/v2/app/assistant/LazyAssistantSettings";
+import { VoicePicker } from "@/components/v2/app/assistant/LazyVoicePicker";
 import { KnowledgeStep } from "@/components/v2/app/lead-setup/KnowledgeStep";
 import { PlaybookStep } from "@/components/v2/app/lead-setup/PlaybookStep";
 import { WizardFrame } from "@/components/v2/app/lead-setup/WizardFrame";
@@ -10,7 +12,11 @@ import { btnMain, btnQuiet, mutedText, pageMain, surface } from "@/components/v2
 import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
+import { ApiAuthError } from "@/lib/api/client";
+import { getWorkspaceProfile } from "@/lib/api/workspace";
 import { assistantProfile } from "@/lib/assistant/defaults";
+import { withNamedAssistant } from "@/lib/assistant/default-name";
+import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
 import { readAssistant } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, VOICES } from "@/lib/assistant/types";
 import { readKnowledge } from "@/lib/lead-desk/knowledge-source";
@@ -18,11 +24,14 @@ import { readPlaybook } from "@/lib/lead-desk/playbook-source";
 import { readTemplates } from "@/lib/lead-desk/source";
 import { readRules } from "@/lib/outreach/source";
 import { withModuleWords } from "@/lib/packs/module-words";
-import { assistantScreens, leadsScreens, outreachScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { assistantScreens, leadsScreens, outreachScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { readVoicePicker } from "@/lib/voice-picker/source";
+import { inForce, PICKER_LANGS, type PickerLang } from "@/lib/voice-picker/types";
 import { appT } from "@/i18n/app";
 
 import { saveAssistantAction, testCallAction } from "../assistant-actions";
 import { leadContext } from "../lead-context";
+import { chooseVoiceAction } from "../voice-picker-actions";
 import { addFactAction, addFileAction, addPasteAction, decideFactAction, discardSourceAction, draftFactsAction, editFactAction, resetPlaybookAction, savePlaybookAction } from "../lead-setup-actions";
 
 export const metadata = { title: `Set up Lead Desk · ${BRAND_NAME}` };
@@ -102,8 +111,12 @@ export default async function LeadSetupPage({ params, searchParams }: PageProps<
     }
   } else if (step === 4) {
     const assistant = await readAssistant(ctx, pack?.modules ?? null);
+    // the voices are the catalogue's (Ramya, Janvi, Sanya, Disha by default), the same picker as Settings > AI assistant: no persona list here
+    const voicePicker = voicePickerScreens() !== "off" ? await readVoicePicker(ctx) : null;
+    const pickerLangs: PickerLang[] = voicePicker?.mode === "ok" ? await getWorkspaceProfile(accessToken, tenantId).then((p) => p.languages, (e) => (e instanceof ApiAuthError ? redirect("/login") : ([] as string[]))).then((own) => PICKER_LANGS.filter((l) => [...own, ...(assistant.mode === "ok" ? [assistant.settings.lang] : own.length === 0 ? [lang] : [])].includes(l))) : [];
     body =
       assistant.mode === "ok" ? (
+        <div className="flex flex-col gap-4">
         <AssistantSettings
           words={withModuleWords(wordsFor(lang, ["asst."]), pack)}
           initial={assistant.settings}
@@ -116,7 +129,22 @@ export default async function LeadSetupPage({ params, searchParams }: PageProps<
           saved={assistant.saved}
           actions={{ save: saveAssistantAction.bind(null, tenantId) }}
           samples={voiceSampleScreens() !== "off" ? { endpoint: `${base}/voice-sample`, mock: voiceSampleScreens() === "mock" } : null}
+          voicePickerOn={voicePicker?.mode === "ok"}
+          voiceInUse={voicePicker?.mode === "ok" ? ((v) => (v ? { name: v.name, label: v.label } : null))(inForce(voicePicker.data, assistant.settings.lang as PickerLang)) : null}
+          defaultName={withNamedAssistant("{assistant}", DEFAULT_ASSISTANT_NAME, lang)}
         />
+        {voicePicker?.mode === "ok" ? (
+          <VoicePicker
+            words={wordsFor(lang, ["vp."])}
+            rows={pickerLangs.map((l) => ({ language: l, voices: voicePicker.data.voices.filter((v) => v.language === l), choice: voicePicker.data.choices[l] ?? null }))}
+            langNames={CALL_LANG_NAMES}
+            canEdit={owner || tenant.role === "admin"}
+            endpoint={`${base}/voice-pick`}
+            mock={voicePickerScreens() === "mock"}
+            actions={{ choose: chooseVoiceAction.bind(null, tenantId) }}
+          />
+        ) : null}
+        </div>
       ) : (
         <p className={mutedText}>{t("frame.notyet")}</p>
       );

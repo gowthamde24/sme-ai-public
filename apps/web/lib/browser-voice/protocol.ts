@@ -1,3 +1,5 @@
+import type { ConfirmAction } from "@/lib/api/turns";
+
 /**
  * "Talk to your assistant" in the browser (job DV, C1's contract-browser-voice.md, ADR 0118): the messages of the WebSocket `wss://<api>/v1/tenants/{id}/voice-chat`, checked as they arrive (the API's words are untrusted text and are drawn as plain text),
  * and the closed words for every refusal. Text frames are JSON; binary frames are audio (to the API: PCM 16-bit little-endian, 16 kHz, mono; from it: PCM 16-bit LE, 24 kHz, mono).
@@ -19,6 +21,12 @@ export type ServerMessage =
   | { type: "ready"; sessionId: string; language: VoiceLang; sessionSeconds: number | null; daySecondsLeft: number | null }
   | { type: "state"; state: VoiceState; step: Step | null }
   | { type: "caption"; who: "user" | "assistant"; text: string; final: boolean; spoken: boolean }
+  /** What the person is saying, word by word (final: false), then once settled (final: true). */
+  | { type: "transcript"; text: string; final: boolean }
+  /** An ACTION is proposed: the plan waits for the owner's yes (a tap, or a spoken "yes" the API recognises). */
+  | { type: "confirm_action"; action: ConfirmAction }
+  /** The owner's answer to a plan went through (by tap or by voice). */
+  | { type: "action"; actionId: string; status: "confirmed" | "declined" | "expired" }
   | { type: "audio_end"; turn: number }
   | { type: "audio_stop" }
   | { type: "interrupted"; ms: number }
@@ -53,6 +61,20 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
       if (json.state !== "listening" && json.state !== "thinking" && json.state !== "speaking") return null;
       return { type: "state", state: json.state, step: json.step === "working" || json.step === "looking" ? json.step : null };
     }
+    case "transcript": {
+      const t = text(json.text, 4000);
+      return t === null ? null : { type: "transcript", text: t, final: json.final === true };
+    }
+    case "confirm_action": {
+      const action = parsePlan(json);
+      return action === null ? null : { type: "confirm_action", action };
+    }
+    case "action":
+      return typeof json.action_id === "string" && UUID.test(json.action_id) && (json.status === "confirmed" || json.status === "declined" || json.status === "expired") ? { type: "action", actionId: json.action_id, status: json.status } : null;
+    case "intent": // what the router decided is for the API's logs; "clarify" and "reply" need nothing more: the spoken words are in the captions
+    case "reply":
+    case "clarify":
+      return { type: "pong" };
     case "caption": {
       const t = text(json.text, 4000);
       if ((json.who !== "user" && json.who !== "assistant") || t === null) return null;
@@ -86,6 +108,25 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
     default:
       return null;
   }
+}
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const str = (v: unknown, max: number): string | null => (typeof v === "string" && v.length <= max ? v : null);
+const whole = (v: unknown): number | null => (typeof v === "number" && Number.isInteger(v) && v >= 0 ? v : null);
+/** The plan of a `confirm_action` message (the same fields as the typed reply's: lib/api/turns.ts, which is server-only), or null when anything is off: a plan that cannot be read is never shown. */
+export function parsePlan(json: Record<string, unknown>): ConfirmAction | null {
+  const id = json.action_id;
+  const title = str(json.title, 300);
+  const summary = str(json.summary, 2000);
+  const status = json.status === undefined ? "proposed" : json.status;
+  const channel = json.channel ?? null;
+  if (typeof id !== "string" || !UUID.test(id) || title === null || summary === null || !Array.isArray(json.steps) || json.steps.length > 20) return null;
+  if (!["proposed", "confirmed", "declined", "expired", "running", "done"].includes(status as string) || (channel !== null && !["call", "whatsapp", "both"].includes(channel as string))) return null;
+  const steps = json.steps.map((x) => str(x, 400));
+  if (steps.includes(null)) return null;
+  const est = typeof json.estimate === "object" && json.estimate !== null ? (json.estimate as Record<string, unknown>) : null;
+  const estimate = est && whole(est.messages) !== null && whole(est.call_minutes) !== null && whole(est.cost_paise) !== null ? { messages: whole(est.messages) as number, callMinutes: whole(est.call_minutes) as number, costPaise: whole(est.cost_paise) as number } : null;
+  return { actionId: id, title, summary, steps: steps as string[], count: whole(json.count), channel: channel as ConfirmAction["channel"], estimate, needsSecondFactor: json.needs_second_factor === true, expiresAt: str(json.expires_at, 60) ?? "", status: status as ConfirmAction["status"] };
 }
 
 /** The closed words for an end of the session (the keys are `bv.end.*`): from a `limit` message, a fatal `error` or the close code. */

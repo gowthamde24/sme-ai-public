@@ -1,3 +1,5 @@
+import type { ConfirmAction } from "@/lib/api/turns";
+
 import { BARGE_IN, endWordOf, parseServerMessage, PING, setLanguageMessage, startMessage, STOP, type EndWord, type LimitReason, type ServerMessage, type Step, type VoiceLang, type VoiceSource, type VoiceState } from "./protocol";
 
 /**
@@ -30,7 +32,7 @@ export interface SocketLike {
 }
 export type Phase = "connecting" | "ready" | "ended";
 export type Caption = { id: number; who: "user" | "assistant"; text: string; final: boolean; spoken: boolean };
-export type Snapshot = { phase: Phase; state: VoiceState | null; step: Step | null; captions: Caption[]; sources: VoiceSource[]; language: VoiceLang; end: EndWord | null; micDenied: boolean };
+export type Snapshot = { phase: Phase; state: VoiceState | null; step: Step | null; captions: Caption[]; sources: VoiceSource[]; language: VoiceLang; end: EndWord | null; micDenied: boolean; /** The plan the assistant proposed in this turn, waiting for the owner (null otherwise). */ plan: ConfirmAction | null; /** The answers to plans so far (by tap or by voice), in order. */ decided: { actionId: string; status: "confirmed" | "declined" | "expired" }[] };
 
 /** A level above this (0..1, after the browser's echo cancelling) is the person speaking; it must hold for this many frames in a row, so a click or a cough does not cut the assistant off. */
 export const SPEECH_LEVEL = 0.06;
@@ -47,9 +49,10 @@ export class VoiceClient {
   private last: { limit?: LimitReason; errorCode?: string } = {};
   private ping: ReturnType<typeof setInterval> | null = null;
   private finished = false;
+  private settled = false; // the last words of the person came as a final `transcript`: the `caption` that repeats them is not a new line
 
   constructor(private readonly o: Options) {
-    this.snap = { phase: "connecting", state: null, step: null, captions: [], sources: [], language: o.language, end: null, micDenied: false };
+    this.snap = { phase: "connecting", state: null, step: null, captions: [], sources: [], language: o.language, end: null, micDenied: false, plan: null, decided: [] };
   }
 
   get snapshot(): Snapshot {
@@ -131,7 +134,27 @@ export class VoiceClient {
         this.loud = 0;
         this.set({ state: m.state, step: m.state === "thinking" ? m.step : null });
         return;
+      case "transcript": {
+        // the person's words live: the interim line is replaced as newer ones come, and by the settled words
+        const list = this.snap.captions.slice();
+        const lastOne = list[list.length - 1];
+        if (lastOne && lastOne.who === "user" && !lastOne.final) list[list.length - 1] = { ...lastOne, text: m.text, final: m.final };
+        else list.push({ id: ++this.seq, who: "user", text: m.text, final: m.final, spoken: true });
+        this.settled = m.final;
+        this.set({ captions: list.slice(-30), plan: null });
+        return;
+      }
+      case "confirm_action":
+        this.set({ plan: m.action });
+        return;
+      case "action":
+        this.set({ decided: [...this.snap.decided, { actionId: m.actionId, status: m.status }].slice(-10), plan: this.snap.plan && this.snap.plan.actionId === m.actionId ? { ...this.snap.plan, status: m.status } : this.snap.plan });
+        return;
       case "caption": {
+        if (m.who === "user" && m.final && this.settled) {
+          this.settled = false; // the same words again, from the older caption message
+          return;
+        }
         const list = this.snap.captions.slice();
         const lastOne = list[list.length - 1];
         if (lastOne && lastOne.who === m.who && !lastOne.final && m.spoken === lastOne.spoken) list[list.length - 1] = { ...lastOne, text: m.text, final: m.final }; // a partial is replaced
