@@ -81,13 +81,18 @@ import { getWorkspaceProfile, type WorkspaceProfile } from "@/lib/api/workspace"
 import { readTypeList } from "@/lib/packs/type-list";
 import { getProfile, PROFILE_LANGUAGES, type BusinessProfile } from "@/lib/api/profile";
 import { logoAction, saveBusinessAction } from "./business-actions";
+import { pictureAction, saveMyProfileAction } from "./profile-actions";
+import { MyProfile } from "@/components/v2/app/settings/MyProfile";
+import { Avatar } from "@/components/v2/app/Avatar";
+import { lettersOf } from "@/components/v2/app/letters";
+import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person } from "@/lib/api/me";
 import { signOutEverywhereAction } from "../../../actions";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "plan", "members", "fields", "data", "language", "assistant", "agent", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "agent", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -149,13 +154,18 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   let members: Member[] | null = null;
+  let people: Person[] = [];
   if (section === "members") {
     try {
       members = await fetchMembers(user.accessToken, tenantId);
+      people = await getPeople(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : []));
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
     }
   }
+  // Settings > My profile: the person's own name, language and picture (any member)
+  let mine: MyProfileData | null = null;
+  if (section === "profile") mine = await getMyProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null));
   let plan: Plan | null = null;
   let usage: AiUsage | null = null;
   let profile: Part<Awaited<ReturnType<typeof getBusinessProfile>>> | null = null;
@@ -229,6 +239,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   const tabs = [
     { key: "business", label: t("settings.tab.business") },
+    { key: "profile", label: t("settings.tab.profile") },
     ...(hasPlan ? [{ key: "plan", label: t("plan.tab") }] : []),
     { key: "members", label: t("settings.tab.members") },
     ...(hasFields ? [{ key: "fields", label: t("settings.tab.fields") }] : []),
@@ -296,6 +307,25 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               </section>
             ) : null}
           </>
+        ) : null}
+        {section === "profile" ? (
+          <section className={surface} aria-label={t("settings.tab.profile")}>
+            {mine ? (
+              <MyProfile
+                words={wordsFor(lang, ["settings.me."])}
+                name={mine.displayName ?? ""}
+                language={mine.language ?? lang}
+                choices={PROFILE_LANGUAGES}
+                pictureUrl={mine.pictureUrl}
+                own={mine.picture === "own"}
+                email={user.email}
+                save={saveMyProfileAction.bind(null, tenantId)}
+                picture={pictureAction.bind(null, tenantId)}
+              />
+            ) : (
+              <p className="text-sm text-muted">{t("frame.notyet")}</p>
+            )}
+          </section>
         ) : null}
         {section === "plan" && planScreens() !== "off" ? (
           <PlanSection
@@ -387,7 +417,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               <ul className={listPlain}>
                 {members.map((m) => (
                   <li key={m.user_id} className={memberRow}>
-                    <span className="min-w-0 truncate font-medium">
+                    <span className="flex min-w-0 items-center gap-3 truncate font-medium">
+                      <Avatar url={people.find((p) => p.userId === m.user_id)?.pictureUrl ?? null} letters={lettersOf(m.display_name, null)} className="grid size-9 shrink-0 place-items-center rounded-full bg-charcoal text-sm font-semibold text-on-charcoal" />
                       {m.display_name ?? m.role}
                       {m.user_id === user.id ? <span className={youMark}>({t("settings.members.you")})</span> : null}
                     </span>

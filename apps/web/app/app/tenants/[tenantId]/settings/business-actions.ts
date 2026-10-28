@@ -7,6 +7,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { PROFILE_LANGUAGES, saveProfile } from "@/lib/api/profile";
 import { getWorkspaceProfile, patchWorkspaceProfile, removeLogo, uploadLogo, type WorkspacePatch } from "@/lib/api/workspace";
 import { requireUser } from "@/lib/auth/session";
+import { pictureProblem } from "@/lib/picture";
 
 export type BusinessError = "invalid" | "role" | "failed" | "session" | "type_pack_data_present" | "type_lead_data_present" | "type_unknown_type";
 export type BusinessState = { ok: true } | { ok: false; error: BusinessError } | undefined;
@@ -15,8 +16,6 @@ export type LogoState = { ok: true } | { ok: false; error: LogoError } | undefin
 
 const REFUSALS: Readonly<Record<string, BusinessError>> = { pack_data_present: "type_pack_data_present", lead_data_present: "type_lead_data_present", unknown_type: "type_unknown_type" };
 const PHONE = /^\+?[0-9 ()-]{6,20}$/;
-const PICTURE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-export const MAX_PICTURE_BYTES = 5 * 1024 * 1024;
 
 /**
  * Settings > Business: the Owner changes the business name, the kind of business (with "Other" and what it is), the city or area, the phone and the languages, at any time; an Admin changes the name, the city and the languages (the older
@@ -69,11 +68,8 @@ export async function saveBusinessAction(tenantId: string, _prev: unknown, formD
 export async function logoAction(tenantId: string, _prev: unknown, formData: FormData): Promise<LogoState> {
   const remove = formData.get("remove") === "1";
   const file = formData.get("logo");
-  if (!remove && !(file instanceof File && file.size > 0)) return { ok: false, error: "invalid" };
-  if (!remove && file instanceof File) {
-    if (file.size > MAX_PICTURE_BYTES) return { ok: false, error: "toobig" };
-    if (!PICTURE_TYPES.includes(file.type)) return { ok: false, error: "kind" };
-  }
+  const problem = remove ? null : pictureProblem(file);
+  if (problem) return { ok: false, error: problem };
   try {
     const user = await requireUser();
     if (!isCanonicalUuid(tenantId)) return { ok: false, error: "role" };

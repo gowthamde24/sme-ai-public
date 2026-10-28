@@ -65,7 +65,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
             {collapsed ? null : <span className="text-sm font-normal">{word(labels, "frame.notyet", "Not available yet")}</span>}
           </button>
         )}
-        <AccountMenu email={email} role={current?.role ?? null} signOut={signOut} labels={labels} collapsed={collapsed} several={memberships.length > 1} />
+        <AccountMenu email={email} role={current?.role ?? null} signOut={signOut} labels={labels} collapsed={collapsed} several={memberships.length > 1} person={frame.person ?? null} profileHref={current ? `/app/tenants/${current.id}/settings?section=profile` : null} />
         <button type="button" onClick={toggle} aria-label={collapsed ? word(labels, "frame.expand", "Expand menu") : word(labels, "frame.collapse", "Collapse menu")} className={`${itemBase} w-full ${itemIdle} ${collapsed ? "justify-center px-0" : ""}`}>
           {collapsed ? <PanelLeftOpen className="size-5" aria-hidden="true" /> : <PanelLeftClose className="size-5" aria-hidden="true" />}
           {collapsed ? null : <span>{word(labels, "frame.collapse", "Collapse menu")}</span>}

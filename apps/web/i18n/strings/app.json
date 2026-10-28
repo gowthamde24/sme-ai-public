@@ -70266,5 +70266,247 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "frame.myprofile": {
+  "en": "My profile",
+  "te": "నా ప్రొఫైల్",
+  "hi": "मेरी प्रोफ़ाइल",
+  "kn": "ನನ್ನ ಪ್ರೊಫೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.profile": {
+  "en": "My profile",
+  "te": "నా ప్రొఫైల్",
+  "hi": "मेरी प्रोफ़ाइल",
+  "kn": "ನನ್ನ ಪ್ರೊಫೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.title": {
+  "en": "My profile",
+  "te": "నా ప్రొఫైల్",
+  "hi": "मेरी प्रोफ़ाइल",
+  "kn": "ನನ್ನ ಪ್ರೊಫೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.title": {
+  "en": "My picture",
+  "te": "నా ఫోటో",
+  "hi": "मेरी तस्वीर",
+  "kn": "ನನ್ನ ಫೋಟೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.choose": {
+  "en": "Choose a picture",
+  "te": "ఫోటో ఎంచుకోండి",
+  "hi": "तस्वीर चुनें",
+  "kn": "ಫೋಟೋ ಆಯ್ಕೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.save": {
+  "en": "Save picture",
+  "te": "ఫోటో సేవ్ చేయండి",
+  "hi": "तस्वीर सेव करें",
+  "kn": "ಫೋಟೋ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.remove": {
+  "en": "Remove picture",
+  "te": "ఫోటో తీసివేయండి",
+  "hi": "तस्वीर हटाएं",
+  "kn": "ಫೋಟೋ ತೆಗೆದುಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.help": {
+  "en": "JPG, PNG or WebP, up to 5 MB. It shows in the menu, the team list and the messages to your team. If you signed in with Google, your Google photo shows until you pick one.",
+  "te": "JPG, PNG లేదా WebP, 5 MB వరకు. ఇది మెనూలో, టీమ్ లిస్ట్‌లో, మీ టీమ్‌కి వెళ్ళే మెసేజ్‌లలో కనిపిస్తుంది. Google తో సైన్ ఇన్ చేసినవారికి, మీరు ఫోటో ఎంచుకునే వరకు Google ఫోటో కనిపిస్తుంది.",
+  "hi": "JPG, PNG या WebP, 5 MB तक। यह मेन्यू, टीम की सूची और टीम को जाने वाले संदेशों में दिखती है। Google से साइन इन किया है तो आपके चुनने तक Google की फ़ोटो दिखती है।",
+  "kn": "JPG, PNG ಅಥವಾ WebP, 5 MB ವರೆಗೆ. ಇದು ಮೆನುವಿನಲ್ಲಿ, ಟೀಮ್ ಪಟ್ಟಿಯಲ್ಲಿ, ನಿಮ್ಮ ಟೀಮ್‌ಗೆ ಹೋಗುವ ಸಂದೇಶಗಳಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ. Google ನಿಂದ ಸೈನ್ ಇನ್ ಮಾಡಿದ್ದರೆ, ನೀವು ಆರಿಸುವವರೆಗೆ Google ಫೋಟೋ ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.saved": {
+  "en": "Picture updated.",
+  "te": "ఫోటో మారింది.",
+  "hi": "तस्वीर बदल गई।",
+  "kn": "ಫೋಟೋ ಬದಲಾಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.err.invalid": {
+  "en": "Choose a picture first.",
+  "te": "ముందు ఒక ఫోటో ఎంచుకోండి.",
+  "hi": "पहले एक तस्वीर चुनें।",
+  "kn": "ಮೊದಲು ಒಂದು ಫೋಟೋ ಆಯ್ಕೆಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.err.toobig": {
+  "en": "That picture is bigger than 5 MB.",
+  "te": "ఆ ఫోటో 5 MB కంటే పెద్దది.",
+  "hi": "वह तस्वीर 5 MB से बड़ी है।",
+  "kn": "ಆ ಫೋಟೋ 5 MB ಗಿಂತ ದೊಡ್ಡದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.err.kind": {
+  "en": "Use a JPG, PNG or WebP picture.",
+  "te": "JPG, PNG లేదా WebP ఫోటో వాడండి.",
+  "hi": "JPG, PNG या WebP तस्वीर इस्तेमाल करें।",
+  "kn": "JPG, PNG ಅಥವಾ WebP ಫೋಟೋ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.err.failed": {
+  "en": "Could not save the picture. Try again.",
+  "te": "ఫోటో సేవ్ చేయలేకపోయాను. మళ్లీ ప్రయత్నించండి.",
+  "hi": "तस्वीर सेव नहीं हो सकी। फिर कोशिश करें।",
+  "kn": "ಫೋಟೋ ಸೇವ್ ಮಾಡಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.err.session": {
+  "en": "Please sign in again.",
+  "te": "దయచేసి మళ్లీ సైన్ ఇన్ చేయండి.",
+  "hi": "कृपया फिर से साइन इन करें।",
+  "kn": "ದಯವಿಟ್ಟು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.name": {
+  "en": "Your name",
+  "te": "మీ పేరు",
+  "hi": "आपका नाम",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.name.help": {
+  "en": "Your team sees this name next to what you do.",
+  "te": "మీరు చేసే పనుల పక్కన మీ టీమ్‌కి ఈ పేరు కనిపిస్తుంది.",
+  "hi": "आपकी टीम को आपके काम के साथ यही नाम दिखता है।",
+  "kn": "ನೀವು ಮಾಡುವ ಕೆಲಸದ ಪಕ್ಕದಲ್ಲಿ ನಿಮ್ಮ ಟೀಮ್‌ಗೆ ಈ ಹೆಸರು ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.lang": {
+  "en": "Your language",
+  "te": "మీ భాష",
+  "hi": "आपकी भाषा",
+  "kn": "ನಿಮ್ಮ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.err.invalid": {
+  "en": "Type your name (up to 100 letters) and pick a language.",
+  "te": "మీ పేరు (100 అక్షరాల వరకు) రాసి, ఒక భాష ఎంచుకోండి.",
+  "hi": "अपना नाम (100 अक्षर तक) लिखें और एक भाषा चुनें।",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು (100 ಅಕ್ಷರಗಳವರೆಗೆ) ಬರೆದು, ಒಂದು ಭಾಷೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.err.failed": {
+  "en": "Could not save. Try again.",
+  "te": "సేవ్ చేయలేకపోయాను. మళ్లీ ప్రయత్నించండి.",
+  "hi": "सेव नहीं हो सका। फिर कोशिश करें।",
+  "kn": "ಸೇವ್ ಮಾಡಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.err.session": {
+  "en": "Please sign in again.",
+  "te": "దయచేసి మళ్లీ సైన్ ఇన్ చేయండి.",
+  "hi": "कृपया फिर से साइन इन करें।",
+  "kn": "ದಯವಿಟ್ಟು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

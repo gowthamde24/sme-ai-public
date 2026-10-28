@@ -39,7 +39,8 @@ describe("buildCsp", () => {
 
   it("lets the browser talk to this app only (the API and Supabase are called from the server)", () => {
     expect(directive(prod, "connect-src")).toBe("connect-src 'self'");
-    expect(prod).not.toMatch(/https?:\/\//);
+    expect(directive(prod, "connect-src")).not.toMatch(/https?:\/\//);
+    expect(directive(prod, "script-src")).not.toMatch(/https?:\/\//);
   });
 
   it("upgrades insecure requests in production only", () => {
@@ -48,7 +49,7 @@ describe("buildCsp", () => {
   });
 
   it("allows the authenticator QR code (a data URI image) and nothing remote", () => {
-    expect(directive(prod, "img-src")).toBe("img-src 'self' blob: data:");
+    expect(directive(prod, "img-src")).toBe("img-src 'self' blob: data: https://lh3.googleusercontent.com"); // + the one Google address of profile photos
     expect(directive(prod, "media-src")).toBe("media-src 'self' blob:"); // the spoken answer, played from a blob: only (job BF)
   });
 
@@ -60,7 +61,7 @@ describe("buildCsp", () => {
 describe("the catalogue's photos (job BC)", () => {
   it("allows ONE more origin for images, the Supabase project's, and nothing else changes", () => {
     const withStorage = buildCsp("NONCE123", false, "https://abc.supabase.co");
-    expect(directive(withStorage, "img-src")).toBe("img-src 'self' blob: data: https://abc.supabase.co");
+    expect(directive(withStorage, "img-src")).toBe("img-src 'self' blob: data: https://abc.supabase.co https://lh3.googleusercontent.com");
     expect(directive(withStorage, "connect-src")).toBe("connect-src 'self'");
     expect(directive(withStorage, "script-src")).not.toContain("supabase");
     expect(directive(withStorage, "style-src")).not.toContain("supabase");

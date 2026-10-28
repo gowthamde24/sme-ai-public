@@ -4,7 +4,8 @@ import { CircleHelp, Ellipsis, LogOut, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-import { initials } from "./AccountMenu";
+import { Avatar } from "./Avatar";
+import { lettersOf } from "./letters";
 import type { FrameData } from "./contract";
 import { useFrameData } from "./frame-store";
 import { UsageCard } from "./frame-parts";
@@ -95,11 +96,9 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
             </div>
             <div className="space-y-5 px-4 pb-8 pt-5">
               <div className="flex items-center gap-3">
-                <span aria-hidden="true" className="grid size-12 place-items-center rounded-full bg-charcoal font-semibold text-on-charcoal">
-                  {initials(email)}
-                </span>
+                <Avatar url={frame.person?.pictureUrl ?? null} letters={lettersOf(frame.person?.name ?? null, email)} className="grid size-12 shrink-0 place-items-center rounded-full bg-charcoal font-semibold text-on-charcoal" />
                 <div className="min-w-0">
-                  <p className="truncate font-semibold">{email ?? word(labels, "frame.account", "Your account")}</p>
+                  <p className="truncate font-semibold">{frame.person?.name ?? email ?? word(labels, "frame.account", "Your account")}</p>
                   <p className="text-sm capitalize text-muted">{current.role}</p>
                 </div>
               </div>

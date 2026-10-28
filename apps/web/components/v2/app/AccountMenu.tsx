@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 
+import { Avatar } from "./Avatar";
+import { lettersOf } from "./letters";
+import type { FramePerson } from "./contract";
 import { Disclosure } from "./Disclosure";
 import { word, type Labels } from "./labels";
 
@@ -17,17 +20,15 @@ export function initials(email: string | null): string {
  * The user card at the foot of the side menu: the person's mark, who is signed in and their role here; it opens upwards with Security, the page of all
  * workspaces (only for someone who belongs to two or more) and Sign out (the server action the workspaces page uses). `collapsed` = the narrow rail: the mark only.
  */
-export function AccountMenu({ email, role, signOut, labels, collapsed = false, several = false, down = false }: { email: string | null; role?: string | null; signOut: () => Promise<void>; labels?: Labels; collapsed?: boolean; several?: boolean; down?: boolean }) {
-  const who = email ?? word(labels, "frame.account", "Your account");
+export function AccountMenu({ email, role, signOut, labels, collapsed = false, several = false, down = false, person = null, profileHref = null }: { email: string | null; role?: string | null; signOut: () => Promise<void>; labels?: Labels; collapsed?: boolean; several?: boolean; down?: boolean; person?: FramePerson | null; profileHref?: string | null }) {
+  const who = person?.name ?? email ?? word(labels, "frame.account", "Your account");
   return (
     <Disclosure
       summaryClassName={down ? "inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-edge bg-surface text-ink hover:bg-surface-2" : `flex min-h-12 w-full min-w-0 items-center gap-3 rounded-lg border border-line px-2 text-ink hover:bg-surface-2 ${collapsed ? "justify-center border-transparent px-0" : ""}`}
       panelClassName={`absolute z-50 rounded-xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)] ${down ? "right-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)]" : `bottom-full mb-1 ${collapsed ? "left-0 w-60" : "inset-x-0"}`}`}
       summary={
         <>
-          <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-full bg-charcoal text-sm font-semibold text-on-charcoal">
-            {initials(email)}
-          </span>
+          <Avatar url={person?.pictureUrl ?? null} letters={lettersOf(person?.name ?? null, email)} className="grid size-9 shrink-0 place-items-center rounded-full bg-charcoal text-sm font-semibold text-on-charcoal" />
           {collapsed || down ? null : (
             <span className="min-w-0 flex-1 text-left">
               <span className="block truncate text-sm font-semibold">{who}</span>
@@ -38,7 +39,12 @@ export function AccountMenu({ email, role, signOut, labels, collapsed = false, s
         </>
       }
     >
-      <p className="truncate px-3 py-2 text-sm text-muted">{who}</p>
+      <p className="truncate px-3 py-2 text-sm text-muted">{email ?? who}</p>
+      {profileHref ? (
+        <Link href={profileHref} className={rowLink}>
+          {word(labels, "frame.myprofile", "My profile")}
+        </Link>
+      ) : null}
       <Link href="/app/security" className={rowLink}>
         {word(labels, "frame.security", "Security")}
       </Link>

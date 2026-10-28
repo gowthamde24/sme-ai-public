@@ -1,0 +1,30 @@
+# Settings
+[button type=button: Help for this screen]
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [My profile](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=profile current=page) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Automation](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="My profile"}
+## My profile
+### My picture
+[image: ]
+form:
+Choose a picture
+<file name=picture label="Choose a picture" accept=image/jpeg,image/png,image/webp>
+[button type=submit: Save picture]
+JPG, PNG or WebP, up to 5 MB. It shows in the menu, the team list and the messages to your team. If you signed in with Google, your Google photo shows until you pick one.
+form:
+Your name
+<text name=display_name label="Your name" required maxlength=100 autocomplete=name value=Asha (synthetic)>
+Your team sees this name next to what you do.
+legend: Your language
+<radio name=language label="English" value=en>
+English
+<radio name=language label="తెలుగు" value=te checked>
+తెలుగు
+<radio name=language label="हिन्दी" value=hi>
+हिन्दी
+<radio name=language label="ಕನ್ನಡ" value=kn>
+ಕನ್ನಡ
+<radio name=language label="தமிழ்" value=ta>
+தமிழ்
+<radio name=language label="മലയാളം" value=ml>
+മലയാളം
+[button type=submit: Save]
