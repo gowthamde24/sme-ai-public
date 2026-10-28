@@ -46,14 +46,26 @@ async def run(url: str, token: str, pcm: bytes, turns: int, language: str) -> tu
     client_ms: list[float] = []
     server_ms: list[float] = []
     async with websockets.connect(url, max_size=None) as ws:
+        inbox: asyncio.Queue[tuple[float, str | bytes | None]] = asyncio.Queue()
+
+        async def reader() -> None:
+            """Stamp every message the moment it arrives (reading only after the silence was sent would make the first audio look late)."""
+            try:
+                async for msg in ws:
+                    inbox.put_nowait((time.perf_counter(), msg))
+            finally:
+                inbox.put_nowait((time.perf_counter(), None))
+
+        read_task = asyncio.ensure_future(reader())
         await ws.send(json.dumps({"type": "start", "access_token": token, "language": language}))
-        ready = json.loads(await ws.recv())
+        _, first_msg = await asyncio.wait_for(inbox.get(), timeout=15.0)
+        ready = json.loads(first_msg) if isinstance(first_msg, str) else {}
         if ready.get("type") != "ready":
             raise SystemExit(f"refused: {ready.get('code')}")
-        # let the greeting finish (its audio_end has turn 0); a workspace without one just waits a second
+        # let the greeting finish (its audio_end has turn 0); a workspace without one just waits a few seconds
         try:
             while True:
-                msg = await asyncio.wait_for(ws.recv(), timeout=4.0)
+                _, msg = await asyncio.wait_for(inbox.get(), timeout=4.0)
                 if isinstance(msg, str) and json.loads(msg).get("type") == "audio_end":
                     break
         except TimeoutError:
@@ -69,10 +81,12 @@ async def run(url: str, token: str, pcm: bytes, turns: int, language: str) -> tu
                 await asyncio.sleep(FRAME_MS / 1000)
             first: float | None = None
             while True:
-                msg = await asyncio.wait_for(ws.recv(), timeout=45.0)
+                at, msg = await asyncio.wait_for(inbox.get(), timeout=45.0)
+                if msg is None:
+                    raise SystemExit("the server closed the socket")
                 if isinstance(msg, bytes):
                     if first is None:
-                        first = time.perf_counter()
+                        first = at
                     continue
                 data = json.loads(msg)
                 if data.get("type") == "timings":
@@ -85,6 +99,7 @@ async def run(url: str, token: str, pcm: bytes, turns: int, language: str) -> tu
                 client_ms.append((first - last_sent) * 1000)
             print(f"turn {turn}: last word -> first audio {'-' if first is None else round((first - last_sent) * 1000)} ms")
         await ws.send(json.dumps({"type": "stop"}))
+        read_task.cancel()
     return client_ms, server_ms
 
 
