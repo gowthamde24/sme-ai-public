@@ -1,16 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
-  company: vi.fn(async () => undefined),
-  contact: vi.fn(async () => "c"),
-  lead: vi.fn(async () => "l"),
+  company: vi.fn(async (..._a: unknown[]) => undefined),
+  contact: vi.fn(async (..._a: unknown[]) => "c"),
+  lead: vi.fn(async (..._a: unknown[]) => "l"),
   testCall: vi.fn(),
   assistant: vi.fn(),
   preview: vi.fn(),
   ask: vi.fn(),
-  draft: vi.fn(async () => ({})),
+  draft: vi.fn(async (..._a: unknown[]) => ({})),
   slots: vi.fn(),
-  book: vi.fn(async () => ({})),
+  book: vi.fn(async (..._a: unknown[]) => ({})),
 }));
 vi.mock("@/lib/api/customers", () => ({ createCustomerCompany: h.company, createContact: h.contact, createLead: h.lead }));
 vi.mock("@/lib/api/ai-assistant", () => ({ postTestCall: h.testCall, getAiAssistant: h.assistant }));

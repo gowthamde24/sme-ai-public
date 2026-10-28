@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ tenant: vi.fn(), run: vi.fn(async () => ({ ok: true, lines: [], sound: null, leadId: null, note: null })) }));
+const h = vi.hoisted(() => ({ tenant: vi.fn(), run: vi.fn(async (..._a: unknown[]) => ({ ok: true, lines: [], sound: null, leadId: null, note: null })) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ accessToken: "tok" }) }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
 vi.mock("@/lib/guided-demo/events", () => ({ runDemoStep: (...a: unknown[]) => h.run(...a) }));
