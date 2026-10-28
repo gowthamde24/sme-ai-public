@@ -520,6 +520,7 @@ def test_the_real_parts_builder_works_for_a_workspace_in_every_language() -> Non
     parts = build_parts(bv_of(), runtime, ctx, lambda kind, data: None, lambda: None)  # type: ignore[arg-type]
     for language in ("te", "en", "hi", "kn"):
         assert "Tenant A" in parts.system_for(language) and parts.greeting_for(language)
+    assert parts.voice_for("te") == "te-sindhu" and parts.voice_for("en") == "en-janvi" and parts.voice_for("hi") == "hi-sanya", "the filler bank is keyed by the catalogue voice that speaks each language"
     assert parts.models["strong"] == "ask" and parts.models["fast"] == "m"
 
 # ---- durable daily caps (follow-up) ----------------------------------------------------------------------------------------------------------------
