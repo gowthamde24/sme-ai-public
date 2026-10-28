@@ -30,6 +30,7 @@ Run:  python3 -I scripts/seed_staging.py --i-know-this-loads-demo-data-into-stag
 from __future__ import annotations
 
 import argparse
+import os
 import base64
 import hashlib
 import hmac
@@ -105,7 +106,8 @@ def secret_put(name: str, value: str) -> None:
 # ----------------------------------------------------------------------------- HTTP
 def http(method: str, url: str, headers: dict[str, str], body: Any = None) -> tuple[int, Any]:
     data = None if body is None else json.dumps(body).encode()
-    req = urllib.request.Request(url, method=method, data=data, headers={"Content-Type": "application/json", "User-Agent": "stack19-seed-staging", **headers})  # noqa: S310 - https only, checked
+    lock = os.environ.get("ORIGIN_LOCK_SECRET")   # the origin lock (docs/runbooks/origin-lock.md): when the API is locked it wants this header; unset = nothing added
+    req = urllib.request.Request(url, method=method, data=data, headers={"Content-Type": "application/json", "User-Agent": "stack19-seed-staging", **({"X-Stack19-Origin": lock} if lock else {}), **headers})  # noqa: S310 - https only, checked
     try:
         with urllib.request.urlopen(req, timeout=60) as r:  # noqa: S310
             raw = r.read()

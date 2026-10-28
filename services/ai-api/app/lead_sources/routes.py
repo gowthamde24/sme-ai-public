@@ -23,6 +23,7 @@ from app.assistant.routes import _refusal
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
+from app.hardening.replay import ReplayGuard
 from app.lead_sources.columns_ai import RunColumnMatcher
 from app.lead_sources.models import (
     ImportIn,
@@ -202,6 +203,18 @@ def lead_touches(lead_id: str, ctx: Importer, runtime: RuntimeDep) -> dict[str, 
 
 
 # ------------------------------------------------------------------------------------------------------------------ the public doors
+REPLAY = ReplayGuard()
+
+
+def _no_replay(request: Request) -> None:
+    """A sender that signs its call (X-Stack19-Timestamp and X-Stack19-Nonce) is protected against replay; one that does not is accepted as before (see app/hardening/replay.py)."""
+    refused = REPLAY.check(request.headers.get("x-stack19-timestamp"), request.headers.get("x-stack19-nonce"))
+    if refused == "bad_headers":
+        raise ApiError(422, "validation_error", "The request was not valid.", extra={"fields": ["headers"]})
+    if refused is not None:
+        raise ApiError(409, "replay", "This call was already received or is too old.", extra={"reason": refused})
+
+
 async def _body(request: Request) -> bytes:
     declared = request.headers.get("content-length")
     if declared and declared.isdigit() and int(declared) > MAX_BODY:
@@ -232,6 +245,7 @@ def _form_data(request: Request, raw: bytes) -> dict[str, Any]:
 
 @public_router.post("/mail", response_model=MailOut, status_code=202)
 async def intake_mail_global(request: Request, runtime: RuntimeDep, x_inbound_secret: Annotated[str | None, Header()] = None) -> dict[str, Any]:
+    _no_replay(request)
     mail = _mail(await _body(request))
     return {"status": _service(runtime).receive_mail_global(x_inbound_secret, mail)}
 
@@ -269,12 +283,14 @@ async def meta_receive(token: str, request: Request, runtime: RuntimeDep, x_hub_
 
 @public_router.post("/{token}/email", response_model=MailOut, status_code=202)
 async def intake_mail(token: str, request: Request, runtime: RuntimeDep) -> dict[str, Any]:
+    _no_replay(request)
     mail = _mail(await _body(request))
     return {"status": _service(runtime).receive_mail(token, mail)}
 
 
 @public_router.post("/{token}", status_code=202)
 async def intake_form(token: str, request: Request, runtime: RuntimeDep) -> Response:
+    _no_replay(request)
     raw = await _body(request)
     _service(runtime).receive_form(token, _form_data(request, raw))
     headers = {"Access-Control-Allow-Origin": "*", "Cache-Control": "no-store"}

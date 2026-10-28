@@ -1,554 +1,581 @@
 {
- "$schema": "./assistant.schema.json",
- "version": 1,
- "status": "draft",
- "note": "DRAFT for native review (job DM, 25 Oct 2026). The wording of every language is a first draft written without a native reader; a person who reads Telugu, Hindi and Kannada should check it before a real customer hears it. Defaults are per business type, so an owner can skip Settings > AI assistant.",
- "languages": [
-  "en",
-  "te",
-  "hi",
-  "kn",
-  "ta",
-  "ml"
- ],
- "personas": [
-  {
-   "id": "female_warm",
-   "label": {
-    "en": "Female · warm"
-   },
-   "description": {
-    "en": "Friendly, unhurried"
-   }
+  "$schema": "./assistant.schema.json",
+  "version": 1,
+  "status": "draft",
+  "note": "DRAFT for native review (job DM, 25 Oct 2026). The wording of every language is a first draft written without a native reader; a person who reads Telugu, Hindi and Kannada should check it before a real customer hears it. Defaults are per business type, so an owner can skip Settings > AI assistant.",
+  "languages": [
+    "en",
+    "te",
+    "hi",
+    "kn",
+    "ta",
+    "ml"
+  ],
+  "personas": [
+    {
+      "id": "female_warm",
+      "label": {
+        "en": "Female · warm"
+      },
+      "description": {
+        "en": "Friendly, unhurried"
+      }
+    },
+    {
+      "id": "female_clear",
+      "label": {
+        "en": "Female · clear"
+      },
+      "description": {
+        "en": "Crisp and confident"
+      }
+    },
+    {
+      "id": "male_calm",
+      "label": {
+        "en": "Male · calm"
+      },
+      "description": {
+        "en": "Steady and polite"
+      }
+    },
+    {
+      "id": "male_lively",
+      "label": {
+        "en": "Male · lively"
+      },
+      "description": {
+        "en": "Energetic, upbeat"
+      }
+    },
+    {
+      "id": "own_voice",
+      "label": {
+        "en": "Your own voice"
+      },
+      "description": {
+        "en": "Your own recorded voice, made with your consent in Settings. The assistant still says it is the AI assistant."
+      }
+    }
+  ],
+  "styles": [
+    {
+      "id": "warm",
+      "label": {
+        "en": "Warm and friendly"
+      },
+      "description": {
+        "en": "Friendly, like a trusted shop assistant"
+      }
+    },
+    {
+      "id": "respectful",
+      "label": {
+        "en": "Respectful"
+      },
+      "description": {
+        "en": "Uses garu, ji and polite forms"
+      }
+    },
+    {
+      "id": "quick",
+      "label": {
+        "en": "Short and quick"
+      },
+      "description": {
+        "en": "Gets to the point in a few words"
+      }
+    }
+  ],
+  "intro": {
+    "en": "{name}, the AI assistant of {business}",
+    "te": "{business} నుంచి AI assistant {name}",
+    "hi": "{business} से AI assistant {name}",
+    "kn": "{business} ನಿಂದ AI assistant {name}",
+    "ta": "{business} ல இருந்து AI assistant {name}",
+    "ml": "{business} ൽ നിന്ന് AI assistant {name}"
   },
-  {
-   "id": "female_clear",
-   "label": {
-    "en": "Female · clear"
-   },
-   "description": {
-    "en": "Crisp and confident"
-   }
+  "samples": {
+    "textiles": {
+      "en": {
+        "warm": "Hello! I'm {name}, the AI assistant at {business}. Lovely new sarees just came in. Shall I send you a few photos?",
+        "respectful": "Namaste, I'm {name}, the AI assistant of {business}. May I take a minute to tell you about our new collection?",
+        "quick": "Hi, {name} here, AI assistant at {business}. New sarees are in. Photos on WhatsApp?"
+      },
+      "te": {
+        "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. కొత్త sarees వచ్చాయండీ, కొన్ని photos పంపనా?",
+        "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మా కొత్త collection గురించి ఒక్క నిమిషం చెప్పొచ్చా?",
+        "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. కొత్త sarees వచ్చాయి. WhatsApp లో photos పంపనా?"
+      },
+      "hi": {
+        "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। नई sarees आई हैं जी, कुछ photos भेज दूँ?",
+        "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। हमारे नए collection के बारे में एक minute बता दूँ?",
+        "quick": "हाय जी, {business} से AI assistant {name}। नई sarees आ गई हैं। WhatsApp पर photos भेजूँ?"
+      },
+      "kn": {
+        "warm": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ಹೊಸ sarees ಬಂದಿವೆ ರೀ, ಕೆಲವು photos ಕಳಿಸ್ಲಾ?",
+        "respectful": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ನಮ್ಮ ಹೊಸ collection ಬಗ್ಗೆ ಒಂದು minute ಹೇಳ್ಲಾ?",
+        "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. ಹೊಸ sarees ಬಂದಿವೆ. WhatsApp ಗೆ photos ಕಳಿಸ್ಲಾ?"
+      },
+      "ta": {
+        "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். புது sarees வந்திருக்கு சார், சில photos அனுப்பவா?",
+        "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க புது collection பத்தி ஒரு நிமிஷம் சொல்லவா?",
+        "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. புது sarees வந்திருக்கு. WhatsApp ல photos அனுப்பவா?"
+      },
+      "ml": {
+        "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. പുതിയ sarees വന്നിട്ടുണ്ട്, കുറച്ച് photos അയക്കട്ടെ?",
+        "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ പുതിയ collection നെ പറ്റി ഒരു minute പറയട്ടെ?",
+        "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. പുതിയ sarees വന്നു. WhatsApp ൽ photos അയക്കട്ടെ?"
+      }
+    },
+    "construction_materials": {
+      "en": {
+        "warm": "Hello! I'm {name}, the AI assistant at {business}. Fresh stock has arrived. Shall I send you the rates and photos?",
+        "respectful": "Namaste, I'm {name}, the AI assistant of {business}. May I take a minute to tell you about our new stock and rates?",
+        "quick": "Hi, {name} here, AI assistant at {business}. Fresh stock is in. Rates on WhatsApp?"
+      },
+      "te": {
+        "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. కొత్త stock వచ్చిందండీ, rates, photos WhatsApp లో పంపనా?",
+        "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మా కొత్త stock, rates గురించి ఒక్క నిమిషం చెప్పొచ్చా?",
+        "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. కొత్త stock వచ్చింది. WhatsApp లో rates పంపనా?"
+      },
+      "hi": {
+        "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। नया stock आया है जी, rates और photos WhatsApp पर भेज दूँ?",
+        "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। हमारे नए stock और rates के बारे में एक minute बता दूँ?",
+        "quick": "हाय जी, {business} से AI assistant {name}। नया stock आ गया है। WhatsApp पर rates भेजूँ?"
+      },
+      "kn": {
+        "warm": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ಹೊಸ stock ಬಂದಿದೆ ರೀ, rates, photos WhatsApp ಗೆ ಕಳಿಸ್ಲಾ?",
+        "respectful": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ನಮ್ಮ ಹೊಸ stock, rates ಬಗ್ಗೆ ಒಂದು minute ಹೇಳ್ಲಾ?",
+        "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. ಹೊಸ stock ಬಂದಿದೆ. WhatsApp ಗೆ rates ಕಳಿಸ್ಲಾ?"
+      },
+      "ta": {
+        "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். புது stock வந்திருக்கு சார், rates, photos WhatsApp ல அனுப்பவா?",
+        "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க புது stock, rates பத்தி ஒரு நிமிஷம் சொல்லவா?",
+        "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. புது stock வந்திருக்கு. WhatsApp ல rates அனுப்பவா?"
+      },
+      "ml": {
+        "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. പുതിയ stock വന്നിട്ടുണ്ട്, rates, photos WhatsApp ൽ അയക്കട്ടെ?",
+        "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ പുതിയ stock, rates നെ പറ്റി ഒരു minute പറയട്ടെ?",
+        "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. പുതിയ stock വന്നു. WhatsApp ൽ rates അയക്കട്ടെ?"
+      }
+    },
+    "education": {
+      "en": {
+        "warm": "Hello! I'm {name}, the AI assistant at {business}. Admissions are open for the new year. Shall I send you the details on WhatsApp?",
+        "respectful": "Namaste, I'm {name}, the AI assistant of {business}. May I take a minute to tell you about our admissions?",
+        "quick": "Hi, {name} here, AI assistant at {business}. Admissions are open. Details on WhatsApp?"
+      },
+      "te": {
+        "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. వచ్చే year admissions open అయ్యాయండీ, details WhatsApp లో పంపనా?",
+        "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మా admissions గురించి ఒక్క నిమిషం చెప్పొచ్చా?",
+        "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. Admissions open అయ్యాయి. WhatsApp లో details పంపనా?"
+      },
+      "hi": {
+        "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। अगले साल के admissions खुल गए हैं जी, details WhatsApp पर भेज दूँ?",
+        "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। हमारे admissions के बारे में एक minute बता दूँ?",
+        "quick": "हाय जी, {business} से AI assistant {name}। Admissions खुल गए हैं। WhatsApp पर details भेजूँ?"
+      },
+      "kn": {
+        "warm": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ಮುಂದಿನ year admissions open ಆಗಿದೆ ರೀ, details WhatsApp ಗೆ ಕಳಿಸ್ಲಾ?",
+        "respectful": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ನಮ್ಮ admissions ಬಗ್ಗೆ ಒಂದು minute ಹೇಳ್ಲಾ?",
+        "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. Admissions open ಆಗಿದೆ. WhatsApp ಗೆ details ಕಳಿಸ್ಲಾ?"
+      },
+      "ta": {
+        "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். அடுத்த year admissions open ஆயிடுச்சு சார், details WhatsApp ல அனுப்பவா?",
+        "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க admissions பத்தி ஒரு நிமிஷம் சொல்லவா?",
+        "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. Admissions open ஆயிடுச்சு. WhatsApp ல details அனுப்பவா?"
+      },
+      "ml": {
+        "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. അടുത്ത year admissions open ആയിട്ടുണ്ട്, details WhatsApp ൽ അയക്കട്ടെ?",
+        "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ admissions നെ പറ്റി ഒരു minute പറയട്ടെ?",
+        "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. Admissions open ആയി. WhatsApp ൽ details അയക്കട്ടെ?"
+      }
+    },
+    "leads": {
+      "en": {
+        "warm": "Hello! I'm {name}, the AI assistant at {business}. Thank you for your enquiry. May I ask a couple of quick questions so we can help you better?",
+        "respectful": "Namaste, I'm {name}, the AI assistant of {business}. You enquired with us. May I take a minute to understand what you need?",
+        "quick": "Hi, {name} here, AI assistant at {business}. About your enquiry: may I ask two quick questions?"
+      },
+      "te": {
+        "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మీ enquiry కి thanks అండీ, మీకు ఏం కావాలో రెండు మాటలు అడగొచ్చా?",
+        "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మీరు enquiry చేశారు కదా, మీ requirement గురించి ఒక్క నిమిషం మాట్లాడొచ్చా?",
+        "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. మీ enquiry గురించి రెండు quick questions అడగొచ్చా?"
+      },
+      "hi": {
+        "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। आपकी enquiry के लिए thanks जी, आपको क्या चाहिए, दो बातें पूछ सकती हूँ?",
+        "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। आपने enquiry की थी, आपकी requirement के बारे में एक minute बात कर सकती हूँ?",
+        "quick": "हाय जी, {business} से AI assistant {name}। आपकी enquiry के बारे में दो quick सवाल पूछ लूँ?"
+      },
+      "kn": {
+        "warm": "ನಮಸ್ಕಾರ, ನಾನು {name}, {business} ನಿಂದ AI assistant. ನಿಮ್ಮ enquiry ಗೆ thanks, ನಿಮಗೆ ಏನು ಬೇಕು ಅಂತ ಎರಡು ಮಾತು ಕೇಳಬಹುದಾ?",
+        "respectful": "ನಮಸ್ಕಾರ, ನಾನು {name}, {business} ನಿಂದ AI assistant. ನೀವು enquiry ಮಾಡಿದ್ರಲ್ವಾ, ನಿಮ್ಮ requirement ಬಗ್ಗೆ ಒಂದು ನಿಮಿಷ ಮಾತಾಡಬಹುದಾ?",
+        "quick": "ಹಾಯ್, {business} ನಿಂದ AI assistant {name}. ನಿಮ್ಮ enquiry ಬಗ್ಗೆ ಎರಡು quick questions ಕೇಳಬಹುದಾ?"
+      },
+      "ta": {
+        "warm": "வணக்கம், நான் {name}, {business} இல் இருந்து AI assistant பேசுறேன். உங்க enquiry க்கு thanks, உங்களுக்கு என்ன வேணும்னு ரெண்டு விஷயம் கேக்கலாமா?",
+        "respectful": "வணக்கம், நான் {name}, {business} இல் இருந்து AI assistant பேசுறேன். நீங்க enquiry பண்ணீங்க, உங்க requirement பத்தி ஒரு நிமிஷம் பேசலாமா?",
+        "quick": "ஹாய், {business} இல் இருந்து AI assistant {name}. உங்க enquiry பத்தி ரெண்டு quick questions கேக்கலாமா?"
+      },
+      "ml": {
+        "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. നിങ്ങളുടെ enquiry ക്ക് thanks, നിങ്ങൾക്ക് എന്താണ് വേണ്ടതെന്ന് രണ്ട് കാര്യം ചോദിക്കട്ടെ?",
+        "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. നിങ്ങൾ enquiry ചെയ്തിരുന്നല്ലോ, നിങ്ങളുടെ requirement നെ പറ്റി ഒരു minute സംസാരിക്കാമോ?",
+        "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. നിങ്ങളുടെ enquiry യെ പറ്റി രണ്ട് quick questions ചോദിക്കട്ടെ?"
+      }
+    }
   },
-  {
-   "id": "male_calm",
-   "label": {
-    "en": "Male · calm"
-   },
-   "description": {
-    "en": "Steady and polite"
-   }
-  },
-  {
-   "id": "male_lively",
-   "label": {
-    "en": "Male · lively"
-   },
-   "description": {
-    "en": "Energetic, upbeat"
-   }
-  },
-  {
-   "id": "own_voice",
-   "label": {
-    "en": "Your own voice"
-   },
-   "description": {
-    "en": "Your own recorded voice, made with your consent in Settings. The assistant still says it is the AI assistant."
-   }
+  "defaults": {
+    "textiles": {
+      "name": "Vani",
+      "voice_persona": "female_warm",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "warm",
+      "speed": 1.0,
+      "may_answer_prices": true,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 5,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": 5000000,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1140
+    },
+    "construction_materials": {
+      "voice_persona": "male_calm",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "respectful",
+      "speed": 1.0,
+      "may_answer_prices": true,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": true,
+      "max_discount_percent": 3,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": 20000000,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1080,
+      "name": "Arun"
+    },
+    "education": {
+      "voice_persona": "female_clear",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "respectful",
+      "speed": 1.0,
+      "may_answer_prices": false,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 0,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": null,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1020,
+      "name": "Meena"
+    },
+    "real_estate": {
+      "voice_persona": "female_warm",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "warm",
+      "speed": 1.0,
+      "may_answer_prices": false,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 0,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": null,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1080,
+      "name": "Anita"
+    },
+    "coaching": {
+      "voice_persona": "female_clear",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "warm",
+      "speed": 1.0,
+      "may_answer_prices": false,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 0,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": null,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1080,
+      "name": "Meena"
+    },
+    "clinic": {
+      "voice_persona": "female_clear",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "warm",
+      "speed": 1.0,
+      "may_answer_prices": false,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 0,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": null,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1080,
+      "name": "Kavya"
+    },
+    "insurance_loans": {
+      "voice_persona": "male_calm",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "warm",
+      "speed": 1.0,
+      "may_answer_prices": false,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 0,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": null,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1080,
+      "name": "Ravi"
+    },
+    "auto_dealer": {
+      "voice_persona": "male_calm",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "warm",
+      "speed": 1.0,
+      "may_answer_prices": false,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 0,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": null,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1080,
+      "name": "Arjun"
+    },
+    "interiors_solar": {
+      "voice_persona": "female_warm",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "warm",
+      "speed": 1.0,
+      "may_answer_prices": false,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 0,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": null,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1080,
+      "name": "Divya"
+    },
+    "travel": {
+      "voice_persona": "female_warm",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "warm",
+      "speed": 1.0,
+      "may_answer_prices": false,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 0,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": null,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1080,
+      "name": "Sneha"
+    },
+    "gym": {
+      "voice_persona": "male_calm",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "warm",
+      "speed": 1.0,
+      "may_answer_prices": false,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 0,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": null,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1080,
+      "name": "Karthik"
+    },
+    "wholesale_b2b": {
+      "voice_persona": "male_calm",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "warm",
+      "speed": 1.0,
+      "may_answer_prices": false,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 0,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": null,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1080,
+      "name": "Arun"
+    },
+    "general_business": {
+      "voice_persona": "female_clear",
+      "main_language": "te",
+      "auto_switch_language": true,
+      "allow_english_mixing": true,
+      "style": "warm",
+      "speed": 1.0,
+      "may_answer_prices": false,
+      "may_book_visits": true,
+      "may_send_media": true,
+      "may_talk_dues": false,
+      "max_discount_percent": 0,
+      "handover_owner_asked": true,
+      "handover_upset": true,
+      "handover_order_above_paise": null,
+      "call_days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "call_from_minute": 540,
+      "call_to_minute": 1080,
+      "name": "Meena"
+    }
   }
- ],
- "styles": [
-  {
-   "id": "warm",
-   "label": {
-    "en": "Warm and friendly"
-   },
-   "description": {
-    "en": "Friendly, like a trusted shop assistant"
-   }
-  },
-  {
-   "id": "respectful",
-   "label": {
-    "en": "Respectful"
-   },
-   "description": {
-    "en": "Uses garu, ji and polite forms"
-   }
-  },
-  {
-   "id": "quick",
-   "label": {
-    "en": "Short and quick"
-   },
-   "description": {
-    "en": "Gets to the point in a few words"
-   }
-  }
- ],
- "intro": {
-  "en": "{name}, the AI assistant of {business}",
-  "te": "{business} నుంచి AI assistant {name}",
-  "hi": "{business} से AI assistant {name}",
-  "kn": "{business} ನಿಂದ AI assistant {name}",
-  "ta": "{business} ல இருந்து AI assistant {name}",
-  "ml": "{business} ൽ നിന്ന് AI assistant {name}"
- },
- "samples": {
-  "textiles": {
-   "en": {
-    "warm": "Hello! I'm {name}, the AI assistant at {business}. Lovely new sarees just came in. Shall I send you a few photos?",
-    "respectful": "Namaste, I'm {name}, the AI assistant of {business}. May I take a minute to tell you about our new collection?",
-    "quick": "Hi, {name} here, AI assistant at {business}. New sarees are in. Photos on WhatsApp?"
-   },
-   "te": {
-    "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. కొత్త sarees వచ్చాయండీ, కొన్ని photos పంపనా?",
-    "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మా కొత్త collection గురించి ఒక్క నిమిషం చెప్పొచ్చా?",
-    "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. కొత్త sarees వచ్చాయి. WhatsApp లో photos పంపనా?"
-   },
-   "hi": {
-    "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। नई sarees आई हैं जी, कुछ photos भेज दूँ?",
-    "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। हमारे नए collection के बारे में एक minute बता दूँ?",
-    "quick": "हाय जी, {business} से AI assistant {name}। नई sarees आ गई हैं। WhatsApp पर photos भेजूँ?"
-   },
-   "kn": {
-    "warm": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ಹೊಸ sarees ಬಂದಿವೆ ರೀ, ಕೆಲವು photos ಕಳಿಸ್ಲಾ?",
-    "respectful": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ನಮ್ಮ ಹೊಸ collection ಬಗ್ಗೆ ಒಂದು minute ಹೇಳ್ಲಾ?",
-    "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. ಹೊಸ sarees ಬಂದಿವೆ. WhatsApp ಗೆ photos ಕಳಿಸ್ಲಾ?"
-   },
-   "ta": {
-    "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். புது sarees வந்திருக்கு சார், சில photos அனுப்பவா?",
-    "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க புது collection பத்தி ஒரு நிமிஷம் சொல்லவா?",
-    "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. புது sarees வந்திருக்கு. WhatsApp ல photos அனுப்பவா?"
-   },
-   "ml": {
-    "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. പുതിയ sarees വന്നിട്ടുണ്ട്, കുറച്ച് photos അയക്കട്ടെ?",
-    "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ പുതിയ collection നെ പറ്റി ഒരു minute പറയട്ടെ?",
-    "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. പുതിയ sarees വന്നു. WhatsApp ൽ photos അയക്കട്ടെ?"
-   }
-  },
-  "construction_materials": {
-   "en": {
-    "warm": "Hello! I'm {name}, the AI assistant at {business}. Fresh stock has arrived. Shall I send you the rates and photos?",
-    "respectful": "Namaste, I'm {name}, the AI assistant of {business}. May I take a minute to tell you about our new stock and rates?",
-    "quick": "Hi, {name} here, AI assistant at {business}. Fresh stock is in. Rates on WhatsApp?"
-   },
-   "te": {
-    "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. కొత్త stock వచ్చిందండీ, rates, photos WhatsApp లో పంపనా?",
-    "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మా కొత్త stock, rates గురించి ఒక్క నిమిషం చెప్పొచ్చా?",
-    "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. కొత్త stock వచ్చింది. WhatsApp లో rates పంపనా?"
-   },
-   "hi": {
-    "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। नया stock आया है जी, rates और photos WhatsApp पर भेज दूँ?",
-    "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। हमारे नए stock और rates के बारे में एक minute बता दूँ?",
-    "quick": "हाय जी, {business} से AI assistant {name}। नया stock आ गया है। WhatsApp पर rates भेजूँ?"
-   },
-   "kn": {
-    "warm": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ಹೊಸ stock ಬಂದಿದೆ ರೀ, rates, photos WhatsApp ಗೆ ಕಳಿಸ್ಲಾ?",
-    "respectful": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ನಮ್ಮ ಹೊಸ stock, rates ಬಗ್ಗೆ ಒಂದು minute ಹೇಳ್ಲಾ?",
-    "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. ಹೊಸ stock ಬಂದಿದೆ. WhatsApp ಗೆ rates ಕಳಿಸ್ಲಾ?"
-   },
-   "ta": {
-    "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். புது stock வந்திருக்கு சார், rates, photos WhatsApp ல அனுப்பவா?",
-    "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க புது stock, rates பத்தி ஒரு நிமிஷம் சொல்லவா?",
-    "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. புது stock வந்திருக்கு. WhatsApp ல rates அனுப்பவா?"
-   },
-   "ml": {
-    "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. പുതിയ stock വന്നിട്ടുണ്ട്, rates, photos WhatsApp ൽ അയക്കട്ടെ?",
-    "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ പുതിയ stock, rates നെ പറ്റി ഒരു minute പറയട്ടെ?",
-    "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. പുതിയ stock വന്നു. WhatsApp ൽ rates അയക്കട്ടെ?"
-   }
-  },
-  "education": {
-   "en": {
-    "warm": "Hello! I'm {name}, the AI assistant at {business}. Admissions are open for the new year. Shall I send you the details on WhatsApp?",
-    "respectful": "Namaste, I'm {name}, the AI assistant of {business}. May I take a minute to tell you about our admissions?",
-    "quick": "Hi, {name} here, AI assistant at {business}. Admissions are open. Details on WhatsApp?"
-   },
-   "te": {
-    "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. వచ్చే year admissions open అయ్యాయండీ, details WhatsApp లో పంపనా?",
-    "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మా admissions గురించి ఒక్క నిమిషం చెప్పొచ్చా?",
-    "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. Admissions open అయ్యాయి. WhatsApp లో details పంపనా?"
-   },
-   "hi": {
-    "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। अगले साल के admissions खुल गए हैं जी, details WhatsApp पर भेज दूँ?",
-    "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। हमारे admissions के बारे में एक minute बता दूँ?",
-    "quick": "हाय जी, {business} से AI assistant {name}। Admissions खुल गए हैं। WhatsApp पर details भेजूँ?"
-   },
-   "kn": {
-    "warm": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ಮುಂದಿನ year admissions open ಆಗಿದೆ ರೀ, details WhatsApp ಗೆ ಕಳಿಸ್ಲಾ?",
-    "respectful": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {name}, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ನಮ್ಮ admissions ಬಗ್ಗೆ ಒಂದು minute ಹೇಳ್ಲಾ?",
-    "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. Admissions open ಆಗಿದೆ. WhatsApp ಗೆ details ಕಳಿಸ್ಲಾ?"
-   },
-   "ta": {
-    "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். அடுத்த year admissions open ஆயிடுச்சு சார், details WhatsApp ல அனுப்பவா?",
-    "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க admissions பத்தி ஒரு நிமிஷம் சொல்லவா?",
-    "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. Admissions open ஆயிடுச்சு. WhatsApp ல details அனுப்பவா?"
-   },
-   "ml": {
-    "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. അടുത്ത year admissions open ആയിട്ടുണ്ട്, details WhatsApp ൽ അയക്കട്ടെ?",
-    "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ admissions നെ പറ്റി ഒരു minute പറയട്ടെ?",
-    "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. Admissions open ആയി. WhatsApp ൽ details അയക്കട്ടെ?"
-   }
-  },
-  "leads": {
-   "en": {
-    "warm": "Hello! I'm {name}, the AI assistant at {business}. Thank you for your enquiry. May I ask a couple of quick questions so we can help you better?",
-    "respectful": "Namaste, I'm {name}, the AI assistant of {business}. You enquired with us. May I take a minute to understand what you need?",
-    "quick": "Hi, {name} here, AI assistant at {business}. About your enquiry: may I ask two quick questions?"
-   },
-   "te": {
-    "warm": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మీ enquiry కి thanks అండీ, మీకు ఏం కావాలో రెండు మాటలు అడగొచ్చా?",
-    "respectful": "నమస్కారం అండీ, నేను {name}, {business} నుంచి AI assistant ని. మీరు enquiry చేశారు కదా, మీ requirement గురించి ఒక్క నిమిషం మాట్లాడొచ్చా?",
-    "quick": "హాయ్ అండీ, {business} నుంచి AI assistant {name}. మీ enquiry గురించి రెండు quick questions అడగొచ్చా?"
-   },
-   "hi": {
-    "warm": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। आपकी enquiry के लिए thanks जी, आपको क्या चाहिए, दो बातें पूछ सकती हूँ?",
-    "respectful": "नमस्ते जी, मैं {name}, {business} से AI assistant बोल रही हूँ। आपने enquiry की थी, आपकी requirement के बारे में एक minute बात कर सकती हूँ?",
-    "quick": "हाय जी, {business} से AI assistant {name}। आपकी enquiry के बारे में दो quick सवाल पूछ लूँ?"
-   },
-   "kn": {
-    "warm": "ನಮಸ್ಕಾರ, ನಾನು {name}, {business} ನಿಂದ AI assistant. ನಿಮ್ಮ enquiry ಗೆ thanks, ನಿಮಗೆ ಏನು ಬೇಕು ಅಂತ ಎರಡು ಮಾತು ಕೇಳಬಹುದಾ?",
-    "respectful": "ನಮಸ್ಕಾರ, ನಾನು {name}, {business} ನಿಂದ AI assistant. ನೀವು enquiry ಮಾಡಿದ್ರಲ್ವಾ, ನಿಮ್ಮ requirement ಬಗ್ಗೆ ಒಂದು ನಿಮಿಷ ಮಾತಾಡಬಹುದಾ?",
-    "quick": "ಹಾಯ್, {business} ನಿಂದ AI assistant {name}. ನಿಮ್ಮ enquiry ಬಗ್ಗೆ ಎರಡು quick questions ಕೇಳಬಹುದಾ?"
-   },
-   "ta": {
-    "warm": "வணக்கம், நான் {name}, {business} இல் இருந்து AI assistant பேசுறேன். உங்க enquiry க்கு thanks, உங்களுக்கு என்ன வேணும்னு ரெண்டு விஷயம் கேக்கலாமா?",
-    "respectful": "வணக்கம், நான் {name}, {business} இல் இருந்து AI assistant பேசுறேன். நீங்க enquiry பண்ணீங்க, உங்க requirement பத்தி ஒரு நிமிஷம் பேசலாமா?",
-    "quick": "ஹாய், {business} இல் இருந்து AI assistant {name}. உங்க enquiry பத்தி ரெண்டு quick questions கேக்கலாமா?"
-   },
-   "ml": {
-    "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. നിങ്ങളുടെ enquiry ക്ക് thanks, നിങ്ങൾക്ക് എന്താണ് വേണ്ടതെന്ന് രണ്ട് കാര്യം ചോദിക്കട്ടെ?",
-    "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. നിങ്ങൾ enquiry ചെയ്തിരുന്നല്ലോ, നിങ്ങളുടെ requirement നെ പറ്റി ഒരു minute സംസാരിക്കാമോ?",
-    "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. നിങ്ങളുടെ enquiry യെ പറ്റി രണ്ട് quick questions ചോദിക്കട്ടെ?"
-   }
-  }
- },
- "defaults": {
-  "textiles": {
-   "name": "Vani",
-   "voice_persona": "female_warm",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "warm",
-   "speed": 1.0,
-   "may_answer_prices": true,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": false,
-   "max_discount_percent": 5,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": 5000000,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1140
-  },
-  "construction_materials": {
-   "voice_persona": "male_calm",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "respectful",
-   "speed": 1.0,
-   "may_answer_prices": true,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": true,
-   "max_discount_percent": 3,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": 20000000,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1080,
-   "name": "Arun"
-  },
-  "education": {
-   "voice_persona": "female_clear",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "respectful",
-   "speed": 1.0,
-   "may_answer_prices": false,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": false,
-   "max_discount_percent": 0,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": null,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1020,
-   "name": "Meena"
-  },
-  "real_estate": {
-   "voice_persona": "female_warm",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "warm",
-   "speed": 1.0,
-   "may_answer_prices": false,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": false,
-   "max_discount_percent": 0,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": null,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1080,
-   "name": "Anita"
-  },
-  "coaching": {
-   "voice_persona": "female_clear",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "warm",
-   "speed": 1.0,
-   "may_answer_prices": false,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": false,
-   "max_discount_percent": 0,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": null,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1080,
-   "name": "Meena"
-  },
-  "clinic": {
-   "voice_persona": "female_clear",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "warm",
-   "speed": 1.0,
-   "may_answer_prices": false,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": false,
-   "max_discount_percent": 0,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": null,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1080,
-   "name": "Kavya"
-  },
-  "insurance_loans": {
-   "voice_persona": "male_calm",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "warm",
-   "speed": 1.0,
-   "may_answer_prices": false,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": false,
-   "max_discount_percent": 0,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": null,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1080,
-   "name": "Ravi"
-  },
-  "auto_dealer": {
-   "voice_persona": "male_calm",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "warm",
-   "speed": 1.0,
-   "may_answer_prices": false,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": false,
-   "max_discount_percent": 0,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": null,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1080,
-   "name": "Arjun"
-  },
-  "interiors_solar": {
-   "voice_persona": "female_warm",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "warm",
-   "speed": 1.0,
-   "may_answer_prices": false,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": false,
-   "max_discount_percent": 0,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": null,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1080,
-   "name": "Divya"
-  },
-  "travel": {
-   "voice_persona": "female_warm",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "warm",
-   "speed": 1.0,
-   "may_answer_prices": false,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": false,
-   "max_discount_percent": 0,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": null,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1080,
-   "name": "Sneha"
-  },
-  "gym": {
-   "voice_persona": "male_calm",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "warm",
-   "speed": 1.0,
-   "may_answer_prices": false,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": false,
-   "max_discount_percent": 0,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": null,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1080,
-   "name": "Karthik"
-  },
-  "wholesale_b2b": {
-   "voice_persona": "male_calm",
-   "main_language": "te",
-   "auto_switch_language": true,
-   "allow_english_mixing": true,
-   "style": "warm",
-   "speed": 1.0,
-   "may_answer_prices": false,
-   "may_book_visits": true,
-   "may_send_media": true,
-   "may_talk_dues": false,
-   "max_discount_percent": 0,
-   "handover_owner_asked": true,
-   "handover_upset": true,
-   "handover_order_above_paise": null,
-   "call_days": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6
-   ],
-   "call_from_minute": 540,
-   "call_to_minute": 1080,
-   "name": "Arun"
-  }
- }
 }

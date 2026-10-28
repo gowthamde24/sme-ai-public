@@ -132,3 +132,41 @@ def test_a_daily_character_cap_protects_the_credits() -> None:
 def test_an_oversized_sound_is_refused() -> None:
     client, _, _ = world(RecordingTts(audio=b"RIFF" + b"\0" * 2_100_000))
     assert client.get(f"{URL}?{Q}", headers=auth("a_owner")).status_code == 404
+
+
+PREVIEW = f"/v1/tenants/{TENANT_A.id}/ai-assistant/voice-preview"
+
+
+def test_the_preview_speaks_the_real_business_name_then_one_reply_and_says_it_is_an_ai_assistant() -> None:
+    client, tts, _ = world()
+    r = client.get(f"{PREVIEW}?{Q}", headers=auth("a_owner"))
+    assert r.status_code == 200 and r.content.startswith(b"RIFF") and r.headers["cache-control"] == "no-store"
+    spoken = tts.calls[0]["text"]
+    assert TENANT_A.name in spoken and "AI" in spoken and "{" not in spoken
+    assert vs.REPLIES["te"] in spoken and spoken.index(TENANT_A.name) < spoken.index(vs.REPLIES["te"])
+    text = client.get(f"{PREVIEW}/text?language=te&style=warm", headers=auth("a_owner")).json()
+    assert text["text"] == spoken and text["business_name"] == TENANT_A.name and text["assistant_name"] == "Vijaya"
+
+
+def test_the_preview_follows_a_new_business_name_at_once_and_a_language_without_a_reply_says_only_the_opening() -> None:
+    service = VoiceSampleService(RecordingTts())
+    tenant = TENANT_A.id
+    first = vs.preview_text("en", "warm", "Vijaya", "Lakshmi Sarees")
+    second = vs.preview_text("en", "warm", "Vijaya", "Sri Sai Homes")
+    assert "Lakshmi Sarees" in first and "Sri Sai Homes" not in first and "Sri Sai Homes" in second
+    tts = service._tts  # noqa: SLF001
+    assert isinstance(tts, RecordingTts)
+    service.preview(tenant, "Lakshmi Sarees", "female_warm", "en", "warm", None)
+    service.preview(tenant, "Sri Sai Homes", "female_warm", "en", "warm", None)   # renamed: not served from the cache of the old name
+    assert [c["text"] for c in tts.calls] == [first, second]
+    assert vs.preview_text("ta", "warm", "Vijaya", "Sri Sai Homes") == vs.line_for("ta", "warm", "Vijaya", "Sri Sai Homes")
+
+
+def test_the_preview_is_for_the_owner_and_admin_only_and_shares_the_limits_of_the_sample() -> None:
+    client, tts, _ = world()
+    for user in ("a_sales", "a_viewer"):
+        assert client.get(f"{PREVIEW}?{Q}", headers=auth(user)).status_code in (403, 404), user
+    assert client.get(f"{PREVIEW}?{Q}").status_code == 401 and tts.calls == []
+    for _ in range(6):
+        assert client.get(f"{PREVIEW}?{Q}", headers=auth("a_owner")).status_code == 200
+    assert client.get(f"{PREVIEW}?voice=male_calm&language=hi", headers=auth("a_owner")).status_code in (200, 429)

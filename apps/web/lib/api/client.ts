@@ -81,6 +81,16 @@ export function parseTenantDetail(json: unknown): TenantDetail {
   return { id: json.id, name: json.name, slug: json.slug, role: json.role };
 }
 
+/**
+ * Every call from the web's SERVER to the API goes through this `fetch`, which shadows the global one inside this file. When ORIGIN_LOCK_SECRET is set (job DT, docs/runbooks/origin-lock.md) the API answers only
+ * requests that carry it in X-Stack19-Origin; unset = nothing is added.
+ */
+const fetch = (url: string, init: RequestInit = {}): Promise<Response> => {
+  const secret = process.env.ORIGIN_LOCK_SECRET;
+  if (!secret) return globalThis.fetch(url, init);
+  return globalThis.fetch(url, { ...init, headers: { ...(init.headers as Record<string, string> | undefined), "X-Stack19-Origin": secret } });
+};
+
 function apiBaseUrl(): string {
   const base = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (!base) {

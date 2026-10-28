@@ -123,19 +123,25 @@ def test_a_failure_while_making_the_file_marks_the_export_failed_and_removes_a_p
 
 
 # ------------------------------------------------------------------------------------------------------------------------ workspace export
-def test_the_workspace_export_is_the_owners_with_a_second_factor(w: World) -> None:
+def test_the_workspace_export_is_the_owners_with_a_second_factor_and_the_typed_name(w: World) -> None:
     for user in ROLES:
-        r = w.call("POST", T + "/data-exports", user, {"export_id": X1})
+        r = w.call("POST", T + "/data-exports", user, {"export_id": X1, "confirm_name": "Tenant A"})
         assert r.status_code == (202 if user == "a_owner" else 403), user
-    assert w.call("POST", T + "/data-exports", "a_owner", {"export_id": X2}, aal="aal1").status_code == 403
-    assert w.call("POST", T + "/data-exports", "outsider", {"export_id": X2}).status_code == 404
+    assert w.call("POST", T + "/data-exports", "a_owner", {"export_id": X2, "confirm_name": "Tenant A"}, aal="aal1").status_code == 403
+    assert w.call("POST", T + "/data-exports", "outsider", {"export_id": X2, "confirm_name": "Tenant A"}).status_code == 404
     assert [c[0] for c in w.db.calls if c[0] == "export_request"] == ["export_request"], "only the Owner's call reached the data layer"
+    # job DT (ADR 0115): the Owner types the business name; a wrong, missing or other-case name starts nothing
+    before = len(w.db.calls)
+    for body in ({"export_id": X2, "confirm_name": "tenant a"}, {"export_id": X2, "confirm_name": "Tenant"}, {"export_id": X2}):
+        assert w.call("POST", T + "/data-exports", "a_owner", body).status_code == 422, body
+    assert len(w.db.calls) == before, "nothing reached the data layer"
+    assert w.call("POST", T + "/data-exports", "a_owner", {"export_id": X2, "confirm_name": "  Tenant A  "}).status_code == 202, "surrounding spaces are ignored"
 
 
 def test_the_workspace_zip_holds_one_file_per_table_read_with_the_owners_token(w: World) -> None:
     w.db.tables = {"companies": [{"id": "c1", "name": "Ravi Silks"}], "orders": []}
     w.db.unreadable = {"audit_events"}
-    r = w.call("POST", T + "/data-exports", "a_owner", {"export_id": X1})
+    r = w.call("POST", T + "/data-exports", "a_owner", {"export_id": X1, "confirm_name": "Tenant A"})
     assert r.status_code == 202
     reads = [c for c in w.db.calls if c[0] == "read_table_page"]
     assert reads and all(c[1][1] in ("id", "tenant_id", "language", "ref_id", "event_id", "at", "day", "source") for c in reads)

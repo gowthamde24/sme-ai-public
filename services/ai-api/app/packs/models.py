@@ -11,7 +11,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
 PackStatus = Literal["draft", "preview", "published"]
-PackSource = Literal["signup", "default", "legacy", "operator"]
+PackSource = Literal["signup", "default", "legacy", "operator", "owner"]
 LanguageReview = Literal["draft", "web_dictionary", "native_reviewed"]
 PackCode = Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,30}$")]
 
@@ -109,9 +109,14 @@ class AuthProvidersOut(_Out):
 
 
 class AccountSecurityOut(_Out):
-    """GET /v1/account/security: where the second factor stands for this session. It is NOT asked at sign-up; it is asked at the first action that needs one."""
+    """GET /v1/account/security: where the person's second factor stands (ADR 0115). It is OPTIONAL for everybody: never asked at sign-up or at setup. A person who turned it on enters the code once per sign-in
+    session (the session is then aal2) and is asked for it on a sensitive action only before that."""
 
     session_level: Literal["aal1", "aal2"]
     asked_at_sign_up: Literal[False]
-    # the groups of actions that need an aal2 session for an Owner or Admin (the database refuses them otherwise, SM306)
+    second_factor: Literal["optional"] = "optional"
+    # did the person turn the authenticator on (null when the database could not be asked)
+    second_factor_on: bool | None = None
+    provider: Literal["email", "google", "facebook"] | None = None
+    # the groups of actions that need the code from a person who turned the authenticator on
     needed_for: list[Literal["approvals", "whatsapp_connect", "rules_and_prices", "imports_and_exports", "team_and_privacy"]]

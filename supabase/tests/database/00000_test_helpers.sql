@@ -26,6 +26,15 @@ begin
     perform set_config('request.jwt.claim.sub', '', true);
     perform set_config('role', 'anon', true);
   else
+    -- ADR 0115: the second factor is OPTIONAL and asked of a person who turned it on. The old tests' 'aal1' / 'absent' sessions are a password-only session of a person WHO HAS an authenticator (ADR 0016's
+    -- world), so such an identity gets a verified factor (rolled back with the test). A test of the new rules builds its own token (tests/130).
+    if coalesce(nullif(current_setting('tests.jwt_aal', true), ''), 'aal2') in ('aal1', 'absent')
+       and coalesce(current_setting('tests.no_factor', true), '') <> 'on'
+       and exists (select 1 from auth.users u where u.id = p_uid) then
+      insert into auth.mfa_factors (id, user_id, friendly_name, factor_type, status, created_at, updated_at, secret)
+      select gen_random_uuid(), p_uid, 'phone', 'totp', 'verified', now(), now(), 'JBSWY3DPEHPK3PXP'
+       where not exists (select 1 from auth.mfa_factors f where f.user_id = p_uid and f.status = 'verified');
+    end if;
     perform set_config(
       'request.jwt.claims',
       -- 'exp' only when a test set tests.jwt_exp (the agent functions bound a run's life by the token's exp)
@@ -689,6 +698,13 @@ end $$;
 
 
 -- Run following statements at a given assurance level (ADR 0016): tests.as_aal('aal1') / 'aal2' / 'absent'. Transaction-local.
+-- Job DT: a session of a person who has NO authenticator (the default of tests.as_aal('aal1') is a person who has one): tests.as_no_factor(true) / (false). Transaction-local.
+create or replace function tests.as_no_factor(p boolean) returns void
+language plpgsql as $$
+begin
+  perform set_config('tests.no_factor', case when p then 'on' else '' end, true);
+end $$;
+
 create or replace function tests.as_aal(p text) returns void
 language plpgsql as $$
 begin

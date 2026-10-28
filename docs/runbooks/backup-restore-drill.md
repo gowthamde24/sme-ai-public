@@ -55,3 +55,10 @@ it held a copy of production.
 
 ## If production must be restored for real
 Stop writes first (close the gate, switch agents off, tell the family), restore, run steps 3 and 4 on production, then reopen.
+
+## Plan for when real customer data starts (job DT, security audit)
+1. **Plan:** move the production Supabase project to **Pro** BEFORE the first real customer record (the free plan has no daily backups). Daily backups, 7 days kept.
+2. **Point-in-time recovery:** the add-on turns "up to 24 hours of lost writes" into "up to a few minutes". Decision for the owner at go-live: buy it once there are paying customers (about USD 100/month, see above); until then the 24-hour window is the stated promise and must not be described as anything better on the website.
+3. **Off-site copy:** a weekly `make staging-backup`-style dump of production to an encrypted location outside Supabase (the owner's choice; no key in the repository), kept 8 weeks. Erasures made after a backup are re-applied after any restore (section 1 above).
+4. **Drill:** run this runbook on a throwaway project once before go-live, then every quarter (`make restore-drill`, or `DRILL=local` for the local variant); write the date and the measured restore time in the real-data gate record (`restore_drill_ref`).
+5. **Who is told:** a failed or skipped drill blocks opening the real-data gate (docs/runbooks/real-data-gate.md).

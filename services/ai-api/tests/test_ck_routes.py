@@ -121,8 +121,8 @@ def test_the_sign_up_cards_need_no_sign_in_and_list_the_three_business_types() -
     assert r.status_code == 200, r.text
     body = r.json()["packs"]
     # job DR: the nine leads-and-calls types are previews too, listed after the published one by id
-    assert [p["pack_id"] for p in body] == ["textiles", "auto_dealer", "clinic", "coaching", "construction_materials", "education", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]
-    assert [p["validated"] for p in body] == [True] + [False] * 11
+    assert [p["pack_id"] for p in body] == ["textiles", "auto_dealer", "clinic", "coaching", "construction_materials", "education", "other", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]
+    assert [p["validated"] for p in body] == [True] + [False] * 12
     assert all(p["names"]["en"] and p["summary"]["en"] and p["status"] in ("preview", "published") for p in body)
 
 
@@ -143,7 +143,7 @@ def test_a_draft_pack_and_an_unreadable_pack_are_never_served(tmp_path: Path) ->
     (tmp_path / "p" / "education" / "pack.json").write_text(json.dumps(draft), encoding="utf-8")
     (tmp_path / "p" / "construction_materials" / "pack.json").write_text("{not json", encoding="utf-8")
     listed = PackRegistry(tmp_path / "p").selectable()
-    assert [p.pack_id for p in listed.packs] == ["textiles", "auto_dealer", "clinic", "coaching", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]  # job DR: the nine previews stay
+    assert [p.pack_id for p in listed.packs] == ["textiles", "auto_dealer", "clinic", "coaching", "general_business", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]  # job DR: the nine previews stay (job DT: and the generic one; the registry holds its own id, the route says "other")
 
 
 def test_the_default_directory_is_the_checkouts_packs() -> None:

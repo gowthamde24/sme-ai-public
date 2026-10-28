@@ -301,7 +301,7 @@ def test_account_setup_needs_a_session_and_says_nothing_to_do_for_an_invited_per
     assert client.get("/v1/account/setup").status_code == 401
     assert (
         client.post(
-            "/v1/account/setup", json={"business_type": "other", "language": "en"}
+            "/v1/account/setup", json={"business_type": "coaching", "language": "en"}
         ).status_code
         == 401
     )
@@ -338,9 +338,9 @@ def test_a_needed_account_gets_its_business_name_and_the_setup_is_idempotent() -
         {"language": "en"},
         # job CK: any pack-shaped code passes; the database says whether it is selectable
         {"business_type": "Bakery Shop!", "language": "en"},
-        {"business_type": "other", "language": "fr"},
-        {"business_type": "other", "language": "en", "business_name": "Mine"},
-        {"business_type": "other", "language": "en", "tenant_id": str(uuid.uuid4())},
+        {"business_type": "coaching", "language": "fr"},
+        {"business_type": "coaching", "language": "en", "business_name": "Mine"},
+        {"business_type": "coaching", "language": "en", "tenant_id": str(uuid.uuid4())},
     ],
 )
 def test_the_setup_takes_exactly_two_choices_and_never_a_business_name(
@@ -370,7 +370,7 @@ def test_the_setup_refusals_have_fixed_plain_sentences(
     repository.raise_on_next = error
     response = client.post(
         "/v1/account/setup",
-        json={"business_type": "other", "language": "en"},
+        json={"business_type": "coaching", "language": "en"},
         headers=auth("outsider"),
     )
     assert response.status_code == status
@@ -383,7 +383,7 @@ def test_the_setup_is_read_and_written_with_the_callers_own_token() -> None:
     headers = auth("outsider")
     client.get("/v1/account/setup", headers=headers)
     client.post(
-        "/v1/account/setup", json={"business_type": "other", "language": "kn"}, headers=headers
+        "/v1/account/setup", json={"business_type": "coaching", "language": "kn"}, headers=headers
     )
     token = headers["Authorization"].removeprefix("Bearer ")
     assert repository.tokens_seen[-2:] == [token, token]

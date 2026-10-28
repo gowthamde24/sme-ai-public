@@ -20,6 +20,7 @@ from app.assistant_settings.service import AssistantSettingsService
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.billing import errors as billing_errors
+from app.billing.mail import EmailSender, build_sender
 from app.billing.provider import BillingProvider, build_provider
 from app.billing.repository import PostgrestBillingRepository
 from app.billing.routes import plans_router as billing_plans_router
@@ -77,6 +78,7 @@ from app.followups.routes import router as followups_router
 from app.hardening.headers import SecurityHeadersMiddleware
 from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
 from app.hardening.ops_routes import build_router as build_ops_router
+from app.hardening.originlock import OriginLockMiddleware
 from app.hardening.ratelimit import RateLimitMiddleware
 from app.integrations import errors as integration_errors
 from app.integrations.policy import PolicyVersions
@@ -116,6 +118,7 @@ from app.notifications.routes import me_router as notifications_me_router
 from app.notifications.routes import router as notifications_router
 from app.notifications.wiring import build_notifications
 from app.observability.sentry import init_sentry
+from app.opening.routes import router as opening_router
 from app.orders import errors as order_errors
 from app.orders.repository import PostgrestOrdersRepository
 from app.orders.routes import router as orders_router
@@ -192,6 +195,7 @@ from app.whatsapp.repository import WhatsAppStateError
 from app.whatsapp.routes import public_router as whatsapp_public_router
 from app.whatsapp.routes import router as whatsapp_router
 from app.whatsapp.wiring import build_whatsapp
+from app.workspace.business import router as workspace_business_router
 from app.workspace.repository import PostgrestWorkspaceRepository
 from app.workspace.routes import router as workspace_router
 
@@ -291,6 +295,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
+        mail_sender=_notice_sender(settings),
         notifications=build_notifications(settings, config),
         research_web=build_research_web(settings),
         research_usage=PostgrestResearchUsageRepository(config.rest_url, config.anon_key),
@@ -857,6 +862,19 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
 }
 
 
+def _notice_sender(settings: Settings) -> EmailSender | None:
+    """The sender of the privacy notices (the worker's provider settings); None when it cannot be
+    built: the actions still work, the notice is skipped and logged."""
+    try:
+        secret = settings.resend_api_key
+        key = secret.get_secret_value() if secret is not None else None
+        return build_sender(
+            settings.billing_email_sender, key, settings.mail_from, settings.mail_reply_to
+        )
+    except ValueError:
+        return None
+
+
 def create_app(settings: Settings | None = None, *, runtime: Runtime | None = None) -> FastAPI:
     settings = settings or get_settings()
     runtime = runtime if runtime is not None else build_runtime(settings)
@@ -1034,6 +1052,12 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
             trusted_hops=settings.trusted_proxy_hops,
             on_limited=metrics.limit_hit,
         )
+    app.add_middleware(
+        OriginLockMiddleware,
+        secret=(
+            settings.origin_lock_secret.get_secret_value() if settings.origin_lock_secret else None
+        ),
+    )
     app.add_middleware(SecurityHeadersMiddleware, production=not settings.is_development)
     app.add_middleware(ObserveMiddleware, metrics=metrics, trusted_hops=settings.trusted_proxy_hops)
     app.include_router(
@@ -1120,6 +1144,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(team_router)
     app.include_router(team_public_router)
     app.include_router(workspace_router)
+    app.include_router(workspace_business_router)
+    app.include_router(opening_router)
     app.include_router(notifications_router)
     app.include_router(notifications_me_router)
     app.include_router(suppression_router)

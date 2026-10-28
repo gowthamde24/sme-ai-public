@@ -1,0 +1,23 @@
+# Weekly dependency updates (job DT, security audit). Security fixes also arrive as Dependabot alerts (turn them on in Settings > Code security).
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /services/ai-api
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    groups:
+      python-minor-and-patch: { update-types: [minor, patch] }
+  - package-ecosystem: npm
+    directory: /apps/web
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 5
+    groups:
+      web-minor-and-patch: { update-types: [minor, patch] }
+  - package-ecosystem: npm
+    directory: /e2e
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 2
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly, day: monday }
+    open-pull-requests-limit: 3

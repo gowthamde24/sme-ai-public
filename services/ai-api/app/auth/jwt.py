@@ -39,6 +39,9 @@ class Principal:
     # code. Anything else, or a missing claim, is "aal1". It is the one claim read besides the
     # subject; roles and tenants still come from the database.
     aal: str = "aal1"
+    # the address of the account (the token's `email` claim), used only to tell the person that
+    # a sensitive action was taken in their name; None when the token carries none
+    email: str | None = None
 
 
 class KeyProvider(Protocol):
@@ -181,4 +184,6 @@ def _principal_from_claims(claims: dict[str, Any], token: str) -> Principal:
     except ValueError as exc:
         raise AuthError("subject is not a uuid") from exc
     aal = "aal2" if claims.get("aal") == "aal2" else "aal1"
-    return Principal(user_id=user_id, token=token, aal=aal)
+    email = claims.get("email")
+    address = email if isinstance(email, str) and "@" in email else None
+    return Principal(user_id=user_id, token=token, aal=aal, email=address)

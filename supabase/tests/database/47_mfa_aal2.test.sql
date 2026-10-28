@@ -94,6 +94,8 @@ select is(pg_temp.out_at('aal1', 'a_owner', format($q$update public.contacts set
 -- ============================================================ the operator resets a lost device
 select tests.as_aal('aal2');
 update auth.users set email = 'lost.device@owner.example.test' where id = tests.uid('a_owner2');
+-- the sessions above (aal1) already gave a_admin a factor in this transaction (tests.set_identity): start from none, then enrol exactly one each
+delete from auth.mfa_factors where user_id in (tests.uid('a_owner2'), tests.uid('a_admin'));
 insert into auth.mfa_factors (id, user_id, friendly_name, factor_type, status, created_at, updated_at, secret)
 values (gen_random_uuid(), tests.uid('a_owner2'), 'phone', 'totp', 'verified', now(), now(), 'JBSWY3DPEHPK3PXP'),
        (gen_random_uuid(), tests.uid('a_admin'), 'phone', 'totp', 'verified', now(), now(), 'JBSWY3DPEHPK3PXP');

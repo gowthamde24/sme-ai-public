@@ -18,7 +18,13 @@ from typing import Annotated, Any, cast
 
 from fastapi import APIRouter, Depends
 
-from app.auth.deps import AnyMember, OwnerOrAdmin, PrincipalDep, Runtime, get_runtime
+from app.auth.deps import (
+    AnyMember,
+    OwnerOrAdmin,
+    PrincipalDep,
+    Runtime,
+    get_runtime,
+)
 from app.errors import ApiError
 from app.packs.models import (
     AccountSecurityOut,
@@ -33,6 +39,7 @@ from app.packs.models import (
     WorkspacePackOut,
 )
 from app.packs.repository import PacksRepository
+from app.workspace.other_type import public_id
 
 public_router = APIRouter(prefix="/v1", tags=["packs"])
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["packs"])
@@ -52,7 +59,8 @@ def list_packs(runtime: RuntimeDep) -> PackListOut:
     listed = runtime.pack_registry.selectable()
     if not listed.packs:
         raise ApiError(503, "packs_unavailable", "Business types are not available on this system.")
-    return listed
+    # job DT: the generic Lead Desk pack is called "other" on screens (app/workspace/other_type.py)
+    return listed.model_copy(update={"packs": [p.model_copy(update={"pack_id": public_id(p.pack_id)}) for p in listed.packs]})
 
 
 @public_router.get("/auth/providers", response_model=AuthProvidersOut)
@@ -61,10 +69,19 @@ def auth_providers(runtime: RuntimeDep) -> AuthProvidersOut:
 
 
 @public_router.get("/account/security", response_model=AccountSecurityOut)
-def account_security(principal: PrincipalDep) -> AccountSecurityOut:
+def account_security(principal: PrincipalDep, runtime: RuntimeDep) -> AccountSecurityOut:
+    status: dict[str, Any] = {}
+    if runtime.workspace is not None:
+        try:
+            status = runtime.workspace.account_security(principal.token)
+        except Exception:  # the status is a convenience: the sign-in facts of the token below stand on their own
+            status = {}
+    provider = status.get("provider")
     return AccountSecurityOut(
         session_level="aal2" if principal.aal == "aal2" else "aal1",
         asked_at_sign_up=False,
+        second_factor_on=status.get("second_factor_on") if isinstance(status.get("second_factor_on"), bool) else None,
+        provider=provider if provider in ("email", "google", "facebook") else None,
         needed_for=["approvals", "whatsapp_connect", "rules_and_prices", "imports_and_exports", "team_and_privacy"],
     )
 

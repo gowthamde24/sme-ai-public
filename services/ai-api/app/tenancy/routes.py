@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from app.auth.deps import AnyMember, OwnerOrAdmin, PrincipalDep, RuntimeDep
+from app.errors import ApiError
 from app.integrations.routes_policy import record_acceptance
 from app.tenancy.models import (
     AccountSetupIn,
@@ -18,6 +19,7 @@ from app.tenancy.models import (
     TenantDetailOut,
     TenantWithPlanOut,
 )
+from app.workspace.other_type import OTHER_ID, internal_code
 
 router = APIRouter(prefix="/v1", tags=["tenancy"])
 
@@ -55,7 +57,22 @@ def complete_account_setup(
             body.accepted_privacy_version,
             "setup",
         )
-    return runtime.repository.complete_setup(principal.token, body.business_type, body.language)
+    other = body.business_type == OTHER_ID
+    if other != (body.business_label is not None):
+        # "other" needs its words; any other type takes none
+        raise ApiError(
+            422,
+            "validation_error",
+            "The request was not valid.",
+            extra={"fields": ["business_label"]},
+        )
+    result = runtime.repository.complete_setup(
+        principal.token, internal_code(body.business_type), body.language
+    )
+    if other and runtime.workspace is not None:
+        words = {"type": OTHER_ID, "type_label": body.business_label}
+        runtime.workspace.save_business(principal.token, result.tenant_id, words)
+    return result
 
 
 @router.post("/tenants", response_model=TenantDetailOut)

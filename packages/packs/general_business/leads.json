@@ -1,0 +1,213 @@
+{
+  "$schema": "../leads.schema.json",
+  "pack": "general_business",
+  "version": 1,
+  "goal": {
+    "code": "appointment",
+    "label": {
+      "en": "Book a meeting or visit",
+      "te": "Meeting లేదా visit book చేయడం",
+      "hi": "Meeting या visit book कराना",
+      "kn": "Meeting ಅಥವಾ visit book ಮಾಡಿಸುವುದು"
+    },
+    "ask": {
+      "en": "Invite the person to a short meeting, visit or call with the team and fix a day and time."
+    }
+  },
+  "questions": [
+    {
+      "code": "looking_for",
+      "field": "looking_for",
+      "ask": {
+        "en": "What are you looking for?"
+      },
+      "required": true
+    },
+    {
+      "code": "need_by",
+      "field": "need_by",
+      "ask": {
+        "en": "When do you need it?"
+      },
+      "required": false
+    },
+    {
+      "code": "meeting_day",
+      "field": "meeting_day",
+      "ask": {
+        "en": "Which day suits you for a short meeting or call?"
+      },
+      "required": true
+    }
+  ],
+  "objections": [
+    {
+      "code": "price_high",
+      "hears": [
+        "too costly",
+        "price is high"
+      ],
+      "answer": {
+        "en": "I understand. The team can go through the options with you and what each includes. Shall I fix a short meeting?"
+      }
+    },
+    {
+      "code": "compare_other",
+      "hears": [
+        "checking other places",
+        "will compare"
+      ],
+      "answer": {
+        "en": "That is wise. A short conversation costs nothing and you can compare with what you have seen. Shall I fix one?"
+      }
+    },
+    {
+      "code": "no_time",
+      "hears": [
+        "no time",
+        "too busy"
+      ],
+      "answer": {
+        "en": "No problem. Tell me a day and time that suits you and the team will call then."
+      }
+    },
+    {
+      "code": "need_to_ask_family",
+      "hears": [
+        "will ask at home",
+        "need to discuss"
+      ],
+      "answer": {
+        "en": "Of course. Would you like the details on WhatsApp to share with them?"
+      }
+    }
+  ],
+  "followups": [
+    {
+      "when": "no_answer",
+      "after_minutes": 30,
+      "channel": "call",
+      "max_attempts": 3,
+      "message": null
+    },
+    {
+      "when": "no_answer",
+      "after_minutes": 1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Hello, this is Vijaya, the AI assistant of the business. I tried calling about your enquiry. When can I call you?"
+      }
+    },
+    {
+      "when": "interested",
+      "after_minutes": 2,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Thank you for talking to us. Here are the details. Shall we fix a short meeting?"
+      }
+    },
+    {
+      "when": "callback",
+      "after_minutes": 0,
+      "channel": "call",
+      "max_attempts": 2,
+      "message": null
+    },
+    {
+      "when": "booked",
+      "after_minutes": -1440,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "A reminder: your meeting is tomorrow."
+      }
+    },
+    {
+      "when": "booked",
+      "after_minutes": -120,
+      "channel": "whatsapp",
+      "max_attempts": 1,
+      "message": {
+        "en": "Your meeting is in two hours. See you soon."
+      }
+    }
+  ],
+  "outcome_reasons": {
+    "not_interested": [
+      {
+        "code": "price_high",
+        "label": {
+          "en": "Price is higher than expected"
+        }
+      },
+      {
+        "code": "bought_elsewhere",
+        "label": {
+          "en": "Bought from someone else"
+        }
+      },
+      {
+        "code": "no_time",
+        "label": {
+          "en": "Cannot spare the time now"
+        }
+      },
+      {
+        "code": "not_offered",
+        "label": {
+          "en": "What they want is not offered"
+        }
+      },
+      {
+        "code": "just_browsing",
+        "label": {
+          "en": "Just browsing"
+        }
+      },
+      {
+        "code": "not_now",
+        "label": {
+          "en": "Not now, maybe later"
+        }
+      },
+      {
+        "code": "already_decided",
+        "label": {
+          "en": "Already decided elsewhere"
+        }
+      },
+      {
+        "code": "decided_not_to_buy",
+        "label": {
+          "en": "Decided not to buy"
+        }
+      }
+    ],
+    "interested": [
+      {
+        "code": "meeting_booked",
+        "label": {
+          "en": "Meeting booked"
+        }
+      },
+      {
+        "code": "wants_details_on_whatsapp",
+        "label": {
+          "en": "Wants details on WhatsApp first"
+        }
+      },
+      {
+        "code": "wants_quote",
+        "label": {
+          "en": "Wants to hear the price from the team"
+        }
+      }
+    ]
+  },
+  "safety": [
+    "Do not promise results, delivery dates or outcomes the business has not approved.",
+    "Do not quote prices or discounts unless they are in the approved facts."
+  ]
+}

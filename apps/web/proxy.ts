@@ -16,7 +16,20 @@ import { refreshSession } from "@/lib/supabase/proxy-session";
  * Jobs 2 and 3 are optimistic, NOT the security boundary. Server Components and Actions re-authenticate with
  * `requireUser()` (auth.getUser plus the assurance level), and the API re-verifies the JWT and RLS decides data access.
  */
+/** Constant-time comparison of two short strings (the origin-lock secret). */
+function sameSecret(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i += 1) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
+}
+
 export async function proxy(request: NextRequest) {
+  // origin lock (job DT, docs/runbooks/origin-lock.md): when ORIGIN_LOCK_SECRET is set, only requests that came through our Cloudflare Worker (which adds it) are answered; unset = no lock
+  const lock = process.env.ORIGIN_LOCK_SECRET;
+  if (lock && !sameSecret(request.headers.get("x-stack19-origin") ?? "", lock)) {
+    return new NextResponse("Not allowed", { status: 403, headers: { "Cache-Control": "no-store" } });
+  }
   const nonce = newNonce();
   const csp = buildCsp(nonce, process.env.NODE_ENV === "development", storageOrigin(process.env.NEXT_PUBLIC_SUPABASE_URL), turnstileSiteKey() !== null);
   // Next.js reads the nonce from the REQUEST's policy header while it renders.

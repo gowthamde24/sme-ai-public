@@ -176,6 +176,8 @@ select is(
         'app.catalogue_item_json',  -- the two helpers the SECURITY INVOKER reads below call: one formats a row the caller may already read, the other only raises
         'app.catalogue_error',
         'app.catalogue_bucket_tenant',  -- evaluated by the storage rules as the signed-in caller
+        'app.images_bucket_tenant',  -- job DT: the same for the business's images bucket (logo, members' pictures)
+        'app.my_second_factor_on',  -- job DT: the client-write trigger (security invoker) asks it; it answers for the caller only
         'public.catalogue_ensure_bucket',
         'public.catalogue_item_save',
         'public.catalogue_photo_add',
@@ -291,6 +293,10 @@ select is(
         -- job BY (ADR 0077): the team, the shop's basics, the weekly report, the feed and web-push. Role first in every one; the worker's three (push_worker_*) accept only the registered scheduler account
         'public.create_invitation', 'public.accept_invitation', 'public.revoke_invitation', 'public.list_invitations', 'public.change_member_role', 'public.remove_member', 'public.team_members',
         'public.workspace_profile_get', 'public.workspace_profile_save', 'public.weekly_report',
+        -- job DT (ADR 0115): the business profile, the members' own profiles and the sign-in status
+        'public.workspace_business_get', 'public.workspace_business_set', 'public.workspace_images_ensure_bucket', 'public.workspace_logo_set', 'public.my_profile_get', 'public.my_profile_set', 'public.people_profiles', 'public.account_security_get',
+        -- job DT (ADR 0116): the opening line and the AI-mention switch
+        'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
         'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
         'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report',
         -- job BP (ADR 0078): the web research tools' daily limit, usage read and query check. Each proves the run (or the role) first
@@ -401,6 +407,10 @@ select is(
                      -- job BY (ADR 0077): the team, the shop's basics, the weekly report, the feed and web-push. Role first in every one; the worker's three (push_worker_*) accept only the registered scheduler account
                      'public.create_invitation', 'public.accept_invitation', 'public.revoke_invitation', 'public.list_invitations', 'public.change_member_role', 'public.remove_member', 'public.team_members',
                      'public.workspace_profile_get', 'public.workspace_profile_save', 'public.weekly_report',
+                     -- job DT (ADR 0115): the business profile, the members' own profiles and the sign-in status
+                     'public.workspace_business_get', 'public.workspace_business_set', 'public.workspace_images_ensure_bucket', 'public.workspace_logo_set', 'public.my_profile_get', 'public.my_profile_set', 'public.people_profiles', 'public.account_security_get',
+                     -- job DT (ADR 0116): the opening line and the AI-mention switch
+                     'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
                      'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
                      'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report',
                      'public.web_quota_take', 'public.web_usage_today', 'public.web_query_check',

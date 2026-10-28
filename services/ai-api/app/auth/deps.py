@@ -14,6 +14,7 @@ from app.agent_runs.wiring import AgentsRuntime
 from app.assistant_settings.service import AssistantSettingsService
 from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.billing import gate
+from app.billing.mail import EmailSender
 from app.billing.service import BillingService
 from app.businessprofile.repository import BusinessProfileRepository
 from app.callsettings.service import CallSettingsService
@@ -117,6 +118,8 @@ class Runtime:
     research_usage: ResearchUsageRepository | None = None
     connectors: Connectors | None = None
     business_profile: BusinessProfileRepository | None = None
+    # job DT (ADR 0115): sends the notices that follow a sensitive privacy action (None = none)
+    mail_sender: EmailSender | None = None
     # job CK: packs and modules (the database), the sign-up cards (the files), custom fields,
     # and which sign-up providers are on
     packs: PacksRepository | None = None
@@ -199,12 +202,26 @@ def get_principal(request: Request, runtime: RuntimeDep) -> Principal:
 # ONE place (app/billing/gate.py); this dependency is the only door to a tenant's address
 
 
+def _second_factor_on(runtime: Runtime, principal: Principal) -> bool:
+    """Did the person turn the authenticator on? Only a sensitive action on a session that has not
+    entered a code asks the database; if it cannot be asked the answer is yes (fail closed)."""
+    if runtime.workspace is None:
+        return True
+    try:
+        status = runtime.workspace.account_security(principal.token)
+        return status.get("second_factor_on") is not False
+    except Exception:
+        logger.warning("second factor status unavailable: asking for the code")
+        return True
+
+
 def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., TenantContext]:
     """Dependency factory. No roles given = any member of the tenant.
 
-    `strong=True` (ADR 0016): an Owner or Admin must also hold an aal2 session (a second factor was
-    entered). It is checked AFTER the role, so a caller who may not do the action at all gets the
-    plain 403 and nothing about their session level. Sales and Viewers are never asked.
+    `strong=True` (ADR 0016, changed by ADR 0115): an Owner or Admin who turned the authenticator
+    on must have entered the code in this session (aal2); one who did not is never asked. It is
+    checked AFTER the role, so a caller who may not do the action at all gets the plain 403 and
+    nothing about their session level. Sales and Viewers are never asked.
 
     Unknown, malformed and foreign tenant ids all give the same 404, so a caller cannot probe for
     existence. A member whose role is too low gets 403: they already know the tenant exists.
@@ -232,7 +249,10 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             # waiting for WhatsApp holds the sends, AI and calls. "full" while the switch is off.
             runtime.billing.ensure(principal.token, parsed, kind)
         if strong and membership.role in (Role.OWNER, Role.ADMIN) and principal.aal != "aal2":
-            raise mfa_required()
+            # ADR 0115: the authenticator is optional. A person who turned it on enters the code
+            # once per sign-in session; this session has not: ask. (Nobody else is ever asked.)
+            if _second_factor_on(runtime, principal):
+                raise mfa_required("second_factor")
         if runtime.policy_gate is not None:
             # job BN: a changed terms or privacy version must be accepted first (POLICY_ENFORCE)
             user = str(principal.user_id)

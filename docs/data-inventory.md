@@ -93,6 +93,13 @@ State on 2026-10-12: everything runs on a developer machine with invented data; 
 
 What reaches a model: the owner's question and the records the tools return (company names, message text, amounts). v1 passes **no contact fields** (names, phones, e-mails) by design (ADR 0013 d.11), but company names and free text can contain personal data (checklist: DPDP/cross-border review before any real data reaches a prompt).
 
+## 4b. Job DT (28 Oct 2026): first-run profile, pictures and the opening line
+| Table / place | Holds | Who reads | How erased |
+|---|---|---|---|
+| `workspace.member_profiles` | a member's display name, language and the path of their own picture (the Google photo address is read from the sign-in, never stored) | the member and, for the team list, every member of the same workspace (`public.people_profiles`) | cascades when the membership is removed; the picture file is deleted by the API at the same time as it is replaced or removed. **Gap:** a tenant-wide erasure does not yet sweep this table or the `img-<tenant>` bucket (list under open items) |
+| storage bucket `img-<tenant>` (`logo/…`, `member/<user>/…`) | the business logo and members' pictures (re-encoded JPEG, no metadata) | every member (signed URL, 10 minutes) | removed by the API on replace/remove; same tenant-erasure gap as above |
+| `workspace.opening_lines`, `workspace.opening_settings` | the Owner's opening line per language/campaign and the "mention AI" switch (no personal data of customers; the line holds placeholders only) | every member reads, the Owner writes | with the workspace; every change of the switch is in the audit log |
+
 ## 5. How deletion works (existing functions)
 * `request_erasure` (Owner/Admin) -> `execute_erasure` (Owner; dry run available) -> `cancel_erasure`. Scopes: `contact`, `company`, `tenant` (24 h cancel window). Web: Settings, Privacy (`apps/web/app/app/tenants/[tenantId]/privacy`). Rows are anonymised in place (NULL / `erased:1` / `erased-1`), never deleted; exact e-mail and phone are swept out of every registered free-text column; names are matched by whole-field equality only and the rest goes to a "needs manual review" list (ids only). The consent ledger's structure, suppression keys, labels, counts and the erasure log stay.
 * Limits stated to the user: downloaded exports; backups for 7 days; a name inside free text; non-ASCII numerals in phone numbers are not swept.

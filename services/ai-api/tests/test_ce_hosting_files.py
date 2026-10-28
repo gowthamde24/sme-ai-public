@@ -59,7 +59,8 @@ def test_every_variable_the_web_reads_at_build_or_run_time_is_in_the_list() -> N
     web = doc_rows("## The web (Cloud Run or Vercel)")
     assert names - {"UPDATE_GOLDEN"} <= set(web), sorted(names - set(web))
     assert set(web) - names <= {"PUBLIC_LAUNCH_REQUIRES_REVIEWED", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "TZ"}  # read by a build script, by name in a loop, and the optional zone
-    assert all(kind == "plain" for kind in web.values()), "the web has no server secret"
+    # the one exception (job DT, origin lock): the shared secret that proves a request came through our Worker
+    assert all(kind == "plain" for name, kind in web.items() if name != "ORIGIN_LOCK_SECRET"), "the web has no server secret but the origin lock's"
 
 
 def test_the_list_holds_no_value_that_looks_like_a_key() -> None:
