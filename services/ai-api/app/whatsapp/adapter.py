@@ -2,6 +2,7 @@
 
 What it does with one claimed message (the database has already decided that it may go: policy, blocks, quiet hours, kill switches):
   * no active number for the business, or no token for it           -> failed `not_configured`
+  * the number is not on the test allow-list (WHATSAPP_ALLOWED_RECIPIENTS, set on staging)     -> failed `rejected`, nothing leaves
   * the customer's 24-hour window is OPEN                           -> photos first (each an `image` message from its signed URL; the text is the first photo's caption when it fits 1,024
                                                                        characters), else one `text` message
   * the window is CLOSED (Meta allows only an approved template)    -> the approved template the database named (the message text is its one variable); no template -> failed
@@ -35,6 +36,13 @@ _SPACES = re.compile(r"\s+")
 _RATE_CODES = {130429, 131056, 80007, 131048}
 _UNREACHABLE_CODES = {131026}
 _TOKEN_CODES = {190, 10}
+
+
+def allow_list(raw: str | None) -> frozenset[str] | None:
+    """WHATSAPP_ALLOWED_RECIPIENTS (separated by ; or ,) as a set of digit strings; None (unset) means no fence, an empty string means a fence that lets nothing through."""
+    if raw is None:
+        return None
+    return frozenset(d for d in ("".join(ch for ch in part if ch.isdigit()) for part in re.split(r"[;,]", raw)) if d)
 
 
 def template_param(text: str) -> str | None:
@@ -88,9 +96,10 @@ def failure_of(result: GraphResult) -> SendResult:
 class WhatsAppCloudAdapter:
     name = "whatsapp"
 
-    def __init__(self, graph: GraphClient, tokens: TokenResolver) -> None:
+    def __init__(self, graph: GraphClient, tokens: TokenResolver, allowed: frozenset[str] | None = None) -> None:
         self._graph = graph
         self._tokens = tokens
+        self._allowed = allowed   # None: no fence. A set (maybe empty): the only numbers (digits) a message may go to
 
     def send(self, message: OutgoingMessage) -> SendResult:
         ctx = message.wa
@@ -100,7 +109,11 @@ class WhatsAppCloudAdapter:
         if token is None:
             logger.error("whatsapp: no token for a business's token reference")
             return SendResult(False, None, "not_configured")
-        to = "+" + "".join(ch for ch in message.to_phone if ch.isdigit())
+        digits = "".join(ch for ch in message.to_phone if ch.isdigit())
+        if self._allowed is not None and digits not in self._allowed:
+            logger.warning("whatsapp: a message to a number outside the test allow-list was not sent")
+            return SendResult(False, None, "rejected")
+        to = "+" + digits
         callback = str(message.message_id)
         if ctx.window_open:
             return self._within_window(message, ctx.phone_number_id, token, to, callback)

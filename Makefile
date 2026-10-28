@@ -1,4 +1,4 @@
-.PHONY: test-integration-run eval-run e2e-new-owner seed-demo-school docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: test-integration-run eval-run e2e-new-owner seed-demo-school docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-whatsapp staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -430,6 +430,10 @@ rollback-staging:
 staging-latest:
 	@test -n "$(SERVICE)" || { echo "usage: make staging-latest SERVICE=sme-api|sme-web"; exit 2; }
 	./deploy/staging.sh latest $(SERVICE)
+# make staging-whatsapp WA_NUMBER=91XXXXXXXXXX [WA_ARGS="--send --template"]   job DU: link the Meta test number to a demo workspace, post a SIGNED synthetic webhook, check the Lead Desk, optionally send ONE reply to that number (docs/runbooks/whatsapp-staging.md)
+staging-whatsapp:
+	python3 scripts/staging_whatsapp.py --i-know-this-is-staging --project-ref $(STAGING_REF) --api-url $(STAGING_API) --number $(WA_NUMBER) $(WA_ARGS)
+
 staging-smoke:
 	$(PY)/python scripts/hosted_smoke.py --web "$(STAGING_WEB)" --api "$(STAGING_API)"
 	python3 scripts/staging_smoke_api.py --i-know-this-is-staging --project-ref $(STAGING_REF) --api-url $(STAGING_API)

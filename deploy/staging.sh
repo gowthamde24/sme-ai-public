@@ -70,11 +70,22 @@ dirty=""; git diff --quiet HEAD -- . 2>/dev/null || dirty="-dirty$(date +%H%M%S)
 export TAG="${TAG:-$(git rev-parse --short HEAD)$dirty}"   # TAG=<tag> names the tag to build and deploy
 
 if [ "$what" = "api" ] || [ "$what" = "all" ]; then
+  # WhatsApp Cloud API (job DU, docs/runbooks/whatsapp-staging.md). Ids are not secrets; the token and the app secret are read by Cloud Run from Secret Manager (sme-api-run needs secretAccessor on them).
+  # The webhook verify token and the channel account (the API's sign-in for handing a webhook to the database) are mounted only once their secrets exist, so a deploy never fails on a missing one.
+  # WHATSAPP_ALLOWED_RECIPIENTS is the TEST FENCE: only these numbers (digits, separated by ; because gcloud splits env values on commas) can receive a message. Left empty, NOTHING is sent. The worker's automatic sending stays on the fake adapter.
+  WHATSAPP_PHONE_NUMBER_ID="${WHATSAPP_PHONE_NUMBER_ID:-1329673453571780}" WHATSAPP_WABA_ID="${WHATSAPP_WABA_ID:-1421890996429034}"
+  WHATSAPP_ALLOWED_RECIPIENTS="${WHATSAPP_ALLOWED_RECIPIENTS-}"
+  WA_ENV="OUTBOX_ADAPTER=whatsapp,WHATSAPP_PHONE_NUMBER_ID=$WHATSAPP_PHONE_NUMBER_ID,WHATSAPP_WABA_ID=$WHATSAPP_WABA_ID,WHATSAPP_GRAPH_VERSION=v25.0,WHATSAPP_ALLOWED_RECIPIENTS=$WHATSAPP_ALLOWED_RECIPIENTS"
+  WA_SECRETS="WHATSAPP_ACCESS_TOKEN=sme-whatsapp-token:latest,WHATSAPP_APP_SECRET=sme-whatsapp-app-secret:latest"
+  if gcloud secrets describe sme-whatsapp-verify-token --project "$PROJECT_ID" >/dev/null 2>&1; then WA_SECRETS="$WA_SECRETS,WHATSAPP_VERIFY_TOKEN=sme-whatsapp-verify-token:latest"; fi
+  if gcloud secrets describe sme-channel-agent-password --project "$PROJECT_ID" >/dev/null 2>&1; then
+    WA_SECRETS="$WA_SECRETS,CHANNEL_AGENT_PASSWORD=sme-channel-agent-password:latest"; WA_ENV="$WA_ENV,CHANNEL_AGENT_EMAIL=${CHANNEL_AGENT_EMAIL:-channel-agent@demo.example.test}"
+  fi
   # AI: Anthropic's cheapest model, the key from Secret Manager, a low spend (prices in millionths of a rupee per million tokens at 90 rupees to the dollar: Haiku 5.5 is $0.10 in, $0.50 out per million).
   # CPU is allocated while an instance is up (the agents run in threads) but min-instances 0 means no fixed cost: it scales to zero when idle.
   RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=0 \
-    EXTRA_ENV="TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam" \
-    EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest" \
+    EXTRA_ENV="$WA_ENV,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam" \
+    EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,$WA_SECRETS" \
     ./deploy/cloudrun.sh api $execute
 fi
 if [ "$what" = "web" ] || [ "$what" = "all" ]; then
