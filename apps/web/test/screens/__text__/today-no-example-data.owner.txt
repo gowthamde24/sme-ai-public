@@ -13,16 +13,16 @@ form:
 [Continue](/app/security)
 Tuesday, 6 October
 # Good morning
-Vijaya this week 88% left
-{role=meter label="Vijaya usage this week: 88% left"}
-[88 %](/app/tenants/22222222-2222-2222-2222-222222222222/settings label="Vijaya usage this week: 88% left")
+Your assistant this week 88% left
+{role=meter label="Your assistant usage this week: 88% left"}
+[88 %](/app/tenants/22222222-2222-2222-2222-222222222222/settings label="Your assistant usage this week: 88% left")
 [button type=button: Help for this screen]
 {role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
 {label="6 things need you. The rest is handled."}
-{role=img label="Vijaya, Resting"}
-Resting Resting Resting Vijaya
+{role=img label="Your assistant, Resting"}
+Resting Resting Resting Your assistant
 ## 6 things need you. The rest is handled.
-Overnight on WhatsApp: 3 sent, 1 held for your OK. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Vijaya answers in writing, and out loud if you turn voice on.
+Overnight on WhatsApp: 3 sent, 1 held for your OK. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Your assistant answers in writing, and out loud if you turn voice on.
 {label="Needs you"}
 ## Needs you
 6 6 waiting for you
@@ -77,8 +77,8 @@ When
 3h
 [Check the quote](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) [Open](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) Nothing is sent, approved or recorded by opening this.
 -
-{label="Vijaya proposed a visit for Priya S. · Hyderabad"} Visit · needs your OK 9:00
-### Vijaya proposed a visit for Priya S. · Hyderabad
+{label="Your assistant proposed a visit for Priya S. · Hyderabad"} Visit · needs your OK 9:00
+### Your assistant proposed a visit for Priya S. · Hyderabad
 When
 Thu, 8 Oct, 11:00
 People

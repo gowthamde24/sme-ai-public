@@ -158,7 +158,7 @@ describe("getConversation", () => {
 });
 
 
-describe("a visit Vijaya proposed (job AS)", () => {
+describe("a visit your assistant proposed (job AS)", () => {
   const VISIT = "0d6a0000-0000-4000-8000-000000000001";
   it("is a draft card of kind store_visit with a store_visit target, and a source of that kind", () => {
     const card = parseDraftCard({ id: VISIT, kind: "store_visit", status: "draft", title: "Proposed visit on 2026-10-14 at 11:30", summary: "A store visit I proposed.", target: { type: "store_visit", id: VISIT }, language: null, gloss_en: null, machine_draft: false });

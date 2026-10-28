@@ -114,7 +114,7 @@ describe("'Do it' in the Ask box (night 4, tasks)", () => {
     await doMode();
     expect(screen.queryByRole("button", { name: "What needs me today?" })).toBeNull();
     expect(screen.getByRole("button", { name: "Do it", pressed: true })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Tell Vijaya what to do")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Tell your assistant what to do")).toBeInTheDocument();
     expect(actions.templates).toHaveBeenCalledTimes(1);
     fireEvent.click(screen.getByRole("button", { name: "Supplier price enquiry" }));
     expect((document.getElementById("ask-input") as HTMLInputElement).value).toMatch(/cement suppliers/);
@@ -158,11 +158,11 @@ describe("'Do it' in the Ask box (night 4, tasks)", () => {
     expect(actions.report).toHaveBeenCalledWith(ID);
   });
   it("asks the ONE question and plans again from the answer", async () => {
-    const actions = fakeActions({ plan: vi.fn(() => Promise.resolve({ ok: true as const, task: task({ status: "needs_answer", plan: null, estimate: null, cap_paise: null, plan_sha256: null, question: "Who should Vijaya contact?" }) })) });
+    const actions = fakeActions({ plan: vi.fn(() => Promise.resolve({ ok: true as const, task: task({ status: "needs_answer", plan: null, estimate: null, cap_paise: null, plan_sha256: null, question: "Who should your assistant contact?" }) })) });
     render(harness(options(actions)));
     await doMode();
     await send("do something nice");
-    expect(await screen.findByText("Who should Vijaya contact?")).toBeInTheDocument();
+    expect(await screen.findByText("Who should your assistant contact?")).toBeInTheDocument();
     fireEvent.change(document.querySelector("[data-task-state=needs_answer] input") as HTMLInputElement, { target: { value: "my suppliers" } });
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Answer" })));
     expect(actions.answer).toHaveBeenCalledWith(ID, "my suppliers");
@@ -191,7 +191,7 @@ describe("'Do it' in the Ask box (night 4, tasks)", () => {
     await screen.findByRole("button", { name: "Approve all (12)" });
     nav.pathname = `${BASE}/leads`;
     rerender(harness(options(actions)));
-    fireEvent.click(await screen.findByRole("button", { name: /^Ask Vijaya/ }));
+    fireEvent.click(await screen.findByRole("button", { name: /^Ask your assistant/ }));
     const panel = await screen.findByRole("dialog");
     expect(await within(panel).findByRole("button", { name: "Approve all (12)" })).toBeInTheDocument();
     expect(actions.plan).toHaveBeenCalledTimes(1);

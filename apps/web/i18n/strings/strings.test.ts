@@ -28,7 +28,7 @@ describe("string store: four languages", () => {
     });
     it(`${name}: the other languages use their own script`, () => {
       const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.|ld\.src\.(indiamart|justdial)$|v3\.(day\.\d\.time)$)/; // intentionally Latin or numeric (role.main.t is the product name "Vijaya"; IndiaMART and JustDial are other companies' names)
+      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.|ld\.src\.(indiamart|justdial)$|v3\.(day\.\d\.time)$)/; // intentionally Latin or numeric (role.main.t is the product name "Your assistant"; IndiaMART and JustDial are other companies' names)
       for (const lang of ["te", "hi", "kn"] as const) {
         const missing = keys.filter((k) => !exempt.test(k) && !script[lang].test(dicts[lang][k]));
         expect(missing, `${name}:${lang}`).toEqual([]);
@@ -59,7 +59,7 @@ describe("honesty: no claims we cannot prove today", () => {
   it("no public page names a trial length or a price (owner, 28 Oct: pricing is undecided): no '14 days', no 'free trial', no 'Most popular', no rupee amount, no assistant name", () => {
     const hits = Object.entries(en).filter(([k, v]) => !/^(ld\.src\.|legal\.)/.test(k) && /\b\d+[- ]days?\b.*\btrial|\btrial\b|free trial|most popular|₹\s?\d|\bRs\.? ?\d/i.test(v)).map(([k]) => k);
     expect(hits).toEqual([]);
-    expect(Object.entries(en).filter(([, v]) => /\bVijaya\b|\bTara\b/.test(v))).toEqual([]);
+    expect(Object.entries(en).filter(([, v]) => /\byour assistant\b|\bTara\b/.test(v))).toEqual([]);
   });
   it("the English home copy says what it must: the owner approves money and campaigns, and AI calls in the hero example are early access (and nothing else is)", () => {
     expect(en["hm.ctl.d"]).toMatch(/money reminders and discounts wait for your approval/);

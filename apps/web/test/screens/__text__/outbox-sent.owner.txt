@@ -1,5 +1,5 @@
 # Outbox
-Every WhatsApp message the shop makes, and what happened to it. Vijaya last checked 2 min ago · next check 10:01
+Every WhatsApp message the shop makes, and what happened to it. Your assistant last checked 2 min ago · next check 10:01
 [button type=button: Help for this screen]
 Automatic sending is off for this business: new messages wait for you to approve them. Messages you approve still go out. [Change it in Settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent)
 {label="Outbox"} [Waiting for you 1 1 waiting for you](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=waiting) [Scheduled 1 1 scheduled](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=scheduled) [Sent 1 1 sent](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent current=page) [Blocked 1 1 blocked or failed](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=blocked)
@@ -15,4 +15,4 @@ To
 [Today](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent&from=2026-10-06&to=2026-10-06) [Last 7 days](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent&from=2026-09-30&to=2026-10-06)
 {role=status}
 -
-[button type=button: Sent by Vijaya on its ownWhatsAppEnglish7:30DEMO Lakshmi Textiles · DemovilleYes, we have silk sarees in stock. We are open from 10 am to 8 pm.]
+[button type=button: Sent by your assistant on its ownWhatsAppEnglish7:30DEMO Lakshmi Textiles · DemovilleYes, we have silk sarees in stock. We are open from 10 am to 8 pm.]

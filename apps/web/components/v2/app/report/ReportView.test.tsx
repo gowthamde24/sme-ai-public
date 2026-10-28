@@ -25,7 +25,7 @@ describe("This week", () => {
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(screen.getByRole("heading", { level: 1, name: "This week" })).toBeInTheDocument();
     expect(screen.getByText(/Mon, 12 Oct to Sun, 18 Oct/)).toBeInTheDocument();
-    for (const name of ["Store visits", "WhatsApp messages", "How fast you say OK", "Sarees sent most", "Vijaya this week"]) expect(section(name)).toBeInTheDocument();
+    for (const name of ["Store visits", "WhatsApp messages", "How fast you say OK", "Sarees sent most", "This week with your assistant"]) expect(section(name)).toBeInTheDocument();
   });
   it("writes every visit number in words beside its bar, not by length alone", () => {
     view(full);
@@ -69,8 +69,8 @@ describe("This week", () => {
   });
   it("shows the AI use as a percentage with a meter", () => {
     view(full);
-    expect(screen.getByRole("meter", { name: "Vijaya usage this week: 42% used" })).toHaveAttribute("aria-valuenow", "42");
-    expect(section("Vijaya this week")).toHaveTextContent("42% used");
+    expect(screen.getByRole("meter", { name: "Usage this week, with your assistant: 42% used" })).toHaveAttribute("aria-valuenow", "42");
+    expect(section("This week with your assistant")).toHaveTextContent("42% used");
   });
   it("shows an empty week with the owl and words, never a made-up number", () => {
     view({ ...full, visits: { booked: 0, arrived: 0, bought: 0, noShow: 0, cancelled: 0, perDay: [0, 0, 0, 0, 0, 0, 0], capped: false }, messages: { sent: 0, waiting: 0, blocked: 0 }, approval: null, sarees: { top: [], unmatched: 0, withPhotos: 0, capped: false } });

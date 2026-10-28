@@ -34,38 +34,38 @@ describe("the assistant is switched off (first run): the line is where it will b
     render(harness(turnOn));
     const off = document.querySelector('[data-ask="off"]') as HTMLElement;
     expect(off).toHaveAttribute("data-ask-where", "card");
-    expect(within(off).getByText("Vijaya is switched off for your workspace. Turn it on and you can type or speak here.")).toBeInTheDocument();
+    expect(within(off).getByText("Your assistant is switched off for your workspace. Turn it on and you can type or speak here.")).toBeInTheDocument();
     expect(off.querySelector("input, textarea")).toBeNull(); // nothing to type into until it is on: no field that takes words and loses them
     expect(within(off).queryByRole("alert")).toBeNull();
-    fireEvent.click(within(off).getByRole("button", { name: "Turn on Vijaya" }));
+    fireEvent.click(within(off).getByRole("button", { name: "Turn on your assistant" }));
     await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
     expect(turnOn).toHaveBeenCalledTimes(1);
   });
   it("says so when the workspace's switch is on but the system's is off, and when it could not be turned on; nothing is refreshed", async () => {
     render(harness(async () => ({ ok: true, live: false })));
-    fireEvent.click(screen.getByRole("button", { name: "Turn on Vijaya" }));
+    fireEvent.click(screen.getByRole("button", { name: "Turn on your assistant" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("switched off for the whole system right now");
     cleanup();
     render(harness(async () => ({ ok: false })));
-    fireEvent.click(screen.getByRole("button", { name: "Turn on Vijaya" }));
+    fireEvent.click(screen.getByRole("button", { name: "Turn on your assistant" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("Could not turn it on. Try again.");
     expect(refresh).not.toHaveBeenCalled();
   });
   it("someone who may not turn it on is told whom to ask and has no button", () => {
     render(harness(null));
-    expect(screen.queryByRole("button", { name: "Turn on Vijaya" })).toBeNull();
-    expect(screen.getByText("Only the Owner or an Admin can turn Vijaya on. Ask them to do it.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Turn on your assistant" })).toBeNull();
+    expect(screen.getByText("Only the Owner or an Admin can turn your assistant on. Ask them to do it.")).toBeInTheDocument();
   });
   it("a screen other than Today has the orb, which opens a dialog with the same line and button; Esc returns to the orb", async () => {
     nav.pathname = `${BASE}/leads`;
     const turnOn = vi.fn<TurnOn>(async () => ({ ok: true, live: true }));
     render(harness(turnOn));
-    const orb = await screen.findByRole("button", { name: "Ask Vijaya" }); // the orb is a chunk of its own
+    const orb = await screen.findByRole("button", { name: "Ask your assistant" }); // the orb is a chunk of its own
     expect(orb).toHaveAttribute("data-ask-off", "true");
     fireEvent.click(orb);
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByText(/Vijaya is switched off for your workspace/)).toBeInTheDocument();
-    await act(async () => void fireEvent.click(within(dialog).getByRole("button", { name: "Turn on Vijaya" })));
+    expect(within(dialog).getByText(/Your assistant is switched off for your workspace/)).toBeInTheDocument();
+    await act(async () => void fireEvent.click(within(dialog).getByRole("button", { name: "Turn on your assistant" })));
     expect(turnOn).toHaveBeenCalledTimes(1);
     fireEvent.keyDown(dialog.parentElement!, { key: "Escape" });
     expect(screen.queryByRole("dialog")).toBeNull();
@@ -73,7 +73,7 @@ describe("the assistant is switched off (first run): the line is where it will b
   it("a system that has no assistant at all (not available) draws neither the line nor the orb", () => {
     nav.pathname = `${BASE}/leads`;
     render(harness(null, "not_available"));
-    expect(screen.queryByRole("button", { name: "Ask Vijaya" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull();
     nav.pathname = BASE;
     cleanup();
     render(harness(null, "not_available"));

@@ -7,7 +7,7 @@ const q = (s: string) => readSampleQuery(new URLSearchParams(s));
 
 describe("the voice-sample query (job DQ part 3)", () => {
   it("accepts closed words and the assistant's name, in every call language including Tamil and Malayalam", () => {
-    expect(q("voice=female_warm&lang=ta&tone=warm&name=Vijaya")).toEqual({ voice: "female_warm", lang: "ta", tone: "warm", name: "Vijaya" });
+    expect(q("voice=female_warm&lang=ta&tone=warm&name=your assistant")).toEqual({ voice: "female_warm", lang: "ta", tone: "warm", name: "your assistant" });
     expect(q("voice=male_calm&lang=ml&tone=crisp")).toEqual({ voice: "male_calm", lang: "ml", tone: "crisp", name: "" });
   });
   it("refuses anything else: an unknown word, the owner's own voice (no sample), a name with symbols or too long", () => {

@@ -20,9 +20,9 @@ Spent
 caption: Result for each person
 table:
   | th Name | th Phone | th Outcome | th What was noted | th Message | th Transcript |
-  | th Sri Venkateswara Traders | …3210 | Interested | - price per bag : ₹395 / - delivery day : Thursday |  | summary: Transcript (simulated) / - Vijaya : Hello, I am Vijaya, an AI assistant calling for the shop. What is your price per bag today? / - Customer : It is 395 rupees a bag. / Simulated: no real call was made. |
+  | th Sri Venkateswara Traders | …3210 | Interested | - price per bag : ₹395 / - delivery day : Thursday |  | summary: Transcript (simulated) / - Your assistant : Hello, I am Vijaya, an AI assistant calling for the shop. What is your price per bag today? / - Customer : It is 395 rupees a bag. / Simulated: no real call was made. |
   | th Lakshmi Cement Depot | …3210 | No answer | Nothing |  | No transcript |
-  | th Balaji Building Supplies | …3210 | Said no Not interested | Nothing |  | summary: Transcript (simulated) / - Vijaya : Hello, I am Vijaya, an AI assistant calling for the shop. What is your price per bag today? / - Customer : It is 395 rupees a bag. / Simulated: no real call was made. |
+  | th Balaji Building Supplies | …3210 | Said no Not interested | Nothing |  | summary: Transcript (simulated) / - Your assistant : Hello, I am Vijaya, an AI assistant calling for the shop. What is your price per bag today? / - Customer : It is 395 rupees a bag. / Simulated: no real call was made. |
 summary: Show the plan
 {label="Plan: Supplier price enquiry"}
 ### Plan: Supplier price enquiry
@@ -41,7 +41,7 @@ Goal
 Ask each supplier today's price per bag and the delivery day.
 How
 Phone calls
-What Vijaya asks
+What your assistant asks
 - What is your price per bag today?
 - Which day can you deliver?
 When

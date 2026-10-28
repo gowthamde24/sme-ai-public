@@ -8,5 +8,5 @@ Six short steps. You can skip any step and come back later. Step 2 of 6
 - [5 . Test call](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=5)
 - [6 . Go live](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=6)
 ## Your kind of business
-Vijaya starts with a set of questions and follow-ups made for this kind of business. Auto dealer Cars and bikes: book a test drive. The goal of each call: Book a test drive when they are ready. 4 questions to start with You can change the goal and the questions in the next step. [Next step](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=3)
+Your assistant starts with a set of questions and follow-ups made for this kind of business. Auto dealer Cars and bikes: book a test drive. The goal of each call: Book a test drive when they are ready. 4 questions to start with You can change the goal and the questions in the next step. [Next step](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=3)
 {label="Setup steps"} [Back](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=1) [Skip this step](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=3) Nothing here is required.

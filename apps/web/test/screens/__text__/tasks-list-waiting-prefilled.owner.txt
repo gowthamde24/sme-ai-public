@@ -1,8 +1,8 @@
-# Ask Vijaya to do it
+# Ask your assistant to do it
 Say what you want done, in your own words. You see a plan first. Nothing is called or sent until you approve.
 form:
-What should Vijaya do?
-<textarea label="What should Vijaya do?" placeholder="For example: call my cement suppliers and ask today's price per bag" maxlength=1500 value="Call my cement suppliers">
+What should your assistant do?
+<textarea label="What should your assistant do?" placeholder="For example: call my cement suppliers and ask today's price per bag" maxlength=1500 value="Call my cement suppliers">
 Ready-made tasks
 -
 [button type=button: Call new leads]

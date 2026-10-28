@@ -4,8 +4,8 @@ Call my cement suppliers, ask the price per bag and the delivery day, and tell m
 ## Nobody found yet
 Nobody in your contacts fits this yet. Say who, or give a list.
 - Nobody in your contacts fits this yet. Say who, or give a list.
-What should Vijaya do?
-<textarea label="What should Vijaya do?" maxlength=1500 value="Call my cement suppliers, ask the price per bag and the delivery day, and tell me the cheapest.">
+What should your assistant do?
+<textarea label="What should your assistant do?" maxlength=1500 value="Call my cement suppliers, ask the price per bag and the delivery day, and tell me the cheapest.">
 Or give a list (optional)
 <textarea label="Or give a list (optional)">
 One person per line: name, phone number. Only people already in your contacts are used.

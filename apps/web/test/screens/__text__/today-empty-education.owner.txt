@@ -7,26 +7,26 @@
 -
 [button type=button: Add your first sareeTo do]
 -
-[button type=button: See what Vijaya doesTo do]
+[button type=button: See what your assistant doesTo do]
 [button type=button: Continue setup]
 Tuesday, 6 October
 # Good morning
-Vijaya this week 88% left
-{role=meter label="Vijaya usage this week: 88% left"}
-[88 %](/app/tenants/22222222-2222-2222-2222-222222222222/settings label="Vijaya usage this week: 88% left")
+Your assistant this week 88% left
+{role=meter label="Your assistant usage this week: 88% left"}
+[88 %](/app/tenants/22222222-2222-2222-2222-222222222222/settings label="Your assistant usage this week: 88% left")
 [button type=button: Help for this screen]
 {role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
 {label="1 thing needs you. The rest is handled."}
-{role=img label="Vijaya, Resting"}
-Resting Resting Resting Vijaya
+{role=img label="Your assistant, Resting"}
+Resting Resting Resting Your assistant
 ## 1 thing needs you. The rest is handled.
-Overnight on WhatsApp: 3 sent, 1 held for your OK. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Vijaya answers in writing, and out loud if you turn voice on.
+Overnight on WhatsApp: 3 sent, 1 held for your OK. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Your assistant answers in writing, and out loud if you turn voice on.
 {label="Needs you"}
 ## Needs you
 1 1 waiting for you Messages about money, promises or complaints, and calls, always wait for you.
 -
-{label="Vijaya proposed a visit for Priya S. · Hyderabad"} Visit · needs your OK 9:00
-### Vijaya proposed a visit for Priya S. · Hyderabad
+{label="Your assistant proposed a visit for Priya S. · Hyderabad"} Visit · needs your OK 9:00
+### Your assistant proposed a visit for Priya S. · Hyderabad
 When
 Thu, 8 Oct, 11:00
 People

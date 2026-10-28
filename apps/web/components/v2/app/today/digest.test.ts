@@ -10,7 +10,7 @@ const msg = (over: Record<string, unknown>) => parseOutboxMessage({ ...SENT_JSON
 const sent = (category: string, minutesAgo: number, over: Record<string, unknown> = {}) => msg({ id: crypto.randomUUID(), category, sent_at: new Date(NOW - minutesAgo * 60_000).toISOString(), ...over });
 
 describe("the outbox of the last 24 hours, boiled down", () => {
-  it("counts what the Vijaya itself sent, by kind, biggest first, and never reads the words", () => {
+  it("counts what the your assistant itself sent, by kind, biggest first, and never reads the words", () => {
     const items = [sent("reply_to_inbound", 60), sent("reply_to_inbound", 120), sent("reply_to_inbound", 200), sent("info", 30), sent("visit", 45), sent("visit", 50)];
     const d = summariseOutbox(items, NOW);
     expect(d).toMatchObject({ state: "ready", sent: 6, held: 0 });

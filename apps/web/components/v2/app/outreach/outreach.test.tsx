@@ -120,7 +120,7 @@ describe("making the plan", () => {
   it("sends the plan as the form says it (closed words, the source as 'who') and goes to the plan card", async () => {
     const plan = draw();
     fireEvent.change(screen.getByLabelText("Name of the plan"), { target: { value: "Diwali" } });
-    fireEvent.change(screen.getByLabelText("What should Vijaya ask?"), { target: { value: "Budget?\n\nWhich area?" } });
+    fireEvent.change(screen.getByLabelText("What should your assistant ask?"), { target: { value: "Budget?\n\nWhich area?" } });
     fireEvent.change(screen.getByLabelText("Most calls in a day (optional)"), { target: { value: "40" } });
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Make the plan" })));
     const sent = plan.mock.calls[0][0] as BatchInput;

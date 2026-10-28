@@ -160,14 +160,14 @@ export function ReportView({ data, labels, lang, catalogue = true, more = null }
 
         <section aria-labelledby="rp-usage" className={surface}>
           <h2 id="rp-usage" className={h2}>
-            {word(labels, "report.usage.title", "{assistant} this week")}
+            {word(labels, "report.usage.title", "This week with {assistant}")}
           </h2>
           {data.aiPercent === "error" ? (
             <Unreadable labels={labels} />
           ) : (
             <>
               <p className="mt-3 font-display text-4xl font-bold">{word(labels, "report.usage.used", "{percent}% used", { percent: data.aiPercent })}</p>
-              <div role="meter" aria-label={word(labels, "report.usage.aria", "{assistant} usage this week: {percent}% used", { percent: data.aiPercent })} aria-valuemin={0} aria-valuemax={100} aria-valuenow={data.aiPercent} className="mt-3 h-3 overflow-hidden rounded-full bg-surface-2">
+              <div role="meter" aria-label={word(labels, "report.usage.aria", "Usage this week, with {assistant}: {percent}% used", { percent: data.aiPercent })} aria-valuemin={0} aria-valuemax={100} aria-valuenow={data.aiPercent} className="mt-3 h-3 overflow-hidden rounded-full bg-surface-2">
                 <div className={`h-full rounded-full ${data.aiPercent >= 90 ? "bg-amber-text" : "bg-brand"} ${fillClass(data.aiPercent)}`} />
               </div>
               <p className={mutedText}>{word(labels, "report.usage.hint", "Of this week's allowance. It starts again on Monday.")}</p>

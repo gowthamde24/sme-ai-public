@@ -50,7 +50,7 @@ describe("the legal documents in four languages (job DB)", () => {
     for (const keep of ["AI", "sb-<project>-auth-token", "sme_lang", "sme_theme", "sme_consent", "/data-deletion"]) expect(privacy, `${lang}: ${keep}`).toContain(keep);
   });
   it.each(IDS)("%s: names no assistant: it says 'our AI assistant', in every language (job DO)", (id) => {
-    for (const lang of LANGS) expect(JSON.stringify(legalDocument(id, lang).doc), `${id}:${lang}`).not.toMatch(/\{assistant\}|Vijaya|Agent OWL/);
+    for (const lang of LANGS) expect(JSON.stringify(legalDocument(id, lang).doc), `${id}:${lang}`).not.toMatch(/\{assistant\}|your assistant|Agent OWL/);
   });
   it("fillLegal puts the facts of lib/site/business.ts into a text, and leaves an unknown {word} visible", () => {
     expect(fillLegal("Write to {privacy_email} within {grievance_days} days. {brand}. {nope}")).toBe(`Write to ${ADDRESSES.privacy} within 30 days. Stack19. {nope}`);

@@ -8,11 +8,11 @@ Six short steps. You can skip any step and come back later. Step 3 of 6
 - [5 . Test call](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=5)
 - [6 . Go live](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=6)
 ## What should each call achieve?
-Check the goal and the questions. Change anything you like. This is what Vijaya says and asks for your kind of business. Change the goal and the questions to match how you work.
+Check the goal and the questions. Change anything you like. This is what your assistant says and asks for your kind of business. Change the goal and the questions to match how you work.
 form:
 The goal of the call
 <textarea label="The goal of the call" maxlength=400 value="Book a test drive when they are ready.">
-legend: What Vijaya asks (4 of 8)
+legend: What your assistant asks (4 of 8)
 need need
 <textarea label="need" maxlength=400 value="What are you looking for?">
 <checkbox label="She must find this out" checked>
@@ -41,7 +41,7 @@ She must find this out
 [button type=button: Move up]
 [button type=button disabled: Move down]
 [button type=button: Remove]
-No prices and no promises here. Vijaya states prices only from facts you approved. Saving needs your second sign-in step.
+No prices and no promises here. Your assistant states prices only from facts you approved. Saving needs your second sign-in step.
 [button type=submit: Save goal and questions]
 {label="When a customer pushes back"}
 ### When a customer pushes back

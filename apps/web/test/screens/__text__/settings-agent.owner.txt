@@ -3,8 +3,8 @@
 {label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [My profile](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=profile) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Automation](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent current=page) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
 {label="Automatic sending"}
 ## Automatic sending
-<checkbox label="Vijaya may send routine replies by itself">
-Vijaya may send routine replies by itself Vijaya sends routine replies by itself. Anything about money, complaints or calls waits for you. Off: new messages wait for you to approve them. Messages you approve still go out. Messages per customer per day
+<checkbox label="Your assistant may send routine replies by itself">
+Your assistant may send routine replies by itself Your assistant sends routine replies by itself. Anything about money, complaints or calls waits for you. Off: new messages wait for you to approve them. Messages you approve still go out. Messages per customer per day
 <number label="Messages per customer per day" min=1 max=20 inputmode=numeric value=3 aria-invalid=false>
 Between 1 and 20. Most shops keep it at 3.
 [button type=submit: Save]
@@ -21,7 +21,7 @@ Quiet hours end
 Saving needs your two-step code first (sign in again with it).
 {label="Visit reminders"}
 ## Visit reminders
-These are the standard settings. Save your own to replace them. Vijaya reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.
+These are the standard settings. Save your own to replace them. Your assistant reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.
 <checkbox label="Remind the evening before" checked>
 Remind the evening before From
 <select label="From">
@@ -42,8 +42,8 @@ Saving needs your two-step code first (sign in again with it).
 {label="System-wide sending switch"}
 ## System-wide sending switch
 On Sending is allowed for the whole system. Our team owns this switch; you can only see it.
-{label="Vijaya's checks"}
-## Vijaya's checks
+{label="Your assistant's checks"}
+## Your assistant's checks
 Approved messages still go out when automatic sending is off.
 State
 Working for this business

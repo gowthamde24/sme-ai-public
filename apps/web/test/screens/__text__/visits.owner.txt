@@ -18,7 +18,7 @@ Pick a date
 [button type=button: Change time]
 [button type=button: Cancel]
 -
-{label="Anita R. · Hyderabad"} Proposed by Vijaya · waiting for you
+{label="Anita R. · Hyderabad"} Proposed by your assistant · waiting for you
 ### Anita R. · Hyderabad
 12:00 – 12:30 1 person Sri Lakshmi Silks
 [button type=button: Confirm]

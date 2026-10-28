@@ -68,7 +68,7 @@ describe("a new workspace sees the wizard instead of an empty Today (job BJ)", (
 });
 
 describe("the order of the steps and what each saves", () => {
-  it("shop → hours → saree → Vijaya → ready, then Today with the checklist for what was skipped", async () => {
+  it("shop → hours → saree → your assistant → ready, then Today with the checklist for what was skipped", async () => {
     const act = actions();
     gate(fresh(), act);
     next();
@@ -86,14 +86,14 @@ describe("the order of the steps and what each saves", () => {
     next();
     expect(title()).toBe("Add your first saree");
     fireEvent.click(screen.getByRole("button", { name: "Skip for now" }));
-    expect(title()).toBe("Meet Vijaya");
+    expect(title()).toBe("Meet your assistant");
     expect(screen.getAllByText("Step 4 of 4").length).toBeGreaterThan(0);
     next();
     expect(title()).toBe("You're ready");
     expect(screen.queryByText(/Step \d of 4/)).toBeNull();
     const links = screen.getAllByRole("link").map((a) => [a.textContent, a.getAttribute("href")]);
     expect(links).toEqual([
-      ["Ask Vijaya what needs you today→", BASE],
+      ["Ask your assistant what needs you today→", BASE],
       ["Add more sarees→", `${BASE}/catalogue/new`],
       ["Add a customer→", `${BASE}?tab=companies`],
       ["Go to Today", BASE],
@@ -113,7 +113,7 @@ describe("the order of the steps and what each saves", () => {
     fireEvent.click(screen.getByRole("button", { name: "Back" }));
     expect(title()).toBe("Welcome to Asha Silks");
   });
-  it("the Vijaya step says what it does, what always waits (money, complaints, calls), that automatic sending is OFF with one plain sentence, and the quiet hours", () => {
+  it("the your assistant step says what it does, what always waits (money, complaints, calls), that automatic sending is OFF with one plain sentence, and the quiet hours", () => {
     gate(fresh());
     next();
     next();
@@ -121,7 +121,7 @@ describe("the order of the steps and what each saves", () => {
     expect(screen.getByText(/reads your records, answers your questions and prepares drafts/)).toBeInTheDocument();
     const waits = screen.getByRole("heading", { name: "What always waits for you" }).closest("div")!;
     expect(waits).toHaveAttribute("lang", "en");
-    for (const t of ["Money: prices, discounts, advances and refunds", "Complaints", "Calls: Vijaya asks you first"]) expect(within(waits).getByText(t)).toBeInTheDocument();
+    for (const t of ["Money: prices, discounts, advances and refunds", "Complaints", "Calls: your assistant asks you first"]) expect(within(waits).getByText(t)).toBeInTheDocument();
     const sending = document.querySelector('[data-setup="sending"]')!;
     expect(sending).toHaveTextContent("Automatic sending is off. New messages wait for you to approve them. You can switch it on later in Settings.");
     expect(sending).toHaveTextContent("Quiet hours: nothing goes out from 21:00 to 09:00 (India time).");
@@ -341,7 +341,7 @@ describe("resume, skip and the checklist", () => {
     const card = document.querySelector('[data-setup="checklist"]') as HTMLElement;
     expect(card).toHaveTextContent("2 of 3 done");
     fireEvent.click(within(card).getByRole("button", { name: "Continue setup" }));
-    expect(title()).toBe("Meet Vijaya");
+    expect(title()).toBe("Meet your assistant");
     expect(readLocal(T).agentSeen).toBe(true);
     next();
     fireEvent.click(screen.getByRole("link", { name: "Go to Today" }));

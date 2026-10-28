@@ -109,7 +109,7 @@ describe("find retailers", () => {
     render(<RetailersSearch tenantId={T} words={WORDS} status={ON} confirm={confirmOk()} />);
     await ask();
     expect(screen.getByText("Nothing was found. Try another kind of shop or a larger town.")).toBeInTheDocument();
-    expect(screen.getByText("What Vijaya said")).toBeInTheDocument();
+    expect(screen.getByText("What your assistant said")).toBeInTheDocument();
   });
   it.each([
     ["agents_disabled", /switched off for this business/],
@@ -150,7 +150,7 @@ describe("find retailers", () => {
     fireEvent.change(screen.getByLabelText("City or town"), { target: { value: "Guntur" } });
     await press("Search");
     expect(screen.getByRole("button", { name: "Searching…" })).toBeDisabled();
-    expect(screen.getByText(/Vijaya is looking on the map/)).toBeInTheDocument();
+    expect(screen.getByText(/Your assistant is looking on the map/)).toBeInTheDocument();
     await act(async () => release(json({ ok: true, data: RESULT })));
     expect(screen.getAllByRole("article")).toHaveLength(2);
   });

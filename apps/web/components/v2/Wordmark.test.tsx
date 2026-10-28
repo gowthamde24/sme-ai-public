@@ -12,7 +12,7 @@ describe("Wordmark", () => {
     const mark = container.querySelector("[data-mark]");
     expect(mark?.getAttribute("aria-hidden")).toBe("true");
     expect(mark?.querySelectorAll("path")).toHaveLength(3);
-    expect(container.querySelector("[data-orb]")).toBeNull(); // the circle is Vijaya's, not the logo
+    expect(container.querySelector("[data-orb]")).toBeNull(); // the circle is your assistant's, not the logo
     expect(document.body.textContent).not.toMatch(/sme-?ai|working name/i);
   });
 });

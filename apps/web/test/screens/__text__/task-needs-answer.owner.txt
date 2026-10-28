@@ -1,8 +1,8 @@
 # Task
 Call my cement suppliers, ask the price per bag and the delivery day, and tell me the cheapest. [All tasks](/app/tenants/22222222-2222-2222-2222-222222222222/tasks)
-{label="Vijaya has one question"}
-## Vijaya has one question
+{label="Your assistant has one question"}
+## Your assistant has one question
 Who should Vijaya contact, and about what? Your answer
 <textarea label="Your answer" maxlength=500>
 [button type=button disabled: Answer]
-Vijaya asks only once. Then you see the plan.
+Your assistant asks only once. Then you see the plan.

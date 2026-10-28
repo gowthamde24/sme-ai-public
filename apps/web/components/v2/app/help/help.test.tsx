@@ -113,10 +113,10 @@ describe("the '?' tip of a screen", () => {
 });
 
 describe("the guides do not claim what the product does not do", () => {
-  it("never say Vijaya sends, prices or decides on its own, and name no real person", () => {
+  it("never say your assistant sends, prices or decides on its own, and name no real person", () => {
     const text = Object.entries(dict).filter(([k]) => k.startsWith("help.") || k.startsWith("ask.can.")).map(([, v]) => v.en).join(" ");
     expect(text).not.toMatch(/guarantee|never makes a mistake|always right|100%/i);
-    expect(text).not.toMatch(/Vijaya (sets|changes) (a )?price/i);
+    expect(text).not.toMatch(/Your assistant (sets|changes) (a )?price/i);
     expect(guideOf("approve")).toBeTruthy();
   });
 });

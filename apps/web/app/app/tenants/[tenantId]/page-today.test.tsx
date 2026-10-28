@@ -83,9 +83,9 @@ const show = async (props_: ReturnType<typeof props> = props()) => {
 };
 
 describe("the assistant's name on Today (job DN)", () => {
-  it("is Vijaya until the workspace gives its assistant a name, then that name, in the card and the Ask box, and nowhere the old one", async () => {
+  it("is your assistant until the workspace gives its assistant a name, then that name, in the card and the Ask box, and nowhere the old one", async () => {
     await show();
-    expect(document.body.textContent).toContain("Vijaya");
+    expect(document.body.textContent).toContain("Your assistant");
     expect(document.body.textContent).not.toMatch(/Agent OWL|\{assistant\}/);
   });
 
@@ -93,12 +93,12 @@ describe("the assistant's name on Today (job DN)", () => {
     provideRequestAssistantName("Asha");
     await show();
     expect(document.body.textContent).toContain("Asha");
-    expect(document.body.textContent).not.toMatch(/Vijaya|Agent OWL|\{assistant\}/);
+    expect(document.body.textContent).not.toMatch(/Your assistant|Agent OWL|\{assistant\}/);
   });
 });
 
 describe("the workspace home with no ?tab= is Today", () => {
-  it("draws the greeting, the Vijaya card, what needs the person (a message, a call and the older kinds), the done list and the team from the API", async () => {
+  it("draws the greeting, the your assistant card, what needs the person (a message, a call and the older kinds), the done list and the team from the API", async () => {
     await show();
     expect(getToday).toHaveBeenCalledWith("tok", TENANT);
     expect(getAgentsStatus).toHaveBeenCalledWith("tok", TENANT);

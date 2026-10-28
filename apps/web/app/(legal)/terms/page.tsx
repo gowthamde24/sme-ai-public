@@ -6,7 +6,7 @@ import { legalMetadata } from "@/lib/legal/page-metadata";
 import { requestIndexable } from "@/lib/seo/index-rule";
 
 export async function generateMetadata(): Promise<Metadata> {
-  return legalMetadata("/terms", "Terms of Use", "The terms for using the service: the free trial, payment, cancelling, acceptable use and the law that applies.", await requestIndexable());
+  return legalMetadata("/terms", "Terms of Use", "The terms for using the service: payment, cancelling, acceptable use and the law that applies.", await requestIndexable());
 }
 
 /** /terms (jobs BH, DB): the Terms of Use. English text with a summary in the visitor's language. A stable address: Meta and Google review it. */
