@@ -73577,5 +73577,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sc.more": {
+  "en": "More ways to bring leads in, and settings",
+  "te": "లీడ్లు తెచ్చే మరిన్ని మార్గాలు, సెట్టింగ్స్",
+  "hi": "लीड लाने के और तरीके और सेटिंग",
+  "kn": "ಲೀಡ್ ತರುವ ಇನ್ನಷ್ಟು ಮಾರ್ಗಗಳು ಮತ್ತು ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

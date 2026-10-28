@@ -42,7 +42,7 @@ export function SourceCards({ words, initial, endpoint, base, metaReturn, post: 
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${BADGE[c.status]}`}>{t(`sc.status.${c.status}` as "sc.status.connected")}</span>
             </div>
             <p className="text-sm text-muted">{t(`sc.${c.kind}.what` as "sc.meta.what")}</p>
-            {c.headline || c.detail ? <p className="text-sm text-ink">{[c.headline, c.detail].filter(Boolean).join(" · ")}</p> : null}
+            {c.detail ? <p className="text-sm text-ink">{c.detail}</p> : null}
             {c.problem ? <p className={warnBox} role="alert">{c.problem.message}</p> : null}
             {!c.available ? (
               <p className={fieldHelp}>{t("sc.unavailable")}</p>

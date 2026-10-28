@@ -35,7 +35,7 @@ describe("Lead source cards", () => {
   it("shows one card per source with its status, what it does, and the API's own plain sentences", () => {
     show();
     expect(document.querySelectorAll("[data-card]")).toHaveLength(7);
-    expect(within(card("website")).getByText("Connected · 12 leads this week")).toBeTruthy();
+    expect(within(card("website")).getByText("12 leads this week")).toBeTruthy();
     expect(within(card("indiamart")).getByRole("alert").textContent).toBe("IndiaMART key stopped working: paste a new one");
     expect(within(card("indiamart")).getByRole("button", { name: "Fix it" })).toBeTruthy();
     expect(within(card("missed_calls")).getByText("Not switched on yet. Ask us to switch this on.")).toBeTruthy();
