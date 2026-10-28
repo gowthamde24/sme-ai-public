@@ -69,7 +69,8 @@ export function parseCampaignOpeningLine(json: unknown): CampaignOpeningLine | n
 }
 
 /** A spoken preview: a short audio the browser can play (base64, with its type), or none when the voice service is not on (the text preview is always there). */
-export type Preview = { audio: { base64: string; mime: string; seconds: number } | null; fake: boolean };
+/** `spokenText` is the EXACT line the sound says (the API's own text, with the real names), shown under the button; null when the API did not say (a test screen speaks nothing). */
+export type Preview = { audio: { base64: string; mime: string; seconds: number } | null; fake: boolean; spokenText?: string | null };
 export const AUDIO_MIMES = ["audio/mpeg", "audio/wav", "audio/webm", "audio/ogg", "audio/mp4"] as const;
 export function parsePreview(json: unknown): Preview | null {
   if (!isRecord(json)) return null;

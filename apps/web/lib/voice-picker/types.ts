@@ -21,6 +21,8 @@ export type PickerVoice = {
   isDefault: boolean;
   /** A path on the API of the pre-rendered sample, or null when there is none yet. The browser never gets it: it asks this app's route. */
   sampleUrl: string | null;
+  /** The exact words of the sample (C1's `sample_text`), shown under the voice once it has been played; null when the API does not say. */
+  sampleText: string | null;
 };
 export type Choices = Partial<Record<PickerLang, string | null>>;
 export type Picker = { voices: PickerVoice[]; choices: Choices; fake: boolean };
@@ -42,7 +44,7 @@ export function parsePicker(json: unknown): Picker | null {
     for (const r of row.voices) {
       if (!isRecord(r) || typeof r.id !== "string" || !VOICE_ID.test(r.id) || typeof r.name !== "string" || r.name.length < 1 || r.name.length > 40 || typeof r.label !== "string" || r.label.length > 30 || typeof r.default !== "boolean") return null;
       if (!(GENDERS as readonly unknown[]).includes(r.gender)) return null;
-      voices.push({ id: r.id, language, name: r.name, label: r.label, gender: r.gender as Gender, isDefault: r.default, sampleUrl: r.sample_url === null || r.sample_url === undefined ? null : safeSamplePath(r.sample_url) });
+      voices.push({ id: r.id, language, name: r.name, label: r.label, gender: r.gender as Gender, isDefault: r.default, sampleUrl: r.sample_url === null || r.sample_url === undefined ? null : safeSamplePath(r.sample_url), sampleText: typeof r.sample_text === "string" && r.sample_text.trim() !== "" && r.sample_text.length <= 1000 ? r.sample_text : null });
     }
     const chosen = row.chosen_id;
     if (chosen === undefined || chosen === null) continue;
@@ -59,7 +61,7 @@ export function inForce(picker: Picker, language: PickerLang): PickerVoice | nul
 }
 
 /** The approved catalogue of 28 Oct, as the test screens (VOICE_PICKER_SCREENS=mock) show it before C1's endpoint is live. */
-const V = (id: string, language: PickerLang, name: string, label: string, gender: Gender, isDefault = false): PickerVoice => ({ id, language, name, label, gender, isDefault, sampleUrl: `/mock/${id}` });
+const V = (id: string, language: PickerLang, name: string, label: string, gender: Gender, isDefault = false): PickerVoice => ({ id, language, name, label, gender, isDefault, sampleUrl: `/mock/${id}`, sampleText: null });
 export const MOCK_VOICES: readonly PickerVoice[] = [
   V("en-janvi", "en", "Janvi", "Calm", "female", true),
   V("te-ramya", "te", "Ramya", "Warm", "female", true),

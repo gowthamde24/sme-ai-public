@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), sample: vi.fn(), said: vi.fn(), chosen: vi.fn() }));
+const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), sample: vi.fn(), said: vi.fn(), chosen: vi.fn(), greeting: vi.fn() }));
 vi.mock("@/lib/api/voice-picker", () => ({ getVoicesPreviewFile: (...a: unknown[]) => h.chosen(...a) }));
+vi.mock("@/lib/api/opening-line", () => ({ savedGreetingText: (...a: unknown[]) => h.greeting(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
 vi.mock("@/lib/api/voice-samples", () => ({ getVoicePreview: (...a: unknown[]) => h.sample(...a), getVoicePreviewText: (...a: unknown[]) => h.said(...a) }));
@@ -21,6 +22,7 @@ beforeEach(() => {
   h.sample.mockReset();
   h.said.mockReset();
   h.chosen.mockReset();
+  h.greeting.mockReset();
 });
 
 describe("GET voice-sample (job DQ part 3; the live preview of job DT)", () => {
@@ -75,6 +77,17 @@ describe("GET voice-sample (job DQ part 3; the live preview of job DT)", () => {
     const limited = await get();
     expect(limited.status).toBe(429);
     expect(limited.headers.get("Retry-After")).toBe("30");
+  });
+  it("with the voice catalogue on, text=1 is the exact greeting the sound says (the saved opening line with the real names), not the old persona words", async () => {
+    vi.stubEnv("VOICE_SAMPLE_SCREENS", "1");
+    vi.stubEnv("VOICE_PICKER_SCREENS", "1");
+    h.greeting.mockResolvedValueOnce("నమస్కారం రవి గారూ, నేను రమ్య, సిరి సిల్క్స్ నుంచి.");
+    const r = await get("voice=female_warm&lang=te&tone=warm&name=Asha&text=1");
+    expect(await r.json()).toEqual({ text: "నమస్కారం రవి గారూ, నేను రమ్య, సిరి సిల్క్స్ నుంచి." });
+    expect(h.greeting).toHaveBeenCalledWith("tok", T, "te");
+    expect(h.said).not.toHaveBeenCalled();
+    h.greeting.mockResolvedValueOnce(null);
+    expect((await get("voice=female_warm&lang=te&tone=warm&text=1")).status).toBe(404);
   });
   it("1 with text=1: the words of the preview as JSON (so the page can show what is heard); none is 404, a failing API is 502; the mock has none", async () => {
     vi.stubEnv("VOICE_SAMPLE_SCREENS", "1");

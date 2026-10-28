@@ -58,8 +58,8 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
     setSampleErr(false);
     setHeard(null);
     const q = { voice: v, lang: s.lang, tone, name: s.name.trim() || initial.name };
-    if (!samples.mock && !voicePickerOn) {
-      // the words are shown beside the player, as the API says them with the business's real name
+    if (!samples.mock) {
+      // the exact words the sound says are shown beside the player (with the voice catalogue: the saved opening line with the business's real names), so what is read is what is heard
       void fetch(`${sampleUrl(samples.endpoint, q)}&text=1`, { cache: "no-store" })
         .then((r) => (r.ok ? r.json() : null))
         .then((j: { text?: unknown } | null) => setHeard(typeof j?.text === "string" ? j.text : null))
@@ -176,7 +176,6 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
                     ))}
                   </div>
                   <p className="mt-2 text-sm font-medium" data-part="preview-label">{t("asst.preview.label", { who: s.name.trim() || initial.name })}</p>
-                  {heard ? <p className="mt-1 rounded-lg bg-surface-2 px-3 py-2 text-sm" data-part="preview-text"><span className="font-semibold">{t("asst.preview.heard")}</span> {heard}</p> : null}
                   <p className="mt-2 text-sm text-muted">{t("asst.sample.note", { language: langs[s.lang] })} {t("asst.tone.note")}</p>
                   {samples.mock ? <p role="note" className="mt-1 text-sm text-muted">{t("asst.sample.mock")}</p> : null}
                   {sampleErr ? <p role="alert" className="mt-1 text-sm font-medium text-red-text">{t("asst.sample.err")}</p> : null}
@@ -316,6 +315,12 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
             ▶ {t("asst.hear")}
           </button>
           {samples ? null : <p className="text-center text-xs opacity-80">{t("asst.hear.soon")}</p>}
+          {heard ? (
+            <p lang={s.lang} className="rounded-lg bg-white/10 px-3 py-2 text-center text-sm" data-part="preview-text" aria-live="polite">
+              <span className="block font-semibold opacity-80">{t("asst.preview.heard")}</span>
+              {heard}
+            </p>
+          ) : null}
           {actions.testCall ? (
             <button
               type="button"

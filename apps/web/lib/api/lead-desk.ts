@@ -1,5 +1,6 @@
 import type { DeskLead, LeadStatus } from "@/lib/lead-desk/leads";
 import { LEAD_STATUSES } from "@/lib/lead-desk/leads";
+import { parseProfile, type LeadProfile } from "@/lib/lead-desk/profile";
 
 import { ApiContractError, apiRequest } from "./client";
 import { fetchContact, isCanonicalUuid } from "./crm";
@@ -15,7 +16,7 @@ const base = (tenantId: string): string => {
 };
 const NAME_FALLBACK = "";
 
-export function parseLeadPage(json: unknown): { rows: { id: string; contactId: string | null; source: string | null; status: LeadStatus; ownerUserId: string | null; createdAt: string }[]; nextCursor: string | null } {
+export function parseLeadPage(json: unknown): { rows: { id: string; contactId: string | null; source: string | null; status: LeadStatus; ownerUserId: string | null; createdAt: string; profile: LeadProfile | null; isNew: boolean }[]; nextCursor: string | null } {
   const x = rec(json, "leads");
   return {
     rows: list(x.items, "items", 200).map((row) => {
@@ -24,7 +25,7 @@ export function parseLeadPage(json: unknown): { rows: { id: string; contactId: s
       if (!isCanonicalUuid(id)) bad("id");
       const contact = r.contact_id === null || r.contact_id === undefined ? null : str(r.contact_id, "contact_id", 80);
       const owner = r.owner_user_id === null || r.owner_user_id === undefined ? null : str(r.owner_user_id, "owner_user_id", 80);
-      return { id, contactId: contact, source: optStr(r.source, "source", 100), status: oneOf(r.status, LEAD_STATUSES, "status"), ownerUserId: owner, createdAt: optIso(r.created_at, "created_at") ?? "" };
+      return { id, contactId: contact, source: optStr(r.source, "source", 100), status: oneOf(r.status, LEAD_STATUSES, "status"), ownerUserId: owner, createdAt: optIso(r.created_at, "created_at") ?? "", profile: parseProfile(r.profile), isNew: r.is_new === true };
     }),
     nextCursor: optStr(x.next_cursor, "next_cursor", 300),
   };

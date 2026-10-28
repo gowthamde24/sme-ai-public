@@ -179,6 +179,32 @@ describe("a session", () => {
     expect(client.snapshot.captions.map((c) => [c.who, c.text, c.spoken])).toEqual([["user", "price of a saree", true], ["assistant", "It is 500 rupees.", true], ["assistant", "More details here.", false]]);
     expect(client.snapshot.sources).toEqual([{ kind: "price_item", label: "Silk saree" }]);
   });
+  it("transcripts: the person's words show live, replaced by newer ones and by the settled words; the older final caption that repeats them is not a second line", async () => {
+    await ready();
+    ws.say({ type: "transcript", text: "how many", final: false, seq: 1, t_ms: 250 });
+    ws.say({ type: "transcript", text: "how many enquiries", final: false, seq: 2, t_ms: 500 });
+    expect(client.snapshot.captions).toMatchObject([{ who: "user", text: "how many enquiries", final: false }]);
+    ws.say({ type: "transcript", text: "How many enquiries today?", final: true, seq: 3, t_ms: 900 });
+    ws.say({ type: "caption", who: "user", text: "How many enquiries today?", final: true, spoken: true });
+    ws.say({ type: "caption", who: "assistant", text: "Four.", final: true, spoken: true });
+    expect(client.snapshot.captions.map((c) => [c.who, c.text, c.final])).toEqual([["user", "How many enquiries today?", true], ["assistant", "Four.", true]]);
+  });
+  it("a plan is held for the owner (read from the message, a malformed one is ignored), its answer comes by tap or by voice, and the next words clear it", async () => {
+    await ready();
+    const plan = { type: "confirm_action", action_id: "33333333-3333-4333-8333-333333333333", title: "Call 12 new leads", summary: "Today.", steps: ["Pick", "Call"], count: 12, channel: "call", estimate: { messages: 0, call_minutes: 30, cost_paise: 1200 }, needs_second_factor: true, expires_at: "2026-10-28T20:00:00Z", status: "proposed" };
+    ws.say({ ...plan, action_id: "nope" });
+    expect(client.snapshot.plan).toBeNull();
+    ws.say(plan);
+    expect(client.snapshot.plan).toMatchObject({ actionId: "33333333-3333-4333-8333-333333333333", title: "Call 12 new leads", count: 12, channel: "call", needsSecondFactor: true, status: "proposed", estimate: { callMinutes: 30 } });
+    ws.say({ type: "action", action_id: "33333333-3333-4333-8333-333333333333", status: "confirmed", task: { id: "t", status: "approved" } });
+    expect(client.snapshot.plan?.status).toBe("confirmed");
+    expect(client.snapshot.decided).toEqual([{ actionId: "33333333-3333-4333-8333-333333333333", status: "confirmed" }]);
+    ws.say({ type: "transcript", text: "and", final: false, seq: 1, t_ms: 100 });
+    expect(client.snapshot.plan).toBeNull();
+    ws.say({ type: "intent", kind: "business" });
+    ws.say({ type: "reply", kind: "answer" });
+    ws.say({ type: "clarify", question: "Which leads?", action_id: null }); // spoken and captioned: nothing more to keep
+  });
   it("a limit or a close ends it with plain words and lets everything go; a second tap stops it", async () => {
     await ready();
     ws.say({ type: "limit", reason: "idle" });

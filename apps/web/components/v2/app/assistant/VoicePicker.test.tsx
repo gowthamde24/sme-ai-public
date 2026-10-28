@@ -51,6 +51,17 @@ describe("Settings > AI assistant > Voice", () => {
     expect(document.querySelector('[data-voice="kn-disha"]')).not.toHaveAttribute("data-in-use");
     expect(within(document.querySelector('[data-voice="kn-prakash"]') as HTMLElement).getByText(/Male/)).toBeInTheDocument();
   });
+  it("a voice whose sample words the API gives shows them under the voice once it has been played, and only that voice's", () => {
+    const withText = rows.map((r) => ({ ...r, voices: r.voices.map((v) => (v.id === "hi-sanya" ? { ...v, sampleText: "नमस्ते, मैं संया हूँ।" } : v)) }));
+    draw();
+    cleanup();
+    render(<VoicePicker words={WORDS} rows={withText} langNames={CALL_LANG_NAMES} canEdit endpoint="/app/tenants/t/voice-pick" mock={false} actions={{ choose: async () => ({ ok: true }) }} />);
+    expect(document.querySelector('[data-part="sample-text"]')).toBeNull(); // nothing is claimed before it is played
+    fireEvent.click(document.querySelector('[data-play="hi-sanya"]') as HTMLElement);
+    expect(document.querySelector('[data-voice="hi-sanya"] [data-part="sample-text"]')).toHaveTextContent("What this sample says:नमस्ते, मैं संया हूँ।");
+    fireEvent.click(document.querySelector('[data-play="hi-esha"]') as HTMLElement);
+    expect(document.querySelector('[data-part="sample-text"]')).toBeNull(); // Esha has no words given: nothing is made up
+  });
   it("play and stop are one button, and only one sample plays at a time; the sample is asked of this app's own route", () => {
     draw();
     const sanya = document.querySelector('[data-play="hi-sanya"]') as HTMLElement;

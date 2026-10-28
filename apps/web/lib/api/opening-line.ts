@@ -1,7 +1,7 @@
 import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { validLine, type CampaignOpeningLine, type Lines, type OpeningLine, type Preview } from "@/lib/opening-line/types";
 
-import { ApiContractError, apiBinaryRequest, apiRequest } from "./client";
+import { ApiContractError, ApiRequestError, apiBinaryRequest, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 
 /**
@@ -127,6 +127,45 @@ export async function previewOpeningLine(token: string, tenantId: string, langua
     if (error instanceof ApiContractError) throw error;
     if (typeof error === "object" && error !== null && (error as { status?: number }).status === 404) return { audio: null, fake: false };
     throw error;
+  }
+}
+
+/** The API has no "preview this text" yet (the route is missing): the caller falls back to the saved line, or says so. Not a refusal of the person's text. */
+export class PreviewUnsupported extends Error {}
+
+/**
+ * "Hear it" for the line AS IT IS ON THE SCREEN, saved or not (C2 -> C1, 28 Oct): `POST /voices/preview {language, text, mention_ai}` (Owner, Admin). `text` is the line with its four placeholders (null = the saved line); the API fills the live names, applies the disclosure rule exactly as a call does,
+ * speaks it in the voice in force and answers {spoken_text, audio: {mime, base64}}: `spoken_text` is the exact string it sent to the voice engine, shown under the button so that what is read is what was heard. Nothing is saved. 404 `no_preview` = no voice service (no sound);
+ * a 404 / 405 of any other kind = the route is not there yet (PreviewUnsupported).
+ */
+export async function previewSpoken(token: string, tenantId: string, input: { language: CallLang; text: string | null; mentionAi: boolean | null }): Promise<Preview> {
+  let json: unknown;
+  try {
+    json = await apiRequest(`${aiBase(tenantId)}/voices/preview`, token, { method: "POST", body: JSON.stringify({ language: input.language, text: input.text, mention_ai: input.mentionAi }) });
+  } catch (error) {
+    if (error instanceof ApiRequestError) {
+      if (error.code === "no_preview") return { audio: null, fake: false, spokenText: null };
+      if (error.status === 404 || error.status === 405) throw new PreviewUnsupported();
+    }
+    throw error;
+  }
+  if (!isRecord(json) || typeof json.spoken_text !== "string" || json.spoken_text.trim() === "" || json.spoken_text.length > 2000) throw new ApiContractError("Unexpected opening-line preview.");
+  const audio = isRecord(json.audio) ? json.audio : null;
+  if (audio === null) return { audio: null, fake: false, spokenText: json.spoken_text };
+  const mime = audio.mime === "audio/x-wav" ? "audio/wav" : audio.mime;
+  if (typeof audio.base64 !== "string" || audio.base64.length > 4_000_000 || !/^[A-Za-z0-9+/=]+$/.test(audio.base64) || typeof mime !== "string" || !/^audio\/(wav|mpeg|ogg|mp4|webm)$/.test(mime)) throw new ApiContractError("Unexpected opening-line preview audio.");
+  const bytes = Uint8Array.from(atob(audio.base64), (c) => c.charCodeAt(0));
+  return { audio: { base64: audio.base64, mime, seconds: mime === "audio/wav" ? wavSeconds(bytes) : 1 }, fake: false, spokenText: json.spoken_text };
+}
+
+/** The saved greeting exactly as a customer hears it, with the real names: `GET /opening-line/preview?language` {text}. The sound of `GET /voices/preview` is made from the same text, so this is what that sound says. null when the API has none. */
+export async function savedGreetingText(token: string, tenantId: string, language: CallLang): Promise<string | null> {
+  try {
+    const json = await apiRequest(`${aiBase(tenantId)}/opening-line/preview?${new URLSearchParams({ language }).toString()}`, token);
+    return isRecord(json) && typeof json.text === "string" && json.text.trim() !== "" && json.text.length <= 2000 ? json.text : null;
+  } catch (error) {
+    if (error instanceof ApiContractError) throw error;
+    return null;
   }
 }
 

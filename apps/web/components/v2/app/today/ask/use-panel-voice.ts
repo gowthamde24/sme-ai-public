@@ -45,7 +45,8 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
   const done = React.useRef(0); // captions already turned into the thread
   const turn = React.useRef<{ asked: string; answer: string } | null>(null);
   const sourcesSeen = React.useRef(0);
-  const { addExchange, setVoiceOrb } = session;
+  const decidedSeen = React.useRef(0);
+  const { addExchange, setVoiceOrb, setEarlier, setPlan } = session;
   const { tokenUrl, url, language } = voice;
 
   React.useEffect(() => {
@@ -72,7 +73,7 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
       if (!t || (t.asked === "" && t.answer === "")) return;
       const mine = next.sources.slice(sourcesSeen.current).map((x) => ({ label: x.label, href: null }));
       sourcesSeen.current = next.sources.length;
-      addExchange({ asked: t.asked, heardByVoice: true, answer: t.answer, sources: mine, drafts: [], errorCode: null, failed: false, task: null });
+      addExchange({ asked: t.asked, heardByVoice: true, answer: t.answer, sources: mine, drafts: [], errorCode: null, failed: false, task: null, plan: next.plan });
       turn.current = null;
     };
     for (const c of next.captions.slice(done.current)) {
@@ -85,6 +86,12 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
       } else turn.current = { asked: t?.asked ?? "", answer: t && t.answer !== "" ? `${t.answer}\n\n${c.text}` : c.text };
     }
     if (next.state === "listening" || next.phase === "ended") flush();
+    // an answer to a plan (the owner's tap, or a spoken "yes" the API recognised): the card in the thread shows its state
+    for (const d of next.decided.slice(decidedSeen.current)) {
+      setEarlier((list) => list.map((x) => (x.plan && x.plan.actionId === d.actionId ? { ...x, plan: { ...x.plan, status: d.status } } : x)));
+      setPlan((p) => (p && p.actionId === d.actionId ? { ...p, status: d.status } : p));
+    }
+    decidedSeen.current = next.decided.length;
     setVoiceOrb(next.phase === "ended" ? null : next.state === "listening" ? "listen" : next.state === "speaking" ? "speak" : next.state === "thinking" || next.phase === "connecting" ? "think" : null);
     const partial = next.captions.slice(done.current).find((c) => !c.final);
     const t = turn.current;
@@ -96,12 +103,13 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     if (client.current && snap && snap.phase !== "ended") return;
     if (token.current === null || Date.now() - token.current.at > TOKEN_FRESH_MS) {
       const out = await askVoiceToken(tokenUrl);
-      if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false });
+      if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false, plan: null, decided: [] });
       token.current = { value: out.token, at: Date.now() };
     }
     done.current = 0;
     turn.current = null;
     sourcesSeen.current = 0;
+    decidedSeen.current = 0;
     audio.current = audioFactory();
     const c = new VoiceClient({ url, token: token.current.value, language, audio: audio.current, socket: socketFactory, onChange });
     client.current = c;

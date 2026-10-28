@@ -69729,10 +69729,10 @@
   }
  },
  "ope.hear.note": {
-  "en": "Preview of the voice. In real calls {assistant} talks naturally and answers what the customer says.",
-  "te": "వాయిస్ ప్రివ్యూ. నిజమైన కాల్స్‌లో {assistant} సహజంగా మాట్లాడుతుంది, కస్టమర్ చెప్పినదానికి జవాబు ఇస్తుంది.",
-  "hi": "आवाज़ का प्रीव्यू। असली कॉल में {assistant} स्वाभाविक रूप से बात करती है और ग्राहक जो कहता है उसका जवाब देती है।",
-  "kn": "ಧ್ವನಿಯ ಪ್ರಿವ್ಯೂ. ನಿಜವಾದ ಕರೆಗಳಲ್ಲಿ {assistant} ಸಹಜವಾಗಿ ಮಾತನಾಡುತ್ತದೆ, ಗ್ರಾಹಕ ಹೇಳಿದ್ದಕ್ಕೆ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "en": "Plays the line exactly as it is in the box, with your real names. Nothing is saved.",
+  "te": "బాక్స్‌లో ఉన్న లైన్‌నే, మీ నిజమైన పేర్లతో, అలాగే వినిపిస్తుంది. ఏదీ సేవ్ కాదు.",
+  "hi": "बॉक्स में जो लाइन है, वही आपके असली नामों के साथ बजती है। कुछ सेव नहीं होता।",
+  "kn": "ಬಾಕ್ಸ್‌ನಲ್ಲಿರುವ ಸಾಲನ್ನೇ, ನಿಮ್ಮ ನಿಜವಾದ ಹೆಸರುಗಳೊಂದಿಗೆ, ಹಾಗೆಯೇ ಕೇಳಿಸುತ್ತದೆ. ಏನೂ ಸೇವ್ ಆಗುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -70602,17 +70602,6 @@
   "te": "ఇది అయిపోయిందని మీకు ఇ-మెయిల్‌లో ఒక నోట్ పంపుతాము.",
   "hi": "यह हो जाने पर हम आपको एक ई-मेल नोट भेजेंगे।",
   "kn": "ಇದು ಆಗಿದೆ ಎಂದು ನಿಮಗೆ ಇ-ಮೇಲ್‌ನಲ್ಲಿ ಒಂದು ಟಿಪ್ಪಣಿ ಕಳುಹಿಸುತ್ತೇವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ope.hear.save": {
-  "en": "Save first: the sound is made from the saved line.",
-  "te": "ముందు సేవ్ చేయండి: సేవ్ చేసిన లైన్‌తోనే సౌండ్ తయారవుతుంది.",
-  "hi": "पहले सेव करें: आवाज़ सेव की गई लाइन से बनती है।",
-  "kn": "ಮೊದಲು ಸೇವ್ ಮಾಡಿ: ಸೇವ್ ಮಾಡಿದ ಸಾಲಿನಿಂದಲೇ ಧ್ವನಿ ಮಾಡಲಾಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -72813,6 +72802,1029 @@
   "te": "ఒకదాన్ని తిరిగి తెస్తే కొత్త వెర్షన్ అవుతుంది. ఏదీ పోదు.",
   "hi": "किसी को वापस लाने पर नया संस्करण बनता है। कुछ खोता नहीं।",
   "kn": "ಒಂದನ್ನು ಮರಳಿ ತಂದರೆ ಹೊಸ ಆವೃತ್ತಿ ಆಗುತ್ತದೆ. ಏನೂ ಕಳೆದುಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.title": {
+  "en": "Where your leads come from",
+  "te": "మీ లీడ్లు ఎక్కడి నుంచి వస్తాయి",
+  "hi": "आपके लीड कहाँ से आते हैं",
+  "kn": "ನಿಮ್ಮ ಲೀಡ್‌ಗಳು ಎಲ್ಲಿಂದ ಬರುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.sub": {
+  "en": "One tap or two on each card and it is connected. You never have to match columns or read technical guides.",
+  "te": "ప్రతి కార్డ్‌పై ఒకటి రెండు నొక్కులతో కనెక్ట్ అవుతుంది. కాలమ్‌లు సరిపోల్చాల్సిన అవసరం లేదు.",
+  "hi": "हर कार्ड पर एक-दो टैप में जुड़ जाता है। कॉलम मिलाने या तकनीकी गाइड पढ़ने की ज़रूरत नहीं।",
+  "kn": "ಪ್ರತಿ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಒಂದೆರಡು ಟ್ಯಾಪ್‌ನಲ್ಲಿ ಕನೆಕ್ಟ್ ಆಗುತ್ತದೆ. ಕಾಲಮ್‌ಗಳನ್ನು ಹೊಂದಿಸಬೇಕಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.meta": {
+  "en": "Facebook and Instagram lead ads",
+  "te": "ఫేస్‌బుక్, ఇన్‌స్టాగ్రామ్ లీడ్ యాడ్స్",
+  "hi": "फेसबुक और इंस्टाग्राम लीड विज्ञापन",
+  "kn": "ಫೇಸ್‌ಬುಕ್, ಇನ್‌ಸ್ಟಾಗ್ರಾಮ್ ಲೀಡ್ ಜಾಹೀರಾತುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.meta.what": {
+  "en": "People who fill your ad form arrive here by themselves.",
+  "te": "మీ యాడ్ ఫారం నింపినవారు ఇక్కడికి తమంతట తామే వస్తారు.",
+  "hi": "आपके विज्ञापन का फ़ॉर्म भरने वाले अपने आप यहाँ आ जाते हैं।",
+  "kn": "ನಿಮ್ಮ ಜಾಹೀರಾತು ಫಾರ್ಮ್ ತುಂಬಿದವರು ತಾನಾಗಿಯೇ ಇಲ್ಲಿಗೆ ಬರುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.indiamart": {
+  "en": "IndiaMART",
+  "te": "ఇండియామార్ట్",
+  "hi": "इंडियामार्ट",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.indiamart.what": {
+  "en": "Your own IndiaMART enquiries, with your own key.",
+  "te": "మీ సొంత ఇండియామార్ట్ ఎంక్వైరీలు, మీ సొంత కీతో.",
+  "hi": "आपकी अपनी इंडियामार्ट पूछताछ, आपकी अपनी कुंजी से।",
+  "kn": "ನಿಮ್ಮದೇ ಇಂಡಿಯಾಮಾರ್ಟ್ ವಿಚಾರಣೆಗಳು, ನಿಮ್ಮದೇ ಕೀ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.email_forward": {
+  "en": "JustDial, Sulekha and other portals",
+  "te": "జస్ట్‌డయల్, సులేఖ, ఇతర పోర్టల్స్",
+  "hi": "जस्टडायल, सुलेखा और दूसरे पोर्टल",
+  "kn": "ಜಸ್ಟ್‌ಡಯಲ್, ಸುಲೇಖಾ ಮತ್ತು ಇತರ ಪೋರ್ಟಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.email_forward.what": {
+  "en": "Forward their lead e-mails to your own address and each one becomes a lead.",
+  "te": "వారి లీడ్ ఈమెయిల్‌లను మీ చిరునామాకు ఫార్వర్డ్ చేయండి, ప్రతిదీ ఒక లీడ్ అవుతుంది.",
+  "hi": "उनके लीड ई-मेल अपने पते पर फ़ॉरवर्ड करें, हर एक लीड बन जाता है।",
+  "kn": "ಅವರ ಲೀಡ್ ಇಮೇಲ್‌ಗಳನ್ನು ನಿಮ್ಮ ವಿಳಾಸಕ್ಕೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ, ಪ್ರತಿಯೊಂದೂ ಲೀಡ್ ಆಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.website": {
+  "en": "Your website",
+  "te": "మీ వెబ్‌సైట్",
+  "hi": "आपकी वेबसाइट",
+  "kn": "ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.website.what": {
+  "en": "Paste one snippet on your site, or share a ready form link. Google Forms work through the e-mail address.",
+  "te": "మీ సైట్‌లో ఒక స్నిప్పెట్ పెట్టండి, లేదా సిద్ధమైన ఫారం లింక్ పంచుకోండి. గూగుల్ ఫారమ్స్ ఈమెయిల్ చిరునామా ద్వారా పని చేస్తాయి.",
+  "hi": "अपनी साइट पर एक स्निपेट लगाएँ, या तैयार फ़ॉर्म लिंक साझा करें। गूगल फ़ॉर्म ई-मेल पते से काम करते हैं।",
+  "kn": "ನಿಮ್ಮ ಸೈಟ್‌ನಲ್ಲಿ ಒಂದು ಸ್ನಿಪ್ಪೆಟ್ ಹಾಕಿ, ಅಥವಾ ಸಿದ್ಧ ಫಾರ್ಮ್ ಲಿಂಕ್ ಹಂಚಿ. ಗೂಗಲ್ ಫಾರ್ಮ್ಸ್ ಇಮೇಲ್ ವಿಳಾಸದ ಮೂಲಕ ಕೆಲಸ ಮಾಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.files": {
+  "en": "Excel, Google Sheets, CSV, a pasted list",
+  "te": "ఎక్సెల్, గూగుల్ షీట్స్, CSV, పేస్ట్ చేసిన జాబితా",
+  "hi": "एक्सेल, गूगल शीट, CSV, पेस्ट की गई सूची",
+  "kn": "ಎಕ್ಸೆಲ್, ಗೂಗಲ್ ಶೀಟ್ಸ್, CSV, ಪೇಸ್ಟ್ ಮಾಡಿದ ಪಟ್ಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.files.what": {
+  "en": "Drop a file or paste a list. The columns are found for you.",
+  "te": "ఫైల్ వేయండి లేదా జాబితా పేస్ట్ చేయండి. కాలమ్‌లు మీ కోసం గుర్తించబడతాయి.",
+  "hi": "फ़ाइल डालें या सूची पेस्ट करें। कॉलम अपने आप पहचाने जाते हैं।",
+  "kn": "ಫೈಲ್ ಹಾಕಿ ಅಥವಾ ಪಟ್ಟಿ ಪೇಸ್ಟ್ ಮಾಡಿ. ಕಾಲಮ್‌ಗಳು ನಿಮಗಾಗಿ ಗುರುತಿಸಲ್ಪಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.whatsapp": {
+  "en": "WhatsApp",
+  "te": "వాట్సాప్",
+  "hi": "व्हाट्सऐप",
+  "kn": "ವಾಟ್ಸಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.whatsapp.what": {
+  "en": "New chats become leads by themselves.",
+  "te": "కొత్త చాట్‌లు తమంతట తామే లీడ్లు అవుతాయి.",
+  "hi": "नई चैट अपने आप लीड बन जाती हैं।",
+  "kn": "ಹೊಸ ಚಾಟ್‌ಗಳು ತಾನಾಗಿಯೇ ಲೀಡ್ ಆಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.missed_calls": {
+  "en": "Missed calls",
+  "te": "మిస్డ్ కాల్స్",
+  "hi": "मिस्ड कॉल",
+  "kn": "ಮಿಸ್ಡ್ ಕಾಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.missed_calls.what": {
+  "en": "Every missed call becomes a lead. Comes with phone calling.",
+  "te": "ప్రతి మిస్డ్ కాల్ ఒక లీడ్ అవుతుంది. ఫోన్ కాలింగ్‌తో వస్తుంది.",
+  "hi": "हर मिस्ड कॉल लीड बन जाती है। फ़ोन कॉलिंग के साथ आएगा।",
+  "kn": "ಪ್ರತಿ ಮಿಸ್ಡ್ ಕಾಲ್ ಲೀಡ್ ಆಗುತ್ತದೆ. ಫೋನ್ ಕಾಲಿಂಗ್‌ನೊಂದಿಗೆ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.status.connected": {
+  "en": "Connected",
+  "te": "కనెక్ట్ అయింది",
+  "hi": "जुड़ा है",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.status.not_connected": {
+  "en": "Not connected",
+  "te": "కనెక్ట్ కాలేదు",
+  "hi": "जुड़ा नहीं",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.status.needs_attention": {
+  "en": "Needs attention",
+  "te": "శ్రద్ధ కావాలి",
+  "hi": "ध्यान चाहिए",
+  "kn": "ಗಮನ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.status.coming_soon": {
+  "en": "Coming soon",
+  "te": "త్వరలో వస్తుంది",
+  "hi": "जल्द आ रहा है",
+  "kn": "ಶೀಘ್ರದಲ್ಲಿ ಬರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.unavailable": {
+  "en": "Not switched on yet. Ask us to switch this on.",
+  "te": "ఇంకా ఆన్ చేయలేదు. ఆన్ చేయమని మమ్మల్ని అడగండి.",
+  "hi": "अभी चालू नहीं है। हमसे इसे चालू करने को कहें।",
+  "kn": "ಇನ್ನೂ ಆನ್ ಮಾಡಿಲ್ಲ. ಆನ್ ಮಾಡಲು ನಮ್ಮನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.manage": {
+  "en": "Manage",
+  "te": "నిర్వహించండి",
+  "hi": "संभालें",
+  "kn": "ನಿರ್ವಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.fix": {
+  "en": "Fix it",
+  "te": "సరిచేయండి",
+  "hi": "ठीक करें",
+  "kn": "ಸರಿಪಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.act.oauth": {
+  "en": "Connect",
+  "te": "కనెక్ట్ చేయండి",
+  "hi": "जोड़ें",
+  "kn": "ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.act.paste_key": {
+  "en": "Paste your key",
+  "te": "మీ కీ పేస్ట్ చేయండి",
+  "hi": "अपनी कुंजी पेस्ट करें",
+  "kn": "ನಿಮ್ಮ ಕೀ ಪೇಸ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.act.copy_address": {
+  "en": "Get your address",
+  "te": "మీ చిరునామా పొందండి",
+  "hi": "अपना पता लें",
+  "kn": "ನಿಮ್ಮ ವಿಳಾಸ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.act.copy_snippet": {
+  "en": "Get the snippet",
+  "te": "స్నిప్పెట్ పొందండి",
+  "hi": "स्निपेट लें",
+  "kn": "ಸ್ನಿಪ್ಪೆಟ್ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.act.upload": {
+  "en": "Add a file or list",
+  "te": "ఫైల్ లేదా జాబితా చేర్చండి",
+  "hi": "फ़ाइल या सूची जोड़ें",
+  "kn": "ಫೈಲ್ ಅಥವಾ ಪಟ್ಟಿ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.act.none": {
+  "en": "Nothing to do",
+  "te": "చేయవలసినది ఏమీ లేదు",
+  "hi": "कुछ करने की ज़रूरत नहीं",
+  "kn": "ಮಾಡಬೇಕಾದದ್ದು ಏನೂ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.meta.how": {
+  "en": "You will go to Facebook to say yes, then come back and pick your Page.",
+  "te": "ఫేస్‌బుక్‌కు వెళ్లి అనుమతి ఇచ్చి, తిరిగి వచ్చి మీ పేజీని ఎంచుకోండి.",
+  "hi": "आप फ़ेसबुक पर जाकर हाँ कहेंगे, फिर लौटकर अपना पेज चुनेंगे।",
+  "kn": "ನೀವು ಫೇಸ್‌ಬುಕ್‌ಗೆ ಹೋಗಿ ಒಪ್ಪಿಗೆ ನೀಡಿ, ಮರಳಿ ಬಂದು ನಿಮ್ಮ ಪೇಜ್ ಆರಿಸುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.meta.go": {
+  "en": "Continue with Facebook",
+  "te": "ఫేస్‌బుక్‌తో కొనసాగండి",
+  "hi": "फेसबुक से आगे बढ़ें",
+  "kn": "ಫೇಸ್‌ಬುಕ್‌ನೊಂದಿಗೆ ಮುಂದುವರಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.meta.pick": {
+  "en": "Choose the Page whose ads bring you leads:",
+  "te": "మీకు లీడ్లు తెచ్చే యాడ్స్ ఉన్న పేజీని ఎంచుకోండి:",
+  "hi": "वह पेज चुनें जिसके विज्ञापन आपको लीड लाते हैं:",
+  "kn": "ನಿಮಗೆ ಲೀಡ್ ತರುವ ಜಾಹೀರಾತುಗಳ ಪೇಜ್ ಆರಿಸಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.meta.chosen": {
+  "en": "in use",
+  "te": "వాడుకలో ఉంది",
+  "hi": "उपयोग में",
+  "kn": "ಬಳಕೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.meta.use": {
+  "en": "Use this Page",
+  "te": "ఈ పేజీని వాడండి",
+  "hi": "यह पेज इस्तेमाल करें",
+  "kn": "ಈ ಪೇಜ್ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.disconnect": {
+  "en": "Disconnect",
+  "te": "కనెక్షన్ తొలగించండి",
+  "hi": "अलग करें",
+  "kn": "ಕನೆಕ್ಷನ್ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.im.step1": {
+  "en": "Sign in to IndiaMART and open Lead Manager settings.",
+  "te": "ఇండియామార్ట్‌లో సైన్ ఇన్ చేసి లీడ్ మేనేజర్ సెట్టింగ్స్ తెరవండి.",
+  "hi": "इंडियामार्ट में साइन इन करके लीड मैनेजर सेटिंग खोलें।",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್‌ಗೆ ಸೈನ್ ಇನ್ ಆಗಿ ಲೀಡ್ ಮ್ಯಾನೇಜರ್ ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.im.step2": {
+  "en": "Find your CRM key (a long code) and copy it.",
+  "te": "మీ CRM కీ (పొడవైన కోడ్) కనుగొని కాపీ చేయండి.",
+  "hi": "अपनी CRM कुंजी (लंबा कोड) ढूँढकर कॉपी करें।",
+  "kn": "ನಿಮ್ಮ CRM ಕೀ (ಉದ್ದದ ಕೋಡ್) ಹುಡುಕಿ ಕಾಪಿ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.im.step3": {
+  "en": "Paste it below and save.",
+  "te": "క్రింద పేస్ట్ చేసి సేవ్ చేయండి.",
+  "hi": "नीचे पेस्ट करके सहेजें।",
+  "kn": "ಕೆಳಗೆ ಪೇಸ್ಟ್ ಮಾಡಿ ಉಳಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.im.key": {
+  "en": "Your IndiaMART CRM key",
+  "te": "మీ ఇండియామార్ట్ CRM కీ",
+  "hi": "आपकी इंडियामार्ट CRM कुंजी",
+  "kn": "ನಿಮ್ಮ ಇಂಡಿಯಾಮಾರ್ಟ್ CRM ಕೀ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.im.hint": {
+  "en": "It is kept safely and never shown again in full.",
+  "te": "ఇది భద్రంగా ఉంచబడుతుంది, మళ్ళీ పూర్తిగా చూపబడదు.",
+  "hi": "यह सुरक्षित रखी जाती है और दोबारा पूरी नहीं दिखाई जाती।",
+  "kn": "ಇದನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಇಡಲಾಗುತ್ತದೆ, ಮತ್ತೆ ಪೂರ್ತಿ ತೋರಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.im.save": {
+  "en": "Save key",
+  "te": "కీ సేవ్ చేయండి",
+  "hi": "कुंजी सहेजें",
+  "kn": "ಕೀ ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.im.saved": {
+  "en": "Connected. Key saved ({hint}).",
+  "te": "కనెక్ట్ అయింది. కీ సేవ్ అయింది ({hint}).",
+  "hi": "जुड़ गया। कुंजी सहेजी गई ({hint})।",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿದೆ. ಕೀ ಉಳಿಸಲಾಗಿದೆ ({hint}).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.mail.how": {
+  "en": "Forward each lead e-mail from the portal to this address.",
+  "te": "పోర్టల్ నుంచి వచ్చే ప్రతి లీడ్ ఈమెయిల్‌ను ఈ చిరునామాకు ఫార్వర్డ్ చేయండి.",
+  "hi": "पोर्टल से आने वाला हर लीड ई-मेल इस पते पर फ़ॉरवर्ड करें।",
+  "kn": "ಪೋರ್ಟಲ್‌ನಿಂದ ಬರುವ ಪ್ರತಿ ಲೀಡ್ ಇಮೇಲ್ ಅನ್ನು ಈ ವಿಳಾಸಕ್ಕೆ ಫಾರ್ವರ್ಡ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.mail.address": {
+  "en": "Your forwarding address",
+  "te": "మీ ఫార్వర్డింగ్ చిరునామా",
+  "hi": "आपका फ़ॉरवर्डिंग पता",
+  "kn": "ನಿಮ್ಮ ಫಾರ್ವರ್ಡಿಂಗ್ ವಿಳಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.mail.rotate": {
+  "en": "Make a new address (the old one stops working)",
+  "te": "కొత్త చిరునామా చేయండి (పాతది పని చేయదు)",
+  "hi": "नया पता बनाएँ (पुराना काम करना बंद कर देगा)",
+  "kn": "ಹೊಸ ವಿಳಾಸ ಮಾಡಿ (ಹಳೆಯದು ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.mail.rotated": {
+  "en": "New address ready. Use it from now on.",
+  "te": "కొత్త చిరునామా సిద్ధం. ఇకపై దీన్ని వాడండి.",
+  "hi": "नया पता तैयार है। अब से इसे इस्तेमाल करें।",
+  "kn": "ಹೊಸ ವಿಳಾಸ ಸಿದ್ಧ. ಇನ್ನು ಇದನ್ನು ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.web.how": {
+  "en": "Paste this snippet on your website, or share the form link.",
+  "te": "ఈ స్నిప్పెట్‌ను మీ వెబ్‌సైట్‌లో పెట్టండి, లేదా ఫారం లింక్ పంచుకోండి.",
+  "hi": "यह स्निपेट अपनी वेबसाइट पर लगाएँ, या फ़ॉर्म लिंक साझा करें।",
+  "kn": "ಈ ಸ್ನಿಪ್ಪೆಟ್ ಅನ್ನು ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ಹಾಕಿ, ಅಥವಾ ಫಾರ್ಮ್ ಲಿಂಕ್ ಹಂಚಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.web.snippet": {
+  "en": "Website snippet",
+  "te": "వెబ్‌సైట్ స్నిప్పెట్",
+  "hi": "वेबसाइट स्निपेट",
+  "kn": "ವೆಬ್‌ಸೈಟ್ ಸ್ನಿಪ್ಪೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.web.form": {
+  "en": "Ready form link",
+  "te": "సిద్ధమైన ఫారం లింక్",
+  "hi": "तैयार फ़ॉर्म लिंक",
+  "kn": "ಸಿದ್ಧ ಫಾರ್ಮ್ ಲಿಂಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.err.badkey": {
+  "en": "That key did not work. Check it and paste it again.",
+  "te": "ఆ కీ పని చేయలేదు. చూసుకుని మళ్ళీ పేస్ట్ చేయండి.",
+  "hi": "वह कुंजी काम नहीं आई। जाँचकर फिर पेस्ट करें।",
+  "kn": "ಆ ಕೀ ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪೇಸ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.err.notavailable": {
+  "en": "This is not switched on yet. Ask us to switch it on.",
+  "te": "ఇది ఇంకా ఆన్ చేయలేదు. ఆన్ చేయమని మమ్మల్ని అడగండి.",
+  "hi": "यह अभी चालू नहीं है। हमसे चालू करने को कहें।",
+  "kn": "ಇದು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ. ಆನ್ ಮಾಡಲು ನಮ್ಮನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.err.state": {
+  "en": "Something changed while you were doing this. Reload and try again.",
+  "te": "మీరు చేస్తుండగా ఏదో మారింది. రీలోడ్ చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आपके करते समय कुछ बदल गया। रीलोड करके फिर कोशिश करें।",
+  "kn": "ನೀವು ಮಾಡುತ್ತಿರುವಾಗ ಏನೋ ಬದಲಾಯಿತು. ರೀಲೋಡ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.err.forbidden": {
+  "en": "Only the Owner and Admins can change lead sources.",
+  "te": "లీడ్ సోర్సెస్‌ను ఓనర్, అడ్మిన్లు మాత్రమే మార్చగలరు.",
+  "hi": "लीड सोर्स सिर्फ़ मालिक और एडमिन बदल सकते हैं।",
+  "kn": "ಲೀಡ್ ಸೋರ್ಸ್‌ಗಳನ್ನು ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.err.slow": {
+  "en": "Too many tries in a row. Please wait a minute.",
+  "te": "వరుసగా చాలాసార్లు ప్రయత్నించారు. ఒక నిమిషం ఆగండి.",
+  "hi": "लगातार बहुत कोशिशें हुईं। एक मिनट रुकिए।",
+  "kn": "ಸತತವಾಗಿ ಹಲವು ಬಾರಿ ಪ್ರಯತ್ನಿಸಿದ್ದೀರಿ. ಒಂದು ನಿಮಿಷ ಕಾಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.err.down": {
+  "en": "That did not work just now. Please try again.",
+  "te": "ఇప్పుడు అది పని చేయలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी यह नहीं हो पाया। कृपया फिर कोशिश करें।",
+  "kn": "ಈಗ ಅದು ಆಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.new": {
+  "en": "New",
+  "te": "కొత్త",
+  "hi": "नया",
+  "kn": "ಹೊಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.urgency.high": {
+  "en": "Urgent",
+  "te": "అత్యవసరం",
+  "hi": "जरूरी",
+  "kn": "ತುರ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.urgency.normal": {
+  "en": "Normal",
+  "te": "సాధారణం",
+  "hi": "सामान्य",
+  "kn": "ಸಾಮಾನ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.urgency.low": {
+  "en": "Not urgent",
+  "te": "తొందర లేదు",
+  "hi": "जल्दी नहीं",
+  "kn": "ತುರ್ತಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.junk.spam": {
+  "en": "Junk: spam",
+  "te": "చెత్త: స్పామ్",
+  "hi": "कचरा: स्पैम",
+  "kn": "ಕಸ: ಸ್ಪ್ಯಾಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.junk.test": {
+  "en": "Junk: test",
+  "te": "చెత్త: టెస్ట్",
+  "hi": "कचरा: टेस्ट",
+  "kn": "ಕಸ: ಟೆಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.junk.no_contact": {
+  "en": "Junk: no way to reach",
+  "te": "చెత్త: సంప్రదించే దారి లేదు",
+  "hi": "कचरा: संपर्क का तरीका नहीं",
+  "kn": "ಕಸ: ಸಂಪರ್ಕಿಸುವ ದಾರಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.junk.abuse": {
+  "en": "Junk: abusive",
+  "te": "చెత్త: దుర్భాష",
+  "hi": "कचरा: गाली-गलौज",
+  "kn": "ಕಸ: ನಿಂದನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.guess": {
+  "en": "A guess. Open the lead to fix it.",
+  "te": "అంచనా మాత్రమే. సరిచేయడానికి లీడ్ తెరవండి.",
+  "hi": "अंदाज़ा है। ठीक करने के लिए लीड खोलें।",
+  "kn": "ಅಂದಾಜು ಮಾತ್ರ. ಸರಿಪಡಿಸಲು ಲೀಡ್ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.dup": {
+  "en": "The same person wrote {n} times. Merged into one.",
+  "te": "ఒకే వ్యక్తి {n} సార్లు రాశారు. ఒకటిగా కలిపాం.",
+  "hi": "एक ही व्यक्ति ने {n} बार लिखा। एक में मिला दिया।",
+  "kn": "ಒಬ್ಬರೇ {n} ಬಾರಿ ಬರೆದಿದ್ದಾರೆ. ಒಂದಾಗಿ ಸೇರಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.original": {
+  "en": "As they wrote it",
+  "te": "వారు రాసినట్లే",
+  "hi": "जैसा उन्होंने लिखा",
+  "kn": "ಅವರು ಬರೆದಂತೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.f.urgency": {
+  "en": "How urgent",
+  "te": "ఎంత అత్యవసరం",
+  "hi": "कितना जरूरी",
+  "kn": "ಎಷ್ಟು ತುರ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.f.q": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.f.junk": {
+  "en": "Show junk",
+  "te": "చెత్త కూడా చూపండి",
+  "hi": "कचरा भी दिखाएँ",
+  "kn": "ಕಸವನ್ನೂ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.more": {
+  "en": "More ways to bring leads in, and settings",
+  "te": "లీడ్లు తెచ్చే మరిన్ని మార్గాలు, సెట్టింగ్స్",
+  "hi": "लीड लाने के और तरीके और सेटिंग",
+  "kn": "ಲೀಡ್ ತರುವ ಇನ್ನಷ್ಟು ಮಾರ್ಗಗಳು ಮತ್ತು ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.title": {
+  "en": "Automatic replies",
+  "te": "ఆటోమేటిక్ రిప్లైలు",
+  "hi": "अपने आप जवाब",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.off": {
+  "en": "Off",
+  "te": "ఆఫ్",
+  "hi": "बंद",
+  "kn": "ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.what": {
+  "en": "When a customer writes to you on WhatsApp, {assistant} can answer by itself, in the customer's language, using only the facts you approved. Nothing is invented.",
+  "te": "కస్టమర్ వాట్సాప్‌లో రాసినప్పుడు, మీరు ఆమోదించిన వివరాలతో మాత్రమే, కస్టమర్ భాషలో {assistant} తానే సమాధానం ఇవ్వగలదు. ఏదీ కల్పించదు.",
+  "hi": "जब कोई ग्राहक आपको WhatsApp पर लिखता है, तो {assistant} सिर्फ़ आपके मंज़ूर किए तथ्यों से, ग्राहक की भाषा में अपने आप जवाब दे सकती है। कुछ भी गढ़ा नहीं जाता।",
+  "kn": "ಗ್ರಾಹಕರು ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಬರೆದಾಗ, ನೀವು ಒಪ್ಪಿದ ವಿವರಗಳಿಂದ ಮಾತ್ರ, ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲಿ {assistant} ತಾನಾಗಿ ಉತ್ತರಿಸಬಹುದು. ಏನನ್ನೂ ಕಲ್ಪಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.rules": {
+  "en": "It always follows these rules:",
+  "te": "ఇది ఎప్పుడూ ఈ నియమాలు పాటిస్తుంది:",
+  "hi": "यह हमेशा ये नियम मानती है:",
+  "kn": "ಇದು ಯಾವಾಗಲೂ ಈ ನಿಯಮಗಳನ್ನು ಪಾಲಿಸುತ್ತದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.rule.answers_within_24_hours": {
+  "en": "It answers only within 24 hours of the customer's message.",
+  "te": "కస్టమర్ మెసేజ్ చేసిన 24 గంటల్లోపే సమాధానం ఇస్తుంది.",
+  "hi": "ग्राहक के संदेश के 24 घंटे के भीतर ही जवाब देती है।",
+  "kn": "ಗ್ರಾಹಕರ ಸಂದೇಶದ 24 ಗಂಟೆಗಳೊಳಗೆ ಮಾತ್ರ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.rule.asks_you_before_prices_and_promises": {
+  "en": "A price, a discount or a promise always waits for you.",
+  "te": "ధర, డిస్కౌంట్ లేదా మాట ఇవ్వడం ఎప్పుడూ మీ కోసం ఆగుతుంది.",
+  "hi": "दाम, छूट या कोई वादा हमेशा आपका इंतज़ार करता है।",
+  "kn": "ಬೆಲೆ, ರಿಯಾಯಿತಿ ಅಥವಾ ಭರವಸೆ ಯಾವಾಗಲೂ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.rule.hands_over_when_unsure_or_asked_for_a_person": {
+  "en": "If it is unsure, the customer is upset, or asks for a person, it hands over to you.",
+  "te": "తెలియకపోయినా, కస్టమర్ కోపంగా ఉన్నా, మనిషిని అడిగినా, మీకు అప్పగిస్తుంది.",
+  "hi": "अगर पक्का न हो, ग्राहक नाराज़ हो या इंसान से बात माँगे, तो यह आपको सौंप देती है।",
+  "kn": "ಖಚಿತವಿಲ್ಲದಿದ್ದರೆ, ಗ್ರಾಹಕರು ಕೋಪಗೊಂಡರೆ ಅಥವಾ ವ್ಯಕ್ತಿಯನ್ನು ಕೇಳಿದರೆ, ನಿಮಗೆ ಒಪ್ಪಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.today": {
+  "en": "Today: {answered} answered by itself, {held} waiting for you (at most {limit} a day).",
+  "te": "ఈ రోజు: {answered} తానే సమాధానం ఇచ్చింది, {held} మీ కోసం ఆగాయి (రోజుకు గరిష్ఠంగా {limit}).",
+  "hi": "आज: {answered} का जवाब अपने आप दिया, {held} आपका इंतज़ार कर रहे हैं (दिन में अधिकतम {limit})।",
+  "kn": "ಇಂದು: {answered} ತಾನಾಗಿ ಉತ್ತರಿಸಿದೆ, {held} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ (ದಿನಕ್ಕೆ ಗರಿಷ್ಠ {limit}).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.needs": {
+  "en": "A reply goes out only while automatic sending is on in your message settings; otherwise it waits for your approval.",
+  "te": "మీ మెసేజ్ సెట్టింగ్స్‌లో ఆటోమేటిక్ సెండింగ్ ఆన్‌లో ఉన్నప్పుడే రిప్లై వెళ్తుంది; లేకపోతే మీ ఆమోదం కోసం ఆగుతుంది.",
+  "hi": "जवाब तभी जाता है जब आपकी मैसेज सेटिंग में अपने आप भेजना चालू हो; नहीं तो वह आपकी मंज़ूरी का इंतज़ार करता है।",
+  "kn": "ನಿಮ್ಮ ಸಂದೇಶ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ತಾನಾಗಿ ಕಳುಹಿಸುವುದು ಆನ್ ಇದ್ದಾಗ ಮಾತ್ರ ಉತ್ತರ ಹೋಗುತ್ತದೆ; ಇಲ್ಲದಿದ್ದರೆ ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.approve": {
+  "en": "Turning it on is your approval of these rules, for every message.",
+  "te": "ఆన్ చేయడం అంటే ప్రతి మెసేజ్‌కీ ఈ నియమాలకు మీ ఆమోదం.",
+  "hi": "इसे चालू करना हर संदेश के लिए इन नियमों की आपकी मंज़ूरी है।",
+  "kn": "ಆನ್ ಮಾಡುವುದು ಪ್ರತಿ ಸಂದೇಶಕ್ಕೂ ಈ ನಿಯಮಗಳಿಗೆ ನಿಮ್ಮ ಒಪ್ಪಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.turnon": {
+  "en": "Turn on automatic replies",
+  "te": "ఆటోమేటిక్ రిప్లైలు ఆన్ చేయండి",
+  "hi": "अपने आप जवाब चालू करें",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳನ್ನು ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.turnoff": {
+  "en": "Turn off automatic replies",
+  "te": "ఆటోమేటిక్ రిప్లైలు ఆఫ్ చేయండి",
+  "hi": "अपने आप जवाब बंद करें",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳನ್ನು ಆಫ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.owneronly": {
+  "en": "Only the Owner can turn this on or off.",
+  "te": "దీన్ని ఓనర్ మాత్రమే ఆన్ లేదా ఆఫ్ చేయగలరు.",
+  "hi": "इसे सिर्फ़ मालिक चालू या बंद कर सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಆನ್ ಅಥವಾ ಆಫ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.done.on": {
+  "en": "Automatic replies are on.",
+  "te": "ఆటోమేటిక్ రిప్లైలు ఆన్ అయ్యాయి.",
+  "hi": "अपने आप जवाब चालू हो गए।",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು ಆನ್ ಆದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.done.off": {
+  "en": "Automatic replies are off. Every message waits for you again.",
+  "te": "ఆటోమేటిక్ రిప్లైలు ఆఫ్ అయ్యాయి. ప్రతి మెసేజ్ మళ్ళీ మీ కోసం ఆగుతుంది.",
+  "hi": "अपने आप जवाब बंद हो गए। हर संदेश फिर आपका इंतज़ार करेगा।",
+  "kn": "ತಾನಾಗಿ ಉತ್ತರಗಳು ಆಫ್ ಆದವು. ಪ್ರತಿ ಸಂದೇಶ ಮತ್ತೆ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.err.mfa": {
+  "en": "This needs your two-step code first. Sign in again with the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "దీనికి ముందుగా మీ టూ-స్టెప్ కోడ్ కావాలి. ఆథెంటికేటర్ యాప్ కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, ఇంకోసారి ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "इसके लिए पहले आपका टू-स्टेप कोड चाहिए। ऑथेंटिकेटर ऐप के कोड से फिर साइन इन करके दोबारा कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಟೂ-ಸ್ಟೆಪ್ ಕೋಡ್ ಬೇಕು. ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಕೋಡ್‌ನಿಂದ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.err.forbidden": {
+  "en": "Only the Owner can change this.",
+  "te": "దీన్ని ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ मालिक बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.err.not_available": {
+  "en": "This is not available on this system yet.",
+  "te": "ఇది ఈ సిస్టమ్‌లో ఇంకా అందుబాటులో లేదు.",
+  "hi": "यह अभी इस सिस्टम पर उपलब्ध नहीं है।",
+  "kn": "ಇದು ಈ ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ar.err.down": {
+  "en": "That did not work just now. Nothing was changed. Please try again.",
+  "te": "ఇప్పుడు అది పని చేయలేదు. ఏదీ మారలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी यह नहीं हो पाया। कुछ नहीं बदला। कृपया फिर कोशिश करें।",
+  "kn": "ಈಗ ಅದು ಆಗಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.hear.said": {
+  "en": "What was said:",
+  "te": "చెప్పినది:",
+  "hi": "जो बोला गया:",
+  "kn": "ಹೇಳಿದ್ದು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.hear.unsupported": {
+  "en": "Hearing a line that is not saved yet is not available on this system yet. Save it to hear the saved line.",
+  "te": "ఇంకా సేవ్ చేయని లైన్ వినడం ఈ సిస్టమ్‌లో ఇంకా అందుబాటులో లేదు. సేవ్ చేసిన లైన్ వినడానికి సేవ్ చేయండి.",
+  "hi": "जो लाइन अभी सेव नहीं हुई उसे सुनना इस सिस्टम पर अभी उपलब्ध नहीं है। सेव की गई लाइन सुनने के लिए सेव करें।",
+  "kn": "ಇನ್ನೂ ಸೇವ್ ಮಾಡದ ಸಾಲನ್ನು ಕೇಳುವುದು ಈ ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ. ಸೇವ್ ಮಾಡಿದ ಸಾಲನ್ನು ಕೇಳಲು ಸೇವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.said": {
+  "en": "What this sample says:",
+  "te": "ఈ శాంపిల్ చెప్పేది:",
+  "hi": "यह नमूना जो बोलता है:",
+  "kn": "ಈ ಮಾದರಿ ಹೇಳುವುದು:",
   "status": {
    "te": "draft",
    "hi": "draft",

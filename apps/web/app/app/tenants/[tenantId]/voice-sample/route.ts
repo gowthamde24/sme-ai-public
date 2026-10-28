@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { getVoicePreview, getVoicePreviewText } from "@/lib/api/voice-samples";
+import { savedGreetingText } from "@/lib/api/opening-line";
 import { getVoicesPreviewFile } from "@/lib/api/voice-picker";
 import { voicePickerScreens } from "@/lib/screens/flag";
 import { requireUser } from "@/lib/auth/session";
@@ -39,6 +40,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (request.nextUrl.searchParams.get("text") === "1") {
     if (mode === "mock") return new NextResponse(null, { status: 404 });
     try {
+      // with the voice catalogue on, the sound is the saved opening line: its words are that line's exact greeting
+      if (voicePickerScreens() === "on") {
+        const text = await savedGreetingText(user.accessToken, tenantId, query.lang);
+        return text ? NextResponse.json({ text }, { status: 200, headers }) : new NextResponse(null, { status: 404 });
+      }
       const said = await getVoicePreviewText(user.accessToken, tenantId, query);
       return said ? NextResponse.json({ text: said.text }, { status: 200, headers }) : new NextResponse(null, { status: 404 });
     } catch {

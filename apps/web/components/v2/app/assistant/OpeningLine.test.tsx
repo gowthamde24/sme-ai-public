@@ -92,9 +92,9 @@ describe("Settings > AI assistant > Opening line", () => {
     draw({ mentionAi: false, effectiveAi: false });
     pick("English");
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Hear it" })));
-    expect(hear).toHaveBeenCalledWith("en", "Hello Ravi, this is your assistant, the AI assistant of Sri Silks. Do you have a minute?", false);
+    expect(hear).toHaveBeenCalledWith("en", MOCK_DEFAULTS.en, false, false); // the line as it is in the box (placeholders and all): the API fills the real names
     expect(screen.getByRole("status")).toHaveTextContent("There is no sound in this mode.");
-    expect(screen.getByText(/Preview of the voice\. In real calls your assistant talks naturally and answers what the customer says\./)).toBeInTheDocument();
+    expect(screen.getByText(/Plays the line exactly as it is in the box, with your real names\. Nothing is saved\./)).toBeInTheDocument();
   });
   it("'Hear it' plays the sound from a blob: address (the page's media rule does not allow data:)", async () => {
     const made: string[] = [];
@@ -108,6 +108,31 @@ describe("Settings > AI assistant > Opening line", () => {
     expect(made).toEqual(["blob:http://x/abc"]);
     expect(played).toEqual(["blob:http://x/abc"]);
     vi.unstubAllGlobals();
+  });
+  it("'Hear it' needs no saving: an edited line is sent as it is in the box and the exact words the sound said are shown under the button", async () => {
+    vi.stubGlobal("Audio", class { onended: (() => void) | null = null; play() { return Promise.resolve(); } pause() {} });
+    URL.createObjectURL = vi.fn(() => "blob:http://x/abc");
+    URL.revokeObjectURL = vi.fn();
+    const say = vi.fn(async () => ({ ok: true, preview: { audio: { base64: btoa("RIFF"), mime: "audio/wav", seconds: 1 }, fake: false, spokenText: "Hello Ravi, this is Tara of Sri Silks. Got a minute for a quick question?" } }) as never);
+    draw({ actions: actions({ preview: say }), mock: false });
+    pick("English");
+    type("Hello {customer}, this is {assistant} of {business}. Got a minute for a quick question?");
+    expect(screen.queryByText(/Save first/)).toBeNull();
+    const button = screen.getByRole("button", { name: "Hear it" });
+    expect(button).not.toBeDisabled(); // edited and not saved: still enabled
+    await act(async () => void fireEvent.click(button));
+    expect(say).toHaveBeenCalledWith("en", "Hello {customer}, this is {assistant} of {business}. Got a minute for a quick question?", true, true);
+    expect(document.querySelector('[data-part="spoken-text"]')).toHaveTextContent("What was said:Hello Ravi, this is Tara of Sri Silks. Got a minute for a quick question?");
+    vi.unstubAllGlobals();
+  });
+  it("when the API cannot speak a line that is not saved yet it says so in words and plays nothing", async () => {
+    const say = vi.fn(async () => ({ ok: false, error: "unsupported" }) as never);
+    draw({ actions: actions({ preview: say }), mock: false });
+    pick("English");
+    type("Hello {customer}, this is {assistant} of {business}. Got a minute for a quick question?");
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Hear it" })));
+    expect(screen.getByRole("status")).toHaveTextContent("not available on this system yet");
+    expect(document.querySelector('[data-part="spoken-text"]')).toBeNull();
   });
   it("a viewer of it (the Admin) can read and hear but not change: no box to type in, no Save, no reset", () => {
     draw({ canEdit: false });

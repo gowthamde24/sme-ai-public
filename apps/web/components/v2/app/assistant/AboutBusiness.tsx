@@ -197,7 +197,7 @@ export function AboutBusiness({ words, initial, endpoint, canEdit, lang, sources
   };
 
   const headings = initial.prompts.map((p) => ({ key: p.key, label: SECTION_KEYS.includes(p.key) ? t(`ctx.sec.${p.key}` as "ctx.sec.prices") : p.label }));
-  const when = (iso: string) => (iso ? new Date(iso).toLocaleString(lang, { dateStyle: "medium", timeStyle: "short" }) : "");
+  const when = (iso: string) => (iso ? new Date(iso).toLocaleString(lang, { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }) : "");
   const stateLine = save === "saving" ? t("ctx.saving") : save === "unsaved" ? t("ctx.unsaved") : save === "saved" ? t("ctx.saved") : "";
 
   return (

@@ -48,3 +48,9 @@ export const browserVoice = (value: string | undefined = process.env.BROWSER_VOI
 
 /** Settings > AI assistant > "About my business" (job context-and-easy-sources part A, contract-context-sources.md): the owner's own notes the assistant uses in chats, calls, Ask and drafts, with "add by paste, file or voice" and "Test it". `mock` = notes kept in the memory of the server (nothing is sent anywhere), `1` = the API (`/ai-assistant/context*`), unset = the part is not there. */
 export const aboutBusinessScreens = (value: string | undefined = process.env.ABOUT_BUSINESS_SCREENS): ScreenMode => screenMode(value);
+
+/** Lead sources as big simple cards (job context-and-easy-sources part B, contract-context-sources.md): one clear action and a live status each (Meta, IndiaMART, forwarded e-mails, website, files, WhatsApp, missed calls). `mock` = made-up cards kept in the memory of the server (nothing is sent), `1` = the API (`/lead-sources/cards` and its connect calls), unset = the part is not there. */
+export const sourceCardsScreens = (value: string | undefined = process.env.SOURCE_CARDS_SCREENS): ScreenMode => screenMode(value);
+
+/** Settings > AI assistant > "Automatic replies" (job DY, C1's `GET/PUT /ai-assistant/auto-reply`, Owner with the second factor): the switch that lets the assistant answer customers' WhatsApp messages on its own, with the standing rules in plain words and today's counts. `mock` = the switch kept in a cookie of the browser (nothing is sent), `1` = the API, unset = the part is not there. */
+export const autoReplyScreens = (value: string | undefined = process.env.AUTO_REPLY_SCREENS): ScreenMode => screenMode(value);

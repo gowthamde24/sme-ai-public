@@ -1,13 +1,15 @@
 import Link from "next/link";
 
 import { AssignSelect } from "@/components/v2/app/lead-desk/AssignSelect";
+import { ProfileLine } from "@/components/v2/app/lead-desk/ProfileLine";
 import { PageTop } from "@/components/v2/app/parts";
 import { btnMain, btnQuiet, fieldInput, fieldLabel, leadRow, mutedText, pageMain, pillAmber, pillBrand, pillGreen, pillNeutral, surface } from "@/components/v2/app/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { fetchMembers } from "@/lib/api/orders";
-import { applyFilter, filterHref, LEAD_STATUSES, parseFilter } from "@/lib/lead-desk/leads";
+import { applyFilter, filterHref, LEAD_STATUSES, NO_FILTER, parseFilter } from "@/lib/lead-desk/leads";
+import { URGENCIES } from "@/lib/lead-desk/profile";
 import { readDeskLeads } from "@/lib/lead-desk/leads-source";
 import { readHandoffs } from "@/lib/outreach/source";
 import { sourceNames } from "@/lib/outreach/words";
@@ -33,7 +35,7 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
   if (!got.ok) return got.page;
   const { accessToken, userId, tenant } = got.ctx;
   const lang = await getLang();
-  const words = wordsFor(lang, ["ld.desk.", "ld.source.", "ld.status.", "ol.hot."]);
+  const words = wordsFor(lang, ["ld.desk.", "ld.source.", "ld.status.", "ol.hot.", "lp."]);
   const base = `/app/tenants/${tenantId}`;
   const filter = parseFilter(query);
   const ctx = { token: accessToken, tenantId, userId };
@@ -97,11 +99,34 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
             {words["ld.desk.f.hot"]}
           </label>
         ) : null}
+        <div className="min-w-40 flex-1">
+          <label htmlFor="ldf-urgency" className={fieldLabel}>
+            {words["lp.f.urgency"]}
+          </label>
+          <select id="ldf-urgency" name="urgency" className={fieldInput} defaultValue={filter.urgency ?? ""}>
+            <option value="">{words["ld.desk.f.any"]}</option>
+            {URGENCIES.map((u) => (
+              <option key={u} value={u}>
+                {words[`lp.urgency.${u}`]}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="min-w-40 flex-1">
+          <label htmlFor="ldf-q" className={fieldLabel}>
+            {words["lp.f.q"]}
+          </label>
+          <input id="ldf-q" name="q" type="search" maxLength={80} defaultValue={filter.q} className={fieldInput} />
+        </div>
+        <label className="flex min-h-11 items-center gap-2 text-base">
+          <input type="checkbox" name="junk" value="1" defaultChecked={filter.junk} className="size-6 accent-brand-text" />
+          {words["lp.f.junk"]}
+        </label>
         <button type="submit" className={btnMain}>
           {words["ld.desk.f.apply"]}
         </button>
-        {filter.source || filter.status || filter.mine || filter.hot ? (
-          <Link href={filterHref(base, { source: null, status: null, mine: false, hot: false })} className={btnQuiet}>
+        {filter.source || filter.status || filter.mine || filter.hot || filter.urgency || filter.junk || filter.q ? (
+          <Link href={filterHref(base, NO_FILTER)} className={btnQuiet}>
             {words["ld.desk.f.clear"]}
           </Link>
         ) : null}
@@ -120,9 +145,12 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
                   <Link href={`${base}/leads/${l.id}`} className="break-words font-display text-lg font-bold text-brand-text hover:underline">
                     {l.name || words["ld.desk.noname"]}
                   </Link>
+                  {l.isNew ? <span className={pillBrand}>{words["lp.new"]}</span> : null}
                   {l.hot ? <span className={pillAmber}>{words["ld.desk.hot"]}</span> : null}
+                  {l.profile?.junk ? <span className={pillNeutral}>{words[`lp.junk.${l.profile.junk}`]}</span> : null}
                   <span className={statusPill(l.status)}>{words[`ld.status.${l.status}`]}</span>
                 </div>
+                {l.profile ? <ProfileLine p={l.profile} words={words} /> : null}
                 <p className={`${mutedText} !mt-1`}>
                   {l.source ? (sn[l.source] ?? l.source) : words["ld.desk.nosource"]} · {date(l.createdAt)}
                 </p>
