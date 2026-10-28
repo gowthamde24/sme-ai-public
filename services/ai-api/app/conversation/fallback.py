@@ -16,7 +16,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
-from collections.abc import AsyncIterator, Callable
+from collections.abc import AsyncIterator, Callable, Mapping
 from contextlib import suppress
 
 from app.conversation.parts import StreamingTts
@@ -38,8 +38,9 @@ async def _close(it: object) -> None:
 class FallbackTts:
     sample_rate = 24000
 
-    def __init__(self, config: VoiceConfig, factory: EngineFactory, *, prewarm_language: str = "te", clock: Callable[[], float] = time.monotonic) -> None:
+    def __init__(self, config: VoiceConfig, factory: EngineFactory, *, prewarm_language: str = "te", clock: Callable[[], float] = time.monotonic, chosen: Mapping[str, str] | None = None) -> None:
         self.config, self._factory, self._prewarm_language, self._clock = config, factory, prewarm_language, clock
+        self._chosen: dict[str, str] = dict(chosen or {})  # the workspace's voice id per language (job voice-picker); a missing or unknown one means the default
         self._engines: dict[tuple[str, str, str, str], StreamingTts] = {}
         self._skip_primary_until: dict[str, float] = {}
         self._fallback_in_turn = False
@@ -61,14 +62,14 @@ class FallbackTts:
         return self._engines[key]
 
     async def prewarm(self) -> None:
-        voices = self.config.for_language(self._prewarm_language)
+        voices = self.config.for_language(self._prewarm_language, self._chosen.get(self._prewarm_language))
         with suppress(Exception):
             await self._engine(voices.primary, self._prewarm_language).prewarm()
 
     # ---- one piece of text ----------------------------------------------------------------------------------------------------------------
 
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
-        voices = self.config.for_language(language)
+        voices = self.config.for_language(language, self._chosen.get(language))
         now = self._clock()
         use_primary = not self._fallback_in_turn and now >= self._skip_primary_until.get(language, 0.0)
         if not use_primary and not self._fallback_in_turn:

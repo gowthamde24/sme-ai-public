@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import copy
+import dataclasses
 import json
 import logging
 from collections.abc import AsyncIterator
@@ -50,15 +51,15 @@ def test_bulbul_v3_is_not_a_choice_anywhere() -> None:
     raw = json.loads(DEFAULT_FILE.read_text(encoding="utf-8"))
     assert "bulbul:v3" not in json.dumps(raw) and "sarvam_v3" not in json.dumps(raw)
     bad = copy.deepcopy(raw)
-    bad["languages"]["te"]["fallback"]["engine"] = "sarvam_v3"
+    bad["catalogue"][0]["fallback"]["engine"] = "sarvam_v3"
     with pytest.raises(ValueError, match="engine must be one of"):
         parse_config(bad)
 
 
 def test_the_config_is_data_a_voice_swaps_without_touching_code(tmp_path: Path) -> None:
     raw = json.loads(DEFAULT_FILE.read_text(encoding="utf-8"))
-    raw["languages"]["te"]["primary"]["voice"] = "some-other-voice-id"
-    raw["languages"]["en"]["fallback"]["voice"] = "ritu_en_latenight"
+    next(e for e in raw["catalogue"] if e["id"] == "te-ramya")["primary"]["voice"] = "some-other-voice-id"
+    next(e for e in raw["catalogue"] if e["id"] == "en-janvi")["fallback"]["voice"] = "ritu_en_latenight"
     raw["first_audio_timeout_ms"] = 600
     path = tmp_path / "voices.json"
     path.write_text(json.dumps(raw), encoding="utf-8")
@@ -70,10 +71,11 @@ def test_the_config_is_data_a_voice_swaps_without_touching_code(tmp_path: Path) 
 @pytest.mark.parametrize(
     "mutate, message",
     [
-        (lambda r: r["languages"].pop("kn"), "missing languages"),
-        (lambda r: r["languages"]["hi"]["fallback"].update(engine="cartesia"), "different engine"),
+        (lambda r: r.pop("catalogue"), "catalogue"),
         (lambda r: r.update(first_audio_timeout_ms=50), "first_audio_timeout_ms"),
-        (lambda r: r["languages"]["te"]["primary"].pop("voice"), "model and voice are required"),
+        (lambda r: r["catalogue"][0]["primary"].pop("voice"), "model and voice are required"),
+        (lambda r: r["catalogue"][0]["fallback"].update(engine="cartesia"), "different engine"),
+        (lambda r: r["catalogue"].pop(0), "language en needs exactly one default"),
     ],
 )
 def test_a_broken_config_is_refused_with_a_reason(mutate: Any, message: str) -> None:
@@ -125,7 +127,7 @@ class Engine:
 
 def build(primary: Engine, fallback: Engine, *, timeout_ms: int = 800, clock: Any = None, cooldown_s: float = 30.0) -> FallbackTts:
     cfg = default_config()
-    cfg = type(cfg)(cfg.languages, timeout_ms, cooldown_s)
+    cfg = dataclasses.replace(cfg, first_audio_timeout_ms=timeout_ms, cooldown_s=cooldown_s)
     engines = {"cartesia": primary, "sarvam_v4": fallback}
     return FallbackTts(cfg, lambda choice, language: engines[choice.engine], clock=clock or (lambda: 0.0))
 
@@ -218,7 +220,7 @@ def test_each_language_gets_its_own_voice_from_the_config_and_the_engine_is_buil
     for lang in ("te", "hi", "kn", "en", "te"):
         tts.begin_turn()
         run(speak(tts, "x", lang))
-    assert [b[0] for b in built] == ["te", "hi", "kn", "en"] and len({b[2] for b in built}) == 2  # Ramya for te/hi/kn, Saira for en
+    assert [b[0] for b in built] == ["te", "hi", "kn", "en"] and len({b[2] for b in built}) == 4  # each language's own default voice
 
 
 def test_prewarm_warms_only_the_primary() -> None:

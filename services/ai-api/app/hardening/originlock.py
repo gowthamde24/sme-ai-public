@@ -18,6 +18,7 @@ Send = Callable[[MutableMapping[str, Any]], Awaitable[None]]
 
 HEADER = b"x-stack19-origin"
 EXEMPT = ("/health", "/ready")
+EXEMPT_PREFIXES = ("/v1/voice-samples/",)  # job voice-picker: static pre-rendered samples that a browser audio tag fetches directly (no data, no sign-in)
 
 
 def origin_ok(provided: bytes | None, secret: str) -> bool:
@@ -30,7 +31,7 @@ class OriginLockMiddleware:
         self.secret = secret or None
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if self.secret is None or scope["type"] != "http" or scope["path"] in EXEMPT:
+        if self.secret is None or scope["type"] != "http" or scope["path"] in EXEMPT or scope["path"].startswith(EXEMPT_PREFIXES):
             await self.app(scope, receive, send)
             return
         provided = next((v for k, v in scope["headers"] if k == HEADER), None)

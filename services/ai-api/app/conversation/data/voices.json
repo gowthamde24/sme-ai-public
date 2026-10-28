@@ -1,23 +1,196 @@
 {
-  "$comment": "Which voice speaks each language on a call (job natural-voice, owner decision 28 Oct: Bulbul v3 dropped; Cartesia first, Sarvam Bulbul v4 Flash as the automatic fallback). Data, not code: change a voice or an engine here and nothing else. English is the owner's pick by ear (Janvi). The other defaults are PROVISIONAL: the owner's reveal picks are not recorded, so they are the bake-off voices judged calmest and warmest. Hindi and Kannada: Ramya (a Telugu voice) speaks them until the owner picks from voice-bakeoff/picks-hi-kn (Hindi: Sanya, Esha, Meera; Kannada has only three native voices: Disha, Divya, Prakash).",
+  "$comment": "The voices a workspace owner can choose from for their assistant on calls and in previews (job voice-picker, owner decision 28 Oct; Bulbul v3 is dropped). Data, not code: the CATALOGUE is the list of allowed voices, one entry marked default per language (the default is what speaks until the owner chooses). Each entry names its Cartesia voice and a Bulbul v4 Flash FALLBACK voice of the SAME gender (checked on load). Ids are '<language>-<name>'. Add or remove a voice here and render its sample with scripts/voice_catalogue_samples.py. Labels are plain words for the screen.",
   "first_audio_timeout_ms": 800,
   "cooldown_s": 30,
-  "languages": {
-    "te": {
-      "primary": {"engine": "cartesia", "model": "sonic-3.6", "voice": "cf061d8b-a752-4865-81a2-57570a6e0565", "label": "Ramya"},
-      "fallback": {"engine": "sarvam_v4", "model": "bulbul:v4-flash", "voice": "kavitha_te_conversation", "label": "kavitha"}
+  "catalogue": [
+    {
+      "id": "en-janvi",
+      "language": "en",
+      "name": "Janvi",
+      "label": "Calm",
+      "gender": "female",
+      "default": true,
+      "primary": {
+        "engine": "cartesia",
+        "model": "sonic-3.6",
+        "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+        "label": "Janvi"
+      },
+      "fallback": {
+        "engine": "sarvam_v4",
+        "model": "bulbul:v4-flash",
+        "voice": "shalini_en_customer",
+        "gender": "female",
+        "label": "shalini"
+      }
     },
-    "hi": {
-      "primary": {"engine": "cartesia", "model": "sonic-3.6", "voice": "cf061d8b-a752-4865-81a2-57570a6e0565", "label": "Ramya (Telugu voice, Hindi untested by ear)"},
-      "fallback": {"engine": "sarvam_v4", "model": "bulbul:v4-flash", "voice": "kavya_hi_conversational", "label": "kavya"}
+    {
+      "id": "te-ramya",
+      "language": "te",
+      "name": "Ramya",
+      "label": "Warm",
+      "gender": "female",
+      "default": true,
+      "primary": {
+        "engine": "cartesia",
+        "model": "sonic-3.6",
+        "voice": "cf061d8b-a752-4865-81a2-57570a6e0565",
+        "label": "Ramya"
+      },
+      "fallback": {
+        "engine": "sarvam_v4",
+        "model": "bulbul:v4-flash",
+        "voice": "kavitha_te_conversation",
+        "gender": "female",
+        "label": "kavitha"
+      }
     },
-    "kn": {
-      "primary": {"engine": "cartesia", "model": "sonic-3.6", "voice": "cf061d8b-a752-4865-81a2-57570a6e0565", "label": "Ramya (Telugu voice, Kannada untested by ear)"},
-      "fallback": {"engine": "sarvam_v4", "model": "bulbul:v4-flash", "voice": "chaitra_kn_conversation", "label": "chaitra"}
+    {
+      "id": "te-sindhu",
+      "language": "te",
+      "name": "Sindhu",
+      "label": "Natural",
+      "gender": "female",
+      "default": false,
+      "primary": {
+        "engine": "cartesia",
+        "model": "sonic-3.6",
+        "voice": "07bc462a-c644-49f1-baf7-82d5599131be",
+        "label": "Sindhu"
+      },
+      "fallback": {
+        "engine": "sarvam_v4",
+        "model": "bulbul:v4-flash",
+        "voice": "pooja_te_conversation",
+        "gender": "female",
+        "label": "pooja"
+      }
     },
-    "en": {
-      "primary": {"engine": "cartesia", "model": "sonic-3.6", "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8", "label": "Janvi (picked by ear by the owner, 28 Oct)"},
-      "fallback": {"engine": "sarvam_v4", "model": "bulbul:v4-flash", "voice": "shalini_en_customer", "label": "shalini"}
+    {
+      "id": "hi-sanya",
+      "language": "hi",
+      "name": "Sanya",
+      "label": "Clear",
+      "gender": "female",
+      "default": true,
+      "primary": {
+        "engine": "cartesia",
+        "model": "sonic-3.6",
+        "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+        "label": "Sanya"
+      },
+      "fallback": {
+        "engine": "sarvam_v4",
+        "model": "bulbul:v4-flash",
+        "voice": "kavya_hi_conversational",
+        "gender": "female",
+        "label": "kavya"
+      }
+    },
+    {
+      "id": "hi-esha",
+      "language": "hi",
+      "name": "Esha",
+      "label": "Calm",
+      "gender": "female",
+      "default": false,
+      "primary": {
+        "engine": "cartesia",
+        "model": "sonic-3.6",
+        "voice": "72656902-fb4b-4c31-af52-c3b68e2cae26",
+        "label": "Esha"
+      },
+      "fallback": {
+        "engine": "sarvam_v4",
+        "model": "bulbul:v4-flash",
+        "voice": "kavya_hi_conversational",
+        "gender": "female",
+        "label": "kavya"
+      }
+    },
+    {
+      "id": "hi-meera",
+      "language": "hi",
+      "name": "Meera",
+      "label": "Friendly",
+      "gender": "female",
+      "default": false,
+      "primary": {
+        "engine": "cartesia",
+        "model": "sonic-3.6",
+        "voice": "a81fccdc-5595-4dfc-ae76-4de6a515b8a2",
+        "label": "Meera"
+      },
+      "fallback": {
+        "engine": "sarvam_v4",
+        "model": "bulbul:v4-flash",
+        "voice": "kavya_hi_conversational",
+        "gender": "female",
+        "label": "kavya"
+      }
+    },
+    {
+      "id": "kn-disha",
+      "language": "kn",
+      "name": "Disha",
+      "label": "Friendly",
+      "gender": "female",
+      "default": true,
+      "primary": {
+        "engine": "cartesia",
+        "model": "sonic-3.6",
+        "voice": "4c00ff98-199c-4967-99ae-7b69125edcff",
+        "label": "Disha"
+      },
+      "fallback": {
+        "engine": "sarvam_v4",
+        "model": "bulbul:v4-flash",
+        "voice": "chaitra_kn_conversation",
+        "gender": "female",
+        "label": "chaitra"
+      }
+    },
+    {
+      "id": "kn-divya",
+      "language": "kn",
+      "name": "Divya",
+      "label": "Cheerful",
+      "gender": "female",
+      "default": false,
+      "primary": {
+        "engine": "cartesia",
+        "model": "sonic-3.6",
+        "voice": "7c6219d2-e8d2-462c-89d8-7ecba7c75d65",
+        "label": "Divya"
+      },
+      "fallback": {
+        "engine": "sarvam_v4",
+        "model": "bulbul:v4-flash",
+        "voice": "chaitra_kn_conversation",
+        "gender": "female",
+        "label": "chaitra"
+      }
+    },
+    {
+      "id": "kn-prakash",
+      "language": "kn",
+      "name": "Prakash",
+      "label": "Male",
+      "gender": "male",
+      "default": false,
+      "primary": {
+        "engine": "cartesia",
+        "model": "sonic-3.6",
+        "voice": "6baae46d-1226-45b5-a976-c7f9b797aae2",
+        "label": "Prakash"
+      },
+      "fallback": {
+        "engine": "sarvam_v4",
+        "model": "bulbul:v4-flash",
+        "voice": "chetan_kn_conversation",
+        "gender": "male",
+        "label": "chetan"
+      }
     }
-  }
+  ]
 }

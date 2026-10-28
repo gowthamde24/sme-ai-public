@@ -94,6 +94,8 @@ class Settings(BaseSettings):
     llm_api_key: SecretStr | None = None
     gemini_api_key: SecretStr | None = None
     sarvam_api_key: SecretStr | None = None
+    # job voice-picker: Cartesia Sonic key (environment only; never logged)
+    cartesia_api_key: SecretStr | None = None
     anthropic_base_url: str = "https://api.anthropic.com"
     llm_input_micros_per_mtok: int | None = None
     llm_output_micros_per_mtok: int | None = None
