@@ -151,8 +151,12 @@ def test_the_bb_copy_is_the_last_definition_and_differs_by_exactly_the_named_lin
     mig, compared, want_dropped, want_added = BB_CHANGED[name]
     defs = definitions(name)
     # a later job may copy it again, if ITS pin says exactly what it changed (BR: test_migration_copies_br.py; CA: test_migration_copies_ca.py)
+    dx = "20261214090200_dx_reply_fixes.sql"  # test_migration_copies_dx.py
     later = {
-        "app.outbox_claim_due_core": ("20261117090000_br_whatsapp.sql", "20261127090200_di_billing_meters.sql", "20261127090300_di_read_only_lapse.sql"),
+        "app.outbox_claim_due_core": ("20261117090000_br_whatsapp.sql", "20261127090200_di_billing_meters.sql", "20261127090300_di_read_only_lapse.sql", dx),
+        "app.outbox_decide_content": (dx,),
+        "app.outbox_submit_core": (dx,),
+        "public.outbox_decide": (dx,),
         "app.erase_company": ("20261123090600_cn_erasure.sql",),
     }
     assert defs[-1][0] in (mig, *later.get(name, ())), (
