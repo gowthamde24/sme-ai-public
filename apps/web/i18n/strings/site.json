@@ -88,10 +88,10 @@
   }
  },
  "nav.start": {
-  "en": "Start trial",
-  "te": "ట్రయల్ మొదలుపెట్టండి",
-  "hi": "ट्रायल शुरू करें",
-  "kn": "ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
+  "en": "Get started",
+  "te": "ప్రారంభించండి",
+  "hi": "आरंभ करें",
+  "kn": "ಶುರು ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -250,10 +250,10 @@
   }
  },
  "hero.cta": {
-  "en": "Start your {trial_days}-day trial",
-  "te": "మీ {trial_days} రోజుల ట్రయల్ మొదలుపెట్టండి",
-  "hi": "अपना {trial_days} दिन का ट्रायल शुरू करें",
-  "kn": "ನಿಮ್ಮ {trial_days} ದಿನಗಳ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
+  "en": "Get started",
+  "te": "ప్రారంభించండి",
+  "hi": "आरंभ करें",
+  "kn": "ಶುರು ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -272,10 +272,10 @@
   }
  },
  "hero.note": {
-  "en": "{trial_days} days to try it, counted from the day your WhatsApp is connected. Cancel before the trial ends and you pay nothing.",
-  "te": "ట్రయల్ {trial_days} రోజులు, మీ వాట్సాప్ కనెక్ట్ అయిన రోజు నుంచి లెక్క. ట్రయల్ ముగిసేలోపు క్యాన్సిల్ చేస్తే ఏమీ కట్టక్కర్లేదు.",
-  "hi": "ट्रायल {trial_days} दिन का है, जिस दिन आपका व्हाट्सऐप कनेक्ट होगा उस दिन से गिनती शुरू। ट्रायल खत्म होने से पहले कैंसल करें तो कुछ नहीं देना।",
-  "kn": "ಟ್ರಯಲ್ {trial_days} ದಿನಗಳು, ನಿಮ್ಮ ವಾಟ್ಸಾಪ್ ಕನೆಕ್ಟ್ ಆದ ದಿನದಿಂದ ಲೆಕ್ಕ. ಟ್ರಯಲ್ ಮುಗಿಯುವ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಕೊಡಬೇಕಿಲ್ಲ.",
+  "en": "Money reminders and discounts wait for your approval.",
+  "te": "డబ్బు రిమైండర్లు, డిస్కౌంట్లు మీ ఆమోదం కోసం ఆగుతాయి.",
+  "hi": "पैसों के रिमाइंडर और छूट आपकी मंज़ूरी का इंतज़ार करते हैं।",
+  "kn": "ಹಣದ ರಿಮೈಂಡರ್, ರಿಯಾಯಿತಿಗಳು ನಿಮ್ಮ ಒಪ್ಪಿಗೆಗಾಗಿ ಕಾಯುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -338,10 +338,10 @@
   }
  },
  "cta.sub": {
-  "en": "See Lead Desk work for a business like yours. Start with a {trial_days}-day trial, counted from the day your WhatsApp is connected.",
-  "te": "మీలాంటి వ్యాపారం కోసం Lead Desk ఎలా పని చేస్తుందో చూడండి. {trial_days} రోజుల ట్రయల్‌తో మొదలుపెట్టండి, మీ వాట్సాప్ కనెక్ట్ అయిన రోజు నుంచి లెక్క.",
-  "hi": "देखिए Lead Desk आपके जैसे कारोबार के लिए कैसे काम करता है। {trial_days} दिन के ट्रायल से शुरू करें, व्हाट्सऐप कनेक्ट होने के दिन से गिनती।",
-  "kn": "ನಿಮ್ಮಂಥ ವ್ಯಾಪಾರಕ್ಕೆ Lead Desk ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂದು ನೋಡಿ. {trial_days} ದಿನಗಳ ಟ್ರಯಲ್‌ನಿಂದ ಶುರು ಮಾಡಿ, ವಾಟ್ಸಾಪ್ ಕನೆಕ್ಟ್ ಆದ ದಿನದಿಂದ ಲೆಕ್ಕ.",
+  "en": "See Lead Desk work for a business like yours.",
+  "te": "మీలాంటి వ్యాపారం కోసం Lead Desk ఎలా పని చేస్తుందో చూడండి.",
+  "hi": "देखिए Lead Desk आपके जैसे कारोबार के लिए कैसे काम करता है।",
+  "kn": "ನಿಮ್ಮಂತಹ ವ್ಯಾಪಾರಕ್ಕೆ Lead Desk ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂದು ನೋಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -371,10 +371,10 @@
   }
  },
  "price.billing": {
-  "en": "Pricing announced soon. You can start the {trial_days}-day trial now (it counts from the day your WhatsApp is connected): cancel before it ends and you pay nothing.",
-  "te": "ధరలు త్వరలో ప్రకటిస్తాం. {trial_days} రోజుల ట్రయల్ ఇప్పుడే మొదలుపెట్టవచ్చు (మీ వాట్సాప్ కనెక్ట్ అయిన రోజు నుంచి లెక్క): ముగిసేలోపు క్యాన్సిల్ చేస్తే ఏమీ కట్టక్కర్లేదు.",
-  "hi": "कीमतें जल्द बताई जाएँगी। {trial_days} दिन का ट्रायल अभी शुरू कर सकते हैं (गिनती व्हाट्सऐप कनेक्ट होने के दिन से): खत्म होने से पहले कैंसल करें तो कुछ नहीं देना।",
-  "kn": "ಬೆಲೆಗಳನ್ನು ಶೀಘ್ರದಲ್ಲಿ ತಿಳಿಸುತ್ತೇವೆ. {trial_days} ದಿನಗಳ ಟ್ರಯಲ್ ಈಗಲೇ ಶುರು ಮಾಡಬಹುದು (ವಾಟ್ಸಾಪ್ ಕನೆಕ್ಟ್ ಆದ ದಿನದಿಂದ ಲೆಕ್ಕ): ಮುಗಿಯುವ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಕೊಡಬೇಕಿಲ್ಲ.",
+  "en": "Pricing will be announced soon.",
+  "te": "ధరలు త్వరలో ప్రకటిస్తాం.",
+  "hi": "कीमतें जल्द घोषित की जाएँगी।",
+  "kn": "ಬೆಲೆಗಳನ್ನು ಶೀಘ್ರದಲ್ಲೇ ಘೋಷಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -382,10 +382,10 @@
   }
  },
  "price.trial.t": {
-  "en": "Free trial",
-  "te": "ఉచిత ట్రయల్",
-  "hi": "मुफ़्त ट्रायल",
-  "kn": "ಉಚಿತ ಟ್ರಯಲ್",
+  "en": "Try it with your own business",
+  "te": "మీ సొంత వ్యాపారంతో ప్రయత్నించండి",
+  "hi": "अपने ही कारोबार के साथ आज़माइए",
+  "kn": "ನಿಮ್ಮದೇ ವ್ಯಾಪಾರದೊಂದಿಗೆ ಪ್ರಯತ್ನಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -393,10 +393,10 @@
   }
  },
  "price.trial.d": {
-  "en": "{days} days to try the whole app with your own business, counted from the day your WhatsApp is connected. Cancel before the trial ends and you pay nothing.",
-  "te": "మీ సొంత వ్యాపారంతో మొత్తం యాప్‌ని {days} రోజులు ప్రయత్నించండి, మీ వాట్సాప్ కనెక్ట్ అయిన రోజు నుంచి లెక్క. ట్రయల్ ముగిసేలోపు క్యాన్సిల్ చేస్తే ఏమీ కట్టక్కర్లేదు.",
-  "hi": "अपने कारोबार के साथ पूरा ऐप {days} दिन आज़माएँ, गिनती व्हाट्सऐप कनेक्ट होने के दिन से। ट्रायल खत्म होने से पहले कैंसल करें तो कुछ नहीं देना।",
-  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದೊಂದಿಗೆ ಇಡೀ ಆ್ಯಪ್ ಅನ್ನು {days} ದಿನ ಪ್ರಯತ್ನಿಸಿ, ವಾಟ್ಸಾಪ್ ಕನೆಕ್ಟ್ ಆದ ದಿನದಿಂದ ಲೆಕ್ಕ. ಟ್ರಯಲ್ ಮುಗಿಯುವ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಕೊಡಬೇಕಿಲ್ಲ.",
+  "en": "Set up your business, add your leads and see Lead Desk work with your own data. Pricing will be announced soon.",
+  "te": "మీ వ్యాపారాన్ని సెటప్ చేయండి, మీ లీడ్స్ చేర్చండి, మీ సొంత డేటాతో Lead Desk ఎలా పని చేస్తుందో చూడండి. ధరలు త్వరలో ప్రకటిస్తాం.",
+  "hi": "अपना कारोबार सेट कीजिए, अपने लीड जोड़िए और अपने ही डेटा पर Lead Desk को काम करते देखिए। कीमतें जल्द घोषित की जाएँगी।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರವನ್ನು ಸೆಟ್ ಮಾಡಿ, ನಿಮ್ಮ ಲೀಡ್ಸ್ ಸೇರಿಸಿ, ನಿಮ್ಮದೇ ಡೇಟಾದೊಂದಿಗೆ Lead Desk ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ಎಂದು ನೋಡಿ. ಬೆಲೆಗಳನ್ನು ಶೀಘ್ರದಲ್ಲೇ ಘೋಷಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -657,10 +657,10 @@
   }
  },
  "price.faq.3.a": {
-  "en": "Pricing will be announced soon. The trial runs for {trial_days} days first, counted from the day your WhatsApp is connected, and you can cancel before it ends and pay nothing.",
-  "te": "ధరలు త్వరలో ప్రకటిస్తాం. ముందు {trial_days} రోజుల ట్రయల్ ఉంటుంది, మీ వాట్సాప్ కనెక్ట్ అయిన రోజు నుంచి లెక్క. అది ముగిసేలోపు క్యాన్సిల్ చేస్తే ఏమీ కట్టక్కర్లేదు.",
-  "hi": "कीमतें जल्द बताई जाएँगी। पहले {trial_days} दिन का ट्रायल चलता है, गिनती व्हाट्सऐप कनेक्ट होने के दिन से, और खत्म होने से पहले कैंसल करें तो कुछ नहीं देना।",
-  "kn": "ಬೆಲೆಗಳನ್ನು ಶೀಘ್ರದಲ್ಲಿ ತಿಳಿಸುತ್ತೇವೆ. ಮೊದಲು {trial_days} ದಿನಗಳ ಟ್ರಯಲ್ ಇರುತ್ತದೆ, ವಾಟ್ಸಾಪ್ ಕನೆಕ್ಟ್ ಆದ ದಿನದಿಂದ ಲೆಕ್ಕ. ಮುಗಿಯುವ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಕೊಡಬೇಕಿಲ್ಲ.",
+  "en": "Pricing will be announced soon. Before anything is charged we show you the plan and the price, and you must agree to it.",
+  "te": "ధరలు త్వరలో ప్రకటిస్తాం. ఏదైనా కట్టించే ముందు ప్లాన్, ధర చూపిస్తాం, మీరు ఒప్పుకోవాలి.",
+  "hi": "कीमतें जल्द घोषित की जाएँगी। कुछ भी लेने से पहले हम प्लान और कीमत दिखाएँगे, और आपको उसे मानना होगा।",
+  "kn": "ಬೆಲೆಗಳನ್ನು ಶೀಘ್ರದಲ್ಲೇ ಘೋಷಿಸುತ್ತೇವೆ. ಏನಾದರೂ ಕಟ್ಟಿಸುವ ಮೊದಲು ಪ್ಲಾನ್, ಬೆಲೆ ತೋರಿಸುತ್ತೇವೆ, ನೀವು ಒಪ್ಪಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1438,10 +1438,10 @@
   }
  },
  "help.7.d": {
-  "en": "The trial lasts {trial_days} days, counted from the day your WhatsApp is connected. Cancel before it ends and you pay nothing. Pricing will be announced soon.",
-  "te": "ట్రయల్ {trial_days} రోజులు, మీ వాట్సాప్ కనెక్ట్ అయిన రోజు నుంచి లెక్క. ముగిసేలోపు క్యాన్సిల్ చేస్తే ఏమీ కట్టక్కర్లేదు. ధరలు త్వరలో ప్రకటిస్తాం.",
-  "hi": "ट्रायल {trial_days} दिन का है, गिनती व्हाट्सऐप कनेक्ट होने के दिन से। खत्म होने से पहले कैंसल करें तो कुछ नहीं देना। कीमतें जल्द बताई जाएँगी।",
-  "kn": "ಟ್ರಯಲ್ {trial_days} ದಿನಗಳು, ವಾಟ್ಸಾಪ್ ಕನೆಕ್ಟ್ ಆದ ದಿನದಿಂದ ಲೆಕ್ಕ. ಮುಗಿಯುವ ಮೊದಲು ಕ್ಯಾನ್ಸಲ್ ಮಾಡಿದರೆ ಏನೂ ಕೊಡಬೇಕಿಲ್ಲ. ಬೆಲೆಗಳನ್ನು ಶೀಘ್ರದಲ್ಲಿ ತಿಳಿಸುತ್ತೇವೆ.",
+  "en": "Pricing will be announced soon. Before anything is charged we show you the plan and the price, and you must agree to it.",
+  "te": "ధరలు త్వరలో ప్రకటిస్తాం. ఏదైనా కట్టించే ముందు ప్లాన్, ధర చూపిస్తాం, మీరు ఒప్పుకోవాలి.",
+  "hi": "कीमतें जल्द घोषित की जाएँगी। कुछ भी लेने से पहले हम प्लान और कीमत दिखाएँगे, और आपको उसे मानना होगा।",
+  "kn": "ಬೆಲೆಗಳನ್ನು ಶೀಘ್ರದಲ್ಲೇ ಘೋಷಿಸುತ್ತೇವೆ. ಏನಾದರೂ ಕಟ್ಟಿಸುವ ಮೊದಲು ಪ್ಲಾನ್, ಬೆಲೆ ತೋರಿಸುತ್ತೇವೆ, ನೀವು ಒಪ್ಪಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1724,10 +1724,10 @@
   }
  },
  "meta.description": {
-  "en": "Lead Desk: {assistant} aims to call your leads within minutes, in calling hours, in their language, sends the details on WhatsApp, records the outcome and follows up until yes or no. Industry packs for sarees, building materials and schools.",
-  "te": "Lead Desk: కాలింగ్ టైమ్‌లో నిమిషాల్లోనే మీ లీడ్స్‌కి వాళ్ల భాషలో కాల్ చేయడానికి {assistant} ప్రయత్నిస్తుంది, వాట్సాప్‌లో వివరాలు పంపుతుంది, ఫలితం రాసి, అవును లేదా కాదు వచ్చే వరకు ఫాలో-అప్ చేస్తుంది. చీరలు, బిల్డింగ్ మెటీరియల్స్, స్కూళ్లకు ఇండస్ట్రీ ప్యాక్‌లు.",
-  "hi": "Lead Desk: कॉलिंग टाइम में मिनटों के अंदर आपके लीड को उनकी भाषा में कॉल करने की कोशिश {assistant} करती है, व्हाट्सऐप पर डिटेल भेजती है, नतीजा लिखती है और हाँ या ना मिलने तक फ़ॉलो-अप करती है। साड़ी, बिल्डिंग मटेरियल और स्कूलों के लिए इंडस्ट्री पैक।",
-  "kn": "Lead Desk: ಕಾಲಿಂಗ್ ಸಮಯದಲ್ಲಿ ನಿಮಿಷಗಳಲ್ಲಿ ನಿಮ್ಮ ಲೀಡ್ಸ್‌ಗೆ ಅವರ ಭಾಷೆಯಲ್ಲಿ ಕಾಲ್ ಮಾಡಲು {assistant} ಪ್ರಯತ್ನಿಸುತ್ತದೆ, ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ವಿವರ ಕಳಿಸುತ್ತದೆ, ಫಲಿತಾಂಶ ಬರೆದು, ಹೌದು ಅಥವಾ ಇಲ್ಲ ಬರುವವರೆಗೆ ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತದೆ. ಸೀರೆ, ಕಟ್ಟಡ ಸಾಮಗ್ರಿ, ಶಾಲೆಗಳಿಗೆ ಇಂಡಸ್ಟ್ರಿ ಪ್ಯಾಕ್.",
+  "en": "Lead Desk: {assistant} calls your leads right away, in calling hours, in their language, sends the details on WhatsApp, records the outcome and follows up until yes or no. Industry packs for sarees, building materials and schools.",
+  "te": "Lead Desk: కాలింగ్ టైమ్‌లో మీ లీడ్స్‌కి వెంటనే వాళ్ల భాషలో {assistant} కాల్ చేస్తుంది, వాట్సాప్‌లో వివరాలు పంపుతుంది, ఫలితం రాసి, అవును లేదా కాదు వచ్చే వరకు ఫాలో-అప్ చేస్తుంది. చీరలు, బిల్డింగ్ మెటీరియల్స్, స్కూళ్లకు ఇండస్ట్రీ ప్యాక్‌లు.",
+  "hi": "Lead Desk: कॉलिंग टाइम में आपके लीड को तुरंत उनकी भाषा में {assistant} कॉल करती है, व्हाट्सऐप पर डिटेल भेजती है, नतीजा लिखती है और हाँ या ना मिलने तक फ़ॉलो-अप करती है। साड़ी, बिल्डिंग मटेरियल और स्कूलों के लिए इंडस्ट्री पैक।",
+  "kn": "Lead Desk: ಕಾಲಿಂಗ್ ಸಮಯದಲ್ಲಿ ನಿಮ್ಮ ಲೀಡ್ಸ್‌ಗೆ ತಕ್ಷಣ ಅವರ ಭಾಷೆಯಲ್ಲಿ {assistant} ಕಾಲ್ ಮಾಡುತ್ತದೆ, ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ವಿವರ ಕಳಿಸುತ್ತದೆ, ಫಲಿತಾಂಶ ಬರೆದು, ಹೌದು ಅಥವಾ ಇಲ್ಲ ಬರುವವರೆಗೆ ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತದೆ. ಸೀರೆ, ಕಟ್ಟಡ ಸಾಮಗ್ರಿ, ಶಾಲೆಗಳಿಗೆ ಇಂಡಸ್ಟ್ರಿ ಪ್ಯಾಕ್.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1746,10 +1746,10 @@
   }
  },
  "meta.pricing.description": {
-  "en": "A {trial_days}-day free trial, counted from the day your WhatsApp is connected, then simple monthly plans with AI included under fair use. Pricing announced soon.",
-  "te": "{trial_days} రోజుల ఉచిత ట్రయల్ (మీ వాట్సాప్ కనెక్ట్ అయిన రోజు నుంచి లెక్క), తర్వాత AI చేర్చిన సులభమైన నెలవారీ ప్లాన్లు. ధరలు త్వరలో.",
-  "hi": "{trial_days} दिन का मुफ़्त ट्रायल (गिनती व्हाट्सऐप कनेक्ट होने के दिन से), फिर AI शामिल सीधे-सादे मासिक प्लान। कीमतें जल्द।",
-  "kn": "{trial_days} ದಿನಗಳ ಉಚಿತ ಟ್ರಯಲ್ (ವಾಟ್ಸಾಪ್ ಕನೆಕ್ಟ್ ಆದ ದಿನದಿಂದ ಲೆಕ್ಕ), ನಂತರ AI ಸೇರಿದ ಸರಳ ಮಾಸಿಕ ಪ್ಲಾನ್‌ಗಳು. ಬೆಲೆಗಳು ಶೀಘ್ರದಲ್ಲಿ.",
+  "en": "Lead Desk plans with AI included under fair use. Pricing announced soon.",
+  "te": "AI తో కూడిన Lead Desk ప్లాన్లు, సరసమైన వాడకం పరిధిలో. ధరలు త్వరలో ప్రకటిస్తాం.",
+  "hi": "AI के साथ Lead Desk प्लान, उचित उपयोग की सीमा में। कीमतें जल्द घोषित की जाएँगी।",
+  "kn": "AI ಸಹಿತ Lead Desk ಪ್ಲಾನ್‌ಗಳು, ನ್ಯಾಯಯುತ ಬಳಕೆಯ ಮಿತಿಯಲ್ಲಿ. ಬೆಲೆಗಳನ್ನು ಶೀಘ್ರದಲ್ಲೇ ಘೋಷಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1911,10 +1911,10 @@
   }
  },
  "cta.start": {
-  "en": "Start {trial_days}-day trial",
-  "te": "{trial_days} రోజుల ట్రయల్ మొదలుపెట్టండి",
-  "hi": "{trial_days} दिन का ट्रायल शुरू करें",
-  "kn": "{trial_days} ದಿನಗಳ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
+  "en": "Get started",
+  "te": "ప్రారంభించండి",
+  "hi": "आरंभ करें",
+  "kn": "ಶುರು ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3054,10 +3054,10 @@
   }
  },
  "hm.pl.sub": {
-  "en": "Every plan starts with a {trial_days}-day trial, counted from the day your WhatsApp is connected. Prices are announced at launch.",
-  "te": "ప్రతి ప్లాన్ {trial_days} రోజుల ట్రయల్‌తో మొదలవుతుంది, మీ వాట్సాప్ కనెక్ట్ అయిన రోజు నుంచి లెక్క. ధరలు లాంచ్ సమయంలో ప్రకటిస్తాం.",
-  "hi": "हर प्लान {trial_days} दिन के ट्रायल से शुरू होता है, व्हाट्सऐप कनेक्ट होने के दिन से गिनती। कीमतें लॉन्च पर बताई जाएँगी।",
-  "kn": "ಪ್ರತಿ ಪ್ಲಾನ್ {trial_days} ದಿನಗಳ ಟ್ರಯಲ್‌ನಿಂದ ಶುರು, ವಾಟ್ಸಾಪ್ ಕನೆಕ್ಟ್ ಆದ ದಿನದಿಂದ ಲೆಕ್ಕ. ಬೆಲೆಗಳನ್ನು ಲಾಂಚ್ ಸಮಯದಲ್ಲಿ ತಿಳಿಸುತ್ತೇವೆ.",
+  "en": "Prices are announced at launch.",
+  "te": "ధరలు ప్రారంభంలో ప్రకటిస్తాం.",
+  "hi": "कीमतें लॉन्च पर घोषित की जाएँगी।",
+  "kn": "ಬೆಲೆಗಳನ್ನು ಆರಂಭದಲ್ಲಿ ಘೋಷಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3164,10 +3164,10 @@
   }
  },
  "hm.pl.cta.main": {
-  "en": "Start {trial_days}-day trial",
-  "te": "{trial_days} రోజుల ట్రయల్ మొదలుపెట్టండి",
-  "hi": "{trial_days} दिन का ट्రायल शुरू करें",
-  "kn": "{trial_days} ದಿನಗಳ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
+  "en": "Get started",
+  "te": "ప్రారంభించండి",
+  "hi": "आरंभ करें",
+  "kn": "ಶುರು ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3428,10 +3428,10 @@
   }
  },
  "ld.aim": {
-  "en": "{assistant} aims to call within 2 minutes, in calling hours.",
-  "te": "కాలింగ్ టైమ్‌లో 2 నిమిషాల్లో కాల్ చేయడానికి {assistant} ప్రయత్నిస్తుంది.",
-  "hi": "{assistant} कॉलिंग टाइम में 2 मिनट के अंदर कॉल करने की कोशिश करती है।",
-  "kn": "{assistant} ಕಾಲಿಂಗ್ ಸಮಯದಲ್ಲಿ 2 ನಿಮಿಷದೊಳಗೆ ಕಾಲ್ ಮಾಡಲು ಪ್ರಯತ್ನಿಸುತ್ತದೆ.",
+  "en": "{assistant} calls your leads in your calling hours.",
+  "te": "కాలింగ్ టైమ్‌లో మీ లీడ్స్‌కి {assistant} కాల్ చేస్తుంది.",
+  "hi": "कॉलिंग टाइम में आपके लीड को {assistant} कॉल करती है।",
+  "kn": "ಕಾಲಿಂಗ್ ಸಮಯದಲ್ಲಿ ನಿಮ್ಮ ಲೀಡ್ಸ್‌ಗೆ {assistant} ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3516,10 +3516,10 @@
   }
  },
  "ld.s.2.t": {
-  "en": "{assistant} calls within minutes",
-  "te": "{assistant} నిమిషాల్లో కాల్ చేస్తుంది",
-  "hi": "{assistant} मिनटों में कॉल करती है",
-  "kn": "{assistant} ನಿಮಿಷಗಳಲ್ಲಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ",
+  "en": "{assistant} calls right away",
+  "te": "{assistant} వెంటనే కాల్ చేస్తుంది",
+  "hi": "{assistant} तुरंत कॉल करती है",
+  "kn": "{assistant} ತಕ್ಷಣ ಕಾಲ್ ಮಾಡುತ್ತದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3780,10 +3780,10 @@
   }
  },
  "ld.deep.textiles.d": {
-  "en": "Meta lead ad and WhatsApp enquiries, a call within minutes, photos on WhatsApp, then a store visit.",
-  "te": "Meta లీడ్ ప్రకటనలు, వాట్సాప్ ఎంక్వయిరీలు, నిమిషాల్లో కాల్, వాట్సాప్‌లో ఫోటోలు, ఆ తర్వాత షాప్ సందర్శన.",
-  "hi": "Meta लीड विज्ञापन और व्हाट्सऐप की पूछताछ, मिनटों में कॉल, व्हाट्सऐप पर फ़ोटो, फिर दुकान की विज़िट।",
-  "kn": "Meta ಲೀಡ್ ಜಾಹೀರಾತು, ವಾಟ್ಸಾಪ್ ವಿಚಾರಣೆಗಳು, ನಿಮಿಷಗಳಲ್ಲಿ ಕಾಲ್, ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಫೋಟೋ, ನಂತರ ಅಂಗಡಿ ಭೇಟಿ.",
+  "en": "Meta lead ad and WhatsApp enquiries, a call right away, photos on WhatsApp, then a store visit.",
+  "te": "Meta లీడ్ ప్రకటనలు, వాట్సాప్ ఎంక్వయిరీలు, వెంటనే కాల్, వాట్సాప్‌లో ఫోటోలు, ఆ తర్వాత షాప్ సందర్శన.",
+  "hi": "Meta लीड विज्ञापन और व्हाट्सऐप की पूछताछ, तुरंत कॉल, व्हाट्सऐप पर फ़ोटो, फिर दुकान की विज़िट।",
+  "kn": "Meta ಲೀಡ್ ಜಾಹೀರಾತು, ವಾಟ್ಸಾಪ್ ವಿಚಾರಣೆಗಳು, ತಕ್ಷಣ ಕಾಲ್, ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಫೋಟೋ, ನಂತರ ಅಂಗಡಿ ಭೇಟಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4044,10 +4044,10 @@
   }
  },
  "ld.pack.textiles.2": {
-  "en": "{assistant} calls within minutes, in the customer's language.",
-  "te": "{assistant} నిమిషాల్లో కస్టమర్ భాషలో కాల్ చేస్తుంది.",
-  "hi": "{assistant} मिनटों में ग्राहक की भाषा में कॉल करती है।",
-  "kn": "{assistant} ನಿಮಿಷಗಳಲ್ಲಿ ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "en": "{assistant} calls right away, in the customer's language.",
+  "te": "{assistant} వెంటనే కస్టమర్ భాషలో కాల్ చేస్తుంది.",
+  "hi": "{assistant} तुरंत ग्राहक की भाषा में कॉल करती है।",
+  "kn": "{assistant} ತಕ್ಷಣ ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4154,10 +4154,10 @@
   }
  },
  "ld.pack.education.2": {
-  "en": "Speed to lead: {assistant} calls the parent within minutes, in their language.",
-  "te": "వెంటనే స్పందన: {assistant} నిమిషాల్లో పేరెంట్‌కి వాళ్ల భాషలో కాల్ చేస్తుంది.",
-  "hi": "तुरंत जवाब: {assistant} मिनटों में पैरेंट को उनकी भाषा में कॉल करती है।",
-  "kn": "ತಕ್ಷಣದ ಸ್ಪಂದನೆ: {assistant} ನಿಮಿಷಗಳಲ್ಲಿ ಪೋಷಕರಿಗೆ ಅವರ ಭಾಷೆಯಲ್ಲಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "en": "{assistant} calls the parent right away, in their language.",
+  "te": "{assistant} వెంటనే పేరెంట్‌కి వాళ్ల భాషలో కాల్ చేస్తుంది.",
+  "hi": "{assistant} तुरंत पैरेंट को उनकी भाषा में कॉल करती है।",
+  "kn": "{assistant} ತಕ್ಷಣ ಪೋಷಕರಿಗೆ ಅವರ ಭಾಷೆಯಲ್ಲಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4253,10 +4253,10 @@
   }
  },
  "v3.hero.sub": {
-  "en": "{brand} is an AI workforce for Indian businesses. Its assistant, {assistant}, calls every lead in their own language, carries on over WhatsApp and keeps following up, so your team only talks to people who are ready to buy.",
-  "te": "{brand} భారతీయ వ్యాపారాల కోసం AI వర్క్‌ఫోర్స్. దీని అసిస్టెంట్ {assistant} ప్రతి లీడ్‌కి వాళ్ల భాషలోనే కాల్ చేస్తుంది, WhatsApp లో కొనసాగిస్తుంది, ఫాలో అప్ చేస్తూనే ఉంటుంది. అందువల్ల మీ టీమ్ కొనడానికి సిద్ధంగా ఉన్నవారితోనే మాట్లాడుతుంది.",
-  "hi": "{brand} भारतीय कारोबारों के लिए AI वर्कफ़ोर्स है। इसकी असिस्टेंट {assistant} हर लीड को उनकी अपनी भाषा में कॉल करती है, WhatsApp पर बात आगे बढ़ाती है और फ़ॉलो-अप करती रहती है, ताकि आपकी टीम सिर्फ़ खरीदने को तैयार लोगों से बात करे।",
-  "kn": "{brand} ಭಾರತೀಯ ವ್ಯಾಪಾರಗಳಿಗಾಗಿ AI ವರ್ಕ್‌ಫೋರ್ಸ್. ಇದರ ಅಸಿಸ್ಟೆಂಟ್ {assistant} ಪ್ರತಿ ಲೀಡ್‌ಗೆ ಅವರದೇ ಭಾಷೆಯಲ್ಲಿ ಕರೆ ಮಾಡುತ್ತದೆ, WhatsApp ನಲ್ಲಿ ಮುಂದುವರಿಸುತ್ತದೆ ಮತ್ತು ಫಾಲೋ ಅಪ್ ಮಾಡುತ್ತಲೇ ಇರುತ್ತದೆ. ಹೀಗಾಗಿ ನಿಮ್ಮ ತಂಡ ಖರೀದಿಸಲು ಸಿದ್ಧರಾದವರೊಂದಿಗೆ ಮಾತ್ರ ಮಾತನಾಡುತ್ತದೆ.",
+  "en": "{brand} is an AI workforce for Indian businesses. Its assistant calls every lead in their own language, carries on over WhatsApp and keeps following up, so your team only talks to people who are ready to buy.",
+  "te": "{brand} భారతీయ వ్యాపారాల కోసం AI వర్క్‌ఫోర్స్. దీని అసిస్టెంట్ ప్రతి లీడ్‌కి వాళ్ల భాషలోనే కాల్ చేస్తుంది, WhatsApp లో కొనసాగిస్తుంది, ఫాలో అప్ చేస్తూనే ఉంటుంది. అందువల్ల మీ టీమ్ కొనడానికి సిద్ధంగా ఉన్నవారితోనే మాట్లాడుతుంది.",
+  "hi": "{brand} भारतीय कारोबारों के लिए AI वर्कफ़ोर्स है। इसकी असिस्टेंट हर लीड को उनकी अपनी भाषा में कॉल करती है, WhatsApp पर बात आगे बढ़ाती है और फ़ॉलो-अप करती रहती है, ताकि आपकी टीम सिर्फ़ खरीदने को तैयार लोगों से बात करे।",
+  "kn": "{brand} ಭಾರತೀಯ ವ್ಯಾಪಾರಗಳಿಗಾಗಿ AI ವರ್ಕ್‌ಫೋರ್ಸ್. ಇದರ ಅಸಿಸ್ಟೆಂಟ್ ಪ್ರತಿ ಲೀಡ್‌ಗೆ ಅವರದೇ ಭಾಷೆಯಲ್ಲಿ ಕರೆ ಮಾಡುತ್ತದೆ, WhatsApp ನಲ್ಲಿ ಮುಂದುವರಿಸುತ್ತದೆ ಮತ್ತು ಫಾಲೋ ಅಪ್ ಮಾಡುತ್ತಲೇ ಇರುತ್ತದೆ. ಹೀಗಾಗಿ ನಿಮ್ಮ ತಂಡ ಖರೀದಿಸಲು ಸಿದ್ಧರಾದವರೊಂದಿಗೆ ಮಾತ್ರ ಮಾತನಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4264,10 +4264,10 @@
   }
  },
  "v3.hero.fine": {
-  "en": "Telugu, Tamil, Kannada, Malayalam, Hindi and English. {trial_days}-day trial.",
-  "te": "తెలుగు, తమిళం, కన్నడ, మలయాళం, హిందీ, ఇంగ్లీష్. {trial_days} రోజుల ట్రయల్.",
-  "hi": "तेलुगु, तमिल, कन्नड़, मलयालम, हिंदी और अंग्रेज़ी। {trial_days} दिन का ट्रायल।",
-  "kn": "ತೆಲುಗು, ತಮಿಳು, ಕನ್ನಡ, ಮಲಯಾಳಂ, ಹಿಂದಿ ಮತ್ತು ಇಂಗ್ಲಿಷ್. {trial_days} ದಿನಗಳ ಟ್ರಯಲ್.",
+  "en": "Telugu, Tamil, Kannada, Malayalam, Hindi and English.",
+  "te": "తెలుగు, తమిళం, కన్నడ, మలయాళం, హిందీ, ఇంగ్లీష్.",
+  "hi": "तेलुगु, तमिल, कन्नड़, मलयालम, हिंदी और अंग्रेज़ी।",
+  "kn": "ತೆಲುಗು, ತಮಿಳು, ಕನ್ನಡ, ಮಲಯಾಳಂ, ಹಿಂದಿ ಮತ್ತು ಇಂಗ್ಲಿಷ್.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5133,10 +5133,10 @@
   }
  },
  "v3.opening": {
-  "en": "“Namaskaram {customer} garu, nenu {assistant}, {business} nunchi matladutunnanu…”",
-  "te": "“నమస్కారం {customer} గారూ, నేను {assistant}, {business} నుంచి మాట్లాడుతున్నాను…”",
-  "hi": "“नमस्कार {customer} जी, मैं {assistant}, {business} से बोल रही हूँ…”",
-  "kn": "“ನಮಸ್ಕಾರ {customer} ಅವರೇ, ನಾನು {assistant}, {business} ಇಂದ ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ…”",
+  "en": "“Namaskaram {customer} garu, {business} nunchi matladutunnanu…”",
+  "te": "“నమస్కారం {customer} గారూ, {business} నుంచి మాట్లాడుతున్నాను…”",
+  "hi": "“नमस्कार {customer} जी, {business} से बोल रही हूँ…”",
+  "kn": "“ನಮಸ್ಕಾರ {customer} ಅವರೇ, {business} ಇಂದ ಮಾತನಾಡುತ್ತಿದ್ದೇನೆ…”",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5155,10 +5155,10 @@
   }
  },
  "v3.row.5.d": {
-  "en": "Website, Meta ad and WhatsApp leads are called about a minute after they arrive, within your calling hours.",
-  "te": "వెబ్‌సైట్, Meta ప్రకటన, వాట్సాప్ లీడ్స్‌కి వచ్చిన ఒక నిమిషం తర్వాత, మీ కాలింగ్ సమయాల్లో కాల్ వెళ్తుంది.",
-  "hi": "वेबसाइट, Meta विज्ञापन और व्हाट्सऐप के लीड को आने के करीब एक मिनट बाद, आपके कॉल के समय में कॉल जाता है।",
-  "kn": "ವೆಬ್‌ಸೈಟ್, Meta ಜಾಹೀರಾತು, ವಾಟ್ಸಾಪ್ ಲೀಡ್ಸ್‌ಗೆ ಬಂದ ಸುಮಾರು ಒಂದು ನಿಮಿಷದ ನಂತರ, ನಿಮ್ಮ ಕಾಲ್ ಸಮಯದೊಳಗೆ ಕಾಲ್ ಹೋಗುತ್ತದೆ.",
+  "en": "Website, Meta ad and WhatsApp leads are called right away, within your calling hours.",
+  "te": "వెబ్‌సైట్, Meta ప్రకటన, వాట్సాప్ లీడ్స్‌కి వెంటనే, మీ కాలింగ్ సమయాల్లో కాల్ వెళ్తుంది.",
+  "hi": "वेबसाइट, Meta विज्ञापन और व्हाट्सऐप के लीड को तुरंत, आपके कॉल के समय में कॉल जाता है।",
+  "kn": "ವೆಬ್‌ಸೈಟ್, Meta ಜಾಹೀರಾತು, ವಾಟ್ಸಾಪ್ ಲೀಡ್ಸ್‌ಗೆ ತಕ್ಷಣ, ನಿಮ್ಮ ಕಾಲ್ ಸಮಯದೊಳಗೆ ಕಾಲ್ ಹೋಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5177,10 +5177,10 @@
   }
  },
  "v3.speed.1.v": {
-  "en": "about 1 minute",
-  "te": "సుమారు 1 నిమిషం",
-  "hi": "लगभग 1 मिनट",
-  "kn": "ಸುಮಾರು 1 ನಿಮಿಷ",
+  "en": "right away",
+  "te": "వెంటనే",
+  "hi": "तुरंत",
+  "kn": "ತಕ್ಷಣ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5199,10 +5199,10 @@
   }
  },
  "v3.speed.2.v": {
-  "en": "about 1 minute",
-  "te": "సుమారు 1 నిమిషం",
-  "hi": "लगभग 1 मिनट",
-  "kn": "ಸುಮಾರು 1 ನಿಮಿಷ",
+  "en": "right away",
+  "te": "వెంటనే",
+  "hi": "तुरंत",
+  "kn": "ತಕ್ಷಣ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5221,10 +5221,10 @@
   }
  },
  "v3.speed.3.v": {
-  "en": "about 1 minute",
-  "te": "సుమారు 1 నిమిషం",
-  "hi": "लगभग 1 मिनट",
-  "kn": "ಸುಮಾರು 1 ನಿಮಿಷ",
+  "en": "right away",
+  "te": "వెంటనే",
+  "hi": "तुरंत",
+  "kn": "ತಕ್ಷಣ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5474,10 +5474,10 @@
   }
  },
  "v3.plans.d": {
-  "en": "Prices are announced at launch. Every plan has a {trial_days}-day trial that starts when your WhatsApp is connected.",
-  "te": "ధరలు లాంచ్ సమయంలో ప్రకటిస్తారు. ప్రతి ప్లాన్‌కి {trial_days} రోజుల ట్రయల్ ఉంటుంది, మీ WhatsApp కనెక్ట్ అయిన రోజు నుంచి మొదలవుతుంది.",
-  "hi": "कीमतें लॉन्च के समय बताई जाएँगी। हर प्लान में {trial_days} दिन का ट्रायल है, जो आपका WhatsApp जुड़ने के दिन से शुरू होता है।",
-  "kn": "ಬೆಲೆಗಳನ್ನು ಲಾಂಚ್ ಸಮಯದಲ್ಲಿ ಘೋಷಿಸಲಾಗುತ್ತದೆ. ಪ್ರತಿ ಪ್ಲಾನ್‌ಗೂ {trial_days} ದಿನಗಳ ಟ್ರಯಲ್ ಇದೆ, ನಿಮ್ಮ WhatsApp ಸಂಪರ್ಕವಾದ ದಿನದಿಂದ ಆರಂಭ.",
+  "en": "Prices are announced at launch.",
+  "te": "ధరలు ప్రారంభంలో ప్రకటిస్తాం.",
+  "hi": "कीमतें लॉन्च पर घोषित की जाएँगी।",
+  "kn": "ಬೆಲೆಗಳನ್ನು ಆರಂಭದಲ್ಲಿ ಘೋಷಿಸುತ್ತೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5995,6 +5995,17 @@
   "te": "మిస్డ్ కాల్స్",
   "hi": "मिस्ड कॉल",
   "kn": "ಮಿಸ್ಡ್ ಕಾಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "v3.src.indiamart": {
+  "en": "IndiaMART (coming soon)",
+  "te": "IndiaMART (త్వరలో)",
+  "hi": "IndiaMART (जल्द आ रहा है)",
+  "kn": "IndiaMART (ಶೀಘ್ರದಲ್ಲೇ)",
   "status": {
    "te": "draft",
    "hi": "draft",

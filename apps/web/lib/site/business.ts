@@ -1,7 +1,7 @@
 /**
  * The one place that says who we are and how to reach us (job DB). The domain, the four public e-mail addresses, the business and the Grievance Officer are written HERE and nowhere else:
  * the contact page, every footer, the Privacy Policy, the Terms, the data-deletion page and the share/canonical addresses all read them from this file (a test fails if an address appears in
- * any other source file). No phone number and no postal address are published, by the owner's decision.
+ * any other source file). No phone number and no street address are published; the town and PIN (Ananthapuramu 515001) are named, as on the GST registration (owner decision of 28 Oct).
  *
  * Server and client safe: plain constants, no environment, no secret. The address app e-mails are SENT from is not here: it is the environment setting MAIL_FROM (docs/runbooks/hosting-env-and-secrets.md).
  */
@@ -12,9 +12,11 @@ export const CANONICAL_ORIGIN = `https://${DOMAIN}`;
 export const BUSINESS = {
   /** The trading name; the product is called the same (design/brand.ts). */
   name: "Stack19",
-  proprietor: "Gowtham Reddy Sodanapalli",
+  proprietor: "SODANAPALLI GOWTHAM REDDY", // the name as on the GST registration (owner, 28 Oct)
   /** How the business is described in the legal texts. */
-  description: "a sole proprietorship of Gowtham Reddy Sodanapalli, registered for GST in Andhra Pradesh, India",
+  /** The town and PIN as on the GST registration (owner, 28 Oct): no street address is published for now. */
+  address: "Ananthapuramu, Andhra Pradesh 515001, India",
+  description: "a sole proprietorship of SODANAPALLI GOWTHAM REDDY, Ananthapuramu, Andhra Pradesh 515001, India, registered for GST (trade name Stack19)",
 } as const;
 
 /**
@@ -58,6 +60,7 @@ export const LEGAL_TOKENS: Readonly<Record<string, string>> = {
   support: ADDRESSES.support,
   billing: ADDRESSES.billing,
   privacy_email: ADDRESSES.privacy,
+  security_email: SECURITY_ADDRESS,
   proprietor: BUSINESS.proprietor,
   business_description: BUSINESS.description,
   request_days: String(RESPONSE_DAYS.requests),

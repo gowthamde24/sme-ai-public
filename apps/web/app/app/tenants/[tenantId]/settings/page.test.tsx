@@ -75,7 +75,7 @@ describe("Settings, one part at a time", () => {
     expect(tabs().getByRole("link", { name: "Business and plan" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByText("Acme Silks")).toBeInTheDocument();
     expect(screen.getByText("acme-silks")).toBeInTheDocument();
-    expect(screen.getByText("Free trial plan")).toBeInTheDocument();
+    expect(screen.getByText("Getting started plan")).toBeInTheDocument();
     expect(getPlan).toHaveBeenCalledWith("tok", TENANT);
     expect(getAiUsage).toHaveBeenCalledWith("tok", TENANT);
     expect(screen.getByRole("meter", { name: "AI usage today" })).toHaveAttribute("aria-valuenow", "7");
@@ -96,7 +96,7 @@ describe("Settings, one part at a time", () => {
     render(await SettingsPage(props()));
     expect(screen.queryByText("AI usage today")).toBeNull();
     expect(getAiUsage).not.toHaveBeenCalled();
-    expect(screen.getByText("Free trial plan")).toBeInTheDocument();
+    expect(screen.getByText("Getting started plan")).toBeInTheDocument();
   });
   it("an unknown section word is the business part", async () => {
     render(await SettingsPage(props({ section: "<script>" })));

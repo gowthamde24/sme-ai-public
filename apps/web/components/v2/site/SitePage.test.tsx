@@ -82,11 +82,11 @@ describe("the home page (landing v3, night 5)", () => {
     const h1 = home.match(/<h1[\s\S]*?<\/h1>/)![0];
     expect([...h1.matchAll(/<span class="block">([^<]+)<\/span>/g)].map((m) => m[1])).toEqual(["Catches every lead.", "Calls them right away.", "Follows up until they decide."]);
     const t = text(home);
-    for (const x of ["Stack19 is an AI workforce for Indian businesses", "Its assistant, Vijaya, calls every lead in their own language", "Start your 14-day trial", "See a day with Stack19", "Telugu, Tamil, Kannada, Malayalam, Hindi and English. 14-day trial.", "Sign in", "Start trial"]) expect(t, x).toContain(x);
+    for (const x of ["Stack19 is an AI workforce for Indian businesses", "Its assistant calls every lead in their own language", "Get started", "See a day with Stack19", "Telugu, Tamil, Kannada, Malayalam, Hindi and English.", "Sign in", "Get started"]) expect(t, x).toContain(x);
     expect(t).not.toMatch(/working name|Sme-?AI|30-day|30 day|within 2 minutes|in 2 minutes/i);
     expect(home.match(/<h1[\s>]/g)).toHaveLength(1);
   });
-  it("has the sticky nav: the three-bar logo, How it works, Lead Desk, Industries, Pricing, Questions, Sign in and Start trial (each link goes to a section that is on the page)", () => {
+  it("has the sticky nav: the three-bar logo, How it works, Lead Desk, Industries, Pricing, Questions, Sign in and Get started (each link goes to a section that is on the page)", () => {
     const nav = home.match(/<header[\s\S]*?<\/header>/)![0];
     expect(nav).toMatch(/\[position:sticky\]/);
     for (const href of ['href="#day"', 'href="#leaddesk"', 'href="#industries"', 'href="#plans"', 'href="#faq"', 'href="/login"', 'href="/signup"']) expect(nav, href).toContain(href);
@@ -94,7 +94,7 @@ describe("the home page (landing v3, night 5)", () => {
     expect(nav).toContain("data-mark"); // the logo is three bars, not the circle
     expect(nav).not.toContain("data-orb");
   });
-  it("draws no owl, no picture file and no play or pause button; the circle is Vijaya's (the hero and the closing band)", () => {
+  it("draws no owl, no picture file and no play or pause button; the circle is the assistant's (the hero and the closing band)", () => {
     expect(home).not.toMatch(/owl/i);
     expect(home.match(/<img/g)).toBeNull();
     expect(home).not.toMatch(/aria-pressed|role="tab"|Pause the example|Play the example/);
@@ -106,7 +106,7 @@ describe("the home page (landing v3, night 5)", () => {
     expect(call.match(/data-line=/g)).toHaveLength(4);
     expect(call.match(/lang="te"/g)).toHaveLength(4);
     expect(text(call)).toContain("Ravi Kumar");
-    expect(text(call)).toContain("Hello, I'm Vijaya from Sri Sai Homes. Do you have a minute?");
+    expect(text(call)).toContain("Hello, this is Sri Sai Homes. Do you have a minute?");
     expect(text(call)).toContain("Site visit booked, Saturday 11:00");
     expect(call).toMatch(/data-part="clock">01:48</);
     expect(text(call)).toContain("Example with made-up names. AI calls are in early access.");
@@ -116,14 +116,14 @@ describe("the home page (landing v3, night 5)", () => {
     const find = section.match(/data-part="find"[\s\S]*?<\/ul>/)![0];
     expect([...find.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["An Excel or Google Sheets file", "A pasted list of names and numbers", "Contacts from your phone"]);
     const chips = section.match(/<ul[^>]*data-part="sources"[\s\S]*?<\/ul>/)![0];
-    expect([...chips.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["Your website forms", "WhatsApp", "Missed calls", "Meta lead ads", "Excel and Google Sheets import"]);
+    expect([...chips.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["Your website forms", "WhatsApp", "Missed calls", "Meta lead ads", "Excel and Google Sheets import", "IndiaMART (coming soon)"]);
     expect(section).not.toMatch(/<img|<svg|<a[\s>]|<picture/);
   });
   it("has a day with Stack19: six moments in order, with the workers named and a small example under three of them", () => {
     const day = home.match(/<section id="day"[\s\S]*?<\/section>/)![0];
     const list = day.match(/<ol[^>]*data-part="day"[\s\S]*?<\/ol>/)![0];
     expect(list.match(/<li[\s>]/g)).toHaveLength(6);
-    expect([...list.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1])).toEqual(["New leads caught", "A lead arrives late", "Vijaya calls", "The outcome is saved", "Your salesperson takes over", "Follow-up, without reminders from you"]);
+    expect([...list.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1])).toEqual(["New leads caught", "A lead arrives late", "Your assistant calls", "The outcome is saved", "Your salesperson takes over", "Follow-up, without reminders from you"]);
     expect([...list.matchAll(/<time[^>]*>([^<]+)/g)].map((m) => m[1])).toEqual(["6:00", "9:47", "9:30", "9:32", "9:33", "Fri"]);
     expect(text(list)).toContain("Leads from your website forms, WhatsApp, missed calls and Meta lead ads land in one list");
     expect(list.match(/<strong[^>]*>/g)!.length).toBeGreaterThanOrEqual(2);
@@ -131,7 +131,7 @@ describe("the home page (landing v3, night 5)", () => {
   it("has Lead Desk in five rows: approve all, tell the assistant, languages, your opening line, speed by source", () => {
     const section = home.match(/<section id="leaddesk"[\s\S]*?<\/section>/)![0];
     expect([...section.matchAll(/data-row="(\d)"/g)].map((m) => m[1])).toEqual(["1", "2", "3", "4", "5"]);
-    for (const x of ["Approve a whole list in one go", "Approve all", "Tell Vijaya what you need", "Talks the way your customers talk", "నమస్కారం", "வணக்கம்", "ನಮಸ್ಕಾರ", "നമസ്കാരം", "नमस्ते", "Your words open every call", "Fast, while they're still interested", "about 1 minute", "WhatsApp now, call in the morning"]) expect(text(section), x).toContain(x);
+    for (const x of ["Approve a whole list in one go", "Approve all", "Tell your assistant what you need", "Talks the way your customers talk", "నమస్కారం", "வணக்கம்", "ನಮಸ್ಕಾರ", "നമസ്കാരം", "नमस्ते", "Your words open every call", "Fast, while they're still interested", "right away", "WhatsApp now, call in the morning"]) expect(text(section), x).toContain(x);
     // the opening line shows its placeholders as they are typed
     for (const v of ["{customer}", "{business}"]) expect(text(section.match(/data-part="opening-example"[\s\S]*?<\/p>/)![0])).toContain(v);
   });
@@ -153,17 +153,16 @@ describe("the home page (landing v3, night 5)", () => {
     expect(text(plans)).toContain("Pay as you go, Lead Desk 300 or Lead Desk 1,000");
     expect(text(plans)).toContain("Starter, Growth or Business");
     expect(text(plans).match(/Price at launch/g)).toHaveLength(2);
-    expect(text(plans)).toContain("Every plan has a 14-day trial that starts when your WhatsApp is connected.");
     expect(text(plans)).not.toMatch(/most popular|best value|recommended/i);
   });
-  it("has four promises in plain words and five questions as native disclosures, then the closing band with Vijaya's orb", () => {
+  it("has four promises in plain words and five questions as native disclosures, then the closing band with the assistant's orb", () => {
     const trust = home.match(/<section id="trust"[\s\S]*?<\/section>/)![0];
     for (const x of ["You decide the rules", "Honest on every call", "DND respected", "Your data stays yours"]) expect(text(trust), x).toContain(x);
     const faq = home.match(/<section id="faq"[\s\S]*?<\/section>/)![0];
     expect(faq.match(/<details/g)).toHaveLength(5);
     expect(faq).not.toMatch(/<details[^>]*\sopen/);
     const end = home.match(/<section id="start"[\s\S]*?<\/section>/)![0];
-    expect(text(end)).toContain("Let Vijaya call your next hundred leads");
+    expect(text(end)).toContain("Let your assistant call your next hundred leads");
     expect(end).toContain('data-orb="speak"');
     const foot = home.match(/<footer[\s\S]*?<\/footer>/)![0];
     for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ"]) expect(foot, l).toContain(l);
@@ -178,10 +177,13 @@ describe("the home page (landing v3, night 5)", () => {
     expect(t).not.toMatch(/live now|stored in (india|mumbai)|\d\s?%|guarantee|testimonial|trusted by|used by|customers love|incl\w* GST|most popular/i);
     expect(t).not.toMatch(/\d[\d,]*\+?\s+(customers|businesses|leads called|calls a day)/i);
   });
-  it("the first call is 'about a minute', by source, and never a promise of a number in the headline or the page description", () => {
-    expect(siteDict("en")["v3.row.5.d"]).toMatch(/about a minute after they arrive, within your calling hours/);
-    expect(siteDict("en")["meta.description"]).toMatch(/aims to call your leads within minutes, in calling hours/);
-    expect(siteDict("en")["hero.sub"]).not.toMatch(/within 2 minutes/);
+  it("the first call is 'right away', never a number of minutes (owner, 28 Oct: no speed claim until it is measured), in no headline, row or page description", () => {
+    expect(siteDict("en")["v3.row.5.d"]).toMatch(/called right away, within your calling hours/);
+    expect(siteDict("en")["meta.description"]).toMatch(/calls your leads right away, in calling hours/);
+    for (const lang of ["en", "te", "hi", "kn"] as const) {
+      const dict = siteDict(lang);
+      for (const [k, v] of Object.entries(dict)) if (!/^(hm\.pl\.f\.|v3\.plan|v3\.faq\.5|v3\.plans\.small)/.test(k)) expect(v, `${lang} ${k}`).not.toMatch(/\b(1|2|one|two)[- ]minutes?\b|\bminute after\b|\bwithin minutes\b|ఒక నిమిషం|2 నిమిషా|1 मिनट|2 मिनट|ಒಂದು ನಿಮಿಷ|2 ನಿಮಿಷ/i);
+    }
   });
   it("carries application data and no FAQ data or offers (there is no price)", () => {
     expect(home).toContain('"@type":"SoftwareApplication"');
@@ -197,11 +199,11 @@ describe("Lead Desk on the business pages and the other pages (night 4, F1)", ()
     const html = render("en", { kind: "pack", slug: p.slug });
     return { html, block: html.match(/<section[^>]*id="lead-desk"[\s\S]*?<\/section>/)![0] };
   };
-  it("sarees: Meta lead ad and WhatsApp enquiries, a call within minutes, photos on WhatsApp, a store visit", () => {
+  it("sarees: Meta lead ad and WhatsApp enquiries, a call right away, photos on WhatsApp, a store visit", () => {
     const { block } = flow("textiles");
     expect(text(block)).toContain("How Lead Desk works for sarees");
     expect(block.match(/<li/g)).toHaveLength(4);
-    for (const x of ["Meta lead ad or WhatsApp", "calls within minutes", "Photos of the sarees go on WhatsApp", "store visit"]) expect(text(block), x).toContain(x);
+    for (const x of ["Meta lead ad or WhatsApp", "calls right away", "Photos of the sarees go on WhatsApp", "store visit"]) expect(text(block), x).toContain(x);
   });
   it("building materials: website and WhatsApp enquiries, a call, a quote the owner approves, delivery follow-up", () => {
     const { block } = flow("construction_materials");
@@ -213,8 +215,8 @@ describe("Lead Desk on the business pages and the other pages (night 4, F1)", ()
     const { block } = flow("education");
     expect(text(block)).toContain("How Lead Desk works for schools");
     expect(block.match(/<li/g)).toHaveLength(3);
-    for (const x of ["An admission enquiry arrives", "Speed to lead", "A campus visit is booked"]) expect(text(block), x).toContain(x);
-    expect(text(block.match(/data-part="ld-note"[\s\S]*?<\/p>/)![0])).toContain("Vijaya never talks about fees, marks or dues");
+    for (const x of ["An admission enquiry arrives", "calls the parent right away", "A campus visit is booked"]) expect(text(block), x).toContain(x);
+    expect(text(block.match(/data-part="ld-note"[\s\S]*?<\/p>/)![0])).toContain("Your assistant never talks about fees, marks or dues");
   });
   it("the block links only to the plans page; a pack page without a block (none today) draws nothing", () => {
     for (const p of SITE_PACKS) {
@@ -265,7 +267,7 @@ describe("the pricing page", () => {
   it("keeps the plan names and what every plan includes, and says 'Pricing announced soon' for each plan and the setup (no amount)", () => {
     for (const s of ["Starter", "Growth", "Business", "Done-for-you setup", "Founding offer", "AI is included, under fair use", "Cancel any time"]) expect(text, s).toContain(s);
     expect(text.match(/Pricing announced soon/g)!.length).toBeGreaterThanOrEqual(4);
-    expect(text).toContain("Start 14-day trial");
+    expect(text).toContain("Get started");
     expect(text).not.toMatch(/₹/);
     expect(html).not.toMatch(/guarantee/i);
   });

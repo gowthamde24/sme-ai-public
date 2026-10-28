@@ -28,7 +28,7 @@ English
 - How Vijaya greets you and introduces your business
 {label="Business and plan"}
 Plan
-Free trial plan
+Getting started plan
 URL name
 demo-silks
 ## Our GSTIN

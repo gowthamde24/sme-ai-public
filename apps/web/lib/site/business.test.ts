@@ -17,9 +17,10 @@ describe("the one place for the domain and the addresses (job DB)", () => {
     expect(ADDRESSES).toEqual({ hello: "hello@stack19.com", support: "support@stack19.com", billing: "billing@stack19.com", privacy: "privacy@stack19.com" });
   });
   it("names the Grievance Officer and the response times: 7 days to access, correct or erase, 30 days for any other grievance, 48 hours to act on a withdrawal of consent (owner decisions of 24 October)", () => {
-    expect(BUSINESS.proprietor).toBe("Gowtham Reddy Sodanapalli");
-    expect(BUSINESS.description).toMatch(/sole proprietorship of Gowtham Reddy Sodanapalli.*GST.*Andhra Pradesh/);
-    expect(GRIEVANCE_OFFICER).toEqual({ name: "Gowtham Reddy Sodanapalli", email: "privacy@stack19.com" });
+    expect(BUSINESS.proprietor).toBe("SODANAPALLI GOWTHAM REDDY");
+    expect(BUSINESS.address).toBe("Ananthapuramu, Andhra Pradesh 515001, India"); // the town and PIN only: no street address is published (owner, 28 Oct)
+    expect(BUSINESS.description).toMatch(/sole proprietorship of SODANAPALLI GOWTHAM REDDY, Ananthapuramu, Andhra Pradesh 515001, India.*GST/);
+    expect(GRIEVANCE_OFFICER).toEqual({ name: "SODANAPALLI GOWTHAM REDDY", email: "privacy@stack19.com" });
     expect(RESPONSE_DAYS).toEqual({ requests: 7, grievances: 30 });
     expect(LEGAL_TOKENS.request_days).toBe("7");
     expect(LEGAL_TOKENS.grievance_days).toBe("30");
