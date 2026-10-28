@@ -14,9 +14,7 @@ import type { AskWords } from "./ask-words";
 import type { BrowserVoice } from "./browser-voice";
 
 /** The panel is a chunk of its own: it is drawn only after the orb is pressed (the route-JS budget counts what a page loads at first). */
-const AskPanel = dynamic(() => import("./AskPanel").then((m) => m.AskPanel), { ssr: false });
-/** "Talk to your assistant" (BROWSER_VOICE): a chunk of its own, loaded when the orb is pressed. */
-const VoiceChat = dynamic(() => import("../../voice-chat/VoiceChat").then((m) => m.VoiceChat), { ssr: false });
+const AskPanel = dynamic(() => import("./AskPanelHost").then((m) => m.AskPanelHost), { ssr: false });
 
 /** Is the keyboard focus somewhere a letter is being typed? "/" then belongs to the field, not to us. */
 function typing(target: EventTarget | null): boolean {
@@ -46,7 +44,6 @@ export function AskFloating({ words, chipWords, voice = null }: { words: AskWord
   if (shownFor !== pathname) {
     setShownFor(pathname);
     if (open) setOpen(false);
-    if (talking) setTalking(false);
   }
   const unseen = !open && finished > seenAt;
   const openPanel = React.useCallback(() => {
@@ -73,7 +70,7 @@ export function AskFloating({ words, chipWords, voice = null }: { words: AskWord
   }, [rest, here, openPanel]);
   if (!here || (session && !session.live)) return null; // (a conversation that has nothing to ask with draws no orb)
   const w = (key: string) => words[key] ?? key;
-  const name = voice ? voice.words["bv.open"] ?? w("ask.orb.open") : w("ask.orb.open");
+  const name = w("ask.orb.open");
   return (
     <>
       <button
@@ -85,15 +82,14 @@ export function AskFloating({ words, chipWords, voice = null }: { words: AskWord
         aria-expanded={open}
         title={name}
         onClick={() => (voice && !open ? setTalking(true) : open ? closePanel() : openPanel())}
-        onMouseEnter={() => void import("./AskPanel")}
-        onFocus={() => void import("./AskPanel")}
+        onMouseEnter={() => void import("./AskPanelHost")}
+        onFocus={() => void import("./AskPanelHost")}
         className={`fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-line bg-surface shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 motion-reduce:transition-none md:bottom-6 md:right-6 print:hidden ${open ? "max-md:hidden" : ""}`}
       >
         <Orb px={44} state={session?.asking && !session.answer ? "think" : session?.playing || session?.asking ? "speak" : "ambient"} />
         {unseen ? <span data-ask="dot" aria-hidden="true" className="absolute right-0 top-0 size-3.5 rounded-full border-2 border-surface bg-brand" /> : null}
       </button>
-      {talking && voice ? <VoiceChat words={voice.words} url={voice.url} language={voice.language} languageNames={voice.languageNames} getToken={voice.getToken} onClose={() => setTalking(false)} onType={() => { setTalking(false); openPanel(); }} /> : null}
-      {open && session ? <AskPanel session={session} chips={chipsForPath(rest ?? "", tab).map((k) => chipWords[k] ?? k)} onClose={closePanel} /> : null}
+      {(open && session) || (talking && voice) ? <AskPanel session={session} chips={chipsForPath(rest ?? "", tab).map((k) => chipWords[k] ?? k)} onClose={talking ? () => setTalking(false) : closePanel} voice={talking ? voice : null} onType={() => { setTalking(false); openPanel(); }} /> : null}
     </>
   );
 }
