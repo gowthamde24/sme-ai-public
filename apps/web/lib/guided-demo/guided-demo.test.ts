@@ -16,10 +16,10 @@ vi.mock("@/lib/api/customers", () => ({ createCustomerCompany: h.company, create
 vi.mock("@/lib/api/ai-assistant", () => ({ postTestCall: h.testCall, getAiAssistant: h.assistant }));
 vi.mock("@/lib/api/opening-line", () => ({ previewOpeningLine: h.preview }));
 vi.mock("@/lib/api/assistant", () => ({ sendAssistantMessage: (...a: unknown[]) => h.ask(...a) }));
-vi.mock("@/lib/api/followups", () => ({ createDraft: h.draft }));
+vi.mock("@/lib/api/outbox", () => ({ createCallRequest: h.draft }));
 vi.mock("@/lib/api/visits", () => ({ getSlots: h.slots, bookVisit: h.book }));
 
-import { ApiAuthError } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
 import { runDemoStep } from "./events";
 import { addressOf, clip, demoLead, routesFor, STEP_KEYS } from "./script";
@@ -79,11 +79,15 @@ describe("what the steps do", () => {
     });
     expect(await runDemoStep(CTX, "ask", IN)).toMatchObject({ ok: true, note: "none" });
   });
-  it("followup: a WhatsApp DRAFT for the lead (nothing is sent); no lead, no step", async () => {
-    expect(await runDemoStep(CTX, "followup", IN)).toMatchObject({ ok: true });
-    expect(h.draft.mock.calls[0].slice(0, 3)).toEqual(["tok", CTX.tenantId, IN.leadId]);
-    expect(h.draft.mock.calls[0][3]).toMatchObject({ channel: "whatsapp" });
-    expect(await runDemoStep(CTX, "followup", { ...IN, leadId: null })).toEqual({ ok: false });
+  it("followup: a call REQUEST for the lead (nothing dials until the Owner approves); no lead (a business type that keeps none) is a skip, not a failure", async () => {
+    expect(await runDemoStep(CTX, "followup", IN)).toMatchObject({ ok: true, note: null });
+    expect(h.draft.mock.calls[0].slice(0, 2)).toEqual(["tok", CTX.tenantId]);
+    expect(h.draft.mock.calls[0][2]).toMatchObject({ leadId: IN.leadId, language: "en" });
+    expect(await runDemoStep(CTX, "followup", { ...IN, leadId: null })).toMatchObject({ ok: true, note: "skip" });
+  });
+  it("lead: a refusal (403: this business type keeps no leads of this kind) is a skip, not a failure", async () => {
+    h.company.mockRejectedValueOnce(new ApiRequestError(403, "forbidden", "no"));
+    expect(await runDemoStep(CTX, "lead", IN)).toMatchObject({ ok: true, leadId: null, note: "skip" });
   });
   it("visit: the first free slot that is not past, today or the next days; none = the step fails", async () => {
     h.slots.mockResolvedValueOnce({ open: false, slots: [] }).mockResolvedValueOnce({ open: true, slots: [{ start: "10:00", free: 0, past: false }, { start: "11:00", free: 2, past: false }] });
@@ -91,6 +95,7 @@ describe("what the steps do", () => {
     expect(h.book.mock.calls[0][2]).toMatchObject({ leadId: IN.leadId, slot: "11:00", partySize: 1 });
     h.slots.mockResolvedValue({ open: false, slots: [] });
     expect(await runDemoStep(CTX, "visit", IN)).toEqual({ ok: false });
+    expect(await runDemoStep(CTX, "visit", { ...IN, leadId: null })).toMatchObject({ ok: true, note: "skip" });
   });
   it("today: nothing to do; any failure is { ok: false }, a lost sign-in is passed on", async () => {
     expect(await runDemoStep(CTX, "today", IN)).toMatchObject({ ok: true });

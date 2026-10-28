@@ -29,6 +29,7 @@ export function GuidedDemo({ words, routes, actions }: { words?: Words; routes: 
   const [paused, setPaused] = React.useState(false);
   const [busy, setBusy] = React.useState(false);
   const [failed, setFailed] = React.useState(false);
+  const [skipped, setSkipped] = React.useState(false);
   const [shown, setShown] = React.useState<Line[]>([]);
   const run = React.useRef("");
   const leadId = React.useRef<string | null>(null);
@@ -93,6 +94,7 @@ export function GuidedDemo({ words, routes, actions }: { words?: Words; routes: 
       setStep(index);
       setShown([]);
       setFailed(false);
+      setSkipped(false);
       setBusy(true);
       const out = await actions.run(key, run.current, leadId.current).catch((): StepResult => ({ ok: false }));
       if (mine !== token.current) return;
@@ -100,6 +102,7 @@ export function GuidedDemo({ words, routes, actions }: { words?: Words; routes: 
       if (!out.ok) setFailed(true);
       else {
         if (out.leadId) leadId.current = out.leadId;
+        if (out.note === "skip") setSkipped(true);
         out.lines.forEach((line, n) => timers.current.push(window.setTimeout(() => mine === token.current && setShown((s) => [...s, line]), n * LINE_MS)));
         play(out.sound);
       }
@@ -163,6 +166,7 @@ export function GuidedDemo({ words, routes, actions }: { words?: Words; routes: 
           <h2 className="font-display text-lg font-semibold leading-tight">{t(`gd.${key}.t` as "gd.lead.t")}</h2>
           <p className="text-sm">{t(`gd.${key}.d` as "gd.lead.d")}</p>
           {busy ? <p role="status" className="text-sm text-muted">{t("gd.working")}</p> : null}
+          {skipped ? <p role="status" className="text-sm text-muted">{t("gd.skip")}</p> : null}
           {failed ? <p role="alert" className="rounded-lg border border-red-text bg-red-bg px-3 py-2 text-sm font-medium text-red-text">{t("gd.fail")}</p> : null}
           {shown.length > 0 ? (
             <ul aria-live="polite" data-part="guided-demo-transcript" className="flex flex-col gap-1.5">
@@ -174,7 +178,7 @@ export function GuidedDemo({ words, routes, actions }: { words?: Words; routes: 
               ))}
             </ul>
           ) : null}
-          {key === "ask" && !busy && !failed && shown.length === 1 ? <p className="text-sm text-muted">{t("gd.ask.none")}</p> : null}
+          {key === "ask" && !busy && !failed && shown.length === 1 && !skipped ? <p className="text-sm text-muted">{t("gd.ask.none")}</p> : null}
         </>
       )}
       <p className="text-xs text-muted">{t("gd.note")}</p>

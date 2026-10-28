@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
 
-import { ApiAuthError } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { previewOpeningLine } from "@/lib/api/opening-line";
 import { getAiAssistant, postTestCall } from "@/lib/api/ai-assistant";
 import { sendAssistantMessage } from "@/lib/api/assistant";
 import { createContact, createCustomerCompany, createLead } from "@/lib/api/customers";
-import { createDraft } from "@/lib/api/followups";
+import { createCallRequest } from "@/lib/api/outbox";
 import { bookVisit, getSlots } from "@/lib/api/visits";
 
 import { clip, demoLead, type Line, type StepKey, type StepResult } from "./script";
@@ -13,7 +13,7 @@ import { clip, demoLead, type Line, type StepKey, type StepResult } from "./scri
 /**
  * What each step of the guided demo DOES, through the real API with the signed-in person's own token (SERVER ONLY; the caller has checked that the workspace is a DEMO one and that the person is its Owner or an Admin):
  * a made-up lead of the reserved demo number range, the assistant's simulated test call with the preview sound of the workspace's own voice, one real question to the assistant (an answer from the catalogue, with
- * its sources), a follow-up DRAFT (nothing is sent) and a visit in the first free slot. Every step answers `{ ok: false }` on any failure: nothing is half-told.
+ * its sources), a follow-up CALL REQUEST (nothing dials until the Owner approves) and a visit in the first free slot. A business type whose workspace may not keep leads of this kind (the API says 403) skips the steps that need one. Every step answers `{ ok: false }` on any failure: nothing is half-told.
  */
 export type Ctx = { token: string; tenantId: string };
 export type Input = { run: string; leadId: string | null; question: string };
@@ -29,9 +29,14 @@ async function lead(ctx: Ctx, input: Input): Promise<StepResult> {
   const companyId = randomUUID();
   const contactId = randomUUID();
   const leadId = randomUUID();
-  await createCustomerCompany(ctx.token, ctx.tenantId, { id: companyId, name: who.name });
-  await createContact(ctx.token, ctx.tenantId, { id: contactId, companyId, fullName: who.name, phone: who.phone, email: null });
-  await createLead(ctx.token, ctx.tenantId, { id: leadId, companyId, contactId, source: "whatsapp" });
+  try {
+    await createCustomerCompany(ctx.token, ctx.tenantId, { id: companyId, name: who.name });
+    await createContact(ctx.token, ctx.tenantId, { id: contactId, companyId, fullName: who.name, phone: who.phone, email: null });
+    await createLead(ctx.token, ctx.tenantId, { id: leadId, companyId, contactId, source: "whatsapp" });
+  } catch (error) {
+    if (error instanceof ApiRequestError && error.status === 403) return ok({ note: "skip" }); // this business type does not keep leads of this kind
+    throw error;
+  }
   return ok({ leadId });
 }
 
@@ -64,13 +69,13 @@ async function ask(ctx: Ctx, input: Input): Promise<StepResult> {
 }
 
 async function followup(ctx: Ctx, input: Input): Promise<StepResult> {
-  if (input.leadId === null) return { ok: false };
-  await createDraft(ctx.token, ctx.tenantId, input.leadId, { id: randomUUID(), channel: "whatsapp" });
+  if (input.leadId === null) return ok({ note: "skip" });
+  await createCallRequest(ctx.token, ctx.tenantId, { requestId: randomUUID(), leadId: input.leadId, reason: "Follow up on the question about the price and a visit.", scriptDraft: "Hello, this is a follow-up on your question about the price. Shall we fix a time for you to come and see it?", language: "en" });
   return ok();
 }
 
 async function visit(ctx: Ctx, input: Input): Promise<StepResult> {
-  if (input.leadId === null) return { ok: false };
+  if (input.leadId === null) return ok({ note: "skip" });
   for (const plus of [0, 1, 2, 3]) {
     const date = istDay(plus);
     const slots = await getSlots(ctx.token, ctx.tenantId, date);
