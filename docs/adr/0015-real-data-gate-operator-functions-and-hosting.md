@@ -122,3 +122,14 @@ local schema and must catch each (14 cases). Connection details travel in the en
 * Opening the gate needs a person with database-owner access, the four records, and the runbook (`docs/runbooks/real-data-gate.md`).
 * Three new SQLSTATEs: `SM401` gate closed, `SM402` erasure not installed, `SM305` last Owner. The API maps them to fixed messages.
 * Image sizes: API 297 MB, web 1.33 GB (a `standalone` build would shrink it; not needed yet).
+
+## Opening log
+
+One line per opening of the gate for a workspace (the audit trail `public.audit_events`, entity `tenant_data_policy`, holds the same references).
+
+### 2026-10-28: "Stack19 Owner Test" (staging), the first opening
+- **Workspace:** "Stack19 Owner Test", id `63e9ce7f-1343-45c3-b3d4-2c1f59253aae` (slug `my-business-e862a8b2`), owned by the owner's existing account (one workspace per account; renamed from "My business", example data removed). Opened 2026-10-28 18:06:03 UTC by the operator (`app.operator_open_real_data_gate`).
+- **Scope:** the owner's own phone number (919502380998) and the owner's own messages through Meta's test number, for testing. No third-party personal data. Nothing else is opened: the five demo workspaces stay closed. Sending is fenced in the API to that one number (`WHATSAPP_ALLOWED_RECIPIENTS`), so the gate being open does not make any other number reachable.
+- **References:** erasure `adr:0014`; hosting `doc:hosting-verify-2026-10-28` (`docs/compliance/hosting-verify-2026-10-28.md`, `ALL CHECKS PASSED`, 48 checks); DPDP `doc:owner-test-scope-2026-10-28` (`docs/compliance/owner-test-scope-2026-10-28.md`: the OWNER'S SCOPE NOTE, signed 28 Oct 2026, **not** the full DPDP legal review, which stays required before any customer or third-party data and before the gate opens for any other workspace); restore drill `doc:restore-drill-2026-10-28` (`docs/compliance/restore-drill-2026-10-28.md`: run 1 failed and found the missing `billing` schema in the backup script, run 2 passed; the restore target was a local scratch database).
+- **Done with it, the same day (staging, operator):** the WhatsApp test number's link was removed from the demo workspace "DEMO Sri Sai Homes" (it was linked there for the synthetic checks) so that it can be linked to this workspace by its Owner (Integrations > Connect WhatsApp); the system-wide outbox switch was turned ON for staging (`app.operator_set_outbox(true)`; it had been OFF, which held every message in every workspace) and the assistant was allowed for this workspace (`app.operator_enable_assistant`; it was allowed only for the five demo workspaces).
+- **Close it:** `select app.operator_close_real_data_gate('my-business-e862a8b2');` Real data already inside stays (see the runbook). The outbox switch can be turned off with `select app.operator_set_outbox(false);`.
