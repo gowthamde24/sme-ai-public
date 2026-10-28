@@ -25,13 +25,12 @@ export function parseLine(raw: string): AskEvent | null {
         ? { type: "draft", id: r.id, kind: r.kind, title: r.title, summary: r.summary, href: r.href, language: s(r.language), gloss: s(r.gloss), machine: r.machine === true }
         : null;
     case "error":
-      return { type: "error", code: s(r.code) ?? undefined };
+    case "audio_error":
+      return { type: r.type, code: s(r.code) ?? undefined };
     case "heard":
       return typeof r.text === "string" ? { type: "heard", text: r.text } : null;
     case "audio":
       return typeof r.contentType === "string" && AUDIO_TYPE.test(r.contentType) && typeof r.data === "string" && /^[A-Za-z0-9+/]+={0,2}$/.test(r.data) ? { type: "audio", contentType: r.contentType, data: r.data } : null;
-    case "audio_error":
-      return { type: "audio_error", code: s(r.code) ?? undefined };
     case "confirm_action":
       return r.action && typeof r.action === "object" ? { type: "confirm_action", action: r.action as ConfirmAction } : null; // the route made it from the API's plan, already read there
     case "clarify":
