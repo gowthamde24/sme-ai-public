@@ -131,7 +131,7 @@ def rendered_opening(runtime: Runtime, ctx: TenantContext, language: str, campai
     row = _repo(runtime).opening(ctx.principal.token, ctx.tenant.id)
     mention = render.pick_mention(bool(row.get("mention_ai", True)), row.get("campaign_overrides", []), campaign_id)
     line = render.pick_line(row.get("lines", []), language, campaign_id)
-    name: object = settings_data.defaults_for(None).get("name", "Vijaya")
+    name: object = settings_data.default_name()
     if runtime.assistant_settings is not None:  # the name the Owner chose in Settings > AI assistant
         name = runtime.assistant_settings.get(ctx.principal.token, ctx.tenant.id).settings.name
     ai_intro = settings_data.intro(language, str(name), ctx.tenant.name) if language in settings_data.load()["intro"] else None

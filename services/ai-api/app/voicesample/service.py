@@ -23,7 +23,7 @@ SPEAKERS = {"female_warm": "ritu", "female_clear": "priya", "male_calm": "aditya
 # "warm": normal pace, more expressive; "quick": faster and steadier (listening only: nothing is saved)
 STYLES: dict[str, tuple[float, float]] = {"warm": (1.0, 0.7), "quick": (1.15, 0.4)}
 NAME_OK = re.compile(r"^[^<>{}@/\\|]{1,24}$")
-DEFAULT_NAME = "Vijaya"
+DEFAULT_NAME = settings_data.default_name()
 MAX_BYTES = 2_000_000
 CACHE_SECONDS = 24 * 3600
 DAILY_CHAR_CAP = 3000

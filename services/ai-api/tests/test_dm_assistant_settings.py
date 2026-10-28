@@ -149,10 +149,27 @@ def test_before_the_first_save_the_defaults_of_the_business_type_are_shown() -> 
     client, repo = world(business_type="construction_materials", business_name="Sri Ram Pavers")
     out = client.get(B, headers=auth("a_owner")).json()
     assert out["saved"] is False and out["business_type"] == "construction_materials" and out["settings"] == out["defaults"]
-    assert out["settings"]["name"] == "Arun" and out["settings"]["voice_persona"] == "male_calm"
-    assert out["intro"]["en"] == "Arun, the AI assistant of Sri Ram Pavers"
+    assert out["settings"]["name"] == "Aruna" and out["settings"]["voice_persona"] == "female_clear"
+    assert out["intro"]["en"] == "Aruna, the AI assistant of Sri Ram Pavers"
     assert out["wording"] == "draft" and out["updated_at"] is None
     assert repo.row is None, "reading made nothing"
+
+
+def test_no_default_is_a_male_voice_and_the_catalogue_default_of_every_call_language_is_female() -> None:
+    """Owner, 28 Oct: nothing the API pre-fills may be a male voice (the old 'Male · calm' default); the voice that speaks until the owner picks one is the catalogue's default per language (Janvi, Ramya, Sanya, Disha)."""
+    from app.conversation.voices import load_config
+
+    for code, defaults in data.load()["defaults"].items():
+        assert defaults["voice_persona"].startswith("female_"), code
+    cfg = load_config()
+    for language in ("en", "te", "hi", "kn"):
+        assert cfg.default_for(language).gender == "female", language
+
+
+def test_the_name_used_when_nothing_says_one_comes_from_the_data_not_from_code() -> None:
+    assert data.default_name() == data.defaults_for(None)["name"]
+    for path in ("voicesample/service.py", "browser_voice/routes.py", "opening/routes.py"):
+        assert '"Vijaya"' not in (Path(models.__file__).resolve().parents[1] / path).read_text(encoding="utf-8"), path
 
 
 def test_an_unknown_business_type_falls_back_to_the_first_pack() -> None:

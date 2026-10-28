@@ -27,6 +27,11 @@ def business_type(code: str | None) -> str:
     return str(next(iter(defaults)))
 
 
+def default_name() -> str:
+    """The name used when nothing else says one (no settings store wired, or a sample with no name): the first business type's, from the data, so no name is written in code."""
+    return str(defaults_for(None)["name"])
+
+
 def defaults_for(code: str | None) -> dict[str, Any]:
     return dict(load()["defaults"][business_type(code)])
 

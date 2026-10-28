@@ -145,21 +145,21 @@ def test_the_preview_speaks_the_real_business_name_then_one_reply_and_says_it_is
     assert TENANT_A.name in spoken and "AI" in spoken and "{" not in spoken
     assert vs.REPLIES["te"] in spoken and spoken.index(TENANT_A.name) < spoken.index(vs.REPLIES["te"])
     text = client.get(f"{PREVIEW}/text?language=te&style=warm", headers=auth("a_owner")).json()
-    assert text["text"] == spoken and text["business_name"] == TENANT_A.name and text["assistant_name"] == "Vijaya"
+    assert text["text"] == spoken and text["business_name"] == TENANT_A.name and text["assistant_name"] == vs.DEFAULT_NAME
 
 
 def test_the_preview_follows_a_new_business_name_at_once_and_a_language_without_a_reply_says_only_the_opening() -> None:
     service = VoiceSampleService(RecordingTts())
     tenant = TENANT_A.id
-    first = vs.preview_text("en", "warm", "Vijaya", "Lakshmi Sarees")
-    second = vs.preview_text("en", "warm", "Vijaya", "Sri Sai Homes")
+    first = vs.preview_text("en", "warm", vs.DEFAULT_NAME, "Lakshmi Sarees")
+    second = vs.preview_text("en", "warm", vs.DEFAULT_NAME, "Sri Sai Homes")
     assert "Lakshmi Sarees" in first and "Sri Sai Homes" not in first and "Sri Sai Homes" in second
     tts = service._tts  # noqa: SLF001
     assert isinstance(tts, RecordingTts)
     service.preview(tenant, "Lakshmi Sarees", "female_warm", "en", "warm", None)
     service.preview(tenant, "Sri Sai Homes", "female_warm", "en", "warm", None)   # renamed: not served from the cache of the old name
     assert [c["text"] for c in tts.calls] == [first, second]
-    assert vs.preview_text("ta", "warm", "Vijaya", "Sri Sai Homes") == vs.line_for("ta", "warm", "Vijaya", "Sri Sai Homes")
+    assert vs.preview_text("ta", "warm", vs.DEFAULT_NAME, "Sri Sai Homes") == vs.line_for("ta", "warm", vs.DEFAULT_NAME, "Sri Sai Homes")
 
 
 def test_the_preview_is_for_the_owner_and_admin_only_and_shares_the_limits_of_the_sample() -> None:
