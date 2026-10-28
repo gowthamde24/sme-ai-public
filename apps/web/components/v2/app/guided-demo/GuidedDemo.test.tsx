@@ -39,6 +39,19 @@ describe("the guided demo", () => {
     expect(screen.getByText("Step 1 of 6")).toBeInTheDocument();
     expect(screen.getByText(/Made-up people and numbers only/)).toBeInTheDocument();
   });
+  it("the first step opens the new lead's own page once the lead exists (Today when it could not be made)", async () => {
+    const withLead = { ...routes, lead: "/app/tenants/t/leads/{lead}", today: "/app/tenants/t" };
+    run.mockResolvedValueOnce(good({ leadId: "33333333-3333-4333-8333-333333333333" }));
+    render(<GuidedDemo words={WORDS} routes={withLead} actions={{ run: run as never }} />);
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Start demo" })));
+    expect(push).toHaveBeenCalledWith("/app/tenants/t/leads/33333333-3333-4333-8333-333333333333");
+    cleanup();
+    push.mockClear();
+    run.mockResolvedValueOnce({ ok: false });
+    render(<GuidedDemo words={WORDS} routes={withLead} actions={{ run: run as never }} />);
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Start demo" })));
+    expect(push).toHaveBeenCalledWith("/app/tenants/t");
+  });
   it("goes on by itself after the caption has been read, and the lead id of one step is given to the next", async () => {
     run.mockResolvedValueOnce(good({ leadId: "33333333-3333-4333-8333-333333333333" }));
     draw();

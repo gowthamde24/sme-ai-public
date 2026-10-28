@@ -22,7 +22,7 @@ vi.mock("@/lib/api/visits", () => ({ getSlots: h.slots, bookVisit: h.book }));
 import { ApiAuthError } from "@/lib/api/client";
 
 import { runDemoStep } from "./events";
-import { clip, demoLead, routesFor, STEP_KEYS } from "./script";
+import { addressOf, clip, demoLead, routesFor, STEP_KEYS } from "./script";
 
 const CTX = { token: "tok", tenantId: "22222222-2222-4222-8222-222222222222" };
 const IN = { run: "abcd1234-0000", leadId: "33333333-3333-4333-8333-333333333333", question: "Price?" };
@@ -37,7 +37,10 @@ describe("the story", () => {
     expect(STEP_KEYS).toHaveLength(6);
     const all = routesFor(BASE, null);
     expect(all.today).toBe(BASE);
-    expect(all.lead).toBe(`${BASE}/customers`);
+    expect(all.lead).toBe(`${BASE}/leads/{lead}`);
+    expect(addressOf(all.lead, BASE, "L-1")).toBe(`${BASE}/leads/L-1`);
+    expect(addressOf(all.lead, BASE, null)).toBe(BASE); // no lead yet: Today
+    expect(addressOf(all.visit, BASE, "L-1")).toBe(all.visit);
     const some = routesFor(BASE, []);
     expect(Object.values(some).every((p) => p === BASE || p.startsWith(BASE))).toBe(true);
     expect(some.lead).toBe(BASE); // no module at all: Today

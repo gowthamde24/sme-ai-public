@@ -4,7 +4,7 @@ import { Pause, Play, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { STEP_KEYS, type Line, type Sound, type StepKey, type StepResult } from "@/lib/guided-demo/script";
+import { addressOf, STEP_KEYS, type Line, type Sound, type StepKey, type StepResult } from "@/lib/guided-demo/script";
 
 import { makeT, type Words } from "../words";
 import { primary, quiet, secondary } from "../visits/styles";
@@ -103,7 +103,7 @@ export function GuidedDemo({ words, routes, actions }: { words?: Words; routes: 
         out.lines.forEach((line, n) => timers.current.push(window.setTimeout(() => mine === token.current && setShown((s) => [...s, line]), n * LINE_MS)));
         play(out.sound);
       }
-      router.push(routes[key]);
+      router.push(addressOf(routes[key], routes.today, leadId.current));
       router.refresh();
       timers.current.push(window.setTimeout(() => mine === token.current && outline(true), 1500));
       const stay = READ_MS + (out.ok ? out.lines.length * LINE_MS : 0);

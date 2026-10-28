@@ -9,7 +9,10 @@ export type StepKey = (typeof STEP_KEYS)[number];
 export const isStepKey = (v: unknown): v is StepKey => (STEP_KEYS as readonly unknown[]).includes(v);
 
 /** The screen of each step, below the workspace's address ("" = Today). */
-export const STEP_PAGES: Record<StepKey, string> = { lead: "/customers", reach: "/call-list", ask: "/chats", followup: "/followups", visit: "/visits", today: "" };
+export const STEP_PAGES: Record<StepKey, string> = { lead: "/leads/{lead}", reach: "/call-list", ask: "/chats", followup: "/followups", visit: "/visits", today: "" };
+/** Where the new lead's id goes in an address (the step that made the lead knows it only after it has run). */
+export const LEAD_TOKEN = "{lead}";
+export const addressOf = (route: string, base: string, leadId: string | null): string => (route.includes(LEAD_TOKEN) ? (leadId ? route.replace(LEAD_TOKEN, leadId) : base) : route);
 
 export type Line = { who: "assistant" | "lead"; text: string };
 export type Sound = { base64: string; mime: string; seconds: number };

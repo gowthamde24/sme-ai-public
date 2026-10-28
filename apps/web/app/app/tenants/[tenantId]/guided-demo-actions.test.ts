@@ -4,6 +4,7 @@ const h = vi.hoisted(() => ({ tenant: vi.fn(), run: vi.fn(async (..._a: unknown[
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ accessToken: "tok" }) }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
 vi.mock("@/lib/guided-demo/events", () => ({ runDemoStep: (...a: unknown[]) => h.run(...a) }));
+vi.mock("./today-read", () => ({ readIsDemo: async (_t: string, _id: string, name: string) => /^DEMO\b/.test(name) }));
 vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`redirect ${to}`); } }));
 

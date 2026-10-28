@@ -20,7 +20,7 @@ import { getLang } from "@/i18n/get-lang";
 import { fetchTenant } from "@/lib/api/client";
 import { requireUser } from "@/lib/auth/session";
 import { guidedDemo, taskScreens } from "@/lib/screens/flag";
-import { isDemoWorkspace } from "@/lib/workspace-demo";
+import { readIsDemo } from "./today-read";
 import { routesFor } from "@/lib/guided-demo/script";
 import { GuidedDemo } from "@/components/v2/app/guided-demo/LazyGuidedDemo";
 import { runDemoStepAction } from "./guided-demo-actions";
@@ -95,7 +95,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
 async function demoRoutesFor(accessToken: string, tenantId: string, modules: readonly string[] | null) {
   try {
     const tenant = await fetchTenant(accessToken, tenantId);
-    if ((tenant.role !== "owner" && tenant.role !== "admin") || !isDemoWorkspace(tenant.name)) return null;
+    if ((tenant.role !== "owner" && tenant.role !== "admin") || !(await readIsDemo(accessToken, tenantId, tenant.name))) return null;
     return routesFor(`/app/tenants/${tenantId}`, modules);
   } catch {
     return null;
