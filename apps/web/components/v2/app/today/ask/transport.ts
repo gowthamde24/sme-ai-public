@@ -37,7 +37,7 @@ export function parseLine(raw: string): AskEvent | null {
     case "clarify":
       return typeof r.question === "string" ? { type: "clarify", question: r.question } : null;
     case "done":
-      return { type: "done", conversationId: s(r.conversationId) ?? undefined };
+      return { type: "done", conversationId: s(r.conversationId) };
     default:
       return null;
   }

@@ -19,7 +19,7 @@ describe("parseLine", () => {
     expect(parseLine('{"type":"source","label":"L","href":null}')).toEqual({ type: "source", label: "L", href: null });
     expect(parseLine('{"type":"draft","id":"i","kind":"reply_draft","title":"t","summary":"s","href":null,"language":"te","gloss":"g","machine":true}')).toEqual({ type: "draft", id: "i", kind: "reply_draft", title: "t", summary: "s", href: null, language: "te", gloss: "g", machine: true });
     expect(parseLine('{"type":"error","code":"ai_paused_until"}')).toEqual({ type: "error", code: "ai_paused_until" });
-    expect(parseLine('{"type":"done"}')).toEqual({ type: "done" });
+    expect(parseLine('{"type":"done"}')).toEqual({ type: "done", conversationId: null });
     expect(parseLine('{"type":"done","conversationId":"c1","kind":"clarify"}')).toEqual({ type: "done", conversationId: "c1" });
     expect(parseLine('{"type":"clarify","question":"Which leads?"}')).toEqual({ type: "clarify", question: "Which leads?" });
     expect(parseLine('{"type":"clarify"}')).toBeNull();
@@ -50,7 +50,7 @@ describe("makeAskTransport", () => {
     const bytes = new TextEncoder().encode('{"type":"text","delta":"నమస్కారం"}\n{"type":"done"}\n');
     const cut = bytes.indexOf(0xb0) + 1; // inside the first Telugu letter
     const body = new ReadableStream<Uint8Array>({ start(c) { c.enqueue(bytes.slice(0, cut)); c.enqueue(bytes.slice(cut, cut + 7)); c.enqueue(bytes.slice(cut + 7)); c.close(); } });
-    expect(await collect(run(async () => new Response(body, { headers: NDJSON })))).toEqual([{ type: "text", delta: "నమస్కారం" }, { type: "done" }]);
+    expect(await collect(run(async () => new Response(body, { headers: NDJSON })))).toEqual([{ type: "text", delta: "నమస్కారం" }, { type: "done", conversationId: null }]);
   });
   it.each([
     ["a sign-in page (not the event stream)", () => new Response("<html>login</html>", { headers: { "Content-Type": "text/html" } })],
@@ -122,7 +122,7 @@ describe("makeVoiceTransport", () => {
   });
   it("a stream that stops before its last word ends with an error; one that stops after `done` (the spoken answer never came) does not", async () => {
     expect(await collect(voice(vi.fn(async () => new Response('{"type":"heard","text":"hi"}\n', { headers: NDJSON }))))).toEqual([{ type: "heard", text: "hi" }, { type: "error" }]);
-    expect((await collect(voice(vi.fn(async () => new Response('{"type":"done"}\n', { headers: NDJSON }))))).at(-1)).toEqual({ type: "done" });
+    expect((await collect(voice(vi.fn(async () => new Response('{"type":"done"}\n', { headers: NDJSON }))))).at(-1)).toEqual({ type: "done", conversationId: null });
   });
 });
 
