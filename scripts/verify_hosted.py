@@ -54,7 +54,7 @@ def _is_https(url: str) -> bool:
 
 
 def check_auth_settings(
-    client: httpx.Client, supabase_url: str, anon_key: str, report: Report
+    client: httpx.Client, supabase_url: str, anon_key: str, report: Report, allowed_providers: str = ""
 ) -> None:
     r = client.get(f"{supabase_url}/auth/v1/settings", headers={"apikey": anon_key})
     if r.status_code != 200:
@@ -72,14 +72,16 @@ def check_auth_settings(
         f"mailer_autoconfirm = {body.get('mailer_autoconfirm')!r}",
     )
     external = body.get("external") or {}
-    enabled = sorted(k for k, v in external.items() if v is True and k not in ("email",))
+    # a provider the operator has decided to allow (HOSTED_ALLOWED_PROVIDERS=google): "Continue with Google" for people who already have an account (sign-up stays closed, so nobody new can arrive that way)
+    allowed = {p.strip() for p in allowed_providers.split(",") if p.strip()}
+    enabled = sorted(k for k, v in external.items() if v is True and k not in ("email", "phone") and k not in allowed)
     report.add(
         "PASS" if not enabled else "FAIL",
         "no social / phone sign-in providers enabled",
-        ", ".join(enabled) or "only e-mail",
+        ", ".join(enabled) or ("only e-mail" if not allowed else "only e-mail and the allowed: " + ", ".join(sorted(allowed))),
     )
-    if body.get("sms_provider") or external.get("phone") is True:
-        report.add("FAIL", "phone sign-in is off", "enabled")
+    # `sms_provider` is a label Supabase sends even when phone sign-in is off ("twilio"): the switch is external.phone
+    report.add("FAIL" if external.get("phone") is True else "PASS", "phone sign-in is off", f"external.phone = {external.get('phone')!r}")
 
 
 def check_anon_surface(
@@ -292,7 +294,7 @@ def run(env: dict[str, str] | None = None, client: httpx.Client | None = None) -
     report = Report()
     c = client or httpx.Client(timeout=20, follow_redirects=False)
     try:
-        check_auth_settings(c, supabase_url, anon_key, report)
+        check_auth_settings(c, supabase_url, anon_key, report, env.get("HOSTED_ALLOWED_PROVIDERS", ""))
         check_anon_surface(c, supabase_url, anon_key, report)
         check_api(c, api_url, web_origin, report)
         check_web_headers(c, web_origin, report)

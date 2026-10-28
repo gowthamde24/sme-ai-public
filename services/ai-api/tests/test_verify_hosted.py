@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 """scripts/verify_hosted.py: read-only by construction, fails closed, and never prints a key or a
 connection string. The hosted checks run against an in-memory transport (no network)."""
 
@@ -254,3 +255,19 @@ def test_the_sql_file_contains_no_statement_that_writes() -> None:
     ):
         assert word not in code, word
     assert code.lstrip().startswith("with")
+
+
+def test_a_provider_the_operator_allowed_passes_and_any_other_still_fails() -> None:
+    google = {"disable_signup": True, "mailer_autoconfirm": False, "external": {"email": True, "google": True}}
+    assert go(Hosted(settings=google), {**ENV, "HOSTED_ALLOWED_PROVIDERS": "google"}) == 0
+    assert go(Hosted(settings=google)) == 1, "not allowed by default"
+    other = {**google, "external": {"email": True, "google": True, "github": True}}
+    assert go(Hosted(settings=other), {**ENV, "HOSTED_ALLOWED_PROVIDERS": "google"}) == 1
+
+
+def test_the_sms_provider_label_is_not_phone_sign_in() -> None:
+    """Supabase sends `sms_provider: twilio` even when phone sign-in is off; the switch is external.phone."""
+    label = {"disable_signup": True, "mailer_autoconfirm": False, "sms_provider": "twilio", "external": {"email": True, "phone": False}}
+    assert go(Hosted(settings=label)) == 0
+    on = {**label, "external": {"email": True, "phone": True}}
+    assert go(Hosted(settings=on)) == 1
