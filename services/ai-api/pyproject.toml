@@ -56,6 +56,7 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "../../scripts/plans_migration.py" = ["E501"]
 # job BZ: connectors read like their providers' documentation (long lines of fields and examples)
 "app/connectors/*" = ["E501"]
+"app/browser_voice/*" = ["E501"]
 "tests/test_bz_*.py" = ["E501"]
 "../../tests/integration/test_bz_*.py" = ["E501"]
 # job CA: the GSTIN module and the business profile read like their documentation (long lines)

@@ -16,6 +16,7 @@ from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.billing import gate
 from app.billing.mail import EmailSender
 from app.billing.service import BillingService
+from app.browser_voice.runtime import BrowserVoice
 from app.businessprofile.repository import BusinessProfileRepository
 from app.callsettings.service import CallSettingsService
 from app.campaigns.repository import CampaignsRepository
@@ -169,6 +170,8 @@ class Runtime:
     voice_sample: VoiceSampleService | None = None
     # job voice-picker: the opening line in the chosen voice; None = no preview here
     call_voice: CallVoicePreview | None = None
+    # job DV: talk to the assistant in the browser (a WebSocket); None = off
+    browser_voice: BrowserVoice | None = None
 
 
 @dataclass(frozen=True)
