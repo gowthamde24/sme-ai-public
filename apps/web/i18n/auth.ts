@@ -12,7 +12,7 @@ import { dictFor, namedDict } from "@/i18n/strings";
  * pin, or say things that are not true of the product (docs/plans/port-design-v2-stage3-plan.md, section 4).
  * SERVER ONLY, like landing.ts: a client component must not import this file; a test enforces it.
  */
-export const AUTH_CHROME_KEYS = ["skip", "lang.label", "theme.toDark", "theme.toLight", "home", "side.title", "side.d", "side.note"] as const;
+export const AUTH_CHROME_KEYS = ["skip", "lang.label", "theme.toDark", "theme.toLight", "home", "side.title", "side.d"] as const;
 export type AuthKey = (typeof AUTH_CHROME_KEYS)[number];
 export type AuthDict = Record<AuthKey, string>;
 export type AuthT = (key: AuthKey, vars?: Vars) => string;

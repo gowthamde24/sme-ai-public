@@ -11,8 +11,8 @@ const walk = (dir: string): string[] =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? (e.name === "node_modules" || e.name === ".next" ? [] : walk(path.join(dir, e.name))) : [path.join(dir, e.name)]));
 
 describe("auth chrome dictionary", () => {
-  it("has exactly the eight chrome keys, non-empty, in every language", () => {
-    expect(AUTH_CHROME_KEYS).toHaveLength(8);
+  it("has exactly the seven chrome keys, non-empty, in every language", () => {
+    expect(AUTH_CHROME_KEYS).toHaveLength(7);
     for (const l of LANGS) {
       expect(Object.keys(authDict(l))).toEqual([...AUTH_CHROME_KEYS]);
       for (const k of AUTH_CHROME_KEYS) expect(authDict(l)[k].trim().length, `${l} ${k}`).toBeGreaterThan(0);

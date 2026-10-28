@@ -52,7 +52,6 @@ export async function AuthFrame({ children }: { children: ReactNode }) {
           <aside className="hidden md:block">
             <p className="text-balance font-display text-4xl font-bold leading-tight">{t("side.title")}</p>
             <p className="mt-4 text-lg text-muted">{t("side.d")}</p>
-            <p className="mt-6 inline-block rounded-md bg-brand-bg px-3 py-1 text-base font-semibold text-brand-text">{t("side.note")}</p>
           </aside>
           <div>
             <div lang="en">{children}</div>
