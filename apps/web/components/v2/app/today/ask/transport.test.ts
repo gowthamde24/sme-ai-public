@@ -20,7 +20,7 @@ describe("parseLine", () => {
     expect(parseLine('{"type":"draft","id":"i","kind":"reply_draft","title":"t","summary":"s","href":null,"language":"te","gloss":"g","machine":true}')).toEqual({ type: "draft", id: "i", kind: "reply_draft", title: "t", summary: "s", href: null, language: "te", gloss: "g", machine: true });
     expect(parseLine('{"type":"error","code":"ai_paused_until"}')).toEqual({ type: "error", code: "ai_paused_until" });
     expect(parseLine('{"type":"done"}')).toEqual({ type: "done" });
-    expect(parseLine('{"type":"done","conversationId":"c1","kind":"clarify"}')).toEqual({ type: "done", conversationId: "c1", kind: "clarify" });
+    expect(parseLine('{"type":"done","conversationId":"c1","kind":"clarify"}')).toEqual({ type: "done", conversationId: "c1" });
     expect(parseLine('{"type":"clarify","question":"Which leads?"}')).toEqual({ type: "clarify", question: "Which leads?" });
     expect(parseLine('{"type":"clarify"}')).toBeNull();
     expect(parseLine('{"type":"confirm_action","action":{"actionId":"a"}}')).toMatchObject({ type: "confirm_action" });

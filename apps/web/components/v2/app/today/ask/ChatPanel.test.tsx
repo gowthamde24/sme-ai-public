@@ -42,16 +42,16 @@ const PLAN = { actionId: "33333333-3333-4333-8333-333333333333", title: "Call 12
 async function* answer(text: string): AsyncGenerator<AskEvent> {
   if (text === "PLAN") {
     yield { type: "confirm_action", action: PLAN };
-    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555", kind: "confirm_action" };
+    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
     return;
   }
   if (text === "CLARIFY") {
     yield { type: "clarify", question: "Which leads: today's or this week's?" };
-    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555", kind: "clarify" };
+    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
     return;
   }
   yield { type: "text", delta: text };
-  yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555", kind: "answer" };
+  yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
 }
 const asks: { question: string; conversationId?: string | null }[] = [];
 let sideCalls: Record<string, unknown>[] = [];

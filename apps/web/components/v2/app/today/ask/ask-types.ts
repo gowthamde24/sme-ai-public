@@ -21,8 +21,8 @@ export type AskEvent =
   | { type: "draft"; id: string; kind: string; title: string; summary: string; href: string | null; language?: string | null; gloss?: string | null; machine?: boolean }
   /** The answer could not be completed. Nothing was changed. `code` is one of a short closed list (see ERROR_CODES); anything else is the general sentence. */
   | { type: "error"; code?: string }
-  /** The conversation turn ended; `conversationId` is the conversation to go on in (the next message continues it), `kind` the typed reply. Older replies carry neither. */
-  | { type: "done"; conversationId?: string; kind?: "answer" | "confirm_action" | "clarify" }
+  /** The conversation turn ended; `conversationId` is the conversation to go on in (the next message continues it), Older replies carry none. */
+  | { type: "done"; conversationId?: string }
   /** An ACTION is proposed (the router decided the message was one): the plan, and one tap to approve it. Nothing has run. */
   | { type: "confirm_action"; action: ConfirmAction }
   /** The router needs ONE short answer before it can go on; the next message is the answer. */

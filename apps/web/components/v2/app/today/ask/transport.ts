@@ -35,11 +35,11 @@ export function parseLine(raw: string): AskEvent | null {
     case "audio_error":
       return { type: "audio_error", code: s(r.code) ?? undefined };
     case "confirm_action":
-      return r.action !== null && typeof r.action === "object" && !Array.isArray(r.action) ? { type: "confirm_action", action: r.action as ConfirmAction } : null; // the route made it from the API's plan, already read there
+      return r.action && typeof r.action === "object" ? { type: "confirm_action", action: r.action as ConfirmAction } : null; // the route made it from the API's plan, already read there
     case "clarify":
       return typeof r.question === "string" ? { type: "clarify", question: r.question } : null;
     default:
-      return { type: "done", conversationId: s(r.conversationId) ?? undefined, kind: r.kind === "answer" || r.kind === "confirm_action" || r.kind === "clarify" ? r.kind : undefined };
+      return { type: "done", conversationId: s(r.conversationId) ?? undefined };
   }
 }
 
