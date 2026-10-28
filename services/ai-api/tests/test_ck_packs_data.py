@@ -158,12 +158,12 @@ def test_editing_a_synced_pack_is_refused_and_a_new_version_is_a_new_migration(t
     (fake / "education" / "pack.json").write_text(json.dumps(edited), encoding="utf-8")
     _, _, problems = pm.pending(fake, pm.MIGRATIONS)
     assert len(problems) == 1 and "never edited" in problems[0]
-    edited["version"] = 2
+    edited["version"] += 1  # whatever version the pack has now (a labels-only version 2 was added by job DW): the next one
     (fake / "education" / "pack.json").write_text(json.dumps(edited), encoding="utf-8")
     _, todo, problems = pm.pending(fake, pm.MIGRATIONS)
-    assert problems == [] and [(p["id"], p["version"]) for p in todo] == [("education", 2)]
+    assert problems == [] and [(p["id"], p["version"]) for p in todo] == [("education", edited["version"])]
     rendered = pm.render([], todo)
-    assert "-- pack-sync: education 2 " in rendered and "$pack_json$" in rendered and "update packs.pack_versions set is_default" not in rendered
+    assert f"-- pack-sync: education {edited['version']} " in rendered and "$pack_json$" in rendered and "update packs.pack_versions set is_default" not in rendered
 
 
 def test_the_closed_unit_list_is_the_same_everywhere() -> None:
