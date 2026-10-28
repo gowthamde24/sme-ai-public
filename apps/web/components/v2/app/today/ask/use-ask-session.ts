@@ -336,33 +336,30 @@ export function useAskSession({ lang, base, words, availability, transport: give
     await run("", (signal) => voiceTransport({ audio: blob, lang, speak, signal }), true, speak);
   };
 
+  /** What is on screen goes (the exchange, its plan or question); the thread keeps what was moved out of it. */
+  const clearScreen = () => {
+    setAsked("");
+    setAnswer("");
+    setSources([]);
+    setDrafts([]);
+    setErrorCode(null);
+    setPhase("idle");
+    setExtra({});
+  };
   /** The conversation panel: a turn that was spoken (the socket's captions) joins the thread like a typed one, and "new conversation" empties it. */
   const addExchange = (x: Exchange) => {
     const before = current.current; // a typed exchange that is still on screen goes first: the thread keeps the order things happened in
     const keep = before && (before.asked !== "" || before.answer !== "") && phase !== "asking";
     setEarlier((list) => [...list, ...(keep ? [before] : []), x].slice(-MAX_EARLIER));
-    if (keep) {
-      setAsked("");
-      setAnswer("");
-      setSources([]);
-      setDrafts([]);
-      setErrorCode(null);
-      setPhase("idle");
-    }
+    if (keep) clearScreen();
   };
   /** Starts a fresh conversation, or (with an id and its messages from the history) goes on in an earlier one: the next message continues it. */
   const newChat = (id: string | null = null, thread: Exchange[] = []) => {
     abort.current?.abort();
     dropAudio();
     setEarlier(thread.slice(-MAX_EARLIER));
-    setAsked("");
-    setAnswer("");
-    setSources([]);
-    setDrafts([]);
-    setErrorCode(null);
     setText("");
-    setPhase("idle");
-    setExtra({});
+    clearScreen();
     convRef.current = id;
   };
   const [voiceOrb, setVoiceOrb] = React.useState<"listen" | "think" | "speak" | null>(null); // what the spoken conversation is doing, for the floating circle
