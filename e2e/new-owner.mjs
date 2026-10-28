@@ -88,6 +88,16 @@ const signIn = async () => {
   await page.click('button:has-text("Sign in")');
 };
 
+/** The question is echoed in the box `where`, and something longer than a few words follows it: an answer (or the honest "not found"), not an error. */
+async function answered(question, where) {
+  await page.waitForFunction(([q, sel]) => {
+    const t = (document.querySelector(sel) ?? document.body).innerText;
+    const i = t.indexOf(q);
+    return i >= 0 && t.slice(i + q.length).trim().length > 20;
+  }, [question, where], { timeout: 60000 });
+  must(!/Something went wrong/i.test(await text(page)), "the page broke while asking");
+}
+
 // ---- 1. sign up with "Other", become a Google-style account, sign in --------------------------------------------------------
 if (!(await step("N1", 'sign-up step 1 is ONE searchable list with "Other" in its own group; choosing Other goes to step 2; the e-mail way makes the account', async () => {
   await page.goto(`${BASE}/signup`);
@@ -177,21 +187,23 @@ await step("N6", "Today: with the assistant off the card still has the typing li
 
 await step("N7", "Today: type a question in the card and press Enter: an answer appears (the scripted model of the local stack)", async () => {
   const box = page.locator("#ask-input");
-  await box.fill("What needs me today?");
+  const q = "How many things wait for me right now?"; // not one of the chips, so the page has it only once it is asked
+  await box.fill(q);
   await box.press("Enter");
-  await page.waitForFunction(() => /Here is what I found|I found nothing|Nothing needs you/i.test(document.body.innerText), { timeout: 60000 });
+  await answered(q, '[data-ask="live"]');
   await shot(page, "ask-today");
 }, page);
 
-await step("N8", "another page (Customers): the floating orb opens a panel with a typing box; a question typed there is answered, and Esc closes it", async () => {
-  await page.goto(`${BASE}/app/tenants/${tenant}/customers`, { waitUntil: "networkidle" });
+await step("N8", "another page (Chats): the floating orb opens a panel with a typing box; a question typed there is answered, and Esc closes it", async () => {
+  await page.goto(`${BASE}/app/tenants/${tenant}/outbox`, { waitUntil: "networkidle" });
   const orb = page.getByRole("button", { name: /^Ask Vijaya/ }).last();
   await orb.click();
   const box = page.locator("#ask-input");
   await box.waitFor({ timeout: 30000 });
-  await box.fill("Who should I call first?");
+  const q = "Which message should I read first?";
+  await box.fill(q);
   await box.press("Enter");
-  await page.waitForFunction(() => /Here is what I found|I found nothing|Nothing needs you/i.test(document.body.innerText), { timeout: 60000 });
+  await answered(q, "[role=dialog]");
   await shot(page, "ask-floating");
   await page.keyboard.press("Escape");
 }, page);
@@ -254,5 +266,7 @@ await step("Z1", "the browser console had no Content-Security-Policy refusal and
   must(problems.length === 0, `${problems.length}: ${problems[0] ?? ""}`);
 }, page);
 
+// the clean-up of `make e2e-local` removes only workspaces named "E2E Silks ...": this run's business is given that name now (LOCAL database only) so nothing is left behind
+if (tenant) psql(`begin; set local session_replication_role = replica; update public.tenants set name = 'E2E Silks ${STAMP} new-owner' where id = '${tenant}'; commit;`);
 await browser.close();
 process.exit(finish());
