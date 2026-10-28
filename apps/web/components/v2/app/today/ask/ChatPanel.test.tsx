@@ -38,15 +38,29 @@ class Sock implements SocketLike {
 let sock: Sock;
 const audio = (): AudioIO => ({ startMic: async () => undefined, stopMic: () => undefined, play: () => undefined, flush: () => undefined, playing: () => false, close: () => undefined, analyser: () => null });
 const asked: string[] = [];
+const PLAN = { actionId: "33333333-3333-4333-8333-333333333333", title: "Call 12 new leads", summary: "Today, in calling hours.", steps: ["Pick the new leads", "Call each one"], count: 12, channel: "call" as const, estimate: { messages: 0, callMinutes: 30, costPaise: 0 }, needsSecondFactor: false, expiresAt: "2026-10-28T20:00:00Z", status: "proposed" as const };
 async function* answer(text: string): AsyncGenerator<AskEvent> {
+  if (text === "PLAN") {
+    yield { type: "confirm_action", action: PLAN };
+    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555", kind: "confirm_action" };
+    return;
+  }
+  if (text === "CLARIFY") {
+    yield { type: "clarify", question: "Which leads: today's or this week's?" };
+    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555", kind: "clarify" };
+    return;
+  }
   yield { type: "text", delta: text };
-  yield { type: "done" };
+  yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555", kind: "answer" };
 }
+const asks: { question: string; conversationId?: string | null }[] = [];
+let sideCalls: Record<string, unknown>[] = [];
+let sideAnswer: (body: Record<string, unknown>) => unknown = () => ({ ok: true });
 let reply = "It is **five** pieces.\n- Silk\n- Cotton";
 const orbs: (string | null)[] = [];
 
 function Harness({ onClose = () => undefined }: { onClose?: () => void }) {
-  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: {}, availability: "live", transport: ({ question }) => (asked.push(question), answer(reply)), voiceStatus: { available: false, speech: false } });
+  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: {}, availability: "live", transport: ({ question, conversationId }) => (asked.push(question), asks.push({ question, conversationId }), answer(question === "PLAN" || question === "CLARIFY" ? question : reply)), voiceStatus: { available: false, speech: false } });
   React.useEffect(() => {
     orbs.push(s.voiceOrb);
   }, [s.voiceOrb]);
@@ -62,7 +76,20 @@ beforeEach(() => {
   asked.length = 0;
   orbs.length = 0;
   reply = "It is **five** pieces.\n- Silk\n- Cotton";
-  vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ token: "tok" }) })));
+  asks.length = 0;
+  sideCalls = [];
+  sideAnswer = () => ({ ok: true });
+  vi.stubGlobal(
+    "fetch",
+    vi.fn(async (url: string, init?: { body?: string }) => {
+      if (String(url).endsWith("/conversation")) {
+        const body = JSON.parse(init?.body ?? "{}") as Record<string, unknown>;
+        sideCalls.push(body);
+        return { ok: true, json: async () => sideAnswer(body) };
+      }
+      return { ok: true, json: async () => ({ token: "tok" }) };
+    }),
+  );
   Object.assign(navigator, { clipboard: { writeText: vi.fn(async () => undefined) } });
 });
 afterEach(() => {
@@ -151,5 +178,64 @@ describe("the conversation panel", () => {
     fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
     expect(onClose).toHaveBeenCalled();
     expect(sock.types()).toContain("stop");
+  });
+  it("a plan from the assistant shows what it will do with ONE tap, Yes, do it / No; the answer goes to the API and the card then says what happened", async () => {
+    draw();
+    await type("PLAN");
+    await send();
+    const card = document.querySelector('[data-chat="plan"]') as HTMLElement;
+    expect(card).toHaveTextContent("Call 12 new leads");
+    expect(card).toHaveTextContent("12 people");
+    expect(card).toHaveTextContent("about 30 call minutes");
+    expect(card).toHaveTextContent("by phone call");
+    expect(within(card).getAllByRole("listitem").map((l) => l.textContent)).toEqual(["Pick the new leads", "Call each one"]);
+    sideAnswer = () => ({ ok: true, status: "confirmed" });
+    await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "Yes, do it" })));
+    expect(sideCalls[0]).toEqual({ op: "confirm", actionId: PLAN.actionId, decision: "yes" });
+    expect(card).toHaveTextContent("Approved. It is being done.");
+    expect(within(card).queryByRole("button", { name: "Yes, do it" })).toBeNull();
+  });
+  it("a refusal of the answer is said in words (the second factor, expired); No cancels", async () => {
+    draw();
+    await type("PLAN");
+    await send();
+    const card = document.querySelector('[data-chat="plan"]') as HTMLElement;
+    sideAnswer = () => ({ ok: false, error: "mfa" });
+    await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "Yes, do it" })));
+    expect(within(card).getByRole("alert")).toHaveTextContent("two-step code");
+    sideAnswer = () => ({ ok: true, status: "declined" });
+    await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "No" })));
+    expect(card).toHaveTextContent("Cancelled. Nothing was done.");
+  });
+  it("one short question from the assistant is shown as its message; the next message goes on in the same conversation, and New conversation starts another", async () => {
+    draw();
+    await type("CLARIFY");
+    await send();
+    expect(document.querySelector('[data-chat="clarify"]')).toHaveTextContent("Which leads: today's or this week's?");
+    expect(asks[0].conversationId).toBeNull(); // the first message starts a conversation
+    await type("today's");
+    await send();
+    expect(asks[1].conversationId).toBe("55555555-5555-4555-8555-555555555555"); // the answer continues it
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "New conversation" })));
+    await type("another");
+    await send();
+    expect(asks[2].conversationId).toBeNull();
+  });
+  it("the history lists the earlier conversations, opens one into the thread (the next message continues it) and hides one", async () => {
+    const id = "66666666-6666-4666-8666-666666666666";
+    draw();
+    sideAnswer = (b) => (b.op === "list" ? { items: [{ id, title: "Price of silk", updatedAt: "x", messageCount: 2, lastText: "Rs 500" }] } : b.op === "open" ? { id, messages: [{ role: "user", text: "price of silk?", kind: null, action: null, sources: [] }, { role: "assistant", text: "Rs 500 a piece.", kind: "answer", action: null, sources: [{ label: "Silk saree" }] }] } : { ok: true });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Earlier conversations" })));
+    expect(await screen.findByText("Price of silk")).toBeInTheDocument();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /Price of silk/ })));
+    expect(document.querySelector('[data-chat="thread"]')).toHaveTextContent("Rs 500 a piece.");
+    expect(document.querySelector('[data-chat="thread"]')).toHaveTextContent("price of silk?");
+    await type("and yesterday?");
+    await send();
+    expect(asks.at(-1)).toEqual({ question: "and yesterday?", conversationId: id });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Earlier conversations" })));
+    await act(async () => void fireEvent.click(await screen.findByRole("button", { name: "Hide" })));
+    expect(sideCalls.at(-1)).toEqual({ op: "archive", id });
+    expect(screen.queryByText("Price of silk")).toBeNull();
   });
 });

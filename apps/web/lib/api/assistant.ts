@@ -65,7 +65,7 @@ export type AssistantEvent =
   | ({ type: "source" } & AssistantSource)
   | ({ type: "draft" } & DraftCard)
   | { type: "error"; code: string; message: string; until?: string }
-  | { type: "done"; conversation_id: string; message_id: string; language: AssistantLanguage | null; kind: "answer" | "refusal" | "clarify" | "replayed" };
+  | { type: "done"; conversation_id: string; message_id: string; language: AssistantLanguage | null; kind: "answer" | "refusal" | "clarify" | "replayed" | "confirm_action" };
 
 export interface AssistantMessage {
   id: string;
@@ -168,7 +168,7 @@ export function parseAssistantEvent(name: string, data: unknown): AssistantEvent
         conversation_id: uuid(data.conversation_id, "conversation_id"),
         message_id: uuid(data.message_id, "message_id"),
         language: nullable(data.language ?? null, (x) => oneOf(ASSISTANT_LANGUAGES, x, "language")),
-        kind: oneOf(["answer", "refusal", "clarify", "replayed"] as const, data.kind, "kind"),
+        kind: oneOf(["answer", "refusal", "clarify", "replayed", "confirm_action"] as const, data.kind, "kind"),
       };
     default:
       return bad(`event name "${name.slice(0, 20)}"`);

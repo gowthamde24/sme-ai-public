@@ -1,6 +1,8 @@
 import { type NextRequest } from "next/server";
 
 import { sendAssistantMessage } from "@/lib/api/assistant";
+import { sendTurn } from "@/lib/api/turns";
+import { browserVoice } from "@/lib/screens/flag";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchQuote } from "@/lib/api/quotes";
@@ -41,7 +43,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const text = typeof b?.text === "string" ? b.text.trim() : "";
   const messageId = b?.messageId;
   const conversationId = b?.conversationId;
-  if (!b || text.length < 1 || text.length > 4000 || typeof messageId !== "string" || !isCanonicalUuid(messageId) || (conversationId !== undefined && (typeof conversationId !== "string" || !isCanonicalUuid(conversationId)))) {
+  if (!b || text.length < 1 || text.length > 4000 || typeof messageId !== "string" || !isCanonicalUuid(messageId) || (conversationId !== undefined && conversationId !== null && (typeof conversationId !== "string" || !isCanonicalUuid(conversationId)))) {
     return new Response("Bad request", { status: 400 });
   }
 
@@ -59,6 +61,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     return enquiries.get(id) ?? null;
   };
 
-  const events = toAskEvents(sendAssistantMessage(user.accessToken, tenantId, { messageId, conversationId, text }), base, enquiryOfQuote);
+  // where the conversation panel is on (BROWSER_VOICE) the ONE conversation endpoint decides what the message is (answer, plan to confirm, one question); otherwise the written Ask as before
+  const events = browserVoice()
+    ? toAskEvents(sendTurn(user.accessToken, tenantId, { messageId, conversationId: typeof conversationId === "string" ? conversationId : null, text }), base, enquiryOfQuote)
+    : toAskEvents(sendAssistantMessage(user.accessToken, tenantId, { messageId, conversationId: typeof conversationId === "string" ? conversationId : undefined, text }), base, enquiryOfQuote);
   return ndjsonResponse(events, (error) => (error instanceof ApiRequestError ? (error.status === 403 ? "forbidden" : knownCode(error.code)) : undefined));
 }

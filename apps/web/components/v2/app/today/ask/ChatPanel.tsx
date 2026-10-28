@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, Mic, Plus, Send, Square, X } from "lucide-react";
+import { Copy, History, Mic, Plus, Send, Square, X } from "lucide-react";
 import * as React from "react";
 
 import { Orb } from "@/components/v2/Orb";
@@ -11,13 +11,58 @@ import { Drafts, ERROR_WORD, Sources } from "./AskView";
 import { MarkdownLite } from "./MarkdownLite";
 import { MAX_QUESTION } from "./ask-constants";
 import type { AskSession, Exchange } from "./use-ask-session";
+import { archiveHistory, confirmPlan, listHistory, openHistory, type ConversationItem } from "./conversation-api";
 import { usePanelVoice, type PanelVoiceOptions } from "./use-panel-voice";
+import type { ConfirmAction } from "@/lib/api/turns";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 const bubble = "max-w-[92%] rounded-2xl px-3.5 py-2.5";
 
 /** One exchange of the thread: what the person said or typed, then the answer (light formatting, a copy button, sources, drafts, the reason when it failed). */
-function ExchangeView({ x, w, c, onEdit }: { x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void }) {
+/** The plan the router proposed: what it will do, for whom, how (and about how much), and ONE tap: Yes, do it / No. Once answered (or expired) it shows its state in words. */
+function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: string) => string; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void }) {
+  const [busy, setBusy] = React.useState(false);
+  const [problem, setProblem] = React.useState<string | null>(null);
+  const decide = async (decision: "yes" | "no") => {
+    setBusy(true);
+    setProblem(null);
+    const out = await confirmPlan(base, plan.actionId, decision);
+    setBusy(false);
+    if (out.ok) onStatus(plan.actionId, out.status);
+    else if (out.error === "expired") onStatus(plan.actionId, "expired");
+    else setProblem(out.error === "mfa" ? "bv.chat.err.mfa" : out.error === "forbidden" ? "bv.chat.err.forbidden" : out.error === "state" ? "bv.chat.state.done" : "bv.chat.err.down");
+  };
+  const facts = [plan.count !== null ? c("bv.chat.plan.people").replace("{n}", String(plan.count)) : null, plan.estimate ? c("bv.chat.plan.messages").replace("{n}", String(plan.estimate.messages)) : null, plan.estimate && plan.estimate.callMinutes > 0 ? c("bv.chat.plan.minutes").replace("{n}", String(plan.estimate.callMinutes)) : null, plan.channel ? c(`bv.chat.plan.${plan.channel}`) : null].filter((v): v is string => v !== null);
+  return (
+    <article data-chat="plan" aria-label={c("bv.chat.plan")} className="mt-2 rounded-xl border border-brand-edge bg-surface p-3">
+      <h3 className="text-base font-semibold [overflow-wrap:anywhere]">{plan.title}</h3>
+      {plan.summary ? <p className="mt-1 text-sm [overflow-wrap:anywhere]">{plan.summary}</p> : null}
+      {plan.steps.length > 0 ? (
+        <ol className="mt-2 list-decimal space-y-0.5 pl-5 text-sm">
+          {plan.steps.map((st, i) => (
+            <li key={i}>{st}</li>
+          ))}
+        </ol>
+      ) : null}
+      {facts.length > 0 ? <p className="mt-2 text-sm text-muted">{facts.join(" · ")}</p> : null}
+      {plan.status === "proposed" ? (
+        <div className="mt-3 flex gap-2">
+          <button type="button" data-chat="yes" data-write disabled={busy} onClick={() => void decide("yes")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-base font-semibold text-on-brand disabled:opacity-60">
+            {c("bv.chat.yes")}
+          </button>
+          <button type="button" data-chat="no" data-write disabled={busy} onClick={() => void decide("no")} className="inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-edge bg-surface px-4 text-base font-semibold text-ink disabled:opacity-60">
+            {c("bv.chat.no")}
+          </button>
+        </div>
+      ) : (
+        <p data-chat="plan-state" className="mt-2 text-sm font-semibold">{c(`bv.chat.state.${plan.status}`)}</p>
+      )}
+      {problem ? <p role="alert" className="mt-2 text-sm font-medium text-red-text">{c(problem)}</p> : null}
+    </article>
+  );
+}
+
+function ExchangeView({ x, w, c, onEdit, base, onStatus }: { x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void }) {
   const [copied, setCopied] = React.useState(false);
   const copy = () => {
     void navigator.clipboard?.writeText(x.answer).then(() => setCopied(true), () => undefined);
@@ -45,6 +90,16 @@ function ExchangeView({ x, w, c, onEdit }: { x: Exchange; w: (k: string) => stri
           <Drafts drafts={x.drafts} w={w} />
         </div>
       ) : null}
+      {x.clarify ? (
+        <div data-chat="clarify" className={`${bubble} self-start bg-surface-2`}>
+          <p className="text-base [overflow-wrap:anywhere]">{x.clarify}</p>
+        </div>
+      ) : null}
+      {x.plan ? (
+        <div className={`${bubble} self-start bg-surface-2`}>
+          <PlanCard plan={x.plan} c={c} base={base} onStatus={onStatus} />
+        </div>
+      ) : null}
       {x.failed && !x.answer ? <p role="alert" className="self-start text-base font-medium text-red-text">{x.errorCode !== null && ERROR_WORD[x.errorCode] ? w(ERROR_WORD[x.errorCode]) : w("ask.error")}</p> : null}
     </li>
   );
@@ -62,11 +117,28 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
     return (k: string) => t(k as "bv.chat.new");
   }, [voice.words]);
   const talk = usePanelVoice(s, voice, voiceOptions);
+  const [view, setView] = React.useState<"chat" | "history">("chat");
+  const [items, setItems] = React.useState<ConversationItem[] | "error" | null>(null);
+  const showHistory = async () => {
+    setView("history");
+    setItems(null);
+    setItems((await listHistory(s.base)) ?? "error");
+  };
+  const reopen = async (id: string) => {
+    const thread = await openHistory(s.base, id);
+    if (thread === null) return setItems("error");
+    talk.stop();
+    s.openConversation(id, thread);
+    setView("chat");
+  };
+  const hide = async (id: string) => {
+    if (await archiveHistory(s.base, id)) setItems((list) => (Array.isArray(list) ? list.filter((x) => x.id !== id) : list));
+  };
   const box = React.useRef<HTMLDivElement>(null);
   const input = React.useRef<HTMLInputElement>(null);
   const end = React.useRef<HTMLDivElement>(null);
   const { w } = s;
-  const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null } : null;
+  const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, plan: s.plan, clarify: s.clarify } : null;
   const empty = s.earlier.length === 0 && current === null && !talk.live;
   React.useEffect(() => {
     input.current?.focus();
@@ -116,20 +188,49 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
         <div className="flex min-h-14 shrink-0 items-center gap-2 border-b border-line px-3">
           <Orb px={28} state={orb} analyser={talk.active ? talk.analyser(talk.state === "speaking" ? "voice" : "mic") : null} />
           <h2 className="min-w-0 flex-1 truncate font-display text-lg font-semibold">{c("bv.chat.title")}</h2>
-          <button type="button" data-chat="new" onClick={() => { talk.stop(); s.newChat(); }} aria-label={c("bv.chat.new")} title={c("bv.chat.new")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-surface-2">
+          <button type="button" data-chat="history" onClick={() => void showHistory()} aria-label={c("bv.chat.history")} title={c("bv.chat.history")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-surface-2">
+            <History className="size-5" aria-hidden="true" />
+          </button>
+          <button type="button" data-chat="new" onClick={() => { talk.stop(); s.newChat(); setView("chat"); }} aria-label={c("bv.chat.new")} title={c("bv.chat.new")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-surface-2">
             <Plus className="size-5" aria-hidden="true" />
           </button>
           <button type="button" data-chat="close" onClick={() => { talk.stop(); onClose(); }} aria-label={c("bv.close")} title={c("bv.close")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-surface-2">
             <X className="size-5" aria-hidden="true" />
           </button>
         </div>
+        {view === "history" ? (
+          <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3" data-chat="history-list">
+            <button type="button" data-chat="history-back" onClick={() => setView("chat")} className="mb-3 inline-flex min-h-10 items-center text-sm font-semibold text-brand-text underline underline-offset-2">
+              {c("bv.chat.history.back")}
+            </button>
+            {items === null ? <p role="status" className="text-sm text-muted">{c("bv.chat.working")}</p> : null}
+            {items === "error" ? <p role="alert" className="text-sm font-medium text-red-text">{c("bv.chat.history.err")}</p> : null}
+            {Array.isArray(items) && items.length === 0 ? <p className="text-sm text-muted">{c("bv.chat.history.empty")}</p> : null}
+            {Array.isArray(items) ? (
+              <ul className="flex flex-col gap-2">
+                {items.map((it) => (
+                  <li key={it.id} className="flex items-stretch gap-2">
+                    <button type="button" data-chat="history-item" onClick={() => void reopen(it.id)} className="min-w-0 flex-1 rounded-xl border border-line bg-surface p-3 text-left hover:bg-surface-2">
+                      <span className="block truncate text-base font-semibold">{it.title || it.lastText}</span>
+                      <span className="block truncate text-sm text-muted">{it.lastText}</span>
+                    </button>
+                    <button type="button" data-chat="history-hide" onClick={() => void hide(it.id)} className="shrink-0 rounded-xl px-2 text-xs font-semibold text-muted hover:text-ink">
+                      {c("bv.chat.history.archive")}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        ) : (
+          <>
         <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3" data-chat="body" aria-live="polite">
           {empty ? <p className="text-sm text-muted">{c("bv.chat.empty")}</p> : null}
           <ul data-chat="thread" className="flex flex-col gap-4">
             {s.earlier.map((x, i) => (
-              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} />
+              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={s.setActionStatus} />
             ))}
-            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} /> : null}
+            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={s.setActionStatus} /> : null}
             {talk.live ? (
               <li data-chat="live" className="flex flex-col gap-2">
                 {talk.live.asked ? (
@@ -214,6 +315,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
             )}
           </form>
         </div>
+          </>
+        )}
       </div>
     </div>
   );

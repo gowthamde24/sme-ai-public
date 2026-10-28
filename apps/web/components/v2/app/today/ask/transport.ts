@@ -1,6 +1,8 @@
+import type { ConfirmAction } from "@/lib/api/turns";
+
 import type { AskEvent, AskTransport, VoiceStatus, VoiceTransport } from "./ask-types";
 
-const KINDS = ["text", "source", "draft", "error", "done", "heard", "audio", "audio_error"];
+const KINDS = ["text", "source", "draft", "error", "done", "heard", "audio", "audio_error", "confirm_action", "clarify"];
 const AUDIO_TYPES = ["audio/wav", "audio/x-wav", "audio/wave", "audio/mpeg", "audio/mp3", "audio/ogg", "audio/webm", "audio/mp4", "audio/aac"];
 
 /** One line of the route's answer as an AskEvent, or null for anything that is not one: the stream is this app's own, but its text is still untrusted and nothing is guessed. */
@@ -32,8 +34,12 @@ export function parseLine(raw: string): AskEvent | null {
       return typeof r.contentType === "string" && AUDIO_TYPES.includes(r.contentType) && typeof r.data === "string" && /^[A-Za-z0-9+/]+={0,2}$/.test(r.data) ? { type: "audio", contentType: r.contentType, data: r.data } : null;
     case "audio_error":
       return { type: "audio_error", code: s(r.code) ?? undefined };
+    case "confirm_action":
+      return r.action !== null && typeof r.action === "object" && !Array.isArray(r.action) ? { type: "confirm_action", action: r.action as ConfirmAction } : null; // the route made it from the API's plan, already read there
+    case "clarify":
+      return typeof r.question === "string" ? { type: "clarify", question: r.question } : null;
     default:
-      return { type: "done" };
+      return { type: "done", ...(typeof r.conversationId === "string" ? { conversationId: r.conversationId } : {}), ...(r.kind === "answer" || r.kind === "confirm_action" || r.kind === "clarify" ? { kind: r.kind } : {}) };
   }
 }
 
@@ -75,13 +81,13 @@ async function* readEvents(body: ReadableStream<Uint8Array>, signal: AbortSignal
  */
 export function makeAskTransport(endpoint: string, fetcher: typeof fetch = (...a) => fetch(...a)): AskTransport {
   const conversationId = crypto.randomUUID();
-  return async function* ask({ question, signal }) {
+  return async function* ask({ question, signal, conversationId: given }) {
     let response: Response;
     try {
       response = await fetcher(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: question, messageId: crypto.randomUUID(), conversationId }),
+        body: JSON.stringify({ text: question, messageId: crypto.randomUUID(), conversationId: given === undefined ? conversationId : given }),
         signal,
         cache: "no-store",
         credentials: "same-origin",

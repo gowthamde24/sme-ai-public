@@ -1,3 +1,4 @@
+import type { ConfirmAction } from "@/lib/api/turns";
 import type { TaskError, TaskOut } from "@/lib/tasks/types";
 
 /**
@@ -20,7 +21,12 @@ export type AskEvent =
   | { type: "draft"; id: string; kind: string; title: string; summary: string; href: string | null; language?: string | null; gloss?: string | null; machine?: boolean }
   /** The answer could not be completed. Nothing was changed. `code` is one of a short closed list (see ERROR_CODES); anything else is the general sentence. */
   | { type: "error"; code?: string }
-  | { type: "done" }
+  /** The conversation turn ended; `conversationId` is the conversation to go on in (the next message continues it), `kind` the typed reply. Older replies carry neither. */
+  | { type: "done"; conversationId?: string; kind?: "answer" | "confirm_action" | "clarify" }
+  /** An ACTION is proposed (the router decided the message was one): the plan, and one tap to approve it. Nothing has run. */
+  | { type: "confirm_action"; action: ConfirmAction }
+  /** The router needs ONE short answer before it can go on; the next message is the answer. */
+  | { type: "clarify"; question: string }
   /** Voice only (job BF): the words the recording was heard as. The box shows them as the person's own message. */
   | { type: "heard"; text: string }
   /** Voice only: the spoken answer (base64, after the written one). The written answer stands without it. */
@@ -38,7 +44,7 @@ export const ERROR_CODES = [
   "voice_too_long", "voice_too_short", "voice_no_speech", "voice_unavailable", "voice_failed", "network",
 ] as const;
 
-export type AskRequest = { question: string; lang: string; signal: AbortSignal };
+export type AskRequest = { question: string; lang: string; signal: AbortSignal; /** The conversation to go on in; null starts a new one (the conversation panel). */ conversationId?: string | null };
 export type AskTransport = (request: AskRequest) => AsyncIterable<AskEvent>;
 
 /** A recording to ask with (job BF). `speak`: also ask for the answer to be spoken. */

@@ -71663,5 +71663,247 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.chat.yes": {
+  "en": "Yes, do it",
+  "te": "అవును, చేయండి",
+  "hi": "हाँ, कर दीजिए",
+  "kn": "ಹೌದು, ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.no": {
+  "en": "No",
+  "te": "వద్దు",
+  "hi": "नहीं",
+  "kn": "ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan": {
+  "en": "A plan, waiting for you",
+  "te": "మీ కోసం ఎదురుచూస్తున్న ప్లాన్",
+  "hi": "आपका इंतज़ार करता प्लान",
+  "kn": "ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿರುವ ಯೋಜನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.people": {
+  "en": "{n} people",
+  "te": "{n} మంది",
+  "hi": "{n} लोग",
+  "kn": "{n} ಜನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.messages": {
+  "en": "{n} messages",
+  "te": "{n} మెసేజ్‌లు",
+  "hi": "{n} मैसेज",
+  "kn": "{n} ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.minutes": {
+  "en": "about {n} call minutes",
+  "te": "సుమారు {n} కాల్ నిమిషాలు",
+  "hi": "लगभग {n} कॉल मिनट",
+  "kn": "ಸುಮಾರು {n} ಕಾಲ್ ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.whatsapp": {
+  "en": "on WhatsApp",
+  "te": "వాట్సాప్‌లో",
+  "hi": "व्हाट्सऐप पर",
+  "kn": "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.call": {
+  "en": "by phone call",
+  "te": "ఫోన్ కాల్‌తో",
+  "hi": "फ़ोन कॉल से",
+  "kn": "ಫೋನ್ ಕಾಲ್ ಮೂಲಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.plan.both": {
+  "en": "by call and WhatsApp",
+  "te": "కాల్, వాట్సాప్ రెండింటిలో",
+  "hi": "कॉल और व्हाट्सऐप दोनों से",
+  "kn": "ಕಾಲ್ ಮತ್ತು ವಾಟ್ಸಾಪ್ ಎರಡರಲ್ಲೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.state.confirmed": {
+  "en": "Approved. It is being done.",
+  "te": "ఓకే చేశారు. జరుగుతోంది.",
+  "hi": "मंज़ूर हो गया। हो रहा है।",
+  "kn": "ಒಪ್ಪಿದ್ದೀರಿ. ನಡೆಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.state.declined": {
+  "en": "Cancelled. Nothing was done.",
+  "te": "రద్దు చేశారు. ఏమీ జరగలేదు.",
+  "hi": "रद्द किया। कुछ नहीं हुआ।",
+  "kn": "ರದ್ದು ಮಾಡಿದ್ದೀರಿ. ಏನೂ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.state.expired": {
+  "en": "This plan expired. Ask again if you still want it.",
+  "te": "ఈ ప్లాన్ గడువు ముగిసింది. ఇంకా కావాలంటే మళ్ళీ అడగండి.",
+  "hi": "यह प्लान खत्म हो गया। अब भी चाहिए तो फिर से कहें।",
+  "kn": "ಈ ಯೋಜನೆ ಮುಗಿದಿದೆ. ಇನ್ನೂ ಬೇಕಾದರೆ ಮತ್ತೆ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.state.running": {
+  "en": "Running now.",
+  "te": "ఇప్పుడు జరుగుతోంది.",
+  "hi": "अभी चल रहा है।",
+  "kn": "ಈಗ ನಡೆಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.state.done": {
+  "en": "Done.",
+  "te": "అయింది.",
+  "hi": "हो गया।",
+  "kn": "ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.err.mfa": {
+  "en": "This needs your two-step code. Open the Security page, then try again.",
+  "te": "దీనికి మీ టూ-స్టెప్ కోడ్ కావాలి. సెక్యూరిటీ పేజీ తెరిచి, మళ్ళీ ప్రయత్నించండి.",
+  "hi": "इसके लिए आपका टू-स्टेप कोड चाहिए। सिक्योरिटी पेज खोलकर फिर कोशिश करें।",
+  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಟೂ-ಸ್ಟೆಪ್ ಕೋಡ್ ಬೇಕು. ಸೆಕ್ಯುರಿಟಿ ಪುಟ ತೆರೆದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.err.forbidden": {
+  "en": "Only the Owner can approve this.",
+  "te": "దీన్ని ఓనర్ మాత్రమే ఓకే చేయగలరు.",
+  "hi": "इसे सिर्फ़ ओनर मंज़ूर कर सकते हैं।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಮಾತ್ರ ಒಪ್ಪಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.err.down": {
+  "en": "That did not work. Nothing was done. Try again.",
+  "te": "అది జరగలేదు. ఏమీ చేయలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो सका। कुछ नहीं किया गया। फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಏನೂ ಮಾಡಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.history": {
+  "en": "Earlier conversations",
+  "te": "ముందటి సంభాషణలు",
+  "hi": "पिछली बातचीत",
+  "kn": "ಹಿಂದಿನ ಸಂಭಾಷಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.history.empty": {
+  "en": "No earlier conversations yet.",
+  "te": "ఇంకా ముందటి సంభాషణలు లేవు.",
+  "hi": "अभी कोई पिछली बातचीत नहीं।",
+  "kn": "ಇನ್ನೂ ಹಿಂದಿನ ಸಂಭಾಷಣೆಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.history.archive": {
+  "en": "Hide",
+  "te": "దాచండి",
+  "hi": "छिपाएँ",
+  "kn": "ಮರೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.history.back": {
+  "en": "Back to the chat",
+  "te": "చాట్‌కు వెనక్కి",
+  "hi": "चैट पर वापस",
+  "kn": "ಚಾಟ್‌ಗೆ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.history.err": {
+  "en": "The history could not be read now.",
+  "te": "చరిత్ర ఇప్పుడు చదవలేకపోయాం.",
+  "hi": "इतिहास अभी नहीं पढ़ा जा सका।",
+  "kn": "ಇತಿಹಾಸ ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

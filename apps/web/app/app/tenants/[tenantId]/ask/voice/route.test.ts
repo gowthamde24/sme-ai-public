@@ -78,7 +78,7 @@ describe("POST /app/tenants/[id]/ask/voice", () => {
     const r = await post();
     expect(r.headers.get("content-type")).toContain("application/x-ndjson");
     expect(r.headers.get("cache-control")).toBe("no-store");
-    expect(await lines(r)).toEqual([{ type: "heard", text: "what is waiting" }, { type: "text", delta: "Two quotes." }, { type: "done" }, { type: "audio", contentType: "audio/wav", data: "UklGRg==" }]);
+    expect(await lines(r)).toEqual([{ type: "heard", text: "what is waiting" }, { type: "text", delta: "Two quotes." }, { type: "done", conversationId: C, kind: "answer" }, { type: "audio", contentType: "audio/wav", data: "UklGRg==" }]);
     const [token, tenant, input] = h.send.mock.calls[0];
     expect([token, tenant]).toEqual(["person-token", T]);
     expect(input).toMatchObject({ messageId: M, conversationId: C, language: "te", speak: true, contentType: "audio/webm;codecs=opus" });
@@ -91,7 +91,7 @@ describe("POST /app/tenants/[id]/ask/voice", () => {
   });
   it("a spoken answer that failed leaves the written answer standing", async () => {
     h.send.mockImplementation(stream([transcript, { type: "text", delta: "Hi" }, done, { type: "audio_error", code: "voice_failed" }]));
-    expect(await lines(await post())).toEqual([{ type: "heard", text: "what is waiting" }, { type: "text", delta: "Hi" }, { type: "done" }, { type: "audio_error", code: "voice_failed" }]);
+    expect(await lines(await post())).toEqual([{ type: "heard", text: "what is waiting" }, { type: "text", delta: "Hi" }, { type: "done", conversationId: C, kind: "answer" }, { type: "audio_error", code: "voice_failed" }]);
   });
   it.each([
     ["too long", 422, "audio_too_long", "voice_too_long"],

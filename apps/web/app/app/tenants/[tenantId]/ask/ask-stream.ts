@@ -1,6 +1,7 @@
 import { ERROR_CODES, type AskEvent } from "@/components/v2/app/today/ask/ask-types";
 import type { Target } from "@/lib/api/assistant";
 import type { ApiRequestError } from "@/lib/api/client";
+import type { TurnEvent } from "@/lib/api/turns";
 import type { VoiceAssistantEvent } from "@/lib/api/voice";
 
 /** What one answer may carry to the browser. The box keeps the same limits; keeping them here too bounds the lookups a single answer can cause. */
@@ -75,7 +76,7 @@ export function voiceErrorCode(error: ApiRequestError): string | undefined {
  * are dropped, the number of sources and drafts is capped, and an error keeps only its code if the box knows it. Anything thrown while reading the stream ends the answer with an error event,
  * so the browser always gets a last word and never a half-open answer.
  */
-export async function* toAskEvents(events: AsyncIterable<VoiceAssistantEvent>, base: string, enquiryOfQuote: QuoteLookup, options: { voice?: boolean } = {}): AsyncGenerator<AskEvent> {
+export async function* toAskEvents(events: AsyncIterable<VoiceAssistantEvent | TurnEvent>, base: string, enquiryOfQuote: QuoteLookup, options: { voice?: boolean } = {}): AsyncGenerator<AskEvent> {
   let sources = 0;
   let drafts = 0;
   let steps = 0;
@@ -106,11 +107,19 @@ export async function* toAskEvents(events: AsyncIterable<VoiceAssistantEvent>, b
         if (drafts++ < MAX_DRAFTS)
           yield { type: "draft", id: e.id, kind: e.kind, title: e.title, summary: e.summary, href: await pathFor(e.target, base, enquiryOfQuote), language: e.language, gloss: e.gloss_en, machine: e.machine_draft };
         break;
+      case "intent":
+        break; // what the router decided is for the API's own logs: the box shows nothing for it
+      case "confirm_action":
+        yield { type: "confirm_action", action: e.action };
+        break;
+      case "clarify":
+        yield { type: "clarify", question: e.question };
+        break;
       case "error":
         yield { type: "error", code: knownCode(e.code) };
         return;
       case "done":
-        yield { type: "done" };
+        yield { type: "done", conversationId: e.conversation_id, ...(e.kind === "answer" || e.kind === "confirm_action" || e.kind === "clarify" ? { kind: e.kind } : {}) };
         if (!options.voice) return;
         finished = true; // the API speaks AFTER it has said `done`: go on reading for the audio
         break;
