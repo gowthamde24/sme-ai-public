@@ -35,6 +35,7 @@ import base64
 import hashlib
 import hmac
 import json
+import os
 import secrets
 import struct
 import subprocess
@@ -52,6 +53,8 @@ import demo_data  # noqa: E402
 STAGING_REF = "uiallwgywitryxatcqxf"
 STAGING_NAME = "stack19-staging"
 GCP_PROJECT = "project-2757c07e-37d2-4167-88f"
+STAGING_API_URL = "https://sme-api-620338396268.asia-south1.run.app"
+DEMO_REFRESH_JOB = "sme-demo-refresh"   # the Cloud Run job that runs scripts/refresh_demo_leads.py every morning (docs/runbooks/demo-workspaces.md)
 DEMO_DOMAIN = "demo.example.test"
 SCHEDULER_EMAIL = f"scheduler@{DEMO_DOMAIN}"
 SCHEDULER_SECRET = "sme-scheduler-password"
@@ -138,12 +141,20 @@ class Seeder:
             raise SeedError("--api-url must be https.")
         self.api = api_url.rstrip("/")
         self.sb = f"https://{STAGING_REF}.supabase.co"
-        self._keys = json_from(run(["supabase", "projects", "api-keys", "--project-ref", STAGING_REF, "--agent", "no", "-o", "json"]))
-        self.pub = next(k["api_key"] for k in self._keys if k.get("type") == "publishable")
+        # The publishable key is public (it is in the web's pages). In the Cloud Run job there is no logged-in CLI, so the job's environment carries it; everywhere else it is read from the CLI.
+        env_key = os.environ.get("SUPABASE_PUBLISHABLE_KEY") if os.environ.get("CLOUD_RUN_JOB") == DEMO_REFRESH_JOB else None
+        if env_key:
+            self._keys: list[dict[str, Any]] = []
+            self.pub = env_key
+        else:
+            self._keys = json_from(run(["supabase", "projects", "api-keys", "--project-ref", STAGING_REF, "--agent", "no", "-o", "json"]))
+            self.pub = next(k["api_key"] for k in self._keys if k.get("type") == "publishable")
 
     @property
     def admin(self) -> str:
-        """The project's service_role key, read only when an account has to be CREATED (memory only; a sign-in, as the daily refresh does, never needs it)."""
+        """The project's service_role key, read only when an account has to be CREATED (memory only; a sign-in, as the daily refresh does, never needs it). The Cloud Run job never has it."""
+        if not self._keys:
+            raise SeedError("The admin key is not available here (the Cloud Run job only signs in).")
         return str(next(k["api_key"] for k in self._keys if k.get("id") == "service_role"))
 
     def admin_headers(self) -> dict[str, str]:
@@ -265,6 +276,19 @@ def guard(args: argparse.Namespace) -> None:
     match = [p for p in listed if p.get("id") == STAGING_REF or p.get("ref") == STAGING_REF]
     if len(match) != 1 or match[0].get("name") != STAGING_NAME:
         raise SeedError(f"Refusing to run: the project under that ref is not named {STAGING_NAME}.")
+
+
+def guard_demo_refresh_job(args: argparse.Namespace) -> None:
+    """The guard of the daily refresh when it runs as the Cloud Run job `sme-demo-refresh`: that job has no logged-in `supabase` CLI, so the project is checked by the two constants instead of by listing projects.
+    Cloud Run sets CLOUD_RUN_JOB itself; the job's service account can read only the four demo secrets, and the run is sign-in only (no admin key), so it can touch nothing but the two demo owners' workspaces."""
+    if not args.i_know_this_loads_demo_data_into_staging:
+        raise SeedError("Refusing to run: pass --i-know-this-loads-demo-data-into-staging. This loads synthetic demo data into the HOSTED stack19-staging project.")
+    if os.environ.get("CLOUD_RUN_JOB") != DEMO_REFRESH_JOB:
+        raise SeedError(f"Refusing to run: this guard is only for the Cloud Run job {DEMO_REFRESH_JOB}.")
+    if args.project_ref != STAGING_REF:
+        raise SeedError("Refusing to run: --project-ref is not the stack19-staging project.")
+    if args.api_url.rstrip("/") != STAGING_API_URL:
+        raise SeedError("Refusing to run: --api-url is not the stack19-staging API.")
 
 
 def main() -> int:
