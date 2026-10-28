@@ -3,12 +3,12 @@ import { isCanonicalUuid } from "./crm";
 import { parsePicker, VOICE_ID, type Picker, type PickerLang } from "@/lib/voice-picker/types";
 
 /**
- * The voice picker from C1's API (job-voice-picker.md; ASSUMED CONTRACT until C1's endpoint is on main: when it lands, make the names below match or change this one file). Under `/v1/tenants/{id}/ai-assistant`, the signed-in person's own token:
+ * The voice picker from C1's API (contract-voice-picker.md, PR #153). Under `/v1/tenants/{id}/ai-assistant`, the signed-in person's own token:
  *
- *   GET /voices          any member -> { voices: [{ id, language, name, label, gender: "female"|"male", default: bool, sample_url: "/path" | null }], choices: { <lang>: <voice id> | null } }
- *   PUT /voice-choice    Owner, Admin { language, voice_id | null }   null = back to the default of that language   -> the same answer
- *   GET <sample_url>     the pre-rendered sample of one voice, a static file (audio/mpeg or audio/wav): made ONCE per voice, never by the voice service on a click
- * Only ids of the catalogue are accepted (422 otherwise); a member who is not Owner or Admin is refused (403); calls and the voice preview use the chosen voice, else the default, else the fallback of the same gender.
+ *   GET /voices   any member -> { languages: [{ language, default_id, chosen_id | null, active_id, voices: [{ id, name, label, gender: "female"|"male", default, chosen, sample_url: "/v1/voice-samples/<id>.mp3" }] }] }  (te, hi, kn, en)
+ *   PUT /voices   Owner, Admin { language, voice_id | null }   null = back to the default of that language   -> the same answer; 422 for an id that is not a voice of that language
+ *   GET /v1/voice-samples/<id>.mp3   the pre-rendered sample, a static file, no sign-in; the browser never asks the API itself, our route does (the page's media rule allows only this app's address)
+ * "Hear it" in the opening-line editor is `GET /voices/preview?language=` (lib/api/opening-line.ts), spoken in the voice in force.
  */
 const base = (tenantId: string): string => {
   if (!isCanonicalUuid(tenantId)) throw new ApiContractError("id");
@@ -23,8 +23,8 @@ export const getVoicePicker = async (token: string, tenantId: string): Promise<P
 
 export async function putVoiceChoice(token: string, tenantId: string, language: PickerLang, voiceId: string | null): Promise<Picker> {
   if (voiceId !== null && !VOICE_ID.test(voiceId)) throw new ApiContractError("voice id");
-  return checked(parsePicker(await apiRequest(`${base(tenantId)}/voice-choice`, token, { method: "PUT", body: JSON.stringify({ language, voice_id: voiceId }) })));
+  return checked(parsePicker(await apiRequest(`${base(tenantId)}/voices`, token, { method: "PUT", body: JSON.stringify({ language, voice_id: voiceId }) })));
 }
 
-/** The bytes of one sample (a file of at most 1 MB); `path` has been through `safeSamplePath`. */
+/** The bytes of one sample (a file of about 100 KB, at most 1 MB); `path` has been through `safeSamplePath`. The API needs no sign-in for it; the person's token is sent like on every call of the app. */
 export const getVoiceSampleFile = async (token: string, path: string): Promise<{ bytes: ArrayBuffer; contentType: string }> => apiBinaryRequest(path, token, 1_000_000);

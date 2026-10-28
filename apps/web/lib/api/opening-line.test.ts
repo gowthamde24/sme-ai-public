@@ -82,26 +82,18 @@ const wav = (seconds: number, rate = 48000) => {
 };
 
 describe("hearing the saved line", () => {
-  it("asks for the voice preview in the workspace's own voice and language and hands the sound on with its length", async () => {
-    getAiAssistant.mockResolvedValue({ settings: { voice: "male_calm" } });
+  it("asks for the voice preview in the voice in force (the API picks it) and the language, and hands the sound on with its length", async () => {
     apiBinaryRequest.mockResolvedValue({ bytes: wav(3).buffer, contentType: "audio/wav" });
     const got = await previewOpeningLine("tok", T, "te");
-    expect(apiBinaryRequest.mock.calls[0][0]).toBe(`${AI}/voice-preview?voice=male_calm&language=te&style=warm`);
+    expect(apiBinaryRequest.mock.calls[0][0]).toBe(`${AI}/voices/preview?language=te`);
     expect(got.audio?.mime).toBe("audio/wav");
     expect(got.audio?.seconds).toBeCloseTo(3, 1);
     expect(got.audio?.base64.length).toBeGreaterThan(100);
   });
-  it("a made voice of its own, or settings that cannot be read, is the warm default; a sound that is not audio, or none (404), is no sound", async () => {
-    getAiAssistant.mockResolvedValue({ settings: { voice: "own_voice" } });
-    apiBinaryRequest.mockResolvedValue({ bytes: wav(1).buffer, contentType: "audio/wav" });
-    await previewOpeningLine("tok", T, "en");
-    expect(apiBinaryRequest.mock.calls[0][0]).toContain("voice=female_warm");
-    getAiAssistant.mockRejectedValue(new Error("down"));
-    await previewOpeningLine("tok", T, "en");
-    expect(apiBinaryRequest.mock.calls[1][0]).toContain("voice=female_warm");
+  it("a sound that is not audio, or none (404 no_preview), is no sound; too many asks (429) is passed on", async () => {
     apiBinaryRequest.mockResolvedValue({ bytes: new ArrayBuffer(3), contentType: "text/html" });
     expect((await previewOpeningLine("tok", T, "en")).audio).toBeNull();
-    apiBinaryRequest.mockRejectedValue(new ApiRequestError(404, "no_sample", "x"));
+    apiBinaryRequest.mockRejectedValue(new ApiRequestError(404, "no_preview", "x"));
     expect((await previewOpeningLine("tok", T, "en")).audio).toBeNull();
     apiBinaryRequest.mockRejectedValue(new ApiRequestError(429, "rate_limited", "x"));
     await expect(previewOpeningLine("tok", T, "en")).rejects.toBeInstanceOf(ApiRequestError);

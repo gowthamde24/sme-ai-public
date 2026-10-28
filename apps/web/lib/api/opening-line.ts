@@ -1,7 +1,6 @@
-import { CALL_LANGS, VOICES, type CallLang } from "@/lib/assistant/types";
+import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { validLine, type CampaignOpeningLine, type Lines, type OpeningLine, type Preview } from "@/lib/opening-line/types";
 
-import { getAiAssistant } from "./ai-assistant";
 import { ApiContractError, apiBinaryRequest, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 
@@ -11,7 +10,7 @@ import { isCanonicalUuid } from "./crm";
  *   GET /opening-line               any member -> { mention_ai, lines: [{language, campaign_id, text}], campaign_overrides: [{campaign_id, mention_ai}], defaults: {<lang>: {with_ai, without_ai}}, placeholders, disclosure_notice }
  *   PUT /opening-line               Owner      { language, campaign_id?, text | null }   one language at a time; null = back to the default (the API has no DELETE verb)
  *   PUT /mention-ai                 Owner      { mention_ai, campaign_id? }              default ON; for a campaign null removes its override
- *   GET /voice-preview?voice&language&style   Owner, Admin -> the sound (audio/wav) of the SAVED line, spoken with the business's real names
+ *   GET /voices/preview?language   Owner, Admin -> the sound (audio/wav) of the SAVED line, spoken with the business's real names in the voice in force (C1's voice picker contract); 404 no_preview = no voice service, 429 = too many
  *
  * The screens work with one workspace object ({lines by language, the default of each, the switch}) and one per campaign; this file is the one place that knows how the API cuts them. A text is 10 to 300 characters with only {customer} {assistant}
  * {business} {agent_role}. The API also has mr and bn (drafts); the screens have the six call languages, so those two are left out. "Hear it" can only speak what is SAVED (the API makes the sound from the stored line), so the editor asks to save first.
@@ -112,19 +111,12 @@ export function wavSeconds(bytes: Uint8Array): number {
 }
 
 /**
- * "Hear it": the sound of the SAVED opening line for one language, in the workspace's own voice (the voice of Settings > AI assistant; a made voice of its own or an unknown one is the warm default), with the business's real names. The API makes the
+ * "Hear it": the sound of the SAVED opening line for one language, in the workspace's own voice (the voice chosen in Settings > AI assistant > Voice, else the default; the API picks it), with the business's real names. The API makes the
  * sound from what it has stored, so what is on the screen but not saved is not what is heard (the editor says so). null audio = the voice service has none.
  */
 export async function previewOpeningLine(token: string, tenantId: string, language: CallLang): Promise<Preview> {
-  let voice = "female_warm";
   try {
-    const own = (await getAiAssistant(token, tenantId)).settings.voice;
-    if ((VOICES as readonly string[]).includes(own) && own !== "own_voice") voice = own;
-  } catch {
-    /* the warm default */
-  }
-  try {
-    const got = await apiBinaryRequest(`${aiBase(tenantId)}/voice-preview?${new URLSearchParams({ voice, language, style: "warm" }).toString()}`, token, 2_000_000);
+    const got = await apiBinaryRequest(`${aiBase(tenantId)}/voices/preview?${new URLSearchParams({ language }).toString()}`, token, 2_000_000);
     if (!/^audio\/(wav|x-wav|mpeg|ogg|mp4|webm)(;|$)/.test(got.contentType)) return { audio: null, fake: false };
     const bytes = new Uint8Array(got.bytes);
     let binary = "";
