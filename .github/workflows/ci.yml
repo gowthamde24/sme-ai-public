@@ -34,6 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       db: ${{ steps.decide.outputs.db }}
+      web: ${{ steps.decide.outputs.web }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,10 +48,20 @@ jobs:
           set -euo pipefail
           if [ "$EVENT" != "pull_request" ]; then
             echo "db=true" >> "$GITHUB_OUTPUT"
+            echo "web=true" >> "$GITHUB_OUTPUT"
             echo "db job: RUNS (a push to main runs every job)" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           files=$(git diff --name-only --no-renames "$BASE_SHA...$HEAD_SHA")
+          # the visual job: the pictures can change only with the web app, the visual tests or the workflows that run them
+          web=false
+          while IFS= read -r f; do
+            case "$f" in
+              apps/web/*|e2e/visual/*|.github/workflows/ci.yml|.github/workflows/visual.yml) web=true; break ;;
+            esac
+          done <<< "$files"
+          echo "web=$web" >> "$GITHUB_OUTPUT"
+          echo "visual job: $([ "$web" = true ] && echo RUNS || echo 'SKIPPED on purpose (nothing under apps/web/, e2e/visual/ or the visual workflows changed)')" >> "$GITHUB_STEP_SUMMARY"
           needed=false
           reason=""
           while IFS= read -r f; do
@@ -211,6 +222,53 @@ jobs:
           ignores=()
           for f in $INTEGRATION_GROUP_1 $INTEGRATION_GROUP_2; do ignores+=("--ignore=../../tests/integration/$f"); done
           ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml ../../tests/integration "${ignores[@]}" -q
+
+  # THE required check `visual`. It used to live in visual.yml with a path filter, so a pull request that touched no web file never got a `visual` check at all and stayed BLOCKED. Now it is a job of this
+  # workflow: it ALWAYS runs (`if: always()`) and reports, and does the real work only when `changes` says the web or the visual tests changed. A pull request that changed nothing there gets a green
+  # `visual` that says it skipped on purpose. Fail closed: if `changes` itself failed or said anything but "false", the pictures are compared. (visual.yml stays, by hand only, to write the Linux baselines.)
+  visual:
+    needs: changes
+    if: always()
+    runs-on: ubuntu-latest
+    env:
+      CHANGES_RESULT: ${{ needs.changes.result }}
+      RUN_VISUAL: ${{ needs.changes.result != 'success' || needs.changes.outputs.web != 'false' }}
+    steps:
+      - name: Decide
+        run: |
+          if [ "$RUN_VISUAL" = true ]; then
+            echo "visual: RUNS (changes: $CHANGES_RESULT)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "visual: SKIPPED on purpose (nothing under apps/web/, e2e/visual/ or the visual workflows changed)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/checkout@v4
+        if: ${{ env.RUN_VISUAL == 'true' }}
+      - name: Are there Linux baselines?
+        id: baselines
+        if: ${{ env.RUN_VISUAL == 'true' }}
+        run: |
+          if ls e2e/visual/baselines/linux/*.jpg >/dev/null 2>&1; then echo "have=true" >> "$GITHUB_OUTPUT"; else echo "have=false" >> "$GITHUB_OUTPUT"; echo "No Linux baselines are committed yet: the visual comparison is skipped. Run the Visual workflow by hand with update ticked to make them." >> "$GITHUB_STEP_SUMMARY"; fi
+      - uses: actions/setup-node@v4
+        if: ${{ env.RUN_VISUAL == 'true' && steps.baselines.outputs.have == 'true' }}
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install
+        if: ${{ env.RUN_VISUAL == 'true' && steps.baselines.outputs.have == 'true' }}
+        working-directory: apps/web
+        run: |
+          npm ci
+          npx playwright-core install --with-deps chromium
+      - name: Compare with the baselines
+        if: ${{ env.RUN_VISUAL == 'true' && steps.baselines.outputs.have == 'true' }}
+        run: node e2e/visual/run.mjs
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: visual-changed-pictures
+          path: e2e/visual/out
+          if-no-files-found: ignore
 
   # THE required check. It is the only job named `db`. It always runs (`if: always()`, so a failed, cancelled or skipped group can never leave it "skipped", which would count as passing) and
   # decides from the results of the four groups:

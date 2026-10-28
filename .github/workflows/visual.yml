@@ -1,5 +1,6 @@
 name: Visual
 
+# BY HAND ONLY since job DV: the pull-request check named `visual` is a job of ci.yml (it always reports, and compares only when the web or the visual tests changed). This workflow is how the Linux baselines are made.
 # The visual tests of job BX (e2e/visual/README.md). They need no secrets and no database: an invented stand-in backend answers for the API and the Auth server.
 # The pictures are compared with e2e/visual/baselines/linux/. Until that folder is committed the job skips itself (it says so); make it by running this workflow by hand with "update" ticked,
 # then download the artifact and commit its baselines/linux/ folder.
@@ -11,11 +12,6 @@ on:
         description: "Write new Linux baselines (uploaded as an artifact) instead of comparing"
         type: boolean
         default: false
-  pull_request:
-    paths:
-      - "apps/web/**"
-      - "e2e/visual/**"
-      - ".github/workflows/visual.yml"
 
 permissions:
   contents: read
