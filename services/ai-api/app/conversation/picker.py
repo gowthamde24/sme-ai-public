@@ -37,7 +37,7 @@ public_router = APIRouter(prefix="/v1/voice-samples", tags=["ai-assistant"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
-Language = Literal["te", "hi", "kn", "en"]
+Language = Literal["en", "te", "hi", "kn"]
 SAMPLE_URL = "/v1/voice-samples/{id}.mp3"
 
 

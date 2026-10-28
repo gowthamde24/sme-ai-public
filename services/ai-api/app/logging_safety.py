@@ -25,6 +25,8 @@ ROUTE_WORDS = frozenset(
         "workspace", "logo", "picture", "people", "voice-preview", "opening-line", "mention-ai",
         # job voice-picker
         "voice-samples", "voice-chat", "auto-reply", "turns", "actions",
+        # job EB: the owner's notes
+        "context", "save", "test", "understand", "versions",
         # job DI: plans and billing
         "plans", "billing", "trial", "access",
         # job DP part 4: call settings

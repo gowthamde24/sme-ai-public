@@ -456,6 +456,9 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    'outcome = outcome', $$delete from public.outcomes where id = %2$L$$, false),
   -- job DP part 2: the marks-message send log (written only by the Owner's functions; guarded by the module `programmes`, which is OFF for the default pack of the fixture tenants: tests 11 and 12 call tests.cn_guards_off() first)
   -- job DR B1: tasks ("Ask Vijaya to do it") and their people (written only by the task functions; no module guard: every business type may give the assistant a task)
+  ('assistant_context_versions',
+   $$insert into public.assistant_context_versions (id, tenant_id, version, notes, change, created_by) values (%2$L, %1$L, 1 + abs(hashtext(%2$L) %% 1000000), 'Generic notes', 'edited', %5$L)$$,
+   'notes = notes', $$delete from public.assistant_context_versions where id = %2$L$$, false),
   ('tasks',
    $$insert into public.tasks (id, tenant_id, instruction, language, created_by) values (%2$L, %1$L, 'Generic task', 'en', %5$L)$$,
    'status = status', $$delete from public.tasks where id = %2$L$$, false),
@@ -792,6 +795,8 @@ select t, r, s, i, u, d from (values
   ('ledger_accounts', 'sales', true, false, false, false), ('ledger_accounts', 'viewer', false, false, false, false),
   ('ledger_entries', 'owner', true, false, false, false), ('ledger_entries', 'admin', true, false, false, false),
   ('ledger_entries', 'sales', true, false, false, false), ('ledger_entries', 'viewer', false, false, false, false),
+  ('assistant_context_versions', 'owner', true, false, false, false), ('assistant_context_versions', 'admin', true, false, false, false),
+  ('assistant_context_versions', 'sales', true, false, false, false), ('assistant_context_versions', 'viewer', true, false, false, false),
   ('tasks', 'owner', true, false, false, false), ('tasks', 'admin', true, false, false, false),
   ('tasks', 'sales', true, false, false, false), ('tasks', 'viewer', true, false, false, false),
   ('task_contacts', 'owner', true, false, false, false), ('task_contacts', 'admin', true, false, false, false),

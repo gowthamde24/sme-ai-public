@@ -42,6 +42,7 @@ from app.assistant import resolver
 from app.assistant.db import AssistantDb, MessageConflict
 from app.assistant.language import detect_language
 from app.assistant.models import ActionRefOut, ConversationOut, MessageIn, MessageOut
+from app.assistant.notes import owner_notes
 from app.assistant.runner import AssistantRunner, Outcome, _sha
 from app.assistant.tools import Ctx, State
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
@@ -244,6 +245,7 @@ def start_message(
         llm=agents.llm_for("ask")(),   # the setting AI_JOB_ASK decides which model (ADR 0102)
         ctx=Ctx(db, runtime, token, tenant, run_id, state),
         on_reply=(lambda text, lang: on_reply(db, text, lang)) if on_reply is not None else None,
+        owner_notes=owner_notes(runtime, token, tenant),   # job EB: the owner's own notes are a source the answer may cite
     )
     events: queue.Queue[tuple[str, dict[str, Any]] | None] = queue.Queue()
     reply_id = uuid.uuid4()

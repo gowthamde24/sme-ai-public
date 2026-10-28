@@ -15,6 +15,7 @@ from app.tenancy.repository import RepositoryError, TokenRejected
 
 logger = logging.getLogger("app.autoreply.runner")
 LIMIT = 5
+NOTE_LINES = 80   # at most this many lines of the owner's notes reach one reply
 
 
 @dataclass
@@ -45,7 +46,19 @@ class AutoReplyRunner:
             logger.info("autoreply: seen=%d answered=%d held_for_owner=%d skipped=%d", result.seen, result.answered, result.held, result.skipped)
         return result
 
+    def _with_notes(self, token: str, item: dict[str, Any]) -> dict[str, Any]:
+        """The owner's notes count as facts the assistant may state (job EB): one fact per line, as the owner wrote it. A read that fails leaves the approved facts as they were."""
+        try:
+            notes = self._repository.notes(token, uuid.UUID(str(item["tenant_id"])))
+        except (KeyError, ValueError, RepositoryError):
+            return item
+        lines = [" ".join(line.split())[:300] for line in notes.splitlines() if line.strip()][:NOTE_LINES]
+        if not lines:
+            return item
+        return {**item, "facts": [*(item.get("facts") or []), *({"kind": "notes", "text": line} for line in lines)]}
+
     def _one(self, token: str, enquiry: uuid.UUID, item: dict[str, Any], result: Result) -> None:
+        item = self._with_notes(token, item)
         draft = self._drafter.draft(item)
         if draft is None:
             self._repository.skip(token, enquiry, "model unavailable or unusable")

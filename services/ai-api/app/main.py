@@ -15,6 +15,9 @@ from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agent_runs.routes import router as agent_runs_router
 from app.agent_runs.wiring import build_agents_runtime
 from app.assistant.routes import router as assistant_router
+from app.assistant_context.repository import PostgrestContextRepository
+from app.assistant_context.routes import router as assistant_context_router
+from app.assistant_context.service import ContextService
 from app.assistant_settings.repository import PostgrestAssistantSettingsRepository
 from app.assistant_settings.routes import router as assistant_settings_router
 from app.assistant_settings.service import AssistantSettingsService
@@ -236,6 +239,20 @@ def _outbox_adapter(settings: Settings) -> ChannelAdapter:
         raise ConfigurationError(str(exc)) from None
 
 
+def _signing_key(settings: Settings) -> bytes:
+    """The key that signs the ids of "Here is what I understood" previews (job EB).
+
+    Derived from the suppression key when it is set, so every instance agrees;
+    otherwise one random key per process
+    (a preview then lives only on the instance that made it: fine in development)."""
+    import hashlib
+    import secrets
+
+    key = settings.suppression_hmac_key
+    base = key.get_secret_value().encode() if key else secrets.token_bytes(32)
+    return hashlib.sha256(b"assistant-context-preview:" + base).digest()
+
+
 def _billing_provider(settings: Settings) -> BillingProvider:
     """The billing provider: only the fake one exists; any other name stops us."""
     try:
@@ -349,6 +366,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
         assistant_settings=AssistantSettingsService(
             PostgrestAssistantSettingsRepository(config.rest_url, config.anon_key)
+        ),
+        assistant_context=ContextService(
+            PostgrestContextRepository(config.rest_url, config.anon_key), _signing_key(settings)
         ),
         marks_messages=MarksSendService(
             PostgrestMarksSendRepository(config.rest_url, config.anon_key), FakeGuardianSender()
@@ -1185,6 +1205,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(call_settings_router)
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
+    app.include_router(assistant_context_router)
     app.include_router(assistant_settings_router)
     app.include_router(marks_messages_router)
     app.include_router(materials_public_router)
