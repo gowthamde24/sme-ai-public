@@ -76,7 +76,9 @@ export function VoiceChat({ words, url, language, languageNames, tokenUrl, onClo
     };
   }, [tokenUrl]);
   React.useEffect(() => () => client.current?.stop(), []);
-  React.useEffect(() => bottom.current?.scrollIntoView?.({ block: "end" }), [snap?.captions]);
+  React.useEffect(() => {
+    bottom.current?.scrollIntoView?.({ block: "end" }); // (no value is returned: React would take it for a clean-up)
+  }, [snap?.captions]);
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
