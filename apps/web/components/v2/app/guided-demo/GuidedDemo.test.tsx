@@ -8,7 +8,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push, refresh }) }));
 import { appDict } from "@/i18n/app";
 import { STEP_KEYS, type StepKey, type StepResult } from "@/lib/guided-demo/script";
 
-import { GuidedDemo } from "./GuidedDemo";
+import GuidedDemo from "./GuidedDemo";
 
 const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("gd.")));
 const routes = Object.fromEntries(STEP_KEYS.map((k) => [k, `/app/tenants/t/${k}`])) as Record<StepKey, string>;

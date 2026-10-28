@@ -14,7 +14,7 @@ import type { AskWords } from "./ask-words";
 import type { BrowserVoice } from "./browser-voice";
 
 /** The panel is a chunk of its own: it is drawn only after the orb is pressed (the route-JS budget counts what a page loads at first). */
-const AskPanel = dynamic(() => import("./AskPanelHost").then((m) => m.AskPanelHost), { ssr: false });
+const AskPanel = dynamic(() => import("./AskPanelHost"), { ssr: false });
 
 /** Is the keyboard focus somewhere a letter is being typed? "/" then belongs to the field, not to us. */
 function typing(target: EventTarget | null): boolean {

@@ -12,7 +12,8 @@ vi.mock("next/dynamic", () => ({
   default: (load: () => Promise<unknown>) => {
     let part: React.ComponentType<Record<string, unknown>> | null = null;
     void load().then((m) => {
-      part = m as React.ComponentType<Record<string, unknown>>;
+      const mod = m as { default?: React.ComponentType<Record<string, unknown>> } & React.ComponentType<Record<string, unknown>>;
+      part = mod.default ?? mod;
     });
     return function Lazy(props: Record<string, unknown>) {
       const Part = part;
