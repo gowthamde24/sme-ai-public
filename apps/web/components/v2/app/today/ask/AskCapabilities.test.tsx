@@ -37,7 +37,7 @@ describe("What can Vijaya do? (job BT)", () => {
     const card = screen.getByRole("region", { name: "What Vijaya can do for you" });
     const steps = within(card).getAllByRole("listitem").filter((li) => li.hasAttribute("data-step"));
     expect(steps.map((li) => li.getAttribute("data-step"))).toEqual(["1", "2", "3", "4", "5", "6"]);
-    expect(steps.map((li) => li.querySelector("p")!.textContent)).toEqual(["1Find leads", "2Research", "3AI calls", "4WhatsApp", "5Outcome", "6Follow-up"]);
+    expect(steps.map((li) => li.querySelector("p")!.textContent)).toEqual(["1Catch leads", "2Research", "3AI calls", "4WhatsApp", "5Outcome", "6Follow-up"]);
     expect(steps[3]).toHaveTextContent("You: approve quotes and prices");
     expect(steps.every((li) => li.querySelector("svg"))).toBe(true);
     expect(card.textContent).not.toMatch(/Lead Finder|Quote Writer/);

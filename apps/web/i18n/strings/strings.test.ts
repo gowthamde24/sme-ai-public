@@ -56,20 +56,25 @@ describe("honesty: no claims we cannot prove today", () => {
     expect(claims.map(([k]) => k)).toEqual([]);
     expect(Object.entries(en).filter(([k, v]) => !k.startsWith("ld.src.") && /99acres|MagicBricks/.test(v))).toEqual([]);
   });
-  it("the English home copy says what it must: the owner approves money and campaigns, the trial is 14 days from the day WhatsApp is connected and can be cancelled before it ends, and AI calls in the hero example are early access (and nothing else is)", () => {
+  it("no public page names a trial length or a price (owner, 28 Oct: pricing is undecided): no '14 days', no 'free trial', no 'Most popular', no rupee amount, no assistant name", () => {
+    const hits = Object.entries(en).filter(([k, v]) => !/^(ld\.src\.|legal\.)/.test(k) && /\b\d+[- ]days?\b.*\btrial|\btrial\b|free trial|most popular|₹\s?\d|\bRs\.? ?\d/i.test(v)).map(([k]) => k);
+    expect(hits).toEqual([]);
+    expect(Object.entries(en).filter(([, v]) => /\bVijaya\b|\bTara\b/.test(v))).toEqual([]);
+  });
+  it("the English home copy says what it must: the owner approves money and campaigns, and AI calls in the hero example are early access (and nothing else is)", () => {
     expect(en["hm.ctl.d"]).toMatch(/money reminders and discounts wait for your approval/);
     // owner, 20:52 on 27 Oct: the headline makes no promise of a number; the fast first call is the Lead Desk row's explained "about a minute", by source
     expect(en["hero.h1"]).toBe("Catches every lead. Calls them right away. Follows up until they decide.");
-    expect(en["hero.note"]).toMatch(/14 days to try it, counted from the day your WhatsApp is connected\. Cancel before the trial ends and you pay nothing/);
-    expect(en["hm.pl.sub"]).toMatch(/Every plan starts with a 14-day trial, counted from the day your WhatsApp is connected\. Prices are announced at launch\./);
+    expect(en["hero.note"]).toBe("Money reminders and discounts wait for your approval."); // owner, 28 Oct: no trial length or price on any screen until pricing is set
+    expect(en["hm.pl.sub"]).toBe("Prices are announced at launch.");
     // "early access" is said only where it is true: the AI calls (job DM); nothing says sign-up is by invitation
     const EARLY_OK = new Set(["hm.demo.note", "hm.wf.early"]);
     for (const k of Object.keys(en)) {
       expect(en[k], k).not.toMatch(/invitation only|by invitation/i);
       if (!EARLY_OK.has(k)) expect(en[k], k).not.toMatch(/early access/i);
     }
-    expect(en["hero.cta"]).toBe("Start your 14-day trial");
-    expect(en["cta.start"]).toBe("Start 14-day trial");
+    expect(en["hero.cta"]).toBe("Get started");
+    expect(en["cta.start"]).toBe("Get started");
     for (const k of Object.keys(en)) expect(en[k], k).not.toMatch(/30-day|30 days|day 30/);
   });
   it("never says the trial needs no card, and holds no price in any website or sign-in string (job CX: the owner decides prices after usage tests)", () => {
@@ -84,7 +89,7 @@ describe("honesty: no claims we cannot prove today", () => {
   });
   it("the pricing copy never counts questions, says pricing is announced soon, and holds no price", () => {
     expect(en["price.sub"]).toMatch(/No charge for each question/);
-    expect(en["price.billing"]).toMatch(/Pricing announced soon/);
+    expect(en["price.billing"]).toMatch(/Pricing will be announced soon/);
     expect(en["price.soon"]).toBe("Pricing announced soon");
     expect(en["price.faq.3.a"]).toMatch(/Pricing will be announced soon/);
     for (const k of Object.keys(en).filter((x) => x.startsWith("price.") || x.startsWith("home.price."))) expect(en[k], k).not.toMatch(/₹|\d{3}|\bGST\b/);
