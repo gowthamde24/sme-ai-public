@@ -288,6 +288,13 @@ class Settings(BaseSettings):
     # needs its price row and LLM_SPEND_CAP_CONFIRMED, ADR 0102)
     browser_voice_turn_model: str = "claude"
 
+    # Job DY: the assistant answers a customer's WhatsApp message on its own, in the worker, for the
+    # workspaces whose Owner switched it on (public.auto_reply_set). Off until AUTO_REPLY_ENABLED=
+    # true and ANTHROPIC_API_KEY and a model (AUTO_REPLY_MODEL, else LLM_MODEL) are set in the
+    # WORKER's environment.
+    auto_reply_enabled: bool = False
+    auto_reply_model: str | None = None
+
     # Job BY (ADR 0077): web-push to the team's browsers. Off until BOTH are set. The private
     # key is a secret: only from the environment, entered hidden, never logged or returned.
     vapid_private_key: SecretStr | None = None

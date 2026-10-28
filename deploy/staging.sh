@@ -69,12 +69,14 @@ export BUILD_SA="sme-build@$PROJECT_ID.iam.gserviceaccount.com"
 dirty=""; git diff --quiet HEAD -- . 2>/dev/null || dirty="-dirty$(date +%H%M%S)"
 export TAG="${TAG:-$(git rev-parse --short HEAD)$dirty}"   # TAG=<tag> names the tag to build and deploy
 
+# the TEST FENCE (docs/runbooks/whatsapp-staging.md): the only numbers a message may be sent to, by the API AND by the worker. Left empty, NOTHING is sent.
+WHATSAPP_ALLOWED_RECIPIENTS="${WHATSAPP_ALLOWED_RECIPIENTS-}"
+
 if [ "$what" = "api" ] || [ "$what" = "all" ]; then
   # WhatsApp Cloud API (job DU, docs/runbooks/whatsapp-staging.md). Ids are not secrets; the token and the app secret are read by Cloud Run from Secret Manager (sme-api-run needs secretAccessor on them).
   # The webhook verify token and the channel account (the API's sign-in for handing a webhook to the database) are mounted only once their secrets exist, so a deploy never fails on a missing one.
   # WHATSAPP_ALLOWED_RECIPIENTS is the TEST FENCE: only these numbers (digits, separated by ; because gcloud splits env values on commas) can receive a message. Left empty, NOTHING is sent. The worker's automatic sending stays on the fake adapter.
   WHATSAPP_PHONE_NUMBER_ID="${WHATSAPP_PHONE_NUMBER_ID:-1329673453571780}" WHATSAPP_WABA_ID="${WHATSAPP_WABA_ID:-1421890996429034}"
-  WHATSAPP_ALLOWED_RECIPIENTS="${WHATSAPP_ALLOWED_RECIPIENTS-}"
   WA_ENV="OUTBOX_ADAPTER=whatsapp,WHATSAPP_PHONE_NUMBER_ID=$WHATSAPP_PHONE_NUMBER_ID,WHATSAPP_WABA_ID=$WHATSAPP_WABA_ID,WHATSAPP_GRAPH_VERSION=v25.0,WHATSAPP_ALLOWED_RECIPIENTS=$WHATSAPP_ALLOWED_RECIPIENTS"
   WA_SECRETS="WHATSAPP_ACCESS_TOKEN=sme-whatsapp-token:latest,WHATSAPP_APP_SECRET=sme-whatsapp-app-secret:latest"
   if gcloud secrets describe sme-whatsapp-verify-token --project "$PROJECT_ID" >/dev/null 2>&1; then WA_SECRETS="$WA_SECRETS,WHATSAPP_VERIFY_TOKEN=sme-whatsapp-verify-token:latest"; fi
@@ -93,9 +95,15 @@ if [ "$what" = "web" ] || [ "$what" = "all" ]; then
   WEB_RUN_SA="sme-web-run@$PROJECT_ID.iam.gserviceaccount.com" ./deploy/cloudrun.sh web $execute
 fi
 if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
+  # Automatic WhatsApp replies (job DY): the worker needs the model key, and its service account needs secretAccessor on sme-anthropic-api-key (an owner IAM step, docs/runbooks/whatsapp-staging.md).
+  # Run with WORKER_AUTO_REPLY=1 once that is granted; without it the worker still sends (WhatsApp adapter, fenced) but does not draft replies.
+  WORKER_AR_ENV="" WORKER_AR_SECRETS=""
+  if [ "${WORKER_AUTO_REPLY:-0}" = 1 ]; then WORKER_AR_ENV=",AUTO_REPLY_ENABLED=true,AUTO_REPLY_MODEL=claude-haiku-5-5"; WORKER_AR_SECRETS=",ANTHROPIC_API_KEY=sme-anthropic-api-key:latest"; fi
   # the worker has its own image (the API's code plus ffmpeg, job DJ), built here with the same TAG
-  RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="scheduler@demo.example.test" WORKER_EVERY_MINUTES=5 \
-    WORKER_EXTRA_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN},SPEECH_PROVIDER=sarvam,OUTREACH_DIALER=fake" WORKER_EXTRA_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest" \
+  RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="scheduler@demo.example.test" \
+    WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER=whatsapp \
+    WORKER_EXTRA_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN},SPEECH_PROVIDER=sarvam,OUTREACH_DIALER=fake,WHATSAPP_GRAPH_VERSION=v25.0,WHATSAPP_ALLOWED_RECIPIENTS=${WHATSAPP_ALLOWED_RECIPIENTS}${WORKER_AR_ENV}" \
+    WORKER_EXTRA_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,WHATSAPP_ACCESS_TOKEN=sme-whatsapp-token:latest${WORKER_AR_SECRETS}" \
     ./deploy/cloudrun.sh worker $execute
 fi
 echo "staging: $WEB_ORIGIN  (api: $API_URL)  tag $TAG"

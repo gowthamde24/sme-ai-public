@@ -13,6 +13,7 @@ from fastapi import Depends, Request
 from app.agent_runs.wiring import AgentsRuntime
 from app.assistant_settings.service import AssistantSettingsService
 from app.auth.jwt import AuthError, Principal, TokenVerifier
+from app.autoreply.repository import AutoReplySwitch
 from app.billing import gate
 from app.billing.mail import EmailSender
 from app.billing.service import BillingService
@@ -172,6 +173,8 @@ class Runtime:
     call_voice: CallVoicePreview | None = None
     # job DV: talk to the assistant in the browser (a WebSocket); None = off
     browser_voice: BrowserVoice | None = None
+    # job DY: the Owner's switch for automatic WhatsApp replies; None = not available here
+    auto_reply: AutoReplySwitch | None = None
 
 
 @dataclass(frozen=True)
