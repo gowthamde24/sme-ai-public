@@ -9,8 +9,8 @@ from app.conversation.style import conversation_style_block
 from app.opening.honesty import HONESTY_RULE
 
 
-def call_system_prompt(*, business: str, assistant: str, language: str, opening_line: str, goal: str, facts: list[str], caller_memory: str | None = None, mention_ai: bool = False, speaking_style: str | None = None) -> str:
-    """`mention_ai` is the owner's switch (ADR 0116); `speaking_style` (everyday_mixed / everyday_pure / formal) adds the register block with the owner's own example lines, and the call-only rules of app/conversation/style.py come with it (job natural-voice)."""
+def call_system_prompt(*, business: str, assistant: str, language: str, opening_line: str, goal: str, facts: list[str], caller_memory: str | None = None, mention_ai: bool = True, speaking_style: str | None = None) -> str:
+    """`mention_ai` is the owner's switch (ADR 0116; ON by default, like the workspace setting); `speaking_style` (everyday_mixed / everyday_pure / formal) adds the register block with the owner's own example lines, and the call-only rules of app/conversation/style.py come with it (job natural-voice)."""
     parts = [
         f"You are {assistant}, the AI assistant of {business}, on a phone call or voice note. Speak in everyday spoken {language}, in short sentences.",
         HONESTY_RULE,
