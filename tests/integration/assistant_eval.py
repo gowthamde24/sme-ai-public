@@ -181,9 +181,11 @@ def _waiting(request: LlmRequest) -> list[tuple[str, str, str, str, str]]:
 def _today_answer(request: LlmRequest, intro: str, lang: str, drop_quote: bool) -> LlmResponse:
     """An answer about today's list citing every waiting item, or (a careless model) every one except the quote that waits for approval."""
     items = [x for x in _waiting(request) if not (drop_quote and "quote_approval" in x[4])]
-    return final(
-        "answer", intro + " " + "; ".join(x[3].split(":")[0][:30] for x in items), lang, [x[0] for x in items]
-    )
+    labels = [x[3].split(":")[0][:30] for x in items]
+    # The reply must be mostly in its language (language.py: a quarter of the letters). The labels are English names, so ONE short intro in front of a long list falls under the quarter when the day has many items
+    # (how many depends on what else the session made): in Telugu and Hindi the intro is said before every item, so the share does not depend on the count.
+    text = intro + " " + "; ".join(labels) if lang == "en" else " ".join(f"{intro} {label}." for label in labels)
+    return final("answer", text, lang, [x[0] for x in items])
 
 
 def today_script(intro: str, lang: str, mode: str) -> Scripted:
