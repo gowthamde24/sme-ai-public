@@ -83,7 +83,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
       {/* the notice at 80 and 100 percent of the minutes or messages (night 4, TOPUP_SCREENS): markup only, nothing when the flag is off */}
       {topupBanner}
       {/* ONE conversation for the workspace (job DQ part 0): Today's card and the floating panel of the other screens read the same thread */}
-      <AskProvider lang={lang} base={`/app/tenants/${tenantId}`} words={askWords} chipWords={chipWords} availability={availability} voice={voice} readOnly={access.readOnly} doIt={doIt} turnOn={turnOn}>
+      <AskProvider lang={lang} base={`/app/tenants/${tenantId}`} words={askWords} chipWords={chipWords} availability={availability} voice={voice} readOnly={access.readOnly} doIt={voice ? null : doIt} turnOn={turnOn}>
         {/* a server with no pack routes gives no pack: the product as it always was, every page on */}
         {data.pack ? (
           <ModuleGate modules={data.pack.modules} fallback={<ProblemView kind={403} variant="module" labels={labels} homeHref={`/app/tenants/${tenantId}`} />}>

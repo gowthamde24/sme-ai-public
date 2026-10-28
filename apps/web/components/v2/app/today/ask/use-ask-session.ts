@@ -407,6 +407,8 @@ export function useAskSession({ lang, base, words, availability, transport: give
     hasAudio, playing, audioPending, audioFailed, autoplay, setAutoplay, seen, showMic, status,
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
     ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb,
+    /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
+    floatOrb: voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient"),
     asking: phase === "asking",
     /** Night 4 (tasks): "ask" unless "Ask Vijaya to do it" is on for this person; `doIt` carries the actions, the words and the tasks of this thread. */
     mode: doIt ? mode : ("ask" as Mode),
