@@ -8,6 +8,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
+from app.assistant.language import Language
 from app.assistant_context.rules import MAX_NOTES
 
 Section = Literal["prices", "delivery", "timings", "payment", "always_say", "never_say", "discounts", "handover", "tone", "faq", "products", "other"]
@@ -68,7 +69,7 @@ class UnderstandIn(_Strict):
     text: Annotated[str, StringConstraints(max_length=60_000)] | None = None
     filename: Annotated[str, StringConstraints(max_length=200)] | None = None
     content_base64: Annotated[str, StringConstraints(max_length=5_000_000)] | None = None
-    language: Literal["te", "en", "hi", "kn"] | None = None
+    language: Literal["en", "te", "hi", "kn"] | None = None
 
 
 class Understood(_Strict):
@@ -98,7 +99,7 @@ class SaveUnderstoodIn(_Strict):
 
 class TestIn(_Strict):
     question: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=500)]
-    language: Literal["te", "en", "hi", "kn", "ta", "ml"] | None = None
+    language: Language | None = None   # (the shared type: a Literal of the same members in another order would be cached as one, and reorder committed contracts)
 
 
 class UsedFrom(_Strict):
