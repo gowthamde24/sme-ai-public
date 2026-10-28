@@ -22,6 +22,7 @@ from app.campaigns.repository import CampaignsRepository
 from app.catalogue.repository import CatalogueRepository
 from app.catalogue.storage import StorageClient
 from app.connectors.runtime import Connectors
+from app.conversation.preview import CallVoicePreview
 from app.crm.repository import CrmRepository
 from app.customfields.repository import CustomFieldsRepository
 from app.deliveries.repository import DeliveriesRepository
@@ -166,6 +167,8 @@ class Runtime:
     tasks: TasksService | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
     voice_sample: VoiceSampleService | None = None
+    # job voice-picker: the opening line in the chosen voice; None = no preview here
+    call_voice: CallVoicePreview | None = None
 
 
 @dataclass(frozen=True)

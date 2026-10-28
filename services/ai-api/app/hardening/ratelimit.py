@@ -56,6 +56,7 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("lead_templates", "/v1/lead-templates", False, 60),  # job DR / A1: the nine business types and their templates (static data)
     PublicRule("lead_intake", "/v1/lead-intake/", False, 60),  # job DR / A2: a website form, a webhook, a portal's mail, Meta (the secret address is the credential; the database holds its own caps)
     PublicRule("webhooks", "/v1/webhooks/", False, 300),
+    PublicRule("voice_samples", "/v1/voice-samples/", False, 120),  # job voice-picker: the pre-rendered samples (static files, no data)
     PublicRule("docs", "/docs", False, 20),
     PublicRule("redoc", "/redoc", False, 20),
     PublicRule("openapi", "/openapi.json", True, 20),
@@ -72,7 +73,7 @@ class AccountRule:
 
 
 ACCOUNT_RULES: tuple[AccountRule, ...] = (
-    AccountRule("voice_preview", re.compile(r"/ai-assistant/voice-(preview|sample)"), 12),
+    AccountRule("voice_preview", re.compile(r"/ai-assistant/(voice-(preview|sample)|voices/preview)"), 12),
     AccountRule("ask", re.compile(r"/assistant/messages$"), 20),
     AccountRule("task_plan", re.compile(r"/tasks/plan$"), 10),
     AccountRule("imports", re.compile(r"/lead-imports(/read|/preview)?$"), 20),
@@ -81,7 +82,7 @@ ACCOUNT_RULES: tuple[AccountRule, ...] = (
 
 
 def account_rule(path: str, method: str) -> AccountRule | None:
-    if method != "POST" and not path.endswith(("voice-preview", "voice-sample")):
+    if method != "POST" and not path.endswith(("voice-preview", "voice-sample", "voices/preview")):
         return None
     for rule in ACCOUNT_RULES:
         if rule.pattern.search(path):

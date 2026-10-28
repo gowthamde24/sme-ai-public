@@ -27,6 +27,8 @@ class WorkspaceRepository(Protocol):
     def opening(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def set_opening_line(self, token: str, tenant_id: uuid.UUID, language: str, campaign_id: str | None, text: str | None) -> dict[str, Any]: ...
     def set_mention_ai(self, token: str, tenant_id: uuid.UUID, campaign_id: str | None, mention_ai: bool | None) -> dict[str, Any]: ...
+    def voice_choices(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def set_voice_choice(self, token: str, tenant_id: uuid.UUID, language: str, voice_id: str | None) -> dict[str, Any]: ...
 
 
 class PostgrestWorkspaceRepository:
@@ -76,3 +78,9 @@ class PostgrestWorkspaceRepository:
 
     def set_mention_ai(self, token: str, tenant_id: uuid.UUID, campaign_id: str | None, mention_ai: bool | None) -> dict[str, Any]:
         return self._rpc.object(token, "opening_set_mention", {"p_tenant_id": str(tenant_id), "p_campaign_id": campaign_id, "p_mention_ai": mention_ai})
+
+    def voice_choices(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "call_voice_get", {"p_tenant_id": str(tenant_id)})
+
+    def set_voice_choice(self, token: str, tenant_id: uuid.UUID, language: str, voice_id: str | None) -> dict[str, Any]:
+        return self._rpc.object(token, "call_voice_set", {"p_tenant_id": str(tenant_id), "p_language": language, "p_voice_id": voice_id})

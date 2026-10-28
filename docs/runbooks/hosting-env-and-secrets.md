@@ -105,6 +105,7 @@ Off or fake by default. The rehearsal sets none of them. A provider named withou
 | `AGENTS_MAX_QUEUE` | plain | api | Runs waiting (default 8). |
 | `RESEARCH_FIXTURE_DIR` | plain | api | Development only (synthetic sites on disk). Never set on a deployment. |
 | `SARVAM_API_KEY` | secret | api | Only for voice or Hindi/Indic models through Sarvam. |
+| `CARTESIA_API_KEY` | secret | api | Job voice-picker: Cartesia Sonic, the primary voice of the picker's preview (`GET .../ai-assistant/voices/preview`). Unset = no preview (404 `no_preview`); the catalogue, the choice and the pre-rendered samples need no key. Secret Manager name `sme-cartesia-api-key`; the API's service account needs access to it (an owner step). |
 | `VOICE_STT_PROVIDER` | plain | api | `off` (default). Speech to text: `sarvam`, `bhashini`, `google`, `ai4bharat`. |
 | `VOICE_TTS_PROVIDER` | plain | api | `off` (default). Text to speech. |
 | `VOICE_NOTE_TTS_PROVIDER` | plain | worker | `auto` (default, job DJ, ADR 0093): Sarvam when `SARVAM_API_KEY` is set (it then also needs ffmpeg, which the worker image has), else `VOICE_TTS_PROVIDER` when it names one, else the fake provider in development and NONE in a deployment (every message then goes as text). `off`, `fake` (development only) or `sarvam` force a choice. |

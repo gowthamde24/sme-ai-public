@@ -43,6 +43,11 @@ from app.connectors.repository import PostgrestConnectorsRepository
 from app.connectors.routes import router as connectors_router
 from app.connectors.webhooks import router as webhooks_router
 from app.connectors.wiring import build_connectors
+from app.conversation.engines import real_engine_factory
+from app.conversation.picker import public_router as voice_samples_router
+from app.conversation.picker import router as voice_picker_router
+from app.conversation.preview import CallVoicePreview
+from app.conversation.voices import default_config as voice_catalogue
 from app.crm import repository as crm_repo
 from app.crm.repository import PostgrestCrmRepository
 from app.crm.routes import router as crm_router
@@ -294,6 +299,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         outreach=build_outreach(config.rest_url, config.anon_key),
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
+        call_voice=_call_voice(settings),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         mail_sender=_notice_sender(settings),
         notifications=build_notifications(settings, config),
@@ -862,6 +868,16 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
 }
 
 
+def _call_voice(settings: Settings) -> CallVoicePreview | None:
+    """The picker's preview (job voice-picker). None unless the Cartesia key is set."""
+    cartesia = settings.cartesia_api_key.get_secret_value() if settings.cartesia_api_key else ""
+    if not cartesia:
+        return None
+    sarvam = settings.sarvam_api_key.get_secret_value() if settings.sarvam_api_key else ""
+    factory = real_engine_factory(cartesia_key=cartesia, sarvam_key=sarvam)
+    return CallVoicePreview(voice_catalogue(), factory)
+
+
 def _notice_sender(settings: Settings) -> EmailSender | None:
     """The sender of the privacy notices (the worker's provider settings); None when it cannot be
     built: the actions still work, the notice is skipped and logged."""
@@ -1139,6 +1155,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(outreach_router)
     app.include_router(tasks_router)
     app.include_router(voice_sample_router)
+    app.include_router(voice_picker_router)
+    app.include_router(voice_samples_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
     app.include_router(team_router)

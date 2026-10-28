@@ -229,3 +229,29 @@ def test_the_fixed_reply_names_the_repairs_that_were_asked_for(
         runner._note_fallback(4, {"sources", "complete"})
     (line,) = [r.getMessage() for r in caplog.records if r.name == "app.assistant.runner"]
     assert "after 4 turn(s)" in line and line.endswith("repairs asked: complete,sources")
+
+
+# ---- an answer with no source when the tools found nothing (the 37 s Telugu Ask) ------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("language", ["te", "hi", "kn", "en"])
+def test_when_the_tools_found_nothing_an_uncited_answer_gets_the_fixed_sentence_at_once_not_two_more_model_turns(language: str) -> None:
+    from app.assistant.language import NO_ANSWER
+
+    expected = NO_ANSWER[language]  # type: ignore[index]
+
+    runner, _ = runner_with_today(waiting=0, recent=0)  # no record exists to cite
+    out = runner._judge(answer(language=language), language, set(), 2, searched=True)  # type: ignore[arg-type]
+    assert isinstance(out, Reply) and out.text == expected and out.kind == "refusal" and out.sources == []
+
+
+def test_an_uncited_answer_before_any_tool_ran_is_still_asked_again_so_the_model_can_look_things_up() -> None:
+    runner, _ = runner_with_today(waiting=0, recent=0)
+    repaired: set[str] = set()
+    assert runner._judge(answer(), "en", repaired, 1) == prompts.NOTE_REPAIR_SOURCES and "sources" in repaired
+
+
+def test_an_uncited_answer_when_records_exist_is_still_asked_to_cite_them() -> None:
+    runner, _ = runner_with_today(waiting=2, recent=0)
+    repaired: set[str] = set()
+    assert runner._judge(answer(), "en", repaired, 2, searched=True) == prompts.NOTE_REPAIR_SOURCES
