@@ -15,6 +15,7 @@ whole of anything: the caller hears the start of the answer while the model is s
 from __future__ import annotations
 
 import asyncio
+import logging
 import time
 from collections.abc import AsyncIterator, Callable
 from contextlib import suppress
@@ -32,6 +33,8 @@ from app.conversation.parts import (
     TurnTimings,
 )
 from app.conversation.router import Tier, route
+
+log = logging.getLogger("app.conversation")
 
 BARGE_IN_MIN_SPEECH_MS = 100  # sound this long while we speak counts as the caller talking (shorter would trigger on a cough)
 
@@ -141,6 +144,9 @@ class Conversation:
         tm.model_tier = tier
         messages = [*self.session.history, {"role": "user", "content": user_text}]
         queue: asyncio.Queue[str | None] = asyncio.Queue()
+        begin = getattr(self.tts, "begin_turn", None)
+        if begin is not None:
+            begin()
         background = [asyncio.ensure_future(self.tts.prewarm()), asyncio.ensure_future(self._filler(tm, epoch))]
         producer = asyncio.ensure_future(self._produce(messages, self.models[tier], tm, queue))
         try:
@@ -153,6 +159,9 @@ class Conversation:
             for task in (producer, *background):
                 with suppress(asyncio.CancelledError, Exception):
                     await task
+            tm.tts_engine = str(getattr(self.tts, "served_engine", "") or "")
+            tm.tts_fallback = str(getattr(self.tts, "fallback_reason", "") or "")
+            log.info("conversation_turn language=%s model_tier=%s tts_engine=%s tts_fallback=%s clauses=%s interrupted=%s filler=%s first_audio_ms=%s", self.session.language, tm.model_tier, tm.tts_engine or "-", tm.tts_fallback or "-", tm.clauses, tm.interrupted, tm.filler_played, None if tm.after_final_ms is None else round(tm.after_final_ms))
             self.session.history += [{"role": "user", "content": user_text}, {"role": "assistant", "content": tm.reply_text}]
 
     async def _produce(self, messages: list[dict[str, str]], model: str, tm: TurnTimings, queue: asyncio.Queue[str | None]) -> None:

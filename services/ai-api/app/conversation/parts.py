@@ -41,6 +41,8 @@ class TurnTimings:
     filler_at: float | None = None
     done_at: float | None = None
     model_tier: str = ""
+    tts_engine: str = ""  # which voice engine spoke the turn (cartesia | sarvam_v4); empty for a part that does not say
+    tts_fallback: str = ""  # why the primary did not speak: error | timeout | cooldown | mid_stream; empty when it did
     reply_text: str = ""
     filler_played: bool = False
     interrupted: bool = False
