@@ -228,7 +228,7 @@ describe("the quote section of /app/tenants/[tenantId]/enquiries/[enquiryId]", (
     document.body.innerHTML = "";
     await show();
     expect(screen.queryByRole("button", { name: "Approve this quote" })).toBeNull();
-  });
+}, 20_000); // three full renders of the section in one test: 1.3 s here, 5 s on a slow runner (main at 7482bac timed out at the default)
 
   it("makes a fresh id for the next draft on every load", async () => {
     quotesApi.fetchEnquiryQuotes.mockResolvedValue([]);
