@@ -242,9 +242,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const assistantCtx = { token: user.accessToken, tenantId };
   const ownVoice = section === "assistant" && ownVoiceScreens() !== "off" ? await readOwnVoice(assistantCtx) : null;
   const openingLine = section === "assistant" && openingLineScreens() !== "off" ? await readOpeningLine(assistantCtx) : null;
-  // the voice picker (owner decision 28 Oct): one block per language the business talks in (its own languages, else the one in use) that the catalogue has a row for
+  // the voice picker (owner decision 28 Oct): one block per language the business talks in (its own languages and the assistant's main one, else the one in use) that the catalogue has a row for
   const voicePicker = section === "assistant" && voicePickerScreens() !== "off" ? await readVoicePicker(assistantCtx) : null;
-  const pickerLangs: PickerLang[] = section === "assistant" && voicePicker?.mode === "ok" ? await getWorkspaceProfile(user.accessToken, tenantId).then((p) => p.languages, (e) => (e instanceof ApiAuthError ? redirect("/login") : [] as string[])).then((own) => PICKER_LANGS.filter((l) => (own.length > 0 ? own : [lang]).includes(l))) : [];
+  const pickerLangs: PickerLang[] = section === "assistant" && voicePicker?.mode === "ok" ? await getWorkspaceProfile(user.accessToken, tenantId).then((p) => p.languages, (e) => (e instanceof ApiAuthError ? redirect("/login") : [] as string[])).then((own) => PICKER_LANGS.filter((l) => [...own, ...(assistant?.mode === "ok" ? [assistant.settings.lang] : own.length === 0 ? [lang] : [])].includes(l))) : [];
   const callSettings = section === "assistant" && callSettingsScreens() !== "off" ? await readCallSettings(assistantCtx, pack?.modules ?? null) : null;
   let theme: ThemePick = "system";
   try {
@@ -380,6 +380,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               actions={{ save: saveAssistantAction.bind(null, tenantId), testCall: testCallAction.bind(null, tenantId) }}
               samples={voiceSampleScreens() !== "off" ? { endpoint: `/app/tenants/${tenantId}/voice-sample`, mock: voiceSampleScreens() === "mock" } : null}
               ownVoiceReady={ownVoice?.mode === "ok" && ownVoice.voice.status === "ready"}
+              voicePickerOn={voicePicker?.mode === "ok"}
             />
             ) : null}
             {openingLine?.mode === "ok" ? (

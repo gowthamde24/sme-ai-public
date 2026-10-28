@@ -575,7 +575,7 @@ async function publicPages(size) {
       must(title.test(t), `title "${t}"`);
       must((await page.locator("h1").count()) === 1, `${await page.locator("h1").count()} h1`);
       const body = (await page.locator("body").innerText()).replace(/\s+/g, " ");
-      must(!/\{[a-z_]+\}/.test(body) && !/\b(nav|home|price|legal|contact|foot)\.[a-z_.]{3,}\b/.test(body), "a token or raw key is on the page");
+      must(!/\{(?!(?:customer|business|assistant|agent_role)\})[a-z_]+\}/.test(body) && !/\b(nav|home|price|legal|contact|foot)\.[a-z_.]{3,}\b/.test(body), "a token or raw key is on the page"); // the landing page shows the opening line's own placeholders ({customer}, {business}) on purpose
       if (extra) must(extra.test(body), `expected text missing: ${extra}`);
       const canonical = await page.locator('link[rel="canonical"]').getAttribute("href").catch(() => null);
       if (size === "phone") must(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), "the page scrolls sideways at 390 px");

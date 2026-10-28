@@ -34,15 +34,12 @@ export const DAY_BLOCKS = [
 ] as const;
 export type DayBlock = (typeof DAY_BLOCKS)[number];
 
-/** The places leads already come from, as text chips (no logo of another company). The words are `v3.src.<id>`, except two that are proper names and already have words in the Lead Desk set. */
+/** The places leads come from, as text chips (no logo of another company): what the product receives today (copy fix 28 Oct: nothing here says we search for leads, and no portal is named until its parser is checked on real mails). The words are `v3.src.<id>`. */
 export const HAVE_SOURCES: readonly { id: string; key: SiteKey }[] = [
-  { id: "meta", key: "v3.src.meta" },
-  { id: "whatsapp", key: "v3.src.whatsapp" },
-  { id: "indiamart", key: "ld.src.indiamart" },
-  { id: "justdial", key: "ld.src.justdial" },
-  { id: "99acres", key: "v3.src.99acres" },
-  { id: "magicbricks", key: "v3.src.magicbricks" },
   { id: "website", key: "v3.src.website" },
+  { id: "whatsapp", key: "v3.src.whatsapp" },
+  { id: "missed", key: "v3.src.missed" },
+  { id: "meta", key: "v3.src.meta" },
   { id: "sheets", key: "v3.src.sheets" },
 ];
 export const FIND_SOURCES = [1, 2, 3] as const;

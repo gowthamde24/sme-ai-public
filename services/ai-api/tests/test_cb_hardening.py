@@ -50,6 +50,8 @@ def _routes(app: Any) -> list[tuple[str, str, list[str]]]:
     for route in app.routes:
         contexts = list(route.effective_route_contexts()) if type(route).__name__ == "_IncludedRouter" else [route] if hasattr(route, "dependant") else []
         for c in contexts:
+            if not hasattr(c, "methods") or getattr(c, "dependant", None) is None:
+                continue  # a WebSocket route (the browser voice): it has no HTTP method, authenticates in its first message and is limited by its own ledger
             deps: set[str] = set()
             names(c.dependant, deps)
             found.append((",".join(sorted(c.methods)), c.path, sorted(deps)))
@@ -66,6 +68,7 @@ def test_every_route_without_a_sign_in_has_a_rate_rule_and_is_on_the_known_list(
         "/v1/calculate/materials",  # job CN: the pure paver calculator (no business data; rate limited)
         "/v1/lead-intake/{token}", "/v1/lead-intake/{token}/email", "/v1/lead-intake/mail", "/v1/lead-intake/meta/{token}",  # job DR / A2: the public intake doors (the secret address is the credential)
         "/v1/lead-templates", "/v1/lead-templates/{pack_id}",  # job DR part A1: the leads-and-calls templates (static data, cached, rate limited)
+        "/v1/voice-samples/{file_name}",  # job DT: the pre-rendered voice samples (static files, public by design, rate limited: rule voice_samples)
         "/v1/privacy/notice",  # job DQ: the privacy notice facts (public, cached)
         "/v1/privacy/subprocessors",  # job DQ: the processors as data (public, cached)
         "/v1/privacy/grievance",  # job DQ: a grievance from anyone (rate limited; the database holds its own caps)

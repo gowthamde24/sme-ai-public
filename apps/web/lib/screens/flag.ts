@@ -39,3 +39,6 @@ export const openingLineScreens = (value: string | undefined = process.env.OPENI
 
 /** Settings > AI assistant > "Voice" (owner decision 28 Oct, job-voice-picker.md): the approved voices of each language with a recorded sample, and the voice the workspace chooses per language. C1's endpoint (PR 153; lib/api/voice-picker.ts has the contract): `mock` = the approved catalogue with a choice kept in a cookie (the sounds are tones), `1` = the API, unset = the part is not there. */
 export const voicePickerScreens = (value: string | undefined = process.env.VOICE_PICKER_SCREENS): ScreenMode => screenMode(value);
+
+/** The guided demo (owner request 28 Oct, job-guided-demo.md): a "Start demo" button in the DEMO workspaces plays a short story over the real screens, with made-up data only. Off unless `1`. */
+export const guidedDemo = (value: string | undefined = process.env.GUIDED_DEMO): boolean => value === "1";

@@ -1,0 +1,186 @@
+"""GET (WebSocket) /v1/tenants/{tenant_id}/voice-chat: talk to the assistant in the browser (job DV, contract: ~/Desktop/stack19-jobs/contract-browser-voice.md).
+
+A browser cannot put an Authorization header on a WebSocket, so the FIRST message is `{"type":"start","access_token":...,"language":...}` (within 10 s); the token is checked exactly as a request's would be (signature, then the
+workspace membership from the database: Owner, Admin or Sales; the read-only and waiting-for-WhatsApp rules; the terms gate). Everything refused closes the socket with a `fatal` error message and a close code (4401 sign-in,
+4403 not allowed, 4404 no such workspace, 4429 a limit, 4503 not available). The Origin header, when present, must be one of API_CORS_ORIGINS."""
+
+# ruff: noqa: E501
+
+from __future__ import annotations
+
+import asyncio
+import logging
+import uuid
+from collections.abc import Callable
+from typing import Any
+
+from fastapi import APIRouter, WebSocket
+from fastapi.concurrency import run_in_threadpool
+from starlette.websockets import WebSocketDisconnect
+
+from app.assistant.models import MessageIn
+from app.assistant.routes import start_message
+from app.auth.deps import Runtime, TenantContext
+from app.auth.jwt import AuthError
+from app.browser_voice.limits import Usage
+from app.browser_voice.llm import AskLlm, AskTurns, CaptionLlm, TieredLlm
+from app.browser_voice.runtime import BrowserVoice
+from app.browser_voice.session import LANGUAGES, Kind, Parts, VoiceSession
+from app.conversation.fallback import FallbackTts
+from app.conversation.picker import choices_of
+from app.conversation.pronounce import default_pronunciations
+from app.conversation.providers import SarvamRealtimeStt
+from app.opening.prompt import call_system_prompt
+from app.opening.routes import rendered_opening
+from app.tenancy.models import Role
+
+log = logging.getLogger("app.browser_voice")
+router = APIRouter(tags=["browser-voice"])
+
+LANGUAGE_NAMES = {"te": "Telugu", "en": "English", "hi": "Hindi", "kn": "Kannada"}
+ALLOWED_ROLES = (Role.OWNER, Role.ADMIN, Role.SALES)
+GOAL = "Help a member of the business's own team: answer briefly, and when they ask about the business's own data (prices, stock, customers, leads, orders, dates) say you will check it."
+
+
+def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Callable[[str, dict[str, Any]], None], on_ask: Callable[[], None]) -> Parts:
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    chosen = choices_of(runtime, ctx)
+    tts = FallbackTts(bv.config, bv.factory, chosen=chosen, pronunciations=default_pronunciations())
+    name = "Vijaya"
+    if runtime.assistant_settings is not None:
+        name = str(runtime.assistant_settings.get(token, tenant).settings.name)
+    opening_cache: dict[str, tuple[str, bool]] = {}
+
+    def opening(language: str) -> tuple[str, bool]:
+        if language not in opening_cache:
+            opening_cache[language] = rendered_opening(runtime, ctx, language, None, None, None)
+        return opening_cache[language]
+
+    def system_for(language: str) -> str:
+        line, mention = opening(language)
+        return call_system_prompt(business=ctx.tenant.name, assistant=name, language=LANGUAGE_NAMES.get(language, "English"), opening_line=line, goal=GOAL, facts=[f"You work for {ctx.tenant.name}. You are talking with a member of its own team, in the web app."], mention_ai=mention, speaking_style="everyday_mixed")
+
+    def open_ask(conversation_id: uuid.UUID, message_id: uuid.UUID, text: str):  # type: ignore[no-untyped-def]
+        return start_message(runtime, ctx, MessageIn(message_id=message_id, conversation_id=conversation_id, text=text))
+
+    ask = AskLlm(AskTurns(open_ask), emit)
+    llm = TieredLlm(CaptionLlm(bv.fast_llm(), emit), ask, on_ask)
+    return Parts(
+        stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language=language),
+        tts=tts,
+        llm=llm,
+        system_for=system_for,
+        greeting_for=lambda language: opening(language)[0],
+        models=bv.model_ids(),
+        voice_label=chosen.get("en", ""),
+        fillers=None,  # a spoken filler needs a pre-rendered bank per voice (a follow-up); the orb shows `thinking` meanwhile
+    )
+
+
+class StarletteSocket:
+    def __init__(self, ws: WebSocket) -> None:
+        self._ws = ws
+
+    async def send_json(self, message: dict[str, Any]) -> None:
+        await self._ws.send_json(message)
+
+    async def send_bytes(self, data: bytes) -> None:
+        await self._ws.send_bytes(data)
+
+    async def receive(self) -> tuple[Kind, Any]:
+        try:
+            raw = await self._ws.receive()
+        except (WebSocketDisconnect, RuntimeError):
+            return "close", None
+        if raw.get("type") == "websocket.disconnect":
+            return "close", None
+        if raw.get("bytes") is not None:
+            return "bytes", raw["bytes"]
+        text = raw.get("text")
+        if text is None:
+            return "text", None
+        try:
+            import json
+
+            return "text", json.loads(text)
+        except ValueError:
+            return "text", None
+
+
+async def _refuse(ws: WebSocket, code: int, error: str, message: str) -> None:
+    try:
+        await ws.send_json({"type": "error", "code": error, "message": message, "fatal": True})
+        await ws.close(code=code)
+    except Exception:  # noqa: BLE001, S110 - the browser is already gone
+        pass
+
+
+def _authenticate(runtime: Runtime, token: str, tenant_id: str) -> TenantContext | tuple[int, str]:
+    """Blocking (database calls): run in a thread. A TenantContext, or (close code, error code)."""
+    try:
+        principal = runtime.verifier.verify(token)
+    except AuthError:
+        return 4401, "unauthorized"
+    try:
+        parsed = uuid.UUID(tenant_id)
+    except ValueError:
+        return 4404, "not_found"
+    membership = runtime.repository.get_membership(principal.token, principal.user_id, parsed)
+    if membership is None:
+        return 4404, "not_found"
+    if membership.role not in ALLOWED_ROLES:
+        return 4403, "forbidden"
+    try:
+        if runtime.billing is not None:
+            runtime.billing.ensure(principal.token, parsed, "spend")  # talking spends AI: held in a read-only workspace and while waiting for WhatsApp, like Ask
+        if runtime.policy_gate is not None:
+            runtime.policy_gate.check(runtime.integrations, principal.token, str(principal.user_id))
+    except Exception as err:  # the same refusals as a request (read-only, terms): the class name is the code
+        return 4403, getattr(err, "code", None) or "not_allowed"
+    return TenantContext(principal=principal, tenant=membership.tenant, role=membership.role)
+
+
+@router.websocket("/v1/tenants/{tenant_id}/voice-chat")
+async def voice_chat(ws: WebSocket, tenant_id: str) -> None:
+    runtime: Runtime | None = getattr(ws.app.state, "runtime", None)
+    bv: BrowserVoice | None = getattr(runtime, "browser_voice", None) if runtime is not None else None
+    await ws.accept()
+    if runtime is None or bv is None:
+        return await _refuse(ws, 4503, "unavailable", "Talking to the assistant is not available on this system.")
+    origin = ws.headers.get("origin")
+    if origin and bv.allowed_origins and origin not in bv.allowed_origins:
+        return await _refuse(ws, 4403, "forbidden", "Not allowed.")
+    try:
+        first = await asyncio.wait_for(ws.receive_json(), timeout=10.0)
+    except (TimeoutError, WebSocketDisconnect, ValueError, RuntimeError):
+        return await _refuse(ws, 4401, "unauthorized", "Send the start message with your sign-in first.")
+    token = first.get("access_token") if isinstance(first, dict) else None
+    if not isinstance(first, dict) or first.get("type") != "start" or not isinstance(token, str) or not token.strip():
+        return await _refuse(ws, 4401, "unauthorized", "Send the start message with your sign-in first.")
+    ctx = await run_in_threadpool(_authenticate, runtime, token.strip(), tenant_id)
+    if isinstance(ctx, tuple):
+        return await _refuse(ws, ctx[0], ctx[1], "Not allowed.")
+    language = first.get("language") if first.get("language") in LANGUAGES else "en"
+    refused = bv.ledger.admit(ctx.tenant.id)
+    if refused is not None:
+        return await _refuse(ws, 4429, refused, "Too many voice sessions, or today's talking time is used up. Try again later.")
+    usage = Usage()
+    try:
+        box: dict[str, Callable[[str, dict[str, Any]], None]] = {"emit": lambda kind, data: None}
+
+        def count_ask() -> None:
+            usage.ask_turns += 1
+
+        parts = await run_in_threadpool(build_parts, bv, runtime, ctx, lambda kind, data: box["emit"](kind, data), count_ask)
+        session = VoiceSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage)
+        box["emit"] = session.emit
+        await session.run()
+    except Exception as err:  # noqa: BLE001 - only the class is kept
+        log.error("browser_voice crashed: %s", err.__class__.__name__)
+        await _refuse(ws, 4503, "unavailable", "Talking to the assistant stopped. Please try again.")
+    finally:
+        bv.ledger.release(ctx.tenant.id)
+        try:
+            await ws.close()
+        except Exception:  # noqa: BLE001, S110
+            pass
