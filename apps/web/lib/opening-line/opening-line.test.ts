@@ -73,7 +73,7 @@ describe("the editor's source", () => {
   it("is not there with the flag off, and asks the API for nothing", async () => {
     expect(await readOpeningLine(CTX)).toEqual({ mode: "off" });
     expect(await saveOpeningLine(CTX, { lines: {}, mentionAi: true })).toEqual({ ok: false, error: "not_available" });
-    expect(await previewLine(CTX, "en", "Hello there", true)).toEqual({ ok: false, error: "not_available" });
+    expect(await previewLine(CTX, "en", "Hello there")).toEqual({ ok: false, error: "not_available" });
     expect(h.get).not.toHaveBeenCalled();
   });
   it("mock: keeps the texts and the switch in one small cookie, resets a language with null, and makes no sound", async () => {
@@ -84,8 +84,8 @@ describe("the editor's source", () => {
     expect(h.jar.has(MOCK_COOKIE)).toBe(true);
     expect(await saveOpeningLine(CTX, { lines: { en: null }, mentionAi: false })).toMatchObject({ ok: true, data: { lines: { te: MOCK_DEFAULTS.te } } });
     expect(await saveOpeningLine(CTX, { lines: { en: "no" }, mentionAi: false })).toEqual({ ok: false, error: "invalid" });
-    expect(await previewLine(CTX, "te", "నమస్కారం రవి గారూ", true)).toEqual({ ok: true, data: { audio: null, fake: true } });
-    expect(await previewLine(CTX, "xx", "Hello there", true)).toEqual({ ok: false, error: "invalid" });
+    expect(await previewLine(CTX, "te", "నమస్కారం రవి గారూ")).toEqual({ ok: true, data: { audio: null, fake: true } });
+    expect(await previewLine(CTX, "xx", "Hello there")).toEqual({ ok: false, error: "invalid" });
     expect(h.put).not.toHaveBeenCalled();
   });
   it("mock: a campaign's own texts lie over the business's, and its switch can follow the business", async () => {
@@ -110,7 +110,7 @@ describe("the editor's source", () => {
     h.get.mockRejectedValue(new Error("down"));
     expect(await readOpeningLine(CTX)).toEqual({ mode: "unavailable" });
     h.preview.mockResolvedValue({ audio: { base64: "QUJD", mime: "audio/mpeg", seconds: 3 }, fake: false });
-    expect(await previewLine(CTX, "en", "Hello Ravi", false)).toMatchObject({ ok: true });
-    expect(h.preview).toHaveBeenCalledWith("tok", CTX.tenantId, "en", "Hello Ravi", false);
+    expect(await previewLine(CTX, "en", "Hello Ravi")).toMatchObject({ ok: true });
+    expect(h.preview).toHaveBeenCalledWith("tok", CTX.tenantId, "en"); // the API speaks the saved line, so only the language goes
   });
 });

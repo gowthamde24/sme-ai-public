@@ -51,7 +51,7 @@ describe("Settings > AI assistant > Opening line", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("{name} is not one of the four placeholders.");
     expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
     type("Hi");
-    expect(screen.getByRole("alert")).toHaveTextContent("Write at least 5 characters.");
+    expect(screen.getByRole("alert")).toHaveTextContent("Write at least 10 characters.");
   });
   it("saves only the languages that were touched, then refreshes; a reset language is sent as null", async () => {
     draw({ lines: { te: "నమస్కారం {customer} గారూ, నేను {assistant}." } });
