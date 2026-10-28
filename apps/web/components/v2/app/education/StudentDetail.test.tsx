@@ -58,10 +58,10 @@ describe("one student", () => {
     expect(screen.queryByRole("link", { name: "Change" })).toBeNull();
   });
   it("a missing second factor points at the Security page and keeps the sheet", async () => {
-    show({}, { erase: async () => ({ ok: false, error: "This needs your authenticator app.", mfa: true }) });
+    show({}, { erase: async () => ({ ok: false, error: "This needs your two-step code, if you turned it on.", mfa: true }) });
     fireEvent.click(screen.getByRole("button", { name: "Erase this child" }));
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Erase for good" })));
-    expect(screen.getByRole("alert")).toHaveTextContent("authenticator");
+    expect(screen.getByRole("alert")).toHaveTextContent("two-step code");
     expect(screen.getByRole("link", { name: /Security/ })).toHaveAttribute("href", "/app/security");
   });
   it("an erased student is shown as erased, with no name and nothing to change", () => {

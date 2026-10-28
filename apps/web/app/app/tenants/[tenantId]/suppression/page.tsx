@@ -16,6 +16,7 @@ import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { BRAND_NAME } from "@/design/brand";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
 export const metadata = { title: `Suppression keys · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -108,7 +109,7 @@ export default async function SuppressionPage({ params }: PageProps<"/app/tenant
       {(readiness === "unkeyed" || readiness === "clear") && (
         <section aria-labelledby="backfill-heading">
           <h2 id="backfill-heading" className={pageH2}>{t("supp.record_keys")}</h2>
-          <BackfillForm words={words} action={backfillKeysAction.bind(null, tenantId)} secondFactorMissing={user.aal !== "aal2"} />
+          <BackfillForm words={words} action={backfillKeysAction.bind(null, tenantId)} secondFactorMissing={secondFactorNeeded(user)} />
         </section>
       )}
     </main>

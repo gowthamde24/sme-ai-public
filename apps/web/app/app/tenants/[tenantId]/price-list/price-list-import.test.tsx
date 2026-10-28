@@ -152,8 +152,8 @@ describe("PriceListImport", () => {
     render(<PriceListImport {...props({ secondFactorMissing: true })} />);
     type(GOOD_TEXT);
     await check();
-    expect(await screen.findByRole("note")).toHaveTextContent("Saving a price list needs your authenticator app.");
-    expect(screen.getByRole("link", { name: "Set it up on the Security page" })).toHaveAttribute("href", "/app/security");
+    expect(await screen.findByRole("note")).toHaveTextContent("Saving a price list needs your two-step code, if you turned it on.");
+    expect(screen.getByRole("link", { name: "Open the Security page" })).toHaveAttribute("href", "/app/security");
     expect(screen.queryByRole("button", { name: /Save as a new price list version/ })).toBeNull();
   });
 
@@ -162,13 +162,13 @@ describe("PriceListImport", () => {
     render(<PriceListImport {...p} />);
     await check();
     expect(await screen.findByRole("alert")).toHaveTextContent("Paste the file's text or choose a file first.");
-    const q = props({ commit: vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app." })) });
+    const q = props({ commit: vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on." })) });
     document.body.innerHTML = "";
     render(<PriceListImport {...q} />);
     type(GOOD_TEXT);
     await check();
     await act(async () => fireEvent.click(await screen.findByRole("button", { name: "Save as a new price list version" })));
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("This needs your authenticator app."));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("This needs your two-step code, if you turned it on."));
   });
 
   it("a pasted text over 900,000 bytes (Telugu counts three bytes a character) is stopped in the browser: the action is never called", async () => {

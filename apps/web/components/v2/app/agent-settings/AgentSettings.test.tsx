@@ -35,7 +35,7 @@ describe("automatic sending", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Saved. Automatic sending is on.");
   });
   it("without the second factor it says so and points at Security, keeping what was set", async () => {
-    const save = vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app. Nothing was changed.", mfa: true }));
+    const save = vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on. Nothing was changed.", mfa: true }));
     render(<SendingForm words={WORDS} settings={SETTINGS} save={save} />);
     fireEvent.click(screen.getByRole("checkbox", { name: /Vijaya may send/ }));
     await click("Save");
@@ -105,10 +105,10 @@ describe("visit reminders", () => {
     expect(screen.getByLabelText("How long before")).toHaveValue("100");
   });
   it("a refusal is shown, with the way to Security when the second factor is missing", async () => {
-    const save = vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app. Nothing was changed.", mfa: true }));
+    const save = vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on. Nothing was changed.", mfa: true }));
     render(<RemindersForm words={WORDS} settings={schedulerSettings()} save={save} />);
     await click("Save");
-    expect(screen.getByRole("alert")).toHaveTextContent("This needs your authenticator app.");
+    expect(screen.getByRole("alert")).toHaveTextContent("This needs your two-step code, if you turned it on.");
     expect(screen.getByRole("link", { name: "Open Security" })).toBeInTheDocument();
   });
 });
@@ -142,11 +142,11 @@ describe("quiet hours (editable within the API's limits, job BE)", () => {
   });
 
   it("a missing second factor is explained and points at Security; the choice stays on the screen", async () => {
-    const save = vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app. Nothing was changed.", mfa: true }));
+    const save = vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on. Nothing was changed.", mfa: true }));
     show(REM, save);
     fireEvent.change(screen.getByLabelText("Quiet hours start"), { target: { value: "20" } });
     await click("Save quiet hours");
-    expect(screen.getByRole("alert")).toHaveTextContent("This needs your authenticator app.");
+    expect(screen.getByRole("alert")).toHaveTextContent("This needs your two-step code, if you turned it on.");
     expect(screen.getByRole("link", { name: "Open Security" })).toBeInTheDocument();
     expect(screen.getByLabelText("Quiet hours start")).toHaveValue("20");
   });

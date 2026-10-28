@@ -26,8 +26,8 @@ Kannada
 <checkbox label="Tamil">
 Tamil
 Erase a student's record this many months after they leave (optional)
-<text label="Erase a student's record this many months after they leave (optional)" inputmode=numeric described-by="Leave empty to keep records until you erase them. Only you, with the authenticator code, can change this.">
-Leave empty to keep records until you erase them. Only you, with the authenticator code, can change this.
+<text label="Erase a student's record this many months after they leave (optional)" inputmode=numeric described-by="Leave empty to keep records until you erase them. Only you can change this.">
+Leave empty to keep records until you erase them. Only you can change this.
 [button type=submit: Save the institution]
 {label="Classes and courses"}
 ## Classes and courses

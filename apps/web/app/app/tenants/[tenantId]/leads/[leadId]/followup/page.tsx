@@ -18,6 +18,7 @@ import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { BRAND_NAME } from "@/design/brand";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
 export const metadata = { title: `Follow-up · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -80,7 +81,7 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
         <Link href={`/app/tenants/${tenantId}/leads/${leadId}`} className={backLink}>{t("lead.lead")}</Link> · <Link href={`/app/tenants/${tenantId}/followups`} className={link}>{t("lead.follow_ups_due")}</Link>
       </p>
       <NoticeV2>{t("fu.nothing_sent")}</NoticeV2>
-      <LeadFollowupView words={words} tenantId={tenantId} leadId={leadId} data={data} role={tenant.role} userId={user.id} aal={user.aal} ids={ids} draftForm={draftForm} touchForm={touchForm} />
+      <LeadFollowupView words={words} tenantId={tenantId} leadId={leadId} data={data} role={tenant.role} userId={user.id} aal={secondFactorNeeded(user) ? "aal1" : "aal2"} ids={ids} draftForm={draftForm} touchForm={touchForm} />
     </main>
   );
 }

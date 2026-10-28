@@ -14,7 +14,7 @@ The shop's GST registration number. It is shown on quotes and orders and goes in
 form:
 GSTIN (15 characters)
 <text label="GSTIN (15 characters)" maxlength=30 autocomplete=off value=27AAPFU0939F1ZV described-by="For example 27AAPFU0939F1ZV. Spaces, dashes and small letters are fine.">
-For example 27AAPFU0939F1ZV. Spaces, dashes and small letters are fine. We only check that the number is well formed. We do not check with the GST portal that the business exists or is active. Saving needs your second step (your authenticator code). If you are asked, open Security first.
+For example 27AAPFU0939F1ZV. Spaces, dashes and small letters are fine. We only check that the number is well formed. We do not check with the GST portal that the business exists or is active. Saving needs your two-step code, if you turned it on. If you are asked, sign in again with it.
 [button type=submit disabled: Save GSTIN]
 [button type=button: Remove the GSTIN]
 {label="AI usage today"}

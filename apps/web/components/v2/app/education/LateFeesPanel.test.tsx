@@ -41,10 +41,10 @@ describe("late fees", () => {
     expect(screen.getByText(/Only the Owner and Admins can post late fees/)).toBeInTheDocument();
   });
   it("a missing second factor points at the Security page", async () => {
-    show({}, async () => ({ ok: false, error: "This needs your authenticator app.", mfa: true }));
+    show({}, async () => ({ ok: false, error: "This needs your two-step code, if you turned it on.", mfa: true }));
     fireEvent.click(screen.getByRole("button", { name: "Post these late fees" }));
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Post the late fees" })));
-    expect(screen.getByRole("alert")).toHaveTextContent("authenticator");
+    expect(screen.getByRole("alert")).toHaveTextContent("two-step code");
     expect(screen.getByRole("link", { name: /Security/ })).toHaveAttribute("href", "/app/security");
   });
 });

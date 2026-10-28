@@ -112,7 +112,7 @@ describe("ApproveForm: the second factor and the reviewed fingerprint", () => {
   it("without the second factor the form is replaced by the notice and a link to the Security page", () => {
     render(<ApproveForm action={ok()} stateHash={HASH} secondFactorMissing />);
     expect(screen.queryByRole("button")).toBeNull();
-    expect(screen.getByRole("note")).toHaveTextContent(/authenticator app/);
+    expect(screen.getByRole("note")).toHaveTextContent(/two-step code/);
     expect(screen.getByRole("link", { name: /Security page/ })).toHaveAttribute("href", "/app/security");
   });
 
@@ -175,7 +175,7 @@ describe("PolicyForm", () => {
   it("without the second factor there is a notice and no form", () => {
     render(<PolicyForm action={ok()} policyId="p" today="2026-10-07" secondFactorMissing />);
     expect(screen.queryByRole("button")).toBeNull();
-    expect(screen.getByRole("note")).toHaveTextContent(/authenticator app/);
+    expect(screen.getByRole("note")).toHaveTextContent(/two-step code/);
   });
 });
 

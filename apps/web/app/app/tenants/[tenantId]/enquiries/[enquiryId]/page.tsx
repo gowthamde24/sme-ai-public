@@ -25,6 +25,7 @@ import { withMaterialWords } from "@/lib/packs/material-words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { BRAND_NAME } from "@/design/brand";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
 export const metadata = { title: `Enquiry · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -198,7 +199,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           tenantId={tenantId}
           enquiryId={enquiryId}
           role={tenant.role}
-          secondFactorMissing={user.aal !== "aal2"}
+          secondFactorMissing={secondFactorNeeded(user)}
           setup={setup}
           quotes={quotes}
           selected={selected}

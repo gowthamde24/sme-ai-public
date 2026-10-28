@@ -45,7 +45,7 @@ From
 <date label="From" max=2026-09-30 value=2026-09-01>
 To
 <date label="To" min=2026-09-01 value=2026-09-30>
-Up to one year at a time. Try one voucher on a copy of your Tally company first, and import each period only once. Exports need your second step (your authenticator code). If you are asked, open Security first.
+Up to one year at a time. Try one voucher on a copy of your Tally company first, and import each period only once. Exports need your two-step code, if you turned it on. If you are asked, sign in again with it.
 [button type=button: Download the file]
 {label="Visits in your phone's calendar"}
 ## Visits in your phone's calendar

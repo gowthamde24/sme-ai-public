@@ -32,9 +32,9 @@ describe("the add form", () => {
     expect(Object.fromEntries(add.mock.calls[0][1].entries())).toEqual({ name: "Type D", code: "D", position: "4", lowest: "100", highest: "" });
   });
   it("shows the action's sentence, and a link to the Security page when the second factor is missing", async () => {
-    render(<AddItemTypeForm add={mk({ ok: false, reason: "mfa", error: "Changing item types needs your authenticator app." })} />);
+    render(<AddItemTypeForm add={mk({ ok: false, reason: "mfa", error: "Changing item types needs your two-step code, if you turned it on." })} />);
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this item type" })));
-    expect(await screen.findByRole("alert")).toHaveTextContent("authenticator app");
+    expect(await screen.findByRole("alert")).toHaveTextContent("two-step code");
     expect(screen.getByRole("link", { name: /Security page/ })).toHaveAttribute("href", "/app/security");
   });
   it("shows a success sentence as a status", async () => {

@@ -106,7 +106,7 @@ def get_pack(ctx: AnyMember, runtime: RuntimeDep) -> WorkspacePackOut:
         names=_words(manifest, "names"), summary=_words(manifest, "summary"), accent=manifest.get("accent", ""), owl_prop=manifest.get("owl_prop", ""),
         core_tab=manifest.get("core_tab", ""), modules=[str(m) for m in row.get("modules") or []], units=[str(u) for u in manifest.get("units") or []],
         default_unit=manifest.get("default_unit"), labels=labels, language_review=cast("dict[str, LanguageReview]", _words(manifest, "language_review")),
-        has_example_data=_has_example_data(manifest),
+        has_example_data=bool(row["has_example_data"]) if "has_example_data" in row else _has_example_data(manifest),
     )  # fmt: skip
 
 

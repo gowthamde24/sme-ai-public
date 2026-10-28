@@ -58,7 +58,7 @@ describe("the quote rules form", () => {
     expect(screen.getByRole("button", { name: "Remove slab 1" })).toBeDisabled();
   });
   it("shows the Security link when the second factor is missing", async () => {
-    show({ save: vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app.", mfa: true })) as never });
+    show({ save: vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on.", mfa: true })) as never });
     await submit();
     expect(screen.getByRole("link", { name: /Security/ })).toHaveAttribute("href", "/app/security");
   });

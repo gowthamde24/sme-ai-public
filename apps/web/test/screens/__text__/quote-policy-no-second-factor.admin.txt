@@ -46,4 +46,4 @@ Discount ceiling
 Shipping
 flat fee ₹150.00, tax 0%, free above ₹50,000.00
 Published Oct 1, 2026, 3:30 PM (5 days ago)
-{role=note} Publishing a quote policy needs your authenticator app. [Set it up on the Security page](/app/security) , then sign in again with its code.
+{role=note} Publishing a quote policy needs your two-step code, if you turned it on. [Open the Security page](/app/security) , then sign in again with its code.

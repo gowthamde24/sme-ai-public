@@ -225,12 +225,12 @@ describe("saving: details, photos with progress, order, then show", () => {
   });
 
   it("a refusal of the save is shown in our words; a missing second factor points at the Security page; nothing is uploaded", async () => {
-    const actions = fakeEditorActions({ save: vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app. Nothing was changed.", mfa: true })) });
+    const actions = fakeEditorActions({ save: vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on. Nothing was changed.", mfa: true })) });
     const { uploader, go } = show({ actions });
     fill();
     put(choose(), file("a.jpg"));
     await save();
-    expect(screen.getByRole("alert")).toHaveTextContent("This needs your authenticator app.");
+    expect(screen.getByRole("alert")).toHaveTextContent("This needs your two-step code, if you turned it on.");
     expect(within(screen.getByRole("alert")).getByRole("link", { name: "Open Security" })).toHaveAttribute("href", "/app/security");
     expect(uploader).not.toHaveBeenCalled();
     expect(go).not.toHaveBeenCalled();
@@ -339,7 +339,7 @@ describe("the exact price is the owner's alone", () => {
   it("the owner has the price field, with the second-factor note; an admin has none and is told who can set it", () => {
     show({ item: item({ price_paise: null, price_text: null }) });
     expect(screen.getByLabelText(/Exact price/)).toBeInTheDocument();
-    expect(screen.getByText(/needs your authenticator code/)).toBeInTheDocument();
+    expect(screen.getByText(/Optional\. Only the owner can set this/)).toBeInTheDocument();
     cleanup();
     show({ item: item(), role: "admin" });
     expect(screen.queryByLabelText(/Exact price/)).toBeNull();
@@ -382,7 +382,7 @@ describe("the exact price is the owner's alone", () => {
   });
 
   it("without the second factor the owner is told so and shown the Security page; the price is not retried by itself", async () => {
-    const actions = fakeEditorActions({ save: vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app. Nothing was changed.", mfa: true })) });
+    const actions = fakeEditorActions({ save: vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on. Nothing was changed.", mfa: true })) });
     show({ item: item(), actions });
     fireEvent.change(screen.getByLabelText(/Exact price/), { target: { value: "40000" } });
     await save();

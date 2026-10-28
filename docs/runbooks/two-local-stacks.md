@@ -88,3 +88,10 @@ Cause: the Supabase CLI gives Kong the mail template as a bind mount of the sing
 Fix: `templates` is now synced **in place** (`sync_in_place`): a file whose bytes are already right is not touched, a changed file is rewritten through the same inode, a file that left `supabase/templates` is removed. `migrations` and `tests` are still replaced as folders (nothing mounts them). `tests/test_stacks.py` pins the inode.
 
 One-time step: a Kong container that was started *before* this fix may still hold a stale file. Recreate it once with `make agent-db-down` then `make agent-db-up` (or `docker restart supabase_kong_sme-ai-agent`); after that, resets need no manual step. If the template is ever *edited*, the edit is written through the same inode, so Kong sees it without a restart.
+
+## One session at a time on a stack (the lock)
+
+Each stack's database is one shared thing: a reset or pgTAP run rebuilds it, an integration test pins its clock, a real-stack browser run (`make e2e-local`, `e2e-packs`, `e2e-new-owner`) keeps data in it for minutes. Two sessions at once break each other. `scripts/db-lock.sh <command>` runs a command inside a lock
+(`~/.cache/sme-ai/db-<stack>.lock`, a folder holding the holder's process number); the make targets that use the database (`agent-db-reset`, `agent-db-test`, `db-reset`, `db-test`, `test-integration`, `eval`) and `scripts/e2e-local.sh` take it for you and wait their turn (up to 45 minutes, `SME_DB_LOCK_WAIT`; then exit 75).
+A dead holder's lock is taken over; the lock is re-entrant (`SME_DB_LOCK_HELD=1`); nothing is killed. Details and the reasons for a lock instead of a second database: `e2e/README.md`.
+

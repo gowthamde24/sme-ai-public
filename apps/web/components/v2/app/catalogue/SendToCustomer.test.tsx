@@ -219,13 +219,13 @@ describe("sending to the outbox", () => {
   it("a refusal is shown in our words and the form stays for another try with the SAME message id (a retry is never a second message)", async () => {
     const send_ = vi
       .fn()
-      .mockResolvedValueOnce({ ok: false, error: "This needs your authenticator app. Nothing was changed.", mfa: true })
+      .mockResolvedValueOnce({ ok: false, error: "This needs your two-step code, if you turned it on. Nothing was changed.", mfa: true })
       .mockResolvedValueOnce({ ok: true, state: "sent", text: "Sent to the customer.", why: null, recordText: "x" });
     show({ actions: fakeSendActions({ send: send_ }) });
     await chooseLead();
     await send();
     const alert = screen.getByRole("alert");
-    expect(alert).toHaveTextContent("This needs your authenticator app.");
+    expect(alert).toHaveTextContent("This needs your two-step code, if you turned it on.");
     expect(within(alert).getByRole("link", { name: "Open Security" })).toHaveAttribute("href", "/app/security");
     await send();
     expect(send_.mock.calls[0][0].messageId).toBe(send_.mock.calls[1][0].messageId);

@@ -14,6 +14,7 @@ import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { BRAND_NAME } from "@/design/brand";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
 export const metadata = { title: `Price list · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -64,7 +65,7 @@ export default async function PriceListPage({ params }: PageProps<"/app/tenants/
         preview={previewPriceListAction.bind(null, tenantId)}
         commit={commitPriceListAction.bind(null, tenantId)}
         today={todayInIndia(new Date())}
-        secondFactorMissing={user.aal !== "aal2"}
+        secondFactorMissing={secondFactorNeeded(user)}
       />
     </main>
   );

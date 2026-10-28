@@ -133,11 +133,11 @@ describe("the quote policy page: the form's props", () => {
 
 describe("the quote policy page: the second factor", () => {
   it("without the authenticator (aal1) there is no form, and the page points at the Security page", async () => {
-    requireUser.mockResolvedValue({ ...USER, aal: "aal1" });
+    requireUser.mockResolvedValue({ ...USER, aal: "aal1", hasSecondFactor: true });
     const { container } = render(await QuotePolicyPage(props()));
     expect(screen.queryByText("POLICY-FORM")).toBeNull();
-    expect(screen.getByText(/needs your authenticator app/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Set it up on the Security page" })).toHaveAttribute("href", "/app/security");
+    expect(screen.getByText(/needs your two-step code/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open the Security page" })).toHaveAttribute("href", "/app/security");
     expect(screen.getByText(/Version 1/)).toBeInTheDocument(); // the list is still shown
     assertInternalLinks(container);
   });

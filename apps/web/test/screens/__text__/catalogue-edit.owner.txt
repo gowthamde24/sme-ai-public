@@ -63,8 +63,8 @@ Customers are told this range. It is not an exact price. Stock
 <select label="Stock">
   options: In stock=in_stock* | Few left=few_left | Made to order=made_to_order
 Exact price (₹)
-<text label="Exact price (₹)" inputmode=decimal autocomplete=off described-by="Optional. Only the owner can set this, and it needs your authenticator code. Leave it empty to keep it as it is.">
-Optional. Only the owner can set this, and it needs your authenticator code. Leave it empty to keep it as it is. Exact price now: ₹38,500.00
+<text label="Exact price (₹)" inputmode=decimal autocomplete=off described-by="Optional. Only the owner can set this. Leave it empty to keep it as it is.">
+Optional. Only the owner can set this. Leave it empty to keep it as it is. Exact price now: ₹38,500.00
 <checkbox label="Remove the exact price">
 Remove the exact price
 {label="Photos"}

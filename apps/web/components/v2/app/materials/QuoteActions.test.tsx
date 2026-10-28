@@ -48,11 +48,11 @@ describe("approving a draft", () => {
     expect(refresh).toHaveBeenCalled();
   });
   it("says in our words why the approval was refused, and points the second factor to Security", async () => {
-    show({}, acts({ approve: vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app.", mfa: true })) as never }));
+    show({}, acts({ approve: vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on.", mfa: true })) as never }));
     await click("Check and approve");
     fireEvent.click(screen.getByRole("checkbox"));
     await click("Approve this quote");
-    expect(screen.getByRole("alert")).toHaveTextContent("authenticator");
+    expect(screen.getByRole("alert")).toHaveTextContent("two-step code");
     expect(screen.getByRole("link", { name: /Security/ })).toHaveAttribute("href", "/app/security");
   });
   it("a quote with a flag cannot be approved by an Admin: the button is off and says whose it is", () => {
@@ -131,6 +131,6 @@ describe("the WhatsApp message", () => {
 describe("the second factor", () => {
   it("is mentioned in advance when it is missing for someone who approves", () => {
     show({ secondFactorMissing: true });
-    expect(screen.getByText(/Approving needs your authenticator code/)).toBeInTheDocument();
+    expect(screen.getByText(/Approving needs your two-step code/)).toBeInTheDocument();
   });
 });

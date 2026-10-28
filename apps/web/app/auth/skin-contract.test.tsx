@@ -30,7 +30,7 @@ const q = <T extends (p: never) => unknown>(query: Record<string, string>) => ({
 beforeEach(() => {
   vi.clearAllMocks();
   requireBefore.mockResolvedValue({ aal: "aal1", hasSecondFactor: true });
-  requireUser.mockResolvedValue({ aal: "aal1" });
+  requireUser.mockResolvedValue({ aal: "aal1", hasSecondFactor: true });
 });
 
 /** The attributes the contract pins on one field. */

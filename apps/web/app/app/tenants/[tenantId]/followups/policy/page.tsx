@@ -17,6 +17,7 @@ import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { BRAND_NAME } from "@/design/brand";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
 export const metadata = { title: `Follow-up policy · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -53,7 +54,7 @@ export default async function PolicyPage({ params }: PageProps<"/app/tenants/[te
   const today = todayInIndia(new Date());
   const form =
     tenant.role === "owner" ? (
-      <PolicyForm words={words} action={createPolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} secondFactorMissing={user.aal !== "aal2"} />
+      <PolicyForm words={words} action={createPolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} secondFactorMissing={secondFactorNeeded(user)} />
     ) : (
       <p className={mutedText}>{t("fu.only_the_owner_publishes_a_policy")}</p>
     );

@@ -15,7 +15,7 @@ const press = async (state: BackfillState) => {
 describe("BackfillForm", () => {
   it("without a second factor it gives the reason and no button", () => {
     render(<BackfillForm action={vi.fn()} secondFactorMissing />);
-    expect(screen.getByText(/needs your authenticator app/)).toBeInTheDocument();
+    expect(screen.getByText(/needs your two-step code/)).toBeInTheDocument();
     expect(screen.queryByRole("button")).toBeNull();
   });
 

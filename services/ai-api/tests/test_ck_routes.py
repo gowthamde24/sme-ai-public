@@ -490,3 +490,15 @@ def test_a_pack_has_example_data_only_when_one_of_its_lists_has_a_row() -> None:
     assert _has_example_data({"example_data": {}}) is False
     assert _has_example_data({"example_data": {"contacts": [], "leads": []}}) is False
     assert _has_example_data({}) is False
+
+
+def test_the_pack_says_itself_whether_it_ships_example_data() -> None:
+    """The database function hands the manifest out without its example rows, so the answer comes from the function's own `has_example_data`; an older function that does not say it is read from the manifest."""
+
+    class Says(FakePacks):
+        def workspace_pack(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+            return {**super().workspace_pack(token, tenant_id), "has_example_data": True}
+
+    client, _ = make_client(packs=Says())
+    r = client.get(f"/v1/tenants/{A}/pack", headers=auth("a_owner"))
+    assert r.status_code == 200 and r.json()["has_example_data"] is True

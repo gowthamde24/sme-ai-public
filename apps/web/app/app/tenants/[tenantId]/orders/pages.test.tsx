@@ -137,11 +137,11 @@ describe("the order page", () => {
   });
 
   it("without the second factor a money form is a notice, and a plain one is still a form", async () => {
-    requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1" });
+    requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1", hasSecondFactor: true });
     orders.fetchOrder.mockResolvedValue(parseOrderDetail({ ...DETAIL_JSON, state: "accepted", allowed_next_events: ["request_advance", "record_payment"] }));
     render(await OrderPage(orderProps()));
     expect(screen.getByRole("button", { name: "Record: advance asked for" })).toBeInTheDocument();
-    expect(screen.getAllByText(/This needs your authenticator app\./)).toHaveLength(1);
+    expect(screen.getAllByText(/This needs your two-step code, if you turned it on\./)).toHaveLength(1);
     expect(screen.queryByRole("button", { name: "Record this payment" })).toBeNull();
   });
 
@@ -150,11 +150,11 @@ describe("the order page", () => {
     ["record_refund", "A refund was given"],
     ["record_payment", "A payment was received"],
   ])("without the second factor the owner's %s form is only a notice", async (type, title) => {
-    requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1" });
+    requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1", hasSecondFactor: true });
     orders.fetchOrder.mockResolvedValue(parseOrderDetail({ ...DETAIL_JSON, state: "accepted", allowed_next_events: [type], paid_paise: 500 }));
     render(await OrderPage(orderProps()));
     expect(screen.getByRole("heading", { name: title })).toBeInTheDocument();
-    expect(screen.getByText(/This needs your authenticator app\./)).toBeInTheDocument();
+    expect(screen.getByText(/This needs your two-step code, if you turned it on\./)).toBeInTheDocument();
     expect(screen.queryByRole("button")).toBeNull();
   });
 

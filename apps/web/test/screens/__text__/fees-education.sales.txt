@@ -35,7 +35,7 @@ table:
   | Class 5 (synthetic) | B | 15 | ₹2,80,000.00 | ₹44,000.00 | 84.3% |
 {label="Late fees"}
 ## Late fees
-The fee plans have their own rules. This shows what they give today. Looking changes nothing. 2 late instalments, which come to ₹400.00 Only the Owner and Admins can post late fees, with the authenticator code.
+The fee plans have their own rules. This shows what they give today. Looking changes nothing. 2 late instalments, which come to ₹400.00 Only the Owner and Admins can post late fees.
 {label="Collected, day by day"}
 ## Collected, day by day
 - 2026-10-12 ₹25,000.00

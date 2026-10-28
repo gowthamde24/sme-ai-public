@@ -7788,10 +7788,10 @@
   "humanOnly": true
  },
  "catalogue.form.price.owner": {
-  "en": "Optional. Only the owner can set this, and it needs your authenticator code. Leave it empty to keep it as it is.",
-  "te": "Optional. Only the owner can set this, and it needs your authenticator code. Leave it empty to keep it as it is.",
-  "hi": "Optional. Only the owner can set this, and it needs your authenticator code. Leave it empty to keep it as it is.",
-  "kn": "Optional. Only the owner can set this, and it needs your authenticator code. Leave it empty to keep it as it is.",
+  "en": "Optional. Only the owner can set this. Leave it empty to keep it as it is.",
+  "te": "Optional. Only the owner can set this. Leave it empty to keep it as it is.",
+  "hi": "Optional. Only the owner can set this. Leave it empty to keep it as it is.",
+  "kn": "Optional. Only the owner can set this. Leave it empty to keep it as it is.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10522,10 +10522,10 @@
   }
  },
  "orders.set_it_up_on_the_security": {
-  "en": "Set it up on the Security page",
-  "te": "సెక్యూరిటీ పేజీలో సెట్ చేయండి",
-  "hi": "सिक्योरिटी पेज पर सेट करें",
-  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ",
+  "en": "Open the Security page",
+  "te": "సెక్యూరిటీ పేజీని తెరవండి",
+  "hi": "सिक्योरिटी पेज खोलें",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -10590,10 +10590,10 @@
   }
  },
  "orders.if_the_advance_has_not_been": {
-  "en": "If the advance has not been paid, only the owner can dispatch (with their authenticator app).",
-  "te": "If the advance has not been paid, only the owner can dispatch (with their authenticator app).",
-  "hi": "If the advance has not been paid, only the owner can dispatch (with their authenticator app).",
-  "kn": "If the advance has not been paid, only the owner can dispatch (with their authenticator app).",
+  "en": "If the advance has not been paid, only the owner can dispatch.",
+  "te": "If the advance has not been paid, only the owner can dispatch.",
+  "hi": "If the advance has not been paid, only the owner can dispatch.",
+  "kn": "If the advance has not been paid, only the owner can dispatch.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11905,10 +11905,10 @@
   }
  },
  "orders.mfa_a": {
-  "en": "This needs your authenticator app.",
-  "te": "దీనికి మీ ఆథెంటికేటర్ యాప్ కావాలి.",
-  "hi": "इसके लिए आपका ऑथेंटिकेटर ऐप चाहिए।",
-  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "en": "This needs your two-step code, if you turned it on.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, దీనికి మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "अगर आपने चालू किया है, तो इसके लिए आपका दो-चरण कोड चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ಇದಕ್ಕೆ ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11916,10 +11916,10 @@
   }
  },
  "orders.mfa_start_a": {
-  "en": "Starting an order needs your authenticator app.",
-  "te": "ఆర్డర్ మొదలుపెట్టడానికి మీ ఆథెంటికేటర్ యాప్ కావాలి.",
-  "hi": "ऑर्डर शुरू करने के लिए आपका ऑथेंटिकेटर ऐप चाहिए।",
-  "kn": "ಆರ್ಡರ್ ಆರಂಭಿಸಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "en": "Starting an order needs your two-step code, if you turned it on.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, ఆర్డర్ మొదలుపెట్టడానికి మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "अगर आपने चालू किया है, तो ऑर्डर शुरू करने के लिए आपका दो-चरण कोड चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ಆರ್ಡರ್ ಶುರು ಮಾಡಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -12049,10 +12049,10 @@
   }
  },
  "enq.set_it_up_on_the_security": {
-  "en": "Set it up on the Security page",
-  "te": "సెక్యూరిటీ పేజీలో సెట్ చేయండి",
-  "hi": "सिक्योरिटी पेज पर सेट करें",
-  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ",
+  "en": "Open the Security page",
+  "te": "సెక్యూరిటీ పేజీని తెరవండి",
+  "hi": "सिक्योरिटी पेज खोलें",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -12194,10 +12194,10 @@
   }
  },
  "enq.mfa_a": {
-  "en": "This needs your authenticator app.",
-  "te": "దీనికి మీ ఆథెంటికేటర్ యాప్ కావాలి.",
-  "hi": "इसके लिए आपका ऑथेंटिकेटर ऐप चाहिए।",
-  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "en": "This needs your two-step code, if you turned it on.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, దీనికి మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "अगर आपने चालू किया है, तो इसके लिए आपका दो-चरण कोड चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ಇದಕ್ಕೆ ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -14310,10 +14310,10 @@
   }
  },
  "enq.approve_mfa_a": {
-  "en": "Approving needs your authenticator app.",
-  "te": "ఓకే చేయడానికి మీ ఆథెంటికేటర్ యాప్ కావాలి.",
-  "hi": "मंज़ूर करने के लिए आपका ऑथेंटिकेटर ऐप चाहिए।",
-  "kn": "ಒಪ್ಪಿಗೆ ನೀಡಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "en": "Approving needs your two-step code, if you turned it on.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, ఓకే చేయడానికి మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "अगर आपने चालू किया है, तो मंज़ूरी के लिए आपका दो-चरण कोड चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ಒಪ್ಪಿಗೆ ನೀಡಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -16092,10 +16092,10 @@
   }
  },
  "fu.set_it_up_on_the_security": {
-  "en": "Set it up on the Security page",
-  "te": "సెక్యూరిటీ పేజీలో సెట్ చేయండి",
-  "hi": "सिक्योरिटी पेज पर सेट करें",
-  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ",
+  "en": "Open the Security page",
+  "te": "సెక్యూరిటీ పేజీని తెరవండి",
+  "hi": "सिक्योरिटी पेज खोलें",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -16203,10 +16203,10 @@
   "humanOnly": true
  },
  "pl.set_it_up_on_the_security": {
-  "en": "Set it up on the Security page",
-  "te": "సెక్యూరిటీ పేజీలో సెట్ చేయండి",
-  "hi": "सिक्योरिटी पेज पर सेट करें",
-  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ",
+  "en": "Open the Security page",
+  "te": "సెక్యూరిటీ పేజీని తెరవండి",
+  "hi": "सिक्योरिटी पेज खोलें",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -16269,10 +16269,10 @@
   }
  },
  "it.set_it_up_on_the_security": {
-  "en": "Set it up on the Security page",
-  "te": "సెక్యూరిటీ పేజీలో సెట్ చేయండి",
-  "hi": "सिक्योरिटी पेज पर सेट करें",
-  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ",
+  "en": "Open the Security page",
+  "te": "సెక్యూరిటీ పేజీని తెరవండి",
+  "hi": "सिक्योरिटी पेज खोलें",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -16280,10 +16280,10 @@
   }
  },
  "qp.set_it_up_on_the_security": {
-  "en": "Set it up on the Security page",
-  "te": "సెక్యూరిటీ పేజీలో సెట్ చేయండి",
-  "hi": "सिक्योरिटी पेज पर सेट करें",
-  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ",
+  "en": "Open the Security page",
+  "te": "సెక్యూరిటీ పేజీని తెరవండి",
+  "hi": "सिक्योरिटी पेज खोलें",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -16357,10 +16357,10 @@
   }
  },
  "supp.set_it_up_on_the_security": {
-  "en": "Set it up on the Security page",
-  "te": "సెక్యూరిటీ పేజీలో సెట్ చేయండి",
-  "hi": "सिक्योरिटी पेज पर सेट करें",
-  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ",
+  "en": "Open the Security page",
+  "te": "సెక్యూరిటీ పేజీని తెరవండి",
+  "hi": "सिक्योरिटी पेज खोलें",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -16866,10 +16866,10 @@
   }
  },
  "fu.mfa_approving": {
-  "en": "Approving needs your authenticator app.",
-  "te": "ఓకే చేయడానికి మీ ఆథెంటికేటర్ యాప్ కావాలి.",
-  "hi": "मंज़ूर करने के लिए आपका ऑथेंटिकेटर ऐप चाहिए।",
-  "kn": "ಒಪ್ಪಿಗೆ ನೀಡಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "en": "Approving needs your two-step code, if you turned it on.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, ఓకే చేయడానికి మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "अगर आपने चालू किया है, तो मंज़ूरी के लिए आपका दो-चरण कोड चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ಒಪ್ಪಿಗೆ ನೀಡಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -24570,10 +24570,10 @@
   }
  },
  "fu.mfa_publishing_a_policy": {
-  "en": "Publishing a policy needs your authenticator app.",
-  "te": "పాలసీ ప్రచురించడానికి మీ ఆథెంటికేటర్ యాప్ కావాలి.",
-  "hi": "पॉलिसी प्रकाशित करने के लिए आपका ऑथेंटिकेटर ऐप चाहिए।",
-  "kn": "ಪಾಲಿಸಿ ಪ್ರಕಟಿಸಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "en": "Publishing a policy needs your two-step code, if you turned it on.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, పాలసీ ప్రచురించడానికి మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "अगर आपने चालू किया है, तो पॉलिसी प्रकाशित करने के लिए आपका दो-चरण कोड चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ಪಾಲಿಸಿ ಪ್ರಕಟಿಸಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -24581,10 +24581,10 @@
   }
  },
  "pl.mfa_saving_a_price_list": {
-  "en": "Saving a price list needs your authenticator app.",
-  "te": "Saving a price list needs your authenticator app.",
-  "hi": "Saving a price list needs your authenticator app.",
-  "kn": "Saving a price list needs your authenticator app.",
+  "en": "Saving a price list needs your two-step code, if you turned it on.",
+  "te": "Saving a price list needs your two-step code, if you turned it on.",
+  "hi": "Saving a price list needs your two-step code, if you turned it on.",
+  "kn": "Saving a price list needs your two-step code, if you turned it on.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -24593,10 +24593,10 @@
   "humanOnly": true
  },
  "supp.mfa_recording_keys": {
-  "en": "Recording keys needs your authenticator app.",
-  "te": "Recording keys needs your authenticator app.",
-  "hi": "Recording keys needs your authenticator app.",
-  "kn": "Recording keys needs your authenticator app.",
+  "en": "Recording keys needs your two-step code, if you turned it on.",
+  "te": "Recording keys needs your two-step code, if you turned it on.",
+  "hi": "Recording keys needs your two-step code, if you turned it on.",
+  "kn": "Recording keys needs your two-step code, if you turned it on.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -25453,10 +25453,10 @@
   }
  },
  "it.mfa_changing": {
-  "en": "Changing item types needs your authenticator app.",
-  "te": "ఐటమ్ రకాలు మార్చడానికి మీ ఆథెంటికేటర్ యాప్ కావాలి.",
-  "hi": "आइटम प्रकार बदलने के लिए आपका ऑथेंटिकेटर ऐप चाहिए।",
-  "kn": "ಐಟಂ ಪ್ರಕಾರಗಳನ್ನು ಬದಲಿಸಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "en": "Changing item types needs your two-step code, if you turned it on.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, ఐటమ్ రకాలు మార్చడానికి మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "अगर आपने चालू किया है, तो आइटम के प्रकार बदलने के लिए आपका दो-चरण कोड चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ಐಟಂ ವಿಧಗಳನ್ನು ಬದಲಿಸಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -25663,10 +25663,10 @@
   "humanOnly": true
  },
  "qp.mfa_publishing": {
-  "en": "Publishing a quote policy needs your authenticator app.",
-  "te": "Publishing a quote policy needs your authenticator app.",
-  "hi": "Publishing a quote policy needs your authenticator app.",
-  "kn": "Publishing a quote policy needs your authenticator app.",
+  "en": "Publishing a quote policy needs your two-step code, if you turned it on.",
+  "te": "Publishing a quote policy needs your two-step code, if you turned it on.",
+  "hi": "Publishing a quote policy needs your two-step code, if you turned it on.",
+  "kn": "Publishing a quote policy needs your two-step code, if you turned it on.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27684,10 +27684,10 @@
   }
  },
  "acct.set_up_your_authenticator_app": {
-  "en": "Set up your authenticator app.",
-  "te": "మీ ఆథెంటికేటర్ యాప్ సెట్ చేయండి.",
-  "hi": "अपना ऑथेंटिकेटर ऐप सेट करें।",
-  "kn": "ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಸೆಟ್ ಮಾಡಿ.",
+  "en": "Two-step sign-in is optional.",
+  "te": "రెండు-దశల సైన్ ఇన్ ఐచ్ఛికం.",
+  "hi": "दो-चरण साइन इन वैकल्पिक है।",
+  "kn": "ಎರಡು-ಹಂತದ ಸೈನ್ ಇನ್ ಐಚ್ಛಿಕ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -27695,10 +27695,10 @@
   }
  },
  "acct.set_it_up": {
-  "en": "Set it up",
-  "te": "సెట్ చేయండి",
-  "hi": "सेट करें",
-  "kn": "ಸೆಟ್ ಮಾಡಿ",
+  "en": "Turn it on",
+  "te": "ఆన్ చేయండి",
+  "hi": "चालू करें",
+  "kn": "ಆನ್ ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28028,10 +28028,10 @@
   "humanOnly": true
  },
  "acct.owner_notice": {
-  "en": "As an owner or admin you need it to erase data, export, change members or roles, and change workspace settings.",
-  "te": "As an owner or admin you need it to erase data, export, change members or roles, and change workspace settings.",
-  "hi": "As an owner or admin you need it to erase data, export, change members or roles, and change workspace settings.",
-  "kn": "As an owner or admin you need it to erase data, export, change members or roles, and change workspace settings.",
+  "en": "We recommend it for owners and admins: it protects your account if your password is stolen.",
+  "te": "We recommend it for owners and admins: it protects your account if your password is stolen.",
+  "hi": "We recommend it for owners and admins: it protects your account if your password is stolen.",
+  "kn": "We recommend it for owners and admins: it protects your account if your password is stolen.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28634,10 +28634,10 @@
   }
  },
  "help.guide.agent.1": {
-  "en": "Open Settings, then the Automation tab. Only the owner can change these, with the authenticator app.",
-  "te": "సెట్టింగ్స్ తెరిచి, ఆటోమేషన్ ట్యాబ్‌కి వెళ్ళండి. వీటిని ఓనర్ మాత్రమే, ఆథెంటికేటర్ యాప్‌తో మార్చగలరు.",
-  "hi": "सेटिंग खोलें, फिर ऑटोमेशन टैब। इन्हें सिर्फ़ ओनर, ऑथेंटिकेटर ऐप के साथ बदल सकते हैं।",
-  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆದು, ಆಟೋಮೇಶನ್ ಟ್ಯಾಬ್‌ಗೆ ಹೋಗಿ. ಇವನ್ನು ಓನರ್ ಮಾತ್ರ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನೊಂದಿಗೆ ಬದಲಿಸಬಹುದು.",
+  "en": "Open Settings, then the Automation tab. Only the owner can change these.",
+  "te": "సెట్టింగ్స్ తెరిచి, ఆటోమేషన్ ట్యాబ్‌కి వెళ్ళండి. వీటిని ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "सेटिंग्स खोलें, फिर ऑटोमेशन टैब पर जाएं। इन्हें सिर्फ़ ओनर बदल सकते हैं।",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆದು, ಆಟೋಮೇಷನ್ ಟ್ಯಾಬ್‌ಗೆ ಹೋಗಿ. ಇವನ್ನು ಓನರ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -29080,10 +29080,10 @@
   }
  },
  "help.tip.settings.2": {
-  "en": "Changing them needs the owner and the authenticator app.",
-  "te": "వాటిని మార్చడానికి ఓనర్, ఆథెంటికేటర్ యాప్ కావాలి.",
-  "hi": "इन्हें बदलने के लिए ओनर और ऑथेंटिकेटर ऐप चाहिए।",
-  "kn": "ಇವನ್ನು ಬದಲಿಸಲು ಓನರ್ ಮತ್ತು ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "en": "Changing them needs the owner.",
+  "te": "వాటిని మార్చడానికి ఓనర్ కావాలి.",
+  "hi": "इन्हें बदलने के लिए ओनर चाहिए।",
+  "kn": "ಅವನ್ನು ಬದಲಿಸಲು ಓನರ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -30339,10 +30339,10 @@
   }
  },
  "apierr.mfa": {
-  "en": "This needs your second step. Open Security, enter your authenticator code, then try again.",
-  "te": "This needs your second step. Open Security, enter your authenticator code, then try again.",
-  "hi": "This needs your second step. Open Security, enter your authenticator code, then try again.",
-  "kn": "This needs your second step. Open Security, enter your authenticator code, then try again.",
+  "en": "This needs your two-step code first. Sign in again and type the code, then try again.",
+  "te": "This needs your two-step code first. Sign in again and type the code, then try again.",
+  "hi": "This needs your two-step code first. Sign in again and type the code, then try again.",
+  "kn": "This needs your two-step code first. Sign in again and type the code, then try again.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -30912,10 +30912,10 @@
   }
  },
  "dta.import.mfa": {
-  "en": "Importing needs your second step (your authenticator code). If you are asked, open Security first.",
-  "te": "Importing needs your second step (your authenticator code). If you are asked, open Security first.",
-  "hi": "Importing needs your second step (your authenticator code). If you are asked, open Security first.",
-  "kn": "Importing needs your second step (your authenticator code). If you are asked, open Security first.",
+  "en": "Importing needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "te": "Importing needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "hi": "Importing needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "kn": "Importing needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32112,10 +32112,10 @@
   }
  },
  "dta.export.mfa": {
-  "en": "Exports need your second step (your authenticator code). If you are asked, open Security first.",
-  "te": "Exports need your second step (your authenticator code). If you are asked, open Security first.",
-  "hi": "Exports need your second step (your authenticator code). If you are asked, open Security first.",
-  "kn": "Exports need your second step (your authenticator code). If you are asked, open Security first.",
+  "en": "Exports need your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "te": "Exports need your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "hi": "Exports need your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "kn": "Exports need your two-step code, if you turned it on. If you are asked, sign in again with it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32512,10 +32512,10 @@
   }
  },
  "prx.exp.workspace_note": {
-  "en": "The workspace's data is everything this business keeps here. Only the owner can ask for it, and it needs your second step (your authenticator code).",
-  "te": "The workspace's data is everything this business keeps here. Only the owner can ask for it, and it needs your second step (your authenticator code).",
-  "hi": "The workspace's data is everything this business keeps here. Only the owner can ask for it, and it needs your second step (your authenticator code).",
-  "kn": "The workspace's data is everything this business keeps here. Only the owner can ask for it, and it needs your second step (your authenticator code).",
+  "en": "The workspace's data is everything this business keeps here. Only the owner can ask for it.",
+  "te": "The workspace's data is everything this business keeps here. Only the owner can ask for it.",
+  "hi": "The workspace's data is everything this business keeps here. Only the owner can ask for it.",
+  "kn": "The workspace's data is everything this business keeps here. Only the owner can ask for it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -32857,10 +32857,10 @@
   }
  },
  "prx.del.mfa": {
-  "en": "This needs your second step (your authenticator code). If you are asked, open Security first.",
-  "te": "This needs your second step (your authenticator code). If you are asked, open Security first.",
-  "hi": "This needs your second step (your authenticator code). If you are asked, open Security first.",
-  "kn": "This needs your second step (your authenticator code). If you are asked, open Security first.",
+  "en": "This needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "te": "This needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "hi": "This needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "kn": "This needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -34255,10 +34255,10 @@
   }
  },
  "team.invite.mfa": {
-  "en": "Inviting needs your second step (your authenticator code). If you are asked, open Security first.",
-  "te": "Inviting needs your second step (your authenticator code). If you are asked, open Security first.",
-  "hi": "Inviting needs your second step (your authenticator code). If you are asked, open Security first.",
-  "kn": "Inviting needs your second step (your authenticator code). If you are asked, open Security first.",
+  "en": "Inviting needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "te": "Inviting needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "hi": "Inviting needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "kn": "Inviting needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -35099,10 +35099,10 @@
   }
  },
  "wa.form.mfa": {
-  "en": "Saving and switching on need your second step (your authenticator code). If you are asked, open Security first.",
-  "te": "Saving and switching on need your second step (your authenticator code). If you are asked, open Security first.",
-  "hi": "Saving and switching on need your second step (your authenticator code). If you are asked, open Security first.",
-  "kn": "Saving and switching on need your second step (your authenticator code). If you are asked, open Security first.",
+  "en": "Saving and switching on need your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "te": "Saving and switching on need your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "hi": "Saving and switching on need your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "kn": "Saving and switching on need your two-step code, if you turned it on. If you are asked, sign in again with it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36187,10 +36187,10 @@
   "humanOnly": true
  },
  "gst.mfa": {
-  "en": "Saving needs your second step (your authenticator code). If you are asked, open Security first.",
-  "te": "Saving needs your second step (your authenticator code). If you are asked, open Security first.",
-  "hi": "Saving needs your second step (your authenticator code). If you are asked, open Security first.",
-  "kn": "Saving needs your second step (your authenticator code). If you are asked, open Security first.",
+  "en": "Saving needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "te": "Saving needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "hi": "Saving needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
+  "kn": "Saving needs your two-step code, if you turned it on. If you are asked, sign in again with it.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -38394,10 +38394,10 @@
   }
  },
  "mat.field.price.help": {
-  "en": "Your own price, before GST. Only the owner sets it, with the authenticator code.",
-  "te": "మీ సొంత రేటు, GST ముందు. ఓనర్ మాత్రమే సెట్ చేస్తారు, ఆథెంటికేటర్ కోడ్‌తో.",
-  "hi": "आपका अपना दाम, GST से पहले। सिर्फ़ ओनर तय करते हैं, ऑथेंटिकेटर कोड के साथ।",
-  "kn": "ನಿಮ್ಮದೇ ಬೆಲೆ, GST ಮೊದಲು. ಓನರ್ ಮಾತ್ರ ಹೊಂದಿಸುತ್ತಾರೆ, ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್‌ನೊಂದಿಗೆ.",
+  "en": "Your own price, before GST. Only the owner sets it.",
+  "te": "మీ సొంత రేటు, GST ముందు. ఓనర్ మాత్రమే సెట్ చేస్తారు.",
+  "hi": "आपकी अपनी कीमत, GST से पहले। इसे सिर्फ़ ओनर सेट करते हैं।",
+  "kn": "ನಿಮ್ಮದೇ ಬೆಲೆ, GST ಗಿಂತ ಮೊದಲು. ಓನರ್ ಮಾತ್ರ ಸೆಟ್ ಮಾಡುತ್ತಾರೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -40517,10 +40517,10 @@
   }
  },
  "mat.a.2fa": {
-  "en": "Approving needs your authenticator code.",
-  "te": "ఆమోదించడానికి మీ ఆథెంటికేటర్ కోడ్ కావాలి.",
-  "hi": "मंज़ूर करने के लिए आपका ऑथेंटिकेटर कोड चाहिए।",
-  "kn": "ಒಪ್ಪಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್ ಬೇಕು.",
+  "en": "Approving needs your two-step code, if you turned it on.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, ఓకే చేయడానికి మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "अगर आपने चालू किया है, तो मंज़ूरी के लिए आपका दो-चरण कोड चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ಒಪ್ಪಿಗೆ ನೀಡಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -40924,10 +40924,10 @@
   }
  },
  "mat.pol.2fa": {
-  "en": "Changing the rules needs your authenticator code.",
-  "te": "నియమాలు మార్చడానికి మీ ఆథెంటికేటర్ కోడ్ కావాలి.",
-  "hi": "नियम बदलने के लिए आपका ऑथेंटिकेटर कोड चाहिए।",
-  "kn": "ನಿಯಮ ಬದಲಿಸಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್ ಬೇಕು.",
+  "en": "Changing the rules needs your two-step code, if you turned it on.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, నియమాలు మార్చడానికి మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "अगर आपने चालू किया है, तो नियम बदलने के लिए आपका दो-चरण कोड चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ನಿಯಮಗಳನ್ನು ಬದಲಿಸಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -43825,10 +43825,10 @@
   }
  },
  "due.limit.2fa": {
-  "en": "Setting a credit limit needs your authenticator code.",
-  "te": "క్రెడిట్ పరిమితి పెట్టడానికి మీ ఆథెంటికేటర్ కోడ్ కావాలి.",
-  "hi": "क्रेडिट सीमा तय करने के लिए आपका ऑथेंटिकेटर कोड चाहिए।",
-  "kn": "ಕ್ರೆಡಿಟ್ ಮಿತಿ ಹೊಂದಿಸಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್ ಬೇಕು.",
+  "en": "Setting a credit limit needs your two-step code, if you turned it on.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, క్రెడిట్ పరిమితి పెట్టడానికి మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "अगर आपने चालू किया है, तो क्रेडिट सीमा तय करने के लिए आपका दो-चरण कोड चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ಕ್ರೆಡಿಟ್ ಮಿತಿ ಹಾಕಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -43836,10 +43836,10 @@
   }
  },
  "due.2fa": {
-  "en": "Adjustments and concessions need your authenticator code.",
-  "te": "సర్దుబాట్లు, రాయితీలకు మీ ఆథెంటికేటర్ కోడ్ కావాలి.",
-  "hi": "एडजस्टमेंट और रियायत के लिए आपका ऑथेंटिकेटर कोड चाहिए।",
-  "kn": "ಹೊಂದಾಣಿಕೆ, ರಿಯಾಯಿತಿಗೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್ ಬೇಕು.",
+  "en": "Adjustments and concessions need your two-step code, if you turned it on.",
+  "te": "మీరు ఆన్ చేసి ఉంటే, సర్దుబాట్లు, రాయితీలకు మీ రెండు-దశల కోడ్ కావాలి.",
+  "hi": "अगर आपने चालू किया है, तो समायोजन और रियायतों के लिए आपका दो-चरण कोड चाहिए।",
+  "kn": "ನೀವು ಆನ್ ಮಾಡಿದ್ದರೆ, ಹೊಂದಾಣಿಕೆ ಮತ್ತು ರಿಯಾಯಿತಿಗಳಿಗೆ ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -44345,10 +44345,10 @@
   "humanOnly": true
  },
  "due.s.adjustment.note": {
-  "en": "This changes what the customer owes without any money coming in. Only the Owner or an Admin can do it, with the authenticator code. It cannot be edited later, only voided.",
-  "te": "This changes what the customer owes without any money coming in. Only the Owner or an Admin can do it, with the authenticator code. It cannot be edited later, only voided.",
-  "hi": "This changes what the customer owes without any money coming in. Only the Owner or an Admin can do it, with the authenticator code. It cannot be edited later, only voided.",
-  "kn": "This changes what the customer owes without any money coming in. Only the Owner or an Admin can do it, with the authenticator code. It cannot be edited later, only voided.",
+  "en": "This changes what the customer owes without any money coming in. Only the Owner or an Admin can do it. It cannot be edited later, only voided.",
+  "te": "This changes what the customer owes without any money coming in. Only the Owner or an Admin can do it. It cannot be edited later, only voided.",
+  "hi": "This changes what the customer owes without any money coming in. Only the Owner or an Admin can do it. It cannot be edited later, only voided.",
+  "kn": "This changes what the customer owes without any money coming in. Only the Owner or an Admin can do it. It cannot be edited later, only voided.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -44357,10 +44357,10 @@
   "humanOnly": true
  },
  "due.s.concession.note": {
-  "en": "This takes an amount off what is owed without any money coming in. Only the Owner or an Admin can do it, with the authenticator code. It cannot be edited later, only voided.",
-  "te": "This takes an amount off what is owed without any money coming in. Only the Owner or an Admin can do it, with the authenticator code. It cannot be edited later, only voided.",
-  "hi": "This takes an amount off what is owed without any money coming in. Only the Owner or an Admin can do it, with the authenticator code. It cannot be edited later, only voided.",
-  "kn": "This takes an amount off what is owed without any money coming in. Only the Owner or an Admin can do it, with the authenticator code. It cannot be edited later, only voided.",
+  "en": "This takes an amount off what is owed without any money coming in. Only the Owner or an Admin can do it. It cannot be edited later, only voided.",
+  "te": "This takes an amount off what is owed without any money coming in. Only the Owner or an Admin can do it. It cannot be edited later, only voided.",
+  "hi": "This takes an amount off what is owed without any money coming in. Only the Owner or an Admin can do it. It cannot be edited later, only voided.",
+  "kn": "This takes an amount off what is owed without any money coming in. Only the Owner or an Admin can do it. It cannot be edited later, only voided.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -45912,10 +45912,10 @@
   }
  },
  "camp.ap.ownerOnly": {
-  "en": "Only the Owner can approve, with the authenticator code. You can read the messages and fix what is missing.",
-  "te": "యజమాని మాత్రమే ఆథెంటికేటర్ కోడ్‌తో ఆమోదించగలరు. మీరు సందేశాలు చదివి, లేనివి సరిచేయవచ్చు.",
-  "hi": "केवल मालिक ऑथेंटिकेटर कोड से मंज़ूरी दे सकते हैं। आप संदेश पढ़ सकते हैं और जो कमी है उसे ठीक कर सकते हैं।",
-  "kn": "ಮಾಲೀಕರು ಮಾತ್ರ ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್‌ನೊಂದಿಗೆ ಒಪ್ಪಿಗೆ ನೀಡಬಹುದು. ನೀವು ಸಂದೇಶಗಳನ್ನು ಓದಿ, ಕೊರತೆಯನ್ನು ಸರಿಪಡಿಸಬಹುದು.",
+  "en": "Only the Owner can approve. You can read the messages and fix what is missing.",
+  "te": "యజమాని మాత్రమే ఓకే చేయగలరు. మీరు సందేశాలు చదివి, లేనివి సరిచేయవచ్చు.",
+  "hi": "सिर्फ़ ओनर मंज़ूरी दे सकते हैं। आप संदेश पढ़ सकते हैं और जो कमी है उसे ठीक कर सकते हैं।",
+  "kn": "ಓನರ್ ಮಾತ್ರ ಒಪ್ಪಿಗೆ ನೀಡಬಹುದು. ನೀವು ಸಂದೇಶಗಳನ್ನು ಓದಿ, ಇಲ್ಲದ್ದನ್ನು ಸರಿಪಡಿಸಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -48089,10 +48089,10 @@
   }
  },
  "edu.profile.retention.help": {
-  "en": "Leave empty to keep records until you erase them. Only you, with the authenticator code, can change this.",
-  "te": "మీరు తొలగించే వరకు రికార్డులు ఉంచాలంటే ఖాళీగా వదలండి. దీన్ని ఆథెంటికేటర్ కోడ్‌తో మీరు మాత్రమే మార్చగలరు.",
-  "hi": "खाली छोड़ें तो रिकॉर्ड तब तक रहेंगे जब तक आप न मिटाएँ। इसे केवल आप, ऑथेंटिकेटर कोड से, बदल सकते हैं।",
-  "kn": "ಅಳಿಸುವವರೆಗೆ ದಾಖಲೆಗಳನ್ನು ಇಡಲು ಖಾಲಿ ಬಿಡಿ. ಇದನ್ನು ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್‌ನೊಂದಿಗೆ ನೀವು ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "en": "Leave empty to keep records until you erase them. Only you can change this.",
+  "te": "మీరు తొలగించే వరకు రికార్డులు ఉంచాలంటే ఖాళీగా వదలండి. దీన్ని మీరు మాత్రమే మార్చగలరు.",
+  "hi": "जब तक आप मिटाएं नहीं, रिकॉर्ड रखने के लिए खाली छोड़ें। इसे सिर्फ़ आप बदल सकते हैं।",
+  "kn": "ನೀವು ಅಳಿಸುವವರೆಗೆ ದಾಖಲೆಗಳನ್ನು ಇಡಲು ಖಾಲಿ ಬಿಡಿ. ಇದನ್ನು ನೀವು ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -48100,10 +48100,10 @@
   }
  },
  "edu.profile.retention.owner": {
-  "en": "Only the Owner, with the authenticator code, can change this.",
-  "te": "దీన్ని ఆథెంటికేటర్ కోడ్‌తో యజమాని మాత్రమే మార్చగలరు.",
-  "hi": "इसे केवल मालिक, ऑथेंटिकेटर कोड से, बदल सकते हैं।",
-  "kn": "ಇದನ್ನು ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್‌ನೊಂದಿಗೆ ಮಾಲೀಕರು ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "en": "Only the Owner can change this.",
+  "te": "దీన్ని యజమాని మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ ओनर बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -50719,10 +50719,10 @@
   }
  },
  "edu.late.owner": {
-  "en": "Only the Owner and Admins can post late fees, with the authenticator code.",
-  "te": "ఆలస్య రుసుములను యజమాని, అడ్మిన్‌లు మాత్రమే ఆథెంటికేటర్ కోడ్‌తో పోస్ట్ చేయగలరు.",
-  "hi": "विलंब शुल्क केवल मालिक और एडमिन ऑथेंटिकेटर कोड से पोस्ट कर सकते हैं।",
-  "kn": "ತಡ ಶುಲ್ಕಗಳನ್ನು ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್‌ನೊಂದಿಗೆ ಪೋಸ್ಟ್ ಮಾಡಬಹುದು.",
+  "en": "Only the Owner and Admins can post late fees.",
+  "te": "ఆలస్య రుసుములను యజమాని, అడ్మిన్‌లు మాత్రమే పోస్ట్ చేయగలరు.",
+  "hi": "देरी के शुल्क सिर्फ़ ओनर और एडमिन दर्ज कर सकते हैं।",
+  "kn": "ತಡ ಶುಲ್ಕಗಳನ್ನು ಓನರ್ ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ದಾಖಲಿಸಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -68772,10 +68772,10 @@
   }
  },
  "tu.err.mfa": {
-  "en": "Confirm with your second step first, then try again.",
-  "te": "ముందు మీ రెండో స్టెప్‌తో నిర్ధారించండి, తర్వాత మళ్లీ ప్రయత్నించండి.",
-  "hi": "पहले अपने दूसरे स्टेप से पक्का करें, फिर कोशिश करें।",
-  "kn": "ಮೊದಲು ನಿಮ್ಮ ಎರಡನೇ ಹಂತದಲ್ಲಿ ಖಚಿತಪಡಿಸಿ, ಆಮೇಲೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "Confirm with your two-step code first, then try again.",
+  "te": "ముందు మీ రెండు-దశల కోడ్‌తో నిర్ధారించండి, తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "पहले अपने दो-चरण कोड से पुष्टि करें, फिर दोबारा कोशिश करें।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್‌ನಿಂದ ಖಚಿತಪಡಿಸಿ, ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",

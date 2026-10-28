@@ -52,7 +52,7 @@ describe("PRIVACY: another person who was erased by right is never mentioned, an
 describe("the other answers", () => {
   it("the second factor is the same sentence the order screens show", () => {
     expect(followupSentence(403, "mfa_required", undefined)).toBe(MFA_TEXT);
-    expect(MFA_TEXT).toBe("This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more.");
+    expect(MFA_TEXT).toBe("This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more.");
   });
 
   it("generic codes and statuses have fixed sentences and never repeat the server's text", () => {

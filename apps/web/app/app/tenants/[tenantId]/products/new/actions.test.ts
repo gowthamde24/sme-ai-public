@@ -28,7 +28,7 @@ const run = (over: Record<string, string> = {}) => addProductAction(T, undefined
 
 beforeEach(() => {
   vi.clearAllMocks();
-  requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1" });
+  requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1", hasSecondFactor: true });
   api.createProduct.mockResolvedValue(P);
 });
 
