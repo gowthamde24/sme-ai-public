@@ -28,6 +28,9 @@ from app.conversation.parts import (
     TurnTimings,
 )
 from app.conversation.pipeline import Conversation
+from app.conversation.router import Tier
+from app.turns.intent import Kind as TurnKind
+from app.turns.intent import classify, is_yes_no, normalise
 
 log = logging.getLogger("app.browser_voice")
 
@@ -36,6 +39,12 @@ START_WITHIN_S = 10.0
 IDLE_S = 60.0  # no final transcript for this long: the session ends (the browser keeps the mic open for nothing)
 MAX_STT_FAILURES = 3
 FLUSH_EVERY_S = 15.0
+TRANSCRIPT_EVERY_S = 0.25   # an interim transcript at most this often (the newest of the recogniser's partials)
+_NO_WORDS = frozenset({"no", "nope", "n", "cancel", "don't", "dont", "stop", "kaadu", "nahi", "nahin", "illa", "కాదు", "వద్దు", "नहीं", "नही", "मत", "ಇಲ್ಲ", "ಬೇಡ"})
+SAID = {
+    "yes": {"en": "Okay, I will go ahead.", "te": "సరే, కొనసాగిస్తాను.", "hi": "ठीक है, मैं आगे बढ़ता हूँ।", "kn": "ಸರಿ, ಮುಂದುವರಿಯುತ್ತೇನೆ."},
+    "no": {"en": "Okay, I will not do it.", "te": "సరే, చేయను.", "hi": "ठीक है, मैं नहीं करूँगा।", "kn": "ಸರಿ, ಮಾಡುವುದಿಲ್ಲ."},
+}
 Kind = Literal["text", "bytes", "close"]
 
 
@@ -57,6 +66,8 @@ class Parts:
     models: dict[str, str]
     voice_for: Callable[[str], str] = lambda language: ""  # the catalogue voice id that speaks in a language (the filler bank is keyed by it)
     fillers: FillerBank | None = None
+    # job EA: the owner's yes or no to a plan the assistant proposed -> {action_id, status, task}; raises ApiError (mfa_required, action_expired, ...). None: the socket cannot confirm.
+    confirm: Callable[[uuid.UUID, str], dict[str, Any]] | None = None
 
 
 class CountingTts:
@@ -123,7 +134,16 @@ class VoiceSession:
             filler_after_ms=BROWSER_FILLER_AFTER_MS,  # Ask can take seconds: after 700 ms of nothing a short pre-rendered line is said
             tools_available=True,
             on_stt=self._on_stt,
+            router=self._route,
         )
+        self._previous: TurnKind | None = None
+        self.pending_action: uuid.UUID | None = None
+        self._utterance_at: float | None = None
+        self._tr_seq = 0
+        self._tr_sent_at = 0.0
+        self._tr_text = ""
+        self._tr_pending: str | None = None
+        self._tr_flush: asyncio.Future[None] | None = None
         self._greeting: asyncio.Task[None] | None = None
         self._ended = "client"
         self._started = clock()
@@ -150,13 +170,87 @@ class VoiceSession:
             message = {"type": "caption", "who": data.get("who", "assistant"), "text": data.get("text", ""), "final": True, "spoken": bool(data.get("spoken", True))}
         else:
             message = {"type": kind, **data}
+            if kind == "confirm_action" and str(data.get("status", "proposed")) == "proposed":
+                with suppress(ValueError):
+                    self.pending_action = uuid.UUID(str(data.get("action_id")))
         asyncio.ensure_future(self._send(message))
 
     def _on_stt(self, ev: SttEvent) -> None:
         if ev.kind in ("partial", "final") and ev.text:
             asyncio.ensure_future(self._send({"type": "caption", "who": "user", "text": ev.text, "final": ev.kind == "final", "spoken": True}))
+            self._transcript(ev.kind == "final", ev.text)
         if ev.kind == "speech_end":
             self.bus.speech_ended_at = self.clock()
+
+    # ---- what the person is saying, live (job EA): an interim transcript at most every 250 ms, then one final ------------------------------------
+
+    def _transcript(self, final: bool, text: str) -> None:
+        now = self.clock()
+        if self._utterance_at is None:
+            self._utterance_at = now
+        if final:
+            self._cancel_flush()
+            self._send_transcript(text, True, now)
+            self._utterance_at, self._tr_text, self._tr_pending, self._tr_sent_at = None, "", None, 0.0   # the next utterance starts its own window
+            return
+        if text == self._tr_text:
+            return   # never the same text twice
+        wait = self._tr_sent_at + TRANSCRIPT_EVERY_S - now
+        if wait <= 0:
+            self._cancel_flush()
+            self._send_transcript(text, False, now)
+            return
+        self._tr_pending = text   # the newest partial wins; it goes out when the window is over
+        if self._tr_flush is None or self._tr_flush.done():
+            self._tr_flush = asyncio.ensure_future(self._flush_transcript(wait))
+
+    def _cancel_flush(self) -> None:
+        if self._tr_flush is not None and not self._tr_flush.done():
+            self._tr_flush.cancel()
+        self._tr_flush = None
+
+    async def _flush_transcript(self, wait: float) -> None:
+        await asyncio.sleep(wait)
+        text, self._tr_pending = self._tr_pending, None
+        if text and text != self._tr_text:
+            self._send_transcript(text, False, self.clock())
+
+    def _send_transcript(self, text: str, final: bool, now: float) -> None:
+        self._tr_seq += 1
+        self._tr_text, self._tr_sent_at = text, now
+        started = self._utterance_at if self._utterance_at is not None else now
+        asyncio.ensure_future(self._send({"type": "transcript", "text": text, "final": final, "seq": self._tr_seq, "t_ms": round((now - started) * 1000)}))
+
+    # ---- the router: the SAME one as the written chat (job EA) -------------------------------------------------------------------------------------
+
+    def _route(self, text: str, tools_available: bool, turn_number: int) -> Tier:
+        """Small talk and general help are answered by the fast model, spoken; a question about the records and an instruction go to the tool path / the planner (which decides again, the same way)."""
+        intent = classify(text, self._previous)
+        self._previous = intent.kind
+        asyncio.ensure_future(self._send({"type": "intent", "kind": intent.kind}))
+        return "fast" if intent.kind in ("smalltalk", "general") else "strong"
+
+    # ---- the owner's yes or no to a plan ------------------------------------------------------------------------------------------------------------
+
+    async def _confirm(self, action_id: uuid.UUID, decision: str) -> None:
+        confirm = self.parts.confirm
+        if confirm is None or decision not in ("yes", "no"):
+            await self._send({"type": "error", "code": "not_available", "message": "I cannot do that here. Use the buttons in the app.", "fatal": False})
+            return
+        try:
+            out = await asyncio.to_thread(confirm, action_id, decision)
+        except Exception as err:   # ApiError: the code and the plain words are the API's own (mfa_required, action_expired, action_state, not found)
+            code = str(getattr(err, "code", "turn_failed"))
+            await self._send({"type": "error", "code": code, "message": str(getattr(err, "message", "")) or "I could not do that.", "fatal": False})
+            if code in ("action_expired", "action_state", "not_found"):
+                self.pending_action = None
+            return
+        self.pending_action = None
+        await self._send({"type": "action", "action_id": str(action_id), "status": out.get("status"), "task": out.get("task")})
+
+    def _polarity(self, text: str) -> str:
+        words = set(normalise(text).replace(".", " ").replace("!", " ").split())
+        return "no" if words & _NO_WORDS else "yes"
 
     # ---- the session -----------------------------------------------------------------------------------------------------------------------------
 
@@ -214,6 +308,11 @@ class VoiceSession:
                 self.conv.session.system = self.parts.system_for(self.language)
                 self.conv.stt = self.parts.stt_for(self.language)
                 await self._send({"type": "language", "language": self.language})
+            elif what == "confirm":
+                try:
+                    await self._confirm(uuid.UUID(str(payload.get("action_id"))), str(payload.get("decision")))
+                except ValueError:
+                    await self._send({"type": "error", "code": "validation_error", "message": "That plan id is not valid.", "fatal": False})
             elif what == "stop":
                 self._ended = "client"
                 return
@@ -296,6 +395,11 @@ class VoiceSession:
                     return
                 continue
             failures = 0
+            if self.pending_action is not None and is_yes_no(text):
+                decision = self._polarity(text)
+                await self._confirm(self.pending_action, decision)
+                await self._say(SAID[decision].get(self.language, SAID[decision]["en"]))
+                continue
             await self._set_state("thinking")
             self.usage.turns += 1
             tm.end_of_speech_at = self.bus.speech_ended_at
@@ -325,6 +429,15 @@ class VoiceSession:
                 "interrupted": tm.interrupted,
             }
         )
+
+    async def _say(self, text: str) -> None:
+        """A short fixed line, spoken and captioned (the answer to a spoken yes or no)."""
+        await self._set_state("speaking")
+        await self._send({"type": "caption", "who": "assistant", "text": text, "final": True, "spoken": True})
+        with suppress(asyncio.CancelledError, Exception):
+            async for pcm in self.tts.stream(text, self.language):
+                await self.playout.write(pcm)
+        await self._send({"type": "audio_end", "turn": self.usage.turns})
 
     async def _greet(self) -> bool:
         text = self.parts.greeting_for(self.language) if self.limits.greeting else None

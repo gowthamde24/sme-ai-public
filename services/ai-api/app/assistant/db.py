@@ -12,7 +12,7 @@ from app.agents.db import AgentDb
 from app.agents.errors import AgentDbError, DataLayerUnavailable
 
 CONVERSATION_COLUMNS = "id,created_at,updated_at"
-MESSAGE_COLUMNS = "id,role,body,language,sources,drafts,created_at,seq"
+MESSAGE_COLUMNS = "id,role,body,language,sources,drafts,created_at,seq,kind,task_id"
 
 
 class MessageConflict(AgentDbError):
@@ -79,6 +79,20 @@ class AssistantDb(AgentDb):
                 "p_drafts": drafts,
             },
         )
+
+    def mark_reply(self, *, message_id: uuid.UUID, kind: str, task_id: uuid.UUID | None) -> dict[str, Any]:
+        """Job EA: the type of the reply this run saved (confirm_action, clarify) and the task it is about."""
+        return self._rpc(
+            "assistant_mark_reply",
+            {"p_run_id": str(self._run), "p_message_id": str(message_id), "p_kind": kind, "p_task_id": str(task_id) if task_id else None},
+        )
+
+    def list_conversations(self, *, tenant_id: uuid.UUID, limit: int, before: str | None) -> dict[str, Any]:
+        """Job EA: the caller's own conversations, newest first (the database proves who is asking)."""
+        return self._rpc("assistant_conversations_list", {"p_tenant_id": str(tenant_id), "p_limit": limit, "p_before": before})
+
+    def archive_conversation(self, *, tenant_id: uuid.UUID, conversation_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc("assistant_conversation_archive", {"p_tenant_id": str(tenant_id), "p_conversation_id": str(conversation_id)})
 
     def save_reply_draft(
         self,

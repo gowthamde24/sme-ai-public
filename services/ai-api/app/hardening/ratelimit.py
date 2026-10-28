@@ -74,7 +74,7 @@ class AccountRule:
 
 ACCOUNT_RULES: tuple[AccountRule, ...] = (
     AccountRule("voice_preview", re.compile(r"/ai-assistant/(voice-(preview|sample)|voices/preview)"), 12),
-    AccountRule("ask", re.compile(r"/assistant/messages$"), 20),
+    AccountRule("ask", re.compile(r"/assistant/(messages|turns)$"), 20),
     AccountRule("task_plan", re.compile(r"/tasks/plan$"), 10),
     AccountRule("imports", re.compile(r"/lead-imports(/read|/preview)?$"), 20),
     AccountRule("uploads", re.compile(r"/(workspace/logo|me/picture)$"), 10),

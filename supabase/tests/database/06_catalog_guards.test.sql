@@ -138,6 +138,10 @@ select is(
         'public.assistant_begin_message',
         'public.assistant_save_reply',
         'public.assistant_save_reply_draft',
+        -- job EA: the conversational assistant: the type of a stored reply, the caller's own conversation list, and archive. Each proves the role (or the run) first
+        'public.assistant_mark_reply',
+        'public.assistant_conversations_list',
+        'public.assistant_conversation_archive',
         -- job AT: the outbox and call requests. Each proves the role first (Owner / Admin / Sales as stated in migration 20261106090000) and derives the person from auth.uid()
         'public.outbox_submit',
         'public.outbox_edit',
@@ -390,7 +394,7 @@ select is(
                      'public.create_followup_policy_version', 'public.followup_gate', 'public.followup_due_candidates', 'public.record_touch', 'public.create_followup_draft', 'public.approve_followup_draft',
                      'public.discard_followup_draft', 'public.record_draft_sent', 'public.persist_question_drafts', 'public.decide_question_draft',
                      'public.get_account_setup', 'public.complete_setup', 'public.ai_usage_today', 'public.ai_usage', 'public.ai_paused_until',
-                     'public.assistant_begin_message', 'public.assistant_save_reply', 'public.assistant_save_reply_draft',
+                     'public.assistant_begin_message', 'public.assistant_save_reply', 'public.assistant_save_reply_draft', 'public.assistant_mark_reply', 'public.assistant_conversations_list', 'public.assistant_conversation_archive',
                      'public.outbox_submit', 'public.outbox_edit', 'public.outbox_decide', 'public.outbox_claim_due', 'public.outbox_mark', 'public.outbox_set_settings', 'public.outbox_settings_get', 'public.call_request_create', 'public.call_request_decide',
                      'public.visit_settings_get', 'public.visit_settings_set', 'public.visit_slots', 'public.visit_book', 'public.visit_change', 'public.visit_step', 'public.visit_complete', 'public.visit_send_message',
                      'public.call_request_offer_visit', 'public.visit_list', 'public.ai_usage_week',

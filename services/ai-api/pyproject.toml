@@ -59,6 +59,11 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/browser_voice/*" = ["E501"]
 "app/autoreply/*" = ["E501"]
 "tests/test_bz_*.py" = ["E501"]
+# job EA: the conversational assistant (word lists in four languages are long lines)
+"app/turns/*" = ["E501"]
+"tests/test_ea_*.py" = ["E501"]
+"tests/ea_fakes.py" = ["E501"]
+"../../tests/integration/test_ea_*.py" = ["E501"]
 "../../tests/integration/test_bz_*.py" = ["E501"]
 # job CA: the GSTIN module and the business profile read like their documentation (long lines)
 "app/gstin.py" = ["E501"]

@@ -87,6 +87,7 @@ class AskLlm:
         question = messages[-1]["content"]
         events = await asyncio.to_thread(self._turns.open, question)
         written: list[str] = []
+        late: list[tuple[str, dict[str, Any]]] = []
         sentinel = object()
         while True:
             block = await asyncio.to_thread(next, events, sentinel)
@@ -100,6 +101,11 @@ class AskLlm:
                 written.append(str(data.get("delta", "")))
             elif kind in ("source", "draft", "step"):
                 self._emit(kind, data)
+            elif kind in ("confirm_action", "clarify"):
+                late.append((kind, data))   # said first, shown after: the plan card follows the spoken plan
+            elif kind == "done":
+                if str(data.get("kind", "answer")) == "answer":
+                    late.append(("reply", {"kind": "answer"}))
             elif kind == "error":
                 self._emit("error", {"code": str(data.get("code", "ask_failed")), "message": str(data.get("message", ""))})
                 return
@@ -110,6 +116,8 @@ class AskLlm:
             yield say
         if rest:
             self._emit("caption", {"who": "assistant", "text": rest, "spoken": False})
+        for kind, data in late:
+            self._emit(kind, {k: v for k, v in data.items() if k != "type"})
 
 
 class CaptionLlm:

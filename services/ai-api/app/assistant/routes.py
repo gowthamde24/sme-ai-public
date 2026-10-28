@@ -20,7 +20,7 @@ import threading
 import time
 import uuid
 from collections.abc import Callable, Iterator
-from datetime import UTC
+from datetime import UTC, datetime
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
@@ -41,12 +41,13 @@ from app.agents.errors import (
 from app.assistant import resolver
 from app.assistant.db import AssistantDb, MessageConflict
 from app.assistant.language import detect_language
-from app.assistant.models import ConversationOut, MessageIn, MessageOut
+from app.assistant.models import ActionRefOut, ConversationOut, MessageIn, MessageOut
 from app.assistant.runner import AssistantRunner, Outcome, _sha
 from app.assistant.tools import Ctx, State
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError, not_found
 from app.tenancy.models import Role
+from app.turns.status import action_status
 
 logger = logging.getLogger("app.assistant.routes")
 
@@ -318,6 +319,19 @@ def start_message(
     return stream()
 
 
+def _action_of(runtime: Runtime, ctx: TenantContext, message: dict[str, Any]) -> ActionRefOut | None:
+    """Job EA: where the action behind a reply stands now (read from its task); None for a reply with no action or a task that can no longer be read."""
+    task_id = message.get("task_id")
+    if not task_id or runtime.tasks is None:
+        return None
+    try:
+        task = runtime.tasks.get(ctx.principal.token, ctx.tenant.id, uuid.UUID(str(task_id)))
+        proposed_at = datetime.fromisoformat(str(message["created_at"]).replace("Z", "+00:00"))
+        return ActionRefOut(action_id=uuid.UUID(str(task_id)), status=action_status(task.status, proposed_at, datetime.now(UTC)))  # type: ignore[arg-type]
+    except Exception:   # the history still shows the words; only the state is missing
+        return None
+
+
 @router.get("/assistant/conversations/{conversation_id}", response_model=ConversationOut)
 def get_conversation(conversation_id: str, ctx: SalesPlus, runtime: RuntimeDep) -> ConversationOut:
     """A chat as stored. A person reads only their own chats (the database sees to it); anyone else's, an erased one and an unknown one are the same 404."""
@@ -344,6 +358,8 @@ def get_conversation(conversation_id: str, ctx: SalesPlus, runtime: RuntimeDep) 
                         sources=sources,
                         drafts=drafts,
                         created_at=m["created_at"],
+                        kind=m.get("kind") or "answer",
+                        action=_action_of(runtime, ctx, m),
                     )
                 )
         except AgentDbError as exc:

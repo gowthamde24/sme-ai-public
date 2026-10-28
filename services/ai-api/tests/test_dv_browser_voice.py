@@ -151,7 +151,7 @@ async def test_ask_answers_are_spoken_short_with_the_rest_and_the_sources_on_the
     spoken = [p async for p in llm.stream("", [{"role": "user", "content": "price of saree?"}], "ask")]
     assert spoken == ["The saree costs 2,600 rupees."]
     kinds = [k for k, _ in seen]
-    assert kinds == ["step", "source", "caption", "caption"]
+    assert kinds == ["step", "source", "caption", "caption", "reply"], "(job EA) a plain answer ends with the typed reply"
     assert seen[2][1]["spoken"] is True and seen[3][1]["spoken"] is False
 
 
