@@ -4,7 +4,7 @@
 import { PACKS, SHOTS, session, shot, sleep } from "./staging-df-lib.mjs";
 
 const packs = process.argv.slice(2).length ? process.argv.slice(2) : PACKS;
-const TITLES = ["A new lead arrives", /reaches out|వాళ్ళని సంప్రదిస్తుంది/, "The lead asks", "A follow-up is ready", "A visit is booked", "What happened while you were away"];
+const TITLES = ["A new lead arrives", /reaches out|వాళ్ళని సంప్రదిస్తుంది/, "The lead asks", "A follow-up call is lined up", "A visit is booked", "What happened while you were away"];
 let failed = 0;
 const ok = (pack, name, pass, note = "") => {
   if (!pass) failed++;
