@@ -29,7 +29,7 @@ from app.browser_voice.llm import (
     speakable,
 )
 from app.browser_voice.runtime import BrowserVoice
-from app.browser_voice.session import Parts, VoiceSession
+from app.browser_voice.session import Kind, Parts, VoiceSession
 from app.conversation.fakes import FakeLlm, FakeStt, FakeTts, silence, tone
 from app.conversation.voices import default_config
 from tests.fakes import TENANT_A, auth, make_client
@@ -186,7 +186,7 @@ async def test_the_router_models_pick_the_tier() -> None:
 
 class FakeSocket:
     def __init__(self) -> None:
-        self.inbox: asyncio.Queue[tuple[str, Any]] = asyncio.Queue()
+        self.inbox: asyncio.Queue[tuple[Kind, Any]] = asyncio.Queue()
         self.json: list[dict[str, Any]] = []
         self.audio: list[tuple[float, bytes]] = []
         self.stop_times: list[float] = []
@@ -199,7 +199,7 @@ class FakeSocket:
     async def send_bytes(self, data: bytes) -> None:
         self.audio.append((time.perf_counter(), data))
 
-    async def receive(self) -> tuple[str, Any]:
+    async def receive(self) -> tuple[Kind, Any]:
         return await self.inbox.get()
 
     def feed_speech(self, speech_ms: int = 600, quiet_ms: int = 600) -> None:
@@ -329,7 +329,12 @@ async def test_the_language_can_change_between_turns() -> None:
     sock = FakeSocket()
     seen: list[str] = []
     parts = fake_parts()
-    parts.system_for = lambda language: seen.append(language) or "system"  # type: ignore[assignment,func-returns-value]
+
+    def remember(language: str) -> str:
+        seen.append(language)
+        return "system"
+
+    parts.system_for = remember
     session = session_of(sock, parts)
     run = asyncio.ensure_future(session.run())
     sock.inbox.put_nowait(("text", {"type": "set_language", "language": "hi"}))
