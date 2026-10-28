@@ -81,6 +81,11 @@ import { getWorkspaceProfile, type WorkspaceProfile } from "@/lib/api/workspace"
 import { readTypeList } from "@/lib/packs/type-list";
 import { getProfile, PROFILE_LANGUAGES, type BusinessProfile } from "@/lib/api/profile";
 import { logoAction, saveBusinessAction } from "./business-actions";
+import { ActivationCard } from "@/components/v2/app/start/ActivationCard";
+import { readActivation, type Activation } from "@/lib/packs/activation";
+import { leadDeskSteps } from "@/lib/packs/lead-activation";
+import { readHidden } from "@/lib/packs/hidden-steps";
+import { setStepHiddenAction } from "../start-hide-actions";
 import { pictureAction, saveMyProfileAction } from "./profile-actions";
 import { MyProfile } from "@/components/v2/app/settings/MyProfile";
 import { Avatar } from "@/components/v2/app/Avatar";
@@ -146,6 +151,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const workspace: WorkspaceProfile | null = admin && onBusiness ? await getWorkspaceProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const businessProfile: BusinessProfile | null = workspace ? { name: workspace.name, town: workspace.city, languages: workspace.languages.filter((l) => (PROFILE_LANGUAGES as readonly string[]).includes(l)), setupComplete: true } : admin && onBusiness ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const typeList = workspace && tenant.role === "owner" ? await readTypeList(lang) : null;
+  // the steps still to do of "Finish setting up", all of them (the ones put away from Today are marked, with the way back)
+  const finish: Activation | null = admin && onBusiness && pack && usesChecklist(pack) ? await readActivation(user.accessToken, tenantId, pack, t, await leadDeskSteps(pack)).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const putAway = finish ? await readHidden(tenantId) : [];
   const hasFields = admin && fieldEntities.length > 0 && (usesChecklist(pack) || (fieldList !== null && fieldList.length > 0));
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
   const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
@@ -273,6 +281,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 {workspace ? <BusinessLogo action={logoAction.bind(null, tenantId)} words={wordsFor(lang, ["settings.biz.logo."])} logoUrl={workspace.logoUrl} initial={businessProfile.name.slice(0, 1).toUpperCase()} /> : null}
               </section>
             ) : null}
+            {finish && finish.done < finish.total ? <ActivationCard activation={finish} base={base} t={t} hide={setStepHiddenAction.bind(null, tenantId)} hidden={putAway} /> : null}
             <section className={surface} aria-label={t("settings.tab.business")}>
               <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {businessProfile ? null : (

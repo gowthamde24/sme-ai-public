@@ -8,7 +8,7 @@ Vijaya may send routine replies by itself Vijaya sends routine replies by itself
 <number label="Messages per customer per day" min=1 max=20 inputmode=numeric value=3 aria-invalid=false>
 Between 1 and 20. Most shops keep it at 3.
 [button type=submit: Save]
-Saving needs your authenticator app.
+Saving needs your two-step code first (sign in again with it).
 {label="Quiet hours"}
 ## Quiet hours
 India time. Nothing goes out from the start hour until the end hour; what is due waits for the morning. Start between 19:00 and 23:00, end between 07:00 and 10:00. Quiet hours start
@@ -18,7 +18,7 @@ Quiet hours end
 <select label="Quiet hours end">
   options: 07:00=7 | 08:00=8 | 09:00=9* | 10:00=10
 [button type=submit: Save quiet hours]
-Saving needs your authenticator app.
+Saving needs your two-step code first (sign in again with it).
 {label="Visit reminders"}
 ## Visit reminders
 These are the standard settings. Save your own to replace them. Vijaya reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.
@@ -38,7 +38,7 @@ Mark a visit as “did not come” by itself After the visit time has ended by
   options: 5 minutes=5 | 10 minutes=10 | 15 minutes=15 | 30 minutes=30* | 45 minutes=45 | 60 minutes=60 | 90 minutes=90 | 120 minutes=120 | 180 minutes=180 | 240 minutes=240 | 360 minutes=360 | 480 minutes=480 | 720 minutes=720
 Only for a confirmed visit. Off unless you switch it on.
 [button type=submit: Save]
-Saving needs your authenticator app.
+Saving needs your two-step code first (sign in again with it).
 {label="System-wide sending switch"}
 ## System-wide sending switch
 On Sending is allowed for the whole system. Our team owns this switch; you can only see it.
