@@ -14,13 +14,13 @@
   --v2-bg: #f9f8f6;
   --v2-surface: #ffffff;
   --v2-surface-2: #f3f1ed;
-  --v2-ink: #1e1e24;
+  --v2-ink: #17161c;
   --v2-muted: #6d6a67;
   --v2-border: #d9d5ce;          /* decorative hairline only */
   --v2-border-strong: #8c8782;   /* every control edge: >= 3:1 */
 
-  --v2-brand: #ff773c;
-  --v2-on-brand: #1e1e24;        /* dark ink: white on #ff773c is only 2.64:1 */
+  --v2-brand: #c2410c;           /* saffron (owner, 28 Oct): white text on it is 5.2:1 */
+  --v2-on-brand: #ffffff;
   --v2-brand-edge: #c2410c;
   --v2-brand-text: #c2410c;      /* orange used as text, links, meter fill */
   --v2-brand-bg: #fff0e8;
@@ -57,9 +57,9 @@
   --v2-pack-sky-bg: #e6f2fb;
   --v2-pack-sky-edge: #2f7db5;
 
-  --v2-dot: rgba(30, 30, 36, 0.07);
-  --v2-shadow: 0 1px 2px rgba(30, 30, 36, 0.06), 0 4px 16px rgba(30, 30, 36, 0.05);
-  --v2-shadow-pop: 0 8px 32px rgba(30, 30, 36, 0.16);
+  --v2-dot: rgba(23, 22, 28, 0.07);
+  --v2-shadow: 0 1px 2px rgba(23, 22, 28, 0.06), 0 4px 16px rgba(23, 22, 28, 0.05);
+  --v2-shadow-pop: 0 8px 32px rgba(23, 22, 28, 0.16);
 
   /* Font stacks. The variables come from next/font (design/fonts.ts, set by V2Root); Telugu, Devanagari and Kannada
      follow the Latin font and are used only for their own glyphs. Every var() has a fallback: an undefined variable
@@ -81,9 +81,9 @@
   --v2-border: #36343b;
   --v2-border-strong: #7b7780;
 
-  --v2-brand: #ff773c;
-  --v2-on-brand: #1e1e24;
-  --v2-brand-edge: #ff773c;
+  --v2-brand: #c2410c;
+  --v2-on-brand: #ffffff;
+  --v2-brand-edge: #c2410c;
   --v2-brand-text: #ff9a6b;
   --v2-brand-bg: #33231c;
   --v2-ring: #ff9a6b;
@@ -135,9 +135,9 @@
     --v2-border: #36343b;
     --v2-border-strong: #7b7780;
 
-    --v2-brand: #ff773c;
-    --v2-on-brand: #1e1e24;
-    --v2-brand-edge: #ff773c;
+    --v2-brand: #c2410c;
+    --v2-on-brand: #ffffff;
+    --v2-brand-edge: #c2410c;
     --v2-brand-text: #ff9a6b;
     --v2-brand-bg: #33231c;
     --v2-ring: #ff9a6b;

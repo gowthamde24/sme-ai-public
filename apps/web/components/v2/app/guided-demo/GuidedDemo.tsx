@@ -61,7 +61,7 @@ export default function GuidedDemo({ words, routes, actions }: { words?: Words; 
       const el = document.querySelector<HTMLElement>(selector);
       if (el) {
         el.setAttribute("data-demo-area", "");
-        el.style.outline = "3px solid #e8590c";
+        el.style.outline = "3px solid #c2410c";
         el.style.outlineOffset = "4px";
         el.scrollIntoView?.({ block: "center", behavior: "smooth" });
         return;
