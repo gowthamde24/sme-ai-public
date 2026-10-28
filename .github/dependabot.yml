@@ -1,23 +1,35 @@
-# Weekly dependency updates (job DT, security audit). Security fixes also arrive as Dependabot alerts (turn them on in Settings > Code security).
+# Weekly dependency updates (job DT, security audit). Minor and patch only for now: major upgrades are planned after launch (ignore rule below; remove it then). Security alerts still arrive as alerts. Security fixes also arrive as Dependabot alerts (turn them on in Settings > Code security).
 version: 2
 updates:
   - package-ecosystem: pip
     directory: /services/ai-api
     schedule: { interval: weekly, day: monday }
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       python-minor-and-patch: { update-types: [minor, patch] }
   - package-ecosystem: npm
     directory: /apps/web
     schedule: { interval: weekly, day: monday }
     open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       web-minor-and-patch: { update-types: [minor, patch] }
   - package-ecosystem: npm
     directory: /e2e
     schedule: { interval: weekly, day: monday }
     open-pull-requests-limit: 2
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: weekly, day: monday }
     open-pull-requests-limit: 3
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
