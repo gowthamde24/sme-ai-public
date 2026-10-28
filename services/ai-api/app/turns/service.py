@@ -21,6 +21,7 @@ from app.agents.errors import AgentDbError, CostCapReached
 from app.assistant import resolver
 from app.assistant.db import AssistantDb
 from app.assistant.language import SCHOOL_REFUSAL, Language, detect_language
+from app.assistant.notes import owner_notes
 from app.assistant.routes import FAILURES, _factory, _refusal, _sse
 from app.assistant.runner import AssistantRunner, Outcome, Reply, _sha
 from app.assistant.tools import Ctx, State
@@ -174,6 +175,7 @@ def start_turn(
         on_reply=(lambda text, lang: on_reply(db, text, lang)) if on_reply is not None else None,
         help_on_empty=True,
         typed_replies=True,
+        owner_notes=owner_notes(runtime, token, tenant),
     )
     events: queue.Queue[tuple[str, dict[str, Any]] | None] = queue.Queue()
     reply_id = uuid.uuid4()
@@ -235,7 +237,7 @@ def _dispatch(
         name = _assistant_name(runtime, ctx)
         return runner.run_chat(
             question=body.text, language=language, history=history, emit=emit, message_id=reply_id,
-            assistant_name=name, business_name=ctx.tenant.name, small=intent.kind == "smalltalk", owner_notes=_owner_notes(runtime, ctx),
+            assistant_name=name, business_name=ctx.tenant.name, small=intent.kind == "smalltalk", owner_notes=runner.owner_notes,
         )
     if intent.kind == "business":
         return runner.run(question=body.text, language=language, history=history[-BUSINESS_HISTORY:], emit=emit, message_id=reply_id)
@@ -248,17 +250,6 @@ def _assistant_name(runtime: Runtime, ctx: TenantContext) -> str:
         return runtime.repository.get_assistant_name(ctx.principal.token, ctx.tenant.id) or "your assistant"
     except Exception:
         return "your assistant"
-
-
-def _owner_notes(runtime: Runtime, ctx: TenantContext) -> str:
-    """The owner's own notes about the business ('About my business'), when that store exists; empty until then. Facts from them may be stated as 'from your notes'."""
-    context = getattr(runtime, "assistant_context", None)
-    if context is None:
-        return ""
-    try:
-        return str(context.notes_text(ctx.principal.token, ctx.tenant.id))
-    except Exception:
-        return ""
 
 
 def _run_action(

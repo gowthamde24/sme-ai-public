@@ -158,7 +158,7 @@ def build_chat_request(
     for note in notes:
         if note not in FIXED_NOTES:
             raise ValueError("only fixed phrases may flow back to the model as trusted text")
-    system = CHAT_SYSTEM_PROMPT.replace("{assistant}", assistant_name).replace("{business}", business_name) + (CHAT_SMALLTALK_CLAUSE if small else "")
+    system = CHAT_SYSTEM_PROMPT.replace("{assistant}", assistant_name).replace("{business}", business_name) + (CHAT_NOTES_CLAUSE if owner_notes else "") + (CHAT_SMALLTALK_CLAUSE if small else "")
     blocks = [
         Block(Trust.SYSTEM, system),
         Block(Trust.TRUSTED, f"Today (India) is {today.date().isoformat()}. Reply in {LANGUAGE_NAMES[language]} ({language}). Use the `reply` tool."),
@@ -166,12 +166,34 @@ def build_chat_request(
     if notes:
         blocks.append(Block(Trust.TRUSTED, " ".join(dict.fromkeys(notes))))
     if owner_notes:
-        blocks.append(Block(Trust.UNTRUSTED, _block(delimiter, ["the owner's own notes about the business (facts the owner wrote):", escape_value(owner_notes[:6000], delimiter)])))
+        blocks.append(notes_block(delimiter, "notes", owner_notes))
     if history:
         lines = [f"{h['role']}: {escape_value(str(h['body'])[:CHAT_HISTORY_LINE_CHARS], delimiter)}" for h in history[-CHAT_HISTORY_LINES:]]
         blocks.append(Block(Trust.UNTRUSTED, _block(delimiter, ["earlier in this chat:", *lines])))
     blocks.append(Block(Trust.TRUSTED, f"THE PERSON'S MESSAGE: {question}"))
     return LlmRequest(blocks=tuple(blocks), tools=(), max_output_tokens=max_output_tokens, task_class=CHAT_TASK_CLASS, final_result=CHAT_REPLY)
+
+
+NOTES_CLAUSE = (
+    " The OWNER'S NOTES (the block that starts with their handle) are facts the owner wrote about the business: you may state a fact from them, cite the notes' handle, and say it is from the owner's notes. "
+    "A price or amount in the notes may be repeated exactly as written. Anything about the business that is in neither the tool results nor the notes, do not state."
+)
+CHAT_NOTES_CLAUSE = (
+    " The owner's own notes are given below: facts the owner wrote about the business. You may state a fact from them and say it is from the owner's notes. Anything else about the business you still must not state."
+)
+
+
+def notes_block(delimiter: str, handle: str, notes: str) -> Block:
+    """The owner's notes as DATA between the run's delimiter, one flattened line per line of the notes, cut at a safe size."""
+    lines = [escape_value(line, delimiter) for line in notes.splitlines() if line.strip()]
+    text = []
+    used = 0
+    for line in lines:
+        if used + len(line) > 6000:
+            break
+        text.append(line)
+        used += len(line)
+    return Block(Trust.UNTRUSTED, _block(delimiter, [f"{handle} | notes | the owner's own notes about the business:", *text]))
 
 
 def tool_specs(offered: frozenset[str] | None) -> tuple[ToolSpec, ...]:
@@ -249,6 +271,7 @@ def build_request(
     max_output_tokens: int,
     offered: frozenset[str] | None = None,
     widened: bool = False,
+    notes_handle: str | None = None,
 ) -> LlmRequest:
     """`offered`: the names of the tools to describe to the model (job BB: the router decides once per question; None = every tool, for tests). `widened`: the safety net (job BD) has offered every tool."""
     if not re.fullmatch(r"[0-9a-f]{6,64}", delimiter):
@@ -262,7 +285,8 @@ def build_request(
         Block(
             Trust.SYSTEM,
             (SYSTEM_PROMPT if with_catalogue else SYSTEM_PROMPT_NO_CATALOGUE)
-            + (WEB_CLAUSE if offered is not None and offered & WEB_TOOLS else ""),
+            + (WEB_CLAUSE if offered is not None and offered & WEB_TOOLS else "")
+            + (NOTES_CLAUSE if notes_handle else ""),
         ),
         Block(
             Trust.TRUSTED,

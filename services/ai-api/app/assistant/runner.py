@@ -59,6 +59,7 @@ from app.assistant.language import (
     reply_matches,
 )
 from app.assistant.models import NOT_STORED_SOURCES, DraftCardOut, SourceOut
+from app.assistant.notes import NOTES_HANDLE_LABEL, NOTES_ID
 from app.assistant.tools import TOOLS, Ctx, Item, State
 from app.assistant.web_tools import WEB_TOOL_NAMES, question_urls
 from app.errors import ApiError
@@ -178,7 +179,9 @@ class AssistantRunner:
         on_reply: Callable[[str, str], None] | None = None,
         help_on_empty: bool = False,
         typed_replies: bool = False,
+        owner_notes: str = "",
     ) -> None:
+        self.owner_notes = owner_notes.strip()   # job EB: the owner's own notes; a source the model may cite ("From your notes")
         self._typed = typed_replies   # job EA: the conversational route stores the type of each reply (confirm_action, clarify); the written Ask does not
         # job EA: the conversational assistant says "no record" AND offers one way forward (NO_RECORD_HELP); the written Ask keeps the bare NO_ANSWER
         self._empty = NO_RECORD_HELP if help_on_empty else NO_ANSWER
@@ -210,6 +213,12 @@ class AssistantRunner:
             results: list[Block] = []
             notes: tuple[str, ...] = ()
             repaired: set[str] = set()
+            notes_handle: str | None = None
+            if self.owner_notes:
+                notes_item = self._state.add("notes", NOTES_ID, NOTES_HANDLE_LABEL, {}, None, money=tuple(money_amounts(self.owner_notes)))
+                notes_handle = notes_item.handle
+                results.append(prompts.notes_block(self._delimiter, notes_handle, self.owner_notes))
+            tools_before = len(results)
             actions = 0
             # job BB: the tools offered are decided ONCE per question from the question and the lines before it (a deterministic router, no model call). A call to a tool that was not offered is refused.
             self._state.question_urls = question_urls(question)
@@ -235,6 +244,7 @@ class AssistantRunner:
                     max_output_tokens=MAX_OUTPUT_TOKENS,
                     offered=offered,
                     widened=widened,
+                    notes_handle=notes_handle,
                 )
                 llm = self._pick(request)
                 self._db.reserve_cost(
@@ -326,7 +336,7 @@ class AssistantRunner:
                     if status != "ok":
                         notes = (prompts.NOTE_TOOL_REFUSED,)
 
-                verdict = self._judge(response.structured, language, repaired, turn, searched=bool(results))
+                verdict = self._judge(response.structured, language, repaired, turn, searched=len(results) > tools_before)
                 if isinstance(verdict, Reply) and verdict.kind == "refusal":
                     # the model says it cannot help. If a hidden group could have helped, ask once more with every tool offered (the one retry; its model call is counted like any other)
                     missed = (
@@ -551,7 +561,7 @@ class AssistantRunner:
             self._state.items[h] for h in dict.fromkeys(final.sources) if h in self._state.items
         ]
         if final.kind == "answer" and not known:
-            if searched and not self._state.items:
+            if searched and not any(i.type != "notes" for i in self._state.items.values()):
                 # the tools ran and found NOTHING: there is no record the model could cite, so asking again can only cost two more model calls and end in the same fixed sentence (a Telugu Ask took 37 s that way). Say it now.
                 logger.info("assistant run %s: nothing found and an answer with no source; answered with the fixed sentence at turn %d (%s)", self._ctx.run_id, turn, language)
                 return Reply(self._empty[language], language, "refusal", [], list(self._state.drafts))

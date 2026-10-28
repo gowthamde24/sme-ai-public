@@ -104,7 +104,7 @@ class FakeTurnDb(FakeDb):
         items = []
         for cid, c in self.conversations.items():
             rows = sorted((m for m in self.messages if m["conversation_id"] == cid), key=lambda m: m["seq"])
-            if c["archived"] or not rows or rows[0]["body"] == "Plan a task":
+            if c["archived"] or not rows or rows[0]["body"] in ("Plan a task", "Read business notes", "Test business notes"):
                 continue
             items.append({"id": cid, "title": next(m["body"] for m in rows if m["role"] == "user")[:60], "updated_at": c["updated_at"], "message_count": len(rows), "last_text": rows[-1]["body"][:120]})
         items.sort(key=lambda i: i["updated_at"], reverse=True)

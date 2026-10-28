@@ -190,3 +190,44 @@ end;
 $$;
 revoke all on function public.scheduler_assistant_context(uuid) from public, anon;
 grant execute on function public.scheduler_assistant_context(uuid) to authenticated;
+
+-- The notes' own model runs ("understand" and "test") keep a bookkeeping conversation like the task planner's; the list leaves them out too. A full copy of the job EA definition with that one predicate widened.
+create or replace function public.assistant_conversations_list(p_tenant_id uuid, p_limit integer default 30, p_before timestamptz default null) returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  v_uid   uuid := auth.uid();
+  v_limit integer := least(greatest(coalesce(p_limit, 30), 1), 100);
+  v_items jsonb;
+  v_next  timestamptz;
+begin
+  if v_uid is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin', 'sales']::public.app_role[]) then
+    perform app.agent_deny();
+  end if;
+  with page as (
+    select c.id, c.updated_at
+      from public.assistant_conversations c
+     where c.tenant_id = p_tenant_id and c.created_by = v_uid and c.archived_at is null
+       and exists (select 1 from public.assistant_messages m where m.tenant_id = c.tenant_id and m.conversation_id = c.id)
+       -- the task planner keeps its own bookkeeping conversation ("Plan a task", "Read business notes", "Test business notes"); it is not something the person said
+       and not exists (select 1 from public.assistant_messages m where m.tenant_id = c.tenant_id and m.conversation_id = c.id and m.role = 'user' and m.seq = 1 and m.body in ('Plan a task', 'Read business notes', 'Test business notes'))
+       and (p_before is null or c.updated_at < p_before)
+     order by c.updated_at desc, c.id desc
+     limit v_limit + 1
+  ), shown as (select * from page order by updated_at desc, id desc limit v_limit)
+  select coalesce(jsonb_agg(jsonb_build_object(
+           'id', s.id,
+           'title', (select left(m.body, 60) from public.assistant_messages m where m.tenant_id = p_tenant_id and m.conversation_id = s.id and m.role = 'user' order by m.seq limit 1),
+           'updated_at', s.updated_at,
+           'message_count', (select count(*) from public.assistant_messages m where m.tenant_id = p_tenant_id and m.conversation_id = s.id),
+           'last_text', (select left(m.body, 120) from public.assistant_messages m where m.tenant_id = p_tenant_id and m.conversation_id = s.id order by m.seq desc limit 1)
+         ) order by s.updated_at desc, s.id desc), '[]'::jsonb),
+         case when (select count(*) from page) > v_limit then min(s.updated_at) end
+    into v_items, v_next
+    from shown s;
+  return jsonb_build_object('items', v_items, 'next_before', v_next);
+end;
+$$;
