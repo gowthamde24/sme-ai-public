@@ -33,13 +33,11 @@ export const TERMS: LegalText = {
     },
     {
       id: "trial",
-      title: "3. Free trial, payment and cancelling",
+      title: "3. Payment and cancelling",
       blocks: [
         {
           ul: [
-            "You start with a {trial_days}-day free trial, counted from the day your WhatsApp is connected. To start it you add a payment method.",
-            "If you cancel before the trial ends, nothing is charged.",
-            "Our prices are not published yet. Before we charge you anything we will show you the plan and the price, and you must agree to it. If you do not agree, the trial ends and nothing is charged.",
+            "Our prices are not published yet. Before we charge you anything we will show you the plan and the price, and you must agree to it. If you do not agree, nothing is charged.",
             "To cancel, write to {billing} from the e-mail address of your account, or use the cancel option in the app where it is offered. We confirm the cancellation by e-mail.",
             "When a paid plan starts, we send an invoice with the GST charged, to the billing e-mail you give. Questions about a payment or an invoice: {billing}.",
           ],

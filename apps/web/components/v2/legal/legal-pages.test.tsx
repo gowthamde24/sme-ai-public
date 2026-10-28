@@ -65,7 +65,7 @@ describe("/privacy and /terms (job BH)", () => {
     expect(document.querySelectorAll("mark[data-placeholder]")).toHaveLength(0);
     for (const doc of [PRIVACY, TERMS]) for (const m of textOf(doc).matchAll(/\[[A-Z][^\]]*\]/g)) expect(m[0].match(PLACEHOLDER)?.[0], m[0]).toBe(m[0]); // the highlighter still matches any that is ever added
     expect(document.body.textContent).toContain("privacy@stack19.com");
-    expect(document.body.textContent).toContain("Gowtham Reddy Sodanapalli");
+    expect(document.body.textContent).toContain("SODANAPALLI GOWTHAM REDDY");
     expect(document.body.textContent).not.toMatch(/\{[a-z_]+\}/);
   });
   it("the structure is sound: unique section ids, each in the table of contents, each heading labelled, tables have header cells", async () => {
