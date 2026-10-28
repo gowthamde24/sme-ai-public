@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+const jar = vi.hoisted(() => new Map<string, string>());
+vi.mock("next/headers", () => ({ cookies: async () => ({ get: (k: string) => (jar.has(k) ? { name: k, value: jar.get(k) } : undefined), set: (k: string, v: string, o?: { maxAge?: number }) => (o?.maxAge === 0 ? void jar.delete(k) : void jar.set(k, v)) }) }));
 const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
@@ -13,6 +15,7 @@ const T = "55555555-5555-4555-8555-555555555551";
 const post = (body: unknown, id = T, headers: Record<string, string> = { "sec-fetch-site": "same-origin" }) => POST(new NextRequest(`http://x/app/tenants/${id}/lead-sources/cards`, { method: "POST", headers, body: JSON.stringify(body) }), { params: Promise.resolve({ tenantId: id }) });
 const json = async (r: Response) => (await r.json()) as { ok: boolean; data?: unknown; error?: string };
 beforeEach(() => {
+  jar.clear();
   vi.unstubAllEnvs();
   vi.stubEnv("SOURCE_CARDS_SCREENS", "mock");
   h.user.mockReset().mockResolvedValue({ accessToken: "tok" });

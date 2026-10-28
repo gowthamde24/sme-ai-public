@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+const jar = vi.hoisted(() => new Map<string, string>());
+vi.mock("next/headers", () => ({ cookies: async () => ({ get: (k: string) => (jar.has(k) ? { name: k, value: jar.get(k) } : undefined), set: (k: string, v: string, o?: { maxAge?: number }) => (o?.maxAge === 0 ? void jar.delete(k) : void jar.set(k, v)) }) }));
 const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
@@ -13,6 +15,7 @@ const T = "22222222-2222-4222-8222-222222222222";
 const post = (body: unknown, id = T, headers: Record<string, string> = { "sec-fetch-site": "same-origin" }) => POST(new NextRequest(`http://x/app/tenants/${id}/context`, { method: "POST", headers, body: JSON.stringify(body) }), { params: Promise.resolve({ tenantId: id }) });
 const json = async (r: Response) => (await r.json()) as { ok: boolean; data?: Record<string, unknown>; error?: string };
 beforeEach(() => {
+  jar.clear();
   vi.unstubAllEnvs();
   vi.stubEnv("ABOUT_BUSINESS_SCREENS", "mock");
   h.user.mockReset().mockResolvedValue({ accessToken: "tok" });

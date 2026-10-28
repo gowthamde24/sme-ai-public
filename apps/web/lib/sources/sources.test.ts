@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const request = vi.fn();
+const jar = vi.hoisted(() => new Map<string, string>());
+vi.mock("next/headers", () => ({ cookies: async () => ({ get: (k: string) => (jar.has(k) ? { name: k, value: jar.get(k) } : undefined), set: (k: string, v: string, o?: { maxAge?: number }) => (o?.maxAge === 0 ? void jar.delete(k) : void jar.set(k, v)) }) }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), apiRequest: (...a: unknown[]) => request(...a) }));
 
 import { ApiAuthError, ApiContractError, ApiRequestError } from "@/lib/api/client";
@@ -11,6 +13,7 @@ import { parseAuthorize, parseCards, parseEmail } from "./types";
 
 const T = "55555555-5555-4555-8555-555555555555";
 beforeEach(() => {
+  jar.clear();
   request.mockReset();
 });
 

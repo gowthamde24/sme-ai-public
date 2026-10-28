@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const request = vi.fn();
+const jar = vi.hoisted(() => new Map<string, string>());
+vi.mock("next/headers", () => ({ cookies: async () => ({ get: (k: string) => (jar.has(k) ? { name: k, value: jar.get(k) } : undefined), set: (k: string, v: string, o?: { maxAge?: number }) => (o?.maxAge === 0 ? void jar.delete(k) : void jar.set(k, v)) }) }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), apiRequest: (...a: unknown[]) => request(...a) }));
 
 import { ApiAuthError, ApiContractError, ApiRequestError } from "@/lib/api/client";
@@ -13,6 +15,7 @@ const T = "22222222-2222-4222-8222-222222222222";
 const STATE = { notes: "We deliver in Anantapur.", version: 3, updated_at: "2026-10-28T10:00:00Z", updated_by: { id: "u1", name: "Ravi" }, prompts: [{ key: "prices", label: "Prices", hint: "x" }, { key: "", label: "bad", hint: "" }], used_by: ["chats", "calls", 7] };
 const PREVIEW = { preview_id: "pv_12345678", understood: [{ section: "prices", text: "Paver: 38" }, { section: "weird", text: "x" }], notes_markdown: "## Prices\nPaver: 38", source: { kind: "file", filename: "rates.xlsx" }, warnings: ["cells_cut", "nope"], expires_at: "2026-10-28T10:30:00Z" };
 beforeEach(() => {
+  jar.clear();
   request.mockReset();
 });
 
