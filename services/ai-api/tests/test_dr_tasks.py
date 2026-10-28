@@ -398,9 +398,9 @@ def test_a_task_can_be_paused_and_cancelled_by_owner_or_admin_only() -> None:
 
 
 # ============================================================================ the runner
-def run_world(task_plan: dict[str, Any], *, outbox: FakeOutbox | None = None, flags: dict[int, dict[str, Any]] | None = None) -> tuple[FakeTasksRepository, TaskRunner, uuid.UUID, FakeOutbox]:
+def run_world(task_plan: dict[str, Any], *, outbox: FakeOutbox | None = None, flags: dict[int, dict[str, Any]] | None = None, task_id: uuid.UUID | None = None) -> tuple[FakeTasksRepository, TaskRunner, uuid.UUID, FakeOutbox]:
     repo = FakeTasksRepository()
-    tid = uuid.uuid4()
+    tid = task_id or uuid.uuid4()
     repo.tasks[tid] = {"id": str(tid), "status": "approved", "instruction": "x", "language": "en", "template": task_plan.get("template", "custom"), "question": None, "plan": task_plan,
                        "estimate": {}, "estimated_paise": 600, "cap_paise": 10_000, "spent_paise": 0, "pause_reason": None, "plan_sha256": "a" * 64, "approved_at": "x", "finished_at": None, "created_at": "x", "updated_at": "x"}
     repo.rows[tid] = [
@@ -446,10 +446,12 @@ def test_without_a_message_text_the_fixed_sentence_is_used_and_it_holds_no_figur
 
 def test_a_call_with_a_whatsapp_summary_sends_it_only_after_a_conversation() -> None:
     plan = {**CALL_PLAN, "follow_up": {"kind": "whatsapp_summary", "after_hours": 1}}
-    repo, runner, tid, outbox = run_world(plan)
+    # the fake dialer's outcomes come from the task id: a RANDOM id left this test failing about 2 times in 100 runs (all four calls unanswered or refused). This id gives no answer, a refusal, a yes and a "call back later".
+    repo, runner, tid, outbox = run_world(plan, task_id=uuid.UUID("00000000-0000-0000-0000-00007a5c0003"))
     runner.run("tok", TENANT_A.id, "Demo Silks", tid)
+    assert [r["outcome"] for r in repo.rows[tid]] == ["no_answer", "negative", "positive", "unclear"]
     talked = [r for r in repo.rows[tid] if r["outcome"] in ("positive", "unclear")]
-    assert len(outbox.sent) == len(talked) > 0
+    assert len(outbox.sent) == len(talked) == 2
 
 
 def test_stopped_erased_and_phoneless_people_are_skipped_and_never_dialled() -> None:
