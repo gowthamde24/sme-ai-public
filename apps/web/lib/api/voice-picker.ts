@@ -1,4 +1,4 @@
-import { ApiContractError, apiBinaryRequest, apiRequest } from "./client";
+import { ApiContractError, ApiRequestError, apiBinaryRequest, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { parsePicker, VOICE_ID, type Picker, type PickerLang } from "@/lib/voice-picker/types";
 
@@ -28,3 +28,18 @@ export async function putVoiceChoice(token: string, tenantId: string, language: 
 
 /** The bytes of one sample (a file of about 100 KB, at most 1 MB); `path` has been through `safeSamplePath`. The API needs no sign-in for it; the person's token is sent like on every call of the app. */
 export const getVoiceSampleFile = async (token: string, path: string): Promise<{ bytes: ArrayBuffer; contentType: string }> => apiBinaryRequest(path, token, 1_000_000);
+
+/**
+ * `GET /ai-assistant/voices/preview?language=` (Owner, Admin): the workspace's SAVED opening line spoken in the voice in force (the chosen catalogue voice, else the default of that language), with the business's real names. null = no voice service here (404 `no_preview`).
+ * 429 is passed on (12 a minute per person). The one "Hear it" of Settings > AI assistant: there is no other preview.
+ */
+export async function getVoicesPreviewFile(token: string, tenantId: string, language: string): Promise<{ bytes: ArrayBuffer; contentType: string } | null> {
+  if (!/^[a-z]{2}$/.test(language)) return null;
+  try {
+    const got = await apiBinaryRequest(`${base(tenantId)}/voices/preview?${new URLSearchParams({ language }).toString()}`, token, 2_000_000);
+    return /^audio\/(wav|x-wav|mpeg|ogg|mp4|webm)(;|$)/.test(got.contentType) ? got : null;
+  } catch (error) {
+    if (error instanceof ApiRequestError && error.status === 404) return null;
+    throw error;
+  }
+}

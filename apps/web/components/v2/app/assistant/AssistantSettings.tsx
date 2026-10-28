@@ -11,6 +11,7 @@ import { CALL_LANGS, DAYS, HOURS, NAME_MAX, SPEED, STYLES, VOICES, parseSettings
 import type { AssistantProfile } from "@/lib/assistant/defaults";
 
 import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, surface } from "../ui";
+import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
 import { makeT, type Words } from "../words";
 
 export type AssistantActions = { save: (input: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; /** The simulated test call (job DQ part 3); absent = the button is not drawn. */ testCall?: () => Promise<TestCallResult> };
@@ -36,7 +37,7 @@ function Switch({ on, label, onChange, disabled }: { on: boolean; label: string;
  * may do on calls (and the highest discount), when it hands over to the owner, the calling hours, and on the right a live preview with the circle speaking. It starts from the defaults of the business type (`profile`), so an owner can
  * skip it; nothing is kept until "Save". Only the Owner can change it (`canEdit`). Voice samples and test calls do not exist yet, so "Hear it" is switched off and "Call me now for a test" says so. The words come in as props.
  */
-export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, ownVoiceReady = false, samples = null, voicePickerOn = false }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ ownVoiceReady?: boolean; /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The voice picker (a voice for each language, below) is on: the four-persona list is not shown, unless the Owner's own voice is in use or ready to use (it is chosen here). */ voicePickerOn?: boolean }) {
+export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, ownVoiceReady = false, samples = null, voicePickerOn = false, voiceInUse = null, defaultName = null }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ ownVoiceReady?: boolean; /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The voice picker (a voice for each language, below) is on: the four-persona list is not shown, unless the Owner's own voice is in use or ready to use (it is chosen here). */ voicePickerOn?: boolean; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<Settings>(initial);
@@ -57,7 +58,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
     setSampleErr(false);
     setHeard(null);
     const q = { voice: v, lang: s.lang, tone, name: s.name.trim() || initial.name };
-    if (!samples.mock) {
+    if (!samples.mock && !voicePickerOn) {
       // the words are shown beside the player, as the API says them with the business's real name
       void fetch(`${sampleUrl(samples.endpoint, q)}&text=1`, { cache: "no-store" })
         .then((r) => (r.ok ? r.json() : null))
@@ -86,6 +87,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
   const hoursOk = s.hours.from < s.hours.to && s.hours.days.length > 0;
   const rangeOk = s.hours.from >= HOURS.min && s.hours.to <= HOURS.max && [s.hours.from, s.hours.to].every((h) => Number(h.slice(3, 5)) % HOURS.stepMinutes === 0);
   const toggleDay = (d: Day) => set({ hours: { ...s.hours, days: s.hours.days.includes(d) ? s.hours.days.filter((x) => x !== d) : DAYS.filter((x) => x === d || s.hours.days.includes(x)) } });
+  const shownName = s.name.trim() === "" || s.name.trim() === DEFAULT_ASSISTANT_NAME ? (defaultName ?? initial.name) : s.name.trim(); // (the owner's own name is used as written)
   const line = sayLine(s.lang, s.style, s.name.trim() || initial.name, shop);
   const ok = parseSettings(s) !== null;
   return (
@@ -301,9 +303,9 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
             <Orb px={120} state="speak" halo />
           </div>
           <div className="flex flex-col gap-1 text-center">
-            <strong className="text-lg">{t("asst.preview.who", { name: s.name.trim() || initial.name })}</strong>
+            <strong className="text-lg">{t("asst.preview.who", { name: shownName })}</strong>
             <span className="text-[13px] opacity-80">
-              {voiceNames[s.voice]} · {t(`asst.style.${s.style}` as "asst.style.warm")} · {s.speed.toFixed(2).replace(/0$/, "")}×
+              {voicePickerOn && voiceInUse ? `${voiceInUse.name} · ${voiceInUse.label}` : voiceNames[s.voice]} · {t(`asst.style.${s.style}` as "asst.style.warm")} · {s.speed.toFixed(2).replace(/0$/, "")}×
             </span>
           </div>
           <p lang={s.lang} data-part="preview-line" className="m-0 text-center text-[17px] leading-relaxed">

@@ -4,8 +4,8 @@ const apiRequest = vi.fn();
 const bin = vi.fn();
 vi.mock("./client", async (orig) => ({ ...(await orig<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a), apiBinaryRequest: (...a: unknown[]) => bin(...a) }));
 
-import { ApiContractError } from "./client";
-import { getVoicePicker, getVoiceSampleFile, putVoiceChoice } from "./voice-picker";
+import { ApiContractError, ApiRequestError } from "./client";
+import { getVoicePicker, getVoicesPreviewFile, getVoiceSampleFile, putVoiceChoice } from "./voice-picker";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const BODY = { languages: [{ language: "en", default_id: "en-janvi", chosen_id: null, active_id: "en-janvi", voices: [{ id: "en-janvi", name: "Janvi", label: "Calm", gender: "female", default: true, chosen: false, sample_url: "/v1/voice-samples/en-janvi.mp3" }] }] };
@@ -36,5 +36,20 @@ describe("the voice picker client (C1's contract)", () => {
     bin.mockResolvedValue({ bytes: new ArrayBuffer(3), contentType: "audio/mpeg" });
     expect((await getVoiceSampleFile("tok", "/v1/voice-samples/en-janvi.mp3")).contentType).toBe("audio/mpeg");
     expect(bin).toHaveBeenCalledWith("/v1/voice-samples/en-janvi.mp3", "tok", 1_000_000);
+  });
+});
+
+describe("the preview of the voice in force (Hear it)", () => {
+  it("asks /voices/preview for one language and hands the sound on; no voice service (404) is no sound; a language that is not two letters is never asked", async () => {
+    bin.mockResolvedValue({ bytes: new ArrayBuffer(3), contentType: "audio/wav" });
+    expect((await getVoicesPreviewFile("tok", T, "te"))?.contentType).toBe("audio/wav");
+    expect(bin).toHaveBeenLastCalledWith(`/v1/tenants/${T}/ai-assistant/voices/preview?language=te`, "tok", 2_000_000);
+    bin.mockResolvedValue({ bytes: new ArrayBuffer(3), contentType: "text/html" });
+    expect(await getVoicesPreviewFile("tok", T, "en")).toBeNull();
+    bin.mockRejectedValue(new ApiRequestError(404, "no_preview", "x"));
+    expect(await getVoicesPreviewFile("tok", T, "en")).toBeNull();
+    bin.mockClear();
+    expect(await getVoicesPreviewFile("tok", T, "../x")).toBeNull();
+    expect(bin).not.toHaveBeenCalled();
   });
 });

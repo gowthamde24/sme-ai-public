@@ -7,6 +7,7 @@ import { Orb, type OrbState } from "@/components/v2/Orb";
 import { browserAudio } from "@/lib/browser-voice/audio-io";
 import { VoiceClient, type SocketLike, type Snapshot } from "@/lib/browser-voice/client";
 import { VOICE_LANGS, type VoiceLang } from "@/lib/browser-voice/protocol";
+import { askVoiceToken } from "@/lib/browser-voice/token";
 
 import { makeT, type Words } from "../words";
 import { primary, quiet, secondary } from "../visits/styles";
@@ -29,18 +30,6 @@ export type VoiceChatProps = {
 
 const TOKEN_FRESH_MS = 20 * 60_000;
 
-/** The sign-in for the socket, from this app's own route (never from anything the page keeps). */
-const askToken = async (tokenUrl: string): Promise<{ ok: true; token: string } | { ok: false }> => {
-  try {
-    const res = await fetch(tokenUrl, { method: "POST", cache: "no-store", credentials: "same-origin" });
-    const json: unknown = res.ok ? await res.json() : null;
-    const token = typeof json === "object" && json !== null ? (json as { token?: unknown }).token : null;
-    return typeof token === "string" && token.length > 0 ? { ok: true, token } : { ok: false };
-  } catch {
-    return { ok: false };
-  }
-};
-
 /**
  * "Talk to your assistant" (job DV, contract-browser-voice.md): the full-screen circle that is a microphone. Tap it and speak, tap it again to stop; it follows the microphone while the assistant listens, thinks (and says when it is looking at the business's records), and
  * ripples with the assistant's voice as it speaks. Live captions of both sides: what you said, what it says; a part of a long answer that is not read aloud is on the screen with a label, and the sources of an answer are listed. Speak while it talks and it
@@ -57,13 +46,13 @@ export function VoiceChat({ words, url, language, languageNames, tokenUrl, onClo
   const bottom = React.useRef<HTMLDivElement | null>(null);
 
   const fetchToken = React.useCallback(async () => {
-    const out = await askToken(tokenUrl);
+    const out = await askVoiceToken(tokenUrl);
     if (out.ok) token.current = { value: out.token, at: Date.now() };
     setTokenFailed(!out.ok);
   }, [tokenUrl]);
   React.useEffect(() => {
     let alive = true; // the sign-in is asked for before the tap, so the tap itself can open the microphone
-    askToken(tokenUrl).then(
+    askVoiceToken(tokenUrl).then(
       (out) => {
         if (!alive) return;
         if (out.ok) token.current = { value: out.token, at: Date.now() };

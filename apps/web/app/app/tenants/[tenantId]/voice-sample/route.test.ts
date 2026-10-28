@@ -1,7 +1,8 @@
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), sample: vi.fn(), said: vi.fn() }));
+const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), sample: vi.fn(), said: vi.fn(), chosen: vi.fn() }));
+vi.mock("@/lib/api/voice-picker", () => ({ getVoicesPreviewFile: (...a: unknown[]) => h.chosen(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
 vi.mock("@/lib/api/voice-samples", () => ({ getVoicePreview: (...a: unknown[]) => h.sample(...a), getVoicePreviewText: (...a: unknown[]) => h.said(...a) }));
@@ -19,9 +20,21 @@ beforeEach(() => {
   h.tenant.mockReset().mockResolvedValue({ role: "owner" });
   h.sample.mockReset();
   h.said.mockReset();
+  h.chosen.mockReset();
 });
 
 describe("GET voice-sample (job DQ part 3; the live preview of job DT)", () => {
+  it("with the voice catalogue on, the sound is the preview of the CHOSEN catalogue voice for the language, never the old four-persona sample", async () => {
+    vi.stubEnv("VOICE_SAMPLE_SCREENS", "1");
+    vi.stubEnv("VOICE_PICKER_SCREENS", "1");
+    h.chosen.mockResolvedValue({ bytes: new ArrayBuffer(4), contentType: "audio/wav" });
+    const r = await get("voice=male_calm&lang=te&tone=warm&name=Asha");
+    expect(r.status).toBe(200);
+    expect(h.chosen).toHaveBeenCalledWith("tok", T, "te");
+    expect(h.sample).not.toHaveBeenCalled();
+    h.chosen.mockResolvedValue(null);
+    expect((await get("voice=male_calm&lang=te&tone=warm&name=Asha")).status).toBe(404);
+  });
   it("is not there while the screens are off", async () => {
     expect((await get()).status).toBe(404);
     expect(h.user).not.toHaveBeenCalled();

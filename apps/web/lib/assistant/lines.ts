@@ -1,3 +1,4 @@
+import { DEFAULT_ASSISTANT_NAME } from "./name";
 import type { CallLang, Style } from "./types";
 
 /**
@@ -38,5 +39,11 @@ export const LINES: Record<CallLang, Record<Style, string>> = {
   },
 };
 
-/** The line for a language and way of talking, with the name and the business filled in. */
-export const sayLine = (lang: CallLang, style: Style, name: string, shop: string): string => LINES[lang][style].replaceAll("{name}", name).replaceAll("{shop}", shop);
+/**
+ * The line for a language and way of talking, with the name and the business filled in. Until the owner names the assistant (the default name) the line names nobody: "I'm the AI assistant at Sri Silks" (owner, 28 Oct: no fixed name).
+ */
+export const sayLine = (lang: CallLang, style: Style, name: string, shop: string): string => {
+  let line = LINES[lang][style];
+  if (name === DEFAULT_ASSISTANT_NAME) line = line.replace("I'm {name}, the", "I'm the").replace("{name} here, AI assistant", "this is the AI assistant").replace(" {name}", "");
+  return line.replaceAll("{name}", name).replaceAll("{shop}", shop);
+};
