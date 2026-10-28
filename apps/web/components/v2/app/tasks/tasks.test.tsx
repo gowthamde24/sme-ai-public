@@ -313,14 +313,14 @@ describe("the Tasks page parts", () => {
   it("a chip puts its example in the box for the owner to change, and the offer chip says who is included", () => {
     render(<TaskComposer words={words} base={BASE} actions={actions()} templates={templates} canPlan />);
     fireEvent.click(screen.getByRole("button", { name: "Call new leads" }));
-    expect((screen.getByLabelText("What should Vijaya do?") as HTMLTextAreaElement).value).toMatch(/Call everyone who enquired this week/);
+    expect((screen.getByLabelText("What should your assistant do?") as HTMLTextAreaElement).value).toMatch(/Call everyone who enquired this week/);
     expect(document.querySelector("[data-part=offer-note]")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Offer or event invite" }));
     expect(document.querySelector("[data-part=offer-note]")).toHaveTextContent("Only people who agreed to offers are included. WhatsApp only for now.");
   });
   it("pre-fills from a link, puts the cursor in the box, and offers the six languages", () => {
     render(<TaskComposer words={words} base={BASE} actions={actions()} templates={templates} canPlan initial="Call my suppliers" focus />);
-    const box = screen.getByLabelText("What should Vijaya do?");
+    const box = screen.getByLabelText("What should your assistant do?");
     expect(box).toHaveValue("Call my suppliers");
     expect(box).toHaveFocus();
     expect([...(screen.getByLabelText("Customers' language") as HTMLSelectElement).options].map((o) => o.value)).toEqual(["auto", "te", "hi", "kn", "en", "ta", "ml"]);

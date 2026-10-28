@@ -1,17 +1,18 @@
 import { describe, expect, it } from "vitest";
 
+import { DEFAULT_NAME_BY_LANG } from "@/lib/assistant/name";
 import { appDict } from "@/i18n/app";
 import { LANGS } from "@/i18n/lang";
 import { siteDict } from "@/i18n/site";
 import { FORBIDDEN_CLAIMS } from "@/i18n/strings/forbidden";
 
 describe("the two copy fixes of job BJ", () => {
-  it("the Ask box line says Vijaya answers in writing, and out loud if voice is turned on", () => {
-    expect(appDict("en")["ask.hero.note"]).toBe("Speak or type in Telugu, Hindi, Kannada or English. Vijaya answers in writing, and out loud if you turn voice on.");
+  it("the Ask box line says your assistant answers in writing, and out loud if voice is turned on", () => {
+    expect(appDict("en")["ask.hero.note"]).toBe("Speak or type in Telugu, Hindi, Kannada or English. Your assistant answers in writing, and out loud if you turn voice on.");
     for (const lang of ["te", "hi", "kn"] as const) {
       const d = appDict(lang)["ask.hero.note"];
       expect(d, lang).not.toBe(appDict("en")["ask.hero.note"]);
-      expect(d, lang).toContain("Vijaya");
+      expect(d, lang).toContain(DEFAULT_NAME_BY_LANG[lang]); // the default name, in the reader's language
       expect(d, lang).toMatch(/వాయిస్|वॉइस|ವಾಯ್ಸ್/); // the voice switch is named in the language
     }
   });

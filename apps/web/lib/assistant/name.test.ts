@@ -22,7 +22,9 @@ import { siteDict } from "@/i18n/site";
 import { wordsFor } from "@/i18n/app-words";
 import { fillLegal } from "@/lib/legal/documents";
 
-import { ASSISTANT_PLACEHOLDER, currentAssistantName, DEFAULT_ASSISTANT_NAME, withAssistantName } from "./name";
+import appJson from "@/i18n/strings/app.json";
+
+import { ASSISTANT_PLACEHOLDER, currentAssistantName, DEFAULT_ASSISTANT_NAME, DEFAULT_NAME_BY_LANG, withAssistantName } from "./name";
 import { provideRequestAssistantName } from "./request-name";
 import { MOCK_COOKIE } from "./source";
 import { assistantProfile } from "./defaults";
@@ -39,17 +41,17 @@ beforeEach(() => {
 });
 
 describe("the assistant's name (job DN)", () => {
-  it("is Vijaya until a workspace chooses one, and the placeholder is {assistant}", () => {
-    expect(DEFAULT_ASSISTANT_NAME).toBe("Vijaya");
+  it("is your assistant until a workspace chooses one, and the placeholder is {assistant}", () => {
+    expect(DEFAULT_ASSISTANT_NAME).toBe("your assistant");
     expect(ASSISTANT_PLACEHOLDER).toBe("{assistant}");
-    expect(currentAssistantName()).toBe("Vijaya");
+    expect(currentAssistantName()).toBe("your assistant");
   });
 
   it("puts the name in every place of a text, leaves other text alone, and takes the name as plain text", () => {
     expect(withAssistantName("Ask {assistant}. {assistant} answers.", "Asha")).toBe("Ask Asha. Asha answers.");
     expect(withAssistantName("No name here {brand}", "Asha")).toBe("No name here {brand}");
     expect(withAssistantName("Hi {assistant}", "$&x")).toBe("Hi $&x");
-    expect(withAssistantName("Hi {assistant}")).toBe("Hi Vijaya");
+    expect(withAssistantName("Hi {assistant}")).toBe("Hi your assistant");
   });
 
   it("is what fill() puts for {assistant}, unless the caller gives one", () => {
@@ -60,12 +62,12 @@ describe("the assistant's name (job DN)", () => {
   });
 
   it.each(LANGS)("%s: every dictionary says the workspace's name and never a bare {assistant}", (lang) => {
-    for (const name of ["Vijaya", "Asha Devi"]) {
+    for (const name of [DEFAULT_ASSISTANT_NAME, "Asha Devi"]) {
       provideRequestAssistantName(name);
       for (const dict of [appDict(lang), siteDict(lang), legalDict(lang), authDict(lang)] as Record<string, string>[]) {
         for (const text of Object.values(dict)) expect(text, text).not.toContain("{assistant}");
       }
-      expect(appDict(lang)["agent.main"]).toBe(name);
+      expect(appDict(lang)["agent.main"]).toBe(name === DEFAULT_ASSISTANT_NAME ? (lang === "en" ? "Your assistant" : DEFAULT_NAME_BY_LANG[lang]) : name); // the default is "your assistant" in the reader's language, capitalised at a sentence start
       expect(appT(lang)("ask.title")).not.toMatch(/Agent OWL|\{assistant\}/);
     }
   });
@@ -84,11 +86,10 @@ describe("the assistant's name (job DN)", () => {
   });
 
   it("the Telugu, Hindi and Kannada strings keep the placeholder where English has it", () => {
-    const raw = appDict("en");
     provideRequestAssistantName("Zed");
     for (const lang of ["te", "hi", "kn"] as const) {
       const dict = appDict(lang);
-      for (const [k, text] of Object.entries(raw)) if (text.includes("Zed") || text.includes("Vijaya")) expect(dict[k as keyof typeof dict], `${lang}:${k}`).toContain("Zed");
+      for (const [k, v] of Object.entries(appJson as Record<string, { en: string }>)) if (v.en.includes("{assistant}")) expect(dict[k as keyof typeof dict], `${lang}:${k}`).toContain("Zed");
     }
   });
 });
@@ -109,24 +110,24 @@ describe("getLang fixes the name for the request", () => {
     vi.stubEnv("ASSISTANT_SCREENS", "mock");
     h.path = "/pricing";
     await getLang();
-    expect(currentAssistantName()).toBe("Vijaya");
+    expect(currentAssistantName()).toBe("your assistant");
 
     h.path = inApp;
     vi.stubEnv("ASSISTANT_SCREENS", "");
     await getLang();
-    expect(currentAssistantName()).toBe("Vijaya");
+    expect(currentAssistantName()).toBe("your assistant");
 
     vi.stubEnv("ASSISTANT_SCREENS", "mock");
     h.jar.delete(MOCK_COOKIE);
     await getLang();
-    expect(currentAssistantName()).toBe("Vijaya");
+    expect(currentAssistantName()).toBe("your assistant");
 
     h.jar.set(MOCK_COOKIE, mine("<script>"));
     await getLang();
-    expect(currentAssistantName()).toBe("Vijaya");
+    expect(currentAssistantName()).toBe("your assistant");
     h.jar.set(MOCK_COOKIE, "{broken");
     await getLang();
-    expect(currentAssistantName()).toBe("Vijaya");
+    expect(currentAssistantName()).toBe("your assistant");
   });
 
   it("goes back to the default when the next page of the same server has no name (no leftovers), and never stops the language from being read", async () => {
@@ -136,8 +137,8 @@ describe("getLang fixes the name for the request", () => {
     await getLang();
     h.noHeaders = true;
     h.jar.set("sme_lang", "te");
-    provideRequestAssistantName("Vijaya");
+    provideRequestAssistantName("your assistant");
     expect(await getLang()).toBe("te");
-    expect(currentAssistantName()).toBe("Vijaya");
+    expect(currentAssistantName()).toBe("your assistant");
   });
 });

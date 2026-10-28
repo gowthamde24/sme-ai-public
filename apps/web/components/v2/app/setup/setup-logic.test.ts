@@ -7,7 +7,7 @@ const L = (o: Partial<Local> = {}): Local => ({ ...NEW_LOCAL, ...o });
 const saved = { settings: { ...defaultHours, is_default: false }, saved: true };
 
 describe("setup logic (job BJ)", () => {
-  it("the steps are shop, hours, saree, Vijaya, ready (no invitation step: the API has none)", () => {
+  it("the steps are shop, hours, saree, your assistant, ready (no invitation step: the API has none)", () => {
     expect(STEPS).toEqual(["shop", "hours", "saree", "agent", "ready"]);
   });
   it("a workspace is brand new only when the hours were never saved AND the catalogue is empty, both read", () => {

@@ -117,22 +117,22 @@ describe("the Outbox page: the kill switch and automatic sending", () => {
   });
 });
 
-describe("the Outbox page: Vijaya's last check", () => {
+describe("the Outbox page: your assistant's last check", () => {
   it("says when it last checked and when it checks next", async () => {
     await show({ scheduler: schedulerStatusFor({ next_run_at: "2026-10-14T04:31:00Z" }) });
-    expect(document.querySelector('[data-scheduler="calm"]')).toHaveTextContent("Vijaya last checked 2 min ago · next check 10:01");
+    expect(document.querySelector('[data-scheduler="calm"]')).toHaveTextContent("Your assistant last checked 2 min ago · next check 10:01");
     cleanup();
     await show(); // the next check is already due (04:29 is behind 04:30): no time is invented
-    expect(document.querySelector('[data-scheduler="calm"]')).toHaveTextContent(/^Vijaya last checked 2 min ago$/);
+    expect(document.querySelector('[data-scheduler="calm"]')).toHaveTextContent(/^Your assistant last checked 2 min ago$/);
   });
   it("says 'just now' inside the first minute", async () => {
     await show({ scheduler: schedulerStatusFor({ last_run_at: "2026-10-14T04:29:40Z" }) });
-    expect(document.querySelector('[data-scheduler="calm"]')).toHaveTextContent("Vijaya checked just now");
+    expect(document.querySelector('[data-scheduler="calm"]')).toHaveTextContent("Your assistant checked just now");
   });
   it("a calm warning when it has not checked for more than five minutes while it should", async () => {
     await show({ scheduler: schedulerStatusFor({ last_run_at: "2026-10-14T04:20:00Z" }) });
     const w = document.querySelector('[data-scheduler="stale"]') as HTMLElement;
-    expect(w).toHaveTextContent("Vijaya has not checked for 10 minutes. Messages held for the morning and visit reminders may be late.");
+    expect(w).toHaveTextContent("Your assistant has not checked for 10 minutes. Messages held for the morning and visit reminders may be late.");
     expect(w).toHaveAttribute("role", "status");
   });
   it("no warning when its automatic work is off: it says why instead", async () => {
@@ -142,7 +142,7 @@ describe("the Outbox page: Vijaya's last check", () => {
   });
   it("never heard from, and not drawn for Sales or when it could not be read", async () => {
     await show({ scheduler: schedulerStatusFor({ last_run_at: null, next_run_at: null, worker_running: false }) });
-    expect(document.querySelector('[data-scheduler="never"]')).toHaveTextContent("Vijaya has not checked yet.");
+    expect(document.querySelector('[data-scheduler="never"]')).toHaveTextContent("Your assistant has not checked yet.");
     cleanup();
     await show({ role: "sales" });
     expect(document.querySelector("[data-scheduler]")).toBeNull();

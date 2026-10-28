@@ -70,7 +70,7 @@ describe("the filters in the address", () => {
   });
 });
 
-describe("how Vijaya's checking looks", () => {
+describe("how your assistant's checking looks", () => {
   const s = { platform_switch_on: true, auto_send_enabled: true, active: true, last_run_at: "2026-10-14T04:28:00Z", next_run_at: "2026-10-14T04:29:00Z" };
   it("calm when it checked a moment ago", () => {
     expect(schedulerView(s, NOW)).toEqual({ state: "calm", minutes: 2, next: "2026-10-14T04:29:00Z", off: null });

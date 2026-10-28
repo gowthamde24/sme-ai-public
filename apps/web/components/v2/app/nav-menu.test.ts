@@ -101,7 +101,7 @@ describe("the seven-item menu (job DQ part 0, owner decision of 26 Oct)", () => 
   });
 });
 
-describe("the parts that need a feature flag (night 4: Lead Desk, Ask Vijaya to do it)", () => {
+describe("the parts that need a feature flag (night 4: Lead Desk, Ask your assistant to do it)", () => {
   const withFeatures = (features: string[]): PackFrame => ({ ...TEXTILES, features });
   it("are not offered while their flag is off, in any business type", () => {
     for (const [, view] of PACKS) {

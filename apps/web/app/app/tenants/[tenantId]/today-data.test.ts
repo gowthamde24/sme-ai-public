@@ -145,7 +145,7 @@ describe("readToday: at the store today", () => {
   });
 });
 
-describe("readToday: a visit Vijaya proposed", () => {
+describe("readToday: a visit your assistant proposed", () => {
   const proposal = (id: string, over: Record<string, unknown> = {}) => parseVisitFixture(visitJson({ id, source: "assistant", status: "booked", ...over }));
   it("asks for the booked visits of the next two months and makes a card of each one the assistant proposed, newest first", async () => {
     getToday.mockResolvedValue({ ...todayFor("owner"), cards: { ...todayFor("owner").cards, waiting: 7 } }); // the API's own number already counts the two proposed visits (job AY)

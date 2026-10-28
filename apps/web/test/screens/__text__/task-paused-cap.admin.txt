@@ -24,7 +24,7 @@ Goal
 Ask each supplier today's price per bag and the delivery day.
 How
 Phone calls
-What Vijaya asks
+What your assistant asks
 - What is your price per bag today?
 - Which day can you deliver?
 When

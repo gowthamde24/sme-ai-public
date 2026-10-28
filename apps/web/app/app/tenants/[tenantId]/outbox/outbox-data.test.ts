@@ -66,7 +66,7 @@ describe("readOutbox: the server does the filtering (job BE on BB)", () => {
 });
 
 describe("readOutbox: the other reads", () => {
-  it("Owner and Admin also get the sending settings (with the quiet hours) and Vijaya's status; Sales do not", async () => {
+  it("Owner and Admin also get the sending settings (with the quiet hours) and your assistant's status; Sales do not", async () => {
     const owner = await readOutbox("tok", T, o());
     expect(owner.settings).toEqual(SETTINGS);
     expect(owner.scheduler?.worker_running).toBe(true);

@@ -65,7 +65,7 @@ describe("the import screen (night 4, item 3)", () => {
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add these leads" })));
     expect(a.import).toHaveBeenCalledWith(expect.objectContaining({ import_id: "77777777-7777-4777-8777-777777777777", cost_per_lead_paise: 1250, consent: { confirmed: true, list_name: "Open day", purpose: "The new flats", basis: "legitimate_use", how_collected: "Form at the stall" } }));
     expect(screen.getByRole("link", { name: "Start a campaign" })).toHaveAttribute("href", "/app/tenants/T/outreach/new?source=pasted_list");
-    expect(screen.getByRole("link", { name: "Tell Vijaya what to do" })).toHaveAttribute("href", "/app/tenants/T/tasks?new=1");
+    expect(screen.getByRole("link", { name: "Tell your assistant what to do" })).toHaveAttribute("href", "/app/tenants/T/tasks?new=1");
   });
 
   it("a retry of the same import keeps the same id; other content gets a new one", async () => {

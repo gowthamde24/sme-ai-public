@@ -25,7 +25,7 @@ describe("Settings > Business form", () => {
     const used = document.querySelector('[data-part="name-used"]') as HTMLElement;
     expect(within(used).getByText("Where this name shows")).toBeInTheDocument();
     expect(within(used).getAllByRole("listitem")).toHaveLength(3);
-    expect(within(used).getByText("How Vijaya greets you and introduces your business")).toBeInTheDocument();
+    expect(within(used).getByText("How your assistant greets you and introduces your business")).toBeInTheDocument();
   });
 });
 

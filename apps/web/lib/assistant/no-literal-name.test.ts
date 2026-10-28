@@ -5,13 +5,13 @@ import { describe, expect, it } from "vitest";
 
 /**
  * Job DN: the assistant's name is never written into the product. Every user-visible mention is the placeholder `{assistant}` in a string (or `currentAssistantName()` in code), and the only place that says what the default
- * is is lib/assistant/name.ts. This reads the shipped files (code without its comments, the strings, the pack texts, the static pages) and fails on the old name or the default name written out. Tests may name Vijaya: they pin the default.
+ * is is lib/assistant/name.ts. This reads the shipped files (code without its comments, the strings, the pack texts, the static pages) and fails on the old name or the default name written out. Tests may name your assistant: they pin the default.
  */
 const WEB = join(__dirname, "..", "..");
 const ROOT = join(WEB, "..", "..");
 const SKIP_DIRS = new Set(["node_modules", ".next", "__text__", "coverage", "test-results"]);
 const NAME_FILE = join(WEB, "lib", "assistant", "name.ts");
-const WRITTEN = /Agent\s+OWL|Vijaya|\bVani\b/i;
+const WRITTEN = /Agent\s+OWL|\bVijaya\b|\bVani\b/i; // (the default is the plain phrase "your assistant" now: only the old names are forbidden)
 
 function walk(dir: string, out: string[] = []): string[] {
   for (const entry of readdirSync(dir)) {
@@ -48,6 +48,6 @@ describe("the assistant's name is read through the helper, never written", () =>
   });
 
   it("the default name is written in exactly one place", () => {
-    expect(readFileSync(NAME_FILE, "utf8").match(/"Vijaya"/g)).toHaveLength(1);
+    expect(readFileSync(NAME_FILE, "utf8").match(/"your assistant"/g)).toHaveLength(1);
   });
 });

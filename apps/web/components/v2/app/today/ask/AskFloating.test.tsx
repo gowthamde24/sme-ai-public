@@ -63,36 +63,36 @@ afterEach(cleanup);
 describe("the floating orb (job DQ part 0)", () => {
   it("is a 56 px circle on a screen, not on Today, not on the live call, not in a read-only workspace, and not when there is nothing to ask", () => {
     const { rerender } = render(harness(playing(ANSWER)));
-    const orb = screen.getByRole("button", { name: "Ask Vijaya" });
+    const orb = screen.getByRole("button", { name: "Ask your assistant" });
     expect(orb.className).toContain("size-14");
     expect(orb).toHaveAttribute("aria-haspopup", "dialog");
     expect(orb).toHaveAttribute("aria-expanded", "false");
     nav.pathname = BASE;
     rerender(harness(playing(ANSWER)));
-    expect(screen.queryByRole("button", { name: "Ask Vijaya" })).toBeNull(); // Today: the card is the assistant
+    expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull(); // Today: the card is the assistant
     nav.pathname = `${BASE}/office/live`;
     rerender(harness(playing(ANSWER)));
-    expect(screen.queryByRole("button", { name: "Ask Vijaya" })).toBeNull(); // the live call
+    expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull(); // the live call
     nav.pathname = `${BASE}/quotes`;
     rerender(harness(playing(ANSWER), { readOnly: true }));
-    expect(screen.queryByRole("button", { name: "Ask Vijaya" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull();
     rerender(harness(playing(ANSWER), { availability: "not_available" }));
-    expect(screen.queryByRole("button", { name: "Ask Vijaya" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull();
     rerender(harness(null));
-    expect(screen.queryByRole("button", { name: "Ask Vijaya" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull();
   });
 
   it("opens a dialog with the line and the chips of the page (Leads: who to call first), and Esc or Close returns to the orb with the focus on it", async () => {
     render(harness(playing(ANSWER)));
-    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
-    const panel = await screen.findByRole("dialog", { name: "Ask Vijaya" });
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant" }));
+    const panel = await screen.findByRole("dialog", { name: "Ask your assistant" });
     expect(panel).toHaveAttribute("aria-modal", "true");
-    expect(within(panel).getByRole("textbox", { name: "Your question for Vijaya" })).toHaveFocus();
+    expect(within(panel).getByRole("textbox", { name: "Your question for your assistant" })).toHaveFocus();
     expect(within(panel).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["Who should I call first?", "What needs me today?", "How much customer money is held?"]);
     fireEvent.keyDown(panel, { key: "Escape" });
     expect(screen.queryByRole("dialog")).toBeNull();
-    await waitFor(() => expect(screen.getByRole("button", { name: "Ask Vijaya" })).toHaveFocus());
-    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Ask your assistant" })).toHaveFocus());
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant" }));
     fireEvent.click(await screen.findByRole("button", { name: "Close" }));
     expect(screen.queryByRole("dialog")).toBeNull();
   });
@@ -100,13 +100,13 @@ describe("the floating orb (job DQ part 0)", () => {
   it("the chips follow the screen: Sales asks about quotes and money, a screen with none of its own gets the three common ones", async () => {
     nav.pathname = `${BASE}/quotes`;
     render(harness(playing(ANSWER)));
-    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant" }));
     const panel = await screen.findByRole("dialog");
     expect(within(panel).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["Which quotes are waiting for me?", "How much customer money is held?", "What needs me today?"]);
     cleanup();
     nav.pathname = `${BASE}/something-new`;
     render(harness(playing(ANSWER)));
-    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant" }));
     expect(within(await screen.findByRole("dialog")).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["What needs me today?", "Who should I call first?", "How much customer money is held?"]);
   });
 
@@ -114,17 +114,17 @@ describe("the floating orb (job DQ part 0)", () => {
     nav.pathname = BASE;
     nav.search = "tab=companies";
     const { rerender } = render(harness(playing(ANSWER)));
-    expect(screen.getByRole("button", { name: "Ask Vijaya" })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
+    expect(screen.getByRole("button", { name: "Ask your assistant" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant" }));
     expect(within(await screen.findByRole("dialog")).getAllByRole("listitem")[0]).toHaveTextContent("Who should I call first?");
     nav.search = "";
     rerender(harness(playing(ANSWER)));
-    expect(screen.queryByRole("button", { name: "Ask Vijaya" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull();
   });
   it("a chip asks its words and the answer appears in the panel", async () => {
     const seen: string[] = [];
     render(harness(playing(ANSWER, seen)));
-    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant" }));
     const panel = await screen.findByRole("dialog");
     fireEvent.click(within(panel).getByRole("button", { name: "Who should I call first?" }));
     await waitFor(() => expect(seen).toEqual(["Who should I call first?"]));
@@ -134,7 +134,7 @@ describe("the floating orb (job DQ part 0)", () => {
   it("the same conversation: a question asked on Leads is on Today, with 'Show earlier' for the one before", async () => {
     const seen: string[] = [];
     const { rerender } = render(harness(playing(ANSWER, seen)));
-    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant" }));
     const panel = await screen.findByRole("dialog");
     fireEvent.change(within(panel).getByRole("textbox"), { target: { value: "first question" } });
     fireEvent.click(within(panel).getByRole("button", { name: "Ask" }));
@@ -164,7 +164,7 @@ describe("the floating orb (job DQ part 0)", () => {
       yield { type: "done" };
     };
     render(harness(slow));
-    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant" }));
     const panel = await screen.findByRole("dialog");
     fireEvent.click(within(panel).getByRole("button", { name: "What needs me today?" }));
     fireEvent.keyDown(panel, { key: "Escape" });
@@ -173,8 +173,8 @@ describe("the floating orb (job DQ part 0)", () => {
       hold.release?.();
     });
     await waitFor(() => expect(document.querySelector('[data-ask="dot"]')).not.toBeNull());
-    expect(screen.getByRole("button", { name: /Ask Vijaya\. New answer/ })).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: /Ask Vijaya/ }));
+    expect(screen.getByRole("button", { name: /Ask your assistant\. New answer/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Ask your assistant/ }));
     await screen.findByRole("dialog");
     expect(document.querySelector('[data-ask="dot"]')).toBeNull();
   });
@@ -201,12 +201,12 @@ describe("the floating orb (job DQ part 0)", () => {
     rerender(harness(playing(ANSWER)));
     fireEvent.keyDown(window, { key: "/" });
     expect(screen.queryByRole("dialog")).toBeNull();
-    expect(await screen.findByRole("textbox", { name: "Your question for Vijaya" })).toHaveFocus();
+    expect(await screen.findByRole("textbox", { name: "Your question for your assistant" })).toHaveFocus();
   });
 
   it("the focus stays inside the panel: Tab from the last control goes to the first, Shift+Tab the other way", async () => {
     render(harness(playing(ANSWER)));
-    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant" }));
     const panel = await screen.findByRole("dialog");
     const controls = [...panel.querySelectorAll<HTMLElement>("button:not([disabled]), input:not([disabled])")];
     controls[controls.length - 1].focus();
@@ -218,7 +218,7 @@ describe("the floating orb (job DQ part 0)", () => {
 
   it("moving to another screen closes the panel", async () => {
     const { rerender } = render(harness(playing(ANSWER)));
-    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant" }));
     await screen.findByRole("dialog");
     nav.pathname = `${BASE}/orders`;
     rerender(harness(playing(ANSWER)));
@@ -228,7 +228,7 @@ describe("the floating orb (job DQ part 0)", () => {
   it("there is no bar fixed at the bottom: the only fixed things are the orb and, once open, the panel", async () => {
     render(harness(playing(ANSWER)));
     expect(document.querySelector("form")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Ask Vijaya" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask your assistant" }));
     await screen.findByRole("dialog");
     expect(document.querySelectorAll("form")).toHaveLength(1);
     expect(document.querySelector("form")!.className).not.toContain("fixed");

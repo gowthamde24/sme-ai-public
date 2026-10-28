@@ -89,7 +89,7 @@ describe("OfficeRoom: the pose of each helper follows the API's state", () => {
   });
   it("each tag carries the helper's name and state (Working, Idle, Switched off, Not available yet)", () => {
     room(mixed);
-    expect(tag("main", "Vijaya Not available yet")).toHaveAttribute("aria-pressed", "false");
+    expect(tag("main", "Your assistant Not available yet")).toHaveAttribute("aria-pressed", "false");
     expect(seat("main")).toHaveAttribute("data-pose", "off");
     expect(tag("researcher", "Researcher Switched off")).toBeInTheDocument();
     expect(tag("quote_writer", "Quote Writer Working")).toBeInTheDocument();

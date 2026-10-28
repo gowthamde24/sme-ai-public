@@ -1,11 +1,11 @@
 # Help
-Short guides, with Vijaya to show the way.
+Short guides, with your assistant to show the way.
 {label="Guides"}
 - [Today: what needs you Your day on one screen. Read the guide](/app/tenants/22222222-2222-2222-2222-222222222222/help/today)
 - [Approve a message What to check before you press Approve. Read the guide](/app/tenants/22222222-2222-2222-2222-222222222222/help/approve)
 - [Store visits Book, confirm and finish a visit. Read the guide](/app/tenants/22222222-2222-2222-2222-222222222222/help/visits)
-- [Your saree catalogue Photos and details that Vijaya can send. Read the guide](/app/tenants/22222222-2222-2222-2222-222222222222/help/catalogue)
+- [Your saree catalogue Photos and details that your assistant can send. Read the guide](/app/tenants/22222222-2222-2222-2222-222222222222/help/catalogue)
 - [Outbox: why a message waits Every message has a status and a reason. Read the guide](/app/tenants/22222222-2222-2222-2222-222222222222/help/outbox)
-- [Automation settings Choose how much Vijaya does by itself. Read the guide](/app/tenants/22222222-2222-2222-2222-222222222222/help/agent)
-- [Ask Vijaya by voice Speak your question and read the answer. Read the guide](/app/tenants/22222222-2222-2222-2222-222222222222/help/voice)
+- [Automation settings Choose how much your assistant does by itself. Read the guide](/app/tenants/22222222-2222-2222-2222-222222222222/help/agent)
+- [Ask your assistant by voice Speak your question and read the answer. Read the guide](/app/tenants/22222222-2222-2222-2222-222222222222/help/voice)
 - [Privacy and your customers' data Agreement, stopping and erasing. Read the guide](/app/tenants/22222222-2222-2222-2222-222222222222/help/privacy)

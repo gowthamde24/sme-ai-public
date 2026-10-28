@@ -1,5 +1,5 @@
 # This week
-Mon, 5 Oct to Sun, 11 Oct What happened in your shop this week, Monday to Sunday, from the records you and Vijaya keep.
+Mon, 5 Oct to Sun, 11 Oct What happened in your shop this week, Monday to Sunday, from the records you and your assistant keep.
 {label="Store visits"}
 ## Store visits
 No visits booked this week yet.
@@ -12,8 +12,8 @@ No message you approved was sent this week yet. How fast customers hear back fro
 {label="Sarees sent most"}
 ## Sarees sent most
 No saree photos were sent this week yet.
-{label="Vijaya this week"}
-## Vijaya this week
+{label="Your assistant this week"}
+## Your assistant this week
 0% used
-{role=meter label="Vijaya usage this week: 0% used"}
+{role=meter label="Your assistant usage this week: 0% used"}
 Of this week's allowance. It starts again on Monday.

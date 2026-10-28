@@ -25,7 +25,7 @@ Goal
 Ask each supplier today's price per bag and the delivery day.
 How
 Phone calls
-What Vijaya asks
+What your assistant asks
 - What is your price per bag today?
 - Which day can you deliver?
 When
@@ -40,7 +40,7 @@ It stops when it has spent ₹36
 One approval covers everyone who is ticked. Nothing is called or sent before you approve.
 {label="Customers' language"}
 ## Customers' language
-Vijaya will speak తెలుగు. Choose another language
+Your assistant will speak తెలుగు. Choose another language
 <select label="Choose another language">
   options: తెలుగు=te* | हिन्दी=hi | ಕನ್ನಡ=kn | English=en | தமிழ்=ta | മലയാളം=ml
 [button type=button disabled: Plan again in this language]

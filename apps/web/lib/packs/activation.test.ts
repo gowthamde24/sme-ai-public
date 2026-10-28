@@ -169,7 +169,7 @@ describe("the Lead Desk steps of a business that has leads (night 4 clean-up)", 
     const steps = ["lead_source_added", "call_rule_approved", "ask_assistant_tried"] as const;
     const a = await readActivation("tok", T, leadsPack(), t, steps);
     expect(a.steps.slice(-3).map((s) => [s.id, s.state, s.href])).toEqual([["lead_source_added", "todo", "/lead-sources"], ["call_rule_approved", "todo", "/outreach"], ["ask_assistant_tried", "todo", "/tasks"]]);
-    expect(a.steps.slice(-3).map((s) => s.title)).toEqual(["Connect a lead source or import your leads", "Approve your first call rule", "Try “Ask Vijaya to do it”"]); // {assistant} is filled with the default name
+    expect(a.steps.slice(-3).map((s) => s.title)).toEqual(["Connect a lead source or import your leads", "Approve your first call rule", "Try “Ask your assistant to do it”"]); // {assistant} is filled with the default name
     reads.listLeadImports.mockResolvedValue([{}]);
     reads.listRules.mockResolvedValue([{}]);
     reads.listTasks.mockResolvedValue([{}]);

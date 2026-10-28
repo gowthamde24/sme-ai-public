@@ -16,7 +16,7 @@ const hear = vi.fn(async () => ({ ok: true, preview: { audio: null, fake: true }
 const actions = (over: Partial<OpeningLineActions> = {}): OpeningLineActions => ({ save, preview: hear, ...over });
 type Props = Partial<Parameters<typeof OpeningLine>[0]>;
 const draw = (over: Props = {}) =>
-  render(<OpeningLine words={words} langNames={CALL_LANG_NAMES} scope={{ kind: "workspace" }} lines={{}} fallback={MOCK_DEFAULTS} mentionAi={true} effectiveAi={true} names={{ assistant: "Vijaya", business: "Sri Silks" }} canEdit mock={false} actions={actions()} {...over} />);
+  render(<OpeningLine words={words} langNames={CALL_LANG_NAMES} scope={{ kind: "workspace" }} lines={{}} fallback={MOCK_DEFAULTS} mentionAi={true} effectiveAi={true} names={{ assistant: "your assistant", business: "Sri Silks" }} canEdit mock={false} actions={actions()} {...over} />);
 const box = () => screen.getByLabelText("What is said") as HTMLTextAreaElement;
 const pick = (name: string) => fireEvent.click(screen.getByRole("button", { name }));
 const type = (text: string) => fireEvent.change(box(), { target: { value: text } });
@@ -32,7 +32,7 @@ describe("Settings > AI assistant > Opening line", () => {
     draw();
     pick("English");
     expect(box().value).toBe(MOCK_DEFAULTS.en);
-    expect(screen.getByText("Hello Ravi, this is Vijaya, the AI assistant of Sri Silks. Do you have a minute?")).toBeInTheDocument();
+    expect(screen.getByText("Hello Ravi, this is your assistant, the AI assistant of Sri Silks. Do you have a minute?")).toBeInTheDocument();
     expect(screen.getByText("This is the default line. Change it to make it yours.")).toBeInTheDocument();
   });
   it("a live preview follows what is typed; the four placeholders can be put in at the cursor", () => {
@@ -81,7 +81,7 @@ describe("Settings > AI assistant > Opening line", () => {
     fireEvent.click(sw);
     expect(sw).not.toBeChecked();
     const note = screen.getByRole("note");
-    expect(note).toHaveTextContent("Vijaya will still answer honestly if someone asks whether it is an AI.");
+    expect(note).toHaveTextContent("Your assistant will still answer honestly if someone asks whether it is an AI.");
     expect(note).toHaveTextContent("Some regulators expect AI calls to be disclosed; check with your advisor.");
     fireEvent.click(screen.getByRole("button", { name: "Got it" }));
     fireEvent.click(sw);
@@ -92,9 +92,9 @@ describe("Settings > AI assistant > Opening line", () => {
     draw({ mentionAi: false, effectiveAi: false });
     pick("English");
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Hear it" })));
-    expect(hear).toHaveBeenCalledWith("en", "Hello Ravi, this is Vijaya, the AI assistant of Sri Silks. Do you have a minute?", false);
+    expect(hear).toHaveBeenCalledWith("en", "Hello Ravi, this is your assistant, the AI assistant of Sri Silks. Do you have a minute?", false);
     expect(screen.getByRole("status")).toHaveTextContent("There is no sound in this mode.");
-    expect(screen.getByText(/Preview of the voice\. In real calls Vijaya talks naturally and answers what the customer says\./)).toBeInTheDocument();
+    expect(screen.getByText(/Preview of the voice\. In real calls your assistant talks naturally and answers what the customer says\./)).toBeInTheDocument();
   });
   it("'Hear it' plays the sound from a blob: address (the page's media rule does not allow data:)", async () => {
     const made: string[] = [];

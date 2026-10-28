@@ -35,7 +35,7 @@ export function namedDict<D>(store: Map<string, D>, lang: Lang, build: () => Rec
   let dict = store.get(key);
   if (!dict) {
     if (store.size >= 40) store.clear();
-    dict = Object.fromEntries(Object.entries(build()).map(([k, v]) => [k, withTrialDays(withAssistantName(v, name))])) as D;
+    dict = Object.fromEntries(Object.entries(build()).map(([k, v]) => [k, withTrialDays(withAssistantName(v, name, lang))])) as D;
     store.set(key, dict);
   }
   return dict;

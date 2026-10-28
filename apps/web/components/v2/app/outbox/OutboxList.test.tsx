@@ -40,11 +40,11 @@ describe("the real history of a message (job BE on BB's events)", () => {
     const ol = document.querySelector("[data-history]") as HTMLElement;
     expect(ol).toHaveAttribute("data-history", "events");
     expect(Array.from(ol.querySelectorAll("li")).map((li) => li.textContent)).toEqual([
-      "13 Oct, 8:30 · Made by Vijaya",
+      "13 Oct, 8:30 · Made by your assistant",
       "13 Oct, 8:30 · Waits for a person: Not a routine message",
       "13 Oct, 21:00 · Approved by Asha",
       "13 Oct, 21:00 · Held for the morning: nothing goes out from 21:00 to 09:00 (India time)",
-      "9:00 · Sent by Vijaya's checks",
+      "9:00 · Sent by your assistant's checks",
     ]);
   });
 
@@ -172,7 +172,7 @@ describe("a row of the Outbox", () => {
   it.each([
     [STOPPED(), "Customer said STOP"],
     [FAILED(), "WhatsApp did not take it"],
-    [SENT(), "Sent by Vijaya on its own"],
+    [SENT(), "Sent by your assistant on its own"],
   ])("a blocked, failed or sent message wears its own chip", (m, chip) => {
     show([m], { tab: "blocked" });
     expect(screen.getByText(chip)).toBeInTheDocument();
@@ -190,7 +190,7 @@ describe("a row of the Outbox", () => {
     expect(screen.getByText(/Why: It mentions money/)).toBeInTheDocument();
     expect(screen.getByText("The first message to a customer says it comes from the shop's AI assistant.")).toBeInTheDocument();
     const history = screen.getByRole("list", { name: "History" });
-    expect(within(history).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["8:42 · Written by Vijaya", "8:42 · Waiting for a person: Mentions a price"]);
+    expect(within(history).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["8:42 · Written by your assistant", "8:42 · Waiting for a person: Mentions a price"]);
     expect(screen.getByRole("link", { name: "Open the lead" })).toHaveAttribute("href", `${BASE}/leads/${WAITING().lead_id}`);
     await open(/Mentions a price/);
     expect(screen.queryByText(/AI సహాయకుడి/)).toBeNull();
@@ -223,7 +223,7 @@ describe("the history of a message, from the times the API gives", () => {
   const h = (m: OutboxMessage) => historyOf(m, { words: WORDS, now: NOW, lang: "en" }).map((x) => x.text);
   it("queued, approved, sent, in time order", () => {
     expect(h(msg(SENT() as never, { edited_at: "2026-10-14T02:30:00Z", decided_at: "2026-10-14T03:00:00Z", reason: "owner_approved", created_at: "2026-10-14T01:00:00Z", sent_at: "2026-10-14T03:01:00Z", source: "assistant" }))).toEqual([
-      "6:30 · Written by Vijaya",
+      "6:30 · Written by your assistant",
       "8:00 · Words changed by a person",
       "8:30 · Approved by a person",
       "8:31 · Sent",
@@ -259,7 +259,7 @@ describe("who may decide, and what the decision does", () => {
   });
   it("a message that is not waiting has no decision buttons for anyone", async () => {
     show([SENT()], { tab: "sent" });
-    await open(/Sent by Vijaya/);
+    await open(/Sent by your assistant/);
     expect(screen.queryByRole("button", { name: "Approve and send" })).toBeNull();
     expect(screen.queryByText("Only the owner or an admin decides this.")).toBeNull();
   });

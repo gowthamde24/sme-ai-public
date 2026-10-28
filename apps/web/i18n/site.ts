@@ -1,6 +1,7 @@
 import site from "@/i18n/strings/site.json";
 
 import { fill, type Vars } from "@/i18n/fill";
+import { DEFAULT_ASSISTANT_NAME, DEFAULT_NAME_BY_LANG, withAssistantName } from "@/lib/assistant/name";
 import type { Lang } from "@/i18n/lang";
 import { dictFor, namedDict } from "@/i18n/strings";
 
@@ -15,16 +16,9 @@ export type SiteT = (key: SiteKey, vars?: Vars) => string;
 
 const cache = new Map<string, SiteDict>();
 
-/**
- * The public site names no assistant (owner, 28 Oct: no fixed name; the owner sets the name in the app): wherever its words say `{assistant}` the visitor reads "your assistant" in their language. At the start of an English sentence it is capitalised.
- * (A workspace's own name is for the app, lib/assistant/name.ts.) The Hindi word is the feminine "असिस्टेंट" the verbs of these strings were written for.
- */
-export const SITE_ASSISTANT: Record<Lang, string> = { en: "your assistant", te: "మీ అసిస్టెంట్", hi: "आपकी असिस्टेंट", kn: "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್" };
-export function withSiteAssistant(text: string, lang: Lang): string {
-  if (!text.includes("{assistant}")) return text;
-  const name = SITE_ASSISTANT[lang];
-  return text.replace(/\{assistant\}/g, (_m, at: number) => (lang === "en" && (at === 0 || /([.!?]\s+|["“])$/.test(text.slice(0, at))) ? `${name[0].toUpperCase()}${name.slice(1)}` : name));
-}
+/** The public site names no assistant (owner, 28 Oct): wherever its words say `{assistant}` the visitor reads "your assistant" in their language (lib/assistant/name.ts), whatever name a workspace has chosen. */
+export const SITE_ASSISTANT = DEFAULT_NAME_BY_LANG;
+export const withSiteAssistant = (text: string, lang: Lang): string => withAssistantName(text, DEFAULT_ASSISTANT_NAME, lang);
 
 export function siteDict(lang: Lang): SiteDict {
   return namedDict<SiteDict>(cache, lang, () => Object.fromEntries(Object.entries(dictFor(site, lang)).map(([k, v]) => [k, withSiteAssistant(v as string, lang)])) as SiteDict);

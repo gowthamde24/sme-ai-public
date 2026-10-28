@@ -5,7 +5,7 @@ Call my cement suppliers, ask the price per bag and the delivery day, and tell m
 Running
 {label="Progress of the task"} 25 %
 {role=status} 3 of 12
-Vijaya is working through the list. Spent so far: ₹7.50 of ₹36 · 3 reached, 1 interested Test mode: the calls are simulated. Nothing real is dialled.
+Your assistant is working through the list. Spent so far: ₹7.50 of ₹36 · 3 reached, 1 interested Test mode: the calls are simulated. Nothing real is dialled.
 [button type=button: Pause]
 [button type=button: Cancel the task]
 {label="Plan: Supplier price enquiry"}
@@ -25,7 +25,7 @@ Goal
 Ask each supplier today's price per bag and the delivery day.
 How
 Phone calls
-What Vijaya asks
+What your assistant asks
 - What is your price per bag today?
 - Which day can you deliver?
 When

@@ -1,3 +1,4 @@
+import { DEFAULT_NAME_BY_LANG } from "@/lib/assistant/name";
 import { describe, expect, it } from "vitest";
 
 import { appDict } from "@/i18n/app";
@@ -18,7 +19,7 @@ describe("setupWords (job BJ)", () => {
     for (const lang of ["te", "hi", "kn"] as const) {
       const d = appDict(lang) as Record<string, string>;
       for (const k of Object.keys(en).filter((x) => x.startsWith("setup."))) {
-        if (stay.includes(k)) expect(d[k], `${lang}:${k}`).toBe(en[k]);
+        if (stay.includes(k)) expect(d[k].replaceAll(DEFAULT_NAME_BY_LANG[lang], DEFAULT_NAME_BY_LANG.en), `${lang}:${k}`).toBe(en[k]); // (the default name is said in the reader's language even in these lines)
         else expect(d[k], `${lang}:${k}`).not.toBe(en[k]);
         for (const ph of en[k].match(/\{\w+\}/g) ?? []) expect(d[k], `${lang}:${k}`).toContain(ph);
       }

@@ -25,7 +25,7 @@ English
 ### Where this name shows
 - The menu and the title of every page of your workspace
 - Messages and calls written for your customers
-- How Vijaya greets you and introduces your business
+- How your assistant greets you and introduces your business
 {label="Business and plan"}
 Plan
 Getting started plan

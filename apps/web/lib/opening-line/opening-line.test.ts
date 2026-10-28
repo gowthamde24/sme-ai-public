@@ -12,7 +12,7 @@ import { MOCK_DEFAULTS, fillOpening, parseCampaignOpeningLine, parseOpeningLine,
 const CTX = { token: "tok", tenantId: "22222222-2222-2222-2222-222222222222" };
 const CAMPAIGN = "33333333-3333-4333-8333-333333333333";
 const EN = "Hello {customer}, this is {assistant} from {business}.";
-const VALUES = { customer: "Ravi", assistant: "Vijaya", business: "Sri Silks", agent_role: "AI assistant" };
+const VALUES = { customer: "Ravi", assistant: "your assistant", business: "Sri Silks", agent_role: "AI assistant" };
 
 beforeEach(() => {
   h.jar.clear();
@@ -31,7 +31,7 @@ describe("a line and its placeholders", () => {
     expect(unknownPlaceholders("{customer} {name} {phone} {name}")).toEqual(["name", "phone"]);
   });
   it("is filled with made-up values; a placeholder it does not know stays as typed", () => {
-    expect(fillOpening(`${EN} {agent_role} {x}`, VALUES)).toBe("Hello Ravi, this is Vijaya from Sri Silks. AI assistant {x}");
+    expect(fillOpening(`${EN} {agent_role} {x}`, VALUES)).toBe("Hello Ravi, this is your assistant from Sri Silks. AI assistant {x}");
   });
   it("every default of the mock is a valid line in each of the six languages", () => {
     for (const text of Object.values(MOCK_DEFAULTS)) expect(validLine(text)).toBe(true);

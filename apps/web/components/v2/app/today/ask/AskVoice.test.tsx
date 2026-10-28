@@ -444,7 +444,7 @@ describe("what goes wrong, in words", () => {
   });
 });
 
-describe("Vijaya's mood", () => {
+describe("Your assistant's mood", () => {
   it("listens while recording, thinks while the recording is understood, answers while it streams, and is idle when done", async () => {
     const hold: { first?: () => void; second?: () => void } = {};
     const slow: VoiceTransport = async function* () {

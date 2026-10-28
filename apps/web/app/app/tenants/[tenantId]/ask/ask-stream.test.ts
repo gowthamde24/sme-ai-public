@@ -33,7 +33,7 @@ describe("pathFor: a target becomes a page of THIS workspace", () => {
     expect(await pathFor(target("enquiry"), B, none)).toBe(`${B}/enquiries/${ID(1)}`);
     expect(await pathFor(null, B, none)).toBeNull();
   });
-  it("a visit Vijaya proposed opens the Visits page at that visit; a message or call waiting opens the list on Today", async () => {
+  it("a visit your assistant proposed opens the Visits page at that visit; a message or call waiting opens the list on Today", async () => {
     expect(await pathFor(target("store_visit"), B, none)).toBe(`${B}/visits?visit=${ID(1)}`);
     expect(await pathFor(target("outbox_message"), B, none)).toBe(`${B}#needs-you`);
     expect(await pathFor(target("call_request"), B, none)).toBe(`${B}#needs-you`);
