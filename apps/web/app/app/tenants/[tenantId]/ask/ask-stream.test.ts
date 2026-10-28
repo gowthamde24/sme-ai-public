@@ -15,6 +15,7 @@ const none = async (): Promise<string | null> => null;
 const target = (type: Target["type"], n = 1): Target => ({ type, id: ID(n) });
 const source = (n: number, t: Target | null = target("order", n)): AssistantEvent => ({ type: "source", kind: "order", id: ID(n), label: `S${n}`, target: t });
 const done: AssistantEvent = { type: "done", conversation_id: ID(90), message_id: ID(91), language: "en", kind: "answer" };
+const DONE_OUT = { type: "done", conversationId: ID(90), kind: "answer" }; // the conversation to go on in, and what the typed reply was
 
 async function run(events: AssistantEvent[], lookup: (id: string) => Promise<string | null> = none, fail?: unknown): Promise<AskEvent[]> {
   async function* gen() {
@@ -86,11 +87,11 @@ describe("toAskEvents", () => {
       { type: "source", label: "S2", href: null },
       { type: "draft", id: ID(3), kind: "reply_draft", title: "Reply", summary: "నమస్కారం", href: `${B}/leads/${ID(3)}`, language: "te", gloss: "Hello", machine: true },
       { type: "draft", id: ID(4), kind: "quote", title: "Quote 3", summary: "A draft quote.", href: `${B}/enquiries/${ID(7)}?quote=${ID(4)}`, language: null, gloss: null, machine: false },
-      { type: "done" },
+      DONE_OUT,
     ]);
   });
   it("stops at done: nothing after it is passed on", async () => {
-    expect(await run([{ type: "text", delta: "a" }, done, { type: "text", delta: "late" }])).toEqual([{ type: "text", delta: "a" }, { type: "done" }]);
+    expect(await run([{ type: "text", delta: "a" }, done, { type: "text", delta: "late" }])).toEqual([{ type: "text", delta: "a" }, DONE_OUT]);
   });
   it("caps the sources and drafts, so one answer cannot cause an unbounded number of lookups", async () => {
     let looked = 0;
@@ -112,7 +113,7 @@ describe("toAskEvents", () => {
     expect(await run([{ type: "text", delta: "half" }])).toEqual([{ type: "text", delta: "half" }, { type: "error" }]);
   });
   it("a step opens the stream once and is never part of the answer (job DG)", async () => {
-    expect(await run([{ type: "step", step: "working" }, { type: "step", step: "looking" }, { type: "step", step: "working" }, { type: "text", delta: "Hi" }, done])).toEqual([{ type: "step" }, { type: "text", delta: "Hi" }, { type: "done" }]);
+    expect(await run([{ type: "step", step: "working" }, { type: "step", step: "looking" }, { type: "step", step: "working" }, { type: "text", delta: "Hi" }, done])).toEqual([{ type: "step" }, { type: "text", delta: "Hi" }, DONE_OUT]);
   });
   it("the route answers as soon as the first step arrives, not when the answer is ready (job DG)", async () => {
     let release!: () => void;
@@ -155,19 +156,19 @@ describe("voice (job BF)", () => {
     return out;
   }
   it("passes the transcript on as `heard`, goes on after `done` for the spoken answer, and ends without an error", async () => {
-    expect(await runVoice([transcript, { type: "text", delta: "Hi" }, done, audio])).toEqual([{ type: "heard", text: "What needs me?" }, { type: "text", delta: "Hi" }, { type: "done" }, { type: "audio", contentType: "audio/wav", data: "UklGRg==" }]);
+    expect(await runVoice([transcript, { type: "text", delta: "Hi" }, done, audio])).toEqual([{ type: "heard", text: "What needs me?" }, { type: "text", delta: "Hi" }, DONE_OUT, { type: "audio", contentType: "audio/wav", data: "UklGRg==" }]);
   });
   it("a failed spoken answer is passed on with its code", async () => {
     expect((await runVoice([transcript, done, { type: "audio_error", code: "budget" }])).at(-1)).toEqual({ type: "audio_error", code: "budget" });
   });
   it("after `done` nothing but the spoken answer is passed on", async () => {
-    expect(await runVoice([transcript, done, { type: "text", delta: "late" }, source(1)])).toEqual([{ type: "heard", text: "What needs me?" }, { type: "done" }]);
+    expect(await runVoice([transcript, done, { type: "text", delta: "late" }, source(1)])).toEqual([{ type: "heard", text: "What needs me?" }, DONE_OUT]);
   });
   it("a voice stream with no `done` is an error", async () => {
     expect((await runVoice([transcript, { type: "text", delta: "Hi" }])).at(-1)).toEqual({ type: "error" });
   });
   it("a typed answer still ends at `done` (nothing after it is read)", async () => {
-    expect(await runVoice([{ type: "text", delta: "Hi" }, done, audio], false)).toEqual([{ type: "text", delta: "Hi" }, { type: "done" }]);
+    expect(await runVoice([{ type: "text", delta: "Hi" }, done, audio], false)).toEqual([{ type: "text", delta: "Hi" }, DONE_OUT]);
   });
   it("an over-long transcript is cut", async () => {
     expect(((await runVoice([{ ...transcript, text: "x".repeat(4000) }, done]))[0] as { text: string }).text).toHaveLength(4000);

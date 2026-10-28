@@ -1,7 +1,8 @@
+import type { ConfirmAction } from "@/lib/api/turns";
+
 import type { AskEvent, AskTransport, VoiceStatus, VoiceTransport } from "./ask-types";
 
-const KINDS = ["text", "source", "draft", "error", "done", "heard", "audio", "audio_error"];
-const AUDIO_TYPES = ["audio/wav", "audio/x-wav", "audio/wave", "audio/mpeg", "audio/mp3", "audio/ogg", "audio/webm", "audio/mp4", "audio/aac"];
+const AUDIO_TYPE = /^audio\/(wav|x-wav|wave|mpeg|mp3|ogg|webm|mp4|aac)$/; // the same nine as lib/api/voice.ts
 
 /** One line of the route's answer as an AskEvent, or null for anything that is not one: the stream is this app's own, but its text is still untrusted and nothing is guessed. */
 export function parseLine(raw: string): AskEvent | null {
@@ -14,7 +15,6 @@ export function parseLine(raw: string): AskEvent | null {
   if (typeof e !== "object" || e === null) return null;
   const r = e as Record<string, unknown>;
   const s = (v: unknown): string | null => (typeof v === "string" ? v : null);
-  if (typeof r.type !== "string" || !KINDS.includes(r.type)) return null;
   switch (r.type) {
     case "text":
       return typeof r.delta === "string" ? { type: "text", delta: r.delta } : null;
@@ -25,15 +25,18 @@ export function parseLine(raw: string): AskEvent | null {
         ? { type: "draft", id: r.id, kind: r.kind, title: r.title, summary: r.summary, href: r.href, language: s(r.language), gloss: s(r.gloss), machine: r.machine === true }
         : null;
     case "error":
-      return { type: "error", code: s(r.code) ?? undefined };
+    case "audio_error":
+      return { type: r.type, code: s(r.code) ?? undefined };
     case "heard":
       return typeof r.text === "string" ? { type: "heard", text: r.text } : null;
     case "audio":
-      return typeof r.contentType === "string" && AUDIO_TYPES.includes(r.contentType) && typeof r.data === "string" && /^[A-Za-z0-9+/]+={0,2}$/.test(r.data) ? { type: "audio", contentType: r.contentType, data: r.data } : null;
-    case "audio_error":
-      return { type: "audio_error", code: s(r.code) ?? undefined };
+      return typeof r.contentType === "string" && AUDIO_TYPE.test(r.contentType) && typeof r.data === "string" && /^[A-Za-z0-9+/]+={0,2}$/.test(r.data) ? { type: "audio", contentType: r.contentType, data: r.data } : null;
+    case "confirm_action":
+      return r.action instanceof Object ? { type: "confirm_action", action: r.action as ConfirmAction } : null; // the route made it from the API's plan, already read there
+    case "done":
+      return { type: "done", conversationId: s(r.conversationId) };
     default:
-      return { type: "done" };
+      return null;
   }
 }
 
@@ -75,13 +78,13 @@ async function* readEvents(body: ReadableStream<Uint8Array>, signal: AbortSignal
  */
 export function makeAskTransport(endpoint: string, fetcher: typeof fetch = (...a) => fetch(...a)): AskTransport {
   const conversationId = crypto.randomUUID();
-  return async function* ask({ question, signal }) {
+  return async function* ask({ question, signal, conversationId: given }) {
     let response: Response;
     try {
       response = await fetcher(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: question, messageId: crypto.randomUUID(), conversationId }),
+        body: JSON.stringify({ text: question, messageId: crypto.randomUUID(), conversationId: given === undefined ? conversationId : given }),
         signal,
         cache: "no-store",
         credentials: "same-origin",

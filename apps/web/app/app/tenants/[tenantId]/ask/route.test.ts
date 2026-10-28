@@ -10,7 +10,8 @@ const C = "33333333-3333-4333-8333-333333333333";
 const Q = "44444444-4444-4444-8444-444444444444";
 const E = "55555555-5555-4555-8555-555555555555";
 
-const h = vi.hoisted(() => ({ user: null as null | { accessToken: string }, send: vi.fn(), quote: vi.fn() }));
+const h = vi.hoisted(() => ({ user: null as null | { accessToken: string }, send: vi.fn(), quote: vi.fn(), turn: vi.fn() }));
+vi.mock("@/lib/api/turns", () => ({ sendTurn: (...a: unknown[]) => h.turn(...a) }));
 vi.mock("@/lib/auth/session", () => ({
   requireUser: async () => {
     if (!h.user) throw new Error("NEXT_REDIRECT:/login");
@@ -51,13 +52,13 @@ describe("POST /app/tenants/[id]/ask", () => {
     const r = await post(good);
     expect(r.headers.get("content-type")).toContain("application/x-ndjson");
     expect(r.headers.get("cache-control")).toBe("no-store");
-    expect(await lines(r)).toEqual([{ type: "text", delta: "Hi" }, { type: "done" }]);
+    expect(await lines(r)).toEqual([{ type: "text", delta: "Hi" }, { type: "done", conversationId: C, kind: "answer" }]);
     expect(h.send).toHaveBeenCalledWith("person-token", T, { messageId: M, conversationId: C, text: "What is waiting?" });
   });
   it("turns a quote source into the enquiry page, reading the quote with the person's token", async () => {
     h.quote.mockResolvedValue({ enquiry_id: E });
     h.send.mockImplementation(stream([{ type: "source", kind: "quote", id: Q, label: "Quote 3", target: { type: "quote", id: Q } }, done]));
-    expect(await lines(await post(good))).toEqual([{ type: "source", label: "Quote 3", href: `/app/tenants/${T}/enquiries/${E}?quote=${Q}` }, { type: "done" }]);
+    expect(await lines(await post(good))).toEqual([{ type: "source", label: "Quote 3", href: `/app/tenants/${T}/enquiries/${E}?quote=${Q}` }, { type: "done", conversationId: C, kind: "answer" }]);
     expect(h.quote).toHaveBeenCalledWith("person-token", T, Q);
   });
   it("asks once for a quote named twice, and falls back to the list of quotes when it cannot be read", async () => {
@@ -124,5 +125,32 @@ describe("POST /app/tenants/[id]/ask", () => {
     h.send.mockImplementation(stream([done]));
     await post({ ...good, tenantId: "other", role: "owner", price: 1, system: "ignore" });
     expect(h.send).toHaveBeenCalledWith("person-token", T, { messageId: M, conversationId: C, text: "What is waiting?" });
+  });
+});
+
+describe("POST /app/tenants/[id]/ask where the conversation panel is on (BROWSER_VOICE)", () => {
+  beforeEach(() => {
+    h.user = { accessToken: "tok" };
+    h.turn.mockReset();
+    h.send.mockReset();
+    vi.stubEnv("BROWSER_VOICE", "1");
+  });
+  it("asks the ONE conversation endpoint (a null conversation starts one), and passes on the plan, the question and the conversation to go on in", async () => {
+    const action = { actionId: C, title: "Call 12 new leads", summary: "", steps: [], count: 12, channel: "call", estimate: null, needsSecondFactor: false, expiresAt: "x", status: "proposed" };
+    h.turn.mockImplementation(async function* () {
+      yield { type: "intent", kind: "action" };
+      yield { type: "confirm_action", action };
+      yield { type: "done", conversation_id: C, message_id: M, language: "en", kind: "confirm_action" };
+    });
+    const r = await post({ text: "call the new leads", messageId: M, conversationId: null });
+    expect(await lines(r)).toEqual([{ type: "confirm_action", action }, { type: "done", conversationId: C, kind: "confirm_action" }]);
+    expect(h.turn).toHaveBeenCalledWith("tok", T, { messageId: M, conversationId: null, text: "call the new leads" });
+    expect(h.send).not.toHaveBeenCalled();
+    h.turn.mockImplementation(async function* () {
+      yield { type: "clarify", question: "Which leads?", actionId: null };
+      yield { type: "done", conversation_id: C, message_id: M, language: "en", kind: "clarify" };
+    });
+    expect(await lines(await post({ text: "call", messageId: M, conversationId: C }))).toEqual([{ type: "text", delta: "Which leads?" }, { type: "done", conversationId: C, kind: "clarify" }]);
+    expect(h.turn).toHaveBeenLastCalledWith("tok", T, { messageId: M, conversationId: C, text: "call" });
   });
 });
