@@ -71170,10 +71170,10 @@
   }
  },
  "gd.speaker.assistant": {
-  "en": "{assistant}",
-  "te": "{assistant}",
-  "hi": "{assistant}",
-  "kn": "{assistant}",
+  "en": "Assistant",
+  "te": "అసిస్టెంట్",
+  "hi": "असिस्टेंट",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್",
   "status": {
    "te": "draft",
    "hi": "draft",
