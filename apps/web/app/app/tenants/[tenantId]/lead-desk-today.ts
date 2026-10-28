@@ -2,7 +2,7 @@ import type { DeskWorker, NeedsCard, NeedsYouItem, Role, T } from "@/components/
 import { ApiAuthError } from "@/lib/api/client";
 import { readDeskLeads } from "@/lib/lead-desk/leads-source";
 import { readBatches, readHandoffs, readItems, readRules } from "@/lib/outreach/source";
-import type { BatchAnswer, BatchItem, Handoff, Rule } from "@/lib/outreach/types";
+import { SOURCE_TAGS, type BatchAnswer, type BatchItem, type Handoff, type Rule } from "@/lib/outreach/types";
 import { leadsScreens, outreachScreens, taskScreens } from "@/lib/screens/flag";
 import { readTasks } from "@/lib/tasks/source";
 import type { TaskOut } from "@/lib/tasks/types";
@@ -24,6 +24,12 @@ const settled = <V>(r: PromiseSettledResult<V>): V | null => {
   return null;
 };
 
+/**
+ * The plain name of a lead source for a line of Today. Only the tags Lead Desk knows (`SOURCE_TAGS`) have a word in the dictionary; any other source a CRM lead may carry (a WhatsApp enquiry, something typed by hand, a tag
+ * from before Lead Desk) is shown as it is, with the underscores taken out. Never a dictionary lookup that can miss: a missing key made Today fail for every business type with its own pages.
+ */
+export const sourceNameOf = (t: T, tag: string): string => ((SOURCE_TAGS as readonly string[]).includes(tag) ? t(`ld.source.${tag}`) : tag.replace(/_/g, " "));
+
 const CAPS = ["cap_calls", "cap_minutes"] as const;
 const isCap = (reason: string | null): boolean => reason !== null && (CAPS as readonly string[]).includes(reason);
 const short = (text: string, max = 80): string => (text.length <= max ? text : `${text.slice(0, max - 1).trimEnd()}…`);
@@ -37,7 +43,7 @@ const dueItems = (items: readonly BatchItem[], now: number): BatchItem[] =>
 
 type Parts = { batches: BatchAnswer[] | null; handoffs: Handoff[] | null; rules: Rule[] | null; tasks: TaskOut[] | null; callbacks: Map<string, { name: string; n: number; at: string }> };
 
-export function needsOf(parts: Parts, role: Role, base: string, t: T): NeedsCard[] {
+export function needsOf(parts: Parts, role: Role, base: string, t: T, sourceName: (tag: string) => string): NeedsCard[] {
   const out: NeedsCard[] = [];
   const decides = role === "owner";
   const manages = role === "owner" || role === "admin";
@@ -64,7 +70,7 @@ export function needsOf(parts: Parts, role: Role, base: string, t: T): NeedsCard
     }
     for (const r of parts.rules ?? []) {
       if (r.active || !isCap(r.pausedReason)) continue;
-      out.push(card({ kind: "outreach_paused", id: r.id, customer: t(`ld.source.${r.source}`), summary: t(r.pausedReason === "cap_minutes" ? "today.sum.cap.minutes" : "today.sum.cap.calls"), at: r.approvedAt, href: `${base}/outreach` }));
+      out.push(card({ kind: "outreach_paused", id: r.id, customer: sourceName(r.source), summary: t(r.pausedReason === "cap_minutes" ? "today.sum.cap.minutes" : "today.sum.cap.calls"), at: r.approvedAt, href: `${base}/outreach` }));
     }
     for (const k of parts.tasks ?? []) {
       if (k.status !== "paused" || k.pause_reason !== "cap") continue;
@@ -108,10 +114,10 @@ export function teamOf(parts: Parts & { lead: { name: string; source: string | n
 }
 
 /**
- * Reads what Lead Desk adds to Today. Each part is read once, on its own (a part whose flag is off is not asked), and one that fails adds nothing and is `not_available` in the team. `sourceName` is the plain name of a lead source ("IndiaMART").
+ * Reads what Lead Desk adds to Today. `withTeam` is false for a business type that has no Lead Desk template: its Today gets the cards but its "Your team" is the shop's helpers, so the leads are not even read. Each part is read once, on its own (a part whose flag is off is not asked), and one that fails adds nothing and is `not_available` in the team. `sourceName` is the plain name of a lead source ("IndiaMART").
  * Callbacks are counted from the items of the (at most five) running plans, the newest first: a plan with callbacks due is one card with the number. `base` is the workspace's address.
  */
-export async function readLeadDesk(ctx: Ctx, role: Role, base: string, t: T, sourceName: (tag: string) => string, now: number = Date.now()): Promise<LeadDeskToday> {
+export async function readLeadDesk(ctx: Ctx, role: Role, base: string, t: T, sourceName: (tag: string) => string, now: number = Date.now(), withTeam = true): Promise<LeadDeskToday> {
   if (role === "viewer") return { needs: [], team: [] };
   const manages = role === "owner" || role === "admin";
   const outreach = outreachScreens() !== "off";
@@ -120,15 +126,15 @@ export async function readLeadDesk(ctx: Ctx, role: Role, base: string, t: T, sou
     outreach ? readHandoffs(ctx, true) : Promise.resolve(null),
     outreach && manages ? readRules(ctx) : Promise.resolve(null),
     taskScreens() !== "off" && manages ? readTasks({ token: ctx.token, tenantId: ctx.tenantId }).then((r) => (r.ok ? r.value : null)) : Promise.resolve(null),
-    leadsScreens() !== "off" && manages ? readDeskLeads(ctx, null) : Promise.resolve(null),
+    withTeam && leadsScreens() !== "off" && manages ? readDeskLeads(ctx, null) : Promise.resolve(null),
   ]);
   const parts: Parts = { batches: settled(batches), handoffs: settled(handoffs), rules: settled(rules), tasks: settled(tasks), callbacks: new Map() };
   const lead = settled(leads);
   const callbacks = manages && parts.batches ? await readCallbacks(ctx, parts.batches, now) : new Map();
   parts.callbacks = callbacks;
   const newest = lead?.leads.length ? [...lead.leads].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))[0] : null;
-  const team = manages ? teamOf({ ...parts, lead: leadsScreens() === "off" ? undefined : lead === null ? undefined : newest ? { name: newest.name, source: newest.source, at: newest.createdAt } : null }, t, sourceName) : [];
-  return { needs: needsOf(parts, role, base, t), team };
+  const team = manages && withTeam ? teamOf({ ...parts, lead: leadsScreens() === "off" ? undefined : lead === null ? undefined : newest ? { name: newest.name, source: newest.source, at: newest.createdAt } : null }, t, sourceName) : [];
+  return { needs: needsOf(parts, role, base, t, sourceName), team };
 }
 
 async function readCallbacks(ctx: Ctx, batches: readonly BatchAnswer[], now: number): Promise<Map<string, { name: string; n: number; at: string }>> {
