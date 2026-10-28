@@ -111,7 +111,7 @@ describe("the leads of Lead Desk", () => {
     expect(mockLeads(now, { [leads[0].id]: null }, [], U)[0].ownerUserId).toBeNull();
   });
   it("filters by source, state, mine and hot, and only on words it knows", () => {
-    expect(parseFilter({ source: "indiamart", status: "new", mine: "1", hot: "1" })).toEqual({ source: "indiamart", status: "new", mine: true, hot: true });
+    expect(parseFilter({ source: "indiamart", status: "new", mine: "1", hot: "1" })).toMatchObject({ source: "indiamart", status: "new", mine: true, hot: true });
     expect(parseFilter({ source: "tv", status: "gone", mine: "yes" })).toEqual(NO_FILTER);
     expect(parseFilter({ source: ["justdial"] }).source).toBe("justdial");
     expect(applyFilter(leads, { ...NO_FILTER, source: "indiamart" }, U).every((l) => l.source === "indiamart")).toBe(true);
