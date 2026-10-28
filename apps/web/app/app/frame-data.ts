@@ -4,7 +4,6 @@ import type { FrameData } from "@/components/v2/app/contract";
 import { ApiRequestError } from "@/lib/api/client";
 import { getPlan } from "@/lib/api/plan";
 import { getAiUsage } from "@/lib/api/ai-usage";
-import { getMyProfile } from "@/lib/api/me";
 import { readPackCached } from "@/lib/packs/read";
 import { packFrame } from "@/lib/packs/resolve";
 
@@ -16,7 +15,6 @@ import { readTodayCached } from "./tenants/[tenantId]/today-read";
  */
 export const readPlanCached = cache((accessToken: string, tenantId: string) => getPlan(accessToken, tenantId));
 export const readUsageCached = cache((accessToken: string, tenantId: string) => getAiUsage(accessToken, tenantId));
-export const readMyProfileCached = cache((accessToken: string, tenantId: string) => getMyProfile(accessToken, tenantId));
 
 /**
  * What the frame shows besides the menu, for ONE workspace: the plan under the business name (`getPlan`), the AI usage card (`getAiUsage`) and the count on Today
@@ -24,7 +22,7 @@ export const readMyProfileCached = cache((accessToken: string, tenantId: string)
  * Owner and Admin only: for anyone else its 403 means the card is not drawn at all (not "Not available yet": there is nothing to wait for). Never throws.
  */
 export async function readFrameData(accessToken: string, tenantId: string, lang = "en"): Promise<FrameData> {
-  const [plan, usage, today, pack, me] = await Promise.allSettled([readPlanCached(accessToken, tenantId), readUsageCached(accessToken, tenantId), readTodayCached(accessToken, tenantId), readPackCached(accessToken, tenantId), readMyProfileCached(accessToken, tenantId)]);
+  const [plan, usage, today, pack] = await Promise.allSettled([readPlanCached(accessToken, tenantId), readUsageCached(accessToken, tenantId), readTodayCached(accessToken, tenantId), readPackCached(accessToken, tenantId)]);
   return {
     plan: plan.status === "fulfilled" ? plan.value : null,
     usage: usage.status === "fulfilled" ? usage.value : null,
@@ -32,6 +30,5 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
     waiting: today.status === "fulfilled" ? today.value.cards.waiting : null,
     ready: true,
     pack: pack.status === "fulfilled" && pack.value ? packFrame(pack.value, lang) : null,
-    person: me.status === "fulfilled" ? { name: me.value.displayName, pictureUrl: me.value.pictureUrl } : null,
   };
 }

@@ -6,7 +6,11 @@ import { redirectMock, redirectTarget } from "@/test/helpers";
 const requireUser = vi.fn();
 const fetchMe = vi.fn();
 const jar = new Map<string, string>();
-vi.mock("next/headers", () => ({ cookies: async () => ({ get: (n: string) => (jar.has(n) ? { name: n, value: jar.get(n) } : undefined) }) }));
+const hdr = new Map<string, string>();
+const getMyProfile = vi.fn();
+vi.mock("next/headers", () => ({ cookies: async () => ({ get: (n: string) => (jar.has(n) ? { name: n, value: jar.get(n) } : undefined) }), headers: async () => ({ get: (n: string) => hdr.get(n) ?? null }) }));
+vi.mock("@/lib/api/me", () => ({ getMyProfile: (...a: unknown[]) => getMyProfile(...a) }));
+vi.mock("@/lib/packs/read", () => ({ readPackCached: async () => null }));
 vi.mock("next/navigation", () => ({ usePathname: () => "/app", useSearchParams: () => new URLSearchParams(), useRouter: () => ({ refresh: vi.fn() }), redirect: (to: string) => redirectMock(to) }));
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
@@ -21,6 +25,8 @@ const T = "22222222-2222-2222-2222-222222222222";
 beforeEach(() => {
   vi.clearAllMocks();
   jar.clear();
+  hdr.clear();
+  getMyProfile.mockReset().mockResolvedValue({ displayName: null, language: null, picture: "none", pictureUrl: null });
   window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
   requireUser.mockResolvedValue(USER);
   fetchMe.mockResolvedValue({ user_id: USER.id, memberships: [{ role: "owner", tenant: { id: T, name: "Acme", slug: "acme" } }] });
@@ -51,6 +57,29 @@ describe("the /app layout (the workspace frame)", () => {
     fetchMe.mockResolvedValue({ user_id: "99999999-9999-4999-8999-999999999999", memberships: [{ role: "owner", tenant: { id: T, name: "Acme", slug: "acme" } }] });
     render(await AppLayout({ children: page }));
     expect(screen.getByText("The page")).toBeInTheDocument();
+  });
+
+  it("inside a workspace the menu footer has the person's picture over their letters (drawn by the server); outside one, none", async () => {
+    hdr.set("x-sme-path", `/app/tenants/${T}/settings`);
+    getMyProfile.mockResolvedValue({ displayName: "Ravi Kumar", language: "te", picture: "own", pictureUrl: "https://img.example/me.jpg" });
+    const { container, unmount } = render(await AppLayout({ children: page }));
+    expect(getMyProfile).toHaveBeenCalledWith("tok", T);
+    expect(container.querySelector('img[src="https://img.example/me.jpg"]')).not.toBeNull();
+    expect(screen.getAllByText("RK").length).toBeGreaterThan(0);
+    unmount();
+    hdr.clear();
+    getMyProfile.mockClear();
+    const outside = render(await AppLayout({ children: page }));
+    expect(getMyProfile).not.toHaveBeenCalled();
+    expect(outside.container.querySelector("img")).toBeNull();
+  });
+
+  it("a profile that cannot be read leaves the letters of the e-mail address", async () => {
+    hdr.set("x-sme-path", `/app/tenants/${T}`);
+    getMyProfile.mockRejectedValue(new Error("down"));
+    const { container } = render(await AppLayout({ children: page }));
+    expect(container.querySelector("aside img")).toBeNull();
+    expect(screen.getAllByText("O").length).toBeGreaterThan(0); // the letters of o@example.test
   });
 
   it("follows the saved theme, and the frame is never indexed", async () => {

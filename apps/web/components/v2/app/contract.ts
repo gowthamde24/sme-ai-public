@@ -19,10 +19,7 @@ export type FrameData = {
   showUsage: boolean;
   /** The business type of the workspace as the menu needs it (job CL): modules, phone tabs and changed words. null = not known (the menu is the one the product always had). */
   pack: PackFrame | null;
-  /** The signed-in person as the menu footer draws them (their name and picture from Settings > My profile). null or left out = the e-mail address and its letters. */
-  person?: FramePerson | null;
 };
-export type FramePerson = { name: string | null; pictureUrl: string | null };
 /** Every part unreadable: the frame says "Not available yet" in each place. */
 export const NO_FRAME_DATA: FrameData = { plan: null, usage: null, waiting: null, ready: true, showUsage: true, pack: null };
 /** Not read yet (the layout above the workspace cannot know which workspace it is; the workspace's own layout brings the numbers in). */

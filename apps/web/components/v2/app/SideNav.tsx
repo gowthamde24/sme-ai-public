@@ -2,6 +2,7 @@
 
 import { CircleHelp, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { AccountMenu } from "./AccountMenu";
 import type { FrameData } from "./contract";
@@ -22,7 +23,7 @@ export { itemCurrent };
  * (nav.ts), each row only for the roles that may open it; and, fixed below, the AI usage card, Settings, Help ("Not available yet"), the user card and "Collapse menu".
  * Outside a workspace (the workspaces page, the security page) the groups give way to the two account pages.
  */
-export function SideNav({ memberships, labels: given_labels, frame: given, email, signOut }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void> }) {
+export function SideNav({ memberships, labels: given_labels, frame: given, email, signOut, mark }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void>; mark: ReactNode }) {
   const { current, pathname, activeMenu } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const labels = withPackWords(given_labels, frame.pack);
@@ -65,7 +66,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
             {collapsed ? null : <span className="text-sm font-normal">{word(labels, "frame.notyet", "Not available yet")}</span>}
           </button>
         )}
-        <AccountMenu email={email} role={current?.role ?? null} signOut={signOut} labels={labels} collapsed={collapsed} several={memberships.length > 1} person={frame.person ?? null} profileHref={current ? `/app/tenants/${current.id}/settings?section=profile` : null} />
+        <AccountMenu email={email} role={current?.role ?? null} signOut={signOut} labels={labels} collapsed={collapsed} several={memberships.length > 1} mark={mark} />
         <button type="button" onClick={toggle} aria-label={collapsed ? word(labels, "frame.expand", "Expand menu") : word(labels, "frame.collapse", "Collapse menu")} className={`${itemBase} w-full ${itemIdle} ${collapsed ? "justify-center px-0" : ""}`}>
           {collapsed ? <PanelLeftOpen className="size-5" aria-hidden="true" /> : <PanelLeftClose className="size-5" aria-hidden="true" />}
           {collapsed ? null : <span>{word(labels, "frame.collapse", "Collapse menu")}</span>}

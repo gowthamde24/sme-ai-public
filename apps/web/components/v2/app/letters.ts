@@ -1,6 +1,6 @@
-/** The two letters of a name ("Ravi Kumar" = RK), else the first two of the e-mail address; "·" when there is nothing. */
+/** The two letters of a name ("Ravi Kumar" = RK, "Ravi" = RA), else the first two of the e-mail address; "·" when there is nothing. */
 export function lettersOf(name: string | null, email: string | null): string {
-  const parts = (name ?? "").trim().split(/\s+/).map((p) => p.replace(/[^\p{L}]/gu, "")).filter((p) => p !== "");
-  const letters = parts.length >= 2 ? `${[...parts[0]][0]}${[...parts[parts.length - 1]][0]}` : parts.length === 1 ? [...parts[0]].slice(0, 2).join("") : (email ?? "").split("@")[0].replace(/[^\p{L}]/gu, "").slice(0, 2);
-  return (letters || "·").toUpperCase();
+  const words = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  const from = words.length > 1 ? words[0][0] + words[words.length - 1][0] : words.length === 1 ? words[0].slice(0, 2) : (email ?? "").split("@")[0].slice(0, 2);
+  return (from || "·").toUpperCase();
 }

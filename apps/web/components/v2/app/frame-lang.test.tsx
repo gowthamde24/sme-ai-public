@@ -16,6 +16,9 @@ import { TabBar } from "./TabBar";
 import type { Membership } from "./use-workspace";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 
+/** The round mark the layout draws on the server (its letters here): a slot of the menu parts. */
+const MARK = <span aria-hidden="true">OW</span>;
+
 const A = "22222222-2222-2222-2222-222222222222";
 const none: FrameData = NO_FRAME_DATA;
 const members: Membership[] = [{ id: A, name: "Acme", role: "owner" }, { id: "33333333-3333-3333-3333-333333333333", name: "Second", role: "viewer" }];
@@ -27,10 +30,10 @@ afterEach(cleanup);
 
 describe("the frame in English is the same with or without the dictionary (language track L0, English parity)", () => {
   it.each([
-    ["SideNav", (l?: Record<string, string>) => <SideNav memberships={members} labels={l} frame={none} email="o@example.test" signOut={async () => undefined} />],
-    ["TabBar", (l?: Record<string, string>) => <TabBar memberships={members} labels={l} frame={none} email="o@example.test" signOut={async () => undefined} />],
+    ["SideNav", (l?: Record<string, string>) => <SideNav memberships={members} labels={l} frame={none} email="o@example.test" signOut={async () => undefined} mark={MARK} />],
+    ["TabBar", (l?: Record<string, string>) => <TabBar memberships={members} labels={l} frame={none} email="o@example.test" signOut={async () => undefined} mark={MARK} />],
     ["WorkspaceSwitcher", (l?: Record<string, string>) => <WorkspaceSwitcher memberships={members} labels={l} plan={null} />],
-    ["AccountMenu", (l?: Record<string, string>) => <AccountMenu email="o@example.test" signOut={async () => undefined} labels={l} />],
+    ["AccountMenu", (l?: Record<string, string>) => <AccountMenu email="o@example.test" signOut={async () => undefined} labels={l} mark={MARK} />],
   ])("%s", (_name, make) => {
     nav.pathname = `/app/tenants/${A}/orders/abc`;
     expect(renderToStaticMarkup(make(frameLabels("en")))).toBe(renderToStaticMarkup(make(undefined)));

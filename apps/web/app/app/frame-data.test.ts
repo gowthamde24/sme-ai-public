@@ -32,7 +32,7 @@ describe("readFrameData", () => {
     getPlan.mockResolvedValue(PLAN);
     getAiUsage.mockResolvedValue(USAGE);
     readToday.mockResolvedValue(TODAY);
-    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, pack: PACK, person: null });
+    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, pack: PACK });
     expect(getPlan).toHaveBeenCalledWith("tok", T);
     expect(getAiUsage).toHaveBeenCalledWith("tok", T);
     expect(readToday).toHaveBeenCalledWith("tok", T);
@@ -41,13 +41,13 @@ describe("readFrameData", () => {
     getPlan.mockResolvedValue(PLAN);
     getAiUsage.mockRejectedValue(new ApiRequestError(403, "forbidden", "No."));
     readToday.mockResolvedValue(TODAY);
-    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: null, waiting: 3, ready: true, showUsage: false, pack: PACK, person: null });
+    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: null, waiting: 3, ready: true, showUsage: false, pack: PACK });
   });
   it("any other failure is null for that one part only (so the frame says 'Not available yet' there) and never throws", async () => {
     getPlan.mockRejectedValue(new ApiContractError("x"));
     getAiUsage.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "down"));
     readToday.mockRejectedValue(new ApiAuthError("rejected"));
-    expect(await readFrameData("tok", T)).toEqual({ plan: null, usage: null, waiting: null, ready: true, showUsage: true, pack: PACK, person: null });
+    expect(await readFrameData("tok", T)).toEqual({ plan: null, usage: null, waiting: null, ready: true, showUsage: true, pack: PACK });
   });
   it("hands the menu of the workspace's business type to the frame, in the person's language", async () => {
     const id = otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!;
@@ -66,6 +66,6 @@ describe("readFrameData", () => {
     getAiUsage.mockResolvedValue(USAGE);
     readToday.mockResolvedValue(TODAY);
     readPack.mockRejectedValue(new ApiAuthError("rejected"));
-    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, pack: null, person: null });
+    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, pack: null });
   });
 });

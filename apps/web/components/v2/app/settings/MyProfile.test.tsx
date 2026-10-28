@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { appDict, appT } from "@/i18n/app";
@@ -31,10 +31,12 @@ describe("Settings > My profile", () => {
 });
 
 describe("the round mark of a person", () => {
-  it("falls back to the letters when the picture cannot be loaded", () => {
-    render(<Avatar url="https://x/broken.jpg" letters="RK" className="x" />);
-    fireEvent.error(document.querySelector("img") as HTMLImageElement);
+  it("always has the letters, with the picture over them when there is one (no text of its own)", () => {
+    render(<Avatar url="https://x/me.jpg" letters="RK" className="x" />);
     expect(screen.getByText("RK")).toBeInTheDocument();
+    expect(document.querySelector("img")).toHaveAttribute("alt", "");
+    cleanup();
+    render(<Avatar url={null} letters="RK" className="x" />);
     expect(document.querySelector("img")).toBeNull();
   });
   it("makes letters from a name, else from the e-mail address", () => {
