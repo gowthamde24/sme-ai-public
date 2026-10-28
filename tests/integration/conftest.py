@@ -16,9 +16,10 @@ import sys
 import time
 import uuid
 from collections.abc import Iterator
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
+from unittest import mock
 from urllib.parse import urlparse
 
 import httpx
@@ -27,6 +28,7 @@ from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
 from app.config import Settings
+from app.hardening import ratelimit
 from app.main import create_app
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
@@ -248,7 +250,13 @@ def client(stack: Stack) -> Iterator[TestClient]:
     # a fixed request id on every request: an error body carries it, and the tests that prove a
     # foreign and an unknown workspace look identical compare whole bodies (job CD)
     fixed_id = {"x-request-id": "integration-test-0001"}
-    with TestClient(create_app(settings), headers=fixed_id) as test_client:
+    # the per-account allowances (Ask 20 a minute, ...) are for people; one session-wide client
+    # sends far more Ask calls than any person does, so the tests get a table with no real limit
+    roomy = tuple(replace(rule, limit=100_000) for rule in ratelimit.ACCOUNT_RULES)
+    with (
+        mock.patch.object(ratelimit, "ACCOUNT_RULES", roomy),
+        TestClient(create_app(settings), headers=fixed_id) as test_client,
+    ):
         yield test_client
 
 
