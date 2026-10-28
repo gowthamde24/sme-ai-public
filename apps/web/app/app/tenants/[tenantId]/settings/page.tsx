@@ -60,8 +60,12 @@ import { readAssistant } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, VOICES } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { assistantScreens, callSettingsScreens, dpdpScreens, openingLineScreens, ownVoiceScreens, topupScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { assistantScreens, callSettingsScreens, dpdpScreens, openingLineScreens, ownVoiceScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
 import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
+import { VoicePicker } from "@/components/v2/app/assistant/LazyVoicePicker";
+import { readVoicePicker } from "@/lib/voice-picker/source";
+import { PICKER_LANGS, type PickerLang } from "@/lib/voice-picker/types";
+import { chooseVoiceAction } from "../voice-picker-actions";
 import { readOpeningLine } from "@/lib/opening-line/source";
 import { currentAssistantName } from "@/lib/assistant/name";
 import { previewOpeningLineAction, saveOpeningLineAction } from "../opening-line-actions";
@@ -158,7 +162,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
   const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
   // Settings > AI assistant (job DM): only while its flag is on, and only for the Owner (the people who run the business may be admins, but the assistant is the Owner's to set up)
-  const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off");
+  const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off" || voicePickerScreens() !== "off");
   const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   let members: Member[] | null = null;
@@ -238,6 +242,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const assistantCtx = { token: user.accessToken, tenantId };
   const ownVoice = section === "assistant" && ownVoiceScreens() !== "off" ? await readOwnVoice(assistantCtx) : null;
   const openingLine = section === "assistant" && openingLineScreens() !== "off" ? await readOpeningLine(assistantCtx) : null;
+  // the voice picker (owner decision 28 Oct): one block per language the business talks in (its own languages, else the one in use) that the catalogue has a row for
+  const voicePicker = section === "assistant" && voicePickerScreens() !== "off" ? await readVoicePicker(assistantCtx) : null;
+  const pickerLangs: PickerLang[] = section === "assistant" && voicePicker?.mode === "ok" ? await getWorkspaceProfile(user.accessToken, tenantId).then((p) => p.languages, (e) => (e instanceof ApiAuthError ? redirect("/login") : [] as string[])).then((own) => PICKER_LANGS.filter((l) => (own.length > 0 ? own : [lang]).includes(l))) : [];
   const callSettings = section === "assistant" && callSettingsScreens() !== "off" ? await readCallSettings(assistantCtx, pack?.modules ?? null) : null;
   let theme: ThemePick = "system";
   try {
@@ -388,6 +395,17 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 canEdit={tenant.role === "owner"}
                 mock={openingLineScreens() === "mock"}
                 actions={{ save: saveOpeningLineAction.bind(null, tenantId), preview: previewOpeningLineAction.bind(null, tenantId) }}
+              />
+            ) : null}
+            {voicePicker?.mode === "ok" ? (
+              <VoicePicker
+                words={wordsFor(lang, ["vp."])}
+                rows={pickerLangs.map((l) => ({ language: l, voices: voicePicker.data.voices.filter((v) => v.language === l), choice: voicePicker.data.choices[l] ?? null }))}
+                langNames={CALL_LANG_NAMES}
+                canEdit={admin}
+                endpoint={`${base}/voice-pick`}
+                mock={voicePickerScreens() === "mock"}
+                actions={{ choose: chooseVoiceAction.bind(null, tenantId) }}
               />
             ) : null}
             {ownVoice?.mode === "ok" ? (

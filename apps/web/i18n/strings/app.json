@@ -70618,5 +70618,236 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "vp.title": {
+  "en": "Voice",
+  "te": "వాయిస్",
+  "hi": "आवाज़",
+  "kn": "ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.sub": {
+  "en": "Choose the voice {assistant} uses on calls and in voice previews, for each language. Until you choose, the default voice is used.",
+  "te": "కాల్స్‌లో, వాయిస్ ప్రివ్యూలో {assistant} వాడే వాయిస్‌ని ప్రతి భాషకూ ఎంచుకోండి. మీరు ఎంచుకునే వరకు డిఫాల్ట్ వాయిస్ వాడతాం.",
+  "hi": "कॉल और वॉइस प्रीव्यू में {assistant} कौन सी आवाज़ इस्तेमाल करे, यह हर भाषा के लिए चुनें। आपके चुनने तक डिफ़ॉल्ट आवाज़ चलती है।",
+  "kn": "ಕಾಲ್‌ಗಳಲ್ಲಿ ಮತ್ತು ವಾಯ್ಸ್ ಪ್ರಿವ್ಯೂನಲ್ಲಿ {assistant} ಬಳಸುವ ಧ್ವನಿಯನ್ನು ಪ್ರತಿ ಭಾಷೆಗೂ ಆಯ್ಕೆಮಾಡಿ. ನೀವು ಆಯ್ಕೆಮಾಡುವವರೆಗೆ ಡಿಫಾಲ್ಟ್ ಧ್ವನಿ ಬಳಕೆಯಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.default": {
+  "en": "Default",
+  "te": "డిఫాల్ట్",
+  "hi": "डिफ़ॉल्ट",
+  "kn": "ಡಿಫಾಲ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.inuse": {
+  "en": "In use",
+  "te": "వాడుకలో ఉంది",
+  "hi": "इस्तेमाल में",
+  "kn": "ಬಳಕೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.use": {
+  "en": "Use this voice",
+  "te": "ఈ వాయిస్ వాడండి",
+  "hi": "यह आवाज़ इस्तेमाल करें",
+  "kn": "ಈ ಧ್ವನಿ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.saving": {
+  "en": "Saving…",
+  "te": "సేవ్ అవుతోంది…",
+  "hi": "सेव हो रहा है…",
+  "kn": "ಸೇವ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.play": {
+  "en": "Play the sample of {voice}",
+  "te": "{voice} శాంపిల్ వినండి",
+  "hi": "{voice} का सैंपल सुनें",
+  "kn": "{voice} ಮಾದರಿ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.stop": {
+  "en": "Stop the sample of {voice}",
+  "te": "{voice} శాంపిల్ ఆపండి",
+  "hi": "{voice} का सैंपल रोकें",
+  "kn": "{voice} ಮಾದರಿ ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.gender.female": {
+  "en": "Female",
+  "te": "మహిళ",
+  "hi": "महिला",
+  "kn": "ಮಹಿಳೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.gender.male": {
+  "en": "Male",
+  "te": "పురుషుడు",
+  "hi": "पुरुष",
+  "kn": "ಪುರುಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.none": {
+  "en": "There are no voices for this language yet.",
+  "te": "ఈ భాషకు ఇంకా వాయిస్‌లు లేవు.",
+  "hi": "इस भाषा के लिए अभी कोई आवाज़ नहीं है।",
+  "kn": "ಈ ಭಾಷೆಗೆ ಇನ್ನೂ ಧ್ವನಿಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.owneronly": {
+  "en": "Only the Owner or an Admin can change the voice.",
+  "te": "వాయిస్‌ని ఓనర్ లేదా అడ్మిన్ మాత్రమే మార్చగలరు.",
+  "hi": "आवाज़ सिर्फ़ ओनर या एडमिन बदल सकते हैं।",
+  "kn": "ಧ್ವನಿಯನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.mock": {
+  "en": "Test mode: your choice is kept in this browser only, and the sounds are tones, not voices.",
+  "te": "టెస్ట్ మోడ్: మీ ఎంపిక ఈ బ్రౌజర్‌లో మాత్రమే ఉంటుంది, సౌండ్‌లు వాయిస్‌లు కావు, కేవలం టోన్‌లు.",
+  "hi": "टेस्ट मोड: आपका चुनाव सिर्फ़ इस ब्राउज़र में रहता है, और ये आवाज़ें नहीं, सिर्फ़ टोन हैं।",
+  "kn": "ಟೆಸ್ಟ್ ಮೋಡ್: ನಿಮ್ಮ ಆಯ್ಕೆ ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಮಾತ್ರ ಇರುತ್ತದೆ, ಶಬ್ದಗಳು ಧ್ವನಿಗಳಲ್ಲ, ಟೋನ್‌ಗಳು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.sample.note": {
+  "en": "A short recorded sample. In real calls {assistant} talks naturally and answers what the customer says.",
+  "te": "ఇది చిన్న రికార్డ్ చేసిన శాంపిల్. నిజమైన కాల్స్‌లో {assistant} సహజంగా మాట్లాడుతుంది, కస్టమర్ చెప్పినదానికి జవాబు ఇస్తుంది.",
+  "hi": "यह एक छोटा रिकॉर्ड किया हुआ सैंपल है। असली कॉल में {assistant} सहज तरीके से बात करती है और ग्राहक की बात का जवाब देती है।",
+  "kn": "ಇದು ಒಂದು ಚಿಕ್ಕ ರೆಕಾರ್ಡ್ ಮಾಡಿದ ಮಾದರಿ. ನಿಜವಾದ ಕಾಲ್‌ಗಳಲ್ಲಿ {assistant} ಸಹಜವಾಗಿ ಮಾತನಾಡುತ್ತದೆ, ಗ್ರಾಹಕರು ಹೇಳಿದ್ದಕ್ಕೆ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.saved": {
+  "en": "Voice for {language} saved. New calls use it.",
+  "te": "{language} వాయిస్ సేవ్ అయింది. కొత్త కాల్స్ దీన్ని వాడతాయి.",
+  "hi": "{language} की आवाज़ सेव हो गई। नए कॉल इसे इस्तेमाल करेंगे।",
+  "kn": "{language} ಧ್ವನಿ ಸೇವ್ ಆಯಿತು. ಹೊಸ ಕಾಲ್‌ಗಳು ಇದನ್ನು ಬಳಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.err.sample": {
+  "en": "The sample could not be played now. Try again in a moment.",
+  "te": "శాంపిల్ ఇప్పుడు వినిపించలేకపోయాను. కాసేపట్లో మళ్లీ ప్రయత్నించండి.",
+  "hi": "सैंपल अभी नहीं चल सका। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಮಾದರಿಯನ್ನು ಈಗ ಪ್ಲೇ ಮಾಡಲು ಆಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.err.invalid": {
+  "en": "That voice is not one of the approved voices.",
+  "te": "ఆ వాయిస్ ఆమోదించిన వాటిలో లేదు.",
+  "hi": "वह आवाज़ मंज़ूर की गई आवाज़ों में नहीं है।",
+  "kn": "ಆ ಧ್ವನಿ ಒಪ್ಪಿದ ಧ್ವನಿಗಳಲ್ಲಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.err.forbidden": {
+  "en": "Only the Owner or an Admin can change the voice.",
+  "te": "వాయిస్‌ని ఓనర్ లేదా అడ్మిన్ మాత్రమే మార్చగలరు.",
+  "hi": "आवाज़ सिर्फ़ ओनर या एडमिन बदल सकते हैं।",
+  "kn": "ಧ್ವನಿಯನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.err.read_only": {
+  "en": "This workspace is read-only now, so nothing could be saved.",
+  "te": "ఈ వర్క్‌స్పేస్ ఇప్పుడు చదవడానికి మాత్రమే, అందుకే ఏదీ సేవ్ కాలేదు.",
+  "hi": "यह वर्कस्पेस अभी सिर्फ़ पढ़ने के लिए है, इसलिए कुछ सेव नहीं हुआ।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಈಗ ಓದಲು ಮಾತ್ರ, ಆದ್ದರಿಂದ ಏನೂ ಸೇವ್ ಆಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.err.not_available": {
+  "en": "Not available yet.",
+  "te": "ఇంకా అందుబాటులో లేదు.",
+  "hi": "अभी उपलब्ध नहीं है।",
+  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.err.down": {
+  "en": "Could not save now. Try again in a moment.",
+  "te": "ఇప్పుడు సేవ్ చేయలేకపోయాను. కాసేపట్లో మళ్లీ ప్రయత్నించండి.",
+  "hi": "अभी सेव नहीं हो सका। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಈಗ ಸೇವ್ ಮಾಡಲು ಆಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
