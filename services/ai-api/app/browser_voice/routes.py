@@ -42,6 +42,12 @@ ALLOWED_ROLES = (Role.OWNER, Role.ADMIN, Role.SALES)
 GOAL = "Help a member of the business's own team: answer briefly, and when they ask about the business's own data (prices, stock, customers, leads, orders, dates) say you will check it."
 
 
+def system_prompt(*, business: str, assistant: str, language: str, opening_line: str, mention_ai: bool) -> str:
+    """The prompt of the fast tier. `language` is the CODE (te, en, hi, kn): the register block of the call prompt is looked up by it."""
+    facts = [f"You work for {business}. You are talking with a member of its own team, in the web app.", f"Speak {LANGUAGE_NAMES.get(language, 'English')}."]
+    return call_system_prompt(business=business, assistant=assistant, language=language, opening_line=opening_line, goal=GOAL, facts=facts, mention_ai=mention_ai, speaking_style="everyday_mixed")
+
+
 def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Callable[[str, dict[str, Any]], None], on_ask: Callable[[], None]) -> Parts:
     token, tenant = ctx.principal.token, ctx.tenant.id
     chosen = choices_of(runtime, ctx)
@@ -58,7 +64,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
 
     def system_for(language: str) -> str:
         line, mention = opening(language)
-        return call_system_prompt(business=ctx.tenant.name, assistant=name, language=LANGUAGE_NAMES.get(language, "English"), opening_line=line, goal=GOAL, facts=[f"You work for {ctx.tenant.name}. You are talking with a member of its own team, in the web app."], mention_ai=mention, speaking_style="everyday_mixed")
+        return system_prompt(business=ctx.tenant.name, assistant=name, language=language, opening_line=line, mention_ai=mention)
 
     def open_ask(conversation_id: uuid.UUID, message_id: uuid.UUID, text: str):  # type: ignore[no-untyped-def]
         return start_message(runtime, ctx, MessageIn(message_id=message_id, conversation_id=conversation_id, text=text))

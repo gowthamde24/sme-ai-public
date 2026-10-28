@@ -488,3 +488,36 @@ def test_the_latency_script_reads_percentiles_like_the_reports() -> None:
     spec.loader.exec_module(module)
     values = [float(v) for v in range(100, 1100, 100)]
     assert module.percentile(values, 50) == 500.0 and module.percentile(values, 95) == 1000.0 and module.percentile([42.0], 95) == 42.0
+
+
+def test_the_fast_tiers_prompt_builds_for_every_language_of_the_browser_voice() -> None:
+    """Found on staging: the prompt was given a language NAME and the register block refused it; the route tests had replaced the parts builder, so nothing exercised this."""
+    from app.browser_voice.routes import system_prompt
+    from app.browser_voice.session import LANGUAGES
+
+    for language in LANGUAGES:
+        for mention in (True, False):
+            text = system_prompt(business="Tenant A", assistant="Vijaya", language=language, opening_line="Hello from Tenant A.", mention_ai=mention)
+            assert "Tenant A" in text and "Hello from Tenant A." in text and "HOW TO SOUND ON A CALL" in text
+    assert "Speak Telugu." in system_prompt(business="B", assistant="V", language="te", opening_line="x", mention_ai=True)
+
+
+def test_the_real_parts_builder_works_for_a_workspace_in_every_language() -> None:
+    """build_parts with a stand-in workspace (the opening line, the voice choices): the greeting, the prompt and the tiers are made without a network."""
+    from types import SimpleNamespace
+
+    from app.auth.deps import TenantContext
+    from app.auth.jwt import Principal
+    from app.browser_voice.routes import build_parts
+    from app.tenancy.models import Role
+
+    workspace = SimpleNamespace(
+        voice_choices=lambda token, tenant: {"choices": {"te": "te-sindhu"}},
+        opening=lambda token, tenant: {"mention_ai": True, "lines": [], "campaign_overrides": []},
+    )
+    runtime = SimpleNamespace(workspace=workspace, assistant_settings=None)
+    ctx = TenantContext(principal=Principal(user_id=USER, token="t"), tenant=TENANT_A, role=Role.OWNER)
+    parts = build_parts(bv_of(), runtime, ctx, lambda kind, data: None, lambda: None)  # type: ignore[arg-type]
+    for language in ("te", "en", "hi", "kn"):
+        assert "Tenant A" in parts.system_for(language) and parts.greeting_for(language)
+    assert parts.models["strong"] == "ask" and parts.models["fast"] == "m"
