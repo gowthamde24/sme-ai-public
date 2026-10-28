@@ -19,6 +19,8 @@ from typing import Protocol
 
 import httpx
 
+from app.autoreply.runner import AutoReplyRunner
+from app.autoreply.wiring import build_auto_reply
 from app.billing.alerts import FakeOwnerWhatsApp, UsageAlerts
 from app.billing.mail import (
     BillingReminders,
@@ -91,6 +93,7 @@ class Worker:
         dpdp_jobs: DpdpJobs | None = None,
         outreach: OutreachRunner | None = None,
         usage_alerts: UsageAlerts | None = None,
+        auto_reply: AutoReplyRunner | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -121,11 +124,14 @@ class Worker:
         self._outreach = outreach
         # job DS part E2: the 80 and 100 percent alerts (e-mail and a FAKE WhatsApp message to the owner) and the close of a period (one overage invoice); only while the platform's billing switch is on
         self._usage_alerts = usage_alerts
+        # job DY: the assistant's automatic answers to customers' WhatsApp messages (workspaces whose Owner switched it on); runs BEFORE the dispatch so an answer goes in the same tick
+        self._auto_reply = auto_reply
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
         try:
             token = self._session.token()
+            self._auto_reply_pass(token)
             result = run_tick(
                 self._repository,
                 self._adapter,
@@ -220,6 +226,16 @@ class Worker:
         except Exception as exc:
             logger.error("outreach pass crashed: %s", exc.__class__.__name__)
 
+    def _auto_reply_pass(self, token: str) -> None:
+        if self._auto_reply is None:
+            return
+        try:
+            self._auto_reply.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:   # a failed pass never fails the tick: the dispatch of what is already queued must still happen
+            logger.error("auto-reply pass crashed: %s", exc.__class__.__name__)
+
     def _usage_alerts_pass(self, token: str) -> None:
         if self._usage_alerts is None:
             return
@@ -308,6 +324,7 @@ def build_worker(settings: Settings) -> Worker:
         billing_clocks=BillingService(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_provider(settings)),
         dpdp_jobs=build_dpdp_jobs(settings, config.rest_url, config.anon_key, _billing_sender(settings)),
         outreach=build_outreach_runner(settings, config.rest_url, config.anon_key),
+        auto_reply=build_auto_reply(settings, config.rest_url, config.anon_key),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),

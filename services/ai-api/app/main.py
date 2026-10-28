@@ -20,6 +20,8 @@ from app.assistant_settings.routes import router as assistant_settings_router
 from app.assistant_settings.service import AssistantSettingsService
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
+from app.autoreply.repository import PostgrestAutoReplySwitch
+from app.autoreply.routes import router as auto_reply_router
 from app.billing import errors as billing_errors
 from app.billing.mail import EmailSender, build_sender
 from app.billing.provider import BillingProvider, build_provider
@@ -307,6 +309,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         call_voice=_call_voice(settings),
         browser_voice=_browser_voice(settings, config),
+        auto_reply=PostgrestAutoReplySwitch(config.rest_url, config.anon_key),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         mail_sender=_notice_sender(settings),
         notifications=build_notifications(settings, config),
@@ -1205,6 +1208,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(voice_sample_router)
     app.include_router(voice_picker_router)
     app.include_router(browser_voice_router)
+    app.include_router(auto_reply_router)
     app.include_router(voice_samples_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
