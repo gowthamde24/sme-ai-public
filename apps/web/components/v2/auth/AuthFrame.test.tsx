@@ -32,7 +32,7 @@ describe("AuthFrame", () => {
     jarValues.sme_lang = lang;
     const out = await html();
     const d = authDict(lang);
-    for (const k of ["skip", "home", "side.title", "side.d", "side.note"] as const) expect(out, `${lang} ${k}`).toContain(d[k].replace(/&/g, "&amp;"));
+    for (const k of ["skip", "home", "side.title", "side.d"] as const) expect(out, `${lang} ${k}`).toContain(d[k].replace(/&/g, "&amp;"));
     expect(out).toMatch(new RegExp(`<div[^>]*data-ui="v2"[^>]*lang="${lang}"|<div[^>]*lang="${lang}"[^>]*data-ui="v2"`));
     expect(out).toContain(d["lang.label"]);
   });

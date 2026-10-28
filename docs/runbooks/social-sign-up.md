@@ -29,3 +29,9 @@ Set `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` and `SUPABASE_AUTH_EXTERNAL_GOOGLE
 ## What cannot be checked offline
 
 A real Google or Facebook round trip needs the owner's accounts, so it has not been run. What is proved without them: the setup refuses an unverified address (pgTAP 95), accepts the terms by acceptance record, treats a social account as "needs setup" until it has a business (pgTAP 95), the provider list is off by default and never carries a secret (`tests/test_ck_routes.py`), and the committed config is off with no literal key (`tests/test_supabase_config.py`).
+
+## Google on the sign-in page (staging, 27 Oct)
+* `/login` draws **Continue with Google** whenever `GET /v1/auth/providers` says `google: true`, that is whenever the API has `AUTH_GOOGLE_CLIENT_ID` (staging: set in `deploy/staging.sh`, it is the public id of the client `stack19-staging`). It does not depend on the sign-up being open.
+* It **signs existing people in and makes nobody**: the Auth server's "Allow new users to sign up" stays OFF on staging (`enable_signup = false`), and while it is off an unknown Google address is refused by the Auth server; the return (`/auth/callback?error_code=signup_disabled`) ends on `/login?notice=nosignup` with "There is no account for that Google address, and sign-up is closed for now." A Google address that matches an existing, confirmed account is linked to it by e-mail (manual linking stays off).
+* Supabase Auth > URL configuration must list `https://staging.stack19.com/**` (Redirect URLs) and have `https://staging.stack19.com` as the Site URL; otherwise the Auth server sends the browser to the Site URL instead of `/auth/callback`. Read it back without changing anything: `supabase config diff --agent no --output-format json` (look at `auth.additional_redirect_urls`; never `config push`).
+* Test to Google's own page (it stops there, nothing is typed): `node e2e/staging-google-signin.mjs https://staging.stack19.com`.
