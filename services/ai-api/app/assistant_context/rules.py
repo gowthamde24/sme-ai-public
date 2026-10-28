@@ -31,7 +31,7 @@ _SCHOOL = {
 }
 SCHOOL_MESSAGE = "In a school's notes the assistant cannot be told to talk about fees, marks, dues or children's details. Take that part out; the school's own screens keep those."
 _PHONE = re.compile(r"(?<!\d)(?:\+?91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}(?!\d)")
-_EMAIL = re.compile(r"[\w.+-]+@[\w-]+\.[\w.-]+")
+_EMAIL = re.compile(r"[\w.+-]{1,64}@[\w-]{1,63}(?:\.[\w-]{1,63}){1,4}")   # (bounded: no backtracking blow-up on a long line)
 _NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
 
 
