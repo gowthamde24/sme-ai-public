@@ -366,11 +366,6 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setExtra({});
     convRef.current = id;
   };
-  /** The state of a plan changed (the owner said yes or no, or it expired): the plan on screen and any earlier message that carries it. */
-  const setActionStatus = (actionId: string, status: ConfirmAction["status"]) => {
-    setExtra((x) => (x.plan && x.plan.actionId === actionId ? { plan: { ...x.plan, status } } : x));
-    setEarlier((list) => list.map((x) => (x.plan && x.plan.actionId === actionId ? { ...x, plan: { ...x.plan, status } } : x)));
-  };
   const [voiceOrb, setVoiceOrb] = React.useState<"listen" | "think" | "speak" | null>(null); // what the spoken conversation is doing, for the floating circle
   const stop = () => {
     abort.current?.abort();
@@ -423,7 +418,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     text, setText, focused, setFocused, asked, phase, answer, sources, drafts, problem, errorCode, heardByVoice, earlier, finished, mood,
     hasAudio, playing, audioPending, audioFailed, autoplay, setAutoplay, seen, showMic, status,
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, clarify, setActionStatus,
+    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, clarify, setExtra, setEarlier,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",
     asking: phase === "asking",

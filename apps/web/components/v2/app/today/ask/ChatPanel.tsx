@@ -146,6 +146,11 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
   React.useEffect(() => {
     end.current?.scrollIntoView?.({ block: "end" });
   }, [s.earlier.length, s.answer, talk.live?.answer, talk.live?.asked]);
+  /** The state of a plan changed (the owner said yes or no, or it expired): the plan on screen and any earlier message that carries it. */
+  const setActionStatus = (actionId: string, status: ConfirmAction["status"]) => {
+    s.setExtra((x) => (x.plan && x.plan.actionId === actionId ? { plan: { ...x.plan, status } } : x));
+    s.setEarlier((list) => list.map((x) => (x.plan && x.plan.actionId === actionId ? { ...x, plan: { ...x.plan, status } } : x)));
+  };
   const edit = (text: string) => {
     s.setText(text);
     input.current?.focus();
@@ -228,9 +233,9 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
           {empty ? <p className="text-sm text-muted">{c("bv.chat.empty")}</p> : null}
           <ul data-chat="thread" className="flex flex-col gap-4">
             {s.earlier.map((x, i) => (
-              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={s.setActionStatus} />
+              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} />
             ))}
-            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={s.setActionStatus} /> : null}
+            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} /> : null}
             {talk.live ? (
               <li data-chat="live" className="flex flex-col gap-2">
                 {talk.live.asked ? (
