@@ -52,4 +52,4 @@ export type WorkspacePack = PackSummary & {
   readonly labels: Readonly<Record<string, Readonly<Record<string, string>>>>;
 };
 export type AuthProviders = { readonly google: boolean; readonly facebook: boolean };
-export type AccountSecurity = { readonly level: "aal1" | "aal2"; readonly neededFor: readonly string[] };
+export type AccountSecurity = { readonly level: "aal1" | "aal2"; readonly neededFor: readonly string[]; /** The person turned two-step sign-in on (it is optional for everybody). Left out by an older API: then only the session level tells. */ readonly secondFactorOn?: boolean };

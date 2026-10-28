@@ -76,16 +76,28 @@ import { CATALOGUE, planById } from "@/lib/plan/catalogue";
 import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
 import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, startPlanAction } from "../plan-actions";
 import { topupsPart } from "./topups-part";
-import { BusinessForm } from "@/components/v2/app/settings/BusinessForm";
+import { BusinessForm, BusinessLogo } from "@/components/v2/app/settings/BusinessForm";
+import { getWorkspaceProfile, type WorkspaceProfile } from "@/lib/api/workspace";
+import { readTypeList } from "@/lib/packs/type-list";
 import { getProfile, PROFILE_LANGUAGES, type BusinessProfile } from "@/lib/api/profile";
-import { saveBusinessAction } from "./business-actions";
+import { logoAction, saveBusinessAction } from "./business-actions";
+import { ActivationCard } from "@/components/v2/app/start/ActivationCard";
+import { readActivation, type Activation } from "@/lib/packs/activation";
+import { leadDeskSteps } from "@/lib/packs/lead-activation";
+import { readHidden } from "@/lib/packs/hidden-steps";
+import { setStepHiddenAction } from "../start-hide-actions";
+import { pictureAction, saveMyProfileAction } from "./profile-actions";
+import { MyProfile } from "@/components/v2/app/settings/MyProfile";
+import { Avatar } from "@/components/v2/app/Avatar";
+import { lettersOf } from "@/components/v2/app/letters";
+import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person } from "@/lib/api/me";
 import { signOutEverywhereAction } from "../../../actions";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "plan", "members", "fields", "data", "language", "assistant", "agent", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "agent", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -135,7 +147,13 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const fieldList: WorkspaceField[] | null = admin && fieldEntities.length > 0 ? await listCustomFields(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   // a workspace that existed before business types and has no field of its own keeps the Settings it always had; one made with a chosen business type, or that has fields, gets the tab
   // the business name, city and languages are editable by the people who run the business (read here; a failed read leaves the plain name)
-  const businessProfile: BusinessProfile | null = admin && (wanted === undefined || wanted === "business") ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const onBusiness = wanted === undefined || wanted === "business";
+  const workspace: WorkspaceProfile | null = admin && onBusiness ? await getWorkspaceProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const businessProfile: BusinessProfile | null = workspace ? { name: workspace.name, town: workspace.city, languages: workspace.languages.filter((l) => (PROFILE_LANGUAGES as readonly string[]).includes(l)), setupComplete: true } : admin && onBusiness ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const typeList = workspace && tenant.role === "owner" ? await readTypeList(lang) : null;
+  // the steps still to do of "Finish setting up", all of them (the ones put away from Today are marked, with the way back)
+  const finish: Activation | null = admin && onBusiness && pack && usesChecklist(pack) ? await readActivation(user.accessToken, tenantId, pack, t, await leadDeskSteps(pack)).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const putAway = finish ? await readHidden(tenantId) : [];
   const hasFields = admin && fieldEntities.length > 0 && (usesChecklist(pack) || (fieldList !== null && fieldList.length > 0));
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
   const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
@@ -144,13 +162,18 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   let members: Member[] | null = null;
+  let people: Person[] = [];
   if (section === "members") {
     try {
       members = await fetchMembers(user.accessToken, tenantId);
+      people = await getPeople(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : []));
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
     }
   }
+  // Settings > My profile: the person's own name, language and picture (any member)
+  let mine: MyProfileData | null = null;
+  if (section === "profile") mine = await getMyProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null));
   let plan: Plan | null = null;
   let usage: AiUsage | null = null;
   let profile: Part<Awaited<ReturnType<typeof getBusinessProfile>>> | null = null;
@@ -224,6 +247,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   const tabs = [
     { key: "business", label: t("settings.tab.business") },
+    { key: "profile", label: t("settings.tab.profile") },
     ...(hasPlan ? [{ key: "plan", label: t("plan.tab") }] : []),
     { key: "members", label: t("settings.tab.members") },
     ...(hasFields ? [{ key: "fields", label: t("settings.tab.fields") }] : []),
@@ -249,11 +273,15 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                   words={wordsFor(lang, ["settings.biz."])}
                   name={businessProfile.name}
                   town={businessProfile.town ?? ""}
-                  languages={businessProfile.languages}
+                  languages={businessProfile.languages.length > 0 ? businessProfile.languages : [lang]}
                   choices={PROFILE_LANGUAGES}
+                  usedIn={workspace?.nameUsedIn ?? []}
+                  owner={workspace && typeList && typeList.groups.length > 0 ? { groups: typeList.groups, typeWords: typeList.words, otherId: typeList.otherId, type: workspace.type, typeLabel: workspace.typeLabel ?? "", phone: workspace.phone ?? "" } : null}
                 />
+                {workspace ? <BusinessLogo action={logoAction.bind(null, tenantId)} words={wordsFor(lang, ["settings.biz.logo."])} logoUrl={workspace.logoUrl} initial={businessProfile.name.slice(0, 1).toUpperCase()} /> : null}
               </section>
             ) : null}
+            {finish && finish.done < finish.total ? <ActivationCard activation={finish} base={base} t={t} hide={setStepHiddenAction.bind(null, tenantId)} hidden={putAway} /> : null}
             <section className={surface} aria-label={t("settings.tab.business")}>
               <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {businessProfile ? null : (
@@ -288,6 +316,25 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               </section>
             ) : null}
           </>
+        ) : null}
+        {section === "profile" ? (
+          <section className={surface} aria-label={t("settings.tab.profile")}>
+            {mine ? (
+              <MyProfile
+                words={wordsFor(lang, ["settings.me."])}
+                name={mine.displayName ?? ""}
+                language={mine.language ?? lang}
+                choices={PROFILE_LANGUAGES}
+                pictureUrl={mine.pictureUrl}
+                own={mine.picture === "own"}
+                email={user.email}
+                save={saveMyProfileAction.bind(null, tenantId)}
+                picture={pictureAction.bind(null, tenantId)}
+              />
+            ) : (
+              <p className="text-sm text-muted">{t("frame.notyet")}</p>
+            )}
+          </section>
         ) : null}
         {section === "plan" && planScreens() !== "off" ? (
           <PlanSection
@@ -379,7 +426,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               <ul className={listPlain}>
                 {members.map((m) => (
                   <li key={m.user_id} className={memberRow}>
-                    <span className="min-w-0 truncate font-medium">
+                    <span className="flex min-w-0 items-center gap-3 truncate font-medium">
+                      <Avatar url={people.find((p) => p.userId === m.user_id)?.pictureUrl ?? null} letters={lettersOf(m.display_name, null)} className="grid size-9 shrink-0 place-items-center rounded-full bg-charcoal text-sm font-semibold text-on-charcoal" />
                       {m.display_name ?? m.role}
                       {m.user_id === user.id ? <span className={youMark}>({t("settings.members.you")})</span> : null}
                     </span>

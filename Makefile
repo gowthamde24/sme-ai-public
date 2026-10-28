@@ -1,4 +1,4 @@
-.PHONY: seed-demo-school docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: e2e-new-owner seed-demo-school docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -343,6 +343,11 @@ e2e-local:
 # for a school, a builder and the saree shop, and pictures of every pack's screens (light and dark, laptop and 390 px phone) into E2E_SHOTS (default ~/Desktop/v2-overnight/shots-night).
 e2e-c2:
 	E2E_SCRIPT=night-c2-flows.mjs ./scripts/e2e-local.sh
+
+# The new-owner walkthrough (job DT, OPT-IN, never in make check or CI; same start-up, clean-up and guards): a Google-style new person, sign-up with "Other", the set-up (kind and name only), Today with "Finish setting up", the assistant by typing,
+# a profile picture, the business name and phone, sign out and in. Needs the local Supabase stack with Storage (make agent-db-up).
+e2e-new-owner:
+	E2E_SCRIPT=new-owner.mjs ./scripts/e2e-local.sh
 
 e2e-packs:
 	E2E_SCRIPT=cl-signup.mjs AUTH_GOOGLE_CLIENT_ID=local-public-placeholder AUTH_FACEBOOK_APP_ID=local-public-placeholder ./scripts/e2e-local.sh

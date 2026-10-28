@@ -22,6 +22,9 @@ import { TabBar } from "./TabBar";
 import type { Membership } from "./use-workspace";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 
+/** The round mark the layout draws on the server (its letters here): a slot of the menu parts. */
+const MARK = <span aria-hidden="true">OW</span>;
+
 const A = "22222222-2222-2222-2222-222222222222";
 const B = "33333333-3333-3333-3333-333333333333";
 const owner: Membership[] = [{ id: A, name: "Acme Silks", role: "owner" }, { id: B, name: "Second Shop", role: "viewer" }];
@@ -37,8 +40,8 @@ afterEach(cleanup);
 const none: FrameData = NO_FRAME_DATA;
 const loaded: FrameData = { plan: { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }, usage: { today_percent: 38, month_percent: 12, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }, waiting: 5, ready: true, showUsage: true, pack: null };
 const noSignOut = async () => undefined;
-const side = (memberships: Membership[], frame = none, email: string | null = "o@example.test") => render(<SideNav memberships={memberships} frame={frame} email={email} signOut={noSignOut} />);
-const bar = (memberships: Membership[], frame = none) => render(<TabBar memberships={memberships} frame={frame} email="o@example.test" signOut={noSignOut} />);
+const side = (memberships: Membership[], frame = none, email: string | null = "o@example.test") => render(<SideNav memberships={memberships} frame={frame} email={email} signOut={noSignOut} mark={MARK} />);
+const bar = (memberships: Membership[], frame = none) => render(<TabBar memberships={memberships} frame={frame} email="o@example.test" signOut={noSignOut} mark={MARK} />);
 
 describe("SideNav", () => {
   it("lists the groups for the role, marks the current page, and links inside the workspace", () => {
@@ -190,7 +193,7 @@ describe("WorkspaceSwitcher", () => {
 describe("AccountMenu", () => {
   it("is the user card: the mark, who is signed in and the role; it links to Security and signs out with the server action", () => {
     const signOut = vi.fn(async () => undefined);
-    render(<AccountMenu email="owner@example.test" role="owner" signOut={signOut} several />);
+    render(<AccountMenu email="owner@example.test" role="owner" signOut={signOut} several mark={MARK} />);
     expect(screen.getAllByText("owner@example.test").length).toBeGreaterThan(0);
     expect(screen.getByText("OW")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Security" })).toHaveAttribute("href", "/app/security");
@@ -198,7 +201,7 @@ describe("AccountMenu", () => {
     expect(screen.getByRole("button", { name: "Sign out" })).toHaveAttribute("type", "submit");
   });
   it("offers 'All workspaces' only to someone who belongs to two or more", () => {
-    render(<AccountMenu email="owner@example.test" signOut={async () => undefined} />);
+    render(<AccountMenu email="owner@example.test" signOut={async () => undefined} mark={MARK} />);
     expect(screen.queryByRole("link", { name: "All workspaces" })).toBeNull();
   });
 });
@@ -305,7 +308,7 @@ describe("the menu of a business type (job CL)", () => {
   });
   it("is what the workspace's slot brought in that wins over what the first paint had (no flash of the wrong menu after the client takes over)", async () => {
     const { act } = await import("@testing-library/react");
-    render(<SideNav memberships={only("owner")} frame={view()} email="o@example.test" signOut={noSignOut} />);
+    render(<SideNav memberships={only("owner")} frame={view()} email="o@example.test" signOut={noSignOut} mark={MARK} />);
     expect(names()).toContain("Reports");
     await act(async () => {
       render(<FrameDataSlot data={view({ modules: real.modules.filter((m) => m !== "reports") })} />);

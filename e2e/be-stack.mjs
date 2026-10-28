@@ -113,9 +113,12 @@ await step("A2", "the local stack asks for e-mail confirmation: confirm the thro
   await page.fill('input[name="password"]', PW);
   await page.click('button:has-text("Sign in")');
   await page.waitForURL(/\/setup/, { timeout: 30000 }); // a confirmed account with no business goes to the set-up screen
+  // the set-up asks the kind of business (already chosen at sign-up) and the name: type the name and go on
+  await page.fill("#setup-business-name", `E2E Silks ${STAMP}`);
+  await page.click('form button[type="submit"]');
 }, page);
 
-await step("A3", "first-login setup makes the business by itself, with the kind chosen on the sign-up page, this person as Owner, and lands on Today", async () => {
+await step("A3", "first-login setup makes the business with the kind chosen on the sign-up page and the name typed, this person as Owner, and lands on Today", async () => {
   await page.waitForURL(/\/app(\/tenants|$)/, { timeout: 60000 });
   const link = page.locator('a[href^="/app/tenants/"]').first();
   if (/\/app$/.test(page.url())) await link.waitFor({ timeout: 15000 });

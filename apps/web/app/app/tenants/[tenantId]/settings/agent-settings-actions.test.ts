@@ -38,7 +38,7 @@ describe("automatic sending", () => {
     expect(putOutboxSettings).not.toHaveBeenCalled();
   });
   it.each([
-    [403, "mfa_required", "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.", true],
+    [403, "mfa_required", "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.", true],
     [403, "forbidden", "Only the owner can change this.", false],
     [422, "validation_error", "Something was not accepted. Check the numbers.", false],
     [503, "outbox_unavailable", "This is not available right now. Try again shortly.", false],
@@ -101,7 +101,7 @@ describe("quiet hours (job BE on BB's API)", () => {
     expect(putOutboxSettings).not.toHaveBeenCalled();
   });
   it.each([
-    [403, "mfa_required", "This needs your authenticator app", true],
+    [403, "mfa_required", "This needs your two-step code first", true],
     [403, "forbidden", "Only the owner can change this", undefined],
     [422, "validation_error", "Something was not accepted", undefined],
     [500, "boom", "That did not work", undefined],

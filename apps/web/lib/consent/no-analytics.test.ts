@@ -37,7 +37,7 @@ describe("no analytics is loaded anywhere (job BH)", () => {
     const csp = buildCsp("abc", false, null);
     expect(csp).toMatch(/script-src 'self' 'nonce-abc' 'strict-dynamic'/);
     expect(csp).toMatch(/connect-src 'self'(;|$)/);
-    expect(csp).not.toMatch(/https?:\/\/(?!abc)/);
+    expect(csp).not.toMatch(/https?:\/\/(?!abc|lh3\.googleusercontent\.com)/); // the one outside address is Google's, for profile photos (images only)
   });
   it("the only way to start something behind the Analytics category is whenAnalyticsAllowed: it has no caller yet", () => {
     const callers = files.filter((f) => /whenAnalyticsAllowed\s*\(/.test(readFileSync(f, "utf8"))).map((f) => path.relative(ROOT, f));

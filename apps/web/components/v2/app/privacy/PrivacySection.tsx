@@ -27,7 +27,7 @@ export function PrivacySection({ tenantId, words, role, email, workspaceName, ex
   const space = workspaceDeletions?.ok ? latest(workspaceDeletions.data.filter((d) => d.kind === "workspace")) : null;
   return (
     <div className="flex flex-col gap-5" data-settings="privacy">
-      {exports.ok ? <ExportMyData words={words} actions={actions} initial={exports.data} isOwner={isOwner} /> : <PartProblem kind={exports.kind} retryAfter={exports.retryAfter} words={words} title={t("prx.exp.title")} />}
+      {exports.ok ? <ExportMyData words={words} actions={actions} initial={exports.data} isOwner={isOwner} workspaceName={workspaceName} /> : <PartProblem kind={exports.kind} retryAfter={exports.retryAfter} words={words} title={t("prx.exp.title")} />}
       {myDeletions.ok && (!isOwner || workspaceDeletions?.ok !== false) ? (
         <DeleteData words={words} actions={actions} email={email} workspaceName={workspaceName} isOwner={isOwner} accountDeletion={mine} workspaceDeletion={space} now={now} />
       ) : (

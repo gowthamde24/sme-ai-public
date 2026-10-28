@@ -8,7 +8,7 @@ import { MOCK_DEFAULTS, validLine, type CampaignOpeningLine, type Lines, type Op
 
 /**
  * Where the opening-line editor gets its words and saves them (night 5). `mock` = ONE small cookie for the workspace (and one per campaign): the texts and the switch, never a sound; `on` = C1's API (lib/api/opening-line.ts, an ASSUMED contract until
- * it is merged); `off` = the part is not there. Every move checks its input again here (the browser is not trusted): a text is 5 to 300 characters with only the four placeholders, a language is one of the six. SERVER ONLY.
+ * it is merged); `off` = the part is not there. Every move checks its input again here (the browser is not trusted): a text is 10 to 300 characters with only the four placeholders, a language is one of the six. SERVER ONLY.
  */
 export type Ctx = { token: string; tenantId: string };
 export const MOCK_COOKIE = "sme_openingline_mock";
@@ -136,14 +136,14 @@ export async function saveCampaignOpeningLine(ctx: Ctx, campaignId: string, inpu
   }
 }
 
-/** The spoken preview of a text that already has its placeholders filled. In `mock` there is no sound: `audio` is null and the screen says the text above is what would be said. */
-export async function previewLine(ctx: Ctx, language: unknown, text: unknown, mentionAi: boolean): Promise<Saved<Preview>> {
+/** The spoken preview of the line that is SAVED (the API makes the sound from what it stores; `text` is only checked as a sign that there is a line on the screen). In `mock` there is no sound: `audio` is null and the screen says the text above is what would be said. */
+export async function previewLine(ctx: Ctx, language: unknown, text: unknown): Promise<Saved<Preview>> {
   const mode = openingLineScreens();
   if (mode === "off") return { ok: false, error: "not_available" };
   if (typeof language !== "string" || !(CALL_LANGS as readonly string[]).includes(language) || typeof text !== "string" || text.trim().length < 2 || text.length > 400) return { ok: false, error: "invalid" };
   if (mode === "mock") return { ok: true, data: { audio: null, fake: true } };
   try {
-    return { ok: true, data: await previewOpeningLine(ctx.token, ctx.tenantId, language as CallLang, text.trim(), mentionAi) };
+    return { ok: true, data: await previewOpeningLine(ctx.token, ctx.tenantId, language as CallLang) };
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     return { ok: false, error: refusal(error) };

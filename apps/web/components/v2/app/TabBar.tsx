@@ -2,9 +2,8 @@
 
 import { CircleHelp, Ellipsis, LogOut, X } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
-import { initials } from "./AccountMenu";
 import type { FrameData } from "./contract";
 import { useFrameData } from "./frame-store";
 import { UsageCard } from "./frame-parts";
@@ -22,7 +21,7 @@ const row = "flex min-h-12 w-full items-center gap-3 rounded-lg border border-li
  * each only when the role may open it) and "More", which opens a sheet with the rest of the menu (Calls, Catalogue, Reports, Settings),
  * the person, the AI usage card, Help ("Not available yet") and Sign out. Respects the phone's safe area. Outside a workspace the bar is not drawn.
  */
-export function TabBar({ memberships, labels: given_labels, frame: given, email, signOut }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void> }) {
+export function TabBar({ memberships, labels: given_labels, frame: given, email, signOut, mark: accountMark }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void>; /** The round mark, drawn by the server (the person's picture over their letters, or the letters of the e-mail address). */ mark: ReactNode }) {
   const { current, pathname, activeMenu } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const labels = withPackWords(given_labels, frame.pack);
@@ -95,9 +94,7 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
             </div>
             <div className="space-y-5 px-4 pb-8 pt-5">
               <div className="flex items-center gap-3">
-                <span aria-hidden="true" className="grid size-12 place-items-center rounded-full bg-charcoal font-semibold text-on-charcoal">
-                  {initials(email)}
-                </span>
+                {accountMark}
                 <div className="min-w-0">
                   <p className="truncate font-semibold">{email ?? word(labels, "frame.account", "Your account")}</p>
                   <p className="text-sm capitalize text-muted">{current.role}</p>

@@ -6,9 +6,9 @@ import { LocalTime } from "@/app/app/local-time";
 import type { DataExport } from "@/lib/api/privacy";
 
 import { FailureNote } from "../cc/FailureNote";
-import { card, h2, help, muted, okLine, pillClass, primary, secondary, type Failed } from "../cc/kit";
+import { card, field, h2, help, label as labelClass, muted, okLine, pillClass, primary, secondary, type Failed } from "../cc/kit";
 import { makeT, type Words } from "../words";
-import { ACTIVE, exportStateWord, POLL_GIVE_UP_MS, POLL_MS, privacySentence } from "./privacy-model";
+import { ACTIVE, confirms, exportStateWord, POLL_GIVE_UP_MS, POLL_MS, privacySentence } from "./privacy-model";
 import type { PrivacyActions } from "./types";
 
 /**
@@ -16,13 +16,15 @@ import type { PrivacyActions } from "./types";
  * is made in the background: this part looks again every few seconds while it is being made (and stops after five minutes, or when the person leaves), then offers "Download". The link the API gives works for five minutes and
  * is opened at once; it is not shown, copied or kept. The file itself is removed after 24 hours.
  */
-export function ExportMyData({ words, actions, initial, isOwner }: { words: Words; actions: Pick<PrivacyActions, "requestExport" | "getExport" | "openLink">; initial: DataExport[]; isOwner: boolean }) {
+export function ExportMyData({ words, actions, initial, isOwner, workspaceName = "" }: { /** The business name the Owner types to ask for the whole workspace's data. */ workspaceName?: string; words: Words; actions: Pick<PrivacyActions, "requestExport" | "getExport" | "openLink">; initial: DataExport[]; isOwner: boolean }) {
   const t = makeT(words);
   const id = useId();
   const [items, setItems] = useState<DataExport[]>(initial);
   const [busy, setBusy] = useState<string | null>(null);
   const [failure, setFailure] = useState<Failed | null>(null);
   const [opened, setOpened] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
+  const [typed, setTyped] = useState("");
   const alive = useRef(true);
   const started = useRef<Record<string, number>>({});
 
@@ -54,9 +56,13 @@ export function ExportMyData({ words, actions, initial, isOwner }: { words: Word
   async function ask(scope: "person" | "workspace") {
     setBusy(scope);
     setFailure(null);
-    const r = await actions.requestExport(scope, crypto.randomUUID());
+    const r = await (scope === "workspace" ? actions.requestExport(scope, crypto.randomUUID(), typed.trim()) : actions.requestExport(scope, crypto.randomUUID()));
     setBusy(null);
     if (!r.ok) return setFailure(r);
+    if (scope === "workspace") {
+      setConfirming(false);
+      setTyped("");
+    }
     setItems((list) => [r.data, ...list.filter((x) => x.id !== r.data.id)]);
   }
   async function download(exportId: string) {
@@ -82,12 +88,29 @@ export function ExportMyData({ words, actions, initial, isOwner }: { words: Word
           {busy === "person" ? t("dta.btn.working") : t("prx.exp.ask")}
         </button>
         {isOwner ? (
-          <button type="button" onClick={() => ask("workspace")} disabled={busy !== null || making} className={secondary}>
-            {busy === "workspace" ? t("dta.btn.working") : t("prx.exp.ask_workspace")}
+          <button type="button" onClick={() => setConfirming((v) => !v)} aria-expanded={confirming} disabled={busy !== null || making} className={secondary}>
+            {t("prx.exp.ask_workspace")}
           </button>
         ) : null}
       </div>
       {isOwner ? <p className={help}>{t("prx.exp.workspace_note")}</p> : null}
+      {isOwner && confirming ? (
+        <div className="flex flex-col gap-2" data-part="export-confirm">
+          <label htmlFor={`${id}-name`} className={labelClass}>
+            {t("prx.exp.confirm.type", { name: workspaceName })}
+          </label>
+          <input id={`${id}-name`} value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" spellCheck={false} className={field} />
+          <p className={help}>{t("prx.exp.confirm.email")}</p>
+          <div className="flex flex-wrap gap-3">
+            <button type="button" onClick={() => ask("workspace")} disabled={busy !== null || making || !confirms(typed, workspaceName, false)} className={primary}>
+              {busy === "workspace" ? t("dta.btn.working") : t("prx.exp.confirm.go")}
+            </button>
+            <button type="button" onClick={() => { setConfirming(false); setTyped(""); }} disabled={busy !== null} className={secondary}>
+              {t("prx.exp.confirm.cancel")}
+            </button>
+          </div>
+        </div>
+      ) : null}
       <FailureNote failure={failure} words={words} own={(code) => privacySentence(code, t)} />
       {making ? (
         <p role="status" className={muted}>

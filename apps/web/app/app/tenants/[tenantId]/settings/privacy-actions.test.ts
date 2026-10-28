@@ -20,9 +20,13 @@ beforeEach(() => h.api.mockReset().mockResolvedValue({ id: ID }));
 describe("the privacy actions", () => {
   it("ask the API with the person's token and the workspace only for the workspace's data", async () => {
     expect(await requestExportAction(T, "person", ID)).toEqual({ ok: true, data: { id: ID } });
-    expect(h.api).toHaveBeenLastCalledWith("requestExport", "tok", ID, null);
-    await requestExportAction(T, "workspace", ID);
-    expect(h.api).toHaveBeenLastCalledWith("requestExport", "tok", ID, T);
+    expect(h.api).toHaveBeenLastCalledWith("requestExport", "tok", ID, null, undefined);
+    await requestExportAction(T, "workspace", ID, "Acme Silks");
+    expect(h.api).toHaveBeenLastCalledWith("requestExport", "tok", ID, T, "Acme Silks");
+    // the business name is needed for the workspace's data: without it nothing is asked
+    h.api.mockClear();
+    expect(await requestExportAction(T, "workspace", ID, "  ")).toMatchObject({ ok: false, kind: "invalid" });
+    expect(h.api).not.toHaveBeenCalled();
     await getExportAction(T, ID);
     expect(h.api).toHaveBeenLastCalledWith("getMyExport", "tok", ID);
     await exportLinkAction(T, ID);

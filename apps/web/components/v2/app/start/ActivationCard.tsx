@@ -14,7 +14,7 @@ import { card, primary } from "../visits/styles";
 /** A step inside the workspace is relative to it; an account page (a path that starts with /app) is used as it is. */
 const hrefOf = (base: string, href: string) => (href.startsWith("/app") ? href : `${base}${href}`);
 
-export function ActivationCard({ activation, base, t }: { activation: Activation; base: string; t: AppT }) {
+export function ActivationCard({ activation, base, t, hide = null, hidden = [] }: { activation: Activation; base: string; t: AppT; /** The server action that puts a step away from Today (or brings it back): with it each step still to do has "Hide for now" (and a hidden one "Show on Today"). */ hide?: ((formData: FormData) => Promise<void>) | null; /** The steps put away from Today (the Settings list shows them marked and with the way back). */ hidden?: readonly string[] }) {
   if (activation.steps.length === 0 || activation.done === activation.total) return null;
   const next = activation.next;
   return (
@@ -39,15 +39,28 @@ export function ActivationCard({ activation, base, t }: { activation: Activation
             </>
           );
           const cls = "flex min-h-11 w-full items-center gap-3 rounded-lg px-1 py-1 text-left text-base";
+          const away = hidden.includes(s.id);
           return (
-            <li key={s.id} data-step={s.id} data-state={s.state}>
-              {s.href && s.state === "todo" ? (
-                <Link href={hrefOf(base, s.href)} className={`${cls} hover:bg-surface-2`}>
-                  {body}
-                </Link>
-              ) : (
-                <div className={cls}>{body}</div>
-              )}
+            <li key={s.id} data-step={s.id} data-state={s.state} data-hidden={away ? "true" : undefined} className="flex items-center gap-2">
+              <div className="min-w-0 flex-1">
+                {s.href && s.state === "todo" ? (
+                  <Link href={hrefOf(base, s.href)} className={`${cls} hover:bg-surface-2`}>
+                    {body}
+                  </Link>
+                ) : (
+                  <div className={cls}>{body}</div>
+                )}
+                {away ? <span className="block pl-9 text-sm text-muted">{t("start.hidden")}</span> : null}
+              </div>
+              {hide && s.state === "todo" ? (
+                <form action={hide}>
+                  <input type="hidden" name="step" value={s.id} />
+                  {away ? <input type="hidden" name="do" value="show" /> : null}
+                  <button type="submit" className="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-muted hover:bg-surface-2">
+                    {away ? t("start.show") : t("start.hide")}
+                  </button>
+                </form>
+              ) : null}
             </li>
           );
         })}

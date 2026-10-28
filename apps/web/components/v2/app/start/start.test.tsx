@@ -15,6 +15,24 @@ afterEach(cleanup);
 const step = (id: string, state: "done" | "todo" | "unavailable", href: string | null = `/${id}`) => ({ id, check: "business_profile" as const, title: `Title ${id}`, hint: `Hint ${id}`, state, href });
 const act = (steps: Activation["steps"]): Activation => ({ steps, done: steps.filter((s) => s.state === "done").length, total: steps.length, next: steps.find((s) => s.state === "todo") ?? null });
 
+describe("the activation card: putting a step away", () => {
+  it('has "Hide for now" on each step still to do (not on done ones) when it is given the action, and none without it', () => {
+    const hide = vi.fn(async () => {});
+    const a = act([step("a", "done"), step("b", "todo")]);
+    const { rerender } = render(<ActivationCard base={base} t={t} activation={a} />);
+    expect(screen.queryByRole("button", { name: "Hide for now" })).toBeNull();
+    rerender(<ActivationCard base={base} t={t} activation={a} hide={hide} />);
+    expect(screen.getAllByRole("button", { name: "Hide for now" })).toHaveLength(1);
+    expect((document.querySelector('li[data-step="b"] input[name="step"]') as HTMLInputElement).value).toBe("b");
+  });
+  it("in Settings a step that is put away is marked and has the way back", () => {
+    render(<ActivationCard base={base} t={t} activation={act([step("b", "todo")])} hide={vi.fn(async () => {})} hidden={["b"]} />);
+    expect(screen.getByText("Hidden from Today")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Show on Today" })).toBeInTheDocument();
+    expect((document.querySelector('li[data-step="b"] input[name="do"]') as HTMLInputElement).value).toBe("show");
+  });
+});
+
 describe("the activation card on Today", () => {
   it("lists the steps with their real state: done is struck through, to do is a link with its hint, not available yet is plain text", () => {
     render(<ActivationCard base={base} t={t} activation={act([step("a", "done"), step("b", "todo"), step("c", "unavailable", null)])} />);

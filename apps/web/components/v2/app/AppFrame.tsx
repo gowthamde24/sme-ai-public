@@ -10,8 +10,10 @@ import { authT } from "@/i18n/auth";
 import type { Lang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
 
+import { Avatar } from "./Avatar";
 import { FRAME_LOADING, type FrameData } from "./contract";
 import { GroupTabs } from "./GroupTabs";
+import { lettersOf } from "./letters";
 import { LabelsProvider } from "./robust/labels-context";
 import { RobustShell } from "./robust/RobustShell";
 import { SideNav } from "./SideNav";
@@ -30,19 +32,26 @@ import type { Membership } from "./use-workspace";
  * It decides no access: `memberships` only says which menu items to offer; a page, the API and the database stay the gate. `memberships` null = the API could not be read:
  * the account part only. `frame` = what the frame shows until the workspace's own layout brings in the plan, the AI usage and the count on Today (frame-store.ts); a part that cannot be read says "Not available yet".
  */
-export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRAME_LOADING, children }: { lang: Lang; theme: Theme | undefined; email: string | null; memberships: readonly Membership[] | null; signOut: () => Promise<void>; frame?: FrameData; children: ReactNode }) {
+/** The sizes of the round mark (the menu footer and the phone's menu sheet): the layout draws the person's own with the same classes. */
+export const MARK_SMALL = "grid size-9 shrink-0 place-items-center rounded-full bg-charcoal text-sm font-semibold text-on-charcoal";
+export const MARK_LARGE = "grid size-12 shrink-0 place-items-center rounded-full bg-charcoal font-semibold text-on-charcoal";
+
+export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRAME_LOADING, mark, markLarge, children }: { lang: Lang; theme: Theme | undefined; email: string | null; memberships: readonly Membership[] | null; signOut: () => Promise<void>; frame?: FrameData; /** The person's round mark (picture over letters) drawn by the layout on the server: slots, so the picture adds no script to any page. */ mark?: ReactNode; markLarge?: ReactNode; children: ReactNode }) {
   const t = authT(lang);
   const list = memberships ?? [];
   const labels = frameLabels(lang);
+  // the round marks of the account menu: the person's own (picture over letters) when the layout read their profile, else the letters of the e-mail address
+  const small = mark ?? <Avatar url={null} letters={lettersOf(null, email)} className={MARK_SMALL} />;
+  const large = markLarge ?? <Avatar url={null} letters={lettersOf(null, email)} className={MARK_LARGE} />;
   return (
     <V2Root theme={theme} lang={lang} className="min-h-dvh">
       <div data-frame="app" className="flex min-h-dvh w-full">
         <a href="#main-content" lang={lang} className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-charcoal focus:px-4 focus:py-3 focus:text-on-charcoal">
           {t("skip")}
         </a>
-        <SideNav memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} />
+        <SideNav memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} mark={small} />
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar memberships={list} labels={labels} email={email} signOut={signOut}>
+          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small}>
             <span lang={lang}>
               <LangSelect lang={lang} label={t("lang.label")} />
             </span>
@@ -67,7 +76,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
         </div>
         <div className="fixed inset-x-0 bottom-0 z-40 md:hidden print:hidden">
           <InstallHint labels={labels} />
-          <TabBar memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} />
+          <TabBar memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} mark={large} />
         </div>
       </div>
     </V2Root>
