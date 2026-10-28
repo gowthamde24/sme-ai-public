@@ -162,10 +162,10 @@ describe("the lead's follow-up page", () => {
   });
 
   it("without the authenticator session the owner sees the notice instead of the Approve button", async () => {
-    requireUser.mockResolvedValue({ id: PERSON, email: "e", accessToken: "tok", aal: "aal1" });
+    requireUser.mockResolvedValue({ id: PERSON, email: "e", accessToken: "tok", aal: "aal1", hasSecondFactor: true });
     render(await LeadFollowupPage(leadProps()));
     expect(screen.queryByRole("button", { name: "Approve this text" })).toBeNull();
-    expect(screen.getByText(/Approving needs your authenticator app/)).toBeInTheDocument();
+    expect(screen.getByText(/Approving needs your two-step code/)).toBeInTheDocument();
   });
 
   it("Sales cannot approve; she can discard her own draft but not another person's", async () => {
@@ -472,10 +472,10 @@ describe("the policy page", () => {
   });
 
   it("the owner without the authenticator session sees the notice instead of the form", async () => {
-    requireUser.mockResolvedValue({ id: PERSON, email: "e", accessToken: "tok", aal: "aal1" });
+    requireUser.mockResolvedValue({ id: PERSON, email: "e", accessToken: "tok", aal: "aal1", hasSecondFactor: true });
     render(await PolicyPage(policyProps));
     expect(screen.queryByRole("button", { name: "Publish this policy" })).toBeNull();
-    expect(screen.getByText(/Publishing a policy needs your authenticator app/)).toBeInTheDocument();
+    expect(screen.getByText(/Publishing a policy needs your two-step code/)).toBeInTheDocument();
   });
 
   it.each(["admin", "sales"])("a %s user reads the versions but is not offered the form", async (role) => {

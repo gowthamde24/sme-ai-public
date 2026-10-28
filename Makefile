@@ -1,4 +1,4 @@
-.PHONY: e2e-new-owner seed-demo-school docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: test-integration-run eval-run e2e-new-owner seed-demo-school docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-whatsapp staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -103,10 +103,10 @@ agent-db-down:
 	SME_STACK=agent $(SB) stop
 
 agent-db-reset:
-	SME_STACK=agent $(SB) db reset
+	SME_STACK=agent ./scripts/db-lock.sh $(SB) db reset
 
 agent-db-test:
-	SME_STACK=agent $(SB) test db
+	SME_STACK=agent ./scripts/db-lock.sh $(SB) test db
 
 # Which stack is each thing on, and is it running? (prints no key)
 agent-db-status stack-info:
@@ -114,11 +114,11 @@ agent-db-status stack-info:
 
 # Rebuild the local DB from migrations (drops all local data). The AGENT stack by default; STACK=owner needs OWNER_OK=1.
 db-reset:
-	$(SB) db reset
+	./scripts/db-lock.sh $(SB) db reset
 
 # pgTAP suite in supabase/tests/database (RLS isolation, roles, audit, catalog guards). The AGENT stack by default; STACK=owner needs OWNER_OK=1.
 db-test:
-	$(SB) test db
+	./scripts/db-lock.sh $(SB) test db
 
 # Regenerate packages/contracts/{crm,evidence,leads}.schema.json + .ts from the API models (a test fails if stale).
 contracts:
@@ -131,14 +131,21 @@ bench-rls:
 
 # API + real local Supabase (GoTrue, PostgREST, Postgres): isolation end to end, private-schema
 # exposure, concurrent last-owner race. Needs `make db-start`. Exports only the public URL and anon key.
-test-integration:
+test-integration-run:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration -q --ignore=../../tests/integration/test_agent_evals.py --ignore=../../tests/integration/test_research_evals.py --ignore=../../tests/integration/test_research_golden.py --ignore=../../tests/integration/test_requirement_evals.py --ignore=../../tests/integration/test_requirement_golden.py --ignore=../../tests/integration/test_assistant_evals.py
 
 # T006 agent containment evals: scripted models that OBEY every injection, run against the real local stack; the hard gate is
 # measured from the database afterwards (tests/evals/, tests/integration/agent_eval.py). FakeProvider only: no key, no network.
 # T007 adds the Research Agent's web-injection cases (tests/evals/research/, tests/integration/research_eval.py): synthetic fixture
 # sites only, no network.
+# One session at a time on the local database (scripts/db-lock.sh, docs/runbooks/two-local-stacks.md): the public target takes the lock and runs the -run target inside it.
+test-integration:
+	./scripts/db-lock.sh $(MAKE) --no-print-directory test-integration-run
+
 eval:
+	./scripts/db-lock.sh $(MAKE) --no-print-directory eval-run
+
+eval-run:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_agent_evals.py ../../tests/integration/test_research_evals.py -q
 	# T007 M3: the Research Agent golden set (20 synthetic businesses). Prints the report; FAILS on any wrong claim that is accepted.
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_research_golden.py -q -s
@@ -423,6 +430,10 @@ rollback-staging:
 staging-latest:
 	@test -n "$(SERVICE)" || { echo "usage: make staging-latest SERVICE=sme-api|sme-web"; exit 2; }
 	./deploy/staging.sh latest $(SERVICE)
+# make staging-whatsapp WA_NUMBER=91XXXXXXXXXX [WA_ARGS="--send --template"]   job DU: link the Meta test number to a demo workspace, post a SIGNED synthetic webhook, check the Lead Desk, optionally send ONE reply to that number (docs/runbooks/whatsapp-staging.md)
+staging-whatsapp:
+	python3 scripts/staging_whatsapp.py --i-know-this-is-staging --project-ref $(STAGING_REF) --api-url $(STAGING_API) --number $(WA_NUMBER) $(WA_ARGS)
+
 staging-smoke:
 	$(PY)/python scripts/hosted_smoke.py --web "$(STAGING_WEB)" --api "$(STAGING_API)"
 	python3 scripts/staging_smoke_api.py --i-know-this-is-staging --project-ref $(STAGING_REF) --api-url $(STAGING_API)

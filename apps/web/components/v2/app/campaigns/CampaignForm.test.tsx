@@ -70,11 +70,11 @@ describe("making a campaign", () => {
     expect(actions.save).not.toHaveBeenCalled();
   });
   it("a refusal from the server is shown with the Security link when the second factor is missing", async () => {
-    show({}, async () => ({ ok: false, error: "This needs your authenticator app.", mfa: true }));
+    show({}, async () => ({ ok: false, error: "This needs your two-step code, if you turned it on.", mfa: true }));
     type("Name", "A");
     type("Message", "Hello {{name}} pay soon please");
     await save();
-    expect(screen.getByRole("alert")).toHaveTextContent("authenticator");
+    expect(screen.getByRole("alert")).toHaveTextContent("two-step code");
   });
 });
 

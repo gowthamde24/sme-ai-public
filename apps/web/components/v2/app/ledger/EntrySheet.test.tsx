@@ -45,11 +45,11 @@ describe("writing down a payment", () => {
     expect(refresh).toHaveBeenCalled();
   });
   it("says why a refusal happened and offers the Security page for the second factor", async () => {
-    show({}, vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app.", mfa: true })) as never);
+    show({}, vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on.", mfa: true })) as never);
     await click("Adjust the account");
     fireEvent.change(screen.getByLabelText(/^Amount/), { target: { value: "500" } });
     await click("Write down the adjustment");
-    expect(screen.getByRole("alert")).toHaveTextContent("authenticator");
+    expect(screen.getByRole("alert")).toHaveTextContent("two-step code");
     expect(screen.getByRole("link", { name: /Security/ })).toBeInTheDocument();
   });
 });
@@ -68,7 +68,7 @@ describe("who may write what", () => {
   });
   it("an Admin is told in advance that adjustments need the authenticator code", () => {
     show({ role: "admin", secondFactorMissing: true });
-    expect(screen.getByText(/Adjustments and concessions need your authenticator code/)).toBeInTheDocument();
+    expect(screen.getByText(/Adjustments and concessions need your two-step code/)).toBeInTheDocument();
   });
   it("an invoice's due date cannot be before its date", async () => {
     const record = show();

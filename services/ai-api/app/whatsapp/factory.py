@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from app.outbox.adapter import ChannelAdapter
-from app.whatsapp.adapter import WhatsAppCloudAdapter
+from app.whatsapp.adapter import WhatsAppCloudAdapter, allow_list
 from app.whatsapp.graph import GraphClient
 from app.whatsapp.tokens import TokenResolver
 
@@ -24,4 +24,4 @@ def build_whatsapp_adapter(settings: Any) -> ChannelAdapter:
         raise ValueError("OUTBOX_ADAPTER=whatsapp needs WHATSAPP_ACCESS_TOKEN or WHATSAPP_ACCESS_TOKENS")
     if not settings.whatsapp_api_base.startswith(("https://", "http://127.0.0.1", "http://localhost")):
         raise ValueError("WHATSAPP_API_BASE must be https (or a local fake server)")
-    return WhatsAppCloudAdapter(GraphClient(settings.whatsapp_api_base, settings.whatsapp_graph_version), tokens)
+    return WhatsAppCloudAdapter(GraphClient(settings.whatsapp_api_base, settings.whatsapp_graph_version), tokens, allow_list(settings.whatsapp_allowed_recipients))

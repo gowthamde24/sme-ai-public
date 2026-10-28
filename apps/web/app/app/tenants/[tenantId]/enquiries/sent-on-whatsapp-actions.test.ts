@@ -36,7 +36,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(NOW);
-  requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1" });
+  requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1", hasSecondFactor: true });
   api.fetchQuote.mockResolvedValue(quote());
   api.recordTouch.mockResolvedValue({ touch_id: ID, lead_id: L, direction: "out", replayed: false });
 });

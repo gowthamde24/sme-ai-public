@@ -8,4 +8,4 @@ table "Item types, in order":
   | th Type C (not sold) | C | No, switched off | 0 | none | none |
   | th Type A | A | Yes | 1 | none | none |
   | th Type B | B | Yes | 2 | ₹500.00 | ₹4,000.00 |
-{role=note} Changing item types needs your authenticator app. [Set it up on the Security page](/app/security) , then sign in again with its code.
+{role=note} Changing item types needs your two-step code, if you turned it on. [Open the Security page](/app/security) , then sign in again with its code.

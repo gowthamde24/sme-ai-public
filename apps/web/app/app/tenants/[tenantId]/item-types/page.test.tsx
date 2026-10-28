@@ -35,7 +35,7 @@ const typeRows = () => screen.getAllByRole("rowheader").map((h) => h.closest("tr
 
 async function show(role: string, aal = "aal2") {
   fetchTenant.mockResolvedValue(tenant(role));
-  requireUser.mockResolvedValue({ ...USER, aal });
+  requireUser.mockResolvedValue({ ...USER, aal, hasSecondFactor: true });
   render(await ItemTypesPage(props()));
 }
 
@@ -92,7 +92,7 @@ describe("/app/tenants/[tenantId]/item-types", () => {
     await show(role, "aal1");
     expect(typeRows()).toHaveLength(3);
     expect(screen.queryByRole("columnheader", { name: "Edit" })).toBeNull();
-    expect(screen.getByText(/needs your authenticator app/)).toBeInTheDocument();
+    expect(screen.getByText(/needs your two-step code/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Security page/ })).toHaveAttribute("href", "/app/security");
     expect(screen.queryByRole("button")).toBeNull();
     expect(screen.queryByRole("heading", { name: "Add an item type" })).toBeNull();

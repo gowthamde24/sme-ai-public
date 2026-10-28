@@ -269,7 +269,7 @@ describe("auto top-up and pay per use", () => {
   it("a refusal from the server (the second factor) is said", async () => {
     controls(actions({ save: vi.fn(async (): Promise<TopupResult> => ({ ok: false, error: "mfa" })) }));
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Confirm with your second step first"));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Confirm with your two-step code first"));
   });
 });
 

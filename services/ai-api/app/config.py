@@ -265,6 +265,12 @@ class Settings(BaseSettings):
     whatsapp_access_token: SecretStr | None = None
     # a JSON object {"token_ref": "token", ...}; a business's token_ref names its entry
     whatsapp_access_tokens: SecretStr | None = None
+    # TEST FENCE (staging): the only numbers a message may go to (; or , between them, digits with
+    # the country code). Unset = no fence (production). Set but empty = nothing goes out at all.
+    whatsapp_allowed_recipients: str | None = None
+    # Meta's ids of the number and the account (not secrets)
+    whatsapp_phone_number_id: str | None = None
+    whatsapp_waba_id: str | None = None
     # the account the API signs in as to hand a webhook to the database (registered by the
     # operator; belongs to no workspace)
     channel_agent_email: str | None = None

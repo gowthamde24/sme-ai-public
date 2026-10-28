@@ -21,6 +21,7 @@ import { voidEntryAction } from "../../../dues/ledger-actions";
 import { eduContext, eduWords } from "../../../education-kit";
 import { assignPlanAction, recordFeeEntryAction, voidAssignmentAction } from "../../actions";
 import { BRAND_NAME } from "@/design/brand";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
 export const metadata = { title: `Student fees · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -66,7 +67,7 @@ export default async function StudentFeesRoute({ params }: PageProps<"/app/tenan
       </p>
       <div className="flex flex-col gap-5">
         <FeeAssignment assignment={fees.assignment} plans={plans} canEdit={admin} assignmentId={randomUUID()} words={words} base={base} actions={{ assign: assignPlanAction.bind(null, tenantId, studentId), void: voidAssignmentAction.bind(null, tenantId, studentId) }} />
-        <EntrySheet kinds={["payment", "concession", "adjustment"]} prefix="fee" words={words} record={recordFeeEntryAction.bind(null, tenantId, studentId)} today={today(clock())} receiptBase={`${base}/fees/receipt`} secondFactorMissing={user.aal !== "aal2"} role={tenant.role} />
+        <EntrySheet kinds={["payment", "concession", "adjustment"]} prefix="fee" words={words} record={recordFeeEntryAction.bind(null, tenantId, studentId)} today={today(clock())} receiptBase={`${base}/fees/receipt`} secondFactorMissing={secondFactorNeeded(user)} role={tenant.role} />
         <StatementView statement={fees.statement} entries={ledgerEntries} words={words} base={base} receiptBase={`${base}/fees/receipt`} canVoid={admin} voidEntry={voidEntryAction.bind(null, tenantId, here)} prefix="fee" />
       </div>
     </main>

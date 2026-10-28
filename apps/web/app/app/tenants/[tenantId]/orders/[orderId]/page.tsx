@@ -22,6 +22,7 @@ import { EventForm } from "../event-form";
 import { recordEventAction } from "../order-actions";
 import { OrderView } from "../order-view";
 import { BRAND_NAME } from "@/design/brand";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
 export const metadata = { title: `Order · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -92,7 +93,7 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   }
   const now = new Date();
   const offered = eventsOffered({ role: tenant.role, allowed: order.allowed_next_events, order });
-  const secondFactorMissing = user.aal !== "aal2";
+  const secondFactorMissing = secondFactorNeeded(user);
   const forms =
     offered.length === 0 ? (
       <p className={mutedText}>{order.allowed_next_events.length === 0 ? t("orders.nothing_more") : t("orders.nothing_left")}</p>

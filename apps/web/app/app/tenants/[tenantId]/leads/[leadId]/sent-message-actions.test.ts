@@ -29,7 +29,7 @@ const run = (over: Record<string, string> = {}) => recordSentMessageAction(T, L,
 
 beforeEach(() => {
   vi.clearAllMocks();
-  requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1" });
+  requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1", hasSecondFactor: true });
   api.recordTouch.mockResolvedValue({ touch_id: ID, lead_id: L, direction: "out", replayed: false });
 });
 afterEach(() => vi.useRealTimers());

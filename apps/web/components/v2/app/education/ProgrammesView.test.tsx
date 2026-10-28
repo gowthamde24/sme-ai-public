@@ -39,7 +39,7 @@ describe("the institution", () => {
   it("an Admin sees the months but cannot edit them; Sales read only", () => {
     show("admin");
     expect(screen.getByLabelText(/Erase a student's record/)).toBeDisabled();
-    expect(screen.getByText(/Only the Owner, with the authenticator code, can change this/)).toBeInTheDocument();
+    expect(screen.getByText(/Only the Owner can change this/)).toBeInTheDocument();
   });
   it("Sales cannot change anything", () => {
     show("sales");

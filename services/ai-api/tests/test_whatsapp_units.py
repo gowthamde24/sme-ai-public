@@ -16,7 +16,7 @@ from app.outbox.service import MAX_SEND_ATTEMPTS, _send_context, dispatch_due
 from app.suppression.keys import KeyRing, KeyVersion
 from app.tenancy.repository import TokenRejected, UpstreamError
 from app.whatsapp import optout, payloads, webhook
-from app.whatsapp.adapter import WhatsAppCloudAdapter, failure_of, template_param
+from app.whatsapp.adapter import WhatsAppCloudAdapter, allow_list, failure_of, template_param
 from app.whatsapp.fake_graph import FakeGraph
 from app.whatsapp.graph import GraphClient, GraphResult
 from app.whatsapp.ingest import WhatsAppIngest, clean_text
@@ -159,6 +159,34 @@ def test_no_number_or_no_token_is_not_configured_and_nothing_goes_out() -> None:
     assert WhatsAppCloudAdapter(GraphClient("https://g.example.test", "v25.0", client=httpx.Client(transport=graph.transport())), TokenResolver()).send(message()).failure_code == "not_configured"
     assert adapter_with(graph, token="wrong").send(message()).failure_code == "not_configured", "Meta says 401/190: the token is the problem, not the customer"
     assert graph.sent == []
+
+
+def fenced(graph: FakeGraph, raw: str | None) -> WhatsAppCloudAdapter:
+    return WhatsAppCloudAdapter(GraphClient("https://graph.example.test", "v25.0", client=httpx.Client(transport=graph.transport())), TokenResolver("fake-token"), allow_list(raw))
+
+
+def test_the_test_fence_lets_only_listed_numbers_through() -> None:
+    assert allow_list(None) is None and allow_list("") == frozenset() and allow_list(" +91 98765-43210 ,, 14155550100") == allow_list("919876543210;14155550100") == frozenset({"919876543210", "14155550100"})
+    graph = FakeGraph()
+    graph.inbound_from("919876543210")
+    assert fenced(graph, "919876543210,14155550100").send(message()).ok
+    assert len(graph.sent) == 1
+
+
+def test_a_number_outside_the_fence_is_refused_and_nothing_leaves(caplog: pytest.LogCaptureFixture) -> None:
+    graph = FakeGraph()
+    graph.inbound_from("919876543210")
+    with caplog.at_level("DEBUG"):
+        result = fenced(graph, "14155550100").send(message())
+    assert not result.ok and result.failure_code == "rejected" and not result.retry
+    assert graph.sent == [] and "9876543210" not in caplog.text
+
+
+def test_an_empty_fence_sends_nothing_at_all_and_no_fence_sends_to_anyone() -> None:
+    graph = FakeGraph()
+    graph.inbound_from("919876543210")
+    assert fenced(graph, "").send(message()).failure_code == "rejected" and graph.sent == []
+    assert fenced(graph, None).send(message()).ok
 
 
 @pytest.mark.parametrize(

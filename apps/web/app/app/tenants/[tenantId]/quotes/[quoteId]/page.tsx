@@ -18,6 +18,7 @@ import { readLeadLabel } from "../../visits/visits-data";
 import { approveMaterialQuoteAction, materialQuoteTextAction, orderFromMaterialQuoteAction, rejectMaterialQuoteAction } from "../material-actions";
 import { quoteWords } from "../material-words";
 import { BRAND_NAME } from "@/design/brand";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
 export const metadata = { title: `Quote · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -68,7 +69,7 @@ export default async function MaterialQuotePage({ params, searchParams }: PagePr
   };
   return (
     <main className={pageMain} lang={lang}>
-      <QuoteDetailView base={`/app/tenants/${tenantId}`} words={words} role={tenant.role} quote={quote} customer={lead?.label ?? null} site={site ? [site.name, site.city].filter(Boolean).join(", ") : null} actions={actions} secondFactorMissing={user.aal !== "aal2"} made={pick(raw.made) === "1"} />
+      <QuoteDetailView base={`/app/tenants/${tenantId}`} words={words} role={tenant.role} quote={quote} customer={lead?.label ?? null} site={site ? [site.name, site.city].filter(Boolean).join(", ") : null} actions={actions} secondFactorMissing={secondFactorNeeded(user)} made={pick(raw.made) === "1"} />
     </main>
   );
 }

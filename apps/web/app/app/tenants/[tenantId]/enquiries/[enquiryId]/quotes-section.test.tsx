@@ -208,10 +208,10 @@ describe("the quote section of /app/tenants/[tenantId]/enquiries/[enquiryId]", (
 
   it("an owner who has not used their authenticator app is shown how to, instead of an approve button", async () => {
     fetchTenant.mockResolvedValue(tenant("owner"));
-    requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1" });
+    requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1", hasSecondFactor: true });
     await show();
     expect(screen.queryByRole("button", { name: "Approve this quote" })).toBeNull();
-    expect(screen.getByRole("link", { name: /Set it up on the Security page/ })).toHaveAttribute("href", "/app/security");
+    expect(screen.getByRole("link", { name: /Open the Security page/ })).toHaveAttribute("href", "/app/security");
   });
 
   it("an owner with it can approve; an admin cannot approve a flagged quote; sales cannot approve at all", async () => {

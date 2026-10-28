@@ -80,7 +80,7 @@ export function sharedDatabaseProblem() {
   const procs = execFileSync("ps", ["-axo", "command"], { encoding: "utf8" })
     .split("\n")
     .filter((l) => /(^|\/)(python[0-9.]*|pytest|pg_prove)\b/.test(l) && /(pytest|pg_prove|supabase test)/.test(l) && !/^\/bin\/(zsh|bash|sh)\b/.test(l.trim()));
-  if (procs.length) return `a test session is running (${procs[0].trim().slice(0, 80)}): wait for it`;
+  if (procs.length) return `a test session is running (${procs[0].trim().slice(0, 80)}): wait for it (sessions that take the lock, scripts/db-lock.sh, wait their turn by themselves; this one did not)`;
   const def = psql("select pg_get_functiondef(p.oid) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'app' and p.proname = 'outbox_now'");
   if (!/select now\(\)/.test(def)) return "the database clock is pinned by a test session (app.outbox_now is not now()): wait for it";
   return null;

@@ -35,4 +35,4 @@ Minimum gap
 UTC offset
 330 minutes
 Published Oct 1, 2026, 10:30 AM (5 days ago)
-{role=note} Publishing a policy needs your authenticator app. [Set it up on the Security page](/app/security) , then sign in again with its code.
+{role=note} Publishing a policy needs your two-step code, if you turned it on. [Open the Security page](/app/security) , then sign in again with its code.

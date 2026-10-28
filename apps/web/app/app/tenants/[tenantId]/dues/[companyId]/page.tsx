@@ -19,6 +19,7 @@ import { requireUser } from "@/lib/auth/session";
 import { dueWords } from "../due-words";
 import { recordEntryAction, setCreditLimitAction, voidEntryAction } from "../ledger-actions";
 import { BRAND_NAME } from "@/design/brand";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
 export const metadata = { title: `Account · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -68,12 +69,12 @@ export default async function CustomerDuesPage({ params }: PageProps<"/app/tenan
           record={recordEntryAction.bind(null, tenantId, party, here)}
           today={today(clock())}
           receiptBase={`${base}/dues/receipt`}
-          secondFactorMissing={user.aal !== "aal2"}
+          secondFactorMissing={secondFactorNeeded(user)}
           role={tenant.role}
         />
         <StatementView statement={statement} entries={entries.entries} words={words} base={base} receiptBase={`${base}/dues/receipt`} canVoid={admin} voidEntry={voidEntryAction.bind(null, tenantId, here)} prefix="due" />
         {tenant.role === "owner" ? (
-          user.aal === "aal2" ? <CreditLimitForm current={statement.credit_limit_paise} words={words} save={setCreditLimitAction.bind(null, tenantId, companyId, here)} /> : <p role="note" className="text-sm text-muted">{words["due.limit.2fa"]} <Link href="/app/security" className="font-semibold underline">{words["today.err.mfa.link"]}</Link></p>
+          !secondFactorNeeded(user) ? <CreditLimitForm current={statement.credit_limit_paise} words={words} save={setCreditLimitAction.bind(null, tenantId, companyId, here)} /> : <p role="note" className="text-sm text-muted">{words["due.limit.2fa"]} <Link href="/app/security" className="font-semibold underline">{words["today.err.mfa.link"]}</Link></p>
         ) : null}
       </div>
     </main>

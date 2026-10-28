@@ -64,8 +64,8 @@ describe("EventForm", () => {
 
   it.each(["record_payment", "cancel", "record_refund"] as EventType[])("%s without the second factor shows the notice and no way to submit", (type) => {
     render(<EventForm type={type} action={ok()} ids={ids} secondFactorMissing />);
-    expect(screen.getByRole("note")).toHaveTextContent("This needs your authenticator app.");
-    expect(screen.getByRole("link", { name: "Set it up on the Security page" })).toHaveAttribute("href", "/app/security");
+    expect(screen.getByRole("note")).toHaveTextContent("This needs your two-step code, if you turned it on.");
+    expect(screen.getByRole("link", { name: "Open the Security page" })).toHaveAttribute("href", "/app/security");
     expect(screen.queryByRole("button")).toBeNull();
     expect(document.querySelector("input[name=event_id]")).toBeNull();
   });
@@ -101,8 +101,8 @@ describe("StartOrderForm", () => {
 
   it.each(["owner", "admin"])("%s without the second factor gets the notice, not a raw error", (role) => {
     render(<StartOrderForm {...props} role={role} secondFactorMissing />);
-    expect(screen.getByRole("note")).toHaveTextContent("Starting an order needs your authenticator app.");
-    expect(screen.getByRole("link", { name: "Set it up on the Security page" })).toBeInTheDocument();
+    expect(screen.getByRole("note")).toHaveTextContent("Starting an order needs your two-step code, if you turned it on.");
+    expect(screen.getByRole("link", { name: "Open the Security page" })).toBeInTheDocument();
     expect(screen.queryByRole("button")).toBeNull();
   });
 

@@ -7,6 +7,8 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 ROOT="$(pwd)"
+# one session at a time on the local database (scripts/db-lock.sh): take the lock, then run this script inside it
+[ "${SME_DB_LOCK_HELD:-}" = 1 ] || exec "$ROOT/scripts/db-lock.sh" "$ROOT/scripts/e2e-local.sh" "$@"
 . scripts/stack.sh   # the AGENT stack unless SME_STACK=owner (docs/runbooks/two-local-stacks.md)
 WEB_PORT="${E2E_WEB_PORT:-3002}"
 API_PORT="${E2E_API_PORT:-8002}"

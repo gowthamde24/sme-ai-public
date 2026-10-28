@@ -65,10 +65,10 @@ describe("adding a product", () => {
     expect(mocked(a.save).mock.calls[0][1]).not.toHaveProperty("price");
   });
   it("the server's refusal is shown in our sentence, with the Security link for the second factor", async () => {
-    show({}, acts({ save: vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app.", mfa: true })) as never }));
+    show({}, acts({ save: vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on.", mfa: true })) as never }));
     fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Paver" } });
     await save();
-    expect(screen.getByRole("alert")).toHaveTextContent("authenticator");
+    expect(screen.getByRole("alert")).toHaveTextContent("two-step code");
     expect(screen.getByRole("link", { name: /Security/ })).toBeInTheDocument();
   });
 });
