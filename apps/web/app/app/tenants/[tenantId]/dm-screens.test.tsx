@@ -76,7 +76,7 @@ describe("Settings > AI assistant (ASSISTANT_SCREENS)", () => {
     expect(tabNames()).toContain("AI assistant");
     expect(document.querySelector('[data-settings="assistant"]')).not.toBeNull();
     expect(screen.getByLabelText("Assistant name")).toHaveValue("Vijaya");
-    expect(screen.getByText(/the AI assistant of Acme Silks/)).toBeInTheDocument();
+    expect(screen.getByText(/the assistant of Acme Silks/)).toBeInTheDocument();
     cleanup();
     h.fetchTenant.mockResolvedValue(tenant("admin"));
     render(await SettingsPage(settingsProps({ section: "assistant" })));

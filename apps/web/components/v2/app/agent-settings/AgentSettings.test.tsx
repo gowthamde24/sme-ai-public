@@ -22,7 +22,7 @@ describe("automatic sending", () => {
     expect(screen.getByRole("checkbox", { name: "Vijaya may send routine replies by itself" })).not.toBeChecked();
     expect(screen.getByText("Off: new messages wait for you to approve them. Messages you approve still go out.")).toBeInTheDocument();
     expect(screen.getByLabelText("Messages per customer per day")).toHaveValue(3);
-    expect(screen.getByText("Saving needs your authenticator app.")).toBeInTheDocument();
+    expect(screen.getByText("Saving needs your two-step code first (sign in again with it).")).toBeInTheDocument();
   });
   it("turning it on says what that means, and saving sends exactly the two settings", async () => {
     const save = ok("Saved. Automatic sending is on.");
@@ -138,7 +138,7 @@ describe("quiet hours (editable within the API's limits, job BE)", () => {
     await click("Save quiet hours");
     expect(save).toHaveBeenCalledWith({ quiet_hours_start: 22, quiet_hours_end: 8, auto_send_enabled: true, per_customer_daily_limit: 4 });
     expect(screen.getByRole("status")).toHaveTextContent("Saved.");
-    expect(screen.getByText("Saving needs your authenticator app.")).toBeInTheDocument();
+    expect(screen.getByText("Saving needs your two-step code first (sign in again with it).")).toBeInTheDocument();
   });
 
   it("a missing second factor is explained and points at Security; the choice stays on the screen", async () => {

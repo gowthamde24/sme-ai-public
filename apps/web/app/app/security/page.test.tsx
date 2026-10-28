@@ -30,7 +30,7 @@ describe("/app/security", () => {
     requireUser.mockResolvedValue(user(false));
     render(await SecurityPage(props()));
     expect(screen.getByRole("button", { name: "Set up an authenticator" })).toBeInTheDocument();
-    expect(screen.getByText(/Owners and Admins need an authenticator app to erase data, export, change members or roles/)).toBeInTheDocument();
+    expect(screen.getByText(/Two-step sign-in is optional\. When it is on, you type a code from your authenticator app once each time you sign in/)).toBeInTheDocument();
     expect(screen.getByText("password only")).toBeInTheDocument();
   });
 
