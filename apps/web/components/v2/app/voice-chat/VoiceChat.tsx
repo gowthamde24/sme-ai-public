@@ -17,8 +17,8 @@ export type VoiceChatProps = {
   url: string;
   language: VoiceLang;
   languageNames: Record<VoiceLang, string>;
-  /** The person's sign-in for the socket's first message (the API's contract); a server action, asked before the tap so the tap itself can open the microphone. */
-  getToken: () => Promise<{ ok: true; token: string } | { ok: false }>;
+  /** The route that hands over the person's sign-in for the socket's first message (the API's contract); asked before the tap so the tap itself can open the microphone. */
+  tokenUrl: string;
   onClose: () => void;
   /** "Type instead": closes this and opens the written Ask panel. */
   onType: () => void;
@@ -29,12 +29,24 @@ export type VoiceChatProps = {
 
 const TOKEN_FRESH_MS = 20 * 60_000;
 
+/** The sign-in for the socket, from this app's own route (never from anything the page keeps). */
+const askToken = async (tokenUrl: string): Promise<{ ok: true; token: string } | { ok: false }> => {
+  try {
+    const res = await fetch(tokenUrl, { method: "POST", cache: "no-store", credentials: "same-origin" });
+    const json: unknown = res.ok ? await res.json() : null;
+    const token = typeof json === "object" && json !== null ? (json as { token?: unknown }).token : null;
+    return typeof token === "string" && token.length > 0 ? { ok: true, token } : { ok: false };
+  } catch {
+    return { ok: false };
+  }
+};
+
 /**
  * "Talk to your assistant" (job DV, contract-browser-voice.md): the full-screen circle that is a microphone. Tap it and speak, tap it again to stop; it follows the microphone while the assistant listens, thinks (and says when it is looking at the business's records), and
  * ripples with the assistant's voice as it speaks. Live captions of both sides: what you said, what it says; a part of a long answer that is not read aloud is on the screen with a label, and the sources of an answer are listed. Speak while it talks and it
  * stops at once (barge-in). The language can be changed on the way. "Type instead" opens the written assistant. Plain words for every end. The microphone and the socket are made on the tap (a phone allows sound only after one).
  */
-export function VoiceChat({ words, url, language, languageNames, getToken, onClose, onType, audioFactory = browserAudio, socketFactory = (u) => new WebSocket(u) as unknown as SocketLike }: VoiceChatProps) {
+export function VoiceChat({ words, url, language, languageNames, tokenUrl, onClose, onType, audioFactory = browserAudio, socketFactory = (u) => new WebSocket(u) as unknown as SocketLike }: VoiceChatProps) {
   const t = makeT(words);
   const [snap, setSnap] = React.useState<Snapshot | null>(null);
   const [lang, setLang] = React.useState<VoiceLang>(language);
@@ -45,24 +57,24 @@ export function VoiceChat({ words, url, language, languageNames, getToken, onClo
   const bottom = React.useRef<HTMLDivElement | null>(null);
 
   const fetchToken = React.useCallback(async () => {
-    const out = await getToken().catch((): { ok: false } => ({ ok: false }));
+    const out = await askToken(tokenUrl);
     if (out.ok) token.current = { value: out.token, at: Date.now() };
     setTokenFailed(!out.ok);
-  }, [getToken]);
+  }, [tokenUrl]);
   React.useEffect(() => {
     let alive = true; // the sign-in is asked for before the tap, so the tap itself can open the microphone
-    getToken().then(
+    askToken(tokenUrl).then(
       (out) => {
         if (!alive) return;
         if (out.ok) token.current = { value: out.token, at: Date.now() };
         else setTokenFailed(true);
       },
-      () => alive && setTokenFailed(true),
+      () => undefined,
     );
     return () => {
       alive = false;
     };
-  }, [getToken]);
+  }, [tokenUrl]);
   React.useEffect(() => () => client.current?.stop(), []);
   React.useEffect(() => bottom.current?.scrollIntoView?.({ block: "end" }), [snap?.captions]);
   React.useEffect(() => {
@@ -131,7 +143,7 @@ export function VoiceChat({ words, url, language, languageNames, getToken, onClo
           <ul aria-label={t("bv.captions")} data-part="captions" className="flex w-full flex-1 flex-col gap-2 overflow-y-auto">
             {snap.captions.map((c) => (
               <li key={c.id} data-who={c.who} data-final={c.final ? "true" : "false"} data-spoken={c.spoken ? "true" : "false"} className={`max-w-[92%] rounded-2xl px-3.5 py-2 text-base ${c.who === "user" ? "self-end border border-line" : "self-start bg-surface-2"} ${c.final ? "" : "opacity-70"}`}>
-                <span className="block text-xs font-semibold text-muted">{c.who === "user" ? t("bv.you") : t("bv.title")}</span>
+                <span className="block text-xs font-semibold text-muted">{c.who === "user" ? t("bv.you") : t("bv.assistant")}</span>
                 {c.text}
                 {c.who === "assistant" && !c.spoken ? <span className="mt-1 block text-xs font-semibold text-muted">{t("bv.notspoken")}</span> : null}
               </li>

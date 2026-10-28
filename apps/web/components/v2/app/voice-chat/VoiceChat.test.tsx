@@ -41,15 +41,16 @@ const audio = (): AudioIO => ({
   close: () => undefined,
   analyser: () => null,
 });
-const getToken = vi.fn(async () => ({ ok: true as const, token: "tok" }));
+const getToken = vi.fn(async (..._a: unknown[]) => ({ ok: true, json: async () => ({ token: "tok" }) }));
 const onClose = vi.fn();
 const onType = vi.fn();
-const draw = () => render(<VoiceChat words={WORDS} url="wss://x/v1/tenants/t/voice-chat" language="te" languageNames={NAMES} getToken={getToken} onClose={onClose} onType={onType} audioFactory={audio as never} socketFactory={() => (sock = new Sock())} />);
+const draw = () => render(<VoiceChat words={WORDS} url="wss://x/v1/tenants/t/voice-chat" language="te" languageNames={NAMES} tokenUrl="/app/tenants/t/voice-token" onClose={onClose} onType={onType} audioFactory={audio as never} socketFactory={() => (sock = new Sock())} />);
 const tapOrb = async () => {
   await act(async () => void fireEvent.click(document.querySelector('[data-voice="orb"]') as HTMLElement));
 };
 
 beforeEach(() => {
+  vi.stubGlobal("fetch", getToken);
   micFails = false;
   getToken.mockClear();
   onClose.mockClear();

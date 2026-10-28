@@ -27,12 +27,14 @@ const csp = [];
 s.page.on("console", (m) => /content security policy|refused to connect/i.test(m.text()) && csp.push(m.text().slice(0, 200)));
 try {
   await s.context.grantPermissions(["microphone"], { origin: "https://staging.stack19.com" });
-  await s.page.goto(`${s.base}/customers`, { waitUntil: "domcontentloaded" });
+  await s.page.goto(`${s.base}/outbox`, { waitUntil: "domcontentloaded" });
   const orb = s.page.locator('[data-ask="orb"]');
   await orb.waitFor({ timeout: 45000 });
-  await orb.click();
   const chat = s.page.locator('[data-part="voice-chat"]');
-  await chat.waitFor({ timeout: 20000 });
+  await s.page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => null); // the orb is on the page before it is hydrated
+  await sleep(1500);
+  await orb.click();
+  await chat.waitFor({ timeout: 30000 });
   ok("the orb opens the voice chat", true);
   await chat.locator('[data-voice="orb"]').click();
   await s.page.waitForFunction(() => /listening|thinking|speaking/.test(document.querySelector('[data-part="voice-chat"]')?.getAttribute("data-state") || ""), null, { timeout: 30000 });
