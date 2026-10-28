@@ -70849,5 +70849,335 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "gd.start": {
+  "en": "Start demo",
+  "te": "డెమో మొదలుపెట్టండి",
+  "hi": "डेमो शुरू करें",
+  "kn": "ಡೆಮೊ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.label": {
+  "en": "Guided demo",
+  "te": "గైడెడ్ డెమో",
+  "hi": "गाइडेड डेमो",
+  "kn": "ಗೈಡೆಡ್ ಡೆಮೊ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.step": {
+  "en": "Step {n} of {total}",
+  "te": "{n}వ అడుగు, మొత్తం {total}",
+  "hi": "चरण {n} / {total}",
+  "kn": "ಹಂತ {n} / {total}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.pause": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.play": {
+  "en": "Play",
+  "te": "కొనసాగించండి",
+  "hi": "चलाएँ",
+  "kn": "ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.next": {
+  "en": "Next",
+  "te": "తర్వాత",
+  "hi": "आगे",
+  "kn": "ಮುಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.back": {
+  "en": "Back",
+  "te": "వెనక్కి",
+  "hi": "पीछे",
+  "kn": "ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.close": {
+  "en": "Close the demo",
+  "te": "డెమో ముగించండి",
+  "hi": "डेमो बंद करें",
+  "kn": "ಡೆಮೊ ಮುಗಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.again": {
+  "en": "Play again",
+  "te": "మళ్ళీ చూపించండి",
+  "hi": "फिर से दिखाएँ",
+  "kn": "ಮತ್ತೆ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.working": {
+  "en": "Working on it…",
+  "te": "చేస్తున్నాను…",
+  "hi": "हो रहा है…",
+  "kn": "ಮಾಡುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.fail": {
+  "en": "This step could not run just now. Nothing was changed. You can go to the next one.",
+  "te": "ఈ అడుగు ఇప్పుడు జరగలేదు. ఏమీ మారలేదు. తర్వాతదానికి వెళ్ళవచ్చు.",
+  "hi": "यह चरण अभी नहीं चल सका। कुछ नहीं बदला। आप अगले पर जा सकते हैं।",
+  "kn": "ಈ ಹಂತ ಈಗ ನಡೆಯಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಿಲ್ಲ. ಮುಂದಿನದಕ್ಕೆ ಹೋಗಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.note": {
+  "en": "Made-up people and numbers only. Nothing is sent to anyone.",
+  "te": "అన్నీ కల్పిత పేర్లు, నంబర్లే. ఎవరికీ ఏమీ పంపరు.",
+  "hi": "सिर्फ़ काल्पनिक नाम और नंबर। किसी को कुछ नहीं भेजा जाता।",
+  "kn": "ಎಲ್ಲವೂ ಕಾಲ್ಪನಿಕ ಹೆಸರು, ಸಂಖ್ಯೆಗಳು. ಯಾರಿಗೂ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.done": {
+  "en": "That is the whole story. Open any screen and try it yourself.",
+  "te": "ఇదే మొత్తం కథ. ఏ స్క్రీన్ అయినా తెరిచి మీరే చూడండి.",
+  "hi": "यही पूरी कहानी है। कोई भी स्क्रीन खोलकर खुद आज़माएँ।",
+  "kn": "ಇದೇ ಪೂರ್ತಿ ಕಥೆ. ಯಾವುದೇ ಪರದೆ ತೆರೆದು ನೀವೇ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.lead.t": {
+  "en": "A new lead arrives",
+  "te": "కొత్త లీడ్ వచ్చింది",
+  "hi": "नया लीड आया",
+  "kn": "ಹೊಸ ಲೀಡ್ ಬಂತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.lead.d": {
+  "en": "Someone writes to you on WhatsApp. They are in your customer list at once, with how they came.",
+  "te": "ఒకరు వాట్సాప్‌లో మీకు రాశారు. వాళ్ళు ఎలా వచ్చారో చెప్తూ మీ కస్టమర్ల జాబితాలో వెంటనే కనిపిస్తారు.",
+  "hi": "कोई आपको व्हाट्सऐप पर लिखता है। वे तुरंत आपकी ग्राहक सूची में दिखते हैं, कैसे आए यह भी।",
+  "kn": "ಒಬ್ಬರು ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಬರೆಯುತ್ತಾರೆ. ಅವರು ಹೇಗೆ ಬಂದರು ಎಂಬುದರೊಂದಿಗೆ ಗ್ರಾಹಕರ ಪಟ್ಟಿಯಲ್ಲಿ ತಕ್ಷಣ ಕಾಣುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.reach.t": {
+  "en": "{assistant} reaches out",
+  "te": "{assistant} వాళ్ళని సంప్రదిస్తుంది",
+  "hi": "{assistant} संपर्क करता है",
+  "kn": "{assistant} ಸಂಪರ್ಕಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.reach.d": {
+  "en": "The assistant opens the call in your chosen voice, with your shop's name. This is a simulation: no phone rings.",
+  "te": "అసిస్టెంట్ మీరు ఎంచుకున్న గొంతుతో, మీ షాపు పేరుతో కాల్ మొదలుపెడుతుంది. ఇది నమూనా మాత్రమే: ఏ ఫోనూ మోగదు.",
+  "hi": "असिस्टेंट आपकी चुनी आवाज़ में, आपकी दुकान के नाम से कॉल शुरू करता है। यह नमूना है: कोई फ़ोन नहीं बजता।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ನೀವು ಆರಿಸಿದ ಧ್ವನಿಯಲ್ಲಿ, ನಿಮ್ಮ ಅಂಗಡಿಯ ಹೆಸರಿನೊಂದಿಗೆ ಕರೆ ಶುರು ಮಾಡುತ್ತದೆ. ಇದು ಮಾದರಿ ಮಾತ್ರ: ಯಾವ ಫೋನೂ ಮೊಳಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.ask.t": {
+  "en": "The lead asks, {assistant} answers",
+  "te": "లీడ్ అడుగుతారు, {assistant} చెప్తుంది",
+  "hi": "लीड पूछता है, {assistant} बताता है",
+  "kn": "ಲೀಡ್ ಕೇಳುತ್ತಾರೆ, {assistant} ಹೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.ask.d": {
+  "en": "The lead asks about price and a visit. The answer comes from your own catalogue, with its sources.",
+  "te": "లీడ్ ధర గురించి, రావడం గురించి అడుగుతారు. జవాబు మీ సొంత కేటలాగ్ నుంచే వస్తుంది, ఆధారాలతో.",
+  "hi": "लीड कीमत और आने के बारे में पूछता है। जवाब आपकी अपनी सूची से आता है, स्रोतों के साथ।",
+  "kn": "ಲೀಡ್ ಬೆಲೆ ಮತ್ತು ಬರುವ ಬಗ್ಗೆ ಕೇಳುತ್ತಾರೆ. ಉತ್ತರ ನಿಮ್ಮದೇ ಕ್ಯಾಟಲಾಗ್‌ನಿಂದ ಬರುತ್ತದೆ, ಆಧಾರಗಳೊಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.ask.q": {
+  "en": "Hello, do you have what I am looking for? What is the price, and can I come and see it?",
+  "te": "నమస్తే, నాకు కావాల్సినది మీ దగ్గర ఉందా? ధర ఎంత, వచ్చి చూడవచ్చా?",
+  "hi": "नमस्ते, मुझे जो चाहिए वह आपके पास है? कीमत क्या है, और क्या मैं आकर देख सकता हूँ?",
+  "kn": "ನಮಸ್ಕಾರ, ನನಗೆ ಬೇಕಾದದ್ದು ನಿಮ್ಮ ಬಳಿ ಇದೆಯೇ? ಬೆಲೆ ಎಷ್ಟು, ಬಂದು ನೋಡಬಹುದೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.ask.none": {
+  "en": "The assistant could not answer just now. Nothing was changed.",
+  "te": "అసిస్టెంట్ ఇప్పుడు జవాబు ఇవ్వలేకపోయింది. ఏమీ మారలేదు.",
+  "hi": "असिस्टेंट अभी जवाब नहीं दे सका। कुछ नहीं बदला।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಈಗ ಉತ್ತರಿಸಲಾಗಲಿಲ್ಲ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.followup.t": {
+  "en": "A follow-up is ready",
+  "te": "ఫాలో-అప్ సిద్ధంగా ఉంది",
+  "hi": "फ़ॉलो-अप तैयार है",
+  "kn": "ಫಾಲೋ-ಅಪ್ ಸಿದ್ಧವಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.followup.d": {
+  "en": "A follow-up message is written for the lead and waits for you. Nothing goes out until you approve it.",
+  "te": "లీడ్ కోసం ఫాలో-అప్ సందేశం రాసి మీ కోసం వేచి ఉంది. మీరు సరే అనేవరకు ఏదీ వెళ్ళదు.",
+  "hi": "लीड के लिए फ़ॉलो-अप संदेश लिखा है और आपका इंतज़ार कर रहा है। आपके हाँ कहने तक कुछ नहीं जाता।",
+  "kn": "ಲೀಡ್‌ಗಾಗಿ ಫಾಲೋ-ಅಪ್ ಸಂದೇಶ ಬರೆದಿದೆ, ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ. ನೀವು ಒಪ್ಪುವವರೆಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.visit.t": {
+  "en": "A visit is booked",
+  "te": "సందర్శన బుక్ అయింది",
+  "hi": "विज़िट बुक हुई",
+  "kn": "ಭೇಟಿ ಬುಕ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.visit.d": {
+  "en": "The lead's visit is in the schedule, in its time slot.",
+  "te": "లీడ్ రాక షెడ్యూల్‌లో, ఆ సమయంలో కనిపిస్తోంది.",
+  "hi": "लीड की विज़िट शेड्यूल में, अपने समय पर दिखती है।",
+  "kn": "ಲೀಡ್ ಭೇಟಿ ವೇಳಾಪಟ್ಟಿಯಲ್ಲಿ, ಆ ಸಮಯದಲ್ಲಿ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.today.t": {
+  "en": "What happened while you were away",
+  "te": "మీరు లేనప్పుడు ఏం జరిగింది",
+  "hi": "आपके पीछे क्या हुआ",
+  "kn": "ನೀವು ಇಲ್ಲದಾಗ ಏನಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.today.d": {
+  "en": "Today shows the new lead, the call, the follow-up waiting for you and the visit. One look and you are up to date.",
+  "te": "ఈరోజు స్క్రీన్‌లో కొత్త లీడ్, కాల్, మీ కోసం వేచి ఉన్న ఫాలో-అప్, సందర్శన కనిపిస్తాయి. ఒక్క చూపులో అంతా తెలుస్తుంది.",
+  "hi": "आज की स्क्रीन पर नया लीड, कॉल, आपका इंतज़ार करता फ़ॉलो-अप और विज़िट दिखते हैं। एक नज़र में सब पता चल जाता है।",
+  "kn": "ಇಂದಿನ ಪರದೆಯಲ್ಲಿ ಹೊಸ ಲೀಡ್, ಕರೆ, ನಿಮಗಾಗಿ ಕಾಯುವ ಫಾಲೋ-ಅಪ್, ಭೇಟಿ ಕಾಣುತ್ತವೆ. ಒಂದೇ ನೋಟದಲ್ಲಿ ಎಲ್ಲವೂ ಗೊತ್ತಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.speaker.lead": {
+  "en": "Lead",
+  "te": "లీడ్",
+  "hi": "लीड",
+  "kn": "ಲೀಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.audio": {
+  "en": "Voice",
+  "te": "గొంతు",
+  "hi": "आवाज़",
+  "kn": "ಧ್ವನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gd.speaker.assistant": {
+  "en": "{assistant}",
+  "te": "{assistant}",
+  "hi": "{assistant}",
+  "kn": "{assistant}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

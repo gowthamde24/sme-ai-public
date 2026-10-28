@@ -19,7 +19,11 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { getLang } from "@/i18n/get-lang";
 import { fetchTenant } from "@/lib/api/client";
 import { requireUser } from "@/lib/auth/session";
-import { taskScreens } from "@/lib/screens/flag";
+import { guidedDemo, taskScreens } from "@/lib/screens/flag";
+import { isDemoWorkspace } from "@/lib/workspace-demo";
+import { routesFor } from "@/lib/guided-demo/script";
+import { GuidedDemo } from "@/components/v2/app/guided-demo/LazyGuidedDemo";
+import { runDemoStepAction } from "./guided-demo-actions";
 import { ADDRESSES } from "@/lib/site/business";
 
 import { readFrameData } from "../../frame-data";
@@ -52,6 +56,8 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   const askWords = Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]));
   // the suggestion chips of the screens, in the person's language and for the business type (`ask.chip.quotes@programmes`)
   const chipWords = withModuleWords(Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("ask.chip."))), data.pack);
+  // the guided demo (GUIDED_DEMO): only in a workspace that says it is a DEMO one, for its Owner and Admins
+  const demoRoutes = guidedDemo() && isCanonicalUuid(tenantId) ? await demoRoutesFor(user.accessToken, tenantId, data.pack?.modules ?? null) : null;
   const topupBanner = isCanonicalUuid(tenantId) ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
   return (
     <>
@@ -80,8 +86,20 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
           children
         )}
       </AskProvider>
+      {demoRoutes ? <GuidedDemo words={Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("gd.")))} routes={demoRoutes} actions={{ run: runDemoStepAction.bind(null, tenantId) }} /> : null}
     </>
   );
+}
+
+/** The screens of the guided demo's steps, when this workspace is a DEMO one and the person may run it (Owner or Admin); else nothing. A failed read is "no". */
+async function demoRoutesFor(accessToken: string, tenantId: string, modules: readonly string[] | null) {
+  try {
+    const tenant = await fetchTenant(accessToken, tenantId);
+    if ((tenant.role !== "owner" && tenant.role !== "admin") || !isDemoWorkspace(tenant.name)) return null;
+    return routesFor(`/app/tenants/${tenantId}`, modules);
+  } catch {
+    return null;
+  }
 }
 
 /** Whether the workspace is read-only. A read that fails says "not": the API refuses every change in that state all the same, so the worst case is a button that says so when pressed. */
