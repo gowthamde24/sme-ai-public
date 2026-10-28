@@ -44,8 +44,8 @@ describe("decisions made from the Outbox", () => {
     expect(rejectMessageAction).toHaveBeenCalledWith(T, ID);
   });
   it("a refusal passes through as it is (our sentence, the mfa and stale flags)", async () => {
-    approveMessageAction.mockResolvedValue({ ok: false, error: "This needs your authenticator app.", mfa: true });
-    expect(await approveFromOutboxAction(T, ID)).toEqual({ ok: false, error: "This needs your authenticator app.", mfa: true });
+    approveMessageAction.mockResolvedValue({ ok: false, error: "This needs your two-step code, if you turned it on.", mfa: true });
+    expect(await approveFromOutboxAction(T, ID)).toEqual({ ok: false, error: "This needs your two-step code, if you turned it on.", mfa: true });
   });
   it("edit is Today's edit and changes nothing that is counted", async () => {
     editMessageAction.mockResolvedValue({ ok: true, message: "Saved.", text: "new" });

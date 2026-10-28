@@ -26,7 +26,7 @@ const BUTTON = "Add this product";
 
 beforeEach(() => {
   vi.clearAllMocks();
-  requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1" });
+  requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1", hasSecondFactor: true });
   fetchTenant.mockResolvedValue(tenant("admin"));
 });
 

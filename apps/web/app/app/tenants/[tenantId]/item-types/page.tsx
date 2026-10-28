@@ -18,6 +18,7 @@ import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { BRAND_NAME } from "@/design/brand";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
 export const metadata = { title: `Item types · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -65,7 +66,7 @@ export default async function ItemTypesPage({ params }: PageProps<"/app/tenants/
     return <ApiDownV2 words={await partsWords()} />;
   }
   const canEdit = EDIT_ROLES.includes(tenant.role);
-  const secondFactor = user.aal === "aal2";
+  const secondFactor = !secondFactorNeeded(user);
   const note =
     canEdit && !secondFactor ? (
       <p role="note" className={noteBox}>

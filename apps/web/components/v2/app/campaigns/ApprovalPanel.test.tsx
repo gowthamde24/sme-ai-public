@@ -52,11 +52,11 @@ describe("reading the messages before approving", () => {
     await act(async () => release({ ok: true, planned: 1, past: 0, sendingOn: true }));
   });
   it("a missing second factor points at the Security page and keeps the sheet open", async () => {
-    show({}, async () => ({ ok: false, error: "This needs your authenticator app.", mfa: true }));
+    show({}, async () => ({ ok: false, error: "This needs your two-step code, if you turned it on.", mfa: true }));
     open();
     fireEvent.click(screen.getByRole("checkbox"));
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Approve" })));
-    expect(screen.getByRole("alert")).toHaveTextContent("authenticator");
+    expect(screen.getByRole("alert")).toHaveTextContent("two-step code");
     expect(screen.getByRole("link", { name: /Security/ })).toHaveAttribute("href", "/app/security");
   });
   it("a campaign that changed since is refused and the page reads the samples again", async () => {

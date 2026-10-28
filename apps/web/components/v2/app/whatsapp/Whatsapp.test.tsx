@@ -97,7 +97,7 @@ describe("Connect WhatsApp: the four states", () => {
     expect(screen.getByRole("button", { name: "Switch off" })).not.toBe(on);
   });
   it.each([
-    [fail("mfa", undefined, { mfa: true }), /second step/],
+    [fail("mfa", undefined, { mfa: true }), /two-step code/],
     [fail("forbidden"), /Your role cannot do this/],
     [fail("rate_limited", undefined, { retryAfter: 14 }), /Wait 14 seconds/],
     [fail("unavailable", "whatsapp_unavailable"), /WhatsApp is not available on this system/],
@@ -211,7 +211,7 @@ describe("a chat", () => {
     const a = acts({ approve: vi.fn(async () => fail("mfa", undefined, { mfa: true })) });
     view(thread({}, [item({ id: "99999999-9999-4999-8999-999999999999", status: "needs_approval", reason: "money", at: "2026-10-12T09:10:00Z" })]), a);
     await press("Approve and send");
-    expect(screen.getByRole("alert")).toHaveTextContent(/second step/);
+    expect(screen.getByRole("alert")).toHaveTextContent(/two-step code/);
     expect(screen.getByRole("link", { name: "Open Security" })).toHaveAttribute("href", "/app/security");
     expect(screen.getByText("Waiting for OK")).toBeInTheDocument();
   });

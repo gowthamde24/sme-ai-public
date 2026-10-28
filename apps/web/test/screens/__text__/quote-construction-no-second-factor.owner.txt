@@ -40,7 +40,7 @@ summary: Why each number is what it is
 Worked out by the quote calculator, version 1.0.0. No AI model calculates any figure.
 [button type=button: Check and approve]
 [button type=button: Turn it down]
-{role=note} Approving needs your authenticator code. [Open Security](/app/security)
+{role=note} Approving needs your two-step code, if you turned it on. [Open Security](/app/security)
 {label="The WhatsApp message"}
 ## The WhatsApp message
 {role=group label="Language of the message"}

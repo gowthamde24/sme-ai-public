@@ -129,13 +129,13 @@ describe("Needs you: the decisions call the right endpoint, and the card leaves 
     expect(actions.offerVisit).toHaveBeenCalledWith(CALL_ID, "en");
   });
   it("a refusal puts the card back where it was, with the reason; a missing second factor shows the way to Security", async () => {
-    const approveMessage = vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app. Nothing was changed.", mfa: true }));
+    const approveMessage = vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on. Nothing was changed.", mfa: true }));
     board([classic(), outbox(), call()], { actions: fakeActions({ approveMessage }) });
     await act(async () => fireEvent.click(within(cardOf(/Reply to/)).getByRole("button", { name: "Approve and send" })));
     const articles = screen.getAllByRole("article").map((a) => a.getAttribute("aria-labelledby"));
     expect(articles).toEqual([expect.stringContaining("quote_approval"), expect.stringContaining("outbox_approval"), expect.stringContaining("call_approval")]); // same place
     const a = cardOf(/Reply to/);
-    expect(within(a).getByRole("alert")).toHaveTextContent("This needs your authenticator app. Nothing was changed.");
+    expect(within(a).getByRole("alert")).toHaveTextContent("This needs your two-step code, if you turned it on. Nothing was changed.");
     expect(within(a).getByRole("link", { name: "Open Security" })).toHaveAttribute("href", "/app/security");
     expect(count()).toHaveTextContent("3");
     expect(screen.getByRole("status")).toBeEmptyDOMElement(); // no toast for a refusal
@@ -318,10 +318,10 @@ describe("Needs you: a visit Vijaya proposed", () => {
   });
   it("a refusal puts the card back with the reason and the way to Security when the second factor is missing", async () => {
     const actions = fakeActions();
-    actions.visit.confirm.mockResolvedValueOnce({ ok: false, error: "This needs your authenticator app. Nothing was changed.", mfa: true } as never);
+    actions.visit.confirm.mockResolvedValueOnce({ ok: false, error: "This needs your two-step code, if you turned it on. Nothing was changed.", mfa: true } as never);
     board([proposal()], { actions });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Confirm the visit" })));
-    expect(within(card()).getByRole("alert")).toHaveTextContent("This needs your authenticator app.");
+    expect(within(card()).getByRole("alert")).toHaveTextContent("This needs your two-step code, if you turned it on.");
     expect(within(card()).getByRole("link", { name: "Open Security" })).toBeInTheDocument();
   });
   it("Change time opens the days' free times, moves the visit, and the card shows the new time", async () => {

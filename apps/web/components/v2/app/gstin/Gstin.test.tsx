@@ -59,7 +59,7 @@ describe("the GSTIN form", () => {
     expect(screen.getByText("No GSTIN saved.")).toBeInTheDocument();
   });
   it.each([
-    [fail("mfa", undefined, { mfa: true }), /second step/],
+    [fail("mfa", undefined, { mfa: true }), /two-step code/],
     [fail("invalid", "validation_error"), /This GSTIN is not valid: check the 15 characters\./],
     [fail("forbidden"), /Your role cannot do this/],
     [fail("rate_limited", undefined, { retryAfter: 8 }), /Wait 8 seconds/],

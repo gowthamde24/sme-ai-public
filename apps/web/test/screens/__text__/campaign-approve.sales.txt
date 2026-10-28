@@ -17,4 +17,4 @@ The first person, the longest message, the highest amount and three picked at ra
 - Longest ₹2,300.00 Hello Lakshmi Constructions Private Limited (synthetic), a payment of ₹2,300.00 for INV-1007 is due on 2026-10-27.
 - Picked at random ₹48,000.00 Hello Suresh (synthetic), a payment of ₹48,000.00 for INV-1003 is due on 2026-10-22.
 Every message tells the person it comes from the business's AI assistant and how to stop. It reads: This message is from the business's AI assistant. Reply STOP to stop messages.
-{role=note} Only the Owner can approve, with the authenticator code. You can read the messages and fix what is missing.
+{role=note} Only the Owner can approve. You can read the messages and fix what is missing.

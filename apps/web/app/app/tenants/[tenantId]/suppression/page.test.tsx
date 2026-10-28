@@ -56,11 +56,11 @@ describe("the suppression keys page: who sees it", () => {
   });
 
   it("an owner WITHOUT the second factor sees the status, the reason and no button", async () => {
-    requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1" });
+    requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1", hasSecondFactor: true });
     render(await SuppressionPage(props()));
     expect(screen.getByText(/7 contacts have no suppression key/)).toBeInTheDocument();
-    expect(screen.getByText(/Recording keys needs your authenticator app/)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Set it up on the Security page" })).toHaveAttribute("href", "/app/security");
+    expect(screen.getByText(/Recording keys needs your two-step code/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open the Security page" })).toHaveAttribute("href", "/app/security");
     expect(screen.queryByRole("button", { name: BUTTON })).toBeNull();
   });
 

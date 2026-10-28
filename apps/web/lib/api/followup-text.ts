@@ -55,7 +55,7 @@ export const REFUSAL_TEXT: Record<string, Record<string, string>> = {
 };
 
 /** What the person sees when the second factor is missing: the same sentence the order screens show. */
-export const MFA_TEXT = "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more.";
+export const MFA_TEXT = "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more.";
 export const OUT_OF_DATE = "This form is out of date. Reload the page and try again.";
 
 /** Refusals after which what is on the screen is out of date: the page is read again (the person sees the new state, never a guess). */

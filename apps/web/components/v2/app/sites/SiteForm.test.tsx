@@ -78,7 +78,7 @@ describe("adding a site", () => {
     expect(screen.getByRole("link", { name: "Open the map pin" })).toHaveAttribute("href", "https://www.google.com/maps?q=17.123457,78.500000");
   });
   it("shows the server's sentence and the Security link for the second factor", async () => {
-    show(actions({ save: vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app.", mfa: true })) as never }));
+    show(actions({ save: vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on.", mfa: true })) as never }));
     fireEvent.change(screen.getByLabelText("Name of the site"), { target: { value: "Yard" } });
     await save();
     expect(screen.getByRole("link", { name: /Security/ })).toBeInTheDocument();

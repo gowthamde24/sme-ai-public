@@ -42,8 +42,8 @@ Kannada
 <checkbox label="Tamil">
 Tamil
 Erase a student's record this many months after they leave (optional)
-<text label="Erase a student's record this many months after they leave (optional)" disabled inputmode=numeric described-by="Only the Owner, with the authenticator code, can change this.">
-Only the Owner, with the authenticator code, can change this. Only the Owner and Admins can change this.
+<text label="Erase a student's record this many months after they leave (optional)" disabled inputmode=numeric described-by="Only the Owner can change this.">
+Only the Owner can change this. Only the Owner and Admins can change this.
 {label="Classes and courses"}
 ## Classes and courses
 - Class 5 (synthetic) Classes · 31 students [See students](/app/tenants/22222222-2222-2222-2222-222222222222/students?programme=bb000000-0000-4000-8000-000000000001) Sections

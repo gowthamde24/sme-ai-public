@@ -44,7 +44,7 @@ describe("the sentence for it", () => {
   it("a missing second step says so and is marked", () => {
     const f = failureOf(new ApiRequestError(403, "mfa_required", "x"), t);
     expect(f.mfa).toBe(true);
-    expect(f.error).toMatch(/second step/);
+    expect(f.error).toMatch(/two-step code/);
   });
   it("a 429 says how long to wait when the API said, and 'a minute' when it did not or said a long time", () => {
     expect(failureOf(new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 30), t).error).toMatch(/Wait 30 seconds/);

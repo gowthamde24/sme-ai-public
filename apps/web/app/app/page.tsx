@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { fetchAccountSetup, type AccountSetup } from "@/lib/api/account";
 import { ApiAuthError } from "@/lib/api/client";
 import { AddButton } from "@/components/v2/app/AddButton";
-import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, pageH1, pageMain, rowBetween, sectionBlock, warnBox } from "@/components/v2/app/ui";
+import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, pageH1, pageMain, rowBetween, noteBox, sectionBlock } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 import { Rich } from "@/components/v2/app/rich";
 import { makeT } from "@/components/v2/app/words";
@@ -65,7 +65,7 @@ export default async function AppPage() {
       </p>
       {me?.memberships.some((m) => m.role === "owner" || m.role === "admin") &&
         !user.hasSecondFactor && (
-          <p role="note" className={warnBox}>
+          <p role="note" className={noteBox}>
             <strong>{t("acct.set_up_your_authenticator_app")}</strong> {t("acct.owner_notice")} <Link href="/app/security" className={inlineLink}>{t("acct.set_it_up")}</Link>
           </p>
         )}

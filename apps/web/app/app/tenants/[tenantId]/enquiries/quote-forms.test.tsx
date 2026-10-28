@@ -120,7 +120,7 @@ describe("QuoteDecisions", () => {
   it("without a second factor the approve button is replaced by the way to set it up", () => {
     render(<QuoteDecisions {...props({ secondFactorMissing: true })} />);
     expect(screen.queryByRole("button", { name: "Approve this quote" })).toBeNull();
-    expect(screen.getByRole("link", { name: /Set it up on the Security page/ })).toHaveAttribute("href", "/app/security");
+    expect(screen.getByRole("link", { name: /Open the Security page/ })).toHaveAttribute("href", "/app/security");
   });
 
   it("a sales user can only withdraw their own draft", () => {
@@ -137,7 +137,7 @@ describe("QuoteDecisions", () => {
     unmount();
     const missing = render(<QuoteDecisions {...props({ outcome: "approved", secondFactorMissing: true })} />);
     expect(screen.queryByLabelText("Why")).toBeNull();
-    expect(screen.getByRole("link", { name: /Set it up/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Open the Security page/ })).toBeInTheDocument();
     missing.unmount();
     const sales = render(<QuoteDecisions {...props({ outcome: "approved", role: "sales" })} />);
     expect(sales.container).toBeEmptyDOMElement();

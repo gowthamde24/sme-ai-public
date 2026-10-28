@@ -326,7 +326,8 @@ async function checkWorkspace(u, label, { offPath }) {
 // ---- 1. the business types, by e-mail ------------------------------------------------------------------------------------------------
 const others = IDS.map((id, i) => ({ id, i })).filter((x) => x.i > 0);
 const OFF = { construction_materials: "/fees", education: "/orders" };
-for (const { id, i } of others) {
+// E2E_PACK_INDEX=7 runs only that business type of the list (a targeted run of one failing type)
+for (const { id, i } of others.filter((x) => !process.env.E2E_PACK_INDEX || String(x.i) === process.env.E2E_PACK_INDEX)) {
   const label = id.startsWith("con") ? "con" : id.startsWith("edu") ? "edu" : `p${i}`;
   const u = await signUpThrough(i, label);
   if (u.tenant) await checkWorkspace(u, label, { offPath: OFF[id] ?? "/fees" });

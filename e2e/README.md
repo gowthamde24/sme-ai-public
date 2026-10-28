@@ -47,6 +47,15 @@ A label belongs to one reviewer, so each labelling run needs a reviewer who has 
 (`supabase db reset` then `make seed-demo`) or create more users in `setup-local-users.mjs`.
 
 
+## One session at a time on the local database (the lock)
+
+The local database of a stack is ONE shared thing: a pgTAP run or `db reset` rebuilds it, an integration test pins its clock, and the real-stack browser runs below keep data in it for minutes. Two sessions at once break each other (a workspace "gone", a pinned clock, a reset under a running browser, "a test session is running").
+So every run that uses the database takes a lock first and waits its turn, **`scripts/db-lock.sh`**: `make e2e-local`, `e2e-packs`, `e2e-new-owner` and `e2e-c2` (through `scripts/e2e-local.sh`), and `make agent-db-reset`, `agent-db-test`, `db-reset`, `db-test`, `test-integration` and `eval`.
+- The lock is a folder per stack (`~/.cache/sme-ai/db-agent.lock`, `db-owner.lock`; override the place with `SME_DB_LOCK_DIR`) holding the process number of the holder. A lock whose holder is gone is taken over. It waits up to 45 minutes (`SME_DB_LOCK_WAIT`, seconds) and then stops with exit 75 instead of running on a database somebody is using.
+- It is re-entrant (`SME_DB_LOCK_HELD=1` inside the lock), so `make check` and scripts that call `make` do not wait for themselves. It never kills anything.
+- A session that does NOT use the lock (a hand-started `pytest`, `supabase db reset` typed by hand) is still caught by the guard of the browser runs (`sharedDatabaseProblem` in `be-lib.mjs`: "a test session is running ... wait for it"): that run stops before it starts. Wrap such a command yourself: `scripts/db-lock.sh <command>`.
+- Why a lock and not a second database: the Supabase services (Auth, REST, Storage) are bound to the one `postgres` database of the stack, and a third stack costs about 1 GB of memory on this Mac. If a run must never wait for the other agent, start the OWNER stack for yourself (`SME_STACK=owner`, `OWNER_OK=1`; docs/runbooks/two-local-stacks.md) - a different lock and a different database.
+
 ## The real-stack run (job BE): `make e2e-local`
 
 Unlike the walkthroughs above (which drive the demo on :3000/:8000), `be-stack.mjs` starts **its own API (:8002) and web (:3002)** against the local Supabase stack **with Storage**, signs up a **throwaway account and workspace** (`e2e-<stamp>`) through the real pages, and walks sign-in with the authenticator, Today, the Outbox, Settings, Visits and the saree Catalogue (a real photo upload), then removes everything it made. It never touches the demo, never uses :3000, :8000 or :8001, and refuses to start while an integration or pgTAP session is using the shared database. Run it from the repository root: `make e2e-local`. Details, the step list and the things to know (quiet hours, the scripted model, clean-up, why it is not in CI): `docs/runbooks/e2e-real-stack.md`.

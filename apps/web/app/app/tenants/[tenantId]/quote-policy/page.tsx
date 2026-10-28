@@ -22,6 +22,7 @@ import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { BRAND_NAME } from "@/design/brand";
+import { secondFactorNeeded } from "@/lib/auth/second-factor";
 
 export const metadata = { title: `Quote policy · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -53,7 +54,7 @@ export default async function QuotePolicyPage({ params, searchParams }: PageProp
   // a business that sells by area, weight or piece (module `materials`, job CO) has its own rules: wastage, freight, loading, laying, advance, credit days, validity
   if (hasModule(await readPackCached(user.accessToken, tenantId).catch(() => null), "materials")) {
     const query = await searchParams;
-    return MaterialPolicyPage({ accessToken: user.accessToken, tenantId, role: tenant.role, aal2: user.aal === "aal2", lang, saved: (Array.isArray(query.saved) ? query.saved[0] : query.saved) === "1" });
+    return MaterialPolicyPage({ accessToken: user.accessToken, tenantId, role: tenant.role, aal2: !secondFactorNeeded(user), lang, saved: (Array.isArray(query.saved) ? query.saved[0] : query.saved) === "1" });
   }
   if (!ROLES.includes(tenant.role))
     return (
@@ -76,7 +77,7 @@ export default async function QuotePolicyPage({ params, searchParams }: PageProp
   const newest = versions.reduce((latest, v) => (v.effective_from > latest ? v.effective_from : latest), "");
   const minDate = newest > today ? newest : today;
   const form =
-    user.aal !== "aal2" ? (
+    secondFactorNeeded(user) ? (
       <p role="note" className={noteBox}>
         {t("qp.mfa_publishing")}{" "}
         <Link href="/app/security" className={link}>

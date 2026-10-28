@@ -81,7 +81,7 @@ describe("a typed-price quote on the panel", () => {
   });
   it("keeps the approve, reject and withdraw buttons and the second-factor prompt", () => {
     panel({ selected: parseQuote(MANUAL_QUOTE_JSON), quotes: [parseQuoteSummary(MANUAL_SUMMARY_JSON)], secondFactorMissing: true });
-    expect(screen.getByText(/Approving needs your authenticator app/)).toBeInTheDocument();
+    expect(screen.getByText(/Approving needs your two-step code/)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Approve this quote" })).toBeNull();
   });
   it("an admin sees that a flagged typed-price quote is the owner's alone", () => {

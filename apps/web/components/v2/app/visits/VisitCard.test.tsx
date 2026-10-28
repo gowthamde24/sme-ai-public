@@ -198,7 +198,7 @@ describe("a visit: completing it", () => {
     expect(screen.getByText("How did the visit end?")).toBeInTheDocument(); // not completed: the choices are still there
   });
   it("without the second factor it shows the way to Security", async () => {
-    const complete = vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app. Nothing was changed.", mfa: true }));
+    const complete = vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on. Nothing was changed.", mfa: true }));
     show(arrived(), { actions: fakeVisitsActions({ complete }) });
     await click("Complete");
     await click("Bought: start the order");

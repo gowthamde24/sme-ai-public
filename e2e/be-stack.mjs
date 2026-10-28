@@ -95,7 +95,7 @@ const quiet = () => {
 // ---- 1. sign up, confirm, sign in, set up the business ---------------------------------------------------------------------
 if (!(await step("A1", "sign up with the real two-step sign-up page (the kind of business, then the e-mail way with an address and a password; the terms are the line 'By continuing, you agree')", async () => {
   await page.goto(`${BASE}/signup`);
-  await page.getByRole("combobox").focus(); // step 1 is one searchable list now: it opens on focus
+  await page.locator('input[role="combobox"]').focus(); // step 1 is one searchable list now: it opens on focus
   const card = page.locator("[data-pack-card]").first(); // the first type the API lists: the reviewed business type, the one the product always was
   await card.waitFor();
   await Promise.all([page.waitForURL(/\/signup\?type=/, { timeout: 30000 }), card.click()]);

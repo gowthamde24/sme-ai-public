@@ -30,7 +30,7 @@ const run = (over: Record<string, string> = {}) => recordConsentAction(T, C, und
 beforeEach(() => {
   vi.clearAllMocks();
   vi.useRealTimers();
-  requireUser.mockResolvedValue({ id: "u", email: "asha@example.test", accessToken: "tok", aal: "aal1" });
+  requireUser.mockResolvedValue({ id: "u", email: "asha@example.test", accessToken: "tok", aal: "aal1", hasSecondFactor: true });
   api.recordConsent.mockResolvedValue(NOW);
 });
 
@@ -51,7 +51,7 @@ describe("recordConsentAction", () => {
     expect(r?.at).toBe("2026-10-08T10:30:00.000Z");
   });
   it("an account without an e-mail is named plainly, not left blank", async () => {
-    requireUser.mockResolvedValue({ id: "u", email: null, accessToken: "tok", aal: "aal1" });
+    requireUser.mockResolvedValue({ id: "u", email: null, accessToken: "tok", aal: "aal1", hasSecondFactor: true });
     expect((await run())?.by).toBe("your account");
   });
   it("a second factor is not asked for: a password-only session is passed to the API, which decides", async () => {

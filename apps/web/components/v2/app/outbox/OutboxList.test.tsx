@@ -283,12 +283,12 @@ describe("who may decide, and what the decision does", () => {
     expect(actions.approve).not.toHaveBeenCalled();
   });
   it("a refusal puts the row back with the reason, and without the second factor shows the way to Security", async () => {
-    const approve = vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app. Nothing was changed.", mfa: true }));
+    const approve = vi.fn(async () => ({ ok: false as const, error: "This needs your two-step code, if you turned it on. Nothing was changed.", mfa: true }));
     show([WAITING()], { actions: fakeOutboxActions({ approve }) });
     await open(/Mentions a price/);
     await click("Approve and send");
     expect(screen.getAllByRole("listitem").length).toBeGreaterThan(0); // the row is back (and still open)
-    expect(screen.getByRole("alert")).toHaveTextContent("This needs your authenticator app.");
+    expect(screen.getByRole("alert")).toHaveTextContent("This needs your two-step code, if you turned it on.");
     expect(within(screen.getByRole("alert")).getByRole("link", { name: "Open Security" })).toHaveAttribute("href", "/app/security");
   });
   it("a card that is out of date makes the page read again", async () => {

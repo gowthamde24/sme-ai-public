@@ -111,7 +111,7 @@ Policy version
 99999999-9999-4999-8999-999999999999
 Fingerprint
 0123456789abcdef
-{role=note} Approving needs your authenticator app. [Set it up on the Security page](/app/security) , then sign in again with its code.
+{role=note} Approving needs your two-step code, if you turned it on. [Open the Security page](/app/security) , then sign in again with its code.
 summary: Reject this draft
 form:
 Why

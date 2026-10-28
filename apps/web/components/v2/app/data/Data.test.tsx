@@ -112,7 +112,7 @@ describe("the import: a file, the columns, the preview, then the import", () => 
     expect(rows.getByText("No phone number or e-mail: the shop is added without a person.")).toBeInTheDocument();
     expect(rows.getByText(/looks real\. Until real customer details are allowed/)).toBeInTheDocument();
     expect(screen.getByText("Line 3: A cell holds a formula. Formulas are not read.")).toBeInTheDocument();
-    expect(screen.getByText(/Importing needs your second step/)).toBeInTheDocument();
+    expect(screen.getByText(/Importing needs your two-step code/)).toBeInTheDocument();
 
     await press("Import");
     expect(calls[2].url).toBe(`/app/tenants/${T}/data/import/confirm?job_id=${JOB}`);
@@ -178,7 +178,7 @@ describe("the import: a file, the columns, the preview, then the import", () => 
     await press("Check the file");
     await press("Show what would happen");
     await press("Import");
-    expect(screen.getByRole("alert")).toHaveTextContent(/second step/);
+    expect(screen.getByRole("alert")).toHaveTextContent(/two-step code/);
     expect(screen.getByRole("link", { name: "Open Security" })).toHaveAttribute("href", "/app/security");
     expect(screen.getByRole("heading", { name: "What would happen" })).toBeInTheDocument();
   });
@@ -280,7 +280,7 @@ describe("the export", () => {
     click.mockRestore();
   });
   it.each([
-    [{ ok: false, kind: "mfa", error: "", mfa: true }, 403, /second step/],
+    [{ ok: false, kind: "mfa", error: "", mfa: true }, 403, /two-step code/],
     [{ ok: false, kind: "invalid", error: "", code: "export_too_large" }, 422, /too many rows for one file/],
     [{ ok: false, kind: "rate_limited", error: "", retryAfter: 9 }, 429, /Wait 9 seconds/],
     [{ ok: false, kind: "forbidden", error: "" }, 403, /Your role cannot/],

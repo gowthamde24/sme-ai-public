@@ -11,7 +11,7 @@ A zip file with each table as JSON and CSV, and a README, of the information thi
 ## Delete my account
 This deletes your account and your sign-in. What you typed into a business's records stays with that business, and its audit trail keeps only an anonymous id of you. Nothing happens at once. There are 7 days to change your mind, and you can cancel until the day. Type your e-mail address (owner@example.test) to confirm.
 <text label="Type your e-mail address (owner@example.test) to confirm." autocomplete=off>
-This needs your second step (your authenticator code). If you are asked, open Security first.
+This needs your two-step code, if you turned it on. If you are asked, sign in again with it.
 [button type=button disabled: Delete my account]
 {label="More privacy tools"}
 ## More privacy tools

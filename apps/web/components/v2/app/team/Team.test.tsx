@@ -127,7 +127,7 @@ describe("the people", () => {
   it.each([
     [fail("forbidden", "role_not_allowed"), /cannot do that with your role/],
     [fail("conflict", "keep_owner"), /only owner cannot leave/],
-    [fail("mfa", undefined, { mfa: true }), /second step/],
+    [fail("mfa", undefined, { mfa: true }), /two-step code/],
     [fail("rate_limited", undefined, { retryAfter: 20 }), /Wait 20 seconds/],
   ])("a refusal (%j) is said in words and the person stays", async (reply, words) => {
     render(<TeamMembers words={WORDS} members={members} myRole="owner" actions={actions({ remove: vi.fn(async () => reply) })} />);
@@ -192,7 +192,7 @@ describe("inviting", () => {
   it.each([
     [fail("conflict", "too_many_invitations"), /20 invitations are waiting/],
     [fail("forbidden", "role_not_allowed"), /cannot do that with your role/],
-    [fail("mfa", undefined, { mfa: true }), /second step/],
+    [fail("mfa", undefined, { mfa: true }), /two-step code/],
     [fail("rate_limited", undefined, { retryAfter: 11 }), /Wait 11 seconds/],
   ])("a refusal (%j) is said in words and nothing is shown as a code", async (reply, words) => {
     render(<InviteForm words={WORDS} myRole="owner" workspaceName="Acme" actions={actions({ invite: vi.fn(async () => reply) })} />);
@@ -266,7 +266,7 @@ describe("joining with a code", () => {
   it.each([
     [fail("invalid", "invitation_invalid"), /That code is not valid/],
     [fail("rate_limited", "invitation_locked"), /Too many wrong codes/],
-    [fail("mfa", undefined, { mfa: true }), /second step/],
+    [fail("mfa", undefined, { mfa: true }), /two-step code/],
     [fail("conflict", "already_member"), /already in this business/],
   ])("a refusal (%j) is said in words and the code stays in the box", async (reply, words) => {
     window.history.replaceState(null, "", "/app/join");

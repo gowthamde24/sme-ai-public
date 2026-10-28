@@ -45,8 +45,8 @@ HSN code (from your accountant)
 GST rate in percent (from your accountant)
 <text label="GST rate in percent (from your accountant)" maxlength=20 inputmode=decimal autocomplete=off value=18>
 Price per unit (₹)
-<text label="Price per unit (₹)" inputmode=decimal autocomplete=off described-by="Your own price, before GST. Only the owner sets it, with the authenticator code.">
-Your own price, before GST. Only the owner sets it, with the authenticator code. Exact price now: ₹65 per sq ft
+<text label="Price per unit (₹)" inputmode=decimal autocomplete=off described-by="Your own price, before GST. Only the owner sets it.">
+Your own price, before GST. Only the owner sets it. Exact price now: ₹65 per sq ft
 <checkbox label="Remove the exact price">
 Remove the exact price
 {label="Photos"}

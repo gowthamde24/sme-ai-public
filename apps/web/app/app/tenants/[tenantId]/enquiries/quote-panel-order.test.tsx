@@ -49,7 +49,7 @@ describe("the Order section of the quote panel", () => {
 
   it("without the second factor it is the notice, not the button", () => {
     panel({ secondFactorMissing: true });
-    expect(screen.getAllByText(/Starting an order needs your authenticator app/)).toHaveLength(1);
+    expect(screen.getAllByText(/Starting an order needs your two-step code/)).toHaveLength(1);
     expect(screen.queryByRole("button", { name: "Start order" })).toBeNull();
   });
 

@@ -44,7 +44,7 @@ describe("download my data", () => {
     cleanup();
     render(<ExportMyData words={WORDS} actions={actions()} initial={[]} isOwner />);
     expect(screen.getByRole("button", { name: "Prepare the workspace's data" })).toBeInTheDocument();
-    expect(screen.getByText(/needs your second step/)).toBeInTheDocument();
+    expect(screen.getByText(/Only the owner can ask for it/)).toBeInTheDocument();
   });
   it("the workspace's data needs the business name typed: the button waits for it, the name goes with the request, and the e-mail note is announced", async () => {
     const a = actions();
@@ -91,7 +91,7 @@ describe("download my data", () => {
     [fail("conflict", "privacy_state"), /already being made/],
     [fail("rate_limited", "privacy_rate_limited"), /5 files a day/],
     [fail("unavailable", "storage_unavailable"), /Files cannot be made on this system/],
-    [fail("mfa", undefined, { mfa: true }), /second step/],
+    [fail("mfa", undefined, { mfa: true }), /two-step code/],
     [fail("forbidden"), /Your role cannot do this/],
   ])("a refusal (%j) is said in words and nothing is lost", async (reply, words) => {
     render(<ExportMyData words={WORDS} actions={actions({ requestExport: vi.fn(async () => reply) })} initial={[exp()]} isOwner workspaceName="Acme Silks" />);
@@ -146,7 +146,7 @@ describe("delete my account and the workspace", () => {
     [fail("conflict", "sole_owner"), /only owner of a workspace/],
     [fail("invalid", "confirmation_mismatch"), /does not match/],
     [fail("conflict", "privacy_state"), /already being made|cannot be done right now/],
-    [fail("mfa", undefined, { mfa: true }), /second step/],
+    [fail("mfa", undefined, { mfa: true }), /two-step code/],
     [fail("rate_limited", undefined, { retryAfter: 30 }), /Wait 30 seconds/],
   ])("a refusal (%j) is said in words and keeps what was typed", async (reply, words) => {
     render(<DeleteData {...base} actions={actions({ requestAccountDeletion: vi.fn(async () => reply) })} isOwner={false} accountDeletion={null} workspaceDeletion={null} />);
