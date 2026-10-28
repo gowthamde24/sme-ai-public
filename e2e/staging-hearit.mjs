@@ -19,17 +19,16 @@ try {
   await p.locator("aside[aria-labelledby=asst-prev-h]").waitFor({ timeout: 45000 });
   await sleep(2000);
   // (a) the preview card
-  const lang = await p.evaluate(() => document.querySelector("aside[aria-labelledby=asst-prev-h]")?.closest("section")?.getAttribute("lang") || "en");
   await p.locator('aside[aria-labelledby=asst-prev-h] button:has-text("Hear")').first().click();
   const said = p.locator('[data-part="preview-text"]');
   await said.waitFor({ timeout: 30000 }).then(() => ok("the preview card shows the exact words after 'Hear it'", true), () => ok("the preview card shows the exact words after 'Hear it'", false));
-  const shown = (await said.count()) ? norm((await said.innerText()).replace(/^[^:]*:\s*/, "")) : "";
-  const direct = await p.evaluate(async (base) => {
-    const q = new URLSearchParams(location.search);
-    const r = await fetch(`${base}/voice-sample?voice=female_warm&lang=${document.documentElement.lang || "en"}&tone=warm&text=1`, { cache: "no-store" });
+  const shown = (await said.count()) ? norm((await said.innerText()).replace(/^What you hear:\s*/, "")) : "";
+  const lang = await p.evaluate(() => document.querySelector('[data-part="preview-line"]')?.getAttribute("lang") || "en");
+  const direct = await p.evaluate(async ({ base, lang }) => {
+    const r = await fetch(`${base}/voice-sample?voice=female_warm&lang=${lang}&tone=warm&text=1`, { cache: "no-store" });
     return r.ok ? (await r.json()).text : null;
-  }, `/app/tenants/${s.tenant}`).catch(() => null);
-  ok("what is shown equals the greeting the API gives for the saved line", !!shown && (!direct || norm(direct) === shown), `${shown.slice(0, 80)}`);
+  }, { base: `/app/tenants/${s.tenant}`, lang }).catch(() => null);
+  ok("what is shown equals the greeting the API gives for the saved line", !!shown && !!direct && norm(direct) === shown, `${shown.slice(0, 80)}`);
   ok("it has no unfilled placeholder", !/[{}]/.test(shown));
   await shot(s, `hi-${pack}-${size}-1-card`);
   // (b) the opening-line editor with an unsaved edit
