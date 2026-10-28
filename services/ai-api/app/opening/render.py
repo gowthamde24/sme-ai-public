@@ -58,8 +58,8 @@ def fill(template: str, *, customer: str | None, assistant: str, business: str, 
         return values[m.group(1)] or ""
 
     out = _TOKEN.sub(one, template)
-    out = re.sub(r"\s+([,.!?।])", r"\1", out)   # a dropped placeholder leaves no space before punctuation
-    return re.sub(r"\s{2,}", " ", out).strip()
+    out = re.sub(r"\s{1,20}([,.!?।])", r"\1", out)   # a dropped placeholder leaves no space before punctuation (bounded: the line may come from the screen)
+    return " ".join(out.split())
 
 
 def compose_opening(
