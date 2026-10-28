@@ -79,8 +79,8 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const [focused, setFocused] = React.useState(false);
   const [voiceOpen, setVoiceOpen] = React.useState(false); // voice mode (job DM): the full-screen circle over the box, opened by the microphone
   const [earlier, setEarlier] = React.useState<Exchange[]>([]);
-  const [plan, setPlan] = React.useState<ConfirmAction | null>(null);
-  const [clarify, setClarify] = React.useState<string | null>(null);
+  const [extra, setExtra] = React.useState<{ plan?: ConfirmAction; clarify?: string }>({}); // what the router answered with besides text: a plan to confirm, or one short question
+  const { plan = null, clarify = null } = extra;
   const [conversationId, setConversationId] = React.useState<string | null>(null); // the conversation the next message continues (null starts a new one)
   const convRef = React.useRef<string | null>(null);
   const doIt = useDoIt(doItOptions);
@@ -205,8 +205,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setAnswer("");
     setSources([]);
     setDrafts([]);
-    setPlan(null);
-    setClarify(null);
+    setExtra({});
     setTaskEntry(null);
     setAudioPending(voice && speak);
     let failed = false;
@@ -229,10 +228,8 @@ export function useAskSession({ lang, base, words, availability, transport: give
                 ? d
                 : [...d, { id: String(e.id).slice(0, 64), kind: String(e.kind), title: String(e.title).slice(0, 120), summary: String(e.summary).slice(0, 400), href, language: typeof e.language === "string" ? e.language.slice(0, 8) : null, gloss: typeof e.gloss === "string" ? e.gloss.slice(0, 400) : null, machine: e.machine === true }],
             );
-        } else if (e.type === "confirm_action") {
-          setPlan(e.action);
-        } else if (e.type === "clarify") {
-          setClarify(e.question);
+        } else if (e.type === "confirm_action" || e.type === "clarify") {
+          setExtra(e.type === "clarify" ? { clarify: e.question } : { plan: e.action });
         } else if (e.type === "error") {
           failed = true;
           const code = typeof e.code === "string" && (ERROR_CODES as readonly string[]).includes(e.code) ? e.code : null;
@@ -356,28 +353,8 @@ export function useAskSession({ lang, base, words, availability, transport: give
       setPhase("idle");
     }
   };
-  const newChat = () => {
-    abort.current?.abort();
-    dropAudio();
-    setEarlier([]);
-    setAsked("");
-    setAnswer("");
-    setSources([]);
-    setDrafts([]);
-    setErrorCode(null);
-    setText("");
-    setPhase("idle");
-    setPlan(null);
-    setClarify(null);
-    setConversationId(null);
-  };
-  /** The state of a plan changed (the owner said yes or no, or it expired): the plan on screen and any earlier message that carries it. */
-  const setActionStatus = (actionId: string, status: ConfirmAction["status"]) => {
-    setPlan((p) => (p && p.actionId === actionId ? { ...p, status } : p));
-    setEarlier((list) => list.map((x) => (x.plan && x.plan.actionId === actionId ? { ...x, plan: { ...x.plan, status } } : x)));
-  };
-  /** Opens an earlier conversation from the history: its messages become the thread and the next message continues it. */
-  const openConversation = (id: string, thread: Exchange[]) => {
+  /** Starts a fresh conversation, or (with an id and its messages from the history) goes on in an earlier one: the next message continues it. */
+  const newChat = (id: string | null = null, thread: Exchange[] = []) => {
     abort.current?.abort();
     dropAudio();
     setEarlier(thread.slice(-MAX_EARLIER));
@@ -388,9 +365,13 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setErrorCode(null);
     setText("");
     setPhase("idle");
-    setPlan(null);
-    setClarify(null);
+    setExtra({});
     setConversationId(id);
+  };
+  /** The state of a plan changed (the owner said yes or no, or it expired): the plan on screen and any earlier message that carries it. */
+  const setActionStatus = (actionId: string, status: ConfirmAction["status"]) => {
+    setExtra((x) => (x.plan && x.plan.actionId === actionId ? { plan: { ...x.plan, status } } : x));
+    setEarlier((list) => list.map((x) => (x.plan && x.plan.actionId === actionId ? { ...x, plan: { ...x.plan, status } } : x)));
   };
   const [voiceOrb, setVoiceOrb] = React.useState<"listen" | "think" | "speak" | null>(null); // what the spoken conversation is doing, for the floating circle
   const stop = () => {
@@ -444,7 +425,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     text, setText, focused, setFocused, asked, phase, answer, sources, drafts, problem, errorCode, heardByVoice, earlier, finished, mood,
     hasAudio, playing, audioPending, audioFailed, autoplay, setAutoplay, seen, showMic, status,
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, clarify, conversationId, setActionStatus, openConversation,
+    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, clarify, conversationId, setActionStatus,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",
     asking: phase === "asking",

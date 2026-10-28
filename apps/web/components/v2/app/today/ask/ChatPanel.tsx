@@ -128,7 +128,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
     const thread = await openHistory(s.base, id);
     if (thread === null) return setItems("error");
     talk.stop();
-    s.openConversation(id, thread);
+    s.newChat(id, thread);
     setView("chat");
   };
   const hide = async (id: string) => {

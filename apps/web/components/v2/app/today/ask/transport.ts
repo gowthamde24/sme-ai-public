@@ -39,7 +39,7 @@ export function parseLine(raw: string): AskEvent | null {
     case "clarify":
       return typeof r.question === "string" ? { type: "clarify", question: r.question } : null;
     default:
-      return { type: "done", ...(typeof r.conversationId === "string" ? { conversationId: r.conversationId } : {}), ...(r.kind === "answer" || r.kind === "confirm_action" || r.kind === "clarify" ? { kind: r.kind } : {}) };
+      return { type: "done", conversationId: s(r.conversationId) ?? undefined, kind: r.kind === "answer" || r.kind === "confirm_action" || r.kind === "clarify" ? r.kind : undefined };
   }
 }
 
