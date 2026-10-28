@@ -7,7 +7,7 @@ Signs in as ONE synthetic demo owner (password and authenticator secret from Sec
   3. reads the workspace's conversations to show that the inbound became a lead with a message in the Lead Desk
   4. only with --template: saves and submits one test template to Meta for review (the one approved template on the test account, hello_world, takes no variable)
   5. only with --send: queues ONE reply to that lead and lets the API hand it to the Cloud API (the API's own allow-list, WHATSAPP_ALLOWED_RECIPIENTS, must name the number)
-The number must be given with --number (digits with the country code, one of the owner's allow-listed test numbers); nothing is ever sent to any other number.
+The number must be given with --number (digits with the country code). A REAL number is refused by the real-data gate while it is closed for the workspace (the inbound is then "ignored", by design): use a synthetic +00 number such as 0099887766 for the inbound checks; --send needs an allow-listed real number and an open gate. Nothing is ever sent to any other number.
 
 Run: python3 scripts/staging_whatsapp.py --i-know-this-is-staging --project-ref uiallwgywitryxatcqxf --api-url https://<api> --number 91XXXXXXXXXX [--send]
 Needs on the API: the WhatsApp secrets, CHANNEL_AGENT_EMAIL / CHANNEL_AGENT_PASSWORD (docs/runbooks/whatsapp-staging.md). Exit 0 = no FAIL."""
@@ -19,6 +19,8 @@ import json
 import re
 import sys
 import time
+import urllib.error
+import urllib.request
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -57,13 +59,20 @@ def status_notification(number: str, wamid: str, status: str) -> dict[str, Any]:
 
 def post_signed(api: str, secret: str, payload: dict[str, Any]) -> tuple[int, Any]:
     body = json.dumps(payload).encode()
-    import httpx
+    return _post(api, body, sign(body, secret))
 
-    r = httpx.post(f"{api}/v1/webhooks/whatsapp", content=body, headers={"content-type": "application/json", "x-hub-signature-256": sign(body, secret)}, timeout=30)
+
+def _post(api: str, body: bytes, signature: str) -> tuple[int, Any]:
+    request = urllib.request.Request(f"{api}/v1/webhooks/whatsapp", data=body, method="POST", headers={"content-type": "application/json", "x-hub-signature-256": signature})
     try:
-        return r.status_code, r.json()
+        with urllib.request.urlopen(request, timeout=30) as r:  # noqa: S310 - https staging address given by the operator
+            status, raw = r.status, r.read()
+    except urllib.error.HTTPError as e:
+        status, raw = e.code, e.read()
+    try:
+        return status, json.loads(raw)
     except ValueError:
-        return r.status_code, {}
+        return status, {}
 
 
 def main() -> int:
@@ -132,10 +141,7 @@ def main() -> int:
 
 
 def http_bad_signature(api: str) -> tuple[int, Any]:
-    import httpx
-
-    r = httpx.post(f"{api}/v1/webhooks/whatsapp", content=b"{}", headers={"content-type": "application/json", "x-hub-signature-256": "sha256=" + "0" * 64}, timeout=30)
-    return r.status_code, {}
+    return _post(api, b"{}", "sha256=" + "0" * 64)
 
 
 if __name__ == "__main__":

@@ -21,11 +21,14 @@ The WhatsApp adapter of job BR (ADR 0076) now talks to Meta's Cloud API **v25.0*
 1. Verify token (once): `python3 -c "import secrets;print(secrets.token_urlsafe(32),end='')" | gcloud secrets create sme-whatsapp-verify-token --data-file=- --project project-2757c07e-37d2-4167-88f`, then give `sme-api-run` the role `roles/secretmanager.secretAccessor` on that one secret.
 2. Channel account (once): the webhook hands what Meta sends to the database as a **channel principal**: a sign-in that belongs to no workspace.
    Supabase (staging project) > Authentication > Add user: `channel-agent@demo.example.test`, a long random password, auto-confirm. Store the password: `... | gcloud secrets create sme-channel-agent-password --data-file=- ...`, give `sme-api-run` secretAccessor on it, and register it in the SQL editor: `select app.operator_register_channel_agent('channel-agent@demo.example.test');`
-3. The test fence: `WHATSAPP_ALLOWED_RECIPIENTS="91XXXXXXXXXX;1415XXXXXXX" ./deploy/staging.sh api --execute` (the owner's allow-listed test numbers, which must also be in Meta's list of up to 5 recipients). Empty = nothing is sent.
-4. Deploy: `./deploy/staging.sh api --execute` mounts the token, the app secret, the verify token and the channel account (the last two only once they exist).
+3. The test fence: `WHATSAPP_ALLOWED_RECIPIENTS="91XXXXXXXXXX;1415XXXXXXX" ./deploy/staging.sh deploy api` (the owner's allow-listed test numbers, which must also be in Meta's list of up to 5 recipients). Empty = nothing is sent.
+4. Deploy: `./deploy/staging.sh deploy api` mounts the token, the app secret, the verify token and the channel account (the last two only once they exist).
 
 ## Check it
 `make staging-whatsapp WA_NUMBER=91XXXXXXXXXX` links the test number to the real-estate demo workspace, posts a signed synthetic inbound (and a duplicate, and one with a wrong signature), and confirms a conversation exists on a Lead Desk lead. `WA_ARGS="--send"` also sends ONE reply to that number; `WA_ARGS="--template"` submits a one-variable test template to Meta (the only approved template on the test account, `hello_world`, takes no variable, so a message outside the 24-hour window needs ours; set it to approved with `POST /whatsapp/templates/{id}/status` once Meta has decided).
+
+## The real-data gate (found on the first run, 28 Oct)
+A demo workspace's real-data gate is closed (ADR 0015): the database refuses a contact whose phone is not a `+00…` placeholder. So an inbound message from the owner's REAL test number is received and checked but **ignored** (`ignored=1`, no lead), and a reply to a real number cannot be queued. This is by design. `make staging-whatsapp WA_NUMBER=0099887766` proves the whole inbound path with a synthetic number; sending to a real test number needs the owner's decision to open the gate for one workspace.
 
 ## Notes
 - Meta test numbers can message only the recipients added in the developer app, and only after the recipient has opted in by messaging the number or by a template.
