@@ -2,7 +2,7 @@ import type { CallLang } from "@/lib/assistant/types";
 
 /**
  * The voice picker (owner decision 28 Oct, job-voice-picker.md; Settings > AI assistant > Voice): the catalogue of approved voices, and the voice the workspace chose for each language (none = the default of that language). The shapes the screen reads;
- * every answer is checked (lib/api/voice-picker.ts has the contract this assumes until C1's endpoint is on main). A sample is a short recording made ONCE for each voice and kept as a file: the browser plays it through this app's own route.
+ * every answer is checked (lib/api/voice-picker.ts has C1's contract). A sample is a short recording made ONCE for each voice and kept as a file: the browser plays it through this app's own route.
  */
 export const PICKER_LANGS = ["en", "te", "hi", "kn"] as const satisfies readonly CallLang[];
 export type PickerLang = (typeof PICKER_LANGS)[number];
@@ -32,21 +32,22 @@ const isPickerLang = (l: unknown): l is PickerLang => (PICKER_LANGS as readonly 
 export const safeSamplePath = (v: unknown): string | null => (typeof v === "string" && /^\/[A-Za-z0-9_\-./]{1,200}(\?[A-Za-z0-9_\-.=&]{1,100})?$/.test(v) && !v.includes("..") && !v.startsWith("//") ? v : null);
 
 export function parsePicker(json: unknown): Picker | null {
-  if (!isRecord(json) || !Array.isArray(json.voices) || !isRecord(json.choices)) return null;
+  if (!isRecord(json) || !Array.isArray(json.languages)) return null;
   const voices: PickerVoice[] = [];
-  for (const r of json.voices) {
-    if (!isRecord(r) || typeof r.id !== "string" || !VOICE_ID.test(r.id) || typeof r.name !== "string" || r.name.length < 1 || r.name.length > 40 || typeof r.label !== "string" || r.label.length > 30 || typeof r.default !== "boolean") return null;
-    if (!(GENDERS as readonly unknown[]).includes(r.gender)) return null;
-    if (typeof r.language !== "string") return null;
-    if (!isPickerLang(r.language)) continue; // a language the picker has no row for is left out
-    voices.push({ id: r.id, language: r.language, name: r.name, label: r.label, gender: r.gender as Gender, isDefault: r.default, sampleUrl: r.sample_url === null || r.sample_url === undefined ? null : safeSamplePath(r.sample_url) });
-  }
   const choices: Choices = {};
-  for (const l of PICKER_LANGS) {
-    const c = json.choices[l];
-    if (c === undefined || c === null) continue;
-    if (typeof c !== "string" || !VOICE_ID.test(c)) return null;
-    choices[l] = c;
+  for (const row of json.languages) {
+    if (!isRecord(row) || typeof row.language !== "string" || !Array.isArray(row.voices)) return null;
+    if (!isPickerLang(row.language)) continue; // a language the picker has no row for is left out
+    const language = row.language;
+    for (const r of row.voices) {
+      if (!isRecord(r) || typeof r.id !== "string" || !VOICE_ID.test(r.id) || typeof r.name !== "string" || r.name.length < 1 || r.name.length > 40 || typeof r.label !== "string" || r.label.length > 30 || typeof r.default !== "boolean") return null;
+      if (!(GENDERS as readonly unknown[]).includes(r.gender)) return null;
+      voices.push({ id: r.id, language, name: r.name, label: r.label, gender: r.gender as Gender, isDefault: r.default, sampleUrl: r.sample_url === null || r.sample_url === undefined ? null : safeSamplePath(r.sample_url) });
+    }
+    const chosen = row.chosen_id;
+    if (chosen === undefined || chosen === null) continue;
+    if (typeof chosen !== "string" || !VOICE_ID.test(chosen)) return null;
+    choices[language] = chosen;
   }
   return { voices, choices, fake: json.fake === true };
 }
@@ -60,12 +61,13 @@ export function inForce(picker: Picker, language: PickerLang): PickerVoice | nul
 /** The approved catalogue of 28 Oct, as the test screens (VOICE_PICKER_SCREENS=mock) show it before C1's endpoint is live. */
 const V = (id: string, language: PickerLang, name: string, label: string, gender: Gender, isDefault = false): PickerVoice => ({ id, language, name, label, gender, isDefault, sampleUrl: `/mock/${id}` });
 export const MOCK_VOICES: readonly PickerVoice[] = [
-  V("cartesia_en_janvi", "en", "Janvi", "Calm", "female", true),
-  V("cartesia_te_ramya", "te", "Ramya", "Calm", "female", true),
-  V("cartesia_hi_sanya", "hi", "Sanya", "Calm", "female", true),
-  V("cartesia_hi_esha", "hi", "Esha", "Cheerful", "female"),
-  V("cartesia_hi_meera", "hi", "Meera", "Warm", "female"),
-  V("cartesia_kn_disha", "kn", "Disha", "Calm", "female", true),
-  V("cartesia_kn_divya", "kn", "Divya", "Cheerful", "female"),
-  V("cartesia_kn_prakash", "kn", "Prakash", "Male", "male"),
+  V("en-janvi", "en", "Janvi", "Calm", "female", true),
+  V("te-ramya", "te", "Ramya", "Warm", "female", true),
+  V("te-sindhu", "te", "Sindhu", "Natural", "female"),
+  V("hi-sanya", "hi", "Sanya", "Clear", "female", true),
+  V("hi-esha", "hi", "Esha", "Friendly", "female"),
+  V("hi-meera", "hi", "Meera", "Cheerful", "female"),
+  V("kn-disha", "kn", "Disha", "Warm", "female", true),
+  V("kn-divya", "kn", "Divya", "Natural", "female"),
+  V("kn-prakash", "kn", "Prakash", "Male", "male"),
 ];

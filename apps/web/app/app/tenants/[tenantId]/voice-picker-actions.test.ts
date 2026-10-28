@@ -24,8 +24,8 @@ beforeEach(() => {
 
 describe("the voice picker's move", () => {
   it("the Owner and an Admin choose a voice (or null for the default) and the settings page is read again", async () => {
-    expect(await chooseVoiceAction(T, "hi", "cartesia_hi_esha")).toEqual({ ok: true });
-    expect(save).toHaveBeenCalledWith({ token: "tok", tenantId: T }, "hi", "cartesia_hi_esha");
+    expect(await chooseVoiceAction(T, "hi", "hi-esha")).toEqual({ ok: true });
+    expect(save).toHaveBeenCalledWith({ token: "tok", tenantId: T }, "hi", "hi-esha");
     fetchTenant.mockResolvedValue({ role: "admin" });
     expect(await chooseVoiceAction(T, "hi", null)).toEqual({ ok: true });
     expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${T}/settings`);

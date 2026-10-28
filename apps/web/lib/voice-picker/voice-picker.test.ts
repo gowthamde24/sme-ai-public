@@ -11,12 +11,19 @@ import { inForce, MOCK_VOICES, parsePicker, safeSamplePath } from "./types";
 
 const CTX = { token: "tok", tenantId: "22222222-2222-2222-2222-222222222222" };
 const WIRE = {
-  voices: [
-    { id: "cartesia_hi_sanya", language: "hi", name: "Sanya", label: "Calm", gender: "female", default: true, sample_url: "/static/voices/hi-sanya.mp3" },
-    { id: "cartesia_hi_esha", language: "hi", name: "Esha", label: "Cheerful", gender: "female", default: false, sample_url: null },
-    { id: "cartesia_mr_x", language: "mr", name: "X", label: "Calm", gender: "female", default: true, sample_url: "/static/x.mp3" },
+  languages: [
+    {
+      language: "hi",
+      default_id: "hi-sanya",
+      chosen_id: "hi-esha",
+      active_id: "hi-esha",
+      voices: [
+        { id: "hi-sanya", name: "Sanya", label: "Clear", gender: "female", default: true, chosen: false, sample_url: "/v1/voice-samples/hi-sanya.mp3" },
+        { id: "hi-esha", name: "Esha", label: "Friendly", gender: "female", default: false, chosen: true, sample_url: null },
+      ],
+    },
+    { language: "mr", default_id: "mr-x", chosen_id: null, active_id: "mr-x", voices: [{ id: "mr-x", name: "X", label: "Calm", gender: "female", default: true, chosen: false, sample_url: "/static/x.mp3" }] },
   ],
-  choices: { hi: "cartesia_hi_esha" },
 };
 beforeEach(() => {
   h.jar.clear();
@@ -28,12 +35,12 @@ beforeEach(() => {
 describe("the voice catalogue answer", () => {
   it("is read voice by voice; a language the picker has no row for is left out; a sample is a plain path or none", () => {
     const p = parsePicker(WIRE);
-    expect(p?.voices.map((v) => v.id)).toEqual(["cartesia_hi_sanya", "cartesia_hi_esha"]);
-    expect(p?.voices[0]).toMatchObject({ name: "Sanya", gender: "female", isDefault: true, sampleUrl: "/static/voices/hi-sanya.mp3" });
+    expect(p?.voices.map((v) => v.id)).toEqual(["hi-sanya", "hi-esha"]);
+    expect(p?.voices[0]).toMatchObject({ name: "Sanya", gender: "female", isDefault: true, sampleUrl: "/v1/voice-samples/hi-sanya.mp3" });
     expect(p?.voices[1].sampleUrl).toBeNull();
-    expect(p?.choices).toEqual({ hi: "cartesia_hi_esha" });
+    expect(p?.choices).toEqual({ hi: "hi-esha" });
   });
-  it.each([["no voices list", { ...WIRE, voices: "x" }], ["a bad id", { ...WIRE, voices: [{ ...WIRE.voices[0], id: "../x" }] }], ["an unknown gender", { ...WIRE, voices: [{ ...WIRE.voices[0], gender: "other" }] }], ["a choice that is not an id", { ...WIRE, choices: { hi: 3 } }], ["no body", null]])("%s is not accepted", (_w, body) => {
+  it.each([["no languages list", { languages: "x" }], ["a language row without voices", { languages: [{ language: "hi" }] }], ["a bad id", { languages: [{ ...WIRE.languages[0], voices: [{ ...WIRE.languages[0].voices[0], id: "../x" }] }] }], ["an unknown gender", { languages: [{ ...WIRE.languages[0], voices: [{ ...WIRE.languages[0].voices[0], gender: "other" }] }] }], ["a choice that is not an id", { languages: [{ ...WIRE.languages[0], chosen_id: 3 }] }], ["no body", null]])("%s is not accepted", (_w, body) => {
     expect(parsePicker(body)).toBeNull();
   });
   it("a sample path never carries a host, a way up or a scheme", () => {
@@ -42,9 +49,9 @@ describe("the voice catalogue answer", () => {
   });
   it("the voice in force is the one chosen, else the default of the language", () => {
     const p = parsePicker(WIRE)!;
-    expect(inForce(p, "hi")?.id).toBe("cartesia_hi_esha");
-    expect(inForce({ ...p, choices: {} }, "hi")?.id).toBe("cartesia_hi_sanya");
-    expect(inForce({ ...p, choices: { hi: "gone" } }, "hi")?.id).toBe("cartesia_hi_sanya"); // a voice that left the catalogue falls back
+    expect(inForce(p, "hi")?.id).toBe("hi-esha");
+    expect(inForce({ ...p, choices: {} }, "hi")?.id).toBe("hi-sanya");
+    expect(inForce({ ...p, choices: { hi: "gone" } }, "hi")?.id).toBe("hi-sanya"); // a voice that left the catalogue falls back
     expect(inForce(p, "te")).toBeNull();
   });
   it("the approved catalogue has one default per language and the male voice of Kannada", () => {
@@ -62,9 +69,9 @@ describe("the voice picker source", () => {
     vi.stubEnv("VOICE_PICKER_SCREENS", "mock");
     const first = await readVoicePicker(CTX);
     expect(first.mode === "ok" && first.data.fake).toBe(true);
-    expect(await saveVoiceChoice(CTX, "hi", "cartesia_hi_esha")).toMatchObject({ ok: true, data: { choices: { hi: "cartesia_hi_esha" } } });
+    expect(await saveVoiceChoice(CTX, "hi", "hi-esha")).toMatchObject({ ok: true, data: { choices: { hi: "hi-esha" } } });
     expect(h.jar.has(MOCK_COOKIE)).toBe(true);
-    expect(await saveVoiceChoice(CTX, "hi", "cartesia_kn_prakash")).toEqual({ ok: false, error: "invalid" }); // another language's voice
+    expect(await saveVoiceChoice(CTX, "hi", "kn-prakash")).toEqual({ ok: false, error: "invalid" }); // another language's voice
     expect(await saveVoiceChoice(CTX, "hi", "nobody")).toEqual({ ok: false, error: "invalid" });
     expect(await saveVoiceChoice(CTX, "xx", null)).toEqual({ ok: false, error: "invalid" });
     expect(await saveVoiceChoice(CTX, "hi", null)).toMatchObject({ ok: true, data: { choices: {} } });
@@ -76,8 +83,8 @@ describe("the voice picker source", () => {
     expect((await readVoicePicker(CTX)).mode).toBe("ok");
     expect(h.get).toHaveBeenCalledWith("tok", CTX.tenantId);
     h.put.mockResolvedValue(parsePicker(WIRE));
-    expect(await saveVoiceChoice(CTX, "hi", "cartesia_hi_esha")).toMatchObject({ ok: true });
-    expect(h.put).toHaveBeenCalledWith("tok", CTX.tenantId, "hi", "cartesia_hi_esha");
+    expect(await saveVoiceChoice(CTX, "hi", "hi-esha")).toMatchObject({ ok: true });
+    expect(h.put).toHaveBeenCalledWith("tok", CTX.tenantId, "hi", "hi-esha");
     for (const [status, code, want] of [[403, "forbidden", "forbidden"], [422, "validation_error", "invalid"], [403, "workspace_read_only", "read_only"], [500, "boom", "down"]] as const) {
       h.put.mockRejectedValueOnce(new ApiRequestError(status, code, "x"));
       expect(await saveVoiceChoice(CTX, "hi", null)).toEqual({ ok: false, error: want });
