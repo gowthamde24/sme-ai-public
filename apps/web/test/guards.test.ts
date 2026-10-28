@@ -211,7 +211,10 @@ describe("server-only code stays on the server", () => {
     const AUTHORIZE_PROBE = path.join("lib", "supabase", "authorize-probe.ts");
     // And the Lead Desk import (night 4): a file of up to 3 MB cannot go through a server action (its body limit is 1 MB), so the browser posts it to this app's OWN route `import/send/<step>` by a relative path: no token, never the API.
     const LEAD_IMPORT = path.join("components", "v2", "app", "lead-desk", "ImportScreen.tsx");
-    expect(callers).toEqual([ASK_TRANSPORT, AUTHORIZE_PROBE, BELL_POLL, CC_POST, LEAD_IMPORT, SESSION_CHECK, path.join("lib", "api", "client.ts")].sort());
+    // And the voice preview's words (night 5): Settings > AI assistant asks this app's OWN route `<workspace>/voice-sample?...&text=1` (a relative path) for the words the preview says: no token, never the API.
+    const PREVIEW_WORDS = path.join("components", "v2", "app", "assistant", "AssistantSettings.tsx");
+    expect(callers).toEqual([ASK_TRANSPORT, AUTHORIZE_PROBE, BELL_POLL, CC_POST, LEAD_IMPORT, PREVIEW_WORDS, SESSION_CHECK, path.join("lib", "api", "client.ts")].sort());
+    expect(read(path.join(WEB_ROOT, PREVIEW_WORDS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, LEAD_IMPORT))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i); // (a sheet link is typed by the person, so an address may appear in a hint)
     expect(read(path.join(WEB_ROOT, AUTHORIZE_PROBE))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     const client = read(path.join(WEB_ROOT, "lib/api/client.ts"));

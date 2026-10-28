@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { getVoiceSample } from "@/lib/api/voice-samples";
+import { getVoicePreview, getVoicePreviewText } from "@/lib/api/voice-samples";
 import { requireUser } from "@/lib/auth/session";
 import { voiceSampleScreens } from "@/lib/screens/flag";
 import { mockSampleWav } from "@/lib/voice-samples/mock";
@@ -11,9 +11,9 @@ import { readSampleQuery } from "@/lib/voice-samples/types";
 export const dynamic = "force-dynamic";
 
 /**
- * GET /app/tenants/[tenantId]/voice-sample?voice=&lang=&tone=&name= (job DQ part 3): one short voice sample for the voice picker of Settings > AI assistant. Owner and Admin only. The browser asks THIS route (its person's token stays on the
- * server); the query is closed words and the assistant's name; the answer is a sound and nothing else. VOICE_SAMPLE_SCREENS: off = 404, mock = a synthetic two-note sound that tells the voices apart by pitch, 1 = C1's sample through the API.
- * The sound is private to the person and may be kept by the browser for an hour (the same query is the same sound).
+ * GET /app/tenants/[tenantId]/voice-sample?voice=&lang=&tone=&name= (job DQ part 3, now the live PREVIEW of job DT): the opening line with the workspace's real assistant and business names and one reply, for the voice picker of Settings > AI assistant; with `&text=1`, the same words as JSON to show beside the player. Owner and Admin only. The browser asks THIS route (its person's token stays on the
+ * server); the query is closed words and the assistant's name; the answer is a sound and nothing else. VOICE_SAMPLE_SCREENS: off = 404, mock = a synthetic two-note sound that tells the voices apart by pitch, 1 = C1's preview through the API (never the fixed sample files).
+ * The sound is private to the person and never kept by the browser.
  */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
@@ -32,10 +32,20 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   } catch (error) {
     return new NextResponse(null, { status: error instanceof ApiAuthError ? 401 : 404 });
   }
-  const headers = { "Cache-Control": "private, max-age=3600", "X-Content-Type-Options": "nosniff" };
+  // the preview speaks the business's CURRENT name, so the browser never keeps one
+  const headers = { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" };
+  if (request.nextUrl.searchParams.get("text") === "1") {
+    if (mode === "mock") return new NextResponse(null, { status: 404 });
+    try {
+      const said = await getVoicePreviewText(user.accessToken, tenantId, query);
+      return said ? NextResponse.json({ text: said.text }, { status: 200, headers }) : new NextResponse(null, { status: 404 });
+    } catch {
+      return new NextResponse(null, { status: 502 });
+    }
+  }
   if (mode === "mock") return new NextResponse(mockSampleWav(query) as BodyInit, { status: 200, headers: { ...headers, "Content-Type": "audio/wav" } });
   try {
-    const got = await getVoiceSample(user.accessToken, tenantId, query);
+    const got = await getVoicePreview(user.accessToken, tenantId, query);
     if (!got) return new NextResponse(null, { status: 404 });
     return new NextResponse(got.bytes, { status: 200, headers: { ...headers, "Content-Type": got.contentType.split(";")[0] } });
   } catch (error) {

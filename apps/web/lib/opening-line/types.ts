@@ -8,7 +8,7 @@ import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
  */
 export const PLACEHOLDERS = ["customer", "assistant", "business", "agent_role"] as const;
 export type Placeholder = (typeof PLACEHOLDERS)[number];
-export const LINE_MIN = 5;
+export const LINE_MIN = 10;
 export const LINE_MAX = 300;
 
 /** The texts by language: a language that is not there follows the default (workspace) or the workspace's text (campaign). */
@@ -19,7 +19,7 @@ export type CampaignOpeningLine = { lines: Lines; mentionAi: boolean | null; eff
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 
-/** The words a line may hold: text of 5 to 300 characters whose {placeholders} are only the four known ones. */
+/** The words a line may hold: text of 10 to 300 characters whose {placeholders} are only the four known ones. */
 export function validLine(text: unknown): text is string {
   if (typeof text !== "string") return false;
   const t = text.trim();

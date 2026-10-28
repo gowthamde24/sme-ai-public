@@ -2376,10 +2376,10 @@
   "humanOnly": true
  },
  "today.err.mfa": {
-  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
-  "te": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
-  "hi": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
-  "kn": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "en": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "hi": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "kn": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5935,10 +5935,10 @@
   }
  },
  "agentset.mfa": {
-  "en": "Saving needs your authenticator app.",
-  "te": "Saving needs your authenticator app.",
-  "hi": "Saving needs your authenticator app.",
-  "kn": "Saving needs your authenticator app.",
+  "en": "Saving needs your two-step code first (sign in again with it).",
+  "te": "Saving needs your two-step code first (sign in again with it).",
+  "hi": "Saving needs your two-step code first (sign in again with it).",
+  "kn": "Saving needs your two-step code first (sign in again with it).",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -11524,10 +11524,10 @@
   }
  },
  "orders.err.mfa": {
-  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more.",
-  "te": "దీనికి మీ ఆథెంటికేటర్ యాప్ కావాలి. సెక్యూరిటీ పేజీలో సెట్ చేసి, దాని కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, ఇంకోసారి ప్రయత్నించండి.",
-  "hi": "इसके लिए आपका ऑथेंटिकेटर ऐप चाहिए। सिक्योरिटी पेज पर सेट करें, उसके कोड से दोबारा साइन इन करें, और एक बार फिर कोशिश करें।",
-  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು. ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ, ಅದರ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "దీనికి ముందు మీ రెండు-దశల కోడ్ కావాలి. మళ్లీ సైన్ ఇన్ చేసి, ఆథెంటికేటర్ యాప్‌లోని కోడ్ టైప్ చేసి, ఇంకోసారి ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "इसके लिए पहले आपका दो-चरण कोड चाहिए। फिर से साइन इन करें, ऑथेंटिकेटर ऐप का कोड डालें और दोबारा कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಕೋಡ್ ಟೈಪ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಲಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -12348,10 +12348,10 @@
   }
  },
  "enq.this_needs_your_authenticator_app_set": {
-  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more.",
-  "te": "దీనికి మీ ఆథెంటికేటర్ యాప్ కావాలి. సెక్యూరిటీ పేజీలో సెట్ చేసి, దాని కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, ఇంకోసారి ప్రయత్నించండి.",
-  "hi": "इसके लिए आपका ऑथेंटिकेटर ऐप चाहिए। सिक्योरिटी पेज पर सेट करें, उसके कोड से दोबारा साइन इन करें, और एक बार फिर कोशिश करें।",
-  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು. ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ, ಅದರ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "దీనికి ముందు మీ రెండు-దశల కోడ్ కావాలి. మళ్లీ సైన్ ఇన్ చేసి, ఆథెంటికేటర్ యాప్‌లోని కోడ్ టైప్ చేసి, ఇంకోసారి ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "इसके लिए पहले आपका दो-चरण कोड चाहिए। फिर से साइन इन करें, ऑथेंटिकेटर ऐप का कोड डालें और दोबारा कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಕೋಡ್ ಟೈಪ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಲಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -16621,10 +16621,10 @@
   }
  },
  "pl.this_needs_your_authenticator_app_set": {
-  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more.",
-  "te": "దీనికి మీ ఆథెంటికేటర్ యాప్ కావాలి. సెక్యూరిటీ పేజీలో సెట్ చేసి, దాని కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, ఇంకోసారి ప్రయత్నించండి.",
-  "hi": "इसके लिए आपका ऑथेंटिकेटर ऐप चाहिए। सिक्योरिटी पेज पर सेट करें, उसके कोड से दोबारा साइन इन करें, और एक बार फिर कोशिश करें।",
-  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು. ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ, ಅದರ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "దీనికి ముందు మీ రెండు-దశల కోడ్ కావాలి. మళ్లీ సైన్ ఇన్ చేసి, ఆథెంటికేటర్ యాప్‌లోని కోడ్ టైప్ చేసి, ఇంకోసారి ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "इसके लिए पहले आपका दो-चरण कोड चाहिए। फिर से साइन इन करें, ऑथेंटिकेटर ऐप का कोड डालें और दोबारा कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಕೋಡ್ ಟೈಪ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಲಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -16654,10 +16654,10 @@
   }
  },
  "supp.this_needs_your_authenticator_app_set": {
-  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more.",
-  "te": "దీనికి మీ ఆథెంటికేటర్ యాప్ కావాలి. సెక్యూరిటీ పేజీలో సెట్ చేసి, దాని కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, ఇంకోసారి ప్రయత్నించండి.",
-  "hi": "इसके लिए आपका ऑथेंटिकेटर ऐप चाहिए। सिक्योरिटी पेज पर सेट करें, उसके कोड से दोबारा साइन इन करें, और एक बार फिर कोशिश करें।",
-  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು. ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ, ಅದರ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "దీనికి ముందు మీ రెండు-దశల కోడ్ కావాలి. మళ్లీ సైన్ ఇన్ చేసి, ఆథెంటికేటర్ యాప్‌లోని కోడ్ టైప్ చేసి, ఇంకోసారి ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "इसके लिए पहले आपका दो-चरण कोड चाहिए। फिर से साइन इन करें, ऑथेंटिकेटर ऐप का कोड डालें और दोबारा कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಕೋಡ್ ಟೈಪ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಲಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -17131,10 +17131,10 @@
   }
  },
  "fu.x.3ac6c6d3": {
-  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more.",
-  "te": "దీనికి మీ ఆథెంటికేటర్ యాప్ కావాలి. సెక్యూరిటీ పేజీలో సెట్ చేసి, దాని కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, ఇంకోసారి ప్రయత్నించండి.",
-  "hi": "इसके लिए आपका ऑथेंटिकेटर ऐप चाहिए। सिक्योरिटी पेज पर सेट करें, उसके कोड से दोबारा साइन इन करें, और एक बार फिर कोशिश करें।",
-  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು. ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ, ಅದರ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "దీనికి ముందు మీ రెండు-దశల కోడ్ కావాలి. మళ్లీ సైన్ ఇన్ చేసి, ఆథెంటికేటర్ యాప్‌లోని కోడ్ టైప్ చేసి, ఇంకోసారి ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "इसके लिए पहले आपका दो-चरण कोड चाहिए। फिर से साइन इन करें, ऑथेंटिकेटर ऐप का कोड डालें और दोबारा कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಕೋಡ್ ಟೈಪ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಲಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -22798,10 +22798,10 @@
   }
  },
  "it.changing_item_types_needs_your_authenticator": {
-  "en": "Changing item types needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was saved.",
-  "te": "ఐటమ్ రకాలు మార్చడానికి మీ ఆథెంటికేటర్ యాప్ కావాలి. సెక్యూరిటీ పేజీలో సెట్ చేసి, దాని కోడ్‌తో మళ్ళీ సైన్ ఇన్ అయి, ఇంకోసారి ప్రయత్నించండి. ఏదీ సేవ్ కాలేదు.",
-  "hi": "आइटम प्रकार बदलने के लिए आपका ऑथेंटिकेटर ऐप चाहिए। सिक्योरिटी पेज पर इसे सेट करें, उसके कोड से फिर साइन इन करें, और एक बार और कोशिश करें। कुछ सेव नहीं हुआ।",
-  "kn": "ಐಟಂ ಪ್ರಕಾರಗಳನ್ನು ಬದಲಿಸಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು. ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ, ಅದರ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಆಗಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಸೇವ್ ಆಗಿಲ್ಲ.",
+  "en": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "దీనికి ముందు మీ రెండు-దశల కోడ్ కావాలి. మళ్లీ సైన్ ఇన్ చేసి, ఆథెంటికేటర్ యాప్‌లోని కోడ్ టైప్ చేసి, ఇంకోసారి ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "इसके लिए पहले आपका दो-चरण कोड चाहिए। फिर से साइन इन करें, ऑथेंटिकेटर ऐप का कोड डालें और दोबारा कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಕೋಡ್ ಟೈಪ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಲಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -22888,10 +22888,10 @@
   }
  },
  "qp.publishing_a_policy_needs_your_authenticator": {
-  "en": "Publishing a policy needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was published.",
-  "te": "పాలసీ ప్రచురించడానికి మీ ఆథెంటికేటర్ యాప్ కావాలి. సెక్యూరిటీ పేజీలో సెట్ చేసి, దాని కోడ్‌తో మళ్ళీ సైన్ ఇన్ అయి, ఇంకోసారి ప్రయత్నించండి. ఏదీ ప్రచురించలేదు.",
-  "hi": "पॉलिसी प्रकाशित करने के लिए आपका ऑथेंटिकेटर ऐप चाहिए। सिक्योरिटी पेज पर इसे सेट करें, उसके कोड से फिर साइन इन करें, और एक बार और कोशिश करें। कुछ प्रकाशित नहीं हुआ।",
-  "kn": "ಪಾಲಿಸಿ ಪ್ರಕಟಿಸಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು. ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ, ಅದರ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಆಗಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಪ್ರಕಟವಾಗಿಲ್ಲ.",
+  "en": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "దీనికి ముందు మీ రెండు-దశల కోడ్ కావాలి. మళ్లీ సైన్ ఇన్ చేసి, ఆథెంటికేటర్ యాప్‌లోని కోడ్ టైప్ చేసి, ఇంకోసారి ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "इसके लिए पहले आपका दो-चरण कोड चाहिए। फिर से साइन इन करें, ऑथेंटिकेटर ऐप का कोड डालें और दोबारा कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಕೋಡ್ ಟೈಪ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಲಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28016,10 +28016,10 @@
   }
  },
  "acct.not_set_up_line": {
-  "en": "Owners and Admins need an authenticator app to erase data, export, change members or roles, and change workspace settings. It takes a minute.",
-  "te": "Owners and Admins need an authenticator app to erase data, export, change members or roles, and change workspace settings. It takes a minute.",
-  "hi": "Owners and Admins need an authenticator app to erase data, export, change members or roles, and change workspace settings. It takes a minute.",
-  "kn": "Owners and Admins need an authenticator app to erase data, export, change members or roles, and change workspace settings. It takes a minute.",
+  "en": "Two-step sign-in is optional. When it is on, you type a code from your authenticator app once each time you sign in. It takes a minute to set up.",
+  "te": "Two-step sign-in is optional. When it is on, you type a code from your authenticator app once each time you sign in. It takes a minute to set up.",
+  "hi": "Two-step sign-in is optional. When it is on, you type a code from your authenticator app once each time you sign in. It takes a minute to set up.",
+  "kn": "Two-step sign-in is optional. When it is on, you type a code from your authenticator app once each time you sign in. It takes a minute to set up.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36502,10 +36502,10 @@
   }
  },
  "start.title": {
-  "en": "Get started",
-  "te": "మొదలుపెడదాం",
-  "hi": "शुरू करें",
-  "kn": "ಶುರು ಮಾಡೋಣ",
+  "en": "Finish setting up",
+  "te": "సెటప్ పూర్తి చేయండి",
+  "hi": "सेटअप पूरा करें",
+  "kn": "ಸೆಟಪ್ ಪೂರ್ಣಗೊಳಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36546,10 +36546,10 @@
   }
  },
  "start.check.second_factor_set.title": {
-  "en": "Set up your second step",
-  "te": "మీ రెండో దశను సెట్ చేయండి",
-  "hi": "अपना दूसरा चरण सेट करें",
-  "kn": "ನಿಮ್ಮ ಎರಡನೇ ಹಂತವನ್ನು ಹೊಂದಿಸಿ",
+  "en": "Turn on two-step sign-in (optional)",
+  "te": "రెండు-దశల సైన్ ఇన్ ఆన్ చేయండి (ఐచ్ఛికం)",
+  "hi": "दो-चरण साइन इन चालू करें (वैकल्पिक)",
+  "kn": "ಎರಡು-ಹಂತದ ಸೈನ್ ಇನ್ ಆನ್ ಮಾಡಿ (ಐಚ್ಛಿಕ)",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -36557,10 +36557,10 @@
   }
  },
  "start.check.second_factor_set.hint": {
-  "en": "An authenticator code, asked before you approve anything or connect WhatsApp.",
-  "te": "ఏదైనా ఆమోదించే ముందు లేదా WhatsApp కనెక్ట్ చేసే ముందు అడిగే ఆథెంటికేటర్ కోడ్.",
-  "hi": "एक ऑथेंटिकेटर कोड, जो कुछ भी मंज़ूर करने या WhatsApp जोड़ने से पहले माँगा जाता है।",
-  "kn": "ಏನನ್ನಾದರೂ ಅನುಮೋದಿಸುವ ಮೊದಲು ಅಥವಾ WhatsApp ಸಂಪರ್ಕಿಸುವ ಮೊದಲು ಕೇಳುವ ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್.",
+  "en": "A code from an authenticator app on top of your password. We recommend it for the Owner; nothing needs it.",
+  "te": "పాస్‌వర్డ్‌తో పాటు ఆథెంటికేటర్ యాప్ కోడ్. ఓనర్‌కి సిఫార్సు చేస్తున్నాము; ఏదీ దీనిపై ఆధారపడదు.",
+  "hi": "पासवर्ड के साथ ऑथेंटिकेटर ऐप का कोड। ओनर के लिए हम इसे सुझाते हैं; इसके बिना भी सब चलता है।",
+  "kn": "ಪಾಸ್‌ವರ್ಡ್ ಜೊತೆಗೆ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಕೋಡ್. ಓನರ್‌ಗೆ ಶಿಫಾರಸು ಮಾಡುತ್ತೇವೆ; ಇದಿಲ್ಲದೆಯೂ ಎಲ್ಲವೂ ನಡೆಯುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -37525,10 +37525,10 @@
   }
  },
  "fields.notice.mfa": {
-  "en": "Turn on your authenticator app first (Security), then try again.",
-  "te": "ముందు మీ ఆథెంటికేటర్ యాప్ ఆన్ చేయండి (సెక్యూరిటీ), తర్వాత మళ్ళీ ప్రయత్నించండి.",
-  "hi": "पहले अपना ऑथेंटिकेटर ऐप चालू कीजिए (सिक्योरिटी), फिर कोशिश कीजिए।",
-  "kn": "ಮೊದಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಆನ್ ಮಾಡಿ (ಸೆಕ್ಯುರಿಟಿ), ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "దీనికి ముందు మీ రెండు-దశల కోడ్ కావాలి. మళ్లీ సైన్ ఇన్ చేసి, ఆథెంటికేటర్ యాప్‌లోని కోడ్ టైప్ చేసి, ఇంకోసారి ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "इसके लिए पहले आपका दो-चरण कोड चाहिए। फिर से साइन इन करें, ऑथेंटिकेटर ऐप का कोड डालें और दोबारा कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಎರಡು-ಹಂತದ ಕೋಡ್ ಬೇಕು. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನ ಕೋಡ್ ಟೈಪ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಲಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -55072,10 +55072,10 @@
   }
  },
  "asst.name.d": {
-  "en": "Customers hear: “{name}, the AI assistant of {shop}.” The words “AI assistant” are always said.",
-  "te": "కస్టమర్లు వినేది: “{name}, {shop} AI అసిస్టెంట్.” “AI అసిస్టెంట్” అనే మాటలు ఎప్పుడూ చెప్తారు.",
-  "hi": "ग्राहक सुनते हैं: “{name}, {shop} की AI असिस्टेंट।” “AI असिस्टेंट” शब्द हमेशा बोले जाते हैं।",
-  "kn": "ಗ್ರಾಹಕರು ಕೇಳುವುದು: “{name}, {shop} ನ AI ಅಸಿಸ್ಟೆಂಟ್.” “AI ಅಸಿಸ್ಟೆಂಟ್” ಎಂಬ ಮಾತು ಯಾವಾಗಲೂ ಹೇಳಲಾಗುತ್ತದೆ.",
+  "en": "Customers hear: “{name}, the assistant of {shop}.” Whether the greeting also says it is an AI assistant is your choice, in the opening line below.",
+  "te": "కస్టమర్లకు వినిపించేది: “{name}, {shop} అసిస్టెంట్.” గ్రీటింగ్‌లో ఇది AI అసిస్టెంట్ అని కూడా చెప్పాలా వద్దా అనేది మీ ఇష్టం, కింద ఓపెనింగ్ లైన్‌లో.",
+  "hi": "ग्राहक सुनते हैं: “{name}, {shop} की असिस्टेंट।” ग्रीटिंग में AI असिस्टेंट भी बताना है या नहीं, यह आपकी पसंद है, नीचे ओपनिंग लाइन में।",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಕೇಳುವುದು: “{name}, {shop} ಅಸಿಸ್ಟೆಂಟ್.” ಗ್ರೀಟಿಂಗ್‌ನಲ್ಲಿ ಇದು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದೂ ಹೇಳಬೇಕೇ ಬೇಡವೇ ಎಂಬುದು ನಿಮ್ಮ ಆಯ್ಕೆ, ಕೆಳಗಿನ ಓಪನಿಂಗ್ ಲೈನ್‌ನಲ್ಲಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -55875,10 +55875,10 @@
   }
  },
  "asst.save.mfa": {
-  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
-  "te": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
-  "hi": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
-  "kn": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "en": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "hi": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
+  "kn": "This needs your two-step code first. Sign in again and type the code from your authenticator app, then try once more. Nothing was changed.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -58938,10 +58938,10 @@
   }
  },
  "asst.disclosure": {
-  "en": "Every call opens like this: the assistant says it is an AI assistant, and whose it is.",
-  "te": "ప్రతి కాల్ ఇలాగే మొదలవుతుంది: అసిస్టెంట్ తాను AI అసిస్టెంట్ అని, ఎవరిదో చెబుతుంది.",
-  "hi": "हर कॉल ऐसे ही शुरू होता है: असिस्टेंट बताता है कि वह AI असिस्टेंट है और किसका है।",
-  "kn": "ಪ್ರತಿ ಕರೆ ಹೀಗೆಯೇ ಆರಂಭವಾಗುತ್ತದೆ: ಅಸಿಸ್ಟೆಂಟ್ ತಾನು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು, ಯಾರದು ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "en": "Unless you turn it off in the opening line, every call opens by saying it is an AI assistant, and whose it is. Either way the assistant never says it is a person, and answers honestly if asked.",
+  "te": "ఓపెనింగ్ లైన్‌లో మీరు ఆఫ్ చేయకపోతే, ప్రతి కాల్ ఇది AI అసిస్టెంట్ అని, ఎవరిదో చెప్పి మొదలవుతుంది. ఏ సందర్భంలోనైనా అసిస్టెంట్ తాను మనిషినని ఎప్పుడూ చెప్పదు; అడిగితే నిజం చెబుతుంది.",
+  "hi": "ओपनिंग लाइन में आप बंद न करें तो हर कॉल यह बताकर शुरू होती है कि यह AI असिस्टेंट है और किसकी है। दोनों हाल में असिस्टेंट खुद को इंसान नहीं बताती, और पूछने पर सच बताती है।",
+  "kn": "ಓಪನಿಂಗ್ ಲೈನ್‌ನಲ್ಲಿ ನೀವು ಆಫ್ ಮಾಡದಿದ್ದರೆ, ಪ್ರತಿ ಕಾಲ್ ಇದು AI ಅಸಿಸ್ಟೆಂಟ್ ಎಂದು, ಯಾರದು ಎಂದು ಹೇಳಿ ಶುರುವಾಗುತ್ತದೆ. ಯಾವ ಸಂದರ್ಭದಲ್ಲೂ ಅಸಿಸ್ಟೆಂಟ್ ತಾನು ಮನುಷ್ಯ ಎಂದು ಹೇಳುವುದಿಲ್ಲ; ಕೇಳಿದರೆ ನಿಜ ಹೇಳುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -70052,6 +70052,567 @@
   "te": "అది పని చేయలేదు, ఏమీ మారలేదు. మీరు ఇంకా సైన్ ఇన్‌లోనే ఉన్నారు. మళ్లీ ప్రయత్నించండి.",
   "hi": "यह नहीं हो सका और कुछ नहीं बदला। आप अभी भी साइन इन हैं। फिर कोशिश करें।",
   "kn": "ಅದು ಆಗಲಿಲ್ಲ, ಏನೂ ಬದಲಾಗಲಿಲ್ಲ. ನೀವು ಇನ್ನೂ ಸೈನ್ ಇನ್‌ನಲ್ಲಿದ್ದೀರಿ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.type.note": {
+  "en": "Changing the kind of business changes the words, the checklist and the starter messages. Your customers, leads and messages stay.",
+  "te": "వ్యాపార రకం మార్చితే పదాలు, చెక్‌లిస్ట్, మొదటి మెసేజ్‌లు మారతాయి. మీ కస్టమర్లు, లీడ్స్, మెసేజ్‌లు అలాగే ఉంటాయి.",
+  "hi": "व्यवसाय का प्रकार बदलने पर शब्द, चेकलिस्ट और शुरुआती संदेश बदल जाते हैं। आपके ग्राहक, लीड और संदेश वैसे ही रहते हैं।",
+  "kn": "ವ್ಯಾಪಾರದ ವಿಧ ಬದಲಿಸಿದರೆ ಪದಗಳು, ಚೆಕ್‌ಲಿಸ್ಟ್, ಮೊದಲ ಸಂದೇಶಗಳು ಬದಲಾಗುತ್ತವೆ. ನಿಮ್ಮ ಗ್ರಾಹಕರು, ಲೀಡ್‌ಗಳು, ಸಂದೇಶಗಳು ಹಾಗೆಯೇ ಇರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.phone": {
+  "en": "Business phone",
+  "te": "వ్యాపారం ఫోన్ నంబర్",
+  "hi": "व्यवसाय का फ़ोन नंबर",
+  "kn": "ವ್ಯಾಪಾರದ ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.phone.help": {
+  "en": "The number customers can call you on. You can leave it empty.",
+  "te": "కస్టమర్లు మీకు కాల్ చేసే నంబర్. ఖాళీగా వదిలేయవచ్చు.",
+  "hi": "वह नंबर जिस पर ग्राहक आपको कॉल कर सकें। खाली छोड़ सकते हैं।",
+  "kn": "ಗ್ರಾಹಕರು ನಿಮಗೆ ಕಾಲ್ ಮಾಡುವ ನಂಬರ್. ಖಾಲಿ ಬಿಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.used.4": {
+  "en": "The voice preview you hear in Settings",
+  "te": "సెట్టింగ్స్‌లో మీరు వినే వాయిస్ ప్రివ్యూలో",
+  "hi": "सेटिंग्स में सुनाई देने वाले वॉइस प्रीव्यू में",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ನೀವು ಕೇಳುವ ವಾಯ್ಸ್ ಪ್ರಿವ್ಯೂನಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.type_pack_data_present": {
+  "en": "This business already has records of its own kind (for example orders or students), so the kind cannot be changed.",
+  "te": "ఈ వ్యాపారంలో ఇప్పటికే దాని రకానికి చెందిన రికార్డులు (ఉదా: ఆర్డర్లు, విద్యార్థులు) ఉన్నాయి, కాబట్టి రకాన్ని మార్చలేము.",
+  "hi": "इस व्यवसाय में अपने प्रकार के रिकॉर्ड (जैसे ऑर्डर या विद्यार्थी) पहले से हैं, इसलिए प्रकार नहीं बदल सकते।",
+  "kn": "ಈ ವ್ಯಾಪಾರದಲ್ಲಿ ಅದರ ವಿಧದ ದಾಖಲೆಗಳು (ಉದಾ: ಆರ್ಡರ್, ವಿದ್ಯಾರ್ಥಿಗಳು) ಈಗಾಗಲೇ ಇವೆ, ಆದ್ದರಿಂದ ವಿಧ ಬದಲಿಸಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.type_lead_data_present": {
+  "en": "This business already has leads, so it cannot be switched to a kind with its own pages.",
+  "te": "ఈ వ్యాపారంలో ఇప్పటికే లీడ్స్ ఉన్నాయి, కాబట్టి సొంత పేజీలున్న రకంలోకి మార్చలేము.",
+  "hi": "इस व्यवसाय में पहले से लीड हैं, इसलिए इसे अपने पेज वाले प्रकार में नहीं बदल सकते।",
+  "kn": "ಈ ವ್ಯಾಪಾರದಲ್ಲಿ ಈಗಾಗಲೇ ಲೀಡ್‌ಗಳು ಇವೆ, ಆದ್ದರಿಂದ ತನ್ನದೇ ಪುಟಗಳಿರುವ ವಿಧಕ್ಕೆ ಬದಲಿಸಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.type_unknown_type": {
+  "en": "That kind of business is not available.",
+  "te": "ఆ వ్యాపార రకం అందుబాటులో లేదు.",
+  "hi": "वह व्यवसाय प्रकार उपलब्ध नहीं है।",
+  "kn": "ಆ ವ್ಯಾಪಾರದ ವಿಧ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.title": {
+  "en": "Business logo",
+  "te": "వ్యాపారం లోగో",
+  "hi": "व्यवसाय का लोगो",
+  "kn": "ವ್ಯಾಪಾರದ ಲೋಗೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.help": {
+  "en": "JPG, PNG or WebP, up to 5 MB.",
+  "te": "JPG, PNG లేదా WebP, 5 MB వరకు.",
+  "hi": "JPG, PNG या WebP, 5 MB तक।",
+  "kn": "JPG, PNG ಅಥವಾ WebP, 5 MB ವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.choose": {
+  "en": "Choose a picture",
+  "te": "ఫోటో ఎంచుకోండి",
+  "hi": "तस्वीर चुनें",
+  "kn": "ಫೋಟೋ ಆಯ್ಕೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.save": {
+  "en": "Save logo",
+  "te": "లోగో సేవ్ చేయండి",
+  "hi": "लोगो सेव करें",
+  "kn": "ಲೋಗೋ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.remove": {
+  "en": "Remove logo",
+  "te": "లోగో తీసివేయండి",
+  "hi": "लोगो हटाएं",
+  "kn": "ಲೋಗೋ ತೆಗೆದುಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.saved": {
+  "en": "Logo updated.",
+  "te": "లోగో మారింది.",
+  "hi": "लोगो बदल गया।",
+  "kn": "ಲೋಗೋ ಬದಲಾಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.invalid": {
+  "en": "Choose a picture first.",
+  "te": "ముందు ఒక ఫోటో ఎంచుకోండి.",
+  "hi": "पहले एक तस्वीर चुनें।",
+  "kn": "ಮೊದಲು ಒಂದು ಫೋಟೋ ಆಯ್ಕೆಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.toobig": {
+  "en": "That picture is bigger than 5 MB.",
+  "te": "ఆ ఫోటో 5 MB కంటే పెద్దది.",
+  "hi": "वह तस्वीर 5 MB से बड़ी है।",
+  "kn": "ಆ ಫೋಟೋ 5 MB ಗಿಂತ ದೊಡ್ಡದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.kind": {
+  "en": "Use a JPG, PNG or WebP picture.",
+  "te": "JPG, PNG లేదా WebP ఫోటో వాడండి.",
+  "hi": "JPG, PNG या WebP तस्वीर इस्तेमाल करें।",
+  "kn": "JPG, PNG ಅಥವಾ WebP ಫೋಟೋ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.role": {
+  "en": "Only the Owner or an Admin can change the logo.",
+  "te": "లోగో ఓనర్ లేదా అడ్మిన్ మాత్రమే మార్చగలరు.",
+  "hi": "लोगो सिर्फ़ ओनर या एडमिन बदल सकते हैं।",
+  "kn": "ಲೋಗೋವನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.failed": {
+  "en": "Could not save the logo. Try again.",
+  "te": "లోగో సేవ్ చేయలేకపోయాను. మళ్లీ ప్రయత్నించండి.",
+  "hi": "लोगो सेव नहीं हो सका। फिर कोशिश करें।",
+  "kn": "ಲೋಗೋ ಸೇವ್ ಮಾಡಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.session": {
+  "en": "Please sign in again.",
+  "te": "దయచేసి మళ్లీ సైన్ ఇన్ చేయండి.",
+  "hi": "कृपया फिर से साइन इन करें।",
+  "kn": "ದಯವಿಟ್ಟು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.profile": {
+  "en": "My profile",
+  "te": "నా ప్రొఫైల్",
+  "hi": "मेरी प्रोफ़ाइल",
+  "kn": "ನನ್ನ ಪ್ರೊಫೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.title": {
+  "en": "My profile",
+  "te": "నా ప్రొఫైల్",
+  "hi": "मेरी प्रोफ़ाइल",
+  "kn": "ನನ್ನ ಪ್ರೊಫೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.title": {
+  "en": "My picture",
+  "te": "నా ఫోటో",
+  "hi": "मेरी तस्वीर",
+  "kn": "ನನ್ನ ಫೋಟೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.choose": {
+  "en": "Choose a picture",
+  "te": "ఫోటో ఎంచుకోండి",
+  "hi": "तस्वीर चुनें",
+  "kn": "ಫೋಟೋ ಆಯ್ಕೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.save": {
+  "en": "Save picture",
+  "te": "ఫోటో సేవ్ చేయండి",
+  "hi": "तस्वीर सेव करें",
+  "kn": "ಫೋಟೋ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.remove": {
+  "en": "Remove picture",
+  "te": "ఫోటో తీసివేయండి",
+  "hi": "तस्वीर हटाएं",
+  "kn": "ಫೋಟೋ ತೆಗೆದುಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.help": {
+  "en": "JPG, PNG or WebP, up to 5 MB. It shows in the menu, the team list and the messages to your team. If you signed in with Google, your Google photo shows until you pick one.",
+  "te": "JPG, PNG లేదా WebP, 5 MB వరకు. ఇది మెనూలో, టీమ్ లిస్ట్‌లో, మీ టీమ్‌కి వెళ్ళే మెసేజ్‌లలో కనిపిస్తుంది. Google తో సైన్ ఇన్ చేసినవారికి, మీరు ఫోటో ఎంచుకునే వరకు Google ఫోటో కనిపిస్తుంది.",
+  "hi": "JPG, PNG या WebP, 5 MB तक। यह मेन्यू, टीम की सूची और टीम को जाने वाले संदेशों में दिखती है। Google से साइन इन किया है तो आपके चुनने तक Google की फ़ोटो दिखती है।",
+  "kn": "JPG, PNG ಅಥವಾ WebP, 5 MB ವರೆಗೆ. ಇದು ಮೆನುವಿನಲ್ಲಿ, ಟೀಮ್ ಪಟ್ಟಿಯಲ್ಲಿ, ನಿಮ್ಮ ಟೀಮ್‌ಗೆ ಹೋಗುವ ಸಂದೇಶಗಳಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ. Google ನಿಂದ ಸೈನ್ ಇನ್ ಮಾಡಿದ್ದರೆ, ನೀವು ಆರಿಸುವವರೆಗೆ Google ಫೋಟೋ ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.saved": {
+  "en": "Picture updated.",
+  "te": "ఫోటో మారింది.",
+  "hi": "तस्वीर बदल गई।",
+  "kn": "ಫೋಟೋ ಬದಲಾಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.err.invalid": {
+  "en": "Choose a picture first.",
+  "te": "ముందు ఒక ఫోటో ఎంచుకోండి.",
+  "hi": "पहले एक तस्वीर चुनें।",
+  "kn": "ಮೊದಲು ಒಂದು ಫೋಟೋ ಆಯ್ಕೆಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.err.toobig": {
+  "en": "That picture is bigger than 5 MB.",
+  "te": "ఆ ఫోటో 5 MB కంటే పెద్దది.",
+  "hi": "वह तस्वीर 5 MB से बड़ी है।",
+  "kn": "ಆ ಫೋಟೋ 5 MB ಗಿಂತ ದೊಡ್ಡದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.err.kind": {
+  "en": "Use a JPG, PNG or WebP picture.",
+  "te": "JPG, PNG లేదా WebP ఫోటో వాడండి.",
+  "hi": "JPG, PNG या WebP तस्वीर इस्तेमाल करें।",
+  "kn": "JPG, PNG ಅಥವಾ WebP ಫೋಟೋ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.err.failed": {
+  "en": "Could not save the picture. Try again.",
+  "te": "ఫోటో సేవ్ చేయలేకపోయాను. మళ్లీ ప్రయత్నించండి.",
+  "hi": "तस्वीर सेव नहीं हो सकी। फिर कोशिश करें।",
+  "kn": "ಫೋಟೋ ಸೇವ್ ಮಾಡಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.pic.err.session": {
+  "en": "Please sign in again.",
+  "te": "దయచేసి మళ్లీ సైన్ ఇన్ చేయండి.",
+  "hi": "कृपया फिर से साइन इन करें।",
+  "kn": "ದಯವಿಟ್ಟು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.name": {
+  "en": "Your name",
+  "te": "మీ పేరు",
+  "hi": "आपका नाम",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.name.help": {
+  "en": "Your team sees this name next to what you do.",
+  "te": "మీరు చేసే పనుల పక్కన మీ టీమ్‌కి ఈ పేరు కనిపిస్తుంది.",
+  "hi": "आपकी टीम को आपके काम के साथ यही नाम दिखता है।",
+  "kn": "ನೀವು ಮಾಡುವ ಕೆಲಸದ ಪಕ್ಕದಲ್ಲಿ ನಿಮ್ಮ ಟೀಮ್‌ಗೆ ಈ ಹೆಸರು ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.lang": {
+  "en": "Your language",
+  "te": "మీ భాష",
+  "hi": "आपकी भाषा",
+  "kn": "ನಿಮ್ಮ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.err.invalid": {
+  "en": "Type your name (up to 100 letters) and pick a language.",
+  "te": "మీ పేరు (100 అక్షరాల వరకు) రాసి, ఒక భాష ఎంచుకోండి.",
+  "hi": "अपना नाम (100 अक्षर तक) लिखें और एक भाषा चुनें।",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು (100 ಅಕ್ಷರಗಳವರೆಗೆ) ಬರೆದು, ಒಂದು ಭಾಷೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.err.failed": {
+  "en": "Could not save. Try again.",
+  "te": "సేవ్ చేయలేకపోయాను. మళ్లీ ప్రయత్నించండి.",
+  "hi": "सेव नहीं हो सका। फिर कोशिश करें।",
+  "kn": "ಸೇವ್ ಮಾಡಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.err.session": {
+  "en": "Please sign in again.",
+  "te": "దయచేసి మళ్లీ సైన్ ఇన్ చేయండి.",
+  "hi": "कृपया फिर से साइन इन करें।",
+  "kn": "ದಯವಿಟ್ಟು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.preview.label": {
+  "en": "Preview of the voice. In real calls {who} talks naturally and answers what the customer says.",
+  "te": "ఇది వాయిస్ ప్రివ్యూ. నిజమైన కాల్స్‌లో {who} సహజంగా మాట్లాడుతుంది, కస్టమర్ చెప్పినదానికి జవాబు ఇస్తుంది.",
+  "hi": "यह आवाज़ का प्रीव्यू है। असली कॉल में {who} से सहज बातचीत होती है, और ग्राहक जो कहे उसका जवाब मिलता है।",
+  "kn": "ಇದು ಧ್ವನಿಯ ಪ್ರಿವ್ಯೂ. ನಿಜವಾದ ಕಾಲ್‌ಗಳಲ್ಲಿ {who} ಸಹಜವಾಗಿ ಮಾತನಾಡುತ್ತದೆ, ಗ್ರಾಹಕರು ಹೇಳಿದ್ದಕ್ಕೆ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.preview.heard": {
+  "en": "What you hear:",
+  "te": "మీరు వినేది:",
+  "hi": "आप यह सुनेंगे:",
+  "kn": "ನೀವು ಕೇಳುವುದು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.hide": {
+  "en": "Hide for now",
+  "te": "ఇప్పుడు దాచండి",
+  "hi": "अभी छिपाएं",
+  "kn": "ಈಗ ಮರೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.show": {
+  "en": "Show on Today",
+  "te": "ఈరోజు పేజీలో చూపించండి",
+  "hi": "आज के पेज पर दिखाएं",
+  "kn": "ಇಂದಿನ ಪುಟದಲ್ಲಿ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.hidden": {
+  "en": "Hidden from Today",
+  "te": "ఈరోజు పేజీ నుండి దాచారు",
+  "hi": "आज के पेज से छिपा है",
+  "kn": "ಇಂದಿನ ಪುಟದಿಂದ ಮರೆಮಾಡಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.optional": {
+  "en": "Optional",
+  "te": "ఐచ్ఛికం",
+  "hi": "वैकल्पिक",
+  "kn": "ಐಚ್ಛಿಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.confirm.type": {
+  "en": "Type {name} to confirm",
+  "te": "నిర్ధారించడానికి {name} అని టైప్ చేయండి",
+  "hi": "पुष्टि करने के लिए {name} टाइप करें",
+  "kn": "ಖಚಿತಪಡಿಸಲು {name} ಟೈಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.confirm.go": {
+  "en": "Ask for the workspace data",
+  "te": "వర్క్‌స్పేస్ డేటా కోసం అడగండి",
+  "hi": "वर्कस्पेस का डेटा मांगें",
+  "kn": "ವರ್ಕ್‌ಸ್ಪೇಸ್ ಡೇಟಾ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.confirm.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు చేయండి",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.confirm.email": {
+  "en": "We will e-mail you a note that this was done.",
+  "te": "ఇది అయిపోయిందని మీకు ఇ-మెయిల్‌లో ఒక నోట్ పంపుతాము.",
+  "hi": "यह हो जाने पर हम आपको एक ई-मेल नोट भेजेंगे।",
+  "kn": "ಇದು ಆಗಿದೆ ಎಂದು ನಿಮಗೆ ಇ-ಮೇಲ್‌ನಲ್ಲಿ ಒಂದು ಟಿಪ್ಪಣಿ ಕಳುಹಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ope.hear.save": {
+  "en": "Save first: the sound is made from the saved line.",
+  "te": "ముందు సేవ్ చేయండి: సేవ్ చేసిన లైన్‌తోనే సౌండ్ తయారవుతుంది.",
+  "hi": "पहले सेव करें: आवाज़ सेव की गई लाइन से बनती है।",
+  "kn": "ಮೊದಲು ಸೇವ್ ಮಾಡಿ: ಸೇವ್ ಮಾಡಿದ ಸಾಲಿನಿಂದಲೇ ಧ್ವನಿ ಮಾಡಲಾಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

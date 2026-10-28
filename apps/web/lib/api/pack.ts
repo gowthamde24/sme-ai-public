@@ -83,7 +83,7 @@ export async function getAccountSecurity(accessToken: string): Promise<AccountSe
   try {
     const json = await apiRequest("/v1/account/security", accessToken);
     if (!isRecord(json) || !AAL.includes(json.session_level as (typeof AAL)[number]) || !Array.isArray(json.needed_for)) return null;
-    return { level: json.session_level as AccountSecurity["level"], neededFor: json.needed_for.filter((x): x is string => typeof x === "string" && CODE.test(x)) };
+    return { level: json.session_level as AccountSecurity["level"], neededFor: json.needed_for.filter((x): x is string => typeof x === "string" && CODE.test(x)), ...(typeof json.second_factor_on === "boolean" ? { secondFactorOn: json.second_factor_on } : {}) };
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     return null;

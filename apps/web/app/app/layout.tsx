@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
 import type { ReactNode } from "react";
 
-import { AppFrame } from "@/components/v2/app/AppFrame";
+import { AppFrame, MARK_LARGE, MARK_SMALL } from "@/components/v2/app/AppFrame";
+import { Avatar } from "@/components/v2/app/Avatar";
+import { lettersOf } from "@/components/v2/app/letters";
 import { FRAME_LOADING } from "@/components/v2/app/contract";
 import { workspaceOf } from "@/components/v2/app/nav";
 import type { Membership } from "@/components/v2/app/use-workspace";
@@ -13,7 +15,7 @@ import { packFrame } from "@/lib/packs/resolve";
 import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
 
 import { signOut } from "./actions";
-import { readMeCached } from "./me-read";
+import { readMeCached, readMyProfileCached } from "./me-read";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -37,17 +39,22 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   }
   // the menu of THIS workspace's business type (job CL): the proxy records where the person is, so the first paint already has the right menu (the workspace's own layout hands the same to the client store)
   let frame = FRAME_LOADING;
+  let me: { url: string | null; letters: string } | null = null;
   try {
     const here = workspaceOf(((await headers()).get("x-sme-path") ?? "").split("?")[0]);
     if (here && isCanonicalUuid(here.tenantId) && memberships?.some((m) => m.id.toLowerCase() === here.tenantId.toLowerCase())) {
-      const pack = await readPackCached(user.accessToken, here.tenantId);
+      const [pack, mine] = await Promise.all([readPackCached(user.accessToken, here.tenantId), readMyProfileCached(user.accessToken, here.tenantId).catch(() => null)]);
       if (pack) frame = { ...FRAME_LOADING, pack: packFrame(pack, lang) };
+      if (mine) me = { url: mine.pictureUrl, letters: lettersOf(mine.displayName, user.email) };
     }
   } catch {
     // no pack to draw: the menu the product always had
   }
+  // the person's own picture over their letters, drawn here on the server and handed to the menu as slots (no script of their own)
+  const mark = me ? <Avatar url={me.url} letters={me.letters} className={MARK_SMALL} /> : undefined;
+  const markLarge = me ? <Avatar url={me.url} letters={me.letters} className={MARK_LARGE} /> : undefined;
   return (
-    <AppFrame lang={lang} theme={theme} email={user.email} memberships={memberships} signOut={signOut} frame={frame}>
+    <AppFrame lang={lang} theme={theme} email={user.email} memberships={memberships} signOut={signOut} frame={frame} mark={mark} markLarge={markLarge}>
       {children}
     </AppFrame>
   );

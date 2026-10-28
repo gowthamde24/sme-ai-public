@@ -40,11 +40,11 @@ describe("the opening-line server actions", () => {
   it("the Owner and the Admin may hear a preview; Sales and Viewers may not", async () => {
     for (const role of ["owner", "admin"]) {
       h.role = role;
-      expect(await previewOpeningLineAction(T, "en", "Hello Ravi", false)).toEqual({ ok: true, preview: { audio: null, fake: true } });
+      expect(await previewOpeningLineAction(T, "en", "Hello Ravi")).toEqual({ ok: true, preview: { audio: null, fake: true } });
     }
-    expect(h.preview).toHaveBeenLastCalledWith({ token: "tok", tenantId: T }, "en", "Hello Ravi", false);
+    expect(h.preview).toHaveBeenLastCalledWith({ token: "tok", tenantId: T }, "en", "Hello Ravi");
     h.role = "sales";
-    expect(await previewOpeningLineAction(T, "en", "Hello Ravi", true)).toEqual({ ok: false, error: "forbidden" });
+    expect(await previewOpeningLineAction(T, "en", "Hello Ravi")).toEqual({ ok: false, error: "forbidden" });
   });
   it("a refusal of the source is passed on as its closed word", async () => {
     h.save.mockResolvedValue({ ok: false, error: "read_only" });

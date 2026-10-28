@@ -41,7 +41,10 @@ export async function readFacts(accessToken: string, tenantId: string, checks: r
     // the building-materials quote rules (delivery, transport and rounding) are in force
     delivery_rule_set: async () => (await getMaterialPolicy(accessToken, tenantId)).current !== null,
     // the session is at the second level only when an authenticator code was given: the person has set it up (a status the server cannot give counts as not done)
-    second_factor_set: async () => (await getAccountSecurity(accessToken))?.level === "aal2",
+    second_factor_set: async () => {
+      const s = await getAccountSecurity(accessToken);
+      return s?.secondFactorOn === true || s?.level === "aal2";
+    },
     catalogue_has_items: async () => (await listCatalogueItems(accessToken, tenantId, { limit: 1, includeInactive: true })).items.length > 0,
     quote_rules_set: async () => (await fetchQuotePolicyVersions(accessToken, tenantId)).length > 0,
     whatsapp_connected: async () => {

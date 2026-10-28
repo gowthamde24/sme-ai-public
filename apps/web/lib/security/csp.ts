@@ -10,12 +10,16 @@
  *  - img-src data: blob: for the authenticator QR code (an SVG data URI) and Next's image placeholders; blob: also shows the photo a person has just picked, before it is uploaded. The catalogue's photos
  *    (job BC) are signed links into the project's own Storage service, so exactly ONE more origin is allowed for images: the Supabase project's (`imageOrigin`). Never a wildcard, never for scripts,
  *    styles, frames or connections (the browser still talks only to this app).
+ *  - img-src also names ONE Google address, `https://lh3.googleusercontent.com`, where the profile photo of a person who signed in with Google lives (Settings > My profile, the menu footer). Images only, one host, never a wildcard.
  *  - media-src 'self' blob: (job BF): the spoken answer of the Ask box is played from a blob: made in the page from the API's audio, never from another address. Nothing else may be played.
  *  - worker-src 'self' (job BL): the offline worker (/sw.js). With 'strict-dynamic' a host source in script-src is ignored, so the worker needs its own directive; it may only come from this site.
  *  - 'unsafe-eval' only in development (React's debugging needs it), never in production.
  *  - frame-src https://challenges.cloudflare.com only when Turnstile is on (lib/security/turnstile.ts): the check box of the public forms.
  *  - upgrade-insecure-requests only in production, so plain-http local development keeps working.
  */
+/** Where Google keeps the profile photos of the people who sign in with Google (an image address only). */
+export const GOOGLE_PHOTOS = "https://lh3.googleusercontent.com";
+
 export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null = null, turnstile = false): string {
   const directives = [
     "default-src 'self'",
@@ -23,7 +27,7 @@ export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null
     // development only: Next's hot-reload injects <style> elements without a nonce ('unsafe-inline' is ignored when a nonce is present)
     dev ? "style-src 'self' 'unsafe-inline'" : `style-src 'self' 'nonce-${nonce}'`,
     "style-src-attr 'unsafe-inline'",
-    `img-src 'self' blob: data:${imageOrigin ? ` ${imageOrigin}` : ""}`,
+    `img-src 'self' blob: data:${imageOrigin ? ` ${imageOrigin}` : ""} ${GOOGLE_PHOTOS}`,
     "media-src 'self' blob:",
     "worker-src 'self'",
     "font-src 'self'",

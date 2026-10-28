@@ -37,8 +37,8 @@ async function run<T>(tenantId: string | null, ids: string[], work: (token: stri
   }
 }
 
-export async function requestExportAction(tenantId: string, scope: "person" | "workspace", exportId: string): Promise<Out<DataExport>> {
-  return run(tenantId, [exportId], (token) => requestExport(token, exportId, scope === "workspace" ? tenantId : null));
+export async function requestExportAction(tenantId: string, scope: "person" | "workspace", exportId: string, confirmName?: string): Promise<Out<DataExport>> {
+  return run(tenantId, [exportId], (token) => requestExport(token, exportId, scope === "workspace" ? tenantId : null, confirmName), scope === "person" || (typeof confirmName === "string" && confirmName.trim().length >= 1 && confirmName.length <= 200));
 }
 
 export async function getExportAction(tenantId: string, exportId: string): Promise<Out<DataExport>> {

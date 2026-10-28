@@ -168,10 +168,10 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
         </p>
         {actions.preview ? (
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <button type="button" onClick={hear} disabled={heard === "busy" || problem !== null} className={btnQuiet}>
+            <button type="button" onClick={hear} disabled={heard === "busy" || problem !== null || (dirty && !mock)} className={btnQuiet}>
               {heard === "busy" ? t("ope.hearing") : t("ope.hear")}
             </button>
-            <p className="min-w-0 flex-1 text-sm text-muted">{t("ope.hear.note")}</p>
+            <p className="min-w-0 flex-1 text-sm text-muted">{dirty && !mock ? t("ope.hear.save") : t("ope.hear.note")}</p>
           </div>
         ) : null}
         {heard === "none" ? <p role="status" className={fieldHelp}>{t("ope.hear.none")}</p> : null}

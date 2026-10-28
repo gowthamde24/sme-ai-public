@@ -71,7 +71,7 @@ beforeEach(() => {
 describe("Settings, one part at a time", () => {
   it("opens on the business: its name, URL name, plan and today's AI usage from the API; the members are not asked for", async () => {
     render(await SettingsPage(props()));
-    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "Members", "Data", "Language and look", "Automation", "Security", "Privacy and data"]);
+    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "My profile", "Members", "Data", "Language and look", "Automation", "Security", "Privacy and data"]);
     expect(tabs().getByRole("link", { name: "Business and plan" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByText("Acme Silks")).toBeInTheDocument();
     expect(screen.getByText("acme-silks")).toBeInTheDocument();

@@ -12,6 +12,8 @@ import { pageMain } from "@/components/v2/app/ui";
 import { ActivationCard } from "@/components/v2/app/start/ActivationCard";
 import { ExampleBanner, type ExampleNotice } from "@/components/v2/app/start/ExampleBanner";
 import { readActivation, usesChecklist, type Activation } from "@/lib/packs/activation";
+import { readHidden, withoutHidden } from "@/lib/packs/hidden-steps";
+import { setStepHiddenAction } from "./start-hide-actions";
 import { leadDeskSteps } from "@/lib/packs/lead-activation";
 import { getExampleStatus } from "@/lib/api/example-data";
 import { readPackCached } from "@/lib/packs/read";
@@ -77,6 +79,8 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
       readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupees }),
       readLeadDesk({ token: accessToken, tenantId, userId }, role, base, tt, (tag) => sourceNameOf(tt, tag), now, deskPack),
     ]);
+    // the steps the person put away from Today (a cookie of this browser) are not drawn; they stay in Settings
+    if (activation) activation = withoutHidden(activation, await readHidden(tenantId));
     // Lead Desk's items and workers join what the API said (the merge keeps one card per thing and counts only what the API did not)
     data = mergeDesk(data, { needs: desk.needs, team: deskPack ? desk.team : [] });
   } catch (error) {
@@ -113,7 +117,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
       {showSample || (activation && activation.done < activation.total) ? (
         <div data-part="start" className="mb-6 flex flex-col gap-4">
           {showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} t={t} /> : null}
-          {activation ? <ActivationCard activation={activation} base={`/app/tenants/${tenantId}`} t={t} /> : null}
+          {activation ? <ActivationCard activation={activation} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /> : null}
         </div>
       ) : null}
       {setup ? (

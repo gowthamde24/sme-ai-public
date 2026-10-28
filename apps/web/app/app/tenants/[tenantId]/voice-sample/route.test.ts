@@ -1,10 +1,10 @@
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), sample: vi.fn() }));
+const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), sample: vi.fn(), said: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
-vi.mock("@/lib/api/voice-samples", () => ({ getVoiceSample: (...a: unknown[]) => h.sample(...a) }));
+vi.mock("@/lib/api/voice-samples", () => ({ getVoicePreview: (...a: unknown[]) => h.sample(...a), getVoicePreviewText: (...a: unknown[]) => h.said(...a) }));
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
@@ -18,19 +18,20 @@ beforeEach(() => {
   h.user.mockReset().mockResolvedValue({ accessToken: "tok" });
   h.tenant.mockReset().mockResolvedValue({ role: "owner" });
   h.sample.mockReset();
+  h.said.mockReset();
 });
 
-describe("GET voice-sample (job DQ part 3)", () => {
+describe("GET voice-sample (job DQ part 3; the live preview of job DT)", () => {
   it("is not there while the screens are off", async () => {
     expect((await get()).status).toBe(404);
     expect(h.user).not.toHaveBeenCalled();
   });
-  it("mock: a private, nosniff WAV, and a bad query or workspace id is a 404", async () => {
+  it("mock: a never-kept, nosniff WAV, and a bad query or workspace id is a 404", async () => {
     vi.stubEnv("VOICE_SAMPLE_SCREENS", "mock");
     const r = await get();
     expect(r.status).toBe(200);
     expect(r.headers.get("Content-Type")).toBe("audio/wav");
-    expect(r.headers.get("Cache-Control")).toContain("private");
+    expect(r.headers.get("Cache-Control")).toBe("no-store"); // the preview speaks the current business name
     expect(r.headers.get("X-Content-Type-Options")).toBe("nosniff");
     expect((await get("voice=own_voice&lang=en&tone=warm")).status).toBe(404);
     expect((await get("voice=female_warm&lang=en&tone=warm", "not-a-uuid")).status).toBe(404);
@@ -61,5 +62,19 @@ describe("GET voice-sample (job DQ part 3)", () => {
     const limited = await get();
     expect(limited.status).toBe(429);
     expect(limited.headers.get("Retry-After")).toBe("30");
+  });
+  it("1 with text=1: the words of the preview as JSON (so the page can show what is heard); none is 404, a failing API is 502; the mock has none", async () => {
+    vi.stubEnv("VOICE_SAMPLE_SCREENS", "1");
+    h.said.mockResolvedValueOnce({ text: "Hello, I am Asha from Pavers Corner.", assistantName: "Asha", businessName: "Pavers Corner" });
+    const r = await get("voice=female_warm&lang=ta&tone=warm&name=Asha&text=1");
+    expect(r.status).toBe(200);
+    expect(await r.json()).toEqual({ text: "Hello, I am Asha from Pavers Corner." });
+    expect(h.said).toHaveBeenCalledWith("tok", T, { voice: "female_warm", lang: "ta", tone: "warm", name: "Asha" });
+    h.said.mockResolvedValueOnce(null);
+    expect((await get("voice=female_warm&lang=ta&tone=warm&text=1")).status).toBe(404);
+    h.said.mockRejectedValueOnce(new Error("down"));
+    expect((await get("voice=female_warm&lang=ta&tone=warm&text=1")).status).toBe(502);
+    vi.stubEnv("VOICE_SAMPLE_SCREENS", "mock");
+    expect((await get("voice=female_warm&lang=ta&tone=warm&text=1")).status).toBe(404);
   });
 });

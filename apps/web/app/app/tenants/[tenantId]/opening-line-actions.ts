@@ -43,9 +43,9 @@ export async function saveCampaignOpeningLineAction(tenantId: string, campaignId
   return out.ok ? { ok: true } : out;
 }
 
-export async function previewOpeningLineAction(tenantId: string, language: unknown, text: unknown, mentionAi: unknown): Promise<PreviewResult> {
+export async function previewOpeningLineAction(tenantId: string, language: unknown, text: unknown): Promise<PreviewResult> {
   const me = await who(tenantId);
   if (!me || (me.role !== "owner" && me.role !== "admin")) return { ok: false, error: "forbidden" };
-  const out = await previewLine({ token: me.token, tenantId }, language, text, mentionAi !== false);
+  const out = await previewLine({ token: me.token, tenantId }, language, text);
   return out.ok ? { ok: true, preview: out.data } : out;
 }

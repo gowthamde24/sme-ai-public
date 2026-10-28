@@ -2,7 +2,7 @@
 Signed in as owner@example.test. Session: password only .
 {label="Authenticator app"}
 ## Authenticator app
-Not set up. Owners and Admins need an authenticator app to erase data, export, change members or roles, and change workspace settings. It takes a minute.
+Not set up. Two-step sign-in is optional. When it is on, you type a code from your authenticator app once each time you sign in. It takes a minute to set up.
 [button type=button: Set up an authenticator]
 {label="If you lose your phone"}
 ## If you lose your phone
