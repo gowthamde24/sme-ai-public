@@ -28,12 +28,12 @@ afterEach(() => {
 });
 
 describe("Settings > AI assistant", () => {
-  it("starts from the defaults of the business type, says so, and says the words 'AI assistant' are always said", () => {
+  it("starts from the defaults of the business type, says so, and says that mentioning 'AI assistant' in the greeting is the owner's choice", () => {
     draw();
     expect(screen.getByRole("heading", { name: "Set up your AI assistant" })).toBeInTheDocument();
     expect(screen.getByText(/standard settings for your kind of business/)).toBeInTheDocument();
     expect(screen.getByLabelText("Assistant name")).toHaveValue("Vijaya");
-    expect(screen.getByText(/Customers hear: “Vijaya, the AI assistant of Acme Silks\.” The words “AI assistant” are always said\./)).toBeInTheDocument();
+    expect(screen.getByText(/Customers hear: “Vijaya, the assistant of Acme Silks\.” Whether the greeting also says it is an AI assistant is your choice, in the opening line below\./)).toBeInTheDocument();
     expect(screen.getByText("Test mode: your choices are kept on this device only.")).toBeInTheDocument();
   });
   it("the preview follows the name, the language and the way of talking, and the circle speaks", () => {
@@ -201,7 +201,7 @@ describe("Settings > AI assistant", () => {
     it("shows the AI disclosure in the preview, and 'Hear it' plays the chosen voice", () => {
       install();
       draw({ samples });
-      expect(screen.getByText(/the assistant says it is an AI assistant/)).toBeInTheDocument();
+      expect(screen.getByText(/Unless you turn it off in the opening line, every call opens by saying it is an AI assistant/)).toBeInTheDocument();
       fireEvent.click(screen.getByRole("button", { name: /Hear it/ }));
       expect(made).toHaveLength(1);
     });
