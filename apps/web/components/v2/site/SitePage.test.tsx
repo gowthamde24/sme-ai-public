@@ -80,7 +80,7 @@ describe("the home page (landing v3, night 5)", () => {
   });
   it("says the headline in three lines (no number), what it is, the two buttons and the trial line, and brands itself Stack19 (no working name)", () => {
     const h1 = home.match(/<h1[\s\S]*?<\/h1>/)![0];
-    expect([...h1.matchAll(/<span class="block">([^<]+)<\/span>/g)].map((m) => m[1])).toEqual(["Finds your leads.", "Calls them right away.", "Follows up until they decide."]);
+    expect([...h1.matchAll(/<span class="block">([^<]+)<\/span>/g)].map((m) => m[1])).toEqual(["Catches every lead.", "Calls them right away.", "Follows up until they decide."]);
     const t = text(home);
     for (const x of ["Stack19 is an AI workforce for Indian businesses", "Its assistant, Vijaya, calls every lead in their own language", "Start your 14-day trial", "See a day with Stack19", "Telugu, Tamil, Kannada, Malayalam, Hindi and English. 14-day trial.", "Sign in", "Start trial"]) expect(t, x).toContain(x);
     expect(t).not.toMatch(/working name|Sme-?AI|30-day|30 day|within 2 minutes|in 2 minutes/i);
@@ -111,22 +111,22 @@ describe("the home page (landing v3, night 5)", () => {
     expect(call).toMatch(/data-part="clock">01:48</);
     expect(text(call)).toContain("Example with made-up names. AI calls are in early access.");
   });
-  it("has leads we find for you and leads you already get, as plain text chips (no logo, no picture, no link)", () => {
+  it("has leads from your own lists and leads you already get, as plain text chips (no logo, no picture, no link)", () => {
     const section = home.match(/<section id="sources"[\s\S]*?<\/section>/)![0];
     const find = section.match(/data-part="find"[\s\S]*?<\/ul>/)![0];
-    expect([...find.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["Retail shops in nearby towns", "Builders and contractors", "Dealers and distributors"]);
+    expect([...find.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["An Excel or Google Sheets file", "A pasted list of names and numbers", "Contacts from your phone"]);
     const chips = section.match(/<ul[^>]*data-part="sources"[\s\S]*?<\/ul>/)![0];
-    expect([...chips.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["Meta and Instagram ads", "WhatsApp", "IndiaMART", "JustDial", "99acres", "MagicBricks", "Your website", "Excel and Google Sheets"]);
+    expect([...chips.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["Your website forms", "WhatsApp", "Missed calls", "Meta lead ads", "Excel and Google Sheets import"]);
     expect(section).not.toMatch(/<img|<svg|<a[\s>]|<picture/);
   });
   it("has a day with Stack19: six moments in order, with the workers named and a small example under three of them", () => {
     const day = home.match(/<section id="day"[\s\S]*?<\/section>/)![0];
     const list = day.match(/<ol[^>]*data-part="day"[\s\S]*?<\/ol>/)![0];
     expect(list.match(/<li[\s>]/g)).toHaveLength(6);
-    expect([...list.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1])).toEqual(["New customers found", "A lead arrives late", "Vijaya calls", "The outcome is saved", "Your salesperson takes over", "Follow-up, without reminders from you"]);
+    expect([...list.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1])).toEqual(["New leads caught", "A lead arrives late", "Vijaya calls", "The outcome is saved", "Your salesperson takes over", "Follow-up, without reminders from you"]);
     expect([...list.matchAll(/<time[^>]*>([^<]+)/g)].map((m) => m[1])).toEqual(["6:00", "9:47", "9:30", "9:32", "9:33", "Fri"]);
-    expect(text(list)).toContain("The Lead Finder looks for shops, builders or dealers");
-    expect(list.match(/<strong[^>]*>/g)!.length).toBeGreaterThanOrEqual(3);
+    expect(text(list)).toContain("Leads from your website forms, WhatsApp, missed calls and Meta lead ads land in one list");
+    expect(list.match(/<strong[^>]*>/g)!.length).toBeGreaterThanOrEqual(2);
   });
   it("has Lead Desk in five rows: approve all, tell the assistant, languages, your opening line, speed by source", () => {
     const section = home.match(/<section id="leaddesk"[\s\S]*?<\/section>/)![0];
@@ -142,7 +142,7 @@ describe("the home page (landing v3, night 5)", () => {
     expect(cards.match(/data-pack-card=/g)).toHaveLength(SITE_PACKS.length);
     expect(SITE_PACKS).toHaveLength(3);
     for (const p of SITE_PACKS) expect(cards, p.slug).toContain(`href="/${p.slug}"`);
-    for (const x of ["Sarees and textiles", "Building materials", "Schools", "Finds retail shops to sell to", "Finds builders and contractors near you", "Admission enquiries called the same day", "Fee reminders from your fixed templates", "never written by the AI"]) expect(text(cards), x).toContain(x);
+    for (const x of ["Sarees and textiles", "Building materials", "Schools", "Catches every enquiry, even missed calls", "Catches every builder and contractor enquiry", "Admission enquiries called the same day", "Fee reminders from your fixed templates", "never written by the AI"]) expect(text(cards), x).toContain(x);
     const chips = section.match(/data-part="industries"[\s\S]*?<\/ul>/)![0];
     expect([...chips.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["Real estate", "Coaching", "Clinics", "Insurance and loans", "Auto dealers", "Interiors and solar", "Travel", "Gyms", "Wholesale"]);
   });
@@ -197,17 +197,17 @@ describe("Lead Desk on the business pages and the other pages (night 4, F1)", ()
     const html = render("en", { kind: "pack", slug: p.slug });
     return { html, block: html.match(/<section[^>]*id="lead-desk"[\s\S]*?<\/section>/)![0] };
   };
-  it("sarees: Meta and Instagram enquiries, a call within minutes, photos on WhatsApp, a store visit", () => {
+  it("sarees: Meta lead ad and WhatsApp enquiries, a call within minutes, photos on WhatsApp, a store visit", () => {
     const { block } = flow("textiles");
     expect(text(block)).toContain("How Lead Desk works for sarees");
     expect(block.match(/<li/g)).toHaveLength(4);
-    for (const x of ["Meta or Instagram", "calls within minutes", "Photos of the sarees go on WhatsApp", "store visit"]) expect(text(block), x).toContain(x);
+    for (const x of ["Meta lead ad or WhatsApp", "calls within minutes", "Photos of the sarees go on WhatsApp", "store visit"]) expect(text(block), x).toContain(x);
   });
-  it("building materials: IndiaMART and JustDial enquiries, a call, a quote the owner approves, delivery follow-up", () => {
+  it("building materials: website and WhatsApp enquiries, a call, a quote the owner approves, delivery follow-up", () => {
     const { block } = flow("construction_materials");
     expect(text(block)).toContain("How Lead Desk works for building materials");
     expect(block.match(/<li/g)).toHaveLength(4);
-    for (const x of ["IndiaMART or JustDial", "calls and notes what the customer needs", "You approve the quote before it goes out", "follows up on the delivery"]) expect(text(block), x).toContain(x);
+    for (const x of ["your website or WhatsApp", "calls and notes what the customer needs", "You approve the quote before it goes out", "follows up on the delivery"]) expect(text(block), x).toContain(x);
   });
   it("schools: admission enquiries, speed to lead, a campus visit booked, and the plain note that the assistant never talks about fees, marks or dues", () => {
     const { block } = flow("education");
@@ -278,7 +278,7 @@ describe("how it works (job DM): the same six AI workers as the home page", () =
   it("has six steps in the order of the workflow, each with the icon of its job, and the loop line; no owl", () => {
     expect(list.match(/data-step=/g)).toHaveLength(6);
     const names = [...list.matchAll(/<h3[^>]*>[\s\S]*?<\/h3>/g)].map((m) => m[0].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim());
-    expect(names.map((n) => n.replace(/^\d /, "").replace(/ Early access$/, ""))).toEqual(["Find leads", "Research", "AI calls", "WhatsApp", "Outcome", "Follow-up"]);
+    expect(names.map((n) => n.replace(/^\d /, "").replace(/ Early access$/, ""))).toEqual(["Catch leads", "Research", "AI calls", "WhatsApp", "Outcome", "Follow-up"]);
     expect(list.match(/<svg/g)!.length).toBeGreaterThanOrEqual(6);
     expect(text).toContain("Then the loop starts again");
     expect(html).not.toMatch(/owl/i);
