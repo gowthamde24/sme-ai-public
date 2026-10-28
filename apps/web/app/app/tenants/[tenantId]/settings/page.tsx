@@ -64,7 +64,9 @@ import { assistantScreens, callSettingsScreens, dpdpScreens, openingLineScreens,
 import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
 import { VoicePicker } from "@/components/v2/app/assistant/LazyVoicePicker";
 import { readVoicePicker } from "@/lib/voice-picker/source";
-import { PICKER_LANGS, type PickerLang } from "@/lib/voice-picker/types";
+import { inForce, PICKER_LANGS, type PickerLang } from "@/lib/voice-picker/types";
+import { withNamedAssistant } from "@/lib/assistant/default-name";
+import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
 import { chooseVoiceAction } from "../voice-picker-actions";
 import { readOpeningLine } from "@/lib/opening-line/source";
 import { currentAssistantName } from "@/lib/assistant/name";
@@ -381,6 +383,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               samples={voiceSampleScreens() !== "off" ? { endpoint: `/app/tenants/${tenantId}/voice-sample`, mock: voiceSampleScreens() === "mock" } : null}
               ownVoiceReady={ownVoice?.mode === "ok" && ownVoice.voice.status === "ready"}
               voicePickerOn={voicePicker?.mode === "ok"}
+              voiceInUse={voicePicker?.mode === "ok" && assistant?.mode === "ok" ? ((v) => (v ? { name: v.name, label: v.label } : null))(inForce(voicePicker.data, assistant.settings.lang as PickerLang)) : null}
+              defaultName={withNamedAssistant("{assistant}", DEFAULT_ASSISTANT_NAME, lang)}
             />
             ) : null}
             {openingLine?.mode === "ok" ? (

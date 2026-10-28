@@ -15,11 +15,11 @@ import { AssistantSettings } from "./AssistantSettings";
 const raw = (lang: "en" | "te" | "hi" | "kn", modules: string[] | null) => withModuleWords(Object.fromEntries(Object.entries(appDict(lang) as Record<string, string>).filter(([k]) => k.startsWith("asst."))), modules ? { modules } : null);
 const langs = { te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ", en: "English", ta: "தமிழ்", ml: "മലയാളം" };
 const voiceNames = Object.fromEntries(VOICES.map((v) => [v, (appDict("en") as Record<string, string>)[`asst.voice.${v}`]])) as Record<(typeof VOICES)[number], string>;
-const draw = (over: Partial<{ modules: string[] | null; canEdit: boolean; saved: boolean; save: (i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; samples: { endpoint: string; mock: boolean } | null; voicePickerOn: boolean; testCall: () => Promise<TestCallResult> }> = {}) => {
+const draw = (over: Partial<{ modules: string[] | null; canEdit: boolean; saved: boolean; save: (i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; samples: { endpoint: string; mock: boolean } | null; voicePickerOn: boolean; voiceInUse: { name: string; label: string } | null; defaultName: string; testCall: () => Promise<TestCallResult> }> = {}) => {
   const modules = over.modules === undefined ? null : over.modules;
   const profile = assistantProfile(modules);
   const save = (over.save ?? vi.fn(async () => ({ ok: true as const }))) as ReturnType<typeof vi.fn> & ((i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>);
-  render(<AssistantSettings words={raw("en", modules)} initial={profile.defaults} profile={profile} shop="Acme Silks" langs={langs} voiceNames={voiceNames} canEdit={over.canEdit ?? true} testMode saved={over.saved ?? false} actions={{ save, ...(over.testCall ? { testCall: over.testCall } : {}) }} samples={over.samples ?? null} voicePickerOn={over.voicePickerOn ?? false} />);
+  render(<AssistantSettings words={raw("en", modules)} initial={profile.defaults} profile={profile} shop="Acme Silks" langs={langs} voiceNames={voiceNames} canEdit={over.canEdit ?? true} testMode saved={over.saved ?? false} actions={{ save, ...(over.testCall ? { testCall: over.testCall } : {}) }} samples={over.samples ?? null} voicePickerOn={over.voicePickerOn ?? false} voiceInUse={over.voiceInUse ?? null} defaultName={over.defaultName ?? null} />);
   return { save, profile };
 };
 afterEach(() => {
@@ -28,6 +28,15 @@ afterEach(() => {
 });
 
 describe("Settings > AI assistant", () => {
+  it("with the voice catalogue on, the preview names the catalogue voice in force and the old persona list and its words are gone; the name is the default 'Your assistant' until the owner chooses one", () => {
+    draw({ voicePickerOn: true, voiceInUse: { name: "Ramya", label: "Warm" }, defaultName: "Your assistant" });
+    const aside = document.querySelector("aside") as HTMLElement;
+    expect(aside).toHaveTextContent("Your assistant · AI assistant");
+    expect(aside).toHaveTextContent("Ramya · Warm");
+    expect(document.body.textContent).not.toMatch(/Male · calm|Female · warm|Male · lively|Female · clear/);
+    expect(screen.queryByRole("radiogroup", { name: /Voice/ })).toBeNull();
+    expect(aside.querySelector('[data-part="preview-line"]')?.textContent).not.toMatch(/your assistant|Vijaya/i); // the example line names nobody
+  });
   it("the four-persona voice list is shown, and is left out when the voice picker is on (the picker chooses the voice of each language)", () => {
     draw({});
     expect(screen.getByRole("radiogroup", { name: /Voice/ })).toBeInTheDocument();
