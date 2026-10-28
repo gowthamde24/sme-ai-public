@@ -144,7 +144,8 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `WHATSAPP_VERIFY_TOKEN` | secret | api | The phrase you type into Meta's webhook page. |
 | `WHATSAPP_ACCESS_TOKEN` | secret | api | A PERMANENT system-user token for production (the test number's token lasts a day). |
 | `WHATSAPP_ACCESS_TOKENS` | secret | api | A JSON object `{token_ref: token}` when workspaces have their own numbers. |
-| `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_WABA_ID` | plain | api | Meta's ids of the number and the account (not secrets). Staging: set by `deploy/staging.sh` (docs/runbooks/whatsapp-staging.md). |
+| `WHATSAPP_PHONE_NUMBER_ID` | plain | api | Meta's id of the sending number (not a secret). Staging: set by `deploy/staging.sh` (docs/runbooks/whatsapp-staging.md). |
+| `WHATSAPP_WABA_ID` | plain | api | Meta's id of the WhatsApp Business Account (not a secret). Staging: set by `deploy/staging.sh`. |
 | `WHATSAPP_ALLOWED_RECIPIENTS` | plain | api | The TEST FENCE: the only numbers (digits with the country code, `;` or `,` between) a message may go to. Unset = no fence (production). Set but empty = nothing is sent. Staging always sets it. |
 | `CHANNEL_AGENT_EMAIL` | plain | api | The registered account the API signs in as to hand a webhook to the database (belongs to no workspace). |
 | `CHANNEL_AGENT_PASSWORD` | secret | api | Its password. |
