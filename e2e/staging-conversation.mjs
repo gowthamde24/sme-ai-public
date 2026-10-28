@@ -52,9 +52,9 @@ try {
   await panel.locator('[data-chat="close"]').click();
   // Settings > AI assistant
   await s.page.goto(`${s.base}/settings?section=assistant`, { waitUntil: "domcontentloaded" });
-  await s.page.locator("aside").first().waitFor({ timeout: 45000 });
+  await s.page.locator("aside[aria-labelledby=asst-prev-h]").waitFor({ timeout: 45000 });
   await sleep(1500);
-  const aside = await s.page.locator("aside").first().innerText();
+  const aside = await s.page.locator("aside[aria-labelledby=asst-prev-h]").innerText();
   ok("Settings > AI assistant: no old persona words on the preview", !/Male · calm|Female · warm|Male · lively|Female · clear/.test(aside) && !/Vijaya/.test(aside), aside.replace(/\s+/g, " ").slice(0, 140));
   ok("it names a catalogue voice (name · label)", /(Ramya|Janvi|Sanya|Disha|Sindhu|Esha|Meera|Divya|Prakash) · \w+/.test(aside));
   await shot(s, `cv-${pack}-4-settings`);
