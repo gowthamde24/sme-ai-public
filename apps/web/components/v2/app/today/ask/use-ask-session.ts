@@ -81,8 +81,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const [earlier, setEarlier] = React.useState<Exchange[]>([]);
   const [extra, setExtra] = React.useState<{ plan?: ConfirmAction; clarify?: string }>({}); // what the router answered with besides text: a plan to confirm, or one short question
   const { plan = null, clarify = null } = extra;
-  const [conversationId, setConversationId] = React.useState<string | null>(null); // the conversation the next message continues (null starts a new one)
-  const convRef = React.useRef<string | null>(null);
+  const convRef = React.useRef<string | null>(null); // the conversation the next message continues (null starts a new one)
   const doIt = useDoIt(doItOptions);
   const [mode, setMode] = React.useState<Mode>("ask");
   const [taskEntry, setTaskEntry] = React.useState<TaskEntry | null>(null);
@@ -116,7 +115,6 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const current = React.useRef<Exchange | null>(null);
   React.useEffect(() => {
     current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, plan, clarify };
-    convRef.current = conversationId;
     modeRef.current = doIt ? mode : "ask";
   });
   const voiceEndpoint = `${base}/ask/voice`;
@@ -236,7 +234,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
           setErrorCode(code);
           if (code === "voice_unavailable") setVoiceOff(true); // voice was switched off since the page loaded: the microphone goes away
         } else if (e.type === "done") {
-          if (e.conversationId) setConversationId(e.conversationId);
+          if (e.conversationId) convRef.current = e.conversationId;
           if (!failed) setPhase("done"); // the written answer is whole; a spoken one may still follow
         } else if (e.type === "audio") {
           player.current?.dispose();
@@ -366,7 +364,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setText("");
     setPhase("idle");
     setExtra({});
-    setConversationId(id);
+    convRef.current = id;
   };
   /** The state of a plan changed (the owner said yes or no, or it expired): the plan on screen and any earlier message that carries it. */
   const setActionStatus = (actionId: string, status: ConfirmAction["status"]) => {
@@ -425,7 +423,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     text, setText, focused, setFocused, asked, phase, answer, sources, drafts, problem, errorCode, heardByVoice, earlier, finished, mood,
     hasAudio, playing, audioPending, audioFailed, autoplay, setAutoplay, seen, showMic, status,
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, clarify, conversationId, setActionStatus,
+    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, clarify, setActionStatus,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",
     asking: phase === "asking",
