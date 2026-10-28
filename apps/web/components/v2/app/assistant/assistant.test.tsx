@@ -15,11 +15,11 @@ import { AssistantSettings } from "./AssistantSettings";
 const raw = (lang: "en" | "te" | "hi" | "kn", modules: string[] | null) => withModuleWords(Object.fromEntries(Object.entries(appDict(lang) as Record<string, string>).filter(([k]) => k.startsWith("asst."))), modules ? { modules } : null);
 const langs = { te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ", en: "English", ta: "தமிழ்", ml: "മലയാളം" };
 const voiceNames = Object.fromEntries(VOICES.map((v) => [v, (appDict("en") as Record<string, string>)[`asst.voice.${v}`]])) as Record<(typeof VOICES)[number], string>;
-const draw = (over: Partial<{ modules: string[] | null; canEdit: boolean; saved: boolean; save: (i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; samples: { endpoint: string; mock: boolean } | null; testCall: () => Promise<TestCallResult> }> = {}) => {
+const draw = (over: Partial<{ modules: string[] | null; canEdit: boolean; saved: boolean; save: (i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; samples: { endpoint: string; mock: boolean } | null; voicePickerOn: boolean; testCall: () => Promise<TestCallResult> }> = {}) => {
   const modules = over.modules === undefined ? null : over.modules;
   const profile = assistantProfile(modules);
   const save = (over.save ?? vi.fn(async () => ({ ok: true as const }))) as ReturnType<typeof vi.fn> & ((i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>);
-  render(<AssistantSettings words={raw("en", modules)} initial={profile.defaults} profile={profile} shop="Acme Silks" langs={langs} voiceNames={voiceNames} canEdit={over.canEdit ?? true} testMode saved={over.saved ?? false} actions={{ save, ...(over.testCall ? { testCall: over.testCall } : {}) }} samples={over.samples ?? null} />);
+  render(<AssistantSettings words={raw("en", modules)} initial={profile.defaults} profile={profile} shop="Acme Silks" langs={langs} voiceNames={voiceNames} canEdit={over.canEdit ?? true} testMode saved={over.saved ?? false} actions={{ save, ...(over.testCall ? { testCall: over.testCall } : {}) }} samples={over.samples ?? null} voicePickerOn={over.voicePickerOn ?? false} />);
   return { save, profile };
 };
 afterEach(() => {
@@ -28,6 +28,14 @@ afterEach(() => {
 });
 
 describe("Settings > AI assistant", () => {
+  it("the four-persona voice list is shown, and is left out when the voice picker is on (the picker chooses the voice of each language)", () => {
+    draw({});
+    expect(screen.getByRole("radiogroup", { name: /Voice/ })).toBeInTheDocument();
+    cleanup();
+    draw({ voicePickerOn: true });
+    expect(screen.queryByRole("radiogroup", { name: /Voice/ })).toBeNull();
+    expect(screen.getByRole("radiogroup", { name: /Languages|Language/ })).toBeInTheDocument();
+  });
   it("starts from the defaults of the business type, says so, and says that mentioning 'AI assistant' in the greeting is the owner's choice", () => {
     draw();
     expect(screen.getByRole("heading", { name: "Set up your AI assistant" })).toBeInTheDocument();

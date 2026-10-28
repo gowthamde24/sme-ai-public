@@ -36,7 +36,7 @@ function Switch({ on, label, onChange, disabled }: { on: boolean; label: string;
  * may do on calls (and the highest discount), when it hands over to the owner, the calling hours, and on the right a live preview with the circle speaking. It starts from the defaults of the business type (`profile`), so an owner can
  * skip it; nothing is kept until "Save". Only the Owner can change it (`canEdit`). Voice samples and test calls do not exist yet, so "Hear it" is switched off and "Call me now for a test" says so. The words come in as props.
  */
-export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, ownVoiceReady = false, samples = null }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ ownVoiceReady?: boolean; /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null }) {
+export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, ownVoiceReady = false, samples = null, voicePickerOn = false }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ ownVoiceReady?: boolean; /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The voice picker (a voice for each language, below) is on: the four-persona list is not shown, unless the Owner's own voice is in use or ready to use (it is chosen here). */ voicePickerOn?: boolean }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<Settings>(initial);
@@ -140,6 +140,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
               )}
             </section>
 
+            {voicePickerOn && !ownVoiceReady && s.voice !== "own_voice" ? null : (
             <section className={block} aria-labelledby="asst-voice-h">
               <div>
                 <h3 id="asst-voice-h" className="text-[17px] font-semibold">{t("asst.voice.t")}</h3>
@@ -180,6 +181,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
                 </div>
               ) : null}
             </section>
+            )}
 
             <section className={block} aria-labelledby="asst-lang-h">
               <div>
