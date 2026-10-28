@@ -92,9 +92,15 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
       if (!out.ok) return setHeard("error");
       if (!out.preview.audio) return setHeard("none");
       player.current?.pause();
-      const audio = new Audio(`data:${out.preview.audio.mime};base64,${out.preview.audio.base64}`);
+      // a blob: address, not a data: one: the page's media rule allows only this app's own address and blob: (lib/security/csp.ts)
+      const bytes = Uint8Array.from(atob(out.preview.audio.base64), (c) => c.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes], { type: out.preview.audio.mime }));
+      const audio = new Audio(url);
       player.current = audio;
-      audio.onended = () => setHeard("idle");
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+        setHeard("idle");
+      };
       await audio.play();
       setHeard("idle");
     } catch {
