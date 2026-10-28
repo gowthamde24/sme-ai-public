@@ -45,3 +45,6 @@ export const guidedDemo = (value: string | undefined = process.env.GUIDED_DEMO):
 
 /** "Talk to your assistant" in the browser (job DV, ADR 0118): the orb becomes a microphone and the assistant answers aloud over a WebSocket to the API. Off unless `1`. */
 export const browserVoice = (value: string | undefined = process.env.BROWSER_VOICE): boolean => value === "1";
+
+/** Settings > AI assistant > "About my business" (job context-and-easy-sources part A, contract-context-sources.md): the owner's own notes the assistant uses in chats, calls, Ask and drafts, with "add by paste, file or voice" and "Test it". `mock` = notes kept in the memory of the server (nothing is sent anywhere), `1` = the API (`/ai-assistant/context*`), unset = the part is not there. */
+export const aboutBusinessScreens = (value: string | undefined = process.env.ABOUT_BUSINESS_SCREENS): ScreenMode => screenMode(value);

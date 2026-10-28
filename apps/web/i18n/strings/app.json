@@ -71905,5 +71905,918 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ctx.title": {
+  "en": "About my business",
+  "te": "నా వ్యాపారం గురించి",
+  "hi": "मेरे व्यापार के बारे में",
+  "kn": "ನನ್ನ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.lead": {
+  "en": "Tell {assistant} about your business, the way you would brief a new employee. It uses this in chats, calls, Ask and drafts. If something is not here or in your records, it does not make it up.",
+  "te": "కొత్తగా చేరిన ఉద్యోగికి చెప్పినట్లు మీ వ్యాపారం గురించి {assistant}కి చెప్పండి. చాట్‌లు, కాల్స్, అడగండి, డ్రాఫ్ట్‌లలో ఇది వాడబడుతుంది. ఇక్కడ లేదా మీ రికార్డుల్లో లేనిది అది కల్పించదు.",
+  "hi": "नए कर्मचारी को समझाने की तरह {assistant} को अपने व्यापार के बारे में बताइए। चैट, कॉल, पूछिए और ड्राफ्ट में यह इस्तेमाल होता है। जो यहाँ या आपके रिकॉर्ड में नहीं है, वह अपनी तरफ़ से नहीं बनाती।",
+  "kn": "ಹೊಸ ಉದ್ಯೋಗಿಗೆ ಹೇಳುವಂತೆ ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ {assistant}ಗೆ ಹೇಳಿ. ಚಾಟ್, ಕರೆ, ಕೇಳಿ ಮತ್ತು ಡ್ರಾಫ್ಟ್‌ಗಳಲ್ಲಿ ಇದನ್ನು ಬಳಸಲಾಗುತ್ತದೆ. ಇಲ್ಲಿ ಅಥವಾ ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ಇಲ್ಲದ್ದನ್ನು ಅದು ಸೃಷ್ಟಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.used": {
+  "en": "Used in:",
+  "te": "వీటిలో వాడబడుతుంది:",
+  "hi": "इनमें इस्तेमाल होता है:",
+  "kn": "ಇವುಗಳಲ್ಲಿ ಬಳಕೆಯಾಗುತ್ತದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.used.chats": {
+  "en": "chats",
+  "te": "చాట్‌లు",
+  "hi": "चैट",
+  "kn": "ಚಾಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.used.calls": {
+  "en": "calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.used.ask": {
+  "en": "Ask",
+  "te": "అడగండి",
+  "hi": "पूछिए",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.used.drafts": {
+  "en": "drafts",
+  "te": "డ్రాఫ్ట్‌లు",
+  "hi": "ड्राफ्ट",
+  "kn": "ಡ್ರಾಫ್ಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.notes": {
+  "en": "Your notes",
+  "te": "మీ నోట్స్",
+  "hi": "आपके नोट्स",
+  "kn": "ನಿಮ್ಮ ಟಿಪ್ಪಣಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.ph": {
+  "en": "What you sell, prices, delivery, timings, what to always say, what never to promise…",
+  "te": "మీరు ఏమి అమ్ముతారు, ధరలు, డెలివరీ, సమయాలు, ఎప్పుడూ ఏమి చెప్పాలి, ఏమి ఎప్పుడూ మాట ఇవ్వకూడదు…",
+  "hi": "आप क्या बेचते हैं, दाम, डिलीवरी, समय, हमेशा क्या कहना है, किसका वादा कभी नहीं करना…",
+  "kn": "ನೀವು ಏನು ಮಾರುತ್ತೀರಿ, ಬೆಲೆ, ಡೆಲಿವರಿ, ಸಮಯ, ಯಾವಾಗಲೂ ಏನು ಹೇಳಬೇಕು, ಯಾವುದನ್ನು ಎಂದಿಗೂ ಭರವಸೆ ನೀಡಬಾರದು…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.count": {
+  "en": "{n} of 20,000",
+  "te": "20,000 లో {n}",
+  "hi": "20,000 में से {n}",
+  "kn": "20,000 ರಲ್ಲಿ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.saved": {
+  "en": "Saved",
+  "te": "సేవ్ అయింది",
+  "hi": "सहेजा गया",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.saving": {
+  "en": "Saving…",
+  "te": "సేవ్ అవుతోంది…",
+  "hi": "सहेज रहे हैं…",
+  "kn": "ಉಳಿಸಲಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.unsaved": {
+  "en": "Not saved yet",
+  "te": "ఇంకా సేవ్ కాలేదు",
+  "hi": "अभी सहेजा नहीं गया",
+  "kn": "ಇನ್ನೂ ಉಳಿಸಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.changed": {
+  "en": "Someone else saved newer notes while you were writing.",
+  "te": "మీరు రాస్తున్నప్పుడు మరొకరు కొత్త నోట్స్ సేవ్ చేశారు.",
+  "hi": "आपके लिखते समय किसी और ने नए नोट्स सहेज दिए।",
+  "kn": "ನೀವು ಬರೆಯುತ್ತಿರುವಾಗ ಬೇರೆಯವರು ಹೊಸ ಟಿಪ್ಪಣಿಗಳನ್ನು ಉಳಿಸಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.changed.load": {
+  "en": "Show theirs",
+  "te": "వారి నోట్స్ చూపించు",
+  "hi": "उनके नोट्स दिखाएँ",
+  "kn": "ಅವರದನ್ನು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.changed.keep": {
+  "en": "Keep mine",
+  "te": "నావే ఉంచు",
+  "hi": "मेरे ही रखें",
+  "kn": "ನನ್ನದನ್ನೇ ಇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.down": {
+  "en": "Could not save just now. Your text is still here.",
+  "te": "ఇప్పుడు సేవ్ చేయలేకపోయాం. మీ టెక్స్ట్ ఇక్కడే ఉంది.",
+  "hi": "अभी सहेज नहीं पाए। आपका लिखा यहीं है।",
+  "kn": "ಈಗ ಉಳಿಸಲು ಆಗಲಿಲ್ಲ. ನಿಮ್ಮ ಬರಹ ಇಲ್ಲಿಯೇ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.forbidden": {
+  "en": "Only the Owner and Admins can change these notes.",
+  "te": "ఈ నోట్స్‌ను ఓనర్, అడ్మిన్లు మాత్రమే మార్చగలరు.",
+  "hi": "इन नोट्स को सिर्फ़ मालिक और एडमिन बदल सकते हैं।",
+  "kn": "ಈ ಟಿಪ್ಪಣಿಗಳನ್ನು ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.expired": {
+  "en": "This was kept for 30 minutes and has run out. Please add it again.",
+  "te": "ఇది 30 నిమిషాలు మాత్రమే ఉంటుంది, ఇప్పుడు ముగిసింది. మళ్ళీ చేర్చండి.",
+  "hi": "यह 30 मिनट ही रखा जाता है और अब खत्म हो गया। कृपया फिर से जोड़ें।",
+  "kn": "ಇದನ್ನು 30 ನಿಮಿಷ ಮಾತ್ರ ಇಡಲಾಗುತ್ತದೆ, ಈಗ ಮುಗಿದಿದೆ. ಮತ್ತೆ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.refused": {
+  "en": "That file cannot be used as notes.",
+  "te": "ఆ ఫైల్‌ను నోట్స్‌గా వాడలేము.",
+  "hi": "यह फ़ाइल नोट्स के रूप में इस्तेमाल नहीं हो सकती।",
+  "kn": "ಆ ಫೈಲ್ ಅನ್ನು ಟಿಪ್ಪಣಿಯಾಗಿ ಬಳಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.unreadable": {
+  "en": "We could not read that. Try another file, or paste the text.",
+  "te": "అది చదవలేకపోయాం. వేరే ఫైల్ ప్రయత్నించండి, లేదా టెక్స్ట్ పేస్ట్ చేయండి.",
+  "hi": "यह पढ़ नहीं पाए। दूसरी फ़ाइल आज़माएँ, या टेक्स्ट पेस्ट करें।",
+  "kn": "ಅದನ್ನು ಓದಲು ಆಗಲಿಲ್ಲ. ಬೇರೆ ಫೈಲ್ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ಪಠ್ಯ ಪೇಸ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.toolarge": {
+  "en": "That is too big. Files can be 3 MB and notes 20,000 characters.",
+  "te": "ఇది చాలా పెద్దది. ఫైల్ 3 MB, నోట్స్ 20,000 అక్షరాల వరకు.",
+  "hi": "यह बहुत बड़ा है। फ़ाइल 3 MB तक और नोट्स 20,000 अक्षर तक हो सकते हैं।",
+  "kn": "ಇದು ತುಂಬಾ ದೊಡ್ಡದು. ಫೈಲ್ 3 MB, ಟಿಪ್ಪಣಿ 20,000 ಅಕ್ಷರಗಳವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.busy": {
+  "en": "The assistant is busy. Please try again in a minute.",
+  "te": "అసిస్టెంట్ బిజీగా ఉంది. ఒక నిమిషం తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "असिस्टेंट अभी व्यस्त है। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಬ್ಯುಸಿ ಇದೆ. ಒಂದು ನಿಮಿಷದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.slow": {
+  "en": "Too many tries in a row. Please wait a minute.",
+  "te": "వరుసగా చాలాసార్లు ప్రయత్నించారు. ఒక నిమిషం ఆగండి.",
+  "hi": "लगातार बहुत कोशिशें हुईं। एक मिनट रुकिए।",
+  "kn": "ಸತತವಾಗಿ ಹಲವು ಬಾರಿ ಪ್ರಯತ್ನಿಸಿದ್ದೀರಿ. ಒಂದು ನಿಮಿಷ ಕಾಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.schools_fees": {
+  "en": "For schools, the assistant never talks about fees, so these notes cannot cover fees.",
+  "te": "స్కూళ్లలో అసిస్టెంట్ ఫీజుల గురించి మాట్లాడదు, కాబట్టి ఈ నోట్స్‌లో ఫీజులు ఉండకూడదు.",
+  "hi": "स्कूलों में असिस्टेंट फ़ीस की बात नहीं करती, इसलिए इन नोट्स में फ़ीस नहीं हो सकती।",
+  "kn": "ಶಾಲೆಗಳಲ್ಲಿ ಅಸಿಸ್ಟೆಂಟ್ ಫೀಸ್ ಬಗ್ಗೆ ಮಾತನಾಡುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಈ ಟಿಪ್ಪಣಿಗಳಲ್ಲಿ ಫೀಸ್ ಇರಬಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.schools_marks": {
+  "en": "For schools, the assistant never talks about marks, so these notes cannot cover marks.",
+  "te": "స్కూళ్లలో అసిస్టెంట్ మార్కుల గురించి మాట్లాడదు, కాబట్టి ఈ నోట్స్‌లో మార్కులు ఉండకూడదు.",
+  "hi": "स्कूलों में असिस्टेंट अंकों की बात नहीं करती, इसलिए इन नोट्स में अंक नहीं हो सकते।",
+  "kn": "ಶಾಲೆಗಳಲ್ಲಿ ಅಸಿಸ್ಟೆಂಟ್ ಅಂಕಗಳ ಬಗ್ಗೆ ಮಾತನಾಡುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಈ ಟಿಪ್ಪಣಿಗಳಲ್ಲಿ ಅಂಕಗಳು ಇರಬಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.schools_dues": {
+  "en": "For schools, the assistant never talks about dues, so these notes cannot cover dues.",
+  "te": "స్కూళ్లలో అసిస్టెంట్ బాకీల గురించి మాట్లాడదు, కాబట్టి ఈ నోట్స్‌లో బాకీలు ఉండకూడదు.",
+  "hi": "स्कूलों में असिस्टेंट बकाया की बात नहीं करती, इसलिए इन नोट्स में बकाया नहीं हो सकता।",
+  "kn": "ಶಾಲೆಗಳಲ್ಲಿ ಅಸಿಸ್ಟೆಂಟ್ ಬಾಕಿಯ ಬಗ್ಗೆ ಮಾತನಾಡುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಈ ಟಿಪ್ಪಣಿಗಳಲ್ಲಿ ಬಾಕಿ ಇರಬಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.err.schools_children": {
+  "en": "For schools, children's details are never used, so these notes cannot hold them.",
+  "te": "స్కూళ్లలో పిల్లల వివరాలు ఎప్పుడూ వాడబడవు, కాబట్టి ఈ నోట్స్‌లో ఉండకూడదు.",
+  "hi": "स्कूलों में बच्चों का ब्योरा कभी इस्तेमाल नहीं होता, इसलिए इन नोट्स में नहीं हो सकता।",
+  "kn": "ಶಾಲೆಗಳಲ್ಲಿ ಮಕ್ಕಳ ವಿವರಗಳನ್ನು ಎಂದಿಗೂ ಬಳಸುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಈ ಟಿಪ್ಪಣಿಗಳಲ್ಲಿ ಇರಬಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.prompts": {
+  "en": "Not sure what to write? Tap a heading to add it:",
+  "te": "ఏమి రాయాలో తెలియదా? ఒక హెడ్డింగ్ నొక్కి చేర్చండి:",
+  "hi": "समझ नहीं आ रहा क्या लिखें? एक शीर्षक दबाकर जोड़ें:",
+  "kn": "ಏನು ಬರೆಯಬೇಕು ಗೊತ್ತಿಲ್ಲವೇ? ಒಂದು ಶೀರ್ಷಿಕೆ ಒತ್ತಿ ಸೇರಿಸಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add": {
+  "en": "Add from something you already have",
+  "te": "మీ దగ్గర ఉన్నదాని నుంచి చేర్చండి",
+  "hi": "जो आपके पास पहले से है, उससे जोड़ें",
+  "kn": "ನಿಮ್ಮ ಬಳಿ ಇರುವುದರಿಂದ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add.paste": {
+  "en": "Paste text",
+  "te": "టెక్స్ట్ పేస్ట్ చేయండి",
+  "hi": "टेक्स्ट पेस्ट करें",
+  "kn": "ಪಠ್ಯ ಪೇಸ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add.file": {
+  "en": "Upload a file",
+  "te": "ఫైల్ అప్‌లోడ్ చేయండి",
+  "hi": "फ़ाइल अपलोड करें",
+  "kn": "ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add.voice": {
+  "en": "Speak",
+  "te": "మాట్లాడండి",
+  "hi": "बोलिए",
+  "kn": "ಮಾತನಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add.paste.ph": {
+  "en": "Paste a price list, a message or your common questions here",
+  "te": "ధరల జాబితా, మెసేజ్ లేదా తరచు అడిగే ప్రశ్నలు ఇక్కడ పేస్ట్ చేయండి",
+  "hi": "दाम की सूची, कोई संदेश या आम सवाल यहाँ पेस्ट करें",
+  "kn": "ಬೆಲೆ ಪಟ್ಟಿ, ಸಂದೇಶ ಅಥವಾ ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳನ್ನು ಇಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add.read": {
+  "en": "Read it",
+  "te": "చదవండి",
+  "hi": "पढ़िए",
+  "kn": "ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add.reading": {
+  "en": "Reading…",
+  "te": "చదువుతోంది…",
+  "hi": "पढ़ रही है…",
+  "kn": "ಓದುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add.file.hint": {
+  "en": "PDF, Excel, CSV, Word, a photo or text, up to 3 MB.",
+  "te": "PDF, Excel, CSV, Word, ఫోటో లేదా టెక్స్ట్, 3 MB వరకు.",
+  "hi": "PDF, Excel, CSV, Word, फ़ोटो या टेक्स्ट, 3 MB तक।",
+  "kn": "PDF, Excel, CSV, Word, ಫೋಟೋ ಅಥವಾ ಪಠ್ಯ, 3 MB ವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add.voice.hint": {
+  "en": "Up to 2 minutes, in your own language.",
+  "te": "2 నిమిషాల వరకు, మీ భాషలోనే.",
+  "hi": "2 मिनट तक, अपनी भाषा में।",
+  "kn": "2 ನಿಮಿಷದವರೆಗೆ, ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add.voice.start": {
+  "en": "Start speaking",
+  "te": "మాట్లాడటం మొదలుపెట్టండి",
+  "hi": "बोलना शुरू करें",
+  "kn": "ಮಾತನಾಡಲು ಶುರುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add.voice.stop": {
+  "en": "Stop and read it",
+  "te": "ఆపి చదవండి",
+  "hi": "रोकिए और पढ़िए",
+  "kn": "ನಿಲ್ಲಿಸಿ ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.add.voice.nomic": {
+  "en": "The microphone is not available here. Type or upload instead.",
+  "te": "ఇక్కడ మైక్రోఫోన్ అందుబాటులో లేదు. టైప్ చేయండి లేదా అప్‌లోడ్ చేయండి.",
+  "hi": "यहाँ माइक्रोफ़ोन उपलब्ध नहीं है। टाइप करें या अपलोड करें।",
+  "kn": "ಇಲ್ಲಿ ಮೈಕ್ರೋಫೋನ್ ಲಭ್ಯವಿಲ್ಲ. ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.pv.title": {
+  "en": "Here is what I understood",
+  "te": "నేను అర్థం చేసుకున్నది ఇదే",
+  "hi": "मैंने यह समझा",
+  "kn": "ನಾನು ಅರ್ಥಮಾಡಿಕೊಂಡದ್ದು ಇದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.pv.edit": {
+  "en": "Nothing is saved yet. Change anything that is wrong, then save.",
+  "te": "ఇంకా ఏదీ సేవ్ కాలేదు. తప్పు ఉంటే మార్చి, తర్వాత సేవ్ చేయండి.",
+  "hi": "अभी कुछ सहेजा नहीं गया। कुछ गलत हो तो बदलिए, फिर सहेजिए।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಉಳಿಸಿಲ್ಲ. ತಪ್ಪಿದ್ದರೆ ಬದಲಿಸಿ, ನಂತರ ಉಳಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.pv.append": {
+  "en": "Add to my notes",
+  "te": "నా నోట్స్‌కి చేర్చు",
+  "hi": "मेरे नोट्स में जोड़ें",
+  "kn": "ನನ್ನ ಟಿಪ್ಪಣಿಗೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.pv.replace": {
+  "en": "Replace my notes",
+  "te": "నా నోట్స్ మార్చు",
+  "hi": "मेरे नोट्स बदलें",
+  "kn": "ನನ್ನ ಟಿಪ್ಪಣಿ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.pv.save": {
+  "en": "Save these notes",
+  "te": "ఈ నోట్స్ సేవ్ చేయండి",
+  "hi": "ये नोट्स सहेजें",
+  "kn": "ಈ ಟಿಪ್ಪಣಿ ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.pv.discard": {
+  "en": "Discard",
+  "te": "వద్దు",
+  "hi": "छोड़ दें",
+  "kn": "ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.pv.empty": {
+  "en": "Nothing was found to add.",
+  "te": "చేర్చడానికి ఏమీ దొరకలేదు.",
+  "hi": "जोड़ने के लिए कुछ नहीं मिला।",
+  "kn": "ಸೇರಿಸಲು ಏನೂ ಸಿಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.warn.cells_cut": {
+  "en": "Some long cells were cut. Please check the numbers.",
+  "te": "కొన్ని పొడవైన సెల్స్ కత్తిరించబడ్డాయి. సంఖ్యలు చూడండి.",
+  "hi": "कुछ लंबे सेल कट गए। कृपया संख्याएँ जाँच लें।",
+  "kn": "ಕೆಲವು ಉದ್ದದ ಸೆಲ್‌ಗಳನ್ನು ಕತ್ತರಿಸಲಾಗಿದೆ. ಸಂಖ್ಯೆಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.warn.illegible_part": {
+  "en": "Part of it could not be read. Please check it.",
+  "te": "కొంత భాగం చదవలేకపోయాం. చూసుకోండి.",
+  "hi": "कुछ हिस्सा पढ़ा नहीं जा सका। कृपया जाँच लें।",
+  "kn": "ಸ್ವಲ್ಪ ಭಾಗ ಓದಲು ಆಗಲಿಲ್ಲ. ಪರಿಶೀಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.warn.looks_like_personal_data": {
+  "en": "This looks like a list of customers, not notes about your business. Add customers under Lead sources instead.",
+  "te": "ఇది మీ వ్యాపారం గురించి నోట్స్ కాదు, కస్టమర్ల జాబితాలా ఉంది. కస్టమర్లను లీడ్ సోర్సెస్‌లో చేర్చండి.",
+  "hi": "यह आपके व्यापार के नोट्स नहीं, ग्राहकों की सूची लगती है। ग्राहकों को लीड सोर्स में जोड़ें।",
+  "kn": "ಇದು ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಟಿಪ್ಪಣಿ ಅಲ್ಲ, ಗ್ರಾಹಕರ ಪಟ್ಟಿಯಂತಿದೆ. ಗ್ರಾಹಕರನ್ನು ಲೀಡ್ ಸೋರ್ಸ್‌ಗಳಲ್ಲಿ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.warn.link": {
+  "en": "Open lead sources",
+  "te": "లీడ్ సోర్సెస్ తెరవండి",
+  "hi": "लीड सोर्स खोलें",
+  "kn": "ಲೀಡ್ ಸೋರ್ಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.prices": {
+  "en": "Prices",
+  "te": "ధరలు",
+  "hi": "दाम",
+  "kn": "ಬೆಲೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.delivery": {
+  "en": "Delivery",
+  "te": "డెలివరీ",
+  "hi": "डिलीवरी",
+  "kn": "ಡೆಲಿವರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.timings": {
+  "en": "Timings",
+  "te": "సమయాలు",
+  "hi": "समय",
+  "kn": "ಸಮಯಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.payment": {
+  "en": "Payment",
+  "te": "చెల్లింపు",
+  "hi": "भुगतान",
+  "kn": "ಪಾವತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.always_say": {
+  "en": "Always say",
+  "te": "ఎప్పుడూ చెప్పాలి",
+  "hi": "हमेशा कहें",
+  "kn": "ಯಾವಾಗಲೂ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.never_say": {
+  "en": "Never say or promise",
+  "te": "ఎప్పుడూ చెప్పకూడదు, మాట ఇవ్వకూడదు",
+  "hi": "कभी न कहें, न वादा करें",
+  "kn": "ಎಂದಿಗೂ ಹೇಳಬೇಡಿ, ಭರವಸೆ ನೀಡಬೇಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.discounts": {
+  "en": "Discounts",
+  "te": "డిస్కౌంట్లు",
+  "hi": "छूट",
+  "kn": "ರಿಯಾಯಿತಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.handover": {
+  "en": "When to hand over to me",
+  "te": "ఎప్పుడు నాకు అప్పగించాలి",
+  "hi": "कब मुझे सौंपना है",
+  "kn": "ಯಾವಾಗ ನನಗೆ ಒಪ್ಪಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.tone": {
+  "en": "Tone",
+  "te": "మాట తీరు",
+  "hi": "बोलने का ढंग",
+  "kn": "ಮಾತಿನ ಧಾಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.faq": {
+  "en": "Common questions",
+  "te": "తరచు అడిగే ప్రశ్నలు",
+  "hi": "आम सवाल",
+  "kn": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.products": {
+  "en": "What we sell",
+  "te": "మేము ఏమి అమ్ముతాం",
+  "hi": "हम क्या बेचते हैं",
+  "kn": "ನಾವು ಏನು ಮಾರುತ್ತೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.sec.other": {
+  "en": "Other",
+  "te": "ఇతరాలు",
+  "hi": "अन्य",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test": {
+  "en": "Try it",
+  "te": "ప్రయత్నించి చూడండి",
+  "hi": "आज़माकर देखिए",
+  "kn": "ಪ್ರಯತ್ನಿಸಿ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.hint": {
+  "en": "Ask a question the way a customer would on WhatsApp. Nothing is sent to anyone.",
+  "te": "కస్టమర్ వాట్సాప్‌లో అడిగినట్లు అడగండి. ఎవరికీ ఏదీ పంపబడదు.",
+  "hi": "ग्राहक जैसे WhatsApp पर पूछता है वैसे पूछिए। किसी को कुछ नहीं भेजा जाता।",
+  "kn": "ಗ್ರಾಹಕ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಕೇಳುವಂತೆ ಕೇಳಿ. ಯಾರಿಗೂ ಏನೂ ಕಳುಹಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.ph": {
+  "en": "Do you deliver on Sundays?",
+  "te": "ఆదివారాలు డెలివరీ చేస్తారా?",
+  "hi": "क्या आप रविवार को डिलीवरी करते हैं?",
+  "kn": "ಭಾನುವಾರ ಡೆಲಿವರಿ ಮಾಡುತ್ತೀರಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.ask": {
+  "en": "Ask",
+  "te": "అడగండి",
+  "hi": "पूछिए",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.working": {
+  "en": "Thinking…",
+  "te": "ఆలోచిస్తోంది…",
+  "hi": "सोच रही है…",
+  "kn": "ಯೋಚಿಸುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.answer": {
+  "en": "It would answer:",
+  "te": "ఇలా సమాధానం ఇస్తుంది:",
+  "hi": "यह ऐसे जवाब देगी:",
+  "kn": "ಹೀಗೆ ಉತ್ತರಿಸುತ್ತದೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.from.notes": {
+  "en": "From your notes",
+  "te": "మీ నోట్స్ నుంచి",
+  "hi": "आपके नोट्स से",
+  "kn": "ನಿಮ್ಮ ಟಿಪ್ಪಣಿಗಳಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.from.facts": {
+  "en": "From your records",
+  "te": "మీ రికార్డుల నుంచి",
+  "hi": "आपके रिकॉर्ड से",
+  "kn": "ನಿಮ್ಮ ದಾಖಲೆಗಳಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.hand": {
+  "en": "It would not answer this by itself. It waits for you.",
+  "te": "దీనికి తానే సమాధానం ఇవ్వదు. మీ కోసం ఆగుతుంది.",
+  "hi": "इसका जवाब यह खुद नहीं देगी। आपका इंतज़ार करेगी।",
+  "kn": "ಇದಕ್ಕೆ ತಾನೇ ಉತ್ತರಿಸುವುದಿಲ್ಲ. ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.reason.asked_for_a_person": {
+  "en": "The customer asked for a person.",
+  "te": "కస్టమర్ ఒక మనిషిని అడిగారు.",
+  "hi": "ग्राहक ने इंसान से बात करने को कहा।",
+  "kn": "ಗ್ರಾಹಕರು ಒಬ್ಬ ವ್ಯಕ್ತಿಯನ್ನು ಕೇಳಿದರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.reason.asked_about_money": {
+  "en": "It is about a price or payment, and your notes do not say it may answer.",
+  "te": "ఇది ధర లేదా చెల్లింపు గురించి, మరియు సమాధానం ఇవ్వవచ్చని మీ నోట్స్‌లో లేదు.",
+  "hi": "यह दाम या भुगतान का सवाल है, और आपके नोट्स में जवाब देने की अनुमति नहीं है।",
+  "kn": "ಇದು ಬೆಲೆ ಅಥವಾ ಪಾವತಿಯ ಬಗ್ಗೆ, ಮತ್ತು ಉತ್ತರಿಸಬಹುದು ಎಂದು ನಿಮ್ಮ ಟಿಪ್ಪಣಿಯಲ್ಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.reason.complaint": {
+  "en": "It sounds like a complaint.",
+  "te": "ఇది ఫిర్యాదులా ఉంది.",
+  "hi": "यह शिकायत जैसा लगता है।",
+  "kn": "ಇದು ದೂರಿನಂತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.test.reason.unsure": {
+  "en": "It is not sure. Add this to your notes if it should answer.",
+  "te": "దానికి ఖచ్చితంగా తెలియదు. అది సమాధానం ఇవ్వాలంటే ఇది నోట్స్‌లో చేర్చండి.",
+  "hi": "इसे पक्का पता नहीं। यह जवाब दे, तो इसे नोट्स में जोड़ें।",
+  "kn": "ಅದಕ್ಕೆ ಖಚಿತವಿಲ್ಲ. ಅದು ಉತ್ತರಿಸಬೇಕಾದರೆ ಇದನ್ನು ಟಿಪ್ಪಣಿಯಲ್ಲಿ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.ver": {
+  "en": "Earlier versions",
+  "te": "మునుపటి వెర్షన్లు",
+  "hi": "पिछले संस्करण",
+  "kn": "ಹಿಂದಿನ ಆವೃತ್ತಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.ver.none": {
+  "en": "No earlier versions yet.",
+  "te": "ఇంకా మునుపటి వెర్షన్లు లేవు.",
+  "hi": "अभी कोई पिछला संस्करण नहीं।",
+  "kn": "ಇನ್ನೂ ಹಿಂದಿನ ಆವೃತ್ತಿಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.ver.restore": {
+  "en": "Bring back",
+  "te": "తిరిగి తెచ్చు",
+  "hi": "वापस लाएँ",
+  "kn": "ಮರಳಿ ತನ್ನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.ver.item": {
+  "en": "Version {v}, {when}",
+  "te": "వెర్షన్ {v}, {when}",
+  "hi": "संस्करण {v}, {when}",
+  "kn": "ಆವೃತ್ತಿ {v}, {when}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.ver.by": {
+  "en": "by {name}",
+  "te": "{name} ద్వారా",
+  "hi": "{name} द्वारा",
+  "kn": "{name} ಅವರಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctx.ver.note": {
+  "en": "Bringing one back makes a new version. Nothing is lost.",
+  "te": "ఒకదాన్ని తిరిగి తెస్తే కొత్త వెర్షన్ అవుతుంది. ఏదీ పోదు.",
+  "hi": "किसी को वापस लाने पर नया संस्करण बनता है। कुछ खोता नहीं।",
+  "kn": "ಒಂದನ್ನು ಮರಳಿ ತಂದರೆ ಹೊಸ ಆವೃತ್ತಿ ಆಗುತ್ತದೆ. ಏನೂ ಕಳೆದುಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -217,8 +217,11 @@ describe("server-only code stays on the server", () => {
     const VOICE_CHAT = path.join("lib", "browser-voice", "token.ts");
     // And the conversation panel's side calls (the plan's Yes / No, the history): this app's OWN route `<workspace>/conversation` (a path it is given): no token, never the API.
     const CONVERSATION_CALLS = path.join("components", "v2", "app", "today", "ask", "conversation-api.ts");
-    expect(callers).toEqual([ASK_TRANSPORT, AUTHORIZE_PROBE, BELL_POLL, CC_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, SESSION_CHECK, VOICE_CHAT, path.join("lib", "api", "client.ts")].sort());
+    // And "About my business" (job context-and-easy-sources): the notes' autosave, the preview and "Try it" ask this app's OWN route `<workspace>/context` (a path it is given): no token, never the API.
+    const CONTEXT_POST = path.join("components", "v2", "app", "assistant", "context-post.ts");
+    expect(callers).toEqual([ASK_TRANSPORT, AUTHORIZE_PROBE, BELL_POLL, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, SESSION_CHECK, VOICE_CHAT, path.join("lib", "api", "client.ts")].sort());
     expect(read(path.join(WEB_ROOT, CONVERSATION_CALLS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
+    expect(read(path.join(WEB_ROOT, CONTEXT_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, VOICE_CHAT))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, PREVIEW_WORDS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, LEAD_IMPORT))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i); // (a sheet link is typed by the person, so an address may appear in a hint)
