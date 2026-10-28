@@ -8,14 +8,14 @@
       "additionalProperties": false,
       "properties": {
         "settings": {
-          "$ref": "#/$defs/AssistantSettings"
+          "$ref": "#/$defs/AssistantSettingsRead"
         },
         "saved": {
           "title": "Saved",
           "type": "boolean"
         },
         "defaults": {
-          "$ref": "#/$defs/AssistantSettings"
+          "$ref": "#/$defs/AssistantSettingsRead"
         },
         "business_name": {
           "title": "Business Name",
@@ -249,6 +249,154 @@
         "call_to_minute"
       ],
       "title": "AssistantSettings",
+      "type": "object"
+    },
+    "AssistantSettingsRead": {
+      "additionalProperties": false,
+      "description": "The settings as they are READ: before the Owner saves, `name` is empty (no name is made up; a save needs a real one).",
+      "properties": {
+        "name": {
+          "maxLength": 24,
+          "title": "Name",
+          "type": "string"
+        },
+        "voice_persona": {
+          "enum": [
+            "female_warm",
+            "female_clear",
+            "male_calm",
+            "male_lively",
+            "own_voice"
+          ],
+          "title": "Voice Persona",
+          "type": "string"
+        },
+        "main_language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta",
+            "ml"
+          ],
+          "title": "Main Language",
+          "type": "string"
+        },
+        "auto_switch_language": {
+          "title": "Auto Switch Language",
+          "type": "boolean"
+        },
+        "allow_english_mixing": {
+          "title": "Allow English Mixing",
+          "type": "boolean"
+        },
+        "style": {
+          "enum": [
+            "warm",
+            "respectful",
+            "quick"
+          ],
+          "title": "Style",
+          "type": "string"
+        },
+        "speed": {
+          "maximum": 1.25,
+          "minimum": 0.75,
+          "multipleOf": 0.05,
+          "title": "Speed",
+          "type": "number"
+        },
+        "may_answer_prices": {
+          "title": "May Answer Prices",
+          "type": "boolean"
+        },
+        "may_book_visits": {
+          "title": "May Book Visits",
+          "type": "boolean"
+        },
+        "may_send_media": {
+          "title": "May Send Media",
+          "type": "boolean"
+        },
+        "may_talk_dues": {
+          "title": "May Talk Dues",
+          "type": "boolean"
+        },
+        "max_discount_percent": {
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Max Discount Percent",
+          "type": "integer"
+        },
+        "handover_owner_asked": {
+          "title": "Handover Owner Asked",
+          "type": "boolean"
+        },
+        "handover_upset": {
+          "title": "Handover Upset",
+          "type": "boolean"
+        },
+        "handover_order_above_paise": {
+          "anyOf": [
+            {
+              "maximum": 100000000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Handover Order Above Paise"
+        },
+        "call_days": {
+          "items": {
+            "maximum": 7,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "maxItems": 7,
+          "minItems": 1,
+          "title": "Call Days",
+          "type": "array"
+        },
+        "call_from_minute": {
+          "maximum": 1260,
+          "minimum": 540,
+          "multipleOf": 15,
+          "title": "Call From Minute",
+          "type": "integer"
+        },
+        "call_to_minute": {
+          "maximum": 1260,
+          "minimum": 540,
+          "multipleOf": 15,
+          "title": "Call To Minute",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "voice_persona",
+        "main_language",
+        "auto_switch_language",
+        "allow_english_mixing",
+        "style",
+        "speed",
+        "may_answer_prices",
+        "may_book_visits",
+        "may_send_media",
+        "may_talk_dues",
+        "max_discount_percent",
+        "handover_owner_asked",
+        "handover_upset",
+        "handover_order_above_paise",
+        "call_days",
+        "call_from_minute",
+        "call_to_minute"
+      ],
+      "title": "AssistantSettingsRead",
       "type": "object"
     },
     "OptionOut": {

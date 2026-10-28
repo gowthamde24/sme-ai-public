@@ -27,9 +27,18 @@ def business_type(code: str | None) -> str:
     return str(next(iter(defaults)))
 
 
-def default_name() -> str:
-    """The name used when nothing else says one (no settings store wired, or a sample with no name): the first business type's, from the data, so no name is written in code."""
-    return str(defaults_for(None)["name"])
+# What stands where a name would be when the Owner has not named the assistant (job EE: no name is ever made up). A phrase, not a person: "your assistant".
+NO_NAME = {"en": "your assistant", "te": "మీ అసిస్టెంట్", "hi": "आपकी असिस्टेंट", "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್"}
+# the fixed introduction when there is no name: the business and "AI assistant" (every language states both)
+INTRO_UNNAMED = {
+    "en": "The AI assistant of {business}", "te": "{business} నుంచి AI assistant", "hi": "{business} की AI assistant", "kn": "{business} ಇಂದ AI assistant",
+    "ta": "{business} இன் AI assistant", "ml": "{business} ന്റെ AI assistant",
+}
+
+
+def default_name(language: str = "en") -> str:
+    """The phrase used where a name would stand when nobody named the assistant (a sample, a preview, a prompt): never a made-up name."""
+    return NO_NAME.get(language, NO_NAME["en"])
 
 
 def defaults_for(code: str | None) -> dict[str, Any]:
@@ -42,6 +51,9 @@ def _fill(template: str, name: str, business: str) -> str:
 
 
 def intro(language: str, name: str, business: str) -> str:
+    """The fixed introduction. With no name (the Owner set none) it names only the business and says AI assistant."""
+    if not name:
+        return INTRO_UNNAMED[language].replace("{business}", business)
     return _fill(load()["intro"][language], name, business)
 
 

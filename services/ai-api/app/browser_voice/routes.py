@@ -20,7 +20,6 @@ from fastapi.concurrency import run_in_threadpool
 from starlette.websockets import WebSocketDisconnect
 
 from app.assistant.notes import owner_notes
-from app.assistant_settings import data as settings_data
 from app.auth.deps import Runtime, TenantContext
 from app.auth.jwt import AuthError
 from app.browser_voice.limits import Usage
@@ -33,7 +32,7 @@ from app.conversation.pronounce import default_pronunciations
 from app.conversation.providers import SarvamRealtimeStt
 from app.errors import ApiError
 from app.opening.prompt import call_system_prompt
-from app.opening.routes import rendered_opening
+from app.opening.routes import assistant_name, rendered_opening
 from app.tenancy.models import Role
 from app.turns.models import TurnIn
 from app.turns.service import confirm_decision, start_turn
@@ -58,9 +57,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
     token, tenant = ctx.principal.token, ctx.tenant.id
     chosen = choices_of(runtime, ctx)
     tts = FallbackTts(bv.config, bv.factory, chosen=chosen, pronunciations=default_pronunciations())
-    name = settings_data.default_name()
-    if runtime.assistant_settings is not None:
-        name = str(runtime.assistant_settings.get(token, tenant).settings.name)
+    name = assistant_name(runtime, ctx) or "the assistant"   # (the name only when the Owner set one)
     opening_cache: dict[str, tuple[str, bool]] = {}
     notes = owner_notes(runtime, token, tenant)
 

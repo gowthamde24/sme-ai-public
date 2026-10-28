@@ -9,6 +9,7 @@ from app.assistant_settings import data
 from app.assistant_settings.models import (
     AssistantOut,
     AssistantSettings,
+    AssistantSettingsRead,
     LanguageWord,
     OptionOut,
     OptionsOut,
@@ -44,9 +45,9 @@ class AssistantSettingsService:
     def get(self, token: str, tenant_id: uuid.UUID) -> AssistantOut:
         row = self._repo.get(token, tenant_id)
         biz = data.business_type(str(row.get("business_type")))
-        defaults = AssistantSettings.model_validate(data.defaults_for(biz))
+        defaults = AssistantSettingsRead.model_validate({**data.defaults_for(biz), "name": ""})   # (no business type has a fixed name: the Owner names the assistant)
         saved = bool(row.get("saved"))
-        settings = AssistantSettings.model_validate(row["settings"]) if saved and row.get("settings") else defaults
+        settings = AssistantSettingsRead.model_validate(row["settings"]) if saved and row.get("settings") else defaults
         business = str(row.get("business_name") or "")
         return AssistantOut(
             settings=settings,
@@ -73,7 +74,7 @@ class AssistantSettingsService:
 
     def preview(self, token: str, tenant_id: uuid.UUID, language: str, style: str, name: str | None) -> PreviewOut:
         current = self.get(token, tenant_id)
-        shown = name if name else current.settings.name
+        shown = name or current.settings.name or data.default_name(language)
         return PreviewOut(
             language=language,  # type: ignore[arg-type]
             style=style,  # type: ignore[arg-type]
@@ -87,7 +88,7 @@ class AssistantSettingsService:
         current = self.get(token, tenant_id)
         s = current.settings
         language = s.main_language
-        opening = data.sample(current.business_type, language, s.style, s.name, current.business_name)
+        opening = data.sample(current.business_type, language, s.style, s.name or data.default_name(language), current.business_name)
         return TestCallOut(
             mode="fake",
             status="simulated",

@@ -149,8 +149,8 @@ def test_before_the_first_save_the_defaults_of_the_business_type_are_shown() -> 
     client, repo = world(business_type="construction_materials", business_name="Sri Ram Pavers")
     out = client.get(B, headers=auth("a_owner")).json()
     assert out["saved"] is False and out["business_type"] == "construction_materials" and out["settings"] == out["defaults"]
-    assert out["settings"]["name"] == "Aruna" and out["settings"]["voice_persona"] == "female_clear"
-    assert out["intro"]["en"] == "Aruna, the AI assistant of Sri Ram Pavers"
+    assert out["settings"]["name"] == "" and out["defaults"]["name"] == "" and out["settings"]["voice_persona"] == "female_clear", "no name is made up: the Owner names the assistant"
+    assert out["intro"]["en"] == "The AI assistant of Sri Ram Pavers" and out["intro"]["te"] == "Sri Ram Pavers నుంచి AI assistant"
     assert out["wording"] == "draft" and out["updated_at"] is None
     assert repo.row is None, "reading made nothing"
 
@@ -166,10 +166,11 @@ def test_no_default_is_a_male_voice_and_the_catalogue_default_of_every_call_lang
         assert cfg.default_for(language).gender == "female", language
 
 
-def test_the_name_used_when_nothing_says_one_comes_from_the_data_not_from_code() -> None:
-    assert data.default_name() == data.defaults_for(None)["name"]
+def test_where_a_name_would_stand_and_nobody_named_the_assistant_a_phrase_stands_never_a_name() -> None:
+    assert data.default_name() == "your assistant" and data.default_name("te") == "మీ అసిస్టెంట్" and data.default_name("ta") == "your assistant"
     for path in ("voicesample/service.py", "browser_voice/routes.py", "opening/routes.py"):
-        assert '"Vijaya"' not in (Path(models.__file__).resolve().parents[1] / path).read_text(encoding="utf-8"), path
+        text = (Path(models.__file__).resolve().parents[1] / path).read_text(encoding="utf-8")
+        assert '"Vijaya"' not in text and '"Vani"' not in text, path
 
 
 def test_an_unknown_business_type_falls_back_to_the_first_pack() -> None:
@@ -180,7 +181,7 @@ def test_an_unknown_business_type_falls_back_to_the_first_pack() -> None:
 def test_a_save_is_read_back_and_defaults_stay_available_for_reset() -> None:
     client, repo = world()
     out = client.put(B, json=settings(name="Priya", speed=1.1, max_discount_percent=7), headers=auth("a_owner")).json()
-    assert out["saved"] is True and out["settings"]["name"] == "Priya" and out["settings"]["speed"] == 1.1 and out["defaults"]["name"] == "Vani"
+    assert out["saved"] is True and out["settings"]["name"] == "Priya" and out["settings"]["speed"] == 1.1 and out["defaults"]["name"] == ""
     assert out["intro"]["te"] == "Sri Lakshmi Silks నుంచి AI assistant Priya", "the words AI assistant are in the introduction whatever the name"
     again = client.get(B, headers=auth("a_admin")).json()
     assert again["settings"] == out["settings"] and repo.row is not None
@@ -262,7 +263,7 @@ def test_the_preview_uses_the_shops_name_and_the_unsaved_name() -> None:
     client, repo = world()
     saved_before = repo.row
     r = client.get(f"{B}/preview", params={"language": "hi", "style": "respectful"}, headers=auth("a_owner")).json()
-    assert "Sri Lakshmi Silks" in r["text"] and "Vani" in r["text"] and "AI" in r["text"] and r["wording"] == "draft"
+    assert "Sri Lakshmi Silks" in r["text"] and "आपकी असिस्टेंट" in r["text"] and "AI" in r["text"] and r["wording"] == "draft", "with no name set the phrase stands where a name would"
     r2 = client.get(f"{B}/preview", params={"language": "en", "style": "quick", "name": "Lakshmi"}, headers=auth("a_owner")).json()
     assert "Lakshmi here" in r2["text"] and r2["name"] == "Lakshmi"
     assert repo.row is saved_before, "a preview saves nothing"

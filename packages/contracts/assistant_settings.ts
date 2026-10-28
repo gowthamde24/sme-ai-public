@@ -2,9 +2,9 @@
 // The AI assistant's settings per workspace. The words "AI assistant" are always said. No child data.
 
 export interface AssistantOut {
-  settings: AssistantSettings;
+  settings: AssistantSettingsRead;
   saved: boolean;
-  defaults: AssistantSettings;
+  defaults: AssistantSettingsRead;
   business_name: string;
   business_type: string;
   intro: Record<string, string>;
@@ -16,6 +16,27 @@ export interface AssistantOut {
 }
 
 export interface AssistantSettings {
+  name: string;
+  voice_persona: "female_warm" | "female_clear" | "male_calm" | "male_lively" | "own_voice";
+  main_language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  auto_switch_language: boolean;
+  allow_english_mixing: boolean;
+  style: "warm" | "respectful" | "quick";
+  speed: number;
+  may_answer_prices: boolean;
+  may_book_visits: boolean;
+  may_send_media: boolean;
+  may_talk_dues: boolean;
+  max_discount_percent: number;
+  handover_owner_asked: boolean;
+  handover_upset: boolean;
+  handover_order_above_paise: number | null;
+  call_days: number[];
+  call_from_minute: number;
+  call_to_minute: number;
+}
+
+export interface AssistantSettingsRead {
   name: string;
   voice_persona: "female_warm" | "female_clear" | "male_calm" | "male_lively" | "own_voice";
   main_language: "en" | "te" | "hi" | "kn" | "ta" | "ml";

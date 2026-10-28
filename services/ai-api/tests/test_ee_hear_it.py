@@ -160,3 +160,26 @@ def test_each_catalogue_voice_reports_the_exact_words_of_its_sample_and_they_nam
     r = client.get(f"{BASE}/voices", headers=auth("a_viewer"))
     first = r.json()["languages"][0]["voices"][0]
     assert first["sample_text"] and json.loads(json.dumps(first))["sample_url"].endswith(".mp3") and uuid.uuid4() is not None
+
+
+def test_a_name_is_spoken_only_when_the_owner_set_one_and_the_default_line_never_invents_one() -> None:
+    from app.assistant_settings import data as settings_data
+    from app.assistant_settings.service import AssistantSettingsService
+    from tests.dm_assistant_fakes import FakeAssistantSettingsRepository
+
+    texts: list[tuple[str, str]] = []
+    cache: dict[tuple[str, str], Spoken] = {}
+
+    def factory(choice: Any, language: str) -> Spoken:
+        return cache.setdefault((choice.engine, choice.voice), Spoken(texts, choice.voice))
+
+    repo = FakeChoices()
+    client, _ = make_client(workspace=repo, call_voice=CallVoicePreview(default_config(), factory, today=lambda: "2026-10-29"), assistant_settings=AssistantSettingsService(FakeAssistantSettingsRepository()))
+    for lang in ("te", "en"):
+        before = post(client, {"language": lang}).json()["spoken_text"]
+        assert TENANT_A.name in before and "Vani" not in before and "Vijaya" not in before and "{" not in before, "no name is made up"
+    saved = client.put(f"{BASE}", json={**settings_data.defaults_for("textiles"), "name": "Priya"}, headers=auth("a_owner"))
+    assert saved.status_code == 200, saved.text
+    after = post(client, {"language": "en"}).json()["spoken_text"]
+    assert after == f"Hello, this is Priya from {TENANT_A.name}. I'm calling about your enquiry. Is this a good time to talk?"   # (this fake workspace has the AI switch off)
+    assert post(client, {"language": "te"}).json()["spoken_text"].startswith("నమస్కారం అండీ, నేను Priya,")
