@@ -128,7 +128,7 @@ def test_any_member_reads_the_catalogue_with_sample_urls_and_the_default_active(
     te = body["languages"][0]
     assert te["default_id"] == "te-ramya" and te["chosen_id"] is None and te["active_id"] == "te-ramya"
     assert [(v["id"], v["default"], v["chosen"]) for v in te["voices"]] == [("te-ramya", True, False), ("te-sindhu", False, False)]
-    assert te["voices"][0]["sample_url"] == "/v1/voice-samples/te-ramya.mp3" and set(te["voices"][0]) == {"id", "name", "label", "gender", "default", "chosen", "sample_url"}
+    assert te["voices"][0]["sample_url"] == "/v1/voice-samples/te-ramya.mp3" and set(te["voices"][0]) == {"id", "name", "label", "gender", "default", "chosen", "sample_url", "sample_text"}
     assert client.get(f"{BASE}/voices", headers=auth("b_owner")).status_code == 404, "another business reads nothing of ours"
 
 

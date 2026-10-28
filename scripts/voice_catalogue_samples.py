@@ -4,7 +4,7 @@ when someone clicks play (cost and caps). Run it again only when the catalogue (
 
     CARTESIA_API_KEY=... [SARVAM_API_KEY=... --check-fallbacks] python scripts/voice_catalogue_samples.py [--only te-sindhu] [--check-fallbacks]
 
-Writes services/ai-api/app/conversation/data/samples/<voice id>.mp3: the same two spoken-style lines in the voice's language with a neutral business name ("Sample Stores"), one MP3 (44.1 kHz, 96 kbps, mono)
+Writes services/ai-api/app/conversation/data/samples/<voice id>.mp3: the spoken-style line of app.conversation.voices.SAMPLE_LINES in the voice's language with a neutral business name ("Sample Stores") and no person's name, one MP3 (44.1 kHz, 96 kbps, mono)
 per voice. Keys come from the environment only. Characters sent are counted and printed; `--check-fallbacks` sends a few words (about 60 characters in all) to each distinct Bulbul v4 Flash fallback voice to prove it exists."""
 
 # ruff: noqa: E501
@@ -20,21 +20,10 @@ from pathlib import Path
 import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.conversation.voices import SAMPLES, default_config  # noqa: E402
+from app.conversation.voices import SAMPLES, default_config, sample_text  # noqa: E402
 
-BUSINESS = "Sample Stores"
-LINES = {
-    "te": "నమస్కారం అండీ, నేను {name}, {b} నుంచి మాట్లాడుతున్నాను. ఒక్క నిమిషం అండీ, check చేసి చెప్తాను. సాయంత్రం ఆరు గంటలకి call చేయనా?",
-    "hi": "नमस्ते जी, मैं {name} बोल रही हूँ, {b} से। एक मिनट जी, देख कर बताती हूँ। शाम छह बजे call करूँ?",
-    "kn": "ನಮಸ್ಕಾರ ಸರ್, ನಾನು {name}, {b} ನಿಂದ ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ. ಒಂದು ನಿಮಿಷ ಸರ್, ನೋಡಿ ಹೇಳ್ತೀನಿ. ಸಂಜೆ ಆರು ಗಂಟೆಗೆ call ಮಾಡ್ಲಾ?",
-    "en": "Hello, this is {name} from {b}. One moment, I'll check and tell you. Shall I call you after six?",
-}
 SHORT = {"te": "హా అండీ", "hi": "हाँ जी", "kn": "ಹೌದು ಸರ್", "en": "Hello"}
 TAG = {"te": "te-IN", "hi": "hi-IN", "kn": "kn-IN", "en": "en-IN"}
-
-
-def sample_text(language: str, gender: str) -> str:
-    return LINES[language].format(name="Vijaya" if gender == "female" else "Vijay", b=BUSINESS)
 
 
 def main() -> None:
@@ -51,7 +40,7 @@ def main() -> None:
             for c in cfg.catalogue.values():
                 if args.only and c.id != args.only:
                     continue
-                text = sample_text(c.language, c.gender)
+                text = sample_text(c.language)
                 chars += len(text)
                 r = client.post(
                     "https://api.cartesia.ai/tts/bytes",
