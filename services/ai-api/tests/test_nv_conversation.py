@@ -327,3 +327,77 @@ def test_the_cartesia_stream_yields_whole_samples_only() -> None:
 
 def test_the_measuring_clock_is_the_loops_own() -> None:
     assert abs(Conversation(stt=FakeStt(), llm=FakeLlm(), tts=FakeTts(), playout=FakePlayout(), session=Session("s", "te"), models={"fast": "a", "strong": "b"}).clock() - time.perf_counter()) < 1.0
+
+
+# ---- the speaking style of a call -------------------------------------------------------------------------------------------------------------------
+
+
+def call_prompt(**kw: Any) -> str:
+    from app.opening.prompt import call_system_prompt
+
+    base: dict[str, Any] = {"business": "Lakshmi Sarees", "assistant": "Vijaya", "language": "te", "opening_line": "నమస్కారం అండీ, నేను విజయ, లక్ష్మి సారీస్ నుంచి.", "goal": "reply", "facts": ["Open 10 to 7."]}
+    return call_system_prompt(**{**base, **kw})
+
+
+def test_the_old_call_prompt_is_unchanged_when_no_speaking_style_is_given() -> None:
+    plain = call_prompt()
+    assert "HOW TO SOUND ON A CALL" not in plain and "HOW TO TALK" not in plain
+
+
+@pytest.mark.parametrize("language", ["te", "hi", "kn", "ta", "ml", "en"])
+def test_the_call_style_is_strict_short_one_filler_mirroring_and_never_a_list(language: str) -> None:
+    prompt = call_prompt(language=language, speaking_style="everyday_mixed")
+    for needle in ("At most 2 short sentences", "ONE question at a time", "at most ONE per turn", "Mirror the caller", "Never read out a list", "never digit by digit"):
+        assert needle in prompt
+    assert len(prompt.split("HOW TO SOUND ON A CALL")[1]) < 2400  # the block is paid for by the token on every turn
+
+
+def test_the_assistant_is_not_told_to_announce_it_is_an_ai_unless_the_owners_switch_is_on_and_the_honesty_rule_is_always_there() -> None:
+    from app.opening.honesty import HONESTY_RULE
+
+    off = call_prompt(speaking_style="everyday_mixed", mention_ai=False)
+    on = call_prompt(speaking_style="everyday_mixed", mention_ai=True)
+    assert "Do NOT say that you are an AI assistant on your own" in off and "answer truthfully" in off
+    assert "already told the caller you are an AI assistant" in on and "Do NOT say that you are an AI assistant on your own" not in on
+    assert HONESTY_RULE in off and HONESTY_RULE in on and HONESTY_RULE in call_prompt()
+
+
+def test_the_owner_set_opening_line_is_in_the_prompt_unchanged() -> None:
+    opening = "నమస్కారం అండీ, నేను విజయ, లక్ష్మి సారీస్ నుంచి."
+    assert f"Your opening line was: {opening}" in call_prompt(speaking_style="everyday_mixed", opening_line=opening)
+
+
+def test_the_model_is_told_not_to_think_first_and_the_between_tools_form_is_tried_when_it_asks_for_it() -> None:
+    from app.conversation.providers import SarvamChatStream
+
+    bodies: list[dict[str, Any]] = []
+    delta = f"data: {json.dumps({'type': 'content_block_delta', 'delta': {'type': 'text_delta', 'text': 'సరే'}})}"
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        body = json.loads(req.content)
+        bodies.append(body)
+        if body["thinking"]["type"] == "disabled":
+            return httpx.Response(400, text='send "thinking": {"type": "between_tools"} instead')
+        return httpx.Response(200, text=delta)
+
+    async def go() -> list[str]:
+        client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+        return [d async for d in AnthropicStream("k", client=client).stream("s", [{"role": "user", "content": "x"}], "m")]
+
+    assert run(go()) == ["సరే"] and [b["thinking"]["type"] for b in bodies] == ["disabled", "between_tools"]
+
+    chat = "\n".join(["data: " + json.dumps({"choices": [{"delta": {"content": "హా "}}]}), "data: " + json.dumps({"choices": [{"delta": {}}]}), "data: " + json.dumps({"choices": [{"delta": {"content": "అండీ"}}]}), "data: [DONE]"])
+
+    async def go2() -> list[str]:
+        client = httpx.AsyncClient(transport=httpx.MockTransport(lambda req: httpx.Response(200, text=chat) if req.headers.get("api-subscription-key") == "k" else httpx.Response(401)))
+        return [d async for d in SarvamChatStream("k", client=client).stream("s", [{"role": "user", "content": "x"}], "sarvam-105b")]
+
+    assert run(go2()) == ["హా ", "అండీ"]
+
+
+def test_the_first_sound_counts_the_filler_and_the_first_audio_does_not() -> None:
+    from app.conversation.parts import TurnTimings
+
+    tm = TurnTimings(end_of_speech_at=1.0, first_audio_at=2.5, filler_at=1.7)
+    assert tm.first_sound_ms == pytest.approx(700) and tm.total_ms == pytest.approx(1500)
+    assert TurnTimings(end_of_speech_at=1.0, first_audio_at=1.4).first_sound_ms == pytest.approx(400)

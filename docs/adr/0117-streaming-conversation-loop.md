@@ -1,0 +1,23 @@
+# 0117. The streaming conversation loop and the call speaking style
+
+Status: accepted (owner job "natural voice", 28 Oct 2026). Telephony is still fake; nothing here dials or sends.
+
+## Context
+The owner found our Telugu voice robotic and slow. Measured before: the model took about 3.1 s (Claude Haiku 5.5 "thinks" before it answers unless told not to), the whole voice clip about 2 s, so a reply began after more than 4 s. Indian voice agents aim for under 600 to 700 ms and a person hangs up past 1.5 s.
+
+## Decisions
+1. **Nothing waits for the whole of anything** (`app/conversation/pipeline.py`): streamed speech recognition, streamed model, the first clause (first comma or stop, or 100 characters) goes to the voice at once, streamed voice audio goes to the line. Later pieces at sentence ends, never over 150 characters (`chunker.py`). The voice connection is opened while the model is thinking.
+2. **The parts are interfaces** (`parts.py`: `StreamingStt`, `StreamingLlm`, `StreamingTts`, `AudioSource`, `Playout`). Real ones are in `providers.py` (Sarvam realtime WebSocket speech recognition, Sarvam streaming voice, Cartesia Sonic over HTTP, Anthropic and Sarvam models), fakes in `fakes.py`. Tests and CI use only the fakes and open no socket; only `scripts/voice_bakeoff_natural.py` and `scripts/voice_latency_live.py` call providers, with keys from the environment and a character cap counted in code.
+3. **End of turn by silence of 300 to 450 ms per language** (Telugu 350, Hindi 350, Kannada 380, Tamil and Malayalam 420, English 300; `endpointing.py`), configurable between 200 and 800 ms.
+4. **Barge-in is our own detector.** `interrupt()` stops the line first (a counter makes every later write of the old reply a no-op), then cancels the model and the voice; `watch_for_interrupt()` listens to the caller's frames while we speak (100 ms of sound). We do not wait for the recogniser's VAD event (measured 454 ms after the first sound). Sarvam's voice socket has no cancel message: close the socket.
+5. **Fillers** from a set rendered before the call, in the same voice, when no reply audio is ready after 600 ms; at most one per turn, not the same twice in a row (`fillers.py`). Never a beep.
+6. **Model routing by rule** (`router.py`, no model call): yes/no/small talk to the fast tier; prices, numbers, bookings, dates and long turns to the strong tier. Which model is each tier is a deployment setting (ADR 0102).
+7. **Models are told not to think first** (`thinking: disabled`, or `between_tools` where a model asks for that form), learned once per model.
+8. **Speaking style on a call** (`style.py`, wired through `call_system_prompt(speaking_style=, mention_ai=)`): at most two short sentences, one question, at most one natural filler per turn, mirror the caller's mix of languages and switch with them, never read a list, numbers as people say them. The assistant does not announce it is an AI unless the owner's switch (ADR 0116) is on or the caller asks; the honesty rule is always in the prompt; the owner's opening line is used unchanged.
+9. **A latency eval runs in CI** on the fakes: a budget per component and the streaming property (first audio before the model has finished). The real numbers are measured on demand (`scripts/voice_latency_live.py`) and reported, not asserted in CI.
+
+## Consequences
+- Measured (this Mac, real providers, fake line): final text to first audio 350 ms p50 / 490 ms p95 with Cartesia + Sarvam 105b; 1.07 s from the caller's last word; before 4.2 s.
+- The loop is not connected to a dialer, the voice-note path or the web widget until a telephony provider is live.
+- A new dependency, `websockets`.
+- Not built: starting the model on the last partial transcript (about 250 ms), a per-workspace endpointing setting in the screens.

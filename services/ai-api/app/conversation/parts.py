@@ -38,6 +38,7 @@ class TurnTimings:
     first_token_at: float | None = None
     tts_request_at: float | None = None
     first_audio_at: float | None = None
+    filler_at: float | None = None
     done_at: float | None = None
     model_tier: str = ""
     reply_text: str = ""
@@ -71,6 +72,12 @@ class TurnTimings:
     def after_final_ms(self) -> float | None:
         """From the final transcript to the first audio: the part the loop itself controls."""
         return self._ms(self.final_at, self.first_audio_at)
+
+    @property
+    def first_sound_ms(self) -> float | None:
+        """From the last word to the first SOUND of any kind (the filler counts): what the caller feels as the assistant answering."""
+        times = [t for t in (self.filler_at, self.first_audio_at) if t is not None]
+        return self._ms(self.end_of_speech_at, min(times)) if times else None
 
     @property
     def total_ms(self) -> float | None:

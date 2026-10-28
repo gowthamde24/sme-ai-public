@@ -166,21 +166,67 @@ class AnthropicStream:
     def __init__(self, key: str, *, max_tokens: int = 160, client: httpx.AsyncClient | None = None) -> None:
         self._key, self._max_tokens = key, max_tokens
         self._client = client or httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0))
+        self._thinking_form: dict[str, str] = {}  # model -> the form of "do not think" it accepted (learned once, so no failed request is repeated)
 
     def __repr__(self) -> str:
         return "AnthropicStream()"
 
+    async def warm(self) -> None:
+        """Open the connection before the first turn (a new TLS connection is 300 ms or more from India)."""
+        with contextlib.suppress(httpx.HTTPError):
+            await self._client.head("https://api.anthropic.com")
+
     async def stream(self, system: str, messages: list[dict[str, str]], model: str) -> AsyncIterator[str]:
-        body = {"model": model, "max_tokens": self._max_tokens, "system": system, "messages": messages, "stream": True}
+        # these models "think" before they answer unless told not to, and the thinking is the first second of the wait; some want `between_tools` instead of `disabled`
+        forms = [self._thinking_form[model]] if model in self._thinking_form else ["disabled", "between_tools"]
+        for form in forms:
+            thinking = {"type": form}
+            body = {"model": model, "max_tokens": self._max_tokens, "system": system, "messages": messages, "stream": True, "thinking": thinking}
+            try:
+                async with self._client.stream("POST", ANTHROPIC, headers={"x-api-key": self._key, "anthropic-version": "2023-06-01"}, json=body) as resp:
+                    if resp.status_code == 400 and form == "disabled" and b"between_tools" in await resp.aread():
+                        continue
+                    if resp.status_code != 200:
+                        raise VoiceError(f"llm_http_{resp.status_code}")
+                    self._thinking_form[model] = form
+                    async for line in resp.aiter_lines():
+                        if not line.startswith("data:"):
+                            continue
+                        event = json.loads(line[5:].strip() or "{}")
+                        if event.get("type") == "content_block_delta" and (event.get("delta") or {}).get("type") == "text_delta":
+                            yield str(event["delta"]["text"])
+                    return
+            except httpx.HTTPError:
+                raise VoiceError("unreachable") from None
+
+
+class SarvamChatStream:
+    """Sarvam's hosted model (India) over `POST /v1/chat/completions`, streamed (OpenAI-shaped events). Its first token came in about 500 ms from this Mac, 200 ms before the Anthropic one; which model answers a job is
+    a deployment setting (ADR 0102), this class only makes the Sarvam one usable in the streaming loop."""
+
+    def __init__(self, key: str, *, max_tokens: int = 160, client: httpx.AsyncClient | None = None) -> None:
+        self._key, self._max_tokens = key, max_tokens
+        self._client = client or httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0))
+
+    def __repr__(self) -> str:
+        return "SarvamChatStream()"
+
+    async def warm(self) -> None:
+        with contextlib.suppress(httpx.HTTPError):
+            await self._client.head("https://api.sarvam.ai")
+
+    async def stream(self, system: str, messages: list[dict[str, str]], model: str) -> AsyncIterator[str]:
+        body = {"model": model, "messages": [{"role": "system", "content": system}, *messages], "stream": True, "max_tokens": self._max_tokens, "reasoning_effort": None}  # no reasoning pass before the answer
         try:
-            async with self._client.stream("POST", ANTHROPIC, headers={"x-api-key": self._key, "anthropic-version": "2023-06-01"}, json=body) as resp:
+            async with self._client.stream("POST", "https://api.sarvam.ai/v1/chat/completions", headers={"api-subscription-key": self._key}, json=body) as resp:
                 if resp.status_code != 200:
                     raise VoiceError(f"llm_http_{resp.status_code}")
                 async for line in resp.aiter_lines():
-                    if not line.startswith("data:"):
+                    if not line.startswith("data:") or "[DONE]" in line:
                         continue
-                    event = json.loads(line[5:].strip() or "{}")
-                    if event.get("type") == "content_block_delta" and (event.get("delta") or {}).get("type") == "text_delta":
-                        yield str(event["delta"]["text"])
+                    choice = (json.loads(line[5:].strip() or "{}").get("choices") or [{}])[0]
+                    piece = (choice.get("delta") or {}).get("content")
+                    if piece:
+                        yield str(piece)
         except httpx.HTTPError:
             raise VoiceError("unreachable") from None

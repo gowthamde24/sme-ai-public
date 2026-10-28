@@ -8,7 +8,6 @@ HARD CAP: 3,000 characters of text per engine (counted in code before every requ
 
 Writes DIR/<engine>/<lang>/<voice>/NN.wav (44.1 kHz mono), manifest.json, latency.json, usage.json and index.html (unlabeled A/B/C players with a reveal button)."""
 
-# ruff: noqa: E501
 
 from __future__ import annotations
 
@@ -174,7 +173,7 @@ def pct(values: list[float], p: float) -> float:
 
 
 def cartesia_voice_ids(client: httpx.Client, key: str) -> dict[str, str]:
-    found: dict[str, str] = {}
+    found: dict[str, str] = {"Saira": "1e9b9b3d-d2ce-4cac-9d05-bc36a63fa28e"}  # an English voice that is not on the first page of the list
     for lang in ("te", "hi", "kn", "en"):
         r = client.get("https://api.cartesia.ai/voices", params={"language": lang, "limit": 100}, headers={"X-API-Key": key, "Cartesia-Version": "2025-04-16"})
         r.raise_for_status()

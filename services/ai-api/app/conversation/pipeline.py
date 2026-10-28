@@ -200,4 +200,5 @@ class Conversation:
         tm.filler_played = True
         async with self._write_lock:
             if epoch == self._epoch:
+                tm.filler_at = self.clock()
                 await self.playout.write(picked[1])
