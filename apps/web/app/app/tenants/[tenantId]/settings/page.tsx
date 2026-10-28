@@ -76,9 +76,11 @@ import { CATALOGUE, planById } from "@/lib/plan/catalogue";
 import { readCatalogue, readWorkspacePlan } from "@/lib/plan/source";
 import { cancelPlanAction, endPlanTrialAction, fixPlanPaymentAction, startPlanAction } from "../plan-actions";
 import { topupsPart } from "./topups-part";
-import { BusinessForm } from "@/components/v2/app/settings/BusinessForm";
+import { BusinessForm, BusinessLogo } from "@/components/v2/app/settings/BusinessForm";
+import { getWorkspaceProfile, type WorkspaceProfile } from "@/lib/api/workspace";
+import { readTypeList } from "@/lib/packs/type-list";
 import { getProfile, PROFILE_LANGUAGES, type BusinessProfile } from "@/lib/api/profile";
-import { saveBusinessAction } from "./business-actions";
+import { logoAction, saveBusinessAction } from "./business-actions";
 import { signOutEverywhereAction } from "../../../actions";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
@@ -135,7 +137,10 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const fieldList: WorkspaceField[] | null = admin && fieldEntities.length > 0 ? await listCustomFields(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   // a workspace that existed before business types and has no field of its own keeps the Settings it always had; one made with a chosen business type, or that has fields, gets the tab
   // the business name, city and languages are editable by the people who run the business (read here; a failed read leaves the plain name)
-  const businessProfile: BusinessProfile | null = admin && (wanted === undefined || wanted === "business") ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const onBusiness = wanted === undefined || wanted === "business";
+  const workspace: WorkspaceProfile | null = admin && onBusiness ? await getWorkspaceProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const businessProfile: BusinessProfile | null = workspace ? { name: workspace.name, town: workspace.city, languages: workspace.languages.filter((l) => (PROFILE_LANGUAGES as readonly string[]).includes(l)), setupComplete: true } : admin && onBusiness ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const typeList = workspace && tenant.role === "owner" ? await readTypeList(lang) : null;
   const hasFields = admin && fieldEntities.length > 0 && (usesChecklist(pack) || (fieldList !== null && fieldList.length > 0));
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
   const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
@@ -251,7 +256,10 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                   town={businessProfile.town ?? ""}
                   languages={businessProfile.languages}
                   choices={PROFILE_LANGUAGES}
+                  usedIn={workspace?.nameUsedIn ?? []}
+                  owner={workspace && typeList && typeList.groups.length > 0 ? { groups: typeList.groups, typeWords: typeList.words, otherId: typeList.otherId, type: workspace.type, typeLabel: workspace.typeLabel ?? "", phone: workspace.phone ?? "" } : null}
                 />
+                {workspace ? <BusinessLogo action={logoAction.bind(null, tenantId)} words={wordsFor(lang, ["settings.biz.logo."])} logoUrl={workspace.logoUrl} initial={businessProfile.name.slice(0, 1).toUpperCase()} /> : null}
               </section>
             ) : null}
             <section className={surface} aria-label={t("settings.tab.business")}>

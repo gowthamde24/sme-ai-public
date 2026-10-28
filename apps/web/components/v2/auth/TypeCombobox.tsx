@@ -18,7 +18,7 @@ export const OTHER_MAX = 60;
  * that hides behind the keyboard). Keyboard: arrows move, Enter chooses, Esc closes. The choice goes with the form as the hidden field `name`; "Other" (`otherId`) shows a required text field "What is your business?" (`other_label`, 2 to 60 letters).
  * `onChoose` runs when a choice is made (the sign-up goes on to step 2 at once); with `askOther` the "Other" choice only shows its text field (the form that holds it checks the text). Each row carries `data-pack-card` with its id, as the cards did.
  */
-export function TypeCombobox({ groups, words, name = "type", otherId = null, askOther = true, initial = null, onChoose }: { groups: readonly TypeGroup[]; words: TypeWords; name?: string; otherId?: string | null; /** Show the text field "What is your business?" when Other is chosen (the first-login setup); false = Other is a choice like any other (sign-up step 1: the words are asked at setup). */ askOther?: boolean; initial?: string | null; onChoose?: (id: string) => void }) {
+export function TypeCombobox({ groups, words, name = "type", otherId = null, askOther = true, initial = null, otherInitial = "", onChoose }: { groups: readonly TypeGroup[]; words: TypeWords; name?: string; otherId?: string | null; /** Show the text field "What is your business?" when Other is chosen (the first-login setup); false = Other is a choice like any other (sign-up step 1: the words are asked at setup). */ askOther?: boolean; initial?: string | null; /** The words of "Other" already saved (Settings), put in its text field. */ otherInitial?: string; onChoose?: (id: string) => void }) {
   const uid = React.useId();
   const all = React.useMemo(() => groups.flatMap((g) => g.options), [groups]);
   const [chosen, setChosen] = React.useState<string | null>(initial && all.some((o) => o.id === initial) ? initial : null);
@@ -119,7 +119,7 @@ export function TypeCombobox({ groups, words, name = "type", otherId = null, ask
           <label htmlFor={`${uid}-other`} className={authLabel}>
             {words.otherAsk}
           </label>
-          <input id={`${uid}-other`} name="other_label" type="text" required minLength={OTHER_MIN} maxLength={OTHER_MAX} autoComplete="off" className={authField} />
+          <input id={`${uid}-other`} name="other_label" type="text" defaultValue={otherInitial} required minLength={OTHER_MIN} maxLength={OTHER_MAX} autoComplete="off" className={authField} />
           <p className={authHint}>{words.otherHint}</p>
         </div>
       ) : null}

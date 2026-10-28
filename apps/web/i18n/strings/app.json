@@ -70057,5 +70057,214 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "settings.biz.type.note": {
+  "en": "Changing the kind of business changes the words, the checklist and the starter messages. Your customers, leads and messages stay.",
+  "te": "వ్యాపార రకం మార్చితే పదాలు, చెక్‌లిస్ట్, మొదటి మెసేజ్‌లు మారతాయి. మీ కస్టమర్లు, లీడ్స్, మెసేజ్‌లు అలాగే ఉంటాయి.",
+  "hi": "व्यवसाय का प्रकार बदलने पर शब्द, चेकलिस्ट और शुरुआती संदेश बदल जाते हैं। आपके ग्राहक, लीड और संदेश वैसे ही रहते हैं।",
+  "kn": "ವ್ಯಾಪಾರದ ವಿಧ ಬದಲಿಸಿದರೆ ಪದಗಳು, ಚೆಕ್‌ಲಿಸ್ಟ್, ಮೊದಲ ಸಂದೇಶಗಳು ಬದಲಾಗುತ್ತವೆ. ನಿಮ್ಮ ಗ್ರಾಹಕರು, ಲೀಡ್‌ಗಳು, ಸಂದೇಶಗಳು ಹಾಗೆಯೇ ಇರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.phone": {
+  "en": "Business phone",
+  "te": "వ్యాపారం ఫోన్ నంబర్",
+  "hi": "व्यवसाय का फ़ोन नंबर",
+  "kn": "ವ್ಯಾಪಾರದ ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.phone.help": {
+  "en": "The number customers can call you on. You can leave it empty.",
+  "te": "కస్టమర్లు మీకు కాల్ చేసే నంబర్. ఖాళీగా వదిలేయవచ్చు.",
+  "hi": "वह नंबर जिस पर ग्राहक आपको कॉल कर सकें। खाली छोड़ सकते हैं।",
+  "kn": "ಗ್ರಾಹಕರು ನಿಮಗೆ ಕಾಲ್ ಮಾಡುವ ನಂಬರ್. ಖಾಲಿ ಬಿಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.used.4": {
+  "en": "The voice preview you hear in Settings",
+  "te": "సెట్టింగ్స్‌లో మీరు వినే వాయిస్ ప్రివ్యూలో",
+  "hi": "सेटिंग्स में सुनाई देने वाले वॉइस प्रीव्यू में",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ನೀವು ಕೇಳುವ ವಾಯ್ಸ್ ಪ್ರಿವ್ಯೂನಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.type_pack_data_present": {
+  "en": "This business already has records of its own kind (for example orders or students), so the kind cannot be changed.",
+  "te": "ఈ వ్యాపారంలో ఇప్పటికే దాని రకానికి చెందిన రికార్డులు (ఉదా: ఆర్డర్లు, విద్యార్థులు) ఉన్నాయి, కాబట్టి రకాన్ని మార్చలేము.",
+  "hi": "इस व्यवसाय में अपने प्रकार के रिकॉर्ड (जैसे ऑर्डर या विद्यार्थी) पहले से हैं, इसलिए प्रकार नहीं बदल सकते।",
+  "kn": "ಈ ವ್ಯಾಪಾರದಲ್ಲಿ ಅದರ ವಿಧದ ದಾಖಲೆಗಳು (ಉದಾ: ಆರ್ಡರ್, ವಿದ್ಯಾರ್ಥಿಗಳು) ಈಗಾಗಲೇ ಇವೆ, ಆದ್ದರಿಂದ ವಿಧ ಬದಲಿಸಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.type_lead_data_present": {
+  "en": "This business already has leads, so it cannot be switched to a kind with its own pages.",
+  "te": "ఈ వ్యాపారంలో ఇప్పటికే లీడ్స్ ఉన్నాయి, కాబట్టి సొంత పేజీలున్న రకంలోకి మార్చలేము.",
+  "hi": "इस व्यवसाय में पहले से लीड हैं, इसलिए इसे अपने पेज वाले प्रकार में नहीं बदल सकते।",
+  "kn": "ಈ ವ್ಯಾಪಾರದಲ್ಲಿ ಈಗಾಗಲೇ ಲೀಡ್‌ಗಳು ಇವೆ, ಆದ್ದರಿಂದ ತನ್ನದೇ ಪುಟಗಳಿರುವ ವಿಧಕ್ಕೆ ಬದಲಿಸಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.err.type_unknown_type": {
+  "en": "That kind of business is not available.",
+  "te": "ఆ వ్యాపార రకం అందుబాటులో లేదు.",
+  "hi": "वह व्यवसाय प्रकार उपलब्ध नहीं है।",
+  "kn": "ಆ ವ್ಯಾಪಾರದ ವಿಧ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.title": {
+  "en": "Business logo",
+  "te": "వ్యాపారం లోగో",
+  "hi": "व्यवसाय का लोगो",
+  "kn": "ವ್ಯಾಪಾರದ ಲೋಗೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.help": {
+  "en": "JPG, PNG or WebP, up to 5 MB.",
+  "te": "JPG, PNG లేదా WebP, 5 MB వరకు.",
+  "hi": "JPG, PNG या WebP, 5 MB तक।",
+  "kn": "JPG, PNG ಅಥವಾ WebP, 5 MB ವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.choose": {
+  "en": "Choose a picture",
+  "te": "ఫోటో ఎంచుకోండి",
+  "hi": "तस्वीर चुनें",
+  "kn": "ಫೋಟೋ ಆಯ್ಕೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.save": {
+  "en": "Save logo",
+  "te": "లోగో సేవ్ చేయండి",
+  "hi": "लोगो सेव करें",
+  "kn": "ಲೋಗೋ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.remove": {
+  "en": "Remove logo",
+  "te": "లోగో తీసివేయండి",
+  "hi": "लोगो हटाएं",
+  "kn": "ಲೋಗೋ ತೆಗೆದುಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.saved": {
+  "en": "Logo updated.",
+  "te": "లోగో మారింది.",
+  "hi": "लोगो बदल गया।",
+  "kn": "ಲೋಗೋ ಬದಲಾಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.invalid": {
+  "en": "Choose a picture first.",
+  "te": "ముందు ఒక ఫోటో ఎంచుకోండి.",
+  "hi": "पहले एक तस्वीर चुनें।",
+  "kn": "ಮೊದಲು ಒಂದು ಫೋಟೋ ಆಯ್ಕೆಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.toobig": {
+  "en": "That picture is bigger than 5 MB.",
+  "te": "ఆ ఫోటో 5 MB కంటే పెద్దది.",
+  "hi": "वह तस्वीर 5 MB से बड़ी है।",
+  "kn": "ಆ ಫೋಟೋ 5 MB ಗಿಂತ ದೊಡ್ಡದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.kind": {
+  "en": "Use a JPG, PNG or WebP picture.",
+  "te": "JPG, PNG లేదా WebP ఫోటో వాడండి.",
+  "hi": "JPG, PNG या WebP तस्वीर इस्तेमाल करें।",
+  "kn": "JPG, PNG ಅಥವಾ WebP ಫೋಟೋ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.role": {
+  "en": "Only the Owner or an Admin can change the logo.",
+  "te": "లోగో ఓనర్ లేదా అడ్మిన్ మాత్రమే మార్చగలరు.",
+  "hi": "लोगो सिर्फ़ ओनर या एडमिन बदल सकते हैं।",
+  "kn": "ಲೋಗೋವನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.failed": {
+  "en": "Could not save the logo. Try again.",
+  "te": "లోగో సేవ్ చేయలేకపోయాను. మళ్లీ ప్రయత్నించండి.",
+  "hi": "लोगो सेव नहीं हो सका। फिर कोशिश करें।",
+  "kn": "ಲೋಗೋ ಸೇವ್ ಮಾಡಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.biz.logo.err.session": {
+  "en": "Please sign in again.",
+  "te": "దయచేసి మళ్లీ సైన్ ఇన్ చేయండి.",
+  "hi": "कृपया फिर से साइन इन करें।",
+  "kn": "ದಯವಿಟ್ಟು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
