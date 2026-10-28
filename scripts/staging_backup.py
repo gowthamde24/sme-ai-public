@@ -26,7 +26,16 @@ import seed_staging as ss  # noqa: E402
 ROOT = Path(__file__).resolve().parents[1]
 CONTAINER = "supabase_db_sme-ai-agent"  # the AGENT stack: never the owner's (supabase_db_sme-ai)
 DEFAULT_DIR = Path("/Volumes/Stack19/stack19/staging-backups")
-SCHEMAS = ["public", "app", "auth", "erasure", "integrations", "notify", "packs", "privacy", "research", "scheduler", "suppression", "team", "voice", "workspace", "supabase_migrations"]
+SCHEMAS = ["public", "app", "auth", "erasure", "integrations", "notify", "packs", "privacy", "research", "scheduler", "suppression", "team", "voice", "workspace", "billing", "supabase_migrations"]
+
+
+# Schemas the platform itself manages (a Supabase restore brings them; a plain dump does not need them). Any OTHER schema that is not in SCHEMAS would be silently missing from the backup (the `billing` schema was, until the first
+# real drill on 28 Oct 2026), so the dump stops and says so.
+MANAGED = {"extensions", "graphql", "graphql_public", "pgbouncer", "realtime", "storage", "vault", "information_schema"}
+
+
+def unlisted_schemas(existing: set[str]) -> set[str]:
+    return {s for s in existing if not s.startswith("pg_") and s not in SCHEMAS and s not in MANAGED}
 
 
 def counts_sql() -> str:
@@ -52,6 +61,10 @@ def remote_json(sql: str) -> list[dict]:
 
 def dump(directory: Path) -> Path:
     role, password = credentials()
+    existing = {str(next(iter(row.values()))) for row in remote_json("select nspname from pg_namespace")}
+    missing = unlisted_schemas(existing)
+    if missing:
+        raise SystemExit(f"the database has schemas the backup does not list: {sorted(missing)}. Add them to SCHEMAS (or to MANAGED if the platform owns them) in scripts/staging_backup.py, or the backup would silently leave them out.")
     directory.mkdir(parents=True, exist_ok=True)
     os.chmod(directory, 0o700)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -104,7 +117,7 @@ def drill(file: Path) -> int:
         remote = dict(v.split("=") for v in (str(next(iter(row.values()))) for row in remote_json(counts_sql())))
         local = dict(v.split("=") for v in psql(scratch, counts_sql()).splitlines())
         # sign-in tables keep growing after the dump (the scheduler worker signs in every few minutes): there the copy may hold fewer rows, never more
-        volatile = {"auth.sessions", "auth.refresh_tokens", "auth.mfa_amr_claims", "auth.audit_log_entries"}
+        volatile = {"auth.sessions", "auth.refresh_tokens", "auth.mfa_amr_claims", "auth.audit_log_entries", "auth.flow_state", "auth.one_time_tokens", "auth.mfa_challenges"}
         diff = {k: (remote.get(k), local.get(k)) for k in sorted(set(remote) | set(local))
                 if remote.get(k) != local.get(k) and not (k in volatile and int(local.get(k) or 0) <= int(remote.get(k) or 0))}
         print(f"row counts: {len(remote)} tables in staging, {len(local)} restored, {len(diff)} differ")

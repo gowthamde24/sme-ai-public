@@ -20,6 +20,8 @@ the operator to create one on someone's behalf, and none is needed yet. Then add
 Before you open it: run the hosted verifier (`scripts/verify_hosted.py`, `hosting-deploy.md`) and record its output with the hosting
 reference. `hosting_ref` points at that record: the deployment AND the verifier's `ALL CHECKS PASSED` for the day you open.
 
+Run the verifier with `HOSTED_ALLOWED_PROVIDERS=google` when "Continue with Google" is on (sign-up stays closed, so only existing people can use it); any other provider still fails. Records of the first real use are in `docs/compliance/` (28 Oct 2026: hosting verification, restore drill, the owner's scope note).
+
 ## The four prerequisites (all four, every time)
 
 | Reference | What must be true | Example reference |
