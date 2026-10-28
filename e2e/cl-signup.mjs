@@ -111,7 +111,7 @@ async function signUpThrough(index, label) {
     await page.fill("#signup-password", PW);
     await Promise.all([page.waitForURL(/\/signup\/check-email/, { timeout: 30000 }), page.click('details[data-signup=email] button[type="submit"]')]);
   }, page);
-  await step(`${label}-3`, `the e-mail is confirmed, the person signs in, and the setup makes the business BY ITSELF as ${id} (nothing is asked), landing on Today`, async () => {
+  await step(`${label}-3`, `the e-mail is confirmed, the person signs in, and the setup asks the name only (the kind was chosen at sign-up) and makes the business as ${id}, landing on Today`, async () => {
     const meta = psql(`select raw_user_meta_data->>'business_type' from auth.users where email = '${email}'`);
     must(meta === id, `the account's business_type is "${meta}"`);
     confirmEmail(email);
@@ -120,11 +120,12 @@ async function signUpThrough(index, label) {
     await page.fill('input[name="password"]', PW);
     await page.click('button:has-text("Sign in")');
     await page.waitForURL(/\/setup/, { timeout: 30000 });
-    must((await page.getByRole("radio").count()) === 0, "the setup asks a question");
+    await page.fill("#setup-business-name", `E2E Silks ${STAMP} ${label}`); // the kind was chosen at sign-up: the set-up asks the name only
+    await page.click('form button[type="submit"]');
     await page.waitForURL(/\/app\/tenants\/[0-9a-f-]{36}/, { timeout: 90000 });
     const row = psql(`select t.id || '|' || t.name || '|' || w.pack_code || '|' || w.source from public.tenants t join public.memberships m on m.tenant_id = t.id join auth.users u on u.id = m.user_id join packs.workspace_pack w on w.tenant_id = t.id where u.email = '${email}'`);
     const [tenant, name, code, source] = row.split("|");
-    must(code === id && source === "signup" && name === "My business", `the workspace is "${row}"`);
+    must(code === id && source === "signup" && name === `E2E Silks ${STAMP} ${label}`, `the workspace is "${row}"`);
     // the throwaway workspace is renamed so the clean-up (e2e- slug and "E2E Silks ..." name only) can find it. LOCAL database only.
     psql(`begin; set local session_replication_role = replica; update public.tenants set name = 'E2E Silks ${STAMP} ${label}', slug = 'e2e-${STAMP}-${label}' where id = '${tenant}'; commit;`);
     out.tenant = tenant;
@@ -377,13 +378,15 @@ for (const { id, i } of others) {
     await shot(p, `${suffix}-today`);
     return `${code}; terms ${accepted}`;
   };
-  await step("G2", "after the trip to Google (the kind of business was remembered in the browser): the Google-like account lands on /setup, which makes the business BY ITSELF with that kind and records the terms at setup", async () => {
+  await step("G2", "after the trip to Google (the kind of business was remembered in the browser): the Google-like account lands on /setup, which asks the name and makes the business with that kind and records the terms at setup", async () => {
     const email = await googleLike("goo");
     await page.goto(`${BASE}/login`);
     await page.fill('input[name="email"]', email);
     await page.fill('input[name="password"]', PW);
     await page.click('button:has-text("Sign in")');
     await page.waitForURL(/\/setup/, { timeout: 30000 });
+    await page.fill("#setup-business-name", `E2E Silks ${STAMP} goo`); // the remembered kind is already chosen: the name is the only thing asked
+    await page.click('form button[type="submit"]');
     await page.waitForURL(/\/app\/tenants\/[0-9a-f-]{36}/, { timeout: 90000 });
     return finish(page, email, "goo", IDS[1]);
   }, page);
@@ -399,10 +402,13 @@ for (const { id, i } of others) {
     await p.fill('input[name="password"]', PW);
     await p.click('button:has-text("Sign in")');
     await p.waitForURL(/\/setup/, { timeout: 30000 });
-    must((await p.getByRole("radio").count()) === IDS.length + 4, "the setup does not ask the kind of business");
+    must((await p.getByRole("combobox").count()) === 1, "the setup does not ask the kind of business (one searchable list)");
+    await p.getByRole("combobox").focus();
+    await p.locator(`[data-pack-card="${IDS[2]}"]`).waitFor();
     await shot(p, "google-setup-asks");
-    await p.getByRole("radio", { name: cards.packs[2].names.en }).check();
-    await Promise.all([p.waitForURL(/\/app\/tenants\/[0-9a-f-]{36}/, { timeout: 90000 }), p.click('button[type="submit"]')]);
+    await p.locator(`[data-pack-card="${IDS[2]}"]`).click();
+    await p.fill("#setup-business-name", `E2E Silks ${STAMP} goq`);
+    await Promise.all([p.waitForURL(/\/app\/tenants\/[0-9a-f-]{36}/, { timeout: 90000 }), p.click('form button[type="submit"]')]);
     return finish(p, email, "goq", IDS[2]);
   }, second.page);
   await second.context.close();
