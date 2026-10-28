@@ -50,6 +50,7 @@ from app.assistant.db import AssistantDb
 from app.assistant.hygiene import leaked_names
 from app.assistant.language import (
     NO_ANSWER,
+    NO_RECORD_HELP,
     PLAIN_WORDS,
     SEE_CARDS,
     WAITING_ALSO,
@@ -94,6 +95,8 @@ class Reply:
     kind: str
     sources: list[SourceOut] = field(default_factory=list)
     drafts: list[DraftCardOut] = field(default_factory=list)
+    # job EA: the task a `confirm_action` reply proposes, or a `clarify` reply asks about (stored with the reply)
+    task_id: uuid.UUID | None = None
 
 
 @dataclass(frozen=True)
@@ -173,7 +176,12 @@ class AssistantRunner:
         now: Callable[[], datetime] | None = None,
         delimiter: str | None = None,
         on_reply: Callable[[str, str], None] | None = None,
+        help_on_empty: bool = False,
+        typed_replies: bool = False,
     ) -> None:
+        self._typed = typed_replies   # job EA: the conversational route stores the type of each reply (confirm_action, clarify); the written Ask does not
+        # job EA: the conversational assistant says "no record" AND offers one way forward (NO_RECORD_HELP); the written Ask keeps the bare NO_ANSWER
+        self._empty = NO_RECORD_HELP if help_on_empty else NO_ANSWER
         self._on_reply = on_reply  # job BD: the voice route speaks the finished answer here, while the run is still open (so it can be charged to it)
         self._db, self._router, self._ctx = db, as_router(llm), ctx
         self._now = now or (lambda: datetime.now(UTC))
@@ -344,7 +352,7 @@ class AssistantRunner:
                     notes = (*notes, prompts.NOTE_REPAIR_SHAPE)
             # no acceptable reply: a fixed one, in the owner's language, with whatever drafts were made
             self._note_fallback(turns, repaired)
-            fallback = Reply(NO_ANSWER[language], language, "refusal", [], list(self._state.drafts))
+            fallback = Reply(self._empty[language], language, "refusal", [], list(self._state.drafts))
             return self._finish(
                 fallback, message_id, emit, turns, status="failed", code="invalid_output"
             )
@@ -353,6 +361,90 @@ class AssistantRunner:
         except AgentDbError as exc:
             status, code, shown = self._classify(exc)
             return self._end(status, code, turns, shown)
+
+    # ------------------------------------------------------------------ a chat turn with no tools (job EA)
+    def run_chat(
+        self,
+        *,
+        question: str,
+        language: Language,
+        history: list[dict[str, Any]],
+        emit: Callable[[str, dict[str, Any]], None],
+        message_id: uuid.UUID,
+        assistant_name: str,
+        business_name: str,
+        small: bool,
+        owner_notes: str = "",
+    ) -> Outcome:
+        """Small talk and general help: ONE model call (a second only to put a reply into the person's language), no tools, no sources. The model has no record of the business in front of it, so
+        it cannot state one; the same cost reservation, hygiene and language checks as the tool path apply."""
+        turns = 0
+        try:
+            run = self._db.read_run()
+            if run.status != "running":
+                return Outcome("failed", "tool_failed")
+            if run.expires_at <= self._now():
+                raise RunExpired
+            notes: tuple[str, ...] = ()
+            for turn in (1, 2):
+                turns = turn
+                self._guard()
+                emit("step", {"type": "step", "step": "working"})
+                request = prompts.build_chat_request(
+                    delimiter=self._delimiter,
+                    question=question,
+                    language=language,
+                    history=history,
+                    today=self._now(),
+                    assistant_name=assistant_name,
+                    business_name=business_name,
+                    small=small,
+                    notes=notes,
+                    owner_notes=owner_notes,
+                )
+                response = self._complete(request, f"usage-{turn}", language)
+                try:
+                    final = prompts.ChatReply.model_validate(response.structured)
+                except ValidationError:
+                    if turn == 1:
+                        notes = (prompts.NOTE_REPAIR_SHAPE,)
+                        continue
+                    break
+                if leaked_names(final.answer):
+                    logger.warning("assistant run %s: a chat answer named an internal name; replaced by the fixed sentence (%s)", self._ctx.run_id, language)
+                    return self._finish(Reply(PLAIN_WORDS[language], language, "clarify"), message_id, emit, turns)
+                if final.language != language or not reply_matches(final.answer, language):
+                    if turn == 1:
+                        notes = (prompts.NOTE_REPAIR_LANGUAGE,)
+                        continue
+                    break
+                return self._finish(Reply(final.answer.strip(), language, final.kind), message_id, emit, turns)
+            self._note_fallback(turns, set())
+            return self._finish(Reply(PLAIN_WORDS[language], language, "clarify"), message_id, emit, turns, status="failed", code="invalid_output")
+        except _Stop as stop:
+            return self._end(stop.status, stop.error_code, turns, stop.shown)
+        except AgentDbError as exc:
+            status, code, shown = self._classify(exc)
+            return self._end(status, code, turns, shown)
+
+    def _complete(self, request: LlmRequest, key: str, language: str) -> Any:
+        """Reserve the worst-case cost, call the model, record the usage (the tool loop does the same inline)."""
+        llm = self._pick(request)
+        self._db.reserve_cost(key, model=llm.model_id, max_input_tokens=input_token_bound(request), max_output_tokens=request.max_output_tokens)
+        try:
+            called = time.perf_counter()
+            response = llm.complete(request)
+            self._model_ms += (time.perf_counter() - called) * 1000.0
+        except LlmError as exc:
+            logger.warning("assistant run %s: model call failed (%s)", self._ctx.run_id, exc.code)
+            if exc.code in NOT_BILLED:
+                try:
+                    self._db.release_cost(key, reason=exc.code)
+                except AgentDbError:
+                    pass
+            raise _Stop("failed", "model_failed", "model_busy" if exc.code == "rate_limited" else None) from None
+        self._db.record_usage(key, response.usage)
+        return response
 
     def _web_tools(self) -> frozenset[str]:
         """The web tools the owner has switched on (job BP): a tool whose provider is not configured is never offered."""
@@ -462,7 +554,7 @@ class AssistantRunner:
             if searched and not self._state.items:
                 # the tools ran and found NOTHING: there is no record the model could cite, so asking again can only cost two more model calls and end in the same fixed sentence (a Telugu Ask took 37 s that way). Say it now.
                 logger.info("assistant run %s: nothing found and an answer with no source; answered with the fixed sentence at turn %d (%s)", self._ctx.run_id, turn, language)
-                return Reply(NO_ANSWER[language], language, "refusal", [], list(self._state.drafts))
+                return Reply(self._empty[language], language, "refusal", [], list(self._state.drafts))
             return self._once("sources", prompts.NOTE_REPAIR_SOURCES, repaired)
         # an amount is stated only exactly as a tool returned it: not the owner's own number repeated back as if it were done, not a sum, not a guess
         if any(a not in self._state.allowed_paise for a in money_amounts(final.answer)):
@@ -520,7 +612,9 @@ class AssistantRunner:
         *,
         status: str = "succeeded",
         code: str | None = None,
+        extra: tuple[tuple[str, dict[str, Any]], ...] = (),
     ) -> Outcome:
+        """`extra`: events sent after the drafts (job EA: `confirm_action`, `clarify`). A reply that is not a plain answer has its type (and task) stored right after it."""
         self._guard()
         self._db.save_reply(
             message_id=message_id,
@@ -533,6 +627,12 @@ class AssistantRunner:
             ],
             drafts=[{"type": d.kind, "id": str(d.id)} for d in reply.drafts],
         )
+        stored_kind = "confirm_action" if reply.task_id is not None and reply.kind == "confirm_action" else ("clarify" if reply.kind == "clarify" else "answer")
+        if self._typed and stored_kind != "answer":
+            try:
+                self._db.mark_reply(message_id=message_id, kind=stored_kind, task_id=reply.task_id)
+            except AgentDbError as exc:   # the type is a label for the history; the answer itself is stored, so a failure here is logged by code and the turn goes on
+                logger.warning("assistant reply type could not be stored (%s)", exc.code)
         words = reply.text.split(" ")
         chunk = ""
         for word in words:
@@ -546,6 +646,8 @@ class AssistantRunner:
             emit("source", {"type": "source", **source.model_dump(mode="json")})
         for draft in reply.drafts:
             emit("draft", {"type": "draft", **draft.model_dump(mode="json")})
+        for name, data in extra:
+            emit(name, {"type": name, **data})
         if self._on_reply is not None:
             try:
                 self._on_reply(reply.text, reply.language)
@@ -557,6 +659,26 @@ class AssistantRunner:
             logger.warning("assistant run could not be closed (%s)", exc.code)
         logger.info("assistant run finished: status=%s code=%s turns=%d ms=%d model_ms=%d language=%s", status, code or "-", turns, self._elapsed_ms(), self._model_ms, reply.language)
         return Outcome(status, code, reply, turns)
+
+    def finish_with(
+        self,
+        reply: Reply,
+        message_id: uuid.UUID,
+        emit: Callable[[str, dict[str, Any]], None],
+        extra: tuple[tuple[str, dict[str, Any]], ...] = (),
+    ) -> Outcome:
+        """Job EA: store and send a reply that code made (a plan, a question, a fixed sentence) and close the run."""
+        try:
+            return self._finish(reply, message_id, emit, 0, extra=extra)
+        except _Stop as stop:
+            return self._end(stop.status, stop.error_code, 0, stop.shown)
+        except AgentDbError as exc:
+            status, code, shown = self._classify(exc)
+            return self._end(status, code, 0, shown)
+
+    def fail_with(self, code: str | None, shown: str | None = None) -> Outcome:
+        """Job EA: close the run as failed with a code the stream turns into its fixed error (`budget` and the like)."""
+        return self._end("failed", code, 0, shown)
 
     def _elapsed_ms(self) -> int:
         return int((time.perf_counter() - self._started) * 1000)

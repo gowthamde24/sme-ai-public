@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import threading
 import uuid
 from collections.abc import Callable
 from typing import Any
@@ -18,8 +19,6 @@ from fastapi import APIRouter, WebSocket
 from fastapi.concurrency import run_in_threadpool
 from starlette.websockets import WebSocketDisconnect
 
-from app.assistant.models import MessageIn
-from app.assistant.routes import start_message
 from app.assistant_settings import data as settings_data
 from app.auth.deps import Runtime, TenantContext
 from app.auth.jwt import AuthError
@@ -31,9 +30,12 @@ from app.conversation.fallback import FallbackTts
 from app.conversation.picker import choices_of
 from app.conversation.pronounce import default_pronunciations
 from app.conversation.providers import SarvamRealtimeStt
+from app.errors import ApiError
 from app.opening.prompt import call_system_prompt
 from app.opening.routes import rendered_opening
 from app.tenancy.models import Role
+from app.turns.models import TurnIn
+from app.turns.service import confirm_decision, start_turn
 
 log = logging.getLogger("app.browser_voice")
 router = APIRouter(tags=["browser-voice"])
@@ -68,7 +70,14 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
         return system_prompt(business=ctx.tenant.name, assistant=name, language=language, opening_line=line, mention_ai=mention)
 
     def open_ask(conversation_id: uuid.UUID, message_id: uuid.UUID, text: str):  # type: ignore[no-untyped-def]
-        return start_message(runtime, ctx, MessageIn(message_id=message_id, conversation_id=conversation_id, text=text))
+        # the same turn as the written chat (job EA): it decides again what the words are, runs the tool path or the planner, and ends in a typed reply
+        return start_turn(runtime, ctx, TurnIn(message_id=message_id, conversation_id=conversation_id, text=text))
+
+    def confirm(action_id: uuid.UUID, decision: str) -> dict[str, Any]:
+        if ctx.role != Role.OWNER:
+            raise ApiError(403, "forbidden", "Only the owner can say yes to a plan.")
+        out = confirm_decision(runtime, ctx, action_id, decision, lambda fn, *args: threading.Thread(target=fn, args=args, daemon=True).start())
+        return out.model_dump(mode="json")
 
     ask = AskLlm(AskTurns(open_ask), emit)
     llm = TieredLlm(CaptionLlm(bv.fast_llm(), emit), ask, on_ask)
@@ -81,6 +90,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
         models=bv.model_ids(),
         voice_for=lambda language: bv.config.resolve(language, chosen.get(language)).id,
         fillers=bv.fillers,
+        confirm=confirm,
     )
 
 

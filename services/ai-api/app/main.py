@@ -191,6 +191,7 @@ from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
 from app.today.repository import PostgrestTodayRepository
 from app.today.routes import router as today_router
+from app.turns.routes import router as turns_router
 from app.visits import errors as visit_errors
 from app.visits.repository import PostgrestVisitsRepository
 from app.visits.routes import router as visits_router
@@ -1163,6 +1164,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(pricelists_router)
     app.include_router(today_router)
     app.include_router(assistant_router)
+    app.include_router(turns_router)
     app.include_router(voice_router)
     app.include_router(connectors_router)
     app.include_router(webhooks_router)

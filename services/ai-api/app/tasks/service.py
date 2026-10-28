@@ -75,6 +75,10 @@ class TasksService:
         except Exception:   # an unreadable answer is treated as not a school by the API; the database decides again when the task is saved (SM951)
             return False
 
+    def is_school(self, runtime: Runtime, token: str, tenant_id: uuid.UUID) -> bool:
+        """Job EA: does the database say this workspace is a school? (The conversational assistant keeps fees, marks and dues out of a chat with a model.)"""
+        return self._school(runtime, token, tenant_id)
+
     def plan(self, runtime: Runtime, token: str, tenant_id: uuid.UUID, tenant_name: str, body: PlanIn, refusal: Any) -> TaskOut:
         task_id = uuid.UUID(str(body.task_id)) if body.task_id else uuid.uuid4()
         if body.task_id:

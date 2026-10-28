@@ -56,10 +56,12 @@ class Conversation:
         tools_available: bool = False,
         clock: Callable[[], float] = time.perf_counter,
         on_stt: Callable[[SttEvent], None] | None = None,
+        router: Callable[[str, bool, int], Tier] | None = None,
     ) -> None:
         self.stt, self.llm, self.tts, self.playout = stt, llm, tts, playout
         self.session, self.models, self.fillers, self.voice = session, models, fillers, voice
         self.filler_after_ms, self.tools_available, self.clock = filler_after_ms, tools_available, clock
+        self.router = router or (lambda text, tools, turn: route(text, tools_available=tools, turn_number=turn))   # the browser session routes by the conversational assistant's intent (job EA)
         self.on_stt = on_stt  # the browser session shows the caller's words as they come (partials and the final); the phone loop leaves it None
         self._epoch = 0
         self._reply_task: asyncio.Future[None] | None = None
@@ -149,7 +151,7 @@ class Conversation:
 
     async def _reply(self, user_text: str, tm: TurnTimings) -> None:
         epoch = self._epoch
-        tier = route(user_text, tools_available=self.tools_available, turn_number=self.turns)
+        tier = self.router(user_text, self.tools_available, self.turns)
         tm.model_tier = tier
         messages = [*self.session.history, {"role": "user", "content": user_text}]
         queue: asyncio.Queue[str | None] = asyncio.Queue()

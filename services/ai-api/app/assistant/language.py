@@ -101,6 +101,27 @@ NO_ANSWER: dict[Language, str] = {
     "ml": "ഇത് നിങ്ങളുടെ രേഖകളിൽ എനിക്ക് കണ്ടെത്താനായില്ല, അതിനാൽ ഞാൻ ഊഹിച്ചു പറയില്ല.",
 }
 
+# job EA: the conversational assistant says this, not the bare NO_ANSWER, when a question about the business's own records found nothing: plainly "no record", then ONE way forward. Not model output.
+# A native reader of each language should check these words.
+NO_RECORD_HELP: dict[Language, str] = {
+    "en": "I could not find a record of that, so I will not guess. Tell me a customer's name, a date or a product and I will look again, or ask me to draft a follow-up.",
+    "te": "దీని గురించి మీ రికార్డుల్లో ఏమీ కనిపించలేదు, అందుకే ఊహించి చెప్పను. కస్టమర్ పేరు, తేదీ లేదా వస్తువు చెప్పండి, మళ్ళీ చూస్తాను; లేదా ఫాలో-అప్ డ్రాఫ్ట్ చేయమని అడగండి.",
+    "hi": "इसका कोई रिकॉर्ड मुझे नहीं मिला, इसलिए मैं अंदाज़ा नहीं लगाऊँगा। किसी ग्राहक का नाम, तारीख या सामान बताइए, मैं फिर देखता हूँ; या फॉलो-अप ड्राफ़्ट बनाने को कहिए।",
+    "kn": "ಇದರ ಬಗ್ಗೆ ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ಏನೂ ಸಿಗಲಿಲ್ಲ, ಹಾಗಾಗಿ ನಾನು ಊಹಿಸುವುದಿಲ್ಲ. ಗ್ರಾಹಕರ ಹೆಸರು, ದಿನಾಂಕ ಅಥವಾ ವಸ್ತು ಹೇಳಿ, ಮತ್ತೆ ನೋಡುತ್ತೇನೆ; ಅಥವಾ ಫಾಲೋ-ಅಪ್ ಡ್ರಾಫ್ಟ್ ಮಾಡಲು ಹೇಳಿ.",
+    "ta": "இதைப் பற்றி உங்கள் பதிவுகளில் எதுவும் கிடைக்கவில்லை, அதனால் நான் ஊகிக்க மாட்டேன். வாடிக்கையாளர் பெயர், தேதி அல்லது பொருளைச் சொல்லுங்கள், மீண்டும் பார்க்கிறேன்; அல்லது பின்தொடர்வு வரைவு செய்யச் சொல்லுங்கள்.",
+    "ml": "ഇതിനെക്കുറിച്ച് നിങ്ങളുടെ രേഖകളിൽ ഒന്നും കണ്ടില്ല, അതിനാൽ ഞാൻ ഊഹിച്ചു പറയില്ല. ഉപഭോക്താവിന്റെ പേര്, തീയതി അല്ലെങ്കിൽ ഉൽപ്പന്നം പറയൂ, ഞാൻ വീണ്ടും നോക്കാം; അല്ലെങ്കിൽ ഫോളോ-അപ്പ് ഡ്രാഫ്റ്റ് തയ്യാറാക്കാൻ പറയൂ.",
+}
+
+# job EA: a school's assistant does not discuss fees, marks, results or dues, and a child's details never go to a model. Said in place of any answer to such a turn. Not model output.
+SCHOOL_REFUSAL: dict[Language, str] = {
+    "en": "I do not talk about fees, marks, results or dues here, and a child's details never go to the AI. Please use the school's own screens for those.",
+    "te": "ఫీజులు, మార్కులు, ఫలితాలు, బకాయిల గురించి నేను ఇక్కడ మాట్లాడను, పిల్లల వివరాలు AI కి వెళ్లవు. వాటికి స్కూల్ స్క్రీన్లనే వాడండి.",
+    "hi": "मैं यहाँ फीस, अंकों, नतीजों या बकाया के बारे में बात नहीं करता, और बच्चे की जानकारी AI को नहीं जाती। इनके लिए स्कूल की अपनी स्क्रीन देखिए।",
+    "kn": "ಶುಲ್ಕ, ಅಂಕ, ಫಲಿತಾಂಶ ಅಥವಾ ಬಾಕಿಯ ಬಗ್ಗೆ ನಾನು ಇಲ್ಲಿ ಮಾತನಾಡುವುದಿಲ್ಲ, ಮಕ್ಕಳ ವಿವರಗಳು AI ಗೆ ಹೋಗುವುದಿಲ್ಲ. ಅವಕ್ಕೆ ಶಾಲೆಯ ಸ್ವಂತ ಪರದೆಗಳನ್ನು ಬಳಸಿ.",
+    "ta": "கட்டணம், மதிப்பெண், முடிவுகள், நிலுவை பற்றி நான் இங்கே பேசமாட்டேன்; குழந்தையின் விவரங்கள் AI க்குச் செல்லாது. அவற்றுக்கு பள்ளியின் சொந்தத் திரைகளைப் பயன்படுத்துங்கள்.",
+    "ml": "ഫീസ്, മാർക്ക്, ഫലം, കുടിശ്ശിക എന്നിവയെക്കുറിച്ച് ഞാൻ ഇവിടെ സംസാരിക്കില്ല, കുട്ടിയുടെ വിവരങ്ങൾ AI ക്ക് പോകില്ല. അതിന് സ്കൂളിന്റെ സ്വന്തം സ്ക്രീനുകൾ ഉപയോഗിക്കൂ.",
+}
+
 # What the assistant says in place of an answer that named a tool, a function or an internal field (see hygiene.py). Not model output.
 PLAIN_WORDS: dict[Language, str] = {
     "en": "I could not put that into clear words. Please ask me again, in other words.",

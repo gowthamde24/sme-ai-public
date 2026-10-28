@@ -102,6 +102,13 @@ class DraftCardOut(_Strict):
     machine_draft: bool = False
 
 
+class ActionRefOut(_Strict):
+    """Job EA: the action a reply proposed (confirm_action) or asked about (clarify): the task behind it and where it stands now."""
+
+    action_id: uuid.UUID
+    status: Literal["proposed", "confirmed", "declined", "expired", "running", "done"]
+
+
 class MessageOut(_Strict):
     id: uuid.UUID
     role: Literal["user", "assistant"]
@@ -110,6 +117,9 @@ class MessageOut(_Strict):
     sources: list[SourceOut]
     drafts: list[DraftCardOut]
     created_at: datetime
+    # job EA: the type of the reply (a plain answer unless it proposed an action or asked one question) and the action behind it
+    kind: Literal["answer", "confirm_action", "clarify"] = "answer"
+    action: ActionRefOut | None = None
 
 
 class ConversationOut(_Strict):
