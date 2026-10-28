@@ -1,7 +1,8 @@
 """Caps and the usage ledger of the browser voice (job DV). A session has a hard length; a workspace has a day's allowance of talking time and of voice characters; a workspace may open only so many sessions a minute and only one at a time.
 
-The ledger lives in this process (Cloud Run may run two instances, so a day's cap can be used up to twice: a limit of the first version, stated in the contract). What is LOGGED per session is numbers and ids only: workspace,
-user, session, seconds of speech sent to the recogniser, characters sent to each voice engine, turns. Never audio, never words."""
+The day's numbers are DURABLE when a store is given (follow-up, migration 20261213090000): they are read from the database when a session is admitted, and the session's new seconds and characters are written back every few seconds
+and when it ends, so two API instances and a restart share one count. The count in memory is the database's last answer plus what this process has not written yet; if the database cannot be reached the memory count carries on and the
+unwritten numbers are kept for the next try. What is LOGGED per session is numbers and ids only: workspace, user, session, seconds of speech sent to the recogniser, characters sent to each voice engine, turns. Never audio, never words."""
 
 # ruff: noqa: E501
 
@@ -15,6 +16,8 @@ from collections import defaultdict, deque
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
+
+from app.browser_voice.store import UsageStore
 
 log = logging.getLogger("app.browser_voice")
 IST = timezone(timedelta(hours=5, minutes=30))
@@ -45,17 +48,66 @@ class Usage:
 
 
 class Ledger:
-    def __init__(self, limits: Limits, *, clock: Callable[[], float] = time.monotonic, today: Callable[[], str] | None = None) -> None:
-        self.limits, self._clock = limits, clock
+    def __init__(self, limits: Limits, store: UsageStore | None = None, *, clock: Callable[[], float] = time.monotonic, today: Callable[[], str] | None = None) -> None:
+        self.limits, self._store, self._clock = limits, store, clock
         self._today = today or (lambda: datetime.now(IST).date().isoformat())
         self._lock = threading.Lock()
-        self._seconds: dict[tuple[uuid.UUID, str], float] = defaultdict(float)
+        self._seconds: dict[tuple[uuid.UUID, str], float] = defaultdict(float)  # the day's total: the database's last answer plus what is not written yet
         self._chars: dict[tuple[uuid.UUID, str], int] = defaultdict(int)
+        self._pending: dict[tuple[uuid.UUID, str], list[float]] = defaultdict(lambda: [0.0, 0.0, 0.0])  # seconds, chars, sessions not yet written
         self._opened: dict[uuid.UUID, deque[float]] = defaultdict(deque)
         self._live: set[uuid.UUID] = set()
 
-    def admit(self, tenant_id: uuid.UUID) -> str | None:
-        """None when a new session may start; otherwise the refusal code: busy (one at a time), rate_limited, daily_limit."""
+    # ---- the database ---------------------------------------------------------------------------------------------------------------------------
+
+    def _merge(self, key: tuple[uuid.UUID, str], answer: dict[str, object]) -> None:
+        """The database's totals for the day, plus what this process still has to write."""
+        pend = self._pending[key]
+        self._seconds[key] = float(answer.get("seconds") or 0) + pend[0]  # type: ignore[arg-type]
+        self._chars[key] = int(answer.get("tts_chars") or 0) + int(pend[1])  # type: ignore[call-overload]
+
+    def sync(self, tenant_id: uuid.UUID, token: str) -> None:
+        """Read today's numbers (blocking: call it from a thread). A database that cannot answer changes nothing."""
+        if self._store is None:
+            return
+        key = (tenant_id, self._today())
+        try:
+            answer = self._store.get(token, tenant_id)
+        except Exception as err:  # noqa: BLE001 - only the class is kept
+            log.warning("browser_voice_usage_read_failed code=%s", err.__class__.__name__)
+            return
+        with self._lock:
+            self._merge(key, answer)
+
+    def flush(self, tenant_id: uuid.UUID, token: str) -> None:
+        """Write what has not been written yet (blocking). Each call to the database is bounded, so a long backlog goes in pieces; a failure keeps the rest for the next try."""
+        if self._store is None:
+            return
+        key = (tenant_id, self._today())
+        while True:
+            with self._lock:
+                seconds, chars, sessions = self._pending[key]
+                if seconds < 1 and chars < 1 and sessions < 1:
+                    return
+                take = (min(int(seconds), 600), min(int(chars), 6000), min(int(sessions), 1))
+            try:
+                answer = self._store.add(token, tenant_id, *take)
+            except Exception as err:  # noqa: BLE001
+                log.warning("browser_voice_usage_write_failed code=%s", err.__class__.__name__)
+                return
+            with self._lock:
+                pend = self._pending[key]
+                pend[0] -= take[0]
+                pend[1] -= take[1]
+                pend[2] -= take[2]
+                self._merge(key, answer)
+
+    # ---- admission and counting -----------------------------------------------------------------------------------------------------------------
+
+    def admit(self, tenant_id: uuid.UUID, token: str | None = None) -> str | None:
+        """None when a new session may start; otherwise the refusal code: busy (one at a time), rate_limited, daily_limit. With a token the day's numbers are read from the database first (blocking: call it from a thread)."""
+        if token is not None:
+            self.sync(tenant_id, token)
         now = self._clock()
         with self._lock:
             if tenant_id in self._live:
@@ -65,10 +117,12 @@ class Ledger:
                 opened.popleft()
             if len(opened) >= self.limits.sessions_per_minute:
                 return "rate_limited"
-            if self._seconds[(tenant_id, self._today())] >= self.limits.day_seconds or self._chars[(tenant_id, self._today())] >= self.limits.day_tts_chars:
+            key = (tenant_id, self._today())
+            if self._seconds[key] >= self.limits.day_seconds or self._chars[key] >= self.limits.day_tts_chars:
                 return "daily_limit"
             opened.append(now)
             self._live.add(tenant_id)
+            self._pending[key][2] += 1
         return None
 
     def release(self, tenant_id: uuid.UUID) -> None:
@@ -76,12 +130,16 @@ class Ledger:
             self._live.discard(tenant_id)
 
     def add_seconds(self, tenant_id: uuid.UUID, seconds: float) -> None:
+        key = (tenant_id, self._today())
         with self._lock:
-            self._seconds[(tenant_id, self._today())] += seconds
+            self._seconds[key] += seconds
+            self._pending[key][0] += seconds
 
     def add_chars(self, tenant_id: uuid.UUID, chars: int) -> None:
+        key = (tenant_id, self._today())
         with self._lock:
-            self._chars[(tenant_id, self._today())] += chars
+            self._chars[key] += chars
+            self._pending[key][1] += chars
 
     def seconds_left(self, tenant_id: uuid.UUID) -> int:
         with self._lock:

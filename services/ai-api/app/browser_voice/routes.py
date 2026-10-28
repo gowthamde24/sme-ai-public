@@ -78,8 +78,8 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
         system_for=system_for,
         greeting_for=lambda language: opening(language)[0],
         models=bv.model_ids(),
-        voice_label=chosen.get("en", ""),
-        fillers=None,  # a spoken filler needs a pre-rendered bank per voice (a follow-up); the orb shows `thinking` meanwhile
+        voice_for=lambda language: bv.config.resolve(language, chosen.get(language)).id,
+        fillers=bv.fillers,
     )
 
 
@@ -167,7 +167,7 @@ async def voice_chat(ws: WebSocket, tenant_id: str) -> None:
     if isinstance(ctx, tuple):
         return await _refuse(ws, ctx[0], ctx[1], "Not allowed.")
     language = first.get("language") if first.get("language") in LANGUAGES else "en"
-    refused = bv.ledger.admit(ctx.tenant.id)
+    refused = await run_in_threadpool(bv.ledger.admit, ctx.tenant.id, ctx.principal.token)
     if refused is not None:
         return await _refuse(ws, 4429, refused, "Too many voice sessions, or today's talking time is used up. Try again later.")
     usage = Usage()
@@ -178,7 +178,7 @@ async def voice_chat(ws: WebSocket, tenant_id: str) -> None:
             usage.ask_turns += 1
 
         parts = await run_in_threadpool(build_parts, bv, runtime, ctx, lambda kind, data: box["emit"](kind, data), count_ask)
-        session = VoiceSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage)
+        session = VoiceSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage, token=ctx.principal.token)
         box["emit"] = session.emit
         await session.run()
     except Exception as err:  # noqa: BLE001 - only the class is kept

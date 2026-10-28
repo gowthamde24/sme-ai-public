@@ -299,6 +299,8 @@ select is(
         'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
         -- job voice-picker: the workspace's chosen voice per language
         'public.call_voice_get', 'public.call_voice_set',
+        -- job DV follow-up: the browser voice's daily caps
+        'public.browser_voice_usage_get', 'public.browser_voice_usage_add',
         'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
         'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report',
         -- job BP (ADR 0078): the web research tools' daily limit, usage read and query check. Each proves the run (or the role) first
@@ -415,6 +417,7 @@ select is(
                      'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
                      -- job voice-picker: the workspace's chosen voice per language
                      'public.call_voice_get', 'public.call_voice_set',
+                     'public.browser_voice_usage_get', 'public.browser_voice_usage_add',
                      'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
                      'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report',
                      'public.web_quota_take', 'public.web_usage_today', 'public.web_query_check',

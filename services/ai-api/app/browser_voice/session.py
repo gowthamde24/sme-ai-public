@@ -18,7 +18,7 @@ from typing import Any, Literal, Protocol
 
 from app.browser_voice.audio import IN_RATE, OUT_RATE, PREROLL_S, BrowserPlayout, FrameBus
 from app.browser_voice.limits import Ledger, Limits, Usage, log_usage
-from app.conversation.fillers import FillerBank
+from app.conversation.fillers import BROWSER_FILLER_AFTER_MS, FillerBank
 from app.conversation.parts import (
     Session,
     StreamingLlm,
@@ -35,6 +35,7 @@ LANGUAGES = ("te", "en", "hi", "kn")
 START_WITHIN_S = 10.0
 IDLE_S = 60.0  # no final transcript for this long: the session ends (the browser keeps the mic open for nothing)
 MAX_STT_FAILURES = 3
+FLUSH_EVERY_S = 15.0
 Kind = Literal["text", "bytes", "close"]
 
 
@@ -54,7 +55,7 @@ class Parts:
     system_for: Callable[[str], str]
     greeting_for: Callable[[str], str | None]
     models: dict[str, str]
-    voice_label: str = ""
+    voice_for: Callable[[str], str] = lambda language: ""  # the catalogue voice id that speaks in a language (the filler bank is keyed by it)
     fillers: FillerBank | None = None
 
 
@@ -99,10 +100,12 @@ class VoiceSession:
         limits: Limits,
         ledger: Ledger,
         usage: Usage,
+        token: str = "",
         clock: Callable[[], float] = time.monotonic,
     ) -> None:
         self.socket, self.parts, self.tenant_id, self.user_id = socket, parts, tenant_id, user_id
         self.limits, self.ledger, self.usage, self.clock = limits, ledger, usage, clock
+        self._token = token  # the member's own token, to write the day's numbers back (empty: memory only)
         self.session_id = uuid.uuid4()
         self.bus = FrameBus(clock)
         self.playout = BrowserPlayout(socket.send_bytes, self._send_stop, clock)
@@ -116,7 +119,8 @@ class VoiceSession:
             session=Session(system=parts.system_for(self.language), language=self.language),
             models=parts.models,  # type: ignore[arg-type]
             fillers=parts.fillers,
-            voice=parts.voice_label,
+            voice=parts.voice_for,
+            filler_after_ms=BROWSER_FILLER_AFTER_MS,  # Ask can take seconds: after 700 ms of nothing a short pre-rendered line is said
             tools_available=True,
             on_stt=self._on_stt,
         )
@@ -182,6 +186,9 @@ class VoiceSession:
                     with suppress(asyncio.CancelledError, Exception):
                         await t
             self._account_time()
+            if self._token:
+                with suppress(Exception):
+                    await asyncio.wait_for(asyncio.to_thread(self.ledger.flush, self.tenant_id, self._token), timeout=5.0)
             log_usage(self.tenant_id, self.user_id, self.session_id, self.clock() - self._started, self.usage, self._ended)
         return self._ended
 
@@ -229,9 +236,13 @@ class VoiceSession:
 
     async def _timer(self) -> None:
         """The caps: the session's length and the workspace's day."""
+        last_flush = self.clock()
         while True:
             await asyncio.sleep(1.0)
             self._account_time()
+            if self._token and self.clock() - last_flush >= FLUSH_EVERY_S:
+                last_flush = self.clock()
+                await asyncio.to_thread(self.ledger.flush, self.tenant_id, self._token)  # other instances see this session's use within seconds
             elapsed = self.clock() - self._started
             if elapsed >= self.limits.session_seconds:
                 await self._limit("session")

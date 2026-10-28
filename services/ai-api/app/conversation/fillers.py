@@ -7,8 +7,10 @@ Hindi, Kannada, Tamil and Malayalam lines are drafts for a native reader; the Te
 
 from __future__ import annotations
 
+import json
 import random
 from collections.abc import Awaitable, Callable
+from pathlib import Path
 
 FILLER_AFTER_MS = 600
 
@@ -20,6 +22,18 @@ FILLERS: dict[str, tuple[str, ...]] = {
     "ml": ("ഹാ…", "ഒരു മിനിറ്റ് സർ"),
     "en": ("Hmm…", "One moment, sir"),
 }
+
+# The browser voice (job DV follow-up): 3 to 4 short lines per language, rendered ONCE per catalogue voice by scripts/voice_filler_bank.py into data/fillers/ and played when Ask is still checking after
+# 700 ms. The Telugu first line is the approved wording of native-lines/te.md; the others are drafts for a native reader, like every non-Telugu line here.
+BANK_LINES: dict[str, tuple[str, ...]] = {
+    "en": ("One moment, let me check.", "Sure, let me look that up.", "Hmm, one second.", "Just a moment."),
+    "te": ("ఒక్క నిమిషం అండీ, check చేసి చెప్తాను.", "హా అండీ, ఒక్క నిమిషం.", "ఒక్క క్షణం అండీ, చూస్తాను."),
+    "hi": ("एक मिनट जी, मैं चेक करती हूँ।", "जी, एक सेकंड।", "हाँ जी, अभी देखती हूँ।"),
+    "kn": ("ಒಂದು ನಿಮಿಷ ಸರ್, ನೋಡ್ತೀನಿ.", "ಹೌದು ಸರ್, ಒಂದು ಕ್ಷಣ.", "ಸ್ವಲ್ಪ ಇರಿ ಸರ್, ಚೆಕ್ ಮಾಡ್ತೀನಿ."),
+}
+BANK_DIR = Path(__file__).parent / "data" / "fillers"
+BANK_INDEX = BANK_DIR / "index.json"
+BROWSER_FILLER_AFTER_MS = 700
 
 
 class FillerBank:
@@ -50,3 +64,17 @@ class FillerBank:
         choice = self._rng.choice(options)
         self._last[(language, voice)] = choice
         return choice, bank[choice]
+
+    @classmethod
+    def from_disk(cls, directory: Path = BANK_DIR, seed: int | None = None) -> FillerBank:
+        """The bank rendered by scripts/voice_filler_bank.py: index.json maps a catalogue voice id to its language and lines, each line to a raw 16-bit 24 kHz mono PCM file. A missing folder is an empty bank (no filler is said)."""
+        bank = cls(seed)
+        index = directory / "index.json"
+        if not index.is_file():
+            return bank
+        data = json.loads(index.read_text(encoding="utf-8"))
+        for voice_id, entry in data.items():
+            audio = {line["text"]: (directory / line["file"]).read_bytes() for line in entry["lines"] if (directory / line["file"]).is_file()}
+            if audio:
+                bank._audio[(entry["language"], voice_id)] = audio
+        return bank
