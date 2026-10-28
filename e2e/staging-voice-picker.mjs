@@ -58,6 +58,7 @@ try {
     const err = await line.getByText("Could not make the sound now").count();
     const none = await line.locator('[role="status"]').count();
     ok("Hear it gives a sound (or the plain no-sound line), never the error line", err === 0, none ? "no-sound line shown" : "sound played");
+    if (err > 0) console.log("page errors:", JSON.stringify(s.errors));
     await shot(s, `vp-${pack}-4-hear`);
   } else ok("Hear it is available", false, "button disabled (needs a saved opening line?)");
 } catch (e) {

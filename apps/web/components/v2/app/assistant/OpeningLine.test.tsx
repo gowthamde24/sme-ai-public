@@ -96,6 +96,19 @@ describe("Settings > AI assistant > Opening line", () => {
     expect(screen.getByRole("status")).toHaveTextContent("There is no sound in this mode.");
     expect(screen.getByText(/Preview of the voice\. In real calls Vijaya talks naturally and answers what the customer says\./)).toBeInTheDocument();
   });
+  it("'Hear it' plays the sound from a blob: address (the page's media rule does not allow data:)", async () => {
+    const made: string[] = [];
+    const played: string[] = [];
+    vi.stubGlobal("Audio", class { src: string; onended: (() => void) | null = null; constructor(src: string) { this.src = src; made.push(src); } play() { played.push(this.src); return Promise.resolve(); } pause() {} });
+    URL.createObjectURL = vi.fn(() => "blob:http://x/abc");
+    URL.revokeObjectURL = vi.fn();
+    const withSound = vi.fn(async () => ({ ok: true, preview: { audio: { base64: btoa("RIFF"), mime: "audio/wav", seconds: 1 }, fake: false } }) as never);
+    draw({ actions: actions({ preview: withSound }) });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Hear it" })));
+    expect(made).toEqual(["blob:http://x/abc"]);
+    expect(played).toEqual(["blob:http://x/abc"]);
+    vi.unstubAllGlobals();
+  });
   it("a viewer of it (the Admin) can read and hear but not change: no box to type in, no Save, no reset", () => {
     draw({ canEdit: false });
     expect(box()).toBeDisabled();
