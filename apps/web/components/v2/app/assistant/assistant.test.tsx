@@ -166,6 +166,25 @@ describe("Settings > AI assistant", () => {
       fireEvent.click(document.querySelector('[data-sample="male_calm"]') as HTMLElement);
       expect(made[1].src).toContain("voice=male_calm");
     });
+    it("labels it as a preview of the voice with the assistant's name, and shows the words that are spoken (with the real names) once they are read", async () => {
+      install();
+      const fetched = vi.fn(async () => ({ ok: true, json: async () => ({ text: "Hello, this is Asha from Pavers Corner." }) }));
+      vi.stubGlobal("fetch", fetched);
+      draw({ samples });
+      fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "Asha" } });
+      expect(document.querySelector('[data-part="preview-label"]')).toHaveTextContent("Preview of the voice. In real calls Asha talks naturally and answers what the customer says.");
+      fireEvent.click(document.querySelector('[data-sample="female_warm"]') as HTMLElement);
+      expect(await screen.findByText(/Hello, this is Asha from Pavers Corner\./)).toBeInTheDocument();
+      expect(fetched).toHaveBeenCalledWith("/app/tenants/t/voice-sample?voice=female_warm&lang=te&tone=warm&name=Asha&text=1", { cache: "no-store" });
+    });
+    it("the test screens' own sound has no words to show and asks for none", () => {
+      install();
+      const fetched = vi.fn();
+      vi.stubGlobal("fetch", fetched);
+      draw({ samples: { ...samples, mock: true } });
+      fireEvent.click(document.querySelector('[data-sample="female_warm"]') as HTMLElement);
+      expect(fetched).not.toHaveBeenCalled();
+    });
     it("a sample the browser cannot play says so, in words", async () => {
       install(true);
       draw({ samples });

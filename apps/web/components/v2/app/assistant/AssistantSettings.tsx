@@ -45,6 +45,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
   const [tone, setTone] = React.useState<Tone>("warm");
   const [playing, setPlaying] = React.useState<Voice | null>(null);
   const [sampleErr, setSampleErr] = React.useState(false);
+  const [heard, setHeard] = React.useState<string | null>(null); // the words of the preview that was played (the real names in them)
   const audio = React.useRef<HTMLAudioElement | null>(null);
   const [test, setTest] = React.useState<{ state: "idle" } | { state: "running" } | { state: "error" } | { state: "done"; call: TestCall }>({ state: "idle" });
   React.useEffect(() => () => audio.current?.pause(), []);
@@ -54,7 +55,16 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
     audio.current?.pause();
     if (playing === v) return setPlaying(null);
     setSampleErr(false);
-    const a = new Audio(sampleUrl(samples.endpoint, { voice: v, lang: s.lang, tone, name: s.name.trim() || initial.name }));
+    setHeard(null);
+    const q = { voice: v, lang: s.lang, tone, name: s.name.trim() || initial.name };
+    if (!samples.mock) {
+      // the words are shown beside the player, as the API says them with the business's real name
+      void fetch(`${sampleUrl(samples.endpoint, q)}&text=1`, { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((j: { text?: unknown } | null) => setHeard(typeof j?.text === "string" ? j.text : null))
+        .catch(() => setHeard(null));
+    }
+    const a = new Audio(sampleUrl(samples.endpoint, q));
     audio.current = a;
     a.onended = () => setPlaying(null);
     a.onerror = () => {
@@ -162,6 +172,8 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
                       </button>
                     ))}
                   </div>
+                  <p className="mt-2 text-sm font-medium" data-part="preview-label">{t("asst.preview.label", { who: s.name.trim() || initial.name })}</p>
+                  {heard ? <p className="mt-1 rounded-lg bg-surface-2 px-3 py-2 text-sm" data-part="preview-text"><span className="font-semibold">{t("asst.preview.heard")}</span> {heard}</p> : null}
                   <p className="mt-2 text-sm text-muted">{t("asst.sample.note", { language: langs[s.lang] })} {t("asst.tone.note")}</p>
                   {samples.mock ? <p role="note" className="mt-1 text-sm text-muted">{t("asst.sample.mock")}</p> : null}
                   {sampleErr ? <p role="alert" className="mt-1 text-sm font-medium text-red-text">{t("asst.sample.err")}</p> : null}

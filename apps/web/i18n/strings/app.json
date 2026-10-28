@@ -70508,5 +70508,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "asst.preview.label": {
+  "en": "Preview of the voice. In real calls {who} talks naturally and answers what the customer says.",
+  "te": "ఇది వాయిస్ ప్రివ్యూ. నిజమైన కాల్స్‌లో {who} సహజంగా మాట్లాడుతుంది, కస్టమర్ చెప్పినదానికి జవాబు ఇస్తుంది.",
+  "hi": "यह आवाज़ का प्रीव्यू है। असली कॉल में {who} से सहज बातचीत होती है, और ग्राहक जो कहे उसका जवाब मिलता है।",
+  "kn": "ಇದು ಧ್ವನಿಯ ಪ್ರಿವ್ಯೂ. ನಿಜವಾದ ಕಾಲ್‌ಗಳಲ್ಲಿ {who} ಸಹಜವಾಗಿ ಮಾತನಾಡುತ್ತದೆ, ಗ್ರಾಹಕರು ಹೇಳಿದ್ದಕ್ಕೆ ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.preview.heard": {
+  "en": "What you hear:",
+  "te": "మీరు వినేది:",
+  "hi": "आप यह सुनेंगे:",
+  "kn": "ನೀವು ಕೇಳುವುದು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
