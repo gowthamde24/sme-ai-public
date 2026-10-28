@@ -36765,6 +36765,72 @@
    "kn": "draft"
   }
  },
+ "start.check.lead_source_added.title": {
+  "en": "Connect a lead source or import your leads",
+  "te": "లీడ్ సోర్స్‌ను కనెక్ట్ చేయండి లేదా మీ లీడ్‌లను ఇంపోర్ట్ చేయండి",
+  "hi": "कोई लीड स्रोत जोड़ें या अपनी लीड इंपोर्ट करें",
+  "kn": "ಲೀಡ್ ಮೂಲವನ್ನು ಸಂಪರ್ಕಿಸಿ ಅಥವಾ ನಿಮ್ಮ ಲೀಡ್‌ಗಳನ್ನು ಇಂಪೋರ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.lead_source_added.hint": {
+  "en": "Meta ads, IndiaMART, JustDial, your website, or an Excel or Google Sheets file.",
+  "te": "మెటా యాడ్స్, IndiaMART, JustDial, మీ వెబ్‌సైట్, లేదా Excel / Google Sheets ఫైల్.",
+  "hi": "मेटा ऐड, IndiaMART, JustDial, आपकी वेबसाइट, या Excel / Google Sheets फ़ाइल।",
+  "kn": "ಮೆಟಾ ಜಾಹೀರಾತು, IndiaMART, JustDial, ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್, ಅಥವಾ Excel / Google Sheets ಫೈಲ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.call_rule_approved.title": {
+  "en": "Approve your first call rule",
+  "te": "మీ మొదటి కాల్ రూల్‌ను ఆమోదించండి",
+  "hi": "अपना पहला कॉल रूल मंज़ूर करें",
+  "kn": "ನಿಮ್ಮ ಮೊದಲ ಕಾಲ್ ನಿಯಮವನ್ನು ಅನುಮೋದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.call_rule_approved.hint": {
+  "en": "It says which new leads {assistant} calls, and how fast. Nothing is called before you approve.",
+  "te": "కొత్త లీడ్‌లలో ఎవరికి, ఎంత త్వరగా {assistant} కాల్ చేయాలో ఇది చెబుతుంది. మీరు ఆమోదించే వరకు ఎవరికీ కాల్ వెళ్లదు.",
+  "hi": "यह तय करता है कि नई लीड में किसे {assistant} कॉल करे और कितनी जल्दी। आपकी मंज़ूरी से पहले कोई कॉल नहीं जाता।",
+  "kn": "ಹೊಸ ಲೀಡ್‌ಗಳಲ್ಲಿ ಯಾರಿಗೆ, ಎಷ್ಟು ಬೇಗ {assistant} ಕರೆ ಮಾಡಬೇಕೆಂದು ಇದು ಹೇಳುತ್ತದೆ. ನೀವು ಅನುಮೋದಿಸುವ ತನಕ ಯಾವ ಕರೆಯೂ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.ask_assistant_tried.title": {
+  "en": "Try “Ask {assistant} to do it”",
+  "te": "“{assistant} కి పని చెప్పండి” ప్రయత్నించండి",
+  "hi": "“{assistant} को काम बताइए” आज़माएँ",
+  "kn": "“{assistant} ಗೆ ಕೆಲಸ ಹೇಳಿ” ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.ask_assistant_tried.hint": {
+  "en": "Tell {assistant} a job in your own words, then approve the plan.",
+  "te": "{assistant} కి మీ మాటల్లో పని చెప్పి, ప్లాన్‌ను ఆమోదించండి.",
+  "hi": "{assistant} को अपने शब्दों में काम बताइए और प्लान मंज़ूर कीजिए।",
+  "kn": "{assistant} ಗೆ ನಿಮ್ಮ ಮಾತುಗಳಲ್ಲಿ ಕೆಲಸ ಹೇಳಿ, ಯೋಜನೆಯನ್ನು ಅನುಮೋದಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "start.step.done": {
   "en": "Done",
   "te": "అయింది",

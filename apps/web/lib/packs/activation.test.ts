@@ -2,7 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
-const reads = { getProfile: vi.fn(), listCatalogueItems: vi.fn(), fetchQuotePolicyVersions: vi.fn(), getWhatsappAccount: vi.fn(), fetchQuotes: vi.fn(), getAccountSecurity: vi.fn(), getInstitutionProfile: vi.fn(), listStudents: vi.fn(), listFeePlans: vi.fn(), listCampaigns: vi.fn(), getMaterialPolicy: vi.fn() };
+const reads = { listSources: vi.fn(), listLeadImports: vi.fn(), listRules: vi.fn(), listTasks: vi.fn(), getProfile: vi.fn(), listCatalogueItems: vi.fn(), fetchQuotePolicyVersions: vi.fn(), getWhatsappAccount: vi.fn(), fetchQuotes: vi.fn(), getAccountSecurity: vi.fn(), getInstitutionProfile: vi.fn(), listStudents: vi.fn(), listFeePlans: vi.fn(), listCampaigns: vi.fn(), getMaterialPolicy: vi.fn() };
+vi.mock("@/lib/api/lead-sources", () => ({ listSources: (...a: unknown[]) => reads.listSources(...a) }));
+vi.mock("@/lib/api/lead-imports", () => ({ listLeadImports: (...a: unknown[]) => reads.listLeadImports(...a) }));
+vi.mock("@/lib/api/outreach", () => ({ listRules: (...a: unknown[]) => reads.listRules(...a) }));
+vi.mock("@/lib/api/tasks", () => ({ listTasks: (...a: unknown[]) => reads.listTasks(...a) }));
 vi.mock("@/lib/api/profile", () => ({ getProfile: (...a: unknown[]) => reads.getProfile(...a) }));
 vi.mock("@/lib/api/catalogue", () => ({ listCatalogueItems: (...a: unknown[]) => reads.listCatalogueItems(...a) }));
 vi.mock("@/lib/api/quote-policies", () => ({ fetchQuotePolicyVersions: (...a: unknown[]) => reads.fetchQuotePolicyVersions(...a) }));
@@ -17,7 +21,7 @@ import { appT } from "@/i18n/app";
 
 import { readActivation, stepChecks, usesChecklist } from "./activation";
 import { readFacts } from "./activation-facts";
-import { defaultPackId, otherPackIds, workspacePack } from "./pack-test-kit";
+import { defaultPackId, otherPackIds, selectableIds, workspacePack } from "./pack-test-kit";
 
 const T = "22222222-2222-2222-2222-222222222222";
 
@@ -34,6 +38,10 @@ beforeEach(() => {
   reads.listFeePlans.mockResolvedValue([]);
   reads.listCampaigns.mockResolvedValue({ items: [], next_cursor: null });
   reads.getMaterialPolicy.mockResolvedValue({ current: null, versions: [] });
+  reads.listSources.mockResolvedValue([]);
+  reads.listLeadImports.mockResolvedValue([]);
+  reads.listRules.mockResolvedValue([]);
+  reads.listTasks.mockResolvedValue([]);
 });
 
 describe("the activation facts", () => {
@@ -145,5 +153,29 @@ describe("the activation checklist of a workspace", () => {
     reads.getMaterialPolicy.mockResolvedValue({ current: { version_id: "v" }, versions: [] });
     const a = await readActivation("tok", T, construction, t);
     expect(a.steps.find((s) => s.id === "delivery_rule_set")?.state).toBe("done");
+  });
+});
+
+describe("the Lead Desk steps of a business that has leads (night 4 clean-up)", () => {
+  const t = appT("en");
+  const leadsPack = () => workspacePack(selectableIds().find((i) => workspacePack(i).modules.includes("campaigns") && !workspacePack(i).modules.includes("fees") && !workspacePack(i).modules.includes("quotes"))!);
+  it("a business with campaigns but no fees has no fee-reminder step: it has the Lead Desk steps it is given, after the second step and WhatsApp", () => {
+    const m = leadsPack().modules;
+    expect(stepChecks(m)).toEqual(["business_profile", "second_factor_set", "whatsapp_connected"]);
+    expect(stepChecks(m, ["lead_source_added", "call_rule_approved", "ask_assistant_tried"])).toEqual(["business_profile", "second_factor_set", "whatsapp_connected", "lead_source_added", "call_rule_approved", "ask_assistant_tried"]);
+    expect(stepChecks(workspacePack(otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!).modules)).toContain("first_campaign_approved");
+  });
+  it("are done by real facts: a live source or an import, an approved rule, a first task; and read the words of the closed list", async () => {
+    const steps = ["lead_source_added", "call_rule_approved", "ask_assistant_tried"] as const;
+    const a = await readActivation("tok", T, leadsPack(), t, steps);
+    expect(a.steps.slice(-3).map((s) => [s.id, s.state, s.href])).toEqual([["lead_source_added", "todo", "/lead-sources"], ["call_rule_approved", "todo", "/outreach"], ["ask_assistant_tried", "todo", "/tasks"]]);
+    expect(a.steps.slice(-3).map((s) => s.title)).toEqual(["Connect a lead source or import your leads", "Approve your first call rule", "Try “Ask Vijaya to do it”"]); // {assistant} is filled with the default name
+    reads.listLeadImports.mockResolvedValue([{}]);
+    reads.listRules.mockResolvedValue([{}]);
+    reads.listTasks.mockResolvedValue([{}]);
+    expect((await readActivation("tok", T, leadsPack(), t, steps)).steps.slice(-3).map((s) => s.state)).toEqual(["done", "done", "done"]);
+    reads.listLeadImports.mockResolvedValue([]);
+    reads.listSources.mockResolvedValue([{}]);
+    expect((await readFacts("tok", T, ["lead_source_added"]))).toEqual({ lead_source_added: true });
   });
 });

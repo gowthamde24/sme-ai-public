@@ -11,6 +11,7 @@ import { escalate } from "@/lib/api/failure";
 import { getProfile, type BusinessProfile } from "@/lib/api/profile";
 import { requireUser } from "@/lib/auth/session";
 import { readActivation, usesChecklist } from "@/lib/packs/activation";
+import { leadDeskSteps } from "@/lib/packs/lead-activation";
 import { readPackCached } from "@/lib/packs/read";
 
 import { saveProfileAction } from "./actions";
@@ -56,7 +57,7 @@ export default async function StartPage({ params }: PageProps<"/app/tenants/[ten
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
   }
-  const activation = await readActivation(user.accessToken, tenantId, pack, t);
+  const activation = await readActivation(user.accessToken, tenantId, pack, t, await leadDeskSteps(pack));
   const dict = appDict(lang) as Record<string, string>;
   const words = Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("start.")));
   return (

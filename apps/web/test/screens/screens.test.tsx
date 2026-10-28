@@ -186,5 +186,7 @@ describe("the example data offer (night 4 clean-up)", () => {
     const read = (id: string) => fs.readFileSync(path.join(DIR, `${id}.owner.txt`), "utf8");
     expect(read("today-construction")).toMatch(/example data/i);
     expect(read("today-no-example-data")).not.toMatch(/example data/i);
+    expect(read("today-no-example-data")).not.toMatch(/fee-reminder/i); // a fee-reminder campaign is the first step of a school only
+    expect(read("today-education-example-loaded")).toMatch(/fee-reminder/i);
   });
 });
