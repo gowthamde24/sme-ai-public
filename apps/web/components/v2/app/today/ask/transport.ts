@@ -2,7 +2,6 @@ import type { ConfirmAction } from "@/lib/api/turns";
 
 import type { AskEvent, AskTransport, VoiceStatus, VoiceTransport } from "./ask-types";
 
-const KINDS = ["text", "source", "draft", "error", "done", "heard", "audio", "audio_error", "confirm_action", "clarify"];
 const AUDIO_TYPE = /^audio\/(wav|x-wav|wave|mpeg|mp3|ogg|webm|mp4|aac)$/; // the same nine as lib/api/voice.ts
 
 /** One line of the route's answer as an AskEvent, or null for anything that is not one: the stream is this app's own, but its text is still untrusted and nothing is guessed. */
@@ -16,7 +15,6 @@ export function parseLine(raw: string): AskEvent | null {
   if (typeof e !== "object" || e === null) return null;
   const r = e as Record<string, unknown>;
   const s = (v: unknown): string | null => (typeof v === "string" ? v : null);
-  if (typeof r.type !== "string" || !KINDS.includes(r.type)) return null;
   switch (r.type) {
     case "text":
       return typeof r.delta === "string" ? { type: "text", delta: r.delta } : null;
@@ -38,8 +36,10 @@ export function parseLine(raw: string): AskEvent | null {
       return r.action && typeof r.action === "object" ? { type: "confirm_action", action: r.action as ConfirmAction } : null; // the route made it from the API's plan, already read there
     case "clarify":
       return typeof r.question === "string" ? { type: "clarify", question: r.question } : null;
-    default:
+    case "done":
       return { type: "done", conversationId: s(r.conversationId) ?? undefined };
+    default:
+      return null;
   }
 }
 
