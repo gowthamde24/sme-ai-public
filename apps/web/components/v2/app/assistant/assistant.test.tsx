@@ -45,6 +45,17 @@ describe("Settings > AI assistant", () => {
     expect(screen.queryByRole("radiogroup", { name: /Voice/ })).toBeNull();
     expect(screen.getByRole("radiogroup", { name: /Languages|Language/ })).toBeInTheDocument();
   });
+  it("with the voice catalogue on, 'Hear it' shows the exact words the sound says under the button of the preview card (what is read is what is heard)", async () => {
+    const asked: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => (asked.push(url), { ok: true, json: async () => ({ text: "నమస్కారం రవి గారూ, నేను రమ్య, ఆక్మీ సిల్క్స్ నుంచి." }) })));
+    vi.stubGlobal("Audio", class { onended: (() => void) | null = null; onerror: (() => void) | null = null; play() { return Promise.resolve(); } pause() {} });
+    draw({ voicePickerOn: true, voiceInUse: { name: "Ramya", label: "Warm" }, samples: { endpoint: "/app/tenants/t/voice-sample", mock: false } });
+    expect(document.querySelector('[data-part="preview-text"]')).toBeNull(); // nothing is claimed before it is played
+    fireEvent.click(screen.getByRole("button", { name: /Hear it/ }));
+    await waitFor(() => expect(document.querySelector('aside [data-part="preview-text"]')).toHaveTextContent("నమస్కారం రవి గారూ, నేను రమ్య, ఆక్మీ సిల్క్స్ నుంచి."));
+    expect(asked.some((u) => u.includes("&text=1"))).toBe(true);
+    vi.unstubAllGlobals();
+  });
   it("starts from the defaults of the business type, says so, and says that mentioning 'AI assistant' in the greeting is the owner's choice", () => {
     draw();
     expect(screen.getByRole("heading", { name: "Set up your AI assistant" })).toBeInTheDocument();
