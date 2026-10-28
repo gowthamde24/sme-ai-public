@@ -200,7 +200,7 @@ async function main() {
           await common(s, name);
           await footerLinks(s.page, name);
           if (name === "signup") {
-            await s.page.getByRole("combobox").focus(); // step 1 is one searchable list now: it opens on focus
+            await s.page.locator('input[role="combobox"]').focus(); // step 1 is one searchable list now: it opens on focus
             await s.page.locator("[data-pack-card]").first().click(); // step 2 carries the agreement line
             await s.page.getByText("Continue with e-mail").waitFor({ timeout: 30_000 });
             const hrefs = await s.page.locator("main a").evaluateAll((els) => els.map((e) => e.getAttribute("href")));

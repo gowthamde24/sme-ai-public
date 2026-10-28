@@ -598,7 +598,7 @@ async function publicPages(size) {
   });
   await step(s, size, "public", "signup", "/signup: what a visitor sees (no account is made)", async () => {
     await page.goto(`${WEB}/signup`, { waitUntil: "load" });
-    if ((await page.getByRole("combobox").count()) > 0) await page.getByRole("combobox").focus(); // step 1 is one searchable list now: it opens on focus
+    if ((await page.locator('input[role="combobox"]').count()) > 0) await page.locator('input[role="combobox"]').focus(); // step 1 is one searchable list now: it opens on focus
     const cards = await page.locator("[data-pack-card]").count();
     // job DH: sign-up is CLOSED on purpose (the note and the early-access address, no form, no business cards, nothing asked of the API); the three cards belong to the open page
     if (cards === 0) {
