@@ -131,7 +131,7 @@ describe("the home page (landing v3, night 5)", () => {
   it("has Lead Desk in five rows: approve all, tell the assistant, languages, your opening line, speed by source", () => {
     const section = home.match(/<section id="leaddesk"[\s\S]*?<\/section>/)![0];
     expect([...section.matchAll(/data-row="(\d)"/g)].map((m) => m[1])).toEqual(["1", "2", "3", "4", "5"]);
-    for (const x of ["Approve a whole list in one go", "Approve all", "Tell your assistant what you need", "Talks the way your customers talk", "నమస్కారం", "வணக்கம்", "ನಮಸ್ಕಾರ", "നമസ്കാരം", "नमस्ते", "Your words open every call", "Fast, while they're still interested", "about 1 minute", "WhatsApp now, call in the morning"]) expect(text(section), x).toContain(x);
+    for (const x of ["Approve a whole list in one go", "Approve all", "Tell your assistant what you need", "Talks the way your customers talk", "నమస్కారం", "வணக்கம்", "ನಮಸ್ಕಾರ", "നമസ്കാരം", "नमस्ते", "Your words open every call", "Fast, while they're still interested", "right away", "WhatsApp now, call in the morning"]) expect(text(section), x).toContain(x);
     // the opening line shows its placeholders as they are typed
     for (const v of ["{customer}", "{business}"]) expect(text(section.match(/data-part="opening-example"[\s\S]*?<\/p>/)![0])).toContain(v);
   });
@@ -177,10 +177,13 @@ describe("the home page (landing v3, night 5)", () => {
     expect(t).not.toMatch(/live now|stored in (india|mumbai)|\d\s?%|guarantee|testimonial|trusted by|used by|customers love|incl\w* GST|most popular/i);
     expect(t).not.toMatch(/\d[\d,]*\+?\s+(customers|businesses|leads called|calls a day)/i);
   });
-  it("the first call is 'about a minute', by source, and never a promise of a number in the headline or the page description", () => {
-    expect(siteDict("en")["v3.row.5.d"]).toMatch(/about a minute after they arrive, within your calling hours/);
-    expect(siteDict("en")["meta.description"]).toMatch(/aims to call your leads within minutes, in calling hours/);
-    expect(siteDict("en")["hero.sub"]).not.toMatch(/within 2 minutes/);
+  it("the first call is 'right away', never a number of minutes (owner, 28 Oct: no speed claim until it is measured), in no headline, row or page description", () => {
+    expect(siteDict("en")["v3.row.5.d"]).toMatch(/called right away, within your calling hours/);
+    expect(siteDict("en")["meta.description"]).toMatch(/calls your leads right away, in calling hours/);
+    for (const lang of ["en", "te", "hi", "kn"] as const) {
+      const dict = siteDict(lang);
+      for (const [k, v] of Object.entries(dict)) if (!/^(hm\.pl\.f\.|v3\.plan|v3\.faq\.5|v3\.plans\.small)/.test(k)) expect(v, `${lang} ${k}`).not.toMatch(/\b(1|2|one|two)[- ]minutes?\b|\bminute after\b|\bwithin minutes\b|ఒక నిమిషం|2 నిమిషా|1 मिनट|2 मिनट|ಒಂದು ನಿಮಿಷ|2 ನಿಮಿಷ/i);
+    }
   });
   it("carries application data and no FAQ data or offers (there is no price)", () => {
     expect(home).toContain('"@type":"SoftwareApplication"');
@@ -196,11 +199,11 @@ describe("Lead Desk on the business pages and the other pages (night 4, F1)", ()
     const html = render("en", { kind: "pack", slug: p.slug });
     return { html, block: html.match(/<section[^>]*id="lead-desk"[\s\S]*?<\/section>/)![0] };
   };
-  it("sarees: Meta lead ad and WhatsApp enquiries, a call within minutes, photos on WhatsApp, a store visit", () => {
+  it("sarees: Meta lead ad and WhatsApp enquiries, a call right away, photos on WhatsApp, a store visit", () => {
     const { block } = flow("textiles");
     expect(text(block)).toContain("How Lead Desk works for sarees");
     expect(block.match(/<li/g)).toHaveLength(4);
-    for (const x of ["Meta lead ad or WhatsApp", "calls within minutes", "Photos of the sarees go on WhatsApp", "store visit"]) expect(text(block), x).toContain(x);
+    for (const x of ["Meta lead ad or WhatsApp", "calls right away", "Photos of the sarees go on WhatsApp", "store visit"]) expect(text(block), x).toContain(x);
   });
   it("building materials: website and WhatsApp enquiries, a call, a quote the owner approves, delivery follow-up", () => {
     const { block } = flow("construction_materials");
@@ -212,7 +215,7 @@ describe("Lead Desk on the business pages and the other pages (night 4, F1)", ()
     const { block } = flow("education");
     expect(text(block)).toContain("How Lead Desk works for schools");
     expect(block.match(/<li/g)).toHaveLength(3);
-    for (const x of ["An admission enquiry arrives", "Speed to lead", "A campus visit is booked"]) expect(text(block), x).toContain(x);
+    for (const x of ["An admission enquiry arrives", "calls the parent right away", "A campus visit is booked"]) expect(text(block), x).toContain(x);
     expect(text(block.match(/data-part="ld-note"[\s\S]*?<\/p>/)![0])).toContain("Your assistant never talks about fees, marks or dues");
   });
   it("the block links only to the plans page; a pack page without a block (none today) draws nothing", () => {

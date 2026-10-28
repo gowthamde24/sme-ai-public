@@ -1724,10 +1724,10 @@
   }
  },
  "meta.description": {
-  "en": "Lead Desk: {assistant} aims to call your leads within minutes, in calling hours, in their language, sends the details on WhatsApp, records the outcome and follows up until yes or no. Industry packs for sarees, building materials and schools.",
-  "te": "Lead Desk: కాలింగ్ టైమ్‌లో నిమిషాల్లోనే మీ లీడ్స్‌కి వాళ్ల భాషలో కాల్ చేయడానికి {assistant} ప్రయత్నిస్తుంది, వాట్సాప్‌లో వివరాలు పంపుతుంది, ఫలితం రాసి, అవును లేదా కాదు వచ్చే వరకు ఫాలో-అప్ చేస్తుంది. చీరలు, బిల్డింగ్ మెటీరియల్స్, స్కూళ్లకు ఇండస్ట్రీ ప్యాక్‌లు.",
-  "hi": "Lead Desk: कॉलिंग टाइम में मिनटों के अंदर आपके लीड को उनकी भाषा में कॉल करने की कोशिश {assistant} करती है, व्हाट्सऐप पर डिटेल भेजती है, नतीजा लिखती है और हाँ या ना मिलने तक फ़ॉलो-अप करती है। साड़ी, बिल्डिंग मटेरियल और स्कूलों के लिए इंडस्ट्री पैक।",
-  "kn": "Lead Desk: ಕಾಲಿಂಗ್ ಸಮಯದಲ್ಲಿ ನಿಮಿಷಗಳಲ್ಲಿ ನಿಮ್ಮ ಲೀಡ್ಸ್‌ಗೆ ಅವರ ಭಾಷೆಯಲ್ಲಿ ಕಾಲ್ ಮಾಡಲು {assistant} ಪ್ರಯತ್ನಿಸುತ್ತದೆ, ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ವಿವರ ಕಳಿಸುತ್ತದೆ, ಫಲಿತಾಂಶ ಬರೆದು, ಹೌದು ಅಥವಾ ಇಲ್ಲ ಬರುವವರೆಗೆ ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತದೆ. ಸೀರೆ, ಕಟ್ಟಡ ಸಾಮಗ್ರಿ, ಶಾಲೆಗಳಿಗೆ ಇಂಡಸ್ಟ್ರಿ ಪ್ಯಾಕ್.",
+  "en": "Lead Desk: {assistant} calls your leads right away, in calling hours, in their language, sends the details on WhatsApp, records the outcome and follows up until yes or no. Industry packs for sarees, building materials and schools.",
+  "te": "Lead Desk: కాలింగ్ టైమ్‌లో మీ లీడ్స్‌కి వెంటనే వాళ్ల భాషలో {assistant} కాల్ చేస్తుంది, వాట్సాప్‌లో వివరాలు పంపుతుంది, ఫలితం రాసి, అవును లేదా కాదు వచ్చే వరకు ఫాలో-అప్ చేస్తుంది. చీరలు, బిల్డింగ్ మెటీరియల్స్, స్కూళ్లకు ఇండస్ట్రీ ప్యాక్‌లు.",
+  "hi": "Lead Desk: कॉलिंग टाइम में आपके लीड को तुरंत उनकी भाषा में {assistant} कॉल करती है, व्हाट्सऐप पर डिटेल भेजती है, नतीजा लिखती है और हाँ या ना मिलने तक फ़ॉलो-अप करती है। साड़ी, बिल्डिंग मटेरियल और स्कूलों के लिए इंडस्ट्री पैक।",
+  "kn": "Lead Desk: ಕಾಲಿಂಗ್ ಸಮಯದಲ್ಲಿ ನಿಮ್ಮ ಲೀಡ್ಸ್‌ಗೆ ತಕ್ಷಣ ಅವರ ಭಾಷೆಯಲ್ಲಿ {assistant} ಕಾಲ್ ಮಾಡುತ್ತದೆ, ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ವಿವರ ಕಳಿಸುತ್ತದೆ, ಫಲಿತಾಂಶ ಬರೆದು, ಹೌದು ಅಥವಾ ಇಲ್ಲ ಬರುವವರೆಗೆ ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತದೆ. ಸೀರೆ, ಕಟ್ಟಡ ಸಾಮಗ್ರಿ, ಶಾಲೆಗಳಿಗೆ ಇಂಡಸ್ಟ್ರಿ ಪ್ಯಾಕ್.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3428,10 +3428,10 @@
   }
  },
  "ld.aim": {
-  "en": "{assistant} aims to call within 2 minutes, in calling hours.",
-  "te": "కాలింగ్ టైమ్‌లో 2 నిమిషాల్లో కాల్ చేయడానికి {assistant} ప్రయత్నిస్తుంది.",
-  "hi": "{assistant} कॉलिंग टाइम में 2 मिनट के अंदर कॉल करने की कोशिश करती है।",
-  "kn": "{assistant} ಕಾಲಿಂಗ್ ಸಮಯದಲ್ಲಿ 2 ನಿಮಿಷದೊಳಗೆ ಕಾಲ್ ಮಾಡಲು ಪ್ರಯತ್ನಿಸುತ್ತದೆ.",
+  "en": "{assistant} calls your leads in your calling hours.",
+  "te": "కాలింగ్ టైమ్‌లో మీ లీడ్స్‌కి {assistant} కాల్ చేస్తుంది.",
+  "hi": "कॉलिंग टाइम में आपके लीड को {assistant} कॉल करती है।",
+  "kn": "ಕಾಲಿಂಗ್ ಸಮಯದಲ್ಲಿ ನಿಮ್ಮ ಲೀಡ್ಸ್‌ಗೆ {assistant} ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3516,10 +3516,10 @@
   }
  },
  "ld.s.2.t": {
-  "en": "{assistant} calls within minutes",
-  "te": "{assistant} నిమిషాల్లో కాల్ చేస్తుంది",
-  "hi": "{assistant} मिनटों में कॉल करती है",
-  "kn": "{assistant} ನಿಮಿಷಗಳಲ್ಲಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ",
+  "en": "{assistant} calls right away",
+  "te": "{assistant} వెంటనే కాల్ చేస్తుంది",
+  "hi": "{assistant} तुरंत कॉल करती है",
+  "kn": "{assistant} ತಕ್ಷಣ ಕಾಲ್ ಮಾಡುತ್ತದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -3780,10 +3780,10 @@
   }
  },
  "ld.deep.textiles.d": {
-  "en": "Meta lead ad and WhatsApp enquiries, a call within minutes, photos on WhatsApp, then a store visit.",
-  "te": "Meta లీడ్ ప్రకటనలు, వాట్సాప్ ఎంక్వయిరీలు, నిమిషాల్లో కాల్, వాట్సాప్‌లో ఫోటోలు, ఆ తర్వాత షాప్ సందర్శన.",
-  "hi": "Meta लीड विज्ञापन और व्हाट्सऐप की पूछताछ, मिनटों में कॉल, व्हाट्सऐप पर फ़ोटो, फिर दुकान की विज़िट।",
-  "kn": "Meta ಲೀಡ್ ಜಾಹೀರಾತು, ವಾಟ್ಸಾಪ್ ವಿಚಾರಣೆಗಳು, ನಿಮಿಷಗಳಲ್ಲಿ ಕಾಲ್, ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಫೋಟೋ, ನಂತರ ಅಂಗಡಿ ಭೇಟಿ.",
+  "en": "Meta lead ad and WhatsApp enquiries, a call right away, photos on WhatsApp, then a store visit.",
+  "te": "Meta లీడ్ ప్రకటనలు, వాట్సాప్ ఎంక్వయిరీలు, వెంటనే కాల్, వాట్సాప్‌లో ఫోటోలు, ఆ తర్వాత షాప్ సందర్శన.",
+  "hi": "Meta लीड विज्ञापन और व्हाट्सऐप की पूछताछ, तुरंत कॉल, व्हाट्सऐप पर फ़ोटो, फिर दुकान की विज़िट।",
+  "kn": "Meta ಲೀಡ್ ಜಾಹೀರಾತು, ವಾಟ್ಸಾಪ್ ವಿಚಾರಣೆಗಳು, ತಕ್ಷಣ ಕಾಲ್, ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಫೋಟೋ, ನಂತರ ಅಂಗಡಿ ಭೇಟಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4044,10 +4044,10 @@
   }
  },
  "ld.pack.textiles.2": {
-  "en": "{assistant} calls within minutes, in the customer's language.",
-  "te": "{assistant} నిమిషాల్లో కస్టమర్ భాషలో కాల్ చేస్తుంది.",
-  "hi": "{assistant} मिनटों में ग्राहक की भाषा में कॉल करती है।",
-  "kn": "{assistant} ನಿಮಿಷಗಳಲ್ಲಿ ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "en": "{assistant} calls right away, in the customer's language.",
+  "te": "{assistant} వెంటనే కస్టమర్ భాషలో కాల్ చేస్తుంది.",
+  "hi": "{assistant} तुरंत ग्राहक की भाषा में कॉल करती है।",
+  "kn": "{assistant} ತಕ್ಷಣ ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4154,10 +4154,10 @@
   }
  },
  "ld.pack.education.2": {
-  "en": "Speed to lead: {assistant} calls the parent within minutes, in their language.",
-  "te": "వెంటనే స్పందన: {assistant} నిమిషాల్లో పేరెంట్‌కి వాళ్ల భాషలో కాల్ చేస్తుంది.",
-  "hi": "तुरंत जवाब: {assistant} मिनटों में पैरेंट को उनकी भाषा में कॉल करती है।",
-  "kn": "ತಕ್ಷಣದ ಸ್ಪಂದನೆ: {assistant} ನಿಮಿಷಗಳಲ್ಲಿ ಪೋಷಕರಿಗೆ ಅವರ ಭಾಷೆಯಲ್ಲಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
+  "en": "{assistant} calls the parent right away, in their language.",
+  "te": "{assistant} వెంటనే పేరెంట్‌కి వాళ్ల భాషలో కాల్ చేస్తుంది.",
+  "hi": "{assistant} तुरंत पैरेंट को उनकी भाषा में कॉल करती है।",
+  "kn": "{assistant} ತಕ್ಷಣ ಪೋಷಕರಿಗೆ ಅವರ ಭಾಷೆಯಲ್ಲಿ ಕಾಲ್ ಮಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5155,10 +5155,10 @@
   }
  },
  "v3.row.5.d": {
-  "en": "Website, Meta ad and WhatsApp leads are called about a minute after they arrive, within your calling hours.",
-  "te": "వెబ్‌సైట్, Meta ప్రకటన, వాట్సాప్ లీడ్స్‌కి వచ్చిన ఒక నిమిషం తర్వాత, మీ కాలింగ్ సమయాల్లో కాల్ వెళ్తుంది.",
-  "hi": "वेबसाइट, Meta विज्ञापन और व्हाट्सऐप के लीड को आने के करीब एक मिनट बाद, आपके कॉल के समय में कॉल जाता है।",
-  "kn": "ವೆಬ್‌ಸೈಟ್, Meta ಜಾಹೀರಾತು, ವಾಟ್ಸಾಪ್ ಲೀಡ್ಸ್‌ಗೆ ಬಂದ ಸುಮಾರು ಒಂದು ನಿಮಿಷದ ನಂತರ, ನಿಮ್ಮ ಕಾಲ್ ಸಮಯದೊಳಗೆ ಕಾಲ್ ಹೋಗುತ್ತದೆ.",
+  "en": "Website, Meta ad and WhatsApp leads are called right away, within your calling hours.",
+  "te": "వెబ్‌సైట్, Meta ప్రకటన, వాట్సాప్ లీడ్స్‌కి వెంటనే, మీ కాలింగ్ సమయాల్లో కాల్ వెళ్తుంది.",
+  "hi": "वेबसाइट, Meta विज्ञापन और व्हाट्सऐप के लीड को तुरंत, आपके कॉल के समय में कॉल जाता है।",
+  "kn": "ವೆಬ್‌ಸೈಟ್, Meta ಜಾಹೀರಾತು, ವಾಟ್ಸಾಪ್ ಲೀಡ್ಸ್‌ಗೆ ತಕ್ಷಣ, ನಿಮ್ಮ ಕಾಲ್ ಸಮಯದೊಳಗೆ ಕಾಲ್ ಹೋಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5177,10 +5177,10 @@
   }
  },
  "v3.speed.1.v": {
-  "en": "about 1 minute",
-  "te": "సుమారు 1 నిమిషం",
-  "hi": "लगभग 1 मिनट",
-  "kn": "ಸುಮಾರು 1 ನಿಮಿಷ",
+  "en": "right away",
+  "te": "వెంటనే",
+  "hi": "तुरंत",
+  "kn": "ತಕ್ಷಣ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5199,10 +5199,10 @@
   }
  },
  "v3.speed.2.v": {
-  "en": "about 1 minute",
-  "te": "సుమారు 1 నిమిషం",
-  "hi": "लगभग 1 मिनट",
-  "kn": "ಸುಮಾರು 1 ನಿಮಿಷ",
+  "en": "right away",
+  "te": "వెంటనే",
+  "hi": "तुरंत",
+  "kn": "ತಕ್ಷಣ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5221,10 +5221,10 @@
   }
  },
  "v3.speed.3.v": {
-  "en": "about 1 minute",
-  "te": "సుమారు 1 నిమిషం",
-  "hi": "लगभग 1 मिनट",
-  "kn": "ಸುಮಾರು 1 ನಿಮಿಷ",
+  "en": "right away",
+  "te": "వెంటనే",
+  "hi": "तुरंत",
+  "kn": "ತಕ್ಷಣ",
   "status": {
    "te": "draft",
    "hi": "draft",
