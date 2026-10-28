@@ -273,7 +273,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                   words={wordsFor(lang, ["settings.biz."])}
                   name={businessProfile.name}
                   town={businessProfile.town ?? ""}
-                  languages={businessProfile.languages}
+                  languages={businessProfile.languages.length > 0 ? businessProfile.languages : [lang]}
                   choices={PROFILE_LANGUAGES}
                   usedIn={workspace?.nameUsedIn ?? []}
                   owner={workspace && typeList && typeList.groups.length > 0 ? { groups: typeList.groups, typeWords: typeList.words, otherId: typeList.otherId, type: workspace.type, typeLabel: workspace.typeLabel ?? "", phone: workspace.phone ?? "" } : null}

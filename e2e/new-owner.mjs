@@ -91,7 +91,7 @@ const signIn = async () => {
 // ---- 1. sign up with "Other", become a Google-style account, sign in --------------------------------------------------------
 if (!(await step("N1", 'sign-up step 1 is ONE searchable list with "Other" in its own group; choosing Other goes to step 2; the e-mail way makes the account', async () => {
   await page.goto(`${BASE}/signup`);
-  await page.getByRole("combobox").focus();
+  await page.locator('input[role="combobox"]').focus();
   const other = page.locator('[data-pack-card="other"]');
   await other.waitFor();
   must((await page.locator("[data-pack-card]").count()) >= 10, "the list is short");
@@ -117,7 +117,7 @@ await step("N3", "sign in: no second step is asked (the account has none), and a
 
 // ---- 2. first run: only the kind of business, what "Other" is and the name ---------------------------------------------------
 await step("N4", 'the set-up asks ONLY the kind of business (Other is already chosen: it asks what the business is), the name and the language; nothing else is required', async () => {
-  await page.getByRole("combobox").waitFor();
+  await page.locator('input[role="combobox"]').waitFor();
   const required = await page.locator("form input[required]").evaluateAll((els) => els.map((e) => e.getAttribute("name")));
   must(required.every((n) => ["business_name", "other_label"].includes(n)), `unexpected required fields: ${required.join(",")}`);
   const asked = await page.locator("form input:visible").evaluateAll((els) => els.filter((e) => e.type !== "radio").length);
@@ -141,6 +141,8 @@ await step("N4", 'the set-up asks ONLY the kind of business (Other is already ch
 
 await step("N5", 'skip the rest: Today opens at once with the business name and a short "Finish setting up" list; a step can be put away ("Hide for now") and comes back in Settings', async () => {
   await page.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" });
+  const ok = page.getByRole("button", { name: "OK, got it" }); // the cookie notice sits over the page until it is answered
+  if (await ok.count()) await ok.click();
   must((await text(page)).includes(NAME), "Today does not show the business name");
   must(!/Something went wrong/i.test(await text(page)), "Today crashed");
   const card = page.locator('[data-start="card"]');
@@ -150,7 +152,7 @@ await step("N5", 'skip the rest: Today opens at once with the business name and 
   must(before > 0, "no step is left to do");
   await shot(page, "today-first");
   await card.getByRole("button", { name: "Hide for now" }).first().click();
-  await page.waitForLoadState("networkidle");
+  await page.waitForFunction((n) => document.querySelectorAll('[data-start="card"] li[data-state=todo]').length < n, before, { timeout: 30000 }).catch(() => null);
   const after = await page.locator('[data-start="card"] li[data-state=todo]').count();
   must(after === before - 1 || (before === 1 && after === 0), `a step was not put away (${before} -> ${after})`);
   await page.goto(`${BASE}/app/tenants/${tenant}/settings?section=business`, { waitUntil: "networkidle" });
@@ -162,7 +164,7 @@ await step("N6", "Today: with the assistant off the card still has the typing li
   await page.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" });
   const turnOn = page.getByRole("button", { name: /^Turn on / });
   if (await turnOn.count()) {
-    must((await page.locator("input[type=text], input:not([type])").count()) > 0, "no typing line while the assistant is off");
+    must((await page.locator('[data-ask="off"]').getByText(/anything, in any language/).count()) > 0, "no typing line (as drawn) while the assistant is off");
     psql(`select app.operator_enable_assistant('${slug}')`); // the platform's own allow-list: an operator step on the local stack only
     await turnOn.click();
     await page.waitForLoadState("networkidle");
@@ -213,7 +215,8 @@ await step("N9", "Settings > My profile: set a name and a picture (a real upload
 // ---- 5. the business details and the greeting -------------------------------------------------------------------------------------
 await step("N10", "Settings > Business: the Owner changes the name and the phone; the voice preview text carries the NEW name (nothing stored under the old one)", async () => {
   await page.goto(`${BASE}/app/tenants/${tenant}/settings?section=business`, { waitUntil: "networkidle" });
-  must((await page.getByRole("combobox").count()) === 1, "the kind of business is not in Settings");
+  must((await page.locator('input[role="combobox"]').count()) === 1, "the kind of business is not in Settings");
+  must((await page.locator('input[name="languages"]:checked').count()) >= 1, "a new owner's languages are all unticked: the form cannot be saved");
   must((await page.locator('[data-part="biz-logo"]').count()) === 1, "no logo part");
   await page.fill("#biz-name", NEW_NAME);
   await page.fill("#biz-phone", "+91 98765 43210");
