@@ -60,8 +60,10 @@ import { readAssistant } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, VOICES } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { assistantScreens, callSettingsScreens, dpdpScreens, openingLineScreens, ownVoiceScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { aboutBusinessScreens, assistantScreens, callSettingsScreens, dpdpScreens, openingLineScreens, ownVoiceScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
 import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
+import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
+import { apiFor } from "@/lib/context/server";
 import { VoicePicker } from "@/components/v2/app/assistant/LazyVoicePicker";
 import { readVoicePicker } from "@/lib/voice-picker/source";
 import { inForce, PICKER_LANGS, type PickerLang } from "@/lib/voice-picker/types";
@@ -164,7 +166,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
   const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
   // Settings > AI assistant (job DM): only while its flag is on, and only for the Owner (the people who run the business may be admins, but the assistant is the Owner's to set up)
-  const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off" || voicePickerScreens() !== "off");
+  const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off" || voicePickerScreens() !== "off" || aboutBusinessScreens() !== "off");
   const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   let members: Member[] | null = null;
@@ -243,6 +245,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // under the assistant (job DP): its own voice, with consent, and the advanced call settings; each behind its own flag, the Owner only
   const assistantCtx = { token: user.accessToken, tenantId };
   const ownVoice = section === "assistant" && ownVoiceScreens() !== "off" ? await readOwnVoice(assistantCtx) : null;
+  // "About my business": the notes the assistant reads (read here once; the screen then saves through its own route)
+  const aboutApi = section === "assistant" ? apiFor(aboutBusinessScreens(), user.accessToken, tenantId) : null;
+  const about = aboutApi ? await aboutApi.get().catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const openingLine = section === "assistant" && openingLineScreens() !== "off" ? await readOpeningLine(assistantCtx) : null;
   // the voice picker (owner decision 28 Oct): one block per language the business talks in (its own languages and the assistant's main one, else the one in use) that the catalogue has a row for
   const voicePicker = section === "assistant" && voicePickerScreens() !== "off" ? await readVoicePicker(assistantCtx) : null;
@@ -387,6 +392,16 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               defaultName={withNamedAssistant("{assistant}", DEFAULT_ASSISTANT_NAME, lang)}
             />
             ) : null}
+            {about?.ok ? (
+              <AboutBusiness
+                words={wordsFor(lang, ["ctx."])}
+                initial={about.data}
+                endpoint={`${base}/context`}
+                canEdit={tenant.role === "owner" || tenant.role === "admin"}
+                lang={lang}
+                sourcesHref={`${base}/lead-sources`}
+              />
+            ) : null}
             {openingLine?.mode === "ok" ? (
               <OpeningLine
                 words={wordsFor(lang, ["ope."])}
@@ -433,7 +448,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 actions={{ save: saveCallSettingsAction.bind(null, tenantId) }}
               />
             ) : null}
-            {ownVoice?.mode === "unavailable" || callSettings?.mode === "unavailable" || openingLine?.mode === "unavailable" ? (
+            {ownVoice?.mode === "unavailable" || callSettings?.mode === "unavailable" || openingLine?.mode === "unavailable" || (about && !about.ok) ? (
               <section className={surface}>
                 <p className="text-sm text-muted">{t("frame.notyet")}</p>
               </section>
