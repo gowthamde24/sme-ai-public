@@ -21,6 +21,21 @@ GENDERS: tuple[str, ...] = ("female", "male")
 DATA = Path(__file__).resolve().parent / "data"
 DEFAULT_FILE = DATA / "voices.json"
 SAMPLES = DATA / "samples"
+
+# The words of every pre-rendered listening sample (scripts/voice_catalogue_samples.py renders them; GET /voices shows them as `sample_text`). No person's name: the voice says it is the assistant of a neutral business, and
+# the lines avoid verbs that carry a gender, so the same words suit a woman's voice and a man's.
+SAMPLE_BUSINESS = "Sample Stores"
+SAMPLE_LINES: dict[str, str] = {
+    "te": "నమస్కారం అండీ, నేను {b} నుంచి మాట్లాడుతున్నాను. ఒక్క నిమిషం అండీ, check చేసి చెప్తాను. సాయంత్రం ఆరు గంటలకి call చేయనా?",
+    "hi": "नमस्ते जी, यह {b} की तरफ़ से कॉल है। एक मिनट जी, check करके बताते हैं। शाम छह बजे call करें?",
+    "kn": "ನಮಸ್ಕಾರ ಸರ್, ನಾನು {b} ನಿಂದ ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ. ಒಂದು ನಿಮಿಷ ಸರ್, ನೋಡಿ ಹೇಳ್ತೀನಿ. ಸಂಜೆ ಆರು ಗಂಟೆಗೆ call ಮಾಡ್ಲಾ?",
+    "en": "Hello, this is the assistant from {b}. One moment, I'll check and tell you. Shall I call you after six?",
+}
+
+
+def sample_text(language: str) -> str:
+    """The exact words of the pre-rendered sample of a voice of this language."""
+    return SAMPLE_LINES[language].replace("{b}", SAMPLE_BUSINESS)
 LOWEST_TIMEOUT_MS, HIGHEST_TIMEOUT_MS = 200, 3000
 ID_FORMAT = re.compile(r"^[a-z]{2}-[a-z0-9_]{2,40}$")  # the same pattern the database holds
 

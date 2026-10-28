@@ -126,14 +126,22 @@ def preview(
     return PreviewOut(language=language, text=text, mention_ai=mention, says_ai=render.says_ai(text))
 
 
-def rendered_opening(runtime: Runtime, ctx: TenantContext, language: str, campaign_id: str | None, customer: str | None, agent_role: str | None) -> tuple[str, bool]:
-    """The greeting a customer hears (the preview, the voice preview, a call and a voice note all use this): the live business name, the assistant's name from its settings, the Owner's line and the switch."""
+def assistant_name(runtime: Runtime, ctx: TenantContext) -> str:
+    """The name a call gives itself: the one the Owner chose in Settings > AI assistant (read now), else the default of the data."""
+    if runtime.assistant_settings is not None:
+        return str(runtime.assistant_settings.get(ctx.principal.token, ctx.tenant.id).settings.name)
+    return str(settings_data.default_name())
+
+
+def rendered_opening(
+    runtime: Runtime, ctx: TenantContext, language: str, campaign_id: str | None, customer: str | None, agent_role: str | None, *, line: str | None = None, mention_ai: bool | None = None
+) -> tuple[str, bool]:
+    """The greeting a customer hears (the preview, the voice preview, a call and a voice note all use this): the live business name, the assistant's name from its settings, the Owner's line and the switch.
+    `line` / `mention_ai` stand in for the SAVED line and switch (job EC: "Hear it" speaks the line as it is on the screen, unsaved edits included); nothing is saved."""
     row = _repo(runtime).opening(ctx.principal.token, ctx.tenant.id)
-    mention = render.pick_mention(bool(row.get("mention_ai", True)), row.get("campaign_overrides", []), campaign_id)
-    line = render.pick_line(row.get("lines", []), language, campaign_id)
-    name: object = settings_data.default_name()
-    if runtime.assistant_settings is not None:  # the name the Owner chose in Settings > AI assistant
-        name = runtime.assistant_settings.get(ctx.principal.token, ctx.tenant.id).settings.name
+    mention = mention_ai if mention_ai is not None else render.pick_mention(bool(row.get("mention_ai", True)), row.get("campaign_overrides", []), campaign_id)
+    owner_line = line if line is not None else render.pick_line(row.get("lines", []), language, campaign_id)
+    name = assistant_name(runtime, ctx)
     ai_intro = settings_data.intro(language, str(name), ctx.tenant.name) if language in settings_data.load()["intro"] else None
-    text = render.compose_opening(language, owner_line=line, mention_ai=mention, assistant=str(name), business=ctx.tenant.name, customer=customer, agent_role=agent_role, ai_intro=ai_intro)
+    text = render.compose_opening(language, owner_line=owner_line, mention_ai=mention, assistant=str(name), business=ctx.tenant.name, customer=customer, agent_role=agent_role, ai_intro=ai_intro)
     return text, mention
