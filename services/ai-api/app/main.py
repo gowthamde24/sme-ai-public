@@ -3,6 +3,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import httpx
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -26,6 +27,9 @@ from app.billing.repository import PostgrestBillingRepository
 from app.billing.routes import plans_router as billing_plans_router
 from app.billing.routes import router as billing_router
 from app.billing.service import BillingService
+from app.browser_voice.limits import Ledger, Limits
+from app.browser_voice.routes import router as browser_voice_router
+from app.browser_voice.runtime import BrowserVoice
 from app.businessprofile.repository import PostgrestBusinessProfileRepository
 from app.businessprofile.routes import router as business_profile_router
 from app.callsettings.repository import PostgrestCallSettingsRepository
@@ -300,6 +304,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         call_voice=_call_voice(settings),
+        browser_voice=_browser_voice(settings),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         mail_sender=_notice_sender(settings),
         notifications=build_notifications(settings, config),
@@ -878,6 +883,46 @@ def _call_voice(settings: Settings) -> CallVoicePreview | None:
     return CallVoicePreview(voice_catalogue(), factory)
 
 
+def _browser_voice(settings: Settings) -> BrowserVoice | None:
+    """Talk to the assistant in the browser (job DV). None unless BROWSER_VOICE_ENABLED and its keys
+    are set; a half-set configuration stays off (the log names what is missing, never a key)."""
+    if not settings.browser_voice_enabled:
+        return None
+    sarvam = settings.sarvam_api_key.get_secret_value() if settings.sarvam_api_key else ""
+    cartesia = settings.cartesia_api_key.get_secret_value() if settings.cartesia_api_key else ""
+    claude = settings.anthropic_api_key
+    anthropic = claude.get_secret_value() if claude else ""
+    model = settings.browser_voice_turn_model
+    needs = {"SARVAM_API_KEY": sarvam, "CARTESIA_API_KEY": cartesia}
+    if model == "claude":
+        needs |= {"ANTHROPIC_API_KEY": anthropic, "LLM_MODEL": settings.llm_model or ""}
+    elif model == "sarvam" and not settings.llm_spend_cap_confirmed:
+        needs["LLM_SPEND_CAP_CONFIRMED"] = ""
+    missing = [name for name, value in needs.items() if not value]
+    if model not in ("claude", "sarvam") or missing:
+        why = ", ".join(missing) if missing else "BROWSER_VOICE_TURN_MODEL must be claude or sarvam"
+        logging.getLogger("app.main").warning("browser voice is off: %s", why)
+        return None
+    limits = Limits(
+        session_seconds=settings.browser_voice_session_seconds,
+        day_seconds=settings.browser_voice_day_seconds,
+        day_tts_chars=settings.browser_voice_day_tts_chars,
+        sessions_per_minute=settings.browser_voice_sessions_per_minute,
+    )
+    return BrowserVoice(
+        config=voice_catalogue(),
+        factory=real_engine_factory(cartesia_key=cartesia, sarvam_key=sarvam),
+        sarvam_key=sarvam,
+        anthropic_key=anthropic or None,
+        fast_model=settings.llm_model or "",
+        turn_model=model,
+        limits=limits,
+        ledger=Ledger(limits),
+        allowed_origins=tuple(o.strip() for o in settings.api_cors_origins.split(",") if o.strip()),
+        client=httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0)),
+    )
+
+
 def _notice_sender(settings: Settings) -> EmailSender | None:
     """The sender of the privacy notices (the worker's provider settings); None when it cannot be
     built: the actions still work, the notice is skipped and logged."""
@@ -1156,6 +1201,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(tasks_router)
     app.include_router(voice_sample_router)
     app.include_router(voice_picker_router)
+    app.include_router(browser_voice_router)
     app.include_router(voice_samples_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)

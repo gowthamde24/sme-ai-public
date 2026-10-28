@@ -30,6 +30,7 @@ from app.conversation.parts import (
     StreamingLlm,
     StreamingStt,
     StreamingTts,
+    SttEvent,
     TurnTimings,
 )
 from app.conversation.router import Tier, route
@@ -54,10 +55,12 @@ class Conversation:
         filler_after_ms: int = FILLER_AFTER_MS,
         tools_available: bool = False,
         clock: Callable[[], float] = time.perf_counter,
+        on_stt: Callable[[SttEvent], None] | None = None,
     ) -> None:
         self.stt, self.llm, self.tts, self.playout = stt, llm, tts, playout
         self.session, self.models, self.fillers, self.voice = session, models, fillers, voice
         self.filler_after_ms, self.tools_available, self.clock = filler_after_ms, tools_available, clock
+        self.on_stt = on_stt  # the browser session shows the caller's words as they come (partials and the final); the phone loop leaves it None
         self._epoch = 0
         self._reply_task: asyncio.Future[None] | None = None
         self._current: TurnTimings | None = None
@@ -76,11 +79,17 @@ class Conversation:
             await self.respond(text, tm)
         return tm
 
+    async def listen(self, source: AudioSource, tm: TurnTimings) -> str | None:
+        """Listen to one caller turn and return what was said (None when nothing was); the answer is a separate `respond()`, so a caller that must act between the two (the browser session) can."""
+        return await self._listen(source, tm)
+
     async def _listen(self, source: AudioSource, tm: TurnTimings) -> str | None:
         events = self.stt.events(source.frames())
         try:
             async for ev in events:
                 now = self.clock()
+                if self.on_stt is not None:
+                    self.on_stt(ev)
                 if ev.kind == "speech_start":
                     await self.interrupt()
                 elif ev.kind == "speech_end":

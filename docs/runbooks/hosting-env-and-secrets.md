@@ -145,6 +145,12 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `WHATSAPP_VERIFY_TOKEN` | secret | api | The phrase you type into Meta's webhook page. |
 | `WHATSAPP_ACCESS_TOKEN` | secret | api | A PERMANENT system-user token for production (the test number's token lasts a day). |
 | `WHATSAPP_ACCESS_TOKENS` | secret | api | A JSON object `{token_ref: token}` when workspaces have their own numbers. |
+| `BROWSER_VOICE_ENABLED` | plain | api | Job DV: `true` turns on "talk to your assistant" in the browser (a WebSocket, `/v1/tenants/{id}/voice-chat`). Needs `SARVAM_API_KEY`, `CARTESIA_API_KEY` and, for the default turn model, `ANTHROPIC_API_KEY` + `LLM_MODEL`; a half-set configuration stays off and the log names what is missing. Default off. |
+| `BROWSER_VOICE_SESSION_SECONDS` | plain | api | Hard length of one voice session. Default `300` (Cloud Run's request timeout is also 300 s). |
+| `BROWSER_VOICE_DAY_SECONDS` | plain | api | A workspace's talking time per day, all sessions together. Default `1800`. |
+| `BROWSER_VOICE_DAY_TTS_CHARS` | plain | api | Characters a workspace may send to the voice engines per day. Default `6000`. |
+| `BROWSER_VOICE_SESSIONS_PER_MINUTE` | plain | api | Sessions a workspace may open per minute (one runs at a time). Default `6`. |
+| `BROWSER_VOICE_TURN_MODEL` | plain | api | Who answers the short turns: `claude` (default: the model `LLM_MODEL`) or `sarvam` (105b: needs its price row and `LLM_SPEND_CAP_CONFIRMED`, ADR 0102). Questions about the business's data always go to Ask. |
 | `WHATSAPP_PHONE_NUMBER_ID` | plain | api | Meta's id of the sending number (not a secret). Staging: set by `deploy/staging.sh` (docs/runbooks/whatsapp-staging.md). |
 | `WHATSAPP_WABA_ID` | plain | api | Meta's id of the WhatsApp Business Account (not a secret). Staging: set by `deploy/staging.sh`. |
 | `WHATSAPP_ALLOWED_RECIPIENTS` | plain | api | The TEST FENCE: the only numbers (digits with the country code, `;` or `,` between) a message may go to. Unset = no fence (production). Set but empty = nothing is sent. Staging always sets it. |

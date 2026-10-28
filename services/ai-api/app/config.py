@@ -276,6 +276,18 @@ class Settings(BaseSettings):
     channel_agent_email: str | None = None
     channel_agent_password: SecretStr | None = None
 
+    # Job DV: "talk to your assistant" in the browser (a WebSocket). Off until
+    # BROWSER_VOICE_ENABLED=true and the keys it speaks with are set (SARVAM_API_KEY,
+    # CARTESIA_API_KEY, ANTHROPIC_API_KEY for the default turn model). Caps are per workspace.
+    browser_voice_enabled: bool = False
+    browser_voice_session_seconds: int = 300
+    browser_voice_day_seconds: int = 1800
+    browser_voice_day_tts_chars: int = 6000
+    browser_voice_sessions_per_minute: int = 6
+    # who answers the short turns: claude (the approved model, LLM_MODEL) or sarvam (105b:
+    # needs its price row and LLM_SPEND_CAP_CONFIRMED, ADR 0102)
+    browser_voice_turn_model: str = "claude"
+
     # Job BY (ADR 0077): web-push to the team's browsers. Off until BOTH are set. The private
     # key is a secret: only from the environment, entered hidden, never logged or returned.
     vapid_private_key: SecretStr | None = None

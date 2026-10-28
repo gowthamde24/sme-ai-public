@@ -50,6 +50,8 @@ def _routes(app: Any) -> list[tuple[str, str, list[str]]]:
     for route in app.routes:
         contexts = list(route.effective_route_contexts()) if type(route).__name__ == "_IncludedRouter" else [route] if hasattr(route, "dependant") else []
         for c in contexts:
+            if not hasattr(c, "methods") or getattr(c, "dependant", None) is None:
+                continue  # a WebSocket route (the browser voice): it has no HTTP method, authenticates in its first message and is limited by its own ledger
             deps: set[str] = set()
             names(c.dependant, deps)
             found.append((",".join(sorted(c.methods)), c.path, sorted(deps)))
