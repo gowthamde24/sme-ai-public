@@ -1,5 +1,5 @@
 /* The offline page (job BL): plain, no script, no font file; the colours are the v2 tokens (design/tokens.css), light and dark. Cached by the service worker (public/sw.js). */
-:root { --bg: #f9f8f6; --surface: #ffffff; --ink: #1e1e24; --muted: #5f5c59; --brand: #ff773c; --on-brand: #1e1e24; --edge: #c2410c; --line: #d9d5ce; }
+:root { --bg: #f9f8f6; --surface: #ffffff; --ink: #17161c; --muted: #5f5c59; --brand: #c2410c; --on-brand: #ffffff; --edge: #c2410c; --line: #d9d5ce; }
 @media (prefers-color-scheme: dark) { :root { --bg: #17161a; --surface: #1f1e23; --ink: #f1efec; --muted: #b3afaa; --edge: #ff9a6b; --line: #3a383f; } }
 * { box-sizing: border-box; }
 html { color-scheme: light dark; }
