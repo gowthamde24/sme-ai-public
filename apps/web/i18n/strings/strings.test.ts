@@ -94,8 +94,8 @@ describe("honesty: no claims we cannot prove today", () => {
     expect(en["price.faq.3.a"]).toMatch(/Pricing will be announced soon/);
     for (const k of Object.keys(en).filter((x) => x.startsWith("price.") || x.startsWith("home.price."))) expect(en[k], k).not.toMatch(/₹|\d{3}|\bGST\b/);
   });
-  it("the Lead Desk copy states the 2 minutes as an aim in calling hours, says whom we call, names no price or number it cannot back, and puts no third-party logo or praise in words", () => {
-    expect(en["ld.aim"]).toBe("{assistant} aims to call within 2 minutes, in calling hours.");
+  it("the Lead Desk copy says the call happens in calling hours (no number of minutes), says whom we call, names no price or number it cannot back, and puts no third-party logo or praise in words", () => {
+    expect(en["ld.aim"]).toBe("{assistant} calls your leads in your calling hours.");
     expect(en["ld.rules"]).toBe("We call only people who gave their number to the business. We follow calling hours and do-not-disturb rules.");
     expect(en["ld.plans.wf.d"]).toBe("Lead Desk, plus your industry pack and research.");
     expect(en["ld.pack.education.note"]).toMatch(/never talks about fees, marks or dues/);

@@ -10,7 +10,7 @@ export const PRIVACY: LegalText = {
   title: "Privacy notice",
   intro: [
     "This notice says what personal data {brand} keeps, why, who handles it, where it goes, how long we keep it, and how you use your rights. It is written for the owners and staff of Indian shops, builders' merchants and schools who use the service, for the customers and parents those businesses write to, and for people who visit our website.",
-    "{brand} is provided by Stack19, {business_description} (\"we\", \"us\"). Write to {privacy_email} for anything in this notice.",
+    "{brand} is provided by Stack19, {business_description} (\"we\", \"us\"). Write to {privacy_email} for anything in this notice, and to {security_email} to report a security problem.",
   ],
   sections: [
     {
