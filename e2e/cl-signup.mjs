@@ -92,11 +92,13 @@ async function signUpThrough(index, label) {
   const email = `e2e-${STAMP}-${label}@e2e.example.test`;
   const { context, page } = await newContext();
   const out = { id, email, context, page, tenant: "", token: "" };
-  await step(`${label}-1`, `step 1 of the sign-up: a card for each business type the API offers, in its order; choosing ${id} goes to step 2 and asks nothing`, async () => {
+  await step(`${label}-1`, `step 1 of the sign-up: one searchable list with each business type the API offers, grouped; choosing ${id} goes to step 2 and asks nothing`, async () => {
     await page.goto(`${BASE}/signup`);
+    await page.locator('input[role="combobox"]').focus(); // step 1 is one searchable list: it opens on focus
     await page.locator("[data-pack-card]").first().waitFor();
-    must(JSON.stringify(await page.locator("[data-pack-card]").evaluateAll((els) => els.map((e) => e.getAttribute("data-pack-card")))) === JSON.stringify(IDS), "the cards are not the API's list");
-    must((await page.locator("input:visible").count()) === 0, "step 1 asks something");
+    const listed = await page.locator("[data-pack-card]").evaluateAll((els) => els.map((e) => e.getAttribute("data-pack-card")));
+    must(JSON.stringify([...listed].sort()) === JSON.stringify([...IDS].sort()), "the list is not the API's"); // grouped now ("Built especially for", "Lead Desk", "Other"), so the order is the groups'
+    must((await page.locator("input:visible").count()) === 1, "step 1 asks more than the list");
     await shot(page, `${label}-signup-1`);
     await Promise.all([page.waitForURL(new RegExp(`/signup\\?type=${id}$`), { timeout: 30000 }), page.locator(`[data-pack-card="${id}"]`).click()]);
   }, page);
@@ -120,12 +122,13 @@ async function signUpThrough(index, label) {
     await page.fill('input[name="password"]', PW);
     await page.click('button:has-text("Sign in")');
     await page.waitForURL(/\/setup/, { timeout: 30000 });
+    if (id === "other") await page.getByLabel("What is your business?").fill("Pet grooming (synthetic)"); // Other also asks what the business is
     await page.fill("#setup-business-name", `E2E Silks ${STAMP} ${label}`); // the kind was chosen at sign-up: the set-up asks the name only
     await page.click('form button[type="submit"]');
     await page.waitForURL(/\/app\/tenants\/[0-9a-f-]{36}/, { timeout: 90000 });
     const row = psql(`select t.id || '|' || t.name || '|' || w.pack_code || '|' || w.source from public.tenants t join public.memberships m on m.tenant_id = t.id join auth.users u on u.id = m.user_id join packs.workspace_pack w on w.tenant_id = t.id where u.email = '${email}'`);
     const [tenant, name, code, source] = row.split("|");
-    must(code === id && source === "signup" && name === `E2E Silks ${STAMP} ${label}`, `the workspace is "${row}"`);
+    must(code === (id === "other" ? "general_business" : id) && source === "signup" && name === `E2E Silks ${STAMP} ${label}`, `the workspace is "${row}"`);
     // the throwaway workspace is renamed so the clean-up (e2e- slug and "E2E Silks ..." name only) can find it. LOCAL database only.
     psql(`begin; set local session_replication_role = replica; update public.tenants set name = 'E2E Silks ${STAMP} ${label}', slug = 'e2e-${STAMP}-${label}' where id = '${tenant}'; commit;`);
     out.tenant = tenant;
@@ -153,7 +156,9 @@ async function checkWorkspace(u, label, { offPath }) {
     const pack = await labelsOf(u).catch(() => null);
     const body = await text(page);
     must((await page.locator('[data-start="card"]').count()) === 1, "the checklist is missing");
-    must((await page.locator("[data-example=available]").count()) === 1, "the example-data offer is missing");
+    // since the clean-up of 27 Oct a type that ships no example data (the types that start from a lead template) has no offer: the empty button was removed
+    const ships = Number(psql(`select coalesce(jsonb_array_length(v.manifest -> 'example_data' -> 'companies'), 0) + coalesce(jsonb_array_length(v.manifest -> 'example_data' -> 'contacts'), 0) from packs.workspace_pack w join packs.pack_versions v on v.code = w.pack_code and v.version = w.pack_version where w.tenant_id = '${u.tenant}'`)) > 0;
+    must((await page.locator("[data-example=available]").count()) === (ships ? 1 : 0), ships ? "the example-data offer is missing" : "an empty example-data offer is drawn");
     const links = await page.locator('nav[aria-label="Workspace menu"] a').evaluateAll((els) => els.map((e) => ({ text: (e.textContent ?? "").replace(/\s*Waiting for you:.*$/, "").trim(), path: new URL(e.href).pathname.replace(/^\/app\/tenants\/[0-9a-f-]{36}/, "") })));
     // job DQ part 0: the menu has seven items; the pages of a group are the tabs above its page ("Parts of this section"), so the business type's own words and its parts are looked for in the menu AND in the tabs of every group
     const tabLinks = [];
@@ -209,8 +214,9 @@ async function checkWorkspace(u, label, { offPath }) {
     must((await page.locator('[data-step="business_profile"][data-state="done"]').count()) === 1, "step 1 is not done");
   }, page);
 
-  await step(`${label}-7`, "Try with example data: load it (clearly labelled rows, no phone, no e-mail), then remove it with one confirming press", async () => {
+  await step(`${label}-7`, "Try with example data: load it (clearly labelled rows, no phone, no e-mail), then remove it with one confirming press (only for a type that ships some)", async () => {
     await page.goto(T, { waitUntil: "networkidle" });
+    if ((await page.getByRole("button", { name: "Load example data" }).count()) === 0) return "no example data for this type: no offer";
     await page.getByRole("button", { name: "Load example data" }).click();
     await page.locator("[data-example=loaded]").waitFor({ timeout: 60000 });
     const countRows = () => psql(`select (select count(*) from public.companies where tenant_id = '${u.tenant}' and name like 'Example: %') || '|' || (select count(*) from public.contacts where tenant_id = '${u.tenant}' and full_name like 'Example: %') || '|' || (select count(*) from public.contacts where tenant_id = '${u.tenant}' and full_name like 'Example: %' and (email is not null or phone is not null))`);
@@ -402,8 +408,8 @@ for (const { id, i } of others) {
     await p.fill('input[name="password"]', PW);
     await p.click('button:has-text("Sign in")');
     await p.waitForURL(/\/setup/, { timeout: 30000 });
-    must((await p.getByRole("combobox").count()) === 1, "the setup does not ask the kind of business (one searchable list)");
-    await p.getByRole("combobox").focus();
+    must((await p.locator('input[role="combobox"]').count()) === 1, "the setup does not ask the kind of business (one searchable list)");
+    await p.locator('input[role="combobox"]').focus();
     await p.locator(`[data-pack-card="${IDS[2]}"]`).waitFor();
     await shot(p, "google-setup-asks");
     await p.locator(`[data-pack-card="${IDS[2]}"]`).click();
