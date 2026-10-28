@@ -1,5 +1,6 @@
 import type { Lang } from "@/i18n/lang";
-import { currentAssistantName, withAssistantName } from "@/lib/assistant/name";
+import { withNamedAssistant } from "@/lib/assistant/default-name";
+import { currentAssistantName } from "@/lib/assistant/name";
 import { withTrialDays } from "@/lib/plan/trial-days";
 
 /**
@@ -35,7 +36,7 @@ export function namedDict<D>(store: Map<string, D>, lang: Lang, build: () => Rec
   let dict = store.get(key);
   if (!dict) {
     if (store.size >= 40) store.clear();
-    dict = Object.fromEntries(Object.entries(build()).map(([k, v]) => [k, withTrialDays(withAssistantName(v, name, lang))])) as D;
+    dict = Object.fromEntries(Object.entries(build()).map(([k, v]) => [k, withTrialDays(withNamedAssistant(v, name, lang))])) as D;
     store.set(key, dict);
   }
   return dict;

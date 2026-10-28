@@ -24,7 +24,8 @@ import { fillLegal } from "@/lib/legal/documents";
 
 import appJson from "@/i18n/strings/app.json";
 
-import { ASSISTANT_PLACEHOLDER, currentAssistantName, DEFAULT_ASSISTANT_NAME, DEFAULT_NAME_BY_LANG, withAssistantName } from "./name";
+import { ASSISTANT_PLACEHOLDER, currentAssistantName, DEFAULT_ASSISTANT_NAME, withAssistantName } from "./name";
+import { DEFAULT_NAME_BY_LANG } from "./default-name";
 import { provideRequestAssistantName } from "./request-name";
 import { MOCK_COOKIE } from "./source";
 import { assistantProfile } from "./defaults";

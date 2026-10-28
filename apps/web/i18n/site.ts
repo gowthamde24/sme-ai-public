@@ -1,7 +1,8 @@
 import site from "@/i18n/strings/site.json";
 
 import { fill, type Vars } from "@/i18n/fill";
-import { DEFAULT_ASSISTANT_NAME, DEFAULT_NAME_BY_LANG, withAssistantName } from "@/lib/assistant/name";
+import { DEFAULT_NAME_BY_LANG, withNamedAssistant } from "@/lib/assistant/default-name";
+import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
 import type { Lang } from "@/i18n/lang";
 import { dictFor, namedDict } from "@/i18n/strings";
 
@@ -18,7 +19,7 @@ const cache = new Map<string, SiteDict>();
 
 /** The public site names no assistant (owner, 28 Oct): wherever its words say `{assistant}` the visitor reads "your assistant" in their language (lib/assistant/name.ts), whatever name a workspace has chosen. */
 export const SITE_ASSISTANT = DEFAULT_NAME_BY_LANG;
-export const withSiteAssistant = (text: string, lang: Lang): string => withAssistantName(text, DEFAULT_ASSISTANT_NAME, lang);
+export const withSiteAssistant = (text: string, lang: Lang): string => withNamedAssistant(text, DEFAULT_ASSISTANT_NAME, lang);
 
 export function siteDict(lang: Lang): SiteDict {
   return namedDict<SiteDict>(cache, lang, () => Object.fromEntries(Object.entries(dictFor(site, lang)).map(([k, v]) => [k, withSiteAssistant(v as string, lang)])) as SiteDict);

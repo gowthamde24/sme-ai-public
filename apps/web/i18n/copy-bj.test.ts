@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_NAME_BY_LANG } from "@/lib/assistant/name";
+import { DEFAULT_NAME_BY_LANG } from "@/lib/assistant/default-name";
 import { appDict } from "@/i18n/app";
 import { LANGS } from "@/i18n/lang";
 import { siteDict } from "@/i18n/site";

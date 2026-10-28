@@ -1,4 +1,4 @@
-import { DEFAULT_NAME_BY_LANG } from "@/lib/assistant/name";
+import { DEFAULT_NAME_BY_LANG } from "@/lib/assistant/default-name";
 import { describe, expect, it } from "vitest";
 
 import { appDict } from "@/i18n/app";

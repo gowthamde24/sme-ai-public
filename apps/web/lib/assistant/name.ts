@@ -4,11 +4,9 @@
  * request (lib/assistant/request-name.ts); with no request (a browser, a test, the public site) the name is the default. Client safe: plain constants and functions, no server import.
  */
 /**
- * No fixed name (owner, 28 Oct): until the owner names the assistant it is the plain phrase below, in the reader's language (DEFAULT_NAME_BY_LANG; the Hindi word is the feminine "असिस्टेंट" the verbs of these strings were written for).
- * At the start of an English sentence it is capitalised. A name the owner set is a proper name and is used as written.
+ * No fixed name (owner, 28 Oct): until the owner names the assistant it is the plain phrase below (said in the reader's language by lib/assistant/default-name.ts, which only the server's dictionaries use). A name the owner set is a proper name and is used as written.
  */
 export const DEFAULT_ASSISTANT_NAME = "your assistant";
-export const DEFAULT_NAME_BY_LANG: Readonly<Record<string, string>> = { en: DEFAULT_ASSISTANT_NAME, te: "మీ అసిస్టెంట్", hi: "आपकी असिस्टेंट", kn: "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್" };
 export const ASSISTANT_PLACEHOLDER = "{assistant}";
 
 let provider: () => string = () => DEFAULT_ASSISTANT_NAME;
@@ -20,10 +18,6 @@ export function setAssistantNameProvider(next: () => string): void {
 export const currentAssistantName = (): string => provider();
 
 /** A text with `{assistant}` replaced by the name (the current one unless given). A text without the placeholder is returned as it is. */
-export function withAssistantName(text: string, name: string = currentAssistantName(), lang = "en"): string {
-  if (!text.includes(ASSISTANT_PLACEHOLDER)) return text;
-  const isDefault = name === DEFAULT_ASSISTANT_NAME;
-  const shown = isDefault ? (DEFAULT_NAME_BY_LANG[lang] ?? name) : name;
-  const startsSentence = (at: number): boolean => at === 0 || /([.!?]\s+|["“(])$/.test(text.slice(0, at));
-  return text.replace(/\{assistant\}/g, (_m, at: number) => (isDefault && lang === "en" && startsSentence(at) ? `${shown[0].toUpperCase()}${shown.slice(1)}` : shown));
+export function withAssistantName(text: string, name: string = currentAssistantName()): string {
+  return text.includes(ASSISTANT_PLACEHOLDER) ? text.replaceAll(ASSISTANT_PLACEHOLDER, () => name) : text;
 }
