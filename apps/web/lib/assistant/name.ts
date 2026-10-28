@@ -18,10 +18,9 @@ export function setAssistantNameProvider(next: () => string): void {
 export const currentAssistantName = (): string => provider();
 
 /**
- * A text with `{assistant}` replaced by the name (the current one unless given). A text without the placeholder is returned as it is. The default name is capitalised when it opens the text ("Your assistant this week"); a name the owner set is used as written.
- * (The server's dictionaries do the full job, per language and after any sentence end: lib/assistant/default-name.ts.)
+ * A text with `{assistant}` replaced by the name (the current one unless given). A text without the placeholder is returned as it is. Client safe and small (the route-JS budget counts it on every page): the server's dictionaries say the default name in the reader's language and
+ * capitalised at a sentence start (lib/assistant/default-name.ts), so the words a screen receives are already right; this is only for a fallback English word.
  */
 export function withAssistantName(text: string, name: string = currentAssistantName()): string {
-  const out = text.replaceAll(ASSISTANT_PLACEHOLDER, () => name);
-  return name === DEFAULT_ASSISTANT_NAME && text.startsWith(ASSISTANT_PLACEHOLDER) ? out[0].toUpperCase() + out.slice(1) : out;
+  return text.includes(ASSISTANT_PLACEHOLDER) ? text.replaceAll(ASSISTANT_PLACEHOLDER, () => name) : text;
 }
