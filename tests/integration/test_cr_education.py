@@ -344,7 +344,10 @@ def test_the_pending_list_the_late_fees_and_the_reports(school: Any, eval_world:
     r = w.client.put(url(a, f"/fee-assignments/{aid}"), json={"student_id": sid, "plan_id": old_plan, "assigned_on": LONG_AGO.isoformat()}, headers=bearer(owner))
     assert r.status_code == 200, r.text
     pend = w.client.get(url(a, "/fees/pending"), headers=bearer(sales)).json()
-    assert [(i["display_name"], i["pending_paise"], i["overdue_days"]) for i in pend["items"]] == [("Dev", 500000, 200)]
+    # the days overdue are counted by the database on India's calendar day; TODAY was taken when the module was imported, and a CI run that crosses midnight IST (18:30 UTC) between the two would be one day off,
+    # so the expected number is worked out from the day it is NOW (200 on every run that does not cross midnight)
+    expected_days = (datetime.now(IST).date() - LONG_AGO).days
+    assert [(i["display_name"], i["pending_paise"], i["overdue_days"]) for i in pend["items"]] == [("Dev", 500000, expected_days)]
     assert pend["items"][0]["programme_name"] == "Class 6" and "defaulter" not in json.dumps(pend).lower()
     # the late fee the plan's rule gives (a fixed Rs 100) is looked at, then posted by a person with a second factor
     prev = w.client.get(url(a, "/late-fees"), headers=bearer(sales)).json()
