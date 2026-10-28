@@ -64,7 +64,7 @@ export function mockApi(tenantId: string): SourcesApi {
         { kind: "email_forward", status: x.mail ? "connected" : "not_connected", headline: x.mail ? "Connected" : "Not connected", detail: null, action: "copy_address", ...base },
         { kind: "website", status: "not_connected", headline: "Not connected", detail: null, action: "copy_snippet", ...base },
         { kind: "files", status: "connected", headline: "Ready", detail: null, action: "upload", ...base },
-        { kind: "whatsapp", status: "connected", headline: "Connected", detail: "New chats become leads by themselves", action: "none", ...base },
+        { kind: "whatsapp", status: "connected", headline: "Connected", detail: "5 chats became leads this week", action: "none", ...base },
         { kind: "missed_calls", status: "coming_soon", headline: "Coming soon", detail: null, action: "none", ...base, available: false },
       ]);
     },
