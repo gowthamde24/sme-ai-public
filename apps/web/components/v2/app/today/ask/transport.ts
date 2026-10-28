@@ -33,8 +33,6 @@ export function parseLine(raw: string): AskEvent | null {
       return typeof r.contentType === "string" && AUDIO_TYPE.test(r.contentType) && typeof r.data === "string" && /^[A-Za-z0-9+/]+={0,2}$/.test(r.data) ? { type: "audio", contentType: r.contentType, data: r.data } : null;
     case "confirm_action":
       return r.action instanceof Object ? { type: "confirm_action", action: r.action as ConfirmAction } : null; // the route made it from the API's plan, already read there
-    case "clarify":
-      return typeof r.question === "string" ? { type: "clarify", question: r.question } : null;
     case "done":
       return { type: "done", conversationId: s(r.conversationId) };
     default:

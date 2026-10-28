@@ -90,11 +90,6 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus }: { x: Exchange; w: (k:
           <Drafts drafts={x.drafts} w={w} />
         </div>
       ) : null}
-      {x.clarify ? (
-        <div data-chat="clarify" className={`${bubble} self-start bg-surface-2`}>
-          <p className="text-base [overflow-wrap:anywhere]">{x.clarify}</p>
-        </div>
-      ) : null}
       {x.plan ? (
         <div className={`${bubble} self-start bg-surface-2`}>
           <PlanCard plan={x.plan} c={c} base={base} onStatus={onStatus} />
@@ -138,7 +133,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
   const input = React.useRef<HTMLInputElement>(null);
   const end = React.useRef<HTMLDivElement>(null);
   const { w } = s;
-  const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, ...s.extra } : null;
+  const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, plan: s.plan } : null;
   const empty = s.earlier.length === 0 && current === null && !talk.live;
   React.useEffect(() => {
     input.current?.focus();
@@ -148,7 +143,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
   }, [s.earlier.length, s.answer, talk.live?.answer, talk.live?.asked]);
   /** The state of a plan changed (the owner said yes or no, or it expired): the plan on screen and any earlier message that carries it. */
   const setActionStatus = (actionId: string, status: ConfirmAction["status"]) => {
-    s.setExtra((x) => (x.plan && x.plan.actionId === actionId ? { plan: { ...x.plan, status } } : x));
+    s.setPlan((p) => (p && p.actionId === actionId ? { ...p, status } : p));
     s.setEarlier((list) => list.map((x) => (x.plan && x.plan.actionId === actionId ? { ...x, plan: { ...x.plan, status } } : x)));
   };
   const edit = (text: string) => {

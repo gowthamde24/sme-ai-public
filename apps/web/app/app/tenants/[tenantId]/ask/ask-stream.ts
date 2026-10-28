@@ -113,7 +113,7 @@ export async function* toAskEvents(events: AsyncIterable<VoiceAssistantEvent | T
         yield { type: "confirm_action", action: e.action };
         break;
       case "clarify":
-        yield { type: "clarify", question: e.question };
+        yield { type: "text", delta: e.question }; // one short question is simply the assistant's message; the next message answers it in the same conversation
         break;
       case "error":
         yield { type: "error", code: knownCode(e.code) };

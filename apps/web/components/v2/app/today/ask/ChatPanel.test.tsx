@@ -46,7 +46,7 @@ async function* answer(text: string): AsyncGenerator<AskEvent> {
     return;
   }
   if (text === "CLARIFY") {
-    yield { type: "clarify", question: "Which leads: today's or this week's?" };
+    yield { type: "text", delta: "Which leads: today's or this week's?" };
     yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
     return;
   }
@@ -211,7 +211,7 @@ describe("the conversation panel", () => {
     draw();
     await type("CLARIFY");
     await send();
-    expect(document.querySelector('[data-chat="clarify"]')).toHaveTextContent("Which leads: today's or this week's?");
+    expect(document.body).toHaveTextContent("Which leads: today's or this week's?");
     expect(asks[0].conversationId).toBeNull(); // the first message starts a conversation
     await type("today's");
     await send();

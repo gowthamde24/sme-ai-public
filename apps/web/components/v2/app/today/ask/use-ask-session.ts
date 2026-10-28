@@ -43,7 +43,7 @@ export function insideWorkspace(href: string, base: string): string | null {
 export type AskPhase = "idle" | "asking" | "done" | "error";
 export type AskProblem = RecorderProblem | null;
 /** One question and its answer, as the thread keeps it. */
-export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** The router asked ONE short question instead of answering. */ clarify?: string | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null };
+export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null };
 
 export type AskSessionOptions = {
   lang: string;
@@ -79,7 +79,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const [focused, setFocused] = React.useState(false);
   const [voiceOpen, setVoiceOpen] = React.useState(false); // voice mode (job DM): the full-screen circle over the box, opened by the microphone
   const [earlier, setEarlier] = React.useState<Exchange[]>([]);
-  const [extra, setExtra] = React.useState<{ plan?: ConfirmAction; clarify?: string }>({}); // what the router answered with besides text: a plan to confirm, or one short question
+  const [plan, setPlan] = React.useState<ConfirmAction | null>(null); // the router proposed an action: the plan waits for Yes / No
   const convRef = React.useRef<string | null>(null); // the conversation the next message continues (null starts a new one)
   const doIt = useDoIt(doItOptions);
   const [mode, setMode] = React.useState<Mode>("ask");
@@ -113,7 +113,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   // the exchange on screen, readable from a handler made by an earlier render (a recording finishes long after the render that started it)
   const current = React.useRef<Exchange | null>(null);
   React.useEffect(() => {
-    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, ...extra };
+    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, plan };
     modeRef.current = doIt ? mode : "ask";
   });
   const voiceEndpoint = `${base}/ask/voice`;
@@ -202,7 +202,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setAnswer("");
     setSources([]);
     setDrafts([]);
-    setExtra({});
+    setPlan(null);
     setTaskEntry(null);
     setAudioPending(voice && speak);
     let failed = false;
@@ -225,8 +225,8 @@ export function useAskSession({ lang, base, words, availability, transport: give
                 ? d
                 : [...d, { id: String(e.id).slice(0, 64), kind: String(e.kind), title: String(e.title).slice(0, 120), summary: String(e.summary).slice(0, 400), href, language: typeof e.language === "string" ? e.language.slice(0, 8) : null, gloss: typeof e.gloss === "string" ? e.gloss.slice(0, 400) : null, machine: e.machine === true }],
             );
-        } else if (e.type === "confirm_action" || e.type === "clarify") {
-          setExtra(e.type === "clarify" ? { clarify: e.question } : { plan: e.action });
+        } else if (e.type === "confirm_action") {
+          setPlan(e.action);
         } else if (e.type === "error") {
           failed = true;
           const code = typeof e.code === "string" && (ERROR_CODES as readonly string[]).includes(e.code) ? e.code : null;
@@ -344,7 +344,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setDrafts([]);
     setErrorCode(null);
     setPhase("idle");
-    setExtra({});
+    setPlan(null);
   };
   /** The conversation panel: a turn that was spoken (the socket's captions) joins the thread like a typed one, and "new conversation" empties it. */
   const addExchange = (x: Exchange) => {
@@ -414,7 +414,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     text, setText, focused, setFocused, asked, phase, answer, sources, drafts, problem, errorCode, heardByVoice, earlier, finished, mood,
     hasAudio, playing, audioPending, audioFailed, autoplay, setAutoplay, seen, showMic, status,
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, extra, setExtra, setEarlier,
+    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, setEarlier,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",
     asking: phase === "asking",

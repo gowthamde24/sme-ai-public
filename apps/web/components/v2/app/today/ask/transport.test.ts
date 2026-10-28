@@ -21,8 +21,6 @@ describe("parseLine", () => {
     expect(parseLine('{"type":"error","code":"ai_paused_until"}')).toEqual({ type: "error", code: "ai_paused_until" });
     expect(parseLine('{"type":"done"}')).toEqual({ type: "done", conversationId: null });
     expect(parseLine('{"type":"done","conversationId":"c1","kind":"clarify"}')).toEqual({ type: "done", conversationId: "c1" });
-    expect(parseLine('{"type":"clarify","question":"Which leads?"}')).toEqual({ type: "clarify", question: "Which leads?" });
-    expect(parseLine('{"type":"clarify"}')).toBeNull();
     expect(parseLine('{"type":"confirm_action","action":{"actionId":"a"}}')).toMatchObject({ type: "confirm_action" });
     expect(parseLine('{"type":"confirm_action","action":3}')).toBeNull();
     for (const bad of ["", "not json", "[]", "null", '{"type":"start"}', '{"type":"text"}', '{"type":"text","delta":5}', '{"type":"source","label":"L"}', '{"type":"draft","id":"i"}']) expect(parseLine(bad), bad).toBeNull();

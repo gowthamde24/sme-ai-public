@@ -150,7 +150,7 @@ describe("POST /app/tenants/[id]/ask where the conversation panel is on (BROWSER
       yield { type: "clarify", question: "Which leads?", actionId: null };
       yield { type: "done", conversation_id: C, message_id: M, language: "en", kind: "clarify" };
     });
-    expect(await lines(await post({ text: "call", messageId: M, conversationId: C }))).toEqual([{ type: "clarify", question: "Which leads?" }, { type: "done", conversationId: C, kind: "clarify" }]);
+    expect(await lines(await post({ text: "call", messageId: M, conversationId: C }))).toEqual([{ type: "text", delta: "Which leads?" }, { type: "done", conversationId: C, kind: "clarify" }]);
     expect(h.turn).toHaveBeenLastCalledWith("tok", T, { messageId: M, conversationId: C, text: "call" });
   });
 });

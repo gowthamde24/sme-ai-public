@@ -47,7 +47,7 @@ export async function openHistory(base: string, id: string, fetcher: typeof fetc
       asked = String(m.text).slice(0, 4000);
     } else {
       const plan = m.action ? { actionId: m.action.actionId, title: String(m.text).slice(0, 300), summary: "", steps: [], count: null, channel: null, estimate: null, needsSecondFactor: false, expiresAt: "", status: m.action.status } : null;
-      out.push({ asked, heardByVoice: false, answer: plan || m.kind === "clarify" ? "" : String(m.text).slice(0, 12_000), sources: (m.sources ?? []).slice(0, 8).map((s) => ({ label: String(s.label), href: null })), drafts: [], errorCode: null, failed: false, task: null, plan, clarify: m.kind === "clarify" ? String(m.text).slice(0, 1000) : null });
+      out.push({ asked, heardByVoice: false, answer: plan ? "" : String(m.text).slice(0, 12_000), sources: (m.sources ?? []).slice(0, 8).map((s) => ({ label: String(s.label), href: null })), drafts: [], errorCode: null, failed: false, task: null, plan });
       asked = "";
     }
   }

@@ -25,8 +25,6 @@ export type AskEvent =
   | { type: "done"; conversationId?: string | null }
   /** An ACTION is proposed (the router decided the message was one): the plan, and one tap to approve it. Nothing has run. */
   | { type: "confirm_action"; action: ConfirmAction }
-  /** The router needs ONE short answer before it can go on; the next message is the answer. */
-  | { type: "clarify"; question: string }
   /** Voice only (job BF): the words the recording was heard as. The box shows them as the person's own message. */
   | { type: "heard"; text: string }
   /** Voice only: the spoken answer (base64, after the written one). The written answer stands without it. */
