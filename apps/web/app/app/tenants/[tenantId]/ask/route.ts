@@ -20,6 +20,24 @@ const MAX_BODY = 20_000;
  * on as one JSON event per line in the box's shape (ask-types.ts), with every `target` already turned into a path inside this workspace. Nothing is decided here: the API checks the person's
  * role, the kill switches and the daily cost cap, and the Agent OWL only reads and leaves drafts. A refusal arrives as one `error` event with a code the box has a sentence for.
  */
+/**
+ * The conversation endpoint when the API has it (`POST /assistant/turns`); an API that does not have it yet (404 or 405 before anything was said) answers the same question through the written Ask (`POST /assistant/messages`, which keeps working): the box never stops answering
+ * because the two sides are deployed a few minutes apart. Anything else, or a failure after the answer began, is passed on as it is.
+ */
+async function* turnOrMessage(token: string, tenantId: string, input: { messageId: string; conversationId: string | null; text: string }) {
+  let began = false;
+  try {
+    for await (const event of sendTurn(token, tenantId, input)) {
+      began = true;
+      yield event;
+    }
+    return;
+  } catch (error) {
+    if (began || !(error instanceof ApiRequestError && (error.status === 404 || error.status === 405))) throw error;
+  }
+  yield* sendAssistantMessage(token, tenantId, { messageId: input.messageId, conversationId: input.conversationId ?? undefined, text: input.text });
+}
+
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) return new Response("Not found", { status: 404 });
@@ -63,7 +81,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
   // where the conversation panel is on (BROWSER_VOICE) the ONE conversation endpoint decides what the message is (answer, plan to confirm, one question); otherwise the written Ask as before
   const events = browserVoice()
-    ? toAskEvents(sendTurn(user.accessToken, tenantId, { messageId, conversationId: typeof conversationId === "string" ? conversationId : null, text }), base, enquiryOfQuote)
+    ? toAskEvents(turnOrMessage(user.accessToken, tenantId, { messageId, conversationId: typeof conversationId === "string" ? conversationId : null, text }), base, enquiryOfQuote)
     : toAskEvents(sendAssistantMessage(user.accessToken, tenantId, { messageId, conversationId: typeof conversationId === "string" ? conversationId : undefined, text }), base, enquiryOfQuote);
   return ndjsonResponse(events, (error) => (error instanceof ApiRequestError ? (error.status === 403 ? "forbidden" : knownCode(error.code)) : undefined));
 }

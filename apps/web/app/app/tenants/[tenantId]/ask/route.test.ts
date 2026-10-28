@@ -153,4 +153,24 @@ describe("POST /app/tenants/[id]/ask where the conversation panel is on (BROWSER
     expect(await lines(await post({ text: "call", messageId: M, conversationId: C }))).toEqual([{ type: "text", delta: "Which leads?" }, { type: "done", conversationId: C, kind: "clarify" }]);
     expect(h.turn).toHaveBeenLastCalledWith("tok", T, { messageId: M, conversationId: C, text: "call" });
   });
+  it("an API that has no conversation endpoint yet (404) is asked through the written Ask instead; a failure after the answer began, or any other refusal, is not retried", async () => {
+    h.turn.mockImplementation(async function* () {
+      throw new ApiRequestError(404, "not_found", "x");
+    });
+    h.send.mockImplementation(stream([{ type: "text", delta: "Hi" }, done]));
+    expect(await lines(await post({ text: "hello", messageId: M, conversationId: null }))).toEqual([{ type: "text", delta: "Hi" }, { type: "done", conversationId: C, kind: "answer" }]);
+    expect(h.send).toHaveBeenCalledWith("tok", T, { messageId: M, conversationId: undefined, text: "hello" });
+    h.send.mockClear();
+    h.turn.mockImplementation(async function* () {
+      yield { type: "text", delta: "Part" };
+      throw new ApiRequestError(404, "not_found", "x");
+    });
+    await lines(await post({ text: "again", messageId: M, conversationId: C }));
+    expect(h.send).not.toHaveBeenCalled(); // it had begun
+    h.turn.mockImplementation(async function* () {
+      throw new ApiRequestError(500, "boom", "x");
+    });
+    await lines(await post({ text: "again", messageId: M, conversationId: C }));
+    expect(h.send).not.toHaveBeenCalled();
+  });
 });
