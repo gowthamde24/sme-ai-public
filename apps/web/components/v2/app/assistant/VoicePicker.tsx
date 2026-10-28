@@ -24,6 +24,7 @@ export function VoicePicker({ words, rows, langNames, canEdit, endpoint, mock, a
   const router = useRouter();
   const [playing, setPlaying] = React.useState<string | null>(null);
   const [failed, setFailed] = React.useState(false);
+  const [played, setPlayed] = React.useState<string | null>(null); // the voice whose sample was played last: its words are shown under it
   const [busy, setBusy] = React.useState<string | null>(null);
   const [note, setNote] = React.useState<Note>(null);
   const audio = React.useRef<HTMLAudioElement | null>(null);
@@ -33,6 +34,7 @@ export function VoicePicker({ words, rows, langNames, canEdit, endpoint, mock, a
     audio.current?.pause(); // one sample at a time
     if (playing === id) return setPlaying(null);
     setFailed(false);
+    setPlayed(id);
     const a = new Audio(`${endpoint}?id=${encodeURIComponent(id)}`);
     audio.current = a;
     a.onended = () => setPlaying((p) => (p === id ? null : p));
@@ -94,6 +96,12 @@ export function VoicePicker({ words, rows, langNames, canEdit, endpoint, mock, a
                           <p className="text-sm text-muted">{v.label === "" || v.label === label ? label : `${v.label} · ${label}`}</p>
                         </div>
                       </div>
+                      {played === v.id && v.sampleText ? (
+                        <p lang={row.language} data-part="sample-text" className="rounded-lg bg-surface-2 px-3 py-2 text-sm">
+                          <span className="block font-semibold text-muted">{t("vp.said")}</span>
+                          {v.sampleText}
+                        </p>
+                      ) : null}
                       {on ? (
                         <p className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-text">
                           <span aria-hidden="true">✓</span> {t("vp.inuse")}

@@ -7,7 +7,7 @@ vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof
 vi.mock("./ai-assistant", () => ({ getAiAssistant: (...a: unknown[]) => getAiAssistant(...a) }));
 
 import { ApiContractError, ApiRequestError } from "./client";
-import { getCampaignOpeningLine, getOpeningLine, previewOpeningLine, putCampaignOpeningLine, putOpeningLine, wavSeconds } from "./opening-line";
+import { PreviewUnsupported, getCampaignOpeningLine, getOpeningLine, previewOpeningLine, previewSpoken, putCampaignOpeningLine, putOpeningLine, savedGreetingText, wavSeconds } from "./opening-line";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const C = "33333333-3333-4333-8333-333333333333";
@@ -80,6 +80,41 @@ const wav = (seconds: number, rate = 48000) => {
   new DataView(bytes.buffer).setUint32(28, rate, true);
   return bytes;
 };
+
+describe("hearing the line as it is on the screen", () => {
+  const BODY = { language: "te", text: "నమస్కారం {customer} గారూ, నేను {assistant}.", mention_ai: true };
+  it("sends the line with its placeholders and the switch, saves nothing, and brings back the sound with the EXACT words it spoke", async () => {
+    apiRequest.mockResolvedValue({ spoken_text: "నమస్కారం రవి గారూ, నేను రమ్య.", audio: { mime: "audio/wav", base64: Buffer.from(wav(2)).toString("base64") }, engine: "cartesia" });
+    const got = await previewSpoken("tok", T, { language: "te", text: BODY.text, mentionAi: true });
+    expect(apiRequest).toHaveBeenCalledWith(`${AI}/voices/preview`, "tok", { method: "POST", body: JSON.stringify(BODY) });
+    expect(got.spokenText).toBe("నమస్కారం రవి గారూ, నేను రమ్య.");
+    expect(got.audio?.mime).toBe("audio/wav");
+    expect(got.audio?.seconds).toBeCloseTo(2, 1);
+  });
+  it("no voice service (404 no_preview) is no sound and no claimed words; a route that is not there yet is PreviewUnsupported; other refusals are passed on; an answer without the words is refused", async () => {
+    apiRequest.mockRejectedValueOnce(new ApiRequestError(404, "no_preview", "x"));
+    expect(await previewSpoken("tok", T, { language: "en", text: null, mentionAi: null })).toEqual({ audio: null, fake: false, spokenText: null });
+    apiRequest.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x"));
+    await expect(previewSpoken("tok", T, { language: "en", text: null, mentionAi: null })).rejects.toBeInstanceOf(PreviewUnsupported);
+    apiRequest.mockRejectedValueOnce(new ApiRequestError(405, "method_not_allowed", "x"));
+    await expect(previewSpoken("tok", T, { language: "en", text: null, mentionAi: null })).rejects.toBeInstanceOf(PreviewUnsupported);
+    apiRequest.mockRejectedValueOnce(new ApiRequestError(429, "rate_limited", "x"));
+    await expect(previewSpoken("tok", T, { language: "en", text: null, mentionAi: null })).rejects.toBeInstanceOf(ApiRequestError);
+    apiRequest.mockResolvedValueOnce({ audio: { mime: "audio/wav", base64: "QUJD" } });
+    await expect(previewSpoken("tok", T, { language: "en", text: null, mentionAi: null })).rejects.toBeInstanceOf(ApiContractError);
+    apiRequest.mockResolvedValueOnce({ spoken_text: "Hi", audio: { mime: "text/html", base64: "QUJD" } });
+    await expect(previewSpoken("tok", T, { language: "en", text: null, mentionAi: null })).rejects.toBeInstanceOf(ApiContractError);
+  });
+  it("the saved greeting as a customer hears it comes from the API's own text, never made up", async () => {
+    apiRequest.mockResolvedValueOnce({ text: "Hello Ravi, this is Tara.", mention_ai: true, says_ai: true });
+    expect(await savedGreetingText("tok", T, "en")).toBe("Hello Ravi, this is Tara.");
+    expect(apiRequest).toHaveBeenLastCalledWith(`${AI}/opening-line/preview?language=en`, "tok");
+    apiRequest.mockResolvedValueOnce({ nope: 1 });
+    expect(await savedGreetingText("tok", T, "en")).toBeNull();
+    apiRequest.mockRejectedValueOnce(new ApiRequestError(500, "x", "x"));
+    expect(await savedGreetingText("tok", T, "en")).toBeNull();
+  });
+});
 
 describe("hearing the saved line", () => {
   it("asks for the voice preview in the voice in force (the API picks it) and the language, and hands the sound on with its length", async () => {

@@ -18,7 +18,7 @@ const WIRE = {
       chosen_id: "hi-esha",
       active_id: "hi-esha",
       voices: [
-        { id: "hi-sanya", name: "Sanya", label: "Clear", gender: "female", default: true, chosen: false, sample_url: "/v1/voice-samples/hi-sanya.mp3" },
+        { id: "hi-sanya", name: "Sanya", label: "Clear", gender: "female", default: true, chosen: false, sample_url: "/v1/voice-samples/hi-sanya.mp3", sample_text: "नमस्ते, मैं संया हूँ।" },
         { id: "hi-esha", name: "Esha", label: "Friendly", gender: "female", default: false, chosen: true, sample_url: null },
       ],
     },
@@ -38,6 +38,8 @@ describe("the voice catalogue answer", () => {
     expect(p?.voices.map((v) => v.id)).toEqual(["hi-sanya", "hi-esha"]);
     expect(p?.voices[0]).toMatchObject({ name: "Sanya", gender: "female", isDefault: true, sampleUrl: "/v1/voice-samples/hi-sanya.mp3" });
     expect(p?.voices[1].sampleUrl).toBeNull();
+    expect(p?.voices[0].sampleText).toBe("नमस्ते, मैं संया हूँ।");
+    expect(p?.voices[1].sampleText).toBeNull(); // not given: nothing is made up
     expect(p?.choices).toEqual({ hi: "hi-esha" });
   });
   it.each([["no languages list", { languages: "x" }], ["a language row without voices", { languages: [{ language: "hi" }] }], ["a bad id", { languages: [{ ...WIRE.languages[0], voices: [{ ...WIRE.languages[0].voices[0], id: "../x" }] }] }], ["an unknown gender", { languages: [{ ...WIRE.languages[0], voices: [{ ...WIRE.languages[0].voices[0], gender: "other" }] }] }], ["a choice that is not an id", { languages: [{ ...WIRE.languages[0], chosen_id: 3 }] }], ["no body", null]])("%s is not accepted", (_w, body) => {

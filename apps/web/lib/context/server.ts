@@ -2,7 +2,7 @@ import { readJar, writeJar } from "@/lib/mock/jar";
 import { aboutBusinessScreens, type ScreenMode } from "@/lib/screens/flag";
 import { ApiAuthError } from "@/lib/api/client";
 import { contextErrorOf, getContext, getVersions, getVersionText, putContext, restoreVersion, saveUnderstood, testContext, understand, type UnderstandInput } from "@/lib/api/context";
-import { NOTES_MAX, SECTIONS, type ContextError, type ContextState, type Done, type TestAnswer, type Understood, type VersionItem } from "./types";
+import { SECTIONS, type ContextError, type ContextState, type Done, type TestAnswer, type Understood, type VersionItem } from "./types";
 
 /**
  * The one door the screen's route and the settings page go through: the API (`1`) or a stand-in kept in the memory of this server (`mock`: for review and the pictures; nothing leaves the process). Every call ends in `Done`: the data, or a closed word the screen has a sentence for.

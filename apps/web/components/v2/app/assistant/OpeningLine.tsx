@@ -10,7 +10,7 @@ import { alertBox, btnMain, btnQuiet, fieldHelp, fieldLabel, fieldTextarea, okBo
 import { makeT, type Words } from "../words";
 
 type SaveOut = { ok: true } | { ok: false; error: string };
-export type OpeningLineActions = { save: (input: unknown) => Promise<SaveOut>; preview: ((language: CallLang, text: string, mentionAi: boolean) => Promise<{ ok: true; preview: Preview } | { ok: false; error: string }>) | null };
+export type OpeningLineActions = { save: (input: unknown) => Promise<SaveOut>; preview: ((language: CallLang, text: string, mentionAi: boolean, unsaved: boolean) => Promise<{ ok: true; preview: Preview } | { ok: false; error: string }>) | null };
 /** `workspace`: the business's own opening line. `campaign`: the same two settings for ONE campaign, where an empty text follows the business and the switch can follow it too. */
 export type Scope = { kind: "workspace" } | { kind: "campaign"; backHref: string };
 const WARNED = "sme-opening-ai-warned";
@@ -33,7 +33,8 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
   const [aiTouched, setAiTouched] = React.useState(false);
   const [warn, setWarn] = React.useState(false);
   const [busy, startSave] = React.useTransition();
-  const [heard, setHeard] = React.useState<"idle" | "busy" | "none" | "error">("idle");
+  const [heard, setHeard] = React.useState<"idle" | "busy" | "none" | "error" | "unsupported">("idle");
+  const [said, setSaid] = React.useState<{ lang: CallLang; text: string } | null>(null); // the exact words the sound said
   const [message, setMessage] = React.useState<{ ok: boolean; text: string } | null>(null);
   const area = React.useRef<HTMLTextAreaElement>(null);
   const player = React.useRef<HTMLAudioElement | null>(null);
@@ -87,10 +88,13 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
   const hear = async () => {
     if (!actions.preview || problem) return;
     setHeard("busy");
+    setSaid(null);
     try {
-      const out = await actions.preview(lang, preview, effective);
-      if (!out.ok) return setHeard("error");
+      // the line AS IT IS IN THE BOX (placeholders and all, saved or not): the API fills the real names and says back the words it spoke
+      const out = await actions.preview(lang, value, effective, dirty);
+      if (!out.ok) return setHeard(out.error === "unsupported" ? "unsupported" : "error");
       if (!out.preview.audio) return setHeard("none");
+      if (out.preview.spokenText) setSaid({ lang, text: out.preview.spokenText });
       player.current?.pause();
       // a blob: address, not a data: one: the page's media rule allows only this app's own address and blob: (lib/security/csp.ts)
       const bytes = Uint8Array.from(atob(out.preview.audio.base64), (c) => c.charCodeAt(0));
@@ -174,12 +178,19 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
         </p>
         {actions.preview ? (
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <button type="button" onClick={hear} disabled={heard === "busy" || problem !== null || (dirty && !mock)} className={btnQuiet}>
+            <button type="button" onClick={hear} disabled={heard === "busy" || problem !== null} className={btnQuiet}>
               {heard === "busy" ? t("ope.hearing") : t("ope.hear")}
             </button>
-            <p className="min-w-0 flex-1 text-sm text-muted">{dirty && !mock ? t("ope.hear.save") : t("ope.hear.note")}</p>
+            <p className="min-w-0 flex-1 text-sm text-muted">{t("ope.hear.note")}</p>
           </div>
         ) : null}
+        {said && said.lang === lang ? (
+          <p lang={lang} className="mt-2 rounded-lg bg-surface px-3 py-2 text-base" data-part="spoken-text" aria-live="polite">
+            <span className="block text-sm font-semibold text-muted">{t("ope.hear.said")}</span>
+            {said.text}
+          </p>
+        ) : null}
+        {heard === "unsupported" ? <p role="status" className={fieldHelp}>{t("ope.hear.unsupported")}</p> : null}
         {heard === "none" ? <p role="status" className={fieldHelp}>{t("ope.hear.none")}</p> : null}
         {heard === "error" ? <p role="alert" className="mt-1.5 text-sm font-medium text-red-text">{t("ope.hear.err")}</p> : null}
       </div>

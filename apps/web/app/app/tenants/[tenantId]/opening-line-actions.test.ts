@@ -40,9 +40,9 @@ describe("the opening-line server actions", () => {
   it("the Owner and the Admin may hear a preview; Sales and Viewers may not", async () => {
     for (const role of ["owner", "admin"]) {
       h.role = role;
-      expect(await previewOpeningLineAction(T, "en", "Hello Ravi")).toEqual({ ok: true, preview: { audio: null, fake: true } });
+      expect(await previewOpeningLineAction(T, "en", "Hello Ravi", true, true)).toEqual({ ok: true, preview: { audio: null, fake: true } });
     }
-    expect(h.preview).toHaveBeenLastCalledWith({ token: "tok", tenantId: T }, "en", "Hello Ravi");
+    expect(h.preview).toHaveBeenLastCalledWith({ token: "tok", tenantId: T }, "en", "Hello Ravi", true, true); // the line as in the box, the switch, and whether it is unsaved
     h.role = "sales";
     expect(await previewOpeningLineAction(T, "en", "Hello Ravi")).toEqual({ ok: false, error: "forbidden" });
   });

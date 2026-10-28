@@ -1,5 +1,5 @@
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
-import { getCampaignOpeningLine, getOpeningLine, previewOpeningLine, putCampaignOpeningLine, putOpeningLine } from "@/lib/api/opening-line";
+import { PreviewUnsupported, getCampaignOpeningLine, getOpeningLine, previewOpeningLine, previewSpoken, putCampaignOpeningLine, putOpeningLine, savedGreetingText } from "@/lib/api/opening-line";
 import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { openingLineScreens } from "@/lib/screens/flag";
@@ -13,7 +13,7 @@ import { MOCK_DEFAULTS, validLine, type CampaignOpeningLine, type Lines, type Op
 export type Ctx = { token: string; tenantId: string };
 export const MOCK_COOKIE = "sme_openingline_mock";
 const campaignCookie = (campaignId: string): string => `${MOCK_COOKIE}_${campaignId.slice(0, 8)}`;
-export type SaveError = "invalid" | "forbidden" | "read_only" | "not_available" | "down";
+export type SaveError = "invalid" | "forbidden" | "read_only" | "not_available" | "down" | "unsupported";
 export type Saved<T> = { ok: true; data: T } | { ok: false; error: SaveError };
 export type Edit = { lines: Partial<Record<CallLang, string | null>>; mentionAi: boolean };
 
@@ -136,14 +136,26 @@ export async function saveCampaignOpeningLine(ctx: Ctx, campaignId: string, inpu
   }
 }
 
-/** The spoken preview of the line that is SAVED (the API makes the sound from what it stores; `text` is only checked as a sign that there is a line on the screen). In `mock` there is no sound: `audio` is null and the screen says the text above is what would be said. */
-export async function previewLine(ctx: Ctx, language: unknown, text: unknown): Promise<Saved<Preview>> {
+/**
+ * "Hear it" for the line on the screen, saved or not: `text` is the line with its placeholders, exactly as in the box (the API fills the real names and speaks it; nothing is saved) and `unsaved` says the box differs from what is stored. The answer carries the EXACT words the sound says.
+ * While the API has no "preview this text" (PreviewUnsupported) a SAVED line is still heard (the stored one, with its exact greeting shown next to it) and an unsaved one says plainly that it cannot be heard yet: never a sound that is not the line on the screen. In `mock` there is no sound.
+ */
+export async function previewLine(ctx: Ctx, language: unknown, text: unknown, mentionAi: unknown = null, unsaved = false): Promise<Saved<Preview>> {
   const mode = openingLineScreens();
   if (mode === "off") return { ok: false, error: "not_available" };
   if (typeof language !== "string" || !(CALL_LANGS as readonly string[]).includes(language) || typeof text !== "string" || text.trim().length < 2 || text.length > 400) return { ok: false, error: "invalid" };
   if (mode === "mock") return { ok: true, data: { audio: null, fake: true } };
+  if (!validLine(text)) return { ok: false, error: "invalid" }; // never the saved line in its place
+  const lang = language as CallLang;
   try {
-    return { ok: true, data: await previewOpeningLine(ctx.token, ctx.tenantId, language as CallLang) };
+    try {
+      return { ok: true, data: await previewSpoken(ctx.token, ctx.tenantId, { language: lang, text, mentionAi: typeof mentionAi === "boolean" ? mentionAi : null }) };
+    } catch (error) {
+      if (!(error instanceof PreviewUnsupported)) throw error;
+      if (unsaved) return { ok: false, error: "unsupported" };
+      const heard = await previewOpeningLine(ctx.token, ctx.tenantId, lang);
+      return { ok: true, data: { ...heard, spokenText: heard.audio ? await savedGreetingText(ctx.token, ctx.tenantId, lang) : null } };
+    }
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     return { ok: false, error: refusal(error) };

@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ jar: new Map<string, string>(), get: vi.fn(), put: vi.fn(), cget: vi.fn(), cput: vi.fn(), preview: vi.fn() }));
+const h = vi.hoisted(() => ({ jar: new Map<string, string>(), get: vi.fn(), put: vi.fn(), cget: vi.fn(), cput: vi.fn(), preview: vi.fn(), spoken: vi.fn(), saved: vi.fn(), Unsupported: class extends Error {} }));
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: (k: string) => (h.jar.has(k) ? { name: k, value: h.jar.get(k) } : undefined), set: (k: string, v: string) => void h.jar.set(k, v), delete: (k: string) => void h.jar.delete(k) }) }));
-vi.mock("@/lib/api/opening-line", () => ({ getOpeningLine: (...a: unknown[]) => h.get(...a), putOpeningLine: (...a: unknown[]) => h.put(...a), getCampaignOpeningLine: (...a: unknown[]) => h.cget(...a), putCampaignOpeningLine: (...a: unknown[]) => h.cput(...a), previewOpeningLine: (...a: unknown[]) => h.preview(...a) }));
+vi.mock("@/lib/api/opening-line", () => ({ getOpeningLine: (...a: unknown[]) => h.get(...a), putOpeningLine: (...a: unknown[]) => h.put(...a), getCampaignOpeningLine: (...a: unknown[]) => h.cget(...a), putCampaignOpeningLine: (...a: unknown[]) => h.cput(...a), previewOpeningLine: (...a: unknown[]) => h.preview(...a), previewSpoken: (...a: unknown[]) => h.spoken(...a), savedGreetingText: (...a: unknown[]) => h.saved(...a), PreviewUnsupported: h.Unsupported }));
 
 import { ApiRequestError } from "@/lib/api/client";
 
@@ -109,8 +109,29 @@ describe("the editor's source", () => {
     }
     h.get.mockRejectedValue(new Error("down"));
     expect(await readOpeningLine(CTX)).toEqual({ mode: "unavailable" });
-    h.preview.mockResolvedValue({ audio: { base64: "QUJD", mime: "audio/mpeg", seconds: 3 }, fake: false });
-    expect(await previewLine(CTX, "en", "Hello Ravi")).toMatchObject({ ok: true });
-    expect(h.preview).toHaveBeenCalledWith("tok", CTX.tenantId, "en"); // the API speaks the saved line, so only the language goes
+  });
+  it("'Hear it' speaks the line as it is in the box, saved or not, and brings back the exact words; a line that is not valid is refused and never replaced by the saved one", async () => {
+    vi.stubEnv("OPENING_LINE_SCREENS", "1");
+    const line = "Hello {customer}, this is {assistant} of {business}. Do you have a minute?";
+    h.spoken.mockResolvedValue({ audio: { base64: "QUJD", mime: "audio/wav", seconds: 3 }, fake: false, spokenText: "Hello Ravi, this is Tara of Sri Silks. Do you have a minute?" });
+    expect(await previewLine(CTX, "en", line, true, true)).toEqual({ ok: true, data: { audio: { base64: "QUJD", mime: "audio/wav", seconds: 3 }, fake: false, spokenText: "Hello Ravi, this is Tara of Sri Silks. Do you have a minute?" } });
+    expect(h.spoken).toHaveBeenCalledWith("tok", CTX.tenantId, { language: "en", text: line, mentionAi: true });
+    h.spoken.mockClear();
+    expect(await previewLine(CTX, "en", "Short {x}", true, true)).toEqual({ ok: false, error: "invalid" });
+    expect(h.spoken).not.toHaveBeenCalled();
+  });
+  it("while the API has no 'preview this text': a saved line is heard with its exact greeting shown, an unsaved one says it cannot be heard yet (never another sound)", async () => {
+    vi.stubEnv("OPENING_LINE_SCREENS", "1");
+    const line = "Hello {customer}, this is {assistant} of {business}. Do you have a minute?";
+    h.spoken.mockRejectedValue(new h.Unsupported());
+    h.preview.mockResolvedValue({ audio: { base64: "QUJD", mime: "audio/wav", seconds: 3 }, fake: false });
+    h.saved.mockResolvedValue("Hello Ravi, this is Tara of Sri Silks.");
+    expect(await previewLine(CTX, "en", line, true, false)).toMatchObject({ ok: true, data: { spokenText: "Hello Ravi, this is Tara of Sri Silks." } });
+    expect(h.preview).toHaveBeenCalledWith("tok", CTX.tenantId, "en");
+    h.preview.mockClear();
+    expect(await previewLine(CTX, "en", line, true, true)).toEqual({ ok: false, error: "unsupported" });
+    expect(h.preview).not.toHaveBeenCalled();
+    h.preview.mockResolvedValue({ audio: null, fake: false }); // no voice service: nothing to hear, no words claimed
+    expect(await previewLine(CTX, "en", line, true, false)).toMatchObject({ ok: true, data: { audio: null, spokenText: null } });
   });
 });

@@ -58,8 +58,8 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
     setSampleErr(false);
     setHeard(null);
     const q = { voice: v, lang: s.lang, tone, name: s.name.trim() || initial.name };
-    if (!samples.mock && !voicePickerOn) {
-      // the words are shown beside the player, as the API says them with the business's real name
+    if (!samples.mock) {
+      // the exact words the sound says are shown beside the player (with the voice catalogue: the saved opening line with the business's real names), so what is read is what is heard
       void fetch(`${sampleUrl(samples.endpoint, q)}&text=1`, { cache: "no-store" })
         .then((r) => (r.ok ? r.json() : null))
         .then((j: { text?: unknown } | null) => setHeard(typeof j?.text === "string" ? j.text : null))
