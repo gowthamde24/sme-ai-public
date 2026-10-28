@@ -74,7 +74,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - run: make test-packages
@@ -114,7 +114,7 @@ jobs:
         working-directory: services/ai-api
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
           cache: pip
@@ -150,7 +150,7 @@ jobs:
         with:
           version: 2.119.0
       - run: supabase start
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
           cache: pip
@@ -174,7 +174,7 @@ jobs:
         with:
           version: 2.119.0
       - run: supabase start
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
           cache: pip
@@ -198,7 +198,7 @@ jobs:
         with:
           version: 2.119.0
       - run: supabase start
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
           cache: pip
