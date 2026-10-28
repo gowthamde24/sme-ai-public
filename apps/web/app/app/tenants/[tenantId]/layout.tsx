@@ -25,7 +25,7 @@ import { requireUser } from "@/lib/auth/session";
 import { browserVoice, guidedDemo, taskScreens } from "@/lib/screens/flag";
 import { readIsDemo } from "./today-read";
 import { routesFor } from "@/lib/guided-demo/script";
-import { GuidedDemo } from "@/components/v2/app/guided-demo/LazyGuidedDemo";
+import dynamic from "next/dynamic";
 import { runDemoStepAction } from "./guided-demo-actions";
 import { ADDRESSES } from "@/lib/site/business";
 
@@ -34,6 +34,9 @@ import { turnOnAssistantAction } from "./ask-switch-actions";
 import { boundTaskActions } from "./tasks-bound";
 import { topupLayoutBanner } from "./topup-banner";
 import { readAccessCached, readAgentsCached } from "./today-read";
+
+/** The guided demo as a chunk of its own: only the DEMO workspaces with the flag on render it (the route-JS budget counts the first load of every route). */
+const GuidedDemo = dynamic(() => import("@/components/v2/app/guided-demo/GuidedDemo").then((m) => m.GuidedDemo));
 
 /**
  * The layout of one workspace. It draws nothing of its own: the frame is drawn by the layout of /app, which cannot know which workspace the address is in, so this one reads

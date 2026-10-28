@@ -28,7 +28,7 @@ function typing(target: EventTarget | null): boolean {
  * arrived that the person has not seen). Pressed, it opens the panel (AskPanel): a small chat bottom right on a laptop, a sheet 70 % high on a phone. "/" or Cmd/Ctrl+K opens it from the keyboard; Esc or the close button returns to the circle.
  * On Today the same keys put the cursor in the card's own line. Nothing here is fixed to the bottom as a bar: there is no bar.
  */
-export function AskFloating({ words, chipWords, voice = null }: { words: AskWords; chipWords: AskWords; /** Present where "Talk to your assistant" is on: the orb then opens the voice chat, and the written panel is one tap away ("Type instead"). */ voice?: BrowserVoice | null }) {
+export function AskFloating({ words, chipWords, voice = null }: { words: AskWords; chipWords: AskWords; /** Present where "Talk to your assistant" is on: the orb then opens the voice chat (in the same lazy chunk as the panel), and the written panel is one tap away ("Type instead"). */ voice?: BrowserVoice | null }) {
   const session = useStoredAsk(); // null until the conversation's code has arrived: the orb is on the page at once, the panel opens as soon as there is something to open
   const finished = session?.finished ?? 0;
   const pathname = usePathname();
@@ -36,7 +36,6 @@ export function AskFloating({ words, chipWords, voice = null }: { words: AskWord
   const rest = workspaceOf(pathname ?? "")?.rest ?? null;
   const here = rest !== null && !orbHidden(rest, tab);
   const [open, setOpen] = React.useState(false);
-  const [talking, setTalking] = React.useState(false);
   const [seenAt, setSeenAt] = React.useState(0); // how many finished answers the person has seen
   const orbRef = React.useRef<HTMLButtonElement>(null);
   const [shownFor, setShownFor] = React.useState(pathname);
@@ -81,7 +80,7 @@ export function AskFloating({ words, chipWords, voice = null }: { words: AskWord
         aria-haspopup="dialog"
         aria-expanded={open}
         title={name}
-        onClick={() => (voice && !open ? setTalking(true) : open ? closePanel() : openPanel())}
+        onClick={() => (open ? closePanel() : openPanel())}
         onMouseEnter={() => void import("./AskPanelHost")}
         onFocus={() => void import("./AskPanelHost")}
         className={`fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-line bg-surface shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 motion-reduce:transition-none md:bottom-6 md:right-6 print:hidden ${open ? "max-md:hidden" : ""}`}
@@ -89,7 +88,7 @@ export function AskFloating({ words, chipWords, voice = null }: { words: AskWord
         <Orb px={44} state={session?.asking && !session.answer ? "think" : session?.playing || session?.asking ? "speak" : "ambient"} />
         {unseen ? <span data-ask="dot" aria-hidden="true" className="absolute right-0 top-0 size-3.5 rounded-full border-2 border-surface bg-brand" /> : null}
       </button>
-      {(open && session) || (talking && voice) ? <AskPanel session={session} chips={chipsForPath(rest ?? "", tab).map((k) => chipWords[k] ?? k)} onClose={talking ? () => setTalking(false) : closePanel} voice={talking ? voice : null} onType={() => { setTalking(false); openPanel(); }} /> : null}
+      {open && (session || voice) ? <AskPanel session={session} chips={chipsForPath(rest ?? "", tab).map((k) => chipWords[k] ?? k)} onClose={closePanel} voice={voice} /> : null}
     </>
   );
 }
