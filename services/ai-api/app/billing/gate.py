@@ -54,6 +54,7 @@ _SPEND = (
     ("POST", r"/lead-imports/read"),   # job DR / A2: column matching may ask the model
     ("POST", r"/institution/marks-messages/send"),
     ("POST", r"/trips/[^/]+/notify"),
+    ("POST", r"/ai-assistant/context/(understand|test)"),   # job EB: a model call (or a transcription)
     ("POST", r"/tasks/(plan|[^/]+/(answer|approve|run|resume))"),   # job DR B1: calls the model, starts calls and messages
     ("GET", r"/leads/search"),   # the outside lead search
 )

@@ -12,6 +12,7 @@ class AutoReplyRepository(Protocol):
     def pending(self, token: str, limit: int) -> list[dict[str, Any]]: ...
     def submit(self, token: str, enquiry_id: uuid.UUID, text: str, language: str, gloss_en: str | None, hold: bool) -> dict[str, Any]: ...
     def skip(self, token: str, enquiry_id: uuid.UUID, note: str) -> dict[str, Any]: ...
+    def notes(self, token: str, tenant_id: uuid.UUID) -> str: ...
 
 
 class PostgrestAutoReplyRepository:
@@ -26,6 +27,11 @@ class PostgrestAutoReplyRepository:
 
     def skip(self, token: str, enquiry_id: uuid.UUID, note: str) -> dict[str, Any]:
         return self._rpc.object(token, "scheduler_auto_reply_skip", {"p_enquiry_id": str(enquiry_id), "p_note": note})
+
+    def notes(self, token: str, tenant_id: uuid.UUID) -> str:
+        """The owner's notes about the business (job EB), for the workspace this message belongs to; empty when there are none."""
+        result = self._rpc.call(token, "scheduler_assistant_context", {"p_tenant_id": str(tenant_id)})
+        return result if isinstance(result, str) else ""
 
 
 class AutoReplySwitch(Protocol):

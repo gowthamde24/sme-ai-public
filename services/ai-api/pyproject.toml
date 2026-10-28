@@ -46,6 +46,11 @@ target-version = "py311"
 select = ["E", "F", "I", "B", "UP", "S"]
 
 [tool.ruff.lint.per-file-ignores]
+# job EB: the owner's notes (word lists and plain-words messages are long lines)
+"app/assistant_context/*" = ["E501"]
+"tests/test_eb_*.py" = ["E501"]
+"tests/eb_fakes.py" = ["E501"]
+"../../tests/integration/test_eb_*.py" = ["E501"]
 "tests/*" = ["S101", "S105", "S106"]
 # job DI: plans, billing and their tests read like the ADR they implement (long lines)
 "app/billing/*" = ["E501"]

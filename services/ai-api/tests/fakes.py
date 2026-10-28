@@ -257,6 +257,7 @@ def make_client(
     call_settings: Any = None,
     outcomes: Any = None,
     assistant_settings: Any = None,
+    assistant_context: Any = None,
     marks_messages: Any = None,
     rate_limit: bool = False,
 ) -> tuple[TestClient, FakeRepository]:
@@ -335,6 +336,7 @@ def make_client(
             call_settings=call_settings,
             outcomes=outcomes,
             assistant_settings=assistant_settings,
+            assistant_context=assistant_context,
             marks_messages=marks_messages,
         ),
     )

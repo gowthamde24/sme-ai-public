@@ -529,6 +529,8 @@ begin
   insert into public.assistant_conversations (id, tenant_id, created_by) values (tests.rid(p || '_er_conv'), t, tests.uid(p || '_owner'));
   insert into public.assistant_messages (id, tenant_id, conversation_id, seq, role, body, created_by) values
     (tests.rid(p || '_er_m1'), t, tests.rid(p || '_er_conv'), 1, 'user', 'Ask about zed.qxjv@canary.test or +91 98765 43210 for me', tests.uid(p || '_owner'));
+  -- job EB: the owner's notes name the person too
+  insert into public.assistant_context_versions (tenant_id, version, notes, change, created_by) values (t, 1, 'Ask zed.qxjv@canary.test or +91 98765 43210 about the order', 'edited', tests.uid(p || '_owner'));
   insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, conversation_id, expires_at, input_sha256)
   values (tests.rid(p || '_er_run'), t, tests.uid(p || '_owner'), 'assistant', 'assistant-1', tests.rid(p || '_er_conv'), now() + interval '15 minutes', repeat('9', 64));
   insert into public.assistant_reply_drafts (id, tenant_id, conversation_id, run_id, lead_id, language, body, gloss_en, created_by) values

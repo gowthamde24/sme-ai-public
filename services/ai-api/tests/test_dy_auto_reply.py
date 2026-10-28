@@ -18,7 +18,7 @@ from app.autoreply.rules import asks_about_money, asks_for_a_person, is_a_compla
 from app.autoreply.runner import AutoReplyRunner
 from app.autoreply.wiring import build_auto_reply
 from app.config import Settings
-from app.tenancy.repository import TokenRejected
+from app.tenancy.repository import RepositoryError, TokenRejected
 
 CONTEXT: dict[str, Any] = {
     "enquiry_id": str(uuid.uuid4()),
@@ -119,6 +119,7 @@ class FakeRepo:
         self.items, self.refuse = items, refuse
         self.submitted: list[tuple[uuid.UUID, str, str, str | None, bool]] = []
         self.skipped: list[tuple[uuid.UUID, str]] = []
+        self.notes_text = ""
 
     def pending(self, token: str, limit: int) -> list[dict[str, Any]]:
         assert token == "tok"
@@ -130,6 +131,9 @@ class FakeRepo:
             return {"outcome": "skipped"}
         return {"outcome": "submitted", "message": {"status": "needs_approval" if hold else "queued"}}
 
+    def notes(self, token: str, tenant_id: uuid.UUID) -> str:
+        return self.notes_text
+
     def skip(self, token: str, enquiry_id: uuid.UUID, note: str) -> dict[str, Any]:
         self.skipped.append((enquiry_id, note))
         return {"outcome": "skipped"}
@@ -139,8 +143,10 @@ class FakeDrafter:
     def __init__(self, draft: Draft | None) -> None:
         self.draft_ = draft
         self.asked: list[str] = []
+        self.contexts: list[dict[str, Any]] = []
 
     def draft(self, context: dict[str, Any]) -> Draft | None:
+        self.contexts.append(context)
         self.asked.append(str(context["text"]))
         return self.draft_
 
@@ -157,6 +163,25 @@ def test_an_ordinary_question_is_answered_a_price_a_person_and_a_doubt_wait_for_
     assert [s[4] for s in repo.submitted] == [False, True, True], "the hold flag is the standing rule's decision, not the model's"
     unsure = AutoReplyRunner(FakeRepo([item("Do you open on Sunday?")]), FakeDrafter(Draft("Yes.", "en", "Yes.", 0.3, False))).run("tok")
     assert unsure.held == 1
+
+
+def test_the_owners_notes_reach_the_drafter_as_facts_one_line_each_and_a_failing_read_changes_nothing() -> None:
+    d = Draft("We open at nine.", "en", "We open at nine.", 0.9, False)
+    tenant = str(uuid.uuid4())
+    repo = FakeRepo([{**item("When do you open?"), "tenant_id": tenant, "facts": [{"kind": "hours", "text": "Closed on Sunday"}]}])
+    repo.notes_text = "Open 9 to 7.\n\n  We deliver in Guntur   within two days.\n"
+    drafter = FakeDrafter(d)
+    AutoReplyRunner(repo, drafter).run("tok")
+    facts = drafter.contexts[0]["facts"]
+    assert [f["text"] for f in facts] == ["Closed on Sunday", "Open 9 to 7.", "We deliver in Guntur within two days."] and facts[1]["kind"] == "notes"
+
+    class Broken(FakeRepo):
+        def notes(self, token: str, tenant_id: uuid.UUID) -> str:
+            raise RepositoryError("down")
+
+    again = FakeDrafter(d)
+    AutoReplyRunner(Broken([{**item("When do you open?"), "tenant_id": tenant, "facts": [{"kind": "hours", "text": "Closed on Sunday"}]}]), again).run("tok")
+    assert [f["text"] for f in again.contexts[0]["facts"]] == ["Closed on Sunday"], "the approved facts stay as they were"
 
 
 def test_when_the_model_fails_nothing_is_sent_and_the_message_is_recorded_as_skipped() -> None:
