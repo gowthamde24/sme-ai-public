@@ -213,7 +213,10 @@ describe("server-only code stays on the server", () => {
     const LEAD_IMPORT = path.join("components", "v2", "app", "lead-desk", "ImportScreen.tsx");
     // And the voice preview's words (night 5): Settings > AI assistant asks this app's OWN route `<workspace>/voice-sample?...&text=1` (a relative path) for the words the preview says: no token, never the API.
     const PREVIEW_WORDS = path.join("components", "v2", "app", "assistant", "AssistantSettings.tsx");
-    expect(callers).toEqual([ASK_TRANSPORT, AUTHORIZE_PROBE, BELL_POLL, CC_POST, LEAD_IMPORT, PREVIEW_WORDS, SESSION_CHECK, path.join("lib", "api", "client.ts")].sort());
+    // And the voice chat's sign-in (job DV): it asks this app's OWN route `<workspace>/voice-token` (a path it is given) for the sign-in that the API's socket wants in its first message; the socket itself is a WebSocket, not fetch().
+    const VOICE_CHAT = path.join("components", "v2", "app", "voice-chat", "VoiceChat.tsx");
+    expect(callers).toEqual([ASK_TRANSPORT, AUTHORIZE_PROBE, BELL_POLL, CC_POST, LEAD_IMPORT, PREVIEW_WORDS, SESSION_CHECK, VOICE_CHAT, path.join("lib", "api", "client.ts")].sort());
+    expect(read(path.join(WEB_ROOT, VOICE_CHAT))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, PREVIEW_WORDS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, LEAD_IMPORT))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i); // (a sheet link is typed by the person, so an address may appear in a hint)
     expect(read(path.join(WEB_ROOT, AUTHORIZE_PROBE))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
