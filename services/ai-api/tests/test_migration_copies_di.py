@@ -21,6 +21,8 @@ ADDED = {
 
 def test_the_di_copy_is_the_last_definition_and_differs_from_the_br_copy_by_exactly_the_named_lines() -> None:
     defs = definitions("app.outbox_claim_due_core")
+    # job DX (28 Oct 2026) copies it once more: its own pin is test_migration_copies_dx.py
+    defs = [d for d in defs if d[0] != "20261214090200_dx_reply_fixes.sql"]
     assert defs[-1][0] == DI4, f"redefined after job DI's migration ({defs[-1][0]}): re-copy it from the latest definition"
     assert [d[0] for d in defs[-3:]] == [BR, DI, DI4]
     diff = [
@@ -40,7 +42,7 @@ READ_ONLY_ADDED = {
 
 
 def test_the_read_only_copy_of_the_claim_adds_exactly_the_read_only_hold() -> None:
-    defs = definitions("app.outbox_claim_due_core")
+    defs = [d for d in definitions("app.outbox_claim_due_core") if d[0] != "20261214090200_dx_reply_fixes.sql"]  # job DX copies it once more (test_migration_copies_dx.py)
     diff = [
         line
         for line in difflib.unified_diff(normalised(defs[-2][1]), normalised(defs[-1][1]), lineterm="", n=0)
@@ -59,6 +61,7 @@ def test_only_the_claim_and_the_call_check_ask_the_meter_whether_a_kind_is_stopp
         if "billing_stopped(" in text and path.name not in (DI, DI4):
             names.add(path.name)
     # job DM's pending hold redefines the check itself (migration 4); nothing else consults it
+    # job DX: its copy of the claim keeps the meter check it was copied with
     # job DR A3: the scheduler's outreach run is a call check of its own (calls are held for the hour when call minutes are stopped)
     # job DS part E2: the re-created check (`billing_blocked` holds the overage rule) names it in its definition, and the outreach run is re-created from its own definition (queue instead of an hour's hold)
-    assert names == {"20261129090400_dm_trial_pending.sql", "20261206090000_dr_speed_approvals.sql", "20261210090100_ds_topups_meter.sql", "20261210090200_ds_topups_api.sql"}, "no other migration consults the meter"
+    assert names == {"20261129090400_dm_trial_pending.sql", "20261206090000_dr_speed_approvals.sql", "20261210090100_ds_topups_meter.sql", "20261210090200_ds_topups_api.sql", "20261214090200_dx_reply_fixes.sql"}, "no other migration consults the meter"

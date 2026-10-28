@@ -158,12 +158,15 @@ def test_a_plain_reply_within_24_hours_goes_out_through_the_fake_channel_with_th
     before = len(box.adapter.sent)
     out = body_of(
         box.submit(
-            "owner", lead, "Thank you for writing. We are open from 10 am to 8 pm every day."
+            "owner",
+            lead,
+            "Thank you for writing. We are open from 10 am to 8 pm every day.",
+            source="assistant",  # job DX: the AI line labels what the ASSISTANT wrote (a person's reply has none)
         )
     )
     message = out["message"]
     assert message["disclosure_added"] is True and "AI assistant" in message["text"], (
-        "the first message to a customer says it is from the AI assistant"
+        "the first message the assistant writes to a customer says it is from the AI assistant"
     )
     assert message["flags"] == [] and message["channel"] == "whatsapp"
     if quiet():
@@ -193,7 +196,7 @@ def test_a_price_in_telugu_waits_for_a_person_then_goes_only_after_approval(box:
     lead = box.lead()
     box.inbound(lead)
     before = len(box.adapter.sent)
-    out = body_of(box.submit("owner", lead, TELUGU_PRICE, language="te"))
+    out = body_of(box.submit("owner", lead, TELUGU_PRICE, language="te", source="assistant"))  # job DX: the AI line labels what the ASSISTANT wrote
     message = out["message"]
     assert (message["status"], message["reason"], message["flags"]) == (
         "needs_approval",
@@ -618,3 +621,41 @@ def test_the_main_agent_can_name_what_waits_for_approval_without_showing_the_tex
             )
     finally:
         restore(saved)
+
+
+def test_a_reply_inside_an_active_conversation_goes_now_even_at_night(box: Box) -> None:
+    """Job DX: quiet hours hold what the business starts, not an answer to a customer who wrote a few minutes ago. The customer wrote 10 minutes ago: the reply goes now on both pins."""
+    lead = box.lead()
+    box.inbound(lead, ago="10 minutes")
+    before = len(box.adapter.sent)
+    out = body_of(box.submit("owner", lead, "Yes, the green silk saree is in stock.", source="owner"))
+    message = out["message"]
+    assert (message["status"], message["reason"]) == ("sent", "auto_allowed") or (message["status"], message["reason"]) == ("queued", "auto_allowed")
+    assert sf(out["dispatched"]) == {"sent": 1, "failed": 0} and len(box.adapter.sent) - before == 1
+    assert message["disclosure_added"] is False and "AI assistant" not in box.adapter.sent[-1].body, "a reply a person wrote carries no AI line"
+
+
+def test_a_follow_up_or_an_old_conversation_still_waits_for_morning(box: Box) -> None:
+    lead = box.lead()
+    box.inbound(lead, ago="10 minutes")
+    old = box.lead()
+    box.inbound(old, ago="3 hours")
+    before = len(box.adapter.sent)
+    follow = body_of(box.submit("owner", lead, "Just checking in on the saree.", category="followup", source="owner"))
+    stale = body_of(box.submit("owner", old, "Thank you for writing to us.", source="owner"))
+    if quiet():
+        assert (follow["message"]["status"], follow["message"]["reason"]) == ("queued", "quiet_hours")
+        assert (stale["message"]["status"], stale["message"]["reason"]) == ("queued", "quiet_hours")
+        assert len(box.adapter.sent) == before
+    else:
+        assert follow["message"]["reason"] == "auto_allowed" and stale["message"]["reason"] == "auto_allowed"
+
+
+def test_only_what_the_assistant_wrote_gets_the_ai_line(box: Box) -> None:
+    mine, theirs = box.lead(), box.lead()
+    box.inbound(mine, ago="10 minutes")
+    box.inbound(theirs, ago="10 minutes")
+    person = body_of(box.submit("owner", mine, "I will send the photos now.", source="owner"))["message"]
+    assistant = body_of(box.submit("owner", theirs, "We are open from 10 am to 8 pm.", source="assistant"))["message"]
+    assert person["disclosure_added"] is False and "AI assistant" not in person["text"]
+    assert assistant["disclosure_added"] is True and "AI assistant" in assistant["text"]
