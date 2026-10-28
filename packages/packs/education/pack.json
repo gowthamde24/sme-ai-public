@@ -1,7 +1,7 @@
 {
   "$schema": "../pack.schema.json",
   "id": "education",
-  "version": 1,
+  "version": 2,
   "status": "preview",
   "default_for_existing_workspaces": false,
   "reviewed_by": null,
@@ -61,7 +61,7 @@
       "nav.item.sarees": "Programmes",
       "nav.item.visits": "Campus visits",
       "nav.tab.visits": "Campus visits",
-      "nav.item.retailers": "Find leads",
+      "nav.item.retailers": "Leads",
       "agent.lead_finder": "Admissions Desk",
       "agent.requirement_analyst": "Enquiry Analyst",
       "agent.quote_writer": "Fee Desk",

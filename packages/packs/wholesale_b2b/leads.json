@@ -1,7 +1,7 @@
 {
   "$schema": "../leads.schema.json",
   "pack": "wholesale_b2b",
-  "version": 1,
+  "version": 2,
   "goal": {
     "code": "wholesale_quote",
     "label": {

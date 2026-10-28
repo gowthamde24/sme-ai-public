@@ -43,7 +43,7 @@
     },
     {
       "key": "nav.item.retailers",
-      "description": "Navigation: the lead finder"
+      "description": "Navigation: the leads page (module code lead_finder)"
     },
     {
       "key": "nav.item.report",
@@ -67,7 +67,7 @@
     },
     {
       "key": "agent.lead_finder",
-      "description": "Owl team: the lead finder slot"
+      "description": "Owl team: the Lead Desk slot (code lead_finder)"
     },
     {
       "key": "agent.researcher",

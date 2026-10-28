@@ -14,10 +14,10 @@ create function pg_temp.tid(p text) returns text language sql as $$ select quote
 create function pg_temp.rid(p text) returns text language sql as $$ select quote_literal(tests.rid(p)) $$;
 
 -- ============================================================================ A. the packs
-select is((select count(*)::int from packs.pack_versions where code in ('real_estate', 'coaching', 'clinic', 'insurance_loans', 'auto_dealer', 'interiors_solar', 'travel', 'gym', 'wholesale_b2b') and status = 'preview'), 9, 'A1 the nine business types are in the database as preview packs');
+select is((select count(distinct code)::int from packs.pack_versions where code in ('real_estate', 'coaching', 'clinic', 'insurance_loans', 'auto_dealer', 'interiors_solar', 'travel', 'gym', 'wholesale_b2b') and status = 'preview'), 9, 'A1 the nine business types are in the database as preview packs');
 select is(pg_temp.val('a_owner', $q$select jsonb_array_length(public.pack_catalogue())::text$q$), '13', 'A2 the sign-up list holds the three deep packs, the nine new ones and the generic one (job DT)');
-select is((select manifest ->> 'core_tab' from packs.pack_versions where code = 'real_estate'), 'campaigns', 'A3 a lead pack''s core tab is the campaigns (batches of calls)');
-select is((select count(*)::int from packs.pack_versions v, jsonb_array_elements(v.manifest -> 'custom_fields') f where v.code = 'clinic' and f ->> 'entity' = 'contact'), 7, 'A4 a pack carries the contact fields its questions fill');
+select is((select manifest ->> 'core_tab' from packs.pack_versions where code = 'real_estate' order by version desc limit 1), 'campaigns', 'A3 a lead pack''s core tab is the campaigns (batches of calls)');
+select is((select count(*)::int from packs.pack_versions v, jsonb_array_elements(v.manifest -> 'custom_fields') f where v.code = 'clinic' and v.version = 2 and f ->> 'entity' = 'contact'), 7, 'A4 a pack carries the contact fields its questions fill');
 select ok(not exists (select 1 from packs.pack_versions v where v.code = 'gym' and (v.manifest -> 'modules') ? 'quotes'), 'A5 a lead pack does not switch the quotes module on');
 select ok(exists (select 1 from packs.pack_versions v where v.code = 'wholesale_b2b' and (v.manifest -> 'modules') ? 'companies'), 'A6 the wholesale pack has companies');
 

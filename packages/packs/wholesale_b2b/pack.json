@@ -1,7 +1,7 @@
 {
   "$schema": "../pack.schema.json",
   "id": "wholesale_b2b",
-  "version": 1,
+  "version": 2,
   "status": "preview",
   "default_for_existing_workspaces": false,
   "reviewed_by": null,
@@ -49,7 +49,7 @@
       "nav.item.visits": "Buyer meetings",
       "nav.tab.visits": "Buyer meetings",
       "nav.item.chats": "Customer chats",
-      "nav.item.retailers": "Find leads",
+      "nav.item.retailers": "Leads",
       "nav.item.report": "This week",
       "nav.item.team": "Team",
       "nav.item.office": "Office",

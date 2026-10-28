@@ -1,7 +1,7 @@
 {
   "$schema": "../pack.schema.json",
   "id": "auto_dealer",
-  "version": 1,
+  "version": 2,
   "status": "preview",
   "default_for_existing_workspaces": false,
   "reviewed_by": null,
@@ -48,7 +48,7 @@
       "nav.item.visits": "Test drives",
       "nav.tab.visits": "Test drives",
       "nav.item.chats": "Customer chats",
-      "nav.item.retailers": "Find leads",
+      "nav.item.retailers": "Leads",
       "nav.item.report": "This week",
       "nav.item.team": "Team",
       "nav.item.office": "Office",
