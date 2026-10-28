@@ -20,6 +20,7 @@ from collections.abc import AsyncIterator, Callable, Mapping
 from contextlib import suppress
 
 from app.conversation.parts import StreamingTts
+from app.conversation.pronounce import Pronunciations, default_pronunciations
 from app.conversation.voices import VoiceChoice, VoiceConfig
 from app.voice.interface import VoiceError
 
@@ -38,7 +39,8 @@ async def _close(it: object) -> None:
 class FallbackTts:
     sample_rate = 24000
 
-    def __init__(self, config: VoiceConfig, factory: EngineFactory, *, prewarm_language: str = "te", clock: Callable[[], float] = time.monotonic, chosen: Mapping[str, str] | None = None) -> None:
+    def __init__(self, config: VoiceConfig, factory: EngineFactory, *, prewarm_language: str = "te", clock: Callable[[], float] = time.monotonic, chosen: Mapping[str, str] | None = None, pronunciations: Pronunciations | None = None) -> None:
+        self._pron = pronunciations or default_pronunciations()  # words respelled before any engine hears them (a workspace passes its own additions)
         self.config, self._factory, self._prewarm_language, self._clock = config, factory, prewarm_language, clock
         self._chosen: dict[str, str] = dict(chosen or {})  # the workspace's voice id per language (job voice-picker); a missing or unknown one means the default
         self._engines: dict[tuple[str, str, str, str], StreamingTts] = {}
@@ -70,6 +72,8 @@ class FallbackTts:
 
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
         voices = self.config.for_language(language, self._chosen.get(language))
+        primary_text = self._pron.apply(text, language, voices.primary.engine)
+        fallback_text = self._pron.apply(text, language, voices.fallback.engine)
         now = self._clock()
         use_primary = not self._fallback_in_turn and now >= self._skip_primary_until.get(language, 0.0)
         if not use_primary and not self._fallback_in_turn:
@@ -77,7 +81,7 @@ class FallbackTts:
         if use_primary:
             reason = ""
             started = time.perf_counter()
-            agen = self._engine(voices.primary, language).stream(text, language)
+            agen = self._engine(voices.primary, language).stream(primary_text, language)
             try:
                 first = await asyncio.wait_for(agen.__anext__(), self.config.first_audio_timeout_ms / 1000.0)
             except StopAsyncIteration:
@@ -113,7 +117,7 @@ class FallbackTts:
         started = time.perf_counter()
         spoke = False
         try:
-            async for chunk in self._engine(voices.fallback, language).stream(text, language):
+            async for chunk in self._engine(voices.fallback, language).stream(fallback_text, language):
                 if not spoke:
                     spoke = True
                     self.served_engine = voices.fallback.engine
