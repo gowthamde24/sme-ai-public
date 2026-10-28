@@ -6,7 +6,7 @@ import type { Failed } from "../cc/kit";
 export type Out<T> = { ok: true; data: T } | Failed;
 
 export interface PrivacyActions {
-  requestExport: (scope: "person" | "workspace", exportId: string) => Promise<Out<DataExport>>;
+  requestExport: (scope: "person" | "workspace", exportId: string, confirmName?: string) => Promise<Out<DataExport>>;
   getExport: (exportId: string) => Promise<Out<DataExport>>;
   openLink: (exportId: string) => Promise<Out<ExportLink>>;
   requestAccountDeletion: (requestId: string, email: string) => Promise<Out<Deletion>>;

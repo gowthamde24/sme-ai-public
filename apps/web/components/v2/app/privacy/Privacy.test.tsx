@@ -46,6 +46,19 @@ describe("download my data", () => {
     expect(screen.getByRole("button", { name: "Prepare the workspace's data" })).toBeInTheDocument();
     expect(screen.getByText(/needs your second step/)).toBeInTheDocument();
   });
+  it("the workspace's data needs the business name typed: the button waits for it, the name goes with the request, and the e-mail note is announced", async () => {
+    const a = actions();
+    render(<ExportMyData words={WORDS} actions={a} initial={[]} isOwner workspaceName="Acme Silks" />);
+    expect(screen.queryByLabelText("Type Acme Silks to confirm")).toBeNull();
+    await press("Prepare the workspace's data");
+    expect(screen.getByText("We will e-mail you a note that this was done.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ask for the workspace data" })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("Type Acme Silks to confirm"), { target: { value: "acme silks" } });
+    expect(screen.getByRole("button", { name: "Ask for the workspace data" })).toBeDisabled(); // as written
+    fireEvent.change(screen.getByLabelText("Type Acme Silks to confirm"), { target: { value: " Acme Silks " } });
+    await press("Ask for the workspace data");
+    expect(a.requestExport).toHaveBeenCalledWith("workspace", expect.stringMatching(/^[0-9a-f-]{36}$/), "Acme Silks");
+  });
   it("asks with an id it made, shows 'Preparing', looks again every few seconds and offers Download when ready", async () => {
     vi.useFakeTimers();
     const a = actions();
@@ -81,8 +94,10 @@ describe("download my data", () => {
     [fail("mfa", undefined, { mfa: true }), /second step/],
     [fail("forbidden"), /Your role cannot do this/],
   ])("a refusal (%j) is said in words and nothing is lost", async (reply, words) => {
-    render(<ExportMyData words={WORDS} actions={actions({ requestExport: vi.fn(async () => reply) })} initial={[exp()]} isOwner />);
+    render(<ExportMyData words={WORDS} actions={actions({ requestExport: vi.fn(async () => reply) })} initial={[exp()]} isOwner workspaceName="Acme Silks" />);
     await press("Prepare the workspace's data");
+    fireEvent.change(screen.getByLabelText("Type Acme Silks to confirm"), { target: { value: "Acme Silks" } });
+    await press("Ask for the workspace data");
     expect(screen.getByRole("alert")).toHaveTextContent(words);
     expect(screen.getByText("Ready")).toBeInTheDocument();
   });

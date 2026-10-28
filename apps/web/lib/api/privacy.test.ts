@@ -52,8 +52,8 @@ describe("asking the API", () => {
     apiRequest.mockResolvedValue({ export: EXPORT });
     await requestExport("tok", E, null);
     expect(apiRequest).toHaveBeenLastCalledWith("/v1/me/data-exports", "tok", { method: "POST", body: JSON.stringify({ export_id: E }) });
-    await requestExport("tok", E, T);
-    expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${T}/data-exports`, "tok", { method: "POST", body: JSON.stringify({ export_id: E }) });
+    await requestExport("tok", E, T, "Acme Silks");
+    expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${T}/data-exports`, "tok", { method: "POST", body: JSON.stringify({ export_id: E, confirm_name: "Acme Silks" }) });
   });
   it("asks for a link with a POST and reads the address", async () => {
     apiRequest.mockResolvedValue({ url: "https://files.example.test/x?token=1", link_valid_seconds: 300, file_expires_at: null, size_bytes: 3 });

@@ -94,10 +94,10 @@ export async function getMyExport(token: string, exportId: string): Promise<Data
   ids(null, exportId);
   return parseOneExport(await apiRequest(`/v1/me/data-exports/${exportId}`, token));
 }
-/** Person scope: any member. Workspace scope (`tenantId` given): the Owner, with the second factor. */
-export async function requestExport(token: string, exportId: string, tenantId: string | null): Promise<DataExport> {
+/** Person scope: any member. Workspace scope (`tenantId` given): the Owner, who types the business name to confirm (`confirmName`, the name as written: the API answers 422 `confirmation_mismatch` and starts nothing otherwise); the API then e-mails the Owner a note. */
+export async function requestExport(token: string, exportId: string, tenantId: string | null, confirmName?: string): Promise<DataExport> {
   ids(tenantId, exportId);
-  return parseOneExport(await post(tenantId ? `/v1/tenants/${tenantId}/data-exports` : "/v1/me/data-exports", token, { export_id: exportId }));
+  return parseOneExport(await post(tenantId ? `/v1/tenants/${tenantId}/data-exports` : "/v1/me/data-exports", token, tenantId ? { export_id: exportId, confirm_name: confirmName ?? "" } : { export_id: exportId }));
 }
 export async function exportLink(token: string, exportId: string): Promise<ExportLink> {
   ids(null, exportId);

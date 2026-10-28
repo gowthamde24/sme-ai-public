@@ -70574,5 +70574,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "prx.exp.confirm.type": {
+  "en": "Type {name} to confirm",
+  "te": "నిర్ధారించడానికి {name} అని టైప్ చేయండి",
+  "hi": "पुष्टि करने के लिए {name} टाइप करें",
+  "kn": "ಖಚಿತಪಡಿಸಲು {name} ಟೈಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.confirm.go": {
+  "en": "Ask for the workspace data",
+  "te": "వర్క్‌స్పేస్ డేటా కోసం అడగండి",
+  "hi": "वर्कस्पेस का डेटा मांगें",
+  "kn": "ವರ್ಕ್‌ಸ್ಪೇಸ್ ಡೇಟಾ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.confirm.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు చేయండి",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.confirm.email": {
+  "en": "We will e-mail you a note that this was done.",
+  "te": "ఇది అయిపోయిందని మీకు ఇ-మెయిల్‌లో ఒక నోట్ పంపుతాము.",
+  "hi": "यह हो जाने पर हम आपको एक ई-मेल नोट भेजेंगे।",
+  "kn": "ಇದು ಆಗಿದೆ ಎಂದು ನಿಮಗೆ ಇ-ಮೇಲ್‌ನಲ್ಲಿ ಒಂದು ಟಿಪ್ಪಣಿ ಕಳುಹಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
