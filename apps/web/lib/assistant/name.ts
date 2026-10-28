@@ -22,5 +22,6 @@ export const currentAssistantName = (): string => provider();
  * (The server's dictionaries do the full job, per language and after any sentence end: lib/assistant/default-name.ts.)
  */
 export function withAssistantName(text: string, name: string = currentAssistantName()): string {
-  return text.includes(ASSISTANT_PLACEHOLDER) ? text.replace(/\{assistant\}/g, (_m, at: number) => (at === 0 && name === DEFAULT_ASSISTANT_NAME ? "Your assistant" : name)) : text;
+  const out = text.replaceAll(ASSISTANT_PLACEHOLDER, () => name);
+  return name === DEFAULT_ASSISTANT_NAME && text.startsWith(ASSISTANT_PLACEHOLDER) ? out[0].toUpperCase() + out.slice(1) : out;
 }
