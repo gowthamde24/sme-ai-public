@@ -28,7 +28,7 @@ function typing(target: EventTarget | null): boolean {
  * arrived that the person has not seen). Pressed, it opens the panel (AskPanel): a small chat bottom right on a laptop, a sheet 70 % high on a phone. "/" or Cmd/Ctrl+K opens it from the keyboard; Esc or the close button returns to the circle.
  * On Today the same keys put the cursor in the card's own line. Nothing here is fixed to the bottom as a bar: there is no bar.
  */
-export function AskFloating({ words, chipWords, voice = null }: { words: AskWords; chipWords: AskWords; /** Present where "Talk to your assistant" is on: the orb then opens the voice chat (in the same lazy chunk as the panel), and the written panel is one tap away ("Type instead"). */ voice?: BrowserVoice | null }) {
+export function AskFloating({ words, chipWords, voice }: { words: AskWords; chipWords: AskWords; /** Present where "Talk to your assistant" is on: the orb then opens the voice chat (in the same lazy chunk as the panel), and the written panel is one tap away ("Type instead"). */ voice?: BrowserVoice | null }) {
   const session = useStoredAsk(); // null until the conversation's code has arrived: the orb is on the page at once, the panel opens as soon as there is something to open
   const finished = session?.finished ?? 0;
   const pathname = usePathname();
