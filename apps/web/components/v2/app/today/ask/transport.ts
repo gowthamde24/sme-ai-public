@@ -3,7 +3,7 @@ import type { ConfirmAction } from "@/lib/api/turns";
 import type { AskEvent, AskTransport, VoiceStatus, VoiceTransport } from "./ask-types";
 
 const KINDS = ["text", "source", "draft", "error", "done", "heard", "audio", "audio_error", "confirm_action", "clarify"];
-const AUDIO_TYPES = ["audio/wav", "audio/x-wav", "audio/wave", "audio/mpeg", "audio/mp3", "audio/ogg", "audio/webm", "audio/mp4", "audio/aac"];
+const AUDIO_TYPE = /^audio\/(wav|x-wav|wave|mpeg|mp3|ogg|webm|mp4|aac)$/; // the same nine as lib/api/voice.ts
 
 /** One line of the route's answer as an AskEvent, or null for anything that is not one: the stream is this app's own, but its text is still untrusted and nothing is guessed. */
 export function parseLine(raw: string): AskEvent | null {
@@ -31,7 +31,7 @@ export function parseLine(raw: string): AskEvent | null {
     case "heard":
       return typeof r.text === "string" ? { type: "heard", text: r.text } : null;
     case "audio":
-      return typeof r.contentType === "string" && AUDIO_TYPES.includes(r.contentType) && typeof r.data === "string" && /^[A-Za-z0-9+/]+={0,2}$/.test(r.data) ? { type: "audio", contentType: r.contentType, data: r.data } : null;
+      return typeof r.contentType === "string" && AUDIO_TYPE.test(r.contentType) && typeof r.data === "string" && /^[A-Za-z0-9+/]+={0,2}$/.test(r.data) ? { type: "audio", contentType: r.contentType, data: r.data } : null;
     case "audio_error":
       return { type: "audio_error", code: s(r.code) ?? undefined };
     case "confirm_action":

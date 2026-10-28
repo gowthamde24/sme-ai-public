@@ -80,7 +80,6 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const [voiceOpen, setVoiceOpen] = React.useState(false); // voice mode (job DM): the full-screen circle over the box, opened by the microphone
   const [earlier, setEarlier] = React.useState<Exchange[]>([]);
   const [extra, setExtra] = React.useState<{ plan?: ConfirmAction; clarify?: string }>({}); // what the router answered with besides text: a plan to confirm, or one short question
-  const { plan = null, clarify = null } = extra;
   const convRef = React.useRef<string | null>(null); // the conversation the next message continues (null starts a new one)
   const doIt = useDoIt(doItOptions);
   const [mode, setMode] = React.useState<Mode>("ask");
@@ -114,7 +113,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   // the exchange on screen, readable from a handler made by an earlier render (a recording finishes long after the render that started it)
   const current = React.useRef<Exchange | null>(null);
   React.useEffect(() => {
-    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, plan, clarify };
+    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, ...extra };
     modeRef.current = doIt ? mode : "ask";
   });
   const voiceEndpoint = `${base}/ask/voice`;
@@ -418,7 +417,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     text, setText, focused, setFocused, asked, phase, answer, sources, drafts, problem, errorCode, heardByVoice, earlier, finished, mood,
     hasAudio, playing, audioPending, audioFailed, autoplay, setAutoplay, seen, showMic, status,
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, clarify, setExtra, setEarlier,
+    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, extra, setExtra, setEarlier,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",
     asking: phase === "asking",

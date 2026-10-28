@@ -138,7 +138,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
   const input = React.useRef<HTMLInputElement>(null);
   const end = React.useRef<HTMLDivElement>(null);
   const { w } = s;
-  const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, plan: s.plan, clarify: s.clarify } : null;
+  const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, ...s.extra } : null;
   const empty = s.earlier.length === 0 && current === null && !talk.live;
   React.useEffect(() => {
     input.current?.focus();
