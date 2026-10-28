@@ -20,6 +20,7 @@ import json
 import logging
 import re
 import secrets
+import time
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -178,6 +179,8 @@ class AssistantRunner:
         self._now = now or (lambda: datetime.now(UTC))
         self._delimiter = delimiter or secrets.token_hex(8)
         self._state: State = ctx.state
+        self._started = time.perf_counter()
+        self._model_ms = 0.0  # time spent waiting for the model in this run (the part of a slow answer that is not ours)
 
     # ------------------------------------------------------------------ the run
     def run(
@@ -233,7 +236,9 @@ class AssistantRunner:
                     max_output_tokens=request.max_output_tokens,
                 )
                 try:
+                    called = time.perf_counter()
                     response = llm.complete(request)
+                    self._model_ms += (time.perf_counter() - called) * 1000.0
                 except LlmError as exc:
                     logger.warning(
                         "assistant run %s: model call failed (%s)", self._ctx.run_id, exc.code
@@ -313,7 +318,7 @@ class AssistantRunner:
                     if status != "ok":
                         notes = (prompts.NOTE_TOOL_REFUSED,)
 
-                verdict = self._judge(response.structured, language, repaired, turn)
+                verdict = self._judge(response.structured, language, repaired, turn, searched=bool(results))
                 if isinstance(verdict, Reply) and verdict.kind == "refusal":
                     # the model says it cannot help. If a hidden group could have helped, ask once more with every tool offered (the one retry; its model call is counted like any other)
                     missed = (
@@ -427,6 +432,8 @@ class AssistantRunner:
         language: Language,
         repaired: set[str],
         turn: int = MAX_TURNS,
+        *,
+        searched: bool = False,
     ) -> Reply | str | None:
         """A Reply that may be shown, a fixed repair note to send back (once per kind), or None when there is no reply yet."""
         if structured is None:
@@ -452,6 +459,10 @@ class AssistantRunner:
             self._state.items[h] for h in dict.fromkeys(final.sources) if h in self._state.items
         ]
         if final.kind == "answer" and not known:
+            if searched and not self._state.items:
+                # the tools ran and found NOTHING: there is no record the model could cite, so asking again can only cost two more model calls and end in the same fixed sentence (a Telugu Ask took 37 s that way). Say it now.
+                logger.info("assistant run %s: nothing found and an answer with no source; answered with the fixed sentence at turn %d (%s)", self._ctx.run_id, turn, language)
+                return Reply(NO_ANSWER[language], language, "refusal", [], list(self._state.drafts))
             return self._once("sources", prompts.NOTE_REPAIR_SOURCES, repaired)
         # an amount is stated only exactly as a tool returned it: not the owner's own number repeated back as if it were done, not a sum, not a guess
         if any(a not in self._state.allowed_paise for a in money_amounts(final.answer)):
@@ -544,7 +555,11 @@ class AssistantRunner:
             self._db.finish(status, code)
         except AgentDbError as exc:
             logger.warning("assistant run could not be closed (%s)", exc.code)
+        logger.info("assistant run finished: status=%s code=%s turns=%d ms=%d model_ms=%d language=%s", status, code or "-", turns, self._elapsed_ms(), self._model_ms, reply.language)
         return Outcome(status, code, reply, turns)
+
+    def _elapsed_ms(self) -> int:
+        return int((time.perf_counter() - self._started) * 1000)
 
     @staticmethod
     def _classify(exc: AgentDbError) -> tuple[str, str | None, str | None]:
@@ -571,7 +586,7 @@ class AssistantRunner:
                 self._db.finish(status, code)
             except AgentDbError as exc:
                 logger.warning("assistant run could not be closed (%s)", exc.code)
-        logger.info("assistant run ended: status=%s code=%s turns=%d", status, code or "-", turns)
+        logger.info("assistant run ended: status=%s code=%s turns=%d ms=%d model_ms=%d", status, code or "-", turns, self._elapsed_ms(), self._model_ms)
         return Outcome(status, code, None, turns, shown)
 
     def _pick(self, request: LlmRequest) -> LlmClient:

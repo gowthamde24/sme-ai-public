@@ -1,5 +1,5 @@
 {
-  "$comment": "Which voice speaks each language on a call (job natural-voice, owner decision 28 Oct: Bulbul v3 dropped; Cartesia first, Sarvam Bulbul v4 Flash as the automatic fallback). Data, not code: change a voice or an engine here and nothing else. DEFAULTS ARE PROVISIONAL: the owner's reveal picks from the bake-off are not recorded anywhere, so these are the voices that were in the bake-off for each language, chosen as the calmest warm female one. Hindi and Kannada have no Cartesia-native voice in the bake-off: Ramya (a Telugu voice) speaks them, so listen to those two first and swap (Sonic has Hindi voices such as Sanya).",
+  "$comment": "Which voice speaks each language on a call (job natural-voice, owner decision 28 Oct: Bulbul v3 dropped; Cartesia first, Sarvam Bulbul v4 Flash as the automatic fallback). Data, not code: change a voice or an engine here and nothing else. English is the owner's pick by ear (Janvi). The other defaults are PROVISIONAL: the owner's reveal picks are not recorded, so they are the bake-off voices judged calmest and warmest. Hindi and Kannada: Ramya (a Telugu voice) speaks them until the owner picks from voice-bakeoff/picks-hi-kn (Hindi: Sanya, Esha, Meera; Kannada has only three native voices: Disha, Divya, Prakash).",
   "first_audio_timeout_ms": 800,
   "cooldown_s": 30,
   "languages": {
@@ -16,7 +16,7 @@
       "fallback": {"engine": "sarvam_v4", "model": "bulbul:v4-flash", "voice": "chaitra_kn_conversation", "label": "chaitra"}
     },
     "en": {
-      "primary": {"engine": "cartesia", "model": "sonic-3.6", "voice": "1e9b9b3d-d2ce-4cac-9d05-bc36a63fa28e", "label": "Saira (Indian accent)"},
+      "primary": {"engine": "cartesia", "model": "sonic-3.6", "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8", "label": "Janvi (picked by ear by the owner, 28 Oct)"},
       "fallback": {"engine": "sarvam_v4", "model": "bulbul:v4-flash", "voice": "shalini_en_customer", "label": "shalini"}
     }
   }
