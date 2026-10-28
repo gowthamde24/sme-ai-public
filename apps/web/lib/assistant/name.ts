@@ -17,7 +17,12 @@ export function setAssistantNameProvider(next: () => string): void {
 /** The name for the request being drawn: the workspace's own, or the default. */
 export const currentAssistantName = (): string => provider();
 
-/** A text with `{assistant}` replaced by the name (the current one unless given). A text without the placeholder is returned as it is. */
+/**
+ * A text with `{assistant}` replaced by the name (the current one unless given). A text without the placeholder is returned as it is. The default name is capitalised at the start of a sentence ("Your assistant this week"); a name the owner set is used as written.
+ * (The default in Telugu, Hindi and Kannada is said by lib/assistant/default-name.ts, which only the server's dictionaries use.)
+ */
 export function withAssistantName(text: string, name: string = currentAssistantName()): string {
-  return text.includes(ASSISTANT_PLACEHOLDER) ? text.replaceAll(ASSISTANT_PLACEHOLDER, () => name) : text;
+  if (!text.includes(ASSISTANT_PLACEHOLDER)) return text;
+  const cap = `${name[0].toUpperCase()}${name.slice(1)}`;
+  return text.replace(/\{assistant\}/g, (_m, at: number) => (name === DEFAULT_ASSISTANT_NAME && (at === 0 || /([.!?]\s+|["“(])$/.test(text.slice(0, at))) ? cap : name));
 }
