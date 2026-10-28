@@ -51,7 +51,7 @@ class Conversation:
         session: Session,
         models: dict[Tier, str],
         fillers: FillerBank | None = None,
-        voice: str = "",
+        voice: str | Callable[[str], str] = "",
         filler_after_ms: int = FILLER_AFTER_MS,
         tools_available: bool = False,
         clock: Callable[[], float] = time.perf_counter,
@@ -212,7 +212,8 @@ class Conversation:
         await asyncio.sleep(self.filler_after_ms / 1000.0)
         if tm.first_audio_at is not None or epoch != self._epoch:
             return
-        picked = self.fillers.pick(self.session.language, self.voice)
+        voice = self.voice(self.session.language) if callable(self.voice) else self.voice  # the browser voice has a different catalogue voice per language
+        picked = self.fillers.pick(self.session.language, voice)
         if picked is None:
             return
         tm.filler_played = True

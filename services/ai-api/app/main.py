@@ -30,6 +30,7 @@ from app.billing.service import BillingService
 from app.browser_voice.limits import Ledger, Limits
 from app.browser_voice.routes import router as browser_voice_router
 from app.browser_voice.runtime import BrowserVoice
+from app.browser_voice.store import PostgrestUsageStore
 from app.businessprofile.repository import PostgrestBusinessProfileRepository
 from app.businessprofile.routes import router as business_profile_router
 from app.callsettings.repository import PostgrestCallSettingsRepository
@@ -42,12 +43,13 @@ from app.catalogue import errors as catalogue_errors
 from app.catalogue.repository import PostgrestCatalogueRepository
 from app.catalogue.routes import router as catalogue_router
 from app.catalogue.storage import HttpStorageClient
-from app.config import ConfigurationError, Settings, build_auth_config, get_settings
+from app.config import AuthConfig, ConfigurationError, Settings, build_auth_config, get_settings
 from app.connectors.repository import PostgrestConnectorsRepository
 from app.connectors.routes import router as connectors_router
 from app.connectors.webhooks import router as webhooks_router
 from app.connectors.wiring import build_connectors
 from app.conversation.engines import real_engine_factory
+from app.conversation.fillers import FillerBank
 from app.conversation.picker import public_router as voice_samples_router
 from app.conversation.picker import router as voice_picker_router
 from app.conversation.preview import CallVoicePreview
@@ -304,7 +306,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         call_voice=_call_voice(settings),
-        browser_voice=_browser_voice(settings),
+        browser_voice=_browser_voice(settings, config),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         mail_sender=_notice_sender(settings),
         notifications=build_notifications(settings, config),
@@ -883,7 +885,7 @@ def _call_voice(settings: Settings) -> CallVoicePreview | None:
     return CallVoicePreview(voice_catalogue(), factory)
 
 
-def _browser_voice(settings: Settings) -> BrowserVoice | None:
+def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | None:
     """Talk to the assistant in the browser (job DV). None unless BROWSER_VOICE_ENABLED and its keys
     are set; a half-set configuration stays off (the log names what is missing, never a key)."""
     if not settings.browser_voice_enabled:
@@ -917,7 +919,8 @@ def _browser_voice(settings: Settings) -> BrowserVoice | None:
         fast_model=settings.llm_model or "",
         turn_model=model,
         limits=limits,
-        ledger=Ledger(limits),
+        ledger=Ledger(limits, PostgrestUsageStore(config.rest_url, config.anon_key)),
+        fillers=FillerBank.from_disk(),
         allowed_origins=tuple(o.strip() for o in settings.api_cors_origins.split(",") if o.strip()),
         client=httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0)),
     )

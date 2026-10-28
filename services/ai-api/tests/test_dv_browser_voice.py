@@ -521,3 +521,129 @@ def test_the_real_parts_builder_works_for_a_workspace_in_every_language() -> Non
     for language in ("te", "en", "hi", "kn"):
         assert "Tenant A" in parts.system_for(language) and parts.greeting_for(language)
     assert parts.models["strong"] == "ask" and parts.models["fast"] == "m"
+
+# ---- durable daily caps (follow-up) ----------------------------------------------------------------------------------------------------------------
+
+
+class FakeStore:
+    """The two database functions, in memory, with the same bounds."""
+
+    def __init__(self) -> None:
+        self.seconds, self.chars, self.sessions = 0, 0, 0
+        self.adds: list[tuple[int, int, int]] = []
+        self.fail = False
+
+    def get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        if self.fail:
+            raise RuntimeError("down")
+        return {"seconds": self.seconds, "tts_chars": self.chars, "sessions": self.sessions}
+
+    def add(self, token: str, tenant_id: uuid.UUID, seconds: int, chars: int, sessions: int) -> dict[str, Any]:
+        if self.fail:
+            raise RuntimeError("down")
+        assert 0 <= seconds <= 600 and 0 <= chars <= 6000 and 0 <= sessions <= 1
+        self.adds.append((seconds, chars, sessions))
+        self.seconds, self.chars, self.sessions = self.seconds + seconds, self.chars + chars, self.sessions + sessions
+        return self.get(token, tenant_id)
+
+
+def test_two_instances_share_one_count_through_the_database() -> None:
+    store = FakeStore()
+    limits = Limits(day_seconds=100, day_tts_chars=1000)
+    a, b = Ledger(limits, store), Ledger(limits, store)
+    assert a.admit(TENANT, "t") is None
+    a.add_seconds(TENANT, 70)
+    a.add_chars(TENANT, 400)
+    a.flush(TENANT, "t")
+    assert store.seconds == 70 and store.chars == 400 and store.sessions == 1
+    assert b.admit(TENANT, "t") is None, "70 of 100 seconds used: another instance still admits"
+    b.add_seconds(TENANT, 40)
+    b.flush(TENANT, "t")
+    assert store.seconds == 110
+    a.release(TENANT)
+    assert a.admit(TENANT, "t") == "daily_limit", "the first instance reads the other's use before it admits"
+
+
+def test_a_long_backlog_goes_to_the_database_in_bounded_pieces() -> None:
+    store = FakeStore()
+    ledger = Ledger(Limits(day_seconds=100000, day_tts_chars=100000), store)
+    ledger.add_seconds(TENANT, 1500)
+    ledger.add_chars(TENANT, 13000)
+    ledger.flush(TENANT, "t")
+    assert sum(a[0] for a in store.adds) == 1500 and sum(a[1] for a in store.adds) == 13000 and all(a[0] <= 600 and a[1] <= 6000 for a in store.adds)
+
+
+def test_a_database_that_is_down_never_stops_a_session_and_nothing_is_lost() -> None:
+    store = FakeStore()
+    ledger = Ledger(Limits(day_seconds=100, day_tts_chars=1000), store)
+    store.fail = True
+    assert ledger.admit(TENANT, "t") is None, "memory carries on"
+    ledger.add_seconds(TENANT, 30)
+    ledger.flush(TENANT, "t")
+    assert store.seconds == 0 and ledger.seconds_left(TENANT) == 70
+    store.fail = False
+    ledger.flush(TENANT, "t")
+    assert store.seconds == 30 and store.sessions == 1, "the unwritten numbers went in on the next try"
+
+
+def test_the_store_calls_the_two_database_functions_with_the_members_token() -> None:
+    from app.browser_voice.store import PostgrestUsageStore
+
+    calls: list[tuple[str, str, dict[str, Any]]] = []
+
+    class Rpc:
+        def object(self, token: str, name: str, params: dict[str, Any]) -> dict[str, Any]:
+            calls.append((token, name, params))
+            return {}
+
+    store = PostgrestUsageStore("http://x", "k", rpc=Rpc())  # type: ignore[arg-type]
+    store.get("tok", TENANT)
+    store.add("tok", TENANT, 5, 7, 1)
+    assert calls == [("tok", "browser_voice_usage_get", {"p_tenant_id": str(TENANT)}), ("tok", "browser_voice_usage_add", {"p_tenant_id": str(TENANT), "p_seconds": 5, "p_chars": 7, "p_sessions": 1})]
+
+
+# ---- the filler bank (follow-up) --------------------------------------------------------------------------------------------------------------------
+
+
+def test_every_catalogue_voice_has_its_pre_rendered_one_moment_lines() -> None:
+    from app.conversation.fillers import BANK_LINES, FillerBank
+
+    cfg, bank = default_config(), FillerBank.from_disk(seed=1)
+    for voice in cfg.catalogue.values():
+        audio = bank._audio.get((voice.language, voice.id))  # noqa: SLF001
+        assert audio is not None, f"no filler lines rendered for {voice.id}"
+        assert list(audio) == list(BANK_LINES[voice.language]) and 3 <= len(audio) <= 4
+        for text, pcm in audio.items():
+            seconds = len(pcm) / 2 / 24000
+            assert len(pcm) % 2 == 0 and 0.8 <= seconds <= 3.5, f"{voice.id}: '{text}' is {seconds:.1f} s"
+    assert "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను." in BANK_LINES["te"], "the approved Telugu wording of native-lines/te.md"
+
+
+def test_the_filler_never_repeats_twice_in_a_row() -> None:
+    from app.conversation.fillers import FillerBank
+
+    bank = FillerBank.from_disk(seed=3)
+    picks = [bank.pick("en", "en-janvi")[0] for _ in range(12)]  # type: ignore[index]
+    assert all(a != b for a, b in zip(picks, picks[1:], strict=False))
+
+
+@arun
+async def test_when_ask_is_slow_a_filler_in_the_chosen_voice_is_said_after_700_ms() -> None:
+    from app.conversation.fillers import FillerBank
+
+    bank = FillerBank.from_disk(seed=2)
+    sock = FakeSocket()
+    parts = fake_parts(llm=FakeLlm(("Here is the answer. ",), first_token_delay=1.3))
+    parts.fillers = bank
+    parts.voice_for = lambda language: {"en": "en-janvi"}.get(language, "")
+    session = session_of(sock, parts)
+    run = asyncio.ensure_future(session.run())
+    sock.feed_speech()
+    await until(lambda: "timings" in sock.types(), seconds=6)
+    sock.inbox.put_nowait(("close", None))
+    await run
+    lengths = {len(pcm) for pcm in bank._audio[("en", "en-janvi")].values()}  # noqa: SLF001
+    sent = [len(b) for _, b in sock.audio]
+    assert sent[0] in lengths, "the first audio the browser got was a filler line, not silence"
+    timing = next(m for m in sock.json if m["type"] == "timings")
+    assert timing["after_final_ms"] is not None and timing["first_sound_ms"] < timing["after_final_ms"] + 1500

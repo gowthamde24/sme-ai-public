@@ -11,6 +11,7 @@ import httpx
 from app.browser_voice.limits import Ledger, Limits
 from app.browser_voice.llm import ASK_MODEL
 from app.conversation.fallback import EngineFactory
+from app.conversation.fillers import FillerBank
 from app.conversation.parts import StreamingLlm
 from app.conversation.providers import AnthropicStream, SarvamChatStream
 from app.conversation.voices import VoiceConfig
@@ -30,6 +31,7 @@ class BrowserVoice:
     ledger: Ledger
     allowed_origins: tuple[str, ...]
     client: httpx.AsyncClient
+    fillers: FillerBank | None = None  # the pre-rendered 'one moment' lines per catalogue voice (data/fillers/)
 
     def fast_llm(self) -> StreamingLlm:
         if self.turn_model == "sarvam":
