@@ -95,11 +95,15 @@ if [ "$what" = "web" ] || [ "$what" = "all" ]; then
   WEB_RUN_SA="sme-web-run@$PROJECT_ID.iam.gserviceaccount.com" ./deploy/cloudrun.sh web $execute
 fi
 if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
+  # Automatic WhatsApp replies (job DY): the worker needs the model key, and its service account needs secretAccessor on sme-anthropic-api-key (an owner IAM step, docs/runbooks/whatsapp-staging.md).
+  # Run with WORKER_AUTO_REPLY=1 once that is granted; without it the worker still sends (WhatsApp adapter, fenced) but does not draft replies.
+  WORKER_AR_ENV="" WORKER_AR_SECRETS=""
+  if [ "${WORKER_AUTO_REPLY:-0}" = 1 ]; then WORKER_AR_ENV=",AUTO_REPLY_ENABLED=true,AUTO_REPLY_MODEL=claude-haiku-5-5"; WORKER_AR_SECRETS=",ANTHROPIC_API_KEY=sme-anthropic-api-key:latest"; fi
   # the worker has its own image (the API's code plus ffmpeg, job DJ), built here with the same TAG
   RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="scheduler@demo.example.test" \
     WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER=whatsapp \
-    WORKER_EXTRA_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN},SPEECH_PROVIDER=sarvam,OUTREACH_DIALER=fake,WHATSAPP_GRAPH_VERSION=v25.0,WHATSAPP_ALLOWED_RECIPIENTS=${WHATSAPP_ALLOWED_RECIPIENTS},AUTO_REPLY_ENABLED=true,AUTO_REPLY_MODEL=claude-haiku-5-5" \
-    WORKER_EXTRA_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,WHATSAPP_ACCESS_TOKEN=sme-whatsapp-token:latest,ANTHROPIC_API_KEY=sme-anthropic-api-key:latest" \
+    WORKER_EXTRA_ENV="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN},SPEECH_PROVIDER=sarvam,OUTREACH_DIALER=fake,WHATSAPP_GRAPH_VERSION=v25.0,WHATSAPP_ALLOWED_RECIPIENTS=${WHATSAPP_ALLOWED_RECIPIENTS}${WORKER_AR_ENV}" \
+    WORKER_EXTRA_SECRETS="RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,WHATSAPP_ACCESS_TOKEN=sme-whatsapp-token:latest${WORKER_AR_SECRETS}" \
     ./deploy/cloudrun.sh worker $execute
 fi
 echo "staging: $WEB_ORIGIN  (api: $API_URL)  tag $TAG"
