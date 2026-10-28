@@ -6,7 +6,7 @@ import { voicePickerScreens } from "@/lib/screens/flag";
 import { MOCK_VOICES, PICKER_LANGS, VOICE_ID, type Choices, type Picker, type PickerLang } from "./types";
 
 /**
- * Where the voice picker gets the catalogue and saves the choice. `mock` = the approved catalogue of 28 Oct and ONE small cookie for the choice, no real voices (the sounds are tones); `on` = C1's API (lib/api/voice-picker.ts, an ASSUMED contract until it is on main);
+ * Where the voice picker gets the catalogue and saves the choice. `mock` = the approved catalogue of 28 Oct and ONE small cookie for the choice, no real voices (the sounds are tones); `on` = C1's API (lib/api/voice-picker.ts, C1's contract);
  * `off` = the part is not there. Every move checks its input again here (the browser is not trusted): a language of the four, a voice id of the catalogue. SERVER ONLY.
  */
 export type Ctx = { token: string; tenantId: string };
