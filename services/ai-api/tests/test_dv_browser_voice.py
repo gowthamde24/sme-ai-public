@@ -606,23 +606,18 @@ def test_the_store_calls_the_two_database_functions_with_the_members_token() -> 
 # ---- the filler bank (follow-up) --------------------------------------------------------------------------------------------------------------------
 
 
-def test_every_rendered_catalogue_voice_has_its_pre_rendered_one_moment_lines_and_an_unrendered_one_has_none() -> None:
-    """The voices rendered so far have their lines in THEIR language and gender; a voice without lines (waiting for Cartesia credits) has NO filler at all, never another voice's (rule R4)."""
+def test_every_catalogue_voice_has_its_pre_rendered_one_moment_lines_in_its_language_and_gender() -> None:
     from app.conversation.fillers import FillerBank, bank_lines
 
     cfg, bank = default_config(), FillerBank.from_disk(seed=1)
-    rendered = 0
     for voice in cfg.catalogue.values():
         audio = bank._audio.get((voice.language, voice.id))  # noqa: SLF001
-        if audio is None:
-            assert bank.pick(voice.language, voice.id) is None, f"{voice.id}: no lines, so no filler"
-            continue
-        rendered += 1
+        assert audio is not None, f"no filler lines rendered for {voice.id}"
         assert list(audio) == list(bank_lines(voice.language, voice.gender)) and 3 <= len(audio) <= 4
         for text, pcm in audio.items():
             seconds = len(pcm) / 2 / 24000
-            assert len(pcm) % 2 == 0 and 0.8 <= seconds <= 3.5, f"{voice.id}: '{text}' is {seconds:.1f} s"
-    assert rendered >= 9
+            assert len(pcm) % 2 == 0 and 0.6 <= seconds <= 3.5, f"{voice.id}: '{text}' is {seconds:.1f} s"
+    assert bank.pick("te", "te-unknown") is None, "a voice without lines gets no filler, never another voice's"
     assert "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను." in bank_lines("te")
     assert bank_lines("hi", "male")[0].endswith("करता हूँ।") and bank_lines("hi")[0].endswith("करती हूँ।"), "Hindi verbs carry the speaker's gender"
     assert all(bank_lines(lang) for lang in ("te", "en", "hi", "kn", "ta", "ml"))

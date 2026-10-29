@@ -4,6 +4,107 @@
  "cooldown_s": 30,
  "catalogue": [
   {
+   "id": "te-sindhu",
+   "language": "te",
+   "name": "Sindhu",
+   "label": "Bright",
+   "gender": "female",
+   "tags": [
+    "bright",
+    "young"
+   ],
+   "recommended": true,
+   "default": false,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "07bc462a-c644-49f1-baf7-82d5599131be",
+    "label": "Sindhu"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "kavitha_te_conversation",
+    "gender": "female",
+    "label": "kavitha"
+   }
+  },
+  {
+   "id": "te-deepthi",
+   "language": "te",
+   "name": "Deepthi",
+   "label": "Bright",
+   "gender": "female",
+   "tags": [
+    "bright"
+   ],
+   "recommended": true,
+   "default": false,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "062c17da-6ab6-4ecc-9f8a-d2a3dace8003",
+    "label": "Deepthi"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "kavitha_te_conversation",
+    "gender": "female",
+    "label": "kavitha"
+   }
+  },
+  {
+   "id": "te-bhavani",
+   "language": "te",
+   "name": "Bhavani",
+   "label": "Warm",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "76961778-5ce4-4aa9-9cdf-66a029d61a8f",
+    "label": "Bhavani"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "kavitha_te_conversation",
+    "gender": "female",
+    "label": "kavitha"
+   }
+  },
+  {
+   "id": "te-divya",
+   "language": "te",
+   "name": "Divya",
+   "label": "Warm",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "292708e4-1200-4214-a3b7-f522a88c7284",
+    "label": "Divya"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "kavitha_te_conversation",
+    "gender": "female",
+    "label": "kavitha"
+   }
+  },
+  {
    "id": "te-ramya",
    "language": "te",
    "name": "Ramya",
@@ -38,39 +139,13 @@
     "calm",
     "warm"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
     "voice": "330c4fa0-1da3-4c55-8e97-951bfd724e20",
     "label": "Sarika"
-   },
-   "fallback": {
-    "engine": "sarvam_v4",
-    "model": "bulbul:v4-flash",
-    "voice": "kavitha_te_conversation",
-    "gender": "female",
-    "label": "kavitha"
-   }
-  },
-  {
-   "id": "te-sindhu",
-   "language": "te",
-   "name": "Sindhu",
-   "label": "Bright",
-   "gender": "female",
-   "tags": [
-    "bright",
-    "young"
-   ],
-   "recommended": true,
-   "default": false,
-   "primary": {
-    "engine": "cartesia",
-    "model": "sonic-3.6",
-    "voice": "07bc462a-c644-49f1-baf7-82d5599131be",
-    "label": "Sindhu"
    },
    "fallback": {
     "engine": "sarvam_v4",
@@ -97,31 +172,6 @@
     "model": "sonic-3.6",
     "voice": "4418bb06-8329-49a1-bb11-53bb64ca0547",
     "label": "Shanti"
-   },
-   "fallback": {
-    "engine": "sarvam_v4",
-    "model": "bulbul:v4-flash",
-    "voice": "kavitha_te_conversation",
-    "gender": "female",
-    "label": "kavitha"
-   }
-  },
-  {
-   "id": "te-deepthi",
-   "language": "te",
-   "name": "Deepthi",
-   "label": "Bright",
-   "gender": "female",
-   "tags": [
-    "bright"
-   ],
-   "recommended": false,
-   "default": false,
-   "primary": {
-    "engine": "cartesia",
-    "model": "sonic-3.6",
-    "voice": "062c17da-6ab6-4ecc-9f8a-d2a3dace8003",
-    "label": "Deepthi"
    },
    "fallback": {
     "engine": "sarvam_v4",
@@ -210,31 +260,6 @@
    }
   },
   {
-   "id": "en-janvi",
-   "language": "en",
-   "name": "Janvi",
-   "label": "Calm",
-   "gender": "female",
-   "tags": [
-    "calm"
-   ],
-   "recommended": true,
-   "default": true,
-   "primary": {
-    "engine": "cartesia",
-    "model": "sonic-3.6",
-    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
-    "label": "Janvi"
-   },
-   "fallback": {
-    "engine": "sarvam_v4",
-    "model": "bulbul:v4-flash",
-    "voice": "shalini_en_customer",
-    "gender": "female",
-    "label": "shalini"
-   }
-  },
-  {
    "id": "en-skylar",
    "language": "en",
    "name": "Skylar",
@@ -260,32 +285,6 @@
    }
   },
   {
-   "id": "en-katie",
-   "language": "en",
-   "name": "Katie",
-   "label": "Warm",
-   "gender": "female",
-   "tags": [
-    "warm",
-    "young"
-   ],
-   "recommended": true,
-   "default": false,
-   "primary": {
-    "engine": "cartesia",
-    "model": "sonic-3.6",
-    "voice": "f786b574-daa5-4673-aa0c-cbe3e8534c02",
-    "label": "Katie"
-   },
-   "fallback": {
-    "engine": "sarvam_v4",
-    "model": "bulbul:v4-flash",
-    "voice": "shalini_en_customer",
-    "gender": "female",
-    "label": "shalini"
-   }
-  },
-  {
    "id": "en-gemma",
    "language": "en",
    "name": "Gemma",
@@ -294,7 +293,7 @@
    "tags": [
     "mature"
    ],
-   "recommended": false,
+   "recommended": true,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -337,55 +336,54 @@
    }
   },
   {
-   "id": "en-parker",
+   "id": "en-katie",
    "language": "en",
-   "name": "Parker",
+   "name": "Katie",
    "label": "Warm",
-   "gender": "male",
+   "gender": "female",
    "tags": [
     "warm",
     "young"
+   ],
+   "recommended": false,
+   "default": false,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "f786b574-daa5-4673-aa0c-cbe3e8534c02",
+    "label": "Katie"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shalini_en_customer",
+    "gender": "female",
+    "label": "shalini"
+   }
+  },
+  {
+   "id": "en-janvi",
+   "language": "en",
+   "name": "Janvi",
+   "label": "Calm",
+   "gender": "female",
+   "tags": [
+    "calm"
    ],
    "recommended": true,
    "default": true,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
-    "voice": "30894953-bcce-41fe-892c-15ce19c843ff",
-    "label": "Parker"
+    "voice": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8",
+    "label": "Janvi"
    },
    "fallback": {
     "engine": "sarvam_v4",
     "model": "bulbul:v4-flash",
-    "voice": "shubh_enhi_customer",
-    "gender": "male",
-    "label": "shubh"
-   }
-  },
-  {
-   "id": "en-carson",
-   "language": "en",
-   "name": "Carson",
-   "label": "Warm",
-   "gender": "male",
-   "tags": [
-    "warm",
-    "young"
-   ],
-   "recommended": true,
-   "default": false,
-   "primary": {
-    "engine": "cartesia",
-    "model": "sonic-3.6",
-    "voice": "86e30c1d-714b-4074-a1f2-1cb6b552fb49",
-    "label": "Carson"
-   },
-   "fallback": {
-    "engine": "sarvam_v4",
-    "model": "bulbul:v4-flash",
-    "voice": "shubh_enhi_customer",
-    "gender": "male",
-    "label": "shubh"
+    "voice": "shalini_en_customer",
+    "gender": "female",
+    "label": "shalini"
    }
   },
   {
@@ -398,12 +396,38 @@
     "bright"
    ],
    "recommended": true,
-   "default": false,
+   "default": true,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
     "voice": "47c38ca4-5f35-497b-b1a3-415245fb35e1",
     "label": "Daniel"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_enhi_customer",
+    "gender": "male",
+    "label": "shubh"
+   }
+  },
+  {
+   "id": "en-parker",
+   "language": "en",
+   "name": "Parker",
+   "label": "Warm",
+   "gender": "male",
+   "tags": [
+    "warm",
+    "young"
+   ],
+   "recommended": true,
+   "default": false,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "30894953-bcce-41fe-892c-15ce19c843ff",
+    "label": "Parker"
    },
    "fallback": {
     "engine": "sarvam_v4",
@@ -423,7 +447,7 @@
     "warm",
     "young"
    ],
-   "recommended": false,
+   "recommended": true,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -465,21 +489,47 @@
    }
   },
   {
-   "id": "hi-sanya",
-   "language": "hi",
-   "name": "Sanya",
-   "label": "Bright",
-   "gender": "female",
+   "id": "en-carson",
+   "language": "en",
+   "name": "Carson",
+   "label": "Warm",
+   "gender": "male",
    "tags": [
-    "bright"
+    "warm",
+    "young"
    ],
-   "recommended": true,
-   "default": true,
+   "recommended": false,
+   "default": false,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
-    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
-    "label": "Sanya"
+    "voice": "86e30c1d-714b-4074-a1f2-1cb6b552fb49",
+    "label": "Carson"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "shubh_enhi_customer",
+    "gender": "male",
+    "label": "shubh"
+   }
+  },
+  {
+   "id": "hi-riva",
+   "language": "hi",
+   "name": "Riva",
+   "label": "Calm",
+   "gender": "female",
+   "tags": [
+    "calm"
+   ],
+   "recommended": true,
+   "default": false,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "a631bc8b-ea1c-49bb-8dab-7a118afd11b8",
+    "label": "Riva"
    },
    "fallback": {
     "engine": "sarvam_v4",
@@ -525,39 +575,13 @@
    "tags": [
     "warm"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
     "voice": "e6b71342-48f1-4c70-a13a-d197b176ff24",
     "label": "Sana"
-   },
-   "fallback": {
-    "engine": "sarvam_v4",
-    "model": "bulbul:v4-flash",
-    "voice": "kavya_hi_conversational",
-    "gender": "female",
-    "label": "kavya"
-   }
-  },
-  {
-   "id": "hi-esha",
-   "language": "hi",
-   "name": "Esha",
-   "label": "Calm",
-   "gender": "female",
-   "tags": [
-    "calm",
-    "warm"
-   ],
-   "recommended": false,
-   "default": false,
-   "primary": {
-    "engine": "cartesia",
-    "model": "sonic-3.6",
-    "voice": "72656902-fb4b-4c31-af52-c3b68e2cae26",
-    "label": "Esha"
    },
    "fallback": {
     "engine": "sarvam_v4",
@@ -594,21 +618,99 @@
    }
   },
   {
-   "id": "hi-dev",
+   "id": "hi-esha",
    "language": "hi",
-   "name": "Dev",
-   "label": "Warm",
-   "gender": "male",
+   "name": "Esha",
+   "label": "Calm",
+   "gender": "female",
    "tags": [
+    "calm",
     "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "72656902-fb4b-4c31-af52-c3b68e2cae26",
+    "label": "Esha"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "kavya_hi_conversational",
+    "gender": "female",
+    "label": "kavya"
+   }
+  },
+  {
+   "id": "hi-sanya",
+   "language": "hi",
+   "name": "Sanya",
+   "label": "Bright",
+   "gender": "female",
+   "tags": [
+    "bright"
    ],
    "recommended": true,
    "default": true,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
-    "voice": "910fb75e-1d20-4840-ac63-ac6b26a71bdc",
-    "label": "Dev"
+    "voice": "432fc642-6a83-4975-b77a-c605903b5ba6",
+    "label": "Sanya"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "kavya_hi_conversational",
+    "gender": "female",
+    "label": "kavya"
+   }
+  },
+  {
+   "id": "hi-rohan",
+   "language": "hi",
+   "name": "Rohan",
+   "label": "Calm",
+   "gender": "male",
+   "tags": [
+    "calm",
+    "bright"
+   ],
+   "recommended": true,
+   "default": true,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
+    "label": "Rohan"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "kabir_hi_conversational",
+    "gender": "male",
+    "label": "kabir"
+   }
+  },
+  {
+   "id": "hi-anuj",
+   "language": "hi",
+   "name": "Anuj",
+   "label": "Mature",
+   "gender": "male",
+   "tags": [
+    "mature",
+    "energetic"
+   ],
+   "recommended": true,
+   "default": false,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "7e8cb11d-37af-476b-ab8f-25da99b18644",
+    "label": "Anuj"
    },
    "fallback": {
     "engine": "sarvam_v4",
@@ -654,7 +756,7 @@
     "bright",
     "mature"
    ],
-   "recommended": true,
+   "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
@@ -671,22 +773,21 @@
    }
   },
   {
-   "id": "hi-rohan",
+   "id": "hi-dev",
    "language": "hi",
-   "name": "Rohan",
-   "label": "Calm",
+   "name": "Dev",
+   "label": "Warm",
    "gender": "male",
    "tags": [
-    "calm",
-    "bright"
+    "warm"
    ],
    "recommended": false,
    "default": false,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
-    "voice": "4877b818-c7fe-4c89-b1cf-eadf8e23da72",
-    "label": "Rohan"
+    "voice": "910fb75e-1d20-4840-ac63-ac6b26a71bdc",
+    "label": "Dev"
    },
    "fallback": {
     "engine": "sarvam_v4",
@@ -799,56 +900,6 @@
    }
   },
   {
-   "id": "ta-anitha",
-   "language": "ta",
-   "name": "Anitha",
-   "label": "Warm",
-   "gender": "female",
-   "tags": [
-    "warm"
-   ],
-   "recommended": true,
-   "default": true,
-   "primary": {
-    "engine": "cartesia",
-    "model": "sonic-3.6",
-    "voice": "d4470f50-295e-4e11-82a2-158d45bf6abc",
-    "label": "Anitha"
-   },
-   "fallback": {
-    "engine": "sarvam_v4",
-    "model": "bulbul:v3",
-    "voice": "ritu",
-    "gender": "female",
-    "label": "ritu"
-   }
-  },
-  {
-   "id": "ta-kavya",
-   "language": "ta",
-   "name": "Kavya",
-   "label": "Warm",
-   "gender": "female",
-   "tags": [
-    "warm"
-   ],
-   "recommended": true,
-   "default": false,
-   "primary": {
-    "engine": "cartesia",
-    "model": "sonic-3.6",
-    "voice": "25d2c432-139c-4035-bfd6-9baaabcdd006",
-    "label": "Kavya"
-   },
-   "fallback": {
-    "engine": "sarvam_v4",
-    "model": "bulbul:v3",
-    "voice": "ritu",
-    "gender": "female",
-    "label": "ritu"
-   }
-  },
-  {
    "id": "ta-janani",
    "language": "ta",
    "name": "Janani",
@@ -860,7 +911,7 @@
     "mature"
    ],
    "recommended": true,
-   "default": false,
+   "default": true,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
@@ -884,13 +935,38 @@
    "tags": [
     "bright"
    ],
-   "recommended": false,
+   "recommended": true,
    "default": false,
    "primary": {
     "engine": "cartesia",
     "model": "sonic-3.6",
     "voice": "96e6974d-57a9-4325-89c8-43f065f8bd95",
     "label": "Akshara"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v3",
+    "voice": "ritu",
+    "gender": "female",
+    "label": "ritu"
+   }
+  },
+  {
+   "id": "ta-anitha",
+   "language": "ta",
+   "name": "Anitha",
+   "label": "Warm",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": true,
+   "default": false,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "d4470f50-295e-4e11-82a2-158d45bf6abc",
+    "label": "Anitha"
    },
    "fallback": {
     "engine": "sarvam_v4",
@@ -917,6 +993,31 @@
     "model": "sonic-3.6",
     "voice": "4014f0c9-d3eb-4eca-af2b-fd6004f526be",
     "label": "Meena"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v3",
+    "voice": "ritu",
+    "gender": "female",
+    "label": "ritu"
+   }
+  },
+  {
+   "id": "ta-kavya",
+   "language": "ta",
+   "name": "Kavya",
+   "label": "Warm",
+   "gender": "female",
+   "tags": [
+    "warm"
+   ],
+   "recommended": false,
+   "default": false,
+   "primary": {
+    "engine": "cartesia",
+    "model": "sonic-3.6",
+    "voice": "25d2c432-139c-4035-bfd6-9baaabcdd006",
+    "label": "Kavya"
    },
    "fallback": {
     "engine": "sarvam_v4",

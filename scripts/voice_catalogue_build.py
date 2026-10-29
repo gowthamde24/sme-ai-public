@@ -138,7 +138,8 @@ def main() -> int:
                     name = v["name"].split(" - ")[0].strip()
                     vid = f"{lang}-{slug(v['name'])}"
                     model, speaker = FALLBACK[(lang, gender)]
-                    is_default = (vid == "en-janvi") if (lang == "en" and gender == "female") else rank == 0
+                    old_default = next((i for i, o in old.items() if o["language"] == lang and o["gender"] == gender and o.get("default")), None)
+                    is_default = (vid == old_default) if old_default is not None else rank == 0   # whoever has always spoken stays the default (te Ramya, en Janvi, ...); a new group takes its best score
                     tags = tags_of(v["name"], v.get("description", ""))
                     catalogue.append({
                         "id": vid, "language": lang, "name": name, "label": tags[0].capitalize(), "gender": gender, "tags": tags, "recommended": rank < recommended_count or vid == "en-janvi", "default": is_default,

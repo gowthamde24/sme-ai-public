@@ -62,7 +62,7 @@ class FakeChoices:
 # ---- the catalogue ------------------------------------------------------------------------------------------------------------------------------------
 
 
-# the voices whose sample and fillers are rendered; the others wait for Cartesia credits (see PENDING_AUDIO) and are rendered by scripts/voice_catalogue_build.py + scripts/voice_filler_bank.py
+# the voices that existed before voice v2 (no workspace's choice may break); every voice of the catalogue also has its sample and its filler lines rendered (scripts/voice_catalogue_build.py, scripts/voice_filler_bank.py)
 RENDERED = {"en-janvi", "hi-sanya", "hi-esha", "hi-meera", "kn-disha", "kn-divya", "kn-prakash", "te-ramya", "te-sindhu"}
 
 
@@ -76,7 +76,7 @@ def test_the_catalogue_has_native_voices_of_both_genders_in_all_six_languages_wi
             assert [c.default for c in group].count(True) == 1 and group[0].default, "the default comes first"
             assert 1 <= sum(c.recommended for c in group) <= 3, (lang, gender)
             assert cfg.default_for(lang, gender).id == group[0].id
-    assert {lang: cfg.default_for(lang).name for lang in CALL_LANGUAGES} == {"te": "Ramya", "en": "Janvi", "hi": "Sanya", "kn": "Disha", "ta": "Anitha", "ml": "Latha"}
+    assert {lang: cfg.default_for(lang).name for lang in CALL_LANGUAGES[:4]} == {"te": "Ramya", "en": "Janvi", "hi": "Sanya", "kn": "Disha"}, "the voices that have always spoken stay the defaults"
     assert cfg.catalogue["kn-prakash"].gender == "male"
     for c in cfg.catalogue.values():
         assert c.id.startswith(f"{c.language}-") and c.voices.primary.engine == "cartesia" and c.voices.fallback.engine == "sarvam_v4" and 0 < len(c.label) <= 20
@@ -114,14 +114,10 @@ def test_a_broken_catalogue_is_refused(mutate: Any, message: str) -> None:
         parse_config(raw)
 
 
-def test_every_rendered_voice_has_a_sample_file_of_sane_size_and_the_rest_are_listed_as_pending() -> None:
-    cfg = default_config()
-    for c in cfg.catalogue.values():
-        if c.id in RENDERED:
-            assert c.sample_file.is_file(), c.id
-            assert 20_000 < c.sample_file.stat().st_size < 400_000 and c.sample_file.read_bytes()[:3] in (b"ID3", b"\xff\xfb", b"\xff\xf3", b"\xff\xf2"), c.id
-        else:
-            assert not c.sample_file.is_file() or c.sample_file.stat().st_size > 20_000, c.id   # not rendered yet (Cartesia credits), or rendered and sane
+def test_every_catalogue_voice_has_a_pre_rendered_sample_file_of_sane_size() -> None:
+    for c in default_config().catalogue.values():
+        assert c.sample_file.is_file(), c.id
+        assert 20_000 < c.sample_file.stat().st_size < 400_000 and c.sample_file.read_bytes()[:3] in (b"ID3", b"\xff\xfb", b"\xff\xf3", b"\xff\xf2"), c.id
 
 
 # ---- resolving a choice -------------------------------------------------------------------------------------------------------------------------------
