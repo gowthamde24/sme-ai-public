@@ -100,7 +100,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
     ask = AskLlm(AskTurns(open_ask), emit)
     llm = TieredLlm(CaptionLlm(bv.fast_llm(), emit), ask, on_ask)
     return Parts(
-        stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language="auto", silence_ms=OWNER_SILENCE_MS, mode="codemix"),   # any of the six languages in any turn: the recogniser detects it and writes native script with English words as spoken (codemix); the reply follows what was said
+        stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language="auto", silence_ms=OWNER_SILENCE_MS, mode="verbatim"),   # any of the six languages in any turn: the recogniser detects it and writes what was said as spoken (verbatim; the bake-off had codemix at 51% word errors on Telugu); the reply follows what was said
         tts=tts,
         llm=llm,
         system_for=system_for,
