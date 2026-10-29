@@ -183,3 +183,12 @@ def test_a_name_is_spoken_only_when_the_owner_set_one_and_the_default_line_never
     after = post(client, {"language": "en"}).json()["spoken_text"]
     assert after == f"Hello, this is Priya from {TENANT_A.name}. I'm calling about your enquiry. Is this a good time to talk?"   # (this fake workspace has the AI switch off)
     assert post(client, {"language": "te"}).json()["spoken_text"].startswith("నమస్కారం అండీ, నేను Priya,")
+
+
+def test_an_edited_line_that_says_assistant_in_an_unnamed_workspace_speaks_a_phrase_not_a_hole() -> None:
+    client, _, texts = world()
+    shown = "Hello, this is {assistant} of {business}. Is this a good time?"
+    for lang, text, phrase in (("en", shown, "your assistant"), ("te", "నమస్కారం, నేను {assistant}, {business} నుంచి మాట్లాడుతున్నాను.", "మీ అసిస్టెంట్")):
+        spoken = post(client, {"language": lang, "text": text}).json()["spoken_text"]
+        assert phrase in spoken and TENANT_A.name in spoken and "  " not in spoken and "{" not in spoken, lang
+    assert texts[0][1] == f"Hello, this is your assistant of {TENANT_A.name}. Is this a good time?"
