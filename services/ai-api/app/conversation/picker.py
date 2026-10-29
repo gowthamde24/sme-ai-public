@@ -3,7 +3,7 @@
   GET  /v1/tenants/{t}/ai-assistant/voices            any member: the catalogue per language with sample URLs, the language's default, the workspace's choice (null = the default) and which voice is active
   PUT  /v1/tenants/{t}/ai-assistant/voices            OWNER or ADMIN: {language, voice_id}  `voice_id` null clears the choice (back to the default). Only a catalogue voice OF THAT LANGUAGE is accepted (422 otherwise). Audited, old and new id.
   GET  /v1/tenants/{t}/ai-assistant/voices/preview?language=   OWNER or ADMIN: the SAVED opening line as a customer hears it, in the ACTIVE voice (audio/wav; the words spoken are in the header X-Spoken-Text, percent-encoded).
-  POST /v1/tenants/{t}/ai-assistant/voices/preview {language, text|null, mention_ai|null, campaign_id|null}   "Hear it": the line AS ON THE SCREEN (unsaved edits included), placeholders filled and the AI sentence added as a call does; JSON {spoken_text, audio{mime, base64}, engine}. 404 `no_preview` when the voice service is not configured on this system.
+  POST /v1/tenants/{t}/ai-assistant/voices/preview {language, text|null, mention_ai|null, campaign_id|null, assistant_name|null}   "Hear it": the line AS ON THE SCREEN (unsaved edits included), placeholders filled and the AI sentence added as a call does; JSON {spoken_text (= resolved_opening_line), audio{mime, base64}, engine, voice_id}. 404 `no_preview` when the voice service is not configured on this system.
   GET  /v1/voice-samples/{voice_id}.mp3               NO sign-in (an <audio> tag cannot send one): the PRE-RENDERED sample of one catalogue voice, a static file. The provider is never called when someone clicks play.
 
 The catalogue is data (app/conversation/data/voices.json); a voice stored for a workspace that is no longer in it is ignored (the default speaks). A call uses `chosen -> default -> the Bulbul v4 Flash fallback of the same gender`
@@ -165,6 +165,7 @@ class PreviewIn(BaseModel):
     text: Annotated[str, StringConstraints(strip_whitespace=True, max_length=2000)] | None = None   # (300 is checked by the same rule as the opening line itself: 422 invalid_text)
     mention_ai: bool | None = None
     campaign_id: uuid.UUID | None = None
+    assistant_name: Annotated[str, StringConstraints(strip_whitespace=True, max_length=24)] | None = None   # a name typed on the screen and not yet saved; null = the saved name (none: no name is made up)
 
 
 class PreviewAudio(BaseModel):
@@ -180,6 +181,7 @@ class PreviewOut(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     spoken_text: str
+    resolved_opening_line: str   # the same text, under the name the card reads (app/opening/resolve.py)
     audio: PreviewAudio
     engine: str
     voice_id: str   # the catalogue voice that spoke (also X-Voice-Id on the GET)
@@ -197,7 +199,7 @@ async def _speak_opening(runtime: Runtime, ctx: TenantContext, body: PreviewIn) 
         raise ApiError(404, "no_preview", "There is no preview on this system.")
     if body.text is not None and not render.valid_line(body.text):
         raise ApiError(422, "invalid_text", "The opening line must be 10 to 300 characters and may use only {customer}, {assistant}, {business} and {agent_role}.", extra={"fields": ["text"]})
-    spoken, _ = rendered_opening(runtime, ctx, body.language, str(body.campaign_id) if body.campaign_id else None, None, None, line=body.text, mention_ai=body.mention_ai)
+    spoken, _ = rendered_opening(runtime, ctx, body.language, str(body.campaign_id) if body.campaign_id else None, None, None, line=body.text, mention_ai=body.mention_ai, name=body.assistant_name)
     found = detect_language(spoken)
     if found != "en" and found != body.language:
         raise ApiError(422, "language_mismatch", "This line is written in a different language from the one chosen.", extra={"fields": ["language"]})
@@ -222,7 +224,7 @@ async def voice_preview(ctx: OwnerAdmin, runtime: RuntimeDep, language: Annotate
 async def voice_preview_line(body: PreviewIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> PreviewOut:
     """"Hear it": the line as it is on the screen, unsaved edits included, in the workspace's chosen voice for its language. Returns the exact words spoken so the screen can show them."""
     spoken, wav, engine, voice_id = await _speak_opening(runtime, ctx, body)
-    return PreviewOut(spoken_text=spoken, audio=PreviewAudio(mime="audio/wav", base64=base64.b64encode(wav).decode("ascii")), engine=engine, voice_id=voice_id)
+    return PreviewOut(spoken_text=spoken, resolved_opening_line=spoken, audio=PreviewAudio(mime="audio/wav", base64=base64.b64encode(wav).decode("ascii")), engine=engine, voice_id=voice_id)
 
 
 # ---- the pre-rendered sample (no sign-in) ----------------------------------------------------------------------------------------------------------------

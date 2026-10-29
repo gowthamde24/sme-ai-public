@@ -40,7 +40,7 @@ _HIDE_AI = re.compile(r"(pretend|claim|say|tell|act|sound)\b[^.]{0,60}\b(human|r
 _NUMBER = re.compile(r"\d[\d,]*")
 
 SYSTEM = (
-    "You plan ONE task for Vijaya, the AI assistant of a small Indian business. The owner gave one instruction (any of English, Telugu, Hindi, Kannada, Tamil, Malayalam; typed or transcribed). Turn it into a plan by calling the tool `make_plan` exactly once when you are done.\n"
+    "You plan ONE task for the AI assistant of a small Indian business. The owner gave one instruction (any of English, Telugu, Hindi, Kannada, Tamil, Malayalam; typed or transcribed). Turn it into a plan by calling the tool `make_plan` exactly once when you are done.\n"
     "Rules, all of them always:\n"
     "1. You only DESCRIBE who to contact (a segment of the owner's own leads, or a name). You cannot pick anyone else, and you never see phone numbers.\n"
     "2. Pick the template that fits (call_new_leads, reengage_old_leads, confirm_appointments, collect_feedback, payment_reminder, supplier_price_enquiry, offer_invite) or `custom`. Choose the channel: call, whatsapp or both. Write a short goal, up to eight short questions (each with a key like price_per_bag and a type: text, amount, date or yesno), and short script notes.\n"

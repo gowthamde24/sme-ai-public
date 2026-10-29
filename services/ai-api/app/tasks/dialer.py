@@ -16,12 +16,12 @@ from app.visits.texts import WEEKDAYS
 AI_MARK = re.compile(r"\bAI\b|ఏఐ|एआई|ಎಐ|ஏஐ|എഐ")
 
 OPENERS: dict[str, str] = {
-    "en": "Hello, I'm Vijaya, {business}'s AI assistant. Is this a good time to talk?",
-    "te": "నమస్కారం అండీ, నేను విజయ, {business} నుంచి AI assistant ని. ఒక్క నిమిషం మాట్లాడొచ్చా?",
-    "hi": "नमस्ते जी, मैं विजया, {business} से AI assistant बोल रही हूँ। एक minute बात कर सकते हैं?",
-    "kn": "ನಮಸ್ಕಾರ ರೀ, ನಾನು ವಿಜಯ, {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ಒಂದು minute ಮಾತಾಡಬಹುದಾ?",
-    "ta": "வணக்கம்ங்க, நான் விஜயா, {business} ல இருந்து AI assistant பேசுறேன். ஒரு நிமிஷம் பேசலாமா?",
-    "ml": "നമസ്കാരം, ഞാൻ വിജയ, {business} ൽ നിന്ന് AI assistant ആണ്. ഒരു minute സംസാരിക്കാമോ?",
+    "en": "Hello, this is the AI assistant of {business}. Is this a good time to talk?",
+    "te": "నమస్కారం అండీ, నేను {business} నుంచి AI assistant ని. ఒక్క నిమిషం మాట్లాడొచ్చా?",
+    "hi": "नमस्ते जी, मैं {business} की AI assistant बोल रही हूँ। एक minute बात कर सकते हैं?",
+    "kn": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {business} ನಿಂದ AI assistant ಮಾತಾಡ್ತಿದ್ದೀನಿ. ಒಂದು minute ಮಾತಾಡಬಹುದಾ?",
+    "ta": "வணக்கம்ங்க, நான் {business} ல இருந்து AI assistant பேசுறேன். ஒரு நிமிஷம் பேசலாமா?",
+    "ml": "നമസ്കാരം, ഞാൻ {business} ൽ നിന്ന് AI assistant ആണ്. ഒരു minute സംസാരിക്കാമോ?",
 }
 YES: dict[str, str] = {"en": "Yes, go ahead.", "te": "అవునండీ, చెప్పండి.", "hi": "हाँ जी, बोलिए।", "kn": "ಹೌದು ರೀ, ಹೇಳಿ.", "ta": "ஆமாங்க, சொல்லுங்க.", "ml": "അതെ, പറയൂ."}
 NOT_INTERESTED: dict[str, str] = {"en": "No, I'm not interested.", "te": "వద్దండీ, interest లేదు.", "hi": "नहीं जी, interest नहीं है।", "kn": "ಬೇಡ ರೀ, interest ಇಲ್ಲ.", "ta": "வேண்டாங்க, interest இல்ல.", "ml": "വേണ്ട, interest ഇല്ല."}

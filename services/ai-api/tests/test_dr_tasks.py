@@ -441,7 +441,7 @@ def test_without_a_message_text_the_fixed_sentence_is_used_and_it_holds_no_figur
     repo, runner, tid, outbox = run_world(plan)
     runner.run("tok", TENANT_A.id, "Demo Silks", tid)
     body = outbox.sent[0]["p_body"]
-    assert "Vijaya" in body and "AI assistant" in body and not any(ch.isdigit() for ch in body)
+    assert "Demo Silks" in body and "AI assistant" in body and "Vijaya" not in body and not any(ch.isdigit() for ch in body)
 
 
 def test_a_call_with_a_whatsapp_summary_sends_it_only_after_a_conversation() -> None:

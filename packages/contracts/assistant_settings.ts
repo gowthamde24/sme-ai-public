@@ -89,6 +89,9 @@ export interface PreviewOut {
   text: string;
   intro: string;
   wording: "draft";
+  resolved_opening_line?: string;
+  spoken_text?: string;
+  source?: "stored" | "default" | "draft" | "";
 }
 
 export interface TestCallOut {

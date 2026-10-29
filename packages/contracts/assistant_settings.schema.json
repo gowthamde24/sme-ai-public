@@ -578,6 +578,27 @@
           "const": "draft",
           "title": "Wording",
           "type": "string"
+        },
+        "resolved_opening_line": {
+          "default": "",
+          "title": "Resolved Opening Line",
+          "type": "string"
+        },
+        "spoken_text": {
+          "default": "",
+          "title": "Spoken Text",
+          "type": "string"
+        },
+        "source": {
+          "default": "",
+          "enum": [
+            "stored",
+            "default",
+            "draft",
+            ""
+          ],
+          "title": "Source",
+          "type": "string"
         }
       },
       "required": [

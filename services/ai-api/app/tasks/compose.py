@@ -9,20 +9,20 @@ import uuid
 NAMESPACE = uuid.UUID("5d0f3f0e-7a0c-4f27-9a41-0b7a1f6d4a10")
 
 ASK: dict[str, str] = {
-    "en": "Hello, this is Vijaya, {business}'s AI assistant. Can we ask you a quick question? Just reply here.",
-    "te": "నమస్కారం అండీ, నేను విజయ, {business} నుంచి AI assistant ని. ఒక చిన్న question అడగొచ్చా? ఇక్కడే reply ఇవ్వండి.",
-    "hi": "नमस्ते जी, मैं विजया, {business} से AI assistant हूँ। एक छोटा question पूछ सकती हूँ? यहीं reply कर दीजिए।",
-    "kn": "ನಮಸ್ಕಾರ ರೀ, ನಾನು ವಿಜಯ, {business} ನಿಂದ AI assistant. ಒಂದು ಚಿಕ್ಕ question ಕೇಳ್ಬಹುದಾ? ಇಲ್ಲೇ reply ಮಾಡಿ.",
-    "ta": "வணக்கம்ங்க, நான் விஜயா, {business} ல இருந்து AI assistant. ஒரு சின்ன question கேக்கலாமா? இங்கேயே reply பண்ணுங்க.",
-    "ml": "നമസ്കാരം, ഞാൻ വിജയ, {business} ൽ നിന്ന് AI assistant ആണ്. ഒരു ചെറിയ question ചോദിക്കട്ടെ? ഇവിടെ തന്നെ reply ചെയ്യൂ.",
+    "en": "Hello, this is the AI assistant of {business}. Can we ask you a quick question? Just reply here.",
+    "te": "నమస్కారం అండీ, నేను {business} నుంచి AI assistant ని. ఒక చిన్న question అడగొచ్చా? ఇక్కడే reply ఇవ్వండి.",
+    "hi": "नमस्ते जी, मैं {business} की AI assistant हूँ। एक छोटा question पूछ सकती हूँ? यहीं reply कर दीजिए।",
+    "kn": "ನಮಸ್ಕಾರ ರೀ, ನಾನು {business} ನಿಂದ AI assistant. ಒಂದು ಚಿಕ್ಕ question ಕೇಳ್ಬಹುದಾ? ಇಲ್ಲೇ reply ಮಾಡಿ.",
+    "ta": "வணக்கம்ங்க, நான் {business} ல இருந்து AI assistant. ஒரு சின்ன question கேக்கலாமா? இங்கேயே reply பண்ணுங்க.",
+    "ml": "നമസ്കാരം, ഞാൻ {business} ൽ നിന്ന് AI assistant ആണ്. ഒരു ചെറിയ question ചോദിക്കട്ടെ? ഇവിടെ തന്നെ reply ചെയ്യൂ.",
 }
 SUMMARY: dict[str, str] = {
-    "en": "Thank you for speaking with Vijaya, {business}'s AI assistant. We have noted what you told us.",
-    "te": "మాట్లాడినందుకు Thank you అండీ. మీరు చెప్పింది note చేసుకున్నాం. - {business} AI assistant విజయ",
-    "hi": "बात करने के लिए Thank you जी। आपने जो बताया वो note कर लिया है। - {business} की AI assistant विजया",
-    "kn": "ಮಾತಾಡಿದ್ದಕ್ಕೆ Thank you ರೀ. ನೀವು ಹೇಳಿದ್ದನ್ನ note ಮಾಡ್ಕೊಂಡಿದ್ದೀವಿ. - {business} AI assistant ವಿಜಯ",
-    "ta": "பேசினதுக்கு Thank you ங்க. நீங்க சொன்னத note பண்ணிக்கிட்டோம். - {business} AI assistant விஜயா",
-    "ml": "സംസാരിച്ചതിന് Thank you. നിങ്ങൾ പറഞ്ഞത് note ചെയ്തിട്ടുണ്ട്. - {business} AI assistant വിജയ",
+    "en": "Thank you for speaking with the AI assistant of {business}. We have noted what you told us.",
+    "te": "మాట్లాడినందుకు Thank you అండీ. మీరు చెప్పింది note చేసుకున్నాం. - {business} AI assistant",
+    "hi": "बात करने के लिए Thank you जी। आपने जो बताया वो note कर लिया है। - {business} की AI assistant",
+    "kn": "ಮಾತಾಡಿದ್ದಕ್ಕೆ Thank you ರೀ. ನೀವು ಹೇಳಿದ್ದನ್ನ note ಮಾಡ್ಕೊಂಡಿದ್ದೀವಿ. - {business} AI assistant",
+    "ta": "பேசினதுக்கு Thank you ங்க. நீங்க சொன்னத note பண்ணிக்கிட்டோம். - {business} AI assistant",
+    "ml": "സംസാരിച്ചതിന് Thank you. നിങ്ങൾ പറഞ്ഞത് note ചെയ്തിട്ടുണ്ട്. - {business} AI assistant",
 }
 
 
