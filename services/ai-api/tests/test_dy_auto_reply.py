@@ -311,3 +311,21 @@ def test_without_the_switch_wired_the_route_says_so() -> None:
 
     client, _ = make_client()
     assert client.get(f"/v1/tenants/{TENANT_A.id}/ai-assistant/auto-reply", headers=auth("a_owner")).status_code == 503
+
+
+# ---- a reply that cannot give a price still moves the lead (job EF) ------------------------------------------------------------------------------------
+
+
+def test_the_prompt_tells_the_assistant_to_ask_one_or_two_qualifying_questions_when_it_cannot_answer() -> None:
+    system, _ = build_prompt({**CONTEXT, "facts": [{"kind": "notes", "text": "We sell paver blocks in 60 mm and 80 mm thickness"}]}, "en")
+    assert "ONE or TWO short questions" in system and "Never ask more than two questions" in system
+    assert "where it is to be delivered" in system and "when they need it" in system
+    assert "60 mm and 80 mm" in system, "the owner's notes are in the same prompt, so the questions can use them"
+    assert "NEVER state a price" in system, "asking the owner before quoting is unchanged"
+
+
+def test_a_reply_that_hands_the_price_to_the_owner_and_asks_two_questions_is_accepted_but_a_list_of_questions_is_not() -> None:
+    two = "Thanks for asking! I will check the price with the owner. Which thickness do you need? And where should it be delivered?"
+    assert parse(json.dumps({"text": two, "gloss_en": "ask owner; two questions", "confidence": 0.8}), "en") is not None
+    four = "Which thickness? Which design? Where to deliver? When do you need it?"
+    assert parse(json.dumps({"text": four, "gloss_en": "four questions", "confidence": 0.8}), "en") is None
