@@ -94,6 +94,10 @@ export interface ContactUpdate {
 
 export type EvidenceType = "web_form" | "email_reply" | "verbal" | "written" | "imported" | "other";
 
+export interface JunkOut {
+  reason: "spam" | "test" | "no_contact" | "abuse";
+}
+
 export interface LeadCreate {
   id: string;
   company_id?: string | null;
@@ -115,6 +119,30 @@ export interface LeadOut {
   status: LeadStatus;
   source: string | null;
   disqualified_reason: string | null;
+  profile?: LeadProfileOut | null;
+  is_new?: boolean;
+}
+
+export interface LeadProfileOut {
+  name?: string | null;
+  phone_e164?: string | null;
+  email?: string | null;
+  city?: string | null;
+  area?: string | null;
+  need?: string | null;
+  quantity?: string | null;
+  budget?: string | null;
+  timeline?: string | null;
+  urgency?: "low" | "normal" | "high" | null;
+  language?: "en" | "te" | "hi" | "kn" | "ta" | "ml" | null;
+  source?: string | null;
+  campaign?: string | null;
+  original_text?: string | null;
+  confidence?: Record<string, unknown>;
+  duplicate_of?: string | null;
+  merged_count?: number;
+  junk?: JunkOut | boolean;
+  fixed_by_you?: string[];
 }
 
 export type LeadStatus = "new" | "in_review" | "qualified" | "disqualified";

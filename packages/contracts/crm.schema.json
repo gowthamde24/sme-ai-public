@@ -777,6 +777,26 @@
       "title": "EvidenceType",
       "type": "string"
     },
+    "JunkOut": {
+      "additionalProperties": false,
+      "properties": {
+        "reason": {
+          "enum": [
+            "spam",
+            "test",
+            "no_contact",
+            "abuse"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "reason"
+      ],
+      "title": "JunkOut",
+      "type": "object"
+    },
     "LeadCreate": {
       "additionalProperties": false,
       "description": "Leads always start as `new`: there is no status field on create.",
@@ -848,6 +868,7 @@
     },
     "LeadOut": {
       "additionalProperties": false,
+      "description": "`GET /leads`: the columns plus the profile (job EE) and whether this person opened it.",
       "properties": {
         "id": {
           "format": "uuid",
@@ -951,6 +972,22 @@
             }
           ],
           "title": "Disqualified Reason"
+        },
+        "profile": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LeadProfileOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "is_new": {
+          "default": false,
+          "title": "Is New",
+          "type": "boolean"
         }
       },
       "required": [
@@ -968,6 +1005,244 @@
         "disqualified_reason"
       ],
       "title": "LeadOut",
+      "type": "object"
+    },
+    "LeadProfileOut": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "phone_e164": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone E164"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "area": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area"
+        },
+        "need": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Need"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quantity"
+        },
+        "budget": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Budget"
+        },
+        "timeline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timeline"
+        },
+        "urgency": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "normal",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Urgency"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "te",
+                "hi",
+                "kn",
+                "ta",
+                "ml"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Campaign"
+        },
+        "original_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Text"
+        },
+        "confidence": {
+          "additionalProperties": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ],
+            "type": "string"
+          },
+          "title": "Confidence",
+          "type": "object"
+        },
+        "duplicate_of": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duplicate Of"
+        },
+        "merged_count": {
+          "default": 0,
+          "title": "Merged Count",
+          "type": "integer"
+        },
+        "junk": {
+          "anyOf": [
+            {
+              "const": false,
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/JunkOut"
+            }
+          ],
+          "default": false,
+          "title": "Junk"
+        },
+        "fixed_by_you": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fixed By You",
+          "type": "array"
+        }
+      },
+      "title": "LeadProfileOut",
       "type": "object"
     },
     "LeadStatus": {
