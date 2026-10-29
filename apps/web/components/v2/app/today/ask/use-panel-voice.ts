@@ -22,6 +22,8 @@ export type PanelVoice = {
   live: { asked: string; answer: string } | null;
   end: EndWord | null;
   micDenied: boolean;
+  /** The voice speaking now (name, language), as the API said; null until it says. */
+  voice: Snapshot["voice"];
   start: () => Promise<void>;
   stop: () => void;
   /** A tap while it talks. */
@@ -121,7 +123,7 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     if (client.current && snap && snap.phase !== "ended") return;
     if (token.current === null || Date.now() - token.current.at > TOKEN_FRESH_MS) {
       const out = await askVoiceToken(tokenUrl);
-      if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false, plan: null, decided: [] });
+      if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false, plan: null, decided: [], voice: null });
       token.current = { value: out.token, at: Date.now() };
     }
     flushedId.current = 0;
@@ -140,5 +142,5 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
   const analyser = (which: "mic" | "voice") => audio.current?.analyser(which) ?? null;
 
   const active = snap !== null && snap.phase !== "ended";
-  return { active, state: snap?.state ?? null, step: snap?.step ?? null, interim: live?.interim ?? "", live: live ? { asked: live.asked, answer: live.answer } : null, end: snap?.end ?? null, micDenied: snap?.micDenied ?? false, start, stop, bargeIn, analyser };
+  return { active, state: snap?.state ?? null, step: snap?.step ?? null, interim: live?.interim ?? "", live: live ? { asked: live.asked, answer: live.answer } : null, end: snap?.end ?? null, micDenied: snap?.micDenied ?? false, voice: snap?.voice ?? null, start, stop, bargeIn, analyser };
 }

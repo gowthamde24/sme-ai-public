@@ -12,7 +12,7 @@ import { ChatPanel } from "./ChatPanel";
 import { useAskSession } from "./use-ask-session";
 
 const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("bv.")));
-const voice = { words: WORDS, url: "wss://x/v1/tenants/t/voice-chat", language: "en" as const, languageNames: { te: CALL_LANG_NAMES.te, hi: CALL_LANG_NAMES.hi, kn: CALL_LANG_NAMES.kn, en: CALL_LANG_NAMES.en }, tokenUrl: "/app/tenants/t/voice-token" };
+const voice = { words: WORDS, url: "wss://x/v1/tenants/t/voice-chat", language: "en" as const, languageNames: CALL_LANG_NAMES, tokenUrl: "/app/tenants/t/voice-token" };
 
 class Sock implements SocketLike {
   binaryType = "";
@@ -305,5 +305,18 @@ describe("the conversation panel", () => {
     await act(async () => void sock.say({ type: "ready", session_id: "s2", language: "en", limits: {} }));
     await act(async () => void sock.say({ type: "caption", who: "assistant", text: "Hi, how can I help?", final: true, spoken: true }));
     expect(screen.queryByText("Hi, how can I help?")).toBeNull(); // no greeting again
+  });
+  it("under the circle it says which voice speaks, as the API says it at the start of the turn: 'Speaking in Telugu · Ramya'", async () => {
+    draw();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "te", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    expect(document.querySelector('[data-chat="speaking-in"]')).toBeNull();
+    await act(async () => void sock.say({ type: "voice", voice_id: "te-ramya", language: "te", name: "Ramya" }));
+    await act(async () => void sock.say({ type: "state", state: "speaking" }));
+    expect(document.querySelector('[data-chat="speaking-in"]')).toHaveTextContent("Speaking in తెలుగు · Ramya");
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    expect(document.querySelector('[data-chat="speaking-in"]')).toBeNull();
   });
 });

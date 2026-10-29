@@ -382,7 +382,7 @@ export async function apiDownloadRequest(path: string, accessToken: string, body
 }
 
 /** A GET whose good answer is a SOUND or another small file, as bytes (job DQ part 3: a voice sample). The status is judged first; an answer longer than `max` bytes is refused. */
-export async function apiBinaryRequest(path: string, accessToken: string, max: number): Promise<{ bytes: ArrayBuffer; contentType: string }> {
+export async function apiBinaryRequest(path: string, accessToken: string, max: number): Promise<{ bytes: ArrayBuffer; contentType: string; voiceId?: string | null }> {
   const base = apiBaseUrl();
   let response: Response;
   try {
@@ -404,7 +404,8 @@ export async function apiBinaryRequest(path: string, accessToken: string, max: n
   if (length > max) throw new ApiContractError("The file is too large.");
   const bytes = await response.arrayBuffer();
   if (bytes.byteLength > max) throw new ApiContractError("The file is too large.");
-  return { bytes, contentType: response.headers.get("Content-Type") ?? "application/octet-stream" };
+  const voice = response.headers.get("X-Voice-Id");
+  return { bytes, contentType: response.headers.get("Content-Type") ?? "application/octet-stream", voiceId: voice !== null && /^[a-z0-9][a-z0-9_.-]{1,59}$/.test(voice) ? voice : null }; // (the voice that spoke a preview, when the API says it)
 }
 
 /** The API's public address, as a calendar app or a phone must be given it (the browser never calls the API itself; this is only for a link a person copies). */
