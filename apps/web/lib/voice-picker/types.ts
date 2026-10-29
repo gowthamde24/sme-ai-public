@@ -5,6 +5,10 @@ import type { CallLang } from "@/lib/assistant/types";
  * every answer is checked (lib/api/voice-picker.ts has C1's contract). A sample is a short recording made ONCE for each voice and kept as a file: the browser plays it through this app's own route.
  */
 export const PICKER_LANGS = ["te", "en", "hi", "kn", "ta", "ml"] as const satisfies readonly CallLang[];
+/** Every supported language, the workspace's own first (in the catalogue's order inside each group): the Voice section draws a row for all of them. */
+export function pickerOrder(own: readonly string[]): PickerLang[] {
+  return [...PICKER_LANGS.filter((l) => own.includes(l)), ...PICKER_LANGS.filter((l) => !own.includes(l))];
+}
 export type PickerLang = (typeof PICKER_LANGS)[number];
 export const GENDERS = ["female", "male"] as const;
 export type Gender = (typeof GENDERS)[number];

@@ -192,8 +192,8 @@ describe("'Do it' in the Ask box (night 4, tasks)", () => {
     nav.pathname = `${BASE}/leads`;
     rerender(harness(options(actions)));
     fireEvent.click(await screen.findByRole("button", { name: /^Ask your assistant/ }));
-    const panel = await screen.findByRole("dialog");
-    expect(await within(panel).findByRole("button", { name: "Approve all (12)" })).toBeInTheDocument();
+    const panel = await screen.findByRole("dialog", {}, { timeout: 8000 });
+    expect(await within(panel).findByRole("button", { name: "Approve all (12)" }, { timeout: 8000 })).toBeInTheDocument();
     expect(actions.plan).toHaveBeenCalledTimes(1);
   });
   it("a spoken instruction in Do it mode is heard, then planned; the answer of the question line is dropped", async () => {

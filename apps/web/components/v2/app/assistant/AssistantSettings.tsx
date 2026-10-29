@@ -7,7 +7,7 @@ import { Orb } from "@/components/v2/Orb";
 import { sayLine } from "@/lib/assistant/lines";
 import { sampleUrl } from "@/lib/voice-samples/types";
 import type { TestCall, TestCallResult } from "@/lib/assistant/test-call";
-import { CALL_LANGS, DAYS, HOURS, NAME_MAX, SPEED, STYLES, parseSettings, validName, type AssistantSettings as Settings, type CallLang, type Day, type Voice } from "@/lib/assistant/types";
+import { CALL_LANGS, DAYS, HOURS, NAME_MAX, parseSettings, validName, type AssistantSettings as Settings, type CallLang, type Day } from "@/lib/assistant/types";
 import type { AssistantProfile } from "@/lib/assistant/defaults";
 
 import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, surface } from "../ui";
@@ -19,7 +19,6 @@ export type AssistantActions = { save: (input: unknown) => Promise<{ ok: true } 
 /** The voice samples (job DQ part 3): where the browser asks for one (our own route), and whether it is the fake sound of the test screens. null = no "Hear it" anywhere. */
 export type SampleSource = { endpoint: string; mock: boolean };
 const block = `${surface} flex flex-col gap-4`;
-const opt = (on: boolean) => `flex items-center gap-3 rounded-2xl border p-3.5 text-left ${on ? "border-brand-edge bg-brand-bg ring-2 ring-brand/25" : "border-line bg-surface hover:bg-surface-2"}`;
 const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 
 function Switch({ on, label, onChange, disabled }: { on: boolean; label: string; onChange: (v: boolean) => void; disabled: boolean }) {
@@ -38,7 +37,7 @@ function Switch({ on, label, onChange, disabled }: { on: boolean; label: string;
  * may do on calls (and the highest discount), when it hands over to the owner, the calling hours, and on the right a live preview with the circle speaking. It starts from the defaults of the business type (`profile`), so an owner can
  * skip it; nothing is kept until "Save". Only the Owner can change it (`canEdit`). Voice samples and test calls do not exist yet, so "Hear it" is switched off and "Call me now for a test" says so. The words come in as props.
  */
-export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, samples = null, voicePickerOn = false, voiceInUse = null, defaultName = null, openingLine = null }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The voice picker (a voice for each language, below) is on: the four-persona list is not shown, unless the Owner's own voice is in use or ready to use (it is chosen here). */ voicePickerOn?: boolean; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null; /** The opening line a call speaks, per language (the saved line, else the default by the AI switch): the card shows it instead of an example sentence. */ openingLine?: { lines: Partial<Record<CallLang, string>>; defaults: Record<CallLang, string> } | null }) {
+export function AssistantSettings({ words, initial, profile, shop, langs, canEdit, testMode, saved, actions, samples = null, voiceInUse = null, defaultName = null, openingLine = null }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null; /** The opening line a call speaks, per language (the saved line, else the default by the AI switch): the card shows it instead of an example sentence. */ openingLine?: { lines: Partial<Record<CallLang, string>>; defaults: Record<CallLang, string> } | null }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<Settings>(initial);
@@ -46,25 +45,31 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
   const [note, setNote] = React.useState<"saved" | "error" | "test" | null>(null);
   const [playing, setPlaying] = React.useState(false);
   const [sampleErr, setSampleErr] = React.useState(false);
-  const [heard, setHeard] = React.useState<string | null>(null); // the words of the preview that was played (the real names in them)
+  const live = samples !== null && !samples.mock; // the API's own line (the one "Hear it" speaks); the test screens have no API and keep their stand-in
+  const [resolved, setResolved] = React.useState<{ lang: CallLang; text: string } | null>(null); // ONE line, from the API, with the real names: the card shows it and the sound says it
   const audio = React.useRef<HTMLAudioElement | null>(null);
   const [test, setTest] = React.useState<{ state: "idle" } | { state: "running" } | { state: "error" } | { state: "done"; call: TestCall }>({ state: "idle" });
   React.useEffect(() => () => audio.current?.pause(), []);
+  // the line the card shows is fetched, not made up here: the same words "Hear it" speaks (saved opening line, real names, the language shown); fetched again after every save (the page is read again)
+  React.useEffect(() => {
+    if (!live || !samples) return;
+    let stale = false;
+    const lang = s.lang;
+    void fetch(`${sampleUrl(samples.endpoint, { voice: "female_warm", lang, tone: "warm", name: "" })}&text=1`, { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j: { text?: unknown } | null) => !stale && setResolved(typeof j?.text === "string" && j.text.trim() !== "" ? { lang, text: j.text } : null))
+      .catch(() => !stale && setResolved(null));
+    return () => {
+      stale = true;
+    };
+  }, [live, samples, s.lang, openingLine, saved]);
   /** Plays one voice's sample in the language and tone now chosen; the one that was playing stops. A browser that will not play it, or a sample that is not there, says so. */
   const hear = () => {
     if (!samples) return;
     audio.current?.pause();
     if (playing) return setPlaying(false);
     setSampleErr(false);
-    setHeard(null);
     const q = { voice: s.voice === "own_voice" ? ("female_warm" as const) : s.voice, lang: s.lang, tone: "warm" as const, name: nameOnScreen }; // (with the voice catalogue on, the sound is the saved line in the voice in force: these two only name the old sample)
-    if (!samples.mock) {
-      // the exact words the sound says are shown beside the player (with the voice catalogue: the saved opening line with the business's real names), so what is read is what is heard
-      void fetch(`${sampleUrl(samples.endpoint, q)}&text=1`, { cache: "no-store" })
-        .then((r) => (r.ok ? r.json() : null))
-        .then((j: { text?: unknown } | null) => setHeard(typeof j?.text === "string" ? j.text : null))
-        .catch(() => setHeard(null));
-    }
     const a = new Audio(sampleUrl(samples.endpoint, q));
     audio.current = a;
     a.onended = () => setPlaying(false);
@@ -90,9 +95,9 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
   const rangeOk = s.hours.from >= HOURS.min && s.hours.to <= HOURS.max && [s.hours.from, s.hours.to].every((h) => Number(h.slice(3, 5)) % HOURS.stepMinutes === 0);
   const toggleDay = (d: Day) => set({ hours: { ...s.hours, days: s.hours.days.includes(d) ? s.hours.days.filter((x) => x !== d) : DAYS.filter((x) => x === d || s.hours.days.includes(x)) } });
   const shownName = s.name.trim() === "" || s.name.trim() === DEFAULT_ASSISTANT_NAME ? (defaultName ?? DEFAULT_ASSISTANT_NAME) : s.name.trim(); // (the owner's own name is used as written)
-  // what the card says is the opening line a call speaks: the owner's saved line, else the default of the language (by the AI switch); the old example sentence only where the line is not known
+  // what the card says is what "Hear it" speaks: the API's line. Only the test screens (no API) draw a stand-in from the opening-line template
   const template = openingLine ? (openingLine.lines[s.lang] ?? openingLine.defaults[s.lang]) : null;
-  const line = template ? fillOpening(template, { customer: SAMPLE_CUSTOMER[s.lang], assistant: shownName, business: shop, agent_role: SAMPLE_ROLE[s.lang] }) : sayLine(s.lang, s.style, nameOnScreen, shop);
+  const line = live ? (resolved?.lang === s.lang ? resolved.text : null) : template ? fillOpening(template, { customer: SAMPLE_CUSTOMER[s.lang], assistant: shownName, business: shop, agent_role: SAMPLE_ROLE[s.lang] }) : sayLine(s.lang, s.style, nameOnScreen, shop);
   const ok = parseSettings(s) !== null;
   return (
     <div data-settings="assistant" data-assistant-saved={saved ? "true" : "false"} className="@container flex flex-col gap-5">
@@ -160,26 +165,6 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
               </div>
               <Switch on={s.autoSwitch} label={t("asst.lang.auto")} onChange={(v) => set({ autoSwitch: v })} disabled={!canEdit || busy} />
               <Switch on={s.mixEnglish} label={t("asst.lang.mix")} onChange={(v) => set({ mixEnglish: v })} disabled={!canEdit || busy} />
-            </section>
-
-            <section className={block} aria-labelledby="asst-style-h">
-              <div>
-                <h3 id="asst-style-h" className="text-[17px] font-semibold">{t("asst.style.t")}</h3>
-                <p className="text-sm text-muted">{t("asst.style.d")}</p>
-              </div>
-              <div role="radiogroup" aria-labelledby="asst-style-h" className="grid gap-2.5 sm:grid-cols-3">
-                {STYLES.map((st) => (
-                  <button key={st} type="button" role="radio" aria-checked={st === s.style} onClick={() => set({ style: st })} className={`${opt(st === s.style)} flex-col !items-start`}>
-                    <strong className="text-[15px]">{t(`asst.style.${st}` as "asst.style.warm")}</strong>
-                    <span className="text-[13px] leading-snug text-muted">{t(`asst.style.${st}.d` as "asst.style.warm.d")}</span>
-                  </button>
-                ))}
-              </div>
-              <label htmlFor="asst-speed" className="flex justify-between text-sm text-muted">
-                <span>{t("asst.speed")}</span>
-                <span>{s.speed.toFixed(2).replace(/0$/, "")}×</span>
-              </label>
-              <input id="asst-speed" type="range" min={SPEED.min} max={SPEED.max} step={SPEED.step} value={s.speed} onChange={(e) => set({ speed: Number(e.target.value) })} className="w-full accent-brand-edge" />
             </section>
 
             <section className={block} aria-labelledby="asst-may-h">
@@ -265,25 +250,23 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
           </div>
           <div className="flex flex-col gap-1 text-center">
             <strong className="text-lg">{t("asst.preview.who", { name: shownName })}</strong>
-            <span className="text-[13px] opacity-80">
-              {voicePickerOn && voiceInUse ? `${voiceInUse.name} · ${voiceInUse.label}` : voiceNames[s.voice]} · {t(`asst.style.${s.style}` as "asst.style.warm")} · {s.speed.toFixed(2).replace(/0$/, "")}×
-            </span>
+            {voiceInUse ? (
+              <span data-part="speaking-in" className="text-[13px] opacity-80">
+                {t("bv.speaking.in", { language: langs[s.lang], voice: voiceInUse.name })}
+              </span>
+            ) : null}
           </div>
-          <p lang={s.lang} data-part="preview-line" className="m-0 text-center text-[17px] leading-relaxed">
-            “{line}”
-          </p>
+          {line ? (
+            <p lang={s.lang} data-part="preview-line" className="m-0 text-center text-[17px] leading-relaxed">
+              “{line}”
+            </p>
+          ) : null}
           <p data-part="disclosure" className="text-center text-xs opacity-80">{t("asst.disclosure")}</p>
           <button type="button" disabled={!samples} onClick={hear} className={`${btnQuiet} !border-white/30 !bg-transparent !text-on-charcoal ${samples ? "" : "opacity-60"}`}>
             ▶ {t("asst.hear")}
           </button>
           {samples ? null : <p className="text-center text-xs opacity-80">{t("asst.hear.soon")}</p>}
           {sampleErr ? <p role="alert" className="text-center text-xs font-medium">{t("asst.sample.err")}</p> : null}
-          {heard ? (
-            <p lang={s.lang} className="rounded-lg bg-white/10 px-3 py-2 text-center text-sm" data-part="preview-text" aria-live="polite">
-              <span className="block font-semibold opacity-80">{t("asst.preview.heard")}</span>
-              {heard}
-            </p>
-          ) : null}
           {actions.testCall ? (
             <button
               type="button"
