@@ -8,6 +8,9 @@ export const JUNK_REASONS = ["spam", "test", "no_contact", "abuse"] as const;
 export type JunkReason = (typeof JUNK_REASONS)[number];
 export const FIELDS = ["name", "phone", "email", "city", "area", "need", "quantity", "budget", "timeline", "urgency", "language"] as const;
 export type Field = (typeof FIELDS)[number];
+/** The fields the owner may fix in one tap (the API's PATCH /leads/{id}/profile takes these; name, phone and e-mail are the contact's). */
+export const FIX_FIELDS = ["need", "quantity", "area", "city", "budget", "timeline", "urgency"] as const;
+export type FixField = (typeof FIX_FIELDS)[number];
 export type LeadProfile = {
   need: string | null;
   quantity: string | null;
