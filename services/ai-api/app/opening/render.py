@@ -28,17 +28,37 @@ DISCLOSURE = {
     "mr": "मी एक AI assistant आहे.",
     "bn": "আমি একটি AI assistant।",
 }
-# the default greeting WITHOUT the disclosure (used when the switch is OFF and the Owner wrote no line); te follows native-lines/te.md
-DEFAULT_PLAIN = {
-    "en": "Hello {customer}, this is {assistant} from {business}. Do you have a minute?",
-    "te": "నమస్కారం {customer} గారు, నేను {assistant}, {business} నుంచి. ఒక్క నిమిషం మాట్లాడొచ్చా?",
-    "hi": "नमस्ते {customer} जी, मैं {assistant}, {business} से बोल रही हूँ। क्या एक मिनट बात कर सकते हैं?",
-    "kn": "ನಮಸ್ಕಾರ {customer} ಅವರೇ, ನಾನು {assistant}, {business} ಇಂದ. ಒಂದು ನಿಮಿಷ ಮಾತಾಡಬಹುದಾ?",
-    "ta": "வணக்கம் {customer}, நான் {assistant}, {business} இலிருந்து. ஒரு நிமிடம் பேசலாமா?",
-    "ml": "നമസ്കാരം {customer}, ഞാൻ {assistant}, {business} ൽ നിന്ന്. ഒരു മിനിറ്റ് സംസാരിക്കാമോ?",
-    "mr": "नमस्कार {customer}, मी {assistant}, {business} कडून बोलत आहे. एक मिनिट बोलता येईल का?",
-    "bn": "নমস্কার {customer}, আমি {assistant}, {business} থেকে বলছি। এক মিনিট কথা বলা যাবে?",
+# The default greeting when the Owner wrote no line (job EE): ONE natural sentence pair per language, with {business} and NO name; a name is spoken only when the Owner set one ("named"). The "ai" lines already say
+# it is an AI assistant (the switch is ON); the "plain" ones are used when it is OFF. The call speaks exactly these words (placeholders filled) and the screen shows exactly these words: one source of truth.
+# te, en, hi, kn follow the owner's wording; ta, ml, mr, bn are drafts for a native reader (they have no named variant: the name is left out). The verbs avoid a gender where the language has one.
+_ENQUIRY = {
+    "en": "I'm calling about your enquiry. Is this a good time to talk?",
+    "te": "మీ ఎంక్వైరీ గురించి కాల్ చేశాను, ఇప్పుడు మాట్లాడొచ్చా?",
+    "hi": "आपकी पूछताछ के बारे में बात करनी थी, क्या अभी बात कर सकते हैं?",
+    "kn": "ನಿಮ್ಮ ವಿಚಾರಣೆ ಬಗ್ಗೆ ಕರೆ ಮಾಡಿದ್ದೆ, ಈಗ ಮಾತಾಡಬಹುದಾ?",
+    "ta": "உங்கள் விசாரணை பற்றி அழைத்தேன், இப்போது பேசலாமா?",
+    "ml": "നിങ്ങളുടെ അന്വേഷണത്തെക്കുറിച്ച് വിളിച്ചതാണ്, ഇപ്പോൾ സംസാരിക്കാമോ?",
+    "mr": "तुमच्या चौकशीबद्दल फोन केला होता, आता बोलता येईल का?",
+    "bn": "আপনার অনুসন্ধান নিয়ে ফোন করেছি, এখন কথা বলা যাবে?",
 }
+_OPENERS: dict[str, dict[str, str]] = {
+    "en": {"plain": "Hello, this is {business}.", "ai": "Hello, this is the AI assistant of {business}.", "plain_named": "Hello, this is {assistant} from {business}.", "ai_named": "Hello, this is {assistant}, the AI assistant of {business}."},
+    "te": {"plain": "నమస్కారం అండీ, {business} నుంచి మాట్లాడుతున్నాను.", "ai": "నమస్కారం అండీ, నేను {business} నుంచి AI assistant ని మాట్లాడుతున్నాను.", "plain_named": "నమస్కారం అండీ, నేను {assistant}, {business} నుంచి మాట్లాడుతున్నాను.", "ai_named": "నమస్కారం అండీ, నేను {assistant}, {business} నుంచి AI assistant ని మాట్లాడుతున్నాను."},
+    "hi": {"plain": "नमस्ते जी, {business} की तरफ़ से फ़ोन है।", "ai": "नमस्ते जी, {business} की AI assistant की तरफ़ से फ़ोन है।", "plain_named": "नमस्ते जी, यह {assistant} है, {business} से।", "ai_named": "नमस्ते जी, यह {assistant} है, {business} की AI assistant।"},
+    "kn": {"plain": "ನಮಸ್ಕಾರ ಸರ್, {business} ಇಂದ ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ.", "ai": "ನಮಸ್ಕಾರ ಸರ್, ನಾನು {business} ಇಂದ AI assistant ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ.", "plain_named": "ನಮಸ್ಕಾರ ಸರ್, ನಾನು {assistant}, {business} ಇಂದ ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ.", "ai_named": "ನಮಸ್ಕಾರ ಸರ್, ನಾನು {assistant}, {business} ಇಂದ AI assistant ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ."},
+    "ta": {"plain": "வணக்கம், {business} இலிருந்து பேசுகிறேன்.", "ai": "வணக்கம், நான் {business} இன் AI assistant பேசுகிறேன்."},
+    "ml": {"plain": "നമസ്കാരം, {business} ൽ നിന്ന് വിളിക്കുന്നു.", "ai": "നമസ്കാരം, ഞാൻ {business} ന്റെ AI assistant ആണ്."},
+    "mr": {"plain": "नमस्कार, {business} कडून बोलत आहे.", "ai": "नमस्कार, मी {business} ची AI assistant बोलत आहे."},
+    "bn": {"plain": "নমস্কার, {business} থেকে বলছি।", "ai": "নমস্কার, আমি {business}-এর AI assistant বলছি।"},
+}
+
+
+def default_line(language: str, mention_ai: bool, *, named: bool = False) -> str:
+    """The default opening, as a template with {business} (and {assistant} only when the Owner set a name)."""
+    lang = language if language in _OPENERS else "en"
+    kind = "ai" if mention_ai else "plain"
+    opener = _OPENERS[lang].get(f"{kind}_named") if named else None
+    return f"{opener or _OPENERS[lang][kind]} {_ENQUIRY[lang]}"
 
 
 def says_ai(text: str) -> bool:
@@ -67,25 +87,20 @@ def compose_opening(
     *,
     owner_line: str | None,
     mention_ai: bool,
-    assistant: str,
+    assistant: str | None,
     business: str,
     customer: str | None = None,
     agent_role: str | None = None,
-    ai_intro: str | None = None,
 ) -> str:
-    """What the customer hears first. `ai_intro` is the fixed introduction of the AI-assistant settings (it already says "AI assistant"): the default when the switch is ON and the Owner wrote no line."""
+    """What the customer hears first: the Owner's line (given the short disclosure when the switch is ON and it does not say so), or the default line of default_line(). `assistant` is the name the Owner
+    set, or None: no name is ever made up."""
     lang = language if language in DISCLOSURE else "en"
     if owner_line:
-        text = fill(owner_line, customer=customer, assistant=assistant, business=business, agent_role=agent_role)
+        text = fill(owner_line, customer=customer, assistant=assistant or "", business=business, agent_role=agent_role)
         if mention_ai and not says_ai(text):
             text = f"{text} {DISCLOSURE[lang]}"
         return text
-    if mention_ai:
-        if ai_intro:
-            return ai_intro
-        text = fill(DEFAULT_PLAIN[lang], customer=customer, assistant=assistant, business=business, agent_role=agent_role)
-        return f"{text} {DISCLOSURE[lang]}"
-    return fill(DEFAULT_PLAIN[lang], customer=customer, assistant=assistant, business=business, agent_role=agent_role)
+    return fill(default_line(lang, mention_ai, named=bool(assistant)), customer=customer, assistant=assistant or "", business=business, agent_role=agent_role)
 
 
 def pick_line(lines: list[dict[str, object]], language: str, campaign_id: str | None) -> str | None:

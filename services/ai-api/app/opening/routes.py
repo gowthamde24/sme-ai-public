@@ -16,7 +16,6 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
-from app.assistant_settings import data as settings_data
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.errors import ApiError
 from app.opening import render
@@ -87,30 +86,29 @@ def _repo(runtime: Runtime) -> WorkspaceRepository:
     return runtime.workspace
 
 
-def _out(row: dict[str, object]) -> OpeningOut:
-    defaults = {
-        lang: DefaultsOut(with_ai=f"{render.DEFAULT_PLAIN[lang]} {render.DISCLOSURE[lang]}", without_ai=render.DEFAULT_PLAIN[lang]) for lang in render.LANGUAGES
-    }
+def _out(row: dict[str, object], *, named: bool = False) -> OpeningOut:
+    """`defaults` are the very templates a call speaks when the Owner wrote no line (with {business}, and {assistant} only when the Owner set a name): the screen shows exactly what is spoken."""
+    defaults = {lang: DefaultsOut(with_ai=render.default_line(lang, True, named=named), without_ai=render.default_line(lang, False, named=named)) for lang in render.LANGUAGES}
     return OpeningOut.model_validate({**row, "defaults": defaults})
 
 
 @router.get("/opening-line", response_model=OpeningOut)
 def get_opening(ctx: AnyMember, runtime: RuntimeDep) -> OpeningOut:
-    return _out(_repo(runtime).opening(ctx.principal.token, ctx.tenant.id))
+    return _out(_repo(runtime).opening(ctx.principal.token, ctx.tenant.id), named=assistant_name(runtime, ctx) is not None)
 
 
 @router.put("/opening-line", response_model=OpeningOut)
 def put_opening(body: LineIn, ctx: OwnerOnly, runtime: RuntimeDep) -> OpeningOut:
     if body.text is not None and not render.valid_line(body.text):
         raise ApiError(422, "validation_error", "Use only {customer} {assistant} {business} {agent_role} in braces.", extra={"fields": ["text"]})
-    return _out(_repo(runtime).set_opening_line(ctx.principal.token, ctx.tenant.id, body.language, str(body.campaign_id) if body.campaign_id else None, body.text))
+    return _out(_repo(runtime).set_opening_line(ctx.principal.token, ctx.tenant.id, body.language, str(body.campaign_id) if body.campaign_id else None, body.text), named=assistant_name(runtime, ctx) is not None)
 
 
 @router.put("/mention-ai", response_model=OpeningOut)
 def put_mention(body: MentionIn, ctx: OwnerOnly, runtime: RuntimeDep) -> OpeningOut:
     if body.mention_ai is None and body.campaign_id is None:
         raise ApiError(422, "validation_error", "Say on or off.", extra={"fields": ["mention_ai"]})
-    return _out(_repo(runtime).set_mention_ai(ctx.principal.token, ctx.tenant.id, str(body.campaign_id) if body.campaign_id else None, body.mention_ai))
+    return _out(_repo(runtime).set_mention_ai(ctx.principal.token, ctx.tenant.id, str(body.campaign_id) if body.campaign_id else None, body.mention_ai), named=assistant_name(runtime, ctx) is not None)
 
 
 @router.get("/opening-line/preview", response_model=PreviewOut)
@@ -126,11 +124,12 @@ def preview(
     return PreviewOut(language=language, text=text, mention_ai=mention, says_ai=render.says_ai(text))
 
 
-def assistant_name(runtime: Runtime, ctx: TenantContext) -> str:
-    """The name a call gives itself: the one the Owner chose in Settings > AI assistant (read now), else the default of the data."""
-    if runtime.assistant_settings is not None:
-        return str(runtime.assistant_settings.get(ctx.principal.token, ctx.tenant.id).settings.name)
-    return str(settings_data.default_name())
+def assistant_name(runtime: Runtime, ctx: TenantContext) -> str | None:
+    """The name a call gives itself: ONLY the one the Owner saved in Settings > AI assistant (read now); otherwise None. No name is ever made up."""
+    if runtime.assistant_settings is None:
+        return None
+    got = runtime.assistant_settings.get(ctx.principal.token, ctx.tenant.id)
+    return str(got.settings.name) if got.saved else None
 
 
 def rendered_opening(
@@ -141,7 +140,5 @@ def rendered_opening(
     row = _repo(runtime).opening(ctx.principal.token, ctx.tenant.id)
     mention = mention_ai if mention_ai is not None else render.pick_mention(bool(row.get("mention_ai", True)), row.get("campaign_overrides", []), campaign_id)
     owner_line = line if line is not None else render.pick_line(row.get("lines", []), language, campaign_id)
-    name = assistant_name(runtime, ctx)
-    ai_intro = settings_data.intro(language, str(name), ctx.tenant.name) if language in settings_data.load()["intro"] else None
-    text = render.compose_opening(language, owner_line=owner_line, mention_ai=mention, assistant=str(name), business=ctx.tenant.name, customer=customer, agent_role=agent_role, ai_intro=ai_intro)
+    text = render.compose_opening(language, owner_line=owner_line, mention_ai=mention, assistant=assistant_name(runtime, ctx), business=ctx.tenant.name, customer=customer, agent_role=agent_role)
     return text, mention

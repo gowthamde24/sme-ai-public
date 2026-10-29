@@ -163,10 +163,12 @@ def test_the_school_rule_a_schools_assistant_never_talks_about_dues_fees_or_mark
         got = client.get(url, headers=bearer(w.users["owner"])).json()
         conforms(got, ASSISTANT, "AssistantOut")
         assert got["business_type"] == "education" and got["locked"] == {"may_talk_dues": False, "may_answer_prices": False, "max_discount_percent": 0, "handover_order_above_paise": None}
+        assert got["settings"]["name"] == "" and got["saved"] is False, "no name is made up: the Owner names the assistant before saving"
+        base = {**got["settings"], "name": "Meena"}
         for over in ({"may_talk_dues": True}, {"may_answer_prices": True}, {"max_discount_percent": 3}, {"handover_order_above_paise": 500}):
-            r = client.put(url, json={**got["settings"], **over}, headers=bearer(w.users["owner"]))
+            r = client.put(url, json={**base, **over}, headers=bearer(w.users["owner"]))
             assert r.status_code == 422 and r.json()["error"]["code"] == "locked_for_business_type", over
-        assert client.put(url, json=got["settings"], headers=bearer(w.users["owner"])).status_code == 200
+        assert client.put(url, json=base, headers=bearer(w.users["owner"])).status_code == 200
         # an outcome in a school never keeps a reason (no child can slip in through a sentence)
         contact = operator_sql.sql(f"select id from public.contacts where tenant_id = '{w.id}' and erased_at is null order by created_at limit 1").strip()
         r = client.post(o(w), json={"contact_id": contact, "kind": "call", "source_id": str(uuid.uuid4()), "outcome": "positive", "category": "visit_booked", "reason": "Mother of a Class 5 pupil asked about a visit", "occurred_at": datetime.now(UTC).isoformat()}, headers=bearer(w.users["owner"]))

@@ -93,13 +93,19 @@ class OptionsOut(_Strict):
     languages: list[OptionOut]
 
 
+class AssistantSettingsRead(AssistantSettings):
+    """The settings as they are READ: before the Owner saves, `name` is empty (no name is made up; a save needs a real one)."""
+
+    name: Annotated[str, StringConstraints(strip_whitespace=True, max_length=24)]
+
+
 class AssistantOut(_Strict):
     # the settings in force: what the owner saved, or the defaults of the business type before the first save
-    settings: AssistantSettings
+    settings: AssistantSettingsRead
     # false until the owner saves once: the screen can say "you can skip this, these are good defaults"
     saved: bool
     # the defaults of this business type (for "reset to defaults")
-    defaults: AssistantSettings
+    defaults: AssistantSettingsRead
     business_name: str
     business_type: BusinessType
     # the fixed introduction in each language, with the name and the business filled in; "AI assistant" is always in it

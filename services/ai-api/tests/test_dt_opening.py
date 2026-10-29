@@ -5,7 +5,6 @@ from __future__ import annotations
 import uuid
 from typing import Any
 
-from app.assistant_settings import data as settings_data
 from app.opening import honesty, render
 from tests.fakes import TENANT_A, auth, make_client
 
@@ -28,12 +27,34 @@ def test_a_placeholder_without_a_value_is_dropped_never_spoken_as_a_brace() -> N
     assert "{" not in out and "  " not in out and " ," not in out and out.startswith("Hello, this is Vijaya from Lakshmi Sarees")
 
 
-def test_the_defaults_in_every_language_with_and_without_the_disclosure() -> None:
+def test_the_defaults_in_every_language_with_and_without_the_disclosure_name_nobody() -> None:
     for lang in render.LANGUAGES:
-        plain = render.compose_opening(lang, owner_line=None, mention_ai=False, assistant="Vijaya", business="Sri Sai Homes", customer="Ravi")
-        said = render.compose_opening(lang, owner_line=None, mention_ai=True, assistant="Vijaya", business="Sri Sai Homes", customer="Ravi")
-        assert "Sri Sai Homes" in plain and "Vijaya" in plain and "{" not in plain and not render.says_ai(plain), lang
-        assert render.says_ai(said) and "Sri Sai Homes" in said, lang
+        plain = render.compose_opening(lang, owner_line=None, mention_ai=False, assistant=None, business="Sri Sai Homes", customer="Ravi")
+        said = render.compose_opening(lang, owner_line=None, mention_ai=True, assistant=None, business="Sri Sai Homes", customer="Ravi")
+        assert "Sri Sai Homes" in plain and "{" not in plain and not render.says_ai(plain) and "  " not in plain and " ," not in plain, lang
+        assert render.says_ai(said) and "Sri Sai Homes" in said and "{" not in said, lang
+        for fixed in ("Vani", "Vijaya", "Vijay", "Ravi"):
+            assert fixed not in plain and fixed not in said, (lang, fixed)
+        assert plain == render.default_line(lang, False).replace("{business}", "Sri Sai Homes"), "the call speaks exactly the default template"
+
+
+def test_the_four_main_languages_follow_the_owners_wording_and_a_name_appears_only_when_set() -> None:
+    te = render.compose_opening("te", owner_line=None, mention_ai=False, assistant=None, business="X Silks")
+    assert te == "నమస్కారం అండీ, X Silks నుంచి మాట్లాడుతున్నాను. మీ ఎంక్వైరీ గురించి కాల్ చేశాను, ఇప్పుడు మాట్లాడొచ్చా?"
+    for lang in ("en", "te", "hi", "kn"):
+        named = render.compose_opening(lang, owner_line=None, mention_ai=True, assistant="Meena", business="X Silks")
+        unnamed = render.compose_opening(lang, owner_line=None, mention_ai=True, assistant=None, business="X Silks")
+        assert "Meena" in named and "Meena" not in unnamed and render.says_ai(named) and render.says_ai(unnamed), lang
+
+
+def test_the_screens_defaults_are_the_very_words_a_call_speaks() -> None:
+    client, _ = world()
+    h = auth("a_owner")
+    defaults = client.get(f"{BASE}/opening-line", headers=h).json()["defaults"]
+    for lang in ("en", "te", "hi", "kn"):
+        spoken = client.get(f"{BASE}/opening-line/preview?language={lang}", headers=h).json()
+        assert spoken["text"] == defaults[lang]["with_ai"].replace("{business}", TENANT_A.name), lang
+        assert "{assistant}" not in defaults[lang]["with_ai"] and "{customer}" not in defaults[lang]["without_ai"], "no name and no customer are needed for the default"
 
 
 def test_validity_and_picking_the_line_and_the_switch_for_a_campaign() -> None:
@@ -138,12 +159,11 @@ def test_the_preview_is_the_greeting_a_customer_hears_with_the_live_business_nam
     client.put(f"{BASE}/opening-line", json={"language": "en", "text": "Hi {customer}, {assistant} from {business} here."}, headers=h)
     client.put(f"{BASE}/mention-ai", json={"mention_ai": False}, headers=h)
     off = client.get(q, headers=auth("a_sales")).json()
-    name = settings_data.defaults_for(None)["name"]
-    assert off["text"] == f"Hi Ravi, {name} from {TENANT_A.name} here." and off["says_ai"] is False and off["mention_ai"] is False
+    assert off["text"] == f"Hi Ravi, from {TENANT_A.name} here." and off["says_ai"] is False and off["mention_ai"] is False, "no name was set: the placeholder is dropped, nothing is made up"
     camp = str(uuid.uuid4())
     assert client.put(f"{BASE}/mention-ai", json={"mention_ai": True, "campaign_id": camp}, headers=h).status_code == 200
     on = client.get(q + f"&campaign_id={camp}", headers=h).json()
-    assert on["says_ai"] is True and on["text"].startswith(f"Hi Ravi, {name}") and on["text"].endswith("I'm an AI assistant.")
+    assert on["says_ai"] is True and on["text"].startswith("Hi Ravi, from") and on["text"].endswith("I'm an AI assistant.")
     assert client.put(f"{BASE}/mention-ai", json={"mention_ai": None}, headers=h).status_code == 422 and repo.row["mention_ai"] is False
 
 
