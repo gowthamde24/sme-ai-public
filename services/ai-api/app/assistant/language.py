@@ -86,6 +86,7 @@ def detect_language(text: str) -> Language:
 ROMAN_WORDS: dict[Language, frozenset[str]] = {
     "te": frozenset(
         "eeroju roju edaina edhaina kotha kothha cheyyi cheyandi cheyyandi chesaava chesava chesara chesaru chesanu cheppu cheppandi cheppali chupinchu chupinchandi chudandi kavali kaavali kavalsina "
+        "chala chaala undi vundi unna unnaru unnav unnanu ela elaa gurinchi gurunchi pettali cheyali cheyyali chestunnaru chestunnav chestunna tinnara tagara bagunnara baagunnara bagunnaru baagunnaru bagunna baagunna ee ki lo ga tho kosam baga avunu sare sarey mari kani ayithe ante enduku "
         "kotta emaina emi vacchaaya vachaya vachayaa vacchinda ledhu unnayaa kaavaali unnayi unnaayi lekapothe ippudu repu ninna nenu meeru naaku miku meeku enti emiti ekkada evaru entha ayyindi ayindi vachindi vachayi vachaaru pampu pampandi pampinchu avunu kaadu sare bagundi ante".split()
     ),
     "hi": frozenset(

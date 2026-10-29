@@ -54,3 +54,12 @@ def test_the_chat_prompt_welcomes_casual_talk_and_does_not_steer_back_to_work() 
     text = prompts.CHAT_SYSTEM_PROMPT
     assert "never refuse it" in text and "Do not steer back to leads" in text and "general-knowledge" in text and "one short paragraph" in text
     assert "no mention of the business" in prompts.CHAT_SMALLTALK_CLAUSE
+
+
+def test_romanised_telugu_chat_is_answered_in_telugu_and_english_stays_english() -> None:
+    from app.assistant.language import detect_owner_language
+
+    for text in ("Ee roju chala tired ga undi", "Dharmavaram silk gurinchi cheppu", "Nenu chala happy ga unna", "Baagunnara? Em chestunnaru?", "Sankranti ki em offer pettali?"):
+        assert detect_owner_language(text) == "te", text
+    for text in ("Hello, how are you today?", "Tell me about Dharmavaram silk", "I will go to the market and call him later", "ok thanks", "How many leads came in today?"):
+        assert detect_owner_language(text) == "en", text
