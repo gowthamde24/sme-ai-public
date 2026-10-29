@@ -648,3 +648,27 @@ async def test_when_ask_is_slow_a_filler_in_the_chosen_voice_is_said_after_700_m
     assert sent[0] in lengths, "the first audio the browser got was a filler line, not silence"
     timing = next(m for m in sock.json if m["type"] == "timings")
     assert timing["after_final_ms"] is not None and timing["first_sound_ms"] < timing["after_final_ms"] + 1500
+
+
+def test_the_owner_hears_a_short_hello_of_their_own_not_the_customer_call_line_and_the_turn_ends_after_a_longer_pause() -> None:
+    """Job EG: the owner's own conversation opens with 'Hi, how can I help?' (never 'I'm calling about your enquiry') and Sarvam waits 900 ms of silence before the turn ends."""
+    from types import SimpleNamespace
+
+    from app.auth.deps import TenantContext
+    from app.auth.jwt import Principal
+    from app.browser_voice.routes import OWNER_GREETING, OWNER_SILENCE_MS, build_parts
+    from app.tenancy.models import Role
+
+    workspace = SimpleNamespace(voice_choices=lambda token, tenant: {"choices": {}}, opening=lambda token, tenant: {"mention_ai": True, "lines": [], "campaign_overrides": []})
+    runtime = SimpleNamespace(workspace=workspace, assistant_settings=None)
+    ctx = TenantContext(principal=Principal(user_id=USER, token="t"), tenant=TENANT_A, role=Role.OWNER)
+    parts = build_parts(bv_of(), runtime, ctx, lambda kind, data: None, lambda: None)  # type: ignore[arg-type]
+    assert parts.greeting_for("en") == "Hi, how can I help?"
+    for language in ("te", "en", "hi", "kn"):
+        greeting = parts.greeting_for(language)
+        assert greeting == OWNER_GREETING[language] and "enquiry" not in greeting.lower() and "calling" not in greeting.lower()
+        assert f"Your opening line was: {greeting}" in parts.system_for(language), "the model is told what it said"
+        assert "good time to talk" not in parts.system_for(language)
+    assert parts.greeting_for("ta") == "Hi, how can I help?", "a language without its own hello falls back to English"
+    assert OWNER_SILENCE_MS == 900
+    assert parts.stt_for("en")._silence_ms == 900  # type: ignore[attr-defined]
