@@ -52,7 +52,7 @@ p.on("console", (m) => /content security policy|refused to connect/i.test(m.text
 
 /** Starts the mic inside `root`, watches the live words, waits for the reply WITHOUT pressing anything, then ends the chat with a tap. */
 async function talk(root, tag) {
-  const mic = root.locator('[data-chat="mic"]');
+  const mic = root.locator('[data-chat="live-talk"]');
   await mic.waitFor({ timeout: 30000 });
   await mic.click();
   const seen = new Set();
