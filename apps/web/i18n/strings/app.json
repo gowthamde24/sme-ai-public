@@ -71610,10 +71610,10 @@
   }
  },
  "bv.chat.placeholder": {
-  "en": "Type, or tap the microphone",
-  "te": "టైప్ చేయండి, లేదా మైక్ నొక్కండి",
-  "hi": "टाइप करें, या माइक छुएँ",
-  "kn": "ಟೈಪ್ ಮಾಡಿ, ಅಥವಾ ಮೈಕ್ ಒತ್ತಿ",
+  "en": "Type, dictate, or go Live",
+  "te": "టైప్ చేయండి, చెప్పండి, లేదా లైవ్ వెళ్ళండి",
+  "hi": "लिखें, बोलकर लिखवाएँ, या लाइव जाएँ",
+  "kn": "ಟೈಪ್ ಮಾಡಿ, ಹೇಳಿ, ಅಥವಾ ಲೈವ್ ಆಗಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -74232,6 +74232,83 @@
   "te": "ఎప్పుడు",
   "hi": "कब",
   "kn": "ಯಾವಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.dictate": {
+  "en": "Dictate: speak, the words go in the box",
+  "te": "చెప్పండి: మాటలు బాక్స్‌లో వస్తాయి",
+  "hi": "बोलें: शब्द बॉक्स में आएँगे",
+  "kn": "ಹೇಳಿ: ಮಾತುಗಳು ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಬರುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.dictate.stop": {
+  "en": "Stop dictating",
+  "te": "చెప్పడం ఆపండి",
+  "hi": "बोलना रोकें",
+  "kn": "ಹೇಳುವುದನ್ನು ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.dictating": {
+  "en": "Listening. Tap the microphone again to stop.",
+  "te": "వింటున్నాను. ఆపడానికి మైక్ మళ్ళీ నొక్కండి.",
+  "hi": "सुन रही हूँ। रोकने के लिए माइक फिर दबाएँ।",
+  "kn": "ಕೇಳುತ್ತಿದ್ದೇನೆ. ನಿಲ್ಲಿಸಲು ಮೈಕ್ ಮತ್ತೆ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.hearing": {
+  "en": "Writing down your words…",
+  "te": "మీ మాటలు రాస్తున్నాను…",
+  "hi": "आपके शब्द लिख रही हूँ…",
+  "kn": "ನಿಮ್ಮ ಮಾತುಗಳನ್ನು ಬರೆಯುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.live.start": {
+  "en": "Live talk: a spoken conversation",
+  "te": "లైవ్ టాక్: మాటల సంభాషణ",
+  "hi": "लाइव बातचीत: बोलकर बात",
+  "kn": "ಲೈವ್ ಮಾತು: ಮಾತಿನ ಸಂಭಾಷಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.live.stop": {
+  "en": "Stop live talk",
+  "te": "లైవ్ టాక్ ఆపండి",
+  "hi": "लाइव बातचीत रोकें",
+  "kn": "ಲೈವ್ ಮಾತು ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.live.on": {
+  "en": "Live. Speak, I answer aloud.",
+  "te": "లైవ్. చెప్పండి, నేను గట్టిగా సమాధానం ఇస్తాను.",
+  "hi": "लाइव। बोलिए, मैं बोलकर जवाब दूँगी।",
+  "kn": "ಲೈವ್. ಹೇಳಿ, ನಾನು ಗಟ್ಟಿಯಾಗಿ ಉತ್ತರಿಸುತ್ತೇನೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
