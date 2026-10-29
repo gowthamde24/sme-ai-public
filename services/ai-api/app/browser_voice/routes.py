@@ -42,6 +42,10 @@ router = APIRouter(tags=["browser-voice"])
 
 LANGUAGE_NAMES = {"te": "Telugu", "en": "English", "hi": "Hindi", "kn": "Kannada"}
 ALLOWED_ROLES = (Role.OWNER, Role.ADMIN, Role.SALES)
+# The owner (or a teammate) talking to their own assistant is not a customer call: a short hello of its own, and a longer pause before a turn ends (people stop to think; Sarvam suggests 800 for open conversation, 900 at most).
+# The words are drafts for a native reader.
+OWNER_GREETING = {"en": "Hi, how can I help?", "te": "నమస్కారం అండీ, ఎలా సహాయం చేయమంటారు?", "hi": "नमस्ते, मैं आपकी कैसे मदद करूँ?", "kn": "ನಮಸ್ಕಾರ, ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?"}
+OWNER_SILENCE_MS = 900
 GOAL = "Help a member of the business's own team: answer briefly, and when they ask about the business's own data (prices, stock, customers, leads, orders, dates) say you will check it."
 
 
@@ -67,8 +71,8 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
         return opening_cache[language]
 
     def system_for(language: str) -> str:
-        line, mention = opening(language)
-        return system_prompt(business=ctx.tenant.name, assistant=name, language=language, opening_line=line, mention_ai=mention, notes=notes)
+        _, mention = opening(language)
+        return system_prompt(business=ctx.tenant.name, assistant=name, language=language, opening_line=OWNER_GREETING.get(language, OWNER_GREETING["en"]), mention_ai=mention, notes=notes)
 
     def open_ask(conversation_id: uuid.UUID, message_id: uuid.UUID, text: str):  # type: ignore[no-untyped-def]
         # the same turn as the written chat (job EA): it decides again what the words are, runs the tool path or the planner, and ends in a typed reply
@@ -83,11 +87,11 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
     ask = AskLlm(AskTurns(open_ask), emit)
     llm = TieredLlm(CaptionLlm(bv.fast_llm(), emit), ask, on_ask)
     return Parts(
-        stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language=language),
+        stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language=language, silence_ms=OWNER_SILENCE_MS),
         tts=tts,
         llm=llm,
         system_for=system_for,
-        greeting_for=lambda language: opening(language)[0],
+        greeting_for=lambda language: OWNER_GREETING.get(language, OWNER_GREETING["en"]),
         models=bv.model_ids(),
         voice_for=lambda language: bv.config.resolve(language, chosen.get(language)).id,
         fillers=bv.fillers,
