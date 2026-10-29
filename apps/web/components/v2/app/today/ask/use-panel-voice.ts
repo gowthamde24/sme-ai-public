@@ -32,6 +32,8 @@ export type PanelVoice = {
 };
 
 const TOKEN_FRESH_MS = 20 * 60_000;
+/** Live talk ends by itself when nobody speaks for this long while it listens (owner, 30 Oct: about 30 seconds). */
+export const LIVE_SILENCE_MS = 30_000;
 
 /**
  * The spoken conversation INSIDE the chat panel (never full screen): the API's socket (lib/browser-voice) with the person's words shown LIVE as they speak (the interim caption, replaced by the final one) and the reply streaming below as text while it is spoken.
@@ -142,5 +144,13 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
   const analyser = (which: "mic" | "voice") => audio.current?.analyser(which) ?? null;
 
   const active = snap !== null && snap.phase !== "ended";
+  // hands-free: after every answer it listens again; 30 s of nobody speaking ends the conversation (the words, if any, are already in the thread)
+  const listening = active && snap?.state === "listening";
+  const heardLast = `${snap?.captions.length ?? 0}:${snap?.captions.at(-1)?.text.length ?? 0}`; // any new word restarts the 30 s
+  React.useEffect(() => {
+    if (!listening) return;
+    const id = setTimeout(() => client.current?.stop(), LIVE_SILENCE_MS);
+    return () => clearTimeout(id);
+  }, [listening, heardLast]);
   return { active, state: snap?.state ?? null, step: snap?.step ?? null, interim: live?.interim ?? "", live: live ? { asked: live.asked, answer: live.answer } : null, end: snap?.end ?? null, micDenied: snap?.micDenied ?? false, voice: snap?.voice ?? null, start, stop, bargeIn, analyser };
 }

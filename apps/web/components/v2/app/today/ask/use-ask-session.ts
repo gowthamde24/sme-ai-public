@@ -152,6 +152,63 @@ export function useAskSession({ lang, base, words, availability, transport: give
     },
     onProblem: (p) => setProblem(p),
   });
+  /**
+   * Dictation (owner, 30 Oct): the microphone fills the TEXT BOX with the words, nothing is asked. The recording goes to the same voice route as a spoken question; the first thing it says is the words it heard (`heard`), then the request is dropped (no answer is
+   * made or paid for), and the words are added to the box for the person to edit and send. `hearing` = the words are being written down. A recording with no words says so (`voice_no_speech`).
+   */
+  const [hearing, setHearing] = React.useState(false);
+  const dictateAbort = React.useRef<AbortController | null>(null);
+  const dictateFrom = async (blob: Blob) => {
+    if (voiceTransport === null) return;
+    const ctl = new AbortController();
+    dictateAbort.current = ctl;
+    setHearing(true);
+    let heard = "";
+    let failure: string | null = null;
+    try {
+      for await (const e of voiceTransport({ audio: blob, lang, speak: false, signal: ctl.signal })) {
+        if (e.type === "heard") {
+          heard = e.text.trim();
+          ctl.abort();
+          break;
+        }
+        if (e.type === "error") {
+          failure = e.code ?? "voice_failed";
+          break;
+        }
+      }
+    } catch {
+      if (!heard && !ctl.signal.aborted) failure = "network";
+    }
+    if (dictateAbort.current === ctl) dictateAbort.current = null;
+    setHearing(false);
+    if (heard === "") return setDictateError(failure ?? "voice_no_speech");
+    setDictateError(null);
+    setText((before) => `${before.trim() === "" ? "" : `${before.trimEnd()} `}${heard}`.slice(0, MAX_QUESTION));
+  };
+  const [dictateError, setDictateError] = React.useState<string | null>(null);
+  const dictation = useRecorder({
+    onRecorded: (blob) => void dictateFrom(blob),
+    onProblem: (p) => setDictateError(p), // a microphone problem ("denied", "nomic", "short", ...) or the route's code ("voice_no_speech", ...): the chat puts it into words
+  });
+  const dictate = {
+    state: dictation.state,
+    left: dictation.left,
+    hearing,
+    error: dictateError,
+    /** Tap: start; tap again: stop early (the words then appear in the box). */
+    toggle: () => {
+      if (dictation.state === "recording") return dictation.stop();
+      if (dictation.state !== "idle" || hearing) return;
+      setDictateError(null);
+      void dictation.start();
+    },
+    cancel: () => {
+      dictation.cancel();
+      dictateAbort.current?.abort();
+      setHearing(false);
+    },
+  };
   const recording = recorder.state !== "idle";
   React.useEffect(
     () => () => {
@@ -413,7 +470,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     w, lang, base, words, availability, live, transport,
     text, setText, focused, setFocused, asked, phase, answer, sources, drafts, problem, errorCode, heardByVoice, earlier, finished, mood,
     hasAudio, playing, audioPending, audioFailed, autoplay, setAutoplay, seen, showMic, status,
-    recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
+    recorder, dictate, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
     ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, setEarlier,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",
