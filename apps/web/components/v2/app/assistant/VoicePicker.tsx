@@ -12,7 +12,7 @@ import { errorLine, help, okLine, secondary } from "../visits/styles";
 
 export type VoiceRow = { language: PickerLang; voices: readonly PickerVoice[]; choice: string | null };
 export type VoicePickerActions = { choose: (language: PickerLang, voiceId: string | null) => Promise<{ ok: true } | { ok: false; error: string }>; setGender: (gender: Gender) => Promise<{ ok: true } | { ok: false; error: string }> };
-type Note = { language: PickerLang | "gender"; kind: "saved" | "error"; error?: string } | null;
+type Note = { language: PickerLang | "gender"; kind: "saved" | "error"; error?: string; voice?: string } | null;
 const PLAIN_TAGS = ["calm", "warm", "deep", "bright", "young", "mature", "energetic"];
 
 /**
@@ -25,9 +25,9 @@ export function VoicePicker({ words, gender, rows, langNames, canEdit, endpoint,
   const router = useRouter();
   const [playing, setPlaying] = React.useState<string | null>(null);
   const [failed, setFailed] = React.useState(false);
-  const [played, setPlayed] = React.useState<string | null>(null); // the voice whose sample was played last: its words are shown under it
   const [busy, setBusy] = React.useState<string | null>(null);
   const [note, setNote] = React.useState<Note>(null);
+  const [picked, setPicked] = React.useState<Partial<Record<PickerLang, string>>>({}); // the choice just made, shown at once while it is saved
   const audio = React.useRef<HTMLAudioElement | null>(null);
   React.useEffect(() => () => audio.current?.pause(), []);
 
@@ -35,7 +35,6 @@ export function VoicePicker({ words, gender, rows, langNames, canEdit, endpoint,
     audio.current?.pause(); // one sample at a time
     if (playing === id) return setPlaying(null);
     setFailed(false);
-    setPlayed(id);
     const a = new Audio(`${endpoint}?id=${encodeURIComponent(id)}`);
     audio.current = a;
     a.onended = () => setPlaying((p) => (p === id ? null : p));
@@ -53,6 +52,7 @@ export function VoicePicker({ words, gender, rows, langNames, canEdit, endpoint,
     if (g === gender || busy !== null) return;
     audio.current?.pause();
     setPlaying(null);
+    setPicked({});
     setBusy(`gender-${g}`);
     setNote(null);
     const out = await actions.setGender(g);
@@ -65,12 +65,16 @@ export function VoicePicker({ words, gender, rows, langNames, canEdit, endpoint,
   const choose = async (language: PickerLang, voice: PickerVoice) => {
     setBusy(voice.id);
     setNote(null);
+    setPicked((x) => ({ ...x, [language]: voice.id }));
     const out = await actions.choose(language, voice.isDefault ? null : voice.id);
     setBusy(null);
     if (out.ok) {
-      setNote({ language, kind: "saved" });
+      setNote({ language, kind: "saved", voice: voice.name });
       router.refresh();
-    } else setNote({ language, kind: "error", error: out.error });
+    } else {
+      setPicked((x) => ({ ...x, [language]: undefined }));
+      setNote({ language, kind: "error", error: out.error });
+    }
   };
 
   return (
@@ -94,62 +98,42 @@ export function VoicePicker({ words, gender, rows, langNames, canEdit, endpoint,
         <p className={help}>{t("vp.gender.d")}</p>
         {note && note.language === "gender" ? (note.kind === "saved" ? <p role="status" className={okLine}>{t("vp.gender.saved", { gender: t(`vp.gender.${gender}` as "vp.gender.female") })}</p> : <p role="alert" className={errorLine}>{t(`vp.err.${note.error}` as "vp.err.down")}</p>) : null}
       </div>
-      <div className="mt-6 flex flex-col gap-6">
+      <div className="mt-6 flex flex-col gap-5">
         {rows.map((row) => {
           const names = langNames[row.language as CallLang];
-          const mine = row.voices.filter((v) => v.gender === gender);
+          // the voices of the workspace's gender, the recommended ones first (the catalogue's order inside each group)
+          const mine = row.voices.filter((v) => v.gender === gender).sort((x, y) => Number(y.recommended) - Number(x.recommended));
           const inUse = mine.find((v) => v.id === row.choice) ?? mine.find((v) => v.isDefault) ?? null;
-          const line = mine.find((v) => v.sampleText)?.sampleText ?? null;
+          const shown = mine.find((v) => v.id === picked[row.language]) ?? inUse;
+          const id = `vp-${row.language}`;
           return (
-            <div key={row.language} data-voice-lang={row.language}>
-              <h3 className="text-base font-semibold" lang={row.language}>{names}</h3>
-              {inUse ? <p data-part="speaking-in" className="text-sm text-muted">{t("vp.speaking", { language: names, voice: inUse.name })}</p> : null}
-              {line ? <p lang={row.language} data-part="sample-line" className="mt-1 text-sm"><span className="font-semibold text-muted">{t("vp.line")} </span>{line}</p> : null}
-              {mine.length === 0 ? <p className={help}>{t("vp.none")}</p> : null}
-              <ul className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {mine.map((v) => {
-                  const on = inUse?.id === v.id;
-                  return (
-                    <li key={v.id} data-voice={v.id} data-in-use={on ? "true" : undefined} className={`flex flex-col gap-3 rounded-2xl border p-3 ${on ? "border-brand-edge bg-brand-bg" : "border-edge bg-surface"}`}>
-                      <div className="flex items-start gap-3">
-                        {v.sampleUrl ? (
-                          <button type="button" data-play={v.id} aria-pressed={playing === v.id} aria-label={playing === v.id ? t("vp.stop", { voice: v.name }) : t("vp.play", { voice: v.name })} onClick={() => play(v.id)} className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-edge bg-surface hover:bg-surface-2">
-                            {playing === v.id ? <Pause className="size-5" aria-hidden="true" /> : <Play className="size-5" aria-hidden="true" />}
-                          </button>
-                        ) : null}
-                        <div className="min-w-0 flex-1">
-                          <p className="flex flex-wrap items-center gap-2 text-base font-semibold">
-                            {v.name}
-                            {v.recommended ? <span data-part="recommended" className="rounded-full bg-brand-bg px-2 py-0.5 text-xs font-semibold text-brand-text">{t("vp.recommended")}</span> : null}
-                            {v.isDefault ? <span className="rounded-full bg-surface-2 px-2 py-0.5 text-xs font-semibold text-muted">{t("vp.default")}</span> : null}
-                          </p>
-                          <p className="text-sm text-muted">{v.tags.map((x) => (PLAIN_TAGS.includes(x) ? t(`vp.tag.${x}` as "vp.tag.calm") : x)).join(" · ")}</p>
-                        </div>
-                      </div>
-                      {played === v.id && v.sampleText ? (
-                        <p lang={row.language} data-part="sample-text" className="rounded-lg bg-surface-2 px-3 py-2 text-sm">
-                          <span className="block font-semibold text-muted">{t("vp.said")}</span>
-                          {v.sampleText}
-                        </p>
-                      ) : null}
-                      {on ? (
-                        <p className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-text">
-                          <span aria-hidden="true">✓</span> {t("vp.inuse")}
-                        </p>
-                      ) : (
-                        <button type="button" disabled={!canEdit || busy !== null} onClick={() => choose(row.language, v)} className={`${secondary} w-full`}>
-                          {busy === v.id ? t("vp.saving") : t("vp.use")}
-                        </button>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
+            <div key={row.language} data-voice-lang={row.language} className="flex flex-col gap-2">
+              <label htmlFor={id} className="text-base font-semibold" lang={row.language}>{names}</label>
+              {mine.length === 0 ? <p className={help}>{t("vp.none")}</p> : (
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <select id={id} data-voice-select={row.language} value={shown?.id ?? ""} disabled={!canEdit || busy !== null} onChange={(e) => { const v = mine.find((x) => x.id === e.target.value); if (!v) return; audio.current?.pause(); setPlaying(null); void choose(row.language, v); }} className="min-h-12 w-full min-w-0 rounded-xl border border-edge bg-surface px-3 text-base text-ink disabled:opacity-70 sm:flex-1">
+                    {mine.map((v) => (
+                      <option key={v.id} value={v.id}>{`${v.name} — ${v.tags.map((x) => (PLAIN_TAGS.includes(x) ? t(`vp.tag.${x}` as "vp.tag.calm") : x)).join(", ")}${v.recommended ? ` · ${t("vp.recommended")}` : ""}`}</option>
+                    ))}
+                  </select>
+                  {shown && shown.sampleUrl ? (
+                    <button type="button" data-play={shown.id} aria-pressed={playing === shown.id} aria-label={playing === shown.id ? t("vp.stop", { voice: shown.name }) : t("vp.play", { voice: shown.name })} onClick={() => play(shown.id)} className={`${secondary} w-full sm:w-auto sm:min-w-28`}>
+                      {playing === shown.id ? <><Pause className="mr-1 inline size-4" aria-hidden="true" />{t("vp.hear.stop")}</> : <><Play className="mr-1 inline size-4" aria-hidden="true" />{t("vp.hear")}</>}
+                    </button>
+                  ) : null}
+                </div>
+              )}
+              {playing !== null && shown && playing === shown.id && shown.sampleText ? (
+                <p lang={row.language} data-part="sample-text" className="rounded-lg bg-surface-2 px-3 py-2 text-sm">
+                  <span className="block font-semibold text-muted">{t("vp.said")}</span>
+                  {shown.sampleText}
+                </p>
+              ) : null}
               {note && note.language === row.language ? (
                 note.kind === "saved" ? (
-                  <p role="status" className={`${okLine} mt-2`}>{t("vp.saved", { language: names })}</p>
+                  <p role="status" data-part="toast" className={okLine}>{t("vp.toast", { language: names, voice: note.voice ?? "" })}</p>
                 ) : (
-                  <p role="alert" className={`${errorLine} mt-2`}>{t(`vp.err.${note.error}` as "vp.err.down")}</p>
+                  <p role="alert" className={errorLine}>{t(`vp.err.${note.error}` as "vp.err.down")}</p>
                 )
               ) : null}
             </div>
