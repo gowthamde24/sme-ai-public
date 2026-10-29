@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import * as React from "react";
 
 import type { AiMood } from "../../mark/mood";
@@ -9,7 +10,10 @@ import { AskOff } from "./AskOff";
 import { AskTeam } from "./AskTeam";
 import type { Availability } from "./ask-types";
 import type { AskWords } from "./ask-words";
-import { AskProvidedContext, useStoredAsk } from "./ask-store";
+import { AskProvidedContext, AskVoiceContext, useStoredAsk } from "./ask-store";
+
+/** The chat in the card (where the spoken conversation is on): its own chunk. */
+const ChatCard = dynamic(() => import("./ChatCardHost"), { ssr: false });
 
 /**
  * The question line INSIDE Today's assistant card (job DQ part 0): the text box with the microphone and Send, the three chips under it, and the latest exchange below ("Show earlier" opens the rest of the thread). It draws the workspace's
@@ -18,6 +22,7 @@ import { AskProvidedContext, useStoredAsk } from "./ask-store";
 export function AskCard({ lang, base, availability, words, chips, onMood }: { lang: string; base: string; availability: Availability; words: AskWords; chips: readonly string[]; onMood: (mood: AiMood) => void }) {
   const provided = React.useContext(AskProvidedContext);
   const shared = useStoredAsk();
+  const voice = React.useContext(AskVoiceContext);
   const mood = shared?.mood;
   React.useEffect(() => {
     if (mood) onMood(mood);
@@ -54,6 +59,7 @@ export function AskCard({ lang, base, availability, words, chips, onMood }: { la
         {availability === "switched_off" ? w("office.switchedoff") : w("frame.notyet")}
       </p>
     );
+  if (voice) return <div data-ask="live" data-ask-where="card" className="min-h-48 min-w-0"><ChatCard session={shared} chips={chips} voice={voice} /></div>;
   return (
     <div data-ask="live" data-ask-where="card" className="flex min-w-0 flex-col gap-3">
       <AskForm session={shared} look="card" placeholder={shared.mode === "do" ? (shared.doIt?.words["tk.d.placeholder"] ?? w("ask.placeholder.hero")) : w("ask.placeholder.hero")} />

@@ -5,7 +5,7 @@ import * as React from "react";
 
 import type { AskTransport, Availability, VoiceStatus, VoiceTransport } from "./ask-types";
 import type { AskWords } from "./ask-words";
-import { AskProvidedContext } from "./ask-store";
+import { AskProvidedContext, AskVoiceContext } from "./ask-store";
 import { AskFloating } from "./AskFloating";
 import { AskTurnOnContext, type TurnOn } from "./ask-turn-on";
 import type { DoItOptions } from "./use-do-it";
@@ -25,12 +25,14 @@ export function AskProvider({ lang, base, words, availability, readOnly = false,
   const live = availability === "live";
   return (
     <AskProvidedContext.Provider value={true}>
+      <AskVoiceContext.Provider value={voice ?? null}>
       <AskTurnOnContext.Provider value={turnOn}>
       {live ? <AskSessionHost lang={lang} base={base} words={words} availability={availability} transport={transport} voiceStatus={voiceStatus} voiceTransport={voiceTransport} doIt={doIt} /> : null}
       {children}
       {live && !readOnly ? <AskFloating words={words} chipWords={chipWords ?? words} voice={voice} /> : null}
       {availability === "switched_off" && !readOnly ? <AskOffFloating words={words} /> : null}
       </AskTurnOnContext.Provider>
+      </AskVoiceContext.Provider>
     </AskProvidedContext.Provider>
   );
 }
