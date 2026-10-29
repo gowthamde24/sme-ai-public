@@ -76,7 +76,7 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
     case "clarify":
       return { type: "pong" };
     case "caption": {
-      const t = text(json.text, 4000);
+      const t = text(json.text, 12_000);
       if ((json.who !== "user" && json.who !== "assistant") || t === null) return null;
       return { type: "caption", who: json.who, text: t, final: json.final !== false, spoken: json.spoken !== false };
     }

@@ -1,5 +1,5 @@
 // The spoken conversation in the chat BUBBLE (the floating circle's small panel) and in Today's card, on staging, with a FAKE microphone: Chromium plays a recorded question into getUserMedia (no real person speaks). Synthetic demo owner; staging only.
-//   node e2e/staging-chat-bubble.mjs [textiles|construction_materials|education] [desktop|phone]
+//   node e2e/staging-chat-bubble.mjs [textiles|construction_materials|education] [desktop|phone] [en|te]
 // Checks (owner, 29 Oct): never full screen (no "I'm listening… Done / Never mind" view); the panel is a small bubble (desktop about 380 by 560 above the circle) or a bottom sheet of about 60 % (phone) with the page visible behind; the words show LIVE while speaking
 // (more than one interim value, or a waveform until the first words); the turn ends on a pause by itself (no Done pressed); the reply streams as text in the same thread; the mic in Today's card works in place; a tap on the mic ends the chat.
 import { chromium } from "playwright";
@@ -12,10 +12,11 @@ import { SHOTS, session, shot, sleep } from "./staging-df-lib.mjs";
 
 const pack = process.argv[2] || "textiles";
 const size = process.argv[3] || "desktop";
+const lang = process.argv[4] || "en";
 const dir = mkdtempSync(path.join(os.tmpdir(), "bb-"));
 const aiff = path.join(dir, "q.aiff");
 const wav = path.join(dir, "q.wav");
-execFileSync("say", ["-o", aiff, "How many enquiries came in today, and who should I call first?"]);
+execFileSync("say", lang === "te" ? ["-v", "Geeta", "-o", aiff, "ఈ రోజు ఎన్ని విచారణలు వచ్చాయి, నేను ఎవరికి ముందు కాల్ చేయాలి?"] : ["-o", aiff, "How many enquiries came in today, and who should I call first?"]);
 const raw = path.join(dir, "raw.wav");
 execFileSync("afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", aiff, raw]);
 // the assistant greets first and the fake microphone plays from the moment it is opened: 14 s of silence in front, so the question comes after the greeting
@@ -78,15 +79,22 @@ async function talk(root, tag) {
   ok(`${tag}: the words show live (a waveform until the first words, then the words)`, waved || seen.size >= 1, `waveform=${waved} values=${seen.size}`);
   ok(`${tag}: more than one live value (word by word) or the final words in the thread`, seen.size >= 2 || (await root.locator('[data-chat="you"]').count()) > 0, `values=${seen.size}`);
   ok(`${tag}: the turn ended on a pause by itself and the reply came as text in the thread`, replied);
+  await sleep(6000); // the reply goes on streaming and the assistant listens again: the thread settles
   await shot(s, `bb-${pack}-${size}-${tag}-reply`);
   const you = await root.locator('[data-chat="you"]').allTextContents();
-  ok(`${tag}: what was said joined the thread`, you.some((t) => /enquir|call/i.test(t)), you.join(" | ").slice(0, 120));
+  ok(`${tag}: what was said joined the thread as ONE bubble (no interim+final twice)`, you.length === 1, `${you.length} bubble(s): ${you.join(" | ").slice(0, 160)}`);
+  const said = await root.locator('[data-chat="assistant"]').evaluateAll((els) => els.map((e) => e.innerText));
+  const reply = said.at(-1) || "";
+  console.log(`${tag}: reply: ${JSON.stringify(reply.replace(/\s*Copy\s*$/, "").slice(0, 300))}`);
+  ok(`${tag}: the reply is one text (no break inside a word or a Telugu letter)`, !/[A-Za-z]\n+[a-z]/.test(reply) && !/[\u0C00-\u0C7F]\n+[\u0C3E-\u0C4D]/.test(reply) && !/(^|\n)[\u0C3E-\u0C4D\u0C01-\u0C03]/.test(reply), "");
+  ok(`${tag}: no "chat has ended" line while the panel is in use`, (await p.getByText(/chat has ended|Tap the circle/).count()) === 0);
   await mic.click().catch(() => null);
   await sleep(800);
 }
 
 try {
   await s.context.grantPermissions(["microphone"], { origin: "https://staging.stack19.com" });
+  if (lang !== "en") await s.context.addCookies([{ name: "sme_lang", value: lang, url: "https://staging.stack19.com" }]);
   // 1. the circle's bubble, on a screen other than Today
   await p.goto(`${s.base}/outbox`, { waitUntil: "domcontentloaded" });
   const orb = p.locator('[data-ask="orb"]');

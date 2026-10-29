@@ -276,4 +276,34 @@ describe("the conversation panel", () => {
     expect(screen.queryByRole("button", { name: /^(Done|Never mind)$/ })).toBeNull();
     expect(document.querySelector('[data-part="voice-chat"], [data-voice="mode"]')).toBeNull();
   });
+  it("a spoken turn is ONE bubble (interim updates in place, the final replaces it), the reply pieces make ONE text, and a chat that went quiet leaves the panel as it was: no 'chat has ended' line, the microphone starts a new chat without a greeting", async () => {
+    draw();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    for (const [text, final] of [["how", false], ["how many", false], ["How many enquiries?", true]] as const) {
+      await act(async () => void sock.say({ type: "caption", who: "user", text, final, spoken: true }));
+      await act(async () => void sock.say({ type: "transcript", text, final, seq: 1, t_ms: 1 }));
+    }
+    await act(async () => void sock.say({ type: "state", state: "thinking" }));
+    for (const piece of ["Great, th", "anks for pic", "king up."]) await act(async () => void sock.say({ type: "caption", who: "assistant", text: piece, final: true, spoken: true }));
+    expect(document.querySelectorAll('[data-chat="you-live"], [data-chat="you"]')).toHaveLength(1);
+    expect(document.querySelector('[data-chat="assistant-live"]')).toHaveTextContent("Great, thanks for picking up.");
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    expect(document.querySelectorAll('[data-chat="you"]')).toHaveLength(1);
+    expect(document.querySelectorAll('[data-chat="assistant"]')).toHaveLength(1);
+    expect(document.querySelector('[data-chat="assistant"]')).toHaveTextContent("Great, thanks for picking up.");
+    await act(async () => void sock.say({ type: "limit", reason: "idle", fatal: true }));
+    await act(async () => void sock.onclose?.({ code: 1000, reason: "" }));
+    expect(screen.queryByText(/chat has ended|went quiet|Tap the circle/)).toBeNull();
+    expect(screen.getByRole("button", { name: "Talk" })).toBeInTheDocument();
+    const first = sock;
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    expect(sock).not.toBe(first);
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s2", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "caption", who: "assistant", text: "Hi, how can I help?", final: true, spoken: true }));
+    expect(screen.queryByText("Hi, how can I help?")).toBeNull(); // no greeting again
+  });
 });

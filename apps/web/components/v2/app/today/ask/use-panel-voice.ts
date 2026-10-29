@@ -42,8 +42,8 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
   const client = React.useRef<VoiceClient | null>(null);
   const audio = React.useRef<AudioIO | null>(null);
   const token = React.useRef<{ value: string; at: number } | null>(null);
-  const done = React.useRef(0); // captions already turned into the thread
-  const turn = React.useRef<{ asked: string; answer: string } | null>(null);
+  const flushedId = React.useRef(0); // the id of the last caption that has joined the thread
+  const started = React.useRef(false); // a second start is a silent restart: no greeting is played or shown again
   const sourcesSeen = React.useRef(0);
   const decidedSeen = React.useRef(0);
   const { addExchange, setVoiceOrb, setEarlier, setPlan } = session;
@@ -66,26 +66,44 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     [setVoiceOrb],
   );
 
-  /** Every change of the conversation (the socket's events, not a render): finished turns join the thread, the floating circle and the live line follow. */
+  /**
+   * Every change of the conversation (the socket's events, not a render). The captions are read from the one that has not joined the thread yet (by its id): the person's words are ONE caption per utterance (replaced in place, interim then final) and the assistant's words ONE caption
+   * per kind (its pieces are joined by the client), so a caption can still grow after it was first seen. A turn joins the thread when the next one begins or when the assistant listens again; the floating circle and the live line follow.
+   */
   const onChange = (next: Snapshot) => {
-    const flush = () => {
-      const t = turn.current;
-      if (!t || (t.asked === "" && t.answer === "")) return;
+    const turns: { asked: string; answer: string; upto: number }[] = [];
+    let asked = "";
+    let answer = "";
+    let partialUser: string | null = null;
+    let partialAsst = "";
+    let lastId = flushedId.current;
+    for (const c of next.captions) {
+      if (c.id <= flushedId.current) continue;
+      if (c.who === "user") {
+        if (answer !== "") {
+          turns.push({ asked, answer, upto: lastId }); // an answer is complete when the person speaks again
+          asked = "";
+          answer = "";
+        }
+        if (c.final) {
+          asked = c.text;
+          partialUser = null;
+        } else partialUser = c.text;
+      } else if (c.final) answer = answer !== "" ? `${answer}\n\n${c.text}` : c.text;
+      else partialAsst = c.text;
+      lastId = c.id;
+    }
+    if (partialUser === null && (asked !== "" || answer !== "") && (next.phase === "ended" || (next.state === "listening" && answer !== ""))) { // (a question alone waits for its answer: the state may still say "listening" for a moment after the words are final)
+      turns.push({ asked, answer, upto: lastId });
+      asked = "";
+      answer = "";
+    }
+    for (const t of turns) {
       const mine = next.sources.slice(sourcesSeen.current).map((x) => ({ label: x.label, href: null }));
       sourcesSeen.current = next.sources.length;
       addExchange({ asked: t.asked, heardByVoice: true, answer: t.answer, sources: mine, drafts: [], errorCode: null, failed: false, task: null, plan: next.plan });
-      turn.current = null;
-    };
-    for (const c of next.captions.slice(done.current)) {
-      if (!c.final) break; // a partial is shown live; it joins the thread when it is final
-      done.current += 1;
-      const t = turn.current;
-      if (c.who === "user") {
-        if (t && t.answer !== "") flush();
-        turn.current = { asked: c.text, answer: "" };
-      } else turn.current = { asked: t?.asked ?? "", answer: t && t.answer !== "" ? `${t.answer}\n\n${c.text}` : c.text };
+      flushedId.current = t.upto;
     }
-    if (next.state === "listening" || next.phase === "ended") flush();
     // an answer to a plan (the owner's tap, or a spoken "yes" the API recognised): the card in the thread shows its state
     for (const d of next.decided.slice(decidedSeen.current)) {
       setEarlier((list) => list.map((x) => (x.plan && x.plan.actionId === d.actionId ? { ...x, plan: { ...x.plan, status: d.status } } : x)));
@@ -93,9 +111,9 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     }
     decidedSeen.current = next.decided.length;
     setVoiceOrb(next.phase === "ended" ? null : next.state === "listening" ? "listen" : next.state === "speaking" ? "speak" : next.state === "thinking" || next.phase === "connecting" ? "think" : null);
-    const partial = next.captions.slice(done.current).find((c) => !c.final);
-    const t = turn.current;
-    setLive(next.phase !== "ended" && (t || partial) ? { asked: partial?.who === "user" ? partial.text : (t?.asked ?? ""), answer: partial?.who === "assistant" ? `${t?.answer ? `${t.answer}\n\n` : ""}${partial.text}` : (t?.answer ?? ""), interim: partial?.who === "user" ? partial.text : "" } : null);
+    const shownAsked = partialUser ?? asked;
+    const shownAnswer = partialAsst !== "" ? (answer !== "" ? `${answer}\n\n${partialAsst}` : partialAsst) : answer;
+    setLive(next.phase !== "ended" && (shownAsked !== "" || shownAnswer !== "") ? { asked: shownAsked, answer: shownAnswer, interim: partialUser ?? "" } : null);
     setSnap(next);
   };
 
@@ -106,12 +124,12 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
       if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false, plan: null, decided: [] });
       token.current = { value: out.token, at: Date.now() };
     }
-    done.current = 0;
-    turn.current = null;
+    flushedId.current = 0;
     sourcesSeen.current = 0;
     decidedSeen.current = 0;
     audio.current = audioFactory();
-    const c = new VoiceClient({ url, token: token.current.value, language, audio: audio.current, socket: socketFactory, onChange });
+    const c = new VoiceClient({ url, token: token.current.value, language, audio: audio.current, socket: socketFactory, onChange, quietStart: started.current });
+    started.current = true;
     client.current = c;
     setSnap(c.snapshot);
     await c.start();

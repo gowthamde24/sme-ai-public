@@ -38,7 +38,7 @@ export type Snapshot = { phase: Phase; state: VoiceState | null; step: Step | nu
 export const SPEECH_LEVEL = 0.06;
 export const SPEECH_FRAMES = 3;
 
-export type Options = { url: string; token: string; language: VoiceLang; audio: AudioIO; socket: (url: string) => SocketLike; onChange: (s: Snapshot) => void };
+export type Options = { url: string; token: string; language: VoiceLang; audio: AudioIO; socket: (url: string) => SocketLike; onChange: (s: Snapshot) => void; /** A restart the person did not ask to hear a greeting for: the greeting (its sound and its caption) is left out until they speak. */ quietStart?: boolean };
 
 export class VoiceClient {
   private ws: SocketLike | null = null;
@@ -49,9 +49,10 @@ export class VoiceClient {
   private last: { limit?: LimitReason; errorCode?: string } = {};
   private ping: ReturnType<typeof setInterval> | null = null;
   private finished = false;
-  private settled = false; // the last words of the person came as a final `transcript`: the `caption` that repeats them is not a new line
+  private quiet: boolean; // a silent restart: nothing of the assistant is heard or shown until the person has spoken
 
   constructor(private readonly o: Options) {
+    this.quiet = o.quietStart === true;
     this.snap = { phase: "connecting", state: null, step: null, captions: [], sources: [], language: o.language, end: null, micDenied: false, plan: null, decided: [] };
   }
 
@@ -120,7 +121,7 @@ export class VoiceClient {
 
   private message(data: unknown): void {
     if (data instanceof ArrayBuffer) {
-      if (this.snap.phase === "ready" && this.serverState !== "listening") this.o.audio.play(data);
+      if (this.snap.phase === "ready" && this.serverState !== "listening" && !this.quiet) this.o.audio.play(data);
       return;
     }
     const m: ServerMessage | null = parseServerMessage(data);
@@ -132,18 +133,13 @@ export class VoiceClient {
       case "state":
         this.serverState = m.state;
         this.loud = 0;
+        if (m.state === "thinking") this.quiet = false;
         this.set({ state: m.state, step: m.state === "thinking" ? m.step : null });
         return;
-      case "transcript": {
-        // the person's words live: the interim line is replaced as newer ones come, and by the settled words
-        const list = this.snap.captions.slice();
-        const lastOne = list[list.length - 1];
-        if (lastOne && lastOne.who === "user" && !lastOne.final) list[list.length - 1] = { ...lastOne, text: m.text, final: m.final };
-        else list.push({ id: ++this.seq, who: "user", text: m.text, final: m.final, spoken: true });
-        this.settled = m.final;
-        this.set({ captions: list.slice(-30), plan: null });
+      case "transcript":
+        this.heard(m.text, m.final); // the person's words live: the interim line is replaced as newer ones come, and by the settled words
+        this.set({ plan: null });
         return;
-      }
       case "confirm_action":
         this.set({ plan: m.action });
         return;
@@ -151,14 +147,13 @@ export class VoiceClient {
         this.set({ decided: [...this.snap.decided, { actionId: m.actionId, status: m.status }].slice(-10), plan: this.snap.plan && this.snap.plan.actionId === m.actionId ? { ...this.snap.plan, status: m.status } : this.snap.plan });
         return;
       case "caption": {
-        if (m.who === "user" && m.final && this.settled) {
-          this.settled = false; // the same words again, from the older caption message
-          return;
-        }
+        if (m.who === "user") return this.heard(m.text, m.final); // the same words as the `transcript` messages say: ONE line per utterance, whichever message comes first
+        if (this.quiet) return;
         const list = this.snap.captions.slice();
         const lastOne = list[list.length - 1];
-        if (lastOne && lastOne.who === m.who && !lastOne.final && m.spoken === lastOne.spoken) list[list.length - 1] = { ...lastOne, text: m.text, final: m.final }; // a partial is replaced
-        else list.push({ id: ++this.seq, who: m.who, text: m.text, final: m.final, spoken: m.spoken });
+        // the assistant's words come in pieces (a few letters each, final each): they are one text, joined as they are, never a line per piece
+        if (lastOne && lastOne.who === "assistant" && m.spoken === lastOne.spoken) list[list.length - 1] = { ...lastOne, text: lastOne.final ? lastOne.text + m.text : m.text, final: m.final };
+        else list.push({ id: ++this.seq, who: "assistant", text: m.text, final: m.final, spoken: m.spoken });
         this.set({ captions: list.slice(-30) });
         return;
       }
@@ -180,6 +175,16 @@ export class VoiceClient {
       default:
         return;
     }
+  }
+
+  /** What the person says, from either message: while an utterance is open (a partial, or a final that a second message repeats) its line is replaced in place; a partial after a final is a new utterance. */
+  private heard(text: string, final: boolean): void {
+    this.quiet = false;
+    const list = this.snap.captions.slice();
+    const lastOne = list[list.length - 1];
+    if (lastOne && lastOne.who === "user" && (!lastOne.final || final)) list[list.length - 1] = { ...lastOne, text, final };
+    else list.push({ id: ++this.seq, who: "user", text, final, spoken: true });
+    this.set({ captions: list.slice(-30) });
   }
 
   private closed(event: { code: number; reason: string }): void {
