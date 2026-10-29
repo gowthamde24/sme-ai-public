@@ -10,6 +10,7 @@
 
 NOTE: no `from __future__ import annotations` here (request models are attached to the endpoint signatures at registration time)."""
 
+import html
 import json
 import re
 import uuid
@@ -343,12 +344,13 @@ def intake_form_page(token: str) -> Response:
     """The hosted lead form: the same fields as the snippet, one page, no script. The address is the credential (as for the snippet); an unknown address shows the same page and its post is refused."""
     if not _TOKEN_SHAPE.fullmatch(token):
         raise not_found()
+    shown = html.escape(token, quote=True)   # already letters, digits, "_" and "-" only; escaped anyway, so the page is safe whatever the check above lets through
     page = (
         '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Send us your enquiry</title>'
         "<style>body{font-family:system-ui,sans-serif;margin:0;background:#f6f6f4;color:#1c1c1a}form{max-width:26rem;margin:2rem auto;padding:1.5rem;background:#fff;border-radius:12px}"
         "h1{font-size:1.25rem;margin:0 0 1rem}input,textarea,button{width:100%;box-sizing:border-box;font:inherit;padding:.7rem;margin:0 0 .8rem;border:1px solid #c9c9c4;border-radius:8px}"
         "button{background:#1c1c1a;color:#fff;border:0;cursor:pointer}</style>"
-        f'<form method="post" action="/v1/lead-intake/{token}"><h1>Send us your enquiry</h1>'
+        f'<form method="post" action="/v1/lead-intake/{shown}"><h1>Send us your enquiry</h1>'
         '<input type="text" name="name" placeholder="Your name" required autocomplete="name">'
         '<input type="tel" name="phone" placeholder="Phone or WhatsApp number" required autocomplete="tel">'
         '<input type="email" name="email" placeholder="E-mail (optional)" autocomplete="email">'
