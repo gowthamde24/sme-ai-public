@@ -36,6 +36,8 @@ class LeadSourcesRepository(Protocol):
     def cards_stats(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def inbound_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def inbound_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, address_token: str) -> dict[str, Any]: ...
+    def website_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def website_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, form_token: str) -> dict[str, Any]: ...
 
 
 class PostgrestLeadSourcesRepository:
@@ -107,3 +109,9 @@ class PostgrestLeadSourcesRepository:
 
     def inbound_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, address_token: str) -> dict[str, Any]:
         return self._rpc.object(token, "lead_inbound_address_set", {"p_tenant_id": str(tenant_id), "p_source_id": str(source_id), "p_token": address_token})
+
+    def website_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "lead_website_form_get", {"p_tenant_id": str(tenant_id)})
+
+    def website_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, form_token: str) -> dict[str, Any]:
+        return self._rpc.object(token, "lead_website_form_set", {"p_tenant_id": str(tenant_id), "p_source_id": str(source_id), "p_token": form_token})
