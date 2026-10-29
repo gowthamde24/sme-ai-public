@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * POST /app/tenants/[tenantId]/lead-sources/cards: the source cards' calls, one JSON request each, always this person's own token (it stays here), Owner and Admin only, only where SOURCE_CARDS_SCREENS is on and only from this site:
- *   {op: "cards"} · {op: "meta_connect"} · {op: "meta_pages"} · {op: "meta_select", pageId} · {op: "meta_disconnect"} · {op: "indiamart_key", key} · {op: "indiamart_disconnect"} · {op: "email", rotate?} · {op: "website"}
+ *   {op: "cards"} · {op: "meta_connect"} · {op: "meta_pages"} · {op: "meta_select", pageId} · {op: "meta_disconnect"} · {op: "indiamart_key", key} · {op: "indiamart_disconnect"} · {op: "email", rotate?} · {op: "website"} · {op: "resume", card}
  * Answers are `{ok: true, data}` or `{ok: false, error: <closed word>}`. A key is passed on and forgotten: it is never logged, stored or returned. A plain route, not a server action: the page must not redraw under a half-filled form.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
@@ -75,6 +75,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         break;
       case "website":
         done = await api.website();
+        break;
+      case "resume":
+        if (typeof body.card !== "string" || !/^[a-z_]{1,20}$/.test(body.card)) return bad;
+        done = await api.resume(body.card);
         break;
       default:
         return bad;

@@ -1,5 +1,5 @@
 import { ApiAuthError } from "@/lib/api/client";
-import { getCards, getEmailAddress, getWebsite, indiaMartDisconnect, indiaMartKey, metaConnect, metaDisconnect, metaPages, metaSelect, rotateEmailAddress, sourceErrorOf } from "@/lib/api/source-cards";
+import { getCards, getEmailAddress, getWebsite, indiaMartDisconnect, indiaMartKey, metaConnect, metaDisconnect, metaPages, metaSelect, resumeCard, rotateEmailAddress, sourceErrorOf } from "@/lib/api/source-cards";
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { sourceCardsScreens, type ScreenMode } from "@/lib/screens/flag";
 
@@ -16,6 +16,7 @@ export type SourcesApi = {
   indiaMartDisconnect(): Promise<Done<null>>;
   email(rotate: boolean): Promise<Done<EmailAddress>>;
   website(): Promise<Done<WebsiteSnippet>>;
+  resume(card: string): Promise<Done<null>>;
 };
 
 async function wrap<T>(run: () => Promise<T>): Promise<Done<T>> {
@@ -37,6 +38,7 @@ export const liveApi = (token: string, tenantId: string): SourcesApi => ({
   indiaMartDisconnect: () => wrap(async () => (await indiaMartDisconnect(token, tenantId), null)),
   email: (rotate) => wrap(() => (rotate ? rotateEmailAddress(token, tenantId) : getEmailAddress(token, tenantId))),
   website: () => wrap(() => getWebsite(token, tenantId)),
+  resume: (card) => wrap(async () => (await resumeCard(token, tenantId, card), null)),
 });
 
 /** The stand-in (mock mode) keeps its few made-up facts in ONE small cookie of the browser (lib/mock/jar.ts), like the other test screens: a server memory would be lost between the instances of a Cloud Run service. */
@@ -100,8 +102,9 @@ export function mockApi(tenantId: string): SourcesApi {
       if (rotate) x.rotations += 1;
       x.mail = true;
       await save(x);
-      return ok({ address: address(x), guide: [{ step: 1, text: "Open Gmail and search for the lead e-mail." }, { step: 2, text: "Choose Filter messages like this, then Forward it to the address above." }], portals: ["JustDial", "Sulekha"] });
+      return ok({ address: address(x), guide: [{ step: 1, text: "Open Gmail and search for the lead e-mail." }, { step: 2, text: "Choose Filter messages like this, then Forward it to the address above." }], portals: ["JustDial", "Sulekha"], confirmation: null });
     },
+    resume: async () => ok(null),
     website: async () => ok({ snippet: `<${"script"} src="https://example.test/lead.js" data-key="mock"></${"script"}>`, formLink: "https://example.test/f/mock" }),
   };
 }

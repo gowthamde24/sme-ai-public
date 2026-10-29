@@ -73885,5 +73885,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "sc.act.resume": {
+  "en": "Turn back on",
+  "te": "మళ్లీ ఆన్ చేయండి",
+  "hi": "फिर से चालू करें",
+  "kn": "ಮತ್ತೆ ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.act.open": {
+  "en": "Open Integrations",
+  "te": "ఇంటిగ్రేషన్లు తెరవండి",
+  "hi": "इंटीग्रेशन खोलें",
+  "kn": "ಇಂಟಿಗ್ರೇಷನ್ಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sc.mail.code": {
+  "en": "Gmail asks for this code to confirm forwarding",
+  "te": "ఫార్వార్డింగ్ నిర్ధారణకు జీమెయిల్ ఈ కోడ్ అడుగుతుంది",
+  "hi": "फ़ॉरवर्डिंग की पुष्टि के लिए जीमेल यह कोड माँगता है",
+  "kn": "ಫಾರ್ವರ್ಡಿಂಗ್ ದೃಢೀಕರಣಕ್ಕೆ ಜೀಮೇಲ್ ಈ ಕೋಡ್ ಕೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

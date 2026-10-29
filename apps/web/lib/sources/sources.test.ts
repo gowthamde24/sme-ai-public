@@ -6,7 +6,7 @@ vi.mock("next/headers", () => ({ cookies: async () => ({ get: (k: string) => (ja
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), apiRequest: (...a: unknown[]) => request(...a) }));
 
 import { ApiAuthError, ApiContractError, ApiRequestError } from "@/lib/api/client";
-import { getCards, indiaMartKey, metaConnect, metaSelect, sourceErrorOf } from "@/lib/api/source-cards";
+import { getCards, indiaMartKey, metaConnect, metaSelect, resumeCard, sourceErrorOf } from "@/lib/api/source-cards";
 
 import { liveApi } from "./server";
 import { parseAuthorize, parseCards, parseEmail } from "./types";
@@ -31,7 +31,12 @@ describe("the cards as the API sends them", () => {
     for (const bad of ["http://x.test", "javascript:alert(1)", "not a url", 5]) expect(parseAuthorize({ authorize_url: bad })).toBeNull();
   });
   it("reads the forwarding address with its Gmail guide", () => {
-    expect(parseEmail({ address: "abc@leads.stack19.com", gmail_filter_guide: [{ step: 1, text: "Open Gmail" }, { step: 2 }], sample_portals: ["JustDial"] })).toEqual({ address: "abc@leads.stack19.com", guide: [{ step: 1, text: "Open Gmail" }], portals: ["JustDial"] });
+    expect(parseEmail({ address: "abc@leads.stack19.com", gmail_filter_guide: [{ step: 1, text: "Open Gmail" }, { step: 2 }], sample_portals: ["JustDial"] })).toEqual({ address: "abc@leads.stack19.com", guide: [{ step: 1, text: "Open Gmail" }], portals: ["JustDial"], confirmation: null });
+  });
+  it("reads the code Gmail sent to confirm forwarding, and the actions the API adds", () => {
+    expect(parseEmail({ address: "a@leads.stack19.com", gmail_filter_guide: [], sample_portals: [], gmail_confirmation: { code: "123456789", received_at: "2026-10-29T10:00:00Z" } })?.confirmation).toEqual({ code: "123456789", receivedAt: "2026-10-29T10:00:00Z" });
+    const paused = parseCards({ items: [{ kind: "website", status: "needs_attention", headline: "Paused", action: { type: "copy_snippet" }, problem: { code: "source_paused", message: "This is paused, so no new leads come in.", fix: { type: "resume", label: "Turn back on" } }, available: true }] });
+    expect(paused?.[0].problem).toEqual({ message: "This is paused, so no new leads come in.", fix: "resume" });
   });
 });
 
@@ -52,6 +57,7 @@ describe("the API calls", () => {
   it("turn refusals into closed words and let a lapsed sign-in through", async () => {
     const e = (status: number, code: string) => sourceErrorOf(new ApiRequestError(status, code, "English"));
     expect(e(422, "indiamart_key_rejected")).toBe("badkey");
+    expect(e(404, "not_found")).toBe("notavailable");
     expect(e(409, "x")).toBe("state");
     expect(e(429, "x")).toBe("slow");
     expect(e(403, "x")).toBe("forbidden");
@@ -68,5 +74,16 @@ describe("the API calls", () => {
       caught = x;
     }
     expect(caught).toBe(out);
+  });
+});
+
+describe("turning a paused card back on", () => {
+  it("resumes only the paused sources of that card", async () => {
+    const src = (id: string, kind: string, status: string) => ({ id, kind, tag: kind === "email_forward" ? "justdial" : kind, label: kind, status, created_at: "2026-10-01T00:00:00Z", last_received_at: null, received_count: 0, token_hint: null, cost_per_lead_paise: null, consent_confirmed: true, available: true });
+    request.mockImplementation(async (path: string) => (path.endsWith("/lead-sources") ? { items: [src("11111111-1111-4111-8111-111111111111", "website_form", "paused"), src("22222222-2222-4222-8222-222222222222", "webhook", "active"), src("33333333-3333-4333-8333-333333333333", "email_forward", "paused")] } : src("11111111-1111-4111-8111-111111111111", "website_form", "active")));
+    await resumeCard("tok", T, "website");
+    const posts = request.mock.calls.filter((c) => (c[2] as { method?: string } | undefined)?.method === "POST").map((c) => c[0]);
+    expect(posts).toEqual([`/v1/tenants/${T}/lead-sources/11111111-1111-4111-8111-111111111111/resume`]);
+    await expect(resumeCard("tok", T, "files")).rejects.toBeInstanceOf(ApiContractError);
   });
 });

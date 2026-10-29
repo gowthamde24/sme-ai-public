@@ -63,11 +63,26 @@ function CardBody({ card, t, words, post, base, open, onOpen, onChanged }: { car
   const action: CardAction = card.problem?.fix && card.problem.fix !== "none" ? card.problem.fix : card.action;
   const label = card.status === "connected" ? t("sc.manage") : card.status === "needs_attention" ? t("sc.fix") : t(`sc.act.${action}` as "sc.act.oauth");
   if (card.kind === "files") return <a href={`${base}/import`} className={`${btnMain} self-start`}>{t("sc.act.upload")}</a>;
-  if (action === "none") return null;
+  if (card.kind === "whatsapp") return card.status === "connected" ? null : <a href={`${base}/integrations`} className={`${btnMain} self-start`}>{t("sc.act.open")}</a>;
+  if (action === "resume") return <ResumeButton card={card.kind} label={t("sc.act.resume")} t={t} post={post} onChanged={onChanged} />;
+  if (action === "none" || action === "open") return null;
   return (
     <div className="flex flex-col gap-3">
       <div><button type="button" className={card.status === "connected" ? btnQuiet : btnMain} aria-expanded={open} onClick={() => onOpen(!open)}>{label}</button></div>
       {open ? <Panel card={card} action={action} t={t} words={words} post={post} onChanged={onChanged} /> : null}
+    </div>
+  );
+}
+
+function ResumeButton({ card, label, t, post, onChanged }: { card: CardKind; label: string; t: T; post: CardsPost; onChanged: () => Promise<void> }) {
+  const [busy, setBusy] = React.useState(false);
+  const [error, setError] = React.useState<SourceError | null>(null);
+  return (
+    <div className="flex flex-col gap-3">
+      <div>
+        <button type="button" className={btnMain} disabled={busy} onClick={() => void (async () => { setBusy(true); setError(null); const r = (await post({ op: "resume", card })) as Done<null>; if (r.ok) await onChanged(); else setError(r.error); setBusy(false); })()}>{label}</button>
+      </div>
+      {error ? <p className={alertBox} role="alert">{sentence(t, error)}</p> : null}
     </div>
   );
 }
@@ -154,6 +169,7 @@ function Panel({ card, action, t, words, post, onChanged }: { card: Card; action
           {email ? (
             <>
               <CopyBox words={words ?? {}} id="sc-address" label={t("sc.mail.address")} value={email.address} />
+              {email.confirmation ? <CopyBox words={words ?? {}} id="sc-code" label={t("sc.mail.code")} value={email.confirmation.code} /> : null}
               <ol className="list-decimal pl-5 text-sm text-muted">{email.guide.map((g) => <li key={g.step}>{g.text}</li>)}</ol>
               <div><button type="button" className={btnQuiet} disabled={busy} onClick={() => void run<EmailAddress>({ op: "email", rotate: true }, (d) => { setEmail(d); setNote(t("sc.mail.rotated")); })}>{t("sc.mail.rotate")}</button></div>
             </>
