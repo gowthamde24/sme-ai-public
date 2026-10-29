@@ -40,6 +40,7 @@ from app.followups.repository import FollowupsRepository
 from app.integrations.policy import PolicyVersions
 from app.integrations.repository import IntegrationsRepository
 from app.knowledge.service import KnowledgeService
+from app.lead_profile.service import LeadProfileService
 from app.lead_sources.service import LeadSourcesService
 from app.leads.repository import LeadsRepository
 from app.leadspack.service import LeadPlaybookService
@@ -165,6 +166,7 @@ class Runtime:
     knowledge: KnowledgeService | None = None
     # job DR / A2: lead imports and live sources
     lead_sources: LeadSourcesService | None = None
+    lead_profiles: LeadProfileService | None = None   # job EE: the Lead Desk list with its profile
     # job DR A3: speed to lead and approve once
     outreach: OutreachService | None = None
     # job DR B1: "Ask Vijaya to do it" (plan, approve once, run, report)

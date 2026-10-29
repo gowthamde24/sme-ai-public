@@ -25,7 +25,7 @@ from pydantic import BaseModel, ValidationError
 from app.crm.models import (
     CompanyOut,
     ContactOut,
-    LeadOut,
+    LeadRow,
     OpportunityOut,
     Page,
     ProductOut,
@@ -89,7 +89,7 @@ ENTITIES: dict[str, EntitySpec] = {
     "companies": EntitySpec("companies", CompanyOut),
     "contacts": EntitySpec("contacts", ContactOut),
     "products": EntitySpec("products", ProductOut),
-    "leads": EntitySpec("leads", LeadOut),
+    "leads": EntitySpec("leads", LeadRow),
     "opportunities": EntitySpec("opportunities", OpportunityOut),
 }
 
