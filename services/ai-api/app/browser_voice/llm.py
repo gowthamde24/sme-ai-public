@@ -30,6 +30,12 @@ Emit = Callable[[str, dict[str, Any]], None]
 
 _MARK = re.compile(r"(\*\*|__|`+|^#{1,6}\s*|^\s*[-*•]\s+|\[\d+\]|\[S\d+\]|\(source[^)]*\))", re.MULTILINE)
 _SPACES = re.compile(r"\s+")
+_CITES = re.compile(r"(\[\d+\]|\[S\d+\]|\(source[^)]*\))")
+
+
+def written_for_screen(text: str) -> str:
+    """The answer as it is SHOWN: its Markdown (lists, bold, line breaks) kept, only the citation marks taken out."""
+    return "\n".join(_CITES.sub("", line).rstrip() for line in text.strip().splitlines()).strip()
 
 
 def speakable(text: str) -> str:
@@ -109,13 +115,13 @@ class AskLlm:
             elif kind == "error":
                 self._emit("error", {"code": str(data.get("code", "ask_failed")), "message": str(data.get("message", ""))})
                 return
-        full = speakable("".join(written))
-        say, rest = cut_for_speech(full, self._limit)
+        raw = "".join(written)
+        full = speakable(raw)
+        say, _rest = cut_for_speech(full, self._limit)
         if say:
-            self._emit("caption", {"who": "assistant", "text": say, "spoken": True})
+            # ONE caption with the whole answer as written (Markdown lists keep their lines); only the voice gets the flattened short part, named in `spoken_text`
+            self._emit("caption", {"who": "assistant", "text": written_for_screen(raw), "spoken": True, "spoken_text": say})
             yield say
-        if rest:
-            self._emit("caption", {"who": "assistant", "text": rest, "spoken": False})
         for kind, data in late:
             self._emit(kind, {k: v for k, v in data.items() if k != "type"})
 

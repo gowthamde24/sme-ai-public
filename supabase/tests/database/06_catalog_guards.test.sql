@@ -302,7 +302,7 @@ select is(
         -- job DT (ADR 0116): the opening line and the AI-mention switch
         'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
         -- job voice-picker: the workspace's chosen voice per language
-        'public.call_voice_get', 'public.call_voice_set',
+        'public.call_voice_get', 'public.call_voice_set', 'public.call_voice_gender_set',
         -- job DV follow-up: the browser voice's daily caps
         'public.browser_voice_usage_get', 'public.browser_voice_usage_add',
         -- job DY: the automatic WhatsApp reply: the Owner's switch and the worker's three calls
@@ -343,7 +343,7 @@ select is(
         'public.knowledge_facts_draft_replace', 'public.knowledge_fact_add', 'public.knowledge_fact_edit', 'public.knowledge_fact_decide', 'public.knowledge_facts_list', 'public.knowledge_facts_approved',
         -- job DR / A2: lead sources and imports (a person imports; Owner/Admin manage sources; the worker account is the door for the public arrivals and the sheets)
         'public.lead_consent_confirm', 'public.lead_intake_apply', 'public.lead_intakes_list', 'public.lead_source_create', 'public.lead_sources_list', 'public.lead_source_rotate', 'public.lead_source_set_status',
-        'public.scheduler_lead_intake_live', 'public.scheduler_lead_unparsed_add', 'public.lead_unparsed_list', 'public.lead_unparsed_discard', 'public.lead_arrivals_list',
+        'public.scheduler_lead_intake_live', 'public.scheduler_lead_unparsed_add', 'public.lead_unparsed_list', 'public.lead_unparsed_discard', 'public.lead_arrivals_list', 'public.lead_desk_page', 'public.lead_desk_get', 'public.lead_profile_unseeded', 'public.lead_profile_seed', 'public.lead_profile_apply_ai', 'public.lead_profile_fix', 'public.lead_profile_open',
         'public.lead_sheet_link_create', 'public.lead_sheet_links_list', 'public.lead_sheet_link_action', 'public.scheduler_sheet_links_due', 'public.scheduler_lead_sheet_apply', 'public.scheduler_lead_sheet_failed',
         -- job CP: reminder campaigns, the call list and the results
         'public.campaign_save', 'public.campaign_get', 'public.campaigns_list', 'public.campaign_recipients_add', 'public.campaign_recipients_from_ledger', 'public.campaign_recipient_remove', 'public.campaign_recipients_list', 'public.campaign_preview', 'public.campaign_approve', 'public.campaign_set_state', 'public.scheduler_campaign_run', 'public.call_list', 'public.call_list_outcome', 'public.campaign_results',
@@ -422,7 +422,7 @@ select is(
                      -- job DT (ADR 0116): the opening line and the AI-mention switch
                      'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
                      -- job voice-picker: the workspace's chosen voice per language
-                     'public.call_voice_get', 'public.call_voice_set',
+                     'public.call_voice_get', 'public.call_voice_set', 'public.call_voice_gender_set',
                      'public.browser_voice_usage_get', 'public.browser_voice_usage_add',
                      'public.auto_reply_get', 'public.auto_reply_set', 'public.scheduler_auto_reply_pending', 'public.scheduler_auto_reply_submit', 'public.scheduler_auto_reply_skip', 'public.assistant_context_get', 'public.assistant_context_versions_list', 'public.assistant_context_version_get', 'public.assistant_context_save', 'public.scheduler_assistant_context', 'public.lead_inbound_address_get', 'public.lead_website_form_get', 'public.lead_website_form_set', 'public.lead_inbound_address_set', 'public.lead_source_cards_stats',
                      'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
@@ -459,7 +459,7 @@ select is(
         'public.knowledge_facts_draft_replace', 'public.knowledge_fact_add', 'public.knowledge_fact_edit', 'public.knowledge_fact_decide', 'public.knowledge_facts_list', 'public.knowledge_facts_approved',
         -- job DR / A2: lead sources and imports (a person imports; Owner/Admin manage sources; the worker account is the door for the public arrivals and the sheets)
         'public.lead_consent_confirm', 'public.lead_intake_apply', 'public.lead_intakes_list', 'public.lead_source_create', 'public.lead_sources_list', 'public.lead_source_rotate', 'public.lead_source_set_status',
-        'public.scheduler_lead_intake_live', 'public.scheduler_lead_unparsed_add', 'public.lead_unparsed_list', 'public.lead_unparsed_discard', 'public.lead_arrivals_list',
+        'public.scheduler_lead_intake_live', 'public.scheduler_lead_unparsed_add', 'public.lead_unparsed_list', 'public.lead_unparsed_discard', 'public.lead_arrivals_list', 'public.lead_desk_page', 'public.lead_desk_get', 'public.lead_profile_unseeded', 'public.lead_profile_seed', 'public.lead_profile_apply_ai', 'public.lead_profile_fix', 'public.lead_profile_open',
         'public.lead_sheet_link_create', 'public.lead_sheet_links_list', 'public.lead_sheet_link_action', 'public.scheduler_sheet_links_due', 'public.scheduler_lead_sheet_apply', 'public.scheduler_lead_sheet_failed',
                      -- job CP: the shared ledger
                      'public.ledger_entry_record', 'public.ledger_entry_void', 'public.ledger_charges_import', 'public.ledger_statement', 'public.ledger_summary', 'public.ledger_entries_list', 'public.ledger_receipt_get',

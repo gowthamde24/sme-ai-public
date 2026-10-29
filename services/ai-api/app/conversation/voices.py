@@ -16,7 +16,8 @@ from pathlib import Path
 from app.voice.interface import VoiceError
 
 ENGINES: tuple[str, ...] = ("cartesia", "sarvam_v4")
-CALL_LANGUAGES: tuple[str, ...] = ("te", "hi", "kn", "en")
+CALL_LANGUAGES: tuple[str, ...] = ("te", "en", "hi", "kn", "ta", "ml")
+TAGS: tuple[str, ...] = ("calm", "warm", "deep", "bright", "young", "mature", "energetic")
 GENDERS: tuple[str, ...] = ("female", "male")
 DATA = Path(__file__).resolve().parent / "data"
 DEFAULT_FILE = DATA / "voices.json"
@@ -30,6 +31,8 @@ SAMPLE_LINES: dict[str, str] = {
     "hi": "नमस्ते जी, यह {b} की तरफ़ से कॉल है। एक मिनट जी, check करके बताते हैं। शाम छह बजे call करें?",
     "kn": "ನಮಸ್ಕಾರ ಸರ್, ನಾನು {b} ನಿಂದ ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ. ಒಂದು ನಿಮಿಷ ಸರ್, ನೋಡಿ ಹೇಳ್ತೀನಿ. ಸಂಜೆ ಆರು ಗಂಟೆಗೆ call ಮಾಡ್ಲಾ?",
     "en": "Hello, this is the assistant from {b}. One moment, I'll check and tell you. Shall I call you after six?",
+    "ta": "வணக்கம், நான் {b} இலிருந்து பேசுகிறேன். ஒரு நிமிடம், check செய்து சொல்கிறேன். மாலை ஆறு மணிக்கு call செய்யலாமா?",
+    "ml": "നമസ്കാരം, ഞാൻ {b} ൽ നിന്ന് സംസാരിക്കുന്നു. ഒരു നിമിഷം, check ചെയ്ത് പറയാം. വൈകുന്നേരം ആറ് മണിക്ക് call ചെയ്യട്ടെ?",
 }
 
 
@@ -64,6 +67,8 @@ class CatalogueVoice:
     gender: str
     default: bool
     voices: LanguageVoices
+    tags: tuple[str, ...] = ()  # plain style words for the screen (TAGS)
+    recommended: bool = False
 
     @property
     def sample_file(self) -> Path:
@@ -78,26 +83,26 @@ class VoiceConfig:
 
     @property
     def languages(self) -> dict[str, LanguageVoices]:
-        """The default voices per language."""
-        return {c.language: c.voices for c in self.catalogue.values() if c.default}
+        """The default (female) voices per language."""
+        return {c.language: c.voices for c in self.catalogue.values() if c.default and c.gender == "female"}
 
-    def voices_of(self, language: str) -> list[CatalogueVoice]:
-        """The catalogue of a language, the default first."""
-        return sorted((c for c in self.catalogue.values() if c.language == language), key=lambda c: (not c.default, c.name))
+    def voices_of(self, language: str, gender: str | None = None) -> list[CatalogueVoice]:
+        """The catalogue of a language (of one gender when given): women's voices first, in each gender the default first, then the recommended ones."""
+        return sorted((c for c in self.catalogue.values() if c.language == language and (gender is None or c.gender == gender)), key=lambda c: (c.gender == "male", not c.default, not c.recommended, c.name))
 
-    def default_for(self, language: str) -> CatalogueVoice:
+    def default_for(self, language: str, gender: str = "female") -> CatalogueVoice:
         for c in self.catalogue.values():
-            if c.language == language and c.default:
+            if c.language == language and c.gender == gender and c.default:
                 return c
         raise VoiceError("unsupported_language")
 
-    def resolve(self, language: str, chosen_id: str | None = None) -> CatalogueVoice:
-        """The voice that speaks `language`: the workspace's choice when it is a catalogue voice OF THAT LANGUAGE, else the default (an id that was removed from the catalogue, or is stale, is ignored)."""
+    def resolve(self, language: str, chosen_id: str | None = None, gender: str = "female") -> CatalogueVoice:
+        """The voice that speaks `language`: the workspace's choice when it is a catalogue voice OF THAT LANGUAGE and of the workspace's GENDER, else that gender's default (an id that was removed from the catalogue, or is stale, is ignored)."""
         picked = self.catalogue.get(chosen_id) if chosen_id else None
-        return picked if picked is not None and picked.language == language else self.default_for(language)
+        return picked if picked is not None and picked.language == language and picked.gender == gender else self.default_for(language, gender)
 
-    def for_language(self, language: str, chosen_id: str | None = None) -> LanguageVoices:
-        return self.resolve(language, chosen_id).voices
+    def for_language(self, language: str, chosen_id: str | None = None, gender: str = "female") -> LanguageVoices:
+        return self.resolve(language, chosen_id, gender).voices
 
 
 def _choice(raw: object, where: str, *, fallback: bool = False) -> VoiceChoice:
@@ -139,11 +144,15 @@ def parse_config(data: object) -> VoiceConfig:
             raise ValueError(f"{where}: the fallback must be a different engine from the primary")
         if fallback.gender != gender:
             raise ValueError(f"{where}: the fallback voice must be the same gender as the voice")
-        catalogue[vid] = CatalogueVoice(vid, lang, name, label, gender, bool(raw.get("default", False)), LanguageVoices(primary, fallback))
+        tags = tuple(str(t) for t in raw.get("tags", ()))
+        if any(t not in TAGS for t in tags) or len(tags) > 3:
+            raise ValueError(f"{where}: tags are at most three of {TAGS}")
+        catalogue[vid] = CatalogueVoice(vid, lang, name, label, gender, bool(raw.get("default", False)), LanguageVoices(primary, fallback), tags, bool(raw.get("recommended", False)))
     for lang in CALL_LANGUAGES:
-        defaults = [c for c in catalogue.values() if c.language == lang and c.default]
-        if len(defaults) != 1:
-            raise ValueError(f"voices: language {lang} needs exactly one default (has {len(defaults)})")
+        for gender in GENDERS:
+            defaults = [c for c in catalogue.values() if c.language == lang and c.gender == gender and c.default]
+            if len(defaults) != 1:
+                raise ValueError(f"voices: language {lang} needs exactly one {gender} default (has {len(defaults)})")
     return VoiceConfig(catalogue, timeout, float(data.get("cooldown_s", 30.0)))
 
 

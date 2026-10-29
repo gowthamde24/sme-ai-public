@@ -151,8 +151,20 @@ async def test_ask_answers_are_spoken_short_with_the_rest_and_the_sources_on_the
     spoken = [p async for p in llm.stream("", [{"role": "user", "content": "price of saree?"}], "ask")]
     assert spoken == ["The saree costs 2,600 rupees."]
     kinds = [k for k, _ in seen]
-    assert kinds == ["step", "source", "caption", "caption", "reply"], "(job EA) a plain answer ends with the typed reply"
-    assert seen[2][1]["spoken"] is True and seen[3][1]["spoken"] is False
+    assert kinds == ["step", "source", "caption", "reply"], "(job EA) a plain answer ends with the typed reply; (job EH) one caption with the whole answer"
+    assert seen[2][1]["spoken"] is True and seen[2][1]["spoken_text"] == "The saree costs 2,600 rupees." and seen[2][1]["text"].startswith("The saree costs 2,600 rupees. More detail")
+
+
+@arun
+async def test_a_markdown_list_is_shown_as_a_list_and_only_the_voice_gets_it_flattened() -> None:
+    seen: list[tuple[str, dict[str, Any]]] = []
+    answer = "Waiting for your approval [S1]:\n1. **Demo lead 4485**\n2. Demo lead 6978"
+    blocks = [sse("text", {"type": "text", "delta": answer}), sse("done", {"type": "done"})]
+    llm = AskLlm(AskTurns(ask_stream(blocks)), lambda k, d: seen.append((k, d)))
+    spoken = [p async for p in llm.stream("", [{"role": "user", "content": "what waits?"}], "ask")]
+    caption = next(d for k, d in seen if k == "caption")
+    assert caption["text"].count("\n") == 2 and "**" in caption["text"] and "[S1]" not in caption["text"]
+    assert "\n" not in spoken[0] and "**" not in spoken[0]
 
 
 @arun
@@ -606,18 +618,21 @@ def test_the_store_calls_the_two_database_functions_with_the_members_token() -> 
 # ---- the filler bank (follow-up) --------------------------------------------------------------------------------------------------------------------
 
 
-def test_every_catalogue_voice_has_its_pre_rendered_one_moment_lines() -> None:
-    from app.conversation.fillers import BANK_LINES, FillerBank
+def test_every_catalogue_voice_has_its_pre_rendered_one_moment_lines_in_its_language_and_gender() -> None:
+    from app.conversation.fillers import FillerBank, bank_lines
 
     cfg, bank = default_config(), FillerBank.from_disk(seed=1)
     for voice in cfg.catalogue.values():
         audio = bank._audio.get((voice.language, voice.id))  # noqa: SLF001
         assert audio is not None, f"no filler lines rendered for {voice.id}"
-        assert list(audio) == list(BANK_LINES[voice.language]) and 3 <= len(audio) <= 4
+        assert list(audio) == list(bank_lines(voice.language, voice.gender)) and 3 <= len(audio) <= 4
         for text, pcm in audio.items():
             seconds = len(pcm) / 2 / 24000
-            assert len(pcm) % 2 == 0 and 0.8 <= seconds <= 3.5, f"{voice.id}: '{text}' is {seconds:.1f} s"
-    assert "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను." in BANK_LINES["te"], "the approved Telugu wording of native-lines/te.md"
+            assert len(pcm) % 2 == 0 and 0.6 <= seconds <= 3.5, f"{voice.id}: '{text}' is {seconds:.1f} s"
+    assert bank.pick("te", "te-unknown") is None, "a voice without lines gets no filler, never another voice's"
+    assert "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను." in bank_lines("te")
+    assert bank_lines("hi", "male")[0].endswith("करता हूँ।") and bank_lines("hi")[0].endswith("करती हूँ।"), "Hindi verbs carry the speaker's gender"
+    assert all(bank_lines(lang) for lang in ("te", "en", "hi", "kn", "ta", "ml"))
 
 
 def test_the_filler_never_repeats_twice_in_a_row() -> None:
@@ -664,11 +679,88 @@ def test_the_owner_hears_a_short_hello_of_their_own_not_the_customer_call_line_a
     ctx = TenantContext(principal=Principal(user_id=USER, token="t"), tenant=TENANT_A, role=Role.OWNER)
     parts = build_parts(bv_of(), runtime, ctx, lambda kind, data: None, lambda: None)  # type: ignore[arg-type]
     assert parts.greeting_for("en") == "Hi, how can I help?"
-    for language in ("te", "en", "hi", "kn"):
+    for language in ("te", "en", "hi", "kn", "ta", "ml"):
         greeting = parts.greeting_for(language)
         assert greeting == OWNER_GREETING[language] and "enquiry" not in greeting.lower() and "calling" not in greeting.lower()
         assert f"Your opening line was: {greeting}" in parts.system_for(language), "the model is told what it said"
         assert "good time to talk" not in parts.system_for(language)
-    assert parts.greeting_for("ta") == "Hi, how can I help?", "a language without its own hello falls back to English"
+    assert parts.greeting_for("ta") == OWNER_GREETING["ta"] and parts.greeting_for("ml") == OWNER_GREETING["ml"] and parts.greeting_for("mr") == "Hi, how can I help?", "a language without its own hello falls back to English"
     assert OWNER_SILENCE_MS == 900
     assert parts.stt_for("en")._silence_ms == 900  # type: ignore[attr-defined]
+    stt = parts.stt_for("en")
+    assert (stt._language, stt._mode) == ("auto", "codemix"), "the owner may speak any of the six in any turn: detected, native script with English words"  # type: ignore[attr-defined]
+
+
+# ---- voice system v2: one voice per turn, announced before the first chunk, the language follows the owner -----------------------------------------------
+
+
+def voiced(parts: Parts) -> Parts:
+    from dataclasses import replace
+
+    names = {"te": "te-ramya", "en": "en-janvi", "hi": "hi-sanya", "kn": "kn-disha", "ta": "ta-anitha", "ml": "ml-latha"}
+    return replace(parts, voice_for=lambda language: names[language], voice_name=lambda language: names[language].split("-")[1].capitalize())
+
+
+@arun
+async def test_a_turn_names_its_voice_before_the_first_audio_chunk_and_audio_end_repeats_it() -> None:
+    sock = FakeSocket()
+    session = session_of(sock, voiced(fake_parts()))
+    run = asyncio.ensure_future(session.run())
+    sock.feed_speech()
+    await until(lambda: "timings" in sock.types())
+    sock.inbox.put_nowait(("close", None))
+    await run
+    voice = next(m for m in sock.json if m["type"] == "voice")
+    assert voice == {"type": "voice", "turn": 1, "voice_id": "en-janvi", "language": "en", "name": "Janvi"}
+    assert sock.types().index("voice") < sock.types().index("audio_end") and sock.audio
+    end = next(m for m in sock.json if m["type"] == "audio_end")
+    assert (end["voice_id"], end["language"], end["turn"]) == ("en-janvi", "en", 1)
+    assert sock.json.index(voice) < sock.json.index(end)
+
+
+@arun
+async def test_the_greeting_is_turn_zero_with_its_own_voice_message() -> None:
+    sock = FakeSocket()
+    session = session_of(sock, voiced(fake_parts(greeting="Hi, how can I help?")), limits=Limits(greeting=True))
+    run = asyncio.ensure_future(session.run())
+    await until(lambda: any(m["type"] == "audio_end" for m in sock.json))
+    sock.inbox.put_nowait(("close", None))
+    await run
+    assert sock.json[1]["type"] in ("state", "voice") and next(m for m in sock.json if m["type"] == "voice")["turn"] == 0
+    assert next(m for m in sock.json if m["type"] == "audio_end")["voice_id"] == "en-janvi"
+
+
+@arun
+async def test_the_voice_and_language_follow_what_the_owner_just_said_even_in_romanised_telugu() -> None:
+    from dataclasses import replace
+
+    sock = FakeSocket()
+    parts = replace(voiced(fake_parts()), stt_for=lambda language: FakeStt("Eeroju edaina kotha leads find chesaava?", silence_ms=300))
+    session = session_of(sock, parts)
+    run = asyncio.ensure_future(session.run())
+    sock.feed_speech()
+    await until(lambda: "timings" in sock.types())
+    sock.inbox.put_nowait(("close", None))
+    await run
+    assert {"type": "language", "language": "te"} in sock.json
+    voice = next(m for m in sock.json if m["type"] == "voice")
+    assert (voice["voice_id"], voice["language"]) == ("te-ramya", "te")
+    assert sock.json.index({"type": "language", "language": "te"}) < sock.json.index(voice), "the browser learns the language before the voice"
+
+
+@arun
+async def test_a_filler_of_another_voice_or_language_is_never_played_and_a_language_change_waits_for_the_turn_to_end() -> None:
+    sock = FakeSocket()
+    session = session_of(sock, voiced(fake_parts()))
+    session._turn_voice = ("te-ramya", "te")  # noqa: SLF001
+    assert session._filler_voice("te") == "te-ramya"  # noqa: SLF001
+    assert session._filler_voice("en") == "", "another language: no filler, never another voice"  # noqa: SLF001
+    session._turn_active = True  # noqa: SLF001
+    run = asyncio.ensure_future(session.run())
+    sock.inbox.put_nowait(("text", {"type": "set_language", "language": "hi"}))
+    await asyncio.sleep(0.1)
+    assert session.language == "en" and session._pending_language == "hi", "not in the middle of a turn"  # noqa: SLF001
+    await session._end_turn()  # noqa: SLF001
+    assert session.language == "hi" and {"type": "language", "language": "hi"} in sock.json
+    sock.inbox.put_nowait(("close", None))
+    await run

@@ -134,6 +134,7 @@ insert into exempt (tbl, why) values
   ('public.assistant_context_versions', 'the owner''s notes about the business: every business type (job EB)'),
   ('public.lead_inbound_addresses', 'lead sources: every business type (job EB)'),
   ('public.lead_website_forms', 'lead sources: every business type (job EK)'),
+  ('public.lead_profiles', 'lead sources: every business type (job EE)'),
   ('public.assistant_messages', 'Agent OWL chats'), ('public.assistant_reply_drafts', 'Agent OWL chats'), ('public.audit_events', 'the audit trail'), ('public.business_profile', 'the business itself'),
   ('public.claim_reviews', 'research evidence follows its (guarded) agent run'), ('public.claims', 'research evidence follows its (guarded) agent run'), ('public.consent_events', 'the consent ledger: every business'),
   ('public.custom_field_defs', 'custom fields: guarded by the entity''s module inside the writer functions'), ('public.custom_field_values', 'custom fields: guarded by the entity''s module inside the writer functions'),

@@ -94,6 +94,8 @@ ROUTE_WORDS = frozenset(
         "item-types", "manual-quotes",
         # job EK: the website form
         "website", "form",
+        # job EE: the lead profile
+        "normalise",
         "followup", "followups", "followup-drafts", "followup-policy-versions", "question-drafts",
         "due", "sent", "erasure-requests", "execute", "data-policy",
         "outbox", "approvals", "dispatch", "edit", "settings", "call-requests",

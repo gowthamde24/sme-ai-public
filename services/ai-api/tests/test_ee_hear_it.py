@@ -112,7 +112,7 @@ def test_a_bad_line_or_a_wrong_language_is_refused_in_plain_words() -> None:
         assert r.status_code == 422 and r.json()["error"]["code"] == "invalid_text", text
     r = post(client, {"language": "en", "text": "నమస్కారం అండీ, మా షాప్ కి స్వాగతం ఈ రోజు"})
     assert r.status_code == 422 and r.json()["error"]["code"] == "language_mismatch"
-    assert post(client, {"language": "ta", "text": "Hello there, welcome to the shop"}).status_code == 422
+    assert post(client, {"language": "mr", "text": "Hello there, welcome to the shop"}).status_code == 422
     assert post(client, {"language": "en", "text": "Hello there, welcome", "extra": 1}).status_code == 422
     assert texts == [], "nothing was spoken for any of those"
 

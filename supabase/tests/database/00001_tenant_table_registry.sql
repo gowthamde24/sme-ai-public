@@ -463,6 +463,9 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with s as (insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, created_by) values (%2$L, %1$L, 'website_form', 'website_form', 'Generic website form', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) returning id)
      insert into public.lead_website_forms (id, tenant_id, source_id, token) select %2$L, %1$L, s.id, substr(md5(%2$L), 1, 24) from s on conflict (tenant_id) do update set id = excluded.id, source_id = excluded.source_id, token = excluded.token$$,
    'token = token', $$delete from public.lead_website_forms where id = %2$L$$, false),
+  ('lead_profiles',
+   $$insert into public.lead_profiles (id, tenant_id, lead_id, need) select %2$L, %1$L, l.id, 'Generic need' from public.leads l where l.tenant_id = %1$L order by l.id limit 1 on conflict (tenant_id, lead_id) do update set id = excluded.id$$,
+   'need = need', $$delete from public.lead_profiles where id = %2$L$$, false),
   ('lead_inbound_addresses',
    $$with s as (insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, created_by) values (%2$L, %1$L, 'email_forward', 'webhook', 'Generic mail source', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) returning id)
      insert into public.lead_inbound_addresses (id, tenant_id, source_id, token) select %2$L, %1$L, s.id, substr(md5(%2$L), 1, 24) from s on conflict (tenant_id) do update set id = excluded.id, source_id = excluded.source_id, token = excluded.token$$,
@@ -805,6 +808,7 @@ select t, r, s, i, u, d from (values
   ('ledger_entries', 'sales', true, false, false, false), ('ledger_entries', 'viewer', false, false, false, false),
   ('assistant_context_versions', 'owner', true, false, false, false), ('assistant_context_versions', 'admin', true, false, false, false),
   ('assistant_context_versions', 'sales', true, false, false, false), ('assistant_context_versions', 'viewer', true, false, false, false),
+  ('lead_profiles', 'owner', true, false, false, false), ('lead_profiles', 'admin', true, false, false, false), ('lead_profiles', 'sales', true, false, false, false), ('lead_profiles', 'viewer', false, false, false, false),
   ('lead_inbound_addresses', 'owner', true, false, false, false), ('lead_inbound_addresses', 'admin', true, false, false, false),
   ('lead_inbound_addresses', 'sales', false, false, false, false), ('lead_inbound_addresses', 'viewer', false, false, false, false),
   ('lead_website_forms', 'owner', true, false, false, false), ('lead_website_forms', 'admin', true, false, false, false),

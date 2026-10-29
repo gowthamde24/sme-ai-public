@@ -175,12 +175,18 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     }
   };
   const orb = talk.active ? (talk.state === "listening" ? "listen" : talk.state === "speaking" ? "speak" : "think") : s.asking && !s.answer ? "think" : s.asking ? "speak" : "ambient";
+  // under the circle while it speaks: which voice it is ("Speaking in Telugu · Ramya"), as the API says it at the start of the turn
+  const said = talk.voice;
+  const hint = talk.state === "speaking" && said?.name ? c("bv.speaking.in").replace("{language}", voice.languageNames[said.language ?? voice.language] ?? "").replace("{voice}", said.name) : null;
   const line = talk.state === "thinking" ? (talk.step === "looking" ? voice.words["bv.looking"] : voice.words["bv.thinking"]) : talk.state === "speaking" ? voice.words["bv.speaking"] : talk.state === "listening" ? voice.words["bv.listening"] : talk.active ? voice.words["bv.connecting"] : null;
   const content = (
     <>
         <div className="flex min-h-14 shrink-0 items-center gap-2 border-b border-line px-3">
           <Orb px={28} state={orb} analyser={talk.active ? talk.analyser(talk.state === "speaking" ? "voice" : "mic") : null} />
-          <h2 className="min-w-0 flex-1 truncate font-display text-lg font-semibold">{c("bv.chat.title")}</h2>
+          <div className="min-w-0 flex-1">
+            <h2 className="truncate font-display text-lg font-semibold">{c("bv.chat.title")}</h2>
+            {hint ? <p data-chat="speaking-in" role="status" className="truncate text-xs text-muted">{hint}</p> : null}
+          </div>
           <button type="button" data-chat="history" onClick={() => void showHistory()} aria-label={c("bv.chat.history")} title={c("bv.chat.history")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-surface-2">
             <History className="size-5" aria-hidden="true" />
           </button>

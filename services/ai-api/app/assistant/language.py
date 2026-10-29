@@ -86,14 +86,14 @@ def detect_language(text: str) -> Language:
 ROMAN_WORDS: dict[Language, frozenset[str]] = {
     "te": frozenset(
         "eeroju roju edaina edhaina kotha kothha cheyyi cheyandi cheyyandi chesaava chesava chesara chesaru chesanu cheppu cheppandi cheppali chupinchu chupinchandi chudandi kavali kaavali kavalsina "
-        "unnayi unnaayi lekapothe ippudu repu ninna nenu meeru naaku miku meeku enti emiti ekkada evaru entha ayyindi ayindi vachindi vachayi vachaaru pampu pampandi pampinchu avunu kaadu sare bagundi ante".split()
+        "kotta emaina emi vacchaaya vachaya vachayaa vacchinda ledhu unnayaa kaavaali unnayi unnaayi lekapothe ippudu repu ninna nenu meeru naaku miku meeku enti emiti ekkada evaru entha ayyindi ayindi vachindi vachayi vachaaru pampu pampandi pampinchu avunu kaadu sare bagundi ante".split()
     ),
     "hi": frozenset(
-        "aaj kal kya hain nahi nahin kaise kitna kitne kitni mujhe mera meri mere aap aapka aapki batao bataiye dikhao dikhaiye karo kijiye kiya abhi achha theek thik naya naye nayi koi kuch kaun kahan "
+        "aaye aayi aaya aaj kal kya hain nahi nahin kaise kitna kitne kitni mujhe mera meri mere aap aapka aapki batao bataiye dikhao dikhaiye karo kijiye kiya abhi achha theek thik naya naye nayi koi kuch kaun kahan "
         "kab kyun chahiye bhejo bhejiye hoga hua raha rahi liye lekin aur mein yeh woh".split()
     ),
     "kn": frozenset(
-        "ivattu nale ninne beku bekku maadi maadu hegide hege yaava yaaru nanage nimage neevu naanu illa helu heli torisi thorisi kaanisi ellide yaake hosa eshtu".split()
+        "bandive bandide ivattu nale ninne beku bekku maadi maadu hegide hege yaava yaaru nanage nimage neevu naanu illa helu heli torisi thorisi kaanisi ellide yaake hosa eshtu".split()
     ),
     "ta": frozenset(
         "inniku naalaikku naalai enna epdi eppadi irukku irukka venum vendum pannunga pannu sollunga naan neenga ungalukku enakku enga evlo kaattu kaatunga puthu pudhu".split()

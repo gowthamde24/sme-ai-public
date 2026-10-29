@@ -72,7 +72,7 @@ import { readVoicePicker } from "@/lib/voice-picker/source";
 import { inForce, PICKER_LANGS, type PickerLang } from "@/lib/voice-picker/types";
 import { withNamedAssistant } from "@/lib/assistant/default-name";
 import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
-import { chooseVoiceAction } from "../voice-picker-actions";
+import { chooseVoiceAction, chooseVoiceGenderAction } from "../voice-picker-actions";
 import { readOpeningLine } from "@/lib/opening-line/source";
 import { currentAssistantName } from "@/lib/assistant/name";
 import { previewOpeningLineAction, saveOpeningLineAction } from "../opening-line-actions";
@@ -390,7 +390,6 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               saved={assistant.saved}
               actions={{ save: saveAssistantAction.bind(null, tenantId), testCall: testCallAction.bind(null, tenantId) }}
               samples={voiceSampleScreens() !== "off" ? { endpoint: `/app/tenants/${tenantId}/voice-sample`, mock: voiceSampleScreens() === "mock" } : null}
-              ownVoiceReady={ownVoice?.mode === "ok" && ownVoice.voice.status === "ready"}
               voicePickerOn={voicePicker?.mode === "ok"}
               voiceInUse={voicePicker?.mode === "ok" && assistant?.mode === "ok" ? ((v) => (v ? { name: v.name, label: v.label } : null))(inForce(voicePicker.data, assistant.settings.lang as PickerLang)) : null}
               defaultName={withNamedAssistant("{assistant}", DEFAULT_ASSISTANT_NAME, lang)}
@@ -433,13 +432,14 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             ) : null}
             {voicePicker?.mode === "ok" ? (
               <VoicePicker
+                gender={voicePicker.data.gender}
                 words={wordsFor(lang, ["vp."])}
                 rows={pickerLangs.map((l) => ({ language: l, voices: voicePicker.data.voices.filter((v) => v.language === l), choice: voicePicker.data.choices[l] ?? null }))}
                 langNames={CALL_LANG_NAMES}
                 canEdit={admin}
                 endpoint={`${base}/voice-pick`}
                 mock={voicePickerScreens() === "mock"}
-                actions={{ choose: chooseVoiceAction.bind(null, tenantId) }}
+                actions={{ choose: chooseVoiceAction.bind(null, tenantId), setGender: chooseVoiceGenderAction.bind(null, tenantId) }}
               />
             ) : null}
             {ownVoice?.mode === "ok" ? (
