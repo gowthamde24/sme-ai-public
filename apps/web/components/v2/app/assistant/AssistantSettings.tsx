@@ -12,6 +12,7 @@ import type { AssistantProfile } from "@/lib/assistant/defaults";
 
 import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, surface } from "../ui";
 import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
+import { SAMPLE_CUSTOMER, SAMPLE_ROLE, fillOpening } from "@/lib/opening-line/types";
 import { makeT, type Words } from "../words";
 
 export type AssistantActions = { save: (input: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; /** The simulated test call (job DQ part 3); absent = the button is not drawn. */ testCall?: () => Promise<TestCallResult> };
@@ -37,7 +38,7 @@ function Switch({ on, label, onChange, disabled }: { on: boolean; label: string;
  * may do on calls (and the highest discount), when it hands over to the owner, the calling hours, and on the right a live preview with the circle speaking. It starts from the defaults of the business type (`profile`), so an owner can
  * skip it; nothing is kept until "Save". Only the Owner can change it (`canEdit`). Voice samples and test calls do not exist yet, so "Hear it" is switched off and "Call me now for a test" says so. The words come in as props.
  */
-export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, ownVoiceReady = false, samples = null, voicePickerOn = false, voiceInUse = null, defaultName = null }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ ownVoiceReady?: boolean; /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The voice picker (a voice for each language, below) is on: the four-persona list is not shown, unless the Owner's own voice is in use or ready to use (it is chosen here). */ voicePickerOn?: boolean; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null }) {
+export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, ownVoiceReady = false, samples = null, voicePickerOn = false, voiceInUse = null, defaultName = null, openingLine = null }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ ownVoiceReady?: boolean; /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The voice picker (a voice for each language, below) is on: the four-persona list is not shown, unless the Owner's own voice is in use or ready to use (it is chosen here). */ voicePickerOn?: boolean; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null; /** The opening line a call speaks, per language (the saved line, else the default by the AI switch): the card shows it instead of an example sentence. */ openingLine?: { lines: Partial<Record<CallLang, string>>; defaults: Record<CallLang, string> } | null }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<Settings>(initial);
@@ -57,7 +58,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
     if (playing === v) return setPlaying(null);
     setSampleErr(false);
     setHeard(null);
-    const q = { voice: v, lang: s.lang, tone, name: s.name.trim() || initial.name };
+    const q = { voice: v, lang: s.lang, tone, name: nameOnScreen };
     if (!samples.mock) {
       // the exact words the sound says are shown beside the player (with the voice catalogue: the saved opening line with the business's real names), so what is read is what is heard
       void fetch(`${sampleUrl(samples.endpoint, q)}&text=1`, { cache: "no-store" })
@@ -83,12 +84,16 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
     setNote(null);
     setS((x) => ({ ...x, ...p }));
   };
+  const nameBlank = s.name.trim() === "";
+  const nameOnScreen = s.name.trim() || defaultName || DEFAULT_ASSISTANT_NAME; // an unsaved workspace has no name: "your assistant", in the person's language
   const nameOk = validName(s.name);
   const hoursOk = s.hours.from < s.hours.to && s.hours.days.length > 0;
   const rangeOk = s.hours.from >= HOURS.min && s.hours.to <= HOURS.max && [s.hours.from, s.hours.to].every((h) => Number(h.slice(3, 5)) % HOURS.stepMinutes === 0);
   const toggleDay = (d: Day) => set({ hours: { ...s.hours, days: s.hours.days.includes(d) ? s.hours.days.filter((x) => x !== d) : DAYS.filter((x) => x === d || s.hours.days.includes(x)) } });
-  const shownName = s.name.trim() === "" || s.name.trim() === DEFAULT_ASSISTANT_NAME ? (defaultName ?? initial.name) : s.name.trim(); // (the owner's own name is used as written)
-  const line = sayLine(s.lang, s.style, s.name.trim() || initial.name, shop);
+  const shownName = s.name.trim() === "" || s.name.trim() === DEFAULT_ASSISTANT_NAME ? (defaultName ?? DEFAULT_ASSISTANT_NAME) : s.name.trim(); // (the owner's own name is used as written)
+  // what the card says is the opening line a call speaks: the owner's saved line, else the default of the language (by the AI switch); the old example sentence only where the line is not known
+  const template = openingLine ? (openingLine.lines[s.lang] ?? openingLine.defaults[s.lang]) : null;
+  const line = template ? fillOpening(template, { customer: SAMPLE_CUSTOMER[s.lang], assistant: shownName, business: shop, agent_role: SAMPLE_ROLE[s.lang] }) : sayLine(s.lang, s.style, nameOnScreen, shop);
   const ok = parseSettings(s) !== null;
   return (
     <div data-settings="assistant" data-assistant-saved={saved ? "true" : "false"} className="@container flex flex-col gap-5">
@@ -131,11 +136,11 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
             <section className={block} aria-labelledby="asst-name-h">
               <div>
                 <h3 id="asst-name-h" className="text-[17px] font-semibold">{t("asst.name.t")}</h3>
-                <p className="text-sm text-muted">{t("asst.name.d", { name: s.name.trim() || initial.name, shop })}</p>
+                <p className="text-sm text-muted">{t("asst.name.d", { name: nameOnScreen, shop })}</p>
               </div>
               <label htmlFor="asst-name" className="sr-only">{t("asst.name.label")}</label>
-              <input id="asst-name" value={s.name} maxLength={NAME_MAX} onChange={(e) => set({ name: e.target.value })} aria-invalid={!nameOk} aria-describedby={nameOk ? undefined : "asst-name-err"} className={`${fieldInput} max-w-xs`} />
-              {nameOk ? null : (
+              <input id="asst-name" value={s.name} maxLength={NAME_MAX} onChange={(e) => set({ name: e.target.value })} placeholder={defaultName ?? DEFAULT_ASSISTANT_NAME} aria-invalid={!nameOk && !nameBlank} aria-describedby={nameOk ? undefined : "asst-name-err"} className={`${fieldInput} max-w-xs`} />
+              {nameBlank && !saved ? <p id="asst-name-err" className="text-sm text-muted">{t("asst.name.need")}</p> : nameOk ? null : (
                 <p id="asst-name-err" role="alert" className="text-sm font-medium text-red-text">
                   {t("asst.name.err", { n: NAME_MAX })}
                 </p>
@@ -175,7 +180,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
                       </button>
                     ))}
                   </div>
-                  <p className="mt-2 text-sm font-medium" data-part="preview-label">{t("asst.preview.label", { who: s.name.trim() || initial.name })}</p>
+                  <p className="mt-2 text-sm font-medium" data-part="preview-label">{t("asst.preview.label", { who: nameOnScreen })}</p>
                   <p className="mt-2 text-sm text-muted">{t("asst.sample.note", { language: langs[s.lang] })} {t("asst.tone.note")}</p>
                   {samples.mock ? <p role="note" className="mt-1 text-sm text-muted">{t("asst.sample.mock")}</p> : null}
                   {sampleErr ? <p role="alert" className="mt-1 text-sm font-medium text-red-text">{t("asst.sample.err")}</p> : null}

@@ -30,6 +30,8 @@ try {
   }, { base: `/app/tenants/${s.tenant}`, lang }).catch(() => null);
   ok("what is shown equals the greeting the API gives for the saved line", !!shown && !!direct && norm(direct) === shown, `${shown.slice(0, 80)}`);
   ok("it has no unfilled placeholder", !/[{}]/.test(shown));
+  const cardLine = norm((await p.locator('[data-part="preview-line"]').innerText()).replace(/[“”"]/g, ""));
+  ok("the line on the card IS the line that is spoken (the saved line, else the default: no separate example)", cardLine === shown, `card: ${cardLine.slice(0, 70)} | said: ${shown.slice(0, 70)}`);
   await shot(s, `hi-${pack}-${size}-1-card`);
   // (b) the opening-line editor with an unsaved edit
   const box = p.getByLabel("What is said");

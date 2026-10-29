@@ -5,7 +5,7 @@
 export const NOTES_MAX = 20_000;
 export const SECTIONS = ["prices", "delivery", "timings", "payment", "always_say", "never_say", "discounts", "handover", "tone", "faq", "products", "other"] as const;
 export type Section = (typeof SECTIONS)[number];
-export const WARNINGS = ["cells_cut", "illegible_part", "looks_like_personal_data"] as const;
+export const WARNINGS = ["cells_cut", "illegible_part", "looks_like_personal_data", "read_from_picture"] as const;
 export type Warning = (typeof WARNINGS)[number];
 export const HANDOVER_REASONS = ["asked_for_a_person", "asked_about_money", "complaint", "unsure"] as const;
 export type HandoverReason = (typeof HANDOVER_REASONS)[number];
@@ -17,7 +17,7 @@ export type Understood = { previewId: string; understood: { section: Section; te
 export type TestAnswer = { answer: string; language: string; used: { from: "notes" | "facts"; snippet: string }[]; wouldHandOver: boolean; reason: HandoverReason | null };
 
 /** The closed words a refusal becomes; the API's own English is never passed on (the screen has a sentence for each). */
-export type ContextError = "changed" | "expired" | "schools_fees" | "schools_marks" | "schools_dues" | "schools_children" | "refused" | "unreadable" | "toolarge" | "busy" | "forbidden" | "slow" | "down";
+export type ContextError = "changed" | "expired" | "schools_fees" | "schools_marks" | "schools_dues" | "schools_children" | "refused" | "unreadable" | "toolarge" | "toolong" | "vision" | "busy" | "forbidden" | "slow" | "down";
 export type Done<T> = { ok: true; data: T } | { ok: false; error: ContextError };
 
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
@@ -58,7 +58,7 @@ export function parseTest(json: unknown): TestAnswer | null {
 }
 
 /** What the screen may send as a file: the kinds the API reads, up to 3 MB. */
-export const FILE_ACCEPT = ".pdf,.xlsx,.csv,.docx,.txt,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png";
+export const FILE_ACCEPT = ".pdf,.xlsx,.csv,.docx,.txt,.jpg,.jpeg,.png,.webp,.gif,application/pdf,image/jpeg,image/png,image/webp,image/gif";
 export const FILE_MAX_BYTES = 3 * 1024 * 1024;
 export const VOICE_MAX_SECONDS = 120;
 export const UNDERSTAND_KINDS = ["paste", "file", "voice"] as const;

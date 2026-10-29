@@ -21,10 +21,11 @@ import { readAssistant } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, VOICES } from "@/lib/assistant/types";
 import { readKnowledge } from "@/lib/lead-desk/knowledge-source";
 import { readPlaybook } from "@/lib/lead-desk/playbook-source";
+import { readOpeningLine } from "@/lib/opening-line/source";
 import { readTemplates } from "@/lib/lead-desk/source";
 import { readRules } from "@/lib/outreach/source";
 import { withModuleWords } from "@/lib/packs/module-words";
-import { assistantScreens, leadsScreens, outreachScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { assistantScreens, leadsScreens, openingLineScreens, outreachScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
 import { readVoicePicker } from "@/lib/voice-picker/source";
 import { inForce, PICKER_LANGS, type PickerLang } from "@/lib/voice-picker/types";
 import { appT } from "@/i18n/app";
@@ -113,6 +114,7 @@ export default async function LeadSetupPage({ params, searchParams }: PageProps<
     const assistant = await readAssistant(ctx, pack?.modules ?? null);
     // the voices are the catalogue's (Ramya, Janvi, Sanya, Disha by default), the same picker as Settings > AI assistant: no persona list here
     const voicePicker = voicePickerScreens() !== "off" ? await readVoicePicker(ctx) : null;
+    const openingLine = openingLineScreens() !== "off" ? await readOpeningLine(ctx) : null;
     const pickerLangs: PickerLang[] = voicePicker?.mode === "ok" ? await getWorkspaceProfile(accessToken, tenantId).then((p) => p.languages, (e) => (e instanceof ApiAuthError ? redirect("/login") : ([] as string[]))).then((own) => PICKER_LANGS.filter((l) => [...own, ...(assistant.mode === "ok" ? [assistant.settings.lang] : own.length === 0 ? [lang] : [])].includes(l))) : [];
     body =
       assistant.mode === "ok" ? (
@@ -132,6 +134,7 @@ export default async function LeadSetupPage({ params, searchParams }: PageProps<
           voicePickerOn={voicePicker?.mode === "ok"}
           voiceInUse={voicePicker?.mode === "ok" ? ((v) => (v ? { name: v.name, label: v.label } : null))(inForce(voicePicker.data, assistant.settings.lang as PickerLang)) : null}
           defaultName={withNamedAssistant("{assistant}", DEFAULT_ASSISTANT_NAME, lang)}
+          openingLine={openingLine?.mode === "ok" ? { lines: openingLine.data.lines, defaults: openingLine.data.defaults } : null}
         />
         {voicePicker?.mode === "ok" ? (
           <VoicePicker

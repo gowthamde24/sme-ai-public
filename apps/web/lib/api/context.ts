@@ -31,6 +31,10 @@ export function contextErrorOf(error: unknown): ContextError {
       return error.code === "sheet_refused" ? "refused" : "unreadable";
     case "file_too_large":
       return "toolarge";
+    case "file_too_long": // a PDF of more than 25 pages
+      return "toolong";
+    case "vision_unavailable": // the picture reader is not on
+      return "vision";
     case "model_unavailable":
       return "busy";
     case "rate_limited":
