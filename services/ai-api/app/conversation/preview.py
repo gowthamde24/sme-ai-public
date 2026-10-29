@@ -26,12 +26,12 @@ class CallVoicePreview:
     def __init__(self, config: VoiceConfig, factory: EngineFactory, *, clock: Callable[[], float] = time.monotonic, today: Callable[[], str] | None = None) -> None:
         self._config, self._factory, self._clock = config, factory, clock
         self._today = today or (lambda: time.strftime("%Y-%m-%d"))
-        self._cache: OrderedDict[str, tuple[bytes, str]] = OrderedDict()
+        self._cache: OrderedDict[str, tuple[bytes, str, str]] = OrderedDict()
         self._spent: dict[tuple[str, str], int] = {}
 
-    async def speak(self, tenant_id: uuid.UUID, language: str, chosen: str | None, text: str) -> tuple[bytes, str]:
-        """(wav, the engine that spoke). Raises VoiceError('rate_limited') over the daily cap and VoiceError('tts_unavailable') when no engine could."""
-        voice = self._config.resolve(language, chosen)
+    async def speak(self, tenant_id: uuid.UUID, language: str, chosen: str | None, text: str, gender: str = "female") -> tuple[bytes, str, str]:
+        """(wav, the engine that spoke, the catalogue voice id). Raises VoiceError('rate_limited') over the daily cap and VoiceError('tts_unavailable') when no engine could."""
+        voice = self._config.resolve(language, chosen, gender)
         key = hashlib.sha256(f"{voice.id}|{text}".encode()).hexdigest()
         hit = self._cache.get(key)
         if hit is not None:
@@ -42,7 +42,7 @@ class CallVoicePreview:
             raise VoiceError("rate_limited")
         self._spent = {k: v for k, v in self._spent.items() if k[1] == slot[1]}
         self._spent[slot] = self._spent.get(slot, 0) + len(text)
-        tts = FallbackTts(self._config, self._factory, chosen={language: voice.id}, clock=self._clock)
+        tts = FallbackTts(self._config, self._factory, chosen={language: voice.id}, gender=gender, clock=self._clock)
         tts.begin_turn()
         pcm = b"".join([c async for c in tts.stream(text, language)])
         buf = io.BytesIO()
@@ -51,7 +51,7 @@ class CallVoicePreview:
             w.setsampwidth(2)
             w.setframerate(tts.sample_rate)
             w.writeframes(pcm[: len(pcm) // 2 * 2])
-        self._cache[key] = (buf.getvalue(), tts.served_engine)
+        self._cache[key] = (buf.getvalue(), tts.served_engine, voice.id)
         while len(self._cache) > PREVIEW_CACHE:
             self._cache.popitem(last=False)
         return self._cache[key]

@@ -17,7 +17,7 @@ from functools import lru_cache
 from pathlib import Path
 
 DATA = Path(__file__).resolve().parent / "data" / "pronunciations.json"
-RUPEES = {"en": "rupees", "te": "రూపాయలు", "hi": "रुपये", "kn": "ರೂಪಾಯಿ"}
+RUPEES = {"en": "rupees", "te": "రూపాయలు", "hi": "रुपये", "kn": "ರೂಪಾಯಿ", "ta": "ரூபாய்", "ml": "രൂപ"}
 _ONES = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"]
 _TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
 _AMOUNT = r"(\d[\d,]*(?:\.\d+)?)"

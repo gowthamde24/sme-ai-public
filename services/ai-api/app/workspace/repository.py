@@ -29,6 +29,7 @@ class WorkspaceRepository(Protocol):
     def set_mention_ai(self, token: str, tenant_id: uuid.UUID, campaign_id: str | None, mention_ai: bool | None) -> dict[str, Any]: ...
     def voice_choices(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def set_voice_choice(self, token: str, tenant_id: uuid.UUID, language: str, voice_id: str | None) -> dict[str, Any]: ...
+    def set_voice_gender(self, token: str, tenant_id: uuid.UUID, gender: str) -> dict[str, Any]: ...
 
 
 class PostgrestWorkspaceRepository:
@@ -84,3 +85,6 @@ class PostgrestWorkspaceRepository:
 
     def set_voice_choice(self, token: str, tenant_id: uuid.UUID, language: str, voice_id: str | None) -> dict[str, Any]:
         return self._rpc.object(token, "call_voice_set", {"p_tenant_id": str(tenant_id), "p_language": language, "p_voice_id": voice_id})
+
+    def set_voice_gender(self, token: str, tenant_id: uuid.UUID, gender: str) -> dict[str, Any]:
+        return self._rpc.object(token, "call_voice_gender_set", {"p_tenant_id": str(tenant_id), "p_gender": gender})

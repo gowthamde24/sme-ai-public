@@ -109,6 +109,9 @@ from app.knowledge import errors as knowledge_errors
 from app.knowledge.repository import PostgrestKnowledgeRepository
 from app.knowledge.routes import router as knowledge_router
 from app.knowledge.service import KnowledgeService
+from app.lead_profile.repository import PostgrestLeadProfileRepository
+from app.lead_profile.routes import router as lead_profile_router
+from app.lead_profile.service import LeadProfileService
 from app.lead_sources.routes import public_router as lead_intake_router
 from app.lead_sources.routes import router as lead_sources_router
 from app.lead_sources.wiring import build_lead_sources
@@ -321,6 +324,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         knowledge=KnowledgeService(PostgrestKnowledgeRepository(config.rest_url, config.anon_key)),
         lead_sources=build_lead_sources(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key, key_ring
+        ),
+        lead_profiles=LeadProfileService(
+            PostgrestLeadProfileRepository(config.rest_url, config.anon_key)
         ),
         outreach=build_outreach(config.rest_url, config.anon_key),
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
@@ -1225,6 +1231,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_playbook_router)
     app.include_router(knowledge_router)
     app.include_router(lead_sources_router)
+    app.include_router(lead_profile_router)
     app.include_router(lead_intake_router)
     app.include_router(outreach_router)
     app.include_router(tasks_router)

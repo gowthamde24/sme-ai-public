@@ -33,6 +33,7 @@ from pydantic import (
 
 from app import gstin as gstin_module
 from app.crm.phone import canonical_phone  # noqa: E402
+from app.lead_profile.models import LeadProfileOut
 
 # ----------------------------------------------------------------------------- primitives
 _CANONICAL_UUID = re.compile(
@@ -203,13 +204,22 @@ class ProductOut(_Row):
     active: bool
 
 
-class LeadOut(_Row):
+class LeadRow(_Row):
+    """The lead's own columns (what the data layer is asked for)."""
+
     company_id: uuid.UUID | None
     contact_id: uuid.UUID | None
     owner_user_id: uuid.UUID | None
     status: LeadStatus
     source: str | None
     disqualified_reason: str | None
+
+
+class LeadOut(LeadRow):
+    """`GET /leads`: the columns plus the profile (job EE) and whether this person opened it."""
+
+    profile: LeadProfileOut | None = None
+    is_new: bool = False
 
 
 class OpportunityOut(_Row):

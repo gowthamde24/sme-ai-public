@@ -14,7 +14,8 @@ request models are attached to the endpoint signatures at registration time.
 
 import uuid
 from dataclasses import dataclass
-from typing import Annotated, Any
+from datetime import date
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Query, Response
 
@@ -31,6 +32,7 @@ from app.crm.models import (
     CursorError,
     LeadCreate,
     LeadOut,
+    LeadStatus,
     LeadUpdate,
     LiftSuppressionIn,
     OpportunityCreate,
@@ -144,12 +146,42 @@ def _register(api: EntityApi) -> None:
             include_archived=include_archived,
         )
 
+    def list_leads(
+        ctx: AnyMember,
+        runtime: RuntimeDep,
+        limit: Annotated[int, Query(ge=1, le=100)] = 50,
+        cursor: Annotated[str | None, Query(max_length=300)] = None,
+        include_archived: bool = False,
+        status: Annotated[LeadStatus | None, Query()] = None,
+        source: Annotated[str | None, Query(max_length=64)] = None,
+        urgency: Annotated[Literal["low", "normal", "high"] | None, Query()] = None,
+        created_from: Annotated[date | None, Query()] = None,
+        created_to: Annotated[date | None, Query()] = None,
+        q: Annotated[str | None, Query(max_length=100)] = None,
+        new: Annotated[bool | None, Query()] = None,
+        junk: Annotated[Literal["only", "hide"] | None, Query()] = None,
+    ) -> Any:
+        """The Lead Desk list: leads with their profile (job EE)."""
+        if runtime.lead_profiles is None:
+            return list_rows(ctx, runtime, limit, cursor, include_archived, None)
+        return runtime.lead_profiles.page(
+            ctx, limit=limit, cursor=cursor, include_archived=include_archived,
+            status=status.value if status else None, source=source, urgency=urgency,
+            created_from=created_from, created_to=created_to, q=q, new=new, junk=junk,
+        )
+
     router.add_api_route(
-        base, list_rows, methods=["GET"], response_model=page_model, name=f"list_{entity}"
+        base,
+        list_leads if entity == "leads" else list_rows,
+        methods=["GET"],
+        response_model=page_model,
+        name=f"list_{entity}",
     )
 
     # ----------------------------------------------------------------------- get
     def get_row(row_id: str, ctx: AnyMember, runtime: RuntimeDep) -> Any:
+        if entity == "leads" and runtime.lead_profiles is not None:
+            return runtime.lead_profiles.get(ctx, _row_id(row_id))
         row = runtime.crm.get_row(ctx.principal.token, entity, ctx.tenant.id, _row_id(row_id))
         if row is None:
             raise not_found()
@@ -167,6 +199,8 @@ def _register(api: EntityApi) -> None:
         response.status_code = 201 if created else 200
         if entity == "contacts":
             row = _keyed(runtime, ctx, row)
+        if entity == "leads" and runtime.lead_profiles is not None:
+            return runtime.lead_profiles.get(ctx, row.id)  # as the read: with its profile
         return row
 
     create_row.__annotations__["body"] = api.create
@@ -193,6 +227,8 @@ def _register(api: EntityApi) -> None:
         if entity == "contacts" and ("email" in changes or "phone" in changes):
             # a changed identifier forgot its key: record the new one (ADR 0020)
             updated = _keyed(runtime, ctx, updated)
+        if entity == "leads" and runtime.lead_profiles is not None:
+            return runtime.lead_profiles.get(ctx, rid)
         return updated
 
     update_row.__annotations__["body"] = api.update

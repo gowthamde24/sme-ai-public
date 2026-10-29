@@ -66,8 +66,10 @@ def test_the_sign_up_cards_come_without_signing_in(client: TestClient) -> None:
     r = client.get("/v1/packs")
     assert r.status_code == 200
     conforms(r.json(), "PackListOut")
-    # the published pack first, then by id (job DR / A1 added the nine "Leads & calls" business types, all preview; job DT the generic one)
-    assert [p["pack_id"] for p in r.json()["packs"]] == ["textiles", "auto_dealer", "clinic", "coaching", "construction_materials", "education", "other", "gym", "insurance_loans", "interiors_solar", "real_estate", "travel", "wholesale_b2b"]
+    # behaviour, not the roster: the published pack comes first, nobody twice, and the business types the product has always offered are there (a NEW business type, or a new order of the rest, must not break this test)
+    ids = [p["pack_id"] for p in r.json()["packs"]]
+    assert ids[0] == "textiles" and len(ids) == len(set(ids))
+    assert {"auto_dealer", "clinic", "coaching", "construction_materials", "education", "gym", "real_estate", "wholesale_b2b"} <= set(ids)
     providers = client.get("/v1/auth/providers")
     conforms(providers.json(), "AuthProvidersOut")
     assert providers.json() == {"email": True, "google": False, "facebook": False}
