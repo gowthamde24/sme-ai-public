@@ -52,5 +52,5 @@ def test_a_place_that_holds_a_price_word_is_not_a_price_question() -> None:
 
 def test_the_chat_prompt_welcomes_casual_talk_and_does_not_steer_back_to_work() -> None:
     text = prompts.CHAT_SYSTEM_PROMPT
-    assert "never refuse it" in text and "Do not steer back to leads" in text and "general-knowledge" in text
+    assert "never refuse it" in text and "Do not steer back to leads" in text and "general-knowledge" in text and "one short paragraph" in text
     assert "no mention of the business" in prompts.CHAT_SMALLTALK_CLAUSE
