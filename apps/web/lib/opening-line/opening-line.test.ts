@@ -120,6 +120,11 @@ describe("the editor's source", () => {
     expect(await previewLine(CTX, "en", "Short {x}", true, true)).toEqual({ ok: false, error: "invalid" });
     expect(h.spoken).not.toHaveBeenCalled();
   });
+  it("a line in another script than its language is its own closed word", async () => {
+    vi.stubEnv("OPENING_LINE_SCREENS", "1");
+    h.spoken.mockRejectedValue(new ApiRequestError(422, "language_mismatch", "x"));
+    expect(await previewLine(CTX, "te", "Hello {customer}, this is {assistant} of {business}.", true, true)).toEqual({ ok: false, error: "language" });
+  });
   it("while the API has no 'preview this text': a saved line is heard with its exact greeting shown, an unsaved one says it cannot be heard yet (never another sound)", async () => {
     vi.stubEnv("OPENING_LINE_SCREENS", "1");
     const line = "Hello {customer}, this is {assistant} of {business}. Do you have a minute?";

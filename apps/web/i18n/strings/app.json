@@ -73830,5 +73830,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ope.hear.language": {
+  "en": "This line is not written in the language of this tab. Write it in this language, or open the tab of the language it is in.",
+  "te": "ఈ లైన్ ఈ ట్యాబ్ భాషలో రాయలేదు. ఈ భాషలో రాయండి, లేదా అది రాసిన భాష ట్యాబ్ తెరవండి.",
+  "hi": "यह लाइन इस टैब की भाषा में नहीं लिखी है। इसे इस भाषा में लिखें, या जिस भाषा में है उसका टैब खोलें।",
+  "kn": "ಈ ಸಾಲು ಈ ಟ್ಯಾಬ್‌ನ ಭಾಷೆಯಲ್ಲಿ ಬರೆದಿಲ್ಲ. ಈ ಭಾಷೆಯಲ್ಲಿ ಬರೆಯಿರಿ, ಅಥವಾ ಅದು ಇರುವ ಭಾಷೆಯ ಟ್ಯಾಬ್ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

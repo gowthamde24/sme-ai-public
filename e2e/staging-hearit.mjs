@@ -65,6 +65,12 @@ try {
   await p.goto(`${s.base}/settings?section=assistant`, { waitUntil: "domcontentloaded" });
   await p.locator("[data-play]").first().waitFor({ timeout: 45000 });
   ok("the voice picker has play buttons", (await p.locator("[data-play]").count()) >= 2);
+  await p.locator("[data-play]").first().click();
+  await p.locator('[data-part="sample-text"]').first().waitFor({ timeout: 10000 }).then(async () => {
+    const t = norm(await p.locator('[data-part="sample-text"]').first().innerText());
+    ok("a played voice shows the exact words of its sample", t.length > 20 && !/Vijaya/.test(t), t.slice(0, 90));
+  }, () => ok("a played voice shows the exact words of its sample", false, "no sample_text shown"));
+  await shot(s, `hi-${pack}-${size}-4-picker`);
   ok("no page errors", s.errors.length === 0, s.errors.slice(0, 2).join(" | "));
 } catch (e) {
   ok("script", false, String(e.message || e).split("\n")[0].slice(0, 200));
