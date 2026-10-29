@@ -920,10 +920,10 @@
    },
    "fallback": {
     "engine": "sarvam_v4",
-    "model": "bulbul:v3",
-    "voice": "ritu",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_hi_conversational",
     "gender": "female",
-    "label": "ritu"
+    "label": "roopa"
    }
   },
   {
@@ -945,10 +945,10 @@
    },
    "fallback": {
     "engine": "sarvam_v4",
-    "model": "bulbul:v3",
-    "voice": "ritu",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_hi_conversational",
     "gender": "female",
-    "label": "ritu"
+    "label": "roopa"
    }
   },
   {
@@ -970,10 +970,10 @@
    },
    "fallback": {
     "engine": "sarvam_v4",
-    "model": "bulbul:v3",
-    "voice": "ritu",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_hi_conversational",
     "gender": "female",
-    "label": "ritu"
+    "label": "roopa"
    }
   },
   {
@@ -996,10 +996,10 @@
    },
    "fallback": {
     "engine": "sarvam_v4",
-    "model": "bulbul:v3",
-    "voice": "ritu",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_hi_conversational",
     "gender": "female",
-    "label": "ritu"
+    "label": "roopa"
    }
   },
   {
@@ -1021,10 +1021,10 @@
    },
    "fallback": {
     "engine": "sarvam_v4",
-    "model": "bulbul:v3",
-    "voice": "ritu",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_hi_conversational",
     "gender": "female",
-    "label": "ritu"
+    "label": "roopa"
    }
   },
   {
@@ -1124,10 +1124,10 @@
    },
    "fallback": {
     "engine": "sarvam_v4",
-    "model": "bulbul:v3",
-    "voice": "pooja",
+    "model": "bulbul:v4-flash",
+    "voice": "roopa_hi_conversational",
     "gender": "female",
-    "label": "pooja"
+    "label": "roopa"
    }
   },
   {
@@ -1150,10 +1150,10 @@
    },
    "fallback": {
     "engine": "sarvam_v4",
-    "model": "bulbul:v3",
-    "voice": "shubh",
+    "model": "bulbul:v4-flash",
+    "voice": "kabir_hi_conversational",
     "gender": "male",
-    "label": "shubh"
+    "label": "kabir"
    }
   }
  ]
