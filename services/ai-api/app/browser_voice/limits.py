@@ -25,8 +25,8 @@ IST = timezone(timedelta(hours=5, minutes=30))
 
 @dataclass(frozen=True)
 class Limits:
-    session_seconds: int = 300
-    day_seconds: int = 1800  # a workspace's talking time per day, all its sessions together
+    session_seconds: int = 3600   # the owner's chat stays open until they close it (an hour at most per session)
+    day_seconds: int = 7200  # a workspace's talking time per day, all its sessions together
     day_tts_chars: int = 6000  # characters sent to the voice engines per workspace per day (Cartesia is paid per character)
     sessions_per_minute: int = 6
     greeting: bool = True

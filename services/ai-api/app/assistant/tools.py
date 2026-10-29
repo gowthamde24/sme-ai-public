@@ -55,6 +55,14 @@ class Item:
     open: tuple[str, uuid.UUID] | None = None
 
 
+_PLACEHOLDER_NAME = re.compile(r"\b(WhatsApp customer|Enquiry) [0-9a-f]{6}\b")
+
+
+def friendly_names(text: str) -> str:
+    """A customer who has no name yet is a placeholder company ("WhatsApp customer 84407a"); the owner never sees that id."""
+    return _PLACEHOLDER_NAME.sub(lambda m: "a WhatsApp customer" if m.group(1).startswith("W") else "an enquiry", text)
+
+
 @dataclass
 class State:
     """What this run has seen and made. Sources can only come from here."""
@@ -83,6 +91,8 @@ class State:
     ) -> Item:
         for paise in money:
             self.allowed_paise.add(paise)
+        label = friendly_names(label)
+        fields = {k: friendly_names(v) if isinstance(v, str) else v for k, v in fields.items()}
         known = self.by_id.get((type_, id_))
         if known is not None:  # the same record seen again keeps its handle
             return self.items[known]

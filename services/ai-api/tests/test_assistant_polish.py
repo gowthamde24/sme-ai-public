@@ -235,14 +235,22 @@ def test_the_fixed_reply_names_the_repairs_that_were_asked_for(
 
 
 @pytest.mark.parametrize("language", ["te", "hi", "kn", "en"])
-def test_when_the_tools_found_nothing_an_uncited_answer_gets_the_fixed_sentence_at_once_not_two_more_model_turns(language: str) -> None:
+def test_when_the_tools_found_nothing_the_models_own_kind_sentence_is_shown_at_once_not_two_more_model_turns(language: str) -> None:
+    runner, _ = runner_with_today(waiting=0, recent=0)  # no record exists to cite
+    given = answer(language=language)
+    out = runner._judge(given, language, set(), 2, searched=True)  # type: ignore[arg-type]
+    assert isinstance(out, Reply) and out.text == given["answer"] and out.kind == "answer" and out.sources == []
+
+
+@pytest.mark.parametrize("language", ["te", "hi", "kn", "en"])
+def test_when_the_tools_found_nothing_an_answer_with_a_figure_is_replaced_by_the_kind_sentence(language: str) -> None:
     from app.assistant.language import NO_ANSWER
 
-    expected = NO_ANSWER[language]  # type: ignore[index]
-
-    runner, _ = runner_with_today(waiting=0, recent=0)  # no record exists to cite
-    out = runner._judge(answer(language=language), language, set(), 2, searched=True)  # type: ignore[arg-type]
-    assert isinstance(out, Reply) and out.text == expected and out.kind == "refusal" and out.sources == []
+    runner, _ = runner_with_today(waiting=0, recent=0)
+    base = answer(language=language)
+    figure = {**base, "answer": f"{base['answer']} 3"}
+    out = runner._judge(figure, language, set(), 2, searched=True)  # type: ignore[arg-type]
+    assert isinstance(out, Reply) and out.text == NO_ANSWER[language] and out.kind == "refusal" and out.sources == []  # type: ignore[index]
 
 
 def test_an_uncited_answer_before_any_tool_ran_is_still_asked_again_so_the_model_can_look_things_up() -> None:
