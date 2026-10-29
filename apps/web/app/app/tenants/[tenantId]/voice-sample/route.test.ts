@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), sample: vi.fn(), said: vi.fn(), chosen: vi.fn(), greeting: vi.fn() }));
+const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), sample: vi.fn(), said: vi.fn(), chosen: vi.fn(), greeting: vi.fn(), speak: vi.fn() }));
 vi.mock("@/lib/api/voice-picker", () => ({ getVoicesPreviewFile: (...a: unknown[]) => h.chosen(...a) }));
-vi.mock("@/lib/api/opening-line", () => ({ savedGreetingText: (...a: unknown[]) => h.greeting(...a) }));
+vi.mock("@/lib/api/opening-line", () => ({ savedGreetingText: (...a: unknown[]) => h.greeting(...a), speakWithName: (...a: unknown[]) => h.speak(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
 vi.mock("@/lib/api/voice-samples", () => ({ getVoicePreview: (...a: unknown[]) => h.sample(...a), getVoicePreviewText: (...a: unknown[]) => h.said(...a) }));
@@ -30,12 +30,24 @@ describe("GET voice-sample (job DQ part 3; the live preview of job DT)", () => {
     vi.stubEnv("VOICE_SAMPLE_SCREENS", "1");
     vi.stubEnv("VOICE_PICKER_SCREENS", "1");
     h.chosen.mockResolvedValue({ bytes: new ArrayBuffer(4), contentType: "audio/wav" });
-    const r = await get("voice=male_calm&lang=te&tone=warm&name=Asha");
+    const r = await get("voice=male_calm&lang=te&tone=warm");
     expect(r.status).toBe(200);
     expect(h.chosen).toHaveBeenCalledWith("tok", T, "te");
     expect(h.sample).not.toHaveBeenCalled();
     h.chosen.mockResolvedValue(null);
-    expect((await get("voice=male_calm&lang=te&tone=warm&name=Asha")).status).toBe(404);
+    expect((await get("voice=male_calm&lang=te&tone=warm")).status).toBe(404);
+  });
+  it("with the voice catalogue on and a name typed but not saved, the sound is the same line WITH that name (POST /voices/preview {assistant_name}), in the voice in force", async () => {
+    vi.stubEnv("VOICE_SAMPLE_SCREENS", "1");
+    vi.stubEnv("VOICE_PICKER_SCREENS", "1");
+    h.speak.mockResolvedValue({ bytes: new Uint8Array(4), contentType: "audio/wav", voiceId: "te-ramya" });
+    const r = await get("voice=female_warm&lang=te&tone=warm&name=kallu");
+    expect(r.status).toBe(200);
+    expect(r.headers.get("X-Voice-Id")).toBe("te-ramya");
+    expect(h.speak).toHaveBeenCalledWith("tok", T, "te", "kallu");
+    expect(h.chosen).not.toHaveBeenCalled();
+    h.speak.mockResolvedValue(null);
+    expect((await get("voice=female_warm&lang=te&tone=warm&name=kallu")).status).toBe(404);
   });
   it("is not there while the screens are off", async () => {
     expect((await get()).status).toBe(404);
@@ -84,7 +96,7 @@ describe("GET voice-sample (job DQ part 3; the live preview of job DT)", () => {
     h.greeting.mockResolvedValueOnce("నమస్కారం రవి గారూ, నేను రమ్య, సిరి సిల్క్స్ నుంచి.");
     const r = await get("voice=female_warm&lang=te&tone=warm&name=Asha&text=1");
     expect(await r.json()).toEqual({ text: "నమస్కారం రవి గారూ, నేను రమ్య, సిరి సిల్క్స్ నుంచి." });
-    expect(h.greeting).toHaveBeenCalledWith("tok", T, "te");
+    expect(h.greeting).toHaveBeenCalledWith("tok", T, "te", "Asha"); // a name typed on the screen goes with it
     expect(h.said).not.toHaveBeenCalled();
     h.greeting.mockResolvedValueOnce(null);
     expect((await get("voice=female_warm&lang=te&tone=warm&text=1")).status).toBe(404);

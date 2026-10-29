@@ -86,7 +86,7 @@ describe("hearing the line as it is on the screen", () => {
   it("sends the line with its placeholders and the switch, saves nothing, and brings back the sound with the EXACT words it spoke", async () => {
     apiRequest.mockResolvedValue({ spoken_text: "నమస్కారం రవి గారూ, నేను రమ్య.", audio: { mime: "audio/wav", base64: Buffer.from(wav(2)).toString("base64") }, engine: "cartesia" });
     const got = await previewSpoken("tok", T, { language: "te", text: BODY.text, mentionAi: true });
-    expect(apiRequest).toHaveBeenCalledWith(`${AI}/voices/preview`, "tok", { method: "POST", body: JSON.stringify(BODY) });
+    expect(apiRequest).toHaveBeenCalledWith(`${AI}/voices/preview`, "tok", { method: "POST", body: JSON.stringify({ ...BODY, assistant_name: null }) });
     expect(got.spokenText).toBe("నమస్కారం రవి గారూ, నేను రమ్య.");
     expect(got.audio?.mime).toBe("audio/wav");
     expect(got.audio?.seconds).toBeCloseTo(2, 1);
@@ -105,10 +105,13 @@ describe("hearing the line as it is on the screen", () => {
     apiRequest.mockResolvedValueOnce({ spoken_text: "Hi", audio: { mime: "text/html", base64: "QUJD" } });
     await expect(previewSpoken("tok", T, { language: "en", text: null, mentionAi: null })).rejects.toBeInstanceOf(ApiContractError);
   });
-  it("the saved greeting as a customer hears it comes from the API's own text, never made up", async () => {
-    apiRequest.mockResolvedValueOnce({ text: "Hello Ravi, this is Tara.", mention_ai: true, says_ai: true });
-    expect(await savedGreetingText("tok", T, "en")).toBe("Hello Ravi, this is Tara.");
-    expect(apiRequest).toHaveBeenLastCalledWith(`${AI}/opening-line/preview?language=en`, "tok");
+  it("THE opening line comes from the API's resolved field, with a typed-unsaved name when there is one, never made up", async () => {
+    apiRequest.mockResolvedValueOnce({ resolved_opening_line: "Hello Ravi, this is the assistant of Pavers.", spoken_text: "Hello Ravi, this is the assistant of Pavers.", source: "default" });
+    expect(await savedGreetingText("tok", T, "en")).toBe("Hello Ravi, this is the assistant of Pavers.");
+    expect(apiRequest).toHaveBeenLastCalledWith(`${AI}/opening-line/resolved?language=en`, "tok");
+    apiRequest.mockResolvedValueOnce({ resolved_opening_line: "Hello, this is kallu." });
+    expect(await savedGreetingText("tok", T, "en", "kallu")).toBe("Hello, this is kallu.");
+    expect(apiRequest).toHaveBeenLastCalledWith(`${AI}/opening-line/resolved?language=en&assistant_name=kallu`, "tok");
     apiRequest.mockResolvedValueOnce({ nope: 1 });
     expect(await savedGreetingText("tok", T, "en")).toBeNull();
     apiRequest.mockRejectedValueOnce(new ApiRequestError(500, "x", "x"));

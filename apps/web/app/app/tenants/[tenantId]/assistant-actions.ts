@@ -25,7 +25,13 @@ export async function saveAssistantAction(tenantId: string, input: unknown): Pro
     return { ok: false, error: "not_available" };
   }
   const pack = await readPackCached(user.accessToken, tenantId);
-  const result = await saveAssistant({ token: user.accessToken, tenantId }, input, pack?.modules ?? null);
+  let result: SaveResult;
+  try {
+    result = await saveAssistant({ token: user.accessToken, tenantId }, input, pack?.modules ?? null);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    return { ok: false, error: "not_available" };
+  }
   if (result.ok) revalidatePath(`/app/tenants/${tenantId}/settings`);
   return result;
 }

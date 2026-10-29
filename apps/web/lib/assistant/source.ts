@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { cache } from "react";
 
-import { ApiRequestError } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { getAiAssistant, postTestCall, putAiAssistant, type AssistantFromApi } from "@/lib/api/ai-assistant";
 import { assistantScreens } from "@/lib/screens/flag";
 
@@ -77,6 +77,7 @@ export async function saveAssistant(ctx: CtxAssistant, input: unknown, modules: 
       await putAiAssistant(ctx.token, ctx.tenantId, kept);
       return { ok: true };
     } catch (error) {
+      if (error instanceof ApiAuthError) throw error; // the sign-in ran out: the action sends the person to sign in again, never a silent "not saved"
       if (error instanceof ApiRequestError && error.code === "mfa_required") return { ok: false, error: "mfa" };
       return { ok: false, error: error instanceof ApiRequestError && error.status === 422 ? "invalid" : "not_available" };
     }
