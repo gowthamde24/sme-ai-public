@@ -60,7 +60,7 @@ from app.assistant.language import (
 )
 from app.assistant.models import NOT_STORED_SOURCES, DraftCardOut, SourceOut
 from app.assistant.notes import NOTES_HANDLE_LABEL, NOTES_ID
-from app.assistant.tools import TOOLS, Ctx, Item, State
+from app.assistant.tools import TOOLS, Ctx, Item, State, friendly_names
 from app.assistant.web_tools import WEB_TOOL_NAMES, question_urls
 from app.errors import ApiError
 
@@ -563,13 +563,16 @@ class AssistantRunner:
         if final.kind == "answer" and not known:
             if searched and not any(i.type != "notes" for i in self._state.items.values()):
                 # the tools ran and found NOTHING: there is no record the model could cite, so asking again can only cost two more model calls and end in the same fixed sentence (a Telugu Ask took 37 s that way). Say it now.
-                logger.info("assistant run %s: nothing found and an answer with no source; answered with the fixed sentence at turn %d (%s)", self._ctx.run_id, turn, language)
+                logger.info("assistant run %s: nothing found and an answer with no source at turn %d (%s)", self._ctx.run_id, turn, language)
+                # the tools ran and found nothing: the model may say so in its own kind words, but only without a number, a link or an amount (nothing it states can then be a made-up fact)
+                if not re.search(r"\d|https?://|www\.|₹", final.answer):
+                    return Reply(friendly_names(final.answer), language, "answer", [], list(self._state.drafts))
                 return Reply(self._empty[language], language, "refusal", [], list(self._state.drafts))
             return self._once("sources", prompts.NOTE_REPAIR_SOURCES, repaired)
         # an amount is stated only exactly as a tool returned it: not the owner's own number repeated back as if it were done, not a sum, not a guess
         if any(a not in self._state.allowed_paise for a in money_amounts(final.answer)):
             return self._once("money", prompts.NOTE_REPAIR_MONEY, repaired)
-        text = hide_places(final.answer, self._state, language)
+        text = friendly_names(hide_places(final.answer, self._state, language))
         if final.kind == "answer":
             line = web_sources_line(language, known)
             if line:

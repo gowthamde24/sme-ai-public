@@ -40,7 +40,7 @@ import bakeoff_shop as shop
 import operator_sql
 from assistant_eval import build_cases
 
-from app.assistant.language import NO_ANSWER, Language, detect_language, reply_matches
+from app.assistant.language import NO_ANSWER, Language, detect_owner_language, reply_matches
 from app.assistant.runner import money_amounts
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -235,7 +235,7 @@ def build_bake_cases() -> list[BakeCase]:
         )
     for cid, text, category, injection in CODEMIX:
         cases.append(
-            BakeCase(cid, text, category, "codemix", detect_language(text), injection=injection)
+            BakeCase(cid, text, category, "codemix", detect_owner_language(text), injection=injection)
         )
     return interleave(cases)
 
@@ -248,7 +248,7 @@ def build_shop_cases() -> list[BakeCase]:
             t.text,
             f"shop_{t.kind}",
             t.lang,
-            detect_language(t.text),
+            detect_owner_language(t.text),
             sources_optional=True,
             task=t,
         )

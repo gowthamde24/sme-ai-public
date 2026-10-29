@@ -280,8 +280,8 @@ class Settings(BaseSettings):
     # BROWSER_VOICE_ENABLED=true and the keys it speaks with are set (SARVAM_API_KEY,
     # CARTESIA_API_KEY, ANTHROPIC_API_KEY for the default turn model). Caps are per workspace.
     browser_voice_enabled: bool = False
-    browser_voice_session_seconds: int = 300
-    browser_voice_day_seconds: int = 1800
+    browser_voice_session_seconds: int = 3600
+    browser_voice_day_seconds: int = 7200
     browser_voice_day_tts_chars: int = 6000
     browser_voice_sessions_per_minute: int = 6
     # who answers the short turns: claude (the approved model, LLM_MODEL) or sarvam (105b:

@@ -112,12 +112,12 @@ def test_a_model_that_is_busy_ends_in_an_error_not_a_reply() -> None:
 
 
 # ============================================================================ business questions: no record is said plainly and still helps
-def test_an_uncited_claim_about_the_business_is_blocked_and_replaced_by_no_record_plus_a_next_step() -> None:
+def test_an_uncited_claim_with_a_figure_about_the_business_is_blocked_and_replaced_by_a_kind_nothing_found_plus_a_next_step() -> None:
     uncited = {"kind": "answer", "answer": "There were 3 enquiries today.", "language": "en", "sources": []}
     client, _, _, _ = world(uncited, uncited)
     evs = events(turn(client, "how many enquiries today?"))
     assert evs[0][1]["kind"] == "business"
-    assert text_of(evs) == NO_RECORD_HELP["en"] and "will not guess" in text_of(evs) and "follow-up" in text_of(evs)
+    assert text_of(evs) == NO_RECORD_HELP["en"] and "nothing to show" in text_of(evs) and "follow-up" in text_of(evs) and "will not guess" not in text_of(evs)
     assert "source" not in names(evs) and done(evs)["kind"] == "answer"
 
 

@@ -1,4 +1,4 @@
-import type { DeskLead, LeadStatus } from "@/lib/lead-desk/leads";
+import type { DeskFilter, DeskLead, LeadStatus } from "@/lib/lead-desk/leads";
 import { LEAD_STATUSES } from "@/lib/lead-desk/leads";
 import { parseProfile, type LeadProfile } from "@/lib/lead-desk/profile";
 
@@ -32,9 +32,17 @@ export function parseLeadPage(json: unknown): { rows: { id: string; contactId: s
 }
 
 /** One page of leads with the contact's name (contacts that cannot be read show no name: the screen says "Lead"). */
-export async function listDeskLeads(token: string, tenantId: string, cursor?: string | null): Promise<{ leads: DeskLead[]; nextCursor: string | null }> {
+export async function listDeskLeads(token: string, tenantId: string, cursor?: string | null, filter?: DeskFilter): Promise<{ leads: DeskLead[]; nextCursor: string | null }> {
   const q = new URLSearchParams({ limit: "25" });
   if (cursor) q.set("cursor", cursor);
+  // the API narrows the list itself (so a page is never spent on leads the person filtered out); "mine" and "hot" are this app's own
+  if (filter) {
+    if (filter.status) q.set("status", filter.status);
+    if (filter.source) q.set("source", filter.source);
+    if (filter.urgency) q.set("urgency", filter.urgency);
+    if (filter.q) q.set("q", filter.q);
+    if (!filter.junk) q.set("junk", "hide"); // flagged, never deleted: out of the list until the person asks for it
+  }
   const page = parseLeadPage(await apiRequest(`${base(tenantId)}/leads?${q}`, token));
   const names = await Promise.allSettled(page.rows.map((r) => (r.contactId && isCanonicalUuid(r.contactId) ? fetchContact(token, tenantId, r.contactId) : Promise.reject(new Error("none")))));
   return { leads: page.rows.map((r, i) => ({ ...r, name: names[i].status === "fulfilled" ? (names[i] as PromiseFulfilledResult<{ full_name: string }>).value.full_name : NAME_FALLBACK, hot: false })), nextCursor: page.nextCursor };
@@ -43,6 +51,12 @@ export async function listDeskLeads(token: string, tenantId: string, cursor?: st
 export async function setLeadOwner(token: string, tenantId: string, leadId: string, ownerUserId: string | null): Promise<void> {
   if (!isCanonicalUuid(leadId)) throw new ApiContractError("id");
   await apiRequest(`${base(tenantId)}/leads/${leadId}`, token, { method: "PATCH", body: JSON.stringify({ owner_user_id: ownerUserId }) });
+}
+
+/** The person opened the lead: it is not "new" for them any more (`POST /leads/{id}/seen`, 204). Best effort: a failure changes nothing on screen. */
+export async function markLeadSeen(token: string, tenantId: string, leadId: string): Promise<void> {
+  if (!isCanonicalUuid(leadId)) throw new ApiContractError("id");
+  await apiRequest(`${base(tenantId)}/leads/${leadId}/seen`, token, { method: "POST", body: JSON.stringify({}) });
 }
 
 export type Touch = { at: string; kind: "first" | "repeat"; source: string; message: string | null };

@@ -16,6 +16,7 @@ from contextlib import suppress
 from dataclasses import dataclass
 from typing import Any, Literal, Protocol
 
+from app.assistant.language import detect_owner_language
 from app.browser_voice.audio import IN_RATE, OUT_RATE, PREROLL_S, BrowserPlayout, FrameBus
 from app.browser_voice.limits import Ledger, Limits, Usage, log_usage
 from app.conversation.fillers import BROWSER_FILLER_AFTER_MS, FillerBank
@@ -36,7 +37,7 @@ log = logging.getLogger("app.browser_voice")
 
 LANGUAGES = ("te", "en", "hi", "kn")
 START_WITHIN_S = 10.0
-IDLE_S = 60.0  # no final transcript for this long: the session ends (the browser keeps the mic open for nothing)
+IDLE_S = 1800.0  # no final transcript for this long: the session ends. The owner's chat stays open until they close it; this only stops a tab left open for hours
 MAX_STT_FAILURES = 3
 FLUSH_EVERY_S = 15.0
 TRANSCRIPT_EVERY_S = 0.25   # an interim transcript at most this often (the newest of the recogniser's partials)
@@ -303,11 +304,7 @@ class VoiceSession:
             if what == "barge_in":
                 await self._barge_in()
             elif what == "set_language" and payload.get("language") in LANGUAGES:
-                self.language = str(payload["language"])
-                self.conv.session.language = self.language
-                self.conv.session.system = self.parts.system_for(self.language)
-                self.conv.stt = self.parts.stt_for(self.language)
-                await self._send({"type": "language", "language": self.language})
+                await self._set_language(str(payload["language"]))
             elif what == "confirm":
                 try:
                     await self._confirm(uuid.UUID(str(payload.get("action_id"))), str(payload.get("decision")))
@@ -318,6 +315,23 @@ class VoiceSession:
                 return
             elif what == "ping":
                 await self._send({"type": "pong"})
+
+    async def _set_language(self, language: str) -> None:
+        """The language the assistant listens for, answers in and speaks (its voice, its fillers, the pronunciation map) from now on."""
+        self.language = language
+        self.conv.session.language = language
+        self.conv.session.system = self.parts.system_for(language)
+        self.conv.stt = self.parts.stt_for(language)
+        await self._send({"type": "language", "language": language})
+
+    async def _follow_language(self, text: str) -> None:
+        """The reply is in the language of the owner's LAST turn (also romanised Telugu): the voice, the filler and the answer all follow it. A short English word ("ok") does not switch a Telugu chat back."""
+        found = detect_owner_language(text)
+        if found == self.language or found not in LANGUAGES:
+            return
+        if found == "en" and len(text.split()) < 3:
+            return
+        await self._set_language(found)
 
     async def _barge_in(self) -> None:
         """'The caller started speaking': stop the voice within ~200 ms. The line is stopped FIRST (the browser flushes what it queued), then the model and the voice are cancelled."""
@@ -400,6 +414,7 @@ class VoiceSession:
                 await self._confirm(self.pending_action, decision)
                 await self._say(SAID[decision].get(self.language, SAID[decision]["en"]))
                 continue
+            await self._follow_language(text)
             await self._set_state("thinking")
             self.usage.turns += 1
             tm.end_of_speech_at = self.bus.speech_ended_at
