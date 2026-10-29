@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
-from app.conversation.fillers import BANK_DIR, BANK_LINES  # noqa: E402
+from app.conversation.fillers import BANK_DIR, bank_lines  # noqa: E402
 from app.conversation.providers import CartesiaStreamTts  # noqa: E402
 from app.conversation.pronounce import default_pronunciations  # noqa: E402
 from app.conversation.voices import default_config  # noqa: E402
@@ -40,8 +40,9 @@ def trim(pcm: bytes) -> bytes:
 
 async def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--cap", type=int, default=2500, help="characters this run may send to Cartesia")
+    ap.add_argument("--cap", type=int, default=6000, help="characters this run may send to Cartesia")
     ap.add_argument("--only", help="one catalogue voice id")
+    ap.add_argument("--force", action="store_true", help="render again even when the lines are already there")
     args = ap.parse_args()
     key = os.environ.get("CARTESIA_API_KEY", "")
     if not key:
@@ -54,7 +55,9 @@ async def main() -> int:
     for voice in cfg.catalogue.values():
         if args.only and voice.id != args.only:
             continue
-        lines = BANK_LINES[voice.language]
+        lines = bank_lines(voice.language, voice.gender)
+        if (BANK_DIR / f"{voice.id}-1.pcm").is_file() and not args.force and index.get(voice.id, {}).get("lines", [{}])[0].get("text") == lines[0]:
+            continue   # already rendered with these lines
         need = sum(len(t) for t in lines)
         if spent + need > args.cap:
             print(f"stopping before {voice.id}: {spent} + {need} characters would pass the cap of {args.cap}")

@@ -18,6 +18,7 @@ from app.conversation.preview import PREVIEW_DAILY_CHARS, CallVoicePreview
 from app.conversation.voices import (
     CALL_LANGUAGES,
     DEFAULT_FILE,
+    TAGS,
     VoiceChoice,
     default_config,
     parse_config,
@@ -33,10 +34,18 @@ class FakeChoices:
 
     def __init__(self) -> None:
         self.choices: dict[str, str] = {}
+        self.gender = "female"
         self.calls: list[tuple[str, str | None]] = []
 
     def voice_choices(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
-        return {"choices": dict(self.choices)}
+        return {"choices": dict(self.choices), "gender": self.gender}
+
+    def set_voice_gender(self, token: str, tenant_id: uuid.UUID, gender: str) -> dict[str, Any]:
+        self.calls.append(("gender", gender))
+        if gender != self.gender:
+            self.choices.clear()
+        self.gender = gender
+        return self.voice_choices(token, tenant_id)
 
     def set_voice_choice(self, token: str, tenant_id: uuid.UUID, language: str, voice_id: str | None) -> dict[str, Any]:
         self.calls.append((language, voice_id))
@@ -53,15 +62,26 @@ class FakeChoices:
 # ---- the catalogue ------------------------------------------------------------------------------------------------------------------------------------
 
 
-def test_the_catalogue_is_the_approved_list_with_one_default_per_language() -> None:
+# the voices whose sample and fillers are rendered; the others wait for Cartesia credits (see PENDING_AUDIO) and are rendered by scripts/voice_catalogue_build.py + scripts/voice_filler_bank.py
+RENDERED = {"en-janvi", "hi-sanya", "hi-esha", "hi-meera", "kn-disha", "kn-divya", "kn-prakash", "te-ramya", "te-sindhu"}
+
+
+def test_the_catalogue_has_native_voices_of_both_genders_in_all_six_languages_with_one_default_each() -> None:
     cfg = default_config()
-    names = {lang: [c.name for c in cfg.voices_of(lang)] for lang in CALL_LANGUAGES}
-    assert names == {"en": ["Janvi"], "te": ["Ramya", "Sindhu"], "hi": ["Sanya", "Esha", "Meera"], "kn": ["Disha", "Divya", "Prakash"]}
-    assert {lang: cfg.default_for(lang).name for lang in CALL_LANGUAGES} == {"en": "Janvi", "te": "Ramya", "hi": "Sanya", "kn": "Disha"}
-    assert [c.name for c in cfg.voices_of("hi")][0] == "Sanya"  # the default first
-    assert cfg.catalogue["kn-prakash"].gender == "male" and cfg.catalogue["kn-prakash"].label == "Male"
+    assert CALL_LANGUAGES == ("te", "en", "hi", "kn", "ta", "ml")
+    for lang in CALL_LANGUAGES:
+        for gender in ("female", "male"):
+            group = cfg.voices_of(lang, gender)
+            assert group, (lang, gender)
+            assert [c.default for c in group].count(True) == 1 and group[0].default, "the default comes first"
+            assert 1 <= sum(c.recommended for c in group) <= 3, (lang, gender)
+            assert cfg.default_for(lang, gender).id == group[0].id
+    assert {lang: cfg.default_for(lang).name for lang in CALL_LANGUAGES} == {"te": "Ramya", "en": "Janvi", "hi": "Sanya", "kn": "Disha", "ta": "Anitha", "ml": "Latha"}
+    assert cfg.catalogue["kn-prakash"].gender == "male"
     for c in cfg.catalogue.values():
-        assert c.id == f"{c.language}-{c.name.lower()}" and c.voices.primary.engine == "cartesia" and c.voices.fallback.engine == "sarvam_v4" and 0 < len(c.label) <= 20
+        assert c.id.startswith(f"{c.language}-") and c.voices.primary.engine == "cartesia" and c.voices.fallback.engine == "sarvam_v4" and 0 < len(c.label) <= 20
+        assert c.tags and set(c.tags) <= set(TAGS) and c.label == c.tags[0].capitalize(), c.id
+    assert RENDERED <= set(cfg.catalogue), "the voices that already had audio are still in the catalogue (no workspace's choice breaks)"
 
 
 def test_a_fallback_voice_keeps_the_gender_of_the_voice_it_backs_up() -> None:
@@ -79,9 +99,10 @@ def test_a_fallback_voice_keeps_the_gender_of_the_voice_it_backs_up() -> None:
     "mutate, message",
     [
         (lambda r: r["catalogue"].append(copy.deepcopy(r["catalogue"][0])), "unique"),
-        (lambda r: [e.update(default=False) for e in r["catalogue"] if e["language"] == "te"], "exactly one default"),
-        (lambda r: r["catalogue"][2].update(default=True), "exactly one default"),
-        (lambda r: r["catalogue"][0].update(id="te-janvi"), "must start with it"),
+        (lambda r: [e.update(default=False) for e in r["catalogue"] if e["language"] == "te" and e["gender"] == "female"], "exactly one female default"),
+        (lambda r: [e.update(default=True) for e in r["catalogue"] if e["language"] == "te" and e["gender"] == "male"], "exactly one male default"),
+        (lambda r: r["catalogue"][0].update(id="en-" + r["catalogue"][0]["id"][3:]), "must start with it"),
+        (lambda r: r["catalogue"][0].update(tags=["loud"]), "tags are at most three"),
         (lambda r: r["catalogue"][0].update(label="x" * 21), "label of at most 20"),
         (lambda r: r["catalogue"][0]["fallback"].update(engine="cartesia"), "different engine"),
     ],
@@ -93,10 +114,14 @@ def test_a_broken_catalogue_is_refused(mutate: Any, message: str) -> None:
         parse_config(raw)
 
 
-def test_every_catalogue_voice_has_a_pre_rendered_sample_file_of_sane_size() -> None:
-    for c in default_config().catalogue.values():
-        assert c.sample_file.is_file(), c.id
-        assert 20_000 < c.sample_file.stat().st_size < 400_000 and c.sample_file.read_bytes()[:3] in (b"ID3", b"\xff\xfb", b"\xff\xf3", b"\xff\xf2"), c.id
+def test_every_rendered_voice_has_a_sample_file_of_sane_size_and_the_rest_are_listed_as_pending() -> None:
+    cfg = default_config()
+    for c in cfg.catalogue.values():
+        if c.id in RENDERED:
+            assert c.sample_file.is_file(), c.id
+            assert 20_000 < c.sample_file.stat().st_size < 400_000 and c.sample_file.read_bytes()[:3] in (b"ID3", b"\xff\xfb", b"\xff\xf3", b"\xff\xf2"), c.id
+        else:
+            assert not c.sample_file.is_file() or c.sample_file.stat().st_size > 20_000, c.id   # not rendered yet (Cartesia credits), or rendered and sane
 
 
 # ---- resolving a choice -------------------------------------------------------------------------------------------------------------------------------
@@ -108,7 +133,9 @@ def test_the_default_speaks_when_nothing_is_chosen_the_choice_when_it_is_valid_a
     assert cfg.resolve("te", "te-sindhu").id == "te-sindhu"
     assert cfg.resolve("te", "hi-esha").id == "te-ramya", "a voice of another language is ignored"
     assert cfg.resolve("te", "te-removed-voice").id == "te-ramya", "a voice no longer in the catalogue is ignored"
-    assert cfg.for_language("kn", "kn-prakash").fallback.voice == "chetan_kn_conversation" and cfg.for_language("kn").fallback.voice == "chaitra_kn_conversation"
+    assert cfg.resolve("te", "te-charan").id == "te-ramya", "a male voice is ignored in a female workspace"
+    assert cfg.resolve("te", "te-charan", "male").id == "te-charan" and cfg.resolve("te", None, "male").id == "te-charan" and cfg.resolve("te", "te-sindhu", "male").id == "te-charan"
+    assert cfg.for_language("kn", "kn-prakash", "male").fallback.voice == "chetan_kn_conversation" and cfg.for_language("kn").fallback.voice == "chaitra_kn_conversation"
 
 
 # ---- the API ------------------------------------------------------------------------------------------------------------------------------------------
@@ -124,11 +151,14 @@ def test_any_member_reads_the_catalogue_with_sample_urls_and_the_default_active(
     client, _ = world()
     r = client.get(f"{BASE}/voices", headers=auth("a_viewer"))
     body = r.json()
-    assert r.status_code == 200 and [x["language"] for x in body["languages"]] == ["te", "hi", "kn", "en"]
+    assert r.status_code == 200 and body["gender"] == "female" and [x["language"] for x in body["languages"]] == ["te", "en", "hi", "kn", "ta", "ml"]
     te = body["languages"][0]
     assert te["default_id"] == "te-ramya" and te["chosen_id"] is None and te["active_id"] == "te-ramya"
-    assert [(v["id"], v["default"], v["chosen"]) for v in te["voices"]] == [("te-ramya", True, False), ("te-sindhu", False, False)]
-    assert te["voices"][0]["sample_url"] == "/v1/voice-samples/te-ramya.mp3" and set(te["voices"][0]) == {"id", "name", "label", "gender", "default", "chosen", "sample_url", "sample_text"}
+    assert {v["gender"] for v in te["voices"]} == {"female", "male"}, "voices of both genders: the screen filters"
+    first = te["voices"][0]
+    assert (first["id"], first["default"], first["chosen"]) == ("te-ramya", True, False) and first["sample_url"] == "/v1/voice-samples/te-ramya.mp3"
+    assert set(first) == {"id", "name", "label", "gender", "tags", "recommended", "default", "chosen", "sample_url", "sample_text"} and first["tags"] and first["recommended"] is True
+    assert len({v["sample_text"] for v in te["voices"]}) == 1, "the SAME line for every voice of a language"
     assert client.get(f"{BASE}/voices", headers=auth("b_owner")).status_code == 404, "another business reads nothing of ours"
 
 
@@ -141,7 +171,7 @@ def test_owner_and_admin_choose_others_are_refused_and_the_choice_is_ticked_and_
     for user in ("a_owner", "a_admin"):
         r = client.put(f"{BASE}/voices", json=put, headers=auth(user))
         te = r.json()["languages"][0]
-        assert r.status_code == 200 and te["chosen_id"] == "te-sindhu" and te["active_id"] == "te-sindhu" and [v["chosen"] for v in te["voices"]] == [False, True], user
+        assert r.status_code == 200 and te["chosen_id"] == "te-sindhu" and te["active_id"] == "te-sindhu" and [v["id"] for v in te["voices"] if v["chosen"]] == ["te-sindhu"], user
     again = client.get(f"{BASE}/voices", headers=auth("a_viewer")).json()["languages"][0]
     assert again["chosen_id"] == "te-sindhu" and again["default_id"] == "te-ramya"
 
@@ -152,7 +182,11 @@ def test_owner_and_admin_choose_others_are_refused_and_the_choice_is_ticked_and_
         {"language": "te", "voice_id": "te-nobody"},  # not in the catalogue
         {"language": "te", "voice_id": "hi-esha"},  # another language's voice
         {"language": "te", "voice_id": "TE-Ramya"},  # badly formed
-        {"language": "ta", "voice_id": "ta-x"},  # a language outside the call set
+        {"language": "mr", "voice_id": "mr-x"},  # a language outside the call set
+        {"language": "te", "voice_id": "te-charan"},  # a male voice in a female workspace
+        {"gender": "male", "language": "te", "voice_id": "te-charan"},  # both forms at once
+        {"gender": "other"},
+        {},
         {"language": "te", "voice_id": "../../etc/passwd"},
         {"language": "te", "voice_id": "te-ramya", "extra": 1},
         {"voice_id": "te-ramya"},
@@ -169,8 +203,32 @@ def test_null_goes_back_to_the_default() -> None:
     h = auth("a_owner")
     client.put(f"{BASE}/voices", json={"language": "hi", "voice_id": "hi-esha"}, headers=h)
     r = client.put(f"{BASE}/voices", json={"language": "hi", "voice_id": None}, headers=h)
-    hi = r.json()["languages"][1]
+    hi = r.json()["languages"][2]
     assert hi["chosen_id"] is None and hi["active_id"] == "hi-sanya" and repo.calls[-1] == ("hi", None)
+
+
+def test_the_gender_flips_the_workspace_clears_the_choices_and_a_voice_of_the_other_gender_is_refused() -> None:
+    client, repo = world()
+    h = auth("a_owner")
+    assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-sindhu"}, headers=h).status_code == 200
+    r = client.put(f"{BASE}/voices", json={"gender": "male"}, headers=h)
+    body = r.json()
+    te = body["languages"][0]
+    assert r.status_code == 200 and body["gender"] == "male" and te["chosen_id"] is None and te["default_id"] == "te-charan" and te["active_id"] == "te-charan"
+    assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-sindhu"}, headers=h).status_code == 422, "a female voice in a male workspace"
+    assert client.put(f"{BASE}/voices", json={"language": "te", "voice_id": "te-pavan"}, headers=h).json()["languages"][0]["chosen_id"] == "te-pavan"
+    assert client.put(f"{BASE}/voices", json={"gender": "male"}, headers=h).json()["languages"][0]["chosen_id"] == "te-pavan", "the same gender again keeps the choices"
+    for user in ("a_sales", "a_viewer"):
+        assert client.put(f"{BASE}/voices", json={"gender": "female"}, headers=auth(user)).status_code == 403
+    assert repo.gender == "male"
+    assert client.get(f"{BASE}/voices", headers=auth("a_viewer")).json()["gender"] == "male"
+
+
+def test_every_language_of_the_call_set_can_be_chosen_including_tamil_and_malayalam() -> None:
+    client, _ = world()
+    for lang, vid in (("ta", "ta-janani"), ("ml", "ml-latha"), ("en", "en-skylar"), ("kn", "kn-divya")):
+        r = client.put(f"{BASE}/voices", json={"language": lang, "voice_id": vid}, headers=auth("a_owner"))
+        assert r.status_code == 200 and next(x for x in r.json()["languages"] if x["language"] == lang)["chosen_id"] == vid, lang
 
 
 def test_a_stored_choice_that_left_the_catalogue_reads_as_no_choice() -> None:
@@ -179,7 +237,8 @@ def test_a_stored_choice_that_left_the_catalogue_reads_as_no_choice() -> None:
     by = {x["language"]: x for x in body["languages"]}
     assert by["te"]["chosen_id"] is None and by["te"]["active_id"] == "te-ramya"
     assert by["hi"]["chosen_id"] is None, "a voice of another language is not a choice"
-    assert by["kn"]["chosen_id"] == "kn-prakash"
+    assert by["kn"]["chosen_id"] is None, "a male voice is not a choice in a female workspace"
+    assert out(cfg, {"kn": "kn-prakash"}, "male").model_dump()["languages"][3]["chosen_id"] == "kn-prakash"
 
 
 # ---- the samples (no sign-in) -------------------------------------------------------------------------------------------------------------------------
@@ -226,13 +285,13 @@ def preview(*, primary_fails: bool = False) -> tuple[CallVoicePreview, list[tupl
 def test_the_preview_speaks_the_chosen_voice_the_default_when_unset_and_the_same_gender_fallback_when_the_primary_fails() -> None:
     svc, built = preview()
     tid = uuid.uuid4()
-    wav, engine = asyncio.run(svc.speak(tid, "kn", "kn-prakash", "ನಮಸ್ಕಾರ ಸರ್"))
-    assert wav[:4] == b"RIFF" and engine == "cartesia" and built[0] == ("cartesia", default_config().catalogue["kn-prakash"].voices.primary.voice)
+    wav, engine, voice_id = asyncio.run(svc.speak(tid, "kn", "kn-prakash", "ನಮಸ್ಕಾರ ಸರ್", "male"))
+    assert wav[:4] == b"RIFF" and engine == "cartesia" and voice_id == "kn-prakash" and built[0] == ("cartesia", default_config().catalogue["kn-prakash"].voices.primary.voice)
     svc2, built2 = preview()
     asyncio.run(svc2.speak(tid, "kn", None, "ನಮಸ್ಕಾರ ಸರ್"))
     assert built2[0] == ("cartesia", default_config().catalogue["kn-disha"].voices.primary.voice)
     svc3, built3 = preview(primary_fails=True)
-    _, engine3 = asyncio.run(svc3.speak(tid, "kn", "kn-prakash", "ನಮಸ್ಕಾರ ಸರ್"))
+    _, engine3, _ = asyncio.run(svc3.speak(tid, "kn", "kn-prakash", "ನಮಸ್ಕಾರ ಸರ್", "male"))
     assert engine3 == "sarvam_v4" and ("sarvam_v4", "chetan_kn_conversation") in built3, "the male voice falls back to the male voice"
 
 
@@ -258,6 +317,7 @@ def test_the_preview_route_needs_owner_or_admin_speaks_the_opening_line_and_is_4
     repo.choices["te"] = "te-sindhu"
     assert client.get(f"{BASE}/voices/preview?language=te", headers=auth("a_admin")).status_code == 200
     assert ("cartesia", default_config().catalogue["te-sindhu"].voices.primary.voice) in built
-    assert client.get(f"{BASE}/voices/preview?language=ta", headers=auth("a_owner")).status_code == 422
+    assert r.headers["x-voice-id"] == "en-janvi" and client.get(f"{BASE}/voices/preview?language=te", headers=auth("a_owner")).headers["x-voice-id"] == "te-sindhu"
+    assert client.get(f"{BASE}/voices/preview?language=mr", headers=auth("a_owner")).status_code == 422
     off, _ = make_client(workspace=FakeChoices())
     assert off.get(q, headers=auth("a_owner")).status_code == 404

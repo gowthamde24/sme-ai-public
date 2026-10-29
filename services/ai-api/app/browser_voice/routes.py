@@ -27,7 +27,7 @@ from app.browser_voice.llm import AskLlm, AskTurns, CaptionLlm, TieredLlm
 from app.browser_voice.runtime import BrowserVoice
 from app.browser_voice.session import LANGUAGES, Kind, Parts, VoiceSession
 from app.conversation.fallback import FallbackTts
-from app.conversation.picker import choices_of
+from app.conversation.picker import voice_state
 from app.conversation.pronounce import default_pronunciations
 from app.conversation.providers import SarvamRealtimeStt
 from app.errors import ApiError
@@ -40,11 +40,11 @@ from app.turns.service import confirm_decision, start_turn
 log = logging.getLogger("app.browser_voice")
 router = APIRouter(tags=["browser-voice"])
 
-LANGUAGE_NAMES = {"te": "Telugu", "en": "English", "hi": "Hindi", "kn": "Kannada"}
+LANGUAGE_NAMES = {"te": "Telugu", "en": "English", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam"}
 ALLOWED_ROLES = (Role.OWNER, Role.ADMIN, Role.SALES)
 # The owner (or a teammate) talking to their own assistant is not a customer call: a short hello of its own, and a longer pause before a turn ends (people stop to think; Sarvam suggests 800 for open conversation, 900 at most).
 # The words are drafts for a native reader.
-OWNER_GREETING = {"en": "Hi, how can I help?", "te": "నమస్కారం అండీ, ఎలా సహాయం చేయమంటారు?", "hi": "नमस्ते, मैं आपकी कैसे मदद करूँ?", "kn": "ನಮಸ್ಕಾರ, ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?"}
+OWNER_GREETING = {"en": "Hi, how can I help?", "te": "చెప్పండి, ఏం చేయాలి?", "hi": "बताइए, मैं क्या करूँ?", "kn": "ಹೇಳಿ, ಏನು ಮಾಡಬೇಕು?", "ta": "சொல்லுங்கள், என்ன செய்ய வேண்டும்?", "ml": "പറയൂ, എന്താണ് ചെയ്യേണ്ടത്?"}
 OWNER_SILENCE_MS = 900
 GOAL = "Help a member of the business's own team: answer briefly, and when they ask about the business's own data (prices, stock, customers, leads, orders, dates) say you will check it."
 
@@ -59,8 +59,21 @@ def system_prompt(*, business: str, assistant: str, language: str, opening_line:
 
 def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Callable[[str, dict[str, Any]], None], on_ask: Callable[[], None]) -> Parts:
     token, tenant = ctx.principal.token, ctx.tenant.id
-    chosen = choices_of(runtime, ctx)
-    tts = FallbackTts(bv.config, bv.factory, chosen=chosen, pronunciations=default_pronunciations())
+    chosen, gender = voice_state(runtime, ctx)
+    live_choices: dict[str, str] = dict(chosen)   # read again at the start of every turn (refresh), so a change in Settings speaks from the next turn
+    live_gender = [gender]
+    tts = FallbackTts(bv.config, bv.factory, chosen=chosen, gender=gender, pronunciations=default_pronunciations())
+
+    def refresh() -> None:
+        new_chosen, new_gender = voice_state(runtime, ctx)
+        live_choices.clear()
+        live_choices.update(new_chosen)
+        live_gender[0] = new_gender
+        tts.set_voices(new_chosen, new_gender)
+
+    def voice_of(language: str) -> Any:
+        return bv.config.resolve(language, live_choices.get(language), live_gender[0])
+
     name = assistant_name(runtime, ctx) or "the assistant"   # (the name only when the Owner set one)
     opening_cache: dict[str, tuple[str, bool]] = {}
     notes = owner_notes(runtime, token, tenant)
@@ -93,7 +106,9 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
         system_for=system_for,
         greeting_for=lambda language: OWNER_GREETING.get(language, OWNER_GREETING["en"]),
         models=bv.model_ids(),
-        voice_for=lambda language: bv.config.resolve(language, chosen.get(language)).id,
+        voice_for=lambda language: voice_of(language).id,
+        voice_name=lambda language: voice_of(language).name,
+        refresh=refresh,
         fillers=bv.fillers,
         confirm=confirm,
     )
