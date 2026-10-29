@@ -200,7 +200,7 @@ def _register(api: EntityApi) -> None:
         if entity == "contacts":
             row = _keyed(runtime, ctx, row)
         if entity == "leads" and runtime.lead_profiles is not None:
-            return runtime.lead_profiles.get(ctx, row.id)   # same shape as the read, with its profile
+            return runtime.lead_profiles.get(ctx, row.id)  # as the read: with its profile
         return row
 
     create_row.__annotations__["body"] = api.create
