@@ -86,9 +86,17 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
   # AUTH_GOOGLE_CLIENT_ID is the PUBLIC id of the Google client "stack19-staging" (Supabase Auth has the secret): it makes GET /v1/auth/providers say google=true, which draws "Continue with Google" on the sign-in page. A deploy sets the whole list: leave it out and the button disappears (28 Oct).
   # AI: Anthropic's cheapest model, the key from Secret Manager, a low spend (prices in millionths of a rupee per million tokens at 90 rupees to the dollar: Haiku 5.5 is $0.10 in, $0.50 out per million).
   # CPU is allocated while an instance is up (the agents run in threads) but min-instances 0 means no fixed cost: it scales to zero when idle.
+  # Lead e-mail door (job EB part B): Cloudflare Email Routing -> an Email Worker -> POST /v1/lead-intake/mail, signed with LEAD_INBOUND_SECRET. The API reaches the database for it as the scheduler account, so
+  # sme-api-run needs secretAccessor on sme-lead-inbound-secret AND sme-scheduler-password (owner IAM steps, ~/Desktop/stack19-jobs/owner-steps-lead-mail.md). Switched on only with API_LEAD_INTAKE=1, so a deploy never fails on a missing grant.
+  LI_ENV="" LI_SECRETS=""
+  if [ "${API_LEAD_INTAKE:-0}" = 1 ]; then
+    LI_ENV="LEAD_INBOUND_DOMAIN=${LEAD_INBOUND_DOMAIN:-leads.stack19.com},SCHEDULER_EMAIL=${SCHEDULER_EMAIL:-scheduler@demo.example.test},PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://sme-api-620338396268.asia-south1.run.app}"
+    LI_SECRETS=",LEAD_INBOUND_SECRET=sme-lead-inbound-secret:latest,SCHEDULER_PASSWORD=sme-scheduler-password:latest"
+  fi
   RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=0 \
     EXTRA_ENV="$WA_ENV,BROWSER_VOICE_ENABLED=true,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam,AUTH_GOOGLE_CLIENT_ID=620338396268-k9tj60ci8equ4lsc120djtggj87ph66s.apps.googleusercontent.com" \
-    EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS" \
+    EXTRA_ENV_2="$EXTRA_ENV_2${LI_ENV:+,$LI_ENV}" \
+    EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS$LI_SECRETS" \
     ./deploy/cloudrun.sh api $execute
 fi
 if [ "$what" = "web" ] || [ "$what" = "all" ]; then

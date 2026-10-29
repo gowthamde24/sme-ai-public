@@ -24,8 +24,11 @@ from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_ro
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
 from app.hardening.replay import ReplayGuard
+from app.lead_sources import mime
 from app.lead_sources.columns_ai import RunColumnMatcher
 from app.lead_sources.models import (
+    CardsOut,
+    EmailAddressOut,
     ImportIn,
     ImportOut,
     ImportsOut,
@@ -163,6 +166,23 @@ def create_source(body: SourceCreate, response: Response, ctx: Manager, runtime:
     return out
 
 
+@router.get("/lead-sources/cards", response_model=CardsOut)
+def cards(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    """The Sources page: seven big cards, each with ONE action and a live status in plain words (always in the same order)."""
+    return {"items": _service(runtime).cards(ctx.principal.token, ctx.tenant.id)}
+
+
+@router.get("/lead-sources/email-address", response_model=EmailAddressOut)
+def email_address(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    return _service(runtime).email_address(ctx.principal.token, ctx.tenant.id)
+
+
+@router.post("/lead-sources/email-address/rotate", response_model=EmailAddressOut)
+def email_address_rotate(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    """A new address; the old one stops working at once."""
+    return _service(runtime).email_address(ctx.principal.token, ctx.tenant.id, rotate=True)
+
+
 @router.get("/lead-sources/unparsed", response_model=UnparsedListOut)
 def list_unparsed(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     return {"items": _service(runtime).unparsed(ctx.principal.token, ctx.tenant.id)}
@@ -244,19 +264,35 @@ def _form_data(request: Request, raw: bytes) -> dict[str, Any]:
 
 
 @public_router.post("/mail", response_model=MailOut, status_code=202)
-async def intake_mail_global(request: Request, runtime: RuntimeDep, x_inbound_secret: Annotated[str | None, Header()] = None) -> dict[str, Any]:
+async def intake_mail_global(
+    request: Request,
+    runtime: RuntimeDep,
+    x_inbound_secret: Annotated[str | None, Header()] = None,
+    x_timestamp: Annotated[str | None, Header()] = None,
+    x_signature: Annotated[str | None, Header()] = None,
+) -> dict[str, Any]:
+    """The one global inbound address (Cloudflare Email Routing -> an Email Worker -> here). Signed (`X-Timestamp` + `X-Signature`, HMAC-SHA256 of `<seconds>.<body>`) or, for older callers, the shared `X-Inbound-Secret`."""
     _no_replay(request)
-    mail = _mail(await _body(request))
-    return {"status": _service(runtime).receive_mail_global(x_inbound_secret, mail)}
+    raw = await _body(request)
+    service = _service(runtime)
+    mail = _mail(raw)
+    return {"status": service.receive_mail_global(x_inbound_secret, mail, signed=service.signed_ok(raw, x_timestamp, x_signature))}
 
 
 def _mail(raw: bytes) -> MailIn:
     from pydantic import ValidationError
 
     try:
-        return MailIn.model_validate_json(raw or b"null")
+        mail = MailIn.model_validate_json(raw or b"null")
     except ValidationError:
         raise ApiError(422, "validation_error", "The request was not valid.", extra={"fields": ["body"]}) from None
+    if mail.raw_base64:   # the worker sent the whole mail: a real parser reads it (the envelope `to` stays the worker's, it is the one the mail was routed by)
+        try:
+            read = mime.read(mail.raw_base64)
+        except mime.Unreadable:
+            raise ApiError(422, "validation_error", "The request was not valid.", extra={"fields": ["raw_base64"]}) from None
+        return mail.model_copy(update={"sender": read["sender"] or mail.sender, "subject": read["subject"] or mail.subject, "text": read["text"] or mail.text, "message_id": read["message_id"] or mail.message_id, "raw_base64": None})
+    return mail
 
 
 @public_router.get("/meta/{token}")

@@ -40,7 +40,7 @@ ROUTE_WORDS = frozenset(
         # job DR / A2: lead imports, sheets kept in sync, live sources, the public intake doors
         "lead-imports", "lead-sheet-links", "sync", "pause", "resume", "lead-sources",
         "rotate", "indiamart", "pull", "unparsed",
-        "leads", "touches", "lead-intake", "email", "mail", "meta",
+        "leads", "touches", "lead-intake", "email", "mail", "meta", "cards", "email-address",
         # job DR A3: speed to lead and approve once
         "outreach", "exclude", "caps", "rules", "result", "handoffs", "acted", "source-costs",
         # job DR B1: tasks

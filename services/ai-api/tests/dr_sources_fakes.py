@@ -31,6 +31,8 @@ class FakeLeadSourcesRepository:
         self.hits = 0
         self.rate_after = 1000
         self.window_end = "2026-10-27T10:00:00+00:00"
+        self.stats: dict[str, Any] = {}       # job EB: what lead_source_cards_stats would return
+        self.inbound: dict[str, Any] = {}     # job EB: the forwarding address token of the workspace
 
     # the core, simplified
     def _core(self, tag: str, consent: str | None, rows: list[dict[str, Any]], live: bool, dry: bool) -> dict[str, Any]:
@@ -201,6 +203,19 @@ class FakeLeadSourcesRepository:
         if error in ("sheet_not_public", "too_large"):
             link["status"] = "needs_attention"
         return True
+
+    # job EB part B: the Sources page
+    def cards_stats(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        self.calls.append("cards_stats")
+        return self.stats
+
+    def inbound_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return dict(self.inbound) if self.inbound else {"token": None, "source_id": None}
+
+    def inbound_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, address_token: str) -> dict[str, Any]:
+        self.calls.append("inbound_set")
+        self.inbound = {"token": address_token, "source_id": str(source_id)}
+        return self.inbound
 
 
 class Receiver:

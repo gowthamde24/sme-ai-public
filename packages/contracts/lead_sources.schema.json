@@ -626,6 +626,19 @@
           ],
           "default": null,
           "title": "Message Id"
+        },
+        "raw_base64": {
+          "anyOf": [
+            {
+              "maxLength": 210000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Base64"
         }
       },
       "required": [

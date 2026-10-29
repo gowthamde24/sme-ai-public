@@ -33,6 +33,9 @@ class LeadSourcesRepository(Protocol):
     def sheets_due(self, worker_token: str, limit: int) -> list[dict[str, Any]]: ...
     def sheet_apply(self, worker_token: str, link_id: uuid.UUID, rows: list[dict[str, Any]], header_sha: str) -> dict[str, Any]: ...
     def sheet_failed(self, worker_token: str, link_id: uuid.UUID, error: str) -> bool: ...
+    def cards_stats(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def inbound_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def inbound_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, address_token: str) -> dict[str, Any]: ...
 
 
 class PostgrestLeadSourcesRepository:
@@ -95,3 +98,12 @@ class PostgrestLeadSourcesRepository:
 
     def sheet_failed(self, worker_token: str, link_id: uuid.UUID, error: str) -> bool:
         return bool(self._rpc.call(worker_token, "scheduler_lead_sheet_failed", {"p_link_id": str(link_id), "p_error": error}))
+
+    def cards_stats(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "lead_source_cards_stats", {"p_tenant_id": str(tenant_id)})
+
+    def inbound_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "lead_inbound_address_get", {"p_tenant_id": str(tenant_id)})
+
+    def inbound_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, address_token: str) -> dict[str, Any]:
+        return self._rpc.object(token, "lead_inbound_address_set", {"p_tenant_id": str(tenant_id), "p_source_id": str(source_id), "p_token": address_token})
