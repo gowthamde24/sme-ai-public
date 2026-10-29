@@ -1,6 +1,6 @@
 import type { DeskFilter, DeskLead, LeadStatus } from "@/lib/lead-desk/leads";
 import { LEAD_STATUSES } from "@/lib/lead-desk/leads";
-import { parseProfile, type LeadProfile } from "@/lib/lead-desk/profile";
+import { parseProfile, type FixField, type LeadProfile } from "@/lib/lead-desk/profile";
 
 import { ApiContractError, apiRequest } from "./client";
 import { fetchContact, isCanonicalUuid } from "./crm";
@@ -73,4 +73,17 @@ export function parseTouches(json: unknown): { items: Touch[]; flags: ("dnd" | "
 export async function getTouches(token: string, tenantId: string, leadId: string): Promise<ReturnType<typeof parseTouches>> {
   if (!isCanonicalUuid(leadId)) throw new ApiContractError("id");
   return parseTouches(await apiRequest(`${base(tenantId)}/leads/${leadId}/touches`, token));
+}
+
+/** The lead's normalised profile (`GET /leads/{id}`); null when the API gives none. */
+export async function getLeadProfile(token: string, tenantId: string, leadId: string): Promise<LeadProfile | null> {
+  if (!isCanonicalUuid(leadId)) throw new ApiContractError("id");
+  const x = rec(await apiRequest(`${base(tenantId)}/leads/${leadId}`, token), "lead");
+  return parseProfile(x.profile);
+}
+
+/** One tap fixes a field (`PATCH /leads/{id}/profile`): the value is kept for good and never overwritten by a later guess. `null` clears it. */
+export async function fixLeadField(token: string, tenantId: string, leadId: string, field: FixField, value: string | null): Promise<void> {
+  if (!isCanonicalUuid(leadId)) throw new ApiContractError("id");
+  await apiRequest(`${base(tenantId)}/leads/${leadId}/profile`, token, { method: "PATCH", body: JSON.stringify({ [field]: value }) });
 }

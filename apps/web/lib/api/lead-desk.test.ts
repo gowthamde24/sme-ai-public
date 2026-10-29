@@ -6,7 +6,7 @@ vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/l
 import { ApiContractError } from "@/lib/api/client";
 import { NO_FILTER } from "@/lib/lead-desk/leads";
 
-import { listDeskLeads, markLeadSeen } from "./lead-desk";
+import { fixLeadField, getLeadProfile, listDeskLeads, markLeadSeen } from "./lead-desk";
 
 const T = "55555555-5555-4555-8555-555555555555";
 const L = "66666666-6666-4666-8666-666666666666";
@@ -30,5 +30,15 @@ describe("the Lead Desk's list from the API", () => {
     await markLeadSeen("tok", T, L);
     expect(request).toHaveBeenCalledWith(`/v1/tenants/${T}/leads/${L}/seen`, "tok", { method: "POST", body: "{}" });
     await expect(markLeadSeen("tok", T, "../x")).rejects.toBeInstanceOf(ApiContractError);
+  });
+  it("reads the profile of one lead and fixes one field with one PATCH (a bad id is refused first)", async () => {
+    request.mockResolvedValue({ id: L, profile: { need: "500 paver blocks", city: "Eluru", urgency: "high", confidence: { city: "low", need: "high" }, fixed_by_you: [] } });
+    const p = await getLeadProfile("tok", T, L);
+    expect(p?.need).toBe("500 paver blocks");
+    expect(p?.guessed).toEqual(["city"]);
+    request.mockResolvedValue(null);
+    await fixLeadField("tok", T, L, "city", "Vijayawada");
+    expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/leads/${L}/profile`, "tok", { method: "PATCH", body: JSON.stringify({ city: "Vijayawada" }) });
+    await expect(fixLeadField("tok", T, "../x", "city", "x")).rejects.toBeInstanceOf(ApiContractError);
   });
 });
