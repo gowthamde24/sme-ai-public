@@ -18,6 +18,7 @@ Sizes: API and web 1 vCPU, 512 MiB, **min instances 0**, max 2 (API) and 3 (web)
 but min instances stay 0, so there is no fixed cost: it scales to zero when idle. Outgoing messages are fake only (`OUTBOX_ADAPTER=fake`); WhatsApp, voice and payments are off.
 
 AI: `LLM_PROVIDER=anthropic`, `LLM_MODEL=claude-haiku-5-5` (Anthropic's cheapest model), prices recorded in the database (`agent_model_prices`) in millionths of a rupee per million tokens at an assumed
+Sarvam 105B is priced too (migration `20261222090000`: Rs 15 per million input tokens, Rs 60 per million output tokens, excl. GST; cached input Rs 5 per million, which the table cannot hold, so it is counted at Rs 15). Having a price does not switch it on: Claude stays the default for the owner chat (`BROWSER_VOICE_TURN_MODEL=claude`).
 90 rupees to the dollar (9,000,000 in, 45,000,000 out). Limits: the assistant's own output cap per model call (1,500 tokens, in code), 3,000 output tokens per run (`agent_definitions.max_output_tokens`),
 Rs 1 per run, **Rs 2 per workspace per day** (`agent_limits.daily_cost_micros`), plus the hard monthly limit set at Anthropic on the key.
 
