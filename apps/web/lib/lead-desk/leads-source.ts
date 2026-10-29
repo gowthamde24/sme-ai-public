@@ -4,7 +4,7 @@ import { readJar, writeJar } from "@/lib/mock/jar";
 import { leadsScreens } from "@/lib/screens/flag";
 import type { Handoff } from "@/lib/outreach/types";
 
-import { mockLeads, type DeskLead } from "./leads";
+import { mockLeads, type DeskFilter, type DeskLead } from "./leads";
 
 /**
  * Where the leads of Lead Desk come from (night 4, part A6): `mock` = fourteen made-up leads (who they are handed to is kept in a cookie), `on` = the CRM's leads with the contact's name, `off` = not there. A lead is HOT when an open
@@ -25,7 +25,7 @@ export function markHot(leads: readonly DeskLead[], handoffs: readonly Handoff[]
   return leads.map((l) => ({ ...l, hot: open.some((h) => (h.leadId !== null && h.leadId === l.id) || (l.contactId !== null && h.contactId === l.contactId) || (byName && h.contactName === l.name)) }));
 }
 
-export async function readDeskLeads(ctx: Ctx, handoffs: readonly Handoff[] | null, cursor: string | null = null, now: Date = new Date()): Promise<{ leads: DeskLead[]; nextCursor: string | null } | null> {
+export async function readDeskLeads(ctx: Ctx, handoffs: readonly Handoff[] | null, cursor: string | null = null, now: Date = new Date(), filter?: DeskFilter): Promise<{ leads: DeskLead[]; nextCursor: string | null } | null> {
   const mode = leadsScreens();
   if (mode === "off") return null;
   if (mode === "mock") {
@@ -33,7 +33,7 @@ export async function readDeskLeads(ctx: Ctx, handoffs: readonly Handoff[] | nul
     return { leads: markHot(mockLeads(now, assigned, [], ctx.userId), handoffs ?? [], true), nextCursor: null };
   }
   try {
-    const page = await listDeskLeads(ctx.token, ctx.tenantId, cursor);
+    const page = await listDeskLeads(ctx.token, ctx.tenantId, cursor, filter);
     return { leads: markHot(page.leads, handoffs ?? [], false), nextCursor: page.nextCursor };
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;

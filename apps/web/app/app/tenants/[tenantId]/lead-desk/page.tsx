@@ -38,10 +38,12 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
   const words = wordsFor(lang, ["ld.desk.", "ld.source.", "ld.status.", "ol.hot.", "lp."]);
   const base = `/app/tenants/${tenantId}`;
   const filter = parseFilter(query);
+  const cursor = Array.isArray(query.after) ? query.after[0] : query.after;
+  const after = typeof cursor === "string" && cursor.length > 0 && cursor.length <= 300 ? cursor : null; // the API checks it
   const ctx = { token: accessToken, tenantId, userId };
   const canSeeHot = tenant.role !== "viewer" && outreachScreens() !== "off";
   const handoffs = canSeeHot ? await readHandoffs(ctx, true) : null;
-  const [page, members] = await Promise.all([readDeskLeads(ctx, handoffs), fetchMembers(accessToken, tenantId).catch(() => [])]);
+  const [page, members] = await Promise.all([readDeskLeads(ctx, handoffs, after, new Date(), filter), fetchMembers(accessToken, tenantId).catch(() => [])]);
   const sn = sourceNames(words);
   const team = members.map((m) => ({ id: m.user_id, name: m.display_name ?? words["ld.desk.member"] ?? "Member" }));
   const shown = page ? applyFilter(page.leads, filter, userId) : [];
@@ -165,7 +167,7 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
       )}
       {page?.nextCursor ? (
         <p className="mt-4">
-          <Link href={`${base}/lead-desk?${new URLSearchParams({ ...(filter.source ? { source: filter.source } : {}), ...(filter.status ? { status: filter.status } : {}), after: page.nextCursor }).toString()}`} className={btnQuiet}>
+          <Link href={`${filterHref(base, filter)}${filterHref(base, filter).includes("?") ? "&" : "?"}${new URLSearchParams({ after: page.nextCursor })}`} className={btnQuiet}>
             {words["ld.desk.more"]}
           </Link>
         </p>

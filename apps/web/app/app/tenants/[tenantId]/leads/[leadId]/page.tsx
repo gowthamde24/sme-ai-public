@@ -9,6 +9,7 @@ import { type ClaimSuggestionOut, fetchClaims } from "@/lib/api/agents";
 import { type Enquiry, fetchLeadEnquiries } from "@/lib/api/enquiries";
 import { type EvidencePage, fetchEvidencePage } from "@/lib/api/evidence";
 import { fetchLeadContactId } from "@/lib/api/lead-contact";
+import { markLeadSeen } from "@/lib/api/lead-desk";
 import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
 import { ContactLead } from "@/components/v2/app/contact/ContactLead";
@@ -79,6 +80,7 @@ export default async function LeadPage({
 
   // The workspace and the lead are read first, one after the other: nothing else is asked about a workspace or a lead the person cannot see (pinned by page.test.tsx). Everything after them does not depend on
   // anything else, so it is asked at the same time (job CH), and each failure is handled below where it was when they ran one after another. Before: six reads in a row; now three steps.
+  void markLeadSeen(user.accessToken, tenantId, leadId).catch(() => undefined); // opened: no longer "new" for this person
   const rawCursor = pick(query.cursor);
   const cursor = rawCursor && rawCursor.length <= MAX_CURSOR ? rawCursor : null;
   const [evidenceRead, claimsRead, enquiriesRead, contactRead, companyRead] = await Promise.allSettled([
