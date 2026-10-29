@@ -41,21 +41,21 @@ afterEach(() => {
   refresh.mockClear();
 });
 
+const select = (language: string) => document.querySelector(`[data-voice-select="${language}"]`) as HTMLSelectElement;
+const optionsOf = (language: string) => [...select(language).options].map((o) => o.textContent);
+
 describe("Settings > AI assistant > Voice", () => {
-  it("has a block per language with the voices of the workspace's gender: name, plain style tags, a Recommended badge, the Default badge; the voice in use is ticked and the row says who speaks", () => {
+  it("is ONE row per language: the language name, a dropdown of that language's voices for the chosen gender ('Name — style tags', '· Recommended' first), and a separate Hear button", () => {
     draw();
-    const hi = document.querySelector('[data-voice-lang="hi"]') as HTMLElement;
-    expect(within(hi).getAllByRole("listitem")).toHaveLength(2); // the two female Hindi voices; the male one is not shown
-    expect(within(hi).getByText("Sanya")).toBeInTheDocument();
-    expect(within(hi).queryByText("Rohan")).toBeNull();
-    expect(within(hi).getAllByText("Default")).toHaveLength(1);
-    expect(within(document.querySelector('[data-voice="hi-sanya"]') as HTMLElement).getByText("Recommended")).toBeInTheDocument();
-    expect(document.querySelector('[data-voice="hi-sanya"]')).toHaveTextContent("calm · mature");
-    expect(document.querySelector('[data-voice="hi-sanya"]')).toHaveAttribute("data-in-use", "true"); // nothing chosen: the default
-    expect(document.querySelector('[data-voice="kn-divya"]')).toHaveAttribute("data-in-use", "true"); // chosen
-    expect(document.querySelector('[data-voice="kn-disha"]')).not.toHaveAttribute("data-in-use");
-    expect(document.querySelector('[data-voice-lang="te"] [data-part="speaking-in"]')).toHaveTextContent("Speaking in తెలుగు · Ramya");
-    expect(document.querySelector('[data-voice-lang="kn"] [data-part="speaking-in"]')).toHaveTextContent("Divya");
+    expect([...document.querySelectorAll("[data-voice-lang]")].map((r) => r.getAttribute("data-voice-lang"))).toEqual(["te", "hi", "kn"]);
+    expect(optionsOf("te")).toEqual(["Ramya — warm, mature · Recommended", "Sindhu — bright, young · Recommended"]);
+    expect(optionsOf("hi")).toEqual(["Sanya — calm, mature · Recommended", "Esha — warm, young · Recommended"]); // the male Hindi voice is not listed
+    expect(select("te").labels?.[0]).toHaveTextContent("తెలుగు");
+    expect(select("te").value).toBe("te-ramya"); // nothing chosen: the default
+    expect(select("kn").value).toBe("kn-divya"); // chosen
+    expect(optionsOf("kn")).toEqual(["Disha — warm, calm · Recommended", "Divya — bright, young"]); // recommended first
+    expect(within(document.querySelector('[data-voice-lang="te"]') as HTMLElement).getByRole("button", { name: "Play the sample of Ramya" })).toHaveTextContent("Hear");
+    expect(document.querySelectorAll("[data-voice]").length).toBe(0); // no cards any more
   });
   it("the Female / Male switch is on top: the current one is checked; Male asks for it and reads the page again, and a refusal is said in words", async () => {
     const choose = draw();
@@ -71,62 +71,60 @@ describe("Settings > AI assistant > Voice", () => {
     fireEvent.click(screen.getByRole("radio", { name: "Male" }));
     expect(await screen.findByText("Only the Owner or an Admin can change the voice.", { selector: "[role=alert]" })).toBeInTheDocument();
   });
-  it("Male shows the male voices of every language and nothing of the female ones", () => {
+  it("Male lists the male voices of every language and nothing of the female ones", () => {
     draw({ gender: "male" });
     expect(screen.getByRole("radio", { name: "Male" })).toBeChecked();
-    expect(within(document.querySelector('[data-voice-lang="te"]') as HTMLElement).getByText("Kiran")).toBeInTheDocument();
-    expect(document.querySelector('[data-voice="te-ramya"]')).toBeNull();
-    expect(document.querySelector('[data-voice-lang="te"] [data-part="speaking-in"]')).toHaveTextContent("Kiran"); // the male default
+    expect(optionsOf("te")).toEqual(["Kiran — deep, calm · Recommended", "Arjun — energetic, young"]);
+    expect(select("te").value).toBe("te-kiran"); // the male default
   });
-  it("a voice whose sample words the API gives shows them under the voice once it has been played, and only that voice's", () => {
+  it("changing the dropdown saves at once (and reads the page again) with a toast like 'తెలుగు voice: Sindhu'; choosing the default goes back to it (null)", async () => {
+    const choose = draw();
+    fireEvent.change(select("te"), { target: { value: "te-sindhu" } });
+    await waitFor(() => expect(choose).toHaveBeenCalledWith("te", "te-sindhu"));
+    expect(await screen.findByText("తెలుగు voice: Sindhu")).toBeInTheDocument();
+    expect(select("te").value).toBe("te-sindhu");
+    expect(refresh).toHaveBeenCalled();
+    fireEvent.change(select("kn"), { target: { value: "kn-disha" } });
+    await waitFor(() => expect(choose).toHaveBeenCalledWith("kn", null)); // Disha is the default of Kannada
+  });
+  it("a refusal is said in words and the dropdown goes back; a member who may not change it can listen but not choose", async () => {
+    const choose = vi.fn(async () => ({ ok: false as const, error: "forbidden" }));
+    draw({ choose });
+    fireEvent.change(select("hi"), { target: { value: "hi-esha" } });
+    expect(await screen.findByText("Only the Owner or an Admin can change the voice.", { selector: "[role=alert]" })).toBeInTheDocument();
+    expect(select("hi").value).toBe("hi-sanya");
+    cleanup();
+    draw({ canEdit: false });
+    expect(select("hi")).toBeDisabled();
+    expect(document.querySelector('[data-play="hi-sanya"]')).not.toBeNull();
+  });
+  it("Hear plays the sample of the voice now selected, from this app's own route; one at a time; the sample line shows under it while it plays and goes when it stops", () => {
     const withText = rows.map((r) => ({ ...r, voices: r.voices.map((v) => (v.id === "hi-sanya" ? { ...v, sampleText: "नमस्ते, मैं संया हूँ।" } : v)) }));
-    draw();
     cleanup();
     render(<VoicePicker words={WORDS} gender="female" rows={withText} langNames={CALL_LANG_NAMES} canEdit endpoint="/app/tenants/t/voice-pick" mock={false} actions={{ choose: async () => ({ ok: true }), setGender: async () => ({ ok: true }) }} />);
-    expect(document.querySelector('[data-part="sample-text"]')).toBeNull(); // nothing is claimed before it is played
-    fireEvent.click(document.querySelector('[data-play="hi-sanya"]') as HTMLElement);
-    expect(document.querySelector('[data-voice="hi-sanya"] [data-part="sample-text"]')).toHaveTextContent("What this sample says:नमस्ते, मैं संया हूँ।");
-    fireEvent.click(document.querySelector('[data-play="hi-esha"]') as HTMLElement);
-    expect(document.querySelector('[data-part="sample-text"]')).toBeNull(); // Esha has no words given: nothing is made up
-  });
-  it("play and stop are one button, and only one sample plays at a time; the sample is asked of this app's own route", () => {
-    draw();
-    const sanya = document.querySelector('[data-play="hi-sanya"]') as HTMLElement;
-    const esha = document.querySelector('[data-play="hi-esha"]') as HTMLElement;
-    fireEvent.click(sanya);
+    expect(document.querySelector('[data-part="sample-text"]')).toBeNull(); // nothing is shown before it plays
+    const hi = document.querySelector('[data-play="hi-sanya"]') as HTMLElement;
+    const te = document.querySelector('[data-play="te-ramya"]') as HTMLElement;
+    fireEvent.click(hi);
     expect(made[0].src).toBe("/app/tenants/t/voice-pick?id=hi-sanya");
-    expect(sanya).toHaveAttribute("aria-pressed", "true");
-    fireEvent.click(esha);
+    expect(hi).toHaveAttribute("aria-pressed", "true");
+    expect(document.querySelector('[data-voice-lang="hi"] [data-part="sample-text"]')).toHaveTextContent("नमस्ते, मैं संया हूँ।");
+    fireEvent.click(te); // another row: the first stops
     expect(made[0].pause).toHaveBeenCalled();
-    expect(sanya).toHaveAttribute("aria-pressed", "false");
-    expect(esha).toHaveAttribute("aria-pressed", "true");
-    fireEvent.click(esha); // the same button stops it
-    expect(esha).toHaveAttribute("aria-pressed", "false");
+    expect(hi).toHaveAttribute("aria-pressed", "false");
+    expect(document.querySelector('[data-part="sample-text"]')).toBeNull(); // Ramya has no words given: nothing is made up
+    fireEvent.click(te); // the same button stops
+    expect(te).toHaveAttribute("aria-pressed", "false");
+    fireEvent.click(hi);
+    fireEvent.change(select("hi"), { target: { value: "hi-esha" } }); // a new choice stops the sound too
+    expect(made[made.length - 1].pause).toHaveBeenCalled();
+    expect(document.querySelector('[data-voice-lang="hi"] [data-play="hi-esha"]')).not.toBeNull(); // Hear now plays the new one
   });
   it("a sample that cannot be played says so in words", async () => {
     draw();
     fireEvent.click(document.querySelector('[data-play="hi-sanya"]') as HTMLElement);
     made[0].onerror?.();
     expect(await screen.findByRole("alert")).toHaveTextContent(/could not be played/);
-  });
-  it('"Use this voice" chooses it for that language and reads the page again; choosing the default goes back to it (null)', async () => {
-    const choose = draw();
-    fireEvent.click(within(document.querySelector('[data-voice="hi-esha"]') as HTMLElement).getByRole("button", { name: "Use this voice" }));
-    await waitFor(() => expect(choose).toHaveBeenCalledWith("hi", "hi-esha"));
-    expect(await screen.findByText(/Voice for हिन्दी saved/)).toBeInTheDocument();
-    expect(refresh).toHaveBeenCalled();
-    fireEvent.click(within(document.querySelector('[data-voice="kn-disha"]') as HTMLElement).getByRole("button", { name: "Use this voice" }));
-    await waitFor(() => expect(choose).toHaveBeenCalledWith("kn", null)); // Disha is the default of Kannada
-  });
-  it("a refusal is said in words; a member who may not change it can listen but not choose", async () => {
-    const choose = vi.fn(async () => ({ ok: false as const, error: "forbidden" }));
-    draw({ choose });
-    fireEvent.click(within(document.querySelector('[data-voice="hi-esha"]') as HTMLElement).getByRole("button", { name: "Use this voice" }));
-    expect(await screen.findByText("Only the Owner or an Admin can change the voice.", { selector: "[role=alert]" })).toBeInTheDocument();
-    cleanup();
-    draw({ canEdit: false });
-    expect(within(document.querySelector('[data-voice="hi-esha"]') as HTMLElement).getByRole("button", { name: "Use this voice" })).toBeDisabled();
-    expect(document.querySelector('[data-play="hi-esha"]')).not.toBeNull();
   });
   it("says that the sounds are test tones in the test mode", () => {
     draw({ mock: true });
