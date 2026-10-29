@@ -33,6 +33,7 @@ class FakeLeadSourcesRepository:
         self.window_end = "2026-10-27T10:00:00+00:00"
         self.stats: dict[str, Any] = {}       # job EB: what lead_source_cards_stats would return
         self.inbound: dict[str, Any] = {}     # job EB: the forwarding address token of the workspace
+        self.website: dict[str, Any] = {}     # job EK: the website form token of the workspace
 
     # the core, simplified
     def _core(self, tag: str, consent: str | None, rows: list[dict[str, Any]], live: bool, dry: bool) -> dict[str, Any]:
@@ -216,6 +217,14 @@ class FakeLeadSourcesRepository:
         self.calls.append("inbound_set")
         self.inbound = {"token": address_token, "source_id": str(source_id)}
         return self.inbound
+
+    def website_get(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return dict(self.website) if self.website else {"token": None, "source_id": None}
+
+    def website_set(self, token: str, tenant_id: uuid.UUID, source_id: uuid.UUID, form_token: str) -> dict[str, Any]:
+        self.calls.append("website_set")
+        self.website = {"token": form_token, "source_id": str(source_id)}
+        return self.website
 
 
 class Receiver:
