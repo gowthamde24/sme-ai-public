@@ -74105,5 +74105,137 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "lp.card.title": {
+  "en": "What they want",
+  "te": "వారికి ఏమి కావాలి",
+  "hi": "उन्हें क्या चाहिए",
+  "kn": "ಅವರಿಗೆ ಏನು ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.card.right": {
+  "en": "That is right",
+  "te": "ఇది సరైనదే",
+  "hi": "यह सही है",
+  "kn": "ಇದು ಸರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.card.change": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.card.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सहेजें",
+  "kn": "ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.card.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.card.err": {
+  "en": "Could not save. Please try again.",
+  "te": "సేవ్ కాలేదు. మళ్లీ ప్రయత్నించండి.",
+  "hi": "सहेजा नहीं जा सका। फिर से कोशिश करें।",
+  "kn": "ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.f.need": {
+  "en": "Product or service",
+  "te": "ఉత్పత్తి లేదా సేవ",
+  "hi": "उत्पाद या सेवा",
+  "kn": "ಉತ್ಪನ್ನ ಅಥವಾ ಸೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.f.quantity": {
+  "en": "How much",
+  "te": "ఎంత",
+  "hi": "कितना",
+  "kn": "ಎಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.f.area": {
+  "en": "Area",
+  "te": "ప్రాంతం",
+  "hi": "इलाका",
+  "kn": "ಪ್ರದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.f.city": {
+  "en": "Town",
+  "te": "ఊరు",
+  "hi": "शहर",
+  "kn": "ಊರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.f.budget": {
+  "en": "Budget",
+  "te": "బడ్జెట్",
+  "hi": "बजट",
+  "kn": "ಬಜೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lp.f.timeline": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
