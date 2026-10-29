@@ -56,8 +56,8 @@ begin
     perform tests.scalar_as(tests.uid('a_owner'), format($q$select public.record_consent(%L, %L, 'whatsapp', 'granted', 'explicit_consent', 'web_form', 'form:at')$q$, tests.tid('a'), tests.rid(p_label || '_c')));
   end if;
 end $$;
--- the customer wrote to us on WhatsApp p_ago ago
-create function pg_temp.inbound(p_label text, p_body text, p_ago interval default '1 hour') returns void language sql as $$
+-- the customer wrote to us on WhatsApp p_ago ago (3 hours: inside the 24-hour window, outside the 2-hour active conversation of job EF)
+create function pg_temp.inbound(p_label text, p_body text, p_ago interval default '3 hours') returns void language sql as $$
   insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body, body_sha256)
   values (gen_random_uuid(), tests.tid('a'), tests.rid(p_label), 'whatsapp', app.outbox_now() - p_ago, p_body, repeat('a', 64)) $$;
 -- submit a message as a user (default the Owner); the answer as JSON text, or 'ERR:<sqlstate>'

@@ -53,12 +53,12 @@ select pg_temp.mk('dx6');
 
 -- A. quiet hours
 select pg_temp.inbound('dx1', '2026-10-05 23:10:00+05:30');   -- 20 minutes ago: an active conversation
-select pg_temp.inbound('dx2', '2026-10-05 22:50:00+05:30');   -- 40 minutes ago: not any more
+select pg_temp.inbound('dx2', '2026-10-05 20:50:00+05:30');   -- 160 minutes ago: not any more
 select pg_temp.inbound('dx3', '2026-10-05 23:20:00+05:30');
 select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx1'), 'reply_to_inbound', timestamptz '2026-10-05 23:30:00+05:30'), true, 'A1: 20 minutes after the customer wrote, a reply is inside the conversation');
-select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx1'), 'reply_to_inbound', timestamptz '2026-10-05 23:40:00+05:30'), true, 'A2: exactly 30 minutes after counts');
-select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx1'), 'reply_to_inbound', timestamptz '2026-10-05 23:41:00+05:30'), false, 'A3: 31 minutes after: no longer');
-select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx2'), 'reply_to_inbound', timestamptz '2026-10-05 23:30:00+05:30'), false, 'A4: 40 minutes after: not active');
+select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx1'), 'reply_to_inbound', timestamptz '2026-10-06 01:10:00+05:30'), true, 'A2: exactly 2 hours after counts');
+select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx1'), 'reply_to_inbound', timestamptz '2026-10-06 01:11:00+05:30'), false, 'A3: 2 hours and a minute after: no longer');
+select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx2'), 'reply_to_inbound', timestamptz '2026-10-05 23:30:00+05:30'), false, 'A4: 160 minutes after: not active');
 select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx3'), 'followup', timestamptz '2026-10-05 23:30:00+05:30'), false, 'A5: a follow-up is business-initiated, whatever the customer wrote a minute ago');
 select is(app.outbox_active_conversation(tests.tid('a'), tests.rid('dx4'), 'reply_to_inbound', timestamptz '2026-10-05 23:30:00+05:30'), false, 'A6: a customer who never wrote: no conversation');
 select is(app.outbox_active_conversation(tests.tid('b'), tests.rid('dx1'), 'reply_to_inbound', timestamptz '2026-10-05 23:30:00+05:30'), false, 'A7: another business cannot see our customer''s conversation');
@@ -67,7 +67,7 @@ select pg_temp.sub('dx_m1', 'dx1', 'owner', 'reply_to_inbound');
 select is(pg_temp.st('dx_m1'), 'queued/auto_allowed', 'A8: AT NIGHT, a reply in an active conversation goes now (not held for the morning)');
 select is(pg_temp.at('dx_m1'), '10-05 23:30', 'A9: ...scheduled for this very minute');
 select pg_temp.sub('dx_m2', 'dx2', 'owner', 'reply_to_inbound');
-select is(pg_temp.st('dx_m2'), 'queued/quiet_hours', 'A10: the same reply 40 minutes after the customer wrote waits for morning');
+select is(pg_temp.st('dx_m2'), 'queued/quiet_hours', 'A10: the same reply 160 minutes after the customer wrote waits for morning');
 select is(pg_temp.at('dx_m2'), '10-06 09:00', 'A11: ...until 09:00');
 select pg_temp.sub('dx_m3', 'dx3', 'assistant', 'followup', 'Just checking in on the saree.');
 select is(pg_temp.st('dx_m3'), 'queued/quiet_hours', 'A12: a follow-up waits for morning even a minute after the customer wrote');
@@ -77,7 +77,7 @@ select is(pg_temp.st('dx_m4'), 'queued/auto_allowed', 'A13: an information reply
 -- the Owner's approval (automatic sending off: the reply waits for a person, then the person approves)
 select ok(pg_temp.auto(false) not like 'ERR:%', 'setup: automatic sending off');
 select pg_temp.inbound('dx5', '2026-10-05 23:15:00+05:30');
-select pg_temp.inbound('dx6', '2026-10-05 22:00:00+05:30');
+select pg_temp.inbound('dx6', '2026-10-05 20:30:00+05:30');
 select pg_temp.sub('dx_m5', 'dx5', 'owner', 'reply_to_inbound', 'done');
 select pg_temp.sub('dx_m6', 'dx6', 'owner', 'reply_to_inbound', 'done too');
 select is(pg_temp.st('dx_m5'), 'needs_approval/auto_off', 'A14: with automatic sending off the reply waits for the Owner');
@@ -85,7 +85,7 @@ select pg_temp.sc('a_owner', format($q$select public.outbox_decide(%L, %L, 'appr
 select pg_temp.sc('a_owner', format($q$select public.outbox_decide(%L, %L, 'approve')$q$, tests.tid('a'), tests.rid('dx_m6')));
 select is(pg_temp.st('dx_m5'), 'queued/owner_approved', 'A15: approved');
 select is(pg_temp.at('dx_m5'), '10-05 23:30', 'A16: APPROVED AT NIGHT INSIDE THE CONVERSATION: it goes now');
-select is(pg_temp.at('dx_m6'), '10-06 09:00', 'A17: approved at night, the customer wrote 90 minutes ago: it waits for 09:00');
+select is(pg_temp.at('dx_m6'), '10-06 09:00', 'A17: approved at night, the customer wrote 3 hours ago: it waits for 09:00');
 
 -- the release (the worker's claim): a conversation reply is handed out at night, an old one is held
 select pg_temp.pin(timestamptz '2026-10-05 23:36:00+05:30');

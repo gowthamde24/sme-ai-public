@@ -90,7 +90,7 @@ class Box:
         return self.fw.lead(**kw)
 
     def inbound(
-        self, lead: Lead, body: str = "Hello, please tell me about your sarees", ago: str = "1 hour"
+        self, lead: Lead, body: str = "Hello, please tell me about your sarees", ago: str = "3 hours"
     ) -> None:
         operator_sql.sql(
             f"insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body, body_sha256) "

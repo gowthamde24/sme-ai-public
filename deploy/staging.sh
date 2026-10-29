@@ -70,6 +70,15 @@ dirty=""; git diff --quiet HEAD -- . 2>/dev/null || dirty="-dirty$(date +%H%M%S)
 export TAG="${TAG:-$(git rev-parse --short HEAD)$dirty}"   # TAG=<tag> names the tag to build and deploy
 
 # the TEST FENCE (docs/runbooks/whatsapp-staging.md): the only numbers a message may be sent to, by the API AND by the worker. Left empty, NOTHING is sent.
+if [ -z "${WHATSAPP_ALLOWED_RECIPIENTS+x}" ]; then
+  # Not given: keep the fence the worker already has. A deploy that forgot it used to close the fence for the API, and the Owner's approved reply was refused ("rejected") without Meta ever being called (29 Oct).
+  WHATSAPP_ALLOWED_RECIPIENTS="$(gcloud run jobs describe sme-worker --region "$REGION" --project "$PROJECT_ID" --format=json 2>/dev/null | python3 -c 'import json,sys
+d=json.load(sys.stdin)
+for c in d["spec"]["template"]["spec"]["template"]["spec"]["containers"]:
+    for e in c.get("env", []):
+        if e["name"] == "WHATSAPP_ALLOWED_RECIPIENTS":
+            print(e.get("value", ""))' 2>/dev/null || true)"
+fi
 WHATSAPP_ALLOWED_RECIPIENTS="${WHATSAPP_ALLOWED_RECIPIENTS-}"
 
 if [ "$what" = "api" ] || [ "$what" = "all" ]; then

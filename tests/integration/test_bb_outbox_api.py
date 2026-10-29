@@ -204,7 +204,7 @@ def test_quiet_hours_are_read_set_by_the_owner_with_a_second_factor_and_used_by_
         # the policy reads this business's hours: at 09:30 (open by default) the message is held until 10:00
         pin_clock(time(9, 30))
         lead = box.lead()
-        box.inbound(lead, ago="2 hours")  # job DX: a reply to a customer who wrote within 30 minutes is no longer held at night, so this one wrote two hours ago
+        box.inbound(lead, ago="3 hours")  # jobs DX and EF: a reply to a customer who wrote within the last 2 hours is no longer held at night, so this one wrote three hours ago
         m = box.submit("sales", lead, "Thank you for writing to us, we are open today.", category="reply_to_inbound").json()["message"]
         assert (m["status"], m["reason"]) == ("queued", "quiet_hours"), m
         yest = datetime.now(IST).date() - timedelta(days=1)
