@@ -70620,10 +70620,10 @@
   }
  },
  "vp.sub": {
-  "en": "Choose the voice {assistant} uses on calls and in voice previews, for each language. Until you choose, the default voice is used.",
-  "te": "కాల్స్‌లో, వాయిస్ ప్రివ్యూలో {assistant} వాడే వాయిస్‌ని ప్రతి భాషకూ ఎంచుకోండి. మీరు ఎంచుకునే వరకు డిఫాల్ట్ వాయిస్ వాడతాం.",
-  "hi": "कॉल और वॉइस प्रीव्यू में {assistant} कौन सी आवाज़ इस्तेमाल करे, यह हर भाषा के लिए चुनें। आपके चुनने तक डिफ़ॉल्ट आवाज़ चलती है।",
-  "kn": "ಕಾಲ್‌ಗಳಲ್ಲಿ ಮತ್ತು ವಾಯ್ಸ್ ಪ್ರಿವ್ಯೂನಲ್ಲಿ {assistant} ಬಳಸುವ ಧ್ವನಿಯನ್ನು ಪ್ರತಿ ಭಾಷೆಗೂ ಆಯ್ಕೆಮಾಡಿ. ನೀವು ಆಯ್ಕೆಮಾಡುವವರೆಗೆ ಡಿಫಾಲ್ಟ್ ಧ್ವನಿ ಬಳಕೆಯಾಗುತ್ತದೆ.",
+  "en": "Choose the voice {assistant} uses in the chat, in voice notes and on calls: first Female or Male, then one voice for each language. Until you choose, the default voice of each language is used.",
+  "te": "చాట్‌లో, వాయిస్ నోట్స్‌లో, కాల్స్‌లో {assistant} వాడే వాయిస్‌ని ఎంచుకోండి: ముందు మహిళ లేదా పురుషుడు, తర్వాత ప్రతి భాషకూ ఒక వాయిస్. మీరు ఎంచుకునే వరకు ప్రతి భాష డిఫాల్ట్ వాయిస్ వాడుతుంది.",
+  "hi": "चैट, वॉइस नोट और कॉल में {assistant} जो आवाज़ इस्तेमाल करता है उसे चुनें: पहले महिला या पुरुष, फिर हर भाषा के लिए एक आवाज़। आपके चुनने तक हर भाषा की डिफ़ॉल्ट आवाज़ चलेगी।",
+  "kn": "ಚಾಟ್, ವಾಯ್ಸ್ ನೋಟ್ ಮತ್ತು ಕರೆಗಳಲ್ಲಿ {assistant} ಬಳಸುವ ಧ್ವನಿಯನ್ನು ಆರಿಸಿ: ಮೊದಲು ಮಹಿಳೆ ಅಥವಾ ಪುರುಷ, ನಂತರ ಪ್ರತಿ ಭಾಷೆಗೆ ಒಂದು ಧ್ವನಿ. ನೀವು ಆರಿಸುವವರೆಗೆ ಪ್ರತಿ ಭಾಷೆಯ ಡಿಫಾಲ್ಟ್ ಧ್ವನಿ ಬಳಕೆಯಾಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -73913,6 +73913,160 @@
   "te": "ఫార్వార్డింగ్ నిర్ధారణకు జీమెయిల్ ఈ కోడ్ అడుగుతుంది",
   "hi": "फ़ॉरवर्डिंग की पुष्टि के लिए जीमेल यह कोड माँगता है",
   "kn": "ಫಾರ್ವರ್ಡಿಂಗ್ ದೃಢೀಕರಣಕ್ಕೆ ಜೀಮೇಲ್ ಈ ಕೋಡ್ ಕೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.gender.t": {
+  "en": "Voice type",
+  "te": "వాయిస్ రకం",
+  "hi": "आवाज़ का प्रकार",
+  "kn": "ಧ್ವನಿಯ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.gender.d": {
+  "en": "One choice for the whole business. Every language below shows voices of this kind.",
+  "te": "మొత్తం బిజినెస్‌కు ఒకే ఎంపిక. కింద ప్రతి భాషలో ఈ రకం వాయిస్‌లే కనిపిస్తాయి.",
+  "hi": "पूरे बिज़नेस के लिए एक ही चुनाव। नीचे हर भाषा में इसी तरह की आवाज़ें दिखेंगी।",
+  "kn": "ಇಡೀ ಬಿಸಿನೆಸ್‌ಗೆ ಒಂದೇ ಆಯ್ಕೆ. ಕೆಳಗಿನ ಪ್ರತಿ ಭಾಷೆಯಲ್ಲಿ ಇಂಥ ಧ್ವನಿಗಳೇ ಕಾಣುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.gender.saved": {
+  "en": "Voices are now {gender}. Each language uses its default until you pick one.",
+  "te": "ఇప్పుడు వాయిస్‌లు: {gender}. మీరు ఎంచుకునే వరకు ప్రతి భాష డిఫాల్ట్ వాడుతుంది.",
+  "hi": "अब आवाज़ें: {gender}। आपके चुनने तक हर भाषा डिफ़ॉल्ट इस्तेमाल करेगी।",
+  "kn": "ಈಗ ಧ್ವನಿಗಳು: {gender}. ನೀವು ಆರಿಸುವವರೆಗೆ ಪ್ರತಿ ಭಾಷೆ ಡಿಫಾಲ್ಟ್ ಬಳಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.recommended": {
+  "en": "Recommended",
+  "te": "సిఫార్సు",
+  "hi": "अनुशंसित",
+  "kn": "ಶಿಫಾರಸು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.line": {
+  "en": "Sample line:",
+  "te": "శాంపిల్ వాక్యం:",
+  "hi": "नमूना वाक्य:",
+  "kn": "ಮಾದರಿ ವಾಕ್ಯ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.speaking": {
+  "en": "Speaking in {language} · {voice}",
+  "te": "{language}లో మాట్లాడేది · {voice}",
+  "hi": "{language} में आवाज़ · {voice}",
+  "kn": "{language}ನಲ್ಲಿ ಧ್ವನಿ · {voice}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.tag.calm": {
+  "en": "calm",
+  "te": "శాంతంగా",
+  "hi": "शांत",
+  "kn": "ಶಾಂತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.tag.warm": {
+  "en": "warm",
+  "te": "ఆత్మీయంగా",
+  "hi": "गर्मजोशी भरी",
+  "kn": "ಆತ್ಮೀಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.tag.deep": {
+  "en": "deep",
+  "te": "గంభీరంగా",
+  "hi": "गहरी",
+  "kn": "ಗಂಭೀರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.tag.bright": {
+  "en": "bright",
+  "te": "తేటగా",
+  "hi": "चमकदार",
+  "kn": "ತೇಜಸ್ವಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.tag.young": {
+  "en": "young",
+  "te": "యువ",
+  "hi": "युवा",
+  "kn": "ಯುವ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.tag.mature": {
+  "en": "mature",
+  "te": "పరిణతితో",
+  "hi": "परिपक्व",
+  "kn": "ಪ್ರೌಢ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.tag.energetic": {
+  "en": "energetic",
+  "te": "ఉత్సాహంగా",
+  "hi": "ऊर्जावान",
+  "kn": "ಉತ್ಸಾಹಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.speaking.in": {
+  "en": "Speaking in {language} · {voice}",
+  "te": "{language}లో మాట్లాడుతోంది · {voice}",
+  "hi": "{language} में बोल रही है · {voice}",
+  "kn": "{language}ನಲ್ಲಿ ಮಾತನಾಡುತ್ತಿದೆ · {voice}",
   "status": {
    "te": "draft",
    "hi": "draft",

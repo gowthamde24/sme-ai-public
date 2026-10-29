@@ -5,9 +5,9 @@ import * as React from "react";
 
 import { Orb } from "@/components/v2/Orb";
 import { sayLine } from "@/lib/assistant/lines";
-import { TONES, sampleUrl, type Tone } from "@/lib/voice-samples/types";
+import { sampleUrl } from "@/lib/voice-samples/types";
 import type { TestCall, TestCallResult } from "@/lib/assistant/test-call";
-import { CALL_LANGS, DAYS, HOURS, NAME_MAX, SPEED, STYLES, VOICES, parseSettings, validName, type AssistantSettings as Settings, type CallLang, type Day, type Voice } from "@/lib/assistant/types";
+import { CALL_LANGS, DAYS, HOURS, NAME_MAX, SPEED, STYLES, parseSettings, validName, type AssistantSettings as Settings, type CallLang, type Day, type Voice } from "@/lib/assistant/types";
 import type { AssistantProfile } from "@/lib/assistant/defaults";
 
 import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, surface } from "../ui";
@@ -38,27 +38,26 @@ function Switch({ on, label, onChange, disabled }: { on: boolean; label: string;
  * may do on calls (and the highest discount), when it hands over to the owner, the calling hours, and on the right a live preview with the circle speaking. It starts from the defaults of the business type (`profile`), so an owner can
  * skip it; nothing is kept until "Save". Only the Owner can change it (`canEdit`). Voice samples and test calls do not exist yet, so "Hear it" is switched off and "Call me now for a test" says so. The words come in as props.
  */
-export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, ownVoiceReady = false, samples = null, voicePickerOn = false, voiceInUse = null, defaultName = null, openingLine = null }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ ownVoiceReady?: boolean; /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The voice picker (a voice for each language, below) is on: the four-persona list is not shown, unless the Owner's own voice is in use or ready to use (it is chosen here). */ voicePickerOn?: boolean; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null; /** The opening line a call speaks, per language (the saved line, else the default by the AI switch): the card shows it instead of an example sentence. */ openingLine?: { lines: Partial<Record<CallLang, string>>; defaults: Record<CallLang, string> } | null }) {
+export function AssistantSettings({ words, initial, profile, shop, langs, voiceNames, canEdit, testMode, saved, actions, samples = null, voicePickerOn = false, voiceInUse = null, defaultName = null, openingLine = null }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; voiceNames: Record<Voice, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The voice picker (a voice for each language, below) is on: the four-persona list is not shown, unless the Owner's own voice is in use or ready to use (it is chosen here). */ voicePickerOn?: boolean; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null; /** The opening line a call speaks, per language (the saved line, else the default by the AI switch): the card shows it instead of an example sentence. */ openingLine?: { lines: Partial<Record<CallLang, string>>; defaults: Record<CallLang, string> } | null }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<Settings>(initial);
   const [busy, setBusy] = React.useState(false);
   const [note, setNote] = React.useState<"saved" | "error" | "test" | null>(null);
-  const [tone, setTone] = React.useState<Tone>("warm");
-  const [playing, setPlaying] = React.useState<Voice | null>(null);
+  const [playing, setPlaying] = React.useState(false);
   const [sampleErr, setSampleErr] = React.useState(false);
   const [heard, setHeard] = React.useState<string | null>(null); // the words of the preview that was played (the real names in them)
   const audio = React.useRef<HTMLAudioElement | null>(null);
   const [test, setTest] = React.useState<{ state: "idle" } | { state: "running" } | { state: "error" } | { state: "done"; call: TestCall }>({ state: "idle" });
   React.useEffect(() => () => audio.current?.pause(), []);
   /** Plays one voice's sample in the language and tone now chosen; the one that was playing stops. A browser that will not play it, or a sample that is not there, says so. */
-  const hear = (v: Voice) => {
+  const hear = () => {
     if (!samples) return;
     audio.current?.pause();
-    if (playing === v) return setPlaying(null);
+    if (playing) return setPlaying(false);
     setSampleErr(false);
     setHeard(null);
-    const q = { voice: v, lang: s.lang, tone, name: nameOnScreen };
+    const q = { voice: s.voice === "own_voice" ? ("female_warm" as const) : s.voice, lang: s.lang, tone: "warm" as const, name: nameOnScreen }; // (with the voice catalogue on, the sound is the saved line in the voice in force: these two only name the old sample)
     if (!samples.mock) {
       // the exact words the sound says are shown beside the player (with the voice catalogue: the saved opening line with the business's real names), so what is read is what is heard
       void fetch(`${sampleUrl(samples.endpoint, q)}&text=1`, { cache: "no-store" })
@@ -68,14 +67,14 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
     }
     const a = new Audio(sampleUrl(samples.endpoint, q));
     audio.current = a;
-    a.onended = () => setPlaying(null);
+    a.onended = () => setPlaying(false);
     a.onerror = () => {
-      setPlaying(null);
+      setPlaying(false);
       setSampleErr(true);
     };
-    setPlaying(v);
+    setPlaying(true);
     a.play().catch(() => {
-      setPlaying(null);
+      setPlaying(false);
       setSampleErr(true);
     });
   };
@@ -146,48 +145,6 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
                 </p>
               )}
             </section>
-
-            {voicePickerOn && !ownVoiceReady && s.voice !== "own_voice" ? null : (
-            <section className={block} aria-labelledby="asst-voice-h">
-              <div>
-                <h3 id="asst-voice-h" className="text-[17px] font-semibold">{t("asst.voice.t")}</h3>
-                <p className="text-sm text-muted">{t("asst.voice.d")}</p>
-              </div>
-              <div role="radiogroup" aria-labelledby="asst-voice-h" className="grid gap-2.5 sm:grid-cols-2">
-                {VOICES.filter((v) => v !== "own_voice" || ownVoiceReady || s.voice === "own_voice").map((v) => (
-                  <div key={v} className="flex items-stretch gap-2">
-                    <button type="button" role="radio" aria-checked={s.voice === v} onClick={() => set({ voice: v })} className={`${opt(s.voice === v)} min-w-0 flex-1`}>
-                      <span className="flex min-w-0 flex-col gap-0.5">
-                        <strong className="text-[15px]">{voiceNames[v]}</strong>
-                        <span className="text-[13px] text-muted">{t(`asst.voice.${v}.d` as "asst.voice.female_warm.d")}</span>
-                      </span>
-                    </button>
-                    {samples && v !== "own_voice" ? (
-                      <button type="button" data-sample={v} aria-pressed={playing === v} aria-label={t("asst.sample.hear", { voice: voiceNames[v] })} title={t("asst.sample.hear", { voice: voiceNames[v] })} onClick={() => hear(v)} className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-2xl border border-edge bg-surface text-lg hover:bg-surface-2">
-                        <span aria-hidden="true">{playing === v ? "■" : "▶"}</span>
-                      </button>
-                    ) : null}
-                  </div>
-                ))}
-              </div>
-              {samples ? (
-                <div data-part="sample-tone">
-                  <p id="asst-tone-h" className="text-sm font-semibold">{t("asst.tone.t")}</p>
-                  <div role="radiogroup" aria-labelledby="asst-tone-h" className="mt-1 flex flex-wrap gap-2">
-                    {TONES.map((x) => (
-                      <button key={x} type="button" role="radio" aria-checked={tone === x} onClick={() => setTone(x)} className={chip(tone === x)}>
-                        {t(`asst.tone.${x}` as "asst.tone.warm")}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="mt-2 text-sm font-medium" data-part="preview-label">{t("asst.preview.label", { who: nameOnScreen })}</p>
-                  <p className="mt-2 text-sm text-muted">{t("asst.sample.note", { language: langs[s.lang] })} {t("asst.tone.note")}</p>
-                  {samples.mock ? <p role="note" className="mt-1 text-sm text-muted">{t("asst.sample.mock")}</p> : null}
-                  {sampleErr ? <p role="alert" className="mt-1 text-sm font-medium text-red-text">{t("asst.sample.err")}</p> : null}
-                </div>
-              ) : null}
-            </section>
-            )}
 
             <section className={block} aria-labelledby="asst-lang-h">
               <div>
@@ -316,10 +273,11 @@ export function AssistantSettings({ words, initial, profile, shop, langs, voiceN
             “{line}”
           </p>
           <p data-part="disclosure" className="text-center text-xs opacity-80">{t("asst.disclosure")}</p>
-          <button type="button" disabled={!samples} onClick={() => hear(s.voice === "own_voice" ? "female_warm" : s.voice)} className={`${btnQuiet} !border-white/30 !bg-transparent !text-on-charcoal ${samples ? "" : "opacity-60"}`}>
+          <button type="button" disabled={!samples} onClick={hear} className={`${btnQuiet} !border-white/30 !bg-transparent !text-on-charcoal ${samples ? "" : "opacity-60"}`}>
             ▶ {t("asst.hear")}
           </button>
           {samples ? null : <p className="text-center text-xs opacity-80">{t("asst.hear.soon")}</p>}
+          {sampleErr ? <p role="alert" className="text-center text-xs font-medium">{t("asst.sample.err")}</p> : null}
           {heard ? (
             <p lang={s.lang} className="rounded-lg bg-white/10 px-3 py-2 text-center text-sm" data-part="preview-text" aria-live="polite">
               <span className="block font-semibold opacity-80">{t("asst.preview.heard")}</span>

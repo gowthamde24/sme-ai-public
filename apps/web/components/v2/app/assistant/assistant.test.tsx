@@ -37,11 +37,13 @@ describe("Settings > AI assistant", () => {
     expect(screen.queryByRole("radiogroup", { name: /Voice/ })).toBeNull();
     expect(aside.querySelector('[data-part="preview-line"]')?.textContent).not.toMatch(/your assistant|Vijaya/i); // the example line names nobody
   });
-  it("the four-persona voice list is shown, and is left out when the voice picker is on (the picker chooses the voice of each language)", () => {
+  it("there is no persona list, no warm/crisp choice and no sample buttons here any more: the voice is chosen in ONE place, Settings > AI assistant > Voice (the picker)", () => {
     draw({});
-    expect(screen.getByRole("radiogroup", { name: /Voice/ })).toBeInTheDocument();
+    expect(screen.queryByRole("radiogroup", { name: /Voice/ })).toBeNull();
+    expect(document.querySelector("[data-sample]")).toBeNull();
+    expect(screen.queryByRole("radio", { name: /Crisp|Warm$/ })).toBeNull();
     cleanup();
-    draw({ voicePickerOn: true });
+    draw({ voicePickerOn: true, samples: { endpoint: "/app/tenants/t/voice-sample", mock: false } });
     expect(screen.queryByRole("radiogroup", { name: /Voice/ })).toBeNull();
     expect(screen.getByRole("radiogroup", { name: /Languages|Language/ })).toBeInTheDocument();
   });
@@ -108,13 +110,12 @@ describe("Settings > AI assistant", () => {
   it("saves the whole settings, says 'Saved.' and reads the screen again", async () => {
     const { save } = draw();
     fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "Meera" } });
-    fireEvent.click(screen.getByRole("radio", { name: /Male · calm/ }));
     fireEvent.click(screen.getByRole("switch", { name: "Talk about dues" }));
     fireEvent.change(screen.getByLabelText("Highest discount it may offer"), { target: { value: "5" } });
     fireEvent.click(screen.getByRole("button", { name: "Sat" }));
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(save).toHaveBeenCalledOnce());
-    expect(save.mock.calls[0][0]).toMatchObject({ name: "Meera", voice: "male_calm", may: { dues: true }, maxDiscount: 5, hours: { days: ["mon", "tue", "wed", "thu", "fri"] } });
+    expect(save.mock.calls[0][0]).toMatchObject({ name: "Meera", may: { dues: true }, maxDiscount: 5, hours: { days: ["mon", "tue", "wed", "thu", "fri"] } });
     expect(await screen.findByRole("status")).toHaveTextContent("Saved.");
     expect(refresh).toHaveBeenCalled();
   });
@@ -155,9 +156,8 @@ describe("Settings > AI assistant", () => {
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("That did not save. Check the name, the hours and the numbers.");
   });
-  it("the voices, the languages and the days are radio groups and buttons with their state", () => {
+  it("the languages and the days are radio groups and buttons with their state", () => {
     draw();
-    expect(within(screen.getByRole("radiogroup", { name: "Voice" })).getAllByRole("radio")).toHaveLength(4);
     expect(screen.getByRole("radio", { name: "తెలుగు" })).toHaveAttribute("aria-checked", "true");
     expect(screen.getByRole("button", { name: "Mon" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "Sun" })).toHaveAttribute("aria-pressed", "false");
@@ -189,62 +189,18 @@ describe("Settings > AI assistant", () => {
     };
     afterEach(() => vi.unstubAllGlobals());
 
-    it("draws a play button beside each voice that has a sample (not the owner's own voice) and the warm/crisp choice, only when samples are on", () => {
-      draw();
-      expect(document.querySelector("[data-sample]")).toBeNull();
-      expect(screen.queryByRole("radio", { name: "Crisp" })).toBeNull();
+    it("'Hear it' on the preview card asks the ONE preview route (the saved line in the voice in force), says so in words when the browser cannot play it, and asks for no words in the test screens", async () => {
+      install(true);
+      draw({ samples });
+      fireEvent.click(screen.getByRole("button", { name: /Hear it/ }));
+      expect(await screen.findByRole("alert")).toHaveTextContent(/sample/i);
       cleanup();
-      draw({ samples });
-      expect(document.querySelectorAll("[data-sample]").length).toBe(VOICES.filter((v) => v !== "own_voice").length);
-      expect(document.querySelector('[data-sample="own_voice"]')).toBeNull();
-      expect(screen.getByRole("radio", { name: "Warm" })).toHaveAttribute("aria-checked", "true");
-    });
-    it("plays the voice in the language and tone now chosen, the name now typed; a second press stops it; another voice replaces it", () => {
-      install();
-      draw({ samples });
-      fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "Asha" } });
-      fireEvent.click(screen.getByRole("radio", { name: "Crisp" }));
-      const first = document.querySelector('[data-sample="female_warm"]') as HTMLElement;
-      fireEvent.click(first);
-      expect(made[0].src).toBe("/app/tenants/t/voice-sample?voice=female_warm&lang=te&tone=crisp&name=Asha");
-      expect(first).toHaveAttribute("aria-pressed", "true");
-      fireEvent.click(first);
-      expect(made[0].pause).toHaveBeenCalled();
-      expect(first).toHaveAttribute("aria-pressed", "false");
-      fireEvent.click(document.querySelector('[data-sample="male_calm"]') as HTMLElement);
-      expect(made[1].src).toContain("voice=male_calm");
-    });
-    it("labels it as a preview of the voice with the assistant's name, and shows the words that are spoken (with the real names) once they are read", async () => {
-      install();
-      const fetched = vi.fn(async () => ({ ok: true, json: async () => ({ text: "Hello, this is Asha from Pavers Corner." }) }));
-      vi.stubGlobal("fetch", fetched);
-      draw({ samples });
-      fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "Asha" } });
-      expect(document.querySelector('[data-part="preview-label"]')).toHaveTextContent("Preview of the voice. In real calls Asha talks naturally and answers what the customer says.");
-      fireEvent.click(document.querySelector('[data-sample="female_warm"]') as HTMLElement);
-      expect(await screen.findByText(/Hello, this is Asha from Pavers Corner\./)).toBeInTheDocument();
-      expect(fetched).toHaveBeenCalledWith("/app/tenants/t/voice-sample?voice=female_warm&lang=te&tone=warm&name=Asha&text=1", { cache: "no-store" });
-    });
-    it("the test screens' own sound has no words to show and asks for none", () => {
       install();
       const fetched = vi.fn();
       vi.stubGlobal("fetch", fetched);
       draw({ samples: { ...samples, mock: true } });
-      fireEvent.click(document.querySelector('[data-sample="female_warm"]') as HTMLElement);
+      fireEvent.click(screen.getByRole("button", { name: /Hear it/ }));
       expect(fetched).not.toHaveBeenCalled();
-    });
-    it("a sample the browser cannot play says so, in words", async () => {
-      install(true);
-      draw({ samples });
-      fireEvent.click(document.querySelector('[data-sample="female_warm"]') as HTMLElement);
-      expect(await screen.findByRole("alert")).toHaveTextContent(/sample/i);
-    });
-    it("says the samples are only a sound of the test screens when they are", () => {
-      draw({ samples });
-      expect(screen.queryByText(/It is not how they will sound/)).toBeNull();
-      cleanup();
-      draw({ samples: { ...samples, mock: true } });
-      expect(screen.getByText(/It is not how they will sound/)).toBeInTheDocument();
     });
     it("shows the AI disclosure in the preview, and 'Hear it' plays the chosen voice", () => {
       install();

@@ -1,6 +1,6 @@
 import { ApiContractError, ApiRequestError, apiBinaryRequest, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
-import { parsePicker, VOICE_ID, type Picker, type PickerLang } from "@/lib/voice-picker/types";
+import { parsePicker, VOICE_ID, type Gender, type Picker, type PickerLang } from "@/lib/voice-picker/types";
 
 /**
  * The voice picker from C1's API (contract-voice-picker.md, PR #153). Under `/v1/tenants/{id}/ai-assistant`, the signed-in person's own token:
@@ -24,6 +24,12 @@ export const getVoicePicker = async (token: string, tenantId: string): Promise<P
 export async function putVoiceChoice(token: string, tenantId: string, language: PickerLang, voiceId: string | null): Promise<Picker> {
   if (voiceId !== null && !VOICE_ID.test(voiceId)) throw new ApiContractError("voice id");
   return checked(parsePicker(await apiRequest(`${base(tenantId)}/voices`, token, { method: "PUT", body: JSON.stringify({ language, voice_id: voiceId }) })));
+}
+
+/** Female or Male for the whole workspace (Owner, Admin): the voices chosen for the other gender are cleared by the API (the defaults of the new gender speak), the answer is the same shape as GET. */
+export async function putVoiceGender(token: string, tenantId: string, gender: Gender): Promise<Picker> {
+  if (gender !== "female" && gender !== "male") throw new ApiContractError("gender");
+  return checked(parsePicker(await apiRequest(`${base(tenantId)}/voices`, token, { method: "PUT", body: JSON.stringify({ gender }) })));
 }
 
 /** The bytes of one sample (a file of about 100 KB, at most 1 MB); `path` has been through `safeSamplePath`. The API needs no sign-in for it; the person's token is sent like on every call of the app. */
