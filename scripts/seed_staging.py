@@ -66,6 +66,9 @@ BUSINESSES = [
     ("coaching", "DEMO Vidya Coaching Centre (synthetic)", "en"),
 ]
 LEAD_DESK_PACKS = ("real_estate", "coaching")
+# A demo workspace must never carry a real business's name. A staging workspace once renamed to a real shop is set back through the app's own PUT /profile (as the demo owner);
+# only a name listed here is changed, so any other name a person chose is left alone. The made-up name is the one the pack's demo uses.
+RETIRED_NAMES = {"Lakshmi Narasimha Silks": "Neelambari Silks (demo)"}
 
 
 class SeedError(Exception):
@@ -221,6 +224,7 @@ class Seeder:
         if st != 200 or not isinstance(setup, dict):
             raise SeedError(f"The first-login setup failed for {pack} (HTTP {st}).")
         tenant = str(setup["tenant_id"])
+        self.retire_real_name(token, tenant)
         counts = None
         if pack not in LEAD_DESK_PACKS:   # the Lead Desk businesses have their own demo data below, not the packs' labelled example rows
             st, ex = self.call(token, "POST", f"/v1/tenants/{tenant}/example-data")
@@ -244,6 +248,14 @@ class Seeder:
         except demo_data.DemoError as e:
             raise SeedError(f"the demo data of {pack} failed: {e}") from None
         return {"pack": pack, "email": email, "account_created": created, "workspace_created": bool(setup.get("created")), "tenant_id": tenant, "example_data": counts, "demo_data": extra}
+
+    def retire_real_name(self, token: str, tenant: str) -> None:
+        st, prof = self.call(token, "GET", f"/v1/tenants/{tenant}/profile")
+        name = prof.get("name") if st == 200 and isinstance(prof, dict) else None
+        if isinstance(name, str) and name in RETIRED_NAMES:
+            st, _ = self.call(token, "PUT", f"/v1/tenants/{tenant}/profile", {"name": RETIRED_NAMES[name]})
+            if st != 200:
+                raise SeedError(f"Renaming a workspace that carried a real business name failed (HTTP {st}).")
 
     def scheduler(self) -> str:
         password = secret_get(SCHEDULER_SECRET)
