@@ -13,6 +13,7 @@ import html
 import logging
 import re
 import secrets
+import time
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -20,6 +21,7 @@ from typing import Any, Protocol
 
 from app.errors import ApiError, not_found
 from app.integrations.sheet import MAX_UPLOAD_BYTES, Grid, SheetRefused, load_grid
+from app.lead_sources import cards as cards_mod
 from app.lead_sources import mapping as mp
 from app.lead_sources import portals, reading
 from app.lead_sources.dnd import DndLookup
@@ -54,6 +56,16 @@ _MAIL_TO = re.compile(r"leads\+([A-Za-z0-9_-]{24,64})@", re.I)
 
 def token_hash(token: str) -> str:
     return hashlib.sha256(token.encode("utf-8")).hexdigest()
+
+
+GMAIL_GUIDE = (
+    "Open Gmail on a computer and open one lead e-mail from the portal.",
+    "Click the three dots at the top, then 'Filter messages like this', then 'Create filter'.",
+    "Tick 'Forward it to'. Click 'Add forwarding address' and paste the address above.",
+    "Gmail sends a confirmation to that address. The code appears on this page within a minute: type it into Gmail.",
+    "Back in the filter, choose the address you added, and click 'Create filter'. From now on those e-mails come here by themselves.",
+)
+_GMAIL_CODE = re.compile(r"(?:#|code[:\s]+)(\d{6,12})", re.I)
 
 
 def tag_of(kind: str, portal: str | None) -> str:
@@ -371,6 +383,53 @@ class LeadSourcesService:
     def sources(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         return [self._source_out(s) for s in self.repo.sources(token, tenant_id)]
 
+    # ------------------------------------------------------------------------------------------------------------- the Sources page (job EB part B)
+    def cards(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
+        """The cards: one clear action and a live status each, in plain words."""
+        available = cards_mod.Available(
+            meta=self._available("meta_lead_ads"), indiamart=False,   # (the owner's own IndiaMART key is a later release: the card says 'coming soon')
+            email_forward=self._available("email_forward"), website=self.receiver is not None,
+        )
+        return cards_mod.build_cards(self.repo.sources(token, tenant_id), self.repo.cards_stats(token, tenant_id), available)
+
+    def email_address(self, token: str, tenant_id: uuid.UUID, *, rotate: bool = False) -> dict[str, Any]:
+        """The workspace's forwarding address (made on first use, shown again as often as asked; `rotate` makes a new one and the old one stops working)."""
+        if not self.inbound_domain or self.receiver is None:
+            raise ApiError(503, "not_available", "Forwarding e-mails is not switched on yet. Ask us to switch it on.")
+        current = self.repo.inbound_get(token, tenant_id)
+        secret = str(current.get("token") or "")
+        if not secret or rotate:
+            secret = secrets.token_hex(12)
+            existing = next((s for s in self.repo.sources(token, tenant_id) if s.get("kind") == "email_forward"), None)
+            if existing is not None:
+                source_id = uuid.UUID(str(existing["id"]))
+                self.repo.source_rotate(token, tenant_id, source_id, token_hash(secret), secret[-4:])
+            else:
+                source_id = uuid.uuid4()
+                self.repo.source_create(
+                    token, tenant_id,
+                    {"p_id": str(source_id), "p_kind": "email_forward", "p_tag": tag_of("email_forward", None), "p_label": "Forwarded lead e-mails", "p_token_hash": token_hash(secret),
+                     "p_token_hint": secret[-4:], "p_consent_id": None, "p_consent": None, "p_cost_paise": None},
+                )
+            self.repo.inbound_set(token, tenant_id, source_id, secret)
+        return {
+            "address": f"leads+{secret}@{self.inbound_domain}",
+            "gmail_filter_guide": [{"step": i + 1, "text": text} for i, text in enumerate(GMAIL_GUIDE)],
+            "sample_portals": ["JustDial", "Sulekha", "IndiaMART e-mail", "99acres", "MagicBricks"],
+            "gmail_confirmation": self._gmail_confirmation(token, tenant_id),
+        }
+
+    def _gmail_confirmation(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
+        """Gmail asks the new forwarding address to confirm with a code; that mail arrives here, so the code is shown to the owner (the mail itself is not a lead)."""
+        for item in self.repo.unparsed(token, tenant_id):
+            subject = str(item.get("subject") or "")
+            if "forwarding confirmation" not in subject.lower():
+                continue
+            found = _GMAIL_CODE.search(subject) or _GMAIL_CODE.search(str(item.get("preview") or ""))
+            if found:
+                return {"code": found.group(1), "received_at": item.get("received_at")}
+        return None
+
     def _secret(self, kind: str, secret: str) -> dict[str, Any]:
         url = f"{self.base}/v1/lead-intake/{secret}" if self.base else f"/v1/lead-intake/{secret}"
         snippet = None
@@ -479,10 +538,23 @@ class LeadSourcesService:
         self._live(secret, [row])
         return "received"
 
-    def receive_mail_global(self, provided_secret: str | None, mail: Any) -> str:
+    def signed_ok(self, raw: bytes, timestamp: str | None, signature: str | None) -> bool:
+        """The Cloudflare mail worker signs `<unix seconds>.<body>` with HMAC-SHA256 under the shared secret (hex, optionally `sha256=` first). Five minutes either way."""
+        if self._inbound_secret is None or not timestamp or not signature:
+            return False
+        try:
+            seconds = int(timestamp)
+        except ValueError:
+            return False
+        if abs(time.time() - seconds) > 300:
+            return False
+        expected = hmac.new(self._inbound_secret.encode(), f"{seconds}.".encode() + raw, hashlib.sha256).hexdigest()
+        return hmac.compare_digest(expected, signature.strip().removeprefix("sha256=").lower())
+
+    def receive_mail_global(self, provided_secret: str | None, mail: Any, *, signed: bool = False) -> str:
         if self._inbound_secret is None or self.receiver is None:
             raise ApiError(503, "not_available", "Not available right now.")
-        if not provided_secret or not hmac.compare_digest(provided_secret.encode(), self._inbound_secret.encode()):
+        if not signed and (not provided_secret or not hmac.compare_digest(provided_secret.encode(), self._inbound_secret.encode())):
             raise ApiError(401, "unauthorized", "Not allowed.")
         m = _MAIL_TO.search(mail.to or "")
         if not m:

@@ -100,6 +100,7 @@ export interface MailIn {
   text?: string;
   html?: string | null;
   message_id?: string | null;
+  raw_base64?: string | null;
 }
 
 export interface MailOut {

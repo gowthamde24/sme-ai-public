@@ -280,9 +280,57 @@ class MailIn(_Strict):
     text: Annotated[str, Field(max_length=200_000)] = ""
     html: Annotated[str, Field(max_length=400_000)] | None = None
     message_id: Annotated[str, StringConstraints(max_length=300)] | None = None
+    # job EB part B: the whole raw mail (base64, at most 150,000 bytes) from the Cloudflare mail worker; the API reads it with a real mail parser and fills sender, subject and text
+    raw_base64: Annotated[str, Field(max_length=210_000)] | None = None
 
     model_config = ConfigDict(extra="forbid", populate_by_name=True)
 
 
 class MailOut(_Strict):
     status: Literal["received", "unrecognised"]
+
+
+# ---- the Sources page (job EB part B)
+class CardAction(_Strict):
+    type: Literal["oauth", "paste_key", "copy_address", "copy_snippet", "upload", "resume", "open", "none"]
+    label: str
+
+
+class CardProblem(_Strict):
+    code: str
+    message: str
+    fix: CardAction
+
+
+class Card(_Strict):
+    kind: Literal["meta", "indiamart", "email_forward", "website", "files", "whatsapp", "missed_calls"]
+    title: str
+    status: Literal["not_connected", "connected", "needs_attention", "coming_soon"]
+    headline: str
+    detail: str | None
+    received_7d: int
+    last_received_at: datetime | None
+    action: CardAction
+    problem: CardProblem | None
+    available: bool
+
+
+class CardsOut(_Strict):
+    items: list[Card]
+
+
+class GuideStep(_Strict):
+    step: int
+    text: str
+
+
+class GmailConfirmation(_Strict):
+    code: str
+    received_at: datetime
+
+
+class EmailAddressOut(_Strict):
+    address: str
+    gmail_filter_guide: list[GuideStep]
+    sample_portals: list[str]
+    gmail_confirmation: GmailConfirmation | None
