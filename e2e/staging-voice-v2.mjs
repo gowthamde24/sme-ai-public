@@ -53,14 +53,22 @@ function wavHeader(len, rate) {
 
 // ---- Sarvam speech-to-text of the captured audio (PCM16, 24 kHz)
 async function stt(pcm, language = "unknown") {
-  const form = new FormData();
-  form.append("file", new Blob([Buffer.concat([wavHeader(pcm.length, 24000), pcm])], { type: "audio/wav" }), "turn.wav");
-  form.append("model", "saarika:v2.5");
-  form.append("language_code", language);
-  const r = await fetch("https://api.sarvam.ai/speech-to-text", { method: "POST", headers: { "api-subscription-key": sarvamKey }, body: form });
-  if (!r.ok) return { transcript: "", language: `http ${r.status}` };
-  const j = await r.json();
-  return { transcript: String(j.transcript ?? ""), language: String(j.language_code ?? "") };
+  // the REST endpoint takes at most 30 s of audio: a long answer goes in pieces of 20 s
+  const piece = 24000 * 2 * 20;
+  const out = { transcript: "", language: "" };
+  for (let at = 0; at < pcm.length; at += piece) {
+    const part = pcm.subarray(at, at + piece);
+    const form = new FormData();
+    form.append("file", new Blob([Buffer.concat([wavHeader(part.length, 24000), part])], { type: "audio/wav" }), "turn.wav");
+    form.append("model", "saarika:v2.5");
+    form.append("language_code", language);
+    const r = await fetch("https://api.sarvam.ai/speech-to-text", { method: "POST", headers: { "api-subscription-key": sarvamKey }, body: form });
+    if (!r.ok) return { transcript: out.transcript, language: `http ${r.status}` };
+    const j = await r.json();
+    out.transcript += `${out.transcript ? " " : ""}${String(j.transcript ?? "")}`;
+    out.language ||= String(j.language_code ?? "");
+  }
+  return out;
 }
 
 /** Plays one recorded question into a fresh browser's chat and returns what the socket sent, grouped by turn. */
@@ -130,15 +138,28 @@ async function inForce(s) {
   }));
 }
 
+/** The default voice of a language when the workspace has not chosen one (contract-voice-v2.md). */
+const DEFAULT_VOICE = { en: "en-janvi", hi: "hi-sanya", kn: "kn-disha" };
+
 async function judge(id, key, expected, { save: name } = {}) {
   const lang = QUESTIONS[key].lang ?? key;
-  const run = await ask(key, { tag: id });
+  // each turn signs in with a fresh browser: a page that does not load in time is tried again (up to three times) before it counts as a failure
+  let run;
+  for (let attempt = 1; ; attempt++) {
+    try {
+      run = await ask(key, { tag: id });
+      break;
+    } catch (e) {
+      if (attempt >= 3) throw e;
+      console.log(`${id} ${key}: attempt ${attempt} failed (${String(e.message || e).split("\n")[0].slice(0, 80)}), trying again`);
+    }
+  }
   const answerTurns = [...run.turns.entries()].filter(([n]) => n >= 1);
   const all = [...run.turns.values()];
   check(id, `${key}: the socket announces the voice of every turn (a \`voice\` message before the sound)`, run.seenVoiceMessage && !run.turns.has(-1), run.seenVoiceMessage ? "" : "no voice message");
   const unique = (n) => new Set(run.turns.get(n).voices.map((v) => v.voice_id));
   check(id, `${key}: ONE voice id per turn (filler and answer identical)`, answerTurns.length > 0 && answerTurns.every(([n]) => unique(n).size === 1), answerTurns.map(([n]) => `turn ${n}: ${[...unique(n)].join("+")}`).join("; "));
-  const want = expected[lang];
+  const want = expected[lang] ?? DEFAULT_VOICE[lang]; // no saved choice = the language's default voice
   check(id, `${key}: the voice is the one the workspace chose for ${lang} (${want})`, answerTurns.length > 0 && answerTurns.every(([n]) => [...unique(n)].every((v) => v === want)), "");
   check(id, `${key}: the voice message names the language ${lang}`, answerTurns.every(([n]) => run.turns.get(n).voices.every((v) => v.language === lang)), answerTurns.map(([n]) => run.turns.get(n).voices.map((v) => v.language).join(",")).join(" "));
   check(id, `${key}: audio_end carries the same voice id`, answerTurns.every(([n]) => run.turns.get(n).ended.every((e) => e.voice_id === [...unique(n)][0])), "");
