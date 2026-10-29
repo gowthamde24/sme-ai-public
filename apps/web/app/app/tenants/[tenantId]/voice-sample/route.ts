@@ -56,7 +56,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // with the voice catalogue on there is ONE preview: the saved opening line in the voice the workspace chose (the old four-persona sample is not used)
     const got = voicePickerScreens() === "on" ? await getVoicesPreviewFile(user.accessToken, tenantId, query.lang) : await getVoicePreview(user.accessToken, tenantId, query);
     if (!got) return new NextResponse(null, { status: 404 });
-    return new NextResponse(got.bytes, { status: 200, headers: { ...headers, "Content-Type": got.contentType.split(";")[0] } });
+    return new NextResponse(got.bytes, { status: 200, headers: { ...headers, "Content-Type": got.contentType.split(";")[0], ...("voiceId" in got && typeof got.voiceId === "string" ? { "X-Voice-Id": got.voiceId } : {}) } });
   } catch (error) {
     // C1: six samples a minute and a daily cap per workspace (429 + Retry-After); the page says the sample could not be played
     if (error instanceof ApiRequestError && error.status === 429) return new NextResponse(null, { status: 429, headers: error.retryAfter ? { "Retry-After": String(error.retryAfter) } : {} });

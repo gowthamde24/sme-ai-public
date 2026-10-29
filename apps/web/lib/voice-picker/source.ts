@@ -1,9 +1,9 @@
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
-import { getVoicePicker, putVoiceChoice } from "@/lib/api/voice-picker";
+import { getVoicePicker, putVoiceChoice, putVoiceGender } from "@/lib/api/voice-picker";
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { voicePickerScreens } from "@/lib/screens/flag";
 
-import { MOCK_VOICES, PICKER_LANGS, VOICE_ID, type Choices, type Picker, type PickerLang } from "./types";
+import { MOCK_VOICES, PICKER_LANGS, VOICE_ID, type Choices, type Gender, type Picker, type PickerLang } from "./types";
 
 /**
  * Where the voice picker gets the catalogue and saves the choice. `mock` = the approved catalogue of 28 Oct and ONE small cookie for the choice, no real voices (the sounds are tones); `on` = C1's API (lib/api/voice-picker.ts, C1's contract);
@@ -14,16 +14,24 @@ export const MOCK_COOKIE = "sme_voicepick_mock";
 export type SaveError = "invalid" | "forbidden" | "read_only" | "not_available" | "down";
 export type Saved<T> = { ok: true; data: T } | { ok: false; error: SaveError };
 
-const parseChoices = (v: unknown): Choices | null => {
+type Jar = { gender: Gender; choices: Choices };
+const parseJar = (v: unknown): Jar | null => {
   if (typeof v !== "object" || v === null || Array.isArray(v)) return null;
-  const out: Choices = {};
+  const r = v as Record<string, unknown>;
+  const gender: Gender = r.gender === "male" ? "male" : "female";
+  const raw = typeof r.choices === "object" && r.choices !== null && !Array.isArray(r.choices) ? (r.choices as Record<string, unknown>) : {};
+  const choices: Choices = {};
   for (const l of PICKER_LANGS) {
-    const c = (v as Record<string, unknown>)[l];
-    if (typeof c === "string" && MOCK_VOICES.some((x) => x.id === c && x.language === l)) out[l] = c;
+    const c = raw[l];
+    if (typeof c === "string" && MOCK_VOICES.some((x) => x.id === c && x.language === l && x.gender === gender)) choices[l] = c;
   }
-  return out;
+  return { gender, choices };
 };
-const mock = async (): Promise<Picker> => ({ voices: [...MOCK_VOICES], choices: await readJar(MOCK_COOKIE, parseChoices, {}), fake: true });
+const NONE: Jar = { gender: "female", choices: {} };
+const mock = async (): Promise<Picker> => {
+  const jar = await readJar(MOCK_COOKIE, parseJar, NONE);
+  return { gender: jar.gender, voices: [...MOCK_VOICES], choices: jar.choices, fake: true };
+};
 
 const refusal = (error: unknown): SaveError => {
   if (error instanceof ApiRequestError) {
@@ -54,15 +62,33 @@ export async function saveVoiceChoice(ctx: Ctx, language: unknown, voiceId: unkn
   if (voiceId !== null && (typeof voiceId !== "string" || !VOICE_ID.test(voiceId))) return { ok: false, error: "invalid" };
   const lang = language as PickerLang;
   if (mode === "mock") {
-    if (voiceId !== null && !MOCK_VOICES.some((x) => x.id === voiceId && x.language === lang)) return { ok: false, error: "invalid" };
-    const next: Choices = { ...(await readJar(MOCK_COOKIE, parseChoices, {})) };
+    const jar = await readJar(MOCK_COOKIE, parseJar, NONE);
+    if (voiceId !== null && !MOCK_VOICES.some((x) => x.id === voiceId && x.language === lang && x.gender === jar.gender)) return { ok: false, error: "invalid" };
+    const next: Choices = { ...jar.choices };
     if (voiceId === null) delete next[lang];
     else next[lang] = voiceId;
-    if (!(await writeJar(MOCK_COOKIE, next))) return { ok: false, error: "invalid" };
+    if (!(await writeJar(MOCK_COOKIE, { gender: jar.gender, choices: next }))) return { ok: false, error: "invalid" };
     return { ok: true, data: await mock() };
   }
   try {
     return { ok: true, data: await putVoiceChoice(ctx.token, ctx.tenantId, lang, voiceId) };
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    return { ok: false, error: refusal(error) };
+  }
+}
+
+/** Female or Male for the whole workspace. The choices of the other gender are dropped (the defaults of the new gender speak until the person picks). */
+export async function saveVoiceGender(ctx: Ctx, gender: unknown): Promise<Saved<Picker>> {
+  const mode = voicePickerScreens();
+  if (mode === "off") return { ok: false, error: "not_available" };
+  if (gender !== "female" && gender !== "male") return { ok: false, error: "invalid" };
+  if (mode === "mock") {
+    if (!(await writeJar(MOCK_COOKIE, { gender, choices: {} }))) return { ok: false, error: "invalid" };
+    return { ok: true, data: await mock() };
+  }
+  try {
+    return { ok: true, data: await putVoiceGender(ctx.token, ctx.tenantId, gender) };
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     return { ok: false, error: refusal(error) };
