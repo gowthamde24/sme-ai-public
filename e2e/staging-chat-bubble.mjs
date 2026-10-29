@@ -4,7 +4,7 @@
 // (more than one interim value, or a waveform until the first words); the turn ends on a pause by itself (no Done pressed); the reply streams as text in the same thread; the mic in Today's card works in place; a tap on the mic ends the chat.
 import { chromium } from "playwright";
 import { execFileSync } from "node:child_process";
-import { mkdtempSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
@@ -16,7 +16,27 @@ const dir = mkdtempSync(path.join(os.tmpdir(), "bb-"));
 const aiff = path.join(dir, "q.aiff");
 const wav = path.join(dir, "q.wav");
 execFileSync("say", ["-o", aiff, "How many enquiries came in today, and who should I call first?"]);
-execFileSync("afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", aiff, wav]);
+const raw = path.join(dir, "raw.wav");
+execFileSync("afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", aiff, raw]);
+// the assistant greets first and the fake microphone plays from the moment it is opened: 14 s of silence in front, so the question comes after the greeting
+const q = readFileSync(raw);
+const at = q.indexOf("data"); // afconvert may put other chunks before the samples: take the samples, write a clean 44-byte header
+const pcm = q.subarray(at + 8, at + 8 + q.readUInt32LE(at + 4));
+const body = Buffer.concat([Buffer.alloc(16000 * 2 * 14), pcm]);
+const head = Buffer.alloc(44);
+head.write("RIFF", 0);
+head.writeUInt32LE(36 + body.length, 4);
+head.write("WAVEfmt ", 8);
+head.writeUInt32LE(16, 16);
+head.writeUInt16LE(1, 20);
+head.writeUInt16LE(1, 22);
+head.writeUInt32LE(16000, 24);
+head.writeUInt32LE(32000, 28);
+head.writeUInt16LE(2, 32);
+head.writeUInt16LE(16, 34);
+head.write("data", 36);
+head.writeUInt32LE(body.length, 40);
+writeFileSync(wav, Buffer.concat([head, body]));
 
 let failed = 0;
 const ok = (name, pass, note = "") => {
@@ -46,7 +66,8 @@ async function talk(root, tag) {
     if (you) seen.add(you.trim());
     if (await root.locator('[data-chat="wave"]').count()) waved = true;
     if (await p.getByRole("button", { name: /^(Done|Never mind)$/ }).count()) sawFull = true;
-    if ((await root.locator('[data-chat="assistant"], [data-chat="assistant-live"]').count()) > 0) {
+    const said = (await root.locator('[data-chat="you"]').count()) > 0;
+    if (said && (await root.locator('[data-chat="assistant"], [data-chat="assistant-live"]').count()) > 1) { // the greeting is the first bubble; the reply is the next
       replied = true;
       break;
     }
