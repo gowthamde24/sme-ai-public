@@ -39,11 +39,11 @@ def run(coro: Any) -> Any:
 
 def test_the_default_config_has_cartesia_first_and_bulbul_v4_flash_behind_it_for_every_call_language() -> None:
     cfg = default_config()
-    assert set(cfg.languages) >= set(CALL_LANGUAGES) == {"te", "hi", "kn", "en"}
+    assert set(cfg.languages) >= set(CALL_LANGUAGES) == {"te", "en", "hi", "kn", "ta", "ml"}
     for lang in CALL_LANGUAGES:
         v = cfg.for_language(lang)
         assert v.primary.engine == "cartesia" and v.primary.model == "sonic-3.6"
-        assert v.fallback.engine == "sarvam_v4" and v.fallback.model == "bulbul:v4-flash" and v.fallback.voice.startswith(("kavitha", "kavya", "chaitra", "shalini"))
+        assert v.fallback.engine == "sarvam_v4" and v.fallback.model == "bulbul:v4-flash" and v.fallback.voice.endswith(("_conversation", "_conversational", "_customer", "_narration"))
     assert cfg.first_audio_timeout_ms == 800
 
 
@@ -75,7 +75,7 @@ def test_the_config_is_data_a_voice_swaps_without_touching_code(tmp_path: Path) 
         (lambda r: r.update(first_audio_timeout_ms=50), "first_audio_timeout_ms"),
         (lambda r: r["catalogue"][0]["primary"].pop("voice"), "model and voice are required"),
         (lambda r: r["catalogue"][0]["fallback"].update(engine="cartesia"), "different engine"),
-        (lambda r: r["catalogue"].pop(0), "language en needs exactly one default"),
+        (lambda r: r.update(catalogue=[e for e in r["catalogue"] if not (e["language"] == "en" and e["gender"] == "female" and e["default"])]), "language en needs exactly one female default"),
     ],
 )
 def test_a_broken_config_is_refused_with_a_reason(mutate: Any, message: str) -> None:

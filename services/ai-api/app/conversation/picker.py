@@ -20,7 +20,7 @@ from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, Query, Response
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import BaseModel, ConfigDict, StringConstraints, model_validator
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.conversation.preview import PREVIEW_DAILY_CHARS as PREVIEW_DAILY_CHARS  # noqa: F401
@@ -42,7 +42,8 @@ public_router = APIRouter(prefix="/v1/voice-samples", tags=["ai-assistant"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
-Language = Literal["en", "te", "hi", "kn"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+Gender = Literal["female", "male"]
 SAMPLE_URL = "/v1/voice-samples/{id}.mp3"
 
 
@@ -51,30 +52,43 @@ class _Strict(BaseModel):
 
 
 class VoiceIn(_Strict):
-    language: Language
-    voice_id: str | None
+    """Two forms: `{gender}` flips the workspace (its per-language choices go back to the new gender's defaults); `{language, voice_id}` picks (or, with null, clears) one language's voice."""
+
+    gender: Gender | None = None
+    language: Language | None = None
+    voice_id: str | None = None
+
+    @model_validator(mode="after")
+    def _one_form(self) -> VoiceIn:
+        picks = self.language is not None or "voice_id" in self.model_fields_set
+        if (self.gender is not None) == picks or (picks and self.language is None):
+            raise ValueError("send either {gender} or {language, voice_id}")
+        return self
 
 
 class VoiceOut(_Strict):
     id: str
     name: str
     label: str
-    gender: Literal["female", "male"]
-    default: bool
+    gender: Gender
+    tags: list[str]
+    recommended: bool
+    default: bool   # the default of its gender in its language
     chosen: bool
     sample_url: str
-    sample_text: str   # the exact words of the pre-rendered sample, so the picker can show what it says
+    sample_text: str   # the exact words of the pre-rendered sample (the same line for every voice of a language)
 
 
 class LanguageOut(_Strict):
     language: Language
-    default_id: str
+    default_id: str   # the default voice of the workspace's gender
     chosen_id: str | None
     active_id: str
-    voices: list[VoiceOut]
+    voices: list[VoiceOut]   # voices of BOTH genders; the screen shows the workspace's
 
 
 class VoicesOut(_Strict):
+    gender: Gender
     languages: list[LanguageOut]
 
 
@@ -84,43 +98,59 @@ def _repo(runtime: Runtime) -> WorkspaceRepository:
     return runtime.workspace
 
 
-def _voice(c: CatalogueVoice, chosen: str | None, active: str) -> VoiceOut:
-    return VoiceOut(id=c.id, name=c.name, label=c.label, gender=c.gender, default=c.default, chosen=c.id == chosen, sample_url=SAMPLE_URL.format(id=c.id), sample_text=sample_text(c.language))  # type: ignore[arg-type]
+def _voice(c: CatalogueVoice, chosen: str | None) -> VoiceOut:
+    return VoiceOut(id=c.id, name=c.name, label=c.label, gender=c.gender, tags=list(c.tags), recommended=c.recommended, default=c.default, chosen=c.id == chosen, sample_url=SAMPLE_URL.format(id=c.id), sample_text=sample_text(c.language))  # type: ignore[arg-type]
 
 
-def out(config: VoiceConfig, choices: dict[str, str]) -> VoicesOut:
-    """The catalogue with this workspace's choices. A stored choice that is not (any longer) a catalogue voice of its language is reported as no choice."""
+def out(config: VoiceConfig, choices: dict[str, str], gender: str = "female") -> VoicesOut:
+    """The catalogue with this workspace's choices. A stored choice that is not (any longer) a catalogue voice of its language AND of the workspace's gender is reported as no choice."""
     rows: list[LanguageOut] = []
     for lang in CALL_LANGUAGES:
-        default = config.default_for(lang)
+        default = config.default_for(lang, gender)
         picked = config.catalogue.get(choices.get(lang, ""))
-        chosen = picked.id if picked is not None and picked.language == lang else None
-        active = config.resolve(lang, chosen).id
-        rows.append(LanguageOut(language=lang, default_id=default.id, chosen_id=chosen, active_id=active, voices=[_voice(c, chosen, active) for c in config.voices_of(lang)]))  # type: ignore[arg-type]
-    return VoicesOut(languages=rows)
+        chosen = picked.id if picked is not None and picked.language == lang and picked.gender == gender else None
+        active = config.resolve(lang, chosen, gender).id
+        rows.append(LanguageOut(language=lang, default_id=default.id, chosen_id=chosen, active_id=active, voices=[_voice(c, chosen) for c in config.voices_of(lang)]))  # type: ignore[arg-type]
+    return VoicesOut(gender=gender, languages=rows)  # type: ignore[arg-type]
+
+
+def voice_state(runtime: Runtime, ctx: TenantContext) -> tuple[dict[str, str], str]:
+    """The workspace's stored choices {language: voice id} and its voice gender (female unless the owner switched)."""
+    raw = _repo(runtime).voice_choices(ctx.principal.token, ctx.tenant.id)
+    choices = raw.get("choices", {})
+    gender = raw.get("gender")
+    return ({str(k): str(v) for k, v in choices.items()} if isinstance(choices, dict) else {}), (gender if gender in ("female", "male") else "female")
 
 
 def choices_of(runtime: Runtime, ctx: TenantContext) -> dict[str, str]:
-    """The workspace's stored choices {language: voice id}; what a call and a preview start from."""
-    raw = _repo(runtime).voice_choices(ctx.principal.token, ctx.tenant.id).get("choices", {})
-    return {str(k): str(v) for k, v in raw.items()} if isinstance(raw, dict) else {}
+    return voice_state(runtime, ctx)[0]
+
+
+def gender_of(runtime: Runtime, ctx: TenantContext) -> str:
+    return voice_state(runtime, ctx)[1]
 
 
 @router.get("/voices", response_model=VoicesOut)
 def get_voices(ctx: AnyMember, runtime: RuntimeDep) -> VoicesOut:
-    return out(default_config(), choices_of(runtime, ctx))
+    choices, gender = voice_state(runtime, ctx)
+    return out(default_config(), choices, gender)
 
 
 @router.put("/voices", response_model=VoicesOut)
 def put_voices(body: VoiceIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> VoicesOut:
     config = default_config()
-    if body.voice_id is not None:
-        picked = config.catalogue.get(body.voice_id) if ID_FORMAT.match(body.voice_id) else None
-        if picked is None or picked.language != body.language:
-            raise ApiError(422, "validation_error", "Choose one of the voices on the list for this language.", extra={"fields": ["voice_id"]})
-    row = _repo(runtime).set_voice_choice(ctx.principal.token, ctx.tenant.id, body.language, body.voice_id)
+    if body.gender is not None:
+        row = _repo(runtime).set_voice_gender(ctx.principal.token, ctx.tenant.id, body.gender)
+    else:
+        current = gender_of(runtime, ctx)
+        if body.voice_id is not None:
+            picked = config.catalogue.get(body.voice_id) if ID_FORMAT.match(body.voice_id) else None
+            if picked is None or picked.language != body.language or picked.gender != current:
+                raise ApiError(422, "validation_error", "Choose one of the voices on the list for this language and voice type.", extra={"fields": ["voice_id"]})
+        row = _repo(runtime).set_voice_choice(ctx.principal.token, ctx.tenant.id, str(body.language), body.voice_id)
     raw = row.get("choices", {})
-    return out(config, {str(k): str(v) for k, v in raw.items()} if isinstance(raw, dict) else {})
+    after = "male" if row.get("gender") == "male" else "female"
+    return out(config, {str(k): str(v) for k, v in raw.items()} if isinstance(raw, dict) else {}, after)
 
 
 # ---- the preview: the opening line in the active voice ------------------------------------------------------------------------------------------------
@@ -152,9 +182,10 @@ class PreviewOut(BaseModel):
     spoken_text: str
     audio: PreviewAudio
     engine: str
+    voice_id: str   # the catalogue voice that spoke (also X-Voice-Id on the GET)
 
 
-async def _speak_opening(runtime: Runtime, ctx: TenantContext, body: PreviewIn) -> tuple[str, bytes, str]:
+async def _speak_opening(runtime: Runtime, ctx: TenantContext, body: PreviewIn) -> tuple[str, bytes, str, str]:
     """(the spoken text, the sound, the engine): the line as sent (or the saved one), filled with the live names and given the AI sentence exactly as a call does (rendered_opening), spoken in the workspace's chosen
     voice of the line's language through the call voice's pronunciation map. Nothing is saved and no sample sentence is added."""
     from app.assistant.language import detect_language
@@ -170,28 +201,28 @@ async def _speak_opening(runtime: Runtime, ctx: TenantContext, body: PreviewIn) 
     found = detect_language(spoken)
     if found != "en" and found != body.language:
         raise ApiError(422, "language_mismatch", "This line is written in a different language from the one chosen.", extra={"fields": ["language"]})
-    chosen = choices_of(runtime, ctx).get(body.language)
+    choices, gender = voice_state(runtime, ctx)
     try:
-        wav, engine = await service.speak(ctx.tenant.id, body.language, chosen, spoken)
+        wav, engine, voice_id = await service.speak(ctx.tenant.id, body.language, choices.get(body.language), spoken, gender)
     except VoiceError as err:
         if err.code == "rate_limited":
             raise ApiError(429, "rate_limited", "Too many previews today. Please try again tomorrow.", retry_after=3600) from None
         raise ApiError(404, "no_preview", "There is no preview on this system right now.") from None
-    return spoken, wav, engine
+    return spoken, wav, engine, voice_id
 
 
 @router.get("/voices/preview")
 async def voice_preview(ctx: OwnerAdmin, runtime: RuntimeDep, language: Annotated[Language, Query()]) -> Response:
     """The SAVED opening line as a customer hears it (audio/wav); the words spoken are in the header `X-Spoken-Text` (percent-encoded UTF-8). To hear an unsaved line use POST."""
-    spoken, wav, engine = await _speak_opening(runtime, ctx, PreviewIn(language=language))
-    return Response(content=wav, media_type="audio/wav", headers={"Cache-Control": "private, max-age=3600", "X-Voice-Engine": engine, "X-Spoken-Text": quote(spoken, safe="")})
+    spoken, wav, engine, voice_id = await _speak_opening(runtime, ctx, PreviewIn(language=language))
+    return Response(content=wav, media_type="audio/wav", headers={"Cache-Control": "private, max-age=3600", "X-Voice-Engine": engine, "X-Voice-Id": voice_id, "X-Spoken-Text": quote(spoken, safe="")})
 
 
 @router.post("/voices/preview", response_model=PreviewOut)
 async def voice_preview_line(body: PreviewIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> PreviewOut:
     """"Hear it": the line as it is on the screen, unsaved edits included, in the workspace's chosen voice for its language. Returns the exact words spoken so the screen can show them."""
-    spoken, wav, engine = await _speak_opening(runtime, ctx, body)
-    return PreviewOut(spoken_text=spoken, audio=PreviewAudio(mime="audio/wav", base64=base64.b64encode(wav).decode("ascii")), engine=engine)
+    spoken, wav, engine, voice_id = await _speak_opening(runtime, ctx, body)
+    return PreviewOut(spoken_text=spoken, audio=PreviewAudio(mime="audio/wav", base64=base64.b64encode(wav).decode("ascii")), engine=engine, voice_id=voice_id)
 
 
 # ---- the pre-rendered sample (no sign-in) ----------------------------------------------------------------------------------------------------------------

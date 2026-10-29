@@ -17,6 +17,9 @@ from app.browser_voice import limits, session
     ("text", "language"),
     [
         ("Eeroju edaina kotha leads find chesaava?", "te"),
+        ("Eeroju kotta leads emaina vacchaaya?", "te"),
+        ("Aaj kitne naye leads aaye hain", "hi"),
+        ("Ivattu eshtu hosa leads bandive", "kn"),
         ("aaj kitne naye leads aaye hain", "hi"),
         ("ivattu yaava leads bandide, torisi", "kn"),
         ("inniku enna leads vandhuchu, sollunga", "ta"),

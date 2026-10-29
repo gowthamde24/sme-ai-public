@@ -39,9 +39,10 @@ async def _close(it: object) -> None:
 class FallbackTts:
     sample_rate = 24000
 
-    def __init__(self, config: VoiceConfig, factory: EngineFactory, *, prewarm_language: str = "te", clock: Callable[[], float] = time.monotonic, chosen: Mapping[str, str] | None = None, pronunciations: Pronunciations | None = None) -> None:
+    def __init__(self, config: VoiceConfig, factory: EngineFactory, *, prewarm_language: str = "te", clock: Callable[[], float] = time.monotonic, chosen: Mapping[str, str] | None = None, gender: str = "female", pronunciations: Pronunciations | None = None) -> None:
         self._pron = pronunciations or default_pronunciations()  # words respelled before any engine hears them (a workspace passes its own additions)
         self.config, self._factory, self._prewarm_language, self._clock = config, factory, prewarm_language, clock
+        self.gender = gender   # the workspace's voice gender: a chosen voice of the other gender is ignored (the gender's default speaks)
         self._chosen: dict[str, str] = dict(chosen or {})  # the workspace's voice id per language (job voice-picker); a missing or unknown one means the default
         self._engines: dict[tuple[str, str, str, str], StreamingTts] = {}
         self._skip_primary_until: dict[str, float] = {}
@@ -49,6 +50,14 @@ class FallbackTts:
         self.served_engine = ""  # the engine that spoke the most recent piece: cartesia | sarvam_v4
         self.fallback_reason = ""  # "", "error", "timeout", "cooldown", "mid_stream"
         self.first_audio_ms: float | None = None
+
+    def set_voices(self, chosen: Mapping[str, str], gender: str) -> None:
+        """The workspace's voice settings were read again (between turns): the next piece speaks with them."""
+        self._chosen, self.gender = dict(chosen), gender
+
+    def voice_id(self, language: str) -> str:
+        """The catalogue voice that speaks `language` (the same id for the whole turn, whichever engine serves it)."""
+        return self.config.resolve(language, self._chosen.get(language), self.gender).id
 
     # ---- the turn -----------------------------------------------------------------------------------------------------------------------------
 
@@ -64,14 +73,14 @@ class FallbackTts:
         return self._engines[key]
 
     async def prewarm(self) -> None:
-        voices = self.config.for_language(self._prewarm_language, self._chosen.get(self._prewarm_language))
+        voices = self.config.for_language(self._prewarm_language, self._chosen.get(self._prewarm_language), self.gender)
         with suppress(Exception):
             await self._engine(voices.primary, self._prewarm_language).prewarm()
 
     # ---- one piece of text ----------------------------------------------------------------------------------------------------------------
 
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
-        voices = self.config.for_language(language, self._chosen.get(language))
+        voices = self.config.for_language(language, self._chosen.get(language), self.gender)
         primary_text = self._pron.apply(text, language, voices.primary.engine)
         fallback_text = self._pron.apply(text, language, voices.fallback.engine)
         now = self._clock()
