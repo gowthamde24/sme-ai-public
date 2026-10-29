@@ -85,9 +85,10 @@ export type AssistantFromApi = { settings: AssistantSettings; saved: boolean };
  */
 export function parseAiAssistant(json: unknown): AssistantFromApi {
   if (!isRecord(json) || typeof json.saved !== "boolean") throw new ApiContractError("Unexpected AI assistant response.");
-  const settings = fromApiSettings(json.settings);
+  // before the first save the API has no name at all ("" - nothing made up): the screen shows "your assistant" in its place and a save asks for a real one; the stand-in below is only so that the rest of the settings can be read
+  const settings = fromApiSettings(json.saved || !isRecord(json.settings) ? json.settings : { ...json.settings, name: DEFAULT_ASSISTANT_NAME });
   if (!settings) throw new ApiContractError("Unexpected AI assistant settings.");
-  return { settings: json.saved ? settings : { ...settings, name: DEFAULT_ASSISTANT_NAME }, saved: json.saved };
+  return { settings: json.saved ? settings : { ...settings, name: "" }, saved: json.saved };
 }
 
 export async function getAiAssistant(accessToken: string, tenantId: string): Promise<AssistantFromApi> {

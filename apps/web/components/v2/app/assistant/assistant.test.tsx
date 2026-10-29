@@ -15,11 +15,11 @@ import { AssistantSettings } from "./AssistantSettings";
 const raw = (lang: "en" | "te" | "hi" | "kn", modules: string[] | null) => withModuleWords(Object.fromEntries(Object.entries(appDict(lang) as Record<string, string>).filter(([k]) => k.startsWith("asst."))), modules ? { modules } : null);
 const langs = { te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ", en: "English", ta: "தமிழ்", ml: "മലയാളം" };
 const voiceNames = Object.fromEntries(VOICES.map((v) => [v, (appDict("en") as Record<string, string>)[`asst.voice.${v}`]])) as Record<(typeof VOICES)[number], string>;
-const draw = (over: Partial<{ modules: string[] | null; canEdit: boolean; saved: boolean; save: (i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; samples: { endpoint: string; mock: boolean } | null; voicePickerOn: boolean; voiceInUse: { name: string; label: string } | null; defaultName: string; testCall: () => Promise<TestCallResult> }> = {}) => {
+const draw = (over: Partial<{ modules: string[] | null; canEdit: boolean; saved: boolean; save: (i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; samples: { endpoint: string; mock: boolean } | null; voicePickerOn: boolean; voiceInUse: { name: string; label: string } | null; defaultName: string; initialName: string; openingLine: { lines: Record<string, string>; defaults: Record<string, string> }; testCall: () => Promise<TestCallResult> }> = {}) => {
   const modules = over.modules === undefined ? null : over.modules;
   const profile = assistantProfile(modules);
   const save = (over.save ?? vi.fn(async () => ({ ok: true as const }))) as ReturnType<typeof vi.fn> & ((i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>);
-  render(<AssistantSettings words={raw("en", modules)} initial={profile.defaults} profile={profile} shop="Acme Silks" langs={langs} voiceNames={voiceNames} canEdit={over.canEdit ?? true} testMode saved={over.saved ?? false} actions={{ save, ...(over.testCall ? { testCall: over.testCall } : {}) }} samples={over.samples ?? null} voicePickerOn={over.voicePickerOn ?? false} voiceInUse={over.voiceInUse ?? null} defaultName={over.defaultName ?? null} />);
+  render(<AssistantSettings words={raw("en", modules)} initial={over.initialName === undefined ? profile.defaults : { ...profile.defaults, name: over.initialName }} profile={profile} shop="Acme Silks" langs={langs} voiceNames={voiceNames} canEdit={over.canEdit ?? true} testMode saved={over.saved ?? false} actions={{ save, ...(over.testCall ? { testCall: over.testCall } : {}) }} samples={over.samples ?? null} voicePickerOn={over.voicePickerOn ?? false} voiceInUse={over.voiceInUse ?? null} defaultName={over.defaultName ?? null} openingLine={(over.openingLine as never) ?? null} />);
   return { save, profile };
 };
 afterEach(() => {
@@ -55,6 +55,26 @@ describe("Settings > AI assistant", () => {
     await waitFor(() => expect(document.querySelector('aside [data-part="preview-text"]')).toHaveTextContent("నమస్కారం రవి గారూ, నేను రమ్య, ఆక్మీ సిల్క్స్ నుంచి."));
     expect(asked.some((u) => u.includes("&text=1"))).toBe(true);
     vi.unstubAllGlobals();
+  });
+  it("the card says the opening line a call speaks: the saved line, else the default of the language, with the real business and the name; no separate example sentence", () => {
+    const defaults = { te: "నమస్కారం అండీ, నేను {business} నుంచి AI assistant ని మాట్లాడుతున్నాను.", en: "Hello, this is the AI assistant of {business}." };
+    draw({ initialName: "", defaultName: "your assistant", openingLine: { lines: {}, defaults } });
+    expect(document.querySelector('[data-part="preview-line"]')).toHaveTextContent("నమస్కారం అండీ, నేను Acme Silks నుంచి AI assistant ని మాట్లాడుతున్నాను.");
+    cleanup();
+    draw({ initialName: "Meera", openingLine: { lines: { te: "{assistant} here from {business}, hello {customer}." }, defaults } });
+    expect(document.querySelector('[data-part="preview-line"]')).toHaveTextContent("Meera here from Acme Silks, hello రవి.");
+  });
+  it("a workspace that has never saved has NO name: the box is empty with \"your assistant\" as its hint, the card says \"your assistant\", and saving asks for a name", () => {
+    draw({ initialName: "", defaultName: "your assistant", saved: false });
+    const box = screen.getByLabelText("Assistant name") as HTMLInputElement;
+    expect(box.value).toBe("");
+    expect(box.placeholder).toBe("your assistant");
+    expect(screen.getByText(/Give your assistant a name to save/)).toBeInTheDocument();
+    expect(box).not.toHaveAttribute("aria-invalid", "true"); // nothing is wrong yet, it is just not named
+    expect(screen.getByRole("button", { name: /^Save/ })).toBeDisabled();
+    fireEvent.change(box, { target: { value: "Meera" } });
+    expect(screen.queryByText(/Give your assistant a name to save/)).toBeNull();
+    expect(screen.getByRole("button", { name: /^Save/ })).not.toBeDisabled();
   });
   it("starts from the defaults of the business type, says so, and says that mentioning 'AI assistant' in the greeting is the owner's choice", () => {
     draw();

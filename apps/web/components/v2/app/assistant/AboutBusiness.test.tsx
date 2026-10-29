@@ -78,6 +78,17 @@ describe("About my business", () => {
     await waitFor(() => expect((screen.getByLabelText("Your notes") as HTMLTextAreaElement).value).toContain("Paver 40"));
     expect(screen.queryByText("Here is what I understood")).toBeNull();
   });
+  it("notes read from a picture say to check every number before saving, and the file box takes pictures", async () => {
+    reply = (b) => (b.op === "understand" ? { ok: true, data: { ...PREVIEW, warnings: ["read_from_picture" as const] } } : { ok: true, data: STATE });
+    show();
+    fireEvent.click(screen.getByRole("button", { name: "Upload a file" }));
+    expect((screen.getByLabelText("Upload a file", { selector: "input" }) as HTMLInputElement).accept).toMatch(/\.webp/);
+    fireEvent.click(screen.getByRole("button", { name: "Paste text" }));
+    fireEvent.change(screen.getByLabelText("Paste text", { selector: "textarea" }), { target: { value: "x" } });
+    fireEvent.click(screen.getByRole("button", { name: "Read it" }));
+    expect(await screen.findByText(/Check every number before you save/)).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Save these notes" })).toBeTruthy(); // it can still be saved after the check
+  });
   it("a list of customers is not notes: the warning points to Lead sources and nothing can be saved", async () => {
     reply = (b) => (b.op === "understand" ? { ok: true, data: { ...PREVIEW, notesMarkdown: "", understood: [], warnings: ["looks_like_personal_data" as const] } } : { ok: true, data: STATE });
     show();

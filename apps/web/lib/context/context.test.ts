@@ -27,6 +27,7 @@ describe("the notes as the API sends them", () => {
     expect(parseContext("x")).toBeNull();
   });
   it("reads a preview: an unknown section becomes 'other', unknown warnings are dropped, a bad id is refused", () => {
+    expect(parseUnderstood({ ...PREVIEW, warnings: ["read_from_picture", "cells_cut"] })?.warnings).toEqual(["read_from_picture", "cells_cut"]);
     expect(parseUnderstood(PREVIEW)).toMatchObject({ previewId: "pv_12345678", understood: [{ section: "prices" }, { section: "other" }], warnings: ["cells_cut"], source: { kind: "file", filename: "rates.xlsx" } });
     expect(parseUnderstood({ ...PREVIEW, preview_id: "../x" })).toBeNull();
   });
@@ -71,6 +72,8 @@ describe("the API calls", () => {
     expect(e(422, "sheet_refused")).toBe("refused");
     expect(e(422, "file_unreadable")).toBe("unreadable");
     expect(e(422, "file_too_large")).toBe("toolarge");
+    expect(e(422, "file_too_long")).toBe("toolong"); // more than 25 pages
+    expect(e(503, "vision_unavailable")).toBe("vision"); // the picture reader is off
     expect(e(502, "model_unavailable")).toBe("busy");
     expect(e(429, "rate_limited")).toBe("slow");
     expect(e(403, "forbidden")).toBe("forbidden");

@@ -394,6 +394,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               voicePickerOn={voicePicker?.mode === "ok"}
               voiceInUse={voicePicker?.mode === "ok" && assistant?.mode === "ok" ? ((v) => (v ? { name: v.name, label: v.label } : null))(inForce(voicePicker.data, assistant.settings.lang as PickerLang)) : null}
               defaultName={withNamedAssistant("{assistant}", DEFAULT_ASSISTANT_NAME, lang)}
+              openingLine={openingLine?.mode === "ok" ? { lines: openingLine.data.lines, defaults: openingLine.data.defaults } : null}
             />
             ) : null}
             {about?.ok ? (
@@ -424,7 +425,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 fallback={openingLine.data.defaults}
                 mentionAi={openingLine.data.mentionAi}
                 effectiveAi={openingLine.data.mentionAi}
-                names={{ assistant: assistant?.mode === "ok" ? assistant.settings.name : currentAssistantName(), business: tenant.name }}
+                names={{ assistant: (assistant?.mode === "ok" && assistant.settings.name) || currentAssistantName(), business: tenant.name }}
                 canEdit={tenant.role === "owner"}
                 mock={openingLineScreens() === "mock"}
                 actions={{ save: saveOpeningLineAction.bind(null, tenantId), preview: previewOpeningLineAction.bind(null, tenantId) }}

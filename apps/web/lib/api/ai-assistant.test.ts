@@ -3,7 +3,6 @@ import { join } from "node:path";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
 import { parseSettings } from "@/lib/assistant/types";
 
 import { fromApiSettings, getAiAssistant, parseAiAssistant, putAiAssistant, toApiSettings } from "./ai-assistant";
@@ -20,7 +19,7 @@ describe("Settings > AI assistant from C1's API (job DO)", () => {
   it("reads every example payload of the contract: textiles, construction (saved) and a school", () => {
     for (const key of ["assistant_defaults_textiles", "assistant_saved_construction", "assistant_defaults_education"]) {
       const got = parseAiAssistant(examples[key]);
-      expect(parseSettings(got.settings), key).not.toBeNull();
+      expect(parseSettings({ ...got.settings, name: got.saved ? got.settings.name : "Meera" }), key).not.toBeNull(); // an unsaved workspace has no name yet
     }
   });
   it("maps field by field: voice, language, style, the four things it may do, hours in minutes, days 1 to 7, the order limit in paise", () => {
@@ -33,9 +32,15 @@ describe("Settings > AI assistant from C1's API (job DO)", () => {
     const body = toApiSettings(fromApiSettings(examples.settings_save_request)!);
     expect(Object.keys(body).sort()).toEqual(Object.keys(examples.settings_save_request).sort());
   });
-  it("before the first save the name is OUR default, not the API's sample name; once saved it is the owner's", () => {
-    expect(parseAiAssistant(examples.assistant_defaults_textiles).settings.name).toBe(DEFAULT_ASSISTANT_NAME);
-    expect(parseAiAssistant({ ...examples.assistant_defaults_textiles, saved: true }).settings.name).toBe(examples.assistant_defaults_textiles.settings.name);
+  it("before the first save there is NO name (the API makes none up: the screen says \"your assistant\" and a save asks for a real one), and the rest of the settings still read; once saved the name is the owner's", () => {
+    for (const apiName of ["", "Vijaya"]) {
+      const got = parseAiAssistant({ ...examples.assistant_defaults_textiles, settings: { ...examples.assistant_defaults_textiles.settings, name: apiName } });
+      expect(got.settings.name).toBe("");
+      expect(got.saved).toBe(false);
+      expect(got.settings.hours.days.length).toBeGreaterThan(0);
+    }
+    expect(parseAiAssistant({ ...examples.assistant_defaults_textiles, settings: { ...examples.assistant_defaults_textiles.settings, name: "Meera" }, saved: true }).settings.name).toBe("Meera");
+    expect(() => parseAiAssistant({ ...examples.assistant_defaults_textiles, settings: { ...examples.assistant_defaults_textiles.settings, name: "" }, saved: true })).toThrow(); // a saved workspace has a name
   });
   it("refuses a value outside its shape: a day, a minute, a paise amount that is not whole rupees, a voice, a name with markup", () => {
     const ok = examples.assistant_saved_construction.settings;
