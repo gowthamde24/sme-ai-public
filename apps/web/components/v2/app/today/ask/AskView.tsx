@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowRight, Mic, Send, Square, Volume2, X } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import * as React from "react";
 
@@ -9,7 +10,7 @@ import { useFollowAnswer } from "./use-follow-answer";
 import { MAX_QUESTION } from "./ask-constants";
 import type { AskSession, Exchange } from "./use-ask-session";
 import { DoItEntry } from "./AskDoItLazy";
-import { VoiceMode } from "./VoiceMode";
+const VoiceMode = dynamic(() => import("./VoiceMode").then((m) => m.VoiceMode), { ssr: false }); // drawn only when the old recorder's circle is opened (not where the spoken conversation is on)
 import type { RecorderProblem } from "./use-recorder";
 
 const chipClass = "inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-50";

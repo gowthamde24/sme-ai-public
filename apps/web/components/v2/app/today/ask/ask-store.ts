@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import type { BrowserVoice } from "./browser-voice";
 import type { AskSession } from "./use-ask-session";
 
 /**
@@ -31,3 +32,6 @@ export function useStoredAsk(): AskSession | null {
 
 /** True inside an AskProvider: a card that finds no session yet then waits for it (a card outside a provider makes its own). */
 export const AskProvidedContext = React.createContext(false);
+
+/** "Talk to your assistant" for this workspace (BROWSER_VOICE): present, Today's card holds the same chat as the floating panel, in its place. */
+export const AskVoiceContext = React.createContext<BrowserVoice | null>(null);

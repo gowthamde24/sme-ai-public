@@ -59,14 +59,14 @@ let sideAnswer: (body: Record<string, unknown>) => unknown = () => ({ ok: true }
 let reply = "It is **five** pieces.\n- Silk\n- Cotton";
 const orbs: (string | null)[] = [];
 
-function Harness({ onClose = () => undefined }: { onClose?: () => void }) {
+function Harness({ onClose = () => undefined, variant }: { onClose?: () => void; variant?: "panel" | "card" }) {
   const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: {}, availability: "live", transport: ({ question, conversationId }) => (asked.push(question), asks.push({ question, conversationId }), answer(question === "PLAN" || question === "CLARIFY" ? question : reply)), voiceStatus: { available: false, speech: false } });
   React.useEffect(() => {
     orbs.push(s.voiceOrb);
   }, [s.voiceOrb]);
-  return <ChatPanel session={s} chips={["Draft a follow-up for today's leads"]} voice={voice} onClose={onClose} voiceOptions={{ audioFactory: audio, socketFactory: () => (sock = new Sock()) }} />;
+  return <ChatPanel session={s} chips={["Draft a follow-up for today's leads"]} voice={voice} variant={variant} onClose={onClose} voiceOptions={{ audioFactory: audio, socketFactory: () => (sock = new Sock()) }} />;
 }
-const draw = (props: { onClose?: () => void } = {}) => render(<Harness {...props} />);
+const draw = (props: { onClose?: () => void; variant?: "panel" | "card" } = {}) => render(<Harness {...props} />);
 const type = async (text: string) => {
   await act(async () => void fireEvent.change(screen.getByLabelText("Type, or tap the microphone"), { target: { value: text } }));
 };
@@ -259,5 +259,21 @@ describe("the conversation panel", () => {
     await act(async () => void fireEvent.click(await screen.findByRole("button", { name: "Hide" })));
     expect(sideCalls.at(-1)).toEqual({ op: "archive", id });
     expect(screen.queryByText("Price of silk")).toBeNull();
+  });
+  it("in Today's card it is the same chat in its place: no dialog, no full screen, no Done or Never mind; a waveform shows until the first words, which then show live", async () => {
+    draw({ variant: "card" });
+    expect(document.querySelector('[data-chat="card"]')).not.toBeNull();
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(document.querySelector('[data-chat="close"]')).toBeNull();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    expect(document.querySelector('[data-chat="wave"]')).not.toBeNull(); // listening, nothing heard yet
+    await act(async () => void sock.say({ type: "caption", who: "user", text: "call the", final: false, spoken: true }));
+    expect(document.querySelector('[data-chat="wave"]')).toBeNull();
+    expect(screen.getByLabelText("Type, or tap the microphone")).toHaveValue("call the");
+    expect(screen.queryByRole("button", { name: /^(Done|Never mind)$/ })).toBeNull();
+    expect(document.querySelector('[data-part="voice-chat"], [data-voice="mode"]')).toBeNull();
   });
 });

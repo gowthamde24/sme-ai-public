@@ -105,7 +105,7 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus }: { x: Exchange; w: (k:
  * (no Ask or Do it buttons: the assistant decides what a message is), the microphone beside it, and one thread for the typed and the spoken turns, each message with its copy button and light formatting. While the person speaks their words show LIVE, word by word, and
  * can be edited if misheard; the reply streams in as text below while it is spoken; a tap while it talks stops it. "New conversation" empties the thread. The floating circle shows what it is doing (listening, thinking, speaking).
  */
-export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { session: AskSession; chips: readonly string[]; voice: BrowserVoice; onClose: () => void; voiceOptions?: PanelVoiceOptions }) {
+export function ChatPanel({ session, chips, voice, onClose, voiceOptions, variant = "panel" }: { session: AskSession; chips: readonly string[]; voice: BrowserVoice; onClose: () => void; voiceOptions?: PanelVoiceOptions; /** `card`: the same chat drawn inside Today's assistant card, in its place (no close button, no focus trap). */ variant?: "panel" | "card" }) {
   const s = session;
   const c = React.useMemo(() => {
     const t = makeT(voice.words);
@@ -131,16 +131,17 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
   };
   const box = React.useRef<HTMLDivElement>(null);
   const input = React.useRef<HTMLInputElement>(null);
-  const end = React.useRef<HTMLDivElement>(null);
+  const body = React.useRef<HTMLDivElement>(null);
   const { w } = s;
   const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, plan: s.plan } : null;
   const empty = s.earlier.length === 0 && current === null && !talk.live;
   React.useEffect(() => {
-    input.current?.focus();
-  }, []);
+    if (variant === "panel") input.current?.focus();
+  }, [variant]);
   React.useEffect(() => {
-    end.current?.scrollIntoView?.({ block: "end" });
-  }, [s.earlier.length, s.answer, talk.live?.answer, talk.live?.asked]);
+    const el = body.current; // the thread scrolls inside its own box (scrollIntoView would move the whole page when the chat sits in a card)
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [s.earlier.length, s.answer, talk.live?.answer, talk.live?.asked, talk.state]);
   /** The state of a plan changed (the owner said yes or no, or it expired): the plan on screen and any earlier message that carries it. */
   const setActionStatus = (actionId: string, status: ConfirmAction["status"]) => {
     s.setPlan((p) => (p && p.actionId === actionId ? { ...p, status } : p));
@@ -152,12 +153,13 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
   };
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
+      if (variant === "card") return talk.stop();
       e.stopPropagation();
       talk.stop();
       onClose();
       return;
     }
-    if (e.key !== "Tab" || !box.current) return;
+    if (e.key !== "Tab" || !box.current || variant === "card") return;
     const items = [...box.current.querySelectorAll<HTMLElement>(FOCUSABLE)];
     if (items.length === 0) return;
     const first = items[0];
@@ -172,19 +174,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
   };
   const orb = talk.active ? (talk.state === "listening" ? "listen" : talk.state === "speaking" ? "speak" : "think") : s.asking && !s.answer ? "think" : s.asking ? "speak" : "ambient";
   const line = talk.state === "thinking" ? (talk.step === "looking" ? voice.words["bv.looking"] : voice.words["bv.thinking"]) : talk.state === "speaking" ? voice.words["bv.speaking"] : talk.state === "listening" ? voice.words["bv.listening"] : talk.active ? voice.words["bv.connecting"] : null;
-  return (
-    <div className="fixed inset-0 z-[55] print:hidden" data-chat="root">
-      {/* the page stays visible and usable behind: the root does not catch the pointer, only the panel does */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true" />
-      <div
-        ref={box}
-        role="dialog"
-        aria-modal="false"
-        aria-label={c("bv.chat.title")}
-        data-chat="panel"
-        onKeyDown={onKeyDown}
-        className="pointer-events-auto absolute inset-x-0 bottom-0 flex h-[60dvh] flex-col overflow-hidden rounded-t-2xl border border-line bg-bg shadow-[var(--v2-shadow-pop)] motion-safe:animate-[ask-panel-in_160ms_ease-out] md:inset-x-auto md:bottom-28 md:right-4 md:h-[560px] md:max-h-[calc(100dvh-8rem)] md:w-[380px] md:rounded-2xl"
-      >
+  const content = (
+    <>
         <div className="flex min-h-14 shrink-0 items-center gap-2 border-b border-line px-3">
           <Orb px={28} state={orb} analyser={talk.active ? talk.analyser(talk.state === "speaking" ? "voice" : "mic") : null} />
           <h2 className="min-w-0 flex-1 truncate font-display text-lg font-semibold">{c("bv.chat.title")}</h2>
@@ -194,9 +185,11 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
           <button type="button" data-chat="new" onClick={() => { talk.stop(); s.newChat(); setView("chat"); }} aria-label={c("bv.chat.new")} title={c("bv.chat.new")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-surface-2">
             <Plus className="size-5" aria-hidden="true" />
           </button>
-          <button type="button" data-chat="close" onClick={() => { talk.stop(); onClose(); }} aria-label={c("bv.close")} title={c("bv.close")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-surface-2">
-            <X className="size-5" aria-hidden="true" />
-          </button>
+          {variant === "panel" ? (
+            <button type="button" data-chat="close" onClick={() => { talk.stop(); onClose(); }} aria-label={c("bv.close")} title={c("bv.close")} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full hover:bg-surface-2">
+              <X className="size-5" aria-hidden="true" />
+            </button>
+          ) : null}
         </div>
         {view === "history" ? (
           <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3" data-chat="history-list">
@@ -224,13 +217,20 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
           </div>
         ) : (
           <>
-        <div className="min-h-0 flex-1 overflow-y-auto px-3 py-3" data-chat="body" aria-live="polite">
+        <div ref={body} className="min-h-0 flex-1 overflow-y-auto px-3 py-3" data-chat="body" aria-live="polite">
           {empty ? <p className="text-sm text-muted">{c("bv.chat.empty")}</p> : null}
           <ul data-chat="thread" className="flex flex-col gap-4">
             {s.earlier.map((x, i) => (
               <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} />
             ))}
             {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} /> : null}
+            {talk.state === "listening" && !talk.live?.asked ? (
+              <li data-chat="wave" aria-hidden="true" className={`${bubble} flex h-11 items-center gap-1 self-end border border-dashed border-brand-edge bg-surface`}>
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <span key={i} className="h-5 w-1 origin-center rounded-full bg-brand motion-safe:animate-pulse" style={{ animationDelay: `${i * 120}ms` }} />
+                ))}
+              </li>
+            ) : null}
             {talk.live ? (
               <li data-chat="live" className="flex flex-col gap-2">
                 {talk.live.asked ? (
@@ -247,7 +247,6 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
             ) : null}
           </ul>
           {s.asking && !s.answer ? <p role="status" className="mt-2 text-sm text-muted">{c("bv.chat.working")}</p> : null}
-          <div ref={end} />
         </div>
         <div className="shrink-0 space-y-2 border-t border-line bg-surface px-3 pb-3 pt-2">
           {empty && chips.length > 0 ? (
@@ -317,6 +316,26 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions }: { se
         </div>
           </>
         )}
+    </>
+  );
+  return variant === "card" ? (
+    <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="card" onKeyDown={onKeyDown} className="flex h-[min(70dvh,34rem)] min-w-0 flex-col overflow-hidden rounded-2xl border border-line bg-bg">
+      {content}
+    </div>
+  ) : (
+    <div className="fixed inset-0 z-[55] print:hidden" data-chat="root">
+      {/* the page stays visible and usable behind: the root does not catch the pointer, only the panel does */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true" />
+      <div
+        ref={box}
+        role="dialog"
+        aria-modal="false"
+        aria-label={c("bv.chat.title")}
+        data-chat="panel"
+        onKeyDown={onKeyDown}
+        className="pointer-events-auto absolute inset-x-0 bottom-0 flex h-[60dvh] flex-col overflow-hidden rounded-t-2xl border border-line bg-bg shadow-[var(--v2-shadow-pop)] motion-safe:animate-[ask-panel-in_160ms_ease-out] md:inset-x-auto md:bottom-28 md:right-4 md:h-[560px] md:max-h-[calc(100dvh-8rem)] md:w-[380px] md:rounded-2xl"
+      >
+        {content}
       </div>
     </div>
   );
