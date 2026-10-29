@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ jar: new Map<string, string>(), get: vi.fn(), put: vi.fn() }));
+const h = vi.hoisted(() => ({ jar: new Map<string, string>(), get: vi.fn(), put: vi.fn(), putGender: vi.fn() }));
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: (k: string) => (h.jar.has(k) ? { name: k, value: h.jar.get(k) } : undefined), set: (k: string, v: string) => void h.jar.set(k, v), delete: (k: string) => void h.jar.delete(k) }) }));
-vi.mock("@/lib/api/voice-picker", () => ({ getVoicePicker: (...a: unknown[]) => h.get(...a), putVoiceChoice: (...a: unknown[]) => h.put(...a) }));
+vi.mock("@/lib/api/voice-picker", () => ({ getVoicePicker: (...a: unknown[]) => h.get(...a), putVoiceChoice: (...a: unknown[]) => h.put(...a), putVoiceGender: (...a: unknown[]) => h.putGender(...a) }));
 
 import { ApiRequestError } from "@/lib/api/client";
 
-import { MOCK_COOKIE, readVoicePicker, saveVoiceChoice } from "./source";
-import { inForce, MOCK_VOICES, parsePicker, safeSamplePath } from "./types";
+import { MOCK_COOKIE, readVoicePicker, saveVoiceChoice, saveVoiceGender } from "./source";
+import { inForce, MOCK_VOICES, parsePicker, PICKER_LANGS, safeSamplePath } from "./types";
 
 const CTX = { token: "tok", tenantId: "22222222-2222-2222-2222-222222222222" };
 const WIRE = {
@@ -56,9 +56,23 @@ describe("the voice catalogue answer", () => {
     expect(inForce({ ...p, choices: { hi: "gone" } }, "hi")?.id).toBe("hi-sanya"); // a voice that left the catalogue falls back
     expect(inForce(p, "te")).toBeNull();
   });
-  it("the approved catalogue has one default per language and the male voice of Kannada", () => {
-    for (const l of ["en", "te", "hi", "kn"]) expect(MOCK_VOICES.filter((v) => v.language === l && v.isDefault)).toHaveLength(1);
-    expect(MOCK_VOICES.find((v) => v.name === "Prakash")).toMatchObject({ language: "kn", gender: "male" });
+  it("the catalogue has, for every language and each gender, exactly one default and at least one Recommended voice; every voice has plain style tags", () => {
+    for (const l of PICKER_LANGS) for (const g of ["female", "male"] as const) {
+      const mine = MOCK_VOICES.filter((v) => v.language === l && v.gender === g);
+      expect(mine.filter((v) => v.isDefault), `${l} ${g}`).toHaveLength(1);
+      expect(mine.some((v) => v.recommended), `${l} ${g}`).toBe(true);
+    }
+    expect(MOCK_VOICES.every((v) => v.tags.length > 0)).toBe(true);
+  });
+  it("reads the gender, the style tags and the Recommended mark; the voice in force follows the gender", () => {
+    const row = (language: string, voices: unknown[], chosen: string | null = null) => ({ language, default_id: null, chosen_id: chosen, active_id: null, voices });
+    const v = (id: string, name: string, gender: string, over: Record<string, unknown> = {}) => ({ id, name, gender, tags: ["calm", "Warm"], recommended: false, default: false, chosen: false, sample_url: `/v1/voice-samples/${id}.mp3`, sample_text: "Hello", ...over });
+    const p = parsePicker({ gender: "male", languages: [row("te", [v("te-ramya", "Ramya", "female", { default: true }), v("te-kiran", "Kiran", "male", { default: true, recommended: true })]), row("ta", [v("ta-meena", "Meena", "female", { default: true })])] });
+    expect(p?.gender).toBe("male");
+    expect(p?.voices.find((x) => x.id === "te-kiran")).toMatchObject({ tags: ["calm", "warm"], recommended: true, label: "calm" });
+    expect(inForce(p as NonNullable<typeof p>, "te")?.name).toBe("Kiran");
+    expect(inForce(p as NonNullable<typeof p>, "ta")).toBeNull(); // no male Tamil voice listed: nothing is made up
+    expect(parsePicker({ languages: [row("en", [v("en-janvi", "Janvi", "female", { default: true })])] })?.gender).toBe("female"); // a answer without a gender is female
   });
 });
 
@@ -93,5 +107,19 @@ describe("the voice picker source", () => {
     }
     h.get.mockRejectedValue(new Error("down"));
     expect(await readVoicePicker(CTX)).toEqual({ mode: "unavailable" });
+  });
+  it("gender: mock keeps it in the cookie, clears the choices of the other gender, and a voice of the other gender is refused; on: asks the API and turns refusals into words", async () => {
+    vi.stubEnv("VOICE_PICKER_SCREENS", "mock");
+    await saveVoiceChoice(CTX, "te", "te-sindhu");
+    expect(await saveVoiceGender(CTX, "male")).toMatchObject({ ok: true, data: { gender: "male", choices: {} } });
+    expect(await saveVoiceChoice(CTX, "te", "te-sindhu")).toEqual({ ok: false, error: "invalid" }); // a female voice while the workspace is male
+    expect(await saveVoiceChoice(CTX, "te", "te-arjun")).toMatchObject({ ok: true, data: { gender: "male", choices: { te: "te-arjun" } } });
+    expect(await saveVoiceGender(CTX, "other")).toEqual({ ok: false, error: "invalid" });
+    vi.stubEnv("VOICE_PICKER_SCREENS", "1");
+    h.putGender.mockResolvedValue(parsePicker(WIRE));
+    expect(await saveVoiceGender(CTX, "female")).toMatchObject({ ok: true });
+    expect(h.putGender).toHaveBeenCalledWith("tok", CTX.tenantId, "female");
+    h.putGender.mockRejectedValueOnce(new ApiRequestError(403, "forbidden", "x"));
+    expect(await saveVoiceGender(CTX, "male")).toEqual({ ok: false, error: "forbidden" });
   });
 });

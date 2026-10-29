@@ -155,5 +155,653 @@
     "file": "kn-prakash-3.pcm"
    }
   ]
+ },
+ "te-deepthi": {
+  "language": "te",
+  "lines": [
+   {
+    "text": "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను.",
+    "file": "te-deepthi-1.pcm"
+   },
+   {
+    "text": "హా అండీ, ఒక్క నిమిషం.",
+    "file": "te-deepthi-2.pcm"
+   },
+   {
+    "text": "ఒక్క క్షణం అండీ, చూస్తాను.",
+    "file": "te-deepthi-3.pcm"
+   }
+  ]
+ },
+ "te-bhavani": {
+  "language": "te",
+  "lines": [
+   {
+    "text": "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను.",
+    "file": "te-bhavani-1.pcm"
+   },
+   {
+    "text": "హా అండీ, ఒక్క నిమిషం.",
+    "file": "te-bhavani-2.pcm"
+   },
+   {
+    "text": "ఒక్క క్షణం అండీ, చూస్తాను.",
+    "file": "te-bhavani-3.pcm"
+   }
+  ]
+ },
+ "te-divya": {
+  "language": "te",
+  "lines": [
+   {
+    "text": "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను.",
+    "file": "te-divya-1.pcm"
+   },
+   {
+    "text": "హా అండీ, ఒక్క నిమిషం.",
+    "file": "te-divya-2.pcm"
+   },
+   {
+    "text": "ఒక్క క్షణం అండీ, చూస్తాను.",
+    "file": "te-divya-3.pcm"
+   }
+  ]
+ },
+ "te-sarika": {
+  "language": "te",
+  "lines": [
+   {
+    "text": "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను.",
+    "file": "te-sarika-1.pcm"
+   },
+   {
+    "text": "హా అండీ, ఒక్క నిమిషం.",
+    "file": "te-sarika-2.pcm"
+   },
+   {
+    "text": "ఒక్క క్షణం అండీ, చూస్తాను.",
+    "file": "te-sarika-3.pcm"
+   }
+  ]
+ },
+ "te-shanti": {
+  "language": "te",
+  "lines": [
+   {
+    "text": "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను.",
+    "file": "te-shanti-1.pcm"
+   },
+   {
+    "text": "హా అండీ, ఒక్క నిమిషం.",
+    "file": "te-shanti-2.pcm"
+   },
+   {
+    "text": "ఒక్క క్షణం అండీ, చూస్తాను.",
+    "file": "te-shanti-3.pcm"
+   }
+  ]
+ },
+ "te-charan": {
+  "language": "te",
+  "lines": [
+   {
+    "text": "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను.",
+    "file": "te-charan-1.pcm"
+   },
+   {
+    "text": "హా అండీ, ఒక్క నిమిషం.",
+    "file": "te-charan-2.pcm"
+   },
+   {
+    "text": "ఒక్క క్షణం అండీ, చూస్తాను.",
+    "file": "te-charan-3.pcm"
+   }
+  ]
+ },
+ "te-pavan": {
+  "language": "te",
+  "lines": [
+   {
+    "text": "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను.",
+    "file": "te-pavan-1.pcm"
+   },
+   {
+    "text": "హా అండీ, ఒక్క నిమిషం.",
+    "file": "te-pavan-2.pcm"
+   },
+   {
+    "text": "ఒక్క క్షణం అండీ, చూస్తాను.",
+    "file": "te-pavan-3.pcm"
+   }
+  ]
+ },
+ "te-vikram": {
+  "language": "te",
+  "lines": [
+   {
+    "text": "ఒక్క నిమిషం అండీ, check చేసి చెప్తాను.",
+    "file": "te-vikram-1.pcm"
+   },
+   {
+    "text": "హా అండీ, ఒక్క నిమిషం.",
+    "file": "te-vikram-2.pcm"
+   },
+   {
+    "text": "ఒక్క క్షణం అండీ, చూస్తాను.",
+    "file": "te-vikram-3.pcm"
+   }
+  ]
+ },
+ "en-skylar": {
+  "language": "en",
+  "lines": [
+   {
+    "text": "One moment, let me check.",
+    "file": "en-skylar-1.pcm"
+   },
+   {
+    "text": "Sure, let me look that up.",
+    "file": "en-skylar-2.pcm"
+   },
+   {
+    "text": "Hmm, one second.",
+    "file": "en-skylar-3.pcm"
+   },
+   {
+    "text": "Just a moment.",
+    "file": "en-skylar-4.pcm"
+   }
+  ]
+ },
+ "en-gemma": {
+  "language": "en",
+  "lines": [
+   {
+    "text": "One moment, let me check.",
+    "file": "en-gemma-1.pcm"
+   },
+   {
+    "text": "Sure, let me look that up.",
+    "file": "en-gemma-2.pcm"
+   },
+   {
+    "text": "Hmm, one second.",
+    "file": "en-gemma-3.pcm"
+   },
+   {
+    "text": "Just a moment.",
+    "file": "en-gemma-4.pcm"
+   }
+  ]
+ },
+ "en-jacqueline": {
+  "language": "en",
+  "lines": [
+   {
+    "text": "One moment, let me check.",
+    "file": "en-jacqueline-1.pcm"
+   },
+   {
+    "text": "Sure, let me look that up.",
+    "file": "en-jacqueline-2.pcm"
+   },
+   {
+    "text": "Hmm, one second.",
+    "file": "en-jacqueline-3.pcm"
+   },
+   {
+    "text": "Just a moment.",
+    "file": "en-jacqueline-4.pcm"
+   }
+  ]
+ },
+ "en-katie": {
+  "language": "en",
+  "lines": [
+   {
+    "text": "One moment, let me check.",
+    "file": "en-katie-1.pcm"
+   },
+   {
+    "text": "Sure, let me look that up.",
+    "file": "en-katie-2.pcm"
+   },
+   {
+    "text": "Hmm, one second.",
+    "file": "en-katie-3.pcm"
+   },
+   {
+    "text": "Just a moment.",
+    "file": "en-katie-4.pcm"
+   }
+  ]
+ },
+ "en-daniel": {
+  "language": "en",
+  "lines": [
+   {
+    "text": "One moment, let me check.",
+    "file": "en-daniel-1.pcm"
+   },
+   {
+    "text": "Sure, let me look that up.",
+    "file": "en-daniel-2.pcm"
+   },
+   {
+    "text": "Hmm, one second.",
+    "file": "en-daniel-3.pcm"
+   },
+   {
+    "text": "Just a moment.",
+    "file": "en-daniel-4.pcm"
+   }
+  ]
+ },
+ "en-parker": {
+  "language": "en",
+  "lines": [
+   {
+    "text": "One moment, let me check.",
+    "file": "en-parker-1.pcm"
+   },
+   {
+    "text": "Sure, let me look that up.",
+    "file": "en-parker-2.pcm"
+   },
+   {
+    "text": "Hmm, one second.",
+    "file": "en-parker-3.pcm"
+   },
+   {
+    "text": "Just a moment.",
+    "file": "en-parker-4.pcm"
+   }
+  ]
+ },
+ "en-archie": {
+  "language": "en",
+  "lines": [
+   {
+    "text": "One moment, let me check.",
+    "file": "en-archie-1.pcm"
+   },
+   {
+    "text": "Sure, let me look that up.",
+    "file": "en-archie-2.pcm"
+   },
+   {
+    "text": "Hmm, one second.",
+    "file": "en-archie-3.pcm"
+   },
+   {
+    "text": "Just a moment.",
+    "file": "en-archie-4.pcm"
+   }
+  ]
+ },
+ "en-jameson": {
+  "language": "en",
+  "lines": [
+   {
+    "text": "One moment, let me check.",
+    "file": "en-jameson-1.pcm"
+   },
+   {
+    "text": "Sure, let me look that up.",
+    "file": "en-jameson-2.pcm"
+   },
+   {
+    "text": "Hmm, one second.",
+    "file": "en-jameson-3.pcm"
+   },
+   {
+    "text": "Just a moment.",
+    "file": "en-jameson-4.pcm"
+   }
+  ]
+ },
+ "en-carson": {
+  "language": "en",
+  "lines": [
+   {
+    "text": "One moment, let me check.",
+    "file": "en-carson-1.pcm"
+   },
+   {
+    "text": "Sure, let me look that up.",
+    "file": "en-carson-2.pcm"
+   },
+   {
+    "text": "Hmm, one second.",
+    "file": "en-carson-3.pcm"
+   },
+   {
+    "text": "Just a moment.",
+    "file": "en-carson-4.pcm"
+   }
+  ]
+ },
+ "hi-riva": {
+  "language": "hi",
+  "lines": [
+   {
+    "text": "एक मिनट जी, मैं चेक करती हूँ।",
+    "file": "hi-riva-1.pcm"
+   },
+   {
+    "text": "जी, एक सेकंड।",
+    "file": "hi-riva-2.pcm"
+   },
+   {
+    "text": "हाँ जी, अभी देखती हूँ।",
+    "file": "hi-riva-3.pcm"
+   }
+  ]
+ },
+ "hi-siya": {
+  "language": "hi",
+  "lines": [
+   {
+    "text": "एक मिनट जी, मैं चेक करती हूँ।",
+    "file": "hi-siya-1.pcm"
+   },
+   {
+    "text": "जी, एक सेकंड।",
+    "file": "hi-siya-2.pcm"
+   },
+   {
+    "text": "हाँ जी, अभी देखती हूँ।",
+    "file": "hi-siya-3.pcm"
+   }
+  ]
+ },
+ "hi-sana": {
+  "language": "hi",
+  "lines": [
+   {
+    "text": "एक मिनट जी, मैं चेक करती हूँ।",
+    "file": "hi-sana-1.pcm"
+   },
+   {
+    "text": "जी, एक सेकंड।",
+    "file": "hi-sana-2.pcm"
+   },
+   {
+    "text": "हाँ जी, अभी देखती हूँ।",
+    "file": "hi-sana-3.pcm"
+   }
+  ]
+ },
+ "hi-rohan": {
+  "language": "hi",
+  "lines": [
+   {
+    "text": "एक मिनट जी, मैं चेक करता हूँ।",
+    "file": "hi-rohan-1.pcm"
+   },
+   {
+    "text": "जी, एक सेकंड।",
+    "file": "hi-rohan-2.pcm"
+   },
+   {
+    "text": "हाँ जी, अभी देखता हूँ।",
+    "file": "hi-rohan-3.pcm"
+   }
+  ]
+ },
+ "hi-anuj": {
+  "language": "hi",
+  "lines": [
+   {
+    "text": "एक मिनट जी, मैं चेक करता हूँ।",
+    "file": "hi-anuj-1.pcm"
+   },
+   {
+    "text": "जी, एक सेकंड।",
+    "file": "hi-anuj-2.pcm"
+   },
+   {
+    "text": "हाँ जी, अभी देखता हूँ।",
+    "file": "hi-anuj-3.pcm"
+   }
+  ]
+ },
+ "hi-sagar": {
+  "language": "hi",
+  "lines": [
+   {
+    "text": "एक मिनट जी, मैं चेक करता हूँ।",
+    "file": "hi-sagar-1.pcm"
+   },
+   {
+    "text": "जी, एक सेकंड।",
+    "file": "hi-sagar-2.pcm"
+   },
+   {
+    "text": "हाँ जी, अभी देखता हूँ।",
+    "file": "hi-sagar-3.pcm"
+   }
+  ]
+ },
+ "hi-atharv": {
+  "language": "hi",
+  "lines": [
+   {
+    "text": "एक मिनट जी, मैं चेक करता हूँ।",
+    "file": "hi-atharv-1.pcm"
+   },
+   {
+    "text": "जी, एक सेकंड।",
+    "file": "hi-atharv-2.pcm"
+   },
+   {
+    "text": "हाँ जी, अभी देखता हूँ।",
+    "file": "hi-atharv-3.pcm"
+   }
+  ]
+ },
+ "hi-dev": {
+  "language": "hi",
+  "lines": [
+   {
+    "text": "एक मिनट जी, मैं चेक करता हूँ।",
+    "file": "hi-dev-1.pcm"
+   },
+   {
+    "text": "जी, एक सेकंड।",
+    "file": "hi-dev-2.pcm"
+   },
+   {
+    "text": "हाँ जी, अभी देखता हूँ।",
+    "file": "hi-dev-3.pcm"
+   }
+  ]
+ },
+ "hi-rehan": {
+  "language": "hi",
+  "lines": [
+   {
+    "text": "एक मिनट जी, मैं चेक करता हूँ।",
+    "file": "hi-rehan-1.pcm"
+   },
+   {
+    "text": "जी, एक सेकंड।",
+    "file": "hi-rehan-2.pcm"
+   },
+   {
+    "text": "हाँ जी, अभी देखता हूँ।",
+    "file": "hi-rehan-3.pcm"
+   }
+  ]
+ },
+ "ta-janani": {
+  "language": "ta",
+  "lines": [
+   {
+    "text": "ஒரு நிமிடம், பார்த்து சொல்கிறேன்.",
+    "file": "ta-janani-1.pcm"
+   },
+   {
+    "text": "சரி, ஒரு நொடி.",
+    "file": "ta-janani-2.pcm"
+   },
+   {
+    "text": "கொஞ்சம் இருங்கள், check செய்கிறேன்.",
+    "file": "ta-janani-3.pcm"
+   }
+  ]
+ },
+ "ta-akshara": {
+  "language": "ta",
+  "lines": [
+   {
+    "text": "ஒரு நிமிடம், பார்த்து சொல்கிறேன்.",
+    "file": "ta-akshara-1.pcm"
+   },
+   {
+    "text": "சரி, ஒரு நொடி.",
+    "file": "ta-akshara-2.pcm"
+   },
+   {
+    "text": "கொஞ்சம் இருங்கள், check செய்கிறேன்.",
+    "file": "ta-akshara-3.pcm"
+   }
+  ]
+ },
+ "ta-anitha": {
+  "language": "ta",
+  "lines": [
+   {
+    "text": "ஒரு நிமிடம், பார்த்து சொல்கிறேன்.",
+    "file": "ta-anitha-1.pcm"
+   },
+   {
+    "text": "சரி, ஒரு நொடி.",
+    "file": "ta-anitha-2.pcm"
+   },
+   {
+    "text": "கொஞ்சம் இருங்கள், check செய்கிறேன்.",
+    "file": "ta-anitha-3.pcm"
+   }
+  ]
+ },
+ "ta-meena": {
+  "language": "ta",
+  "lines": [
+   {
+    "text": "ஒரு நிமிடம், பார்த்து சொல்கிறேன்.",
+    "file": "ta-meena-1.pcm"
+   },
+   {
+    "text": "சரி, ஒரு நொடி.",
+    "file": "ta-meena-2.pcm"
+   },
+   {
+    "text": "கொஞ்சம் இருங்கள், check செய்கிறேன்.",
+    "file": "ta-meena-3.pcm"
+   }
+  ]
+ },
+ "ta-kavya": {
+  "language": "ta",
+  "lines": [
+   {
+    "text": "ஒரு நிமிடம், பார்த்து சொல்கிறேன்.",
+    "file": "ta-kavya-1.pcm"
+   },
+   {
+    "text": "சரி, ஒரு நொடி.",
+    "file": "ta-kavya-2.pcm"
+   },
+   {
+    "text": "கொஞ்சம் இருங்கள், check செய்கிறேன்.",
+    "file": "ta-kavya-3.pcm"
+   }
+  ]
+ },
+ "ta-karthik": {
+  "language": "ta",
+  "lines": [
+   {
+    "text": "ஒரு நிமிடம், பார்த்து சொல்கிறேன்.",
+    "file": "ta-karthik-1.pcm"
+   },
+   {
+    "text": "சரி, ஒரு நொடி.",
+    "file": "ta-karthik-2.pcm"
+   },
+   {
+    "text": "கொஞ்சம் இருங்கள், check செய்கிறேன்.",
+    "file": "ta-karthik-3.pcm"
+   }
+  ]
+ },
+ "ta-dinesh": {
+  "language": "ta",
+  "lines": [
+   {
+    "text": "ஒரு நிமிடம், பார்த்து சொல்கிறேன்.",
+    "file": "ta-dinesh-1.pcm"
+   },
+   {
+    "text": "சரி, ஒரு நொடி.",
+    "file": "ta-dinesh-2.pcm"
+   },
+   {
+    "text": "கொஞ்சம் இருங்கள், check செய்கிறேன்.",
+    "file": "ta-dinesh-3.pcm"
+   }
+  ]
+ },
+ "ta-arun": {
+  "language": "ta",
+  "lines": [
+   {
+    "text": "ஒரு நிமிடம், பார்த்து சொல்கிறேன்.",
+    "file": "ta-arun-1.pcm"
+   },
+   {
+    "text": "சரி, ஒரு நொடி.",
+    "file": "ta-arun-2.pcm"
+   },
+   {
+    "text": "கொஞ்சம் இருங்கள், check செய்கிறேன்.",
+    "file": "ta-arun-3.pcm"
+   }
+  ]
+ },
+ "ml-latha": {
+  "language": "ml",
+  "lines": [
+   {
+    "text": "ഒരു നിമിഷം, നോക്കി പറയാം.",
+    "file": "ml-latha-1.pcm"
+   },
+   {
+    "text": "ശരി, ഒരു സെക്കൻഡ്.",
+    "file": "ml-latha-2.pcm"
+   },
+   {
+    "text": "ഒന്ന് നോക്കട്ടെ, check ചെയ്യാം.",
+    "file": "ml-latha-3.pcm"
+   }
+  ]
+ },
+ "ml-vijay": {
+  "language": "ml",
+  "lines": [
+   {
+    "text": "ഒരു നിമിഷം, നോക്കി പറയാം.",
+    "file": "ml-vijay-1.pcm"
+   },
+   {
+    "text": "ശരി, ഒരു സെക്കൻഡ്.",
+    "file": "ml-vijay-2.pcm"
+   },
+   {
+    "text": "ഒന്ന് നോക്കട്ടെ, check ചെയ്യാം.",
+    "file": "ml-vijay-3.pcm"
+   }
+  ]
  }
 }

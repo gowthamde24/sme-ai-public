@@ -32,7 +32,7 @@ export interface SocketLike {
 }
 export type Phase = "connecting" | "ready" | "ended";
 export type Caption = { id: number; who: "user" | "assistant"; text: string; final: boolean; spoken: boolean };
-export type Snapshot = { phase: Phase; state: VoiceState | null; step: Step | null; captions: Caption[]; sources: VoiceSource[]; language: VoiceLang; end: EndWord | null; micDenied: boolean; /** The plan the assistant proposed in this turn, waiting for the owner (null otherwise). */ plan: ConfirmAction | null; /** The answers to plans so far (by tap or by voice), in order. */ decided: { actionId: string; status: "confirmed" | "declined" | "expired" }[] };
+export type Snapshot = { phase: Phase; state: VoiceState | null; step: Step | null; captions: Caption[]; sources: VoiceSource[]; language: VoiceLang; end: EndWord | null; micDenied: boolean; /** The plan the assistant proposed in this turn, waiting for the owner (null otherwise). */ plan: ConfirmAction | null; /** The answers to plans so far (by tap or by voice), in order. */ decided: { actionId: string; status: "confirmed" | "declined" | "expired" }[]; /** The voice speaking now (its name and language), as the API said at the start of the turn; null until it says. */ voice: { id: string; name: string | null; language: VoiceLang | null } | null };
 
 /** A level above this (0..1, after the browser's echo cancelling) is the person speaking; it must hold for this many frames in a row, so a click or a cough does not cut the assistant off. */
 export const SPEECH_LEVEL = 0.06;
@@ -53,7 +53,7 @@ export class VoiceClient {
 
   constructor(private readonly o: Options) {
     this.quiet = o.quietStart === true;
-    this.snap = { phase: "connecting", state: null, step: null, captions: [], sources: [], language: o.language, end: null, micDenied: false, plan: null, decided: [] };
+    this.snap = { phase: "connecting", state: null, step: null, captions: [], sources: [], language: o.language, end: null, micDenied: false, plan: null, decided: [], voice: null };
   }
 
   get snapshot(): Snapshot {
@@ -165,6 +165,9 @@ export class VoiceClient {
         return;
       case "language":
         this.set({ language: m.language });
+        return;
+      case "voice":
+        this.set({ voice: { id: m.voiceId, name: m.name, language: m.language } });
         return;
       case "error":
         this.last.errorCode = m.code;

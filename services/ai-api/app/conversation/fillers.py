@@ -30,7 +30,16 @@ BANK_LINES: dict[str, tuple[str, ...]] = {
     "te": ("ఒక్క నిమిషం అండీ, check చేసి చెప్తాను.", "హా అండీ, ఒక్క నిమిషం.", "ఒక్క క్షణం అండీ, చూస్తాను."),
     "hi": ("एक मिनट जी, मैं चेक करती हूँ।", "जी, एक सेकंड।", "हाँ जी, अभी देखती हूँ।"),
     "kn": ("ಒಂದು ನಿಮಿಷ ಸರ್, ನೋಡ್ತೀನಿ.", "ಹೌದು ಸರ್, ಒಂದು ಕ್ಷಣ.", "ಸ್ವಲ್ಪ ಇರಿ ಸರ್, ಚೆಕ್ ಮಾಡ್ತೀನಿ."),
+    "ta": ("ஒரு நிமிடம், பார்த்து சொல்கிறேன்.", "சரி, ஒரு நொடி.", "கொஞ்சம் இருங்கள், check செய்கிறேன்."),
+    "ml": ("ഒരു നിമിഷം, നോക്കി പറയാം.", "ശരി, ഒരു സെക്കൻഡ്.", "ഒന്ന് നോക്കട്ടെ, check ചെയ്യാം."),
 }
+# Hindi verbs carry the speaker's gender: a man's voice says "karta", a woman's "karti" (the other languages' lines are the same for both)
+MALE_BANK_LINES: dict[str, tuple[str, ...]] = {"hi": ("एक मिनट जी, मैं चेक करता हूँ।", "जी, एक सेकंड।", "हाँ जी, अभी देखता हूँ।")}
+
+
+def bank_lines(language: str, gender: str = "female") -> tuple[str, ...]:
+    """The filler lines of a voice of this language and gender."""
+    return MALE_BANK_LINES.get(language, BANK_LINES[language]) if gender == "male" else BANK_LINES[language]
 BANK_DIR = Path(__file__).parent / "data" / "fillers"
 BANK_INDEX = BANK_DIR / "index.json"
 BROWSER_FILLER_AFTER_MS = 700

@@ -32,7 +32,7 @@ import { appT } from "@/i18n/app";
 
 import { saveAssistantAction, testCallAction } from "../assistant-actions";
 import { leadContext } from "../lead-context";
-import { chooseVoiceAction } from "../voice-picker-actions";
+import { chooseVoiceAction, chooseVoiceGenderAction } from "../voice-picker-actions";
 import { addFactAction, addFileAction, addPasteAction, decideFactAction, discardSourceAction, draftFactsAction, editFactAction, resetPlaybookAction, savePlaybookAction } from "../lead-setup-actions";
 
 export const metadata = { title: `Set up Lead Desk · ${BRAND_NAME}` };
@@ -138,13 +138,14 @@ export default async function LeadSetupPage({ params, searchParams }: PageProps<
         />
         {voicePicker?.mode === "ok" ? (
           <VoicePicker
+            gender={voicePicker.data.gender}
             words={wordsFor(lang, ["vp."])}
             rows={pickerLangs.map((l) => ({ language: l, voices: voicePicker.data.voices.filter((v) => v.language === l), choice: voicePicker.data.choices[l] ?? null }))}
             langNames={CALL_LANG_NAMES}
             canEdit={owner || tenant.role === "admin"}
             endpoint={`${base}/voice-pick`}
             mock={voicePickerScreens() === "mock"}
-            actions={{ choose: chooseVoiceAction.bind(null, tenantId) }}
+            actions={{ choose: chooseVoiceAction.bind(null, tenantId), setGender: chooseVoiceGenderAction.bind(null, tenantId) }}
           />
         ) : null}
         </div>

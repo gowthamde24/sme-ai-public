@@ -35,7 +35,7 @@ from app.turns.intent import classify, is_yes_no, normalise
 
 log = logging.getLogger("app.browser_voice")
 
-LANGUAGES = ("te", "en", "hi", "kn")
+LANGUAGES = ("te", "en", "hi", "kn", "ta", "ml")
 START_WITHIN_S = 10.0
 IDLE_S = 1800.0  # no final transcript for this long: the session ends. The owner's chat stays open until they close it; this only stops a tab left open for hours
 MAX_STT_FAILURES = 3
@@ -43,8 +43,8 @@ FLUSH_EVERY_S = 15.0
 TRANSCRIPT_EVERY_S = 0.25   # an interim transcript at most this often (the newest of the recogniser's partials)
 _NO_WORDS = frozenset({"no", "nope", "n", "cancel", "don't", "dont", "stop", "kaadu", "nahi", "nahin", "illa", "కాదు", "వద్దు", "नहीं", "नही", "मत", "ಇಲ್ಲ", "ಬೇಡ"})
 SAID = {
-    "yes": {"en": "Okay, I will go ahead.", "te": "సరే, కొనసాగిస్తాను.", "hi": "ठीक है, मैं आगे बढ़ता हूँ।", "kn": "ಸರಿ, ಮುಂದುವರಿಯುತ್ತೇನೆ."},
-    "no": {"en": "Okay, I will not do it.", "te": "సరే, చేయను.", "hi": "ठीक है, मैं नहीं करूँगा।", "kn": "ಸರಿ, ಮಾಡುವುದಿಲ್ಲ."},
+    "yes": {"en": "Okay, I will go ahead.", "te": "సరే, కొనసాగిస్తాను.", "hi": "ठीक है, मैं आगे बढ़ता हूँ।", "kn": "ಸರಿ, ಮುಂದುವರಿಯುತ್ತೇನೆ.", "ta": "சரி, தொடர்கிறேன்.", "ml": "ശരി, തുടരാം."},
+    "no": {"en": "Okay, I will not do it.", "te": "సరే, చేయను.", "hi": "ठीक है, मैं नहीं करूँगा।", "kn": "ಸರಿ, ಮಾಡುವುದಿಲ್ಲ.", "ta": "சரி, செய்யமாட்டேன்.", "ml": "ശരി, ചെയ്യില്ല."},
 }
 Kind = Literal["text", "bytes", "close"]
 
@@ -66,6 +66,8 @@ class Parts:
     greeting_for: Callable[[str], str | None]
     models: dict[str, str]
     voice_for: Callable[[str], str] = lambda language: ""  # the catalogue voice id that speaks in a language (the filler bank is keyed by it)
+    voice_name: Callable[[str], str] = lambda language: ""  # its name for the screen ("Ramya")
+    refresh: Callable[[], None] | None = None   # reads the workspace's voice settings again (called at the start of every turn, so a change in Settings speaks from the next turn)
     fillers: FillerBank | None = None
     # job EA: the owner's yes or no to a plan the assistant proposed -> {action_id, status, task}; raises ApiError (mfa_required, action_expired, ...). None: the socket cannot confirm.
     confirm: Callable[[uuid.UUID, str], dict[str, Any]] | None = None
@@ -131,7 +133,7 @@ class VoiceSession:
             session=Session(system=parts.system_for(self.language), language=self.language),
             models=parts.models,  # type: ignore[arg-type]
             fillers=parts.fillers,
-            voice=parts.voice_for,
+            voice=self._filler_voice,
             filler_after_ms=BROWSER_FILLER_AFTER_MS,  # Ask can take seconds: after 700 ms of nothing a short pre-rendered line is said
             tools_available=True,
             on_stt=self._on_stt,
@@ -146,6 +148,9 @@ class VoiceSession:
         self._tr_pending: str | None = None
         self._tr_flush: asyncio.Future[None] | None = None
         self._greeting: asyncio.Task[None] | None = None
+        self._turn_voice: tuple[str, str] | None = None   # (voice id, language) of the turn in progress: every chunk of the turn is this voice
+        self._turn_active = False
+        self._pending_language: str | None = None
         self._ended = "client"
         self._started = clock()
         self._accounted = 0.0
@@ -304,7 +309,10 @@ class VoiceSession:
             if what == "barge_in":
                 await self._barge_in()
             elif what == "set_language" and payload.get("language") in LANGUAGES:
-                await self._set_language(str(payload["language"]))
+                if self._turn_active:
+                    self._pending_language = str(payload["language"])   # a turn never changes voice or language half way: it takes effect at the next turn
+                else:
+                    await self._set_language(str(payload["language"]))
             elif what == "confirm":
                 try:
                     await self._confirm(uuid.UUID(str(payload.get("action_id"))), str(payload.get("decision")))
@@ -323,6 +331,34 @@ class VoiceSession:
         self.conv.session.system = self.parts.system_for(language)
         self.conv.stt = self.parts.stt_for(language)
         await self._send({"type": "language", "language": language})
+
+    async def _refresh_voices(self) -> None:
+        if self.parts.refresh is not None:
+            with suppress(Exception):
+                await asyncio.to_thread(self.parts.refresh)   # the settings are read again; a failure keeps the voices of the last turn
+
+    def _filler_voice(self, language: str) -> str:
+        """The voice the filler bank is asked for: the turn's own voice only. Another voice or language than the turn's gets NO filler (the orb shows "thinking"), never a different voice."""
+        voice = self.parts.voice_for(language)
+        if self._turn_voice is None:
+            return voice
+        return voice if (voice, language) == self._turn_voice else ""
+
+    async def _announce_voice(self, turn: int) -> None:
+        """Before the first audio chunk of a turn (the greeting and the filler included): which voice speaks it. One voice and one language for the whole turn."""
+        voice, language = self.parts.voice_for(self.language), self.language
+        self._turn_voice = (voice, language)
+        await self._send({"type": "voice", "turn": turn, "voice_id": voice, "language": language, "name": self.parts.voice_name(language)})
+
+    async def _audio_end(self, turn: int) -> None:
+        voice, language = self._turn_voice or (self.parts.voice_for(self.language), self.language)
+        await self._send({"type": "audio_end", "turn": turn, "voice_id": voice, "language": language})
+
+    async def _end_turn(self) -> None:
+        self._turn_active = False
+        if self._pending_language is not None:
+            language, self._pending_language = self._pending_language, None
+            await self._set_language(language)
 
     async def _follow_language(self, text: str) -> None:
         """The reply is in the language of the owner's LAST turn (also romanised Telugu): the voice, the filler and the answer all follow it. A short English word ("ok") does not switch a Telugu chat back."""
@@ -412,13 +448,25 @@ class VoiceSession:
             if self.pending_action is not None and is_yes_no(text):
                 decision = self._polarity(text)
                 await self._confirm(self.pending_action, decision)
-                await self._say(SAID[decision].get(self.language, SAID[decision]["en"]))
+                self._turn_active = True
+                try:
+                    await self._refresh_voices()
+                    await self._announce_voice(self.usage.turns)
+                    await self._say(SAID[decision].get(self.language, SAID[decision]["en"]))
+                finally:
+                    await self._end_turn()
                 continue
-            await self._follow_language(text)
-            await self._set_state("thinking")
-            self.usage.turns += 1
-            tm.end_of_speech_at = self.bus.speech_ended_at
-            await self._answer(text, tm)
+            self._turn_active = True
+            try:
+                await self._follow_language(text)
+                await self._set_state("thinking")
+                self.usage.turns += 1
+                await self._refresh_voices()
+                await self._announce_voice(self.usage.turns)
+                tm.end_of_speech_at = self.bus.speech_ended_at
+                await self._answer(text, tm)
+            finally:
+                await self._end_turn()
             self.bus.drop_before(0.0 if not tm.interrupted else PREROLL_S)
 
     async def _answer(self, text: str, tm: TurnTimings) -> None:
@@ -431,7 +479,7 @@ class VoiceSession:
             log.warning("browser_voice_turn_failed code=%s", getattr(err, "code", type(err).__name__))
             await self._send({"type": "error", "code": getattr(err, "code", "turn_failed"), "message": "Something went wrong with that answer. Please ask again.", "fatal": False})
             return
-        await self._send({"type": "audio_end", "turn": self.usage.turns})
+        await self._audio_end(self.usage.turns)
         await self._send(
             {
                 "type": "timings",
@@ -452,19 +500,21 @@ class VoiceSession:
         with suppress(asyncio.CancelledError, Exception):
             async for pcm in self.tts.stream(text, self.language):
                 await self.playout.write(pcm)
-        await self._send({"type": "audio_end", "turn": self.usage.turns})
+        await self._audio_end(self.usage.turns)
 
     async def _greet(self) -> bool:
         text = self.parts.greeting_for(self.language) if self.limits.greeting else None
         if not text:
             return False
         await self._set_state("speaking")
+        await self._refresh_voices()
+        await self._announce_voice(0)
         await self._send({"type": "caption", "who": "assistant", "text": text, "final": True, "spoken": True})
 
         async def speak() -> None:
             async for pcm in self.tts.stream(text, self.language):
                 await self.playout.write(pcm)
-            await self._send({"type": "audio_end", "turn": 0})
+            await self._audio_end(0)
 
         self._greeting = asyncio.ensure_future(speak())
         with suppress(asyncio.CancelledError, Exception):
