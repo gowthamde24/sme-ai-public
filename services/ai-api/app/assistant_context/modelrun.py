@@ -12,7 +12,7 @@ from collections.abc import Callable, Sequence
 from typing import TYPE_CHECKING, Any
 
 from app.agents.errors import AgentDbError
-from app.agents.llm.interface import Block, LlmError, LlmRequest, TaskClass, ToolSpec
+from app.agents.llm.interface import Attachment, Block, LlmError, LlmRequest, TaskClass, ToolSpec
 from app.agents.llm.routing import as_router
 from app.agents.runtime import NOT_BILLED, input_token_bound
 from app.errors import ApiError
@@ -46,6 +46,7 @@ def run(
     final: ToolSpec,
     max_output_tokens: int,
     charge: Callable[[Any], None] | None = None,
+    attachments: tuple[Attachment, ...] = (),
 ) -> dict[str, Any]:
     """The structured result of one call, or an ApiError (the day's allowance, the model busy or not set up)."""
     from app.assistant.routes import (
@@ -70,8 +71,10 @@ def run(
         except AgentDbError as exc:
             raise _refusal(exc, runtime.today, token, tenant_id) from None
         router = as_router(factory())
-        request = LlmRequest(blocks=tuple(blocks), tools=(), max_output_tokens=max_output_tokens, task_class=TaskClass.SIMPLE, final_result=final)
+        request = LlmRequest(blocks=tuple(blocks), tools=(), max_output_tokens=max_output_tokens, task_class=TaskClass.SIMPLE, final_result=final, attachments=attachments)
         llm = router.choose(request.task_class, db.ai_mode)
+        if attachments and not getattr(llm, "supports_attachments", False):
+            raise ApiError(503, "vision_unavailable", "Reading pictures and PDFs is not switched on for this system. Paste the text instead.")
         try:
             db.reserve_cost("usage-1", model=llm.model_id, max_input_tokens=input_token_bound(request), max_output_tokens=request.max_output_tokens)
         except AgentDbError as exc:

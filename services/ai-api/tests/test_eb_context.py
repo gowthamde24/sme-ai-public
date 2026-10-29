@@ -151,7 +151,7 @@ def test_a_school_document_with_fees_is_refused_before_a_model_sees_it() -> None
     assert r.status_code == 422 and r.json()["error"]["code"] == "not_for_schools" and llm.requests == []
 
 
-def test_files_are_read_by_what_they_are_and_pdf_and_pictures_are_said_plainly_to_be_unavailable() -> None:
+def test_files_are_read_by_what_they_are_and_pictures_need_a_model_that_can_see() -> None:
     sheet = b"Item,Price\nPaver 6 inch,45\nPaver 8 inch,52\n"
     client, _, llm, _ = world(understood(("prices", "Paver 6 inch: 45\nPaver 8 inch: 52")))
     ok = client.post(f"{BASE}/understand", json={"kind": "file", "filename": "prices.csv", "content_base64": b64(sheet)}, headers=auth("a_owner"))
@@ -159,7 +159,7 @@ def test_files_are_read_by_what_they_are_and_pdf_and_pictures_are_said_plainly_t
     assert "Paver 6 inch | 45" in " ".join(b.text for b in llm.requests[0].blocks)
     for name, data in (("list.pdf", b"%PDF-1.4 x"), ("shop.jpg", b"\xff\xd8\xff\xe0x"), ("shop.png", b"\x89PNG\r\n\x1a\nx")):
         r = client.post(f"{BASE}/understand", json={"kind": "file", "filename": name, "content_base64": b64(data)}, headers=auth("a_owner"))
-        assert r.status_code == 422 and r.json()["error"]["code"] == "not_supported_yet", name
+        assert r.status_code == 503 and r.json()["error"]["code"] == "vision_unavailable", (name, "a model that cannot read pictures says so in plain words")
     assert client.post(f"{BASE}/understand", json={"kind": "file", "filename": "x.txt", "content_base64": "not base64!!"}, headers=auth("a_owner")).json()["error"]["code"] == "file_unreadable"
     big = client.post(f"{BASE}/understand", json={"kind": "file", "filename": "x.txt", "content_base64": b64(b"a" * 3_100_000)}, headers=auth("a_owner"))
     assert big.status_code == 422 and big.json()["error"]["code"] == "file_too_large"
