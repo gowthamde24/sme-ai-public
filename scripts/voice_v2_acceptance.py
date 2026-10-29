@@ -150,7 +150,8 @@ class Rig:
             while not any(e.get("type") == "audio_end" and e.get("turn") == 1 for e in events) and time.time() < end:
                 await asyncio.sleep(0.2)
             await asyncio.sleep(0.3)
-            await ws.send(json.dumps({"type": "stop"}))
+            with __import__("contextlib").suppress(Exception):
+                await ws.send(json.dumps({"type": "stop"}))
             task.cancel()
         return {"events": events, "chunks": chunks, "language": language}
 
@@ -173,17 +174,20 @@ class Rig:
             ok, _ = False, notes.append("no audio")
         if first_voice_at < 0:
             ok, _ = False, notes.append("no voice message")
+        problems = [f"{e.get('type')}:{e.get('code') or e.get('reason')}" for e in ev if e.get("type") in ("error", "limit")]
+        if problems:
+            notes.append("server said " + ",".join(problems))
         engine = timing.get("engine")
         if engine != "cartesia" or timing.get("fallback"):
             ok, _ = False, notes.append(f"engine {engine} (fallback {timing.get('fallback')!r}): the chosen Cartesia voice did not speak")
-        heard = self.transcribe(pcm, language) if pcm else ""
+        heard = self.transcribe(pcm[: 24000 * 2 * 25], language) if pcm else ""   # the recogniser takes 30 s at most: the first 25 s say which language and script
         if language in SCRIPT:
             lo, hi = SCRIPT[language]
             letters = [c for c in heard if c.isalpha()]
             share = sum(1 for c in letters if lo <= ord(c) <= hi) / max(1, len(letters))
             if share < 0.5:
                 ok, _ = False, notes.append(f"speech-to-text is only {share:.0%} {language} script: {heard[:60]!r}")
-        elif re.search(r"[^\x00-\x7f]", heard):
+        elif not heard.strip() or re.search(r"[^\x00-\x7f]", heard):
             ok, _ = False, notes.append(f"English turn heard with other scripts: {heard[:60]!r}")
         self.rows.append((label, f"{language} {expect_voice}", ok, "; ".join(notes) or f"engine {engine}, {len(pcm) / 2 / 24000:.1f}s, heard {heard[:50]!r}"))
         if save and pcm:
@@ -201,7 +205,8 @@ async def main() -> int:
     args = ap.parse_args()
     rig = Rig(args.api_url, Path(args.out))
     try:
-        rig.api_call("PUT", "/ai-assistant/voices", {"gender": "female"})
+        rig.api_call("PUT", "/ai-assistant/voices", {"gender": "male"})   # a flip clears every earlier choice ...
+        rig.api_call("PUT", "/ai-assistant/voices", {"gender": "female"})   # ... so the run starts from the defaults
         for lang in ("te", "en", "hi", "kn"):
             await_result = await rig.turn(lang)
             rig.judge(f"A1/A2 {lang}", await_result, rig.active(lang), lang, save=f"{lang}-female" if lang in ("te", "en") else None)
