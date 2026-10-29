@@ -39,7 +39,7 @@ export const getVoiceSampleFile = async (token: string, path: string): Promise<{
  * `GET /ai-assistant/voices/preview?language=` (Owner, Admin): the workspace's SAVED opening line spoken in the voice in force (the chosen catalogue voice, else the default of that language), with the business's real names. null = no voice service here (404 `no_preview`).
  * 429 is passed on (12 a minute per person). The one "Hear it" of Settings > AI assistant: there is no other preview.
  */
-export async function getVoicesPreviewFile(token: string, tenantId: string, language: string): Promise<{ bytes: ArrayBuffer; contentType: string } | null> {
+export async function getVoicesPreviewFile(token: string, tenantId: string, language: string): Promise<{ bytes: ArrayBuffer; contentType: string; voiceId?: string | null } | null> {
   if (!/^[a-z]{2}$/.test(language)) return null;
   try {
     const got = await apiBinaryRequest(`${base(tenantId)}/voices/preview?${new URLSearchParams({ language }).toString()}`, token, 2_000_000);
