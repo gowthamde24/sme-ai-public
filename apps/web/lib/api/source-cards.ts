@@ -22,7 +22,7 @@ const post = (body: unknown = {}): RequestInit => ({ method: "POST", body: JSON.
 export function sourceErrorOf(error: unknown): SourceError {
   if (!(error instanceof ApiRequestError)) return "down";
   if (error.code === "key_rejected" || error.code === "invalid_key" || error.code === "indiamart_key_rejected") return "badkey";
-  if (error.code === "not_available" || error.code === "source_unavailable") return "notavailable";
+  if (error.code === "not_available" || error.code === "source_unavailable" || error.status === 404 || error.status === 405) return "notavailable"; // a door the API does not have yet is "not switched on", not "try again"
   if (error.status === 409) return "state";
   if (error.status === 429) return "slow";
   return error.status === 403 ? "forbidden" : "down";

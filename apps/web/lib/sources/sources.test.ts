@@ -57,6 +57,7 @@ describe("the API calls", () => {
   it("turn refusals into closed words and let a lapsed sign-in through", async () => {
     const e = (status: number, code: string) => sourceErrorOf(new ApiRequestError(status, code, "English"));
     expect(e(422, "indiamart_key_rejected")).toBe("badkey");
+    expect(e(404, "not_found")).toBe("notavailable");
     expect(e(409, "x")).toBe("state");
     expect(e(429, "x")).toBe("slow");
     expect(e(403, "x")).toBe("forbidden");
