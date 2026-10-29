@@ -22,5 +22,8 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     include: ["**/*.test.{ts,tsx}"],
     exclude: ["node_modules/**", ".next/**"],
+    // The first test of a page file pays for importing the whole page (a few seconds on a busy CI machine): a test that only waits for that is not a failure. 5 s was the default; a test that really hangs still fails, 20 s later.
+    testTimeout: 20_000,
+    hookTimeout: 20_000,
   },
 });
