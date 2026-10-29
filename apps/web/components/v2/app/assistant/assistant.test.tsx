@@ -41,7 +41,7 @@ describe("Settings > AI assistant", () => {
     draw({});
     expect(screen.queryByRole("radiogroup", { name: /Voice/ })).toBeNull();
     expect(document.querySelector("[data-sample]")).toBeNull();
-    expect(screen.queryByRole("radio", { name: /Crisp|Warm$/ })).toBeNull();
+    expect(screen.queryByRole("radio", { name: /^(Crisp|Warm)$/ })).toBeNull();
     cleanup();
     draw({ voicePickerOn: true, samples: { endpoint: "/app/tenants/t/voice-sample", mock: false } });
     expect(screen.queryByRole("radiogroup", { name: /Voice/ })).toBeNull();
