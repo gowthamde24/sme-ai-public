@@ -17,6 +17,8 @@ import type { ConfirmAction } from "@/lib/api/turns";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 const bubble = "max-w-[92%] rounded-2xl px-3.5 py-2.5";
+/** How a chat can end without a word on the screen: it went quiet, hit its time limit or was closed. The panel stays as it was (typing works; the microphone starts a new chat without a greeting). The other ends say why. */
+const QUIET_ENDS: readonly string[] = ["idle", "session", "left"];
 
 /** One exchange of the thread: what the person said or typed, then the answer (light formatting, a copy button, sources, drafts, the reason when it failed). */
 /** The plan the router proposed: what it will do, for whom, how (and about how much), and ONE tap: Yes, do it / No. Once answered (or expired) it shows its state in words. */
@@ -262,7 +264,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           ) : null}
           {line ? <p data-chat="state" role="status" className="text-sm font-medium text-muted">{line}</p> : null}
           {talk.micDenied ? <p role="alert" className="text-sm font-medium text-red-text">{voice.words["bv.mic.denied"]}</p> : null}
-          {talk.end && !talk.active ? <p role="status" className="text-sm text-muted">{voice.words[`bv.end.${talk.end}`]}</p> : null}
+          {talk.end && !talk.active && !QUIET_ENDS.includes(talk.end) ? <p role="status" className="text-sm text-muted">{voice.words[`bv.end.${talk.end}`]}</p> : null}
           <form
             data-write
             data-chat="form"

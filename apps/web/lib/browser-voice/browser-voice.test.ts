@@ -189,6 +189,44 @@ describe("a session", () => {
     ws.say({ type: "caption", who: "assistant", text: "Four.", final: true, spoken: true });
     expect(client.snapshot.captions.map((c) => [c.who, c.text, c.final])).toEqual([["user", "How many enquiries today?", true], ["assistant", "Four.", true]]);
   });
+  it("the person's words are ONE line whichever message comes first (the server sends the caption, then the transcript): interim and final never make two lines; a new utterance after an answer is a new line", async () => {
+    await ready();
+    for (const [text, final] of [["how", false], ["how many", false], ["How many enquiries?", true]] as const) {
+      ws.say({ type: "caption", who: "user", text, final, spoken: true });
+      ws.say({ type: "transcript", text, final, seq: 1, t_ms: 1 });
+    }
+    ws.say({ type: "caption", who: "assistant", text: "Four.", final: true, spoken: true });
+    ws.say({ type: "caption", who: "user", text: "and", final: false, spoken: true });
+    ws.say({ type: "transcript", text: "and who?", final: true, seq: 1, t_ms: 1 });
+    ws.say({ type: "caption", who: "user", text: "and who?", final: true, spoken: true });
+    expect(client.snapshot.captions.map((c) => [c.who, c.text, c.final])).toEqual([["user", "How many enquiries?", true], ["assistant", "Four.", true], ["user", "and who?", true]]);
+  });
+  it("the assistant's pieces (a few letters each, final each) are ONE text joined as they are, Telugu letters never cut apart; the part not read aloud stays a second text", async () => {
+    await ready();
+    const pieces = ["Great, th", "anks for pic", "king up. ", "నమ", "స్కా", "రం! ", "ఇ", "ది"];
+    for (const text of pieces) ws.say({ type: "caption", who: "assistant", text, final: true, spoken: true });
+    ws.say({ type: "caption", who: "assistant", text: "More.", final: true, spoken: false });
+    expect(client.snapshot.captions.map((c) => [c.text, c.spoken])).toEqual([[pieces.join(""), true], ["More.", false]]);
+    expect(client.snapshot.captions[0].text).toBe("Great, thanks for picking up. నమస్కారం! ఇది");
+  });
+  it("a silent restart: the greeting's sound and caption are left out until the person speaks", async () => {
+    const quiet = new VoiceClient({ url: "wss://x/v1/tenants/t/voice-chat", token: "tok", language: "en", audio: audio.io, socket: () => ws, onChange: () => undefined, quietStart: true });
+    await quiet.start();
+    ws.open();
+    ws.say({ type: "ready", session_id: "s", language: "en", limits: {} });
+    ws.say({ type: "state", state: "speaking" });
+    ws.say({ type: "caption", who: "assistant", text: "Hi, how can I help?", final: true, spoken: true });
+    ws.say(new ArrayBuffer(8));
+    expect(quiet.snapshot.captions).toEqual([]);
+    expect(audio.calls.played).toBe(0);
+    ws.say({ type: "state", state: "listening" });
+    ws.say({ type: "caption", who: "user", text: "hello", final: true, spoken: true });
+    ws.say({ type: "state", state: "speaking" });
+    ws.say({ type: "caption", who: "assistant", text: "Yes?", final: true, spoken: true });
+    ws.say(new ArrayBuffer(8));
+    expect(quiet.snapshot.captions.map((c) => c.text)).toEqual(["hello", "Yes?"]);
+    expect(audio.calls.played).toBe(1);
+  });
   it("a plan is held for the owner (read from the message, a malformed one is ignored), its answer comes by tap or by voice, and the next words clear it", async () => {
     await ready();
     const plan = { type: "confirm_action", action_id: "33333333-3333-4333-8333-333333333333", title: "Call 12 new leads", summary: "Today.", steps: ["Pick", "Call"], count: 12, channel: "call", estimate: { messages: 0, call_minutes: 30, cost_paise: 1200 }, needs_second_factor: true, expires_at: "2026-10-28T20:00:00Z", status: "proposed" };
