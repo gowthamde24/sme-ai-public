@@ -226,8 +226,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
             {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} /> : null}
             {talk.state === "listening" && !talk.live?.asked ? (
               <li data-chat="wave" aria-hidden="true" className={`${bubble} flex h-11 items-center gap-1 self-end border border-dashed border-brand-edge bg-surface`}>
-                {[0, 1, 2, 3, 4].map((i) => (
-                  <span key={i} className="h-5 w-1 origin-center rounded-full bg-brand motion-safe:animate-pulse" style={{ animationDelay: `${i * 120}ms` }} />
+                {["", "[animation-delay:120ms]", "[animation-delay:240ms]", "[animation-delay:360ms]", "[animation-delay:480ms]"].map((delay) => (
+                  <span key={delay} className={`h-5 w-1 origin-center rounded-full bg-brand motion-safe:animate-pulse ${delay}`} />
                 ))}
               </li>
             ) : null}
