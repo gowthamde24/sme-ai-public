@@ -8,6 +8,8 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from app.opening.render import NO_NAME_PHRASE
+
 DATA = Path(__file__).resolve().parent / "data" / "assistant.json"
 # the assistant word in each language: every introduction and every sample must contain it (and "AI")
 ASSISTANT_WORD = {lang: "assistant" for lang in ("en", "te", "hi", "kn", "ta", "ml")}   # job DS: in everyday speech the word stays in English (Latin letters) in every language
@@ -28,7 +30,7 @@ def business_type(code: str | None) -> str:
 
 
 # What stands where a name would be when the Owner has not named the assistant (job EE: no name is ever made up). A phrase, not a person: "your assistant".
-NO_NAME = {"en": "your assistant", "te": "మీ అసిస్టెంట్", "hi": "आपकी असिस्टेंट", "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್"}
+NO_NAME = NO_NAME_PHRASE   # (one list of the phrases: the opening line and the settings say the same words)
 # the fixed introduction when there is no name: the business and "AI assistant" (every language states both)
 INTRO_UNNAMED = {
     "en": "The AI assistant of {business}", "te": "{business} నుంచి AI assistant", "hi": "{business} की AI assistant", "kn": "{business} ಇಂದ AI assistant",

@@ -159,11 +159,11 @@ def test_the_preview_is_the_greeting_a_customer_hears_with_the_live_business_nam
     client.put(f"{BASE}/opening-line", json={"language": "en", "text": "Hi {customer}, {assistant} from {business} here."}, headers=h)
     client.put(f"{BASE}/mention-ai", json={"mention_ai": False}, headers=h)
     off = client.get(q, headers=auth("a_sales")).json()
-    assert off["text"] == f"Hi Ravi, from {TENANT_A.name} here." and off["says_ai"] is False and off["mention_ai"] is False, "no name was set: the placeholder is dropped, nothing is made up"
+    assert off["text"] == f"Hi Ravi, your assistant from {TENANT_A.name} here." and off["says_ai"] is False and off["mention_ai"] is False, "no name was set: the phrase stands where the name would, no name is made up and no hole is spoken"
     camp = str(uuid.uuid4())
     assert client.put(f"{BASE}/mention-ai", json={"mention_ai": True, "campaign_id": camp}, headers=h).status_code == 200
     on = client.get(q + f"&campaign_id={camp}", headers=h).json()
-    assert on["says_ai"] is True and on["text"].startswith("Hi Ravi, from") and on["text"].endswith("I'm an AI assistant.")
+    assert on["says_ai"] is True and on["text"].startswith("Hi Ravi, your assistant from") and on["text"].endswith("I'm an AI assistant.")
     assert client.put(f"{BASE}/mention-ai", json={"mention_ai": None}, headers=h).status_code == 422 and repo.row["mention_ai"] is False
 
 

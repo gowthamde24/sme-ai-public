@@ -53,6 +53,14 @@ _OPENERS: dict[str, dict[str, str]] = {
 }
 
 
+# Where an Owner's own line says {assistant} but the Owner never named the assistant: a phrase, never a made-up name and never a hole ("this is  of X"). The same words stand in the settings' samples and previews.
+NO_NAME_PHRASE = {"en": "your assistant", "te": "మీ అసిస్టెంట్", "hi": "आपकी असिस्टेंट", "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್"}
+
+
+def no_name_phrase(language: str) -> str:
+    return NO_NAME_PHRASE.get(language, NO_NAME_PHRASE["en"])
+
+
 def default_line(language: str, mention_ai: bool, *, named: bool = False) -> str:
     """The default opening, as a template with {business} (and {assistant} only when the Owner set a name)."""
     lang = language if language in _OPENERS else "en"
@@ -96,7 +104,7 @@ def compose_opening(
     set, or None: no name is ever made up."""
     lang = language if language in DISCLOSURE else "en"
     if owner_line:
-        text = fill(owner_line, customer=customer, assistant=assistant or "", business=business, agent_role=agent_role)
+        text = fill(owner_line, customer=customer, assistant=assistant or no_name_phrase(lang), business=business, agent_role=agent_role)
         if mention_ai and not says_ai(text):
             text = f"{text} {DISCLOSURE[lang]}"
         return text
