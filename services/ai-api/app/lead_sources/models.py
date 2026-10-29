@@ -329,6 +329,12 @@ class GmailConfirmation(_Strict):
     received_at: datetime
 
 
+class WebsiteOut(_Strict):
+    snippet: str   # the HTML form to paste into a website
+    form_link: str   # a hosted page with the same form: share it, no website needed
+    webhook_url: str   # for form tools: POST the fields here
+
+
 class EmailAddressOut(_Strict):
     address: str
     gmail_filter_guide: list[GuideStep]

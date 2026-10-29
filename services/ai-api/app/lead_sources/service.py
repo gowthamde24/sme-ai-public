@@ -419,6 +419,30 @@ class LeadSourcesService:
             "gmail_confirmation": self._gmail_confirmation(token, tenant_id),
         }
 
+    def website(self, token: str, tenant_id: uuid.UUID, *, rotate: bool = False) -> dict[str, Any]:
+        """The workspace's website form (made on first use, shown again as often as asked; `rotate` makes a new address and the old one stops working): the snippet to paste, a hosted form link that needs no website at all, and the webhook address."""
+        if not self.base:
+            raise ApiError(503, "not_available", "The website form is not switched on yet. Ask us to switch it on.")
+        current = self.repo.website_get(token, tenant_id)
+        secret = str(current.get("token") or "")
+        if not secret or rotate:
+            secret = secrets.token_hex(12)
+            existing = next((s for s in self.repo.sources(token, tenant_id) if s.get("kind") == "website_form"), None)
+            if existing is not None:
+                source_id = uuid.UUID(str(existing["id"]))
+                self.repo.source_rotate(token, tenant_id, source_id, token_hash(secret), secret[-4:])
+            else:
+                source_id = uuid.uuid4()
+                self.repo.source_create(
+                    token, tenant_id,
+                    {"p_id": str(source_id), "p_kind": "website_form", "p_tag": tag_of("website_form", None), "p_label": "Website form", "p_token_hash": token_hash(secret),
+                     "p_token_hint": secret[-4:], "p_consent_id": None, "p_consent": None, "p_cost_paise": None},
+                )
+            self.repo.website_set(token, tenant_id, source_id, secret)
+        info = self._secret("website_form", secret)
+        url = str(info["url"])
+        return {"snippet": info["snippet_html"], "form_link": f"{url}/form", "webhook_url": url}
+
     def _gmail_confirmation(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """Gmail asks the new forwarding address to confirm with a code; that mail arrives here, so the code is shown to the owner (the mail itself is not a lead)."""
         for item in self.repo.unparsed(token, tenant_id):
