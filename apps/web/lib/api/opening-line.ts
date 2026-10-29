@@ -138,10 +138,10 @@ export class PreviewUnsupported extends Error {}
  * speaks it in the voice in force and answers {spoken_text, audio: {mime, base64}}: `spoken_text` is the exact string it sent to the voice engine, shown under the button so that what is read is what was heard. Nothing is saved. 404 `no_preview` = no voice service (no sound);
  * a 404 / 405 of any other kind = the route is not there yet (PreviewUnsupported).
  */
-export async function previewSpoken(token: string, tenantId: string, input: { language: CallLang; text: string | null; mentionAi: boolean | null }): Promise<Preview> {
+export async function previewSpoken(token: string, tenantId: string, input: { language: CallLang; text: string | null; mentionAi: boolean | null; assistantName?: string | null }): Promise<Preview> {
   let json: unknown;
   try {
-    json = await apiRequest(`${aiBase(tenantId)}/voices/preview`, token, { method: "POST", body: JSON.stringify({ language: input.language, text: input.text, mention_ai: input.mentionAi }) });
+    json = await apiRequest(`${aiBase(tenantId)}/voices/preview`, token, { method: "POST", body: JSON.stringify({ language: input.language, text: input.text, mention_ai: input.mentionAi, assistant_name: input.assistantName ?? null }) });
   } catch (error) {
     if (error instanceof ApiRequestError) {
       if (error.code === "no_preview") return { audio: null, fake: false, spokenText: null };
@@ -158,15 +158,36 @@ export async function previewSpoken(token: string, tenantId: string, input: { la
   return { audio: { base64: audio.base64, mime, seconds: mime === "audio/wav" ? wavSeconds(bytes) : 1 }, fake: false, spokenText: json.spoken_text };
 }
 
-/** The saved greeting exactly as a customer hears it, with the real names: `GET /opening-line/preview?language` {text}. The sound of `GET /voices/preview` is made from the same text, so this is what that sound says. null when the API has none. */
-export async function savedGreetingText(token: string, tenantId: string, language: CallLang): Promise<string | null> {
+/**
+ * THE opening line (C1's contract-opening-line.md, 30 Oct): `GET /opening-line/resolved?language[&assistant_name]` -> {resolved_opening_line, spoken_text (the same string), source, assistant_name, business_name...}: the stored line else the default, with the real business name, the assistant's name and the AI switch applied. The card, the editor and "Hear it" all read THIS text; there is no second template.
+ * `assistantName` = a name typed on the screen and not saved yet (the line then names it; nothing is saved). null when the API has none.
+ */
+export async function savedGreetingText(token: string, tenantId: string, language: CallLang, assistantName: string | null = null): Promise<string | null> {
   try {
-    const json = await apiRequest(`${aiBase(tenantId)}/opening-line/preview?${new URLSearchParams({ language }).toString()}`, token);
-    return isRecord(json) && typeof json.text === "string" && json.text.trim() !== "" && json.text.length <= 2000 ? json.text : null;
+    const q = new URLSearchParams({ language });
+    if (assistantName) q.set("assistant_name", assistantName);
+    const json = await apiRequest(`${aiBase(tenantId)}/opening-line/resolved?${q.toString()}`, token);
+    const text = isRecord(json) ? json.resolved_opening_line : null;
+    return typeof text === "string" && text.trim() !== "" && text.length <= 2000 ? text : null;
   } catch (error) {
     if (error instanceof ApiContractError) throw error;
     return null;
   }
+}
+
+/** The sound of the line with a name that is typed but not saved yet (`POST /voices/preview {language, text: null, assistant_name}`): the bytes, the type and the voice id, for the preview route. null = no sound (no voice service). */
+export async function speakWithName(token: string, tenantId: string, language: CallLang, assistantName: string): Promise<{ bytes: Uint8Array; contentType: string; voiceId: string | null } | null> {
+  let json: unknown;
+  try {
+    json = await apiRequest(`${aiBase(tenantId)}/voices/preview`, token, { method: "POST", body: JSON.stringify({ language, text: null, mention_ai: null, assistant_name: assistantName }) });
+  } catch (error) {
+    if (error instanceof ApiRequestError && (error.code === "no_preview" || error.status === 404)) return null;
+    throw error;
+  }
+  const audio = isRecord(json) && isRecord(json.audio) ? json.audio : null;
+  const mime = audio?.mime === "audio/x-wav" ? "audio/wav" : audio?.mime;
+  if (!audio || typeof audio.base64 !== "string" || audio.base64.length > 4_000_000 || !/^[A-Za-z0-9+/=]+$/.test(audio.base64) || typeof mime !== "string" || !/^audio\/(wav|mpeg|ogg|mp4|webm)$/.test(mime)) return null;
+  return { bytes: Uint8Array.from(atob(audio.base64), (c) => c.charCodeAt(0)), contentType: mime, voiceId: isRecord(json) && typeof json.voice_id === "string" && /^[a-z0-9-]{1,40}$/.test(json.voice_id) ? json.voice_id : null };
 }
 
 export type { Lines };

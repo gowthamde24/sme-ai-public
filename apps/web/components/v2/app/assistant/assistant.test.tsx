@@ -61,6 +61,19 @@ describe("Settings > AI assistant", () => {
     expect(document.querySelector('aside [data-part="preview-line"]')).toHaveTextContent(said);
     vi.unstubAllGlobals();
   });
+  it("a name typed here and not saved yet goes with the card's request and with 'Hear it' (the API resolves the line WITH it); the saved name does not", async () => {
+    const asked: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => (asked.push(url), { ok: true, json: async () => ({ text: "x" }) })));
+    vi.stubGlobal("Audio", class { static urls: string[] = []; onended: (() => void) | null = null; onerror: (() => void) | null = null; constructor(u: string) { asked.push(u); } play() { return Promise.resolve(); } pause() {} });
+    draw({ initialName: "Vani", saved: true, samples: { endpoint: "/app/tenants/t/voice-sample", mock: false } });
+    await waitFor(() => expect(asked.length).toBeGreaterThan(0));
+    expect(asked.every((u) => !u.includes("name="))).toBe(true); // the saved name is the API's own
+    fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "kallu" } });
+    await waitFor(() => expect(asked.some((u) => u.includes("name=kallu") && u.includes("&text=1"))).toBe(true), { timeout: 3000 });
+    fireEvent.click(screen.getByRole("button", { name: /Hear it/ }));
+    expect(asked.some((u) => u.includes("name=kallu") && !u.includes("&text=1"))).toBe(true);
+    vi.unstubAllGlobals();
+  });
   it("the card says the opening line a call speaks: the saved line, else the default of the language, with the real business and the name; no separate example sentence", () => {
     const defaults = { te: "నమస్కారం అండీ, నేను {business} నుంచి AI assistant ని మాట్లాడుతున్నాను.", en: "Hello, this is the AI assistant of {business}." };
     draw({ initialName: "", defaultName: "your assistant", openingLine: { lines: {}, defaults } });

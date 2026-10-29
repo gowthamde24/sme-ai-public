@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { getVoicePreview, getVoicePreviewText } from "@/lib/api/voice-samples";
-import { savedGreetingText } from "@/lib/api/opening-line";
+import { savedGreetingText, speakWithName } from "@/lib/api/opening-line";
 import { getVoicesPreviewFile } from "@/lib/api/voice-picker";
 import { voicePickerScreens } from "@/lib/screens/flag";
 import { requireUser } from "@/lib/auth/session";
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     try {
       // with the voice catalogue on, the sound is the saved opening line: its words are that line's exact greeting
       if (voicePickerScreens() === "on") {
-        const text = await savedGreetingText(user.accessToken, tenantId, query.lang);
+        const text = await savedGreetingText(user.accessToken, tenantId, query.lang, query.name || null);
         return text ? NextResponse.json({ text }, { status: 200, headers }) : new NextResponse(null, { status: 404 });
       }
       const said = await getVoicePreviewText(user.accessToken, tenantId, query);
@@ -53,6 +53,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
   if (mode === "mock") return new NextResponse(mockSampleWav(query) as BodyInit, { status: 200, headers: { ...headers, "Content-Type": "audio/wav" } });
   try {
+    // a name typed on the screen and not saved yet: the sound of the same line WITH that name (POST /voices/preview {assistant_name}); nothing is saved
+    if (voicePickerScreens() === "on" && query.name) {
+      const said = await speakWithName(user.accessToken, tenantId, query.lang, query.name);
+      if (!said) return new NextResponse(null, { status: 404 });
+      return new NextResponse(said.bytes as BodyInit, { status: 200, headers: { ...headers, "Content-Type": said.contentType, ...(said.voiceId ? { "X-Voice-Id": said.voiceId } : {}) } });
+    }
     // with the voice catalogue on there is ONE preview: the saved opening line in the voice the workspace chose (the old four-persona sample is not used)
     const got = voicePickerScreens() === "on" ? await getVoicesPreviewFile(user.accessToken, tenantId, query.lang) : await getVoicePreview(user.accessToken, tenantId, query);
     if (!got) return new NextResponse(null, { status: 404 });

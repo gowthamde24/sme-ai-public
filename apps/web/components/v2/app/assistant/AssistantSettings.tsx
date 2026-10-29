@@ -46,6 +46,13 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
   const [playing, setPlaying] = React.useState(false);
   const [sampleErr, setSampleErr] = React.useState(false);
   const live = samples !== null && !samples.mock; // the API's own line (the one "Hear it" speaks); the test screens have no API and keep their stand-in
+  // a name typed here and not saved yet is sent with the card's request and with "Hear it": the API resolves the line WITH it (nothing is saved); the saved name is the API's own
+  const typed = s.name.trim() !== "" && validName(s.name) && s.name.trim() !== initial.name.trim() && s.name.trim() !== DEFAULT_ASSISTANT_NAME ? s.name.trim() : "";
+  const [typedLater, setTypedLater] = React.useState(typed);
+  React.useEffect(() => {
+    const id = setTimeout(() => setTypedLater(typed), 500);
+    return () => clearTimeout(id);
+  }, [typed]);
   const [resolved, setResolved] = React.useState<{ lang: CallLang; text: string } | null>(null); // ONE line, from the API, with the real names: the card shows it and the sound says it
   const audio = React.useRef<HTMLAudioElement | null>(null);
   const [test, setTest] = React.useState<{ state: "idle" } | { state: "running" } | { state: "error" } | { state: "done"; call: TestCall }>({ state: "idle" });
@@ -55,21 +62,21 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
     if (!live || !samples) return;
     let stale = false;
     const lang = s.lang;
-    void fetch(`${sampleUrl(samples.endpoint, { voice: "female_warm", lang, tone: "warm", name: "" })}&text=1`, { cache: "no-store" })
+    void fetch(`${sampleUrl(samples.endpoint, { voice: "female_warm", lang, tone: "warm", name: typedLater })}&text=1`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((j: { text?: unknown } | null) => !stale && setResolved(typeof j?.text === "string" && j.text.trim() !== "" ? { lang, text: j.text } : null))
       .catch(() => !stale && setResolved(null));
     return () => {
       stale = true;
     };
-  }, [live, samples, s.lang, openingLine, saved]);
+  }, [live, samples, s.lang, typedLater, openingLine, saved]);
   /** Plays one voice's sample in the language and tone now chosen; the one that was playing stops. A browser that will not play it, or a sample that is not there, says so. */
   const hear = () => {
     if (!samples) return;
     audio.current?.pause();
     if (playing) return setPlaying(false);
     setSampleErr(false);
-    const q = { voice: s.voice === "own_voice" ? ("female_warm" as const) : s.voice, lang: s.lang, tone: "warm" as const, name: nameOnScreen }; // (with the voice catalogue on, the sound is the saved line in the voice in force: these two only name the old sample)
+    const q = { voice: s.voice === "own_voice" ? ("female_warm" as const) : s.voice, lang: s.lang, tone: "warm" as const, name: typed }; // (with the voice catalogue on, the sound is the saved line in the voice in force: these two only name the old sample)
     const a = new Audio(sampleUrl(samples.endpoint, q));
     audio.current = a;
     a.onended = () => setPlaying(false);
