@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 
 
 class Trust(StrEnum):
@@ -42,6 +42,22 @@ class ToolSpec:
 
 
 @dataclass(frozen=True)
+class Attachment:
+    """A picture or a PDF the model is to READ (job EC: notes from a photo or a document).
+
+    Untrusted data, like a web page: sent in the user turn, never in the system role.
+    `max_tokens` bounds what reading it costs (set by whoever made it, from its size)."""
+
+    kind: Literal["image", "document"]
+    media_type: str
+    data: bytes
+    max_tokens: int
+
+    def __repr__(self) -> str:   # never the bytes
+        return f"Attachment({self.kind}, {self.media_type}, {len(self.data)} bytes)"
+
+
+@dataclass(frozen=True)
 class LlmRequest:
     blocks: tuple[Block, ...]
     tools: tuple[ToolSpec, ...]
@@ -51,6 +67,8 @@ class LlmRequest:
     # offers it as a tool of this name and returns the arguments as `LlmResponse.structured`).
     # Never an instruction to do anything.
     final_result: ToolSpec | None = None
+    # pictures and PDFs to read (job EC); only a client with `supports_attachments` may get some
+    attachments: tuple[Attachment, ...] = ()
 
 
 @dataclass(frozen=True)

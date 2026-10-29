@@ -10,6 +10,7 @@ exception or a log line."""
 
 from __future__ import annotations
 
+import base64
 import logging
 from dataclasses import dataclass, field
 from typing import Any
@@ -63,6 +64,8 @@ def _count(value: Any) -> int:
 
 
 class AnthropicClient:
+    supports_attachments = True   # job EC: Claude reads pictures and PDFs (scanned ones too)
+
     def __init__(self, config: AnthropicConfig, *, client: httpx.Client | None = None) -> None:
         self._config = config
         self._client = client or httpx.Client()
@@ -79,7 +82,12 @@ class AnthropicClient:
         system = "\n\n".join(b.text for b in request.blocks if b.trust is Trust.SYSTEM)
         trusted = [b.text for b in request.blocks if b.trust is Trust.TRUSTED]
         untrusted = [b.text for b in request.blocks if b.trust is Trust.UNTRUSTED]
-        parts = [{"type": "text", "text": text} for text in (*trusted, *untrusted)]
+        parts: list[dict[str, Any]] = []
+        for a in request.attachments:
+            data = base64.b64encode(a.data).decode("ascii")
+            source = {"type": "base64", "media_type": a.media_type, "data": data}
+            parts.append({"type": a.kind, "source": source})
+        parts += [{"type": "text", "text": text} for text in (*trusted, *untrusted)]
         tools = [
             {"name": t.name, "description": t.description, "input_schema": t.input_schema}
             for t in (*request.tools, *([request.final_result] if request.final_result else []))

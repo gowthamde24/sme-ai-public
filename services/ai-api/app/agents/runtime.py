@@ -116,7 +116,7 @@ def input_token_bound(request: LlmRequest) -> int:
                 "utf-8"
             )
         )
-    return size + INPUT_TOKEN_OVERHEAD
+    return size + INPUT_TOKEN_OVERHEAD + sum(a.max_tokens for a in request.attachments)
 
 
 def allowed_hosts_for(host: str) -> frozenset[str]:

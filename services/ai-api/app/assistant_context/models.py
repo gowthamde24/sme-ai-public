@@ -12,7 +12,7 @@ from app.assistant.language import Language
 from app.assistant_context.rules import MAX_NOTES
 
 Section = Literal["prices", "delivery", "timings", "payment", "always_say", "never_say", "discounts", "handover", "tone", "faq", "products", "other"]
-Warning = Literal["cells_cut", "illegible_part", "looks_like_personal_data", "dropped_unverified"]
+Warning = Literal["cells_cut", "illegible_part", "looks_like_personal_data", "dropped_unverified", "read_from_picture"]
 
 
 class _Strict(BaseModel):
