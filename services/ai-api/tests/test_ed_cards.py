@@ -211,3 +211,34 @@ def test_the_door_reads_the_raw_mail_and_the_portal_parser_makes_the_lead() -> N
     assert any(row.get("name") == "Ravi" for row in repo.sent), "the lead was made from the mail's own text"
     bad = json.dumps({"from": "x@example.test", "to": address, "raw_base64": "###"}).encode()
     assert client.post("/v1/lead-intake/mail", content=bad, headers=signed(bad)).status_code == 422
+
+
+# ============================================================================ job EK: the website form can be shown again, and has a hosted page
+def test_the_website_form_is_made_on_first_use_shown_again_and_rotated() -> None:
+    client, repo, _ = world()
+    first = client.get(f"{T}/lead-sources/website", headers=auth("a_owner"))
+    assert first.status_code == 200
+    body = first.json()
+    assert set(body) == {"snippet", "form_link", "webhook_url"}
+    token = body["webhook_url"].rsplit("/", 1)[1]
+    assert len(token) == 24 and body["webhook_url"] == f"https://api.example.test/v1/lead-intake/{token}" and body["form_link"] == body["webhook_url"] + "/form"
+    assert f'action="https://api.example.test/v1/lead-intake/{token}"' in body["snippet"] and 'name="_hp"' in body["snippet"]
+    assert client.get(f"{T}/lead-sources/website", headers=auth("a_admin")).json() == body, "the same address after a reload"
+    assert [c for c in repo.calls if c == "website_set"] == ["website_set"] and any(s["kind"] == "website_form" for s in repo.sources("t", TENANT_A.id))
+    rotated = client.post(f"{T}/lead-sources/website/rotate", headers=auth("a_owner")).json()
+    assert rotated["webhook_url"] != body["webhook_url"] and client.get(f"{T}/lead-sources/website", headers=auth("a_owner")).json() == rotated
+    for user in ("a_sales", "a_viewer"):
+        assert client.get(f"{T}/lead-sources/website", headers=auth(user)).status_code == 403
+    assert client.get(f"{T}/lead-sources/website").status_code == 401
+
+
+def test_the_hosted_form_is_a_plain_page_that_posts_to_the_door_and_only_for_a_well_formed_address() -> None:
+    client, _, _ = world()
+    token = "a" * 24
+    r = client.get(f"/v1/lead-intake/{token}/form")
+    assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
+    assert f'action="/v1/lead-intake/{token}"' in r.text and 'name="phone"' in r.text and "<script" not in r.text.lower()
+    assert "frame-ancestors 'none'" in r.headers["content-security-policy"] and r.headers["cache-control"] == "no-store"
+    assert client.get("/v1/lead-intake/short/form").status_code == 404
+    assert client.get("/v1/lead-intake/" + "a" * 70 + "/form").status_code == 404
+    assert client.get("/v1/lead-intake/" + "a/b" + "c" * 22 + "/form").status_code == 404

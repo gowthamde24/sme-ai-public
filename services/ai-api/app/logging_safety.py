@@ -92,6 +92,8 @@ ROUTE_WORDS = frozenset(
         "notifications", "seen", "push", "push-subscriptions", "public-key",
         "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "item-types", "manual-quotes",
+        # job EK: the website form
+        "website", "form",
         "followup", "followups", "followup-drafts", "followup-policy-versions", "question-drafts",
         "due", "sent", "erasure-requests", "execute", "data-policy",
         "outbox", "approvals", "dispatch", "edit", "settings", "call-requests",

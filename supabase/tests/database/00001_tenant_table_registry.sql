@@ -459,6 +459,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('assistant_context_versions',
    $$insert into public.assistant_context_versions (id, tenant_id, version, notes, change, created_by) values (%2$L, %1$L, 1 + abs(hashtext(%2$L) %% 1000000), 'Generic notes', 'edited', %5$L)$$,
    'notes = notes', $$delete from public.assistant_context_versions where id = %2$L$$, false),
+  ('lead_website_forms',
+   $$with s as (insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, created_by) values (%2$L, %1$L, 'website_form', 'website_form', 'Generic website form', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) returning id)
+     insert into public.lead_website_forms (id, tenant_id, source_id, token) select %2$L, %1$L, s.id, substr(md5(%2$L), 1, 24) from s on conflict (tenant_id) do update set id = excluded.id, source_id = excluded.source_id, token = excluded.token$$,
+   'token = token', $$delete from public.lead_website_forms where id = %2$L$$, false),
   ('lead_inbound_addresses',
    $$with s as (insert into public.lead_sources (id, tenant_id, kind, tag, label, token_hash, created_by) values (%2$L, %1$L, 'email_forward', 'webhook', 'Generic mail source', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), %5$L) returning id)
      insert into public.lead_inbound_addresses (id, tenant_id, source_id, token) select %2$L, %1$L, s.id, substr(md5(%2$L), 1, 24) from s on conflict (tenant_id) do update set id = excluded.id, source_id = excluded.source_id, token = excluded.token$$,
@@ -803,6 +807,8 @@ select t, r, s, i, u, d from (values
   ('assistant_context_versions', 'sales', true, false, false, false), ('assistant_context_versions', 'viewer', true, false, false, false),
   ('lead_inbound_addresses', 'owner', true, false, false, false), ('lead_inbound_addresses', 'admin', true, false, false, false),
   ('lead_inbound_addresses', 'sales', false, false, false, false), ('lead_inbound_addresses', 'viewer', false, false, false, false),
+  ('lead_website_forms', 'owner', true, false, false, false), ('lead_website_forms', 'admin', true, false, false, false),
+  ('lead_website_forms', 'sales', false, false, false, false), ('lead_website_forms', 'viewer', false, false, false, false),
   ('tasks', 'owner', true, false, false, false), ('tasks', 'admin', true, false, false, false),
   ('tasks', 'sales', true, false, false, false), ('tasks', 'viewer', true, false, false, false),
   ('task_contacts', 'owner', true, false, false, false), ('task_contacts', 'admin', true, false, false, false),

@@ -306,7 +306,7 @@ select is(
         -- job DV follow-up: the browser voice's daily caps
         'public.browser_voice_usage_get', 'public.browser_voice_usage_add',
         -- job DY: the automatic WhatsApp reply: the Owner's switch and the worker's three calls
-        'public.auto_reply_get', 'public.auto_reply_set', 'public.scheduler_auto_reply_pending', 'public.scheduler_auto_reply_submit', 'public.scheduler_auto_reply_skip', 'public.assistant_context_get', 'public.assistant_context_versions_list', 'public.assistant_context_version_get', 'public.assistant_context_save', 'public.scheduler_assistant_context', 'public.lead_inbound_address_get', 'public.lead_inbound_address_set', 'public.lead_source_cards_stats',
+        'public.auto_reply_get', 'public.auto_reply_set', 'public.scheduler_auto_reply_pending', 'public.scheduler_auto_reply_submit', 'public.scheduler_auto_reply_skip', 'public.assistant_context_get', 'public.assistant_context_versions_list', 'public.assistant_context_version_get', 'public.assistant_context_save', 'public.scheduler_assistant_context', 'public.lead_inbound_address_get', 'public.lead_website_form_get', 'public.lead_website_form_set', 'public.lead_inbound_address_set', 'public.lead_source_cards_stats',
         'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
         'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report',
         -- job BP (ADR 0078): the web research tools' daily limit, usage read and query check. Each proves the run (or the role) first
@@ -424,7 +424,7 @@ select is(
                      -- job voice-picker: the workspace's chosen voice per language
                      'public.call_voice_get', 'public.call_voice_set',
                      'public.browser_voice_usage_get', 'public.browser_voice_usage_add',
-                     'public.auto_reply_get', 'public.auto_reply_set', 'public.scheduler_auto_reply_pending', 'public.scheduler_auto_reply_submit', 'public.scheduler_auto_reply_skip', 'public.assistant_context_get', 'public.assistant_context_versions_list', 'public.assistant_context_version_get', 'public.assistant_context_save', 'public.scheduler_assistant_context', 'public.lead_inbound_address_get', 'public.lead_inbound_address_set', 'public.lead_source_cards_stats',
+                     'public.auto_reply_get', 'public.auto_reply_set', 'public.scheduler_auto_reply_pending', 'public.scheduler_auto_reply_submit', 'public.scheduler_auto_reply_skip', 'public.assistant_context_get', 'public.assistant_context_versions_list', 'public.assistant_context_version_get', 'public.assistant_context_save', 'public.scheduler_assistant_context', 'public.lead_inbound_address_get', 'public.lead_website_form_get', 'public.lead_website_form_set', 'public.lead_inbound_address_set', 'public.lead_source_cards_stats',
                      'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
                      'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report',
                      'public.web_quota_take', 'public.web_usage_today', 'public.web_query_check',

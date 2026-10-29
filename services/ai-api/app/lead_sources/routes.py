@@ -11,6 +11,7 @@
 NOTE: no `from __future__ import annotations` here (request models are attached to the endpoint signatures at registration time)."""
 
 import json
+import re
 import uuid
 from datetime import datetime
 from typing import Annotated, Any
@@ -50,11 +51,13 @@ from app.lead_sources.models import (
     SourceWithSecretOut,
     TouchesOut,
     UnparsedListOut,
+    WebsiteOut,
 )
 from app.lead_sources.service import LeadSourcesService
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["lead-sources"])
+_TOKEN_SHAPE = re.compile(r"^[A-Za-z0-9_-]{24,64}$")
 public_router = APIRouter(prefix="/v1/lead-intake", tags=["lead-intake"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 Importer = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
@@ -181,6 +184,17 @@ def email_address(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
 def email_address_rotate(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     """A new address; the old one stops working at once."""
     return _service(runtime).email_address(ctx.principal.token, ctx.tenant.id, rotate=True)
+
+
+@router.get("/lead-sources/website", response_model=WebsiteOut)
+def website(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    return _service(runtime).website(ctx.principal.token, ctx.tenant.id)
+
+
+@router.post("/lead-sources/website/rotate", response_model=WebsiteOut)
+def website_rotate(ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    """A new form address; the old one stops working at once."""
+    return _service(runtime).website(ctx.principal.token, ctx.tenant.id, rotate=True)
 
 
 @router.get("/lead-sources/unparsed", response_model=UnparsedListOut)
@@ -322,6 +336,28 @@ async def intake_mail(token: str, request: Request, runtime: RuntimeDep) -> dict
     _no_replay(request)
     mail = _mail(await _body(request))
     return {"status": _service(runtime).receive_mail(token, mail)}
+
+
+@public_router.get("/{token}/form")
+def intake_form_page(token: str) -> Response:
+    """The hosted lead form: the same fields as the snippet, one page, no script. The address is the credential (as for the snippet); an unknown address shows the same page and its post is refused."""
+    if not _TOKEN_SHAPE.fullmatch(token):
+        raise not_found()
+    page = (
+        '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Send us your enquiry</title>'
+        "<style>body{font-family:system-ui,sans-serif;margin:0;background:#f6f6f4;color:#1c1c1a}form{max-width:26rem;margin:2rem auto;padding:1.5rem;background:#fff;border-radius:12px}"
+        "h1{font-size:1.25rem;margin:0 0 1rem}input,textarea,button{width:100%;box-sizing:border-box;font:inherit;padding:.7rem;margin:0 0 .8rem;border:1px solid #c9c9c4;border-radius:8px}"
+        "button{background:#1c1c1a;color:#fff;border:0;cursor:pointer}</style>"
+        f'<form method="post" action="/v1/lead-intake/{token}"><h1>Send us your enquiry</h1>'
+        '<input type="text" name="name" placeholder="Your name" required autocomplete="name">'
+        '<input type="tel" name="phone" placeholder="Phone or WhatsApp number" required autocomplete="tel">'
+        '<input type="email" name="email" placeholder="E-mail (optional)" autocomplete="email">'
+        '<textarea name="message" rows="4" placeholder="What do you need?"></textarea>'
+        '<input type="text" name="_hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">'
+        '<button type="submit">Send</button></form></html>'
+    )
+    headers = {"Cache-Control": "no-store", "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "no-referrer"}
+    return HTMLResponse(page, headers=headers)
 
 
 @public_router.post("/{token}", status_code=202)
