@@ -79,6 +79,7 @@ async function ask(key, { tag }) {
       if (typeof payload === "string") {
         let m;
         try { m = JSON.parse(payload); } catch { return; }
+        if (process.env.VV2_TRACE) console.log("  <-", Date.now() % 100000, payload.slice(0, 140));
         if (m.type === "voice") { seenVoiceMessage = true; current = typeof m.turn === "number" ? m.turn : (current ?? 0); turnOf(current).voices.push({ voice_id: m.voice_id, language: m.language, name: m.name }); }
         else if (m.type === "audio_end") turnOf(current ?? 0).ended.push({ voice_id: m.voice_id, language: m.language });
         else if (m.type === "caption") captions.push({ who: m.who, text: m.text });
@@ -108,6 +109,7 @@ async function ask(key, { tag }) {
   } finally {
     await browser.close();
   }
+  console.log(`${tag}/${key} frames:`, JSON.stringify([...turns.entries()].map(([n, t]) => ({ turn: n, voices: t.voices.map((v) => v.voice_id), binaryBytes: t.bytes.reduce((a, b) => a + b.length, 0), ended: t.ended.length }))), "captions:", JSON.stringify(captions.map((c) => `${c.who}: ${c.text.slice(0, 60)}`)));
   return { turns, captions, seenVoiceMessage, tag };
 }
 
