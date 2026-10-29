@@ -20,7 +20,7 @@ from app.agent_runs import pause
 from app.agents.errors import AgentDbError, CostCapReached
 from app.assistant import resolver
 from app.assistant.db import AssistantDb
-from app.assistant.language import SCHOOL_REFUSAL, Language, detect_language
+from app.assistant.language import SCHOOL_REFUSAL, Language, detect_owner_language
 from app.assistant.notes import owner_notes
 from app.assistant.routes import FAILURES, _factory, _refusal, _sse
 from app.assistant.runner import AssistantRunner, Outcome, Reply, _sha
@@ -48,7 +48,7 @@ _SCHOOL_TOPIC = re.compile(
 
 def language_of(body: TurnIn) -> Language:
     """The language of the message by its script; the screen's language only decides a very short message that has none of its own."""
-    found = detect_language(body.text)
+    found = detect_owner_language(body.text)
     if body.language_hint and found == "en" and len(body.text.split()) <= SHORT_MESSAGE_WORDS:
         return body.language_hint
     return found

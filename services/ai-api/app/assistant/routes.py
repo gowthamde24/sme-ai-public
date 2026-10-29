@@ -40,7 +40,7 @@ from app.agents.errors import (
 )
 from app.assistant import resolver
 from app.assistant.db import AssistantDb, MessageConflict
-from app.assistant.language import detect_language
+from app.assistant.language import detect_owner_language
 from app.assistant.models import ActionRefOut, ConversationOut, MessageIn, MessageOut
 from app.assistant.notes import owner_notes
 from app.assistant.runner import AssistantRunner, Outcome, _sha
@@ -163,7 +163,7 @@ def start_message(
     token, tenant = ctx.principal.token, ctx.tenant.id
     conversation_id = body.conversation_id or uuid.uuid4()
     run_id = uuid.uuid4()
-    language = detect_language(body.text)
+    language = detect_owner_language(body.text)
     db: AssistantDb = agents.assistant_db(token, run_id)
     try:
         began = db.begin_message(

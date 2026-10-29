@@ -7,6 +7,7 @@ language is refused and asked for again, whatever the model says it wrote in."""
 
 from __future__ import annotations
 
+import re
 import unicodedata
 from typing import Literal
 
@@ -80,6 +81,50 @@ def detect_language(text: str) -> Language:
     return best if words.count(best) / len(words) >= INDIAN_WORD_SHARE else "en"
 
 
+# Words written in Latin letters ("romanised"), distinctive enough that an English sentence never has them. The owner types the way they speak: "Eeroju edaina kotha leads find chesaava?" is Telugu.
+# Only the OWNER's own chat uses this (customers' messages keep the script rule above). The lists are small on purpose: a word that is also an English word is not in them.
+ROMAN_WORDS: dict[Language, frozenset[str]] = {
+    "te": frozenset(
+        "eeroju roju edaina edhaina kotha kothha cheyyi cheyandi cheyyandi chesaava chesava chesara chesaru chesanu cheppu cheppandi cheppali chupinchu chupinchandi chudandi kavali kaavali kavalsina "
+        "unnayi unnaayi lekapothe ippudu repu ninna nenu meeru naaku miku meeku enti emiti ekkada evaru entha ayyindi ayindi vachindi vachayi vachaaru pampu pampandi pampinchu avunu kaadu sare bagundi ante".split()
+    ),
+    "hi": frozenset(
+        "aaj kal kya hain nahi nahin kaise kitna kitne kitni mujhe mera meri mere aap aapka aapki batao bataiye dikhao dikhaiye karo kijiye kiya abhi achha theek thik naya naye nayi koi kuch kaun kahan "
+        "kab kyun chahiye bhejo bhejiye hoga hua raha rahi liye lekin aur mein yeh woh".split()
+    ),
+    "kn": frozenset(
+        "ivattu nale ninne beku bekku maadi maadu hegide hege yaava yaaru nanage nimage neevu naanu illa helu heli torisi thorisi kaanisi ellide yaake hosa eshtu".split()
+    ),
+    "ta": frozenset(
+        "inniku naalaikku naalai enna epdi eppadi irukku irukka venum vendum pannunga pannu sollunga naan neenga ungalukku enakku enga evlo kaattu kaatunga puthu pudhu".split()
+    ),
+    "ml": frozenset("innu entha enthanu aanu venam venda cheyyu njan ningal ente ningalude parayu kaanikku evide aaranu ethra puthiya".split()),
+}
+_LATIN_WORD = re.compile(r"[A-Za-z]{2,24}")
+
+
+def detect_owner_language(text: str) -> Language:
+    """The language of what the OWNER typed or said: by script first (detect_language), else by romanised words. At least two words from one language's list and a third of all the words,
+    or one such word in a very short message. Everything else is English."""
+    found = detect_language(text)
+    if found != "en":
+        return found
+    words = [w.lower() for w in _LATIN_WORD.findall(text[:1000])]
+    if not words:
+        return "en"
+    best: Language = "en"
+    hits = 0
+    for language, lexicon in ROMAN_WORDS.items():
+        n = sum(1 for w in words if w in lexicon)
+        if n > hits:
+            best, hits = language, n
+    if hits >= 2 and hits / len(words) >= 0.3:
+        return best
+    if hits == 1 and len(words) <= 3:
+        return best
+    return "en"
+
+
 def reply_matches(text: str, language: Language) -> bool:
     """Is a reply really written in `language`? English: letters are (almost) all Latin. An Indian language: its script is at least a quarter of the letters
     (the same share that makes a message count as that language; names and product words stay in Latin letters)."""
@@ -93,23 +138,23 @@ def reply_matches(text: str, language: Language) -> bool:
 
 # Fixed phrases, written once, in each language: what the assistant says when it will not guess, cannot do something, or has no answer to show. They are not model output.
 NO_ANSWER: dict[Language, str] = {
-    "en": "I could not find that in your records, so I will not guess.",
-    "te": "ఇది మీ రికార్డుల్లో నాకు కనిపించలేదు, అందుకే ఊహించి చెప్పను.",
-    "hi": "यह मुझे आपके रिकॉर्ड में नहीं मिला, इसलिए मैं अंदाज़ा नहीं लगाऊँगा।",
-    "kn": "ಇದು ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ನನಗೆ ಸಿಗಲಿಲ್ಲ, ಹಾಗಾಗಿ ನಾನು ಊಹಿಸುವುದಿಲ್ಲ.",
-    "ta": "இது உங்கள் பதிவுகளில் எனக்குக் கிடைக்கவில்லை, அதனால் நான் ஊகிக்க மாட்டேன்.",
-    "ml": "ഇത് നിങ്ങളുടെ രേഖകളിൽ എനിക്ക് കണ്ടെത്താനായില്ല, അതിനാൽ ഞാൻ ഊഹിച്ചു പറയില്ല.",
+    "en": "I looked, and there is nothing to show for that yet.",
+    "te": "చూశాను, దీని గురించి ఇప్పుడు చూపించడానికి ఏమీ లేదు.",
+    "hi": "मैंने देखा, इसके बारे में अभी दिखाने को कुछ नहीं है।",
+    "kn": "ನೋಡಿದೆ, ಇದರ ಬಗ್ಗೆ ಈಗ ತೋರಿಸಲು ಏನೂ ಇಲ್ಲ.",
+    "ta": "பார்த்தேன், இதற்கு இப்போது காட்ட எதுவும் இல்லை.",
+    "ml": "ഞാൻ നോക്കി, ഇതിനെക്കുറിച്ച് ഇപ്പോൾ കാണിക്കാൻ ഒന്നുമില്ല.",
 }
 
 # job EA: the conversational assistant says this, not the bare NO_ANSWER, when a question about the business's own records found nothing: plainly "no record", then ONE way forward. Not model output.
 # A native reader of each language should check these words.
 NO_RECORD_HELP: dict[Language, str] = {
-    "en": "I could not find a record of that, so I will not guess. Tell me a customer's name, a date or a product and I will look again, or ask me to draft a follow-up.",
-    "te": "దీని గురించి మీ రికార్డుల్లో ఏమీ కనిపించలేదు, అందుకే ఊహించి చెప్పను. కస్టమర్ పేరు, తేదీ లేదా వస్తువు చెప్పండి, మళ్ళీ చూస్తాను; లేదా ఫాలో-అప్ డ్రాఫ్ట్ చేయమని అడగండి.",
-    "hi": "इसका कोई रिकॉर्ड मुझे नहीं मिला, इसलिए मैं अंदाज़ा नहीं लगाऊँगा। किसी ग्राहक का नाम, तारीख या सामान बताइए, मैं फिर देखता हूँ; या फॉलो-अप ड्राफ़्ट बनाने को कहिए।",
-    "kn": "ಇದರ ಬಗ್ಗೆ ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ಏನೂ ಸಿಗಲಿಲ್ಲ, ಹಾಗಾಗಿ ನಾನು ಊಹಿಸುವುದಿಲ್ಲ. ಗ್ರಾಹಕರ ಹೆಸರು, ದಿನಾಂಕ ಅಥವಾ ವಸ್ತು ಹೇಳಿ, ಮತ್ತೆ ನೋಡುತ್ತೇನೆ; ಅಥವಾ ಫಾಲೋ-ಅಪ್ ಡ್ರಾಫ್ಟ್ ಮಾಡಲು ಹೇಳಿ.",
-    "ta": "இதைப் பற்றி உங்கள் பதிவுகளில் எதுவும் கிடைக்கவில்லை, அதனால் நான் ஊகிக்க மாட்டேன். வாடிக்கையாளர் பெயர், தேதி அல்லது பொருளைச் சொல்லுங்கள், மீண்டும் பார்க்கிறேன்; அல்லது பின்தொடர்வு வரைவு செய்யச் சொல்லுங்கள்.",
-    "ml": "ഇതിനെക്കുറിച്ച് നിങ്ങളുടെ രേഖകളിൽ ഒന്നും കണ്ടില്ല, അതിനാൽ ഞാൻ ഊഹിച്ചു പറയില്ല. ഉപഭോക്താവിന്റെ പേര്, തീയതി അല്ലെങ്കിൽ ഉൽപ്പന്നം പറയൂ, ഞാൻ വീണ്ടും നോക്കാം; അല്ലെങ്കിൽ ഫോളോ-അപ്പ് ഡ്രാഫ്റ്റ് തയ്യാറാക്കാൻ പറയൂ.",
+    "en": "I looked, and there is nothing to show for that yet. Tell me a customer's name, a date or a product and I will look again, or ask me to draft a follow-up.",
+    "te": "చూశాను, దీని గురించి ఇప్పుడు చూపించడానికి ఏమీ లేదు. కస్టమర్ పేరు, తేదీ లేదా వస్తువు చెప్పండి, మళ్ళీ చూస్తాను; లేదా ఫాలో-అప్ డ్రాఫ్ట్ చేయమని అడగండి.",
+    "hi": "मैंने देखा, इसके बारे में अभी दिखाने को कुछ नहीं है। किसी ग्राहक का नाम, तारीख या सामान बताइए, मैं फिर देखता हूँ; या फॉलो-अप ड्राफ़्ट बनाने को कहिए।",
+    "kn": "ನೋಡಿದೆ, ಇದರ ಬಗ್ಗೆ ಈಗ ತೋರಿಸಲು ಏನೂ ಇಲ್ಲ. ಗ್ರಾಹಕರ ಹೆಸರು, ದಿನಾಂಕ ಅಥವಾ ವಸ್ತು ಹೇಳಿ, ಮತ್ತೆ ನೋಡುತ್ತೇನೆ; ಅಥವಾ ಫಾಲೋ-ಅಪ್ ಡ್ರಾಫ್ಟ್ ಮಾಡಲು ಹೇಳಿ.",
+    "ta": "பார்த்தேன், இதற்கு இப்போது காட்ட எதுவும் இல்லை. வாடிக்கையாளர் பெயர், தேதி அல்லது பொருளைச் சொல்லுங்கள், மீண்டும் பார்க்கிறேன்; அல்லது பின்தொடர்வு வரைவு செய்யச் சொல்லுங்கள்.",
+    "ml": "ഞാൻ നോക്കി, ഇതിനെക്കുറിച്ച് ഇപ്പോൾ കാണിക്കാൻ ഒന്നുമില്ല. ഉപഭോക്താവിന്റെ പേര്, തീയതി അല്ലെങ്കിൽ ഉൽപ്പന്നം പറയൂ, ഞാൻ വീണ്ടും നോക്കാം; അല്ലെങ്കിൽ ഫോളോ-അപ്പ് ഡ്രാഫ്റ്റ് തയ്യാറാക്കാൻ പറയൂ.",
 }
 
 # job EA: a school's assistant does not discuss fees, marks, results or dues, and a child's details never go to a model. Said in place of any answer to such a turn. Not model output.
