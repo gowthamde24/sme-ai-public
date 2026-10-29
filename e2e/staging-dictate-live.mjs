@@ -68,7 +68,7 @@ async function open(file) {
 
 try {
   // 1. Dictate: the question is spoken right away; tap Dictate, wait, tap again to stop
-  const d = wavWith(0.5, 4, "dictate.wav");
+  const d = wavWith(0.2, 4, "dictate.wav");
   const D = await open(d.file);
   const { card: dc, s: ds } = D;
   const bar = dc.locator('[data-chat="form"]');
@@ -124,6 +124,7 @@ try {
   await lc.locator("#chat-input").fill("price of silk?");
   await lc.locator('button[type="submit"]').click();
   await lc.locator('[data-chat="assistant"]').first().waitFor({ timeout: 60000 }).catch(() => null);
+  await sleep(10000); // the reply finishes and the conversation id is known (the live turns join it)
   await lc.locator('[data-chat="live-talk"]').click();
   await lc.locator('[data-chat="live-badge"]').waitFor({ timeout: 30000 });
   await sleep(1500);
