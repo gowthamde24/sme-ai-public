@@ -79,6 +79,7 @@ async function ask(key, { tag }) {
       if (typeof payload === "string") {
         let m;
         try { m = JSON.parse(payload); } catch { return; }
+        if (process.env.VV2_TRACE) console.log("  <-", Date.now() % 100000, payload.slice(0, 140));
         if (m.type === "voice") { seenVoiceMessage = true; current = typeof m.turn === "number" ? m.turn : (current ?? 0); turnOf(current).voices.push({ voice_id: m.voice_id, language: m.language, name: m.name }); }
         else if (m.type === "audio_end") turnOf(current ?? 0).ended.push({ voice_id: m.voice_id, language: m.language });
         else if (m.type === "caption") captions.push({ who: m.who, text: m.text });
@@ -108,6 +109,7 @@ async function ask(key, { tag }) {
   } finally {
     await browser.close();
   }
+  console.log(`${tag}/${key} frames:`, JSON.stringify([...turns.entries()].map(([n, t]) => ({ turn: n, voices: t.voices.map((v) => v.voice_id), binaryBytes: t.bytes.reduce((a, b) => a + b.length, 0), ended: t.ended.length }))), "captions:", JSON.stringify(captions.map((c) => `${c.who}: ${c.text.slice(0, 60)}`)));
   return { turns, captions, seenVoiceMessage, tag };
 }
 
@@ -124,7 +126,7 @@ async function inForce(s) {
   await s.page.locator('[data-part="voice-picker"]').waitFor({ timeout: 45000 });
   return s.page.evaluate(() => ({
     gender: document.querySelector('[data-part="voice-gender"] [aria-checked="true"]')?.getAttribute("data-gender"),
-    voices: Object.fromEntries([...document.querySelectorAll("[data-voice-lang]")].map((row) => [row.getAttribute("data-voice-lang"), row.querySelector('[data-in-use="true"]')?.getAttribute("data-voice")])),
+    voices: Object.fromEntries([...document.querySelectorAll("[data-voice-select]")].map((sel) => [sel.getAttribute("data-voice-select"), sel.value])),
   }));
 }
 
@@ -171,11 +173,11 @@ try {
   }
   if (wanted("A5")) {
     // another Telugu voice of the workspace's gender
-    const other = await s0.page.evaluate(() => [...document.querySelectorAll('[data-voice-lang="te"] [data-voice]:not([data-in-use])')].map((e) => e.getAttribute("data-voice"))[0]);
+    const other = await s0.page.evaluate(() => [...document.querySelector('[data-voice-select="te"]').options].map((o) => o.value).find((v) => v !== document.querySelector('[data-voice-select="te"]').value));
     check("A5", "Telugu has a second voice to choose", Boolean(other), String(other));
     if (other) {
-      await s0.page.locator(`[data-voice="${other}"] button:has-text("Use this voice")`).click();
-      await s0.page.waitForSelector(`[data-voice="${other}"][data-in-use="true"]`, { timeout: 30000 });
+      await s0.page.locator('[data-voice-select="te"]').selectOption(other);
+      await s0.page.locator('[data-part="toast"]').waitFor({ timeout: 30000 });
       force = await inForce(s0);
       check("A5", "the new Telugu voice is in force after a reload of Settings", force.voices.te === other, force.voices.te ?? "");
       await judge("A5", "te", force.voices);
