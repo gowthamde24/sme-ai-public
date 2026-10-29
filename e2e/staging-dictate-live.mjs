@@ -52,8 +52,13 @@ async function open(file) {
   const s = await session(pack, size, { browser });
   await s.context.grantPermissions(["microphone"], { origin: "https://staging.stack19.com" });
   if (lang !== "en") await s.context.addCookies([{ name: "sme_lang", value: lang, url: "https://staging.stack19.com" }]);
-  const sockets = [];
-  s.page.on("websocket", (w) => sockets.push(w.url()));
+  const sockets = []; // {url, start, binaryIn}: what each voice socket was asked and whether any sound came back
+  s.page.on("websocket", (w) => {
+    const rec = { url: w.url(), start: null, binaryIn: 0 };
+    sockets.push(rec);
+    w.on("framesent", (f) => typeof f.payload === "string" && f.payload.includes('"type":"start"') && (rec.start = f.payload.replace(/"access_token":"[^"]*"/, '"access_token":"…"')));
+    w.on("framereceived", (f) => typeof f.payload !== "string" && rec.binaryIn++);
+  });
   await s.page.goto(s.base, { waitUntil: "domcontentloaded" });
   const card = s.page.locator('[data-chat="card"]');
   await card.waitFor({ timeout: 45000 });
@@ -71,10 +76,18 @@ try {
   ok("the input bar is: text box, Dictate, Live talk, Send", kinds.join() === "text,dictate,live-talk,submit", kinds.join());
   await shot(ds, `dl-${pack}-${size}-${lang}-1-bar`);
   await dc.locator('[data-chat="dictate"]').click();
-  await sleep(Math.round((d.seconds - 1) * 1000));
+  await sleep(500);
   ok("while dictating the button says Stop and Live talk is disabled", (await dc.locator('[data-chat="dictate"]').getAttribute("aria-pressed")) === "true" && (await dc.locator('[data-chat="live-talk"]').isDisabled()));
-  await dc.locator('[data-chat="dictate"]').click(); // tap again: stop early
   const box = dc.locator("#chat-input");
+  const seen = new Set();
+  for (let i = 0; i < 20; i++) {
+    const v = (await box.inputValue()).trim();
+    if (v) seen.add(v);
+    await sleep(250);
+  }
+  console.log(`live values in the box: ${[...seen].map((v) => JSON.stringify(v)).join(" -> ")}`);
+  ok("the words come into the box while speaking (more than one value, word by word)", seen.size >= 2, `values=${seen.size}`);
+  await dc.locator('[data-chat="dictate"]').click(); // tap again: stop early
   const t0 = Date.now();
   let words = "";
   while (Date.now() - t0 < 45000) {
@@ -85,7 +98,9 @@ try {
   console.log(`dictated words: ${JSON.stringify(words)}`);
   ok("the words fill the TEXT BOX", words.trim().split(/\s+/).length >= 3, words.slice(0, 80));
   ok("nothing was asked by dictating (no reply yet)", (await dc.locator('[data-chat="exchange"]').count()) === 0);
-  ok("no spoken conversation was opened (no socket)", D.sockets.length === 0, D.sockets.join());
+  const dsock = D.sockets[0];
+  ok("dictation used the words-only mode of the voice socket", !!dsock && /"mode":"dictate"/.test(dsock.start ?? ""), dsock?.start ?? "no socket");
+  ok("no sound came back while dictating (the assistant never spoke)", !!dsock && dsock.binaryIn === 0, `binary frames in: ${dsock?.binaryIn}`);
   await shot(ds, `dl-${pack}-${size}-${lang}-2-dictated`);
   await box.fill(`${words.trim()} `); // the words can be edited
   await dc.locator('button[type="submit"]').click();
@@ -97,7 +112,7 @@ try {
     await sleep(500);
   }
   ok("Send gives a text reply in the thread", reply.trim().length > 20, reply.replace(/\s+/g, " ").slice(0, 100));
-  ok("still no socket after the reply (text only, no audio)", D.sockets.length === 0);
+  ok("the reply is text only (no sound came back, no second socket)", D.sockets.length === 1 && D.sockets[0].binaryIn === 0);
   await shot(ds, `dl-${pack}-${size}-${lang}-3-dictate-reply`);
   ok("dictate: no page errors", ds.errors.length === 0, ds.errors.slice(0, 2).join(" | "));
   await ds.browser.close();
@@ -111,6 +126,9 @@ try {
   await lc.locator('[data-chat="assistant"]').first().waitFor({ timeout: 60000 }).catch(() => null);
   await lc.locator('[data-chat="live-talk"]').click();
   await lc.locator('[data-chat="live-badge"]').waitFor({ timeout: 30000 });
+  await sleep(1500);
+  const lstart = L.sockets[0]?.start ?? "";
+  ok("Live talk joins the typed turn's conversation (conversation_id in start)", /"conversation_id":"[0-9a-f-]{36}"/.test(lstart), lstart.slice(0, 120));
   ok("a clear Live indicator shows", (await lc.locator('[data-chat="live-badge"]').innerText()).trim().length > 0);
   ok("the Live button is now Stop", (await lc.locator('[data-chat="live-talk"]').getAttribute("aria-pressed")) === "true");
   ok("Dictate is off while live", await lc.locator('[data-chat="dictate"]').isDisabled());

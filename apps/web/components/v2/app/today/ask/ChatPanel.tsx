@@ -13,7 +13,7 @@ import { MAX_QUESTION } from "./ask-constants";
 import type { AskSession, Exchange } from "./use-ask-session";
 import { archiveHistory, confirmPlan, listHistory, openHistory, type ConversationItem } from "./conversation-api";
 import { usePanelVoice, type PanelVoiceOptions } from "./use-panel-voice";
-import { clock } from "./recorder";
+import { useDictation } from "./use-dictation";
 import type { ConfirmAction } from "@/lib/api/turns";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -117,6 +117,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     return (k: string) => t(k as "bv.chat.new");
   }, [voice.words]);
   const talk = usePanelVoice(s, voice, voiceOptions);
+  const dict = useDictation(s, voice, voiceOptions);
   const [view, setView] = React.useState<"chat" | "history">("chat");
   const [items, setItems] = React.useState<ConversationItem[] | "error" | null>(null);
   const showHistory = async () => {
@@ -139,7 +140,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   const body = React.useRef<HTMLDivElement>(null);
   const { w } = s;
   const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, plan: s.plan } : null;
-  const dictating = s.dictate.state !== "idle";
+  const dictating = dict.state !== "idle";
   const empty = s.earlier.length === 0 && current === null && !talk.live;
   React.useEffect(() => {
     if (variant === "panel") input.current?.focus();
@@ -283,8 +284,9 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
               ) : null}
             </p>
           ) : null}
-          {dictating ? <p data-chat="dictating" role="status" className="text-sm font-medium text-muted">{c("bv.chat.dictating")} {clock(s.dictate.left)}</p> : null}
-          {s.dictate.error ? <p data-chat="dictate-error" role="status" className="text-sm text-amber-text">{w(ERROR_WORD[s.dictate.error] ?? PROBLEM_WORDS[s.dictate.error] ?? "ask.mic.failed")}</p> : null}
+          {dictating ? <p data-chat="dictating" role="status" className="text-sm font-medium text-muted">{c("bv.chat.dictating")}</p> : null}
+          {dict.error ? <p data-chat="dictate-error" role="status" className="text-sm text-amber-text">{w(ERROR_WORD[dict.error] ?? PROBLEM_WORDS[dict.error] ?? "ask.mic.failed")}</p> : null}
+          {talk.problem ? <p data-chat="live-problem" role="status" className="text-sm text-amber-text">{w(ERROR_WORD[talk.problem] ?? "ask.error")}</p> : null}
           {line ? <p data-chat="state" role="status" className="text-sm font-medium text-muted">{line}</p> : null}
           {talk.micDenied ? <p role="alert" className="text-sm font-medium text-red-text">{voice.words["bv.mic.denied"]}</p> : null}
           {talk.end && !talk.active && !QUIET_ENDS.includes(talk.end) ? <p role="status" className="text-sm text-muted">{voice.words[`bv.end.${talk.end}`]}</p> : null}
@@ -306,7 +308,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
               value={s.text}
               maxLength={MAX_QUESTION}
               onChange={(e) => s.setText(e.target.value)}
-              placeholder={dictating ? c("bv.chat.dictating") : s.dictate.hearing ? c("bv.chat.hearing") : c("bv.chat.placeholder")}
+              placeholder={dictating ? c("bv.chat.dictating") : c("bv.chat.placeholder")}
+              readOnly={dictating}
               autoComplete="off"
               className="min-h-12 min-w-0 flex-1 rounded-full border border-edge bg-surface px-4 text-base text-ink placeholder:text-muted focus:border-brand-edge"
             />
@@ -315,8 +318,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
               type="button"
               data-chat="dictate"
               aria-pressed={dictating}
-              disabled={talk.active || s.dictate.hearing || s.recorder.state !== "idle"}
-              onClick={s.dictate.toggle}
+              disabled={talk.active || dict.state === "connecting"}
+              onClick={dict.toggle}
               aria-label={dictating ? c("bv.chat.dictate.stop") : c("bv.chat.dictate")}
               title={dictating ? c("bv.chat.dictate.stop") : c("bv.chat.dictate")}
               className={`inline-flex size-12 shrink-0 items-center justify-center rounded-full border disabled:opacity-50 ${dictating ? "border-brand-edge bg-brand text-on-brand" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}
@@ -328,7 +331,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
               type="button"
               data-chat="live-talk"
               aria-pressed={talk.active}
-              disabled={dictating || s.dictate.hearing}
+              disabled={dictating}
               onClick={() => (talk.active ? talk.stop() : void talk.start())}
               aria-label={talk.active ? c("bv.chat.live.stop") : c("bv.chat.live.start")}
               title={talk.active ? c("bv.chat.live.stop") : c("bv.chat.live.start")}

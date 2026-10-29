@@ -1,6 +1,6 @@
 import type { ConfirmAction } from "@/lib/api/turns";
 
-import { BARGE_IN, endWordOf, parseServerMessage, PING, setLanguageMessage, startMessage, STOP, type EndWord, type LimitReason, type ServerMessage, type Step, type VoiceLang, type VoiceSource, type VoiceState } from "./protocol";
+import { BARGE_IN, endWordOf, parseServerMessage, PING, setLanguageMessage, startMessage, STOP, type EndWord, type LimitReason, type ServerMessage, type Step, type VoiceLang, type VoiceSource, type VoiceMode, type VoiceState } from "./protocol";
 
 /**
  * One "Talk to your assistant" session (job DV): the WebSocket, the microphone and the speakers, kept apart from the screen so they can be tested with fakes. The browser holds the person's sign-in only for the first message (the API's contract: a socket cannot send a
@@ -32,13 +32,13 @@ export interface SocketLike {
 }
 export type Phase = "connecting" | "ready" | "ended";
 export type Caption = { id: number; who: "user" | "assistant"; text: string; final: boolean; spoken: boolean };
-export type Snapshot = { phase: Phase; state: VoiceState | null; step: Step | null; captions: Caption[]; sources: VoiceSource[]; language: VoiceLang; end: EndWord | null; micDenied: boolean; /** The plan the assistant proposed in this turn, waiting for the owner (null otherwise). */ plan: ConfirmAction | null; /** The answers to plans so far (by tap or by voice), in order. */ decided: { actionId: string; status: "confirmed" | "declined" | "expired" }[]; /** The voice speaking now (its name and language), as the API said at the start of the turn; null until it says. */ voice: { id: string; name: string | null; language: VoiceLang | null } | null };
+export type Snapshot = { phase: Phase; state: VoiceState | null; step: Step | null; captions: Caption[]; sources: VoiceSource[]; language: VoiceLang; end: EndWord | null; micDenied: boolean; /** The plan the assistant proposed in this turn, waiting for the owner (null otherwise). */ plan: ConfirmAction | null; /** The answers to plans so far (by tap or by voice), in order. */ decided: { actionId: string; status: "confirmed" | "declined" | "expired" }[]; /** The voice speaking now (its name and language), as the API said at the start of the turn; null until it says. */ voice: { id: string; name: string | null; language: VoiceLang | null } | null; /** The conversation the spoken turns are stored in (the written chat's thread); null until the API says. */ conversationId: string | null; /** A refusal that does not end the session (the hourly limit, ...): its code, until the next turn. */ problem: string | null };
 
 /** A level above this (0..1, after the browser's echo cancelling) is the person speaking; it must hold for this many frames in a row, so a click or a cough does not cut the assistant off. */
 export const SPEECH_LEVEL = 0.06;
 export const SPEECH_FRAMES = 3;
 
-export type Options = { url: string; token: string; language: VoiceLang; audio: AudioIO; socket: (url: string) => SocketLike; onChange: (s: Snapshot) => void; /** A restart the person did not ask to hear a greeting for: the greeting (its sound and its caption) is left out until they speak. */ quietStart?: boolean };
+export type Options = { /** "dictate": words only (the API never answers); default "live". */ mode?: VoiceMode; /** The written chat's conversation: the spoken turns join it. */ conversationId?: string | null; url: string; token: string; language: VoiceLang; audio: AudioIO; socket: (url: string) => SocketLike; onChange: (s: Snapshot) => void; /** A restart the person did not ask to hear a greeting for: the greeting (its sound and its caption) is left out until they speak. */ quietStart?: boolean };
 
 export class VoiceClient {
   private ws: SocketLike | null = null;
@@ -53,7 +53,7 @@ export class VoiceClient {
 
   constructor(private readonly o: Options) {
     this.quiet = o.quietStart === true;
-    this.snap = { phase: "connecting", state: null, step: null, captions: [], sources: [], language: o.language, end: null, micDenied: false, plan: null, decided: [], voice: null };
+    this.snap = { phase: "connecting", state: null, step: null, captions: [], sources: [], language: o.language, end: null, micDenied: false, plan: null, decided: [], voice: null, conversationId: null, problem: null };
   }
 
   get snapshot(): Snapshot {
@@ -76,7 +76,7 @@ export class VoiceClient {
     const ws = this.o.socket(this.o.url);
     this.ws = ws;
     ws.binaryType = "arraybuffer";
-    ws.onopen = () => ws.send(startMessage(this.o.token, this.snap.language));
+    ws.onopen = () => ws.send(startMessage(this.o.token, this.snap.language, { mode: this.o.mode, conversationId: this.o.conversationId }));
     ws.onmessage = (event) => this.message(event.data);
     ws.onclose = (event) => this.closed(event);
     ws.onerror = () => undefined; // a close follows
@@ -106,6 +106,7 @@ export class VoiceClient {
   private frame(pcm: ArrayBuffer, level: number): void {
     const ws = this.ws;
     if (!ws || ws.readyState !== 1 || this.snap.phase !== "ready") return;
+    if (this.o.mode === "dictate") return void ws.send(pcm); // words only: the microphone goes all the time, nothing is ever spoken back
     if (this.serverState === "speaking") {
       this.loud = level > SPEECH_LEVEL ? this.loud + 1 : 0;
       if (this.loud >= SPEECH_FRAMES) {
@@ -128,13 +129,13 @@ export class VoiceClient {
     if (m === null) return;
     switch (m.type) {
       case "ready":
-        this.set({ phase: "ready", language: m.language });
+        this.set({ phase: "ready", language: m.language, conversationId: m.conversationId, problem: null });
         return;
       case "state":
         this.serverState = m.state;
         this.loud = 0;
         if (m.state === "thinking") this.quiet = false;
-        this.set({ state: m.state, step: m.state === "thinking" ? m.step : null });
+        this.set({ state: m.state, step: m.state === "thinking" ? m.step : null, ...(m.state === "thinking" ? { problem: null } : {}) });
         return;
       case "transcript":
         this.heard(m.text, m.final); // the person's words live: the interim line is replaced as newer ones come, and by the settled words
@@ -171,6 +172,7 @@ export class VoiceClient {
         return;
       case "error":
         this.last.errorCode = m.code;
+        if (!m.fatal) this.set({ problem: m.code }); // the session goes on: the chat says why in words
         return;
       case "limit":
         this.last.limit = m.reason;
