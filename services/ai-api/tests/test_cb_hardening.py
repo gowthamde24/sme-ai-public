@@ -66,7 +66,7 @@ def test_every_route_without_a_sign_in_has_a_rate_rule_and_is_on_the_known_list(
         "/health", "/ready", "/v1/calendar/feed/{token_ics}", "/v1/policies/current",
         "/v1/push/public-key",  # job BY: the browser's push key (public by design)
         "/v1/calculate/materials",  # job CN: the pure paver calculator (no business data; rate limited)
-        "/v1/lead-intake/{token}", "/v1/lead-intake/{token}/email", "/v1/lead-intake/mail", "/v1/lead-intake/meta/{token}",  # job DR / A2: the public intake doors (the secret address is the credential)
+        "/v1/lead-intake/{token}", "/v1/lead-intake/{token}/form", "/v1/lead-intake/{token}/email", "/v1/lead-intake/mail", "/v1/lead-intake/meta/{token}",  # job DR / A2: the public intake doors (the secret address is the credential)
         "/v1/lead-templates", "/v1/lead-templates/{pack_id}",  # job DR part A1: the leads-and-calls templates (static data, cached, rate limited)
         "/v1/voice-samples/{file_name}",  # job DT: the pre-rendered voice samples (static files, public by design, rate limited: rule voice_samples)
         "/v1/privacy/notice",  # job DQ: the privacy notice facts (public, cached)
