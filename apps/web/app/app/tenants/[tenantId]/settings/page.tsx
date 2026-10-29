@@ -57,7 +57,7 @@ import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSett
 import { OwnVoice } from "@/components/v2/app/assistant/LazyOwnVoice";
 import { assistantProfile } from "@/lib/assistant/defaults";
 import { readAssistant } from "@/lib/assistant/source";
-import { CALL_LANG_NAMES, VOICES } from "@/lib/assistant/types";
+import { CALL_LANG_NAMES } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
 import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callSettingsScreens, dpdpScreens, openingLineScreens, ownVoiceScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
@@ -69,7 +69,7 @@ import { setAutoReplyAction } from "../auto-reply-actions";
 import { apiFor } from "@/lib/context/server";
 import { VoicePicker } from "@/components/v2/app/assistant/LazyVoicePicker";
 import { readVoicePicker } from "@/lib/voice-picker/source";
-import { inForce, PICKER_LANGS, type PickerLang } from "@/lib/voice-picker/types";
+import { inForce, pickerOrder, type PickerLang } from "@/lib/voice-picker/types";
 import { withNamedAssistant } from "@/lib/assistant/default-name";
 import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
 import { chooseVoiceAction, chooseVoiceGenderAction } from "../voice-picker-actions";
@@ -255,7 +255,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const openingLine = section === "assistant" && openingLineScreens() !== "off" ? await readOpeningLine(assistantCtx) : null;
   // the voice picker (owner decision 28 Oct): one block per language the business talks in (its own languages and the assistant's main one, else the one in use) that the catalogue has a row for
   const voicePicker = section === "assistant" && voicePickerScreens() !== "off" ? await readVoicePicker(assistantCtx) : null;
-  const pickerLangs: PickerLang[] = section === "assistant" && voicePicker?.mode === "ok" ? await getWorkspaceProfile(user.accessToken, tenantId).then((p) => p.languages, (e) => (e instanceof ApiAuthError ? redirect("/login") : [] as string[])).then((own) => PICKER_LANGS.filter((l) => [...own, ...(assistant?.mode === "ok" ? [assistant.settings.lang] : own.length === 0 ? [lang] : [])].includes(l))) : [];
+  const pickerLangs: PickerLang[] = section === "assistant" && voicePicker?.mode === "ok" ? await getWorkspaceProfile(user.accessToken, tenantId).then((p) => p.languages, (e) => (e instanceof ApiAuthError ? redirect("/login") : [] as string[])).then((own) => pickerOrder([...own, ...(assistant?.mode === "ok" ? [assistant.settings.lang] : own.length === 0 ? [lang] : [])])) : [];
   const callSettings = section === "assistant" && callSettingsScreens() !== "off" ? await readCallSettings(assistantCtx, pack?.modules ?? null) : null;
   let theme: ThemePick = "system";
   try {
@@ -379,18 +379,16 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             ) : null}
             {assistant.mode === "ok" ? (
             <AssistantSettings
-              words={withModuleWords(wordsFor(lang, ["asst."]), pack)}
+              words={withModuleWords(wordsFor(lang, ["asst."], ["bv.speaking.in"]), pack)}
               initial={assistant.settings}
               profile={assistantProfile(pack?.modules ?? null)}
               shop={tenant.name}
               langs={CALL_LANG_NAMES}
-              voiceNames={Object.fromEntries(VOICES.map((v) => [v, t(`asst.voice.${v}` as "asst.voice.female_warm")])) as Record<(typeof VOICES)[number], string>}
               canEdit={tenant.role === "owner"}
               testMode={assistantScreens() === "mock"}
               saved={assistant.saved}
               actions={{ save: saveAssistantAction.bind(null, tenantId), testCall: testCallAction.bind(null, tenantId) }}
               samples={voiceSampleScreens() !== "off" ? { endpoint: `/app/tenants/${tenantId}/voice-sample`, mock: voiceSampleScreens() === "mock" } : null}
-              voicePickerOn={voicePicker?.mode === "ok"}
               voiceInUse={voicePicker?.mode === "ok" && assistant?.mode === "ok" ? ((v) => (v ? { name: v.name, label: v.label } : null))(inForce(voicePicker.data, assistant.settings.lang as PickerLang)) : null}
               defaultName={withNamedAssistant("{assistant}", DEFAULT_ASSISTANT_NAME, lang)}
               openingLine={openingLine?.mode === "ok" ? { lines: openingLine.data.lines, defaults: openingLine.data.defaults } : null}

@@ -7,19 +7,17 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
 import { appDict } from "@/i18n/app";
 import { assistantProfile } from "@/lib/assistant/defaults";
 import type { TestCallResult } from "@/lib/assistant/test-call";
-import { VOICES } from "@/lib/assistant/types";
 import { withModuleWords } from "@/lib/packs/module-words";
 
 import { AssistantSettings } from "./AssistantSettings";
 
-const raw = (lang: "en" | "te" | "hi" | "kn", modules: string[] | null) => withModuleWords(Object.fromEntries(Object.entries(appDict(lang) as Record<string, string>).filter(([k]) => k.startsWith("asst."))), modules ? { modules } : null);
+const raw = (lang: "en" | "te" | "hi" | "kn", modules: string[] | null) => withModuleWords(Object.fromEntries(Object.entries(appDict(lang) as Record<string, string>).filter(([k]) => k.startsWith("asst.") || k === "bv.speaking.in")), modules ? { modules } : null);
 const langs = { te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ", en: "English", ta: "தமிழ்", ml: "മലയാളം" };
-const voiceNames = Object.fromEntries(VOICES.map((v) => [v, (appDict("en") as Record<string, string>)[`asst.voice.${v}`]])) as Record<(typeof VOICES)[number], string>;
-const draw = (over: Partial<{ modules: string[] | null; canEdit: boolean; saved: boolean; save: (i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; samples: { endpoint: string; mock: boolean } | null; voicePickerOn: boolean; voiceInUse: { name: string; label: string } | null; defaultName: string; initialName: string; openingLine: { lines: Record<string, string>; defaults: Record<string, string> }; testCall: () => Promise<TestCallResult> }> = {}) => {
+const draw = (over: Partial<{ modules: string[] | null; canEdit: boolean; saved: boolean; save: (i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; samples: { endpoint: string; mock: boolean } | null; voiceInUse: { name: string; label: string } | null; defaultName: string; initialName: string; openingLine: { lines: Record<string, string>; defaults: Record<string, string> }; testCall: () => Promise<TestCallResult> }> = {}) => {
   const modules = over.modules === undefined ? null : over.modules;
   const profile = assistantProfile(modules);
   const save = (over.save ?? vi.fn(async () => ({ ok: true as const }))) as ReturnType<typeof vi.fn> & ((i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>);
-  render(<AssistantSettings words={raw("en", modules)} initial={over.initialName === undefined ? profile.defaults : { ...profile.defaults, name: over.initialName }} profile={profile} shop="Acme Silks" langs={langs} voiceNames={voiceNames} canEdit={over.canEdit ?? true} testMode saved={over.saved ?? false} actions={{ save, ...(over.testCall ? { testCall: over.testCall } : {}) }} samples={over.samples ?? null} voicePickerOn={over.voicePickerOn ?? false} voiceInUse={over.voiceInUse ?? null} defaultName={over.defaultName ?? null} openingLine={(over.openingLine as never) ?? null} />);
+  render(<AssistantSettings words={raw("en", modules)} initial={over.initialName === undefined ? profile.defaults : { ...profile.defaults, name: over.initialName }} profile={profile} shop="Acme Silks" langs={langs} canEdit={over.canEdit ?? true} testMode saved={over.saved ?? false} actions={{ save, ...(over.testCall ? { testCall: over.testCall } : {}) }} samples={over.samples ?? null} voiceInUse={over.voiceInUse ?? null} defaultName={over.defaultName ?? null} openingLine={(over.openingLine as never) ?? null} />);
   return { save, profile };
 };
 afterEach(() => {
@@ -28,11 +26,13 @@ afterEach(() => {
 });
 
 describe("Settings > AI assistant", () => {
-  it("with the voice catalogue on, the preview names the catalogue voice in force and the old persona list and its words are gone; the name is the default 'Your assistant' until the owner chooses one", () => {
-    draw({ voicePickerOn: true, voiceInUse: { name: "Ramya", label: "Warm" }, defaultName: "Your assistant" });
+  it("the preview names the voice in force as 'Speaking in <language> · <voice>' and the old persona words (voice, way of talking, speed) are gone; the name is the default 'Your assistant' until the owner chooses one", () => {
+    draw({ voiceInUse: { name: "Ramya", label: "Warm" }, defaultName: "Your assistant" });
     const aside = document.querySelector("aside") as HTMLElement;
     expect(aside).toHaveTextContent("Your assistant · AI assistant");
-    expect(aside).toHaveTextContent("Ramya · Warm");
+    expect(aside).toHaveTextContent("Speaking in తెలుగు · Ramya");
+    expect(document.body.textContent).not.toMatch(/Warm and friendly|Respectful|1\.0×|Speaking speed/);
+    expect(screen.queryByRole("slider")).toBeNull();
     expect(document.body.textContent).not.toMatch(/Male · calm|Female · warm|Male · lively|Female · clear/);
     expect(screen.queryByRole("radiogroup", { name: /Voice/ })).toBeNull();
     expect(aside.querySelector('[data-part="preview-line"]')?.textContent).not.toMatch(/your assistant|Vijaya/i); // the example line names nobody
@@ -43,19 +43,22 @@ describe("Settings > AI assistant", () => {
     expect(document.querySelector("[data-sample]")).toBeNull();
     expect(screen.queryByRole("radio", { name: /^(Crisp|Warm)$/ })).toBeNull();
     cleanup();
-    draw({ voicePickerOn: true, samples: { endpoint: "/app/tenants/t/voice-sample", mock: false } });
+    draw({ samples: { endpoint: "/app/tenants/t/voice-sample", mock: false } });
     expect(screen.queryByRole("radiogroup", { name: /Voice/ })).toBeNull();
     expect(screen.getByRole("radiogroup", { name: /Languages|Language/ })).toBeInTheDocument();
   });
-  it("with the voice catalogue on, 'Hear it' shows the exact words the sound says under the button of the preview card (what is read is what is heard)", async () => {
+  it("with the API on, the card shows the ONE line the API resolves (the same words 'Hear it' speaks, asked from the same route) and there is no second text box or example sentence", async () => {
     const asked: string[] = [];
-    vi.stubGlobal("fetch", vi.fn(async (url: string) => (asked.push(url), { ok: true, json: async () => ({ text: "నమస్కారం రవి గారూ, నేను రమ్య, ఆక్మీ సిల్క్స్ నుంచి." }) })));
+    const said = "నమస్కారం రవి గారూ, నేను కల్లు, ఆక్మీ సిల్క్స్ నుంచి.";
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => (asked.push(url), { ok: true, json: async () => ({ text: said }) })));
     vi.stubGlobal("Audio", class { onended: (() => void) | null = null; onerror: (() => void) | null = null; play() { return Promise.resolve(); } pause() {} });
-    draw({ voicePickerOn: true, voiceInUse: { name: "Ramya", label: "Warm" }, samples: { endpoint: "/app/tenants/t/voice-sample", mock: false } });
-    expect(document.querySelector('[data-part="preview-text"]')).toBeNull(); // nothing is claimed before it is played
+    draw({ voiceInUse: { name: "Ramya", label: "Warm" }, samples: { endpoint: "/app/tenants/t/voice-sample", mock: false }, openingLine: { lines: {}, defaults: { te: "template {business}" } } });
+    await waitFor(() => expect(document.querySelector('aside [data-part="preview-line"]')).toHaveTextContent(said));
+    expect(asked.every((u) => u.includes("&text=1"))).toBe(true);
+    expect(document.body.textContent).not.toContain("template");
     fireEvent.click(screen.getByRole("button", { name: /Hear it/ }));
-    await waitFor(() => expect(document.querySelector('aside [data-part="preview-text"]')).toHaveTextContent("నమస్కారం రవి గారూ, నేను రమ్య, ఆక్మీ సిల్క్స్ నుంచి."));
-    expect(asked.some((u) => u.includes("&text=1"))).toBe(true);
+    expect(document.querySelector('[data-part="preview-text"]')).toBeNull();
+    expect(document.querySelector('aside [data-part="preview-line"]')).toHaveTextContent(said);
     vi.unstubAllGlobals();
   });
   it("the card says the opening line a call speaks: the saved line, else the default of the language, with the real business and the name; no separate example sentence", () => {
@@ -86,7 +89,7 @@ describe("Settings > AI assistant", () => {
     expect(screen.getByText(/Customers hear: “your assistant, the assistant of Acme Silks\.” Whether the greeting also says it is an AI assistant is your choice, in the opening line below\./)).toBeInTheDocument();
     expect(screen.getByText("Test mode: your choices are kept on this device only.")).toBeInTheDocument();
   });
-  it("the preview follows the name, the language and the way of talking, and the circle speaks", () => {
+  it("the preview follows the name and the language, and the circle speaks", () => {
     draw();
     fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "Meera" } });
     expect(screen.getByText("Meera · AI assistant")).toBeInTheDocument();
@@ -95,9 +98,8 @@ describe("Settings > AI assistant", () => {
     expect(line().textContent).toContain("Meera");
     expect(line().textContent).toContain("Acme Silks");
     fireEvent.click(screen.getByRole("radio", { name: "English" }));
-    fireEvent.click(screen.getByRole("radio", { name: /Respectful/ }));
     expect(line().getAttribute("lang")).toBe("en");
-    expect(line().textContent).toContain("Namaste, I'm Meera, the AI assistant of Acme Silks");
+    expect(line().textContent).toContain("I'm Meera, the AI assistant at Acme Silks");
     expect(document.querySelector('[data-orb="speak"]')).not.toBeNull();
   });
   it("a name that is not letters and numbers is refused and nothing is saved", async () => {
