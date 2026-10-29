@@ -10,8 +10,8 @@ permissions:
 
 # The integration tests are split BY FILE into four groups that run in parallel, each on its own runner with its own Supabase stack. Groups 1, 2 and 4 are explicit lists;
 # group 3 is "everything else in tests/integration", so a NEW test file lands in group 3 automatically and no file can be left out. A file listed here that no longer
-# exists makes pytest fail ("file or directory not found"), so a stale list is loud. No group may run longer than 12 minutes: group 4 (29 Oct) took the assistant and voice files out of group 3,
-# which had grown to 15-24 minutes. Every group prints its ten slowest tests (--durations=10) so the next split is decided from numbers.
+# exists makes pytest fail ("file or directory not found"), so a stale list is loud. No group may run longer than 12 minutes: group 4 (29 Oct) took the assistant and voice files out of group 3 (then 15-24 minutes);
+# its first run left group 3 at 14-16 minutes, so five of its biggest files moved too (group 3 about 11, group 4 about 9). Every group prints its ten slowest tests (--durations=10) so the next split is decided from numbers.
 env:
   # CI has ONE local stack per runner (a plain `supabase start`), the repository's own supabase/ project: it is the "owner" stack in the sense of docs/runbooks/two-local-stacks.md, and it is
   # throwaway, so the destructive-action guard is released here. (On a person's machine the default is the separate AGENT stack; see that runbook.)
@@ -30,6 +30,7 @@ env:
   INTEGRATION_GROUP_4: >-
     test_assistant_actions.py test_assistant_api.py test_assistant_evals.py test_assistant_smoke.py test_assistant_tokens.py test_model_bakeoff.py test_ea_turns_api.py
     test_eb_context_api.py test_voice_api.py test_cv_voice_reports.py test_dj_voice_notes_db.py
+    test_bq_bakeoff.py test_evidence_api.py test_followup_api.py test_visits_api.py test_suppression_api.py
 
 jobs:
   # Decides whether the db jobs (`db-pgtap`, `db-integration-1..4`, then the one required `db` that sums them up) can affect this change. It checks nothing itself. A push to main always runs `db`. A pull request skips `db` ONLY when every
@@ -153,7 +154,15 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 2.119.0
-      - run: supabase start
+      - name: supabase start (retried: the image registry rate-limits and a container sometimes fails to bind)
+        run: |
+          for attempt in 1 2 3; do
+            if supabase start; then exit 0; fi
+            echo "supabase start failed (attempt $attempt of 3)"
+            supabase stop --no-backup || true
+            sleep $((attempt * 20))
+          done
+          exit 1
       - run: supabase test db
 
   db-integration-1:
@@ -165,7 +174,15 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 2.119.0
-      - run: supabase start
+      - name: supabase start (retried: the image registry rate-limits and a container sometimes fails to bind)
+        run: |
+          for attempt in 1 2 3; do
+            if supabase start; then exit 0; fi
+            echo "supabase start failed (attempt $attempt of 3)"
+            supabase stop --no-backup || true
+            sleep $((attempt * 20))
+          done
+          exit 1
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -189,7 +206,15 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 2.119.0
-      - run: supabase start
+      - name: supabase start (retried: the image registry rate-limits and a container sometimes fails to bind)
+        run: |
+          for attempt in 1 2 3; do
+            if supabase start; then exit 0; fi
+            echo "supabase start failed (attempt $attempt of 3)"
+            supabase stop --no-backup || true
+            sleep $((attempt * 20))
+          done
+          exit 1
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -213,7 +238,15 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 2.119.0
-      - run: supabase start
+      - name: supabase start (retried: the image registry rate-limits and a container sometimes fails to bind)
+        run: |
+          for attempt in 1 2 3; do
+            if supabase start; then exit 0; fi
+            echo "supabase start failed (attempt $attempt of 3)"
+            supabase stop --no-backup || true
+            sleep $((attempt * 20))
+          done
+          exit 1
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
@@ -237,7 +270,15 @@ jobs:
       - uses: supabase/setup-cli@v1
         with:
           version: 2.119.0
-      - run: supabase start
+      - name: supabase start (retried: the image registry rate-limits and a container sometimes fails to bind)
+        run: |
+          for attempt in 1 2 3; do
+            if supabase start; then exit 0; fi
+            echo "supabase start failed (attempt $attempt of 3)"
+            supabase stop --no-backup || true
+            sleep $((attempt * 20))
+          done
+          exit 1
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
