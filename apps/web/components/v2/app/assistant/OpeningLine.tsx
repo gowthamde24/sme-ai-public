@@ -33,7 +33,7 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
   const [aiTouched, setAiTouched] = React.useState(false);
   const [warn, setWarn] = React.useState(false);
   const [busy, startSave] = React.useTransition();
-  const [heard, setHeard] = React.useState<"idle" | "busy" | "none" | "error" | "unsupported">("idle");
+  const [heard, setHeard] = React.useState<"idle" | "busy" | "none" | "error" | "unsupported" | "language">("idle");
   const [said, setSaid] = React.useState<{ lang: CallLang; text: string } | null>(null); // the exact words the sound said
   const [message, setMessage] = React.useState<{ ok: boolean; text: string } | null>(null);
   const area = React.useRef<HTMLTextAreaElement>(null);
@@ -92,7 +92,7 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
     try {
       // the line AS IT IS IN THE BOX (placeholders and all, saved or not): the API fills the real names and says back the words it spoke
       const out = await actions.preview(lang, value, effective, dirty);
-      if (!out.ok) return setHeard(out.error === "unsupported" ? "unsupported" : "error");
+      if (!out.ok) return setHeard(out.error === "unsupported" || out.error === "language" ? out.error : "error");
       if (!out.preview.audio) return setHeard("none");
       if (out.preview.spokenText) setSaid({ lang, text: out.preview.spokenText });
       player.current?.pause();
@@ -190,6 +190,7 @@ export function OpeningLine({ words, langNames, scope, lines, fallback, mentionA
             {said.text}
           </p>
         ) : null}
+        {heard === "language" ? <p role="alert" className="mt-1.5 text-sm font-medium text-red-text">{t("ope.hear.language")}</p> : null}
         {heard === "unsupported" ? <p role="status" className={fieldHelp}>{t("ope.hear.unsupported")}</p> : null}
         {heard === "none" ? <p role="status" className={fieldHelp}>{t("ope.hear.none")}</p> : null}
         {heard === "error" ? <p role="alert" className="mt-1.5 text-sm font-medium text-red-text">{t("ope.hear.err")}</p> : null}

@@ -134,6 +134,14 @@ describe("Settings > AI assistant > Opening line", () => {
     expect(screen.getByRole("status")).toHaveTextContent("not available on this system yet");
     expect(document.querySelector('[data-part="spoken-text"]')).toBeNull();
   });
+  it("a line written in another language than its tab says so in words and plays nothing", async () => {
+    const say = vi.fn(async () => ({ ok: false, error: "language" }) as never);
+    draw({ actions: actions({ preview: say }), mock: false });
+    pick("English");
+    type("Hello {customer}, this is {assistant} of {business}. Got a minute for a quick question?");
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Hear it" })));
+    expect(screen.getByRole("alert")).toHaveTextContent("not written in the language of this tab");
+  });
   it("a viewer of it (the Admin) can read and hear but not change: no box to type in, no Save, no reset", () => {
     draw({ canEdit: false });
     expect(box()).toBeDisabled();

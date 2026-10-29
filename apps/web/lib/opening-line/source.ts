@@ -13,7 +13,7 @@ import { MOCK_DEFAULTS, validLine, type CampaignOpeningLine, type Lines, type Op
 export type Ctx = { token: string; tenantId: string };
 export const MOCK_COOKIE = "sme_openingline_mock";
 const campaignCookie = (campaignId: string): string => `${MOCK_COOKIE}_${campaignId.slice(0, 8)}`;
-export type SaveError = "invalid" | "forbidden" | "read_only" | "not_available" | "down" | "unsupported";
+export type SaveError = "invalid" | "forbidden" | "read_only" | "not_available" | "down" | "unsupported" | "language";
 export type Saved<T> = { ok: true; data: T } | { ok: false; error: SaveError };
 export type Edit = { lines: Partial<Record<CallLang, string | null>>; mentionAi: boolean };
 
@@ -54,6 +54,7 @@ const refusal = (error: unknown): SaveError => {
   if (error instanceof ApiRequestError) {
     if (error.code === "workspace_read_only") return "read_only";
     if (error.status === 403) return "forbidden";
+    if (error.code === "language_mismatch") return "language"; // the line is not written in the language of its tab (the preview says so)
     if (error.status === 422 || error.status === 400) return "invalid";
   }
   return "down";
