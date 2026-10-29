@@ -39,14 +39,15 @@ class SarvamRealtimeStt:
 
     sample_rate = STT_RATE
 
-    def __init__(self, key: str, *, language: str = "te", model: str = "saaras:v3-realtime", stream_type: str = "fast", silence_ms: int = 350, min_speech_ms: int = 150) -> None:
+    def __init__(self, key: str, *, language: str = "te", model: str = "saaras:v3-realtime", stream_type: str = "fast", silence_ms: int = 350, min_speech_ms: int = 150, mode: str | None = None) -> None:
         self._key, self._language, self._model, self._stream_type, self._silence_ms, self._min_speech_ms = key, language, model, stream_type, silence_ms, min_speech_ms
+        self._mode = mode   # what the final transcript is: transcribe (default), verbatim, translit, codemix ("translate" would turn the owner's Telugu into English, which is never wanted)
 
     def __repr__(self) -> str:
         return f"SarvamRealtimeStt(model={self._model})"
 
     async def events(self, frames: AsyncIterator[bytes]) -> AsyncIterator[SttEvent]:
-        query = urlencode({"language_code": TAGS.get(self._language, "unknown"), "model": self._model, "stream_type": self._stream_type, "silence_duration_ms": self._silence_ms, "min_speech_duration_ms": self._min_speech_ms, "sample_rate": STT_RATE, "encoding": "linear16"})
+        query = urlencode({"language_code": "auto" if self._language == "auto" else TAGS.get(self._language, "unknown"), "model": self._model, "stream_type": self._stream_type, "silence_duration_ms": self._silence_ms, "min_speech_duration_ms": self._min_speech_ms, "sample_rate": STT_RATE, **({"mode": self._mode} if self._mode else {}), "encoding": "linear16"})
         try:
             async with websockets.connect(f"{SARVAM_WS}/speech-to-text-realtime/ws?{query}", additional_headers={"api-subscription-key": self._key}, max_size=None) as ws:
 
