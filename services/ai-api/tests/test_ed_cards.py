@@ -19,7 +19,7 @@ from tests.dr_sources_fakes import FakeLeadSourcesRepository, Receiver
 from tests.fakes import TENANT_A, auth, make_client
 
 T = f"/v1/tenants/{TENANT_A.id}"
-SECRET = "inbound-secret-for-tests"
+SECRET = "fake-inbound-secret-for-tests"
 NOW = datetime(2026, 10, 29, 12, 0, tzinfo=UTC)
 
 
