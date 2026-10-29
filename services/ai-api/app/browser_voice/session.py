@@ -169,6 +169,8 @@ class VoiceSession:
             message = {"type": "error", "code": str(data.get("code", "error")), "message": str(data.get("message", "")), "fatal": False}
         elif kind == "caption":
             message = {"type": "caption", "who": data.get("who", "assistant"), "text": data.get("text", ""), "final": True, "spoken": bool(data.get("spoken", True))}
+            if data.get("spoken_text"):
+                message["spoken_text"] = str(data["spoken_text"])   # what the voice says of a longer, written caption
         else:
             message = {"type": kind, **data}
             if kind == "confirm_action" and str(data.get("status", "proposed")) == "proposed":
