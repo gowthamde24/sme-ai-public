@@ -4,7 +4,7 @@ import type { ConfirmAction } from "@/lib/api/turns";
  * "Talk to your assistant" in the browser (job DV, C1's contract-browser-voice.md, ADR 0118): the messages of the WebSocket `wss://<api>/v1/tenants/{id}/voice-chat`, checked as they arrive (the API's words are untrusted text and are drawn as plain text),
  * and the closed words for every refusal. Text frames are JSON; binary frames are audio (to the API: PCM 16-bit little-endian, 16 kHz, mono; from it: PCM 16-bit LE, 24 kHz, mono).
  */
-export const VOICE_LANGS = ["te", "en", "hi", "kn"] as const;
+export const VOICE_LANGS = ["te", "en", "hi", "kn", "ta", "ml"] as const;
 export type VoiceLang = (typeof VOICE_LANGS)[number];
 export const isVoiceLang = (v: unknown): v is VoiceLang => (VOICE_LANGS as readonly unknown[]).includes(v);
 
@@ -34,6 +34,8 @@ export type ServerMessage =
   | { type: "draft" }
   | { type: "timings"; turn: number; tier: string; firstSoundMs: number | null }
   | { type: "language"; language: VoiceLang }
+  /** The voice that speaks this turn (before its first sound): the screen says "speaking in Telugu · Ramya". */
+  | { type: "voice"; voiceId: string; language: VoiceLang | null; name: string | null }
   | { type: "error"; code: string; message: string; fatal: boolean }
   | { type: "limit"; reason: LimitReason }
   | { type: "pong" };
@@ -71,6 +73,8 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
     }
     case "action":
       return typeof json.action_id === "string" && UUID.test(json.action_id) && (json.status === "confirmed" || json.status === "declined" || json.status === "expired") ? { type: "action", actionId: json.action_id, status: json.status } : null;
+    case "voice":
+      return typeof json.voice_id === "string" && json.voice_id.length > 0 && json.voice_id.length <= 80 ? { type: "voice", voiceId: json.voice_id, language: isVoiceLang(json.language) ? json.language : null, name: text(json.name, 40) } : null;
     case "intent": // what the router decided is for the API's logs; "clarify" and "reply" need nothing more: the spoken words are in the captions
     case "reply":
     case "clarify":
