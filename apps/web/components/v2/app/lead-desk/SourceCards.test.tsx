@@ -92,4 +92,23 @@ describe("Lead source cards", () => {
     await waitFor(() => expect(calls).toContainEqual({ op: "meta_select", pageId: "p1" }));
     expect(await screen.findByText(/Sri Traders · in use/)).toBeTruthy();
   });
+  it("a paused card has one button that turns it back on, then the cards are read again", async () => {
+    const paused = CARDS.map((c) => (c.kind === "website" ? { ...c, status: "needs_attention" as const, problem: { message: "This is paused, so no new leads come in.", fix: "resume" as const } } : c));
+    reply = (b) => (b.op === "cards" ? { ok: true, data: CARDS } : { ok: true, data: null });
+    show({ initial: paused });
+    expect(within(card("website")).getByText("This is paused, so no new leads come in.")).toBeTruthy();
+    fireEvent.click(within(card("website")).getByRole("button", { name: "Turn back on" }));
+    await waitFor(() => expect(calls).toEqual([{ op: "resume", card: "website" }, { op: "cards" }]));
+  });
+  it("forwarded mails: the code Gmail sends to confirm forwarding is shown to copy", async () => {
+    reply = (b) => (b.op === "email" ? { ok: true, data: { address: "a@leads.test", guide: [], portals: [], confirmation: { code: "987654321", receivedAt: null } } } : { ok: true, data: CARDS });
+    show();
+    fireEvent.click(within(card("email_forward")).getByRole("button", { name: "Get your address" }));
+    expect(((await screen.findByLabelText("Gmail asks for this code to confirm forwarding")) as HTMLInputElement).value).toBe("987654321");
+  });
+  it("WhatsApp not connected points to Integrations", () => {
+    show({ initial: CARDS.map((c) => (c.kind === "whatsapp" ? { ...c, status: "not_connected" as const } : c)) });
+    expect((within(card("whatsapp")).getByRole("link", { name: "Open Integrations" }) as HTMLAnchorElement).getAttribute("href")).toBe("/app/tenants/T/integrations");
+    expect(within(card("meta")).queryByRole("link")).toBeNull();
+  });
 });

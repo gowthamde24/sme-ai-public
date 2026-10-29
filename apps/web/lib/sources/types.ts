@@ -6,12 +6,12 @@ export const CARD_KINDS = ["meta", "indiamart", "email_forward", "website", "fil
 export type CardKind = (typeof CARD_KINDS)[number];
 export const STATUSES = ["not_connected", "connected", "needs_attention", "coming_soon"] as const;
 export type CardStatus = (typeof STATUSES)[number];
-export const ACTIONS = ["oauth", "paste_key", "copy_address", "copy_snippet", "upload", "none"] as const;
+export const ACTIONS = ["oauth", "paste_key", "copy_address", "copy_snippet", "upload", "resume", "open", "none"] as const;
 export type CardAction = (typeof ACTIONS)[number];
 
 export type Card = { kind: CardKind; status: CardStatus; headline: string; detail: string | null; received7d: number; lastReceivedAt: string | null; action: CardAction; problem: { message: string; fix: CardAction } | null; available: boolean };
 export type MetaPage = { id: string; name: string; selected: boolean };
-export type EmailAddress = { address: string; guide: { step: number; text: string }[]; portals: string[] };
+export type EmailAddress = { address: string; guide: { step: number; text: string }[]; portals: string[]; confirmation: { code: string; receivedAt: string | null } | null };
 export type WebsiteSnippet = { snippet: string; formLink: string | null };
 /** The closed words a refusal becomes. */
 export type SourceError = "badkey" | "notavailable" | "state" | "forbidden" | "slow" | "down";
@@ -50,7 +50,7 @@ export function parseKeyResult(json: unknown): { status: "connected" | "needs_at
 export function parseEmail(json: unknown): EmailAddress | null {
   if (!isRec(json) || !s(json.address, 200)) return null;
   const guide = Array.isArray(json.gmail_filter_guide) ? json.gmail_filter_guide.filter(isRec).slice(0, 10).flatMap((g, i) => (s(g.text, 300) ? [{ step: typeof g.step === "number" ? g.step : i + 1, text: s(g.text, 300) as string }] : [])) : [];
-  return { address: s(json.address, 200) as string, guide, portals: Array.isArray(json.sample_portals) ? json.sample_portals.filter((x): x is string => typeof x === "string").slice(0, 8) : [] };
+  return { address: s(json.address, 200) as string, guide, portals: Array.isArray(json.sample_portals) ? json.sample_portals.filter((x): x is string => typeof x === "string").slice(0, 8) : [], confirmation: isRec(json.gmail_confirmation) && s(json.gmail_confirmation.code, 40) ? { code: s(json.gmail_confirmation.code, 40) as string, receivedAt: s(json.gmail_confirmation.received_at, 40) } : null };
 }
 export function parseWebsite(json: unknown): WebsiteSnippet | null {
   return isRec(json) && s(json.snippet, 4000) ? { snippet: s(json.snippet, 4000) as string, formLink: s(json.form_link, 500) } : null;

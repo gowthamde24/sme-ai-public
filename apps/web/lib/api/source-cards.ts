@@ -1,5 +1,6 @@
 import { ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
+import { listSources, setSourceStatus } from "./lead-sources";
 import { parseAuthorize, parseCards, parseEmail, parseKeyResult, parsePages, parseWebsite, type Card, type EmailAddress, type MetaPage, type SourceError, type WebsiteSnippet } from "@/lib/sources/types";
 
 /**
@@ -40,3 +41,12 @@ export const indiaMartDisconnect = async (token: string, tenantId: string): Prom
 export const getEmailAddress = async (token: string, tenantId: string): Promise<EmailAddress> => need(parseEmail(await apiRequest(`${base(tenantId)}/email-address`, token)));
 export const rotateEmailAddress = async (token: string, tenantId: string): Promise<EmailAddress> => need(parseEmail(await apiRequest(`${base(tenantId)}/email-address/rotate`, token, post())));
 export const getWebsite = async (token: string, tenantId: string): Promise<WebsiteSnippet> => need(parseWebsite(await apiRequest(`${base(tenantId)}/website`, token)));
+
+/** The kinds of live source a card stands for (the API's own grouping in `lead_sources/cards.py`). */
+const KINDS_OF: Record<string, readonly string[]> = { meta: ["meta_lead_ads"], indiamart: ["indiamart"], email_forward: ["email_forward"], website: ["website_form", "webhook"] };
+/** "Turn back on": resumes the paused sources of one card. */
+export async function resumeCard(token: string, tenantId: string, card: string): Promise<void> {
+  const kinds = KINDS_OF[card];
+  if (!kinds) throw new ApiContractError("card");
+  for (const source of await listSources(token, tenantId)) if (kinds.includes(source.kind) && source.status === "paused") await setSourceStatus(token, tenantId, source.id, "resume");
+}
