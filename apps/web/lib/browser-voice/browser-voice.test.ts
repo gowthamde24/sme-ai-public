@@ -44,6 +44,11 @@ describe("the messages", () => {
     expect(parseServerMessage(json({ type: "error", code: "budget", message: "Used up for today", fatal: false }))).toMatchObject({ code: "budget", fatal: false });
     for (const bad of ["not json", json({ type: "state", state: "dancing" }), json({ type: "caption", who: "robot", text: "x" }), json({ type: "ready", language: "xx", session_id: "s" }), json({ nothing: 1 }), json("x"), 5, null, "x".repeat(30_000)]) expect(parseServerMessage(bad)).toBeNull();
   });
+  it("a whole written answer (Markdown, newlines, thousands of characters) is a caption; one past the limit is not", () => {
+    const long = "- item\n".repeat(1200);
+    expect(parseServerMessage(json({ type: "caption", who: "assistant", text: long, final: true, spoken: true, spoken_text: "Short." }))).toMatchObject({ type: "caption", text: long });
+    expect(parseServerMessage(json({ type: "caption", who: "assistant", text: "x".repeat(12_001), final: true }))).toBeNull();
+  });
   it("every end has plain words: a limit, a refusal code, the close code", () => {
     expect(endWordOf(null, { limit: "session" })).toBe("session");
     expect(endWordOf({ code: 4429 }, { errorCode: "busy" })).toBe("busy");
