@@ -129,6 +129,10 @@ class PreviewOut(_Strict):
     text: str
     intro: str
     wording: Literal["draft"]
+    # THE opening line (app/opening/resolve.py): `text` is now this same resolved line (the stored line or the default template), so the card shows what "Hear it" speaks
+    resolved_opening_line: str = ""
+    spoken_text: str = ""
+    source: Literal["stored", "default", "draft", ""] = ""
 
 
 class TranscriptLineOut(_Strict):

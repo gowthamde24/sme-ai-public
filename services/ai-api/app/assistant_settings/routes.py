@@ -3,7 +3,7 @@ docs/contracts/assistant-settings.md.
 
   GET  /ai-assistant                the settings in force (or the defaults of the business type), the defaults, the options with the voices that exist, the fixed introduction. Owner and Admin.
   PUT  /ai-assistant                save every field. Owner, with a second factor. A save also sets the speed, calling hours and voices of the business's voice notes when it has them.
-  GET  /ai-assistant/preview        one sample line with the shop's name (`language`, `style`, optional unsaved `name`). Owner and Admin.
+  GET  /ai-assistant/preview        the opening line in force (`language`, `style`, optional unsaved `name`): `text` = `resolved_opening_line` = `spoken_text`, the same words "Hear it" speaks. Owner and Admin.
   POST /ai-assistant/test-call      "Call me now for a test": a SIMULATION until telephony exists (no call, nothing sent or stored). Owner, with a second factor.
 
 NOTE: no `from __future__ import annotations` here (request models are attached to the endpoint signatures at registration time)."""
@@ -55,9 +55,22 @@ def preview(
     style: Annotated[StyleWord, Query()],
     name: Annotated[str | None, Query(min_length=1, max_length=24, pattern=r"^[^<>{}@/\\|\x00-\x1f\x7f]+$")] = None,
 ) -> PreviewOut:
-    return _service(runtime).preview(ctx.principal.token, ctx.tenant.id, language, style, name.strip() if name else None)
+    from app.opening.resolve import resolve
+
+    out = _service(runtime).preview(ctx.principal.token, ctx.tenant.id, language, style, name.strip() if name else None)
+    if runtime.workspace is None:
+        return out
+    got = resolve(runtime, ctx, language, name=name)   # the one opening line: the card shows what "Hear it" speaks
+    return out.model_copy(update={"text": got.text, "resolved_opening_line": got.text, "spoken_text": got.spoken_text, "source": got.source})
 
 
 @router.post("/test-call", response_model=TestCallOut)
 def test_call(ctx: OwnerStrong, runtime: RuntimeDep) -> TestCallOut:
-    return _service(runtime).test_call(ctx.principal.token, ctx.tenant.id)
+    from app.opening.resolve import resolve
+
+    out = _service(runtime).test_call(ctx.principal.token, ctx.tenant.id)
+    if runtime.workspace is None or not out.transcript:
+        return out
+    language = _service(runtime).get(ctx.principal.token, ctx.tenant.id).settings.main_language
+    first = out.transcript[0].model_copy(update={"text": resolve(runtime, ctx, language).text})   # the call opens with the one opening line
+    return out.model_copy(update={"transcript": [first, *out.transcript[1:]]})

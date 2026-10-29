@@ -69,7 +69,7 @@ def voice_preview(
     if name is not None and not NAME_OK.match(name):
         raise ApiError(422, "validation_error", "Invalid input.")
     try:
-        opening = _owner_opening(runtime, ctx, language)
+        opening = _owner_opening(runtime, ctx, language, name)
         _, speech = service.preview(ctx.tenant.id, ctx.tenant.name, voice, language, style, name, opening)
     except NoSample:
         raise ApiError(404, "no_sample", "There is no preview for this voice.") from None
@@ -89,16 +89,14 @@ def voice_preview_text(
     chosen = (name or DEFAULT_NAME).strip()
     if not NAME_OK.match(chosen):
         raise ApiError(422, "validation_error", "Invalid input.")
-    return {"text": preview_text(language, style, chosen, ctx.tenant.name, _owner_opening(runtime, ctx, language)), "assistant_name": chosen, "business_name": ctx.tenant.name, "language": language, "style": style}
+    opening = _owner_opening(runtime, ctx, language, name)
+    return {"text": preview_text(language, style, chosen, ctx.tenant.name, opening), "resolved_opening_line": opening or "", "assistant_name": chosen, "business_name": ctx.tenant.name, "language": language, "style": style}
 
 
-def _owner_opening(runtime: Runtime, ctx: TenantContext, language: str) -> str | None:
-    """The Owner's own opening line, filled and with the AI switch applied, when they wrote one for this language (the preview then speaks what a customer hears); else None (the standard line)."""
+def _owner_opening(runtime: Runtime, ctx: TenantContext, language: str, name: str | None = None) -> str | None:
+    """THE opening line (app/opening/resolve.py): the stored line or the default template, filled and with the AI switch applied. The preview speaks exactly what a customer hears and what the card shows."""
     if runtime.workspace is None:
-        return None
-    row = runtime.workspace.opening(ctx.principal.token, ctx.tenant.id)
-    if not any(x.get("language") == language and x.get("campaign_id") is None for x in row.get("lines", [])):
         return None
     from app.opening.routes import rendered_opening
 
-    return rendered_opening(runtime, ctx, language, None, None, None)[0]
+    return rendered_opening(runtime, ctx, language, None, None, None, name=name)[0]
