@@ -199,6 +199,8 @@ def _register(api: EntityApi) -> None:
         response.status_code = 201 if created else 200
         if entity == "contacts":
             row = _keyed(runtime, ctx, row)
+        if entity == "leads" and runtime.lead_profiles is not None:
+            return runtime.lead_profiles.get(ctx, row.id)   # same shape as the read, with its profile
         return row
 
     create_row.__annotations__["body"] = api.create
@@ -225,6 +227,8 @@ def _register(api: EntityApi) -> None:
         if entity == "contacts" and ("email" in changes or "phone" in changes):
             # a changed identifier forgot its key: record the new one (ADR 0020)
             updated = _keyed(runtime, ctx, updated)
+        if entity == "leads" and runtime.lead_profiles is not None:
+            return runtime.lead_profiles.get(ctx, rid)
         return updated
 
     update_row.__annotations__["body"] = api.update
