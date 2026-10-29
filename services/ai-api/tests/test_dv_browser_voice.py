@@ -151,8 +151,20 @@ async def test_ask_answers_are_spoken_short_with_the_rest_and_the_sources_on_the
     spoken = [p async for p in llm.stream("", [{"role": "user", "content": "price of saree?"}], "ask")]
     assert spoken == ["The saree costs 2,600 rupees."]
     kinds = [k for k, _ in seen]
-    assert kinds == ["step", "source", "caption", "caption", "reply"], "(job EA) a plain answer ends with the typed reply"
-    assert seen[2][1]["spoken"] is True and seen[3][1]["spoken"] is False
+    assert kinds == ["step", "source", "caption", "reply"], "(job EA) a plain answer ends with the typed reply; (job EH) one caption with the whole answer"
+    assert seen[2][1]["spoken"] is True and seen[2][1]["spoken_text"] == "The saree costs 2,600 rupees." and seen[2][1]["text"].startswith("The saree costs 2,600 rupees. More detail")
+
+
+@arun
+async def test_a_markdown_list_is_shown_as_a_list_and_only_the_voice_gets_it_flattened() -> None:
+    seen: list[tuple[str, dict[str, Any]]] = []
+    answer = "Waiting for your approval [S1]:\n1. **Demo lead 4485**\n2. Demo lead 6978"
+    blocks = [sse("text", {"type": "text", "delta": answer}), sse("done", {"type": "done"})]
+    llm = AskLlm(AskTurns(ask_stream(blocks)), lambda k, d: seen.append((k, d)))
+    spoken = [p async for p in llm.stream("", [{"role": "user", "content": "what waits?"}], "ask")]
+    caption = next(d for k, d in seen if k == "caption")
+    assert caption["text"].count("\n") == 2 and "**" in caption["text"] and "[S1]" not in caption["text"]
+    assert "\n" not in spoken[0] and "**" not in spoken[0]
 
 
 @arun
