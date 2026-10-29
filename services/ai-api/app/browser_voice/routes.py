@@ -25,7 +25,7 @@ from app.auth.jwt import AuthError
 from app.browser_voice.limits import Usage
 from app.browser_voice.llm import AskLlm, AskTurns, CaptionLlm, TieredLlm
 from app.browser_voice.runtime import BrowserVoice
-from app.browser_voice.session import LANGUAGES, Kind, Parts, VoiceSession
+from app.browser_voice.session import LANGUAGES, MODES, Kind, Parts, VoiceSession
 from app.conversation.fallback import FallbackTts
 from app.conversation.picker import voice_state
 from app.conversation.pronounce import default_pronunciations
@@ -57,7 +57,7 @@ def system_prompt(*, business: str, assistant: str, language: str, opening_line:
     return call_system_prompt(business=business, assistant=assistant, language=language, opening_line=opening_line, goal=GOAL, facts=facts, mention_ai=mention_ai, speaking_style="everyday_mixed")
 
 
-def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Callable[[str, dict[str, Any]], None], on_ask: Callable[[], None]) -> Parts:
+def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Callable[[str, dict[str, Any]], None], on_ask: Callable[[], None], conversation_id: uuid.UUID | None = None) -> Parts:
     token, tenant = ctx.principal.token, ctx.tenant.id
     chosen, gender = voice_state(runtime, ctx)
     live_choices: dict[str, str] = dict(chosen)   # read again at the start of every turn (refresh), so a change in Settings speaks from the next turn
@@ -97,7 +97,8 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
         out = confirm_decision(runtime, ctx, action_id, decision, lambda fn, *args: threading.Thread(target=fn, args=args, daemon=True).start())
         return out.model_dump(mode="json")
 
-    ask = AskLlm(AskTurns(open_ask), emit)
+    turns = AskTurns(open_ask, conversation_id)
+    ask = AskLlm(turns, emit)
     llm = TieredLlm(CaptionLlm(bv.fast_llm(), emit), ask, on_ask)
     return Parts(
         stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language="auto", silence_ms=OWNER_SILENCE_MS, mode="verbatim"),   # any of the six languages in any turn: the recogniser detects it and writes what was said as spoken (verbatim; the bake-off had codemix at 51% word errors on Telugu); the reply follows what was said
@@ -111,6 +112,8 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
         refresh=refresh,
         fillers=bv.fillers,
         confirm=confirm,
+        one_thread=True,   # every live turn goes through the written chat's turn (same router, same history, same stored thread): typed, dictated and live turns are ONE conversation
+        conversation_id=str(turns.conversation_id),
     )
 
 
@@ -198,6 +201,13 @@ async def voice_chat(ws: WebSocket, tenant_id: str) -> None:
     if isinstance(ctx, tuple):
         return await _refuse(ws, ctx[0], ctx[1], "Not allowed.")
     language = first.get("language") if first.get("language") in LANGUAGES else "en"
+    mode = first.get("mode") if first.get("mode") in MODES else "live"   # live = the hands-free conversation; dictate = words only (no assistant, no voice, nothing stored)
+    thread: uuid.UUID | None = None
+    if first.get("conversation_id") is not None:
+        try:
+            thread = uuid.UUID(str(first.get("conversation_id")))
+        except ValueError:
+            return await _refuse(ws, 4400, "validation_error", "That conversation id is not valid.")
     refused = await run_in_threadpool(bv.ledger.admit, ctx.tenant.id, ctx.principal.token)
     if refused is not None:
         return await _refuse(ws, 4429, refused, "Too many voice sessions, or today's talking time is used up. Try again later.")
@@ -208,8 +218,8 @@ async def voice_chat(ws: WebSocket, tenant_id: str) -> None:
         def count_ask() -> None:
             usage.ask_turns += 1
 
-        parts = await run_in_threadpool(build_parts, bv, runtime, ctx, lambda kind, data: box["emit"](kind, data), count_ask)
-        session = VoiceSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage, token=ctx.principal.token)
+        parts = await run_in_threadpool(build_parts, bv, runtime, ctx, lambda kind, data: box["emit"](kind, data), count_ask, thread)
+        session = VoiceSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage, token=ctx.principal.token, mode=str(mode))
         box["emit"] = session.emit
         await session.run()
     except Exception as err:  # noqa: BLE001 - only the class is kept

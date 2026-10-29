@@ -78,8 +78,9 @@ def parse_sse(block: str) -> tuple[str, dict[str, Any]] | None:
 class AskTurns:
     """One Ask conversation for the whole voice session (so a follow-up has its history). `open(text)` returns Ask's stream of server-sent events for the caller's words; it raises ApiError as the route does."""
 
-    def __init__(self, open_stream: Callable[[uuid.UUID, uuid.UUID, str], Iterator[str]]) -> None:
-        self._open, self.conversation_id = open_stream, uuid.uuid4()
+    def __init__(self, open_stream: Callable[[uuid.UUID, uuid.UUID, str], Iterator[str]], conversation_id: uuid.UUID | None = None) -> None:
+        # `conversation_id`: the thread the web is already in (typed, dictated and live turns are ONE conversation); None starts a new one
+        self._open, self.conversation_id = open_stream, conversation_id or uuid.uuid4()
 
     def open(self, text: str) -> Iterator[str]:
         return self._open(self.conversation_id, uuid.uuid4(), text)

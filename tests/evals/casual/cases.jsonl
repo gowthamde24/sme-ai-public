@@ -1,0 +1,10 @@
+{"id": "casual-te-greeting", "language": "te", "text": "హాయ్, ఎలా ఉన్నారు?", "kind": "smalltalk", "max_chars": 300}
+{"id": "casual-en-greeting", "language": "en", "text": "Hi, how are you today?", "kind": "smalltalk", "max_chars": 300}
+{"id": "casual-te-tired", "language": "te", "text": "ఈ రోజు చాలా అలసిపోయాను", "kind": "smalltalk", "max_chars": 300}
+{"id": "casual-en-tired", "language": "en", "text": "I'm so tired today", "kind": "smalltalk", "max_chars": 300}
+{"id": "casual-te-joke", "language": "te", "text": "ఒక జోక్ చెప్పండి", "kind": "smalltalk", "max_chars": 500}
+{"id": "casual-en-joke", "language": "en", "text": "Tell me a joke", "kind": "smalltalk", "max_chars": 500}
+{"id": "casual-tenglish-mood", "language": "te", "text": "Ee roju chala tired ga undi", "kind": "smalltalk", "max_chars": 300}
+{"id": "casual-te-silk", "language": "te", "text": "ధర్మవరం పట్టు చీరల గురించి చెప్పండి", "kind": "general", "max_chars": 900}
+{"id": "casual-en-silk", "language": "en", "text": "Tell me about Dharmavaram silk", "kind": "general", "max_chars": 900}
+{"id": "casual-tenglish-silk", "language": "te", "text": "Dharmavaram silk gurinchi cheppu", "kind": "general", "max_chars": 900}

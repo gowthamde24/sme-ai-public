@@ -33,6 +33,8 @@ FOLLOW_UP_WORDS = 6   # a message this short, with no other signal, continues th
 # ---- 1. action: a verb of reaching people at the START of the message (after "please", "can you" ...)
 _POLITE = r"(?:(?:please|pls|kindly|can you|could you|would you|will you|i want you to|i need you to|go and|just|now|also|then|and)\s+)*"
 _NOT_NOUN = r"(?!\s+(?:from|history|log|logs|count|volume|rate|rates|is|was|are|were|me|us|back)\b)"   # "message from Ramesh", "call log" are not instructions
+# Tenglish instructions ("Ravi ki call cheyyi", "customers ki message pampu")
+_ACTION_TENGLISH = re.compile(r"\b(?:call|phone|message|whatsapp|msg)\s+(?:cheyyi|cheyandi|cheyyandi|chey|pettu|pettandi|pampu|pampandi|pamp)\b")
 _ACTION_START = re.compile(
     rf"^{_POLITE}(?:call|phone|ring|whatsapp|message|text|ping|remind|follow[ -]?up(?: with| on)?|reach out(?: to)?|send (?:a |the )?(?:message|whatsapp|reminder)s?)\b{_NOT_NOUN}"
 )
@@ -58,12 +60,23 @@ _SMALLTALK_LATIN = (
     r"\btell me a joke\b", r"^joke\b", r"\bi(?:'m| am)\s+(?:so |very |really |a bit )?(?:tired|happy|sad|stressed|bored|worried|excited|fine|good|great|angry|upset|sleepy|hungry)\b",
     r"\b(?:i feel|feeling)\s+(?:tired|low|sad|stressed|happy|bad)\b", r"\bhow do you do\b",
     r"\b(?:ela ?(?:unnaru|unnav)|bagunnara|baagunnara|baagunnava|bagunnava|em chestunnav|em chestunnaru)\b",
+    # Tenglish feelings and chat ("chala tired ga undi", "bore kodutondi", "nenu happy ga unna", "em chestunnav", "bhojanam chesara")
+    r"\b(?:tired|happy|sad|bored|sleepy|hungry|stressed|upset|busy)\s+ga\b", r"\bbore\s+kod", r"\b(?:nenu|nen)\s+(?:chala\s+)?(?:happy|tired|sad|bored|fine|good)\b",
+    r"\bbhojanam\s+chesara\b", r"\btiffin\s+chesara\b", r"\bcoffee\s+tagara\b", r"\bem\s+chestunn", r"\bnuvvu\s+ela\b", r"\bsubhodayam\b", r"\bsubha\s*ratri\b",
+    r"\bmee\s+peru\b", r"\bnavvinchu\b", r"\bjoke\s+cheppu\b", r"\bkaise\s+ho\b", r"\bkya\s+haal\b", r"\bthak\s+gaya\b",
 )
 _SMALLTALK_INDIAN = (
     "నమస్కారం", "నమస్తే", "హలో", "హాయ్", "ఎలా ఉన్నారు", "ఎలా ఉన్నావు", "బాగున్నారా", "బాగున్నావా", "ధన్యవాదాలు", "థాంక్స్", "థాంక్యూ", "అలసిపోయా", "అలిసిపోయా", "జోక్ చెప్పు", "జోక్",
     "नमस्ते", "हेलो", "हैलो", "कैसे हो", "कैसी हो", "आप कैसे हैं", "आप कैसी हैं", "धन्यवाद", "शुक्रिया", "थैंक", "थक गया", "थक गई", "चुटकुला", "जोक सुना",
     "ನಮಸ್ಕಾರ", "ಹಲೋ", "ಹಾಯ್", "ಹೇಗಿದ್ದೀರಿ", "ಹೇಗಿದ್ದೀಯ", "ಧನ್ಯವಾದ", "ಥ್ಯಾಂಕ್ಸ್", "ಸುಸ್ತಾಗಿದೆ", "ಜೋಕ್",
     "வணக்கம்", "நன்றி", "எப்படி இருக்கிறீர்கள்", "നമസ്കാരം", "നന്ദി", "സുഖമാണോ",
+    # feelings, food and everyday chat (te, hi, kn, ta, ml): the owner talking, not asking about the business
+    "అలసిపోయాన", "అలిసిపోయాన", "అలసట", "బోర్ కొడ", "బోరు కొడ", "సంతోషంగా ఉన్నా", "బాధగా ఉంది", "ఆకలిగా", "నిద్ర వస్తోంది", "నిద్రగా", "కాఫీ తాగ", "టీ తాగ", "భోజనం చేశారా", "తిన్నారా", "తిన్నావా",
+    "ఏం చేస్తున్నారు", "ఏం చేస్తున్నావు", "ఏమి చేస్తున్నారు", "శుభోదయం", "శుభ సాయంత్రం", "శుభరాత్రి", "గుడ్ మార్నింగ్", "గుడ్ నైట్", "గుడ్ ఈవినింగ్", "బాగున్నాను", "బాగున్నా", "నవ్వించ", "మీ పేరు", "ఎవరు మీరు",
+    "ఎలా గడిచింది", "మీకు ఇష్టమైన", "కాఫీ తాగారా",
+    "थकान", "थकी", "बोर हो", "खाना खा", "क्या कर रहे", "क्या कर रही", "आपका नाम", "शुभ प्रभात", "गुड मॉर्निंग", "गुड नाइट", "कैसा रहा", "मज़ाक", "हंसाओ",
+    "ಸುಸ್ತು", "ಬೇಜಾರು", "ಬೋರ್", "ಏನು ಮಾಡ್ತಿದ್ದೀರಿ", "ಗುಡ್ ಮಾರ್ನಿಂಗ್", "ಊಟ ಆಯ್ತಾ", "ನಿಮ್ಮ ಹೆಸರು",
+    "சோர்வாக", "காலை வணக்கம்", "என்ன செய்கிறீர்கள்", "உங்கள் பெயர்", "ക്ഷീണം", "എന്തു ചെയ്യുന്നു", "ശുഭ രാത്രി", "നിങ്ങളുടെ പേര്",
 )
 
 # ---- 3. the business's own records
@@ -91,8 +104,13 @@ _GENERAL_LATIN = (
     r"^(?:how (?:do|can|should|to|does|would)|what (?:is|are|does|do|should)|what'?s (?:a|an|the)|why (?:is|are|do|does|did|should)|when (?:should|do|is it)|is it (?:ok|okay|legal|allowed|true)|should i|can i|which is better|difference between|meaning of|define)\b",
     r"\b(?:capital of|population of|weather|news|recipe|history of|who (?:is|was) the (?:prime minister|president|ceo|founder|inventor)|how far|how old|time zone)\b",
     r"\b(?:idea|ideas|tips?|advice|strategy|template|slogan|caption|greeting|poem|story|speech|post|offer message|festival|diwali|sankranti|ugadi|dasara|eid|christmas)\b",
+    # Tenglish: "Dharmavaram silk gurinchi cheppu", "difference enti", "meaning enti", "enduku"
+    r"\b(?:gurinchi|gurunchi|bagge|ke baare mein|ke bare mein)\s+(?:cheppu|cheppandi|chepandi|cheppava|chepu|batao|bataiye|tell|explain|ardham)", r"\b(?:difference|meaning|ardham)\b", r"\benduku\b", r"\benti\b\s*[?.!]?$",
 )
 _GENERAL_INDIAN = (
+    # asking about a topic or a reason, in conversation ("ధర్మవరం పట్టు గురించి చెప్పండి", "ఆకాశం ఎందుకు నీలం")
+    "గురించి చెప్ప", "గురించి చెప్పు", "గురించి వివరించ", "ఎందుకు", "ఎలా ఉంటుంది", "ఎవరు కనిపెట్టారు", "ఎక్కడ ఉంది", "తేడా ఏమిటి", "తేడా ఏంటి", "అర్థం ఏమిటి", "ఏంటి",
+    "के बारे में बता", "क्यों", "फर्क क्या", "मतलब क्या", "ಬಗ್ಗೆ ಹೇಳಿ", "ಯಾಕೆ", "ಏಕೆ", "ವ್ಯತ್ಯಾಸ ಏನು", "பற்றி சொல்", "ஏன்", "வித்தியாசம் என்ன", "കുറിച്ച് പറ", "എന്തുകൊണ്ട്", "വ്യത്യാസം എന്താണ്",
     "రాయి", "రాయండి", "రాసి", "అనువదించ", "వివరించ", "ఎలా రాయాలి", "ఎలా చేయాలి", "ఏమిటి", "అంటే ఏమిటి", "ఐడియా", "సలహా", "చిట్కా",
     "लिखो", "लिखिए", "लिख दो", "अनुवाद", "समझाओ", "समझाइए", "क्या है", "कैसे करें", "आइडिया", "सलाह", "सुझाव",
     "ಬರೆ", "ಅನುವಾದ", "ವಿವರಿಸಿ", "ಎಂದರೇನು", "ಹೇಗೆ", "ಐಡಿಯಾ", "ಸಲಹೆ",
@@ -128,7 +146,8 @@ def _indian(words: tuple[str, ...], text: str) -> bool:
 
 
 def _word_count(text: str) -> int:
-    return len(re.findall(r"[^\W_]+", text))
+    # words are what the person separated with spaces: a regex of \w runs would cut an Indian-script word at every vowel sign and count a short Telugu sentence as long
+    return len([w for w in re.split(r"[\s,;:.!?()\"'“”‘’।]+", text) if w and not set(w) <= {"-", "_"}])
 
 
 def is_yes_no(text: str) -> bool:
@@ -137,7 +156,7 @@ def is_yes_no(text: str) -> bool:
 
 
 def _is_action(norm: str) -> bool:
-    if _ACTION_START.match(norm):
+    if _ACTION_START.match(norm) or (_ACTION_TENGLISH.search(norm) and not _ACTION_NOT.search(norm)):
         return True
     for lang in ("te", "hi", "kn"):
         if _indian(_ACTION_CHANNEL[lang], norm) and _indian(_ACTION_DO[lang], norm) and not _ACTION_NOT.search(norm):
@@ -145,8 +164,16 @@ def _is_action(norm: str) -> bool:
     return False
 
 
+# Indian-language words match anywhere inside a word (those languages put endings on it), so a place or a common word that merely CONTAINS a business word is blanked first:
+# "ధర్మవరం" (Dharmavaram, a town and its silk) holds "ధర" (price), "ధరించ" (to wear) too.
+_FALSE_FRIENDS = ("ధర్మవరం", "ధర్మ", "ధరించ", "ధరణి", "बकायदा", "జవాబుదారీ")
+
+
 def _has_business(norm: str) -> bool:
-    return _latin(_BUSINESS_LATIN, norm) or _indian(_BUSINESS_INDIAN, norm)
+    masked = norm
+    for word in _FALSE_FRIENDS:
+        masked = masked.replace(word, " ")
+    return _latin(_BUSINESS_LATIN, norm) or _indian(_BUSINESS_INDIAN, masked)
 
 
 def _has_time_word(norm: str) -> bool:
