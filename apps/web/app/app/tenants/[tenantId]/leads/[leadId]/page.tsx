@@ -16,7 +16,9 @@ import { ContactLead } from "@/components/v2/app/contact/ContactLead";
 import { OutcomesPanel } from "@/components/v2/app/outcomes/OutcomesPanel";
 import { readCustomerOutcomes } from "@/lib/outcomes/source";
 import { LeadTimeline } from "@/components/v2/app/lead-desk/LeadTimeline";
-import { readTouches } from "@/lib/lead-desk/leads-source";
+import { readLeadProfile, readTouches } from "@/lib/lead-desk/leads-source";
+import { LeadProfileCard } from "@/components/v2/app/lead-desk/LeadProfileCard";
+import { fixLeadFieldAction } from "../../lead-desk-actions";
 import { sourceNames } from "@/lib/outreach/words";
 import { leadsScreens } from "@/lib/screens/flag";
 import { getLang } from "@/i18n/get-lang";
@@ -151,6 +153,8 @@ export default async function LeadPage({
   const outcomesRead = await readCustomerOutcomes({ token: user.accessToken, tenantId }, leadId);
   // night 4 (Lead Desk): every time this person arrived, with the source (only while LEADS_SCREENS is on)
   const touches = leadsScreens() === "off" ? null : await readTouches({ token: user.accessToken, tenantId, userId: user.id }, leadId);
+  // what the assistant understood this lead wants (guessed parts carry a marker and a one-tap fix); only from the API, and only while LEADS_SCREENS is on
+  const profile = leadsScreens() === "off" ? null : await readLeadProfile({ token: user.accessToken, tenantId, userId: user.id }, leadId);
   const sentId = crypto.randomUUID(); // one id per render: a second press of "Record this" is a retry
   const reviewIds = Object.fromEntries(
     (claims ?? []).map((c) => [c.id, { accept: crypto.randomUUID(), reject: crypto.randomUUID() }]),
@@ -199,6 +203,8 @@ export default async function LeadPage({
             <dd>{originText}</dd>
           </dl>
         </section>
+
+        {profile ? <LeadProfileCard words={wordsFor(lang, ["lp."])} leadId={leadId} profile={profile} canEdit={WRITE_ROLES.includes(tenant.role)} fix={fixLeadFieldAction.bind(null, tenantId)} /> : null}
 
         {outcomesRead.mode === "off" ? null : (
           <OutcomesPanel

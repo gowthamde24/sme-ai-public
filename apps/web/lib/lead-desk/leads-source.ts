@@ -1,9 +1,10 @@
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
-import { getTouches, listDeskLeads, setLeadOwner, type Touch } from "@/lib/api/lead-desk";
+import { fixLeadField, getLeadProfile, getTouches, listDeskLeads, setLeadOwner, type Touch } from "@/lib/api/lead-desk";
 import { readJar, writeJar } from "@/lib/mock/jar";
 import { leadsScreens } from "@/lib/screens/flag";
 import type { Handoff } from "@/lib/outreach/types";
 
+import type { FixField, LeadProfile } from "./profile";
 import { mockLeads, type DeskFilter, type DeskLead } from "./leads";
 
 /**
@@ -78,5 +79,34 @@ export async function readTouches(ctx: Ctx, leadId: string, now: Date = new Date
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     return null;
+  }
+}
+
+/** The profile of one lead for its page: only from the API (the mock leads have none to fix). */
+export async function readLeadProfile(ctx: Ctx, leadId: string): Promise<LeadProfile | null> {
+  if (leadsScreens() !== "on") return null;
+  try {
+    return await getLeadProfile(ctx.token, ctx.tenantId, leadId);
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    return null;
+  }
+}
+
+export type FixResult = { ok: true } | { ok: false; error: "forbidden" | "read_only" | "invalid" | "not_available" | "down" };
+/** Fix one field of a lead's profile. */
+export async function fixLead(ctx: Ctx, leadId: string, field: FixField, value: string | null): Promise<FixResult> {
+  if (leadsScreens() !== "on") return { ok: false, error: "not_available" };
+  try {
+    await fixLeadField(ctx.token, ctx.tenantId, leadId, field, value);
+    return { ok: true };
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    if (error instanceof ApiRequestError) {
+      if (error.code === "workspace_read_only") return { ok: false, error: "read_only" };
+      if (error.status === 403) return { ok: false, error: "forbidden" };
+      if (error.status === 422 || error.status === 400) return { ok: false, error: "invalid" };
+    }
+    return { ok: false, error: "down" };
   }
 }
