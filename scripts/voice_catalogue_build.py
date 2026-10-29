@@ -78,14 +78,10 @@ def native(voices: list[dict], lang: str) -> list[dict]:
     return got
 
 
-REPORT: list[str] = []   # the per-voice table goes to a file, not to the terminal: nothing that came back from a call with a key is printed
-
-
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--per-gender", type=int, default=5)
-    ap.add_argument("--report", default="voice_catalogue_report.txt", help="where the per-voice table is written")
     ap.add_argument("--no-render", action="store_true", help="choose from the provider's list and descriptions only (no audio, no credits): used while the Cartesia credits are empty; samples and fillers are rendered later")
     ap.add_argument("--candidates", type=int, default=8, help="how many native voices per language and gender are rendered and scored")
     args = ap.parse_args()
@@ -117,19 +113,16 @@ def main() -> int:
                         text_l = f"{v['name']} {v.get('description', '')}".lower()
                         fit = (3.0 if v["id"] in keep else 0.0) + (10.0 if any(o["primary"]["voice"] == v["id"] and o.get("default") for o in old.values()) else 0.0) + sum(1.0 for w in ("assistant", "support", "friendly", "warm", "calm", "professional", "concierge", "agent", "conversation", "clear", "guide", "host") if w in text_l) - sum(2.0 for w in ("narrator", "folk", "studio", "character", "storyteller", "kids", "cartoon") if w in text_l)
                         scored.append((fit, v, b"", ""))
-                        REPORT.append(f"{lang} {gender:6} {v['name'][:34]:34} fit={fit:.1f}")
                         continue
                     t = http.post("https://api.cartesia.ai/tts/bytes", headers={"X-API-Key": ckey, "Cartesia-Version": "2025-04-16"},
                                   json={"model_id": MODEL, "transcript": text, "voice": {"mode": "id", "id": v["id"]}, "language": lang, "output_format": {"container": "mp3", "sample_rate": 44100, "bit_rate": 96000}})
                     chars_sent += len(text)
                     if t.status_code != 200:
-                        REPORT.append(f"  {lang} {gender} {v['name']}: render failed {t.status_code}")
                         continue
                     s = http.post("https://api.sarvam.ai/speech-to-text", headers={"api-subscription-key": skey}, data={"model": "saaras:v4", "language_code": STT_TAG[lang]}, files={"file": ("sample.mp3", t.content, "audio/mpeg")})
                     heard = s.json().get("transcript", "") if s.status_code == 200 else ""
                     score = difflib.SequenceMatcher(None, norm(heard), norm(text)).ratio()
                     scored.append((score, v, t.content, heard))
-                    REPORT.append(f"{lang} {gender:6} {v['name'][:34]:34} score={score:.2f} heard={heard[:50]!r}")
                 scored.sort(key=lambda x: -x[0])
                 picked = scored[: args.per_gender]
                 # keep what is already in the catalogue (so no workspace's choice breaks), then fill with the best
@@ -158,11 +151,7 @@ def main() -> int:
             group = [c for c in catalogue if c["language"] == lang and c["gender"] == gender]
             if group and not any(c["default"] for c in group):
                 group[0]["default"] = True
-    for lang in LANGS:
-        REPORT.append(f"{lang} " + str([f"{c['name']}{'*' if c['default'] else ''}{'+' if c['recommended'] else ''}({c['gender'][0]})" for c in catalogue if c["language"] == lang]))
-    report_path = Path(args.report)
-    report_path.write_text("\n".join(REPORT) + f"\n\ncatalogue: {len(catalogue)} voices; Cartesia characters sent: {chars_sent}\n", encoding="utf-8")
-    print(f"{len(catalogue)} voices chosen; {chars_sent} Cartesia characters sent; the table is in {report_path}")
+    print(f"{len(catalogue)} voices chosen; {chars_sent} Cartesia characters sent (the voices, tags and defaults are in voices.json when --write is given)")
     if not args.write:
         print("(dry run: nothing written; add --write)")
         return 0
