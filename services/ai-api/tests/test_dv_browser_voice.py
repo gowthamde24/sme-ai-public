@@ -688,7 +688,7 @@ def test_the_owner_hears_a_short_hello_of_their_own_not_the_customer_call_line_a
     assert OWNER_SILENCE_MS == 900
     assert parts.stt_for("en")._silence_ms == 900  # type: ignore[attr-defined]
     stt = parts.stt_for("en")
-    assert (stt._language, stt._mode) == ("auto", "codemix"), "the owner may speak any of the six in any turn: detected, native script with English words"  # type: ignore[attr-defined]
+    assert (stt._language, stt._mode) == ("auto", "verbatim"), "the owner may speak any of the six in any turn: detected, written as spoken"  # type: ignore[attr-defined]
 
 
 # ---- voice system v2: one voice per turn, announced before the first chunk, the language follows the owner -----------------------------------------------
