@@ -74072,5 +74072,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "vp.toast": {
+  "en": "{language} voice: {voice}",
+  "te": "{language} వాయిస్: {voice}",
+  "hi": "{language} आवाज़: {voice}",
+  "kn": "{language} ಧ್ವನಿ: {voice}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.hear": {
+  "en": "Hear",
+  "te": "వినండి",
+  "hi": "सुनें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "vp.hear.stop": {
+  "en": "Stop",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
