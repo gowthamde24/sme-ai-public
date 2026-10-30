@@ -72,5 +72,7 @@ def test_a_romanised_question_still_gets_an_answer_in_the_languages_own_script()
     req = prompts.build_chat_request(delimiter=uuid.uuid4().hex[:12], question="Dharmavaram silk gurinchi cheppu", language="te", history=[], today=datetime(2026, 10, 30, tzinfo=UTC), assistant_name="kallu", business_name="Demo Silks", small=False)
     trusted = " ".join(b.text for b in req.blocks if b.trust.name == "TRUSTED")
     assert "own script (not in Latin letters)" in trusted
+    native = prompts.build_chat_request(delimiter=uuid.uuid4().hex[:12], question="ధర్మవరం పట్టు గురించి చెప్పండి", language="te", history=[], today=datetime(2026, 10, 30, tzinfo=UTC), assistant_name="kallu", business_name="Demo Silks", small=False)
+    assert "own script" not in " ".join(b.text for b in native.blocks if b.trust.name == "TRUSTED"), "a question already in Telugu script needs no reminder"
     english = prompts.build_chat_request(delimiter=uuid.uuid4().hex[:12], question="Tell me about silk", language="en", history=[], today=datetime(2026, 10, 30, tzinfo=UTC), assistant_name="kallu", business_name="Demo Silks", small=False)
     assert "own script" not in " ".join(b.text for b in english.blocks if b.trust.name == "TRUSTED")
