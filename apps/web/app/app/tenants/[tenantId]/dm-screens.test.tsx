@@ -95,7 +95,7 @@ describe("Settings > AI assistant (ASSISTANT_SCREENS)", () => {
     render(await SettingsPage(settingsProps({ section: "assistant" })));
     expect(screen.queryByRole("switch", { name: "Talk about dues" })).toBeNull();
     expect(screen.queryByLabelText("Highest discount it may offer")).toBeNull();
-    expect(screen.getByRole("switch", { name: "Book campus visits" })).toBeInTheDocument();
+    expect(screen.getByRole("switch", { name: "Book campus visits", hidden: true })).toBeInTheDocument(); // (it is in the Behaviour tab, which is hidden until chosen)
   });
 });
 

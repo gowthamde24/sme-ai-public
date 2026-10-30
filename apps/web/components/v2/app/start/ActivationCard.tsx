@@ -34,14 +34,15 @@ export function ActivationCard({ activation, base, t, hide = null, hidden = [] }
                 <span className={`block ${s.state === "done" ? "text-muted line-through" : "font-medium"}`}>{s.title}</span>
                 {s.state === "todo" ? <span className="block text-sm text-muted">{s.hint}</span> : null}
               </span>
-              <span className="text-sm text-muted">{s.state === "done" ? t("start.step.done") : s.state === "unavailable" ? t("start.step.unavailable") : t("start.step.todo")}</span>
+              <span className="order-last basis-full pl-8 text-sm text-muted sm:order-none sm:basis-auto sm:pl-0 sm:whitespace-nowrap">{s.state === "done" ? t("start.step.done") : s.state === "unavailable" ? t("start.step.unavailable") : t("start.step.todo")}</span>
               {s.href && s.state === "todo" ? <ChevronRight className="size-5 shrink-0 text-muted" aria-hidden="true" /> : null}
             </>
           );
-          const cls = "flex min-h-11 w-full items-center gap-3 rounded-lg px-1 py-1 text-left text-base";
+          // narrow screens (owner, 30 Oct): the icon, the title with its hint and the arrow share the first line, the status sits under the title; from `sm` up it is one line as before
+          const cls = "flex min-h-11 w-full flex-wrap items-center gap-x-3 gap-y-0 rounded-lg px-1 py-1 text-left text-base sm:flex-nowrap";
           const away = hidden.includes(s.id);
           return (
-            <li key={s.id} data-step={s.id} data-state={s.state} data-hidden={away ? "true" : undefined} className="flex items-center gap-2">
+            <li key={s.id} data-step={s.id} data-state={s.state} data-hidden={away ? "true" : undefined} className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
               <div className="min-w-0 flex-1">
                 {s.href && s.state === "todo" ? (
                   <Link href={hrefOf(base, s.href)} className={`${cls} hover:bg-surface-2`}>
@@ -53,10 +54,10 @@ export function ActivationCard({ activation, base, t, hide = null, hidden = [] }
                 {away ? <span className="block pl-9 text-sm text-muted">{t("start.hidden")}</span> : null}
               </div>
               {hide && s.state === "todo" ? (
-                <form action={hide}>
+                <form action={hide} className="pl-9 sm:pl-0">
                   <input type="hidden" name="step" value={s.id} />
                   {away ? <input type="hidden" name="do" value="show" /> : null}
-                  <button type="submit" className="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-muted hover:bg-surface-2">
+                  <button type="submit" className="-ml-3 inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-3 text-sm font-semibold text-muted hover:bg-surface-2 sm:ml-0">
                     {away ? t("start.show") : t("start.hide")}
                   </button>
                 </form>

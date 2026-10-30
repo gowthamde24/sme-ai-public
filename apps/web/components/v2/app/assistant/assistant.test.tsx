@@ -1,3 +1,4 @@
+import type * as React from "react";
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -13,16 +14,18 @@ import { AssistantSettings } from "./AssistantSettings";
 
 const raw = (lang: "en" | "te" | "hi" | "kn", modules: string[] | null) => withModuleWords(Object.fromEntries(Object.entries(appDict(lang) as Record<string, string>).filter(([k]) => k.startsWith("asst.") || k === "bv.speaking.in")), modules ? { modules } : null);
 const langs = { te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ", en: "English", ta: "தமிழ்", ml: "മലയാളം" };
-const draw = (over: Partial<{ modules: string[] | null; canEdit: boolean; saved: boolean; save: (i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; samples: { endpoint: string; mock: boolean } | null; voiceInUse: { name: string; label: string } | null; defaultName: string; initialName: string; openingLine: { lines: Record<string, string>; defaults: Record<string, string> }; testCall: () => Promise<TestCallResult> }> = {}) => {
+const openTab = (name: string) => fireEvent.click(screen.getByRole("tab", { name }));
+const draw = (over: Partial<{ modules: string[] | null; canEdit: boolean; saved: boolean; save: (i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; samples: { endpoint: string; mock: boolean } | null; voiceInUse: { name: string; label: string } | null; defaultName: string; initialName: string; openingLine: { lines: Record<string, string>; defaults: Record<string, string> }; testCall: () => Promise<TestCallResult>; extras: React.ComponentProps<typeof AssistantSettings>["extras"] }> = {}) => {
   const modules = over.modules === undefined ? null : over.modules;
   const profile = assistantProfile(modules);
   const save = (over.save ?? vi.fn(async () => ({ ok: true as const }))) as ReturnType<typeof vi.fn> & ((i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>);
-  render(<AssistantSettings words={raw("en", modules)} initial={over.initialName === undefined ? profile.defaults : { ...profile.defaults, name: over.initialName }} profile={profile} shop="Acme Silks" langs={langs} canEdit={over.canEdit ?? true} testMode saved={over.saved ?? false} actions={{ save, ...(over.testCall ? { testCall: over.testCall } : {}) }} samples={over.samples ?? null} voiceInUse={over.voiceInUse ?? null} defaultName={over.defaultName ?? null} openingLine={(over.openingLine as never) ?? null} />);
+  render(<AssistantSettings words={raw("en", modules)} initial={over.initialName === undefined ? profile.defaults : { ...profile.defaults, name: over.initialName }} profile={profile} shop="Acme Silks" langs={langs} canEdit={over.canEdit ?? true} testMode saved={over.saved ?? false} actions={{ save, ...(over.testCall ? { testCall: over.testCall } : {}) }} samples={over.samples ?? null} voiceInUse={over.voiceInUse ?? null} defaultName={over.defaultName ?? null} openingLine={(over.openingLine as never) ?? null} extras={over.extras} />);
   return { save, profile };
 };
 afterEach(() => {
   cleanup();
   refresh.mockClear();
+  window.history.replaceState(null, "", window.location.pathname); // a tab chosen in one test (the address keeps its #) must not open in the next
 });
 
 describe("Settings > AI assistant", () => {
@@ -122,26 +125,78 @@ describe("Settings > AI assistant", () => {
     expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
     expect(save).not.toHaveBeenCalled();
   });
-  it("saves the whole settings, says 'Saved.' and reads the screen again", async () => {
+  it("Basics saves on its own: the name and languages go, the Behaviour fields stay as they were saved (even with unsaved edits there)", async () => {
     const { save } = draw();
     fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "Meera" } });
+    openTab("Behaviour");
+    fireEvent.click(screen.getByRole("switch", { name: "Talk about dues" })); // an unsaved edit in the other tab
+    openTab("Basics");
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(save).toHaveBeenCalledOnce());
+    expect(save.mock.calls[0][0]).toMatchObject({ name: "Meera", may: { dues: false } });
+    expect(await screen.findByRole("status")).toHaveTextContent("Saved.");
+    expect(refresh).toHaveBeenCalled();
+  });
+  it("Behaviour saves on its own: what it may do, the hand-over and the hours go, the name stays as it was saved", async () => {
+    const { save } = draw();
+    fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "Meera" } }); // unsaved, in Basics
+    openTab("Behaviour");
     fireEvent.click(screen.getByRole("switch", { name: "Talk about dues" }));
     fireEvent.change(screen.getByLabelText("Highest discount it may offer"), { target: { value: "5" } });
     fireEvent.click(screen.getByRole("button", { name: "Sat" }));
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(save).toHaveBeenCalledOnce());
-    expect(save.mock.calls[0][0]).toMatchObject({ name: "Meera", may: { dues: true }, maxDiscount: 5, hours: { days: ["mon", "tue", "wed", "thu", "fri"] } });
+    expect(save.mock.calls[0][0]).toMatchObject({ may: { dues: true }, maxDiscount: 5, hours: { days: ["mon", "tue", "wed", "thu", "fri"] } });
+    expect((save.mock.calls[0][0] as { name: string }).name).not.toBe("Meera");
     expect(await screen.findByRole("status")).toHaveTextContent("Saved.");
     expect(refresh).toHaveBeenCalled();
   });
+  it("a workspace that never saved a name cannot save Behaviour first: it says to name the assistant in Basics, and can after that", async () => {
+    const { save } = draw({ initialName: "" });
+    openTab("Behaviour");
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+    expect(document.querySelector('[data-part="needname"]')).not.toBeNull();
+    openTab("Basics");
+    fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "Meera" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(save).toHaveBeenCalledOnce());
+    await screen.findByRole("status");
+    openTab("Behaviour");
+    expect(document.querySelector('[data-part="needname"]')).toBeNull();
+    expect(screen.getByRole("button", { name: "Save" })).not.toBeDisabled();
+  });
+  it("the tabs: Basics first (the preview card is on it), the other parts the page gave, a hash picks one, arrow keys move", () => {
+    draw({ extras: { knowledge: <p>KNOW</p>, pronunciation: <p>PRON</p>, advanced: <p>ADV</p>, behaviour: <p>AUTO</p> } });
+    expect(screen.getAllByRole("tab").map((x) => x.textContent)).toEqual(["Basics", "Knowledge", "Behaviour", "Pronunciation", "Advanced"]);
+    expect(screen.getByRole("tab", { name: "Basics" })).toHaveAttribute("aria-selected", "true");
+    expect(document.querySelector('aside[aria-labelledby="asst-prev-h"]')).not.toBeNull();
+    expect(screen.getByText("KNOW")).not.toBeVisible(); // the other panels stay mounted (what was typed stays) but are hidden
+    expect(screen.getByText("KNOW").parentElement).toHaveClass("hidden"); // (a class, not only the attribute: a display class would otherwise win over `hidden`)
+    openTab("Knowledge");
+    expect(screen.getByText("KNOW")).toBeVisible();
+    expect(window.location.hash).toBe("#knowledge");
+    fireEvent.keyDown(screen.getByRole("tab", { name: "Knowledge" }), { key: "ArrowRight" });
+    expect(screen.getByRole("tab", { name: "Behaviour" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByText("AUTO")).toBeInTheDocument();
+  });
+  it("a deep link (#advanced) opens that tab, and a part with nothing in it has no tab", () => {
+    window.location.hash = "#advanced";
+    draw({ extras: { advanced: <p>ADV</p> } });
+    expect(screen.getAllByRole("tab").map((x) => x.textContent)).toEqual(["Basics", "Behaviour", "Advanced"]);
+    expect(screen.getByRole("tab", { name: "Advanced" })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByText("ADV")).toBeInTheDocument();
+    window.location.hash = "";
+  });
   it("hours that end before they start, or no day, cannot be saved", () => {
     draw();
+    openTab("Behaviour");
     fireEvent.change(screen.getByLabelText("From"), { target: { value: "20:00" } });
     expect(screen.getByRole("alert")).toHaveTextContent("The end must be after the start, and at least one day must be on.");
     expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
   });
   it("a school sees no 'talk about dues', no discount and no order limit; its words are the school's", () => {
     draw({ modules: ["programmes", "fees"] });
+    openTab("Behaviour");
     expect(screen.queryByRole("switch", { name: "Talk about dues" })).toBeNull();
     expect(screen.queryByLabelText("Highest discount it may offer")).toBeNull();
     expect(screen.queryByLabelText("Order above (rupees)")).toBeNull();
@@ -150,6 +205,7 @@ describe("Settings > AI assistant", () => {
   });
   it("building materials books site visits and may talk about dues", () => {
     draw({ modules: ["materials"] });
+    openTab("Behaviour");
     expect(screen.getByRole("switch", { name: "Book site and shop visits" })).toBeInTheDocument();
     expect(screen.getByRole("switch", { name: "Talk about dues" })).toHaveAttribute("aria-checked", "true");
   });
@@ -174,6 +230,7 @@ describe("Settings > AI assistant", () => {
   it("the languages and the days are radio groups and buttons with their state", () => {
     draw();
     expect(screen.getByRole("radio", { name: "తెలుగు" })).toHaveAttribute("aria-checked", "true");
+    openTab("Behaviour");
     expect(screen.getByRole("button", { name: "Mon" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "Sun" })).toHaveAttribute("aria-pressed", "false");
   });
