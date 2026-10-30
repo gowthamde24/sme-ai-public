@@ -74655,5 +74655,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "asst.tabs.label": {
+  "en": "AI assistant sections",
+  "te": "AI అసిస్టెంట్ విభాగాలు",
+  "hi": "AI असिस्टेंट के भाग",
+  "kn": "AI ಅಸಿಸ್ಟೆಂಟ್ ವಿಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tabs.basics": {
+  "en": "Basics",
+  "te": "ప్రాథమికాలు",
+  "hi": "बुनियादी",
+  "kn": "ಮೂಲಭೂತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tabs.knowledge": {
+  "en": "Knowledge",
+  "te": "జ్ఞానం",
+  "hi": "जानकारी",
+  "kn": "ಜ್ಞಾನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tabs.behaviour": {
+  "en": "Behaviour",
+  "te": "ప్రవర్తన",
+  "hi": "व्यवहार",
+  "kn": "ವರ್ತನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tabs.pronunciation": {
+  "en": "Pronunciation",
+  "te": "ఉచ్చారణ",
+  "hi": "उच्चारण",
+  "kn": "ಉಚ್ಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "asst.tabs.advanced": {
+  "en": "Advanced",
+  "te": "అడ్వాన్స్‌డ్",
+  "hi": "उन्नत",
+  "kn": "ಸುಧಾರಿತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
