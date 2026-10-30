@@ -12,8 +12,9 @@ exception when others then return 'ERR:' || sqlstate;
 end $$;
 create function pg_temp.h(p text) returns text language sql immutable as $$ select md5(p) || md5(p || 'x') $$;
 create function pg_temp.ch(p_sql text) returns text language sql as $$ select pg_temp.sc('x6', p_sql) $$;
+-- each message gets its own minute (messages do have distinct times; equal ones would be ordered by id)
 create function pg_temp.inb(p_wamid text, p_from text, p_text text default 'Hello', p_name text default 'Ravi Kumar', p_kind text default 'text') returns text language sql as $$
-  select pg_temp.ch(format($q$select public.wa_ingest_inbound('100000000000001', %L, %L, %L, %L, %L, now(), %L, 1, false)$q$, p_wamid, p_from, p_name, p_kind, p_text, pg_temp.h(p_from))) $$;
+  select pg_temp.ch(format($q$select public.wa_ingest_inbound('100000000000001', %L, %L, %L, %L, %L, now() - make_interval(mins => 100 - %s), %L, 1, false)$q$, p_wamid, p_from, p_name, p_kind, p_text, substr(p_wamid, 8)::int * 10, pg_temp.h(p_from))) $$;
 
 select app.operator_register_channel_agent('X6@test.local');
 select is(pg_temp.sc('a_owner', format($q$select public.whatsapp_account_save(%L, '200000000000001', '100000000000001', '+91 98765 43210', true, 'shop_a')$q$, tests.tid('a'))) like 'ERR:%', false, 'setup: the business has its WhatsApp number');
