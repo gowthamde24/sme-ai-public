@@ -45,6 +45,7 @@ class AssistantDb(AgentDb):
         text: str,
         language: str | None,
         input_sha256: str,
+        light: bool = False,
     ) -> dict[str, Any]:
         return self._rpc(
             "assistant_begin_message",
@@ -56,8 +57,13 @@ class AssistantDb(AgentDb):
                 "p_text": text,
                 "p_language": language,
                 "p_input_sha256": input_sha256,
+                "p_light": light,
             },
         )
+
+    def mark_heavy(self) -> None:
+        """The router called this turn a data or action turn after the run opened as a light one: it counts against the hourly allowance like any other."""
+        self._rpc("assistant_mark_heavy", {"p_run_id": str(self._run)})
 
     def save_reply(
         self,

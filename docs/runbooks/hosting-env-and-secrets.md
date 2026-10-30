@@ -147,7 +147,8 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `WHATSAPP_ACCESS_TOKENS` | secret | api | A JSON object `{token_ref: token}` when workspaces have their own numbers. |
 | `BROWSER_VOICE_ENABLED` | plain | api | Job DV: `true` turns on "talk to your assistant" in the browser (a WebSocket, `/v1/tenants/{id}/voice-chat`). Needs `SARVAM_API_KEY`, `CARTESIA_API_KEY` and, for the default turn model, `ANTHROPIC_API_KEY` + `LLM_MODEL`; a half-set configuration stays off and the log names what is missing. Default off. |
 | `BROWSER_VOICE_SESSION_SECONDS` | plain | api | Hard length of one voice session. Default `300` (Cloud Run's request timeout is also 300 s). |
-| `BROWSER_VOICE_DAY_SECONDS` | plain | api | A workspace's talking time per day, all sessions together. Default `1800`. |
+| `BROWSER_VOICE_DAY_SECONDS` | plain | api | A workspace's live-talk time per day, all sessions together. Default `7200`; staging runs `3600` (one hour a day, owner decision 30 Oct 2026). |
+| `BROWSER_VOICE_STT_MODES` | plain | api | What the speech recogniser writes per language, over the built-in defaults: `te=transcribe,kn=transcribe,en=transcribe,ta=transcribe,hi=verbatim,ml=verbatim`. Empty = the defaults. A language or mode it does not know is ignored. |
 | `BROWSER_VOICE_DAY_TTS_CHARS` | plain | api | Characters a workspace may send to the voice engines per day. Default `6000`. |
 | `BROWSER_VOICE_SESSIONS_PER_MINUTE` | plain | api | Sessions a workspace may open per minute (one runs at a time). Default `6`. |
 | `BROWSER_VOICE_TURN_MODEL` | plain | api | Who answers the short turns: `claude` (default: the model `LLM_MODEL`) or `sarvam` (105b: needs its price row and `LLM_SPEND_CAP_CONFIRMED`, ADR 0102). Questions about the business's data always go to Ask. |

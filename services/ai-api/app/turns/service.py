@@ -120,6 +120,12 @@ def _pending_question(runtime: Runtime, ctx: TenantContext, last: dict[str, Any]
     return task if task.status == "needs_answer" else None
 
 
+def _is_light(text: str) -> bool:
+    """Small talk and general help are LIGHT runs: one model call, no tools, no records. They do not count against the runs-per-hour allowance, so hands-free live talk cannot use it up.
+    Judged on the words alone (the router, without the previous turn); `_dispatch` takes it back when the full decision says the turn reads or changes the business."""
+    return classify(text, None).kind in ("smalltalk", "general")
+
+
 def start_turn(
     runtime: Runtime,
     ctx: TenantContext,
@@ -144,6 +150,7 @@ def start_turn(
             text=body.text,
             language=language,
             input_sha256=_sha({"conversation": str(conversation_id), "message": str(body.message_id), "text": body.text}),
+            light=_is_light(body.text),
         )
     except AgentDbError as exc:
         db.close()
@@ -186,7 +193,7 @@ def start_turn(
 
     def work() -> None:
         try:
-            outcome_box.append(_dispatch(runtime, ctx, body, language, history, last, runner, emit, reply_id))
+            outcome_box.append(_dispatch(runtime, ctx, db, body, language, history, last, runner, emit, reply_id))
         except Exception as exc:   # last resort: only the class is kept; the stream ends with a fixed error
             logger.error("assistant turn %s crashed: %s", run_id, exc.__class__.__name__)
             outcome_box.append(Outcome("failed", "tool_failed"))
@@ -218,6 +225,7 @@ def start_turn(
 def _dispatch(
     runtime: Runtime,
     ctx: TenantContext,
+    db: AssistantDb,
     body: TurnIn,
     language: Language,
     history: list[dict[str, Any]],
@@ -239,6 +247,8 @@ def _dispatch(
             question=body.text, language=language, history=history, emit=emit, message_id=reply_id,
             assistant_name=name, business_name=ctx.tenant.name, small=intent.kind == "smalltalk", owner_notes=runner.owner_notes,
         )
+    if intent.kind in ("business", "action") and _is_light(body.text):
+        db.mark_heavy()   # opened light on its words alone; the full decision (the turn before it, a pending question) says it reads or changes the business
     if intent.kind == "business":
         return runner.run(question=body.text, language=language, history=history[-BUSINESS_HISTORY:], emit=emit, message_id=reply_id)
     return _run_action(runtime, ctx, body, language, pending, runner, emit, reply_id)

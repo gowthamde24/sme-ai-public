@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import httpx
 
@@ -31,6 +31,7 @@ class BrowserVoice:
     ledger: Ledger
     allowed_origins: tuple[str, ...]
     client: httpx.AsyncClient
+    stt_modes: dict[str, str] = field(default_factory=dict)  # what the recogniser writes per language (routes.STT_MODES unless the deployment overrides it)
     fillers: FillerBank | None = None  # the pre-rendered 'one moment' lines per catalogue voice (data/fillers/)
 
     def fast_llm(self) -> StreamingLlm:

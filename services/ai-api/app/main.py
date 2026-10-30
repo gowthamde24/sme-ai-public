@@ -33,6 +33,7 @@ from app.billing.routes import plans_router as billing_plans_router
 from app.billing.routes import router as billing_router
 from app.billing.service import BillingService
 from app.browser_voice.limits import Ledger, Limits
+from app.browser_voice.routes import parse_stt_modes
 from app.browser_voice.routes import router as browser_voice_router
 from app.browser_voice.runtime import BrowserVoice
 from app.browser_voice.store import PostgrestUsageStore
@@ -948,6 +949,7 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         anthropic_key=anthropic or None,
         fast_model=settings.llm_model or "",
         turn_model=model,
+        stt_modes=parse_stt_modes(settings.browser_voice_stt_modes),
         limits=limits,
         ledger=Ledger(limits, PostgrestUsageStore(config.rest_url, config.anon_key)),
         fillers=FillerBank.from_disk(),
