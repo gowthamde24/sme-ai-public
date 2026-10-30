@@ -125,6 +125,8 @@ class ChatReply(BaseModel):
 CHAT_REPLY = ToolSpec("reply", "Give your reply to the owner.", compact_schema(ChatReply.model_json_schema()))
 CHAT_TASK_CLASS = TaskClass.SIMPLE   # small talk and general help are cheap turns: the light model serves them when one is set (ADR 0102 routing)
 CHAT_HISTORY_LINES = 8
+CHAT_TOKENS_EN = 900
+CHAT_TOKENS_INDIAN = 2400
 CHAT_HISTORY_LINE_CHARS = 600
 CHAT_SYSTEM_PROMPT = (
     "You are {assistant}, the AI assistant of {business}, a small Indian business. You are chatting with its OWNER (or an admin, or a salesperson). Be like a smart, warm colleague: natural, short by default, longer only when asked. "
@@ -159,7 +161,7 @@ def build_chat_request(
     small: bool,
     notes: Sequence[str] = (),
     owner_notes: str = "",
-    max_output_tokens: int = 900,
+    max_output_tokens: int | None = None,
 ) -> LlmRequest:
     """One tool-free request (job EA). Our policy is the SYSTEM block; the person's message a TRUSTED line; the earlier lines of the chat and the owner's own notes DATA between the random delimiter."""
     if not re.fullmatch(r"[0-9a-f]{6,64}", delimiter):
@@ -180,7 +182,10 @@ def build_chat_request(
         lines = [f"{h['role']}: {escape_value(str(h['body'])[:CHAT_HISTORY_LINE_CHARS], delimiter)}" for h in history[-CHAT_HISTORY_LINES:]]
         blocks.append(Block(Trust.UNTRUSTED, _block(delimiter, ["earlier in this chat:", *lines])))
     blocks.append(Block(Trust.TRUSTED, f"THE PERSON'S MESSAGE: {question}"))
-    return LlmRequest(blocks=tuple(blocks), tools=(), max_output_tokens=max_output_tokens, task_class=CHAT_TASK_CLASS, final_result=CHAT_REPLY)
+    # Telugu and the other Indian scripts cost several times the tokens of English for the same sentences: a short paragraph in Telugu ran into 900 tokens, the reply tool call was cut off and the owner got the fixed
+    # "could not put that into clear words" sentence (a staging check, 30 Oct 2026). So those languages get a larger budget; the prompt still asks for a short answer.
+    budget = max_output_tokens if max_output_tokens is not None else (CHAT_TOKENS_EN if language == "en" else CHAT_TOKENS_INDIAN)
+    return LlmRequest(blocks=tuple(blocks), tools=(), max_output_tokens=budget, task_class=CHAT_TASK_CLASS, final_result=CHAT_REPLY)
 
 
 NOTES_CLAUSE = (

@@ -76,3 +76,14 @@ def test_a_romanised_question_still_gets_an_answer_in_the_languages_own_script()
     assert "own script" not in " ".join(b.text for b in native.blocks if b.trust.name == "TRUSTED"), "a question already in Telugu script needs no reminder"
     english = prompts.build_chat_request(delimiter=uuid.uuid4().hex[:12], question="Tell me about silk", language="en", history=[], today=datetime(2026, 10, 30, tzinfo=UTC), assistant_name="kallu", business_name="Demo Silks", small=False)
     assert "own script" not in " ".join(b.text for b in english.blocks if b.trust.name == "TRUSTED")
+
+
+def test_telugu_and_the_other_indian_languages_get_a_larger_reply_budget_than_english() -> None:
+    import uuid
+    from datetime import UTC, datetime
+
+    def budget(language: str) -> int:
+        return prompts.build_chat_request(delimiter=uuid.uuid4().hex[:12], question="hi", language=language, history=[], today=datetime(2026, 10, 30, tzinfo=UTC), assistant_name="kallu", business_name="Demo Silks", small=False).max_output_tokens  # type: ignore[arg-type]
+
+    assert budget("en") == prompts.CHAT_TOKENS_EN == 900
+    assert all(budget(lang) == prompts.CHAT_TOKENS_INDIAN >= 2000 for lang in ("te", "hi", "kn", "ta", "ml"))
