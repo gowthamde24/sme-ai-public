@@ -25,7 +25,7 @@ export function GroupTabs({ memberships, labels: given_labels, frame: given }: {
   const label = word(labels, "nav.tabs.label", "Parts of this section");
   return (
     <div data-frame="group-tabs" className="mx-auto w-full max-w-[1200px] px-4 md:px-8 print:hidden">
-      <SectionTabs label={label} items={tabs.map((t) => ({ key: t.id, label: word(labels, `nav.item.${t.id}`, t.label), href: hrefOf(t, current.id), current: t.id === active.item.id || (t.id === "leaddesk" && active.item.id === "leads") }))} />
+      <SectionTabs label={label} items={tabs.map((t) => ({ key: t.id, label: word(labels, `nav.item.${t.id}`, t.label), href: hrefOf(t, current.id), current: t.id === active.item.id }))} />
     </div>
   );
 }

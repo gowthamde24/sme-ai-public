@@ -1,10 +1,10 @@
 // @vitest-environment node
 import fs from "node:fs";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import app from "@/i18n/strings/app.json";
-import { NAV, barItems, coreItem, footItems, visibleGroups, type PackFrame, type Role } from "@/components/v2/app/nav";
+import { NAV, barItems, coreItem, footItems, offered, visibleGroups, type PackFrame, type Role } from "@/components/v2/app/nav";
 
 import { allModules, defaultPackId, otherPackIds, PACKS_DIR, packFiles, workspacePack } from "./pack-test-kit";
 import { packFrame, packWords, phoneBar, withPackT, withPackWords } from "./resolve";
@@ -152,5 +152,21 @@ describe("the web never holds a copy of the packs, and the files are read by ser
   it("is used by no client component (the server turns what a screen needs into plain props)", () => {
     const clients = source.filter((f) => /^\s*["']use client["']/.test(fs.readFileSync(f, "utf8")));
     for (const f of clients) expect(fs.readFileSync(f, "utf8"), path.relative(WEB, f)).not.toMatch(/@\/lib\/packs\/(resolve|signup|read|activation|activation-facts)|@\/lib\/api\/pack"/);
+  });
+});
+
+describe("the first Leads screen and Lead Desk (one list of leads)", () => {
+  afterEach(() => vi.unstubAllEnvs());
+  const customers = (f: PackFrame) => visibleGroups("owner", f).length && NAV.flatMap((g) => g.items).filter((i) => i.id === "leads" && offered(i, f)).length;
+  it("packFrame sends the module lead_desk only while Lead Desk is on, and that hides the first Leads screen from the menu", () => {
+    const pack = workspacePack(defaultPackId());
+    vi.stubEnv("LEADS_SCREENS", "mock");
+    const on = packFrame(pack, "en");
+    expect(on.modules).toContain("lead_desk");
+    expect(customers(on)).toBe(0);
+    vi.stubEnv("LEADS_SCREENS", "off");
+    const off = packFrame(pack, "en");
+    expect(off.modules).not.toContain("lead_desk");
+    expect(customers(off)).toBe(1);
   });
 });

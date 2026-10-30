@@ -39,6 +39,8 @@ export function phoneBar(pack: Pick<WorkspacePack, "coreTab">): "classic" | "cor
 
 /** What the menu needs (a plain object for the client): the modules that are on, the core tab and only the `nav.` words and the core tab's word (the rest travel with the page that uses them). */
 export function packFrame(pack: WorkspacePack, lang: string): PackFrame {
+  const features = enabledFeatures();
   const labels = Object.fromEntries(Object.entries(packWords(pack, lang)).filter(([k]) => k.startsWith("nav.") || k === "pack.core_tab"));
-  return { name: textIn(pack.names, lang), accent: pack.accent, validated: pack.validated, coreTab: pack.coreTab, modules: pack.modules, labels, bar: phoneBar(pack), features: enabledFeatures() };
+  // "lead_desk": Lead Desk is the one list of leads, so the first Leads screen is a Customers tab only without it (nav.ts, `unlessModule`)
+  return { name: textIn(pack.names, lang), accent: pack.accent, validated: pack.validated, coreTab: pack.coreTab, modules: features.includes("leads") ? [...pack.modules, "lead_desk"] : pack.modules, labels, bar: phoneBar(pack), features };
 }

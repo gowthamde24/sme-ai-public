@@ -102,7 +102,7 @@ describe("the seven-item menu (job DQ part 0, owner decision of 26 Oct)", () => 
 });
 
 describe("the parts that need a feature flag (night 4: Lead Desk, Ask your assistant to do it)", () => {
-  const withFeatures = (features: string[]): PackFrame => ({ ...TEXTILES, features });
+  const withFeatures = (features: string[]): PackFrame => ({ ...TEXTILES, features, modules: features.includes("leads") ? [...TEXTILES.modules, "lead_desk"] : TEXTILES.modules }); // what packFrame() sends
   it("are not offered while their flag is off, in any business type", () => {
     for (const [, view] of PACKS) {
       const ids = tabsOf(MENU.find((m) => m.id === "calls")!, "owner", view).map((t) => t.id);
