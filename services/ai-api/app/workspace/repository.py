@@ -30,6 +30,10 @@ class WorkspaceRepository(Protocol):
     def voice_choices(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def set_voice_choice(self, token: str, tenant_id: uuid.UUID, language: str, voice_id: str | None) -> dict[str, Any]: ...
     def set_voice_gender(self, token: str, tenant_id: uuid.UUID, gender: str) -> dict[str, Any]: ...
+    # job pronunciation-quality: the workspace's own pronunciation words
+    def pronunciation_list(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
+    def pronunciation_set(self, token: str, tenant_id: uuid.UUID, word: str, sounds_like: str, language: str | None, message_id: uuid.UUID | None) -> dict[str, Any]: ...
+    def pronunciation_delete(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> bool: ...
 
 
 class PostgrestWorkspaceRepository:
@@ -88,3 +92,15 @@ class PostgrestWorkspaceRepository:
 
     def set_voice_gender(self, token: str, tenant_id: uuid.UUID, gender: str) -> dict[str, Any]:
         return self._rpc.object(token, "call_voice_gender_set", {"p_tenant_id": str(tenant_id), "p_gender": gender})
+
+    def pronunciation_list(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
+        return self._rpc.array(token, "pronunciation_list", {"p_tenant_id": str(tenant_id)})
+
+    def pronunciation_set(self, token: str, tenant_id: uuid.UUID, word: str, sounds_like: str, language: str | None, message_id: uuid.UUID | None) -> dict[str, Any]:
+        return self._rpc.object(
+            token, "pronunciation_set",
+            {"p_tenant_id": str(tenant_id), "p_word": word, "p_sounds_like": sounds_like, "p_language": language, "p_message_id": str(message_id) if message_id else None},
+        )
+
+    def pronunciation_delete(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> bool:
+        return bool(self._rpc.call(token, "pronunciation_delete", {"p_tenant_id": str(tenant_id), "p_id": str(item_id)}))

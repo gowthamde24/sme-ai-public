@@ -24,6 +24,7 @@ ROUTE_WORDS = frozenset(
         # job DT (ADR 0115, 0116): the business profile, pictures, people and the opening line
         "workspace", "logo", "picture", "people", "voice-preview", "opening-line", "mention-ai",
         "resolved",
+        "pronunciation",
         # job voice-picker
         "voice-samples", "voice-chat", "auto-reply", "turns", "actions",
         # job EB: the owner's notes

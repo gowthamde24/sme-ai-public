@@ -58,7 +58,7 @@ def compare_html(clips: list[SpokenClip], usage: dict[str, object]) -> str:
         "<!doctype html><html lang=en><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Stack19 spoken samples</title>",
         "<style>body{font:16px/1.5 system-ui,sans-serif;margin:24px auto;max-width:1100px;padding:0 16px}h2{margin-top:32px;border-bottom:2px solid #c2410c}"
         "table{border-collapse:collapse;width:100%}th,td{padding:6px 8px;border-bottom:1px solid #ddd;vertical-align:top;text-align:left}.t{font-size:18px}small{color:#555}.old{background:#f6f3ef}.new{background:#fff7ed}</style>",
-        "<h1>How Vijaya sounds: the bookish lines vs the everyday spoken lines</h1>",
+        "<h1>How the assistant sounds: the bookish lines vs the everyday spoken lines</h1>",
         "<p>Left, the lines of night 3 (written register). Right, the same lines in everyday spoken language with the English words people use. Telugu follows the owner's approved lines; the other languages are drafts for a native reader. "
         f"Voice <b>{SPOKEN_VOICE}</b> in both; the new lines are a little faster (pace {SPOKEN_PACE}).</p>",
         f"<p><small>Characters sent to the voice service for the new lines: {usage.get('chars_total', 0)} of {SPOKEN_CHAR_CAP}.</small></p>",

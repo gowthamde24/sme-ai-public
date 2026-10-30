@@ -1,0 +1,2751 @@
+{
+ "$comment": "The shared pronunciation lexicon (job pronunciation-quality). `forms`: the word as it is written in the script of each language (Latin for en); `aliases`: other spellings that mean the same; `sounds_like`: a respelling an engine can read, per voice language; `phonemes`: an engine's own phoneme form (Cartesia IPA, pipe-separated), per voice language; `verified`: a native reader or the owner has listened and agreed. DRAFTS until verified. The weekly review (scripts/pronunciation_review_export.py / _import.py) moves entries to verified and corrects them.",
+ "entries": [
+  {
+   "word": "Srikakulam",
+   "kind": "place",
+   "forms": {
+    "en": "Srikakulam",
+    "te": "శ్రీకాకుళం"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Vizianagaram",
+   "kind": "place",
+   "forms": {
+    "en": "Vizianagaram",
+    "te": "విజయనగరం"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Parvathipuram Manyam",
+   "kind": "place",
+   "forms": {
+    "en": "Parvathipuram Manyam",
+    "te": "పార్వతీపురం మన్యం"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Visakhapatnam",
+   "kind": "place",
+   "forms": {
+    "en": "Visakhapatnam",
+    "te": "విశాఖపట్నం",
+    "kn": "ವಿಶಾಖಪಟ್ಟಣಂ",
+    "hi": "विशाखापत्तनम",
+    "ta": "விசாகப்பட்டினம்",
+    "ml": "വിശാഖപട്ടണം"
+   },
+   "aliases": [
+    "Vizag",
+    "Vishakhapatnam",
+    "Waltair"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Alluri Sitharama Raju",
+   "kind": "place",
+   "forms": {
+    "en": "Alluri Sitharama Raju",
+    "te": "అల్లూరి సీతారామరాజు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Anakapalli",
+   "kind": "place",
+   "forms": {
+    "en": "Anakapalli",
+    "te": "అనకాపల్లి"
+   },
+   "aliases": [
+    "Anakapalle"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Kakinada",
+   "kind": "place",
+   "forms": {
+    "en": "Kakinada",
+    "te": "కాకినాడ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "East Godavari",
+   "kind": "place",
+   "forms": {
+    "en": "East Godavari",
+    "te": "తూర్పు గోదావరి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Konaseema",
+   "kind": "place",
+   "forms": {
+    "en": "Konaseema",
+    "te": "కోనసీమ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "West Godavari",
+   "kind": "place",
+   "forms": {
+    "en": "West Godavari",
+    "te": "పశ్చిమ గోదావరి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Eluru",
+   "kind": "place",
+   "forms": {
+    "en": "Eluru",
+    "te": "ఏలూరు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Krishna",
+   "kind": "place",
+   "forms": {
+    "en": "Krishna",
+    "te": "కృష్ణా"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Guntur",
+   "kind": "place",
+   "forms": {
+    "en": "Guntur",
+    "te": "గుంటూరు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Palnadu",
+   "kind": "place",
+   "forms": {
+    "en": "Palnadu",
+    "te": "పల్నాడు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Bapatla",
+   "kind": "place",
+   "forms": {
+    "en": "Bapatla",
+    "te": "బాపట్ల"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Prakasam",
+   "kind": "place",
+   "forms": {
+    "en": "Prakasam",
+    "te": "ప్రకాశం"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Nellore",
+   "kind": "place",
+   "forms": {
+    "en": "Nellore",
+    "te": "నెల్లూరు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Tirupati",
+   "kind": "place",
+   "forms": {
+    "en": "Tirupati",
+    "te": "తిరుపతి",
+    "kn": "ತಿರುಪತಿ",
+    "hi": "तिरुपति",
+    "ta": "திருப்பதி",
+    "ml": "തിരുപ്പതി"
+   },
+   "aliases": [
+    "Tirupathi"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Annamayya",
+   "kind": "place",
+   "forms": {
+    "en": "Annamayya",
+    "te": "అన్నమయ్య"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Chittoor",
+   "kind": "place",
+   "forms": {
+    "en": "Chittoor",
+    "te": "చిత్తూరు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kadapa",
+   "kind": "place",
+   "forms": {
+    "en": "Kadapa",
+    "te": "కడప"
+   },
+   "aliases": [
+    "Cuddapah"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Sri Sathya Sai",
+   "kind": "place",
+   "forms": {
+    "en": "Sri Sathya Sai",
+    "te": "శ్రీ సత్యసాయి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Anantapur",
+   "kind": "place",
+   "forms": {
+    "en": "Anantapur",
+    "te": "అనంతపురం"
+   },
+   "aliases": [
+    "Ananthapuramu",
+    "Ananthapur",
+    "Anantapuram"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Nandyal",
+   "kind": "place",
+   "forms": {
+    "en": "Nandyal",
+    "te": "నంద్యాల"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kurnool",
+   "kind": "place",
+   "forms": {
+    "en": "Kurnool",
+    "te": "కర్నూలు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Dharmavaram",
+   "kind": "place",
+   "forms": {
+    "en": "Dharmavaram",
+    "te": "ధర్మవరం"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Hindupur",
+   "kind": "place",
+   "forms": {
+    "en": "Hindupur",
+    "te": "హిందూపూర్"
+   },
+   "aliases": [
+    "Hindupuram"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Tadipatri",
+   "kind": "place",
+   "forms": {
+    "en": "Tadipatri",
+    "te": "తాడిపత్రి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Guntakal",
+   "kind": "place",
+   "forms": {
+    "en": "Guntakal",
+    "te": "గుంతకల్లు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Proddatur",
+   "kind": "place",
+   "forms": {
+    "en": "Proddatur",
+    "te": "ప్రొద్దుటూరు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Rajahmundry",
+   "kind": "place",
+   "forms": {
+    "en": "Rajahmundry",
+    "te": "రాజమండ్రి"
+   },
+   "aliases": [
+    "Rajamahendravaram"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Vijayawada",
+   "kind": "place",
+   "forms": {
+    "en": "Vijayawada",
+    "te": "విజయవాడ",
+    "kn": "ವಿಜಯವಾಡ",
+    "hi": "विजयवाड़ा",
+    "ta": "விஜயவாடா",
+    "ml": "വിജയവാഡ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Ongole",
+   "kind": "place",
+   "forms": {
+    "en": "Ongole",
+    "te": "ఒంగోలు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Machilipatnam",
+   "kind": "place",
+   "forms": {
+    "en": "Machilipatnam",
+    "te": "మచిలీపట్నం"
+   },
+   "aliases": [
+    "Bandar"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Tenali",
+   "kind": "place",
+   "forms": {
+    "en": "Tenali",
+    "te": "తెనాలి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Chirala",
+   "kind": "place",
+   "forms": {
+    "en": "Chirala",
+    "te": "చీరాల"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Srikalahasti",
+   "kind": "place",
+   "forms": {
+    "en": "Srikalahasti",
+    "te": "శ్రీకాళహస్తి"
+   },
+   "aliases": [
+    "Kalahasti"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Madanapalle",
+   "kind": "place",
+   "forms": {
+    "en": "Madanapalle",
+    "te": "మదనపల్లె"
+   },
+   "aliases": [
+    "Madanapalli"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Adoni",
+   "kind": "place",
+   "forms": {
+    "en": "Adoni",
+    "te": "ఆదోని"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Pochampally",
+   "kind": "place",
+   "forms": {
+    "en": "Pochampally",
+    "te": "పోచంపల్లి"
+   },
+   "aliases": [
+    "Pochampalli",
+    "Pochampalle"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Uppada",
+   "kind": "place",
+   "forms": {
+    "en": "Uppada",
+    "te": "ఉప్పాడ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Venkatagiri",
+   "kind": "place",
+   "forms": {
+    "en": "Venkatagiri",
+    "te": "వెంకటగిరి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Mangalagiri",
+   "kind": "place",
+   "forms": {
+    "en": "Mangalagiri",
+    "te": "మంగళగిరి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Tirumala",
+   "kind": "place",
+   "forms": {
+    "en": "Tirumala",
+    "te": "తిరుమల"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Amaravati",
+   "kind": "place",
+   "forms": {
+    "en": "Amaravati",
+    "te": "అమరావతి"
+   },
+   "aliases": [
+    "Amaravathi"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Narsapur",
+   "kind": "place",
+   "forms": {
+    "en": "Narsapur",
+    "te": "నరసాపురం"
+   },
+   "aliases": [
+    "Narasapuram"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Bhimavaram",
+   "kind": "place",
+   "forms": {
+    "en": "Bhimavaram",
+    "te": "భీమవరం"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Tanuku",
+   "kind": "place",
+   "forms": {
+    "en": "Tanuku",
+    "te": "తణుకు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Gudivada",
+   "kind": "place",
+   "forms": {
+    "en": "Gudivada",
+    "te": "గుడివాడ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Chilakaluripet",
+   "kind": "place",
+   "forms": {
+    "en": "Chilakaluripet",
+    "te": "చిలకలూరిపేట"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Adilabad",
+   "kind": "place",
+   "forms": {
+    "en": "Adilabad",
+    "te": "ఆదిలాబాద్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Bhadradri Kothagudem",
+   "kind": "place",
+   "forms": {
+    "en": "Bhadradri Kothagudem",
+    "te": "భద్రాద్రి కొత్తగూడెం"
+   },
+   "aliases": [
+    "Kothagudem"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Hanumakonda",
+   "kind": "place",
+   "forms": {
+    "en": "Hanumakonda",
+    "te": "హనుమకొండ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Hyderabad",
+   "kind": "place",
+   "forms": {
+    "en": "Hyderabad",
+    "te": "హైదరాబాద్",
+    "kn": "ಹೈದರಾಬಾದ್",
+    "hi": "हैदराबाद",
+    "ta": "ஹைதராபாத்",
+    "ml": "ഹൈദരാബാദ്"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Secunderabad",
+   "kind": "place",
+   "forms": {
+    "en": "Secunderabad",
+    "te": "సికింద్రాబాద్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Jagtial",
+   "kind": "place",
+   "forms": {
+    "en": "Jagtial",
+    "te": "జగిత్యాల"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Jangaon",
+   "kind": "place",
+   "forms": {
+    "en": "Jangaon",
+    "te": "జనగాం"
+   },
+   "aliases": [
+    "Jangaon"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Jayashankar Bhupalpally",
+   "kind": "place",
+   "forms": {
+    "en": "Jayashankar Bhupalpally",
+    "te": "జయశంకర్ భూపాలపల్లి"
+   },
+   "aliases": [
+    "Bhupalpally"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Jogulamba Gadwal",
+   "kind": "place",
+   "forms": {
+    "en": "Jogulamba Gadwal",
+    "te": "జోగులాంబ గద్వాల"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kamareddy",
+   "kind": "place",
+   "forms": {
+    "en": "Kamareddy",
+    "te": "కామారెడ్డి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Karimnagar",
+   "kind": "place",
+   "forms": {
+    "en": "Karimnagar",
+    "te": "కరీంనగర్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Khammam",
+   "kind": "place",
+   "forms": {
+    "en": "Khammam",
+    "te": "ఖమ్మం"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Komaram Bheem Asifabad",
+   "kind": "place",
+   "forms": {
+    "en": "Komaram Bheem Asifabad",
+    "te": "కొమురం భీం ఆసిఫాబాద్"
+   },
+   "aliases": [
+    "Asifabad"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Mahabubabad",
+   "kind": "place",
+   "forms": {
+    "en": "Mahabubabad",
+    "te": "మహబూబాబాద్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Mahabubnagar",
+   "kind": "place",
+   "forms": {
+    "en": "Mahabubnagar",
+    "te": "మహబూబ్‌నగర్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Mancherial",
+   "kind": "place",
+   "forms": {
+    "en": "Mancherial",
+    "te": "మంచిర్యాల"
+   },
+   "aliases": [
+    "Mancherial"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Medak",
+   "kind": "place",
+   "forms": {
+    "en": "Medak",
+    "te": "మెదక్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Medchal",
+   "kind": "place",
+   "forms": {
+    "en": "Medchal",
+    "te": "మేడ్చల్"
+   },
+   "aliases": [
+    "Medchal-Malkajgiri"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Mulugu",
+   "kind": "place",
+   "forms": {
+    "en": "Mulugu",
+    "te": "ములుగు"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Nagarkurnool",
+   "kind": "place",
+   "forms": {
+    "en": "Nagarkurnool",
+    "te": "నాగర్‌కర్నూల్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Nalgonda",
+   "kind": "place",
+   "forms": {
+    "en": "Nalgonda",
+    "te": "నల్గొండ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Narayanpet",
+   "kind": "place",
+   "forms": {
+    "en": "Narayanpet",
+    "te": "నారాయణపేట"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Nirmal",
+   "kind": "place",
+   "forms": {
+    "en": "Nirmal",
+    "te": "నిర్మల్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Nizamabad",
+   "kind": "place",
+   "forms": {
+    "en": "Nizamabad",
+    "te": "నిజామాబాద్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Peddapalli",
+   "kind": "place",
+   "forms": {
+    "en": "Peddapalli",
+    "te": "పెద్దపల్లి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Rajanna Sircilla",
+   "kind": "place",
+   "forms": {
+    "en": "Rajanna Sircilla",
+    "te": "రాజన్న సిరిసిల్ల"
+   },
+   "aliases": [
+    "Sircilla"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Rangareddy",
+   "kind": "place",
+   "forms": {
+    "en": "Rangareddy",
+    "te": "రంగారెడ్డి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Sangareddy",
+   "kind": "place",
+   "forms": {
+    "en": "Sangareddy",
+    "te": "సంగారెడ్డి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Siddipet",
+   "kind": "place",
+   "forms": {
+    "en": "Siddipet",
+    "te": "సిద్దిపేట"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Suryapet",
+   "kind": "place",
+   "forms": {
+    "en": "Suryapet",
+    "te": "సూర్యాపేట"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Vikarabad",
+   "kind": "place",
+   "forms": {
+    "en": "Vikarabad",
+    "te": "వికారాబాద్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Wanaparthy",
+   "kind": "place",
+   "forms": {
+    "en": "Wanaparthy",
+    "te": "వనపర్తి"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Warangal",
+   "kind": "place",
+   "forms": {
+    "en": "Warangal",
+    "te": "వరంగల్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Yadadri Bhuvanagiri",
+   "kind": "place",
+   "forms": {
+    "en": "Yadadri Bhuvanagiri",
+    "te": "యాదాద్రి భువనగిరి"
+   },
+   "aliases": [
+    "Yadadri"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Gadwal",
+   "kind": "place",
+   "forms": {
+    "en": "Gadwal",
+    "te": "గద్వాల"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Bagalkot",
+   "kind": "place",
+   "forms": {
+    "en": "Bagalkot",
+    "kn": "ಬಾಗಲಕೋಟೆ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Ballari",
+   "kind": "place",
+   "forms": {
+    "en": "Ballari",
+    "kn": "ಬಳ್ಳಾರಿ"
+   },
+   "aliases": [
+    "Bellary"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Belagavi",
+   "kind": "place",
+   "forms": {
+    "en": "Belagavi",
+    "kn": "ಬೆಳಗಾವಿ"
+   },
+   "aliases": [
+    "Belgaum"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Bengaluru",
+   "kind": "place",
+   "forms": {
+    "en": "Bengaluru",
+    "kn": "ಬೆಂಗಳೂರು",
+    "te": "బెంగళూరు",
+    "hi": "बेंगलुरु",
+    "ta": "பெங்களூரு",
+    "ml": "ബെംഗളൂരു"
+   },
+   "aliases": [
+    "Bangalore"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Bidar",
+   "kind": "place",
+   "forms": {
+    "en": "Bidar",
+    "kn": "ಬೀದರ್"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Chamarajanagar",
+   "kind": "place",
+   "forms": {
+    "en": "Chamarajanagar",
+    "kn": "ಚಾಮರಾಜನಗರ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Chikkaballapur",
+   "kind": "place",
+   "forms": {
+    "en": "Chikkaballapur",
+    "kn": "ಚಿಕ್ಕಬಳ್ಳಾಪುರ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Chikkamagaluru",
+   "kind": "place",
+   "forms": {
+    "en": "Chikkamagaluru",
+    "kn": "ಚಿಕ್ಕಮಗಳೂರು"
+   },
+   "aliases": [
+    "Chikmagalur"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Chitradurga",
+   "kind": "place",
+   "forms": {
+    "en": "Chitradurga",
+    "kn": "ಚಿತ್ರದುರ್ಗ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Dakshina Kannada",
+   "kind": "place",
+   "forms": {
+    "en": "Dakshina Kannada",
+    "kn": "ದಕ್ಷಿಣ ಕನ್ನಡ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Davanagere",
+   "kind": "place",
+   "forms": {
+    "en": "Davanagere",
+    "kn": "ದಾವಣಗೆರೆ"
+   },
+   "aliases": [
+    "Davangere"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Dharwad",
+   "kind": "place",
+   "forms": {
+    "en": "Dharwad",
+    "kn": "ಧಾರವಾಡ"
+   },
+   "aliases": [
+    "Dharwar"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Gadag",
+   "kind": "place",
+   "forms": {
+    "en": "Gadag",
+    "kn": "ಗದಗ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Hassan",
+   "kind": "place",
+   "forms": {
+    "en": "Hassan",
+    "kn": "ಹಾಸನ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Haveri",
+   "kind": "place",
+   "forms": {
+    "en": "Haveri",
+    "kn": "ಹಾವೇರಿ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kalaburagi",
+   "kind": "place",
+   "forms": {
+    "en": "Kalaburagi",
+    "kn": "ಕಲಬುರಗಿ"
+   },
+   "aliases": [
+    "Gulbarga"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Kodagu",
+   "kind": "place",
+   "forms": {
+    "en": "Kodagu",
+    "kn": "ಕೊಡಗು"
+   },
+   "aliases": [
+    "Coorg"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Kolar",
+   "kind": "place",
+   "forms": {
+    "en": "Kolar",
+    "kn": "ಕೋಲಾರ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Koppal",
+   "kind": "place",
+   "forms": {
+    "en": "Koppal",
+    "kn": "ಕೊಪ್ಪಳ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Mandya",
+   "kind": "place",
+   "forms": {
+    "en": "Mandya",
+    "kn": "ಮಂಡ್ಯ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Mysuru",
+   "kind": "place",
+   "forms": {
+    "en": "Mysuru",
+    "kn": "ಮೈಸೂರು",
+    "te": "మైసూరు",
+    "hi": "मैसूर",
+    "ta": "மைசூர்",
+    "ml": "മൈസൂരു"
+   },
+   "aliases": [
+    "Mysore"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Raichur",
+   "kind": "place",
+   "forms": {
+    "en": "Raichur",
+    "kn": "ರಾಯಚೂರು"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Ramanagara",
+   "kind": "place",
+   "forms": {
+    "en": "Ramanagara",
+    "kn": "ರಾಮನಗರ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Shivamogga",
+   "kind": "place",
+   "forms": {
+    "en": "Shivamogga",
+    "kn": "ಶಿವಮೊಗ್ಗ"
+   },
+   "aliases": [
+    "Shimoga"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Tumakuru",
+   "kind": "place",
+   "forms": {
+    "en": "Tumakuru",
+    "kn": "ತುಮಕೂರು"
+   },
+   "aliases": [
+    "Tumkur"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Udupi",
+   "kind": "place",
+   "forms": {
+    "en": "Udupi",
+    "kn": "ಉಡುಪಿ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Uttara Kannada",
+   "kind": "place",
+   "forms": {
+    "en": "Uttara Kannada",
+    "kn": "ಉತ್ತರ ಕನ್ನಡ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Vijayapura",
+   "kind": "place",
+   "forms": {
+    "en": "Vijayapura",
+    "kn": "ವಿಜಯಪುರ"
+   },
+   "aliases": [
+    "Bijapur"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Yadgir",
+   "kind": "place",
+   "forms": {
+    "en": "Yadgir",
+    "kn": "ಯಾದಗಿರಿ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Vijayanagara",
+   "kind": "place",
+   "forms": {
+    "en": "Vijayanagara",
+    "kn": "ವಿಜಯನಗರ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Hubballi",
+   "kind": "place",
+   "forms": {
+    "en": "Hubballi",
+    "kn": "ಹುಬ್ಬಳ್ಳಿ"
+   },
+   "aliases": [
+    "Hubli"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Mangaluru",
+   "kind": "place",
+   "forms": {
+    "en": "Mangaluru",
+    "kn": "ಮಂಗಳೂರು"
+   },
+   "aliases": [
+    "Mangalore"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Hosapete",
+   "kind": "place",
+   "forms": {
+    "en": "Hosapete",
+    "kn": "ಹೊಸಪೇಟೆ"
+   },
+   "aliases": [
+    "Hospet"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Bhadravati",
+   "kind": "place",
+   "forms": {
+    "en": "Bhadravati",
+    "kn": "ಭದ್ರಾವತಿ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Sagara",
+   "kind": "place",
+   "forms": {
+    "en": "Sagara",
+    "kn": "ಸಾಗರ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Ariyalur",
+   "kind": "place",
+   "forms": {
+    "en": "Ariyalur",
+    "ta": "அரியலூர்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Chengalpattu",
+   "kind": "place",
+   "forms": {
+    "en": "Chengalpattu",
+    "ta": "செங்கல்பட்டு"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Chennai",
+   "kind": "place",
+   "forms": {
+    "en": "Chennai",
+    "ta": "சென்னை",
+    "te": "చెన్నై",
+    "kn": "ಚೆನ್ನೈ",
+    "hi": "चेन्नई",
+    "ml": "ചെന്നൈ"
+   },
+   "aliases": [
+    "Madras"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Coimbatore",
+   "kind": "place",
+   "forms": {
+    "en": "Coimbatore",
+    "ta": "கோயம்புத்தூர்",
+    "te": "కోయంబత్తూరు",
+    "kn": "ಕೊಯಮತ್ತೂರು",
+    "hi": "कोयंबत्तूर",
+    "ml": "കോയമ്പത്തൂർ"
+   },
+   "aliases": [
+    "Kovai"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Cuddalore",
+   "kind": "place",
+   "forms": {
+    "en": "Cuddalore",
+    "ta": "கடலூர்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Dharmapuri",
+   "kind": "place",
+   "forms": {
+    "en": "Dharmapuri",
+    "ta": "தர்மபுரி"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Dindigul",
+   "kind": "place",
+   "forms": {
+    "en": "Dindigul",
+    "ta": "திண்டுக்கல்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Erode",
+   "kind": "place",
+   "forms": {
+    "en": "Erode",
+    "ta": "ஈரோடு"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kallakurichi",
+   "kind": "place",
+   "forms": {
+    "en": "Kallakurichi",
+    "ta": "கள்ளக்குறிச்சி"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kancheepuram",
+   "kind": "place",
+   "forms": {
+    "en": "Kancheepuram",
+    "ta": "காஞ்சிபுரம்"
+   },
+   "aliases": [
+    "Kanchipuram",
+    "Kanchi"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Kanyakumari",
+   "kind": "place",
+   "forms": {
+    "en": "Kanyakumari",
+    "ta": "கன்னியாகுமரி"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Karur",
+   "kind": "place",
+   "forms": {
+    "en": "Karur",
+    "ta": "கரூர்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Krishnagiri",
+   "kind": "place",
+   "forms": {
+    "en": "Krishnagiri",
+    "ta": "கிருஷ்ணகிரி"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Madurai",
+   "kind": "place",
+   "forms": {
+    "en": "Madurai",
+    "ta": "மதுரை",
+    "te": "మదురై",
+    "kn": "ಮಧುರೈ",
+    "hi": "मदुरै",
+    "ml": "മധുര"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Mayiladuthurai",
+   "kind": "place",
+   "forms": {
+    "en": "Mayiladuthurai",
+    "ta": "மயிலாடுதுறை"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Nagapattinam",
+   "kind": "place",
+   "forms": {
+    "en": "Nagapattinam",
+    "ta": "நாகப்பட்டினம்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Namakkal",
+   "kind": "place",
+   "forms": {
+    "en": "Namakkal",
+    "ta": "நாமக்கல்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Nilgiris",
+   "kind": "place",
+   "forms": {
+    "en": "Nilgiris",
+    "ta": "நீலகிரி"
+   },
+   "aliases": [
+    "Ooty"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Perambalur",
+   "kind": "place",
+   "forms": {
+    "en": "Perambalur",
+    "ta": "பெரம்பலூர்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Pudukkottai",
+   "kind": "place",
+   "forms": {
+    "en": "Pudukkottai",
+    "ta": "புதுக்கோட்டை"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Ramanathapuram",
+   "kind": "place",
+   "forms": {
+    "en": "Ramanathapuram",
+    "ta": "ராமநாதபுரம்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Ranipet",
+   "kind": "place",
+   "forms": {
+    "en": "Ranipet",
+    "ta": "ராணிப்பேட்டை"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Salem",
+   "kind": "place",
+   "forms": {
+    "en": "Salem",
+    "ta": "சேலம்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Sivaganga",
+   "kind": "place",
+   "forms": {
+    "en": "Sivaganga",
+    "ta": "சிவகங்கை"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Tenkasi",
+   "kind": "place",
+   "forms": {
+    "en": "Tenkasi",
+    "ta": "தென்காசி"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Thanjavur",
+   "kind": "place",
+   "forms": {
+    "en": "Thanjavur",
+    "ta": "தஞ்சாவூர்"
+   },
+   "aliases": [
+    "Tanjore"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Theni",
+   "kind": "place",
+   "forms": {
+    "en": "Theni",
+    "ta": "தேனி"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Thoothukudi",
+   "kind": "place",
+   "forms": {
+    "en": "Thoothukudi",
+    "ta": "தூத்துக்குடி"
+   },
+   "aliases": [
+    "Tuticorin"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Tiruchirappalli",
+   "kind": "place",
+   "forms": {
+    "en": "Tiruchirappalli",
+    "ta": "திருச்சிராப்பள்ளி"
+   },
+   "aliases": [
+    "Trichy",
+    "Tiruchi"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Tirunelveli",
+   "kind": "place",
+   "forms": {
+    "en": "Tirunelveli",
+    "ta": "திருநெல்வேலி"
+   },
+   "aliases": [
+    "Nellai"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Tirupathur",
+   "kind": "place",
+   "forms": {
+    "en": "Tirupathur",
+    "ta": "திருப்பத்தூர்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Tiruppur",
+   "kind": "place",
+   "forms": {
+    "en": "Tiruppur",
+    "ta": "திருப்பூர்"
+   },
+   "aliases": [
+    "Tirupur"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Tiruvallur",
+   "kind": "place",
+   "forms": {
+    "en": "Tiruvallur",
+    "ta": "திருவள்ளூர்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Tiruvannamalai",
+   "kind": "place",
+   "forms": {
+    "en": "Tiruvannamalai",
+    "ta": "திருவண்ணாமலை"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Tiruvarur",
+   "kind": "place",
+   "forms": {
+    "en": "Tiruvarur",
+    "ta": "திருவாரூர்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Vellore",
+   "kind": "place",
+   "forms": {
+    "en": "Vellore",
+    "ta": "வேலூர்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Viluppuram",
+   "kind": "place",
+   "forms": {
+    "en": "Viluppuram",
+    "ta": "விழுப்புரம்"
+   },
+   "aliases": [
+    "Villupuram"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Virudhunagar",
+   "kind": "place",
+   "forms": {
+    "en": "Virudhunagar",
+    "ta": "விருதுநகர்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Hosur",
+   "kind": "place",
+   "forms": {
+    "en": "Hosur",
+    "ta": "ஓசூர்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kumbakonam",
+   "kind": "place",
+   "forms": {
+    "en": "Kumbakonam",
+    "ta": "கும்பகோணம்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Pollachi",
+   "kind": "place",
+   "forms": {
+    "en": "Pollachi",
+    "ta": "பொள்ளாச்சி"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Rajapalayam",
+   "kind": "place",
+   "forms": {
+    "en": "Rajapalayam",
+    "ta": "ராஜபாளையம்"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Alappuzha",
+   "kind": "place",
+   "forms": {
+    "en": "Alappuzha",
+    "ml": "ആലപ്പുഴ"
+   },
+   "aliases": [
+    "Alleppey"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Ernakulam",
+   "kind": "place",
+   "forms": {
+    "en": "Ernakulam",
+    "ml": "എറണാകുളം"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Idukki",
+   "kind": "place",
+   "forms": {
+    "en": "Idukki",
+    "ml": "ഇടുക്കി"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kannur",
+   "kind": "place",
+   "forms": {
+    "en": "Kannur",
+    "ml": "കണ്ണൂർ"
+   },
+   "aliases": [
+    "Cannanore"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Kasaragod",
+   "kind": "place",
+   "forms": {
+    "en": "Kasaragod",
+    "ml": "കാസർഗോഡ്"
+   },
+   "aliases": [
+    "Kasargod"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Kollam",
+   "kind": "place",
+   "forms": {
+    "en": "Kollam",
+    "ml": "കൊല്ലം"
+   },
+   "aliases": [
+    "Quilon"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Kottayam",
+   "kind": "place",
+   "forms": {
+    "en": "Kottayam",
+    "ml": "കോട്ടയം"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kozhikode",
+   "kind": "place",
+   "forms": {
+    "en": "Kozhikode",
+    "ml": "കോഴിക്കോട്"
+   },
+   "aliases": [
+    "Calicut"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Malappuram",
+   "kind": "place",
+   "forms": {
+    "en": "Malappuram",
+    "ml": "മലപ്പുറം"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Palakkad",
+   "kind": "place",
+   "forms": {
+    "en": "Palakkad",
+    "ml": "പാലക്കാട്"
+   },
+   "aliases": [
+    "Palghat"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Pathanamthitta",
+   "kind": "place",
+   "forms": {
+    "en": "Pathanamthitta",
+    "ml": "പത്തനംതിട്ട"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Thiruvananthapuram",
+   "kind": "place",
+   "forms": {
+    "en": "Thiruvananthapuram",
+    "ml": "തിരുവനന്തപുരം"
+   },
+   "aliases": [
+    "Trivandrum"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Thrissur",
+   "kind": "place",
+   "forms": {
+    "en": "Thrissur",
+    "ml": "തൃശ്ശൂർ"
+   },
+   "aliases": [
+    "Trichur"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Wayanad",
+   "kind": "place",
+   "forms": {
+    "en": "Wayanad",
+    "ml": "വയനാട്"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kochi",
+   "kind": "place",
+   "forms": {
+    "en": "Kochi",
+    "ml": "കൊച്ചി",
+    "te": "కొచ్చి",
+    "kn": "ಕೊಚ್ಚಿ",
+    "hi": "कोच्चि",
+    "ta": "கொச்சி"
+   },
+   "aliases": [
+    "Cochin"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Guruvayur",
+   "kind": "place",
+   "forms": {
+    "en": "Guruvayur",
+    "ml": "ഗുരുവായൂർ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kannada",
+   "kind": "word",
+   "forms": {
+    "en": "Kannada",
+    "te": "కన్నడ",
+    "kn": "ಕನ್ನಡ",
+    "hi": "कन्नड़",
+    "ta": "கன்னடம்",
+    "ml": "കന്നഡ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Telugu",
+   "kind": "word",
+   "forms": {
+    "en": "Telugu",
+    "te": "తెలుగు",
+    "kn": "ತೆಲುಗು",
+    "hi": "तेलुगु",
+    "ta": "தெலுங்கு",
+    "ml": "തെലുങ്ക്"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Tamil",
+   "kind": "word",
+   "forms": {
+    "en": "Tamil",
+    "te": "తమిళం",
+    "kn": "ತಮಿಳು",
+    "hi": "तमिल",
+    "ta": "தமிழ்",
+    "ml": "തമിഴ്"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Malayalam",
+   "kind": "word",
+   "forms": {
+    "en": "Malayalam",
+    "te": "మలయాళం",
+    "kn": "ಮಲಯಾಳಂ",
+    "hi": "मलयालम",
+    "ta": "மலையாளம்",
+    "ml": "മലയാളം"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Hindi",
+   "kind": "word",
+   "forms": {
+    "en": "Hindi",
+    "te": "హిందీ",
+    "kn": "ಹಿಂದಿ",
+    "hi": "हिंदी",
+    "ta": "இந்தி",
+    "ml": "ഹിന്ദി"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "pattu",
+   "kind": "word",
+   "forms": {
+    "en": "pattu",
+    "te": "పట్టు",
+    "kn": "ಪಟ್ಟು",
+    "hi": "पट्टू"
+   },
+   "aliases": [
+    "pattu saree",
+    "patu"
+   ],
+   "verified": false,
+   "sounds_like": {
+    "en": "pah-too"
+   }
+  },
+  {
+   "word": "zari",
+   "kind": "word",
+   "forms": {
+    "en": "zari",
+    "te": "జరీ",
+    "kn": "ಜರಿ",
+    "hi": "ज़री",
+    "ta": "ஜரிகை"
+   },
+   "aliases": [
+    "jari"
+   ],
+   "verified": false,
+   "sounds_like": {
+    "en": "zah-ree"
+   }
+  },
+  {
+   "word": "Kanchipuram silk",
+   "kind": "word",
+   "forms": {
+    "en": "Kanchipuram silk"
+   },
+   "aliases": [
+    "Kanchi pattu"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Banarasi",
+   "kind": "word",
+   "forms": {
+    "en": "Banarasi",
+    "te": "బనారసి",
+    "hi": "बनारसी"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Buh-nah-rah-see"
+   }
+  },
+  {
+   "word": "Mysore silk",
+   "kind": "word",
+   "forms": {
+    "en": "Mysore silk",
+    "kn": "ಮೈಸೂರು ಸಿಲ್ಕ್"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "interlock",
+   "kind": "word",
+   "forms": {
+    "en": "interlock"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "inter-lock"
+   }
+  },
+  {
+   "word": "paver",
+   "kind": "word",
+   "forms": {
+    "en": "paver"
+   },
+   "aliases": [
+    "pavers"
+   ],
+   "verified": false,
+   "sounds_like": {
+    "en": "pay-ver"
+   }
+  },
+  {
+   "word": "M-sand",
+   "kind": "word",
+   "forms": {
+    "en": "M-sand"
+   },
+   "aliases": [
+    "M sand",
+    "msand"
+   ],
+   "verified": false,
+   "sounds_like": {
+    "en": "M sand"
+   }
+  },
+  {
+   "word": "kerb",
+   "kind": "word",
+   "forms": {
+    "en": "kerb"
+   },
+   "aliases": [
+    "curb stone"
+   ],
+   "verified": false,
+   "sounds_like": {
+    "en": "kerb"
+   }
+  },
+  {
+   "word": "admission",
+   "kind": "word",
+   "forms": {
+    "en": "admission"
+   },
+   "aliases": [
+    "admissions"
+   ],
+   "verified": false
+  },
+  {
+   "word": "CBSE",
+   "kind": "word",
+   "forms": {
+    "en": "CBSE"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "C B S E"
+   }
+  },
+  {
+   "word": "ICSE",
+   "kind": "word",
+   "forms": {
+    "en": "ICSE"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "I C S E"
+   }
+  },
+  {
+   "word": "LKG",
+   "kind": "word",
+   "forms": {
+    "en": "LKG"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "L K G"
+   }
+  },
+  {
+   "word": "UKG",
+   "kind": "word",
+   "forms": {
+    "en": "UKG"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "U K G"
+   }
+  },
+  {
+   "word": "Stack19",
+   "kind": "brand",
+   "forms": {
+    "en": "Stack19"
+   },
+   "aliases": [
+    "Stack 19",
+    "Stack-19"
+   ],
+   "verified": false,
+   "sounds_like": {
+    "en": "Stack nineteen"
+   }
+  },
+  {
+   "word": "WhatsApp",
+   "kind": "brand",
+   "forms": {
+    "en": "WhatsApp"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Gowtham",
+   "kind": "name",
+   "forms": {
+    "en": "Gowtham",
+    "te": "గౌతమ్"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Gow-tum"
+   }
+  },
+  {
+   "word": "Ramesh",
+   "kind": "name",
+   "forms": {
+    "en": "Ramesh",
+    "te": "రమేష్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Suresh",
+   "kind": "name",
+   "forms": {
+    "en": "Suresh",
+    "te": "సురేష్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Mahesh",
+   "kind": "name",
+   "forms": {
+    "en": "Mahesh",
+    "te": "మహేష్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Naresh",
+   "kind": "name",
+   "forms": {
+    "en": "Naresh",
+    "te": "నరేష్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Rajesh",
+   "kind": "name",
+   "forms": {
+    "en": "Rajesh",
+    "te": "రాజేష్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Srinivas",
+   "kind": "name",
+   "forms": {
+    "en": "Srinivas",
+    "te": "శ్రీనివాస్"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Shree-nee-vaas"
+   }
+  },
+  {
+   "word": "Venkatesh",
+   "kind": "name",
+   "forms": {
+    "en": "Venkatesh",
+    "te": "వెంకటేష్"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Ven-kuh-tesh"
+   }
+  },
+  {
+   "word": "Venkata",
+   "kind": "name",
+   "forms": {
+    "en": "Venkata",
+    "te": "వెంకట"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Ven-kuh-tuh"
+   }
+  },
+  {
+   "word": "Lakshmi",
+   "kind": "name",
+   "forms": {
+    "en": "Lakshmi",
+    "te": "లక్ష్మి"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Luck-shmee"
+   }
+  },
+  {
+   "word": "Ravi",
+   "kind": "name",
+   "forms": {
+    "en": "Ravi",
+    "te": "రవి"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Rah-vee"
+   }
+  },
+  {
+   "word": "Raju",
+   "kind": "name",
+   "forms": {
+    "en": "Raju",
+    "te": "రాజు"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Rah-joo"
+   }
+  },
+  {
+   "word": "Kiran",
+   "kind": "name",
+   "forms": {
+    "en": "Kiran",
+    "te": "కిరణ్"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Kih-run"
+   }
+  },
+  {
+   "word": "Anil",
+   "kind": "name",
+   "forms": {
+    "en": "Anil",
+    "te": "అనిల్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Sunil",
+   "kind": "name",
+   "forms": {
+    "en": "Sunil",
+    "te": "సునీల్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Vijay",
+   "kind": "name",
+   "forms": {
+    "en": "Vijay",
+    "te": "విజయ్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Priya",
+   "kind": "name",
+   "forms": {
+    "en": "Priya",
+    "te": "ప్రియ"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Pree-yah"
+   }
+  },
+  {
+   "word": "Divya",
+   "kind": "name",
+   "forms": {
+    "en": "Divya",
+    "te": "దివ్య"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Div-yah"
+   }
+  },
+  {
+   "word": "Swathi",
+   "kind": "name",
+   "forms": {
+    "en": "Swathi",
+    "te": "స్వాతి"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Swah-thee"
+   }
+  },
+  {
+   "word": "Sravani",
+   "kind": "name",
+   "forms": {
+    "en": "Sravani",
+    "te": "శ్రావణి"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Shraa-vuh-nee"
+   }
+  },
+  {
+   "word": "Padmavathi",
+   "kind": "name",
+   "forms": {
+    "en": "Padmavathi",
+    "te": "పద్మావతి"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Pud-maa-vuh-thee"
+   }
+  },
+  {
+   "word": "Sai",
+   "kind": "name",
+   "forms": {
+    "en": "Sai",
+    "te": "సాయి"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Sigh"
+   }
+  },
+  {
+   "word": "Prasad",
+   "kind": "name",
+   "forms": {
+    "en": "Prasad",
+    "te": "ప్రసాద్"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Pruh-saad"
+   }
+  },
+  {
+   "word": "Narayana",
+   "kind": "name",
+   "forms": {
+    "en": "Narayana",
+    "te": "నారాయణ"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Naa-raa-yuh-nuh"
+   }
+  },
+  {
+   "word": "Subbarao",
+   "kind": "name",
+   "forms": {
+    "en": "Subbarao",
+    "te": "సుబ్బారావు"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Sub-baa-rao"
+   }
+  },
+  {
+   "word": "Satyanarayana",
+   "kind": "name",
+   "forms": {
+    "en": "Satyanarayana",
+    "te": "సత్యనారాయణ"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Sut-yuh-naa-raa-yuh-nuh"
+   }
+  },
+  {
+   "word": "Chandra",
+   "kind": "name",
+   "forms": {
+    "en": "Chandra",
+    "te": "చంద్ర"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Chun-druh"
+   }
+  },
+  {
+   "word": "Bhaskar",
+   "kind": "name",
+   "forms": {
+    "en": "Bhaskar",
+    "te": "భాస్కర్"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Bhaas-kur"
+   }
+  },
+  {
+   "word": "Harish",
+   "kind": "name",
+   "forms": {
+    "en": "Harish",
+    "te": "హరీష్"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Pavan",
+   "kind": "name",
+   "forms": {
+    "en": "Pavan",
+    "te": "పవన్"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Puh-van"
+   }
+  },
+  {
+   "word": "Teja",
+   "kind": "name",
+   "forms": {
+    "en": "Teja",
+    "te": "తేజ"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Tay-jah"
+   }
+  },
+  {
+   "word": "Anusha",
+   "kind": "name",
+   "forms": {
+    "en": "Anusha",
+    "te": "అనూష"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Uh-noo-shah"
+   }
+  },
+  {
+   "word": "Harika",
+   "kind": "name",
+   "forms": {
+    "en": "Harika",
+    "te": "హారిక"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Haa-ri-kah"
+   }
+  },
+  {
+   "word": "Keerthi",
+   "kind": "name",
+   "forms": {
+    "en": "Keerthi",
+    "te": "కీర్తి"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Keer-thee"
+   }
+  },
+  {
+   "word": "Sandhya",
+   "kind": "name",
+   "forms": {
+    "en": "Sandhya",
+    "te": "సంధ్య"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Sun-dhyah"
+   }
+  },
+  {
+   "word": "Vamsi",
+   "kind": "name",
+   "forms": {
+    "en": "Vamsi",
+    "te": "వంశీ"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Vum-shee"
+   }
+  },
+  {
+   "word": "Madhavi",
+   "kind": "name",
+   "forms": {
+    "en": "Madhavi",
+    "te": "మాధవి"
+   },
+   "aliases": [],
+   "verified": false,
+   "sounds_like": {
+    "en": "Maa-dhuh-vee"
+   }
+  },
+  {
+   "word": "Mumbai",
+   "kind": "place",
+   "forms": {
+    "en": "Mumbai",
+    "te": "ముంబై",
+    "kn": "ಮುಂಬೈ",
+    "hi": "मुंबई",
+    "ta": "மும்பை",
+    "ml": "മുംബൈ"
+   },
+   "aliases": [
+    "Bombay"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Delhi",
+   "kind": "place",
+   "forms": {
+    "en": "Delhi",
+    "te": "ఢిల్లీ",
+    "kn": "ದೆಹಲಿ",
+    "hi": "दिल्ली",
+    "ta": "டெல்லி",
+    "ml": "ഡൽഹി"
+   },
+   "aliases": [
+    "New Delhi"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Pune",
+   "kind": "place",
+   "forms": {
+    "en": "Pune",
+    "te": "పుణె",
+    "kn": "ಪುಣೆ",
+    "hi": "पुणे",
+    "ta": "புனே",
+    "ml": "പൂനെ"
+   },
+   "aliases": [],
+   "verified": false
+  },
+  {
+   "word": "Kolkata",
+   "kind": "place",
+   "forms": {
+    "en": "Kolkata",
+    "te": "కోల్‌కతా",
+    "kn": "ಕೋಲ್ಕತ್ತಾ",
+    "hi": "कोलकाता",
+    "ta": "கொல்கத்தா",
+    "ml": "കൊൽക്കത്ത"
+   },
+   "aliases": [
+    "Calcutta"
+   ],
+   "verified": false
+  },
+  {
+   "word": "Surat",
+   "kind": "place",
+   "forms": {
+    "en": "Surat",
+    "te": "సూరత్",
+    "kn": "ಸೂರತ್",
+    "hi": "सूरत",
+    "ta": "சூரத்",
+    "ml": "സൂറത്ത്"
+   },
+   "aliases": [],
+   "verified": false
+  }
+ ]
+}

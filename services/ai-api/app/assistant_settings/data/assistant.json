@@ -227,7 +227,7 @@
   },
   "defaults": {
     "textiles": {
-      "name": "Vani",
+      "name": "Radha",
       "voice_persona": "female_warm",
       "main_language": "te",
       "auto_switch_language": true,

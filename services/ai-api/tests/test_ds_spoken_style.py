@@ -37,7 +37,7 @@ def test_telugu_is_the_owners_own_approved_text_and_the_rest_are_drafts() -> Non
     assert register.status("te") == "approved"
     assert all(register.status(lang) == "draft" for lang in ("en", *OTHER))
     te = [text for _, text in register.examples("te")]
-    assert te[0] == "నమస్కారం అండీ, నేను విజయ, లక్ష్మి సారీస్ నుంచి AI assistant ని. ఒక్క నిమిషం మాట్లాడొచ్చా?"
+    assert te[0] == "నమస్కారం అండీ, నేను లక్ష్మి సారీస్ నుంచి AI assistant ని. ఒక్క నిమిషం మాట్లాడొచ్చా?"
     assert "రెండు వేల ఆరు వందలండీ" in te[2], "a price is said the way people say it"
     block = register.register_block("hi")
     assert "drafts for native review" in block and "drafts for native review" not in register.register_block("te")

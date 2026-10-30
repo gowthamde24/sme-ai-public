@@ -23,6 +23,8 @@ from app.agents.register import address
 from app.conversation.parts import StreamingTts
 from app.conversation.pronounce import Pronunciations, default_pronunciations
 from app.conversation.voices import VoiceChoice, VoiceConfig
+from app.pronunciation.lexicon import OwnerWord
+from app.pronunciation.speech import SpeechText
 from app.voice.interface import VoiceError
 
 log = logging.getLogger("app.conversation.voice")
@@ -41,7 +43,7 @@ class FallbackTts:
     sample_rate = 24000
 
     def __init__(self, config: VoiceConfig, factory: EngineFactory, *, prewarm_language: str = "te", clock: Callable[[], float] = time.monotonic, chosen: Mapping[str, str] | None = None, gender: str = "female", pronunciations: Pronunciations | None = None) -> None:
-        self._pron = pronunciations or default_pronunciations()  # words respelled before any engine hears them (a workspace passes its own additions)
+        self._speech = SpeechText(pronunciations or default_pronunciations())  # what an engine is given: normalised text, the lexicon (script, a workspace's own words), the English respellings
         self.config, self._factory, self._prewarm_language, self._clock = config, factory, prewarm_language, clock
         self.address_allow: tuple[str, ...] = ()   # the word of address the person chose in their profile (the owner chat); a call or a preview speaks none, whatever the model wrote
         self.gender = gender   # the workspace's voice gender: a chosen voice of the other gender is ignored (the gender's default speaks)
@@ -52,6 +54,10 @@ class FallbackTts:
         self.served_engine = ""  # the engine that spoke the most recent piece: cartesia | sarvam_v4
         self.fallback_reason = ""  # "", "error", "timeout", "cooldown", "mid_stream"
         self.first_audio_ms: float | None = None
+
+    def set_owner_words(self, words: list[OwnerWord]) -> None:
+        """The workspace's own pronunciation words (Settings > Pronunciation): the next piece speaks with them."""
+        self._speech = self._speech.with_owner_words(words)
 
     def set_voices(self, chosen: Mapping[str, str], gender: str) -> None:
         """The workspace's voice settings were read again (between turns): the next piece speaks with them."""
@@ -82,10 +88,11 @@ class FallbackTts:
     # ---- one piece of text ----------------------------------------------------------------------------------------------------------------
 
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
+        tag = language if language in ("en", "te", "hi", "kn", "ta", "ml") else "other"   # what the log says about the language is one of ours, never the caller's string
         text = address.clean(text, self.address_allow)   # the last gate: nothing says sir / madam aloud unless the person asked for it
         voices = self.config.for_language(language, self._chosen.get(language), self.gender)
-        primary_text = self._pron.apply(text, language, voices.primary.engine)
-        fallback_text = self._pron.apply(text, language, voices.fallback.engine)
+        primary_text = self._speech.prepare(text, language, voices.primary.engine)
+        fallback_text = self._speech.prepare(text, language, voices.fallback.engine)
         now = self._clock()
         use_primary = not self._fallback_in_turn and now >= self._skip_primary_until.get(language, 0.0)
         if not use_primary and not self._fallback_in_turn:
@@ -105,7 +112,7 @@ class FallbackTts:
                 raise
             except Exception as err:
                 reason = "error"
-                log.warning("tts_primary_failed engine=%s language=%s code=%s", voices.primary.engine, language, getattr(err, "code", type(err).__name__))
+                log.warning("tts_primary_failed engine=%s language=%s code=%s", voices.primary.engine, tag, getattr(err, "code", type(err).__name__))
             else:
                 self.served_engine = voices.primary.engine
                 self.first_audio_ms = self.first_audio_ms if self.first_audio_ms is not None else (time.perf_counter() - started) * 1000.0
@@ -116,7 +123,7 @@ class FallbackTts:
                 except Exception as err:
                     self._skip_primary_until[language] = self._clock() + self.config.cooldown_s
                     self.fallback_reason = "mid_stream"
-                    log.warning("tts_primary_failed_mid_piece engine=%s language=%s code=%s", voices.primary.engine, language, getattr(err, "code", type(err).__name__))
+                    log.warning("tts_primary_failed_mid_piece engine=%s language=%s code=%s", voices.primary.engine, tag, getattr(err, "code", type(err).__name__))
                 finally:
                     await _close(agen)
                 return
@@ -124,7 +131,7 @@ class FallbackTts:
             self._skip_primary_until[language] = self._clock() + self.config.cooldown_s
             self.fallback_reason = reason
             self._fallback_in_turn = True
-            log.warning("tts_fallback engine=%s language=%s reason=%s timeout_ms=%s", voices.fallback.engine, language, reason, self.config.first_audio_timeout_ms)
+            log.warning("tts_fallback engine=%s language=%s reason=%s timeout_ms=%s", voices.fallback.engine, tag, reason, self.config.first_audio_timeout_ms)
         self._fallback_in_turn = True
         started = time.perf_counter()
         spoke = False
@@ -137,7 +144,7 @@ class FallbackTts:
                 yield chunk
         except Exception as err:
             if spoke:
-                log.warning("tts_fallback_failed_mid_piece engine=%s language=%s code=%s", voices.fallback.engine, language, getattr(err, "code", type(err).__name__))
+                log.warning("tts_fallback_failed_mid_piece engine=%s language=%s code=%s", voices.fallback.engine, tag, getattr(err, "code", type(err).__name__))
                 return
             raise VoiceError("tts_unavailable") from None
         if not spoke:
