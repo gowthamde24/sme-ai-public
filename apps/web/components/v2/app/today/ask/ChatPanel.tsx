@@ -6,9 +6,11 @@ import * as React from "react";
 import { Orb } from "@/components/v2/Orb";
 
 import { makeT } from "../../words";
+import type { VoiceLang } from "@/lib/browser-voice/protocol";
 import type { BrowserVoice } from "./browser-voice";
 import { Drafts, ERROR_WORD, Sources } from "./AskView";
 import { MarkdownLite } from "./MarkdownLite";
+import { Mispronounced } from "./Mispronounced";
 import { MAX_QUESTION } from "./ask-constants";
 import type { AskSession, Exchange } from "./use-ask-session";
 import { archiveHistory, confirmPlan, listHistory, openHistory, type ConversationItem } from "./conversation-api";
@@ -67,7 +69,7 @@ function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: str
   );
 }
 
-function ExchangeView({ x, w, c, onEdit, base, onStatus }: { x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void }) {
+function ExchangeView({ x, w, c, onEdit, base, onStatus, mis }: { mis: { endpoint: string; language: VoiceLang } | null; x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void }) {
   const [copied, setCopied] = React.useState(false);
   const copy = () => {
     void navigator.clipboard?.writeText(x.answer).then(() => setCopied(true), () => undefined);
@@ -91,6 +93,7 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus }: { x: Exchange; w: (k:
             <Copy className="size-3.5" aria-hidden="true" />
             {copied ? c("bv.chat.copied") : c("bv.chat.copy")}
           </button>
+          {mis && x.heardByVoice ? <Mispronounced text={x.answer} language={mis.language} endpoint={mis.endpoint} c={c} /> : null}
           <Sources sources={x.sources} w={w} />
           <Drafts drafts={x.drafts} w={w} />
         </div>
@@ -139,6 +142,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   const input = React.useRef<HTMLInputElement>(null);
   const body = React.useRef<HTMLDivElement>(null);
   const { w } = s;
+  // "Mispronounced?" under spoken messages: the Owner and Admin teach the words through the pronunciation route
+  const mis = voice.pronunciation ? { endpoint: `${s.base}/pronunciation`, language: voice.language } : null;
   const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, plan: s.plan } : null;
   const dictating = dict.state !== "idle";
   const empty = s.earlier.length === 0 && current === null && !talk.live;
@@ -234,9 +239,9 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           {empty ? <p className="text-sm text-muted">{c("bv.chat.empty")}</p> : null}
           <ul data-chat="thread" className="flex flex-col gap-4">
             {s.earlier.map((x, i) => (
-              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} />
+              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} />
             ))}
-            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} /> : null}
+            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} /> : null}
             {talk.state === "listening" && !talk.live?.asked ? (
               <li data-chat="wave" aria-hidden="true" className={`${bubble} flex h-11 items-center gap-1 self-end border border-dashed border-brand-edge bg-surface`}>
                 {["", "[animation-delay:120ms]", "[animation-delay:240ms]", "[animation-delay:360ms]", "[animation-delay:480ms]"].map((delay) => (
@@ -254,6 +259,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
                 {talk.live.answer ? (
                   <div data-chat="assistant-live" className={`${bubble} self-start bg-surface-2`}>
                     <MarkdownLite text={talk.live.answer} />
+                    {mis ? <Mispronounced text={talk.live.answer} language={mis.language} endpoint={mis.endpoint} c={c} /> : null}
                   </div>
                 ) : null}
               </li>
