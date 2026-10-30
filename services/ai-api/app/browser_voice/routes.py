@@ -48,10 +48,26 @@ OWNER_GREETING = {"en": "Hi, how can I help?", "te": "చెప్పండి, 
 OWNER_SILENCE_MS = 900
 
 
-def stt_mode_for(language: str) -> str:
-    """What the recogniser writes (language auto in every case). verbatim = the words as spoken, in the script of the language it detects: the best for te, hi, kn, ta, ml (STT bake-off, 29 Oct 2026). For an ENGLISH session it is
-    transcribe: verbatim wrote English questions in Devanagari (a staging check on 30 Oct) and was the weakest on English (19.5% word errors against 7.3%). Owner decision pending on moving every language to transcribe."""
-    return "transcribe" if language == "en" else "verbatim"
+STT_MODES: dict[str, str] = {"te": "transcribe", "kn": "transcribe", "en": "transcribe", "ta": "transcribe", "hi": "verbatim", "ml": "verbatim"}
+STT_MODE_NAMES = ("transcribe", "verbatim", "translit", "codemix")
+
+
+def parse_stt_modes(text: str) -> dict[str, str]:
+    """`te=transcribe,hi=verbatim` over the defaults (BROWSER_VOICE_STT_MODES): a language or a mode this does not know is ignored, so a typo cannot break the recogniser."""
+    modes = dict(STT_MODES)
+    for part in text.split(","):
+        language, _, mode = part.strip().partition("=")
+        if language.strip() in STT_MODES and mode.strip() in STT_MODE_NAMES:
+            modes[language.strip()] = mode.strip()
+    return modes
+
+
+def stt_mode_for(language: str, modes: dict[str, str] | None = None) -> str:
+    """What the recogniser writes for a session in this language (language detection stays on auto). Config per language, owner decision 30 Oct 2026 from the STT bake-off: transcribe for te, kn, en, ta (te 14.3% word
+    errors against 17%, kn 6.1% against 9%, en 7.3% against 19.5%, and English in Latin letters); verbatim for hi (2.4% against 19%) and ml (16.1% against 22.6%). Override with BROWSER_VOICE_STT_MODES."""
+    return (modes or STT_MODES).get(language, "transcribe")
+
+
 GOAL = "Help a member of the business's own team: answer briefly, and when they ask about the business's own data (prices, stock, customers, leads, orders, dates) say you will check it."
 
 
@@ -107,7 +123,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
     ask = AskLlm(turns, emit)
     llm = TieredLlm(CaptionLlm(bv.fast_llm(), emit), ask, on_ask)
     return Parts(
-        stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language=pin_language or "auto", silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(pin_language or language)),   # any of the six languages in any turn: the recogniser detects it and writes what was said as spoken (verbatim; the bake-off had codemix at 51% word errors on Telugu); the reply follows what was said
+        stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language=pin_language or "auto", silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(pin_language or language, bv.stt_modes)),   # any of the six languages in any turn: the recogniser detects it and writes what was said as spoken (the mode per language, STT_MODES); the reply follows what was said
         tts=tts,
         llm=llm,
         system_for=system_for,
