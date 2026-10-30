@@ -174,7 +174,7 @@ class QuoteWorld:
         """A captured enquiry and a requirement whose lines a person added (saree type, quantity in pieces) and confirmed. Returns (enquiry id, requirement id)."""
         eid = uid()
         r = pg(self.w.stack, self.sales, "POST", "/enquiries", json={"id": eid, "tenant_id": self.t.id, "lead_id": lead_id or self.t.rows["leads"]["id"], "channel": "email",
-               "received_at": "2026-10-05T10:00:00+00:00", "body": f"Synthetic enquiry {eid}"}, representation=False)  # fmt: skip
+               "received_at": "2026-10-05T10:00:00+00:00", "body": "Synthetic enquiry " + eid.translate(str.maketrans("0123456789", "ghijklmnop"))}, representation=False)  # fmt: skip
         assert r.status_code == 201, r.text
         requirement = ""
         for n, (saree, qty) in enumerate(lines, start=1):

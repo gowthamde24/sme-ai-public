@@ -65,7 +65,7 @@ def _enquiry(qw: QuoteWorld) -> str:
 
     eid = uid()
     r = pg(qw.w.stack, qw.owner, "POST", "/enquiries", json={"id": eid, "tenant_id": qw.t.id, "lead_id": qw.t.rows["leads"]["id"], "channel": "email",
-           "received_at": "2026-10-05T10:00:00+00:00", "body": f"Synthetic enquiry {eid}"}, representation=False)  # fmt: skip
+           "received_at": "2026-10-05T10:00:00+00:00", "body": "Synthetic enquiry " + eid.translate(str.maketrans("0123456789", "ghijklmnop"))}, representation=False)  # fmt: skip
     assert r.status_code == 201, r.text
     return eid
 
