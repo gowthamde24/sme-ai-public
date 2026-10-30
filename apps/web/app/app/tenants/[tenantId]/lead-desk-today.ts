@@ -1,5 +1,6 @@
 import type { DeskWorker, NeedsCard, NeedsYouItem, Role, T } from "@/components/v2/app/today/types";
 import { ApiAuthError } from "@/lib/api/client";
+import { leadTitle } from "@/lib/lead-desk/leads";
 import { readDeskLeads } from "@/lib/lead-desk/leads-source";
 import { readBatches, readHandoffs, readItems, readRules } from "@/lib/outreach/source";
 import { SOURCE_TAGS, type BatchAnswer, type BatchItem, type Handoff, type Rule } from "@/lib/outreach/types";
@@ -133,7 +134,7 @@ export async function readLeadDesk(ctx: Ctx, role: Role, base: string, t: T, sou
   const callbacks = manages && parts.batches ? await readCallbacks(ctx, parts.batches, now) : new Map();
   parts.callbacks = callbacks;
   const newest = lead?.leads.length ? [...lead.leads].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))[0] : null;
-  const team = manages && withTeam ? teamOf({ ...parts, lead: leadsScreens() === "off" ? undefined : lead === null ? undefined : newest ? { name: newest.name, source: newest.source, at: newest.createdAt } : null }, t, sourceName) : [];
+  const team = manages && withTeam ? teamOf({ ...parts, lead: leadsScreens() === "off" ? undefined : lead === null ? undefined : newest ? { name: leadTitle(newest.name, newest.phone, t("ld.desk.newenquiry")), source: newest.source, at: newest.createdAt } : null }, t, sourceName) : [];
   return { needs: needsOf(parts, role, base, t, sourceName), team };
 }
 

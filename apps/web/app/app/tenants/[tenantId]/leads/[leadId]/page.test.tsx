@@ -157,7 +157,7 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
   it("shows a short summary and the evidence as text", async () => {
     render(await LeadPage(props()));
     expect(
-      screen.getByRole("heading", { level: 1, name: "Lead" }),
+      screen.getByRole("heading", { level: 1, name: "New enquiry" }),
     ).toBeInTheDocument();
     for (const text of ["Good fit", "DEMO trade fair", "3 Feb 2026", "Added by hand"]) // the status and the origin in words, the day the Indian way
       expect(screen.getAllByText(text).length).toBeGreaterThan(0);
@@ -265,7 +265,7 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
       new ApiRequestError(502, "upstream_error", "x"),
     );
     render(await LeadPage(props()));
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Lead");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("New enquiry");
     expect(screen.getByRole("alert")).toHaveTextContent(
       "Could not load the evidence",
     );
@@ -385,6 +385,6 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
     fetchLeadEnquiries.mockRejectedValue(new ApiRequestError(502, "upstream_error", "x"));
     render(await LeadPage(props()));
     expect(screen.getByRole("alert")).toHaveTextContent(/Could not load the enquiries/);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Lead");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("New enquiry");
   });
 });

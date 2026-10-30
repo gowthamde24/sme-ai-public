@@ -46,7 +46,7 @@ describe("the lead screen, one part at a time", () => {
   it("opens on the overview: the customer's name, Contact this lead first, then what is known, then the enquiries; no evidence, no suggestions", async () => {
     render(await LeadPage(props()));
     expect(current()).toBe("Overview");
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Lead"); // no company name could be read in this test: the plain word
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("New enquiry"); // no company name could be read in this test: the plain words, never an id
     const headings = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
     expect(headings).toEqual(["Contact this lead", "About this lead", "Enquiries"]);
     expect(screen.queryByText("Catalogue says silk")).toBeNull();
