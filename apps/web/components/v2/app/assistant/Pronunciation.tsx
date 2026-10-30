@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
@@ -16,6 +17,7 @@ type Out = { ok: true; entry?: Entry } | { ok: false; error: PronError };
  */
 export function Pronunciation({ words, initial, canEdit, endpoint, previewEndpoint, langNames, defaultLang, businessName, city }: { words?: Words; initial: PronList; canEdit: boolean; endpoint: string; previewEndpoint: string; langNames: Record<CallLang, string>; defaultLang: CallLang; businessName: string; city: string | null }) {
   const t = makeT(words);
+  const router = useRouter();
   const [items, setItems] = React.useState<Entry[]>(initial.items);
   const [word, setWord] = React.useState("");
   const [sound, setSound] = React.useState("");
@@ -31,7 +33,7 @@ export function Pronunciation({ words, initial, canEdit, endpoint, previewEndpoi
     try {
       const r = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       if (r.status === 401) {
-        window.location.assign("/login");
+        router.push("/login");
         return { ok: false, error: "down" };
       }
       return (await r.json()) as Out;
