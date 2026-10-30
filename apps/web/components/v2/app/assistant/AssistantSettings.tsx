@@ -14,9 +14,13 @@ import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, surface } from ".
 import { DEFAULT_ASSISTANT_NAME } from "@/lib/assistant/name";
 import { SAMPLE_CUSTOMER, SAMPLE_ROLE, fillOpening } from "@/lib/opening-line/types";
 import { makeT, type Words } from "../words";
+import { PanelTabs, type Panel } from "./PanelTabs";
 
 export type AssistantActions = { save: (input: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; /** The simulated test call (job DQ part 3); absent = the button is not drawn. */ testCall?: () => Promise<TestCallResult> };
 /** The voice samples (job DQ part 3): where the browser asks for one (our own route), and whether it is the fake sound of the test screens. null = no "Hear it" anywhere. */
+type Part = "basics" | "behaviour";
+/** The fields each form owns. */
+const PART_FIELDS: Record<Part, readonly (keyof Settings)[]> = { basics: ["name", "lang", "autoSwitch", "mixEnglish"], behaviour: ["may", "maxDiscount", "handover", "hours"] };
 export type SampleSource = { endpoint: string; mock: boolean };
 const block = `${surface} flex flex-col gap-4`;
 const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
@@ -37,12 +41,14 @@ function Switch({ on, label, onChange, disabled }: { on: boolean; label: string;
  * may do on calls (and the highest discount), when it hands over to the owner, the calling hours, and on the right a live preview with the circle speaking. It starts from the defaults of the business type (`profile`), so an owner can
  * skip it; nothing is kept until "Save". Only the Owner can change it (`canEdit`). Voice samples and test calls do not exist yet, so "Hear it" is switched off and "Call me now for a test" says so. The words come in as props.
  */
-export function AssistantSettings({ words, initial, profile, shop, langs, canEdit, testMode, saved, actions, samples = null, voiceInUse = null, defaultName = null, openingLine = null }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null; /** The opening line a call speaks, per language (the saved line, else the default by the AI switch): the card shows it instead of an example sentence. */ openingLine?: { lines: Partial<Record<CallLang, string>>; defaults: Record<CallLang, string> } | null }) {
+export function AssistantSettings({ words, initial, profile, shop, langs, canEdit, testMode, saved, actions, samples = null, voiceInUse = null, defaultName = null, openingLine = null, extras = {} }: { words: Words; initial: Settings; profile: AssistantProfile; shop: string; langs: Record<CallLang, string>; canEdit: boolean; testMode: boolean; saved: boolean; actions: AssistantActions; /** The Owner has made a voice of their own (job DP): it can be chosen. */ /** The voice picker's samples (job DQ part 3). */ samples?: SampleSource | null; /** The catalogue voice the workspace speaks in for the main language (Settings > Voice picks it), shown on the preview; null = not known. */ voiceInUse?: { name: string; label: string } | null; /** How the default name reads on the screen ("Your assistant", in the person's language), for a workspace whose owner has not named the assistant. */ defaultName?: string | null; /** The opening line a call speaks, per language (the saved line, else the default by the AI switch): the card shows it instead of an example sentence. */ openingLine?: { lines: Partial<Record<CallLang, string>>; defaults: Record<CallLang, string> } | null; /** The other parts of Settings > AI assistant, drawn by the page, each in its own tab (a part with nothing to show is left out). */ extras?: { basics?: React.ReactNode; knowledge?: React.ReactNode; behaviour?: React.ReactNode; pronunciation?: React.ReactNode; advanced?: React.ReactNode } }) {
   const t = makeT(words);
   const router = useRouter();
   const [s, setS] = React.useState<Settings>(initial);
   const [busy, setBusy] = React.useState(false);
   const [note, setNote] = React.useState<"saved" | "error" | "test" | null>(null);
+  const [notePart, setNotePart] = React.useState<Part>("basics"); // which of the two forms the note belongs to
+  const [lastSaved, setLastSaved] = React.useState<Settings>(initial); // what the server has, as far as this screen knows: a form saves ITS fields on top of it, never the other form's unsaved ones
   const [playing, setPlaying] = React.useState(false);
   const [sampleErr, setSampleErr] = React.useState(false);
   const live = samples !== null && !samples.mock; // the API's own line (the one "Hear it" speaks); the test screens have no API and keep their stand-in
@@ -105,75 +111,53 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
   // what the card says is what "Hear it" speaks: the API's line. Only the test screens (no API) draw a stand-in from the opening-line template
   const template = openingLine ? (openingLine.lines[s.lang] ?? openingLine.defaults[s.lang]) : null;
   const line = live ? (resolved?.lang === s.lang ? resolved.text : null) : template ? fillOpening(template, { customer: SAMPLE_CUSTOMER[s.lang], assistant: shownName, business: shop, agent_role: SAMPLE_ROLE[s.lang] }) : sayLine(s.lang, s.style, nameOnScreen, shop);
-  const ok = parseSettings(s) !== null;
-  return (
-    <div data-settings="assistant" data-assistant-saved={saved ? "true" : "false"} className="@container flex flex-col gap-5">
-      <div>
-        <h2 className="font-display text-2xl font-bold leading-tight">{t("asst.title")}</h2>
-        <p className="mt-1 text-base text-muted">{t("asst.intro")}</p>
-        {testMode ? (
-          <p role="note" className="mt-3 rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-sm font-medium text-amber-text">
-            {t("asst.testmode")}
-          </p>
-        ) : null}
-        {!saved ? <p className="mt-2 text-sm text-muted">{t("asst.defaults")}</p> : null}
-        {!canEdit ? <p className="mt-2 text-sm font-medium">{t("asst.forbidden")}</p> : null}
-      </div>
-      {/* the page keeps a narrow column: the preview stands above the form, and beside it only when the column is wide (a container query, not the screen) */}
-      <div className="flex flex-col gap-5 @5xl:flex-row @5xl:items-start">
-        <form
-          data-write
-          className="flex min-w-0 flex-1 flex-col gap-4"
-          onSubmit={async (e) => {
-            e.preventDefault();
-            if (!canEdit || !ok) return setNote("error");
-            setBusy(true);
-            let done = false;
-            let needsSecondFactor = false;
-            try {
-              const r = await actions.save(s);
-              done = r.ok;
-              needsSecondFactor = !r.ok && r.error === "mfa";
-            } catch {
-              done = false;
-            }
-            setBusy(false);
-            setMfa(needsSecondFactor);
-            setNote(done ? "saved" : "error");
-            if (done) router.refresh();
-          }}
-        >
-          <fieldset disabled={!canEdit || busy} className="contents">
-            <section className={block} aria-labelledby="asst-name-h">
-              <div>
-                <h3 id="asst-name-h" className="text-[17px] font-semibold">{t("asst.name.t")}</h3>
-                <p className="text-sm text-muted">{t("asst.name.d", { name: nameOnScreen, shop })}</p>
-              </div>
-              <label htmlFor="asst-name" className="sr-only">{t("asst.name.label")}</label>
-              <input id="asst-name" value={s.name} maxLength={NAME_MAX} onChange={(e) => set({ name: e.target.value })} placeholder={defaultName ?? DEFAULT_ASSISTANT_NAME} aria-invalid={!nameOk && !nameBlank} aria-describedby={nameOk ? undefined : "asst-name-err"} className={`${fieldInput} max-w-xs`} />
-              {nameBlank && !saved ? <p id="asst-name-err" className="text-sm text-muted">{t("asst.name.need")}</p> : nameOk ? null : (
-                <p id="asst-name-err" role="alert" className="text-sm font-medium text-red-text">
-                  {t("asst.name.err", { n: NAME_MAX })}
-                </p>
-              )}
-            </section>
-
-            <section className={block} aria-labelledby="asst-lang-h">
-              <div>
-                <h3 id="asst-lang-h" className="text-[17px] font-semibold">{t("asst.lang.t")}</h3>
-                <p className="text-sm text-muted">{t("asst.lang.d")}</p>
-              </div>
-              <div role="radiogroup" aria-labelledby="asst-lang-h" className="flex flex-wrap gap-2">
-                {CALL_LANGS.map((l) => (
-                  <button key={l} type="button" role="radio" lang={l} aria-checked={s.lang === l} onClick={() => set({ lang: l })} className={chip(s.lang === l)}>
-                    {langs[l]}
-                  </button>
-                ))}
-              </div>
-              <Switch on={s.autoSwitch} label={t("asst.lang.auto")} onChange={(v) => set({ autoSwitch: v })} disabled={!canEdit || busy} />
-              <Switch on={s.mixEnglish} label={t("asst.lang.mix")} onChange={(v) => set({ mixEnglish: v })} disabled={!canEdit || busy} />
-            </section>
-
+  const payload = (part: Part): Settings => ({ ...lastSaved, ...Object.fromEntries(PART_FIELDS[part].map((k) => [k, s[k]])) }) as Settings;
+  const okBasics = parseSettings(payload("basics")) !== null;
+  const okBehaviour = parseSettings(payload("behaviour")) !== null;
+  const save = async (part: Part) => {
+    const out = payload(part);
+    setNotePart(part);
+    if (!canEdit || parseSettings(out) === null) return setNote("error");
+    setBusy(true);
+    let done = false;
+    let needsSecondFactor = false;
+    try {
+      const r = await actions.save(out);
+      done = r.ok;
+      needsSecondFactor = !r.ok && r.error === "mfa";
+    } catch {
+      done = false;
+    }
+    setBusy(false);
+    setMfa(needsSecondFactor);
+    setNote(done ? "saved" : "error");
+    if (done) {
+      setLastSaved(out);
+      router.refresh();
+    }
+  };
+  const saveRow = (part: Part, ok: boolean) => (
+    <div className="flex flex-wrap items-center gap-3">
+      <button type="submit" disabled={!canEdit || busy || !ok} className={btnMain}>
+        {t("asst.save")}
+      </button>
+      {part === "behaviour" && !validName(lastSaved.name) ? <p className="text-sm text-muted" data-part="needname">{t("asst.behaviour.needname")}</p> : null}
+      {notePart === part && note === "saved" ? <p role="status" className="text-base font-medium text-green-text">{t("asst.saved")}</p> : null}
+      {notePart === part && note === "error" ? <p role="alert" className="text-base font-medium text-red-text">{t(mfa ? "asst.save.mfa" : "asst.save.err")}</p> : null}
+    </div>
+  );
+  const behaviourNode = (
+    <>
+      <form
+        data-write
+        data-part="behaviour-form"
+        className="flex min-w-0 flex-col gap-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void save("behaviour");
+        }}
+      >
+        <fieldset disabled={!canEdit || busy} className="contents">
             <section className={block} aria-labelledby="asst-may-h">
               <h3 id="asst-may-h" className="text-[17px] font-semibold">{t("asst.may.t")}</h3>
               <div>
@@ -240,15 +224,61 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
                 )}
               </div>
             </section>
+        </fieldset>
+        {saveRow("behaviour", okBehaviour)}
+      </form>
+      {extras.behaviour}
+    </>
+  );
+  // the page keeps a narrow column: the preview stands above the form, and beside it only when the column is wide (a container query, not the screen)
+  const basicsNode = (
+      <div className="flex flex-col gap-5 @5xl:flex-row @5xl:items-start">
+        <div className="flex min-w-0 flex-1 flex-col gap-5">
+        <form
+          data-write
+          data-part="basics-form"
+          className="flex min-w-0 flex-col gap-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            void save("basics");
+          }}
+        >
+          <fieldset disabled={!canEdit || busy} className="contents">
+            <section className={block} aria-labelledby="asst-name-h">
+              <div>
+                <h3 id="asst-name-h" className="text-[17px] font-semibold">{t("asst.name.t")}</h3>
+                <p className="text-sm text-muted">{t("asst.name.d", { name: nameOnScreen, shop })}</p>
+              </div>
+              <label htmlFor="asst-name" className="sr-only">{t("asst.name.label")}</label>
+              <input id="asst-name" value={s.name} maxLength={NAME_MAX} onChange={(e) => set({ name: e.target.value })} placeholder={defaultName ?? DEFAULT_ASSISTANT_NAME} aria-invalid={!nameOk && !nameBlank} aria-describedby={nameOk ? undefined : "asst-name-err"} className={`${fieldInput} max-w-xs`} />
+              {nameBlank && !saved ? <p id="asst-name-err" className="text-sm text-muted">{t("asst.name.need")}</p> : nameOk ? null : (
+                <p id="asst-name-err" role="alert" className="text-sm font-medium text-red-text">
+                  {t("asst.name.err", { n: NAME_MAX })}
+                </p>
+              )}
+            </section>
+
+            <section className={block} aria-labelledby="asst-lang-h">
+              <div>
+                <h3 id="asst-lang-h" className="text-[17px] font-semibold">{t("asst.lang.t")}</h3>
+                <p className="text-sm text-muted">{t("asst.lang.d")}</p>
+              </div>
+              <div role="radiogroup" aria-labelledby="asst-lang-h" className="flex flex-wrap gap-2">
+                {CALL_LANGS.map((l) => (
+                  <button key={l} type="button" role="radio" lang={l} aria-checked={s.lang === l} onClick={() => set({ lang: l })} className={chip(s.lang === l)}>
+                    {langs[l]}
+                  </button>
+                ))}
+              </div>
+              <Switch on={s.autoSwitch} label={t("asst.lang.auto")} onChange={(v) => set({ autoSwitch: v })} disabled={!canEdit || busy} />
+              <Switch on={s.mixEnglish} label={t("asst.lang.mix")} onChange={(v) => set({ mixEnglish: v })} disabled={!canEdit || busy} />
+            </section>
+
           </fieldset>
-          <div className="flex flex-wrap items-center gap-3">
-            <button type="submit" disabled={!canEdit || busy || !ok} className={btnMain}>
-              {t("asst.save")}
-            </button>
-            {note === "saved" ? <p role="status" className="text-base font-medium text-green-text">{t("asst.saved")}</p> : null}
-            {note === "error" ? <p role="alert" className="text-base font-medium text-red-text">{t(mfa ? "asst.save.mfa" : "asst.save.err")}</p> : null}
-          </div>
+          {saveRow("basics", okBasics)}
         </form>
+        {extras.basics}
+        </div>
 
         <aside aria-labelledby="asst-prev-h" className="order-first flex flex-col gap-4 rounded-3xl bg-charcoal p-6 text-on-charcoal @5xl:sticky @5xl:top-24 @5xl:order-none @5xl:w-[380px] @5xl:flex-none">
           <h3 id="asst-prev-h" className="text-xs font-bold uppercase tracking-[0.14em] text-brand">{t("asst.preview")}</h3>
@@ -316,6 +346,29 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
           ) : null}
         </aside>
       </div>
+  );
+  // the tabs (owner, 30 Oct): Basics (the preview stays at its top), Knowledge, Behaviour, Pronunciation, Advanced; a tab with nothing in it is left out
+  const sections: Panel[] = [
+    { id: "basics", label: t("asst.tabs.basics"), node: basicsNode },
+    ...(extras.knowledge ? [{ id: "knowledge", label: t("asst.tabs.knowledge"), node: extras.knowledge }] : []),
+    { id: "behaviour", label: t("asst.tabs.behaviour"), node: behaviourNode },
+    ...(extras.pronunciation ? [{ id: "pronunciation", label: t("asst.tabs.pronunciation"), node: extras.pronunciation }] : []),
+    ...(extras.advanced ? [{ id: "advanced", label: t("asst.tabs.advanced"), node: extras.advanced }] : []),
+  ];
+  return (
+    <div data-settings="assistant" data-assistant-saved={saved ? "true" : "false"} className="@container flex flex-col gap-5">
+      <div>
+        <h2 className="font-display text-2xl font-bold leading-tight">{t("asst.title")}</h2>
+        <p className="mt-1 text-base text-muted">{t("asst.intro")}</p>
+        {testMode ? (
+          <p role="note" className="mt-3 rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-sm font-medium text-amber-text">
+            {t("asst.testmode")}
+          </p>
+        ) : null}
+        {!saved ? <p className="mt-2 text-sm text-muted">{t("asst.defaults")}</p> : null}
+        {!canEdit ? <p className="mt-2 text-sm font-medium">{t("asst.forbidden")}</p> : null}
+      </div>
+      <PanelTabs sections={sections} label={t("asst.tabs.label")} />
     </div>
   );
 }

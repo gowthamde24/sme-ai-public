@@ -65,6 +65,7 @@ import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
 import { Pronunciation } from "@/components/v2/app/assistant/LazyPronunciation";
+import { PanelTabs } from "@/components/v2/app/assistant/PanelTabs";
 import { readPronunciation } from "@/lib/pronunciation/source";
 import { readAutoReply } from "@/lib/auto-reply/source";
 import { setAutoReplyAction } from "../auto-reply-actions";
@@ -279,6 +280,114 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     { key: "security", label: t("settings.tab.security") },
     { key: "privacy", label: t("settings.tab.privacy") },
   ];
+  const otherUnavailable = section === "assistant" && (ownVoice?.mode === "unavailable" || callSettings?.mode === "unavailable" || openingLine?.mode === "unavailable" || autoReply?.mode === "unavailable" || pronunciation?.mode === "unavailable" || (about && !about.ok));
+  const assistantExtras = {
+    basics: (
+                    <>
+                    {openingLine?.mode === "ok" ? (
+                      <OpeningLine
+                        words={wordsFor(lang, ["ope."])}
+                        langNames={CALL_LANG_NAMES}
+                        scope={{ kind: "workspace" }}
+                        lines={openingLine.data.lines}
+                        fallback={openingLine.data.defaults}
+                        mentionAi={openingLine.data.mentionAi}
+                        effectiveAi={openingLine.data.mentionAi}
+                        names={{ assistant: (assistant?.mode === "ok" && assistant.settings.name) || currentAssistantName(), business: tenant.name }}
+                        canEdit={tenant.role === "owner"}
+                        mock={openingLineScreens() === "mock"}
+                        actions={{ save: saveOpeningLineAction.bind(null, tenantId), preview: previewOpeningLineAction.bind(null, tenantId) }}
+                      />
+                    ) : null}
+                    {voicePicker?.mode === "ok" ? (
+                      <VoicePicker
+                        gender={voicePicker.data.gender}
+                        words={wordsFor(lang, ["vp."])}
+                        rows={pickerLangs.map((l) => ({ language: l, voices: voicePicker.data.voices.filter((v) => v.language === l), choice: voicePicker.data.choices[l] ?? null }))}
+                        langNames={CALL_LANG_NAMES}
+                        canEdit={admin}
+                        endpoint={`${base}/voice-pick`}
+                        mock={voicePickerScreens() === "mock"}
+                        actions={{ choose: chooseVoiceAction.bind(null, tenantId), setGender: chooseVoiceGenderAction.bind(null, tenantId) }}
+                      />
+                    ) : null}
+                    </>
+                  ),
+                  knowledge: about?.ok ? (
+                    <>
+                    {about?.ok ? (
+                      <AboutBusiness
+                        words={wordsFor(lang, ["ctx."])}
+                        initial={about.data}
+                        endpoint={`${base}/context`}
+                        canEdit={tenant.role === "owner" || tenant.role === "admin"}
+                        lang={lang}
+                        sourcesHref={`${base}/lead-sources`}
+                      />
+                    ) : null}
+                    </>
+                  ) : null,
+                  behaviour: (
+                    <>
+                    {autoReply?.mode === "ok" ? (
+                      <AutoReply
+                        words={wordsFor(lang, ["ar."], ["today.err.mfa.link"])}
+                        initial={autoReply.data}
+                        canEdit={tenant.role === "owner"}
+                        change={setAutoReplyAction.bind(null, tenantId)}
+                        securityHref="/app/security"
+                      />
+                    ) : null}
+                    </>
+                  ),
+                  pronunciation: pronunciation?.mode === "ok" ? (
+                    <>
+                    {pronunciation?.mode === "ok" ? (
+                      <Pronunciation
+                        words={wordsFor(lang, ["pr."])}
+                        initial={pronunciation.data}
+                        canEdit={tenant.role === "owner" || tenant.role === "admin"}
+                        endpoint={`${base}/pronunciation`}
+                        previewEndpoint={`${base}/pronunciation-preview`}
+                        langNames={CALL_LANG_NAMES}
+                        defaultLang={(CALL_LANGS as readonly string[]).includes(lang) ? (lang as CallLang) : "en"}
+                        businessName={tenant.name}
+                        city={businessProfile?.town ?? null}
+                      />
+                    ) : null}
+                    </>
+                  ) : null,
+                  advanced:
+                    ownVoice?.mode === "ok" || callSettings?.mode === "ok" || otherUnavailable ? (
+                      <>
+                      {ownVoice?.mode === "ok" ? (
+                        <OwnVoice
+                          words={wordsFor(lang, ["ov."], ["today.err.mfa", "today.err.mfa.link"])}
+                          voice={ownVoice.voice}
+                          canEdit={tenant.role === "owner"}
+                          endpoint={`${base}/own-voice`}
+                          actions={{ sentence: sentenceAction.bind(null, tenantId), remove: deleteVoiceAction.bind(null, tenantId) }}
+                        />
+                      ) : null}
+                      {callSettings?.mode === "ok" ? (
+                        <CallSettingsAdvanced
+                          words={wordsFor(lang, ["calls."], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link"])}
+                          initial={callSettings.settings}
+                          locked={callSettings.lockedPurposes}
+                          canEdit={tenant.role === "owner"}
+                          mock={callSettingsScreens() === "mock"}
+                          saved={callSettings.saved}
+                          actions={{ save: saveCallSettingsAction.bind(null, tenantId) }}
+                        />
+                      ) : null}
+                      {ownVoice?.mode === "unavailable" || callSettings?.mode === "unavailable" || openingLine?.mode === "unavailable" || autoReply?.mode === "unavailable" || pronunciation?.mode === "unavailable" || (about && !about.ok) ? (
+                        <section className={surface}>
+                          <p className="text-sm text-muted">{t("frame.notyet")}</p>
+                        </section>
+                      ) : null}
+                      </>
+                    ) : null,
+                };
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={t("nav.item.settings")} />
@@ -381,8 +490,20 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 <p className="text-sm text-muted">{t("frame.notyet")}</p>
               </section>
             ) : null}
+            {assistant.mode !== "ok" ? (
+              <PanelTabs
+                label={t("asst.tabs.label")}
+                sections={[
+                  { id: "basics", label: t("asst.tabs.basics"), node: assistantExtras.basics },
+                  ...(assistantExtras.knowledge ? [{ id: "knowledge", label: t("asst.tabs.knowledge"), node: assistantExtras.knowledge }] : []),
+                  { id: "behaviour", label: t("asst.tabs.behaviour"), node: assistantExtras.behaviour },
+                  ...(assistantExtras.pronunciation ? [{ id: "pronunciation", label: t("asst.tabs.pronunciation"), node: assistantExtras.pronunciation }] : []),
+                  ...(assistantExtras.advanced ? [{ id: "advanced", label: t("asst.tabs.advanced"), node: assistantExtras.advanced }] : []),
+                ]}
+              />
+            ) : null}
             {assistant.mode === "ok" ? (
-            <AssistantSettings
+              <AssistantSettings
               words={withModuleWords(wordsFor(lang, ["asst."], ["bv.speaking.in"]), pack)}
               initial={assistant.settings}
               profile={assistantProfile(pack?.modules ?? null)}
@@ -396,91 +517,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               voiceInUse={voicePicker?.mode === "ok" && assistant?.mode === "ok" ? ((v) => (v ? { name: v.name, label: v.label } : null))(inForce(voicePicker.data, assistant.settings.lang as PickerLang)) : null}
               defaultName={withNamedAssistant("{assistant}", DEFAULT_ASSISTANT_NAME, lang)}
               openingLine={openingLine?.mode === "ok" ? { lines: openingLine.data.lines, defaults: openingLine.data.defaults } : null}
-            />
-            ) : null}
-            {about?.ok ? (
-              <AboutBusiness
-                words={wordsFor(lang, ["ctx."])}
-                initial={about.data}
-                endpoint={`${base}/context`}
-                canEdit={tenant.role === "owner" || tenant.role === "admin"}
-                lang={lang}
-                sourcesHref={`${base}/lead-sources`}
+                extras={assistantExtras}
               />
-            ) : null}
-            {autoReply?.mode === "ok" ? (
-              <AutoReply
-                words={wordsFor(lang, ["ar."], ["today.err.mfa.link"])}
-                initial={autoReply.data}
-                canEdit={tenant.role === "owner"}
-                change={setAutoReplyAction.bind(null, tenantId)}
-                securityHref="/app/security"
-              />
-            ) : null}
-            {pronunciation?.mode === "ok" ? (
-              <Pronunciation
-                words={wordsFor(lang, ["pr."])}
-                initial={pronunciation.data}
-                canEdit={tenant.role === "owner" || tenant.role === "admin"}
-                endpoint={`${base}/pronunciation`}
-                previewEndpoint={`${base}/pronunciation-preview`}
-                langNames={CALL_LANG_NAMES}
-                defaultLang={(CALL_LANGS as readonly string[]).includes(lang) ? (lang as CallLang) : "en"}
-                businessName={tenant.name}
-                city={businessProfile?.town ?? null}
-              />
-            ) : null}
-            {openingLine?.mode === "ok" ? (
-              <OpeningLine
-                words={wordsFor(lang, ["ope."])}
-                langNames={CALL_LANG_NAMES}
-                scope={{ kind: "workspace" }}
-                lines={openingLine.data.lines}
-                fallback={openingLine.data.defaults}
-                mentionAi={openingLine.data.mentionAi}
-                effectiveAi={openingLine.data.mentionAi}
-                names={{ assistant: (assistant?.mode === "ok" && assistant.settings.name) || currentAssistantName(), business: tenant.name }}
-                canEdit={tenant.role === "owner"}
-                mock={openingLineScreens() === "mock"}
-                actions={{ save: saveOpeningLineAction.bind(null, tenantId), preview: previewOpeningLineAction.bind(null, tenantId) }}
-              />
-            ) : null}
-            {voicePicker?.mode === "ok" ? (
-              <VoicePicker
-                gender={voicePicker.data.gender}
-                words={wordsFor(lang, ["vp."])}
-                rows={pickerLangs.map((l) => ({ language: l, voices: voicePicker.data.voices.filter((v) => v.language === l), choice: voicePicker.data.choices[l] ?? null }))}
-                langNames={CALL_LANG_NAMES}
-                canEdit={admin}
-                endpoint={`${base}/voice-pick`}
-                mock={voicePickerScreens() === "mock"}
-                actions={{ choose: chooseVoiceAction.bind(null, tenantId), setGender: chooseVoiceGenderAction.bind(null, tenantId) }}
-              />
-            ) : null}
-            {ownVoice?.mode === "ok" ? (
-              <OwnVoice
-                words={wordsFor(lang, ["ov."], ["today.err.mfa", "today.err.mfa.link"])}
-                voice={ownVoice.voice}
-                canEdit={tenant.role === "owner"}
-                endpoint={`${base}/own-voice`}
-                actions={{ sentence: sentenceAction.bind(null, tenantId), remove: deleteVoiceAction.bind(null, tenantId) }}
-              />
-            ) : null}
-            {callSettings?.mode === "ok" ? (
-              <CallSettingsAdvanced
-                words={wordsFor(lang, ["calls."], ["asst.hours.from", "asst.hours.to", "asst.hours.t", ...["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => `asst.day.${d}`), "today.err.mfa", "today.err.mfa.link"])}
-                initial={callSettings.settings}
-                locked={callSettings.lockedPurposes}
-                canEdit={tenant.role === "owner"}
-                mock={callSettingsScreens() === "mock"}
-                saved={callSettings.saved}
-                actions={{ save: saveCallSettingsAction.bind(null, tenantId) }}
-              />
-            ) : null}
-            {ownVoice?.mode === "unavailable" || callSettings?.mode === "unavailable" || openingLine?.mode === "unavailable" || autoReply?.mode === "unavailable" || pronunciation?.mode === "unavailable" || (about && !about.ok) ? (
-              <section className={surface}>
-                <p className="text-sm text-muted">{t("frame.notyet")}</p>
-              </section>
             ) : null}
           </>
         ) : null}
