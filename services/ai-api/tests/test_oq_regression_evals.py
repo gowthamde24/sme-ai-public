@@ -119,7 +119,7 @@ def recogniser_mode(language: str, mode: str) -> None:
 
 
 def small_talk_is_light(text: str, light: bool) -> None:
-    from app.turns.service import _is_light   # (the live-talk budget, #229)
+    from app.turns.service import _is_light  # (the live-talk budget, #229)
 
     assert _is_light(text) is light
 
