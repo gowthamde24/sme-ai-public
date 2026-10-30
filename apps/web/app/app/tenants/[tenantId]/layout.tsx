@@ -21,7 +21,7 @@ import { fetchTenant, publicApiBase } from "@/lib/api/client";
 import { isVoiceLang, voiceSocketUrl, VOICE_LANGS } from "@/lib/browser-voice/protocol";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
 import { requireUser } from "@/lib/auth/session";
-import { browserVoice, guidedDemo, taskScreens } from "@/lib/screens/flag";
+import { browserVoice, guidedDemo, pronunciationScreens, taskScreens } from "@/lib/screens/flag";
 import { readIsDemo } from "./today-read";
 import { routesFor } from "@/lib/guided-demo/script";
 import { GuidedDemo } from "@/components/v2/app/guided-demo/LazyGuidedDemo";
@@ -63,7 +63,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales)
   const url = browserVoice() && isCanonicalUuid(tenantId) ? voiceSocketUrl(publicApiBase(), tenantId) : null;
   const voice = url && (await mayTalk(user.accessToken, tenantId))
-    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv."))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token` }
+    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv."))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)) }
     : null;
   const topupBanner = isCanonicalUuid(tenantId) ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
   return (

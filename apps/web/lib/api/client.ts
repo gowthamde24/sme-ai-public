@@ -381,12 +381,13 @@ export async function apiDownloadRequest(path: string, accessToken: string, body
   return { bytes: await response.arrayBuffer(), contentType: response.headers.get("Content-Type") ?? "application/octet-stream", filename: suggestedFilename(response.headers.get("Content-Disposition")), headers };
 }
 
-/** A GET whose good answer is a SOUND or another small file, as bytes (job DQ part 3: a voice sample). The status is judged first; an answer longer than `max` bytes is refused. */
-export async function apiBinaryRequest(path: string, accessToken: string, max: number): Promise<{ bytes: ArrayBuffer; contentType: string; voiceId?: string | null }> {
+/** A GET (or, with `post`, a POST) whose good answer is a SOUND or another small file, as bytes (job DQ part 3: a voice sample). The status is judged first; an answer longer than `max` bytes is refused. */
+export async function apiBinaryRequest(path: string, accessToken: string, max: number, post?: { body: unknown }): Promise<{ bytes: ArrayBuffer; contentType: string; voiceId?: string | null }> {
   const base = apiBaseUrl();
   let response: Response;
   try {
-    response = await fetch(`${base}${path}`, { cache: "no-store", headers: { Authorization: `Bearer ${accessToken}` } });
+    // `post`: the sound comes from a POST with a JSON body (a pronunciation preview: nothing is saved)
+    response = await fetch(`${base}${path}`, { cache: "no-store", ...(post ? { method: "POST", body: JSON.stringify(post.body) } : {}), headers: { Authorization: `Bearer ${accessToken}`, ...(post ? { "Content-Type": "application/json" } : {}) } });
   } catch {
     throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
   }
