@@ -10,6 +10,8 @@ export interface MyProfile {
   language: string | null;
   picture: PictureKind;
   pictureUrl: string | null;
+  /** "How should I address you?" (C1, 30 Oct): a word or two, at most 30 characters; "" = not set. `undefined` = this API does not have the field yet (the screen then does not draw it and never sends it). */
+  addressAs?: string;
 }
 export interface Person {
   userId: string;
@@ -27,7 +29,7 @@ const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "obj
 
 export function parseMyProfile(json: unknown): MyProfile {
   if (!isRecord(json) || !KINDS.includes(json.picture)) return bad("body");
-  return { displayName: maybe(json.display_name, "display_name", 200), language: maybe(json.language, "language", 8), picture: json.picture as PictureKind, pictureUrl: maybe(json.picture_url, "picture_url", 4000) };
+  return { displayName: maybe(json.display_name, "display_name", 200), language: maybe(json.language, "language", 8), picture: json.picture as PictureKind, pictureUrl: maybe(json.picture_url, "picture_url", 4000), ...("address_as" in json ? { addressAs: maybe(json.address_as, "address_as", 30) ?? "" } : {}) };
 }
 
 export function parsePeople(json: unknown): Person[] {
@@ -44,7 +46,7 @@ export async function getMyProfile(accessToken: string, tenantId: string): Promi
   return parseMyProfile(await apiRequest(path(tenantId, "me/profile"), accessToken));
 }
 
-export async function patchMyProfile(accessToken: string, tenantId: string, patch: { display_name?: string; language?: string }): Promise<MyProfile> {
+export async function patchMyProfile(accessToken: string, tenantId: string, patch: { display_name?: string; language?: string; address_as?: string }): Promise<MyProfile> {
   return parseMyProfile(await apiRequest(path(tenantId, "me/profile"), accessToken, { method: "PATCH", body: JSON.stringify(patch) }));
 }
 
