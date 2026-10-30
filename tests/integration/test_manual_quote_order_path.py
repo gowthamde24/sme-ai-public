@@ -37,7 +37,7 @@ def h(user: Any) -> dict[str, str]:
 def enquiry(ow: OrderWorld) -> str:
     eid = uid()
     r = pg(ow.w.stack, ow.qw.sales, "POST", "/enquiries", json={"id": eid, "tenant_id": ow.t.id, "lead_id": ow.t.rows["leads"]["id"], "channel": "email",
-           "received_at": "2026-10-05T10:00:00+00:00", "body": f"Synthetic enquiry {eid}"}, representation=False)  # fmt: skip
+           "received_at": "2026-10-05T10:00:00+00:00", "body": "Synthetic enquiry " + eid.translate(str.maketrans("0123456789", "ghijklmnop"))}, representation=False)  # fmt: skip
     assert r.status_code == 201, r.text
     return eid
 
