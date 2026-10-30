@@ -246,6 +246,12 @@
           },
           "title": "Tags",
           "type": "array"
+        },
+        "display_name": {
+          "description": "A company made from an id (\"WhatsApp customer 84407a\") reads \"New enquiry\".",
+          "readOnly": true,
+          "title": "Display Name",
+          "type": "string"
         }
       },
       "required": [
@@ -263,7 +269,8 @@
         "region",
         "city",
         "industry",
-        "tags"
+        "tags",
+        "display_name"
       ],
       "title": "CompanyOut",
       "type": "object"
@@ -666,6 +673,11 @@
               "type": "null"
             }
           ]
+        },
+        "display_name": {
+          "readOnly": true,
+          "title": "Display Name",
+          "type": "string"
         }
       },
       "required": [
@@ -684,7 +696,8 @@
         "whatsapp_consent",
         "phone_consent",
         "suppressed_at",
-        "suppression_reason"
+        "suppression_reason",
+        "display_name"
       ],
       "title": "ContactOut",
       "type": "object"
@@ -988,6 +1001,12 @@
           "default": false,
           "title": "Is New",
           "type": "boolean"
+        },
+        "display_name": {
+          "description": "The name to show: the person's, else their phone, else \"New enquiry\" (never an id).",
+          "readOnly": true,
+          "title": "Display Name",
+          "type": "string"
         }
       },
       "required": [
@@ -1002,7 +1021,8 @@
         "owner_user_id",
         "status",
         "source",
-        "disqualified_reason"
+        "disqualified_reason",
+        "display_name"
       ],
       "title": "LeadOut",
       "type": "object"
