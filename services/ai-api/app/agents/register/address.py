@@ -46,11 +46,12 @@ def address_rule(language: str = "en") -> str:
     )
 
 
-def address_clause(language: str, address_as: str = "") -> str:
-    """The prompt lines about addressing: the rule, and (only when the person chose one in their profile) the word they asked for. The word is their own typing, so it is cut to letters and quoted."""
+def address_clause(language: str, address_as: str = "", *, rule: bool = True) -> str:
+    """The prompt lines about addressing: the rule, and (only when the person chose one in their profile) the word they asked for. The word is their own typing, so it is cut to letters and quoted. `rule=False` leaves the
+    rule out (the records path, whose prompt is held to a token ceiling, tests/integration/test_assistant_tokens.py: there the gate on the reply is what keeps sir and madam out)."""
     chosen = re.sub(r"[^\w .'-]", "", address_as or "", flags=re.UNICODE).strip()[:30]
-    rule = address_rule(language)
-    return f"{rule} This person asked to be addressed as \"{chosen}\": use exactly that when you address them." if chosen else rule
+    lead = address_rule(language) if rule else ""
+    return f"{lead} This person asked to be addressed as \"{chosen}\": use exactly that when you address them.".strip() if chosen else lead
 
 
 def gendered_words(text: str, allow: tuple[str, ...] = ()) -> list[str]:

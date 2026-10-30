@@ -307,7 +307,7 @@ def build_request(
         ),
         Block(
             Trust.TRUSTED,
-            f"Turn {turn}. {hint} Today (India) is {today.date().isoformat()}. Reply in {LANGUAGE_NAMES[language]} ({language}). {address_clause(language, address_as)}",
+            f"Turn {turn}. {hint} Today (India) is {today.date().isoformat()}. Reply in {LANGUAGE_NAMES[language]} ({language}). {address_clause(language, address_as, rule=False)}",
         ),
     ]
     if notes:
