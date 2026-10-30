@@ -8,6 +8,7 @@ from __future__ import annotations
 import ast
 import asyncio
 import json
+import re
 from collections.abc import AsyncIterator
 from pathlib import Path
 
@@ -25,14 +26,32 @@ CASES = [json.loads(line) for line in (Path(__file__).resolve().parents[3] / "te
 ABOUT_THE_WORDS = {"agents/register/address.py", "lead_profile/rules.py", "autoreply/rules.py"}
 
 
+# an instruction that NAMES the words in order to forbid them is not a line the assistant says
+_FORBIDDING = ("Do not use 'ಸರ್'", "never call anyone sir", "ADDRESSING PEOPLE", "never a word that names a gender")
+
+
 def _strings(path: Path) -> list[str]:
-    """The text a file ships: a data file whole; a Python file's string values (not its docstrings or comments, which may talk ABOUT the words)."""
+    """The text a file ships: the string values of a data file or a Python file (not docstrings or comments, which may talk ABOUT the words); a Markdown file's numbered and bulleted example lines."""
     text = path.read_text(encoding="utf-8")
-    if path.suffix != ".py":
-        return [text]
-    tree = ast.parse(text)
-    docstrings = {id(node.body[0].value) for node in ast.walk(tree) if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and node.body and isinstance(node.body[0], ast.Expr) and isinstance(node.body[0].value, ast.Constant)}
-    return [n.value for n in ast.walk(tree) if isinstance(n, ast.Constant) and isinstance(n.value, str) and id(n) not in docstrings]
+    if path.suffix == ".md":
+        found = [m.group(1) for line in text.splitlines() if (m := re.match(r"^\s*(?:\d+\.|-)\s+(.+)$", line))]
+    elif path.suffix == ".json":
+        found = [n for n in _json_strings(json.loads(text))]
+    else:
+        tree = ast.parse(text)
+        docstrings = {id(node.body[0].value) for node in ast.walk(tree) if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and node.body and isinstance(node.body[0], ast.Expr) and isinstance(node.body[0].value, ast.Constant)}
+        found = [n.value for n in ast.walk(tree) if isinstance(n, ast.Constant) and isinstance(n.value, str) and id(n) not in docstrings]
+    return [t for t in found if not any(marker in t for marker in _FORBIDDING)]
+
+
+def _json_strings(node: object) -> list[str]:
+    if isinstance(node, str):
+        return [node]
+    if isinstance(node, dict):
+        return [s for v in node.values() for s in _json_strings(v)]
+    if isinstance(node, list):
+        return [s for v in node for s in _json_strings(v)]
+    return []
 
 
 def test_no_line_the_product_ships_says_sir_or_madam() -> None:
