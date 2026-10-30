@@ -149,7 +149,7 @@ try {
   const youText = await lc.locator('[data-chat="you"]').allTextContents();
   ok("the typed message and the spoken turn are in ONE thread", turns >= 2 && youText[0].includes("price of silk"), youText.join(" | ").slice(0, 150));
   await shot(ls, `dl-${pack}-${size}-${lang}-5-live-thread`);
-  await lc.locator('[data-chat="live-talk"]').click(); // Stop
+  if ((await lc.locator('[data-chat="live-badge"]').count()) > 0) await lc.locator('[data-chat="live-talk"]').click(); // Stop (when the API has not already ended it after 30 s of silence: a click then would start Live again)
   await sleep(1500);
   ok("Stop ends it (the Live indicator is gone)", (await lc.locator('[data-chat="live-badge"]').count()) === 0);
   ok("live: no page errors", ls.errors.length === 0, ls.errors.slice(0, 2).join(" | "));

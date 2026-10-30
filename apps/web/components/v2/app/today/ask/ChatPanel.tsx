@@ -16,6 +16,7 @@ import type { AskSession, Exchange } from "./use-ask-session";
 import { archiveHistory, confirmPlan, listHistory, openHistory, type ConversationItem } from "./conversation-api";
 import { usePanelVoice, type PanelVoiceOptions } from "./use-panel-voice";
 import { useDictation } from "./use-dictation";
+import { useKeyboardInset } from "./use-keyboard-inset";
 import type { ConfirmAction } from "@/lib/api/turns";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -139,7 +140,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     if (await archiveHistory(s.base, id)) setItems((list) => (Array.isArray(list) ? list.filter((x) => x.id !== id) : list));
   };
   const box = React.useRef<HTMLDivElement>(null);
-  const input = React.useRef<HTMLInputElement>(null);
+  const input = React.useRef<HTMLTextAreaElement>(null);
   const body = React.useRef<HTMLDivElement>(null);
   const { w } = s;
   // "Mispronounced?" under spoken messages: the Owner and Admin teach the words through the pronunciation route
@@ -154,6 +155,18 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     const el = body.current; // the thread scrolls inside its own box (scrollIntoView would move the whole page when the chat sits in a card)
     if (el) el.scrollTop = el.scrollHeight;
   }, [s.earlier.length, s.answer, talk.live?.answer, talk.live?.asked, talk.state]);
+  // the box grows with what is typed (one line when empty, about five at most, then it scrolls inside) and shrinks again after Send
+  React.useLayoutEffect(() => {
+    const el = input.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = s.text === "" ? "" : `${el.scrollHeight}px`; // empty = one line, whatever the length of the placeholder; the class max-h caps the rest
+  }, [s.text]);
+  // on a phone the keyboard covers the bottom of the page: the panel sits above it, and the thread keeps its last message in view
+  useKeyboardInset(box, variant === "panel", () => {
+    const el = body.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  });
   /** The state of a plan changed (the owner said yes or no, or it expired): the plan on screen and any earlier message that carries it. */
   const setActionStatus = (actionId: string, status: ConfirmAction["status"]) => {
     s.setPlan((p) => (p && p.actionId === actionId ? { ...p, status } : p));
@@ -299,7 +312,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           <form
             data-write
             data-chat="form"
-            className="flex items-center gap-2"
+            className="flex flex-col rounded-2xl border border-edge bg-surface px-3 pb-2 pt-1"
             onSubmit={(e) => {
               e.preventDefault();
               void s.ask(s.text);
@@ -308,17 +321,27 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
             <label htmlFor="chat-input" className="sr-only">
               {c("bv.chat.placeholder")}
             </label>
-            <input
+            <textarea
               id="chat-input"
               ref={input}
+              rows={1}
               value={s.text}
               maxLength={MAX_QUESTION}
               onChange={(e) => s.setText(e.target.value)}
+              onKeyDown={(e) => {
+                // Enter sends, Shift+Enter is a new line; not while a keyboard is still composing a word (Telugu, Hindi, Kannada)
+                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && e.keyCode !== 229) {
+                  e.preventDefault();
+                  e.currentTarget.form?.requestSubmit();
+                }
+              }}
               placeholder={dictating ? c("bv.chat.dictating") : c("bv.chat.placeholder")}
               readOnly={dictating}
               autoComplete="off"
-              className="min-h-12 min-w-0 flex-1 rounded-full border border-edge bg-surface px-4 text-base text-ink placeholder:text-muted focus:border-brand-edge"
+              enterKeyHint="send"
+              className="block max-h-36 min-h-11 w-full min-w-0 resize-none overflow-y-auto bg-transparent py-2.5 text-base leading-6 text-ink placeholder:text-muted"
             />
+            <div className="flex items-center justify-end gap-2" data-chat="actions">
             {/* Dictate: the words go into the box (to edit), nothing is asked until Send; the reply is text only. Tap again to stop early. */}
             <button
               type="button"
@@ -354,6 +377,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
                 <Send className="size-5" aria-hidden="true" />
               </button>
             )}
+            </div>
           </form>
         </div>
           </>
@@ -375,7 +399,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
         aria-label={c("bv.chat.title")}
         data-chat="panel"
         onKeyDown={onKeyDown}
-        className="pointer-events-auto absolute inset-x-0 bottom-0 flex h-[60dvh] flex-col overflow-hidden rounded-t-2xl border border-line bg-bg shadow-[var(--v2-shadow-pop)] motion-safe:animate-[ask-panel-in_160ms_ease-out] md:inset-x-auto md:bottom-28 md:right-4 md:h-[560px] md:max-h-[calc(100dvh-8rem)] md:w-[380px] md:rounded-2xl"
+        className="pointer-events-auto absolute inset-x-0 bottom-[var(--kb,0px)] flex h-[60dvh] max-h-[calc(var(--vvh,100dvh)-0.5rem)] flex-col overflow-hidden rounded-t-2xl border border-line bg-bg shadow-[var(--v2-shadow-pop)] motion-safe:animate-[ask-panel-in_160ms_ease-out] md:inset-x-auto md:bottom-28 md:right-4 md:h-[560px] md:max-h-[calc(100dvh-8rem)] md:w-[380px] md:rounded-2xl"
       >
         {content}
       </div>
