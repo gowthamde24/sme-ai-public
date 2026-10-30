@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
-import { fetchCompany, fetchLead, isCanonicalUuid } from "@/lib/api/crm";
+import { fetchCompany, fetchContact, fetchLead, isCanonicalUuid } from "@/lib/api/crm";
 import { appT } from "@/i18n/app";
 import { indiaDayText } from "@/components/v2/app/visits/dates";
 import { type ClaimSuggestionOut, fetchClaims } from "@/lib/api/agents";
@@ -16,7 +16,7 @@ import { ContactLead } from "@/components/v2/app/contact/ContactLead";
 import { OutcomesPanel } from "@/components/v2/app/outcomes/OutcomesPanel";
 import { readCustomerOutcomes } from "@/lib/outcomes/source";
 import { LeadTimeline } from "@/components/v2/app/lead-desk/LeadTimeline";
-import { leadTitle } from "@/lib/lead-desk/leads";
+import { leadTitle, looksLikeId } from "@/lib/lead-desk/leads";
 import { readLeadProfile, readTouches } from "@/lib/lead-desk/leads-source";
 import { LeadProfileCard } from "@/components/v2/app/lead-desk/LeadProfileCard";
 import { fixLeadFieldAction } from "../../lead-desk-actions";
@@ -126,6 +126,8 @@ export default async function LeadPage({
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
   }
+  // The lead's own name for the title: the contact's name and phone (when the contact could be read), else the customer's name; never an id
+  const contact = contactId && isCanonicalUuid(contactId) ? await fetchContact(user.accessToken, tenantId, contactId).catch(() => null) : null;
   // One part of the screen at a time (Job X): the summary with what to do next, the evidence, the suggestions. A paged evidence list opens on the evidence.
   const wanted = pick(query.section);
   // `?section=all` draws every part on one page (the screen as it was before it was split: for printing, and for the tests that pin the whole screen).
@@ -164,7 +166,7 @@ export default async function LeadPage({
   return (
     <main className={pageMain} lang={lang}>
       <BackLink href={`/app/tenants/${tenantId}/${leadsScreens() === "off" ? "review" : "lead-desk"}`} label={t("lead.back")} />
-      <h1 className={pageH1}>{leadTitle(company?.name, null, t("ld.desk.newenquiry"))}</h1>
+      <h1 className={pageH1}>{leadTitle([contact?.full_name, company?.name].find((n) => n && !looksLikeId(n)), contact?.phone, t("ld.desk.newenquiry"))}</h1>
       <p className={pageSub}>
         {company?.city ? `${company.city} · ` : ""}
         {statusText}

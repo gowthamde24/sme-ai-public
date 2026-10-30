@@ -15,7 +15,8 @@ const ok = (name, pass, note = "") => {
 const s = await session(pack, size);
 const p = s.page;
 const tag = `lo-${pack}-${size}-${lang}`;
-const ID = /\b[0-9a-f]{8}-[0-9a-f]{4}-|\b(?=[0-9a-f]*\d)[0-9a-f]{8,}\b|(?:enquiry|whatsapp customer|lead|contact)\s+#?(?=[0-9a-f]*\d)[0-9a-f]{6,}/i;
+const PHONE = /^\+?[\d\s-]{7,16}$/; // a phone number is the allowed fallback name (its digits look like hex)
+const ID = /\b[0-9a-f]{8}-[0-9a-f]{4}-|\b(?=[0-9a-f]*\d)(?=[0-9a-f]*[a-f])[0-9a-f]{8,}\b|(?:enquiry|whatsapp customer|lead|contact)\s+#?(?=[0-9a-f]*\d)[0-9a-f]{6,}/i;
 try {
   if (lang !== "en") await s.context.addCookies([{ name: "sme_lang", value: lang, url: "https://staging.stack19.com" }]);
   await p.goto(`${s.base}/lead-desk`, { waitUntil: "domcontentloaded" });
@@ -24,7 +25,7 @@ try {
   const tabs = (await p.locator('[data-frame="group-tabs"] a').allTextContents()).map((x) => x.trim());
   console.log(`tabs: ${tabs.join(" | ")}`);
   if (lang === "en") {
-    ok("the tabs start Leads, Buyers, Add leads", tabs.slice(0, 3).join("|") === "Leads|Buyers|Add leads", tabs.join("|"));
+    ok("the tabs start Leads, Customers, Add leads", tabs[0] === "Leads" && /^Customers/.test(tabs[1]) && tabs[2] === "Add leads", tabs.join("|"));
     ok("no second Leads tab and no Lead Desk", tabs.filter((x) => x === "Leads").length === 1 && !tabs.includes("Lead Desk"));
     ok("the page title is Leads", (await p.locator("main h1").first().innerText()).trim() === "Leads");
   } else ok("three or more tabs", tabs.length >= 3, tabs.join("|"));
@@ -40,7 +41,11 @@ try {
   for (let i = 0; i < n; i++) {
     const row = rows.nth(i);
     const title = (await row.locator("a").first().innerText()).trim();
-    if (ID.test(title)) idName++;
+    if (!PHONE.test(title) && ID.test(title)) {
+      idName++;
+      console.log(`  id-like name: ${title}`);
+    }
+    if (i < 12) console.log(`  row ${i}: ${title}`);
     if (newWord) {
       const pills = (await row.locator("span").allTextContents()).map((x) => x.trim()).filter((x) => newWord.test(x));
       if (pills.length > 1) dupNew++;
@@ -52,10 +57,13 @@ try {
   ok("no sideways scroll of the page", !overflow);
   if (n > 0) {
     await rows.first().locator("a").first().click();
+    await p.waitForURL(/\/leads\/[0-9a-f-]{36}/, { timeout: 30000 });
     await p.locator("main h1").first().waitFor({ timeout: 30000 });
+    await sleep(1500);
     const h1 = (await p.locator("main h1").first().innerText()).trim();
     ok("the lead page title is not an id", !ID.test(h1), h1);
     const back = p.locator('main a[href$="/lead-desk"]').first();
+    console.log(`  detail title: ${h1}`);
     ok("the way back goes to Leads", (await back.count()) > 0);
     await shot(s, `${tag}-2-detail`, { fullPage: false });
   }
