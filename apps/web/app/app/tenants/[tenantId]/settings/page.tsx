@@ -57,13 +57,15 @@ import { CallSettingsAdvanced } from "@/components/v2/app/assistant/LazyCallSett
 import { OwnVoice } from "@/components/v2/app/assistant/LazyOwnVoice";
 import { assistantProfile } from "@/lib/assistant/defaults";
 import { readAssistant } from "@/lib/assistant/source";
-import { CALL_LANG_NAMES } from "@/lib/assistant/types";
+import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callSettingsScreens, dpdpScreens, openingLineScreens, ownVoiceScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callSettingsScreens, dpdpScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
 import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
+import { Pronunciation } from "@/components/v2/app/assistant/LazyPronunciation";
+import { readPronunciation } from "@/lib/pronunciation/source";
 import { readAutoReply } from "@/lib/auto-reply/source";
 import { setAutoReplyAction } from "../auto-reply-actions";
 import { apiFor } from "@/lib/context/server";
@@ -169,7 +171,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
   const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
   // Settings > AI assistant (job DM): only while its flag is on, and only for the Owner (the people who run the business may be admins, but the assistant is the Owner's to set up)
-  const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off" || voicePickerScreens() !== "off" || aboutBusinessScreens() !== "off" || autoReplyScreens() !== "off");
+  const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off" || voicePickerScreens() !== "off" || aboutBusinessScreens() !== "off" || autoReplyScreens() !== "off" || pronunciationScreens() !== "off");
   const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   let members: Member[] | null = null;
@@ -252,6 +254,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const aboutApi = section === "assistant" ? apiFor(aboutBusinessScreens(), user.accessToken, tenantId) : null;
   const about = aboutApi ? await aboutApi.get().catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const autoReply = section === "assistant" && autoReplyScreens() !== "off" ? await readAutoReply(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const pronunciation = section === "assistant" && pronunciationScreens() !== "off" ? await readPronunciation(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const openingLine = section === "assistant" && openingLineScreens() !== "off" ? await readOpeningLine(assistantCtx) : null;
   // the voice picker (owner decision 28 Oct): one block per language the business talks in (its own languages and the assistant's main one, else the one in use) that the catalogue has a row for
   const voicePicker = section === "assistant" && voicePickerScreens() !== "off" ? await readVoicePicker(assistantCtx) : null;
@@ -413,6 +416,19 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 securityHref="/app/security"
               />
             ) : null}
+            {pronunciation?.mode === "ok" ? (
+              <Pronunciation
+                words={wordsFor(lang, ["pr."])}
+                initial={pronunciation.data}
+                canEdit={tenant.role === "owner" || tenant.role === "admin"}
+                endpoint={`${base}/pronunciation`}
+                previewEndpoint={`${base}/pronunciation-preview`}
+                langNames={CALL_LANG_NAMES}
+                defaultLang={(CALL_LANGS as readonly string[]).includes(lang) ? (lang as CallLang) : "en"}
+                businessName={tenant.name}
+                city={businessProfile?.town ?? null}
+              />
+            ) : null}
             {openingLine?.mode === "ok" ? (
               <OpeningLine
                 words={wordsFor(lang, ["ope."])}
@@ -460,7 +476,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 actions={{ save: saveCallSettingsAction.bind(null, tenantId) }}
               />
             ) : null}
-            {ownVoice?.mode === "unavailable" || callSettings?.mode === "unavailable" || openingLine?.mode === "unavailable" || autoReply?.mode === "unavailable" || (about && !about.ok) ? (
+            {ownVoice?.mode === "unavailable" || callSettings?.mode === "unavailable" || openingLine?.mode === "unavailable" || autoReply?.mode === "unavailable" || pronunciation?.mode === "unavailable" || (about && !about.ok) ? (
               <section className={surface}>
                 <p className="text-sm text-muted">{t("frame.notyet")}</p>
               </section>
