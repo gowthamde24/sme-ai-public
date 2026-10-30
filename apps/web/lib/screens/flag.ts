@@ -54,3 +54,6 @@ export const sourceCardsScreens = (value: string | undefined = process.env.SOURC
 
 /** Settings > AI assistant > "Automatic replies" (job DY, C1's `GET/PUT /ai-assistant/auto-reply`, Owner with the second factor): the switch that lets the assistant answer customers' WhatsApp messages on its own, with the standing rules in plain words and today's counts. `mock` = the switch kept in a cookie of the browser (nothing is sent), `1` = the API, unset = the part is not there. */
 export const autoReplyScreens = (value: string | undefined = process.env.AUTO_REPLY_SCREENS): ScreenMode => screenMode(value);
+
+/** Settings > AI assistant > "Pronunciation" (job pronunciation-quality, owner 30 Oct): the words the assistant must say a certain way (word + "sounds like" + Hear it in the chosen voice), and the "Mispronounced?" action on spoken chat messages. C1's API (`/ai-assistant/pronunciation`, lib/api/pronunciation.ts has the assumed contract): `mock` = the list kept in a cookie of the browser (the sounds are tones), `1` = the API, unset = the part is not there. */
+export const pronunciationScreens = (value: string | undefined = process.env.PRONUNCIATION_SCREENS): ScreenMode => screenMode(value);

@@ -49,6 +49,9 @@ class FakeTurnDb(FakeDb):
         self.messages.append(self._row(kw["message_id"], conversation, seq, "user", kw["text"], kw["language"]))
         return {"replayed": False, "seq": seq, "conversation_id": conversation}
 
+    def mark_heavy(self) -> None:
+        self.calls.append(("mark_heavy", {}))
+
     def _row(self, id_: uuid.UUID, conversation: uuid.UUID, seq: int, role: str, body: str, language: str | None) -> dict[str, Any]:
         return {"id": id_, "conversation_id": conversation, "seq": seq, "role": role, "body": body, "language": language, "sources": [], "drafts": [], "kind": "answer", "task_id": None, "created_at": self._tick().isoformat()}
 

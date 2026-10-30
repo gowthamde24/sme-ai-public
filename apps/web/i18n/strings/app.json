@@ -74315,6 +74315,325 @@
    "kn": "draft"
   }
  },
+ "pr.title": {
+  "en": "Pronunciation",
+  "te": "ఉచ్చారణ",
+  "hi": "उच्चारण",
+  "kn": "ಉಚ್ಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.what": {
+  "en": "Teach your assistant how to say names and words the way you say them. Type the word, then how it sounds in plain letters, and press Hear it.",
+  "te": "మీ అసిస్టెంట్ పేర్లు, పదాలను మీరు చెప్పినట్లే పలకడం నేర్పండి. పదాన్ని, అది ఎలా వినిపించాలో సాధారణ అక్షరాల్లో టైప్ చేసి, వినండి నొక్కండి.",
+  "hi": "अपनी असिस्टेंट को नाम और शब्द वैसे बोलना सिखाएँ जैसे आप बोलते हैं। शब्द लिखें, फिर सादे अक्षरों में लिखें कि वह कैसे सुनाई दे, और सुनें दबाएँ।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೆಸರು ಮತ್ತು ಪದಗಳನ್ನು ನೀವು ಹೇಳುವಂತೆ ಹೇಳಲು ಕಲಿಸಿ. ಪದವನ್ನು ಬರೆಯಿರಿ, ನಂತರ ಅದು ಹೇಗೆ ಕೇಳಿಸಬೇಕೆಂದು ಸರಳ ಅಕ್ಷರಗಳಲ್ಲಿ ಬರೆದು ಕೇಳಿ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.empty": {
+  "en": "No words yet. Add the names of your business, town or products that it says wrongly.",
+  "te": "ఇంకా పదాలు లేవు. మీ వ్యాపారం, ఊరు, ఉత్పత్తుల పేర్లలో తప్పుగా పలికేవి జోడించండి.",
+  "hi": "अभी कोई शब्द नहीं। अपने कारोबार, शहर या उत्पादों के जो नाम गलत बोले जाते हैं, जोड़ें।",
+  "kn": "ಇನ್ನೂ ಪದಗಳಿಲ್ಲ. ನಿಮ್ಮ ವ್ಯವಹಾರ, ಊರು ಅಥವಾ ಉತ್ಪನ್ನಗಳ ತಪ್ಪಾಗಿ ಹೇಳುವ ಹೆಸರುಗಳನ್ನು ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.sounds": {
+  "en": "sounds like",
+  "te": "ఇలా వినిపించాలి",
+  "hi": "ऐसे सुनाई दे",
+  "kn": "ಹೀಗೆ ಕೇಳಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.word": {
+  "en": "Word",
+  "te": "పదం",
+  "hi": "शब्द",
+  "kn": "ಪದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.sound": {
+  "en": "Sounds like",
+  "te": "ఎలా వినిపించాలి",
+  "hi": "कैसे सुनाई दे",
+  "kn": "ಹೇಗೆ ಕೇಳಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.sound.help": {
+  "en": "Plain letters, the way you would say it. Example: pochampalli",
+  "te": "సాధారణ అక్షరాల్లో, మీరు చెప్పినట్లు. ఉదాహరణ: pochampalli",
+  "hi": "सादे अक्षरों में, जैसे आप बोलेंगे। उदाहरण: pochampalli",
+  "kn": "ಸರಳ ಅಕ್ಷರಗಳಲ್ಲಿ, ನೀವು ಹೇಳುವಂತೆ. ಉದಾಹರಣೆ: pochampalli",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.lang": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.lang.all": {
+  "en": "All languages",
+  "te": "అన్ని భాషలు",
+  "hi": "सभी भाषाएँ",
+  "kn": "ಎಲ್ಲಾ ಭಾಷೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.hear": {
+  "en": "Hear it",
+  "te": "వినండి",
+  "hi": "सुनें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.hearing": {
+  "en": "Playing…",
+  "te": "వినిపిస్తోంది…",
+  "hi": "बज रहा है…",
+  "kn": "ಕೇಳಿಸುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.save": {
+  "en": "Save word",
+  "te": "పదాన్ని సేవ్ చేయండి",
+  "hi": "शब्द सहेजें",
+  "kn": "ಪದವನ್ನು ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.saved": {
+  "en": "Saved. The assistant will say it this way.",
+  "te": "సేవ్ అయింది. అసిస్టెంట్ ఇలాగే పలుకుతుంది.",
+  "hi": "सहेज लिया। असिस्टेंट अब इसे ऐसे ही बोलेगी।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ. ಅಸಿಸ್ಟೆಂಟ್ ಹೀಗೇ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.remove": {
+  "en": "Remove",
+  "te": "తొలగించు",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.remove.label": {
+  "en": "Remove {word}",
+  "te": "{word} ను తొలగించు",
+  "hi": "{word} हटाएँ",
+  "kn": "{word} ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.suggest": {
+  "en": "Words from your business",
+  "te": "మీ వ్యాపారంలోని పదాలు",
+  "hi": "आपके कारोबार के शब्द",
+  "kn": "ನಿಮ್ಮ ವ್ಯವಹಾರದ ಪದಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.err.invalid": {
+  "en": "Check the word and how it sounds: both are needed, and they cannot be too long.",
+  "te": "పదం, అది ఎలా వినిపించాలో చూడండి: రెండూ కావాలి, మరీ పొడవు ఉండకూడదు.",
+  "hi": "शब्द और उसकी ध्वनि देखें: दोनों चाहिए और बहुत लंबे नहीं होने चाहिए।",
+  "kn": "ಪದ ಮತ್ತು ಅದು ಹೇಗೆ ಕೇಳಿಸಬೇಕು ಎಂಬುದನ್ನು ನೋಡಿ: ಎರಡೂ ಬೇಕು, ತುಂಬಾ ಉದ್ದ ಇರಬಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.err.forbidden": {
+  "en": "Only the owner or an admin can change this list.",
+  "te": "ఈ జాబితాను యజమాని లేదా అడ్మిన్ మాత్రమే మార్చగలరు.",
+  "hi": "यह सूची सिर्फ मालिक या एडमिन बदल सकते हैं।",
+  "kn": "ಈ ಪಟ್ಟಿಯನ್ನು ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.err.full": {
+  "en": "The list is full. Remove a word first.",
+  "te": "జాబితా నిండింది. ముందు ఒక పదాన్ని తొలగించండి.",
+  "hi": "सूची भर गई है। पहले कोई शब्द हटाएँ।",
+  "kn": "ಪಟ್ಟಿ ತುಂಬಿದೆ. ಮೊದಲು ಒಂದು ಪದವನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.err.not_available": {
+  "en": "Pronunciation is not available yet.",
+  "te": "ఉచ్చారణ ఇంకా అందుబాటులో లేదు.",
+  "hi": "उच्चारण अभी उपलब्ध नहीं है।",
+  "kn": "ಉಚ್ಚಾರಣೆ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.err.down": {
+  "en": "That did not work. Please try again.",
+  "te": "అది పని చేయలేదు. మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हुआ। कृपया फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pr.err.hear": {
+  "en": "Could not play the sound. Try again in a moment.",
+  "te": "శబ్దాన్ని వినిపించలేకపోయాం. కాసేపటి తర్వాత ప్రయత్నించండి.",
+  "hi": "आवाज़ नहीं बज सकी। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಶಬ್ದವನ್ನು ಕೇಳಿಸಲು ಆಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.mis": {
+  "en": "Mispronounced?",
+  "te": "తప్పుగా పలికిందా?",
+  "hi": "गलत बोला?",
+  "kn": "ತಪ್ಪಾಗಿ ಹೇಳಿತೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.mis.pick": {
+  "en": "Tap the word that was said wrongly",
+  "te": "తప్పుగా పలికిన పదాన్ని నొక్కండి",
+  "hi": "जो शब्द गलत बोला गया उसे दबाएँ",
+  "kn": "ತಪ್ಪಾಗಿ ಹೇಳಿದ ಪದವನ್ನು ಒತ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.mis.sound": {
+  "en": "How should it sound?",
+  "te": "ఎలా వినిపించాలి?",
+  "hi": "कैसे सुनाई देना चाहिए?",
+  "kn": "ಹೇಗೆ ಕೇಳಿಸಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.mis.save": {
+  "en": "Save",
+  "te": "సేవ్",
+  "hi": "सहेजें",
+  "kn": "ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.mis.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.mis.saved": {
+  "en": "Saved. It will say it this way next time.",
+  "te": "సేవ్ అయింది. ఇకపై ఇలాగే పలుకుతుంది.",
+  "hi": "सहेज लिया। अगली बार ऐसे ही बोलेगी।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ. ಮುಂದಿನ ಬಾರಿ ಹೀಗೇ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.chat.mis.err": {
+  "en": "Could not save. Only the owner or an admin can teach a word.",
+  "te": "సేవ్ చేయలేకపోయాం. పదాన్ని యజమాని లేదా అడ్మిన్ మాత్రమే నేర్పగలరు.",
+  "hi": "सहेज नहीं सका। शब्द सिर्फ मालिक या एडमिन सिखा सकते हैं।",
+  "kn": "ಉಳಿಸಲು ಆಗಲಿಲ್ಲ. ಪದವನ್ನು ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಕಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "settings.me.address": {
   "en": "How should I address you?",
   "te": "నన్ను ఎలా సంబోధించాలి?",

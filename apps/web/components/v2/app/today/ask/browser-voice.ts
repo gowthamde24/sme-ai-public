@@ -10,4 +10,6 @@ export type BrowserVoice = {
   languageNames: Record<VoiceLang, string>;
   /** The route that hands over the person's sign-in for the socket's first message (a plain POST, not a server action: that would make Next draw the page again under the open chat). */
   tokenUrl: string;
+  /** "Mispronounced?" on spoken messages (Owner and Admin, PRONUNCIATION_SCREENS on): the words are taught through `<base>/pronunciation`. */
+  pronunciation?: boolean;
 };

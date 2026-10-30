@@ -181,5 +181,17 @@ def test_a_chosen_dictation_language_pins_the_recogniser_and_auto_detects_otherw
     ctx = TenantContext(principal=Principal(user_id=USER, token="t"), tenant=TENANT_A, role=Role.OWNER)
     auto = build_parts(bv_of(), runtime, ctx, lambda kind, data: None, lambda: None).stt_for("te")  # type: ignore[arg-type]
     pinned = build_parts(bv_of(), runtime, ctx, lambda kind, data: None, lambda: None, None, "te").stt_for("en")  # type: ignore[arg-type]
-    assert auto._language == "auto" and auto._mode == "verbatim"  # type: ignore[attr-defined]
-    assert pinned._language == "te" and pinned._mode == "verbatim", "pinned to Telugu: native script from the first word (the mode follows the pinned language)"  # type: ignore[attr-defined]
+    assert auto._language == "auto" and auto._mode == "transcribe"  # type: ignore[attr-defined]
+    assert pinned._language == "te" and pinned._mode == "transcribe", "pinned to Telugu: native script from the first word (the mode follows the pinned language)"  # type: ignore[attr-defined]
+
+
+def test_the_recogniser_mode_is_a_per_language_setting_with_the_owner_decided_defaults() -> None:
+    from app.browser_voice.routes import STT_MODES, parse_stt_modes, stt_mode_for
+
+    assert {language: stt_mode_for(language) for language in ("te", "kn", "en", "ta", "hi", "ml")} == {
+        "te": "transcribe", "kn": "transcribe", "en": "transcribe", "ta": "transcribe", "hi": "verbatim", "ml": "verbatim",
+    }
+    assert parse_stt_modes("") == STT_MODES
+    assert parse_stt_modes("hi=transcribe, ml = codemix")["hi"] == "transcribe" and parse_stt_modes("hi=transcribe, ml=codemix")["ml"] == "codemix"
+    assert parse_stt_modes("xx=verbatim,te=nonsense,garbage") == STT_MODES, "an unknown language or mode is ignored"
+    assert stt_mode_for("hi", {"hi": "transcribe"}) == "transcribe"
