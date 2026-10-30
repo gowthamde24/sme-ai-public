@@ -155,7 +155,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     const el = input.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`; // the class max-h caps it
+    el.style.height = s.text === "" ? "" : `${el.scrollHeight}px`; // empty = one line, whatever the length of the placeholder; the class max-h caps the rest
   }, [s.text]);
   // on a phone the keyboard covers the bottom of the page: the panel sits above it, and the thread keeps its last message in view
   useKeyboardInset(box, variant === "panel", () => {
