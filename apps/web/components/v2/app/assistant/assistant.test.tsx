@@ -151,12 +151,27 @@ describe("Settings > AI assistant", () => {
     expect(await screen.findByRole("status")).toHaveTextContent("Saved.");
     expect(refresh).toHaveBeenCalled();
   });
+  it("a workspace that never saved a name cannot save Behaviour first: it says to name the assistant in Basics, and can after that", async () => {
+    const { save } = draw({ initialName: "" });
+    openTab("Behaviour");
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+    expect(document.querySelector('[data-part="needname"]')).not.toBeNull();
+    openTab("Basics");
+    fireEvent.change(screen.getByLabelText("Assistant name"), { target: { value: "Meera" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(save).toHaveBeenCalledOnce());
+    await screen.findByRole("status");
+    openTab("Behaviour");
+    expect(document.querySelector('[data-part="needname"]')).toBeNull();
+    expect(screen.getByRole("button", { name: "Save" })).not.toBeDisabled();
+  });
   it("the tabs: Basics first (the preview card is on it), the other parts the page gave, a hash picks one, arrow keys move", () => {
     draw({ extras: { knowledge: <p>KNOW</p>, pronunciation: <p>PRON</p>, advanced: <p>ADV</p>, behaviour: <p>AUTO</p> } });
     expect(screen.getAllByRole("tab").map((x) => x.textContent)).toEqual(["Basics", "Knowledge", "Behaviour", "Pronunciation", "Advanced"]);
     expect(screen.getByRole("tab", { name: "Basics" })).toHaveAttribute("aria-selected", "true");
     expect(document.querySelector('aside[aria-labelledby="asst-prev-h"]')).not.toBeNull();
     expect(screen.getByText("KNOW")).not.toBeVisible(); // the other panels stay mounted (what was typed stays) but are hidden
+    expect(screen.getByText("KNOW").parentElement).toHaveClass("hidden"); // (a class, not only the attribute: a display class would otherwise win over `hidden`)
     openTab("Knowledge");
     expect(screen.getByText("KNOW")).toBeVisible();
     expect(window.location.hash).toBe("#knowledge");

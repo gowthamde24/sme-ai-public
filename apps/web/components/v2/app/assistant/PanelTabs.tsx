@@ -69,7 +69,7 @@ export function PanelTabs({ sections, label }: { sections: readonly Panel[]; lab
         })}
       </div>
       {sections.map((s) => (
-        <div key={s.id} role="tabpanel" id={`panel-${s.id}`} aria-labelledby={`tab-${s.id}`} hidden={s.id !== active} className="flex min-w-0 flex-col gap-5">
+        <div key={s.id} role="tabpanel" id={`panel-${s.id}`} aria-labelledby={`tab-${s.id}`} hidden={s.id !== active} className={`min-w-0 flex-col gap-5 ${s.id === active ? "flex" : "hidden"}`}>
           {s.node}
         </div>
       ))}

@@ -44,8 +44,20 @@ try {
   ok("choosing Behaviour shows it and writes #behaviour to the address", (await p.locator("#panel-behaviour").isVisible()) && !(await p.locator("#panel-basics").isVisible()) && new URL(p.url()).hash === "#behaviour", new URL(p.url()).hash);
   ok("Behaviour has what it may do and the hours", (await p.locator("#panel-behaviour #asst-from").count()) === 1);
   await shot(s, `${tag}-2-behaviour`, { fullPage: false });
-  // Behaviour saves on its own
-  await p.locator('#panel-behaviour [data-part="behaviour-form"] button[type="submit"]').click();
+  // Behaviour saves on its own (a workspace that never saved a name must name the assistant in Basics first: Behaviour says so)
+  const save = p.locator('#panel-behaviour [data-part="behaviour-form"] button[type="submit"]');
+  if (await save.isDisabled()) {
+    ok("Behaviour says to name the assistant first when no name is saved", (await p.locator('#panel-behaviour [data-part="needname"]').count()) === 1);
+    await p.locator('[data-tab="basics"]').click();
+    if (!(await p.locator("#asst-name").inputValue())) await p.locator("#asst-name").fill("Meera");
+    await p.locator('#panel-basics [data-part="basics-form"] button[type="submit"]').click();
+    await p.locator('#panel-basics [role="status"]').waitFor({ timeout: 20000 });
+    ok("Basics saves on its own", true);
+    await sleep(2500);
+    await p.locator('[data-tab="behaviour"]').click();
+    await sleep(300);
+  }
+  await save.click();
   await p.locator('#panel-behaviour [role="status"]').waitFor({ timeout: 20000 });
   ok("Behaviour saves on its own (its own Save, its own note)", true);
   for (const id of ids.filter((i) => !["basics", "behaviour"].includes(i))) {

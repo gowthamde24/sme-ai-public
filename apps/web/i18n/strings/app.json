@@ -74721,5 +74721,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "asst.behaviour.needname": {
+  "en": "Give your assistant a name in Basics and save it first. Then you can save this part.",
+  "te": "ముందు Basics లో మీ అసిస్టెంట్‌కు పేరు పెట్టి సేవ్ చేయండి. ఆ తర్వాత ఈ భాగాన్ని సేవ్ చేయవచ్చు.",
+  "hi": "पहले Basics में अपनी असिस्टेंट का नाम रखकर सहेजें। उसके बाद यह भाग सहेज सकेंगे।",
+  "kn": "ಮೊದಲು Basics ನಲ್ಲಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೆಸರು ಕೊಟ್ಟು ಉಳಿಸಿ. ನಂತರ ಈ ಭಾಗವನ್ನು ಉಳಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

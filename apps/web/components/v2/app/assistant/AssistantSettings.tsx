@@ -141,6 +141,7 @@ export function AssistantSettings({ words, initial, profile, shop, langs, canEdi
       <button type="submit" disabled={!canEdit || busy || !ok} className={btnMain}>
         {t("asst.save")}
       </button>
+      {part === "behaviour" && !validName(lastSaved.name) ? <p className="text-sm text-muted" data-part="needname">{t("asst.behaviour.needname")}</p> : null}
       {notePart === part && note === "saved" ? <p role="status" className="text-base font-medium text-green-text">{t("asst.saved")}</p> : null}
       {notePart === part && note === "error" ? <p role="alert" className="text-base font-medium text-red-text">{t(mfa ? "asst.save.mfa" : "asst.save.err")}</p> : null}
     </div>
