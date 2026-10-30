@@ -123,7 +123,8 @@ def test_a_place_is_written_in_the_script_of_the_voice_s_language() -> None:
     assert lx.apply("ధర్మవరం చీరలు", "en") == "Dharmavaram చీరలు"
     assert lx.apply("Bangalore", "kn") == "ಬೆಂಗಳೂರು" and lx.apply("Bangalore", "te") == "బెంగళూరు"
     assert lx.apply("ಧಾರವಾಡ", "kn") == "ಧಾರವಾಡ" and lx.apply("Dharwad", "kn") == "ಧಾರವಾಡ"
-    assert lx.apply("ధర్మవరం", "kn") == "Dharmavaram", "a script the voice does not speak is given in Latin letters"
+    assert lx.apply("ధర్మవరం", "kn") == "ಧರ್ಮಾವರಂ", "the Kannada voice is given the Kannada-script draft"
+    assert lx.apply("పోచంపల్లి", "ta") == "Pochampally", "a script the voice does not speak, with no spelling in its own, is given in Latin letters"
     assert lx.apply("Dharmavarams", "te") == "Dharmavarams" and lx.apply("xDharmavaram", "te") == "xDharmavaram", "whole words only"
 
 
@@ -194,3 +195,54 @@ def test_the_speech_text_leaves_the_callers_string_alone() -> None:
     text = "Dharmavaram ₹2,600"
     SpeechText().prepare(text, "te")
     assert text == "Dharmavaram ₹2,600"
+
+
+# ---- approval per language (owner listened, 30 Oct 2026) ------------------------------------------------------------------------------------------------
+
+
+def test_dharmavaram_and_anantapur_are_approved_in_telugu_and_english_and_not_in_kannada() -> None:
+    for word in ("Dharmavaram", "Anantapur"):
+        entry = shared().find(word)
+        assert entry is not None
+        assert entry.is_verified("te") and entry.is_verified("en"), "the owner listened to the Telugu and the English clips and they were right"
+        assert not entry.is_verified("kn"), "the Kannada spelling is a draft until the owner's Kannada contact has confirmed it"
+    assert shared().find("Ananthapuramu") is shared().find("Anantapur") and shared().find("అనంతపురం") is shared().find("Anantapur")
+
+
+def test_a_verified_flag_is_a_list_of_languages_and_the_older_true_means_every_form(tmp_path: Path) -> None:
+    path = tmp_path / "lex.json"
+    path.write_text(json.dumps({"entries": [
+        {"word": "A", "forms": {"en": "A", "te": "ఎ"}, "verified": True},
+        {"word": "B", "forms": {"en": "B"}, "verified": ["en"]},
+        {"word": "C", "forms": {"en": "C"}},
+    ]}), encoding="utf-8")
+    a, b, c = lexicon.load(path)
+    assert a.verified == {"en", "te"} and b.verified == {"en"} and c.verified == frozenset()
+    path.write_text(json.dumps({"entries": [{"word": "D", "verified": ["xx"]}]}), encoding="utf-8")
+    with pytest.raises(ValueError, match="language codes"):
+        lexicon.load(path)
+
+
+def test_the_towns_of_andhra_and_telangana_have_a_kannada_spelling_and_a_kannada_voice_says_it_in_kannada() -> None:
+    telugu_towns = [e for e in shared().entries if e.kind == "place" and "te" in e.forms]
+    assert len(telugu_towns) >= 90
+    for e in telugu_towns:
+        kn = e.forms.get("kn")
+        assert kn and all(0x0C80 <= ord(ch) <= 0x0CFF or ch in " ‌‍" for ch in kn), f"{e.word}: needs a Kannada-script spelling"
+        assert "kn" not in e.verified, f"{e.word}: a Kannada spelling stays a draft until the Kannada contact confirms it"
+    assert shared().find("Dharmavaram").forms["kn"] == "ಧರ್ಮಾವರಂ" and shared().find("Anantapur").forms["kn"] == "ಅನಂತಪುರ"   # type: ignore[union-attr]
+    for heard in ("Dharmavaram", "ధర్మవరం"):
+        assert shared().apply(f"{heard} నుంచి ಕರೆ", "kn") == "ಧರ್ಮಾವರಂ నుంచి ಕರೆ"
+    assert shared().apply("Ananthapuramu ಕಡೆಗೆ", "kn") == "ಅನಂತಪುರ ಕಡೆಗೆ"
+    assert shared().apply("Dharmavaram", "te") == "ధర్మవరం"   # the Telugu voice is unchanged
+
+
+def test_the_review_import_marks_only_the_language_that_was_heard(tmp_path: Path) -> None:
+    import subprocess
+    import sys
+
+    root = Path(__file__).resolve().parents[3]
+    verdicts = tmp_path / "v.json"
+    verdicts.write_text(json.dumps({"language": "kn", "verdicts": [{"id": "1", "word": "Hindupur", "ok": True}]}), encoding="utf-8")
+    run = subprocess.run([sys.executable, str(root / "scripts" / "pronunciation_review_import.py"), str(verdicts)], capture_output=True, text=True, check=False)  # noqa: S603
+    assert run.returncode == 0 and "verified: Hindupur" in run.stdout
