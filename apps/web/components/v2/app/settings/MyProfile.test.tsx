@@ -23,6 +23,13 @@ describe("Settings > My profile", () => {
     rerender(<MyProfile words={WORDS} name="Ravi Kumar" language="te" choices={CALL_LANGS} pictureUrl="https://x/own.jpg" own email="r@example.com" save={vi.fn()} picture={vi.fn()} />);
     expect(screen.getByRole("button", { name: "Remove picture" })).toBeInTheDocument();
   });
+  it("draws \"How should I address you?\" only when the API has the field", () => {
+    const { rerender } = render(<MyProfile words={WORDS} name="Ravi" language="te" choices={CALL_LANGS} pictureUrl={null} own={false} email={null} save={vi.fn()} picture={vi.fn()} />);
+    expect(document.querySelector("#me-address")).toBeNull();
+    rerender(<MyProfile words={WORDS} name="Ravi" addressAs="Ravi garu" language="te" choices={CALL_LANGS} pictureUrl={null} own={false} email={null} save={vi.fn()} picture={vi.fn()} />);
+    expect((document.querySelector("#me-address") as HTMLInputElement).value).toBe("Ravi garu");
+    expect((document.querySelector("#me-address") as HTMLInputElement).maxLength).toBe(30);
+  });
   it("draws the letters when there is no picture", () => {
     render(<MyProfile words={WORDS} name="Ravi Kumar" language="en" choices={CALL_LANGS} pictureUrl={null} own={false} email={null} save={vi.fn()} picture={vi.fn()} />);
     expect(document.querySelector("img")).toBeNull();

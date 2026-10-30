@@ -341,6 +341,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               <MyProfile
                 words={wordsFor(lang, ["settings.me."])}
                 name={mine.displayName ?? ""}
+                addressAs={mine.addressAs}
                 language={mine.language ?? lang}
                 choices={PROFILE_LANGUAGES}
                 pictureUrl={mine.pictureUrl}

@@ -15,10 +15,11 @@ export type MyProfileState = { ok: true } | { ok: false; error: "invalid" | "too
 export async function saveMyProfileAction(tenantId: string, _prev: unknown, formData: FormData): Promise<MyProfileState> {
   const name = String(formData.get("display_name") ?? "").trim();
   const language = String(formData.get("language") ?? "");
-  if (name.length < 1 || name.length > 100 || !(PROFILE_LANGUAGES as readonly string[]).includes(language) || !isCanonicalUuid(tenantId)) return { ok: false, error: "invalid" };
+  const address = formData.has("address_as") ? String(formData.get("address_as") ?? "").replace(/\s+/g, " ").trim() : null; // only when the screen had the field (the API has it); "" clears it
+  if ((address !== null && address.length > 30) || name.length < 1 || name.length > 100 || !(PROFILE_LANGUAGES as readonly string[]).includes(language) || !isCanonicalUuid(tenantId)) return { ok: false, error: "invalid" };
   try {
     const user = await requireUser();
-    await patchMyProfile(user.accessToken, tenantId, { display_name: name, language });
+    await patchMyProfile(user.accessToken, tenantId, { display_name: name, language, ...(address === null ? {} : { address_as: address }) });
     revalidatePath(`/app/tenants/${tenantId}`, "layout");
     return { ok: true };
   } catch (error) {
