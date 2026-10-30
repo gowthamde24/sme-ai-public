@@ -31,6 +31,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
+from app.display_name import lead_title, real_name
 from app.errors import ApiError, not_found
 from app.integrations.ratelimit import SlidingWindow
 from app.tenancy.models import Role
@@ -220,15 +221,25 @@ def submit_template(template_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> d
 
 
 # ------------------------------------------------------------------------------------------------ conversations
+def _named(row: dict[str, Any]) -> dict[str, Any]:
+    """`display_name`: the customer's name, else their number, else "New enquiry". The company of a customer who gave no name is an id ("WhatsApp customer 84407a"): it is never shown."""
+    out = dict(row)
+    out["display_name"] = lead_title(row.get("name"), row.get("phone"))
+    if "company" in out:
+        out["company"] = real_name(out["company"])
+    return out
+
+
 @router.get("/conversations")
 def list_conversations(ctx: SalesPlus, runtime: RuntimeDep, limit: Annotated[int, Query(ge=1, le=100)] = 50, before: datetime | None = None) -> dict[str, Any]:
-    rows = _wa(runtime).repository.conversation_list(ctx.principal.token, ctx.tenant.id, limit, before)
+    rows = [_named(r) for r in _wa(runtime).repository.conversation_list(ctx.principal.token, ctx.tenant.id, limit, before)]
     return {"conversations": rows, "next_before": rows[-1]["last_at"] if len(rows) == limit else None}
 
 
 @router.get("/conversations/{lead_id}")
 def get_conversation(lead_id: str, ctx: SalesPlus, runtime: RuntimeDep, limit: Annotated[int, Query(ge=1, le=100)] = 50, before: datetime | None = None) -> dict[str, Any]:
     thread = _wa(runtime).repository.conversation_thread(ctx.principal.token, ctx.tenant.id, _id(lead_id), limit, before)
+    thread = _named(thread)
     items = thread.get("items") or []
     thread["next_before"] = items[-1]["at"] if len(items) == limit else None
     return thread

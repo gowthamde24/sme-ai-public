@@ -27,12 +27,14 @@ from pydantic import (
     ConfigDict,
     Field,
     StringConstraints,
+    computed_field,
     field_validator,
     model_validator,
 )
 
 from app import gstin as gstin_module
 from app.crm.phone import canonical_phone  # noqa: E402
+from app.display_name import NO_NAME, lead_title, real_name, without_display_name
 from app.lead_profile.models import LeadProfileOut
 
 # ----------------------------------------------------------------------------- primitives
@@ -180,6 +182,17 @@ class CompanyOut(_Row):
     industry: str | None
     tags: list[str]
 
+    @model_validator(mode="before")
+    @classmethod
+    def _ignore_display_name(cls, data: object) -> object:
+        return without_display_name(data)
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def display_name(self) -> str:
+        """A company made from an id ("WhatsApp customer 84407a") reads "New enquiry"."""
+        return real_name(self.name) or NO_NAME
+
 
 class ContactOut(_Row):
     company_id: uuid.UUID | None
@@ -192,6 +205,16 @@ class ContactOut(_Row):
     phone_consent: ConsentStatus
     suppressed_at: datetime | None
     suppression_reason: SuppressionReason | None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _ignore_display_name(cls, data: object) -> object:
+        return without_display_name(data)
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def display_name(self) -> str:
+        return lead_title(self.full_name, self.phone)
 
 
 class ProductOut(_Row):
@@ -220,6 +243,19 @@ class LeadOut(LeadRow):
 
     profile: LeadProfileOut | None = None
     is_new: bool = False
+
+    @model_validator(mode="before")
+    @classmethod
+    def _ignore_display_name(cls, data: object) -> object:
+        return without_display_name(data)
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def display_name(self) -> str:
+        """The name to show: the person's, else their phone, else "New enquiry" (never an id)."""
+        profile = self.profile
+        name, phone = (profile.name, profile.phone_e164) if profile else (None, None)
+        return lead_title(name, phone)
 
 
 class OpportunityOut(_Row):
