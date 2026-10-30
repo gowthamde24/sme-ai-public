@@ -8,7 +8,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 ORDER = ("meta", "indiamart", "email_forward", "website", "files", "whatsapp", "missed_calls")
-EMAIL_TAGS = ("justdial", "99acres", "magicbricks", "housing")
+EMAIL_TAGS = ("email_forward", "justdial", "99acres", "magicbricks", "housing")
 WEBSITE_TAGS = ("website_form", "webhook")
 FILE_TAGS = ("excel_upload", "google_sheet", "pasted_list", "vcard")
 TITLES = {

@@ -71,7 +71,7 @@ _GMAIL_CODE = re.compile(r"(?:#|code[:\s]+)(\d{6,12})", re.I)
 
 
 def tag_of(kind: str, portal: str | None) -> str:
-    return {"website_form": "website_form", "webhook": "webhook", "meta_lead_ads": "meta_lead_ads", "indiamart": "indiamart"}.get(kind) or (portal or "webhook")
+    return {"website_form": "website_form", "webhook": "webhook", "meta_lead_ads": "meta_lead_ads", "indiamart": "indiamart"}.get(kind) or (portal or ("email_forward" if kind == "email_forward" else "webhook"))
 
 
 @dataclass
