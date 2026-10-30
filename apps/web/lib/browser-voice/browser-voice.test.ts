@@ -32,6 +32,8 @@ describe("the messages", () => {
     expect(JSON.parse(startMessage("tok", "te"))).toEqual({ type: "start", access_token: "tok", language: "te" });
     const C = "55555555-5555-4555-8555-555555555555";
     expect(JSON.parse(startMessage("tok", "te", { mode: "dictate" }))).toEqual({ type: "start", access_token: "tok", language: "te", mode: "dictate" });
+    expect(JSON.parse(startMessage("tok", "te", { mode: "dictate", sttLanguage: "te" }))).toEqual({ type: "start", access_token: "tok", language: "te", mode: "dictate", stt_language: "te" });
+    expect(JSON.parse(startMessage("tok", "en", { mode: "dictate", sttLanguage: null }))).not.toHaveProperty("stt_language");
     expect(JSON.parse(startMessage("tok", "te", { conversationId: C }))).toEqual({ type: "start", access_token: "tok", language: "te", conversation_id: C });
     expect(JSON.parse(startMessage("tok", "te", { conversationId: "not-an-id" }))).toEqual({ type: "start", access_token: "tok", language: "te" }); // a bad id is never sent
     expect(parseServerMessage(json({ type: "ready", session_id: "s", language: "en", limits: {}, conversation_id: C }))).toMatchObject({ conversationId: C });
