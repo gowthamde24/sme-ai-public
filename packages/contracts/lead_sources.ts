@@ -104,7 +104,7 @@ export interface MailIn {
 }
 
 export interface MailOut {
-  status: "received" | "unrecognised";
+  status: "received" | "unrecognised" | "ignored";
 }
 
 export interface PreviewIn {

@@ -7,6 +7,7 @@
   GET|POST /tenants/{t}/lead-sources[...]         Owner, Admin          live sources: website form, webhook, e-mail forwarding, Meta, IndiaMART
   GET  /tenants/{t}/leads/{lead}/touches          Owner, Admin, Sales   every time the same person arrived
   POST /v1/lead-intake/{token}[/email] | /mail | GET|POST /meta/{token}     NO sign-in: the secret address is the credential (the worker account passes it to the database)
+  POST /v1/lead-intake/resend                     NO sign-in: Resend's `email.received` webhook (leads.stack19.com), checked against its Svix signature
 
 NOTE: no `from __future__ import annotations` here (request models are attached to the endpoint signatures at registration time)."""
 
@@ -291,6 +292,24 @@ async def intake_mail_global(
     service = _service(runtime)
     mail = _mail(raw)
     return {"status": service.receive_mail_global(x_inbound_secret, mail, signed=service.signed_ok(raw, x_timestamp, x_signature))}
+
+
+@public_router.post("/resend", response_model=MailOut, status_code=202)
+async def intake_resend(
+    request: Request,
+    runtime: RuntimeDep,
+    svix_id: Annotated[str | None, Header()] = None,
+    svix_timestamp: Annotated[str | None, Header()] = None,
+    svix_signature: Annotated[str | None, Header()] = None,
+) -> dict[str, Any]:
+    """leads.stack19.com receives its mail through Resend, which calls this with an `email.received` event signed the Svix way (`svix-id`, `svix-timestamp`, `svix-signature`). The signature is checked first;
+    the mail is then fetched from Resend with the leads key (the event carries no body) and read like any forwarded mail."""
+    raw = await _body(request)
+    try:
+        payload: object = json.loads(raw or b"null")
+    except ValueError:
+        payload = None   # the signature is still checked first: an unsigned call is refused whatever it holds
+    return {"status": _service(runtime).receive_resend(raw, svix_id, svix_timestamp, svix_signature, payload)}
 
 
 def _mail(raw: bytes) -> MailIn:
