@@ -37,6 +37,8 @@ export type Snapshot = { phase: Phase; state: VoiceState | null; step: Step | nu
 /** A level above this (0..1, after the browser's echo cancelling) is the person speaking; it must hold for this many frames in a row, so a click or a cough does not cut the assistant off. */
 export const SPEECH_LEVEL = 0.06;
 export const SPEECH_FRAMES = 3;
+/** How many microphone frames dictation keeps while the socket opens. */
+export const EARLY_FRAMES = 80;
 
 export type Options = { /** "dictate": words only (the API never answers); default "live". */ mode?: VoiceMode; /** The written chat's conversation: the spoken turns join it. */ conversationId?: string | null; url: string; token: string; language: VoiceLang; audio: AudioIO; socket: (url: string) => SocketLike; onChange: (s: Snapshot) => void; /** A restart the person did not ask to hear a greeting for: the greeting (its sound and its caption) is left out until they speak. */ quietStart?: boolean };
 
@@ -48,6 +50,8 @@ export class VoiceClient {
   private seq = 0;
   private last: { limit?: LimitReason; errorCode?: string } = {};
   private ping: ReturnType<typeof setInterval> | null = null;
+  /** Dictation: the first words are spoken while the socket is still opening; the frames are kept (about 6 s at most) and sent as soon as the API is ready, so the start of the sentence is not lost. */
+  private early: ArrayBuffer[] = [];
   private finished = false;
   private quiet: boolean; // a silent restart: nothing of the assistant is heard or shown until the person has spoken
 
@@ -105,6 +109,11 @@ export class VoiceClient {
 
   private frame(pcm: ArrayBuffer, level: number): void {
     const ws = this.ws;
+    if (this.o.mode === "dictate" && this.snap.phase === "connecting") {
+      this.early.push(pcm);
+      if (this.early.length > EARLY_FRAMES) this.early.shift();
+      return;
+    }
     if (!ws || ws.readyState !== 1 || this.snap.phase !== "ready") return;
     if (this.o.mode === "dictate") return void ws.send(pcm); // words only: the microphone goes all the time, nothing is ever spoken back
     if (this.serverState === "speaking") {
@@ -129,6 +138,7 @@ export class VoiceClient {
     if (m === null) return;
     switch (m.type) {
       case "ready":
+        if (this.o.mode === "dictate" && this.ws && this.ws.readyState === 1) for (const f of this.early.splice(0)) this.ws.send(f);
         this.set({ phase: "ready", language: m.language, conversationId: m.conversationId, problem: null });
         return;
       case "state":
