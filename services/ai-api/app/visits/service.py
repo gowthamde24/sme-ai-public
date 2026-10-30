@@ -10,6 +10,7 @@ import uuid
 from datetime import date, datetime
 from typing import Any, Literal
 
+from app.display_name import real_name
 from app.errors import not_found
 from app.tenancy.repository import UpstreamError
 from app.visits.models import (
@@ -51,7 +52,7 @@ def _clean(value: Any) -> str | None:
 
 def visit_out(row: dict[str, Any]) -> VisitOut:
     contact = short_name(row.get("contact_name"))
-    company = _clean(row.get("company_name"))
+    company = real_name(_clean(row.get("company_name")))
     try:
         return VisitOut(
             id=row["id"],

@@ -21,6 +21,7 @@ from app.assistant.language import Language
 from app.assistant.routes import _refusal
 from app.auth.deps import AnyMember, Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
+from app.display_name import real_name
 from app.errors import ApiError, not_found
 from app.outbox import service as outbox_service
 from app.tenancy.models import Role
@@ -91,7 +92,7 @@ def search_leads(
         items = [
             LeadHitOut(
                 lead_id=r["lead_id"],
-                customer=r.get("company"),
+                customer=real_name(r.get("company")),
                 city=r.get("city"),
                 contact_name=short_name(r.get("contact_name")),
                 phone_last4=r.get("phone_last4"),

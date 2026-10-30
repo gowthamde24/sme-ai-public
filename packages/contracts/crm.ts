@@ -29,6 +29,7 @@ export interface CompanyOut {
   city: string | null;
   industry: string | null;
   tags: string[];
+  display_name: string;
 }
 
 export type CompanyType = "prospect" | "customer" | "supplier" | "other";
@@ -82,6 +83,7 @@ export interface ContactOut {
   phone_consent: ConsentStatus;
   suppressed_at: string | null;
   suppression_reason: SuppressionReason | null;
+  display_name: string;
 }
 
 export interface ContactUpdate {
@@ -121,6 +123,7 @@ export interface LeadOut {
   disqualified_reason: string | null;
   profile?: LeadProfileOut | null;
   is_new?: boolean;
+  display_name: string;
 }
 
 export interface LeadProfileOut {
