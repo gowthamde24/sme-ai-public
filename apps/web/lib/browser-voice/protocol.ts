@@ -18,7 +18,7 @@ export type LimitReason = "session" | "daily_limit" | "idle";
 export type VoiceSource = { kind: string; label: string };
 
 export type ServerMessage =
-  | { type: "ready"; sessionId: string; language: VoiceLang; sessionSeconds: number | null; daySecondsLeft: number | null }
+  | { type: "ready"; sessionId: string; language: VoiceLang; sessionSeconds: number | null; daySecondsLeft: number | null; /** The conversation the spoken turns belong to (the written chat's own thread); null from an older API. */ conversationId: string | null }
   | { type: "state"; state: VoiceState; step: Step | null }
   | { type: "caption"; who: "user" | "assistant"; text: string; final: boolean; spoken: boolean }
   /** What the person is saying, word by word (final: false), then once settled (final: true). */
@@ -57,7 +57,7 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
   switch (json.type) {
     case "ready": {
       const limits = isRec(json.limits) ? json.limits : {};
-      return isVoiceLang(json.language) && typeof json.session_id === "string" ? { type: "ready", sessionId: json.session_id.slice(0, 80), language: json.language, sessionSeconds: num(limits.session_seconds), daySecondsLeft: num(limits.day_seconds_left) } : null;
+      return isVoiceLang(json.language) && typeof json.session_id === "string" ? { type: "ready", sessionId: json.session_id.slice(0, 80), language: json.language, sessionSeconds: num(limits.session_seconds), daySecondsLeft: num(limits.day_seconds_left), conversationId: typeof json.conversation_id === "string" && UUID.test(json.conversation_id) ? json.conversation_id : null } : null;
     }
     case "state": {
       if (json.state !== "listening" && json.state !== "thinking" && json.state !== "speaking") return null;
@@ -151,8 +151,10 @@ export function endWordOf(close: { code: number; reason?: string } | null, last:
   return code === 1000 ? "left" : "unavailable";
 }
 
-/** The messages to the API. */
-export const startMessage = (accessToken: string, language: VoiceLang): string => JSON.stringify({ type: "start", access_token: accessToken, language });
+/** The messages to the API. `mode` "dictate" = words only (no answer, no voice, nothing stored); `conversationId` = the written chat's thread, so typed, dictated and spoken turns are ONE conversation. */
+export type VoiceMode = "live" | "dictate";
+export const startMessage = (accessToken: string, language: VoiceLang, extra: { mode?: VoiceMode; conversationId?: string | null } = {}): string =>
+  JSON.stringify({ type: "start", access_token: accessToken, language, ...(extra.mode === "dictate" ? { mode: "dictate" } : {}), ...(extra.conversationId && UUID.test(extra.conversationId) ? { conversation_id: extra.conversationId } : {}) });
 export const BARGE_IN = JSON.stringify({ type: "barge_in" });
 export const STOP = JSON.stringify({ type: "stop" });
 export const PING = JSON.stringify({ type: "ping" });

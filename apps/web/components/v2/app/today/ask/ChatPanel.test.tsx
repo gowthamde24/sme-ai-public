@@ -68,7 +68,7 @@ function Harness({ onClose = () => undefined, variant }: { onClose?: () => void;
 }
 const draw = (props: { onClose?: () => void; variant?: "panel" | "card" } = {}) => render(<Harness {...props} />);
 const type = async (text: string) => {
-  await act(async () => void fireEvent.change(screen.getByLabelText("Type, or tap the microphone"), { target: { value: text } }));
+  await act(async () => void fireEvent.change(screen.getByLabelText("Type, dictate, or go Live"), { target: { value: text } }));
 };
 const send = async () => act(async () => void fireEvent.click(screen.getByRole("button", { name: "Send" })));
 
@@ -108,12 +108,119 @@ describe("the light formatting of an answer", () => {
   });
 });
 
+describe("the input bar: Dictate and Live talk (owner, 30 Oct)", () => {
+  const open = async (name: RegExp) => {
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name })));
+    await act(async () => void sock.onopen?.());
+  };
+  it("has a text box, Dictate, Live talk and Send, in that order", () => {
+    draw();
+    const bar = document.querySelector('[data-chat="form"]') as HTMLElement;
+    const kinds = [...bar.querySelectorAll("input, button")].map((e) => (e.tagName === "INPUT" ? "text" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))));
+    expect(kinds).toEqual(["text", "dictate", "live-talk", "submit"]);
+  });
+  it("Dictate: the words appear in the box AS THEY ARE SPOKEN (the API's words-only mode: no answer, no sound), nothing is asked until Send, and the reply is text", async () => {
+    draw();
+    const box = screen.getByLabelText("Type, dictate, or go Live");
+    await open(/^Dictate/);
+    expect(JSON.parse(sock.sent[0] as string)).toMatchObject({ type: "start", mode: "dictate", access_token: "tok" });
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {}, mode: "dictate" }));
+    expect(screen.getByRole("button", { name: "Stop dictating" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: /^Live talk/ })).toBeDisabled(); // one microphone at a time
+    expect(box).toHaveAttribute("readonly");
+    await act(async () => void sock.say({ type: "transcript", text: "how many", final: false }));
+    expect(box).toHaveValue("how many"); // word by word
+    await act(async () => void sock.say({ type: "transcript", text: "how many enquiries today", final: true }));
+    expect(box).toHaveValue("how many enquiries today");
+    await act(async () => void sock.say({ type: "limit", reason: "idle", fatal: true }));
+    await act(async () => void sock.onclose?.({ code: 1000, reason: "" }));
+    expect(box).not.toHaveAttribute("readonly");
+    expect(asked).toEqual([]); // nothing is asked by dictating
+    expect(sock.types()).not.toContain("barge_in");
+    await type("how many enquiries today?"); // the words can be edited
+    await send();
+    expect(asked).toEqual(["how many enquiries today?"]);
+    expect(document.querySelector('[data-chat="assistant"]')).not.toBeNull();
+  });
+  it("Dictate keeps what was already typed in front of the new words, and a tap on Stop ends it at once", async () => {
+    draw();
+    await type("price of");
+    await open(/^Dictate/);
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {}, mode: "dictate" }));
+    await act(async () => void sock.say({ type: "transcript", text: "silk", final: false }));
+    expect(screen.getByLabelText("Type, dictate, or go Live")).toHaveValue("price of silk");
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Stop dictating" })));
+    expect(sock.types()).toContain("stop");
+    expect(screen.getByLabelText("Type, dictate, or go Live")).toHaveValue("price of silk");
+  });
+  it("Dictate with nobody speaking says so in words and leaves the box as it was", async () => {
+    draw();
+    await type("my own words");
+    await open(/^Dictate/);
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {}, mode: "dictate" }));
+    await act(async () => void sock.say({ type: "limit", reason: "idle", fatal: true }));
+    await act(async () => void sock.onclose?.({ code: 1000, reason: "" }));
+    expect(document.querySelector('[data-chat="dictate-error"]')).not.toBeNull();
+    expect(screen.getByLabelText("Type, dictate, or go Live")).toHaveValue("my own words");
+  });
+  it("Live talk joins the written conversation: the typed turn's conversation id goes in `start`, and one the API starts is kept for the next typed message", async () => {
+    draw();
+    await type("price of silk?");
+    await send();
+    await open(/^Live talk: a spoken/);
+    expect(JSON.parse(sock.sent[0] as string)).toMatchObject({ type: "start", conversation_id: "55555555-5555-4555-8555-555555555555" });
+    expect(JSON.parse(sock.sent[0] as string).mode).toBeUndefined();
+  });
+  it("Live talk says the hourly limit in words and goes on (a refusal that does not end the session)", async () => {
+    draw();
+    await open(/^Live talk: a spoken/);
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    await act(async () => void sock.say({ type: "error", code: "run_limit_reached", message: "x", fatal: false }));
+    expect(document.querySelector('[data-chat="live-problem"]')).not.toBeNull();
+    expect(document.querySelector('[data-chat="live-badge"]')).not.toBeNull();
+  });
+  it("Live talk: a clear Live indicator and a Stop button while it runs; typed, dictated and live turns share ONE thread; about 30 s of silence ends it", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    draw();
+    await type("price of silk?");
+    await send();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    expect(document.querySelector('[data-chat="live-badge"]')).toHaveTextContent("Live");
+    expect(screen.getByRole("button", { name: "Stop live talk" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: /^Dictate/ })).toBeDisabled();
+    await act(async () => void sock.say({ type: "caption", who: "user", text: "how many enquiries today", final: true, spoken: true }));
+    await act(async () => void sock.say({ type: "caption", who: "assistant", text: "Five.", final: true, spoken: true }));
+    await act(async () => void sock.say({ type: "state", state: "listening" })); // it listens again by itself
+    expect([...document.querySelectorAll('[data-chat="you"]')].map((e) => e.textContent).join("|")).toContain("price of silk?");
+    expect([...document.querySelectorAll('[data-chat="you"]')].map((e) => e.textContent).join("|")).toContain("how many enquiries today");
+    expect(sock.types()).not.toContain("stop");
+    await act(async () => void vi.advanceTimersByTime(29_000));
+    expect(sock.types()).not.toContain("stop");
+    await act(async () => void vi.advanceTimersByTime(2_000));
+    expect(sock.types()).toContain("stop"); // 30 s of nobody speaking
+    vi.useRealTimers();
+  });
+  it("Stop ends Live talk at once", async () => {
+    draw();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Stop live talk" })));
+    expect(sock.types()).toContain("stop");
+  });
+});
+
 describe("the conversation panel", () => {
   it("is a small chat: one line to write in, the microphone and a send button; no 'Ask' or 'Do it' button, no full-screen layer", () => {
     draw();
     expect(screen.getByRole("dialog", { name: "Your assistant" })).toHaveAttribute("aria-modal", "false");
     expect(screen.queryByRole("button", { name: /^(Ask|Do it)$/ })).toBeNull();
-    expect(screen.getByRole("button", { name: "Talk" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Live talk: a spoken/ })).toBeInTheDocument();
     expect(screen.getByText(/Ask anything about your business, or just talk/)).toBeInTheDocument();
     expect(document.querySelector('[data-chat="panel"]')?.className).toMatch(/h-\[60dvh\]/);
   });
@@ -137,14 +244,14 @@ describe("the conversation panel", () => {
     await type("price of silk?");
     await send();
     expect(asked).toEqual(["price of silk?"]);
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
     await act(async () => void sock.onopen?.());
     expect(JSON.parse(sock.sent[0] as string)).toMatchObject({ type: "start", access_token: "tok", language: "en" });
     await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
     await act(async () => void sock.say({ type: "state", state: "listening" }));
     expect(orbs.at(-1)).toBe("listen");
     await act(async () => void sock.say({ type: "caption", who: "user", text: "how many en", final: false, spoken: true }));
-    expect(screen.getByLabelText("Type, or tap the microphone")).toHaveValue("how many en"); // live, word by word
+    expect(document.querySelector('[data-chat="you-live"]')).toHaveTextContent("how many en"); // live in the thread, word by word (the box is for typing and dictating) // live, word by word
     expect(document.querySelector('[data-chat="you-live"]')).toHaveTextContent("how many en");
     await act(async () => void sock.say({ type: "caption", who: "user", text: "how many enquiries today", final: true, spoken: true }));
     await act(async () => void sock.say({ type: "state", state: "thinking", step: "looking" }));
@@ -164,12 +271,12 @@ describe("the conversation panel", () => {
   });
   it("a spoken action: the words show live as transcripts, the plan joins the thread with Yes / No, and a spoken yes (the API's answer) flips the card", async () => {
     draw();
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
     await act(async () => void sock.onopen?.());
     await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
     await act(async () => void sock.say({ type: "state", state: "listening" }));
     await act(async () => void sock.say({ type: "transcript", text: "call the new", final: false, seq: 1, t_ms: 250 }));
-    expect(screen.getByLabelText("Type, or tap the microphone")).toHaveValue("call the new");
+    expect(document.querySelector('[data-chat="you-live"]')).toHaveTextContent("call the new"); // live in the thread, word by word (the box is for typing and dictating)
     await act(async () => void sock.say({ type: "transcript", text: "call the new leads", final: true, seq: 2, t_ms: 700 }));
     await act(async () => void sock.say({ type: "caption", who: "user", text: "call the new leads", final: true, spoken: true }));
     await act(async () => void sock.say({ type: "state", state: "speaking" }));
@@ -187,7 +294,7 @@ describe("the conversation panel", () => {
   it("a tap while it talks stops the speech (barge-in); the words heard can be edited if misheard; Escape ends the conversation and closes", async () => {
     const onClose = vi.fn();
     draw({ onClose });
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
     await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
     await act(async () => void sock.say({ type: "state", state: "speaking" }));
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Stop talking" })));
@@ -196,7 +303,7 @@ describe("the conversation panel", () => {
     await act(async () => void sock.say({ type: "caption", who: "assistant", text: "Ok.", final: true, spoken: true }));
     await act(async () => void sock.say({ type: "state", state: "listening" }));
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Edit what I heard" })));
-    expect(screen.getByLabelText("Type, or tap the microphone")).toHaveValue("pri silk");
+    expect(screen.getByLabelText("Type, dictate, or go Live")).toHaveValue("pri silk"); // "Edit" puts the heard words in the box
     fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
     expect(onClose).toHaveBeenCalled();
     expect(sock.types()).toContain("stop");
@@ -265,20 +372,20 @@ describe("the conversation panel", () => {
     expect(document.querySelector('[data-chat="card"]')).not.toBeNull();
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(document.querySelector('[data-chat="close"]')).toBeNull();
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
     await act(async () => void sock.onopen?.());
     await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
     await act(async () => void sock.say({ type: "state", state: "listening" }));
     expect(document.querySelector('[data-chat="wave"]')).not.toBeNull(); // listening, nothing heard yet
     await act(async () => void sock.say({ type: "caption", who: "user", text: "call the", final: false, spoken: true }));
     expect(document.querySelector('[data-chat="wave"]')).toBeNull();
-    expect(screen.getByLabelText("Type, or tap the microphone")).toHaveValue("call the");
+    expect(document.querySelector('[data-chat="you-live"]')).toHaveTextContent("call the"); // live in the thread, word by word (the box is for typing and dictating)
     expect(screen.queryByRole("button", { name: /^(Done|Never mind)$/ })).toBeNull();
     expect(document.querySelector('[data-part="voice-chat"], [data-voice="mode"]')).toBeNull();
   });
   it("a spoken turn is ONE bubble (interim updates in place, the final replaces it), the reply pieces make ONE text, and a chat that went quiet leaves the panel as it was: no 'chat has ended' line, the microphone starts a new chat without a greeting", async () => {
     draw();
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
     await act(async () => void sock.onopen?.());
     await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
     await act(async () => void sock.say({ type: "state", state: "listening" }));
@@ -297,9 +404,9 @@ describe("the conversation panel", () => {
     await act(async () => void sock.say({ type: "limit", reason: "idle", fatal: true }));
     await act(async () => void sock.onclose?.({ code: 1000, reason: "" }));
     expect(screen.queryByText(/chat has ended|went quiet|Tap the circle/)).toBeNull();
-    expect(screen.getByRole("button", { name: "Talk" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Live talk: a spoken/ })).toBeInTheDocument();
     const first = sock;
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
     expect(sock).not.toBe(first);
     await act(async () => void sock.onopen?.());
     await act(async () => void sock.say({ type: "ready", session_id: "s2", language: "en", limits: {} }));
@@ -308,7 +415,7 @@ describe("the conversation panel", () => {
   });
   it("under the circle it says which voice speaks, as the API says it at the start of the turn: 'Speaking in Telugu · Ramya'", async () => {
     draw();
-    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Talk" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
     await act(async () => void sock.onopen?.());
     await act(async () => void sock.say({ type: "ready", session_id: "s", language: "te", limits: {} }));
     await act(async () => void sock.say({ type: "state", state: "listening" }));

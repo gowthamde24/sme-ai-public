@@ -24,6 +24,8 @@ export type PanelVoice = {
   micDenied: boolean;
   /** The voice speaking now (name, language), as the API said; null until it says. */
   voice: Snapshot["voice"];
+  /** A refusal that does not end the conversation (the hourly limit): its code, until the next turn. */
+  problem: string | null;
   start: () => Promise<void>;
   stop: () => void;
   /** A tap while it talks. */
@@ -32,6 +34,8 @@ export type PanelVoice = {
 };
 
 const TOKEN_FRESH_MS = 20 * 60_000;
+/** Live talk ends by itself when nobody speaks for this long while it listens (owner, 30 Oct: about 30 seconds). */
+export const LIVE_SILENCE_MS = 30_000;
 
 /**
  * The spoken conversation INSIDE the chat panel (never full screen): the API's socket (lib/browser-voice) with the person's words shown LIVE as they speak (the interim caption, replaced by the final one) and the reply streaming below as text while it is spoken.
@@ -116,6 +120,7 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     const shownAsked = partialUser ?? asked;
     const shownAnswer = partialAsst !== "" ? (answer !== "" ? `${answer}\n\n${partialAsst}` : partialAsst) : answer;
     setLive(next.phase !== "ended" && (shownAsked !== "" || shownAnswer !== "") ? { asked: shownAsked, answer: shownAnswer, interim: partialUser ?? "" } : null);
+    if (next.conversationId) session.adoptConversation(next.conversationId); // typed turns after a spoken one are the same conversation
     setSnap(next);
   };
 
@@ -123,14 +128,14 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     if (client.current && snap && snap.phase !== "ended") return;
     if (token.current === null || Date.now() - token.current.at > TOKEN_FRESH_MS) {
       const out = await askVoiceToken(tokenUrl);
-      if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false, plan: null, decided: [], voice: null });
+      if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false, plan: null, decided: [], voice: null, conversationId: null, problem: null });
       token.current = { value: out.token, at: Date.now() };
     }
     flushedId.current = 0;
     sourcesSeen.current = 0;
     decidedSeen.current = 0;
     audio.current = audioFactory();
-    const c = new VoiceClient({ url, token: token.current.value, language, audio: audio.current, socket: socketFactory, onChange, quietStart: started.current });
+    const c = new VoiceClient({ url, token: token.current.value, language, audio: audio.current, socket: socketFactory, onChange, quietStart: started.current, conversationId: session.conversationId() });
     started.current = true;
     client.current = c;
     setSnap(c.snapshot);
@@ -142,5 +147,13 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
   const analyser = (which: "mic" | "voice") => audio.current?.analyser(which) ?? null;
 
   const active = snap !== null && snap.phase !== "ended";
-  return { active, state: snap?.state ?? null, step: snap?.step ?? null, interim: live?.interim ?? "", live: live ? { asked: live.asked, answer: live.answer } : null, end: snap?.end ?? null, micDenied: snap?.micDenied ?? false, voice: snap?.voice ?? null, start, stop, bargeIn, analyser };
+  // hands-free: after every answer it listens again; 30 s of nobody speaking ends the conversation (the words, if any, are already in the thread)
+  const listening = active && snap?.state === "listening";
+  const heardLast = `${snap?.captions.length ?? 0}:${snap?.captions.at(-1)?.text.length ?? 0}`; // any new word restarts the 30 s
+  React.useEffect(() => {
+    if (!listening) return;
+    const id = setTimeout(() => client.current?.stop(), LIVE_SILENCE_MS);
+    return () => clearTimeout(id);
+  }, [listening, heardLast]);
+  return { active, state: snap?.state ?? null, step: snap?.step ?? null, interim: live?.interim ?? "", live: live ? { asked: live.asked, answer: live.answer } : null, end: snap?.end ?? null, problem: snap?.problem ?? null, micDenied: snap?.micDenied ?? false, voice: snap?.voice ?? null, start, stop, bargeIn, analyser };
 }

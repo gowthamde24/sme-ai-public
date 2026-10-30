@@ -413,6 +413,12 @@ export function useAskSession({ lang, base, words, availability, transport: give
     w, lang, base, words, availability, live, transport,
     text, setText, focused, setFocused, asked, phase, answer, sources, drafts, problem, errorCode, heardByVoice, earlier, finished, mood,
     hasAudio, playing, audioPending, audioFailed, autoplay, setAutoplay, seen, showMic, status,
+    /** The conversation the next message continues (null = a new one): the spoken turns are asked into the same one. */
+    conversationId: () => convRef.current,
+    /** The API started a conversation for a spoken turn: the typed messages that follow continue it. */
+    adoptConversation: (id: string) => {
+      if (convRef.current === null) convRef.current = id;
+    },
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
     ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, setEarlier,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
