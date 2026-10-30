@@ -133,6 +133,11 @@ select is(pg_temp.val('a_sales', format('select public.my_profile_get(%L)::text'
 select is(pg_temp.mset('a_sales', '{"language":"xx"}'), 'ERR:22023', 'D3: a language of the product');
 select is(pg_temp.mset('a_sales', '{"display_name":""}'), 'ERR:22023', 'D4: a name');
 select is(pg_temp.mset('a_sales', '{"other":1}'), 'ERR:22023', 'D5: no unknown key');
+select is(pg_temp.j(pg_temp.mset('a_sales', '{"address_as":"  Madam "}'), 'address_as'), 'Madam', 'D5a: a member chooses how the assistant addresses them (trimmed)');
+select is(pg_temp.val('a_sales', format('select public.my_profile_get(%L)::text', tests.tid('a')))::jsonb ->> 'address_as', 'Madam', 'D5b: ...and reads it back');
+select is(pg_temp.j(pg_temp.mset('a_sales', '{"address_as":""}'), 'address_as'), null, 'D5c: an empty word clears it: the neutral forms only');
+select is(pg_temp.mset('a_sales', format('{"address_as":"%s"}', repeat('x', 31))), 'ERR:22023', 'D5d: at most 30 characters');
+select is(pg_temp.val('a_viewer', format('select public.my_profile_get(%L)::text', tests.tid('a')))::jsonb ->> 'address_as', null, 'D5e: someone else''s choice is not theirs');
 select is(pg_temp.mset('b_owner', '{"language":"te"}', 'a'), 'ERR:42501', 'D6: another business is refused');
 select is(pg_temp.mset('anon', '{"language":"te"}'), 'ERR:42501', 'D7: anon neither');
 -- a picture: only a file the member itself put in the business's bucket

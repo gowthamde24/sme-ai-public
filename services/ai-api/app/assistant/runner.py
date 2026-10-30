@@ -23,7 +23,7 @@ import secrets
 import time
 import uuid
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from typing import Any
 
@@ -44,6 +44,7 @@ from app.agents.errors import (
 )
 from app.agents.llm.interface import Block, LlmClient, LlmError, LlmRequest
 from app.agents.llm.routing import ModelRouter, as_router
+from app.agents.register import address
 from app.agents.runtime import NOT_BILLED, input_token_bound
 from app.assistant import prompts, router
 from app.assistant.db import AssistantDb
@@ -180,7 +181,9 @@ class AssistantRunner:
         help_on_empty: bool = False,
         typed_replies: bool = False,
         owner_notes: str = "",
+        address_as: str = "",
     ) -> None:
+        self.address_as = address_as.strip()   # how the person chose to be addressed (their profile); '' = the neutral forms only, never sir / madam
         self.owner_notes = owner_notes.strip()   # job EB: the owner's own notes; a source the model may cite ("From your notes")
         self._typed = typed_replies   # job EA: the conversational route stores the type of each reply (confirm_action, clarify); the written Ask does not
         # job EA: the conversational assistant says "no record" AND offers one way forward (NO_RECORD_HELP); the written Ask keeps the bare NO_ANSWER
@@ -245,6 +248,7 @@ class AssistantRunner:
                     offered=offered,
                     widened=widened,
                     notes_handle=notes_handle,
+                    address_as=self.address_as,
                 )
                 llm = self._pick(request)
                 self._db.reserve_cost(
@@ -411,6 +415,7 @@ class AssistantRunner:
                     small=small,
                     notes=notes,
                     owner_notes=owner_notes,
+                    address_as=self.address_as,
                 )
                 response = self._complete(request, f"usage-{turn}", language)
                 try:
@@ -629,6 +634,9 @@ class AssistantRunner:
     ) -> Outcome:
         """`extra`: events sent after the drafts (job EA: `confirm_action`, `clarify`). A reply that is not a plain answer has its type (and task) stored right after it."""
         self._guard()
+        cleaned = address.clean(reply.text, (self.address_as,))   # no sir / madam in any reply, whatever the model wrote (unless the person chose that word)
+        if cleaned != reply.text:
+            reply = replace(reply, text=cleaned)
         self._db.save_reply(
             message_id=message_id,
             text=reply.text,

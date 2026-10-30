@@ -43,7 +43,7 @@
   "en": ["English: contractions, plain words, no 'kindly' or 'do the needful'."]
  },
  "regions_hint": {
-  "te": {"coastal": "Lean to coastal Andhra speech where it does not hurt clarity.", "telangana": "Lean to Telangana speech (e.g. 'ఏం చేద్దాం', 'చెప్పండి సార్') where it does not hurt clarity.", "rayalaseema": "Lean lightly to Rayalaseema speech where it does not hurt clarity."},
+  "te": {"coastal": "Lean to coastal Andhra speech where it does not hurt clarity.", "telangana": "Lean to Telangana speech (e.g. 'ఏం చేద్దాం', 'చెప్పండి అండీ') where it does not hurt clarity.", "rayalaseema": "Lean lightly to Rayalaseema speech where it does not hurt clarity."},
   "ta": {"chennai": "Lean to Chennai speech.", "kongu": "Lean to Kongu (Coimbatore) speech."},
   "kn": {"bengaluru": "Lean to Bengaluru speech, with common English words.", "north_karnataka": "Lean to north Karnataka speech."}
  },

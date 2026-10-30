@@ -57,7 +57,7 @@ REPLIES = {
     "en": "Sure, no problem. Which time shall I call you? Six in the evening, is that okay?",
     "te": "సరేనండీ, no problem. ఏ time కి call చేయమంటారు? సాయంత్రం ఆరు గంటలకి ఓకేనా?",
     "hi": "ठीक है, कोई बात नहीं। मैं किस time पर call करूँ? शाम को छह बजे ठीक रहेगा?",
-    "kn": "ಸರಿ ಸರ್, no problem. ಯಾವ time ಗೆ call ಮಾಡಲಿ? ಸಂಜೆ ಆರು ಗಂಟೆಗೆ ಓಕೆನಾ?",
+    "kn": "ಸರಿ, no problem. ಯಾವ time ಗೆ call ಮಾಡಲಿ? ಸಂಜೆ ಆರು ಗಂಟೆಗೆ ಓಕೆನಾ?",
 }
 
 

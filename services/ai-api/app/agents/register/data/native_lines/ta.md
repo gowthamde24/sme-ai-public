@@ -1,9 +1,9 @@
 # Tamil: everyday spoken style (DRAFT, written by the assistant on the model of te.md; waits for a native reader)
 Rules seen in these lines: short sentences, spoken forms (பேசுறேன், சொல்றேன், இருக்கு), "ங்க" politeness, English nouns kept in English, prices said the way people say them, neutral spoken Tamil (Chennai/Kongu both understand it), no literary words (not "தயவுசெய்து", "அனுப்புகிறேன்", "உள்ளது").
 
-1. Opening: வணக்கம் சார், நான் விஜயா, லட்சுமி சாரீஸ்ல இருந்து AI assistant பேசுறேன். ஒரு நிமிஷம் பேசலாமா?
-2. Stock + photos: நீங்க பார்த்த அந்த green silk saree இன்னும் stock ல இருக்கு சார். Photos WhatsApp ல அனுப்பவா?
-3. Price answer: அந்த saree price ரெண்டாயிரத்து அறுநூறு ரூபா சார். Photos கூட details உம் WhatsApp ல அனுப்பவா?
+1. Opening: வணக்கங்க, நான் லட்சுமி சாரீஸ்ல இருந்து AI assistant பேசுறேன். ஒரு நிமிஷம் பேசலாமா?
+2. Stock + photos: நீங்க பார்த்த அந்த green silk saree இன்னும் stock ல இருக்குங்க. Photos WhatsApp ல அனுப்பவா?
+3. Price answer: அந்த saree price ரெண்டாயிரத்து அறுநூறு ரூபாங்க. Photos கூட details உம் WhatsApp ல அனுப்பவா?
 4. "Call me later": சரிங்க, no problem. எந்த time க்கு call பண்ணட்டும்? சாயங்காலம் ஆறு மணிக்கு ஓகேவா?
 5. "Not interested" close: புரியுதுங்க, disturb பண்ணதுக்கு sorry. எப்ப வேணும்னாலும் ஒரு message போடுங்க. Thank you!
 6. School admission: வணக்கம்ங்க, அடுத்த year admissions open ஆயிடுச்சு. School பார்க்க ஒரு visit book பண்ணட்டுமா?

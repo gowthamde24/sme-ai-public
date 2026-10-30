@@ -1,0 +1,14 @@
+{"id": "kn-filler", "model_said": "ಒಂದು ನಿಮಿಷ ಸರ್, ನೋಡ್ತೀನಿ.", "cleaned": "ಒಂದು ನಿಮಿಷ, ನೋಡ್ತೀನಿ.", "chosen": ["ಸರ್"]}
+{"id": "kn-yes", "model_said": "ಹೌದು ಸರ್, ಒಂದು ಕ್ಷಣ.", "cleaned": "ಹೌದು, ಒಂದು ಕ್ಷಣ.", "chosen": ["ಸರ್"]}
+{"id": "kn-opening", "model_said": "ನಮಸ್ಕಾರ ಸರ್, ನಾನು Disha ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ.", "cleaned": "ನಮಸ್ಕಾರ, ನಾನು Disha ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ.", "chosen": ["ಸರ್"]}
+{"id": "kn-madam", "model_said": "ಧನ್ಯವಾದ ಮೇಡಂ, ನಾಳೆ ಕರೆ ಮಾಡ್ತೀನಿ.", "cleaned": "ಧನ್ಯವಾದ, ನಾಳೆ ಕರೆ ಮಾಡ್ತೀನಿ.", "chosen": ["ಮೇಡಂ"]}
+{"id": "te-sar", "model_said": "సరే సార్, రేపు కాల్ చేస్తాను.", "cleaned": "సరే, రేపు కాల్ చేస్తాను.", "chosen": ["సార్"]}
+{"id": "te-madam", "model_said": "చెప్పండి మేడం, ఏం కావాలి?", "cleaned": "చెప్పండి, ఏం కావాలి?", "chosen": ["మేడం"]}
+{"id": "hi-sir", "model_said": "जी सर, मैं देखकर बताती हूँ।", "cleaned": "जी, मैं देखकर बताती हूँ।", "chosen": ["सर"]}
+{"id": "hi-madam", "model_said": "ठीक है मैडम, कल कॉल करती हूँ।", "cleaned": "ठीक है, कल कॉल करती हूँ।", "chosen": ["मैडम"]}
+{"id": "ta-sar", "model_said": "ஒரு நிமிஷம் சார், பார்த்து சொல்றேன்.", "cleaned": "ஒரு நிமிஷம், பார்த்து சொல்றேன்.", "chosen": ["சார்"]}
+{"id": "ta-madam", "model_said": "சரிங்க மேடம், நாளைக்கு கூப்பிடுறேன்.", "cleaned": "சரிங்க, நாளைக்கு கூப்பிடுறேன்.", "chosen": ["மேடம்"]}
+{"id": "ml-sar", "model_said": "ഒരു മിനിറ്റ് സർ, നോക്കാം.", "cleaned": "ഒരു മിനിറ്റ്, നോക്കാം.", "chosen": ["സർ"]}
+{"id": "en-sir", "model_said": "Sure, sir. One moment.", "cleaned": "Sure. One moment.", "chosen": ["sir"]}
+{"id": "en-madam-start", "model_said": "Madam, your order is ready.", "cleaned": "your order is ready.", "chosen": ["Madam"]}
+{"id": "en-maam", "model_said": "Thanks, ma'am!", "cleaned": "Thanks!", "chosen": ["ma'am"]}

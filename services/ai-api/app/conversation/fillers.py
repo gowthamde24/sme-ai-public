@@ -17,10 +17,10 @@ FILLER_AFTER_MS = 600
 FILLERS: dict[str, tuple[str, ...]] = {
     "te": ("హా…", "ఒక్క నిమిషం అండీ"),
     "hi": ("हाँ जी…", "एक मिनट जी"),
-    "kn": ("ಹೌದು…", "ಒಂದು ನಿಮಿಷ ಸರ್"),
-    "ta": ("ஆமாங்க…", "ஒரு நிமிஷம் சார்"),
-    "ml": ("ഹാ…", "ഒരു മിനിറ്റ് സർ"),
-    "en": ("Hmm…", "One moment, sir"),
+    "kn": ("ಹೌದು…", "ಒಂದು ನಿಮಿಷ"),
+    "ta": ("ஆமாங்க…", "ஒரு நிமிஷங்க"),
+    "ml": ("ഹാ…", "ഒരു മിനിറ്റ്"),
+    "en": ("Hmm…", "One moment"),
 }
 
 # The browser voice (job DV follow-up): 3 to 4 short lines per language, rendered ONCE per catalogue voice by scripts/voice_filler_bank.py into data/fillers/ and played when Ask is still checking after
@@ -29,7 +29,7 @@ BANK_LINES: dict[str, tuple[str, ...]] = {
     "en": ("One moment, let me check.", "Sure, let me look that up.", "Hmm, one second.", "Just a moment."),
     "te": ("ఒక్క నిమిషం అండీ, check చేసి చెప్తాను.", "హా అండీ, ఒక్క నిమిషం.", "ఒక్క క్షణం అండీ, చూస్తాను."),
     "hi": ("एक मिनट जी, मैं चेक करती हूँ।", "जी, एक सेकंड।", "हाँ जी, अभी देखती हूँ।"),
-    "kn": ("ಒಂದು ನಿಮಿಷ ಸರ್, ನೋಡ್ತೀನಿ.", "ಹೌದು ಸರ್, ಒಂದು ಕ್ಷಣ.", "ಸ್ವಲ್ಪ ಇರಿ ಸರ್, ಚೆಕ್ ಮಾಡ್ತೀನಿ."),
+    "kn": ("ಒಂದು ನಿಮಿಷ, ನೋಡ್ತೀನಿ.", "ಹೌದು, ಒಂದು ಕ್ಷಣ.", "ಸ್ವಲ್ಪ ಇರಿ, ಚೆಕ್ ಮಾಡ್ತೀನಿ."),
     "ta": ("ஒரு நிமிடம், பார்த்து சொல்கிறேன்.", "சரி, ஒரு நொடி.", "கொஞ்சம் இருங்கள், check செய்கிறேன்."),
     "ml": ("ഒരു നിമിഷം, നോക്കി പറയാം.", "ശരി, ഒരു സെക്കൻഡ്.", "ഒന്ന് നോക്കട്ടെ, check ചെയ്യാം."),
 }
