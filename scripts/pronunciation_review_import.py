@@ -3,7 +3,7 @@
 
   python scripts/pronunciation_review_import.py ~/Desktop/stack19-jobs/pron-review/2026-11-02/te/verdicts.json [--write]
 
-For each verdict with "ok": true the entry is marked verified. For "ok": false with a "sounds_like" the entry gets that respelling for the language of the file (a new entry is made for a word the lexicon does not know). Without --write
+For each verdict with "ok": true the entry is marked verified for the language of the file (the other languages of the entry stay drafts). For "ok": false with a "sounds_like" the entry gets that respelling for the language of the file (a new entry is made for a word the lexicon does not know). Without --write
 it only prints what would change. The file edited is services/ai-api/app/pronunciation/data/lexicon.json; commit it like any change."""
 
 from __future__ import annotations
@@ -15,6 +15,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
 from app.pronunciation.lexicon import DATA, LANGUAGES  # noqa: E402
+
+
+def _verified(entry: dict) -> list[str]:
+    """The languages an entry has been agreed for (the older `true` meant every form it has)."""
+    value = entry.get("verified") or []
+    return sorted({*entry.get("forms", {}), *entry.get("sounds_like", {}), *entry.get("phonemes", {})}) if value is True else list(value)
 
 
 def main() -> int:
@@ -36,17 +42,17 @@ def main() -> int:
             continue
         entry = entries.get(word.casefold())
         if ok:
-            if entry is not None and not entry.get("verified"):
-                entry["verified"] = True
+            if entry is not None and language not in _verified(entry):
+                entry["verified"] = sorted({*_verified(entry), language})
                 changes += 1
                 print(f"verified: {word}")
         elif sound:
             if entry is None:
-                entry = {"word": word, "kind": "word", "forms": {"en": word}, "aliases": [], "verified": True}
+                entry = {"word": word, "kind": "word", "forms": {"en": word}, "aliases": [], "verified": [language]}
                 lexicon["entries"].append(entry)
                 entries[word.casefold()] = entry
             entry.setdefault("sounds_like", {})[language] = sound[:80]
-            entry["verified"] = True
+            entry["verified"] = sorted({*_verified(entry), language})
             changes += 1
             print(f"{word}: sounds like {sound!r} in {language}")
     if args.write and changes:

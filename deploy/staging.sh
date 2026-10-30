@@ -108,6 +108,11 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
     EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS$LI_SECRETS" \
     ./deploy/cloudrun.sh api $execute
 fi
+# The nightly pronunciation round trip (docs/runbooks/pronunciation-nightly-qa.md) is a Cloud Run job on the API's image, created by the owner. Once it exists, every API deploy moves it to the new image, so each night tests the
+# lexicon and the speech path that are live. Nothing happens when the job is not there.
+if { [ "$what" = "api" ] || [ "$what" = "all" ]; } && [ -n "$execute" ] && gcloud run jobs describe sme-pron-qa --project "$PROJECT_ID" --region "$REGION" >/dev/null 2>&1; then
+  gcloud run jobs update sme-pron-qa --project "$PROJECT_ID" --region "$REGION" --image "$REGION-docker.pkg.dev/$PROJECT_ID/${REPO:-sme}/api:$TAG"
+fi
 if [ "$what" = "web" ] || [ "$what" = "all" ]; then
   WEB_RUN_SA="sme-web-run@$PROJECT_ID.iam.gserviceaccount.com" ./deploy/cloudrun.sh web $execute
 fi
