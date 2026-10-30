@@ -282,7 +282,7 @@ class Settings(BaseSettings):
     browser_voice_enabled: bool = False
     browser_voice_session_seconds: int = 3600
     browser_voice_day_seconds: int = 7200
-    # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the defaults in browser_voice/routes.py
+    # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the built-in defaults
     browser_voice_stt_modes: str = ""
     browser_voice_day_tts_chars: int = 12000
     browser_voice_sessions_per_minute: int = 6
