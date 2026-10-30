@@ -67,6 +67,13 @@ try {
     ok("the way back goes to Leads", (await back.count()) > 0);
     await shot(s, `${tag}-2-detail`, { fullPage: false });
   }
+  // the customer chats (WhatsApp inbox): no thread is named by an internal id
+  await p.goto(`${s.base}/chats`, { waitUntil: "domcontentloaded" });
+  await sleep(2500);
+  const chatNames = (await p.locator("main a[href*='/chats/'] span.font-display").allTextContents()).map((x) => x.trim());
+  console.log(`chat names: ${chatNames.slice(0, 8).join(" | ") || "(none)"}`);
+  ok("no chat thread is named by an internal id", chatNames.every((x) => PHONE.test(x) || !ID.test(x)), chatNames.filter((x) => ID.test(x)).join(" | "));
+  await shot(s, `${tag}-2b-chats`, { fullPage: false });
   await p.goto(`${s.base}/settings?section=data`, { waitUntil: "domcontentloaded" });
   const link = p.locator('main a[href$="/review"]').first();
   await link.waitFor({ timeout: 45000 });

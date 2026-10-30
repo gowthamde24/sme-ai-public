@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { ago } from "../today/time";
 import type { ConversationPage } from "@/lib/api/whatsapp";
+import { leadTitle } from "@/lib/lead-desk/leads";
 
 import { card, h2, pillClass } from "../cc/kit";
 import { OrbMark } from "../mark/OrbMark";
@@ -25,7 +26,7 @@ export function ChatList({ tenantId, words, page, now, olderHref }: { tenantId: 
     <div className="flex flex-col gap-3" data-chats="list">
       <ul className="flex flex-col gap-3">
         {page.conversations.map((c) => {
-          const name = c.name ?? c.company ?? t("wa.chats.customer");
+          const name = leadTitle(c.display_name ?? c.name ?? c.company, null, t("wa.chats.customer"));
           return (
             <li key={c.lead_id}>
               <Link href={`/app/tenants/${tenantId}/chats/${c.lead_id}`} className={`${card} gap-1 hover:bg-surface-2`} data-unread={c.unread ? "yes" : undefined}>
