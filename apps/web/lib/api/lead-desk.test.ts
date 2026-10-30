@@ -25,6 +25,13 @@ describe("the Lead Desk's list from the API", () => {
     await listDeskLeads("tok", T, null, { ...NO_FILTER, junk: true });
     expect(Object.fromEntries(new URL(`https://x${request.mock.calls[0][0]}`).searchParams)).toEqual({ limit: "25" });
   });
+  it("uses the API's display_name and then reads no contact (older API: the contact read gives the name and phone)", async () => {
+    const row = { id: L, contact_id: "00000000-0000-4000-8000-0000000000c1", source: "webhook", status: "new", owner_user_id: null, created_at: "2026-10-30T10:00:00Z" };
+    request.mockResolvedValueOnce({ items: [{ ...row, display_name: "New enquiry" }], next_cursor: null });
+    const page = await listDeskLeads("tok", T, null);
+    expect(page.leads[0].name).toBe("New enquiry");
+    expect(request).toHaveBeenCalledTimes(1); // no GET /contacts/{id} for it
+  });
   it("marks a lead seen with one POST (a bad id is refused before any call)", async () => {
     request.mockResolvedValue(null);
     await markLeadSeen("tok", T, L);

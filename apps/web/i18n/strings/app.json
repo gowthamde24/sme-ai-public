@@ -35401,10 +35401,10 @@
   }
  },
  "wa.chats.customer": {
-  "en": "Customer",
-  "te": "కస్టమర్",
-  "hi": "कस्टमर",
-  "kn": "ಕಸ್ಟಮರ್",
+  "en": "New enquiry",
+  "te": "కొత్త విచారణ",
+  "hi": "नई पूछताछ",
+  "kn": "ಹೊಸ ವಿಚಾರಣೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

@@ -16,7 +16,7 @@ const base = (tenantId: string): string => {
 };
 const NAME_FALLBACK = "";
 
-export function parseLeadPage(json: unknown): { rows: { id: string; contactId: string | null; source: string | null; status: LeadStatus; ownerUserId: string | null; createdAt: string; profile: LeadProfile | null; isNew: boolean }[]; nextCursor: string | null } {
+export function parseLeadPage(json: unknown): { rows: { id: string; contactId: string | null; displayName: string | null; source: string | null; status: LeadStatus; ownerUserId: string | null; createdAt: string; profile: LeadProfile | null; isNew: boolean }[]; nextCursor: string | null } {
   const x = rec(json, "leads");
   return {
     rows: list(x.items, "items", 200).map((row) => {
@@ -25,7 +25,7 @@ export function parseLeadPage(json: unknown): { rows: { id: string; contactId: s
       if (!isCanonicalUuid(id)) bad("id");
       const contact = r.contact_id === null || r.contact_id === undefined ? null : str(r.contact_id, "contact_id", 80);
       const owner = r.owner_user_id === null || r.owner_user_id === undefined ? null : str(r.owner_user_id, "owner_user_id", 80);
-      return { id, contactId: contact, source: optStr(r.source, "source", 100), status: oneOf(r.status, LEAD_STATUSES, "status"), ownerUserId: owner, createdAt: optIso(r.created_at, "created_at") ?? "", profile: parseProfile(r.profile), isNew: r.is_new === true };
+      return { id, contactId: contact, displayName: optStr(r.display_name, "display_name", 200), source: optStr(r.source, "source", 100), status: oneOf(r.status, LEAD_STATUSES, "status"), ownerUserId: owner, createdAt: optIso(r.created_at, "created_at") ?? "", profile: parseProfile(r.profile), isNew: r.is_new === true };
     }),
     nextCursor: optStr(x.next_cursor, "next_cursor", 300),
   };
@@ -44,11 +44,13 @@ export async function listDeskLeads(token: string, tenantId: string, cursor?: st
     if (!filter.junk) q.set("junk", "hide"); // flagged, never deleted: out of the list until the person asks for it
   }
   const page = parseLeadPage(await apiRequest(`${base(tenantId)}/leads?${q}`, token));
-  const names = await Promise.allSettled(page.rows.map((r) => (r.contactId && isCanonicalUuid(r.contactId) ? fetchContact(token, tenantId, r.contactId) : Promise.reject(new Error("none")))));
+  // the API names the lead itself (`display_name`: name, else phone, else "New enquiry"); an older API leaves it to the contact read, one per lead
+  const names = await Promise.allSettled(page.rows.map((r) => (r.displayName === null && r.contactId && isCanonicalUuid(r.contactId) ? fetchContact(token, tenantId, r.contactId) : Promise.reject(new Error("none")))));
   return {
     leads: page.rows.map((r, i) => {
       const contact = names[i].status === "fulfilled" ? (names[i] as PromiseFulfilledResult<{ full_name: string; phone: string | null }>).value : null;
-      return { ...r, name: contact ? contact.full_name : NAME_FALLBACK, phone: contact?.phone ?? null, hot: false };
+      const { displayName, ...lead } = r;
+      return { ...lead, name: displayName ?? (contact ? contact.full_name : NAME_FALLBACK), phone: contact?.phone ?? null, hot: false };
     }),
     nextCursor: page.nextCursor,
   };

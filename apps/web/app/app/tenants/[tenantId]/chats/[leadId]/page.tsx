@@ -18,6 +18,7 @@ import { requireUser } from "@/lib/auth/session";
 
 import { approveChatMessageAction, markReadAction, refreshThreadAction, rejectChatMessageAction, replyAction } from "../actions";
 import { BRAND_NAME } from "@/design/brand";
+import { leadTitle } from "@/lib/lead-desk/leads";
 
 export const metadata = { title: `Customer chat · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -59,7 +60,7 @@ export default async function ChatPage({ params }: PageProps<"/app/tenants/[tena
   return (
     <main className={pageMain} lang={lang}>
       <BackLink href={back.href} label={back.label} />
-      <PageTop title={thread.ok ? (thread.data.name ?? t("wa.chats.customer")) : t("wa.chats.customer")} />
+      <PageTop title={thread.ok ? leadTitle(thread.data.display_name ?? thread.data.name, null, t("wa.chats.customer")) : t("wa.chats.customer")} />
       <div className="mt-6 max-w-3xl">
         {thread.ok ? (
           <ChatThread
