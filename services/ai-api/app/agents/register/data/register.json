@@ -10,7 +10,7 @@
   "ml": ["neutral"],
   "en": ["neutral"]
  },
- "status": {"te": "approved", "hi": "draft", "kn": "draft", "ta": "draft", "ml": "draft", "en": "draft"},
+ "status": {"te": "approved", "hi": "draft", "kn": "approved", "ta": "draft", "ml": "draft", "en": "draft"},
  "common": {
   "everyday_mixed": [
    "Talk the way people talk on the phone or in a WhatsApp chat, not the way a book is written.",
