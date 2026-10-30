@@ -63,3 +63,14 @@ def test_romanised_telugu_chat_is_answered_in_telugu_and_english_stays_english()
         assert detect_owner_language(text) == "te", text
     for text in ("Hello, how are you today?", "Tell me about Dharmavaram silk", "I will go to the market and call him later", "ok thanks", "How many leads came in today?"):
         assert detect_owner_language(text) == "en", text
+
+
+def test_a_romanised_question_still_gets_an_answer_in_the_languages_own_script() -> None:
+    import uuid
+    from datetime import UTC, datetime
+
+    req = prompts.build_chat_request(delimiter=uuid.uuid4().hex[:12], question="Dharmavaram silk gurinchi cheppu", language="te", history=[], today=datetime(2026, 10, 30, tzinfo=UTC), assistant_name="kallu", business_name="Demo Silks", small=False)
+    trusted = " ".join(b.text for b in req.blocks if b.trust.name == "TRUSTED")
+    assert "own script (not in Latin letters)" in trusted
+    english = prompts.build_chat_request(delimiter=uuid.uuid4().hex[:12], question="Tell me about silk", language="en", history=[], today=datetime(2026, 10, 30, tzinfo=UTC), assistant_name="kallu", business_name="Demo Silks", small=False)
+    assert "own script" not in " ".join(b.text for b in english.blocks if b.trust.name == "TRUSTED")

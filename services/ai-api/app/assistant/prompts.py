@@ -143,6 +143,10 @@ CHAT_SYSTEM_PROMPT = (
 CHAT_SMALLTALK_CLAUSE = " This is small talk: reply warmly in one or two short sentences, with no lists and no mention of the business unless the person did."
 
 
+# also when the person typed romanised words ("gurinchi cheppu"): the answer is written in the language's own script, English words stay in Latin letters
+_SCRIPT_RULE = ", written in that language's own script (not in Latin letters), English words as they are"
+
+
 def build_chat_request(
     *,
     delimiter: str,
@@ -166,7 +170,7 @@ def build_chat_request(
     system = CHAT_SYSTEM_PROMPT.replace("{assistant}", assistant_name).replace("{business}", business_name) + (CHAT_NOTES_CLAUSE if owner_notes else "") + (CHAT_SMALLTALK_CLAUSE if small else "")
     blocks = [
         Block(Trust.SYSTEM, system),
-        Block(Trust.TRUSTED, f"Today (India) is {today.date().isoformat()}. Reply in {LANGUAGE_NAMES[language]} ({language}). Use the `reply` tool."),
+        Block(Trust.TRUSTED, f"Today (India) is {today.date().isoformat()}. Reply in {LANGUAGE_NAMES[language]} ({language}){_SCRIPT_RULE if language != 'en' else ''}. Use the `reply` tool."),
     ]
     if notes:
         blocks.append(Block(Trust.TRUSTED, " ".join(dict.fromkeys(notes))))
