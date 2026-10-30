@@ -40,7 +40,7 @@ export const SPEECH_FRAMES = 3;
 /** How many microphone frames dictation keeps while the socket opens. */
 export const EARLY_FRAMES = 80;
 
-export type Options = { /** "dictate": words only (the API never answers); default "live". */ mode?: VoiceMode; /** The written chat's conversation: the spoken turns join it. */ conversationId?: string | null; url: string; token: string; language: VoiceLang; audio: AudioIO; socket: (url: string) => SocketLike; onChange: (s: Snapshot) => void; /** A restart the person did not ask to hear a greeting for: the greeting (its sound and its caption) is left out until they speak. */ quietStart?: boolean };
+export type Options = { /** Pin the recogniser to this language (dictation in the app language: the first words come in its script, not as Latin guesses); default: any language. */ sttLanguage?: VoiceLang | null; /** "dictate": words only (the API never answers); default "live". */ mode?: VoiceMode; /** The written chat's conversation: the spoken turns join it. */ conversationId?: string | null; url: string; token: string; language: VoiceLang; audio: AudioIO; socket: (url: string) => SocketLike; onChange: (s: Snapshot) => void; /** A restart the person did not ask to hear a greeting for: the greeting (its sound and its caption) is left out until they speak. */ quietStart?: boolean };
 
 export class VoiceClient {
   private ws: SocketLike | null = null;
@@ -80,7 +80,7 @@ export class VoiceClient {
     const ws = this.o.socket(this.o.url);
     this.ws = ws;
     ws.binaryType = "arraybuffer";
-    ws.onopen = () => ws.send(startMessage(this.o.token, this.snap.language, { mode: this.o.mode, conversationId: this.o.conversationId }));
+    ws.onopen = () => ws.send(startMessage(this.o.token, this.snap.language, { mode: this.o.mode, conversationId: this.o.conversationId, sttLanguage: this.o.sttLanguage }));
     ws.onmessage = (event) => this.message(event.data);
     ws.onclose = (event) => this.closed(event);
     ws.onerror = () => undefined; // a close follows

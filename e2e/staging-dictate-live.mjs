@@ -57,7 +57,11 @@ async function open(file) {
     const rec = { url: w.url(), start: null, binaryIn: 0 };
     sockets.push(rec);
     w.on("framesent", (f) => typeof f.payload === "string" && f.payload.includes('"type":"start"') && (rec.start = f.payload.replace(/"access_token":"[^"]*"/, '"access_token":"…"')));
-    w.on("framereceived", (f) => typeof f.payload !== "string" && rec.binaryIn++);
+    w.on("framereceived", (f) => {
+      if (typeof f.payload !== "string") rec.binaryIn++;
+      else if (process.env.DL_TRACE) console.log("  <-", f.payload.slice(0, 160));
+    });
+    if (process.env.DL_TRACE) w.on("framesent", (f) => typeof f.payload === "string" && console.log("  ->", f.payload.replace(/"access_token":"[^"]*"/, '"access_token":"…"').slice(0, 160)));
   });
   await s.page.goto(s.base, { waitUntil: "domcontentloaded" });
   const card = s.page.locator('[data-chat="card"]');
