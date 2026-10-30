@@ -13,6 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.agents.llm.interface import Block, LlmRequest, TaskClass, ToolSpec, Trust
 from app.agents.prompts import escape_value
+from app.agents.register.address import address_clause
 from app.assistant.language import LANGUAGES, Language
 from app.assistant.router import CATALOGUE_TOOLS, WEB_TOOLS
 from app.assistant.tools import TOOLS, Item
@@ -162,6 +163,7 @@ def build_chat_request(
     notes: Sequence[str] = (),
     owner_notes: str = "",
     max_output_tokens: int | None = None,
+    address_as: str = "",
 ) -> LlmRequest:
     """One tool-free request (job EA). Our policy is the SYSTEM block; the person's message a TRUSTED line; the earlier lines of the chat and the owner's own notes DATA between the random delimiter."""
     if not re.fullmatch(r"[0-9a-f]{6,64}", delimiter):
@@ -172,7 +174,7 @@ def build_chat_request(
     system = CHAT_SYSTEM_PROMPT.replace("{assistant}", assistant_name).replace("{business}", business_name) + (CHAT_NOTES_CLAUSE if owner_notes else "") + (CHAT_SMALLTALK_CLAUSE if small else "")
     blocks = [
         Block(Trust.SYSTEM, system),
-        Block(Trust.TRUSTED, f"Today (India) is {today.date().isoformat()}. Reply in {LANGUAGE_NAMES[language]} ({language}){_SCRIPT_RULE if language != 'en' and question.isascii() else ''}. Use the `reply` tool."),
+        Block(Trust.TRUSTED, f"Today (India) is {today.date().isoformat()}. Reply in {LANGUAGE_NAMES[language]} ({language}){_SCRIPT_RULE if language != 'en' and question.isascii() else ''}. Use the `reply` tool. {address_clause(language, address_as)}"),
     ]
     if notes:
         blocks.append(Block(Trust.TRUSTED, " ".join(dict.fromkeys(notes))))
@@ -286,6 +288,7 @@ def build_request(
     offered: frozenset[str] | None = None,
     widened: bool = False,
     notes_handle: str | None = None,
+    address_as: str = "",
 ) -> LlmRequest:
     """`offered`: the names of the tools to describe to the model (job BB: the router decides once per question; None = every tool, for tests). `widened`: the safety net (job BD) has offered every tool."""
     if not re.fullmatch(r"[0-9a-f]{6,64}", delimiter):
@@ -304,7 +307,7 @@ def build_request(
         ),
         Block(
             Trust.TRUSTED,
-            f"Turn {turn}. {hint} Today (India) is {today.date().isoformat()}. Reply in {LANGUAGE_NAMES[language]} ({language}).",
+            f"Turn {turn}. {hint} Today (India) is {today.date().isoformat()}. Reply in {LANGUAGE_NAMES[language]} ({language}). {address_clause(language, address_as, rule=False)}",
         ),
     ]
     if notes:

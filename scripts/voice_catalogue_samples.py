@@ -22,7 +22,7 @@ import httpx
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
 from app.conversation.voices import SAMPLES, default_config, sample_text  # noqa: E402
 
-SHORT = {"te": "హా అండీ", "hi": "हाँ जी", "kn": "ಹೌದು ಸರ್", "en": "Hello", "ta": "ஆமாம்", "ml": "അതെ"}
+SHORT = {"te": "హా అండీ", "hi": "हाँ जी", "kn": "ಹೌದು", "en": "Hello", "ta": "ஆமாம்", "ml": "അതെ"}
 TAG = {"te": "te-IN", "hi": "hi-IN", "kn": "kn-IN", "en": "en-IN", "ta": "ta-IN", "ml": "ml-IN"}
 
 

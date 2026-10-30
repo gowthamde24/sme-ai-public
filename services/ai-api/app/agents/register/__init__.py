@@ -15,6 +15,8 @@ from functools import cache, lru_cache
 from pathlib import Path
 from typing import Any
 
+from app.agents.register.address import address_rule
+
 HERE = Path(__file__).resolve().parent
 LANGUAGES: tuple[str, ...] = ("en", "te", "hi", "kn", "ta", "ml")
 EXAMPLES_PER_BLOCK = 7   # keeps the block short: a prompt is paid for by the token
@@ -79,6 +81,7 @@ def register_block(language: str, style: str = DEFAULT_STYLE, region: str = "neu
         lines += [f"  * {text}" for _, text in _spread(shots, EXAMPLES_PER_BLOCK)]
         if status(language) != "approved":
             lines.append("(These examples are drafts for native review.)")
+    lines.append(f"- {address_rule(language)}")
     return "\n".join(lines)
 
 

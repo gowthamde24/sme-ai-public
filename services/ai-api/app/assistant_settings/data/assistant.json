@@ -118,9 +118,9 @@
         "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. ಹೊಸ sarees ಬಂದಿವೆ. WhatsApp ಗೆ photos ಕಳಿಸ್ಲಾ?"
       },
       "ta": {
-        "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். புது sarees வந்திருக்கு சார், சில photos அனுப்பவா?",
-        "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க புது collection பத்தி ஒரு நிமிஷம் சொல்லவா?",
-        "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. புது sarees வந்திருக்கு. WhatsApp ல photos அனுப்பவா?"
+        "warm": "வணக்கங்க, நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். புது sarees வந்திருக்குங்க, சில photos அனுப்பவா?",
+        "respectful": "வணக்கங்க, நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க புது collection பத்தி ஒரு நிமிஷம் சொல்லவா?",
+        "quick": "ஹாய்ங்க, {business} ல இருந்து AI assistant {name}. புது sarees வந்திருக்கு. WhatsApp ல photos அனுப்பவா?"
       },
       "ml": {
         "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. പുതിയ sarees വന്നിട്ടുണ്ട്, കുറച്ച് photos അയക്കട്ടെ?",
@@ -150,9 +150,9 @@
         "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. ಹೊಸ stock ಬಂದಿದೆ. WhatsApp ಗೆ rates ಕಳಿಸ್ಲಾ?"
       },
       "ta": {
-        "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். புது stock வந்திருக்கு சார், rates, photos WhatsApp ல அனுப்பவா?",
-        "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க புது stock, rates பத்தி ஒரு நிமிஷம் சொல்லவா?",
-        "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. புது stock வந்திருக்கு. WhatsApp ல rates அனுப்பவா?"
+        "warm": "வணக்கங்க, நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். புது stock வந்திருக்குங்க, rates, photos WhatsApp ல அனுப்பவா?",
+        "respectful": "வணக்கங்க, நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க புது stock, rates பத்தி ஒரு நிமிஷம் சொல்லவா?",
+        "quick": "ஹாய்ங்க, {business} ல இருந்து AI assistant {name}. புது stock வந்திருக்கு. WhatsApp ல rates அனுப்பவா?"
       },
       "ml": {
         "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. പുതിയ stock വന്നിട്ടുണ്ട്, rates, photos WhatsApp ൽ അയക്കട്ടെ?",
@@ -182,9 +182,9 @@
         "quick": "ಹಾಯ್ ರೀ, {business} ನಿಂದ AI assistant {name}. Admissions open ಆಗಿದೆ. WhatsApp ಗೆ details ಕಳಿಸ್ಲಾ?"
       },
       "ta": {
-        "warm": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். அடுத்த year admissions open ஆயிடுச்சு சார், details WhatsApp ல அனுப்பவா?",
-        "respectful": "வணக்கம் சார், நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க admissions பத்தி ஒரு நிமிஷம் சொல்லவா?",
-        "quick": "ஹாய் சார், {business} ல இருந்து AI assistant {name}. Admissions open ஆயிடுச்சு. WhatsApp ல details அனுப்பவா?"
+        "warm": "வணக்கங்க, நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். அடுத்த year admissions open ஆயிடுச்சுங்க, details WhatsApp ல அனுப்பவா?",
+        "respectful": "வணக்கங்க, நான் {name}, {business} ல இருந்து AI assistant பேசுறேன். எங்க admissions பத்தி ஒரு நிமிஷம் சொல்லவா?",
+        "quick": "ஹாய்ங்க, {business} ல இருந்து AI assistant {name}. Admissions open ஆயிடுச்சு. WhatsApp ல details அனுப்பவா?"
       },
       "ml": {
         "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. അടുത്ത year admissions open ആയിട്ടുണ്ട്, details WhatsApp ൽ അയക്കട്ടെ?",

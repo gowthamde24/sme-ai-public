@@ -19,6 +19,7 @@ import time
 from collections.abc import AsyncIterator, Callable, Mapping
 from contextlib import suppress
 
+from app.agents.register import address
 from app.conversation.parts import StreamingTts
 from app.conversation.pronounce import Pronunciations, default_pronunciations
 from app.conversation.voices import VoiceChoice, VoiceConfig
@@ -42,6 +43,7 @@ class FallbackTts:
     def __init__(self, config: VoiceConfig, factory: EngineFactory, *, prewarm_language: str = "te", clock: Callable[[], float] = time.monotonic, chosen: Mapping[str, str] | None = None, gender: str = "female", pronunciations: Pronunciations | None = None) -> None:
         self._pron = pronunciations or default_pronunciations()  # words respelled before any engine hears them (a workspace passes its own additions)
         self.config, self._factory, self._prewarm_language, self._clock = config, factory, prewarm_language, clock
+        self.address_allow: tuple[str, ...] = ()   # the word of address the person chose in their profile (the owner chat); a call or a preview speaks none, whatever the model wrote
         self.gender = gender   # the workspace's voice gender: a chosen voice of the other gender is ignored (the gender's default speaks)
         self._chosen: dict[str, str] = dict(chosen or {})  # the workspace's voice id per language (job voice-picker); a missing or unknown one means the default
         self._engines: dict[tuple[str, str, str, str], StreamingTts] = {}
@@ -80,6 +82,7 @@ class FallbackTts:
     # ---- one piece of text ----------------------------------------------------------------------------------------------------------------
 
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
+        text = address.clean(text, self.address_allow)   # the last gate: nothing says sir / madam aloud unless the person asked for it
         voices = self.config.for_language(language, self._chosen.get(language), self.gender)
         primary_text = self._pron.apply(text, language, voices.primary.engine)
         fallback_text = self._pron.apply(text, language, voices.fallback.engine)

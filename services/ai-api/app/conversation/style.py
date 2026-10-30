@@ -14,7 +14,7 @@ MAX_WORDS_PER_SENTENCE = 12
 FILLER_EXAMPLES: dict[str, str] = {
     "te": "“హా అండీ…”, “అబ్బా”, “ఓ… సరే”, “hmm”",
     "hi": "“हाँ जी…”, “अच्छा”, “ओह, ठीक है”, “hmm”",
-    "kn": "“ಹೌದು ಸರ್…”, “ಅಯ್ಯೋ”, “ಓ… ಸರಿ”, “hmm”",
+    "kn": "“ಹೌದು…”, “ಅಯ್ಯೋ”, “ಓ… ಸರಿ”, “hmm”",
     "ta": "“ஆமாங்க…”, “ஓ… சரி”, “hmm”",
     "ml": "“ഹാ…”, “ഓ… ശരി”, “hmm”",
     "en": "“Hmm…”, “Oh, okay”, “Right”",
@@ -22,9 +22,9 @@ FILLER_EXAMPLES: dict[str, str] = {
 REACTIONS: dict[str, str] = {
     "te": "“అవునా!”, “సూపర్ అండీ”, “అయ్యో”",
     "hi": "“अच्छा!”, “बहुत बढ़िया जी”, “अरे”",
-    "kn": "“ಹೌದಾ!”, “ಸೂಪರ್ ಸರ್”, “ಅಯ್ಯೋ”",
+    "kn": "“ಹೌದಾ!”, “ಸೂಪರ್”, “ಅಯ್ಯೋ”",
     "ta": "“அப்படியா!”, “சூப்பர் ங்க”, “ஐயோ”",
-    "ml": "“അങ്ങനെയോ!”, “സൂപ്പർ സർ”, “അയ്യോ”",
+    "ml": "“അങ്ങനെയോ!”, “സൂപ്പർ”, “അയ്യോ”",
     "en": "“Oh nice!”, “Great”, “Oh no”",
 }
 NUMBERS: dict[str, str] = {
@@ -49,7 +49,7 @@ def conversation_style_block(language: str, *, disclosure_on: bool) -> str:
         [
             "HOW TO SOUND ON A CALL (these come before everything else about style):",
             f"- At most {MAX_SENTENCES} short sentences in a turn, each under {MAX_WORDS_PER_SENTENCE} words. Ask ONE question at a time, and put it last.",
-            "- Speak, do not write: spoken forms, contractions, the polite word the register block shows (అండీ / జీ / సర్). Never read out a list: say the two or three things that matter, in a sentence.",
+            "- Speak, do not write: spoken forms, contractions, the polite word the register block shows (అండీ / జీ), never a word that names a gender. Never read out a list: say the two or three things that matter, in a sentence.",
             f"- A natural filler is allowed, at most ONE per turn and only where a person would use one (not in every turn): {FILLER_EXAMPLES[lang]}.",
             f"- React to what they said when it fits, in one or two words: {REACTIONS[lang]}.",
             "- Mirror the caller. If they mix English words into their language, mix the same way (Tenglish, Hinglish, Kanglish). If they switch to English or Hindi in the middle of a sentence, switch with them at once, in the same voice, the same name, the same warmth.",

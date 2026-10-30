@@ -22,6 +22,7 @@ from app.agents.errors import AgentDbError
 from app.agents.llm.interface import Block, LlmError, LlmRequest, TaskClass, ToolSpec, Trust
 from app.agents.llm.routing import as_router
 from app.agents.prompts import escape_value
+from app.agents.register import address
 from app.agents.runtime import NOT_BILLED, input_token_bound
 from app.assistant.language import Language, detect_language, reply_matches
 from app.assistant.runner import _sha, money_amounts
@@ -136,7 +137,7 @@ def accept(structured: dict[str, Any] | None, language: Language) -> Suggestion 
         return None
     if language != "en" and not reply_matches(reply.gloss_en, "en"):  # the gloss is in English
         return None
-    return Suggestion(reply.text.strip(), language, reply.gloss_en.strip())
+    return Suggestion(address.clean(reply.text).strip(), language, address.clean(reply.gloss_en).strip())   # a message to a customer never says sir / madam: their title is not known
 
 
 def _approved_facts(runtime: Runtime, token: str, tenant_id: uuid.UUID) -> str | None:
