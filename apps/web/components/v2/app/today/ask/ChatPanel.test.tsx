@@ -116,8 +116,20 @@ describe("the input bar: Dictate and Live talk (owner, 30 Oct)", () => {
   it("has a text box, Dictate, Live talk and Send, in that order", () => {
     draw();
     const bar = document.querySelector('[data-chat="form"]') as HTMLElement;
-    const kinds = [...bar.querySelectorAll("input, button")].map((e) => (e.tagName === "INPUT" ? "text" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))));
+    const kinds = [...bar.querySelectorAll("input, textarea, button")].map((e) => (e.tagName === "INPUT" || e.tagName === "TEXTAREA" ? "text" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))));
     expect(kinds).toEqual(["text", "dictate", "live-talk", "submit"]);
+  });
+  it("the box is a multi-line text area: Enter sends, Shift+Enter is a new line, a composing keyboard is not cut short", async () => {
+    draw();
+    const box = screen.getByLabelText("Type, dictate, or go Live");
+    expect(box.tagName).toBe("TEXTAREA");
+    await type("how many enquiries today?");
+    await act(async () => void fireEvent.keyDown(box, { key: "Enter", shiftKey: true }));
+    expect(asked).toEqual([]);
+    await act(async () => void fireEvent.keyDown(box, { key: "Enter", keyCode: 229 })); // an IME confirming a word
+    expect(asked).toEqual([]);
+    await act(async () => void fireEvent.keyDown(box, { key: "Enter" }));
+    expect(asked).toEqual(["how many enquiries today?"]);
   });
   it("Dictate: the words appear in the box AS THEY ARE SPOKEN (the API's words-only mode: no answer, no sound), nothing is asked until Send, and the reply is text", async () => {
     draw();
