@@ -306,7 +306,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           <form
             data-write
             data-chat="form"
-            className="flex flex-col rounded-2xl border border-edge bg-surface px-3 pb-2 pt-1 focus-within:border-brand-edge"
+            className="flex flex-col rounded-2xl border border-edge bg-surface px-3 pb-2 pt-1"
             onSubmit={(e) => {
               e.preventDefault();
               void s.ask(s.text);
