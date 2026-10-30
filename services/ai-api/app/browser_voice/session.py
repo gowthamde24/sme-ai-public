@@ -37,7 +37,10 @@ log = logging.getLogger("app.browser_voice")
 
 LANGUAGES = ("te", "en", "hi", "kn", "ta", "ml")
 START_WITHIN_S = 10.0
-IDLE_S = 1800.0  # no final transcript for this long: the session ends. The owner's chat stays open until they close it; this only stops a tab left open for hours
+MODES = ("live", "dictate")
+LIVE_IDLE_S = 30.0   # live talk: no speech for this long and the session ends (`limit` idle); it listens again after every reply until then
+DICTATE_MAX_S = 60.0   # dictate: words only; the whole session never runs longer than this
+DICTATE_SILENCE_S = 4.0   # dictate: this long without a sound after a final transcript ends it (`limit` idle)
 MAX_STT_FAILURES = 3
 FLUSH_EVERY_S = 15.0
 TRANSCRIPT_EVERY_S = 0.25   # an interim transcript at most this often (the newest of the recogniser's partials)
@@ -71,6 +74,9 @@ class Parts:
     fillers: FillerBank | None = None
     # job EA: the owner's yes or no to a plan the assistant proposed -> {action_id, status, task}; raises ApiError (mfa_required, action_expired, ...). None: the socket cannot confirm.
     confirm: Callable[[uuid.UUID, str], dict[str, Any]] | None = None
+    # live talk is one thread with the typed chat: every turn goes through the written chat's turn (router, history, storage) instead of the voice's own fast model
+    one_thread: bool = False
+    conversation_id: str | None = None   # the thread (sent to the browser in `ready`)
 
 
 class CountingTts:
@@ -115,11 +121,16 @@ class VoiceSession:
         ledger: Ledger,
         usage: Usage,
         token: str = "",
+        mode: str = "live",
+        idle_s: float | None = None,
         clock: Callable[[], float] = time.monotonic,
     ) -> None:
         self.socket, self.parts, self.tenant_id, self.user_id = socket, parts, tenant_id, user_id
         self.limits, self.ledger, self.usage, self.clock = limits, ledger, usage, clock
         self._token = token  # the member's own token, to write the day's numbers back (empty: memory only)
+        self.mode = mode if mode in MODES else "live"
+        self.idle_s = LIVE_IDLE_S if idle_s is None else idle_s
+        self._last_sound = clock()   # dictate: the last time the recogniser heard anything
         self.session_id = uuid.uuid4()
         self.bus = FrameBus(clock)
         self.playout = BrowserPlayout(socket.send_bytes, self._send_stop, clock)
@@ -184,6 +195,7 @@ class VoiceSession:
         asyncio.ensure_future(self._send(message))
 
     def _on_stt(self, ev: SttEvent) -> None:
+        self._last_sound = self.clock()
         if ev.kind in ("partial", "final") and ev.text:
             asyncio.ensure_future(self._send({"type": "caption", "who": "user", "text": ev.text, "final": ev.kind == "final", "spoken": True}))
             self._transcript(ev.kind == "final", ev.text)
@@ -236,6 +248,8 @@ class VoiceSession:
         intent = classify(text, self._previous)
         self._previous = intent.kind
         asyncio.ensure_future(self._send({"type": "intent", "kind": intent.kind}))
+        if self.parts.one_thread:
+            return "strong"   # the written chat's own turn decides again and keeps the thread: small talk, general help, records and plans in ONE conversation
         return "fast" if intent.kind in ("smalltalk", "general") else "strong"
 
     # ---- the owner's yes or no to a plan ------------------------------------------------------------------------------------------------------------
@@ -272,9 +286,11 @@ class VoiceSession:
                 "audio_in": {"format": "pcm_s16le", "sample_rate": IN_RATE, "channels": 1},
                 "audio_out": {"format": "pcm_s16le", "sample_rate": OUT_RATE, "channels": 1},
                 "limits": {"session_seconds": self.limits.session_seconds, "day_seconds_left": self.ledger.seconds_left(self.tenant_id)},
+                "mode": self.mode,
+                **({"conversation_id": self.parts.conversation_id} if self.parts.conversation_id else {}),
             }
         )
-        tasks = [asyncio.ensure_future(c) for c in (self._reader(), self._turns(), self._timer())]
+        tasks = [asyncio.ensure_future(c) for c in (self._reader(), self._dictate() if self.mode == "dictate" else self._turns(), self._timer())]
         try:
             await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
         finally:
@@ -425,7 +441,7 @@ class VoiceSession:
             await self._set_state("listening")
             tm = TurnTimings()
             try:
-                text = await asyncio.wait_for(self.conv.listen(self.bus, tm), timeout=IDLE_S)
+                text = await asyncio.wait_for(self.conv.listen(self.bus, tm), timeout=self.idle_s)
             except TimeoutError:
                 self._ended = "idle"
                 await self._send({"type": "limit", "reason": "idle", "fatal": True})
@@ -470,6 +486,50 @@ class VoiceSession:
             finally:
                 await self._end_turn()
             self.bus.drop_before(0.0 if not tm.interrupted else PREROLL_S)
+
+    async def _dictate(self) -> None:
+        """Dictate: the same recogniser (language auto, verbatim), words only. The live `transcript` partials and the final ones go to the browser to fill the text box; the assistant is NEVER called, nothing is spoken, no turn is stored.
+        It ends with `limit` idle after DICTATE_MAX_S in all, or DICTATE_SILENCE_S without a sound after a final transcript (or on `stop`)."""
+        failures = 0
+        finals = 0
+        began = self.clock()
+        self._last_sound = began
+        await self._set_state("listening")
+        while not self._closing.is_set():
+            tm = TurnTimings()
+            listening = asyncio.ensure_future(self.conv.listen(self.bus, tm))
+            try:
+                while not listening.done():
+                    await asyncio.wait({listening}, timeout=0.25)
+                    now = self.clock()
+                    if now - began >= DICTATE_MAX_S or (finals and now - self._last_sound >= DICTATE_SILENCE_S):
+                        listening.cancel()
+                        with suppress(asyncio.CancelledError, Exception):
+                            await listening
+                        self._ended = "idle"
+                        await self._send({"type": "limit", "reason": "idle", "fatal": True})
+                        return
+                text = listening.result()
+            except asyncio.CancelledError:
+                listening.cancel()
+                raise
+            except Exception as err:
+                failures += 1
+                self.usage.errors += 1
+                log.warning("browser_voice_stt_failed code=%s", getattr(err, "code", type(err).__name__))
+                await self._send({"type": "error", "code": "stt_unavailable", "message": "I could not hear that. Please try again.", "fatal": failures >= MAX_STT_FAILURES})
+                if failures >= MAX_STT_FAILURES:
+                    self._ended = "stt_unavailable"
+                    return
+                self.bus.drop_before(0.0)
+                continue
+            if not text:
+                if self.bus._closed:  # noqa: SLF001 - the browser left
+                    return
+                continue
+            failures = 0
+            finals += 1
+            self._last_sound = self.clock()
 
     async def _answer(self, text: str, tm: TurnTimings) -> None:
         try:

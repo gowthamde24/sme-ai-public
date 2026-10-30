@@ -142,8 +142,8 @@ def test_the_ten_new_questions_are_telugu_and_kannada_the_way_people_type_them()
     assert "50 sarees ki quote pampu" in text and "pampu" in text
     assert re.search(r"[ಀ-೿]", text), "some are mixed with Kannada script"
     assert {c.id for c in new} == {i for i, *_ in bake.CODEMIX}
-    # the reply language is the product's own rule: Latin-script questions get English, Kannada-script ones Kannada
-    assert CASES["cm-send-quote-tenglish"].expect_reply == "en" and CASES[
+    # the reply language is the product's own rule: Kannada-script questions get Kannada; romanised Telugu gets Telugu back (owner, 29 Oct 2026), other Latin-script ones English
+    assert CASES["cm-send-quote-tenglish"].expect_reply in ("en", "te") and CASES[
         "cm-discount-kannada"
     ].expect_reply in ("kn", "en")
 

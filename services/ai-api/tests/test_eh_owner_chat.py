@@ -53,6 +53,6 @@ def test_a_customer_without_a_name_is_never_shown_with_an_id() -> None:
     assert not re.search(r"[0-9a-f]{6}", friendly_names("WhatsApp customer 84407a"))
 
 
-def test_the_owner_chat_stays_open_for_long_silences_and_an_hour() -> None:
-    assert session.IDLE_S >= 1800
+def test_live_talk_ends_after_thirty_seconds_of_silence_and_runs_up_to_an_hour() -> None:
+    assert session.LIVE_IDLE_S == 30.0   # owner (30 Oct 2026): live talk ends after about 30 s of silence; the typed chat thread stays open, only the hands-free session ends
     assert limits.Limits().session_seconds >= 3600 and limits.Limits().day_seconds >= 7200
