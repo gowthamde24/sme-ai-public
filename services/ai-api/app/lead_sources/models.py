@@ -287,7 +287,7 @@ class MailIn(_Strict):
 
 
 class MailOut(_Strict):
-    status: Literal["received", "unrecognised"]
+    status: Literal["received", "unrecognised", "ignored"]
 
 
 # ---- the Sources page (job EB part B)

@@ -167,6 +167,8 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `INDIAMART_CRM_KEY` | secret | api | Only with `real`. |
 | `LEAD_INBOUND_DOMAIN` | plain | api | Job DR / A2: the domain of the forwarding addresses `leads+TOKEN@domain`. Unset = no address is shown. |
 | `LEAD_INBOUND_SECRET` | secret | api | Job DR / A2: the header `X-Inbound-Secret` of the one global inbound mail address. Unset = that route answers 503. |
+| `LEAD_RESEND_API_KEY` | secret | api | Lead e-mails received by Resend (`leads.stack19.com`): the key that FETCHES a received mail, from Secret Manager `sme-resend-leads-api-key` (`--set-secrets`). It is NOT `RESEND_API_KEY` (the key the app's own e-mails are sent with, `sme-resend-api-key`); never reuse one for the other. Set together with `LEAD_RESEND_WEBHOOK_SECRET` or not at all (the API refuses to start with one of them). |
+| `LEAD_RESEND_WEBHOOK_SECRET` | secret | api | The signing secret (`whsec_...`) of the Resend webhook `POST /v1/lead-intake/resend` (event `email.received` only), from Secret Manager `sme-resend-webhook-secret`. Unset = that route answers 503. |
 | `LEAD_DND_PROVIDER` | plain | api | Job DR / A2: `off` (default) \| `fake` (development only). No real Do-Not-Disturb lookup is chosen yet. |
 | `META_LEAD_PROVIDER` | plain | api | Job DR / A2: `off` (default) \| `fake` (development only) \| `graph` (after Meta's app verification). |
 | `META_APP_SECRET` | secret | api | Job DR / A2: signs Meta's webhook. Only with `graph`. |

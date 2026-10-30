@@ -653,7 +653,8 @@
         "status": {
           "enum": [
             "received",
-            "unrecognised"
+            "unrecognised",
+            "ignored"
           ],
           "title": "Status",
           "type": "string"

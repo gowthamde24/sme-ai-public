@@ -28,6 +28,8 @@ from app.lead_sources.dnd import DndLookup
 from app.lead_sources.meta import LeadgenRef, MetaError, MetaLeadFetcher, refs_of, signature_ok
 from app.lead_sources.phones import check_phone
 from app.lead_sources.repository import LeadSourcesRepository
+from app.lead_sources.resend_inbound import ResendError, ResendInbound, email_id_of
+from app.lead_sources.resend_inbound import signature_ok as resend_signature_ok
 from app.lead_sources.sheets import SheetError, SheetFetcher, SheetRef, parse_sheet_url
 from app.suppression.keys import KeyRing
 
@@ -105,6 +107,13 @@ def _find_number(data: object, key: str) -> int | None:
     return None
 
 
+class _ReceivedAsMail:
+    """A mail fetched from Resend in the shape `receive_mail` reads."""
+
+    def __init__(self, got: Any) -> None:
+        self.sender, self.subject, self.text, self.message_id = got.sender, got.subject, got.text, got.message_id
+
+
 class LeadSourcesService:
     def __init__(
         self,
@@ -116,6 +125,7 @@ class LeadSourcesService:
         receiver: TokenSource | None = None,
         meta: MetaLeadFetcher | None = None,
         meta_app_secret: str | None = None,
+        resend: ResendInbound | None = None,
         inbound_domain: str | None = None,
         inbound_secret: str | None = None,
         public_base_url: str | None = None,
@@ -131,6 +141,7 @@ class LeadSourcesService:
         self.receiver = receiver
         self.meta = meta
         self._meta_secret = meta_app_secret
+        self.resend = resend
         self.inbound_domain = (inbound_domain or "").strip().lower() or None
         self._inbound_secret = inbound_secret
         self.base = (public_base_url or "").rstrip("/")
@@ -584,6 +595,30 @@ class LeadSourcesService:
         if not m:
             raise not_found()
         return self.receive_mail(m.group(1), mail)
+
+    def receive_resend(self, raw: bytes, svix_id: str | None, timestamp: str | None, signature: str | None, payload: object) -> str:
+        """Resend's `email.received` webhook (leads.stack19.com). Signed (Svix); the mail is fetched with the leads key and read like any forwarded mail. Answers: `received`, `unrecognised` (the mail was read but
+        is not a lead, or was not for a known address: nothing is retried), `ignored` (another kind of event). A mail that cannot be fetched is a 502 so that Resend tries again."""
+        if self.resend is None or self.receiver is None:
+            raise ApiError(503, "not_available", "Not available right now.")
+        if not resend_signature_ok(self.resend.webhook_secret, svix_id, timestamp, signature, raw):
+            raise ApiError(401, "unauthorized", "Not allowed.")
+        email_id = email_id_of(payload)
+        if email_id is None:
+            return "ignored"
+        try:
+            got = self.resend.fetcher.fetch(email_id)
+        except ResendError:
+            raise ApiError(502, "upstream_unavailable", "Try again shortly.") from None
+        m = next((hit for hit in (_MAIL_TO.search(a) for a in got.to) if hit), None)
+        if m is None:
+            return "unrecognised"
+        try:
+            return self.receive_mail(m.group(1), _ReceivedAsMail(got))
+        except ApiError as err:
+            if err.status_code == 404:   # an address that was rotated or never existed: a retry would not change that
+                return "unrecognised"
+            raise
 
     def meta_verify(self, secret: str, mode: str | None, verify_token: str | None, challenge: str | None) -> str:
         if self.meta is None or not _TOKEN.fullmatch(secret):

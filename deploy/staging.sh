@@ -101,6 +101,11 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
   if [ "${API_LEAD_INTAKE:-0}" = 1 ]; then
     LI_ENV="LEAD_INBOUND_DOMAIN=${LEAD_INBOUND_DOMAIN:-leads.stack19.com},SCHEDULER_EMAIL=${SCHEDULER_EMAIL:-scheduler@demo.example.test},PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://sme-api-620338396268.asia-south1.run.app}"
     LI_SECRETS=",LEAD_INBOUND_SECRET=sme-lead-inbound-secret:latest,SCHEDULER_PASSWORD=sme-scheduler-password:latest"
+    # leads.stack19.com receives through Resend (owner, 30 Oct 2026): POST /v1/lead-intake/resend. The leads key is sme-resend-leads-api-key, NOT sme-resend-api-key (that one SENDS the app's e-mails and is passed as RESEND_API_KEY
+    # below); the webhook's signing secret is sme-resend-webhook-secret. Both are mounted only when they exist and sme-api-run can read them, so a deploy never fails on a missing one.
+    if gcloud secrets describe sme-resend-leads-api-key --project "$PROJECT_ID" >/dev/null 2>&1 && gcloud secrets describe sme-resend-webhook-secret --project "$PROJECT_ID" >/dev/null 2>&1; then
+      LI_SECRETS="$LI_SECRETS,LEAD_RESEND_API_KEY=sme-resend-leads-api-key:latest,LEAD_RESEND_WEBHOOK_SECRET=sme-resend-webhook-secret:latest"
+    fi
   fi
   RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=0 \
     EXTRA_ENV="$WA_ENV,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam,AUTH_GOOGLE_CLIENT_ID=620338396268-k9tj60ci8equ4lsc120djtggj87ph66s.apps.googleusercontent.com" \

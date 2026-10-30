@@ -175,6 +175,11 @@ class Settings(BaseSettings):
     # The website form, the webhook and a public Google Sheet need no key.
     lead_inbound_domain: str | None = None  # domain of leads+TOKEN@domain; unset: no address
     lead_inbound_secret: SecretStr | None = None  # header of the one global inbound address
+    # Lead e-mails received by Resend (leads.stack19.com): the key that FETCHES a received mail
+    # (secret sme-resend-leads-api-key; NOT RESEND_API_KEY, the key app e-mails are SENT with)
+    # and the webhook's signing secret
+    lead_resend_api_key: SecretStr | None = None
+    lead_resend_webhook_secret: SecretStr | None = None
     lead_dnd_provider: str = "off"  # off | fake (no real Do-Not-Disturb lookup is chosen yet)
     meta_lead_provider: str = "off"  # off | fake | graph (graph only after Meta's app verification)
     meta_app_secret: SecretStr | None = None
