@@ -449,7 +449,7 @@ def test_a_foreign_origin_is_refused() -> None:
 
 
 def test_a_member_talks_and_hears_the_answer(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(bv_routes, "build_parts", lambda bv, runtime, ctx, emit, on_ask, thread=None: fake_parts())
+    monkeypatch.setattr(bv_routes, "build_parts", lambda bv, runtime, ctx, emit, on_ask, thread=None, pin=None: fake_parts())
     bv = bv_of()
     client, _ = make_client(browser_voice=bv)
     with client.websocket_connect(f"/v1/tenants/{TENANT_A.id}/voice-chat", headers={"origin": "https://staging.stack19.com"}) as ws:
@@ -473,7 +473,7 @@ def test_a_member_talks_and_hears_the_answer(monkeypatch: pytest.MonkeyPatch) ->
 
 
 def test_a_second_session_of_the_same_workspace_is_busy(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr(bv_routes, "build_parts", lambda bv, runtime, ctx, emit, on_ask, thread=None: fake_parts())
+    monkeypatch.setattr(bv_routes, "build_parts", lambda bv, runtime, ctx, emit, on_ask, thread=None, pin=None: fake_parts())
     client, _ = make_client(browser_voice=bv_of())
     url = f"/v1/tenants/{TENANT_A.id}/voice-chat"
     with client.websocket_connect(url) as first:
@@ -687,8 +687,10 @@ def test_the_owner_hears_a_short_hello_of_their_own_not_the_customer_call_line_a
     assert parts.greeting_for("ta") == OWNER_GREETING["ta"] and parts.greeting_for("ml") == OWNER_GREETING["ml"] and parts.greeting_for("mr") == "Hi, how can I help?", "a language without its own hello falls back to English"
     assert OWNER_SILENCE_MS == 900
     assert parts.stt_for("en")._silence_ms == 900  # type: ignore[attr-defined]
-    stt = parts.stt_for("en")
+    stt = parts.stt_for("te")
     assert (stt._language, stt._mode) == ("auto", "verbatim"), "the owner may speak any of the six in any turn: detected, written as spoken"  # type: ignore[attr-defined]
+    english = parts.stt_for("en")
+    assert (english._language, english._mode) == ("auto", "transcribe"), "an English session is written in Latin letters (verbatim wrote English in Devanagari)"  # type: ignore[attr-defined]
 
 
 # ---- voice system v2: one voice per turn, announced before the first chunk, the language follows the owner -----------------------------------------------

@@ -7,6 +7,7 @@ reads and plants (aging a lead, a touch at an exact time, invariants) that no cl
 from __future__ import annotations
 
 import json
+import time
 import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -215,7 +216,8 @@ class FollowWorld:
         # the Docker VM's). Any other offset is days in the past and cannot be later than the database's now().
         if days_ago is not None and days_ago != 0:
             body["occurred_at"] = (datetime.now(UTC) - timedelta(days=days_ago)).isoformat()
-        return self.call("POST", f"/leads/{lead.id}/touches", user, body)
+        out = self.call("POST", f"/leads/{lead.id}/touches", user, body)
+        return out
 
     def due_lead(self, label: str | None = None, *, outs: int = 1, **kw: Any) -> Lead:
         """A lead with `outs` outbound touches (5, 4, 3 ... days ago): due under the default policy."""
@@ -225,9 +227,19 @@ class FollowWorld:
             assert r.status_code == 201, r.text
         return lead
 
+    def settle(self) -> None:
+        """Let the HOST clock pass the newest touch of this tenant by a second before the API is asked what is due. The engine request carries `as_of` (the API's now, from the host clock) and every touch time in WHOLE
+        seconds (floor); a touch with no stated time is stamped by the DATABASE clock (the Docker VM's, which can run ahead of the host's by more than a second), so a draft asked for in the touch's own second saw a touch
+        "after now" (future_history: the db-integration-4 failure on #223 and on main). Waiting here makes the order the same on a fast machine as on a slow one."""
+        newest = float(self.sql(f"select coalesce(extract(epoch from max(occurred_at)), 0) from public.lead_touches where tenant_id = '{self.t.id}' and occurred_at <= clock_timestamp()"))   # (a touch planted in the FUTURE on purpose is not waited for)
+        wait = newest + 1.05 - time.time()
+        if 0 < wait <= 10:
+            time.sleep(wait)
+
     def draft(
         self, user: User | str, lead: Lead, channel: str = "email", draft_id: str | None = None
     ) -> httpx.Response:
+        self.settle()
         return self.call(
             "POST",
             f"/leads/{lead.id}/followup-drafts",

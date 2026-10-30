@@ -164,3 +164,22 @@ def test_the_real_parts_join_the_given_thread_and_use_the_written_chats_turn() -
     parts = build_parts(bv_of(), runtime, ctx, lambda kind, data: None, lambda: None, thread)  # type: ignore[arg-type]
     assert parts.one_thread is True and parts.conversation_id == str(thread)
     assert build_parts(bv_of(), runtime, ctx, lambda kind, data: None, lambda: None).conversation_id != str(thread)  # type: ignore[arg-type]
+
+
+def test_a_chosen_dictation_language_pins_the_recogniser_and_auto_detects_otherwise() -> None:
+    from types import SimpleNamespace
+
+    from app.auth.deps import TenantContext
+    from app.auth.jwt import Principal
+    from app.browser_voice.routes import build_parts
+    from app.tenancy.models import Role
+    from tests.fakes import TENANT_A
+    from tests.test_dv_browser_voice import bv_of
+
+    workspace = SimpleNamespace(voice_choices=lambda token, tenant: {"choices": {}}, opening=lambda token, tenant: {"mention_ai": True, "lines": [], "campaign_overrides": []})
+    runtime = SimpleNamespace(workspace=workspace, assistant_settings=None)
+    ctx = TenantContext(principal=Principal(user_id=USER, token="t"), tenant=TENANT_A, role=Role.OWNER)
+    auto = build_parts(bv_of(), runtime, ctx, lambda kind, data: None, lambda: None).stt_for("te")  # type: ignore[arg-type]
+    pinned = build_parts(bv_of(), runtime, ctx, lambda kind, data: None, lambda: None, None, "te").stt_for("en")  # type: ignore[arg-type]
+    assert auto._language == "auto" and auto._mode == "verbatim"  # type: ignore[attr-defined]
+    assert pinned._language == "te" and pinned._mode == "verbatim", "pinned to Telugu: native script from the first word (the mode follows the pinned language)"  # type: ignore[attr-defined]
