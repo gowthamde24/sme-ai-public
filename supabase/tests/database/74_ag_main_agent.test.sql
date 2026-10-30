@@ -85,6 +85,11 @@ select is(pg_temp.begin('a_owner', 'a', 'conv4', 'm4', 'hi'), 'ok', 'light runs 
 select is(pg_temp.begin('a_owner', 'a', 'conv4', 'm4b', 'how many enquiries today?'), 'SM206', '...and heavy runs are: the next heavy turn is refused');
 select tests.scalar_as(tests.uid('a_owner'), format($q$select public.assistant_mark_heavy(%L)$q$, tests.rid('run_light1')));
 select is((select light from public.agent_runs where id = tests.rid('run_light1')), false, 'a turn the router calls heavy is taken back into the count');
+-- light turns have a ceiling of their own: eight times the hourly allowance
+update public.agent_limits set limit_value = 1 where limit_key = 'max_runs_per_hour';
+select is((select count(*) from public.agent_runs where tenant_id = tests.tid('a') and light and created_at > now() - interval '1 hour'), 0::bigint, 'no light run is open in the hour (the first was taken back)');
+select tests.scalar_as(tests.uid('a_owner'), format($q$select public.assistant_begin_message(%L, %L, %L, %L, 'light %s', 'en', %L, true)$q$, tests.rid('run_l' || n), tests.tid('a'), tests.rid('conv4'), tests.rid('m_l' || n), n, repeat('a', 64))) from generate_series(1, 8) n;
+select is(tests.sqlstate_as(tests.uid('a_owner'), format($q$select public.assistant_begin_message(%L, %L, %L, %L, 'one too many', 'en', %L, true)$q$, tests.rid('run_l9'), tests.tid('a'), tests.rid('conv4'), tests.rid('m_l9'), repeat('a', 64))), 'SM206', 'the ninth light run in an hour is refused: eight times the allowance');
 update public.agent_limits set limit_value = 1000 where limit_key = 'max_runs_per_hour';
 delete from public.assistant_messages where id = tests.rid('m4');
 select is((select count(*) from public.assistant_messages where id = tests.rid('m4b')), 0::bigint, 'a refused message is not stored');

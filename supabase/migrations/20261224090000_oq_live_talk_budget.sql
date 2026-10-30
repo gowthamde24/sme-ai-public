@@ -1,6 +1,6 @@
 -- Live talk gets its own budget (owner, 30 Oct). A small-talk or general-help turn (the router's `smalltalk` / `general`) is a light run: one model call, no tools, no records.
 -- It is marked `light` and does not count against `max_runs_per_hour`, so hands-free talk cannot use up the allowance of the data and action turns.
--- A data or action turn counts as before. The concurrent-run limit and the day's cost cap still apply to every run.
+-- A data or action turn counts as before. The concurrent-run limit and the day's cost cap still apply to every run; light turns have their own ceiling of eight times the hourly allowance.
 alter table public.agent_runs add column light boolean not null default false;
 
 -- a turn the router calls a data or action turn after the run was opened light (the router sees the previous turn; the cheap pre-check does not): it counts like any other
@@ -85,7 +85,11 @@ begin
        >= app.agent_limit('max_concurrent_runs', 0)
      or (not coalesce(p_light, false)
          and (select count(*) from public.agent_runs a where a.tenant_id = p_tenant_id and a.created_at > now() - interval '1 hour' and not a.light)
-             >= app.agent_limit('max_runs_per_hour', 0)) then
+             >= app.agent_limit('max_runs_per_hour', 0))
+     -- light turns have a ceiling of their own (eight times the hourly allowance: 240 an hour at 30), so the flag cannot be used to start unlimited runs
+     or (coalesce(p_light, false)
+         and (select count(*) from public.agent_runs a where a.tenant_id = p_tenant_id and a.created_at > now() - interval '1 hour' and a.light)
+             >= 8 * app.agent_limit('max_runs_per_hour', 0)) then
     perform app.agent_state_error('SM206');
   end if;
   if app.agent_day_spend(p_tenant_id, app.agent_utc_today()) >= app.agent_daily_cap(p_tenant_id) then
