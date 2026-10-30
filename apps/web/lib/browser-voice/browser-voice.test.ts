@@ -30,13 +30,18 @@ describe("the sound", () => {
 describe("the messages", () => {
   it("the first message carries the sign-in and the language; the address of the socket is made from the API's own address", () => {
     expect(JSON.parse(startMessage("tok", "te"))).toEqual({ type: "start", access_token: "tok", language: "te" });
+    const C = "55555555-5555-4555-8555-555555555555";
+    expect(JSON.parse(startMessage("tok", "te", { mode: "dictate" }))).toEqual({ type: "start", access_token: "tok", language: "te", mode: "dictate" });
+    expect(JSON.parse(startMessage("tok", "te", { conversationId: C }))).toEqual({ type: "start", access_token: "tok", language: "te", conversation_id: C });
+    expect(JSON.parse(startMessage("tok", "te", { conversationId: "not-an-id" }))).toEqual({ type: "start", access_token: "tok", language: "te" }); // a bad id is never sent
+    expect(parseServerMessage(json({ type: "ready", session_id: "s", language: "en", limits: {}, conversation_id: C }))).toMatchObject({ conversationId: C });
     expect(JSON.parse(setLanguageMessage("hi"))).toEqual({ type: "set_language", language: "hi" });
     expect(voiceSocketUrl("https://sme-api-1.run.app/", "t-1")).toBe("wss://sme-api-1.run.app/v1/tenants/t-1/voice-chat");
     expect(voiceSocketUrl("http://localhost:8000", "t")).toBe("ws://localhost:8000/v1/tenants/t/voice-chat");
     expect(voiceSocketUrl("javascript:1", "t")).toBeNull();
   });
   it("reads each message of the API and nothing else", () => {
-    expect(parseServerMessage(json({ type: "ready", session_id: "s1", language: "te", limits: { session_seconds: 300, day_seconds_left: 1700 } }))).toEqual({ type: "ready", sessionId: "s1", language: "te", sessionSeconds: 300, daySecondsLeft: 1700 });
+    expect(parseServerMessage(json({ type: "ready", session_id: "s1", language: "te", limits: { session_seconds: 300, day_seconds_left: 1700 } }))).toEqual({ type: "ready", sessionId: "s1", language: "te", sessionSeconds: 300, daySecondsLeft: 1700, conversationId: null });
     expect(parseServerMessage(json({ type: "state", state: "thinking", step: "looking" }))).toEqual({ type: "state", state: "thinking", step: "looking" });
     expect(parseServerMessage(json({ type: "caption", who: "assistant", text: "Long answer", final: true, spoken: false }))).toEqual({ type: "caption", who: "assistant", text: "Long answer", final: true, spoken: false });
     expect(parseServerMessage(json({ type: "source", kind: "price_item", label: "Silk saree" }))).toEqual({ type: "source", kind: "price_item", label: "Silk saree" });
@@ -122,6 +127,18 @@ describe("a session", () => {
     ws.say({ type: "ready", session_id: "s", language: "te", limits: {} });
   };
 
+  it("dictation keeps the first words spoken while the socket opens and sends them once the API is ready (the start of the sentence is not lost); a live session does not", async () => {
+    const dict = new VoiceClient({ url: "wss://x/v1/tenants/t/voice-chat", token: "tok", language: "te", audio: audio.io, socket: () => ws, onChange: () => undefined, mode: "dictate" });
+    await dict.start();
+    audio.frame(0.5);
+    audio.frame(0.5);
+    ws.open();
+    expect(ws.types()).toEqual(["start"]); // not ready yet: nothing but the start
+    ws.say({ type: "ready", session_id: "s", language: "te", limits: {}, mode: "dictate" });
+    expect(ws.types()).toEqual(["start", "audio", "audio"]); // the two early frames, in order, then live ones
+    audio.frame(0.5);
+    expect(ws.types().length).toBe(4);
+  });
   it("opens the microphone, sends the sign-in first, and says ready", async () => {
     await ready();
     expect(ws.binaryType).toBe("arraybuffer");
