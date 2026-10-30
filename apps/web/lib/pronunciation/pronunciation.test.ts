@@ -10,7 +10,7 @@ describe("the pronunciation list shapes", () => {
     expect(parseEntry({ ...row, language: "te" })?.language).toBe("te");
     expect(parseEntry({ ...row, language: "xx" })).toBeNull();
     expect(parseEntry({ ...row, sounds_like: "" })).toBeNull();
-    expect(parseList({ items: [row], suggestions: [{ word: "Kallu", reason: "business_name" }, { word: "x", reason: "nope" }, 5] })).toEqual({ items: [{ id: row.id, word: "Pochampally", soundsLike: "pochampalli", language: null }], suggestions: [{ word: "Kallu", reason: "business_name" }] });
+    expect(parseList({ items: [row], suggestions: [{ word: "Kallu", reason: "business_name", sounds_like: "kal-lu" }, { word: "x", reason: "nope" }, 5] })).toEqual({ items: [{ id: row.id, word: "Pochampally", soundsLike: "pochampalli", language: null }], suggestions: [{ word: "Kallu", reason: "business_name", soundsLike: "kal-lu" }] });
     expect(parseList({ items: [{ ...row, id: "!" }] })).toBeNull();
     expect(parseList({ nope: 1 })).toBeNull();
   });

@@ -76,7 +76,7 @@ try {
   const D = await open(d.file);
   const { card: dc, s: ds } = D;
   const bar = dc.locator('[data-chat="form"]');
-  const kinds = await bar.locator("input, button").evaluateAll((els) => els.map((e) => (e.tagName === "INPUT" ? "text" : e.getAttribute("data-chat") || e.getAttribute("type"))));
+  const kinds = await bar.locator("input, textarea, button").evaluateAll((els) => els.map((e) => (e.tagName === "INPUT" || e.tagName === "TEXTAREA" ? "text" : e.getAttribute("data-chat") || e.getAttribute("type"))));
   ok("the input bar is: text box, Dictate, Live talk, Send", kinds.join() === "text,dictate,live-talk,submit", kinds.join());
   await shot(ds, `dl-${pack}-${size}-${lang}-1-bar`);
   await dc.locator('[data-chat="dictate"]').click();

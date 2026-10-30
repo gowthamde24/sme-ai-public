@@ -1,14 +1,14 @@
-import { ApiContractError, ApiRequestError, apiRequest } from "./client";
+import { ApiContractError, ApiRequestError, apiBinaryRequest, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { cleanText, parseEntry, parseList, SOUND_MAX, WORD_MAX, type Entry, type PronList } from "@/lib/pronunciation/types";
 import type { CallLang } from "@/lib/assistant/types";
 
 /**
- * The workspace's pronunciation list, as C1's API has it (DRAFT contract, job pronunciation-quality; the real one replaces this file's paths): under `/v1/tenants/{id}/ai-assistant`:
+ * The workspace's pronunciation list, as C1's API has it (contract-pronunciation.md, 30 Oct): under `/v1/tenants/{id}/ai-assistant`:
  *   GET  /pronunciation          any member -> { items: [{id, word, sounds_like, language|null}], suggestions: [{word, reason}] }
- *   PUT  /pronunciation          Owner, Admin { word, sounds_like, language|null }  (one entry per word and language: saving again changes it) -> the entry
+ *   PUT  /pronunciation          Owner, Admin { word, sounds_like, language|null, message_id? }  (one entry per word and language: saving again changes it) -> the entry
  *   POST /pronunciation/{id}/delete   Owner, Admin -> 204 (the API has no DELETE verb)
- *   POST /voices/preview         { language, text, mention_ai: null, assistant_name: null } -> the sound of `text` in the voice in force (the same as the opening line's "Hear it")
+ *   POST /pronunciation/preview  Owner, Admin { word, sounds_like, language } -> audio/wav: the word in a short sentence in the workspace's voice, with this respelling (nothing saved); 404 no_sample, 429 rate_limited
  * SERVER ONLY, with the signed-in person's own token.
  */
 const base = (tenantId: string): string => {
@@ -36,19 +36,17 @@ export async function deletePronunciation(token: string, tenantId: string, id: s
   await apiRequest(`${base(tenantId)}/pronunciation/${id}/delete`, token, { method: "POST", body: "{}" });
 }
 
-/** The sound of the "sounds like" text in the workspace's voice for that language; null = no voice service. Same envelope as the opening line's preview. */
-export async function speakSoundsLike(token: string, tenantId: string, language: CallLang, soundsLike: string): Promise<{ bytes: Uint8Array; contentType: string } | null> {
-  const text = cleanText(soundsLike, SOUND_MAX);
-  if (text === null) throw new ApiContractError("invalid");
-  let json: unknown;
+/** The sound of a word with this respelling, said in a short sentence in the workspace's voice for that language (`POST /pronunciation/preview`, nothing is saved); null = no voice service (404). A 429 is passed on to the caller. */
+export async function speakWord(token: string, tenantId: string, word: string, soundsLike: string, language: CallLang): Promise<{ bytes: ArrayBuffer; contentType: string } | null> {
+  const w = cleanText(word, WORD_MAX);
+  const s = cleanText(soundsLike, SOUND_MAX);
+  if (w === null || s === null) throw new ApiContractError("invalid");
   try {
-    json = await apiRequest(`${base(tenantId)}/voices/preview`, token, { method: "POST", body: JSON.stringify({ language, text, mention_ai: null, assistant_name: null }) });
+    const got = await apiBinaryRequest(`${base(tenantId)}/pronunciation/preview`, token, 4_000_000, { body: { word: w, sounds_like: s, language } });
+    const type = got.contentType.split(";")[0].trim();
+    return /^audio\/(wav|x-wav|mpeg|ogg|mp4|webm)$/.test(type) ? { bytes: got.bytes, contentType: type === "audio/x-wav" ? "audio/wav" : type } : null;
   } catch (error) {
-    if (error instanceof ApiRequestError && (error.code === "no_preview" || error.status === 404)) return null;
+    if (error instanceof ApiRequestError && (error.status === 404 || error.code === "no_sample")) return null;
     throw error;
   }
-  const audio = typeof json === "object" && json !== null && typeof (json as { audio?: unknown }).audio === "object" ? ((json as { audio: { base64?: unknown; mime?: unknown } }).audio ?? null) : null;
-  const mime = audio?.mime === "audio/x-wav" ? "audio/wav" : audio?.mime;
-  if (!audio || typeof audio.base64 !== "string" || audio.base64.length > 4_000_000 || !/^[A-Za-z0-9+/=]+$/.test(audio.base64) || typeof mime !== "string" || !/^audio\/(wav|mpeg|ogg|mp4|webm)$/.test(mime)) return null;
-  return { bytes: Uint8Array.from(atob(audio.base64), (c) => c.charCodeAt(0)), contentType: mime };
 }

@@ -9,7 +9,7 @@ export const SOUND_MAX = 80;
 export const LIST_MAX = 100;
 export type Entry = { id: string; word: string; soundsLike: string; language: CallLang | null };
 /** A word the business already uses (its name, its town) that the owner may want to teach; `reason` is a closed word. */
-export type Suggestion = { word: string; reason: "business_name" | "city" | "product" };
+export type Suggestion = { word: string; reason: "business_name" | "city" | "product"; /** What an English voice is given today when the shared words know the word; null = the owner types it. */ soundsLike?: string | null };
 export type PronError = "invalid" | "forbidden" | "full" | "not_available" | "down";
 export type PronList = { items: Entry[]; suggestions: Suggestion[] };
 
@@ -47,7 +47,7 @@ export function parseList(json: unknown): PronList | null {
     for (const s of json.suggestions.slice(0, 50)) {
       const word = isRecord(s) ? cleanText(s.word, WORD_MAX) : null;
       if (word === null || !isRecord(s) || !(REASONS as readonly unknown[]).includes(s.reason)) continue; // a suggestion we cannot read is dropped, not an error
-      suggestions.push({ word, reason: s.reason as Suggestion["reason"] });
+      suggestions.push({ word, reason: s.reason as Suggestion["reason"], soundsLike: cleanText(s.sounds_like, SOUND_MAX) });
     }
   }
   return { items, suggestions };

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 
+import { postPronunciation } from "@/components/v2/app/assistant/pronunciation-post";
 import type { VoiceLang } from "@/lib/browser-voice/protocol";
 import { cleanText, SOUND_MAX, WORD_MAX } from "@/lib/pronunciation/types";
 
@@ -37,9 +38,8 @@ export function Mispronounced({ text, language, endpoint, c, messageId }: { text
     if (word === null || cleanText(sound, SOUND_MAX) === null) return;
     setState("saving");
     try {
-      const r = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "save", word, sounds_like: sound, language, ...(messageId ? { message_id: messageId } : {}) }) });
-      const out = (await r.json()) as { ok?: boolean };
-      if (out.ok) {
+      const out = await postPronunciation(endpoint, { action: "save", word, sounds_like: sound, language, ...(messageId ? { message_id: messageId } : {}) });
+      if (out !== "signin" && out.ok) {
         setState("saved");
         close();
       } else setState("error");

@@ -67,7 +67,7 @@ describe("Settings > AI assistant > Pronunciation", () => {
   it("Hear it asks the preview route for the sound in the chosen language", async () => {
     draw();
     await act(async () => void fireEvent.click(document.querySelector('[data-part="pron-hear"]') as HTMLElement));
-    expect((fetch as unknown as { mock: { calls: string[][] } }).mock.calls.some((c) => c[0].startsWith("/pp?lang=te&say=pochampalli"))).toBe(true);
+    expect((fetch as unknown as { mock: { calls: string[][] } }).mock.calls.some((c) => c[0].startsWith("/pp?lang=te&word=Pochampally&say=pochampalli"))).toBe(true);
   });
   it("a member who may not change it only reads and hears", () => {
     draw(false);

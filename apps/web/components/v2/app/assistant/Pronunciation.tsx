@@ -6,10 +6,9 @@ import * as React from "react";
 import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { offerFromBusiness, SOUND_MAX, WORD_MAX, type Entry, type PronError, type PronList } from "@/lib/pronunciation/types";
 
+import { fetchSound, postPronunciation, type Out } from "./pronunciation-post";
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, okBox, surface } from "../ui";
 import { makeT, type Words } from "../words";
-
-type Out = { ok: true; entry?: Entry } | { ok: false; error: PronError };
 
 /**
  * Settings > AI assistant > "Pronunciation" (job pronunciation-quality, owner 30 Oct): the words the assistant must say a certain way. One row per word ("Pochampally" sounds like "pochampalli") with "Hear it" in the voice the workspace chose and "Remove"; below it a small form to add
@@ -30,25 +29,21 @@ export function Pronunciation({ words, initial, canEdit, endpoint, previewEndpoi
   const suggestions = offerFromBusiness(businessName, city, items, initial.suggestions);
 
   const post = async (body: Record<string, unknown>): Promise<Out> => {
-    try {
-      const r = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-      if (r.status === 401) {
-        router.push("/login");
-        return { ok: false, error: "down" };
-      }
-      return (await r.json()) as Out;
-    } catch {
+    const r = await postPronunciation(endpoint, body);
+    if (r === "signin") {
+      router.push("/login");
       return { ok: false, error: "down" };
     }
+    return r;
   };
-  const hear = async (key: string, say: string, language: CallLang) => {
+  const hear = async (key: string, wordText: string, say: string, language: CallLang) => {
     audio.current?.pause();
     setError(null);
     setHearing(key);
     try {
-      const r = await fetch(`${previewEndpoint}?${new URLSearchParams({ lang: language, say })}`, { cache: "no-store" });
-      if (!r.ok) throw new Error("no sound");
-      const url = URL.createObjectURL(await r.blob());
+      const blob = await fetchSound(`${previewEndpoint}?${new URLSearchParams({ lang: language, word: wordText, say })}`);
+      if (blob === null) throw new Error("no sound");
+      const url = URL.createObjectURL(blob);
       const a = new Audio(url);
       audio.current = a;
       a.onended = a.onerror = () => {
@@ -98,7 +93,7 @@ export function Pronunciation({ words, initial, canEdit, endpoint, previewEndpoi
               <span className="ml-2 rounded-full bg-surface px-2 py-0.5 text-xs font-semibold text-muted">{e.language ? langNames[e.language] : t("pr.lang.all")}</span>
             </p>
             <span className="flex gap-2">
-              <button type="button" data-part="pron-hear" className={btnQuiet} disabled={hearing !== null} onClick={() => void hear(e.id, e.soundsLike, e.language ?? defaultLang)}>
+              <button type="button" data-part="pron-hear" className={btnQuiet} disabled={hearing !== null} onClick={() => void hear(e.id, e.word, e.soundsLike, e.language ?? defaultLang)}>
                 {hearing === e.id ? t("pr.hearing") : t("pr.hear")}
               </button>
               {canEdit ? (
@@ -124,7 +119,10 @@ export function Pronunciation({ words, initial, canEdit, endpoint, previewEndpoi
               <ul className="mt-1 flex flex-wrap gap-2">
                 {suggestions.map((s) => (
                   <li key={s.word}>
-                    <button type="button" className="inline-flex min-h-10 items-center rounded-full border border-edge bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2" onClick={() => setWord(s.word)}>
+                    <button type="button" className="inline-flex min-h-10 items-center rounded-full border border-edge bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2" onClick={() => {
+                        setWord(s.word);
+                        if (s.soundsLike) setSound(s.soundsLike);
+                      }}>
                       {s.word}
                     </button>
                   </li>
@@ -153,7 +151,7 @@ export function Pronunciation({ words, initial, canEdit, endpoint, previewEndpoi
             </select>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button type="button" data-part="pron-hear-new" className={btnQuiet} disabled={sound.trim() === "" || hearing !== null} onClick={() => void hear("new", sound, hearLang)}>
+            <button type="button" data-part="pron-hear-new" className={btnQuiet} disabled={sound.trim() === "" || hearing !== null} onClick={() => void hear("new", word, sound, hearLang)}>
               {hearing === "new" ? t("pr.hearing") : t("pr.hear")}
             </button>
             <button type="submit" data-part="pron-save" className={btnMain} disabled={busy || word.trim() === "" || sound.trim() === ""}>
