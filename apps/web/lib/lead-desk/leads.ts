@@ -8,9 +8,23 @@ import { URGENCIES, type LeadProfile, type Urgency } from "./profile";
  */
 export const LEAD_STATUSES = ["new", "contacted", "qualified", "disqualified"] as const;
 export type LeadStatus = (typeof LEAD_STATUSES)[number];
-export type DeskLead = { id: string; contactId: string | null; name: string; source: string | null; status: LeadStatus; ownerUserId: string | null; createdAt: string; hot: boolean; /** What the lead is (need, size, area, urgency...), from the API's normaliser; absent when it has none. */ profile?: LeadProfile | null; /** Not yet opened by this person. */ isNew?: boolean };
+export type DeskLead = { id: string; contactId: string | null; name: string; source: string | null; status: LeadStatus; ownerUserId: string | null; createdAt: string; hot: boolean; /** The contact's phone number, when the contact could be read. */ phone?: string | null; /** What the lead is (need, size, area, urgency...), from the API's normaliser; absent when it has none. */ profile?: LeadProfile | null; /** Not yet opened by this person. */ isNew?: boolean };
 export type DeskFilter = { source: string | null; status: LeadStatus | null; mine: boolean; hot: boolean; urgency: Urgency | null; junk: boolean; q: string };
 export const NO_FILTER: DeskFilter = { source: null, status: null, mine: false, hot: false, urgency: null, junk: false, q: "" };
+
+/** A system id and not a name: a UUID, a long hex run, or "Lead 3f2a9b1c" / "contact_3f2a9b1c" (what an intake that had no name may have stored). */
+export function looksLikeId(text: string): boolean {
+  const t = text.trim();
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(t) || /^(?=.*\d)[0-9a-f]{8,}$/i.test(t) || /^(?:new[\s_-]*)?(?:whatsapp[\s_-]*customer|whatsapp|customer|lead|contact|enquiry|inquiry|cnt|usr|user)[\s#:_-]*(?=[0-9a-f-]*\d)[0-9a-f-]{6,}$/i.test(t);
+}
+
+/** What a lead is called on screen: its name, else its phone number, else `fallback` ("New enquiry"). An internal id is never shown as a name. */
+export function leadTitle(name: string | null | undefined, phone: string | null | undefined, fallback: string): string {
+  const n = (name ?? "").trim();
+  if (n !== "" && !looksLikeId(n)) return n;
+  const p = (phone ?? "").trim();
+  return p !== "" && !looksLikeId(p) ? p : fallback;
+}
 
 /** The filter out of the address: only known words count; anything else is "no filter" for that part. */
 export function parseFilter(query: Record<string, string | string[] | undefined>): DeskFilter {

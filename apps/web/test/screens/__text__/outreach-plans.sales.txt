@@ -7,7 +7,7 @@ Speed to lead: who your assistant calls and messages, approved once instead of o
 form:
 Make a plan for the leads from
 <select name=source label="Make a plan for the leads from">
-  options: IndiaMART=indiamart | JustDial=justdial | 99acres | MagicBricks=magicbricks | Housing.com=housing | Meta lead ads=meta_lead_ads | Your website form=website_form | Webhook (Zapier, n8n)=webhook | Excel or CSV file=excel_upload* | Google Sheet=google_sheet | Pasted list=pasted_list | Contacts file=vcard
+  options: IndiaMART=indiamart | JustDial=justdial | 99acres | MagicBricks=magicbricks | Housing.com=housing | Meta lead ads=meta_lead_ads | Your website form=website_form | Webhook (Zapier, n8n)=webhook | Forwarded e-mail=email_forward | Excel or CSV file=excel_upload* | Google Sheet=google_sheet | Pasted list=pasted_list | Contacts file=vcard
 [button type=submit: Make a plan]
 - [IndiaMART leads, 27 Oct (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/batches/ba000000-0000-4000-8000-0000000000b1) Book a site visit · 12 people · ₹108 Waiting for your approval
 - [IndiaMART leads, 27 Oct (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/outreach/batches/ba000000-0000-4000-8000-0000000000b1) Book a site visit · 12 people · ₹108 · 3 of 9 done Running

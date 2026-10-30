@@ -16,6 +16,7 @@ import { ContactLead } from "@/components/v2/app/contact/ContactLead";
 import { OutcomesPanel } from "@/components/v2/app/outcomes/OutcomesPanel";
 import { readCustomerOutcomes } from "@/lib/outcomes/source";
 import { LeadTimeline } from "@/components/v2/app/lead-desk/LeadTimeline";
+import { leadTitle } from "@/lib/lead-desk/leads";
 import { readLeadProfile, readTouches } from "@/lib/lead-desk/leads-source";
 import { LeadProfileCard } from "@/components/v2/app/lead-desk/LeadProfileCard";
 import { fixLeadFieldAction } from "../../lead-desk-actions";
@@ -162,8 +163,8 @@ export default async function LeadPage({
 
   return (
     <main className={pageMain} lang={lang}>
-      <BackLink href={`/app/tenants/${tenantId}/review`} label={t("lead.back")} />
-      <h1 className={pageH1}>{company?.name ?? t("lead.untitled")}</h1>
+      <BackLink href={`/app/tenants/${tenantId}/${leadsScreens() === "off" ? "review" : "lead-desk"}`} label={t("lead.back")} />
+      <h1 className={pageH1}>{leadTitle(company?.name, null, t("ld.desk.newenquiry"))}</h1>
       <p className={pageSub}>
         {company?.city ? `${company.city} · ` : ""}
         {statusText}

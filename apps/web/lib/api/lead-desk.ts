@@ -45,7 +45,13 @@ export async function listDeskLeads(token: string, tenantId: string, cursor?: st
   }
   const page = parseLeadPage(await apiRequest(`${base(tenantId)}/leads?${q}`, token));
   const names = await Promise.allSettled(page.rows.map((r) => (r.contactId && isCanonicalUuid(r.contactId) ? fetchContact(token, tenantId, r.contactId) : Promise.reject(new Error("none")))));
-  return { leads: page.rows.map((r, i) => ({ ...r, name: names[i].status === "fulfilled" ? (names[i] as PromiseFulfilledResult<{ full_name: string }>).value.full_name : NAME_FALLBACK, hot: false })), nextCursor: page.nextCursor };
+  return {
+    leads: page.rows.map((r, i) => {
+      const contact = names[i].status === "fulfilled" ? (names[i] as PromiseFulfilledResult<{ full_name: string; phone: string | null }>).value : null;
+      return { ...r, name: contact ? contact.full_name : NAME_FALLBACK, phone: contact?.phone ?? null, hot: false };
+    }),
+    nextCursor: page.nextCursor,
+  };
 }
 
 export async function setLeadOwner(token: string, tenantId: string, leadId: string, ownerUserId: string | null): Promise<void> {

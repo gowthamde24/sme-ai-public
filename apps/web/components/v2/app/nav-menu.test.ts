@@ -109,6 +109,7 @@ describe("the parts that need a feature flag (night 4: Lead Desk, Ask your assis
       expect(ids).not.toContain("tasks");
       expect(ids).not.toContain("outreach");
       expect(tabsOf(MENU.find((m) => m.id === "customers")!, "owner", view).map((t) => t.id)).not.toContain("leaddesk");
+      expect(tabsOf(MENU.find((m) => m.id === "customers")!, "owner", view).map((t) => t.id)).toContain("leads"); // without Lead Desk the old Leads screen is still the list
       expect(tabsOf(MENU.find((m) => m.id === "settings")!, "owner", view).map((t) => t.id)).not.toContain("lead-sources");
     }
   });
@@ -116,6 +117,8 @@ describe("the parts that need a feature flag (night 4: Lead Desk, Ask your assis
     const view = withFeatures(["leads", "outreach", "tasks"]);
     const tab = (menu: string, role: "owner" | "admin" | "sales" | "viewer") => tabsOf(MENU.find((m) => m.id === menu)!, role, view).map((t) => t.id);
     expect(tab("customers", "owner")).toEqual(expect.arrayContaining(["leaddesk", "import"]));
+    expect(tab("customers", "owner").slice(0, 3)).toEqual(["leaddesk", "customers", "import"]); // Leads, Buyers, Add leads (the sales-finder tabs of a pack follow)
+    expect(tab("customers", "owner")).not.toContain("leads"); // the old Leads screen is not a tab while Lead Desk is on: one list of leads
     expect(tab("customers", "viewer")).toContain("leaddesk");
     expect(tab("customers", "viewer")).not.toContain("import");
     expect(tab("calls", "owner")).toEqual(expect.arrayContaining(["outreach", "tasks"]));
