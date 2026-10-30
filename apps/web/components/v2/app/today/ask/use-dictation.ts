@@ -65,6 +65,7 @@ export function useDictation(session: AskSession, voice: BrowserVoice, options: 
       audio,
       socket: socketFactory,
       mode: "dictate",
+      sttLanguage: language === "en" ? null : language, // Telugu, Hindi, Kannada: the words come in that script from the first one; English stays on any-language (the API uses its Latin recogniser)
       onChange: (snap) => {
         if (client.current !== c) return;
         const words = joined(snap);
