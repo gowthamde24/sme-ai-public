@@ -88,6 +88,7 @@ class FallbackTts:
     # ---- one piece of text ----------------------------------------------------------------------------------------------------------------
 
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
+        tag = language if language in ("en", "te", "hi", "kn", "ta", "ml") else "other"   # what the log says about the language is one of ours, never the caller's string
         text = address.clean(text, self.address_allow)   # the last gate: nothing says sir / madam aloud unless the person asked for it
         voices = self.config.for_language(language, self._chosen.get(language), self.gender)
         primary_text = self._speech.prepare(text, language, voices.primary.engine)
@@ -111,7 +112,7 @@ class FallbackTts:
                 raise
             except Exception as err:
                 reason = "error"
-                log.warning("tts_primary_failed engine=%s language=%s code=%s", voices.primary.engine, language, getattr(err, "code", type(err).__name__))
+                log.warning("tts_primary_failed engine=%s language=%s code=%s", voices.primary.engine, tag, getattr(err, "code", type(err).__name__))
             else:
                 self.served_engine = voices.primary.engine
                 self.first_audio_ms = self.first_audio_ms if self.first_audio_ms is not None else (time.perf_counter() - started) * 1000.0
@@ -122,7 +123,7 @@ class FallbackTts:
                 except Exception as err:
                     self._skip_primary_until[language] = self._clock() + self.config.cooldown_s
                     self.fallback_reason = "mid_stream"
-                    log.warning("tts_primary_failed_mid_piece engine=%s language=%s code=%s", voices.primary.engine, language, getattr(err, "code", type(err).__name__))
+                    log.warning("tts_primary_failed_mid_piece engine=%s language=%s code=%s", voices.primary.engine, tag, getattr(err, "code", type(err).__name__))
                 finally:
                     await _close(agen)
                 return
@@ -130,7 +131,7 @@ class FallbackTts:
             self._skip_primary_until[language] = self._clock() + self.config.cooldown_s
             self.fallback_reason = reason
             self._fallback_in_turn = True
-            log.warning("tts_fallback engine=%s language=%s reason=%s timeout_ms=%s", voices.fallback.engine, language, reason, self.config.first_audio_timeout_ms)
+            log.warning("tts_fallback engine=%s language=%s reason=%s timeout_ms=%s", voices.fallback.engine, tag, reason, self.config.first_audio_timeout_ms)
         self._fallback_in_turn = True
         started = time.perf_counter()
         spoke = False
@@ -143,7 +144,7 @@ class FallbackTts:
                 yield chunk
         except Exception as err:
             if spoke:
-                log.warning("tts_fallback_failed_mid_piece engine=%s language=%s code=%s", voices.fallback.engine, language, getattr(err, "code", type(err).__name__))
+                log.warning("tts_fallback_failed_mid_piece engine=%s language=%s code=%s", voices.fallback.engine, tag, getattr(err, "code", type(err).__name__))
                 return
             raise VoiceError("tts_unavailable") from None
         if not spoke:

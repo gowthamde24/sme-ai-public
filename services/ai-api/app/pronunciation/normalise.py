@@ -10,6 +10,7 @@ Pure text in, text out: no network, no key, no clock. The captions and the chat 
 from __future__ import annotations
 
 import re
+import unicodedata
 
 from app.pronunciation import numbers
 
@@ -57,7 +58,13 @@ _UNIT_SPELLINGS = {
 LETTERS = {"GST", "EMI", "UPI", "AC", "CBSE", "ICSE", "LKG", "UKG", "KYC", "PAN", "OTP", "ID", "PDF", "SMS", "CCTV", "TV", "GPS", "FAQ", "VIP", "ATM", "MRP", "COD", "NEFT", "RTGS", "IMPS", "SSC", "HSC", "NRI", "GSM", "LED", "UPS", "CRM"}
 WORDS = {"OK": "okay", "PIN": "pin", "RERA": "rera", "WIFI": "wi-fi", "WHATSAPP": "WhatsApp"}
 
-_EMOJI = re.compile("[\U0001F000-\U0001FAFF\U00002600-\U000027BF\U0001F1E6-\U0001F1FF‍️⭐⬆⬇⤴⤵〰〽㊗㊙]+")
+_JOINERS = {"\u200d", "\ufe0f", "\ufe0e"}
+
+
+def _strip_emoji(text: str) -> str:
+    """Pictographs, flags, skin-tone marks and the joiners that bind them are never said (symbols above U+2190; a degree sign, ©, ™ and the currency signs stay)."""
+    return "".join(" " if (ord(c) >= 0x2190 and unicodedata.category(c) in ("So", "Sk")) or c in _JOINERS else c for c in text)
+
 _MARKDOWN = re.compile(r"(\*\*|__|`+|^#{1,6}\s*|^\s*[-*•]\s+|^\s*>\s?|~~)", re.MULTILINE)
 _URL = re.compile(r"(?:https?://|www\.)[^\s<>()\[\]]{1,200}", re.IGNORECASE)
 _EMAIL = re.compile(r"[\w.+-]{1,64}@[\w-]{1,63}(?:\.[\w-]{1,63}){1,4}")
@@ -170,7 +177,7 @@ def _acronym(m: re.Match[str]) -> str:
 def normalise(text: str, language: str) -> str:
     """The text as it is to be SAID in `language` (en, te, hi, kn, ta, ml). An unknown language gets English."""
     lang = language if language in numbers.LANGS else "en"
-    out = _EMOJI.sub(" ", text)
+    out = _strip_emoji(text)
     out = _MARKDOWN.sub("", out)
     out = _URL.sub(f" {LINK[lang]} ", out)
     out = _EMAIL.sub(f" {MAIL[lang]} ", out)
