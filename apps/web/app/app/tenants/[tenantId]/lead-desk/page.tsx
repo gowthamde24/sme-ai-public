@@ -8,7 +8,7 @@ import { BRAND_NAME } from "@/design/brand";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { fetchMembers } from "@/lib/api/orders";
-import { applyFilter, filterHref, LEAD_STATUSES, NO_FILTER, parseFilter } from "@/lib/lead-desk/leads";
+import { applyFilter, filterHref, LEAD_STATUSES, leadTitle, NO_FILTER, parseFilter } from "@/lib/lead-desk/leads";
 import { URGENCIES } from "@/lib/lead-desk/profile";
 import { readDeskLeads } from "@/lib/lead-desk/leads-source";
 import { readHandoffs } from "@/lib/outreach/source";
@@ -19,7 +19,7 @@ import { SOURCE_TAGS } from "@/lib/outreach/types";
 import { leadContext } from "../lead-context";
 import { assignLeadAction } from "../lead-desk-actions";
 
-export const metadata = { title: `Lead Desk · ${BRAND_NAME}` };
+export const metadata = { title: `Leads · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const statusPill = (s: string) => (s === "qualified" ? pillGreen : s === "contacted" ? pillBrand : s === "disqualified" ? pillNeutral : pillAmber);
@@ -51,7 +51,7 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
   const date = (iso: string) => (iso ? new Date(iso).toLocaleDateString(lang, { day: "numeric", month: "short", timeZone: "Asia/Kolkata" }) : "");
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={words["ld.desk.title"] ?? "Lead Desk"} sub={words["ld.desk.sub"] ?? ""} />
+      <PageTop title={words["ld.desk.title"] ?? "Leads"} sub={words["ld.desk.sub"] ?? ""} />
       {leadsScreens() === "mock" ? (
         <p role="note" className="mt-3 text-sm text-muted">
           {words["ld.desk.mock"]}
@@ -145,12 +145,13 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <Link href={`${base}/leads/${l.id}`} className="break-words font-display text-lg font-bold text-brand-text hover:underline">
-                    {l.name || words["ld.desk.noname"]}
+                    {leadTitle(l.name, l.phone, words["ld.desk.newenquiry"] ?? "New enquiry")}
                   </Link>
-                  {l.isNew ? <span className={pillBrand}>{words["lp.new"]}</span> : null}
+                  {/* "New" once: the state "new" and the freshness (not opened yet) are one badge, never two */}
+                  {l.isNew || l.status === "new" ? <span className={pillBrand}>{words["lp.new"]}</span> : null}
                   {l.hot ? <span className={pillAmber}>{words["ld.desk.hot"]}</span> : null}
                   {l.profile?.junk ? <span className={pillNeutral}>{words[`lp.junk.${l.profile.junk}`]}</span> : null}
-                  <span className={statusPill(l.status)}>{words[`ld.status.${l.status}`]}</span>
+                  {l.status !== "new" ? <span className={statusPill(l.status)}>{words[`ld.status.${l.status}`]}</span> : null}
                 </div>
                 {l.profile ? <ProfileLine p={l.profile} words={words} /> : null}
                 <p className={`${mutedText} !mt-1`}>

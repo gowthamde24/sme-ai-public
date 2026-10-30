@@ -18,7 +18,7 @@ export { CALL_LANGS };
 export type { CallLang };
 
 /** The lead source tags (exact strings, contract-lead-sources.md section 0): what the Lead Desk, the imports, the rules and the report all key on. */
-export const SOURCE_TAGS = ["indiamart", "justdial", "99acres", "magicbricks", "housing", "meta_lead_ads", "website_form", "webhook", "excel_upload", "google_sheet", "pasted_list", "vcard"] as const;
+export const SOURCE_TAGS = ["indiamart", "justdial", "99acres", "magicbricks", "housing", "meta_lead_ads", "website_form", "webhook", "email_forward", "excel_upload", "google_sheet", "pasted_list", "vcard"] as const;
 export type SourceTag = (typeof SOURCE_TAGS)[number];
 /** The tags a standing rule is offered for: where leads ARRIVE by themselves (a file upload is a batch, not a rule). */
 export const RULE_SOURCES: readonly SourceTag[] = ["meta_lead_ads", "website_form", "indiamart", "justdial", "99acres", "magicbricks", "housing", "webhook", "google_sheet"];

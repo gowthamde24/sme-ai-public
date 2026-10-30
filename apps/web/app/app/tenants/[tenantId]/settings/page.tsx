@@ -8,7 +8,7 @@ import { ThemeChoice, type ThemePick } from "@/components/v2/controls/ThemeChoic
 import { UsageCard, planText } from "@/components/v2/app/frame-parts";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { ApiDownV2, PageTop, Pill, SectionTabs } from "@/components/v2/app/parts";
-import { breakAll, link, listPlain, memberRow, youMark, mutedText, pageH2, pageMain, surface } from "@/components/v2/app/ui";
+import { breakAll, btnQuiet, link, listPlain, memberRow, youMark, mutedText, pageH2, pageMain, surface } from "@/components/v2/app/ui";
 import { appT, frameLabels } from "@/i18n/app";
 import { authT } from "@/i18n/auth";
 import { getLang } from "@/i18n/get-lang";
@@ -60,7 +60,7 @@ import { readAssistant } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callSettingsScreens, dpdpScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
 import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
@@ -568,6 +568,17 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             makeFeed={makeCalendarFeedAction.bind(null, tenantId)}
             revokeFeed={revokeCalendarFeedAction.bind(null, tenantId)}
           />
+        ) : null}
+        {section === "data" && leadsScreens() !== "off" && pack?.modules.includes("enquiries") !== false ? (
+          <section className={`${surface} mt-4`} aria-label={t("settings.scoring.title")}>
+            <h2 className={`${pageH2} mt-0`}>{t("settings.scoring.title")}</h2>
+            <p className={mutedText}>{t("settings.scoring.text")}</p>
+            <p className="mt-3">
+              <Link href={`${base}/review`} className={btnQuiet}>
+                {t("settings.scoring.open")}
+              </Link>
+            </p>
+          </section>
         ) : null}
         {section === "language" ? (
           <section className={surface} aria-label={t("settings.tab.language")}>
