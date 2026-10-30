@@ -48,9 +48,9 @@ const p = s.page;
 const rows = () => p.locator('[data-part="pron-row"]');
 try {
   await s.context.grantPermissions(["microphone"], { origin: "https://staging.stack19.com" });
-  await p.goto(`${s.base}/settings?section=assistant`, { waitUntil: "domcontentloaded" });
+  await p.goto(`${s.base}/settings?section=assistant#pronunciation`, { waitUntil: "domcontentloaded" });
   const part = p.locator('[data-part="pronunciation"]');
-  await part.waitFor({ timeout: 45000 });
+  await part.waitFor({ timeout: 45000 }); // (the part is in the Pronunciation tab: the #pronunciation link opens it)
   await sleep(1500);
   const title = (await part.locator("h2").textContent()) ?? "";
   ok("Settings > AI assistant has a Pronunciation part", /pronunciation/i.test(title), title);
@@ -103,7 +103,7 @@ try {
   await card.locator('[data-chat="mis-save"]').click();
   await card.locator('[data-chat="mis-saved"]').waitFor({ timeout: 15000 });
   ok("Save says it is saved", true);
-  await p.goto(`${s.base}/settings?section=assistant`, { waitUntil: "domcontentloaded" });
+  await p.goto(`${s.base}/settings?section=assistant#pronunciation`, { waitUntil: "domcontentloaded" });
   await p.locator('[data-part="pronunciation"]').waitFor({ timeout: 45000 });
   const texts = await rows().allTextContents();
   ok("the taught word is in the Settings list", texts.some((t) => t.includes(wtext) && t.includes("sounds right")), `${wtext}`);
