@@ -34,7 +34,7 @@ _WORD = re.compile(
     r"(?<![" + _LETTERS + r"'])(?:" + "|".join(re.escape(w) for w in sorted((*_LATIN, *_INDIC), key=len, reverse=True)) + r")(?![" + _LETTERS + r"'])",
     re.IGNORECASE,
 )
-_PUNCT_RUNS = re.compile(r"\s*([,;])(\s*[,;])+")
+_PUNCT_RUNS = re.compile(r"[ \t]{0,20}([,;])(?:[ \t]{0,20}[,;]){1,20}")
 
 
 def address_rule(language: str = "en") -> str:
@@ -70,8 +70,8 @@ def clean(text: str, allow: tuple[str, ...] = ()) -> str:
         return match.group(0) if match.group(0).lower() in allowed else ""
 
     out = _WORD.sub(drop, text)
-    out = re.sub(r"[ \t]+([,.;!?…।])", r"\1", out)         # "ಹೌದು ," -> "ಹೌದು,"
+    out = re.sub(r"[ \t]{1,20}([,.;!?…।])", r"\1", out)         # "ಹೌದು ," -> "ಹೌದು,"
     out = _PUNCT_RUNS.sub(r"\1", out)
-    out = re.sub(r"^[\s,;]+", "", out)                        # a reply that began "Sir, ..."
-    out = re.sub(r"([,;])\s*([.!?…।])", r"\2", out)           # "Sure, ." -> "Sure."
-    return re.sub(r"[ \t]{2,}", " ", out).strip()
+    out = re.sub(r"^[\s,;]{1,50}", "", out)                        # a reply that began "Sir, ..."
+    out = re.sub(r"([,;])[ \t]{0,20}([.!?…।])", r"\2", out)           # "Sure, ." -> "Sure."
+    return re.sub(r"[ \t]{2,20}", " ", out).strip()
