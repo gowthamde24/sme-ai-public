@@ -34,6 +34,7 @@ from app.conversation.providers import SarvamRealtimeStt
 from app.errors import ApiError
 from app.opening.prompt import call_system_prompt
 from app.opening.routes import assistant_name, rendered_opening
+from app.pronunciation.words import owner_words
 from app.tenancy.models import Role
 from app.turns.models import TurnIn
 from app.turns.service import confirm_decision, start_turn
@@ -94,6 +95,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
         live_choices.update(new_chosen)
         live_gender[0] = new_gender
         tts.set_voices(new_chosen, new_gender)
+        tts.set_owner_words(owner_words(runtime, token, tenant))   # the workspace's own pronunciation words, read again every turn: a saved word is heard from the next sentence
 
     def voice_of(language: str) -> Any:
         return bv.config.resolve(language, live_choices.get(language), live_gender[0])

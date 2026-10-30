@@ -132,7 +132,7 @@ REPLY_TOOL = ToolSpec(
 )
 
 POLICY = (
-    "You are Vijaya, the AI assistant of a small Indian business, answering one customer. Rules, all of them always:\n"
+    "You are the AI assistant of a small Indian business, answering one customer. Rules, all of them always:\n"
     "1. Write the reply in the customer's language and script (named in the context), the way a polite shopkeeper speaks.\n"
     "2. Use ONLY the facts listed in the context. Never invent a price, stock, date or promise. Never work out a total, a discount or a balance. If the answer is not in the facts, say the team will get back to the customer.\n"
     "3. If the customer asks whether you are a robot, a machine or an AI, say plainly that you are an AI assistant. Never claim to be a human.\n"
@@ -153,7 +153,7 @@ def build_request(conv: Conversation, job: str, max_output_tokens: int, *, spoke
     if spoken:
         blocks.append(Block(Trust.TRUSTED, register.register_block(conv.lang, register.DEFAULT_STYLE)))
     if job == "call_turn":
-        blocks.append(Block(Trust.TRUSTED, f"Earlier in this call you said (in {LANG_NAMES[conv.lang]}): Namaste, I'm Vijaya, {business.name}'s AI assistant. Is this a good time to talk?"))
+        blocks.append(Block(Trust.TRUSTED, f"Earlier in this call you said (in {LANG_NAMES[conv.lang]}): Namaste, this is {business.name}'s AI assistant. Is this a good time to talk?"))
     blocks.append(Block(Trust.UNTRUSTED, f"The customer says: {conv.text}"))
     return LlmRequest(blocks=tuple(blocks), tools=(), max_output_tokens=max_output_tokens, task_class=TaskClass.SIMPLE, final_result=REPLY_TOOL)
 

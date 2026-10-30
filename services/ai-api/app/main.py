@@ -169,6 +169,7 @@ from app.privacy.policy_gate import PolicyGate
 from app.privacy.repository import PostgrestPrivacyRepository
 from app.privacy.routes import me_router as privacy_me_router
 from app.privacy.routes import router as privacy_router
+from app.pronunciation.routes import router as pronunciation_router
 from app.quotes import errors as quote_errors
 from app.quotes.repository import PostgrestQuotesRepository
 from app.quotes.routes import router as quotes_router
@@ -1238,6 +1239,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(outreach_router)
     app.include_router(tasks_router)
     app.include_router(voice_sample_router)
+    app.include_router(pronunciation_router)
     app.include_router(voice_picker_router)
     app.include_router(browser_voice_router)
     app.include_router(auto_reply_router)

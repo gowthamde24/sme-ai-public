@@ -1,7 +1,7 @@
 # English: everyday spoken style (DRAFT; waits for a reader)
 Rules seen in these lines: short sentences, contractions, the words people use on the phone, prices said as people say them.
 
-1. Opening: Hi, I'm Vijaya, the AI assistant from Lakshmi Sarees. Got a minute to talk?
+1. Opening: Hi, this is the AI assistant from Lakshmi Sarees. Got a minute to talk?
 2. Stock + photos: That green silk saree you liked is still in stock. Want me to send photos on WhatsApp?
 3. Price answer: That saree is two thousand six hundred rupees. Shall I send the photos and details on WhatsApp?
 4. "Call me later": Sure, no problem. What time should I call? Is six in the evening okay?

@@ -169,7 +169,7 @@ class Runtime:
     lead_profiles: LeadProfileService | None = None   # job EE: the Lead Desk list with its profile
     # job DR A3: speed to lead and approve once
     outreach: OutreachService | None = None
-    # job DR B1: "Ask Vijaya to do it" (plan, approve once, run, report)
+    # job DR B1: "Ask the assistant to do it" (plan, approve once, run, report)
     tasks: TasksService | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
     voice_sample: VoiceSampleService | None = None

@@ -1,7 +1,7 @@
 # Malayalam: everyday spoken style (DRAFT, written by the assistant on the model of te.md; waits for a native reader)
 Rules seen in these lines: short sentences, spoken forms (പറയാം, അയക്കാം, ഉണ്ട്), English nouns kept in English, prices said the way people say them, no Sanskritised words (not "ദയവായി", "ലഭ്യമാണ്", "അറിയിക്കുക").
 
-1. Opening: നമസ്കാരം, ഞാൻ വിജയ, ലക്ഷ്മി സാരീസിൽ നിന്ന് AI assistant ആണ്. ഒരു minute സംസാരിക്കാമോ?
+1. Opening: നമസ്കാരം, ഞാൻ ലക്ഷ്മി സാരീസിൽ നിന്ന് AI assistant ആണ്. ഒരു minute സംസാരിക്കാമോ?
 2. Stock + photos: നിങ്ങൾ കണ്ട ആ green silk saree ഇപ്പോഴും stock ൽ ഉണ്ട്. Photos WhatsApp ൽ അയക്കട്ടെ?
 3. Price answer: ആ saree ന്റെ price രണ്ടായിരത്തി അറുനൂറു രൂപയാണ്. Photos ന്റെ കൂടെ details ഉം WhatsApp ൽ അയക്കട്ടെ?
 4. "Call me later": ശരി, no problem. ഏത് time ന് call ചെയ്യട്ടെ? വൈകിട്ട് ആറു മണിക്ക് ഓക്കേ ആണോ?
