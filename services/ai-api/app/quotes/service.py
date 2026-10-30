@@ -11,6 +11,7 @@ from datetime import date
 from typing import Any
 
 from app.crm.repository import InvalidReferenceError
+from app.display_name import real_name
 from app.enquiries.models import EnquiryOut
 from app.enquiries.service import value_of
 from app.errors import ApiError
@@ -220,7 +221,7 @@ def summary_out(row: dict[str, Any]) -> QuoteSummaryOut:
         {
             **shown,
             "outcome": outcome(row),
-            "customer": company.get("name"),
+            "customer": real_name(company.get("name")),
             "city": company.get("city"),
             "customer_gstin": company.get("gstin"),
         }
@@ -690,7 +691,7 @@ def render_text(
     company = quotes.company_name(token, tenant_id, quote.lead_id)
     display_block = {
         "seller_name": tenant_name,
-        "customer_name": company or "Customer",
+        "customer_name": real_name(company) or "Customer",
         "quote_ref": f"Q-{quote.quote_no:05d}",
         "issued_on": quote.as_of.isoformat(),
         "valid_until": quote.valid_until.isoformat(),

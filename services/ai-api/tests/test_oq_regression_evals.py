@@ -124,6 +124,14 @@ def small_talk_is_light(text: str, light: bool) -> None:
     assert _is_light(text) is light
 
 
+def lead_title(name: str | None, phone: str | None, expected: str) -> None:
+    from app.display_name import (
+        lead_title as title,  # (the name, else the phone, else "New enquiry"; never an id)
+    )
+
+    assert title(name, phone) == expected
+
+
 def speech_text(language: str, written: str, spoken: str) -> None:
     assert SpeechText().prepare(written, language) == spoken
 
@@ -131,7 +139,7 @@ def speech_text(language: str, written: str, spoken: str) -> None:
 CHECKS: dict[str, Callable[..., None]] = {
     f.__name__: f
     for f in (shipped_lines_no_gendered, model_text_clean, address_rule_in_prompts, router_kind, owner_language, fillers_in_voice_language, one_voice_per_language, spoken_tone_rules, indian_languages_get_the_larger_budget,
-              chat_prompt_welcomes_casual_talk, no_retired_names_in_shipped_lines, recogniser_mode, small_talk_is_light, speech_text)
+              chat_prompt_welcomes_casual_talk, no_retired_names_in_shipped_lines, recogniser_mode, small_talk_is_light, speech_text, lead_title)
 }
 
 

@@ -573,6 +573,11 @@
             }
           ],
           "title": "Message Status"
+        },
+        "display_name": {
+          "readOnly": true,
+          "title": "Display Name",
+          "type": "string"
         }
       },
       "required": [
@@ -583,7 +588,8 @@
         "category",
         "captured",
         "transcript",
-        "message_status"
+        "message_status",
+        "display_name"
       ],
       "title": "ReportRow",
       "type": "object"
@@ -650,11 +656,17 @@
             }
           ],
           "title": "Name"
+        },
+        "display_name": {
+          "readOnly": true,
+          "title": "Display Name",
+          "type": "string"
         }
       },
       "required": [
         "contact_id",
-        "name"
+        "name",
+        "display_name"
       ],
       "title": "SampleContact",
       "type": "object"
@@ -748,6 +760,11 @@
           "default": true,
           "title": "Simulated",
           "type": "boolean"
+        },
+        "display_name": {
+          "readOnly": true,
+          "title": "Display Name",
+          "type": "string"
         }
       },
       "required": [
@@ -759,7 +776,8 @@
         "skip_reason",
         "outcome",
         "outcome_category",
-        "captured"
+        "captured",
+        "display_name"
       ],
       "title": "TaskContactOut",
       "type": "object"
