@@ -1,0 +1,70 @@
+{
+ "language": "kn",
+ "status": "approved",
+ "reviewed": "2026-10-30",
+ "reviewer": "the owner's native Kannada contact",
+ "verdict": "all 10 clips natural and pronounced right; voice kn-disha pleasant (clips in voice-picks/kn-review)",
+ "voice": "kn-disha",
+ "anchors": [
+  {
+   "id": "01-opening",
+   "label": "Opening",
+   "text": "ನಮಸ್ಕಾರ, ನಾನು ಲಕ್ಷ್ಮಿ ಸೀರೀಸ್‌ನಿಂದ AI assistant ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ. ಒಂದು minute ಮಾತಾಡಬಹುದಾ?",
+   "meaning": "Hello, I am the AI assistant from Lakshmi Sarees. Can we talk for a minute?"
+  },
+  {
+   "id": "02-stock",
+   "label": "Stock",
+   "text": "ನೀವು ನೋಡಿದ್ರಲ್ಲ, ಆ green silk saree, ಇನ್ನೂ stock ಇದೆ. Photos WhatsApp ಗೆ ಕಳಿಸ್ಲಾ?",
+   "meaning": "The green silk saree you saw is still in stock. Shall I send photos on WhatsApp?"
+  },
+  {
+   "id": "03-price",
+   "label": "Price",
+   "text": "ಆ saree price ಎರಡು ಸಾವಿರದ ಆರು ನೂರು ರೂಪಾಯಿ. Photos, details WhatsApp ಗೆ ಹಾಕ್ಲಾ?",
+   "meaning": "That saree costs two thousand six hundred rupees. Shall I put photos and details on WhatsApp?"
+  },
+  {
+   "id": "04-call-later",
+   "label": "Call later",
+   "text": "ಸರಿ, no problem. ಯಾವ time ಗೆ call ಮಾಡ್ಲಿ? ಸಂಜೆ ಆರಕ್ಕೆ ಓಕೆನಾ?",
+   "meaning": "OK, no problem. What time shall I call? Is six in the evening OK?"
+  },
+  {
+   "id": "05-not-interested",
+   "label": "Not interested",
+   "text": "ಸರಿ, ಅರ್ಥ ಆಯ್ತು. Disturb ಮಾಡಿದ್ದಕ್ಕೆ sorry. ಬೇಕಾದಾಗ ಒಂದು message ಹಾಕಿ. Thank you!",
+   "meaning": "OK, understood. Sorry for disturbing. Send a message whenever you need. Thank you!"
+  },
+  {
+   "id": "06-delivery",
+   "label": "Delivery",
+   "text": "ನಿಮ್ಮ order ಗುರುವಾರ ಬೆಳಿಗ್ಗೆನೇ ಬರುತ್ತೆ.",
+   "meaning": "Your order will arrive on Thursday morning itself."
+  },
+  {
+   "id": "07-reminder",
+   "label": "Reminder",
+   "text": "ನಾಳೆ ಬೆಳಿಗ್ಗೆ ಹನ್ನೊಂದಕ್ಕೆ ನಿಮ್ಮ shop visit ಇದೆ. Confirm ಮಾಡ್ಲಾ?",
+   "meaning": "Tomorrow at eleven in the morning you have your shop visit. Shall I confirm?"
+  },
+  {
+   "id": "08-one-moment",
+   "label": "One moment",
+   "text": "ಒಂದು minute, check ಮಾಡಿ ಹೇಳ್ತೀನಿ.",
+   "meaning": "One minute, I will check and tell you."
+  },
+  {
+   "id": "09-owner-call",
+   "label": "Owner call",
+   "text": "ಇದನ್ನ owner ಗೆ ಹೇಳ್ತೀನಿ. ಅವರೇ call ಮಾಡ್ತಾರೆ.",
+   "meaning": "I will tell the owner. They will call you themselves."
+  },
+  {
+   "id": "10-are-you-a-robot",
+   "label": "Are you a robot",
+   "text": "ಹೌದು, ನಾನು shop ನ AI assistant. ಏನು ಬೇಕು ಹೇಳಿ, help ಮಾಡ್ತೀನಿ.",
+   "meaning": "Yes, I am the shop's AI assistant. Tell me what you need, I will help."
+  }
+ ]
+}

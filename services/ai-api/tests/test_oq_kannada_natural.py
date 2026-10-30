@@ -5,7 +5,9 @@
 
 from __future__ import annotations
 
+import json
 import re
+from pathlib import Path
 
 import pytest
 
@@ -58,3 +60,42 @@ def test_the_rules_the_model_reads_say_the_same_things() -> None:
 @pytest.mark.parametrize("line", BANK_LINES["kn"] + FILLERS["kn"])
 def test_the_kannada_fillers_are_short_neutral_and_colloquial(line: str) -> None:
     assert len(line.split()) <= 5 and not gendered_words(line) and not register.formal_forms_in("kn", line)
+
+
+# ---- the reviewed set (approved by a native reviewer, 30 Oct 2026) ------------------------------------------------------------------------------------------------
+
+
+def test_kannada_is_approved_with_the_ten_reviewed_lines_as_its_anchors() -> None:
+    assert register.status("kn") == "approved" and register.status("hi") == register.status("ta") == register.status("ml") == "draft"
+    anchors = register.anchors("kn")
+    assert len(anchors) == 10
+    kn_md = (Path(register.HERE) / "data" / "native_lines" / "kn.md").read_text(encoding="utf-8")
+    assert all(text in kn_md for _, text in anchors), "an anchor is a line of kn.md"
+    assert "APPROVED 30 Oct 2026" in kn_md.splitlines()[0]
+    doc = json.loads((Path(register.HERE) / "data" / "anchors" / "kn.json").read_text(encoding="utf-8"))
+    assert doc["voice"] == "kn-disha" and doc["reviewed"] == "2026-10-30" and all(a["meaning"].strip() for a in doc["anchors"])
+
+
+@pytest.mark.parametrize("label,text", register.anchors("kn"))
+def test_each_anchor_stays_spoken_neutral_short_and_free_of_retired_names(label: str, text: str) -> None:
+    assert not register.formal_forms_in("kn", text) and not gendered_words(text)
+    assert not any(w in text for w in WRITTEN_ENDINGS)
+    for sentence in re.split(r"[.?!]\s*", text):
+        assert len(sentence.split()) <= 12, (label, sentence)
+    assert not re.search(r"ವಿಜಯ|ವಾಣಿ|(?<![ಀ-೿])ತಾರಾ?(?![ಀ-೿])", text)
+
+
+def test_the_prompt_teaches_kannada_from_the_anchors_only_and_without_the_draft_note() -> None:
+    block = register.register_block("kn")
+    shown = [line.strip()[2:] for line in block.splitlines() if line.strip().startswith("* ")]
+    anchors = [text for _, text in register.anchors("kn")]
+    assert shown and all(text in anchors for text in shown)
+    assert "drafts for native review" not in block
+    assert "drafts for native review" in register.register_block("hi")
+
+
+def test_disha_stays_the_default_kannada_voice() -> None:
+    from app.conversation.voices import default_config
+
+    cfg = default_config()
+    assert cfg.default_for("kn").id == "kn-disha" and cfg.default_for("kn").gender == "female"
