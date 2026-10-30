@@ -21,7 +21,7 @@ from app.agents.errors import AgentDbError, CostCapReached
 from app.assistant import resolver
 from app.assistant.db import AssistantDb
 from app.assistant.language import SCHOOL_REFUSAL, Language, detect_owner_language
-from app.assistant.notes import owner_notes
+from app.assistant.notes import address_as, owner_notes
 from app.assistant.routes import FAILURES, _factory, _refusal, _sse
 from app.assistant.runner import AssistantRunner, Outcome, Reply, _sha
 from app.assistant.tools import Ctx, State
@@ -183,6 +183,7 @@ def start_turn(
         help_on_empty=True,
         typed_replies=True,
         owner_notes=owner_notes(runtime, token, tenant),
+        address_as=address_as(runtime, token, tenant),
     )
     events: queue.Queue[tuple[str, dict[str, Any]] | None] = queue.Queue()
     reply_id = uuid.uuid4()

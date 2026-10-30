@@ -24,3 +24,15 @@ def owner_notes(runtime: Any, token: str, tenant_id: uuid.UUID) -> str:
     except Exception as exc:   # noqa: BLE001  a missing store never stops an answer
         logger.warning("owner notes unreadable: %s", exc.__class__.__name__)
         return ""
+
+
+def address_as(runtime: Any, token: str, tenant_id: uuid.UUID) -> str:
+    """How the signed-in member asked the assistant to address them ("How should I address you?" in their profile), or '' (none chosen, or the profile unreadable: only the neutral forms are used)."""
+    repo = getattr(runtime, "workspace", None)
+    if repo is None:
+        return ""
+    try:
+        return str(repo.my_profile(token, tenant_id).get("address_as") or "").strip()
+    except Exception as exc:   # noqa: BLE001  a missing profile never stops an answer
+        logger.warning("address preference unreadable: %s", exc.__class__.__name__)
+        return ""
