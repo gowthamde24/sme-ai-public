@@ -74633,5 +74633,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "settings.me.address": {
+  "en": "How should I address you?",
+  "te": "నన్ను ఎలా సంబోధించాలి?",
+  "hi": "मैं आपको कैसे संबोधित करूँ?",
+  "kn": "ನಾನು ನಿಮ್ಮನ್ನು ಹೇಗೆ ಸಂಬೋಧಿಸಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.me.address.help": {
+  "en": "Optional. A word or two, up to 30 characters, for example your first name. If you leave it empty, the assistant uses neutral words and never says sir or madam.",
+  "te": "ఐచ్ఛికం. ఒకటి రెండు పదాలు, గరిష్ఠంగా 30 అక్షరాలు, ఉదాహరణకు మీ మొదటి పేరు. ఖాళీగా వదిలితే అసిస్టెంట్ తటస్థ పదాలు వాడుతుంది, సార్ లేదా మేడమ్ అనదు.",
+  "hi": "वैकल्पिक। एक या दो शब्द, अधिकतम 30 अक्षर, जैसे आपका पहला नाम। खाली छोड़ने पर असिस्टेंट तटस्थ शब्द इस्तेमाल करेगी, सर या मैडम नहीं कहेगी।",
+  "kn": "ಐಚ್ಛಿಕ. ಒಂದು ಅಥವಾ ಎರಡು ಪದ, ಗರಿಷ್ಠ 30 ಅಕ್ಷರ, ಉದಾಹರಣೆಗೆ ನಿಮ್ಮ ಮೊದಲ ಹೆಸರು. ಖಾಲಿ ಬಿಟ್ಟರೆ ಅಸಿಸ್ಟೆಂಟ್ ತಟಸ್ಥ ಪದಗಳನ್ನು ಬಳಸುತ್ತದೆ, ಸರ್ ಅಥವಾ ಮೇಡಂ ಎನ್ನುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

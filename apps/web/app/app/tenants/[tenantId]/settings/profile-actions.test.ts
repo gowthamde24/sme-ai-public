@@ -30,6 +30,13 @@ describe("Settings > My profile: name and language", () => {
   it("saves the person's own name and language and reads the pages again so the menu shows them", async () => {
     expect(await saveMyProfileAction(T, undefined, form({ display_name: "  Ravi K  ", language: "te" }))).toEqual({ ok: true });
     expect(patchMyProfile).toHaveBeenCalledWith("tok", T, { display_name: "Ravi K", language: "te" });
+    patchMyProfile.mockClear();
+    expect(await saveMyProfileAction(T, undefined, form({ display_name: "Ravi", language: "te", address_as: "  Ravi   garu " }))).toEqual({ ok: true });
+    expect(patchMyProfile).toHaveBeenCalledWith("tok", T, { display_name: "Ravi", language: "te", address_as: "Ravi garu" });
+    patchMyProfile.mockClear();
+    expect(await saveMyProfileAction(T, undefined, form({ display_name: "Ravi", language: "te", address_as: "" }))).toEqual({ ok: true });
+    expect(patchMyProfile).toHaveBeenCalledWith("tok", T, { display_name: "Ravi", language: "te", address_as: "" }); // empty clears it
+    expect(await saveMyProfileAction(T, undefined, form({ display_name: "Ravi", language: "te", address_as: "x".repeat(31) }))).toEqual({ ok: false, error: "invalid" });
     expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${T}`, "layout");
   });
   it.each([["no name", { display_name: " ", language: "en" }], ["a name over 100 letters", { display_name: "x".repeat(101), language: "en" }], ["a language the API does not know", { display_name: "Ravi", language: "xx" }]])("%s is refused before any request", async (_w, o) => {

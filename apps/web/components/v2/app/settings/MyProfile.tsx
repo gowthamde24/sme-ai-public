@@ -16,7 +16,7 @@ export type MyProfileWords = Readonly<Record<string, string>>;
  * Settings > My profile: every member sets their OWN name, language and picture (a JPG, PNG or WebP of at most 5 MB; the API makes the sizes). Until they pick one the Google photo shows, if they signed in with Google; "Remove picture" goes back to it.
  * The picture shows in the menu footer, the team list and the hand-off messages. `save` and `picture` are the server actions bound to the workspace.
  */
-export function MyProfile({ words, name, language, choices, pictureUrl, own, email, save, picture }: { words: MyProfileWords; name: string; language: string; choices: readonly CallLang[]; pictureUrl: string | null; own: boolean; email: string | null; save: Action; picture: Action }) {
+export function MyProfile({ words, name, addressAs, language, choices, pictureUrl, own, email, save, picture }: { words: MyProfileWords; name: string; /** "How should I address you?": undefined = the API has no such field yet, so it is not drawn. */ addressAs?: string; language: string; choices: readonly CallLang[]; pictureUrl: string | null; own: boolean; email: string | null; save: Action; picture: Action }) {
   const [saved, saveAction, saving] = useActionState(save, undefined);
   const [pic, picAction, uploading] = useActionState(picture, undefined);
   const w = (key: string) => words[key] ?? key;
@@ -65,6 +65,15 @@ export function MyProfile({ words, name, language, choices, pictureUrl, own, ema
           <input id="me-name" name="display_name" required maxLength={100} defaultValue={name} autoComplete="name" disabled={saving} className={field} />
           <p className={help}>{w("settings.me.name.help")}</p>
         </div>
+        {addressAs !== undefined ? (
+          <div>
+            <label htmlFor="me-address" className={label}>
+              {w("settings.me.address")}
+            </label>
+            <input id="me-address" name="address_as" maxLength={30} defaultValue={addressAs} autoComplete="off" disabled={saving} className={field} />
+            <p className={help}>{w("settings.me.address.help")}</p>
+          </div>
+        ) : null}
         <fieldset>
           <legend className={label}>{w("settings.me.lang")}</legend>
           <div className="flex flex-wrap gap-2">
