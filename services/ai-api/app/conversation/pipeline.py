@@ -42,6 +42,7 @@ from app.conversation.turntaking import (
     blend,
     completeness,
     hold_ms,
+    is_command,
     spoken_prefix,
 )
 
@@ -88,6 +89,7 @@ class Conversation:
         audio_turn: AudioTurnModel | None = None,
         audio_turn_mode: str = "off",
         audio_tail: Callable[[], bytes] | None = None,
+        command_hold_ms: int = 0,
     ) -> None:
         self.stt, self.llm, self.tts, self.playout = stt, llm, tts, playout
         self.session, self.models, self.fillers, self.voice = session, models, fillers, voice
@@ -112,10 +114,12 @@ class Conversation:
         self._spec_timer: asyncio.TimerHandle | None = None
         self.speculations = {"started": 0, "used": 0, "dropped": 0}
         self.pauses = pause_model if pause_model is not None else PauseModel()
+        self.command_hold_ms = command_hold_ms   # a finished-looking command waits this long for more (0: off)
         # the audio turn model (Indic Smart Turn): "shadow" records what it says on the turn's timings and changes nothing; "on" lets it move the text reading of "is this finished" by one step; "off" (or no model: it did not load) is
         # the text rules alone. It judges the last seconds of audio from the moment the recogniser says the caller stopped, so its answer is ready by the time the final transcript arrives.
         self.audio_turn = audio_turn if audio_turn_mode in ("shadow", "on") else None
         self.audio_turn_mode, self.audio_tail = audio_turn_mode, audio_tail
+        self._command_turn = False
         self._audio_job: asyncio.Future[tuple[float | None, float]] | None = None
         self._audio_p: float | None = None
         # B2/B3: the line can be paused for a possible interruption and picked up again; what was actually heard is what the history keeps
@@ -150,6 +154,7 @@ class Conversation:
             set_silence(self.pauses.silence_ms(endpoint_ms(self.session.language)))   # the speaker's own pause, learned in this session
         parts: list[str] = []
         gap_from: float | None = None
+        self._command_turn = False
         while True:
             wait_s = None if not parts else self._hold_s(" ".join(parts))
             text = await self._listen_once(source, tm, wait_s, interrupt)
@@ -163,6 +168,7 @@ class Conversation:
                 break
             gap_from = tm.eot_at if tm.eot_at is not None else self.clock()
         merged = " ".join(parts).strip()
+        tm.command_turn = self._command_turn
         return merged or None
 
     def _hold_s(self, text: str) -> float:
@@ -171,7 +177,11 @@ class Conversation:
         state = completeness(text, self.session.language)
         if self.audio_turn_mode == "on":
             state = blend(state, self._audio_p)
-        return hold_ms(state, self.pauses) / 1000.0
+        ms = hold_ms(state, self.pauses)
+        if state == "complete" and self.command_hold_ms and is_command(text, self.session.language):
+            ms = self.command_hold_ms   # (owner, 31 Oct 2026) a command waits a little for its quantity or its name
+            self._command_turn = True
+        return ms / 1000.0
 
     async def _listen_once(self, source: AudioSource, tm: TurnTimings, first_within_s: float | None = None, interrupt: bool = True) -> str | None:
         """One recogniser turn. `first_within_s`: give up (None) when the caller does not start talking again within that time."""

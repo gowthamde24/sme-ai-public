@@ -306,6 +306,8 @@ class Settings(BaseSettings):
     # The audio turn model (Indic Smart Turn, ONNX, BSD-2): off | shadow (measured and
     # recorded, changes nothing) | on (moves the text reading of "finished" by one step).
     # No file or a load failure means the text rules alone, in every mode.
+    # A finished-looking command waits this long for more (0: off); questions and chat never wait.
+    browser_voice_command_wait_ms: int = 900
     browser_voice_audio_turn: str = "shadow"
     browser_voice_audio_turn_model: str = "/srv/models/indic-smart-turn-base-int8.onnx"
     # AI phone calls (job phone-calls): off | sandbox | live. `live` is refused by the gate

@@ -8,3 +8,5 @@ What is kept is text and timings: what the recogniser wrote for each piece, how 
 
 `tests/test_or_recordings_eval.py` replays the pieces through the real loop with a scripted recogniser: text rules alone must join every `pass` case; every `known_gap` is a strict expected failure for the text rules (when a fix lands the test
 flips and the line is changed to `pass`), and with the audio turn model at the calibrated threshold the gaps that its numbers can fix are checked.
+
+`interruptions.jsonl`: the barge-in windows of voices 5 and 6 (1.5 s slices) with what the recogniser wrote, the sound's length, its level, the OWNER'S label (`owner`, `tv`, `cough`), what the reply should do (`stop` / `ignore`) and `status`. Two TV phrases of two or more words are known gaps (they stop the reply).

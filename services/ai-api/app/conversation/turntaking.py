@@ -82,6 +82,44 @@ def completeness(text: str, language: str = "en") -> Completeness:
     return "complete"
 
 
+# ---- A1b: command-like turns (owner decision, 31 Oct 2026) ------------------------------------------------------------------------------------
+# "Lakshmi gaariki quote pampinchu" ... (a short pause) ... "40 sarees": a finished-looking COMMAND is the one kind of turn that is acted on, so losing what comes after the pause (a quantity, a name) costs a wrong plan. A command-like turn waits
+# COMMAND_HOLD_MS for more before it is handed over; a question or a chat never does. Commands are their own latency group in the reports. Telugu, English and Kannada imperatives that DO something to people; "tell me", "explain", "write"
+# are chat and are not here.
+COMMAND_HOLD_MS = 900
+_COMMAND_EN_START = re.compile(
+    r"^(?:(?:please|pls|kindly|can you|could you|would you|will you|just|now|also|then|and|ok|okay)\s+)*"
+    r"(?:send|call|phone|ring|message|text|whatsapp|remind|forward|share|book|schedule|create|add|prepare|draft|quote|invoice|follow[ -]?up|e-?mail|mail|ping|notify|cancel|confirm|update|assign|set)\b"
+)
+_NOT_A_COMMAND_START = re.compile(r"^(?:how|what|what's|who|whom|which|when|why|where|is|are|was|were|do|does|did|have|has|should|shall)\b")
+_COMMAND_END = (
+    # Telugu
+    "పంపించు", "పంపించండి", "పంపండి", "పంపు", "పంపేయి", "చేయి", "చేయండి", "చెయ్యి", "చెయ్యండి", "చేసెయ్", "చేయు", "పెట్టు", "పెట్టండి",
+    # Telugu typed in English letters
+    "pampinchu", "pampinchandi", "pampandi", "pampu", "pampey", "pampeyi", "cheyyi", "cheyi", "cheyandi", "cheyyandi", "chesey", "cheseyyi", "pettu", "pettandi",
+    # Kannada
+    "ಕಳುಹಿಸಿ", "ಕಳುಹಿಸು", "ಕಳಿಸು", "ಕಳಿಸಿ", "ಮಾಡಿ", "ಮಾಡು", "ಹಾಕಿ", "ಹಾಕು",
+    # Kannada typed in English letters
+    "kalisu", "kalisi", "kaluhisi", "maadi", "maadu",
+)
+
+
+def is_command(text: str, language: str = "en") -> bool:
+    """Is this finished-looking turn an instruction to DO something (send, call, remind ...) rather than a question or chat? Verb-final languages end on the verb; English starts on it."""
+    stripped = (text or "").strip()
+    if not stripped or _QUESTIONISH.search(stripped):
+        return False
+    tokens = _tokens(stripped)
+    if not tokens:
+        return False
+    lowered = " ".join(tokens)
+    if _NOT_A_COMMAND_START.match(lowered):
+        return False
+    if _COMMAND_EN_START.match(lowered):
+        return True
+    return tokens[-1] in _COMMAND_END
+
+
 def hold_ms(state: Completeness, pause: PauseModel | None = None) -> int:
     """How long to wait for a continuation AFTER the line went quiet (on top of the quiet that ended the speech)."""
     if state == "complete":
