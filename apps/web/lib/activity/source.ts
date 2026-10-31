@@ -4,13 +4,15 @@ import { activityScreens } from "@/lib/screens/flag";
 import { parseActivity, type ActivityFeed, type ActivityItem } from "./types";
 
 /**
- * Where the "Live now" strip's data comes from (SERVER ONLY): `mock` = made-up activity that changes every 15 seconds (a call with three chats, then two leads being read, then nothing), `on` = the API's `GET /assistant/activity`, `off` = the strip is
+ * Where the "Live now" strip's data comes from (SERVER ONLY): `mock` = made-up activity for a DEMO workspace only (it changes every 15 seconds: a call with three chats, then two leads being read, then nothing; any other workspace gets "nothing", i.e. All caught up), `on` = the API's `GET /assistant/activity`, `off` = the strip is
  * not drawn. A read that fails is null (the strip then says nothing, never a wrong line).
  */
-export async function readActivity(token: string, tenantId: string, now: number = Date.now()): Promise<ActivityFeed | null> {
+export async function readActivity(token: string, tenantId: string, opts: { demo: boolean; now?: number }): Promise<ActivityFeed | null> {
+  const now = opts.now ?? Date.now();
   const mode = activityScreens();
   if (mode === "off") return null;
   if (mode === "mock") {
+    if (!opts.demo) return { items: [], pollAfterS: 30 }; // made-up activity is for the demo workspaces only: a real workspace says "All caught up" until the API is on
     const phase = Math.floor(now / 15_000) % 3;
     const id = (n: number) => `00000000-0000-4000-8000-${String(900 + n).padStart(12, "0")}`;
     const items: ActivityItem[] =

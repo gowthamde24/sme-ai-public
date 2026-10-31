@@ -244,10 +244,13 @@ describe("Needs you: the count is the cards", () => {
 });
 
 describe("Needs you: empty, unreadable, and the phone", () => {
-  it("nothing waiting is the happy line, the circle and no people", () => {
+  it("nothing waiting is one slim line (a check mark, no card, no circle: the page has a single orb) and no people", () => {
     const { container } = board([]);
     expect(screen.getByText("All clear. I will tell you the moment something needs you.")).toBeInTheDocument();
-    expect(container.querySelector('[data-empty="needs"] [data-orb]')).not.toBeNull();
+    const line = container.querySelector('[data-empty="needs"]') as HTMLElement;
+    expect(line.tagName).toBe("P");
+    expect(line.querySelector("[data-orb]")).toBeNull();
+    expect(container.querySelector("[data-orb]")).toBeNull();
     expect(screen.queryByRole("article")).toBeNull();
     expect(count()).toHaveTextContent("0");
   });

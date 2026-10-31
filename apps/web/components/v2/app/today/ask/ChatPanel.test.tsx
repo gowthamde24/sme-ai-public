@@ -114,11 +114,15 @@ describe("the input bar: Dictate and Live talk (owner, 30 Oct)", () => {
     await act(async () => void fireEvent.click(screen.getByRole("button", { name })));
     await act(async () => void sock.onopen?.());
   };
-  it("has a text box, Dictate, Live talk and Send, in that order", () => {
+  it("has one rounded input row (plus, text box, language pill, Dictate, Send) with Talk as its own pill below it", () => {
     draw();
     const bar = document.querySelector('[data-chat="form"]') as HTMLElement;
-    const kinds = [...bar.querySelectorAll("input, textarea, button")].map((e) => (e.tagName === "INPUT" || e.tagName === "TEXTAREA" ? "text" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))));
-    expect(kinds).toEqual(["text", "dictate", "live-talk", "submit"]);
+    const kinds = [...bar.querySelectorAll("input, textarea, button, select")].map((e) => (e.tagName === "INPUT" || e.tagName === "TEXTAREA" ? "text" : e.tagName === "SELECT" ? "pill" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))));
+    expect(kinds).toEqual(["plus", "text", "pill", "dictate", "submit"]);
+    const talk = document.querySelector('[data-chat="live-talk"]') as HTMLElement;
+    expect(bar.contains(talk)).toBe(false); // nothing can sit on the input's border
+    expect(bar.compareDocumentPosition(talk) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(talk.className).toContain("w-full");
   });
   it("the box is a multi-line text area: Enter sends, Shift+Enter is a new line, a composing keyboard is not cut short", async () => {
     draw();
@@ -333,7 +337,18 @@ describe("the conversation panel", () => {
     expect(screen.queryByRole("button", { name: /^(Ask|Do it)$/ })).toBeNull();
     expect(screen.getByRole("button", { name: /^Live talk: a spoken/ })).toBeInTheDocument();
     expect(screen.getByText(/Ask anything about your business, or just talk/)).toBeInTheDocument();
-    expect(document.querySelector('[data-chat="panel"]')?.className).toMatch(/h-\[60dvh\]/);
+    const panel = document.querySelector('[data-chat="panel"]') as HTMLElement;
+    expect(panel.className).not.toMatch(/(^|\s)(md:)?h-\[/); // no fixed height: it fits what is in it
+    expect(panel.className).toContain("max-h-[min(560px"); // and grows with the conversation up to about 560px, then the thread scrolls inside
+    expect(panel.className).not.toContain("overflow-hidden"); // (the plus menu opens upward over it)
+  });
+  it("empty: the greeting and the chips come directly under each other, then the input; no big blank area (the chips are above the input)", () => {
+    draw();
+    const empty = document.querySelector('[data-chat="empty"]') as HTMLElement;
+    expect(empty).toHaveTextContent(/Ask anything about your business/);
+    expect(empty.querySelector('[data-chat="chips"]')).not.toBeNull();
+    const form = document.querySelector('[data-chat="form"]') as HTMLElement;
+    expect(empty.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
   it("a suggested prompt asks at once; the answer shows with its list and a copy button; New conversation empties the thread", async () => {
     draw();
@@ -624,7 +639,8 @@ describe("the command bar (owner's design C) and the language pill", () => {
   });
   it("the sheet on a phone has the same pieces: pill, Dictate, Talk, Send", () => {
     draw({ variant: "panel" });
-    const actions = document.querySelector('[data-chat="actions"]') as HTMLElement;
-    expect([...actions.querySelectorAll("select, button")].map((e) => (e.tagName === "SELECT" ? "pill" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))))).toEqual(["pill", "dictate", "live-talk", "submit"]);
+    const form = document.querySelector('[data-chat="form"]') as HTMLElement;
+    expect([...form.querySelectorAll("select, button")].map((e) => (e.tagName === "SELECT" ? "pill" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))))).toEqual(["plus", "pill", "dictate", "submit"]);
+    expect(document.querySelector('[data-chat="live-talk"]')).toHaveTextContent("Talk"); // the prominent pill under the input
   });
 });
