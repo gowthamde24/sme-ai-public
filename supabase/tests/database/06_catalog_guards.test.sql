@@ -306,7 +306,7 @@ select is(
         'public.call_voice_get', 'public.call_voice_set', 'public.call_voice_gender_set',
         -- job DV follow-up: the browser voice's daily caps
         'public.browser_voice_usage_get', 'public.browser_voice_usage_add',
-        'public.pronunciation_list', 'public.pronunciation_set', 'public.pronunciation_delete',
+        'public.assistant_activity', 'public.pronunciation_list', 'public.pronunciation_set', 'public.pronunciation_delete',
         -- job DY: the automatic WhatsApp reply: the Owner's switch and the worker's three calls
         'public.auto_reply_get', 'public.auto_reply_set', 'public.scheduler_auto_reply_pending', 'public.scheduler_auto_reply_submit', 'public.scheduler_auto_reply_skip', 'public.scheduler_lead_reads_pending', 'public.scheduler_lead_read_apply', 'public.assistant_context_get', 'public.assistant_context_versions_list', 'public.assistant_context_version_get', 'public.assistant_context_save', 'public.scheduler_assistant_context', 'public.lead_inbound_address_get', 'public.lead_website_form_get', 'public.lead_website_form_set', 'public.lead_inbound_address_set', 'public.lead_source_cards_stats',
         'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
@@ -426,7 +426,7 @@ select is(
                      'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
                      -- job voice-picker: the workspace's chosen voice per language
                      'public.call_voice_get', 'public.call_voice_set', 'public.call_voice_gender_set',
-                     'public.browser_voice_usage_get', 'public.browser_voice_usage_add', 'public.pronunciation_list', 'public.pronunciation_set', 'public.pronunciation_delete',
+                     'public.browser_voice_usage_get', 'public.browser_voice_usage_add', 'public.assistant_activity', 'public.pronunciation_list', 'public.pronunciation_set', 'public.pronunciation_delete',
                      'public.auto_reply_get', 'public.auto_reply_set', 'public.scheduler_auto_reply_pending', 'public.scheduler_auto_reply_submit', 'public.scheduler_auto_reply_skip', 'public.scheduler_lead_reads_pending', 'public.scheduler_lead_read_apply', 'public.assistant_context_get', 'public.assistant_context_versions_list', 'public.assistant_context_version_get', 'public.assistant_context_save', 'public.scheduler_assistant_context', 'public.lead_inbound_address_get', 'public.lead_website_form_get', 'public.lead_website_form_set', 'public.lead_inbound_address_set', 'public.lead_source_cards_stats',
                      'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
                      'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report',
