@@ -96,8 +96,8 @@ export function LiveNow({ memberships, labels, frame: given }: { memberships: re
       >
         <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-green-text motion-safe:animate-pulse" />
         <span className="max-w-[17rem] truncate max-md:hidden">{text}</span>
-        <span className="max-w-[6.5rem] truncate md:hidden">{shortOf(first, labels)}</span>
-        <ChevronDown className="size-4 shrink-0 text-muted" aria-hidden="true" />
+        <span className="max-w-[5.5rem] truncate md:hidden">{shortOf(first, labels)}</span>
+        <ChevronDown className="size-4 shrink-0 text-muted max-md:hidden" aria-hidden="true" />
       </button>
       {open ? (
         <div id={id} role="region" aria-label={title} className="absolute right-0 top-full z-[60] mt-2 w-[min(22rem,calc(100vw-1.5rem))] rounded-2xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)]">

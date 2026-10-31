@@ -40,7 +40,7 @@ try {
       const outer = document.querySelector('[data-chat="bar"]');
       const cs = getComputedStyle(outer);
       const orbs = document.querySelectorAll("main [data-orb], [data-screen='today'] [data-orb]").length;
-      const chips = document.querySelector('[data-chat="bar"] [data-chat="chips"]')?.getBoundingClientRect();
+      const chips = document.querySelector('[data-chat="bar"] [data-chat="chips"] li')?.getBoundingClientRect(); // (the first chip)
       return { off: parts.filter((x) => x.d > 2).map((x) => `${x.name}:${x.d.toFixed(1)}`), outerBorder: cs.borderTopWidth, outerBg: cs.backgroundColor, orbs, chipsLeft: chips ? chips.left : null, formLeft: f.left };
     });
     ok(`${w}x${h} everything inside the input is vertically centred`, c.off.length === 0, c.off.join(","));
@@ -88,8 +88,8 @@ try {
   await shot(s, `bc-${pack}-${lang}-phone390`, { fullPage: false });
   await p.locator('[data-ask="orb"]').click();
   await p.locator('[data-chat="panel"]').waitFor({ timeout: 20000 });
-  const kinds = await p.locator('[data-chat="panel"] [data-chat="actions"] select, [data-chat="panel"] [data-chat="actions"] button').evaluateAll((els) => els.map((e) => (e.tagName === "SELECT" ? "pill" : e.getAttribute("data-chat") || e.getAttribute("type"))));
-  ok("phone sheet: the same bar pieces (pill, mic, Talk, Send)", kinds.join() === "pill,dictate,live-talk,submit", kinds.join());
+  const kinds = await p.locator('[data-chat="panel"] [data-chat="form"] select, [data-chat="panel"] [data-chat="form"] button').evaluateAll((els) => els.map((e) => (e.tagName === "SELECT" ? "pill" : e.getAttribute("data-chat") || e.getAttribute("type"))));
+  ok("phone sheet: the same bar pieces (plus, pill, mic, Send) and Talk below", kinds.join() === "plus,pill,dictate,submit" && (await p.locator('[data-chat="panel"] [data-chat="live-talk"]').count()) === 1, kinds.join());
   await shot(s, `bc-${pack}-${lang}-phone390-sheet`, { fullPage: false });
   ok("no page errors", s.errors.length === 0, s.errors.slice(0, 2).join(" | "));
 } catch (e) {

@@ -56,7 +56,8 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
             <span lang={lang}>
               <LangSelect lang={lang} label={t("lang.label")} />
             </span>
-            <span lang={lang}>
+            {/* the light/dark button has no room beside "Live now" and the language on a phone: there it is in Settings, Language and look */}
+            <span lang={lang} className="max-md:hidden">
               <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
             </span>
           </TopBar>
