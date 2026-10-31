@@ -89,6 +89,9 @@ class Parts:
     one_thread: bool = False
     # casual turns (small talk, general help) go to the fast tier, which writes into the same thread; business questions and actions keep the written chat's turn
     fast_smalltalk: bool = False
+    # the language pill (owner, 31 Oct 2026): None = auto (the session follows the caller's own language); a language = PINNED: the recogniser, the reply, the voice and the fillers stay in it
+    pinned_language: Callable[[], str | None] = lambda: None
+    set_pin: Callable[[str | None], None] = lambda language: None
     conversation_id: str | None = None   # the thread (sent to the browser in `ready`)
 
 
@@ -310,6 +313,7 @@ class VoiceSession:
                 "audio_out": {"format": "pcm_s16le", "sample_rate": OUT_RATE, "channels": 1},
                 "limits": {"session_seconds": self.limits.session_seconds, "day_seconds_left": self.ledger.seconds_left(self.tenant_id)},
                 "mode": self.mode,
+                "pinned": self.parts.pinned_language() is not None,
                 **({"conversation_id": self.parts.conversation_id} if self.parts.conversation_id else {}),
             }
         )
@@ -349,11 +353,11 @@ class VoiceSession:
             what = payload.get("type")
             if what == "barge_in":
                 await self._barge_in(verify=bool(payload.get("verify")) and self.limits.verify_barge_in)
-            elif what == "set_language" and payload.get("language") in LANGUAGES:
+            elif what == "set_language" and (payload.get("language") in LANGUAGES or payload.get("language") == "auto"):
                 if self._turn_active:
                     self._pending_language = str(payload["language"])   # a turn never changes voice or language half way: it takes effect at the next turn
                 else:
-                    await self._set_language(str(payload["language"]))
+                    await self._choose_language(str(payload["language"]))
             elif what == "confirm":
                 try:
                     await self._confirm(uuid.UUID(str(payload.get("action_id"))), str(payload.get("decision")))
@@ -365,13 +369,24 @@ class VoiceSession:
             elif what == "ping":
                 await self._send({"type": "pong"})
 
+    async def _choose_language(self, choice: str) -> None:
+        """The language pill changed (owner, 31 Oct 2026). A language PINS the session to it (the recogniser writes it, the reply, the voice and the fillers are in it, nothing the caller says moves it); "auto" lets the session
+        follow the caller again from the next turn (the recogniser is opened on auto, the language stays as it is until the caller's own words change it)."""
+        if choice == "auto":
+            self.parts.set_pin(None)
+            self.conv.stt = self.parts.stt_for(self.language)
+            await self._send({"type": "language", "language": self.language, "pinned": False})
+            return
+        self.parts.set_pin(choice)
+        await self._set_language(choice)
+
     async def _set_language(self, language: str) -> None:
         """The language the assistant listens for, answers in and speaks (its voice, its fillers, the pronunciation map) from now on."""
         self.language = language
         self.conv.session.language = language
         self.conv.session.system = self.parts.system_for(language)
         self.conv.stt = self.parts.stt_for(language)
-        await self._send({"type": "language", "language": language})
+        await self._send({"type": "language", "language": language, "pinned": self.parts.pinned_language() is not None})
 
     async def _refresh_voices(self) -> None:
         if self.parts.refresh is not None:
@@ -399,10 +414,12 @@ class VoiceSession:
         self._turn_active = False
         if self._pending_language is not None:
             language, self._pending_language = self._pending_language, None
-            await self._set_language(language)
+            await self._choose_language(language)
 
     async def _follow_language(self, text: str) -> None:
         """The reply is in the language of the owner's LAST turn (also romanised Telugu): the voice, the filler and the answer all follow it. A short English word ("ok") does not switch a Telugu chat back."""
+        if self.parts.pinned_language() is not None:
+            return   # the person chose the language on the assistant bar: nothing the caller says changes it
         found = detect_owner_language(text)
         if found == self.language or found not in LANGUAGES:
             return

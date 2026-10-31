@@ -47,7 +47,10 @@ _SCHOOL_TOPIC = re.compile(
 
 
 def language_of(body: TurnIn) -> Language:
-    """The language of the message by its script; the screen's language only decides a very short message that has none of its own."""
+    """The language the person CHOSE on the assistant bar, if they did (the reply is in it whatever the words inside are, so Telugu with English words stays Telugu); otherwise the language of the message by its
+    script, where the screen's language only decides a very short message that has none of its own."""
+    if body.language is not None and body.language != "auto":
+        return body.language
     found = detect_owner_language(body.text)
     if body.language_hint and found == "en" and len(body.text.split()) <= SHORT_MESSAGE_WORDS:
         return body.language_hint

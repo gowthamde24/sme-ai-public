@@ -87,6 +87,7 @@ def system_prompt(*, business: str, assistant: str, language: str, opening_line:
 
 def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Callable[[str, dict[str, Any]], None], on_ask: Callable[[], None], conversation_id: uuid.UUID | None = None, pin_language: str | None = None) -> Parts:
     token, tenant = ctx.principal.token, ctx.tenant.id
+    pin_box: dict[str, str | None] = {"lang": pin_language}   # the language the person chose on the assistant bar (None = auto); the pill can change it mid-session
     chosen, gender = voice_state(runtime, ctx)
     live_choices: dict[str, str] = dict(chosen)   # read again at the start of every turn (refresh), so a change in Settings speaks from the next turn
     live_gender = [gender]
@@ -123,7 +124,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
 
     def open_ask(conversation_id: uuid.UUID, message_id: uuid.UUID, text: str):  # type: ignore[no-untyped-def]
         # the same turn as the written chat (job EA): it decides again what the words are, runs the tool path or the planner, and ends in a typed reply
-        return start_turn(runtime, ctx, TurnIn(message_id=message_id, conversation_id=conversation_id, text=text))
+        return start_turn(runtime, ctx, TurnIn(message_id=message_id, conversation_id=conversation_id, text=text, language=pin_box["lang"]))   # type: ignore[arg-type]
 
     def confirm(action_id: uuid.UUID, decision: str) -> dict[str, Any]:
         if ctx.role != Role.OWNER:
@@ -164,7 +165,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
 
     llm = TieredLlm(CaptionLlm(fast, emit), ask, on_ask_turn)
     return Parts(
-        stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language=pin_language or "auto", silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(pin_language or language, bv.stt_modes)),   # any of the six languages in any turn: the recogniser detects it and writes what was said as spoken (the mode per language, STT_MODES); the reply follows what was said
+        stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language=pin_box["lang"] or "auto", silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(pin_box["lang"] or language, bv.stt_modes)),   # any of the six languages in any turn: the recogniser detects it and writes what was said as spoken (the mode per language, STT_MODES); the reply follows what was said
         tts=tts,
         llm=llm,
         system_for=system_for,
@@ -176,6 +177,8 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
         fillers=bv.fillers,
         confirm=confirm,
         fast_smalltalk=in_thread,
+        pinned_language=lambda: pin_box["lang"],
+        set_pin=lambda lang: pin_box.__setitem__("lang", lang),
         one_thread=True,   # every live turn goes through the written chat's turn (same router, same history, same stored thread): typed, dictated and live turns are ONE conversation
         conversation_id=str(turns.conversation_id),
     )

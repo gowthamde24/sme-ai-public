@@ -23,6 +23,8 @@ class TurnIn(_Strict):
     conversation_id: uuid.UUID | None = None
     text: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=4000)]
     language_hint: Literal["en", "te", "hi", "kn"] | None = None
+    # the language chosen on the assistant bar (owner, 31 Oct 2026): a language = the reply is in THAT language whatever the words inside it are; absent or "auto" = detected from the message, as before
+    language: Literal["auto", "te", "en", "hi", "kn", "ta", "ml"] | None = None
 
 
 class ConfirmIn(_Strict):
