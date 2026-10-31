@@ -1,4 +1,4 @@
-# Set up Lead Desk
+# Set up Leads
 Six short steps. You can skip any step and come back later. Step 1 of 6
 {label="Step 1 of 6"}
 - [1 . What you sell](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=1 current=step)
