@@ -1,6 +1,7 @@
 import { Sparkles } from "lucide-react";
 
 import { Mark } from "@/components/v2/Mark";
+import { BRAND_NAME } from "@/design/brand";
 
 import type { AiUsage, Plan } from "./contract";
 import { word, type Labels } from "./labels";
@@ -14,6 +15,17 @@ export const fillClass = (percent: number): string => FILL[Math.min(100, Math.ma
 /** The mark that stands for the product in the frame: the three-bar logo. */
 export function BrandMark({ px = 32 }: { px?: number }) {
   return <Mark px={px} />;
+}
+
+/** "Powered by <brand>" with the three-bar mark (owner 31 Oct): small, at the bottom of the menu and of the phone's More sheet. `compact` (a collapsed menu) shows the mark alone, the words in its title. */
+export function PoweredBy({ labels, compact = false }: { labels?: Labels; compact?: boolean }) {
+  const text = word(labels, "frame.poweredby", "Powered by {brand}", { brand: BRAND_NAME });
+  return (
+    <p data-frame="powered-by" title={compact ? text : undefined} className={`flex items-center gap-1.5 text-xs text-muted ${compact ? "justify-center" : "px-3"}`}>
+      <Mark px={16} />
+      {compact ? <span className="sr-only">{text}</span> : <span>{text}</span>}
+    </p>
+  );
 }
 
 /** "free_trial" -> "Free trial plan": the plan's name from `getPlan()` (`frame.plan.<name>`, else the name with its underscores opened), inside the frame's own sentence. */

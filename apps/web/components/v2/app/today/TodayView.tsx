@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 
+import { LiveNow } from "../live/LiveNow";
 import { CommandBar } from "./CommandBar";
 import { DoneSection } from "./DoneSection";
 import { NeedsYou } from "./NeedsYou";
@@ -39,9 +40,13 @@ export function TodayView({ intro = null, live = null, outcomes = null, data, na
   const chips = TODAY_CHIPS.map((k) => t(k));
   return (
     <div data-screen="today" className="flex flex-col gap-4 md:gap-5">
-      <header>
-        <p className="text-sm text-muted">{dayLine(now, lang)}</p>
-        <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? `${greet}, ${name}` : greet}</h1>
+      <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
+        <div>
+          <p className="text-sm text-muted">{dayLine(now, lang)}</p>
+          {/* the member's own name (My profile), with the respectful form of the language (Telugu "గారు", Hindi "जी", Kannada "ಅವರೇ"; English the name alone: never sir or madam); none when they have no name */}
+          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? t("today.greeting.named", { greet, name }) : greet}</h1>
+        </div>
+        <LiveNow tenantId={base.split("/").pop() ?? ""} />
       </header>
       {help}
       {sending?.stopped ? <SendingBanner words={words} demo={demo} /> : null}

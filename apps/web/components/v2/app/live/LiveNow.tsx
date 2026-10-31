@@ -7,9 +7,10 @@ import * as React from "react";
 import { groupActivity, type ActivityRow } from "@/lib/activity/types";
 
 import { word, type Labels } from "../labels";
-import type { FrameData } from "../contract";
+import { NO_FRAME_DATA } from "../contract";
 import { useFrameData } from "../frame-store";
-import { useWorkspace, type Membership } from "../use-workspace";
+import { useLabels } from "../robust/labels-context";
+
 import { useActivity } from "./activity-poll";
 
 const ICON = { call: Phone, chats: MessageCircle, quote: FileText, leads: Inbox } as const;
@@ -26,23 +27,15 @@ export function lineOf(row: ActivityRow, secs: number, labels?: Labels): string 
   return row.count === 1 ? word(labels, "frame.live.leads.one", "Reading a new lead") : word(labels, "frame.live.leads.other", "Reading {n} new leads", { n: row.count });
 }
 
-/** The few words of one line for a phone's header: "On a call", "WhatsApp · 3", "Quote", "Leads · 2". */
-export function shortOf(row: ActivityRow, labels?: Labels): string {
-  if (row.key === "call") return word(labels, "frame.live.short.call", "On a call");
-  if (row.key === "chats") return word(labels, "frame.live.short.chats", "WhatsApp · {n}", { n: row.count });
-  if (row.key === "quote") return word(labels, "frame.live.short.quote", "Quote");
-  return word(labels, "frame.live.short.leads", "Leads · {n}", { n: row.count });
-}
-
 /**
- * "Live now" (owner 31 Oct): what the assistant is doing at this moment, a compact pill in the top bar before the bell ("● Reading 2 new leads ▾", a live dot while something is going on). It opens a list of everything going on now, each line a link to the
- * call, chat, quote or lead it is about; when idle it is a plain grey "✓ All caught up" (nothing to open). On a phone the pill is the dot and a short label ("Leads · 2"). Nothing is drawn until the first answer (no empty box). A call's timer counts on from the
+ * "Live now" (owner 31 Oct): what the assistant is doing at this moment, a compact pill on the greeting row of Today, right-aligned (under the greeting on a phone): "● Reading 2 new leads ▾", a live dot while something is going on. It opens a list of everything going on now, each line a link to the
+ * call, chat, quote or lead it is about; when idle it is a plain grey "✓ All caught up" (nothing to open). Nothing is drawn until the first answer (no empty box). A call's timer counts on from the
  * API's own elapsed seconds. Not asked at all unless the workspace has it switched on (`frame.live`).
  */
-export function LiveNow({ memberships, labels, frame: given }: { memberships: readonly Membership[]; labels?: Labels; /** What the frame was given; the workspace's own layout brings the real `live` flag in through the frame store (like the plan and the usage). */ frame: FrameData }) {
-  const { current } = useWorkspace(memberships);
-  const enabled = useFrameData(given).live;
-  const { feed, at } = useActivity(current?.id ?? null, enabled);
+export function LiveNow({ tenantId }: { tenantId: string }) {
+  const labels = useLabels(); // the frame's words (this part lives in the page, on the greeting row, under the frame's labels)
+  const enabled = useFrameData(NO_FRAME_DATA).live; // the workspace's own layout brings the real `live` flag in through the frame store (like the plan and the usage)
+  const { feed, at } = useActivity(tenantId, enabled);
   const rows = React.useMemo(() => (feed ? groupActivity(feed.items) : []), [feed]);
   const hasCall = rows.some((r) => r.key === "call");
   const [now, setNow] = React.useState(0);
@@ -67,17 +60,17 @@ export function LiveNow({ memberships, labels, frame: given }: { memberships: re
       document.removeEventListener("pointerdown", onDown);
     };
   }, [open]);
-  if (!current || !enabled || !feed) return null;
-  const base = `/app/tenants/${current.id}`;
+  if (!enabled || !feed) return null;
+  const base = `/app/tenants/${tenantId}`;
   const secsOf = (r: ActivityRow) => r.elapsedS + (at > 0 && now > at ? Math.floor((now - at) / 1000) : 0);
   const title = word(labels, "frame.live.title", "Live now");
   const idle = word(labels, "frame.live.idle", "All caught up");
   const first = rows[0];
   if (!first) {
     return (
-      <p data-live="pill" data-state="idle" role="status" aria-label={`${title}: ${idle}`} className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-edge bg-surface px-3 text-sm font-medium text-muted max-md:min-w-11 max-md:justify-center max-md:px-0">
+      <p data-live="pill" data-state="idle" role="status" aria-label={`${title}: ${idle}`} className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-edge bg-surface px-3 text-sm font-medium text-muted">
         <Check className="size-4 shrink-0 text-green-text" aria-hidden="true" />
-        <span className="max-md:hidden">{idle}</span>
+        <span>{idle}</span>
       </p>
     );
   }
@@ -91,15 +84,14 @@ export function LiveNow({ memberships, labels, frame: given }: { memberships: re
         aria-controls={id}
         aria-label={`${title}: ${text}${rows.length > 1 ? ` ${word(labels, "frame.live.more", "+{n} more", { n: rows.length - 1 })}` : ""}`}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-edge bg-brand-bg px-3 text-sm font-semibold text-ink hover:brightness-95 aria-expanded:bg-surface max-md:gap-1.5 max-md:px-2.5"
+        className="inline-flex min-h-10 max-w-full items-center gap-2 rounded-full border border-brand-edge bg-brand-bg px-3 text-sm font-semibold text-ink hover:brightness-95 aria-expanded:bg-surface"
       >
         <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-green-text motion-safe:animate-pulse" />
-        <span className="max-w-[17rem] truncate max-md:hidden">{text}</span>
-        <span className="max-w-[4.25rem] truncate md:hidden">{shortOf(first, labels)}</span>
-        <ChevronDown className="size-4 shrink-0 text-muted max-md:hidden" aria-hidden="true" />
+        <span className="min-w-0 truncate md:max-w-[19rem]">{text}</span>
+        <ChevronDown className="size-4 shrink-0 text-muted" aria-hidden="true" />
       </button>
       {open ? (
-        <div id={id} role="region" aria-label={title} className="absolute right-0 top-full z-[60] mt-2 w-[min(22rem,calc(100vw-1.5rem))] rounded-2xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)]">
+        <div id={id} role="region" aria-label={title} className="absolute left-0 top-full z-[60] mt-2 w-[min(22rem,calc(100vw-2rem))] md:left-auto md:right-0 rounded-2xl border border-line bg-surface p-2 shadow-[var(--v2-shadow-pop)]">
           <p className="flex items-center gap-1.5 px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-muted">
             <span aria-hidden="true" className="size-2 rounded-full bg-green-text motion-safe:animate-pulse" />
             {title}

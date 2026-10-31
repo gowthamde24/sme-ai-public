@@ -19,10 +19,12 @@ export type FrameData = {
   showUsage: boolean;
   /** "Live now" is switched on for this workspace (ACTIVITY_SCREENS): the menu and the phone's line ask what the assistant is doing. */
   live: boolean;
+  /** The business's uploaded logo (a signed address that expires in ten minutes; the next page load brings a fresh one), or null: the menu then shows a letter avatar of the business name. */
+  logoUrl: string | null;
   /** The business type of the workspace as the menu needs it (job CL): modules, phone tabs and changed words. null = not known (the menu is the one the product always had). */
   pack: PackFrame | null;
 };
 /** Every part unreadable: the frame says "Not available yet" in each place. */
-export const NO_FRAME_DATA: FrameData = { plan: null, usage: null, waiting: null, ready: true, showUsage: true, live: false, pack: null };
+export const NO_FRAME_DATA: FrameData = { plan: null, usage: null, waiting: null, ready: true, showUsage: true, live: false, logoUrl: null, pack: null };
 /** Not read yet (the layout above the workspace cannot know which workspace it is; the workspace's own layout brings the numbers in). */
-export const FRAME_LOADING: FrameData = { plan: null, usage: null, waiting: null, ready: false, showUsage: true, live: false, pack: null };
+export const FRAME_LOADING: FrameData = { plan: null, usage: null, waiting: null, ready: false, showUsage: true, live: false, logoUrl: null, pack: null };

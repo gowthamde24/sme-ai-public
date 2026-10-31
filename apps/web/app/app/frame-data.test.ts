@@ -3,6 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const getPlan = vi.fn();
 const getAiUsage = vi.fn();
 const readToday = vi.fn();
+const getWorkspaceProfile = vi.fn();
+vi.mock("@/lib/api/workspace", () => ({ getWorkspaceProfile: (...a: unknown[]) => getWorkspaceProfile(...a) }));
+const LOGO = "https://s.example/logo.png?sig=1";
 vi.mock("@/lib/api/plan", () => ({ getPlan: (...a: unknown[]) => getPlan(...a) }));
 vi.mock("@/lib/api/ai-usage", () => ({ getAiUsage: (...a: unknown[]) => getAiUsage(...a) }));
 const readPack = vi.fn();
@@ -27,12 +30,13 @@ const T = "22222222-2222-2222-2222-222222222222";
 describe("readFrameData", () => {
   beforeEach(() => {
     readPack.mockResolvedValue(FIXTURE);
+    getWorkspaceProfile.mockResolvedValue({ logoUrl: LOGO });
   });
   it("brings in the plan, the usage and the waiting count with the person's token", async () => {
     getPlan.mockResolvedValue(PLAN);
     getAiUsage.mockResolvedValue(USAGE);
     readToday.mockResolvedValue(TODAY);
-    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, live: false, pack: PACK });
+    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, live: false, logoUrl: LOGO, pack: PACK });
     expect(getPlan).toHaveBeenCalledWith("tok", T);
     expect(getAiUsage).toHaveBeenCalledWith("tok", T);
     expect(readToday).toHaveBeenCalledWith("tok", T);
@@ -41,13 +45,14 @@ describe("readFrameData", () => {
     getPlan.mockResolvedValue(PLAN);
     getAiUsage.mockRejectedValue(new ApiRequestError(403, "forbidden", "No."));
     readToday.mockResolvedValue(TODAY);
-    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: null, waiting: 3, ready: true, showUsage: false, live: false, pack: PACK });
+    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: null, waiting: 3, ready: true, showUsage: false, live: false, logoUrl: LOGO, pack: PACK });
   });
   it("any other failure is null for that one part only (so the frame says 'Not available yet' there) and never throws", async () => {
     getPlan.mockRejectedValue(new ApiContractError("x"));
     getAiUsage.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "down"));
     readToday.mockRejectedValue(new ApiAuthError("rejected"));
-    expect(await readFrameData("tok", T)).toEqual({ plan: null, usage: null, waiting: null, ready: true, showUsage: true, live: false, pack: PACK });
+    getWorkspaceProfile.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "down"));
+    expect(await readFrameData("tok", T)).toEqual({ plan: null, usage: null, waiting: null, ready: true, showUsage: true, live: false, logoUrl: null, pack: PACK });
   });
   it("hands the menu of the workspace's business type to the frame, in the person's language", async () => {
     const id = otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!;
@@ -66,6 +71,6 @@ describe("readFrameData", () => {
     getAiUsage.mockResolvedValue(USAGE);
     readToday.mockResolvedValue(TODAY);
     readPack.mockRejectedValue(new ApiAuthError("rejected"));
-    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, live: false, pack: null });
+    expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, live: false, logoUrl: LOGO, pack: null });
   });
 });

@@ -11,6 +11,7 @@ import { frameBand } from "./frame-style";
 import { itemBase, itemCurrent, itemIdle, NavGroups, NavLink } from "./NavGroups";
 import { word, withPackWords, type Labels } from "./labels";
 import { menuFoot, menuGroups } from "./nav";
+import { PoweredBy } from "./frame-parts";
 import { useCollapsed } from "./use-collapsed";
 import { useWorkspace, type Membership } from "./use-workspace";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
@@ -33,7 +34,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
   return (
     <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[232px]"} print:hidden`}>
-      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} />
+      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} logoUrl={frame.logoUrl} />
       <nav aria-label={aria} className="min-h-0 flex-1 overflow-y-auto p-2">
         {current ? (
           <NavGroups groups={menuGroups(current.role, frame.pack)} tenantId={current.id} activeItemId={activeMenu} labels={labels} waiting={frame.waiting} collapsed={collapsed} />
@@ -69,6 +70,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
           {collapsed ? <PanelLeftOpen className="size-5" aria-hidden="true" /> : <PanelLeftClose className="size-5" aria-hidden="true" />}
           {collapsed ? null : <span>{word(labels, "frame.collapse", "Collapse menu")}</span>}
         </button>
+        <PoweredBy labels={labels} compact={collapsed} />
       </div>
     </aside>
   );

@@ -10,6 +10,7 @@ import { NavIcon } from "./icons";
 import { word, withPackWords, type Labels } from "./labels";
 import { hrefOf, menuBar, menuFoot, menuGroups } from "./nav";
 import { useWorkspace, type Membership } from "./use-workspace";
+import { PoweredBy } from "./frame-parts";
 
 const cell = "relative flex min-h-16 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 pb-1 pt-1.5 text-center text-sm font-medium leading-tight transition-colors duration-150 ease-out active:bg-surface-2";
 const COLS: Record<number, string> = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "grid-cols-4", 5: "grid-cols-5", 6: "grid-cols-6" };
@@ -128,6 +129,7 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
                   {word(labels, "frame.signout", "Sign out")}
                 </button>
               </form>
+              <PoweredBy labels={labels} />
             </div>
           </div>
         </div>
