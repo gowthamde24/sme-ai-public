@@ -29,6 +29,11 @@ export function parseActivity(json: unknown): ActivityFeed | null {
   return { items, pollAfterS: poll };
 }
 
+/** The feed as the API writes it (snake_case), which is what the app's own route sends to the browser: the browser reads it with `parseActivity` like the server does. */
+export function activityWire(feed: ActivityFeed): { items: { type: ActivityType; who: string | null; elapsed_s: number; target: ActivityTarget | null }[]; poll_after_s: number | null } {
+  return { items: feed.items.map((i) => ({ type: i.type, who: i.who, elapsed_s: i.elapsedS, target: i.target })), poll_after_s: feed.pollAfterS };
+}
+
 /** One line of the strip: the items of one kind of work. */
 export type ActivityRow = { key: "call" | "chats" | "quote" | "leads"; count: number; who: string | null; elapsedS: number; /** Where a tap goes (inside the workspace): the one thing it is about, else the list. */ href: (base: string) => string };
 

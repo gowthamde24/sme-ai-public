@@ -53,7 +53,7 @@ try {
   // Settings > Plan and usage
   await p.goto(`${s.base}/settings?section=plan`, { waitUntil: "domcontentloaded" });
   await p.locator("#usage-heading").waitFor({ timeout: 45000 }).catch(() => null);
-  ok("the AI usage is in Settings, Plan and usage", (await p.locator('#usage-heading').count()) === 1 && (await p.locator('[role="meter"]').count()) === 1);
+  ok("the AI usage is in Settings, Plan and usage", (await p.locator("#usage-heading").count()) === 1 && (await p.locator('section[aria-labelledby="usage-heading"] [role="meter"]').count()) === 1);
   await shot(s, `ln-${pack}-${lang}-settings-plan`, { fullPage: false });
   // phones
   for (const [w, h] of [[390, 844], [360, 780]]) {

@@ -7,6 +7,8 @@ import * as React from "react";
 import { groupActivity, type ActivityRow } from "@/lib/activity/types";
 
 import { word, type Labels } from "../labels";
+import type { FrameData } from "../contract";
+import { useFrameData } from "../frame-store";
 import { useWorkspace, type Membership } from "../use-workspace";
 import { useActivity } from "./activity-poll";
 
@@ -29,8 +31,9 @@ export function lineOf(row: ActivityRow, secs: number, labels?: Labels): string 
  * line under the header (the first thing, and "+n more"), shown under the same rules. Nothing at all is drawn until the first answer (no empty box), and "All caught up" when the assistant is idle. A call's timer counts on from the API's own elapsed
  * seconds. Not asked at all unless the workspace has it switched on (`enabled`).
  */
-export function LiveNow({ memberships, labels, enabled, variant, collapsed = false }: { memberships: readonly Membership[]; labels?: Labels; enabled: boolean; variant: "side" | "line"; collapsed?: boolean }) {
+export function LiveNow({ memberships, labels, frame: given, variant, collapsed = false }: { memberships: readonly Membership[]; labels?: Labels; /** What the frame was given; the workspace's own layout brings the real `live` flag in through the frame store (like the plan and the usage). */ frame: FrameData; variant: "side" | "line"; collapsed?: boolean }) {
   const { current } = useWorkspace(memberships);
+  const enabled = useFrameData(given).live;
   const { feed, at } = useActivity(current?.id ?? null, enabled);
   const rows = React.useMemo(() => (feed ? groupActivity(feed.items) : []), [feed]);
   const hasCall = rows.some((r) => r.key === "call");

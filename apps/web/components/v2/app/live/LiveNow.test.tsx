@@ -5,11 +5,14 @@ const nav = { pathname: "/app/tenants/11111111-1111-4111-8111-111111111111" };
 vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname, useSearchParams: () => new URLSearchParams(), useRouter: () => ({ push: () => undefined }) }));
 
 import { LiveNow, lineOf } from "./LiveNow";
+import { NO_FRAME_DATA } from "../contract";
 import type { Membership } from "../use-workspace";
 import { groupActivity } from "@/lib/activity/types";
 
 const T = "11111111-1111-4111-8111-111111111111";
 const memberships: Membership[] = [{ id: T, name: "Acme", role: "owner" } as Membership];
+const ON = { ...NO_FRAME_DATA, live: true };
+const OFF = { ...NO_FRAME_DATA, live: false };
 const id = (n: number) => `00000000-0000-4000-8000-${String(900 + n).padStart(12, "0")}`;
 let answer: unknown;
 const fetchMock = vi.fn(async () => new Response(JSON.stringify(answer), { status: 200, headers: { "Content-Type": "application/json" } }));
@@ -17,7 +20,7 @@ const fetchMock = vi.fn(async () => new Response(JSON.stringify(answer), { statu
 beforeEach(() => {
   vi.stubGlobal("fetch", fetchMock);
   fetchMock.mockClear();
-  answer = { items: [], pollAfterS: 5 };
+  answer = { items: [], poll_after_s: 5 };
 });
 afterEach(() => {
   cleanup();
@@ -49,13 +52,13 @@ describe("Live now: the words of a line", () => {
 
 describe("Live now: the strip", () => {
   it("is not asked and not drawn when it is switched off", async () => {
-    render(<LiveNow memberships={memberships} enabled={false} variant="side" />);
+    render(<LiveNow memberships={memberships} frame={OFF} variant="side" />);
     await settle();
     expect(fetchMock).not.toHaveBeenCalled();
     expect(document.querySelector("[data-live]")).toBeNull();
   });
   it("draws nothing before the first answer (no empty box), then 'All caught up' when idle", async () => {
-    render(<LiveNow memberships={memberships} enabled variant="side" />);
+    render(<LiveNow memberships={memberships} frame={ON} variant="side" />);
     expect(document.querySelector("[data-live]")).toBeNull();
     await settle();
     expect(fetchMock).toHaveBeenCalledWith(`/app/tenants/${T}/activity`, expect.objectContaining({ cache: "no-store" }));
@@ -65,8 +68,8 @@ describe("Live now: the strip", () => {
     answer = { items: [{ type: "call", who: "Ramesh", elapsed_s: 134, target: { kind: "task", id: id(1) } }, { type: "whatsapp_reply", who: "Anitha", elapsed_s: 3, target: { kind: "conversation", id: id(2) } }], poll_after_s: 5 };
     render(
       <>
-        <LiveNow memberships={memberships} enabled variant="side" />
-        <LiveNow memberships={memberships} enabled variant="line" />
+        <LiveNow memberships={memberships} frame={ON} variant="side" />
+        <LiveNow memberships={memberships} frame={ON} variant="line" />
       </>,
     );
     await settle();
@@ -81,7 +84,7 @@ describe("Live now: the strip", () => {
   });
   it("keeps the last line through a failed read, and stops for good on a rejected session", async () => {
     answer = { items: [{ type: "lead_read", who: null, elapsed_s: 1, target: null }, { type: "lead_read", who: null, elapsed_s: 2, target: null }] };
-    render(<LiveNow memberships={memberships} enabled variant="side" />);
+    render(<LiveNow memberships={memberships} frame={ON} variant="side" />);
     await settle();
     expect(screen.getByText("Reading 2 new leads")).toBeInTheDocument();
     fetchMock.mockResolvedValueOnce(new Response("no", { status: 503 }));

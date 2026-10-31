@@ -61,7 +61,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
               <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
             </span>
           </TopBar>
-          <LiveNow memberships={list} labels={labels} enabled={frame.live} variant="line" />
+          <LiveNow memberships={list} labels={labels} frame={frame} variant="line" />
           <RobustShell labels={labels} />
           {lang !== "en" ? (
             <div role="region" aria-label={appT(lang)("frame.draft.label")} lang={lang} className="border-b border-line px-4 py-1.5 text-sm text-muted md:px-8 print:hidden">

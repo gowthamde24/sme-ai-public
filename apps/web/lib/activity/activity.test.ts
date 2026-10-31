@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { parseActivity } from "./types";
+import { activityWire, parseActivity } from "./types";
 import { readActivity } from "./source";
 
 const ID = "00000000-0000-4000-8000-000000000901";
@@ -18,6 +18,14 @@ describe("the activity feed of the API", () => {
   it("is null for anything that is not an activity answer, and holds at most 20 items", () => {
     for (const bad of [null, "x", {}, { items: "no" }]) expect(parseActivity(bad)).toBeNull();
     expect(parseActivity({ items: Array.from({ length: 30 }, () => ({ type: "lead_read", who: null, elapsed_s: 1 })) })?.items).toHaveLength(20);
+  });
+});
+
+describe("the app's own route sends the API's shape", () => {
+  it("what the route writes (snake_case) is read back by the browser's parser as the same feed", () => {
+    const feed = { items: [{ type: "call" as const, who: "Ramesh", elapsedS: 134, target: { kind: "task" as const, id: ID } }], pollAfterS: 5 };
+    expect(activityWire(feed)).toEqual({ items: [{ type: "call", who: "Ramesh", elapsed_s: 134, target: { kind: "task", id: ID } }], poll_after_s: 5 });
+    expect(parseActivity(activityWire(feed))).toEqual(feed);
   });
 });
 
