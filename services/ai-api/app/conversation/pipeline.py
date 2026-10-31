@@ -19,6 +19,7 @@ import logging
 import time
 from collections.abc import AsyncIterator, Callable
 from contextlib import suppress
+from typing import Any
 
 from app.conversation.chunker import ClauseBuffer
 from app.conversation.endpointing import EnergyEndpointer, endpoint_ms
@@ -34,6 +35,13 @@ from app.conversation.parts import (
     TurnTimings,
 )
 from app.conversation.router import Tier, route
+from app.conversation.turntaking import (
+    MAX_HOLD_PARTS,
+    PauseModel,
+    completeness,
+    hold_ms,
+    spoken_prefix,
+)
 
 log = logging.getLogger("app.conversation")
 
@@ -57,6 +65,8 @@ class Conversation:
         clock: Callable[[], float] = time.perf_counter,
         on_stt: Callable[[SttEvent], None] | None = None,
         router: Callable[[str, bool, int], Tier] | None = None,
+        semantic_turns: bool = False,
+        pause_model: PauseModel | None = None,
     ) -> None:
         self.stt, self.llm, self.tts, self.playout = stt, llm, tts, playout
         self.session, self.models, self.fillers, self.voice = session, models, fillers, voice
@@ -67,6 +77,15 @@ class Conversation:
         self._reply_task: asyncio.Future[None] | None = None
         self._current: TurnTimings | None = None
         self._write_lock = asyncio.Lock()
+        # owner standard 31 Oct 2026 (live conversation A1/A2): hold the end of a turn while the thought is unfinished, and let the speaker's own pause set how long the quiet must be
+        self.semantic_turns = semantic_turns
+        self.pauses = pause_model if pause_model is not None else PauseModel()
+        # B2/B3: the line can be paused for a possible interruption and picked up again; what was actually heard is what the history keeps
+        self._gate = asyncio.Event()
+        self._gate.set()
+        self._tail = bytearray()   # the last seconds of audio written to the line, so a pause can send again what the caller did not hear
+        self._resume_pcm = b""
+        self._clauses: list[list[Any]] = []   # [text, seconds of audio] of the reply being spoken
         self.turns = 0
         self.last_interrupt_ms: float | None = None
 
@@ -81,19 +100,62 @@ class Conversation:
             await self.respond(text, tm)
         return tm
 
-    async def listen(self, source: AudioSource, tm: TurnTimings) -> str | None:
-        """Listen to one caller turn and return what was said (None when nothing was); the answer is a separate `respond()`, so a caller that must act between the two (the browser session) can."""
-        return await self._listen(source, tm)
+    async def listen(self, source: AudioSource, tm: TurnTimings, *, interrupt: bool = True, hold: bool = True) -> str | None:
+        """Listen to one caller turn and return what was said (None when nothing was); the answer is a separate `respond()`, so a caller that must act between the two (the browser session) can.
+        `interrupt=False`: the first sound does not stop our own reply (the session is only judging a possible interruption); `hold=False`: the end of the turn is not held back for an unfinished thought."""
+        return await self._listen(source, tm, interrupt=interrupt, hold=hold)
 
-    async def _listen(self, source: AudioSource, tm: TurnTimings) -> str | None:
+    async def _listen(self, source: AudioSource, tm: TurnTimings, *, interrupt: bool = True, hold: bool = True) -> str | None:
+        """One caller turn. With semantic turns on, a thought that is not finished ("2000 sq ft ki...") is not answered: the line is listened to for a little longer and what comes next is joined to it."""
+        set_silence = getattr(self.stt, "set_silence_ms", None)
+        if self.semantic_turns and set_silence is not None:
+            set_silence(self.pauses.silence_ms(endpoint_ms(self.session.language)))   # the speaker's own pause, learned in this session
+        parts: list[str] = []
+        gap_from: float | None = None
+        while True:
+            wait_s = None if not parts else self._hold_s(" ".join(parts))
+            text = await self._listen_once(source, tm, wait_s, interrupt)
+            if text is None:
+                break
+            if gap_from is not None:
+                self.pauses.observe_gap(int((self.clock() - gap_from) * 1000))
+            parts.append(text)
+            merged = " ".join(parts)
+            if not hold or not self.semantic_turns or len(parts) >= MAX_HOLD_PARTS or self._hold_s(merged) <= 0:
+                break
+            gap_from = tm.eot_at if tm.eot_at is not None else self.clock()
+        merged = " ".join(parts).strip()
+        return merged or None
+
+    def _hold_s(self, text: str) -> float:
+        if not self.semantic_turns:
+            return 0.0
+        return hold_ms(completeness(text, self.session.language), self.pauses) / 1000.0
+
+    async def _listen_once(self, source: AudioSource, tm: TurnTimings, first_within_s: float | None = None, interrupt: bool = True) -> str | None:
+        """One recogniser turn. `first_within_s`: give up (None) when the caller does not start talking again within that time."""
         events = self.stt.events(source.frames())
         try:
-            async for ev in events:
+            first = True
+            while True:
+                try:
+                    if first and first_within_s is not None:
+                        ev = await asyncio.wait_for(events.__anext__(), timeout=first_within_s)
+                    else:
+                        ev = await events.__anext__()
+                except StopAsyncIteration:
+                    return None
+                except TimeoutError:
+                    tm.held_ms += int((first_within_s or 0) * 1000)   # waited for the rest of a thought that did not come
+                    return None
+                first = False
                 now = self.clock()
                 if self.on_stt is not None:
                     self.on_stt(ev)
                 if ev.kind == "speech_start":
-                    await self.interrupt()
+                    tm.speech_start_at = tm.speech_start_at if tm.speech_start_at is not None else now
+                    if interrupt:
+                        await self.interrupt()
                 elif ev.kind == "speech_end":
                     tm.eot_at = now
                 elif ev.kind == "final":
@@ -105,7 +167,6 @@ class Conversation:
             aclose = getattr(events, "aclose", None)
             if aclose is not None:
                 await aclose()
-        return None
 
     async def respond(self, user_text: str, tm: TurnTimings | None = None) -> TurnTimings:
         tm = tm or TurnTimings()
@@ -133,11 +194,56 @@ class Conversation:
         self._epoch += 1  # from here on every write of the old reply is dropped, whatever is still in flight
         if self._current is not None:
             self._current.interrupted = True
+            self._current.spoken_text = self._heard()   # B3: the history keeps what the caller heard, not what was written
+        self._gate.set()   # (a paused reply that is now cancelled must not wait for ever)
+        self._resume_pcm = b""
         await self.playout.stop()
         self.last_interrupt_ms = (self.clock() - t0) * 1000.0
         if task is not None and not task.done():
             task.cancel()
         return self.last_interrupt_ms
+
+    def _heard(self) -> str:
+        """What of the reply the caller has actually heard so far: the clauses that were played, and the words of the one that was cut (B3)."""
+        unplayed = float(getattr(self.playout, "unplayed_seconds", lambda: 0.0)())
+        written = sum(float(c[1]) for c in self._clauses)
+        return spoken_prefix([(str(c[0]), float(c[1])) for c in self._clauses], max(0.0, written - unplayed))
+
+    @property
+    def speaking(self) -> bool:
+        task = self._reply_task
+        return (task is not None and not task.done()) or self.playout.active
+
+    async def pause(self) -> float | None:
+        """B1/B2: something made a sound while we speak. Stop the line NOW (the caller hears silence within the browser's flush) but keep the reply alive and remember what was cut off, so it can be picked up again
+        if the sound turns out to be a cough, a "hmm" or a TV. Returns the milliseconds it took, or None when we were not speaking."""
+        if not self.speaking or not self._gate.is_set():
+            return None
+        t0 = self.clock()
+        rate = int(getattr(self.tts, "sample_rate", 24000) or 24000)
+        unplayed = float(getattr(self.playout, "unplayed_seconds", lambda: 0.0)())
+        self._gate.clear()
+        keep = min(len(self._tail), int(unplayed * rate) * 2)
+        self._resume_pcm = bytes(self._tail[len(self._tail) - keep :]) if keep else b""
+        await self.playout.stop()
+        if self._current is not None:
+            self._current.paused += 1
+        return (self.clock() - t0) * 1000.0
+
+    @property
+    def is_paused(self) -> bool:
+        return not self._gate.is_set()
+
+    async def resume(self) -> bool:
+        """B2: it was not an interruption. Say again what was cut off and go on with the rest of the reply."""
+        if self._gate.is_set():
+            return False
+        pcm, self._resume_pcm = self._resume_pcm, b""
+        if pcm:
+            async with self._write_lock:
+                await self.playout.write(pcm)
+        self._gate.set()
+        return True
 
     async def watch_for_interrupt(self, frames: AsyncIterator[bytes]) -> float | None:
         """Listen to the caller's frames while we speak; at the first sound of speech call interrupt(). Returns its milliseconds, or None when the frames ended without speech."""
@@ -151,6 +257,8 @@ class Conversation:
 
     async def _reply(self, user_text: str, tm: TurnTimings) -> None:
         epoch = self._epoch
+        self._clauses = []
+        self._tail = bytearray()
         tier = self.router(user_text, self.tools_available, self.turns)
         tm.model_tier = tier
         messages = [*self.session.history, {"role": "user", "content": user_text}]
@@ -173,7 +281,11 @@ class Conversation:
             tm.tts_engine = str(getattr(self.tts, "served_engine", "") or "")
             tm.tts_fallback = str(getattr(self.tts, "fallback_reason", "") or "")
             log.info("conversation_turn language=%s model_tier=%s tts_engine=%s tts_fallback=%s clauses=%s interrupted=%s filler=%s first_audio_ms=%s", self.session.language, tm.model_tier, tm.tts_engine or "-", tm.tts_fallback or "-", tm.clauses, tm.interrupted, tm.filler_played, None if tm.after_final_ms is None else round(tm.after_final_ms))
-            self.session.history += [{"role": "user", "content": user_text}, {"role": "assistant", "content": tm.reply_text}]
+            if not tm.interrupted:
+                tm.spoken_text = tm.reply_text
+            said = tm.spoken_text   # B3: an honest context: only what the caller heard
+            self.session.history += [{"role": "user", "content": user_text}] + ([{"role": "assistant", "content": said}] if said else [])
+            self._clauses = []
 
     async def _produce(self, messages: list[dict[str, str]], model: str, tm: TurnTimings, queue: asyncio.Queue[str | None]) -> None:
         buf = ClauseBuffer()
@@ -194,19 +306,26 @@ class Conversation:
             await queue.put(None)
 
     async def _consume(self, queue: asyncio.Queue[str | None], tm: TurnTimings, epoch: int) -> None:
+        rate = int(getattr(self.tts, "sample_rate", 24000) or 24000)
         while (piece := await queue.get()) is not None:
             tm.clauses += 1
             if tm.tts_request_at is None:
                 tm.tts_request_at = self.clock()
+            clause: list[Any] = [piece, 0.0]
+            self._clauses.append(clause)
             async for pcm in self.tts.stream(piece, self.session.language):
                 if epoch != self._epoch:
                     return
                 if tm.first_audio_at is None:
                     tm.first_audio_at = self.clock()
+                await self._gate.wait()   # a pause for a possible interruption holds the next audio here (B2)
                 async with self._write_lock:
                     if epoch != self._epoch:
                         return
                     await self.playout.write(pcm)
+                    clause[1] += len(pcm) / 2 / rate
+                    self._tail += pcm
+                    del self._tail[: max(0, len(self._tail) - 20 * rate * 2)]   # the last 20 s are enough to say again what a pause cut off
 
     async def _filler(self, tm: TurnTimings, epoch: int) -> None:
         if self.fillers is None:
