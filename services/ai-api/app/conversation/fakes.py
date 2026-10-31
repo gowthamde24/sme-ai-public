@@ -137,6 +137,9 @@ class FakePlayout:
     def active(self) -> bool:
         return self.clock() < self._busy_until
 
+    def unplayed_seconds(self) -> float:
+        return max(0.0, self._busy_until - self.clock())
+
     async def write(self, pcm: bytes) -> None:
         now = self.clock()
         self.writes.append((now, len(pcm)))
@@ -149,3 +152,56 @@ class FakePlayout:
     @property
     def bytes_written(self) -> int:
         return sum(n for _, n in self.writes)
+
+
+@dataclass
+class Segment:
+    """One stretch of a caller's talk: what the recogniser writes for it, how long they speak, and the quiet that FOLLOWS before they go on (the last one's is the quiet until the end)."""
+
+    text: str
+    speech_ms: int = 800
+    gap_ms: int = 600
+
+
+class ScriptedStt:
+    """A recogniser that follows a script on a time scale (live conversation eval, 31 Oct 2026). It behaves like the real one: speech_start, partials, speech_end after `silence_ms` of quiet, then a final and the
+    stream ENDS; the next `events()` call (a new connection) carries on with the next segment, waiting for it to begin. When the script is over it waits (the caller says nothing more) until it is cancelled.
+    `scale` shrinks every duration (0.05 = twenty times faster) so a 3 s thinking pause costs 150 ms in a test."""
+
+    sample_rate = 16000
+
+    def __init__(self, segments: Sequence[Segment], *, silence_ms: int = 350, scale: float = 0.05) -> None:
+        self.segments, self.silence_ms, self.scale = list(segments), silence_ms, scale
+        self.index = 0
+        self._quiet_since: float | None = None   # when the last segment ended, on the loop's clock
+        self.set_silence_calls: list[int] = []
+
+    def set_silence_ms(self, ms: int) -> None:
+        self.silence_ms = ms
+        self.set_silence_calls.append(ms)
+
+    def _s(self, ms: float) -> float:
+        return ms / 1000.0 * self.scale
+
+    async def events(self, frames: AsyncIterator[bytes]) -> AsyncIterator[SttEvent]:
+        loop = asyncio.get_running_loop()
+        if self.index >= len(self.segments):
+            await asyncio.sleep(3600)
+            return
+        seg = self.segments[self.index]
+        prev_gap = self.segments[self.index - 1].gap_ms if self.index else 0
+        if self.index and self._quiet_since is not None:
+            # they were quiet for the previous segment's gap; part of it has passed already (the silence that ended the last turn, the time spent deciding)
+            waited = loop.time() - self._quiet_since
+            await asyncio.sleep(max(0.0, self._s(prev_gap) - waited))
+        yield SttEvent("speech_start")
+        words = seg.text.split()
+        steps = max(1, min(4, len(words)))
+        for k in range(1, steps + 1):
+            await asyncio.sleep(self._s(seg.speech_ms) / steps)
+            yield SttEvent("partial", " ".join(words[: max(1, len(words) * k // steps)]))
+        self._quiet_since = loop.time()
+        await asyncio.sleep(self._s(self.silence_ms))
+        yield SttEvent("speech_end")
+        self.index += 1
+        yield SttEvent("final", seg.text)
