@@ -75161,5 +75161,60 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.orb.tap": {
+  "en": "Tap to talk",
+  "te": "మాట్లాడటానికి తాకండి",
+  "hi": "बात करने के लिए टैप करें",
+  "kn": "ಮಾತಾಡಲು ಟ್ಯಾಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.orb.speaking": {
+  "en": "Speaking",
+  "te": "మాట్లాడుతోంది",
+  "hi": "बोल रही है",
+  "kn": "ಮಾತಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.bar.speakingin": {
+  "en": "speaking in {language}",
+  "te": "{language} లో మాట్లాడుతోంది",
+  "hi": "{language} में बोल रही है",
+  "kn": "{language} ನಲ್ಲಿ ಮಾತಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.leads.title": {
+  "en": "New leads",
+  "te": "కొత్త లీడ్స్",
+  "hi": "नई पूछताछ",
+  "kn": "ಹೊಸ ಲೀಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.leads.open": {
+  "en": "Open leads",
+  "te": "లీడ్స్ తెరవండి",
+  "hi": "पूछताछ खोलें",
+  "kn": "ಲೀಡ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

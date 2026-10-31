@@ -116,8 +116,8 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(listCallRequests).toHaveBeenCalledWith("tok", TENANT, { status: "requested", limit: 100 });
     expect(screen.getByRole("heading", { name: "Done while you slept" })).toBeInTheDocument();
     const team = within(screen.getByRole("heading", { name: "Your team" }).closest("section")!);
-    expect(team.getByText("Quote Writer")).toBeInTheDocument();
-    expect(team.getByText("Lead Finder")).toBeInTheDocument();
+    expect(team.getByText(/Quote Writer/)).toBeInTheDocument();
+    expect(team.getByText(/Lead Finder/)).toBeInTheDocument();
   });
   it("'Open' goes where the item's target says: the order, the lead, and for a quote the enquiry it belongs to", async () => {
     await show();
@@ -168,7 +168,7 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(needs.getByText("Not available yet")).toBeInTheDocument();
     expect(needs.queryByRole("article")).toBeNull();
     const team = within(screen.getByRole("heading", { name: "Your team" }).closest("section")!);
-    expect(team.getByText("Researcher")).toBeInTheDocument(); // the team was read on its own
+    expect(team.getByText(/Researcher/)).toBeInTheDocument(); // the team was read on its own
     document.body.innerHTML = "";
     getToday.mockResolvedValue(todayFor("owner"));
     getAgentsStatus.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));

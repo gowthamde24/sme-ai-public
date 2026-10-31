@@ -120,7 +120,7 @@ describe("Today: the side sections", () => {
     await view(data({ store: { state: "error" } }));
     expect(within(document.querySelector('[data-part="visits"]') as HTMLElement).getByText("Not available yet")).toBeInTheDocument();
   });
-  it("draws the visits in time order with who comes with them, what for and where each stands", async () => {
+  it("'At the store today' is the title, ONE line (how many and the next one, in time order) and ONE link: the calendar", async () => {
     await view(
       data({ store: ready([
         { id: "b", starts_at: "2026-10-11T10:00:00Z", who: "Mahesh, Hindupur", extra: 0, topic: "Shop restock, about 40 pieces", status: "reminder_sent", here: false },
@@ -129,48 +129,32 @@ describe("Today: the side sections", () => {
       ]) }),
     );
     const s = screen.getByRole("heading", { name: "At the store today" }).closest("section")!;
-    expect(within(s).getByText("3 visits")).toBeInTheDocument();
-    expect(within(s).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["10:00Anita R.Waiting for the customer", "11:00Priya S. + 2Bridal sareesConfirmed", "15:30Mahesh, HindupurShop restock, about 40 piecesReminder sent"]);
+    expect(s.querySelector('[data-line="visits"]')).toHaveTextContent("3 visits · 10:00 Anita R.");
+    expect(within(s).getAllByRole("link")).toHaveLength(1);
     expect(within(s).getByRole("link", { name: "Open the visit calendar" })).toHaveAttribute("href", "/app/tenants/T/visits");
-    expect(within(s).getByRole("link", { name: "Book a visit" })).toHaveAttribute("href", "/app/tenants/T/visits#book");
   });
-  it("says 'Here now' for a customer who has arrived", async () => {
-    await view(data({ store: ready([{ id: "a", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 0, topic: null, status: "confirmed", here: true }]) }));
-    const s = document.querySelector('[data-part="visits"]') as HTMLElement;
-    expect(within(s).getByText("Here now")).toBeInTheDocument();
-    expect(within(s).queryByText("Confirmed")).toBeNull();
+  it("names who comes with the next visitor", async () => {
+    await view(data({ store: ready([{ id: "a", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 2, topic: null, status: "confirmed", here: false }]) }));
+    expect(document.querySelector('[data-line="visits"]')).toHaveTextContent("1 visit · 11:00 Priya S. + 2");
   });
-  it("one line about the rest of the day: the next free time, 'every time is taken', 'closed today', or nothing when it could not be read", async () => {
-    await view(data({ store: ready([], { slots: "free", nextFree: "2026-10-11T11:00:00Z" }) }));
-    expect(document.querySelector('[data-line="slots"]')).toHaveTextContent("Next free time today: 16:30");
-    cleanup();
-    await view(data({ store: ready([], { slots: "full" }) }));
-    expect(document.querySelector('[data-line="slots"]')).toHaveTextContent("Every time left today is taken.");
-    cleanup();
-    await view(data({ store: ready([], { slots: "closed" }) }));
-    expect(document.querySelector('[data-line="slots"]')).toHaveTextContent("The shop is closed today.");
-    cleanup();
-    await view(data({ store: ready([], { slots: "unknown" }) }));
-    expect(document.querySelector('[data-line="slots"]')).toBeNull();
-  });
-  it("with no visits it still says so and offers the calendar and the booking", async () => {
+  it("with no visits it says so and offers the booking (the one link)", async () => {
     await view(data({ store: ready([]) }));
     const s = document.querySelector('[data-part="visits"]') as HTMLElement;
     expect(within(s).getByText("No visits booked for today.")).toBeInTheDocument();
-    expect(within(s).getByText("None yet")).toBeInTheDocument();
-    expect(within(s).getByRole("link", { name: "Book a visit" })).toBeInTheDocument();
+    expect(within(s).getAllByRole("link")).toHaveLength(1);
+    expect(within(s).getByRole("link", { name: "Book a visit" })).toHaveAttribute("href", "/app/tenants/T/visits#book");
   });
-  it("a Viewer sees the visits and the calendar but is not offered the booking", async () => {
-    await view(data({ store: ready([{ id: "a", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 0, topic: null, status: "requested", here: false }]) }), { role: "viewer" });
+  it("a Viewer with no visits is offered the calendar, not the booking", async () => {
+    await view(data({ store: ready([]) }), { role: "viewer" });
     const s = document.querySelector('[data-part="visits"]') as HTMLElement;
     expect(within(s).getByRole("link", { name: "Open the visit calendar" })).toBeInTheDocument();
     expect(within(s).queryByRole("link", { name: "Book a visit" })).toBeNull();
   });
-  it("'Done while you slept' lists at most four lines from the outbox log, with plurals, and a link only when there is an outbox page", async () => {
+  it("'Done while you slept' is ONE line of the outbox log's short sentences, with plurals, and a link only when there is an outbox page", async () => {
     const lines: Digest = { state: "ready", sent: 8, held: 0, lines: [{ kind: "reply_to_inbound", n: 6 }, { kind: "info", n: 1 }, { kind: "visit", n: 2 }, { kind: "quiet", n: 1, time: "9:00" }] };
     await view(data({ digest: Promise.resolve(lines) }));
     const s = screen.getByRole("heading", { name: "Done while you slept" }).closest("section")!;
-    expect(within(s).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["Replied to 6 customers on WhatsApp", "Sent shop information to 1 customer", "Sent visit messages to 2 customers", "Held 1 message until 9:00 (quiet hours)"]);
+    expect(s.querySelector('[data-line="done"]')).toHaveTextContent("Replied to 6 customers on WhatsApp · Sent shop information to 1 customer · Sent visit messages to 2 customers · Held 1 message until 9:00 (quiet hours)");
     expect(within(s).queryByRole("link")).toBeNull();
     cleanup();
     await view(data({ digest: Promise.resolve(lines) }), { outboxHref: "/app/tenants/T/outbox" });
@@ -190,26 +174,14 @@ describe("Today: the side sections", () => {
     await view(data({ digest: Promise.resolve({ state: "none" }) }));
     expect(screen.queryByRole("heading", { name: "Done while you slept" })).toBeNull();
   });
-  it("'Your team' shows the six helpers as icons of their jobs, one live status line each, and not your assistant itself", async () => {
+  it("'Your team' is the title, ONE line with the helpers' names (not your assistant itself) and the link to the Office", async () => {
     await view(data());
     const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
-    const rows = within(s).getAllByRole("listitem");
-    expect(rows).toHaveLength(6);
-    expect(rows.map((r) => r.querySelector("[data-agent-mark]")?.getAttribute("data-agent-mark"))).toEqual(["lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"]);
+    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent("Lead Finder · Researcher · Requirement Analyst · Quote Writer · Follow-up Desk · Order Desk");
     expect(within(s).queryByText("Your assistant")).toBeNull();
-    // the still has one pose, so each helper's state is also a dot beside its name (working, calm, off)
-    expect(rows.map((r) => r.querySelector("[data-state-dot]")?.getAttribute("data-state-dot"))).toEqual(["off", "working", "off", "idle", "idle", "idle"]);
-    expect(rows.map((r) => r.querySelector("span.line-clamp-2")?.textContent ?? r.textContent)).toEqual([
-      expect.stringContaining("Not available yet"),
-      expect.stringContaining("Working"),
-      expect.stringContaining("Switched off"),
-      expect.stringContaining("Prepared quote 3 · 3h"),
-      expect.stringContaining("Idle"),
-      expect.stringContaining("Idle"),
-    ]);
     expect(within(s).getByRole("link", { name: /Open the office/ })).toHaveAttribute("href", "/app/tenants/T/office");
   });
-  it("'Your team' of a Lead Desk workspace lists its own workers with the real status line, never the shop's helpers or 'Not available yet'", async () => {
+  it("a Lead Desk workspace names its own workers (never the shop's helpers) and has a 'New leads' card with the newest lead and a link to the Leads", async () => {
     await view(data({ deskTeam: [
       { key: "leads", state: "idle", name: "Lead catcher", text: "Last lead: Anita R. from IndiaMART", at: "2026-10-11T04:40:00Z" },
       { key: "calls", state: "working", name: "Caller", text: "Calling Diwali leads: 12 of 40 done", at: null },
@@ -217,12 +189,16 @@ describe("Today: the side sections", () => {
       { key: "tasks", state: "not_available", name: "Task helper", text: null, at: null },
     ] }));
     const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
-    const rows = within(s).getAllByRole("listitem");
-    expect(rows.map((r) => r.querySelector("[data-part=team-name]")?.textContent)).toEqual(["Lead catcher", "Caller", "Standing rules", "Task helper"]);
-    expect(rows.map((r) => r.querySelector("[data-part=team-status]")?.textContent)).toEqual(["Last lead: Anita R. from IndiaMART · 20m", "Calling Diwali leads: 12 of 40 done", "No rule is on", "Not available yet"]);
-    expect(rows.map((r) => r.querySelector("[data-state-dot]")?.getAttribute("data-state-dot"))).toEqual(["idle", "working", "off", "off"]);
-    expect(within(s).queryByText("Quote writer")).toBeNull();
-    expect(within(s).queryByText("Lead Finder")).toBeNull();
+    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent("Lead catcher · Caller · Standing rules · Task helper");
+    expect(within(s).queryByText(/Quote Writer/)).toBeNull();
+    const n = document.querySelector('[data-part="new-leads"]') as HTMLElement;
+    expect(within(n).getByRole("heading", { name: "New leads" })).toBeInTheDocument();
+    expect(n).toHaveTextContent("Last lead: Anita R. from IndiaMART · 20m");
+    expect(within(n).getByRole("link", { name: "Open leads" })).toHaveAttribute("href", "/app/tenants/T/leads");
+  });
+  it("no 'New leads' card for a business type without Lead Desk", async () => {
+    await view(data());
+    expect(document.querySelector('[data-part="new-leads"]')).toBeNull();
   });
   it("'Your team' says 'Not available yet' when the helpers could not be read", async () => {
     await view(data({ team: null }));

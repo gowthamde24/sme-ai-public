@@ -5,7 +5,7 @@ import { LiveNow } from "../live/LiveNow";
 import { CommandBar } from "./CommandBar";
 import { DoneSection } from "./DoneSection";
 import { NeedsYou } from "./NeedsYou";
-import { TeamSection, StoreVisits } from "./TodaySide";
+import { NewLeads, StoreVisits, TeamSection } from "./TodaySide";
 import type { TodayActions } from "./actions-types";
 import { TODAY_CHIPS } from "./ask/ask-chips";
 import { ASK_WORD_KEYS } from "./ask/ask-words";
@@ -56,16 +56,15 @@ export function TodayView({ intro = null, live = null, outcomes = null, data, na
         {intro}
         {live}
         {outcomes}
-        <div className="grid grid-cols-1 items-start gap-4 md:gap-5 lg:grid-cols-2">
-          <div className="flex min-w-0 flex-col gap-4 md:gap-5">
-            <StoreVisits store={store} calendarHref={calendarHref ?? `${base}/visits`} bookHref={role === "viewer" ? null : `${base}/visits#book`} t={t} />
-            {packCards}
-          </div>
-          <div className="flex min-w-0 flex-col gap-4 md:gap-5">
-            <DoneSection digest={digest} words={words} outboxHref={outboxHref} />
-            <TeamSection team={team} deskTeam={deskTeam} base={base} t={t} now={now} />
-          </div>
+        {/* the other cards, two by two */}
+        <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-2">
+          <StoreVisits store={store} calendarHref={calendarHref ?? `${base}/visits`} bookHref={role === "viewer" ? null : `${base}/visits#book`} t={t} />
+          <DoneSection digest={digest} words={words} outboxHref={outboxHref} />
+          <NewLeads deskTeam={deskTeam} base={base} t={t} now={now} />
+          <TeamSection team={team} deskTeam={deskTeam} base={base} t={t} now={now} />
         </div>
+        {/* what a business type adds (trips, quotes, dues...) sits under the four cards, side by side */}
+        {packCards}
       </NeedsProvider>
     </div>
   );

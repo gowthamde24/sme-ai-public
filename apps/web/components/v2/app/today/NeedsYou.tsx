@@ -48,21 +48,27 @@ type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions |
 const rowPrimary = "inline-flex min-h-9 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95 disabled:opacity-60";
 const rowQuiet = "inline-flex min-h-9 items-center justify-center rounded-full border border-edge bg-transparent px-3.5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
 
-/** One thing that waits, as one line on a desktop: its badge, its title, the reason in a few words, how long ago, the quick buttons on the right and "Details" (which opens the whole card, with every button it has). */
+/** One thing that waits, as one line on a desktop (the owner's target, 31 Oct): its badge, "title · reason" as one line, the quick buttons on the right. The words open the whole card (with every button it has); "Details" stays for the keyboard and screen readers. The rows share ONE card (see `NeedsYou`). */
 function CompactRow({ cardKey, tone, label, title, reason, at, ctx, children, onOpen }: { cardKey: string; tone: string; label: string; title: string; reason: string; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
   return (
-    <div data-needs-row={cardKey} data-write className="flex min-h-14 items-center gap-3 rounded-xl border border-line bg-surface px-3 py-2">
+    <div data-needs-row={cardKey} data-write className="flex min-h-14 items-center gap-3 px-4 py-2">
       <span className={`${badge} shrink-0 !py-0.5 !text-xs ${tone}`}>{label}</span>
-      <h3 id={`needs-${cardKey}`} title={title} className="max-w-[32%] shrink-0 truncate text-[15px] font-semibold">
-        {title}
-      </h3>
-      <p title={reason} className="min-w-0 flex-1 truncate text-sm text-muted">
-        {reason}
-      </p>
-      <span className="shrink-0 text-xs text-muted">{whenLabel(at, ctx.now)}</span>
+      <div onClick={onOpen} title={`${title} · ${reason} · ${whenLabel(at, ctx.now)}`} className="flex min-w-0 flex-1 cursor-pointer items-baseline gap-1.5 text-[15px]">
+        <h3 id={`needs-${cardKey}`} className="max-w-[60%] shrink-0 truncate font-semibold">
+          {title}
+        </h3>
+        {reason ? (
+          <>
+            <span aria-hidden="true" className="text-muted">
+              ·
+            </span>
+            <p className="min-w-0 flex-1 truncate text-muted">{reason}</p>
+          </>
+        ) : null}
+      </div>
       <div className="flex shrink-0 items-center gap-2">
         {children}
-        <button type="button" data-needs="details" aria-expanded="false" aria-controls={`needs-full-${cardKey}`} onClick={onOpen} className="inline-flex min-h-9 items-center rounded-full px-2.5 text-sm font-semibold text-brand-text hover:bg-surface-2">
+        <button type="button" data-needs="details" aria-expanded="false" aria-controls={`needs-full-${cardKey}`} onClick={onOpen} className="sr-only">
           {say(ctx.words, "today.row.details")}
         </button>
       </div>
@@ -540,8 +546,8 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
         </p>
       ) : (
         <>
-          <p className="mb-1 text-sm text-muted">{say(words, "today.needs.note")}</p>
-          <ul className="flex flex-col gap-2.5">
+          <p className="mb-1 text-sm text-muted md:hidden">{say(words, "today.needs.note")}</p>
+          <ul className={layout === "rows" ? "flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0" : "flex flex-col gap-2.5"}>
             {cards.map((c, i) => (
               <li key={c.key} className={!all && i >= 3 ? "hidden" : !all && i >= 2 ? "max-md:hidden" : ""}>
                 {layout === "both" ? (

@@ -24,4 +24,4 @@ Not available yet
 Not available yet [See everything in the outbox](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent)
 {label="Your team"}
 ## Your team
-[Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office) Not available yet
+Not available yet [Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
