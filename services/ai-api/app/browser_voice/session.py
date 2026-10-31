@@ -20,7 +20,7 @@ from app.assistant.language import detect_owner_language
 from app.browser_voice.audio import IN_RATE, OUT_RATE, PREROLL_S, BrowserPlayout, FrameBus
 from app.browser_voice.limits import Ledger, Limits, Usage, log_usage
 from app.conversation.endpointing import endpoint_ms
-from app.conversation.fillers import BROWSER_FILLER_AFTER_MS, FillerBank
+from app.conversation.fillers import FillerBank
 from app.conversation.parts import (
     Session,
     StreamingLlm,
@@ -161,7 +161,9 @@ class VoiceSession:
             models=parts.models,  # type: ignore[arg-type]
             fillers=parts.fillers,
             voice=self._filler_voice,
-            filler_after_ms=BROWSER_FILLER_AFTER_MS,  # Ask can take seconds: after 700 ms of nothing a short pre-rendered line is said
+            filler_after_ms=limits.filler_after_ms,
+            filler_on_casual=limits.filler_on_casual,
+            # (Ask can take seconds: a data turn whose answer is not audible after filler_after_ms gets a short pre-rendered line; small talk never)
             tools_available=True,
             on_stt=self._on_stt,
             router=self._route,
@@ -682,6 +684,7 @@ class VoiceSession:
                 "fallback": tm.tts_fallback,
                 "interrupted": tm.interrupted,
                 "speculative": tm.speculative,
+                "filler": tm.filler_played,
                 "held_ms": tm.held_ms,
             }
         )

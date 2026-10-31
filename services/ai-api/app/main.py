@@ -946,6 +946,8 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         verify_barge_in=settings.browser_voice_verify_barge_in,
         audio_ahead_ms=settings.browser_voice_audio_ahead_ms,
         speculative=settings.browser_voice_speculative,
+        filler_after_ms=settings.browser_voice_filler_after_ms,
+        filler_on_casual=settings.browser_voice_filler_on_casual,
     )
     return BrowserVoice(
         config=voice_catalogue(),

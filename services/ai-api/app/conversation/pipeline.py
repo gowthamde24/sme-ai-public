@@ -77,10 +77,15 @@ class Conversation:
         semantic_turns: bool = False,
         pause_model: PauseModel | None = None,
         can_speculate: Callable[[str], bool] | None = None,
+        filler_on_casual: bool = True,
     ) -> None:
         self.stt, self.llm, self.tts, self.playout = stt, llm, tts, playout
         self.session, self.models, self.fillers, self.voice = session, models, fillers, voice
         self.filler_after_ms, self.tools_available, self.clock = filler_after_ms, tools_available, clock
+        # filler policy (owner, 31 Oct 2026: fillers only when the wait is real): none on casual turns (the fast tier) unless asked for, one at most per turn, never on two turns in a row, and never one that was
+        # overtaken by the answer (the bank itself never repeats the line it said last)
+        self.filler_on_casual = filler_on_casual
+        self._last_filler_turn = -10
         self.router = router or (lambda text, tools, turn: route(text, tools_available=tools, turn_number=turn))   # the browser session routes by the conversational assistant's intent (job EA)
         self.on_stt = on_stt  # the browser session shows the caller's words as they come (partials and the final); the phone loop leaves it None
         self._epoch = 0
@@ -339,7 +344,7 @@ class Conversation:
         begin = getattr(self.tts, "begin_turn", None)
         if begin is not None:
             begin()
-        background = [asyncio.ensure_future(self.tts.prewarm()), asyncio.ensure_future(self._filler(tm, epoch))]
+        background = [asyncio.ensure_future(self.tts.prewarm()), asyncio.ensure_future(self._filler(tm, epoch, tier))]
         spec, self._reply_spec = self._reply_spec, None
         if spec is not None and tier != "fast":
             self._schedule_cancel(spec)
@@ -407,9 +412,13 @@ class Conversation:
                     self._tail += pcm
                     del self._tail[: max(0, len(self._tail) - 20 * rate * 2)]   # the last 20 s are enough to say again what a pause cut off
 
-    async def _filler(self, tm: TurnTimings, epoch: int) -> None:
+    async def _filler(self, tm: TurnTimings, epoch: int, tier: str = "strong") -> None:
         if self.fillers is None:
             return
+        if tier == "fast" and not self.filler_on_casual:
+            return   # small talk is answered fast; "one moment" in front of it would only be noise
+        if self.turns - self._last_filler_turn <= 1:
+            return   # never on two turns in a row
         await asyncio.sleep(self.filler_after_ms / 1000.0)
         if tm.first_audio_at is not None or epoch != self._epoch:
             return
@@ -417,8 +426,10 @@ class Conversation:
         picked = self.fillers.pick(self.session.language, voice)
         if picked is None:
             return
-        tm.filler_played = True
         async with self._write_lock:
-            if epoch == self._epoch:
+            # the answer may have arrived while this waited for the line: then the filler is dropped, not played over it
+            if epoch == self._epoch and tm.first_audio_at is None:
+                tm.filler_played = True
+                self._last_filler_turn = self.turns
                 tm.filler_at = self.clock()
                 await self.playout.write(picked[1])

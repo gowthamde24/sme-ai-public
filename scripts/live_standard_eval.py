@@ -201,6 +201,7 @@ def staging(args: argparse.Namespace) -> dict[str, Any]:
         all_server += server
         out["latency"][lang] = {"turns": len(client), "p50": round(statistics.median(client)) if client else None, "p95": round(pct(client, 95)) if client else None,
                                 "server_p50": round(statistics.median(server)) if server else None}
+    out["fillers_on_casual"] = f"{sum(browser_voice_latency.FILLER_FLAGS)}/{len(browser_voice_latency.FILLER_FLAGS)}"
     out["speculative_turns"] = f"{sum(browser_voice_latency.FLAGS)}/{len(browser_voice_latency.FLAGS)}"
     out["latency"]["all"] = {"turns": len(all_client), "p50": round(statistics.median(all_client)), "p95": round(pct(all_client, 95)), "server_p50": round(statistics.median(all_server)) if all_server else None}
     stops: dict[str, list[float]] = {"hard": [], "verify": []}
@@ -229,6 +230,7 @@ def report(result: dict[str, Any], style: list[tuple[str, str, list[str]]] | Non
         ("Real interruptions that stop the reply", "100 %", f"{s['real_interruptions_stopped_pct']} %", ok(s["real_interruptions_stopped_pct"] == 100)),
         ("Premature cut-offs on the thinking-pause set (te / kn / en / hi)", "< 5 %", f"{s['premature_cut_off_pct']} % of {s['thinking_turns']} (pauses with a cue in the words: {s['premature_cut_off_without_hard_pct']} %; the rest have no cue)", ok(s["premature_cut_off_pct"] < 5)),
         ("A finished turn made to wait or joined to the next", "0 %", f"{s['over_hold_pct']} % of {s['finished_turns']}", ok(s["over_hold_pct"] == 0)),
+        ("Fillers only when the wait is real: none on small talk, a data turn only if late, never two turns in a row (the real loop, 10 sessions)", "all", s["filler_ok"], ok(s["filler_ok"].split("/")[0] == s["filler_ok"].split("/")[1])),
         ("Quiet line: check-in at ~8 s, end at ~30 s", "3/3", s["silence_ok"], ok(s["silence_ok"].split("/")[0] == s["silence_ok"].split("/")[1])),
         ("Goodbye phrases end the session, ordinary sentences do not", "all", s["goodbye_ok"], ok(s["goodbye_ok"].split("/")[0] == s["goodbye_ok"].split("/")[1])),
     ]
@@ -242,6 +244,7 @@ def report(result: dict[str, Any], style: list[tuple[str, str, list[str]]] | Non
             ("User stops → first assistant audio, casual turn, p50 (staging, client side)", "≤ 1.2 s", f"{lat['p50']} ms over {lat['turns']} turns (server side p50 {lat['server_p50']} ms)", ok(lat["p50"] <= 1200)),
             ("User stops → first assistant audio, casual turn, p95", "≤ 2 s", f"{lat['p95']} ms", ok(lat["p95"] <= 2000)),
             ("…the same with the network taken out (one round trip of this machine to the server, " + str(rtt) + " ms, taken off): a user in India next to the server", "p50 ≤ 1.2 s", f"p50 {lat['p50'] - rtt} ms, p95 {lat['p95'] - rtt} ms", ok(lat["p50"] - rtt <= 1200)),
+            ("Fillers on small-talk turns, staging (the turns of the latency run)", "0", str(stg.get("fillers_on_casual", "n/a")), ok(str(stg.get("fillers_on_casual", "")).startswith("0/"))),
             ("Barge-in stop, as the browser sees it (hard stop), staging", "≤ 200 ms", f"p50 {stg['barge']['hard']['p50']} ms, max {stg['barge']['hard']['max']} ms over {stg['barge']['hard']['n']} (network included)", ok((stg['barge']['hard']['max'] or 9999) <= 200)),
             ("Barge-in pause with verify, staging", "≤ 200 ms", f"p50 {stg['barge']['verify']['p50']} ms, max {stg['barge']['verify']['max']} ms over {stg['barge']['verify']['n']} (network included)", ok((stg['barge']['verify']['max'] or 9999) <= 200)),
         ]

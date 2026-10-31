@@ -351,7 +351,7 @@ async def test_the_language_can_change_between_turns() -> None:
     run = asyncio.ensure_future(session.run())
     sock.inbox.put_nowait(("text", {"type": "set_language", "language": "hi"}))
     sock.inbox.put_nowait(("text", {"type": "set_language", "language": "xx"}))  # unknown: ignored
-    await until(lambda: {"type": "language", "language": "hi"} in sock.json)
+    await until(lambda: {"type": "language", "language": "hi", "pinned": False} in sock.json)
     assert seen[-1] == "hi" and session.language == "hi"
     sock.inbox.put_nowait(("close", None))
     await run
@@ -644,7 +644,7 @@ def test_the_filler_never_repeats_twice_in_a_row() -> None:
 
 
 @arun
-async def test_when_ask_is_slow_a_filler_in_the_chosen_voice_is_said_after_700_ms() -> None:
+async def test_when_a_turn_is_slow_a_filler_in_the_chosen_voice_is_said_after_the_configured_time() -> None:
     from app.conversation.fillers import FillerBank
 
     bank = FillerBank.from_disk(seed=2)
@@ -652,7 +652,7 @@ async def test_when_ask_is_slow_a_filler_in_the_chosen_voice_is_said_after_700_m
     parts = fake_parts(llm=FakeLlm(("Here is the answer. ",), first_token_delay=1.3))
     parts.fillers = bank
     parts.voice_for = lambda language: {"en": "en-janvi"}.get(language, "")
-    session = session_of(sock, parts, limits=Limits(greeting=False, audio_ahead_ms=0))   # (the filler is judged by when it STARTS: unpaced, it is all sent at once)
+    session = session_of(sock, parts, limits=Limits(greeting=False, audio_ahead_ms=0, filler_after_ms=700, filler_on_casual=True))   # (the filler is judged by when it STARTS: unpaced, it is all sent at once; this fake turn is a fast-tier one, so casual fillers are switched on for the test)
     run = asyncio.ensure_future(session.run())
     sock.feed_speech()
     await until(lambda: "timings" in sock.types(), seconds=6)
@@ -744,10 +744,10 @@ async def test_the_voice_and_language_follow_what_the_owner_just_said_even_in_ro
     await until(lambda: "timings" in sock.types())
     sock.inbox.put_nowait(("close", None))
     await run
-    assert {"type": "language", "language": "te"} in sock.json
+    assert {"type": "language", "language": "te", "pinned": False} in sock.json
     voice = next(m for m in sock.json if m["type"] == "voice")
     assert (voice["voice_id"], voice["language"]) == ("te-ramya", "te")
-    assert sock.json.index({"type": "language", "language": "te"}) < sock.json.index(voice), "the browser learns the language before the voice"
+    assert sock.json.index({"type": "language", "language": "te", "pinned": False}) < sock.json.index(voice), "the browser learns the language before the voice"
 
 
 @arun
@@ -763,6 +763,6 @@ async def test_a_filler_of_another_voice_or_language_is_never_played_and_a_langu
     await asyncio.sleep(0.1)
     assert session.language == "en" and session._pending_language == "hi", "not in the middle of a turn"  # noqa: SLF001
     await session._end_turn()  # noqa: SLF001
-    assert session.language == "hi" and {"type": "language", "language": "hi"} in sock.json
+    assert session.language == "hi" and {"type": "language", "language": "hi", "pinned": False} in sock.json
     sock.inbox.put_nowait(("close", None))
     await run
