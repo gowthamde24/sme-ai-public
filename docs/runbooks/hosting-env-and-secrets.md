@@ -157,6 +157,10 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `BROWSER_VOICE_FILLER_ON_CASUAL` | plain | api | `true` also lets small talk and general help (the fast tier) have a filler. Default `false`: never. |
 | `BROWSER_VOICE_AUDIO_TURN` | plain | api | The audio turn model (Indic Smart Turn): `off`, `shadow` (default: it is run on every stop and the probability is recorded on the turn's timings, the decision stays with the text rules) or `on` (it moves the text reading of "is this finished" by ONE step: finished words in a voice that trails off wait a little; "2000 sq ft" in a voice that sounds done is answered). No model file, no packages or a failed load = the text rules alone, in every mode. See `docs/runbooks/live-turn-models.md`. |
 | `BROWSER_VOICE_AUDIO_TURN_MODEL` | plain | api | Path of the ONNX file. Default `/srv/models/indic-smart-turn-base-int8.onnx` (baked into the API image by `deploy/Dockerfile.api`). |
+| `TELEPHONY_MODE` | plain | api | AI phone calls: `off` (default) | `sandbox` (only the numbers in `TELEPHONY_SANDBOX_NUMBERS` can be rung) | `live` (refused by the gate until `TELEPHONY_LIVE_CONFIRMED=true`). Plan: `docs/plans/phone-calls.md`. |
+| `TELEPHONY_LIVE_CONFIRMED` | plain | api | `true` only after the owner has the lawyer's answers (TRAI/DLT, disclosure, recording). Default `false`. |
+| `TELEPHONY_SANDBOX_NUMBERS` | plain | api | Comma-separated `+91...` numbers of the verified users of the provider's trial account: the only numbers a sandbox call may ring. |
+| `TELEPHONY_MAX_CONCURRENT` | plain | api | Calls at once, all workspaces. Default `2`. |
 | `BROWSER_VOICE_STT_MODES` | plain | api | What the speech recogniser writes per language, over the built-in defaults: `te=transcribe,kn=transcribe,en=transcribe,ta=transcribe,hi=verbatim,ml=verbatim`. Empty = the defaults. A language or mode it does not know is ignored. |
 | `BROWSER_VOICE_DAY_TTS_CHARS` | plain | api | Characters a workspace may send to the voice engines per day. Default `6000`. |
 | `BROWSER_VOICE_SESSIONS_PER_MINUTE` | plain | api | Sessions a workspace may open per minute (one runs at a time). Default `6`. |
