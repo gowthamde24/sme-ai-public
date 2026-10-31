@@ -38,6 +38,10 @@ class Limits:
     audio_turn: str = "shadow"    # the audio turn model: off | shadow | on (see Settings.browser_voice_audio_turn)
     audio_turn_model: str = ""    # path of the ONNX file ("": none); a missing file or a failed load means the text rules alone
     command_wait_ms: int = 900    # a finished-looking command (send, call, remind ... in Telugu, English, Kannada) waits this long for its quantity or name; 0: off. Questions and chat never wait (owner, 31 Oct 2026)
+    language_gate: bool = False   # while the assistant speaks, with the language pill set: speech clearly in ANOTHER language is background (TV), not an interruption; stop words always interrupt (owner, 31 Oct 2026)
+    stop_words: tuple[str, ...] = ()   # () = the built-in list (turntaking.STOP_WORDS)
+    speaker_check: str = "off"   # off | shadow | on: is a sound that interrupts the SAME voice as this session's speaker? Browser sessions only; never a phone call (owner, 31 Oct 2026)
+    speaker_model: str = ""
     verify_barge_in: bool = True  # standard B1/B2: a sound while the assistant speaks pauses it; a cough, a "hmm" or a TV lets it go on (a real interruption stops it)
 
 

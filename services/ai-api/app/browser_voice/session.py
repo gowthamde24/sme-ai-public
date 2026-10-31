@@ -19,7 +19,7 @@ from typing import Any, Literal, Protocol
 from app.assistant.language import detect_owner_language
 from app.browser_voice.audio import IN_RATE, OUT_RATE, PREROLL_S, BrowserPlayout, FrameBus
 from app.browser_voice.limits import Ledger, Limits, Usage, log_usage
-from app.conversation import audio_turn
+from app.conversation import audio_turn, speaker
 from app.conversation.endpointing import endpoint_ms
 from app.conversation.fillers import FillerBank
 from app.conversation.parts import (
@@ -37,10 +37,14 @@ from app.conversation.turntaking import (
     GOODBYE_QUIET,
     GOODBYE_REPLY,
     RESUME_AFTER_MS,
+    STOP_WORDS,
+    Interruption,
     classify_interruption,
+    foreign_to_pin,
     is_goodbye,
     silence_action,
     soft_warning_due,
+    stop_word_heard,
 )
 from app.turns.intent import Kind as TurnKind
 from app.turns.intent import classify, is_yes_no, normalise
@@ -175,6 +179,8 @@ class VoiceSession:
             command_hold_ms=limits.command_wait_ms,
             audio_tail=self.bus.recent,
         )
+        # the speaker check (owner, 31 Oct 2026): a signature of this session's speaker, in memory, dropped at the end; browser sessions only (a phone call never has one)
+        self._voice = speaker.new_session_voice(speaker.load(limits.speaker_model)) if limits.speaker_check in ("shadow", "on") and mode == "live" and not getattr(self, "is_phone", False) else None
         self._previous: TurnKind | None = None
         self.pending_action: uuid.UUID | None = None
         self._utterance_at: float | None = None
@@ -337,6 +343,9 @@ class VoiceSession:
                 if t is not None:
                     with suppress(asyncio.CancelledError, Exception):
                         await t
+            if self._voice is not None:
+                self._voice.close()   # the signature is forgotten with the session
+                self._voice = None
             self._account_time()
             if self._token:
                 with suppress(Exception):
@@ -476,7 +485,11 @@ class VoiceSession:
         except Exception as err:
             log.warning("browser_voice_judge_failed code=%s", getattr(err, "code", type(err).__name__))
         speech_ms = max(0, int((tm.eot_at - tm.speech_start_at) * 1000) - endpoint_ms(self.language)) if tm.eot_at is not None and tm.speech_start_at is not None else 0   # (the recogniser's end comes after the quiet that ends a turn)
-        kind = classify_interruption(speech_ms, text)
+        pin = self.parts.pinned_language()
+        foreign = bool(self.limits.language_gate and pin is not None and foreign_to_pin(text, pin))   # the TV in another language (never a stop word, never Tenglish)
+        kind = classify_interruption(speech_ms, text, foreign=foreign, **({"stop_words": self.limits.stop_words} if self.limits.stop_words else {}))
+        if self._voice is not None and kind == "barge_in" and not stop_word_heard(text, self.limits.stop_words or STOP_WORDS):
+            kind = await self._speaker_verdict(kind)
         if kind == "barge_in":
             self._carry = text
             await self._hard_stop(t0)
@@ -487,6 +500,28 @@ class VoiceSession:
         if await self.conv.resume():
             await self._send({"type": "state", "state": "speaking"})
             await self._send({"type": "resumed", "after": kind})
+
+    def _enrol_voice(self, tm: TurnTimings) -> None:
+        """The person's turn is confirmed: add what they just said to this session's signature (in memory, off the critical path)."""
+        voice = self._voice
+        if voice is None:
+            return
+        seconds = (tm.final_at - tm.speech_start_at) if tm.final_at is not None and tm.speech_start_at is not None else 4.0
+        clip = self.bus.recent()[-int((min(8.0, max(1.0, seconds)) + 0.4) * IN_RATE * 2) :]
+        asyncio.ensure_future(asyncio.to_thread(voice.enrol, clip))
+
+    async def _speaker_verdict(self, kind: Interruption) -> Interruption:
+        """The sound that paused the reply was words: is it the session's speaker? In `on` a different voice is background (the reply goes on); no signature yet, too little speech or an unclear score is the person (stopping beats talking
+        over them). In `shadow` it only measures. The score goes to the browser, nowhere else."""
+        voice = self._voice
+        if voice is None:
+            return kind
+        began = self.clock()
+        clip = self.bus.recent()[-3 * IN_RATE * 2 :]
+        score = await asyncio.to_thread(voice.similarity, clip)
+        same = None if score is None else score >= speaker.SAME_AT_LEAST
+        await self._send({"type": "speaker", "mode": self.limits.speaker_check, "same": same, "score": None if score is None else round(score, 2), "ms": round((self.clock() - began) * 1000)})
+        return "noise" if (self.limits.speaker_check == "on" and same is False) else kind
 
     async def _timer(self) -> None:
         """The caps: the session's length and the workspace's day."""
@@ -554,6 +589,8 @@ class VoiceSession:
                 continue
             failures = 0
             self._checked_in = False
+            if carried is None and self._voice is not None:
+                self._enrol_voice(tm)
             if is_goodbye(text):
                 await self._say_goodbye(text)
                 return

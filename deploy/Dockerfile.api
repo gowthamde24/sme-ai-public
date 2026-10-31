@@ -44,10 +44,11 @@ USER 10001
 
 # The API's image: no ffmpeg (the API never codes audio), so it stays small and starts fast.
 FROM base AS api
+# The speaker model (CAM++ from 3D-Speaker, Apache-2.0, 28 MB, same pinned-and-checked download) sits next to it; it is loaded only when BROWSER_VOICE_SPEAKER_CHECK is shadow or on.
 # The audio turn model (job live-conversation-standard, owner decision 31 Oct 2026): Indic Smart Turn, BSD-2-Clause, github.com/adimyth / huggingface.co/adimyth/indic-smart-turn, base int8 (24 MB), pinned to one revision and
 # checked against its sha256. numpy and onnxruntime run it on one CPU thread. Without the file or the packages the API starts and judges turns by the text rules alone (docs/runbooks/live-turn-models.md); a download that
 # cannot be reached leaves the image without the model (logged at start), a file that does not match the checksum fails the build.
 USER root
 COPY deploy/fetch_audio_turn_model.py /tmp/fetch_audio_turn_model.py
-RUN pip install ".[audio-turn]" && python /tmp/fetch_audio_turn_model.py /srv/models && rm /tmp/fetch_audio_turn_model.py
+RUN pip install ".[audio-turn,speaker]" && python /tmp/fetch_audio_turn_model.py /srv/models && rm /tmp/fetch_audio_turn_model.py
 USER 10001
