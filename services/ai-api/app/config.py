@@ -303,6 +303,11 @@ class Settings(BaseSettings):
     # never on small talk.
     browser_voice_filler_after_ms: int = 1800
     browser_voice_filler_on_casual: bool = False
+    # The audio turn model (Indic Smart Turn, ONNX, BSD-2): off | shadow (measured and
+    # recorded, changes nothing) | on (moves the text reading of "finished" by one step).
+    # No file or a load failure means the text rules alone, in every mode.
+    browser_voice_audio_turn: str = "shadow"
+    browser_voice_audio_turn_model: str = "/srv/models/indic-smart-turn-base-int8.onnx"
     browser_voice_day_seconds: int = 7200
     # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the built-in defaults
     browser_voice_stt_modes: str = ""

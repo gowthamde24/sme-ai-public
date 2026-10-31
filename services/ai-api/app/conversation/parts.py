@@ -48,6 +48,8 @@ class TurnTimings:
     spoken_text: str = ""   # what of the reply was actually heard (the whole reply, or its start when the caller cut it): what the stored history keeps
     speculative: bool = False   # the reply was started before the final transcript (A3) and kept
     paused: int = 0        # how many times the line was paused for a possible interruption that turned out not to be one
+    audio_p: float | None = None   # the audio turn model's chance that the caller's turn was over when they went quiet (None: no opinion, or the model is off)
+    audio_turn_ms: int | None = None   # how long the final transcript waited for it
     held_ms: int = 0       # how long the end of the turn was held back because the thought was not finished
     filler_played: bool = False
     interrupted: bool = False
