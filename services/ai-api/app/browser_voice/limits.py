@@ -30,6 +30,8 @@ class Limits:
     day_tts_chars: int = 12000  # characters sent to the voice engines per workspace per day (Cartesia is paid per character)
     sessions_per_minute: int = 6
     greeting: bool = True
+    semantic_turns: bool = True   # live conversation standard A1/A2: an unfinished thought is not answered; the speaker's own pause sets the quiet that ends a turn
+    verify_barge_in: bool = True  # standard B1/B2: a sound while the assistant speaks pauses it; a cough, a "hmm" or a TV lets it go on (a real interruption stops it)
 
 
 @dataclass
