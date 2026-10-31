@@ -49,6 +49,7 @@ class TurnTimings:
     speculative: bool = False   # the reply was started before the final transcript (A3) and kept
     paused: int = 0        # how many times the line was paused for a possible interruption that turned out not to be one
     audio_p: float | None = None   # the audio turn model's chance that the caller's turn was over when they went quiet (None: no opinion, or the model is off)
+    command_turn: bool = False   # a command-like turn (it waited the command hold): reported as its own latency group
     audio_run_ms: int | None = None   # how long the model itself took on this machine (the part that does not depend on the transcript)
     audio_turn_ms: int | None = None   # how long the final transcript waited for it
     held_ms: int = 0       # how long the end of the turn was held back because the thought was not finished

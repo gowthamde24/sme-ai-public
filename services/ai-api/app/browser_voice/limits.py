@@ -37,6 +37,7 @@ class Limits:
     filler_on_casual: bool = False  # small talk never gets one
     audio_turn: str = "shadow"    # the audio turn model: off | shadow | on (see Settings.browser_voice_audio_turn)
     audio_turn_model: str = ""    # path of the ONNX file ("": none); a missing file or a failed load means the text rules alone
+    command_wait_ms: int = 900    # a finished-looking command (send, call, remind ... in Telugu, English, Kannada) waits this long for its quantity or name; 0: off. Questions and chat never wait (owner, 31 Oct 2026)
     verify_barge_in: bool = True  # standard B1/B2: a sound while the assistant speaks pauses it; a cough, a "hmm" or a TV lets it go on (a real interruption stops it)
 
 

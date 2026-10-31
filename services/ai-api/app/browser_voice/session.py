@@ -172,6 +172,7 @@ class VoiceSession:
             can_speculate=self._can_speculate if limits.speculative else None,
             audio_turn=audio_turn.load(limits.audio_turn_model) if limits.audio_turn in ("shadow", "on") else None,
             audio_turn_mode=limits.audio_turn,
+            command_hold_ms=limits.command_wait_ms,
             audio_tail=self.bus.recent,
         )
         self._previous: TurnKind | None = None
@@ -689,6 +690,7 @@ class VoiceSession:
                 "interrupted": tm.interrupted,
                 "speculative": tm.speculative,
                 "audio_p": None if tm.audio_p is None else round(tm.audio_p, 3),
+                "command": tm.command_turn,
                 "audio_turn_ms": tm.audio_turn_ms,
                 "audio_run_ms": tm.audio_run_ms,
                 "filler": tm.filler_played,
