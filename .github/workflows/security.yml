@@ -7,7 +7,8 @@ on:
     branches: [main]
   pull_request:
   schedule:
-    - cron: "17 3 * * 1"   # every Monday: a new advisory can turn an old dependency red
+    - cron: "17 3 * * 1"   # every Monday: a new advisory can turn an old dependency red; the full osv scan (osv-weekly) runs then
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -23,13 +24,71 @@ jobs:
         run: |
           docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest detect --source /repo --redact --no-banner --exit-code 1
 
+  # Known-vulnerable dependencies (osv-scanner), two jobs (owner decision 31 Oct 2026: it was too noisy):
+  #  - osv-scanner (every push and pull request): the full scan is only INFORMATION (a table in the run's summary, dev-only packages marked); the check fails only for a HIGH or CRITICAL advisory (CVSS 7.0 or more)
+  #    in a package that is not dev-only (a lock file's dev flag). A dev-only advisory, like minimatch in the eslint chain, never fails a pull request.
+  #  - osv-weekly (Mondays): the full scan of every dependency, dev-only included; it opens (or updates, or closes when clean) ONE issue labelled dependency-scan. The fixes arrive as Dependabot pull requests (.github/dependabot.yml).
   osv-scanner:
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Scan the lock files and the Python dependencies
+      - name: Scan the lock files and the Python dependencies (information)
         run: |
-          docker run --rm -v "$PWD:/src" ghcr.io/google/osv-scanner:latest scan source --recursive /src/apps/web /src/e2e /src/services/ai-api
+          set +e
+          docker run --rm -v "$PWD:/src" ghcr.io/google/osv-scanner:latest scan source --format json --recursive /src/apps/web /src/e2e /src/services/ai-api > osv.json
+          code=$?
+          set -e
+          # exit 1 = advisories were found (fine here); anything else with no readable report is a broken scan: say so, loudly, but do not fail the pull request for it
+          if ! jq -e '.results' osv.json > /dev/null 2>&1; then
+            echo "::warning::osv-scanner gave no readable report (exit $code)"
+            echo "osv-scanner gave no readable report (exit $code)." >> "$GITHUB_STEP_SUMMARY"
+            echo '{"results":[]}' > osv.json
+          fi
+          { echo "### Known advisories (information)"; .github/scripts/osv-report.sh table osv.json; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Fail only for HIGH or CRITICAL advisories in production dependencies
+        run: |
+          blocking=$(.github/scripts/osv-report.sh block osv.json)
+          if [ -n "$blocking" ]; then
+            echo "::error::HIGH or CRITICAL advisories in production dependencies:"
+            echo "$blocking"
+            { echo "### Blocking (HIGH or CRITICAL, production)"; echo "$blocking" | sed 's/^/- /'; } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "No HIGH or CRITICAL advisory in a production dependency."
+
+  osv-weekly:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Full scan of every dependency, dev-only included
+        run: |
+          set +e
+          docker run --rm -v "$PWD:/src" ghcr.io/google/osv-scanner:latest scan source --format json --recursive /src/apps/web /src/e2e /src/services/ai-api > osv.json
+          set -e
+          jq -e '.results' osv.json > /dev/null || { echo "::error::osv-scanner gave no readable report"; exit 1; }
+          n=$(.github/scripts/osv-report.sh count osv.json)
+          { echo "## Weekly dependency scan"; echo; .github/scripts/osv-report.sh table osv.json; echo; echo "Fixes come as Dependabot pull requests (minor and patch are grouped). Production HIGH/CRITICAL advisories also fail every pull request's osv-scanner check."; } | tee report.md >> "$GITHUB_STEP_SUMMARY"
+          echo "count=$n" >> "$GITHUB_ENV"
+      - name: Open, update or close the weekly issue
+        run: |
+          gh label create dependency-scan --color BFD4F2 --description "Weekly dependency scan" 2>/dev/null || true
+          existing=$(gh issue list --label dependency-scan --state open --json number --jq '.[0].number // empty')
+          if [ "$count" != "0" ]; then
+            if [ -n "$existing" ]; then
+              gh issue edit "$existing" --title "Weekly dependency scan: $count advisories" --body-file report.md
+            else
+              gh issue create --title "Weekly dependency scan: $count advisories" --label dependency-scan --body-file report.md
+            fi
+          elif [ -n "$existing" ]; then
+            gh issue close "$existing" --comment "Clean this week: no known advisory in any dependency."
+          fi
 
   codeql:
     runs-on: ubuntu-latest
