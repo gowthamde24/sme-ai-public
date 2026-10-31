@@ -55,6 +55,7 @@ from app.connectors.repository import PostgrestConnectorsRepository
 from app.connectors.routes import router as connectors_router
 from app.connectors.webhooks import router as webhooks_router
 from app.connectors.wiring import build_connectors
+from app.conversation import audio_turn
 from app.conversation.engines import real_engine_factory
 from app.conversation.fillers import FillerBank
 from app.conversation.picker import public_router as voice_samples_router
@@ -949,7 +950,11 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         speculative=settings.browser_voice_speculative,
         filler_after_ms=settings.browser_voice_filler_after_ms,
         filler_on_casual=settings.browser_voice_filler_on_casual,
+        audio_turn=settings.browser_voice_audio_turn,
+        audio_turn_model=settings.browser_voice_audio_turn_model,
     )
+    if limits.audio_turn in ("shadow", "on"):
+        audio_turn.load(limits.audio_turn_model)   # loaded at start, so no caller waits for it
     return BrowserVoice(
         config=voice_catalogue(),
         factory=real_engine_factory(cartesia_key=cartesia, sarvam_key=sarvam),

@@ -16,6 +16,8 @@ IN_RATE = 16000
 OUT_RATE = 24000
 MAX_BUFFERED_FRAMES = 1500  # about 30 s of 20 ms frames: more than that means the loop is not reading, and the oldest frames go
 PREROLL_S = 0.3
+RECENT_S = 8   # the audio turn model reads the last 8 s
+RECENT_BYTES = IN_RATE * 2 * RECENT_S
 SLICE_S = 0.10   # a paced write goes out in slices of this much audio
 
 
@@ -26,6 +28,7 @@ class FrameBus:
         self._wake = asyncio.Event()
         self._closed = False
         self.bytes_in = 0
+        self._recent = bytearray()  # the last RECENT_S seconds of what the caller sent, whether or not it has been read yet (the audio turn model looks at it)
         self.speech_ended_at: float | None = None  # AudioSource: set by the session when the browser says the caller stopped (or by the recogniser's end-of-speech)
 
     def push(self, frame: bytes) -> None:
@@ -33,9 +36,16 @@ class FrameBus:
             return
         self.bytes_in += len(frame)
         self._frames.append((self._clock(), frame))
+        self._recent += frame
+        if len(self._recent) > RECENT_BYTES:
+            del self._recent[: len(self._recent) - RECENT_BYTES]
         while len(self._frames) > MAX_BUFFERED_FRAMES:
             self._frames.popleft()
         self._wake.set()
+
+    def recent(self) -> bytes:
+        """The last few seconds of the caller's audio (16 kHz mono s16le), oldest first."""
+        return bytes(self._recent)
 
     def close(self) -> None:
         self._closed = True
@@ -43,6 +53,8 @@ class FrameBus:
 
     def drop_before(self, age_s: float = PREROLL_S) -> int:
         """Throw away frames older than `age_s` seconds. Returns how many."""
+        keep = int(IN_RATE * 2 * age_s) // 2 * 2
+        del self._recent[: max(0, len(self._recent) - keep)]   # our own voice that came back through the microphone is not the caller's
         cutoff = self._clock() - age_s
         dropped = 0
         while self._frames and self._frames[0][0] < cutoff:

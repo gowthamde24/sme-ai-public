@@ -20,6 +20,11 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# the audio turn model (Indic Smart Turn, app/conversation/audio_turn.py): installed in the API image only; the service runs without them (the text rules decide)
+audio-turn = [
+    "numpy>=2.0,<3",
+    "onnxruntime>=1.20,<2",
+]
 dev = [
     "pytest>=8",
     "ruff>=0.6",
