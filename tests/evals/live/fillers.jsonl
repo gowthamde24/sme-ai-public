@@ -1,0 +1,10 @@
+{"id": "casual-fast-answer", "after_ms": 1800, "turns": [{"tier": "fast", "first_token_ms": 600, "expect": false}]}
+{"id": "casual-slow-answer-still-none", "after_ms": 1800, "turns": [{"tier": "fast", "first_token_ms": 3000, "expect": false}]}
+{"id": "data-on-time", "after_ms": 1800, "turns": [{"tier": "strong", "first_token_ms": 1200, "expect": false}]}
+{"id": "data-late", "after_ms": 1800, "turns": [{"tier": "strong", "first_token_ms": 2600, "expect": true}]}
+{"id": "data-just-before-the-limit", "after_ms": 1800, "turns": [{"tier": "strong", "first_token_ms": 1500, "expect": false}]}
+{"id": "two-late-data-turns-in-a-row", "after_ms": 1800, "turns": [{"tier": "strong", "first_token_ms": 2600, "expect": true}, {"tier": "strong", "first_token_ms": 2600, "expect": false}]}
+{"id": "late-then-casual-then-late", "after_ms": 1800, "turns": [{"tier": "strong", "first_token_ms": 2600, "expect": true}, {"tier": "fast", "first_token_ms": 3000, "expect": false}, {"tier": "strong", "first_token_ms": 2600, "expect": true}]}
+{"id": "late-skip-late", "after_ms": 1800, "turns": [{"tier": "strong", "first_token_ms": 2600, "expect": true}, {"tier": "strong", "first_token_ms": 600, "expect": false}, {"tier": "strong", "first_token_ms": 2600, "expect": true}]}
+{"id": "a-shorter-setting-is-honoured", "after_ms": 900, "turns": [{"tier": "strong", "first_token_ms": 1200, "expect": true}]}
+{"id": "a-longer-setting-is-honoured", "after_ms": 3000, "turns": [{"tier": "strong", "first_token_ms": 2600, "expect": false}]}

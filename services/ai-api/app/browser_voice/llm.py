@@ -138,6 +138,28 @@ class CaptionLlm:
             self._emit("caption", {"who": "assistant", "text": piece, "spoken": True})
             yield piece
 
+    def speculate(self, system: str, messages: list[dict[str, str]], model: str) -> Any:
+        """A reply started on unconfirmed words (see FastThread.speculate), or None when the model behind cannot; the captions are shown only when it is served."""
+        inner = getattr(self._inner, "speculate", None)
+        spec = inner(system, messages, model) if inner is not None else None
+        if spec is None:
+            return None
+        return _CaptionedSpeculation(spec, self._emit)
+
+
+class _CaptionedSpeculation:
+    def __init__(self, spec: Any, emit: Emit) -> None:
+        self._spec, self._emit = spec, emit
+        self.text = spec.text
+
+    async def stream(self) -> AsyncIterator[str]:
+        async for piece in self._spec.stream():
+            self._emit("caption", {"who": "assistant", "text": piece, "spoken": True})
+            yield piece
+
+    async def cancel(self) -> None:
+        await self._spec.cancel()
+
 
 class TieredLlm:
     """`model == ASK_MODEL` goes to Ask; any other model id goes to the fast streaming model."""
@@ -150,3 +172,10 @@ class TieredLlm:
             self._on_ask()
             return self._ask.stream(system, messages, model)
         return self._fast.stream(system, messages, model)
+
+    def speculate(self, system: str, messages: list[dict[str, str]], model: str) -> Any:
+        """Only the fast tier can start a reply before the words are confirmed (the written chat's turn writes the thread at once)."""
+        if model == ASK_MODEL:
+            return None
+        inner = getattr(self._fast, "speculate", None)
+        return inner(system, messages, model) if inner is not None else None

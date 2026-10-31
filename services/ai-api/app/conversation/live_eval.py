@@ -203,6 +203,32 @@ def style_problems(answer: str, checks: list[str], language: str, keys: list[str
     return out
 
 
+# ---- fillers (owner, 31 Oct 2026: only when the wait is real) ------------------------------------------------------------------------------------------
+
+FILLERS = ROOT / "tests" / "evals" / "live" / "fillers.jsonl"
+
+
+async def run_fillers(case: dict[str, Any]) -> list[tuple[str, bool, bool]]:
+    """One case = one session of turns with the real loop on a time scale: (case id, whether a filler played, whether that was expected) per turn. The bank holds three lines so 'never the same line twice' can show."""
+    from app.conversation.fillers import FillerBank
+
+    bank = FillerBank(seed=5)
+    bank._audio[("en", "v")] = {"one": b"\x01\x00" * 500, "two": b"\x02\x00" * 500, "three": b"\x03\x00" * 500}   # noqa: SLF001
+    playout = FakePlayout(rate=16000)
+    tier = {"value": "strong"}
+    llm = FakeLlm(("Here you go. ",), first_token_delay=0.0)
+
+    conv = Conversation(stt=ScriptedStt([]), llm=llm, tts=FakeTts(chunks=2, chunk_ms=50), playout=playout, session=Session(system="", language="en"), models={"fast": "f", "strong": "s"}, fillers=bank, voice="v",
+                        filler_after_ms=int(case["after_ms"] * SCALE), filler_on_casual=False, router=lambda text, tools, turn: tier["value"])   # type: ignore[arg-type,return-value]
+    out: list[tuple[str, bool, bool]] = []
+    for n, turn in enumerate(case["turns"], start=1):
+        tier["value"] = turn["tier"]
+        llm.first_token_delay = turn["first_token_ms"] / 1000.0 * SCALE
+        tm = await conv.respond(f"question {n}")
+        out.append((case["id"], bool(tm.filler_played), bool(turn["expect"])))
+    return out
+
+
 # ---- all ------------------------------------------------------------------------------------------------------------------------------------------
 
 async def run_all(dialogues: list[dict[str, Any]] | None = None) -> dict[str, Any]:
@@ -210,6 +236,9 @@ async def run_all(dialogues: list[dict[str, Any]] | None = None) -> dict[str, An
     turns: list[TurnResult] = []
     interrupts: list[InterruptResult] = []
     silences: list[bool] = []
+    fillers: list[tuple[str, bool, bool]] = []
+    for case in [json.loads(line) for line in FILLERS.read_text(encoding="utf-8").splitlines() if line.strip()]:
+        fillers += await run_fillers(case)
     byes: list[bool] = []
     styles: list[tuple[str, dict[str, Any]]] = []
     for d in dialogues:
@@ -225,7 +254,7 @@ async def run_all(dialogues: list[dict[str, Any]] | None = None) -> dict[str, An
                 byes.append(run_goodbye(beat))
             elif kind == "style":
                 styles.append((d["lang"], beat))
-    return {"dialogues": len(dialogues), "turns": turns, "interrupts": interrupts, "silences": silences, "goodbyes": byes, "styles": styles}
+    return {"dialogues": len(dialogues), "fillers": fillers, "turns": turns, "interrupts": interrupts, "silences": silences, "goodbyes": byes, "styles": styles}
 
 
 def summary(result: dict[str, Any]) -> dict[str, Any]:
@@ -248,6 +277,8 @@ def summary(result: dict[str, Any]) -> dict[str, Any]:
         "pause_ms_max": round(max((i.stop_ms for i in ints), default=0.0), 1),
         "pause_ms_p50": round(sorted(i.stop_ms for i in ints)[len(ints) // 2], 1) if ints else 0.0,
         "mechanics_failures": sum(1 for i in ints if i.problems),
+        "filler_ok": f"{sum(played == expected for _, played, expected in result['fillers'])}/{len(result['fillers'])}",
+        "filler_on_casual": sum(1 for cid, played, expected in result["fillers"] if played and cid.startswith("casual")),
         "silence_ok": f"{sum(result['silences'])}/{len(result['silences'])}",
         "goodbye_ok": f"{sum(result['goodbyes'])}/{len(result['goodbyes'])}",
     }

@@ -357,6 +357,7 @@ async def test_the_dialogues_meet_what_the_loop_guarantees() -> None:
     assert s["over_hold_pct"] == 0.0, "a finished turn is never made to wait"
     assert s["real_interruptions_stopped_pct"] == 100.0 and s["false_interruption_without_tv_pct"] == 0.0 and s["mechanics_failures"] == 0
     assert s["pause_ms_max"] <= 200 and s["silence_ok"] == "3/3" and s["goodbye_ok"] == "7/7"
+    assert s["filler_ok"] == "15/15" and s["filler_on_casual"] == 0, "fillers only when the wait is real"
     assert s["premature_cut_off_pct"] <= 20.0, "the cue-less pauses are the known limit of a text classifier (the audio turn model is the next step)"
 
 

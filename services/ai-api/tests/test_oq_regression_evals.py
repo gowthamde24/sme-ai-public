@@ -132,6 +132,14 @@ def lead_title(name: str | None, phone: str | None, expected: str) -> None:
     assert title(name, phone) == expected
 
 
+def reply_language(text: str, language: str | None, expected: str, hint: str | None = None) -> None:
+    from app.turns.models import TurnIn
+    from app.turns.service import language_of
+
+    body = {"message_id": "6b9c7e9c-6f7a-4b1c-8f0e-3d2a1b0c9d8e", "text": text, **({"language": language} if language else {}), **({"language_hint": hint} if hint else {})}
+    assert language_of(TurnIn.model_validate(body)) == expected
+
+
 def speech_text(language: str, written: str, spoken: str) -> None:
     assert SpeechText().prepare(written, language) == spoken
 
@@ -139,7 +147,7 @@ def speech_text(language: str, written: str, spoken: str) -> None:
 CHECKS: dict[str, Callable[..., None]] = {
     f.__name__: f
     for f in (shipped_lines_no_gendered, model_text_clean, address_rule_in_prompts, router_kind, owner_language, fillers_in_voice_language, one_voice_per_language, spoken_tone_rules, indian_languages_get_the_larger_budget,
-              chat_prompt_welcomes_casual_talk, no_retired_names_in_shipped_lines, recogniser_mode, small_talk_is_light, speech_text, lead_title)
+              chat_prompt_welcomes_casual_talk, no_retired_names_in_shipped_lines, recogniser_mode, small_talk_is_light, speech_text, lead_title, reply_language)
 }
 
 
