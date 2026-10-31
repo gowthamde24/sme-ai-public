@@ -14,8 +14,8 @@ from __future__ import annotations
 
 import asyncio
 import time
-from collections import deque
-from collections.abc import Callable
+from collections.abc import Awaitable, Callable
+from contextlib import suppress
 from typing import Any, Literal, Protocol
 
 from app.browser_voice.audio import OUT_RATE
@@ -37,8 +37,11 @@ class Wire(Protocol):
 
 
 class PhoneLine:
-    def __init__(self, wire: Wire, *, clock: Callable[[], float] = time.monotonic, barge_threshold: float = 700.0, barge_ms: int = 160, line_rate: int | None = None) -> None:
-        self._wire, self._clock = wire, clock
+    def __init__(self, wire: Wire, *, clock: Callable[[], float] = time.monotonic, sleep: Callable[[float], Awaitable[None]] = asyncio.sleep, barge_threshold: float = 700.0, barge_ms: int = 160,
+                 line_rate: int | None = None, hang_up_wait_s: float = 10.0) -> None:
+        self._wire, self._clock, self._sleep = wire, clock, sleep
+        self.hang_up_wait_s = hang_up_wait_s
+        self.end_reason: str | None = None       # why the call ended, in the words of phone_calls.end_reason: caller_hung_up | goodbye | silence | longest_call | stopped | error
         self._forced_rate = line_rate
         self.rate = line_rate or exotel.DEFAULT_RATE
         self.start: exotel.Start | None = None
@@ -46,7 +49,9 @@ class PhoneLine:
         self.dtmf: list[str] = []
         self.bytes_in = 0
         self.bytes_out = 0
-        self._queue: deque[tuple[Kind, Any]] = deque()
+        self._q: asyncio.Queue[tuple[Kind, Any]] = asyncio.Queue()   # what the session reads: filled by the pump, and by us when we hang up
+        self._pump_task: asyncio.Future[None] | None = None
+        self._hang_up_after_audio_end: str | None = None
         self._seq = 0
         self._pending = bytearray()    # voice audio already at the line rate, waiting for a whole chunk
         self._down: Resampler | None = None
@@ -78,20 +83,36 @@ class PhoneLine:
             self.rate = self._forced_rate or start.sample_rate
             self._down = Resampler(OUT_RATE, self.rate)
             self._up = Resampler(self.rate, STT_RATE) if self.rate != STT_RATE else None
+            self._pump_task = asyncio.ensure_future(self._pump())
         return start
+
+    async def _pump(self) -> None:
+        """The provider's messages, one at a time, into the queue the session reads."""
+        while True:
+            raw = await self._wire.receive_text()
+            if raw is None:
+                self._finish("caller_hung_up")
+                return
+            self._on_event(exotel.parse(raw))
+            if self._closed:
+                return
+
+    def _finish(self, reason: str) -> None:
+        if not self._closed:
+            self._closed = True
+            self.end_reason = self.end_reason or reason
+            self._q.put_nowait(("close", None))
+
+    async def close(self) -> None:
+        if self._pump_task is not None and not self._pump_task.done():
+            self._pump_task.cancel()
+            with suppress(asyncio.CancelledError, Exception):
+                await self._pump_task
 
     # ---- the Socket the session reads ------------------------------------------------------------------------------------------------------------
 
     async def receive(self) -> tuple[Kind, Any]:
-        while not self._queue:
-            if self._closed:
-                return "close", None
-            raw = await self._wire.receive_text()
-            if raw is None:
-                self._closed = True
-                return "close", None
-            self._on_event(exotel.parse(raw))
-        return self._queue.popleft()
+        return await self._q.get()
 
     def _on_event(self, event: exotel.Event) -> None:
         if isinstance(event, exotel.Media):
@@ -99,7 +120,7 @@ class PhoneLine:
             if not pcm:
                 return
             self.bytes_in += len(pcm)
-            self._queue.append(("bytes", pcm))
+            self._q.put_nowait(("bytes", pcm))
             if self._clock() < self._play_until:
                 self._watch_for_barge_in(pcm)
             else:
@@ -107,10 +128,9 @@ class PhoneLine:
                 self._vad_buf.clear()
         elif isinstance(event, exotel.Dtmf):
             self.dtmf.append(event.digit)
-            self._queue.append(("text", {"type": "dtmf", "digit": event.digit}))
+            self._q.put_nowait(("text", {"type": "dtmf", "digit": event.digit}))
         elif isinstance(event, exotel.Stop):
-            self._closed = True
-            self._queue.append(("close", None))
+            self._finish("caller_hung_up")
 
     def _watch_for_barge_in(self, pcm: bytes) -> None:
         self._vad_buf += pcm
@@ -118,7 +138,7 @@ class PhoneLine:
             frame = bytes(self._vad_buf[:FRAME_BYTES])
             del self._vad_buf[:FRAME_BYTES]
             if "speech_start" in self._vad.feed(frame):
-                self._queue.append(("text", {"type": "barge_in", "verify": True}))
+                self._q.put_nowait(("text", {"type": "barge_in", "verify": True}))
 
     # ---- the Socket the session writes -----------------------------------------------------------------------------------------------------------
 
@@ -142,6 +162,10 @@ class PhoneLine:
                 await self._wire.send_text(exotel.clear_message(self.start.stream_sid))
         elif kind == "audio_end":
             await self.flush()
+            if self._hang_up_after_audio_end is not None:
+                await self.hang_up(self._hang_up_after_audio_end)
+        elif kind == "limit" and message.get("fatal"):
+            await self.hang_up({"goodbye": "goodbye", "idle": "silence", "session": "longest_call", "daily_limit": "stopped"}.get(str(message.get("reason")), "stopped"))
 
     async def flush(self) -> None:
         """The voice has finished a turn: send the last part of its audio (silence-padded to a whole chunk) and ask the provider to tell us when it has played it."""
@@ -162,6 +186,21 @@ class PhoneLine:
         now = self._clock()
         self._play_until = max(self._play_until, now) + len(chunk) / 2 / self.rate
         await self._wire.send_text(exotel.media_message(self.start.stream_sid, chunk, self._seq))
+
+    async def hang_up(self, reason: str) -> None:
+        """We end the call: first let the provider finish playing what we sent (a goodbye cut in half is rude), then close. The session's reader sees the close and the session ends."""
+        if self._closed:
+            return
+        await self.flush()
+        waited = 0.0
+        while self._clock() < self._play_until and waited < self.hang_up_wait_s:
+            await self._sleep(0.05)
+            waited += 0.05
+        self._finish(reason)
+
+    def hang_up_after_next_turn(self, reason: str) -> None:
+        """The next thing the voice finishes saying is the last: when its audio ends we close the line (after it has played)."""
+        self._hang_up_after_audio_end = reason
 
     def playing(self) -> bool:
         return self._clock() < self._play_until
