@@ -69,6 +69,8 @@ from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
 from app.tasks.service import TasksService
 from app.team.repository import TeamRepository
+from app.telephony.live import LiveCalls
+from app.telephony.service import CallsService
 from app.tenancy.models import Role, TenantOut
 from app.tenancy.repository import TenantRepository
 from app.today.repository import TodayRepository
@@ -171,6 +173,8 @@ class Runtime:
     outreach: OutreachService | None = None
     # job DR B1: "Ask the assistant to do it" (plan, approve once, run, report)
     tasks: TasksService | None = None
+    calls: CallsService | None = None
+    live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
     voice_sample: VoiceSampleService | None = None
     # job voice-picker: the opening line in the chosen voice; None = no preview here
