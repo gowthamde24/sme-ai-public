@@ -52,6 +52,8 @@ class CallStore(Protocol):
 
 
 class CallVoiceSession(VoiceSession):
+    is_phone = True   # a phone call never gets the speaker check (owner decision 31 Oct 2026: off until the December lawyer review)
+
     async def speak_and_hang_up(self, text: str, reason: str) -> None:
         """Stop whatever is being said, say one fixed line, let it finish playing, close the line."""
         await self._barge_in(verify=False)

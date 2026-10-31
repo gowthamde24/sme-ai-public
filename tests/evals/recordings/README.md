@@ -10,3 +10,5 @@ What is kept is text and timings: what the recogniser wrote for each piece, how 
 flips and the line is changed to `pass`), and with the audio turn model at the calibrated threshold the gaps that its numbers can fix are checked.
 
 `interruptions.jsonl`: the barge-in windows of voices 5 and 6 (1.5 s slices) with what the recogniser wrote, the sound's length, its level, the OWNER'S label (`owner`, `tv`, `cough`), what the reply should do (`stop` / `ignore`) and `status`. Two TV phrases of two or more words are known gaps (they stop the reply).
+
+Barge-in decisions of the windows are scored with the language gate on the owner's pill (`pin`: Telugu). The gate's honest limit is in `docs/runbooks/live-conversation-standard.md`: the pinned recogniser writes English in Telugu script, so the text-based gate rarely fires in a real session.
