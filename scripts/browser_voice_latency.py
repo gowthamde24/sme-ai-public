@@ -23,6 +23,7 @@ import seed_staging as ss  # noqa: E402
 from staging_smoke_api import Owner  # noqa: E402
 
 FRAME_MS = 20
+FLAGS: list[bool] = []   # per turn: did the server say the reply was started early (speculative)?
 
 
 def percentile(values: list[float], p: float) -> float:
@@ -90,6 +91,7 @@ async def run(url: str, token: str, pcm: bytes, turns: int, language: str) -> tu
                     continue
                 data = json.loads(msg)
                 if data.get("type") == "timings":
+                    FLAGS.append(bool(data.get("speculative")))
                     if data.get("after_final_ms") is not None:
                         server_ms.append(float(data["after_final_ms"]))
                     break

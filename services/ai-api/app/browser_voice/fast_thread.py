@@ -18,6 +18,7 @@ import contextlib
 import hashlib
 import json
 import logging
+import threading
 import uuid
 from collections.abc import AsyncIterator, Callable
 from typing import Any
@@ -72,6 +73,22 @@ class FastThread:
         # the thread as this session last read it, kept up to date by its own turns; another path (the written chat's turn, a message typed elsewhere) makes it `stale` and the next turn reads it again
         self._cache: list[dict[str, str]] | None = None
         self.stale = True
+
+    def prefetch(self) -> None:
+        """Read the thread once in the background when the session opens (while the greeting plays), so the first casual turn can start early too."""
+
+        def run() -> None:
+            db = self._open_db()
+            try:
+                thread = self._thread(db, self._conversation(), "")
+                if self._cache is None:
+                    self._cache, self.stale = thread, False
+            except Exception as exc:   # noqa: BLE001  a thread that cannot be read now is read when it is needed
+                log.info("thread not prefetched (%s)", exc.__class__.__name__)
+            finally:
+                self._close(db)
+
+        threading.Thread(target=run, daemon=True).start()
 
     def mark_stale(self) -> None:
         """A turn went another way (the written chat's turn): the thread has messages this session has not read."""

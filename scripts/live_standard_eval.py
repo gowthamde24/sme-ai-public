@@ -177,6 +177,7 @@ async def barge_in_ms(url: str, token: str, pcm: bytes, language: str, verify: b
 
 def staging(args: argparse.Namespace) -> dict[str, Any]:
     import seed_staging as ss
+    import browser_voice_latency
     from browser_voice_latency import FRAME_MS, read_wav, run  # noqa: F401
     from staging_smoke_api import Owner
 
@@ -200,6 +201,7 @@ def staging(args: argparse.Namespace) -> dict[str, Any]:
         all_server += server
         out["latency"][lang] = {"turns": len(client), "p50": round(statistics.median(client)) if client else None, "p95": round(pct(client, 95)) if client else None,
                                 "server_p50": round(statistics.median(server)) if server else None}
+    out["speculative_turns"] = f"{sum(browser_voice_latency.FLAGS)}/{len(browser_voice_latency.FLAGS)}"
     out["latency"]["all"] = {"turns": len(all_client), "p50": round(statistics.median(all_client)), "p95": round(pct(all_client, 95)), "server_p50": round(statistics.median(all_server)) if all_server else None}
     stops: dict[str, list[float]] = {"hard": [], "verify": []}
     for lang in ("en", "te"):
@@ -247,7 +249,7 @@ def report(result: dict[str, Any], style: list[tuple[str, str, list[str]]] | Non
              "| Measure | Bar | Result | |", "|---|---|---|---|"]
     lines += [f"| {a} | {b} | {c} | {d} |" for a, b, c, d in rows]
     if stg is not None:
-        lines += ["", "Casual-turn latency per language (client side, ms): " + "; ".join(f"{k} p50 {v['p50']} / p95 {v['p95']} ({v['turns']} turns)" for k, v in stg["latency"].items() if k != "all")]
+        lines += ["", f"Turns whose reply was started early (speculative start): {stg.get('speculative_turns', 'n/a')}", "", "Casual-turn latency per language (client side, ms): " + "; ".join(f"{k} p50 {v['p50']} / p95 {v['p95']} ({v['turns']} turns)" for k, v in stg["latency"].items() if k != "all")]
     lines += ["", "Thinking-pause turns that were cut (no cue in the words): " + (", ".join(t.id for t in result["turns"] if t.cut_off) or "none"),
               "TV beat decided as a real interruption (by text a TV has words): " + (", ".join(i.id for i in result["interrupts"] if i.tv and i.decided != "resume") or "none")]
     if style:

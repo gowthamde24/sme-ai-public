@@ -154,6 +154,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
             input_micros_per_mtok=bv.input_micros_per_mtok,
             output_micros_per_mtok=bv.output_micros_per_mtok,
         )
+        fast.prefetch()   # the thread, read while the greeting plays
     mark_stale = getattr(fast, "mark_stale", None)
 
     def on_ask_turn() -> None:
