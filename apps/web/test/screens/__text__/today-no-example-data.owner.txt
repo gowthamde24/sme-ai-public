@@ -1,16 +1,3 @@
-{label="Finish setting up"}
-## Finish setting up
-1 of 3 done
-- Tell us your business name and city Done
-- [Turn on two-step sign-in (optional) A code from an authenticator app on top of your password. We recommend it for the Owner; nothing needs it. To do](/app/security)
-form:
-<hidden name=step value=second_factor_set>
-[button type=submit: Hide for now]
-- [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
-form:
-<hidden name=step value=whatsapp_connected>
-[button type=submit: Hide for now]
-[Continue](/app/security)
 Tuesday, 6 October
 # Good morning
 [button type=button: Help for this screen]
@@ -83,6 +70,19 @@ Booked, but not confirmed with the customer yet. Nothing was sent to the custome
 [button type=button: Cancel the visit]
 {role=status}
 Not available yet
+{label="Finish setting up"}
+## Finish setting up
+1 of 3 done
+- Tell us your business name and city Done
+- [Turn on two-step sign-in (optional) A code from an authenticator app on top of your password. We recommend it for the Owner; nothing needs it. To do](/app/security)
+form:
+<hidden name=step value=second_factor_set>
+[button type=submit: Hide for now]
+- [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
+form:
+<hidden name=step value=whatsapp_connected>
+[button type=submit: Hide for now]
+[Continue](/app/security)
 {label="At the store today"}
 ## At the store today
 3 visits

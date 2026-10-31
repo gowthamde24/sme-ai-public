@@ -1,33 +1,3 @@
-{label="See how it works with example data"}
-## See how it works with example data
-One tap loads a small sample workspace, clearly marked as example. You can remove it any time.
-form:
-[button type=submit: Load example data]
-{label="Finish setting up"}
-## Finish setting up
-1 of 6 done
-- Tell us your business name and city Done
-- [Add your first products One by one, or import your price list. To do](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
-form:
-<hidden name=step value=catalogue_has_items>
-[button type=submit: Hide for now]
-- [Set your delivery charge and advance How a truck trip is priced and how much you take before dispatch. To do](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy)
-form:
-<hidden name=step value=delivery_rule_set>
-[button type=submit: Hide for now]
-- [Turn on two-step sign-in (optional) A code from an authenticator app on top of your password. We recommend it for the Owner; nothing needs it. To do](/app/security)
-form:
-<hidden name=step value=second_factor_set>
-[button type=submit: Hide for now]
-- [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
-form:
-<hidden name=step value=whatsapp_connected>
-[button type=submit: Hide for now]
-- [Send your first quote Draft it, check the figures, approve it, then send it yourself. To do](/app/tenants/22222222-2222-2222-2222-222222222222/quotes)
-form:
-<hidden name=step value=first_quote_sent>
-[button type=submit: Hide for now]
-[Continue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
 Tuesday, 6 October
 # Good morning
 [button type=button: Help for this screen]
@@ -100,6 +70,36 @@ Booked, but not confirmed with the customer yet. Nothing was sent to the custome
 [button type=button: Cancel the visit]
 {role=status}
 Not available yet
+{label="See how it works with example data"}
+## See how it works with example data
+One tap loads a small sample workspace, clearly marked as example. You can remove it any time.
+form:
+[button type=submit: Load example data]
+{label="Finish setting up"}
+## Finish setting up
+1 of 6 done
+- Tell us your business name and city Done
+- [Add your first products One by one, or import your price list. To do](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
+form:
+<hidden name=step value=catalogue_has_items>
+[button type=submit: Hide for now]
+- [Set your delivery charge and advance How a truck trip is priced and how much you take before dispatch. To do](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy)
+form:
+<hidden name=step value=delivery_rule_set>
+[button type=submit: Hide for now]
+- [Turn on two-step sign-in (optional) A code from an authenticator app on top of your password. We recommend it for the Owner; nothing needs it. To do](/app/security)
+form:
+<hidden name=step value=second_factor_set>
+[button type=submit: Hide for now]
+- [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
+form:
+<hidden name=step value=whatsapp_connected>
+[button type=submit: Hide for now]
+- [Send your first quote Draft it, check the figures, approve it, then send it yourself. To do](/app/tenants/22222222-2222-2222-2222-222222222222/quotes)
+form:
+<hidden name=step value=first_quote_sent>
+[button type=submit: Hide for now]
+[Continue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
 {label="At the store today"}
 ## At the store today
 3 visits
