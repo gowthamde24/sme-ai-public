@@ -81,7 +81,7 @@ try {
 
   // the chat: a spoken turn, then "Mispronounced?"
   await p.goto(s.base, { waitUntil: "domcontentloaded" });
-  const card = p.locator('[data-chat="card"]');
+  const card = p.locator('[data-chat="bar"]');
   await card.waitFor({ timeout: 45000 });
   await sleep(1500);
   await card.locator('[data-chat="live-talk"]').click();

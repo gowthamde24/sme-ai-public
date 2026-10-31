@@ -173,7 +173,8 @@ export const BARGE_IN = JSON.stringify({ type: "barge_in" });
 export const BARGE_IN_VERIFY = JSON.stringify({ type: "barge_in", verify: true });
 export const STOP = JSON.stringify({ type: "stop" });
 export const PING = JSON.stringify({ type: "ping" });
-export const setLanguageMessage = (language: VoiceLang): string => JSON.stringify({ type: "set_language", language });
+/** `"auto"` un-pins: the recogniser detects again and the session follows the caller's language from the next turn; a language pins it. */
+export const setLanguageMessage = (language: VoiceLang | "auto"): string => JSON.stringify({ type: "set_language", language });
 
 /** The address of the socket for a workspace, from the API's https address (never from anything the browser holds). null when the address is not a plain http(s) one. */
 export function voiceSocketUrl(apiBase: string, tenantId: string): string | null {

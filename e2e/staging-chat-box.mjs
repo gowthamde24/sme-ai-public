@@ -60,7 +60,7 @@ for (const width of [390, 360]) {
     await s.context.addCookies([{ name: "sme_lang", value: "te", url: "https://staging.stack19.com" }]);
     await s.page.setViewportSize({ width, height: width === 390 ? 844 : 780 });
     await s.page.goto(s.base, { waitUntil: "domcontentloaded" });
-    const card = s.page.locator('[data-chat="card"]');
+    const card = s.page.locator('[data-chat="bar"]');
     await card.waitFor({ timeout: 45000 });
     await sleep(1500);
     await check("card", s.page, card, width);

@@ -1,6 +1,6 @@
 "use client";
 
-import { AudioLines, ChevronDown, ChevronUp, Copy, History, Mic, Plus, Send, Square, X } from "lucide-react";
+import { ArrowUp, AudioLines, ChevronDown, ChevronUp, Copy, History, Mic, Plus, Send, Square, X } from "lucide-react";
 import * as React from "react";
 
 import { Orb } from "@/components/v2/Orb";
@@ -10,6 +10,8 @@ import type { VoiceLang } from "@/lib/browser-voice/protocol";
 import type { BrowserVoice } from "./browser-voice";
 import { Drafts, ERROR_WORD, Sources } from "./AskView";
 import { MarkdownLite } from "./MarkdownLite";
+import { useChatLanguage } from "./chat-language";
+import { LanguagePill } from "./LanguagePill";
 import { LiveStatus } from "./LiveStatus";
 import { Mispronounced } from "./Mispronounced";
 import { MAX_QUESTION } from "./ask-constants";
@@ -122,8 +124,10 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     const t = makeT(voice.words);
     return (k: string) => t(k as "bv.chat.new");
   }, [voice.words]);
-  const talk = usePanelVoice(s, voice, voiceOptions);
-  const dict = useDictation(s, voice, voiceOptions);
+  const chat = useChatLanguage(voice.language); // the language pill: Auto or one language, remembered
+  const talk = usePanelVoice(s, voice, voiceOptions, chat);
+  const dict = useDictation(s, voice, voiceOptions, chat);
+  const [plusOpen, setPlusOpen] = React.useState(false); // the "+" menu of the command bar
   const [view, setView] = React.useState<"chat" | "history">("chat");
   const [items, setItems] = React.useState<ConversationItem[] | "error" | null>(null);
   const showHistory = async () => {
@@ -156,6 +160,18 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   const [minAt, setMinAt] = React.useState<number | null>(null);
   const minimised = bar && minAt === version;
   const btn = bar ? "size-10" : "size-12";
+  React.useEffect(() => {
+    if (!plusOpen) return;
+    const close = (e: Event) => {
+      if (e instanceof KeyboardEvent ? e.key === "Escape" : !(e.target as Element).closest?.('[data-chat="plus"], [data-chat="plus-menu"]')) setPlusOpen(false);
+    };
+    document.addEventListener("pointerdown", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("pointerdown", close);
+      document.removeEventListener("keydown", close);
+    };
+  }, [plusOpen]);
   React.useEffect(() => {
     if (variant === "panel") input.current?.focus();
   }, [variant]);
@@ -210,7 +226,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   const said = talk.voice;
   const hint = talk.state === "speaking" && said?.name ? c("bv.speaking.in").replace("{language}", voice.languageNames[said.language ?? voice.language] ?? "").replace("{voice}", said.name) : null;
   const chipsEl = empty && chips.length > 0 ? (
-            <ul data-chat="chips" className={`flex flex-wrap gap-2 ${bar ? "min-w-0 shrink" : ""}`}>
+            <ul data-chat="chips" className={`flex flex-wrap gap-2 ${bar ? "min-w-0 pl-[76px]" : ""}`}>
               {chips.map((chip) => (
                 <li key={chip}>
                   <button type="button" data-write onClick={() => void s.ask(chip)} className={`inline-flex ${bar ? "min-h-9 px-3" : "min-h-10 px-3.5"} items-center rounded-full border border-edge bg-surface text-sm font-semibold text-ink hover:bg-surface-2`}>
@@ -220,78 +236,115 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
               ))}
             </ul>
           ) : null;
+  // the pieces of the bar (owner 31 Oct, design C): the language pill, the microphone (Dictate), Send and the prominent Talk button; the same pieces in the sheet on a phone
+  const pillEl = <LanguagePill value={chat.pill} onChange={chat.set} label={c("bv.lang.label")} auto={c("bv.lang.auto")} />;
+  const micEl = (
+    <button
+      type="button"
+      data-chat="dictate"
+      aria-pressed={dictating}
+      disabled={talk.active || dict.state === "connecting"}
+      onClick={dict.toggle}
+      aria-label={dictating ? c("bv.chat.dictate.stop") : c("bv.chat.dictate")}
+      title={dictating ? c("bv.chat.dictate.stop") : c("bv.chat.dictate")}
+      className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border disabled:opacity-50 ${dictating ? "border-brand-edge bg-brand text-on-brand" : bar ? "border-transparent bg-transparent text-ink hover:bg-surface-2" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}
+    >
+      {dictating ? <Square className="size-5" aria-hidden="true" /> : <Mic className="size-5" aria-hidden="true" />}
+    </button>
+  );
+  const sendEl = s.asking ? (
+    <button type="button" onClick={s.stop} aria-label={w("ask.stop")} title={w("ask.stop")} className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border border-edge bg-surface text-ink hover:bg-surface-2`}>
+      <Square className="size-4" aria-hidden="true" />
+    </button>
+  ) : (
+    <button type="submit" disabled={s.text.trim() === "" || dictating} aria-label={c("bv.chat.send")} title={c("bv.chat.send")} className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border border-brand-edge bg-brand text-on-brand disabled:opacity-50`}>
+      {bar ? <ArrowUp className="size-5" aria-hidden="true" /> : <Send className="size-5" aria-hidden="true" />}
+    </button>
+  );
+  /* Talk: a hands-free spoken conversation; it listens again after every answer, you may speak over it, and Stop (or about 30 s of silence) ends it. */
+  const talkEl = (
+    <button
+      type="button"
+      data-chat="live-talk"
+      aria-pressed={talk.active}
+      disabled={dictating}
+      onClick={() => (talk.active ? talk.stop() : void talk.start())}
+      aria-label={talk.active ? c("bv.chat.live.stop") : c("bv.chat.live.start")}
+      title={talk.active ? c("bv.chat.live.stop") : c("bv.chat.live.start")}
+      className={`inline-flex shrink-0 items-center justify-center gap-2 rounded-full border border-brand-edge bg-brand px-5 text-base font-bold text-on-brand hover:brightness-95 disabled:opacity-50 ${bar ? "min-h-14" : "min-h-12 flex-1"}`}
+    >
+      {talk.active ? <Square className="size-5" aria-hidden="true" /> : <AudioLines className="size-5" aria-hidden="true" />}
+      <span aria-hidden="true">{talk.active ? c("bv.talk.stop") : c("bv.talk.label")}</span>
+    </button>
+  );
+  const plusEl = bar ? (
+    <div className="relative shrink-0">
+      <button type="button" data-chat="plus" aria-haspopup="menu" aria-expanded={plusOpen} aria-label={c("bv.bar.plus")} title={c("bv.bar.plus")} onClick={() => setPlusOpen((v) => !v)} className="inline-flex size-10 items-center justify-center rounded-full text-ink hover:bg-surface-2">
+        <Plus className="size-5" aria-hidden="true" />
+      </button>
+      {plusOpen ? (
+        <div role="menu" data-chat="plus-menu" className="absolute left-0 top-full z-20 mt-2 flex min-w-56 flex-col rounded-xl border border-line bg-surface p-1 shadow-[var(--v2-shadow-pop)]">
+          <button type="button" role="menuitem" data-chat="new" onClick={() => { setPlusOpen(false); talk.stop(); s.newChat(); setView("chat"); }} className="flex min-h-10 items-center gap-2 rounded-lg px-3 text-left text-sm font-semibold hover:bg-surface-2">
+            <Plus className="size-4" aria-hidden="true" />
+            {c("bv.chat.new")}
+          </button>
+          <button type="button" role="menuitem" data-chat="history" onClick={() => { setPlusOpen(false); void showHistory(); }} className="flex min-h-10 items-center gap-2 rounded-lg px-3 text-left text-sm font-semibold hover:bg-surface-2">
+            <History className="size-4" aria-hidden="true" />
+            {c("bv.chat.history")}
+          </button>
+        </div>
+      ) : null}
+    </div>
+  ) : null;
   const formEl = (
     <form
-            data-write
-            data-chat="form"
-            className={bar ? "flex min-w-0 flex-1 basis-[22rem] items-center gap-2 rounded-full border border-edge bg-bg py-1 pl-1.5 pr-1.5" : "flex flex-col rounded-2xl border border-edge bg-surface px-3 pb-2 pt-1"}
-            onSubmit={(e) => {
-              e.preventDefault();
-              void s.ask(s.text);
-            }}
-          >
-            {bar ? <Orb px={40} state={orb} analyser={talk.active ? talk.analyser(talk.state === "speaking" ? "voice" : "mic") : null} /> : null}
-            <label htmlFor="chat-input" className="sr-only">
-              {c("bv.chat.placeholder")}
-            </label>
-            <textarea
-              id="chat-input"
-              ref={input}
-              rows={1}
-              value={s.text}
-              maxLength={MAX_QUESTION}
-              onChange={(e) => s.setText(e.target.value)}
-              onKeyDown={(e) => {
-                // Enter sends, Shift+Enter is a new line; not while a keyboard is still composing a word (Telugu, Hindi, Kannada)
-                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && e.keyCode !== 229) {
-                  e.preventDefault();
-                  e.currentTarget.form?.requestSubmit();
-                }
-              }}
-              placeholder={dictating ? c("bv.chat.dictating") : bar ? c("bv.bar.placeholder") : c("bv.chat.placeholder")}
-              readOnly={dictating}
-              autoComplete="off"
-              enterKeyHint="send"
-              className={`block w-full min-w-0 resize-none overflow-y-auto bg-transparent text-base leading-6 text-ink placeholder:text-muted ${bar ? "max-h-28 min-h-10 py-2" : "max-h-36 min-h-11 py-2.5"}`}
-            />
-            <div className={`flex items-center gap-2 ${bar ? "shrink-0" : "justify-end"}`} data-chat="actions">
-            {/* Dictate: the words go into the box (to edit), nothing is asked until Send; the reply is text only. Tap again to stop early. */}
-            <button
-              type="button"
-              data-chat="dictate"
-              aria-pressed={dictating}
-              disabled={talk.active || dict.state === "connecting"}
-              onClick={dict.toggle}
-              aria-label={dictating ? c("bv.chat.dictate.stop") : c("bv.chat.dictate")}
-              title={dictating ? c("bv.chat.dictate.stop") : c("bv.chat.dictate")}
-              className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border disabled:opacity-50 ${dictating ? "border-brand-edge bg-brand text-on-brand" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}
-            >
-              {dictating ? <Square className="size-5" aria-hidden="true" /> : <Mic className="size-5" aria-hidden="true" />}
-            </button>
-            {/* Live talk: a hands-free spoken conversation; it listens again after every answer, you may speak over it, and Stop (or about 30 s of silence) ends it. */}
-            <button
-              type="button"
-              data-chat="live-talk"
-              aria-pressed={talk.active}
-              disabled={dictating}
-              onClick={() => (talk.active ? talk.stop() : void talk.start())}
-              aria-label={talk.active ? c("bv.chat.live.stop") : c("bv.chat.live.start")}
-              title={talk.active ? c("bv.chat.live.stop") : c("bv.chat.live.start")}
-              className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border disabled:opacity-50 ${talk.active ? "border-brand-edge bg-brand text-on-brand" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}
-            >
-              {talk.active ? <Square className="size-5" aria-hidden="true" /> : <AudioLines className="size-5" aria-hidden="true" />}
-            </button>
-            {s.asking ? (
-              <button type="button" onClick={s.stop} aria-label={w("ask.stop")} title={w("ask.stop")} className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border border-edge bg-surface text-ink hover:bg-surface-2`}>
-                <Square className="size-4" aria-hidden="true" />
-              </button>
-            ) : (
-              <button type="submit" disabled={s.text.trim() === "" || dictating} aria-label={c("bv.chat.send")} title={c("bv.chat.send")} className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border border-brand-edge bg-brand text-on-brand disabled:opacity-50`}>
-                <Send className="size-5" aria-hidden="true" />
-              </button>
-            )}
-            </div>
-          </form>
+      data-write
+      data-chat="form"
+      className={bar ? "flex min-h-14 min-w-0 flex-1 items-center gap-1.5 rounded-full border border-edge bg-bg px-2" : "flex flex-col rounded-2xl border border-edge bg-surface px-3 pb-2 pt-1"}
+      onSubmit={(e) => {
+        e.preventDefault();
+        void s.ask(s.text);
+      }}
+    >
+      {plusEl}
+      <label htmlFor="chat-input" className="sr-only">
+        {c("bv.chat.placeholder")}
+      </label>
+      <textarea
+        id="chat-input"
+        ref={input}
+        rows={1}
+        value={s.text}
+        maxLength={MAX_QUESTION}
+        onChange={(e) => s.setText(e.target.value)}
+        onKeyDown={(e) => {
+          // Enter sends, Shift+Enter is a new line; not while a keyboard is still composing a word (Telugu, Hindi, Kannada)
+          if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing && e.keyCode !== 229) {
+            e.preventDefault();
+            e.currentTarget.form?.requestSubmit();
+          }
+        }}
+        placeholder={dictating ? c("bv.chat.dictating") : bar ? c("bv.bar.placeholder") : c("bv.chat.placeholder")}
+        readOnly={dictating}
+        autoComplete="off"
+        enterKeyHint="send"
+        className={`block w-full min-w-0 resize-none overflow-y-auto bg-transparent text-base leading-6 text-ink placeholder:text-muted ${bar ? "max-h-32 min-h-10 px-1 py-2" : "max-h-36 min-h-11 py-2.5"}`}
+      />
+      {bar ? (
+        <>
+          {pillEl}
+          {micEl}
+          {sendEl}
+        </>
+      ) : (
+        <div className="flex items-center gap-2" data-chat="actions">
+          {pillEl}
+          {micEl}
+          {talkEl}
+          {sendEl}
+        </div>
+      )}
+    </form>
   );
   const content = (
     <>
@@ -378,8 +431,19 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           </ul>
           {s.asking && !s.answer ? <p role="status" className="mt-2 text-sm text-muted">{c("bv.chat.working")}</p> : null}
         </div>
-        <div className={bar ? "order-1 flex flex-col gap-2 p-2.5" : "shrink-0 space-y-2 border-t border-line bg-surface px-3 pb-3 pt-2"}>
-          {bar ? <div className="flex flex-wrap items-center gap-2">{formEl}{chipsEl}</div> : chipsEl}
+        <div className={bar ? "order-1 flex flex-col gap-3 p-3" : "shrink-0 space-y-2 border-t border-line bg-surface px-3 pb-3 pt-2"}>
+          {bar ? (
+            <>
+              <div data-chat="bar-row" className="flex items-center gap-3">
+                <Orb px={64} state={orb} analyser={talk.active ? talk.analyser(talk.state === "speaking" ? "voice" : "mic") : null} />
+                {formEl}
+                {talkEl}
+              </div>
+              {chipsEl}
+            </>
+          ) : (
+            chipsEl
+          )}
           {talk.active ? <LiveStatus talk={talk} c={c} /> : null}
           {dictating ? <p data-chat="dictating" role="status" className="text-sm font-medium text-muted">{c("bv.chat.dictating")}</p> : null}
           {dict.error ? <p data-chat="dictate-error" role="status" className="text-sm text-amber-text">{w(ERROR_WORD[dict.error] ?? PROBLEM_WORDS[dict.error] ?? "ask.mic.failed")}</p> : null}
@@ -398,7 +462,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     </>
   );
   return variant === "bar" ? (
-    <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="bar" onKeyDown={onKeyDown} className="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-line bg-surface">
+    <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="bar" onKeyDown={onKeyDown} className="flex min-w-0 flex-col rounded-3xl border border-line bg-surface">
       {content}
     </div>
   ) : variant === "card" ? (

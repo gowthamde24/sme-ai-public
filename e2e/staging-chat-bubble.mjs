@@ -117,7 +117,7 @@ try {
   await panel.locator('[data-chat="close"]').click();
   // 2. Today's card: the mic works in place
   await p.goto(s.base, { waitUntil: "domcontentloaded" });
-  const card = p.locator('[data-chat="card"]');
+  const card = p.locator('[data-chat="bar"]');
   await card.waitFor({ timeout: 45000 });
   await sleep(1500);
   ok("Today: the chat is in the assistant's card (in place, no dialog)", (await p.getByRole("dialog").count()) === 0);
