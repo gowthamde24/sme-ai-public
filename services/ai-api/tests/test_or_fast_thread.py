@@ -421,3 +421,27 @@ async def test_an_early_start_writes_nothing_to_the_thread_until_it_is_confirmed
     assert pieces and db.names().count("begin") == 1 and "save" in db.names()
     ft.stale = True
     assert ft.speculate("s", [{"role": "user", "content": "x y z"}], "m") is None, "a thread that has to be read again is not worth an early start"
+
+
+@arun
+async def test_the_early_start_also_fires_at_the_recogniser_s_end_of_speech_even_when_the_words_were_never_stable() -> None:
+    from app.conversation.parts import SttEvent, TurnTimings
+
+    class Quick:
+        sample_rate = 16000
+
+        async def events(self, frames: Any) -> Any:
+            yield SttEvent("speech_start")
+            yield SttEvent("partial", "what is the price of this saree")   # no stable moment: the end of speech follows at once
+            yield SttEvent("speech_end")
+            await asyncio.sleep(0.05)   # the final transcript is still being made
+            yield SttEvent("final", "What is the price of this saree?")
+
+    llm = SpecLlm()
+    conv = spec_conversation(Quick(), llm)
+    conv.STABLE_S = 5.0
+    tm = TurnTimings()
+    text = await conv.listen(Src2(), tm)
+    assert llm.started == ["what is the price of this saree"], "started at speech_end, before the final"
+    await conv.respond(text or "", tm)
+    assert llm.served == ["what is the price of this saree"] and llm.streamed == [] and conv.speculations["used"] == 1

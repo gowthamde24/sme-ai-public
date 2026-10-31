@@ -98,6 +98,7 @@ class Conversation:
         # A3 (speculative start): the model starts on a stable partial that looks finished, before the final transcript; `can_speculate(text)` says whether this words go to a tier that may (the session's pure check)
         self.can_speculate = can_speculate
         self._spec: Any = None
+        self._last_partial = ""
         self._spec_timer: asyncio.TimerHandle | None = None
         self.speculations = {"started": 0, "used": 0, "dropped": 0}
         self.pauses = pause_model if pause_model is not None else PauseModel()
@@ -177,12 +178,16 @@ class Conversation:
                     self._note_partial(ev.text)
                 elif ev.kind == "speech_start":
                     self._drop_spec()
+                    self._last_partial = ""
                 if ev.kind == "speech_start":
                     tm.speech_start_at = tm.speech_start_at if tm.speech_start_at is not None else now
                     if interrupt:
                         await self.interrupt()
                 elif ev.kind == "speech_end":
                     tm.eot_at = now
+                    if self.can_speculate and self._last_partial:
+                        self._cancel_timer()
+                        self._speculate(self._last_partial)   # the recogniser says the caller stopped: the words so far are almost surely the final ones, and the final transcript is still on its way
                 elif ev.kind == "final":
                     tm.final_at = now
                     if tm.eot_at is None:
@@ -222,6 +227,7 @@ class Conversation:
     STABLE_S = 0.15   # the words have not changed for this long
 
     def _note_partial(self, text: str) -> None:
+        self._last_partial = text
         if not self.can_speculate or self.llm is None:
             return
         self._cancel_timer()
