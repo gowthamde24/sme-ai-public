@@ -612,6 +612,10 @@ begin
     (tests.rid(p || '_er_task'), t, 'Tskq7 ask the suppliers for the price', 'en', 'Which Tskq7 suppliers?', 'The three Tskq7 ones', '{"goal": "Tskq7 prices"}'::jsonb, tests.uid(p || '_owner'));
   insert into public.task_contacts (id, tenant_id, task_id, contact_id, lead_id, captured, transcript) values
     (tests.rid(p || '_er_taskc'), t, tests.rid(p || '_er_task'), k, l, '{"price": "Tskq7"}'::jsonb, '[{"who": "contact", "text": "Tskq7 here"}]'::jsonb);
+  -- job phone-calls part 1: what an AI call captured, its summary and its transcript carry a business canary, erased with the workspace and swept
+  insert into public.phone_numbers (id, tenant_id, number, label) values (tests.rid(p || '_er_pnum'), t, '+9180' || substr(translate(tests.rid(p || '_er_pnum')::text, 'abcdef-', '1234567'), 1, 8), 'Phcq7 shop line');
+  insert into public.phone_calls (id, tenant_id, direction, provider, state, contact_id, lead_id, captured, summary, transcript) values
+    (tests.rid(p || '_er_call'), t, 'outbound', 'sandbox', 'queued', k, l, '{"price": "Phcq7"}'::jsonb, 'Phcq7 wants a visit on Saturday', '[{"who": "caller", "text": "Phcq7 here"}]'::jsonb);
 end $$;
 
 -- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).
