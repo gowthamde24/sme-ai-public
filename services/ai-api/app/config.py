@@ -286,6 +286,12 @@ class Settings(BaseSettings):
     # CARTESIA_API_KEY, ANTHROPIC_API_KEY for the default turn model). Caps are per workspace.
     browser_voice_enabled: bool = False
     browser_voice_session_seconds: int = 3600
+    # Live conversation standard (owner, 31 Oct 2026): an unfinished thought is not
+    # answered (A1/A2);
+    # a sound while the assistant speaks pauses it and a cough or a "hmm" lets it go on (B1/B2).
+    # Both default on.
+    browser_voice_semantic_turns: bool = True
+    browser_voice_verify_barge_in: bool = True
     browser_voice_day_seconds: int = 7200
     # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the built-in defaults
     browser_voice_stt_modes: str = ""

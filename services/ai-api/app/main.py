@@ -942,6 +942,8 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         day_seconds=settings.browser_voice_day_seconds,
         day_tts_chars=settings.browser_voice_day_tts_chars,
         sessions_per_minute=settings.browser_voice_sessions_per_minute,
+        semantic_turns=settings.browser_voice_semantic_turns,
+        verify_barge_in=settings.browser_voice_verify_barge_in,
     )
     return BrowserVoice(
         config=voice_catalogue(),

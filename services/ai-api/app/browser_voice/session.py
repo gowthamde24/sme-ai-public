@@ -19,6 +19,7 @@ from typing import Any, Literal, Protocol
 from app.assistant.language import detect_owner_language
 from app.browser_voice.audio import IN_RATE, OUT_RATE, PREROLL_S, BrowserPlayout, FrameBus
 from app.browser_voice.limits import Ledger, Limits, Usage, log_usage
+from app.conversation.endpointing import endpoint_ms
 from app.conversation.fillers import BROWSER_FILLER_AFTER_MS, FillerBank
 from app.conversation.parts import (
     Session,
@@ -30,6 +31,16 @@ from app.conversation.parts import (
 )
 from app.conversation.pipeline import Conversation
 from app.conversation.router import Tier
+from app.conversation.turntaking import (
+    CHECK_IN,
+    GOODBYE_QUIET,
+    GOODBYE_REPLY,
+    RESUME_AFTER_MS,
+    classify_interruption,
+    is_goodbye,
+    silence_action,
+    soft_warning_due,
+)
 from app.turns.intent import Kind as TurnKind
 from app.turns.intent import classify, is_yes_no, normalise
 
@@ -149,6 +160,7 @@ class VoiceSession:
             tools_available=True,
             on_stt=self._on_stt,
             router=self._route,
+            semantic_turns=limits.semantic_turns,
         )
         self._previous: TurnKind | None = None
         self.pending_action: uuid.UUID | None = None
@@ -166,6 +178,10 @@ class VoiceSession:
         self._started = clock()
         self._accounted = 0.0
         self._closing = asyncio.Event()
+        self._carry: str | None = None   # what the caller said while we spoke and it turned out to be a real interruption: their next turn, already heard
+        self._judging: asyncio.Task[None] | None = None
+        self._warned = False
+        self._checked_in = False
 
     # ---- events to the browser -----------------------------------------------------------------------------------------------------------------
 
@@ -325,7 +341,7 @@ class VoiceSession:
                 continue
             what = payload.get("type")
             if what == "barge_in":
-                await self._barge_in()
+                await self._barge_in(verify=bool(payload.get("verify")) and self.limits.verify_barge_in)
             elif what == "set_language" and payload.get("language") in LANGUAGES:
                 if self._turn_active:
                     self._pending_language = str(payload["language"])   # a turn never changes voice or language half way: it takes effect at the next turn
@@ -387,11 +403,23 @@ class VoiceSession:
             return
         await self._set_language(found)
 
-    async def _barge_in(self) -> None:
-        """'The caller started speaking': stop the voice within ~200 ms. The line is stopped FIRST (the browser flushes what it queued), then the model and the voice are cancelled."""
+    async def _barge_in(self, verify: bool = False) -> None:
+        """'The caller started speaking': stop the voice within ~200 ms. Without `verify` it is final: the line is stopped FIRST (the browser flushes what it queued), then the model and the voice are cancelled.
+        With `verify` (standard B1/B2) the line is only PAUSED and the sound is judged: a cough, a click, a TV or a "hmm" lets the reply go on where it stopped; real words end it."""
         t0 = self.clock()
         if self._greeting is not None and not self._greeting.done():
             self._greeting.cancel()
+            verify = False
+        if verify and self.conv.speaking and not self.conv.is_paused:
+            ms = await self.conv.pause()
+            if ms is not None:
+                await self._send({"type": "state", "state": "paused"})
+                await self._send({"type": "paused", "ms": round(ms)})
+                self._judging = asyncio.ensure_future(self._judge_interruption())
+                return
+        await self._hard_stop(t0)
+
+    async def _hard_stop(self, t0: float) -> None:
         ms = await self.conv.interrupt()
         if ms is None and not self.playout.active:
             await self._send({"type": "interrupted", "ms": 0})
@@ -399,7 +427,35 @@ class VoiceSession:
         await self._send_stop()
         self.usage.interrupts += 1
         self.bus.drop_before(PREROLL_S)  # our own voice in the microphone is gone; the first syllable of the interrupting caller stays
-        await self._send({"type": "interrupted", "ms": round((self.clock() - t0) * 1000)})
+        spoken = self.conv._current.spoken_text if self.conv._current is not None else ""  # noqa: SLF001
+        await self._send({"type": "interrupted", "ms": round((self.clock() - t0) * 1000), "spoken": spoken})
+
+    async def _judge_interruption(self) -> None:
+        """The line is paused for a sound. Listen to what it was: words (two real ones, or a longer speech) end the reply and become the caller's next turn; "hmm", "haan", "ok", a cough or a TV let it go on after
+        ~1.8 s of quiet (B2/B4)."""
+        t0 = self.clock()
+        tm = TurnTimings()
+        text: str | None = None
+        try:
+            text = await asyncio.wait_for(self.conv.listen(self.bus, tm, interrupt=False, hold=False), timeout=RESUME_AFTER_MS / 1000.0 + 1.5)
+        except TimeoutError:
+            text = None
+        except asyncio.CancelledError:
+            raise
+        except Exception as err:
+            log.warning("browser_voice_judge_failed code=%s", getattr(err, "code", type(err).__name__))
+        speech_ms = max(0, int((tm.eot_at - tm.speech_start_at) * 1000) - endpoint_ms(self.language)) if tm.eot_at is not None and tm.speech_start_at is not None else 0   # (the recogniser's end comes after the quiet that ends a turn)
+        kind = classify_interruption(speech_ms, text)
+        if kind == "barge_in":
+            self._carry = text
+            await self._hard_stop(t0)
+            return
+        quiet = RESUME_AFTER_MS / 1000.0 - (self.clock() - (tm.eot_at or t0))
+        if quiet > 0:
+            await asyncio.sleep(quiet)   # picks up again only after the line has been quiet for a moment
+        if await self.conv.resume():
+            await self._send({"type": "state", "state": "speaking"})
+            await self._send({"type": "resumed", "after": kind})
 
     async def _timer(self) -> None:
         """The caps: the session's length and the workspace's day."""
@@ -411,6 +467,9 @@ class VoiceSession:
                 last_flush = self.clock()
                 await asyncio.to_thread(self.ledger.flush, self.tenant_id, self._token)  # other instances see this session's use within seconds
             elapsed = self.clock() - self._started
+            if soft_warning_due(elapsed, self.limits.session_seconds, self._warned):
+                self._warned = True
+                await self._send({"type": "notice", "code": "session_ending", "seconds_left": round(self.limits.session_seconds - elapsed)})
             if elapsed >= self.limits.session_seconds:
                 await self._limit("session")
                 return
@@ -441,10 +500,10 @@ class VoiceSession:
             await self._set_state("listening")
             tm = TurnTimings()
             try:
-                text = await asyncio.wait_for(self.conv.listen(self.bus, tm), timeout=self.idle_s)
+                carried, self._carry = self._carry, None
+                text = carried if carried is not None else await self._listen_for_turn(tm)   # (carried: they spoke over us and it was a real interruption: already their turn)
             except TimeoutError:
-                self._ended = "idle"
-                await self._send({"type": "limit", "reason": "idle", "fatal": True})
+                await self._end_for_silence()
                 return
             except asyncio.CancelledError:
                 raise
@@ -463,6 +522,10 @@ class VoiceSession:
                     return
                 continue
             failures = 0
+            self._checked_in = False
+            if is_goodbye(text):
+                await self._say_goodbye(text)
+                return
             if self.pending_action is not None and is_yes_no(text):
                 decision = self._polarity(text)
                 await self._confirm(self.pending_action, decision)
@@ -486,6 +549,48 @@ class VoiceSession:
             finally:
                 await self._end_turn()
             self.bus.drop_before(0.0 if not tm.interrupted else PREROLL_S)
+
+    async def _listen_for_turn(self, tm: TurnTimings) -> str | None:
+        """Listen for the caller's turn. When the line has been quiet for ~8 s one gentle check-in; the end comes at the idle limit (standard D3)."""
+        started = self.clock()
+        self._last_sound = started
+        task = asyncio.ensure_future(self.conv.listen(self.bus, tm))
+        try:
+            while True:
+                done, _ = await asyncio.wait({task}, timeout=1.0)
+                if done:
+                    return task.result()
+                quiet = self.clock() - max(started, self._last_sound)
+                action = silence_action(quiet, self._checked_in) if self.idle_s >= 15 else ("end" if quiet >= self.idle_s else "wait")
+                if action == "end":
+                    raise TimeoutError
+                if action == "check_in":
+                    self._checked_in = True
+                    await self._say(CHECK_IN.get(self.language, CHECK_IN["en"]))
+                    self.bus.drop_before(0.0)   # our own question came back through the microphone
+                    started = self.clock() - 8.0   # (the quiet clock goes on from where it was: the end still comes at ~30 s in all)
+                    self._last_sound = self.clock() - 8.0
+        finally:
+            if not task.done():
+                task.cancel()
+                with suppress(asyncio.CancelledError, Exception):
+                    await task
+
+    async def _end_for_silence(self) -> None:
+        self._ended = "idle"
+        await self._say(GOODBYE_QUIET.get(self.language, GOODBYE_QUIET["en"]))
+        await self._send({"type": "limit", "reason": "idle", "fatal": True})
+
+    async def _say_goodbye(self, text: str) -> None:
+        """'bye', 'thank you, that's all', 'ఇంక చాలు': a short goodbye in their language, then the microphone stops at once (D4)."""
+        self._turn_active = True
+        try:
+            await self._follow_language(text)
+            await self._say(GOODBYE_REPLY.get(self.language, GOODBYE_REPLY["en"]))
+        finally:
+            await self._end_turn()
+        self._ended = "goodbye"
+        await self._send({"type": "limit", "reason": "goodbye", "fatal": True})
 
     async def _dictate(self) -> None:
         """Dictate: the same recogniser (language auto, verbatim), words only. The live `transcript` partials and the final ones go to the browser to fill the text box; the assistant is NEVER called, nothing is spoken, no turn is stored.
