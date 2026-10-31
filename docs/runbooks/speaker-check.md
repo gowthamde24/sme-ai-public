@@ -13,6 +13,10 @@ It never says who anyone is, never compares across sessions, and **phone calls a
 | Where it runs | on our side, in the API process, onnxruntime on one CPU thread; nothing is sent to any provider |
 | Pinned in the image | Hugging Face `Luigi/campplus-zh-en-onnx` revision `aa79cf9b`, sha256 `aa3cfc16...`, by `deploy/fetch_audio_turn_model.py`; loaded only when `BROWSER_VOICE_SPEAKER_CHECK` is `shadow` or `on` |
 
+## Status
+
+Staging runs it in `shadow` for the owner's browser sessions (`BROWSER_VOICE_SPEAKER_CHECK=shadow` in `deploy/staging.sh`): each judged interruption logs `browser_voice_speaker mode= same= score= ms=` (numbers only: no audio, no signature, no words) and sends the same to the browser. `on` stays off until a recording of the owner plus a real TV or YouTube voice ("voice-9") shows separation. The language gate (`BROWSER_VOICE_LANGUAGE_GATE`, off) is removed in the same PR that turns the speaker check `on`.
+
 ## What is kept, and for how long
 
 A signature (the mean of up to 8 embeddings of what the person said in the session) **in memory only, for one session**. Never written to disk, a database, a log, analytics or any provider (a test fails if the code opens a file for writing); dropped when the session ends (`SessionVoice.close()`, called from `VoiceSession.run`'s `finally`). No signature yet (the first turn), too little speech (under 0.8 s) or an unclear answer: the sound is treated as the person, an interruption (stopping beats talking over the owner). The first two turns build the signature freely; later turns are added only if they still match (a TV does not drift it). Stop words always interrupt.
@@ -32,6 +36,6 @@ Chosen: fp32, threshold **0.40** (`speaker.SAME_AT_LEAST`). The time is spent AF
 
 **Voice 6 (the owner with a TV behind), 1.5 s windows every 0.75 s against the owner's signature:** 0.0 to 1.5 s (quiet music, no speech): **0.06 (different)**; every window with speech from 0.75 s to 8.25 s: 0.58, 0.72, 0.68, 0.64, 0.62, 0.58, 0.73, 0.76, 0.58 (**the owner's voice**, the same range as the owner's own windows in the clean recordings). So there is exactly one non-owner stretch in that recording, the music; the stretches the owner labelled as TV speech ("Maatlu ippudu edaina", "Peddam", "Let's find out the dates") sound like the owner: the recogniser, pinned to Telugu, writes them as the owner's own line ("ఇప్పుడు ఏదైనా చేద్దాం", "చేద్దాం", "ఫైండ్ అవుట్ చేద్దాం"). Either the TV said almost the same words in a voice like the owner's, or those labels are the owner's own speech mis-heard as English. **The separation on real TV speech could not be shown with this recording; it needs one with a clearly different voice on the TV.**
 
-## Draft line for the privacy notice (for the owner to approve; NOT published)
+## Privacy-notice line (wording APPROVED by the owner 31 Oct 2026, with "in the app"; UNPUBLISHED until the speaker check goes `on`)
 
-> "During a voice conversation, your voice is compared with the earlier part of the same conversation so that other voices in the background, such as a television, do not interrupt the assistant. This comparison happens in memory on our server for the length of the conversation only; nothing about your voice is stored or kept after it ends."
+> "During a voice conversation in the app, your voice is compared with the earlier part of the same conversation so that other voices in the background, such as a television, do not interrupt the assistant. This comparison happens in memory on our server for the length of the conversation only; nothing about your voice is stored or kept after it ends."

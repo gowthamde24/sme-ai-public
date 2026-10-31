@@ -221,3 +221,30 @@ def test_the_real_model_separates_voices_and_is_fast_when_a_file_is_given() -> N
     vector = model.embed(clip)
     assert vector is not None and vector.shape == (192,) and abs(float(np.linalg.norm(vector)) - 1.0) < 1e-3 and time.perf_counter() - began < 1.0
     assert model.embed(silence(300)) is None
+
+
+@arun
+async def test_the_shadow_run_logs_the_numbers_only() -> None:
+    import logging
+
+    records: list[str] = []
+
+    class Catch(logging.Handler):
+        def emit(self, record: logging.LogRecord) -> None:
+            records.append(record.getMessage())
+
+    handler, logger = Catch(), logging.getLogger("app.browser_voice")
+    logger.addHandler(handler)
+    previous = logger.level
+    logger.setLevel(logging.INFO)
+    try:
+        sock, session, _ = session_with("shadow", 0.37, later="I meant five hundred")
+        await interrupt(sock, session)
+        await until(lambda: "interrupted" in sock.types(), seconds=8)
+        sock.inbox.put_nowait(("close", None))
+    finally:
+        logger.removeHandler(handler)
+        logger.setLevel(previous)
+    lines = [r for r in records if r.startswith("browser_voice_speaker")]
+    assert len(lines) == 1 and lines[0].startswith("browser_voice_speaker mode=shadow same=False score=0.37 ms="), lines
+    assert not any("five hundred" in r for r in records), "no words of the caller in any log line"

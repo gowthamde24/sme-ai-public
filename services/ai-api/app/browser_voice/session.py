@@ -520,7 +520,10 @@ class VoiceSession:
         clip = self.bus.recent()[-3 * IN_RATE * 2 :]
         score = await asyncio.to_thread(voice.similarity, clip)
         same = None if score is None else score >= speaker.SAME_AT_LEAST
-        await self._send({"type": "speaker", "mode": self.limits.speaker_check, "same": same, "score": None if score is None else round(score, 2), "ms": round((self.clock() - began) * 1000)})
+        took_ms = round((self.clock() - began) * 1000)
+        await self._send({"type": "speaker", "mode": self.limits.speaker_check, "same": same, "score": None if score is None else round(score, 2), "ms": took_ms})
+        # (owner, 31 Oct 2026) the numbers only, so the shadow run can be judged: no audio, no signature, no words, no ids
+        log.info("browser_voice_speaker mode=%s same=%s score=%s ms=%s", self.limits.speaker_check, same, None if score is None else round(score, 2), took_ms)
         return "noise" if (self.limits.speaker_check == "on" and same is False) else kind
 
     async def _timer(self) -> None:
