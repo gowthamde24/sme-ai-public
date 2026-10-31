@@ -313,7 +313,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     yield* planEvents(heard, crypto.randomUUID(), signal);
   }
 
-  const ask = async (raw: string) => {
+  const ask = async (raw: string, replyLanguage?: string | null) => {
     const question = raw.trim().slice(0, MAX_QUESTION);
     if (!question) return;
     if (modeRef.current === "do" && doIt) {
@@ -322,7 +322,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
       return;
     }
     if (transport === null) return;
-    await run(question, (signal) => transport({ question, lang, signal, conversationId: convRef.current }), false, false);
+    await run(question, (signal) => transport({ question, lang, signal, conversationId: convRef.current, replyLanguage }), false, false);
   };
 
   /** A recording is the question. A spoken answer is asked for only when the person wants voice answers played (it is paid for by the same allowance, so it is not made to be thrown away). */

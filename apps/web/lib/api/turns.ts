@@ -80,14 +80,17 @@ export function parseTurnEvent(name: string, data: unknown): TurnEvent | null {
   }
 }
 
-export type TurnInput = { messageId: string; conversationId: string | null; text: string; languageHint?: AssistantLanguage | null };
+/** `language`: the chat's language pill: "auto" (the API detects it, as always) or the language the reply is written in, whatever the words are. */
+export const REPLY_LANGUAGES = ["auto", "te", "en", "hi", "kn", "ta", "ml"] as const;
+export type ReplyLanguage = (typeof REPLY_LANGUAGES)[number];
+export type TurnInput = { messageId: string; conversationId: string | null; text: string; languageHint?: AssistantLanguage | null; language?: ReplyLanguage | null };
 const LANGS = ["te", "en", "hi", "kn"];
 
 export async function* sendTurn(token: string, tenantId: string, input: TurnInput): AsyncGenerator<TurnEvent> {
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(input.messageId) || (input.conversationId !== null && !isCanonicalUuid(input.conversationId))) throw new ApiContractError("id");
   const t = input.text.trim();
   if (t.length < 1 || t.length > 4000) throw new ApiContractError("text");
-  const response = await apiStreamRequest(`/v1/tenants/${tenantId}/assistant/turns`, token, { message_id: input.messageId, conversation_id: input.conversationId, text: t, language_hint: input.languageHint && LANGS.includes(input.languageHint) ? input.languageHint : null });
+  const response = await apiStreamRequest(`/v1/tenants/${tenantId}/assistant/turns`, token, { message_id: input.messageId, conversation_id: input.conversationId, text: t, language_hint: input.languageHint && LANGS.includes(input.languageHint) ? input.languageHint : null, ...(input.language ? { language: input.language } : {}) });
   for await (const { name, data } of readSse(response.body as ReadableStream<Uint8Array>)) {
     const event = parseTurnEvent(name, data);
     if (event !== null) yield event;

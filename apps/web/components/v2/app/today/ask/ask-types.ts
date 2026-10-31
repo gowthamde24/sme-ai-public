@@ -42,7 +42,7 @@ export const ERROR_CODES = [
   "voice_too_long", "voice_too_short", "voice_no_speech", "voice_unavailable", "voice_failed", "network",
 ] as const;
 
-export type AskRequest = { question: string; lang: string; signal: AbortSignal; /** The conversation to go on in; null starts a new one (the conversation panel). */ conversationId?: string | null };
+export type AskRequest = { question: string; lang: string; signal: AbortSignal; /** The conversation to go on in; null starts a new one (the conversation panel). */ conversationId?: string | null; /** The chat's language pill: "auto" or the language to reply in whatever the words are; absent = as before (the API detects it). */ replyLanguage?: string | null };
 export type AskTransport = (request: AskRequest) => AsyncIterable<AskEvent>;
 
 /** A recording to ask with (job BF). `speak`: also ask for the answer to be spoken. */

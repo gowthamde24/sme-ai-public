@@ -12,7 +12,8 @@ import { ChatPanel } from "./ChatPanel";
 import { useAskSession } from "./use-ask-session";
 
 const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("bv.")));
-const voice = { words: WORDS, url: "wss://x/v1/tenants/t/voice-chat", language: "en" as const, languageNames: CALL_LANG_NAMES, tokenUrl: "/app/tenants/t/voice-token" };
+let voiceOverride: Record<string, unknown> = {};
+const voiceBase = { words: WORDS, url: "wss://x/v1/tenants/t/voice-chat", language: "en" as const, languageNames: CALL_LANG_NAMES, tokenUrl: "/app/tenants/t/voice-token" };
 
 class Sock implements SocketLike {
   binaryType = "";
@@ -53,18 +54,18 @@ async function* answer(text: string): AsyncGenerator<AskEvent> {
   yield { type: "text", delta: text };
   yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
 }
-const asks: { question: string; conversationId?: string | null }[] = [];
+const asks: { question: string; conversationId?: string | null; replyLanguage?: string | null }[] = [];
 let sideCalls: Record<string, unknown>[] = [];
 let sideAnswer: (body: Record<string, unknown>) => unknown = () => ({ ok: true });
 let reply = "It is **five** pieces.\n- Silk\n- Cotton";
 const orbs: (string | null)[] = [];
 
 function Harness({ onClose = () => undefined, variant }: { onClose?: () => void; variant?: "panel" | "card" | "bar" }) {
-  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: {}, availability: "live", transport: ({ question, conversationId }) => (asked.push(question), asks.push({ question, conversationId }), answer(question === "PLAN" || question === "CLARIFY" ? question : reply)), voiceStatus: { available: false, speech: false } });
+  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: {}, availability: "live", transport: ({ question, conversationId, replyLanguage }) => (asked.push(question), asks.push({ question, conversationId, replyLanguage }), answer(question === "PLAN" || question === "CLARIFY" ? question : reply)), voiceStatus: { available: false, speech: false } });
   React.useEffect(() => {
     orbs.push(s.voiceOrb);
   }, [s.voiceOrb]);
-  return <ChatPanel session={s} chips={["Draft a follow-up for today's leads"]} voice={voice} variant={variant} onClose={onClose} voiceOptions={{ audioFactory: audio, socketFactory: () => (sock = new Sock()) }} />;
+  return <ChatPanel session={s} chips={["Draft a follow-up for today's leads"]} voice={{ ...voiceBase, ...voiceOverride }} variant={variant} onClose={onClose} voiceOptions={{ audioFactory: audio, socketFactory: () => (sock = new Sock()) }} />;
 }
 const draw = (props: { onClose?: () => void; variant?: "panel" | "card" | "bar" } = {}) => render(<Harness {...props} />);
 const type = async (text: string) => {
@@ -471,7 +472,7 @@ describe("the conversation panel", () => {
     expect(document.querySelector('[data-chat="thread"]')).toHaveTextContent("price of silk?");
     await type("and yesterday?");
     await send();
-    expect(asks.at(-1)).toEqual({ question: "and yesterday?", conversationId: id });
+    expect(asks.at(-1)).toMatchObject({ question: "and yesterday?", conversationId: id });
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Earlier conversations" })));
     await act(async () => void fireEvent.click(await screen.findByRole("button", { name: "Hide" })));
     expect(sideCalls.at(-1)).toEqual({ op: "archive", id });
@@ -597,6 +598,29 @@ describe("the command bar (owner's design C) and the language pill", () => {
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Stop dictating" })));
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "More" })));
     expect(screen.getByRole("menu").querySelectorAll('[role="menuitem"]')).toHaveLength(2);
+  });
+  it("a person whose profile says Hindi sees Hindi on the pill; picking a language saves it on the profile (a plain POST) and in this browser", async () => {
+    voiceOverride = { chatLanguage: "hi", chatLanguageUrl: "/app/tenants/t/chat-language" };
+    draw({ variant: "bar" });
+    const pill = screen.getByRole("combobox", { name: "Language" }) as HTMLSelectElement;
+    expect(pill.value).toBe("hi"); // the profile's choice, not the app's language
+    await act(async () => void fireEvent.change(pill, { target: { value: "kn" } }));
+    const fetchMock = globalThis.fetch as unknown as { mock: { calls: [string, { body?: string }][] } };
+    const saved = fetchMock.mock.calls.find((c) => c[0] === "/app/tenants/t/chat-language");
+    expect(JSON.parse(saved![1].body!)).toEqual({ language: "kn" });
+    expect(window.localStorage.getItem("sme_chat_lang")).toBe("kn");
+    voiceOverride = {};
+  });
+  it("a typed question carries the pill: Telugu is asked in Telugu, Auto sends the word auto", async () => {
+    window.localStorage.setItem("sme_chat_lang", "te");
+    draw({ variant: "bar" });
+    await type("price of silk?");
+    await send();
+    expect(asks.at(-1)).toMatchObject({ question: "price of silk?", replyLanguage: "te" });
+    await act(async () => void fireEvent.change(screen.getByRole("combobox", { name: "Language" }), { target: { value: "auto" } }));
+    await type("and cotton?");
+    await send();
+    expect(asks.at(-1)).toMatchObject({ question: "and cotton?", replyLanguage: "auto" });
   });
   it("the sheet on a phone has the same pieces: pill, Dictate, Talk, Send", () => {
     draw({ variant: "panel" });

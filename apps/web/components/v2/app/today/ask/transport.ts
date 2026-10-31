@@ -78,13 +78,13 @@ async function* readEvents(body: ReadableStream<Uint8Array>, signal: AbortSignal
  */
 export function makeAskTransport(endpoint: string, fetcher: typeof fetch = (...a) => fetch(...a)): AskTransport {
   const conversationId = crypto.randomUUID();
-  return async function* ask({ question, signal, conversationId: given }) {
+  return async function* ask({ question, signal, conversationId: given, replyLanguage }) {
     let response: Response;
     try {
       response = await fetcher(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: question, messageId: crypto.randomUUID(), conversationId: given === undefined ? conversationId : given }),
+        body: JSON.stringify({ text: question, messageId: crypto.randomUUID(), conversationId: given === undefined ? conversationId : given, ...(replyLanguage ? { language: replyLanguage } : {}) }),
         signal,
         cache: "no-store",
         credentials: "same-origin",

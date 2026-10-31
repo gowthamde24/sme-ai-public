@@ -43,6 +43,8 @@ describe("a conversation turn's events", () => {
     for await (const e of sendTurn("tok", T, { messageId: M, conversationId: null, text: "  call the new leads  ", languageHint: "en" })) got.push(e.type);
     expect(got).toEqual(["intent", "confirm_action", "done"]);
     expect(stream).toHaveBeenCalledWith(`/v1/tenants/${T}/assistant/turns`, "tok", { message_id: M, conversation_id: null, text: "call the new leads", language_hint: "en" });
+    for await (const _ of sendTurn("tok", T, { messageId: M, conversationId: null, text: "price?", language: "te" })) void _;
+    expect(stream).toHaveBeenLastCalledWith(`/v1/tenants/${T}/assistant/turns`, "tok", { message_id: M, conversation_id: null, text: "price?", language_hint: null, language: "te" }); // the pill: the reply is in that language
     await expect((async () => { for await (const _ of sendTurn("tok", T, { messageId: "x", conversationId: null, text: "hi" })) void _; })()).rejects.toBeInstanceOf(ApiContractError);
     await expect((async () => { for await (const _ of sendTurn("tok", T, { messageId: M, conversationId: null, text: "" })) void _; })()).rejects.toBeInstanceOf(ApiContractError);
   });

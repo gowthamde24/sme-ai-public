@@ -49,8 +49,9 @@ const subscribe = (l: () => void) => {
 const snapshot = (): ChatLang | null => read() ?? memory;
 
 /** The chat's language choice: the pill's value, a setter that remembers it, and what to send. */
-export function useChatLanguage(appLang: VoiceLang): ChatLanguage & { set: (l: ChatLang) => void } {
+export function useChatLanguage(appLang: VoiceLang, saved: string | null = null, remember?: (l: ChatLang) => void): ChatLanguage & { set: (l: ChatLang) => void } {
   const stored = useSyncExternalStore(subscribe, snapshot, () => null);
+  const fromProfile: ChatLang | null = saved === "auto" || isVoiceLang(saved) ? (saved as ChatLang) : null;
   const set = useCallback((l: ChatLang) => {
     try {
       window.localStorage.setItem(KEY, l);
@@ -59,7 +60,9 @@ export function useChatLanguage(appLang: VoiceLang): ChatLanguage & { set: (l: C
       memory = l; // blocked: it holds for this visit only
     }
     listeners.forEach((f) => f());
-  }, []);
-  const pill = stored ?? appLang;
+    remember?.(l); // and the person's profile keeps it (best effort)
+  }, [remember]);
+  // what the person chose in this browser now; else what their profile says; else the app's language
+  const pill = stored ?? fromProfile ?? appLang;
   return { ...resolveLanguage(pill, appLang), set };
 }
