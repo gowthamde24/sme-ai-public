@@ -308,6 +308,14 @@ class Settings(BaseSettings):
     auto_reply_enabled: bool = False
     auto_reply_model: str | None = None
 
+    # The AI lead reader (owner decision, 31 Oct 2026): the worker reads the first WhatsApp message
+    # of a new lead (and later ones while need/quantity are empty) with a light model and stores
+    # what it understood with LOW confidence. Off until LEAD_READER_ENABLED=true and
+    # ANTHROPIC_API_KEY and a model (LEAD_READER_MODEL, else AUTO_REPLY_MODEL, else LLM_MODEL) are
+    # set in the WORKER's environment.
+    lead_reader_enabled: bool = False
+    lead_reader_model: str | None = None
+
     # Job BY (ADR 0077): web-push to the team's browsers. Off until BOTH are set. The private
     # key is a secret: only from the environment, entered hidden, never logged or returned.
     vapid_private_key: SecretStr | None = None
