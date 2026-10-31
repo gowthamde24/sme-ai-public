@@ -102,24 +102,11 @@ form:
 [Continue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
 {label="At the store today"}
 ## At the store today
-3 visits
-- 10:30 Anita R. Waiting for the customer
-- 12:00 Priya S. + 2 Bridal sarees Confirmed
-- 16:00 Lakshmi Textiles Silk saree wholesale Reminder sent
-Next free time today: 10:00 [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits) [Book a visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits#book)
+3 visits · 10:30 Anita R. [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 {label="Done while you slept"}
 ## Done while you slept
-- Replied to 2 customers on WhatsApp
-- Sent shop information to 1 customer
-- Held 1 message until 12:00 (quiet hours)
-[See everything in the outbox](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent)
+Replied to 2 customers on WhatsApp · Sent shop information to 1 customer · Held 1 message until 12:00 (quiet hours) [See everything in the outbox](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent)
 {label="Your business today"} [Trips today 2 1 on the way · 0 delivered](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips) [Quotes waiting 1 1 drafts wait for your approval](/app/tenants/22222222-2222-2222-2222-222222222222/quotes) [Dues this week ₹80,000.00 Already overdue: ₹50,000.00](/app/tenants/22222222-2222-2222-2222-222222222222/dues)
 {label="Your team"}
 ## Your team
-[Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
-- Lead Finder Not available yet
-- Researcher Idle
-- Site Measurer Working
-- Quote Writer Prepared quote 3 · 2h
-- Follow-up Desk Drafted follow-up message number 2 · 1m
-- Dispatch Desk Order started · 30m
+Lead Finder · Researcher · Site Measurer · Quote Writer · Follow-up Desk · Dispatch Desk [Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office)

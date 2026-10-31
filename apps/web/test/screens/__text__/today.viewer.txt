@@ -7,17 +7,7 @@ Tuesday, 6 October
 Not available yet
 {label="At the store today"}
 ## At the store today
-3 visits
-- 10:30 Anita R. Waiting for the customer
-- 12:00 Priya S. + 2 Bridal sarees Confirmed
-- 16:00 Lakshmi Textiles Silk saree wholesale Reminder sent
-Next free time today: 10:00 [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
+3 visits · 10:30 Anita R. [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 {label="Your team"}
 ## Your team
-[Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
-- Lead Finder Not available yet
-- Researcher Idle
-- Requirement Analyst Working
-- Quote Writer Prepared quote 3 · 2h
-- Follow-up Desk Drafted follow-up message number 2 · 1m
-- Order Desk Order started · 30m
+Lead Finder · Researcher · Requirement Analyst · Quote Writer · Follow-up Desk · Order Desk [Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office)

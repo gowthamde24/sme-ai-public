@@ -1,6 +1,5 @@
 "use client";
 
-import { Check } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -28,14 +27,10 @@ function Loaded({ digest, words, outboxHref }: { digest: Promise<Digest>; words:
       ) : d.lines.length === 0 ? (
         <p className="text-base text-muted">{say(words, "today.done.empty")}</p>
       ) : (
-        <ul className="flex flex-col gap-3">
-          {d.lines.map((l) => (
-            <li key={l.kind} className="flex items-start gap-3">
-              <Check className="mt-0.5 size-[22px] shrink-0 text-green-text" strokeWidth={2.4} aria-hidden="true" />
-              <span className="min-w-0 [overflow-wrap:anywhere]">{say(words, `today.done.${l.kind}.${l.n === 1 ? "one" : "other"}`, { n: l.n, time: l.time ?? "" })}</span>
-            </li>
-          ))}
-        </ul>
+        // the owner's target (31 Oct): ONE line, what was done, as short sentences side by side
+        <p data-line="done" className="text-base text-muted [overflow-wrap:anywhere]">
+          {d.lines.map((l) => say(words, `today.done.${l.kind}.${l.n === 1 ? "one" : "other"}`, { n: l.n, time: l.time ?? "" })).join(" · ")}
+        </p>
       )}
       {outboxHref ? (
         <Link href={outboxHref} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline">
@@ -59,7 +54,7 @@ export function DoneSection({ digest, words, outboxHref }: { digest: Promise<Dig
         <section aria-labelledby="done-heading" aria-busy="true" className={card}>
           <Title words={words} />
           <div aria-hidden="true" className="flex flex-col gap-3">
-            {[0, 1, 2].map((i) => (
+            {[0].map((i) => (
               <span key={i} className="h-5 animate-pulse rounded bg-surface-2" />
             ))}
           </div>

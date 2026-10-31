@@ -75194,5 +75194,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.leads.title": {
+  "en": "New leads",
+  "te": "కొత్త లీడ్స్",
+  "hi": "नई पूछताछ",
+  "kn": "ಹೊಸ ಲೀಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.leads.open": {
+  "en": "Open leads",
+  "te": "లీడ్స్ తెరవండి",
+  "hi": "पूछताछ खोलें",
+  "kn": "ಲೀಡ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
