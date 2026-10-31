@@ -62,7 +62,7 @@ describe("TOPUP_SCREENS=mock", () => {
   });
   it("Settings > Plan shows the new part and not the old bars twice", async () => {
     render(await SettingsPage(settingsProps({ section: "plan" })));
-    expect(tabNames()).toContain("Plan");
+    expect(tabNames()).toContain("Plan & usage");
     expect(document.querySelector('[data-settings="topups"]')).not.toBeNull();
     expect(document.querySelector('[data-meter="minutes"]')).toBeNull();
     expect(document.querySelector('[data-meter="tu-minutes"]')).not.toBeNull();
@@ -80,14 +80,14 @@ describe("TOPUP_SCREENS=mock", () => {
   it("with only TOPUP_SCREENS on (no plan screens) Settings still has the Plan part with just the usage", async () => {
     vi.stubEnv("PLAN_SCREENS", "");
     render(await SettingsPage(settingsProps({ section: "plan" })));
-    expect(tabNames()).toContain("Plan");
+    expect(tabNames()).toContain("Plan & usage");
     expect(document.querySelector('[data-settings="topups"]')).not.toBeNull();
     expect(document.querySelector('[data-settings="plan"]')).toBeNull();
   });
   it("a member does not get the Plan part at all", async () => {
     h.fetchTenant.mockResolvedValue(tenant("sales"));
     render(await SettingsPage(settingsProps({ section: "plan" })));
-    expect(tabNames()).not.toContain("Plan");
+    expect(tabNames()).not.toContain("Plan & usage");
     expect(document.querySelector('[data-settings="topups"]')).toBeNull();
   });
   it("the layout's banner: at 80 percent a status line for the Owner and the Admin, nothing for a member, nothing below 80 percent", async () => {

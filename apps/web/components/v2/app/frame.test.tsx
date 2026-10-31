@@ -38,7 +38,7 @@ beforeEach(() => {
 afterEach(cleanup);
 
 const none: FrameData = NO_FRAME_DATA;
-const loaded: FrameData = { plan: { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }, usage: { today_percent: 38, month_percent: 12, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }, waiting: 5, ready: true, showUsage: true, pack: null };
+const loaded: FrameData = { plan: { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }, usage: { today_percent: 38, month_percent: 12, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }, waiting: 5, ready: true, showUsage: true, live: false, pack: null };
 const noSignOut = async () => undefined;
 const side = (memberships: Membership[], frame = none, email: string | null = "o@example.test") => render(<SideNav memberships={memberships} frame={frame} email={email} signOut={noSignOut} mark={MARK} />);
 const bar = (memberships: Membership[], frame = none) => render(<TabBar memberships={memberships} frame={frame} email="o@example.test" signOut={noSignOut} mark={MARK} />);
@@ -52,12 +52,10 @@ describe("SideNav", () => {
     expect(within(menu).queryByRole("group")).toBeNull(); // seven rows in one plain list (job DQ part 0)
     expect(within(menu).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", "Calls", "Sales", "Catalogue", "Reports"]);
   });
-  it("the foot holds the AI usage card, Settings, Help (a link to the guides), the user card and Collapse menu", () => {
+  it("the foot holds Settings, Help (a link to the guides), the user card and Collapse menu; the AI usage card is not there any more (it is in Settings, Plan and usage)", () => {
     side(owner, loaded);
-    expect(screen.getByText("AI usage today")).toBeInTheDocument();
-    expect(screen.getByText("38% used")).toBeInTheDocument();
-    expect(screen.getByText("12% of this month")).toBeInTheDocument();
-    expect(screen.getByRole("meter", { name: "AI usage today" })).toHaveAttribute("aria-valuenow", "38");
+    expect(screen.queryByText("AI usage today")).toBeNull();
+    expect(screen.queryByRole("meter")).toBeNull();
     expect(screen.getByRole("link", { name: "Settings" })).toHaveAttribute("href", `/app/tenants/${A}/settings`);
     expect(screen.getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
     expect(screen.queryByRole("button", { name: /^Help/ })).toBeNull();
@@ -65,24 +63,23 @@ describe("SideNav", () => {
     expect(screen.getByRole("button", { name: "Collapse menu" })).toBeInTheDocument();
     expect(within(screen.getByRole("navigation", { name: "Workspace menu" })).getByRole("link", { name: /Today/ })).toHaveTextContent("Waiting for you: 5");
   });
-  it("says 'Not available yet' for the plan, the AI usage and the count while they cannot be read, and invents nothing", () => {
+  it("says 'Not available yet' for the plan and the count while they cannot be read, and invents nothing", () => {
     side(owner);
-    expect(screen.getAllByText("Not available yet").length).toBeGreaterThanOrEqual(2); // the plan and the usage card (Help is a link now)
+    expect(screen.getAllByText("Not available yet").length).toBeGreaterThanOrEqual(1); // the plan (the usage card is gone from the menu, Help is a link)
     expect(screen.queryByText(/₹/)).toBeNull();
     expect(screen.queryByText(/Waiting for you/)).toBeNull();
     expect(screen.queryByRole("meter")).toBeNull();
   });
   it("while the numbers are still being read it leaves the places empty instead of saying 'Not available yet'", () => {
     side(only("owner"), FRAME_LOADING);
-    expect(screen.getByText("AI usage today")).toBeInTheDocument();
-    // the plan line and the usage card are empty (Help is a link, it says nothing of the kind)
+    // the plan line is empty (Help is a link, it says nothing of the kind)
     expect(screen.queryAllByText("Not available yet")).toHaveLength(0);
   });
-  it("does not draw the AI usage card for a role the API gives no usage to", () => {
+  it("draws no AI usage card anywhere in the menu or the More sheet, whatever the role", () => {
     side(only("sales"), { ...loaded, showUsage: false });
     expect(screen.queryByText("AI usage today")).toBeNull();
     cleanup();
-    bar(only("sales"), { ...loaded, showUsage: false });
+    bar(only("owner"), loaded);
     fireEvent.click(screen.getByRole("button", { name: "More" }));
     expect(screen.queryByText("AI usage today")).toBeNull();
   });
@@ -90,7 +87,6 @@ describe("SideNav", () => {
     side(only("owner"), FRAME_LOADING);
     const slot = render(<FrameDataSlot data={loaded} />);
     expect(screen.getByText("Free trial plan")).toBeInTheDocument();
-    expect(screen.getByRole("meter", { name: "AI usage today" })).toBeInTheDocument();
     slot.unmount();
     expect(screen.queryByText("Free trial plan")).toBeNull();
   });
@@ -124,10 +120,9 @@ describe("SideNav", () => {
     side(owner);
     fireEvent.click(screen.getByRole("button", { name: "Collapse menu" }));
     expect(screen.getByRole("button", { name: "Expand menu" })).toBeInTheDocument();
-    expect(screen.queryByText("AI usage today")).toBeNull();
     expect(window.localStorage.getItem("sme_menu_collapsed")).toBe("1");
     fireEvent.click(screen.getByRole("button", { name: "Expand menu" }));
-    expect(screen.getByText("AI usage today")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Collapse menu" })).toBeInTheDocument();
     expect(window.localStorage.getItem("sme_menu_collapsed")).toBe("0");
   });
 });
@@ -145,7 +140,7 @@ describe("TabBar", () => {
     expect(within(dialog).getAllByRole("link").map((a) => a.textContent).slice(0, 5)).toEqual(["Calls", "Catalogue", "Reports", "Settings", "Help"]);
     expect(within(dialog).getByRole("link", { name: "Calls" })).not.toHaveAttribute("aria-current");
     expect(within(dialog).getByRole("link", { name: "Settings" })).toHaveAttribute("href", `/app/tenants/${A}/settings`);
-    expect(within(dialog).getByText("AI usage today")).toBeInTheDocument();
+    expect(within(dialog).queryByText("AI usage today")).toBeNull(); // the usage is in Settings, Plan and usage now
     expect(within(dialog).getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
     expect(within(dialog).getByRole("button", { name: "Sign out" })).toHaveAttribute("type", "submit");
     expect(within(dialog).getByRole("link", { name: /Second Shop/ })).toHaveAttribute("href", `/app/tenants/${B}`); // two businesses: the list is here
