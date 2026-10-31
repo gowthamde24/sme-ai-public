@@ -146,7 +146,7 @@ class VoiceSession:
         self._last_sound = clock()   # dictate: the last time the recogniser heard anything
         self.session_id = uuid.uuid4()
         self.bus = FrameBus(clock)
-        self.playout = BrowserPlayout(socket.send_bytes, self._send_stop, clock)
+        self.playout = BrowserPlayout(socket.send_bytes, self._send_stop, clock, ahead_s=limits.audio_ahead_ms / 1000.0 if limits.audio_ahead_ms > 0 else None)
         self.language = language if language in LANGUAGES else "en"
         self.tts = CountingTts(parts.tts, usage, lambda n: ledger.add_chars(tenant_id, n))
         self.conv = Conversation(

@@ -174,6 +174,7 @@ def staging(args: argparse.Namespace) -> dict[str, Any]:
         sarvam_wav(key, LONG_ASK[lang], lang, wav)
         for mode in ("hard", "verify"):
             for _ in range(args.barge_runs):
+                time.sleep(12)   # the server admits six sessions a minute
                 ms = asyncio.run(barge_in_ms(url, owner.token, read_wav(wav), lang, mode == "verify"))
                 if ms is not None:
                     stops[mode].append(ms)

@@ -294,6 +294,9 @@ class Settings(BaseSettings):
     browser_voice_verify_barge_in: bool = True
     # Casual Live turns (small talk, general help) on the fast tier, written into the same thread.
     browser_voice_fast_smalltalk: bool = True
+    # Audio pacing: the server sends at most this many ms of audio ahead of what the browser has played
+    # (a barge-in then stops within ~200 ms). 0: as fast as the voice makes it.
+    browser_voice_audio_ahead_ms: int = 300
     browser_voice_day_seconds: int = 7200
     # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the built-in defaults
     browser_voice_stt_modes: str = ""

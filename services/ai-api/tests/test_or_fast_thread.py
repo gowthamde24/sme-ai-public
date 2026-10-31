@@ -232,3 +232,56 @@ async def test_the_thread_is_read_once_then_kept_in_memory_until_another_path_ad
     ft.mark_stale()   # the written chat's turn added messages
     [p async for p in ft.stream("s", [{"role": "user", "content": "three"}], "m")]
     assert sum(1 for c in db.calls if c[0] == "history") == 2
+
+
+# ---- audio pacing (standard B1: the server sends at most 300 ms ahead) ------------------------------------------------------------------------------
+
+
+@arun
+async def test_paced_audio_never_runs_more_than_the_allowed_time_ahead_of_the_browser() -> None:
+    from app.browser_voice.audio import BrowserPlayout
+
+    now = [0.0]
+    sent: list[tuple[float, int]] = []
+    ahead_seen: list[float] = []
+
+    async def audio(b: bytes) -> None:
+        sent.append((now[0], len(b)))
+
+    async def stop() -> None:
+        pass
+
+    async def sleep(seconds: float) -> None:
+        now[0] += seconds   # the browser plays while we wait
+
+    out = BrowserPlayout(audio, stop, lambda: now[0], ahead_s=0.3, sleep=sleep)
+    second = b"\x00\x00" * 24000   # one second at 24 kHz
+    await out.write(second)
+    ahead_seen.append(out.unplayed_seconds())
+    assert max(n for _, n in sent) <= 4800, "sent in slices of 100 ms"
+    assert out.unplayed_seconds() <= 0.3 + 0.1 + 1e-6, "never more than the allowance plus one slice ahead of the browser"
+    assert now[0] >= 0.55, "a second of audio takes about a second to go out, minus what may be ahead"
+    out2 = BrowserPlayout(audio, stop, lambda: now[0])
+    before = len(sent)
+    await out2.write(second)
+    assert len(sent) == before + 1 and out2.unplayed_seconds() == 1.0, "unpaced (the phone loop): as before"
+
+
+@arun
+async def test_a_stop_after_paced_audio_cuts_off_at_most_the_allowance() -> None:
+    from app.browser_voice.audio import BrowserPlayout
+
+    now = [0.0]
+
+    async def audio(b: bytes) -> None:
+        pass
+
+    async def stop() -> None:
+        pass
+
+    async def sleep(seconds: float) -> None:
+        now[0] += seconds
+
+    out = BrowserPlayout(audio, stop, lambda: now[0], ahead_s=0.3, sleep=sleep)
+    await out.write(b"\x00\x00" * 24000 * 3)
+    assert out.unplayed_seconds() <= 0.4 + 1e-6

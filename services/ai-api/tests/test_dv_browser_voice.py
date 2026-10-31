@@ -652,7 +652,7 @@ async def test_when_ask_is_slow_a_filler_in_the_chosen_voice_is_said_after_700_m
     parts = fake_parts(llm=FakeLlm(("Here is the answer. ",), first_token_delay=1.3))
     parts.fillers = bank
     parts.voice_for = lambda language: {"en": "en-janvi"}.get(language, "")
-    session = session_of(sock, parts)
+    session = session_of(sock, parts, limits=Limits(greeting=False, audio_ahead_ms=0))   # (the filler is judged by when it STARTS: unpaced, it is all sent at once)
     run = asyncio.ensure_future(session.run())
     sock.feed_speech()
     await until(lambda: "timings" in sock.types(), seconds=6)
