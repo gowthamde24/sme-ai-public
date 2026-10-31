@@ -85,6 +85,14 @@ export function useDictation(session: AskSession, voice: BrowserVoice, options: 
     client.current = c;
     await c.start();
   };
+  // never listen in the background: the microphone is off the moment the tab is hidden
+  React.useEffect(() => {
+    const onHide = () => {
+      if (document.visibilityState === "hidden") client.current?.stop();
+    };
+    document.addEventListener("visibilitychange", onHide);
+    return () => document.removeEventListener("visibilitychange", onHide);
+  }, []);
   const stop = () => client.current?.stop();
   const toggle = () => {
     if (client.current) return stop();
