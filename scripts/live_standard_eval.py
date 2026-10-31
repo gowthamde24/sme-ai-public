@@ -245,8 +245,8 @@ def report(result: dict[str, Any], style: list[tuple[str, str, list[str]]] | Non
             ("User stops → first assistant audio, casual turn, p95", "≤ 2 s", f"{lat['p95']} ms", ok(lat["p95"] <= 2000)),
             ("…the same with the network taken out (one round trip of this machine to the server, " + str(rtt) + " ms, taken off): a user in India next to the server", "p50 ≤ 1.2 s", f"p50 {lat['p50'] - rtt} ms, p95 {lat['p95'] - rtt} ms", ok(lat["p50"] - rtt <= 1200)),
             ("Fillers on small-talk turns, staging (the turns of the latency run)", "0", str(stg.get("fillers_on_casual", "n/a")), ok(str(stg.get("fillers_on_casual", "")).startswith("0/"))),
-            ("Barge-in stop, as the browser sees it (hard stop), staging", "≤ 200 ms", f"p50 {stg['barge']['hard']['p50']} ms, max {stg['barge']['hard']['max']} ms over {stg['barge']['hard']['n']} (network included)", ok((stg['barge']['hard']['max'] or 9999) <= 200)),
-            ("Barge-in pause with verify, staging", "≤ 200 ms", f"p50 {stg['barge']['verify']['p50']} ms, max {stg['barge']['verify']['max']} ms over {stg['barge']['verify']['n']} (network included)", ok((stg['barge']['verify']['max'] or 9999) <= 200)),
+            ("Barge-in stop, as the browser sees it (hard stop), staging, one round trip ({rtt} ms) taken off".replace("{rtt}", str(rtt)), "≤ 200 ms", f"p50 {(stg['barge']['hard']['p50'] or 0) - rtt} ms, max {(stg['barge']['hard']['max'] or 0) - rtt} ms over {stg['barge']['hard']['n']} (raw, network included: p50 {stg['barge']['hard']['p50']} ms, max {stg['barge']['hard']['max']} ms)", ok(((stg["barge"]["hard"]["max"] or 9999) - rtt) <= 200)),
+            ("Barge-in pause with verify, staging, one round trip ({rtt} ms) taken off".replace("{rtt}", str(rtt)), "≤ 200 ms", f"p50 {(stg['barge']['verify']['p50'] or 0) - rtt} ms, max {(stg['barge']['verify']['max'] or 0) - rtt} ms over {stg['barge']['verify']['n']} (raw, network included: p50 {stg['barge']['verify']['p50']} ms, max {stg['barge']['verify']['max']} ms)", ok(((stg["barge"]["verify"]["max"] or 9999) - rtt) <= 200)),
         ]
     lines = ["# Live talk: the quality bar", "", f"Measured {time.strftime('%d %b %Y')} on the 40-dialogue set (te 15, en 10, kn 8, hi 7) through the real conversation loop with fakes for the audio" + (", and on staging with a socket client" if stg else "") + ".", "",
              "| Measure | Bar | Result | |", "|---|---|---|---|"]
@@ -257,7 +257,7 @@ def report(result: dict[str, Any], style: list[tuple[str, str, list[str]]] | Non
               "TV beat decided as a real interruption (by text a TV has words): " + (", ".join(i.id for i in result["interrupts"] if i.tv and i.decided != "resume") or "none")]
     if style:
         lines += ["", "Style failures: " + ("; ".join(f"{i}: {', '.join(p)}" for i, r, p in style if r != "PASS") or "none")]
-    lines += ["", "Not measured here: the real microphone (a person on a phone in a room), A3 speculative start (not built), the audio turn model (Indic Smart Turn: next step). See docs/runbooks/live-conversation-standard.md."]
+    lines += ["", "Not measured here: the real microphone (a person on a phone in a room), the audio turn model on real speech (Indic Smart Turn runs in shadow mode first). See docs/runbooks/live-conversation-standard.md."]
     return "\n".join(lines) + "\n"
 
 
