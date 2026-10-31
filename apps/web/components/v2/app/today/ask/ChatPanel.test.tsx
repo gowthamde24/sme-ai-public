@@ -117,7 +117,7 @@ describe("the input bar: Dictate and Live talk (owner, 30 Oct)", () => {
   it("is a composer card (the text on top, the toolbar under it: plus, language pill, spacer, Dictate, Send); the orb at the top of the panel is the Talk button", () => {
     draw();
     const form = document.querySelector('[data-chat="form"]') as HTMLElement;
-    expect(form.className).toContain("rounded-2xl");
+    expect(form.className).toContain("rounded-[16px]");
     const text = form.querySelector("textarea") as HTMLElement;
     const toolbar = form.querySelector('[data-chat="toolbar"]') as HTMLElement;
     expect(text.compareDocumentPosition(toolbar) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // the toolbar is BELOW the text
@@ -569,7 +569,7 @@ describe("the command bar (owner's design C) and the language pill", () => {
     expect(talk.querySelector('[data-chat="ring"]')).not.toBeNull();
     expect(bar.querySelector('[data-chat="talk-caption"]')).toHaveTextContent("Tap to talk");
     const form = bar.querySelector('[data-chat="form"]') as HTMLElement;
-    expect(form.className).toContain("rounded-2xl");
+    expect(form.className).toContain("rounded-[16px]");
     expect(form.querySelector("textarea")).toHaveAttribute("placeholder", "Ask or tell your assistant anything…");
     expect([...form.querySelectorAll('[data-chat="toolbar"] select, [data-chat="toolbar"] button')].map((e) => (e.tagName === "SELECT" ? "pill" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))))).toEqual(["plus", "pill", "dictate", "submit"]);
     expect(bar.contains(talk) && !form.contains(talk)).toBe(true);

@@ -546,7 +546,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
         </p>
       ) : (
         <>
-          <p className="mb-1 text-sm text-muted">{say(words, "today.needs.note")}</p>
+          <p className="mb-1 text-sm text-muted md:hidden">{say(words, "today.needs.note")}</p>
           <ul className={layout === "rows" ? "flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0" : "flex flex-col gap-2.5"}>
             {cards.map((c, i) => (
               <li key={c.key} className={!all && i >= 3 ? "hidden" : !all && i >= 2 ? "max-md:hidden" : ""}>

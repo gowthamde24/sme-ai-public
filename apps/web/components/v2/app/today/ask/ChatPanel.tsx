@@ -229,7 +229,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   const said = talk.voice;
   const hint = talk.state === "speaking" && said?.name ? c("bv.speaking.in").replace("{language}", voice.languageNames[said.language ?? voice.language] ?? "").replace("{voice}", said.name) : null;
   const chipsEl = empty && chips.length > 0 ? (
-            <ul data-chat="chips" className={`flex flex-wrap gap-2 ${bar ? "min-w-0 pl-[76px]" : ""}`}>
+            <ul data-chat="chips" className={`flex flex-wrap gap-2 ${bar ? "min-w-0" : ""}`}>
               {chips.map((chip) => (
                 <li key={chip}>
                   <button type="button" data-write onClick={() => void s.ask(chip, chat.pill)} className={`inline-flex ${bar ? "min-h-9 px-3" : "min-h-10 px-3.5"} items-center rounded-full border border-edge bg-surface text-sm font-semibold text-ink hover:bg-surface-2`}>
@@ -319,7 +319,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     <form
       data-write
       data-chat="form"
-      className="flex min-w-0 flex-col gap-1 rounded-2xl border border-edge bg-surface p-2.5 focus-within:border-brand-edge"
+      className="flex min-w-0 flex-col gap-1 rounded-[16px] border border-edge bg-surface p-2.5 focus-within:border-brand-edge"
       onSubmit={(e) => {
         e.preventDefault();
         void s.ask(s.text, chat.pill);
@@ -342,7 +342,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
             e.currentTarget.form?.requestSubmit();
           }
         }}
-        placeholder={dictating ? c("bv.chat.dictating") : bar ? c("bv.bar.placeholder") : c("bv.chat.placeholder.short")}
+        placeholder={dictating ? c("bv.chat.dictating") : c("bv.bar.placeholder")}
         readOnly={dictating}
         autoComplete="off"
         enterKeyHint="send"
