@@ -34,3 +34,12 @@ So there is an open model for our languages, and it is the right audio-side answ
 * Cue-less pauses ("నాకు కావాలి ... ఆ నీలం రంగు చీర": a clause that already reads as complete) are cut by the text classifier. The audio model is the answer.
 * A TV or a second person talking in the background has words, so by text it is a real interruption. Telling it from the caller needs the audio (level, distance, speaker); not built.
 * The recogniser is reopened after an unfinished thought, so the first few tens of milliseconds of the continuation can be lost.
+
+## The latency bar (owner decision 31 Oct 2026)
+
+Browser Live talk, a casual turn, from the caller's last word to the first audio of the assistant, measured on staging with a socket client (`scripts/live_standard_eval.py --staging`): **p50 ≤ 1.6 s, p95 ≤ 2.5 s.** Reported twice: as measured, and with one round trip of the measuring machine to the server taken off (what a caller near the server would feel). Measured the same day on the Live code of tag 8cace2a9: p50 1,909 ms (1,520 ms without the round trip), p95 2,180 ms (1,791 ms): the p95 passes, the p50 as measured does not, without the round trip it does.
+Phone calls have their own model test: `docs/runbooks/phone-model.md`.
+
+## Real-voice recordings
+
+The owner's recordings of 31 Oct 2026 are kept as text and timings only (`tests/evals/recordings/`); the audio is never committed. Findings and the recommendation (audio turn model stays in shadow, `transcribe` and never `verbatim` for Telugu and English): `~/Desktop/stack19-jobs/recordings-check/report.md`.

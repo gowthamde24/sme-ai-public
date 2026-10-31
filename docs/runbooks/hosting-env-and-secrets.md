@@ -161,6 +161,9 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `TELEPHONY_LIVE_CONFIRMED` | plain | api | `true` only after the owner has the lawyer's answers (TRAI/DLT, disclosure, recording). Default `false`. |
 | `TELEPHONY_SANDBOX_NUMBERS` | plain | api | Comma-separated `+91...` numbers of the verified users of the provider's trial account: the only numbers a sandbox call may ring. |
 | `TELEPHONY_MAX_CONCURRENT` | plain | api | Calls at once, all workspaces. Default `2`. |
+| `TELEPHONY_LLM` | plain | api | Who speaks on a call: `haiku` (default) or `sarvam` (Sarvam 105B first, behind a first-token deadline that falls back to Haiku). Measured 31 Oct 2026: `docs/runbooks/phone-model.md`. |
+| `TELEPHONY_FIRST_TOKEN_MS` | plain | api | With `sarvam`: if no first piece of text arrives within this many ms (default `1200`, kept between 500 and 4000) the same turn goes to Haiku. |
+| `TELEPHONY_COST_PAISE_PER_MINUTE` | plain | api | What a started minute of a call costs, in paise: a configurable ESTIMATE until the owner has Exotel's price (default `100`). |
 | `BROWSER_VOICE_STT_MODES` | plain | api | What the speech recogniser writes per language, over the built-in defaults: `te=transcribe,kn=transcribe,en=transcribe,ta=transcribe,hi=verbatim,ml=verbatim`. Empty = the defaults. A language or mode it does not know is ignored. |
 | `BROWSER_VOICE_DAY_TTS_CHARS` | plain | api | Characters a workspace may send to the voice engines per day. Default `6000`. |
 | `BROWSER_VOICE_SESSIONS_PER_MINUTE` | plain | api | Sessions a workspace may open per minute (one runs at a time). Default `6`. |
