@@ -223,7 +223,9 @@ describe("server-only code stays on the server", () => {
     const CARDS_POST = path.join("components", "v2", "app", "lead-desk", "cards-post.ts");
     // And the pronunciation list and "Mispronounced?" (job pronunciation-quality): this app's OWN routes `<workspace>/pronunciation` and `<workspace>/pronunciation-preview` (paths they are given): no token, never the API.
     const PRON_POST = path.join("components", "v2", "app", "assistant", "pronunciation-post.ts");
-    expect(callers).toEqual([ASK_TRANSPORT, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, path.join("lib", "api", "client.ts")].sort());
+    // And the "Live now" strip (owner 31 Oct): it asks this app's OWN route `<workspace>/activity` every few seconds (a path built from the workspace id): no token, never the API.
+    const ACTIVITY_POLL = path.join("components", "v2", "app", "live", "activity-poll.ts");
+    expect(callers).toEqual([ACTIVITY_POLL, ASK_TRANSPORT, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, path.join("lib", "api", "client.ts")].sort());
     expect(read(path.join(WEB_ROOT, CONVERSATION_CALLS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, CONTEXT_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, PRON_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);

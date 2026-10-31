@@ -6,7 +6,6 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import type { FrameData } from "./contract";
 import { useFrameData } from "./frame-store";
-import { UsageCard } from "./frame-parts";
 import { NavIcon } from "./icons";
 import { word, withPackWords, type Labels } from "./labels";
 import { hrefOf, menuBar, menuFoot, menuGroups } from "./nav";
@@ -112,7 +111,6 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
                   <span className="flex-1">{help}</span>
                 </Link>
               </div>
-              {frame.showUsage ? <UsageCard usage={frame.usage} loading={!frame.ready} labels={labels} /> : null}
               {memberships.length > 1 ? (
                 <div className="space-y-2">
                   <p className="text-sm font-semibold">{word(labels, "frame.yourworkspaces", "Your workspaces")}</p>

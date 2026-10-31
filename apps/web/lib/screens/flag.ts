@@ -10,6 +10,8 @@ export function screenMode(value: string | undefined): ScreenMode {
 }
 
 export const callScreens = (value: string | undefined = process.env.CALL_SCREENS): ScreenMode => screenMode(value);
+/** "Live now": what the assistant is doing at this moment (the strip at the bottom of the menu, a slim line under the header on a phone). */
+export const activityScreens = (value: string | undefined = process.env.ACTIVITY_SCREENS): ScreenMode => screenMode(value);
 export const outcomeScreens = (value: string | undefined = process.env.OUTCOME_SCREENS): ScreenMode => screenMode(value);
 export const assistantScreens = (value: string | undefined = process.env.ASSISTANT_SCREENS): ScreenMode => screenMode(value);
 

@@ -51,7 +51,7 @@ afterEach(() => {
 describe("the flag is off by default", () => {
   it("Settings has no Plan part, and ?section=plan falls back to the business part", async () => {
     render(await SettingsPage(settingsProps({ section: "plan" })));
-    expect(tabNames()).not.toContain("Plan");
+    expect(tabNames()).not.toContain("Plan & usage");
     expect(within(screen.getByRole("navigation", { name: "Parts of Settings" })).getByRole("link", { name: "Business and plan" })).toHaveAttribute("aria-current", "page");
     expect(document.querySelector('[data-settings="plan"]')).toBeNull();
   });
@@ -62,7 +62,7 @@ describe("the flag is off by default", () => {
   it.each(["0", "", "yes", "true", "MOCK"])("%j is off too", async (v) => {
     vi.stubEnv("PLAN_SCREENS", v);
     render(await SettingsPage(settingsProps()));
-    expect(tabNames()).not.toContain("Plan");
+    expect(tabNames()).not.toContain("Plan & usage");
   });
   it("every move refuses with not_available and stores nothing", async () => {
     expect(await resumePlanAction(TENANT, "growth", "test_ok")).toEqual({ ok: false, error: "not_available" });
@@ -104,7 +104,7 @@ describe("the flag is '1' (on: the plans and billing API of job DI)", () => {
   });
   it("the Plan part reads the billing answer: no plan yet, the trial's allowances, and the way to start the trial", async () => {
     render(await SettingsPage(settingsProps({ section: "plan" })));
-    expect(tabNames()).toContain("Plan");
+    expect(tabNames()).toContain("Plan & usage");
     expect(h.api).toHaveBeenCalledWith(`/v1/tenants/${TENANT}/billing`, "tok");
     const part = within(screen.getByRole("main"));
     expect(part.getByText("No plan yet")).toBeInTheDocument();
@@ -208,16 +208,16 @@ describe("the flag is 'mock' (the fake provider)", () => {
   beforeEach(() => vi.stubEnv("PLAN_SCREENS", "mock"));
   it("shows the Plan part to an Owner and an Admin, not to anyone else", async () => {
     render(await SettingsPage(settingsProps()));
-    expect(tabNames()).toContain("Plan");
+    expect(tabNames()).toContain("Plan & usage");
     cleanup();
     h.fetchTenant.mockResolvedValue(tenant("admin"));
     render(await SettingsPage(settingsProps()));
-    expect(tabNames()).toContain("Plan");
+    expect(tabNames()).toContain("Plan & usage");
     for (const role of ["member", "viewer"]) {
       cleanup();
       h.fetchTenant.mockResolvedValue(tenant(role));
       render(await SettingsPage(settingsProps({ section: "plan" })));
-      expect(tabNames()).not.toContain("Plan");
+      expect(tabNames()).not.toContain("Plan & usage");
       expect(document.querySelector('[data-settings="plan"]')).toBeNull();
     }
   });
