@@ -302,7 +302,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     <form
       data-write
       data-chat="form"
-      className={bar ? "flex min-h-14 min-w-0 flex-1 items-center gap-1.5 rounded-full border border-edge bg-bg px-2" : "flex min-h-12 min-w-0 items-end gap-1 rounded-3xl border border-edge bg-bg px-1.5 py-1"}
+      className={bar ? "flex min-h-14 min-w-0 flex-1 items-center gap-1.5 rounded-full border border-edge bg-bg px-2 focus-within:border-brand-edge" : "flex min-h-12 min-w-0 items-end gap-1 rounded-3xl border border-edge bg-bg px-1.5 py-1 focus-within:border-brand-edge"}
       onSubmit={(e) => {
         e.preventDefault();
         void s.ask(s.text, chat.pill);
@@ -326,11 +326,11 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
             e.currentTarget.form?.requestSubmit();
           }
         }}
-        placeholder={dictating ? c("bv.chat.dictating") : bar ? c("bv.bar.placeholder") : c("bv.chat.placeholder")}
+        placeholder={dictating ? c("bv.chat.dictating") : bar ? c("bv.bar.placeholder") : c("bv.chat.placeholder.short")}
         readOnly={dictating}
         autoComplete="off"
         enterKeyHint="send"
-        className="block min-h-10 w-full min-w-0 max-h-32 flex-1 resize-none overflow-y-auto bg-transparent px-1 py-2 text-base leading-6 text-ink placeholder:text-muted"
+        className="block min-h-10 w-full min-w-0 max-h-32 flex-1 resize-none overflow-y-auto bg-transparent px-1 py-2 text-base leading-6 text-ink outline-none placeholder:text-muted focus:outline-none focus-visible:outline-none"
       />
       {pillEl}
       {micEl}
