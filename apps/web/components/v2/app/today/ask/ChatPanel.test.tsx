@@ -114,15 +114,20 @@ describe("the input bar: Dictate and Live talk (owner, 30 Oct)", () => {
     await act(async () => void fireEvent.click(screen.getByRole("button", { name })));
     await act(async () => void sock.onopen?.());
   };
-  it("has one rounded input row (plus, text box, language pill, Dictate, Send) with Talk as its own pill below it", () => {
+  it("is a composer card (the text on top, the toolbar under it: plus, language pill, spacer, Dictate, Send); the orb at the top of the panel is the Talk button", () => {
     draw();
-    const bar = document.querySelector('[data-chat="form"]') as HTMLElement;
-    const kinds = [...bar.querySelectorAll("input, textarea, button, select")].map((e) => (e.tagName === "INPUT" || e.tagName === "TEXTAREA" ? "text" : e.tagName === "SELECT" ? "pill" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))));
-    expect(kinds).toEqual(["plus", "text", "pill", "dictate", "submit"]);
+    const form = document.querySelector('[data-chat="form"]') as HTMLElement;
+    expect(form.className).toContain("rounded-2xl");
+    const text = form.querySelector("textarea") as HTMLElement;
+    const toolbar = form.querySelector('[data-chat="toolbar"]') as HTMLElement;
+    expect(text.compareDocumentPosition(toolbar) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // the toolbar is BELOW the text
+    expect([...toolbar.querySelectorAll("select, button")].map((e) => (e.tagName === "SELECT" ? "pill" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))))).toEqual(["plus", "pill", "dictate", "submit"]);
     const talk = document.querySelector('[data-chat="live-talk"]') as HTMLElement;
-    expect(bar.contains(talk)).toBe(false); // nothing can sit on the input's border
-    expect(bar.compareDocumentPosition(talk) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(talk.className).toContain("w-full");
+    expect(form.contains(talk)).toBe(false);
+    expect(talk.querySelector("[data-orb]")).not.toBeNull(); // the orb IS the button
+    expect(document.querySelector('[data-chat="panel"] header, [data-chat="panel"] > div:first-child')?.contains(talk)).toBe(true); // at the top
+    expect(talk).not.toHaveTextContent("Talk"); // no separate Talk pill any more
+    expect(document.querySelector('[data-chat="talk-caption"]')).toHaveTextContent("Tap to talk");
   });
   it("the box is a multi-line text area: Enter sends, Shift+Enter is a new line, a composing keyboard is not cut short", async () => {
     draw();
@@ -556,21 +561,49 @@ describe("the conversation panel", () => {
 
 describe("the command bar (owner's design C) and the language pill", () => {
   beforeEach(() => window.localStorage.removeItem("sme_chat_lang"));
-  it("is a tall input with the plus, the language pill, Dictate and Send inside, the Talk button beside it, the chips under it", () => {
+  it("is the orb on the left (64px, the Talk button, a soft ring, 'Tap to talk') and the composer card on the right with the chips under it; no empty chat area", () => {
     draw({ variant: "bar" });
     const bar = document.querySelector('[data-chat="bar"]') as HTMLElement;
-    const form = bar.querySelector('[data-chat="form"]') as HTMLElement;
-    expect([...form.querySelectorAll("button, select, textarea")].map((e) => e.getAttribute("data-chat") ?? e.tagName.toLowerCase() + (e.getAttribute("type") === "submit" ? ":submit" : ""))).toEqual(["plus", "textarea", "select", "dictate", "button:submit"]);
-    expect(form.className).toContain("min-h-14");
-    expect(form.querySelector("textarea")).toHaveAttribute("placeholder", "Ask or tell your assistant anything…");
     const talk = bar.querySelector('[data-chat="live-talk"]') as HTMLElement;
-    expect(talk).toHaveTextContent("Talk");
-    expect(form.contains(talk)).toBe(false); // prominent, beside the bar
-    expect(talk.className).toContain("bg-brand");
-    const row = bar.querySelector('[data-chat="bar-row"]') as HTMLElement;
-    expect(row.contains(talk) && row.contains(form)).toBe(true);
-    expect(bar.querySelector('[data-chat="chips"]')!.compareDocumentPosition(row) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy(); // the chips come after the bar
+    expect(talk.querySelector("[data-orb]")).not.toBeNull();
+    expect(talk.querySelector('[data-chat="ring"]')).not.toBeNull();
+    expect(bar.querySelector('[data-chat="talk-caption"]')).toHaveTextContent("Tap to talk");
+    const form = bar.querySelector('[data-chat="form"]') as HTMLElement;
+    expect(form.className).toContain("rounded-2xl");
+    expect(form.querySelector("textarea")).toHaveAttribute("placeholder", "Ask or tell your assistant anything…");
+    expect([...form.querySelectorAll('[data-chat="toolbar"] select, [data-chat="toolbar"] button')].map((e) => (e.tagName === "SELECT" ? "pill" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))))).toEqual(["plus", "pill", "dictate", "submit"]);
+    expect(bar.contains(talk) && !form.contains(talk)).toBe(true);
+    expect(talk.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // the orb is on the LEFT of the composer
+    expect(form.compareDocumentPosition(bar.querySelector('[data-chat="chips"]')!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // the chips under the composer
     expect(bar.querySelector('[data-chat="body"]')?.className).toContain("hidden"); // no empty chat area
+  });
+  it("the orb is the Talk button: a tap starts Live talk, the caption follows the state, a tap again ends it; the ring pulses with the sound", async () => {
+    draw({ variant: "bar" });
+    const talk = () => document.querySelector('[data-chat="bar"] [data-chat="live-talk"]') as HTMLElement;
+    const caption = () => document.querySelector('[data-chat="talk-caption"]') as HTMLElement;
+    await act(async () => void fireEvent.click(talk()));
+    await act(async () => void sock.onopen?.());
+    expect(caption()).toHaveTextContent("Connecting");
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    for (const [state, word] of [["listening", "Listening"], ["thinking", "Thinking"], ["speaking", "Speaking"], ["paused", "Paused"]] as const) {
+      await act(async () => void sock.say({ type: "state", state }));
+      expect(caption()).toHaveTextContent(word);
+    }
+    expect(talk()).toHaveAttribute("aria-pressed", "true");
+    expect(talk().getAttribute("aria-label")).toMatch(/Stop live talk/);
+    expect(talk().querySelector('[data-chat="ring"]')?.className).toContain("border-brand-edge ");
+    await act(async () => void fireEvent.click(talk()));
+    expect(sock.types()).toContain("stop");
+  });
+  it("the conversation opens under the composer with its own header: 'Your assistant · speaking in <language> · <voice>' and Minimise", async () => {
+    window.localStorage.setItem("sme_chat_lang", "te");
+    draw({ variant: "bar" });
+    await type("price of silk?");
+    await send();
+    const header = document.querySelector('[data-chat="speaking-in"]') as HTMLElement;
+    expect(header.parentElement).toHaveTextContent("Your assistant · speaking in తెలుగు");
+    expect(document.querySelector('[data-chat="minimise"]')).toBeInTheDocument();
+    window.localStorage.removeItem("sme_chat_lang");
   });
   it("the language pill offers Auto, Telugu, English, Hindi, Kannada, Tamil, Malayalam, starts as the app language and remembers the choice", async () => {
     draw({ variant: "bar" });
@@ -637,10 +670,12 @@ describe("the command bar (owner's design C) and the language pill", () => {
     await send();
     expect(asks.at(-1)).toMatchObject({ question: "and cotton?", replyLanguage: "auto" });
   });
-  it("the sheet on a phone has the same pieces: pill, Dictate, Talk, Send", () => {
+  it("the sheet on a phone has the same composer, with the orb at its top as the Talk button", () => {
     draw({ variant: "panel" });
     const form = document.querySelector('[data-chat="form"]') as HTMLElement;
-    expect([...form.querySelectorAll("select, button")].map((e) => (e.tagName === "SELECT" ? "pill" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))))).toEqual(["plus", "pill", "dictate", "submit"]);
-    expect(document.querySelector('[data-chat="live-talk"]')).toHaveTextContent("Talk"); // the prominent pill under the input
+    expect([...form.querySelectorAll('[data-chat="toolbar"] select, [data-chat="toolbar"] button')].map((e) => (e.tagName === "SELECT" ? "pill" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))))).toEqual(["plus", "pill", "dictate", "submit"]);
+    const talk = document.querySelector('[data-chat="live-talk"]') as HTMLElement;
+    expect(talk.querySelector("[data-orb]")).not.toBeNull();
+    expect(talk.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // the orb is above the composer
   });
 });

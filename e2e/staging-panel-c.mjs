@@ -1,7 +1,7 @@
-// The orb's chat panel with the design-C bar (owner 31 Oct), on staging as a synthetic demo owner. Staging only.
+// The orb's chat panel with the "composer + orb" design (owner 31 Oct), on staging as a synthetic demo owner. Staging only.
 //   node e2e/staging-panel-c.mjs [textiles|construction_materials|education] [en|te]
 // Desktop 1366x768 (and 1280/1920): the panel opened from the floating orb on a screen other than Today. EMPTY it fits its content (the greeting, the chips directly under it, the input, Talk): no big blank area. With a conversation it grows up to about 560 px,
-// then the thread scrolls inside. One rounded input row (plus, text, language pill, mic, send), Talk as its own pill below, chips ABOVE the input; nothing overlaps at any width (every control inside the row, no two overlapping, Talk below the row's border).
+// then the thread scrolls inside. The orb at the top is the Talk button; one rounded composer card (the text on top, the toolbar under it: plus, language pill, mic, send), chips ABOVE the composer; nothing overlaps at any width (every control inside the card, no two overlapping).
 // Phone 390: the same bar in the bottom sheet. Pictures in ~/Desktop/v2-overnight/shots-df/.
 import { session, shot, sleep } from "./staging-df-lib.mjs";
 
@@ -27,7 +27,7 @@ const geometry = () =>
     const outside = parts.filter((a) => a.l < f.l - 0.5 || a.r > f.r + 0.5 || a.t < f.t - 0.5 || a.b > f.b + 0.5).map((a) => a.name);
     const body = panel.querySelector('[data-chat="body"]');
     const chips = panel.querySelector('[data-chat="chips"]');
-    return { panel: r(panel), form: f, talk: r(talk), body: r(body), chips: chips ? r(chips) : null, overlaps, outside, talkBelow: r(talk).t >= f.b - 0.5, vw: innerWidth, vh: innerHeight, bodyScrolls: body.scrollHeight > body.clientHeight + 1, parts: parts.map((x) => x.name) };
+    return { panel: r(panel), form: f, talk: r(talk), body: r(body), chips: chips ? r(chips) : null, overlaps, outside, talkBelow: r(talk).b <= f.t + 0.5, vw: innerWidth, vh: innerHeight, bodyScrolls: body.scrollHeight > body.clientHeight + 1, parts: parts.map((x) => x.name) };
   });
 try {
   if (lang !== "en") await s.context.addCookies([{ name: "sme_lang", value: lang, url: "https://staging.stack19.com" }]);
@@ -43,7 +43,7 @@ try {
     console.log(`-- ${w}x${h} empty: panel ${Math.round(g.panel.w)}x${Math.round(g.panel.h)}, body ${Math.round(g.body.h)}`);
     ok(`${w}x${h} empty panel fits its content (no big blank area)`, g.panel.h <= 460 && g.body.h <= 200, `panel=${Math.round(g.panel.h)} body=${Math.round(g.body.h)}`);
     ok(`${w}x${h} chips directly under the greeting, above the input`, g.chips && g.chips.t < g.form.t && g.chips.t >= g.body.t - 1, g.chips ? `chips.top=${Math.round(g.chips.t)} form.top=${Math.round(g.form.t)}` : "no chips");
-    ok(`${w}x${h} nothing overlaps: every control inside the row, none over another, Talk below the row`, g.overlaps.length === 0 && g.outside.length === 0 && g.talkBelow, `overlaps=${g.overlaps} outside=${g.outside} talkBelow=${g.talkBelow} parts=${g.parts}`);
+    ok(`${w}x${h} nothing overlaps: every control inside the row, none over another, the orb above the composer`, g.overlaps.length === 0 && g.outside.length === 0 && g.talkBelow, `overlaps=${g.overlaps} outside=${g.outside} talkBelow=${g.talkBelow} parts=${g.parts}`);
     ok(`${w}x${h} the panel stays inside the window`, g.panel.t >= 0 && g.panel.b <= g.vh && g.panel.r <= g.vw + 1);
     if (w === 1366) await shot(s, `pc-${pack}-${lang}-1366-empty`, { fullPage: false });
   }

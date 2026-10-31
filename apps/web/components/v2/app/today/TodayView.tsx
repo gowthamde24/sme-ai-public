@@ -56,15 +56,12 @@ export function TodayView({ intro = null, live = null, outcomes = null, data, na
         {intro}
         {live}
         {outcomes}
+        {/* the other cards, two by two */}
         <div className="grid grid-cols-1 items-start gap-4 md:gap-5 lg:grid-cols-2">
-          <div className="flex min-w-0 flex-col gap-4 md:gap-5">
-            <StoreVisits store={store} calendarHref={calendarHref ?? `${base}/visits`} bookHref={role === "viewer" ? null : `${base}/visits#book`} t={t} />
-            {packCards}
-          </div>
-          <div className="flex min-w-0 flex-col gap-4 md:gap-5">
-            <DoneSection digest={digest} words={words} outboxHref={outboxHref} />
-            <TeamSection team={team} deskTeam={deskTeam} base={base} t={t} now={now} />
-          </div>
+          <StoreVisits store={store} calendarHref={calendarHref ?? `${base}/visits`} bookHref={role === "viewer" ? null : `${base}/visits#book`} t={t} />
+          {packCards}
+          <DoneSection digest={digest} words={words} outboxHref={outboxHref} />
+          <TeamSection team={team} deskTeam={deskTeam} base={base} t={t} now={now} />
         </div>
       </NeedsProvider>
     </div>
