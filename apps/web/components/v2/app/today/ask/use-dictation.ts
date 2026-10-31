@@ -8,6 +8,7 @@ import { askVoiceToken } from "@/lib/browser-voice/token";
 
 import type { BrowserVoice } from "./browser-voice";
 import { MAX_QUESTION } from "./ask-constants";
+import type { ChatLanguage } from "./chat-language";
 import type { PanelVoiceOptions } from "./use-panel-voice";
 import type { AskSession } from "./use-ask-session";
 
@@ -32,13 +33,16 @@ const joined = (s: Snapshot): string =>
  * Dictation (owner, 30 Oct): the microphone writes into the TEXT BOX as the person speaks, and nothing is asked until they press Send. It uses the voice socket's words-only mode (`mode: "dictate"`: the same recogniser, but no answer, no voice
  * and nothing stored), so the words come word by word, final words replacing the partial ones. What was in the box stays in front of the new words. The API ends it by itself a few seconds after the last words; a tap ends it at once.
  */
-export function useDictation(session: AskSession, voice: BrowserVoice, options: PanelVoiceOptions = {}): Dictation {
+export function useDictation(session: AskSession, voice: BrowserVoice, options: PanelVoiceOptions = {}, chat?: ChatLanguage): Dictation {
   const { audioFactory = browserAudio, socketFactory = (u: string) => new WebSocket(u) as unknown as SocketLike } = options;
   const [state, setState] = React.useState<Dictation["state"]>("idle");
   const [error, setError] = React.useState<string | null>(null);
   const client = React.useRef<VoiceClient | null>(null);
   const { setText } = session;
-  const { tokenUrl, url, language } = voice;
+  const { tokenUrl, url } = voice;
+  // the pill (when the chat has one): the language the words are written in; without it the app's language as before
+  const language = chat ? chat.reply : voice.language;
+  const sttLanguage = chat ? chat.stt : voice.language === "en" ? null : voice.language; // Telugu, Hindi, Kannada: the words come in that script from the first one; English stays on any-language (the API uses its Latin recogniser)
 
   React.useEffect(
     () => () => {
@@ -65,7 +69,7 @@ export function useDictation(session: AskSession, voice: BrowserVoice, options: 
       audio,
       socket: socketFactory,
       mode: "dictate",
-      sttLanguage: language === "en" ? null : language, // Telugu, Hindi, Kannada: the words come in that script from the first one; English stays on any-language (the API uses its Latin recogniser)
+      sttLanguage,
       onChange: (snap) => {
         if (client.current !== c) return;
         const words = joined(snap);

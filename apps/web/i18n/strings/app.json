@@ -75051,5 +75051,82 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.lang.label": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.lang.auto": {
+  "en": "Auto",
+  "te": "ఆటో",
+  "hi": "ऑटो",
+  "kn": "ಆಟೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.bar.plus": {
+  "en": "More",
+  "te": "మరిన్ని",
+  "hi": "और",
+  "kn": "ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.talk.label": {
+  "en": "Talk",
+  "te": "మాట్లాడండి",
+  "hi": "बात करें",
+  "kn": "ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.talk.stop": {
+  "en": "Stop",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.row.details": {
+  "en": "Details",
+  "te": "వివరాలు",
+  "hi": "विवरण",
+  "kn": "ವಿವರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.row.less": {
+  "en": "Show less",
+  "te": "తక్కువ చూపండి",
+  "hi": "कम दिखाएँ",
+  "kn": "ಕಡಿಮೆ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

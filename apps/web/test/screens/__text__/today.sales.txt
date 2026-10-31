@@ -1,6 +1,5 @@
 Tuesday, 6 October
 # Good morning
-[button type=button: Help for this screen]
 {label="Needs you"}
 ## Needs you
 1 1 waiting for you Messages about money, promises or complaints, and calls, always wait for you.

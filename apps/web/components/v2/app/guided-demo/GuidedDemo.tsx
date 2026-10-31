@@ -143,7 +143,7 @@ export default function GuidedDemo({ words, routes, actions }: { words?: Words; 
 
   if (step === null)
     return (
-      <button type="button" data-part="guided-demo-start" onClick={start} className={`${primary} fixed bottom-20 left-4 z-40 shadow-lg md:bottom-4`}>
+      <button type="button" data-part="guided-demo-start" onClick={start} className={`${primary} fixed bottom-20 left-4 z-40 shadow-lg md:bottom-4 md:left-[256px]`}>
         <Play className="size-4" aria-hidden="true" />
         {t("gd.start")}
       </button>

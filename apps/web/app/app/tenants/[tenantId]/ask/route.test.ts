@@ -11,7 +11,7 @@ const Q = "44444444-4444-4444-8444-444444444444";
 const E = "55555555-5555-4555-8555-555555555555";
 
 const h = vi.hoisted(() => ({ user: null as null | { accessToken: string }, send: vi.fn(), quote: vi.fn(), turn: vi.fn() }));
-vi.mock("@/lib/api/turns", () => ({ sendTurn: (...a: unknown[]) => h.turn(...a) }));
+vi.mock("@/lib/api/turns", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/turns")>()), sendTurn: (...a: unknown[]) => h.turn(...a) }));
 vi.mock("@/lib/auth/session", () => ({
   requireUser: async () => {
     if (!h.user) throw new Error("NEXT_REDIRECT:/login");
@@ -152,6 +152,17 @@ describe("POST /app/tenants/[id]/ask where the conversation panel is on (BROWSER
     });
     expect(await lines(await post({ text: "call", messageId: M, conversationId: C }))).toEqual([{ type: "text", delta: "Which leads?" }, { type: "done", conversationId: C, kind: "clarify" }]);
     expect(h.turn).toHaveBeenLastCalledWith("tok", T, { messageId: M, conversationId: C, text: "call" });
+  });
+  it("passes the chat's language pill on to the turn (auto or a language); anything else is ignored and nothing is sent", async () => {
+    h.turn.mockImplementation(async function* () {
+      yield { type: "done", conversation_id: C, message_id: M, language: "te", kind: "answer" };
+    });
+    await lines(await post({ text: "price?", messageId: M, conversationId: null, language: "te" }));
+    expect(h.turn).toHaveBeenLastCalledWith("tok", T, { messageId: M, conversationId: null, text: "price?", language: "te" });
+    await lines(await post({ text: "price?", messageId: M, conversationId: null, language: "auto" }));
+    expect(h.turn).toHaveBeenLastCalledWith("tok", T, { messageId: M, conversationId: null, text: "price?", language: "auto" });
+    await lines(await post({ text: "price?", messageId: M, conversationId: null, language: "klingon" }));
+    expect(h.turn).toHaveBeenLastCalledWith("tok", T, { messageId: M, conversationId: null, text: "price?" });
   });
   it("an API that has no conversation endpoint yet (404) is asked through the written Ask instead; a failure after the answer began, or any other refusal, is not retried", async () => {
     h.turn.mockImplementation(async function* () {

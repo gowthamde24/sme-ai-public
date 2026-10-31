@@ -1,6 +1,5 @@
 Tuesday, 6 October
 # Good morning
-[button type=button: Help for this screen]
 {role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
 {label="Needs you"}
 ## Needs you

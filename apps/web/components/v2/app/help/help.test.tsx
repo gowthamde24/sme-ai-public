@@ -9,6 +9,7 @@ import { appT } from "@/i18n/app";
 import { LANGS } from "@/i18n/lang";
 
 import { HelpGuide, HelpIndex } from "./HelpScreens";
+import { HelpButton } from "./HelpButton";
 import { HelpTip } from "./HelpTip";
 import { GUIDES, GUIDE_IDS, TIP_LINES, TIP_SCREENS, guideOf, isGuideId, nextGuide } from "./guides";
 import { helpTipFor } from "./help-tip";
@@ -81,10 +82,15 @@ describe("the Help screens", () => {
   }
 });
 
-describe("the '?' tip of a screen", () => {
+describe("the '?' of a screen, in the top bar", () => {
+  const MEMBERSHIPS = [{ id: "11111111-1111-4111-8111-111111111111", name: "Acme", role: "owner" as const }];
+  const header = () => render(<HelpButton base="/app/tenants/T" />);
   const tip = () => render(<HelpTip screen="outbox" label="Help for this screen" lines={["One.", "Two.", "Three."]} moreHref="/g" moreLabel="Read the full guide" closeLabel="Close" />);
-  it("is a closed button with a name, 44 px tall, that opens three lines and the link to the full guide", () => {
-    tip();
+  void MEMBERSHIPS;
+  it("the screen's tip draws nothing in the page; the '?' button in the bar is closed, 44 px, and opens three lines and the link to the full guide", () => {
+    const page = tip();
+    expect(page.container.innerHTML).toBe(""); // nothing under the heading any more
+    header();
     const button = screen.getByRole("button", { name: "Help for this screen" });
     expect(button).toHaveAttribute("aria-expanded", "false");
     expect(button.className).toMatch(/min-h-11/);
@@ -95,14 +101,25 @@ describe("the '?' tip of a screen", () => {
     expect(within(region).getAllByRole("listitem").map((l) => l.textContent)).toEqual(["One.", "Two.", "Three."]);
     expect(within(region).getByRole("link", { name: "Read the full guide" })).toHaveAttribute("href", "/g");
   });
-  it("closes with its own button and with Escape", () => {
+  it("closes with its own button, with Escape and with a tap outside", () => {
     tip();
+    header();
     fireEvent.click(screen.getByRole("button", { name: "Help for this screen" }));
     fireEvent.click(screen.getByRole("button", { name: "Close" }));
     expect(screen.queryByRole("region")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "Help for this screen" }));
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("region")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Help for this screen" }));
+    fireEvent.pointerDown(document.body);
+    expect(screen.queryByRole("region")).toBeNull();
+  });
+  it("a screen with no tip still has the '?': it opens the way to the list of guides; a screen that leaves takes its tip with it", () => {
+    const page = tip();
+    const bar = header();
+    page.unmount();
+    fireEvent.click(bar.getByRole("button", { name: "Help" }));
+    expect(bar.getByRole("link", { name: "Help" })).toHaveAttribute("href", "/app/tenants/T/help");
   });
   it("is built on the server with the words of the language and the guide of the screen", () => {
     const el = helpTipFor("te", BASE, "visits");

@@ -41,6 +41,8 @@ describe("makeAskTransport", () => {
     expect(bodies[0].conversationId).toMatch(U);
     expect(bodies[0].conversationId).toBe(bodies[1].conversationId);
     expect(Object.keys(bodies[0]).sort()).toEqual(["conversationId", "messageId", "text"]); // no tenant, role or price can be sent
+    await collect(ask({ question: "three", lang: "en", signal: new AbortController().signal, replyLanguage: "te" }));
+    expect(JSON.parse(String(fetcher.mock.calls[2][1]!.body)).language).toBe("te"); // the language pill, only when the chat has one
     expect(JSON.stringify(fetcher.mock.calls[0][1]!.headers)).not.toMatch(/authorization/i);
     expect(fetcher.mock.calls[0][1]!.redirect).toBe("error");
   });
