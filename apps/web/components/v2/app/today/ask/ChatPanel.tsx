@@ -10,6 +10,7 @@ import type { VoiceLang } from "@/lib/browser-voice/protocol";
 import type { BrowserVoice } from "./browser-voice";
 import { Drafts, ERROR_WORD, Sources } from "./AskView";
 import { MarkdownLite } from "./MarkdownLite";
+import { LiveStatus } from "./LiveStatus";
 import { Mispronounced } from "./Mispronounced";
 import { MAX_QUESTION } from "./ask-constants";
 import type { AskSession, Exchange } from "./use-ask-session";
@@ -90,6 +91,7 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus, mis }: { mis: { endpoin
       {x.answer ? (
         <div data-chat="assistant" className={`${bubble} self-start bg-surface-2`}>
           <MarkdownLite text={x.answer} />
+          {x.interrupted ? <p data-chat="interrupted" className="mt-1 text-xs font-semibold text-muted">{c("bv.live.interrupted")}</p> : null}
           <button type="button" data-chat="copy" onClick={copy} aria-label={c("bv.chat.copy")} className="mt-1 inline-flex min-h-8 items-center gap-1 text-xs font-semibold text-muted hover:text-ink">
             <Copy className="size-3.5" aria-hidden="true" />
             {copied ? c("bv.chat.copied") : c("bv.chat.copy")}
@@ -201,7 +203,6 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   // under the circle while it speaks: which voice it is ("Speaking in Telugu · Ramya"), as the API says it at the start of the turn
   const said = talk.voice;
   const hint = talk.state === "speaking" && said?.name ? c("bv.speaking.in").replace("{language}", voice.languageNames[said.language ?? voice.language] ?? "").replace("{voice}", said.name) : null;
-  const line = talk.state === "thinking" ? (talk.step === "looking" ? voice.words["bv.looking"] : voice.words["bv.thinking"]) : talk.state === "speaking" ? voice.words["bv.speaking"] : talk.state === "listening" ? voice.words["bv.listening"] : talk.active ? voice.words["bv.connecting"] : null;
   const content = (
     <>
         <div className="flex min-h-14 shrink-0 items-center gap-2 border-b border-line px-3">
@@ -272,6 +273,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
                 {talk.live.answer ? (
                   <div data-chat="assistant-live" className={`${bubble} self-start bg-surface-2`}>
                     <MarkdownLite text={talk.live.answer} />
+                    {talk.live.cut ? <p data-chat="interrupted" className="mt-1 text-xs font-semibold text-muted">{c("bv.live.interrupted")}</p> : null}
                     {mis ? <Mispronounced text={talk.live.answer} language={mis.language} endpoint={mis.endpoint} c={c} /> : null}
                   </div>
                 ) : null}
@@ -292,23 +294,17 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
               ))}
             </ul>
           ) : null}
-          {talk.active ? (
-            <p data-chat="live-badge" role="status" className="flex items-center gap-2 text-sm font-semibold text-brand-text">
-              <span aria-hidden="true" className="size-2.5 rounded-full bg-brand motion-safe:animate-pulse" />
-              {c("bv.chat.live.on")}
-              {talk.state === "speaking" ? (
-                <button type="button" data-chat="stop-talk" onClick={talk.bargeIn} className="ml-auto min-h-8 rounded-full border border-edge bg-surface px-3 text-xs font-semibold text-ink">
-                  {c("bv.chat.stop")}
-                </button>
-              ) : null}
-            </p>
-          ) : null}
+          {talk.active ? <LiveStatus talk={talk} c={c} /> : null}
           {dictating ? <p data-chat="dictating" role="status" className="text-sm font-medium text-muted">{c("bv.chat.dictating")}</p> : null}
           {dict.error ? <p data-chat="dictate-error" role="status" className="text-sm text-amber-text">{w(ERROR_WORD[dict.error] ?? PROBLEM_WORDS[dict.error] ?? "ask.mic.failed")}</p> : null}
           {talk.problem ? <p data-chat="live-problem" role="status" className="text-sm text-amber-text">{w(ERROR_WORD[talk.problem] ?? "ask.error")}</p> : null}
-          {line ? <p data-chat="state" role="status" className="text-sm font-medium text-muted">{line}</p> : null}
           {talk.micDenied ? <p role="alert" className="text-sm font-medium text-red-text">{voice.words["bv.mic.denied"]}</p> : null}
           {talk.end && !talk.active && !QUIET_ENDS.includes(talk.end) ? <p role="status" className="text-sm text-muted">{voice.words[`bv.end.${talk.end}`]}</p> : null}
+          {talk.micDenied || talk.problem || dict.error || (talk.end && !talk.active && !QUIET_ENDS.includes(talk.end)) ? (
+            <button type="button" data-chat="type-instead" onClick={() => input.current?.focus()} className="min-h-9 rounded-full border border-edge bg-surface px-3.5 text-sm font-semibold text-ink hover:bg-surface-2">
+              {c("bv.live.typeinstead")}
+            </button>
+          ) : null}
           <form
             data-write
             data-chat="form"

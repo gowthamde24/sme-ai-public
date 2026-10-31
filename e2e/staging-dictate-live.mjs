@@ -137,6 +137,12 @@ try {
   ok("a clear Live indicator shows", (await lc.locator('[data-chat="live-badge"]').innerText()).trim().length > 0);
   ok("the Live button is now Stop", (await lc.locator('[data-chat="live-talk"]').getAttribute("aria-pressed")) === "true");
   ok("Dictate is off while live", await lc.locator('[data-chat="dictate"]').isDisabled());
+  const stateWord = (await lc.locator('[data-chat="live-state"]').innerText()).trim();
+  ok("Live shows its state in words (Connecting, Listening, Thinking, Speaking or Paused)", /^(Connecting|Listening|Thinking|Looking|Speaking|Paused)/.test(stateWord) || lang !== "en", stateWord);
+  ok("the microphone indicator is visible while Live is open", (await lc.locator('[data-chat="mic"]').count()) === 1 && (await lc.locator('[data-chat="mic"]').isVisible()));
+  await lc.locator('[data-chat="check-in"]').waitFor({ timeout: 25000 }).catch(() => null);
+  const checkIn = await lc.locator('[data-chat="check-in"]').count();
+  console.log(`check-in line: ${checkIn ? JSON.stringify((await lc.locator('[data-chat="check-in"]').innerText()).trim()) : "none seen (the question came before 8 s of quiet)"}`);
   await shot(ls, `dl-${pack}-${size}-${lang}-4-live`);
   const t2 = Date.now();
   let turns = 0;
