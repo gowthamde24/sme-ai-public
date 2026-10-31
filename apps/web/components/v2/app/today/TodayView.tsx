@@ -57,13 +57,14 @@ export function TodayView({ intro = null, live = null, outcomes = null, data, na
         {live}
         {outcomes}
         {/* the other cards, two by two */}
-        <div className="grid grid-cols-1 items-start gap-4 md:gap-5 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-2">
           <StoreVisits store={store} calendarHref={calendarHref ?? `${base}/visits`} bookHref={role === "viewer" ? null : `${base}/visits#book`} t={t} />
           <DoneSection digest={digest} words={words} outboxHref={outboxHref} />
           <NewLeads deskTeam={deskTeam} base={base} t={t} now={now} />
-          {packCards}
           <TeamSection team={team} deskTeam={deskTeam} base={base} t={t} now={now} />
         </div>
+        {/* what a business type adds (trips, quotes, dues...) sits under the four cards, side by side */}
+        {packCards}
       </NeedsProvider>
     </div>
   );

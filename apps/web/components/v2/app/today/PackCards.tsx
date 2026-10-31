@@ -10,7 +10,7 @@ const TONE = { neutral: "border-line", amber: "border-amber-text bg-amber-bg", r
 export function PackCards({ cards, t }: { cards: readonly PackCard[]; t: T }) {
   if (cards.length === 0) return null;
   return (
-    <section aria-label={t("today.pack.label")} data-part="pack-cards" className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 lg:grid-cols-1">
+    <section aria-label={t("today.pack.label")} data-part="pack-cards" className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 lg:grid-cols-3">
       {cards.map((c) => (
         <Link key={c.id} href={c.href} data-card={c.id} className={`flex min-h-11 flex-col gap-1 rounded-[20px] border p-4 hover:border-brand-edge ${c.value === null ? "border-line bg-surface" : `${TONE[c.tone]} bg-surface`}`}>
           <span className="text-sm font-semibold text-muted">{t(c.titleKey)}</span>
