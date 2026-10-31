@@ -112,7 +112,7 @@ def load(path: str) -> IndicSmartTurn | None:
         try:
             if not os.path.isfile(path):
                 raise FileNotFoundError("model file not found")
-            import numpy as np  # noqa: PLC0415 - optional dependency
+            import numpy as np  # type: ignore[import-not-found, import-untyped, unused-ignore]  # noqa: PLC0415
             import onnxruntime as ort  # type: ignore[import-untyped, import-not-found, unused-ignore]  # noqa: PLC0415
 
             options = ort.SessionOptions()
