@@ -49,8 +49,19 @@ _ACTION_DO = {
     "hi": ("कर", "भेज", "दिला", "करो", "कीजिए"),
     "kn": ("ಮಾಡಿ", "ಮಾಡು", "ಕಳುಹಿಸಿ", "ಕಳುಹಿಸು"),
 }
-# a question about a call or a message is not an instruction ("how many calls today?")
-_ACTION_NOT = re.compile(r"\b(how many|how much|which|who|what|when|why|show|list|count|did|have|has|was|were)\b|\?\s*$")
+# a question about a call or a message is not an instruction ("how many calls today?"). Owner bug 31 Oct 2026: "ఈ రోజు ఎన్ని విచారణలు వచ్చాయి, నేను ఎవరికి ముందు కాల్ చేయాలి" (how many enquiries came today, who should I call
+# first) was read as "call" + "do" and became a plan to approve: only an explicit request to reach people is an action, a question never is.
+_ACTION_NOT = re.compile(
+    r"\b(how many|how much|which|who|whom|what|when|why|where|show|list|count|did|have|has|was|were|should i|shall i|do i|need to call|whom to|who to"
+    r"|enni|entha|enta|evaru|evariki|evarini|ekkada|eppudu|enduku|emiti|emi|ye|ela|kitne|kitni|kaun|kisko|kise|kab|kahan|kyun|kaise|kya|yaar[ui]|yaarige|eshtu|yavaga|yelli)\b|\?\s*$|\?"
+)
+# the same in the scripts (an Indian-language word matches anywhere inside a word): a question word, a question mark, or "should I/we do it" (the -ā ending, "चाहिए", "करूँ", "ಮಾಡಬೇಕು")
+_QUESTION_INDIAN = (
+    "?", "？",
+    "ఎన్ని", "ఎంత", "ఎవరు", "ఎవరి", "ఎవరు", "ఎవరిని", "ఎప్పుడు", "ఎక్కడ", "ఏమి", "ఏం ", "ఏది", "ఏవి", "ఎలా", "ఎందుకు", "ఏంటి", "ఏ ", "ఎంతమంది", "చేయాలా", "పంపాలా", "చేయవచ్చా", "చేయమంటారా", "చేయనా", "పంపనా",
+    "कितने", "कितनी", "कितना", "कौन", "किसे", "किसको", "किसकी", "किसका", "कब", "कहाँ", "कहां", "क्यों", "कैसे", "क्या", "कौन सा", "कौन सी", "चाहिए", "करूँ", "करूं", "करें क्या", "भेजूँ", "भेजूं", "करना है",
+    "ಎಷ್ಟು", "ಯಾರು", "ಯಾರಿಗೆ", "ಯಾರನ್ನು", "ಯಾವಾಗ", "ಯಾವ", "ಎಲ್ಲಿ", "ಏನು", "ಹೇಗೆ", "ಯಾಕೆ", "ಏಕೆ", "ಮಾಡಬೇಕು", "ಮಾಡಲಾ", "ಕಳುಹಿಸಲಾ",
+)
 
 # ---- 2. small talk
 _SMALLTALK_LATIN = (
@@ -92,7 +103,7 @@ _BUSINESS_LATIN = (
 _WEAK_TIME = ("today", "yesterday", "tomorrow", "this week", "this month", "last week", "last month", "ఈరోజు", "ఈ రోజు", "నిన్న", "రేపు", "ఈ వారం", "ఈ నెల", "आज", "कल", "इस हफ्ते", "इस हफ़्ते", "इस महीने", "ಇಂದು", "ನಿನ್ನೆ", "ನಾಳೆ", "ಈ ವಾರ", "ಈ ತಿಂಗಳು")
 _BUSINESS_INDIAN = (
     "ఎంక్వైరీ", "ఎంక్వయిరీ", "లీడ్", "కస్టమర్", "వినియోగదారు", "కొటేషన్", "ఆర్డర్", "ఇన్వాయిస్", "చెల్లింపు", "బకాయి", "స్టాక్", "ఫాలో", "పెండింగ్", "ఎంత మంది",
-    "ఎంతమంది", "ధర", "రేటు", "అమ్మకాలు", "విజిట్", "అపాయింట్", "ఫీజు", "విద్యార్థ", "అడ్మిషన్", "డెలివరీ", "నా వ్యాపార", "నా బిజినెస్", "రిప్లై",
+    "ఎంతమంది", "విచారణ", "ధర", "రేటు", "అమ్మకాలు", "విజిట్", "అపాయింట్", "ఫీజు", "విద్యార్థ", "అడ్మిషన్", "డెలివరీ", "నా వ్యాపార", "నా బిజినెస్", "రిప్లై",
     "पूछताछ", "इंक्वायरी", "एनक्वायरी", "लीड", "ग्राहक", "कस्टमर", "कोटेशन", "ऑर्डर", "इनवॉइस", "भुगतान", "बकाया", "स्टॉक", "फॉलो", "पेंडिंग", "कितने", "कितनी", "कीमत", "रेट",
     "बिक्री", "विज़िट", "अपॉइंटमेंट", "फीस", "छात्र", "एडमिशन", "डिलीवरी", "मेरा बिजनेस", "मेरे ग्राहक", "रिप्लाई", "जवाब",
     "ಎನ್‌ಕ್ವೈರಿ", "ಎನ್ಕ್ವೈರಿ", "ಲೀಡ್", "ಗ್ರಾಹಕ", "ಕಸ್ಟಮರ್", "ಕೊಟೇಶನ್", "ಆರ್ಡರ್", "ಇನ್‌ವಾಯ್ಸ್", "ಪಾವತಿ", "ಬಾಕಿ", "ಸ್ಟಾಕ್", "ಫಾಲೋ", "ಎಷ್ಟು", "ಬೆಲೆ", "ದರ", "ಮಾರಾಟ", "ಶುಲ್ಕ", "ವಿದ್ಯಾರ್ಥಿ", "ರಿಪ್ಲೈ",
@@ -159,7 +170,7 @@ def _is_action(norm: str) -> bool:
     if _ACTION_START.match(norm) or (_ACTION_TENGLISH.search(norm) and not _ACTION_NOT.search(norm)):
         return True
     for lang in ("te", "hi", "kn"):
-        if _indian(_ACTION_CHANNEL[lang], norm) and _indian(_ACTION_DO[lang], norm) and not _ACTION_NOT.search(norm):
+        if _indian(_ACTION_CHANNEL[lang], norm) and _indian(_ACTION_DO[lang], norm) and not _ACTION_NOT.search(norm) and not _indian(_QUESTION_INDIAN, norm):
             return True
     return False
 

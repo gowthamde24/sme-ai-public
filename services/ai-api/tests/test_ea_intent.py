@@ -23,6 +23,29 @@ def test_every_example_is_routed_to_its_kind(kind: str, examples: list[str]) -> 
     assert not wrong, f"expected {kind}: {wrong}"
 
 
+# owner bug 31 Oct 2026: a QUESTION that mentions calling or messaging got a "Plan to approve". Only an explicit request to reach people is an action.
+QUESTIONS_ABOUT_REACHING_PEOPLE = [
+    "ఈ రోజు ఎన్ని విచారణలు వచ్చాయి, నేను ఎవరికి ముందు కాల్ చేయాలి", "ఎవరికి కాల్ చేయాలి", "ముందు ఎవరికి కాల్ చేయాలి?", "నేను రవికి కాల్ చేయాలా", "ఈరోజు ఎవరికి మెసేజ్ పంపాలి", "ఎంతమందికి కాల్ చేశాం",
+    "who should I call first", "who do I call first today", "should I call Ravi", "how many enquiries came today and who should I call first", "which leads should I message first", "whom to call first",
+    "today ki evariki call cheyyali", "evariki call cheyali",
+    "आज कितनी पूछताछ आई, पहले किसे कॉल करूँ", "पहले किसको कॉल करना चाहिए", "ಇಂದು ಎಷ್ಟು ವಿಚಾರಣೆ ಬಂದಿವೆ, ಯಾರಿಗೆ ಮೊದಲು ಕಾಲ್ ಮಾಡಬೇಕು", "ಯಾರಿಗೆ ಕಾಲ್ ಮಾಡಲಿ?",
+]
+EXPLICIT_REQUESTS_TO_REACH_PEOPLE = [
+    "call Ravi", "please call Ravi now", "send a WhatsApp to the pending customers", "message everyone who didn't pay", "Ravi ki call cheyyi", "customers ki message pampu",
+    "రవికి కాల్ చేయండి", "రవికి కాల్ చేయి", "ఆ ఎంక్వైరీలకు వాట్సాప్ పంపండి", "रवि को कॉल कीजिए", "ಅವರಿಗೆ ಕಾಲ್ ಮಾಡು", "ರವಿಗೆ ಮೆಸೇಜ್ ಕಳುಹಿಸಿ",
+]
+
+
+def test_a_question_that_mentions_calling_is_answered_never_planned() -> None:
+    wrong = {t: classify(t).kind for t in QUESTIONS_ABOUT_REACHING_PEOPLE if classify(t).kind == "action"}
+    assert not wrong, f"a question must get an answer, not a plan to approve: {wrong}"
+
+
+def test_an_explicit_request_to_reach_people_is_still_an_action() -> None:
+    wrong = {t: classify(t).kind for t in EXPLICIT_REQUESTS_TO_REACH_PEOPLE if classify(t).kind != "action"}
+    assert not wrong, wrong
+
+
 def test_a_question_about_calls_is_not_an_instruction() -> None:
     assert classify("how many calls did we make today?").kind == "business"
     assert classify("call log of this week").kind == "business"
