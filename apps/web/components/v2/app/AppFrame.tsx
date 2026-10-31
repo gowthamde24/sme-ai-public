@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
-import { InstallHint } from "@/components/v2/pwa/InstallHint";
+import { InstallHint } from "@/components/v2/pwa/LazyInstallHint";
 import { V2Root } from "@/components/v2/V2Root";
 import { appT, frameLabels } from "@/i18n/app";
 import { authT } from "@/i18n/auth";
