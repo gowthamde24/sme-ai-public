@@ -40,8 +40,10 @@ try {
   // the member's name (the demo owner has none): the greeting uses it
   await p.goto(`${s.base}/settings?section=profile`, { waitUntil: "domcontentloaded" });
   await p.locator("#me-name").waitFor({ timeout: 45000 });
-  if (!(await p.locator("#me-name").inputValue())) {
-    await p.locator("#me-name").fill("Gowtham Reddy");
+  let memberName = await p.locator("#me-name").inputValue();
+  if (!memberName) {
+    memberName = "Gowtham Reddy";
+    await p.locator("#me-name").fill(memberName);
     await p.locator('[data-part="my-profile"] form:has(#me-name) button[type="submit"]').click();
     await sleep(2500);
   }
@@ -82,7 +84,7 @@ try {
     return { h1: document.querySelector('[data-screen="today"] h1').innerText, inHeader: !!document.querySelector('header[class*="sticky"] [data-live="pill"]'), sameRow: !!pill && pill.bottom > h1.top && pill.top < h1.bottom + 40, rightAligned: !!pill && main.right - pill.right < 60 };
   });
   ok("the Live now pill is on the greeting row, right-aligned, not in the top bar", !g.inHeader && g.sameRow && g.rightAligned, JSON.stringify(g));
-  ok("the greeting carries the member's name, with the language's respectful form", lang === "te" ? /Gowtham Reddy గారు$/.test(g.h1) : /, Gowtham Reddy$/.test(g.h1), g.h1.replace(/\n/g, " "));
+  ok("the greeting carries the member's name, with the language's respectful form", lang === "te" ? g.h1.endsWith(`${memberName} గారు`) : g.h1.endsWith(`, ${memberName}`), g.h1.replace(/\n/g, " "));
   await shot(s, `lg-${pack}-${lang}-3-today`, { fullPage: false });
   await p.setViewportSize({ width: 390, height: 844 });
   await p.goto(s.base, { waitUntil: "domcontentloaded" });
