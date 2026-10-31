@@ -256,11 +256,11 @@ describe("Needs you: empty, unreadable, and the phone", () => {
     expect(screen.getByText("Not available yet")).toBeInTheDocument();
     expect(container.querySelector("[data-count]")).toBeNull();
   });
-  it("only the two newest show (phone and desktop alike), and 'See all' shows the rest (and 'Show fewer' hides them again)", () => {
+  it("on a phone only the two newest show (a desktop three rows), and 'See all' shows the rest (and 'Show fewer' hides them again)", () => {
     const many = [classic(), outbox(), call(), classic({ id: "x2" }), classic({ id: "x3" })].map((c, i) => ({ ...c, key: `k${i}` }) as NeedsCard);
     board(many);
     const items = () => within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("listitem");
-    expect(items().map((li) => (li.className.includes("max-md:hidden") ? "phone-hidden" : li.className.includes("hidden") ? "hidden" : "shown"))).toEqual(["shown", "shown", "hidden", "hidden", "hidden"]);
+    expect(items().map((li) => (li.className.includes("max-md:hidden") ? "phone-hidden" : li.className.includes("hidden") ? "hidden" : "shown"))).toEqual(["shown", "shown", "phone-hidden", "hidden", "hidden"]);
     fireEvent.click(screen.getByRole("button", { name: "See all (5)" }));
     expect(items().some((li) => li.className.includes("hidden"))).toBe(false);
     fireEvent.click(screen.getByRole("button", { name: "Show fewer" }));
@@ -401,5 +401,56 @@ describe("Needs you: Lead Desk (hot leads, plans, callbacks, limits) and the 'Al
     board([desk("hot_lead_waiting")], { waiting: 1 });
     expect(count()).toHaveAttribute("data-count", "1");
     expect(screen.queryByText(/All clear/)).toBeNull();
+  });
+});
+
+describe("Needs you on a desktop: one compact row per thing (owner 31 Oct)", () => {
+  const desktop = () => (window.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }) as unknown as typeof window.matchMedia);
+  afterEach(() => {
+    // @ts-expect-error back to a test environment without matchMedia
+    delete window.matchMedia;
+  });
+  const rows = () => [...document.querySelectorAll("[data-needs-row]")] as HTMLElement[];
+  it("each thing is ONE line: badge, title, a short reason, how long ago, the quick buttons on the right and Details; the three newest show, then See all", () => {
+    desktop();
+    board([classic(), outbox(), call(), classic({ id: "x2" }), classic({ id: "x3" })].map((c, i) => ({ ...c, key: `k${i}` }) as NeedsCard));
+    expect(rows()).toHaveLength(5);
+    expect(screen.queryAllByRole("article")).toHaveLength(0); // no full card until Details
+    const items = within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("listitem");
+    expect(items.map((li) => li.className.split(" ").includes("hidden"))).toEqual([false, false, false, true, true]); // three rows on a desktop (the third is only hidden on a phone)
+    const message = rows()[1];
+    expect(within(message).getByText("Price · needs your OK")).toBeInTheDocument();
+    expect(within(message).getByRole("heading", { level: 3 })).toHaveTextContent("Reply to Lakshmi R.");
+    expect(within(message).getByText(/ఈ చీర ధర 500/)).toBeInTheDocument(); // the first words of the message, one line
+    expect(within(message).getByRole("button", { name: "Approve and send" })).toBeInTheDocument();
+    expect(within(message).getByRole("button", { name: "Not now" })).toBeInTheDocument();
+    expect(within(message).getByRole("button", { name: "Details" })).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("button", { name: "See all (5)" })).toBeInTheDocument();
+  });
+  it("the quick buttons do what the card's buttons do: Approve and send, Approve call", async () => {
+    desktop();
+    const { actions } = board([outbox(), call()].map((c, i) => ({ ...c, key: `k${i}` }) as NeedsCard));
+    await act(async () => void fireEvent.click(within(rows()[0]).getByRole("button", { name: "Approve and send" })));
+    expect(actions.approveMessage).toHaveBeenCalledWith(MESSAGE_ID);
+    await act(async () => void fireEvent.click(within(rows()[0]).getByRole("button", { name: "Approve call" })));
+    expect(actions.approveCall).toHaveBeenCalledWith(CALL_ID);
+  });
+  it("Details opens the whole card in the row's place, with all its buttons; Show less folds it back", () => {
+    desktop();
+    board([outbox()]);
+    fireEvent.click(screen.getByRole("button", { name: "Details" }));
+    const a = cardOf(/^Reply to Lakshmi R\./);
+    expect(within(a).getByRole("button", { name: "Edit" })).toBeInTheDocument();
+    expect(within(a).getByText("Goes out in Telugu")).toBeInTheDocument();
+    expect(rows()).toHaveLength(0);
+    fireEvent.click(within(a).getByRole("button", { name: "Show less" }));
+    expect(rows()).toHaveLength(1);
+    expect(screen.queryByRole("article")).toBeNull();
+  });
+  it("a role that may not decide gets the row and Details, no quick buttons", () => {
+    desktop();
+    board([outbox(), call()].map((c, i) => ({ ...c, key: `k${i}` }) as NeedsCard), { role: "sales" });
+    for (const r of rows()) expect(within(r).queryByRole("button", { name: /Approve/ })).toBeNull();
+    expect(within(rows()[0]).getByRole("button", { name: "Details" })).toBeInTheDocument();
   });
 });

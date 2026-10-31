@@ -44,7 +44,32 @@ function badgeOf(m: OutboxCardMessage | null): { key: string; tone: string } {
   return { key: "today.badge.message", tone: "bg-surface-2 text-ink" };
 }
 
-type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions | null; lang: string };
+type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions | null; lang: string; /** A desktop draws each thing as ONE row (badge, title, short reason, buttons); "Details" opens the whole card in its place. */ compact: boolean };
+
+const rowPrimary = "inline-flex min-h-9 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95 disabled:opacity-60";
+const rowQuiet = "inline-flex min-h-9 items-center justify-center rounded-full border border-edge bg-transparent px-3.5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
+
+/** One thing that waits, as one line on a desktop: its badge, its title, the reason in a few words, how long ago, the quick buttons on the right and "Details" (which opens the whole card, with every button it has). */
+function CompactRow({ cardKey, tone, label, title, reason, at, ctx, children, onOpen }: { cardKey: string; tone: string; label: string; title: string; reason: string; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
+  return (
+    <div data-needs-row={cardKey} data-write className="flex min-h-14 items-center gap-3 rounded-xl border border-line bg-surface px-3 py-2">
+      <span className={`${badge} shrink-0 !py-0.5 !text-xs ${tone}`}>{label}</span>
+      <h3 id={`needs-${cardKey}`} title={title} className="max-w-[32%] shrink-0 truncate text-[15px] font-semibold">
+        {title}
+      </h3>
+      <p title={reason} className="min-w-0 flex-1 truncate text-sm text-muted">
+        {reason}
+      </p>
+      <span className="shrink-0 text-xs text-muted">{whenLabel(at, ctx.now)}</span>
+      <div className="flex shrink-0 items-center gap-2">
+        {children}
+        <button type="button" data-needs="details" aria-expanded="false" aria-controls={`needs-full-${cardKey}`} onClick={onOpen} className="inline-flex min-h-9 items-center rounded-full px-2.5 text-sm font-semibold text-brand-text hover:bg-surface-2">
+          {say(ctx.words, "today.row.details")}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function Note({ id, words }: { id: string; words: TodayWords }) {
   const { notes } = useNeeds();
@@ -87,11 +112,18 @@ function useDecide(card: NeedsCard) {
   };
 }
 
-function Head({ tone, label, at, ctx }: { tone: string; label: string; at: string; ctx: Ctx }) {
+function Head({ tone, label, at, ctx, onCollapse }: { tone: string; label: string; at: string; ctx: Ctx; onCollapse?: () => void }) {
   return (
     <div className="flex items-center justify-between gap-2">
       <span className={`${badge} ${tone}`}>{label}</span>
-      <span className="text-sm text-muted">{whenLabel(at, ctx.now)}</span>
+      <span className="flex items-center gap-2 text-sm text-muted">
+        {whenLabel(at, ctx.now)}
+        {onCollapse ? (
+          <button type="button" data-needs="less" aria-expanded="true" onClick={onCollapse} className="inline-flex min-h-9 items-center rounded-full px-2.5 text-sm font-semibold text-brand-text hover:bg-surface-2">
+            {say(ctx.words, "today.row.less")}
+          </button>
+        ) : null}
+      </span>
     </div>
   );
 }
@@ -103,9 +135,20 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   if (item.city) facts.push([say(words, "today.fact.city"), item.city]);
   if (item.amount_paise !== null) facts.push([say(words, "today.fact.amount"), formatINR(item.amount_paise / 100, { decimals: 2 })]);
   facts.push([say(words, "today.fact.when"), ago(item.at, ctx.now)]);
+  const [open, setOpen] = React.useState(false);
+  const name = item.customer === "" ? say(words, "today.customer.unknown") : item.customer;
+  if (ctx.compact && !open) {
+    return (
+      <CompactRow cardKey={c.key} tone={k.tone} label={say(words, k.kind)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={item.summary} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
+        <Link href={item.href} className={rowPrimary}>
+          {say(words, k.step)}
+        </Link>
+      </CompactRow>
+    );
+  }
   return (
-    <article aria-labelledby={`needs-${c.key}`} data-write className={card}>
-      <Head tone={k.tone} label={say(words, k.kind)} at={item.at} ctx={ctx} />
+    <article id={`needs-full-${c.key}`} aria-labelledby={`needs-${c.key}`} data-write className={card}>
+      <Head tone={k.tone} label={say(words, k.kind)} at={item.at} ctx={ctx} onCollapse={ctx.compact ? () => setOpen(false) : undefined} />
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
         {item.customer === "" ? say(words, "today.customer.unknown") : item.customer}
         {item.city ? `, ${item.city}` : ""}
@@ -149,6 +192,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
   const customer = c.customer ?? say(words, "today.customer.unknown");
   const may = (role === "owner" || role === "admin") && actions !== null && m !== null;
   const title = say(words, `today.title.${m?.category ?? "other"}`, { customer });
+  const [open, setOpen] = React.useState(false);
 
   const save = async () => {
     if (!actions) return;
@@ -170,9 +214,25 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
     store.notify(result.message);
   };
 
+  if (ctx.compact && !open) {
+    return (
+      <CompactRow cardKey={c.key} tone={b.tone} label={say(words, b.key)} title={title} reason={m ? m.text.replace(/\s+/g, " ") : say(words, "today.notext")} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+        {may ? (
+          <>
+            <button type="button" onClick={() => void decide(() => actions.approveMessage(c.id))} className={rowPrimary}>
+              {say(words, "today.act.approve")}
+            </button>
+            <button type="button" onClick={() => void decide(() => actions.rejectMessage(c.id))} className={rowQuiet}>
+              {say(words, "today.act.notnow")}
+            </button>
+          </>
+        ) : null}
+      </CompactRow>
+    );
+  }
   return (
-    <article aria-labelledby={`needs-${c.key}`} data-write className={card}>
-      <Head tone={b.tone} label={say(words, b.key)} at={c.at} ctx={ctx} />
+    <article id={`needs-full-${c.key}`} aria-labelledby={`needs-${c.key}`} data-write className={card}>
+      <Head tone={b.tone} label={say(words, b.key)} at={c.at} ctx={ctx} onCollapse={ctx.compact ? () => setOpen(false) : undefined} />
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
         {title}
         {c.city ? <span className="font-normal text-muted"> · {c.city}</span> : null}
@@ -256,9 +316,26 @@ function CallCard({ c, ctx }: { c: Extract<NeedsCard, { type: "call" }>; ctx: Ct
   const customer = c.customer ?? say(words, "today.customer.unknown");
   const r: CallCardRequest | null = c.request;
   const owner = role === "owner" && actions !== null;
+  const [open, setOpen] = React.useState(false);
+  if (ctx.compact && !open) {
+    return (
+      <CompactRow cardKey={c.key} tone="bg-info-bg text-info-text" label={say(words, "today.badge.call")} title={say(words, "today.title.call", { customer })} reason={r ? r.reason : ""} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+        {owner ? (
+          <>
+            <button type="button" onClick={() => void decide(() => actions.approveCall(c.id))} className={rowPrimary}>
+              {say(words, "today.act.callok")}
+            </button>
+            <button type="button" onClick={() => void decide(() => actions.offerVisit(c.id, r?.language ?? "en"))} className={rowQuiet}>
+              {say(words, "today.act.visit")}
+            </button>
+          </>
+        ) : null}
+      </CompactRow>
+    );
+  }
   return (
-    <article aria-labelledby={`needs-${c.key}`} data-write className={card}>
-      <Head tone="bg-info-bg text-info-text" label={say(words, "today.badge.call")} at={c.at} ctx={ctx} />
+    <article id={`needs-full-${c.key}`} aria-labelledby={`needs-${c.key}`} data-write className={card}>
+      <Head tone="bg-info-bg text-info-text" label={say(words, "today.badge.call")} at={c.at} ctx={ctx} onCollapse={ctx.compact ? () => setOpen(false) : undefined} />
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
         {say(words, "today.title.call", { customer })}
         {c.city ? <span className="font-normal text-muted"> · {c.city}</span> : null}
@@ -302,6 +379,7 @@ function VisitProposalCard({ c, ctx }: { c: Extract<NeedsCard, { type: "visit" }
     [say(words, "today.visit.party"), say(words, v.partySize === 1 ? "visits.party.one" : "visits.party.other", { n: v.partySize })],
   ];
   if (v.purpose) facts.push([say(words, "today.visit.purpose"), v.purpose]);
+  const [open, setOpen] = React.useState(false);
 
   const move = async () => {
     if (!actions?.visit || pick.slot === null) return;
@@ -324,9 +402,20 @@ function VisitProposalCard({ c, ctx }: { c: Extract<NeedsCard, { type: "visit" }
     store.notify(result.message);
   };
 
+  if (ctx.compact && !open) {
+    return (
+      <CompactRow cardKey={c.key} tone="bg-amber-bg text-amber-text" label={say(words, "today.badge.visit")} title={say(words, "today.title.visit.proposed", { who: v.who })} reason={facts.map((f) => f[1]).join(" · ")} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+        {may ? (
+          <button type="button" onClick={() => void decide(() => actions.visit!.confirm(c.id))} className={rowPrimary}>
+            {say(words, "today.act.vconfirm")}
+          </button>
+        ) : null}
+      </CompactRow>
+    );
+  }
   return (
-    <article aria-labelledby={`needs-${c.key}`} data-write className={card}>
-      <Head tone="bg-amber-bg text-amber-text" label={say(words, "today.badge.visit")} at={c.at} ctx={ctx} />
+    <article id={`needs-full-${c.key}`} aria-labelledby={`needs-${c.key}`} data-write className={card}>
+      <Head tone="bg-amber-bg text-amber-text" label={say(words, "today.badge.visit")} at={c.at} ctx={ctx} onCollapse={ctx.compact ? () => setOpen(false) : undefined} />
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug [overflow-wrap:anywhere]">
         {say(words, "today.title.visit.proposed", { who: v.who })}
         {v.city ? <span className="font-normal text-muted"> · {v.city}</span> : null}
@@ -402,12 +491,24 @@ function Toast({ words }: { words: TodayWords }) {
  * "Needs you" (job AU): the count, then one card per thing that waits. A WhatsApp message held for approval shows its exact words, the language it goes out in and why it waits, with Approve and send,
  * Edit and Not now; a request for a call has Approve call and Offer a store visit (which declines the call and queues a message offering a visit in the outbox); a visit Agent OWL proposed has Confirm, Change time and Cancel (nothing is sent to the customer by them); the three older kinds are cards that open the page that decides. A decision takes its card off the list at once and
  * a toast says what really happened ("Sent", "Approved, it goes out at 9:00", "Not sent: ..."); a refusal puts the card back with the reason. The buttons shown follow the role (a message: Owner and Admin;
- * a call: the Owner; a visit Agent OWL proposed: Owner, Admin and Sales); the API checks again. Only the two newest cards show (a phone and a desktop alike, so the assistant's command bar is in view under them), with "See all". Nothing here sends a thing: the outbox does, after re-checking every rule.
+ * a call: the Owner; a visit Agent OWL proposed: Owner, Admin and Sales); the API checks again. On a phone only the two newest cards show; on a desktop each thing is one row and the three newest show (so the assistant's command bar is in view under them); each with "See all". Nothing here sends a thing: the outbox does, after re-checking every rule.
  */
+/** Cards (a phone), rows (768 px and up), or both until the browser has said which (the server draws both; the one that does not fit is hidden by CSS, so nothing jumps). Without matchMedia (a test) it is cards. */
+const subscribeWidth = (notify: () => void) => {
+  if (typeof window.matchMedia !== "function") return () => undefined;
+  const q = window.matchMedia("(min-width: 768px)");
+  q.addEventListener("change", notify);
+  return () => q.removeEventListener("change", notify);
+};
+const layoutNow = (): "rows" | "cards" => (typeof window.matchMedia === "function" && window.matchMedia("(min-width: 768px)").matches ? "rows" : "cards");
+
 export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: TodayWords; role: Role; actions: TodayActions | null; now: number; lang?: string }) {
   const { cards, total, extra } = useNeeds();
   const [all, setAll] = React.useState(false);
-  const ctx: Ctx = { words, now, role, actions, lang };
+  const layout = React.useSyncExternalStore<"rows" | "cards" | "both">(subscribeWidth, layoutNow, () => "both");
+  const ctx: Ctx = { words, now, role, actions, lang, compact: false };
+  const rowsCtx: Ctx = { ...ctx, compact: true };
+  const draw = (c: NeedsCard, cx: Ctx) => (c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={cx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={cx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={cx} /> : <CallCard c={c} ctx={cx} />);
   // the photo links of a catalogue send run out after ten minutes: while a card shows photos, the page reads its data again before they do
   const hasPhotos = cards?.some((c) => c.type === "outbox" && (c.message?.media.length ?? 0) > 0) === true;
   return (
@@ -424,7 +525,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
           </span>
         ) : null}
         {cards !== null && cards.length > 2 ? (
-          <button type="button" aria-expanded={all} onClick={() => setAll((v) => !v)} className="ml-auto inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text hover:underline">
+          <button type="button" aria-expanded={all} onClick={() => setAll((v) => !v)} className={`ml-auto inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text hover:underline ${cards.length > 3 ? "" : "md:hidden"}`}>
             {all ? say(words, "today.seeless") : say(words, "today.seeall", { n: cards.length })}
           </button>
         ) : null}
@@ -441,10 +542,17 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
       ) : (
         <>
           <p className="mb-1 text-sm text-muted">{say(words, "today.needs.note")}</p>
-          <ul className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start">
+          <ul className="flex flex-col gap-2.5">
             {cards.map((c, i) => (
-              <li key={c.key} className={!all && i >= 2 ? "hidden" : ""}>
-                {c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={ctx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={ctx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={ctx} /> : <CallCard c={c} ctx={ctx} />}
+              <li key={c.key} className={!all && i >= 3 ? "hidden" : !all && i >= 2 ? "max-md:hidden" : ""}>
+                {layout === "both" ? (
+                  <>
+                    <div className="md:hidden">{draw(c, ctx)}</div>
+                    <div className="max-md:hidden">{draw(c, rowsCtx)}</div>
+                  </>
+                ) : (
+                  draw(c, layout === "rows" ? rowsCtx : ctx)
+                )}
               </li>
             ))}
           </ul>

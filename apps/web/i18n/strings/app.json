@@ -75106,5 +75106,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.row.details": {
+  "en": "Details",
+  "te": "వివరాలు",
+  "hi": "विवरण",
+  "kn": "ವಿವರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.row.less": {
+  "en": "Show less",
+  "te": "తక్కువ చూపండి",
+  "hi": "कम दिखाएँ",
+  "kn": "ಕಡಿಮೆ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

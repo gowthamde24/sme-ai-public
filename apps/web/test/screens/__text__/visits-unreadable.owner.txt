@@ -1,6 +1,5 @@
 # Store visits
 Who is coming to the shop, and when.
-[button type=button: Help for this screen]
 {label="Store visits"} [Day](/app/tenants/22222222-2222-2222-2222-222222222222/visits?date=2026-10-06 current=page) [Store hours](/app/tenants/22222222-2222-2222-2222-222222222222/visits?view=hours)
 {label="Choose a day"} [](/app/tenants/22222222-2222-2222-2222-222222222222/visits?date=2026-10-05 label="Previous day")
 ## Tuesday, 6 October 2026
