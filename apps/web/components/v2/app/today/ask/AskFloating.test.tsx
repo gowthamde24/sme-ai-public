@@ -61,7 +61,7 @@ beforeEach(() => {
 afterEach(cleanup);
 
 describe("the floating orb (job DQ part 0)", () => {
-  it("is a 56 px circle on a screen, not on Today, not on the live call, not in a read-only workspace, and not when there is nothing to ask", () => {
+  it("is a 56 px circle on a screen, on Today only for a phone (a desktop has the command bar), not on the live call, not in a read-only workspace, and not when there is nothing to ask", () => {
     const { rerender } = render(harness(playing(ANSWER)));
     const orb = screen.getByRole("button", { name: "Ask your assistant" });
     expect(orb.className).toContain("size-14");
@@ -69,7 +69,7 @@ describe("the floating orb (job DQ part 0)", () => {
     expect(orb).toHaveAttribute("aria-expanded", "false");
     nav.pathname = BASE;
     rerender(harness(playing(ANSWER)));
-    expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull(); // Today: the card is the assistant
+    expect(screen.getByRole("button", { name: "Ask your assistant" }).className).toContain("md:hidden"); // Today: the orb is the phone's assistant, a desktop has the command bar
     nav.pathname = `${BASE}/office/live`;
     rerender(harness(playing(ANSWER)));
     expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull(); // the live call
@@ -110,7 +110,7 @@ describe("the floating orb (job DQ part 0)", () => {
     expect(within(await screen.findByRole("dialog")).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["What needs me today?", "Who should I call first?", "How much customer money is held?"]);
   });
 
-  it("the workspace home with a records tab is the Customers screen: the orb is there, with the chips of Customers (Today without a tab is not)", async () => {
+  it("the workspace home with a records tab is the Customers screen: the orb is there, with the chips of Customers  (Today without a tab: only on a phone)", async () => {
     nav.pathname = BASE;
     nav.search = "tab=companies";
     const { rerender } = render(harness(playing(ANSWER)));
@@ -119,7 +119,7 @@ describe("the floating orb (job DQ part 0)", () => {
     expect(within(await screen.findByRole("dialog")).getAllByRole("listitem")[0]).toHaveTextContent("Who should I call first?");
     nav.search = "";
     rerender(harness(playing(ANSWER)));
-    expect(screen.queryByRole("button", { name: "Ask your assistant" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Ask your assistant" }).className).toContain("md:hidden");
   });
   it("a chip asks its words and the answer appears in the panel", async () => {
     const seen: string[] = [];
@@ -179,7 +179,7 @@ describe("the floating orb (job DQ part 0)", () => {
     expect(document.querySelector('[data-ask="dot"]')).toBeNull();
   });
 
-  it("keyboard: '/' and Cmd or Ctrl+K open the panel; '/' typed into a field does not; on Today they put the cursor in the card's own line", async () => {
+  it("keyboard: '/' and Cmd or Ctrl+K open the panel; '/' typed into a field does not; on Today (a desktop) they put the cursor in the command bar's own line", async () => {
     const { rerender } = render(harness(playing(ANSWER)));
     fireEvent.keyDown(window, { key: "/" });
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
@@ -199,6 +199,11 @@ describe("the floating orb (job DQ part 0)", () => {
     field.remove();
     nav.pathname = BASE;
     rerender(harness(playing(ANSWER)));
+    fireEvent.keyDown(window, { key: "/" }); // Today on a phone: the orb's sheet
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+    await new Promise((r) => setTimeout(r, 20)); // (closing gives the focus back to the orb, a moment later)
+    window.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }); // a desktop
     fireEvent.keyDown(window, { key: "/" });
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(await screen.findByRole("textbox", { name: "Your question for your assistant" })).toHaveFocus();

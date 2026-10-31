@@ -441,7 +441,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
       ) : (
         <>
           <p className="mb-1 text-sm text-muted">{say(words, "today.needs.note")}</p>
-          <ul className="flex flex-col gap-3">
+          <ul className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start">
             {cards.map((c, i) => (
               <li key={c.key} className={!all && i >= 2 ? "max-md:hidden" : ""}>
                 {c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={ctx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={ctx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={ctx} /> : <CallCard c={c} ctx={ctx} />}

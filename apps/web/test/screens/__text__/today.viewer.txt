@@ -1,16 +1,11 @@
 Tuesday, 6 October
 # Good morning
-Your assistant this week : Not available yet
 [button type=button: Help for this screen]
-{label="Nothing needs you right now."}
-{role=img label="Your assistant, Resting"}
-Resting Resting Resting Your assistant
-## Nothing needs you right now.
-Not available yet Speak or type in Telugu, Hindi, Kannada or English. Your assistant answers in writing, and out loud if you turn voice on.
 {label="Needs you"}
 ## Needs you
 0 0 waiting for you All clear. I will tell you the moment something needs you.
 {role=status}
+Not available yet
 {label="At the store today"}
 ## At the store today
 3 visits
