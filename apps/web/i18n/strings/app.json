@@ -75140,55 +75140,22 @@
    "kn": "draft"
   }
  },
- "frame.live.short.call": {
-  "en": "On a call",
-  "te": "కాల్‌లో",
-  "hi": "कॉल पर",
-  "kn": "ಕಾಲ್‌ನಲ್ಲಿ",
+ "today.greeting.named": {
+  "en": "{greet}, {name}",
+  "te": "{greet}, {name} గారు",
+  "hi": "{greet}, {name} जी",
+  "kn": "{greet}, {name} ಅವರೇ",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "frame.live.short.chats": {
-  "en": "WhatsApp · {n}",
-  "te": "వాట్సాప్ · {n}",
-  "hi": "व्हाट्सऐप · {n}",
-  "kn": "ವಾಟ್ಸಾಪ್ · {n}",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "frame.live.short.quote": {
-  "en": "Quote",
-  "te": "కొటేషన్",
-  "hi": "कोटेशन",
-  "kn": "ಕೊಟೇಶನ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "frame.live.short.leads": {
-  "en": "Leads · {n}",
-  "te": "లీడ్‌లు · {n}",
-  "hi": "लीड · {n}",
-  "kn": "ಲೀಡ್‌ಗಳು · {n}",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "frame.live.short.idle": {
-  "en": "Caught up",
-  "te": "పూర్తయ్యాయి",
-  "hi": "निपट गया",
-  "kn": "ಮುಗಿದಿದೆ",
+ "frame.poweredby": {
+  "en": "Powered by {brand}",
+  "te": "{brand} ఆధారితం",
+  "hi": "{brand} द्वारा संचालित",
+  "kn": "{brand} ಆಧಾರಿತ",
   "status": {
    "te": "draft",
    "hi": "draft",

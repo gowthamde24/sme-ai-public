@@ -38,7 +38,7 @@ beforeEach(() => {
 afterEach(cleanup);
 
 const none: FrameData = NO_FRAME_DATA;
-const loaded: FrameData = { plan: { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }, usage: { today_percent: 38, month_percent: 12, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }, waiting: 5, ready: true, showUsage: true, live: false, pack: null };
+const loaded: FrameData = { plan: { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }, usage: { today_percent: 38, month_percent: 12, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }, waiting: 5, ready: true, showUsage: true, live: false, logoUrl: null, pack: null };
 const noSignOut = async () => undefined;
 const side = (memberships: Membership[], frame = none, email: string | null = "o@example.test") => render(<SideNav memberships={memberships} frame={frame} email={email} signOut={noSignOut} mark={MARK} />);
 const bar = (memberships: Membership[], frame = none) => render(<TabBar memberships={memberships} frame={frame} email="o@example.test" signOut={noSignOut} mark={MARK} />);
@@ -89,6 +89,15 @@ describe("SideNav", () => {
     expect(screen.getByText("Free trial plan")).toBeInTheDocument();
     slot.unmount();
     expect(screen.queryByText("Free trial plan")).toBeNull();
+  });
+  it("shows the business's own logo (or its letters) instead of the product's mark, and 'Powered by' at the bottom", () => {
+    side(only("owner"), { ...loaded, logoUrl: "https://s.example/logo.png?sig=1" });
+    expect(document.querySelector('aside [data-business-logo="image"]')).toHaveAttribute("src", "https://s.example/logo.png?sig=1");
+    expect(document.querySelector('aside [data-frame="powered-by"]')).toHaveTextContent("Powered by Stack19");
+    cleanup();
+    side(only("owner"), { ...loaded, logoUrl: null });
+    expect(document.querySelector('aside [data-business-logo="letters"]')).toHaveTextContent("AS"); // Acme Silks
+    expect(document.querySelector('aside [data-business-logo="image"]')).toBeNull();
   });
   it("shows the business and its plan on top, and no list of workspaces for one business", () => {
     side(only("owner"), loaded);
@@ -141,6 +150,7 @@ describe("TabBar", () => {
     expect(within(dialog).getByRole("link", { name: "Calls" })).not.toHaveAttribute("aria-current");
     expect(within(dialog).getByRole("link", { name: "Settings" })).toHaveAttribute("href", `/app/tenants/${A}/settings`);
     expect(within(dialog).queryByText("AI usage today")).toBeNull(); // the usage is in Settings, Plan and usage now
+    expect(within(dialog).getByText("Powered by Stack19")).toBeInTheDocument(); // the small credit at the foot of the sheet (owner 31 Oct)
     expect(within(dialog).getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
     expect(within(dialog).getByRole("button", { name: "Sign out" })).toHaveAttribute("type", "submit");
     expect(within(dialog).getByRole("link", { name: /Second Shop/ })).toHaveAttribute("href", `/app/tenants/${B}`); // two businesses: the list is here
