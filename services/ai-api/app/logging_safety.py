@@ -48,6 +48,8 @@ ROUTE_WORDS = frozenset(
         "outreach", "exclude", "caps", "rules", "result", "handoffs", "acted", "source-costs",
         # job DR B1: tasks
         "tasks", "plan", "answer", "run", "cancel", "cap", "report",
+        # job phone-calls part 6: the Calls page
+        "calls", "hang-up",
         "templates",
         "voice-sample",
         # job DP: marks and report messages to guardians (a file that is never stored)

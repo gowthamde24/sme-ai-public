@@ -196,6 +196,10 @@ from app.team import errors as team_errors
 from app.team.repository import PostgrestTeamRepository
 from app.team.routes import public_router as team_public_router
 from app.team.routes import router as team_router
+from app.telephony.live import LiveCalls
+from app.telephony.repository import CallStateError, PostgrestCallsRepository
+from app.telephony.routes import router as calls_router
+from app.telephony.service import CallsService
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
@@ -334,6 +338,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         outreach=build_outreach(config.rest_url, config.anon_key),
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
+        calls=CallsService(PostgrestCallsRepository(config.rest_url, config.anon_key)),
+        live_calls=LiveCalls(),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         call_voice=_call_voice(settings),
         browser_voice=_browser_voice(settings, config),
@@ -836,6 +842,11 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "task_state",
         "That cannot be done in the state the task is in now. Reload and look again.",
     ),
+    CallStateError: ApiError(
+        409,
+        "call_state",
+        "That cannot be done in the state the call is in now. Reload and look again.",
+    ),
     # Store visits (job AS, ADR 0067). Fixed messages: nothing from the data layer reaches a client.
     visit_errors.VisitStateError: ApiError(
         409,
@@ -1253,6 +1264,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_intake_router)
     app.include_router(outreach_router)
     app.include_router(tasks_router)
+    app.include_router(calls_router)
     app.include_router(voice_sample_router)
     app.include_router(pronunciation_router)
     app.include_router(activity_router)

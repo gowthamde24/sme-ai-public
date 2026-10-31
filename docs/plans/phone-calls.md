@@ -171,10 +171,10 @@ Voice cloning, call recording (switch exists, off, not wired), WhatsApp calling,
 | Part | State |
 |---|---|
 | Plan (this file) | written 31 Oct 2026 |
-| 1 Gate + data | not started |
-| 2 Line + simulator | not started |
-| 3 Call session | not started |
-| 4 Outbound | not started |
-| 5 Inbound | not started |
-| 6 Calls page API | not started |
+| 1 Gate + data | built, PR #263 (pgTAP + whole suite green) |
+| 2 Line + simulator | built (branch api/p2-phone-line): Exotel protocol, resampler, `PhoneLine`, `SimulatedExotel`, 21 tests |
+| 3 Call session | built (same branch): phone persona (approved facts only, no tools), honesty / stop / voicemail rules in code, DTMF, outcome + summary, 17 tests against the simulator |
+| 4 Outbound | not started (needs the Exotel keys; daily batch approval "Approve today's N calls"; `POST /calls/stop`) |
+| 5 Inbound | not started (needs the Voicebot applet) |
+| 6 Calls page API | built (same branch): list, one call, hang-up, `docs/contracts/calls.md`, 7 tests |
 | 7 Evals + sandbox | not started |
