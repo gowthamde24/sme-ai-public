@@ -193,7 +193,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   let profile: Part<Awaited<ReturnType<typeof getBusinessProfile>>> | null = null;
   if (section === "business") {
     try {
-      [plan, usage, profile] = await Promise.all([readPlanCached(user.accessToken, tenantId).catch(rethrowAuth), admin ? readUsageCached(user.accessToken, tenantId).catch(rethrowAuth) : null, settle(() => getBusinessProfile(user.accessToken, tenantId))]);
+      [plan, usage, profile] = await Promise.all([readPlanCached(user.accessToken, tenantId).catch(rethrowAuth), admin && !hasPlan ? readUsageCached(user.accessToken, tenantId).catch(rethrowAuth) : null, settle(() => getBusinessProfile(user.accessToken, tenantId))]);
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       escalate(error);
@@ -245,6 +245,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     }
   }
   const planCtx = { token: user.accessToken, tenantId };
+  // the AI usage lives under "Plan & usage" (owner 31 Oct); a workspace with no plan tab keeps it under the business
+  if (section === "plan" && admin) usage = await readUsageCached(user.accessToken, tenantId).catch(rethrowAuth);
   const [workspacePlan, planCatalogue] = section === "plan" ? await Promise.all([readWorkspacePlan(planCtx), readCatalogue(planCtx)]) : [null, null];
   const topups = section === "plan" ? await topupsPart({ token: user.accessToken, tenantId, lang, owner: tenant.role === "owner", plan: workspacePlan, catalogue: planCatalogue }) : null;
   const assistant = section === "assistant" ? await readAssistant({ token: user.accessToken, tenantId }, pack?.modules ?? null) : null;
@@ -437,7 +439,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 <PartProblem kind={profile.kind} retryAfter={profile.retryAfter} words={wordsFor(lang, ["apierr.", "problem."])} title={t("gst.shop.title")} />
               )
             ) : null}
-            {admin ? (
+            {admin && !hasPlan ? (
               <section className={surface} aria-labelledby="usage-heading">
                 <h2 id="usage-heading" className="mb-3 text-xl font-semibold">
                   {t("frame.aiusage")}
@@ -483,6 +485,14 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           />
         ) : null}
         {topups}
+        {section === "plan" && admin ? (
+          <section className={surface} aria-labelledby="usage-heading">
+            <h2 id="usage-heading" className="mb-3 text-xl font-semibold">
+              {t("frame.aiusage")}
+            </h2>
+            <UsageCard usage={usage} labels={labels} />
+          </section>
+        ) : null}
         {section === "assistant" && assistant ? (
           <>
             {assistant.mode === "unavailable" ? (
