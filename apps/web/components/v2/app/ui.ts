@@ -6,7 +6,7 @@ import { btnPrimary } from "@/components/v2/landing/ui";
  * may appear in a v2 file: the source check of audit:leaks enforces it.
  */
 /** The page's own <main>. */
-export const pageMain = "mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-8";
+export const pageMain = "mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-6";
 export const pageH1 = "mb-2 mt-3 font-display text-3xl font-bold leading-tight sm:text-4xl";
 export const pageH2 = "mb-3 mt-8 font-display text-2xl font-bold leading-tight";
 export const pageH3 = "mb-2 mt-5 font-display text-xl font-bold leading-tight";

@@ -256,15 +256,15 @@ describe("Needs you: empty, unreadable, and the phone", () => {
     expect(screen.getByText("Not available yet")).toBeInTheDocument();
     expect(container.querySelector("[data-count]")).toBeNull();
   });
-  it("on a phone only the two newest show, and 'See all' shows the rest (and 'Show fewer' hides them again)", () => {
+  it("on a phone only the two newest show (a desktop four, two rows), and 'See all' shows the rest (and 'Show fewer' hides them again)", () => {
     const many = [classic(), outbox(), call(), classic({ id: "x2" }), classic({ id: "x3" })].map((c, i) => ({ ...c, key: `k${i}` }) as NeedsCard);
     board(many);
     const items = () => within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("listitem");
-    expect(items().map((li) => li.className.includes("max-md:hidden"))).toEqual([false, false, true, true, true]);
-    fireEvent.click(screen.getByRole("button", { name: "See all (5)" }));
-    expect(items().some((li) => li.className.includes("max-md:hidden"))).toBe(false);
+    expect(items().map((li) => (li.className.includes("max-md:hidden") ? "phone-hidden" : li.className.includes("hidden") ? "hidden" : "shown"))).toEqual(["shown", "shown", "phone-hidden", "phone-hidden", "hidden"]);
+    fireEvent.click(screen.getByRole("button", { name: "See all (5)" })); // five cards: a desktop needs the button too
+    expect(items().some((li) => li.className.includes("hidden"))).toBe(false);
     fireEvent.click(screen.getByRole("button", { name: "Show fewer" }));
-    expect(items().filter((li) => li.className.includes("max-md:hidden"))).toHaveLength(3);
+    expect(items().filter((li) => li.className.includes("hidden"))).toHaveLength(3);
   });
   it("two cards or fewer have no 'See all'", () => {
     board([classic(), outbox()]);

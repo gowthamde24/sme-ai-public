@@ -11,17 +11,12 @@
 [button type=button: Continue setup]
 Tuesday, 6 October
 # Good morning
-Your assistant this week : Not available yet
 [button type=button: Help for this screen]
-{label="Not available yet"}
-{role=img label="Your assistant, Resting"}
-Resting Resting Resting Your assistant
-## Not available yet
-The overnight summary is not available yet. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Your assistant answers in writing, and out loud if you turn voice on.
 {label="Needs you"}
 ## Needs you
 Not available yet
 {role=status}
+Not available yet
 {label="At the store today"}
 ## At the store today
 Not available yet

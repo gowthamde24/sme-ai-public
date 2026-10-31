@@ -1,9 +1,10 @@
+import type { ReactNode } from "react";
 
-import { AgentHero } from "./AgentHero";
+
+import { CommandBar } from "./CommandBar";
 import { DoneSection } from "./DoneSection";
 import { NeedsYou } from "./NeedsYou";
 import { TeamSection, StoreVisits } from "./TodaySide";
-import { TodayUsage } from "./TodayUsage";
 import type { TodayActions } from "./actions-types";
 import { TODAY_CHIPS } from "./ask/ask-chips";
 import { ASK_WORD_KEYS } from "./ask/ask-words";
@@ -29,33 +30,33 @@ export function dayLine(now: number, lang: string): string {
  * phone), "At the store today", "Done while you slept" and "Your team". It only draws what `data` holds: a null part says "Not available yet"; a section with no data is not drawn. `actions` are the
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
-export function TodayView({ live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = null, demo = false }: { /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS), drawn first in the side column. */ packCards?: React.ReactNode; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
-  const { cards, needs, team, deskTeam, store, week, sending, digest } = data;
+export function TodayView({ intro = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = null, demo = false }: { /** The first-run offers (example-data banner, "Finish setting up"): drawn after Needs you and the command bar. */ intro?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS), drawn first in the side column. */ packCards?: React.ReactNode; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
+  const { cards, needs, team, deskTeam, store, sending, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
   const greet = t(hour < 12 ? "today.greeting.morning" : hour < 17 ? "today.greeting.afternoon" : "today.greeting.evening");
   const words = todayWords(t);
   const chips = TODAY_CHIPS.map((k) => t(k));
   return (
-    <div data-screen="today" className="flex flex-col gap-6">
-      <header className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-sm text-muted">{dayLine(now, lang)}</p>
-          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{name ? `${greet}, ${name}` : greet}</h1>
-        </div>
-        <TodayUsage words={words} settingsHref={`${base}/settings`} week={week} />
+    <div data-screen="today" className="flex flex-col gap-4 md:gap-5">
+      <header>
+        <p className="text-sm text-muted">{dayLine(now, lang)}</p>
+        <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? `${greet}, ${name}` : greet}</h1>
       </header>
       {help}
       {sending?.stopped ? <SendingBanner words={words} demo={demo} /> : null}
       <NeedsProvider initial={needs} waiting={cards.waiting}>
-        <AgentHero lang={lang} base={base} availability={availability} askWords={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} words={words} chips={chips} digest={digest} />
+        <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />
+        <CommandBar lang={lang} base={base} availability={availability} words={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} chips={chips} />
+        {intro}
         {live}
         {outcomes}
-        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-          <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />
-          <div className="flex min-w-0 flex-col gap-6">
-            {packCards}
+        <div className="grid grid-cols-1 items-start gap-4 md:gap-5 lg:grid-cols-2">
+          <div className="flex min-w-0 flex-col gap-4 md:gap-5">
             <StoreVisits store={store} calendarHref={calendarHref ?? `${base}/visits`} bookHref={role === "viewer" ? null : `${base}/visits#book`} t={t} />
+            {packCards}
+          </div>
+          <div className="flex min-w-0 flex-col gap-4 md:gap-5">
             <DoneSection digest={digest} words={words} outboxHref={outboxHref} />
             <TeamSection team={team} deskTeam={deskTeam} base={base} t={t} now={now} />
           </div>

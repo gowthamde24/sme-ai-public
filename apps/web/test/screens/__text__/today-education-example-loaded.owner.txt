@@ -1,49 +1,7 @@
-{label="You are looking at example data"}
-## You are looking at example data
-Everything marked Example is made up. Remove it when you are ready to use your own.
-{role=status} Example data loaded.
-summary: Remove example data
-form:
-This removes only the example rows. Your own work stays.
-[button type=submit: Yes, remove the example data]
-{label="Finish setting up"}
-## Finish setting up
-2 of 7 done
-- Tell us your business name and city Done
-- [Set up your institution The kind of place, when the year starts and your classes or courses. To do](/app/tenants/22222222-2222-2222-2222-222222222222/programmes)
-form:
-<hidden name=step value=institution_set>
-[button type=submit: Hide for now]
-- [Import your students and guardians From a CSV or Excel file. To do](/app/tenants/22222222-2222-2222-2222-222222222222/students/import)
-form:
-<hidden name=step value=students_imported>
-[button type=submit: Hide for now]
-- [Set your fee plan Fee heads, instalments and due dates. To do](/app/tenants/22222222-2222-2222-2222-222222222222/fees/plans)
-form:
-<hidden name=step value=fee_plan_set>
-[button type=submit: Hide for now]
-- [Turn on two-step sign-in (optional) A code from an authenticator app on top of your password. We recommend it for the Owner; nothing needs it. To do](/app/security)
-form:
-<hidden name=step value=second_factor_set>
-[button type=submit: Hide for now]
-- [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
-form:
-<hidden name=step value=whatsapp_connected>
-[button type=submit: Hide for now]
-- Approve your first fee-reminder campaign Done
-[Continue](/app/tenants/22222222-2222-2222-2222-222222222222/programmes)
 Tuesday, 6 October
 # Good morning
-Your assistant this week 88% left
-{role=meter label="Your assistant usage this week: 88% left"}
-[88 %](/app/tenants/22222222-2222-2222-2222-222222222222/settings label="Your assistant usage this week: 88% left")
 [button type=button: Help for this screen]
 {role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
-{label="5 things need you. The rest is handled."}
-{role=img label="Your assistant, Resting"}
-Resting Resting Resting Your assistant
-## 5 things need you. The rest is handled.
-Overnight on WhatsApp: 3 sent, 1 held for your OK. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Your assistant answers in writing, and out loud if you turn voice on.
 {label="Needs you"}
 ## Needs you
 5 5 waiting for you
@@ -98,7 +56,41 @@ When
 3h
 [Check the quote](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) [Open](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) Nothing is sent, approved or recorded by opening this.
 {role=status}
-{label="Your business today"} [Fees collected today ₹37,000.00 4 receipts today](/app/tenants/22222222-2222-2222-2222-222222222222/fees) [Reminders running 3 3 campaigns are sending on their days](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns) [Campus visits today 0 No campus visit today](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
+Not available yet
+{label="You are looking at example data"}
+## You are looking at example data
+Everything marked Example is made up. Remove it when you are ready to use your own.
+{role=status} Example data loaded.
+summary: Remove example data
+form:
+This removes only the example rows. Your own work stays.
+[button type=submit: Yes, remove the example data]
+{label="Finish setting up"}
+## Finish setting up
+2 of 7 done
+- Tell us your business name and city Done
+- [Set up your institution The kind of place, when the year starts and your classes or courses. To do](/app/tenants/22222222-2222-2222-2222-222222222222/programmes)
+form:
+<hidden name=step value=institution_set>
+[button type=submit: Hide for now]
+- [Import your students and guardians From a CSV or Excel file. To do](/app/tenants/22222222-2222-2222-2222-222222222222/students/import)
+form:
+<hidden name=step value=students_imported>
+[button type=submit: Hide for now]
+- [Set your fee plan Fee heads, instalments and due dates. To do](/app/tenants/22222222-2222-2222-2222-222222222222/fees/plans)
+form:
+<hidden name=step value=fee_plan_set>
+[button type=submit: Hide for now]
+- [Turn on two-step sign-in (optional) A code from an authenticator app on top of your password. We recommend it for the Owner; nothing needs it. To do](/app/security)
+form:
+<hidden name=step value=second_factor_set>
+[button type=submit: Hide for now]
+- [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
+form:
+<hidden name=step value=whatsapp_connected>
+[button type=submit: Hide for now]
+- Approve your first fee-reminder campaign Done
+[Continue](/app/tenants/22222222-2222-2222-2222-222222222222/programmes)
 {label="At the store today"}
 ## At the store today
 3 visits
@@ -106,6 +98,7 @@ When
 - 12:00 Priya S. + 2 Bridal sarees Confirmed
 - 16:00 Lakshmi Textiles Silk saree wholesale Reminder sent
 Next free time today: 10:00 [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits) [Book a visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits#book)
+{label="Your business today"} [Fees collected today ₹37,000.00 4 receipts today](/app/tenants/22222222-2222-2222-2222-222222222222/fees) [Reminders running 3 3 campaigns are sending on their days](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns) [Campus visits today 0 No campus visit today](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 {label="Done while you slept"}
 ## Done while you slept
 - Replied to 2 customers on WhatsApp
