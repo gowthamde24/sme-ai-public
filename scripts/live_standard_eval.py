@@ -98,7 +98,7 @@ def sarvam_wav(key: str, text: str, language: str, path: Path) -> None:
         w.writeframes(pcm)
 
 
-async def barge_in_ms(url: str, token: str, pcm: bytes, language: str, verify: bool) -> float | None:
+async def barge_in_ms(url: str, token: str, pcm: bytes, language: str, verify: bool) -> tuple[float, float | None] | None:
     import websockets
 
     frame = 640
@@ -133,12 +133,15 @@ async def barge_in_ms(url: str, token: str, pcm: bytes, language: str, verify: b
             got += isinstance(m, bytes)
         sent = time.perf_counter()
         await ws.send(json.dumps({"type": "barge_in", **({"verify": True} if verify else {})}))
-        stopped: float | None = None
+        stopped: tuple[float, float | None] | None = None
         for _ in range(200):
             at, m = await asyncio.wait_for(inbox.get(), timeout=10.0)
-            if isinstance(m, str) and json.loads(m).get("type") in ("audio_stop", "paused", "interrupted"):
-                stopped = (at - sent) * 1000
-                break
+            data = json.loads(m) if isinstance(m, str) else {}
+            if data.get("type") in ("audio_stop", "paused", "interrupted"):
+                # client side: from sending to receiving (network included); server side: the `ms` the server says it took
+                stopped = ((at - sent) * 1000, float(data["ms"]) if data.get("ms") is not None else None) if stopped is None or data.get("type") != "audio_stop" else stopped
+                if data.get("type") in ("paused", "interrupted"):
+                    break
         await ws.send(json.dumps({"type": "stop"}))
         task.cancel()
         return stopped
@@ -169,6 +172,7 @@ def staging(args: argparse.Namespace) -> dict[str, Any]:
                                 "server_p50": round(statistics.median(server)) if server else None}
     out["latency"]["all"] = {"turns": len(all_client), "p50": round(statistics.median(all_client)), "p95": round(pct(all_client, 95)), "server_p50": round(statistics.median(all_server)) if all_server else None}
     stops: dict[str, list[float]] = {"hard": [], "verify": []}
+    server_stops: dict[str, list[float]] = {"hard": [], "verify": []}
     for lang in ("en", "te"):
         wav = work / f"ask-{lang}.wav"
         sarvam_wav(key, LONG_ASK[lang], lang, wav)
@@ -176,8 +180,11 @@ def staging(args: argparse.Namespace) -> dict[str, Any]:
             for _ in range(args.barge_runs):
                 ms = asyncio.run(barge_in_ms(url, owner.token, read_wav(wav), lang, mode == "verify"))
                 if ms is not None:
-                    stops[mode].append(ms)
-    out["barge"] = {m: {"n": len(v), "p50": round(statistics.median(v)) if v else None, "max": round(max(v)) if v else None} for m, v in stops.items()}
+                    stops[mode].append(ms[0])
+                    if ms[1] is not None:
+                        server_stops[mode].append(ms[1])
+    out["barge"] = {m: {"n": len(v), "p50": round(statistics.median(v)) if v else None, "max": round(max(v)) if v else None,
+                        "server_p50": round(statistics.median(server_stops[m])) if server_stops[m] else None, "server_max": round(max(server_stops[m])) if server_stops[m] else None} for m, v in stops.items()}
     return out
 
 
@@ -204,8 +211,8 @@ def report(result: dict[str, Any], style: list[tuple[str, str, list[str]]] | Non
         rows += [
             ("User stops → first assistant audio, casual turn, p50 (staging, client side)", "≤ 1.2 s", f"{lat['p50']} ms over {lat['turns']} turns (server side p50 {lat['server_p50']} ms)", ok(lat["p50"] <= 1200)),
             ("User stops → first assistant audio, casual turn, p95", "≤ 2 s", f"{lat['p95']} ms", ok(lat["p95"] <= 2000)),
-            ("Barge-in stop, as the browser sees it (hard stop), staging", "≤ 200 ms", f"p50 {stg['barge']['hard']['p50']} ms, max {stg['barge']['hard']['max']} ms over {stg['barge']['hard']['n']} (network included)", ok((stg['barge']['hard']['max'] or 9999) <= 200)),
-            ("Barge-in pause with verify, staging", "≤ 200 ms", f"p50 {stg['barge']['verify']['p50']} ms, max {stg['barge']['verify']['max']} ms over {stg['barge']['verify']['n']} (network included)", ok((stg['barge']['verify']['max'] or 9999) <= 200)),
+            ("Barge-in stop, as the browser sees it (hard stop), staging", "≤ 200 ms", f"server says p50 {stg['barge']['hard']['server_p50']} ms, max {stg['barge']['hard']['server_max']} ms; browser sees p50 {stg['barge']['hard']['p50']} ms, max {stg['barge']['hard']['max']} ms over {stg['barge']['hard']['n']} (network included)", ok((stg['barge']['hard']['server_max'] if stg['barge']['hard']['server_max'] is not None else 9999) <= 200)),
+            ("Barge-in pause with verify, staging", "≤ 200 ms", f"server says p50 {stg['barge']['verify']['server_p50']} ms, max {stg['barge']['verify']['server_max']} ms; browser sees p50 {stg['barge']['verify']['p50']} ms, max {stg['barge']['verify']['max']} ms over {stg['barge']['verify']['n']} (network included)", ok((stg['barge']['verify']['server_max'] if stg['barge']['verify']['server_max'] is not None else 9999) <= 200)),
         ]
     lines = ["# Live talk: the quality bar", "", f"Measured {time.strftime('%d %b %Y')} on the 40-dialogue set (te 15, en 10, kn 8, hi 7) through the real conversation loop with fakes for the audio" + (", and on staging with a socket client" if stg else "") + ".", "",
              "| Measure | Bar | Result | |", "|---|---|---|---|"]
