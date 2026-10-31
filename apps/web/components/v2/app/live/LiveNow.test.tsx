@@ -6,11 +6,16 @@ vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname, useSearchPa
 
 import { LiveNow, lineOf } from "./LiveNow";
 import { NO_FRAME_DATA } from "../contract";
-import type { Membership } from "../use-workspace";
+import { FrameDataSlot } from "../frame-store";
 import { groupActivity } from "@/lib/activity/types";
 
 const T = "11111111-1111-4111-8111-111111111111";
-const memberships: Membership[] = [{ id: T, name: "Acme", role: "owner" } as Membership];
+const Pill = ({ data }: { data: typeof NO_FRAME_DATA }) => (
+  <>
+    <FrameDataSlot data={data} />
+    <LiveNow tenantId={T} />
+  </>
+);
 const ON = { ...NO_FRAME_DATA, live: true };
 const OFF = { ...NO_FRAME_DATA, live: false };
 const id = (n: number) => `00000000-0000-4000-8000-${String(900 + n).padStart(12, "0")}`;
@@ -52,13 +57,13 @@ describe("Live now: the words of a line", () => {
 
 describe("Live now: the pill in the top bar", () => {
   it("is not asked and not drawn when it is switched off", async () => {
-    render(<LiveNow memberships={memberships} frame={OFF} />);
+    render(<Pill data={OFF} />);
     await settle();
     expect(fetchMock).not.toHaveBeenCalled();
     expect(document.querySelector("[data-live]")).toBeNull();
   });
   it("draws nothing before the first answer (no empty box), then a plain grey 'All caught up' when idle (nothing to open)", async () => {
-    render(<LiveNow memberships={memberships} frame={ON} />);
+    render(<Pill data={ON} />);
     expect(document.querySelector("[data-live]")).toBeNull();
     await settle();
     expect(fetchMock).toHaveBeenCalledWith(`/app/tenants/${T}/activity`, expect.objectContaining({ cache: "no-store" }));
@@ -69,7 +74,7 @@ describe("Live now: the pill in the top bar", () => {
   });
   it("active: a live dot, the first line, and a list of everything going on that opens from it, each line a link", async () => {
     answer = { items: [{ type: "call", who: "Ramesh", elapsed_s: 134, target: { kind: "task", id: id(1) } }, { type: "whatsapp_reply", who: "Anitha", elapsed_s: 3, target: { kind: "conversation", id: id(2) } }], poll_after_s: 5 };
-    render(<LiveNow memberships={memberships} frame={ON} />);
+    render(<Pill data={ON} />);
     await settle();
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const pill = document.querySelector('[data-live="pill"]') as HTMLElement;
@@ -88,16 +93,9 @@ describe("Live now: the pill in the top bar", () => {
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("region", { name: "Live now" })).toBeNull();
   });
-  it("on a phone the pill is the dot and a short label", async () => {
-    answer = { items: [{ type: "lead_read", who: null, elapsed_s: 1, target: null }, { type: "lead_read", who: null, elapsed_s: 2, target: null }] };
-    render(<LiveNow memberships={memberships} frame={ON} />);
-    await settle();
-    const short = document.querySelector('[data-live="pill"] button span.md\\:hidden') as HTMLElement;
-    expect(short).toHaveTextContent("Leads · 2");
-  });
   it("keeps the last answer through a failed read", async () => {
     answer = { items: [{ type: "lead_read", who: null, elapsed_s: 1, target: null }, { type: "lead_read", who: null, elapsed_s: 2, target: null }] };
-    render(<LiveNow memberships={memberships} frame={ON} />);
+    render(<Pill data={ON} />);
     await settle();
     expect(screen.getByRole("button", { name: /Reading 2 new leads/ })).toBeInTheDocument();
     fetchMock.mockResolvedValueOnce(new Response("no", { status: 503 }));

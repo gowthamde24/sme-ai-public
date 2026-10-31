@@ -52,12 +52,11 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
         </a>
         <SideNav memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} mark={small} />
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar frame={frame} memberships={list} labels={labels} email={email} signOut={signOut} mark={small}>
+          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small}>
             <span lang={lang}>
               <LangSelect lang={lang} label={t("lang.label")} />
             </span>
-            {/* the light/dark button has no room beside "Live now" and the language on a phone: there it is in Settings, Language and look */}
-            <span lang={lang} className="max-md:hidden">
+            <span lang={lang}>
               <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
             </span>
           </TopBar>

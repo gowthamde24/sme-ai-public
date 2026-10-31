@@ -277,3 +277,25 @@ describe("Today: sections that have no data are not drawn, and nothing is invent
     expect(screen.queryByText(/₹/)).toBeNull();
   });
 });
+
+describe("Today: the greeting names the member, respectfully, in their language (owner 31 Oct)", () => {
+  it("English: the name alone, never sir or madam; Telugu: గారు; Hindi: जी; Kannada: ಅವರೇ; none when there is no name", async () => {
+    await view(data(), { name: "Gowtham Reddy", hour: 20 });
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Good evening, Gowtham Reddy");
+    expect(screen.getByRole("heading", { level: 1 }).textContent).not.toMatch(/sir|madam/i);
+    for (const [lang, tail] of [["te", "గారు"], ["hi", "जी"], ["kn", "ಅವರೇ"]] as const) {
+      cleanup();
+      await view(data(), { name: "Gowtham", hour: 20, lang });
+      expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(`${appT(lang)("today.greeting.evening")}, Gowtham ${tail}`);
+    }
+    cleanup();
+    await view(data(), { name: null, hour: 20, lang: "te" });
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(appT("te")("today.greeting.evening"));
+  });
+  it("the Live now pill sits on the greeting row (the same header as the heading), not in the top bar", async () => {
+    await view(data());
+    const header = document.querySelector('[data-screen="today"] > header') as HTMLElement;
+    expect(header.querySelector("h1")).not.toBeNull();
+    expect(header.className).toContain("md:justify-between");
+  });
+});

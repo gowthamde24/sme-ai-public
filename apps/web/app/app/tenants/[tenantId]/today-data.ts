@@ -1,3 +1,4 @@
+import { readMyProfileCached } from "../../me-read";
 import type { ClassicKind, NeedsCard, NeedsYouItem, RecentItem, Role, TodayData } from "@/components/v2/app/today/types";
 import { NOTHING_TODAY } from "@/components/v2/app/today/types";
 import { ApiAuthError } from "@/lib/api/client";
@@ -96,8 +97,15 @@ function rethrowAuth(error: unknown): null {
   return null;
 }
 
-/** The person's display name in this workspace, if the members list has one for them (it is null for most). Never throws except for a rejected session. */
+/** The person's display name for the greeting: the name in their own profile (My profile, `GET /me/profile`), else the one the members list has for them (it is null for most). Never throws except for a rejected session. */
 export async function readDisplayName(accessToken: string, tenantId: string, userId: string): Promise<string | null> {
+  try {
+    const own = (await readMyProfileCached(accessToken, tenantId)).displayName?.trim();
+    if (own) return own;
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    // (a profile that cannot be read: the members list may still know the name)
+  }
   try {
     return (await fetchMembers(accessToken, tenantId)).find((m) => m.user_id === userId)?.display_name ?? null;
   } catch (error) {
