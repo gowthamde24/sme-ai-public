@@ -6,6 +6,7 @@ import { getPlan } from "@/lib/api/plan";
 import { getAiUsage } from "@/lib/api/ai-usage";
 import { readPackCached } from "@/lib/packs/read";
 import { packFrame } from "@/lib/packs/resolve";
+import { activityScreens } from "@/lib/screens/flag";
 
 import { readTodayCached } from "./tenants/[tenantId]/today-read";
 
@@ -29,6 +30,7 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
     showUsage: !(usage.status === "rejected" && usage.reason instanceof ApiRequestError && usage.reason.status === 403),
     waiting: today.status === "fulfilled" ? today.value.cards.waiting : null,
     ready: true,
+    live: activityScreens() !== "off",
     pack: pack.status === "fulfilled" && pack.value ? packFrame(pack.value, lang) : null,
   };
 }

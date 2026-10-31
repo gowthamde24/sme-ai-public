@@ -53378,10 +53378,10 @@
   }
  },
  "plan.tab": {
-  "en": "Plan",
-  "te": "ప్లాన్",
-  "hi": "प्लान",
-  "kn": "ಪ್ಲಾನ್",
+  "en": "Plan & usage",
+  "te": "ప్లాన్ & వినియోగం",
+  "hi": "प्लान और उपयोग",
+  "kn": "ಪ್ಲಾನ್ & ಬಳಕೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -74881,6 +74881,171 @@
   "te": "సంభాషణ చూపండి",
   "hi": "बातचीत दिखाएँ",
   "kn": "ಸಂಭಾಷಣೆ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.title": {
+  "en": "Live now",
+  "te": "ఇప్పుడు జరుగుతున్నది",
+  "hi": "अभी चल रहा है",
+  "kn": "ಈಗ ನಡೆಯುತ್ತಿರುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.idle": {
+  "en": "All caught up",
+  "te": "అన్నీ పూర్తయ్యాయి",
+  "hi": "सब निपट गया",
+  "kn": "ಎಲ್ಲವೂ ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.call": {
+  "en": "On a call with {name} · {time}",
+  "te": "{name} తో కాల్‌లో · {time}",
+  "hi": "{name} के साथ कॉल पर · {time}",
+  "kn": "{name} ಜೊತೆ ಕಾಲ್‌ನಲ್ಲಿ · {time}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.call.noname": {
+  "en": "On a call · {time}",
+  "te": "కాల్‌లో · {time}",
+  "hi": "कॉल पर · {time}",
+  "kn": "ಕಾಲ್‌ನಲ್ಲಿ · {time}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.calls": {
+  "en": "On {n} calls",
+  "te": "{n} కాల్స్‌లో",
+  "hi": "{n} कॉल पर",
+  "kn": "{n} ಕಾಲ್‌ಗಳಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.chats.one": {
+  "en": "Replying on WhatsApp · 1 chat",
+  "te": "WhatsApp లో జవాబిస్తోంది · 1 చాట్",
+  "hi": "WhatsApp पर जवाब दे रही है · 1 चैट",
+  "kn": "WhatsApp ನಲ್ಲಿ ಉತ್ತರಿಸುತ್ತಿದೆ · 1 ಚಾಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.chats.other": {
+  "en": "Replying on WhatsApp · {n} chats",
+  "te": "WhatsApp లో జవాబిస్తోంది · {n} చాట్‌లు",
+  "hi": "WhatsApp पर जवाब दे रही है · {n} चैट",
+  "kn": "WhatsApp ನಲ್ಲಿ ಉತ್ತರಿಸುತ್ತಿದೆ · {n} ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.quote.one": {
+  "en": "Drafting a quote",
+  "te": "కొటేషన్ తయారు చేస్తోంది",
+  "hi": "कोटेशन बना रही है",
+  "kn": "ಕೊಟೇಶನ್ ತಯಾರಿಸುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.quote.other": {
+  "en": "Drafting {n} quotes",
+  "te": "{n} కొటేషన్లు తయారు చేస్తోంది",
+  "hi": "{n} कोटेशन बना रही है",
+  "kn": "{n} ಕೊಟೇಶನ್‌ಗಳನ್ನು ತಯಾರಿಸುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.leads.one": {
+  "en": "Reading a new lead",
+  "te": "కొత్త లీడ్ చదువుతోంది",
+  "hi": "नया लीड पढ़ रही है",
+  "kn": "ಹೊಸ ಲೀಡ್ ಓದುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.leads.other": {
+  "en": "Reading {n} new leads",
+  "te": "{n} కొత్త లీడ్‌లు చదువుతోంది",
+  "hi": "{n} नए लीड पढ़ रही है",
+  "kn": "{n} ಹೊಸ ಲೀಡ್‌ಗಳನ್ನು ಓದುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.more": {
+  "en": "+{n} more",
+  "te": "+{n} మరిన్ని",
+  "hi": "+{n} और",
+  "kn": "+{n} ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.usagebanner.today": {
+  "en": "Your assistant has used {percent}% of today's allowance. At the limit it switches to a lighter mode.",
+  "te": "మీ అసిస్టెంట్ ఈ రోజు పరిమితిలో {percent}% వాడింది. పరిమితి చేరితే తేలికపాటి మోడ్‌కు మారుతుంది.",
+  "hi": "आपकी असिस्टेंट ने आज की सीमा का {percent}% इस्तेमाल किया है। सीमा पूरी होने पर वह हल्के मोड में चली जाएगी।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಇಂದಿನ ಮಿತಿಯ {percent}% ಬಳಸಿದೆ. ಮಿತಿ ತಲುಪಿದರೆ ಹಗುರ ಮೋಡ್‌ಗೆ ಬದಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.usagebanner.month": {
+  "en": "Your assistant has used {percent}% of this month's allowance. At the limit it switches to a lighter mode.",
+  "te": "మీ అసిస్టెంట్ ఈ నెల పరిమితిలో {percent}% వాడింది. పరిమితి చేరితే తేలికపాటి మోడ్‌కు మారుతుంది.",
+  "hi": "आपकी असिस्टेंट ने इस महीने की सीमा का {percent}% इस्तेमाल किया है। सीमा पूरी होने पर वह हल्के मोड में चली जाएगी।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಈ ತಿಂಗಳ ಮಿತಿಯ {percent}% ಬಳಸಿದೆ. ಮಿತಿ ತಲುಪಿದರೆ ಹಗುರ ಮೋಡ್‌ಗೆ ಬದಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.usagebanner.see": {
+  "en": "See usage",
+  "te": "వినియోగం చూడండి",
+  "hi": "उपयोग देखें",
+  "kn": "ಬಳಕೆ ನೋಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
