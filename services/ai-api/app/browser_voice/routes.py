@@ -154,7 +154,14 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
             input_micros_per_mtok=bv.input_micros_per_mtok,
             output_micros_per_mtok=bv.output_micros_per_mtok,
         )
-    llm = TieredLlm(CaptionLlm(fast, emit), ask, on_ask)
+    mark_stale = getattr(fast, "mark_stale", None)
+
+    def on_ask_turn() -> None:
+        on_ask()
+        if mark_stale is not None:
+            mark_stale()   # the written chat's turn added messages to the thread that the fast tier has not read
+
+    llm = TieredLlm(CaptionLlm(fast, emit), ask, on_ask_turn)
     return Parts(
         stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language=pin_language or "auto", silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(pin_language or language, bv.stt_modes)),   # any of the six languages in any turn: the recogniser detects it and writes what was said as spoken (the mode per language, STT_MODES); the reply follows what was said
         tts=tts,

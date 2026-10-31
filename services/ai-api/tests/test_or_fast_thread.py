@@ -183,3 +183,52 @@ async def test_the_router_sends_casual_turns_to_the_fast_tier_and_the_rest_to_th
         for text, tier in expected.items():
             assert session._route(text, True, 1) == tier, (fast_smalltalk, text)   # noqa: SLF001
         await asyncio.sleep(0)
+
+
+@arun
+async def test_the_model_starts_while_the_database_is_still_storing_the_words_but_nothing_is_spoken_before_that_is_done() -> None:
+    import threading
+    import time
+
+    gate = threading.Event()
+
+    class Slow(FakeDb):
+        def begin_message(self, **kw: Any) -> dict[str, Any]:
+            gate.wait(2.0)
+            return super().begin_message(**kw)
+
+    db = Slow()
+    started: list[float] = []
+    llm = FakeLlm(("Hello there. ",))
+    original = llm.stream
+
+    def spy(system: str, messages: list[dict[str, str]], model: str) -> Any:
+        started.append(time.perf_counter())
+        return original(system, messages, model)
+
+    llm.stream = spy   # type: ignore[method-assign]
+    ft, _, _ = make(db, llm)
+    ft._cache, ft.stale = [], False   # noqa: SLF001  (a session that has read its thread)
+    t0 = time.perf_counter()
+    gen = ft.stream("s", [{"role": "user", "content": "hi"}], "m")
+    first = asyncio.ensure_future(gen.__anext__())
+    await asyncio.sleep(0.3)
+    assert started and started[0] - t0 < 0.2, "the model was asked at once"
+    assert not first.done(), "…but not a word is spoken until the words are stored"
+    gate.set()
+    assert await asyncio.wait_for(first, 3) == "Hello there. "
+    async for _ in gen:
+        pass
+
+
+@arun
+async def test_the_thread_is_read_once_then_kept_in_memory_until_another_path_adds_to_it() -> None:
+    db = FakeDb([{"seq": 1, "role": "user", "body": "typed earlier", "language": "en"}, {"seq": 2, "role": "assistant", "body": "typed answer", "language": "en"}])
+    ft, _, prompts = make(db)
+    [p async for p in ft.stream("s", [{"role": "user", "content": "one"}], "m")]
+    [p async for p in ft.stream("s", [{"role": "user", "content": "two"}], "m")]
+    assert sum(1 for c in db.calls if c[0] == "history") == 1, "the second turn did not read the thread again"
+    assert prompts[1]["messages"][-3:] == [{"role": "user", "content": "one"}, {"role": "assistant", "content": "Hello there. How can I help?"}, {"role": "user", "content": "two"}]
+    ft.mark_stale()   # the written chat's turn added messages
+    [p async for p in ft.stream("s", [{"role": "user", "content": "three"}], "m")]
+    assert sum(1 for c in db.calls if c[0] == "history") == 2
