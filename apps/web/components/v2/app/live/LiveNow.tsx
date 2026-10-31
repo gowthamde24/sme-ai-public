@@ -93,9 +93,9 @@ export function LiveNow({ memberships, labels, frame: given, variant, collapsed 
         <ul className="flex flex-col gap-0.5">
           {rows.slice(0, 4).map((r) => (
             <li key={r.key}>
-              <Link href={r.href(base)} className="flex min-h-8 items-center gap-2 rounded-md px-1 text-sm font-medium hover:bg-surface-2">
-                {React.createElement(ICON[r.key], { className: "size-4 shrink-0 text-brand-text", "aria-hidden": true })}
-                <span className="min-w-0 flex-1 truncate">{lineOf(r, secsOf(r), labels)}</span>
+              <Link href={r.href(base)} className="flex min-h-8 items-start gap-2 rounded-md px-1 py-1 text-sm font-medium hover:bg-surface-2">
+                {React.createElement(ICON[r.key], { className: "mt-0.5 size-4 shrink-0 text-brand-text", "aria-hidden": true })}
+                <span className="min-w-0 flex-1 leading-snug">{lineOf(r, secsOf(r), labels)}</span>
               </Link>
             </li>
           ))}
