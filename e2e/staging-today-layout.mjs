@@ -43,7 +43,7 @@ try {
         barBottom: bar ? bar.bottom : null,
         rows: document.querySelectorAll("[data-needs-row]").length,
         rowH: document.querySelector("[data-needs-row]")?.getBoundingClientRect().height ?? null,
-        demo: (() => { const d = document.querySelector('[data-part="guided-demo-start"]')?.getBoundingClientRect(); const a = document.querySelector("aside")?.getBoundingClientRect(); const prof = [...document.querySelectorAll("aside div")].find((e) => /Owner|Admin|Sales|Viewer/.test(e.textContent ?? "") && e.querySelector('[class*="rounded-full"]') && e.getBoundingClientRect().height < 80 && e.getBoundingClientRect().bottom > innerHeight - 140)?.getBoundingClientRect(); return d ? { left: d.left, asideRight: a?.right ?? 0, overlapsProfile: !!prof && !(d.right <= prof.left || d.left >= prof.right || d.bottom <= prof.top || d.top >= prof.bottom) } : null; })(),
+        demo: (() => { const b = document.querySelector('[data-part="guided-demo-start"]'); const header = document.querySelector("header[class*='sticky']"); return b ? { inHeader: !!header?.contains(b), fixed: getComputedStyle(b).position === "fixed" } : null; })(),
         helpInBar: !!document.querySelector('header [data-help="tip"] button'),
         helpInPage: !!document.querySelector('main [data-help="tip"]'),
       };
@@ -56,7 +56,7 @@ try {
     ok(`${w}x${h} no sideways scroll, no usage meter`, m.scrollW <= m.innerW + 1 && !m.usage);
     if (w <= 1366) ok(`${w}x${h} the command bar is fully visible above the fold`, m.barBottom <= h, `bar bottom ${Math.round(m.barBottom)} of ${h}`);
     ok(`${w}x${h} "Needs you" is compact rows (one line each, at most three) on a desktop`, m.rows >= 1 && m.rows <= 3 + 0 && m.rowH <= 72, `rows=${m.rows} rowH=${Math.round(m.rowH ?? 0)}`);
-    ok(`${w}x${h} "Start demo" does not sit on the profile box in the menu`, m.demo === null || (!m.demo.overlapsProfile && m.demo.left >= m.demo.asideRight), JSON.stringify(m.demo));
+    ok(`${w}x${h} "Start demo" is a small pill in the top bar, not floating`, m.demo === null || (m.demo.inHeader && !m.demo.fixed), JSON.stringify(m.demo));
     ok(`${w}x${h} "Help" is a small ? in the top bar, not a button in the page`, m.helpInBar && !m.helpInPage);
     await shot(s, `tl-${pack}-${lang}-${w}x${h}`, { fullPage: false });
   }

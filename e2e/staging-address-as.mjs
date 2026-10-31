@@ -25,7 +25,7 @@ try {
   if (has) {
     const before = await p.locator("#me-address").inputValue();
     ok("it allows at most 30 characters", (await p.locator("#me-address").getAttribute("maxlength")) === "30");
-    if (!(await p.locator("#me-name").inputValue())) await p.locator("#me-name").fill("Demo owner"); // (the name box is required; a demo owner without a name could not save anything)
+    if (!(await p.locator("#me-name").inputValue())) await p.locator("#me-name").fill("Lakshmi Prasad"); // (the name box is required; a demo owner without a name could not save anything)
     await p.locator("#me-address").fill("Meera garu");
     await shot(s, `aa-${pack}-${size}-1-filled`, { fullPage: false });
     await p.locator('[data-part="my-profile"] form:has(#me-name) button[type="submit"]').click();
