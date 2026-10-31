@@ -1,6 +1,6 @@
 import type { ConfirmAction } from "@/lib/api/turns";
 
-import { BARGE_IN, endWordOf, parseServerMessage, PING, setLanguageMessage, startMessage, STOP, type EndWord, type LimitReason, type ServerMessage, type Step, type VoiceLang, type VoiceSource, type VoiceMode, type VoiceState } from "./protocol";
+import { BARGE_IN, BARGE_IN_VERIFY, endWordOf, parseServerMessage, PING, setLanguageMessage, startMessage, STOP, type EndWord, type LimitReason, type ServerMessage, type Step, type VoiceLang, type VoiceSource, type VoiceMode, type VoiceState } from "./protocol";
 
 /**
  * One "Talk to your assistant" session (job DV): the WebSocket, the microphone and the speakers, kept apart from the screen so they can be tested with fakes. The browser holds the person's sign-in only for the first message (the API's contract: a socket cannot send a
@@ -32,7 +32,7 @@ export interface SocketLike {
 }
 export type Phase = "connecting" | "ready" | "ended";
 export type Caption = { id: number; who: "user" | "assistant"; text: string; final: boolean; spoken: boolean; /** The person spoke over it: only the words up to here were heard (the thread marks it "Interrupted"). */ cut?: boolean };
-export type Snapshot = { phase: Phase; state: VoiceState | null; step: Step | null; captions: Caption[]; sources: VoiceSource[]; language: VoiceLang; end: EndWord | null; micDenied: boolean; /** The plan the assistant proposed in this turn, waiting for the owner (null otherwise). */ plan: ConfirmAction | null; /** The answers to plans so far (by tap or by voice), in order. */ decided: { actionId: string; status: "confirmed" | "declined" | "expired" }[]; /** The voice speaking now (its name and language), as the API said at the start of the turn; null until it says. */ voice: { id: string; name: string | null; language: VoiceLang | null } | null; /** The conversation the spoken turns are stored in (the written chat's thread); null until the API says. */ conversationId: string | null; /** A refusal that does not end the session (the hourly limit, ...): its code, until the next turn. */ problem: string | null; /** The length of one conversation in seconds, as the API said at the start (null: it did not say), and when it started (ms): the screen warns before the end. */ sessionSeconds: number | null; readyAt: number | null };
+export type Snapshot = { phase: Phase; state: VoiceState | null; step: Step | null; captions: Caption[]; sources: VoiceSource[]; language: VoiceLang; end: EndWord | null; micDenied: boolean; /** The plan the assistant proposed in this turn, waiting for the owner (null otherwise). */ plan: ConfirmAction | null; /** The answers to plans so far (by tap or by voice), in order. */ decided: { actionId: string; status: "confirmed" | "declined" | "expired" }[]; /** The voice speaking now (its name and language), as the API said at the start of the turn; null until it says. */ voice: { id: string; name: string | null; language: VoiceLang | null } | null; /** The conversation the spoken turns are stored in (the written chat's thread); null until the API says. */ conversationId: string | null; /** A refusal that does not end the session (the hourly limit, ...): its code, until the next turn. */ problem: string | null; /** The length of one conversation in seconds, as the API said at the start (null: it did not say), and when it started (ms): the screen warns before the end. */ sessionSeconds: number | null; readyAt: number | null; /** The API said the session ends in this many seconds (a soft warning before its limit), and when that was said (ms); null before. */ endingIn: number | null; endingAt: number | null };
 
 /** A level above this (0..1, after the browser's echo cancelling) is the person speaking; it must hold for this many frames in a row, so a click or a cough does not cut the assistant off. */
 export const SPEECH_LEVEL = 0.06;
@@ -57,7 +57,7 @@ export class VoiceClient {
 
   constructor(private readonly o: Options) {
     this.quiet = o.quietStart === true;
-    this.snap = { phase: "connecting", state: null, step: null, captions: [], sources: [], language: o.language, end: null, micDenied: false, plan: null, decided: [], voice: null, conversationId: null, problem: null, sessionSeconds: null, readyAt: null };
+    this.snap = { phase: "connecting", state: null, step: null, captions: [], sources: [], language: o.language, end: null, micDenied: false, plan: null, decided: [], voice: null, conversationId: null, problem: null, sessionSeconds: null, readyAt: null, endingIn: null, endingAt: null };
   }
 
   get snapshot(): Snapshot {
@@ -93,13 +93,14 @@ export class VoiceClient {
     this.finish({ code: 1000, reason: "" });
   }
 
-  /** The assistant's last words were cut off by the person (a tap, or speaking over it): that turn is marked, so the thread says "Interrupted". */
-  private markCut(): void {
+  /** The assistant's last words were cut off by the person (a tap, or speaking over it): that turn is marked, so the thread says "Interrupted". `spoken` = what the person actually heard of it, when the API says: only that stays as the assistant's words. */
+  private markCut(spoken: string | null = null): void {
     const list = this.snap.captions.slice();
     for (let i = list.length - 1; i >= 0; i--) {
       if (list[i].who !== "assistant") continue;
-      if (!list[i].cut) {
-        list[i] = { ...list[i], cut: true };
+      const text = spoken !== null && spoken !== list[i].text ? spoken : list[i].text;
+      if (!list[i].cut || text !== list[i].text) {
+        list[i] = { ...list[i], cut: true, text, final: true };
         this.set({ captions: list });
       }
       return;
@@ -108,7 +109,7 @@ export class VoiceClient {
 
   /** A tap while the assistant talks: the sound stops HERE, the API is told, and the microphone goes on (the same as speaking over it). */
   bargeIn(): void {
-    if (!this.ws || this.ws.readyState !== 1 || this.serverState !== "speaking") return;
+    if (!this.ws || this.ws.readyState !== 1 || (this.serverState !== "speaking" && this.serverState !== "paused")) return;
     this.markCut();
     this.o.audio.flush();
     this.ws.send(BARGE_IN);
@@ -134,19 +135,18 @@ export class VoiceClient {
       this.loud = level > SPEECH_LEVEL ? this.loud + 1 : 0;
       if (this.loud >= SPEECH_FRAMES) {
         this.loud = 0;
-        this.markCut();
         this.o.audio.flush(); // the sound stops here first...
-        ws.send(BARGE_IN); // ...and the API is told
-        this.serverState = "listening";
-        this.set({ state: "listening" });
+        ws.send(BARGE_IN_VERIFY); // ...and the API is told to judge it: a cough or "hmm" and the reply goes on, real words end it
+        this.serverState = "paused";
+        this.set({ state: "paused" });
       }
     }
-    if (this.serverState === "listening") ws.send(pcm); // only while the assistant listens
+    if (this.serverState === "listening" || this.serverState === "paused") ws.send(pcm); // while the assistant listens, and while it judges what it heard (it needs the sound to tell)
   }
 
   private message(data: unknown): void {
     if (data instanceof ArrayBuffer) {
-      if (this.snap.phase === "ready" && this.serverState !== "listening" && !this.quiet) this.o.audio.play(data);
+      if (this.snap.phase === "ready" && this.serverState !== "listening" && this.serverState !== "paused" && !this.quiet) this.o.audio.play(data);
       return;
     }
     const m: ServerMessage | null = parseServerMessage(data);
@@ -157,6 +157,7 @@ export class VoiceClient {
         this.set({ phase: "ready", language: m.language, conversationId: m.conversationId, problem: null, sessionSeconds: m.sessionSeconds, readyAt: Date.now() });
         return;
       case "state":
+        if (m.state === "listening" && this.serverState === "paused") this.markCut(); // it judged the sound to be the person speaking: the reply ended where it was
         this.serverState = m.state;
         this.loud = 0;
         if (m.state === "thinking") this.quiet = false;
@@ -186,8 +187,21 @@ export class VoiceClient {
       case "audio_stop":
         this.o.audio.flush();
         return;
-      case "interrupted": // the API heard the person over the assistant (its own barge-in): the same mark
-        this.markCut();
+      case "interrupted": // the API heard the person over the assistant: the turn is cut where they heard it
+        this.markCut(m.spoken);
+        return;
+      case "paused": // judging a sound: nothing is played meanwhile
+        this.o.audio.flush();
+        this.serverState = "paused";
+        this.loud = 0;
+        this.set({ state: "paused" });
+        return;
+      case "resumed": // it was a cough, a click or "hmm": the reply goes on (the API sends the audio again)
+        this.serverState = "speaking";
+        this.set({ state: "speaking" });
+        return;
+      case "notice":
+        this.set({ endingIn: m.secondsLeft, endingAt: Date.now() });
         return;
       case "source":
         if (!this.snap.sources.some((s) => s.label === m.label)) this.set({ sources: [...this.snap.sources, { kind: m.kind, label: m.label }].slice(-8) });
@@ -204,6 +218,7 @@ export class VoiceClient {
         return;
       case "limit":
         this.last.limit = m.reason;
+        if (m.reason === "goodbye") this.o.audio.stopMic(); // the person said bye: the microphone is off at once (the goodbye is still played; the close follows)
         return;
       default:
         return;

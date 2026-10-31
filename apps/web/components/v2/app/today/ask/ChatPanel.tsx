@@ -23,7 +23,7 @@ import type { ConfirmAction } from "@/lib/api/turns";
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 const bubble = "max-w-[92%] rounded-2xl px-3.5 py-2.5";
 /** How a chat can end without a word on the screen: it went quiet, hit its time limit or was closed. The panel stays as it was (typing works; the microphone starts a new chat without a greeting). The other ends say why. */
-const QUIET_ENDS: readonly string[] = ["idle", "session", "left"];
+const QUIET_ENDS: readonly string[] = ["idle", "session", "left", "goodbye"];
 /** What a microphone problem of dictation says (the route's own codes are in ERROR_WORD). */
 const PROBLEM_WORDS: Readonly<Record<string, string>> = { denied: "ask.mic.denied", nomic: "ask.voice.nomic", short: "ask.voice.short", unsupported: "ask.mic.failed", failed: "ask.mic.failed" };
 
@@ -205,7 +205,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
       first.focus();
     }
   };
-  const orb = talk.active ? (talk.state === "listening" ? "listen" : talk.state === "speaking" ? "speak" : "think") : s.asking && !s.answer ? "think" : s.asking ? "speak" : "ambient";
+  const orb = talk.active ? (talk.state === "listening" || talk.state === "paused" ? "listen" : talk.state === "speaking" ? "speak" : "think") : s.asking && !s.answer ? "think" : s.asking ? "speak" : "ambient";
   // under the circle while it speaks: which voice it is ("Speaking in Telugu · Ramya"), as the API says it at the start of the turn
   const said = talk.voice;
   const hint = talk.state === "speaking" && said?.name ? c("bv.speaking.in").replace("{language}", voice.languageNames[said.language ?? voice.language] ?? "").replace("{voice}", said.name) : null;

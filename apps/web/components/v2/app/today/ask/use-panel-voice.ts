@@ -132,7 +132,7 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
       setPlan((p) => (p && p.actionId === d.actionId ? { ...p, status: d.status } : p));
     }
     decidedSeen.current = next.decided.length;
-    setVoiceOrb(next.phase === "ended" ? null : next.state === "listening" ? "listen" : next.state === "speaking" ? "speak" : next.state === "thinking" || next.phase === "connecting" ? "think" : null);
+    setVoiceOrb(next.phase === "ended" ? null : next.state === "listening" || next.state === "paused" ? "listen" : next.state === "speaking" ? "speak" : next.state === "thinking" || next.phase === "connecting" ? "think" : null);
     const shownAsked = partialUser ?? asked;
     const shownAnswer = partialAsst !== "" ? (answer !== "" ? `${answer}\n\n${partialAsst}` : partialAsst) : answer;
     setLive(next.phase !== "ended" && (shownAsked !== "" || shownAnswer !== "") ? { asked: shownAsked, answer: shownAnswer, interim: partialUser ?? "", cut } : null);
@@ -144,7 +144,7 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     if (client.current && snap && snap.phase !== "ended") return;
     if (token.current === null || Date.now() - token.current.at > TOKEN_FRESH_MS) {
       const out = await askVoiceToken(tokenUrl);
-      if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false, plan: null, decided: [], voice: null, conversationId: null, problem: null, sessionSeconds: null, readyAt: null });
+      if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false, plan: null, decided: [], voice: null, conversationId: null, problem: null, sessionSeconds: null, readyAt: null, endingIn: null, endingAt: null });
       token.current = { value: out.token, at: Date.now() };
     }
     flushedId.current = 0;
@@ -179,14 +179,17 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
   const [clock, setClock] = React.useState<{ quietMs: number; left: number | null }>({ quietMs: 0, left: null });
   const sessionSeconds = snap?.sessionSeconds ?? null;
   const readyAt = snap?.readyAt ?? null;
+  const endingIn = snap?.endingIn ?? null; // the API's own warning ("the session ends in n seconds"), when it sends one
+  const endingAt = snap?.endingAt ?? null;
   React.useEffect(() => {
     if (!active) return;
     const id = setInterval(() => {
       const t = Date.now();
-      setClock({ quietMs: listening ? t - quietSince.current : 0, left: sessionSeconds !== null && readyAt !== null ? Math.round(sessionSeconds - (t - readyAt) / 1000) : null });
+      const told = endingIn !== null && endingAt !== null ? Math.round(endingIn - (t - endingAt) / 1000) : null;
+      setClock({ quietMs: listening ? t - quietSince.current : 0, left: told ?? (sessionSeconds !== null && readyAt !== null ? Math.round(sessionSeconds - (t - readyAt) / 1000) : null) });
     }, 1000);
     return () => clearInterval(id);
-  }, [active, listening, sessionSeconds, readyAt]);
+  }, [active, listening, sessionSeconds, readyAt, endingIn, endingAt]);
   const checkIn = listening && clock.quietMs >= LIVE_CHECKIN_MS ? Math.max(0, Math.ceil((LIVE_SILENCE_MS - clock.quietMs) / 1000)) : null;
   const sessionLeft = active && clock.left !== null && clock.left > 0 && clock.left <= LIVE_WARN_S ? clock.left : null;
   // never listen in the background (D4, D6): the microphone is off the moment the tab is hidden
