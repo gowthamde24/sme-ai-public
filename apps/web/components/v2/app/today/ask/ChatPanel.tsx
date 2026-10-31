@@ -269,7 +269,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   const caption = talk.connecting ? c("bv.connecting") : !talk.active ? c("bv.orb.tap") : talk.state === "speaking" ? c("bv.orb.speaking") : talk.state === "thinking" ? c("bv.thinking") : talk.state === "paused" ? c("bv.live.paused") : c("bv.listening");
   /* The orb IS the Talk button (owner 31 Oct): a hands-free spoken conversation; it listens again after every answer, you may speak over it, and a tap again (or about 30 s of silence) ends it. The ring around it is its voice: still when idle, pulsing with the sound while it listens or speaks. */
   const talkOrb = (px: number, withCaption: boolean) => (
-    <div className="flex shrink-0 flex-col items-center gap-1.5">
+    <div className={`flex shrink-0 flex-col items-center gap-1.5 ${withCaption ? "w-[84px]" : ""}`}>
       <button
         type="button"
         data-chat="live-talk"
@@ -289,7 +289,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
         <Orb px={px} state={orb} analyser={talk.active ? talk.analyser(talk.state === "speaking" ? "voice" : "mic") : null} />
       </button>
       {withCaption ? (
-        <span data-chat="talk-caption" role="status" className="text-xs font-semibold text-muted">
+        <span data-chat="talk-caption" role="status" className="text-center text-xs font-semibold leading-tight text-muted">
           {caption}
         </span>
       ) : null}
