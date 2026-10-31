@@ -15,6 +15,7 @@ from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agent_runs.routes import router as agent_runs_router
 from app.agent_runs.wiring import build_agents_runtime
 from app.assistant.routes import router as assistant_router
+from app.assistant_activity.routes import router as activity_router
 from app.assistant_context.repository import PostgrestContextRepository
 from app.assistant_context.routes import router as assistant_context_router
 from app.assistant_context.service import ContextService
@@ -1242,6 +1243,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(tasks_router)
     app.include_router(voice_sample_router)
     app.include_router(pronunciation_router)
+    app.include_router(activity_router)
     app.include_router(voice_picker_router)
     app.include_router(browser_voice_router)
     app.include_router(auto_reply_router)
