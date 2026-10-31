@@ -72,6 +72,10 @@ class BrowserPlayout:
     def active(self) -> bool:
         return self._clock() < self._until
 
+    def unplayed_seconds(self) -> float:
+        """How much of what was sent the browser has not played yet (what a stop would cut off)."""
+        return max(0.0, self._until - self._clock())
+
     async def write(self, pcm: bytes) -> None:
         now = self._clock()
         self._until = max(self._until, now) + len(pcm) / 2 / OUT_RATE

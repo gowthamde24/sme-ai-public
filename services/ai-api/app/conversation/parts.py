@@ -33,6 +33,7 @@ class TurnTimings:
 
     end_of_speech_at: float | None = None
     eot_at: float | None = None
+    speech_start_at: float | None = None   # the recogniser heard the caller start (the first time in the turn)
     final_at: float | None = None
     llm_request_at: float | None = None
     first_token_at: float | None = None
@@ -44,6 +45,9 @@ class TurnTimings:
     tts_engine: str = ""  # which voice engine spoke the turn (cartesia | sarvam_v4); empty for a part that does not say
     tts_fallback: str = ""  # why the primary did not speak: error | timeout | cooldown | mid_stream; empty when it did
     reply_text: str = ""
+    spoken_text: str = ""   # what of the reply was actually heard (the whole reply, or its start when the caller cut it): what the stored history keeps
+    paused: int = 0        # how many times the line was paused for a possible interruption that turned out not to be one
+    held_ms: int = 0       # how long the end of the turn was held back because the thought was not finished
     filler_played: bool = False
     interrupted: bool = False
     clauses: int = 0

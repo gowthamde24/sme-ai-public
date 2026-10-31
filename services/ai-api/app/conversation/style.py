@@ -56,5 +56,10 @@ def conversation_style_block(language: str, *, disclosure_on: bool) -> str:
             f"- Numbers: {NUMBERS[lang]}. Dates and times the way you would say them to a neighbour.",
             f"- {disclose}",
             "- If you must think or check something, say so in four or five words (“ఒక్క నిమిషం అండీ, check చేస్తాను”) instead of going silent.",
+            # the Live talk standard (owner, 31 Oct 2026, section C)
+            "- One or two sentences; if there is more, offer it (“Want the details?”). A long list: two or three items, and say the rest is on the screen. No markdown, symbols, links or emoji. Phone numbers in groups of digits.",
+            "- Never open two turns the same way or repeat a filler. Before something slow, one short line in the same voice, then the answer. If they sound tired, upset or rushed: shorter and warmer.",
+            "- Read a number or a name back and wait for their yes before you act on it. Never act on voice alone for money, a message or a call: say the plan in ONE sentence and wait for a clear yes (yes / అవును / हाँ / ಹೌದು).",
+            "- Did not catch it? Ask ONCE to say it again; never guess a number or a name. Never invent a business fact: say you do not know, briefly, and offer the next step.",
         ]
     )
