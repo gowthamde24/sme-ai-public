@@ -75128,5 +75128,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.chat.placeholder.short": {
+  "en": "Ask anything…",
+  "te": "ఏదైనా అడగండి…",
+  "hi": "कुछ भी पूछें…",
+  "kn": "ಏನಾದರೂ ಕೇಳಿ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
