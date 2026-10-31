@@ -126,6 +126,12 @@ if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
   # Run with WORKER_AUTO_REPLY=1 once that is granted; without it the worker still sends (WhatsApp adapter, fenced) but does not draft replies.
   WORKER_AR_ENV="" WORKER_AR_SECRETS=""
   if [ "${WORKER_AUTO_REPLY:-0}" = 1 ]; then WORKER_AR_ENV=",AUTO_REPLY_ENABLED=true,AUTO_REPLY_MODEL=claude-haiku-5-5"; WORKER_AR_SECRETS=",ANTHROPIC_API_KEY=sme-anthropic-api-key:latest"; fi
+  # The AI lead reader (owner decision, 31 Oct 2026): the worker reads a new WhatsApp lead's first message with the light model and fills the profile with low confidence (WORKER_LEAD_READER=1). Same key as the auto-reply; the
+  # database decides who is read (real-data gate open, not a school, agents on, 200 reads a workspace a day).
+  if [ "${WORKER_LEAD_READER:-0}" = 1 ]; then
+    WORKER_AR_ENV="$WORKER_AR_ENV,LEAD_READER_ENABLED=true,LEAD_READER_MODEL=claude-haiku-5-5"
+    case "$WORKER_AR_SECRETS" in *ANTHROPIC_API_KEY*) ;; *) WORKER_AR_SECRETS="$WORKER_AR_SECRETS,ANTHROPIC_API_KEY=sme-anthropic-api-key:latest" ;; esac
+  fi
   # the worker has its own image (the API's code plus ffmpeg, job DJ), built here with the same TAG
   RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="scheduler@demo.example.test" \
     WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER=whatsapp \
