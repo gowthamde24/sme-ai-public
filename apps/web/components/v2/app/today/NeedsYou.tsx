@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
@@ -9,7 +9,6 @@ import { formatINR } from "@/design/format";
 
 import { FreshPhotos } from "../catalogue/FreshPhotos";
 import { MessagePhotos } from "../catalogue/MessagePhotos";
-import { OrbMark } from "../mark/OrbMark";
 import { dayShort, todayInIndia } from "../visits/dates";
 import { SlotPicker, type SlotChoice } from "../visits/SlotPicker";
 import type { DecisionResult, TodayActions } from "./actions-types";
@@ -535,10 +534,10 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
           <p className="text-sm text-muted">{say(words, "frame.notyet")}</p>
         </div>
       ) : cards.length === 0 && extra === 0 ? (
-        <div className={`${card} flex-row items-center`} data-empty="needs">
-          <OrbMark px={56} mood={"idle"} className="size-14" />
-          <p className="font-medium">{say(words, "today.empty")}</p>
-        </div>
+        <p data-empty="needs" className="flex items-center gap-2 text-sm font-medium text-muted">
+          <Check className="size-4 shrink-0 text-green-text" aria-hidden="true" />
+          {say(words, "today.empty")}
+        </p>
       ) : (
         <>
           <p className="mb-1 text-sm text-muted">{say(words, "today.needs.note")}</p>
