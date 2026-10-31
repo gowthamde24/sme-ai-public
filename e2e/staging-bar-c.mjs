@@ -43,7 +43,7 @@ try {
   const opts = await sel.locator("option").allTextContents();
   ok("the pill offers Auto, Telugu, English, Hindi, Kannada, Tamil, Malayalam", opts.length === 7 && opts.slice(1).join() === OPTIONS.slice(1).join(), opts.join(" | "));
   const start = await sel.inputValue();
-  ok("it starts as the app's language", start === (lang === "te" ? "te" : "en"), `value=${start}`);
+  ok("it starts as the app's language (or what the person saved before: the profile's choice wins)", [lang === "te" ? "te" : "en", "auto"].includes(start), `value=${start}`);
   await sel.selectOption("te");
   await p.reload({ waitUntil: "domcontentloaded" });
   await sel.waitFor({ timeout: 45000 });
