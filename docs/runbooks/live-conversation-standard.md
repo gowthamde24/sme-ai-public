@@ -43,3 +43,7 @@ Phone calls have their own model test: `docs/runbooks/phone-model.md`.
 ## Real-voice recordings
 
 The owner's recordings of 31 Oct 2026 are kept as text and timings only (`tests/evals/recordings/`); the audio is never committed. Findings and the recommendation (audio turn model stays in shadow, `transcribe` and never `verbatim` for Telugu and English): `~/Desktop/stack19-jobs/recordings-check/report.md`.
+
+## Command-like turns (owner decision 31 Oct 2026)
+
+A finished-looking command (Telugu, English, Kannada imperatives that do something to people: send, call, message, remind, పంపించు, చేయి, ಕಳುಹಿಸಿ ...) waits `BROWSER_VOICE_COMMAND_WAIT_MS` (900 ms) for more before it is handed over, so a quantity or a name said after a short pause is kept. Questions and chat never wait. The `timings` message carries `command: true`; **command turns are their own latency group, not part of the 1.6 s / 2.5 s bar of questions.** Code: `turntaking.is_command`, `Conversation(command_hold_ms=...)`. On the real recording of 31 Oct the quantity after the pause (0.82 s) is now kept.

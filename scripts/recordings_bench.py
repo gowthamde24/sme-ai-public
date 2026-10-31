@@ -114,7 +114,7 @@ async def cmd_turns(args: argparse.Namespace) -> None:
             bus = FrameBus()
             language = "en" if n in (7, 8) else "te"
             conv = Conversation(stt=SarvamRealtimeStt(key, language="auto", mode="transcribe"), llm=FakeLlm(("ok",)), tts=FakeTts(), playout=FakePlayout(rate=16000), session=Session(system="", language=language),
-                                models={"fast": "f", "strong": "s"}, semantic_turns=True, audio_turn=Logged(), audio_turn_mode=variant, audio_tail=bus.recent)
+                                models={"fast": "f", "strong": "s"}, semantic_turns=True, audio_turn=Logged(), audio_turn_mode=variant, audio_tail=bus.recent, command_hold_ms=args.command_wait)
             finals: list[tuple[float, str]] = []
             timeline: list[dict[str, Any]] = []
 
@@ -147,7 +147,7 @@ async def cmd_turns(args: argparse.Namespace) -> None:
             decided_at = round(time.perf_counter() - t0, 2)
             feeder.cancel()
             reference = truth[str(n)]["transcribe/long"]["text"]
-            rows[str(n)][variant] = {"text": text, "decided_at_s": decided_at, "speech_s": round(len(pcm) / 32000, 1), "held_ms": tm.held_ms, "pieces": [f[1] for f in finals], "timeline": timeline, "audio_calls": calls,
+            rows[str(n)][variant] = {"text": text, "decided_at_s": decided_at, "speech_s": round(len(pcm) / 32000, 1), "held_ms": tm.held_ms, "command_turn": tm.command_turn, "pieces": [f[1] for f in finals], "timeline": timeline, "audio_calls": calls,
                                      "reference": reference, "words": len((text or "").split()), "reference_words": len(reference.split())}
             print(n, variant, "->", text, "| decided", decided_at, "s | held", tm.held_ms, "| pieces", len(finals), "| audio", [(c["p"], c["run_ms"]) for c in calls], flush=True)
     (args.out_dir / f"turns{args.tag}.json").write_text(json.dumps(rows, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -217,6 +217,7 @@ def main() -> int:
     ap.add_argument("--files", default="1,2,3,4,5,6,7,8")
     ap.add_argument("--variants", default="shadow,on")
     ap.add_argument("--not-done", type=float, default=None, help="try another 'the voice sounds unfinished' threshold for the audio model (default: the code's)")
+    ap.add_argument("--command-wait", type=int, default=900, help="ms a finished-looking command waits for more (0: the behaviour before 31 Oct 2026)")
     ap.add_argument("--tag", default="", help="suffix of the output file, to keep several runs")
     ap.add_argument("--audio-dir", required=True, type=Path)
     ap.add_argument("--out-dir", required=True, type=Path)
