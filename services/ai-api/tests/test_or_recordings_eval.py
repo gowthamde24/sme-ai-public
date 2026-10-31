@@ -14,7 +14,7 @@ from app.conversation import turntaking
 from app.conversation.fakes import FakeLlm, FakePlayout, FakeTts, ScriptedStt, Segment
 from app.conversation.parts import Session, TurnTimings
 from app.conversation.pipeline import Conversation
-from app.conversation.turntaking import COMMAND_HOLD_MS, classify_interruption
+from app.conversation.turntaking import COMMAND_HOLD_MS, classify_interruption, foreign_to_pin
 from tests.test_oq_live_standard import Src
 
 CASES = [json.loads(line) for line in (Path(__file__).resolve().parents[3] / "tests" / "evals" / "recordings" / "cases.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
@@ -88,8 +88,9 @@ def test_at_a_0_6_threshold_the_audio_model_fixes_the_cough_and_the_tv_word_and_
 WINDOWS = [json.loads(line) for line in (Path(__file__).resolve().parents[3] / "tests" / "evals" / "recordings" / "interruptions.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
-def decision(window: dict[str, Any]) -> str:
-    return "stop" if classify_interruption(int(window["speech_ms"]), window["text"]) == "barge_in" else "ignore"
+def decision(window: dict[str, Any], gate: bool = True) -> str:
+    foreign = gate and foreign_to_pin(window["text"], window.get("pin"))
+    return "stop" if classify_interruption(int(window["speech_ms"]), window["text"], foreign=foreign) == "barge_in" else "ignore"
 
 
 @pytest.mark.parametrize("window", [w for w in WINDOWS if w["status"] == "pass"], ids=lambda w: w["id"])
@@ -97,7 +98,7 @@ def test_a_cough_a_single_tv_word_and_the_owner_are_told_apart(window: dict[str,
     assert decision(window) == window["expect"]
 
 
-@pytest.mark.xfail(strict=True, reason="a TV phrase of two or more words is read as a person (known limit, fix proposed in recordings-check/report.md)")
+@pytest.mark.xfail(strict=True, reason="a TV phrase in the owner's own language (Telugu or Tenglish) is read as a person (known limit; the speaker check is the proposed fix)")
 @pytest.mark.parametrize("window", [w for w in WINDOWS if w["status"] == "known_gap"], ids=lambda w: w["id"])
 def test_a_tv_phrase_of_two_or_more_words_does_not_stop_the_reply(window: dict[str, Any]) -> None:
     assert decision(window) == window["expect"]
@@ -105,7 +106,8 @@ def test_a_tv_phrase_of_two_or_more_words_does_not_stop_the_reply(window: dict[s
 
 def test_the_scores_of_the_labelled_windows() -> None:
     tv = [w for w in WINDOWS if w["label"] == "tv"]
-    assert (len(tv), sum(decision(w) == "ignore" for w in tv)) == (4, 2), "2 of 4 TV windows ignored, 2 wrongly stop the reply"
+    assert (len(tv), sum(decision(w) == "ignore" for w in tv)) == (4, 3), "3 of 4 TV windows ignored with the language gate (2 before), 1 still wrongly stops the reply"
+    assert sum(decision(w, gate=False) == "ignore" for w in tv) == 2, "without the gate: 2 of 4"
     assert all(decision(w) == "ignore" for w in WINDOWS if w["label"] == "cough") and all(decision(w) == "stop" for w in WINDOWS if w["label"] == "owner")
 
 
@@ -118,3 +120,14 @@ def test_a_question_gets_no_added_delay_and_the_command_gets_the_wait(name: str)
     tm = TurnTimings()
     asyncio.run(asyncio.wait_for(conv.listen(Src(), tm), 20))
     assert not tm.command_turn and tm.held_ms == 0, name
+
+
+def test_the_gate_changes_nothing_for_what_the_owner_said_in_the_recordings() -> None:
+    """Every piece the recogniser wrote for the owner's eight recordings, as an interruption with the pill the owner would have set (Telugu for voices 1 to 6, English for 7 and 8): same decision with the gate as without it."""
+    for case in CASES:
+        pin = "en" if case["recording"] in ("voice-7", "voice-8") else "te"
+        for segment in case["segments"]:
+            window = {"text": segment["text"], "speech_ms": segment["speech_ms"], "pin": pin}
+            if case["id"] == "rec-6" and segment["text"] == "Cubic":
+                continue   # the TV's word (scored with the windows)
+            assert decision(window) == decision(window, gate=False), (case["id"], segment["text"])

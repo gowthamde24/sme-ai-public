@@ -308,6 +308,19 @@ class Settings(BaseSettings):
     # No file or a load failure means the text rules alone, in every mode.
     # A finished-looking command waits this long for more (0: off); questions and chat never wait.
     browser_voice_command_wait_ms: int = 900
+    # Barge-in only (while the assistant speaks) and only with the language pill set: speech
+    # clearly in another language is background. Stop words always interrupt;
+    # BROWSER_VOICE_STOP_WORDS replaces the built-in list (comma separated).
+    browser_voice_language_gate: bool = False
+    browser_voice_stop_words: str = ""
+    # Speaker check (browser Live talk only): off | shadow (measured, decides nothing) |
+    # on (a voice that is not this session's speaker does not interrupt; stop words still
+    # do). The voice signature lives in memory for one session and is never stored.
+    # Phone calls: never, until the lawyer review.
+    browser_voice_speaker_check: str = "off"
+    browser_voice_speaker_model: str = (
+        "/srv/models/campplus_zh_en_fp32.onnx"
+    )
     browser_voice_audio_turn: str = "shadow"
     browser_voice_audio_turn_model: str = "/srv/models/indic-smart-turn-base-int8.onnx"
     # AI phone calls (job phone-calls): off | sandbox | live. `live` is refused by the gate

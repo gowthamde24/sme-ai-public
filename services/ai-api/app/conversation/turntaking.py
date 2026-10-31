@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import re
 import statistics
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Literal, Protocol
 
@@ -168,9 +169,80 @@ BACKCHANNELS = {
 }
 
 
-def classify_interruption(speech_ms: int, text: str | None = None) -> Interruption:
-    """What was that sound while we spoke? `text` is what the recogniser made of it (None = nothing yet / nothing).
+# ---- B: stop words, and a language gate for barge-in (owner decision, 31 Oct 2026) -----------------------------------------------------------
+# A stop word ALWAYS barges in, in any language: one word like "stop" is a real word the speaker meant, however short the sound, whatever the language pill says. The list is config (BROWSER_VOICE_STOP_WORDS).
+STOP_WORDS: tuple[str, ...] = (
+    "stop", "wait", "one minute", "one second", "just a minute", "hold on", "hang on", "aagu", "aagandi", "aapu", "aapandi", "oka nimisham", "ruko", "rukiye",
+    "ఆగు", "ఆగండి", "ఆపు", "ఆపండి", "ఒక నిమిషం", "ನಿಲ್ಲಿಸಿ", "ನಿಲ್ಲಿಸು", "ರುಕೋ", "रुको", "रुकिए", "रुक जाओ", "ठहरो",
+    # what the recogniser writes when the language pill is set and someone says the English word (measured 31 Oct 2026: "stop" -> స్టాప్, "wait" -> వెయిట్, "hold on" -> హోల్డన్ / "Holden"): the sound in the pill's own script
+    "holden", "స్టాప్", "వెయిట్", "హోల్డన్", "హోల్డ్ ఆన్", "వన్ మినిట్", "వన్ సెకండ్", "జస్ట్ ఏ మినిట్", "स्टॉप", "वेट", "होल्ड ऑन", "वन मिनट", "ಸ್ಟಾಪ್", "ವೇಟ್", "ಹೋಲ್ಡ್ ಆನ್", "ಒನ್ ಮಿನಿಟ್",
+    "ஸ்டாப்", "வெயிட்", "ஹோல்ட் ஆன்", "സ്റ്റോപ്പ്", "വെയിറ്റ്",
+)
+# Words of English that an Indian-language sentence written in Latin letters does not have. A Telugu or Hindi sentence in Latin ("Ramesh ki", "2000 square feet ki", "Lakshmi gaariki coat pampinchu") has too few of them.
+# Measured on the owner's recordings (31 Oct 2026): Sarvam labels such Tenglish "en-IN" with 0.94 to 0.99 confidence, so the recogniser's own language code cannot tell Tenglish from English; a pinned session returns no code at all.
+_ENGLISH_COMMON = frozenset(
+    "the a an and or but if then so of in on at by for with without from to into out up down over about like as is are was were be been am do does did have has had will would can could should shall may might must i you he she it we they me him her us them my your his its our their this that these "
+    "those what who whom whose which when where why how not no yes there here all any some more most other such only own same than too very just also now today tomorrow yesterday first last next new old good great find look let lets get give take make see say tell ask want need help please "
+    "thanks thank hello hi dates date time day week month year people thing things".split()
+)
+_ROMAN_INDIAN = frozenset(
+    "ki ku ni nu tho toh lo nundi nunchi gurinchi kosam mariyu kani leda ante inka alage appudu mari aa pai meeda daggara aur lekin ya kyunki agar jab ke ko ka mein se par hai hain nahi nahin kya aap mera meri mere gaariki gariki garu garuki "
+    "pampinchu pampu pampandi cheyyi cheyi cheyandi cheyyandi chesey enta entha enti emi evaru ekkada eppudu ippudu repu ninna nenu meeru naaku miku meeku andi anta kavali undi unnaru chala bagunnara cheppu cheppandi ela kotha eeroju roju edaina maatlu".split()
+)
+_ENGLISH_SHARE = 0.6
+
+
+def stop_word_heard(text: str | None, words: Sequence[str] = STOP_WORDS) -> bool:
+    """Did the speaker say one of the stop words? Latin words match whole words or phrases; the Indian scripts match inside a word (those languages put endings on it)."""
+    t = " " + " ".join(_tokens(text or "")) + " "
+    if not t.strip():
+        return False
+    for word in words:
+        w = word.casefold().strip()
+        if not w:
+            continue
+        if w.isascii():
+            if f" {w} " in t:
+                return True
+        elif w in t:
+            return True
+    return False
+
+
+def looks_english(text: str | None) -> bool:
+    """Is this clearly English? Two or more words, most of them common English words, none of them a marker of Telugu/Hindi/Kannada written in Latin letters, no Indian script. A sentence that mixes ("2000 square feet ki") is NOT English."""
+    tokens = [t for t in _tokens(text or "") if t]
+    if len(tokens) < 2:
+        return False
+    if any(ord(ch) >= 0x0900 for t in tokens for ch in t) or any(t in _ROMAN_INDIAN for t in tokens):
+        return False
+    letters = [t for t in tokens if t.isalpha()]
+    return bool(letters) and sum(1 for t in letters if t.strip("'’").rstrip("s") in _ENGLISH_COMMON or t in _ENGLISH_COMMON or t.replace("’", "'") in _ENGLISH_COMMON) / len(tokens) >= _ENGLISH_SHARE
+
+
+_INDIAN_SCRIPTS = {"te": (0x0C00, 0x0C7F), "hi": (0x0900, 0x097F), "kn": (0x0C80, 0x0CFF), "ta": (0x0B80, 0x0BFF), "ml": (0x0D00, 0x0D7F)}
+
+
+def foreign_to_pin(text: str | None, pin: str | None) -> bool:
+    """With the language pill set to `pin`: is what was heard clearly in ANOTHER language (so, while the assistant speaks, probably the TV or someone else)? Pin "en": speech in an Indian script. Pin an Indian language: clear English in Latin
+    letters, or a different Indian script. Tenglish in Latin never counts. Pin None (auto) or unknown: never."""
+    if not pin or not text or pin not in ("en", *_INDIAN_SCRIPTS):
+        return False
+    scripts = {lang for lang, (lo, hi) in _INDIAN_SCRIPTS.items() if any(lo <= ord(ch) <= hi for ch in text)}
+    if pin == "en":
+        return bool(scripts)
+    if scripts:
+        return pin not in scripts and len(scripts) == 1
+    return looks_english(text)
+
+
+def classify_interruption(speech_ms: int, text: str | None = None, *, foreign: bool = False, stop_words: Sequence[str] = STOP_WORDS) -> Interruption:
+    """What was that sound while we spoke? `text` is what the recogniser made of it (None = nothing yet / nothing). `foreign`: the language gate says it is another language than the pill's.
     barge_in: stop and listen. backchannel: "hmm", "ok", "haan": they are following, do not stop (or pick up again). noise: a cough, a click, a TV: same."""
+    if stop_word_heard(text, stop_words):
+        return "barge_in"   # (always, whatever the language, however short)
+    if foreign:
+        return "noise"
     words = _tokens(text or "")
     if words:
         real = [w for w in words if w not in BACKCHANNELS]

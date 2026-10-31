@@ -25,6 +25,10 @@ audio-turn = [
     "numpy>=2.0,<3",
     "onnxruntime>=1.20,<2",
 ]
+# the speaker check (app/conversation/speaker.py, browser Live talk only): Kaldi filterbank features for the CAM++ model (also needs the audio-turn extra's numpy and onnxruntime)
+speaker = [
+    "kaldi-native-fbank>=1.22,<2",
+]
 dev = [
     "pytest>=8",
     "ruff>=0.6",
