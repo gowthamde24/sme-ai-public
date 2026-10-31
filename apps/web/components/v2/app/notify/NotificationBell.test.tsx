@@ -63,7 +63,7 @@ describe("NotificationBell", () => {
     await ready();
     await waitFor(() => expect(bell()).toHaveAccessibleName("Notifications, 2 new"));
     fireEvent.click(bell());
-    const panel = screen.getByRole("region", { name: "Notifications" });
+    const panel = await screen.findByRole("region", { name: "Notifications" });
     expect(bell()).toHaveAttribute("aria-expanded", "true");
     expect(panel.closest('[data-ui="v2"]')).not.toBeNull(); // inside the v2 theme, not a fixed child of the blurred bar
     const links = within(panel).getAllByRole("link");
@@ -147,7 +147,7 @@ describe("NotificationBell", () => {
     vi.stubGlobal("Notification", Object.assign(Ctor, { permission: "default", requestPermission: vi.fn().mockResolvedValue("default") }));
     await ready();
     fireEvent.click(bell());
-    const sw = screen.getByRole("switch");
+    const sw = await screen.findByRole("switch");
     expect(sw).toHaveAttribute("aria-checked", "false");
     expect(Ctor).not.toHaveBeenCalled();
   });
@@ -156,8 +156,9 @@ describe("NotificationBell", () => {
     vi.stubGlobal("Notification", Object.assign(Ctor, { permission: "default", requestPermission: vi.fn().mockImplementation(async () => { (Notification as unknown as { permission: string }).permission = "granted"; return "granted"; }) }));
     await ready();
     fireEvent.click(bell());
+    const sw = await screen.findByRole("switch");
     await act(async () => {
-      fireEvent.click(screen.getByRole("switch"));
+      fireEvent.click(sw);
     });
     expect(window.localStorage.getItem("sme-notify-browser")).toBe("on");
     expect(JSON.parse(window.localStorage.getItem(`sme-notify-announced:${T}`)!)).toEqual(["a"]);
@@ -183,8 +184,8 @@ describe("NotificationBell", () => {
     vi.stubGlobal("Notification", Object.assign(vi.fn(), { permission: "denied", requestPermission: vi.fn() }));
     await ready();
     fireEvent.click(bell());
+    expect(await screen.findByText(/blocked in this browser/)).toBeInTheDocument();
     expect(screen.queryByRole("switch")).toBeNull();
-    expect(screen.getByText(/blocked in this browser/)).toBeInTheDocument();
   });
   it("works with storage blocked: everything is new, nothing throws", async () => {
     vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
@@ -196,7 +197,7 @@ describe("NotificationBell", () => {
     await ready();
     await waitFor(() => expect(bell()).toHaveAccessibleName("Notifications, 2 new"));
     fireEvent.click(bell());
-    expect(screen.getAllByRole("link")).toHaveLength(2);
+    await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(2));
   });
   it("a new page closes the panel", async () => {
     const { rerender } = render(
@@ -208,7 +209,7 @@ describe("NotificationBell", () => {
       await Promise.resolve();
     });
     fireEvent.click(document.querySelector('[data-notify="bell"]')!);
-    expect(screen.getByRole("region", { name: "Notifications" })).toBeInTheDocument();
+    expect(await screen.findByRole("region", { name: "Notifications" })).toBeInTheDocument();
     nav.pathname = `${BASE}/orders`;
     rerender(
       <div data-ui="v2">
