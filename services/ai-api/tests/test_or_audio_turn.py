@@ -141,7 +141,7 @@ async def test_shadow_records_what_the_model_says_and_changes_nothing() -> None:
     tm = TurnTimings()
     assert await asyncio.wait_for(conv.listen(Src(), tm), 10) == "two thousand sq ft"
     await asyncio.sleep(0.05)
-    assert model.calls == 1 and tm.audio_p == 0.05
+    assert model.calls == 1 and tm.audio_p == 0.05 and tm.audio_run_ms is not None, "the model's own time is recorded too"
     assert conv._hold_s("two thousand sq ft") == conv._hold_s("two thousand sq ft")   # noqa: SLF001
     text = "price for 2000 sq ft"
     plain = loop(None, "off")

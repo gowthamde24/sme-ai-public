@@ -50,9 +50,10 @@ log = logging.getLogger("app.conversation")
 BARGE_IN_MIN_SPEECH_MS = 100  # sound this long while we speak counts as the caller talking (shorter would trigger on a cough)
 
 
-def _record_audio(tm: TurnTimings, job: asyncio.Future[float | None]) -> None:
+def _record_audio(tm: TurnTimings, job: asyncio.Future[tuple[float | None, float]]) -> None:
     if not job.cancelled() and job.exception() is None:
-        tm.audio_p = job.result()
+        tm.audio_p, run_ms = job.result()
+        tm.audio_run_ms = round(run_ms)
 
 
 def _same_words(a: str, b: str) -> bool:
@@ -115,7 +116,7 @@ class Conversation:
         # the text rules alone. It judges the last seconds of audio from the moment the recogniser says the caller stopped, so its answer is ready by the time the final transcript arrives.
         self.audio_turn = audio_turn if audio_turn_mode in ("shadow", "on") else None
         self.audio_turn_mode, self.audio_tail = audio_turn_mode, audio_tail
-        self._audio_job: asyncio.Future[float | None] | None = None
+        self._audio_job: asyncio.Future[tuple[float | None, float]] | None = None
         self._audio_p: float | None = None
         # B2/B3: the line can be paused for a possible interruption and picked up again; what was actually heard is what the history keeps
         self._gate = asyncio.Event()
@@ -254,7 +255,14 @@ class Conversation:
         pcm = self.audio_tail()
         if not pcm:
             return
-        self._audio_job = asyncio.get_running_loop().run_in_executor(None, self.audio_turn.probability_complete, pcm)
+        model = self.audio_turn
+
+        def run() -> tuple[float | None, float]:
+            began = time.perf_counter()
+            p = model.probability_complete(pcm)
+            return p, (time.perf_counter() - began) * 1000   # the inference alone, on the machine the call runs on
+
+        self._audio_job = asyncio.get_running_loop().run_in_executor(None, run)
 
     def _drop_audio_job(self) -> None:
         job, self._audio_job = self._audio_job, None
@@ -278,9 +286,11 @@ class Conversation:
             return
         except Exception:   # noqa: BLE001 - the model failing is not the turn failing
             return
+        value, run_ms = p
         tm.audio_turn_ms = int((self.clock() - started) * 1000)
-        tm.audio_p = p
-        self._audio_p = p
+        tm.audio_run_ms = round(run_ms)
+        tm.audio_p = value
+        self._audio_p = value
 
     # ---- A3: speculative start ---------------------------------------------------------------------------------------------------------------------
 
