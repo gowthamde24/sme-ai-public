@@ -46,6 +46,7 @@ class TurnTimings:
     tts_fallback: str = ""  # why the primary did not speak: error | timeout | cooldown | mid_stream; empty when it did
     reply_text: str = ""
     spoken_text: str = ""   # what of the reply was actually heard (the whole reply, or its start when the caller cut it): what the stored history keeps
+    speculative: bool = False   # the reply was started before the final transcript (A3) and kept
     paused: int = 0        # how many times the line was paused for a possible interruption that turned out not to be one
     held_ms: int = 0       # how long the end of the turn was held back because the thought was not finished
     filler_played: bool = False

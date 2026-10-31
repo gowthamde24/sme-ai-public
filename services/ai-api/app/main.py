@@ -945,6 +945,7 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         semantic_turns=settings.browser_voice_semantic_turns,
         verify_barge_in=settings.browser_voice_verify_barge_in,
         audio_ahead_ms=settings.browser_voice_audio_ahead_ms,
+        speculative=settings.browser_voice_speculative,
     )
     return BrowserVoice(
         config=voice_catalogue(),

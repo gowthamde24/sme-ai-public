@@ -48,6 +48,15 @@ log = logging.getLogger("app.conversation")
 BARGE_IN_MIN_SPEECH_MS = 100  # sound this long while we speak counts as the caller talking (shorter would trigger on a cough)
 
 
+
+def _same_words(a: str, b: str) -> bool:
+    """Are these the same words, whatever the punctuation and the case (the recogniser's partial and its final differ in the marks)?"""
+    def norm(t: str) -> str:
+        return " ".join("".join(ch for ch in t.casefold() if ch.isalnum() or ch.isspace()).split())
+
+    return norm(a) == norm(b)
+
+
 class Conversation:
     def __init__(
         self,
@@ -67,6 +76,7 @@ class Conversation:
         router: Callable[[str, bool, int], Tier] | None = None,
         semantic_turns: bool = False,
         pause_model: PauseModel | None = None,
+        can_speculate: Callable[[str], bool] | None = None,
     ) -> None:
         self.stt, self.llm, self.tts, self.playout = stt, llm, tts, playout
         self.session, self.models, self.fillers, self.voice = session, models, fillers, voice
@@ -74,11 +84,17 @@ class Conversation:
         self.router = router or (lambda text, tools, turn: route(text, tools_available=tools, turn_number=turn))   # the browser session routes by the conversational assistant's intent (job EA)
         self.on_stt = on_stt  # the browser session shows the caller's words as they come (partials and the final); the phone loop leaves it None
         self._epoch = 0
+        self._reply_spec: Any = None
         self._reply_task: asyncio.Future[None] | None = None
         self._current: TurnTimings | None = None
         self._write_lock = asyncio.Lock()
         # owner standard 31 Oct 2026 (live conversation A1/A2): hold the end of a turn while the thought is unfinished, and let the speaker's own pause set how long the quiet must be
         self.semantic_turns = semantic_turns
+        # A3 (speculative start): the model starts on a stable partial that looks finished, before the final transcript; `can_speculate(text)` says whether this words go to a tier that may (the session's pure check)
+        self.can_speculate = can_speculate
+        self._spec: Any = None
+        self._spec_timer: asyncio.TimerHandle | None = None
+        self.speculations = {"started": 0, "used": 0, "dropped": 0}
         self.pauses = pause_model if pause_model is not None else PauseModel()
         # B2/B3: the line can be paused for a possible interruption and picked up again; what was actually heard is what the history keeps
         self._gate = asyncio.Event()
@@ -152,6 +168,10 @@ class Conversation:
                 now = self.clock()
                 if self.on_stt is not None:
                     self.on_stt(ev)
+                if ev.kind == "partial":
+                    self._note_partial(ev.text)
+                elif ev.kind == "speech_start":
+                    self._drop_spec()
                 if ev.kind == "speech_start":
                     tm.speech_start_at = tm.speech_start_at if tm.speech_start_at is not None else now
                     if interrupt:
@@ -162,14 +182,23 @@ class Conversation:
                     tm.final_at = now
                     if tm.eot_at is None:
                         tm.eot_at = now
+                    self._cancel_timer()
+                    if self._spec is not None and _same_words(self._spec.text, ev.text) is False:
+                        self._drop_spec()   # what was confirmed is not what the model was started on
                     return ev.text.strip() or None
         finally:
+            self._cancel_timer()
             aclose = getattr(events, "aclose", None)
             if aclose is not None:
                 await aclose()
 
     async def respond(self, user_text: str, tm: TurnTimings | None = None) -> TurnTimings:
         tm = tm or TurnTimings()
+        spec, self._spec = self._spec, None
+        if spec is not None and not _same_words(spec.text, user_text):
+            self._schedule_cancel(spec)
+            spec = None
+        self._reply_spec = spec
         self._current = tm
         self.turns += 1
         self._reply_task = asyncio.ensure_future(self._reply(user_text, tm))
@@ -182,6 +211,50 @@ class Conversation:
             self._reply_task = None
             tm.done_at = self.clock()
         return tm
+
+    # ---- A3: speculative start ---------------------------------------------------------------------------------------------------------------------
+
+    STABLE_S = 0.25   # the words have not changed for this long
+
+    def _note_partial(self, text: str) -> None:
+        if not self.can_speculate or self.llm is None:
+            return
+        self._cancel_timer()
+        if self._spec is not None and not _same_words(self._spec.text, text):
+            self._drop_spec()   # they went on
+        if self._spec is None:
+            self._spec_timer = asyncio.get_running_loop().call_later(self.STABLE_S, self._speculate, text)
+
+    def _speculate(self, text: str) -> None:
+        self._spec_timer = None
+        if self._spec is not None or self.speaking or not self.can_speculate or len(text.split()) < 3:
+            return
+        if completeness(text, self.session.language) != "complete" or not self.can_speculate(text):
+            return
+        starter = getattr(self.llm, "speculate", None)
+        if starter is None:
+            return
+        messages = [*self.session.history, {"role": "user", "content": text.strip()}]
+        spec = starter(self.session.system, messages, self.models["fast"])
+        if spec is not None:
+            self._spec = spec
+            self.speculations["started"] += 1
+
+    def _cancel_timer(self) -> None:
+        if self._spec_timer is not None:
+            self._spec_timer.cancel()
+            self._spec_timer = None
+
+    def _drop_spec(self) -> None:
+        self._cancel_timer()
+        spec, self._spec = self._spec, None
+        if spec is not None:
+            self.speculations["dropped"] += 1
+            self._schedule_cancel(spec)
+
+    @staticmethod
+    def _schedule_cancel(spec: Any) -> None:
+        asyncio.ensure_future(spec.cancel())
 
     # ---- barge-in --------------------------------------------------------------------------------------------------------------------------------
 
@@ -267,7 +340,14 @@ class Conversation:
         if begin is not None:
             begin()
         background = [asyncio.ensure_future(self.tts.prewarm()), asyncio.ensure_future(self._filler(tm, epoch))]
-        producer = asyncio.ensure_future(self._produce(messages, self.models[tier], tm, queue))
+        spec, self._reply_spec = self._reply_spec, None
+        if spec is not None and tier != "fast":
+            self._schedule_cancel(spec)
+            spec = None
+        if spec is not None:
+            self.speculations["used"] += 1
+            tm.speculative = True
+        producer = asyncio.ensure_future(self._produce(messages, self.models[tier], tm, queue, spec))
         try:
             await self._consume(queue, tm, epoch)
             await producer
@@ -287,12 +367,12 @@ class Conversation:
             self.session.history += [{"role": "user", "content": user_text}] + ([{"role": "assistant", "content": said}] if said else [])
             self._clauses = []
 
-    async def _produce(self, messages: list[dict[str, str]], model: str, tm: TurnTimings, queue: asyncio.Queue[str | None]) -> None:
+    async def _produce(self, messages: list[dict[str, str]], model: str, tm: TurnTimings, queue: asyncio.Queue[str | None], spec: Any = None) -> None:
         buf = ClauseBuffer()
         parts: list[str] = []
         try:
             tm.llm_request_at = self.clock()
-            async for delta in self.llm.stream(self.session.system, messages, model):
+            async for delta in (spec.stream() if spec is not None else self.llm.stream(self.session.system, messages, model)):
                 if tm.first_token_at is None:
                     tm.first_token_at = self.clock()
                 parts.append(delta)

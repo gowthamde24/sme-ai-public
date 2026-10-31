@@ -285,3 +285,139 @@ async def test_a_stop_after_paced_audio_cuts_off_at_most_the_allowance() -> None
     out = BrowserPlayout(audio, stop, lambda: now[0], ahead_s=0.3, sleep=sleep)
     await out.write(b"\x00\x00" * 24000 * 3)
     assert out.unplayed_seconds() <= 0.4 + 1e-6
+
+
+# ---- A3: speculative start -----------------------------------------------------------------------------------------------------------------------------
+
+
+class SpecLlm:
+    """A fast tier that can start before the words are final: counts what was started, served and cancelled."""
+
+    def __init__(self) -> None:
+        self.started: list[str] = []
+        self.served: list[str] = []
+        self.cancelled: list[str] = []
+        self.streamed: list[str] = []
+
+    def stream(self, system: str, messages: list[dict[str, str]], model: str) -> Any:
+        self.streamed.append(messages[-1]["content"])
+        return FakeLlm(("Sure. ", "Here you go."), gap=0.01).stream(system, messages, model)
+
+    def speculate(self, system: str, messages: list[dict[str, str]], model: str) -> Any:
+        text = messages[-1]["content"]
+        self.started.append(text)
+        outer = self
+
+        class Spec:
+            def __init__(self) -> None:
+                self.text = text
+
+            def stream(self) -> Any:
+                outer.served.append(text)
+                return FakeLlm(("Early ", "answer."), gap=0.01).stream(system, messages, model)
+
+            async def cancel(self) -> None:
+                outer.cancelled.append(text)
+
+        return Spec()
+
+
+class PartialsStt:
+    """Partials, a pause, optionally more partials, then the final (a real recogniser's order)."""
+
+    sample_rate = 16000
+
+    def __init__(self, partials: list[tuple[float, str]], final: str, quiet: float = 0.4) -> None:
+        self.partials, self.final, self.quiet = partials, final, quiet
+
+    async def events(self, frames: Any) -> Any:
+        from app.conversation.parts import SttEvent
+
+        yield SttEvent("speech_start")
+        for wait, text in self.partials:
+            await asyncio.sleep(wait)
+            yield SttEvent("partial", text)
+        await asyncio.sleep(self.quiet)
+        yield SttEvent("speech_end")
+        yield SttEvent("final", self.final)
+
+
+def spec_conversation(stt: Any, llm: SpecLlm, allowed: bool = True) -> Any:
+    from app.conversation.fakes import FakePlayout, FakeTts
+    from app.conversation.parts import Session
+    from app.conversation.pipeline import Conversation
+
+    conv = Conversation(stt=stt, llm=llm, tts=FakeTts(chunks=3, chunk_ms=50), playout=FakePlayout(rate=16000), session=Session(system="s", language="en"), models={"fast": "f", "strong": "s"},
+                        router=lambda text, tools, turn: "fast", can_speculate=(lambda text: allowed))
+    conv.STABLE_S = 0.05
+    return conv
+
+
+class Src2:
+    speech_ended_at = None
+
+    async def frames(self) -> Any:
+        if False:
+            yield b""
+
+
+@arun
+async def test_a_reply_started_on_a_stable_finished_looking_partial_is_used_when_the_final_is_the_same_words() -> None:
+    from app.conversation.parts import TurnTimings
+
+    llm = SpecLlm()
+    conv = spec_conversation(PartialsStt([(0.05, "what is the"), (0.1, "what is the price of this saree")], "What is the price of this saree?"), llm)
+    tm = TurnTimings()
+    text = await conv.listen(Src2(), tm)
+    assert text == "What is the price of this saree?" and llm.started == ["what is the price of this saree"]
+    done = await conv.respond(text or "", tm)
+    assert llm.served == ["what is the price of this saree"] and llm.streamed == [] and not llm.cancelled
+    assert done.reply_text.startswith("Early") and done.speculative and conv.speculations == {"started": 1, "used": 1, "dropped": 0}
+
+
+@arun
+async def test_a_reply_started_early_is_thrown_away_when_the_caller_goes_on() -> None:
+    from app.conversation.parts import TurnTimings
+
+    llm = SpecLlm()
+    conv = spec_conversation(PartialsStt([(0.05, "what is the price of this saree"), (0.2, "what is the price of this saree in blue")], "What is the price of this saree in blue?", quiet=0.1), llm)
+    tm = TurnTimings()
+    text = await conv.listen(Src2(), tm)
+    await conv.respond(text or "", tm)
+    assert llm.started == ["what is the price of this saree", "what is the price of this saree in blue"] and llm.cancelled == ["what is the price of this saree"], "the first early start was dropped when they went on"
+    assert llm.served == ["what is the price of this saree in blue"] and llm.streamed == [], "…and the one started on the longer words was kept when the final confirmed them"
+    assert conv.speculations == {"started": 2, "used": 1, "dropped": 1}
+
+
+@arun
+async def test_nothing_is_started_early_for_words_that_look_unfinished_or_for_the_written_chat_tier() -> None:
+    from app.conversation.parts import TurnTimings
+
+    llm = SpecLlm()
+    conv = spec_conversation(PartialsStt([(0.05, "I want to know about the")], "I want to know about the blue saree"), llm)
+    await conv.listen(Src2(), TurnTimings())
+    assert llm.started == [], "an unfinished thought is not answered, early or late"
+    llm2 = SpecLlm()
+    conv2 = spec_conversation(PartialsStt([(0.05, "show me the pending leads for today")], "Show me the pending leads for today."), llm2, allowed=False)
+    await conv2.listen(Src2(), TurnTimings())
+    assert llm2.started == [], "business questions go to the written chat's turn, which writes at once: never early"
+
+
+@arun
+async def test_an_early_start_writes_nothing_to_the_thread_until_it_is_confirmed() -> None:
+    db = FakeDb()
+    ft, _, _ = make(db)
+    ft._cache, ft.stale = [], False   # noqa: SLF001
+    spec = ft.speculate("s", [{"role": "user", "content": "how are you today"}], "m")
+    assert spec is not None
+    await asyncio.sleep(0.05)
+    await spec.cancel()
+    await asyncio.sleep(0.05)
+    assert db.calls == [], "a dropped early start leaves no message, no run and no cost in the thread"
+    spec2 = ft.speculate("s", [{"role": "user", "content": "how are you today"}], "m")
+    assert spec2 is not None
+    pieces = [p async for p in spec2.stream()]
+    await settle(db)
+    assert pieces and db.names().count("begin") == 1 and "save" in db.names()
+    ft.stale = True
+    assert ft.speculate("s", [{"role": "user", "content": "x y z"}], "m") is None, "a thread that has to be read again is not worth an early start"

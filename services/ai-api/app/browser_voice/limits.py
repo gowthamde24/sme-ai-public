@@ -32,6 +32,7 @@ class Limits:
     greeting: bool = True
     semantic_turns: bool = True   # live conversation standard A1/A2: an unfinished thought is not answered; the speaker's own pause sets the quiet that ends a turn
     audio_ahead_ms: int = 300     # standard B1: the server sends no more than this much audio ahead of what the browser has played, so a stop is not queued behind it (0: as fast as it is made)
+    speculative: bool = True      # standard A3: the fast tier starts on a stable, finished-looking partial transcript; kept when the final transcript is the same words, dropped when the caller goes on
     verify_barge_in: bool = True  # standard B1/B2: a sound while the assistant speaks pauses it; a cough, a "hmm" or a TV lets it go on (a real interruption stops it)
 
 

@@ -98,6 +98,37 @@ def sarvam_wav(key: str, text: str, language: str, path: Path) -> None:
         w.writeframes(pcm)
 
 
+async def ping_rtt_ms(url: str, token: str, n: int = 10) -> float:
+    """The round trip of a tiny message (`ping` -> `pong`) on an open session: what the network between this machine and the server costs, so it can be told apart from what the server does."""
+    import websockets
+
+    async with websockets.connect(url, max_size=None) as ws:
+        await ws.send(json.dumps({"type": "start", "access_token": token, "language": "en"}))
+        inbox: asyncio.Queue[tuple[float, Any]] = asyncio.Queue()
+
+        async def reader() -> None:
+            async for m in ws:
+                inbox.put_nowait((time.perf_counter(), m))
+
+        task = asyncio.ensure_future(reader())
+        await asyncio.sleep(4)
+        while not inbox.empty():
+            inbox.get_nowait()
+        rtts = []
+        for _ in range(n):
+            sent = time.perf_counter()
+            await ws.send(json.dumps({"type": "ping"}))
+            while True:
+                at, m = await asyncio.wait_for(inbox.get(), timeout=5.0)
+                if isinstance(m, str) and json.loads(m).get("type") == "pong":
+                    rtts.append((at - sent) * 1000)
+                    break
+            await asyncio.sleep(0.3)
+        await ws.send(json.dumps({"type": "stop"}))
+        task.cancel()
+    return float(statistics.median(rtts))
+
+
 async def barge_in_ms(url: str, token: str, pcm: bytes, language: str, verify: bool) -> float | None:
     import websockets
 
@@ -157,6 +188,8 @@ def staging(args: argparse.Namespace) -> dict[str, Any]:
     work = Path(os.environ.get("TMPDIR", "/tmp")) / "live-standard-wavs"
     work.mkdir(parents=True, exist_ok=True)
     out: dict[str, Any] = {"latency": {}, "barge": {}}
+    time.sleep(12)
+    out["rtt_ms"] = round(asyncio.run(ping_rtt_ms(url, owner.token)))
     all_client: list[float] = []
     all_server: list[float] = []
     for lang in ("en", "te", "hi", "kn"):
@@ -202,9 +235,11 @@ def report(result: dict[str, Any], style: list[tuple[str, str, list[str]]] | Non
         rows.append(("Speaking-style rules on a real model's answers (short, no markup, no gendered address, the caller's script, read back before acting, no invented fact)", "all", f"{passed}/{len(style)}", ok(passed == len(style))))
     if stg is not None:
         lat = stg["latency"]["all"]
+        rtt = stg["rtt_ms"]
         rows += [
             ("User stops → first assistant audio, casual turn, p50 (staging, client side)", "≤ 1.2 s", f"{lat['p50']} ms over {lat['turns']} turns (server side p50 {lat['server_p50']} ms)", ok(lat["p50"] <= 1200)),
             ("User stops → first assistant audio, casual turn, p95", "≤ 2 s", f"{lat['p95']} ms", ok(lat["p95"] <= 2000)),
+            ("…the same with the network taken out (one round trip of this machine to the server, " + str(rtt) + " ms, taken off): a user in India next to the server", "p50 ≤ 1.2 s", f"p50 {lat['p50'] - rtt} ms, p95 {lat['p95'] - rtt} ms", ok(lat["p50"] - rtt <= 1200)),
             ("Barge-in stop, as the browser sees it (hard stop), staging", "≤ 200 ms", f"p50 {stg['barge']['hard']['p50']} ms, max {stg['barge']['hard']['max']} ms over {stg['barge']['hard']['n']} (network included)", ok((stg['barge']['hard']['max'] or 9999) <= 200)),
             ("Barge-in pause with verify, staging", "≤ 200 ms", f"p50 {stg['barge']['verify']['p50']} ms, max {stg['barge']['verify']['max']} ms over {stg['barge']['verify']['n']} (network included)", ok((stg['barge']['verify']['max'] or 9999) <= 200)),
         ]

@@ -34,6 +34,23 @@ ALL_SEQ = 2**31 - 1
 MAX_REPLY_TOKENS = 200
 
 
+class Speculation:
+    """A reply that was started on words not yet confirmed. `stream()` serves it (the words were confirmed and are now stored); `cancel()` drops it."""
+
+    def __init__(self, text: str, serve: Callable[[], AsyncIterator[str]], agen: Any, first: asyncio.Future[str]) -> None:
+        self.text, self._serve, self._agen, self._first = text, serve, agen, first
+
+    def stream(self) -> AsyncIterator[str]:
+        return self._serve()
+
+    async def cancel(self) -> None:
+        self._first.cancel()
+        with contextlib.suppress(asyncio.CancelledError, Exception):
+            await self._first
+        with contextlib.suppress(Exception):
+            await self._agen.aclose()
+
+
 class FastThread:
     def __init__(
         self,
@@ -63,8 +80,7 @@ class FastThread:
     async def stream(self, system: str, messages: list[dict[str, str]], model: str) -> AsyncIterator[str]:
         text = messages[-1]["content"]
         db = self._open_db()
-        conversation, message_id, reply_id = self._conversation(), uuid.uuid4(), uuid.uuid4()
-        language = self._language()
+        conversation = self._conversation()
         # the thread: from memory when this session wrote its last turn itself, else read again. The model starts at once; storing the caller's words and reserving the cost run beside its first token
         if self.stale or self._cache is None:
             try:
@@ -76,9 +92,27 @@ class FastThread:
         else:
             thread = list(self._cache)
         prompt = [*thread, {"role": "user", "content": text}]
-        bound_in = max(1, len(system) + sum(len(m["content"]) for m in prompt))   # a token is at least one byte of what is sent: the bytes bound the tokens
         agen = self._fast.stream(system, prompt, model)
         first: asyncio.Future[str] = asyncio.ensure_future(agen.__anext__())
+        async for piece in self._serve(db, conversation, text, system, thread, prompt, model, agen, first):
+            yield piece
+
+    def speculate(self, system: str, messages: list[dict[str, str]], model: str) -> Speculation | None:
+        """A3 (speculative start): the model starts on words that look finished, BEFORE the recogniser's final transcript. Nothing is written until `stream()` is called on the result (the words were confirmed); `cancel()`
+        throws it away (the caller went on). Only when the thread is in memory and fresh: a read of the database would eat the time this is meant to save."""
+        if self.stale or self._cache is None:
+            return None
+        text = messages[-1]["content"]
+        thread = list(self._cache)
+        prompt = [*thread, {"role": "user", "content": text}]
+        agen = self._fast.stream(system, prompt, model)
+        first: asyncio.Future[str] = asyncio.ensure_future(agen.__anext__())
+        return Speculation(text, lambda: self._serve(self._open_db(), self._conversation(), text, system, thread, prompt, model, agen, first), agen, first)
+
+    async def _serve(self, db: Any, conversation: uuid.UUID, text: str, system: str, thread: list[dict[str, str]], prompt: list[dict[str, str]], model: str, agen: Any, first: asyncio.Future[str]) -> AsyncIterator[str]:
+        message_id, reply_id = uuid.uuid4(), uuid.uuid4()
+        language = self._language()
+        bound_in = max(1, len(system) + sum(len(m["content"]) for m in prompt))   # a token is at least one byte of what is sent: the bytes bound the tokens
         stored = asyncio.ensure_future(asyncio.to_thread(self._open_turn, db, conversation, message_id, text, language, model, bound_in))
         try:
             began = await stored
@@ -87,7 +121,7 @@ class FastThread:
             with contextlib.suppress(asyncio.CancelledError, Exception):
                 await first
             with contextlib.suppress(Exception):
-                await agen.aclose()   # type: ignore[attr-defined]
+                await agen.aclose()
             self._emit("error", self._refuse(exc))
             await asyncio.to_thread(self._close, db, "failed", "budget")
             return
@@ -114,12 +148,13 @@ class FastThread:
             if not first.done():
                 first.cancel()
             with contextlib.suppress(Exception):
-                await asyncio.shield(agen.aclose())   # type: ignore[attr-defined]
+                await asyncio.shield(agen.aclose())
             reply = "".join(pieces)
             self.stale = False
             self._cache = [*thread, {"role": "user", "content": text}, *([{"role": "assistant", "content": reply.strip()}] if reply.strip() else [])][-HISTORY_MESSAGES:]
             # cut by the caller or finished: write what was said to the thread, off the critical path (a cancelled turn must not wait for the database)
             asyncio.get_running_loop().run_in_executor(None, self._settle, db, reply_id, reply, language, bound_in, status, code, model)
+
 
     # ---- the database, in worker threads -----------------------------------------------------------------------------------------------------------
 

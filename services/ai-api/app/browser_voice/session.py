@@ -163,6 +163,7 @@ class VoiceSession:
             on_stt=self._on_stt,
             router=self._route,
             semantic_turns=limits.semantic_turns,
+            can_speculate=self._can_speculate if limits.speculative else None,
         )
         self._previous: TurnKind | None = None
         self.pending_action: uuid.UUID | None = None
@@ -258,6 +259,10 @@ class VoiceSession:
         self._tr_text, self._tr_sent_at = text, now
         started = self._utterance_at if self._utterance_at is not None else now
         asyncio.ensure_future(self._send({"type": "transcript", "text": text, "final": final, "seq": self._tr_seq, "t_ms": round((now - started) * 1000)}))
+
+    def _can_speculate(self, text: str) -> bool:
+        """May the model be started on these words before they are final? Only small talk and general help on the fast tier (a pure check: nothing is sent to the screen and the router's memory is not touched)."""
+        return bool(self.parts.fast_smalltalk) and classify(text, self._previous).kind in ("smalltalk", "general") and not self.pending_action
 
     # ---- the router: the SAME one as the written chat (job EA) -------------------------------------------------------------------------------------
 
