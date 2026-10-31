@@ -201,7 +201,8 @@ describe("the input bar: Dictate and Live talk (owner, 30 Oct)", () => {
     await act(async () => void sock.onopen?.());
     await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
     await act(async () => void sock.say({ type: "state", state: "listening" }));
-    expect(document.querySelector('[data-chat="live-badge"]')).toHaveTextContent("Live");
+    expect(document.querySelector('[data-chat="live-badge"]')).toHaveTextContent("Listening");
+    expect(document.querySelector('[data-chat="mic"]')).not.toBeNull(); // the microphone indicator is on while it listens
     expect(screen.getByRole("button", { name: "Stop live talk" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: /^Dictate/ })).toBeDisabled();
     await act(async () => void sock.say({ type: "caption", who: "user", text: "how many enquiries today", final: true, spoken: true }));
@@ -215,6 +216,83 @@ describe("the input bar: Dictate and Live talk (owner, 30 Oct)", () => {
     await act(async () => void vi.advanceTimersByTime(2_000));
     expect(sock.types()).toContain("stop"); // 30 s of nobody speaking
     vi.useRealTimers();
+  });
+  it("Live talk shows its state in words: Listening, Thinking, Speaking, and the microphone indicator all the while", async () => {
+    draw();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
+    await act(async () => void sock.onopen?.());
+    expect(document.querySelector('[data-chat="live-badge"]')).toHaveTextContent("Connecting");
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    for (const [state, word] of [["listening", "Listening"], ["thinking", "Thinking"], ["speaking", "Speaking"]] as const) {
+      await act(async () => void sock.say({ type: "state", state }));
+      expect(document.querySelector('[data-chat="live-badge"]')).toHaveTextContent(word);
+      expect(document.querySelector('[data-chat="live-badge"]')?.getAttribute("data-state")).toBe(state);
+      expect(document.querySelector('[data-chat="mic"]')).not.toBeNull();
+    }
+  });
+  it("after 8 s of quiet one check-in appears and the state reads Paused; a word brings it back; 30 s end it", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    draw();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    await act(async () => void vi.advanceTimersByTime(6_000));
+    expect(document.querySelector('[data-chat="check-in"]')).toBeNull();
+    await act(async () => void vi.advanceTimersByTime(3_000));
+    expect(document.querySelector('[data-chat="check-in"]')).toHaveTextContent(/Still there\?.*\d+ s/);
+    expect(document.querySelector('[data-chat="live-badge"]')).toHaveTextContent("Paused");
+    await act(async () => void sock.say({ type: "caption", who: "user", text: "yes", final: false, spoken: true }));
+    await act(async () => void vi.advanceTimersByTime(1_000));
+    expect(document.querySelector('[data-chat="check-in"]')).toBeNull();
+    expect(document.querySelector('[data-chat="live-badge"]')).toHaveTextContent("Listening");
+    await act(async () => void vi.advanceTimersByTime(31_000));
+    expect(sock.types()).toContain("stop");
+    vi.useRealTimers();
+  });
+  it("warns two minutes before the time limit, with the time left", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    draw();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: { session_seconds: 300 } }));
+    await act(async () => void sock.say({ type: "state", state: "speaking" }));
+    await act(async () => void vi.advanceTimersByTime(170_000));
+    expect(document.querySelector('[data-chat="session-warning"]')).toBeNull();
+    await act(async () => void vi.advanceTimersByTime(15_000));
+    expect(document.querySelector('[data-chat="session-warning"]')).toHaveTextContent(/Live talk ends in 1:\d\d/);
+    vi.useRealTimers();
+  });
+  it("a turn the person spoke over is marked Interrupted in the thread", async () => {
+    draw();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    await act(async () => void sock.say({ type: "caption", who: "user", text: "tell me everything", final: true, spoken: true }));
+    await act(async () => void sock.say({ type: "state", state: "speaking" }));
+    await act(async () => void sock.say({ type: "caption", who: "assistant", text: "There are five", final: true, spoken: true }));
+    await act(async () => void sock.say({ type: "interrupted", ms: 120 }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    const thread = document.querySelector('[data-chat="thread"]')!;
+    expect(thread.querySelector('[data-chat="interrupted"]')).toHaveTextContent("Interrupted");
+  });
+  it("an error offers Type instead, which puts the cursor in the box; the microphone off while the tab is hidden", async () => {
+    draw();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    expect(document.querySelector('[data-chat="type-instead"]')).toBeNull();
+    await act(async () => void sock.say({ type: "error", code: "run_limit_reached", message: "x", fatal: false }));
+    const btn = document.querySelector('[data-chat="type-instead"]') as HTMLButtonElement;
+    expect(btn).toHaveTextContent("Type instead");
+    await act(async () => void fireEvent.click(btn));
+    expect(document.activeElement).toBe(document.getElementById("chat-input"));
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    await act(async () => void document.dispatchEvent(new Event("visibilitychange")));
+    expect(sock.types()).toContain("stop");
+    Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
   });
   it("Stop ends Live talk at once", async () => {
     draw();
