@@ -12,4 +12,8 @@ export type BrowserVoice = {
   tokenUrl: string;
   /** "Mispronounced?" on spoken messages (Owner and Admin, PRONUNCIATION_SCREENS on): the words are taught through `<base>/pronunciation`. */
   pronunciation?: boolean;
+  /** The language the person chose for this chat on the pill ("auto" or a language), from their member profile; null/absent = never chosen (the app's language) or this API does not keep it yet. */
+  chatLanguage?: string | null;
+  /** Where the pill saves the choice (`<base>/chat-language`); absent = only this browser remembers. */
+  chatLanguageUrl?: string;
 };

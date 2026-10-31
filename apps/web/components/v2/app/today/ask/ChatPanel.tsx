@@ -11,6 +11,7 @@ import type { BrowserVoice } from "./browser-voice";
 import { Drafts, ERROR_WORD, Sources } from "./AskView";
 import { MarkdownLite } from "./MarkdownLite";
 import { useChatLanguage } from "./chat-language";
+import { saveChatLanguage } from "./chat-language-post";
 import { LanguagePill } from "./LanguagePill";
 import { LiveStatus } from "./LiveStatus";
 import { Mispronounced } from "./Mispronounced";
@@ -124,7 +125,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     const t = makeT(voice.words);
     return (k: string) => t(k as "bv.chat.new");
   }, [voice.words]);
-  const chat = useChatLanguage(voice.language); // the language pill: Auto or one language, remembered
+  const rememberLanguage = React.useCallback((l: string) => void (voice.chatLanguageUrl ? saveChatLanguage(voice.chatLanguageUrl, l) : undefined), [voice.chatLanguageUrl]);
+  const chat = useChatLanguage(voice.language, voice.chatLanguage ?? null, rememberLanguage); // the language pill: Auto or one language, remembered (in the profile, and in this browser)
   const talk = usePanelVoice(s, voice, voiceOptions, chat);
   const dict = useDictation(s, voice, voiceOptions, chat);
   const [plusOpen, setPlusOpen] = React.useState(false); // the "+" menu of the command bar
@@ -229,7 +231,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
             <ul data-chat="chips" className={`flex flex-wrap gap-2 ${bar ? "min-w-0 pl-[76px]" : ""}`}>
               {chips.map((chip) => (
                 <li key={chip}>
-                  <button type="button" data-write onClick={() => void s.ask(chip)} className={`inline-flex ${bar ? "min-h-9 px-3" : "min-h-10 px-3.5"} items-center rounded-full border border-edge bg-surface text-sm font-semibold text-ink hover:bg-surface-2`}>
+                  <button type="button" data-write onClick={() => void s.ask(chip, chat.pill)} className={`inline-flex ${bar ? "min-h-9 px-3" : "min-h-10 px-3.5"} items-center rounded-full border border-edge bg-surface text-sm font-semibold text-ink hover:bg-surface-2`}>
                     {chip}
                   </button>
                 </li>
@@ -303,7 +305,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
       className={bar ? "flex min-h-14 min-w-0 flex-1 items-center gap-1.5 rounded-full border border-edge bg-bg px-2" : "flex flex-col rounded-2xl border border-edge bg-surface px-3 pb-2 pt-1"}
       onSubmit={(e) => {
         e.preventDefault();
-        void s.ask(s.text);
+        void s.ask(s.text, chat.pill);
       }}
     >
       {plusEl}

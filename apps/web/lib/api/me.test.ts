@@ -9,6 +9,12 @@ describe("a member's own profile", () => {
     expect(parseMyProfile({ display_name: "Ravi", language: "te", picture: "none", picture_url: null, address_as: "Ravi garu" }).addressAs).toBe("Ravi garu");
     expect(parseMyProfile({ display_name: "Ravi", language: "te", picture: "none", picture_url: null, address_as: null }).addressAs).toBe("");
     expect(() => parseMyProfile({ display_name: "Ravi", language: "te", picture: "none", picture_url: null, address_as: "x".repeat(31) })).toThrow();
+    const base = { display_name: "Ravi", language: "te", picture: "none", picture_url: null };
+    expect(parseMyProfile({ ...base, preferred_chat_language: "hi" }).preferredChatLanguage).toBe("hi"); // the language pill's saved choice
+    expect(parseMyProfile({ ...base, preferred_chat_language: "auto" }).preferredChatLanguage).toBe("auto");
+    expect(parseMyProfile({ ...base, preferred_chat_language: null }).preferredChatLanguage).toBeNull(); // never chosen
+    expect(parseMyProfile({ ...base, preferred_chat_language: "klingon" }).preferredChatLanguage).toBeNull();
+    expect(parseMyProfile(base)).not.toHaveProperty("preferredChatLanguage"); // an API that does not have it yet
     expect(parseMyProfile({ display_name: null, language: null, picture: "none", picture_url: null })).toEqual({ displayName: null, language: null, picture: "none", pictureUrl: null });
   });
   it.each([["a picture kind it does not know", { picture: "facebook" }], ["no body", null], ["a name that is a number", { display_name: 3, picture: "none" }]])("%s is an error", (_w, body) => {
