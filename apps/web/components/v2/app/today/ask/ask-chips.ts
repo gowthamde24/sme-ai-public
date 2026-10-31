@@ -50,7 +50,10 @@ export function chipsForPath(rest: string, tab: string | null = null): readonly 
   return SCREENS[first] ?? FALLBACK;
 }
 
-/** Where the floating orb is not drawn: Today (its card is the assistant) and the live call. `rest` is the path under the workspace ("" = the home) and `tab` its `?tab=`: the home with a records tab is the Customers screen, not Today. */
+/** Today (the home with no records tab): on a desktop its command bar is the assistant, on a phone the floating orb is. `rest` is the path under the workspace ("" = the home) and `tab` its `?tab=`. */
+export const isTodayHome = (rest: string, tab: string | null = null): boolean => (rest === "" || rest === "/") && !tab;
+
+/** Where the floating orb is not drawn on a desktop: Today (its command bar is the assistant) and the live call. On a phone the orb is on every screen, Today included. */
 export function orbHidden(rest: string, tab: string | null = null): boolean {
   if (rest === "" || rest === "/") return !tab;
   return rest === "/office/live" || rest.startsWith("/office/live/");

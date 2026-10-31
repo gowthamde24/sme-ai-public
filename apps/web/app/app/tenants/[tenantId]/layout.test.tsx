@@ -49,14 +49,14 @@ describe("the workspace layout", () => {
     rerender(await TenantLayout(props(T)));
     expect(document.querySelector("[data-readonly-banner]")).toBeNull();
   });
-  it("draws the floating Ask orb (job DQ part 0) on a screen when the assistant can be asked, and not on Today (its card is the assistant) or the live call; there is no bar at the bottom", async () => {
+  it("draws the floating Ask orb (job DQ part 0) on a screen when the assistant can be asked, on Today too (a phone has no assistant card; a desktop hides the orb because the command bar is there) and not on the live call; there is no bar at the bottom", async () => {
     readAgents.mockResolvedValue(teamWith("idle"));
     const { rerender } = render(await TenantLayout(props(T)));
     expect(readAgents).toHaveBeenCalledWith("tok", T);
     expect(document.querySelector("[data-ask='orb']")).not.toBeNull();
     nav.pathname = `/app/tenants/${T}`;
     rerender(await TenantLayout(props(T)));
-    expect(document.querySelector("[data-ask='orb']")).toBeNull(); // Today has its own line, in the card
+    expect(document.querySelector("[data-ask='orb']")?.className).toContain("md:hidden"); // Today: the orb is the phone's assistant; a desktop has the command bar
     nav.pathname = `/app/tenants/${T}/office/live`;
     rerender(await TenantLayout(props(T)));
     expect(document.querySelector("[data-ask='orb']")).toBeNull(); // the live call needs the whole screen

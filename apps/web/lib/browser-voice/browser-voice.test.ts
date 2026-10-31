@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { VoiceClient, SPEECH_FRAMES, SPEECH_LEVEL, type AudioIO, type SocketLike } from "./client";
 import { fromPcm16, level, toPcm16At16k } from "./pcm";
-import { endWordOf, parseServerMessage, setLanguageMessage, startMessage, voiceSocketUrl } from "./protocol";
+import { BARGE_IN, BARGE_IN_VERIFY, endWordOf, parseServerMessage, setLanguageMessage, startMessage, voiceSocketUrl } from "./protocol";
 
 const json = (o: unknown): string => JSON.stringify(o);
 
@@ -50,6 +50,19 @@ describe("the messages", () => {
     expect(parseServerMessage(json({ type: "limit", reason: "daily_limit", fatal: true }))).toEqual({ type: "limit", reason: "daily_limit" });
     expect(parseServerMessage(json({ type: "error", code: "budget", message: "Used up for today", fatal: false }))).toMatchObject({ code: "budget", fatal: false });
     for (const bad of ["not json", json({ type: "state", state: "dancing" }), json({ type: "caption", who: "robot", text: "x" }), json({ type: "ready", language: "xx", session_id: "s" }), json({ nothing: 1 }), json("x"), 5, null, "x".repeat(30_000)]) expect(parseServerMessage(bad)).toBeNull();
+  });
+  it("reads the new live messages: paused, resumed, interrupted with what was heard, the session-ending notice, a goodbye; and the verified barge-in goes out as the API asks", () => {
+    expect(parseServerMessage(json({ type: "paused", ms: 300 }))).toEqual({ type: "paused", ms: 300 });
+    expect(parseServerMessage(json({ type: "state", state: "paused" }))).toEqual({ type: "state", state: "paused", step: null });
+    expect(parseServerMessage(json({ type: "resumed", after: "backchannel" }))).toEqual({ type: "resumed", after: "backchannel" });
+    expect(parseServerMessage(json({ type: "interrupted", ms: 120, spoken: "Five new" }))).toEqual({ type: "interrupted", ms: 120, spoken: "Five new" });
+    expect(parseServerMessage(json({ type: "interrupted", ms: 120 }))).toEqual({ type: "interrupted", ms: 120, spoken: null });
+    expect(parseServerMessage(json({ type: "notice", code: "session_ending", seconds_left: 118 }))).toEqual({ type: "notice", code: "session_ending", secondsLeft: 118 });
+    expect(parseServerMessage(json({ type: "notice", code: "something_else", seconds_left: 1 }))).toBeNull();
+    expect(parseServerMessage(json({ type: "limit", reason: "goodbye", fatal: true }))).toEqual({ type: "limit", reason: "goodbye" });
+    expect(endWordOf({ code: 1000 }, { limit: "goodbye" })).toBe("goodbye");
+    expect(JSON.parse(BARGE_IN_VERIFY)).toEqual({ type: "barge_in", verify: true });
+    expect(JSON.parse(BARGE_IN)).toEqual({ type: "barge_in" });
   });
   it("a whole written answer (Markdown, newlines, thousands of characters) is a caption; one past the limit is not", () => {
     const long = "- item\n".repeat(1200);
@@ -185,7 +198,43 @@ describe("a session", () => {
     for (let i = 0; i < SPEECH_FRAMES; i++) audio.frame(SPEECH_LEVEL + 0.1);
     expect(audio.calls.flushed).toBe(1);
     expect(ws.types().slice(1)).toEqual(["barge_in", "audio"]);
-    expect(client.snapshot.state).toBe("listening");
+    expect(JSON.parse(ws.sent[1] as string)).toEqual({ type: "barge_in", verify: true }); // "something made a sound": the API judges it
+    expect(client.snapshot.state).toBe("paused"); // until the API says what it was
+    ws.say(new ArrayBuffer(4800)); // sound that was already on its way is not played while it judges
+    expect(audio.calls.played).toBe(0);
+  });
+  it("a sound that was only a cough: the API resumes the reply, which goes on and is played again; real words: the reply ends and is marked Interrupted with what was heard", async () => {
+    await ready();
+    ws.say({ type: "caption", who: "assistant", text: "There are five new enquiries today and", final: true, spoken: true });
+    ws.say({ type: "state", state: "speaking" });
+    ws.say({ type: "paused", ms: 300 });
+    expect(client.snapshot.state).toBe("paused");
+    ws.say({ type: "resumed", after: "noise" });
+    expect(client.snapshot.state).toBe("speaking");
+    ws.say(new ArrayBuffer(4800));
+    expect(audio.calls.played).toBe(1);
+    expect(client.snapshot.captions.at(-1)?.cut).toBeUndefined();
+    ws.say({ type: "paused", ms: 300 });
+    ws.say({ type: "interrupted", ms: 900, spoken: "There are five new" });
+    ws.say({ type: "state", state: "listening" });
+    expect(client.snapshot.captions.at(-1)).toMatchObject({ who: "assistant", text: "There are five new", cut: true }); // only what was heard stays
+  });
+  it("an API that does not know 'verify' stops for good: the turn is still marked cut when it goes back to listening", async () => {
+    await ready();
+    ws.say({ type: "caption", who: "assistant", text: "Long answer", final: true, spoken: true });
+    ws.say({ type: "state", state: "speaking" });
+    for (let i = 0; i < SPEECH_FRAMES; i++) audio.frame(SPEECH_LEVEL + 0.1);
+    ws.say({ type: "state", state: "listening" });
+    expect(client.snapshot.captions.at(-1)?.cut).toBe(true);
+  });
+  it("a session_ending notice records the seconds left; a goodbye turns the microphone off at once and ends quietly", async () => {
+    await ready();
+    ws.say({ type: "notice", code: "session_ending", seconds_left: 120 });
+    expect(client.snapshot.endingIn).toBe(120);
+    ws.say({ type: "limit", reason: "goodbye", fatal: true });
+    expect(audio.calls.micStopped).toBeGreaterThan(0);
+    ws.onclose?.({ code: 1000, reason: "" });
+    expect(client.snapshot).toMatchObject({ phase: "ended", end: "goodbye" });
   });
   it("audio_stop flushes the playback queue at once", async () => {
     await ready();

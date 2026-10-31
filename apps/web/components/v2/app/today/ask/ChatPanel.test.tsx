@@ -294,6 +294,26 @@ describe("the input bar: Dictate and Live talk (owner, 30 Oct)", () => {
     expect(sock.types()).toContain("stop");
     Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
   });
+  it("the API's own events: Paused while it judges a sound, its two-minute notice, and a goodbye that ends without an explanation", async () => {
+    draw();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "speaking" }));
+    await act(async () => void sock.say({ type: "state", state: "paused" }));
+    expect(document.querySelector('[data-chat="live-badge"]')).toHaveTextContent("Paused");
+    await act(async () => void sock.say({ type: "state", state: "speaking" }));
+    expect(document.querySelector('[data-chat="live-badge"]')).toHaveTextContent("Speaking");
+    await act(async () => void sock.say({ type: "notice", code: "session_ending", seconds_left: 118 }));
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 1600));
+    });
+    expect(document.querySelector('[data-chat="session-warning"]')).toHaveTextContent(/Live talk ends in 1:5\d/);
+    await act(async () => void sock.say({ type: "limit", reason: "goodbye", fatal: true }));
+    await act(async () => void sock.onclose?.({ code: 1000, reason: "" }));
+    expect(document.querySelector('[data-chat="live-badge"]')).toBeNull();
+    expect(screen.queryByText(/chat has ended/)).toBeNull(); // a goodbye needs no explaining
+  });
   it("Stop ends Live talk at once", async () => {
     draw();
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
