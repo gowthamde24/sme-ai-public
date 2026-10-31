@@ -1,4 +1,4 @@
-# Set up Lead Desk
+# Set up Leads
 Six short steps. You can skip any step and come back later. Step 6 of 6
 {label="Step 6 of 6"}
 - [1 . What you sell](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=1)
@@ -16,5 +16,5 @@ Check what is ready, then connect where your leads come from.
 ### Where your leads come from
 Connect Meta ads, IndiaMART, JustDial, your website form or a Google Sheet, or add leads from a file. [Connect lead sources](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources) [Add leads from a file](/app/tenants/22222222-2222-2222-2222-222222222222/import)
 ### Start with your leads
-Open Lead Desk to see your leads. Nothing is called or sent until you approve a plan or a standing rule. [Open Lead Desk](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk)
+Open Leads to see your leads. Nothing is called or sent until you approve a plan or a standing rule. [Open Leads](/app/tenants/22222222-2222-2222-2222-222222222222/lead-desk)
 {label="Setup steps"} [Back](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup?step=5) Nothing here is required.
