@@ -74853,5 +74853,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.bar.placeholder": {
+  "en": "Ask or tell your assistant anything…",
+  "te": "మీ అసిస్టెంట్‌ను ఏదైనా అడగండి లేదా చెప్పండి…",
+  "hi": "अपनी असिस्टेंट से कुछ भी पूछें या कहें…",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಏನನ್ನಾದರೂ ಕೇಳಿ ಅಥವಾ ಹೇಳಿ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.bar.minimise": {
+  "en": "Minimise",
+  "te": "చిన్నది చేయండి",
+  "hi": "छोटा करें",
+  "kn": "ಚಿಕ್ಕದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.bar.show": {
+  "en": "Show conversation",
+  "te": "సంభాషణ చూపండి",
+  "hi": "बातचीत दिखाएँ",
+  "kn": "ಸಂಭಾಷಣೆ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

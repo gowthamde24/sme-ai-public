@@ -114,9 +114,9 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
         {say(words, `agent.${item.agent}`)} · {ago(item.at, ctx.now)}
       </p>
       <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{item.summary}</p>
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-3 rounded-2xl bg-surface-2 p-3 lg:grid-cols-4">
+      <dl className="flex flex-wrap gap-x-6 gap-y-2 rounded-2xl bg-surface-2 p-3">
         {facts.map(([label, value]) => (
-          <div key={label} className="min-w-0">
+          <div key={label} className="min-w-0 max-w-full">
             <dt className="text-sm text-muted">{label}</dt>
             <dd className="break-words font-semibold tabular-nums">{value}</dd>
           </div>
@@ -331,9 +331,9 @@ function VisitProposalCard({ c, ctx }: { c: Extract<NeedsCard, { type: "visit" }
         {say(words, "today.title.visit.proposed", { who: v.who })}
         {v.city ? <span className="font-normal text-muted"> · {v.city}</span> : null}
       </h3>
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-3 rounded-2xl bg-surface-2 p-3 lg:grid-cols-3">
+      <dl className="flex flex-wrap gap-x-6 gap-y-2 rounded-2xl bg-surface-2 p-3">
         {facts.map(([label, value]) => (
-          <div key={label} className="min-w-0">
+          <div key={label} className="min-w-0 max-w-full">
             <dt className="text-sm text-muted">{label}</dt>
             <dd className="break-words font-semibold tabular-nums">{value}</dd>
           </div>
@@ -402,7 +402,7 @@ function Toast({ words }: { words: TodayWords }) {
  * "Needs you" (job AU): the count, then one card per thing that waits. A WhatsApp message held for approval shows its exact words, the language it goes out in and why it waits, with Approve and send,
  * Edit and Not now; a request for a call has Approve call and Offer a store visit (which declines the call and queues a message offering a visit in the outbox); a visit Agent OWL proposed has Confirm, Change time and Cancel (nothing is sent to the customer by them); the three older kinds are cards that open the page that decides. A decision takes its card off the list at once and
  * a toast says what really happened ("Sent", "Approved, it goes out at 9:00", "Not sent: ..."); a refusal puts the card back with the reason. The buttons shown follow the role (a message: Owner and Admin;
- * a call: the Owner; a visit Agent OWL proposed: Owner, Admin and Sales); the API checks again. On a phone only the two newest cards show, with "See all". Nothing here sends a thing: the outbox does, after re-checking every rule.
+ * a call: the Owner; a visit Agent OWL proposed: Owner, Admin and Sales); the API checks again. On a phone only the two newest cards show, on a desktop the four newest (two rows), each with "See all". Nothing here sends a thing: the outbox does, after re-checking every rule.
  */
 export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: TodayWords; role: Role; actions: TodayActions | null; now: number; lang?: string }) {
   const { cards, total, extra } = useNeeds();
@@ -424,7 +424,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
           </span>
         ) : null}
         {cards !== null && cards.length > 2 ? (
-          <button type="button" aria-expanded={all} onClick={() => setAll((v) => !v)} className="ml-auto inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text hover:underline md:hidden">
+          <button type="button" aria-expanded={all} onClick={() => setAll((v) => !v)} className={`ml-auto inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text hover:underline ${cards.length > 4 ? "" : "md:hidden"}`}>
             {all ? say(words, "today.seeless") : say(words, "today.seeall", { n: cards.length })}
           </button>
         ) : null}
@@ -441,9 +441,9 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
       ) : (
         <>
           <p className="mb-1 text-sm text-muted">{say(words, "today.needs.note")}</p>
-          <ul className="flex flex-col gap-3">
+          <ul className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start">
             {cards.map((c, i) => (
-              <li key={c.key} className={!all && i >= 2 ? "max-md:hidden" : ""}>
+              <li key={c.key} className={!all && i >= 4 ? "hidden" : !all && i >= 2 ? "max-md:hidden" : ""}>
                 {c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={ctx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={ctx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={ctx} /> : <CallCard c={c} ctx={ctx} />}
               </li>
             ))}

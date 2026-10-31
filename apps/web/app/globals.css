@@ -630,6 +630,13 @@ fieldset.form-plain {
   }
 }
 
+/* The signed-in app on a laptop or desktop reads a little denser (owner 31 Oct): the root size is 15px there, so every rem in the app (text, padding, gaps) follows; a phone keeps 16px. */
+@media (min-width: 768px) {
+  html:has([data-frame="app"]) {
+    font-size: 15px;
+  }
+}
+
 /* ---- Workspace redesign: theme bridge (docs/plans/workspace-v2-redesign-plan.md, 2.9; owner approved 2026-10-09) ----
    The v2 theme button writes data-theme on <html>. Screens not yet in the v2 look follow it, in both directions: dark on a light phone and light
    on a dark phone. With no choice there is no attribute and nothing here applies. Deleted with the last legacy screen (Batch 6). */
@@ -668,4 +675,3 @@ html[data-theme="light"] .badge-hidden { background: #f1f5f9; color: #64748b; }
 html[data-theme="light"] .badge-good { background: #dcfce7; color: #166534; }
 html[data-theme="light"] .badge-bad { background: #fee2e2; color: #991b1b; }
 html[data-theme="light"] .factor-item { background: rgba(0, 0, 0, 0.03); }
-

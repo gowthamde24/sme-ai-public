@@ -11,16 +11,8 @@
 [button type=button: Continue setup]
 Tuesday, 6 October
 # Good morning
-Your assistant this week 88% left
-{role=meter label="Your assistant usage this week: 88% left"}
-[88 %](/app/tenants/22222222-2222-2222-2222-222222222222/settings label="Your assistant usage this week: 88% left")
 [button type=button: Help for this screen]
 {role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
-{label="1 thing needs you. The rest is handled."}
-{role=img label="Your assistant, Resting"}
-Resting Resting Resting Your assistant
-## 1 thing needs you. The rest is handled.
-Overnight on WhatsApp: 3 sent, 1 held for your OK. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Your assistant answers in writing, and out loud if you turn voice on.
 {label="Needs you"}
 ## Needs you
 1 1 waiting for you Messages about money, promises or complaints, and calls, always wait for you.
@@ -38,7 +30,7 @@ Booked, but not confirmed with the customer yet. Nothing was sent to the custome
 [button type=button: Change time]
 [button type=button: Cancel the visit]
 {role=status}
-{label="Your business today"} [Fees collected today Not available yet](/app/tenants/22222222-2222-2222-2222-222222222222/fees) [Reminders running Not available yet](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns) [Campus visits today 1 1 families are coming](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
+Not available yet
 {label="At the store today"}
 ## At the store today
 3 visits
@@ -46,6 +38,7 @@ Booked, but not confirmed with the customer yet. Nothing was sent to the custome
 - 12:00 Priya S. + 2 Bridal sarees Confirmed
 - 16:00 Lakshmi Textiles Silk saree wholesale Reminder sent
 Next free time today: 10:00 [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits) [Book a visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits#book)
+{label="Your business today"} [Fees collected today Not available yet](/app/tenants/22222222-2222-2222-2222-222222222222/fees) [Reminders running Not available yet](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns) [Campus visits today 1 1 families are coming](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 {label="Done while you slept"}
 ## Done while you slept
 - Replied to 2 customers on WhatsApp

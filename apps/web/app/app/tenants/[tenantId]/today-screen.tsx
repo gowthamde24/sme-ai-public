@@ -104,22 +104,24 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const live = callScreens() === "mock" && role !== "viewer" ? <LiveNowCard words={wordsFor(lang, ["call.now."])} callee={MOCK_CALL.callee} info={`${t(`call.kind.${MOCK_CALL.kind}` as "call.kind.followup")} · ${LANGUAGE_NAMES[MOCK_CALL.lang].native}`} href={`/app/tenants/${tenantId}/office/live`} /> : null;
   const topups = manages ? await topupsToday({ token: accessToken, tenantId, lang, owner: role === "owner" }) : null;
   const demo = await readIsDemo(accessToken, tenantId, shop);
-  const view = (
-      <TodayView demo={demo} live={live} outcomes={outcomes} packCards={<PackCards cards={packCards} t={(key, vars) => t(key as "frame.notyet", vars)} />} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
-  );
-  const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   // the "example data" banner (blueprint 3.2) is the first-run offer of a workspace made with a chosen business type; a workspace that existed before business types sees it only while a sample is loaded (so it can be removed)
   const showSample = sample !== null && (sample.loaded || (usesChecklist(pack) && pack?.hasExampleData !== false));
   const notice: ExampleNotice = example === "loaded" || example === "removed" || example === "unavailable" || example === "failed" ? example : null;
+  // the first-run offers (the example-data banner and the "Finish setting up" checklist) come AFTER Needs you and the command bar: what needs the person is the first thing on Today, whatever the workspace's age
+  const intro =
+    showSample || (activation && activation.done < activation.total) ? (
+      <div data-part="start" className="flex flex-col gap-4">
+        {showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} t={t} /> : null}
+        {activation ? <ActivationCard activation={activation} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /> : null}
+      </div>
+    ) : null;
+  const view = (
+      <TodayView demo={demo} intro={intro} live={live} outcomes={outcomes} packCards={<PackCards cards={packCards} t={(key, vars) => t(key as "frame.notyet", vars)} />} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
+  );
+  const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   return (
     <main className={pageMain} lang={lang}>
       {topups}
-      {showSample || (activation && activation.done < activation.total) ? (
-        <div data-part="start" className="mb-6 flex flex-col gap-4">
-          {showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} t={t} /> : null}
-          {activation ? <ActivationCard activation={activation} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /> : null}
-        </div>
-      ) : null}
       {setup ? (
         <SetupGate tenantId={tenantId} base={`/app/tenants/${tenantId}`} lang={lang} facts={setup} words={setupWords(lang)} actions={setupActions}>
           {view}

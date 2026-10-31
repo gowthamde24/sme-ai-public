@@ -8,7 +8,7 @@ import { Orb } from "@/components/v2/Orb";
 
 import { workspaceOf } from "../../nav";
 import { orbStateOf } from "../../mark/orb-state";
-import { chipsForPath, orbHidden } from "./ask-chips";
+import { chipsForPath, isTodayHome, orbHidden } from "./ask-chips";
 import { useStoredAsk } from "./ask-store";
 import type { AskWords } from "./ask-words";
 import type { BrowserVoice } from "./browser-voice";
@@ -34,7 +34,8 @@ export function AskFloating({ words, chipWords, voice }: { words: AskWords; chip
   const pathname = usePathname();
   const tab = useSearchParams()?.get("tab") ?? null;
   const rest = workspaceOf(pathname ?? "")?.rest ?? null;
-  const here = rest !== null && !orbHidden(rest, tab);
+  const today = rest !== null && isTodayHome(rest, tab); // on Today the orb is for the phone: a desktop has the command bar
+  const here = rest !== null && (today || !orbHidden(rest, tab));
   const [open, setOpen] = React.useState(false);
   const [seenAt, setSeenAt] = React.useState(0); // how many finished answers the person has seen
   const orbRef = React.useRef<HTMLButtonElement>(null);
@@ -61,12 +62,13 @@ export function AskFloating({ words, chipWords, voice }: { words: AskWords; chip
       if (!cmdK && !slash) return;
       if (rest === null) return;
       e.preventDefault();
-      if (here) openPanel();
-      else document.getElementById("ask-input")?.focus(); // Today: the card's own line
+      if (today && (typeof window.matchMedia !== "function" || window.matchMedia("(min-width: 768px)").matches)) (document.getElementById("chat-input") ?? document.getElementById("ask-input"))?.focus(); // Today on a desktop: the command bar's own line
+      else if (here) openPanel();
+      else document.getElementById("ask-input")?.focus(); // (the live call: no orb)
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [rest, here, openPanel]);
+  }, [rest, here, today, openPanel]);
   if (!here || (session && !session.live)) return null; // (a conversation that has nothing to ask with draws no orb)
   const w = (key: string) => words[key] ?? key;
   const name = w("ask.orb.open");
@@ -83,7 +85,7 @@ export function AskFloating({ words, chipWords, voice }: { words: AskWords; chip
         onClick={() => (open ? closePanel() : openPanel())}
         onMouseEnter={() => void import("./AskPanelHost")}
         onFocus={() => void import("./AskPanelHost")}
-        className={`fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-line bg-surface shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 motion-reduce:transition-none md:bottom-6 md:right-6 print:hidden ${open ? "max-md:hidden" : ""}`}
+        className={`${today ? "md:hidden " : ""}fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-line bg-surface shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 motion-reduce:transition-none md:bottom-6 md:right-6 print:hidden ${open ? "max-md:hidden" : ""}`}
       >
         <Orb px={44} state={session?.floatOrb ?? "ambient"} />
         {unseen ? <span data-ask="dot" aria-hidden="true" className="absolute right-0 top-0 size-3.5 rounded-full border-2 border-surface bg-brand" /> : null}

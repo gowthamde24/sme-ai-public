@@ -82,18 +82,21 @@ const show = async (props_: ReturnType<typeof props> = props()) => {
   await settle();
 };
 
+/** Where the assistant is named on Today now: the words of the command bar (its placeholder, its accessible names) and the text of the cards. */
+const named = () => [document.body.textContent, ...[...document.querySelectorAll("[placeholder],[aria-label]")].map((e) => `${e.getAttribute("placeholder") ?? ""} ${e.getAttribute("aria-label") ?? ""}`)].join(" ");
+
 describe("the assistant's name on Today (job DN)", () => {
-  it("is your assistant until the workspace gives its assistant a name, then that name, in the card and the Ask box, and nowhere the old one", async () => {
+  it("is your assistant until the workspace gives its assistant a name, then that name, in the command bar, and nowhere the old one", async () => {
     await show();
-    expect(document.body.textContent).toContain("Your assistant");
-    expect(document.body.textContent).not.toMatch(/Agent OWL|\{assistant\}/);
+    expect(named()).toMatch(/your assistant/i);
+    expect(named()).not.toMatch(/Agent OWL|\{assistant\}/);
   });
 
   it("says the workspace's own name everywhere the assistant is named", async () => {
     provideRequestAssistantName("Asha");
     await show();
-    expect(document.body.textContent).toContain("Asha");
-    expect(document.body.textContent).not.toMatch(/Your assistant|Agent OWL|\{assistant\}/);
+    expect(named()).toContain("Asha");
+    expect(named()).not.toMatch(/Your assistant|Agent OWL|\{assistant\}/);
   });
 });
 
@@ -103,7 +106,7 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(getToday).toHaveBeenCalledWith("tok", TENANT);
     expect(getAgentsStatus).toHaveBeenCalledWith("tok", TENANT);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/^Good (morning|afternoon|evening)$/); // no display name on record
-    expect(screen.getByRole("heading", { level: 2, name: "5 things need you. The rest is handled." })).toBeInTheDocument();
+    expect(document.querySelector("[data-count]")).toHaveAttribute("data-count", "5");
     const needs = within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!);
     expect(needs.getAllByRole("article")).toHaveLength(5); // the count is the cards
     expect(needs.getByText(/ఈ చీర ధర 500/)).toBeInTheDocument(); // the exact words of the message, read from the outbox
@@ -185,7 +188,6 @@ describe("the workspace home with no ?tab= is Today", () => {
   it("the outbox log failing leaves the rest of Today alone, with its own two places saying so", async () => {
     listOutboxMessages.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
     await show();
-    expect(screen.getByText("The overnight summary is not available yet.")).toBeInTheDocument();
     expect(within(document.querySelector('[data-part="done"]') as HTMLElement).getByText("Not available yet")).toBeInTheDocument();
     expect(within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("article")).toHaveLength(5);
   });
@@ -193,7 +195,7 @@ describe("the workspace home with no ?tab= is Today", () => {
     fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme Silks", slug: "acme", role: "viewer" });
     getToday.mockResolvedValue(todayFor("viewer"));
     await show(props());
-    expect(screen.getByRole("heading", { level: 2, name: "Nothing needs you right now." })).toBeInTheDocument();
+    expect(document.querySelector("[data-count]")).toHaveAttribute("data-count", "0");
     expect(screen.getByText("All clear. I will tell you the moment something needs you.")).toBeInTheDocument();
     expect(listOutboxMessages).not.toHaveBeenCalled();
     expect(document.querySelector('[data-part="done"]')).toBeNull();
