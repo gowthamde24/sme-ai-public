@@ -8,7 +8,6 @@ import { AccountMenu } from "./AccountMenu";
 import type { FrameData } from "./contract";
 import { useFrameData } from "./frame-store";
 import { frameBand } from "./frame-style";
-import { LiveNow } from "./live/LiveNow";
 import { itemBase, itemCurrent, itemIdle, NavGroups, NavLink } from "./NavGroups";
 import { word, withPackWords, type Labels } from "./labels";
 import { menuFoot, menuGroups } from "./nav";
@@ -52,7 +51,6 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
         )}
       </nav>
       <div className="space-y-1.5 border-t border-line p-2">
-        {!current || !frame.live ? null : <LiveNow memberships={memberships} labels={labels} frame={given} variant="side" collapsed={collapsed} />}
         {current ? foot.map((i) => <NavLink key={i.id} item={i} tenantId={current.id} on={activeMenu === i.id} labels={labels} collapsed={collapsed} />) : null}
         {current ? (
           <Link href={`/app/tenants/${current.id}/help`} aria-current={pathname.startsWith(`/app/tenants/${current.id}/help`) ? "page" : undefined} title={collapsed ? help : undefined} className={`${itemBase} w-full ${pathname.startsWith(`/app/tenants/${current.id}/help`) ? itemCurrent : itemIdle} ${collapsed ? "justify-center px-0" : ""}`}>

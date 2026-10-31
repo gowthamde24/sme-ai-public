@@ -7,6 +7,7 @@ import { activityWire } from "@/lib/activity/types";
 import { requireUser } from "@/lib/auth/session";
 
 import { fromThisSite } from "../ask/ask-response";
+import { readIsDemo } from "../today-read";
 
 export const dynamic = "force-dynamic";
 
@@ -27,8 +28,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return new Response("Unauthorized", { status: 401, headers: { "Cache-Control": "no-store" } });
   }
   try {
-    await fetchTenant(user.accessToken, tenantId); // a member of this workspace, or a 404
-    const feed = await readActivity(user.accessToken, tenantId);
+    const tenant = await fetchTenant(user.accessToken, tenantId); // a member of this workspace, or a 404
+    const feed = await readActivity(user.accessToken, tenantId, { demo: await readIsDemo(user.accessToken, tenantId, tenant.name) });
     return feed === null ? new Response("Unavailable", { status: 503, headers: { "Cache-Control": "no-store" } }) : new Response(JSON.stringify(activityWire(feed)), { status: 200, headers: NO_STORE });
   } catch (error) {
     if (error instanceof ApiAuthError) return new Response("Unauthorized", { status: 401, headers: { "Cache-Control": "no-store" } });

@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const nav = { pathname: "/app/tenants/11111111-1111-4111-8111-111111111111" };
@@ -50,46 +50,59 @@ describe("Live now: the words of a line", () => {
   });
 });
 
-describe("Live now: the strip", () => {
+describe("Live now: the pill in the top bar", () => {
   it("is not asked and not drawn when it is switched off", async () => {
-    render(<LiveNow memberships={memberships} frame={OFF} variant="side" />);
+    render(<LiveNow memberships={memberships} frame={OFF} />);
     await settle();
     expect(fetchMock).not.toHaveBeenCalled();
     expect(document.querySelector("[data-live]")).toBeNull();
   });
-  it("draws nothing before the first answer (no empty box), then 'All caught up' when idle", async () => {
-    render(<LiveNow memberships={memberships} frame={ON} variant="side" />);
+  it("draws nothing before the first answer (no empty box), then a plain grey 'All caught up' when idle (nothing to open)", async () => {
+    render(<LiveNow memberships={memberships} frame={ON} />);
     expect(document.querySelector("[data-live]")).toBeNull();
     await settle();
     expect(fetchMock).toHaveBeenCalledWith(`/app/tenants/${T}/activity`, expect.objectContaining({ cache: "no-store" }));
-    expect(screen.getByText("All caught up")).toBeInTheDocument();
+    const pill = document.querySelector('[data-live="pill"]') as HTMLElement;
+    expect(pill).toHaveAttribute("data-state", "idle");
+    expect(pill).toHaveTextContent("All caught up");
+    expect(pill.querySelector("button")).toBeNull();
   });
-  it("lists the work as links in the menu; the phone's line shows the first and '+n more'", async () => {
+  it("active: a live dot, the first line, and a list of everything going on that opens from it, each line a link", async () => {
     answer = { items: [{ type: "call", who: "Ramesh", elapsed_s: 134, target: { kind: "task", id: id(1) } }, { type: "whatsapp_reply", who: "Anitha", elapsed_s: 3, target: { kind: "conversation", id: id(2) } }], poll_after_s: 5 };
-    render(
-      <>
-        <LiveNow memberships={memberships} frame={ON} variant="side" />
-        <LiveNow memberships={memberships} frame={ON} variant="line" />
-      </>,
-    );
+    render(<LiveNow memberships={memberships} frame={ON} />);
     await settle();
-    expect(fetchMock).toHaveBeenCalledTimes(1); // one poll for both parts
-    const side = document.querySelector('[data-live="side"]') as HTMLElement;
-    expect(side.querySelectorAll("a")).toHaveLength(2);
-    expect(side.querySelector("a")).toHaveAttribute("href", `/app/tenants/${T}/tasks/${id(1)}`);
-    const line = document.querySelector('[data-live="line"]') as HTMLElement;
-    expect(line).toHaveTextContent("On a call with Ramesh · 2:14");
-    expect(line).toHaveTextContent("+1 more");
-    expect(line.className).toContain("md:hidden");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const pill = document.querySelector('[data-live="pill"]') as HTMLElement;
+    expect(pill).toHaveAttribute("data-state", "active");
+    const button = pill.querySelector("button") as HTMLButtonElement;
+    expect(button).toHaveTextContent("On a call with Ramesh · 2:14");
+    expect(button).toHaveAttribute("aria-expanded", "false");
+    expect(button.getAttribute("aria-label")).toContain("+1 more");
+    expect(screen.queryByRole("region", { name: "Live now" })).toBeNull();
+    fireEvent.click(button);
+    const list = screen.getByRole("region", { name: "Live now" });
+    const links = list.querySelectorAll("a");
+    expect(links).toHaveLength(2);
+    expect(links[0]).toHaveAttribute("href", `/app/tenants/${T}/tasks/${id(1)}`);
+    expect(links[1]).toHaveTextContent("Replying on WhatsApp · 1 chat");
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("region", { name: "Live now" })).toBeNull();
   });
-  it("keeps the last line through a failed read, and stops for good on a rejected session", async () => {
+  it("on a phone the pill is the dot and a short label", async () => {
     answer = { items: [{ type: "lead_read", who: null, elapsed_s: 1, target: null }, { type: "lead_read", who: null, elapsed_s: 2, target: null }] };
-    render(<LiveNow memberships={memberships} frame={ON} variant="side" />);
+    render(<LiveNow memberships={memberships} frame={ON} />);
     await settle();
-    expect(screen.getByText("Reading 2 new leads")).toBeInTheDocument();
+    const short = document.querySelector('[data-live="pill"] button span.md\\:hidden') as HTMLElement;
+    expect(short).toHaveTextContent("Leads · 2");
+  });
+  it("keeps the last answer through a failed read", async () => {
+    answer = { items: [{ type: "lead_read", who: null, elapsed_s: 1, target: null }, { type: "lead_read", who: null, elapsed_s: 2, target: null }] };
+    render(<LiveNow memberships={memberships} frame={ON} />);
+    await settle();
+    expect(screen.getByRole("button", { name: /Reading 2 new leads/ })).toBeInTheDocument();
     fetchMock.mockResolvedValueOnce(new Response("no", { status: 503 }));
     window.dispatchEvent(new Event("online"));
     await settle();
-    expect(screen.getByText("Reading 2 new leads")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Reading 2 new leads/ })).toBeInTheDocument();
   });
 });
