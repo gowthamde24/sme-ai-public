@@ -11,9 +11,10 @@ export const isVoiceLang = (v: unknown): v is VoiceLang => (VOICE_LANGS as reado
 export const IN_RATE = 16_000;
 export const OUT_RATE = 24_000;
 
-export type VoiceState = "listening" | "thinking" | "speaking";
+/** "paused": something made a sound while the assistant spoke and the API is judging it (a cough or "hmm" = the reply goes on, real words = it ends); no sound is played meanwhile. */
+export type VoiceState = "listening" | "thinking" | "speaking" | "paused";
 export type Step = "working" | "looking";
-export type LimitReason = "session" | "daily_limit" | "idle";
+export type LimitReason = "session" | "daily_limit" | "idle" | "goodbye";
 /** A source the answer rests on (as Ask's): its words only; the browser draws them, it does not follow a link of the API's. */
 export type VoiceSource = { kind: string; label: string };
 
@@ -29,7 +30,10 @@ export type ServerMessage =
   | { type: "action"; actionId: string; status: "confirmed" | "declined" | "expired" }
   | { type: "audio_end"; turn: number }
   | { type: "audio_stop" }
-  | { type: "interrupted"; ms: number }
+  | { type: "interrupted"; ms: number; /** What the person actually heard before cutting in (null: the API did not say). */ spoken: string | null }
+  | { type: "paused"; ms: number }
+  | { type: "resumed"; after: string }
+  | { type: "notice"; code: "session_ending"; secondsLeft: number }
   | ({ type: "source" } & VoiceSource)
   | { type: "draft" }
   | { type: "timings"; turn: number; tier: string; firstSoundMs: number | null }
@@ -60,7 +64,7 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
       return isVoiceLang(json.language) && typeof json.session_id === "string" ? { type: "ready", sessionId: json.session_id.slice(0, 80), language: json.language, sessionSeconds: num(limits.session_seconds), daySecondsLeft: num(limits.day_seconds_left), conversationId: typeof json.conversation_id === "string" && UUID.test(json.conversation_id) ? json.conversation_id : null } : null;
     }
     case "state": {
-      if (json.state !== "listening" && json.state !== "thinking" && json.state !== "speaking") return null;
+      if (json.state !== "listening" && json.state !== "thinking" && json.state !== "speaking" && json.state !== "paused") return null;
       return { type: "state", state: json.state, step: json.step === "working" || json.step === "looking" ? json.step : null };
     }
     case "transcript": {
@@ -89,7 +93,15 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
     case "audio_stop":
       return { type: "audio_stop" };
     case "interrupted":
-      return { type: "interrupted", ms: num(json.ms) ?? 0 };
+      return { type: "interrupted", ms: num(json.ms) ?? 0, spoken: text(json.spoken, 4000) };
+    case "paused":
+      return { type: "paused", ms: num(json.ms) ?? 0 };
+    case "resumed":
+      return { type: "resumed", after: typeof json.after === "string" ? json.after.slice(0, 20) : "" };
+    case "notice": {
+      const left = num(json.seconds_left);
+      return json.code === "session_ending" && left !== null ? { type: "notice", code: "session_ending", secondsLeft: left } : null;
+    }
     case "source": {
       const label = text(json.label, 300);
       return label === null ? null : { type: "source", kind: typeof json.kind === "string" ? json.kind.slice(0, 40) : "", label };
@@ -106,7 +118,7 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
       return code === null || message === null ? null : { type: "error", code, message, fatal: json.fatal === true };
     }
     case "limit":
-      return json.reason === "session" || json.reason === "daily_limit" || json.reason === "idle" ? { type: "limit", reason: json.reason } : null;
+      return json.reason === "session" || json.reason === "daily_limit" || json.reason === "idle" || json.reason === "goodbye" ? { type: "limit", reason: json.reason } : null;
     case "pong":
       return { type: "pong" };
     default:
@@ -134,11 +146,12 @@ export function parsePlan(json: Record<string, unknown>): ConfirmAction | null {
 }
 
 /** The closed words for an end of the session (the keys are `bv.end.*`): from a `limit` message, a fatal `error` or the close code. */
-export type EndWord = "session" | "daily" | "idle" | "busy" | "rate" | "signin" | "refused" | "gone" | "unavailable" | "left";
+export type EndWord = "session" | "daily" | "idle" | "busy" | "rate" | "signin" | "refused" | "gone" | "unavailable" | "left" | "goodbye";
 export function endWordOf(close: { code: number; reason?: string } | null, last: { limit?: LimitReason; errorCode?: string } = {}): EndWord {
   if (last.limit === "session") return "session";
   if (last.limit === "daily_limit") return "daily";
   if (last.limit === "idle") return "idle";
+  if (last.limit === "goodbye") return "goodbye"; // the person said bye: nothing to explain
   if (last.errorCode === "busy") return "busy";
   if (last.errorCode === "rate_limited") return "rate";
   if (last.errorCode === "daily_limit") return "daily";
@@ -156,6 +169,8 @@ export type VoiceMode = "live" | "dictate";
 export const startMessage = (accessToken: string, language: VoiceLang, extra: { mode?: VoiceMode; conversationId?: string | null; sttLanguage?: VoiceLang | null } = {}): string =>
   JSON.stringify({ type: "start", access_token: accessToken, language, ...(extra.mode === "dictate" ? { mode: "dictate" } : {}), ...(extra.sttLanguage ? { stt_language: extra.sttLanguage } : {}), ...(extra.conversationId && UUID.test(extra.conversationId) ? { conversation_id: extra.conversationId } : {}) });
 export const BARGE_IN = JSON.stringify({ type: "barge_in" });
+/** "Something made a sound while it spoke": the API pauses the reply and judges it (a cough, "hmm", "haan", "ok" = it resumes after a short quiet; real words = it ends the reply and those words are the next turn). An API that does not know it treats it as a plain barge_in. */
+export const BARGE_IN_VERIFY = JSON.stringify({ type: "barge_in", verify: true });
 export const STOP = JSON.stringify({ type: "stop" });
 export const PING = JSON.stringify({ type: "ping" });
 export const setLanguageMessage = (language: VoiceLang): string => JSON.stringify({ type: "set_language", language });
