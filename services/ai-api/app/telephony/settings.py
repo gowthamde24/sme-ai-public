@@ -15,3 +15,9 @@ def gate_settings(settings: Any) -> Settings:
     mode: Mode = settings.telephony_mode if settings.telephony_mode in ("off", "sandbox", "live") else "off"
     numbers = frozenset(n for n in (normalise(part) for part in str(settings.telephony_sandbox_numbers).split(",")) if n)
     return Settings(mode=mode, live_confirmed=bool(settings.telephony_live_confirmed), sandbox_numbers=numbers, max_concurrent=max(1, int(settings.telephony_max_concurrent)))
+
+
+def phone_llm_choice(settings: Any) -> tuple[str, float]:
+    """(\"haiku\" | \"sarvam\", the first-token deadline in seconds). Anything but \"sarvam\" is Haiku; the deadline is kept between half a second and four."""
+    choice = "sarvam" if settings.telephony_llm == "sarvam" else "haiku"
+    return choice, max(0.5, min(4.0, int(settings.telephony_first_token_ms) / 1000.0))
