@@ -292,6 +292,8 @@ class Settings(BaseSettings):
     # Both default on.
     browser_voice_semantic_turns: bool = True
     browser_voice_verify_barge_in: bool = True
+    # Casual Live turns (small talk, general help) on the fast tier, written into the same thread.
+    browser_voice_fast_smalltalk: bool = True
     browser_voice_day_seconds: int = 7200
     # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the built-in defaults
     browser_voice_stt_modes: str = ""

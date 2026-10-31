@@ -19,10 +19,13 @@ from fastapi import APIRouter, WebSocket
 from fastapi.concurrency import run_in_threadpool
 from starlette.websockets import WebSocketDisconnect
 
+from app.agents.errors import AgentDbError
 from app.agents.register.address import address_clause
 from app.assistant.notes import address_as, owner_notes
+from app.assistant.routes import _refusal
 from app.auth.deps import Runtime, TenantContext
 from app.auth.jwt import AuthError
+from app.browser_voice.fast_thread import FastThread
 from app.browser_voice.limits import Usage
 from app.browser_voice.llm import AskLlm, AskTurns, CaptionLlm, TieredLlm
 from app.browser_voice.runtime import BrowserVoice
@@ -111,7 +114,10 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
             opening_cache[language] = rendered_opening(runtime, ctx, language, None, None, None)
         return opening_cache[language]
 
+    spoken_language = {"now": "en"}
+
     def system_for(language: str) -> str:
+        spoken_language["now"] = language   # (the session asks for the prompt whenever its language is set)
         _, mention = opening(language)
         return system_prompt(business=ctx.tenant.name, assistant=name, language=language, opening_line=OWNER_GREETING.get(language, OWNER_GREETING["en"]), mention_ai=mention, notes=notes, address_as=chosen_address)
 
@@ -127,7 +133,28 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
 
     turns = AskTurns(open_ask, conversation_id)
     ask = AskLlm(turns, emit)
-    llm = TieredLlm(CaptionLlm(bv.fast_llm(), emit), ask, on_ask)
+    agents = getattr(runtime, "agents", None)
+    fast: Any = bv.fast_llm()
+    in_thread = bool(bv.fast_smalltalk and agents is not None and getattr(agents, "assistant_db", None) is not None)
+    if in_thread and agents is not None:
+
+        def refuse(exc: AgentDbError) -> dict[str, str]:
+            err = _refusal(exc, runtime.today, token, tenant)
+            return {"code": str(err.code), "message": str(err)}
+
+        fast = FastThread(
+            fast=fast,
+            open_db=lambda: agents.assistant_db(token, uuid.uuid4()),
+            tenant_id=tenant,
+            conversation_id=lambda: turns.conversation_id,
+            language=lambda: spoken_language["now"],
+            emit=emit,
+            refuse=refuse,
+            allow_address=lambda: (chosen_address,) if chosen_address else (),
+            input_micros_per_mtok=bv.input_micros_per_mtok,
+            output_micros_per_mtok=bv.output_micros_per_mtok,
+        )
+    llm = TieredLlm(CaptionLlm(fast, emit), ask, on_ask)
     return Parts(
         stt_for=lambda language: SarvamRealtimeStt(bv.sarvam_key, language=pin_language or "auto", silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(pin_language or language, bv.stt_modes)),   # any of the six languages in any turn: the recogniser detects it and writes what was said as spoken (the mode per language, STT_MODES); the reply follows what was said
         tts=tts,
@@ -140,6 +167,7 @@ def build_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, emit: Ca
         refresh=refresh,
         fillers=bv.fillers,
         confirm=confirm,
+        fast_smalltalk=in_thread,
         one_thread=True,   # every live turn goes through the written chat's turn (same router, same history, same stored thread): typed, dictated and live turns are ONE conversation
         conversation_id=str(turns.conversation_id),
     )

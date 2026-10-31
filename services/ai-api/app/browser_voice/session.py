@@ -87,6 +87,8 @@ class Parts:
     confirm: Callable[[uuid.UUID, str], dict[str, Any]] | None = None
     # live talk is one thread with the typed chat: every turn goes through the written chat's turn (router, history, storage) instead of the voice's own fast model
     one_thread: bool = False
+    # casual turns (small talk, general help) go to the fast tier, which writes into the same thread; business questions and actions keep the written chat's turn
+    fast_smalltalk: bool = False
     conversation_id: str | None = None   # the thread (sent to the browser in `ready`)
 
 
@@ -264,7 +266,7 @@ class VoiceSession:
         intent = classify(text, self._previous)
         self._previous = intent.kind
         asyncio.ensure_future(self._send({"type": "intent", "kind": intent.kind}))
-        if self.parts.one_thread:
+        if self.parts.one_thread and not self.parts.fast_smalltalk:
             return "strong"   # the written chat's own turn decides again and keeps the thread: small talk, general help, records and plans in ONE conversation
         return "fast" if intent.kind in ("smalltalk", "general") else "strong"
 

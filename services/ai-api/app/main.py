@@ -956,6 +956,9 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         limits=limits,
         ledger=Ledger(limits, PostgrestUsageStore(config.rest_url, config.anon_key)),
         fillers=FillerBank.from_disk(),
+        fast_smalltalk=settings.browser_voice_fast_smalltalk,
+        input_micros_per_mtok=settings.llm_input_micros_per_mtok or 0,
+        output_micros_per_mtok=settings.llm_output_micros_per_mtok or 0,
         allowed_origins=tuple(o.strip() for o in settings.api_cors_origins.split(",") if o.strip()),
         client=httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0)),
     )

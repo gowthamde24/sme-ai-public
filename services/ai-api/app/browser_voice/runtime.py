@@ -33,6 +33,9 @@ class BrowserVoice:
     client: httpx.AsyncClient
     stt_modes: dict[str, str] = field(default_factory=dict)  # what the recogniser writes per language (routes.STT_MODES unless the deployment overrides it)
     fillers: FillerBank | None = None  # the pre-rendered 'one moment' lines per catalogue voice (data/fillers/)
+    fast_smalltalk: bool = True  # casual turns on the fast tier, written into the same thread (owner decision, 31 Oct 2026)
+    input_micros_per_mtok: int = 0   # what the fast model costs (settings LLM_INPUT/OUTPUT_MICROS_PER_MTOK): the day's cap sees the fast turns
+    output_micros_per_mtok: int = 0
 
     def fast_llm(self) -> StreamingLlm:
         if self.turn_model == "sarvam":
