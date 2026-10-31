@@ -75,10 +75,9 @@ export function LiveNow({ memberships, labels, frame: given }: { memberships: re
   const first = rows[0];
   if (!first) {
     return (
-      <p data-live="pill" data-state="idle" role="status" aria-label={`${title}: ${idle}`} className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-edge bg-surface px-3 text-sm font-medium text-muted">
+      <p data-live="pill" data-state="idle" role="status" aria-label={`${title}: ${idle}`} className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-edge bg-surface px-3 text-sm font-medium text-muted max-md:min-w-11 max-md:justify-center max-md:px-0">
         <Check className="size-4 shrink-0 text-green-text" aria-hidden="true" />
         <span className="max-md:hidden">{idle}</span>
-        <span className="md:hidden">{word(labels, "frame.live.short.idle", "Caught up")}</span>
       </p>
     );
   }
@@ -92,11 +91,11 @@ export function LiveNow({ memberships, labels, frame: given }: { memberships: re
         aria-controls={id}
         aria-label={`${title}: ${text}${rows.length > 1 ? ` ${word(labels, "frame.live.more", "+{n} more", { n: rows.length - 1 })}` : ""}`}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-edge bg-brand-bg px-3 text-sm font-semibold text-ink hover:brightness-95 aria-expanded:bg-surface"
+        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-brand-edge bg-brand-bg px-3 text-sm font-semibold text-ink hover:brightness-95 aria-expanded:bg-surface max-md:gap-1.5 max-md:px-2.5"
       >
         <span aria-hidden="true" className="size-2 shrink-0 rounded-full bg-green-text motion-safe:animate-pulse" />
         <span className="max-w-[17rem] truncate max-md:hidden">{text}</span>
-        <span className="max-w-[5.5rem] truncate md:hidden">{shortOf(first, labels)}</span>
+        <span className="max-w-[4.25rem] truncate md:hidden">{shortOf(first, labels)}</span>
         <ChevronDown className="size-4 shrink-0 text-muted max-md:hidden" aria-hidden="true" />
       </button>
       {open ? (

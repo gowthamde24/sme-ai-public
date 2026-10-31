@@ -23,7 +23,7 @@ export function TopBar({ frame, memberships, labels, email, signOut, mark, child
       <Link href={current ? `/app/tenants/${current.id}` : "/app"} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg md:hidden" aria-label={current?.name ?? "Home"}>
         <BrandMark px={32} />
       </Link>
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-1.5 md:gap-2">
         {current ? <HelpButton base={`/app/tenants/${current.id}`} labels={labels} /> : null}
         <LiveNow memberships={memberships} labels={labels} frame={frame} />
         {current ? <NotificationBell key={current.id} tenantId={current.id} labels={labels} /> : null}
