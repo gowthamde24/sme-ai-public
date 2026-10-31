@@ -5,6 +5,7 @@ import type { PanelVoice } from "./use-panel-voice";
 /** What Live talk is doing, in one word: Connecting, Listening, Thinking, Speaking, or Paused (nobody has spoken for a while, it waits and will end by itself). */
 export function liveStateOf(talk: Pick<PanelVoice, "state" | "connecting" | "checkIn">): "connecting" | "listening" | "thinking" | "speaking" | "paused" {
   if (talk.connecting) return "connecting";
+  if (talk.state === "paused") return "paused"; // the API is judging a sound while it spoke
   if (talk.state === "speaking") return "speaking";
   if (talk.state === "thinking") return "thinking";
   return talk.checkIn !== null ? "paused" : "listening";
