@@ -1,5 +1,5 @@
 # Leads
-Every lead that arrives: where it came from, what state it is in, and who has it. [Set up Lead Desk in six short steps](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup)
+Every lead that arrives: where it came from, what state it is in, and who has it. [Set up Leads in six short steps](/app/tenants/22222222-2222-2222-2222-222222222222/lead-setup)
 form:
 Where from
 <select name=source label="Where from">
