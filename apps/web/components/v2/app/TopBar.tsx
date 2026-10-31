@@ -22,6 +22,8 @@ export function TopBar({ memberships, labels, email, signOut, mark, children }: 
         <BrandMark px={32} />
       </Link>
       <div className="ml-auto flex items-center gap-2">
+        {/* "Start demo" (a demo workspace only) is drawn here by the guided demo */}
+        <span id="demo-start-slot" className="contents" />
         {current ? <HelpButton base={`/app/tenants/${current.id}`} labels={labels} /> : null}
         {current ? <NotificationBell key={current.id} tenantId={current.id} labels={labels} /> : null}
         {children}

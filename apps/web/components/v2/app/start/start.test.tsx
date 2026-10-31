@@ -46,6 +46,20 @@ describe("the activation card on Today", () => {
     expect(within(items[2]).queryByRole("link")).toBeNull();
     expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute("href", `${base}/b`);
   });
+  it("on Today, with five or more steps done, it is ONE row: title, 'N of M done' and Continue; Settings keeps listing the steps", () => {
+    const steps = [step("a", "done"), step("b", "done"), step("c", "done"), step("d", "done"), step("e", "done"), step("f", "todo")];
+    const { rerender } = render(<ActivationCard collapse base={base} t={t} activation={act(steps)} />);
+    const row = document.querySelector('[data-start="card"]') as HTMLElement;
+    expect(row).toHaveAttribute("data-collapsed", "true");
+    expect(row).toHaveTextContent("Finish setting up");
+    expect(row).toHaveTextContent("5 of 6 done");
+    expect(screen.queryAllByRole("listitem")).toHaveLength(0);
+    expect(screen.getByRole("link", { name: "Continue" })).toHaveAttribute("href", `${base}/f`);
+    rerender(<ActivationCard base={base} t={t} activation={act(steps)} />);
+    expect(screen.getAllByRole("listitem")).toHaveLength(6);
+    rerender(<ActivationCard collapse base={base} t={t} activation={act([step("a", "done"), step("b", "todo")])} />);
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+  });
   it("is gone when every step is done (activated), and when there are no steps", () => {
     const { container, rerender } = render(<ActivationCard base={base} t={t} activation={act([step("a", "done")])} />);
     expect(container).toBeEmptyDOMElement();
@@ -60,11 +74,11 @@ describe("the activation card on Today", () => {
 
 describe("the example-data banner", () => {
   const actions = () => ({ load: vi.fn(async () => undefined), remove: vi.fn(async () => undefined) });
-  it("offers one button to load the sample when the server says it can, and says what it does", () => {
+  it("is ONE slim line (no card): offers one button to load the sample when the server says it can", () => {
     const a = actions();
     render(<ExampleBanner state="available" notice={null} load={a.load} remove={a.remove} t={t} />);
     expect(screen.getByRole("heading", { name: "See how it works with example data" })).toBeInTheDocument();
-    expect(screen.getByText(/clearly marked as example/)).toBeInTheDocument();
+    expect(document.querySelector('[data-example="available"]')!.className).not.toContain("border");
     expect(screen.getByRole("button", { name: "Load example data" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Remove/ })).toBeNull();
   });

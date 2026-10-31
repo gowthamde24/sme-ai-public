@@ -4,13 +4,13 @@ import dynamic from "next/dynamic";
 import { usePathname, useSearchParams } from "next/navigation";
 import * as React from "react";
 
-import { Orb } from "@/components/v2/Orb";
 
 import { workspaceOf } from "../../nav";
 import { orbStateOf } from "../../mark/orb-state";
 import { chipsForPath, isTodayHome, orbHidden } from "./ask-chips";
 import { useStoredAsk } from "./ask-store";
 import type { AskWords } from "./ask-words";
+import { TalkOrb } from "./TalkOrb";
 import type { BrowserVoice } from "./browser-voice";
 
 /** The panel is a chunk of its own: it is drawn only after the orb is pressed (the route-JS budget counts what a page loads at first). */
@@ -85,10 +85,10 @@ export function AskFloating({ words, chipWords, voice }: { words: AskWords; chip
         onClick={() => (open ? closePanel() : openPanel())}
         onMouseEnter={() => void import("./AskPanelHost")}
         onFocus={() => void import("./AskPanelHost")}
-        className={`${today ? "md:hidden " : ""}fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-line bg-surface shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 motion-reduce:transition-none md:bottom-6 md:right-6 print:hidden ${open ? "max-md:hidden" : ""}`}
+        className={`${today ? "md:hidden " : ""}fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 motion-reduce:transition-none md:bottom-6 md:right-6 print:hidden ${open ? "max-md:hidden" : ""}`}
       >
-        <Orb px={44} state={session?.floatOrb ?? "ambient"} />
-        {unseen ? <span data-ask="dot" aria-hidden="true" className="absolute right-0 top-0 size-3.5 rounded-full border-2 border-surface bg-brand" /> : null}
+        <TalkOrb px={56} state={session?.floatOrb ?? "ambient"} />
+        {unseen ? <span data-ask="dot" aria-hidden="true" className="absolute right-0 top-0 size-3.5 rounded-full border-2 border-surface bg-charcoal" /> : null}
       </button>
       {open && (session || voice) ? <AskPanel session={session} chips={chipsForPath(rest ?? "", tab).map((k) => chipWords[k] ?? k)} onClose={closePanel} voice={voice} /> : null}
     </>

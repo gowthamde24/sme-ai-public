@@ -3,6 +3,7 @@
 import { Pause, Play, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import { createPortal } from "react-dom";
 
 import { addressOf, STEP_KEYS, type Line, type Sound, type StepKey, type StepResult } from "@/lib/guided-demo/script";
 
@@ -117,6 +118,12 @@ export default function GuidedDemo({ words, routes, actions }: { words?: Words; 
   React.useEffect(() => {
     goRef.current = go;
   }, [go]);
+  // the slot in the top bar (null on the server and until the page is there)
+  const slot = React.useSyncExternalStore(
+    () => () => undefined,
+    () => document.getElementById("demo-start-slot"),
+    () => null,
+  );
   const start = () => {
     run.current = crypto.randomUUID();
     leadId.current = null;
@@ -141,13 +148,17 @@ export default function GuidedDemo({ words, routes, actions }: { words?: Words; 
     }
   };
 
+  // "Start demo" is a small pill in the top bar (owner review, 1 Nov): nothing floats over the page for it, on a desktop or a phone
   if (step === null)
-    return (
-      <button type="button" data-part="guided-demo-start" onClick={start} className={`${primary} fixed bottom-20 left-4 z-40 shadow-lg md:bottom-4 md:left-[256px]`}>
-        <Play className="size-4" aria-hidden="true" />
-        {t("gd.start")}
-      </button>
-    );
+    return slot
+      ? createPortal(
+          <button type="button" data-part="guided-demo-start" onClick={start} className="inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-brand-edge bg-brand px-3 text-sm font-semibold text-on-brand hover:brightness-95">
+            <Play className="size-3.5" aria-hidden="true" />
+            {t("gd.start")}
+          </button>,
+          slot,
+        )
+      : null;
 
   const done = step >= STEP_KEYS.length;
   const key = STEP_KEYS[Math.min(step, STEP_KEYS.length - 1)];

@@ -71,8 +71,8 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
             <GroupTabs memberships={list} labels={labels} frame={frame} />
             <LabelsProvider labels={labels}>{children}</LabelsProvider>
           </div>
-          {/* Privacy Policy, Terms and Cookie settings (job BH); above the bottom bar on a phone */}
-          <footer data-frame="legal" className="border-t border-line px-4 pb-20 pt-1 md:px-8 md:pb-2 print:hidden">
+          {/* Privacy Policy, Terms and Cookie settings (job BH); above the bottom bar on a phone, with room for the floating orb (56px + 16px) under the last thing on the page */}
+          <footer data-frame="legal" className="border-t border-line px-4 pb-[calc(5rem+72px)] pt-1 md:px-8 md:pb-2 print:hidden">
             <LegalLinks lang={lang} />
           </footer>
         </div>

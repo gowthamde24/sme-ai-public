@@ -22,7 +22,7 @@ const TEAM: TodayData["team"] = [
 const CARDS: NeedsCard[] = [outbox(), call(), classic()];
 const ready = (visits: StoreVisit[], over: Partial<StoreToday> = {}): TodayData["store"] => ({ state: "ready", visits, slots: "unknown", nextFree: null, ...over });
 const data = (over: Partial<TodayData> = {}): TodayData => ({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: CARDS, recent: [], team: TEAM, deskTeam: null, store: null, week: null, sending: null, digest: Promise.resolve(READY), ...over });
-const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; demo?: boolean; outboxHref?: string | null; calendarHref?: string | null } = {}) => {
+const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; demo?: boolean; outboxHref?: string | null; calendarHref?: string | null; intro?: React.ReactNode; exampleLine?: React.ReactNode } = {}) => {
   const words = rest.lang && rest.lang !== "en" ? appT(rest.lang as "te") : null;
   // rendered inside an awaited act, so the parts that read a promise (use) settle before the test looks
   let out!: ReturnType<typeof render>;
@@ -109,6 +109,20 @@ describe("Today: the order of the sections", () => {
   it("has no spacer for a bottom bar any more: there is none", async () => {
     const { container } = await view(data());
     expect(container.querySelector('[data-screen="today"] > div[aria-hidden="true"]')).toBeNull();
+  });
+});
+
+describe("Today: the order of the page (owner review, 1 Nov)", () => {
+  it("greeting, the slim example line, Needs you, the assistant row, the four cards, then Finish setting up", async () => {
+    await view(data({ needs: [call()], cards: { waiting: 1, money_held_paise: 0, orders_open: 0 }, store: ready([]) }), {
+      exampleLine: <p data-test="example">example line</p>,
+      intro: <p data-test="setup">setup card</p>,
+    });
+    const at = (sel: string) => document.querySelector(sel) as Element;
+    const sels = ["h1", '[data-test="example"]', "#needs-you", '[data-part="command-bar"]', '[data-part="visits"]', '[data-part="done"], [aria-labelledby="done-heading"]', '[data-part="team"]', '[data-test="setup"]'];
+    const order = sels.map(at);
+    expect(order.map((e, i) => (e ? "" : sels[i]))).toEqual(sels.map(() => ""));
+    for (let i = 1; i < order.length; i++) expect(order[i - 1].compareDocumentPosition(order[i]) & Node.DOCUMENT_POSITION_FOLLOWING, `${i}`).toBeTruthy();
   });
 });
 

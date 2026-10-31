@@ -32,8 +32,11 @@ export function routesFor(base: string, modules: readonly string[] | null): Reco
 /** A line of a transcript or an answer, cut to what one caption box can hold. */
 export const clip = (text: string, max = 500): string => (text.length <= max ? text : `${text.slice(0, max - 1).trimEnd()}…`);
 
+/** The people a demo lead can be (made up; owner review, 1 Nov: never "Demo lead 4485"). The phone number stays in the reserved demo range `+00 000 000 NNNN`, so no real person is ever called. */
+const LEAD_NAMES = ["Ramesh Babu", "Sunitha Rao", "Venkat Reddy", "Padmaja Naidu", "Srinivas Goud", "Anitha Kumari", "Kiran Kumar", "Madhavi Latha", "Ravi Teja", "Swathi Chowdary"] as const;
+
 /** The made-up lead of a run: a name and a phone number of the reserved demo range `+00 000 000 NNNN`. */
 export function demoLead(run: string): { name: string; phone: string } {
   const digits = run.replace(/[^0-9]/g, "").padEnd(4, "7").slice(0, 4);
-  return { name: `Demo lead ${digits}`, phone: `+00 000 000 ${digits}` };
+  return { name: LEAD_NAMES[Number(digits) % LEAD_NAMES.length], phone: `+00 000 000 ${digits}` };
 }
