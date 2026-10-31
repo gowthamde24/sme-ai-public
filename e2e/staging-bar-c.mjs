@@ -32,6 +32,20 @@ try {
     ok(`${w}x${h} the orb is about 64px`, m.orb >= 60 && m.orb <= 68, `orb=${m.orb}`);
     ok(`${w}x${h} the input bar is tall (about 56px)`, m.formH >= 52 && m.formH <= 64, `form=${m.formH}`);
     ok(`${w}x${h} Talk is a separate prominent button on the right, clay fill`, m.talkLeft >= m.formRight && !/rgba?\(0, 0, 0, 0\)|transparent/.test(m.talkBg), `talkBg=${m.talkBg}`);
+    const c = await p.evaluate(() => {
+      const row = document.querySelector('[data-chat="bar"] [data-chat="form"]');
+      const f = row.getBoundingClientRect();
+      const mid = (e) => { const b = e.getBoundingClientRect(); return (b.top + b.bottom) / 2; };
+      const parts = [...row.querySelectorAll('[data-chat="plus"], textarea, [data-chat="language"], [data-chat="dictate"], button[type="submit"]')].map((e) => ({ name: e.getAttribute("data-chat") ?? e.tagName.toLowerCase(), d: Math.abs(mid(e) - (f.top + f.bottom) / 2) }));
+      const outer = document.querySelector('[data-chat="bar"]');
+      const cs = getComputedStyle(outer);
+      const orbs = document.querySelectorAll("main [data-orb], [data-screen='today'] [data-orb]").length;
+      const chips = document.querySelector('[data-chat="bar"] [data-chat="chips"]')?.getBoundingClientRect();
+      return { off: parts.filter((x) => x.d > 2).map((x) => `${x.name}:${x.d.toFixed(1)}`), outerBorder: cs.borderTopWidth, outerBg: cs.backgroundColor, orbs, chipsLeft: chips ? chips.left : null, formLeft: f.left };
+    });
+    ok(`${w}x${h} everything inside the input is vertically centred`, c.off.length === 0, c.off.join(","));
+    ok(`${w}x${h} no outer card around the bar`, c.outerBorder === "0px" && /rgba?\(0, 0, 0, 0\)|transparent/.test(c.outerBg), `border=${c.outerBorder} bg=${c.outerBg}`);
+    ok(`${w}x${h} one orb on the page; the chips start at the input's left edge`, c.orbs === 1 && (c.chipsLeft === null || Math.abs(c.chipsLeft - c.formLeft) <= 2), `orbs=${c.orbs} chips=${c.chipsLeft} input=${c.formLeft}`);
     ok(`${w}x${h} after Needs you, chips under the bar, no sideways scroll`, m.needsTop < m.barTop && (m.chipsTop === undefined || m.chipsTop >= m.barBottom - 2) && m.scrollW <= m.innerW + 1);
     await shot(s, `bc-${pack}-${lang}-${w}x${h}`, { fullPage: false });
   }

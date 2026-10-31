@@ -14,7 +14,6 @@ import { Avatar } from "./Avatar";
 import { FRAME_LOADING, type FrameData } from "./contract";
 import { GroupTabs } from "./GroupTabs";
 import { lettersOf } from "./letters";
-import { LiveNow } from "./live/LiveNow";
 import { UsageBanner } from "./UsageBanner";
 import { LabelsProvider } from "./robust/labels-context";
 import { RobustShell } from "./robust/RobustShell";
@@ -53,7 +52,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
         </a>
         <SideNav memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} mark={small} />
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small}>
+          <TopBar frame={frame} memberships={list} labels={labels} email={email} signOut={signOut} mark={small}>
             <span lang={lang}>
               <LangSelect lang={lang} label={t("lang.label")} />
             </span>
@@ -61,7 +60,6 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
               <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
             </span>
           </TopBar>
-          <LiveNow memberships={list} labels={labels} frame={frame} variant="line" />
           <RobustShell labels={labels} />
           {lang !== "en" ? (
             <div role="region" aria-label={appT(lang)("frame.draft.label")} lang={lang} className="border-b border-line px-4 py-1.5 text-sm text-muted md:px-8 print:hidden">

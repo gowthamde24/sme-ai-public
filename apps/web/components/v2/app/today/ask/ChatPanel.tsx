@@ -239,7 +239,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
             </ul>
           ) : null;
   // the pieces of the bar (owner 31 Oct, design C): the language pill, the microphone (Dictate), Send and the prominent Talk button; the same pieces in the sheet on a phone
-  const pillEl = <LanguagePill value={chat.pill} onChange={chat.set} label={c("bv.lang.label")} auto={c("bv.lang.auto")} className="mb-0.5 self-end" />;
+  const pillEl = <LanguagePill value={chat.pill} onChange={chat.set} label={c("bv.lang.label")} auto={c("bv.lang.auto")} className={bar ? "" : "mb-0.5 self-end"} />;
   const micEl = (
     <button
       type="button"
@@ -280,7 +280,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     </button>
   );
   const plusEl = (
-    <div className="relative shrink-0 self-end">
+    <div className={`relative shrink-0 ${bar ? "" : "self-end"}`}>
       <button type="button" data-chat="plus" aria-haspopup="menu" aria-expanded={plusOpen} aria-label={c("bv.bar.plus")} title={c("bv.bar.plus")} onClick={() => setPlusOpen((v) => !v)} className="inline-flex size-10 items-center justify-center rounded-full text-ink hover:bg-surface-2">
         <Plus className="size-5" aria-hidden="true" />
       </button>
@@ -339,7 +339,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   );
   const content = (
     <>
-        <div className={`flex shrink-0 items-center gap-2 border-line px-3 ${bar ? `order-2 min-h-11 border-t ${empty && view === "chat" ? "hidden" : ""}` : "min-h-14 border-b"}`}>
+        <div className={`flex shrink-0 items-center gap-2 border-line px-3 ${bar ? `order-2 mt-3 min-h-11 border bg-surface ${minimised ? "rounded-2xl" : "rounded-t-2xl border-b-0"} ${empty && view === "chat" ? "hidden" : ""}` : "min-h-14 border-b"}`}>
           {bar ? null : <Orb px={28} state={orb} analyser={talk.active ? talk.analyser(talk.state === "speaking" ? "voice" : "mic") : null} />}
           <div className="min-w-0 flex-1">
             <h2 className="truncate font-display text-lg font-semibold">{c("bv.chat.title")}</h2>
@@ -364,7 +364,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           ) : null}
         </div>
         {view === "history" ? (
-          <div className={`overflow-y-auto px-3 py-3 ${bar ? `order-3 max-h-[50vh] ${minimised ? "hidden" : ""}` : "min-h-0 flex-1"}`} data-chat="history-list">
+          <div className={`overflow-y-auto px-3 py-3 ${bar ? `order-3 max-h-[50vh] rounded-b-2xl border border-t-0 border-line bg-surface ${minimised ? "hidden" : ""}` : "min-h-0 flex-1"}`} data-chat="history-list">
             <button type="button" data-chat="history-back" onClick={() => setView("chat")} className="mb-3 inline-flex min-h-10 items-center text-sm font-semibold text-brand-text underline underline-offset-2">
               {c("bv.chat.history.back")}
             </button>
@@ -389,7 +389,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           </div>
         ) : (
           <>
-        <div ref={body} className={`overflow-y-auto px-3 py-3 ${bar ? `order-3 max-h-[50vh] ${empty || minimised ? "hidden" : ""}` : "min-h-0 flex-1"}`} data-chat="body" aria-live="polite">
+        <div ref={body} className={`overflow-y-auto px-3 py-3 ${bar ? `order-3 max-h-[50vh] rounded-b-2xl border border-t-0 border-line bg-surface ${empty || minimised ? "hidden" : ""}` : "min-h-0 flex-1"}`} data-chat="body" aria-live="polite">
           {empty ? (
             <div data-chat="empty" className="flex flex-col gap-3">
               <p className="text-sm text-muted">{c("bv.chat.empty")}</p>
@@ -427,7 +427,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           </ul>
           {s.asking && !s.answer ? <p role="status" className="mt-2 text-sm text-muted">{c("bv.chat.working")}</p> : null}
         </div>
-        <div className={bar ? "order-1 flex flex-col gap-3 p-3" : "shrink-0 space-y-2 border-t border-line bg-surface px-3 pb-3 pt-2"}>
+        <div className={bar ? "order-1 flex flex-col gap-3" : "shrink-0 space-y-2 border-t border-line bg-surface px-3 pb-3 pt-2"}>
           {bar ? (
             <>
               <div data-chat="bar-row" className="flex items-center gap-3">
@@ -461,7 +461,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     </>
   );
   return variant === "bar" ? (
-    <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="bar" onKeyDown={onKeyDown} className="flex min-w-0 flex-col rounded-3xl border border-line bg-surface">
+    <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="bar" onKeyDown={onKeyDown} className="flex min-w-0 flex-col">
       {content}
     </div>
   ) : variant === "card" ? (

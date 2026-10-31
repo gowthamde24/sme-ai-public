@@ -31,13 +31,17 @@ describe("the app's own route sends the API's shape", () => {
 
 describe("where the strip's data comes from", () => {
   afterEach(() => vi.unstubAllEnvs());
-  it("off: nothing; mock: a call with chats, then leads, then nothing, changing every 15 seconds", async () => {
+  it("off: nothing; mock: a call with chats, then leads, then nothing, changing every 15 seconds, for a DEMO workspace only", async () => {
     vi.stubEnv("ACTIVITY_SCREENS", "off");
-    expect(await readActivity("tok", "t")).toBeNull();
+    expect(await readActivity("tok", "t", { demo: true })).toBeNull();
     vi.stubEnv("ACTIVITY_SCREENS", "mock");
-    const kinds = async (n: number) => (await readActivity("tok", "t", n * 15_000))?.items.map((i) => i.type);
+    const kinds = async (n: number) => (await readActivity("tok", "t", { demo: true, now: n * 15_000 }))?.items.map((i) => i.type);
     expect(await kinds(3)).toEqual(["call", "whatsapp_reply", "whatsapp_reply", "follow_up"]);
     expect(await kinds(4)).toEqual(["lead_read", "lead_read"]);
     expect(await kinds(5)).toEqual([]);
+  });
+  it("a real (non-demo) workspace never shows made-up activity: mock gives it 'nothing' (All caught up) in every phase", async () => {
+    vi.stubEnv("ACTIVITY_SCREENS", "mock");
+    for (const n of [3, 4, 5]) expect((await readActivity("tok", "t", { demo: false, now: n * 15_000 }))?.items).toEqual([]);
   });
 });
