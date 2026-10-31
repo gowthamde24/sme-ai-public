@@ -35,6 +35,8 @@ class Limits:
     speculative: bool = True      # standard A3: the fast tier starts on a stable, finished-looking partial transcript; kept when the final transcript is the same words, dropped when the caller goes on
     filler_after_ms: int = 1800   # a data or action turn gets a "one moment" filler only if its answer audio has not started by then (owner, 31 Oct 2026)
     filler_on_casual: bool = False  # small talk never gets one
+    audio_turn: str = "shadow"    # the audio turn model: off | shadow | on (see Settings.browser_voice_audio_turn)
+    audio_turn_model: str = ""    # path of the ONNX file ("": none); a missing file or a failed load means the text rules alone
     verify_barge_in: bool = True  # standard B1/B2: a sound while the assistant speaks pauses it; a cough, a "hmm" or a TV lets it go on (a real interruption stops it)
 
 

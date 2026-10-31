@@ -237,6 +237,29 @@ def soft_warning_due(elapsed_s: float, cap_s: float, warned: bool) -> bool:
 
 
 class AudioTurnModel(Protocol):
-    """The audio-side upgrade path (Indic Smart Turn: 8 s of 16 kHz audio -> the probability that the turn is over). Not bundled; see docs/runbooks/live-turn-models.md."""
+    """The audio side (Indic Smart Turn, app/conversation/audio_turn.py): the last 8 s of 16 kHz audio -> the probability that the turn is over, or None when it cannot say."""
 
-    def probability_complete(self, pcm16_16k: bytes) -> float: ...
+    def probability_complete(self, pcm16_16k: bytes) -> float | None: ...
+
+
+AUDIO_SURE_DONE = 0.7        # the voice sounds finished
+AUDIO_SURE_NOT_DONE = 0.2    # the voice sounds like it is going on
+AUDIO_VERY_SURE_DONE = 0.85
+
+
+def blend(state: Completeness, audio_p: float | None) -> Completeness:
+    """The text reading of the words, moved at most ONE step by what the voice sounds like (a rising or trailing-off voice, a breath): the audio never turns a finished sentence into "wait for more" on its own, nor an unfinished one into "answer now".
+    No audio opinion (None) leaves the text reading as it is."""
+    if audio_p is None:
+        return state
+    if state == "complete" and audio_p < AUDIO_SURE_NOT_DONE:
+        return "unsure"
+    if state == "unsure":
+        if audio_p >= AUDIO_SURE_DONE:
+            return "complete"
+        if audio_p <= AUDIO_SURE_NOT_DONE:
+            return "incomplete"
+        return "unsure"
+    if state == "incomplete" and audio_p >= AUDIO_VERY_SURE_DONE:
+        return "unsure"
+    return state

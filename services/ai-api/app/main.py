@@ -15,6 +15,7 @@ from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agent_runs.routes import router as agent_runs_router
 from app.agent_runs.wiring import build_agents_runtime
 from app.assistant.routes import router as assistant_router
+from app.assistant_activity.routes import router as activity_router
 from app.assistant_context.repository import PostgrestContextRepository
 from app.assistant_context.routes import router as assistant_context_router
 from app.assistant_context.service import ContextService
@@ -54,6 +55,7 @@ from app.connectors.repository import PostgrestConnectorsRepository
 from app.connectors.routes import router as connectors_router
 from app.connectors.webhooks import router as webhooks_router
 from app.connectors.wiring import build_connectors
+from app.conversation import audio_turn
 from app.conversation.engines import real_engine_factory
 from app.conversation.fillers import FillerBank
 from app.conversation.picker import public_router as voice_samples_router
@@ -194,6 +196,10 @@ from app.team import errors as team_errors
 from app.team.repository import PostgrestTeamRepository
 from app.team.routes import public_router as team_public_router
 from app.team.routes import router as team_router
+from app.telephony.live import LiveCalls
+from app.telephony.repository import CallStateError, PostgrestCallsRepository
+from app.telephony.routes import router as calls_router
+from app.telephony.service import CallsService
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
@@ -332,6 +338,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         outreach=build_outreach(config.rest_url, config.anon_key),
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
+        calls=CallsService(PostgrestCallsRepository(config.rest_url, config.anon_key)),
+        live_calls=LiveCalls(),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
         call_voice=_call_voice(settings),
         browser_voice=_browser_voice(settings, config),
@@ -834,6 +842,11 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "task_state",
         "That cannot be done in the state the task is in now. Reload and look again.",
     ),
+    CallStateError: ApiError(
+        409,
+        "call_state",
+        "That cannot be done in the state the call is in now. Reload and look again.",
+    ),
     # Store visits (job AS, ADR 0067). Fixed messages: nothing from the data layer reaches a client.
     visit_errors.VisitStateError: ApiError(
         409,
@@ -948,7 +961,11 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         speculative=settings.browser_voice_speculative,
         filler_after_ms=settings.browser_voice_filler_after_ms,
         filler_on_casual=settings.browser_voice_filler_on_casual,
+        audio_turn=settings.browser_voice_audio_turn,
+        audio_turn_model=settings.browser_voice_audio_turn_model,
     )
+    if limits.audio_turn in ("shadow", "on"):
+        audio_turn.load(limits.audio_turn_model)   # loaded at start, so no caller waits for it
     return BrowserVoice(
         config=voice_catalogue(),
         factory=real_engine_factory(cartesia_key=cartesia, sarvam_key=sarvam),
@@ -1247,8 +1264,10 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_intake_router)
     app.include_router(outreach_router)
     app.include_router(tasks_router)
+    app.include_router(calls_router)
     app.include_router(voice_sample_router)
     app.include_router(pronunciation_router)
+    app.include_router(activity_router)
     app.include_router(voice_picker_router)
     app.include_router(browser_voice_router)
     app.include_router(auto_reply_router)

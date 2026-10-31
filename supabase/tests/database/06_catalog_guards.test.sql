@@ -306,7 +306,7 @@ select is(
         'public.call_voice_get', 'public.call_voice_set', 'public.call_voice_gender_set',
         -- job DV follow-up: the browser voice's daily caps
         'public.browser_voice_usage_get', 'public.browser_voice_usage_add',
-        'public.pronunciation_list', 'public.pronunciation_set', 'public.pronunciation_delete',
+        'public.assistant_activity', 'public.pronunciation_list', 'public.pronunciation_set', 'public.pronunciation_delete',
         -- job DY: the automatic WhatsApp reply: the Owner's switch and the worker's three calls
         'public.auto_reply_get', 'public.auto_reply_set', 'public.scheduler_auto_reply_pending', 'public.scheduler_auto_reply_submit', 'public.scheduler_auto_reply_skip', 'public.scheduler_lead_reads_pending', 'public.scheduler_lead_read_apply', 'public.assistant_context_get', 'public.assistant_context_versions_list', 'public.assistant_context_version_get', 'public.assistant_context_save', 'public.scheduler_assistant_context', 'public.lead_inbound_address_get', 'public.lead_website_form_get', 'public.lead_website_form_set', 'public.lead_inbound_address_set', 'public.lead_source_cards_stats',
         'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
@@ -323,6 +323,7 @@ select is(
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
         'public.example_data_status', 'public.example_data_load', 'public.example_data_remove',
         -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)
+        'public.phone_call_begin', 'public.phone_call_update', 'public.phone_call_finish', 'public.phone_calls_list', 'public.phone_call_get', 'public.phone_calls_stats', 'public.phone_line_find',
         'public.task_context', 'public.task_save', 'public.task_get', 'public.tasks_list', 'public.task_contacts_list', 'public.task_report', 'public.task_exclude', 'public.task_approve', 'public.task_set_cap', 'public.task_set_state', 'public.task_claim', 'public.task_contact_result',
         -- job CN (ADR 0085): sites, the building-materials catalogue item, dues, material quotes and their order, deliveries. Each proves the role first; money moves need aal2 where the file says so
         'public.catalogue_material_save', 'public.site_save', 'public.site_get', 'public.sites_list', 'public.invoice_record', 'public.invoices_import', 'public.invoice_void', 'public.payment_record', 'public.payment_void', 'public.credit_limit_set', 'public.dues_statement', 'public.dues_summary', 'public.credit_check', 'public.dues_ledger', 'public.material_item_inputs', 'public.material_policy_create', 'public.material_policy_get', 'public.material_quote_build', 'public.material_quote_draft', 'public.material_quote_approve', 'public.material_quote_reject', 'public.material_quote_get', 'public.material_quotes_list', 'public.create_order_from_material_quote', 'public.trip_plan', 'public.trip_update', 'public.trip_set_status', 'public.trip_deliver', 'public.pod_ensure_bucket', 'public.trip_get', 'public.trips_list', 'public.delivery_challan_get', 'public.trip_update_submit',
@@ -425,7 +426,7 @@ select is(
                      'public.opening_get', 'public.opening_set_line', 'public.opening_set_mention',
                      -- job voice-picker: the workspace's chosen voice per language
                      'public.call_voice_get', 'public.call_voice_set', 'public.call_voice_gender_set',
-                     'public.browser_voice_usage_get', 'public.browser_voice_usage_add', 'public.pronunciation_list', 'public.pronunciation_set', 'public.pronunciation_delete',
+                     'public.browser_voice_usage_get', 'public.browser_voice_usage_add', 'public.assistant_activity', 'public.pronunciation_list', 'public.pronunciation_set', 'public.pronunciation_delete',
                      'public.auto_reply_get', 'public.auto_reply_set', 'public.scheduler_auto_reply_pending', 'public.scheduler_auto_reply_submit', 'public.scheduler_auto_reply_skip', 'public.scheduler_lead_reads_pending', 'public.scheduler_lead_read_apply', 'public.assistant_context_get', 'public.assistant_context_versions_list', 'public.assistant_context_version_get', 'public.assistant_context_save', 'public.scheduler_assistant_context', 'public.lead_inbound_address_get', 'public.lead_website_form_get', 'public.lead_website_form_set', 'public.lead_inbound_address_set', 'public.lead_source_cards_stats',
                      'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
                      'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report',
@@ -438,6 +439,7 @@ select is(
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
         'public.example_data_status', 'public.example_data_load', 'public.example_data_remove',
         -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)
+        'public.phone_call_begin', 'public.phone_call_update', 'public.phone_call_finish', 'public.phone_calls_list', 'public.phone_call_get', 'public.phone_calls_stats', 'public.phone_line_find',
         'public.task_context', 'public.task_save', 'public.task_get', 'public.tasks_list', 'public.task_contacts_list', 'public.task_report', 'public.task_exclude', 'public.task_approve', 'public.task_set_cap', 'public.task_set_state', 'public.task_claim', 'public.task_contact_result',
                      -- job DP part 5: the Owner's own voice
                      'public.own_voice_sentence', 'public.own_voice_get', 'public.own_voice_private', 'public.own_voice_ensure_bucket', 'public.own_voice_begin', 'public.own_voice_ready', 'public.own_voice_failed', 'public.own_voice_deleted',

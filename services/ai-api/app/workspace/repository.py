@@ -34,6 +34,8 @@ class WorkspaceRepository(Protocol):
     def pronunciation_list(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
     def pronunciation_set(self, token: str, tenant_id: uuid.UUID, word: str, sounds_like: str, language: str | None, message_id: uuid.UUID | None) -> dict[str, Any]: ...
     def pronunciation_delete(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> bool: ...
+    # owner decision 31 Oct 2026: the live activity feed
+    def activity(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
 
 
 class PostgrestWorkspaceRepository:
@@ -95,6 +97,9 @@ class PostgrestWorkspaceRepository:
 
     def pronunciation_list(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         return self._rpc.array(token, "pronunciation_list", {"p_tenant_id": str(tenant_id)})
+
+    def activity(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
+        return self._rpc.array(token, "assistant_activity", {"p_tenant_id": str(tenant_id)})
 
     def pronunciation_set(self, token: str, tenant_id: uuid.UUID, word: str, sounds_like: str, language: str | None, message_id: uuid.UUID | None) -> dict[str, Any]:
         return self._rpc.object(

@@ -43,11 +43,13 @@ ROUTE_WORDS = frozenset(
         "lead-imports", "lead-sheet-links", "sync", "pause", "resume", "lead-sources",
         "rotate", "indiamart", "pull", "unparsed",
         "leads", "touches", "lead-intake", "email", "mail", "meta", "cards", "email-address",
-        "resend",
+        "resend", "activity",
         # job DR A3: speed to lead and approve once
         "outreach", "exclude", "caps", "rules", "result", "handoffs", "acted", "source-costs",
         # job DR B1: tasks
         "tasks", "plan", "answer", "run", "cancel", "cap", "report",
+        # job phone-calls part 6: the Calls page
+        "calls", "hang-up",
         "templates",
         "voice-sample",
         # job DP: marks and report messages to guardians (a file that is never stored)

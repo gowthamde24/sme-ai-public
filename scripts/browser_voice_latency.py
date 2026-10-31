@@ -94,6 +94,8 @@ async def run(url: str, token: str, pcm: bytes, turns: int, language: str) -> tu
                 if data.get("type") == "timings":
                     FLAGS.append(bool(data.get("speculative")))
                     FILLER_FLAGS.append(bool(data.get("filler")))
+                    if data.get("audio_p") is not None or data.get("audio_turn_ms") is not None:
+                        print(f"  audio turn model (shadow): chance the turn was over {data.get('audio_p')}, waited {data.get('audio_turn_ms')} ms for it")
                     if data.get("after_final_ms") is not None:
                         server_ms.append(float(data["after_final_ms"]))
                     break

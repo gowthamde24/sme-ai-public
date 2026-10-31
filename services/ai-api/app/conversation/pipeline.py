@@ -37,7 +37,9 @@ from app.conversation.parts import (
 from app.conversation.router import Tier, route
 from app.conversation.turntaking import (
     MAX_HOLD_PARTS,
+    AudioTurnModel,
     PauseModel,
+    blend,
     completeness,
     hold_ms,
     spoken_prefix,
@@ -47,6 +49,11 @@ log = logging.getLogger("app.conversation")
 
 BARGE_IN_MIN_SPEECH_MS = 100  # sound this long while we speak counts as the caller talking (shorter would trigger on a cough)
 
+
+def _record_audio(tm: TurnTimings, job: asyncio.Future[tuple[float | None, float]]) -> None:
+    if not job.cancelled() and job.exception() is None:
+        tm.audio_p, run_ms = job.result()
+        tm.audio_run_ms = round(run_ms)
 
 
 def _same_words(a: str, b: str) -> bool:
@@ -78,6 +85,9 @@ class Conversation:
         pause_model: PauseModel | None = None,
         can_speculate: Callable[[str], bool] | None = None,
         filler_on_casual: bool = True,
+        audio_turn: AudioTurnModel | None = None,
+        audio_turn_mode: str = "off",
+        audio_tail: Callable[[], bytes] | None = None,
     ) -> None:
         self.stt, self.llm, self.tts, self.playout = stt, llm, tts, playout
         self.session, self.models, self.fillers, self.voice = session, models, fillers, voice
@@ -102,6 +112,12 @@ class Conversation:
         self._spec_timer: asyncio.TimerHandle | None = None
         self.speculations = {"started": 0, "used": 0, "dropped": 0}
         self.pauses = pause_model if pause_model is not None else PauseModel()
+        # the audio turn model (Indic Smart Turn): "shadow" records what it says on the turn's timings and changes nothing; "on" lets it move the text reading of "is this finished" by one step; "off" (or no model: it did not load) is
+        # the text rules alone. It judges the last seconds of audio from the moment the recogniser says the caller stopped, so its answer is ready by the time the final transcript arrives.
+        self.audio_turn = audio_turn if audio_turn_mode in ("shadow", "on") else None
+        self.audio_turn_mode, self.audio_tail = audio_turn_mode, audio_tail
+        self._audio_job: asyncio.Future[tuple[float | None, float]] | None = None
+        self._audio_p: float | None = None
         # B2/B3: the line can be paused for a possible interruption and picked up again; what was actually heard is what the history keeps
         self._gate = asyncio.Event()
         self._gate.set()
@@ -152,7 +168,10 @@ class Conversation:
     def _hold_s(self, text: str) -> float:
         if not self.semantic_turns:
             return 0.0
-        return hold_ms(completeness(text, self.session.language), self.pauses) / 1000.0
+        state = completeness(text, self.session.language)
+        if self.audio_turn_mode == "on":
+            state = blend(state, self._audio_p)
+        return hold_ms(state, self.pauses) / 1000.0
 
     async def _listen_once(self, source: AudioSource, tm: TurnTimings, first_within_s: float | None = None, interrupt: bool = True) -> str | None:
         """One recogniser turn. `first_within_s`: give up (None) when the caller does not start talking again within that time."""
@@ -179,12 +198,15 @@ class Conversation:
                 elif ev.kind == "speech_start":
                     self._drop_spec()
                     self._last_partial = ""
+                    self._audio_p = None
+                    self._drop_audio_job()
                 if ev.kind == "speech_start":
                     tm.speech_start_at = tm.speech_start_at if tm.speech_start_at is not None else now
                     if interrupt:
                         await self.interrupt()
                 elif ev.kind == "speech_end":
                     tm.eot_at = now
+                    self._start_audio_job()
                     if self.can_speculate and self._last_partial:
                         self._cancel_timer()
                         self._speculate(self._last_partial)   # the recogniser says the caller stopped: the words so far are almost surely the final ones, and the final transcript is still on its way
@@ -195,6 +217,7 @@ class Conversation:
                     self._cancel_timer()
                     if self._spec is not None and _same_words(self._spec.text, ev.text) is False:
                         self._drop_spec()   # what was confirmed is not what the model was started on
+                    await self._finish_audio_job(tm)
                     return ev.text.strip() or None
         finally:
             self._cancel_timer()
@@ -221,6 +244,53 @@ class Conversation:
             self._reply_task = None
             tm.done_at = self.clock()
         return tm
+
+    # ---- A1: what the voice sounds like ------------------------------------------------------------------------------------------------------------
+
+    AUDIO_WAIT_S = 0.25   # at most this long for the audio model once the final transcript is in (it normally finished while the recogniser was still working)
+
+    def _start_audio_job(self) -> None:
+        if self.audio_turn is None or self.audio_tail is None or self._audio_job is not None:
+            return
+        pcm = self.audio_tail()
+        if not pcm:
+            return
+        model = self.audio_turn
+
+        def run() -> tuple[float | None, float]:
+            began = time.perf_counter()
+            p = model.probability_complete(pcm)
+            return p, (time.perf_counter() - began) * 1000   # the inference alone, on the machine the call runs on
+
+        self._audio_job = asyncio.get_running_loop().run_in_executor(None, run)
+
+    def _drop_audio_job(self) -> None:
+        job, self._audio_job = self._audio_job, None
+        if job is not None:
+            job.cancel()
+
+    async def _finish_audio_job(self, tm: TurnTimings) -> None:
+        """The model's answer for this stop, if there is one: kept on the timings always; moves the hold only in "on" mode. A late or failed answer is simply no opinion."""
+        if self.audio_turn is None:
+            return
+        if self._audio_job is None:
+            self._start_audio_job()   # the recogniser gave no end of speech before the final
+        job, self._audio_job = self._audio_job, None
+        if job is None:
+            return
+        started = self.clock()
+        try:
+            p = await asyncio.wait_for(asyncio.shield(job), timeout=self.AUDIO_WAIT_S if self.audio_turn_mode == "on" else 0.0)
+        except TimeoutError:
+            job.add_done_callback(lambda f: _record_audio(tm, f))   # shadow, or too slow: the answer is still written to the timings when it comes
+            return
+        except Exception:   # noqa: BLE001 - the model failing is not the turn failing
+            return
+        value, run_ms = p
+        tm.audio_turn_ms = int((self.clock() - started) * 1000)
+        tm.audio_run_ms = round(run_ms)
+        tm.audio_p = value
+        self._audio_p = value
 
     # ---- A3: speculative start ---------------------------------------------------------------------------------------------------------------------
 

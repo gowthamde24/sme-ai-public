@@ -19,6 +19,7 @@ from typing import Any, Literal, Protocol
 from app.assistant.language import detect_owner_language
 from app.browser_voice.audio import IN_RATE, OUT_RATE, PREROLL_S, BrowserPlayout, FrameBus
 from app.browser_voice.limits import Ledger, Limits, Usage, log_usage
+from app.conversation import audio_turn
 from app.conversation.endpointing import endpoint_ms
 from app.conversation.fillers import FillerBank
 from app.conversation.parts import (
@@ -169,6 +170,9 @@ class VoiceSession:
             router=self._route,
             semantic_turns=limits.semantic_turns,
             can_speculate=self._can_speculate if limits.speculative else None,
+            audio_turn=audio_turn.load(limits.audio_turn_model) if limits.audio_turn in ("shadow", "on") else None,
+            audio_turn_mode=limits.audio_turn,
+            audio_tail=self.bus.recent,
         )
         self._previous: TurnKind | None = None
         self.pending_action: uuid.UUID | None = None
@@ -684,6 +688,9 @@ class VoiceSession:
                 "fallback": tm.tts_fallback,
                 "interrupted": tm.interrupted,
                 "speculative": tm.speculative,
+                "audio_p": None if tm.audio_p is None else round(tm.audio_p, 3),
+                "audio_turn_ms": tm.audio_turn_ms,
+                "audio_run_ms": tm.audio_run_ms,
                 "filler": tm.filler_played,
                 "held_ms": tm.held_ms,
             }
