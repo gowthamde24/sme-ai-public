@@ -34,7 +34,12 @@ vi.mock("@/lib/api/visits", async (importOriginal) => ({
 }));
 vi.mock("@/lib/api/quotes", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/quotes")>()), fetchQuotes: (...a: unknown[]) => fetchQuotes(...a), fetchQuote: async () => { throw new ApiRequestError(500, "api_error", "x"); } }));
 
-import { readToday } from "./today-data";
+const readMyProfileCached = vi.fn();
+const fetchMembers = vi.fn();
+vi.mock("../../me-read", () => ({ readMyProfileCached: (...a: unknown[]) => readMyProfileCached(...a) }));
+vi.mock("@/lib/api/orders", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/orders")>()), fetchMembers: (...a: unknown[]) => fetchMembers(...a) }));
+
+import { readDisplayName, readToday } from "./today-data";
 
 const T = "22222222-2222-4222-8222-222222222222";
 
@@ -221,5 +226,32 @@ describe("readToday: is sending stopped?", () => {
     expect((await readToday("tok", T, "owner", clock)).sending).toBeNull();
     getOutboxSettings.mockRejectedValue(new ApiAuthError("x"));
     await expect(readToday("tok", T, "owner", clock)).rejects.toThrow(ApiAuthError);
+  });
+});
+
+describe("readDisplayName: the greeting's name", () => {
+  beforeEach(() => {
+    readMyProfileCached.mockReset();
+    fetchMembers.mockReset();
+  });
+  it("is the name in My profile, even when the members list has none", async () => {
+    readMyProfileCached.mockResolvedValue({ displayName: "  Gowtham Reddy " });
+    fetchMembers.mockResolvedValue([{ user_id: "u1", display_name: null }]);
+    expect(await readDisplayName("tok", T, "u1")).toBe("Gowtham Reddy");
+    expect(fetchMembers).not.toHaveBeenCalled();
+  });
+  it("falls back to the members list when My profile has no name or cannot be read", async () => {
+    fetchMembers.mockResolvedValue([{ user_id: "u1", display_name: "Asha" }]);
+    readMyProfileCached.mockResolvedValue({ displayName: null });
+    expect(await readDisplayName("tok", T, "u1")).toBe("Asha");
+    readMyProfileCached.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
+    expect(await readDisplayName("tok", T, "u1")).toBe("Asha");
+  });
+  it("is null when neither knows the name, and a rejected session still throws", async () => {
+    readMyProfileCached.mockResolvedValue({ displayName: " " });
+    fetchMembers.mockResolvedValue([]);
+    expect(await readDisplayName("tok", T, "u1")).toBeNull();
+    readMyProfileCached.mockRejectedValue(new ApiAuthError("x"));
+    await expect(readDisplayName("tok", T, "u1")).rejects.toThrow(ApiAuthError);
   });
 });

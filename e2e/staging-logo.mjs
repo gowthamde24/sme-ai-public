@@ -37,6 +37,14 @@ const p = s.page;
 try {
   if (lang !== "en") await s.context.addCookies([{ name: "sme_lang", value: lang, url: "https://staging.stack19.com" }]);
   await p.setViewportSize({ width: 1366, height: 768 });
+  // the member's name (the demo owner has none): the greeting uses it
+  await p.goto(`${s.base}/settings?section=profile`, { waitUntil: "domcontentloaded" });
+  await p.locator("#me-name").waitFor({ timeout: 45000 });
+  if (!(await p.locator("#me-name").inputValue())) {
+    await p.locator("#me-name").fill("Gowtham Reddy");
+    await p.locator('[data-part="my-profile"] form:has(#me-name) button[type="submit"]').click();
+    await sleep(2500);
+  }
   await p.goto(`${s.base}/settings?section=business`, { waitUntil: "domcontentloaded" });
   await p.locator("#biz-logo-file").waitFor({ timeout: 45000 });
   const removeBtn = p.locator('form:has(input[name="remove"]) button');
@@ -54,7 +62,9 @@ try {
   await p.locator('form:has(#biz-logo-file) button[type="submit"]').first().click();
   await p.locator('aside [data-business-logo="image"]').waitFor({ timeout: 40000 });
   ok("after the upload the menu shows the logo at once (no reload)", (await p.locator('aside [data-business-logo="image"]').count()) === 1);
-  ok("…and the picture loads", await p.locator('aside [data-business-logo="image"]').evaluate((e) => e.complete && e.naturalWidth > 0));
+  await p.waitForFunction(() => { const e = document.querySelector('aside [data-business-logo="image"]'); return !e || (e.complete && e.naturalWidth > 0); }, null, { timeout: 15000 }).catch(() => null);
+  const imgState = await p.locator('aside [data-business-logo="image"]').evaluate((e) => ({ loaded: e.complete && e.naturalWidth > 0, src: e.src.replace(/\?.*/, "").slice(-60) })).catch(() => ({ loaded: false, src: "(no image: it fell back to the letters)" }));
+  ok("…and the picture loads", imgState.loaded, imgState.src);
   await sleep(800);
   await shot(s, `lg-${pack}-${lang}-2-logo`, { fullPage: false });
   const pw = (await p.locator('aside [data-frame="powered-by"]').innerText()).trim();
@@ -69,10 +79,10 @@ try {
     const pillEl = document.querySelector('[data-live="pill"]');
     const pill = pillEl?.getBoundingClientRect();
     const main = document.querySelector("main").getBoundingClientRect();
-    return { h1: document.querySelector('[data-screen="today"] h1').innerText, inHeader: !!document.querySelector('header [data-live="pill"]'), sameRow: !!pill && pill.bottom > h1.top && pill.top < h1.bottom + 40, rightAligned: !!pill && main.right - pill.right < 60 };
+    return { h1: document.querySelector('[data-screen="today"] h1').innerText, inHeader: !!document.querySelector('header[class*="sticky"] [data-live="pill"]'), sameRow: !!pill && pill.bottom > h1.top && pill.top < h1.bottom + 40, rightAligned: !!pill && main.right - pill.right < 60 };
   });
   ok("the Live now pill is on the greeting row, right-aligned, not in the top bar", !g.inHeader && g.sameRow && g.rightAligned, JSON.stringify(g));
-  ok("the greeting carries the member's name", /,\s+\S+/.test(g.h1), g.h1.replace(/\n/g, " "));
+  ok("the greeting carries the member's name, with the language's respectful form", lang === "te" ? /Gowtham Reddy గారు$/.test(g.h1) : /, Gowtham Reddy$/.test(g.h1), g.h1.replace(/\n/g, " "));
   await shot(s, `lg-${pack}-${lang}-3-today`, { fullPage: false });
   await p.setViewportSize({ width: 390, height: 844 });
   await p.goto(s.base, { waitUntil: "domcontentloaded" });
@@ -81,7 +91,7 @@ try {
   const ph = await p.evaluate(() => {
     const h1 = document.querySelector('[data-screen="today"] h1').getBoundingClientRect();
     const pill = document.querySelector('[data-live="pill"]')?.getBoundingClientRect();
-    return { below: !pill || pill.top >= h1.bottom - 2, scrollW: document.documentElement.scrollWidth, innerW: innerWidth, headerHasPill: !!document.querySelector('header [data-live="pill"]') };
+    return { below: !pill || pill.top >= h1.bottom - 2, scrollW: document.documentElement.scrollWidth, innerW: innerWidth, headerHasPill: !!document.querySelector('header[class*="sticky"] [data-live="pill"]') };
   });
   ok("phone: the pill is under the greeting, nothing in the header, no sideways scroll", ph.below && !ph.headerHasPill && ph.scrollW <= ph.innerW + 1, JSON.stringify(ph));
   await shot(s, `lg-${pack}-${lang}-4-phone`, { fullPage: false });
