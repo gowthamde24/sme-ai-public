@@ -19,11 +19,17 @@ export type PanelVoice = {
   /** What the person is saying right now, word by word, until it is final; "" when nobody is. */
   interim: string;
   /** The turn in progress: the words heard and the reply so far (the reply streams in as it is spoken). null when no turn has begun. */
-  live: { asked: string; answer: string } | null;
+  live: { asked: string; answer: string; cut: boolean } | null;
   end: EndWord | null;
   micDenied: boolean;
   /** The voice speaking now (name, language), as the API said; null until it says. */
   voice: Snapshot["voice"];
+  /** The conversation is being opened (the microphone is on, the API has not said ready). */
+  connecting: boolean;
+  /** Nobody has spoken for LIVE_CHECKIN_MS: the seconds left until it ends by itself (it waits, "Paused"); null while the conversation is lively. */
+  checkIn: number | null;
+  /** The last LIVE_WARN_S seconds of the conversation's time limit: the seconds left; null before that (and when the API gave no limit). */
+  sessionLeft: number | null;
   /** A refusal that does not end the conversation (the hourly limit): its code, until the next turn. */
   problem: string | null;
   start: () => Promise<void>;
@@ -36,6 +42,10 @@ export type PanelVoice = {
 const TOKEN_FRESH_MS = 20 * 60_000;
 /** Live talk ends by itself when nobody speaks for this long while it listens (owner, 30 Oct: about 30 seconds). */
 export const LIVE_SILENCE_MS = 30_000;
+/** After this much quiet while it listens, ONE gentle check-in is shown ("Still there?") and the state reads "Paused" (job live-conversation-standard D3). */
+export const LIVE_CHECKIN_MS = 8_000;
+/** The screen warns when this many seconds are left of the conversation's time limit (13 minutes of 15). */
+export const LIVE_WARN_S = 120;
 
 /**
  * The spoken conversation INSIDE the chat panel (never full screen): the API's socket (lib/browser-voice) with the person's words shown LIVE as they speak (the interim caption, replaced by the final one) and the reply streaming below as text while it is spoken.
@@ -44,7 +54,7 @@ export const LIVE_SILENCE_MS = 30_000;
 export function usePanelVoice(session: AskSession, voice: BrowserVoice, options: PanelVoiceOptions = {}): PanelVoice {
   const { audioFactory = browserAudio, socketFactory = (u: string) => new WebSocket(u) as unknown as SocketLike } = options;
   const [snap, setSnap] = React.useState<Snapshot | null>(null);
-  const [live, setLive] = React.useState<{ asked: string; answer: string; interim: string } | null>(null);
+  const [live, setLive] = React.useState<{ asked: string; answer: string; interim: string; cut: boolean } | null>(null);
   const client = React.useRef<VoiceClient | null>(null);
   const audio = React.useRef<AudioIO | null>(null);
   const token = React.useRef<{ value: string; at: number } | null>(null);
@@ -77,9 +87,10 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
    * per kind (its pieces are joined by the client), so a caption can still grow after it was first seen. A turn joins the thread when the next one begins or when the assistant listens again; the floating circle and the live line follow.
    */
   const onChange = (next: Snapshot) => {
-    const turns: { asked: string; answer: string; upto: number }[] = [];
+    const turns: { asked: string; answer: string; upto: number; cut: boolean }[] = [];
     let asked = "";
     let answer = "";
+    let cut = false; // an answer of this turn was cut off by the person
     let partialUser: string | null = null;
     let partialAsst = "";
     let lastId = flushedId.current;
@@ -87,27 +98,32 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
       if (c.id <= flushedId.current) continue;
       if (c.who === "user") {
         if (answer !== "") {
-          turns.push({ asked, answer, upto: lastId }); // an answer is complete when the person speaks again
+          turns.push({ asked, answer, upto: lastId, cut }); // an answer is complete when the person speaks again
           asked = "";
           answer = "";
+          cut = false;
         }
         if (c.final) {
           asked = c.text;
           partialUser = null;
         } else partialUser = c.text;
-      } else if (c.final) answer = answer !== "" ? `${answer}\n\n${c.text}` : c.text;
-      else partialAsst = c.text;
+      } else {
+        if (c.cut) cut = true;
+        if (c.final) answer = answer !== "" ? `${answer}\n\n${c.text}` : c.text;
+        else partialAsst = c.text;
+      }
       lastId = c.id;
     }
     if (partialUser === null && (asked !== "" || answer !== "") && (next.phase === "ended" || (next.state === "listening" && answer !== ""))) { // (a question alone waits for its answer: the state may still say "listening" for a moment after the words are final)
-      turns.push({ asked, answer, upto: lastId });
+      turns.push({ asked, answer, upto: lastId, cut });
       asked = "";
       answer = "";
+      cut = false;
     }
     for (const t of turns) {
       const mine = next.sources.slice(sourcesSeen.current).map((x) => ({ label: x.label, href: null }));
       sourcesSeen.current = next.sources.length;
-      addExchange({ asked: t.asked, heardByVoice: true, answer: t.answer, sources: mine, drafts: [], errorCode: null, failed: false, task: null, plan: next.plan });
+      addExchange({ asked: t.asked, heardByVoice: true, answer: t.answer, interrupted: t.cut, sources: mine, drafts: [], errorCode: null, failed: false, task: null, plan: next.plan });
       flushedId.current = t.upto;
     }
     // an answer to a plan (the owner's tap, or a spoken "yes" the API recognised): the card in the thread shows its state
@@ -119,7 +135,7 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     setVoiceOrb(next.phase === "ended" ? null : next.state === "listening" ? "listen" : next.state === "speaking" ? "speak" : next.state === "thinking" || next.phase === "connecting" ? "think" : null);
     const shownAsked = partialUser ?? asked;
     const shownAnswer = partialAsst !== "" ? (answer !== "" ? `${answer}\n\n${partialAsst}` : partialAsst) : answer;
-    setLive(next.phase !== "ended" && (shownAsked !== "" || shownAnswer !== "") ? { asked: shownAsked, answer: shownAnswer, interim: partialUser ?? "" } : null);
+    setLive(next.phase !== "ended" && (shownAsked !== "" || shownAnswer !== "") ? { asked: shownAsked, answer: shownAnswer, interim: partialUser ?? "", cut } : null);
     if (next.conversationId) session.adoptConversation(next.conversationId); // typed turns after a spoken one are the same conversation
     setSnap(next);
   };
@@ -128,7 +144,7 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     if (client.current && snap && snap.phase !== "ended") return;
     if (token.current === null || Date.now() - token.current.at > TOKEN_FRESH_MS) {
       const out = await askVoiceToken(tokenUrl);
-      if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false, plan: null, decided: [], voice: null, conversationId: null, problem: null });
+      if (!out.ok) return setSnap({ phase: "ended", state: null, step: null, captions: [], sources: [], language, end: "signin", micDenied: false, plan: null, decided: [], voice: null, conversationId: null, problem: null, sessionSeconds: null, readyAt: null });
       token.current = { value: out.token, at: Date.now() };
     }
     flushedId.current = 0;
@@ -155,5 +171,32 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     const id = setTimeout(() => client.current?.stop(), LIVE_SILENCE_MS);
     return () => clearTimeout(id);
   }, [listening, heardLast]);
-  return { active, state: snap?.state ?? null, step: snap?.step ?? null, interim: live?.interim ?? "", live: live ? { asked: live.asked, answer: live.answer } : null, end: snap?.end ?? null, problem: snap?.problem ?? null, micDenied: snap?.micDenied ?? false, voice: snap?.voice ?? null, start, stop, bargeIn, analyser };
+  // a clock for the screen while a conversation is open: the check-in after a quiet spell and the warning before the time limit (read once a second, from the clock, never during a render)
+  const quietSince = React.useRef(0); // when the quiet began: a new word, or the assistant finishing, restarts it
+  React.useEffect(() => {
+    if (listening) quietSince.current = Date.now();
+  }, [listening, heardLast]);
+  const [clock, setClock] = React.useState<{ quietMs: number; left: number | null }>({ quietMs: 0, left: null });
+  const sessionSeconds = snap?.sessionSeconds ?? null;
+  const readyAt = snap?.readyAt ?? null;
+  React.useEffect(() => {
+    if (!active) return;
+    const id = setInterval(() => {
+      const t = Date.now();
+      setClock({ quietMs: listening ? t - quietSince.current : 0, left: sessionSeconds !== null && readyAt !== null ? Math.round(sessionSeconds - (t - readyAt) / 1000) : null });
+    }, 1000);
+    return () => clearInterval(id);
+  }, [active, listening, sessionSeconds, readyAt]);
+  const checkIn = listening && clock.quietMs >= LIVE_CHECKIN_MS ? Math.max(0, Math.ceil((LIVE_SILENCE_MS - clock.quietMs) / 1000)) : null;
+  const sessionLeft = active && clock.left !== null && clock.left > 0 && clock.left <= LIVE_WARN_S ? clock.left : null;
+  // never listen in the background (D4, D6): the microphone is off the moment the tab is hidden
+  React.useEffect(() => {
+    if (!active) return;
+    const onHide = () => {
+      if (document.visibilityState === "hidden") client.current?.stop();
+    };
+    document.addEventListener("visibilitychange", onHide);
+    return () => document.removeEventListener("visibilitychange", onHide);
+  }, [active]);
+  return { active, state: snap?.state ?? null, step: snap?.step ?? null, interim: live?.interim ?? "", live: live ? { asked: live.asked, answer: live.answer, cut: live.cut } : null, end: snap?.end ?? null, problem: snap?.problem ?? null, micDenied: snap?.micDenied ?? false, voice: snap?.voice ?? null, connecting: snap?.phase === "connecting", checkIn, sessionLeft, start, stop, bargeIn, analyser };
 }

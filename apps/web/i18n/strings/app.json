@@ -74787,5 +74787,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.live.paused": {
+  "en": "Paused",
+  "te": "ఆగింది",
+  "hi": "रुका है",
+  "kn": "ನಿಲ್ಲಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.live.mic": {
+  "en": "The microphone is on",
+  "te": "మైక్రోఫోన్ ఆన్‌లో ఉంది",
+  "hi": "माइक्रोफ़ोन चालू है",
+  "kn": "ಮೈಕ್ರೋಫೋನ್ ಆನ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.live.checkin": {
+  "en": "Still there? Say something, or Live talk ends in {n} s.",
+  "te": "ఇంకా ఉన్నారా? ఏదైనా చెప్పండి, లేకపోతే Live talk {n} సెకన్లలో ముగుస్తుంది.",
+  "hi": "क्या आप हैं? कुछ बोलिए, वरना Live talk {n} सेकंड में खत्म हो जाएगा।",
+  "kn": "ಇನ್ನೂ ಇದ್ದೀರಾ? ಏನಾದರೂ ಹೇಳಿ, ಇಲ್ಲವಾದರೆ Live talk {n} ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಮುಗಿಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.live.timer": {
+  "en": "Live talk ends in {time}. Start it again after.",
+  "te": "Live talk {time} లో ముగుస్తుంది. తర్వాత మళ్లీ మొదలుపెట్టండి.",
+  "hi": "Live talk {time} में खत्म होगा। बाद में फिर से शुरू करें।",
+  "kn": "Live talk {time} ರಲ್ಲಿ ಮುಗಿಯುತ್ತದೆ. ನಂತರ ಮತ್ತೆ ಶುರು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.live.interrupted": {
+  "en": "Interrupted",
+  "te": "మధ్యలో ఆపారు",
+  "hi": "बीच में रोका",
+  "kn": "ಮಧ್ಯದಲ್ಲಿ ನಿಲ್ಲಿಸಿದಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.live.typeinstead": {
+  "en": "Type instead",
+  "te": "బదులుగా టైప్ చేయండి",
+  "hi": "इसके बजाय टाइप करें",
+  "kn": "ಬದಲಿಗೆ ಟೈಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

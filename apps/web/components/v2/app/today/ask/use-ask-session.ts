@@ -43,7 +43,7 @@ export function insideWorkspace(href: string, base: string): string | null {
 export type AskPhase = "idle" | "asking" | "done" | "error";
 export type AskProblem = RecorderProblem | null;
 /** One question and its answer, as the thread keeps it. */
-export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null };
+export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The person spoke over the spoken answer: only part of it was heard (the thread marks it "Interrupted"). */ interrupted?: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null };
 
 export type AskSessionOptions = {
   lang: string;
