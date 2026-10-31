@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_vali
 
 from app.crm.models import ApiUuid
 
-SourceTag = Literal["indiamart", "justdial", "99acres", "magicbricks", "housing", "meta_lead_ads", "website_form", "webhook", "excel_upload", "google_sheet", "pasted_list", "vcard"]
+SourceTag = Literal["indiamart", "justdial", "99acres", "magicbricks", "housing", "meta_lead_ads", "website_form", "webhook", "email_forward", "excel_upload", "google_sheet", "pasted_list", "vcard"]
 Portal = Literal["indiamart", "justdial", "99acres", "magicbricks", "housing"]
 SourceKind = Literal["website_form", "webhook", "email_forward", "meta_lead_ads", "indiamart"]
 ReadKind = Literal["file", "paste", "vcard", "sheet"]
@@ -287,7 +287,7 @@ class MailIn(_Strict):
 
 
 class MailOut(_Strict):
-    status: Literal["received", "unrecognised"]
+    status: Literal["received", "unrecognised", "ignored"]
 
 
 # ---- the Sources page (job EB part B)

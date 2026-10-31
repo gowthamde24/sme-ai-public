@@ -91,6 +91,8 @@ export async function listTemplates(token: string, tenantId: string): Promise<Te
 export interface Conversation {
   lead_id: string;
   name: string | null;
+  /** What the API calls the customer: the name, else the phone, else "New enquiry" (never an internal id); absent from an older API. */
+  display_name?: string | null;
   company: string | null;
   last_at: string;
   last_direction: "in" | "out";
@@ -123,6 +125,7 @@ export interface ThreadItem {
 export interface Thread {
   lead_id: string;
   name: string | null;
+  display_name?: string | null;
   stopped: boolean;
   whatsapp_consent: "unknown" | "granted" | "withdrawn";
   window_open: boolean;
@@ -140,6 +143,7 @@ export function parseConversationPage(json: unknown): ConversationPage {
       return {
         lead_id: uuid(r.lead_id, "lead_id"),
         name: optStr(r.name, "name", 200),
+        display_name: optStr(r.display_name, "display_name", 200),
         company: optStr(r.company, "company", 200),
         last_at: iso(r.last_at, "last_at"),
         last_direction: oneOf(r.last_direction, ["in", "out"] as const, "last_direction"),
@@ -158,6 +162,7 @@ export function parseThread(json: unknown): Thread {
   return {
     lead_id: uuid(x.lead_id, "lead_id"),
     name: optStr(x.name, "name", 200),
+    display_name: optStr(x.display_name, "display_name", 200),
     stopped: bool(x.stopped, "stopped"),
     whatsapp_consent: oneOf(x.whatsapp_consent, ["unknown", "granted", "withdrawn"] as const, "whatsapp_consent"),
     window_open: bool(x.window_open, "window_open"),

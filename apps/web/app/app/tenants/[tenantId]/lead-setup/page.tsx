@@ -35,7 +35,7 @@ import { leadContext } from "../lead-context";
 import { chooseVoiceAction, chooseVoiceGenderAction } from "../voice-picker-actions";
 import { addFactAction, addFileAction, addPasteAction, decideFactAction, discardSourceAction, draftFactsAction, editFactAction, resetPlaybookAction, savePlaybookAction } from "../lead-setup-actions";
 
-export const metadata = { title: `Set up Lead Desk · ${BRAND_NAME}` };
+export const metadata = { title: `Set up Leads · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const pick = (v: string | string[] | undefined): string | undefined => (Array.isArray(v) ? v[0] : v);

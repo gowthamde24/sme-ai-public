@@ -14,6 +14,7 @@ from datetime import datetime
 from typing import Any, Protocol
 
 from app.catalogue.storage import CHANNEL_URL_SECONDS, StorageClient
+from app.display_name import real_name
 from app.errors import ApiError
 from app.outbox.adapter import (
     AudioClip,
@@ -90,7 +91,7 @@ def _customer(row: dict[str, Any]) -> tuple[str | None, str | None]:
     if not isinstance(company, dict):
         return None, None
     name, city = company.get("name"), company.get("city")
-    return (name if isinstance(name, str) else None, city if isinstance(city, str) else None)
+    return (real_name(name), city if isinstance(city, str) else None)
 
 
 def _send_context(raw: Any) -> SendContext | None:

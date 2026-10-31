@@ -1,5 +1,5 @@
 [All leads](/app/tenants/22222222-2222-2222-2222-222222222222/review)
-# Lead
+# New enquiry
 Being looked at
 {label="About this lead"}
 ## About this lead

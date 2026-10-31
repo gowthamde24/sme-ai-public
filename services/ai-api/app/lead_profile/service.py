@@ -219,7 +219,7 @@ class LeadProfileService:
         for name in _TEXT_FIELDS:
             value = entry.get(name)
             clean = rules.clean_value(value, rules.MAX[name]) if isinstance(value, str) else None
-            if clean is None:
+            if clean is None or rules.has_link(clean):
                 continue
             if any(n not in digits for n in _DIGITS.findall(clean.replace(",", ""))):
                 continue
@@ -229,3 +229,8 @@ class LeadProfileService:
         if entry.get("language") in ("en", "te", "hi", "kn", "ta", "ml"):
             fields["language"] = str(entry["language"])
         return fields
+
+
+def verified_fields(entry: dict[str, Any], text: str) -> dict[str, str]:
+    """What of a model's answer about `text` may be stored (see LeadProfileService._verified)."""
+    return LeadProfileService._verified(entry, text)  # noqa: SLF001

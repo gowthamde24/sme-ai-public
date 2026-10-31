@@ -33,9 +33,9 @@ def test_every_language_has_the_nine_numbered_lines_and_the_often_used_ones() ->
         assert [label for label, _ in lines[:8]] == ["Opening", "Stock + photos", "Price answer", "\"Call me later\"", "\"Not interested\" close", "School admission", "Delivery", "Reminder"], lang
 
 
-def test_telugu_is_the_owners_own_approved_text_and_the_rest_are_drafts() -> None:
-    assert register.status("te") == "approved"
-    assert all(register.status(lang) == "draft" for lang in ("en", *OTHER))
+def test_telugu_and_kannada_are_approved_and_the_rest_are_drafts() -> None:
+    assert register.status("te") == "approved" and register.status("kn") == "approved"   # Kannada: a native reviewer, 30 Oct 2026
+    assert all(register.status(lang) == "draft" for lang in ("en", "hi", "ta", "ml"))
     te = [text for _, text in register.examples("te")]
     assert te[0] == "నమస్కారం అండీ, నేను లక్ష్మి సారీస్ నుంచి AI assistant ని. ఒక్క నిమిషం మాట్లాడొచ్చా?"
     assert "రెండు వేల ఆరు వందలండీ" in te[2], "a price is said the way people say it"

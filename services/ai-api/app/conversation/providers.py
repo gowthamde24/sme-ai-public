@@ -46,6 +46,10 @@ class SarvamRealtimeStt:
     def __repr__(self) -> str:
         return f"SarvamRealtimeStt(model={self._model})"
 
+    def set_silence_ms(self, ms: int) -> None:
+        """The quiet that ends a turn, for the NEXT turn (the speaker's own pause, learned in the session)."""
+        self._silence_ms = int(ms)
+
     async def events(self, frames: AsyncIterator[bytes]) -> AsyncIterator[SttEvent]:
         query = urlencode({"language_code": "auto" if self._language == "auto" else TAGS.get(self._language, "unknown"), "model": self._model, "stream_type": self._stream_type, "silence_duration_ms": self._silence_ms, "min_speech_duration_ms": self._min_speech_ms, "sample_rate": STT_RATE, **({"mode": self._mode} if self._mode else {}), "encoding": "linear16"})
         try:

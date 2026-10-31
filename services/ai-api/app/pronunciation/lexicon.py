@@ -34,7 +34,10 @@ class Entry:
     aliases: tuple[str, ...] = ()                                    # other spellings of it
     sounds_like: Mapping[str, str] = field(default_factory=dict)   # a respelling per voice language
     phonemes: Mapping[str, str] = field(default_factory=dict)      # an engine's phoneme form per voice language (cartesia)
-    verified: bool = False
+    verified: frozenset[str] = frozenset()                          # the languages whose spelling/sound a native reader or the owner has listened to and agreed; the rest are drafts
+
+    def is_verified(self, language: str) -> bool:
+        return language in self.verified
 
     def spellings(self) -> tuple[str, ...]:
         return tuple(dict.fromkeys(s for s in (self.word, *self.aliases, *self.forms.values()) if s and s.strip()))
@@ -62,7 +65,13 @@ def _clean_entry(raw: Mapping[str, object]) -> Entry:
     aliases = raw.get("aliases") or []
     if not isinstance(aliases, list) or not all(isinstance(a, str) and a.strip() for a in aliases):
         raise ValueError(f"lexicon: aliases of {word!r} must be a list of words")
-    return Entry(word=word, kind=str(raw.get("kind") or "word"), forms=mapping("forms"), aliases=tuple(aliases), sounds_like=mapping("sounds_like"), phonemes=mapping("phonemes"), verified=bool(raw.get("verified")))
+    forms, sounds_like, phonemes = mapping("forms"), mapping("sounds_like"), mapping("phonemes")
+    verified = raw.get("verified") or []
+    if verified is True:   # the older form: everything the entry has was agreed
+        verified = sorted({*forms, *sounds_like, *phonemes})
+    if not isinstance(verified, list) or not all(isinstance(v, str) and v in LANGUAGES for v in verified):
+        raise ValueError(f"lexicon: verified of {word!r} must be a list of language codes")
+    return Entry(word=word, kind=str(raw.get("kind") or "word"), forms=forms, aliases=tuple(aliases), sounds_like=sounds_like, phonemes=phonemes, verified=frozenset(verified))
 
 
 def load(path: str | Path | None = None) -> tuple[Entry, ...]:

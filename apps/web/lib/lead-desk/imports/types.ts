@@ -2,7 +2,7 @@
  * Lead imports and the sheets kept in sync (night 4, Lead Desk, items 3; contract-lead-sources.md): the words of the wire, the checks of what the browser sends, and the answers the screens draw. The shapes mirror the API's
  * generated models (`services/ai-api/app/lead_sources/models.py`): a body that is not exactly the contract is refused here, before it leaves the server. Pure (no server import): the client components import the types only.
  */
-export const SOURCE_TAGS = ["indiamart", "justdial", "99acres", "magicbricks", "housing", "meta_lead_ads", "website_form", "webhook", "excel_upload", "google_sheet", "pasted_list", "vcard"] as const;
+export const SOURCE_TAGS = ["indiamart", "justdial", "99acres", "magicbricks", "housing", "meta_lead_ads", "website_form", "webhook", "email_forward", "excel_upload", "google_sheet", "pasted_list", "vcard"] as const;
 export type SourceTag = (typeof SOURCE_TAGS)[number];
 export const PORTALS = ["indiamart", "justdial", "99acres", "magicbricks", "housing"] as const;
 export type Portal = (typeof PORTALS)[number];

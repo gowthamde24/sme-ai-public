@@ -99,6 +99,7 @@ export interface ReportRow {
   recording_url?: string | null;
   simulated?: boolean;
   message_status: string | null;
+  display_name: string;
 }
 
 export interface ReportTotals {
@@ -114,6 +115,7 @@ export interface ReportTotals {
 export interface SampleContact {
   contact_id: string;
   name: string | null;
+  display_name: string;
 }
 
 export interface TaskContactOut {
@@ -127,6 +129,7 @@ export interface TaskContactOut {
   outcome_category: string | null;
   captured: Record<string, unknown> | null;
   simulated?: boolean;
+  display_name: string;
 }
 
 export interface TaskContactsOut {

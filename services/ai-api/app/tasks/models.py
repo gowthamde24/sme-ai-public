@@ -14,11 +14,13 @@ from pydantic import (
     ConfigDict,
     Field,
     StringConstraints,
+    computed_field,
     field_validator,
     model_validator,
 )
 
 from app.crm.models import ApiUuid
+from app.display_name import lead_title, without_display_name
 
 Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
 TemplateId = Literal["call_new_leads", "reengage_old_leads", "confirm_appointments", "collect_feedback", "payment_reminder", "supplier_price_enquiry", "offer_invite", "custom"]
@@ -160,6 +162,16 @@ class SampleContact(_Strict):
     contact_id: uuid.UUID
     name: str | None
 
+    @model_validator(mode="before")
+    @classmethod
+    def _ignore_display_name(cls, data: object) -> object:
+        return without_display_name(data)
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def display_name(self) -> str:
+        return lead_title(self.name)
+
 
 class Unmatched(_Strict):
     name: str | None
@@ -234,6 +246,16 @@ class TaskContactOut(_Strict):
     captured: dict[str, Any] | None
     simulated: bool = True
 
+    @model_validator(mode="before")
+    @classmethod
+    def _ignore_display_name(cls, data: object) -> object:
+        return without_display_name(data)
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def display_name(self) -> str:
+        return lead_title(self.name, None, self.phone_last4)
+
 
 class TaskContactsOut(_Strict):
     contacts: list[TaskContactOut]
@@ -269,6 +291,16 @@ class ReportRow(_Strict):
     recording_url: str | None = None
     simulated: bool = True
     message_status: str | None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _ignore_display_name(cls, data: object) -> object:
+        return without_display_name(data)
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def display_name(self) -> str:
+        return lead_title(self.name, None, self.phone_last4)
 
 
 class ReportTotals(_Strict):

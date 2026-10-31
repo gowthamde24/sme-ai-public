@@ -101,12 +101,22 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
   if [ "${API_LEAD_INTAKE:-0}" = 1 ]; then
     LI_ENV="LEAD_INBOUND_DOMAIN=${LEAD_INBOUND_DOMAIN:-leads.stack19.com},SCHEDULER_EMAIL=${SCHEDULER_EMAIL:-scheduler@demo.example.test},PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://sme-api-620338396268.asia-south1.run.app}"
     LI_SECRETS=",LEAD_INBOUND_SECRET=sme-lead-inbound-secret:latest,SCHEDULER_PASSWORD=sme-scheduler-password:latest"
+    # leads.stack19.com receives through Resend (owner, 30 Oct 2026): POST /v1/lead-intake/resend. The leads key is sme-resend-leads-api-key, NOT sme-resend-api-key (that one SENDS the app's e-mails and is passed as RESEND_API_KEY
+    # below); the webhook's signing secret is sme-resend-webhook-secret. Both are mounted only when they exist and sme-api-run can read them, so a deploy never fails on a missing one.
+    if gcloud secrets describe sme-resend-leads-api-key --project "$PROJECT_ID" >/dev/null 2>&1 && gcloud secrets describe sme-resend-webhook-secret --project "$PROJECT_ID" >/dev/null 2>&1; then
+      LI_SECRETS="$LI_SECRETS,LEAD_RESEND_API_KEY=sme-resend-leads-api-key:latest,LEAD_RESEND_WEBHOOK_SECRET=sme-resend-webhook-secret:latest"
+    fi
   fi
   RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=0 \
     EXTRA_ENV="$WA_ENV,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam,AUTH_GOOGLE_CLIENT_ID=620338396268-k9tj60ci8equ4lsc120djtggj87ph66s.apps.googleusercontent.com" \
     EXTRA_ENV_2="$EXTRA_ENV_2${LI_ENV:+,$LI_ENV}" \
     EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS$LI_SECRETS" \
     ./deploy/cloudrun.sh api $execute
+fi
+# The nightly pronunciation round trip (docs/runbooks/pronunciation-nightly-qa.md) is a Cloud Run job on the API's image, created by the owner. Once it exists, every API deploy moves it to the new image, so each night tests the
+# lexicon and the speech path that are live. Nothing happens when the job is not there.
+if { [ "$what" = "api" ] || [ "$what" = "all" ]; } && [ -n "$execute" ] && gcloud run jobs describe sme-pron-qa --project "$PROJECT_ID" --region "$REGION" >/dev/null 2>&1; then
+  gcloud run jobs update sme-pron-qa --project "$PROJECT_ID" --region "$REGION" --image "$REGION-docker.pkg.dev/$PROJECT_ID/${REPO:-sme}/api:$TAG"
 fi
 if [ "$what" = "web" ] || [ "$what" = "all" ]; then
   WEB_RUN_SA="sme-web-run@$PROJECT_ID.iam.gserviceaccount.com" ./deploy/cloudrun.sh web $execute
@@ -116,6 +126,12 @@ if [ "$what" = "worker" ] || [ "$what" = "all" ]; then
   # Run with WORKER_AUTO_REPLY=1 once that is granted; without it the worker still sends (WhatsApp adapter, fenced) but does not draft replies.
   WORKER_AR_ENV="" WORKER_AR_SECRETS=""
   if [ "${WORKER_AUTO_REPLY:-0}" = 1 ]; then WORKER_AR_ENV=",AUTO_REPLY_ENABLED=true,AUTO_REPLY_MODEL=claude-haiku-5-5"; WORKER_AR_SECRETS=",ANTHROPIC_API_KEY=sme-anthropic-api-key:latest"; fi
+  # The AI lead reader (owner decision, 31 Oct 2026): the worker reads a new WhatsApp lead's first message with the light model and fills the profile with low confidence (WORKER_LEAD_READER=1). Same key as the auto-reply; the
+  # database decides who is read (real-data gate open, not a school, agents on, 200 reads a workspace a day).
+  if [ "${WORKER_LEAD_READER:-0}" = 1 ]; then
+    WORKER_AR_ENV="$WORKER_AR_ENV,LEAD_READER_ENABLED=true,LEAD_READER_MODEL=claude-haiku-5-5"
+    case "$WORKER_AR_SECRETS" in *ANTHROPIC_API_KEY*) ;; *) WORKER_AR_SECRETS="$WORKER_AR_SECRETS,ANTHROPIC_API_KEY=sme-anthropic-api-key:latest" ;; esac
+  fi
   # the worker has its own image (the API's code plus ffmpeg, job DJ), built here with the same TAG
   RUN_SA="sme-worker-run@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_SA="sme-tick@$PROJECT_ID.iam.gserviceaccount.com" SCHEDULER_EMAIL="scheduler@demo.example.test" \
     WORKER_EVERY_MINUTES=1 WORKER_OUTBOX_ADAPTER=whatsapp \

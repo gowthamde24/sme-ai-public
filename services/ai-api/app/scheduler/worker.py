@@ -37,6 +37,8 @@ from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
 from app.dpdp.mail import DpdpJobs
 from app.dpdp.wiring import build_dpdp_jobs
+from app.lead_profile.read_runner import LeadReadRunner
+from app.lead_profile.read_wiring import build_lead_reader
 from app.lead_sources.sync import SheetSync
 from app.lead_sources.wiring import build_lead_sources
 from app.notifications.repository import PostgrestNotificationsRepository
@@ -94,6 +96,7 @@ class Worker:
         outreach: OutreachRunner | None = None,
         usage_alerts: UsageAlerts | None = None,
         auto_reply: AutoReplyRunner | None = None,
+        lead_reader: LeadReadRunner | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -126,12 +129,15 @@ class Worker:
         self._usage_alerts = usage_alerts
         # job DY: the assistant's automatic answers to customers' WhatsApp messages (workspaces whose Owner switched it on); runs BEFORE the dispatch so an answer goes in the same tick
         self._auto_reply = auto_reply
+        # owner decision 31 Oct 2026: the AI lead reader fills the profile of a new WhatsApp lead (and of one whose key fields are still empty), low confidence; the database decides who may be read
+        self._lead_reader = lead_reader
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
         try:
             token = self._session.token()
             self._auto_reply_pass(token)
+            self._lead_reader_pass(token)
             result = run_tick(
                 self._repository,
                 self._adapter,
@@ -236,6 +242,16 @@ class Worker:
         except Exception as exc:   # a failed pass never fails the tick: the dispatch of what is already queued must still happen
             logger.error("auto-reply pass crashed: %s", exc.__class__.__name__)
 
+    def _lead_reader_pass(self, token: str) -> None:
+        if self._lead_reader is None:
+            return
+        try:
+            self._lead_reader.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:   # a failed pass never fails the tick
+            logger.error("lead reader pass crashed: %s", exc.__class__.__name__)
+
     def _usage_alerts_pass(self, token: str) -> None:
         if self._usage_alerts is None:
             return
@@ -325,6 +341,7 @@ def build_worker(settings: Settings) -> Worker:
         dpdp_jobs=build_dpdp_jobs(settings, config.rest_url, config.anon_key, _billing_sender(settings)),
         outreach=build_outreach_runner(settings, config.rest_url, config.anon_key),
         auto_reply=build_auto_reply(settings, config.rest_url, config.anon_key),
+        lead_reader=build_lead_reader(settings, config.rest_url, config.anon_key),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),

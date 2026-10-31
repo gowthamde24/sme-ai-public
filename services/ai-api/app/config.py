@@ -175,6 +175,11 @@ class Settings(BaseSettings):
     # The website form, the webhook and a public Google Sheet need no key.
     lead_inbound_domain: str | None = None  # domain of leads+TOKEN@domain; unset: no address
     lead_inbound_secret: SecretStr | None = None  # header of the one global inbound address
+    # Lead e-mails received by Resend (leads.stack19.com): the key that FETCHES a received mail
+    # (secret sme-resend-leads-api-key; NOT RESEND_API_KEY, the key app e-mails are SENT with)
+    # and the webhook's signing secret
+    lead_resend_api_key: SecretStr | None = None
+    lead_resend_webhook_secret: SecretStr | None = None
     lead_dnd_provider: str = "off"  # off | fake (no real Do-Not-Disturb lookup is chosen yet)
     meta_lead_provider: str = "off"  # off | fake | graph (graph only after Meta's app verification)
     meta_app_secret: SecretStr | None = None
@@ -281,6 +286,12 @@ class Settings(BaseSettings):
     # CARTESIA_API_KEY, ANTHROPIC_API_KEY for the default turn model). Caps are per workspace.
     browser_voice_enabled: bool = False
     browser_voice_session_seconds: int = 3600
+    # Live conversation standard (owner, 31 Oct 2026): an unfinished thought is not
+    # answered (A1/A2);
+    # a sound while the assistant speaks pauses it and a cough or a "hmm" lets it go on (B1/B2).
+    # Both default on.
+    browser_voice_semantic_turns: bool = True
+    browser_voice_verify_barge_in: bool = True
     browser_voice_day_seconds: int = 7200
     # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the built-in defaults
     browser_voice_stt_modes: str = ""
@@ -296,6 +307,14 @@ class Settings(BaseSettings):
     # WORKER's environment.
     auto_reply_enabled: bool = False
     auto_reply_model: str | None = None
+
+    # The AI lead reader (owner decision, 31 Oct 2026): the worker reads the first WhatsApp message
+    # of a new lead (and later ones while need/quantity are empty) with a light model and stores
+    # what it understood with LOW confidence. Off until LEAD_READER_ENABLED=true and
+    # ANTHROPIC_API_KEY and a model (LEAD_READER_MODEL, else AUTO_REPLY_MODEL, else LLM_MODEL) are
+    # set in the WORKER's environment.
+    lead_reader_enabled: bool = False
+    lead_reader_model: str | None = None
 
     # Job BY (ADR 0077): web-push to the team's browsers. Off until BOTH are set. The private
     # key is a secret: only from the environment, entered hidden, never logged or returned.

@@ -59,6 +59,10 @@ describe("the inbox", () => {
     expect(JSON.stringify(p)).not.toContain("9876543210");
     expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${T}/conversations?limit=20&before=2026-10-12T09%3A00%3A00Z`, "tok");
   });
+  it("carries the API's display_name of a thread and of a conversation (absent from an older API)", () => {
+    expect(parseConversationPage({ conversations: [{ ...CONV, display_name: "Number ending 3210" }], next_before: null }).conversations[0].display_name).toBe("Number ending 3210");
+    expect(parseConversationPage({ conversations: [CONV], next_before: null }).conversations[0].display_name).toBeNull();
+  });
   it("a conversation with a direction we do not know is a contract error", () => {
     expect(() => parseConversationPage({ conversations: [{ ...CONV, last_direction: "sideways" }], next_before: null })).toThrow(ApiContractError);
   });

@@ -63,6 +63,10 @@ class Guess:
             self.confidence[name] = confidence
 
 
+def has_link(value: str) -> bool:
+    return _URL.search(value) is not None
+
+
 def clean_value(value: str, limit: int) -> str | None:
     """One line, no control characters, cut to the column's limit; None when empty or when it holds a phone number or an e-mail address (a profile never repeats those)."""
     text = " ".join(_CONTROL.sub("", value).split())[:limit].strip(" ,;:-")
