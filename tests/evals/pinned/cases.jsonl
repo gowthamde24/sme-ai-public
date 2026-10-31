@@ -1,0 +1,8 @@
+{"id": "pinned-te-english-heavy-question", "language": "te", "text": "Give me a short summary of what a good follow-up message to a customer who did not reply looks like", "expect_script": "te"}
+{"id": "pinned-te-english-words-only", "language": "te", "text": "Hello, how are you today? Tell me a joke", "expect_script": "te"}
+{"id": "pinned-hi-english-text", "language": "hi", "text": "Tell me a joke about shopkeepers", "expect_script": "hi"}
+{"id": "pinned-kn-english-text", "language": "kn", "text": "How should I greet a new customer?", "expect_script": "kn"}
+{"id": "pinned-en-telugu-text", "language": "en", "text": "ఈ రోజు ఎలా ఉన్నారు? ఒక జోక్ చెప్పండి", "expect_script": "en"}
+{"id": "auto-te-text-stays-te", "language": "auto", "text": "ఈ రోజు చాలా అలసిపోయాను", "expect_script": "te"}
+{"id": "auto-en-text-stays-en", "language": "auto", "text": "I'm so tired today", "expect_script": "en"}
+{"id": "none-en-text-stays-en", "language": null, "text": "Tell me a joke", "expect_script": "en"}
