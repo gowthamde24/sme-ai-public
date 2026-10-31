@@ -59,14 +59,14 @@ let sideAnswer: (body: Record<string, unknown>) => unknown = () => ({ ok: true }
 let reply = "It is **five** pieces.\n- Silk\n- Cotton";
 const orbs: (string | null)[] = [];
 
-function Harness({ onClose = () => undefined, variant }: { onClose?: () => void; variant?: "panel" | "card" }) {
+function Harness({ onClose = () => undefined, variant }: { onClose?: () => void; variant?: "panel" | "card" | "bar" }) {
   const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: {}, availability: "live", transport: ({ question, conversationId }) => (asked.push(question), asks.push({ question, conversationId }), answer(question === "PLAN" || question === "CLARIFY" ? question : reply)), voiceStatus: { available: false, speech: false } });
   React.useEffect(() => {
     orbs.push(s.voiceOrb);
   }, [s.voiceOrb]);
   return <ChatPanel session={s} chips={["Draft a follow-up for today's leads"]} voice={voice} variant={variant} onClose={onClose} voiceOptions={{ audioFactory: audio, socketFactory: () => (sock = new Sock()) }} />;
 }
-const draw = (props: { onClose?: () => void; variant?: "panel" | "card" } = {}) => render(<Harness {...props} />);
+const draw = (props: { onClose?: () => void; variant?: "panel" | "card" | "bar" } = {}) => render(<Harness {...props} />);
 const type = async (text: string) => {
   await act(async () => void fireEvent.change(screen.getByLabelText("Type, dictate, or go Live"), { target: { value: text } }));
 };
@@ -535,5 +535,72 @@ describe("the conversation panel", () => {
     expect(document.querySelector('[data-chat="speaking-in"]')).toHaveTextContent("Speaking in తెలుగు · Ramya");
     await act(async () => void sock.say({ type: "state", state: "listening" }));
     expect(document.querySelector('[data-chat="speaking-in"]')).toBeNull();
+  });
+});
+
+describe("the command bar (owner's design C) and the language pill", () => {
+  beforeEach(() => window.localStorage.removeItem("sme_chat_lang"));
+  it("is a tall input with the plus, the language pill, Dictate and Send inside, the Talk button beside it, the chips under it", () => {
+    draw({ variant: "bar" });
+    const bar = document.querySelector('[data-chat="bar"]') as HTMLElement;
+    const form = bar.querySelector('[data-chat="form"]') as HTMLElement;
+    expect([...form.querySelectorAll("button, select, textarea")].map((e) => e.getAttribute("data-chat") ?? e.tagName.toLowerCase() + (e.getAttribute("type") === "submit" ? ":submit" : ""))).toEqual(["plus", "textarea", "select", "dictate", "button:submit"]);
+    expect(form.className).toContain("min-h-14");
+    expect(form.querySelector("textarea")).toHaveAttribute("placeholder", "Ask or tell your assistant anything…");
+    const talk = bar.querySelector('[data-chat="live-talk"]') as HTMLElement;
+    expect(talk).toHaveTextContent("Talk");
+    expect(form.contains(talk)).toBe(false); // prominent, beside the bar
+    expect(talk.className).toContain("bg-brand");
+    const row = bar.querySelector('[data-chat="bar-row"]') as HTMLElement;
+    expect(row.contains(talk) && row.contains(form)).toBe(true);
+    expect(bar.querySelector('[data-chat="chips"]')!.compareDocumentPosition(row) & Node.DOCUMENT_POSITION_PRECEDING).toBeTruthy(); // the chips come after the bar
+    expect(bar.querySelector('[data-chat="body"]')?.className).toContain("hidden"); // no empty chat area
+  });
+  it("the language pill offers Auto, Telugu, English, Hindi, Kannada, Tamil, Malayalam, starts as the app language and remembers the choice", async () => {
+    draw({ variant: "bar" });
+    const pill = screen.getByRole("combobox", { name: "Language" }) as HTMLSelectElement;
+    expect([...pill.options].map((o) => o.text)).toEqual(["Auto", "తెలుగు", "English", "हिंदी", "ಕನ್ನಡ", "தமிழ்", "മലയാളം"]);
+    expect(pill.value).toBe("en"); // the app's language
+    await act(async () => void fireEvent.change(pill, { target: { value: "te" } }));
+    expect(window.localStorage.getItem("sme_chat_lang")).toBe("te");
+    cleanup();
+    draw({ variant: "bar" });
+    expect((screen.getByRole("combobox", { name: "Language" }) as HTMLSelectElement).value).toBe("te"); // remembered
+  });
+  it("Telugu on the pill: Live talk starts in Telugu with the recogniser pinned to it; Auto: no pin; changing it while talking tells the API", async () => {
+    window.localStorage.setItem("sme_chat_lang", "te");
+    draw({ variant: "bar" });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
+    await act(async () => void sock.onopen?.());
+    expect(JSON.parse(sock.sent[0] as string)).toMatchObject({ type: "start", language: "te", stt_language: "te" });
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "te", limits: {} }));
+    await act(async () => void fireEvent.change(screen.getByRole("combobox", { name: "Language" }), { target: { value: "hi" } }));
+    expect(sock.sent.map((m) => (typeof m === "string" ? JSON.parse(m) : null)).filter(Boolean).some((m) => m.type === "set_language" && m.language === "hi")).toBe(true);
+    await act(async () => void fireEvent.change(screen.getByRole("combobox", { name: "Language" }), { target: { value: "auto" } }));
+    expect(sock.sent.map((m) => (typeof m === "string" ? JSON.parse(m) : null)).filter(Boolean).some((m) => m.type === "set_language" && m.language === "auto")).toBe(true); // Auto un-pins
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Stop live talk" })));
+    cleanup();
+    window.localStorage.setItem("sme_chat_lang", "auto");
+    draw({ variant: "bar" });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
+    await act(async () => void sock.onopen?.());
+    const start = JSON.parse(sock.sent[0] as string);
+    expect(start.language).toBe("en"); // Auto answers in the app's language
+    expect(start).not.toHaveProperty("stt_language");
+  });
+  it("Dictate follows the pill too, and the plus menu holds a new conversation and the history", async () => {
+    window.localStorage.setItem("sme_chat_lang", "kn");
+    draw({ variant: "bar" });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Dictate/ })));
+    await act(async () => void sock.onopen?.());
+    expect(JSON.parse(sock.sent[0] as string)).toMatchObject({ type: "start", mode: "dictate", language: "kn", stt_language: "kn" });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Stop dictating" })));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "More" })));
+    expect(screen.getByRole("menu").querySelectorAll('[role="menuitem"]')).toHaveLength(2);
+  });
+  it("the sheet on a phone has the same pieces: pill, Dictate, Talk, Send", () => {
+    draw({ variant: "panel" });
+    const actions = document.querySelector('[data-chat="actions"]') as HTMLElement;
+    expect([...actions.querySelectorAll("select, button")].map((e) => (e.tagName === "SELECT" ? "pill" : (e.getAttribute("data-chat") ?? e.getAttribute("type"))))).toEqual(["pill", "dictate", "live-talk", "submit"]);
   });
 });

@@ -45,7 +45,7 @@ try {
     console.log(`-- ${w}x${h}: ${JSON.stringify(m)}`);
     ok(`${w}x${h} base font 15px, menu 232px, greeting 32px`, m.root === 15 && Math.round(m.menu) === 232 && Math.round(m.h1) === 32, `root=${m.root} menu=${m.menu} h1=${m.h1}`);
     ok(`${w}x${h} Needs you first, then the command bar, then the other cards`, m.needsTop < m.barTop && (m.othersTop === null || m.barTop < m.othersTop), `needs=${Math.round(m.needsTop)} bar=${Math.round(m.barTop)} others=${Math.round(m.othersTop ?? -1)}`);
-    ok(`${w}x${h} the bar is one compact row, not an empty chat area`, m.barVisible && m.barH <= 120, `height=${Math.round(m.barH)}`);
+    ok(`${w}x${h} the bar is one compact block (orb, tall input, Talk, chips), not an empty chat area`, m.barVisible && m.barH <= 190, `height=${Math.round(m.barH)}`);
     ok(`${w}x${h} the page is at most 1200px wide`, m.main <= 1200 + 1, `main=${Math.round(m.main)}`);
     ok(`${w}x${h} no sideways scroll, no usage meter`, m.scrollW <= m.innerW + 1 && !m.usage);
     if (w === 1366) ok("1366x768 Needs you and the command bar start above the fold", m.needsTop < 768 && m.barTop < 768, `bar top ${Math.round(m.barTop)}`);

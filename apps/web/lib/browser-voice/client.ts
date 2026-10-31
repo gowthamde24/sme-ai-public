@@ -117,8 +117,8 @@ export class VoiceClient {
     this.set({ state: "listening" });
   }
 
-  setLanguage(language: VoiceLang): void {
-    this.set({ language });
+  setLanguage(language: VoiceLang | "auto"): void {
+    if (language !== "auto") this.set({ language });
     if (this.ws && this.ws.readyState === 1) this.ws.send(setLanguageMessage(language));
   }
 

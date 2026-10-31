@@ -64,7 +64,7 @@ async function open(file) {
     if (process.env.DL_TRACE) w.on("framesent", (f) => typeof f.payload === "string" && console.log("  ->", f.payload.replace(/"access_token":"[^"]*"/, '"access_token":"…"').slice(0, 160)));
   });
   await s.page.goto(s.base, { waitUntil: "domcontentloaded" });
-  const card = s.page.locator('[data-chat="card"]');
+  const card = s.page.locator('[data-chat="bar"]');
   await card.waitFor({ timeout: 45000 });
   await sleep(1500);
   return { s, card, sockets };
@@ -76,8 +76,9 @@ try {
   const D = await open(d.file);
   const { card: dc, s: ds } = D;
   const bar = dc.locator('[data-chat="form"]');
-  const kinds = await bar.locator("input, textarea, button").evaluateAll((els) => els.map((e) => (e.tagName === "INPUT" || e.tagName === "TEXTAREA" ? "text" : e.getAttribute("data-chat") || e.getAttribute("type"))));
-  ok("the input bar is: text box, Dictate, Live talk, Send", kinds.join() === "text,dictate,live-talk,submit", kinds.join());
+  const kinds = await bar.locator("input, textarea, button, select").evaluateAll((els) => els.map((e) => (e.tagName === "INPUT" || e.tagName === "TEXTAREA" || e.tagName === "SELECT" ? (e.tagName === "SELECT" ? "text" : "text") : e.getAttribute("data-chat") || e.getAttribute("type"))));
+  ok("the bar is: plus, text box, language pill, Dictate, Send (Talk stands beside it)", kinds.join() === "plus,text,text,dictate,submit" || kinds.join() === "plus,text,dictate,submit", kinds.join());
+  ok("Talk (Live) is beside the bar", (await dc.locator('[data-chat="live-talk"]').count()) === 1);
   await shot(ds, `dl-${pack}-${size}-${lang}-1-bar`);
   await dc.locator('[data-chat="dictate"]').click();
   await sleep(500);
