@@ -315,6 +315,14 @@ class Settings(BaseSettings):
     telephony_live_confirmed: bool = False
     telephony_sandbox_numbers: str = ""
     telephony_max_concurrent: int = 2
+    # Who speaks on a call: haiku (default, steady) | sarvam (Sarvam 105B first, ~320 ms faster
+    # to the first word, behind a first-token deadline that falls back to Haiku).
+    # Measured 31 Oct 2026: docs/runbooks/phone-model.md.
+    telephony_llm: str = "haiku"
+    telephony_first_token_ms: int = 1200
+    # What a started minute of a call costs, in paise: a configurable ESTIMATE (the owner asks
+    # Exotel for the real price), shown as an estimate everywhere.
+    telephony_cost_paise_per_minute: int = 100
     browser_voice_day_seconds: int = 7200
     # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the built-in defaults
     browser_voice_stt_modes: str = ""

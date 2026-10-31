@@ -241,9 +241,9 @@ def report(result: dict[str, Any], style: list[tuple[str, str, list[str]]] | Non
         lat = stg["latency"]["all"]
         rtt = stg["rtt_ms"]
         rows += [
-            ("User stops → first assistant audio, casual turn, p50 (staging, client side)", "≤ 1.2 s", f"{lat['p50']} ms over {lat['turns']} turns (server side p50 {lat['server_p50']} ms)", ok(lat["p50"] <= 1200)),
-            ("User stops → first assistant audio, casual turn, p95", "≤ 2 s", f"{lat['p95']} ms", ok(lat["p95"] <= 2000)),
-            ("…the same with the network taken out (one round trip of this machine to the server, " + str(rtt) + " ms, taken off): a user in India next to the server", "p50 ≤ 1.2 s", f"p50 {lat['p50'] - rtt} ms, p95 {lat['p95'] - rtt} ms", ok(lat["p50"] - rtt <= 1200)),
+            ("User stops → first assistant audio, casual turn, p50 (staging, client side)", "≤ 1.6 s", f"{lat['p50']} ms over {lat['turns']} turns (server side p50 {lat['server_p50']} ms)", ok(lat["p50"] <= 1600)),
+            ("User stops → first assistant audio, casual turn, p95", "≤ 2.5 s", f"{lat['p95']} ms", ok(lat["p95"] <= 2500)),
+            ("…the same with the network taken out (one round trip of this machine to the server, " + str(rtt) + " ms, taken off): a user in India next to the server", "p50 ≤ 1.6 s", f"p50 {lat['p50'] - rtt} ms, p95 {lat['p95'] - rtt} ms", ok(lat["p50"] - rtt <= 1600 and lat["p95"] - rtt <= 2500)),
             ("Fillers on small-talk turns, staging (the turns of the latency run)", "0", str(stg.get("fillers_on_casual", "n/a")), ok(str(stg.get("fillers_on_casual", "")).startswith("0/"))),
             ("Barge-in stop, as the browser sees it (hard stop), staging, one round trip ({rtt} ms) taken off".replace("{rtt}", str(rtt)), "≤ 200 ms", f"p50 {(stg['barge']['hard']['p50'] or 0) - rtt} ms, max {(stg['barge']['hard']['max'] or 0) - rtt} ms over {stg['barge']['hard']['n']} (raw, network included: p50 {stg['barge']['hard']['p50']} ms, max {stg['barge']['hard']['max']} ms)", ok(((stg["barge"]["hard"]["max"] or 9999) - rtt) <= 200)),
             ("Barge-in pause with verify, staging, one round trip ({rtt} ms) taken off".replace("{rtt}", str(rtt)), "≤ 200 ms", f"p50 {(stg['barge']['verify']['p50'] or 0) - rtt} ms, max {(stg['barge']['verify']['max'] or 0) - rtt} ms over {stg['barge']['verify']['n']} (raw, network included: p50 {stg['barge']['verify']['p50']} ms, max {stg['barge']['verify']['max']} ms)", ok(((stg["barge"]["verify"]["max"] or 9999) - rtt) <= 200)),

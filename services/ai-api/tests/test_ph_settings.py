@@ -34,3 +34,14 @@ def test_the_settings_defaults_of_the_app_are_off() -> None:
 
     cfg = Settings()
     assert cfg.telephony_mode == "off" and cfg.telephony_live_confirmed is False and cfg.telephony_sandbox_numbers == ""
+
+
+def test_the_phone_model_choice_defaults_to_haiku_and_keeps_the_deadline_sane() -> None:
+    from app.telephony.settings import phone_llm_choice
+
+    base = {"telephony_llm": "haiku", "telephony_first_token_ms": 1200}
+    assert phone_llm_choice(SimpleNamespace(**base)) == ("haiku", 1.2)
+    assert phone_llm_choice(SimpleNamespace(**{**base, "telephony_llm": "sarvam"})) == ("sarvam", 1.2)
+    assert phone_llm_choice(SimpleNamespace(**{**base, "telephony_llm": "gpt"}))[0] == "haiku"
+    assert phone_llm_choice(SimpleNamespace(**{**base, "telephony_first_token_ms": 10}))[1] == 0.5
+    assert phone_llm_choice(SimpleNamespace(**{**base, "telephony_first_token_ms": 99999}))[1] == 4.0
