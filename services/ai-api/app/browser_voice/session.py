@@ -485,6 +485,8 @@ class VoiceSession:
         except Exception as err:
             log.warning("browser_voice_judge_failed code=%s", getattr(err, "code", type(err).__name__))
         speech_ms = max(0, int((tm.eot_at - tm.speech_start_at) * 1000) - endpoint_ms(self.language)) if tm.eot_at is not None and tm.speech_start_at is not None else 0   # (the recogniser's end comes after the quiet that ends a turn)
+        if text is None and tm.speech_start_at is not None and tm.eot_at is None:
+            speech_ms = max(speech_ms, 1000)   # the judge's time ran out while the voice was STILL going (a sentence longer than the wait): that is a person talking, not a cough (found 1 Nov 2026 on staging)
         pin = self.parts.pinned_language()
         foreign = bool(self.limits.language_gate and pin is not None and foreign_to_pin(text, pin))   # the TV in another language (never a stop word, never Tenglish)
         kind = classify_interruption(speech_ms, text, foreign=foreign, **({"stop_words": self.limits.stop_words} if self.limits.stop_words else {}))
