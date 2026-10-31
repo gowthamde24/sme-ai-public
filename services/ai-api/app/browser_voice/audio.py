@@ -16,6 +16,7 @@ IN_RATE = 16000
 OUT_RATE = 24000
 MAX_BUFFERED_FRAMES = 1500  # about 30 s of 20 ms frames: more than that means the loop is not reading, and the oldest frames go
 PREROLL_S = 0.3
+SLICE_S = 0.10   # a paced write goes out in slices of this much audio
 
 
 class FrameBus:
@@ -63,8 +64,19 @@ class FrameBus:
 class BrowserPlayout:
     """`send_audio(pcm)` and `send_stop()` are the socket's two operations."""
 
-    def __init__(self, send_audio: Callable[[bytes], Awaitable[None]], send_stop: Callable[[], Awaitable[None]], clock: Callable[[], float] = time.monotonic) -> None:
+    def __init__(
+        self,
+        send_audio: Callable[[bytes], Awaitable[None]],
+        send_stop: Callable[[], Awaitable[None]],
+        clock: Callable[[], float] = time.monotonic,
+        *,
+        ahead_s: float | None = None,
+        sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
+    ) -> None:
         self._send_audio, self._send_stop, self._clock = send_audio, send_stop, clock
+        # audio pacing (owner decision, 31 Oct 2026): the server sends no more than `ahead_s` of audio ahead of what the browser has played. A barge-in stop then does not wait behind seconds of audio that
+        # were already in the socket (the stop message arrived ~500 ms late), and what a pause cuts off is at most that much. None: send as fast as the voice produces it (the phone loop, the old behaviour).
+        self._ahead_s, self._sleep = ahead_s, sleep
         self._until = 0.0  # when the browser will have played everything sent so far
         self.bytes_out = 0
 
@@ -77,10 +89,24 @@ class BrowserPlayout:
         return max(0.0, self._until - self._clock())
 
     async def write(self, pcm: bytes) -> None:
-        now = self._clock()
-        self._until = max(self._until, now) + len(pcm) / 2 / OUT_RATE
-        self.bytes_out += len(pcm)
-        await self._send_audio(pcm)
+        if self._ahead_s is None:
+            now = self._clock()
+            self._until = max(self._until, now) + len(pcm) / 2 / OUT_RATE
+            self.bytes_out += len(pcm)
+            await self._send_audio(pcm)
+            return
+        step = int(OUT_RATE * SLICE_S) * 2
+        for i in range(0, len(pcm), step):
+            part = pcm[i : i + step]
+            while True:   # wait until the browser has played enough that this slice is at most `ahead_s` ahead of it
+                room = (self._until - self._clock()) - self._ahead_s
+                if room <= 0.001:   # (a millisecond of slack: waiting for less than the clock can tell would only spin)
+                    break
+                await self._sleep(min(room, 0.05))
+            now = self._clock()
+            self._until = max(self._until, now) + len(part) / 2 / OUT_RATE
+            self.bytes_out += len(part)
+            await self._send_audio(part)
 
     async def stop(self) -> None:
         self._until = 0.0

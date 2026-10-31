@@ -1,7 +1,7 @@
 import { type NextRequest } from "next/server";
 
 import { sendAssistantMessage } from "@/lib/api/assistant";
-import { sendTurn } from "@/lib/api/turns";
+import { REPLY_LANGUAGES, sendTurn, type ReplyLanguage } from "@/lib/api/turns";
 import { browserVoice } from "@/lib/screens/flag";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
@@ -24,7 +24,7 @@ const MAX_BODY = 20_000;
  * The conversation endpoint when the API has it (`POST /assistant/turns`); an API that does not have it yet (404 or 405 before anything was said) answers the same question through the written Ask (`POST /assistant/messages`, which keeps working): the box never stops answering
  * because the two sides are deployed a few minutes apart. Anything else, or a failure after the answer began, is passed on as it is.
  */
-async function* turnOrMessage(token: string, tenantId: string, input: { messageId: string; conversationId: string | null; text: string }) {
+async function* turnOrMessage(token: string, tenantId: string, input: { messageId: string; conversationId: string | null; text: string; language?: ReplyLanguage | null }) {
   let began = false;
   try {
     for await (const event of sendTurn(token, tenantId, input)) {
@@ -61,6 +61,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const text = typeof b?.text === "string" ? b.text.trim() : "";
   const messageId = b?.messageId;
   const conversationId = b?.conversationId;
+  const language: ReplyLanguage | null = typeof b?.language === "string" && (REPLY_LANGUAGES as readonly string[]).includes(b.language) ? (b.language as ReplyLanguage) : null; // the pill; anything else is ignored
   if (!b || text.length < 1 || text.length > 4000 || typeof messageId !== "string" || !isCanonicalUuid(messageId) || (conversationId !== undefined && conversationId !== null && (typeof conversationId !== "string" || !isCanonicalUuid(conversationId)))) {
     return new Response("Bad request", { status: 400 });
   }
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
   // where the conversation panel is on (BROWSER_VOICE) the ONE conversation endpoint decides what the message is (answer, plan to confirm, one question); otherwise the written Ask as before
   const events = browserVoice()
-    ? toAskEvents(turnOrMessage(user.accessToken, tenantId, { messageId, conversationId: typeof conversationId === "string" ? conversationId : null, text }), base, enquiryOfQuote)
+    ? toAskEvents(turnOrMessage(user.accessToken, tenantId, { messageId, conversationId: typeof conversationId === "string" ? conversationId : null, text, ...(language ? { language } : {}) }), base, enquiryOfQuote)
     : toAskEvents(sendAssistantMessage(user.accessToken, tenantId, { messageId, conversationId: typeof conversationId === "string" ? conversationId : undefined, text }), base, enquiryOfQuote);
   return ndjsonResponse(events, (error) => (error instanceof ApiRequestError ? (error.status === 403 ? "forbidden" : knownCode(error.code)) : undefined));
 }

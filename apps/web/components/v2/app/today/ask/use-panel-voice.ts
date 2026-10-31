@@ -8,6 +8,7 @@ import type { EndWord } from "@/lib/browser-voice/protocol";
 import { askVoiceToken } from "@/lib/browser-voice/token";
 
 import type { BrowserVoice } from "./browser-voice";
+import { plainLanguage, type ChatLanguage } from "./chat-language";
 import type { AskSession } from "./use-ask-session";
 
 export type PanelVoiceOptions = { audioFactory?: () => AudioIO; socketFactory?: (url: string) => SocketLike };
@@ -51,7 +52,7 @@ export const LIVE_WARN_S = 120;
  * The spoken conversation INSIDE the chat panel (never full screen): the API's socket (lib/browser-voice) with the person's words shown LIVE as they speak (the interim caption, replaced by the final one) and the reply streaming below as text while it is spoken.
  * A finished turn joins the SAME thread as the typed messages (`session.addExchange`). The floating circle follows what the conversation is doing (`session.setVoiceOrb`). The sign-in is asked for before the tap, so the tap itself can open the microphone.
  */
-export function usePanelVoice(session: AskSession, voice: BrowserVoice, options: PanelVoiceOptions = {}): PanelVoice {
+export function usePanelVoice(session: AskSession, voice: BrowserVoice, options: PanelVoiceOptions = {}, chat: ChatLanguage = plainLanguage(voice.language)): PanelVoice {
   const { audioFactory = browserAudio, socketFactory = (u: string) => new WebSocket(u) as unknown as SocketLike } = options;
   const [snap, setSnap] = React.useState<Snapshot | null>(null);
   const [live, setLive] = React.useState<{ asked: string; answer: string; interim: string; cut: boolean } | null>(null);
@@ -63,7 +64,9 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
   const sourcesSeen = React.useRef(0);
   const decidedSeen = React.useRef(0);
   const { addExchange, setVoiceOrb, setEarlier, setPlan } = session;
-  const { tokenUrl, url, language } = voice;
+  const { tokenUrl, url } = voice;
+  const language = chat.reply; // the pill: what the assistant answers and speaks in (the app's language on Auto)
+  const { stt, pill } = chat; // and the recogniser: pinned to the pill's language, detecting on Auto
 
   React.useEffect(() => {
     let alive = true;
@@ -151,13 +154,17 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     sourcesSeen.current = 0;
     decidedSeen.current = 0;
     audio.current = audioFactory();
-    const c = new VoiceClient({ url, token: token.current.value, language, audio: audio.current, socket: socketFactory, onChange, quietStart: started.current, conversationId: session.conversationId() });
+    const c = new VoiceClient({ url, token: token.current.value, language, audio: audio.current, socket: socketFactory, onChange, quietStart: started.current, conversationId: session.conversationId(), sttLanguage: stt });
     started.current = true;
     client.current = c;
     setSnap(c.snapshot);
     await c.start();
   };
 
+  // the pill changed while talking: the API is told at once (the next words are answered in it)
+  React.useEffect(() => {
+    if (client.current && started.current) client.current.setLanguage(pill === "auto" ? "auto" : language); // Auto un-pins, a language pins it
+  }, [language, pill]);
   const stop = () => client.current?.stop();
   const bargeIn = () => client.current?.bargeIn();
   const analyser = (which: "mic" | "voice") => audio.current?.analyser(which) ?? null;

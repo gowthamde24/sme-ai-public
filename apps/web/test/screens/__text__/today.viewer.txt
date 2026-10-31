@@ -1,6 +1,5 @@
 Tuesday, 6 October
 # Good morning
-[button type=button: Help for this screen]
 {label="Needs you"}
 ## Needs you
 0 0 waiting for you All clear. I will tell you the moment something needs you.

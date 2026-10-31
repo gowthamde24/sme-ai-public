@@ -1,6 +1,5 @@
 # Catalogue
 Your sarees, with photos. Show them to customers or send them in a message. [Add a saree](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
-[button type=button: Help for this screen]
 {role=search} Search by name
 <search name=q label="Search by name" placeholder="Name, fabric or border" maxlength=100 value=zzz>
 [button type=submit: Search]

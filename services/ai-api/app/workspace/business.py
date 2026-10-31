@@ -7,8 +7,8 @@
                                                  with `reason` (pack_data_present, lead_data_present, unknown_type). Audited (the keys, never the values).
   POST  /workspace/logo             Owner, Admin  the BODY is the image (jpeg, png or webp, at most 5 MB); it is re-drawn as a jpeg of at most 1280 px with every piece of metadata dropped.
   POST  /workspace/logo/remove      Owner, Admin
-  GET   /me/profile                 any member   {display_name, language, picture, picture_url, address_as}   `picture` is own (their file), google (the Google photo, the default) or none
-  PATCH /me/profile                 any member   {display_name?, language?, address_as?}   address_as = "How should I address you?" (a word or two; empty clears it)
+  GET   /me/profile                 any member   {display_name, language, picture, picture_url, address_as, preferred_chat_language}   `picture` is own (their file), google (the Google photo, the default) or none
+  PATCH /me/profile                 any member   {display_name?, language?, address_as?, preferred_chat_language?}   address_as = "How should I address you?" (a word or two; empty clears it); preferred_chat_language = the language chosen on the assistant bar (auto, te, en, hi, kn, ta, ml)
   POST  /me/picture                 any member   the BODY is the image (as the logo, at most 320 px)        POST /me/picture/remove
   GET   /people                     any member   [{user_id, display_name, picture, picture_url}] for the menu, the team list and the hand-off messages
 
@@ -90,6 +90,7 @@ class MePatch(_Strict):
     display_name: PersonName | None = None
     language: Language | None = None
     address_as: Annotated[str, StringConstraints(strip_whitespace=True, max_length=30)] | None = None   # "How should I address you?" (a word or two); empty clears it
+    preferred_chat_language: Literal["auto", "te", "en", "hi", "kn", "ta", "ml"] | None = None   # the language pill of the assistant bar; "auto" follows the person's own words
 
     @model_validator(mode="after")
     def _shape(self) -> MePatch:
@@ -104,6 +105,7 @@ class MeOut(_Out):
     picture: Literal["own", "google", "none"]
     picture_url: str | None
     address_as: str | None = None   # how this person wants the assistant to address them; None = the neutral forms only (never sir / madam)
+    preferred_chat_language: str | None = None   # auto, te, en, hi, kn, ta or ml; None = never chosen (auto)
 
 
 class PersonOut(_Out):
@@ -240,7 +242,7 @@ def _me(runtime: Runtime, ctx: TenantContext, row: dict[str, Any]) -> MeOut:
     path = row.get("avatar_path")
     signed = _signed(runtime, ctx.principal.token, ctx.tenant.id, [path] if isinstance(path, str) else [])
     kind, url = _picture(row, signed)
-    return MeOut(display_name=row.get("display_name"), language=row.get("language"), picture=kind, picture_url=url, address_as=row.get("address_as"))
+    return MeOut(display_name=row.get("display_name"), language=row.get("language"), picture=kind, picture_url=url, address_as=row.get("address_as"), preferred_chat_language=row.get("preferred_chat_language"))
 
 
 @router.get("/me/profile", response_model=MeOut)

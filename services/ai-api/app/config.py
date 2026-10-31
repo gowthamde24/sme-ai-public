@@ -292,6 +292,17 @@ class Settings(BaseSettings):
     # Both default on.
     browser_voice_semantic_turns: bool = True
     browser_voice_verify_barge_in: bool = True
+    # Casual Live turns (small talk, general help) on the fast tier, written into the same thread.
+    browser_voice_fast_smalltalk: bool = True
+    # Audio pacing: at most this many ms of audio are sent ahead of what the browser has played.
+    # 0: as fast as the voice makes it.
+    browser_voice_audio_ahead_ms: int = 300
+    # Speculative start (A3): the model starts on a stable, finished-looking partial.
+    browser_voice_speculative: bool = True
+    # Fillers only when the wait is real: after this many ms without answer audio;
+    # never on small talk.
+    browser_voice_filler_after_ms: int = 1800
+    browser_voice_filler_on_casual: bool = False
     browser_voice_day_seconds: int = 7200
     # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the built-in defaults
     browser_voice_stt_modes: str = ""

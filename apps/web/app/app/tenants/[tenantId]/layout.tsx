@@ -16,6 +16,7 @@ import { withModuleWords } from "@/lib/packs/module-words";
 import { FrameDataSlot } from "@/components/v2/app/frame-store";
 import { type Access } from "@/lib/api/billing-access";
 import { isCanonicalUuid } from "@/lib/api/crm";
+import { readMyProfileCached } from "../../me-read";
 import { getLang } from "@/i18n/get-lang";
 import { fetchTenant, publicApiBase } from "@/lib/api/client";
 import { isVoiceLang, voiceSocketUrl, VOICE_LANGS } from "@/lib/browser-voice/protocol";
@@ -63,7 +64,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales)
   const url = browserVoice() && isCanonicalUuid(tenantId) ? voiceSocketUrl(publicApiBase(), tenantId) : null;
   const voice = url && (await mayTalk(user.accessToken, tenantId))
-    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv."))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)) }
+    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv."))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language` }
     : null;
   const topupBanner = isCanonicalUuid(tenantId) ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
   return (

@@ -42,7 +42,7 @@ def bank_lines(language: str, gender: str = "female") -> tuple[str, ...]:
     return MALE_BANK_LINES.get(language, BANK_LINES[language]) if gender == "male" else BANK_LINES[language]
 BANK_DIR = Path(__file__).parent / "data" / "fillers"
 BANK_INDEX = BANK_DIR / "index.json"
-BROWSER_FILLER_AFTER_MS = 700
+BROWSER_FILLER_AFTER_MS = 1800   # the default of BROWSER_VOICE_FILLER_AFTER_MS (owner, 31 Oct 2026: a filler only when the wait is real)
 
 
 class FillerBank:

@@ -945,6 +945,10 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         sessions_per_minute=settings.browser_voice_sessions_per_minute,
         semantic_turns=settings.browser_voice_semantic_turns,
         verify_barge_in=settings.browser_voice_verify_barge_in,
+        audio_ahead_ms=settings.browser_voice_audio_ahead_ms,
+        speculative=settings.browser_voice_speculative,
+        filler_after_ms=settings.browser_voice_filler_after_ms,
+        filler_on_casual=settings.browser_voice_filler_on_casual,
     )
     return BrowserVoice(
         config=voice_catalogue(),
@@ -957,6 +961,9 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         limits=limits,
         ledger=Ledger(limits, PostgrestUsageStore(config.rest_url, config.anon_key)),
         fillers=FillerBank.from_disk(),
+        fast_smalltalk=settings.browser_voice_fast_smalltalk,
+        input_micros_per_mtok=settings.llm_input_micros_per_mtok or 0,
+        output_micros_per_mtok=settings.llm_output_micros_per_mtok or 0,
         allowed_origins=tuple(o.strip() for o in settings.api_cors_origins.split(",") if o.strip()),
         client=httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0)),
     )

@@ -40,15 +40,24 @@ try {
         scrollW: document.documentElement.scrollWidth, innerW: window.innerWidth,
         usage: /% left|AI usage today/i.test(document.querySelector("main")?.innerText ?? ""), // (the menu's usage card moves in the next job)
         barVisible: !!bar && bar.height > 0,
+        barBottom: bar ? bar.bottom : null,
+        rows: document.querySelectorAll("[data-needs-row]").length,
+        rowH: document.querySelector("[data-needs-row]")?.getBoundingClientRect().height ?? null,
+        demo: (() => { const d = document.querySelector('[data-part="guided-demo-start"]')?.getBoundingClientRect(); const a = document.querySelector("aside")?.getBoundingClientRect(); const prof = [...document.querySelectorAll("aside div")].find((e) => /Owner|Admin|Sales|Viewer/.test(e.textContent ?? "") && e.querySelector('[class*="rounded-full"]') && e.getBoundingClientRect().height < 80 && e.getBoundingClientRect().bottom > innerHeight - 140)?.getBoundingClientRect(); return d ? { left: d.left, asideRight: a?.right ?? 0, overlapsProfile: !!prof && !(d.right <= prof.left || d.left >= prof.right || d.bottom <= prof.top || d.top >= prof.bottom) } : null; })(),
+        helpInBar: !!document.querySelector('header [data-help="tip"] button'),
+        helpInPage: !!document.querySelector('main [data-help="tip"]'),
       };
     });
     console.log(`-- ${w}x${h}: ${JSON.stringify(m)}`);
     ok(`${w}x${h} base font 15px, menu 232px, greeting 32px`, m.root === 15 && Math.round(m.menu) === 232 && Math.round(m.h1) === 32, `root=${m.root} menu=${m.menu} h1=${m.h1}`);
     ok(`${w}x${h} Needs you first, then the command bar, then the other cards`, m.needsTop < m.barTop && (m.othersTop === null || m.barTop < m.othersTop), `needs=${Math.round(m.needsTop)} bar=${Math.round(m.barTop)} others=${Math.round(m.othersTop ?? -1)}`);
-    ok(`${w}x${h} the bar is one compact row, not an empty chat area`, m.barVisible && m.barH <= 120, `height=${Math.round(m.barH)}`);
+    ok(`${w}x${h} the bar is one compact block (orb, tall input, Talk, chips), not an empty chat area`, m.barVisible && m.barH <= 190, `height=${Math.round(m.barH)}`);
     ok(`${w}x${h} the page is at most 1200px wide`, m.main <= 1200 + 1, `main=${Math.round(m.main)}`);
     ok(`${w}x${h} no sideways scroll, no usage meter`, m.scrollW <= m.innerW + 1 && !m.usage);
-    if (w === 1366) ok("1366x768 Needs you and the command bar start above the fold", m.needsTop < 768 && m.barTop < 768, `bar top ${Math.round(m.barTop)}`);
+    if (w <= 1366) ok(`${w}x${h} the command bar is fully visible above the fold`, m.barBottom <= h, `bar bottom ${Math.round(m.barBottom)} of ${h}`);
+    ok(`${w}x${h} "Needs you" is compact rows (one line each, at most three) on a desktop`, m.rows >= 1 && m.rows <= 3 + 0 && m.rowH <= 72, `rows=${m.rows} rowH=${Math.round(m.rowH ?? 0)}`);
+    ok(`${w}x${h} "Start demo" does not sit on the profile box in the menu`, m.demo === null || (!m.demo.overlapsProfile && m.demo.left >= m.demo.asideRight), JSON.stringify(m.demo));
+    ok(`${w}x${h} "Help" is a small ? in the top bar, not a button in the page`, m.helpInBar && !m.helpInPage);
     await shot(s, `tl-${pack}-${lang}-${w}x${h}`, { fullPage: false });
   }
   // the conversation under the bar (desktop)

@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { AccountMenu } from "./AccountMenu";
+import { HelpButton } from "./help/HelpButton";
 import { NotificationBell } from "./notify/NotificationBell";
 import { BrandMark } from "./frame-parts";
 import type { Labels } from "./labels";
@@ -21,6 +22,7 @@ export function TopBar({ memberships, labels, email, signOut, mark, children }: 
         <BrandMark px={32} />
       </Link>
       <div className="ml-auto flex items-center gap-2">
+        {current ? <HelpButton base={`/app/tenants/${current.id}`} labels={labels} /> : null}
         {current ? <NotificationBell key={current.id} tenantId={current.id} labels={labels} /> : null}
         {children}
         {current ? null : (
