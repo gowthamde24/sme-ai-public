@@ -664,6 +664,8 @@ class VoiceSession:
                 "engine": tm.tts_engine,
                 "fallback": tm.tts_fallback,
                 "interrupted": tm.interrupted,
+                "speculative": tm.speculative,
+                "held_ms": tm.held_ms,
             }
         )
 

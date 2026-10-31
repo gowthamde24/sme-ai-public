@@ -214,7 +214,7 @@ class Conversation:
 
     # ---- A3: speculative start ---------------------------------------------------------------------------------------------------------------------
 
-    STABLE_S = 0.25   # the words have not changed for this long
+    STABLE_S = 0.15   # the words have not changed for this long
 
     def _note_partial(self, text: str) -> None:
         if not self.can_speculate or self.llm is None:
