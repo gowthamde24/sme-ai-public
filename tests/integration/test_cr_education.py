@@ -367,7 +367,9 @@ def test_the_pending_list_the_late_fees_and_the_reports(school: Any, eval_world:
     assert k["collected_paise"] == 200000 and k["pending_paise"] == 510000 and k["students_pending"] == 1 and k["concessions_paise"] == 120000
     assert [r[0] for r in next(t for t in col["tables"] if t["key"] == "by_programme")["rows"]] == ["Class 5", "Class 6"]
     today = w.client.get(url(a, "/reports/education.today"), headers=bearer(sales)).json()
-    assert {x["key"]: x["value"] for x in today["kpis"]} == {"collected_paise": 200000, "receipts": 1}
+    # the payments carry the day the module was imported (India's calendar); a CI run that crosses midnight IST (18:30 UTC) in between reports a new, empty day (seen 31 Oct 2026, 00:07 IST)
+    same_day = datetime.now(IST).date() == TODAY
+    assert {x["key"]: x["value"] for x in today["kpis"]} == ({"collected_paise": 200000, "receipts": 1} if same_day else {"collected_paise": 0, "receipts": 0})
     for code in ("education.pending", "education.funnel"):
         conforms(w.client.get(url(a, f"/reports/{code}"), headers=bearer(sales)).json(), "ReportOut")
     assert w.client.get(url(a, "/reports/education.collection"), headers=bearer(a.users["viewer"])).status_code == 403

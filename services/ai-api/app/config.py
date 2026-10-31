@@ -303,6 +303,13 @@ class Settings(BaseSettings):
     # never on small talk.
     browser_voice_filler_after_ms: int = 1800
     browser_voice_filler_on_casual: bool = False
+    # AI phone calls (job phone-calls): off | sandbox | live. `live` is refused by the gate
+    # until TELEPHONY_LIVE_CONFIRMED is true (set after the legal answers). In sandbox only the
+    # numbers in TELEPHONY_SANDBOX_NUMBERS (comma separated, +91...) can be rung.
+    telephony_mode: str = "off"
+    telephony_live_confirmed: bool = False
+    telephony_sandbox_numbers: str = ""
+    telephony_max_concurrent: int = 2
     browser_voice_day_seconds: int = 7200
     # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the built-in defaults
     browser_voice_stt_modes: str = ""
