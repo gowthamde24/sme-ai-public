@@ -12,10 +12,12 @@ import { todayWords } from "./today-words";
 import { CALL_ID, MESSAGE_ID, NOW, U, VISIT_ID, WORDS, call, classic, fakeActions, outbox, proposal } from "./today-test-kit";
 import type { NeedsCard, Role } from "./types";
 
+// the tests of the cards draw the full cards at once; a test of the rows says so with `desktop()` (rows are what every screen draws, phone included)
+let compactNext = false;
 const board = (cards: NeedsCard[] | null, { role = "owner" as Role, actions = fakeActions(), waiting = cards?.length ?? null } = {}) => {
   const view = render(
     <NeedsProvider initial={cards} waiting={waiting}>
-      <NeedsYou words={WORDS} role={role} actions={actions} now={NOW} lang="en" />
+      <NeedsYou words={WORDS} role={role} actions={actions} now={NOW} lang="en" compact={compactNext} />
     </NeedsProvider>,
   );
   return { ...view, actions };
@@ -24,7 +26,10 @@ const cardOf = (name: RegExp | string) => screen.getByRole("article", { name });
 const count = () => screen.getByRole("heading", { name: "Needs you" }).parentElement!.querySelector("[data-count]")!;
 
 beforeEach(() => vi.clearAllMocks());
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  compactNext = false;
+});
 
 describe("Needs you: the English gloss of a message in another language (job BE)", () => {
   it("shows an English gloss under the words so the person who approves can read it; none when the message has none", () => {
@@ -212,7 +217,7 @@ describe("Needs you: who sees which buttons", () => {
   it("with no actions given (nothing to call) there are no buttons either", () => {
     render(
       <NeedsProvider initial={[outbox()]} waiting={1}>
-        <NeedsYou words={WORDS} role="owner" actions={null} now={NOW} />
+        <NeedsYou words={WORDS} role="owner" actions={null} now={NOW} compact={false} />
       </NeedsProvider>,
     );
     expect(screen.queryByRole("button")).toBeNull();
@@ -262,18 +267,19 @@ describe("Needs you: empty, unreadable, and the phone", () => {
     expect(screen.getByText("Not available yet")).toBeInTheDocument();
     expect(container.querySelector("[data-count]")).toBeNull();
   });
-  it("on a phone only the two newest show (a desktop three rows), and 'See all' shows the rest (and 'Show fewer' hides them again)", () => {
+  it("at most three rows show (a phone as a desktop), and 'See all' shows the rest (and 'Show fewer' hides them again)", () => {
     const many = [classic(), outbox(), call(), classic({ id: "x2" }), classic({ id: "x3" })].map((c, i) => ({ ...c, key: `k${i}` }) as NeedsCard);
     board(many);
     const items = () => within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("listitem");
-    expect(items().map((li) => (li.className.includes("max-md:hidden") ? "phone-hidden" : li.className.includes("hidden") ? "hidden" : "shown"))).toEqual(["shown", "shown", "phone-hidden", "hidden", "hidden"]);
+    expect(items().map((li) => (li.className.includes("hidden") ? "hidden" : "shown"))).toEqual(["shown", "shown", "shown", "hidden", "hidden"]);
     fireEvent.click(screen.getByRole("button", { name: "See all (5)" }));
     expect(items().some((li) => li.className.includes("hidden"))).toBe(false);
     fireEvent.click(screen.getByRole("button", { name: "Show fewer" }));
-    expect(items().filter((li) => li.className.includes("hidden"))).toHaveLength(3);
+    expect(items().filter((li) => li.className.includes("hidden"))).toHaveLength(2);
   });
-  it("two cards or fewer have no 'See all'", () => {
-    board([classic(), outbox()]);
+  it("three cards or fewer have no 'See all', and there is no explainer paragraph (it is in the ? help)", () => {
+    board([classic(), outbox(), call()]);
+    expect(screen.queryByText(/always wait for you/)).toBeNull();
     expect(screen.queryByRole("button", { name: /See all/ })).toBeNull();
   });
   it("the toast goes away by itself", async () => {
@@ -411,11 +417,9 @@ describe("Needs you: Lead Desk (hot leads, plans, callbacks, limits) and the 'Al
 });
 
 describe("Needs you on a desktop: one compact row per thing (owner 31 Oct)", () => {
-  const desktop = () => (window.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }) as unknown as typeof window.matchMedia);
-  afterEach(() => {
-    // @ts-expect-error back to a test environment without matchMedia
-    delete window.matchMedia;
-  });
+  const desktop = () => {
+    compactNext = true;
+  };
   const rows = () => [...document.querySelectorAll("[data-needs-row]")] as HTMLElement[];
   it("each thing is ONE line: badge, title, a short reason, how long ago, the quick buttons on the right and Details; the three newest show, then See all", () => {
     desktop();
@@ -462,11 +466,9 @@ describe("Needs you on a desktop: one compact row per thing (owner 31 Oct)", () 
 });
 
 describe("the call row on a desktop, as the owner's target draws it", () => {
-  const desktop = () => (window.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }) as unknown as typeof window.matchMedia);
-  afterEach(() => {
-    // @ts-expect-error back to a test environment without matchMedia
-    delete window.matchMedia;
-  });
+  const desktop = () => {
+    compactNext = true;
+  };
   const asked = call({ customer: "Ramesh", request: { reason: "Follow up on the question about the price and a visit.", language: "en" } } as never);
   it("a short badge, 'Name asked for a call · price and visit' on one line, then Approve and Store visit", () => {
     desktop();
@@ -483,7 +485,7 @@ describe("the call row on a desktop, as the owner's target draws it", () => {
     const te = todayWords((k) => (appDict("te") as Record<string, string>)[k] ?? k);
     render(
       <NeedsProvider initial={[asked]} waiting={1}>
-        <NeedsYou words={te} role="owner" actions={fakeActions()} now={NOW} lang="te" />
+        <NeedsYou words={te} role="owner" actions={fakeActions()} now={NOW} lang="te" compact />
       </NeedsProvider>,
     );
     const row = document.querySelector("[data-needs-row]") as HTMLElement;

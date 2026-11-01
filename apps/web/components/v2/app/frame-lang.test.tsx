@@ -47,14 +47,15 @@ describe("the frame in Telugu", () => {
         <main>The page</main>
       </AppFrame>,
     );
-  it("draws the menu words in Telugu, the page area stays English, and a note says the words are machine drafts", () => {
+  it("draws the menu words in Telugu, the page area stays English, and nothing says the words are machine-written (owner, 1 Nov: the review is tracked in the files, never shown)", () => {
     nav.pathname = `/app/tenants/${A}/orders`;
     const { container } = frame("te");
     const menu = screen.getByRole("navigation", { name: "వర్క్‌స్పేస్ మెనూ" });
     expect(within(menu).getByRole("link", { name: "సేల్స్" })).toHaveAttribute("href", `/app/tenants/${A}/quotes`); // Sales: Quotes, Store visits and Orders are its tabs
     expect(container.querySelector("[data-ui='v2']")).toHaveAttribute("lang", "te");
     expect(container.querySelector("#main-content")).toHaveAttribute("lang", "en");
-    expect(screen.getByRole("region", { name: "అనువాద సూచన" })).toHaveTextContent("యంత్రం రాసింది");
+    expect(screen.queryByRole("region", { name: "అనువాద సూచన" })).toBeNull();
+    expect(container.textContent).not.toMatch(/యంత్రం రాసిన|machine/i);
     expect(screen.getByText("The page")).toBeInTheDocument();
   });
   it("draws the words of the new frame in Telugu too: the seven items, the foot and Help", () => {

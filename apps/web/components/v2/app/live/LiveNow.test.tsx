@@ -42,16 +42,19 @@ describe("Live now: the words of a line", () => {
     { type: "quote_draft", who: "C", elapsedS: 2, target: { kind: "quote", id: id(5) } },
   ]);
   it("says what the assistant is doing, the call with its timer, the chats and leads counted", () => {
-    expect(rows.map((r) => r.key)).toEqual(["call", "chats", "quote", "leads"]); // priority order
-    expect(rows.map((r) => lineOf(r, r.elapsedS))).toEqual(["On a call with Ramesh · 2:14", "Replying on WhatsApp · 2 chats", "Drafting a quote", "Reading a new lead"]);
+    expect(rows.map((r) => r.key)).toEqual(["call", "chats", "followups", "quote", "leads"]); // priority order
+    expect(rows.map((r) => lineOf(r, r.elapsedS))).toEqual(["On a call with Ramesh · 2:14", "Replying on WhatsApp · 1 chat", "Sending a follow-up", "Drafting a quote", "Reading a new lead"]);
+    expect(rows.map((r) => lineOf(r, r.elapsedS, undefined, true))[0]).toBe("Calling Ramesh"); // in the pill
   });
   it("a tap opens the one thing it is about, else the list", () => {
     const base = `/app/tenants/${T}`;
-    expect(rows.map((r) => r.href(base))).toEqual([`${base}/tasks/${id(1)}`, `${base}/chats`, `${base}/quotes/${id(5)}`, `${base}/leads/${id(4)}`]);
+    expect(rows.map((r) => r.href(base))).toEqual([`${base}/tasks/${id(1)}`, `${base}/chats/${id(2)}`, `${base}/outbox`, `${base}/quotes/${id(5)}`, `${base}/leads/${id(4)}`]);
   });
   it("no name (a Viewer) and several calls still read plainly", () => {
     expect(lineOf(groupActivity([{ type: "call", who: null, elapsedS: 65, target: null }])[0], 65)).toBe("On a call · 1:05");
     expect(lineOf(groupActivity([{ type: "call", who: "A", elapsedS: 5, target: null }, { type: "call", who: "B", elapsedS: 5, target: null }])[0], 5)).toBe("On 2 calls");
+    expect(lineOf(groupActivity([{ type: "call", who: null, elapsedS: 65, target: null }])[0], 65, undefined, true)).toBe("On a call");
+    expect(lineOf(groupActivity([{ type: "follow_up", who: null, elapsedS: 1, target: null }, { type: "follow_up", who: null, elapsedS: 1, target: null }, { type: "follow_up", who: null, elapsedS: 1, target: null }])[0], 1)).toBe("Sending 3 follow-ups");
   });
 });
 
@@ -62,14 +65,15 @@ describe("Live now: the pill in the top bar", () => {
     expect(fetchMock).not.toHaveBeenCalled();
     expect(document.querySelector("[data-live]")).toBeNull();
   });
-  it("draws nothing before the first answer (no empty box), then a plain grey 'All caught up' when idle (nothing to open)", async () => {
+  it("draws nothing before the first answer (no empty box), then a plain grey 'Watching for leads' when idle (never 'All caught up': what waits for the person is Needs you; nothing to open)", async () => {
     render(<Pill data={ON} />);
     expect(document.querySelector("[data-live]")).toBeNull();
     await settle();
     expect(fetchMock).toHaveBeenCalledWith(`/app/tenants/${T}/activity`, expect.objectContaining({ cache: "no-store" }));
     const pill = document.querySelector('[data-live="pill"]') as HTMLElement;
     expect(pill).toHaveAttribute("data-state", "idle");
-    expect(pill).toHaveTextContent("All caught up");
+    expect(pill).toHaveTextContent("Watching for leads");
+    expect(pill).not.toHaveTextContent("All caught up");
     expect(pill.querySelector("button")).toBeNull();
   });
   it("active: a live dot, the first line, and a list of everything going on that opens from it, each line a link", async () => {
@@ -80,7 +84,7 @@ describe("Live now: the pill in the top bar", () => {
     const pill = document.querySelector('[data-live="pill"]') as HTMLElement;
     expect(pill).toHaveAttribute("data-state", "active");
     const button = pill.querySelector("button") as HTMLButtonElement;
-    expect(button).toHaveTextContent("On a call with Ramesh · 2:14");
+    expect(button).toHaveTextContent("Calling Ramesh"); // short in the pill, with the timer in the list
     expect(button).toHaveAttribute("aria-expanded", "false");
     expect(button.getAttribute("aria-label")).toContain("+1 more");
     expect(screen.queryByRole("region", { name: "Live now" })).toBeNull();
@@ -89,6 +93,7 @@ describe("Live now: the pill in the top bar", () => {
     const links = list.querySelectorAll("a");
     expect(links).toHaveLength(2);
     expect(links[0]).toHaveAttribute("href", `/app/tenants/${T}/tasks/${id(1)}`);
+    expect(links[0]).toHaveTextContent("On a call with Ramesh · 2:14");
     expect(links[1]).toHaveTextContent("Replying on WhatsApp · 1 chat");
     fireEvent.keyDown(document, { key: "Escape" });
     expect(screen.queryByRole("region", { name: "Live now" })).toBeNull();

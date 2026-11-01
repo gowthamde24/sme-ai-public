@@ -45,16 +45,17 @@ function badgeOf(m: OutboxCardMessage | null): { key: string; tone: string } {
 
 type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions | null; lang: string; /** A desktop draws each thing as ONE row (badge, title, short reason, buttons); "Details" opens the whole card in its place. */ compact: boolean };
 
-const rowPrimary = "inline-flex min-h-9 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95 disabled:opacity-60";
-const rowQuiet = "inline-flex min-h-9 items-center justify-center rounded-full border border-edge bg-transparent px-3.5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
+const rowPrimary = "inline-flex min-h-9 max-md:min-h-11 items-center justify-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95 disabled:opacity-60";
+const rowQuiet = "inline-flex min-h-9 max-md:min-h-11 items-center justify-center rounded-full border border-edge bg-transparent px-3.5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
 
 /** One thing that waits, as one line on a desktop (the owner's target, 31 Oct): its badge, "title · reason" as one line, the quick buttons on the right. The words open the whole card (with every button it has); "Details" stays for the keyboard and screen readers. The rows share ONE card (see `NeedsYou`). */
 function CompactRow({ cardKey, tone, label, title, reason, at, ctx, children, onOpen }: { cardKey: string; tone: string; label: string; title: string; reason: string; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
+  // a phone: the badge and the words (two lines at most) on the first line, the buttons on the line under them; a desktop: all on one line
   return (
-    <div data-needs-row={cardKey} data-write className="flex min-h-14 items-center gap-3 px-4 py-2">
+    <div data-needs-row={cardKey} data-write className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 md:min-h-14 md:flex-nowrap md:py-2">
       <span className={`${badge} shrink-0 !py-0.5 !text-xs ${tone}`}>{label}</span>
-      <div onClick={onOpen} title={`${title} · ${reason} · ${whenLabel(at, ctx.now)}`} className="flex min-w-0 flex-1 cursor-pointer items-baseline gap-1.5 text-[15px]">
-        <h3 id={`needs-${cardKey}`} className="max-w-[60%] shrink-0 truncate font-semibold">
+      <div onClick={onOpen} title={`${title} · ${reason} · ${whenLabel(at, ctx.now)}`} className="min-w-0 flex-1 basis-40 cursor-pointer text-[15px] max-md:line-clamp-2 md:flex md:items-baseline md:gap-1.5">
+        <h3 id={`needs-${cardKey}`} className="font-semibold max-md:inline md:max-w-[60%] md:shrink-0 md:truncate">
           {title}
         </h3>
         {reason ? (
@@ -62,11 +63,11 @@ function CompactRow({ cardKey, tone, label, title, reason, at, ctx, children, on
             <span aria-hidden="true" className="text-muted">
               {" · "}
             </span>
-            <p className="min-w-0 flex-1 truncate text-muted">{reason}</p>
+            <p className="text-muted max-md:inline md:min-w-0 md:flex-1 md:truncate">{reason}</p>
           </>
         ) : null}
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2 max-md:basis-full max-md:justify-end">
         {children}
         <button type="button" data-needs="details" aria-expanded="false" aria-controls={`needs-full-${cardKey}`} onClick={onOpen} className="sr-only">
           {say(ctx.words, "today.row.details")}
@@ -509,21 +510,14 @@ function Toast({ words }: { words: TodayWords }) {
  * a toast says what really happened ("Sent", "Approved, it goes out at 9:00", "Not sent: ..."); a refusal puts the card back with the reason. The buttons shown follow the role (a message: Owner and Admin;
  * a call: the Owner; a visit Agent OWL proposed: Owner, Admin and Sales); the API checks again. On a phone only the two newest cards show; on a desktop each thing is one row and the three newest show (so the assistant's command bar is in view under them); each with "See all". Nothing here sends a thing: the outbox does, after re-checking every rule.
  */
-/** Cards (a phone), rows (768 px and up), or both until the browser has said which (the server draws both; the one that does not fit is hidden by CSS, so nothing jumps). Without matchMedia (a test) it is cards. */
-const subscribeWidth = (notify: () => void) => {
-  if (typeof window.matchMedia !== "function") return () => undefined;
-  const q = window.matchMedia("(min-width: 768px)");
-  q.addEventListener("change", notify);
-  return () => q.removeEventListener("change", notify);
-};
-const layoutNow = (): "rows" | "cards" => (typeof window.matchMedia === "function" && window.matchMedia("(min-width: 768px)").matches ? "rows" : "cards");
-
-export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: TodayWords; role: Role; actions: TodayActions | null; now: number; lang?: string }) {
+/**
+ * Every thing that waits is ONE compact row, on a phone as on a desktop (owner, 1 Nov): badge, "Name asked for a call · price and visit", the quick buttons; "Details" (or the words) opens the whole card in its place. `compact={false}` draws the full
+ * cards at once (the tests of the cards use it). At most three rows show, then "See all".
+ */
+export function NeedsYou({ words, role, actions, now, lang = "en", compact = true }: { words: TodayWords; role: Role; actions: TodayActions | null; now: number; lang?: string; compact?: boolean }) {
   const { cards, total, extra } = useNeeds();
   const [all, setAll] = React.useState(false);
-  const layout = React.useSyncExternalStore<"rows" | "cards" | "both">(subscribeWidth, layoutNow, () => "both");
-  const ctx: Ctx = { words, now, role, actions, lang, compact: false };
-  const rowsCtx: Ctx = { ...ctx, compact: true };
+  const ctx: Ctx = { words, now, role, actions, lang, compact };
   const draw = (c: NeedsCard, cx: Ctx) => (c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={cx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={cx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={cx} /> : <CallCard c={c} ctx={cx} />);
   // the photo links of a catalogue send run out after ten minutes: while a card shows photos, the page reads its data again before they do
   const hasPhotos = cards?.some((c) => c.type === "outbox" && (c.message?.media.length ?? 0) > 0) === true;
@@ -540,8 +534,8 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
             <span className="sr-only">{say(words, "today.needs.count", { n: total })}</span>
           </span>
         ) : null}
-        {cards !== null && cards.length > 2 ? (
-          <button type="button" aria-expanded={all} onClick={() => setAll((v) => !v)} className={`ml-auto inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text hover:underline ${cards.length > 3 ? "" : "md:hidden"}`}>
+        {cards !== null && cards.length > 3 ? (
+          <button type="button" aria-expanded={all} onClick={() => setAll((v) => !v)} className="ml-auto inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text hover:underline">
             {all ? say(words, "today.seeless") : say(words, "today.seeall", { n: cards.length })}
           </button>
         ) : null}
@@ -557,18 +551,10 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
         </p>
       ) : (
         <>
-          <p className="mb-1 text-sm text-muted md:hidden">{say(words, "today.needs.note")}</p>
-          <ul className={layout === "rows" ? "flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0" : "flex flex-col gap-2.5"}>
+          <ul className={compact ? "flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0" : "flex flex-col gap-2.5"}>
             {cards.map((c, i) => (
-              <li key={c.key} className={!all && i >= 3 ? "hidden" : !all && i >= 2 ? "max-md:hidden" : ""}>
-                {layout === "both" ? (
-                  <>
-                    <div className="md:hidden">{draw(c, ctx)}</div>
-                    <div className="max-md:hidden">{draw(c, rowsCtx)}</div>
-                  </>
-                ) : (
-                  draw(c, layout === "rows" ? rowsCtx : ctx)
-                )}
+              <li key={c.key} className={!all && i >= 3 ? "hidden" : ""}>
+                {draw(c, ctx)}
               </li>
             ))}
           </ul>

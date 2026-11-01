@@ -5,7 +5,7 @@ import { ThemeButton } from "@/components/v2/controls/ThemeButton";
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { InstallHint } from "@/components/v2/pwa/LazyInstallHint";
 import { V2Root } from "@/components/v2/V2Root";
-import { appT, frameLabels } from "@/i18n/app";
+import { frameLabels } from "@/i18n/app";
 import { authT } from "@/i18n/auth";
 import type { Lang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
@@ -61,11 +61,6 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
             </span>
           </TopBar>
           <RobustShell labels={labels} />
-          {lang !== "en" ? (
-            <div role="region" aria-label={appT(lang)("frame.draft.label")} lang={lang} className="border-b border-line px-4 py-1.5 text-sm text-muted md:px-8 print:hidden">
-              {appT(lang)("frame.draft")}
-            </div>
-          ) : null}
           <div id="main-content" lang="en" tabIndex={-1} className="min-w-0 flex-1 outline-none">
             <UsageBanner memberships={list} labels={labels} frame={frame} />
             <GroupTabs memberships={list} labels={labels} frame={frame} />

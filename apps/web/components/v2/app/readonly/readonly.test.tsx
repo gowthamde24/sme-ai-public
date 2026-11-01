@@ -169,13 +169,13 @@ describe("on the main screens", () => {
       );
     });
     const main = document.getElementById("main-content")!;
-    const cardButtons = [...main.querySelectorAll<HTMLButtonElement>("article button")];
+    const cardButtons = [...main.querySelectorAll<HTMLButtonElement>("article button, [data-needs-row] button")];
     expect(cardButtons.length).toBeGreaterThan(3);
     expect(cardButtons.every((b) => b.disabled)).toBe(true);
     expect((main.querySelector("#ask-input") as HTMLInputElement).disabled).toBe(true);
     expect(main.querySelector('[data-ask="live"] form button[type=submit]')).toBeDisabled();
     expect(screen.getByRole("link", { name: "Help for this screen" })).not.toHaveAttribute("aria-disabled");
-    for (const a of main.querySelectorAll("article a")) expect(a).not.toHaveAttribute("aria-disabled");
+    for (const a of main.querySelectorAll("article a, [data-needs-row] a")) expect(a).not.toHaveAttribute("aria-disabled");
     expect(main.querySelectorAll("[data-readonly-off]").length).toBeGreaterThan(5);
   });
 });

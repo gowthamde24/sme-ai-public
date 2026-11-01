@@ -594,7 +594,6 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           <section className={surface} aria-label={t("settings.tab.language")}>
             <h2 className={`${pageH2} mt-0`}>{t("settings.language.language")}</h2>
             <LangSelect lang={lang} label={authT(lang)("lang.label")} />
-            {lang === "en" ? null : <p className={mutedText}>{t("frame.draft")}</p>}
             <h2 className={pageH2}>{t("settings.language.appearance")}</h2>
             <ThemeChoice initial={theme} label={t("settings.language.appearance")} words={{ system: t("settings.theme.system"), light: t("settings.theme.light"), dark: t("settings.theme.dark") }} />
           </section>

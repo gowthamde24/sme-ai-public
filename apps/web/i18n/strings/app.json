@@ -263,17 +263,6 @@
    "kn": "draft"
   }
  },
- "frame.draft": {
-  "en": "Machine-written translation of the menu, not yet read by a person. The screens below are still in English.",
-  "te": "మెనూ అనువాదాన్ని యంత్రం రాసింది, ఇంకా ఎవరూ చదివి సరిచూడలేదు. కింద స్క్రీన్లు ఇంకా ఇంగ్లీషులోనే ఉన్నాయి.",
-  "hi": "मेन्यू का अनुवाद मशीन ने लिखा है, अभी किसी ने पढ़कर जाँचा नहीं है। नीचे की स्क्रीन अभी अंग्रेज़ी में हैं।",
-  "kn": "ಮೆನುವಿನ ಅನುವಾದವನ್ನು ಯಂತ್ರ ಬರೆದಿದೆ, ಇನ್ನೂ ಯಾರೂ ಓದಿ ಪರಿಶೀಲಿಸಿಲ್ಲ. ಕೆಳಗಿನ ಸ್ಕ್ರೀನ್‌ಗಳು ಇನ್ನೂ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "frame.help": {
   "en": "Help",
   "te": "సహాయం",
@@ -1847,18 +1836,6 @@
    "hi": "draft",
    "kn": "draft"
   }
- },
- "today.needs.note": {
-  "en": "Messages about money, promises or complaints, and calls, always wait for you.",
-  "te": "Messages about money, promises or complaints, and calls, always wait for you.",
-  "hi": "Messages about money, promises or complaints, and calls, always wait for you.",
-  "kn": "Messages about money, promises or complaints, and calls, always wait for you.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
  },
  "today.needs.count": {
   "en": "{n} waiting for you",
@@ -6697,17 +6674,6 @@
   "te": "మీ వర్క్‌స్పేస్‌లకు వెళ్ళండి",
   "hi": "अपने वर्कस्पेस पर लौटें",
   "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗಳಿಗೆ ಹೋಗಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "frame.draft.label": {
-  "en": "Translation notice",
-  "te": "అనువాద సూచన",
-  "hi": "अनुवाद की सूचना",
-  "kn": "ಅನುವಾದ ಸೂಚನೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -28934,10 +28900,10 @@
   "humanOnly": true
  },
  "help.tip.today.1": {
-  "en": "Cards under Needs you wait for your decision: Approve, Edit or say no.",
-  "te": "\"మీ కోసం\" కింది కార్డ్‌లు మీ నిర్ణయం కోసం ఆగుతాయి: ఓకే, ఎడిట్, లేదా వద్దనండి.",
-  "hi": "\"आपके लिए\" के नीचे के कार्ड आपके फ़ैसले का इंतज़ार करते हैं: OK, Edit या मना।",
-  "kn": "\"ನಿಮಗಾಗಿ\" ಕೆಳಗಿನ ಕಾರ್ಡ್‌ಗಳು ನಿಮ್ಮ ನಿರ್ಧಾರಕ್ಕೆ ಕಾಯುತ್ತವೆ: OK, Edit ಅಥವಾ ಬೇಡ.",
+  "en": "Messages about money, promises or complaints, and calls, always wait for you. Approve, Edit or say no.",
+  "te": "డబ్బు, హామీలు లేదా ఫిర్యాదులకు సంబంధించిన సందేశాలు, అలాగే కాల్స్, ఎప్పుడూ మీ నిర్ణయం కోసం ఆగుతాయి. ఓకే, ఎడిట్, లేదా వద్దనండి.",
+  "hi": "पैसे, वादों या शिकायतों के संदेश और कॉल हमेशा आपके फ़ैसले का इंतज़ार करते हैं। मंज़ूर करें, बदलें या मना करें।",
+  "kn": "ಹಣ, ಭರವಸೆ ಅಥವಾ ದೂರುಗಳ ಸಂದೇಶಗಳು ಮತ್ತು ಕರೆಗಳು ಯಾವಾಗಲೂ ನಿಮ್ಮ ನಿರ್ಧಾರಕ್ಕಾಗಿ ಕಾಯುತ್ತವೆ. ಒಪ್ಪಿ, ತಿದ್ದಿ ಅಥವಾ ಬೇಡ ಎನ್ನಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -74899,10 +74865,10 @@
   }
  },
  "frame.live.idle": {
-  "en": "All caught up",
-  "te": "అన్నీ పూర్తయ్యాయి",
-  "hi": "सब निपट गया",
-  "kn": "ಎಲ್ಲವೂ ಮುಗಿದಿದೆ",
+  "en": "Watching for leads",
+  "te": "లీడ్స్ కోసం గమనిస్తోంది",
+  "hi": "नई पूछताछ पर नज़र है",
+  "kn": "ಹೊಸ ಲೀಡ್‌ಗಳ ಮೇಲೆ ಗಮನವಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -75552,6 +75518,61 @@
   "te": "మరియు",
   "hi": "और",
   "kn": "ಮತ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.calling": {
+  "en": "Calling {name}",
+  "te": "{name} కు కాల్ చేస్తోంది",
+  "hi": "{name} को कॉल हो रही है",
+  "kn": "{name} ಅವರಿಗೆ ಕರೆ ನಡೆಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.calling.noname": {
+  "en": "On a call",
+  "te": "కాల్‌లో ఉంది",
+  "hi": "कॉल चल रही है",
+  "kn": "ಕರೆ ನಡೆಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.calling.n": {
+  "en": "Calling {n} people",
+  "te": "{n} మందికి కాల్ చేస్తోంది",
+  "hi": "{n} लोगों को कॉल हो रही है",
+  "kn": "{n} ಜನರಿಗೆ ಕರೆ ನಡೆಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.followups.one": {
+  "en": "Sending a follow-up",
+  "te": "ఫాలో-అప్ పంపుతోంది",
+  "hi": "फ़ॉलो-अप भेजा जा रहा है",
+  "kn": "ಫಾಲೋ-ಅಪ್ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.live.followups.other": {
+  "en": "Sending {n} follow-ups",
+  "te": "{n} ఫాలో-అప్‌లు పంపుతోంది",
+  "hi": "{n} फ़ॉलो-अप भेजे जा रहे हैं",
+  "kn": "{n} ಫಾಲೋ-ಅಪ್‌ಗಳನ್ನು ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

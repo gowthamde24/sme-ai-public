@@ -32,12 +32,10 @@ describe("every page of the public site, in every language", () => {
     expect(html).toContain(`lang="${lang}"`);
   });
 
-  it.each(cases.filter(([, l]) => l !== "en"))("%s: the page says its words are a machine draft; English does not need to", (_n, lang, target) => {
-    const draft = render(lang, target);
-    const en = render("en", target);
-    expect(draft).toContain(siteDict(lang)["draft.banner"].replace(/&/g, "&amp;"));
-    expect(en).not.toContain(siteDict("te")["draft.banner"]);
-    expect(en).not.toMatch(/data-part="draft"/);
+  it.each(cases)("%s: no line, banner or note says the words are machine-written or not yet reviewed (owner, 1 Nov: that is tracked in the files only)", (_n, lang, target) => {
+    const html = render(lang, target);
+    expect(html).not.toMatch(/data-part="draft"/);
+    expect(html).not.toMatch(/machine-written|machine written|not yet (read|checked|reviewed)|యంత్రం రాసిన|मशीन से लिखा|ಯಂತ್ರ ಬರೆದ/i);
   });
 
   it("the header and footer link to every page in the same language, and to the other languages of this page", () => {

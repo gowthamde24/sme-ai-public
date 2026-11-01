@@ -18,6 +18,7 @@
     "audit:3d": "node scripts/audit-3d.mjs",
     "audit:contrast": "node scripts/contrast.mjs",
     "i18n:status": "node scripts/i18n-status.mjs",
+    "i18n:review-report": "node scripts/i18n-review-report.mjs",
     "i18n:export": "node scripts/i18n-export.mjs",
     "i18n:first-pass": "node scripts/i18n-export.mjs --first-pass",
     "i18n:import": "node scripts/i18n-import.mjs",
