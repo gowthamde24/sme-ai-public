@@ -40,6 +40,9 @@ export function parseLine(raw: string): AskEvent | null {
   }
 }
 
+/** How long the stream may say nothing at all before the answer is given up as stalled (a typed answer starts within seconds; the route also sends a quiet line now and then while the assistant works). */
+export const STALL_MS = 90_000;
+
 /** The route's answer as events: one JSON event per line, each read as it completes. The answer is whole only when it said `done` or `error`; a stream that stops before that ends with an `error` event (unless the person stopped it). */
 async function* readEvents(body: ReadableStream<Uint8Array>, signal: AbortSignal): AsyncGenerator<AskEvent> {
   const reader = body.getReader();
@@ -48,7 +51,16 @@ async function* readEvents(body: ReadableStream<Uint8Array>, signal: AbortSignal
   let ended = false;
   try {
     for (;;) {
-      const { value, done } = await reader.read();
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const stalled = new Promise<"stalled">((resolve) => {
+        timer = setTimeout(() => resolve("stalled"), STALL_MS);
+      });
+      const got = await Promise.race([reader.read(), stalled]).finally(() => clearTimeout(timer));
+      if (got === "stalled") {
+        if (!signal.aborted) yield { type: "error" }; // a long stall: the same ending as a cut connection
+        return;
+      }
+      const { value, done } = got;
       buffer += decoder.decode(value, { stream: !done });
       let cut = buffer.indexOf("\n");
       while (cut !== -1) {

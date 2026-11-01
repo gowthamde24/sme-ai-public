@@ -220,7 +220,7 @@ function EarlierOne({ x, w, session }: { x: Exchange; w: (k: string) => string; 
       <p className="text-sm text-muted">{x.asked ? `${w(x.heardByVoice ? "ask.voice.said" : "ask.asked")} ${x.asked}` : ""}</p>
       {x.task ? <DoItEntry session={session} entry={x.task} /> : null}
       {x.answer ? <p className="mt-1 whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{x.answer}</p> : null}
-      {x.failed && !x.answer && !x.task ? <p className="mt-1 text-base font-medium text-red-text">{x.errorCode !== null && ERROR_WORD[x.errorCode] ? w(ERROR_WORD[x.errorCode]) : w("ask.error")}</p> : null}
+      {x.failed && !x.answer && !x.task ? <p className="mt-1 text-base font-medium text-red-text">{x.errorCode !== null && ERROR_WORD[x.errorCode] ? w(ERROR_WORD[x.errorCode]) : w("ask.sorry")}</p> : null}
       <Sources sources={x.sources} w={w} />
     </li>
   );
@@ -268,7 +268,12 @@ export function AskAnswer({ session, chips = [], earlierWord, scrollRoot = false
           {s.audioFailed ? <p className="mt-2 text-sm text-muted">{w("ask.voice.audioerr")}</p> : null}
           {s.phase === "error" && !s.taskEntry ? (
             <p role="alert" className="mt-2 text-base font-medium text-red-text">
-              {s.errorCode !== null && ERROR_WORD[s.errorCode] ? w(ERROR_WORD[s.errorCode]) : w("ask.error")}
+              {s.errorCode !== null && ERROR_WORD[s.errorCode] ? w(ERROR_WORD[s.errorCode]) : w("ask.sorry")}
+              {s.asked !== "" && !s.heardByVoice ? (
+                <button type="button" data-ask="retry" onClick={s.retry} className="ml-3 inline-flex min-h-11 items-center rounded-full px-3 font-semibold text-brand-text hover:bg-surface-2">
+                  {w("ask.retry")}
+                </button>
+              ) : null}
             </p>
           ) : null}
           <Sources sources={s.sources} w={w} />
