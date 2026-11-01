@@ -39,7 +39,7 @@ def test_the_rule_is_in_the_answer_prompt_with_and_without_the_catalogue_tools()
 
 
 def test_the_live_cases_for_zero_amounts_exist_in_telugu_and_english() -> None:
-    cases = [json.loads(line) for line in (ROOT / "tests" / "evals" / "casual" / "cases.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
+    cases = [json.loads(line) for line in (ROOT / "tests" / "evals" / "zero" / "cases.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
     zero = [c for c in cases if c.get("no_zero")]
     assert {c["language"] for c in zero} == {"en", "te"} and len(zero) >= 4
     assert any("money" in c["text"].lower() and "held" in c["text"].lower() for c in zero), "the owner's own question: How much customer money is held?"
