@@ -84,10 +84,7 @@ TOOL_SPECS: tuple[ToolSpec, ...] = tuple(
 )
 
 # owner review, 1 Nov 2026: a zero is never read out
-ZERO_RULE = (
-    "Never read out a zero: where an amount or a count is zero say there is none, in plain words ('No money is pending.', 'There are no new enquiries today.', 'No orders are waiting.'), never '₹0', '₹0.00', 'Rs 0' or '0 orders'. "
-    "Say it in the language of the question. "
-)
+ZERO_RULE = "Never read out a zero: say there is none ('No money is pending.', 'There are no new enquiries.'), never '₹0' or '0 orders'. "
 SYSTEM_PROMPT = (
     "You are the Main agent of an Indian wholesaler's business application. You help the OWNER (or an admin, or a salesperson) of ONE business, in a chat. "
     "Use only the listed tools. READ tools show what this person may already see; ACTION tools only leave DRAFTS that a person approves later, except the catalogue photos tool, which queues a message under the sending policy (a price or an amount in it waits for the owner). You cannot send otherwise, approve, "
