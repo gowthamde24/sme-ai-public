@@ -147,6 +147,17 @@ NO_ANSWER: dict[Language, str] = {
     "ml": "ഞാൻ നോക്കി, ഇതിനെക്കുറിച്ച് ഇപ്പോൾ കാണിക്കാൻ ഒന്നുമില്ല.",
 }
 
+# owner decision 1 Nov 2026: a question about the money that is held or pending, when nothing is, is answered in these words, not with the general "nothing to show yet". The Telugu is the owner's own;
+# a native reader of the other languages should check them.
+NO_MONEY_PENDING: dict[Language, str] = {
+    "en": "No money is pending.",
+    "te": "బాకీ డబ్బు ఏమీ లేదు.",
+    "hi": "कोई पैसा बाकी नहीं है।",
+    "kn": "ಯಾವುದೇ ಹಣ ಬಾಕಿ ಇಲ್ಲ.",
+    "ta": "நிலுவையில் பணம் எதுவும் இல்லை.",
+    "ml": "ബാക്കി പണം ഒന്നുമില്ല.",
+}
+
 # job EA: the conversational assistant says this, not the bare NO_ANSWER, when a question about the business's own records found nothing: plainly "no record", then ONE way forward. Not model output.
 # A native reader of each language should check these words.
 NO_RECORD_HELP: dict[Language, str] = {

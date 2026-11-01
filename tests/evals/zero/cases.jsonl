@@ -1,4 +1,4 @@
-{"id": "zero-en-money-held", "language": "en", "text": "How much customer money is held?", "kind": "business", "max_chars": 300, "no_zero": true}
-{"id": "zero-te-money-held", "language": "te", "text": "కస్టమర్ల డబ్బు ఎంత ఆపి ఉంది?", "kind": "business", "max_chars": 400, "no_zero": true}
+{"id": "zero-en-money-held", "language": "en", "text": "How much customer money is held?", "kind": "business", "max_chars": 300, "no_zero": true, "expect_contains": "No money is pending"}
+{"id": "zero-te-money-held", "language": "te", "text": "కస్టమర్ల డబ్బు ఎంత ఆపి ఉంది?", "kind": "business", "max_chars": 400, "no_zero": true, "expect_contains": "బాకీ డబ్బు ఏమీ లేదు"}
 {"id": "zero-en-new-enquiries", "language": "en", "text": "How many new enquiries came today?", "kind": "business", "max_chars": 300, "no_zero": true}
 {"id": "zero-te-new-enquiries", "language": "te", "text": "ఈరోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి?", "kind": "business", "max_chars": 400, "no_zero": true}

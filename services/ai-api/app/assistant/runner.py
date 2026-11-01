@@ -51,6 +51,7 @@ from app.assistant.db import AssistantDb
 from app.assistant.hygiene import leaked_names
 from app.assistant.language import (
     NO_ANSWER,
+    NO_MONEY_PENDING,
     NO_RECORD_HELP,
     PLAIN_WORDS,
     SEE_CARDS,
@@ -63,6 +64,7 @@ from app.assistant.models import NOT_STORED_SOURCES, DraftCardOut, SourceOut
 from app.assistant.notes import NOTES_HANDLE_LABEL, NOTES_ID
 from app.assistant.tools import TOOLS, Ctx, Item, State, friendly_names
 from app.assistant.web_tools import WEB_TOOL_NAMES, question_urls
+from app.assistant.wording import is_money_held_question
 from app.errors import ApiError
 
 logger = logging.getLogger("app.assistant.runner")
@@ -188,6 +190,7 @@ class AssistantRunner:
         self._typed = typed_replies   # job EA: the conversational route stores the type of each reply (confirm_action, clarify); the written Ask does not
         # job EA: the conversational assistant says "no record" AND offers one way forward (NO_RECORD_HELP); the written Ask keeps the bare NO_ANSWER
         self._empty = NO_RECORD_HELP if help_on_empty else NO_ANSWER
+        self._question = ""
         self._on_reply = on_reply  # job BD: the voice route speaks the finished answer here, while the run is still open (so it can be charged to it)
         self._db, self._router, self._ctx = db, as_router(llm), ctx
         self._now = now or (lambda: datetime.now(UTC))
@@ -207,6 +210,7 @@ class AssistantRunner:
         message_id: uuid.UUID,
     ) -> Outcome:
         turns = 0
+        self._question = question
         try:
             run = self._db.read_run()
             if run.status != "running":
@@ -366,7 +370,7 @@ class AssistantRunner:
                     notes = (*notes, prompts.NOTE_REPAIR_SHAPE)
             # no acceptable reply: a fixed one, in the owner's language, with whatever drafts were made
             self._note_fallback(turns, repaired)
-            fallback = Reply(self._empty[language], language, "refusal", [], list(self._state.drafts))
+            fallback = Reply(self._nothing(language), language, "answer" if self._money_pending_none() else "refusal", [], list(self._state.drafts))
             return self._finish(
                 fallback, message_id, emit, turns, status="failed", code="invalid_output"
             )
@@ -532,6 +536,14 @@ class AssistantRunner:
             out.facts,
         )
 
+    def _money_pending_none(self) -> bool:
+        """The question is about the money held or pending and today's figures show none: that is the whole answer."""
+        return self._state.money_held_none and is_money_held_question(self._question)
+
+    def _nothing(self, language: Language) -> str:
+        """What is said when there is nothing to show: for a question about the money held, the specific answer (owner, 1 Nov 2026), else the general sentence."""
+        return NO_MONEY_PENDING[language] if self._money_pending_none() else self._empty[language]
+
     # ------------------------------------------------------------------ judging a final reply
     def _judge(
         self,
@@ -560,6 +572,8 @@ class AssistantRunner:
                 final.kind,
             )
             return Reply(PLAIN_WORDS[language], language, "clarify", [], list(self._state.drafts))
+        if final.kind == "answer" and self._money_pending_none():
+            return Reply(NO_MONEY_PENDING[language], language, "answer", [], list(self._state.drafts))   # the specific answer, whatever else the model wrote
         if final.language != language or not reply_matches(final.answer, language):
             return self._once("language", prompts.NOTE_REPAIR_LANGUAGE, repaired)
         known = [
@@ -572,7 +586,7 @@ class AssistantRunner:
                 # the tools ran and found nothing: the model may say so in its own kind words, but only without a number, a link or an amount (nothing it states can then be a made-up fact)
                 if not re.search(r"\d|https?://|www\.|₹", final.answer):
                     return Reply(friendly_names(final.answer), language, "answer", [], list(self._state.drafts))
-                return Reply(self._empty[language], language, "refusal", [], list(self._state.drafts))
+                return Reply(self._nothing(language), language, "answer" if self._money_pending_none() else "refusal", [], list(self._state.drafts))
             return self._once("sources", prompts.NOTE_REPAIR_SOURCES, repaired)
         # an amount is stated only exactly as a tool returned it: not the owner's own number repeated back as if it were done, not a sum, not a guess
         if any(a not in self._state.allowed_paise for a in money_amounts(final.answer)):
