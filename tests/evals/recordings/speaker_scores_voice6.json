@@ -1,0 +1,65 @@
+{
+ "note": "CAM++ similarity of 1.5 s windows of voice 6 against a signature of the owner's clean recordings 1,2,3,4,7,8 (numbers only; labels by the owner, 1 Nov 2026)",
+ "windows": [
+  {
+   "from_s": 0.0,
+   "to_s": 1.5,
+   "score": 0.06,
+   "label": "music"
+  },
+  {
+   "from_s": 0.75,
+   "to_s": 2.25,
+   "score": 0.58,
+   "label": "owner"
+  },
+  {
+   "from_s": 1.5,
+   "to_s": 3.0,
+   "score": 0.72,
+   "label": "owner"
+  },
+  {
+   "from_s": 2.25,
+   "to_s": 3.75,
+   "score": 0.68,
+   "label": "owner"
+  },
+  {
+   "from_s": 3.0,
+   "to_s": 4.5,
+   "score": 0.64,
+   "label": "owner"
+  },
+  {
+   "from_s": 3.75,
+   "to_s": 5.25,
+   "score": 0.62,
+   "label": "owner"
+  },
+  {
+   "from_s": 4.5,
+   "to_s": 6.0,
+   "score": 0.58,
+   "label": "owner"
+  },
+  {
+   "from_s": 5.25,
+   "to_s": 6.75,
+   "score": 0.73,
+   "label": "owner"
+  },
+  {
+   "from_s": 6.0,
+   "to_s": 7.5,
+   "score": 0.76,
+   "label": "owner"
+  },
+  {
+   "from_s": 6.75,
+   "to_s": 8.25,
+   "score": 0.58,
+   "label": "owner"
+  }
+ ]
+}

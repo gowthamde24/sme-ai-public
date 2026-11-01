@@ -12,3 +12,5 @@ flips and the line is changed to `pass`), and with the audio turn model at the c
 `interruptions.jsonl`: the barge-in windows of voices 5 and 6 (1.5 s slices) with what the recogniser wrote, the sound's length, its level, the OWNER'S label (`owner`, `tv`, `cough`), what the reply should do (`stop` / `ignore`) and `status`. Two TV phrases of two or more words are known gaps (they stop the reply).
 
 Barge-in decisions of the windows are scored with the language gate on the owner's pill (`pin`: Telugu). The gate's honest limit is in `docs/runbooks/live-conversation-standard.md`: the pinned recogniser writes English in Telugu script, so the text-based gate rarely fires in a real session.
+
+Labels corrected 1 Nov 2026 (the owner re-listened): in voice 6 everything with speech is the owner; only the music at 0 to 1.5 s ("Cubic") is not. `speaker_scores_voice6.json` holds the speaker check's numbers for it (music 0.06, the owner 0.58 to 0.76).

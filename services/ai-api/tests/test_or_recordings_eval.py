@@ -105,10 +105,23 @@ def test_a_tv_phrase_of_two_or_more_words_does_not_stop_the_reply(window: dict[s
 
 
 def test_the_scores_of_the_labelled_windows() -> None:
-    tv = [w for w in WINDOWS if w["label"] == "tv"]
-    assert (len(tv), sum(decision(w) == "ignore" for w in tv)) == (4, 3), "3 of 4 TV windows ignored with the language gate (2 before), 1 still wrongly stops the reply"
-    assert sum(decision(w, gate=False) == "ignore" for w in tv) == 2, "without the gate: 2 of 4"
-    assert all(decision(w) == "ignore" for w in WINDOWS if w["label"] == "cough") and all(decision(w) == "stop" for w in WINDOWS if w["label"] == "owner")
+    """With the owner's corrected labels (1 Nov 2026: voice 6 is the owner throughout, only the music in the first 1.5 s is not): the music and the cough are ignored, the owner's speech stops the reply except one mis-heard single word, and
+    the language gate (off) would have ignored the owner's own speech that the recogniser wrote as English."""
+    music = [w for w in WINDOWS if w["label"] == "music"]
+    cough = [w for w in WINDOWS if w["label"] == "cough"]
+    owner = [w for w in WINDOWS if w["label"] == "owner"]
+    assert len(music) == 1 and all(decision(w) == "ignore" for w in music + cough)
+    assert (len(owner), sum(decision(w) == "stop" for w in owner)) == (7, 5), "5 of the owner's 7 windows stop the reply with the gate on"
+    assert sum(decision(w, gate=False) == "stop" for w in owner) == 6, "6 of 7 with the gate off: the gate cost the owner one window"
+
+
+def test_the_speaker_check_matched_the_truth_on_voice_6() -> None:
+    """Numbers only (tests/evals/recordings/speaker_scores_voice6.json): the music is a different voice (0.06), every stretch with speech is the owner's (0.58 to 0.76) at the check's own threshold."""
+    from app.conversation.speaker import SAME_AT_LEAST
+
+    data = json.loads((Path(__file__).resolve().parents[3] / "tests" / "evals" / "recordings" / "speaker_scores_voice6.json").read_text(encoding="utf-8"))["windows"]
+    assert all(w["score"] < SAME_AT_LEAST for w in data if w["label"] == "music") and all(w["score"] >= SAME_AT_LEAST for w in data if w["label"] == "owner")
+    assert [w["label"] for w in data].count("music") == 1 and max(w["score"] for w in data if w["label"] == "music") < min(w["score"] for w in data if w["label"] == "owner")
 
 
 @pytest.mark.parametrize("name", ["rec-1", "rec-7", "rec-3"])
