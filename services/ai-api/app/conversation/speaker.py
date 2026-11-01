@@ -27,6 +27,7 @@ SAME_AT_LEAST = 0.40      # measured (31 Oct 2026, 47 other voices): at 0.40 the
 MAX_ENROLLED = 8          # embeddings in the signature
 ENROL_CONFIRM_AT = 0.50   # after the first turns, only a clip this close to the signature is added to it (a television never drifts the signature)
 FIRST_TURNS_FREE = 2      # the first turns build the signature without a check
+MIN_ENROLLED_S = 6.0      # seconds of the person's speech in the signature before it is used (measured on staging 1 Nov 2026: a signature of 3 s of speech scored the owner's own voice at 0.14 to 0.42; the owner's windows against 5 recordings scored 0.61 on average). Until then: no opinion, the sound interrupts
 
 
 def speech_only(pcm16_16k: bytes, np: Any) -> Any:
@@ -79,6 +80,7 @@ class SessionVoice:
         self._model, self._np = model, np
         self._vectors: list[Any] = []
         self.turns = 0
+        self.enrolled_s = 0.0
 
     def _signature(self) -> Any | None:
         if not self._vectors:
@@ -95,24 +97,34 @@ class SessionVoice:
         vector = self._model.embed(pcm16_16k)
         return None if vector is None else float(self._np.dot(signature, vector))
 
-    def same_voice(self, pcm16_16k: bytes, threshold: float = SAME_AT_LEAST) -> bool | None:
-        """True / False when it can tell, None when it cannot (no signature, too short): the caller then treats the sound as the person."""
-        score = self.similarity(pcm16_16k)
-        return None if score is None else score >= threshold
+    @property
+    def ready(self) -> bool:
+        """Is there enough of the person's speech in the signature to judge another voice against it?"""
+        return self.enrolled_s >= MIN_ENROLLED_S
 
-    def enrol(self, pcm16_16k: bytes) -> None:
-        """Add what the person just said (a confirmed turn): the first turns freely, later ones only when they are still the same voice."""
-        self.turns += 1
+    def same_voice(self, pcm16_16k: bytes, threshold: float = SAME_AT_LEAST) -> bool | None:
+        """True / False when it can tell, None when it cannot (no signature, not enough enrolled speech yet, a clip too short): the caller then treats the sound as the person."""
+        score = self.similarity(pcm16_16k)
+        return None if score is None or not self.ready else score >= threshold
+
+    def enrol(self, pcm16_16k: bytes) -> tuple[bool, float]:
+        """Add what the person just said (a confirmed turn): the first turns freely, later ones only when they are still the same voice. Returns (kept, seconds of speech in the clip) for the numbers-only log.
+        A clip with too little speech is NOT a turn: it does not use up one of the free first turns (otherwise a failed first enrolment would let the next voice, a television, become the signature)."""
         vector = self._model.embed(pcm16_16k)
+        seconds = len(speech_only(pcm16_16k, self._np)) / SAMPLE_RATE
         if vector is None:
-            return
+            return False, seconds
+        self.turns += 1
         signature = self._signature()
         if signature is not None and self.turns > FIRST_TURNS_FREE and float(self._np.dot(signature, vector)) < ENROL_CONFIRM_AT:
-            return
+            return False, seconds
         self._vectors = [*self._vectors, vector][-MAX_ENROLLED:]
+        self.enrolled_s += seconds
+        return True, seconds
 
     def close(self) -> None:
         self._vectors = []
+        self.enrolled_s = 0.0
 
 
 _cache: dict[str, SpeakerModel | None] = {}

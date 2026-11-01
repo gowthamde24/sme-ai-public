@@ -166,3 +166,5 @@ def install_logging(log_format: str) -> None:
         if log_format == "json":
             handler.setFormatter(JsonFormatter())
     access_logger.setLevel(logging.INFO)
+    # the browser voice's own numbers lines (the per-session cost line and the speaker-check scores): numbers and ids, no words; the rest of the application stays at warnings
+    logging.getLogger("app.browser_voice").setLevel(logging.INFO)

@@ -403,3 +403,12 @@ def test_cors_answers_only_the_configured_origins_and_never_with_credentials() -
 
 def test_ratelimit_module_constants_are_sane() -> None:
     assert ratelimit.FAIL_LIMIT >= 10 and ratelimit.SUSPECT_LIMIT >= 10 and ratelimit.TOKEN_LIMIT >= 300
+
+
+def test_the_browser_voice_numbers_lines_reach_the_logs_and_other_application_info_does_not() -> None:
+    """Found 1 Nov 2026 on staging: the per-session cost line and the speaker-check scores were dropped because the root logger sits at WARNING."""
+    import logging
+
+    install_logging("text")
+    assert logging.getLogger("app.browser_voice").isEnabledFor(logging.INFO)
+    assert not logging.getLogger("app.assistant").isEnabledFor(logging.INFO)
