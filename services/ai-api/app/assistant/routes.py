@@ -40,7 +40,7 @@ from app.agents.errors import (
 )
 from app.assistant import resolver
 from app.assistant.db import AssistantDb, MessageConflict
-from app.assistant.language import detect_owner_language
+from app.assistant.language import COULD_NOT_ANSWER, Language, detect_owner_language
 from app.assistant.models import ActionRefOut, ConversationOut, MessageIn, MessageOut
 from app.assistant.notes import address_as, owner_notes
 from app.assistant.runner import AssistantRunner, Outcome, _sha
@@ -122,6 +122,16 @@ def _refusal(
     if isinstance(exc, DataLayerUnavailable):
         return ApiError(502, "upstream_error", "The data layer failed.")
     return ApiError(502, "upstream_error", "The data layer failed.")
+
+
+# the codes of a run that ended with no reply because of a fault of ours: the stream says the could-not-answer sentence (text + done), not an `error` event with an English message
+SORRY_CODES = frozenset({"model_failed", "tool_failed", "invalid_output"})
+
+
+def sorry_stream(language: Language, reply_id: uuid.UUID, conversation_id: uuid.UUID, code: str, kind: str = "answer") -> Iterator[str]:
+    logger.warning("assistant turn ended with no reply (%s); the could-not-answer sentence is shown (%s)", code, language)
+    yield _sse("text", {"type": "text", "delta": COULD_NOT_ANSWER[language]})
+    yield _sse("done", {"type": "done", "message_id": str(reply_id), "conversation_id": str(conversation_id), "language": language, "kind": kind})
 
 
 def _sse(event: str, data: dict[str, Any]) -> str:
@@ -292,7 +302,9 @@ def start_message(
                 )
             yield _sse(item[0], item[1])
         outcome = outcome_box[0] if outcome_box else Outcome("failed", "tool_failed")
-        if outcome.reply is None:
+        if outcome.reply is None and (outcome.shown or outcome.error_code or "tool_failed") in SORRY_CODES:
+            yield from sorry_stream(language, reply_id, conversation_id, outcome.error_code or "tool_failed")
+        elif outcome.reply is None:
             code, message = FAILURES.get(
                 outcome.shown or outcome.error_code or "tool_failed", FAILURES["tool_failed"]
             )

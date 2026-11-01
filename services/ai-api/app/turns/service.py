@@ -22,7 +22,7 @@ from app.assistant import resolver
 from app.assistant.db import AssistantDb
 from app.assistant.language import SCHOOL_REFUSAL, Language, detect_owner_language
 from app.assistant.notes import address_as, owner_notes
-from app.assistant.routes import FAILURES, _factory, _refusal, _sse
+from app.assistant.routes import FAILURES, SORRY_CODES, _factory, _refusal, _sse, sorry_stream
 from app.assistant.runner import AssistantRunner, Outcome, Reply, _sha
 from app.assistant.tools import Ctx, State
 from app.auth.deps import Runtime, TenantContext, _second_factor_on
@@ -214,7 +214,9 @@ def start_turn(
                 break
             yield _sse(item[0], item[1])
         outcome = outcome_box[0] if outcome_box else Outcome("failed", "tool_failed")
-        if outcome.reply is None:
+        if outcome.reply is None and (outcome.shown or outcome.error_code or "tool_failed") in SORRY_CODES:
+            yield from sorry_stream(language, reply_id, conversation_id, outcome.error_code or "tool_failed")
+        elif outcome.reply is None:
             code, message = FAILURES.get(outcome.shown or outcome.error_code or "tool_failed", FAILURES["tool_failed"])
             event: dict[str, Any] = {"type": "error", "code": code, "message": message}
             if code == pause.CODE:

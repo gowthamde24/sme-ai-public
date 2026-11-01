@@ -40,6 +40,7 @@ from app.agents.llm.openai_compat import (
 from app.agents.llm.routing import ModelRouter
 from app.agents.ports import RunView
 from app.assistant import routes
+from app.assistant.language import COULD_NOT_ANSWER
 from app.assistant.runner import AssistantRunner
 from app.config import Settings
 
@@ -343,6 +344,10 @@ class FakeDb:
         self.reserve_error = reserve_error
         self.finished: list[tuple[str, str | None]] = []
         self.released: list[str] = []
+        self.replies: list[str] = []
+
+    def save_reply(self, **kw: Any) -> None:
+        self.replies.append(kw["text"])
 
     def read_run(self) -> RunView:
         return RunView(
@@ -417,8 +422,10 @@ def test_a_429_from_the_service_ends_the_run_as_busy_and_the_reservation_is_rele
 
 
 def test_any_other_model_failure_is_not_called_busy() -> None:
-    out = run_it(FakeDb(), RaisingModel(LlmRejected()))
+    db = FakeDb()
+    out = run_it(db, RaisingModel(LlmRejected()))
     assert (out.error_code, out.shown) == ("model_failed", None)
+    assert out.reply is not None and db.replies == [COULD_NOT_ANSWER["en"]], "the person reads the could-not-answer sentence, never an empty bubble"
 
 
 def test_the_client_is_told_a_distinct_code_with_plain_words_for_each() -> None:

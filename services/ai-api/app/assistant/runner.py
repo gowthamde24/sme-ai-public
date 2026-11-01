@@ -50,6 +50,7 @@ from app.assistant import prompts, router
 from app.assistant.db import AssistantDb
 from app.assistant.hygiene import leaked_names
 from app.assistant.language import (
+    COULD_NOT_ANSWER,
     NO_ANSWER,
     NO_MONEY_PENDING,
     NO_RECORD_HELP,
@@ -112,6 +113,9 @@ class Outcome:
     # what the client is told when it is more precise than the recorded code: "model_busy" (the provider said 429) or "model_not_configured" (the model has no price row).
     # Neither is a spending limit, and the recorded code (model_failed) is the closest one the database knows.
     shown: str | None = None
+
+
+RETRYABLE = frozenset({"timeout", "unavailable", "bad_response"})   # LlmError codes worth one more try; a 429, a refusal or a missing setting is not
 
 
 class _Stop(Exception):
@@ -263,7 +267,7 @@ class AssistantRunner:
                 )
                 try:
                     called = time.perf_counter()
-                    response = llm.complete(request)
+                    response = self._call_model(llm, request)
                     self._model_ms += (time.perf_counter() - called) * 1000.0
                 except LlmError as exc:
                     logger.warning(
@@ -370,12 +374,14 @@ class AssistantRunner:
                     notes = (*notes, prompts.NOTE_REPAIR_SHAPE)
             # no acceptable reply: a fixed one, in the owner's language, with whatever drafts were made
             self._note_fallback(turns, repaired)
-            fallback = Reply(self._nothing(language), language, "answer" if self._money_pending_none() else "refusal", [], list(self._state.drafts))
+            # no usable reply at all (blank or unreadable, still so after the one repair): the could-not-answer sentence. A reply the checks refused (no source, a made-up amount) keeps the kind "nothing found".
+            text = self._nothing(language) if "shape" not in repaired or self._money_pending_none() else COULD_NOT_ANSWER[language]
+            fallback = Reply(text, language, "answer" if self._money_pending_none() else "refusal", [], list(self._state.drafts))
             return self._finish(
                 fallback, message_id, emit, turns, status="failed", code="invalid_output"
             )
         except _Stop as stop:
-            return self._end(stop.status, stop.error_code, turns, stop.shown)
+            return self._stopped(stop, language, message_id, emit, turns)
         except AgentDbError as exc:
             status, code, shown = self._classify(exc)
             return self._end(status, code, turns, shown)
@@ -404,6 +410,7 @@ class AssistantRunner:
             if run.expires_at <= self._now():
                 raise RunExpired
             notes: tuple[str, ...] = ()
+            unusable = False   # the model gave nothing readable (or a blank answer) twice
             for turn in (1, 2):
                 turns = turn
                 self._guard()
@@ -428,6 +435,7 @@ class AssistantRunner:
                     if turn == 1:
                         notes = (prompts.NOTE_REPAIR_SHAPE,)
                         continue
+                    unusable = True
                     break
                 if leaked_names(final.answer):
                     logger.warning("assistant run %s: a chat answer named an internal name; replaced by the fixed sentence (%s)", self._ctx.run_id, language)
@@ -439,12 +447,22 @@ class AssistantRunner:
                     break
                 return self._finish(Reply(final.answer.strip(), language, final.kind), message_id, emit, turns)
             self._note_fallback(turns, set())
-            return self._finish(Reply(PLAIN_WORDS[language], language, "clarify"), message_id, emit, turns, status="failed", code="invalid_output")
+            return self._finish(Reply(COULD_NOT_ANSWER[language] if unusable else PLAIN_WORDS[language], language, "refusal" if unusable else "clarify"), message_id, emit, turns, status="failed", code="invalid_output")
         except _Stop as stop:
-            return self._end(stop.status, stop.error_code, turns, stop.shown)
+            return self._stopped(stop, language, message_id, emit, turns)
         except AgentDbError as exc:
             status, code, shown = self._classify(exc)
             return self._end(status, code, turns, shown)
+
+    def _call_model(self, llm: LlmClient, request: LlmRequest) -> Any:
+        """One model call. A provider that timed out, was unreachable or sent something unreadable is asked ONCE more, silently (owner, 1 Nov 2026); the second failure is the caller's."""
+        try:
+            return llm.complete(request)
+        except LlmError as exc:
+            if exc.code not in RETRYABLE:
+                raise
+            logger.warning("assistant run %s: model call failed (%s); asking once more", self._ctx.run_id, exc.code)
+            return llm.complete(request)
 
     def _complete(self, request: LlmRequest, key: str, language: str) -> Any:
         """Reserve the worst-case cost, call the model, record the usage (the tool loop does the same inline)."""
@@ -452,7 +470,7 @@ class AssistantRunner:
         self._db.reserve_cost(key, model=llm.model_id, max_input_tokens=input_token_bound(request), max_output_tokens=request.max_output_tokens)
         try:
             called = time.perf_counter()
-            response = llm.complete(request)
+            response = self._call_model(llm, request)
             self._model_ms += (time.perf_counter() - called) * 1000.0
         except LlmError as exc:
             logger.warning("assistant run %s: model call failed (%s)", self._ctx.run_id, exc.code)
@@ -651,6 +669,9 @@ class AssistantRunner:
         cleaned = address.clean(reply.text, (self.address_as,))   # no sir / madam in any reply, whatever the model wrote (unless the person chose that word)
         if cleaned != reply.text:
             reply = replace(reply, text=cleaned)
+        if not reply.text.strip():   # never an empty bubble (owner, 1 Nov 2026): whatever emptied the text, the person is told to try again and the log says so
+            logger.warning("assistant run %s: an empty reply was replaced by the could-not-answer sentence (%s)", self._ctx.run_id, reply.language)
+            reply = replace(reply, text=COULD_NOT_ANSWER[reply.language], kind="refusal")
         self._db.save_reply(
             message_id=message_id,
             text=reply.text,
@@ -736,6 +757,20 @@ class AssistantRunner:
         if isinstance(exc, BudgetExhausted | LimitReached | CostCapReached):
             return "failed", "budget", None
         return "failed", "tool_failed", None
+
+    def _stopped(self, stop: _Stop, language: Language, message_id: uuid.UUID, emit: Callable[[str, dict[str, Any]], None], turns: int) -> Outcome:
+        """A run that stopped. When the model itself failed (twice, see _call_model) the person gets the could-not-answer sentence in their language as a stored reply, never an empty bubble;
+        every other stop (a limit, a pause, a cancel, the busy provider) keeps its own message."""
+        if stop.error_code == "model_failed" and stop.shown is None:
+            logger.warning("assistant run %s: the model failed; the could-not-answer sentence is the reply (%s)", self._ctx.run_id, language)
+            try:
+                return self._finish(Reply(COULD_NOT_ANSWER[language], language, "refusal"), message_id, emit, turns, status="failed", code="model_failed")
+            except _Stop as again:
+                return self._end(again.status, again.error_code, turns, again.shown)
+            except AgentDbError as exc:
+                status, code, shown = self._classify(exc)
+                return self._end(status, code, turns, shown)
+        return self._end(stop.status, stop.error_code, turns, stop.shown)
 
     def _end(self, status: str, code: str | None, turns: int, shown: str | None = None) -> Outcome:
         if status != "denied":
