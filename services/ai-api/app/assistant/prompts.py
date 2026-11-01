@@ -9,7 +9,7 @@ from collections.abc import Sequence
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.agents.llm.interface import Block, LlmRequest, TaskClass, ToolSpec, Trust
 from app.agents.prompts import escape_value
@@ -41,6 +41,13 @@ class FinalReply(BaseModel):
     # answer: an answer drawn from the tool results; refusal: it will not (or cannot) do what was asked; clarify: it needs one more thing from the owner
     kind: Literal["answer", "refusal", "clarify"]
     answer: str = Field(min_length=1, max_length=6000)
+
+    @field_validator("answer")
+    @classmethod
+    def _not_blank(cls, value: str) -> str:
+        if not value.strip():   # only spaces / new lines: the same as no answer (an empty bubble, owner 1 Nov 2026)
+            raise ValueError("blank answer")
+        return value
     language: Literal["en", "te", "hi", "kn", "ta", "ml"]
     # the handles (s1, s2, ...) of the tool results the answer rests on
     sources: list[str] = Field(default_factory=list, max_length=20)
@@ -124,6 +131,13 @@ class ChatReply(BaseModel):
 
     kind: Literal["answer", "clarify"]
     answer: str = Field(min_length=1, max_length=6000)
+
+    @field_validator("answer")
+    @classmethod
+    def _not_blank(cls, value: str) -> str:
+        if not value.strip():   # only spaces / new lines: the same as no answer (an empty bubble, owner 1 Nov 2026)
+            raise ValueError("blank answer")
+        return value
     language: Literal["en", "te", "hi", "kn", "ta", "ml"]
 
 

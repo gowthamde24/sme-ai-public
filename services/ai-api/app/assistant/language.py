@@ -147,6 +147,17 @@ NO_ANSWER: dict[Language, str] = {
     "ml": "ഞാൻ നോക്കി, ഇതിനെക്കുറിച്ച് ഇപ്പോൾ കാണിക്കാൻ ഒന്നുമില്ല.",
 }
 
+# owner decision 1 Nov 2026: a typed turn never ends in an empty bubble. When the model fails (or answers with nothing) a second time, the person is told this, in their language. Not model output.
+# The words of the other languages are drafts for a native reader to check.
+COULD_NOT_ANSWER: dict[Language, str] = {
+    "en": "Sorry, I couldn't answer that — try again.",
+    "te": "క్షమించండి, దీనికి సమాధానం ఇవ్వలేకపోయాను — మళ్ళీ ప్రయత్నించండి.",
+    "hi": "माफ़ कीजिए, मैं इसका जवाब नहीं दे पाया — फिर से कोशिश कीजिए।",
+    "kn": "ಕ್ಷಮಿಸಿ, ಇದಕ್ಕೆ ಉತ್ತರಿಸಲು ಆಗಲಿಲ್ಲ — ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "ta": "மன்னிக்கவும், இதற்குப் பதில் சொல்ல முடியவில்லை — மீண்டும் முயற்சிக்கவும்.",
+    "ml": "ക്ഷമിക്കണം, ഇതിന് ഉത്തരം നൽകാൻ കഴിഞ്ഞില്ല — വീണ്ടും ശ്രമിക്കൂ.",
+}
+
 # owner decision 1 Nov 2026: a question about the money that is held or pending, when nothing is, is answered in these words, not with the general "nothing to show yet". The Telugu is the owner's own;
 # a native reader of the other languages should check them.
 NO_MONEY_PENDING: dict[Language, str] = {
