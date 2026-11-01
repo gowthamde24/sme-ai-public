@@ -57,3 +57,8 @@ def test_the_model_is_not_handed_a_zero_amount_or_a_zero_count_to_read_out() -> 
         line = next(ln for ln in source.splitlines() if f'("{key}",' in ln)
         assert "_amount(" in line or "_count(" in line, f"{key} must go through the zero-safe helpers: {line}"
     assert '"paid": _amount(paid)' in source and '"refunded": _amount(refunded)' in source
+
+
+def test_the_money_held_cases_expect_the_specific_answer() -> None:
+    cases = {c["id"]: c for c in (json.loads(line) for line in (ROOT / "tests" / "evals" / "zero" / "cases.jsonl").read_text(encoding="utf-8").splitlines() if line.strip())}
+    assert cases["zero-en-money-held"]["expect_contains"] == "No money is pending" and cases["zero-te-money-held"]["expect_contains"] == "బాకీ డబ్బు ఏమీ లేదు"

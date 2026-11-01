@@ -78,6 +78,7 @@ class State:
     # job BP: web calls made in this run by kind, and the web addresses the owner typed in the question
     web_calls: dict[str, int] = field(default_factory=dict)
     question_urls: frozenset[str] = frozenset()
+    money_held_none: bool = False   # get_today showed that no money is held on closed orders: a question about the money held is then answered "No money is pending" (owner, 1 Nov 2026)
 
     def add(
         self,
@@ -205,6 +206,7 @@ def get_today(ctx: Ctx, _: NoArgs) -> Output:
         items.append(item)
         ctx.state.today_recent.append(item.handle)
     ctx.state.allowed_paise.add(today.cards.money_held_paise)
+    ctx.state.money_held_none = today.cards.money_held_paise == 0
     facts = (
         ("waiting_for_you", _count(today.cards.waiting)),
         ("money_held_on_closed_orders", _amount(today.cards.money_held_paise)),
