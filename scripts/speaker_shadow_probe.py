@@ -1,6 +1,6 @@
 """The speaker check in shadow on STAGING: how long it takes on Cloud Run, and what it says (owner decision 31 Oct 2026).
 
-Opens a few sessions as ONE synthetic demo owner (the owner's own test recordings are the voice: they go only to our staging test session and our speech recogniser). Per session: two spoken questions build the
+Opens a few sessions as ONE synthetic demo owner (the owner's own test recordings are the voice: they go only to our staging test session and our speech recogniser). Per session: four spoken questions build the
 session's signature, then three times: a question is asked, the assistant starts to answer, a sound interrupts (`barge_in` with `verify`, then the audio of another recording of the same voice), and the `speaker`
 message the server sends is read: `same`, `score`, `ms` (the check's own time in the server). Nothing is kept except those numbers. Costs a few hundred Cartesia characters a session.
 
@@ -101,7 +101,7 @@ async def _run(ws: Any, token: str, audio: dict[int, bytes], results: list[dict[
             raise SystemExit("no ready")
         await until_type("audio_end", 45)   # the greeting (a cold server can take 15 s to speak it)
         await asyncio.sleep(0.6)
-        for enrol in (1, 7):   # two spoken questions in the owner's voice: the signature is made as soon as the words are confirmed
+        for enrol in (1, 7, 3, 5):   # four spoken questions in the owner's voice (about 9 s of speech: the signature is used after 6 s)   # two spoken questions in the owner's voice: the signature is made as soon as the words are confirmed
             await send_audio(audio[enrol])
             while True:
                 data = await until_type("caption", 40)
