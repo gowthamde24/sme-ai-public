@@ -36,6 +36,18 @@ Chosen: fp32, threshold **0.40** (`speaker.SAME_AT_LEAST`). The time is spent AF
 
 **Voice 6 (the owner with a TV behind), 1.5 s windows every 0.75 s against the owner's signature:** 0.0 to 1.5 s (quiet music, no speech): **0.06 (different)**; every window with speech from 0.75 s to 8.25 s: 0.58, 0.72, 0.68, 0.64, 0.62, 0.58, 0.73, 0.76, 0.58 (**the owner's voice**, the same range as the owner's own windows in the clean recordings). So there is exactly one non-owner stretch in that recording, the music; the stretches the owner labelled as TV speech ("Maatlu ippudu edaina", "Peddam", "Let's find out the dates") sound like the owner: the recogniser, pinned to Telugu, writes them as the owner's own line ("ఇప్పుడు ఏదైనా చేద్దాం", "చేద్దాం", "ఫైండ్ అవుట్ చేద్దాం"). Either the TV said almost the same words in a voice like the owner's, or those labels are the owner's own speech mis-heard as English. **The separation on real TV speech could not be shown with this recording; it needs one with a clearly different voice on the TV.**
 
+## Shadow run on Cloud Run staging (1 Nov 2026): latency and what the scores really are
+
+Staging runs `BROWSER_VOICE_SPEAKER_CHECK=shadow` (owner sessions, browser only). Each judged interruption writes one numbers-only line (`browser_voice_speaker mode= same= ready= score= ms=`; also `browser_voice_speaker_enrol kept= speech_s= clip_s=` per confirmed turn): no audio, no words, no signature. Probe: `scripts/speaker_shadow_probe.py` (the owner's own recordings as the voice, 3 interruptions a session after two enrolment turns). 24 interruptions, all scored:
+
+| Clip scored | n | time in the server, p50 / p95 / max | score (the owner's own voice, signature from two short turns) |
+|---|---|---|---|
+| the last 3 s of the interruption (first version) | 12 | **21 / 33 / 33 ms** | -0.02 to 0.45, median 0.32 |
+| everything since the barge-in began, at most 6 s (now) | 12 | **54 / 67 / 70 ms** | -0.04 to 0.43, median 0.19 |
+
+Latency is inside the 200 ms barge-in budget on Cloud Run (the line is already paused when this runs). **The scores are NOT usable yet:** against the signature that two short turns make (3.1 s of speech in total on staging: `speech_s` 2.0 and 1.1) the owner's own voice scored far below the 0.61 average of the offline test (signature from five recordings). At 0.40 the check would have said "not the speaker" for 9 of the owner's 12 interruptions in the second run. Hence the readiness rule: **the signature is used only after 6 s of the person's speech are enrolled** (`MIN_ENROLLED_S`); before that the check gives no opinion and the sound interrupts, whatever the mode. Found on the way: a failed first enrolment used to still count as a free first turn, so the next voice (a television) could become the signature; fixed (a clip without speech is not a turn), and a later voice must match to be added (the Mac's text-to-speech voice was correctly refused: `kept=False`).
+What is still needed before `on`: a run where the enrolled speech is 6 s or more (a normal conversation, or the probe with more owner turns) and "voice-9" (the owner plus a real TV or YouTube voice).
+
 ## Privacy-notice line (wording APPROVED by the owner 31 Oct 2026, with "in the app"; UNPUBLISHED until the speaker check goes `on`)
 
 > "During a voice conversation in the app, your voice is compared with the earlier part of the same conversation so that other voices in the background, such as a television, do not interrupt the assistant. This comparison happens in memory on our server for the length of the conversation only; nothing about your voice is stored or kept after it ends."
