@@ -519,7 +519,7 @@ class VoiceSession:
         if voice is None:
             return kind
         began = self.clock()
-        clip = self.bus.recent()[-3 * IN_RATE * 2 :]
+        clip = self.bus.recent()[-6 * IN_RATE * 2 :]   # everything since the barge-in began (the ring was trimmed to the preroll then), at most the last 6 s; a clip of the last 3 s alone often holds under a second of speech
         score = await asyncio.to_thread(voice.similarity, clip)
         same = None if score is None else score >= speaker.SAME_AT_LEAST
         took_ms = round((self.clock() - began) * 1000)
