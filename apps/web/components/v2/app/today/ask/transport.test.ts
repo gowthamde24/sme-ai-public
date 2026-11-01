@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import type { AskEvent } from "./ask-types";
-import { fetchVoiceStatus, makeAskTransport, makeVoiceTransport, parseLine } from "./transport";
+import { STALL_MS, fetchVoiceStatus, makeAskTransport, makeVoiceTransport, parseLine } from "./transport";
 
 const NDJSON = { "Content-Type": "application/x-ndjson; charset=utf-8" };
 const U = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
@@ -51,6 +51,20 @@ describe("makeAskTransport", () => {
     const cut = bytes.indexOf(0xb0) + 1; // inside the first Telugu letter
     const body = new ReadableStream<Uint8Array>({ start(c) { c.enqueue(bytes.slice(0, cut)); c.enqueue(bytes.slice(cut, cut + 7)); c.enqueue(bytes.slice(cut + 7)); c.close(); } });
     expect(await collect(run(async () => new Response(body, { headers: NDJSON })))).toEqual([{ type: "text", delta: "నమస్కారం" }, { type: "done", conversationId: null }]);
+  });
+  it("a stream that goes quiet for a long time is given up like a cut connection (an error event), after some words or none", async () => {
+    vi.useFakeTimers();
+    try {
+      const body = new ReadableStream<Uint8Array>({ start(c) { c.enqueue(new TextEncoder().encode('{"type":"text","delta":"Half"}\n')); } }); // never closes, never says another word
+      const pending = collect(run(async () => new Response(body, { headers: NDJSON })));
+      await vi.advanceTimersByTimeAsync(STALL_MS + 1000);
+      expect(await pending).toEqual([{ type: "text", delta: "Half" }, { type: "error" }]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+  it("a stream that ends with `done` and no word is passed on as it is (the session turns it into the sorry sentence)", async () => {
+    expect(await collect(run(async () => new Response('{"type":"done"}\n', { headers: NDJSON })))).toEqual([{ type: "done", conversationId: null }]);
   });
   it.each([
     ["a sign-in page (not the event stream)", () => new Response("<html>login</html>", { headers: { "Content-Type": "text/html" } })],

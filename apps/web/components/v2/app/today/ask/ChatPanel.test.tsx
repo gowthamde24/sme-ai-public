@@ -46,6 +46,10 @@ async function* answer(text: string): AsyncGenerator<AskEvent> {
     yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
     return;
   }
+  if (text === "EMPTY") {
+    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" }; // `done` and not one word: never an empty bubble
+    return;
+  }
   if (text === "CLARIFY") {
     yield { type: "text", delta: "Which leads: today's or this week's?" };
     yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
@@ -61,7 +65,7 @@ let reply = "It is **five** pieces.\n- Silk\n- Cotton";
 const orbs: (string | null)[] = [];
 
 function Harness({ onClose = () => undefined, variant }: { onClose?: () => void; variant?: "panel" | "card" | "bar" }) {
-  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: {}, availability: "live", transport: ({ question, conversationId, replyLanguage }) => (asked.push(question), asks.push({ question, conversationId, replyLanguage }), answer(question === "PLAN" || question === "CLARIFY" ? question : reply)), voiceStatus: { available: false, speech: false } });
+  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: { "ask.sorry": appDict("en")["ask.sorry"], "ask.retry": appDict("en")["ask.retry"] }, availability: "live", transport: ({ question, conversationId, replyLanguage }) => (asked.push(question), asks.push({ question, conversationId, replyLanguage }), answer(question === "PLAN" || question === "CLARIFY" || question === "EMPTY" ? question : reply)), voiceStatus: { available: false, speech: false } });
   React.useEffect(() => {
     orbs.push(s.voiceOrb);
   }, [s.voiceOrb]);
@@ -440,6 +444,17 @@ describe("the conversation panel", () => {
     fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
     expect(onClose).toHaveBeenCalled();
     expect(sock.types()).toContain("stop");
+  });
+  it("an answer that ends with `done` and not one word is the sorry sentence with Try again, never an empty bubble; Try again asks the same question again", async () => {
+    draw();
+    await type("EMPTY");
+    await send();
+    const failed = document.querySelector('[data-chat="failed"]') as HTMLElement;
+    expect(failed).toHaveTextContent("Sorry, I couldn't answer that — try again.");
+    expect(failed).toHaveAttribute("role", "alert");
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Try again" })));
+    expect(asked).toEqual(["EMPTY", "EMPTY"]);
+    expect(document.querySelectorAll('[data-chat="failed"]')).toHaveLength(1); // the first try joined the thread above; the new one is on screen
   });
   it("a plan from the assistant shows what it will do with ONE tap, Yes, do it / No; the answer goes to the API and the card then says what happened", async () => {
     draw();

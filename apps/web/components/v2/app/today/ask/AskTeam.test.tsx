@@ -125,7 +125,7 @@ describe("AskTeam: asking", () => {
   it("an error, thrown or sent, says nothing was changed and offers the questions again", async () => {
     box(playing([{ type: "text", delta: "Half an answer." }, { type: "error" }]));
     ask("x");
-    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("The answer could not be completed. Nothing was changed."));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Sorry, I couldn't answer that — try again."));
     expect(screen.getByRole("button", { name: "What needs me today?" })).toBeInTheDocument();
     cleanup();
     box((async function* () {
@@ -246,8 +246,8 @@ describe("AskTeam: the real your assistant's shapes (Job AG)", () => {
     ["agents_disabled", "Switched off"],
     ["model_busy", "Your assistant is busy right now. Try again in a minute."],
     ["model_not_configured", "Your assistant isn't set up yet. Ask the owner to turn it on."],
-    ["something_else", "The answer could not be completed. Nothing was changed."],
-    [undefined, "The answer could not be completed. Nothing was changed."],
+    ["something_else", "Sorry, I couldn't answer that — try again."],
+    [undefined, "Sorry, I couldn't answer that — try again."],
   ])("an error with code %s says its own fixed sentence", async (code, words) => {
     box(playing([{ type: "error", code }]));
     ask("x");
