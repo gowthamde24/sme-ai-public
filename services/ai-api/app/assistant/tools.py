@@ -136,6 +136,15 @@ def _money(paise: int) -> str:
     return format_rupees(paise)
 
 
+def _amount(paise: int) -> str:
+    """An AGGREGATE amount for the model to read: a zero is the word "none", never "₹0.00" (owner review 1 Nov 2026: a zero is never read out; a prompt rule alone let "₹0.00" through now and then, so the model is not given one)."""
+    return "none" if paise == 0 else format_rupees(paise)
+
+
+def _count(n: int) -> str:
+    return "none" if n == 0 else str(n)
+
+
 def _name(row: dict[str, Any] | None) -> tuple[str, str | None]:
     company = ((row or {}).get("lead") or {}).get("company") or {}
     return (company.get("name") or "A customer", company.get("city"))
@@ -197,9 +206,9 @@ def get_today(ctx: Ctx, _: NoArgs) -> Output:
         ctx.state.today_recent.append(item.handle)
     ctx.state.allowed_paise.add(today.cards.money_held_paise)
     facts = (
-        ("waiting_for_you", str(today.cards.waiting)),
-        ("money_held_on_closed_orders", _money(today.cards.money_held_paise)),
-        ("open_orders", str(today.cards.orders_open)),
+        ("waiting_for_you", _count(today.cards.waiting)),
+        ("money_held_on_closed_orders", _amount(today.cards.money_held_paise)),
+        ("open_orders", _count(today.cards.orders_open)),
     )
     return Output(items=tuple(items), facts=facts)
 
@@ -285,8 +294,8 @@ def list_orders(ctx: Ctx, args: ListOrdersArgs) -> Output:
                     "state": row["state"],
                     "city": city,
                     "total": _money(int(row["order_total_paise"])),
-                    "paid": _money(paid),
-                    "refunded": _money(refunded),
+                    "paid": _amount(paid),
+                    "refunded": _amount(refunded),
                     "money_held": _money(net) if closed_lost and net > 0 else None,
                 },
                 ("order", uuid.UUID(str(row["id"]))),
