@@ -440,7 +440,7 @@ describe("what goes wrong, in words", () => {
     await startRecording();
     await tick(1500);
     await stopRecording();
-    expect(await screen.findByRole("alert")).toHaveTextContent("The answer could not be completed. Nothing was changed.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Sorry, I couldn't answer that — try again.");
   });
 });
 

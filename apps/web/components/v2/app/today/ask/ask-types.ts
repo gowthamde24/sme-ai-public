@@ -19,7 +19,7 @@ export type AskEvent =
    * A customer reply carries the text in the customer's language (`summary`, `language`) and its English meaning (`gloss`); `machine` is true when a machine wrote the words.
    */
   | { type: "draft"; id: string; kind: string; title: string; summary: string; href: string | null; language?: string | null; gloss?: string | null; machine?: boolean }
-  /** The answer could not be completed. Nothing was changed. `code` is one of a short closed list (see ERROR_CODES); anything else is the general sentence. */
+  /** The answer could not be completed. Nothing was changed. `code` is one of a short closed list (see ERROR_CODES); anything else is the general sentence ("Sorry, I couldn't answer that — try again.", with "Try again"). */
   | { type: "error"; code?: string }
   /** The conversation turn ended; `conversationId` is the conversation to go on in (the next message continues it); older replies carry none. */
   | { type: "done"; conversationId?: string | null }
