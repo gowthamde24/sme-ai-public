@@ -87,26 +87,32 @@ async def session(url: str, token: str, audio: dict[int, bytes]) -> list[dict[st
             return None
 
         try:
-            await _run(ws, token, audio, results, next_msg, send_audio, until_type)
+            await _run(ws, token, audio, results, next_msg, send_audio, until_type, inbox)
         except Exception as exc:   # noqa: BLE001 - say what the server last said
             print("  stopped:", type(exc).__name__, "| last server messages:", [m for m in seen if '"type":"limit"' in m or '"type": "limit"' in m or '"fatal"' in m][-2:] or seen[-3:])
         task.cancel()
     return results
 
 
-async def _run(ws: Any, token: str, audio: dict[int, bytes], results: list[dict[str, Any]], next_msg: Any, send_audio: Any, until_type: Any) -> None:
+async def _run(ws: Any, token: str, audio: dict[int, bytes], results: list[dict[str, Any]], next_msg: Any, send_audio: Any, until_type: Any, inbox: Any) -> None:
     if True:
         await ws.send(json.dumps({"type": "start", "access_token": token, "language": "en"}))
         if not await until_type("ready", 20):
             raise SystemExit("no ready")
-        await until_type("audio_end", 8)   # the greeting
-        for enrol in (1, 7):   # two spoken questions: the signature
+        await until_type("audio_end", 45)   # the greeting (a cold server can take 15 s to speak it)
+        await asyncio.sleep(0.6)
+        for enrol in (1, 7):   # two spoken questions in the owner's voice: the signature is made as soon as the words are confirmed
             await send_audio(audio[enrol])
-            await until_type("timings", 60)
+            while True:
+                data = await until_type("caption", 40)
+                if data is None or (data.get("who") == "user" and data.get("final")):
+                    break
+            await ws.send(json.dumps({"type": "barge_in"}))   # (the answer to a business question is slow and not what is measured: stop it)
+            await until_type("timings", 40)
         for interrupter in (5, 3, 1):
             while not inbox.empty():   # (what is left of the last answer)
                 inbox.get_nowait()
-            await send_audio(audio[7])   # a question, so the assistant speaks
+            await send_audio(audio[0])   # a casual question in another voice (the Mac's), so the assistant speaks at length quickly
             while True:   # until the first audio byte of the answer
                 try:
                     _, msg = await next_msg(40)
@@ -132,6 +138,7 @@ def main() -> int:
     ap.add_argument("--project-ref", required=True)
     ap.add_argument("--api-url", required=True)
     ap.add_argument("--audio-dir", required=True, type=Path)
+    ap.add_argument("--trigger-wav", required=True, type=Path, help="a casual question (the Mac's `say`), 16 kHz mono: the assistant answers it at length")
     ap.add_argument("--sessions", type=int, default=5)
     ap.add_argument("--pack", default="education")
     ap.add_argument("--out", type=Path, default=None)
@@ -146,6 +153,7 @@ def main() -> int:
     tenant = owner.t.rsplit("/", 1)[-1]
     url = args.api_url.replace("https://", "wss://", 1).rstrip("/") + f"/v1/tenants/{tenant}/voice-chat"
     audio = {n: wav(args.audio_dir / f"voice-{n}.wav") for n in (1, 3, 5, 7)}
+    audio[0] = wav(args.trigger_wav)
     rows: list[dict[str, Any]] = []
     for i in range(args.sessions):
         got = asyncio.run(session(url, owner.token, audio))
