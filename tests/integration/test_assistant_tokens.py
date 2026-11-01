@@ -47,11 +47,12 @@ PATH_QUESTIONS: dict[str, dict[str, str]] = {
 # job AS: +1 visit tool = +154). Job BB, measured: core 2,982 to 3,263 a question and 1,494 to 1,829 a call; catalogue 3,679 to 3,693 and 2,037 to 2,044; visits 3,277 and 1,836; both 3,855 and 2,125.
 # Night merge 25 Oct (job DG put `get_figures` in the CORE tools, offered to every question): core 3,275 to 3,556 a question and 1,640 to 1,975 a call; visits 3,569 and 1,982 (catalogue and both did not grow past their ceilings).
 # The base and visits ceilings are raised to those numbers + about 3%; whether `get_figures` should be routed like the catalogue tools (only for fees, dues and trips) is the owner's call, see night-report.md.
+# 1 Nov 2026: the zero rule ("never read out a zero", ~31 tokens in every call, ~62 a question of two calls) is the owner's: all four ceilings go up by 70 a question and 40 a call (the rule cost, measured).
 PATH_CEILINGS: dict[str, tuple[int, int]] = {
-    "base": (3660, 2040),
-    "catalogue": (3780, 2100),
-    "visits": (3680, 2050),
-    "both": (3950, 2180),
+    "base": (3730, 2080),
+    "catalogue": (3850, 2140),
+    "visits": (3750, 2090),
+    "both": (4020, 2220),
 }
 
 
