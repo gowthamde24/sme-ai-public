@@ -8,3 +8,7 @@
 {"id": "casual-te-silk", "language": "te", "text": "ధర్మవరం పట్టు చీరల గురించి చెప్పండి", "kind": "general", "max_chars": 900}
 {"id": "casual-en-silk", "language": "en", "text": "Tell me about Dharmavaram silk", "kind": "general", "max_chars": 900}
 {"id": "casual-tenglish-silk", "language": "te", "text": "Dharmavaram silk gurinchi cheppu", "kind": "general", "max_chars": 900}
+{"id": "zero-en-money-held", "language": "en", "text": "How much customer money is held?", "kind": "business", "max_chars": 300, "no_zero": true}
+{"id": "zero-te-money-held", "language": "te", "text": "కస్టమర్ల డబ్బు ఎంత ఆపి ఉంది?", "kind": "business", "max_chars": 400, "no_zero": true}
+{"id": "zero-en-new-enquiries", "language": "en", "text": "How many new enquiries came today?", "kind": "business", "max_chars": 300, "no_zero": true}
+{"id": "zero-te-new-enquiries", "language": "te", "text": "ఈరోజు కొత్త ఎంక్వైరీలు ఎన్ని వచ్చాయి?", "kind": "business", "max_chars": 400, "no_zero": true}

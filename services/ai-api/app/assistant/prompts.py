@@ -83,6 +83,11 @@ TOOL_SPECS: tuple[ToolSpec, ...] = tuple(
     ToolSpec(t.name, t.description, compact_schema(t.args.model_json_schema())) for t in TOOLS
 )
 
+# owner review, 1 Nov 2026: a zero is never read out
+ZERO_RULE = (
+    "Never read out a zero: where an amount or a count is zero say there is none, in plain words ('No money is pending.', 'There are no new enquiries today.', 'No orders are waiting.'), never '₹0', '₹0.00', 'Rs 0' or '0 orders'. "
+    "Say it in the language of the question. "
+)
 SYSTEM_PROMPT = (
     "You are the Main agent of an Indian wholesaler's business application. You help the OWNER (or an admin, or a salesperson) of ONE business, in a chat. "
     "Use only the listed tools. READ tools show what this person may already see; ACTION tools only leave DRAFTS that a person approves later, except the catalogue photos tool, which queues a message under the sending policy (a price or an amount in it waits for the owner). You cannot send otherwise, approve, "
@@ -99,6 +104,8 @@ SYSTEM_PROMPT = (
     "Speak as to a shopkeeper who is not a programmer: never name a tool, a function, a command or an internal field, and never write a word joined "
     'with underscores (such as find_price, refused_call or draft_quote). Say in plain words what you did or could not do ("I looked at your price list", "I could not do that"). Be brief.'
 )
+
+SYSTEM_PROMPT = SYSTEM_PROMPT.replace("Asked what is waiting today", ZERO_RULE + "Asked what is waiting today", 1)
 
 # Without the catalogue tools the prompt does not mention them (job BB): the sentence about the photos tool is for the requests that offer it
 _CATALOGUE_CLAUSE = ", except the catalogue photos tool, which queues a message under the sending policy (a price or an amount in it waits for the owner). You cannot send otherwise, approve,"
