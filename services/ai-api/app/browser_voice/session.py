@@ -527,11 +527,12 @@ class VoiceSession:
         began = self.clock()
         clip = self.bus.recent()[-6 * IN_RATE * 2 :]   # everything since the barge-in began (the ring was trimmed to the preroll then), at most the last 6 s; a clip of the last 3 s alone often holds under a second of speech
         score = await asyncio.to_thread(voice.similarity, clip)
-        same = None if score is None else score >= speaker.SAME_AT_LEAST
+        ready = bool(getattr(voice, "ready", True))
+        same = None if score is None or not ready else score >= speaker.SAME_AT_LEAST
         took_ms = round((self.clock() - began) * 1000)
-        await self._send({"type": "speaker", "mode": self.limits.speaker_check, "same": same, "score": None if score is None else round(score, 2), "ms": took_ms})
+        await self._send({"type": "speaker", "mode": self.limits.speaker_check, "same": same, "ready": ready, "score": None if score is None else round(score, 2), "ms": took_ms})
         # (owner, 31 Oct 2026) the numbers only, so the shadow run can be judged: no audio, no signature, no words, no ids
-        log.info("browser_voice_speaker mode=%s same=%s score=%s ms=%s", self.limits.speaker_check, same, None if score is None else round(score, 2), took_ms)
+        log.info("browser_voice_speaker mode=%s same=%s ready=%s score=%s ms=%s", self.limits.speaker_check, same, ready, None if score is None else round(score, 2), took_ms)
         return "noise" if (self.limits.speaker_check == "on" and same is False) else kind
 
     async def _timer(self) -> None:

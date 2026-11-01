@@ -28,6 +28,7 @@ class FakeVoice:
 
     def __init__(self, score: float | None) -> None:
         self.score = score
+        self.ready = True
         self.enrolled: list[int] = []
         self.checked: list[int] = []
         self.closed = False
@@ -75,7 +76,8 @@ async def test_in_on_mode_a_voice_that_is_not_the_speaker_does_not_stop_the_repl
     sock, session, voice = session_with("on", 0.10)
     await interrupt(sock, session)
     await until(lambda: "resumed" in sock.types(), seconds=8)
-    assert "interrupted" not in sock.types() and next(m for m in sock.json if m["type"] == "speaker") == {"type": "speaker", "mode": "on", "same": False, "score": 0.1, "ms": next(m for m in sock.json if m["type"] == "speaker")["ms"]}
+    speaker_msg = next(m for m in sock.json if m["type"] == "speaker")
+    assert "interrupted" not in sock.types() and speaker_msg == {"type": "speaker", "mode": "on", "same": False, "ready": True, "score": 0.1, "ms": speaker_msg["ms"]}
     sock.inbox.put_nowait(("close", None))
     await asyncio.sleep(0.2)
     assert voice.closed and session._voice is None, "the signature is forgotten when the session ends"  # noqa: SLF001
@@ -176,7 +178,7 @@ def voice_of_pitch(hz: float, seconds: float = 1.5) -> bytes:
 def test_the_signature_logic() -> None:
     np = pytest.importorskip("numpy")
     voice = speaker.SessionVoice(FakeModel(np), np)
-    owner, other = voice_of_pitch(500), voice_of_pitch(1500)
+    owner, other = voice_of_pitch(500, 3.5), voice_of_pitch(1500)
     assert voice.same_voice(owner) is None, "no signature yet: no opinion (the caller treats it as the person)"
     voice.enrol(owner)
     voice.enrol(owner)
@@ -247,7 +249,7 @@ async def test_the_shadow_run_logs_the_numbers_only() -> None:
         logger.removeHandler(handler)
         logger.setLevel(previous)
     lines = [r for r in records if r.startswith("browser_voice_speaker mode=")]
-    assert len(lines) == 1 and lines[0].startswith("browser_voice_speaker mode=shadow same=False score=0.37 ms="), lines
+    assert len(lines) == 1 and lines[0].startswith("browser_voice_speaker mode=shadow same=False ready=True score=0.37 ms="), lines
     enrols = [r for r in records if r.startswith("browser_voice_speaker_enrol")]
     assert all(__import__("re").fullmatch(r"browser_voice_speaker_enrol kept=(True|False) speech_s=[\d.]+ clip_s=[\d.]+", r) for r in enrols), enrols
     assert not any("five hundred" in r for r in records), "no words of the caller in any log line"
@@ -258,7 +260,22 @@ def test_a_clip_without_speech_does_not_use_up_a_free_first_turn() -> None:
     np = pytest.importorskip("numpy")
     voice = speaker.SessionVoice(FakeModel(np), np)
     assert voice.enrol(silence(500))[0] is False and voice.turns == 0
-    owner, other = voice_of_pitch(500), voice_of_pitch(1500)
+    owner, other = voice_of_pitch(500, 3.5), voice_of_pitch(1500)
     assert voice.enrol(owner)[0] is True and voice.enrol(owner)[0] is True
     assert voice.enrol(other)[0] is False, "the third voice is checked against the signature, not admitted"
     assert voice.same_voice(other) is False
+
+
+def test_the_signature_is_not_used_before_enough_speech_is_enrolled() -> None:
+    np = pytest.importorskip("numpy")
+    voice = speaker.SessionVoice(FakeModel(np), np)
+    owner, other = voice_of_pitch(500, 1.5), voice_of_pitch(1500, 1.5)
+    voice.enrol(owner)
+    voice.enrol(owner)
+    assert not voice.ready and voice.same_voice(other) is None and voice.same_voice(owner) is None, "3 s of speech is not enough: no opinion, the sound interrupts"
+    assert voice.similarity(other) is not None, "(the score itself is still measured, for the shadow log)"
+    for _ in range(2):
+        voice.enrol(voice_of_pitch(500, 2.0))
+    assert voice.ready and voice.same_voice(other) is False and voice.same_voice(owner) is True
+    voice.close()
+    assert not voice.ready
