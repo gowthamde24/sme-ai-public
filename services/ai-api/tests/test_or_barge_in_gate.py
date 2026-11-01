@@ -134,3 +134,23 @@ def test_the_english_stop_words_are_found_as_a_telugu_pinned_recogniser_writes_t
     """Measured 31 Oct 2026 with Sarvam pinned to te-IN: the English words come back in Telugu script."""
     for heard in ("స్టాప్.", "స్టాప్ స్టాప్", "వెయిట్.", "వెయిట్ వన్ మినిట్.", "హోల్డన్", "వన్ సెకండ్.", "Holden", "स्टॉप", "ಸ್ಟಾಪ್"):
         assert stop_word_heard(heard) and classify_interruption(0, heard) == "barge_in", heard
+
+
+@arun
+async def test_a_person_still_talking_when_the_judges_time_runs_out_stops_the_reply() -> None:
+    """Found on staging 1 Nov 2026: a sentence longer than the judge's wait (about 3.3 s) used to be recorded as 'no words' and the reply went on over the person. (The sound arrives in real time here, as from a browser.)"""
+    sock = FakeSocket()
+    session = session_of(sock, pinned_parts("I meant five hundred"), Limits(greeting=False))
+    RUNNING.append(asyncio.ensure_future(session.run()))
+    sock.feed_speech()
+    await until(lambda: len(sock.audio) >= 2)
+    sock.inbox.put_nowait(("text", {"type": "barge_in", "verify": True}))
+    await until(lambda: "paused" in sock.types())
+    for _ in range(5000 // 20):   # five seconds of talking, at the pace of a microphone
+        sock.inbox.put_nowait(("bytes", tone(20)))
+        await asyncio.sleep(0.02)
+    for _ in range(40):
+        sock.inbox.put_nowait(("bytes", silence(20)))
+    await until(lambda: "interrupted" in sock.types() or "resumed" in sock.types(), seconds=10)
+    assert "interrupted" in sock.types() and "resumed" not in sock.types()
+    sock.inbox.put_nowait(("close", None))

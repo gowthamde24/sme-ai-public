@@ -485,6 +485,8 @@ class VoiceSession:
         except Exception as err:
             log.warning("browser_voice_judge_failed code=%s", getattr(err, "code", type(err).__name__))
         speech_ms = max(0, int((tm.eot_at - tm.speech_start_at) * 1000) - endpoint_ms(self.language)) if tm.eot_at is not None and tm.speech_start_at is not None else 0   # (the recogniser's end comes after the quiet that ends a turn)
+        if text is None and tm.speech_start_at is not None and tm.eot_at is None:
+            speech_ms = max(speech_ms, 1000)   # the judge's time ran out while the voice was STILL going (a sentence longer than the wait): that is a person talking, not a cough (found 1 Nov 2026 on staging)
         pin = self.parts.pinned_language()
         foreign = bool(self.limits.language_gate and pin is not None and foreign_to_pin(text, pin))   # the TV in another language (never a stop word, never Tenglish)
         kind = classify_interruption(speech_ms, text, foreign=foreign, **({"stop_words": self.limits.stop_words} if self.limits.stop_words else {}))
@@ -508,7 +510,13 @@ class VoiceSession:
             return
         seconds = (tm.final_at - tm.speech_start_at) if tm.final_at is not None and tm.speech_start_at is not None else 4.0
         clip = self.bus.recent()[-int((min(8.0, max(1.0, seconds)) + 0.4) * IN_RATE * 2) :]
-        asyncio.ensure_future(asyncio.to_thread(voice.enrol, clip))
+
+        async def enrol() -> None:
+            result = await asyncio.to_thread(voice.enrol, clip)
+            if result:
+                log.info("browser_voice_speaker_enrol kept=%s speech_s=%.1f clip_s=%.1f", result[0], result[1], len(clip) / 2 / IN_RATE)   # numbers only
+
+        asyncio.ensure_future(enrol())
 
     async def _speaker_verdict(self, kind: Interruption) -> Interruption:
         """The sound that paused the reply was words: is it the session's speaker? In `on` a different voice is background (the reply goes on); no signature yet, too little speech or an unclear score is the person (stopping beats talking
@@ -517,10 +525,14 @@ class VoiceSession:
         if voice is None:
             return kind
         began = self.clock()
-        clip = self.bus.recent()[-3 * IN_RATE * 2 :]
+        clip = self.bus.recent()[-6 * IN_RATE * 2 :]   # everything since the barge-in began (the ring was trimmed to the preroll then), at most the last 6 s; a clip of the last 3 s alone often holds under a second of speech
         score = await asyncio.to_thread(voice.similarity, clip)
-        same = None if score is None else score >= speaker.SAME_AT_LEAST
-        await self._send({"type": "speaker", "mode": self.limits.speaker_check, "same": same, "score": None if score is None else round(score, 2), "ms": round((self.clock() - began) * 1000)})
+        ready = bool(getattr(voice, "ready", True))
+        same = None if score is None or not ready else score >= speaker.SAME_AT_LEAST
+        took_ms = round((self.clock() - began) * 1000)
+        await self._send({"type": "speaker", "mode": self.limits.speaker_check, "same": same, "ready": ready, "score": None if score is None else round(score, 2), "ms": took_ms})
+        # (owner, 31 Oct 2026) the numbers only, so the shadow run can be judged: no audio, no signature, no words, no ids
+        log.info("browser_voice_speaker mode=%s same=%s ready=%s score=%s ms=%s", self.limits.speaker_check, same, ready, None if score is None else round(score, 2), took_ms)
         return "noise" if (self.limits.speaker_check == "on" and same is False) else kind
 
     async def _timer(self) -> None:
