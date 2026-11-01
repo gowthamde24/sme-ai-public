@@ -75,7 +75,7 @@ function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: str
   );
 }
 
-function ExchangeView({ x, w, c, onEdit, base, onStatus, mis }: { mis: { endpoint: string; language: VoiceLang } | null; x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void }) {
+function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry }: { /** The way to ask the same question again, for the exchange that is on screen and failed. */ onRetry?: (() => void) | undefined; mis: { endpoint: string; language: VoiceLang } | null; x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void }) {
   const [copied, setCopied] = React.useState(false);
   const copy = () => {
     void navigator.clipboard?.writeText(x.answer).then(() => setCopied(true), () => undefined);
@@ -110,7 +110,16 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus, mis }: { mis: { endpoin
           <PlanCard plan={x.plan} c={c} base={base} onStatus={onStatus} />
         </div>
       ) : null}
-      {x.failed && !x.answer ? <p role="alert" className="self-start text-base font-medium text-red-text">{x.errorCode !== null && ERROR_WORD[x.errorCode] ? w(ERROR_WORD[x.errorCode]) : w("ask.error")}</p> : null}
+      {x.failed && !x.answer ? (
+        <div className="flex flex-wrap items-center gap-x-3 self-start">
+          <p role="alert" data-chat="failed" className="text-base font-medium text-red-text">{x.errorCode !== null && ERROR_WORD[x.errorCode] ? w(ERROR_WORD[x.errorCode]) : x.task ? w("ask.error") : w("ask.sorry")}</p>
+          {onRetry ? (
+            <button type="button" data-chat="retry" onClick={onRetry} className="inline-flex min-h-11 items-center rounded-full px-3 text-base font-semibold text-brand-text hover:bg-surface-2">
+              {w("ask.retry")}
+            </button>
+          ) : null}
+        </div>
+      ) : null}
     </li>
   );
 }
@@ -410,7 +419,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
             {s.earlier.map((x, i) => (
               <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} />
             ))}
-            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} /> : null}
+            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} onRetry={current.failed && !current.answer && !current.heardByVoice && current.asked !== "" && !current.task ? s.retry : undefined} /> : null}
             {talk.state === "listening" && !talk.live?.asked ? (
               <li data-chat="wave" aria-hidden="true" className={`${bubble} flex h-11 items-center gap-1 self-end border border-dashed border-brand-edge bg-surface`}>
                 {["", "[animation-delay:120ms]", "[animation-delay:240ms]", "[animation-delay:360ms]", "[animation-delay:480ms]"].map((delay) => (

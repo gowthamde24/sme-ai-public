@@ -191,7 +191,9 @@ export function useAskSession({ lang, base, words, availability, transport: give
     abort.current = controller;
     // the exchange that was on screen joins the thread (a question that was never answered is not kept)
     const before = current.current;
-    if (before && (before.asked !== "" || before.answer !== "")) setEarlier((list) => [...list, before].slice(-MAX_EARLIER));
+    const replacing = retrying.current && before !== null && before.failed && before.answer === ""; // "Try again" puts the new try where the failed one was
+    retrying.current = false;
+    if (before && !replacing && (before.asked !== "" || before.answer !== "")) setEarlier((list) => [...list, before].slice(-MAX_EARLIER));
     setRuns((n) => n + 1);
     setAsked(question);
     setHeardByVoice(voice);
@@ -206,9 +208,12 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setTaskEntry(null);
     setAudioPending(voice && speak);
     let failed = false;
+    let said = false; // a word, a source, a draft, a plan, a task or a sound came: the answer is not an empty bubble
+    let finished = false;
     try {
       for await (const e of source(controller.signal)) {
         if (controller.signal.aborted) return;
+        if (e.type === "text" ? typeof e.delta === "string" && e.delta.trim() !== "" : e.type === "source" || e.type === "draft" || e.type === "confirm_action" || e.type === "task" || e.type === "task_error" || e.type === "audio") said = true;
         if (e.type === "heard") setAsked(e.text.slice(0, MAX_QUESTION));
         else if (e.type === "text" && typeof e.delta === "string") setAnswer((a) => (a + e.delta).slice(0, MAX_ANSWER));
         else if (e.type === "source") {
@@ -233,6 +238,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
           setErrorCode(code);
           if (code === "voice_unavailable") setVoiceOff(true); // voice was switched off since the page loaded: the microphone goes away
         } else if (e.type === "done") {
+          finished = true;
           if (e.conversationId) convRef.current = e.conversationId;
           if (!failed) setPhase("done"); // the written answer is whole; a spoken one may still follow
         } else if (e.type === "audio") {
@@ -260,6 +266,8 @@ export function useAskSession({ lang, base, words, availability, transport: give
       if (controller.signal.aborted) return;
       failed = true;
     }
+    // an answer that ended with `done` and said nothing (no words, no source, no draft, no plan, no task) is a failed one: never an empty bubble (a spoken turn is judged by its sound too)
+    if (finished && !said && !failed && !controller.signal.aborted) failed = true;
     if (!controller.signal.aborted) {
       setAudioPending(false);
       setPhase(failed ? "error" : "done");
@@ -322,7 +330,17 @@ export function useAskSession({ lang, base, words, availability, transport: give
       return;
     }
     if (transport === null) return;
+    lastTyped.current = { question, replyLanguage };
     await run(question, (signal) => transport({ question, lang, signal, conversationId: convRef.current, replyLanguage }), false, false);
+  };
+  /** The typed question that was asked last, so a failed answer has "Try again". */
+  const lastTyped = React.useRef<{ question: string; replyLanguage?: string | null } | null>(null);
+  const retrying = React.useRef(false);
+  const retry = () => {
+    const last = lastTyped.current;
+    if (!last) return;
+    retrying.current = true;
+    void ask(last.question, last.replyLanguage);
   };
 
   /** A recording is the question. A spoken answer is asked for only when the person wants voice answers played (it is paid for by the same allowance, so it is not made to be thrown away). */
@@ -420,7 +438,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
       if (convRef.current === null) convRef.current = id;
     },
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, setEarlier,
+    ask, retry, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, setEarlier,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",
     asking: phase === "asking",
