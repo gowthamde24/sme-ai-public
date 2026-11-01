@@ -166,10 +166,10 @@ async def test_on_lets_a_confident_audio_shorten_or_lengthen_the_hold_by_one_ste
 async def test_a_model_that_breaks_or_is_slow_never_holds_up_or_breaks_the_turn() -> None:
     broken = loop(FakeAudioTurn(boom=True), "on")
     assert await asyncio.wait_for(broken.listen(Src(), TurnTimings()), 10) == "two thousand sq ft"
-    slow = loop(FakeAudioTurn(0.9, delay_s=1.5), "on")
+    slow = loop(FakeAudioTurn(0.9, delay_s=3.0), "on")   # (a model far slower than the quarter-second wait: the bound below is half of its delay, so a busy machine cannot flip it)
     started = time.perf_counter()
     tm = TurnTimings()
     assert await asyncio.wait_for(slow.listen(Src(), tm), 10) == "two thousand sq ft"
-    assert time.perf_counter() - started < 1.2, "the final transcript waits for the model for a quarter of a second at most"
+    assert time.perf_counter() - started < 2.0, "the final transcript waits for the model for a quarter of a second at most"
     assert tm.audio_p is None
     assert slow._hold_s("2000 sq ft") == loop(None, "off")._hold_s("2000 sq ft")   # noqa: SLF001
