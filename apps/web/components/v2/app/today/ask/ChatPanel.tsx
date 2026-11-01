@@ -3,7 +3,7 @@
 import { ArrowUp, ChevronDown, ChevronUp, Copy, History, Mic, Plus, Square, X } from "lucide-react";
 import * as React from "react";
 
-import { Orb } from "@/components/v2/Orb";
+import { TalkOrb } from "./TalkOrb";
 
 import { makeT } from "../../words";
 import type { VoiceLang } from "@/lib/browser-voice/protocol";
@@ -286,7 +286,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           data-level={ringLevel}
           className={`pointer-events-none absolute inset-0 rounded-full border-2 transition-transform duration-100 ${talk.active ? "border-brand-edge" : "border-brand-edge/40"} ${talk.active && talk.state === "thinking" ? "motion-safe:animate-pulse" : ""} ${["scale-100", "scale-105", "scale-110", "scale-[1.16]"][ringLevel]}`}
         />
-        <Orb px={px} state={orb} analyser={talk.active ? talk.analyser(talk.state === "speaking" ? "voice" : "mic") : null} />
+        <TalkOrb px={px} state={orb} />
       </button>
       {withCaption ? (
         <span data-chat="talk-caption" role="status" className="text-center text-xs font-semibold leading-tight text-muted">

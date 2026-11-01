@@ -46,7 +46,7 @@ describe("the story", () => {
     expect(some.lead).toBe(BASE); // no module at all: Today
   });
   it("the made-up lead is in the reserved demo number range, and a long text is cut", () => {
-    expect(demoLead("ab12-cd34-9")).toEqual({ name: "Demo lead 1234", phone: "+00 000 000 1234" });
+    expect(demoLead("ab12-cd34-9")).toEqual({ name: "Srinivas Goud", phone: "+00 000 000 1234" }); // 1234 % 10 = 4: a made-up person, never "Demo lead 1234"
     expect(clip("x".repeat(600), 100)).toHaveLength(100);
     expect(clip("short")).toBe("short");
   });

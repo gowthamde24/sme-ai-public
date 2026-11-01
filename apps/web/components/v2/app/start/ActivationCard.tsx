@@ -14,9 +14,24 @@ import { card, primary } from "../visits/styles";
 /** A step inside the workspace is relative to it; an account page (a path that starts with /app) is used as it is. */
 const hrefOf = (base: string, href: string) => (href.startsWith("/app") ? href : `${base}${href}`);
 
-export function ActivationCard({ activation, base, t, hide = null, hidden = [] }: { activation: Activation; base: string; t: AppT; /** The server action that puts a step away from Today (or brings it back): with it each step still to do has "Hide for now" (and a hidden one "Show on Today"). */ hide?: ((formData: FormData) => Promise<void>) | null; /** The steps put away from Today (the Settings list shows them marked and with the way back). */ hidden?: readonly string[] }) {
+export function ActivationCard({ activation, base, t, hide = null, hidden = [], collapse = false }: { /** On Today: five or more steps done fold the card into one row (Settings always lists the steps). */ collapse?: boolean; activation: Activation; base: string; t: AppT; /** The server action that puts a step away from Today (or brings it back): with it each step still to do has "Hide for now" (and a hidden one "Show on Today"). */ hide?: ((formData: FormData) => Promise<void>) | null; /** The steps put away from Today (the Settings list shows them marked and with the way back). */ hidden?: readonly string[] }) {
   if (activation.steps.length === 0 || activation.done === activation.total) return null;
   const next = activation.next;
+  // five or more of the steps done (owner review, 1 Nov): the card folds into ONE row, "Finish setting up · 5 of 6 · Continue"
+  if (collapse && activation.done >= 5)
+    return (
+      <section aria-labelledby="start-h" data-start="card" data-collapsed="true" className="flex min-h-14 flex-wrap items-center gap-x-3 gap-y-1 rounded-[20px] border border-line bg-surface px-4 py-2">
+        <h2 id="start-h" className="font-display text-base font-semibold leading-tight">
+          {t("start.title")}
+        </h2>
+        <p className="text-sm text-muted">· {t("start.count", { done: activation.done, total: activation.total })}</p>
+        {next?.href ? (
+          <Link href={hrefOf(base, next.href)} className="ml-auto inline-flex min-h-9 items-center rounded-full border border-brand-edge bg-brand px-4 text-sm font-bold whitespace-nowrap text-on-brand hover:brightness-95">
+            {t("start.next")}
+          </Link>
+        ) : null}
+      </section>
+    );
   return (
     <section aria-labelledby="start-h" data-start="card" className={`${card} gap-3`}>
       <div className="min-w-0">

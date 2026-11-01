@@ -60,7 +60,7 @@ function CompactRow({ cardKey, tone, label, title, reason, at, ctx, children, on
         {reason ? (
           <>
             <span aria-hidden="true" className="text-muted">
-              ·
+              {" · "}
             </span>
             <p className="min-w-0 flex-1 truncate text-muted">{reason}</p>
           </>
@@ -144,9 +144,9 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   const name = item.customer === "" ? say(words, "today.customer.unknown") : item.customer;
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={k.tone} label={say(words, k.kind)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={item.summary} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone={k.tone} label={say(words, `${k.kind}.row`)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={ctx.lang === "en" ? item.summary : ""} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
         <Link href={item.href} className={rowPrimary}>
-          {say(words, k.step)}
+          {say(words, `${k.step}.row`)}
         </Link>
       </CompactRow>
     );
@@ -221,11 +221,11 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
 
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={b.tone} label={say(words, b.key)} title={title} reason={m ? m.text.replace(/\s+/g, " ") : say(words, "today.notext")} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone={b.tone} label={say(words, `${b.key}.row`)} title={title} reason={m ? m.text.replace(/\s+/g, " ") : say(words, "today.notext")} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {may ? (
           <>
-            <button type="button" onClick={() => void decide(() => actions.approveMessage(c.id))} className={rowPrimary}>
-              {say(words, "today.act.approve")}
+            <button type="button" onClick={() => void decide(() => actions.approveMessage(c.id))} className={rowPrimary} aria-label={say(words, "today.act.approve")}>
+              {say(words, "today.act.approve.row")}
             </button>
             <button type="button" onClick={() => void decide(() => actions.rejectMessage(c.id))} className={rowQuiet}>
               {say(words, "today.act.notnow")}
@@ -315,6 +315,17 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
   );
 }
 
+/**
+ * What the call is about, in a few words, in the person's language ("price and visit"): the topics found in the request's own words (the API writes them in English) are named from the translations, so a Telugu row is Telugu all through. When no topic is
+ * recognised English shows the request's own sentence; another language shows nothing rather than a line in English.
+ */
+const TOPICS: readonly [string, RegExp][] = [["price", /\b(price|prices|rate|rates|cost)\b/i], ["quote", /\b(quote|quotation|estimate)\b/i], ["stock", /\b(stock|availability|available)\b/i], ["order", /\border(s)?\b/i], ["delivery", /\bdeliver(y|ies)\b/i], ["visit", /\b(visit|store|shop|showroom)\b/i]];
+function callReason(words: TodayWords, reason: string, lang: string): string {
+  const found = TOPICS.filter(([, re]) => re.test(reason)).map(([key]) => say(words, `today.topic.${key}`));
+  if (found.length === 0) return lang === "en" ? reason : "";
+  return found.length === 1 ? found[0] : `${found.slice(0, -1).join(", ")} ${say(words, "today.topic.and")} ${found[found.length - 1]}`;
+}
+
 function CallCard({ c, ctx }: { c: Extract<NeedsCard, { type: "call" }>; ctx: Ctx }) {
   const { words, actions, role } = ctx;
   const decide = useDecide(c);
@@ -324,14 +335,14 @@ function CallCard({ c, ctx }: { c: Extract<NeedsCard, { type: "call" }>; ctx: Ct
   const [open, setOpen] = React.useState(false);
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone="bg-info-bg text-info-text" label={say(words, "today.badge.call")} title={say(words, "today.title.call", { customer })} reason={r ? r.reason : ""} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone="bg-info-bg text-info-text" label={say(words, "today.badge.call.row")} title={say(words, "today.title.call", { customer })} reason={r ? callReason(words, r.reason, ctx.lang) : ""} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {owner ? (
           <>
-            <button type="button" onClick={() => void decide(() => actions.approveCall(c.id))} className={rowPrimary}>
-              {say(words, "today.act.callok")}
+            <button type="button" onClick={() => void decide(() => actions.approveCall(c.id))} className={rowPrimary} aria-label={say(words, "today.act.callok")}>
+              {say(words, "today.act.callok.row")}
             </button>
-            <button type="button" onClick={() => void decide(() => actions.offerVisit(c.id, r?.language ?? "en"))} className={rowQuiet}>
-              {say(words, "today.act.visit")}
+            <button type="button" onClick={() => void decide(() => actions.offerVisit(c.id, r?.language ?? "en"))} className={rowQuiet} aria-label={say(words, "today.act.visit")}>
+              {say(words, "today.act.visit.row")}
             </button>
           </>
         ) : null}
@@ -409,10 +420,10 @@ function VisitProposalCard({ c, ctx }: { c: Extract<NeedsCard, { type: "visit" }
 
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone="bg-amber-bg text-amber-text" label={say(words, "today.badge.visit")} title={say(words, "today.title.visit.proposed", { who: v.who })} reason={facts.map((f) => f[1]).join(" · ")} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone="bg-amber-bg text-amber-text" label={say(words, "today.badge.visit.row")} title={say(words, "today.title.visit.proposed", { who: v.who })} reason={facts.map((f) => f[1]).join(" · ")} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {may ? (
-          <button type="button" onClick={() => void decide(() => actions.visit!.confirm(c.id))} className={rowPrimary}>
-            {say(words, "today.act.vconfirm")}
+          <button type="button" onClick={() => void decide(() => actions.visit!.confirm(c.id))} className={rowPrimary} aria-label={say(words, "today.act.vconfirm")}>
+            {say(words, "today.act.vconfirm.row")}
           </button>
         ) : null}
       </CompactRow>

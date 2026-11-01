@@ -31,7 +31,7 @@ export function dayLine(now: number, lang: string): string {
  * phone), "At the store today", "Done while you slept" and "Your team". It only draws what `data` holds: a null part says "Not available yet"; a section with no data is not drawn. `actions` are the
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
-export function TodayView({ intro = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = null, demo = false }: { /** The first-run offers (example-data banner, "Finish setting up"): drawn after Needs you and the command bar. */ intro?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS), drawn first in the side column. */ packCards?: React.ReactNode; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
+export function TodayView({ intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = null, demo = false }: { /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS), drawn first in the side column. */ packCards?: React.ReactNode; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
   const { cards, needs, team, deskTeam, store, sending, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
@@ -48,12 +48,12 @@ export function TodayView({ intro = null, live = null, outcomes = null, data, na
         </div>
         <LiveNow tenantId={base.split("/").pop() ?? ""} />
       </header>
+      {exampleLine}
       {help}
       {sending?.stopped ? <SendingBanner words={words} demo={demo} /> : null}
       <NeedsProvider initial={needs} waiting={cards.waiting}>
         <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />
         <CommandBar lang={lang} base={base} availability={availability} words={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} chips={chips} />
-        {intro}
         {live}
         {outcomes}
         {/* the other cards, two by two */}
@@ -65,6 +65,7 @@ export function TodayView({ intro = null, live = null, outcomes = null, data, na
         </div>
         {/* what a business type adds (trips, quotes, dues...) sits under the four cards, side by side */}
         {packCards}
+        {intro}
       </NeedsProvider>
     </div>
   );

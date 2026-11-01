@@ -240,6 +240,12 @@ describe("readDisplayName: the greeting's name", () => {
     expect(await readDisplayName("tok", T, "u1")).toBe("Gowtham Reddy");
     expect(fetchMembers).not.toHaveBeenCalled();
   });
+  it("is what the person asked to be called, before their full name", async () => {
+    readMyProfileCached.mockResolvedValue({ displayName: "Lakshmi Prasad", addressAs: "Lakshmi" });
+    expect(await readDisplayName("tok", T, "u1")).toBe("Lakshmi");
+    readMyProfileCached.mockResolvedValue({ displayName: "Lakshmi Prasad", addressAs: "" });
+    expect(await readDisplayName("tok", T, "u1")).toBe("Lakshmi Prasad");
+  });
   it("falls back to the members list when My profile has no name or cannot be read", async () => {
     fetchMembers.mockResolvedValue([{ user_id: "u1", display_name: "Asha" }]);
     readMyProfileCached.mockResolvedValue({ displayName: null });

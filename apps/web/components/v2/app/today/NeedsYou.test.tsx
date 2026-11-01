@@ -4,8 +4,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const refresh = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push: () => undefined }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
 
+import { appDict } from "@/i18n/app";
+
 import { NeedsYou } from "./NeedsYou";
 import { NeedsProvider } from "./needs-store";
+import { todayWords } from "./today-words";
 import { CALL_ID, MESSAGE_ID, NOW, U, VISIT_ID, WORDS, call, classic, fakeActions, outbox, proposal } from "./today-test-kit";
 import type { NeedsCard, Role } from "./types";
 
@@ -422,10 +425,10 @@ describe("Needs you on a desktop: one compact row per thing (owner 31 Oct)", () 
     const items = within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("listitem");
     expect(items.map((li) => li.className.split(" ").includes("hidden"))).toEqual([false, false, false, true, true]); // three rows on a desktop (the third is only hidden on a phone)
     const message = rows()[1];
-    expect(within(message).getByText("Price · needs your OK")).toBeInTheDocument();
+    expect(within(message).getByText("Price")).toBeInTheDocument(); // the short badge, not "Price · needs your OK"
     expect(within(message).getByRole("heading", { level: 3 })).toHaveTextContent("Reply to Lakshmi R.");
     expect(within(message).getByText(/ఈ చీర ధర 500/)).toBeInTheDocument(); // the first words of the message, one line
-    expect(within(message).getByRole("button", { name: "Approve and send" })).toBeInTheDocument();
+    expect(within(message).getByRole("button", { name: "Approve and send" })).toHaveTextContent(/^Approve$/); // short on the row, the full words for a screen reader
     expect(within(message).getByRole("button", { name: "Not now" })).toBeInTheDocument();
     expect(within(message).getByRole("button", { name: "Details" })).toHaveAttribute("aria-expanded", "false");
     expect(screen.getByRole("button", { name: "See all (5)" })).toBeInTheDocument();
@@ -455,5 +458,38 @@ describe("Needs you on a desktop: one compact row per thing (owner 31 Oct)", () 
     board([outbox(), call()].map((c, i) => ({ ...c, key: `k${i}` }) as NeedsCard), { role: "sales" });
     for (const r of rows()) expect(within(r).queryByRole("button", { name: /Approve/ })).toBeNull();
     expect(within(rows()[0]).getByRole("button", { name: "Details" })).toBeInTheDocument();
+  });
+});
+
+describe("the call row on a desktop, as the owner's target draws it", () => {
+  const desktop = () => (window.matchMedia = vi.fn().mockReturnValue({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }) as unknown as typeof window.matchMedia);
+  afterEach(() => {
+    // @ts-expect-error back to a test environment without matchMedia
+    delete window.matchMedia;
+  });
+  const asked = call({ customer: "Ramesh", request: { reason: "Follow up on the question about the price and a visit.", language: "en" } } as never);
+  it("a short badge, 'Name asked for a call · price and visit' on one line, then Approve and Store visit", () => {
+    desktop();
+    board([asked]);
+    const row = document.querySelector("[data-needs-row]") as HTMLElement;
+    expect(within(row).getByText("Call")).toBeInTheDocument();
+    expect(row).toHaveTextContent("Ramesh asked for a call · price and visit");
+    expect(within(row).getByRole("button", { name: "Approve call" })).toHaveTextContent(/^Approve$/);
+    expect(within(row).getByRole("button", { name: "Offer a store visit" })).toHaveTextContent(/^Store visit$/);
+    expect(row).not.toHaveTextContent("needs your OK");
+  });
+  it("in Telugu every part of the row is Telugu, except the name (the reason comes from the translations, not from the English sentence)", () => {
+    desktop();
+    const te = todayWords((k) => (appDict("te") as Record<string, string>)[k] ?? k);
+    render(
+      <NeedsProvider initial={[asked]} waiting={1}>
+        <NeedsYou words={te} role="owner" actions={fakeActions()} now={NOW} lang="te" />
+      </NeedsProvider>,
+    );
+    const row = document.querySelector("[data-needs-row]") as HTMLElement;
+    const text = row.textContent ?? "";
+    expect(text).toContain("Ramesh");
+    expect(text).toContain("ధర మరియు విజిట్");
+    expect(text.replace("Ramesh", "")).not.toMatch(/[A-Za-z]{3}/); // no English word is left
   });
 });

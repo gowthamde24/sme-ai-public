@@ -231,7 +231,7 @@ describe("AppFrame", () => {
     expect(within(footer).getByRole("link", { name: "Terms of Use" })).toHaveAttribute("href", "/terms");
     expect(within(footer).getByRole("button", { name: "Cookie settings" })).toBeInTheDocument();
     expect(container.querySelector("#main-content")!.compareDocumentPosition(footer) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(footer.className).toContain("pb-20"); // clear of the fixed bottom bar on a phone
+    expect(footer.className).toContain("pb-[calc(5rem+72px)]"); // clear of the fixed bottom bar on a phone (4rem) and of the floating orb (56px + 16px)
     expect(container.querySelector("#main-content")!.contains(footer)).toBe(false);
   });
   it("holds the page in the one v2 wrapper: a skip link, one wrapper, one language and one theme control", () => {

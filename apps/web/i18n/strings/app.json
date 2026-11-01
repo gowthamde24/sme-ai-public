@@ -75216,5 +75216,346 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.badge.call.row": {
+  "en": "Call",
+  "te": "కాల్",
+  "hi": "कॉल",
+  "kn": "ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.badge.price.row": {
+  "en": "Price",
+  "te": "ధర",
+  "hi": "कीमत",
+  "kn": "ಬೆಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.badge.promise.row": {
+  "en": "Promise",
+  "te": "హామీ",
+  "hi": "वादा",
+  "kn": "ಭರವಸೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.badge.complaint.row": {
+  "en": "Complaint",
+  "te": "ఫిర్యాదు",
+  "hi": "शिकायत",
+  "kn": "ದೂರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.badge.message.row": {
+  "en": "Message",
+  "te": "సందేశం",
+  "hi": "संदेश",
+  "kn": "ಸಂದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.badge.visit.row": {
+  "en": "Visit",
+  "te": "విజిట్",
+  "hi": "विज़िट",
+  "kn": "ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.quote.row": {
+  "en": "Quote",
+  "te": "కొటేషన్",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.followup.row": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.order.row": {
+  "en": "Order",
+  "te": "ఆర్డర్",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.hot.row": {
+  "en": "Hot lead",
+  "te": "హాట్ లీడ్",
+  "hi": "हॉट लीड",
+  "kn": "ಹಾಟ್ ಲೀಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.plan.row": {
+  "en": "Plan",
+  "te": "ప్లాన్",
+  "hi": "प्लान",
+  "kn": "ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.callback.row": {
+  "en": "Callback",
+  "te": "కాల్‌బ్యాక్",
+  "hi": "कॉलबैक",
+  "kn": "ಕಾಲ್‌ಬ್ಯಾಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.cap.row": {
+  "en": "Limit",
+  "te": "పరిమితి",
+  "hi": "सीमा",
+  "kn": "ಮಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.approve.row": {
+  "en": "Approve",
+  "te": "ఓకే",
+  "hi": "मंज़ूर करें",
+  "kn": "ಒಪ್ಪಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.callok.row": {
+  "en": "Approve",
+  "te": "ఓకే",
+  "hi": "मंज़ूर करें",
+  "kn": "ಒಪ್ಪಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.visit.row": {
+  "en": "Store visit",
+  "te": "షాప్ విజిట్",
+  "hi": "स्टोर विज़िट",
+  "kn": "ಅಂಗಡಿ ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.vconfirm.row": {
+  "en": "Confirm",
+  "te": "కన్ఫర్మ్",
+  "hi": "पक्का करें",
+  "kn": "ದೃಢೀಕರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.quote.row": {
+  "en": "Review",
+  "te": "చూడండి",
+  "hi": "देखें",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.followup.row": {
+  "en": "Review",
+  "te": "చూడండి",
+  "hi": "देखें",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.order.row": {
+  "en": "Review",
+  "te": "చూడండి",
+  "hi": "देखें",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.hot.row": {
+  "en": "Call back",
+  "te": "తిరిగి కాల్",
+  "hi": "वापस कॉल करें",
+  "kn": "ಮರುಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.plan.row": {
+  "en": "Review",
+  "te": "చూడండి",
+  "hi": "देखें",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.callback.row": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.cap.row": {
+  "en": "Review",
+  "te": "చూడండి",
+  "hi": "देखें",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.topic.price": {
+  "en": "price",
+  "te": "ధర",
+  "hi": "कीमत",
+  "kn": "ಬೆಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.topic.visit": {
+  "en": "visit",
+  "te": "విజిట్",
+  "hi": "विज़िट",
+  "kn": "ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.topic.quote": {
+  "en": "quote",
+  "te": "కొటేషన్",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.topic.stock": {
+  "en": "stock",
+  "te": "స్టాక్",
+  "hi": "स्टॉक",
+  "kn": "ಸ್ಟಾಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.topic.order": {
+  "en": "order",
+  "te": "ఆర్డర్",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.topic.delivery": {
+  "en": "delivery",
+  "te": "డెలివరీ",
+  "hi": "डिलीवरी",
+  "kn": "ಡೆಲಿವರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.topic.and": {
+  "en": "and",
+  "te": "మరియు",
+  "hi": "और",
+  "kn": "ಮತ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

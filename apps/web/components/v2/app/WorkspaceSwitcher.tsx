@@ -30,7 +30,7 @@ export function WorkspaceSwitcher({ memberships, labels, plan, loading = false, 
     <>
       {mark}
       <span className="min-w-0 flex-1 text-left">
-        <span className="block truncate font-display text-base font-semibold leading-tight">{name}</span>
+        <span className="line-clamp-2 [overflow-wrap:anywhere] font-display text-base font-semibold leading-tight">{name}</span>
         {current ? <span className="block truncate text-sm text-muted">{planText(plan, labels) ?? (loading ? "\u00a0" : <NotYetText labels={labels} className="" />)}</span> : null}
         {current && pack ? <span data-accent={pack.accent} className="inline-block max-w-full truncate rounded-full bg-pack-bg px-2 text-sm text-pack-text">{pack.name}</span> : null}
       </span>

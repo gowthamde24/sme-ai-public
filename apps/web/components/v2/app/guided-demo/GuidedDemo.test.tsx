@@ -14,7 +14,15 @@ const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, 
 const routes = Object.fromEntries(STEP_KEYS.map((k) => [k, `/app/tenants/t/${k}`])) as Record<StepKey, string>;
 const good = (over: Partial<Extract<StepResult, { ok: true }>> = {}): StepResult => ({ ok: true, lines: [], sound: null, leadId: null, note: null, ...over });
 let run: ReturnType<typeof vi.fn>;
-const draw = () => render(<GuidedDemo words={WORDS} routes={routes} actions={{ run: run as never }} />);
+// the Start pill is drawn into the top bar's slot (the frame provides it)
+const draw = (to: Record<StepKey, string> = routes) => {
+  if (!document.getElementById("demo-start-slot")) {
+    const slot = document.createElement("span");
+    slot.id = "demo-start-slot";
+    document.body.append(slot);
+  }
+  return render(<GuidedDemo words={WORDS} routes={to} actions={{ run: run as never }} />);
+};
 const flush = async (ms: number) => void (await act(async () => void (await vi.advanceTimersByTimeAsync(ms))));
 
 beforeEach(() => {
@@ -25,6 +33,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   cleanup();
+  document.getElementById("demo-start-slot")?.remove();
   vi.useRealTimers();
 });
 
@@ -42,13 +51,13 @@ describe("the guided demo", () => {
   it("the first step opens the new lead's own page once the lead exists (Today when it could not be made)", async () => {
     const withLead = { ...routes, lead: "/app/tenants/t/leads/{lead}", today: "/app/tenants/t" };
     run.mockResolvedValueOnce(good({ leadId: "33333333-3333-4333-8333-333333333333" }));
-    render(<GuidedDemo words={WORDS} routes={withLead} actions={{ run: run as never }} />);
+    draw(withLead);
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Start demo" })));
     expect(push).toHaveBeenCalledWith("/app/tenants/t/leads/33333333-3333-4333-8333-333333333333");
     cleanup();
     push.mockClear();
     run.mockResolvedValueOnce({ ok: false });
-    render(<GuidedDemo words={WORDS} routes={withLead} actions={{ run: run as never }} />);
+    draw(withLead);
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Start demo" })));
     expect(push).toHaveBeenCalledWith("/app/tenants/t");
   });

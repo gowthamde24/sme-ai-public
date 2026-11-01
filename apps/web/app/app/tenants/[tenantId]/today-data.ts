@@ -97,10 +97,11 @@ function rethrowAuth(error: unknown): null {
   return null;
 }
 
-/** The person's display name for the greeting: the name in their own profile (My profile, `GET /me/profile`), else the one the members list has for them (it is null for most). Never throws except for a rejected session. */
+/** The name for the greeting: what the person asked to be called (My profile, "How should I address you?"), else their name there (`GET /me/profile`), else the one the members list has for them (it is null for most). Never throws except for a rejected session. */
 export async function readDisplayName(accessToken: string, tenantId: string, userId: string): Promise<string | null> {
   try {
-    const own = (await readMyProfileCached(accessToken, tenantId)).displayName?.trim();
+    const mine = await readMyProfileCached(accessToken, tenantId);
+    const own = mine.addressAs?.trim() || mine.displayName?.trim();
     if (own) return own;
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;

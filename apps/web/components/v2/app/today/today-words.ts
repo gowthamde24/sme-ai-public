@@ -4,6 +4,8 @@
  * left in the text and filled here, by `say`.
  */
 export const TODAY_WORD_KEYS = [
+  // the short words of the one-line rows on a desktop (the owner's target: "Call", "Quote", "Approve", "Store visit")
+  "today.badge.call.row", "today.badge.price.row", "today.badge.promise.row", "today.badge.complaint.row", "today.badge.message.row", "today.badge.visit.row", "today.kind.quote.row", "today.kind.followup.row", "today.kind.order.row", "today.kind.hot.row", "today.kind.plan.row", "today.kind.callback.row", "today.kind.cap.row", "today.act.approve.row", "today.act.callok.row", "today.act.visit.row", "today.act.vconfirm.row", "today.step.quote.row", "today.step.followup.row", "today.step.order.row", "today.step.hot.row", "today.step.plan.row", "today.step.callback.row", "today.step.cap.row", "today.topic.price", "today.topic.visit", "today.topic.quote", "today.topic.stock", "today.topic.order", "today.topic.delivery", "today.topic.and",
   "today.needsYou", "today.team", "today.state.draft", "today.kind.quote", "today.kind.followup", "today.step.quote", "today.step.followup", "today.step.order",
   "today.fact.customer", "today.fact.city", "today.fact.when", "today.fact.amount", "today.kind.order", "today.kind.hot", "today.kind.plan", "today.kind.callback", "today.kind.cap", "today.step.hot", "today.step.plan", "today.step.callback", "today.step.cap", "today.fact.plan", "today.hint.nothingSent", "today.usage.title",
   "today.usage.left", "today.usage.aria", "today.hero.one", "today.hero.other", "today.hero.none", "today.over.some", "today.over.none", "today.over.notyet",
