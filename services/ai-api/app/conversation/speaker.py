@@ -100,16 +100,19 @@ class SessionVoice:
         score = self.similarity(pcm16_16k)
         return None if score is None else score >= threshold
 
-    def enrol(self, pcm16_16k: bytes) -> None:
-        """Add what the person just said (a confirmed turn): the first turns freely, later ones only when they are still the same voice."""
-        self.turns += 1
+    def enrol(self, pcm16_16k: bytes) -> tuple[bool, float]:
+        """Add what the person just said (a confirmed turn): the first turns freely, later ones only when they are still the same voice. Returns (kept, seconds of speech in the clip) for the numbers-only log.
+        A clip with too little speech is NOT a turn: it does not use up one of the free first turns (otherwise a failed first enrolment would let the next voice, a television, become the signature)."""
         vector = self._model.embed(pcm16_16k)
+        seconds = len(speech_only(pcm16_16k, self._np)) / SAMPLE_RATE
         if vector is None:
-            return
+            return False, seconds
+        self.turns += 1
         signature = self._signature()
         if signature is not None and self.turns > FIRST_TURNS_FREE and float(self._np.dot(signature, vector)) < ENROL_CONFIRM_AT:
-            return
+            return False, seconds
         self._vectors = [*self._vectors, vector][-MAX_ENROLLED:]
+        return True, seconds
 
     def close(self) -> None:
         self._vectors = []

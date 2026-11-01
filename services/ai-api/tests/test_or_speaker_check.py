@@ -36,8 +36,9 @@ class FakeVoice:
         self.checked.append(len(pcm))
         return self.score
 
-    def enrol(self, pcm: bytes) -> None:
+    def enrol(self, pcm: bytes) -> tuple[bool, float]:
         self.enrolled.append(len(pcm))
+        return True, 1.0
 
     def close(self) -> None:
         self.closed = True
@@ -245,6 +246,19 @@ async def test_the_shadow_run_logs_the_numbers_only() -> None:
     finally:
         logger.removeHandler(handler)
         logger.setLevel(previous)
-    lines = [r for r in records if r.startswith("browser_voice_speaker")]
+    lines = [r for r in records if r.startswith("browser_voice_speaker mode=")]
     assert len(lines) == 1 and lines[0].startswith("browser_voice_speaker mode=shadow same=False score=0.37 ms="), lines
+    enrols = [r for r in records if r.startswith("browser_voice_speaker_enrol")]
+    assert all(__import__("re").fullmatch(r"browser_voice_speaker_enrol kept=(True|False) speech_s=[\d.]+ clip_s=[\d.]+", r) for r in enrols), enrols
     assert not any("five hundred" in r for r in records), "no words of the caller in any log line"
+
+
+def test_a_clip_without_speech_does_not_use_up_a_free_first_turn() -> None:
+    """The failure this prevents: the owner's first enrolment fails (little speech), so the NEXT voice (a television) would be admitted as the signature."""
+    np = pytest.importorskip("numpy")
+    voice = speaker.SessionVoice(FakeModel(np), np)
+    assert voice.enrol(silence(500))[0] is False and voice.turns == 0
+    owner, other = voice_of_pitch(500), voice_of_pitch(1500)
+    assert voice.enrol(owner)[0] is True and voice.enrol(owner)[0] is True
+    assert voice.enrol(other)[0] is False, "the third voice is checked against the signature, not admitted"
+    assert voice.same_voice(other) is False

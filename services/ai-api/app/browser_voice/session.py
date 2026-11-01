@@ -510,7 +510,13 @@ class VoiceSession:
             return
         seconds = (tm.final_at - tm.speech_start_at) if tm.final_at is not None and tm.speech_start_at is not None else 4.0
         clip = self.bus.recent()[-int((min(8.0, max(1.0, seconds)) + 0.4) * IN_RATE * 2) :]
-        asyncio.ensure_future(asyncio.to_thread(voice.enrol, clip))
+
+        async def enrol() -> None:
+            result = await asyncio.to_thread(voice.enrol, clip)
+            if result:
+                log.info("browser_voice_speaker_enrol kept=%s speech_s=%.1f clip_s=%.1f", result[0], result[1], len(clip) / 2 / IN_RATE)   # numbers only
+
+        asyncio.ensure_future(enrol())
 
     async def _speaker_verdict(self, kind: Interruption) -> Interruption:
         """The sound that paused the reply was words: is it the session's speaker? In `on` a different voice is background (the reply goes on); no signature yet, too little speech or an unclear score is the person (stopping beats talking
