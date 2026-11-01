@@ -14,3 +14,12 @@ _COUNT = re.compile(r"(?<![\d.,:/\-₹])\b0\b(?![\d.,:/%\-])\s*(?!%)(?:new\s+|op
 def reads_a_zero(text: str) -> bool:
     """True when the reply reads out a zero amount or a zero count ("₹0.00", "Rs 0", "0 rupees", "రూ.0", "0 new enquiries", "zero orders")."""
     return bool(_MONEY.search(text) or _WORD_ZERO_MONEY.search(text) or _COUNT.search(text))
+
+
+_MONEY_WORDS = re.compile(r"\b(?:money|amounts?|cash|funds?|payments?|dues?|balance)\b|డబ్బు|మొత్తం|పైసలు|पैसा|पैसे|रकम|ಹಣ|ದುಡ್ಡು|பணம்|പണം|\bdabbu\b", re.IGNORECASE)
+_HELD_WORDS = re.compile(r"\b(?:held|holding|pending|outstanding|unpaid|stuck|blocked|owed|left\s+to\s+(?:pay|collect))\b|ఆపి|ఆగి|బాకీ|పెండింగ్|రావాల్సిన|रुका|रुके|बाकी|पेंडिंग|ಬಾಕಿ|ಹಿಡಿದ|ತಡೆ|நிலுவை|ബാക്കി|\bbaaki\b|\bbaki\b", re.IGNORECASE)
+
+
+def is_money_held_question(text: str) -> bool:
+    """Is this a question about the money that is held or pending ("How much customer money is held?", "కస్టమర్ల డబ్బు ఎంత ఆపి ఉంది?")? A money word AND a held/pending word; "who hasn't paid?" and "price of a saree" are not."""
+    return bool(text and _MONEY_WORDS.search(text) and _HELD_WORDS.search(text))
