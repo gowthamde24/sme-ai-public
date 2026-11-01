@@ -153,17 +153,6 @@
    "kn": "draft"
   }
  },
- "draft.banner": {
-  "en": "This page's text is a machine-written draft. Please tell us if something reads wrongly.",
-  "te": "ఈ పేజీలోని టెక్స్ట్ మెషీన్ రాసిన డ్రాఫ్ట్. ఏదైనా తప్పుగా ఉంటే చెప్పండి.",
-  "hi": "इस पेज का टेक्स्ट मशीन का लिखा ड्राफ़्ट है। कुछ गलत लगे तो बताइए।",
-  "kn": "ಈ ಪುಟದ ಪಠ್ಯ ಮೆಷಿನ್ ಬರೆದ ಡ್ರಾಫ್ಟ್. ಏನಾದರೂ ತಪ್ಪಾಗಿದ್ದರೆ ಹೇಳಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "foot.note": {
   "en": "Made-up example data is labelled wherever it appears.",
   "te": "కల్పిత ఉదాహరణ డేటా ఎక్కడ కనిపించినా దాని మీద లేబుల్ ఉంటుంది.",

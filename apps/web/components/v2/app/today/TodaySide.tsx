@@ -1,10 +1,9 @@
 import Link from "next/link";
 
 import { ago, indiaClock } from "./time";
+import { SIDE_CARD as card, SIDE_LINE, SIDE_LINK as linkClass, SIDE_TITLE } from "./side-card";
 import type { AgentRow, DeskWorker, T, TodayData } from "./types";
 
-const card = "flex flex-col gap-3.5 rounded-[20px] border border-line bg-surface p-5";
-const linkClass = "inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline";
 
 /**
  * "At the store today" (job AV), from `GET /visits/today`: each visit still to come or here now, in time order, with the time, who (and how many come with them), what for, and where it stands (Confirmed,
@@ -16,7 +15,7 @@ export function StoreVisits({ store, calendarHref, bookHref, t }: { store: Today
   if (store.state === "error")
     return (
       <section aria-labelledby="visits-heading" data-part="visits" className={card}>
-        <h2 id="visits-heading" className="font-display text-xl font-semibold">
+        <h2 id="visits-heading" className={SIDE_TITLE}>
           {t("today.visits.title")}
         </h2>
         <p className="text-sm text-muted">{t("frame.notyet")}</p>
@@ -30,10 +29,10 @@ export function StoreVisits({ store, calendarHref, bookHref, t }: { store: Today
   const to = first || !bookHref ? { href: calendarHref, text: t("today.visits.cal") } : { href: bookHref, text: t("today.visits.book") };
   return (
     <section aria-labelledby="visits-heading" data-part="visits" className={card}>
-      <h2 id="visits-heading" className="font-display text-xl font-semibold">
+      <h2 id="visits-heading" className={SIDE_TITLE}>
         {t("today.visits.title")}
       </h2>
-      <p data-line="visits" className="text-base text-muted [overflow-wrap:anywhere]">
+      <p data-line="visits" className={SIDE_LINE}>
         {line}
       </p>
       <Link href={to.href} className={linkClass}>
@@ -58,10 +57,10 @@ export function TeamSection({ team, deskTeam = null, base, t }: { team: readonly
   const names = deskTeam !== null ? deskTeam.map((w) => w.name) : helpers === null ? null : helpers.map((a) => t(`agent.${a.agent}`));
   return (
     <section aria-labelledby="team-heading" data-part="team" className={card}>
-      <h2 id="team-heading" className="font-display text-xl font-semibold">
+      <h2 id="team-heading" className={SIDE_TITLE}>
         {t("today.team")}
       </h2>
-      <p data-part="team-list" data-team={deskTeam !== null ? "lead-desk" : undefined} className="text-base text-muted [overflow-wrap:anywhere]">
+      <p data-part="team-list" data-team={deskTeam !== null ? "lead-desk" : undefined} className={SIDE_LINE}>
         {names === null || names.length === 0 ? t("frame.notyet") : names.join(" · ")}
       </p>
       <Link href={`${base}/office`} className={linkClass}>
@@ -77,10 +76,10 @@ export function NewLeads({ deskTeam, base, t, now }: { deskTeam: readonly DeskWo
   if (!worker) return null;
   return (
     <section aria-labelledby="leads-heading" data-part="new-leads" className={card}>
-      <h2 id="leads-heading" className="font-display text-xl font-semibold">
+      <h2 id="leads-heading" className={SIDE_TITLE}>
         {t("today.leads.title")}
       </h2>
-      <p className="text-base text-muted [overflow-wrap:anywhere]">{deskLine(worker, t, now)}</p>
+      <p className={SIDE_LINE}>{deskLine(worker, t, now)}</p>
       <Link href={`${base}/leads`} className={linkClass}>
         {t("today.leads.open")}
       </Link>

@@ -14,20 +14,12 @@ Tuesday, 6 October
 {role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
 {label="Needs you"}
 ## Needs you
-1 1 waiting for you Messages about money, promises or complaints, and calls, always wait for you.
--
-{label="Your assistant proposed a visit for Priya S. · Hyderabad"} Visit · needs your OK 9:00
-### Your assistant proposed a visit for Priya S. · Hyderabad
-When
-Thu, 8 Oct, 11:00
-People
-3 people
-For
-Bridal sarees
-Booked, but not confirmed with the customer yet. Nothing was sent to the customer.
+1 1 waiting for you
+- Visit
+### Your assistant proposed a visit for Priya S.
+· Thu, 8 Oct, 11:00 · 3 people · Bridal sarees
 [button type=button: Confirm the visit]
-[button type=button: Change time]
-[button type=button: Cancel the visit]
+[button type=button: Details]
 {role=status}
 Not available yet
 {label="At the store today"}

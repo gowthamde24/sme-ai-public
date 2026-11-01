@@ -35,12 +35,12 @@ export function activityWire(feed: ActivityFeed): { items: { type: ActivityType;
 }
 
 /** One line of the strip: the items of one kind of work. */
-export type ActivityRow = { key: "call" | "chats" | "quote" | "leads"; count: number; who: string | null; elapsedS: number; /** Where a tap goes (inside the workspace): the one thing it is about, else the list. */ href: (base: string) => string };
+export type ActivityRow = { key: "call" | "chats" | "followups" | "quote" | "leads"; count: number; who: string | null; elapsedS: number; /** Where a tap goes (inside the workspace): the one thing it is about, else the list. */ href: (base: string) => string };
 
-const ORDER: ActivityRow["key"][] = ["call", "chats", "quote", "leads"];
-const KEY: Record<ActivityType, ActivityRow["key"]> = { call: "call", whatsapp_reply: "chats", follow_up: "chats", quote_draft: "quote", lead_read: "leads" };
+const ORDER: ActivityRow["key"][] = ["call", "chats", "followups", "quote", "leads"];
+const KEY: Record<ActivityType, ActivityRow["key"]> = { call: "call", whatsapp_reply: "chats", follow_up: "followups", quote_draft: "quote", lead_read: "leads" };
 
-/** The strip's lines: calls first, then the chats the assistant is answering (replies and follow-ups), quotes, leads. A tap opens the call, chat, quote or lead when there is exactly one, else the list. */
+/** The strip's lines: calls first, then the chats the assistant is answering, the follow-ups it is sending, quotes, leads. A tap opens the call, chat, quote or lead when there is exactly one, else the list. */
 export function groupActivity(items: readonly ActivityItem[]): ActivityRow[] {
   const rows: ActivityRow[] = [];
   for (const key of ORDER) {
@@ -51,6 +51,7 @@ export function groupActivity(items: readonly ActivityItem[]): ActivityRow[] {
     const href = (base: string): string => {
       if (key === "call") return only?.kind === "task" ? `${base}/tasks/${only.id}` : `${base}/tasks`;
       if (key === "chats") return only?.kind === "conversation" ? `${base}/chats/${only.id}` : `${base}/chats`;
+      if (key === "followups") return `${base}/outbox`;
       if (key === "quote") return only?.kind === "quote" ? `${base}/quotes/${only.id}` : `${base}/quotes`;
       return only?.kind === "lead" ? `${base}/leads/${only.id}` : `${base}/lead-desk`;
     };

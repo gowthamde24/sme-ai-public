@@ -108,9 +108,9 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/^Good (morning|afternoon|evening)$/); // no display name on record
     expect(document.querySelector("[data-count]")).toHaveAttribute("data-count", "5");
     const needs = within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!);
-    expect(needs.getAllByRole("article")).toHaveLength(5); // the count is the cards
+    expect(document.querySelectorAll("[data-needs-row]")).toHaveLength(5); // the count is the rows (three show, the rest wait behind "See all")
     expect(needs.getByText(/ఈ చీర ధర 500/)).toBeInTheDocument(); // the exact words of the message, read from the outbox
-    expect(needs.getByText("The customer asked for a call about a large wedding order.")).toBeInTheDocument();
+    expect(needs.getByText(/asked for a call/)).toBeInTheDocument(); // the row of the call request (its topics are named from the translations)
     expect(needs.getByText("Quote 1 for ₹50,400.00 is ready for your approval.")).toBeInTheDocument(); // the API's own sentence
     expect(listOutboxApprovals).toHaveBeenCalledTimes(1);
     expect(listCallRequests).toHaveBeenCalledWith("tok", TENANT, { status: "requested", limit: 100 });
@@ -175,7 +175,8 @@ describe("the workspace home with no ?tab= is Today", () => {
     await show();
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
     expect(within(screen.getByRole("heading", { name: "Your team" }).closest("section")!).getByText("Not available yet")).toBeInTheDocument();
-    expect(within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("article")).toHaveLength(5);
+    expect(within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByText(/./).length).toBeGreaterThan(5);
+    expect(document.querySelectorAll("[data-needs-row]")).toHaveLength(5);
   });
   it("a message whose words cannot be read is shown without buttons, never approved blind", async () => {
     listOutboxApprovals.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
@@ -189,7 +190,8 @@ describe("the workspace home with no ?tab= is Today", () => {
     listOutboxMessages.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
     await show();
     expect(within(document.querySelector('[data-part="done"]') as HTMLElement).getByText("Not available yet")).toBeInTheDocument();
-    expect(within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("article")).toHaveLength(5);
+    expect(within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByText(/./).length).toBeGreaterThan(5);
+    expect(document.querySelectorAll("[data-needs-row]")).toHaveLength(5);
   });
   it("a Viewer's zeros are numbers; nothing needs them, the log is not asked for and its places are not drawn", async () => {
     fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme Silks", slug: "acme", role: "viewer" });

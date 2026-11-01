@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronDown, FileText, Inbox, MessageCircle, Phone } from "lucide-react";
+import { ChevronDown, Eye, FileText, Inbox, MessageCircle, Phone, Send } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -13,23 +13,28 @@ import { useLabels } from "../robust/labels-context";
 
 import { useActivity } from "./activity-poll";
 
-const ICON = { call: Phone, chats: MessageCircle, quote: FileText, leads: Inbox } as const;
+const ICON = { call: Phone, chats: MessageCircle, followups: Send, quote: FileText, leads: Inbox } as const;
 const clock = (s: number): string => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 
-/** The words of one line: "On a call with Ramesh · 2:14", "Replying on WhatsApp · 3 chats", "Drafting a quote", "Reading 2 new leads". `secs` = how long the first thing has been going on (the timer of a call). */
-export function lineOf(row: ActivityRow, secs: number, labels?: Labels): string {
+/**
+ * The words of one line. In the pill (`short`) a call is "Calling Ramesh"; in the list it is "On a call with Ramesh · 2:14" (`secs` = how long the first thing has been going on: the timer of a call). The others read the same in both: "Replying on WhatsApp · 3 chats",
+ * "Sending 3 follow-ups", "Drafting a quote", "Reading 2 new leads".
+ */
+export function lineOf(row: ActivityRow, secs: number, labels?: Labels, short = false): string {
   if (row.key === "call") {
+    if (short) return row.count > 1 ? word(labels, "frame.live.calling.n", "Calling {n} people", { n: row.count }) : row.who ? word(labels, "frame.live.calling", "Calling {name}", { name: row.who }) : word(labels, "frame.live.calling.noname", "On a call");
     if (row.count > 1) return word(labels, "frame.live.calls", "On {n} calls", { n: row.count });
     return row.who ? word(labels, "frame.live.call", "On a call with {name} · {time}", { name: row.who, time: clock(secs) }) : word(labels, "frame.live.call.noname", "On a call · {time}", { time: clock(secs) });
   }
   if (row.key === "chats") return row.count === 1 ? word(labels, "frame.live.chats.one", "Replying on WhatsApp · 1 chat") : word(labels, "frame.live.chats.other", "Replying on WhatsApp · {n} chats", { n: row.count });
+  if (row.key === "followups") return row.count === 1 ? word(labels, "frame.live.followups.one", "Sending a follow-up") : word(labels, "frame.live.followups.other", "Sending {n} follow-ups", { n: row.count });
   if (row.key === "quote") return row.count === 1 ? word(labels, "frame.live.quote.one", "Drafting a quote") : word(labels, "frame.live.quote.other", "Drafting {n} quotes", { n: row.count });
   return row.count === 1 ? word(labels, "frame.live.leads.one", "Reading a new lead") : word(labels, "frame.live.leads.other", "Reading {n} new leads", { n: row.count });
 }
 
 /**
  * "Live now" (owner 31 Oct): what the assistant is doing at this moment, a compact pill on the greeting row of Today, right-aligned (under the greeting on a phone): "● Reading 2 new leads ▾", a live dot while something is going on. It opens a list of everything going on now, each line a link to the
- * call, chat, quote or lead it is about; when idle it is a plain grey "✓ All caught up" (nothing to open). Nothing is drawn until the first answer (no empty box). A call's timer counts on from the
+ * call, chat, quote or lead it is about; when idle it is a plain grey "Watching for leads" (nothing to open; never a count of what waits for the person: that is Needs you). Nothing is drawn until the first answer (no empty box). A call's timer counts on from the
  * API's own elapsed seconds. Not asked at all unless the workspace has it switched on (`frame.live`).
  */
 export function LiveNow({ tenantId }: { tenantId: string }) {
@@ -64,17 +69,17 @@ export function LiveNow({ tenantId }: { tenantId: string }) {
   const base = `/app/tenants/${tenantId}`;
   const secsOf = (r: ActivityRow) => r.elapsedS + (at > 0 && now > at ? Math.floor((now - at) / 1000) : 0);
   const title = word(labels, "frame.live.title", "Live now");
-  const idle = word(labels, "frame.live.idle", "All caught up");
+  const idle = word(labels, "frame.live.idle", "Watching for leads");
   const first = rows[0];
   if (!first) {
     return (
       <p data-live="pill" data-state="idle" role="status" aria-label={`${title}: ${idle}`} className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-edge bg-surface px-3 text-sm font-medium text-muted">
-        <Check className="size-4 shrink-0 text-green-text" aria-hidden="true" />
+        <Eye className="size-4 shrink-0" aria-hidden="true" />
         <span>{idle}</span>
       </p>
     );
   }
-  const text = lineOf(first, secsOf(first), labels);
+  const text = lineOf(first, secsOf(first), labels, true);
   return (
     <div ref={box} data-live="pill" data-state="active" className="relative">
       <button

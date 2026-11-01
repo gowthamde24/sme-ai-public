@@ -3,14 +3,15 @@
 import Link from "next/link";
 import * as React from "react";
 
+import { SIDE_CARD, SIDE_LINE, SIDE_LINK, SIDE_TITLE } from "./side-card";
 import { say, type TodayWords } from "./today-words";
 import type { Digest } from "./types";
 
-const card = "flex flex-col gap-3 rounded-[20px] border border-line bg-surface p-5";
+const card = SIDE_CARD;
 
 function Title({ words }: { words: TodayWords }) {
   return (
-    <h2 id="done-heading" className="font-display text-xl font-semibold">
+    <h2 id="done-heading" className={SIDE_TITLE}>
       {say(words, "today.done.title")}
     </h2>
   );
@@ -25,15 +26,15 @@ function Loaded({ digest, words, outboxHref }: { digest: Promise<Digest>; words:
       {d.state === "error" ? (
         <p className="text-sm text-muted">{say(words, "frame.notyet")}</p>
       ) : d.lines.length === 0 ? (
-        <p className="text-base text-muted">{say(words, "today.done.empty")}</p>
+        <p className={SIDE_LINE}>{say(words, "today.done.empty")}</p>
       ) : (
         // the owner's target (31 Oct): ONE line, what was done, as short sentences side by side
-        <p data-line="done" className="text-base text-muted [overflow-wrap:anywhere]">
+        <p data-line="done" className={SIDE_LINE}>
           {d.lines.map((l) => say(words, `today.done.${l.kind}.${l.n === 1 ? "one" : "other"}`, { n: l.n, time: l.time ?? "" })).join(" · ")}
         </p>
       )}
       {outboxHref ? (
-        <Link href={outboxHref} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline">
+        <Link href={outboxHref} className={SIDE_LINK}>
           {say(words, "today.done.link")}
         </Link>
       ) : null}
