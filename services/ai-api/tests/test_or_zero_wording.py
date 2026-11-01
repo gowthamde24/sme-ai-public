@@ -43,3 +43,17 @@ def test_the_live_cases_for_zero_amounts_exist_in_telugu_and_english() -> None:
     zero = [c for c in cases if c.get("no_zero")]
     assert {c["language"] for c in zero} == {"en", "te"} and len(zero) >= 4
     assert any("money" in c["text"].lower() and "held" in c["text"].lower() for c in zero), "the owner's own question: How much customer money is held?"
+
+
+def test_the_model_is_not_handed_a_zero_amount_or_a_zero_count_to_read_out() -> None:
+    """A prompt rule alone let "₹0.00" through now and then (staging, 1 Nov 2026: 'money held on closed orders ₹0.00'), so the aggregate figures the model reads say "none" for a zero."""
+    from pathlib import Path
+
+    from app.assistant import tools
+
+    assert tools._amount(0) == "none" and tools._amount(150000) == "₹1,500.00" and tools._count(0) == "none" and tools._count(3) == "3"  # noqa: SLF001
+    source = (Path(tools.__file__)).read_text(encoding="utf-8")
+    for key in ("waiting_for_you", "money_held_on_closed_orders", "open_orders"):
+        line = next(ln for ln in source.splitlines() if f'("{key}",' in ln)
+        assert "_amount(" in line or "_count(" in line, f"{key} must go through the zero-safe helpers: {line}"
+    assert '"paid": _amount(paid)' in source and '"refunded": _amount(refunded)' in source
