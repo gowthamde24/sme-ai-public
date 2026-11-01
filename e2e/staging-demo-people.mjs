@@ -39,25 +39,37 @@ try {
     await p.locator("#needs-you").waitFor({ timeout: 45000 });
   }
 
-  // play the guided demo to its end
-  await p.locator('[data-part="guided-demo-start"]').click({ timeout: 20000 });
-  const t0 = Date.now();
-  while (Date.now() - t0 < 240000) {
-    const done = await p.locator('[data-part="guided-demo"]').getByText(/whole story/i).count().catch(() => 0);
-    if (done) break;
-    const next = p.locator('[data-part="guided-demo"] button:has-text("Next")');
-    if ((await next.count()) > 0 && (await next.first().isEnabled().catch(() => false)) && Date.now() - t0 > 20000) await next.first().click().catch(() => null);
+  // play the guided demo to its end; two rows with the same made-up name look silly, so the later one is approved away and the demo plays once more (at most three times)
+  let rows = [];
+  const play = async () => {
+    await p.locator('[data-part="guided-demo-start"]').click({ timeout: 20000 });
+    const t0 = Date.now();
+    while (Date.now() - t0 < 240000) {
+      const done = await p.locator('[data-part="guided-demo"]').getByText(/whole story/i).count().catch(() => 0);
+      if (done) break;
+      const next = p.locator('[data-part="guided-demo"] button:has-text("Next")');
+      if ((await next.count()) > 0 && (await next.first().isEnabled().catch(() => false)) && Date.now() - t0 > 20000) await next.first().click().catch(() => null);
+      await sleep(3000);
+      if (!(await p.locator('[data-part="guided-demo"]').count())) break;
+    }
+    const close = p.locator('[data-part="guided-demo"] button[aria-label="Close the demo"]').first();
+    if ((await close.count()) > 0) await close.click().catch(() => null);
+    await p.goto(s.base, { waitUntil: "domcontentloaded" });
+    await p.locator("#needs-you").waitFor({ timeout: 45000 });
+    await sleep(2500);
+    rows = await p.locator("[data-needs-row]").allInnerTexts();
+    console.log(`Needs you rows: ${JSON.stringify(rows.map((r) => r.replace(/\s+/g, " ")))}`);
+    ok("no row says 'Demo lead' (people have names)", !rows.some((r) => /Demo lead/.test(r)));
+
+  };
+  for (let round = 0; round < 3; round++) {
+    await play();
+    const names = rows.map((r) => r.replace(/\s+/g, " ").replace(/^\S+\s/, "").split(" asked")[0].split(" కాల్")[0]);
+    const dup = names.findIndex((n, i) => names.indexOf(n) !== i);
+    if (dup < 0 || rows.length < 2) break;
+    await p.locator("[data-needs-row]").nth(dup).getByRole("button", { name: /^(Approve|ఓకే)/ }).first().click().catch(() => null);
     await sleep(3000);
-    if (!(await p.locator('[data-part="guided-demo"]').count())) break;
   }
-  const close = p.locator('[data-part="guided-demo"] button[aria-label="Close the demo"]').first();
-  if ((await close.count()) > 0) await close.click().catch(() => null);
-  await p.goto(s.base, { waitUntil: "domcontentloaded" });
-  await p.locator("#needs-you").waitFor({ timeout: 45000 });
-  await sleep(2500);
-  const rows = await p.locator("[data-needs-row]").allInnerTexts();
-  console.log(`Needs you rows: ${JSON.stringify(rows.map((r) => r.replace(/\s+/g, " ")))}`);
-  ok("no row says 'Demo lead' (people have names)", !rows.some((r) => /Demo lead/.test(r)));
   const h1 = await p.locator('[data-screen="today"] h1').innerText();
   ok(`the greeting says ${callName}`, h1.includes(callName), h1.replace(/\n/g, " "));
 } catch (e) {

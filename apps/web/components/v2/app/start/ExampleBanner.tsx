@@ -39,7 +39,7 @@ export function ExampleBanner({ state, notice, kept = 0, load, remove, t }: { st
           <h2 id="example-h" className="font-semibold text-ink">
             {t("start.example.title")}
           </h2>
-          <span aria-hidden="true">·</span>
+          <span aria-hidden="true" className="max-sm:hidden">·</span>
           <button type="submit" className={link}>
             {t("start.example.load")}
           </button>
@@ -50,7 +50,7 @@ export function ExampleBanner({ state, notice, kept = 0, load, remove, t }: { st
             <h2 id="example-h" className="font-semibold text-ink">
               {t("start.example.loaded.title")}
             </h2>
-            <span aria-hidden="true">·</span>
+            <span aria-hidden="true" className="max-sm:hidden">·</span>
             <span className="font-semibold text-brand-text hover:underline">{t("start.example.remove")}</span>
           </summary>
           <form action={remove} className="mt-1 flex flex-wrap items-center gap-3">

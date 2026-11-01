@@ -152,9 +152,9 @@ export default function GuidedDemo({ words, routes, actions }: { words?: Words; 
   if (step === null)
     return slot
       ? createPortal(
-          <button type="button" data-part="guided-demo-start" onClick={start} className="inline-flex h-9 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-brand-edge bg-brand px-3 text-sm font-semibold text-on-brand hover:brightness-95">
+          <button type="button" data-part="guided-demo-start" onClick={start} title={t("gd.start")} className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full border border-brand-edge bg-brand px-3 text-sm font-semibold text-on-brand hover:brightness-95 max-[420px]:w-9 max-[420px]:px-0">
             <Play className="size-3.5" aria-hidden="true" />
-            {t("gd.start")}
+            <span className="max-[420px]:sr-only">{t("gd.start")}</span>
           </button>,
           slot,
         )

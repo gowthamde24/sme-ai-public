@@ -83,7 +83,8 @@ try {
   const cover = await p.evaluate(() => {
     const o = document.querySelector('[data-ask="orb"]').getBoundingClientRect();
     const hit = [...document.querySelectorAll("a, button, summary, input, select, textarea")].filter((e) => !e.closest('[data-ask="orb"]') && getComputedStyle(e).visibility !== "hidden").map((e) => ({ e, r: e.getBoundingClientRect() })).filter(({ r }) => r.width > 0 && r.height > 0 && r.left < o.right && r.right > o.left && r.top < o.bottom && r.bottom > o.top);
-    const tab = document.querySelector('[data-frame="tabbar"], nav[aria-label]:last-of-type')?.getBoundingClientRect();
+    const bars = [...document.querySelectorAll("nav, div")].filter((e) => getComputedStyle(e).position === "fixed" && !e.closest('[data-ask="orb"]') && e.getAttribute("data-ask") !== "orb" && Math.abs(e.getBoundingClientRect().bottom - innerHeight) < 2 && e.getBoundingClientRect().width > innerWidth * 0.9 && e.getBoundingClientRect().height > 40);
+    const tab = bars.length ? { top: Math.min(...bars.map((e) => e.getBoundingClientRect().top)) } : null;
     return { covered: hit.map(({ e }) => (e.innerText || e.getAttribute("aria-label") || e.tagName).slice(0, 24)), orbBottom: Math.round(o.bottom), tabTop: tab ? Math.round(tab.top) : null, orbSize: Math.round(o.width) };
   });
   ok("phone: at the end of the page the floating orb covers no button or link, and sits above the tab bar", cover.covered.length === 0 && (cover.tabTop === null || cover.orbBottom <= cover.tabTop), JSON.stringify(cover));
