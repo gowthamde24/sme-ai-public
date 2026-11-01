@@ -55,6 +55,14 @@ def address_rule_in_prompts() -> None:
     assert "never call anyone sir, madam" in " ".join(b.text for b in request.blocks)
 
 
+def no_zero_in_text(samples_ok: list[str], samples_bad: list[str]) -> None:
+    from app.assistant import prompts
+    from app.assistant.wording import reads_a_zero
+
+    assert prompts.ZERO_RULE in prompts.SYSTEM_PROMPT, "the answer prompt tells the model never to read out a zero"
+    assert not any(reads_a_zero(t) for t in samples_ok) and all(reads_a_zero(t) for t in samples_bad)
+
+
 def router_kind(text: str, kind: str) -> None:
     assert classify(text).kind == kind
 
@@ -147,7 +155,7 @@ def speech_text(language: str, written: str, spoken: str) -> None:
 CHECKS: dict[str, Callable[..., None]] = {
     f.__name__: f
     for f in (shipped_lines_no_gendered, model_text_clean, address_rule_in_prompts, router_kind, owner_language, fillers_in_voice_language, one_voice_per_language, spoken_tone_rules, indian_languages_get_the_larger_budget,
-              chat_prompt_welcomes_casual_talk, no_retired_names_in_shipped_lines, recogniser_mode, small_talk_is_light, speech_text, lead_title, reply_language)
+              chat_prompt_welcomes_casual_talk, no_retired_names_in_shipped_lines, recogniser_mode, small_talk_is_light, speech_text, lead_title, reply_language, no_zero_in_text)
 }
 
 
