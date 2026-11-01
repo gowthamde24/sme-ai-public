@@ -125,6 +125,8 @@ describe("the input bar: Dictate and Live talk (owner, 30 Oct)", () => {
     const talk = document.querySelector('[data-chat="live-talk"]') as HTMLElement;
     expect(form.contains(talk)).toBe(false);
     expect(talk.querySelector("[data-orb]")).not.toBeNull(); // the orb IS the button
+    expect(talk.querySelector(".orb")).not.toBeNull(); // the animated flow orb (owner, 1 Nov: the flat icon was a wrong turn), not a flat circle
+    expect(talk.querySelector("svg")).toBeNull();
     expect(document.querySelector('[data-chat="panel"] header, [data-chat="panel"] > div:first-child')?.contains(talk)).toBe(true); // at the top
     expect(talk).not.toHaveTextContent("Talk"); // no separate Talk pill any more
     expect(document.querySelector('[data-chat="talk-caption"]')).toHaveTextContent("Tap to talk");

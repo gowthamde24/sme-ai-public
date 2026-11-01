@@ -67,7 +67,7 @@ export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 /** Open a browser, sign in as the owner of `pack` at `size`; returns { browser, context, page, tenant, base, errors, ms }. */
 export async function session(pack, size = "desktop", opts = {}) {
   const browser = opts.browser ?? (await chromium.launch());
-  const context = await browser.newContext({ viewport: SIZES[size], locale: "en-IN", timezoneId: "Asia/Kolkata", reducedMotion: "reduce", isMobile: size === "phone", hasTouch: size === "phone", deviceScaleFactor: size === "phone" ? 2 : 1 });
+  const context = await browser.newContext({ viewport: SIZES[size], locale: "en-IN", timezoneId: "Asia/Kolkata", reducedMotion: process.env.DF_MOTION ? "no-preference" : "reduce", isMobile: size === "phone", hasTouch: size === "phone", deviceScaleFactor: size === "phone" ? 2 : 1 });
   await context.addCookies([{ name: "sme_consent", value: "1.a0", url: WEB }]); // the cookie notice answered (analytics off), so it does not sit on every picture; the notice itself is not under test
   const page = await context.newPage();
   const errors = [];

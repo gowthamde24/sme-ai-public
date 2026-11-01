@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import * as React from "react";
 
-import { TalkOrb } from "./TalkOrb";
+import { Orb } from "@/components/v2/Orb";
 
 import { workspaceOf } from "../../nav";
 import { orbHidden } from "./ask-chips";
@@ -46,9 +46,9 @@ export function AskOffFloating({ words }: { words: AskWords }) {
         aria-expanded={open}
         title={name}
         onClick={() => (open ? close() : setOpen(true))}
-        className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full opacity-60 shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-text md:bottom-6 md:right-6"
+        className="fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+1rem)] right-4 z-30 grid size-14 place-items-center rounded-full border border-line bg-surface opacity-80 shadow-[var(--v2-shadow-pop)] transition-transform duration-150 hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-text md:bottom-6 md:right-6"
       >
-        <TalkOrb px={56} state="still" />
+        <Orb px={44} state="ambient" />
       </button>
       {open ? (
         <div className="fixed inset-0 z-[55] print:hidden" data-ask="panel-root" onKeyDown={(e) => e.key === "Escape" && close()}>

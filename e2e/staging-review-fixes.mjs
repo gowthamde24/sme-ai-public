@@ -42,7 +42,7 @@ try {
         setupHeight: setup ? Math.round(setup.getBoundingClientRect().height) : null,
         demoPill: (() => { const b = document.querySelector('[data-part="guided-demo-start"]'); return b ? { inHeader: !!header?.contains(b), position: getComputedStyle(b).position, h: Math.round(b.getBoundingClientRect().height) } : null; })(),
         fixedOverContent: [...document.querySelectorAll("body *")].filter((e) => getComputedStyle(e).position === "fixed" && e.getBoundingClientRect().width > 0 && !e.closest("aside") && !e.matches("header, header *") && !e.closest('[data-frame="install"]') && e.getBoundingClientRect().height > 0).map((e) => e.getAttribute("data-part") ?? e.getAttribute("data-ask") ?? e.tagName).slice(0, 6),
-        orbBg: cs?.backgroundColor, orbSvg: !!orb?.querySelector("svg"), orbCanvas: !!document.querySelector('[data-chat="live-talk"] canvas'),
+        orbIsFlow: !!document.querySelector('[data-chat="live-talk"] .orb'), orbSvg: !!orb?.querySelector("svg"), ringColour: getComputedStyle(document.querySelector('[data-chat="ring"]')).borderTopColor,
         nameLines: name ? Math.round(name.getBoundingClientRect().height / parseFloat(getComputedStyle(name).lineHeight)) : null,
         needsRows: [...document.querySelectorAll("[data-needs-row]")].map((r) => ({ text: r.innerText.replace(/\s+/g, " "), badge: r.querySelector("span")?.innerText, buttons: [...r.querySelectorAll("button:not(.sr-only)")].map((b) => b.innerText) })),
         body: document.body.innerText,
@@ -56,7 +56,7 @@ try {
     ok(`${theme} Finish setting up is one row when 5+ are done (else the list)`, m.setupCollapsed === null || m.setupHeight <= 72, `collapsed=${m.setupCollapsed} h=${m.setupHeight}`);
     ok(`${theme} Start demo is a pill in the header, not floating`, m.demoPill === null || (m.demoPill.inHeader && m.demoPill.position !== "fixed" && m.demoPill.h <= 40), JSON.stringify(m.demoPill));
     ok(`${theme} nothing floats over the desktop page`, m.fixedOverContent.length === 0, m.fixedOverContent.join(","));
-    ok(`${theme} the orb is solid accent with a waveform (no swirl)`, !/rgba?\(0, 0, 0, 0\)/.test(m.orbBg ?? "") && m.orbSvg && !m.orbCanvas, m.orbBg);
+    ok(`${theme} the Talk orb is the animated flow orb (no flat waveform icon), with an accent ring`, m.orbIsFlow && !m.orbSvg && m.ringColour !== "rgba(0, 0, 0, 0)", JSON.stringify({ flow: m.orbIsFlow, svg: m.orbSvg, ring: m.ringColour }));
     ok(`${theme} the workspace name may use two lines`, m.nameLines === null || m.nameLines <= 2, `lines=${m.nameLines}`);
     ok(`${theme} no "Demo owner" / "Demo lead" on the page`, !/Demo owner|Demo lead/.test(m.body));
     const poll = await p.evaluate(() => {
@@ -77,6 +77,30 @@ try {
       if (lang === "te") ok(`${theme} every word of the row is Telugu except the name`, !/\b[A-Za-z]{4,}\b/.test(r.text.replace(/^[A-Za-z]+(\s[A-Za-z]+)?/, "").replace(/\b(Ramesh|Sunitha|Venkat|Lakshmi|Ravi|Anitha|Babu|Rao|Reddy|Naidu|Goud|Kumari|Kumar|Latha|Teja|Chowdary|Padmaja|Srinivas|Kiran|Madhavi|Swathi|Prasad)\b/g, "")), r.text);
     }
     await shot(s, `rv-${pack}-${lang}-${theme}-1440`, { fullPage: true });
+  }
+  // "reduce motion": the orb is one still frame; without it, it moves
+  {
+    await p.setViewportSize({ width: 1440, height: 900 });
+    await p.goto(s.base, { waitUntil: "domcontentloaded" });
+    const orbEl = p.locator('[data-chat="live-talk"]');
+    await orbEl.waitFor({ timeout: 45000 });
+    await sleep(2500);
+    await p.emulateMedia({ reducedMotion: "reduce" });
+    await p.reload({ waitUntil: "domcontentloaded" });
+    await orbEl.waitFor({ timeout: 45000 });
+    await sleep(2500);
+    const still1 = (await orbEl.screenshot()).toString("base64");
+    await sleep(1500);
+    const still2 = (await orbEl.screenshot()).toString("base64");
+    ok("reduce motion: the orb is one still frame", still1 === still2);
+    await p.emulateMedia({ reducedMotion: "no-preference" });
+    await p.reload({ waitUntil: "domcontentloaded" });
+    await orbEl.waitFor({ timeout: 45000 });
+    await sleep(2500);
+    const a = (await orbEl.screenshot()).toString("base64");
+    await sleep(1500);
+    const b = (await orbEl.screenshot()).toString("base64");
+    ok("with motion allowed: the orb moves", a !== b);
   }
   if (lang !== "en") {
     // no "machine-written / not reviewed" line on the other screens either: Settings, and the public site and legal page in this language
