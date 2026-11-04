@@ -128,7 +128,7 @@ describe("the practice call (simulated; Owner and Admin)", () => {
 });
 
 describe("the draft quote of a qualified call", () => {
-  const PREVIEW = { prospectId: P1, leadId: P2, ready: true, made: false, quoteId: Q1, lines: [], leftOut: [] };
+  const PREVIEW = { prospectId: P1, leadId: P2, ready: true, made: false, quoteId: Q1, enquiryId: null, lines: [], leftOut: [] };
   it("the preview is for the Owner, Admin and Sales; nothing is looked up before the draft is made", async () => {
     as("sales");
     h.preview.mockResolvedValue(PREVIEW);
@@ -139,7 +139,12 @@ describe("the draft quote of a qualified call", () => {
     expect(await quoteDraftAction(T, P1)).toMatchObject({ ok: false, kind: "forbidden" });
     expect(await quoteDraftAction(T, "nope")).toMatchObject({ ok: false });
   });
-  it("once made, the draft's enquiry is looked up for the link; a lookup that fails leaves it null; a call that did not qualify says so", async () => {
+  it("once made, the preview's own enquiry id (#305) is the link, and nothing else is read", async () => {
+    h.preview.mockResolvedValueOnce({ ...PREVIEW, made: true, enquiryId: E1 });
+    expect(await quoteDraftAction(T, P1)).toMatchObject({ ok: true, data: { made: true, enquiryId: E1 } });
+    expect(h.quote).not.toHaveBeenCalled();
+  });
+  it("an older API without it: the draft's enquiry is looked up once for the link; a lookup that fails leaves it null; a call that did not qualify says so", async () => {
     h.preview.mockResolvedValue({ ...PREVIEW, made: true });
     h.quote.mockResolvedValueOnce({ id: Q1, enquiry_id: E1 });
     expect(await quoteDraftAction(T, P1)).toMatchObject({ ok: true, data: { made: true, enquiryId: E1 } });

@@ -134,8 +134,9 @@ export async function quoteDraftAction(tenantId: string, prospectId: string): Pr
   if (typeof prospectId !== "string" || !isCanonicalUuid(prospectId)) return invalid(ctx.t);
   try {
     const preview = await getQuoteDraft(ctx.token, tenantId, prospectId);
-    let enquiryId: string | null = null;
-    if (preview.made) {
+    // the preview names the enquiry itself (#305); an older API does not, and then the quote is read once to find it
+    let enquiryId: string | null = preview.enquiryId;
+    if (preview.made && enquiryId === null) {
       try {
         const enquiry = (await fetchQuote(ctx.token, tenantId, preview.quoteId)).enquiry_id;
         enquiryId = isCanonicalUuid(enquiry) ? enquiry : null;

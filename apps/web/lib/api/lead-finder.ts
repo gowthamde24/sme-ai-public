@@ -268,6 +268,7 @@ export function parseQuoteDraftPreview(json: unknown): QuoteDraftPreview {
     ready: bool(x.ready, "ready"),
     made: bool(x.made, "made"),
     quoteId: uuid(x.quote_id, "quote_id"),
+    enquiryId: x.enquiry_id === null || x.enquiry_id === undefined ? null : uuid(x.enquiry_id, "enquiry_id"),
     lines: list(x.lines, "lines", 20).map(parseDraftLine),
     leftOut: list(x.left_out ?? [], "left_out", 40).map(parseLeftOut),
   };

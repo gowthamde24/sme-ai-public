@@ -195,11 +195,13 @@ describe("settings (contract section 6)", () => {
 describe("the draft quote of a qualified call (contract section 7)", () => {
   it("reads the preview: each line at the catalogue price with what they said, and each left-out item with its closed reason", () => {
     expect(parseQuoteDraftPreview(QUOTE_DRAFT)).toEqual({
-      prospectId: QUOTE_DRAFT.prospect_id, leadId: L1, ready: true, made: false, quoteId: Q1,
+      prospectId: QUOTE_DRAFT.prospect_id, leadId: L1, ready: true, made: false, quoteId: Q1, enquiryId: null,
       lines: [{ item: "Kanchi Pattu Bridal", itemTypeCode: "LF-1A2B3C4D", qty: 40, unitPricePaise: 850000, quantitySaid: "About forty pieces a month, more in the season." }],
       leftOut: [{ item: "Soft Silk Daily", reason: "no_price" }, { item: "Dharmavaram Silk Classic", reason: "no_quantity" }, { item: "Mysore Crepe", reason: "not_in_stock" }],
     });
-    expect(parseQuoteDraftPreview(QUOTE_DRAFT_NONE).leftOut.map((l) => l.reason)).toEqual(["no_price", "not_in_catalogue", "item_type_off", "too_many_lines"]);
+    expect(parseQuoteDraftPreview(QUOTE_DRAFT_NONE).leftOut.map((l) => l.reason)).toEqual(["no_price", "not_in_catalogue", "item_type_off", "too_many_lines"]);    // once made, the preview names its enquiry (#305); a bad id is refused
+    expect(parseQuoteDraftPreview({ ...QUOTE_DRAFT, made: true, enquiry_id: E1 }).enquiryId).toBe(E1);
+    expect(() => parseQuoteDraftPreview({ ...QUOTE_DRAFT, made: true, enquiry_id: "nope" })).toThrow();
   });
   it.each([["a reason outside the list", { left_out: [{ item: "X", reason: "too_dear" }] }], ["no quote id", { quote_id: null }], ["a line without a quantity", { lines: [{ ...QUOTE_DRAFT.lines[0], qty: 0 }] }], ["a negative price", { lines: [{ ...QUOTE_DRAFT.lines[0], unit_price_paise: -1 }] }], ["ready that is not a yes or no", { ready: "yes" }]])("refuses a preview with %s", (_, change) => {
     expect(() => parseQuoteDraftPreview({ ...QUOTE_DRAFT, ...change })).toThrow(ApiContractError);

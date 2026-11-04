@@ -135,7 +135,7 @@ export const LEFT_OUT_REASONS = ["no_price", "no_quantity", "not_in_stock", "not
 export type LeftOutReason = (typeof LEFT_OUT_REASONS)[number];
 export type DraftLine = { item: string; itemTypeCode: string; qty: number; unitPricePaise: number; quantitySaid: string };
 export type LeftOut = { item: string; reason: LeftOutReason };
-export type QuoteDraftPreview = { prospectId: string; leadId: string; ready: boolean; made: boolean; quoteId: string; lines: DraftLine[]; leftOut: LeftOut[] };
+export type QuoteDraftPreview = { prospectId: string; leadId: string; ready: boolean; made: boolean; quoteId: string; /** The enquiry the draft lives on, once made (#305); null from an older API or before it is made. */ enquiryId: string | null; lines: DraftLine[]; leftOut: LeftOut[] };
 export type QuoteDraftMade = { quoteId: string; quoteNo: number | null; enquiryId: string; status: "draft"; totalPaise: number | null; needsOwnerApproval: boolean; lines: DraftLine[]; leftOut: LeftOut[]; replayed: boolean };
 /** What the screen is given: the preview and, once the draft is made, the enquiry it lives on (null when that could not be read). */
 export type QuoteDraftView = QuoteDraftPreview & { enquiryId: string | null };
