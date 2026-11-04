@@ -18,6 +18,8 @@ import { requireUser } from "@/lib/auth/session";
 
 import { createCompanyAction } from "./actions";
 import { TodayScreen } from "./today-screen";
+import { DemoVideoScreen } from "./demo-video-screen";
+import { DEMO_VIDEO_QUERY, demoVideoAllowed } from "@/lib/demo-video/guard";
 import { CreateCompanyForm } from "./create-company-form";
 import { Rich } from "@/components/v2/app/rich";
 import { makeT, type Words } from "@/components/v2/app/words";
@@ -69,6 +71,8 @@ export default async function TenantPage({
   }
 
   const requestedTab = pick(query.tab);
+  // the demo-video mode (job demo-video): `?demo=video` on Today, honoured only where lib/demo-video/guard.ts says yes (flag, Owner or Admin, a workspace the API calls a demo one); anywhere else the address is the normal Today
+  if (requestedTab === undefined && pick(query[DEMO_VIDEO_QUERY.name]) === DEMO_VIDEO_QUERY.value && (await demoVideoAllowed(user.accessToken, tenantId))) return DemoVideoScreen({ accessToken: user.accessToken, tenantId });
   // no tab: Today (Job AC, C2). The records tables are reached with ?tab= (Customers: companies and contacts; Leads: leads).
   if (requestedTab === undefined) return TodayScreen({ accessToken: user.accessToken, userId: user.id, tenantId, role: tenant.role, shop: tenant.name, example: pick(query.example) ?? null, kept: Math.min(100_000, Math.max(0, Number.parseInt(pick(query.kept) ?? "0", 10) || 0)) });
   const tab: EntityKey = (ENTITY_KEYS as readonly string[]).includes(
