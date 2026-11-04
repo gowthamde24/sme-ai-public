@@ -68,6 +68,10 @@ class BillingService:
     def access(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         return self._repo.access(token, tenant_id)
 
+    def entitlements(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        """The plan as feature switches (owner decision 4 Nov 2026): AI Workforce or Lead Desk, and each feature on or off. No price."""
+        return self._repo.entitlements(token, tenant_id)
+
     def forget(self, tenant_id: uuid.UUID | str) -> None:
         """Drop the remembered access state of a workspace (after its plan changed, and in tests)."""
         self._access_cache.pop(uuid.UUID(str(tenant_id)), None)
