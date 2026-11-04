@@ -4,15 +4,15 @@ import { LIVE_TESTS, parseActivity, parseActivityEntry, parsePlan, parseTestResu
 
 /**
  * The assistant does the work: the API calls behind the chat's work cards and Settings > Activity, with the signed-in person's own token (SERVER ONLY: the routes and pages call these).
- * ASSUMED until docs/contracts/assistant-tools.md, under `/v1/tenants/{id}/assistant`:
- *   POST /files                         {name, content_type, size_bytes, data_base64}       -> {file_id, name, size_bytes, kind, expires_at}
- *   POST /plans/{plan_id}/decide        {decision: "do" | "cancel", confirmed}              -> the plan
- *   POST /plans/{plan_id}/undo          {}                                                  -> the plan
- *   POST /secrets/{request_id}          {value}                                             -> {saved: true, last4?}
+ * C1's contract, docs/contracts/assistant-tools.md, under `/v1/tenants/{id}/assistant`:
+ *   POST /files                         {name, content_type, size_bytes, data_base64}       -> 201 {file_id, name, size_bytes, kind, expires_at}   (413 file_too_large, 415 file_type, 422 file_empty)
+ *   POST /plans/{plan_id}/decide        {decision: "do" | "cancel", confirmed}              -> the plan                                            (409 confirm_needed / plan_state / plan_expired, 403 mfa_required)
+ *   POST /plans/{plan_id}/undo          {}                                                  -> the plan                                            (409 nothing_to_undo / plan_state, 403)
+ *   POST /secrets/{request_id}          {value}                                             -> {saved: true, last4: "1a2b" | null}                 (Owner only)
  *   POST /setups/{setup_id}/test        {test}                                              -> {ok, reason, detail, at}
- *   GET  /actions?since&limit=50                                                            -> {items: [...], next_before}
+ *   GET  /actions?since&before&limit=50                                                     -> {items: [...], next_before}                         (Owner, Admin)
  *   POST /actions/{action_id}/undo      {}                                                  -> the entry
- * A refusal is an ApiRequestError (403 `mfa_required`, 403 forbidden, 409 `plan_expired` / `plan_state` / `undo_expired`, 422 `secret_rejected`); an answer that is not the shape is an ApiContractError.
+ * A refusal is an ApiRequestError; an answer that is not the shape is an ApiContractError.
  */
 const base = (tenantId: string): string => {
   if (!isCanonicalUuid(tenantId)) throw new ApiContractError("id");
@@ -53,8 +53,8 @@ export async function runSetupTest(token: string, tenantId: string, setupId: str
   return need(parseTestResult(await apiRequest(`${base(tenantId)}/setups/${uuid(setupId)}/test`, token, { method: "POST", body: JSON.stringify({ test }) })), "test result");
 }
 
-export async function listAssistantActions(token: string, tenantId: string, since: string): Promise<{ items: ActivityEntry[]; nextBefore: string | null }> {
-  const q = new URLSearchParams({ since, limit: "50" });
+export async function listAssistantActions(token: string, tenantId: string, since: string, before?: string | null): Promise<{ items: ActivityEntry[]; nextBefore: string | null }> {
+  const q = new URLSearchParams({ since, ...(before ? { before } : {}), limit: "50" });
   return need(parseActivity(await apiRequest(`${base(tenantId)}/actions?${q.toString()}`, token)), "action list");
 }
 

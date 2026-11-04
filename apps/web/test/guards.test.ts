@@ -227,7 +227,10 @@ describe("server-only code stays on the server", () => {
     const ACTIVITY_POLL = path.join("components", "v2", "app", "live", "activity-poll.ts");
     // And the language pill's memory (31 Oct): a plain POST to this app's OWN route `<workspace>/chat-language` (a path it is given): no token, never the API.
     const CHAT_LANGUAGE_POST = path.join("components", "v2", "app", "today", "ask", "chat-language-post.ts");
-    expect(callers).toEqual([ACTIVITY_POLL, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, path.join("lib", "api", "client.ts")].sort());
+    // And the chat's work cards (the assistant does the work): Do it / Cancel / Undo, the secure key box, a setup's live test and Activity's Undo ask this app's OWN route `<workspace>/assistant-work` (a path it is given): no token, never the API (the file upload is an XMLHttpRequest to `<workspace>/assistant-work/upload`, for its progress).
+    const WORK_CALLS = path.join("lib", "assistant-work", "client.ts");
+    expect(callers).toEqual([ACTIVITY_POLL, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, WORK_CALLS, path.join("lib", "api", "client.ts")].sort());
+    expect(read(path.join(WEB_ROOT, WORK_CALLS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, CONVERSATION_CALLS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, CONTEXT_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, PRON_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);

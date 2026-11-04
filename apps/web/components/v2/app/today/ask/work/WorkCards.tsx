@@ -1,6 +1,6 @@
 "use client";
 
-import { Info } from "lucide-react";
+import { Info, Sparkles } from "lucide-react";
 
 import type { CantDoCard, WorkCard } from "@/lib/assistant-work/types";
 
@@ -10,14 +10,18 @@ import { SecretBox } from "./SecretBox";
 import { SetupSteps } from "./SetupSteps";
 import { cardBox, type WorkEnv } from "./work-env";
 
-/** "Can't do yet" (or "always a person, on its screen"), honestly, with the screen where it is done. */
+/**
+ * "Can't do yet" (or "always a person, on its screen"), honestly, with the screen where it is done. `not_in_plan`: the thing is part of another product (AI Workforce), said in a friendly way
+ * with the Plans link: no price, no checkout.
+ */
 function CantDo({ card, env }: { card: CantDoCard; env: WorkEnv }) {
   const { t } = env;
+  const head = card.reason === "not_in_plan" && card.upgradeTo ? t(`bv.work.cant.not_in_plan.${card.upgradeTo}`) : t(`bv.work.cant.${card.reason}`);
   return (
-    <article data-work="cant-do" data-reason={card.reason} className="mt-2 rounded-xl border border-line bg-surface p-3">
+    <article data-work="cant-do" data-reason={card.reason} data-upgrade={card.upgradeTo ?? undefined} className="mt-2 rounded-xl border border-line bg-surface p-3">
       <p className="flex items-start gap-2 text-sm font-semibold">
-        <Info className="mt-0.5 size-4 shrink-0 text-info-text" aria-hidden="true" />
-        <span>{t(`bv.work.cant.${card.reason}`)}</span>
+        {card.reason === "not_in_plan" ? <Sparkles className="mt-0.5 size-4 shrink-0 text-brand-text" aria-hidden="true" /> : <Info className="mt-0.5 size-4 shrink-0 text-info-text" aria-hidden="true" />}
+        <span>{head}</span>
       </p>
       <p className="mt-1 text-sm [overflow-wrap:anywhere]">{card.what}</p>
       {card.screen ? (

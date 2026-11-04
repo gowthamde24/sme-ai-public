@@ -13,19 +13,22 @@ export const dynamic = "force-dynamic";
 
 const HEADERS = { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" };
 
-/** The API's refusal as a closed word the card has a sentence for (the API's own English is never passed on). */
+/**
+ * The API's refusal as a closed word the card has a sentence for (the API's own English is never passed on). The contract's codes: 403 `mfa_required` and forbidden; 409 `plan_expired`, `plan_state`,
+ * `confirm_needed` (a sensitive plan without its second tap: the card asks again) and `nothing_to_undo`.
+ */
 function word(error: unknown): string {
   if (!(error instanceof ApiRequestError)) return "down";
   if (error.code === "mfa_required") return "mfa";
   if (error.code === "plan_expired" || error.code === "undo_expired") return "expired";
-  if (error.code === "plan_state") return "state";
+  if (error.code === "plan_state" || error.code === "confirm_needed" || error.code === "nothing_to_undo") return "state";
   if (error.code === "secret_rejected" || error.status === 422) return "rejected";
   return error.status === 403 ? "forbidden" : "down";
 }
 
 /**
  * POST /app/tenants/[tenantId]/assistant-work: the side calls of the chat's work cards and of Settings > Activity, one JSON request each, with this person's own token (it stays here), only while
- * ASSISTANT_WORK_SCREENS is `1` (in `mock` the browser answers itself: nothing reaches this route) and only from this site. ASSUMED until docs/contracts/assistant-tools.md (lib/api/assistant-work.ts):
+ * ASSISTANT_WORK_SCREENS is `1` (in `mock` the browser answers itself: nothing reaches this route) and only from this site. C1's contract, docs/contracts/assistant-tools.md (lib/api/assistant-work.ts):
  *   {op: "decide", planId, decision: "do" | "cancel", confirmed}     a plan's Do it / Cancel (a sensitive plan needs `confirmed`; the API checks the role and the second step again)
  *   {op: "undo", planId}                                             "Done · Undo"
  *   {op: "secret", requestId, value}                                 the secure box: the value goes ONLY into that API call; it is never logged, never answered back, never stored here

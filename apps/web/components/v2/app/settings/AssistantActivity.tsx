@@ -22,7 +22,7 @@ const pillOf = { done: "border-green-text bg-green-bg text-green-text", failed: 
 
 /**
  * Settings > Activity: what the assistant changed, "by the assistant, on <name>'s request", newest first, filtered to today or this week, with Undo where the action declares one (the Owner's; the API
- * checks again). The list is the API's (ASSUMED until docs/contracts/assistant-tools.md: `GET /assistant/actions`); null = it could not be read ("Not available yet"), never a guess. In `mock` mode
+ * checks again). The list is the API's (C1's contract, docs/contracts/assistant-tools.md: `GET /assistant/actions`); null = it could not be read ("Not available yet"), never a guess. In `mock` mode
  * the entries are examples and the card says so.
  */
 export function AssistantActivity({ entries, range, words, lang, base, canUndo, mode, transport: given }: { entries: readonly ActivityEntry[] | null; range: "today" | "week"; words: Words; lang: string; base: string; canUndo: boolean; mode: "on" | "mock"; transport?: WorkTransport }) {

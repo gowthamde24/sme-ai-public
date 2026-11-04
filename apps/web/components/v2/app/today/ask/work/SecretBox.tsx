@@ -30,7 +30,7 @@ export function SecretBox({ card, env, inline = false }: { card: SecretCard; env
     if (value.trim() === "") return setProblem("bv.work.secret.err.empty");
     setBusy(true);
     setProblem(null);
-    const out = await env.transport.saveSecret(card.id, value);
+    const out = await env.transport.saveSecret(card.requestId, value);
     setBusy(false);
     if (out.ok) env.store.set(card.id, { secret: { last4: out.last4 } });
     else setProblem(`bv.work.secret.err.${out.error}`);

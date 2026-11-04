@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { appDict } from "@/i18n/app";
 import { fixtureTransport, type WorkTransport } from "@/lib/assistant-work/client";
-import { CANT_DO_JSON, CATALOGUE_PREVIEW_JSON, HOURS_PLAN_JSON, IMPORT_PLAN_JSON, MULTI_PLAN_JSON, NOT_YET_JSON, PREVIEW_JSON, SECRET_JSON, SETUP_EMAIL_JSON, SETUP_FORM_JSON, SETUP_INDIAMART_JSON, STAFF_PLAN_JSON, TENANT_BASE, planCardJson } from "@/lib/assistant-work/fixtures";
+import { CANT_DO_JSON, CATALOGUE_PREVIEW_JSON, HOURS_PLAN_JSON, IMPORT_PLAN_JSON, MULTI_PLAN_JSON, NOT_IN_PLAN_JSON, NOT_YET_JSON, PREVIEW_JSON, SECRET_JSON, SETUP_EMAIL_JSON, SETUP_FORM_JSON, SETUP_INDIAMART_JSON, STAFF_PLAN_JSON, TENANT_BASE, planCardJson } from "@/lib/assistant-work/fixtures";
 import { parseWorkCard, type WorkCard } from "@/lib/assistant-work/types";
 
 import { makeT } from "../../../words";
@@ -164,7 +164,7 @@ describe("the secure key box", () => {
 
 describe("guided setup cards", () => {
   it("numbered steps, the key box and Pull now; the live test's result is said in words", async () => {
-    draw([card(SETUP_INDIAMART_JSON)], { transport: fixtureTransport({ delay: 0, failTests: { [SETUP_INDIAMART_JSON.setup_id]: "key_rejected" } }) });
+    draw([card(SETUP_INDIAMART_JSON)], { transport: fixtureTransport({ delay: 0, failTests: { [SETUP_INDIAMART_JSON.id]: "key_rejected" } }) });
     const setup = screen.getByRole("article", { name: "Connect IndiaMART" });
     expect(within(setup).getAllByRole("listitem").length).toBeGreaterThanOrEqual(4);
     expect(within(setup).getByLabelText("IndiaMART CRM key")).toBeTruthy();
@@ -187,7 +187,7 @@ describe("guided setup cards", () => {
   });
   it("the website snippet and a test that worked", () => {
     draw([card(SETUP_FORM_JSON)]);
-    expect(screen.getByText(/forms\.example\.test\/f\.js/)).toBeTruthy();
+    expect(screen.getByText(/forms\.example\.test\/f\/sri-lakshmi-silks/)).toBeTruthy();
     expect(screen.getByRole("status").textContent).toContain("It works.");
   });
 });
@@ -196,9 +196,21 @@ describe("can't do yet", () => {
   it("says so honestly, with the screen where a person does it", () => {
     draw([card(CANT_DO_JSON), card(NOT_YET_JSON)]);
     expect(screen.getByText("This is always done by a person, on its own screen.")).toBeTruthy();
-    expect(screen.getByRole("link", { name: "Open Privacy and data" }).getAttribute("href")).toBe(`${TENANT_BASE}/settings?section=privacy`);
+    expect(screen.getByRole("link", { name: "Open Settings → Data" }).getAttribute("href")).toBe(`${TENANT_BASE}/settings?section=data`);
     expect(screen.getByText("I can’t do this yet.")).toBeTruthy();
     expect(screen.getByRole("link", { name: "Open Orders" })).toBeTruthy();
+  });
+  it("not in the plan: 'part of AI Workforce' with the Plans link, no price and no checkout (en and te)", () => {
+    draw([card(NOT_IN_PLAN_JSON)]);
+    const el = document.querySelector<HTMLElement>("[data-work=cant-do]") as HTMLElement;
+    expect(el.dataset.reason).toBe("not_in_plan");
+    expect(el.dataset.upgrade).toBe("ai_workforce");
+    expect(within(el).getByText("Finding new customers is part of AI Workforce.")).toBeTruthy();
+    expect(within(el).getByText("Finding new retailers in Guntur")).toBeTruthy();
+    expect(within(el).getByRole("link", { name: "Open Plans" }).getAttribute("href")).toBe(`${TENANT_BASE}/plans`);
+    expect(el.textContent).not.toMatch(/₹|Rs\.?\s?\d|price|pay|buy|checkout|trial/i);
+    expect(within(el).queryAllByRole("button")).toHaveLength(0);
+    expect((appDict("te") as Record<string, string>)["bv.work.cant.not_in_plan.ai_workforce"]).toBe("కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం.");
   });
 });
 

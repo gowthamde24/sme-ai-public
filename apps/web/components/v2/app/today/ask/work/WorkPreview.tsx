@@ -3,7 +3,7 @@
 import * as React from "react";
 
 import { fixtureTransport } from "@/lib/assistant-work/client";
-import { CANT_DO_JSON, CATALOGUE_PREVIEW_JSON, HOURS_PLAN_JSON, IMPORT_PLAN_JSON, MULTI_PLAN_JSON, NOT_YET_JSON, PREVIEW_JSON, SECRET_JSON, SETUP_EMAIL_JSON, SETUP_FORM_JSON, SETUP_HOURS_JSON, SETUP_INDIAMART_ID, SETUP_INDIAMART_JSON, STAFF_PLAN_JSON, planCardJson } from "@/lib/assistant-work/fixtures";
+import { CANT_DO_JSON, CATALOGUE_PREVIEW_JSON, HOURS_PLAN_JSON, IMPORT_PLAN_JSON, MULTI_PLAN_JSON, NOT_IN_PLAN_JSON, NOT_YET_JSON, PDF_NOT_YET_JSON, PREVIEW_JSON, PRICE_LIST_NOT_YET_JSON, SECRET_JSON, SETUP_EMAIL_JSON, SETUP_FORM_JSON, SETUP_HOURS_JSON, SETUP_INDIAMART_ID, SETUP_INDIAMART_JSON, STAFF_PLAN_JSON, planCardJson } from "@/lib/assistant-work/fixtures";
 import { parseWorkCard, type WorkCard } from "@/lib/assistant-work/types";
 
 import { makeT, type Words } from "../../../words";
@@ -12,7 +12,7 @@ import { WorkCards } from "./WorkCards";
 import type { WorkRole } from "./work-env";
 
 const PLANS = [IMPORT_PLAN_JSON, HOURS_PLAN_JSON, STAFF_PLAN_JSON, MULTI_PLAN_JSON, CATALOGUE_PREVIEW_JSON.plan];
-const CARDS = [PREVIEW_JSON, CATALOGUE_PREVIEW_JSON, planCardJson(MULTI_PLAN_JSON), planCardJson(STAFF_PLAN_JSON), planCardJson(HOURS_PLAN_JSON), SECRET_JSON, SETUP_INDIAMART_JSON, SETUP_EMAIL_JSON, SETUP_FORM_JSON, SETUP_HOURS_JSON, CANT_DO_JSON, NOT_YET_JSON];
+const CARDS = [PREVIEW_JSON, CATALOGUE_PREVIEW_JSON, planCardJson(MULTI_PLAN_JSON), planCardJson(STAFF_PLAN_JSON), planCardJson(HOURS_PLAN_JSON), SECRET_JSON, SETUP_INDIAMART_JSON, SETUP_EMAIL_JSON, SETUP_FORM_JSON, SETUP_HOURS_JSON, CANT_DO_JSON, NOT_YET_JSON, PDF_NOT_YET_JSON, PRICE_LIST_NOT_YET_JSON, NOT_IN_PLAN_JSON];
 
 /**
  * The fixture-only preview of the work cards (ASSISTANT_WORK_SCREENS=mock, not linked from any menu): every card with made-up data, as the Owner or as Staff, and the composer's file chips, so the

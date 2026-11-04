@@ -72,7 +72,7 @@ export function parseTurnEvent(name: string, data: unknown): TurnEvent | null {
     case "clarify":
       return { type: "clarify", question: text(data.question, "question", 1000), actionId: typeof data.action_id === "string" && isCanonicalUuid(data.action_id) ? data.action_id : null };
     case "work_card":
-      // the assistant does the work (ASSUMED until docs/contracts/assistant-tools.md): the card goes on as the API wrote it; the browser reads it strictly (lib/assistant-work/types.ts parseWorkCard)
+      // the assistant does the work (C1's contract, docs/contracts/assistant-tools.md): the card goes on as the API wrote it; the browser reads it strictly (lib/assistant-work/types.ts parseWorkCard)
       return isRec(data.card) ? { type: "work_card", card: data.card } : null;
     case "source": {
       const fixed = isRec(data) && data.target === undefined && data.open !== undefined ? { ...data, target: data.open } : data;
@@ -86,7 +86,7 @@ export function parseTurnEvent(name: string, data: unknown): TurnEvent | null {
 /** `language`: the chat's language pill: "auto" (the API detects it, as always) or the language the reply is written in, whatever the words are. */
 export const REPLY_LANGUAGES = ["auto", "te", "en", "hi", "kn", "ta", "ml"] as const;
 export type ReplyLanguage = (typeof REPLY_LANGUAGES)[number];
-export type TurnInput = { messageId: string; conversationId: string | null; text: string; languageHint?: AssistantLanguage | null; language?: ReplyLanguage | null; /** ASSUMED until docs/contracts/assistant-tools.md: the uploaded files that go with the message (`attachment_ids`, at most 5). */ attachmentIds?: readonly string[] };
+export type TurnInput = { messageId: string; conversationId: string | null; text: string; languageHint?: AssistantLanguage | null; language?: ReplyLanguage | null; /** C1's contract, docs/contracts/assistant-tools.md: the uploaded files that go with the message (`attachment_ids`, at most 5). */ attachmentIds?: readonly string[] };
 const LANGS = ["te", "en", "hi", "kn"];
 
 export async function* sendTurn(token: string, tenantId: string, input: TurnInput): AsyncGenerator<TurnEvent> {

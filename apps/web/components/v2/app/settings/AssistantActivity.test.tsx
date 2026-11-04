@@ -31,7 +31,7 @@ describe("Settings > Activity", () => {
     expect(screen.getAllByRole("button", { name: "Undo" })).toHaveLength(2);
     await act(async () => void fireEvent.click(screen.getAllByRole("button", { name: "Undo" })[0]));
     expect(screen.getAllByRole("button", { name: "Undo" })).toHaveLength(1);
-    expect(document.querySelector("[data-activity='leads.import']")?.getAttribute("data-status")).toBe("undone");
+    expect(document.querySelector("[data-activity='lead-imports.commit']")?.getAttribute("data-status")).toBe("undone");
     cleanup();
     draw({ canUndo: false });
     expect(screen.queryByRole("button", { name: "Undo" })).toBeNull();
@@ -57,7 +57,7 @@ describe("Settings > Activity", () => {
     expect(whenText("te", "2026-11-04T08:40:00Z")).toMatch(/^4 .+, 2:10 pm$/);
   });
   it("the mock list is judged against the fixtures' own clock: today is today's, the week is the week's", async () => {
-    expect((await readActivity("mock", { token: "t", tenantId: "x" }, "today"))?.map((e) => e.tool)).toEqual(["leads.import", "calls.set_hours"]);
+    expect((await readActivity("mock", { token: "t", tenantId: "x" }, "today"))?.map((e) => e.tool)).toEqual(["lead-imports.commit", "calls.set_hours"]);
     expect(await readActivity("mock", { token: "t", tenantId: "x" }, "week", FIXTURE_NOW)).toHaveLength(4);
   });
 });

@@ -4,12 +4,12 @@ import { ACTIVITY_JSON, IMPORT_PLAN_JSON } from "./fixtures";
 /**
  * The browser's side calls of the assistant's work cards. Two transports with ONE shape:
  *   routeTransport(base): this workspace's own route `<base>/assistant-work` (JSON, one op each) and `<base>/assistant-work/upload` (the file as the body), which hold the person's token and call the API
- *     (ASSUMED until docs/contracts/assistant-tools.md; see lib/assistant-work/types.ts for the assumed API routes);
+ *     (C1's contract, docs/contracts/assistant-tools.md; lib/api/assistant-work.ts has the API routes);
  *   fixtureTransport(): made-up answers in the browser, no network at all (the tests, the preview page and ASSISTANT_WORK_SCREENS=mock: nothing is uploaded anywhere).
  * Every answer is a closed word on failure; the API's own English is never shown.
  */
 export type PlanOutcome = { ok: true; plan: WorkPlan } | { ok: false; error: "mfa" | "forbidden" | "expired" | "state" | "down" };
-export type UploadOutcome = { ok: true; file: UploadedFile } | { ok: false; error: "size" | "type" | "forbidden" | "down" | "aborted" };
+export type UploadOutcome = { ok: true; file: UploadedFile } | { ok: false; error: "size" | "type" | "empty" | "forbidden" | "down" | "aborted" };
 export type SecretOutcome = { ok: true; last4: string | null } | { ok: false; error: "rejected" | "forbidden" | "down" };
 export type TestOutcome = { ok: true; result: TestResult } | { ok: false; error: "forbidden" | "down" };
 export type UndoOutcome = { ok: true; entry: ActivityEntry } | { ok: false; error: "expired" | "forbidden" | "down" };
@@ -66,7 +66,7 @@ function xhrUpload(url: string, file: File, onProgress: (f: number) => void, sig
       const file = isRec(json) && json.ok === true ? parseUploadedFile(json.file) : null;
       if (file) return resolve({ ok: true, file });
       const e = isRec(json) ? json.error : null;
-      resolve({ ok: false, error: e === "size" || e === "type" || e === "forbidden" ? e : "down" });
+      resolve({ ok: false, error: e === "size" || e === "type" || e === "empty" || e === "forbidden" ? e : "down" });
     };
     xhr.onerror = () => resolve({ ok: false, error: "down" });
     xhr.onabort = () => resolve({ ok: false, error: "aborted" });
@@ -135,7 +135,8 @@ export function fixtureTransport(options: FixtureOptions = {}, plans: readonly u
         onProgress(f);
       }
       if (signal.aborted) return { ok: false, error: "aborted" };
-      const parsed = parseUploadedFile({ file_id: fixedId(++uploads), name: file.name, size_bytes: file.size, kind: fileKindOf(file.name) ?? "text", expires_at: null });
+      // the contract's answer (201 {file_id, name, size_bytes, kind, expires_at}); the kind is judged here by the name and the browser's type (the API reads the first bytes)
+      const parsed = parseUploadedFile({ file_id: fixedId(++uploads), name: file.name, size_bytes: file.size, kind: fileKindOf(file.name, file.type) ?? "text", expires_at: null });
       return parsed ? { ok: true, file: parsed } : { ok: false, error: "type" };
     },
     async decide(planId, decision, confirmed) {

@@ -1,18 +1,37 @@
 import { describe, expect, it } from "vitest";
 
-import { ACTIVITY_JSON, CANT_DO_JSON, CATALOGUE_PREVIEW_JSON, HOURS_PLAN_JSON, IMPORT_PLAN_JSON, PREVIEW_JSON, SECRET_JSON, SETUP_EMAIL_JSON, SETUP_INDIAMART_JSON, STAFF_PLAN_JSON, TENANT_BASE, planCardJson } from "./fixtures";
-import { checkFile, fileKindOf, insideBase, MAX_FILE_BYTES, parseActivity, parsePlan, parseTestResult, parseUploadedFile, parseWorkCard, sinceFor, sizeLabel } from "./types";
+import { ACTIVITY_JSON, CANT_DO_JSON, CATALOGUE_PREVIEW_JSON, HOURS_PLAN_JSON, IMPORT_PLAN_JSON, MULTI_PLAN_JSON, NOT_IN_PLAN_JSON, NOT_YET_JSON, PDF_NOT_YET_JSON, PREVIEW_JSON, PRICE_LIST_NOT_YET_JSON, SECRET_JSON, SETUP_EMAIL_JSON, SETUP_FORM_JSON, SETUP_HOURS_JSON, SETUP_INDIAMART_JSON, STAFF_PLAN_JSON, TENANT_BASE, planCardJson } from "./fixtures";
+import { checkFile, FILE_ACCEPT, fileKindOf, insideBase, MAX_FILE_BYTES, parseActivity, parsePlan, parseTestResult, parseUploadedFile, parseWorkCard, sinceFor, sizeLabel } from "./types";
 
 const B = TENANT_BASE;
+/** A copy of a fixture without some of its fields. */
+const without = (o: Record<string, unknown>, ...keys: string[]): Record<string, unknown> => Object.fromEntries(Object.entries(o).filter(([k]) => !keys.includes(k)));
 
 describe("files before an upload", () => {
-  it("takes the kinds the job lists, by extension, whatever the case", () => {
-    expect(["a.xlsx", "b.XLS", "c.csv", "d.pdf", "e.JPG", "f.jpeg", "g.png", "h.heic", "i.docx", "j.vcf", "k.txt"].map(fileKindOf)).toEqual(["sheet", "sheet", "sheet", "pdf", "image", "image", "image", "image", "doc", "contacts", "text"]);
+  it("takes the contract's kinds, by extension, whatever the case", () => {
+    expect(["a.xlsx", "b.XLS", "c.csv", "c2.tsv", "c3.ods", "d.pdf", "e.JPG", "f.jpeg", "g.png", "h.heic", "h2.HEIF", "i.docx", "j.vcf", "k.txt"].map((n) => fileKindOf(n))).toEqual(["sheet", "sheet", "sheet", "sheet", "sheet", "pdf", "image", "image", "image", "image", "image", "doc", "contacts", "text"]);
     expect(fileKindOf("setup.exe")).toBeNull();
     expect(fileKindOf("noextension")).toBeNull();
     expect(fileKindOf("macro.xlsm")).toBeNull();
+    expect(fileKindOf("old.doc")).toBeNull();
   });
-  it("refuses a file over 20 MB, an empty one, a wrong kind and a sixth file, before anything is sent", () => {
+  it("a phone's photo with an EMPTY type is taken by its extension; a name without one by the browser's type; a wrong extension never by its type", () => {
+    expect(fileKindOf("IMG_2041.HEIC", "")).toBe("image");
+    expect(fileKindOf("IMG_2041.heif", "")).toBe("image");
+    expect(fileKindOf("IMG_2043", "image/jpeg")).toBe("image");
+    expect(fileKindOf("scan", "application/pdf; charset=binary")).toBe("pdf");
+    expect(fileKindOf("rates", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")).toBe("doc");
+    expect(fileKindOf("setup.exe", "image/png")).toBeNull();
+    expect(fileKindOf("blob", "application/octet-stream")).toBeNull();
+    expect(fileKindOf("folder/sub/list.csv")).toBe("sheet");
+    expect(checkFile({ name: "IMG_2041.HEIC", size: 10, type: "" }, 0)).toBeNull();
+    expect(checkFile({ name: "IMG_2043", size: 10, type: "image/png" }, 0)).toBeNull();
+  });
+  it("the picker's accept lists the extensions and the types (a phone's picker filters by type)", () => {
+    for (const x of [".pdf", ".jpg", ".jpeg", ".png", ".heic", ".heif", ".docx", ".xlsx", ".csv", ".vcf", ".txt", "image/heic", "application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]) expect(FILE_ACCEPT.split(",")).toContain(x);
+  });
+  it("refuses a file over 10 MB (the contract), an empty one, a wrong kind and a sixth file, before anything is sent", () => {
+    expect(MAX_FILE_BYTES).toBe(10 * 1024 * 1024);
     expect(checkFile({ name: "list.xlsx", size: MAX_FILE_BYTES + 1 }, 0)).toBe("size");
     expect(checkFile({ name: "list.xlsx", size: MAX_FILE_BYTES }, 0)).toBeNull();
     expect(checkFile({ name: "list.xlsx", size: 0 }, 0)).toBe("empty");
@@ -31,7 +50,53 @@ describe("files before an upload", () => {
   });
 });
 
-describe("the cards of a turn (ASSUMED shapes)", () => {
+describe("the cards of a turn (the contract's shapes)", () => {
+  it("every fixture is the contract's shape and is read", () => {
+    for (const c of [PREVIEW_JSON, CATALOGUE_PREVIEW_JSON, planCardJson(MULTI_PLAN_JSON), planCardJson(STAFF_PLAN_JSON), planCardJson(HOURS_PLAN_JSON), SECRET_JSON, SETUP_INDIAMART_JSON, SETUP_EMAIL_JSON, SETUP_FORM_JSON, SETUP_HOURS_JSON, CANT_DO_JSON, NOT_YET_JSON, PRICE_LIST_NOT_YET_JSON, PDF_NOT_YET_JSON, NOT_IN_PLAN_JSON]) {
+      const card = parseWorkCard(c, B);
+      expect(card, JSON.stringify(c).slice(0, 80)).not.toBeNull();
+      expect(card?.id).toBe(c.id);
+    }
+  });
+  it("the shapes assumed before the contract are not read any more (preview_id, counts, sample_rows; card_id; setup_id; a secret without its own id)", () => {
+    expect(parseWorkCard({ ...without(PREVIEW_JSON, "id", "facts", "rows"), preview_id: PREVIEW_JSON.id, counts: { found: 1 }, sample_rows: [] }, B)).toBeNull();
+    expect(parseWorkCard({ ...without(CANT_DO_JSON, "id"), card_id: CANT_DO_JSON.id }, B)).toBeNull();
+    expect(parseWorkCard({ ...without(SETUP_FORM_JSON, "id"), setup_id: SETUP_FORM_JSON.id }, B)).toBeNull();
+    expect(parseWorkCard(without(SECRET_JSON, "id"), B)).toBeNull();
+    expect(parseWorkCard({ kind: "plan", plan: HOURS_PLAN_JSON }, B)).toBeNull(); // a plan card has its own id
+  });
+  it("a secret card keeps its own id and the request id the value goes to", () => {
+    expect(parseWorkCard(SECRET_JSON, B)).toMatchObject({ kind: "secret", id: SECRET_JSON.id, requestId: SECRET_JSON.request_id });
+    const setup = parseWorkCard(SETUP_INDIAMART_JSON, B);
+    if (setup?.kind !== "setup") throw new Error("no setup");
+    expect(setup.secret).toMatchObject({ id: SETUP_INDIAMART_JSON.secret.id, requestId: SETUP_INDIAMART_JSON.secret.request_id });
+  });
+  it("a plan card's id is the card's, not the plan's", () => {
+    const card = parseWorkCard(planCardJson(HOURS_PLAN_JSON), B);
+    expect(card?.id).not.toBe(HOURS_PLAN_JSON.plan_id);
+    expect(card?.kind === "plan" ? card.plan.planId : null).toBe(HOURS_PLAN_JSON.plan_id);
+  });
+  it("a plan or a step without its state is not drawn (it could have run already); a preview whose plan does not read is not drawn as 'nobody new'", () => {
+    expect(parsePlan(without(HOURS_PLAN_JSON, "status"))).toBeNull();
+    expect(parsePlan({ ...HOURS_PLAN_JSON, steps: [{ tool: "a", summary: "b", undoable: true }] })).toBeNull();
+    expect(parseWorkCard({ ...PREVIEW_JSON, plan: { plan_id: "nope" } }, B)).toBeNull();
+    expect(parseWorkCard({ ...PREVIEW_JSON, plan: null }, B)).toMatchObject({ kind: "file_preview", plan: null });
+  });
+  it("PDF, photo and Word: the contract's 'can't do yet' card, with About my business where this app draws it", () => {
+    expect(parseWorkCard(PDF_NOT_YET_JSON, B)).toEqual({ kind: "cant_do", id: PDF_NOT_YET_JSON.id, reason: "not_yet", what: PDF_NOT_YET_JSON.what, screen: { label: "About my business", href: `${B}/settings?section=assistant#knowledge` }, upgradeTo: null });
+    expect(parseWorkCard(PRICE_LIST_NOT_YET_JSON, B)).toMatchObject({ reason: "not_yet", screen: { href: `${B}/catalogue` } });
+    expect(parseWorkCard(CANT_DO_JSON, B)).toMatchObject({ reason: "screen_only", screen: { href: `${B}/settings?section=data` } });
+  });
+  it("not in the plan (PR #317): part of AI Workforce, with the Plans link; an upgrade to a product it has no words for is not drawn", () => {
+    expect(parseWorkCard(NOT_IN_PLAN_JSON, B)).toEqual({ kind: "cant_do", id: NOT_IN_PLAN_JSON.id, reason: "not_in_plan", what: "Finding new retailers in Guntur", screen: { label: "Plans", href: `${B}/plans` }, upgradeTo: "ai_workforce" });
+    expect(parseWorkCard({ ...NOT_IN_PLAN_JSON, upgrade_to: "platinum" }, B)).toBeNull();
+    expect(parseWorkCard(without(NOT_IN_PLAN_JSON, "upgrade_to"), B)).toBeNull();
+    expect(parseWorkCard({ ...NOT_YET_JSON, upgrade_to: "ai_workforce" }, B)).toMatchObject({ reason: "not_yet", upgradeTo: null }); // only with not_in_plan
+    expect(parseWorkCard({ ...NOT_IN_PLAN_JSON, screen: { label: "Pay now", href: "https://pay.example/checkout" } }, B)).toMatchObject({ screen: null }); // never a link out of the workspace
+  });
+  it("unknown card kinds are skipped, never a crash", () => {
+    for (const x of [{ kind: "launch_rockets", id: PREVIEW_JSON.id }, { kind: "file_preview" }, null, "card", 7, [], { id: PREVIEW_JSON.id }]) expect(parseWorkCard(x, B)).toBeNull();
+  });
   it("a file's preview: the counts in a fixed order, the sample rows, where it goes and its plan", () => {
     const card = parseWorkCard(PREVIEW_JSON, B);
     expect(card?.kind).toBe("file_preview");
@@ -43,7 +108,7 @@ describe("the cards of a turn (ASSUMED shapes)", () => {
     expect(card.plan?.steps).toHaveLength(2);
   });
   it("drops a count it has no words for, caps the rows at five, and keeps the cells as text", () => {
-    const card = parseWorkCard({ ...PREVIEW_JSON, counts: { found: 3, sparkle: 9, existing: -1 }, sample_rows: Array.from({ length: 9 }, () => ["<b>x</b>", 5, null, "d"]) }, B);
+    const card = parseWorkCard({ ...PREVIEW_JSON, facts: [{ code: "found", n: 3 }, { code: "sparkle", n: 9 }, { code: "existing", n: -1 }, { code: "found", n: 99 }, "junk"], rows: Array.from({ length: 9 }, () => ["<b>x</b>", 5, null, "d"]) }, B);
     if (card?.kind !== "file_preview") throw new Error("no preview");
     expect(card.facts).toEqual([{ code: "found", n: 3 }]);
     expect(card.rows).toHaveLength(5);
@@ -75,8 +140,8 @@ describe("the cards of a turn (ASSUMED shapes)", () => {
     if (email?.kind !== "setup") throw new Error("no setup");
     expect(email.portals.map((p) => p.name)).toEqual(["JustDial", "TradeIndia"]);
     expect(email.lastTest).toMatchObject({ ok: false, reason: "nothing_arrived" });
-    expect(parseWorkCard(CANT_DO_JSON, B)).toMatchObject({ kind: "cant_do", reason: "screen_only", screen: { href: `${B}/settings?section=privacy` } });
-    expect(parseWorkCard({ kind: "launch_rockets" }, B)).toBeNull();
+    expect(parseWorkCard(CANT_DO_JSON, B)).toMatchObject({ kind: "cant_do", reason: "screen_only", what: "Opening the real-data gate" });
+    expect(parseWorkCard({ kind: "launch_rockets", id: CANT_DO_JSON.id }, B)).toBeNull();
   });
   it("a saved key keeps at most four plain characters", () => {
     expect(parseWorkCard({ ...SECRET_JSON, saved: { last4: "1234" } }, B)).toMatchObject({ saved: { last4: "1234" } });
@@ -100,11 +165,11 @@ describe("the cards of a turn (ASSUMED shapes)", () => {
   });
 });
 
-describe("Settings > Activity (ASSUMED shape)", () => {
+describe("Settings > Activity (the contract's shape)", () => {
   it("reads the entries and drops a malformed one", () => {
     const got = parseActivity({ items: [...ACTIVITY_JSON.items, { action_id: "x" }], next_before: null });
     expect(got?.items).toHaveLength(5);
-    expect(got?.items[0]).toMatchObject({ tool: "leads.import", requestedBy: "Srinivas Reddy", status: "done", undo: "available" });
+    expect(got?.items[0]).toMatchObject({ tool: "lead-imports.commit", requestedBy: "Srinivas Reddy", status: "done", undo: "available" });
     expect(got?.items[2].undo).toBe("none");
   });
   it("today and this week start at midnight India time (the week on Monday)", () => {

@@ -342,7 +342,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
       onSubmit={(e) => {
         e.preventDefault();
         if (work.uploading) return;
-        void s.ask(work.textFor(s.text), chat.pill, work.take());
+        const sent = work.take(s.text);
+        void s.ask(sent.text, chat.pill, sent.ids, sent.local);
       }}
     >
       {work.chips}

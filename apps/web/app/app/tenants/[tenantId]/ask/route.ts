@@ -62,7 +62,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const messageId = b?.messageId;
   const conversationId = b?.conversationId;
   const language: ReplyLanguage | null = typeof b?.language === "string" && (REPLY_LANGUAGES as readonly string[]).includes(b.language) ? (b.language as ReplyLanguage) : null; // the pill; anything else is ignored
-  // the files that go with the message (the assistant does the work; ASSUMED until docs/contracts/assistant-tools.md): upload ids only, at most 5, each a canonical uuid; anything else is dropped
+  // the files that go with the message (the assistant does the work; C1's contract, docs/contracts/assistant-tools.md): upload ids only, at most 5, each a canonical uuid; anything else is dropped
   const attachmentIds = Array.isArray(b?.attachmentIds) ? b.attachmentIds.filter((x): x is string => typeof x === "string" && isCanonicalUuid(x)).slice(0, 5) : [];
   if (!b || text.length < 1 || text.length > 4000 || typeof messageId !== "string" || !isCanonicalUuid(messageId) || (conversationId !== undefined && conversationId !== null && (typeof conversationId !== "string" || !isCanonicalUuid(conversationId)))) {
     return new Response("Bad request", { status: 400 });

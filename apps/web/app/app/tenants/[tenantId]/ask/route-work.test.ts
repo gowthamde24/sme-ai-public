@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PREVIEW_JSON } from "@/lib/assistant-work/fixtures";
 
-/** The assistant does the work (ASSUMED until docs/contracts/assistant-tools.md): the files go with the turn as upload ids, and a work card comes back as it was written (the browser reads it strictly). */
+/** The assistant does the work (C1's contract, docs/contracts/assistant-tools.md): the files go with the turn as upload ids, and a work card comes back as it was written (the browser reads it strictly). */
 const T = "11111111-1111-4111-8111-111111111111";
 const M = "22222222-2222-4222-8222-222222222222";
 const C = "33333333-3333-4333-8333-333333333333";

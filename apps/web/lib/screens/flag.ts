@@ -62,7 +62,7 @@ export const pronunciationScreens = (value: string | undefined = process.env.PRO
 
 /**
  * "The assistant does the work" (job assistant-does-the-work, C2): files in the chat ("+" > Add a file, drag-and-drop), the work cards (a file's preview, plans with Do it / Change / Cancel and Undo, the secure key box,
- * guided setups with a live test, "can't do yet") and Settings > Activity. C1's API is ASSUMED until docs/contracts/assistant-tools.md: `mock` = made-up answers in the browser and fixtures on the server (no file leaves
+ * guided setups with a live test, "can't do yet") and Settings > Activity. C1's API follows its contract docs/contracts/assistant-tools.md: `mock` = made-up answers in the browser and fixtures on the server (no file leaves
  * the page, nothing is stored), `1` = the API through this workspace's own routes, unset = the part is not there (the chat as before).
  */
 export const assistantWorkScreens = (value: string | undefined = process.env.ASSISTANT_WORK_SCREENS): ScreenMode => screenMode(value);

@@ -6,10 +6,10 @@ legend: Seen as
 {label="The composer with files"}
 ## The composer with files
 form:
-<file accept=.xlsx,.xls,.csv,.pdf,.jpg,.jpeg,.png,.heic,.docx,.vcf,.txt,image/jpeg,image/png,image/heic,application/pdf,text/csv,text/plain,text/vcard,text/x-vcard>
+<file accept=.xlsx,.xls,.csv,.tsv,.ods,.pdf,.jpg,.jpeg,.png,.heic,.heif,.docx,.vcf,.txt,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,application/vnd.oasis.opendocument.spreadsheet,text/csv,text/tab-separated-values,application/pdf,image/jpeg,image/png,image/heic,image/heif,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/vcard,text/x-vcard,text/plain>
 Ask or tell your assistant anything…
 <textarea label="Ask or tell your assistant anything…" placeholder="Ask or tell your assistant anything…">
-[button type=button: Add a file]
+[button type=button: Add a fileExcel, CSV, PDF, photos (JPG, PNG, HEIC), Word, contact cards · up to 10 MB]
 {label="Cards of an answer"}
 ## Cards of an answer
 {label="What I found in leads-guntur-nov.xlsx"}
@@ -27,8 +27,8 @@ Goes to: Leads Nobody is messaged or called because of this. Your usual follow-u
 [button type=button: Do it]
 [button type=button: Change]
 [button type=button: Cancel]
-{label="What I found in price-list-nov.pdf"}
-### What I found in price-list-nov.pdf
+{label="What I found in price-list-nov.xlsx"}
+### What I found in price-list-nov.xlsx
 24 found · 18 already exist · 2 no price A few rows
 - Item : Mysore silk, plain border Price : ₹ 6,800 Stock : 12
 - Item : Ilkal cotton Price : ₹ 1,450 Stock : 40
@@ -111,7 +111,7 @@ summary: TradeIndia
 - 1 Copy the snippet below.
 - 2 Paste it into your website, where the form should be.
 - 3 Send a test lead from your website.
-Website snippet <script src="https://forms.example.test/f.js" data-form="sri-lakshmi-silks" async></script>
+Website snippet <iframe src="https://forms.example.test/f/sri-lakshmi-silks" title="Enquiry form" width="100%" height="480"></iframe>
 [button type=button: Copy]
 [button type=button: Send a test lead]
 {role=status} It works. A test lead from sri-lakshmi-silks.example.test arrived at 2:41 pm.
@@ -122,8 +122,11 @@ Website snippet <script src="https://forms.example.test/f.js" data-form="sri-lak
 - 3 Press “Test call” to get a call on your own phone.
 [button type=button: Test call]
 [Open Call settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=assistant)
-This is always done by a person, on its own screen. Opening real customer data is always done by a person, on its own screen. [Open Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
-I can’t do this yet. I can’t make a GST invoice yet. [Open Orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
+This is always done by a person, on its own screen. Opening the real-data gate [Open Settings → Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data)
+I can’t do this yet. Making a GST invoice [Open Orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
+I can’t do this yet. Reading leads or details from brochure-diwali.pdf (a PDF) [Open About my business](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=assistant#knowledge)
+I can’t do this yet. Adding a price list from a file [Open Catalogue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+Finding new customers is part of AI Workforce. Finding new retailers in Guntur [Open Plans](/app/tenants/22222222-2222-2222-2222-222222222222/plans)
 {label="What the assistant changed"}
 ## What the assistant changed
 Every change the assistant made on a request, newest first. Undo where it can be undone.

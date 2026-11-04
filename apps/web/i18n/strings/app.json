@@ -75734,10 +75734,10 @@
   }
  },
  "bv.work.file.err.type": {
-  "en": "{name}: this kind of file can’t be read. Use Excel, CSV, PDF, a photo, Word, a contact card (.vcf) or a text file.",
-  "te": "{name}: ఈ రకం ఫైల్ చదవలేను. Excel, CSV, PDF, ఫోటో, Word, కాంటాక్ట్ కార్డ్ (.vcf) లేదా టెక్స్ట్ ఫైల్ పంపండి.",
-  "hi": "{name}: इस तरह की फ़ाइल पढ़ी नहीं जा सकती। Excel, CSV, PDF, फ़ोटो, Word, कॉन्टैक्ट कार्ड (.vcf) या टेक्स्ट फ़ाइल भेजें।",
-  "kn": "{name}: ಈ ರೀತಿಯ ಫೈಲ್ ಓದಲು ಆಗುವುದಿಲ್ಲ. Excel, CSV, PDF, ಫೋಟೋ, Word, ಕಾಂಟ್ಯಾಕ್ಟ್ ಕಾರ್ಡ್ (.vcf) ಅಥವಾ ಟೆಕ್ಸ್ಟ್ ಫೈಲ್ ಕಳುಹಿಸಿ.",
+  "en": "{name}: this kind of file can’t be read. Use Excel, CSV, PDF, a photo (JPG, PNG, HEIC), Word (.docx), a contact card (.vcf) or a text file.",
+  "te": "{name}: ఈ రకం ఫైల్ చదవలేను. Excel, CSV, PDF, ఫోటో (JPG, PNG, HEIC), Word (.docx), కాంటాక్ట్ కార్డ్ (.vcf) లేదా టెక్స్ట్ ఫైల్ పంపండి.",
+  "hi": "{name}: इस तरह की फ़ाइल पढ़ी नहीं जा सकती। Excel, CSV, PDF, फ़ोटो (JPG, PNG, HEIC), Word (.docx), कॉन्टैक्ट कार्ड (.vcf) या टेक्स्ट फ़ाइल भेजें।",
+  "kn": "{name}: ಈ ರೀತಿಯ ಫೈಲ್ ಓದಲು ಆಗುವುದಿಲ್ಲ. Excel, CSV, PDF, ಫೋಟೋ (JPG, PNG, HEIC), Word (.docx), ಕಾಂಟ್ಯಾಕ್ಟ್ ಕಾರ್ಡ್ (.vcf) ಅಥವಾ ಟೆಕ್ಸ್ಟ್ ಫೈಲ್ ಕಳುಹಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -75745,10 +75745,10 @@
   }
  },
  "bv.work.file.err.size": {
-  "en": "{name} is bigger than 20 MB. Send a smaller file.",
-  "te": "{name} 20 MB కంటే పెద్దది. చిన్న ఫైల్ పంపండి.",
-  "hi": "{name} 20 MB से बड़ी है। छोटी फ़ाइल भेजें।",
-  "kn": "{name} 20 MB ಗಿಂತ ದೊಡ್ಡದು. ಚಿಕ್ಕ ಫೈಲ್ ಕಳುಹಿಸಿ.",
+  "en": "{name} is bigger than {mb} MB. Send a smaller file.",
+  "te": "{name} {mb} MB కంటే పెద్దది. చిన్న ఫైల్ పంపండి.",
+  "hi": "{name} {mb} MB से बड़ी है। छोटी फ़ाइल भेजें।",
+  "kn": "{name} {mb} MB ಗಿಂತ ದೊಡ್ಡದು. ಚಿಕ್ಕ ಫೈಲ್ ಕಳುಹಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -75782,6 +75782,116 @@
   "te": "మీ రోల్‌తో ఇక్కడ ఫైల్స్ జత చేయలేరు.",
   "hi": "आपके रोल से यहाँ फ़ाइल नहीं जोड़ सकते।",
   "kn": "ನಿಮ್ಮ ರೋಲ್‌ನಿಂದ ಇಲ್ಲಿ ಫೈಲ್ ಸೇರಿಸಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.file.types": {
+  "en": "Excel, CSV, PDF, photos (JPG, PNG, HEIC), Word, contact cards · up to {mb} MB",
+  "te": "Excel, CSV, PDF, ఫోటోలు (JPG, PNG, HEIC), Word, కాంటాక్ట్ కార్డ్స్ · {mb} MB వరకు",
+  "hi": "Excel, CSV, PDF, फ़ोटो (JPG, PNG, HEIC), Word, कॉन्टैक्ट कार्ड · {mb} MB तक",
+  "kn": "Excel, CSV, PDF, ಫೋಟೋಗಳು (JPG, PNG, HEIC), Word, ಕಾಂಟ್ಯಾಕ್ಟ್ ಕಾರ್ಡ್‌ಗಳು · {mb} MB ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.file.kind.sheet": {
+  "en": "Spreadsheet",
+  "te": "స్ప్రెడ్‌షీట్",
+  "hi": "स्प्रेडशीट",
+  "kn": "ಸ್ಪ್ರೆಡ್‌ಶೀಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.file.kind.pdf": {
+  "en": "PDF",
+  "te": "PDF ఫైల్",
+  "hi": "PDF फ़ाइल",
+  "kn": "PDF ಫೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.file.kind.image": {
+  "en": "Photo",
+  "te": "ఫోటో",
+  "hi": "फ़ोटो",
+  "kn": "ಫೋಟೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.file.kind.doc": {
+  "en": "Word file",
+  "te": "Word ఫైల్",
+  "hi": "Word फ़ाइल",
+  "kn": "Word ಫೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.file.kind.contacts": {
+  "en": "Contact card",
+  "te": "కాంటాక్ట్ కార్డ్",
+  "hi": "कॉन्टैक्ट कार्ड",
+  "kn": "ಕಾಂಟ್ಯಾಕ್ಟ್ ಕಾರ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.file.kind.text": {
+  "en": "Text file",
+  "te": "టెక్స్ట్ ఫైల్",
+  "hi": "टेक्स्ट फ़ाइल",
+  "kn": "ಟೆಕ್ಸ್ಟ್ ಫೈಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.cant.file": {
+  "en": "Reading leads or details from {name} ({kind})",
+  "te": "{name} ({kind}) నుంచి లీడ్స్ లేదా వివరాలు చదవడం",
+  "hi": "{name} ({kind}) से लीड या जानकारी पढ़ना",
+  "kn": "{name} ({kind}) ನಿಂದ ಲೀಡ್‌ಗಳು ಅಥವಾ ವಿವರಗಳನ್ನು ಓದುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.cant.file.screen": {
+  "en": "About my business",
+  "te": "నా వ్యాపారం గురించి",
+  "hi": "मेरे व्यापार के बारे में",
+  "kn": "ನನ್ನ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.cant.file.say": {
+  "en": "I can’t read PDFs, photos or Word files yet, so nothing was added from them. A list in Excel or CSV, or a contact card, I can already add as leads.",
+  "te": "PDF, ఫోటో లేదా Word ఫైల్స్‌ను నేను ఇంకా చదవలేను, అందుకే వాటి నుంచి ఏమీ జత చేయలేదు. Excel లేదా CSV లిస్ట్‌ను, కాంటాక్ట్ కార్డ్‌ను ఇప్పటికే లీడ్స్‌గా జత చేయగలను.",
+  "hi": "मैं अभी PDF, फ़ोटो या Word फ़ाइलें नहीं पढ़ सकता, इसलिए इनसे कुछ नहीं जोड़ा गया। Excel या CSV की लिस्ट, या कॉन्टैक्ट कार्ड, मैं अभी लीड के रूप में जोड़ सकता हूँ।",
+  "kn": "PDF, ಫೋಟೋ ಅಥವಾ Word ಫೈಲ್‌ಗಳನ್ನು ನಾನು ಇನ್ನೂ ಓದಲು ಆಗುವುದಿಲ್ಲ, ಹಾಗಾಗಿ ಅವುಗಳಿಂದ ಏನನ್ನೂ ಸೇರಿಸಿಲ್ಲ. Excel ಅಥವಾ CSV ಲಿಸ್ಟ್, ಅಥವಾ ಕಾಂಟ್ಯಾಕ್ಟ್ ಕಾರ್ಡ್ ಅನ್ನು ಈಗಲೇ ಲೀಡ್‌ಗಳಾಗಿ ಸೇರಿಸಬಹುದು.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -76794,6 +76904,17 @@
   "te": "ఇది ఎప్పుడూ ఒక మనిషే, దాని స్క్రీన్ మీదే చేస్తారు.",
   "hi": "यह हमेशा कोई इंसान ही, उसकी अपनी स्क्रीन पर करता है।",
   "kn": "ಇದನ್ನು ಯಾವಾಗಲೂ ಒಬ್ಬ ವ್ಯಕ್ತಿಯೇ, ಅದರ ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಮಾಡುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.cant.not_in_plan.ai_workforce": {
+  "en": "Finding new customers is part of AI Workforce.",
+  "te": "కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం.",
+  "hi": "नए ग्राहक ढूँढना AI Workforce का हिस्सा है।",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು AI Workforce ನ ಭಾಗ.",
   "status": {
    "te": "draft",
    "hi": "draft",

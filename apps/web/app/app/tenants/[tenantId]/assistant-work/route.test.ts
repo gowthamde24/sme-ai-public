@@ -42,6 +42,15 @@ describe("POST /app/tenants/[id]/assistant-work", () => {
     expect(await (await post({ op: "decide", planId: P, decision: "do", confirmed: true })).json()).toEqual({ ok: false, error: "mfa" });
     h.decide.mockRejectedValue(new ApiRequestError(409, "plan_expired", "Old."));
     expect(await (await post({ op: "decide", planId: P, decision: "cancel" })).json()).toEqual({ ok: false, error: "expired" });
+    // the contract's other 409s: a sensitive plan without its second tap, a plan that is no longer proposed, an Undo with nothing to undo
+    for (const code of ["confirm_needed", "plan_state"]) {
+      h.decide.mockRejectedValue(new ApiRequestError(409, code, "No."));
+      expect(await (await post({ op: "decide", planId: P, decision: "do", confirmed: false })).json()).toEqual({ ok: false, error: "state" });
+    }
+    h.undo.mockRejectedValue(new ApiRequestError(409, "nothing_to_undo", "Nothing."));
+    expect(await (await post({ op: "undo", planId: P })).json()).toEqual({ ok: false, error: "state" });
+    h.undo.mockRejectedValue(new ApiRequestError(403, "forbidden", "Archiving is the Owner's."));
+    expect(await (await post({ op: "undo", planId: P })).json()).toEqual({ ok: false, error: "forbidden" });
     expect((await post({ op: "decide", planId: "x", decision: "do" })).status).toBe(400);
   });
   it("a Viewer can do nothing here", async () => {
@@ -84,9 +93,24 @@ describe("POST /app/tenants/[id]/assistant-work/upload", () => {
     expect(await (await up("leads.csv", "a,b\n1,2")).json()).toEqual({ ok: true, file: { file_id: "b2000000-0000-4000-8000-000000000001", name: "leads.csv", size_bytes: 7, kind: "sheet", expires_at: null } });
     expect(h.upload.mock.calls[0][2]).toMatchObject({ name: "leads.csv", contentType: "text/csv" });
   });
-  it("refuses a kind it does not take and a body over 20 MB before calling the API", async () => {
+  it("refuses a kind it does not take, an empty body and a body over 10 MB before calling the API", async () => {
     expect(await (await up("run.exe", "MZ")).json()).toEqual({ ok: false, error: "type" });
-    expect(await (await up("big.csv", "x", { "content-length": String(21 * 1024 * 1024) })).json()).toEqual({ ok: false, error: "size" });
+    expect(await (await up("run.exe", "MZ", { "content-type": "image/png" })).json()).toEqual({ ok: false, error: "type" }); // an extension the chat does not take: the type does not save it
+    expect(await (await up("big.csv", "x", { "content-length": String(11 * 1024 * 1024) })).json()).toEqual({ ok: false, error: "size" });
+    expect(await (await up("empty.csv", "")).json()).toEqual({ ok: false, error: "empty" });
     expect(h.upload).not.toHaveBeenCalled();
+  });
+  it("takes a PDF, a photo (HEIC with no type, as a phone sends it) and a Word file, and a camera picture with no extension by its type", async () => {
+    h.upload.mockResolvedValue({ fileId: "b2000000-0000-4000-8000-000000000001", name: "x", size: 2, kind: "pdf", expiresAt: null });
+    for (const [name, type] of [["brochure.pdf", "application/pdf"], ["IMG_2041.HEIC", ""], ["IMG_2042.heif", "image/heif"], ["rates.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"], ["IMG_2043", "image/jpeg"]]) {
+      expect(await (await up(name, "%P", { "content-type": type })).json(), name).toMatchObject({ ok: true });
+    }
+    expect(h.upload).toHaveBeenCalledTimes(5);
+  });
+  it("the API's refusals (the contract: 413 file_too_large, 415 file_type, 422 file_empty) are the chip's closed words", async () => {
+    for (const [status, code, word] of [[413, "file_too_large", "size"], [415, "file_type", "type"], [422, "file_empty", "empty"], [403, "forbidden", "forbidden"], [500, "internal", "down"]] as const) {
+      h.upload.mockRejectedValue(new ApiRequestError(status, code, "English the chip never shows"));
+      expect(await (await up("leads.csv", "a,b")).json(), code).toEqual({ ok: false, error: word });
+    }
   });
 });

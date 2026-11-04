@@ -95,12 +95,62 @@ describe("files in the chat", () => {
     await act(async () => void fireEvent.click(within(chip).getByRole("button", { name: "Remove leads-guntur-nov.xlsx" })));
     expect(document.querySelector("[data-chat=file-chip]")).toBeNull();
   });
-  it("refuses a file over 20 MB and a kind it cannot read BEFORE any upload", async () => {
+  it("refuses a file over 10 MB (the contract) and a kind it cannot read BEFORE any upload", async () => {
     render(<Harness work={{ mode: "mock", role: "owner" }} />);
-    await pick(bigFile("register-photo.jpg", 21 * 1024 * 1024), new File(["MZ"], "setup.exe"));
+    await pick(bigFile("register-photo.jpg", 11 * 1024 * 1024), new File(["MZ"], "setup.exe"), new File(["x"], "old-rates.doc"));
     const refused = [...document.querySelectorAll("[data-chat=file-refused]")].map((x) => x.textContent);
-    expect(refused).toEqual(["register-photo.jpg is bigger than 20 MB. Send a smaller file.", "setup.exe: this kind of file can’t be read. Use Excel, CSV, PDF, a photo, Word, a contact card (.vcf) or a text file."]);
+    const typeWords = "this kind of file can’t be read. Use Excel, CSV, PDF, a photo (JPG, PNG, HEIC), Word (.docx), a contact card (.vcf) or a text file.";
+    expect(refused).toEqual(["register-photo.jpg is bigger than 10 MB. Send a smaller file.", `setup.exe: ${typeWords}`, `old-rates.doc: ${typeWords}`]);
     expect(document.querySelector("[data-chat=file-chip]")).toBeNull();
+  });
+  it("the + menu says what it takes; the picker accepts PDF, photos (HEIC/HEIF too) and Word next to Excel, CSV and contact cards", async () => {
+    render(<Harness work={{ mode: "mock", role: "owner" }} />);
+    await openPlus();
+    const item = screen.getByRole("menuitem", { name: "Add a file" });
+    expect(item.getAttribute("aria-describedby")).toBeTruthy();
+    expect(document.getElementById(item.getAttribute("aria-describedby") as string)?.textContent).toBe("Excel, CSV, PDF, photos (JPG, PNG, HEIC), Word, contact cards · up to 10 MB");
+    const accept = (fileInput()?.accept ?? "").split(",");
+    for (const x of [".xlsx", ".xls", ".csv", ".pdf", ".jpg", ".jpeg", ".png", ".heic", ".heif", ".docx", ".vcf", ".txt", "image/heic", "application/pdf"]) expect(accept).toContain(x);
+  });
+  it("a PDF, a phone's HEIC photo with an EMPTY type and a Word file become chips that say their kind", async () => {
+    render(<Harness work={{ mode: "mock", role: "owner" }} />);
+    await pick(new File(["%PDF"], "brochure-diwali.pdf", { type: "application/pdf" }), new File(["x"], "IMG_2041.HEIC", { type: "" }), new File(["PK"], "rates.docx"));
+    const chips = [...document.querySelectorAll<HTMLElement>("[data-chat=file-chip]")];
+    expect(chips.map((c) => c.dataset.kind)).toEqual(["pdf", "image", "doc"]);
+    expect(chips.map((c) => c.dataset.status)).toEqual(["ready", "ready", "ready"]);
+    expect(chips[0].textContent).toContain("PDF · 4 B");
+    expect(chips[1].textContent).toContain("Photo · 1 B");
+    expect(chips[2].textContent).toContain("Word file · 2 B");
+  });
+  it("a PDF on its own: the contract's honest 'can't do yet' card and a sentence that says so, made in the browser (mock: nothing is sent)", async () => {
+    render(<Harness work={{ mode: "mock", role: "owner" }} />);
+    await pick(new File(["%PDF"], "brochure-diwali.pdf", { type: "application/pdf" }));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Send" })));
+    expect(requests).toHaveLength(0);
+    expect(document.querySelector("[data-chat=thread]")?.textContent).toContain("I can’t read PDFs, photos or Word files yet, so nothing was added from them.");
+    const card = document.querySelector<HTMLElement>("[data-work=cant-do]") as HTMLElement;
+    expect(card.dataset.reason).toBe("not_yet");
+    expect(card.textContent).toContain("I can’t do this yet.");
+    expect(card.textContent).toContain("Reading leads or details from brochure-diwali.pdf (PDF)");
+    expect(within(card).getByRole("link", { name: "Open About my business" }).getAttribute("href")).toBe("/app/tenants/t/settings?section=assistant#knowledge");
+    expect(screen.queryByRole("button", { name: "Do it" })).toBeNull(); // nothing pretends to be done
+  });
+  it("a sheet and a photo together: the sheet goes to the assistant; the photo's card comes after its answer", async () => {
+    render(<Harness work={{ mode: "mock", role: "owner" }} />);
+    await pick(new File(["a"], "leads-guntur-nov.xlsx"), new File(["x"], "visiting-card.jpg", { type: "image/jpeg" }));
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Send" })));
+    expect(requests).toHaveLength(1);
+    expect(requests[0].question).toBe("📎 leads-guntur-nov.xlsx\n📎 visiting-card.jpg");
+    expect(screen.getByRole("article", { name: "What I found in leads-guntur-nov.xlsx" })).toBeTruthy();
+    expect(document.querySelectorAll("[data-work=cant-do]")).toHaveLength(1);
+    expect(document.querySelector("[data-work=cant-do]")?.textContent).toContain("visiting-card.jpg (Photo)");
+  });
+  it("typed words with a Word file: the words go to the assistant, and the file still gets its honest card", async () => {
+    render(<Harness work={{ mode: "mock", role: "owner" }} />);
+    await pick(new File(["PK"], "rates.docx"));
+    await typeAndSend("what is in this?");
+    expect(requests.map((r) => r.question)).toEqual(["what is in this?"]);
+    expect(document.querySelector("[data-work=cant-do]")?.textContent).toContain("rates.docx (Word file)");
   });
   it("a file dropped on the composer is taken; a drag without files is not", async () => {
     render(<Harness work={{ mode: "mock", role: "owner" }} />);

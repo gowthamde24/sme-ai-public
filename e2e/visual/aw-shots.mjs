@@ -1,7 +1,10 @@
 // Pictures of "the assistant does the work" chat cards (job assistant-does-the-work, C2 part), from the REAL web app on the visual tests' invented backend (stand-in.mjs): no database, no keys, no network
 // after the build, no real person. The web app runs with ASSISTANT_WORK_SCREENS=mock, so the cards answer from fixtures in the browser and no file leaves the page.
 //
-//   node e2e/visual/aw-shots.mjs [--no-build] [--out DIR] [--only preview,today,activity]
+//   node e2e/visual/aw-shots.mjs [--no-build] [--out DIR] [--only preview,today,activity,chat-plus,chat-pdf]
+//
+// chat-plus: the chat's "+" menu open, with "Add a file" and the kinds it takes. chat-pdf: a made-up PDF picked in the chat and sent, answered (in the browser, mock mode) with the contract's honest
+// "can't do yet" card. Both need the chat, so the build has BROWSER_VOICE=1 too (nothing is dialled or spoken: the pictures never press the microphone).
 //
 // Saves full-page pictures (390 and 1440 wide, light and dark, English and Telugu) to DIR (default /Volumes/Stack19/stack19/v2-overnight/shots-aw). It compares nothing (that is run.mjs).
 // Same ports and guards as run.mjs (54999, 3014); it starts and stops only its own processes, by their own process ids.
@@ -31,12 +34,46 @@ const STAND_IN_PORT = 54999;
 const WEB_PORT = 3014;
 const STAND_IN_URL = `https://127.0.0.1:${STAND_IN_PORT}`;
 const WEB_URL = `http://127.0.0.1:${WEB_PORT}`;
-const FLAGS = { ASSISTANT_WORK_SCREENS: "mock" };
+const FLAGS = { ASSISTANT_WORK_SCREENS: "mock", BROWSER_VOICE: "1" };
+
+/** The chat on the page: Today's own card, else the floating panel the orb opens. */
+async function openChat(page) {
+  const form = page.locator("[data-chat=form]").filter({ visible: true }).first();
+  if (!(await form.count())) {
+    const orb = page.locator("[data-ask=orb]").filter({ visible: true }).first();
+    if (await orb.count()) await orb.click();
+  }
+  await form.waitFor({ state: "visible", timeout: 15_000 });
+  return form;
+}
+/** A made-up file, made here (never a real document): a few bytes with a PDF's first line. */
+const FAKE_PDF = { name: "brochure-diwali.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4\n% made up for the pictures\n") };
 
 const SCREENS = [
   { id: "preview", path: `/app/tenants/${TENANT}/assistant-work-preview` },
   { id: "activity", path: `/app/tenants/${TENANT}/settings?section=activity&range=week` },
   { id: "today", path: `/app/tenants/${TENANT}` },
+  {
+    id: "chat-plus",
+    path: `/app/tenants/${TENANT}`,
+    act: async (page) => {
+      const form = await openChat(page);
+      await form.locator("[data-chat=plus]").click();
+      await page.locator("[data-chat=add-file]").filter({ visible: true }).first().waitFor({ state: "visible", timeout: 10_000 });
+    },
+  },
+  {
+    id: "chat-pdf",
+    path: `/app/tenants/${TENANT}`,
+    act: async (page) => {
+      const form = await openChat(page);
+      await form.locator("[data-chat=file-input]").setInputFiles(FAKE_PDF);
+      await form.locator("[data-chat=file-chip][data-status=ready]").waitFor({ timeout: 10_000 });
+      await form.locator("button[type=submit]").click();
+      await page.locator("[data-work=cant-do]").filter({ visible: true }).first().waitFor({ state: "visible", timeout: 10_000 });
+      await page.locator("[data-work=cant-do]").filter({ visible: true }).first().scrollIntoViewIfNeeded();
+    },
+  },
 ];
 const SIZES = { "390": { width: 390, height: 844 }, "1440": { width: 1440, height: 900 } };
 const SCHEMES = ["light", "dark"];
@@ -113,6 +150,7 @@ async function main() {
             try {
               const res = await page.goto(`${WEB_URL}${screen.path}`, { waitUntil: "networkidle", timeout: 60_000 });
               await page.evaluate(() => document.fonts.ready);
+              if (screen.act) await screen.act(page);
               await page.waitForTimeout(300);
               await page.screenshot({ path: path.join(OUT, `${name}.png`), fullPage: true, animations: "disabled", caret: "hide" });
               const wide = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);

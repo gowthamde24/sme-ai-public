@@ -6,7 +6,7 @@ import { ACTIVITY_JSON, FIXTURE_NOW } from "./fixtures";
 import { parseActivity, sinceFor, type ActivityEntry } from "./types";
 
 /**
- * Settings > Activity's list (SERVER ONLY): `mock` = the synthetic entries, judged against the fixtures' own clock (so "today" stays the fixtures' today); `on` = the API (ASSUMED until
+ * Settings > Activity's list (SERVER ONLY): `mock` = the synthetic entries, judged against the fixtures' own clock (so "today" stays the fixtures' today); `on` = the API (C1's contract,
  * docs/contracts/assistant-tools.md: `GET /assistant/actions?since`). A read that fails is null (the card says "Not available yet"); a rejected session is thrown.
  */
 export async function readActivity(mode: Exclude<ScreenMode, "off">, ctx: { token: string; tenantId: string }, range: "today" | "week", now: number = Date.now()): Promise<ActivityEntry[] | null> {

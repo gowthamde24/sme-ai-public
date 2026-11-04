@@ -13,7 +13,7 @@ const M = "44444444-4444-4444-8444-444444444444";
 const F = "b2000000-0000-4000-8000-000000000001";
 beforeEach(() => stream.mockReset().mockResolvedValue({ body: {} }));
 
-describe("turns: the assistant does the work (ASSUMED until docs/contracts/assistant-tools.md)", () => {
+describe("turns: the assistant does the work (C1's contract, docs/contracts/assistant-tools.md)", () => {
   it("a work_card event carries its card on; anything that is not an object is dropped", () => {
     expect(parseTurnEvent("work_card", { type: "work_card", card: SECRET_JSON })).toEqual({ type: "work_card", card: SECRET_JSON });
     expect(parseTurnEvent("work_card", { type: "work_card", card: "x" })).toBeNull();

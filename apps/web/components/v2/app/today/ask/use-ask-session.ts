@@ -7,7 +7,7 @@ import { parseWorkCard, type WorkCard } from "@/lib/assistant-work/types";
 
 import { aiMood, type AiMood } from "../../mark/mood";
 import { defaultAutoplay, makeAnswerPlayer, markNoticeSeen, noticeSeen, readAutoplay, saveAutoplay, subscribeStore, type AnswerPlayer } from "./answer-audio";
-import { ERROR_CODES, type AskDraft, type AskEvent, type AskSource, type AskTransport, type Availability, type VoiceStatus, type VoiceTransport } from "./ask-types";
+import { ERROR_CODES, type AskDraft, type AskEvent, type AskSource, type AskTransport, type Availability, type LocalAnswer, type VoiceStatus, type VoiceTransport } from "./ask-types";
 import type { AskWords } from "./ask-words";
 import { canRecord } from "./recorder";
 import { fetchVoiceStatus, makeAskTransport, makeVoiceTransport } from "./transport";
@@ -39,6 +39,24 @@ export function insideWorkspace(href: string, base: string): string | null {
   } catch {
     return null;
   }
+}
+
+/** An answer made in the browser (LocalAnswer with `alone`), ended like a real one. */
+async function* localEvents(events: readonly AskEvent[]): AsyncGenerator<AskEvent> {
+  yield* events;
+  yield { type: "done" };
+}
+/** The transport's answer with the browser's own events added before its `done` (or at its end, when it has none). */
+async function* withLocal(source: AsyncIterable<AskEvent>, extra: readonly AskEvent[]): AsyncGenerator<AskEvent> {
+  let added = false;
+  for await (const e of source) {
+    if (e.type === "done" && !added) {
+      added = true;
+      yield* extra;
+    }
+    yield e;
+  }
+  if (!added) yield* extra;
 }
 
 export type AskPhase = "idle" | "asking" | "done" | "error";
@@ -330,7 +348,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     yield* planEvents(heard, crypto.randomUUID(), signal);
   }
 
-  const ask = async (raw: string, replyLanguage?: string | null, attachmentIds?: readonly string[]) => {
+  const ask = async (raw: string, replyLanguage?: string | null, attachmentIds?: readonly string[], local?: LocalAnswer | null) => {
     const question = raw.trim().slice(0, MAX_QUESTION);
     if (!question) return;
     if (modeRef.current === "do" && doIt) {
@@ -338,9 +356,14 @@ export function useAskSession({ lang, base, words, availability, transport: give
       await run(question, (signal) => planEvents(question, taskId, signal), false, false);
       return;
     }
+    if (local?.alone) {
+      await run(question, () => localEvents(local.events), false, false); // made here: nothing reaches the network
+      return;
+    }
     if (transport === null) return;
     lastTyped.current = { question, replyLanguage };
-    await run(question, (signal) => transport({ question, lang, signal, conversationId: convRef.current, replyLanguage, ...(attachmentIds && attachmentIds.length > 0 ? { attachmentIds } : {}) }), false, false);
+    const asked = (signal: AbortSignal) => transport({ question, lang, signal, conversationId: convRef.current, replyLanguage, ...(attachmentIds && attachmentIds.length > 0 ? { attachmentIds } : {}) });
+    await run(question, local && local.events.length > 0 ? (signal) => withLocal(asked(signal), local.events) : asked, false, false);
   };
   /** The typed question that was asked last, so a failed answer has "Try again". */
   const lastTyped = React.useRef<{ question: string; replyLanguage?: string | null } | null>(null);
