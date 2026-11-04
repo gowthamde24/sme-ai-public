@@ -401,3 +401,15 @@ def test_the_only_call_route_is_the_simulator() -> None:
     paths = {getattr(r, "path", "") for r in router.routes}
     call_paths = {p for p in paths if "call" in p}
     assert call_paths == {"/v1/tenants/{tenant_id}/prospects/{prospect_id}/simulated-call"}
+
+
+def test_availability_is_never_an_error_for_a_member_and_a_viewer_is_told_it_is_not_for_their_role() -> None:
+    """C2, part D (4 Nov 2026): the contract says 'never an error for a member'; a Viewer got 403."""
+    repo = FakeLeadFinderRepo("textiles")
+    c = _client(repo)
+    for user in ("a_owner", "a_admin", "a_sales"):
+        assert c.get(f"{URL}/lead-finder/availability", headers=auth(user)).json() == {"available": True, "source": "fixture", "reason": "ok"}, user
+    viewer = c.get(f"{URL}/lead-finder/availability", headers=auth("a_viewer"))
+    assert viewer.status_code == 200 and viewer.json() == {"available": False, "source": None, "reason": "not_for_your_role"}
+    assert c.get(f"{URL}/prospects", headers=auth("a_viewer")).status_code == 403, "everything else stays refused for a Viewer"
+    assert c.get(f"{URL}/lead-finder/availability", headers=auth("outsider")).status_code == 404, "a stranger still learns nothing"
