@@ -13,6 +13,8 @@
   POST /prospects/actions                        Owner, Admin, Sales: call | later | skip | not_interested | do_not_call, for up to 50 at once
   POST /prospects/redecide                       Owner, Admin, Sales: decide again the ones that waited for the hours or the cap
   POST /prospects/{id}/simulated-call            Owner, Admin: the qualifying call IN THE SIMULATOR (nothing is dialled)
+  GET  /prospects/{id}/quote-draft               Owner, Admin, Sales: the PREVIEW of the draft quote a qualified call suggests (nothing is stored)
+  POST /prospects/{id}/quote-draft               Owner, Admin, with the second factor: one enquiry on the call's lead + a DRAFT quote at the Owner's catalogue prices (approved on the quote page)
 
 A business type without the module (a school) gets 403 `lead_finder_not_available` from every one of them.
 
@@ -23,11 +25,12 @@ NOTE: no `from __future__ import annotations` here (request models are attached 
 import uuid
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
+from app.lead_finder import quote_draft
 from app.lead_finder.models import (
     ActionsIn,
     ActionsOut,
@@ -36,6 +39,9 @@ from app.lead_finder.models import (
     ProspectListOut,
     ProspectOut,
     ProspectStatus,
+    QuoteDraftIn,
+    QuoteDraftOut,
+    QuoteDraftPreviewOut,
     RedecideOut,
     SearchListOut,
     SearchOut,
@@ -52,6 +58,7 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["lead-finder"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 Worker = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
+OwnerAdminStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, strong=True))]
 
 
 def _service(runtime: Runtime) -> LeadFinderService:
@@ -136,3 +143,15 @@ def prospect(prospect_id: str, ctx: Worker, runtime: RuntimeDep) -> ProspectOut:
 @router.post("/prospects/{prospect_id}/simulated-call", response_model=SimulatedCallOut)
 def simulated_call(prospect_id: str, body: SimulateIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> SimulatedCallOut:
     return _service(runtime).simulate_call(ctx.principal.token, ctx.tenant.id, ctx.tenant.name, _id(prospect_id), body)
+
+
+@router.get("/prospects/{prospect_id}/quote-draft", response_model=QuoteDraftPreviewOut)
+def quote_draft_preview(prospect_id: str, ctx: Worker, runtime: RuntimeDep) -> QuoteDraftPreviewOut:
+    return quote_draft.preview(_service(runtime), runtime.quotes, ctx.principal.token, ctx.tenant.id, _id(prospect_id))
+
+
+@router.post("/prospects/{prospect_id}/quote-draft", response_model=QuoteDraftOut, status_code=201)
+def quote_draft_make(prospect_id: str, body: QuoteDraftIn, ctx: OwnerAdminStrong, runtime: RuntimeDep, response: Response) -> QuoteDraftOut:
+    out = quote_draft.make(_service(runtime), runtime.quotes, runtime.enquiries, ctx.principal.token, ctx.tenant.id, _id(prospect_id), body)
+    response.status_code = 200 if out.replayed else 201
+    return out
