@@ -145,7 +145,8 @@ class LeadFinderService:
         return SettingsOut.model_validate(self.repo.settings_set(token, tenant_id, changes))
 
     # ------------------------------------------------------------------------------------------------------------------- plan -> OK -> run
-    def plan(self, token: str, tenant_id: uuid.UUID, body: PlanIn) -> SearchOut:
+    def plan(self, token: str, tenant_id: uuid.UUID, body: PlanIn, *, search_id: uuid.UUID | None = None) -> SearchOut:
+        """`search_id`: the chat gives the plan the id of the reply that shows it (app/turns/lead_finder.py), so a later "yes" and a replay find it again. A screen leaves it out."""
         data = self.data_for(token, tenant_id)
         if body.text:
             parsed = intent.parse(body.text, data)
@@ -163,7 +164,7 @@ class LeadFinderService:
         request = SearchRequest(query=query, area=area, max_results=max_results, language=body.language)
         now = self._clock()
         row = self.repo.search_plan(token, tenant_id, {
-            "p_id": str(uuid.uuid4()), "p_query": query, "p_area": area, "p_category_hint": hint, "p_max_results": max_results, "p_provider": source.provider,
+            "p_id": str(search_id or uuid.uuid4()), "p_query": query, "p_area": area, "p_category_hint": hint, "p_max_results": max_results, "p_provider": source.provider,
             "p_sku": source.sku(), "p_est_cost_paise": source.estimate_paise(request), "p_source_label": source_label(source.provider, query, area, now),
         })
         left = max(0, int(settings.get("searches_per_day", 5)) - int(ctx.get("searches_today", 0)))

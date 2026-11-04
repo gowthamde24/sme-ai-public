@@ -29,6 +29,7 @@ from app.auth.deps import Runtime, TenantContext, _second_factor_on
 from app.errors import ApiError
 from app.tasks.models import AnswerIn, PlanIn, TaskOut
 from app.tenancy.models import Role
+from app.turns import lead_finder as lf_turn
 from app.turns import words
 from app.turns.intent import Intent, Kind, classify
 from app.turns.models import ConfirmOut, TaskRef, TurnIn
@@ -97,7 +98,7 @@ def _last_reply(db: AssistantDb, conversation_id: uuid.UUID, before_seq: int) ->
         rows = db.rest_rows(
             "read_last_reply",
             "/assistant_messages",
-            {"select": "kind,task_id,sources", "conversation_id": f"eq.{conversation_id}", "role": "eq.assistant", "seq": f"lt.{before_seq}", "order": "seq.desc", "limit": "1"},
+            {"select": "id,kind,task_id,sources", "conversation_id": f"eq.{conversation_id}", "role": "eq.assistant", "seq": f"lt.{before_seq}", "order": "seq.desc", "limit": "1"},
         )
     except AgentDbError:
         return None
@@ -241,8 +242,26 @@ def _dispatch(
     reply_id: uuid.UUID,
 ) -> Outcome:
     """Decide the kind, tell the client first, then run the path."""
+    # the owner's yes or no to the Lead Finder's plan card that the last reply showed (typed, or said to the voice): the search runs or is cancelled, no model call
+    if last is not None and last.get("kind") in (None, "answer") and not last.get("task_id") and not last.get("sources") and lf_turn.is_answer(body.text):
+        service = lf_turn.available(runtime, ctx)
+        search = lf_turn.pending_plan(service, ctx, last) if service is not None else None
+        if service is not None and search is not None:
+            emit("intent", {"type": "intent", "kind": "action"})
+            logger.info("assistant turn: kind=action reason=lead_finder_answer language=%s", language)
+            return lf_turn.answer_turn(service, ctx, search, body.text, language, runner, emit, reply_id)
     pending = _pending_question(runtime, ctx, last)
     intent = Intent("action", "answers_question") if pending is not None else classify(body.text, _previous_kind(last))
+    if intent.reason == "find_new_customers":
+        service = lf_turn.available(runtime, ctx)
+        if service is not None:
+            emit("intent", {"type": "intent", "kind": intent.kind})
+            logger.info("assistant turn: kind=action reason=find_new_customers language=%s", language)
+            outcome = lf_turn.plan_turn(service, ctx, body.text, language, runner, emit, reply_id)
+            if outcome is not None:
+                return outcome
+        # no Lead Finder here (a school, or switched off): the words are decided again without rule 0 and answered as they always were
+        intent = classify(body.text, _previous_kind(last), find=False)
     emit("intent", {"type": "intent", "kind": intent.kind})
     logger.info("assistant turn: kind=%s reason=%s language=%s", intent.kind, intent.reason, language)
     if intent.kind in ("smalltalk", "general"):
@@ -346,6 +365,9 @@ def _replay(
                     yield _sse("confirm_action", {"type": "confirm_action", **payload})
             except Exception:
                 logger.warning("assistant replay: the plan card could not be rebuilt")
+        elif kind == "answer" and not reply.get("sources"):
+            for lf_card in lf_turn.cards_for(runtime, ctx, [str(reply["id"])]).values():
+                yield _sse("lead_finder", {"type": "lead_finder", **lf_card})
         yield _sse("done", {"type": "done", "message_id": str(reply["id"]), "conversation_id": str(conversation_id), "language": reply.get("language"), "kind": kind})
 
     return replay()

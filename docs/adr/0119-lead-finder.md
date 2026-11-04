@@ -24,6 +24,15 @@ Status: accepted (4 Nov 2026, built unattended overnight; the owner reviews in t
    only after an explicit yes to the question. The other side is one of six scripted retailer personas. No model and no provider is called; the evals are exact (24 calls, all pass).
    This package imports no telephony provider, dialer, outbox or WhatsApp module (a test pins it) and its only call route is `/simulated-call`.
 
+6. **The chat's way in** (owner, 4 Nov 2026, day 2). The conversational router (`app/turns/intent.py`) has a rule 0 before every other: an unmistakable request to FIND NEW businesses
+   (`app/lead_finder/intent.py` `is_find_request`: a verb of finding, a word for a business we do not know yet with "new" or a place, or "new customers"; never with a word about our own records) is an
+   action whose path is the Lead Finder (`app/turns/lead_finder.py`): the plan card as the event `lead_finder`, a fixed sentence in the chat language, no model call. The owner's OK is the card's button or a
+   bare yes in the chat or by voice; no cancels. The plan takes the id of the chat reply that showed it, so a later yes, a replay and the stored chat find the card without a new column. The written Ask
+   (`/assistant/messages`) is unchanged.
+7. **A school: only the Lead Finder is blocked** (owner, 4 Nov 2026, day 2). Prospecting strangers is never for a school: the module is off for education (SM971 in the database, 403 from every route, no
+   card in the chat, no screen). Everything a school does with people who asked it (admission calls and follow-ups to parents who enquired, campus-visit rules: night 4 E1) stays on; the outreach block
+   tried in #287 is not put back.
+
 ## Google Maps Platform terms (the rules this code follows)
 
 * **Only the official API**: Places API (New) `places:searchText`. No scraping of Google, IndiaMART, JustDial or any site. IndiaMART BuyLeads keep arriving only through the existing CRM pull.
@@ -48,7 +57,6 @@ in words ("Google Maps search 'saree shops Jayanagar', 2 Nov"). The real-data ga
 
 ## Open
 
-* The chat hook: "find new retailers in ..." typed in the assistant is not yet routed to `POST /lead-finder/plan` by `/assistant/messages`; the screens call the plan route directly.
 * Place Details re-fetch after 30 days; `redecide` on a schedule. (The scheduler worker already runs `prospect_places_expire` every six hours: `app/lead_finder/housekeeping.py`.)
 * The Quote writer: a qualified call carries a quote SUGGESTION (in-stock items, catalogue prices, the quantity they said); turning it into a real quote draft for the Owner's OK is the next step.
 * Distance: the business's own location is not stored yet, so every place scores the "unknown" 8 points.

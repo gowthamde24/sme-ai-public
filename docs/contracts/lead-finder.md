@@ -35,6 +35,24 @@ Request (closed; one of `text` or `query`):
 The plan card shows: query, area, max results, the estimated cost (`est_cost_paise`, "estimate" when `cost_is_estimate`), searches left today, and two buttons: **OK** (Owner/Admin) and Cancel.
 `attribution` is `"Google Maps"` whenever the provider is `places`: show "Google Maps" next to any Places data (the result card, the list, a prospect).
 
+## 1b. In the chat: `POST /assistant/turns` (and the voice) -> the event `lead_finder` (4 Nov 2026, day 2)
+The owner types or says "find new retailers / boutiques / contractors in <place>" (en, te, kn, hi; "జయనగర్‌లో కొత్త రీటైలర్లను వెతకండి", "ಜಯನಗರದಲ್ಲಿ ಹೊಸ ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ", "अनंतपुर में नए ठेकेदार ढूंढो").
+The router sees it first (no model call): the stream is `intent {kind: "action"}`, `step`, `text` (one sentence in the chat language that ends "Shall I search?"), then
+```json
+event: lead_finder
+data: { "type": "lead_finder", "search": SearchOut, "can_approve": true }
+```
+and `done {kind: "answer"}`. Draw the **plan card** from `search` (state `planned`), under the sentence; OK is `POST /lead-finder/searches/{search.id}/approve` as in section 2, Cancel is `/cancel`.
+`can_approve` is false for Sales (the sentence then says the owner or an admin says OK; hide OK).
+The owner may also answer in the chat: a bare **yes / ok / అవును / సరే / हाँ / ಹೌದು** (by voice too) runs the search, and the next turn's `lead_finder` event carries the **result card** (state `done`)
+with a sentence of the split ("Done: I found 20 businesses in Jayanagar. 15 need you, 5 skipped. They are in Prospects; nobody was called."). **no / వద్దు / नहीं / ಬೇಡ** cancels it (state `cancelled`).
+After the card's own OK button, update the card in place from the approve response (the chat is not told).
+- The search's id is the id of the chat reply that showed it. `GET /assistant/conversations/{id}` gives that message `lead_finder: {search, can_approve}` with the search's state NOW (one card per search,
+  on the reply that showed the plan); a replay of the same message id sends the event again.
+- No place named ("find more customers") -> one sentence asking where, no card. A school, or the Lead Finder switched off -> no card ever; the words are answered as before.
+- Questions about the business's own customers are never a search ("find customers who have not paid", "నా కస్టమర్లను వెతుకు"): the router needs a word for a business we do not know yet (or "new"
+  customers) and refuses any record word (my, our, paid, order, quote, enquiry, stock ...).
+
 ## 2. The OK: `POST /lead-finder/searches/{id}/approve` -> 200 `SearchOut` (state `done` or `failed`)
 Owner, Admin. Runs the search there and then (one request; a few seconds at most) and returns the **result card**. The same OK again returns the same result (idempotent).
 `counts` on a done search:
