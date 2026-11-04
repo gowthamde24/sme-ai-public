@@ -10,14 +10,14 @@ export const PLAN_STAFF_ID = "a1000000-0000-4000-8000-000000000003";
 export const PLAN_MULTI_ID = "a1000000-0000-4000-8000-000000000004";
 export const PREVIEW_ID = "b1000000-0000-4000-8000-000000000001";
 export const PREVIEW_CAT_ID = "b1000000-0000-4000-8000-000000000002";
-export const SECRET_ID = "c1000000-0000-4000-8000-000000000001";
+export const KEY_CARD_ID = "c1000000-0000-4000-8000-000000000001";
 export const SETUP_INDIAMART_ID = "d1000000-0000-4000-8000-000000000001";
 export const SETUP_EMAIL_ID = "d1000000-0000-4000-8000-000000000002";
 export const SETUP_FORM_ID = "d1000000-0000-4000-8000-000000000003";
 export const SETUP_HOURS_ID = "d1000000-0000-4000-8000-000000000004";
 export const CANT_ID = "e1000000-0000-4000-8000-000000000001";
 export const PLAN_CARD_ID = "a2000000-0000-4000-8000-000000000001";
-export const SECRET_REQUEST_ID = "c2000000-0000-4000-8000-000000000001";
+export const KEY_ASK_ID = "c2000000-0000-4000-8000-000000000001";
 const EXPIRES = "2026-11-04T10:30:00Z"; // 30 minutes after the fixtures' clock (FIXTURE_NOW)
 
 export const IMPORT_PLAN_JSON = {
@@ -111,7 +111,7 @@ export const MULTI_PLAN_JSON = {
   expires_at: EXPIRES,
 };
 
-export const SECRET_JSON = { kind: "secret", id: SECRET_ID, request_id: SECRET_REQUEST_ID, secret: "indiamart_key", title: "IndiaMART CRM key", hint: "IndiaMART seller panel → Lead Manager → CRM API key. It looks like a long line of letters and numbers.", saved: null };
+export const SECRET_JSON = { kind: "secret", id: KEY_CARD_ID, request_id: KEY_ASK_ID, secret: "indiamart_key", title: "IndiaMART CRM key", hint: "IndiaMART seller panel → Lead Manager → CRM API key. It looks like a long line of letters and numbers.", saved: null };
 
 export const SETUP_INDIAMART_JSON = {
   kind: "setup",
