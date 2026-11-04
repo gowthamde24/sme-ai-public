@@ -214,6 +214,9 @@ async function main() {
                 }
                 if (screen.chat) {
                   const box = page.locator('[data-chat="form"] textarea').first();
+                  // a phone: the chat is the floating orb's panel
+                  const orb = page.locator('[data-ask="orb"]').first();
+                  if (!(await box.isVisible().catch(() => false)) && (await orb.count())) await orb.click();
                   await box.waitFor({ timeout: 20_000 });
                   await box.fill(lang === "te" ? "Jayanagar లో కొత్త retailers వెతుకు" : "find new retailers in Jayanagar");
                   await box.press("Enter");
