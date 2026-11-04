@@ -136,7 +136,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     return (k: string) => t(k as "bv.chat.new");
   }, [voice.words]);
   const rememberLanguage = React.useCallback((l: string) => void (voice.chatLanguageUrl ? saveChatLanguage(voice.chatLanguageUrl, l) : undefined), [voice.chatLanguageUrl]);
-  const chat = useChatLanguage(voice.language, voice.chatLanguage ?? null, rememberLanguage); // the language pill: Auto or one language, remembered (in the profile, and in this browser)
+  const chat = useChatLanguage(voice.language, voice.chatLanguage ?? null, rememberLanguage, voice.chatLanguageUrl ? (/\/tenants\/([^/]+)\//.exec(voice.chatLanguageUrl)?.[1] ?? voice.chatLanguageUrl) : null); // the language pill: Auto or one language, remembered (in the profile, and in this browser)
   const talk = usePanelVoice(s, voice, voiceOptions, chat);
   const dict = useDictation(s, voice, voiceOptions, chat);
   const [plusOpen, setPlusOpen] = React.useState(false); // the "+" menu of the command bar

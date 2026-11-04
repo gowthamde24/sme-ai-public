@@ -43,7 +43,8 @@ export function OfficeView({ agents, selected, base, t, links = {} }: { agents: 
     );
   }
   const words: Words = Object.fromEntries(WORD_KEYS.map((k) => [k, t(k)]));
-  const rows: RoomRow[] = agents.map((a) => ({ agent: a.agent, state: a.state, job: a.job, event: a.last_event ? { text: a.last_event.text, ago: ago(a.last_event.at), at: a.last_event.at, href: links[a.agent] ?? null } : null }));
+  // a helper that is not built yet (`not_available`: the Lead Finder until its job ships) has no seat and no card (owner, 4 Nov): the office shows the team that exists
+  const rows: RoomRow[] = agents.filter((a) => a.agent === "main" || a.state !== "not_available").map((a) => ({ agent: a.agent, state: a.state, job: a.job, event: a.last_event ? { text: a.last_event.text, ago: ago(a.last_event.at), at: a.last_event.at, href: links[a.agent] ?? null } : null }));
   const chosen = selected !== null && (ALL_AGENT_IDS as readonly string[]).includes(selected) ? (selected as AgentId) : null;
   return <OfficeRoom rows={rows} selected={chosen} base={base} words={words} />;
 }

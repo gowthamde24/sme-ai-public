@@ -8,19 +8,20 @@ const fetchTenant = vi.fn();
 const saveProfile = vi.fn();
 const loadExample = vi.fn();
 const removeExample = vi.fn();
+const resetExample = vi.fn();
 const revalidatePath = vi.fn();
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to) }));
 vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => revalidatePath(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("@/lib/api/profile", () => ({ saveProfile: (...a: unknown[]) => saveProfile(...a) }));
-vi.mock("@/lib/api/example-data", () => ({ loadExampleData: (...a: unknown[]) => loadExample(...a), removeExampleData: (...a: unknown[]) => removeExample(...a) }));
+vi.mock("@/lib/api/example-data", async (orig) => ({ ...(await orig<typeof import("@/lib/api/example-data")>()), loadExampleData: (...a: unknown[]) => loadExample(...a), removeExampleData: (...a: unknown[]) => removeExample(...a), resetExampleData: (...a: unknown[]) => resetExample(...a) }));
 
-import { loadExampleAction, removeExampleAction, saveProfileAction } from "./actions";
+import { loadExampleAction, removeExampleAction, resetExampleAction, saveProfileAction } from "./actions";
 
 const T = "22222222-2222-2222-2222-222222222222";
-const NONE = { companies: 0, contacts: 0, leads: 0, products: 0 };
-const COUNTS = { companies: 2, contacts: 3, leads: 3, products: 4 };
+const NONE = { companies: 0, contacts: 0, leads: 0, products: 0, other: 0 };
+const COUNTS = { companies: 2, contacts: 3, leads: 3, products: 4, other: 0 };
 const form = (o: Record<string, string>) => {
   const f = new FormData();
   for (const [k, v] of Object.entries(o)) f.set(k, v);
@@ -107,5 +108,23 @@ describe("example data", () => {
   it("sends a rejected session to sign in", async () => {
     loadExample.mockRejectedValueOnce(new ApiAuthError("x"));
     expect(await target(() => loadExampleAction(T))).toBe("/login");
+  });
+});
+
+describe("Remove and load it again (job test-workspaces)", () => {
+  it("is one reset and goes back to Today saying so, with how many used rows stayed", async () => {
+    fetchTenant.mockResolvedValue({ id: T, role: "owner" });
+    resetExample.mockResolvedValueOnce({ result: "ok", kept: 0 });
+    expect(await target(() => resetExampleAction(T))).toBe(`/app/tenants/${T}?example=reset`);
+    expect(resetExample).toHaveBeenCalledWith("tok", T);
+    resetExample.mockResolvedValueOnce({ result: "ok", kept: 2 });
+    expect(await target(() => resetExampleAction(T))).toBe(`/app/tenants/${T}?example=reset&kept=2`);
+    resetExample.mockResolvedValueOnce({ result: "failed", kept: 0 });
+    expect(await target(() => resetExampleAction(T))).toBe(`/app/tenants/${T}?example=failed`);
+  });
+  it("a sales person or viewer cannot reset", async () => {
+    fetchTenant.mockResolvedValue({ id: T, role: "sales" });
+    expect(await target(() => resetExampleAction(T))).toBe(`/app/tenants/${T}?example=failed`);
+    expect(resetExample).not.toHaveBeenCalled();
   });
 });
