@@ -240,6 +240,8 @@ class Seeder:
         try:
             if pack == "construction_materials":
                 extra = demo_data.construction_materials(call)
+            elif pack == "textiles":
+                extra = demo_data.textiles(call)
             elif pack == "education":
                 extra = demo_data.education(call, datetime.now(timezone(timedelta(hours=5, minutes=30))).date())
             elif pack in LEAD_DESK_PACKS:
