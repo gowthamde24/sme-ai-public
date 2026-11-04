@@ -150,7 +150,7 @@ export const SETUP_FORM_JSON = {
   setup: "website_form",
   title: "Connect your website form",
   steps: ["Copy the snippet below.", "Paste it into your website, where the form should be.", "Send a test lead from your website."],
-  copy: [{ label: "Website snippet", value: '<iframe src="https://forms.example.test/f/sri-lakshmi-silks" title="Enquiry form" width="100%" height="480"></iframe>', code: true }],
+  copy: [{ label: "Website snippet", value: '<iframe src="https://forms.example.test/f/sri-lakshmi-silks" width="100%" height="480" title="Enquiry form"></iframe>', code: true }],
   portals: [],
   secret: null,
   test: "send_test_lead",

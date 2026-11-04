@@ -1,0 +1,34 @@
+Tuesday, 6 October
+# Good morning
+{label="Needs you"}
+## Needs you
+4 4 waiting for you
+[button type=button: See all (4)]
+- Prospect
+### Sri Sai Constructions
+· fit 64 · low stock [Decide](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?id=b1b1b1b1-0000-4000-8000-000000000002)
+[button type=button: Details]
+- Prospect
+### Sri Lakshmi Sarees
+· fit 82 · 1 of the first 10 calls — needs your OK [Decide](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?id=b1b1b1b1-0000-4000-8000-000000000001)
+[button type=button: Details]
+- Prospect
+### 9 more prospects
+· need you on the Prospects tab [Decide](/app/tenants/22222222-2222-2222-2222-222222222222/retailers?status=needs_owner)
+[button type=button: Details]
+- Visit
+### Your assistant proposed a visit for Priya S.
+· Thu, 8 Oct, 11:00 · 3 people · Bridal sarees
+[button type=button: Confirm the visit]
+[button type=button: Details]
+{role=status}
+Not available yet
+{label="At the store today"}
+## At the store today
+3 visits · 10:30 Anita R. [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
+{label="Done while you slept"}
+## Done while you slept
+Replied to 2 customers on WhatsApp · Sent shop information to 1 customer · Held 1 message until 12:00 (quiet hours) [See everything in the outbox](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent)
+{label="Your team"}
+## Your team
+Lead Finder · Researcher · Requirement Analyst · Quote Writer · Follow-up Desk · Order Desk [Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
