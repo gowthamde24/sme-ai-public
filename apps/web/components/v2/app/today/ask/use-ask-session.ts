@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import type { ConfirmAction } from "@/lib/api/turns";
+import type { LeadFinderCard } from "@/lib/lead-finder/types";
 
 import { aiMood, type AiMood } from "../../mark/mood";
 import { defaultAutoplay, makeAnswerPlayer, markNoticeSeen, noticeSeen, readAutoplay, saveAutoplay, subscribeStore, type AnswerPlayer } from "./answer-audio";
@@ -43,7 +44,7 @@ export function insideWorkspace(href: string, base: string): string | null {
 export type AskPhase = "idle" | "asking" | "done" | "error";
 export type AskProblem = RecorderProblem | null;
 /** One question and its answer, as the thread keeps it. */
-export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The person spoke over the spoken answer: only part of it was heard (the thread marks it "Interrupted"). */ interrupted?: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null };
+export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The person spoke over the spoken answer: only part of it was heard (the thread marks it "Interrupted"). */ interrupted?: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** The Lead Finder's card under the reply (a search's plan, or its result). */ leadFinder?: LeadFinderCard | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null };
 
 export type AskSessionOptions = {
   lang: string;
@@ -80,6 +81,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const [voiceOpen, setVoiceOpen] = React.useState(false); // voice mode (job DM): the full-screen circle over the box, opened by the microphone
   const [earlier, setEarlier] = React.useState<Exchange[]>([]);
   const [plan, setPlan] = React.useState<ConfirmAction | null>(null); // the router proposed an action: the plan waits for Yes / No
+  const [leadFinder, setLeadFinder] = React.useState<LeadFinderCard | null>(null); // the Lead Finder's card under the reply (docs/contracts/lead-finder.md 1b)
   const convRef = React.useRef<string | null>(null); // the conversation the next message continues (null starts a new one)
   const doIt = useDoIt(doItOptions);
   const [mode, setMode] = React.useState<Mode>("ask");
@@ -113,7 +115,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   // the exchange on screen, readable from a handler made by an earlier render (a recording finishes long after the render that started it)
   const current = React.useRef<Exchange | null>(null);
   React.useEffect(() => {
-    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, plan };
+    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, plan, leadFinder };
     modeRef.current = doIt ? mode : "ask";
   });
   const voiceEndpoint = `${base}/ask/voice`;
@@ -205,6 +207,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setSources([]);
     setDrafts([]);
     setPlan(null);
+    setLeadFinder(null);
     setTaskEntry(null);
     setAudioPending(voice && speak);
     let failed = false;
@@ -213,7 +216,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     try {
       for await (const e of source(controller.signal)) {
         if (controller.signal.aborted) return;
-        if (e.type === "text" ? typeof e.delta === "string" && e.delta.trim() !== "" : e.type === "source" || e.type === "draft" || e.type === "confirm_action" || e.type === "task" || e.type === "task_error" || e.type === "audio") said = true;
+        if (e.type === "text" ? typeof e.delta === "string" && e.delta.trim() !== "" : e.type === "source" || e.type === "draft" || e.type === "confirm_action" || e.type === "lead_finder" || e.type === "task" || e.type === "task_error" || e.type === "audio") said = true;
         if (e.type === "heard") setAsked(e.text.slice(0, MAX_QUESTION));
         else if (e.type === "text" && typeof e.delta === "string") setAnswer((a) => (a + e.delta).slice(0, MAX_ANSWER));
         else if (e.type === "source") {
@@ -232,6 +235,8 @@ export function useAskSession({ lang, base, words, availability, transport: give
             );
         } else if (e.type === "confirm_action") {
           setPlan(e.action);
+        } else if (e.type === "lead_finder") {
+          setLeadFinder(e.card); // a replay of the same reply sends it again: still one card
         } else if (e.type === "error") {
           failed = true;
           const code = typeof e.code === "string" && (ERROR_CODES as readonly string[]).includes(e.code) ? e.code : null;
@@ -363,6 +368,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setErrorCode(null);
     setPhase("idle");
     setPlan(null);
+    setLeadFinder(null);
   };
   /** The conversation panel: a turn that was spoken (the socket's captions) joins the thread like a typed one, and "new conversation" empties it. */
   const addExchange = (x: Exchange) => {
@@ -438,7 +444,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
       if (convRef.current === null) convRef.current = id;
     },
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, retry, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, setEarlier,
+    ask, retry, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, leadFinder, setEarlier,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",
     asking: phase === "asking",

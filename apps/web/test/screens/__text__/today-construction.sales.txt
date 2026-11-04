@@ -10,8 +10,8 @@ Tuesday, 6 October
 [button type=button: Details]
 {role=status}
 Not available yet
-{label="At the store today"}
-## At the store today
+{label="Site visits today"}
+## Site visits today
 3 visits · 10:30 Anita R. [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 {label="Done while you slept"}
 ## Done while you slept

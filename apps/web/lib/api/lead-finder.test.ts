@@ -13,6 +13,10 @@ import {
   getProspectStats,
   listProspects,
   listSearches,
+  getQuoteDraft,
+  makeQuoteDraft,
+  parseQuoteDraftMade,
+  parseQuoteDraftPreview,
   parseAvailability,
   parsePracticeCall,
   parseProspect,
@@ -23,7 +27,7 @@ import {
   redecideProspects,
   saveFinderSettings,
 } from "./lead-finder";
-import { PROSPECT, PRACTICE, SEARCH_DONE, SEARCH_PLANNED, SETTINGS, T, P1, P2, S1 } from "./lead-finder-fixtures";
+import { PROSPECT, PRACTICE, SEARCH_DONE, SEARCH_PLANNED, SETTINGS, T, P1, P2, S1, E1, L1, Q1, QUOTE_DRAFT, QUOTE_DRAFT_MADE, QUOTE_DRAFT_NONE } from "./lead-finder-fixtures";
 
 beforeEach(() => request.mockReset());
 
@@ -185,5 +189,41 @@ describe("settings (contract section 6)", () => {
   it("refuses a bar under 50 from the API", async () => {
     request.mockResolvedValue({ ...SETTINGS, fit_bar: 10 });
     await expect(getFinderSettings("tok", T)).rejects.toBeInstanceOf(ApiContractError);
+  });
+});
+
+describe("the draft quote of a qualified call (contract section 7)", () => {
+  it("reads the preview: each line at the catalogue price with what they said, and each left-out item with its closed reason", () => {
+    expect(parseQuoteDraftPreview(QUOTE_DRAFT)).toEqual({
+      prospectId: QUOTE_DRAFT.prospect_id, leadId: L1, ready: true, made: false, quoteId: Q1, enquiryId: null,
+      lines: [{ item: "Kanchi Pattu Bridal", itemTypeCode: "LF-1A2B3C4D", qty: 40, unitPricePaise: 850000, quantitySaid: "About forty pieces a month, more in the season." }],
+      leftOut: [{ item: "Soft Silk Daily", reason: "no_price" }, { item: "Dharmavaram Silk Classic", reason: "no_quantity" }, { item: "Mysore Crepe", reason: "not_in_stock" }],
+    });
+    expect(parseQuoteDraftPreview(QUOTE_DRAFT_NONE).leftOut.map((l) => l.reason)).toEqual(["no_price", "not_in_catalogue", "item_type_off", "too_many_lines"]);    // once made, the preview names its enquiry (#305); a bad id is refused
+    expect(parseQuoteDraftPreview({ ...QUOTE_DRAFT, made: true, enquiry_id: E1 }).enquiryId).toBe(E1);
+    expect(() => parseQuoteDraftPreview({ ...QUOTE_DRAFT, made: true, enquiry_id: "nope" })).toThrow();
+  });
+  it.each([["a reason outside the list", { left_out: [{ item: "X", reason: "too_dear" }] }], ["no quote id", { quote_id: null }], ["a line without a quantity", { lines: [{ ...QUOTE_DRAFT.lines[0], qty: 0 }] }], ["a negative price", { lines: [{ ...QUOTE_DRAFT.lines[0], unit_price_paise: -1 }] }], ["ready that is not a yes or no", { ready: "yes" }]])("refuses a preview with %s", (_, change) => {
+    expect(() => parseQuoteDraftPreview({ ...QUOTE_DRAFT, ...change })).toThrow(ApiContractError);
+  });
+  it("reads what making it answers (a draft, with the enquiry it lives on); anything but a draft is refused", () => {
+    expect(parseQuoteDraftMade(QUOTE_DRAFT_MADE)).toMatchObject({ quoteId: Q1, quoteNo: 21, enquiryId: E1, status: "draft", totalPaise: 34000000, needsOwnerApproval: false, replayed: false });
+    for (const change of [{ status: "approved" }, { enquiry_id: null }, { needs_owner_approval: undefined }]) expect(() => parseQuoteDraftMade({ ...QUOTE_DRAFT_MADE, ...change })).toThrow(ApiContractError);
+  });
+  it("GETs the preview and POSTs a new customer with no delivery state; bad input never reaches the API", async () => {
+    request.mockResolvedValueOnce(QUOTE_DRAFT);
+    expect((await getQuoteDraft("tok", T, P1)).ready).toBe(true);
+    expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/prospects/${P1}/quote-draft`, "tok");
+    request.mockResolvedValueOnce(QUOTE_DRAFT_MADE);
+    expect((await makeQuoteDraft("tok", T, P1, { customerKind: "new", deliveryState: null })).enquiryId).toBe(E1);
+    expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/prospects/${P1}/quote-draft`, "tok", { method: "POST", body: JSON.stringify({ customer_kind: "new", delivery_state: null }) });
+    request.mockResolvedValueOnce(QUOTE_DRAFT_MADE);
+    await makeQuoteDraft("tok", T, P1, { customerKind: "repeat", deliveryState: "KA" });
+    expect(request).toHaveBeenLastCalledWith(`/v1/tenants/${T}/prospects/${P1}/quote-draft`, "tok", { method: "POST", body: JSON.stringify({ customer_kind: "repeat", delivery_state: "KA" }) });
+    request.mockClear();
+    await expect(makeQuoteDraft("tok", T, P1, { customerKind: "old" as never, deliveryState: null })).rejects.toBeInstanceOf(ApiContractError);
+    await expect(makeQuoteDraft("tok", T, P1, { customerKind: "new", deliveryState: "Karnataka" })).rejects.toBeInstanceOf(ApiContractError);
+    await expect(getQuoteDraft("tok", T, "nope")).rejects.toBeInstanceOf(ApiContractError);
+    expect(request).not.toHaveBeenCalled();
   });
 });

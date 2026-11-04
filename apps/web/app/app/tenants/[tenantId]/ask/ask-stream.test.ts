@@ -196,3 +196,11 @@ describe("voice (job BF)", () => {
     expect(voiceErrorCode(new ApiRequestError(status, code, "English"))).toBe(want);
   });
 });
+
+describe("the Lead Finder's card (docs/contracts/lead-finder.md 1b)", () => {
+  it("passes the card the turn's reader made on to the box, after the sentence", async () => {
+    const card = { search: { id: ID(5), state: "planned" }, canApprove: true } as unknown as Extract<AskEvent, { type: "lead_finder" }>["card"];
+    const out = await run([{ type: "text", delta: "Shall I search?" }, { type: "lead_finder", card } as unknown as AssistantEvent, done]);
+    expect(out).toEqual([{ type: "text", delta: "Shall I search?" }, { type: "lead_finder", card }, DONE_OUT]);
+  });
+});

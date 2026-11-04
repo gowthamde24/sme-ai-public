@@ -92,7 +92,7 @@ try {
       const tenant = /\/app\/tenants\/([0-9a-f-]{36})/.exec(href || page.url())?.[1];
       if (!tenant) throw new Error(`no workspace for ${pack}`);
       const base = `${WEB}/app/tenants/${tenant}`;
-      const list = ["switcher", "verify", "more", "finder"].includes(MODE) ? [] : PAGES.length ? PAGES.map((p) => [p.replace(/\W+/g, "-") || "today", p === "today" ? "" : p]) : size === "desktop" ? [["today", ""], ["customers", "/lead-desk"], OWN[pack], ["office", "/office"]] : [["today", ""], ["customers", "/lead-desk"], OWN[pack]];
+      const list = ["switcher", "verify", "more", "finder", "chatcard"].includes(MODE) ? [] : PAGES.length ? PAGES.map((p) => [p.replace(/\W+/g, "-") || "today", p === "today" ? "" : p]) : size === "desktop" ? [["today", ""], ["customers", "/lead-desk"], OWN[pack], ["office", "/office"]] : [["today", ""], ["customers", "/lead-desk"], OWN[pack]];
       for (const [name, p] of list) {
         const res = await page.goto(`${base}${p}`, { waitUntil: "domcontentloaded" });
         await settle(page);
@@ -164,6 +164,41 @@ try {
         console.log(`today ${pack}/${size}/${LANG}: prospect rows ${rows}; Lead Finder in team: ${/Lead Finder|లీడ్ ఫైండర్/.test(today)}`);
         const wide = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
         console.log(`layout ${pack}/${size}: horizontal scroll ${wide}`);
+      }
+      if (MODE === "chatcard") {
+        // Lead Finder in the chat (contract 1b) and the draft quote of a qualified call (contract 7): the search is ASKED in the chat (a fixture search where the workspace is a demo/test one), the card's
+        // OK is pressed only with --ok; the draft quote's preview is opened, its "Make the draft quote" is never pressed
+        const sz = size === "desktop" ? "1440" : "390";
+        if (SEARCH) {
+          await page.goto(base, { waitUntil: "domcontentloaded" });
+          await settle(page);
+          const box = page.locator('[data-chat="form"] textarea').first();
+          await box.fill(SEARCH);
+          await box.press("Enter");
+          const card = page.locator('[data-chat="lead-finder"]').last();
+          await card.waitFor({ timeout: 90000 }).catch(() => null);
+          await page.waitForTimeout(1500);
+          console.log(`chat card ${pack}/${size}/${LANG}: ${(await card.innerText().catch(() => "none")).replace(/\s+/g, " ").slice(0, 300)}`);
+          await card.scrollIntoViewIfNeeded().catch(() => null);
+          await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-chat-plan-${LANG}-${sz}.png`), fullPage: false });
+          if (process.argv.includes("--ok")) {
+            await card.locator("[data-plan-ok]").first().click().catch((e) => console.log("ok: " + String(e).slice(0, 100)));
+            await card.locator("[data-result-card]").first().waitFor({ timeout: 60000 }).catch(() => null);
+            console.log(`chat result ${pack}/${size}/${LANG}: ${(await card.innerText().catch(() => "none")).replace(/\s+/g, " ").slice(0, 300)}`);
+            await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-chat-result-${LANG}-${sz}.png`), fullPage: false });
+          }
+        }
+        await page.goto(`${base}/retailers?status=qualified`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        const draft = page.locator("[data-quote-draft-box]").first();
+        if (await draft.count()) {
+          await draft.locator("summary").first().click().catch(() => null);
+          await page.locator("[data-draft-lines], [data-draft-left-out], [data-draft-made]").first().waitFor({ timeout: 30000 }).catch(() => null);
+          await page.waitForTimeout(800);
+          console.log(`draft ${pack}/${size}/${LANG}: ${(await draft.innerText().catch(() => "")).replace(/\s+/g, " ").slice(0, 400)}`);
+          await draft.scrollIntoViewIfNeeded().catch(() => null);
+          await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-draft-quote-${LANG}-${sz}.png`), fullPage: false });
+        } else console.log(`draft ${pack}/${size}: no qualified prospect with a draft box`);
       }
       if (MODE === "more") {
         // the phone: what the More sheet offers (is there a way to another workspace?)
