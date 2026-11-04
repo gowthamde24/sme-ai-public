@@ -31,7 +31,7 @@ Status: accepted (4 Nov 2026, built unattended overnight; the owner reviews in t
   The phone number, website, rating and review count are **Text Search Enterprise** fields (Google's SKU table, read 4 Nov 2026), so one search bills **one Text Search Enterprise request**; nothing from
   the Enterprise + Atmosphere tier (reviews, photos) is asked for. The phone number is what a call needs, so Enterprise is the cheapest tier that does the job. One request per search (`pageSize` <= 20,
   no next page). The cost recorded on the search is an ESTIMATE (`LEAD_FINDER_PLACES_COST_PAISE`, default 300 paise), shown as an estimate; the real price is Google's price list and the account's credits.
-* **Caching**: the `place_id` is kept indefinitely (the terms allow it). Every other field from Google is kept **at most 30 days** (`fetched_at`): `prospect_places_expire` (scheduler only) blanks them and a
+* **Caching**: the `place_id` is kept indefinitely (the terms allow it). Every other field from Google is kept **at most 30 days** (`fetched_at`): `prospect_places_expire` (scheduler only, run by the worker every six hours) blanks them and a
   prospect that was still waiting is skipped; a call after that needs the details fetched again by `place_id` (Place Details: **not built yet**, see Open).
 * **Attribution**: every API response that carries Places data says `attribution: "Google Maps"` and the screens show it next to that data.
 
@@ -49,7 +49,7 @@ in words ("Google Maps search 'saree shops Jayanagar', 2 Nov"). The real-data ga
 ## Open
 
 * The chat hook: "find new retailers in ..." typed in the assistant is not yet routed to `POST /lead-finder/plan` by `/assistant/messages`; the screens call the plan route directly.
-* Place Details re-fetch after 30 days; the scheduler entry that runs `prospect_places_expire` daily and `POST /prospects/redecide`.
+* Place Details re-fetch after 30 days; `redecide` on a schedule. (The scheduler worker already runs `prospect_places_expire` every six hours: `app/lead_finder/housekeeping.py`.)
 * The Quote writer: a qualified call carries a quote SUGGESTION (in-stock items, catalogue prices, the quantity they said); turning it into a real quote draft for the Owner's OK is the next step.
 * Distance: the business's own location is not stored yet, so every place scores the "unknown" 8 points.
 * A1 (a real Places search in Owner Test) waits for the owner's key.
