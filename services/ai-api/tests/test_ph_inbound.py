@@ -41,7 +41,7 @@ class FakeCalls:
         self.status, self.from_number = status, from_number
         self.asked: list[str] = []
 
-    async def get(self, call_sid: str) -> inbound.ProviderCall | None:
+    async def get(self, call_sid: str, *, retries_s: tuple[float, ...] = ()) -> inbound.ProviderCall | None:
         self.asked.append(call_sid)
         return inbound.ProviderCall(status=self.status, from_number=self.from_number, to_number=EXOPHONE)
 
@@ -104,8 +104,8 @@ def test_a_token_is_good_for_its_call_until_it_expires_and_cannot_be_forged() ->
 
 def test_the_stream_address_is_wss_on_our_host_inside_the_applets_limits() -> None:
     url = inbound.stream_url("https://sme-api-620338396268.asia-south1.run.app/", inbound.mint(SECRET, NOW))
-    assert url.startswith("wss://sme-api-620338396268.asia-south1.run.app/v1/telephony/exotel/stream?sample-rate=16000&t=")
-    assert len(url.split("?", 1)[1]) < 256 and url.count("&") == 1, "two parameters, under the applet's 256 characters"
+    assert url.startswith("wss://sme-api-620338396268.asia-south1.run.app/v1/telephony/exotel/stream/") and url.endswith("?sample-rate=16000")
+    assert len(url) < 200 and url.count("&") == 0, "the token in the path (a dropped query string cannot lose it), one parameter, a short address"
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- the Voicebot URL
@@ -121,8 +121,8 @@ def test_the_voicebot_url_answers_the_calls_stream_address_and_nothing_while_off
     ok = client.get("/v1/telephony/exotel/stream-url", params={"CallSid": "CA123", "CallFrom": "09502380998", "CallTo": "09513886363"})
     assert ok.status_code == 200, ok.text
     url = ok.json()["url"]
-    assert url.startswith("wss://api.example.test/v1/telephony/exotel/stream?sample-rate=16000&t=")
-    token = url.split("t=", 1)[1]
+    assert url.startswith("wss://api.example.test/v1/telephony/exotel/stream/")
+    token = url.split("/stream/", 1)[1].split("?", 1)[0]
     assert inbound.verify(SECRET, token, inbound.monotonic(), "CA123") and not inbound.verify(SECRET, token, inbound.monotonic(), "CAother")
     posted = client.post("/v1/telephony/exotel/stream-url", data={"CallSid": "CA124", "From": "+919502380998"})
     assert posted.status_code == 200 and posted.json()["url"].startswith("wss://")
@@ -272,7 +272,7 @@ def test_the_voicebot_url_can_answer_the_bare_address_as_text_and_logs_only_name
     finally:
         logger.removeHandler(handler)
     assert r.status_code == 200 and r.headers["content-type"].startswith("text/plain")
-    assert r.text.startswith("wss://api.example.test/v1/telephony/exotel/stream?sample-rate=16000&t=")
+    assert r.text.startswith("wss://api.example.test/v1/telephony/exotel/stream/")
     query = r.text.split("?", 1)[1]
     assert len(query) <= 200 and query.count("&") + 1 <= 3, "inside Exotel's 3 parameters and 256 characters, with room to spare"
     shape = next(m for m in records if m.startswith("exotel_stream_url request"))
