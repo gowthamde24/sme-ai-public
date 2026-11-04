@@ -8,6 +8,7 @@ convert units.
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from app.errors import ApiError
@@ -29,6 +30,7 @@ MICROS_PER_PAISE = (
     10_000  # agent costs are kept in millionths of a rupee (100 paise = 1,000,000 micros)
 )
 UNKNOWN_CUSTOMER = "A customer"
+logger = logging.getLogger("app.today")
 
 
 def _bad(what: str) -> ApiError:
@@ -76,8 +78,22 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         return "Your call minutes are used up. Calls wait in a queue until you top up." if ref == "call_minutes" else "Your business messages are used up. They wait in the outbox until you top up."
     if kind == "hot_lead_waiting":
         return "An interested customer is waiting: nobody has called back yet."
+    if kind == "material_quote_approval":
+        total = format_rupees(amount) if amount is not None else "an amount to check"
+        return f"Materials quote {ref} for {total} is ready for your approval."
+    if kind == "campaign_approval":
+        return f"A {_CAMPAIGN_WORDS.get(ref, 'message campaign')} is drafted and waiting for your approval. Nothing is sent before you approve it."
+    if kind == "fees_overdue":
+        total = format_rupees(amount) if amount is not None else "fees"
+        who = "1 student has" if ref == "1" else f"{ref} students have"
+        return f"{who} fees fallen due and not paid: {total} in all. The fee list shows who."
     held = format_rupees(amount) if amount is not None else "money"
     return f"Order {ref} is closed but still holds {held}. A refund may be owed."
+
+
+_CAMPAIGN_WORDS = {"payment_due": "payment reminder", "fee_due": "fee reminder", "delivery_update": "delivery update", "event": "event message", "exam": "exam message", "holiday": "holiday message"}
+# the "customer" of a row that is not about one customer
+_NOT_A_CUSTOMER = {"fees_overdue": "Fees due"}
 
 
 _STEP_TEXT = {
@@ -109,7 +125,7 @@ def needs_item(row: dict[str, Any]) -> NeedsYouItem:
         return NeedsYouItem(
             kind=row["kind"],
             id=row["id"],
-            customer=row.get("customer") or UNKNOWN_CUSTOMER,
+            customer=row.get("customer") or _NOT_A_CUSTOMER.get(str(row.get("kind")), UNKNOWN_CUSTOMER),
             city=row.get("city"),
             agent=row["agent"],
             summary=_summary(row["kind"], str(row["ref"]), amount),
@@ -119,6 +135,18 @@ def needs_item(row: dict[str, Any]) -> NeedsYouItem:
         )
     except (KeyError, TypeError, ValueError, AttributeError):
         raise _bad("notification") from None
+
+
+def needs_items(rows: Any) -> list[NeedsYouItem]:
+    """The waiting items the screens can show. A row of a kind this API does not know yet (the database is ahead of a deploy) is LEFT OUT with a warning, never a failed Today: 4 Nov 2026, a
+    model that knew only one plan turned a whole workspace's page into a 500."""
+    out: list[NeedsYouItem] = []
+    for row in rows or []:
+        try:
+            out.append(needs_item(row))
+        except ApiError:
+            logger.warning("needs-you item left out: kind=%s", str(row.get("kind") if isinstance(row, dict) else "?")[:40])
+    return out
 
 
 def shape_today(raw: Any) -> TodayOut:
@@ -132,12 +160,12 @@ def _shape_today(raw: Any) -> TodayOut:
     if not isinstance(raw, dict) or not isinstance(raw.get("cards"), dict):
         raise _bad("Today answer")
     cards = raw["cards"]
-    needs: list[NeedsYouItem] = [needs_item(row) for row in raw.get("needs_you") or []]
+    needs: list[NeedsYouItem] = needs_items(raw.get("needs_you"))
     recent = [
         RecentStep(
             kind="order_step",
             order_ref=f"Order {row['order_no']}",
-            customer=row.get("customer") or UNKNOWN_CUSTOMER,
+            customer=row.get("customer") or _NOT_A_CUSTOMER.get(str(row.get("kind")), UNKNOWN_CUSTOMER),
             text=_step_text(str(row["type"]), row.get("amount_paise")),
             at=row["at"],
             target=Target(type="order", id=row["order_id"]),
