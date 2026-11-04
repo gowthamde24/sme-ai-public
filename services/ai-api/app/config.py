@@ -350,6 +350,13 @@ class Settings(BaseSettings):
     # What a started minute of a call costs, in paise: a configurable ESTIMATE (the owner asks
     # Exotel for the real price), shown as an estimate everywhere.
     telephony_cost_paise_per_minute: int = 100
+    # Inbound on the Exotel sandbox (job phone-calls part 5). Outbound stays refused by the gate
+    # until TELEPHONY_OUTBOUND is true (there is no dialer yet). The stream secret signs the
+    # per-call token of the Voicebot URL (Secret Manager: sme-exotel-stream-secret).
+    telephony_outbound: bool = False
+    exotel_stream_secret: SecretStr | None = None
+    telephony_inbound_language: str = "en"
+    telephony_inbound_business: str = "the business"
     browser_voice_day_seconds: int = 7200
     # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the built-in defaults
     browser_voice_stt_modes: str = ""
