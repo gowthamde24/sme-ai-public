@@ -29,7 +29,7 @@ import time
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import httpx
@@ -139,17 +139,73 @@ class ExotelCalls:
         return ProviderCall(status=str(call.get("Status") or "").lower(), from_number=normalise(call.get("From")), to_number=normalise(call.get("To")))
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------- the shared trial number (sandbox only)
+@dataclass(frozen=True)
+class TrialRule:
+    """Owner, 4 Nov 2026: Exotel's SHARED trial number (PIN routing) records its calls under Exotel's trial host account, so the lookup of step 3 can never confirm one. On THAT number only, and only
+    in sandbox mode, a call is admitted instead when ALL hold: our per-call signed token (checked before admit), the one caller, the start message's account_sid = ours, its app id = ours, no other
+    call open, at most `max_calls_per_day` a day (India time); the call is cut at `max_call_s`. Every other number keeps the strict Exotel lookup. The counts are this server's (staging runs at most
+    two instances)."""
+
+    number: str           # normalised (+91...)
+    caller: str           # normalised
+    account_sid: str
+    app_id: str
+    max_calls_per_day: int = 10
+    max_call_s: int = 180
+    max_concurrent: int = 1
+
+
+class DayCount:
+    """Calls admitted by the trial rule today (India time), in this process."""
+
+    def __init__(self) -> None:
+        self.day: str = ""
+        self.n = 0
+
+    def _today(self, now: datetime) -> str:
+        return (now.astimezone(UTC) + timedelta(hours=5, minutes=30)).date().isoformat()
+
+    def count(self, now: datetime) -> int:
+        return self.n if self.day == self._today(now) else 0
+
+    def add(self, now: datetime) -> None:
+        today = self._today(now)
+        self.n = self.n + 1 if self.day == today else 1
+        self.day = today
+
+
+def trial_rule(number: str, caller: str, account_sid: str | None, app_id: str, *, max_calls_per_day: int = 10, max_call_s: int = 180) -> TrialRule | None:
+    """The rule from the settings, or None when any part is missing (then the trial number gets the strict lookup like every other number, and is refused)."""
+    n, c = normalise(number), normalise(caller)
+    if not (n and c and account_sid and app_id.strip()):
+        return None
+    return TrialRule(number=n, caller=c, account_sid=account_sid, app_id=app_id.strip(), max_calls_per_day=max(0, max_calls_per_day), max_call_s=max(30, min(max_call_s, 180)))
+
+
+def _match(ours: str | None, theirs: str) -> str:
+    if not theirs:
+        return "absent"
+    if not ours:
+        return "unknown"
+    return "yes" if hmac.compare_digest(ours.encode("utf-8"), theirs.encode("utf-8")) else "no"
+
+
 # ---------------------------------------------------------------------------------------------------------------------------------- the decision before any audio
 @dataclass(frozen=True)
 class Admitted:
     tenant_id: uuid.UUID
     talk: bool
+    rule: str = "exotel_lookup"   # which rule admitted the call: exotel_lookup | trial_number
+    max_call_s: int | None = None   # a tighter cut than the deployment's, when the rule has one
 
 
 async def admit(start: exotel.Start, settings: gate.Settings, *, find_line: Callable[[str], dict[str, Any] | None], calls: ExotelCalls | None, active_calls: int,
-                now: datetime, hours: gate.Hours | None = None) -> Admitted | gate.Refused:
-    """Steps 2 to 4 of the module note. Refusals are the gate's closed words."""
+                now: datetime, hours: gate.Hours | None = None, our_sid: str | None = None, trial: TrialRule | None = None, trial_count: DayCount | None = None) -> Admitted | gate.Refused:
+    """Steps 2 to 4 of the module note (or, on the shared trial number in sandbox mode, the trial rule instead of step 3). Refusals are the gate's closed words."""
     caller, line_no = normalise(start.from_number), normalise(start.to_number)
+    log.info("exotel_start fields=%s custom=%s account_matches=%s app_id_matches=%s trial_number=%s", ",".join(start.fields) or "-", ",".join(sorted(start.custom)) or "-",
+             _match(our_sid, start.account_sid), _match(trial.app_id if trial else None, start.app_id), "yes" if trial and line_no == trial.number else "no")
     if settings.mode == "off":
         return gate.Refused("telephony_off")
     if caller is None or line_no is None:
@@ -159,6 +215,8 @@ async def admit(start: exotel.Start, settings: gate.Settings, *, find_line: Call
     found = await asyncio.to_thread(find_line, line_no)
     if not found:
         return gate.Refused("no_such_line")
+    if trial is not None and line_no == trial.number:
+        return _admit_trial(start, settings, trial, trial_count, found=found, caller=caller, line_no=line_no, active_calls=active_calls, now=now, hours=hours)
     if calls is None:
         return gate.Refused("telephony_off")   # without our Exotel key the call cannot be confirmed: fail closed
     confirmed = await calls.get(start.call_sid)
@@ -169,6 +227,27 @@ async def admit(start: exotel.Start, settings: gate.Settings, *, find_line: Call
     if isinstance(decision, gate.Refused):
         return decision
     return Admitted(tenant_id=uuid.UUID(str(found["tenant_id"])), talk=decision.talk)
+
+
+def _admit_trial(start: exotel.Start, settings: gate.Settings, trial: TrialRule, count: DayCount | None, *, found: dict[str, Any], caller: str, line_no: str,
+                 active_calls: int, now: datetime, hours: gate.Hours | None) -> Admitted | gate.Refused:
+    if settings.mode != "sandbox":
+        return gate.Refused("trial_not_sandbox")
+    if caller != trial.caller:
+        return gate.Refused("trial_caller")
+    if _match(trial.account_sid, start.account_sid) != "yes":
+        return gate.Refused("trial_account")
+    if _match(trial.app_id, start.app_id) != "yes":
+        return gate.Refused("trial_app_id")
+    if active_calls >= trial.max_concurrent:
+        return gate.Refused("trial_busy")
+    if count is None or count.count(now) >= trial.max_calls_per_day:
+        return gate.Refused("trial_day_limit")
+    decision = gate.check_inbound(settings, gate.InboundFacts(to_number=line_no, now=now, line_known=True, inbound_on=bool(found.get("inbound_on")), hours=hours, active_calls_total=active_calls, from_number=caller))
+    if isinstance(decision, gate.Refused):
+        return decision
+    count.add(now)
+    return Admitted(tenant_id=uuid.UUID(str(found["tenant_id"])), talk=decision.talk, rule="trial_number", max_call_s=trial.max_call_s)
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- the numbers of one call
