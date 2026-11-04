@@ -21,6 +21,7 @@ import { getLang } from "@/i18n/get-lang";
 import { fetchTenant, publicApiBase } from "@/lib/api/client";
 import { isVoiceLang, voiceSocketUrl, VOICE_LANGS } from "@/lib/browser-voice/protocol";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
+import { isChatCardWord } from "@/lib/lead-finder/types";
 import { requireUser } from "@/lib/auth/session";
 import { browserVoice, guidedDemo, pronunciationScreens, taskScreens } from "@/lib/screens/flag";
 import { readIsDemo } from "./today-read";
@@ -61,10 +62,10 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   const chipWords = withModuleWords(Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("ask.chip."))), data.pack);
   // the guided demo (GUIDED_DEMO): only in a workspace that says it is a DEMO one, for its Owner and Admins
   const demoRoutes = guidedDemo() && isCanonicalUuid(tenantId) ? await demoRoutesFor(user.accessToken, tenantId, data.pack?.modules ?? null) : null;
-  // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales)
+  // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales); its words, and those of the Lead Finder's card in the chat
   const url = browserVoice() && isCanonicalUuid(tenantId) ? voiceSocketUrl(publicApiBase(), tenantId) : null;
   const voice = url && (await mayTalk(user.accessToken, tenantId))
-    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv."))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language` }
+    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || isChatCardWord(k))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language` }
     : null;
   const topupBanner = isCanonicalUuid(tenantId) ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
   return (

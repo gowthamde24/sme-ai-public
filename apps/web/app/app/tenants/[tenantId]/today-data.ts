@@ -12,7 +12,7 @@ import { targetPaths } from "./target-path";
 import { readAgentsCached, readTodayCached } from "./today-read";
 import type { LeadDeskToday } from "./lead-desk-today";
 
-const CLASSIC: readonly string[] = ["quote_approval", "followup_due", "order_money_held"];
+const CLASSIC: readonly string[] = ["quote_approval", "followup_due", "order_money_held", "material_quote_approval", "campaign_approval", "fees_overdue"];
 const isClassic = (i: ApiItem): i is ApiItem & { kind: ClassicKind } => CLASSIC.includes(i.kind);
 
 /**
