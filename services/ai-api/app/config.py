@@ -190,6 +190,10 @@ class Settings(BaseSettings):
     exotel_api_key: str | None = None
     exotel_api_token: SecretStr | None = None
     exotel_subdomain: str = "api.in.exotel.com"
+    # The whole REST base: https://api.exotel.com (Singapore) or https://api.in.exotel.com
+    # (Mumbai). Set, it wins over EXOTEL_SUBDOMAIN. Staging: https://api.exotel.com, the
+    # cluster the owner's account authenticates on (4 Nov 2026; ADR 0080 addendum).
+    exotel_api_base: str | None = None
     exotel_caller_id: str | None = None  # the ExoPhone shown to the customer
     exotel_agent_number: str | None = None  # the shop's own phone, rung first
     exotel_webhook_token: SecretStr | None = None  # the secret in the webhook addresses

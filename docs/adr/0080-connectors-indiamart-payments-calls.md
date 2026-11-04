@@ -43,3 +43,13 @@ Four connectors, each behind an interface with a fake, each OFF until the owner 
 
 ## Sources (read 2026-10-12)
 IndiaMART help.indiamart.com/knowledge-base/lms-crm-integration-v2 and /im-lms-leads-api; Razorpay razorpay.com/docs/api/payments/payment-links/create-upi, /docs/webhooks/validate-test, /docs/webhooks/payloads/payment-links, razorpay.com/blog/razorpay-payment-gateway-pricing-explained; Cashfree cashfree.com/docs/api-reference/payments/latest/payment-links/create-payment-link, /previous/v2025-01-01/payment-links/webhooks, /docs/payments/online/webhooks/overview, /payment-gateway-charges; Exotel developer.exotel.com/api/make-a-call-api, /docs/app-bazaar/passthru-applet-guide, /docs/call-support/call-features/missed-call, /docs/faqs/tcccpr-2018.
+
+## Addendum, 4 Nov 2026: the Exotel account is on the Singapore cluster (`EXOTEL_API_BASE`)
+* After KYC (verified) the owner stored the account's SID, API key and token in Secret Manager (`sme-exotel-sid`, `sme-exotel-api-key`, `sme-exotel-api-token`). A read-only check (one authenticated
+  `GET /v1/Accounts/<sid>/Balance.json` per cluster, no call, no SMS, no purchase) answered **401 on `api.in.exotel.com` (Mumbai)** and **200 on `api.exotel.com` (Singapore)**: the account lives on the
+  Singapore cluster.
+* The REST base is now one setting, `EXOTEL_API_BASE` (`https://` and a host only; it wins over `EXOTEL_SUBDOMAIN`, whose default `api.in.exotel.com` is unchanged when it is unset). Staging sets
+  `EXOTEL_API_BASE=https://api.exotel.com`. `CALLS_PROVIDER` and `TELEPHONY_MODE` stay off; nothing dials.
+* The owner has asked Exotel whether the account can be served from Mumbai (data residency and latency for Indian calls). Until Exotel answers, Singapore is the base; moving is a change of this one setting.
+* Still not known from that check (the balance answer does not carry them): the account's status, whether an ExoPhone or a trial number is assigned, and whether AgentStream / Voicebot is enabled. The phone-calls
+  job's part 4 waits for Exotel to enable AgentStream.
