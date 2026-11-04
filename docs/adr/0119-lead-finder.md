@@ -60,6 +60,14 @@ search. The usage meter's kinds stay `call_minutes` and `whatsapp_messages` (a c
 No real outbound call: `TELEPHONY_MODE` stays off and nothing here dials. Real calls need the owner's December lawyer review, a registered calling number and DND scrubbing first. Every prospect keeps its source
 in words ("Google Maps search 'saree shops Jayanagar', 2 Nov"). The real-data gate stays closed everywhere except the Owner Test workspace.
 
+## Plans (owner decision, 4 Nov 2026)
+
+Two subscriptions, built as feature switches and not prices: **AI Workforce** = every feature; **Lead Desk** = every feature except the Lead Finder. The catalogue (`packages/plans/plans.json`,
+version 4) names each plan's `product` (the trial, Starter, Growth and Business are AI Workforce; the calls plans, already named "Lead Desk", are Lead Desk) and each product's `features`.
+`app.entitled(tenant, 'lead_finder')` reads the latest synced catalogue; the Lead Finder's gate (`app.lf_gate`) asks it after the module, so a Lead Desk workspace gets SQLSTATE SM974 (API 403
+`not_in_plan`, availability `reason: "not_in_plan"`, the chat's "part of AI Workforce" card with the Plans link). Nothing is charged or enforced beyond these switches until Customer Zero. The test
+workspaces and Owner Test are on Growth: AI Workforce. Migrations `20261230090000` (catalogue v4) and `20261230090100` (the switches); pgTAP 156.
+
 ## Open
 
 * Place Details re-fetch after 30 days; `redecide` on a schedule. (The scheduler worker already runs `prospect_places_expire` every six hours: `app/lead_finder/housekeeping.py`.)

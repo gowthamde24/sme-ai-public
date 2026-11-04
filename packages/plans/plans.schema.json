@@ -5,7 +5,7 @@
  "description": "packages/plans/plans.json. Prices are null until the owner sets them. `allowances.call_minutes` and `allowances.whatsapp_messages` null = nothing included and no ceiling (pay as you go: billed by use, per minute and per message). Only two things are metered and shown to owners: AI call minutes and business-initiated WhatsApp messages. AI itself is 'included, fair use' (the internal allowances of plan_ai_allowances, never shown in rupees).",
  "type": "object",
  "additionalProperties": false,
- "required": ["version", "status", "currency", "trial", "plans"],
+ "required": ["version", "status", "currency", "trial", "products", "plans"],
  "properties": {
   "$schema": { "type": "string" },
   "version": { "type": "integer", "minimum": 1 },
@@ -25,6 +25,16 @@
     "grace_days_after_failed_payment": { "type": "integer", "minimum": 0, "maximum": 30 }
    }
   },
+  "products": {
+   "description": "The two subscriptions (owner decision of 4 Nov 2026) as feature switches, not prices: AI Workforce has every feature, Lead Desk every feature except the Lead Finder. A feature no product names is on for every plan.",
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["ai_workforce", "lead_desk"],
+   "properties": {
+    "ai_workforce": { "$ref": "#/$defs/product" },
+    "lead_desk": { "$ref": "#/$defs/product" }
+   }
+  },
   "plans": { "type": "array", "minItems": 1, "maxItems": 20, "items": { "$ref": "#/$defs/plan" } }
  },
  "$defs": {
@@ -40,13 +50,23 @@
     "kn": { "type": "string", "minLength": 1, "maxLength": 60 }
    }
   },
+  "product": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": ["name", "features"],
+   "properties": {
+    "name": { "$ref": "#/$defs/text" },
+    "features": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["lead_desk", "lead_finder"] } }
+   }
+  },
   "plan": {
    "type": "object",
    "additionalProperties": false,
-   "required": ["id", "kind", "sort", "name", "price_paise_monthly", "allowances", "limits", "ai"],
+   "required": ["id", "kind", "product", "sort", "name", "price_paise_monthly", "allowances", "limits", "ai"],
    "properties": {
     "id": { "$ref": "#/$defs/planId" },
     "kind": { "enum": ["trial", "main", "calls"] },
+    "product": { "enum": ["ai_workforce", "lead_desk"] },
     "sort": { "type": "integer", "minimum": 0, "maximum": 1000 },
     "name": { "$ref": "#/$defs/text" },
     "price_paise_monthly": { "type": ["integer", "null"], "minimum": 0, "maximum": 100000000 },

@@ -866,6 +866,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "lead_finder_not_available",
         "Finding new customers is not available for this business.",
     ),
+    lead_finder_errors.NotInPlanError: ApiError(
+        403,
+        "not_in_plan",
+        "Finding new customers is part of AI Workforce.",
+        extra={"feature": "lead_finder", "upgrade_to": "ai_workforce"},
+    ),
     lead_finder_errors.SearchCapError: ApiError(
         429, "search_cap_reached", "Today's searches are used up. Try again tomorrow."
     ),

@@ -91,9 +91,11 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
 
 ### cant_do (A6)
 ```json
-{ "kind": "cant_do", "id": "uuid", "reason": "not_yet" | "screen_only", "what": "Opening the real-data gate", "screen": { "label": "Settings -> Data", "href": "/settings/data" } | null }
+{ "kind": "cant_do", "id": "uuid", "reason": "not_yet" | "screen_only" | "not_in_plan", "what": "Opening the real-data gate", "screen": { "label": "Settings -> Data", "href": "/settings/data" } | null,
+  "upgrade_to": "ai_workforce" }   // upgrade_to: only with not_in_plan
 ```
-`href` is a path inside the workspace, which your `insideBase` keeps. `not_yet` means no tool exists for it yet: the assistant says so, never pretends. `screen_only` means it is always a screen and a person.
+`href` is a path inside the workspace, which your `insideBase` keeps. `not_yet` means no tool exists for it yet: the assistant says so, never pretends. `screen_only` means it is always a screen and a person. **`not_in_plan`** (owner decision 4 Nov 2026): the
+feature is part of AI Workforce and this workspace is on Lead Desk ("find new retailers ..."): a friendly card with `upgrade_to` and the Plans link (`/plans`); no price, nothing is charged.
 
 ## 3. Settings -> Activity (design 6)
 - `GET /assistant/actions?since=<iso>&before=<iso>&limit=50` -> `{ items: [ { action_id, tool, summary, changed, requested_by, message_id, at, status: "done" | "failed" | "undone", undo: "available" | "done" | "none" | "expired" } ], next_before }`
