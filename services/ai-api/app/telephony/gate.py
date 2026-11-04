@@ -51,7 +51,7 @@ REASONS: tuple[str, ...] = (
     "outside_window", "outside_hours", "holiday", "weekly_limit", "daily_cap", "minutes_cap", "no_consent", "suppressed", "erased_or_archived", "dnd", "dnd_unknown", "no_ai_disclosure",
     "already_calling", "too_many_calls",
     "inbound_off", "no_such_line", "blocked_caller",
-    "trial_not_sandbox", "trial_caller", "trial_account", "trial_app_id", "trial_busy", "trial_day_limit",
+    "trial_not_sandbox", "trial_account", "trial_app_id", "trial_busy", "trial_day_limit",
 )
 
 
