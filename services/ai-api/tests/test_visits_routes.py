@@ -523,7 +523,7 @@ def test_a_confirmation_is_made_from_the_fixed_words_in_india_time_and_goes_to_t
     )
     # V2 starts 10:30 UTC = 16:00 India time on Monday 5 October; it carries an advance of ₹500, so the words say so
     assert sent["p_body"] == (
-        "Your visit is confirmed for Monday, 5 October at 4:00 pm. We look forward to seeing you at our shop. "
+        "Your visit is confirmed for Monday, 5 October at 4:00 pm. We look forward to seeing you. "
         "If your plans change, please let us know. An advance of ₹500.00 is requested to hold the slot."
     )
     body = r.json()
