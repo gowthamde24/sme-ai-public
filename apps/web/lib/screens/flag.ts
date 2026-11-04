@@ -59,3 +59,10 @@ export const autoReplyScreens = (value: string | undefined = process.env.AUTO_RE
 
 /** Settings > AI assistant > "Pronunciation" (job pronunciation-quality, owner 30 Oct): the words the assistant must say a certain way (word + "sounds like" + Hear it in the chosen voice), and the "Mispronounced?" action on spoken chat messages. C1's API (`/ai-assistant/pronunciation`, lib/api/pronunciation.ts has the assumed contract): `mock` = the list kept in a cookie of the browser (the sounds are tones), `1` = the API, unset = the part is not there. */
 export const pronunciationScreens = (value: string | undefined = process.env.PRONUNCIATION_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * The two plan tiers (owner decision 4 Nov): AI Workforce = every feature, Lead Desk = every feature except the Lead Finder. What the screens read is lib/plan/tier.ts (`GET /billing/entitlements`, C1's draft in
+ * docs/contracts/plans-billing.md). Off (unset) = the web treats every workspace as AI Workforce and reads nothing (nothing changes). `mock` = a fixture, AI Workforce unless PLAN_TIER_MOCK=lead_desk (review, tests and pictures:
+ * no network). `1` = the API; a missing or odd answer is AI Workforce too, so a tier switch never hides a feature by accident.
+ */
+export const planTierScreens = (value: string | undefined = process.env.PLAN_TIER_SCREENS): ScreenMode => screenMode(value);
