@@ -39,8 +39,22 @@ AFTER_HOURS = {"en": "Thank you for calling {business}. We are closed right now.
                "ml": "{business} ലേക്ക് വിളിച്ചതിന് thank you. ഇപ്പോൾ ഞങ്ങൾ അടച്ചിരിക്കുകയാണ്. പ്രവൃത്തി സമയത്ത് വീണ്ടും വിളിക്കൂ, അല്ലെങ്കിൽ WhatsApp ൽ message അയക്കൂ, ഞങ്ങളുടെ ടീം ബന്ധപ്പെടും."}
 
 
+# the person rang US: no "I am calling about your enquiry"; it says it is an AI and asks how it can help (drafts for a native reader, like the other fixed words)
+INBOUND_OPENING = {
+    "en": "Hello, this is the AI assistant of {business}. How can I help you?",
+    "te": "నమస్కారం అండీ, నేను {business} AI assistant ని. మీకు ఎలా సహాయం చేయగలను?",
+    "hi": "नमस्ते, मैं {business} की AI assistant हूँ। बताइए, आपकी क्या मदद करूँ?",
+    "kn": "ನಮಸ್ಕಾರ, ನಾನು {business} ನ AI assistant. ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
+    "ta": "வணக்கம், நான் {business} ன் AI assistant. உங்களுக்கு எப்படி உதவலாம்?",
+    "ml": "നമസ്കാരം, ഞാൻ {business} ന്റെ AI assistant ആണ്. എങ്ങനെ സഹായിക്കാം?",
+}
+
+
 def opening_line(language: str, *, business: str, assistant: str | None, customer: str | None, owner_line: str | None = None, inbound: bool = False) -> str:
-    """What the person hears first. ALWAYS says it is an AI (the gate refuses an outbound call whose line does not); on an inbound call the Owner's switch decides, defaulting to saying it."""
+    """What the person hears first. ALWAYS says it is an AI (the gate refuses an outbound call whose line does not); on an inbound call the Owner's switch decides, defaulting to saying it.
+    An inbound call without the Owner's own line is answered, not called: it asks how it can help."""
+    if inbound and not owner_line:
+        return INBOUND_OPENING.get(language, INBOUND_OPENING["en"]).replace("{business}", business)
     return compose_opening(language, owner_line=owner_line, mention_ai=True, assistant=assistant, business=business, customer=customer, agent_role=None)
 
 

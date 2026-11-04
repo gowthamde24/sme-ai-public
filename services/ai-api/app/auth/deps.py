@@ -6,7 +6,7 @@ import logging
 import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import Depends, Request
 
@@ -184,6 +184,8 @@ class Runtime:
     call_voice: CallVoicePreview | None = None
     # job DV: talk to the assistant in the browser (a WebSocket); None = off
     browser_voice: BrowserVoice | None = None
+    # inbound calls on the Exotel sandbox (app.telephony.inbound_routes.InboundService); None = off
+    phone_inbound: Any = None
     # job DY: the Owner's switch for automatic WhatsApp replies; None = not available here
     auto_reply: AutoReplySwitch | None = None
 
