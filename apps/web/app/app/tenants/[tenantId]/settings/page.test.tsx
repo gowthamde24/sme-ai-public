@@ -40,6 +40,9 @@ vi.mock("@/lib/api/privacy", async (importOriginal) => ({ ...(await importOrigin
 vi.mock("@/lib/dpdp/source", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/dpdp/source")>()), readConsents: (...a: unknown[]) => readConsentsMock(...a) }));
 vi.mock("@/lib/api/consent-list", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/consent-list")>()), readConsentList: (...a: unknown[]) => readConsentList(...a) }));
 
+const readAvailability = vi.fn<(...a: unknown[]) => Promise<unknown>>(async () => null);
+const getFinderSettings = vi.fn<(...a: unknown[]) => Promise<unknown>>(async () => null);
+vi.mock("@/lib/api/lead-finder", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/lead-finder")>()), readAvailability: (...a: unknown[]) => readAvailability(...a), getFinderSettings: (...a: unknown[]) => getFinderSettings(...a) }));
 vi.mock("@/lib/api/gstin", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/gstin")>()), getBusinessProfile: (...a: unknown[]) => getBusinessProfile(...a) }));
 
 import SettingsPage from "./page";
@@ -314,5 +317,44 @@ describe("Settings > Business: the shop's GSTIN (job CC)", () => {
     render(await SettingsPage(props()));
     expect(screen.getByText(/Wait 12 seconds/)).toBeInTheDocument();
     expect(screen.getByText("Acme Silks")).toBeInTheDocument();
+  });
+});
+
+describe("Settings > Lead Finder (job lead-finder part D)", () => {
+  const ON = { available: true, source: "fixture", reason: "ok" };
+  const STORED = { fitBar: 70, dailyCallCap: 20, callFromHour: 10, callToHour: 19, searchesPerDay: 5, resultsPerSearch: 20, updatedAt: null };
+  it.each(["owner", "admin"])("%s: a tab where the Lead Finder is available, with the six numbers as they are stored", async (role) => {
+    fetchTenant.mockResolvedValue(tenant(role));
+    readAvailability.mockResolvedValue(ON);
+    getFinderSettings.mockResolvedValue(STORED);
+    render(await SettingsPage(props({ section: "leadfinder" })));
+    expect(tabs().getByRole("link", { name: "Lead Finder" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("spinbutton", { name: "Fit bar (50 to 100)" })).toHaveValue(70);
+    expect(screen.getByRole("spinbutton", { name: "Calls a day (0 to 500)" })).toHaveValue(20);
+    expect(screen.getByRole("spinbutton", { name: "Call from (hour, 9 to 20)" })).toHaveValue(10);
+    expect(screen.getByRole("spinbutton", { name: "Call until (hour, 10 to 21)" })).toHaveValue(19);
+    expect(screen.getByRole("spinbutton", { name: "Searches a day (1 to 20)" })).toHaveValue(5);
+    expect(screen.getByRole("spinbutton", { name: "Results per search (1 to 20)" })).toHaveValue(20);
+    expect(getFinderSettings).toHaveBeenCalledWith("tok", TENANT);
+  });
+  it.each([["a school", { available: false, source: null, reason: "not_for_this_business" }], ["switched off", { available: false, source: null, reason: "switched_off" }], ["cannot tell", null]])("%s: no tab, and the address opens the business part", async (_, availability) => {
+    readAvailability.mockResolvedValue(availability);
+    render(await SettingsPage(props({ section: "leadfinder" })));
+    expect(tabs().queryByRole("link", { name: "Lead Finder" })).toBeNull();
+    expect(tabs().getByRole("link", { name: "Business and plan" })).toHaveAttribute("aria-current", "page");
+    expect(getFinderSettings).not.toHaveBeenCalled();
+  });
+  it.each(["sales", "viewer"])("%s: no tab (the availability is not even asked)", async (role) => {
+    fetchTenant.mockResolvedValue(tenant(role));
+    readAvailability.mockResolvedValue(ON);
+    render(await SettingsPage(props({ section: "leadfinder" })));
+    expect(tabs().queryByRole("link", { name: "Lead Finder" })).toBeNull();
+    expect(readAvailability).not.toHaveBeenCalled();
+  });
+  it("settings that cannot be read say so in their place", async () => {
+    readAvailability.mockResolvedValue(ON);
+    getFinderSettings.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
+    render(await SettingsPage(props({ section: "leadfinder" })));
+    expect(screen.getByText("Not available yet")).toBeInTheDocument();
   });
 });

@@ -25,7 +25,11 @@ import { type Plan } from "@/lib/api/plan";
 import { type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
 
-import { readPlanCached, readUsageCached } from "../../../frame-data";
+import { readFinderCached, readPlanCached, readUsageCached } from "../../../frame-data";
+import { FinderSettingsForm } from "@/components/v2/app/prospects/FinderSettingsForm";
+import { getFinderSettings } from "@/lib/api/lead-finder";
+import type { FinderSettings } from "@/lib/lead-finder/types";
+import { saveFinderSettingsAction } from "./lead-finder-actions";
 import { PartProblem } from "@/components/v2/app/cc/PartProblem";
 import { DataSection } from "@/components/v2/app/data/DataSection";
 import { getBusinessProfile } from "@/lib/api/gstin";
@@ -114,7 +118,7 @@ export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -179,8 +183,11 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // Settings > Activity (the assistant does the work, ASSISTANT_WORK_SCREENS): what the assistant changed on request, for the people who run the business
   const workMode = assistantWorkScreens();
   const hasActivity = admin && workMode !== "off";
-  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "activity" && !hasActivity) && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+  // Settings > Lead Finder (job lead-finder part D): for the Owner and Admin, only where the API says the Lead Finder is available (a school never; switched off or cannot be told: hidden)
+  const hasLeadFinder = admin && (await readFinderCached(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)))?.available === true;
+  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "activity" && !hasActivity) && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "leadfinder" && !hasLeadFinder) && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
+  const finderSettings: FinderSettings | null = section === "leadfinder" ? await getFinderSettings(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   let members: Member[] | null = null;
   let people: Person[] = [];
   if (section === "members") {
@@ -288,6 +295,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     ...(hasAssistant ? [{ key: "assistant", label: t("asst.tab") }] : []),
     ...(hasActivity ? [{ key: "activity", label: t("settings.tab.activity") }] : []),
     ...(tenant.role === "owner" ? [{ key: "agent", label: t("settings.tab.agent") }] : []),
+    ...(hasLeadFinder ? [{ key: "leadfinder", label: t("lf.set.tab") }] : []),
     { key: "security", label: t("settings.tab.security") },
     { key: "privacy", label: t("settings.tab.privacy") },
   ];
@@ -616,6 +624,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             <SchedulerCard words={words} status={scheduler} now={clock()} />
           </div>
         ) : null}
+        {section === "leadfinder" ? finderSettings ? <FinderSettingsForm words={wordsFor(lang, ["lf.set.", "apierr."], ["lf.working"])} initial={finderSettings} save={saveFinderSettingsAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} /> : null}
         {section === "security" ? (
           <section className={`${surface} flex flex-col gap-3`} aria-label={t("settings.security.title")}>
             <h2 className="text-xl font-semibold">{t("settings.security.title")}</h2>
