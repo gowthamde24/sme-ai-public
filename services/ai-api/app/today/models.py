@@ -45,7 +45,8 @@ class TodayCards(_Out):
 class Target(_Out):
     """Where "Open" goes for an item: a quote, a lead (its follow-ups), an enquiry, an order, a message held for approval or a call request."""
 
-    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "billing"]
+    # material_quote: the building-materials quote; campaign: a message campaign; fees: the school's fee list (the id is the workspace's)
+    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "billing", "material_quote", "campaign", "fees"]
     id: uuid.UUID
 
 
@@ -60,6 +61,10 @@ class NeedsYouItem(_Out):
         "hot_lead_waiting",
         "topup_low",
         "topup_empty",
+        # 4 Nov 2026 (migration 20261228100000): a draft materials quote, a draft campaign, a school's overdue fees (a count and a total, no name)
+        "material_quote_approval",
+        "campaign_approval",
+        "fees_overdue",
     ]
     id: uuid.UUID
     customer: str
