@@ -80,9 +80,11 @@ def test_the_module_matrix_of_the_blueprint_section_4() -> None:
     t, c, e = on["textiles"], on["construction_materials"], on["education"]
     everyone = {"today", "inbox", "contacts", "enquiries", "followups", "visits", "call_list", "reports", "office", "integrations"}
     assert everyone <= t and everyone <= c and everyone <= e
-    # companies, catalogue, quotes, orders: textiles and construction; research and the lead finder too; never education
-    for m in ("companies", "catalogue", "quotes", "orders", "research", "lead_finder"):
+    # companies, catalogue, quotes, orders: textiles and construction; research too; never education
+    for m in ("companies", "catalogue", "quotes", "orders", "research"):
         assert m in t and m in c and m not in e, m
+    # the Lead Finder: every one of the three (owner decision 4 Nov 2026: a school finds ORGANISATIONS only; packages/packs/education/lead_finder.json)
+    assert "lead_finder" in t and "lead_finder" in c and "lead_finder" in e
     assert {"deliveries", "sites"} <= c and not {"deliveries", "sites"} & (t | e)
     assert {"programmes", "fees"} <= e and not {"programmes", "fees"} & (t | c)
     assert "dues" in c and "dues" in e and "dues" not in t

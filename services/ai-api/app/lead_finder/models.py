@@ -35,6 +35,8 @@ class AvailabilityOut(_Out):
     # not_in_plan: the workspace is on Lead Desk (owner decision 4 Nov 2026: the Lead Finder is part of AI Workforce); the screens show the upgrade card, not the feature
     reason: Literal["ok", "not_for_this_business", "switched_off", "not_for_your_role", "not_in_plan"]
     upgrade_to: Literal["ai_workforce"] | None = None
+    # who it finds (owner decision 4 Nov 2026): a shop's buyers ("businesses") or, for a school, organisations only (associations, companies, coaching centres, vendors, institutions; never individuals)
+    audience: Literal["businesses", "organisations"] = "businesses"
 
 
 class SettingsIn(_In):

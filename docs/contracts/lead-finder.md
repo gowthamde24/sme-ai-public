@@ -7,9 +7,13 @@ Everything a demo workspace sees is **made-up businesses** (`source: "fixture"`)
 Who: Owner, Admin and Sales read and act; **Owner and Admin** approve a search, change the settings and run a simulated call; a Viewer gets 403. A business type without the Lead Finder (a **school**) gets
 **403 `lead_finder_not_available`** from every route below except `availability`, which says `available: false`: hide every Lead Finder screen, button and word then.
 
+**Schools (4 Nov 2026):** a school has the Lead Finder for **organisations only** (`availability.audience: "organisations"`): associations, companies and their HR, coaching centres,
+transport and event vendors, institutions. Word the screens for organisations ("Find organisations"), never parents, families, retailers or stock. A request that names individual people or families
+gets **422 `individuals_not_allowed`** from `POST /lead-finder/plan` (any business type), with a polite sentence in `message` (`extra: { audience }`); the chat says it too, with no card.
+
 ## 0. `GET /lead-finder/availability` -> 200
 ```json
-{ "available": true, "source": "fixture | places | null", "reason": "ok | not_for_this_business | switched_off | not_for_your_role | not_in_plan", "upgrade_to": "ai_workforce | null" }
+{ "available": true, "source": "fixture | places | null", "reason": "ok | not_for_this_business | switched_off | not_for_your_role | not_in_plan", "upgrade_to": "ai_workforce | null", "audience": "businesses | organisations" }
 ```
 **`not_in_plan` (5 Nov 2026, owner decision of 4 Nov):** the workspace is on **Lead Desk**; the Lead Finder is part of **AI Workforce**. Show the upgrade card (no price, nothing is charged) where the
 Prospects tab would be, linking to `/plans`. Every other route answers **403 `not_in_plan`** (`extra: { feature: "lead_finder", upgrade_to: "ai_workforce" }`). In the chat, "find new retailers ..."
