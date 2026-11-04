@@ -14,7 +14,8 @@ def gate_settings(settings: Any) -> Settings:
     """From the app settings. Anything but the three known modes is `off`; a sandbox number that is not a number is ignored (it can never be rung)."""
     mode: Mode = settings.telephony_mode if settings.telephony_mode in ("off", "sandbox", "live") else "off"
     numbers = frozenset(n for n in (normalise(part) for part in str(settings.telephony_sandbox_numbers).split(",")) if n)
-    return Settings(mode=mode, live_confirmed=bool(settings.telephony_live_confirmed), sandbox_numbers=numbers, max_concurrent=max(1, int(settings.telephony_max_concurrent)))
+    return Settings(mode=mode, live_confirmed=bool(settings.telephony_live_confirmed), sandbox_numbers=numbers, max_concurrent=max(1, int(settings.telephony_max_concurrent)),
+                    outbound=bool(getattr(settings, "telephony_outbound", False)))
 
 
 def phone_llm_choice(settings: Any) -> tuple[str, float]:
