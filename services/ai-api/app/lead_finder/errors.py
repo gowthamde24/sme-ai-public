@@ -15,5 +15,9 @@ class SearchCapError(RepositoryError):
     """SM972: the searches of today are used up."""
 
 
+class NotInPlanError(RepositoryError):
+    """SM974: the workspace's plan does not have the Lead Finder (Lead Desk; owner decision 4 Nov 2026: the Lead Finder is part of AI Workforce)."""
+
+
 class ProspectStateError(RepositoryError):
     """SM973: not possible in the state it is in now (a suppressed business, a search that is not approved)."""

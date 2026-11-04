@@ -9,7 +9,12 @@ from typing import Any, Protocol
 
 import httpx
 
-from app.lead_finder.errors import NotForThisBusinessError, ProspectStateError, SearchCapError
+from app.lead_finder.errors import (
+    NotForThisBusinessError,
+    NotInPlanError,
+    ProspectStateError,
+    SearchCapError,
+)
 from app.rpc_base import RpcClient
 
 
@@ -31,12 +36,13 @@ class LeadFinderRepository(Protocol):
     def call_finish(self, token: str, tenant_id: uuid.UUID, prospect_id: uuid.UUID, call_id: uuid.UUID, result: str, qualification: dict[str, Any] | None) -> dict[str, Any]: ...
     def pack_id(self, token: str, tenant_id: uuid.UUID) -> str | None: ...
     def module_on(self, token: str, tenant_id: uuid.UUID) -> bool: ...
+    def entitled(self, token: str, tenant_id: uuid.UUID) -> bool: ...
     def stock(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
 
 
 class PostgrestLeadFinderRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
-        self._rpc = RpcClient(rest_url, anon_key, {"SM971": NotForThisBusinessError, "SM972": SearchCapError, "SM973": ProspectStateError}, client=client)
+        self._rpc = RpcClient(rest_url, anon_key, {"SM971": NotForThisBusinessError, "SM972": SearchCapError, "SM973": ProspectStateError, "SM974": NotInPlanError}, client=client)
 
     def close(self) -> None:
         self._rpc.close()
@@ -95,6 +101,11 @@ class PostgrestLeadFinderRepository:
     def module_on(self, token: str, tenant_id: uuid.UUID) -> bool:
         rows = self._rpc.array(token, "workspace_modules", {"p_tenant_id": str(tenant_id)})
         return any(r.get("module") == "lead_finder" and r.get("enabled") is True for r in rows)
+
+    def entitled(self, token: str, tenant_id: uuid.UUID) -> bool:
+        """The plan's switch (public.workspace_entitlements): AI Workforce has the Lead Finder, Lead Desk does not."""
+        out = self._rpc.object(token, "workspace_entitlements", {"p_tenant_id": str(tenant_id)})
+        return bool((out.get("features") or {}).get("lead_finder"))
 
     def stock(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         return self._rpc.array(token, "catalogue_search", {"p_tenant_id": str(tenant_id), "p_limit": 50})

@@ -63,6 +63,11 @@ def not_available() -> ApiError:
     return ApiError(403, "lead_finder_not_available", "Finding new customers is not available for this business.")
 
 
+def not_in_plan() -> ApiError:
+    """The workspace's plan (Lead Desk) does not have the Lead Finder: it is part of AI Workforce. No charge: the screen shows an upgrade link."""
+    return ApiError(403, "not_in_plan", "Finding new customers is part of AI Workforce.", extra={"feature": "lead_finder", "upgrade_to": "ai_workforce"})
+
+
 INDIVIDUALS = {
     "businesses": "I find businesses and organisations only, never individual people or families.",
     "organisations": ("I find organisations only, never individual people or families: for example apartment associations, companies, coaching centres or transport and event vendors near the "
@@ -129,6 +134,8 @@ class LeadFinderService:
         data = packdata.for_pack(self.repo.pack_id(token, tenant_id))
         if data is None:
             raise not_available()
+        if not self.repo.entitled(token, tenant_id):
+            raise not_in_plan()
         return data
 
     def _stock(self, token: str, tenant_id: uuid.UUID, data: packdata.PackLeadFinder) -> list[decide.StockLine]:
@@ -145,7 +152,8 @@ class LeadFinderService:
         try:
             data = self.data_for(token, tenant_id)
         except ApiError as exc:
-            return AvailabilityOut(available=False, source=None, reason="switched_off" if exc.code == "lead_finder_off" else "not_for_this_business")
+            reason = {"lead_finder_off": "switched_off", "not_in_plan": "not_in_plan"}.get(exc.code, "not_for_this_business")
+            return AvailabilityOut(available=False, source=None, reason=reason, upgrade_to="ai_workforce" if reason == "not_in_plan" else None)  # type: ignore[arg-type]
         except NotForThisBusinessError:
             return AvailabilityOut(available=False, source=None, reason="not_for_this_business")
         ctx = self.repo.context(token, tenant_id)

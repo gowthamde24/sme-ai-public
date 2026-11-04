@@ -13,8 +13,11 @@ gets **422 `individuals_not_allowed`** from `POST /lead-finder/plan` (any busine
 
 ## 0. `GET /lead-finder/availability` -> 200
 ```json
-{ "available": true, "source": "fixture | places | null", "reason": "ok | not_for_this_business | switched_off | not_for_your_role", "audience": "businesses | organisations" }
+{ "available": true, "source": "fixture | places | null", "reason": "ok | not_for_this_business | switched_off | not_for_your_role | not_in_plan", "upgrade_to": "ai_workforce | null", "audience": "businesses | organisations" }
 ```
+**`not_in_plan` (5 Nov 2026, owner decision of 4 Nov):** the workspace is on **Lead Desk**; the Lead Finder is part of **AI Workforce**. Show the upgrade card (no price, nothing is charged) where the
+Prospects tab would be, linking to `/plans`. Every other route answers **403 `not_in_plan`** (`extra: { feature: "lead_finder", upgrade_to: "ai_workforce" }`). In the chat, "find new retailers ..."
+gets a `work_card` `cant_do` with `reason: "not_in_plan"` and `upgrade_to: "ai_workforce"` (docs/contracts/assistant-tools.md).
 Use it to show or hide the Prospects tab, the plan card and Settings -> Lead Finder. Never an error for a member: a **Viewer** gets `available: false, reason: "not_for_your_role"` (a Viewer reads
 no prospect; every other route answers a Viewer 403).
 
