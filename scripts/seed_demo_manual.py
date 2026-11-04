@@ -31,8 +31,8 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import httpx  # noqa: E402
-from seed_demo import (  # noqa: E402
+import httpx
+from seed_demo import (
     DEMO_EMAIL,
     DEMO_WORKSPACE_NAME,
     DEMO_WORKSPACE_SLUG,
