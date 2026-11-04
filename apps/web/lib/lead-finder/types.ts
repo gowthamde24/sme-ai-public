@@ -62,6 +62,18 @@ export type Search = {
   finishedAt: string | null;
 };
 
+/**
+ * The card a chat reply carries (contract section 1b): the event `lead_finder` of a turn (typed or spoken) and `lead_finder` on a message of the conversation's history. The search's state says which card it is: `planned` = the plan
+ * card (OK / Cancel), `done` = the result card, `failed` / `cancelled` = a closed card. `canApprove`: the Owner or an Admin (a Sales member sees the plan; the owner says OK).
+ */
+export type LeadFinderCard = { search: Search; canApprove: boolean };
+
+/** How far a search has gone: a card never goes back (a replayed `planned` never hides a `done` already shown). */
+export const searchRank = (s: SearchState): number => (s === "planned" ? 0 : s === "approved" ? 1 : 2);
+
+/** The words the chat's Lead Finder card draws (the chat panel is given only these and its own `bv.*` words). */
+export const isChatCardWord = (k: string): boolean => k.startsWith("lf.plan.") || k.startsWith("lf.result.") || k === "lf.demo" || k === "lf.working" || k === "lf.chat.card" || k === "lf.err.cap" || k === "lf.err.off" || k === "lf.err.state";
+
 export type StockMatch = { matched: string[]; low: string[]; enough: boolean };
 export type QuoteLine = { item: string; unit: string; pricePaise: number | null; moq: number | null; quantitySaid: string };
 export type Qualification = { summary: string; captured: Partial<Record<CapturedKey, string>>; language: string; whatsappOk: boolean; callback: boolean; pitched: string[]; quoteSuggestion: QuoteLine[]; simulated: true };
@@ -113,6 +125,22 @@ export type PracticeCall = {
   transcript: Turn[];
   evals: Record<string, boolean>;
 };
+
+/**
+ * The draft quote of a qualified call (contract section 7). The PREVIEW (`GET /prospects/{id}/quote-draft`, nothing stored): each line at the Owner's own exact catalogue price for the number the buyer said, and each suggestion that is
+ * left out with its closed reason; `ready` = at least one line can go in (the button is shown), `made` = the draft exists (open it instead). Making it (`POST`, Owner and Admin, with the second factor) makes ONE enquiry on the call's
+ * lead and ONE draft quote: nothing is approved or sent.
+ */
+export const LEFT_OUT_REASONS = ["no_price", "no_quantity", "not_in_stock", "not_in_catalogue", "too_many_lines", "item_type_off"] as const;
+export type LeftOutReason = (typeof LEFT_OUT_REASONS)[number];
+export type DraftLine = { item: string; itemTypeCode: string; qty: number; unitPricePaise: number; quantitySaid: string };
+export type LeftOut = { item: string; reason: LeftOutReason };
+export type QuoteDraftPreview = { prospectId: string; leadId: string; ready: boolean; made: boolean; quoteId: string; /** The enquiry the draft lives on, once made (#305); null from an older API or before it is made. */ enquiryId: string | null; lines: DraftLine[]; leftOut: LeftOut[] };
+export type QuoteDraftMade = { quoteId: string; quoteNo: number | null; enquiryId: string; status: "draft"; totalPaise: number | null; needsOwnerApproval: boolean; lines: DraftLine[]; leftOut: LeftOut[]; replayed: boolean };
+/** What the screen is given: the preview and, once the draft is made, the enquiry it lives on (null when that could not be read). */
+export type QuoteDraftView = QuoteDraftPreview & { enquiryId: string | null };
+/** A textiles draft quote opens on its ENQUIRY's page with that quote chosen (its Quote part), never on /quotes/{id} (the building-materials quote). */
+export const draftQuoteHref = (base: string, enquiryId: string, quoteId: string): string => `${base}/enquiries/${enquiryId}?${new URLSearchParams({ quote: quoteId })}`;
 
 /** Settings -> Lead Finder (contract section 6) and the ranges the API takes. */
 export type FinderSettings = { fitBar: number; dailyCallCap: number; callFromHour: number; callToHour: number; searchesPerDay: number; resultsPerSearch: number; updatedAt: string | null };

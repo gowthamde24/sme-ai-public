@@ -1,12 +1,15 @@
 import { ApiContractError, apiRequest, apiStreamRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
+import type { LeadFinderCard } from "@/lib/lead-finder/types";
+
 import { isKnownSource, parseAssistantEvent, parseSource, readSse, type AssistantEvent, type AssistantLanguage } from "./assistant";
+import { readChatCard } from "./lead-finder-card";
 
 /**
  * One conversation for the typed box and the voice circle (contract-conversation.md, 28 Oct), under `/v1/tenants/{id}/assistant`, with the signed-in person's own token (server side only):
- *   POST /turns                            {message_id, conversation_id | null, text, language_hint}  -> server-sent events: intent, step, text, source, draft, confirm_action, clarify, done, error
+ *   POST /turns                            {message_id, conversation_id | null, text, language_hint}  -> server-sent events: intent, step, text, source, draft, confirm_action, clarify, lead_finder, done, error
  *   GET  /conversations?limit&before       the person's own conversations, newest first
- *   GET  /conversations/{id}               the messages (with `kind` and `action`)
+ *   GET  /conversations/{id}               the messages (with `kind`, `action` and the Lead Finder's card `lead_finder`)
  *   POST /conversations/{id}/archive       hides it (nothing is deleted)
  *   POST /actions/{action_id}/confirm      {decision: "yes" | "no"}   (the Owner; with the second factor when the plan says so)
  * There is NO mode switch: the router decides whether a message is small talk, general help, business data or an action, and `done.kind` says what the typed reply is: an answer, a plan to confirm, or one short question.
@@ -28,7 +31,13 @@ export type ConfirmAction = {
   status: ActionStatus;
 };
 
-export type TurnEvent = AssistantEvent | { type: "intent"; kind: "smalltalk" | "general" | "business" | "action" } | { type: "confirm_action"; action: ConfirmAction } | { type: "clarify"; question: string; actionId: string | null };
+export type TurnEvent =
+  | AssistantEvent
+  | { type: "intent"; kind: "smalltalk" | "general" | "business" | "action" }
+  | { type: "confirm_action"; action: ConfirmAction }
+  | { type: "clarify"; question: string; actionId: string | null }
+  /** The Lead Finder's plan card (or, after a "yes" in the chat, its result card) under the reply's sentence (docs/contracts/lead-finder.md section 1b). */
+  | { type: "lead_finder"; card: LeadFinderCard };
 
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const bad = (what: string): never => {
@@ -71,6 +80,11 @@ export function parseTurnEvent(name: string, data: unknown): TurnEvent | null {
       return { type: "confirm_action", action: parseConfirmAction(data) };
     case "clarify":
       return { type: "clarify", question: text(data.question, "question", 1000), actionId: typeof data.action_id === "string" && isCanonicalUuid(data.action_id) ? data.action_id : null };
+    case "lead_finder": {
+      // a card that is not the contract's shape is left out (never drawn); the reply's sentence still stands
+      const card = readChatCard(data);
+      return card === null ? null : { type: "lead_finder", card };
+    }
     case "source": {
       const fixed = isRec(data) && data.target === undefined && data.open !== undefined ? { ...data, target: data.open } : data;
       return isKnownSource(fixed) ? { type: "source", ...parseSource(fixed) } : null;
@@ -98,7 +112,7 @@ export async function* sendTurn(token: string, tenantId: string, input: TurnInpu
 }
 
 export type ConversationItem = { id: string; title: string; updatedAt: string; messageCount: number; lastText: string };
-export type HistoryMessage = { id: string; role: "user" | "assistant"; text: string; kind: string | null; action: { actionId: string; status: ActionStatus } | null; sources: { label: string }[]; createdAt: string };
+export type HistoryMessage = { id: string; role: "user" | "assistant"; text: string; kind: string | null; action: { actionId: string; status: ActionStatus } | null; sources: { label: string }[]; /** The Lead Finder's card this reply showed, with the search's state NOW (one per search, on the reply that showed the plan); null otherwise or when it cannot be read. */ leadFinder: LeadFinderCard | null; createdAt: string };
 
 const base = (tenantId: string): string => {
   if (!isCanonicalUuid(tenantId)) throw new ApiContractError("id");
@@ -132,6 +146,7 @@ export async function getHistory(token: string, tenantId: string, conversationId
       kind: typeof m.kind === "string" ? m.kind.slice(0, 30) : null,
       action: a,
       sources: Array.isArray(m.sources) ? m.sources.filter(isKnownSource).slice(0, 8).map((s) => ({ label: parseSource(s).label })) : [],
+      leadFinder: m.role === "assistant" && m.lead_finder !== null && m.lead_finder !== undefined ? readChatCard(m.lead_finder) : null,
       createdAt: text(m.created_at ?? "", "date", 60),
     };
   });

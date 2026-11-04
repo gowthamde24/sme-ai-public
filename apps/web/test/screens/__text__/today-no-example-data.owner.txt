@@ -15,7 +15,7 @@ Tuesday, 6 October
 ### Synthetic Buyer asked for a call
 · order
 [button type=button: Approve call]
-[button type=button: Offer a store visit]
+[button type=button: Test drive instead]
 [button type=button: Details]
 - Follow-up
 ### Synthetic Buyer
@@ -36,8 +36,8 @@ Tuesday, 6 October
 [button type=button: Details]
 {role=status}
 Not available yet
-{label="At the store today"}
-## At the store today
+{label="Test drives today"}
+## Test drives today
 3 visits · 10:30 Anita R. [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 {label="Done while you slept"}
 ## Done while you slept

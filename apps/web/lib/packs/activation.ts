@@ -66,7 +66,7 @@ export function usesChecklist(pack: Pick<WorkspacePack, "source"> | null): boole
 
 export async function readActivation(accessToken: string, tenantId: string, pack: Pick<WorkspacePack, "modules">, t: AppT, leadDesk: readonly LeadDeskStep[] = []): Promise<Activation> {
   const checks = stepChecks(pack.modules, leadDesk);
-  const facts = await readFacts(accessToken, tenantId, checks);
+  const facts = await readFacts(accessToken, tenantId, checks, pack.modules);
   const steps: StartStep[] = checks.map((check) => {
     const where = WHERE[check];
     const state: StepState = where === null ? "unavailable" : facts[check] ? "done" : "todo";

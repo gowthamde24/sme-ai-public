@@ -25,7 +25,7 @@ form:
 ### Synthetic Buyer asked for a call
 · order
 [button type=button: Approve call]
-[button type=button: Offer a campus visit]
+[button type=button: Campus visit instead]
 [button type=button: Details]
 - Follow-up
 ### Synthetic Buyer
