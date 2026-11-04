@@ -125,7 +125,8 @@ After a practice call that QUALIFIED (`prospect.status: "qualified"`, it has a `
 ```
   Show each line (item × qty at ₹price, and "they said: …"), and each left-out item with its reason in words: "no exact price set" (no_price), "they said no number" (no_quantity), "not in stock now"
   (not_in_stock), "no longer in the catalogue" (not_in_catalogue), "a draft holds five lines" (too_many_lines), "its item type is switched off" (item_type_off). Show the button only when `ready`; when `made`, show
-  "Open the draft quote" -> `/quotes/{quote_id}` instead. 409 `not_qualified` for any other call.
+  "Open the draft quote" instead. A textiles draft lives on its ENQUIRY's page, `/app/tenants/{t}/enquiries/{enquiry_id}` (the Quote tab), not on `/quotes/{id}` (that page is the building-materials
+  quote): the POST answer carries `enquiry_id`, and `GET /quotes/{quote_id}` gives it too. (Checked on staging, 4 Nov 2026: quote 52 of the textiles demo renders there with "Typed prices" and "Approve".) 409 `not_qualified` for any other call.
 - `POST /prospects/{id}/quote-draft` `{ "customer_kind": "new" | "repeat", "delivery_state": "KA" | null }` (Owner, Admin, **with the second factor**: 403 `mfa_required` otherwise) -> 201 (200 on a repeat)
 ```json
 { "quote_id": "uuid", "quote_no": 21, "enquiry_id": "uuid", "status": "draft", "total_paise": 40120000, "needs_owner_approval": false, "lines": [...], "left_out": [...], "replayed": false }
