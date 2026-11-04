@@ -50,7 +50,7 @@ describe("Settings > Lead Finder: the form", () => {
     const save = form();
     set("Call from (hour, 9 to 20)", "19");
     press();
-    expect(screen.getByRole("alert")).toHaveTextContent("Calling must start before it ends.");
+    expect(screen.getByRole("alert")).toHaveTextContent("The calling hours must start before they end.");
     expect(save).not.toHaveBeenCalled();
   });
   it("a refusal from the API is said in words and what was typed stays", async () => {

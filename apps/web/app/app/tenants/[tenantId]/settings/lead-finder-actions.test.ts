@@ -36,7 +36,13 @@ describe("saving Settings > Lead Finder", () => {
   });
   it("the API's refusal of the hours is said in words; a rejected session goes to sign in", async () => {
     h.save.mockRejectedValueOnce(new ApiRequestError(422, "invalid_hours", "x"));
-    expect(await saveFinderSettingsAction(T, { callFromHour: 12 })).toMatchObject({ ok: false, kind: "invalid", error: "Calling must start before it ends." });
+    expect(await saveFinderSettingsAction(T, { callFromHour: 12 })).toMatchObject({ ok: false, kind: "invalid", error: "The calling hours must start before they end." });
+    // one hour sent that crosses the stored other: the API's validation_error with no field (#298) says the same
+    h.save.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x"));
+    expect(await saveFinderSettingsAction(T, { callToHour: 10 })).toMatchObject({ ok: false, error: "The calling hours must start before they end." });
+    // a validation_error on a save without an hour is not about the hours
+    h.save.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x"));
+    expect(await saveFinderSettingsAction(T, { fitBar: 80 })).not.toMatchObject({ error: "The calling hours must start before they end." });
     h.save.mockRejectedValueOnce(new ApiAuthError("x"));
     await expect(saveFinderSettingsAction(T, { callFromHour: 12 })).rejects.toThrow("NEXT_REDIRECT:/login");
   });

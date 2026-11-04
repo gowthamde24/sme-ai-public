@@ -31,6 +31,8 @@ describe("availability (contract section 0)", () => {
   it("reads the three closed fields", () => {
     expect(parseAvailability({ available: true, source: "fixture", reason: "ok" })).toEqual({ available: true, source: "fixture", reason: "ok" });
     expect(parseAvailability({ available: false, source: null, reason: "not_for_this_business" })).toEqual({ available: false, source: null, reason: "not_for_this_business" });
+    // a Viewer (#298): 200 with available false; hidden like any other
+    expect(parseAvailability({ available: false, source: null, reason: "not_for_your_role" })).toEqual({ available: false, source: null, reason: "not_for_your_role" });
   });
   it.each([[{ available: "yes", source: null, reason: "ok" }], [{ available: true, source: "yelp", reason: "ok" }], [{ available: true, source: "places", reason: "maybe" }], [null]])("refuses %j", (body) => {
     expect(() => parseAvailability(body)).toThrow(ApiContractError);

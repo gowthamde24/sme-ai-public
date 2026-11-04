@@ -77032,7 +77032,7 @@
   }
  },
  "lf.set.err.hours": {
-  "en": "Calling must start before it ends.",
+  "en": "The calling hours must start before they end.",
   "te": "కాల్స్ మొదలయ్యే టైమ్ ఆఖరు టైమ్ కంటే ముందు ఉండాలి.",
   "hi": "कॉल शुरू होने का समय खत्म होने से पहले होना चाहिए।",
   "kn": "ಕಾಲ್ ಶುರುವಾಗುವ ಸಮಯ ಮುಗಿಯುವ ಸಮಯಕ್ಕಿಂತ ಮೊದಲು ಇರಬೇಕು.",

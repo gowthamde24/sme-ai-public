@@ -33,7 +33,7 @@ export const END_REASONS = ["goodbye", "caller_hung_up", "we_hung_up", "stopped"
 export const CAPTURED = ["sells", "price", "quantity", "supplier", "timing", "decision"] as const;
 export type CapturedKey = (typeof CAPTURED)[number];
 
-export type Availability = { available: boolean; source: Provider | null; reason: "ok" | "not_for_this_business" | "switched_off" };
+export type Availability = { available: boolean; source: Provider | null; /** `not_for_your_role`: a Viewer (#298); hidden like any other `available: false`. */ reason: "ok" | "not_for_this_business" | "switched_off" | "not_for_your_role" };
 
 /** The keys of a done search's counts (contract section 2); an absent key is 0. */
 export const COUNT_KEYS = ["found", "new", "duplicates", "call_ready", "needs_owner", "skipped", "researching", "duplicate_customer", "duplicate_company", "duplicate_prospect", "duplicate_suppressed"] as const;

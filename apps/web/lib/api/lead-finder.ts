@@ -59,7 +59,7 @@ export const notAvailable = (e: unknown): boolean => e instanceof ApiRequestErro
 export function parseAvailability(json: unknown): Availability {
   const x = rec(json, "availability");
   const available = bool(x.available, "available");
-  return { available, source: x.source === null || x.source === undefined ? null : oneOf(x.source, PROVIDERS, "source"), reason: oneOf(x.reason, ["ok", "not_for_this_business", "switched_off"] as const, "reason") };
+  return { available, source: x.source === null || x.source === undefined ? null : oneOf(x.source, PROVIDERS, "source"), reason: oneOf(x.reason, ["ok", "not_for_this_business", "switched_off", "not_for_your_role"] as const, "reason") };
 }
 export async function getAvailability(token: string, tenantId: string): Promise<Availability> {
   return parseAvailability(await apiRequest(`${base(tenantId)}/lead-finder/availability`, token));

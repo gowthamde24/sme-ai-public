@@ -36,6 +36,8 @@ export async function saveFinderSettingsAction(tenantId: string, changes: Partia
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     const f = failureOf(error, t);
-    return f.code === "invalid_hours" ? { ...f, error: t("lf.set.err.hours") } : f;
+    // the calling hours (contract section 6, #298): `invalid_hours` (both sent, from >= to), or a `validation_error` on a save that holds one hour: every range was checked above, so that one crosses the stored other
+    const hours = f.code === "invalid_hours" || (f.code === "validation_error" && (changes.callFromHour !== undefined || changes.callToHour !== undefined));
+    return hours ? { ...f, error: t("lf.set.err.hours") } : f;
   }
 }
