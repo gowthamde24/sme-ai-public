@@ -20,6 +20,9 @@ const SIZE = arg("size", "both");
 const MODE = arg("mode", "shots");
 const OUT = arg("out", "/Volumes/Stack19/stack19/v2-overnight/shots-tw");
 const PAGES = (arg("pages", "") || "").split(",").filter(Boolean);
+const WHO = arg("who", "owner-test"); // owner-test = the helpers of the owner's test workspaces; demo = the demo owners of the DEMO workspaces (scripts/seed_staging.py)
+const LANG = arg("lang", "en"); // the app's language (the sme_lang cookie): en or te
+const SEARCH = arg("search", ""); // finder mode: run ONE Lead Finder search with these words (fixture in a demo/test workspace: made-up businesses, nothing billed)
 mkdirSync(OUT, { recursive: true });
 
 const SIZES = { desktop: { width: 1440, height: 1000 }, phone: { width: 390, height: 844 }, phone360: { width: 360, height: 780 } };
@@ -41,16 +44,16 @@ function totp(b32, offset = 0) {
 }
 
 async function signIn(page, pack) {
-  const email = `owner-test-${pack.replace(/_/g, "-")}@demo.example.test`;
+  const email = `${WHO}-${pack.replace(/_/g, "-")}@demo.example.test`;
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
       await page.goto(`${WEB}/login`);
       await page.fill('input[name="email"]', email, { timeout: 45000 });
-      await page.fill('input[name="password"]', secret(`sme-owner-test-${pack}-password`));
+      await page.fill('input[name="password"]', secret(`sme-${WHO}-${pack}-password`));
       await page.click('button:has-text("Sign in")');
       await page.waitForURL(/\/(app|auth\/mfa|setup)/, { timeout: 45000 });
       if (/\/auth\/mfa/.test(page.url())) {
-        const seed = secret(`sme-owner-test-${pack}-totp`);
+        const seed = secret(`sme-${WHO}-${pack}-totp`);
         for (const offset of [0, 1, -1]) {
           await page.fill('input[name="code"]', totp(seed, offset), { timeout: 45000 });
           await Promise.all([page.waitForURL(/\/app/, { timeout: 15000 }).catch(() => null), page.click('button:has-text("Verify")')]);
@@ -78,8 +81,8 @@ try {
   for (const pack of ONLY) {
     const sizes = SIZE === "both" ? ["desktop", "phone"] : SIZE.split(",");
     for (const size of sizes) {
-      const context = await browser.newContext({ viewport: SIZES[size], colorScheme: "light", locale: "en-IN", timezoneId: "Asia/Kolkata", reducedMotion: "reduce", isMobile: size !== "desktop", hasTouch: size !== "desktop", deviceScaleFactor: size === "desktop" ? 1 : 2 });
-      await context.addCookies([{ name: "sme_consent", value: "1.a0", url: WEB }]);
+      const context = await browser.newContext({ viewport: SIZES[size] ?? SIZES.desktop, colorScheme: "light", locale: "en-IN", timezoneId: "Asia/Kolkata", reducedMotion: "reduce", isMobile: size !== "desktop", hasTouch: size !== "desktop", deviceScaleFactor: size === "desktop" ? 1 : 2 });
+      await context.addCookies([{ name: "sme_consent", value: "1.a0", url: WEB }, { name: "sme_lang", value: LANG, url: WEB }]);
       const page = await context.newPage();
       const errors = [];
       page.on("pageerror", (e) => errors.push(String(e).slice(0, 160)));
@@ -89,7 +92,7 @@ try {
       const tenant = /\/app\/tenants\/([0-9a-f-]{36})/.exec(href || page.url())?.[1];
       if (!tenant) throw new Error(`no workspace for ${pack}`);
       const base = `${WEB}/app/tenants/${tenant}`;
-      const list = MODE === "switcher" || MODE === "verify" || MODE === "more" ? [] : PAGES.length ? PAGES.map((p) => [p.replace(/\W+/g, "-") || "today", p === "today" ? "" : p]) : size === "desktop" ? [["today", ""], ["customers", "/lead-desk"], OWN[pack], ["office", "/office"]] : [["today", ""], ["customers", "/lead-desk"], OWN[pack]];
+      const list = ["switcher", "verify", "more", "finder"].includes(MODE) ? [] : PAGES.length ? PAGES.map((p) => [p.replace(/\W+/g, "-") || "today", p === "today" ? "" : p]) : size === "desktop" ? [["today", ""], ["customers", "/lead-desk"], OWN[pack], ["office", "/office"]] : [["today", ""], ["customers", "/lead-desk"], OWN[pack]];
       for (const [name, p] of list) {
         const res = await page.goto(`${base}${p}`, { waitUntil: "domcontentloaded" });
         await settle(page);
@@ -124,6 +127,43 @@ try {
         await page.screenshot({ path: path.join(OUT, `switcher-${SHORT[pack]}-${size === "desktop" ? "1440-light" : "390"}.png`), fullPage: false });
         report.push({ pack, size, page: "switcher", path: "/", status: has ? 200 : 0, url: new URL(page.url()).pathname, flags: has ? [] : ["no switcher"], errors: [], workspaces: names.map((n) => n.replace(/\s+/g, " ").trim()) });
         console.log(`switcher ${pack}/${size}: ${has ? names.map((n) => n.replace(/\s+/g, " ").trim()).join(" | ") : "none"}`);
+      }
+      if (MODE === "finder") {
+        // the Lead Finder screens (job lead-finder part D): optionally ONE search (plan card -> OK -> result card), then the pictures of the tab, Today and Settings -> Lead Finder
+        const sz = size === "desktop" ? "1440-light" : size === "phone" ? "390" : "360";
+        const tag = `${SHORT[pack]}-finder-${LANG}-${sz}`;
+        await page.goto(`${base}/retailers`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        if (SEARCH) {
+          await page.locator("[data-finder] input").first().fill(SEARCH);
+          await page.locator("[data-finder] button[type=submit]").first().click();
+          await page.locator("[data-plan-ok]").first().waitFor({ timeout: 60000 }).catch(() => null);
+          await page.screenshot({ path: path.join(OUT, `${tag}-plan.png`), fullPage: false });
+          const plan = (await page.locator("[data-finder]").first().innerText().catch(() => "")).replace(/\s+/g, " ");
+          console.log(`plan ${pack}/${size}: ${plan.slice(0, 300)}`);
+          await page.locator("[data-plan-ok]").first().click().catch((e) => console.log("ok: " + String(e).slice(0, 100)));
+          await page.waitForFunction(() => /Found \d+/.test(document.querySelector("[data-finder]")?.textContent || ""), null, { timeout: 60000 }).catch(() => null);
+          const result = (await page.locator("[data-finder]").first().innerText().catch(() => "")).replace(/\s+/g, " ");
+          console.log(`result ${pack}/${size}: ${result.slice(0, 300)}`);
+          await page.screenshot({ path: path.join(OUT, `${tag}-result.png`), fullPage: false });
+          await page.goto(`${base}/retailers`, { waitUntil: "domcontentloaded" });
+          await settle(page);
+        }
+        await page.screenshot({ path: path.join(OUT, `${tag}-prospects.png`), fullPage: true });
+        const body = await text(page);
+        console.log(`prospects ${pack}/${size}/${LANG}: ${body.length} characters; Google Maps shown: ${/Google Maps/.test(body)}; demo label: ${/Made-up|కల్పిత/.test(body)}; machine-translation notice: ${/machine[- ]translat|translated automatically/i.test(body)}`);
+        for (const [n, p] of [["today", ""], ["settings", "/settings?section=leadfinder"]]) {
+          await page.goto(`${base}${p}`, { waitUntil: "domcontentloaded" });
+          await settle(page);
+          await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-${n}-lf-${LANG}-${sz}.png`), fullPage: true });
+        }
+        await page.goto(base, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        const today = await text(page);
+        const rows = (today.match(/fit \d+/g) || []).length;
+        console.log(`today ${pack}/${size}/${LANG}: prospect rows ${rows}; Lead Finder in team: ${/Lead Finder|లీడ్ ఫైండర్/.test(today)}`);
+        const wide = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
+        console.log(`layout ${pack}/${size}: horizontal scroll ${wide}`);
       }
       if (MODE === "more") {
         // the phone: what the More sheet offers (is there a way to another workspace?)

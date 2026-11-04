@@ -33,7 +33,10 @@ const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: str
   plan_waiting: { kind: "today.kind.plan", step: "today.step.plan", tone: "bg-brand-bg text-brand-text", who: "today.fact.plan" },
   callback_due: { kind: "today.kind.callback", step: "today.step.callback", tone: "bg-amber-bg text-amber-text", who: "today.fact.plan" },
   outreach_paused: { kind: "today.kind.cap", step: "today.step.cap", tone: "bg-amber-bg text-amber-text", who: "today.fact.plan" },
+  prospect_waiting: { kind: "today.kind.prospect", step: "today.step.prospect", tone: "bg-amber-bg text-amber-text", who: "today.fact.customer" },
 };
+/** The kinds whose one-line reason is made in the person's language by the server (the others' reasons are the API's English): their row shows it in every language. */
+const OWN_WORDS: readonly NeedsYouItem["kind"][] = ["prospect_waiting"];
 
 /** Which badge a message wears: what makes it wait for a person (money first, then a promise, then a complaint). */
 function badgeOf(m: OutboxCardMessage | null): { key: string; tone: string } {
@@ -144,7 +147,8 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   const [open, setOpen] = React.useState(false);
   const name = item.customer === "" ? say(words, "today.customer.unknown") : item.customer;
   // the row is SHORT (owner, 4 Nov: "Quote | Lakshmi · ₹40,000"): the amount when there is one, the hot lead's own gist (English only, as before), else just the name; the API's full sentence is in the opened card
-  const reason = item.amount_paise !== null ? formatINR(item.amount_paise / 100, { decimals: 2 }) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : "";
+  // a kind whose summary is OUR words (OWN_WORDS: the Lead Finder's "fit 64 · low stock") is short already and shown in every language
+  const reason = OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatINR(item.amount_paise / 100, { decimals: 2 }) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : "";
   if (ctx.compact && !open) {
     return (
       <CompactRow cardKey={c.key} tone={k.tone} label={say(words, `${k.kind}.row`)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={reason} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
