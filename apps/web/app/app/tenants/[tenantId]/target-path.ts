@@ -24,6 +24,12 @@ export async function targetPaths(accessToken: string, tenantId: string, targets
       }
       case "outreach_batch":
         return `${base}/outreach/batches/${target.id}`;
+      case "material_quote": // the building-materials quote has its own page
+        return `${base}/quotes/${target.id}`;
+      case "campaign":
+        return `${base}/campaigns/${target.id}`;
+      case "fees": // the school's list of who has fees pending (the id is the workspace's own)
+        return `${base}/fees/pending`;
       case "outbox_message":
       case "call_request":
         return `${base}#needs-you`; // decided on Today itself (job AU)

@@ -21,7 +21,7 @@ form:
 ### Synthetic Buyer asked for a call
 · order
 [button type=button: Approve call]
-[button type=button: Offer a store visit]
+[button type=button: Site visit instead]
 [button type=button: Details]
 - Follow-up
 ### Synthetic Buyer
@@ -42,8 +42,8 @@ form:
 [button type=button: Details]
 {role=status}
 Not available yet
-{label="At the store today"}
-## At the store today
+{label="Site visits today"}
+## Site visits today
 3 visits · 10:30 Anita R. [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 {label="Done while you slept"}
 ## Done while you slept
@@ -54,7 +54,7 @@ Researcher · Site Measurer · Quote Writer · Follow-up Desk · Dispatch Desk [
 {label="Your business today"} [Trips today 2 1 on the way · 0 delivered](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips) [Quotes waiting 1 1 drafts wait for your approval](/app/tenants/22222222-2222-2222-2222-222222222222/quotes) [Dues this week ₹80,000.00 Already overdue: ₹50,000.00](/app/tenants/22222222-2222-2222-2222-222222222222/dues)
 {label="Finish setting up"}
 ## Finish setting up
-1 of 6 done
+2 of 6 done
 - Tell us your business name and city Done
 - [Add your first products One by one, or import your price list. To do](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
 form:
@@ -72,8 +72,5 @@ form:
 form:
 <hidden name=step value=whatsapp_connected>
 [button type=submit: Hide for now]
-- [Send your first quote Draft it, check the figures, approve it, then send it yourself. To do](/app/tenants/22222222-2222-2222-2222-222222222222/quotes)
-form:
-<hidden name=step value=first_quote_sent>
-[button type=submit: Hide for now]
+- Send your first quote Done
 [Continue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)

@@ -35,6 +35,9 @@ const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: str
   callback_due: { kind: "today.kind.callback", step: "today.step.callback", tone: "bg-amber-bg text-amber-text", who: "today.fact.plan" },
   outreach_paused: { kind: "today.kind.cap", step: "today.step.cap", tone: "bg-amber-bg text-amber-text", who: "today.fact.plan" },
   prospect_waiting: { kind: "today.kind.prospect", step: "today.step.prospect", tone: "bg-amber-bg text-amber-text", who: "today.fact.customer" },
+  material_quote_approval: { kind: "today.kind.quote", step: "today.step.quote", tone: "bg-brand-bg text-brand-text", who: "today.fact.customer" },
+  campaign_approval: { kind: "today.kind.campaign", step: "today.step.campaign", tone: "bg-brand-bg text-brand-text", who: "today.fact.campaign" },
+  fees_overdue: { kind: "today.kind.fees", step: "today.step.fees", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
 };
 /** The kinds whose one-line reason is made in the person's language by the server (the others' reasons are the API's English): their row shows it in every language. */
 const OWN_WORDS: readonly NeedsYouItem["kind"][] = ["prospect_waiting"];

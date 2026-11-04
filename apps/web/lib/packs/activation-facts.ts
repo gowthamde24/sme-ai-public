@@ -7,7 +7,7 @@ import { listRules } from "@/lib/api/outreach";
 import { listTasks } from "@/lib/api/tasks";
 import { getInstitutionProfile, listFeePlans, listStudents } from "@/lib/api/education";
 import { getAccountSecurity } from "@/lib/api/pack";
-import { getMaterialPolicy } from "@/lib/api/materials";
+import { getMaterialPolicy, listMaterialItems, listMaterialQuotes } from "@/lib/api/materials";
 import { getProfile } from "@/lib/api/profile";
 import { fetchQuotePolicyVersions } from "@/lib/api/quote-policies";
 import { fetchQuotes } from "@/lib/api/quotes";
@@ -25,8 +25,10 @@ async function yes(read: () => Promise<boolean>): Promise<boolean> {
 }
 
 /** The facts behind the checks a pack's steps use, each read on its own with existing endpoints only (a check nobody asks for is not read). */
-export async function readFacts(accessToken: string, tenantId: string, checks: readonly StepCheck[]): Promise<Partial<Record<StepCheck, boolean>>> {
+export async function readFacts(accessToken: string, tenantId: string, checks: readonly StepCheck[], modules: readonly string[] = []): Promise<Partial<Record<StepCheck, boolean>>> {
   const want = new Set(checks);
+  // a business that sells building materials keeps its products and its quotes in the materials part (GET /materials/items, /materials/quotes), not in the saree catalogue and its quotes (owner, 4 Nov)
+  const materials = modules.includes("materials");
   const reads: Partial<Record<StepCheck, () => Promise<boolean>>> = {
     business_profile: async () => (await getProfile(accessToken, tenantId)).town !== null,
     // job CS: the school is set up once its institution profile is saved; the students file has brought in at least one student; a fee plan exists; the first reminder campaign was approved (not still a draft)
@@ -45,14 +47,16 @@ export async function readFacts(accessToken: string, tenantId: string, checks: r
       const s = await getAccountSecurity(accessToken);
       return s?.secondFactorOn === true || s?.level === "aal2";
     },
-    catalogue_has_items: async () => (await listCatalogueItems(accessToken, tenantId, { limit: 1, includeInactive: true })).items.length > 0,
+    catalogue_has_items: async () =>
+      (materials && (await listMaterialItems(accessToken, tenantId, { limit: 1, includeInactive: true })).items.length > 0) || (await listCatalogueItems(accessToken, tenantId, { limit: 1, includeInactive: true })).items.length > 0,
     quote_rules_set: async () => (await fetchQuotePolicyVersions(accessToken, tenantId)).length > 0,
     whatsapp_connected: async () => {
       const a = await getWhatsappAccount(accessToken, tenantId);
       return a.configured && a.status === "active";
     },
     // the system never sends a quote (the person does, outside it): a quote that reached "approved" is the product's own record of the first one
-    first_quote_sent: async () => (await fetchQuotes(accessToken, tenantId, 50)).some((q) => q.outcome === "approved"),
+    first_quote_sent: async () =>
+      (materials && (await listMaterialQuotes(accessToken, tenantId, { limit: 50 })).items.some((q) => q.status === "approved")) || (await fetchQuotes(accessToken, tenantId, 50)).some((q) => q.outcome === "approved"),
   };
   const entries = await Promise.all((Object.keys(reads) as StepCheck[]).filter((c) => want.has(c)).map(async (c) => [c, await yes(reads[c]!)] as const));
   return Object.fromEntries(entries);

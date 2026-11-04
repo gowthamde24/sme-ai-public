@@ -75403,6 +75403,28 @@
    "kn": "draft"
   }
  },
+ "today.visits.title.pack": {
+  "en": "{visits} today",
+  "te": "ఈ రోజు {visits}",
+  "hi": "आज {visits}",
+  "kn": "ಇಂದು {visits}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.visit.pack": {
+  "en": "{visit} instead",
+  "te": "బదులుగా {visit}",
+  "hi": "इसके बदले {visit}",
+  "kn": "ಬದಲಿಗೆ {visit}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.act.visit@programmes": {
   "en": "Offer a campus visit",
   "te": "క్యాంపస్ విజిట్ ఆఫర్ చేయండి",
@@ -75452,6 +75474,116 @@
   "te": "చూడండి",
   "hi": "देखें",
   "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.campaign": {
+  "en": "Campaign draft",
+  "te": "క్యాంపెయిన్ డ్రాఫ్ట్",
+  "hi": "कैंपेन ड्राफ़्ट",
+  "kn": "ಕ್ಯಾಂಪೇನ್ ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.campaign.row": {
+  "en": "Campaign",
+  "te": "క్యాంపెయిన్",
+  "hi": "कैंपेन",
+  "kn": "ಕ್ಯಾಂಪೇನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.campaign": {
+  "en": "Check the campaign",
+  "te": "క్యాంపెయిన్ చూడండి",
+  "hi": "कैंपेन देखिए",
+  "kn": "ಕ್ಯಾಂಪೇನ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.campaign.row": {
+  "en": "Review",
+  "te": "చూడండి",
+  "hi": "देखिए",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.fees": {
+  "en": "Fees overdue",
+  "te": "బాకీ ఫీజులు",
+  "hi": "बकाया फ़ीस",
+  "kn": "ಬಾಕಿ ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.fees.row": {
+  "en": "Fees",
+  "te": "ఫీజులు",
+  "hi": "फ़ीस",
+  "kn": "ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.fees": {
+  "en": "See who has not paid",
+  "te": "ఎవరు కట్టలేదో చూడండి",
+  "hi": "देखिए किसने नहीं भरी",
+  "kn": "ಯಾರು ಕಟ್ಟಿಲ್ಲ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.fees.row": {
+  "en": "See who",
+  "te": "చూడండి",
+  "hi": "देखिए",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.fact.campaign": {
+  "en": "Campaign",
+  "te": "క్యాంపెయిన్",
+  "hi": "कैंपेन",
+  "kn": "ಕ್ಯಾಂಪೇನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.fact.what": {
+  "en": "What",
+  "te": "ఏమిటి",
+  "hi": "क्या",
+  "kn": "ಏನು",
   "status": {
    "te": "draft",
    "hi": "draft",
