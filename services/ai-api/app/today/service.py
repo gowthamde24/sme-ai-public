@@ -85,8 +85,8 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         return f"A {_CAMPAIGN_WORDS.get(ref, 'message campaign')} is drafted and waiting for your approval. Nothing is sent before you approve it."
     if kind == "fees_overdue":
         total = format_rupees(amount) if amount is not None else "fees"
-        who = "1 student has" if ref == "1" else f"{ref} students have"
-        return f"{who} fees fallen due and not paid: {total} in all. The fee list shows who."
+        accounts = "1 fee account" if ref == "1" else f"{ref} fee accounts"
+        return f"Fees are overdue on {accounts}: {total} in all. The fee list shows whose."
     held = format_rupees(amount) if amount is not None else "money"
     return f"Order {ref} is closed but still holds {held}. A refund may be owed."
 

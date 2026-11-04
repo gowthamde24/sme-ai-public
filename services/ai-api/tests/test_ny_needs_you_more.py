@@ -31,8 +31,8 @@ def test_a_draft_campaign_says_what_it_is_and_that_nothing_is_sent() -> None:
 
 def test_a_schools_overdue_fees_are_a_count_and_a_total_never_a_name() -> None:
     item = needs_item(row("fees_overdue", "3", 1250000, "fees", customer=None))
-    assert item.customer == "Fees due" and item.summary == "3 students have fees fallen due and not paid: ₹12,500.00 in all. The fee list shows who."
-    assert needs_item(row("fees_overdue", "1", 500000, "fees", customer=None)).summary.startswith("1 student has fees")
+    assert item.customer == "Fees due" and item.summary == "Fees are overdue on 3 fee accounts: ₹12,500.00 in all. The fee list shows whose."
+    assert needs_item(row("fees_overdue", "1", 500000, "fees", customer=None)).summary.startswith("Fees are overdue on 1 fee account:")
 
 
 def test_a_kind_the_api_does_not_know_is_left_out_and_today_still_answers() -> None:
