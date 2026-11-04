@@ -187,7 +187,7 @@ describe("guided setup cards", () => {
   });
   it("the website snippet and a test that worked", () => {
     draw([card(SETUP_FORM_JSON)]);
-    expect(screen.getByText(/forms\.example\.test\/f\.js/)).toBeTruthy();
+    expect(screen.getByText(/forms\.example\.test\/f\/sri-lakshmi-silks/)).toBeTruthy();
     expect(screen.getByRole("status").textContent).toContain("It works.");
   });
 });

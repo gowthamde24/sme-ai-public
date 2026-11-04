@@ -10,7 +10,7 @@ export const PLAN_STAFF_ID = "a1000000-0000-4000-8000-000000000003";
 export const PLAN_MULTI_ID = "a1000000-0000-4000-8000-000000000004";
 export const PREVIEW_ID = "b1000000-0000-4000-8000-000000000001";
 export const PREVIEW_CAT_ID = "b1000000-0000-4000-8000-000000000002";
-export const SECRET_ID = "c1000000-0000-4000-8000-000000000001";
+export const KEY_REQUEST_ID = "c1000000-0000-4000-8000-000000000001";
 export const SETUP_INDIAMART_ID = "d1000000-0000-4000-8000-000000000001";
 export const SETUP_EMAIL_ID = "d1000000-0000-4000-8000-000000000002";
 export const SETUP_FORM_ID = "d1000000-0000-4000-8000-000000000003";
@@ -94,7 +94,7 @@ export const MULTI_PLAN_JSON = {
   status: "proposed",
 };
 
-export const SECRET_JSON = { kind: "secret", request_id: SECRET_ID, secret: "indiamart_key", title: "IndiaMART CRM key", hint: "IndiaMART seller panel → Lead Manager → CRM API key. It looks like a long line of letters and numbers.", saved: null };
+export const SECRET_JSON = { kind: "secret", request_id: KEY_REQUEST_ID, secret: "indiamart_key", title: "IndiaMART CRM key", hint: "IndiaMART seller panel → Lead Manager → CRM API key. It looks like a long line of letters and numbers.", saved: null };
 
 export const SETUP_INDIAMART_JSON = {
   kind: "setup",
