@@ -26,7 +26,8 @@ ROUTE_WORDS = frozenset(
         "resolved",
         "pronunciation",
         # Lead Finder (ADR 0119)
-        "lead-finder", "availability", "searches", "prospects", "redecide", "simulated-call", "stats",
+        "lead-finder", "availability", "searches", "prospects", "redecide", "simulated-call",
+        "stats",
         # job voice-picker
         "voice-samples", "voice-chat", "auto-reply", "turns", "actions",
         # job EB: the owner's notes

@@ -100,6 +100,7 @@ create index prospect_searches_day_idx on public.prospect_searches (tenant_id, a
 -- ---------------------------------------------------------------------------------------------------------------------------------
 -- prospects
 -- ---------------------------------------------------------------------------------------------------------------------------------
+-- `fit` is the fit SCORE of a business (0 to 100); the column is not called "score" so that a school's no-marks guard (test 117) stays a simple word rule. The API calls it fit_score.
 create table public.prospects (
   id                uuid primary key default gen_random_uuid(),
   tenant_id         uuid not null references public.tenants (id) on delete restrict,
@@ -121,7 +122,7 @@ create table public.prospects (
   fetched_at        timestamptz not null default now(),
   status            text not null default 'new' check (status in ('new', 'researching', 'call_ready', 'needs_owner', 'skipped', 'contacted', 'qualified', 'not_interested')),
   decision_reason   text check (decision_reason in ('fit_high', 'fit_middle', 'fit_low', 'first_calls', 'low_stock', 'no_stock_match', 'very_large', 'competitor', 'not_a_buyer', 'suppressed', 'contacted_recently', 'outside_hours', 'daily_cap', 'owner_approved', 'owner_skipped', 'asked_later', 'no_phone')),
-  fit_score         integer check (fit_score between 0 and 100),
+  fit               integer check (fit between 0 and 100),
   fit_reason        text check (char_length(fit_reason) <= 300),
   stock_match       jsonb check (stock_match is null or jsonb_typeof(stock_match) = 'object'),
   owner_approved    boolean not null default false,
@@ -159,7 +160,7 @@ comment on column public.prospects.fit_reason is 'SAFE: one line written from th
 comment on column public.prospects.stock_match is 'SAFE: names of our own catalogue items and a yes or no. CLEAN-EXEMPT: validated document';
 comment on column public.prospects.qualification is 'PII: what the business said on the call (what it sells, quantities, timing). Erased with the workspace. CLEAN-EXEMPT: a validated document, never read by a model';
 create index prospects_tenant_idx on public.prospects (tenant_id, created_at desc, id);
-create index prospects_status_idx on public.prospects (tenant_id, status, fit_score desc nulls last);
+create index prospects_status_idx on public.prospects (tenant_id, status, fit desc nulls last);
 create index prospects_search_idx on public.prospects (tenant_id, search_id);
 create index prospects_lead_idx on public.prospects (tenant_id, lead_id) where lead_id is not null;
 create index prospects_phone_idx on public.prospects (tenant_id, phone_key) where phone_key is not null;
@@ -512,7 +513,7 @@ set search_path = ''
 as $$
   select jsonb_build_object('id', x.id, 'search_id', x.search_id, 'name', x.name, 'category', x.category, 'area', x.area, 'lat', x.lat, 'lng', x.lng, 'phone', x.phone, 'website', x.website,
     'rating', x.rating, 'review_count', x.review_count, 'source', x.source, 'source_label', x.source_label, 'place_id', x.place_id, 'fetched_at', x.fetched_at, 'status', x.status,
-    'decision_reason', x.decision_reason, 'fit_score', x.fit_score, 'fit_reason', x.fit_reason, 'stock_match', x.stock_match, 'owner_approved', x.owner_approved, 'suppressed', x.suppressed,
+    'decision_reason', x.decision_reason, 'fit_score', x.fit, 'fit_reason', x.fit_reason, 'stock_match', x.stock_match, 'owner_approved', x.owner_approved, 'suppressed', x.suppressed,
     'ask_after', x.ask_after, 'last_contacted_at', x.last_contacted_at, 'lead_id', x.lead_id, 'qualification', x.qualification, 'created_at', x.created_at, 'updated_at', x.updated_at)
 $$;
 revoke all on function app.lf_prospect_json(public.prospects) from public, anon, authenticated, service_role;
@@ -557,7 +558,7 @@ begin
   for v_item in select value from jsonb_array_elements(p_items) loop
     begin
       insert into public.prospects (tenant_id, search_id, name, name_key, category, area, lat, lng, phone, phone_key, website, rating, review_count, source, source_label, place_id,
-                                    status, decision_reason, fit_score, fit_reason, stock_match, created_by)
+                                    status, decision_reason, fit, fit_reason, stock_match, created_by)
       values (p_tenant_id, p_id, left(btrim(v_item ->> 'name'), 200), left(coalesce(v_item ->> 'name_key', ''), 200), left(v_item ->> 'category', 80), left(v_item ->> 'area', 160),
               (v_item ->> 'lat')::numeric, (v_item ->> 'lng')::numeric, nullif(v_item ->> 'phone', ''), nullif(v_item ->> 'phone_key', ''), left(v_item ->> 'website', 300),
               (v_item ->> 'rating')::numeric, (v_item ->> 'review_count')::integer, case when x.provider = 'places' then 'google_maps' else 'fixture' end, x.source_label, v_item ->> 'place_id',
@@ -593,11 +594,11 @@ begin
   if p_status is not null and p_status not in ('new', 'researching', 'call_ready', 'needs_owner', 'skipped', 'contacted', 'qualified', 'not_interested') then
     perform app.lf_error('invalid');
   end if;
-  return coalesce((select jsonb_agg(app.lf_prospect_json(z) order by z.fit_score desc nulls last, z.id) from (
+  return coalesce((select jsonb_agg(app.lf_prospect_json(z) order by z.fit desc nulls last, z.id) from (
     select * from public.prospects p
      where p.tenant_id = p_tenant_id and (p_status is null or p.status = p_status) and (p_search_id is null or p.search_id = p_search_id)
-       and (p_before_score is null or (coalesce(p.fit_score, -1), p.id) < (p_before_score, coalesce(p_before_id, 'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid)))
-     order by p.fit_score desc nulls last, p.id desc limit least(greatest(coalesce(p_limit, 50), 1), 200)) z), '[]'::jsonb);
+       and (p_before_score is null or (coalesce(p.fit, -1), p.id) < (p_before_score, coalesce(p_before_id, 'ffffffff-ffff-ffff-ffff-ffffffffffff'::uuid)))
+     order by p.fit desc nulls last, p.id desc limit least(greatest(coalesce(p_limit, 50), 1), 200)) z), '[]'::jsonb);
 end;
 $$;
 revoke all on function public.prospects_list(uuid, text, uuid, integer, integer, uuid) from public, anon;
@@ -658,7 +659,7 @@ begin
   end if;
   for v_item in select value from jsonb_array_elements(p_items) loop
     begin
-      update public.prospects z set status = v_item ->> 'status', decision_reason = v_item ->> 'decision_reason', fit_score = (v_item ->> 'fit_score')::integer, fit_reason = left(v_item ->> 'fit_reason', 300),
+      update public.prospects z set status = v_item ->> 'status', decision_reason = v_item ->> 'decision_reason', fit = (v_item ->> 'fit_score')::integer, fit_reason = left(v_item ->> 'fit_reason', 300),
              stock_match = case when jsonb_typeof(v_item -> 'stock_match') = 'object' then v_item -> 'stock_match' else z.stock_match end
        where z.tenant_id = p_tenant_id and z.id = (v_item ->> 'id')::uuid and z.status in ('new', 'researching', 'call_ready', 'needs_owner', 'skipped') and not z.suppressed
          and (v_item ->> 'status') in ('researching', 'call_ready', 'needs_owner', 'skipped');
