@@ -37138,6 +37138,39 @@
    "kn": "draft"
   }
  },
+ "start.example.reset.go": {
+  "en": "Remove and load it again",
+  "te": "తీసేసి మళ్ళీ తీసుకురండి",
+  "hi": "हटाकर फिर से लाइए",
+  "kn": "ತೆಗೆದು ಮತ್ತೆ ತನ್ನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.done.reset": {
+  "en": "Example data removed and loaded again.",
+  "te": "ఉదాహరణ డేటా తీసేసి మళ్ళీ తెచ్చాం.",
+  "hi": "उदाहरण डेटा हटाकर फिर से ला दिया।",
+  "kn": "ಉದಾಹರಣೆ ಡೇಟಾ ತೆಗೆದು ಮತ್ತೆ ತಂದಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.done.resetkept": {
+  "en": "Example data loaded again. {n} example rows stayed as they were because you have used them.",
+  "te": "ఉదాహరణ డేటా మళ్ళీ తెచ్చాం. మీరు వాడినందున {n} ఉదాహరణ వరుసలు అలాగే ఉన్నాయి.",
+  "hi": "उदाहरण डेटा फिर से ला दिया। {n} उदाहरण पंक्तियाँ वैसी ही रहीं क्योंकि आपने उन्हें इस्तेमाल किया है।",
+  "kn": "ಉದಾಹರಣೆ ಡೇಟಾ ಮತ್ತೆ ತಂದಿದ್ದೇವೆ. ನೀವು ಬಳಸಿದ್ದರಿಂದ {n} ಉದಾಹರಣೆ ಸಾಲುಗಳು ಹಾಗೆಯೇ ಇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "settings.tab.fields": {
   "en": "Fields",
   "te": "ఫీల్డ్‌లు",

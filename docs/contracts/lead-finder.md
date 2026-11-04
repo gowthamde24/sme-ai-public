@@ -111,6 +111,24 @@ Label it **"Practice call (simulated): nothing was dialled"**. A `qualified` out
 ```
 PUT sends any subset. Ranges: bar 50 to 100, cap 0 to 500, hours 9 to 21 (India time; from before to), searches 1 to 20 a day, results 1 to 20. Out of range: 422.
 
+## 7. The draft quote of a qualified call (day 2): `GET` / `POST /prospects/{id}/quote-draft`
+After a practice call that QUALIFIED (`prospect.status: "qualified"`, it has a `lead_id`), the prospect's page shows **"Make the draft quote"**.
+- `GET /prospects/{id}/quote-draft` (Owner, Admin, Sales) -> the PREVIEW, nothing stored:
+```json
+{ "prospect_id": "uuid", "lead_id": "uuid", "ready": true, "made": false, "quote_id": "uuid",
+  "lines": [ { "item": "Kanchi Pattu Bridal", "item_type_code": "LF-1A2B3C4D", "qty": 40, "unit_price_paise": 850000, "quantity_said": "About forty pieces a month, more in the season." } ],
+  "left_out": [ { "item": "Soft Silk Daily", "reason": "no_price | no_quantity | not_in_stock | not_in_catalogue | too_many_lines | item_type_off" } ] }
+```
+  Show each line (item × qty at ₹price, and "they said: …"), and each left-out item with its reason in words: "no exact price set" (no_price), "they said no number" (no_quantity), "not in stock now"
+  (not_in_stock), "no longer in the catalogue" (not_in_catalogue), "a draft holds five lines" (too_many_lines), "its item type is switched off" (item_type_off). Show the button only when `ready`; when `made`, show
+  "Open the draft quote" -> `/quotes/{quote_id}` instead. 409 `not_qualified` for any other call.
+- `POST /prospects/{id}/quote-draft` `{ "customer_kind": "new" | "repeat", "delivery_state": "KA" | null }` (Owner, Admin, **with the second factor**: 403 `mfa_required` otherwise) -> 201 (200 on a repeat)
+```json
+{ "quote_id": "uuid", "quote_no": 21, "enquiry_id": "uuid", "status": "draft", "total_paise": 40120000, "needs_owner_approval": false, "lines": [...], "left_out": [...], "replayed": false }
+```
+  It makes ONE enquiry on the call's Lead Desk lead and ONE **draft** quote at the Owner's own catalogue prices. Nothing is approved or sent: the quote is approved on the quote page like any other.
+  422 `nothing_to_quote` (no line can go in), 409 `quote_draft_exists` (a draft from this call was made with other prices: open it). A school: 403 like every route here.
+
 ## Words (en; te drafts for a native reader)
 "Prospects" (ప్రాస్పెక్ట్స్), "Needs you" (మీరు చూడాలి), "Ready to call" (కాల్ చేయడానికి రెడీ), "Skipped" (వదిలేశాం), "Waiting" (వెయిట్ చేస్తోంది), "Practice call (simulated)" (ప్రాక్టీస్ కాల్ (సిమ్యులేషన్)),
 "Made-up businesses for the demo" (డెమో కోసం కల్పిత వ్యాపారాలు). No machine-translation notice anywhere.

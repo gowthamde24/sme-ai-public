@@ -191,7 +191,8 @@ describe("Today: the side sections", () => {
   it("'Your team' is the title, ONE line with the helpers' names (not your assistant itself) and the link to the Office", async () => {
     await view(data());
     const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
-    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent("Lead Finder · Researcher · Requirement Analyst · Quote Writer · Follow-up Desk · Order Desk");
+    // the Lead Finder is not built yet (not_available): it is not named (owner, 4 Nov)
+    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent(/^Researcher · Requirement Analyst · Quote Writer · Follow-up Desk · Order Desk$/);
     expect(within(s).queryByText("Your assistant")).toBeNull();
     expect(within(s).getByRole("link", { name: /Open the office/ })).toHaveAttribute("href", "/app/tenants/T/office");
   });

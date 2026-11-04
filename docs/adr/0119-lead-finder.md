@@ -32,6 +32,11 @@ Status: accepted (4 Nov 2026, built unattended overnight; the owner reviews in t
 7. **A school: only the Lead Finder is blocked** (owner, 4 Nov 2026, day 2). Prospecting strangers is never for a school: the module is off for education (SM971 in the database, 403 from every route, no
    card in the chat, no screen). Everything a school does with people who asked it (admission calls and follow-ups to parents who enquired, campus-visit rules: night 4 E1) stays on; the outreach block
    tried in #287 is not put back.
+8. **A qualified call's quote suggestion becomes a DRAFT quote, on the Owner's button** (owner, 4 Nov 2026, day 2; `app/lead_finder/quote_draft.py`). `GET /prospects/{id}/quote-draft` previews, `POST`
+   (Owner or Admin with the second factor) makes one enquiry on the call's Lead Desk lead and one manual-price draft through the quotes' own path (the pinned engine; the database recomputes it, SM216).
+   A line is an item the call pitched, found in the catalogue now and still in stock, at the Owner's own EXACT catalogue price, for the quantity the buyer said (digits, or English and Telugu number
+   words); anything else is left out with its reason: a price or a quantity is never made up. It is a person's action, not an agent's (the database refuses a typed price in an agent context, SM260),
+   and the draft is approved on the quote page like any other. Each item gets an item type of its own on first use (`LF-` + a digest of its name). Ids derive from the prospect: the button again replays.
 
 ## Google Maps Platform terms (the rules this code follows)
 
@@ -58,6 +63,6 @@ in words ("Google Maps search 'saree shops Jayanagar', 2 Nov"). The real-data ga
 ## Open
 
 * Place Details re-fetch after 30 days; `redecide` on a schedule. (The scheduler worker already runs `prospect_places_expire` every six hours: `app/lead_finder/housekeeping.py`.)
-* The Quote writer: a qualified call carries a quote SUGGESTION (in-stock items, catalogue prices, the quantity they said); turning it into a real quote draft for the Owner's OK is the next step.
+* The draft quote of a construction call: the construction pack quotes through its own materials path (`/materials`), which has no manual-price draft yet; its quote suggestion stays a suggestion.
 * Distance: the business's own location is not stored yet, so every place scores the "unknown" 8 points.
 * A1 (a real Places search in Owner Test) waits for the owner's key.
