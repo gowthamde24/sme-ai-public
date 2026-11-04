@@ -71,9 +71,8 @@ export function TeamSection({ team, deskTeam = null, base, t }: { team: readonly
   );
 }
 
-/** "New leads" (the owner's target, 31 Oct), for a workspace that catches leads: the newest one and where it came from (the Lead catcher's own line), and the link to the Leads. Not drawn for a business type without Lead Desk. */
-export function NewLeads({ deskTeam, base, t, now }: { deskTeam: readonly DeskWorker[] | null; base: string; t: T; now: number }) {
-  const worker = deskTeam?.find((w) => w.key === "leads");
+/** "New leads" (the owner's target, 31 Oct; on in every workspace, 4 Nov): the newest one and where it came from (the Lead catcher's own line), and the link to the Leads. Not drawn when the leads were not read (a Sales person or Viewer, or a failed read). */
+export function NewLeads({ worker, base, t, now }: { worker: DeskWorker | null | undefined; base: string; t: T; now: number }) {
   if (!worker) return null;
   return (
     <section aria-labelledby="leads-heading" data-part="new-leads" className={card}>

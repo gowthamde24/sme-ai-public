@@ -66,6 +66,8 @@ export type TodayData = {
   team: AgentRow[] | null;
   /** The workers of a Lead Desk workspace (what "Your team" draws instead of the shop's helpers). null = this workspace has none (the helpers are drawn); a worker that could not be read says so in its own row. */
   deskTeam: DeskWorker[] | null;
+  /** The Lead catcher's line for the "New leads" card, in EVERY workspace (owner, 4 Nov: Lead Desk on everywhere), also where `deskTeam` is null. Absent or null = not drawn (a Sales person or Viewer, or the leads could not be read). */
+  newLeads?: DeskWorker | null;
   /** The store today. null = not asked (the section is not drawn); `error` = it could not be read (the section says so). */
   store: ({ state: "ready" } & StoreToday) | { state: "error" } | null;
   /** The share of this week's AI allowance used (0 to 100), for the usage card. Owner and Admin only: null = not asked; `error` = could not be read. */

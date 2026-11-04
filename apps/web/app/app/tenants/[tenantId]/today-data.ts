@@ -76,8 +76,9 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
  * Lead Desk's items (`lead-desk-today.ts`) join the API's. One the API listed too (a hot lead, a plan paused by a limit: the same `kind-id` key) is one card: it keeps the words and address Lead Desk made and the time the API gave; one only Lead
  * Desk knows is new and adds to the count (the API's `waiting` does not hold it). The cards are then newest first, so a hot lead is not buried under older things. The count is what the person is told: "All clear" is for 0 and only 0.
  */
-export function mergeDesk(base: TodayData, desk: LeadDeskToday): TodayData {
-  const data: TodayData = { ...base, cards: { ...base.cards }, deskTeam: desk.team.length > 0 ? desk.team : null };
+export function mergeDesk(base: TodayData, desk: LeadDeskToday & { /** The workers are "Your team" only in a business type with a lead template; the Lead catcher's line is the "New leads" card in every workspace. */ teamShown?: boolean }): TodayData {
+  const shown = desk.teamShown ?? true;
+  const data: TodayData = { ...base, cards: { ...base.cards }, deskTeam: shown && desk.team.length > 0 ? desk.team : null, newLeads: desk.team.find((w) => w.key === "leads") ?? null };
   if (desk.needs.length === 0 || data.needs === null) return data;
   const own = new Map(desk.needs.map((c) => [c.key, c]));
   const merged = data.needs.map((c) => {

@@ -115,7 +115,7 @@ export function teamOf(parts: Parts & { lead: { name: string; source: string | n
 }
 
 /**
- * Reads what Lead Desk adds to Today. `withTeam` is false for a business type that has no Lead Desk template: its Today gets the cards but its "Your team" is the shop's helpers, so the leads are not even read. Each part is read once, on its own (a part whose flag is off is not asked), and one that fails adds nothing and is `not_available` in the team. `sourceName` is the plain name of a lead source ("IndiaMART").
+ * Reads what Lead Desk adds to Today. `withTeam` false skips the leads (Today passes true in every workspace since 4 Nov: the "New leads" card is on everywhere; `mergeDesk` decides whether the workers are "Your team"). Each part is read once, on its own (a part whose flag is off is not asked), and one that fails adds nothing and is `not_available` in the team. `sourceName` is the plain name of a lead source ("IndiaMART").
  * Callbacks are counted from the items of the (at most five) running plans, the newest first: a plan with callbacks due is one card with the number. `base` is the workspace's address.
  */
 export async function readLeadDesk(ctx: Ctx, role: Role, base: string, t: T, sourceName: (tag: string) => string, now: number = Date.now(), withTeam = true): Promise<LeadDeskToday> {

@@ -197,6 +197,10 @@ describe("Lead Desk's items join Today's own, and the count is the truth", () =>
   it("does not change a Today that Lead Desk adds nothing to, and a Today that could not be read stays unread", () => {
     const today = base();
     expect(mergeDesk(today, { needs: [], team: [] })).toMatchObject({ needs: today.needs, cards: today.cards, deskTeam: null });
+    const catcher = { key: "leads", state: "idle", name: "Lead catcher", text: "No new leads yet", at: null } as const;
+    // a business type without a lead template: its helpers stay "Your team", the Lead catcher's line still makes the "New leads" card (owner, 4 Nov)
+    expect(mergeDesk(today, { needs: [], team: [catcher], teamShown: false })).toMatchObject({ deskTeam: null, newLeads: catcher });
+    expect(mergeDesk(today, { needs: [], team: [catcher] })).toMatchObject({ deskTeam: [catcher], newLeads: catcher });
     expect(mergeDesk({ ...today, needs: null }, { needs: needsOf({ ...none, handoffs: [handoff(3)] }, "owner", BASE, t, sourceName), team: [] }).needs).toBeNull();
   });
   it("carries the workers for 'Your team' only when there are some", () => {
