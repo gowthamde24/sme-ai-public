@@ -61,6 +61,8 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
   const stateOf = (id: AgentId): RoomRow["state"] => byId[id]?.state ?? "not_available"; // the API always sends all seven; a missing one is shown as not there, never made up
   const tagText = Object.fromEntries(ALL_AGENT_IDS.map((id) => [id, stateText(stateOf(id))])) as Record<AgentId, string>;
   const poses = React.useMemo(() => Object.fromEntries(ALL_AGENT_IDS.map((id) => [id, poseOf(byId[id]?.state ?? "not_available")])) as Record<AgentId, Pose>, [byId]);
+  // the board draws the main assistant and every helper the rows carry (OfficeView leaves out the ones that are not built yet)
+  const shown = React.useMemo(() => ALL_AGENT_IDS.filter((id) => id === "main" || byId[id] !== undefined), [byId]);
   const chosen = selected ? (byId[selected] ?? null) : null;
   const feed = rows.filter((r) => r.event).sort((a, b) => Date.parse(b.event!.at) - Date.parse(a.event!.at)).slice(0, 6);
 
@@ -92,7 +94,7 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-8">
           {showRoom ? (
-            <TeamBoard poses={poses} names={names} stateText={tagText} selected={selected} onSelect={select} label={w("office.title")} hint={w("office.hint")} />
+            <TeamBoard poses={poses} names={names} stateText={tagText} selected={selected} onSelect={select} label={w("office.title")} hint={w("office.hint")} shown={shown} />
           ) : (
             <section aria-label={w("office.title")}>
               <p className="mb-3 flex items-center gap-2 text-base text-muted">
