@@ -153,7 +153,7 @@ def preview(service: LeadFinderService, quotes: Any, token: str, tenant_id: uuid
             made = quotes.get_quote(token, tenant_id, qid) is not None
         except Exception:   # the preview still says what the draft would be
             made = False
-    return QuoteDraftPreviewOut(prospect_id=prospect_id, lead_id=uuid.UUID(str(row["lead_id"])), ready=bool(lines), lines=lines, left_out=left, quote_id=qid, made=made)
+    return QuoteDraftPreviewOut(prospect_id=prospect_id, lead_id=uuid.UUID(str(row["lead_id"])), ready=bool(lines), lines=lines, left_out=left, quote_id=qid, enquiry_id=enquiry_id_for(prospect_id), made=made)
 
 
 def _enquiry_text(row: dict[str, Any], lines: list[QuoteLineOut]) -> tuple[str, str | None]:

@@ -131,3 +131,29 @@ def test_the_t005_routes_are_logged_with_their_words_and_never_their_ids_or_term
     assert redact_path(f"/v1/tenants/{tenant}/leads/jane.canary@example.test/labels").endswith(
         "/leads/<redacted>/labels"
     )
+
+
+def test_a_websocket_opening_line_never_carries_its_query() -> None:
+    """Found on staging (4 Nov 2026): the phone stream's token reached the log via uvicorn.error."""
+    import logging as _logging
+
+    from app.logging_safety import RedactWebSocketFilter
+
+    path = "/v1/telephony/exotel/stream?sample-rate=16000&t=SECRETTOKEN"
+    fmt = '%s - "WebSocket %s" [accepted]'
+    record = _logging.LogRecord("uvicorn.error", 20, __file__, 1, fmt, ("1.2.3.4:5", path), None)
+    assert RedactWebSocketFilter().filter(record)
+    line = record.getMessage()
+    assert "SECRETTOKEN" not in line
+    assert line == '1.2.3.4:5 - "WebSocket /v1/telephony/exotel/stream?<redacted>" [accepted]'
+    other = _logging.LogRecord("uvicorn.error", 20, __file__, 1, "Started [%d]", (42,), None)
+    assert RedactWebSocketFilter().filter(other) and other.getMessage() == "Started [42]"
+
+
+def test_the_phone_numbers_line_is_logged_at_info() -> None:
+    import logging as _logging
+
+    from app.hardening.observe import install_logging
+
+    install_logging("text")
+    assert _logging.getLogger("app.telephony.inbound").isEnabledFor(_logging.INFO)

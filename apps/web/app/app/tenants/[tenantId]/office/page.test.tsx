@@ -39,15 +39,15 @@ beforeEach(() => {
 });
 
 describe("the Office", () => {
-  it("lists all seven helpers from the API for any member; the two that are not built say so", async () => {
+  it("lists the helpers from the API for any member; your assistant says when it is not available, a helper that is not built (the Lead Finder) is left out", async () => {
     render(await OfficePage(props()));
     expect(getAgentsStatus).toHaveBeenCalledWith("tok", TENANT);
     const items = within(screen.getByRole("region", { name: "Agent office" })).getAllByRole("listitem");
-    expect(items).toHaveLength(7);
+    expect(items).toHaveLength(6);
     expect(items[0]).toHaveTextContent("Your assistantNot available yet");
-    expect(items[1]).toHaveTextContent("Lead FinderNot available yet");
-    expect(items[3]).toHaveTextContent("Requirement AnalystWorking");
-    expect(items[4]).toHaveTextContent("Quote WriterIdlePrepares a quote from the prices you set. A person approves it.Prepared quote 3");
+    expect(screen.queryByText(/Lead Finder/)).toBeNull();
+    expect(items[2]).toHaveTextContent("Requirement AnalystWorking");
+    expect(items[3]).toHaveTextContent("Quote WriterIdlePrepares a quote from the prices you set. A person approves it.Prepared quote 3");
   });
   it("?agent= chooses a helper, and an unknown word chooses none", async () => {
     render(await OfficePage(props({ agent: "quote_writer" })));

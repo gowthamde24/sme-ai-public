@@ -168,3 +168,5 @@ def install_logging(log_format: str) -> None:
     access_logger.setLevel(logging.INFO)
     # the browser voice's own numbers lines (the per-session cost line and the speaker-check scores): numbers and ids, no words; the rest of the application stays at warnings
     logging.getLogger("app.browser_voice").setLevel(logging.INFO)
+    # the phone calls' own lines (job phone-calls part 5): a refusal's closed word and the per-call numbers line (latency, turns, duration, cost); no number or word of a caller
+    logging.getLogger("app.telephony").setLevel(logging.INFO)

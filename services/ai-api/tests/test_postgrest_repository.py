@@ -209,3 +209,20 @@ def test_complete_setup_sends_only_the_two_choices() -> None:
     assert seen[0].url.path.endswith("/rpc/complete_setup")
     assert json.loads(seen[0].content) == {"p_business_type": "textiles", "p_language": "te"}
     assert seen[0].headers["authorization"] == f"Bearer {USER_TOKEN}"
+
+
+def test_a_tenant_on_any_plan_of_the_catalogue_reads_back() -> None:
+    """4 Nov 2026: a workspace moved to growth made GET /v1/tenants/{id} answer 500."""
+    from datetime import UTC, datetime
+
+    import pytest
+    from pydantic import ValidationError
+
+    from app.tenancy.models import TenantPlanOut
+
+    started = datetime(2026, 11, 4, tzinfo=UTC)
+    for plan in ("free_trial", "starter", "growth", "business", "calls_300"):
+        out = TenantPlanOut(plan=plan, workspace_limit=4, trial_started_at=started)
+        assert out.plan == plan
+    with pytest.raises(ValidationError):
+        TenantPlanOut(plan="Growth; drop", workspace_limit=1, trial_started_at=started)
