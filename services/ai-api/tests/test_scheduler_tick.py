@@ -161,7 +161,7 @@ def test_a_due_reminder_is_queued_with_the_fixed_words_a_stable_id_and_its_langu
         "p_visit_id": VISIT,
         "p_kind": "evening_before",
         "p_message_id": str(reminder_message_id(uuid.UUID(VISIT), "evening_before", starts, "en")),
-        "p_body": "A reminder: your visit to our shop is on Tuesday, 6 October at 11:00 am. We look forward to seeing you.",
+        "p_body": "A reminder: your visit is on Tuesday, 6 October at 11:00 am. We look forward to seeing you.",
         "p_language": "en",
         "p_uncertain": False,
     }
