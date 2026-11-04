@@ -163,3 +163,13 @@ export function rupees(paise: number): string {
 
 /** The owner's words for a search, as the box takes them: 2 to 300 characters after trimming (the API's limit). */
 export const searchTextProblem = (text: string): "empty" | "too_long" | null => (text.trim().length < 2 ? "empty" : text.trim().length > 300 ? "too_long" : null);
+
+/**
+ * The helpers' status may still call the Lead Finder "not built" (`not_available`) where its own API says it is available: there it is a member of the team (idle until it works).
+ * Anywhere else nothing changes (a school, a switched-off one, one that cannot be told: the Lead Finder stays unnamed).
+ */
+export function withFinder<A extends { agent: string; state: string }>(team: readonly A[] | null, available: boolean): A[] | null {
+  if (team === null) return null;
+  if (!available) return [...team];
+  return team.map((a) => (a.agent === "lead_finder" && a.state === "not_available" ? { ...a, state: "idle" } : a));
+}

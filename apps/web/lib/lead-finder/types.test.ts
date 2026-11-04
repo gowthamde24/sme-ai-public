@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { reasonKey, resultNumbers, rupees, searchTextProblem, settingsChanges, type FinderSettings } from "./types";
+import { reasonKey, resultNumbers, rupees, searchTextProblem, settingsChanges, withFinder, type FinderSettings } from "./types";
 
 const STORED: FinderSettings = { fitBar: 70, dailyCallCap: 20, callFromHour: 10, callToHour: 19, searchesPerDay: 5, resultsPerSearch: 20, updatedAt: null };
 
@@ -44,5 +44,23 @@ describe("small words of the screens", () => {
     expect(searchTextProblem(" a ")).toBe("empty");
     expect(searchTextProblem("x".repeat(301))).toBe("too_long");
     expect(searchTextProblem("find new retailers in Jayanagar")).toBeNull();
+  });
+});
+
+describe("withFinder: the Lead Finder in 'Your team' and the Office follows its own availability (C1, 4 Nov)", () => {
+  const team = [
+    { agent: "main", state: "idle" },
+    { agent: "lead_finder", state: "not_available" },
+    { agent: "researcher", state: "switched_off" },
+  ];
+  it("where it is available, a 'not built' Lead Finder is a member of the team (idle); nothing else changes", () => {
+    expect(withFinder(team, true)).toEqual([{ agent: "main", state: "idle" }, { agent: "lead_finder", state: "idle" }, { agent: "researcher", state: "switched_off" }]);
+  });
+  it("where it is not available (a school, switched off, cannot tell) the API's states stay as they are, and null stays null", () => {
+    expect(withFinder(team, false)).toEqual(team);
+    expect(withFinder(null, true)).toBeNull();
+  });
+  it("a Lead Finder the API already reports as working keeps its state", () => {
+    expect(withFinder([{ agent: "lead_finder", state: "working" }], true)).toEqual([{ agent: "lead_finder", state: "working" }]);
   });
 });

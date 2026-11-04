@@ -42,6 +42,7 @@ import { setupWords } from "./setup-words";
 import { readLeadDesk, sourceNameOf } from "./lead-desk-today";
 import { readFinderNeeds } from "./lead-finder-today";
 import { readFinderCached } from "../../frame-data";
+import { withFinder } from "@/lib/lead-finder/types";
 import { readTemplates } from "@/lib/lead-desk/source";
 import { mergeDesk, readDisplayName, readToday } from "./today-data";
 import { cancelVisitAction, confirmVisitAction, moveVisitAction, saveHoursAction, slotsAction } from "./visits/visits-actions";
@@ -88,6 +89,9 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     if (activation) activation = withoutHidden(activation, await readHidden(tenantId));
     // Lead Desk's items and workers join what the API said (the merge keeps one card per thing and counts only what the API did not)
     data = mergeDesk(data, { needs: [...desk.needs, ...finder], team: deskPack ? desk.team : [] });
+    // the Lead Finder is named in "Your team" exactly where its own API says it is available (C1, 4 Nov): the helpers' status may still say "not built" for it
+    const finderOn = (await readFinderCached(accessToken, tenantId).catch(() => null))?.available === true;
+    data = { ...data, team: withFinder(data.team, finderOn) };
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     escalate(error);
