@@ -5,13 +5,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { appDict } from "@/i18n/app";
 import type { AudioIO, SocketLike } from "@/lib/browser-voice/client";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
+import { parseSearch } from "@/lib/api/lead-finder-card";
+import { SEARCH_DONE, SEARCH_PLACES, SEARCH_PLANNED } from "@/lib/api/lead-finder-fixtures";
+import { isChatCardWord } from "@/lib/lead-finder/types";
 
 import type { AskEvent } from "./ask-types";
 import { blocksOf, MarkdownLite } from "./MarkdownLite";
 import { ChatPanel } from "./ChatPanel";
 import { useAskSession } from "./use-ask-session";
 
-const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("bv.")));
+const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("bv.") || isChatCardWord(k))); // as the layout gives them
 let voiceOverride: Record<string, unknown> = {};
 const voiceBase = { words: WORDS, url: "wss://x/v1/tenants/t/voice-chat", language: "en" as const, languageNames: CALL_LANG_NAMES, tokenUrl: "/app/tenants/t/voice-token" };
 
@@ -40,7 +43,24 @@ let sock: Sock;
 const audio = (): AudioIO => ({ startMic: async () => undefined, stopMic: () => undefined, play: () => undefined, flush: () => undefined, playing: () => false, close: () => undefined, analyser: () => null });
 const asked: string[] = [];
 const PLAN = { actionId: "33333333-3333-4333-8333-333333333333", title: "Call 12 new leads", summary: "Today, in calling hours.", steps: ["Pick the new leads", "Call each one"], count: 12, channel: "call" as const, estimate: { messages: 0, callMinutes: 30, costPaise: 0 }, needsSecondFactor: false, expiresAt: "2026-10-28T20:00:00Z", status: "proposed" as const };
+const PLANNED = parseSearch(SEARCH_PLANNED);
+const DONE = parseSearch(SEARCH_DONE);
+let finderCan = true;
 async function* answer(text: string): AsyncGenerator<AskEvent> {
+  if (text === "FIND" || text === "FIND TWICE" || text === "FIND PLACES") {
+    yield { type: "text", delta: "I will look for saree shops in Jayanagar Bengaluru, at most 20. Shall I search?" };
+    const card = { search: text === "FIND PLACES" ? parseSearch(SEARCH_PLACES) : PLANNED, canApprove: finderCan };
+    yield { type: "lead_finder", card };
+    if (text === "FIND TWICE") yield { type: "lead_finder", card }; // a replay of the same reply sends the event again
+    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
+    return;
+  }
+  if (text === "yes") {
+    yield { type: "text", delta: "Done: I found 20 businesses in Jayanagar. 11 need you, 7 skipped." };
+    yield { type: "lead_finder", card: { search: DONE, canApprove: true } };
+    yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
+    return;
+  }
   if (text === "PLAN") {
     yield { type: "confirm_action", action: PLAN };
     yield { type: "done", conversationId: "55555555-5555-4555-8555-555555555555" };
@@ -65,7 +85,7 @@ let reply = "It is **five** pieces.\n- Silk\n- Cotton";
 const orbs: (string | null)[] = [];
 
 function Harness({ onClose = () => undefined, variant }: { onClose?: () => void; variant?: "panel" | "card" | "bar" }) {
-  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: { "ask.sorry": appDict("en")["ask.sorry"], "ask.retry": appDict("en")["ask.retry"] }, availability: "live", transport: ({ question, conversationId, replyLanguage }) => (asked.push(question), asks.push({ question, conversationId, replyLanguage }), answer(question === "PLAN" || question === "CLARIFY" || question === "EMPTY" ? question : reply)), voiceStatus: { available: false, speech: false } });
+  const s = useAskSession({ lang: "en", base: "/app/tenants/t", words: { "ask.sorry": appDict("en")["ask.sorry"], "ask.retry": appDict("en")["ask.retry"] }, availability: "live", transport: ({ question, conversationId, replyLanguage }) => (asked.push(question), asks.push({ question, conversationId, replyLanguage }), answer(["PLAN", "CLARIFY", "EMPTY", "FIND", "FIND TWICE", "FIND PLACES", "yes"].includes(question) ? question : reply)), voiceStatus: { available: false, speech: false } });
   React.useEffect(() => {
     orbs.push(s.voiceOrb);
   }, [s.voiceOrb]);
@@ -84,6 +104,7 @@ beforeEach(() => {
   asks.length = 0;
   sideCalls = [];
   sideAnswer = () => ({ ok: true });
+  finderCan = true;
   vi.stubGlobal(
     "fetch",
     vi.fn(async (url: string, init?: { body?: string }) => {
@@ -622,11 +643,11 @@ describe("the command bar (owner's design C) and the language pill", () => {
     expect(document.querySelector('[data-chat="minimise"]')).toBeInTheDocument();
     window.localStorage.removeItem("sme_chat_lang");
   });
-  it("the language pill offers Auto, Telugu, English, Hindi, Kannada, Tamil, Malayalam, starts as the app language and remembers the choice", async () => {
+  it("the language pill offers Auto, Telugu, English, Hindi, Kannada, Tamil, Malayalam, starts on Auto (never chosen) and remembers the choice", async () => {
     draw({ variant: "bar" });
     const pill = screen.getByRole("combobox", { name: "Language" }) as HTMLSelectElement;
     expect([...pill.options].map((o) => o.text)).toEqual(["Auto", "తెలుగు", "English", "हिंदी", "ಕನ್ನಡ", "தமிழ்", "മലയാളം"]);
-    expect(pill.value).toBe("en"); // the app's language
+    expect(pill.value).toBe("auto"); // never chosen = Auto (owner, 4 Nov)
     await act(async () => void fireEvent.change(pill, { target: { value: "te" } }));
     expect(window.localStorage.getItem("sme_chat_lang")).toBe("te");
     cleanup();
@@ -710,5 +731,89 @@ describe("the command bar (owner's design C) and the language pill", () => {
     const talk = document.querySelector('[data-chat="live-talk"]') as HTMLElement;
     expect(talk.querySelector("[data-orb]")).not.toBeNull();
     expect(talk.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // the orb is above the composer
+  });
+});
+
+describe("the Lead Finder's card in the chat (docs/contracts/lead-finder.md 1b)", () => {
+  const cards = () => [...document.querySelectorAll<HTMLElement>('[data-chat="lead-finder"]')];
+  it("draws the plan card under the sentence; OK runs the search and the card becomes the result card in its place", async () => {
+    draw();
+    await type("FIND");
+    await send();
+    expect(document.body).toHaveTextContent("Shall I search?");
+    expect(cards()).toHaveLength(1);
+    const card = cards()[0];
+    for (const text of ["The search plan", "saree shops", "Jayanagar Bengaluru", "20 businesses", "₹0", "Made-up businesses for the demo"]) expect(within(card).getByText(text)).toBeInTheDocument();
+    sideAnswer = (b) => (b.op === "lf_approve" ? { ok: true, search: DONE } : { ok: false });
+    await act(async () => void fireEvent.click(within(card).getByRole("button", { name: "OK" })));
+    expect(sideCalls).toEqual([{ op: "lf_approve", searchId: PLANNED.id }]);
+    expect(cards()).toHaveLength(1);
+    expect(cards()[0]).toHaveTextContent("Found 18 · 0 call-ready · 11 need you · 7 skipped");
+    expect(within(cards()[0]).getByRole("link", { name: "Show the ones that need you" })).toHaveAttribute("href", "/app/tenants/t/retailers?status=needs_owner");
+    expect(within(cards()[0]).queryByRole("button", { name: "OK" })).toBeNull();
+  });
+  it("Cancel throws the plan away (nothing searched); a refusal is said in words and the plan stays", async () => {
+    draw();
+    await type("FIND");
+    await send();
+    sideAnswer = () => ({ ok: false, error: "cap" });
+    await act(async () => void fireEvent.click(within(cards()[0]).getByRole("button", { name: "OK" })));
+    expect(within(cards()[0]).getByRole("alert")).toHaveTextContent("Today's searches are used up.");
+    expect(within(cards()[0]).getByText("The search plan")).toBeInTheDocument();
+    sideAnswer = (b) => (b.op === "lf_cancel" ? { ok: true, search: { ...PLANNED, state: "cancelled" } } : { ok: false });
+    await act(async () => void fireEvent.click(within(cards()[0]).getByRole("button", { name: "Cancel" })));
+    expect(sideCalls.at(-1)).toEqual({ op: "lf_cancel", searchId: PLANNED.id });
+    expect(cards()[0]).toHaveTextContent("Search cancelled. Nothing was searched.");
+  });
+  it("a salesperson (can_approve false) sees the plan and who can OK it, with neither OK nor Cancel", async () => {
+    finderCan = false;
+    draw();
+    await type("FIND");
+    await send();
+    const card = cards()[0];
+    expect(card).toHaveTextContent("Only the owner or an admin can OK a search.");
+    expect(within(card).queryByRole("button", { name: "OK" })).toBeNull();
+    expect(within(card).queryByRole("button", { name: "Cancel" })).toBeNull();
+  });
+  it("a yes in the chat: the next turn's result shows on the card that showed the plan (one card per search); a replayed event keeps one card", async () => {
+    draw();
+    await type("FIND TWICE");
+    await send();
+    expect(cards()).toHaveLength(1);
+    await type("yes");
+    await send();
+    expect(document.body).toHaveTextContent("Done: I found 20 businesses in Jayanagar.");
+    expect(cards()).toHaveLength(1);
+    expect(cards()[0]).toHaveAttribute("data-state", "done");
+    expect(cards()[0]).toHaveTextContent("Found 18 · 0 call-ready · 11 need you · 7 skipped");
+    expect(cards()[0]).toHaveTextContent("Made-up businesses for the demo");
+    expect(cards()[0].closest('[data-chat="exchange"]')).toHaveTextContent("Shall I search?"); // on the reply that showed the plan
+  });
+  it("Google's results say Google Maps; a reply without the event (no Lead Finder here) draws no card", async () => {
+    draw();
+    await type("FIND PLACES");
+    await send();
+    expect(within(cards()[0]).getByText("Google Maps")).toBeInTheDocument();
+    expect(within(cards()[0]).getByText("₹29.50 (estimate)")).toBeInTheDocument();
+    cleanup();
+    draw();
+    await type("find more customers");
+    await send();
+    expect(cards()).toHaveLength(0);
+  });
+  it("a spoken search: the card follows the spoken sentence in the thread", async () => {
+    draw();
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: /^Live talk: a spoken/ })));
+    await act(async () => void sock.onopen?.());
+    await act(async () => void sock.say({ type: "ready", session_id: "s", language: "en", limits: {} }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    await act(async () => void sock.say({ type: "transcript", text: "find new retailers in Jayanagar", final: true, seq: 1, t_ms: 700 }));
+    await act(async () => void sock.say({ type: "caption", who: "user", text: "find new retailers in Jayanagar", final: true, spoken: true }));
+    await act(async () => void sock.say({ type: "state", state: "speaking" }));
+    await act(async () => void sock.say({ type: "caption", who: "assistant", text: "I will look for saree shops in Jayanagar. Shall I search?", final: true, spoken: true }));
+    await act(async () => void sock.say({ type: "lead_finder", search: SEARCH_PLANNED, can_approve: true }));
+    await act(async () => void sock.say({ type: "state", state: "listening" }));
+    expect(cards()).toHaveLength(1);
+    expect(within(cards()[0]).getByRole("button", { name: "OK" })).toBeInTheDocument();
   });
 });

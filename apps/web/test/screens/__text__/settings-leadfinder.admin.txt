@@ -1,0 +1,19 @@
+# Settings
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [My profile](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=profile) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Lead Finder](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=leadfinder current=page) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Lead Finder"}
+## Lead Finder
+How the assistant decides whom it may call, and how much it may search.
+form:
+Fit bar (50 to 100)
+<number name=fitBar label="Fit bar (50 to 100)" min=50 max=100 inputmode=numeric step=1 value=70 described-by="A business at or above this fit is ready to call without asking you (after the first calls of a search).">
+A business at or above this fit is ready to call without asking you (after the first calls of a search). Calls a day (0 to 500)
+<number name=dailyCallCap label="Calls a day (0 to 500)" min=0 max=500 inputmode=numeric step=1 value=20>
+Call from (hour, 9 to 20)
+<number name=callFromHour label="Call from (hour, 9 to 20)" min=9 max=20 inputmode=numeric step=1 value=10>
+Call until (hour, 10 to 21)
+<number name=callToHour label="Call until (hour, 10 to 21)" min=10 max=21 inputmode=numeric step=1 value=19 described-by="India time, 24-hour clock: 19 is 7 in the evening.">
+India time, 24-hour clock: 19 is 7 in the evening. Searches a day (1 to 20)
+<number name=searchesPerDay label="Searches a day (1 to 20)" min=1 max=20 inputmode=numeric step=1 value=5>
+Results per search (1 to 20)
+<number name=resultsPerSearch label="Results per search (1 to 20)" min=1 max=20 inputmode=numeric step=1 value=20>
+[button type=submit: Save]
