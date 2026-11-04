@@ -4,17 +4,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useId, useState } from "react";
 
-import { FOR_GOOD, reasonLine, type ActionResult, type CallLanguage, type Persona, type PracticeCall as Call, type Prospect, type ProspectAction, type ProspectStatus } from "@/lib/lead-finder/types";
+import { FOR_GOOD, reasonLine, type ActionResult, type CallLanguage, type Persona, type PracticeCall as Call, type Prospect, type ProspectAction, type ProspectStatus, type QuoteDraftMade, type QuoteDraftView } from "@/lib/lead-finder/types";
 
 import { FailureNote } from "../cc/FailureNote";
 import { card, danger, muted, pillClass, secondary, type Failed, type Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
 import { GoogleMark } from "./SearchCards";
 import { PracticeCall } from "./PracticeCall";
+import { QuoteDraft } from "./QuoteDraft";
 
 export type ListActions = {
   act: (ids: string[], action: ProspectAction) => Promise<Reply<ActionResult[]>>;
   practice: (prospectId: string, persona: Persona, language: CallLanguage) => Promise<Reply<Call>>;
+  /** The draft quote of a qualified call (contract section 7): the preview, and making it (Owner, Admin). */
+  quoteDraft: (prospectId: string) => Promise<Reply<QuoteDraftView>>;
+  makeQuoteDraft: (prospectId: string) => Promise<Reply<QuoteDraftMade>>;
 };
 
 const TONE: Record<ProspectStatus, Parameters<typeof pillClass>[0]> = { new: "brand", researching: "info", call_ready: "green", needs_owner: "amber", skipped: "neutral", contacted: "brand", qualified: "green", not_interested: "red" };
@@ -23,7 +27,7 @@ const BULK: readonly ProspectAction[] = ["call", "later", "skip", "not_intereste
 /**
  * The Prospects list (job lead-finder part D, contract sections 3 to 5): best fit first, each business with its decision badge, the one-line why, where it came from ("Google Maps" whenever Google's data is shown), a tick box for
  * the bulk buttons (Call, Ask me later, Skip; Not interested and Do not call behind a confirm: they are for good) and the result of each one. A Ready to call business has the practice call (Owner, Admin); a Qualified one links
- * to its lead. Nothing here dials: the only call is the simulator.
+ * to its lead and has its draft quote (the preview for everyone; "Make the draft quote" for the Owner and Admin). Nothing here dials: the only call is the simulator, and nothing here approves or sends a quote.
  */
 export function ProspectList({ items, words, base, canPractice, labelFixture = false, langNames, actions }: { items: Prospect[]; words: Words; base: string; canPractice: boolean; /** Say "Made-up businesses for the demo" on each made-up row (the page has not said it once on top). */ labelFixture?: boolean; langNames: Record<CallLanguage, string>; actions: ListActions }) {
   const t = makeT(words);
@@ -143,7 +147,8 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
                 ) : null}
               </div>
             </div>
-            {p.status === "call_ready" && canPractice ? <PracticeCall prospect={p} words={words} base={base} langNames={langNames} run={(persona, language) => actions.practice(p.id, persona, language)} /> : null}
+            {p.status === "call_ready" && canPractice ? <PracticeCall prospect={p} words={words} base={base} langNames={langNames} run={(persona, language) => actions.practice(p.id, persona, language)} draft={{ preview: actions.quoteDraft, make: actions.makeQuoteDraft }} /> : null}
+            {p.status === "qualified" && p.leadId ? <QuoteDraft words={words} base={base} canMake={canPractice} actions={{ preview: () => actions.quoteDraft(p.id), make: () => actions.makeQuoteDraft(p.id) }} /> : null}
           </li>
         ))}
       </ul>

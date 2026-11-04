@@ -4,6 +4,7 @@ import {
   CAPTURED,
   DECISION_REASONS,
   END_REASONS,
+  LEFT_OUT_REASONS,
   OUTCOMES,
   PERSONAS,
   PROSPECT_STATUSES,
@@ -14,15 +15,19 @@ import {
   type ActionResult,
   type Availability,
   type CallLanguage,
+  type DraftLine,
   type FinderSettings,
   type Persona,
   type PracticeCall,
+  type LeftOut,
   type Prospect,
   type ProspectAction,
   type ProspectPage,
   type ProspectStats,
   type ProspectStatus,
   type Qualification,
+  type QuoteDraftMade,
+  type QuoteDraftPreview,
   type QuoteLine,
   type Search,
   type SettingsField,
@@ -244,6 +249,58 @@ export function parsePracticeCall(json: unknown): PracticeCall {
 export async function practiceCall(token: string, tenantId: string, prospectId: string, persona: Persona, language: CallLanguage): Promise<PracticeCall> {
   const body = { persona: oneOf(persona, PERSONAS, "persona"), language: oneOf(language, CALL_LANGUAGES, "language") };
   return parsePracticeCall(await apiRequest(`${base(tenantId)}/prospects/${id(prospectId, "prospect id")}/simulated-call`, token, { method: "POST", body: JSON.stringify(body) }));
+}
+
+// ---------------------------------------------------------------------------------------------------------------- 7. the draft quote of a qualified call
+const parseDraftLine = (v: unknown): DraftLine => {
+  const r = rec(v, "line");
+  return { item: nstr(r.item, "item", 200), itemTypeCode: str(r.item_type_code, "item_type_code", 60), qty: int(r.qty, "qty", 1, 1_000_000), unitPricePaise: int(r.unit_price_paise, "unit_price_paise", 0, 10_000_000_000), quantitySaid: str(r.quantity_said ?? "", "quantity_said", 300) };
+};
+const parseLeftOut = (v: unknown): LeftOut => {
+  const r = rec(v, "left_out");
+  return { item: nstr(r.item, "item", 200), reason: oneOf(r.reason, LEFT_OUT_REASONS, "reason") };
+};
+export function parseQuoteDraftPreview(json: unknown): QuoteDraftPreview {
+  const x = rec(json, "quote draft");
+  return {
+    prospectId: uuid(x.prospect_id, "prospect_id"),
+    leadId: uuid(x.lead_id, "lead_id"),
+    ready: bool(x.ready, "ready"),
+    made: bool(x.made, "made"),
+    quoteId: uuid(x.quote_id, "quote_id"),
+    lines: list(x.lines, "lines", 20).map(parseDraftLine),
+    leftOut: list(x.left_out ?? [], "left_out", 40).map(parseLeftOut),
+  };
+}
+export function parseQuoteDraftMade(json: unknown): QuoteDraftMade {
+  const x = rec(json, "quote draft");
+  if (x.status !== "draft") bad("status");
+  return {
+    quoteId: uuid(x.quote_id, "quote_id"),
+    quoteNo: optInt(x.quote_no, "quote_no", 0, 100_000_000),
+    enquiryId: uuid(x.enquiry_id, "enquiry_id"),
+    status: "draft",
+    totalPaise: optInt(x.total_paise, "total_paise", 0, 1_000_000_000_000),
+    needsOwnerApproval: bool(x.needs_owner_approval, "needs_owner_approval"),
+    lines: list(x.lines ?? [], "lines", 20).map(parseDraftLine),
+    leftOut: list(x.left_out ?? [], "left_out", 40).map(parseLeftOut),
+    replayed: x.replayed === undefined ? false : bool(x.replayed, "replayed"),
+  };
+}
+/** `GET /prospects/{id}/quote-draft` (Owner, Admin, Sales): the PREVIEW, nothing stored. 409 `not_qualified` for a call that did not qualify. */
+export async function getQuoteDraft(token: string, tenantId: string, prospectId: string): Promise<QuoteDraftPreview> {
+  return parseQuoteDraftPreview(await apiRequest(`${base(tenantId)}/prospects/${id(prospectId, "prospect id")}/quote-draft`, token));
+}
+export type QuoteDraftInput = { customerKind: "new" | "repeat"; deliveryState: string | null };
+/**
+ * `POST /prospects/{id}/quote-draft` (Owner, Admin, with the second factor: 403 `mfa_required` otherwise): ONE enquiry on the call's lead and ONE draft quote at the Owner's own catalogue prices. Nothing is approved or sent. The same
+ * call again gives the same draft (`replayed`). 422 `nothing_to_quote`, 409 `quote_draft_exists` (made before with other prices: open it).
+ */
+export async function makeQuoteDraft(token: string, tenantId: string, prospectId: string, input: QuoteDraftInput): Promise<QuoteDraftMade> {
+  if (input.customerKind !== "new" && input.customerKind !== "repeat") bad("customer kind");
+  if (input.deliveryState !== null && !/^[A-Z]{2}$/.test(input.deliveryState)) bad("delivery state");
+  const body = { customer_kind: input.customerKind, delivery_state: input.deliveryState };
+  return parseQuoteDraftMade(await apiRequest(`${base(tenantId)}/prospects/${id(prospectId, "prospect id")}/quote-draft`, token, { method: "POST", body: JSON.stringify(body) }));
 }
 
 // ---------------------------------------------------------------------------------------------------------------- 6. settings

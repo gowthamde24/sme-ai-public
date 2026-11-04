@@ -126,6 +126,22 @@ export type PracticeCall = {
   evals: Record<string, boolean>;
 };
 
+/**
+ * The draft quote of a qualified call (contract section 7). The PREVIEW (`GET /prospects/{id}/quote-draft`, nothing stored): each line at the Owner's own exact catalogue price for the number the buyer said, and each suggestion that is
+ * left out with its closed reason; `ready` = at least one line can go in (the button is shown), `made` = the draft exists (open it instead). Making it (`POST`, Owner and Admin, with the second factor) makes ONE enquiry on the call's
+ * lead and ONE draft quote: nothing is approved or sent.
+ */
+export const LEFT_OUT_REASONS = ["no_price", "no_quantity", "not_in_stock", "not_in_catalogue", "too_many_lines", "item_type_off"] as const;
+export type LeftOutReason = (typeof LEFT_OUT_REASONS)[number];
+export type DraftLine = { item: string; itemTypeCode: string; qty: number; unitPricePaise: number; quantitySaid: string };
+export type LeftOut = { item: string; reason: LeftOutReason };
+export type QuoteDraftPreview = { prospectId: string; leadId: string; ready: boolean; made: boolean; quoteId: string; lines: DraftLine[]; leftOut: LeftOut[] };
+export type QuoteDraftMade = { quoteId: string; quoteNo: number | null; enquiryId: string; status: "draft"; totalPaise: number | null; needsOwnerApproval: boolean; lines: DraftLine[]; leftOut: LeftOut[]; replayed: boolean };
+/** What the screen is given: the preview and, once the draft is made, the enquiry it lives on (null when that could not be read). */
+export type QuoteDraftView = QuoteDraftPreview & { enquiryId: string | null };
+/** A textiles draft quote opens on its ENQUIRY's page with that quote chosen (its Quote part), never on /quotes/{id} (the building-materials quote). */
+export const draftQuoteHref = (base: string, enquiryId: string, quoteId: string): string => `${base}/enquiries/${enquiryId}?${new URLSearchParams({ quote: quoteId })}`;
+
 /** Settings -> Lead Finder (contract section 6) and the ranges the API takes. */
 export type FinderSettings = { fitBar: number; dailyCallCap: number; callFromHour: number; callToHour: number; searchesPerDay: number; resultsPerSearch: number; updatedAt: string | null };
 export type SettingsField = Exclude<keyof FinderSettings, "updatedAt">;
