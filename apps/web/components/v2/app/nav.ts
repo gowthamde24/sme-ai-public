@@ -84,9 +84,10 @@ export const NAV: readonly NavGroup[] = [
       // night 4 (jobs DR, DS): Lead Desk, the core for every business, and "Ask Vijaya to do it". Each exists only while its feature flag is on (lib/screens/features.ts); they are tabs of Customers, Calls and Reports
       { id: "leaddesk", label: "Leads", icon: "leads", path: "/lead-desk", feature: "leads", roles: ALL_ROLES },
       { id: "import", label: "Add leads", icon: "customers", path: "/import", feature: "leads", roles: WRITERS },
-      { id: "outreach", label: "Lead plans", icon: "campaigns", path: "/outreach", feature: "outreach", roles: WRITERS },
+      // a school (the pack with Fees) does no outreach (owner, 4 Nov: "education never shows outreach features"): no calling plans, no lead report
+      { id: "outreach", label: "Lead plans", icon: "campaigns", path: "/outreach", feature: "outreach", unlessModule: "fees", roles: WRITERS },
       { id: "tasks", label: "Tasks", icon: "calls", path: "/tasks", feature: "tasks", roles: ALL_ROLES },
-      { id: "leadreport", label: "Lead report", icon: "report", path: "/lead-report", feature: "outreach", roles: ADMINS },
+      { id: "leadreport", label: "Lead report", icon: "report", path: "/lead-report", feature: "outreach", unlessModule: "fees", roles: ADMINS },
     ],
   },
   {
