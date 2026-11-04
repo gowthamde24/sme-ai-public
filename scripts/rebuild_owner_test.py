@@ -79,7 +79,7 @@ def rebuild(pack: str, reason: str, api_url: str, *, dry_run: bool = False) -> d
     key = generation_key(pack, g)
 
     class Generation(sot.OwnerTest):  # type: ignore[misc,unused-ignore]  # the fresh helper account: its own address and its own secrets
-        def helper_token(self, pack_: str, name_: str, terms: dict[str, str]) -> str:
+        def helper_token(self, pack_: str, name_: str, terms: dict[str, str], gen: int = 1) -> str:  # `gen` as in OwnerTest (C2, #293); this generation's own key is used
             pw_name = f"sme-owner-test-{key}-password"
             password = ss.secret_get(pw_name)
             if password is None:
@@ -89,7 +89,10 @@ def rebuild(pack: str, reason: str, api_url: str, *, dry_run: bool = False) -> d
             self.create_user(email, password, {"terms_version": terms["terms"], "business_name": name_})
             return str(self.second_factor_for(key, self.sign_in(email, password)))
 
-    sot.helper_email = lambda pack_: generation_email(pack_, g)   # the phases below look the helper up by its address
+    def _email(pack: str, gen: int = 1) -> str:  # noqa: ARG001 - the signature of seed_owner_test.helper_email; this generation's own number is used
+        return generation_email(pack, g)
+
+    sot.helper_email = _email   # the phases below look the helper up by its address
     s = Generation(api_url)
     terms = s.terms()
     out["provisioned"] = s.provision(pack, name, terms)

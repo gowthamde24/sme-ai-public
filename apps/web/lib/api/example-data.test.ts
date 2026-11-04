@@ -5,7 +5,7 @@ import { ApiAuthError, ApiRequestError } from "./client";
 const apiRequest = vi.fn();
 vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a) }));
 
-import { getExampleStatus, loadExampleData, removeExampleData } from "./example-data";
+import { getExampleStatus, loadExampleData, removeExampleData, resetExampleData } from "./example-data";
 import { getProfile, parseProfile, saveProfile } from "./profile";
 import { ApiContractError } from "./client";
 
@@ -16,10 +16,34 @@ const COUNTS = { companies: 2, contacts: 3, leads: 3, products: 4 };
 const NONE = { companies: 0, contacts: 0, leads: 0, products: 0 };
 const STATUS = { loaded: true, batch_id: "b1", pack_id: "p", loaded_at: "2026-10-01T00:00:00Z", removed_at: null, counts: COUNTS };
 
+describe("example data: the one-step reset (job test-workspaces)", () => {
+  it("POSTs .../reset once and counts every kind that stayed, the operator-marked 'other' rows too", async () => {
+    apiRequest.mockResolvedValueOnce({ removed: { ...COUNTS, other: 9 }, kept: { ...NONE, contacts: 1, other: 2 }, status: STATUS });
+    expect(await resetExampleData("tok", T)).toEqual({ result: "ok", kept: 3 });
+    expect(apiRequest).toHaveBeenCalledTimes(1);
+    expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${T}/example-data/reset`, "tok", { method: "POST" });
+  });
+  it("on an older API without the route it removes, then loads; a failed removal loads nothing", async () => {
+    apiRequest.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x")).mockResolvedValueOnce({ batch_id: "b1", removed: COUNTS, kept: { ...NONE, leads: 1 } }).mockResolvedValueOnce(STATUS);
+    expect(await resetExampleData("tok", T)).toEqual({ result: "ok", kept: 1 });
+    expect(apiRequest.mock.calls.map((c) => c[0])).toEqual([`/v1/tenants/${T}/example-data/reset`, `/v1/tenants/${T}/example-data/remove`, `/v1/tenants/${T}/example-data`]);
+    apiRequest.mockReset();
+    apiRequest.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x")).mockRejectedValueOnce(new ApiRequestError(500, "internal", "x"));
+    expect(await resetExampleData("tok", T)).toEqual({ result: "failed", kept: 0 });
+    expect(apiRequest).toHaveBeenCalledTimes(2);
+  });
+  it("a refusal is 'refused', a session problem is thrown", async () => {
+    apiRequest.mockRejectedValueOnce(new ApiRequestError(403, "forbidden", "x"));
+    expect(await resetExampleData("tok", T)).toEqual({ result: "refused", kept: 0 });
+    apiRequest.mockRejectedValueOnce(new ApiAuthError("no"));
+    await expect(resetExampleData("tok", T)).rejects.toThrow(ApiAuthError);
+  });
+});
+
 describe("example data", () => {
   it("asks whether the sample is loaded (GET), at the workspace's own path", async () => {
     apiRequest.mockResolvedValue(STATUS);
-    expect(await getExampleStatus("tok", T)).toEqual({ loaded: true, counts: COUNTS });
+    expect(await getExampleStatus("tok", T)).toEqual({ loaded: true, counts: { ...COUNTS, other: 0 } }); // an older API has no `other`: 0
     expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${T}/example-data`, "tok");
     apiRequest.mockResolvedValue({ ...STATUS, loaded: false, counts: NONE });
     expect((await getExampleStatus("tok", T))?.loaded).toBe(false);
