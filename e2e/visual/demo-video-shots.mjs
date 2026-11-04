@@ -4,7 +4,7 @@
 //   node e2e/visual/demo-video-shots.mjs [--no-build] [--out DIR]
 //
 // Plays the story with the presenter's keys (the right arrow) at 1440x900 and 390x844, light (and dark at 1440), and saves one viewport picture per step to DIR (default /Volumes/Stack19/stack19/v2-overnight/shots-demo).
-// It also checks each step's words: no "example", no "DEMO", no "made-up businesses", no raw word key, no sideways scroll. Same ports and guards as run.mjs (54999, 3014); it stops only its own processes.
+// It also checks each step's words: no "example", no "DEMO", no "made-up businesses", no raw word key, no sideways scroll, no plan line in the menu, no count on the bell and no request for notifications. Same ports and guards as run.mjs (54999, 3014); it stops only its own processes.
 import { execFileSync, spawn } from "node:child_process";
 import { createRequire } from "node:module";
 import { existsSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
@@ -152,6 +152,9 @@ async function main() {
       const page = await context.newPage();
       const errors = [];
       page.on("pageerror", (e) => errors.push(String(e).slice(0, 160)));
+      // the bell asks nothing while the story plays (the workspace's real notices must not reach the recording)
+      const asked = [];
+      page.on("request", (r) => /\/notifications(\?|$)/.test(new URL(r.url()).pathname + new URL(r.url()).search) && asked.push(r.url()));
       // a screen other than Today asked with ?demo=video starts the story at step 1
       await page.goto(`${WEB_URL}/app/tenants/${TENANT}/retailers?demo=video`, { waitUntil: "networkidle", timeout: 60_000 });
       const landed = new URL(page.url());
@@ -170,7 +173,8 @@ async function main() {
           await page.screenshot({ path: path.join(OUT, `${name}.png`), animations: "disabled", caret: "hide" });
           const wide = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
           const body = (await page.locator("body").innerText()).replace(/\s+/g, " ");
-          const flags = [wide ? "horizontal scroll" : "", /\bexamples?\b/i.test(body) ? "the word example" : "", /\bDEMO\b|synthetic/.test(body) ? "a DEMO / synthetic label" : "", /made-up businesses/i.test(body) ? "made-up businesses label" : "", /\b[a-z]+\.[a-z_]+\.[a-z_]+\b/.test(body.replace(/\S+@\S+|https?:\S+/g, "")) ? "maybe a raw key" : "", errors.length ? `page errors: ${errors.join(" | ")}` : ""].filter(Boolean);
+          const badge = await page.locator('[data-notify="count"]').count();
+          const flags = [badge ? "a count on the bell" : "", asked.length ? "the bell asked for notifications" : "", /\b[A-Z][a-z]+( [a-z]+)? plan\b/.test(await page.locator("aside").first().innerText().catch(() => "")) ? "a plan line in the menu" : "", wide ? "horizontal scroll" : "", /\bexamples?\b/i.test(body) ? "the word example" : "", /\bDEMO\b|synthetic/.test(body) ? "a DEMO / synthetic label" : "", /made-up businesses/i.test(body) ? "made-up businesses label" : "", /\b[a-z]+\.[a-z_]+\.[a-z_]+\b/.test(body.replace(/\S+@\S+|https?:\S+/g, "")) ? "maybe a raw key" : "", errors.length ? `page errors: ${errors.join(" | ")}` : ""].filter(Boolean);
           if (flags.length) failed = true;
           rows.push(`${flags.length ? "CHECK" : "ok   "} ${name}${flags.length ? `  ${flags.join("; ")}` : ""}`);
         } catch (e) {

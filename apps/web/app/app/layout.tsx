@@ -52,7 +52,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   } catch {
     // no pack to draw: the menu the product always had
   }
-  // the demo-video mode (job demo-video, lib/demo-video/guard.ts): the frame names the story's invented business and person, never the demo workspace's own name ("DEMO ... (synthetic)") or the demo account's address
+  // the demo-video mode (job demo-video, lib/demo-video/guard.ts): the frame names the story's invented business and person (no plan line, a bell that asks nothing), never the demo workspace's own name ("DEMO ... (synthetic)") or the demo account's address
   const video = await videoFrame(user.accessToken, memberships);
   if (video) {
     memberships = video.memberships;
@@ -62,7 +62,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const mark = me ? <Avatar url={me.url} letters={me.letters} className={MARK_SMALL} /> : undefined;
   const markLarge = me ? <Avatar url={me.url} letters={me.letters} className={MARK_LARGE} /> : undefined;
   return (
-    <AppFrame lang={lang} theme={theme} email={video ? null : user.email} memberships={memberships} signOut={signOut} frame={frame} mark={mark} markLarge={markLarge}>
+    <AppFrame lang={lang} theme={theme} email={video ? null : user.email} memberships={memberships} signOut={signOut} frame={frame} mark={mark} markLarge={markLarge} still={video !== null}>
       {children}
     </AppFrame>
   );

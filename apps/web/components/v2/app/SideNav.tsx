@@ -23,7 +23,7 @@ export { itemCurrent };
  * (nav.ts), each row only for the roles that may open it; and, fixed below, the AI usage card, Settings, Help ("Not available yet"), the user card and "Collapse menu".
  * Outside a workspace (the workspaces page, the security page) the groups give way to the two account pages.
  */
-export function SideNav({ memberships, labels: given_labels, frame: given, email, signOut, mark }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void>; mark: ReactNode }) {
+export function SideNav({ memberships, labels: given_labels, frame: given, email, signOut, mark, still = false }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void>; mark: ReactNode; /** The demo video (job demo-video): no plan line under the business name. */ still?: boolean }) {
   const { current, pathname, activeMenu } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const labels = withPackWords(given_labels, frame.pack);
@@ -34,7 +34,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
   return (
     <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[232px]"} print:hidden`}>
-      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} logoUrl={frame.logoUrl} />
+      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} logoUrl={frame.logoUrl} still={still} />
       <nav aria-label={aria} className="min-h-0 flex-1 overflow-y-auto p-2">
         {current ? (
           <NavGroups groups={menuGroups(current.role, frame.pack)} tenantId={current.id} activeItemId={activeMenu} labels={labels} waiting={frame.waiting} collapsed={collapsed} />
