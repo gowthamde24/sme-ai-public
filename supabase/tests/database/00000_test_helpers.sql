@@ -616,6 +616,12 @@ begin
   insert into public.phone_numbers (id, tenant_id, number, label) values (tests.rid(p || '_er_pnum'), t, '+9180' || substr(translate(tests.rid(p || '_er_pnum')::text, 'abcdef-', '1234567'), 1, 8), 'Phcq7 shop line');
   insert into public.phone_calls (id, tenant_id, direction, provider, state, contact_id, lead_id, captured, summary, transcript) values
     (tests.rid(p || '_er_call'), t, 'outbound', 'sandbox', 'queued', k, l, '{"price": "Phcq7"}'::jsonb, 'Phcq7 wants a visit on Saturday', '[{"who": "caller", "text": "Phcq7 here"}]'::jsonb);
+  -- Lead Finder (ADR 0119): a search's words and a found business (its name, area, number and what it said on the call) carry a business canary, erased with the workspace and swept
+  insert into public.prospect_searches (id, tenant_id, query, area, max_results, provider, sku, state, source_label, created_by) values
+    (tests.rid(p || '_er_psrch'), t, 'Lfdq7 saree shops', 'Lfdq7 Jayanagar', 20, 'fixture', 'fixture', 'done', 'Lfdq7 search, 2 Nov', tests.uid(p || '_owner'));
+  insert into public.prospects (id, tenant_id, search_id, name, name_key, area, phone, phone_key, source, source_label, place_id, qualification) values
+    (tests.rid(p || '_er_prosp'), t, tests.rid(p || '_er_psrch'), 'Lfdq7 Silks', 'lfdq7 silks', 'Lfdq7 Jayanagar', '+91 98450 12345', '919845012345', 'fixture', 'Lfdq7 search, 2 Nov',
+     'fx_' || p || '_er_prosp', '{"summary": "Lfdq7 wants 40 sarees a month"}'::jsonb);
 end $$;
 
 -- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).
