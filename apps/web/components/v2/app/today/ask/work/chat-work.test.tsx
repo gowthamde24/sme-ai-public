@@ -108,7 +108,7 @@ describe("files in the chat", () => {
     await openPlus();
     const item = screen.getByRole("menuitem", { name: "Add a file" });
     expect(item.getAttribute("aria-describedby")).toBeTruthy();
-    expect(document.getElementById(item.getAttribute("aria-describedby") as string)?.textContent).toBe("Excel, CSV, PDF, photos (JPG, PNG, HEIC), Word, contact cards · up to 10 MB");
+    expect(document.getElementById(item.getAttribute("aria-describedby") as string)?.textContent).toBe("Excel, CSV, PDF, photos (JPG, PNG, HEIC), Word, contact cards · up to 10\u00a0MB");
     const accept = (fileInput()?.accept ?? "").split(",");
     for (const x of [".xlsx", ".xls", ".csv", ".pdf", ".jpg", ".jpeg", ".png", ".heic", ".heif", ".docx", ".vcf", ".txt", "image/heic", "application/pdf"]) expect(accept).toContain(x);
   });

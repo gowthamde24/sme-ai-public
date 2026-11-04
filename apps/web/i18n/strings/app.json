@@ -77329,10 +77329,10 @@
   }
  },
  "bv.work.file.types": {
-  "en": "Excel, CSV, PDF, photos (JPG, PNG, HEIC), Word, contact cards · up to {mb} MB",
-  "te": "Excel, CSV, PDF, ఫోటోలు (JPG, PNG, HEIC), Word, కాంటాక్ట్ కార్డ్స్ · {mb} MB వరకు",
-  "hi": "Excel, CSV, PDF, फ़ोटो (JPG, PNG, HEIC), Word, कॉन्टैक्ट कार्ड · {mb} MB तक",
-  "kn": "Excel, CSV, PDF, ಫೋಟೋಗಳು (JPG, PNG, HEIC), Word, ಕಾಂಟ್ಯಾಕ್ಟ್ ಕಾರ್ಡ್‌ಗಳು · {mb} MB ವರೆಗೆ",
+  "en": "Excel, CSV, PDF, photos (JPG, PNG, HEIC), Word, contact cards · up to {mb} MB",
+  "te": "Excel, CSV, PDF, ఫోటోలు (JPG, PNG, HEIC), Word, కాంటాక్ట్ కార్డ్స్ · {mb} MB వరకు",
+  "hi": "Excel, CSV, PDF, फ़ोटो (JPG, PNG, HEIC), Word, कॉन्टैक्ट कार्ड · {mb} MB तक",
+  "kn": "Excel, CSV, PDF, ಫೋಟೋಗಳು (JPG, PNG, HEIC), Word, ಕಾಂಟ್ಯಾಕ್ಟ್ ಕಾರ್ಡ್‌ಗಳು · {mb} MB ವರೆಗೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

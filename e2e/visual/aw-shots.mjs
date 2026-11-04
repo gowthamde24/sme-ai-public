@@ -72,7 +72,9 @@ const SCREENS = [
     act: async (page) => {
       const form = await openChat(page);
       await form.locator("[data-chat=plus]").click();
-      await page.locator("[data-chat=add-file]").filter({ visible: true }).first().waitFor({ state: "visible", timeout: 10_000 });
+      const menu = page.locator("[data-chat=plus-menu]").filter({ visible: true }).first();
+      await menu.waitFor({ state: "visible", timeout: 10_000 });
+      await menu.scrollIntoViewIfNeeded();
     },
   },
   {
@@ -83,8 +85,9 @@ const SCREENS = [
       await form.locator("[data-chat=file-input]").setInputFiles(FAKE_PDF);
       await form.locator("[data-chat=file-chip][data-status=ready]").waitFor({ timeout: 10_000 });
       await form.locator("button[type=submit]").click();
-      await page.locator("[data-work=cant-do]").filter({ visible: true }).first().waitFor({ state: "visible", timeout: 10_000 });
-      await page.locator("[data-work=cant-do]").filter({ visible: true }).first().scrollIntoViewIfNeeded();
+      const card = page.locator("[data-work=cant-do]").filter({ visible: true }).first();
+      await card.waitFor({ state: "visible", timeout: 10_000 });
+      await card.scrollIntoViewIfNeeded();
     },
   },
 ];
@@ -165,7 +168,8 @@ async function main() {
               await page.evaluate(() => document.fonts.ready);
               if (screen.act) await screen.act(page);
               await page.waitForTimeout(300);
-              await page.screenshot({ path: path.join(OUT, `${name}.png`), fullPage: true, animations: "disabled", caret: "hide" });
+              // a screen that was acted on is taken as the person sees it (the window, scrolled to its part): a full-page picture would draw the fixed bars in the middle of the page
+              await page.screenshot({ path: path.join(OUT, `${name}.png`), fullPage: !screen.act, animations: "disabled", caret: "hide" });
               const wide = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
               const body = (await page.locator("body").innerText()).replace(/\s+/g, " ");
               const flags = [res?.status() !== 200 ? `HTTP ${res?.status()}` : "", wide ? "horizontal scroll" : "", /machine[- ]translat|translated automatically/i.test(body) ? "machine-translation notice" : "", /\b[a-z]+\.[a-z_]+\.[a-z_]+\b/.test(body.replace(/\S+@\S+|https?:\S+/g, "")) ? "maybe a raw key" : "", errors.length ? `page errors: ${errors.join(" | ")}` : ""].filter(Boolean);
