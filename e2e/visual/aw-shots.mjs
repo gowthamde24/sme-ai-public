@@ -16,7 +16,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { FIXED_NOW, SESSION_USER, TENANT } from "./fixtures.mjs";
+import { API_ROUTES, FIXED_NOW, SESSION_USER, TENANT } from "./fixtures.mjs";
 import { startStandIn } from "./stand-in.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -35,6 +35,19 @@ const WEB_PORT = 3014;
 const STAND_IN_URL = `https://127.0.0.1:${STAND_IN_PORT}`;
 const WEB_URL = `http://127.0.0.1:${WEB_PORT}`;
 const FLAGS = { ASSISTANT_WORK_SCREENS: "mock", BROWSER_VOICE: "1" };
+
+/** The Main agent is up for these pictures (the stand-in's own list says "not available", and the chat would be off); everything else of the list stays as the stand-in has it (as e2e/ask-stream-shots.mjs). */
+const AGENTS_ROUTE = [
+  "GET",
+  /^\/v1\/tenants\/[0-9a-f-]{36}\/agents\/status$/,
+  (req, res) => {
+    const route = API_ROUTES.find(([p]) => p.test(`/v1/tenants/${TENANT}/agents/status`));
+    const list = typeof route[1] === "function" ? route[1]({ url: new URL("https://x/"), match: [] }) : route[1];
+    const items = (Array.isArray(list) ? list : list.items ?? list).map((a) => (a.agent === "main" ? { ...a, state: "idle", job: "Answers questions about the business." } : a));
+    res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
+    res.end(JSON.stringify(Array.isArray(list) ? items : { ...list, items }));
+  },
+];
 
 /** The chat on the page: Today's own card, else the floating panel the orb opens. */
 async function openChat(page) {
@@ -110,7 +123,7 @@ async function main() {
     rmSync(path.join(WEB_DIR, ".next"), { recursive: true, force: true });
     execFileSync("npm", ["run", "build"], { cwd: WEB_DIR, env: { ...process.env, ...webEnv }, stdio: ["ignore", "ignore", "inherit"] });
   } else if (!existsSync(path.join(WEB_DIR, ".next", "BUILD_ID"))) throw new Error("--no-build, but there is no build");
-  const standIn = await startStandIn({ port: STAND_IN_PORT, certPath: path.join(tmp, "c.pem"), keyPath: path.join(tmp, "k.pem") });
+  const standIn = await startStandIn({ port: STAND_IN_PORT, certPath: path.join(tmp, "c.pem"), keyPath: path.join(tmp, "k.pem"), extraRoutes: [AGENTS_ROUTE] });
   const nextBin = path.join(WEB_DIR, "node_modules", "next", "dist", "bin", "next");
   const web = spawn(process.execPath, [nextBin, "start", "-p", String(WEB_PORT), "-H", "127.0.0.1"], {
     cwd: WEB_DIR,
@@ -158,7 +171,9 @@ async function main() {
               const flags = [res?.status() !== 200 ? `HTTP ${res?.status()}` : "", wide ? "horizontal scroll" : "", /machine[- ]translat|translated automatically/i.test(body) ? "machine-translation notice" : "", /\b[a-z]+\.[a-z_]+\.[a-z_]+\b/.test(body.replace(/\S+@\S+|https?:\S+/g, "")) ? "maybe a raw key" : "", errors.length ? `page errors: ${errors.join(" | ")}` : ""].filter(Boolean);
               rows.push(`${flags.length ? "CHECK" : "ok   "} ${name}${flags.length ? `  ${flags.join("; ")}` : ""}`);
             } catch (e) {
-              rows.push(`ERROR ${name}: ${String(e.message).split("\n")[0]}`);
+              // what the page had instead, so a screen that never showed its part says why (the parts' data attributes, the address)
+              const seen = await page.evaluate(() => [...new Set([...document.querySelectorAll("[data-ask],[data-chat]")].map((el) => `${el.getAttribute("data-ask") ? `ask=${el.getAttribute("data-ask")}` : `chat=${el.getAttribute("data-chat")}`}`))].slice(0, 20).join(" ")).catch(() => "");
+              rows.push(`ERROR ${name}: ${String(e.message).split("\n")[0]} (at ${page.url().replace(WEB_URL, "")}; parts: ${seen || "none"})`);
             }
             await context.close();
           }
