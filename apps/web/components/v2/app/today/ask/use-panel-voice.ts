@@ -126,7 +126,7 @@ export function usePanelVoice(session: AskSession, voice: BrowserVoice, options:
     for (const t of turns) {
       const mine = next.sources.slice(sourcesSeen.current).map((x) => ({ label: x.label, href: null }));
       sourcesSeen.current = next.sources.length;
-      addExchange({ asked: t.asked, heardByVoice: true, answer: t.answer, interrupted: t.cut, sources: mine, drafts: [], errorCode: null, failed: false, task: null, plan: next.plan });
+      addExchange({ asked: t.asked, heardByVoice: true, answer: t.answer, interrupted: t.cut, sources: mine, drafts: [], errorCode: null, failed: false, task: null, plan: next.plan, leadFinder: next.leadFinder ?? null });
       flushedId.current = t.upto;
     }
     // an answer to a plan (the owner's tap, or a spoken "yes" the API recognised): the card in the thread shows its state

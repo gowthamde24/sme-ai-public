@@ -30,6 +30,7 @@ import { readOutcomeTotals } from "@/lib/outcomes/source";
 import { formatRupees } from "@/lib/money";
 import { withModuleT } from "@/lib/packs/module-words";
 import { withPackT } from "@/lib/packs/resolve";
+import { withVisitWords } from "@/lib/packs/visit-words";
 import { loadExampleAction, removeExampleAction, resetExampleAction } from "./start/actions";
 
 import { approveCallAction, approveMessageAction, editMessageAction, offerVisitAction, rejectMessageAction } from "./today-actions";
@@ -60,7 +61,8 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const lang = await getLang();
   // the business type (job CL): once per request (the frame asked already). Its own words (the helpers' names) go on top of the dictionary; a business type with a checklist of its own shows it instead of the first-run wizard
   const pack = await readPackCached(accessToken, tenantId);
-  const t = pack ? withPackT(withModuleT(appT(lang), pack, appDict(lang)), pack, lang) : appT(lang);
+  // a business's own word for a visit (Site visit, Campus visit, Test drive ...) where the screens said "store" (C1 #308)
+  const t = pack ? withVisitWords(withPackT(withModuleT(appT(lang), pack, appDict(lang)), pack, lang), pack, lang) : appT(lang);
   const now = clock();
   let data, name, setup = null, activation: Activation | null = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
   const base = `/app/tenants/${tenantId}`;

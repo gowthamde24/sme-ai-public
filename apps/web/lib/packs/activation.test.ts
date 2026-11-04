@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
-const reads = { listSources: vi.fn(), listLeadImports: vi.fn(), listRules: vi.fn(), listTasks: vi.fn(), getProfile: vi.fn(), listCatalogueItems: vi.fn(), fetchQuotePolicyVersions: vi.fn(), getWhatsappAccount: vi.fn(), fetchQuotes: vi.fn(), getAccountSecurity: vi.fn(), getInstitutionProfile: vi.fn(), listStudents: vi.fn(), listFeePlans: vi.fn(), listCampaigns: vi.fn(), getMaterialPolicy: vi.fn() };
+const reads = { listSources: vi.fn(), listLeadImports: vi.fn(), listRules: vi.fn(), listTasks: vi.fn(), getProfile: vi.fn(), listCatalogueItems: vi.fn(), fetchQuotePolicyVersions: vi.fn(), getWhatsappAccount: vi.fn(), fetchQuotes: vi.fn(), getAccountSecurity: vi.fn(), getInstitutionProfile: vi.fn(), listStudents: vi.fn(), listFeePlans: vi.fn(), listCampaigns: vi.fn(), getMaterialPolicy: vi.fn(), listMaterialItems: vi.fn(), listMaterialQuotes: vi.fn() };
 vi.mock("@/lib/api/lead-sources", () => ({ listSources: (...a: unknown[]) => reads.listSources(...a) }));
 vi.mock("@/lib/api/lead-imports", () => ({ listLeadImports: (...a: unknown[]) => reads.listLeadImports(...a) }));
 vi.mock("@/lib/api/outreach", () => ({ listRules: (...a: unknown[]) => reads.listRules(...a) }));
@@ -13,7 +13,7 @@ vi.mock("@/lib/api/quote-policies", () => ({ fetchQuotePolicyVersions: (...a: un
 vi.mock("@/lib/api/whatsapp", () => ({ getWhatsappAccount: (...a: unknown[]) => reads.getWhatsappAccount(...a) }));
 vi.mock("@/lib/api/education", () => ({ getInstitutionProfile: (...a: unknown[]) => reads.getInstitutionProfile(...a), listStudents: (...a: unknown[]) => reads.listStudents(...a), listFeePlans: (...a: unknown[]) => reads.listFeePlans(...a) }));
 vi.mock("@/lib/api/campaigns", () => ({ listCampaigns: (...a: unknown[]) => reads.listCampaigns(...a) }));
-vi.mock("@/lib/api/materials", () => ({ getMaterialPolicy: (...a: unknown[]) => reads.getMaterialPolicy(...a) }));
+vi.mock("@/lib/api/materials", () => ({ getMaterialPolicy: (...a: unknown[]) => reads.getMaterialPolicy(...a), listMaterialItems: (...a: unknown[]) => reads.listMaterialItems(...a), listMaterialQuotes: (...a: unknown[]) => reads.listMaterialQuotes(...a) }));
 vi.mock("@/lib/api/quotes", () => ({ fetchQuotes: (...a: unknown[]) => reads.fetchQuotes(...a) }));
 vi.mock("@/lib/api/pack", async (orig) => ({ ...(await orig<typeof import("@/lib/api/pack")>()), getAccountSecurity: (...a: unknown[]) => reads.getAccountSecurity(...a) }));
 
@@ -32,6 +32,8 @@ beforeEach(() => {
   reads.fetchQuotePolicyVersions.mockResolvedValue([]);
   reads.getWhatsappAccount.mockResolvedValue({ configured: false });
   reads.fetchQuotes.mockResolvedValue([]);
+  reads.listMaterialItems.mockResolvedValue({ items: [], next_cursor: null });
+  reads.listMaterialQuotes.mockResolvedValue({ items: [] });
   reads.getAccountSecurity.mockResolvedValue({ level: "aal1", neededFor: ["approvals", "whatsapp_connect"] });
   reads.getInstitutionProfile.mockResolvedValue({ configured: false });
   reads.listStudents.mockResolvedValue({ items: [], next_cursor: null });
@@ -177,5 +179,20 @@ describe("the Lead Desk steps of a business that has leads (night 4 clean-up)", 
     reads.listLeadImports.mockResolvedValue([]);
     reads.listSources.mockResolvedValue([{}]);
     expect((await readFacts("tok", T, ["lead_source_added"]))).toEqual({ lead_source_added: true });
+  });
+});
+
+describe("a business that sells building materials (owner, 4 Nov: the checklist counted sarees)", () => {
+  it("its products and its first approved quote come from the materials part", async () => {
+    const { readFacts } = await import("./activation-facts");
+    reads.listMaterialItems.mockResolvedValueOnce({ items: [{ id: "m1" }], next_cursor: null });
+    reads.listMaterialQuotes.mockResolvedValueOnce({ items: [{ id: "q1", status: "draft" }, { id: "q2", status: "approved" }] });
+    expect(await readFacts("tok", "t", ["catalogue_has_items", "first_quote_sent"], ["catalogue", "quotes", "materials"])).toEqual({ catalogue_has_items: true, first_quote_sent: true });
+  });
+  it("without the materials module the materials part is never read", async () => {
+    const { readFacts } = await import("./activation-facts");
+    expect(await readFacts("tok", "t", ["catalogue_has_items", "first_quote_sent"], ["catalogue", "quotes"])).toEqual({ catalogue_has_items: false, first_quote_sent: false });
+    expect(reads.listMaterialItems).not.toHaveBeenCalled();
+    expect(reads.listMaterialQuotes).not.toHaveBeenCalled();
   });
 });
