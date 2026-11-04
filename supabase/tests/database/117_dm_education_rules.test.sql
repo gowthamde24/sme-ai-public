@@ -15,7 +15,7 @@ insert into packs.workspace_pack (tenant_id, pack_code, pack_version, source) se
   on conflict (tenant_id) do update set pack_code = excluded.pack_code, pack_version = excluded.pack_version;
 
 -- ============================================================================ A. the modules
-select is(app.module_enabled(tests.tid('b'), 'lead_finder'), false, 'A1 a school has no lead finder');
+select is(app.module_enabled(tests.tid('b'), 'lead_finder'), true, 'A1 a school has the Lead Finder for organisations only (owner decision 4 Nov 2026; never individuals or families: the API refuses those words)');
 select is(app.module_enabled(tests.tid('b'), 'research'), false, 'A2 ...no business research');
 select is(app.module_enabled(tests.tid('b'), 'companies'), false, 'A3 ...no companies list');
 select is(app.module_enabled(tests.tid('a'), 'lead_finder') and app.module_enabled(tests.tid('a'), 'research'), true, 'A4 a textile shop has both (the pack decides, not the code)');

@@ -1,0 +1,24 @@
+{
+ "$comment": "Words for individual people and families (owner decision 4 Nov 2026: the Lead Finder never searches for them; a school finds organisations only). Read by app/lead_finder/intent.py. A word list, never a column of anyone's data.",
+ "latin": "parents?|famil(?:y|ies)|students?|children|child|kids?|individuals?|people|persons?|households?|mothers?|fathers?|guardians?|homes?",
+ "indian": [
+  "తల్లిదండ్రు",
+  "పేరెంట్",
+  "కుటుంబ",
+  "విద్యార్థు",
+  "పిల్లల",
+  "పిల్లలు",
+  "माता-पिता",
+  "माता पिता",
+  "अभिभावक",
+  "पेरेंट",
+  "परिवार",
+  "छात्र",
+  "बच्च",
+  "ಪೋಷಕ",
+  "ಪೇರೆಂಟ್",
+  "ಕುಟುಂಬ",
+  "ವಿದ್ಯಾರ್ಥಿ",
+  "ಮಕ್ಕಳ"
+ ]
+}

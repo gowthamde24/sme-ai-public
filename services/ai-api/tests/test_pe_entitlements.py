@@ -52,7 +52,7 @@ def finder(plan_has_lead_finder: bool, pack: str = "textiles") -> tuple[Any, Fak
 def test_a_lead_desk_workspace_has_no_lead_finder_and_is_told_where_it_is() -> None:
     client, repo = finder(False)
     avail = client.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json()
-    assert avail == {"available": False, "source": None, "reason": "not_in_plan", "upgrade_to": "ai_workforce"}
+    assert avail == {"available": False, "source": None, "reason": "not_in_plan", "upgrade_to": "ai_workforce", "audience": "businesses"}
     refused = client.post(f"{URL}/lead-finder/plan", json={"text": "find new retailers in Jayanagar"}, headers=auth("a_owner"))
     assert refused.status_code == 403 and refused.json()["error"]["code"] == "not_in_plan"
     assert repo.searches_rows == {}, "nothing searched, nothing charged"

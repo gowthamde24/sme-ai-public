@@ -58,7 +58,7 @@ def test_the_routes_own_role_rule_applies_a_sales_member_cannot_change_the_setti
 def test_a_read_tool_answers_at_once() -> None:
     client, cat, _ = world()
     out = asyncio.run(_run(client, cat, "a_sales", executor.Call(tool="lead-finder.availability")))
-    assert out.ok and out.answer == {"available": True, "source": "fixture", "reason": "ok", "upgrade_to": None} and out.undo is None
+    assert out.ok and out.answer == {"available": True, "source": "fixture", "reason": "ok", "upgrade_to": None, "audience": "businesses"} and out.undo is None
 
 
 def test_a_screen_only_operation_or_an_unknown_name_is_refused_before_anything_is_sent() -> None:

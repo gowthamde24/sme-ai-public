@@ -14,9 +14,11 @@ The WHAT is the words the owner used (or the business type's default when they s
 
 from __future__ import annotations
 
+import json
 import re
 import unicodedata
 from dataclasses import dataclass
+from pathlib import Path
 
 from app.lead_finder.packdata import PackLeadFinder
 
@@ -27,12 +29,23 @@ _FIND_LATIN = re.compile(r"(?<![a-z])(find|search|look\s+for|looking\s+for|get\s
 _FIND_INDIAN = ("వెతుక", "వెతక", "వెతికి", "కనుక్కో", "కనిపెట్ట", "ఫైండ్", "సెర్చ్", "ढूंढ", "ढूँढ", "ढूढ", "खोज", "तलाश", "फाइंड", "सर्च", "ಹುಡುಕ", "ಪತ್ತೆ", "ಫೈಂಡ್", "ಸರ್ಚ್")
 
 # ---- the businesses we do not know yet (a stranger), and the word "customers" (which is often about our own)
-_STRANGER_LATIN = re.compile(r"(?<![a-z])(retailers?|retail\s+shops?|shops?|stores?|boutiques?|contractors?|builders?|developers?|dealers?|businesses)(?![a-z])")
+_STRANGER_LATIN = re.compile(
+    r"(?<![a-z])(retailers?|retail\s+shops?|shops?|stores?|boutiques?|contractors?|builders?|developers?|dealers?|businesses"
+    # organisations (owner decision 4 Nov 2026: what a school may look for)
+    r"|associations?|compan(?:y|ies)|corporates?|organi[sz]ations?|institutions?|institutes?|coaching\s+cent(?:re|er)s?|academ(?:y|ies)|vendors?|caterers?|travels|clubs?|colleges?|societ(?:y|ies)|ngos?|firms?|offices)(?![a-z])"
+)
 _STRANGER_INDIAN = (
     "రీటైలర్", "రిటైలర్", "షాప", "దుకాణ", "కాంట్రాక్టర్", "బిల్డర్", "బొటిక్", "బొటీక్", "బోటిక్", "డీలర్", "స్టోర్",
     "रिटेलर", "दुकान", "ठेकेदार", "कॉन्ट्रैक्टर", "कांट्रेक्टर", "बिल्डर", "बुटीक", "डीलर", "स्टोर", "शॉप",
     "ರಿಟೇಲರ್", "ರಿಟೈಲರ್", "ಅಂಗಡಿ", "ಶಾಪ್", "ಕಾಂಟ್ರಾಕ್ಟರ್", "ಗುತ್ತಿಗೆದಾರ", "ಬಿಲ್ಡರ್", "ಬೊಟಿಕ್", "ಡೀಲರ್", "ಸ್ಟೋರ್",
+    # organisations
+    "అసోసియేషన్", "సంఘం", "కంపెనీ", "సంస్థ", "కోచింగ్", "एसोसिएशन", "कंपनी", "संस्था", "कोचिंग", "ಅಸೋಸಿಯೇಷನ್", "ಕಂಪನಿ", "ಸಂಸ್ಥೆ", "ಕೋಚಿಂಗ್",
 )
+# ---- individual people and families: never searched (owner decision 4 Nov 2026), unless the words name their organisation ("parents' association")
+_PEOPLE_FILE = json.loads((Path(__file__).with_name("people_words.json")).read_text(encoding="utf-8"))
+_PEOPLE_LATIN = re.compile(r"(?<![a-z])(" + _PEOPLE_FILE["latin"] + r")(?![a-z])")
+_PEOPLE_INDIAN: tuple[str, ...] = tuple(_PEOPLE_FILE["indian"])
+_ORG_OF_PEOPLE = re.compile(r"(?<![a-z])(associations?|societ(?:y|ies)|clubs?|unions?|committees?|councils?|forums?|groups?)(?![a-z])|అసోసియేషన్|సంఘం|एसोसिएशन|संघ|ಅಸೋಸಿಯೇಷನ್|ಸಂಘ")
 _CUSTOMER_LATIN = re.compile(r"(?<![a-z])(customers?|clients?|buyers?)(?![a-z])")
 _CUSTOMER_INDIAN = ("కస్టమర్", "వినియోగదార", "ఖాతాదార", "కొనుగోలుదార", "ग्राहक", "कस्टमर", "खरीदार", "ಗ್ರಾಹಕ", "ಕಸ್ಟಮರ್", "ಖರೀದಿದಾರ")
 _NEW_LATIN = re.compile(r"(?<![a-z])(new|more|fresh|kotha|kottha|naye|naya|nayi|hosa)(?![a-z])")
@@ -117,7 +130,8 @@ def _has_own(t: str) -> bool:
 
 def _is_stop(token: str) -> bool:
     return (token in _STOP_TOKENS or _any(token, _FIND_INDIAN) or _any(token, _STRANGER_INDIAN) or _any(token, _CUSTOMER_INDIAN) or _any(token, _NEW_INDIAN)
-            or bool(_FIND_LATIN.fullmatch(token)) or bool(_STRANGER_LATIN.fullmatch(token)) or bool(_NEW_LATIN.fullmatch(token)) or bool(_CUSTOMER_LATIN.fullmatch(token)))
+            or bool(_FIND_LATIN.fullmatch(token)) or bool(_STRANGER_LATIN.fullmatch(token)) or bool(_NEW_LATIN.fullmatch(token)) or bool(_CUSTOMER_LATIN.fullmatch(token))
+            or bool(_PEOPLE_LATIN.fullmatch(token)) or _any(token, _PEOPLE_INDIAN))
 
 
 def _title(area: str) -> str:
@@ -171,10 +185,20 @@ def area_of(text: str) -> str | None:
     return None
 
 
+def _has_people(t: str) -> bool:
+    return bool(_PEOPLE_LATIN.search(t)) or _any(t, _PEOPLE_INDIAN)
+
+
+def names_individuals(text: str) -> bool:
+    """True for a request to find individual people or families ("parents in Anantapur", "families near me"): the Lead Finder never does that. "A parents' association" is an organisation."""
+    t = _clean(text)[:300]
+    return _has_people(t) and not _ORG_OF_PEOPLE.search(t)
+
+
 def wants_lead_finder(text: str) -> bool:
     """The loose test of a search box: a verb of finding and a word for businesses or customers."""
     t = _clean(text)
-    return _has_find(t) and (_has_stranger(t) or _has_customer(t))
+    return _has_find(t) and (_has_stranger(t) or _has_customer(t) or _has_people(t))
 
 
 def is_find_request(text: str) -> bool:
@@ -182,8 +206,8 @@ def is_find_request(text: str) -> bool:
     t = _clean(text)[:300]
     if not _has_find(t) or _has_own(t):
         return False
-    if _has_stranger(t) and (_has_new(t) or _NEAR_ME.search(t) or area_of(text) is not None):
-        return True
+    if (_has_stranger(t) or _has_people(t)) and (_has_new(t) or _NEAR_ME.search(t) or area_of(text) is not None):
+        return True   # a request for people goes to the Lead Finder too, which refuses it politely (it is never a task to call strangers)
     return _has_customer(t) and _has_new(t)
 
 
