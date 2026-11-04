@@ -55,6 +55,10 @@ MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", 
 _STOCK_WORD = {"in_stock": "in_stock", "few_left": "few_left", "made_to_order": "made_to_order"}
 
 
+# the "needs you" reasons that are decided again: none is the Owner's own choice
+REDECIDE_NEEDS = frozenset({"first_calls", "no_stock_match", "low_stock", "fit_middle"})
+
+
 def not_available() -> ApiError:
     return ApiError(403, "lead_finder_not_available", "Finding new customers is not available for this business.")
 
@@ -255,7 +259,8 @@ class LeadFinderService:
         return ActionsOut(results=results)
 
     def redecide(self, token: str, tenant_id: uuid.UUID) -> RedecideOut:
-        """Prospects that waited for the calling hours or the day's cap are decided again (the worker can call this; so can the screen)."""
+        """Prospects that waited for the calling hours or the day's cap are decided again, and so are those that need the Owner only for a reason that can change (REDECIDE_NEEDS). The worker can call this;
+        so can the screen."""
         data = self.data_for(token, tenant_id)
         ctx = self.repo.context(token, tenant_id)
         settings = decide.Settings.from_row(self.repo.settings_get(token, tenant_id))
@@ -263,7 +268,11 @@ class LeadFinderService:
         waiting = int(ctx.get("ready_waiting", 0))
         approved = ctx.get("approved_by_search") or {}
         items: list[dict[str, Any]] = []
-        for row in self.repo.prospects(token, tenant_id, "researching", None, 200, None):
+        # the ones that waited for the hours or the cap, AND the "needs you" whose cause can change: the first ten calls of a search (the Owner has since said yes to ten), no or low stock match and a
+        # middle fit (the catalogue has changed). An Owner's own "ask me later", a competitor and a very large buyer stay with the Owner.
+        rows = self.repo.prospects(token, tenant_id, "researching", None, 200, None)
+        rows += [r for r in self.repo.prospects(token, tenant_id, "needs_owner", None, 200, None) if r.get("decision_reason") in REDECIDE_NEEDS]
+        for row in rows:
             d = decide.decide(place_of(row), data, stock, settings,
                               decide.Situation(now=self._clock(), calls_today=int(ctx.get("calls_today", 0)), ready_waiting=waiting, approved_in_search=int(approved.get(str(row.get("search_id")), 0))),
                               owner_approved=bool(row.get("owner_approved")))

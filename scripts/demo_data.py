@@ -3,6 +3,8 @@
 Both go through OUR API as the demo owner (row-level security applies, nothing is written around it) and are idempotent: every row has a fixed id and a second run changes nothing. They create a row only when it is
 absent and never overwrite one that is there, so a re-seed or a deploy can never undo what a person did (the construction product the owner hid stays hidden; DG found a smoke test flipping it back on every run).
 
+  * textiles: ELEVEN invented sarees in the catalogue (silk, cotton and wedding; nine in stock, two few left; four with an exact price), each shown to customers with a generated placeholder picture, so the Lead Finder's
+    Researcher has stock to match a saree shop against and a prospect can reach call-ready (owner, 4 Nov 2026: the demo catalogue had no active item, so every shop waited on "nothing in our stock matches");
   * construction_materials: ONE visible demo product with its own figures (price, GST, pieces per area, ...), a generated placeholder picture (an active product needs one) and the materials rules, so the quote screen has something to quote on a fresh workspace;
   * education: a school with its institution profile, a class, three students with a guardian each (FAKE phone numbers) and a fee plan with two instalments already due and one to come, one part payment, so the fee
     ledger has an audience and the figures differ.
@@ -55,6 +57,44 @@ def _ok(label: str, result: tuple[int, Any], want: tuple[int, ...] = (200, 201))
         code = body.get("error", {}).get("code") if isinstance(body, dict) and isinstance(body.get("error"), dict) else None
         raise DemoError(f"{label}: HTTP {status}" + (f" ({code})" if code else ""))
     return body
+
+
+# ----------------------------------------------------------------------------- textiles
+# key, name, fabric, colours, zari, occasions, price band, stock level, exact price (paise) the Owner set or None, the placeholder's colour. Every name ends "(demo)": invented products, not anyone's real stock.
+TEXTILE_ITEMS: list[dict[str, Any]] = [
+    {"key": "t1", "name": "Maroon Kanchi pattu (demo)", "fabric": "kanchi_pattu", "colours": ["maroon", "gold"], "zari": "rich", "occasions": ["wedding", "festival"], "band": "25k_50k", "stock": "in_stock", "price": 3_850_000, "rgb": (110, 20, 40)},
+    {"key": "t2", "name": "Peacock green Kanchi pattu bridal (demo)", "fabric": "kanchi_pattu", "colours": ["green", "gold"], "zari": "rich", "occasions": ["wedding"], "band": "25k_50k", "stock": "in_stock", "price": None, "rgb": (30, 130, 70)},
+    {"key": "t3", "name": "Royal blue Dharmavaram silk (demo)", "fabric": "dharmavaram_silk", "colours": ["blue", "silver"], "zari": "light", "occasions": ["festival", "party"], "band": "10k_25k", "stock": "in_stock", "price": 1_650_000, "rgb": (35, 90, 190)},
+    {"key": "t4", "name": "Pink Dharmavaram silk (demo)", "fabric": "dharmavaram_silk", "colours": ["pink"], "zari": "light", "occasions": ["festival"], "band": "10k_25k", "stock": "few_left", "price": None, "rgb": (230, 120, 165)},
+    {"key": "t5", "name": "Red Mysore silk wedding saree (demo)", "fabric": "mysore_silk", "colours": ["red", "gold"], "zari": "light", "occasions": ["wedding", "festival"], "band": "10k_25k", "stock": "in_stock", "price": None, "rgb": (190, 30, 45)},
+    {"key": "t6", "name": "Cream soft silk (demo)", "fabric": "soft_silk", "colours": ["cream", "gold"], "zari": "light", "occasions": ["party", "daily"], "band": "5k_10k", "stock": "in_stock", "price": 780_000, "rgb": (240, 225, 190)},
+    {"key": "t7", "name": "Purple Banarasi wedding saree (demo)", "fabric": "banarasi", "colours": ["purple", "gold"], "zari": "rich", "occasions": ["wedding", "party"], "band": "above_50k", "stock": "in_stock", "price": None, "rgb": (110, 50, 150)},
+    {"key": "t8", "name": "Yellow cotton silk (demo)", "fabric": "cotton_silk", "colours": ["yellow", "red"], "zari": "none", "occasions": ["daily", "festival"], "band": "under_5k", "stock": "in_stock", "price": 320_000, "rgb": (240, 200, 40)},
+    {"key": "t9", "name": "Navy cotton silk (demo)", "fabric": "cotton_silk", "colours": ["navy"], "zari": "light", "occasions": ["daily"], "band": "under_5k", "stock": "few_left", "price": None, "rgb": (20, 35, 95)},
+    {"key": "t10", "name": "White pure cotton daily wear (demo)", "fabric": "pure_cotton", "colours": ["white", "multi"], "zari": "none", "occasions": ["daily"], "band": "under_5k", "stock": "in_stock", "price": None, "rgb": (240, 240, 235)},
+    {"key": "t11", "name": "Green pure cotton festival saree (demo)", "fabric": "pure_cotton", "colours": ["green", "orange"], "zari": "light", "occasions": ["festival", "daily"], "band": "under_5k", "stock": "in_stock", "price": None, "rgb": (60, 140, 60)},
+]
+
+
+def textiles(call: Call) -> dict[str, str]:
+    """The textiles demo catalogue (see the module note). Each item is created only when its fixed id is absent: one that is there, shown or hidden, priced or not, is left exactly as a person left it."""
+    made, kept = 0, 0
+    for it in TEXTILE_ITEMS:
+        item = did(f"textiles-demo-{it['key']}")
+        status, _current = call("GET", f"/catalogue/items/{item}")
+        if status == 200:
+            kept += 1
+            continue
+        body = {"name": it["name"], "fabric": it["fabric"], "colours": it["colours"], "zari": it["zari"], "occasions": it["occasions"], "price_band": it["band"], "stock_status": it["stock"]}
+        # an item can be shown to customers only once it has a photo (the database refuses otherwise): made hidden, a generated placeholder uploaded through the API, then shown (with the Owner's exact price, if any)
+        _ok(f"demo saree {it['key']}", call("PUT", f"/catalogue/items/{item}", {**body, "active": False}))
+        photo = did(f"textiles-demo-{it['key']}-photo")
+        _ok(f"demo saree {it['key']} picture", call("POST", f"/catalogue/items/{item}/photos?photo_id={photo}", raw=(placeholder_png(rgb=it["rgb"]), "image/png")))
+        shown = {**body, "active": True, **({"price_paise": it["price"]} if it["price"] is not None else {})}
+        _ok(f"demo saree {it['key']} shown", call("PUT", f"/catalogue/items/{item}", shown))
+        made += 1
+    in_stock = sum(1 for it in TEXTILE_ITEMS if it["stock"] == "in_stock")
+    return {"demo sarees": f"{made} created, {kept} already there (left as they are); {in_stock} of {len(TEXTILE_ITEMS)} in stock, the rest few left"}
 
 
 # ----------------------------------------------------------------------------- construction materials
