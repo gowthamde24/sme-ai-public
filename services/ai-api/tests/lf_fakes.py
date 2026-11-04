@@ -12,13 +12,13 @@ from app.lead_finder.errors import NotForThisBusinessError, ProspectStateError, 
 from app.tenancy.repository import RepositoryError
 
 NOW = datetime(2026, 11, 4, 6, 0, tzinfo=UTC)   # 11:30 in India: inside the calling hours
-TEXTILE_STOCK = [
+TEXTILE_STOCK: list[dict[str, Any]] = [
     {"name": "Kanchi Pattu Bridal", "fabric": "kanchi_pattu", "occasions": ["wedding"], "price_paise": 850000, "stock_status": "in_stock", "item_kind": "saree", "sell_unit": "piece"},
     {"name": "Dharmavaram Silk Classic", "fabric": "dharmavaram_silk", "occasions": ["festival"], "price_paise": 450000, "stock_status": "in_stock", "item_kind": "saree", "sell_unit": "piece"},
     {"name": "Soft Silk Daily", "fabric": "soft_silk", "occasions": [], "price_paise": None, "stock_status": "few_left", "item_kind": "saree", "sell_unit": "piece"},
     {"name": "Banarasi Georgette", "fabric": "banarasi", "occasions": ["party"], "price_paise": 600000, "stock_status": "made_to_order", "item_kind": "saree", "sell_unit": "piece"},
 ]
-MATERIAL_STOCK = [
+MATERIAL_STOCK: list[dict[str, Any]] = [
     {"name": "OPC 53 Cement", "fabric": None, "occasions": [], "price_paise": 38000, "stock_status": "in_stock", "item_kind": "material", "sell_unit": "bag"},
     {"name": "TMT Steel 12mm", "fabric": None, "occasions": [], "price_paise": None, "stock_status": "in_stock", "item_kind": "material", "sell_unit": "kg"},
     {"name": "Paver Blocks Zigzag", "fabric": None, "occasions": [], "price_paise": 4200, "stock_status": "few_left", "item_kind": "material", "sell_unit": "piece"},
