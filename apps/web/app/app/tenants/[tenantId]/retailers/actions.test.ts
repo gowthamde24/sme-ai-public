@@ -1,33 +1,125 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ApiRequestError } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
+import { P1, P2, S1, T } from "@/lib/api/lead-finder-fixtures";
 
-const T = "11111111-1111-4111-8111-111111111111";
-const P = "3b1c0000-0000-4000-8000-000000000001";
-const h = vi.hoisted(() => ({ confirm: vi.fn() }));
+const h = vi.hoisted(() => ({ tenant: vi.fn(), plan: vi.fn(), approve: vi.fn(), cancel: vi.fn(), act: vi.fn(), practice: vi.fn(), revalidate: vi.fn() }));
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`NEXT_REDIRECT:${to}`); } }));
-vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
+vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => h.revalidate(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ id: "u", email: "e@example.test", accessToken: "tok" }) }));
-vi.mock("@/lib/api/retailers", async (orig) => ({ ...(await orig<typeof import("@/lib/api/retailers")>()), confirmPlace: (...a: unknown[]) => h.confirm(...a) }));
+vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
+vi.mock("@/lib/api/lead-finder", async (orig) => ({
+  ...(await orig<typeof import("@/lib/api/lead-finder")>()),
+  planSearch: (...a: unknown[]) => h.plan(...a),
+  approveSearch: (...a: unknown[]) => h.approve(...a),
+  cancelSearch: (...a: unknown[]) => h.cancel(...a),
+  actOnProspects: (...a: unknown[]) => h.act(...a),
+  practiceCall: (...a: unknown[]) => h.practice(...a),
+}));
 
-import { confirmPlaceAction } from "./actions";
+import { approveSearchAction, cancelSearchAction, planSearchAction, practiceCallAction, prospectActionsAction } from "./actions";
 
-beforeEach(() => h.confirm.mockReset().mockResolvedValue({ company_id: "c", lead_id: "55555555-5555-4555-8555-555555555555", created: true }));
+const as = (role: string) => h.tenant.mockResolvedValue({ id: T, name: "Acme Silks", slug: "acme-silks", role });
+const SEARCH = { id: S1, state: "planned" };
 
-describe("keeping a shop as a lead", () => {
-  it("sends what the person typed and the card's id with the person's token, and answers only the lead and whether it is new", async () => {
-    const r = await confirmPlaceAction(T, P, "Balaji Sarees", "Guntur", "Andhra Pradesh");
-    expect(r).toEqual({ ok: true, data: { lead_id: "55555555-5555-4555-8555-555555555555", created: true } });
-    expect(h.confirm).toHaveBeenCalledWith("tok", T, { placeId: P, companyName: "Balaji Sarees", city: "Guntur", region: "Andhra Pradesh" });
+beforeEach(() => {
+  for (const f of Object.values(h)) f.mockReset();
+  as("owner");
+  h.plan.mockResolvedValue(SEARCH);
+  h.approve.mockResolvedValue({ ...SEARCH, state: "done" });
+  h.cancel.mockResolvedValue({ ...SEARCH, state: "cancelled" });
+  h.act.mockResolvedValue([{ id: P1, ok: true, status: "call_ready", error: null }]);
+  h.practice.mockResolvedValue({ simulated: true, outcome: "qualified" });
+});
+
+describe("plan a search", () => {
+  it("sends the owner's words with the person's token and language; nothing is searched (no approve)", async () => {
+    as("sales");
+    expect(await planSearchAction(T, "find new retailers in Jayanagar")).toEqual({ ok: true, data: SEARCH });
+    expect(h.plan).toHaveBeenCalledWith("tok", T, { text: "find new retailers in Jayanagar", language: "en" });
+    expect(h.approve).not.toHaveBeenCalled();
   });
-  it("refuses an empty or long name and a bad workspace before asking", async () => {
-    for (const r of [await confirmPlaceAction(T, P, "  ", "", ""), await confirmPlaceAction(T, P, "x".repeat(201), "", ""), await confirmPlaceAction("bad", P, "x", "", ""), await confirmPlaceAction(T, P, "x", "y".repeat(101), "")]) expect(r).toMatchObject({ ok: false, kind: "invalid" });
-    expect(h.confirm).not.toHaveBeenCalled();
+  it("refuses empty or long words, a bad workspace and a Viewer before asking the API", async () => {
+    expect(await planSearchAction(T, " a ")).toMatchObject({ ok: false, kind: "invalid", error: "Type what to find and where." });
+    expect(await planSearchAction(T, "x".repeat(301))).toMatchObject({ ok: false, kind: "invalid", error: "Keep it under 300 letters." });
+    expect(await planSearchAction("bad", "find shops in Eluru")).toMatchObject({ ok: false, kind: "invalid" });
+    as("viewer");
+    expect(await planSearchAction(T, "find shops in Eluru")).toMatchObject({ ok: false, kind: "forbidden" });
+    expect(h.plan).not.toHaveBeenCalled();
   });
-  it("says a refusal in words", async () => {
-    h.confirm.mockRejectedValueOnce(new ApiRequestError(403, "forbidden", "x"));
-    expect(await confirmPlaceAction(T, P, "x", "", "")).toMatchObject({ ok: false, kind: "forbidden" });
-    h.confirm.mockRejectedValueOnce(new ApiRequestError(409, "conflict", "x"));
-    expect(await confirmPlaceAction(T, P, "x", "", "")).toMatchObject({ ok: false, kind: "conflict" });
+  it("shows the API's sentence for words that are not a search, and plain words for the cap, the switch and a school", async () => {
+    h.plan.mockRejectedValueOnce(new ApiRequestError(422, "not_a_search", "Say what to find and where, for example: find new retailers in Jayanagar."));
+    expect(await planSearchAction(T, "hello there")).toMatchObject({ ok: false, kind: "invalid", code: "not_a_search", error: "Say what to find and where, for example: find new retailers in Jayanagar." });
+    h.plan.mockRejectedValueOnce(new ApiRequestError(429, "search_cap_reached", "x"));
+    expect(await planSearchAction(T, "find shops in Eluru")).toMatchObject({ ok: false, kind: "rate_limited", error: "Today's searches are used up. Try again tomorrow, or change the limit in Settings." });
+    h.plan.mockRejectedValueOnce(new ApiRequestError(409, "lead_finder_off", "x"));
+    expect(await planSearchAction(T, "find shops in Eluru")).toMatchObject({ ok: false, error: "Finding new customers is switched off right now." });
+    h.plan.mockRejectedValueOnce(new ApiRequestError(403, "lead_finder_not_available", "x"));
+    expect(await planSearchAction(T, "find shops in Eluru")).toMatchObject({ ok: false, kind: "forbidden", error: "Finding new customers is switched off right now." });
+  });
+  it("a rejected session goes to sign in", async () => {
+    h.tenant.mockRejectedValueOnce(new ApiAuthError("x"));
+    await expect(planSearchAction(T, "find shops in Eluru")).rejects.toThrow("NEXT_REDIRECT:/login");
+    h.plan.mockRejectedValueOnce(new ApiAuthError("x"));
+    await expect(planSearchAction(T, "find shops in Eluru")).rejects.toThrow("NEXT_REDIRECT:/login");
+  });
+});
+
+describe("the OK and Cancel (Owner and Admin)", () => {
+  it.each(["owner", "admin"])("%s: the OK runs the search and refreshes the tab", async (role) => {
+    as(role);
+    expect(await approveSearchAction(T, S1)).toEqual({ ok: true, data: { ...SEARCH, state: "done" } });
+    expect(h.approve).toHaveBeenCalledWith("tok", T, S1);
+    expect(h.revalidate).toHaveBeenCalledWith(`/app/tenants/${T}/retailers`);
+    expect(await cancelSearchAction(T, S1)).toMatchObject({ ok: true, data: { state: "cancelled" } });
+  });
+  it.each(["sales", "viewer"])("%s may not OK or cancel (the API is not asked)", async (role) => {
+    as(role);
+    expect(await approveSearchAction(T, S1)).toMatchObject({ ok: false, kind: "forbidden" });
+    expect(await cancelSearchAction(T, S1)).toMatchObject({ ok: false, kind: "forbidden" });
+    expect(h.approve).not.toHaveBeenCalled();
+    expect(h.cancel).not.toHaveBeenCalled();
+  });
+  it("a bad id is refused first; a cancelled search and the cap say so", async () => {
+    expect(await approveSearchAction(T, "../x")).toMatchObject({ ok: false, kind: "invalid" });
+    expect(h.approve).not.toHaveBeenCalled();
+    h.approve.mockRejectedValueOnce(new ApiRequestError(409, "prospect_state", "x"));
+    expect(await approveSearchAction(T, S1)).toMatchObject({ ok: false, kind: "conflict", error: "This search was cancelled. Plan it again." });
+    h.approve.mockRejectedValueOnce(new ApiRequestError(429, "search_cap_reached", "x"));
+    expect(await approveSearchAction(T, S1)).toMatchObject({ ok: false, error: "Today's searches are used up. Try again tomorrow, or change the limit in Settings." });
+  });
+});
+
+describe("the bulk buttons", () => {
+  it("sends the ticked ids (once each) and the action; Sales may", async () => {
+    as("sales");
+    expect(await prospectActionsAction(T, [P1, P1], "call")).toMatchObject({ ok: true });
+    expect(h.act).toHaveBeenCalledWith("tok", T, [P1], "call");
+    await prospectActionsAction(T, [P1, P2], "do_not_call");
+    expect(h.act).toHaveBeenLastCalledWith("tok", T, [P1, P2], "do_not_call");
+  });
+  it("refuses a Viewer, no ids, more than 50, a bad id and an unknown action", async () => {
+    const many = Array.from({ length: 51 }, (_, i) => `00000000-0000-4000-8000-${String(i).padStart(12, "0")}`);
+    for (const [ids, action] of [[[], "call"], [many, "call"], [["x"], "call"], [[P1], "dial"]] as const) expect(await prospectActionsAction(T, ids as unknown as string[], action as never)).toMatchObject({ ok: false, kind: "invalid" });
+    as("viewer");
+    expect(await prospectActionsAction(T, [P1], "skip")).toMatchObject({ ok: false, kind: "forbidden" });
+    expect(h.act).not.toHaveBeenCalled();
+  });
+});
+
+describe("the practice call (simulated; Owner and Admin)", () => {
+  it("sends the persona and the language", async () => {
+    expect(await practiceCallAction(T, P1, "wants_whatsapp", "te")).toMatchObject({ ok: true, data: { simulated: true } });
+    expect(h.practice).toHaveBeenCalledWith("tok", T, P1, "wants_whatsapp", "te");
+  });
+  it("Sales may not; an unknown persona or language is refused first; a business that is not ready says so", async () => {
+    as("sales");
+    expect(await practiceCallAction(T, P1, "interested", "en")).toMatchObject({ ok: false, kind: "forbidden" });
+    as("owner");
+    expect(await practiceCallAction(T, P1, "angry" as never, "en")).toMatchObject({ ok: false, kind: "invalid" });
+    expect(await practiceCallAction(T, P1, "interested", "hi" as never)).toMatchObject({ ok: false, kind: "invalid" });
+    expect(h.practice).not.toHaveBeenCalled();
+    h.practice.mockRejectedValueOnce(new ApiRequestError(409, "prospect_state", "x"));
+    expect(await practiceCallAction(T, P1, "interested", "en")).toMatchObject({ ok: false, error: "Only a business marked Ready to call can have a practice call." });
   });
 });

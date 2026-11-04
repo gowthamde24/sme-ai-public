@@ -5,7 +5,7 @@ import { useCallback, useSyncExternalStore } from "react";
 import { isVoiceLang, type VoiceLang } from "@/lib/browser-voice/protocol";
 
 /**
- * The language pill of the chat bar (owner 31 Oct): Auto, or one of the six languages the voice speaks. It starts as the workspace's/app language and is remembered for the person (until the API keeps it on the profile, in this browser).
+ * The language pill of the chat bar (owner 31 Oct): Auto, or one of the six languages the voice speaks. It starts on Auto (owner, 4 Nov) and is remembered for the person, per workspace (in the profile, and in this browser).
  * It decides what is SENT: the language the assistant answers and speaks in (`reply`), and the language the recogniser is pinned to (`stt`: the words of Telugu, Hindi, Kannada ... come in their script from the first one; Auto = no pin, the API
  * detects it as before). Dictation, Live talk and the sheet on a phone all read the same choice.
  */
@@ -65,7 +65,7 @@ export function useChatLanguage(appLang: VoiceLang, saved: string | null = null,
     listeners.forEach((f) => f());
     remember?.(l); // and the person's profile keeps it (best effort)
   }, [remember, key]);
-  // what the person chose in this browser now (in THIS workspace); else what their profile in this workspace says; else the app's language
-  const pill = stored ?? fromProfile ?? appLang;
+  // what the person chose in this browser now (in THIS workspace); else what their profile in this workspace says; else Auto (never chosen = auto, as the profile column says; owner, 4 Nov)
+  const pill = stored ?? fromProfile ?? "auto";
   return { ...resolveLanguage(pill, appLang), set };
 }
