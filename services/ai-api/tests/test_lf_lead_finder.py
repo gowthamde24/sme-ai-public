@@ -235,6 +235,31 @@ def _client(repo: FakeLeadFinderRepo, mode: str = "fixture", places: Any = None)
     return c
 
 
+def test_after_ten_yeses_the_rest_of_the_search_is_released_to_call_ready_and_new_stock_is_seen() -> None:
+    """Day 2 (4 Nov 2026): the demo check found the rest of a search stayed on "Needs you" after the Owner's tenth yes, and a shop that waited on "nothing in our stock matches" never saw stock added later."""
+    repo = FakeLeadFinderRepo("textiles", stock=[])
+    c = _client(repo)
+    plan = c.post(f"{URL}/lead-finder/plan", json={"text": "find saree shops in Jayanagar"}, headers=auth("a_owner")).json()
+    c.post(f"{URL}/lead-finder/searches/{plan['id']}/approve", headers=auth("a_owner"))
+    waiting = [r for r in repo.rows.values() if r["status"] == "needs_owner"]
+    assert waiting and {r["decision_reason"] for r in waiting} <= {"no_stock_match", "competitor", "very_large", "fit_middle"}, "no stock: nothing can be called"
+    repo._stock = list(TEXTILE_STOCK)   # the owner adds sarees to the catalogue
+    assert c.post(f"{URL}/prospects/redecide", headers=auth("a_owner")).json()["changed"] > 0
+    first = [r for r in repo.rows.values() if r["decision_reason"] == "first_calls"]
+    assert len(first) > 10, "with stock, they are would-be calls: the first ten of the search wait for the Owner"
+    asked_later = first.pop()
+    c.post(f"{URL}/prospects/actions", json={"ids": [asked_later["id"]], "action": "later"}, headers=auth("a_owner"))
+    yes = sorted(first, key=lambda r: -r["fit_score"])[:10]
+    out = c.post(f"{URL}/prospects/actions", json={"ids": [r["id"] for r in yes], "action": "call"}, headers=auth("a_owner")).json()
+    assert all(x["ok"] and x["status"] == "call_ready" for x in out["results"])
+    rest = [r for r in first if r not in yes]
+    assert rest and all(r["status"] == "needs_owner" for r in rest)
+    assert c.post(f"{URL}/prospects/redecide", headers=auth("a_owner")).json()["changed"] == len(rest)
+    assert all(r["status"] == "call_ready" and r["decision_reason"] == "fit_high" for r in rest), "after ten yeses, the rest of the search is released"
+    assert repo.rows[asked_later["id"]]["status"] == "needs_owner" and repo.rows[asked_later["id"]]["decision_reason"] == "asked_later", "the Owner's own 'later' stays"
+    assert all(r["decision_reason"] in ("competitor", "very_large") for r in repo.rows.values() if r["status"] == "needs_owner" and r["id"] != asked_later["id"])
+
+
 def test_a_demo_workspace_plans_approves_and_gets_a_result_card_without_google() -> None:
     reached: list[int] = []
 
