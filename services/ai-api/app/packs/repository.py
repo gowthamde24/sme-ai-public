@@ -19,6 +19,7 @@ class PacksRepository(Protocol):
     def example_status(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def example_load(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
     def example_remove(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
+    def example_reset(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]: ...
 
 
 class PostgrestPacksRepository:
@@ -47,3 +48,6 @@ class PostgrestPacksRepository:
 
     def example_remove(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "example_data_remove", {"p_tenant_id": str(tenant_id)})
+
+    def example_reset(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        return self._rpc.object(token, "example_data_reset", {"p_tenant_id": str(tenant_id)})

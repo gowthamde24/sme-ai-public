@@ -321,7 +321,7 @@ select is(
         -- entity to fill in), and the example data (Owner / Admin). Each proves the role first; the pack tables themselves have no client grant.
         'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue',
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
-        'public.example_data_status', 'public.example_data_load', 'public.example_data_remove',
+        'public.example_data_status', 'public.example_data_load', 'public.example_data_remove', 'public.example_data_reset',
         -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)
         'public.phone_call_begin', 'public.phone_call_update', 'public.phone_call_finish', 'public.phone_calls_list', 'public.phone_call_get', 'public.phone_calls_stats', 'public.phone_line_find',
         -- Lead Finder (ADR 0119): Owner/Admin/Sales read and act, Owner/Admin approve a search and set the settings, the scheduler expires Google data; each proves the role and the module first
@@ -439,7 +439,7 @@ select is(
         -- entity to fill in), and the example data (Owner / Admin). Each proves the role first; the pack tables themselves have no client grant.
         'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue',
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
-        'public.example_data_status', 'public.example_data_load', 'public.example_data_remove',
+        'public.example_data_status', 'public.example_data_load', 'public.example_data_remove', 'public.example_data_reset',
         -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)
         'public.phone_call_begin', 'public.phone_call_update', 'public.phone_call_finish', 'public.phone_calls_list', 'public.phone_call_get', 'public.phone_calls_stats', 'public.phone_line_find',
         -- Lead Finder (ADR 0119): Owner/Admin/Sales read and act, Owner/Admin approve a search and set the settings, the scheduler expires Google data; each proves the role and the module first

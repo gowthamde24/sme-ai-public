@@ -566,6 +566,11 @@
         "products": {
           "title": "Products",
           "type": "integer"
+        },
+        "other": {
+          "default": 0,
+          "title": "Other",
+          "type": "integer"
         }
       },
       "required": [
