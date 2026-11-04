@@ -25,6 +25,11 @@ ROUTE_WORDS = frozenset(
         "workspace", "logo", "picture", "people", "voice-preview", "opening-line", "mention-ai",
         "resolved",
         "pronunciation",
+        # job test-workspaces: the lead sources a business type uses; example data in one call
+        "offered",
+        # Lead Finder (ADR 0119)
+        "lead-finder", "availability", "searches", "prospects", "redecide", "simulated-call",
+        "stats",
         # job voice-picker
         "voice-samples", "voice-chat", "auto-reply", "turns", "actions",
         # job EB: the owner's notes

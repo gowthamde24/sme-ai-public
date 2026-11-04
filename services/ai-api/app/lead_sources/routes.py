@@ -15,7 +15,7 @@ import json
 import re
 import uuid
 from datetime import datetime
-from typing import Annotated, Any
+from typing import Annotated, Any, get_args
 from urllib.parse import parse_qsl
 
 from fastapi import APIRouter, Depends, Header, Query, Request, Response
@@ -49,6 +49,7 @@ from app.lead_sources.models import (
     SourceCreate,
     SourceOut,
     SourcesOut,
+    SourceTag,
     SourceWithSecretOut,
     TouchesOut,
     UnparsedListOut,
@@ -168,6 +169,18 @@ def create_source(body: SourceCreate, response: Response, ctx: Manager, runtime:
     if not created:
         response.status_code = 200
     return out
+
+
+# job test-workspaces (C2 -> C1 item 3): the sources this business type uses, for the Lead Desk filter and the import screen. A school has no property portals, IndiaMART or JustDial.
+SCHOOL_SOURCES = ("website_form", "meta_lead_ads", "excel_upload", "google_sheet", "pasted_list", "vcard")
+
+
+@router.get("/lead-sources/offered")
+def offered_sources(ctx: Annotated[TenantContext, Depends(require_tenant_role())], runtime: RuntimeDep) -> dict[str, Any]:
+    """`{"tags": [...]}`: the lead source tags to offer in this workspace, in the screen's order. The database says whether it is a school (task_context)."""
+    school = runtime.tasks is not None and runtime.tasks.is_school(runtime, ctx.principal.token, ctx.tenant.id)
+    tags = list(SCHOOL_SOURCES) if school else [t for t in get_args(SourceTag) if t != "lead_finder"]
+    return {"tags": tags, "school": school}
 
 
 @router.get("/lead-sources/cards", response_model=CardsOut)

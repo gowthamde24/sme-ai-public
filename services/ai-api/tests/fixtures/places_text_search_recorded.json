@@ -1,0 +1,14 @@
+{
+  "$comment": "A Places API (New) Text Search response in Google's documented shape, written by hand for the contract tests (Lead Finder, ADR 0119). Every business is INVENTED: no real place, no real number. The field set matches app/lead_finder/sources.py FIELD_MASK.",
+  "places": [
+    {"id": "ChIJrecorded000000000001", "displayName": {"text": "Sri Recorded Silks", "languageCode": "en"}, "primaryTypeDisplayName": {"text": "Saree store", "languageCode": "en"},
+     "types": ["clothing_store", "store"], "formattedAddress": "12, 9th Main Rd, Jayanagar 4th Block, Jayanagar, Bengaluru, Karnataka 560011, India", "location": {"latitude": 12.9299, "longitude": 77.5826},
+     "businessStatus": "OPERATIONAL", "nationalPhoneNumber": "080 2345 6789", "websiteUri": "https://example.com/recorded-silks", "rating": 4.4, "userRatingCount": 512},
+    {"id": "ChIJrecorded000000000002", "displayName": {"text": "Recorded Boutique", "languageCode": "en"}, "primaryTypeDisplayName": {"text": "Boutique", "languageCode": "en"},
+     "types": ["clothing_store"], "formattedAddress": "3, 11th Cross, Jayanagar 3rd Block, Jayanagar, Bengaluru, Karnataka 560011, India", "location": {"latitude": 12.931, "longitude": 77.584},
+     "businessStatus": "OPERATIONAL", "nationalPhoneNumber": "098450 00000", "rating": 4.7, "userRatingCount": 61},
+    {"id": "ChIJrecorded000000000003", "displayName": {"text": "Closed Sarees (recorded)", "languageCode": "en"}, "types": ["clothing_store"], "businessStatus": "CLOSED_PERMANENTLY"},
+    {"id": "ChIJrecorded000000000004", "displayName": {"text": "Recorded Textile Mart", "languageCode": "en"}, "types": ["clothing_store", "store"],
+     "formattedAddress": "Jayanagar, Bengaluru, Karnataka 560041, India", "location": {"latitude": 12.925, "longitude": 77.59}, "businessStatus": "OPERATIONAL"}
+  ]
+}

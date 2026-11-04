@@ -112,6 +112,10 @@ from app.knowledge import errors as knowledge_errors
 from app.knowledge.repository import PostgrestKnowledgeRepository
 from app.knowledge.routes import router as knowledge_router
 from app.knowledge.service import KnowledgeService
+from app.lead_finder import errors as lead_finder_errors
+from app.lead_finder.repository import PostgrestLeadFinderRepository
+from app.lead_finder.routes import router as lead_finder_router
+from app.lead_finder.service import LeadFinderService
 from app.lead_profile.repository import PostgrestLeadProfileRepository
 from app.lead_profile.routes import router as lead_profile_router
 from app.lead_profile.service import LeadProfileService
@@ -338,6 +342,16 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         outreach=build_outreach(config.rest_url, config.anon_key),
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
+        lead_finder=LeadFinderService(
+            PostgrestLeadFinderRepository(config.rest_url, config.anon_key),
+            mode=settings.lead_finder,
+            places_key=(
+                settings.google_places_api_key.get_secret_value()
+                if settings.google_places_api_key is not None
+                else None
+            ),
+            places_cost_paise=settings.lead_finder_places_cost_paise,
+        ),
         calls=CallsService(PostgrestCallsRepository(config.rest_url, config.anon_key)),
         live_calls=LiveCalls(),
         voice_sample=VoiceSampleService(voice_stack.tts if voice_stack is not None else None),
@@ -837,6 +851,18 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "plan_changed",
         "The plan changed since you saw it. Look at it again and approve the new one.",
     ),
+    # Lead Finder (ADR 0119). Fixed sentences: nothing from the data layer.
+    lead_finder_errors.NotForThisBusinessError: ApiError(
+        403,
+        "lead_finder_not_available",
+        "Finding new customers is not available for this business.",
+    ),
+    lead_finder_errors.SearchCapError: ApiError(
+        429, "search_cap_reached", "Today's searches are used up. Try again tomorrow."
+    ),
+    lead_finder_errors.ProspectStateError: ApiError(
+        409, "prospect_state", "That is not possible in the state it is in now."
+    ),
     task_errors.TaskStateError: ApiError(
         409,
         "task_state",
@@ -1273,6 +1299,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_intake_router)
     app.include_router(outreach_router)
     app.include_router(tasks_router)
+    app.include_router(lead_finder_router)
     app.include_router(calls_router)
     app.include_router(voice_sample_router)
     app.include_router(pronunciation_router)

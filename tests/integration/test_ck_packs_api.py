@@ -284,7 +284,7 @@ def test_the_example_data_is_labelled_loaded_once_and_removed_without_touching_r
     loaded = w.client.post(base, headers=bearer(owner))
     assert loaded.status_code == 201, loaded.text
     conforms(loaded.json(), "ExampleDataStatusOut")
-    assert loaded.json()["counts"] == {"companies": 3, "contacts": 3, "leads": 2, "products": 5}
+    assert loaded.json()["counts"] == {"companies": 3, "contacts": 3, "leads": 2, "products": 5, "other": 0}
     assert operator_sql.sql(f"select count(*) from public.companies where tenant_id = '{b.id}' and name like 'Example: %'") == "3"
     assert operator_sql.sql(f"select count(*) from public.contacts where tenant_id = '{b.id}' and full_name like 'Example: %' and (email is not null or phone is not null)") == "0"
     again = w.client.post(base, headers=bearer(owner))

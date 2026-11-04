@@ -37,6 +37,7 @@ from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
 from app.dpdp.mail import DpdpJobs
 from app.dpdp.wiring import build_dpdp_jobs
+from app.lead_finder.housekeeping import PlacesExpiry
 from app.lead_profile.read_runner import LeadReadRunner
 from app.lead_profile.read_wiring import build_lead_reader
 from app.lead_sources.sync import SheetSync
@@ -97,6 +98,7 @@ class Worker:
         usage_alerts: UsageAlerts | None = None,
         auto_reply: AutoReplyRunner | None = None,
         lead_reader: LeadReadRunner | None = None,
+        places_expiry: PlacesExpiry | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -131,6 +133,8 @@ class Worker:
         self._auto_reply = auto_reply
         # owner decision 31 Oct 2026: the AI lead reader fills the profile of a new WhatsApp lead (and of one whose key fields are still empty), low confidence; the database decides who may be read
         self._lead_reader = lead_reader
+        # Lead Finder (ADR 0119): Google Maps fields other than place_id are kept at most 30 days
+        self._places_expiry = places_expiry
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -147,6 +151,8 @@ class Worker:
                 voice=self._voice.clip_for if self._voice is not None else None,
             )
             self._privacy_housekeeping(token)
+            if self._places_expiry is not None:
+                self._places_expiry.run_if_due(token)
             self._push_to_the_team(token)
             self._lead_sheet_sync(token)
             self._billing_reminders(token)
@@ -342,6 +348,7 @@ def build_worker(settings: Settings) -> Worker:
         outreach=build_outreach_runner(settings, config.rest_url, config.anon_key),
         auto_reply=build_auto_reply(settings, config.rest_url, config.anon_key),
         lead_reader=build_lead_reader(settings, config.rest_url, config.anon_key),
+        places_expiry=PlacesExpiry.over_rpc(config.rest_url, config.anon_key),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),

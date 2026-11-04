@@ -190,6 +190,10 @@ class Settings(BaseSettings):
     exotel_api_key: str | None = None
     exotel_api_token: SecretStr | None = None
     exotel_subdomain: str = "api.in.exotel.com"
+    # The whole REST base: https://api.exotel.com (Singapore) or https://api.in.exotel.com
+    # (Mumbai). Set, it wins over EXOTEL_SUBDOMAIN. Staging: https://api.exotel.com, the
+    # cluster the owner's account authenticates on (4 Nov 2026; ADR 0080 addendum).
+    exotel_api_base: str | None = None
     exotel_caller_id: str | None = None  # the ExoPhone shown to the customer
     exotel_agent_number: str | None = None  # the shop's own phone, rung first
     exotel_webhook_token: SecretStr | None = None  # the secret in the webhook addresses
@@ -327,6 +331,14 @@ class Settings(BaseSettings):
     # until TELEPHONY_LIVE_CONFIRMED is true (set after the legal answers). In sandbox only the
     # numbers in TELEPHONY_SANDBOX_NUMBERS (comma separated, +91...) can be rung.
     telephony_mode: str = "off"
+    # Lead Finder (ADR 0119): off | fixture | places. `fixture` = synthetic businesses only
+    # (demo workspaces, tests). `places` uses Google Places API (New) Text Search ONLY in a
+    # workspace whose real-data gate is open AND only when GOOGLE_PLACES_API_KEY is set (Secret
+    # Manager: sme-google-places-api-key, the owner's step); elsewhere it falls back to the
+    # fixture. The cost per search is an ESTIMATE in paise.
+    # The key is the one setting below (google_places_api_key), shared with the web-search lane.
+    lead_finder: str = "fixture"
+    lead_finder_places_cost_paise: int = 300
     telephony_live_confirmed: bool = False
     telephony_sandbox_numbers: str = ""
     telephony_max_concurrent: int = 2

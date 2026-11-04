@@ -45,7 +45,7 @@ class FakeApi:
         if method == "POST" and key == "/materials/policy":
             self.rows["policy"] = body
             return 200, {}
-        if method == "PUT" and key.startswith("/materials/items/"):
+        if method == "PUT" and key.startswith(("/materials/items/", "/catalogue/items/")):
             self.rows[key] = {**self.rows.get(key, {}), **body, "photos": self.rows.get(key, {}).get("photos", [])}
             return 200, {}
         if method == "PUT" and key.startswith("/institution/profile"):
@@ -73,6 +73,47 @@ def test_the_construction_demo_product_is_made_shown_with_a_picture_and_never_ov
     second = demo_data.construction_materials(api)
     assert "left as it is" in second["demo product"] and api.rows[key]["active"] is False
     assert not [1 for m, p in api.log[before:] if m in ("PUT", "POST") and "/materials/items/" in p], "no write on a second run"
+
+
+def test_the_textiles_demo_catalogue_has_in_stock_silk_cotton_and_wedding_sarees_each_shown_with_a_picture() -> None:
+    """Owner, 4 Nov 2026: 8 to 12 in-stock items with stock levels (silk, cotton, wedding), so a saree shop can reach call-ready."""
+    api = FakeApi()
+    first = demo_data.textiles(api)
+    items = [v for k, v in api.rows.items() if k.startswith("/catalogue/items/")]
+    assert 8 <= len(items) <= 12 and "11 created" in first["demo sarees"]
+    assert all(i["active"] is True and i["photos"] for i in items), "every item is shown, and an active item needs a photo"
+    levels = [i["stock_status"] for i in items]
+    assert levels.count("in_stock") >= 8 and set(levels) <= {"in_stock", "few_left"}, "stock levels, mostly in stock"
+    assert any("silk" in i["fabric"] or i["fabric"] in ("kanchi_pattu", "banarasi") for i in items) and any("cotton" in i["fabric"] for i in items)
+    assert sum("wedding" in i["occasions"] for i in items) >= 3
+    assert all(i["name"].endswith("(demo)") for i in items), "invented products, labelled"
+    priced = [i for i in items if "price_paise" in i]
+    assert priced and all(i["price_paise"] >= 100 for i in priced), "an exact price only where the Owner set one"
+    # the picture goes up before the item is shown
+    for key in (k for k in api.rows if k.startswith("/catalogue/items/")):
+        writes = [i for i, (m, p) in enumerate(api.log) if m != "GET" and p.split("?")[0] in (key, key + "/photos")]
+        assert [api.log[i][0] for i in writes] == ["PUT", "POST", "PUT"] and api.bodies[writes[0]]["active"] is False and api.bodies[writes[-1]]["active"] is True
+    # a person hides one: a re-seed writes nothing and leaves it hidden
+    key = next(k for k in api.rows if k.startswith("/catalogue/items/"))
+    api.rows[key]["active"] = False
+    before = len(api.log)
+    second = demo_data.textiles(api)
+    assert "0 created, 11 already there" in second["demo sarees"] and api.rows[key]["active"] is False
+    assert not [1 for m, _ in api.log[before:] if m in ("PUT", "POST")], "no write on a second run"
+
+
+def test_the_textiles_demo_catalogue_matches_what_saree_shops_boutiques_and_textile_shops_buy() -> None:
+    """The Lead Finder's Researcher (app/lead_finder/decide.py) finds an in-stock match for every buyer type of the textiles pack."""
+    sys.path.insert(0, str(ROOT / "services/ai-api"))
+    from app.lead_finder import decide, packdata
+    from app.lead_finder.service import stock_lines
+
+    data = packdata.for_pack("textiles")
+    assert data is not None
+    rows = [{"name": i["name"], "fabric": i["fabric"], "occasions": i["occasions"], "stock_status": i["stock"], "price_paise": i["price"], "item_kind": "saree", "sell_unit": "piece"} for i in demo_data.TEXTILE_ITEMS]
+    stock = stock_lines(rows)
+    for buyer in data.buyer_types:
+        assert decide.stock_match(buyer, stock).enough, buyer.code
 
 
 def test_a_half_built_product_without_a_picture_is_finished_not_skipped() -> None:
