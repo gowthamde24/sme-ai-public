@@ -60,7 +60,7 @@ class PlanIn(_In):
     query: Short | None = None
     area: Short | None = None
     max_results: Annotated[int, Field(ge=1, le=20)] | None = None
-    language: Literal["en", "te", "kn", "hi", "ta", "ml"] = "en"
+    language: Literal["en", "te", "hi", "kn", "ta", "ml"] = "en"
 
 
 class SearchOut(_Out):
