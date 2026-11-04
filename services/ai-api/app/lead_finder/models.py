@@ -33,6 +33,8 @@ class AvailabilityOut(_Out):
     source: Literal["fixture", "places"] | None
     # not_for_your_role: a Viewer (who reads no prospect): hide the feature for them
     reason: Literal["ok", "not_for_this_business", "switched_off", "not_for_your_role"]
+    # who it finds (owner decision 4 Nov 2026): a shop's buyers ("businesses") or, for a school, organisations only (associations, companies, coaching centres, vendors, institutions; never individuals)
+    audience: Literal["businesses", "organisations"] = "businesses"
 
 
 class SettingsIn(_In):

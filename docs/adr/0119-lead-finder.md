@@ -60,6 +60,15 @@ search. The usage meter's kinds stay `call_minutes` and `whatsapp_messages` (a c
 No real outbound call: `TELEPHONY_MODE` stays off and nothing here dials. Real calls need the owner's December lawyer review, a registered calling number and DND scrubbing first. Every prospect keeps its source
 in words ("Google Maps search 'saree shops Jayanagar', 2 Nov"). The real-data gate stays closed everywhere except the Owner Test workspace.
 
+## Schools: organisations only (owner decision, 4 Nov 2026)
+
+A school (the education pack, version 3) has the Lead Finder, for **organisations only**: residents' and apartment associations, companies and their HR, coaching centres, transport and event
+vendors, institutions (`packages/packs/education/lead_finder.json`: `audience: "organisations"`, `uses_stock: false`). **Never individuals or families**, for any business type: a request that names
+people ("parents in Anantapur", "families near me", in six languages; `app/lead_finder/people_words.json`) is refused politely with 422 `individuals_not_allowed`, unless the words name their
+organisation ("the parents' association"). Families are reached only from the school's own enquiry list, and the existing school rules stay. No stock is matched for a school: the kind of
+organisation, its size and distance decide, and another school is the Owner's call (`competitor`). The simulated qualifying call asks who they are and what is possible, offers a visit or a notice
+for the members, and never a quote. Migrations `20261231090000` (pack data) and `20261231090100` (school workspaces move to version 3). The plan's switch applies as for every business type.
+
 ## Open
 
 * Place Details re-fetch after 30 days; `redecide` on a schedule. (The scheduler worker already runs `prospect_places_expire` every six hours: `app/lead_finder/housekeeping.py`.)
