@@ -22,7 +22,7 @@ describe("a school finds organisations, never people (job DM: its work is admiss
   it("its public steps are its own words (admission enquiries first), and they say the marks and fee messages are never written by the AI", () => {
     const landing = JSON.parse(fs.readFileSync(path.join(PACKS, "education/landing.json"), "utf8"));
     expect(landing.steps["1"].title.en).toBe("Admission enquiries");
-    expect(landing.steps["1"].text.en).toMatch(/does not search for leads/);
+    expect(landing.steps["1"].text.en).toMatch(/never families/);
     expect(landing.steps["6"].text.en).toMatch(/never written by the AI/);
     expect(landing.steps["3"].text.en).toMatch(/does not discuss a child's fees or marks/);
   });
