@@ -183,6 +183,8 @@ class AccessOut(_Strict):
     # job DQ: a demo workspace (synthetic data, sending switched off) and a workspace exempt from billing (Customer Zero, the demos); set by the operator only
     demo: bool = False
     exempt: bool = False
+    # an OLD TEST workspace the operator archived (it was rebuilt: docs/runbooks/rebuild-test-workspace.md): `access` is read_only for good, no lapse dates; the switcher leaves it out
+    archived: bool = False
 
 
 class BillingOut(_Strict):

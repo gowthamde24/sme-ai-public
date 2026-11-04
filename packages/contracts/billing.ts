@@ -12,6 +12,7 @@ export interface AccessOut {
   erasure_warning_sent_at?: string | null;
   demo?: boolean;
   exempt?: boolean;
+  archived?: boolean;
 }
 
 export interface BalanceKindOut {
