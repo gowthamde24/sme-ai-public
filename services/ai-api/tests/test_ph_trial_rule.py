@@ -69,7 +69,44 @@ async def test_on_the_trial_number_a_call_is_admitted_when_all_hold_without_the_
     calls = FakeCalls(status="completed")   # the lookup would refuse it
     out = await admit(calls=calls)
     assert isinstance(out, inbound.Admitted) and out.rule == "trial_number" and out.tenant_id == TENANT and out.max_call_s == 180
-    assert calls.asked == [], "the trial rule does not ask Exotel's call record"
+    assert calls.asked == ["CA9"], "Exotel's record is asked once first; it does not confirm, so the trial rule decides"
+
+
+@arun
+async def test_on_the_trial_number_exotels_own_confirmation_still_wins() -> None:
+    out = await admit(calls=FakeCalls())
+    assert isinstance(out, inbound.Admitted) and out.rule == "exotel_lookup" and out.max_call_s is None
+
+
+@arun
+async def test_the_lookup_asks_again_on_a_404_and_never_on_another_answer() -> None:
+    import httpx
+
+    def client(statuses: list[int]) -> tuple[httpx.AsyncClient, list[str]]:
+        seen: list[str] = []
+
+        def reply(request: httpx.Request) -> httpx.Response:
+            seen.append(request.url.path)
+            code = statuses[min(len(seen) - 1, len(statuses) - 1)]
+            return httpx.Response(code, json={"Call": {"Status": "in-progress", "From": "09502380998", "To": "09513886363"}} if code == 200 else {})
+
+        return httpx.AsyncClient(transport=httpx.MockTransport(reply)), seen
+
+    c, seen = client([404, 404, 200])
+    got = await inbound.ExotelCalls("https://api.exotel.com", OUR_SID, "k", "t", client=c).get("abc123", retries_s=(0.01, 0.01))
+    assert got is not None and got.status == "in-progress" and got.from_number == OWNER and len(seen) == 3
+    assert seen[0] == f"/v1/Accounts/{OUR_SID}/Calls/abc123.json", "the call_sid of the start message, under our account"
+    c, seen = client([404])
+    assert await inbound.ExotelCalls("https://api.exotel.com", OUR_SID, "k", "t", client=c).get("abc123", retries_s=(0.01, 0.01)) is None and len(seen) == 3
+    c, seen = client([401])
+    assert await inbound.ExotelCalls("https://api.exotel.com", OUR_SID, "k", "t", client=c).get("abc123", retries_s=(0.01, 0.01)) is None and len(seen) == 1, "a refused key is not asked again"
+
+
+def test_a_call_id_is_logged_as_a_fingerprint_never_the_id() -> None:
+    sid = "0123456789abcdef0123456789abcdef"
+    fp = inbound.fingerprint(SECRET, sid)
+    assert fp == inbound.fingerprint(SECRET, sid) and fp.endswith("/32") and sid[:6] not in fp and inbound.fingerprint(SECRET, "") == "-"
+    assert fp != inbound.fingerprint(b"other" * 10, sid)
 
 
 @arun
@@ -82,7 +119,6 @@ async def test_every_condition_of_the_trial_rule_is_needed() -> None:
         (dict(st=start(account_sid="someone-else")), "trial_account"),
         (dict(st=start(account_sid="")), "trial_account"),
         (dict(st=start(app_id="999")), "trial_app_id"),
-        (dict(st=start(app_id="")), "trial_app_id"),                               # Exotel named no app id: not admitted
         (dict(active=1), "trial_busy"),
         (dict(count=full), "trial_day_limit"),
         (dict(gs=gate.Settings(mode="live", sandbox_numbers=frozenset({OWNER}), outbound=False, live_confirmed=True)), "trial_not_sandbox"),
@@ -93,6 +129,28 @@ async def test_every_condition_of_the_trial_rule_is_needed() -> None:
         out = await admit(**over)
         assert isinstance(out, gate.Refused) and out.reason == reason, (over, out)
         assert reason in gate.REASONS
+
+
+@arun
+async def test_the_app_id_is_checked_only_when_exotel_names_one() -> None:
+    absent = await admit(start(app_id=""))
+    assert isinstance(absent, inbound.Admitted) and absent.rule == "trial_number", "Exotel's start message names no app id (owner: then it is not a condition)"
+    other = await admit(start(app_id="999"))
+    assert isinstance(other, gate.Refused) and other.reason == "trial_app_id", "a different app id is still refused"
+
+
+def test_the_stream_takes_the_token_from_the_path_or_the_query_and_the_log_never_shows_it() -> None:
+    from app.logging_safety import RedactWebSocketFilter
+    from app.telephony.inbound_routes import router
+
+    paths = {getattr(r, "path", "") for r in router.routes}
+    assert {"/v1/telephony/exotel/stream", "/v1/telephony/exotel/stream/{token}"} <= paths
+    token = inbound.mint(SECRET, inbound.monotonic(), "CA1")
+    url = inbound.stream_url("https://api.example.test", token)
+    assert f"/stream/{token}?" in url and "t=" not in url
+    record = logging.LogRecord("uvicorn.error", logging.INFO, "", 0, '%s - "WebSocket %s" [accepted]', ("1.2.3.4:5", f"/v1/telephony/exotel/stream/{token}?sample-rate=16000"), None)
+    RedactWebSocketFilter().filter(record)
+    assert token not in record.getMessage() and "/v1/telephony/exotel/stream/<redacted>?<redacted>" in record.getMessage()
 
 
 @arun
@@ -145,7 +203,7 @@ async def test_a_whole_trial_call_is_answered_and_the_log_names_the_rule_but_no_
     svc.our_sid = "sim"   # the simulator's account_sid
     svc.trial = inbound.trial_rule(EXOPHONE, OWNER, "sim", APP)
     try:
-        sim, task = await _call(svc, inbound.mint(SECRET, inbound.monotonic(), "CA123"), {"custom": {"app_id": APP}})
+        sim, task = await _call(svc, inbound.mint(SECRET, inbound.monotonic(), "CA123"))   # no app id, as Exotel sends it
         await asyncio.sleep(0.5)
         await sim.hang_up()
         await asyncio.wait_for(task, 10)
@@ -154,5 +212,6 @@ async def test_a_whole_trial_call_is_answered_and_the_log_names_the_rule_but_no_
     assert store.begun == [(TENANT, "en")]
     assert "exotel_inbound admitted rule=trial_number" in records
     diag = next(r for r in records if r.startswith("exotel_start "))
-    assert "account_matches=yes" in diag and "app_id_matches=yes" in diag and "trial_number=yes" in diag and "custom=app_id" in diag
+    assert "account_matches=yes" in diag and "app_id_matches=absent" in diag and "trial_number=yes" in diag and "custom=-" in diag
     assert all(v not in r for r in records for v in (APP, "sim ", OWNER, "9502380998", "CA123")), "names and yes/no only, never a value"
+    assert any(r.startswith("exotel_stream start call_sid_fp=") and r.split("call_sid_fp=")[1].split(" ")[0] == inbound.fingerprint(SECRET, "CA123") for r in records)

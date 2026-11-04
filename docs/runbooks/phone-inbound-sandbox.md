@@ -6,7 +6,7 @@ outbound call), no recording, no other number.
 ## How a call gets in
 1. The caller dials the trial ExoPhone 09513886363 and enters the PIN. Exotel runs app 1371752: Call Start → **Voicebot** → Hangup.
 2. The Voicebot applet's URL field is **`https://sme-api-620338396268.asia-south1.run.app/v1/telephony/exotel/stream-url`**: a plain address, with no secret in it. Exotel asks it once per call; it answers
-   `{"url": "wss://…/v1/telephony/exotel/stream?sample-rate=16000&t=<token>"}`. The token is signed with `sme-exotel-stream-secret`, lives 120 s and is bound to the call's id when Exotel sends one.
+   `{"url": "wss://…/v1/telephony/exotel/stream/<token>?sample-rate=16000"}`. The token is signed with `sme-exotel-stream-secret`, lives 120 s and is bound to the call's id when Exotel sends one. The token rides in the PATH (on 4 Nov Exotel opened one stream with the query string dropped); `?t=` is still accepted. The log carries call ids only as `call_sid_fp` (8 hex of an HMAC with the stream secret), so a Call SID from the dashboard can be matched without writing it down.
    A caller who is named and not on the list gets 403.
 3. On the stream, before any audio:
    - the token's signature and expiry;
