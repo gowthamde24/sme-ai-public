@@ -51,7 +51,9 @@ def sit(**kw: Any) -> Situation:
 # ---------------------------------------------------------------------------------------------------------------------------------- data
 def test_the_pack_files_say_which_business_types_have_a_lead_finder() -> None:
     assert TEXTILES is not None and MATERIALS is not None
-    assert packdata.for_pack("education", PACKS) is None, "a school has no Lead Finder data: no outreach"
+    school = packdata.for_pack("education", PACKS)
+    assert school is not None and school.audience == "organisations" and not school.uses_stock, "a school finds organisations only (owner decision 4 Nov 2026)"
+    assert packdata.for_pack("general_business", PACKS) is None, "a pack without the file has no Lead Finder"
     assert packdata.for_pack("../textiles", PACKS) is None, "a path is never a pack id"
     for data in (TEXTILES, MATERIALS):
         assert set(data.questions) == {"sells", "price", "quantity", "supplier", "timing", "decision"}
@@ -279,7 +281,7 @@ def test_a_demo_workspace_plans_approves_and_gets_a_result_card_without_google()
 
     repo = FakeLeadFinderRepo("textiles", real_data_open=False)
     c = _client(repo, mode="places", places=Tripwire())
-    assert c.get(f"{URL}/lead-finder/availability", headers=auth("a_sales")).json() == {"available": True, "source": "fixture", "reason": "ok", "upgrade_to": None}
+    assert c.get(f"{URL}/lead-finder/availability", headers=auth("a_sales")).json() == {"available": True, "source": "fixture", "reason": "ok", "upgrade_to": None, "audience": "businesses"}
     plan = c.post(f"{URL}/lead-finder/plan", json={"text": "find saree shops in Jayanagar Bengaluru"}, headers=auth("a_sales"))
     assert plan.status_code == 201, plan.text
     card = plan.json()
@@ -356,15 +358,15 @@ def test_settings_screen() -> None:
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- A5: a school
-def test_a_school_has_no_lead_finder_anywhere() -> None:
-    c = _client(FakeLeadFinderRepo("education", module_on=False))
-    assert c.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json() == {"available": False, "source": None, "reason": "not_for_this_business", "upgrade_to": None}, "hidden"
-    for method, path, body in (("post", "/lead-finder/plan", {"text": "find new schools in Anantapur"}), ("get", "/lead-finder/settings", None), ("get", "/prospects", None),
+def test_a_business_type_without_the_module_has_no_lead_finder_anywhere() -> None:
+    c = _client(FakeLeadFinderRepo("general_business", module_on=False))
+    assert c.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json() == {"available": False, "source": None, "reason": "not_for_this_business", "upgrade_to": None, "audience": "businesses"}, "hidden"
+    for method, path, body in (("post", "/lead-finder/plan", {"text": "find new shops in Anantapur"}), ("get", "/lead-finder/settings", None), ("get", "/prospects", None),
                                ("post", "/prospects/actions", {"ids": [str(uuid.uuid4())], "action": "call"})):
         r = getattr(c, method)(f"{URL}{path}", headers=auth("a_owner"), **({"json": body} if body else {}))
         assert r.status_code == 403 and r.json()["error"]["code"] == "lead_finder_not_available", path
     # even with the module flag on by mistake, a pack without Lead Finder data is refused
-    c2 = _client(FakeLeadFinderRepo("education", module_on=True))
+    c2 = _client(FakeLeadFinderRepo("general_business", module_on=True))
     assert c2.post(f"{URL}/lead-finder/plan", json={"text": "find new retailers in Anantapur"}, headers=auth("a_owner")).status_code == 403
 
 
@@ -408,8 +410,8 @@ def test_availability_is_never_an_error_for_a_member_and_a_viewer_is_told_it_is_
     repo = FakeLeadFinderRepo("textiles")
     c = _client(repo)
     for user in ("a_owner", "a_admin", "a_sales"):
-        assert c.get(f"{URL}/lead-finder/availability", headers=auth(user)).json() == {"available": True, "source": "fixture", "reason": "ok", "upgrade_to": None}, user
+        assert c.get(f"{URL}/lead-finder/availability", headers=auth(user)).json() == {"available": True, "source": "fixture", "reason": "ok", "upgrade_to": None, "audience": "businesses"}, user
     viewer = c.get(f"{URL}/lead-finder/availability", headers=auth("a_viewer"))
-    assert viewer.status_code == 200 and viewer.json() == {"available": False, "source": None, "reason": "not_for_your_role", "upgrade_to": None}
+    assert viewer.status_code == 200 and viewer.json() == {"available": False, "source": None, "reason": "not_for_your_role", "upgrade_to": None, "audience": "businesses"}
     assert c.get(f"{URL}/prospects", headers=auth("a_viewer")).status_code == 403, "everything else stays refused for a Viewer"
     assert c.get(f"{URL}/lead-finder/availability", headers=auth("outsider")).status_code == 404, "a stranger still learns nothing"
