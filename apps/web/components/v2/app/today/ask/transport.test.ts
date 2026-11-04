@@ -1,6 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
+import { parseSearch } from "@/lib/api/lead-finder-card";
+import { SEARCH_DONE, SEARCH_PLANNED } from "@/lib/api/lead-finder-fixtures";
+
 import type { AskEvent } from "./ask-types";
+import { isFinderCard } from "./lead-finder-cards";
 import { STALL_MS, fetchVoiceStatus, makeAskTransport, makeVoiceTransport, parseLine } from "./transport";
 
 const NDJSON = { "Content-Type": "application/x-ndjson; charset=utf-8" };
@@ -154,5 +158,15 @@ describe("fetchVoiceStatus", () => {
     expect(await fetchVoiceStatus("/v", undefined, json(null))).toEqual({ available: false, speech: false });
     expect(await fetchVoiceStatus("/v", undefined, vi.fn(async () => Promise.reject(new Error("down"))))).toEqual({ available: false, speech: false });
     expect(await fetchVoiceStatus("/v", undefined, vi.fn(async () => new Response("<html>", { status: 200 })))).toEqual({ available: false, speech: false });
+  });
+});
+
+describe("the Lead Finder's card on the route's stream (contract section 1b)", () => {
+  const planned = parseSearch(SEARCH_PLANNED);
+  it("is passed on when it has the card's shape; anything else is dropped, never drawn", () => {
+    expect(parseLine(JSON.stringify({ type: "lead_finder", card: { search: planned, canApprove: true } }))).toEqual({ type: "lead_finder", card: { search: planned, canApprove: true } });
+    for (const card of [null, 3, {}, { search: planned }, { search: planned, canApprove: "yes" }, { search: { ...planned, state: "weird" }, canApprove: true }, { search: { ...planned, id: "x" }, canApprove: true }, { search: { ...planned, maxResults: -1 }, canApprove: true }, { search: { ...planned, counts: { new: "a" } }, canApprove: true }, { search: { ...planned, query: "q".repeat(301) }, canApprove: true }])
+      expect(parseLine(JSON.stringify({ type: "lead_finder", card })), JSON.stringify(card).slice(0, 60)).toBeNull();
+    expect(isFinderCard({ search: parseSearch(SEARCH_DONE), canApprove: false })).toBe(true);
   });
 });

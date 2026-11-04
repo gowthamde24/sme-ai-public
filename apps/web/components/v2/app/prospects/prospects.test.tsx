@@ -5,8 +5,8 @@ const refresh = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
 
 import { appDict } from "@/i18n/app";
-import { parsePracticeCall, parseProspect, parseSearch } from "@/lib/api/lead-finder";
-import { P1, P2, P3, PRACTICE, PROSPECT, PROSPECT_LOW, PROSPECT_READY, SEARCH_DONE, SEARCH_PLACES, SEARCH_PLANNED } from "@/lib/api/lead-finder-fixtures";
+import { parsePracticeCall, parseProspect, parseQuoteDraftMade, parseQuoteDraftPreview, parseSearch } from "@/lib/api/lead-finder";
+import { P1, P2, P3, PRACTICE, PROSPECT, PROSPECT_LOW, PROSPECT_READY, QUOTE_DRAFT, QUOTE_DRAFT_MADE, SEARCH_DONE, SEARCH_PLACES, SEARCH_PLANNED } from "@/lib/api/lead-finder-fixtures";
 
 import { FinderBox, type FinderActions } from "./FinderBox";
 import { ProspectList, type ListActions } from "./ProspectList";
@@ -79,7 +79,7 @@ describe("the plan card and the result card", () => {
 });
 
 const list = (canPractice: boolean, over: Partial<ListActions> = {}, rows: unknown[] = [PROSPECT, PROSPECT_LOW, PROSPECT_READY]) => {
-  const actions: ListActions = { act: vi.fn(async (ids: string[]) => ({ ok: true as const, data: ids.map((id, i) => (i === 0 ? { id, ok: true, status: "call_ready" as const, error: null } : { id, ok: false, status: null, error: "prospect_state" as const })) })), practice: vi.fn(async () => ({ ok: true as const, data: parsePracticeCall(PRACTICE) })), ...over };
+  const actions: ListActions = { act: vi.fn(async (ids: string[]) => ({ ok: true as const, data: ids.map((id, i) => (i === 0 ? { id, ok: true, status: "call_ready" as const, error: null } : { id, ok: false, status: null, error: "prospect_state" as const })) })), practice: vi.fn(async () => ({ ok: true as const, data: parsePracticeCall(PRACTICE) })), quoteDraft: vi.fn(async () => ({ ok: true as const, data: { ...parseQuoteDraftPreview(QUOTE_DRAFT), enquiryId: null } })), makeQuoteDraft: vi.fn(async () => ({ ok: true as const, data: parseQuoteDraftMade(QUOTE_DRAFT_MADE) })), ...over };
   render(<ProspectList items={rows.map(parseProspect)} words={words} base={BASE} canPractice={canPractice} langNames={{ en: "English", te: "తెలుగు" }} actions={actions} />);
   return actions;
 };

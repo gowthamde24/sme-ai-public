@@ -43,4 +43,15 @@ export const PRACTICE = {
   evals: { disclosure_first_10s: true, never_pitches_out_of_stock: true, never_invents_prices: true },
 };
 
+// the draft quote of the qualified call (contract section 7): the preview, the same once made, and the answer of making it
+export const Q1 = "e1e1e1e1-0000-4000-8000-000000000001";
+export const E1 = "f1f1f1f1-0000-4000-8000-000000000001";
+export const QUOTE_DRAFT = {
+  prospect_id: PROSPECT_QUALIFIED.id, lead_id: L1, ready: true, made: false, quote_id: Q1,
+  lines: [{ item: "Kanchi Pattu Bridal", item_type_code: "LF-1A2B3C4D", qty: 40, unit_price_paise: 850000, quantity_said: "About forty pieces a month, more in the season." }],
+  left_out: [{ item: "Soft Silk Daily", reason: "no_price" }, { item: "Dharmavaram Silk Classic", reason: "no_quantity" }, { item: "Mysore Crepe", reason: "not_in_stock" }],
+};
+export const QUOTE_DRAFT_NONE = { ...QUOTE_DRAFT, ready: false, lines: [], left_out: [{ item: "Soft Silk Daily", reason: "no_price" }, { item: "Old Gadwal", reason: "not_in_catalogue" }, { item: "Uppada Tissue", reason: "item_type_off" }, { item: "Pochampally Ikat", reason: "too_many_lines" }] };
+export const QUOTE_DRAFT_MADE = { quote_id: Q1, quote_no: 21, enquiry_id: E1, status: "draft", total_paise: 34000000, needs_owner_approval: false, lines: QUOTE_DRAFT.lines, left_out: QUOTE_DRAFT.left_out, replayed: false };
+
 export const SETTINGS = { fit_bar: 70, daily_call_cap: 20, call_from_hour: 10, call_to_hour: 19, searches_per_day: 5, results_per_search: 20, updated_at: null };
