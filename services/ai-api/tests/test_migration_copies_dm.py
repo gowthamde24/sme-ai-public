@@ -17,7 +17,9 @@ PENDING = "20261129090400_dm_trial_pending.sql"
 READONLY = "20261130090100_dp_readonly_gate.sql"
 # job DS part E2 (migration 20261210090100) re-creates the stopped check once more: the pending hold is kept, the meter test becomes `billing_blocked` (the overage can cover a used-up kind)
 TOPUPS = "20261210090100_ds_topups_meter.sql"
-NEWER = {"public.billing_start_trial": READONLY, "public.billing_get": READONLY, "app.billing_stopped": TOPUPS}
+# the rebuild of a test workspace (migration 20261227090000) re-copies the read-only check once more: an ARCHIVED workspace is read-only too
+ARCHIVE = "20261227090000_rtw_archive_workspace.sql"
+NEWER = {"public.billing_start_trial": READONLY, "public.billing_get": READONLY, "app.billing_stopped": TOPUPS, "app.billing_read_only": ARCHIVE}
 LAST = {
     "public.billing_start_trial": PENDING,
     "app.billing_access_until": PENDING,
@@ -50,7 +52,7 @@ def test_the_pending_hold_adds_one_term_to_the_stopped_and_read_only_checks() ->
     removed, added = _diff("app.billing_stopped", -3, -2)   # job DI's, then job DM's
     assert removed == {"select app.billing_enforced() and app.billing_state(app.billing_used(p_tenant, p_kind), app.billing_allowance(p_tenant, p_kind)) = 'stopped'"}
     assert added == {"select app.billing_pending(p_tenant)", "or (app.billing_enforced() and app.billing_state(app.billing_used(p_tenant, p_kind), app.billing_allowance(p_tenant, p_kind)) = 'stopped')"}
-    removed, added = _diff("app.billing_read_only")
+    removed, added = _diff("app.billing_read_only", -3, -2)   # job DI's, then job DM's
     assert "app.billing_lapse(p_tenant) ->> 'access' = 'read_only'" in " ".join(removed) and "or app.billing_pending(p_tenant)" in " ".join(added)
 
 
@@ -73,3 +75,8 @@ def test_the_readonly_copies_add_exactly_what_they_say() -> None:
     removed, added = _diff("public.billing_start_trial")
     assert removed == {"if exists (select 1 from public.billing_subscriptions s where s.tenant_id = p_tenant_id) then"}
     assert added == {"if exists (select 1 from public.billing_subscriptions s where s.tenant_id = p_tenant_id) or app.billing_can_resume(p_tenant_id) then"}
+
+
+def test_the_archive_copy_keeps_the_pending_hold_and_adds_only_the_archived_workspace() -> None:
+    removed, added = _diff("app.billing_read_only")   # job DM's, then the rebuild's
+    assert "or app.billing_pending(p_tenant)" in " ".join(removed) and "or app.billing_pending(p_tenant) or app.workspace_archived(p_tenant)" in " ".join(added)
