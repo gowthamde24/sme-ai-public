@@ -1,0 +1,137 @@
+# Assistant work cards (preview)
+{role=note} Example cards with made-up data. Nothing here is saved or sent.
+legend: Seen as
+[button type=button: Owner]
+[button type=button: Staff]
+{label="The composer with files"}
+## The composer with files
+form:
+<file accept=.xlsx,.xls,.csv,.pdf,.jpg,.jpeg,.png,.heic,.docx,.vcf,.txt,image/jpeg,image/png,image/heic,application/pdf,text/csv,text/plain,text/vcard,text/x-vcard>
+Ask or tell your assistant anything…
+<textarea label="Ask or tell your assistant anything…" placeholder="Ask or tell your assistant anything…">
+[button type=button: Add a file]
+{label="Cards of an answer"}
+## Cards of an answer
+{label="What I found in leads-guntur-nov.xlsx"}
+### What I found in leads-guntur-nov.xlsx
+38 found · 4 already exist · 2 no phone · 1 looks like a supplier A few rows
+- Name : Lakshmi Prasanna Phone : +91 98480 1XXXX Town : Guntur Wants : Kanchi pattu, 40 sarees
+- Name : Venkata Ramana Rao Phone : +91 94401 2XXXX Town : Tenali Wants : Wedding set
+- Name : Sravani Reddy Town : Narasaraopet Wants : Gadwal silk
+Goes to: Leads Nobody is messaged or called because of this. Your usual follow-up rules apply.
+{label="A plan, waiting for you"}
+### Add 31 new leads from leads-guntur-nov.xlsx
+{label="Steps"}
+- Add 31 new leads (4 are already in Leads and are left as they are; 2 have no phone; 1 looks like a supplier and is left out)
+- Tag them “wedding season”
+[button type=button: Do it]
+[button type=button: Change]
+[button type=button: Cancel]
+{label="What I found in price-list-nov.pdf"}
+### What I found in price-list-nov.pdf
+24 found · 18 already exist · 2 no price A few rows
+- Item : Mysore silk, plain border Price : ₹ 6,800 Stock : 12
+- Item : Ilkal cotton Price : ₹ 1,450 Stock : 40
+Goes to: Catalogue
+{label="A plan, waiting for you"}
+### Update 18 prices and add 6 new items
+{label="Steps"}
+- Change the price of 18 items (each old price is kept, so this can be undone)
+- Add 6 new items (2 have no price and are added as hidden)
+[button type=button: Do it]
+[button type=button: Change]
+[button type=button: Cancel]
+{label="A plan, waiting for you"}
+### Set up follow-ups for the new leads
+{label="Steps"}
+- Follow up every 3 days, stop after 4 tries
+- Turn off automatic replies on Sundays
+- Tag the 31 new leads “wedding season”
+[button type=button: Do it]
+[button type=button: Change]
+[button type=button: Cancel]
+{label="A plan, waiting for you"}
+### Invite Ravi Kumar as Staff
+{label="Steps"}
+- Invite Ravi Kumar (ravi.k@example.test) as Staff, who handles calls
+[button type=button: Do it]
+[button type=button: Change]
+[button type=button: Cancel]
+{label="A plan, waiting for you"}
+### Change calling hours to 10 am – 7 pm
+{label="Steps"}
+- Calling hours: 10:00 am to 7:00 pm, Monday to Saturday (now 9:30 am to 8:00 pm)
+[button type=button: Do it]
+[button type=button: Change]
+[button type=button: Cancel]
+{label="Secure box"}
+### Secure box
+Typed here only. It is never shown in the chat, never sent to the AI and never kept in the conversation.
+form:
+IndiaMART CRM key
+<password label="IndiaMART CRM key" autocomplete=off described-by="Typed here only. It is never shown in the chat, never sent to the AI and never kept in the conversation.">
+IndiaMART seller panel → Lead Manager → CRM API key. It looks like a long line of letters and numbers.
+[button type=submit: Save securely]
+{label="Connect IndiaMART"}
+### Connect IndiaMART
+- 1 Open seller.indiamart.com and sign in.
+- 2 Go to Lead Manager, then Settings, then CRM API key.
+- 3 Copy the key and put it in the box below.
+- 4 Press “Pull now”: the last day’s enquiries come in as leads.
+{label="Secure box"}
+### Secure box
+Typed here only. It is never shown in the chat, never sent to the AI and never kept in the conversation.
+form:
+IndiaMART CRM key
+<password label="IndiaMART CRM key" autocomplete=off described-by="Typed here only. It is never shown in the chat, never sent to the AI and never kept in the conversation.">
+[button type=submit: Save securely]
+[button type=button: Pull now]
+[Open Lead sources](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources)
+{label="Forward your lead e-mails here"}
+### Forward your lead e-mails here
+- 1 Copy your workspace address below.
+- 2 In your e-mail, make a rule that forwards the portal’s mails to it.
+- 3 Send a test lead to see it arrive.
+Your workspace address leads.sri-lakshmi-silks@in.example.test
+[button type=button: Copy]
+Steps for each portal
+-
+summary: JustDial
+- Mails come from instantemail@justdial.com.
+- Gmail: Settings → Filters → From: justdial.com → Forward to the address above.
+-
+summary: TradeIndia
+- Mails come from noreply@tradeindia.com.
+- Forward them the same way.
+[button type=button: Send a test mail]
+[Open Lead sources](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources)
+{role=status} It didn’t work: nothing arrived yet. No mail reached leads.sri-lakshmi-silks@in.example.test in the last 10 minutes.
+{label="Connect your website form"}
+### Connect your website form
+- 1 Copy the snippet below.
+- 2 Paste it into your website, where the form should be.
+- 3 Send a test lead from your website.
+Website snippet <script src="https://forms.example.test/f.js" data-form="sri-lakshmi-silks" async></script>
+[button type=button: Copy]
+[button type=button: Send a test lead]
+{role=status} It works. A test lead from sri-lakshmi-silks.example.test arrived at 2:41 pm.
+{label="Calling hours"}
+### Calling hours
+- 1 Calls go out only between 10:00 am and 7:00 pm.
+- 2 Not on Sundays.
+- 3 Press “Test call” to get a call on your own phone.
+[button type=button: Test call]
+[Open Call settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=assistant)
+This is always done by a person, on its own screen. Opening real customer data is always done by a person, on its own screen. [Open Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+I can’t do this yet. I can’t make a GST invoice yet. [Open Orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
+{label="What the assistant changed"}
+## What the assistant changed
+Every change the assistant made on a request, newest first. Undo where it can be undone.
+{role=note} Example entries: none of these really happened.
+{label="Show"} [Today](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=activity&range=today) [This week](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=activity&range=week current=page)
+- Added 31 leads from leads-guntur-nov.xlsx Done What changed: 31 new leads, tagged “wedding season” By the assistant, on Srinivas Reddy’s request · 4 Nov, 2:10 pm
+[button type=button: Undo]
+- Changed calling hours Done What changed: 9:30 am – 8:00 pm → 10:00 am – 7:00 pm By the assistant, on Srinivas Reddy’s request · 4 Nov, 11:35 am
+[button type=button: Undo]
+- Invited Ravi Kumar as Staff Done By the assistant, on Srinivas Reddy’s request · 3 Nov, 5:50 pm
+- Switched the voice to a male Telugu voice Undone What changed: Ramya → Kiran By the assistant, on Srinivas Reddy’s request · 2 Nov, 3:30 pm

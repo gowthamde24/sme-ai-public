@@ -1143,3 +1143,9 @@ for (const step of [1, 2, 3, 4, 5, 6]) {
   });
 }
 
+
+// the assistant does the work (C2, ASSISTANT_WORK_SCREENS=mock): Settings > Activity with its example entries (Owner with Undo, Admin without), and the fixture-only preview of the chat's work cards
+const WORK_ENV = { ASSISTANT_WORK_SCREENS: "mock" };
+add({ id: "settings-activity", roles: ["owner", "admin"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "activity" }))), handlers: (role) => base(role) });
+add({ id: "settings-activity-today", roles: ["owner"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "activity", range: "today" }))), handlers: (role) => base(role) });
+add({ id: "assistant-work-preview", roles: ["owner"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/assistant-work-preview/page")).default(props({}))), handlers: (role) => base(role) });

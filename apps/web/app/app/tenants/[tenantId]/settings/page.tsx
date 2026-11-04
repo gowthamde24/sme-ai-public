@@ -106,12 +106,15 @@ import { Avatar } from "@/components/v2/app/Avatar";
 import { lettersOf } from "@/components/v2/app/letters";
 import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person } from "@/lib/api/me";
 import { signOutEverywhereAction } from "../../../actions";
+import { AssistantActivity } from "@/components/v2/app/settings/AssistantActivity";
+import { readActivity } from "@/lib/assistant-work/source";
+import { assistantWorkScreens } from "@/lib/screens/flag";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "agent", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -173,7 +176,10 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
   // Settings > AI assistant (job DM): only while its flag is on, and only for the Owner (the people who run the business may be admins, but the assistant is the Owner's to set up)
   const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off" || voicePickerScreens() !== "off" || aboutBusinessScreens() !== "off" || autoReplyScreens() !== "off" || pronunciationScreens() !== "off");
-  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+  // Settings > Activity (the assistant does the work, ASSISTANT_WORK_SCREENS): what the assistant changed on request, for the people who run the business
+  const workMode = assistantWorkScreens();
+  const hasActivity = admin && workMode !== "off";
+  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "activity" && !hasActivity) && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   let members: Member[] | null = null;
   let people: Person[] = [];
@@ -269,6 +275,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   } catch {
     /* outside a request: follow the system */
   }
+  const activityRange: "today" | "week" = pick(query.range) === "week" ? "week" : "today";
+  const activity = section === "activity" && workMode !== "off" ? { mode: workMode, range: activityRange, entries: await readActivity(workMode, { token: user.accessToken, tenantId }, activityRange).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) } : null;
   const tabs = [
     { key: "business", label: t("settings.tab.business") },
     { key: "profile", label: t("settings.tab.profile") },
@@ -278,6 +286,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     { key: "data", label: t("settings.tab.data") },
     { key: "language", label: t("settings.tab.language") },
     ...(hasAssistant ? [{ key: "assistant", label: t("asst.tab") }] : []),
+    ...(hasActivity ? [{ key: "activity", label: t("settings.tab.activity") }] : []),
     ...(tenant.role === "owner" ? [{ key: "agent", label: t("settings.tab.agent") }] : []),
     { key: "security", label: t("settings.tab.security") },
     { key: "privacy", label: t("settings.tab.privacy") },
@@ -635,6 +644,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               </button>
             </form>
           </section>
+        ) : null}
+        {section === "activity" && activity ? (
+          <AssistantActivity entries={activity.entries} range={activity.range} words={wordsFor(lang, ["asstact."])} lang={lang} base={base} canUndo={tenant.role === "owner"} mode={activity.mode} />
         ) : null}
         {section === "privacy" && privacy ? (
           <PrivacySection

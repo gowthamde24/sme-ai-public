@@ -1,0 +1,11 @@
+# Settings
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [My profile](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=profile) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Activity](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=activity current=page) [Automation](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy and data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="What the assistant changed"}
+## What the assistant changed
+Every change the assistant made on a request, newest first. Undo where it can be undone.
+{role=note} Example entries: none of these really happened.
+{label="Show"} [Today](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=activity&range=today current=page) [This week](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=activity&range=week)
+- Added 31 leads from leads-guntur-nov.xlsx Done What changed: 31 new leads, tagged “wedding season” By the assistant, on Srinivas Reddy’s request · 4 Nov, 2:10 pm
+[button type=button: Undo]
+- Changed calling hours Done What changed: 9:30 am – 8:00 pm → 10:00 am – 7:00 pm By the assistant, on Srinivas Reddy’s request · 4 Nov, 11:35 am
+[button type=button: Undo]
