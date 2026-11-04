@@ -12,6 +12,8 @@ vi.mock("next/navigation", () => ({ forbidden: () => forbidden() }));
 vi.mock("next/headers", () => ({ headers: async () => ({ get: (k: string) => (k === "x-sme-path" ? headerValue() : null) }) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/packs/read", () => ({ readPackCached: (...a: unknown[]) => readPack(...a) }));
+const readAvailability = vi.fn(async (): Promise<unknown> => null);
+vi.mock("@/lib/api/lead-finder", () => ({ readAvailability: () => readAvailability() }));
 
 import { defaultWorkspacePack, otherPackIds, workspacePack } from "@/lib/packs/pack-test-kit";
 
@@ -23,6 +25,7 @@ const draw = async () => render(await WorkspaceTemplate({ children: <p>the page<
 beforeEach(() => {
   vi.clearAllMocks();
   requireUser.mockResolvedValue({ id: "u", accessToken: "tok" });
+  readAvailability.mockResolvedValue(null);
   readPack.mockResolvedValue(workspacePack(otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!, "signup", ["today", "fees", "contacts"]));
 });
 
@@ -86,5 +89,13 @@ describe("the module guard of a workspace", () => {
     requireUser.mockRejectedValue(new Error("NEXT_REDIRECT:/login"));
     await expect(draw()).rejects.toThrow(/login/);
     expect(forbidden).not.toHaveBeenCalled();
+  });
+  it("the Lead Finder is where ITS API says (C1 #319): a school whose pack does not list it gets the page when availability says available, and the 403 when it says not for this business", async () => {
+    headerValue.mockReturnValue(`/app/tenants/${T}/retailers`);
+    readAvailability.mockResolvedValue({ available: true, source: "fixture", reason: "ok", audience: "organisations" });
+    await draw();
+    expect(screen.getByText("the page")).toBeInTheDocument();
+    readAvailability.mockResolvedValue({ available: false, source: null, reason: "not_for_this_business" });
+    await expect(draw()).rejects.toThrow(ForbiddenSignal);
   });
 });
