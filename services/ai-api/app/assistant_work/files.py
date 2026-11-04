@@ -42,8 +42,10 @@ def kind_of(name: str, content_type: str, head: bytes) -> FileKind | None:
     """The kind, or None when it is none of the kinds the chat takes. The first bytes win over a wrong name (a PDF named .csv is a PDF)."""
     if head.startswith(b"%PDF"):
         return "pdf"
-    if head.startswith((b"\x89PNG", b"\xff\xd8\xff", b"GIF8", b"RIFF")):
+    if head.startswith((b"\x89PNG", b"\xff\xd8\xff", b"GIF8")) or (head.startswith(b"RIFF") and head[8:12] == b"WEBP") or (head[4:8] == b"ftyp" and head[8:12] in (b"heic", b"heix", b"heif", b"mif1", b"avif")):
         return "image"
+    if head.startswith((b"RIFF", b"ID3", b"OggS", b"fLaC", b"\xff\xfb", b"\xff\xf3", b"\xff\xf2")) or head[4:8] == b"ftyp":
+        return None   # audio (a WAV, MP3, Ogg, FLAC, M4A) or a video: never kept here, whatever its name says
     if head.lstrip(b"\xef\xbb\xbf \r\n\t").upper().startswith(b"BEGIN:VCARD"):
         return "contacts"
     ext = name.rsplit(".", 1)[-1].lower() if "." in name else ""

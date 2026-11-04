@@ -264,4 +264,8 @@ def test_the_kind_of_a_file() -> None:
     assert wf.kind_of("x", "image/png", b"\x89PNG") == "image"
     assert wf.kind_of("notes.txt", "text/plain", b"Ravi 98765 43210") == "text"
     assert wf.kind_of("a.bin", "application/octet-stream", b"\x00\x01") is None
+    assert wf.kind_of("photo.webp", "image/webp", b"RIFF\x00\x00\x00\x00WEBPVP8 ") == "image"
+    assert wf.kind_of("card.heic", "image/heic", b"\x00\x00\x00\x18ftypheic") == "image", "a phone's photo"
+    for audio in (b"RIFF\x24\x08\x00\x00WAVEfmt ", b"ID3\x03\x00", b"OggS\x00\x02", b"\x00\x00\x00\x20ftypM4A "):
+        assert wf.kind_of("leads.csv", "text/csv", audio) is None, "audio or video is never kept, whatever its name says"
     assert wf.clean_name("../../etc/passwd\x00") == "passwd"
