@@ -34,18 +34,21 @@ const TOAST_MS = 6000;
  * decision takes its card off at once and a refusal puts it back with the reason, so the person never waits to see the card leave and never sees one leave that was not decided.
  * `waiting` is the API's own count; when it is more than the cards listed (the API lists the newest twenty) the difference is `extra` and the count says the truth.
  */
+/** What waits: every card but the plan's one upsell row (plan tiers, owner decision 4 Nov: it is not something that waits for a person). */
+const waits = (list: readonly NeedsCard[]): number => list.filter((c) => !(c.type === "item" && c.item.kind === "plan_upsell")).length;
+
 export function NeedsProvider({ initial, waiting, children }: { initial: NeedsCard[] | null; waiting: number | null; children: React.ReactNode }) {
   const [cards, setCards] = React.useState<NeedsCard[] | null>(initial);
   const [notes, setNotes] = React.useState<Record<string, Note>>({});
   const [toast, setToast] = React.useState<Toast | null>(null);
-  const extra = initial !== null && waiting !== null ? Math.max(0, waiting - initial.length) : 0;
+  const extra = initial !== null && waiting !== null ? Math.max(0, waiting - waits(initial)) : 0;
   const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   React.useEffect(() => () => void (timer.current && clearTimeout(timer.current)), []);
 
   const store = React.useMemo<Store>(
     () => ({
       cards,
-      total: cards === null ? null : cards.length + extra,
+      total: cards === null ? null : waits(cards) + extra,
       extra,
       notes,
       toast,

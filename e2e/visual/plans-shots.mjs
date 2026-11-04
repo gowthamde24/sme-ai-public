@@ -56,7 +56,16 @@ const SCHOOL_PROSPECTS = [
 ];
 
 // ---- the scenes: the server's flags, the stand-in's own answers, and the screens -------------------------------------------------------------------------------------
-const AGENTS_LIVE = [{ agent: "main", state: "idle", job: "Coordinates the other helpers.", last_event: null }, { agent: "lead_finder", state: "not_available", job: "Finds new businesses.", last_event: null }];
+// the helpers as the visual fixtures have them, with the main assistant on (the chat panel is drawn only where it is live)
+const AGENTS_LIVE = [
+  { agent: "main", state: "idle", job: "Coordinates the other helpers.", last_event: null },
+  { agent: "lead_finder", state: "not_available", job: "Finds new businesses that may want to buy. Not built yet.", last_event: null },
+  { agent: "researcher", state: "idle", job: "Reads public pages about a lead and writes down what it finds, with sources.", last_event: null },
+  { agent: "requirement_analyst", state: "idle", job: "Reads an enquiry and lists what the customer asked for, to be checked.", last_event: null },
+  { agent: "quote_writer", state: "idle", job: "Prepares a quote from the prices you set. A person approves it.", last_event: null },
+  { agent: "followup_desk", state: "idle", job: "Drafts follow-up messages. A person approves and sends them.", last_event: null },
+  { agent: "order_desk", state: "idle", job: "Keeps each order's steps, payments and refunds in order.", last_event: null },
+];
 const sse = (res, events) => {
   res.writeHead(200, { "Content-Type": "text/event-stream", "Cache-Control": "no-store" });
   for (const [name, data] of events) res.write(`event: ${name}\ndata: ${JSON.stringify({ type: name, ...data })}\n\n`);
@@ -70,7 +79,7 @@ const SCENES = {
 const SCREENS = [
   { id: "plan-ld", scene: "ld", path: `${T}/settings?section=plan` },
   { id: "retailers-ld", scene: "ld", path: `${T}/retailers` },
-  { id: "today-ld", scene: "ld", path: T },
+  { id: "today-ld", scene: "ld", path: T, seeAll: true },
   { id: "chat-ld", scene: "ld", path: T, chat: true },
   { id: "plan-aw", scene: "aw", path: `${T}/settings?section=plan` },
   { id: "prospects-school", scene: "school", path: `${T}/retailers` },
@@ -197,6 +206,12 @@ async function main() {
               try {
                 const res = await page.goto(`${WEB_URL}${screen.path}`, { waitUntil: "networkidle", timeout: 60_000 });
                 await page.evaluate(() => document.fonts.ready);
+                if (screen.seeAll) {
+                  // the upsell row is the last one: open the whole list
+                  const all = page.locator("section:has(h2) button", { hasText: /\(\d+\)/ }).first();
+                  if (await all.count()) await all.click();
+                  await page.locator('[data-needs-row="plan_upsell-lead_finder"], #needs-full-plan_upsell-lead_finder').first().scrollIntoViewIfNeeded();
+                }
                 if (screen.chat) {
                   const box = page.locator('[data-chat="form"] textarea').first();
                   await box.waitFor({ timeout: 20_000 });
@@ -212,7 +227,8 @@ async function main() {
                 const flags = [res?.status() !== 200 ? `HTTP ${res?.status()}` : "", wide ? "horizontal scroll" : "", /machine[- ]translat|translated automatically/i.test(body) ? "machine-translation notice" : "", /\b(tier|lf|today|plan)\.[a-z_]+(\.[a-z_]+)?\b/.test(body.replace(/\S+@\S+|https?:\S+/g, "")) ? "maybe a raw key" : "", errors.length ? `page errors: ${errors.join(" | ")}` : ""].filter(Boolean);
                 rows.push(`${flags.length ? "CHECK" : "ok   "} ${name}${flags.length ? `  ${flags.join("; ")}` : ""}`);
               } catch (e) {
-                rows.push(`ERROR ${name}: ${String(e.message).split("\n")[0]}`);
+                const seen = await page.locator("body").innerText().catch(() => "");
+                rows.push(`ERROR ${name}: ${String(e.message).split("\n")[0]} | page says: ${seen.replace(/\s+/g, " ").slice(0, 300)}`);
               }
               await context.close();
             }
