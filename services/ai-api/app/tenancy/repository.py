@@ -175,13 +175,16 @@ class PostgrestTenantRepository:
 
     # ------------------------------------------------------------------ reads
     def get_me(self, token: str, user_id: uuid.UUID) -> MeOut:
+        # The switcher's list: an ARCHIVED workspace (an old test workspace, rebuilt) is left
+        # out. A direct link still opens it, read-only (get_membership below does not filter).
         rows = self._request(
             "GET",
             "/memberships",
             token,
             params={
-                "select": "role,tenants(id,name,slug)",
+                "select": "role,tenants!inner(id,name,slug)",
                 "user_id": f"eq.{user_id}",
+                "tenants.archived_at": "is.null",
                 "order": "created_at.asc",
             },
         )
