@@ -6,6 +6,7 @@ vi.mock("./client", async (orig) => ({ ...(await orig<typeof import("./client")>
 vi.mock("./assistant", async (orig) => ({ ...(await orig<typeof import("./assistant")>()), readSse: async function* () { yield* events; } }));
 
 import { ApiContractError } from "./client";
+import { S1, SEARCH_DONE, SEARCH_PLANNED } from "./lead-finder-fixtures";
 import { archiveConversation, confirmAction, getHistory, listConversations, parseConfirmAction, parseTurnEvent, sendTurn } from "./turns";
 
 const T = "22222222-2222-4222-8222-222222222222";
@@ -67,5 +68,40 @@ describe("history and the plan's answer", () => {
     request.mockResolvedValueOnce({ status: "weird" });
     await expect(confirmAction("tok", T, A, "no")).rejects.toBeInstanceOf(ApiContractError);
     await expect(getHistory("tok", T, "x")).rejects.toBeInstanceOf(ApiContractError);
+  });
+});
+
+describe("the Lead Finder's card in a turn and in the history (contract section 1b)", () => {
+  it("reads the event `lead_finder` into the card; a card that is off is left out (null), never a broken turn; a mismatched name is still refused", () => {
+    expect(parseTurnEvent("lead_finder", { type: "lead_finder", search: SEARCH_PLANNED, can_approve: true })).toMatchObject({ type: "lead_finder", card: { canApprove: true, search: { id: S1, state: "planned" } } });
+    expect(parseTurnEvent("lead_finder", { type: "lead_finder", search: { ...SEARCH_PLANNED, state: "weird" }, can_approve: true })).toBeNull();
+    expect(parseTurnEvent("lead_finder", { type: "lead_finder", search: SEARCH_PLANNED })).toBeNull();
+    expect(() => parseTurnEvent("lead_finder", { type: "text", search: SEARCH_PLANNED, can_approve: true })).toThrow(ApiContractError);
+  });
+  it("a stream with the card yields it between the sentence and `done`", async () => {
+    events = [
+      { name: "intent", data: { type: "intent", kind: "action" } },
+      { name: "text", data: { type: "text", delta: "Shall I search?" } },
+      { name: "lead_finder", data: { type: "lead_finder", search: SEARCH_PLANNED, can_approve: false } },
+      { name: "done", data: { type: "done", conversation_id: A, message_id: M, language: "en", kind: "answer" } },
+    ];
+    const out = [];
+    for await (const e of sendTurn("tok", T, { messageId: M, conversationId: null, text: "find new retailers in Jayanagar" })) out.push(e.type);
+    expect(out).toEqual(["intent", "text", "lead_finder", "done"]);
+  });
+  it("a history message carries the card with the search's state now; a malformed card or a user's message carries none", async () => {
+    request.mockResolvedValueOnce({
+      messages: [
+        { id: M, role: "user", text: "find new retailers in Jayanagar", created_at: "x" },
+        { id: A, role: "assistant", text: "Shall I search?", kind: "answer", sources: [], lead_finder: { search: SEARCH_DONE, can_approve: true }, created_at: "x" },
+        { id: T, role: "assistant", text: "Hello", kind: "answer", sources: [], lead_finder: { search: "x", can_approve: true }, created_at: "x" },
+        { id: S1, role: "user", text: "yes", lead_finder: { search: SEARCH_DONE, can_approve: true }, created_at: "x" },
+      ],
+    });
+    const h = await getHistory("tok", T, A);
+    expect(h[1].leadFinder).toMatchObject({ canApprove: true, search: { id: S1, state: "done", counts: { needs_owner: 11 } } });
+    expect(h[2].leadFinder).toBeNull();
+    expect(h[3].leadFinder).toBeNull();
+    expect(h[0].leadFinder).toBeNull();
   });
 });

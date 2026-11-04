@@ -2,39 +2,41 @@ import {
   ACTIONS,
   CALL_LANGUAGES,
   CAPTURED,
-  CATEGORY_HINTS,
-  COUNT_KEYS,
   DECISION_REASONS,
   END_REASONS,
+  LEFT_OUT_REASONS,
   OUTCOMES,
   PERSONAS,
   PROSPECT_STATUSES,
   PROVIDERS,
-  SEARCH_STATES,
   SETTINGS_FIELDS,
   WIRE,
   MAX_BULK,
   type ActionResult,
   type Availability,
   type CallLanguage,
+  type DraftLine,
   type FinderSettings,
   type Persona,
   type PracticeCall,
+  type LeftOut,
   type Prospect,
   type ProspectAction,
   type ProspectPage,
   type ProspectStats,
   type ProspectStatus,
   type Qualification,
+  type QuoteDraftMade,
+  type QuoteDraftPreview,
   type QuoteLine,
   type Search,
-  type SearchCounts,
   type SettingsField,
   type StockMatch,
 } from "@/lib/lead-finder/types";
 
 import { ApiAuthError, ApiContractError, ApiRequestError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
+import { parseSearch } from "./lead-finder-card";
 import { bad, bool, int, iso, list, nstr, oneOf, optInt, optIso, optStr, rec, str, uuid, word } from "./shape";
 
 /**
@@ -79,37 +81,7 @@ export async function readAvailability(token: string, tenantId: string): Promise
 }
 
 // ---------------------------------------------------------------------------------------------------------------- 1-2. searches
-function parseCounts(v: unknown): SearchCounts | null {
-  if (v === null || v === undefined) return null;
-  const r = rec(v, "counts");
-  const out = {} as SearchCounts;
-  for (const k of COUNT_KEYS) out[k] = r[k] === undefined || r[k] === null ? 0 : int(r[k], `counts.${k}`, 0, 100_000);
-  return out;
-}
-export function parseSearch(json: unknown): Search {
-  const x = rec(json, "search");
-  return {
-    id: uuid(x.id, "id"),
-    state: oneOf(x.state, SEARCH_STATES, "state"),
-    query: str(x.query, "query", 300),
-    area: optStr(x.area, "area", 300),
-    categoryHint: x.category_hint === null || x.category_hint === undefined ? null : oneOf(x.category_hint, CATEGORY_HINTS, "category_hint"),
-    maxResults: int(x.max_results, "max_results", 1, 20),
-    provider: oneOf(x.provider, PROVIDERS, "provider"),
-    sku: word(x.sku, "sku", 80),
-    estCostPaise: int(x.est_cost_paise, "est_cost_paise", 0, 100_000_000),
-    costPaise: int(x.cost_paise, "cost_paise", 0, 100_000_000),
-    costIsEstimate: x.cost_is_estimate === undefined ? true : bool(x.cost_is_estimate, "cost_is_estimate"),
-    sourceLabel: str(x.source_label, "source_label", 300),
-    found: int(x.found, "found", 0, 100_000),
-    counts: parseCounts(x.counts),
-    searchesLeftToday: optInt(x.searches_left_today, "searches_left_today", 0, 1000),
-    attribution: optStr(x.attribution, "attribution", 60),
-    createdAt: iso(x.created_at, "created_at"),
-    approvedAt: optIso(x.approved_at, "approved_at"),
-    finishedAt: optIso(x.finished_at, "finished_at"),
-  };
-}
+export { parseChatCard, parseSearch, readChatCard } from "./lead-finder-card";
 
 export type PlanInput = { text: string; language: string } | { query: string; area: string; maxResults?: number };
 const PLAN_LANGS = ["en", "te", "hi", "kn", "ta", "ml"] as const;
@@ -277,6 +249,59 @@ export function parsePracticeCall(json: unknown): PracticeCall {
 export async function practiceCall(token: string, tenantId: string, prospectId: string, persona: Persona, language: CallLanguage): Promise<PracticeCall> {
   const body = { persona: oneOf(persona, PERSONAS, "persona"), language: oneOf(language, CALL_LANGUAGES, "language") };
   return parsePracticeCall(await apiRequest(`${base(tenantId)}/prospects/${id(prospectId, "prospect id")}/simulated-call`, token, { method: "POST", body: JSON.stringify(body) }));
+}
+
+// ---------------------------------------------------------------------------------------------------------------- 7. the draft quote of a qualified call
+const parseDraftLine = (v: unknown): DraftLine => {
+  const r = rec(v, "line");
+  return { item: nstr(r.item, "item", 200), itemTypeCode: str(r.item_type_code, "item_type_code", 60), qty: int(r.qty, "qty", 1, 1_000_000), unitPricePaise: int(r.unit_price_paise, "unit_price_paise", 0, 10_000_000_000), quantitySaid: str(r.quantity_said ?? "", "quantity_said", 300) };
+};
+const parseLeftOut = (v: unknown): LeftOut => {
+  const r = rec(v, "left_out");
+  return { item: nstr(r.item, "item", 200), reason: oneOf(r.reason, LEFT_OUT_REASONS, "reason") };
+};
+export function parseQuoteDraftPreview(json: unknown): QuoteDraftPreview {
+  const x = rec(json, "quote draft");
+  return {
+    prospectId: uuid(x.prospect_id, "prospect_id"),
+    leadId: uuid(x.lead_id, "lead_id"),
+    ready: bool(x.ready, "ready"),
+    made: bool(x.made, "made"),
+    quoteId: uuid(x.quote_id, "quote_id"),
+    enquiryId: x.enquiry_id === null || x.enquiry_id === undefined ? null : uuid(x.enquiry_id, "enquiry_id"),
+    lines: list(x.lines, "lines", 20).map(parseDraftLine),
+    leftOut: list(x.left_out ?? [], "left_out", 40).map(parseLeftOut),
+  };
+}
+export function parseQuoteDraftMade(json: unknown): QuoteDraftMade {
+  const x = rec(json, "quote draft");
+  if (x.status !== "draft") bad("status");
+  return {
+    quoteId: uuid(x.quote_id, "quote_id"),
+    quoteNo: optInt(x.quote_no, "quote_no", 0, 100_000_000),
+    enquiryId: uuid(x.enquiry_id, "enquiry_id"),
+    status: "draft",
+    totalPaise: optInt(x.total_paise, "total_paise", 0, 1_000_000_000_000),
+    needsOwnerApproval: bool(x.needs_owner_approval, "needs_owner_approval"),
+    lines: list(x.lines ?? [], "lines", 20).map(parseDraftLine),
+    leftOut: list(x.left_out ?? [], "left_out", 40).map(parseLeftOut),
+    replayed: x.replayed === undefined ? false : bool(x.replayed, "replayed"),
+  };
+}
+/** `GET /prospects/{id}/quote-draft` (Owner, Admin, Sales): the PREVIEW, nothing stored. 409 `not_qualified` for a call that did not qualify. */
+export async function getQuoteDraft(token: string, tenantId: string, prospectId: string): Promise<QuoteDraftPreview> {
+  return parseQuoteDraftPreview(await apiRequest(`${base(tenantId)}/prospects/${id(prospectId, "prospect id")}/quote-draft`, token));
+}
+export type QuoteDraftInput = { customerKind: "new" | "repeat"; deliveryState: string | null };
+/**
+ * `POST /prospects/{id}/quote-draft` (Owner, Admin, with the second factor: 403 `mfa_required` otherwise): ONE enquiry on the call's lead and ONE draft quote at the Owner's own catalogue prices. Nothing is approved or sent. The same
+ * call again gives the same draft (`replayed`). 422 `nothing_to_quote`, 409 `quote_draft_exists` (made before with other prices: open it).
+ */
+export async function makeQuoteDraft(token: string, tenantId: string, prospectId: string, input: QuoteDraftInput): Promise<QuoteDraftMade> {
+  if (input.customerKind !== "new" && input.customerKind !== "repeat") bad("customer kind");
+  if (input.deliveryState !== null && !/^[A-Z]{2}$/.test(input.deliveryState)) bad("delivery state");
+  const body = { customer_kind: input.customerKind, delivery_state: input.deliveryState };
+  return parseQuoteDraftMade(await apiRequest(`${base(tenantId)}/prospects/${id(prospectId, "prospect id")}/quote-draft`, token, { method: "POST", body: JSON.stringify(body) }));
 }
 
 // ---------------------------------------------------------------------------------------------------------------- 6. settings

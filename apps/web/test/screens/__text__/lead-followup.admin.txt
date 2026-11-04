@@ -13,7 +13,7 @@ A follow-up draft can be made now. (This would be touch 2.)
 ## Drafts
 {label="Drafts, newest first"}
 - Touch 2 · E-mail · Draft: waiting for approval Made Oct 7, 2026, 12:00 PM (tomorrow) This is the text you review. It is a fixed template: nothing here can be edited.
-{label="Draft text"} Hello, I am following up on my earlier message about your saree requirement.
+{label="Draft text"} Hello, I am following up on my earlier message about your enquiry.
 [button type=button: Copy the text]
 {label="Approve this draft"}
 <hidden name=state_hash value=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa>
@@ -21,7 +21,7 @@ A follow-up draft can be made now. (This would be touch 2.)
 {label="Discard this draft"}
 [button type=submit: Discard this draft]
 - Touch 2 · E-mail · Approved: ready for you to send yourself Made Oct 7, 2026, 12:00 PM (tomorrow) · approved Oct 7, 2026, 12:30 PM (tomorrow) This is the text you review. It is a fixed template: nothing here can be edited.
-{label="Draft text"} Hello, I am following up on my earlier message about your saree requirement. (approved)
+{label="Draft text"} Hello, I am following up on my earlier message about your enquiry. (approved)
 [button type=button: Copy the text]
 {label="Record that you sent it yourself"}
 <hidden name=touch_id value=77777777-7777-4777-8777-777777777777>
