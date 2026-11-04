@@ -181,3 +181,51 @@ class SimulatedCallOut(_Out):
 
 class RedecideOut(_Out):
     changed: int
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------- the quote draft of a qualified call (decision 8)
+class QuoteLineOut(_Out):
+    """One line of the draft: an item the call pitched, at the Owner's own exact catalogue price, for the quantity the buyer said."""
+
+    item: str
+    item_type_code: str
+    qty: int
+    unit_price_paise: int
+    quantity_said: str
+
+
+class QuoteLeftOutOut(_Out):
+    """A suggestion that is NOT in the draft, and why: never a made-up price or quantity."""
+
+    item: str
+    reason: Literal["no_price", "no_quantity", "not_in_stock", "not_in_catalogue", "too_many_lines", "item_type_off"]
+
+
+class QuoteDraftPreviewOut(_Out):
+    prospect_id: uuid.UUID
+    lead_id: uuid.UUID
+    # true when at least one line can go in the draft (the button is shown)
+    ready: bool
+    lines: list[QuoteLineOut]
+    left_out: list[QuoteLeftOutOut]
+    # the id the draft has (made) or will have; open /quotes/{quote_id} once `made`
+    quote_id: uuid.UUID
+    made: bool
+
+
+class QuoteDraftIn(_In):
+    customer_kind: Literal["new", "repeat"] = "new"
+    # a state or union territory code (two capitals), or null: the GST supply is then decided on the quote page
+    delivery_state: Annotated[str, StringConstraints(pattern=r"^[A-Z]{2}$")] | None = None
+
+
+class QuoteDraftOut(_Out):
+    quote_id: uuid.UUID
+    quote_no: int | None
+    enquiry_id: uuid.UUID
+    status: Literal["draft"]
+    total_paise: int | None
+    needs_owner_approval: bool
+    lines: list[QuoteLineOut]
+    left_out: list[QuoteLeftOutOut]
+    replayed: bool
