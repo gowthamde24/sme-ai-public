@@ -1,4 +1,5 @@
-"""The fixed words of the messages a visit makes (job AS, ADR 0067): a confirmation, a reminder and "we would be happy to see you" (the offer on a call request).
+"""The fixed words of the messages a visit makes (job AS, ADR 0067): a confirmation, a reminder and "we would be happy to see you" (the offer on a call request). They name no PLACE (4 Nov 2026:
+"our shop" reached a school's parents and a builder's customers): every business type is visited, so the words fit them all.
 
 These are TEMPLATES, not model output: the same visit gives the same words. The money rule is not here: the outbox policy (job AT) decides what happens to the words, and a message that
 mentions an amount (an advance) is held for a person by it. English is the shop's own; te, hi, kn and ta are MACHINE DRAFTS that no native reader has checked yet, so they are marked
@@ -42,44 +43,44 @@ MONTHS: dict[str, tuple[str, ...]] = {
 # template, in every language and for many dates, through the database's own word check and requires that none is flagged.
 TEMPLATES: dict[str, dict[str, str]] = {
     "en": {
-        "confirmation": "Your visit is confirmed for {when}. We look forward to seeing you at our shop. If your plans change, please let us know.",
-        "reminder": "A reminder: your visit to our shop is on {when}. We look forward to seeing you.",
-        "offer": "Thank you for your interest. We would be happy to welcome you at our shop. Please tell us a day and time that suits you.",
+        "confirmation": "Your visit is confirmed for {when}. We look forward to seeing you. If your plans change, please let us know.",
+        "reminder": "A reminder: your visit is on {when}. We look forward to seeing you.",
+        "offer": "Thank you for your interest. We would be happy to welcome you. Please tell us a day and time that suits you.",
         "advance": " An advance of {amount} is requested to hold the slot.",
         "when": "{weekday}, {day} {month} at {time}",
     },
     "te": {
-        "confirmation": "మీ సందర్శన {when} నిర్ధారించబడింది. మా షాపులో మిమ్మల్ని కలవడానికి ఎదురుచూస్తున్నాము. మీ ప్లాన్లు మారితే దయచేసి మాకు తెలియజేయండి.",
-        "reminder": "గుర్తుచేస్తున్నాము: మీరు {when} మా షాపుకు రావాల్సి ఉంది. మిమ్మల్ని కలవడానికి ఎదురుచూస్తున్నాము.",
-        "offer": "మీ ఆసక్తికి ధన్యవాదాలు. మా షాపుకు మిమ్మల్ని స్వాగతించడానికి సంతోషిస్తాము. మీకు అనుకూలమైన రోజు, సమయం మాకు చెప్పండి.",
+        "confirmation": "మీ సందర్శన {when} నిర్ధారించబడింది. మిమ్మల్ని కలవడానికి ఎదురుచూస్తున్నాము. మీ ప్లాన్లు మారితే దయచేసి మాకు తెలియజేయండి.",
+        "reminder": "గుర్తుచేస్తున్నాము: మీ సందర్శన {when} ఉంది. మిమ్మల్ని కలవడానికి ఎదురుచూస్తున్నాము.",
+        "offer": "మీ ఆసక్తికి ధన్యవాదాలు. మిమ్మల్ని స్వాగతించడానికి సంతోషిస్తాము. మీకు అనుకూలమైన రోజు, సమయం మాకు చెప్పండి.",
         "advance": " స్లాట్ కోసం {amount} అడ్వాన్స్ అవసరం.",
         "when": "{weekday}, {day} {month}, సమయం {time}",
     },
     "hi": {
-        "confirmation": "आपकी विज़िट {when} के लिए पक्की हो गई है। हमें अपनी दुकान पर आपका इंतज़ार रहेगा। अगर आपका कार्यक्रम बदले तो कृपया हमें बताएँ।",
+        "confirmation": "आपकी विज़िट {when} के लिए पक्की हो गई है। हमें आपका इंतज़ार रहेगा। अगर आपका कार्यक्रम बदले तो कृपया हमें बताएँ।",
         "reminder": "याद दिलाना: आपकी विज़िट {when} है। हमें आपका इंतज़ार रहेगा।",
-        "offer": "आपकी रुचि के लिए धन्यवाद। हमें अपनी दुकान पर आपका स्वागत करके खुशी होगी। कृपया बताएँ कि आपके लिए कौन सा दिन और समय ठीक रहेगा।",
+        "offer": "आपकी रुचि के लिए धन्यवाद। हमें आपका स्वागत करके खुशी होगी। कृपया बताएँ कि आपके लिए कौन सा दिन और समय ठीक रहेगा।",
         "advance": " स्लॉट के लिए {amount} एडवांस चाहिए।",
         "when": "{weekday}, {day} {month}, समय {time}",
     },
     "kn": {
-        "confirmation": "ನಿಮ್ಮ ಭೇಟಿ {when} ದೃಢಪಟ್ಟಿದೆ. ನಮ್ಮ ಅಂಗಡಿಯಲ್ಲಿ ನಿಮ್ಮನ್ನು ಭೇಟಿಯಾಗಲು ಕಾಯುತ್ತಿದ್ದೇವೆ. ನಿಮ್ಮ ಭೇಟಿಯಲ್ಲಿ ಬದಲಾವಣೆ ಇದ್ದಲ್ಲಿ ದಯವಿಟ್ಟು ನಮಗೆ ತಿಳಿಸಿ.",
+        "confirmation": "ನಿಮ್ಮ ಭೇಟಿ {when} ದೃಢಪಟ್ಟಿದೆ. ನಿಮ್ಮನ್ನು ಭೇಟಿಯಾಗಲು ಕಾಯುತ್ತಿದ್ದೇವೆ. ನಿಮ್ಮ ಭೇಟಿಯಲ್ಲಿ ಬದಲಾವಣೆ ಇದ್ದಲ್ಲಿ ದಯವಿಟ್ಟು ನಮಗೆ ತಿಳಿಸಿ.",
         "reminder": "ಜ್ಞಾಪನೆ: ನಿಮ್ಮ ಭೇಟಿ {when} ಇದೆ. ನಿಮ್ಮನ್ನು ನಿರೀಕ್ಷಿಸುತ್ತಿದ್ದೇವೆ.",
-        "offer": "ನಿಮ್ಮ ಆಸಕ್ತಿಗೆ ಧನ್ಯವಾದಗಳು. ನಮ್ಮ ಅಂಗಡಿಗೆ ನಿಮ್ಮನ್ನು ಸ್ವಾಗತಿಸಲು ಸಂತೋಷ. ನಿಮಗೆ ಅನುಕೂಲವಾದ ದಿನ ಮತ್ತು ಸಮಯವನ್ನು ತಿಳಿಸಿ.",
+        "offer": "ನಿಮ್ಮ ಆಸಕ್ತಿಗೆ ಧನ್ಯವಾದಗಳು. ನಿಮ್ಮನ್ನು ಸ್ವಾಗತಿಸಲು ಸಂತೋಷ. ನಿಮಗೆ ಅನುಕೂಲವಾದ ದಿನ ಮತ್ತು ಸಮಯವನ್ನು ತಿಳಿಸಿ.",
         "advance": " ಸ್ಲಾಟ್‌ಗಾಗಿ {amount} ಮುಂಗಡ ಬೇಕು.",
         "when": "{weekday}, {day} {month}, ಸಮಯ {time}",
     },
     "ta": {
-        "confirmation": "உங்கள் வருகை {when} பதிவு செய்யப்பட்டுள்ளது. எங்கள் கடையில் உங்களை சந்திக்க காத்திருக்கிறோம். உங்கள் திட்டம் மாறினால் தயவுசெய்து எங்களுக்குத் தெரிவிக்கவும்.",
+        "confirmation": "உங்கள் வருகை {when} பதிவு செய்யப்பட்டுள்ளது. உங்களை சந்திக்க காத்திருக்கிறோம். உங்கள் திட்டம் மாறினால் தயவுசெய்து எங்களுக்குத் தெரிவிக்கவும்.",
         "reminder": "நினைவூட்டல்: உங்கள் வருகை {when}. உங்களை எதிர்பார்க்கிறோம்.",
-        "offer": "உங்கள் ஆர்வத்திற்கு நன்றி. எங்கள் கடைக்கு உங்களை வரவேற்க மகிழ்ச்சி. உங்களுக்கு வசதியான நாள் மற்றும் நேரத்தை தெரிவிக்கவும்.",
+        "offer": "உங்கள் ஆர்வத்திற்கு நன்றி. உங்களை வரவேற்க மகிழ்ச்சி. உங்களுக்கு வசதியான நாள் மற்றும் நேரத்தை தெரிவிக்கவும்.",
         "advance": " இடத்திற்காக {amount} முன்பணம் தேவை.",
         "when": "{weekday}, {day}-{monthnum}-{year}, நேரம் {time}",
     },
     "ml": {
-        "confirmation": "നിങ്ങളുടെ സന്ദർശനം {when} ന് സ്ഥിരീകരിച്ചിരിക്കുന്നു. ഞങ്ങളുടെ കടയിൽ നിങ്ങളെ കാണാൻ കാത്തിരിക്കുന്നു. നിങ്ങളുടെ പദ്ധതി മാറിയാൽ ദയവായി ഞങ്ങളെ അറിയിക്കുക.",
+        "confirmation": "നിങ്ങളുടെ സന്ദർശനം {when} ന് സ്ഥിരീകരിച്ചിരിക്കുന്നു. നിങ്ങളെ കാണാൻ കാത്തിരിക്കുന്നു. നിങ്ങളുടെ പദ്ധതി മാറിയാൽ ദയവായി ഞങ്ങളെ അറിയിക്കുക.",
         "reminder": "ഓർമ്മപ്പെടുത്തൽ: നിങ്ങളുടെ സന്ദർശനം {when} ന് ആണ്. നിങ്ങളെ പ്രതീക്ഷിക്കുന്നു.",
-        "offer": "താൽപര്യം കാണിച്ചതിന് നന്ദി. ഞങ്ങളുടെ കടയിലേക്ക് നിങ്ങളെ സ്വാഗതം ചെയ്യാൻ സന്തോഷമുണ്ട്. നിങ്ങൾക്ക് സൗകര്യമുള്ള ദിവസവും സമയവും അറിയിക്കുക.",
+        "offer": "താൽപര്യം കാണിച്ചതിന് നന്ദി. നിങ്ങളെ സ്വാഗതം ചെയ്യാൻ സന്തോഷമുണ്ട്. നിങ്ങൾക്ക് സൗകര്യമുള്ള ദിവസവും സമയവും അറിയിക്കുക.",
         "advance": " ഈ സമയം മാറ്റിവെക്കാൻ {amount} മുൻകൂർ വേണം.",
         "when": "{weekday}, {day} {month}, സമയം {time}",
     },
