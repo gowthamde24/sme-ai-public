@@ -63,6 +63,10 @@ def test_get_me_parses_embedded_tenants() -> None:
     assert me.memberships[0].role is Role.ADMIN
     assert me.memberships[0].tenant.slug == "tenant-a"
     assert seen[0].url.params["user_id"] == f"eq.{USER}"
+    # the switcher leaves an ARCHIVED workspace out (an old test workspace, rebuilt)
+    params = seen[0].url.params
+    assert params["select"] == "role,tenants!inner(id,name,slug)"
+    assert params["tenants.archived_at"] == "is.null"
 
 
 def test_get_membership_filters_by_user_and_tenant_and_returns_none_when_absent() -> None:
@@ -71,6 +75,8 @@ def test_get_membership_filters_by_user_and_tenant_and_returns_none_when_absent(
     params = seen[0].url.params
     assert params["user_id"] == f"eq.{USER}"
     assert params["tenant_id"] == f"eq.{TENANT}"
+    # a direct link to an archived workspace still opens it (read-only)
+    assert "tenants.archived_at" not in params
 
 
 def test_members_tolerate_an_invisible_profile() -> None:

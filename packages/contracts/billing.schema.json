@@ -97,6 +97,11 @@
           "default": false,
           "title": "Exempt",
           "type": "boolean"
+        },
+        "archived": {
+          "default": false,
+          "title": "Archived",
+          "type": "boolean"
         }
       },
       "required": [
