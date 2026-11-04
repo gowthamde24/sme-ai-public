@@ -9,6 +9,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
 from app.assistant.language import Language
+from app.lead_finder.models import ChatCardOut
 
 SourceType = Literal[
     "quote",
@@ -122,6 +123,8 @@ class MessageOut(_Strict):
     # job EA: the type of the reply (a plain answer unless it proposed an action or asked one question) and the action behind it
     kind: Literal["answer", "confirm_action", "clarify"] = "answer"
     action: ActionRefOut | None = None
+    # the Lead Finder's plan or result card this reply showed (ADR 0119; the same as the turn's `lead_finder` event, its state read now); null for every other reply
+    lead_finder: ChatCardOut | None = None
 
 
 class ConversationOut(_Strict):

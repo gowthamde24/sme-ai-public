@@ -381,6 +381,15 @@ def get_conversation(conversation_id: str, ctx: SalesPlus, runtime: RuntimeDep) 
             raise _refusal(exc) from None
     finally:
         db.close()
+    # the Lead Finder's cards (a plan made in the chat has the id of the reply that showed it); a business without the Lead Finder reads nothing more
+    from app.lead_finder.models import ChatCardOut
+    from app.turns.lead_finder import cards_for
+
+    plain = [str(m.id) for m in messages if m.role == "assistant" and m.kind == "answer" and not m.sources and not m.drafts]
+    for found_id, lf_card in cards_for(runtime, ctx, plain).items():
+        for m in messages:
+            if str(m.id) == found_id:
+                m.lead_finder = ChatCardOut.model_validate(lf_card)
     return ConversationOut(
         id=row["id"], created_at=row["created_at"], updated_at=row["updated_at"], messages=messages
     )
