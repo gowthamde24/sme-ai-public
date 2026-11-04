@@ -1,6 +1,7 @@
 import type { VoiceLang } from "@/lib/browser-voice/protocol";
 
 import type { Words } from "../../words";
+import type { WorkOptions } from "./work";
 
 /** What the floating orb needs to open "Talk to your assistant" (job DV): the words, the socket's address, the language in use and the address that hands over the person's sign-in for the socket's first message. */
 export type BrowserVoice = {
@@ -16,4 +17,6 @@ export type BrowserVoice = {
   chatLanguage?: string | null;
   /** Where the pill saves the choice (`<base>/chat-language`); absent = only this browser remembers. */
   chatLanguageUrl?: string;
+  /** The assistant does the work (ASSISTANT_WORK_SCREENS): files in the chat and the work cards. Absent = the chat as before. */
+  work?: WorkOptions;
 };

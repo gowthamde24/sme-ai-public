@@ -28,7 +28,7 @@ export type ConfirmAction = {
   status: ActionStatus;
 };
 
-export type TurnEvent = AssistantEvent | { type: "intent"; kind: "smalltalk" | "general" | "business" | "action" } | { type: "confirm_action"; action: ConfirmAction } | { type: "clarify"; question: string; actionId: string | null };
+export type TurnEvent = AssistantEvent | { type: "intent"; kind: "smalltalk" | "general" | "business" | "action" } | { type: "confirm_action"; action: ConfirmAction } | { type: "clarify"; question: string; actionId: string | null } | { type: "work_card"; card: Record<string, unknown> };
 
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const bad = (what: string): never => {
@@ -71,6 +71,9 @@ export function parseTurnEvent(name: string, data: unknown): TurnEvent | null {
       return { type: "confirm_action", action: parseConfirmAction(data) };
     case "clarify":
       return { type: "clarify", question: text(data.question, "question", 1000), actionId: typeof data.action_id === "string" && isCanonicalUuid(data.action_id) ? data.action_id : null };
+    case "work_card":
+      // the assistant does the work (ASSUMED until docs/contracts/assistant-tools.md): the card goes on as the API wrote it; the browser reads it strictly (lib/assistant-work/types.ts parseWorkCard)
+      return isRec(data.card) ? { type: "work_card", card: data.card } : null;
     case "source": {
       const fixed = isRec(data) && data.target === undefined && data.open !== undefined ? { ...data, target: data.open } : data;
       return isKnownSource(fixed) ? { type: "source", ...parseSource(fixed) } : null;
@@ -83,14 +86,14 @@ export function parseTurnEvent(name: string, data: unknown): TurnEvent | null {
 /** `language`: the chat's language pill: "auto" (the API detects it, as always) or the language the reply is written in, whatever the words are. */
 export const REPLY_LANGUAGES = ["auto", "te", "en", "hi", "kn", "ta", "ml"] as const;
 export type ReplyLanguage = (typeof REPLY_LANGUAGES)[number];
-export type TurnInput = { messageId: string; conversationId: string | null; text: string; languageHint?: AssistantLanguage | null; language?: ReplyLanguage | null };
+export type TurnInput = { messageId: string; conversationId: string | null; text: string; languageHint?: AssistantLanguage | null; language?: ReplyLanguage | null; /** ASSUMED until docs/contracts/assistant-tools.md: the uploaded files that go with the message (`attachment_ids`, at most 5). */ attachmentIds?: readonly string[] };
 const LANGS = ["te", "en", "hi", "kn"];
 
 export async function* sendTurn(token: string, tenantId: string, input: TurnInput): AsyncGenerator<TurnEvent> {
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(input.messageId) || (input.conversationId !== null && !isCanonicalUuid(input.conversationId))) throw new ApiContractError("id");
   const t = input.text.trim();
   if (t.length < 1 || t.length > 4000) throw new ApiContractError("text");
-  const response = await apiStreamRequest(`/v1/tenants/${tenantId}/assistant/turns`, token, { message_id: input.messageId, conversation_id: input.conversationId, text: t, language_hint: input.languageHint && LANGS.includes(input.languageHint) ? input.languageHint : null, ...(input.language ? { language: input.language } : {}) });
+  const response = await apiStreamRequest(`/v1/tenants/${tenantId}/assistant/turns`, token, { message_id: input.messageId, conversation_id: input.conversationId, text: t, language_hint: input.languageHint && LANGS.includes(input.languageHint) ? input.languageHint : null, ...(input.language ? { language: input.language } : {}), ...(input.attachmentIds && input.attachmentIds.length > 0 ? { attachment_ids: input.attachmentIds.filter(isCanonicalUuid).slice(0, 5) } : {}) });
   for await (const { name, data } of readSse(response.body as ReadableStream<Uint8Array>)) {
     const event = parseTurnEvent(name, data);
     if (event !== null) yield event;

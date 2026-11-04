@@ -3,6 +3,7 @@
 import * as React from "react";
 
 import type { ConfirmAction } from "@/lib/api/turns";
+import { parseWorkCard, type WorkCard } from "@/lib/assistant-work/types";
 
 import { aiMood, type AiMood } from "../../mark/mood";
 import { defaultAutoplay, makeAnswerPlayer, markNoticeSeen, noticeSeen, readAutoplay, saveAutoplay, subscribeStore, type AnswerPlayer } from "./answer-audio";
@@ -43,7 +44,7 @@ export function insideWorkspace(href: string, base: string): string | null {
 export type AskPhase = "idle" | "asking" | "done" | "error";
 export type AskProblem = RecorderProblem | null;
 /** One question and its answer, as the thread keeps it. */
-export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The person spoke over the spoken answer: only part of it was heard (the thread marks it "Interrupted"). */ interrupted?: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null };
+export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The person spoke over the spoken answer: only part of it was heard (the thread marks it "Interrupted"). */ interrupted?: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null; /** The assistant does the work: the cards of the answer (a file's preview, a plan, a key box, a setup, "can't do yet"). */ work?: WorkCard[] };
 
 export type AskSessionOptions = {
   lang: string;
@@ -80,6 +81,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const [voiceOpen, setVoiceOpen] = React.useState(false); // voice mode (job DM): the full-screen circle over the box, opened by the microphone
   const [earlier, setEarlier] = React.useState<Exchange[]>([]);
   const [plan, setPlan] = React.useState<ConfirmAction | null>(null); // the router proposed an action: the plan waits for Yes / No
+  const [work, setWork] = React.useState<WorkCard[]>([]); // the work cards of the answer on screen
   const convRef = React.useRef<string | null>(null); // the conversation the next message continues (null starts a new one)
   const doIt = useDoIt(doItOptions);
   const [mode, setMode] = React.useState<Mode>("ask");
@@ -113,7 +115,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   // the exchange on screen, readable from a handler made by an earlier render (a recording finishes long after the render that started it)
   const current = React.useRef<Exchange | null>(null);
   React.useEffect(() => {
-    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, plan };
+    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, plan, work };
     modeRef.current = doIt ? mode : "ask";
   });
   const voiceEndpoint = `${base}/ask/voice`;
@@ -205,6 +207,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setSources([]);
     setDrafts([]);
     setPlan(null);
+    setWork([]);
     setTaskEntry(null);
     setAudioPending(voice && speak);
     let failed = false;
@@ -232,6 +235,12 @@ export function useAskSession({ lang, base, words, availability, transport: give
             );
         } else if (e.type === "confirm_action") {
           setPlan(e.action);
+        } else if (e.type === "work_card") {
+          const card = parseWorkCard(e.card, base); // untrusted: read strictly, a card that does not parse is not drawn
+          if (card) {
+            said = true;
+            setWork((list) => (list.length >= 6 || list.some((x) => x.id === card.id) ? list : [...list, card]));
+          }
         } else if (e.type === "error") {
           failed = true;
           const code = typeof e.code === "string" && (ERROR_CODES as readonly string[]).includes(e.code) ? e.code : null;
@@ -321,7 +330,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     yield* planEvents(heard, crypto.randomUUID(), signal);
   }
 
-  const ask = async (raw: string, replyLanguage?: string | null) => {
+  const ask = async (raw: string, replyLanguage?: string | null, attachmentIds?: readonly string[]) => {
     const question = raw.trim().slice(0, MAX_QUESTION);
     if (!question) return;
     if (modeRef.current === "do" && doIt) {
@@ -331,7 +340,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     }
     if (transport === null) return;
     lastTyped.current = { question, replyLanguage };
-    await run(question, (signal) => transport({ question, lang, signal, conversationId: convRef.current, replyLanguage }), false, false);
+    await run(question, (signal) => transport({ question, lang, signal, conversationId: convRef.current, replyLanguage, ...(attachmentIds && attachmentIds.length > 0 ? { attachmentIds } : {}) }), false, false);
   };
   /** The typed question that was asked last, so a failed answer has "Try again". */
   const lastTyped = React.useRef<{ question: string; replyLanguage?: string | null } | null>(null);
@@ -363,6 +372,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setErrorCode(null);
     setPhase("idle");
     setPlan(null);
+    setWork([]);
   };
   /** The conversation panel: a turn that was spoken (the socket's captions) joins the thread like a typed one, and "new conversation" empties it. */
   const addExchange = (x: Exchange) => {
@@ -438,7 +448,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
       if (convRef.current === null) convRef.current = id;
     },
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, retry, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, setEarlier,
+    ask, retry, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, work, setEarlier,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",
     asking: phase === "asking",

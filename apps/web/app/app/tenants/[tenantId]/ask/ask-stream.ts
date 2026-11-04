@@ -112,6 +112,9 @@ export async function* toAskEvents(events: AsyncIterable<VoiceAssistantEvent | T
       case "confirm_action":
         yield { type: "confirm_action", action: e.action };
         break;
+      case "work_card":
+        yield { type: "work_card", card: e.card }; // read strictly in the browser (parseWorkCard), with this workspace's base for its links
+        break;
       case "clarify":
         yield { type: "text", delta: e.question }; // one short question is simply the assistant's message; the next message answers it in the same conversation
         break;

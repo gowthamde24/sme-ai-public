@@ -33,6 +33,8 @@ export function parseLine(raw: string): AskEvent | null {
       return typeof r.contentType === "string" && AUDIO_TYPE.test(r.contentType) && typeof r.data === "string" && /^[A-Za-z0-9+/]+={0,2}$/.test(r.data) ? { type: "audio", contentType: r.contentType, data: r.data } : null;
     case "confirm_action":
       return r.action instanceof Object ? { type: "confirm_action", action: r.action as ConfirmAction } : null; // the route made it from the API's plan, already read there
+    case "work_card":
+      return typeof r.card === "object" && r.card !== null && !Array.isArray(r.card) ? { type: "work_card", card: r.card } : null; // read strictly by the session (parseWorkCard)
     case "done":
       return { type: "done", conversationId: s(r.conversationId) };
     default:
@@ -90,13 +92,13 @@ async function* readEvents(body: ReadableStream<Uint8Array>, signal: AbortSignal
  */
 export function makeAskTransport(endpoint: string, fetcher: typeof fetch = (...a) => fetch(...a)): AskTransport {
   const conversationId = crypto.randomUUID();
-  return async function* ask({ question, signal, conversationId: given, replyLanguage }) {
+  return async function* ask({ question, signal, conversationId: given, replyLanguage, attachmentIds }) {
     let response: Response;
     try {
       response = await fetcher(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: question, messageId: crypto.randomUUID(), conversationId: given === undefined ? conversationId : given, ...(replyLanguage ? { language: replyLanguage } : {}) }),
+        body: JSON.stringify({ text: question, messageId: crypto.randomUUID(), conversationId: given === undefined ? conversationId : given, ...(replyLanguage ? { language: replyLanguage } : {}), ...(attachmentIds && attachmentIds.length > 0 ? { attachmentIds } : {}) }),
         signal,
         cache: "no-store",
         credentials: "same-origin",
