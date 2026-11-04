@@ -270,6 +270,15 @@ class Seeder:
         return SCHEDULER_EMAIL
 
 
+def demo_gates_open() -> int:
+    """How many workspaces of the DEMO accounts (demo-*@DEMO_DOMAIN, the only ones this seed signs in as) have the real-data gate open. Only those are written to. The Owner Test workspace's gate is open on
+    purpose (ADR 0119: Google Places runs only there) and is not this seed's: before 4 Nov 2026 any open gate in the project refused the run, which made the seed unusable once Owner Test existed."""
+    rows = json_from(run(["supabase", "db", "query", "--linked", "--agent", "no", "-o", "json",
+                          "select count(distinct p.tenant_id)::int as open_gates from public.tenant_data_policy p join public.memberships m on m.tenant_id = p.tenant_id "
+                          f"join auth.users u on u.id = m.user_id where p.real_data_allowed and lower(u.email) like 'demo-%@{DEMO_DOMAIN}'"]))
+    return int(rows[0]["open_gates"])
+
+
 def guard(args: argparse.Namespace) -> None:
     if not args.i_know_this_loads_demo_data_into_staging:
         raise SeedError("Refusing to run: pass --i-know-this-loads-demo-data-into-staging. This loads synthetic demo data into the HOSTED stack19-staging project.")
@@ -291,10 +300,8 @@ def main() -> int:
     try:
         guard(args)
         s = Seeder(args.api_url)
-        rows = json_from(run(["supabase", "db", "query", "--linked", "--agent", "no", "-o", "json",
-                              "select count(*)::int as open_gates from public.tenant_data_policy where real_data_allowed"]))
-        if rows[0]["open_gates"] != 0:
-            raise SeedError("Refusing to run: a workspace in this project has the real-data gate OPEN.")
+        if demo_gates_open() != 0:
+            raise SeedError("Refusing to run: a DEMO workspace in this project has the real-data gate OPEN.")
         terms = s.terms()
         for pack, name, language in BUSINESSES:
             r = s.business(pack, name, language, terms)
