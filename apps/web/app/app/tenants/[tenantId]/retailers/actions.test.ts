@@ -178,10 +178,10 @@ describe("the draft quote of a qualified call", () => {
   });
 });
 
-describe("a search that names people (C1, 5 Nov: 422 individuals_not_allowed)", () => {
+describe("a search that names people (C1 #319: 422 individuals_not_allowed, any business type)", () => {
   const EN = "The Lead Finder looks for organisations, not for people. Try apartment associations or coaching centres.";
   const TE = "లీడ్ ఫైండర్ సంస్థల కోసం మాత్రమే, వ్యక్తుల కోసం కాదు.";
-  it("the API's polite sentence when it is in the person's language", async () => {
+  it("the API's polite sentence, as it is", async () => {
     h.plan.mockRejectedValueOnce(new ApiRequestError(422, "individuals_not_allowed", EN));
     expect(await planSearchAction(T, "parents in Anantapur")).toMatchObject({ ok: false, code: "individuals_not_allowed", error: EN });
     langNow.v = "te";
@@ -189,12 +189,12 @@ describe("a search that names people (C1, 5 Nov: 422 individuals_not_allowed)", 
     expect(await planSearchAction(T, "parents in Anantapur")).toMatchObject({ ok: false, error: TE });
     langNow.v = "en";
   });
-  it("our own words when the API's sentence is in another language (never the raw error)", async () => {
-    langNow.v = "te";
-    h.plan.mockRejectedValueOnce(new ApiRequestError(422, "individuals_not_allowed", EN));
-    expect(await planSearchAction(T, "parents in Anantapur")).toMatchObject({ ok: false, error: "లీడ్ ఫైండర్ సంస్థలను మాత్రమే వెతుకుతుంది, వ్యక్తులను కాదు. స్కూల్ దగ్గర అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు లేదా కోచింగ్ సెంటర్లు వెతకండి." });
-    langNow.v = "en";
+  it("our own words, in the person's language, only when the API gave no sentence (never the raw error)", async () => {
     h.plan.mockRejectedValueOnce(new ApiRequestError(422, "individuals_not_allowed", ""));
-    expect(await planSearchAction(T, "families near the school")).toMatchObject({ ok: false, error: "The Lead Finder finds organisations only, not people. Try apartment associations, companies or coaching centres near the school." });
+    expect(await planSearchAction(T, "families near the shop")).toMatchObject({ ok: false, error: "The Lead Finder looks for businesses and organisations, not for people. Say what kind of place to look for." });
+    langNow.v = "te";
+    h.plan.mockRejectedValueOnce(new ApiRequestError(422, "individuals_not_allowed", " "));
+    expect(await planSearchAction(T, "parents in Anantapur")).toMatchObject({ ok: false, error: "లీడ్ ఫైండర్ వ్యాపారాలు, సంస్థల కోసం మాత్రమే వెతుకుతుంది, వ్యక్తుల కోసం కాదు. ఎలాంటి చోట్ల కోసం వెతకాలో చెప్పండి." });
+    langNow.v = "en";
   });
 });

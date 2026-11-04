@@ -206,7 +206,7 @@ describe("the Lead Finder's card (docs/contracts/lead-finder.md 1b)", () => {
 });
 
 describe("a Lead Finder search that names people in the chat (C1, 5 Nov: individuals_not_allowed)", () => {
-  const words = (m: string) => (m.startsWith("The Lead Finder") ? m : "OURS");
+  const words = (m: string) => (m.trim() ? m : "OURS"); // as the route gives it: the API's sentence as it is, ours only when there is none
   const collect = async (events: AsyncIterable<AssistantEvent>) => {
     const out: AskEvent[] = [];
     for await (const e of toAskEvents(events, B, none, { individuals: words })) out.push(e);
@@ -218,7 +218,7 @@ describe("a Lead Finder search that names people in the chat (C1, 5 Nov: individ
     }
     expect(await collect(gen())).toEqual([{ type: "text", delta: "The Lead Finder looks for organisations only." }, { type: "done" }]);
     async function* other(): AsyncGenerator<AssistantEvent> {
-      yield { type: "error", code: "individuals_not_allowed", message: "ఇది తెలుగు" };
+      yield { type: "error", code: "individuals_not_allowed", message: "" };
     }
     expect(await collect(other())).toEqual([{ type: "text", delta: "OURS" }, { type: "done" }]);
   });

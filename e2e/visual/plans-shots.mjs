@@ -45,7 +45,7 @@ const SEARCH_PLANNED = {
 };
 const prospect = (n, over) => ({
   id: `b1b1b1b1-0000-4000-8000-00000000000${n}`, search_id: S1, name: "x", category: null, area: null, phone: "+00 000 5123 456" + n, website: null, rating: 4.4, review_count: 120, lat: 17.4, lng: 78.4,
-  source: "fixture", source_label: "Example search (made-up organisations) 'organisations near the school', 14 Oct", attribution: null, status: "needs_owner", decision_reason: "first_calls", fit_score: 80, fit_reason: null,
+  source: "fixture", source_label: "Example search (made-up organisations) 'organisations near the school', 14 Oct", attribution: null, status: "needs_owner", decision_reason: "first_calls", fit_score: 80, fit_reason: "Residents' association",
   stock_match: null, owner_approved: false, suppressed: false, ask_after: null, last_contacted_at: null, lead_id: null, qualification: null, created_at: AT, updated_at: AT, ...over,
 });
 const SCHOOL_PROSPECTS = [
@@ -53,6 +53,8 @@ const SCHOOL_PROSPECTS = [
   prospect(2, { name: "Bright Path Coaching Centre", category: "Coaching centre", area: "Madhapur", status: "call_ready", decision_reason: "fit_high", fit_score: 81 }),
   prospect(3, { name: "Kaveri Software Park (staff welfare)", category: "Company", area: "Hitech City", status: "call_ready", decision_reason: "fit_high", fit_score: 77 }),
   prospect(4, { name: "Sunrise Uniforms and Books", category: "School vendor", area: "Gachibowli", status: "skipped", decision_reason: "fit_low", fit_score: 41 }),
+  // C1 #319: another school comes back as needs_owner with the reason competitor
+  prospect(5, { name: "Little Oaks Primary School", category: "School", area: "Kondapur", status: "needs_owner", decision_reason: "competitor", fit_score: 58 }),
 ];
 
 // ---- the scenes: the server's flags, the stand-in's own answers, and the screens -------------------------------------------------------------------------------------
@@ -94,7 +96,7 @@ const EXTRA = [
   route("/agents/status", AGENTS_LIVE),
   route("/lead-finder/availability", () => scene.availability),
   route("/prospects", () => ({ items: SCHOOL_PROSPECTS, next_cursor: null })),
-  route("/prospects/stats", () => ({ total: 4, by_status: { needs_owner: 1, call_ready: 2, skipped: 1 } })),
+  route("/prospects/stats", () => ({ total: 5, by_status: { needs_owner: 2, call_ready: 2, skipped: 1 } })),
   ["POST", new RegExp(`^${API}/prospects/redecide$`), (_req, res) => (res.writeHead(200, { "Content-Type": "application/json" }), res.end(JSON.stringify({ changed: 0 })))],
   route("/me/profile", { display_name: "Visual Owner", address_as: null, preferred_chat_language: "auto", languages: ["en"] }),
   // the chat: "find new retailers ..." on a Lead Desk plan. C1's #317 answers with a `cant_do` work card (drawn by #302's work cards, not on this branch); here the Lead Finder's own plan card arrives,

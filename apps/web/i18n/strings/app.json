@@ -78121,6 +78121,17 @@
   }
  },
  "lf.err.individuals": {
+  "en": "The Lead Finder looks for businesses and organisations, not for people. Say what kind of place to look for.",
+  "te": "లీడ్ ఫైండర్ వ్యాపారాలు, సంస్థల కోసం మాత్రమే వెతుకుతుంది, వ్యక్తుల కోసం కాదు. ఎలాంటి చోట్ల కోసం వెతకాలో చెప్పండి.",
+  "hi": "लीड फ़ाइंडर बिज़नेस और संस्थाएँ ढूँढता है, लोग नहीं। बताइए किस तरह की जगह ढूँढनी है।",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ವ್ಯಾಪಾರಗಳು ಮತ್ತು ಸಂಸ್ಥೆಗಳನ್ನು ಹುಡುಕುತ್ತದೆ, ವ್ಯಕ್ತಿಗಳನ್ನಲ್ಲ. ಯಾವ ರೀತಿಯ ಜಾಗ ಹುಡುಕಬೇಕು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.individuals@organisations": {
   "en": "The Lead Finder finds organisations only, not people. Try apartment associations, companies or coaching centres near the school.",
   "te": "లీడ్ ఫైండర్ సంస్థలను మాత్రమే వెతుకుతుంది, వ్యక్తులను కాదు. స్కూల్ దగ్గర అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు లేదా కోచింగ్ సెంటర్లు వెతకండి.",
   "hi": "लीड फ़ाइंडर सिर्फ़ संस्थाएँ ढूँढता है, लोग नहीं। स्कूल के पास अपार्टमेंट एसोसिएशन, कंपनियाँ या कोचिंग सेंटर ढूँढें।",

@@ -4,7 +4,7 @@ import { appDict } from "@/i18n/app";
 import { parseAvailability } from "@/lib/api/lead-finder";
 import { withModuleWords } from "@/lib/packs/module-words";
 
-import { audienceModules, audienceOf, isChatCardWord, sentenceIn } from "./types";
+import { audienceModules, audienceOf, isChatCardWord, politeSentence } from "./types";
 
 /**
  * A school's Lead Finder finds ORGANISATIONS (C1, 5 Nov: availability `audience: "organisations"`): apartment associations, companies, coaching centres and vendors near the school. Every Lead Finder word a school can see is
@@ -64,15 +64,15 @@ describe("the Lead Finder for a school: organisations only", () => {
   });
 });
 
-describe("the API's own sentence is shown only in the person's language (individuals_not_allowed)", () => {
+describe("the API's polite sentence (individuals_not_allowed, C1 #319): shown as it is; ours only when it gave none", () => {
   it.each([
-    ["The Lead Finder looks for organisations only.", "en", true],
-    ["లీడ్ ఫైండర్ సంస్థలను మాత్రమే వెతుకుతుంది.", "te", true],
-    ["The Lead Finder looks for organisations only.", "te", false],
-    ["లీడ్ ఫైండర్ సంస్థలను మాత్రమే వెతుకుతుంది.", "en", false],
-    ["", "en", false],
-    ["x".repeat(301), "en", false],
-  ])("%j in %s: %s", (text, lang, ok) => {
-    expect(sentenceIn(text, lang)).toBe(ok);
+    ["The Lead Finder looks for organisations only.", "The Lead Finder looks for organisations only."],
+    ["లీడ్ ఫైండర్ సంస్థలను మాత్రమే వెతుకుతుంది.", "లీడ్ ఫైండర్ సంస్థలను మాత్రమే వెతుకుతుంది."],
+    ["  ", null],
+    ["", null],
+    [undefined, null],
+    ["x".repeat(401), null],
+  ])("%j -> %j", (text, out) => {
+    expect(politeSentence(text)).toBe(out);
   });
 });

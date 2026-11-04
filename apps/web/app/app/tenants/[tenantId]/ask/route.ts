@@ -12,7 +12,7 @@ import { fromThisSite, ndjsonResponse } from "./ask-response";
 import { knownCode, toAskEvents, type QuoteLookup } from "./ask-stream";
 import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
-import { sentenceIn } from "@/lib/lead-finder/types";
+import { politeSentence } from "@/lib/lead-finder/types";
 
 export const dynamic = "force-dynamic";
 
@@ -90,10 +90,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   return ndjsonResponse(events, (error) => (error instanceof ApiRequestError ? (error.status === 403 ? "forbidden" : knownCode(error.code)) : undefined));
 }
 
-/** The reply to a Lead Finder search that names people (C1, 5 Nov: 422 `individuals_not_allowed`): the API's polite sentence when it is in the language of the reply (the chat's pill, else the person's), else ours. */
+/** The reply to a Lead Finder search that names people (C1 #319: 422 `individuals_not_allowed`, any business type): the API's polite sentence as it is; ours (in the chat's language, else the person's) only when it gave none. */
 async function individualsWords(pill: ReplyLanguage | null): Promise<(message: string) => string> {
   const app = await getLang();
   const lang = pill && pill !== "auto" ? pill : app;
   const ours = appT((["en", "te", "hi", "kn"] as const).find((l) => l === lang) ?? app)("lf.err.individuals");
-  return (message) => (sentenceIn(message, lang) ? message : ours);
+  return (message) => politeSentence(message) ?? ours;
 }

@@ -235,14 +235,7 @@ export function withFinder<A extends { agent: string; state: string }>(team: rea
   return team.map((a) => (a.agent === "lead_finder" && a.state === "not_available" ? { ...a, state: "idle" } : a));
 }
 
-const SCRIPT: Record<string, RegExp> = { te: /[\u0C00-\u0C7F]/, hi: /[\u0900-\u097F]/, kn: /[\u0C80-\u0CFF]/ };
-const INDIC = /[\u0900-\u0DFF]/;
 /**
- * Is the API's own sentence in the person's language (C1, 5 Nov: `individuals_not_allowed` carries a polite sentence)? English: letters and no Indian script; Telugu, Hindi, Kannada: the language's own script. A sentence that is
- * empty, too long or in another language is not shown: the screen says it in its own words instead.
+ * The API's polite sentence of a refusal (C1 #319: `individuals_not_allowed` carries one in `error.message`), shown as it is; null when it gave none (empty, or too long to be one), and the screen then says it in its own words.
  */
-export function sentenceIn(text: unknown, lang: string): text is string {
-  if (typeof text !== "string" || text.trim().length < 2 || text.length > 300) return false;
-  const own = SCRIPT[lang];
-  return own ? own.test(text) : lang === "en" && /[A-Za-z]/.test(text) && !INDIC.test(text);
-}
+export const politeSentence = (text: unknown): string | null => (typeof text === "string" && text.trim().length >= 2 && text.length <= 400 ? text.trim() : null);
