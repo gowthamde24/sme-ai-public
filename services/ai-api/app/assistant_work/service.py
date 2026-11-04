@@ -151,8 +151,12 @@ def cant_do(reason: str, what_words: str, screen: dict[str, str] | None) -> dict
 def facts_of(counts: dict[str, Any], problems: list[dict[str, Any]], rows_read: int) -> list[dict[str, Any]]:
     new = int(counts.get("ready") or 0)
     existing = int(counts.get("duplicates_merged") or 0) + int(counts.get("already_imported") or 0)
-    no_phone = sum(1 for p in problems if p.get("reason") in ("no_contact_way", "invalid_number"))
-    unreadable = max(0, int(counts.get("invalid") or 0) - no_phone)
+    invalid = int(counts.get("invalid") or 0)
+    sampled = [p for p in problems if p.get("reason") in ("no_contact_way", "invalid_number", "row_refused")]
+    contact = sum(1 for p in sampled if p.get("reason") in ("no_contact_way", "invalid_number"))
+    # the import names at most 50 problem rows: the split of ALL refused rows follows the rows it named
+    no_phone = invalid if not sampled else round(invalid * contact / len(sampled))
+    unreadable = invalid - no_phone
     out = [{"code": "found", "n": new + existing}, {"code": "existing", "n": existing}]
     for code, n in (("no_phone", no_phone), ("duplicate", int(counts.get("duplicates_in_file") or 0)), ("unreadable", unreadable), ("too_many", max(0, rows_read - MAX_ROWS))):
         if n:

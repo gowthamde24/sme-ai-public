@@ -253,6 +253,12 @@ def test_the_facts_by_closed_code() -> None:
     assert facts == [{"code": "found", "n": 38}, {"code": "existing", "n": 4}, {"code": "no_phone", "n": 2}, {"code": "duplicate", "n": 2}, {"code": "unreadable", "n": 1}]
 
 
+def test_the_facts_split_every_refused_row_though_the_import_names_at_most_50() -> None:
+    named = [{"row": i, "reason": "no_contact_way"} for i in range(40)] + [{"row": 100 + i, "reason": "row_refused"} for i in range(10)]
+    facts = {f["code"]: f["n"] for f in facts_of({"ready": 4400, "invalid": 200}, named, 5000)}
+    assert facts["no_phone"] == 160 and facts["unreadable"] == 40
+
+
 def test_the_kind_of_a_file() -> None:
     assert wf.kind_of("leads.xlsx", "application/octet-stream", b"PK\x03\x04") == "sheet"
     assert wf.kind_of("x", "image/png", b"\x89PNG") == "image"
