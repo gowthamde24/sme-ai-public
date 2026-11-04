@@ -253,3 +253,27 @@ def test_an_inbound_call_is_answered_not_called_and_says_it_is_an_ai(language: s
     assert "AI" in line and "Stack19" in line
     assert gate.has_ai_disclosure(line)
     assert "enquiry" not in line and "ఎంక్వైరీ" not in line and "కాల్ చేశాను" not in line, "the caller rang us"
+
+
+
+def test_the_voicebot_url_can_answer_the_bare_address_as_text_and_logs_only_names() -> None:
+    """4 Nov 2026, the first real call: Exotel fetched the URL and never opened the stream. The query part is 55 characters (Exotel's limit is 256 and 3 parameters), so the next suspect is the
+    answer's form: EXOTEL_STREAM_URL_FORMAT=text answers the bare wss address. Every request's shape is logged by NAMES only."""
+    records: list[str] = []
+    handler = logging.Handler()
+    handler.emit = lambda record: records.append(record.getMessage())  # type: ignore[method-assign]
+    logger = logging.getLogger("app.telephony.inbound")
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    try:
+        svc = service()
+        svc.url_format = "text"
+        r = _client(svc).get("/v1/telephony/exotel/stream-url", params={"CallSid": "CA9", "CallFrom": "09502380998"})
+    finally:
+        logger.removeHandler(handler)
+    assert r.status_code == 200 and r.headers["content-type"].startswith("text/plain")
+    assert r.text.startswith("wss://api.example.test/v1/telephony/exotel/stream?sample-rate=16000&t=")
+    query = r.text.split("?", 1)[1]
+    assert len(query) <= 200 and query.count("&") + 1 <= 3, "inside Exotel's 3 parameters and 256 characters, with room to spare"
+    shape = next(m for m in records if m.startswith("exotel_stream_url request"))
+    assert "params=CallFrom,CallSid" in shape and "9502380998" not in " ".join(records) and "CA9" not in " ".join(records), "names only, never a value"
