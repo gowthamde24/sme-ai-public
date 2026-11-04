@@ -1,5 +1,6 @@
 """The Lead Finder under /v1/tenants/{tenant_id} (ADR 0119). The contract is docs/contracts/lead-finder.md.
 
+  GET  /lead-finder/availability                 Owner, Admin, Sales: is it here at all (a school: no), and which source (fixture | places)
   GET  /lead-finder/settings                     Owner, Admin, Sales: the bar, the daily call cap, the calling hours, the search caps
   PUT  /lead-finder/settings                     Owner, Admin
   POST /lead-finder/plan                         Owner, Admin, Sales: the owner's words (or a query) -> the PLAN CARD (nothing is searched yet)
@@ -30,6 +31,7 @@ from app.errors import ApiError, not_found
 from app.lead_finder.models import (
     ActionsIn,
     ActionsOut,
+    AvailabilityOut,
     PlanIn,
     ProspectListOut,
     ProspectOut,
@@ -63,6 +65,11 @@ def _id(raw: str) -> uuid.UUID:
     if parsed is None:
         raise not_found()
     return parsed
+
+
+@router.get("/lead-finder/availability", response_model=AvailabilityOut)
+def availability(ctx: Worker, runtime: RuntimeDep) -> AvailabilityOut:
+    return _service(runtime).availability(ctx.principal.token, ctx.tenant.id)
 
 
 @router.get("/lead-finder/settings", response_model=SettingsOut)

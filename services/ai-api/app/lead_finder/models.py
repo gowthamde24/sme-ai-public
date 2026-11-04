@@ -25,6 +25,15 @@ class _Out(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+class AvailabilityOut(_Out):
+    """Whether this business has the Lead Finder at all (a school: never) and which source a search would use here. Never an error: the screens hide the feature when `available` is false."""
+
+    available: bool
+    # fixture = made-up businesses (demo workspaces and every workspace until Google is ready); places = Google Maps
+    source: Literal["fixture", "places"] | None
+    reason: Literal["ok", "not_for_this_business", "switched_off"]
+
+
 class SettingsIn(_In):
     fit_bar: Annotated[int, Field(ge=50, le=100)] | None = None
     daily_call_cap: Annotated[int, Field(ge=0, le=500)] | None = None

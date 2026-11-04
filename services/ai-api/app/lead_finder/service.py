@@ -19,10 +19,12 @@ from typing import Any
 
 from app.errors import ApiError
 from app.lead_finder import decide, dedupe, intent, packdata, qualify
+from app.lead_finder.errors import NotForThisBusinessError
 from app.lead_finder.models import (
     ActionResultOut,
     ActionsIn,
     ActionsOut,
+    AvailabilityOut,
     PlanIn,
     ProspectListOut,
     ProspectOut,
@@ -118,6 +120,16 @@ class LeadFinderService:
         if self.mode == "places" and real_data_open and self._places_key:
             return self._places_factory(self._places_key, self._places_cost)
         return FixtureSource(data)
+
+    def availability(self, token: str, tenant_id: uuid.UUID) -> AvailabilityOut:
+        try:
+            data = self.data_for(token, tenant_id)
+        except ApiError as exc:
+            return AvailabilityOut(available=False, source=None, reason="switched_off" if exc.code == "lead_finder_off" else "not_for_this_business")
+        except NotForThisBusinessError:
+            return AvailabilityOut(available=False, source=None, reason="not_for_this_business")
+        ctx = self.repo.context(token, tenant_id)
+        return AvailabilityOut(available=True, source=self.source_for(data, bool(ctx.get("real_data_open"))).provider, reason="ok")  # type: ignore[arg-type]
 
     # ------------------------------------------------------------------------------------------------------------------- settings
     def settings(self, token: str, tenant_id: uuid.UUID) -> SettingsOut:

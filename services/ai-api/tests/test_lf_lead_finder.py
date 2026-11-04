@@ -17,7 +17,16 @@ import pytest
 from app.lead_finder import decide, dedupe, intent, packdata
 from app.lead_finder.decide import Settings, Situation, StockLine
 from app.lead_finder.service import LeadFinderService, stock_lines
-from app.lead_finder.sources import FIELD_MASK, PLACES_SKU, FixtureSource, GooglePlacesSource, Place, SearchRequest, SourceError, parse_places
+from app.lead_finder.sources import (
+    FIELD_MASK,
+    PLACES_SKU,
+    FixtureSource,
+    GooglePlacesSource,
+    Place,
+    SearchRequest,
+    SourceError,
+    parse_places,
+)
 from tests.fakes import TENANT_A, auth, make_client
 from tests.lf_fakes import MATERIAL_STOCK, NOW, TEXTILE_STOCK, FakeLeadFinderRepo
 
@@ -245,6 +254,7 @@ def test_a_demo_workspace_plans_approves_and_gets_a_result_card_without_google()
 
     repo = FakeLeadFinderRepo("textiles", real_data_open=False)
     c = _client(repo, mode="places", places=Tripwire())
+    assert c.get(f"{URL}/lead-finder/availability", headers=auth("a_sales")).json() == {"available": True, "source": "fixture", "reason": "ok"}
     plan = c.post(f"{URL}/lead-finder/plan", json={"text": "find saree shops in Jayanagar Bengaluru"}, headers=auth("a_sales"))
     assert plan.status_code == 201, plan.text
     card = plan.json()
@@ -323,6 +333,7 @@ def test_settings_screen() -> None:
 # ---------------------------------------------------------------------------------------------------------------------------------- A5: a school
 def test_a_school_has_no_lead_finder_anywhere() -> None:
     c = _client(FakeLeadFinderRepo("education", module_on=False))
+    assert c.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json() == {"available": False, "source": None, "reason": "not_for_this_business"}, "hidden"
     for method, path, body in (("post", "/lead-finder/plan", {"text": "find new schools in Anantapur"}), ("get", "/lead-finder/settings", None), ("get", "/prospects", None),
                                ("post", "/prospects/actions", {"ids": [str(uuid.uuid4())], "action": "call"})):
         r = getattr(c, method)(f"{URL}{path}", headers=auth("a_owner"), **({"json": body} if body else {}))

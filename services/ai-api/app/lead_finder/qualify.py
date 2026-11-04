@@ -160,8 +160,9 @@ class Qualifier:
         self.business = business
         self.data = data
         self.lang: Language = language if language in L else "en"
-        self.available = [s for s in stock if s.available]
-        self.unavailable = [s for s in stock if not s.available]
+        # only what is IN STOCK is offered: "few left" is the Owner's to promise, made to order is not stock
+        self.available = [s for s in stock if s.stock == "in_stock"]
+        self.unavailable = [s for s in stock if s.stock != "in_stock"]
         self.likely = likely
         self.pending: list[str] = list(QUESTION_ORDER)
         self.asked: str | None = None
@@ -249,6 +250,8 @@ class Qualifier:
             if intent == "yes":
                 self.whatsapp_ok = True
                 self.state = "closing"
+                # the details they will get (after the Owner approves the message in the outbox) are the in-stock items only
+                self.pitched = [x.name for x in self._pitch_items()]
                 return self._end("whatsapp_yes", "qualified", "goodbye")
             self.state = "closing"
             return self._end("whatsapp_no", "qualified" if self.captured else "contacted", "goodbye")
@@ -311,8 +314,12 @@ def make_persona(name: str, lang: str, domain: str, *, priced_item: str | None, 
     answers = _ANSWERS[domain][lang]
     lines = _LINES[lang]
 
+    memory = {"q": "sells"}
+
     def reply(_kind_unused: str, n: int, last: Turn) -> str:
         kind = last.kind
+        if kind.startswith("question:"):
+            memory["q"] = kind.split(":", 1)[1]
         if name == "rude_hangs_up":
             return lines["rude"] if n == 0 else lines["hang"]
         if name == "not_interested":
@@ -332,10 +339,8 @@ def make_persona(name: str, lang: str, domain: str, *, priced_item: str | None, 
             if name == "interested" and key == "supplier":
                 return lines["ai_q"]
             return answers[key]
-        if kind == "ai_yes":
-            return answers["supplier"]
-        if kind in ("not_in_stock", "price"):
-            return answers.get("quantity", lines["yes"])
+        if kind in ("ai_yes", "not_in_stock", "price"):
+            return answers[memory["q"]]   # back to the question that was asked
         if kind == "pitch":
             return lines["offer_yes"]
         return lines["yes"]
@@ -345,8 +350,8 @@ def make_persona(name: str, lang: str, domain: str, *, priced_item: str | None, 
 
 def simulate(*, business: str, data: PackLeadFinder, stock: list[StockLine], language: Language, persona: str, domain: str, likely: tuple[str, ...] = ()) -> CallResult:
     """One whole call, our script against one persona. Deterministic."""
-    priced = next((s.name for s in stock if s.available and s.price_paise), None)
-    missing = next((s.name for s in stock if not s.available), None)
+    priced = next((s.name for s in stock if s.stock == "in_stock" and s.price_paise), None)
+    missing = next((s.name for s in stock if s.stock in ("made_to_order", "out_of_stock")), None)
     other = make_persona(persona, language, domain, priced_item=priced, missing_item=missing)
     q = Qualifier(business=business, data=data, stock=stock, language=language, likely=likely)
     clock = 0.0
@@ -412,7 +417,7 @@ def allowed_numbers(stock: list[StockLine]) -> set[str]:
 def evaluate(r: CallResult, stock: list[StockLine]) -> list[EvalResult]:
     ours = [t for t in r.turns if t.who == "assistant"]
     first = ours[0] if ours else None
-    unavailable = [s.name for s in stock if not s.available]
+    unavailable = [s.name for s in stock if s.stock != "in_stock"]
     results: list[EvalResult] = []
     # 1. the AI disclosure, in the first sentence and inside the first 10 seconds of speech
     pos = -1
@@ -426,7 +431,14 @@ def evaluate(r: CallResult, stock: list[StockLine]) -> list[EvalResult]:
     results.append(EvalResult("never_pitches_out_of_stock", not bad and all(n not in r.pitched for n in unavailable), "; ".join(bad)[:200]))
     # 3. never invents a price: every number we say is a catalogue price or minimum order
     allowed = allowed_numbers(stock)
-    said = {n.replace(",", "") for t in ours for n in _NUMBER.findall(t.text)}
+    names = sorted((s.name for s in stock), key=len, reverse=True)   # "OPC 53 Cement", "TMT Steel 12mm": a number in our own item's name is not a price
+
+    def strip_names(text: str) -> str:
+        for n in names:
+            text = text.replace(n, " ")
+        return text
+
+    said = {n.replace(",", "") for t in ours for n in _NUMBER.findall(strip_names(t.text))}
     results.append(EvalResult("never_invents_prices", said <= allowed, f"said {sorted(said - allowed)}"))
     # 4. stops on "don't call" / "not interested": the next thing we say is the goodbye, nothing after it
     for i, t in enumerate(r.turns):
