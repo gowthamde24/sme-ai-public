@@ -116,8 +116,11 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
       <ul className="flex flex-col gap-3" data-part="prospects">
         {items.map((p) => (
           <li key={p.id} data-prospect={p.id} className={`${card} !gap-2`}>
-            <div className="flex items-start gap-3">
-              <input type="checkbox" className="mt-2.5 size-6 shrink-0 accent-brand-text" checked={picked.includes(p.id)} onChange={(e) => toggle(p.id, e.target.checked)} aria-label={t("lf.select", { name: p.name })} />
+            <div className="flex items-start gap-1">
+              <label className="-ml-2.5 -mt-1 flex min-h-11 min-w-11 shrink-0 cursor-pointer items-center justify-center">
+                <input type="checkbox" className="size-6 accent-brand-text" checked={picked.includes(p.id)} onChange={(e) => toggle(p.id, e.target.checked)} />
+                <span className="sr-only">{t("lf.select", { name: p.name })}</span>
+              </label>
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="break-words font-display text-lg font-bold leading-snug">{p.name}</h3>

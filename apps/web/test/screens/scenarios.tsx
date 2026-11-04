@@ -735,7 +735,8 @@ add({ id: "retailers", roles: ROLES, render: async () => (await import("@/app/ap
 add({ id: "retailers-places", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.AVAILABLE_PLACES, [{ ...LF.PROSPECT, source: "google_maps", attribution: "Google Maps", source_label: "Google Maps search 'saree shops Jayanagar', 2 Nov" }, LF.PROSPECT_LOW]) });
 add({ id: "retailers-school", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.SCHOOL, []) });
 add({ id: "retailers-unreadable", roles: ["admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(null, []) });
-void parseFinderSettings;
+// Settings > Lead Finder (Owner and Admin, only where the Lead Finder is available)
+add({ id: "settings-leadfinder", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "leadfinder" })), handlers: (role) => ({ ...base(role), readAvailability: () => parseAvailability(LF.AVAILABLE), getFinderSettings: () => parseFinderSettings(LF.SETTINGS) }) });
 
 // ---- the team and joining a business (job CC) ----------------------------------------------------------------------------------
 const TEAM = {

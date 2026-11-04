@@ -43,7 +43,7 @@ export function PracticeCall({ prospect, words, base, langNames, run }: { prospe
     <details className="rounded-2xl bg-surface-2 px-3 py-1 sm:px-4" data-practice={prospect.id}>
       <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-brand-text">{t("lf.pc.open")}</summary>
       <div className="flex flex-col gap-3 pb-3">
-        <p className={pillClass("info")}>{t("lf.pc.title")}</p>
+        <p className="text-sm font-semibold text-info-text">{t("lf.pc.title")}</p>
         <p className={muted}>{t("lf.pc.intro")}</p>
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
