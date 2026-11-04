@@ -109,8 +109,13 @@ async def stream_url(request: Request) -> Response:
     if service is None or service.gate_settings.mode == "off":
         log.info("exotel_stream_url refused=off")
         raise ApiError(403, "telephony_off", "Phone calls are not answered here.")
-    caller = normalise(inbound.first(params, "CallFrom", "From", "from"))
-    if caller is not None and service.gate_settings.mode == "sandbox" and caller not in service.gate_settings.sandbox_numbers:
+    raw_caller = inbound.first(params, "CallFrom", "From", "from")
+    caller = normalise(raw_caller)
+    ours = service.trial.caller if service.trial is not None and service.trial.caller else next(iter(sorted(service.gate_settings.sandbox_numbers)), None)
+    log.info("exotel_stream_url %s from_vs_callfrom=%s", inbound.caller_diagnosis(raw_caller, ours),
+             "same" if normalise(params.get("From", "")) == normalise(params.get("CallFrom", "")) else "differ")
+    # the shared trial number may pass on an altered caller number (the stream decides there, without the caller); every other number: a named caller off the sandbox list gets no address
+    if caller is not None and service.trial is None and service.gate_settings.mode == "sandbox" and caller not in service.gate_settings.sandbox_numbers:
         log.info("exotel_stream_url refused=not_on_sandbox_list")
         raise ApiError(403, "not_on_sandbox_list", "This number is not answered here.")
     call_sid = inbound.first(params, "CallSid", "call_sid", "CallSID")
