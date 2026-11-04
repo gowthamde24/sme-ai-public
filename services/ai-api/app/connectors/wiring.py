@@ -90,6 +90,7 @@ def build_connectors(settings: Settings, rest_url: str, auth_url: str, anon_key:
                     _secret(settings.exotel_api_token, "EXOTEL_API_TOKEN"),
                     _secret(settings.exotel_caller_id, "EXOTEL_CALLER_ID"),
                     subdomain=settings.exotel_subdomain,
+                    api_base=settings.exotel_api_base or None,
                 )
             except ValueError as exc:
                 raise ConfigurationError(str(exc)) from None
