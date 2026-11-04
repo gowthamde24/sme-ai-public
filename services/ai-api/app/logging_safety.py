@@ -146,10 +146,27 @@ class RedactQueryFilter(logging.Filter):
 _installed = False
 
 
+class RedactWebSocketFilter(logging.Filter):
+    """uvicorn logs a WebSocket's opening to `uvicorn.error` with the path AND its query, which
+    can hold a credential (the phone stream's per-call token). The path is redacted like an HTTP
+    access line and the query is dropped."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        args = record.args
+        msg = record.msg
+        if isinstance(msg, str) and '"WebSocket %s"' in msg and isinstance(args, tuple):
+            if len(args) >= 2 and isinstance(args[1], str):
+                path, has_query, _ = args[1].partition("?")
+                safe = redact_path(path) + ("?<redacted>" if has_query else "")
+                record.args = (args[0], safe, *args[2:])
+        return True
+
+
 def install_log_redaction() -> None:
     global _installed
     for name in ("httpx", "httpcore"):
         logging.getLogger(name).setLevel(logging.WARNING)
     if not _installed:
         logging.getLogger("uvicorn.access").addFilter(RedactQueryFilter())
+        logging.getLogger("uvicorn.error").addFilter(RedactWebSocketFilter())
         _installed = True
