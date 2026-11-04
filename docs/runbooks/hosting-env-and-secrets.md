@@ -174,6 +174,7 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `TELEPHONY_OUTBOUND` | plain | api | `false` (default): the gate refuses every outbound call (an inbound-only deployment; there is no dialer yet). |
 | `EXOTEL_STREAM_SECRET` | secret | api | Signs the per-call token of the Voicebot URL (`docs/runbooks/phone-inbound-sandbox.md`), 32+ characters. Secret Manager: `sme-exotel-stream-secret` (made by C1, 4 Nov 2026). |
 | `TELEPHONY_INBOUND_LANGUAGE` | plain | api | The language of an inbound call's opening line (`en` default; staging `te`); the call then follows the language spoken. |
+| `EXOTEL_STREAM_URL_FORMAT` | plain | api | How the Voicebot URL answers: `json` (default, `{"url": "wss://..."}`) or `text` (the bare `wss://` address). |
 | `TELEPHONY_INBOUND_BUSINESS` | plain | api | The business the inbound opening line names (staging `Stack19`). |
 | `BROWSER_VOICE_STT_MODES` | plain | api | What the speech recogniser writes per language, over the built-in defaults: `te=transcribe,kn=transcribe,en=transcribe,ta=transcribe,hi=verbatim,ml=verbatim`. Empty = the defaults. A language or mode it does not know is ignored. |
 | `BROWSER_VOICE_DAY_TTS_CHARS` | plain | api | Characters a workspace may send to the voice engines per day. Default `6000`. |
