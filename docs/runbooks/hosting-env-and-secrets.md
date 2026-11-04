@@ -126,7 +126,9 @@ Off or fake by default. The rehearsal sets none of them. A provider named withou
 | `TAVILY_API_KEY` | secret | api | Only with `tavily`. |
 | `BRAVE_SEARCH_API_KEY` | secret | api | Only with `brave`. |
 | `PLACES_PROVIDER` | plain | api | `off` (default) | `google`. The Find retailers map search. Google Places is billed per request: set the quota and a budget alert at Google first. |
-| `GOOGLE_PLACES_API_KEY` | secret | api | Only with `google`. Restrict the key to the Places API (New) in Google Cloud. |
+| `GOOGLE_PLACES_API_KEY` | secret | api | Only with `google`. Restrict the key to the Places API (New) in Google Cloud. Also the Lead Finder's key (ADR 0119; Secret Manager `sme-google-places-api-key`, the owner creates it). |
+| `LEAD_FINDER` | plain | api | Lead Finder (ADR 0119): `off` | `fixture` (default: made-up businesses only) | `places` (Google Places Text Search, ONLY in a workspace whose real-data gate is open and only when `GOOGLE_PLACES_API_KEY` is set; elsewhere the fixture). |
+| `LEAD_FINDER_PLACES_COST_PAISE` | plain | api | The ESTIMATED cost of one Places Text Search Enterprise request, in paise (default 300), recorded on each search. |
 | `PLACES_FIELD_TIER` | plain | api | `pro` (name, address, link; default) or `ids` (place ids only, the free tier). |
 | `METALS_PROVIDER` | plain | api | `off` (default) | `metals_dev`. Gold and silver reference prices. |
 | `METALS_DEV_API_KEY` | secret | api | Only with `metals_dev`. |

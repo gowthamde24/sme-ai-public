@@ -262,6 +262,7 @@ def make_client(
     assistant_context: Any = None,
     lead_profiles: Any = None,
     marks_messages: Any = None,
+    lead_finder: Any = None,
     rate_limit: bool = False,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
@@ -329,6 +330,7 @@ def make_client(
             knowledge=knowledge,
             lead_sources=lead_sources,
             outreach=outreach,
+            lead_finder=lead_finder,
             tasks=tasks,
             calls=calls,
             live_calls=live_calls,

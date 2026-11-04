@@ -310,7 +310,8 @@
                 "excel_upload",
                 "google_sheet",
                 "pasted_list",
-                "vcard"
+                "vcard",
+                "lead_finder"
               ],
               "type": "string"
             },
@@ -768,7 +769,8 @@
                 "excel_upload",
                 "google_sheet",
                 "pasted_list",
-                "vcard"
+                "vcard",
+                "lead_finder"
               ],
               "type": "string"
             },
@@ -1439,7 +1441,8 @@
             "excel_upload",
             "google_sheet",
             "pasted_list",
-            "vcard"
+            "vcard",
+            "lead_finder"
           ],
           "title": "Tag",
           "type": "string"
@@ -1558,7 +1561,8 @@
             "excel_upload",
             "google_sheet",
             "pasted_list",
-            "vcard"
+            "vcard",
+            "lead_finder"
           ],
           "title": "Tag",
           "type": "string"

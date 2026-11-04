@@ -40,6 +40,7 @@ from app.followups.repository import FollowupsRepository
 from app.integrations.policy import PolicyVersions
 from app.integrations.repository import IntegrationsRepository
 from app.knowledge.service import KnowledgeService
+from app.lead_finder.service import LeadFinderService
 from app.lead_profile.service import LeadProfileService
 from app.lead_sources.service import LeadSourcesService
 from app.leads.repository import LeadsRepository
@@ -173,6 +174,8 @@ class Runtime:
     outreach: OutreachService | None = None
     # job DR B1: "Ask the assistant to do it" (plan, approve once, run, report)
     tasks: TasksService | None = None
+    # Lead Finder (ADR 0119): find new businesses, decide, the simulated qualifying call
+    lead_finder: LeadFinderService | None = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)

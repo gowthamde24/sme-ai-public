@@ -1,0 +1,53 @@
+{
+  "$comment": "Lead Finder data for this business type (ADR 0119). Read by app/lead_finder/packdata.py; a pack without this file has no Lead Finder. Every prospect in `fixture` is INVENTED: synthetic names, '+00' numbers (the reserved demo range), no real business.",
+  "default_query": {"en": "building contractors", "te": "బిల్డింగ్ కాంట్రాక్టర్లు"},
+  "category_hint": "contractor",
+  "buyer_types": [
+    {"code": "contractor", "label": "Building contractor", "weight": 40, "words": ["contractor", "contractors", "construction", "constructions", "civil works", "కాంట్రాక్టర్", "ಕಾಂಟ್ರಾಕ್ಟರ್", "ठेकेदार"], "likely": ["cement", "steel", "tmt", "paver", "blocks", "sand"]},
+    {"code": "builder", "label": "Builder or developer", "weight": 38, "words": ["builder", "builders", "developers", "infra", "homes", "projects", "estates"], "likely": ["cement", "steel", "tmt", "blocks"]},
+    {"code": "interior_works", "label": "Flooring and landscaping", "weight": 30, "words": ["landscaping", "flooring", "paving", "interlocking"], "likely": ["paver", "tiles", "blocks"]}
+  ],
+  "related_types": [
+    {"code": "architect", "label": "Architect or engineer", "weight": 16, "words": ["architect", "architects", "engineers", "consultants"]},
+    {"code": "hardware", "label": "Hardware shop", "weight": 14, "words": ["hardware", "paints", "sanitary"]}
+  ],
+  "competitor_words": ["cement dealer", "cement dealers", "steel dealer", "steel traders", "wholesale", "wholesaler", "distributor", "manufacturer", "factory", "ready mix", "rmc plant", "building materials"],
+  "very_large_words": ["limited", "infrastructure ltd", "group", "corporation"],
+  "very_large_reviews": 1500,
+  "call": {
+    "purpose": {"en": "We supply cement, steel and paver blocks to builders in your area.", "te": "మీ ఏరియాలో builders కి మేము cement, steel, paver blocks supply చేస్తాం."},
+    "questions": {
+      "sells":     {"en": "What kind of projects are you working on now?", "te": "ఇప్పుడు ఏ రకం projects చేస్తున్నారు?"},
+      "price":     {"en": "What price do you usually get cement at?", "te": "Cement సాధారణంగా ఏ rate కి తీసుకుంటారు?"},
+      "quantity":  {"en": "Roughly how much material do you need in a month?", "te": "నెలకి సుమారు ఎంత material కావాలి?"},
+      "supplier":  {"en": "Who supplies you now?", "te": "ఇప్పుడు ఎవరు supply చేస్తున్నారు?"},
+      "timing":    {"en": "When does your next project start?", "te": "మీ next project ఎప్పుడు start అవుతుంది?"},
+      "decision":  {"en": "Who decides on buying material?", "te": "Material కొనడం గురించి ఎవరు decide చేస్తారు?"}
+    }
+  },
+  "fixture": {
+    "$comment": "INVENTED businesses for demo workspaces. {area} is the searched area. kind: buyer | related | competitor | very_large | not_buyer | no_phone.",
+    "templates": [
+      {"name": "Sri Sai Constructions", "category": "Building contractor", "kind": "buyer", "rating": 4.4, "reviews": 86},
+      {"name": "{area} Builders", "category": "Builder", "kind": "buyer", "rating": 4.2, "reviews": 120},
+      {"name": "Ramana Civil Works", "category": "Building contractor", "kind": "buyer", "rating": 4.5, "reviews": 44},
+      {"name": "Venkata Homes and Projects", "category": "Builder", "kind": "buyer", "rating": 4.1, "reviews": 210},
+      {"name": "Green Paving and Landscaping", "category": "Landscaping", "kind": "buyer", "rating": 4.6, "reviews": 38},
+      {"name": "Lakshmi Narasimha Constructions", "category": "Building contractor", "kind": "buyer", "rating": 4.3, "reviews": 152},
+      {"name": "Pragathi Developers", "category": "Builder", "kind": "buyer", "rating": 4.0, "reviews": 98},
+      {"name": "Srinivasa Interlocking Works", "category": "Paving contractor", "kind": "buyer", "rating": 4.4, "reviews": 27},
+      {"name": "Bhavani Infra Projects", "category": "Builder", "kind": "buyer", "rating": 4.2, "reviews": 64},
+      {"name": "Om Sakthi Contractors", "category": "Building contractor", "kind": "buyer", "rating": 3.7, "reviews": 15},
+      {"name": "{area} Architects and Engineers", "category": "Architect", "kind": "related", "rating": 4.7, "reviews": 33},
+      {"name": "Balaji Hardware and Paints", "category": "Hardware shop", "kind": "related", "rating": 4.1, "reviews": 140},
+      {"name": "Anantha Cement Dealers", "category": "Cement dealer", "kind": "competitor", "rating": 4.3, "reviews": 77},
+      {"name": "Deccan Steel Traders Wholesale", "category": "Steel wholesaler", "kind": "competitor", "rating": 4.0, "reviews": 61},
+      {"name": "Mega {area} Infrastructure Group", "category": "Builder", "kind": "very_large", "rating": 4.2, "reviews": 3200},
+      {"name": "Hanuman Tiffin Centre", "category": "Restaurant", "kind": "not_buyer", "rating": 4.4, "reviews": 650},
+      {"name": "Star Driving School", "category": "Driving school", "kind": "not_buyer", "rating": 4.1, "reviews": 90},
+      {"name": "Gowri Constructions", "category": "Building contractor", "kind": "no_phone", "rating": 4.0, "reviews": 20},
+      {"name": "Surya Building Works", "category": "Building contractor", "kind": "buyer", "rating": 4.3, "reviews": 71},
+      {"name": "Kalyan Homes", "category": "Builder", "kind": "buyer", "rating": 4.5, "reviews": 109}
+    ]
+  }
+}
