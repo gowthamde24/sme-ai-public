@@ -35,11 +35,17 @@ class CallBridge(Protocol):
 class ExotelBridge:
     name = "exotel"
 
-    def __init__(self, sid: str, api_key: str, api_token: str, caller_id: str, *, subdomain: str = "api.in.exotel.com", client: httpx.Client | None = None) -> None:
-        if not re.fullmatch(r"[A-Za-z0-9.-]{3,100}", subdomain):
+    def __init__(self, sid: str, api_key: str, api_token: str, caller_id: str, *, subdomain: str = "api.in.exotel.com", api_base: str | None = None, client: httpx.Client | None = None) -> None:
+        """`api_base` (EXOTEL_API_BASE): the whole REST base, https and a host only (https://api.exotel.com, Singapore; https://api.in.exotel.com, Mumbai); it wins over `subdomain` (EXOTEL_SUBDOMAIN)."""
+        if api_base is not None:
+            if not re.fullmatch(r"https://[A-Za-z0-9.-]{3,100}/?", api_base):
+                raise ValueError("EXOTEL_API_BASE must be https:// and a host name, nothing after it")
+            self._base = api_base.rstrip("/")
+        elif not re.fullmatch(r"[A-Za-z0-9.-]{3,100}", subdomain):
             raise ValueError("EXOTEL_SUBDOMAIN is not a host name")
+        else:
+            self._base = f"https://{subdomain}"
         self._sid, self._auth, self._caller_id = sid, (api_key, api_token), caller_id
-        self._base = f"https://{subdomain}"
         self._client = client or httpx.Client(timeout=httpx.Timeout(15.0, connect=5.0))
 
     def __repr__(self) -> str:
