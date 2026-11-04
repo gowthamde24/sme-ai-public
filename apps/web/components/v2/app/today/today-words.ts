@@ -11,7 +11,7 @@ export const TODAY_WORD_KEYS = [
   "today.usage.left", "today.usage.aria", "today.hero.one", "today.hero.other", "today.hero.none", "today.over.some", "today.over.none", "today.over.notyet",
   "today.needs.count", "today.needs.more", "today.seeall", "today.seeless", "today.row.details", "today.row.less", "today.empty", "today.badge.price", "today.badge.promise",
   "today.badge.complaint", "today.badge.message", "today.badge.call", "today.title.reply_to_inbound", "today.title.info", "today.title.visit", "today.title.followup",
-  "today.title.order_status", "today.title.other", "today.title.call", "today.customer.unknown", "today.goes", "today.why", "today.lang.en", "today.lang.te",
+  "today.title.order_status", "today.title.other", "today.title.call", "today.customer.unknown", "today.customer.new", "today.goes", "today.why", "today.lang.en", "today.lang.te",
   "today.lang.hi", "today.lang.kn", "today.lang.ta", "today.act.approve", "today.act.edit", "today.act.notnow", "today.act.save", "today.act.cancel", "today.act.callok",
   "today.act.visit", "today.act.working", "today.edit.label", "today.edit.hint", "today.notext", "today.owneronly", "today.toast.sent", "today.toast.queued",
   "today.toast.queuedNow", "today.toast.blocked", "today.toast.rejected", "today.toast.edited", "today.toast.callok", "today.toast.visit", "today.err.mfa",

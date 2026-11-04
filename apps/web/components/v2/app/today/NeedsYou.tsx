@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { formatINR } from "@/design/format";
+import { looksLikeId } from "@/lib/lead-desk/leads";
 
 import { FreshPhotos } from "../catalogue/FreshPhotos";
 import { MessagePhotos } from "../catalogue/MessagePhotos";
@@ -140,12 +141,12 @@ function Head({ tone, label, at, ctx, onCollapse }: { tone: string; label: strin
 function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: Ctx }) {
   const { words } = ctx;
   const k = KIND[item.kind];
-  const facts: [string, string][] = [[say(words, k.who), item.customer === "" ? say(words, "today.customer.unknown") : item.customer]];
+  const facts: [string, string][] = [[say(words, k.who), customerName(item.customer, words)]];
   if (item.city) facts.push([say(words, "today.fact.city"), item.city]);
   if (item.amount_paise !== null) facts.push([say(words, "today.fact.amount"), formatINR(item.amount_paise / 100, { decimals: 2 })]);
   facts.push([say(words, "today.fact.when"), ago(item.at, ctx.now)]);
   const [open, setOpen] = React.useState(false);
-  const name = item.customer === "" ? say(words, "today.customer.unknown") : item.customer;
+  const name = customerName(item.customer, words);
   // the row is SHORT (owner, 4 Nov: "Quote | Lakshmi · ₹40,000"): the amount when there is one, the hot lead's own gist (English only, as before), else just the name; the API's full sentence is in the opened card
   // a kind whose summary is OUR words (OWN_WORDS: the Lead Finder's "fit 64 · low stock") is short already and shown in every language
   const reason = OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatINR(item.amount_paise / 100, { decimals: 2 }) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : "";
@@ -162,7 +163,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
     <article id={`needs-full-${c.key}`} aria-labelledby={`needs-${c.key}`} data-write className={card}>
       <Head tone={k.tone} label={say(words, k.kind)} at={item.at} ctx={ctx} onCollapse={ctx.compact ? () => setOpen(false) : undefined} />
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
-        {item.customer === "" ? say(words, "today.customer.unknown") : item.customer}
+        {customerName(item.customer, words)}
         {item.city ? `, ${item.city}` : ""}
       </h3>
       <p className="text-base text-muted [overflow-wrap:anywhere]">
@@ -201,7 +202,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
   const [editError, setEditError] = React.useState<string | null>(null);
   const m = c.message;
   const b = badgeOf(m);
-  const customer = c.customer ?? say(words, "today.customer.unknown");
+  const customer = customerName(c.customer, words);
   const may = (role === "owner" || role === "admin") && actions !== null && m !== null;
   const title = say(words, `today.title.${m?.category ?? "other"}`, { customer });
   const [open, setOpen] = React.useState(false);
@@ -336,7 +337,7 @@ function callReason(words: TodayWords, reason: string, lang: string): string {
 function CallCard({ c, ctx }: { c: Extract<NeedsCard, { type: "call" }>; ctx: Ctx }) {
   const { words, actions, role } = ctx;
   const decide = useDecide(c);
-  const customer = c.customer ?? say(words, "today.customer.unknown");
+  const customer = customerName(c.customer, words);
   const r: CallCardRequest | null = c.request;
   const owner = role === "owner" && actions !== null;
   const [open, setOpen] = React.useState(false);
@@ -571,4 +572,11 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
     </section>
     </FreshPhotos>
   );
+}
+
+/** What a card calls the customer: their name; an internal placeholder ("Enquiry 92e730", an id) is never a name, it reads "New enquiry" (owner, 30 Oct and 4 Nov); none at all reads "a customer". */
+export function customerName(raw: string | null | undefined, words: Parameters<typeof say>[0]): string {
+  const n = (raw ?? "").trim();
+  if (n === "") return say(words, "today.customer.unknown");
+  return looksLikeId(n) ? say(words, "today.customer.new") : n;
 }

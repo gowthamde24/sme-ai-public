@@ -2041,6 +2041,17 @@
    "kn": "draft"
   }
  },
+ "today.customer.new": {
+  "en": "New enquiry",
+  "te": "కొత్త విచారణ",
+  "hi": "नई पूछताछ",
+  "kn": "ಹೊಸ ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.goes": {
   "en": "Goes out in {language}",
   "te": "Goes out in {language}",
