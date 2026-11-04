@@ -211,6 +211,7 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `EXOTEL_API_KEY` | plain | api | Exotel's key id (the token below is the secret half). |
 | `EXOTEL_API_TOKEN` | secret | api | Only with `exotel`. |
 | `EXOTEL_SUBDOMAIN` | plain | api | Default `api.in.exotel.com`. |
+| `EXOTEL_API_BASE` | plain | api | The whole REST base (`https://` and a host only); set, it wins over `EXOTEL_SUBDOMAIN`. Staging: `https://api.exotel.com` (the Singapore cluster, where the owner's account authenticates; ADR 0080 addendum). |
 | `EXOTEL_CALLER_ID` | plain | api | The ExoPhone number shown to the customer. |
 | `EXOTEL_AGENT_NUMBER` | plain | api | The shop's own phone, rung first. |
 | `EXOTEL_WEBHOOK_TOKEN` | secret | api | The secret in the webhook addresses. |
