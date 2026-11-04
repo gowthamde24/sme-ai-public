@@ -9,9 +9,10 @@ Who: Owner, Admin and Sales read and act; **Owner and Admin** approve a search, 
 
 ## 0. `GET /lead-finder/availability` -> 200
 ```json
-{ "available": true, "source": "fixture | places | null", "reason": "ok | not_for_this_business | switched_off" }
+{ "available": true, "source": "fixture | places | null", "reason": "ok | not_for_this_business | switched_off | not_for_your_role" }
 ```
-Use it to show or hide the Prospects tab, the plan card and Settings -> Lead Finder. Never an error for a member.
+Use it to show or hide the Prospects tab, the plan card and Settings -> Lead Finder. Never an error for a member: a **Viewer** gets `available: false, reason: "not_for_your_role"` (a Viewer reads
+no prospect; every other route answers a Viewer 403).
 
 ## 1. The plan card: `POST /lead-finder/plan` -> 201 `SearchOut` (state `planned`)
 Request (closed; one of `text` or `query`):
@@ -109,7 +110,10 @@ Label it **"Practice call (simulated): nothing was dialled"**. A `qualified` out
 ```json
 { "fit_bar": 70, "daily_call_cap": 20, "call_from_hour": 10, "call_to_hour": 19, "searches_per_day": 5, "results_per_search": 20, "updated_at": "iso | null" }
 ```
-PUT sends any subset. Ranges: bar 50 to 100, cap 0 to 500, hours 9 to 21 (India time; from before to), searches 1 to 20 a day, results 1 to 20. Out of range: 422.
+PUT sends any subset. Ranges: bar 50 to 100, cap 0 to 500, hours 9 to 21 (India time; from before to), searches 1 to 20 a day, results 1 to 20. Errors, all 422:
+- `validation_error` (with `fields`): a value out of its range, an unknown field;
+- `invalid_hours`: both hours sent and "from" is not before "to" ("The calling hours must start before they end.");
+- `validation_error` (no field): one hour sent that crosses the stored other one (from 18 while to is 17); the database refuses it. Show "The calling hours must start before they end." for this too.
 
 ## 7. The draft quote of a qualified call (day 2): `GET` / `POST /prospects/{id}/quote-draft`
 After a practice call that QUALIFIED (`prospect.status: "qualified"`, it has a `lead_id`), the prospect's page shows **"Make the draft quote"**.

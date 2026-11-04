@@ -1,6 +1,6 @@
 """The Lead Finder under /v1/tenants/{tenant_id} (ADR 0119). The contract is docs/contracts/lead-finder.md.
 
-  GET  /lead-finder/availability                 Owner, Admin, Sales: is it here at all (a school: no), and which source (fixture | places)
+  GET  /lead-finder/availability                 any member (a Viewer: available false): is it here at all (a school: no), and which source (fixture | places)
   GET  /lead-finder/settings                     Owner, Admin, Sales: the bar, the daily call cap, the calling hours, the search caps
   PUT  /lead-finder/settings                     Owner, Admin
   POST /lead-finder/plan                         Owner, Admin, Sales: the owner's words (or a query) -> the PLAN CARD (nothing is searched yet)
@@ -58,6 +58,7 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["lead-finder"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 Worker = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
+Member = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES, Role.VIEWER))]
 OwnerAdminStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, strong=True))]
 
 
@@ -75,7 +76,10 @@ def _id(raw: str) -> uuid.UUID:
 
 
 @router.get("/lead-finder/availability", response_model=AvailabilityOut)
-def availability(ctx: Worker, runtime: RuntimeDep) -> AvailabilityOut:
+def availability(ctx: Member, runtime: RuntimeDep) -> AvailabilityOut:
+    """Never an error for a member (the contract): a Viewer reads no prospect, so for a Viewer the answer is `available: false`, reason `not_for_your_role` (nothing is asked of the database)."""
+    if ctx.role == Role.VIEWER:
+        return AvailabilityOut(available=False, source=None, reason="not_for_your_role")
     return _service(runtime).availability(ctx.principal.token, ctx.tenant.id)
 
 
