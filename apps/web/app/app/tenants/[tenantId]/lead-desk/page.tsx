@@ -15,6 +15,7 @@ import { readHandoffs } from "@/lib/outreach/source";
 import { sourceNames } from "@/lib/outreach/words";
 import { leadsScreens, outreachScreens } from "@/lib/screens/flag";
 import { SOURCE_TAGS } from "@/lib/outreach/types";
+import { getOfferedSources } from "@/lib/api/lead-sources";
 
 import { leadContext } from "../lead-context";
 import { assignLeadAction } from "../lead-desk-actions";
@@ -43,7 +44,9 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
   const ctx = { token: accessToken, tenantId, userId };
   const canSeeHot = tenant.role !== "viewer" && outreachScreens() !== "off";
   const handoffs = canSeeHot ? await readHandoffs(ctx, true) : null;
-  const [page, members] = await Promise.all([readDeskLeads(ctx, handoffs, after, new Date(), filter), fetchMembers(accessToken, tenantId).catch(() => [])]);
+  const [page, members, offered] = await Promise.all([readDeskLeads(ctx, handoffs, after, new Date(), filter), fetchMembers(accessToken, tenantId).catch(() => []), getOfferedSources(accessToken, tenantId, SOURCE_TAGS)]);
+  // the sources this business is offered (a school: website form, Meta lead ads, Excel, Google Sheet, a pasted list, contacts; owner, 4 Nov), and the one in the filter now even if it is not among them
+  const sourceOptions = offered ? [...offered, ...(filter.source && (SOURCE_TAGS as readonly string[]).includes(filter.source) && !offered.includes(filter.source as (typeof SOURCE_TAGS)[number]) ? [filter.source as (typeof SOURCE_TAGS)[number]] : [])] : SOURCE_TAGS;
   const sn = sourceNames(words);
   const team = members.map((m) => ({ id: m.user_id, name: m.display_name ?? words["ld.desk.member"] ?? "Member" }));
   const shown = page ? applyFilter(page.leads, filter, userId) : [];
@@ -71,7 +74,7 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
           </label>
           <select id="ldf-source" name="source" className={fieldInput} defaultValue={filter.source ?? ""}>
             <option value="">{words["ld.desk.f.any"]}</option>
-            {SOURCE_TAGS.map((s) => (
+            {sourceOptions.map((s) => (
               <option key={s} value={s}>
                 {sn[s]}
               </option>

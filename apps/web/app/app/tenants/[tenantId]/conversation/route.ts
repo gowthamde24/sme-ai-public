@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
+import { approveSearch, cancelSearch } from "@/lib/api/lead-finder";
 import { archiveConversation, confirmAction, getHistory, listConversations } from "@/lib/api/turns";
 import { requireUser } from "@/lib/auth/session";
 import { browserVoice } from "@/lib/screens/flag";
@@ -16,6 +17,7 @@ export const dynamic = "force-dynamic";
  *   {op: "open", id}                 the messages of one
  *   {op: "archive", id}              hides it (nothing is deleted)
  *   {op: "confirm", actionId, decision: "yes" | "no"}   the owner's answer to a plan (the Owner only; the API checks again)
+ *   {op: "lf_approve" | "lf_cancel", searchId}          the Lead Finder card's OK (the search runs; the answer is the result card) or Cancel (Owner, Admin; the API checks again)
  * A plain route, not a server action: a server action makes Next draw the page again under the open panel.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
@@ -67,6 +69,22 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           const code = error instanceof ApiRequestError ? error.code : "";
           // closed words the panel has a sentence for (the API's own English is never passed on)
           return NextResponse.json({ ok: false, error: code === "mfa_required" ? "mfa" : code === "action_expired" ? "expired" : code === "action_state" ? "state" : error instanceof ApiRequestError && error.status === 403 ? "forbidden" : "down" }, { headers });
+        }
+      }
+      case "lf_approve":
+      case "lf_cancel": {
+        if (role !== "owner" && role !== "admin") return NextResponse.json({ ok: false, error: "forbidden" }, { headers });
+        const searchId = body.searchId;
+        if (typeof searchId !== "string" || !isCanonicalUuid(searchId)) return new NextResponse(null, { status: 400, headers });
+        try {
+          const search = await (body.op === "lf_approve" ? approveSearch : cancelSearch)(user.accessToken, tenantId, searchId);
+          return NextResponse.json({ ok: true, search }, { headers });
+        } catch (error) {
+          if (error instanceof ApiAuthError) return new NextResponse(null, { status: 401, headers });
+          const code = error instanceof ApiRequestError ? error.code : "";
+          // closed words the card has a sentence for (the API's own English is never passed on)
+          const word = code === "search_cap_reached" ? "cap" : code === "prospect_state" ? "state" : code === "lead_finder_off" || code === "lead_finder_not_available" ? "off" : error instanceof ApiRequestError && error.status === 403 ? "forbidden" : "down";
+          return NextResponse.json({ ok: false, error: word }, { headers });
         }
       }
       default:

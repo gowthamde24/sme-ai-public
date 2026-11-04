@@ -9,7 +9,7 @@ import { isCanonicalUuid } from "./crm";
  * What a person is shown depends on their role, decided by the database: a Viewer gets zeros and empty lists, Sales get the cards and the recent steps but nothing
  * to approve, an Admin gets approvals, and only the Owner is asked about money held on closed orders. A screen should show what it is given.
  */
-export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held" | "outbox_approval" | "call_approval" | "hot_lead_waiting" | "outreach_paused";
+export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held" | "outbox_approval" | "call_approval" | "hot_lead_waiting" | "outreach_paused" | "material_quote_approval" | "campaign_approval" | "fees_overdue";
 export type NeedsYouAgent = "quote_writer" | "followup_desk" | "order_desk";
 
 /**
@@ -17,7 +17,7 @@ export type NeedsYouAgent = "quote_writer" | "followup_desk" | "order_desk";
  * `outbox_message` and `call_request` (job AT) are the ids of a WhatsApp message held for approval and of a request to phone a customer: they have no page of their own, Today decides them in place.
  * `outreach_batch` (Lead Desk) is a calling plan: a hot lead's hand-off names the lead, a plan paused by a limit names the batch.
  */
-export const TARGET_TYPES = ["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch"] as const;
+export const TARGET_TYPES = ["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "material_quote", "campaign", "fees"] as const;
 export type TargetType = (typeof TARGET_TYPES)[number];
 export interface Target {
   type: TargetType;
@@ -88,7 +88,8 @@ function when(v: unknown, what: string): string {
   return typeof v === "string" && /^\d{4}-\d{2}-\d{2}T/.test(v) && !Number.isNaN(Date.parse(v)) ? v : bad(what);
 }
 
-const KINDS: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "outbox_approval", "call_approval", "hot_lead_waiting", "outreach_paused"];
+// 4 Nov (C1 #307): a draft building-materials quote, a draft campaign (a fee reminder ...), a school's overdue fees (one row: a count and a total, no child's name)
+const KINDS: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "outbox_approval", "call_approval", "hot_lead_waiting", "outreach_paused", "material_quote_approval", "campaign_approval", "fees_overdue"];
 const AGENTS: readonly NeedsYouAgent[] = ["quote_writer", "followup_desk", "order_desk"];
 
 export function parseTarget(json: unknown): Target {

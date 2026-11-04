@@ -495,3 +495,25 @@ describe("the call row on a desktop, as the owner's target draws it", () => {
     expect(text.replace("Ramesh", "")).not.toMatch(/[A-Za-z]{3}/); // no English word is left
   });
 });
+
+describe("Needs you: a new business from the Lead Finder (job lead-finder part D)", () => {
+  const prospect = (summary: string): NeedsCard => ({ type: "item", key: `prospect_waiting-${U}`, at: "2026-10-11T03:12:00Z", item: { kind: "prospect_waiting", id: U, customer: "Sri Sai Constructions", city: null, agent: "lead_finder", summary, at: "2026-10-11T03:12:00Z", amount_paise: null, href: `/app/tenants/T/retailers?id=${U}` } });
+  it("is one short row, 'name · fit · reason', that opens the Prospects tab on that business", () => {
+    compactNext = true;
+    board([prospect("fit 64 · low stock")]);
+    const row = document.querySelector(`[data-needs-row="prospect_waiting-${U}"]`) as HTMLElement;
+    expect(row.textContent).toContain("Prospect");
+    expect(row.textContent).toContain("Sri Sai Constructions · fit 64 · low stock");
+    expect(within(row).getByRole("link", { name: "Decide" })).toHaveAttribute("href", `/app/tenants/T/retailers?id=${U}`);
+  });
+  it("keeps its reason in Telugu too (the words are ours, not the API's English)", () => {
+    const te = appDict("te") as Record<string, string>;
+    render(
+      <NeedsProvider initial={[prospect("ఫిట్ 64 · స్టాక్ తక్కువ")]} waiting={1}>
+        <NeedsYou words={todayWords((k) => te[k] ?? k)} role="owner" actions={fakeActions()} now={NOW} lang="te" compact />
+      </NeedsProvider>,
+    );
+    const row = document.querySelector(`[data-needs-row="prospect_waiting-${U}"]`) as HTMLElement;
+    expect(row.textContent).toContain("Sri Sai Constructions · ఫిట్ 64 · స్టాక్ తక్కువ");
+  });
+});
