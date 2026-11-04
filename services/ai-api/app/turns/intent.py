@@ -4,6 +4,8 @@ Four kinds: `smalltalk` (a greeting, a feeling, thanks, a joke), `general` (help
 tool path, with sources) and `action` (do something to people: call, message, remind; the task planner, then the owner's yes).
 
 Rules in code, no model call, no clock, no randomness (the same words give the same kind, so a test can pin each example). Order, first match wins:
+  0. a request to FIND NEW businesses ("find new retailers in Jayanagar", "జయనగర్‌లో కొత్త రీటైలర్లను వెతకండి"; app/lead_finder/intent.py `is_find_request`) -> action, reason `find_new_customers` (the Lead Finder's
+     plan card, app/turns/lead_finder.py; a business without the Lead Finder, such as a school, is decided again without this rule);
   1. an OUTREACH verb at the start of the message (call, phone, message, WhatsApp, remind, follow up with ...) or, in Telugu, Hindi and Kannada, a channel word together with a "do/send" verb -> action;
   2. a short greeting, feeling, thanks or joke -> smalltalk;
   3. a word about the business's own records (enquiry, lead, customer, quote, order, due, stock, today, how many ...) -> business;
@@ -22,6 +24,8 @@ import re
 import unicodedata
 from dataclasses import dataclass
 from typing import Literal
+
+from app.lead_finder.intent import is_find_request
 
 Kind = Literal["smalltalk", "general", "business", "action"]
 KINDS: tuple[Kind, ...] = ("smalltalk", "general", "business", "action")
@@ -203,9 +207,11 @@ def _has_indian_script(text: str) -> bool:
     return any(ord(ch) >= 0x0900 and unicodedata.category(ch).startswith(("L", "M")) for ch in text)
 
 
-def classify(text: str, previous: Kind | None = None) -> Intent:
-    """The kind of this turn. `previous` is the kind of the turn before it in the same conversation (None for the first)."""
+def classify(text: str, previous: Kind | None = None, *, find: bool = True) -> Intent:
+    """The kind of this turn. `previous` is the kind of the turn before it in the same conversation (None for the first). `find=False`: without rule 0 (a business that has no Lead Finder)."""
     norm = normalise(text)
+    if find and is_find_request(text):
+        return Intent("action", "find_new_customers")
     if _is_action(norm):
         return Intent("action", "outreach_verb")
     strong = _has_business(norm)

@@ -382,6 +382,30 @@ def test_exotel_odd_answers_and_host_name() -> None:
         calls.ExotelBridge("s", "k", "t", "0801", subdomain="evil.test/x?")
 
 
+def test_the_exotel_api_base_is_a_setting_and_wins_over_the_subdomain() -> None:
+    """Owner, 4 Nov 2026: the account authenticates on the Singapore cluster (https://api.exotel.com), not on Mumbai (the old default): EXOTEL_API_BASE names the base."""
+    seen: list[str] = []
+
+    def answer(r: httpx.Request) -> httpx.Response:
+        seen.append(str(r.url))
+        return httpx.Response(200, json={"Call": {"Sid": "abcd1234", "Status": "queued"}})
+
+    calls.ExotelBridge("SID1", "k", "t", "0801", api_base="https://api.exotel.com", client=_client(answer)).connect("+919000000001", "+919876543210", "b", None)
+    calls.ExotelBridge("SID1", "k", "t", "0801", api_base="https://api.exotel.com/", subdomain="api.in.exotel.com", client=_client(answer)).connect("+919000000001", "+919876543210", "b", None)
+    calls.ExotelBridge("SID1", "k", "t", "0801", client=_client(answer)).connect("+919000000001", "+919876543210", "b", None)
+    assert seen == ["https://api.exotel.com/v1/Accounts/SID1/Calls/connect.json"] * 2 + ["https://api.in.exotel.com/v1/Accounts/SID1/Calls/connect.json"], "unset: the old default, unchanged"
+    for bad in ("http://api.exotel.com", "https://api.exotel.com/v1", "https://evil.test/x?", "api.exotel.com", "https://"):
+        with pytest.raises(ValueError):
+            calls.ExotelBridge("s", "k", "t", "0801", api_base=bad)
+
+
+def test_the_setting_reaches_the_bridge() -> None:
+    from app.config import Settings
+
+    assert Settings(_env_file=None).exotel_api_base is None  # type: ignore[call-arg]
+    assert Settings(_env_file=None, exotel_api_base="https://api.exotel.com").exotel_api_base == "https://api.exotel.com"  # type: ignore[call-arg]
+
+
 def test_passthru_and_status_parsing() -> None:
     assert calls.passthru({"CallSid": "abc12345", "CallFrom": "09876543210", "Direction": "incoming"}) == ("abc12345", "09876543210")
     assert calls.passthru({"CallSid": "abc12345", "CallFrom": "09876543210"}) is not None

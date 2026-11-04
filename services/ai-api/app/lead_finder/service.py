@@ -55,6 +55,10 @@ MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", 
 _STOCK_WORD = {"in_stock": "in_stock", "few_left": "few_left", "made_to_order": "made_to_order"}
 
 
+# the "needs you" reasons that are decided again: none is the Owner's own choice
+REDECIDE_NEEDS = frozenset({"first_calls", "no_stock_match", "low_stock", "fit_middle"})
+
+
 def not_available() -> ApiError:
     return ApiError(403, "lead_finder_not_available", "Finding new customers is not available for this business.")
 
@@ -145,7 +149,8 @@ class LeadFinderService:
         return SettingsOut.model_validate(self.repo.settings_set(token, tenant_id, changes))
 
     # ------------------------------------------------------------------------------------------------------------------- plan -> OK -> run
-    def plan(self, token: str, tenant_id: uuid.UUID, body: PlanIn) -> SearchOut:
+    def plan(self, token: str, tenant_id: uuid.UUID, body: PlanIn, *, search_id: uuid.UUID | None = None) -> SearchOut:
+        """`search_id`: the chat gives the plan the id of the reply that shows it (app/turns/lead_finder.py), so a later "yes" and a replay find it again. A screen leaves it out."""
         data = self.data_for(token, tenant_id)
         if body.text:
             parsed = intent.parse(body.text, data)
@@ -163,7 +168,7 @@ class LeadFinderService:
         request = SearchRequest(query=query, area=area, max_results=max_results, language=body.language)
         now = self._clock()
         row = self.repo.search_plan(token, tenant_id, {
-            "p_id": str(uuid.uuid4()), "p_query": query, "p_area": area, "p_category_hint": hint, "p_max_results": max_results, "p_provider": source.provider,
+            "p_id": str(search_id or uuid.uuid4()), "p_query": query, "p_area": area, "p_category_hint": hint, "p_max_results": max_results, "p_provider": source.provider,
             "p_sku": source.sku(), "p_est_cost_paise": source.estimate_paise(request), "p_source_label": source_label(source.provider, query, area, now),
         })
         left = max(0, int(settings.get("searches_per_day", 5)) - int(ctx.get("searches_today", 0)))
@@ -255,7 +260,8 @@ class LeadFinderService:
         return ActionsOut(results=results)
 
     def redecide(self, token: str, tenant_id: uuid.UUID) -> RedecideOut:
-        """Prospects that waited for the calling hours or the day's cap are decided again (the worker can call this; so can the screen)."""
+        """Prospects that waited for the calling hours or the day's cap are decided again, and so are those that need the Owner only for a reason that can change (REDECIDE_NEEDS). The worker can call this;
+        so can the screen."""
         data = self.data_for(token, tenant_id)
         ctx = self.repo.context(token, tenant_id)
         settings = decide.Settings.from_row(self.repo.settings_get(token, tenant_id))
@@ -263,7 +269,11 @@ class LeadFinderService:
         waiting = int(ctx.get("ready_waiting", 0))
         approved = ctx.get("approved_by_search") or {}
         items: list[dict[str, Any]] = []
-        for row in self.repo.prospects(token, tenant_id, "researching", None, 200, None):
+        # the ones that waited for the hours or the cap, AND the "needs you" whose cause can change: the first ten calls of a search (the Owner has since said yes to ten), no or low stock match and a
+        # middle fit (the catalogue has changed). An Owner's own "ask me later", a competitor and a very large buyer stay with the Owner.
+        rows = self.repo.prospects(token, tenant_id, "researching", None, 200, None)
+        rows += [r for r in self.repo.prospects(token, tenant_id, "needs_owner", None, 200, None) if r.get("decision_reason") in REDECIDE_NEEDS]
+        for row in rows:
             d = decide.decide(place_of(row), data, stock, settings,
                               decide.Situation(now=self._clock(), calls_today=int(ctx.get("calls_today", 0)), ready_waiting=waiting, approved_in_search=int(approved.get(str(row.get("search_id")), 0))),
                               owner_approved=bool(row.get("owner_approved")))

@@ -90,6 +90,15 @@ class SearchOut(_Out):
     finished_at: datetime | None
 
 
+class ChatCardOut(_Out):
+    """Job LF-router: the card a chat reply carries (event `lead_finder` of POST /assistant/turns, and `lead_finder` on a message of GET /assistant/conversations/{id}). The search's own state says which
+    card: `planned` = the plan card (OK / Cancel; the OK is POST /lead-finder/searches/{id}/approve, or the owner says "yes" in the chat), `done` = the result card, `failed` / `cancelled` = a closed card.
+    `can_approve`: Owner or Admin (a Sales member sees the plan, the owner says OK)."""
+
+    search: SearchOut
+    can_approve: bool
+
+
 class SearchListOut(_Out):
     items: list[SearchOut]
 
