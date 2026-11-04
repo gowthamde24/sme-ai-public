@@ -38,7 +38,7 @@ def school() -> tuple[Any, FakeLeadFinderRepo]:
 
 def test_a_school_has_the_lead_finder_for_organisations() -> None:
     client, _ = school()
-    assert client.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json() == {"available": True, "source": "fixture", "reason": "ok", "audience": "organisations"}
+    assert client.get(f"{URL}/lead-finder/availability", headers=auth("a_owner")).json() == {"available": True, "source": "fixture", "reason": "ok", "upgrade_to": None, "audience": "organisations"}
 
 
 def test_a_school_finds_organisations_and_never_reads_stock() -> None:
