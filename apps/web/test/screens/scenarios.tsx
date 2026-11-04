@@ -57,6 +57,8 @@ import { parseChallan, parseTripDetail, parseTripList } from "@/lib/api/deliveri
 import { CHALLAN_JSON, TRIP as TRIP_ID, TRIP_DETAIL_JSON, TRIP_LIST_JSON, TRIP_ON_THE_WAY_JSON } from "@/lib/api/deliveries-fixtures";
 import { parseEntries as parseLedgerEntries, parseReceipt as parseLedgerReceipt, parseStatement as parseLedgerStatement, parseSummary as parseLedgerSummary } from "@/lib/api/ledger";
 import { COMPANY as LEDGER_COMPANY, ENTRIES_JSON, ENTRY_PAYMENT, RECEIPT_JSON, STATEMENT_JSON, SUMMARY_JSON as LEDGER_SUMMARY_JSON } from "@/lib/api/ledger-fixtures";
+import { parseAvailability, parseProspect, parseSettings as parseFinderSettings, parseStats as parseProspectStats } from "@/lib/api/lead-finder";
+import * as LF from "@/lib/api/lead-finder-fixtures";
 import type { Handler } from "./state";
 
 export const ROLES = ["owner", "admin", "sales", "viewer"] as const;
@@ -717,11 +719,21 @@ add({ id: "catalogue-new", roles: ["owner", "admin", "sales"], render: async () 
 add({ id: "catalogue-edit", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/edit/page")).default(props({ itemId: ITEM_A }, {})), handlers: catalogueHandlers });
 void summaryJson;
 
-// ---- Find retailers (job CC) ---------------------------------------------------------------------------------------------------
-const RESEARCH_STATUS = { tools: { web_search: { enabled: false, used_today: null, daily_limit: null }, read_page: { enabled: false, used_today: null, daily_limit: null }, find_retailers: { enabled: true, used_today: 2, daily_limit: 10 }, metal_prices: { enabled: false, used_today: null, daily_limit: null } } };
-add({ id: "retailers", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => RESEARCH_STATUS }) });
-add({ id: "retailers-off", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => ({ tools: { ...RESEARCH_STATUS.tools, find_retailers: { enabled: false, used_today: null, daily_limit: null } } }) }) });
-add({ id: "retailers-unreadable", roles: ["admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
+// ---- the Prospects tab (job lead-finder part D; it replaced job CC's map search at /retailers) ------------------------------------------
+const prospectRows = (...rows: unknown[]) => ({ items: rows.map(parseProspect), nextCursor: null });
+const finderHandlers = (availability: unknown, rows: unknown[]) => (role: Role) => ({
+  ...base(role),
+  readAvailability: () => (availability === null ? null : parseAvailability(availability)),
+  redecideProspects: () => 0,
+  listProspects: () => prospectRows(...rows),
+  getProspectStats: () => parseProspectStats({ total: 18, by_status: { needs_owner: 11, skipped: 7 } }),
+});
+const PROSPECTS = [LF.PROSPECT, LF.PROSPECT_READY, LF.PROSPECT_LOW, LF.PROSPECT_QUALIFIED];
+add({ id: "retailers", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.AVAILABLE, PROSPECTS) });
+add({ id: "retailers-places", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.AVAILABLE_PLACES, [{ ...LF.PROSPECT, source: "google_maps", attribution: "Google Maps", source_label: "Google Maps search 'saree shops Jayanagar', 2 Nov" }, LF.PROSPECT_LOW]) });
+add({ id: "retailers-school", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.SCHOOL, []) });
+add({ id: "retailers-unreadable", roles: ["admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(null, []) });
+void parseFinderSettings;
 
 // ---- the team and joining a business (job CC) ----------------------------------------------------------------------------------
 const TEAM = {

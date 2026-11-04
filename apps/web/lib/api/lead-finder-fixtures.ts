@@ -33,7 +33,7 @@ export const PROSPECT = {
 };
 export const PROSPECT_LOW = { ...PROSPECT, id: P2, name: "Sri Sai Constructions", category: "Hardware dealer", area: "Basavanagudi", decision_reason: "low_stock", fit_score: 64, fit_reason: "Dealer; only some items in stock", review_count: 40 };
 export const PROSPECT_READY = { ...PROSPECT, id: P3, name: "Padmavathi Silks", area: "JP Nagar", status: "call_ready", decision_reason: "owner_approved", fit_score: 78, owner_approved: true };
-export const PROSPECT_QUALIFIED = { ...PROSPECT_READY, status: "qualified", lead_id: L1 };
+export const PROSPECT_QUALIFIED = { ...PROSPECT_READY, id: "b1b1b1b1-0000-4000-8000-000000000004", name: "Sri Venkateswara Textiles", status: "qualified", lead_id: L1 };
 
 export const PRACTICE = {
   simulated: true, call_id: "d1d1d1d1-0000-4000-8000-000000000001", prospect: PROSPECT_QUALIFIED, persona: "interested", language: "te", outcome: "qualified", end_reason: "goodbye",

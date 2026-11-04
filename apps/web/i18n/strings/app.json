@@ -75600,5 +75600,1501 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "lf.title": {
+  "en": "Prospects",
+  "te": "ప్రాస్పెక్ట్స్",
+  "hi": "प्रॉस्पेक्ट्स",
+  "kn": "ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.sub": {
+  "en": "New businesses that may buy from you, best fit first.",
+  "te": "మీ దగ్గర కొనే అవకాశం ఉన్న కొత్త వ్యాపారాలు, బాగా సరిపోయేవి ముందు.",
+  "hi": "नए बिज़नेस जो आपसे खरीद सकते हैं, सबसे सही पहले।",
+  "kn": "ನಿಮ್ಮಿಂದ ಕೊಳ್ಳಬಹುದಾದ ಹೊಸ ವ್ಯಾಪಾರಗಳು, ಹೆಚ್ಚು ಹೊಂದುವವು ಮೊದಲು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.viewer": {
+  "en": "Prospects are for the owner, admins and sales.",
+  "te": "ప్రాస్పెక్ట్స్ ఓనర్, అడ్మిన్లు, సేల్స్ వాళ్ళకి మాత్రమే.",
+  "hi": "प्रॉस्पेक्ट्स ओनर, एडमिन और सेल्स के लिए हैं।",
+  "kn": "ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್ ಓನರ್, ಅಡ್ಮಿನ್ ಮತ್ತು ಸೇಲ್ಸ್‌ಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.demo": {
+  "en": "Made-up businesses for the demo",
+  "te": "డెమో కోసం కల్పిత వ్యాపారాలు",
+  "hi": "डेमो के लिए बनाए गए नकली बिज़नेस",
+  "kn": "ಡೆಮೋಗಾಗಿ ಕಲ್ಪಿತ ವ್ಯಾಪಾರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.nocall": {
+  "en": "No real call is ever placed from here: a call is a practice call (simulated) for now.",
+  "te": "ఇక్కడ నుంచి నిజమైన కాల్ ఏదీ వెళ్ళదు: ఇప్పటికి కాల్ అంటే ప్రాక్టీస్ కాల్ (సిమ్యులేషన్) మాత్రమే.",
+  "hi": "यहाँ से कोई असली कॉल नहीं जाती: अभी कॉल का मतलब प्रैक्टिस कॉल (सिम्युलेशन) है।",
+  "kn": "ಇಲ್ಲಿಂದ ನಿಜವಾದ ಕಾಲ್ ಹೋಗುವುದಿಲ್ಲ: ಸದ್ಯಕ್ಕೆ ಕಾಲ್ ಅಂದರೆ ಪ್ರಾಕ್ಟೀಸ್ ಕಾಲ್ (ಸಿಮ್ಯುಲೇಶನ್) ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.na": {
+  "en": "The prospects could not be loaded. Try again in a moment.",
+  "te": "ప్రాస్పెక్ట్స్ లోడ్ కాలేదు. కాసేపాగి మళ్ళీ చూడండి.",
+  "hi": "प्रॉस्पेक्ट्स लोड नहीं हो पाए। थोड़ी देर बाद फिर देखें।",
+  "kn": "ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್ ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.none": {
+  "en": "No prospects yet. Find new retailers above.",
+  "te": "ఇంకా ప్రాస్పెక్ట్స్ లేరు. పైన కొత్త రిటైలర్లను వెతకండి.",
+  "hi": "अभी कोई प्रॉस्पेक्ट नहीं। ऊपर नए रिटेलर खोजें।",
+  "kn": "ಇನ್ನೂ ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್ ಇಲ್ಲ. ಮೇಲೆ ಹೊಸ ರಿಟೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.none.filter": {
+  "en": "No prospects with this status.",
+  "te": "ఈ స్టేటస్‌లో ప్రాస్పెక్ట్స్ లేరు.",
+  "hi": "इस स्टेटस में कोई प्रॉस्पेक्ट नहीं।",
+  "kn": "ಈ ಸ್ಟೇಟಸ್‌ನಲ್ಲಿ ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.more": {
+  "en": "Show more",
+  "te": "ఇంకా చూపించు",
+  "hi": "और दिखाएँ",
+  "kn": "ಇನ್ನಷ್ಟು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.f.label": {
+  "en": "Show prospects by status",
+  "te": "స్టేటస్ ప్రకారం ప్రాస్పెక్ట్స్",
+  "hi": "स्टेटस के हिसाब से प्रॉस्पेक्ट्स",
+  "kn": "ಸ್ಟೇಟಸ್ ಪ್ರಕಾರ ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.f.all": {
+  "en": "All",
+  "te": "అన్నీ",
+  "hi": "सब",
+  "kn": "ಎಲ್ಲಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.one": {
+  "en": "Showing one prospect.",
+  "te": "ఒక్క ప్రాస్పెక్ట్ మాత్రమే చూపిస్తున్నాం.",
+  "hi": "एक ही प्रॉस्पेक्ट दिखा रहे हैं।",
+  "kn": "ಒಂದೇ ಪ್ರಾಸ್ಪೆಕ್ಟ್ ತೋರಿಸುತ್ತಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.one.gone": {
+  "en": "That prospect is not there any more.",
+  "te": "ఆ ప్రాస్పెక్ట్ ఇప్పుడు లేదు.",
+  "hi": "वह प्रॉस्पेक्ट अब नहीं है।",
+  "kn": "ಆ ಪ್ರಾಸ್ಪೆಕ್ಟ್ ಈಗ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.all": {
+  "en": "Show all prospects",
+  "te": "అన్ని ప్రాస్పెక్ట్స్ చూపించు",
+  "hi": "सारे प्रॉस్पेक्ट्स दिखाएँ",
+  "kn": "ಎಲ್ಲಾ ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.status.new": {
+  "en": "New",
+  "te": "కొత్తది",
+  "hi": "नया",
+  "kn": "ಹೊಸದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.status.researching": {
+  "en": "Waiting",
+  "te": "వెయిట్ చేస్తోంది",
+  "hi": "इंतज़ार में",
+  "kn": "ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.status.call_ready": {
+  "en": "Ready to call",
+  "te": "కాల్ చేయడానికి రెడీ",
+  "hi": "कॉल के लिए तैयार",
+  "kn": "ಕಾಲ್ ಮಾಡಲು ರೆಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.status.needs_owner": {
+  "en": "Needs you",
+  "te": "మీరు చూడాలి",
+  "hi": "आपको देखना है",
+  "kn": "ನೀವು ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.status.skipped": {
+  "en": "Skipped",
+  "te": "వదిలేశాం",
+  "hi": "छोड़ दिया",
+  "kn": "ಬಿಟ್ಟಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.status.contacted": {
+  "en": "Contacted",
+  "te": "మాట్లాడాం",
+  "hi": "बात हो गई",
+  "kn": "ಮಾತಾಡಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.status.qualified": {
+  "en": "Qualified",
+  "te": "ఆసక్తి ఉంది",
+  "hi": "रुचि है",
+  "kn": "ಆಸಕ್ತಿ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.status.not_interested": {
+  "en": "Not interested",
+  "te": "ఆసక్తి లేదు",
+  "hi": "रुचि नहीं",
+  "kn": "ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.fit_high": {
+  "en": "good fit",
+  "te": "బాగా సరిపోతుంది",
+  "hi": "अच्छा मेल",
+  "kn": "ಚೆನ್ನಾಗಿ ಹೊಂದುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.fit_middle": {
+  "en": "fit below your bar",
+  "te": "మీ బార్ కంటే తక్కువ ఫిట్",
+  "hi": "आपकी सीमा से कम फिट",
+  "kn": "ನಿಮ್ಮ ಬಾರ್‌ಗಿಂತ ಕಡಿಮೆ ಫಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.fit_low": {
+  "en": "low fit",
+  "te": "తక్కువ ఫిట్",
+  "hi": "कम फिट",
+  "kn": "ಕಡಿಮೆ ಫಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.first_calls": {
+  "en": "first calls of a new search wait for you",
+  "te": "కొత్త సెర్చ్‌లో మొదటి కాల్స్ మీ కోసం ఆగుతాయి",
+  "hi": "नई खोज की पहली कॉल आपका इंतज़ार करती हैं",
+  "kn": "ಹೊಸ ಸರ್ಚ್‌ನ ಮೊದಲ ಕಾಲ್‌ಗಳು ನಿಮಗಾಗಿ ಕಾಯುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.low_stock": {
+  "en": "low stock",
+  "te": "స్టాక్ తక్కువ",
+  "hi": "स्टॉक कम",
+  "kn": "ಸ್ಟಾಕ್ ಕಡಿಮೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.no_stock_match": {
+  "en": "nothing in stock they would buy",
+  "te": "వాళ్ళు కొనేది మన స్టాక్‌లో లేదు",
+  "hi": "जो वे खरीदेंगे वह स्टॉक में नहीं",
+  "kn": "ಅವರು ಕೊಳ್ಳುವುದು ನಮ್ಮ ಸ್ಟಾಕ್‌ನಲ್ಲಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.very_large": {
+  "en": "very large buyer",
+  "te": "చాలా పెద్ద కొనుగోలుదారు",
+  "hi": "बहुत बड़ा खरीदार",
+  "kn": "ತುಂಬಾ ದೊಡ್ಡ ಖರೀದಿದಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.competitor": {
+  "en": "looks like a competitor",
+  "te": "పోటీ వ్యాపారంలా ఉంది",
+  "hi": "प्रतियोगी जैसा लगता है",
+  "kn": "ಸ್ಪರ್ಧಿಯಂತೆ ಕಾಣುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.not_a_buyer": {
+  "en": "not a buyer",
+  "te": "కొనేవాళ్ళు కాదు",
+  "hi": "खरीदार नहीं",
+  "kn": "ಖರೀದಿದಾರರಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.suppressed": {
+  "en": "asked not to be called",
+  "te": "కాల్ చేయొద్దన్నారు",
+  "hi": "कॉल न करने को कहा",
+  "kn": "ಕಾಲ್ ಮಾಡಬೇಡಿ ಅಂದಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.contacted_recently": {
+  "en": "contacted in the last 90 days",
+  "te": "గత 90 రోజుల్లో మాట్లాడాం",
+  "hi": "पिछले 90 दिनों में बात हुई",
+  "kn": "ಕಳೆದ 90 ದಿನಗಳಲ್ಲಿ ಮಾತಾಡಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.outside_hours": {
+  "en": "outside calling hours",
+  "te": "కాల్ చేసే టైమ్ కాదు",
+  "hi": "कॉल के समय से बाहर",
+  "kn": "ಕಾಲ್ ಮಾಡುವ ಸಮಯ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.daily_cap": {
+  "en": "today's call limit reached",
+  "te": "ఈరోజు కాల్ లిమిట్ అయిపోయింది",
+  "hi": "आज की कॉल सीमा पूरी",
+  "kn": "ಇಂದಿನ ಕಾಲ್ ಮಿತಿ ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.owner_approved": {
+  "en": "you said call",
+  "te": "కాల్ చేయమని మీరు చెప్పారు",
+  "hi": "आपने कॉल करने को कहा",
+  "kn": "ಕಾಲ್ ಮಾಡಿ ಅಂತ ನೀವು ಹೇಳಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.owner_skipped": {
+  "en": "you skipped it",
+  "te": "మీరు వదిలేశారు",
+  "hi": "आपने छोड़ दिया",
+  "kn": "ನೀವು ಬಿಟ್ಟಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.asked_later": {
+  "en": "you asked to see it later",
+  "te": "తర్వాత అడగమన్నారు",
+  "hi": "आपने बाद में पूछने को कहा",
+  "kn": "ನಂತರ ಕೇಳಿ ಅಂದಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reason.no_phone": {
+  "en": "no phone number",
+  "te": "ఫోన్ నంబర్ లేదు",
+  "hi": "फ़ोन नंबर नहीं",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.fit": {
+  "en": "fit {n}",
+  "te": "ఫిట్ {n}",
+  "hi": "फिट {n}",
+  "kn": "ಫಿಟ್ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.lead": {
+  "en": "Open the lead",
+  "te": "లీడ్ తెరవండి",
+  "hi": "लीड खोलें",
+  "kn": "ಲೀಡ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.select": {
+  "en": "Tick {name}",
+  "te": "{name} ని టిక్ చేయండి",
+  "hi": "{name} पर टिक करें",
+  "kn": "{name} ಟಿಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.selectall": {
+  "en": "Tick all on this page",
+  "te": "ఈ పేజీలో అన్నీ టిక్ చేయండి",
+  "hi": "इस पेज पर सब पर टिक करें",
+  "kn": "ಈ ಪುಟದಲ್ಲಿ ಎಲ್ಲಾ ಟಿಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.bulk.label": {
+  "en": "With the ones you ticked ({n})",
+  "te": "టిక్ చేసినవాటితో ({n})",
+  "hi": "टिक किए हुओं के साथ ({n})",
+  "kn": "ಟಿಕ್ ಮಾಡಿದವುಗಳೊಂದಿಗೆ ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.call": {
+  "en": "Call",
+  "te": "కాల్ చేయండి",
+  "hi": "कॉल करें",
+  "kn": "ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.later": {
+  "en": "Ask me later",
+  "te": "తర్వాత అడగండి",
+  "hi": "बाद में पूछें",
+  "kn": "ನಂತರ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.skip": {
+  "en": "Skip",
+  "te": "వదిలేయండి",
+  "hi": "छोड़ें",
+  "kn": "ಬಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.not_interested": {
+  "en": "Not interested",
+  "te": "ఆసక్తి లేదు",
+  "hi": "रुचि नहीं",
+  "kn": "ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.do_not_call": {
+  "en": "Do not call",
+  "te": "కాల్ చేయొద్దు",
+  "hi": "कॉल न करें",
+  "kn": "ಕಾಲ್ ಮಾಡಬೇಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.none": {
+  "en": "Tick at least one business first.",
+  "te": "ముందు కనీసం ఒక వ్యాపారాన్ని టిక్ చేయండి.",
+  "hi": "पहले कम से कम एक बिज़नेस पर टिक करें।",
+  "kn": "ಮೊದಲು ಕನಿಷ್ಠ ಒಂದು ವ್ಯಾಪಾರ ಟಿಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.confirm": {
+  "en": "Mark {n} for good? They are never called again from this workspace.",
+  "te": "{n} ని శాశ్వతంగా మార్క్ చేయాలా? ఈ వర్క్‌స్పేస్ నుంచి వాళ్ళకి మళ్ళీ ఎప్పుడూ కాల్ వెళ్ళదు.",
+  "hi": "{n} को हमेशा के लिए मार्क करें? इस वर्कस्पेस से उन्हें फिर कभी कॉल नहीं जाएगी।",
+  "kn": "{n} ಅನ್ನು ಶಾಶ್ವತವಾಗಿ ಮಾರ್ಕ್ ಮಾಡಬೇಕೆ? ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ನಿಂದ ಅವರಿಗೆ ಮತ್ತೆ ಕಾಲ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.yes": {
+  "en": "Yes, never call them",
+  "te": "అవును, ఎప్పుడూ కాల్ చేయొద్దు",
+  "hi": "हाँ, कभी कॉल न करें",
+  "kn": "ಹೌದು, ಎಂದೂ ಕಾಲ್ ಮಾಡಬೇಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.no": {
+  "en": "No, go back",
+  "te": "వద్దు, వెనక్కి",
+  "hi": "नहीं, वापस",
+  "kn": "ಬೇಡ, ಹಿಂದಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.done": {
+  "en": "{ok} changed, {failed} not changed.",
+  "te": "{ok} మారాయి, {failed} మారలేదు.",
+  "hi": "{ok} बदले, {failed} नहीं बदले।",
+  "kn": "{ok} ಬದಲಾದವು, {failed} ಬದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.now": {
+  "en": "{name}: now {status}",
+  "te": "{name}: ఇప్పుడు {status}",
+  "hi": "{name}: अब {status}",
+  "kn": "{name}: ಈಗ {status}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.err.prospect_state": {
+  "en": "{name}: not possible in the state it is in now",
+  "te": "{name}: ఇప్పుడున్న స్టేటస్‌లో కుదరదు",
+  "hi": "{name}: अभी की हालत में यह नहीं हो सकता",
+  "kn": "{name}: ಈಗಿನ ಸ್ಟೇಟಸ್‌ನಲ್ಲಿ ಆಗುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.act.err.not_found": {
+  "en": "{name}: not found",
+  "te": "{name}: దొరకలేదు",
+  "hi": "{name}: नहीं मिला",
+  "kn": "{name}: ಸಿಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.find.label": {
+  "en": "Find new retailers in …",
+  "te": "కొత్త రిటైలర్లను ఎక్కడ వెతకాలి …",
+  "hi": "नए रिटेलर कहाँ खोजें …",
+  "kn": "ಹೊಸ ರಿಟೇಲರ್‌ಗಳನ್ನು ಎಲ್ಲಿ ಹುಡುಕಬೇಕು …",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.find.placeholder": {
+  "en": "find new retailers in Jayanagar",
+  "te": "Jayanagar లో కొత్త retailers వెతుకు",
+  "hi": "Jayanagar में नए रिटेलर खोजो",
+  "kn": "Jayanagar ನಲ್ಲಿ ಹೊಸ ರಿಟೇಲರ್ ಹುಡುಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.find.btn": {
+  "en": "Plan the search",
+  "te": "సెర్చ్ ప్లాన్ చేయండి",
+  "hi": "खोज की योजना बनाएँ",
+  "kn": "ಸರ್ಚ್ ಪ್ಲಾನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.find.help": {
+  "en": "Nothing is searched until you press OK.",
+  "te": "మీరు OK నొక్కే వరకు ఏదీ వెతకం.",
+  "hi": "जब तक आप OK न दबाएँ, कुछ नहीं खोजा जाता।",
+  "kn": "ನೀವು OK ಒತ್ತುವವರೆಗೆ ಏನೂ ಹುಡುಕುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.find.empty": {
+  "en": "Type what to find and where.",
+  "te": "ఏం వెతకాలో, ఎక్కడో టైప్ చేయండి.",
+  "hi": "क्या और कहाँ खोजना है, लिखें।",
+  "kn": "ಏನು, ಎಲ್ಲಿ ಹುಡುಕಬೇಕು ಅಂತ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.find.too_long": {
+  "en": "Keep it under 300 letters.",
+  "te": "300 అక్షరాల లోపు ఉంచండి.",
+  "hi": "300 अक्षरों से कम रखें।",
+  "kn": "300 ಅಕ್ಷರಗಳ ಒಳಗೆ ಇಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.title": {
+  "en": "The search plan",
+  "te": "సెర్చ్ ప్లాన్",
+  "hi": "खोज की योजना",
+  "kn": "ಸರ್ಚ್ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.query": {
+  "en": "What",
+  "te": "ఏంటి",
+  "hi": "क्या",
+  "kn": "ಏನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.area": {
+  "en": "Where",
+  "te": "ఎక్కడ",
+  "hi": "कहाँ",
+  "kn": "ಎಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.area.none": {
+  "en": "Not given",
+  "te": "చెప్పలేదు",
+  "hi": "नहीं बताया",
+  "kn": "ಹೇಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.max": {
+  "en": "At most",
+  "te": "గరిష్ఠంగా",
+  "hi": "ज़्यादा से ज़्यादा",
+  "kn": "ಗರಿಷ್ಠ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.max.n": {
+  "en": "{n} businesses",
+  "te": "{n} వ్యాపారాలు",
+  "hi": "{n} बिज़नेस",
+  "kn": "{n} ವ್ಯಾಪಾರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.cost": {
+  "en": "Cost",
+  "te": "ఖర్చు",
+  "hi": "खर्च",
+  "kn": "ಖರ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.cost.estimate": {
+  "en": "{amount} (estimate)",
+  "te": "{amount} (అంచనా)",
+  "hi": "{amount} (अंदाज़ा)",
+  "kn": "{amount} (ಅಂದಾಜು)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.left": {
+  "en": "Searches left today",
+  "te": "ఈరోజు మిగిలిన సెర్చ్‌లు",
+  "hi": "आज बची खोजें",
+  "kn": "ಇಂದು ಉಳಿದ ಸರ್ಚ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.ok": {
+  "en": "OK",
+  "te": "OK చేయండి",
+  "hi": "OK करें",
+  "kn": "OK ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.cancel": {
+  "en": "Cancel",
+  "te": "క్యాన్సల్",
+  "hi": "कैंसल",
+  "kn": "ಕ್ಯಾನ್ಸಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.plan.owner": {
+  "en": "Only the owner or an admin can OK a search.",
+  "te": "సెర్చ్‌ని ఓనర్ లేదా అడ్మిన్ మాత్రమే OK చేయగలరు.",
+  "hi": "खोज को सिर्फ़ ओनर या एडमिन OK कर सकते हैं।",
+  "kn": "ಸರ್ಚ್ ಅನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ OK ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.result.title": {
+  "en": "Search done",
+  "te": "సెర్చ్ అయిపోయింది",
+  "hi": "खोज पूरी",
+  "kn": "ಸರ್ಚ್ ಮುಗಿಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.result.line": {
+  "en": "Found {new} · {call_ready} call-ready · {needs_owner} need you · {skipped} skipped",
+  "te": "{new} దొరికాయి · {call_ready} కాల్‌కి రెడీ · {needs_owner} మీరు చూడాలి · {skipped} వదిలేశాం",
+  "hi": "{new} मिले · {call_ready} कॉल के लिए तैयार · {needs_owner} आपको देखने हैं · {skipped} छोड़े",
+  "kn": "{new} ಸಿಕ್ಕವು · {call_ready} ಕಾಲ್‌ಗೆ ರೆಡಿ · {needs_owner} ನೀವು ನೋಡಬೇಕು · {skipped} ಬಿಟ್ಟಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.result.failed": {
+  "en": "The source did not answer. Nothing was billed and nothing was kept. Try again later.",
+  "te": "సోర్స్ జవాబు ఇవ్వలేదు. ఏ బిల్లూ లేదు, ఏదీ ఉంచలేదు. తర్వాత మళ్ళీ చూడండి.",
+  "hi": "सोर्स ने जवाब नहीं दिया। कोई बिल नहीं बना, कुछ नहीं रखा। बाद में फिर कोशिश करें।",
+  "kn": "ಸೋರ್ಸ್ ಉತ್ತರ ಕೊಡಲಿಲ್ಲ. ಯಾವ ಬಿಲ್ಲೂ ಇಲ್ಲ, ಏನೂ ಇಟ್ಟುಕೊಂಡಿಲ್ಲ. ನಂತರ ಮತ್ತೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.result.cancelled": {
+  "en": "Search cancelled. Nothing was searched.",
+  "te": "సెర్చ్ క్యాన్సల్ అయింది. ఏదీ వెతకలేదు.",
+  "hi": "खोज कैंसल हुई। कुछ नहीं खोजा गया।",
+  "kn": "ಸರ್ಚ್ ಕ್ಯಾನ್ಸಲ್ ಆಯಿತು. ಏನೂ ಹುಡುಕಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.result.show": {
+  "en": "Show the ones that need you",
+  "te": "మీరు చూడాల్సినవి చూపించు",
+  "hi": "जो आपको देखने हैं, दिखाएँ",
+  "kn": "ನೀವು ನೋಡಬೇಕಾದವು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.cap": {
+  "en": "Today's searches are used up. Try again tomorrow, or change the limit in Settings.",
+  "te": "ఈరోజు సెర్చ్‌లు అయిపోయాయి. రేపు మళ్ళీ చూడండి, లేదా సెట్టింగ్స్‌లో లిమిట్ మార్చండి.",
+  "hi": "आज की खोजें खत्म। कल फिर कोशिश करें, या सेटिंग्स में सीमा बदलें।",
+  "kn": "ಇಂದಿನ ಸರ್ಚ್‌ಗಳು ಮುಗಿದಿವೆ. ನಾಳೆ ಮತ್ತೆ ನೋಡಿ, ಅಥವಾ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಮಿತಿ ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.off": {
+  "en": "Finding new customers is switched off right now.",
+  "te": "కొత్త కస్టమర్లను వెతకడం ఇప్పుడు ఆఫ్‌లో ఉంది.",
+  "hi": "नए ग्राहक खोजना अभी बंद है।",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು ಈಗ ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.state": {
+  "en": "This search was cancelled. Plan it again.",
+  "te": "ఈ సెర్చ్ క్యాన్సల్ అయింది. మళ్ళీ ప్లాన్ చేయండి.",
+  "hi": "यह खोज कैंसल हो चुकी है। फिर से योजना बनाएँ।",
+  "kn": "ಈ ಸರ್ಚ್ ಕ್ಯಾನ್ಸಲ್ ಆಗಿದೆ. ಮತ್ತೆ ಪ್ಲಾನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.err.not_a_search": {
+  "en": "Say what to find and where, for example: find new retailers in Jayanagar.",
+  "te": "ఏం వెతకాలో, ఎక్కడో చెప్పండి, ఉదాహరణకి: Jayanagar లో కొత్త retailers వెతుకు.",
+  "hi": "क्या और कहाँ खोजना है बताएँ, जैसे: Jayanagar में नए रिटेलर खोजो।",
+  "kn": "ಏನು, ಎಲ್ಲಿ ಹುಡುಕಬೇಕು ಹೇಳಿ, ಉದಾಹರಣೆಗೆ: Jayanagar ನಲ್ಲಿ ಹೊಸ ರಿಟೇಲರ್ ಹುಡುಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.open": {
+  "en": "Practice call",
+  "te": "ప్రాక్టీస్ కాల్",
+  "hi": "प्रैक्टिस कॉल",
+  "kn": "ಪ್ರಾಕ್ಟೀಸ್ ಕಾಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.title": {
+  "en": "Practice call (simulated): nothing was dialled",
+  "te": "ప్రాక్టీస్ కాల్ (సిమ్యులేషన్): ఏ నంబర్‌కీ కాల్ వెళ్ళలేదు",
+  "hi": "प्रैक्टिस कॉल (सिम्युलेशन): कोई नंबर डायल नहीं हुआ",
+  "kn": "ಪ್ರಾಕ್ಟೀಸ್ ಕಾಲ್ (ಸಿಮ್ಯುಲೇಶನ್): ಯಾವ ನಂಬರ್‌ಗೂ ಕಾಲ್ ಹೋಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.intro": {
+  "en": "Our assistant talks to a made-up shopkeeper. Nothing is dialled and nobody is called.",
+  "te": "మన అసిస్టెంట్ ఒక కల్పిత షాప్ ఓనర్‌తో మాట్లాడుతుంది. ఏ నంబర్‌కీ కాల్ వెళ్ళదు.",
+  "hi": "हमारा असिस्टेंट एक नकली दुकानदार से बात करता है। कोई नंबर डायल नहीं होता।",
+  "kn": "ನಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಒಬ್ಬ ಕಲ್ಪಿತ ಅಂಗಡಿಯವರ ಜೊತೆ ಮಾತಾಡುತ್ತದೆ. ಯಾವ ನಂಬರ್‌ಗೂ ಕಾಲ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.persona": {
+  "en": "The shopkeeper is",
+  "te": "షాప్ ఓనర్",
+  "hi": "दुकानदार",
+  "kn": "ಅಂಗಡಿಯವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.lang": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.start": {
+  "en": "Start the practice call",
+  "te": "ప్రాక్టీస్ కాల్ మొదలుపెట్టండి",
+  "hi": "प्रैक्टिस कॉल शुरू करें",
+  "kn": "ಪ್ರಾಕ್ಟೀಸ್ ಕಾಲ್ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.working": {
+  "en": "Talking…",
+  "te": "మాట్లాడుతోంది…",
+  "hi": "बात हो रही है…",
+  "kn": "ಮಾತಾಡುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.outcome": {
+  "en": "Result",
+  "te": "ఫలితం",
+  "hi": "नतीजा",
+  "kn": "ಫಲಿತಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.summary": {
+  "en": "Summary",
+  "te": "సారాంశం",
+  "hi": "सार",
+  "kn": "ಸಾರಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.transcript": {
+  "en": "What was said",
+  "te": "ఏం మాట్లాడారు",
+  "hi": "क्या बात हुई",
+  "kn": "ಏನು ಮಾತಾಡಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.who.assistant": {
+  "en": "Assistant",
+  "te": "అసిస్టెంట్",
+  "hi": "असिस्टेंट",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.who.business": {
+  "en": "Shopkeeper",
+  "te": "షాప్ ఓనర్",
+  "hi": "दुकानदार",
+  "kn": "ಅಂಗಡಿಯವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.quote": {
+  "en": "Draft quote for your OK",
+  "te": "మీ OK కోసం డ్రాఫ్ట్ కొటేషన్",
+  "hi": "आपके OK के लिए ड्राफ्ट कोटेशन",
+  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ ಡ್ರಾಫ್ಟ್ ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.quote.note": {
+  "en": "A draft only: the prices come from your catalogue. Nothing is sent.",
+  "te": "ఇది డ్రాఫ్ట్ మాత్రమే: ధరలు మీ క్యాటలాగ్ నుంచి. ఏదీ పంపలేదు.",
+  "hi": "यह सिर्फ़ ड्राफ्ट है: दाम आपके कैटलॉग से हैं। कुछ नहीं भेजा गया।",
+  "kn": "ಇದು ಡ್ರಾಫ್ಟ್ ಮಾತ್ರ: ಬೆಲೆಗಳು ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನಿಂದ. ಏನೂ ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.price.none": {
+  "en": "you give the price",
+  "te": "ధర మీరు చెప్పాలి",
+  "hi": "दाम आप बताएँगे",
+  "kn": "ಬೆಲೆ ನೀವು ಹೇಳಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.moq": {
+  "en": "at least {n} {unit}",
+  "te": "కనీసం {n} {unit}",
+  "hi": "कम से कम {n} {unit}",
+  "kn": "ಕನಿಷ್ಠ {n} {unit}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.said": {
+  "en": "they said: {text}",
+  "te": "వాళ్ళు చెప్పింది: {text}",
+  "hi": "उन्होंने कहा: {text}",
+  "kn": "ಅವರು ಹೇಳಿದ್ದು: {text}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.whatsapp": {
+  "en": "Said yes to WhatsApp",
+  "te": "WhatsApp కి సరే అన్నారు",
+  "hi": "WhatsApp के लिए हाँ कहा",
+  "kn": "WhatsApp ಗೆ ಸರಿ ಅಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.pc.only": {
+  "en": "Only a business marked Ready to call can have a practice call.",
+  "te": "కాల్ చేయడానికి రెడీ అని ఉన్న వ్యాపారానికే ప్రాక్టీస్ కాల్ చేయొచ్చు.",
+  "hi": "सिर्फ़ 'कॉल के लिए तैयार' बिज़नेस की ही प्रैक्टिस कॉल हो सकती है।",
+  "kn": "ಕಾಲ್ ಮಾಡಲು ರೆಡಿ ಇರುವ ವ್ಯಾಪಾರಕ್ಕೆ ಮಾತ್ರ ಪ್ರಾಕ್ಟೀಸ್ ಕಾಲ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.persona.interested": {
+  "en": "Interested",
+  "te": "ఆసక్తి ఉంది",
+  "hi": "रुचि है",
+  "kn": "ಆಸಕ್ತಿ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.persona.price_shopper": {
+  "en": "Asks only about the price",
+  "te": "ధర గురించే అడుగుతారు",
+  "hi": "सिर्फ़ दाम पूछते हैं",
+  "kn": "ಬೆಲೆ ಬಗ್ಗೆ ಮಾತ್ರ ಕೇಳುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.persona.busy_call_later": {
+  "en": "Busy, call later",
+  "te": "బిజీ, తర్వాత కాల్ చేయండి",
+  "hi": "व्यस्त, बाद में कॉल करें",
+  "kn": "ಬ್ಯುಸಿ, ನಂತರ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.persona.not_interested": {
+  "en": "Not interested",
+  "te": "ఆసక్తి లేదు",
+  "hi": "रुचि नहीं",
+  "kn": "ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.persona.wants_whatsapp": {
+  "en": "Wants it on WhatsApp",
+  "te": "WhatsApp లో కావాలి",
+  "hi": "WhatsApp पर चाहिए",
+  "kn": "WhatsApp ನಲ್ಲಿ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.persona.rude_hangs_up": {
+  "en": "Rude, hangs up",
+  "te": "కోపంగా ఫోన్ పెట్టేస్తారు",
+  "hi": "गुस्से में फ़ोन काट देते हैं",
+  "kn": "ಕೋಪದಿಂದ ಫೋನ್ ಇಡುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.outcome.qualified": {
+  "en": "Interested: a lead was made on the Lead Desk",
+  "te": "ఆసక్తి ఉంది: లీడ్ డెస్క్‌లో లీడ్ వచ్చింది",
+  "hi": "रुचि है: लीड डेस्क पर लीड बनी",
+  "kn": "ಆಸಕ್ತಿ ಇದೆ: ಲೀಡ್ ಡೆಸ್ಕ್‌ನಲ್ಲಿ ಲೀಡ್ ಬಂತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.outcome.contacted": {
+  "en": "Talked, no interest yet",
+  "te": "మాట్లాడాం, ఇంకా ఆసక్తి లేదు",
+  "hi": "बात हुई, अभी रुचि नहीं",
+  "kn": "ಮಾತಾಡಿದ್ದೇವೆ, ಇನ್ನೂ ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.outcome.not_interested": {
+  "en": "Not interested: never called again",
+  "te": "ఆసక్తి లేదు: మళ్ళీ కాల్ చేయం",
+  "hi": "रुचि नहीं: फिर कभी कॉल नहीं",
+  "kn": "ಆಸಕ್ತಿ ಇಲ್ಲ: ಮತ್ತೆ ಕಾಲ್ ಮಾಡುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.outcome.do_not_call": {
+  "en": "Asked not to be called: never called again",
+  "te": "కాల్ చేయొద్దన్నారు: మళ్ళీ కాల్ చేయం",
+  "hi": "कॉल न करने को कहा: फिर कभी कॉल नहीं",
+  "kn": "ಕಾಲ್ ಮಾಡಬೇಡಿ ಅಂದರು: ಮತ್ತೆ ಕಾಲ್ ಮಾಡುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.tab": {
+  "en": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
+  "hi": "लीड फ़ाइंडर",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.intro": {
+  "en": "How the assistant decides whom it may call, and how much it may search.",
+  "te": "అసిస్టెంట్ ఎవరికి కాల్ చేయొచ్చో, ఎంత వెతకొచ్చో ఇక్కడ.",
+  "hi": "असिस्टेंट किसे कॉल कर सकता है और कितना खोज सकता है।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಯಾರಿಗೆ ಕಾಲ್ ಮಾಡಬಹುದು, ಎಷ್ಟು ಹುಡುಕಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.fit": {
+  "en": "Fit bar (50 to 100)",
+  "te": "ఫిట్ బార్ (50 నుంచి 100)",
+  "hi": "फिट सीमा (50 से 100)",
+  "kn": "ಫಿಟ್ ಬಾರ್ (50 ರಿಂದ 100)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.fit.help": {
+  "en": "A business at or above this fit is ready to call without asking you (after the first calls of a search).",
+  "te": "ఈ ఫిట్ లేదా ఎక్కువ ఉన్న వ్యాపారం మిమ్మల్ని అడగకుండా కాల్‌కి రెడీ (సెర్చ్‌లో మొదటి కాల్స్ తర్వాత).",
+  "hi": "इतने या ज़्यादा फिट वाला बिज़नेस आपसे पूछे बिना कॉल के लिए तैयार है (खोज की पहली कॉल के बाद)।",
+  "kn": "ಈ ಫಿಟ್ ಅಥವಾ ಹೆಚ್ಚು ಇರುವ ವ್ಯಾಪಾರ ನಿಮ್ಮನ್ನು ಕೇಳದೆ ಕಾಲ್‌ಗೆ ರೆಡಿ (ಸರ್ಚ್‌ನ ಮೊದಲ ಕಾಲ್‌ಗಳ ನಂತರ).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.cap": {
+  "en": "Calls a day (0 to 500)",
+  "te": "రోజుకి కాల్స్ (0 నుంచి 500)",
+  "hi": "दिन में कॉल (0 से 500)",
+  "kn": "ದಿನಕ್ಕೆ ಕಾಲ್‌ಗಳು (0 ರಿಂದ 500)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.from": {
+  "en": "Call from (hour, 9 to 20)",
+  "te": "కాల్ మొదలు (గంట, 9 నుంచి 20)",
+  "hi": "कॉल शुरू (घंटा, 9 से 20)",
+  "kn": "ಕಾಲ್ ಶುರು (ಗಂಟೆ, 9 ರಿಂದ 20)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.to": {
+  "en": "Call until (hour, 10 to 21)",
+  "te": "కాల్ ఆఖరు (గంట, 10 నుంచి 21)",
+  "hi": "कॉल तक (घंटा, 10 से 21)",
+  "kn": "ಕಾಲ್ ಕೊನೆ (ಗಂಟೆ, 10 ರಿಂದ 21)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.hours.help": {
+  "en": "India time, 24-hour clock: 19 is 7 in the evening.",
+  "te": "ఇండియా టైమ్, 24 గంటల లెక్క: 19 అంటే సాయంత్రం 7.",
+  "hi": "भारत का समय, 24 घंटे: 19 यानी शाम 7 बजे।",
+  "kn": "ಭಾರತದ ಸಮಯ, 24 ಗಂಟೆ ಲೆಕ್ಕ: 19 ಅಂದರೆ ಸಂಜೆ 7.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.searches": {
+  "en": "Searches a day (1 to 20)",
+  "te": "రోజుకి సెర్చ్‌లు (1 నుంచి 20)",
+  "hi": "दिन में खोजें (1 से 20)",
+  "kn": "ದಿನಕ್ಕೆ ಸರ್ಚ್‌ಗಳು (1 ರಿಂದ 20)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.results": {
+  "en": "Results per search (1 to 20)",
+  "te": "ఒక్కో సెర్చ్‌కి ఫలితాలు (1 నుంచి 20)",
+  "hi": "हर खोज में नतीजे (1 से 20)",
+  "kn": "ಪ್ರತಿ ಸರ್ಚ್‌ಗೆ ಫಲಿತಾಂಶಗಳು (1 ರಿಂದ 20)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.nochange": {
+  "en": "Nothing changed.",
+  "te": "ఏదీ మారలేదు.",
+  "hi": "कुछ नहीं बदला।",
+  "kn": "ಏನೂ ಬದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.err.range": {
+  "en": "Use a whole number from {min} to {max}.",
+  "te": "{min} నుంచి {max} లోపు పూర్తి సంఖ్య ఇవ్వండి.",
+  "hi": "{min} से {max} तक का पूरा नंबर लिखें।",
+  "kn": "{min} ರಿಂದ {max} ಒಳಗಿನ ಪೂರ್ಣ ಸಂಖ್ಯೆ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.set.err.hours": {
+  "en": "Calling must start before it ends.",
+  "te": "కాల్స్ మొదలయ్యే టైమ్ ఆఖరు టైమ్ కంటే ముందు ఉండాలి.",
+  "hi": "कॉल शुरू होने का समय खत्म होने से पहले होना चाहिए।",
+  "kn": "ಕಾಲ್ ಶುರುವಾಗುವ ಸಮಯ ಮುಗಿಯುವ ಸಮಯಕ್ಕಿಂತ ಮೊದಲು ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.working": {
+  "en": "Working…",
+  "te": "చేస్తోంది…",
+  "hi": "हो रहा है…",
+  "kn": "ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.prospect": {
+  "en": "New business",
+  "te": "కొత్త వ్యాపారం",
+  "hi": "नया बिज़नेस",
+  "kn": "ಹೊಸ ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.prospect.row": {
+  "en": "Prospect",
+  "te": "ప్రాస్పెక్ట్",
+  "hi": "प्रॉस्पेक्ट",
+  "kn": "ಪ್ರಾಸ್ಪೆಕ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.prospect": {
+  "en": "Decide: call or skip",
+  "te": "నిర్ణయించండి: కాల్ లేదా వదిలేయండి",
+  "hi": "तय करें: कॉल या छोड़ें",
+  "kn": "ನಿರ್ಧರಿಸಿ: ಕಾಲ್ ಅಥವಾ ಬಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.prospect.row": {
+  "en": "Decide",
+  "te": "చూడండి",
+  "hi": "देखें",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.prospect": {
+  "en": "fit {fit} · {reason}",
+  "te": "ఫిట్ {fit} · {reason}",
+  "hi": "फिट {fit} · {reason}",
+  "kn": "ಫಿಟ್ {fit} · {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.prospect.more": {
+  "en": "{n} more prospects",
+  "te": "ఇంకా {n} ప్రాస్పెక్ట్స్",
+  "hi": "{n} और प्रॉस्पेक्ट्स",
+  "kn": "ಇನ್ನೂ {n} ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.prospect.more.sum": {
+  "en": "need you on the Prospects tab",
+  "te": "ప్రాస్పెక్ట్స్ ట్యాబ్‌లో మీరు చూడాలి",
+  "hi": "प्रॉस्पेक्ट्स टैब पर आपको देखने हैं",
+  "kn": "ಪ್ರಾಸ್ಪೆಕ್ಟ್ಸ್ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ನೀವು ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
