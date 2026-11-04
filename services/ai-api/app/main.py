@@ -22,6 +22,7 @@ from app.assistant_context.service import ContextService
 from app.assistant_settings.repository import PostgrestAssistantSettingsRepository
 from app.assistant_settings.routes import router as assistant_settings_router
 from app.assistant_settings.service import AssistantSettingsService
+from app.assistant_tools.routes import router as assistant_tools_router
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.autoreply.repository import PostgrestAutoReplySwitch
@@ -1306,6 +1307,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(tasks_router)
     app.include_router(lead_finder_router)
     app.include_router(calls_router)
+    app.include_router(assistant_tools_router)
     app.include_router(phone_inbound_router)
     app.include_router(voice_sample_router)
     app.include_router(pronunciation_router)
