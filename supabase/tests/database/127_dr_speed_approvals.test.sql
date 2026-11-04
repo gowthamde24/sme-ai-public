@@ -183,17 +183,18 @@ select is((select next_action from public.outreach_items where batch_id = tests.
 update public.outreach_batches set channel = 'call' where id = tests.rid('b4');
 
 -- ============================================================================ F. caps
+-- every time in this section is the PINNED clock (app.outbox_now()), never the real now(): from 4 Nov 2026 10:00 IST on, a real now() is later than the pinned morning and no call was due (CI failed F1-F12).
 select pg_temp.pin('2026-11-04T10:00:00+05:30'::timestamptz);
 insert into public.outreach_batches (id, tenant_id, name, goal, channel, language, status, plan_sha256, created_by, approved_by, approved_at, max_calls_per_day, max_total_minutes)
-values (tests.rid('cap1'), tests.tid('a'), 'Capped', 'general', 'call', 'en', 'running', repeat('a', 64), tests.uid('a_owner'), tests.uid('a_owner'), now(), 1, 5);
+values (tests.rid('cap1'), tests.tid('a'), 'Capped', 'general', 'call', 'en', 'running', repeat('a', 64), tests.uid('a_owner'), tests.uid('a_owner'), app.outbox_now(), 1, 5);
 insert into public.contacts (id, tenant_id, company_id, full_name, phone, phone_consent) values
   (tests.rid('k1'), tests.tid('a'), tests.rid('co'), 'Cap One', '+91 98111 00001', 'granted'), (tests.rid('k2'), tests.tid('a'), tests.rid('co'), 'Cap Two', '+91 98111 00002', 'granted');
-insert into public.outreach_items (tenant_id, batch_id, contact_id, status, next_action, next_at) select tests.tid('a'), tests.rid('cap1'), c.id, 'waiting', 'call', now() from public.contacts c where c.id in (tests.rid('k1'), tests.rid('k2'));
+insert into public.outreach_items (tenant_id, batch_id, contact_id, status, next_action, next_at) select tests.tid('a'), tests.rid('cap1'), c.id, 'waiting', 'call', app.outbox_now() from public.contacts c where c.id in (tests.rid('k1'), tests.rid('k2'));
 update public.outreach_items set status = 'stopped', reason = 'cancelled', next_action = null, next_at = null where status = 'waiting' and batch_id <> tests.rid('cap1');
 select is(pg_temp.sch('select jsonb_array_length(public.scheduler_outreach_run(10) -> ''calls'')::text'), '2', 'F1 both capped-batch calls are handed out when nothing has been made yet');
-update public.outreach_items set next_at = now() where batch_id = tests.rid('cap1');
+update public.outreach_items set next_at = app.outbox_now() where batch_id = tests.rid('cap1');
 select pg_temp.res('x5', (select id from public.outreach_items where batch_id = tests.rid('cap1') and contact_id = tests.rid('k1')), 'connected', '{"outcome": "unclear"}', 6);
-update public.outreach_items set next_at = now() where batch_id = tests.rid('cap1') and status = 'waiting';
+update public.outreach_items set next_at = app.outbox_now() where batch_id = tests.rid('cap1') and status = 'waiting';
 select pg_temp.sch('select public.scheduler_outreach_run(10)::text');
 select is((select status || ':' || paused_reason from public.outreach_batches where id = tests.rid('cap1')), 'paused:cap_minutes', 'F2 six minutes used of five: the batch pauses (cap_minutes)');
 select is(pg_temp.val('a_owner', format($q$select (public.today_summary(%L) -> 'needs_you' -> 0 ->> 'kind')$q$, pg_temp.t('a'))), 'outreach_paused', 'F3 and a Needs-you item appears on Today');
@@ -203,7 +204,7 @@ select is(pg_temp.val('a_admin', format($q$select public.outreach_batch_state(%L
 select is(pg_temp.val('a_admin', format($q$select public.outreach_caps_set(%L, 'batch', %L, 5, 20)::text$q$, pg_temp.t('a'), tests.rid('cap1'))), 'ERR:42501', 'F7 raising a cap is the Owner''s');
 select is(pg_temp.val('a_owner', format($q$select public.outreach_caps_set(%L, 'batch', %L, 5, 20) -> 'batch' ->> 'status'$q$, pg_temp.t('a'), tests.rid('cap1')), 'aal1'), 'ERR:SM306', 'F8 ... with the second factor');
 select is(pg_temp.val('a_owner', format($q$select public.outreach_caps_set(%L, 'batch', %L, 1, 20) -> 'batch' ->> 'status'$q$, pg_temp.t('a'), tests.rid('cap1'))), 'running', 'F9 the Owner raises it: the batch runs again');
-update public.outreach_items set next_at = now() where batch_id = tests.rid('cap1') and status = 'waiting';
+update public.outreach_items set next_at = app.outbox_now() where batch_id = tests.rid('cap1') and status = 'waiting';
 select pg_temp.sch('select public.scheduler_outreach_run(10)::text');
 select is((select count(*)::int from public.outreach_attempts a join public.outreach_items i on i.id = a.item_id where i.batch_id = tests.rid('cap1') and a.channel = 'call' and (a.at at time zone 'Asia/Kolkata')::date = '2026-11-04'), 1, 'F10 one call today so far');
 select is((select status || ':' || paused_reason from public.outreach_batches where id = tests.rid('cap1')), 'paused:cap_calls', 'F11 the day''s limit of one call is reached: the batch pauses (cap_calls)');
