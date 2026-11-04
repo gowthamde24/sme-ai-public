@@ -174,7 +174,7 @@ export function settingsChanges(stored: FinderSettings, typed: Partial<Record<Se
 /** The key of the words of a decision reason (`lf.reason.<word>`), or null when the API gave none. */
 export const reasonKey = (r: DecisionReason | null): string | null => (r ? `lf.reason.${r}` : null);
 
-/** The one line of why: "fit 82 · first calls of a new search wait for you" (the fit and the decision in words). The Prospects list and Today's Needs-you rows draw it. */
+/** The one line of why: "fit 82 · 1 of the first 10 calls — needs your OK" (the fit and the decision in words). The Prospects list and Today's Needs-you rows draw it. */
 export function reasonLine(p: { fitScore: number | null; decisionReason: DecisionReason | null }, t: (key: string, vars?: Record<string, string | number>) => string): string {
   const key = reasonKey(p.decisionReason);
   return [p.fitScore !== null ? t("lf.fit", { n: p.fitScore }) : null, key ? t(key) : null].filter(Boolean).join(" · ");

@@ -75392,6 +75392,39 @@
    "kn": "draft"
   }
  },
+ "today.act.visit@programmes": {
+  "en": "Offer a campus visit",
+  "te": "క్యాంపస్ విజిట్ ఆఫర్ చేయండి",
+  "hi": "कैंपस विज़िट का सुझाव दीजिए",
+  "kn": "ಕ್ಯಾಂಪಸ್ ಭೇಟಿಗೆ ಆಹ್ವಾನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.visit.row@programmes": {
+  "en": "Campus visit",
+  "te": "క్యాంపస్ విజిట్",
+  "hi": "कैंपस विज़िट",
+  "kn": "ಕ್ಯಾಂಪಸ್ ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.title@programmes": {
+  "en": "Campus visits today",
+  "te": "ఈ రోజు క్యాంపస్ విజిట్లు",
+  "hi": "आज कैंपस विज़िट",
+  "kn": "ಇಂದಿನ ಕ್ಯಾಂಪಸ್ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.act.vconfirm.row": {
   "en": "Confirm",
   "te": "కన్ఫర్మ్",
@@ -75910,10 +75943,32 @@
   }
  },
  "lf.reason.first_calls": {
-  "en": "first calls of a new search wait for you",
-  "te": "కొత్త సెర్చ్‌లో మొదటి కాల్స్ మీ కోసం ఆగుతాయి",
-  "hi": "नई खोज की पहली कॉल आपका इंतज़ार करती हैं",
-  "kn": "ಹೊಸ ಸರ್ಚ್‌ನ ಮೊದಲ ಕಾಲ್‌ಗಳು ನಿಮಗಾಗಿ ಕಾಯುತ್ತವೆ",
+  "en": "1 of the first 10 calls — needs your OK",
+  "te": "మొదటి 10 కాల్స్‌లో ఒకటి — మీ OK కావాలి",
+  "hi": "पहली 10 कॉल में से एक — आपकी मंज़ूरी चाहिए",
+  "kn": "ಮೊದಲ 10 ಕರೆಗಳಲ್ಲಿ ಒಂದು — ನಿಮ್ಮ ಒಪ್ಪಿಗೆ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.instock": {
+  "en": "In stock: {items}",
+  "te": "స్టాక్‌లో ఉన్నవి: {items}",
+  "hi": "स्टॉक में: {items}",
+  "kn": "ಸ್ಟಾಕ್‌ನಲ್ಲಿ: {items}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.reviews": {
+  "en": "{n} reviews",
+  "te": "{n} రివ్యూలు",
+  "hi": "{n} रिव्यू",
+  "kn": "{n} ವಿಮರ್ಶೆಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",

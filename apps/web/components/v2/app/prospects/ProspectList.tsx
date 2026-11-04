@@ -62,6 +62,8 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
     setPicked(r.data.filter((x) => !x.ok).map((x) => x.id));
     router.refresh();
   }
+  // what we have in stock that these businesses would buy, said ONCE above the list (owner, 4 Nov: the stock sentence repeated on every card), most often matched first
+  const inStock = stockOf(items);
   const toggle = (pid: string, on: boolean) => setPicked((now) => (on ? [...new Set([...now, pid])] : now.filter((x) => x !== pid)));
 
   return (
@@ -117,6 +119,11 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
         ) : null}
       </div>
 
+      {inStock.length > 0 ? (
+        <p className="text-base" data-part="in-stock">
+          {t("lf.instock", { items: inStock.join(", ") })}
+        </p>
+      ) : null}
       <ul className="flex flex-col gap-3" data-part="prospects">
         {items.map((p) => (
           <li key={p.id} data-prospect={p.id} className={`${card} !gap-2`}>
@@ -134,9 +141,8 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
                   {p.attribution ? <GoogleMark /> : null}
                   {labelFixture && p.source === "fixture" ? <span className={pillClass("info")}>{t("lf.demo")}</span> : null}
                 </div>
-                {p.category || p.area ? <p className={`${muted} break-words`}>{[p.category, p.area].filter(Boolean).join(" · ")}</p> : null}
+                {facts(p, t) ? <p className={`${muted} break-words`} data-facts="">{facts(p, t)}</p> : null}
                 {reasonLine(p, t) ? <p className="mt-1 break-words text-base font-medium">{reasonLine(p, t)}</p> : null}
-                {p.fitReason ? <p className={`${muted} break-words`}>{p.fitReason}</p> : null}
                 <p className={`${muted} break-words`} data-source="">
                   {p.sourceLabel}
                 </p>
@@ -154,4 +160,17 @@ export function ProspectList({ items, words, base, canPractice, labelFixture = f
       </ul>
     </div>
   );
+}
+
+/** The in-stock items the listed businesses match, each once, the most often matched first (then by name). */
+export function stockOf(items: readonly Pick<Prospect, "stockMatch">[]): string[] {
+  const seen = new Map<string, number>();
+  for (const p of items) for (const m of p.stockMatch?.matched ?? []) seen.set(m, (seen.get(m) ?? 0) + 1);
+  return [...seen.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([m]) => m).slice(0, 8);
+}
+
+/** One line of facts per card: what it is, where, the rating and the number of reviews (distance only once the API gives one). */
+export function facts(p: Pick<Prospect, "category" | "area" | "rating" | "reviewCount">, t: (key: string, vars?: Record<string, string | number>) => string): string {
+  const parts = [p.category, p.area, p.rating !== null ? `★ ${p.rating.toLocaleString("en-IN", { maximumFractionDigits: 1 })}` : null, p.reviewCount !== null ? t("lf.reviews", { n: p.reviewCount.toLocaleString("en-IN") }) : null];
+  return parts.filter((x): x is string => typeof x === "string" && x !== "").join(" · ");
 }

@@ -49,8 +49,11 @@ describe("/retailers: the Prospects tab", () => {
     const row = within(document.querySelector(`[data-prospect="${P1}"]`) as HTMLElement);
     expect(row.getByRole("heading", { name: "Sri Lakshmi Sarees" })).toBeInTheDocument();
     expect(row.getByText("Needs you")).toBeInTheDocument();
-    expect(row.getByText("fit 82 · first calls of a new search wait for you")).toBeInTheDocument();
-    expect(row.getByText(/we have Kanchi Pattu Bridal/)).toBeInTheDocument();
+    expect(row.getByText("fit 82 · 1 of the first 10 calls — needs your OK")).toBeInTheDocument();
+    // the stock is said ONCE above the list (owner, 4 Nov), each card has its own facts instead
+    expect(row.queryByText(/we have Kanchi Pattu Bridal/)).toBeNull();
+    expect(document.querySelector('[data-part="in-stock"]')).toHaveTextContent(/^In stock: .*Kanchi Pattu Bridal/);
+    expect(row.getByText(/★ 4\.5 · 312 reviews/)).toBeInTheDocument();
     expect(row.getByText(/Example search \(made-up businesses\)/)).toBeInTheDocument();
     expect(screen.getByText("fit 64 · low stock")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Open the lead" })).toHaveAttribute("href", `/app/tenants/${T}/leads/${L1}`);

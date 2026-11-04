@@ -89,6 +89,8 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     if (activation) activation = withoutHidden(activation, await readHidden(tenantId));
     // Lead Desk's items and workers join what the API said (the merge keeps one card per thing and counts only what the API did not)
     data = mergeDesk(data, { needs: [...desk.needs, ...finder], team: deskPack ? desk.team : [] });
+    // a business whose own card counts its visits (a school's "Campus visits today") does not also get the shop's "At the store today" (owner, 4 Nov: no shop words for a school)
+    if (packCards.some((c) => c.id === "campus")) data = { ...data, store: null };
     // the Lead Finder is named in "Your team" exactly where its own API says it is available (C1, 4 Nov): the helpers' status may still say "not built" for it
     const finderOn = (await readFinderCached(accessToken, tenantId).catch(() => null))?.available === true;
     data = { ...data, team: withFinder(data.team, finderOn) };

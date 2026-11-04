@@ -1,7 +1,7 @@
 import { SOURCE_TAGS } from "@/lib/lead-desk/imports/types";
 import { SOURCE_KINDS, type LiveSource, type PullResult, type Secret, type SourceCreateBody, type SourceWithSecret, type Unparsed } from "@/lib/lead-desk/sources/types";
 
-import { ApiContractError, apiRequest } from "./client";
+import { ApiAuthError, ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 import { bool, int, iso, list, oneOf, optInt, optIso, optStr, rec, str, uuid } from "./shape";
 
@@ -84,4 +84,19 @@ export async function listUnparsed(token: string, tenantId: string): Promise<Unp
 export async function discardUnparsed(token: string, tenantId: string, id: string): Promise<void> {
   if (!isCanonicalUuid(id)) throw new ApiContractError("id");
   await post(`${base(tenantId)}/unparsed/${id}/discard`, token);
+}
+
+/**
+ * `GET /v1/tenants/{t}/lead-sources/offered` (#287): the source tags to OFFER in this workspace, in the screen's order (a school gets its own few: no IndiaMART, no 99acres). Unknown tags are dropped (an older web
+ * does not offer what it cannot name). Null when it cannot be told (an older API, a failure): the caller then offers its own full list, as before. A rejected session is thrown.
+ */
+export async function getOfferedSources<T extends string>(token: string, tenantId: string, known: readonly T[]): Promise<T[] | null> {
+  try {
+    const r = rec(await apiRequest(`${base(tenantId)}/offered`, token), "offered sources");
+    if (!Array.isArray(r.tags) || r.tags.length > 50) return null;
+    return r.tags.filter((x): x is T => typeof x === "string" && (known as readonly string[]).includes(x));
+  } catch (error) {
+    if (error instanceof ApiAuthError) throw error;
+    return null;
+  }
 }
