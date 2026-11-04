@@ -53,7 +53,8 @@ function deskLine(w: DeskWorker, t: T, now: number): string {
  * is not repeated here. `team` null (could not be read) says so.
  */
 export function TeamSection({ team, deskTeam = null, base, t }: { team: readonly AgentRow[] | null; /** A Lead Desk workspace's workers, named instead of the shop's helpers (which are not its team). */ deskTeam?: readonly DeskWorker[] | null; base: string; t: T; now?: number }) {
-  const helpers = team?.filter((a) => a.agent !== "main") ?? null;
+  // a helper that is not built yet (`not_available`, e.g. the Lead Finder until its job ships) is not named: the line lists the team that exists (owner, 4 Nov)
+  const helpers = team?.filter((a) => a.agent !== "main" && a.state !== "not_available") ?? null;
   const names = deskTeam !== null ? deskTeam.map((w) => w.name) : helpers === null ? null : helpers.map((a) => t(`agent.${a.agent}`));
   return (
     <section aria-labelledby="team-heading" data-part="team" className={card}>
