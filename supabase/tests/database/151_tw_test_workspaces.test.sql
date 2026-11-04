@@ -10,19 +10,6 @@ begin perform tests.as_aal(p_aal); return tests.scalar_as(case when p_user = 'an
 exception when others then return 'ERR:' || sqlstate;
 end $$;
 
--- A: outreach
-select lives_ok(format($q$insert into public.outreach_rules (id, tenant_id, source, action, goal, channel, language, approved_by) values (%L, %L, 'gtw1', 'call_within_minutes', 'general', 'call', 'en', %L)$q$,
-                       gen_random_uuid(), tests.tid('a'), tests.uid('a_owner')), 'A1: a shop may have a standing rule');
-select tests.cp_pack('b', 'education');
-select throws_ok(format($q$insert into public.outreach_rules (id, tenant_id, source, action, goal, channel, language, approved_by) values (%L, %L, 'gtw2', 'call_within_minutes', 'general', 'call', 'en', %L)$q$,
-                        gen_random_uuid(), tests.tid('b'), tests.uid('b_owner')), 'SM951', null, 'A2: a school may not');
-select throws_ok(format($q$insert into public.outreach_batches (id, tenant_id, name, goal, channel, language, plan_sha256, created_by) values (%L, %L, 'x', 'general', 'call', 'en', repeat('a', 64), %L)$q$,
-                        gen_random_uuid(), tests.tid('b'), tests.uid('b_owner')), 'SM951', null, 'A3: nor a batch of calls');
-
-select is(pg_temp.at('aal1', 'b_owner', format($$select app.today_is_school(%L)::text$$, tests.tid('b'))), 'true', 'A4: Today knows the school is a school');
-select is(pg_temp.at('aal1', 'a_owner', format($$select app.today_is_school(%L)::text$$, tests.tid('b'))), 'false', 'A5: and tells nobody outside it');
-select is(pg_temp.at('aal1', 'b_owner', format($$select (public.today_summary(%L) is not null)::text$$, tests.tid('b'))), 'true', 'A6: Today still answers for a school');
-
 -- B: example data
 select is(pg_temp.at('aal2', 'a_owner', format($$select (public.example_data_load(%L) ->> 'loaded')$$, tests.tid('a'))), 'true', 'B1: the sample loads');
 select throws_ok(format($q$select app.operator_mark_example(%L, 'orders', gen_random_uuid(), 'owner test week: seed script marks')$q$, tests.tid('a')), '22023', null, 'B2: an order is never example data (orders are never deleted)');

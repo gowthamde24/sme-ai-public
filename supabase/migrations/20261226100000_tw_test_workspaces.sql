@@ -1,32 +1,13 @@
 -- The owner's test workspaces (job test-workspaces, C2 -> C1 list of 4 Nov 2026).
 --
--- 1. A SCHOOL HAS NO OUTREACH (owner: "education never shows outreach features"). No outreach batch or standing rule is ever made for a workspace whose business type is the school's (the same test as
---    the tasks' school rule, app.task_is_school): a before-insert trigger on both tables, so every path is covered (the API also refuses first, with 403). SQLSTATE SM951, the tasks' "not for schools".
+-- (Outreach for a school is NOT changed here: night 4 part E1 lets a school plan admission calls and campus-visit rules (pgTAP 129 D1, D5); the 2 Nov job says no outreach features for a school.
+--  The menu hides them (C2); whether the API and the database should refuse them too is the owner's decision.)
 -- 2. EXAMPLE DATA REACHES MORE OF A TEST WEEK. The example batch may also hold enquiries, requirements (and their fields), knowledge sources and facts, lead arrivals and lead profiles: tables whose rows
 --    may be deleted under their own rules. `app.operator_mark_example` (operator only, a reason in the audit log) registers a row a seed script made through the API into the workspace's live batch, with
 --    the same fingerprint the load takes. Business records the database never deletes (quotes, orders, ledger entries, calls, fees, students, outcomes: before-delete guards) are NOT accepted: removing
 --    those is a policy decision for the owner, not a side effect of "Remove example data".
 -- 3. The removal deletes in passes (a row something else still points at is tried again after its dependants are gone), keeps and counts every row that was changed or is used by a row outside the batch,
 --    and reports the new tables under `other`. `example_data_reset` = remove + load in ONE transaction (Owner, Admin).
-
--- ---------------------------------------------------------------------------------------------------------------------------------
--- 1. no outreach for a school
--- ---------------------------------------------------------------------------------------------------------------------------------
-create function app.outreach_not_for_school() returns trigger
-language plpgsql
-security definer
-set search_path = ''
-as $$
-begin
-  if app.task_is_school(new.tenant_id) then
-    raise exception 'not for a school' using errcode = 'SM951';
-  end if;
-  return new;
-end;
-$$;
-revoke all on function app.outreach_not_for_school() from public, anon, authenticated, service_role;
-create trigger outreach_batches_not_for_school before insert on public.outreach_batches for each row execute function app.outreach_not_for_school();
-create trigger outreach_rules_not_for_school before insert on public.outreach_rules for each row execute function app.outreach_not_for_school();
 
 -- ---------------------------------------------------------------------------------------------------------------------------------
 -- 2. the example batch holds more kinds of row
@@ -167,31 +148,3 @@ end;
 $$;
 revoke all on function public.example_data_reset(uuid) from public, anon;
 grant execute on function public.example_data_reset(uuid) to authenticated;
-
--- ---------------------------------------------------------------------------------------------------------------------------------
--- 4. Today never lists "calling is paused" or "a hot lead is waiting" for a school (re-created from its own definition, as job DR A3 did; the migration stops if the text is not the expected one)
--- ---------------------------------------------------------------------------------------------------------------------------------
--- Today runs as the caller: it asks this one question (true only for a member of that workspace whose business type is the school's)
-create function app.today_is_school(p_tenant uuid) returns boolean
-language sql
-stable
-security definer
-set search_path = ''
-as $$ select auth.uid() is not null and app.is_tenant_member(p_tenant) and app.task_is_school(p_tenant) $$;
-revoke all on function app.today_is_school(uuid) from public, anon, service_role;
-grant execute on function app.today_is_school(uuid) to authenticated;
-
-do $$
-declare
-  v_def text := pg_get_functiondef('public.today_summary(uuid)'::regprocedure);
-  v_a constant text := 'where v_decider and b.tenant_id = p_tenant_id and b.status = ''paused''';
-  v_b constant text := 'where v_reader and h.tenant_id = p_tenant_id and (v_decider or h.assigned_to = auth.uid())';
-begin
-  if position(v_a in v_def) = 0 or position(v_b in v_def) = 0 then
-    raise exception 'tw: the Today function is not the one this migration expects';
-  end if;
-  v_def := replace(v_def, v_a, v_a || ' and not app.today_is_school(p_tenant_id)');
-  v_def := replace(v_def, v_b, v_b || ' and not app.today_is_school(p_tenant_id)');
-  execute v_def;
-end;
-$$;

@@ -19,8 +19,6 @@
   GET  /reports?from=&to=               every member
   GET/PUT /source-costs                 Owner, Admin read; Owner sets
 
-A SCHOOL gets 403 `outreach_not_available` from every route above (job test-workspaces).
-
 NOTE: no `from __future__ import annotations` here (request models are attached to the endpoint signatures at registration time)."""
 
 import uuid
@@ -35,17 +33,8 @@ from app.outreach import models as m
 from app.outreach.service import OutreachService
 from app.tenancy.models import Role
 
+router = APIRouter(prefix="/v1/tenants/{tenant_id}/outreach", tags=["outreach"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
-
-
-def not_for_a_school(ctx: Annotated[TenantContext, Depends(require_tenant_role())], runtime: RuntimeDep) -> None:
-    """Job test-workspaces (owner: a school has no outreach features): every outreach route, the report included, answers 403 for a school. The database says what a school is (task_context) and
-    refuses a batch or a rule for one by itself too (SM951)."""
-    if runtime.tasks is not None and runtime.tasks.is_school(runtime, ctx.principal.token, ctx.tenant.id):
-        raise ApiError(403, "outreach_not_available", "Calling and messaging plans are not available for a school.")
-
-
-router = APIRouter(prefix="/v1/tenants/{tenant_id}/outreach", tags=["outreach"], dependencies=[Depends(not_for_a_school)])
 Staff = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
 Deciders = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
 AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
