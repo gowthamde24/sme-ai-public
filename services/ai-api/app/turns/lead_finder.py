@@ -119,6 +119,37 @@ def available(runtime: Runtime, ctx: TenantContext) -> LeadFinderService | None:
         return None
 
 
+def not_in_plan(runtime: Runtime, ctx: TenantContext) -> bool:
+    """True when this business would have the Lead Finder but its plan (Lead Desk) does not (owner decision 4 Nov 2026). A failure to tell is a no."""
+    service = runtime.lead_finder
+    if service is None:
+        return False
+    try:
+        return service.availability(ctx.principal.token, ctx.tenant.id).reason == "not_in_plan"
+    except Exception:
+        return False
+
+
+UPGRADE: dict[str, str] = {
+    "en": "Finding new customers is part of AI Workforce. This workspace is on Lead Desk, and everything else works as it does. The plans are on the Plans page.",
+    "te": "కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం. ఈ వర్క్‌స్పేస్ Lead Desk లో ఉంది, మిగతావన్నీ ఎప్పటిలాగే పనిచేస్తాయి. ప్లాన్లు Plans పేజీలో ఉన్నాయి.",
+    "hi": "नए ग्राहक ढूँढना AI Workforce का हिस्सा है। यह वर्कस्पेस Lead Desk पर है, और बाकी सब पहले जैसा चलता है। प्लान Plans पेज पर हैं।",
+    "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು AI Workforce ನ ಭಾಗ. ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ Lead Desk ನಲ್ಲಿದೆ, ಉಳಿದೆಲ್ಲವೂ ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಪ್ಲಾನ್‌ಗಳು Plans ಪುಟದಲ್ಲಿವೆ.",
+    "ta": "புதிய வாடிக்கையாளர்களைத் தேடுவது AI Workforce இன் ஒரு பகுதி. இந்த பணியிடம் Lead Desk இல் உள்ளது; மற்ற அனைத்தும் வழக்கம் போல் இயங்கும். திட்டங்கள் Plans பக்கத்தில் உள்ளன.",
+    "ml": "പുതിയ ഉപഭോക്താക്കളെ കണ്ടെത്തുന്നത് AI Workforce ന്റെ ഭാഗമാണ്. ഈ വർക്ക്‌സ്‌പേസ് Lead Desk ലാണ്; ബാക്കിയെല്ലാം പതിവുപോലെ പ്രവർത്തിക്കും. പ്ലാനുകൾ Plans പേജിലുണ്ട്.",
+}
+
+
+def upgrade_card() -> dict[str, Any]:
+    """The friendly "part of AI Workforce" card (docs/contracts/assistant-tools.md `cant_do`, reason `not_in_plan`): no price, no charge, the Plans page's link."""
+    return {"kind": "cant_do", "id": str(uuid.uuid4()), "reason": "not_in_plan", "what": "Finding new customers (the Lead Finder)", "upgrade_to": "ai_workforce",
+            "screen": {"label": "Plans", "href": "/plans"}}
+
+
+def upgrade_turn(language: Language, runner: AssistantRunner, emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID) -> Outcome:
+    return runner.finish_with(Reply(UPGRADE.get(language, UPGRADE["en"]), language, "answer"), reply_id, emit, extra=(("work_card", {"card": upgrade_card()}),))
+
+
 def is_answer(text: str) -> bool:
     """A bare yes or no to a plan card, in any of the six languages (a short message only)."""
     from app.turns.intent import is_yes_no, normalise

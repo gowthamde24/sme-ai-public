@@ -27,8 +27,10 @@ MATERIAL_STOCK: list[dict[str, Any]] = [
 
 
 class FakeLeadFinderRepo:
-    def __init__(self, pack: str | None, *, module_on: bool = True, real_data_open: bool = False, stock: list[dict[str, Any]] | None = None, customers: list[dict[str, Any]] | None = None) -> None:
+    def __init__(self, pack: str | None, *, module_on: bool = True, real_data_open: bool = False, stock: list[dict[str, Any]] | None = None, customers: list[dict[str, Any]] | None = None,
+                 plan_has_lead_finder: bool = True) -> None:
         self.pack = pack
+        self.plan_has_lead_finder = plan_has_lead_finder   # AI Workforce (True) or Lead Desk (False)
         self.on = module_on
         self.real_data_open = real_data_open
         self._stock = stock if stock is not None else TEXTILE_STOCK
@@ -48,6 +50,9 @@ class FakeLeadFinderRepo:
 
     def module_on(self, token: str, tenant_id: uuid.UUID) -> bool:
         return self.on
+
+    def entitled(self, token: str, tenant_id: uuid.UUID) -> bool:
+        return self.plan_has_lead_finder
 
     def stock(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         return list(self._stock)

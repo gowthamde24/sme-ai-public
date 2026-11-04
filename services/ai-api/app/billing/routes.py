@@ -37,6 +37,7 @@ from app.auth.deps import (
 from app.billing.models import (
     AccessOut,
     BillingOut,
+    EntitlementsOut,
     InvoiceOut,
     InvoicesOut,
     PlansOut,
@@ -92,6 +93,12 @@ def get_access(ctx: AnyMember, runtime: RuntimeDep) -> AccessOut:
             "exempt": bool(status.get("exempt")),
         }
     return AccessOut.model_validate(access)
+
+
+@router.get("/entitlements", response_model=EntitlementsOut)
+def get_entitlements(ctx: AnyMember, runtime: RuntimeDep) -> EntitlementsOut:
+    """The workspace's plan as feature switches (any member: the screens hide what is off and show the upgrade card)."""
+    return EntitlementsOut.model_validate(_service(runtime).entitlements(ctx.principal.token, ctx.tenant.id))
 
 
 @router.get("/usage", response_model=UsageViewOut)
