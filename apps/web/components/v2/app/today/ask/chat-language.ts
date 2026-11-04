@@ -27,42 +27,45 @@ export const plainLanguage = (appLang: VoiceLang): ChatLanguage => ({ pill: "aut
 export const resolveLanguage = (pill: ChatLang, appLang: VoiceLang): ChatLanguage => (pill === "auto" ? plainLanguage(appLang) : { pill, reply: pill, stt: pill });
 
 const KEY = "sme_chat_lang";
+/** The browser's copy of the choice is kept PER WORKSPACE (owner, 4 Nov: switching workspaces keeps each one's own language; a pick in one must not follow you into another). `scope` names the workspace; none = the old shared key. */
+const keyOf = (scope: string | null) => (scope ? `${KEY}:${scope}` : KEY);
 const listeners = new Set<() => void>();
-const read = (): ChatLang | null => {
+const read = (key: string): ChatLang | null => {
   try {
-    const v = window.localStorage.getItem(KEY);
+    const v = window.localStorage.getItem(key);
     return v === "auto" || isVoiceLang(v) ? (v as ChatLang) : null;
   } catch {
     return null; // storage blocked: the pill follows the app language and forgets on reload
   }
 };
-let memory: ChatLang | null = null; // when storage cannot be written, the choice still holds for this visit
+const memory = new Map<string, ChatLang>(); // when storage cannot be written, the choice still holds for this visit
 const subscribe = (l: () => void) => {
   listeners.add(l);
-  const onStorage = (e: StorageEvent) => e.key === KEY && l();
+  const onStorage = (e: StorageEvent) => (e.key === KEY || e.key?.startsWith(`${KEY}:`)) && l();
   window.addEventListener("storage", onStorage);
   return () => {
     listeners.delete(l);
     window.removeEventListener("storage", onStorage);
   };
 };
-const snapshot = (): ChatLang | null => read() ?? memory;
 
-/** The chat's language choice: the pill's value, a setter that remembers it, and what to send. */
-export function useChatLanguage(appLang: VoiceLang, saved: string | null = null, remember?: (l: ChatLang) => void): ChatLanguage & { set: (l: ChatLang) => void } {
+/** The chat's language choice: the pill's value, a setter that remembers it, and what to send. `scope` = the workspace (its id or address), so each workspace keeps its own choice. */
+export function useChatLanguage(appLang: VoiceLang, saved: string | null = null, remember?: (l: ChatLang) => void, scope: string | null = null): ChatLanguage & { set: (l: ChatLang) => void } {
+  const key = keyOf(scope);
+  const snapshot = useCallback((): ChatLang | null => read(key) ?? memory.get(key) ?? null, [key]);
   const stored = useSyncExternalStore(subscribe, snapshot, () => null);
   const fromProfile: ChatLang | null = saved === "auto" || isVoiceLang(saved) ? (saved as ChatLang) : null;
   const set = useCallback((l: ChatLang) => {
     try {
-      window.localStorage.setItem(KEY, l);
-      memory = null;
+      window.localStorage.setItem(key, l);
+      memory.delete(key);
     } catch {
-      memory = l; // blocked: it holds for this visit only
+      memory.set(key, l); // blocked: it holds for this visit only
     }
     listeners.forEach((f) => f());
     remember?.(l); // and the person's profile keeps it (best effort)
-  }, [remember]);
-  // what the person chose in this browser now; else what their profile says; else the app's language
+  }, [remember, key]);
+  // what the person chose in this browser now (in THIS workspace); else what their profile in this workspace says; else the app's language
   const pill = stored ?? fromProfile ?? appLang;
   return { ...resolveLanguage(pill, appLang), set };
 }
