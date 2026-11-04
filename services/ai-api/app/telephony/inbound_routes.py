@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from fastapi import APIRouter, Request, WebSocket
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, Response
 from starlette.websockets import WebSocketDisconnect
 
 from app.browser_voice.limits import Ledger
@@ -50,6 +50,7 @@ class InboundService:
     llm_choice: str = "haiku"
     business: str = "the business"   # what the opening line names (TELEPHONY_INBOUND_BUSINESS; the scheduler account does not read workspace names)
     max_call_s: int = 300
+    url_format: str = "json"   # EXOTEL_STREAM_URL_FORMAT: json ({"url": ...}, the documented form) | text (the bare wss address)
     parts_for: Callable[[Any, str, str, str], tuple[Parts, str]] | None = None   # tests: fake recogniser, voice and model
     last_numbers: dict[str, Any] | None = None   # the numbers of the last call (the log line's), for the sandbox report
 
@@ -95,20 +96,26 @@ async def _params(request: Request) -> dict[str, str]:
 
 
 @router.api_route("/stream-url", methods=["GET", "POST"])
-async def stream_url(request: Request) -> JSONResponse:
-    """Exotel asks once per call. A caller who is named and is not on the sandbox list never gets a token (the gate decides again on the stream, with Exotel's own confirmation)."""
+async def stream_url(request: Request) -> Response:
+    """Exotel asks once per call. A caller who is named and is not on the sandbox list never gets a token (the gate decides again on the stream, with Exotel's own confirmation).
+    The answer is `{"url": "wss://..."}` (JSON, the documented form) unless EXOTEL_STREAM_URL_FORMAT=text, which answers the bare address as text/plain (the other reading of Exotel's docs)."""
     service = _service(request.app)
+    params = await _params(request)
+    # what Exotel sends, NAMES only (never a value: a caller's number is in there): to learn the request's shape on the first real calls
+    log.info("exotel_stream_url request method=%s headers=%s params=%s", request.method, ",".join(sorted(k.lower() for k in request.headers.keys())), ",".join(sorted(params)) or "-")
     if service is None or service.gate_settings.mode == "off":
         log.info("exotel_stream_url refused=off")
         raise ApiError(403, "telephony_off", "Phone calls are not answered here.")
-    params = await _params(request)
     caller = normalise(inbound.first(params, "CallFrom", "From", "from"))
     if caller is not None and service.gate_settings.mode == "sandbox" and caller not in service.gate_settings.sandbox_numbers:
         log.info("exotel_stream_url refused=not_on_sandbox_list")
         raise ApiError(403, "not_on_sandbox_list", "This number is not answered here.")
     token = inbound.mint(service.secret, inbound.monotonic(), inbound.first(params, "CallSid", "call_sid", "CallSID"))
-    log.info("exotel_stream_url issued")
-    return JSONResponse({"url": inbound.stream_url(service.public_base, token)})
+    url = inbound.stream_url(service.public_base, token)
+    log.info("exotel_stream_url issued format=%s query_chars=%d", service.url_format, len(url.split("?", 1)[1]))
+    if service.url_format == "text":
+        return PlainTextResponse(url)
+    return JSONResponse({"url": url})
 
 
 def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str) -> tuple[Parts, str]:
@@ -151,6 +158,7 @@ async def _refuse(wire: Any, line: Any, reason: str) -> None:
 @router.websocket("/stream")
 async def stream(ws: WebSocket) -> None:
     runtime = getattr(ws.app.state, "runtime", None)
+    log.info("exotel_stream open headers=%s params=%s", ",".join(sorted(k.lower() for k in ws.headers.keys())), ",".join(sorted(ws.query_params.keys())) or "-")
     await ws.accept()
     await handle(_service(ws.app), getattr(runtime, "browser_voice", None) if runtime is not None else None, getattr(runtime, "live_calls", None) if runtime is not None else None,
                  ws.query_params.get("t") or "", StarletteWire(ws))
