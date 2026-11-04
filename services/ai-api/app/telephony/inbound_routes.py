@@ -12,11 +12,11 @@ import asyncio
 import logging
 from collections.abc import Callable
 from contextlib import suppress
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from fastapi import APIRouter, Request, WebSocket
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, Response
 from starlette.websockets import WebSocketDisconnect
 
 from app.browser_voice.limits import Ledger
@@ -50,8 +50,12 @@ class InboundService:
     llm_choice: str = "haiku"
     business: str = "the business"   # what the opening line names (TELEPHONY_INBOUND_BUSINESS; the scheduler account does not read workspace names)
     max_call_s: int = 300
+    url_format: str = "json"   # EXOTEL_STREAM_URL_FORMAT: json ({"url": ...}, the documented form) | text (the bare wss address)
     parts_for: Callable[[Any, str, str, str], tuple[Parts, str]] | None = None   # tests: fake recogniser, voice and model
     last_numbers: dict[str, Any] | None = None   # the numbers of the last call (the log line's), for the sandbox report
+    our_sid: str | None = None   # EXOTEL_SID: the start message's account_sid is compared with it (yes / no in the log, never the value)
+    trial: inbound.TrialRule | None = None   # the shared trial number's rule (sandbox only; app/telephony/inbound.py TrialRule)
+    trial_count: inbound.DayCount = field(default_factory=inbound.DayCount)
 
 
 class StarletteWire:
@@ -95,20 +99,26 @@ async def _params(request: Request) -> dict[str, str]:
 
 
 @router.api_route("/stream-url", methods=["GET", "POST"])
-async def stream_url(request: Request) -> JSONResponse:
-    """Exotel asks once per call. A caller who is named and is not on the sandbox list never gets a token (the gate decides again on the stream, with Exotel's own confirmation)."""
+async def stream_url(request: Request) -> Response:
+    """Exotel asks once per call. A caller who is named and is not on the sandbox list never gets a token (the gate decides again on the stream, with Exotel's own confirmation).
+    The answer is `{"url": "wss://..."}` (JSON, the documented form) unless EXOTEL_STREAM_URL_FORMAT=text, which answers the bare address as text/plain (the other reading of Exotel's docs)."""
     service = _service(request.app)
+    params = await _params(request)
+    # what Exotel sends, NAMES only (never a value: a caller's number is in there): to learn the request's shape on the first real calls
+    log.info("exotel_stream_url request method=%s headers=%s params=%s", request.method, ",".join(sorted(k.lower() for k in request.headers.keys())), ",".join(sorted(params)) or "-")
     if service is None or service.gate_settings.mode == "off":
         log.info("exotel_stream_url refused=off")
         raise ApiError(403, "telephony_off", "Phone calls are not answered here.")
-    params = await _params(request)
     caller = normalise(inbound.first(params, "CallFrom", "From", "from"))
     if caller is not None and service.gate_settings.mode == "sandbox" and caller not in service.gate_settings.sandbox_numbers:
         log.info("exotel_stream_url refused=not_on_sandbox_list")
         raise ApiError(403, "not_on_sandbox_list", "This number is not answered here.")
     token = inbound.mint(service.secret, inbound.monotonic(), inbound.first(params, "CallSid", "call_sid", "CallSID"))
-    log.info("exotel_stream_url issued")
-    return JSONResponse({"url": inbound.stream_url(service.public_base, token)})
+    url = inbound.stream_url(service.public_base, token)
+    log.info("exotel_stream_url issued format=%s query_chars=%d", service.url_format, len(url.split("?", 1)[1]))
+    if service.url_format == "text":
+        return PlainTextResponse(url)
+    return JSONResponse({"url": url})
 
 
 def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str) -> tuple[Parts, str]:
@@ -151,6 +161,7 @@ async def _refuse(wire: Any, line: Any, reason: str) -> None:
 @router.websocket("/stream")
 async def stream(ws: WebSocket) -> None:
     runtime = getattr(ws.app.state, "runtime", None)
+    log.info("exotel_stream open headers=%s params=%s", ",".join(sorted(k.lower() for k in ws.headers.keys())), ",".join(sorted(ws.query_params.keys())) or "-")
     await ws.accept()
     await handle(_service(ws.app), getattr(runtime, "browser_voice", None) if runtime is not None else None, getattr(runtime, "live_calls", None) if runtime is not None else None,
                  ws.query_params.get("t") or "", StarletteWire(ws))
@@ -168,17 +179,20 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
         return await _close(wire)
     if not inbound.verify(service.secret, token, inbound.monotonic(), start.call_sid):
         return await _refuse(wire, line, "bad_token")
-    decision = await inbound.admit(start, service.gate_settings, find_line=service.store.line_find, calls=service.calls, active_calls=live.count() if live is not None else 0, now=inbound.now_utc())
+    decision = await inbound.admit(start, service.gate_settings, find_line=service.store.line_find, calls=service.calls, active_calls=live.count() if live is not None else 0, now=inbound.now_utc(),
+                                   our_sid=service.our_sid, trial=service.trial, trial_count=service.trial_count)
     if isinstance(decision, gate.Refused):
         return await _refuse(wire, line, decision.reason)
+    log.info("exotel_inbound admitted rule=%s", decision.rule)
     tenant = decision.tenant_id
+    max_call_s = min(service.max_call_s, decision.max_call_s) if decision.max_call_s else service.max_call_s
     try:
         call_id = await asyncio.to_thread(service.store.begin, tenant, service.language)
     except Exception as exc:  # noqa: BLE001 - no row, no call
         log.warning("exotel_inbound begin_failed %s", exc.__class__.__name__)
         return await _refuse(wire, line, "begin_failed")
     parts, model = (service.parts_for or phone_parts)(bv, service.business, service.language, service.llm_choice)
-    plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="inbound", language=service.language, business=service.business, max_call_s=service.max_call_s,
+    plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="inbound", language=service.language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute)
     if live is not None:
         live.add(tenant, call_id, line)
