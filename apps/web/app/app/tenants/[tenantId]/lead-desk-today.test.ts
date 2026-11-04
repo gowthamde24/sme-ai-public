@@ -209,3 +209,12 @@ describe("Lead Desk's items join Today's own, and the count is the truth", () =>
     expect(mergeDesk(base(), { needs: [], team: [] }).deskTeam).toBeNull();
   });
 });
+
+describe("sourceNameOf", () => {
+  it("names the Lead Finder, a campaign and WhatsApp in words, never the raw tag", async () => {
+    const { sourceNameOf: name } = await import("./lead-desk-today");
+    const words: Record<string, string> = { "ld.from.lead_finder": "the Lead Finder", "ld.from.campaign": "a campaign", "ld.from.whatsapp": "WhatsApp", "ld.source.indiamart": "IndiaMART" };
+    const tt = (k: string) => words[k] ?? k;
+    expect(["lead_finder", "campaign", "whatsapp", "indiamart", "some_new_tag"].map((x) => name(tt, x))).toEqual(["the Lead Finder", "a campaign", "WhatsApp", "IndiaMART", "some new tag"]);
+  });
+});

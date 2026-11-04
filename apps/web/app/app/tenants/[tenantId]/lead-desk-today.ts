@@ -29,7 +29,9 @@ const settled = <V>(r: PromiseSettledResult<V>): V | null => {
  * The plain name of a lead source for a line of Today. Only the tags Lead Desk knows (`SOURCE_TAGS`) have a word in the dictionary; any other source a CRM lead may carry (a WhatsApp enquiry, something typed by hand, a tag
  * from before Lead Desk) is shown as it is, with the underscores taken out. Never a dictionary lookup that can miss: a missing key made Today fail for every business type with its own pages.
  */
-export const sourceNameOf = (t: T, tag: string): string => ((SOURCE_TAGS as readonly string[]).includes(tag) ? t(`ld.source.${tag}`) : tag.replace(/_/g, " "));
+/** Where a lead came from that is not an import source: the Lead Finder, a campaign, a WhatsApp message (staging, 4 Nov: "from lead finder" was the raw tag). */
+const OTHER_SOURCES = ["lead_finder", "campaign", "whatsapp"] as const;
+export const sourceNameOf = (t: T, tag: string): string => ((SOURCE_TAGS as readonly string[]).includes(tag) ? t(`ld.source.${tag}`) : (OTHER_SOURCES as readonly string[]).includes(tag) ? t(`ld.from.${tag}`) : tag.replace(/_/g, " "));
 
 const CAPS = ["cap_calls", "cap_minutes"] as const;
 const isCap = (reason: string | null): boolean => reason !== null && (CAPS as readonly string[]).includes(reason);

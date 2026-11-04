@@ -77525,5 +77525,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ld.from.lead_finder": {
+  "en": "the Lead Finder",
+  "te": "లీడ్ ఫైండర్",
+  "hi": "लीड फ़ाइंडर",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ld.from.campaign": {
+  "en": "a campaign",
+  "te": "ఒక క్యాంపెయిన్",
+  "hi": "एक कैंपेन",
+  "kn": "ಒಂದು ಕ್ಯಾಂಪೇನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ld.from.whatsapp": {
+  "en": "WhatsApp",
+  "te": "వాట్సాప్",
+  "hi": "व्हाट्सऐप",
+  "kn": "ವಾಟ್ಸಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
