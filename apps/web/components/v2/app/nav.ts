@@ -79,7 +79,8 @@ export const NAV: readonly NavGroup[] = [
       // job CO: a customer's delivery sites, and what customers owe (the shared ledger, ADR 0086); only a pack with the module offers them
       { id: "sites", label: "Sites", icon: "sites", path: "/sites", module: "sites", packOnly: true, roles: ALL_ROLES },
       { id: "dues", label: "Dues", icon: "dues", path: "/dues", module: "dues", unlessModule: "fees", packOnly: true, roles: WRITERS },
-      // job CC: look for shops and wholesalers on Google Maps and keep the good ones as leads
+      // the Lead Finder (job lead-finder part D, ADR 0119): new businesses that may buy (made-up ones in a demo, Google Maps in the Owner Test workspace only), the Researcher's decision and the practice call. It replaced job CC's
+      // map search (one place, not two). The tab keeps its word "Find retailers" (the business types' packs name it; packages/packs); the frame drops the module when the API says the Lead Finder is not available here (app/app/frame-data.ts)
       { id: "retailers", label: "Find retailers", icon: "retailers", path: "/retailers", module: "lead_finder", roles: WRITERS },
       // night 4 (jobs DR, DS): Lead Desk, the core for every business, and "Ask Vijaya to do it". Each exists only while its feature flag is on (lib/screens/features.ts); they are tabs of Customers, Calls and Reports
       { id: "leaddesk", label: "Leads", icon: "leads", path: "/lead-desk", feature: "leads", roles: ALL_ROLES },
