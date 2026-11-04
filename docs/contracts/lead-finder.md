@@ -36,6 +36,9 @@ Request (closed; one of `text` or `query`):
 The plan card shows: query, area, max results, the estimated cost (`est_cost_paise`, "estimate" when `cost_is_estimate`), searches left today, and two buttons: **OK** (Owner/Admin) and Cancel.
 `attribution` is `"Google Maps"` whenever the provider is `places`: show "Google Maps" next to any Places data (the result card, the list, a prospect).
 
+Place names are kept as the owner wrote or said them: a Telugu request stores its area in Telugu script ("బంజారా హిల్స్") and the cards show it so. A Places search (Owner Test) sends that text to
+Google as it is.
+
 ## 1b. In the chat: `POST /assistant/turns` (and the voice) -> the event `lead_finder` (4 Nov 2026, day 2)
 The owner types or says "find new retailers / boutiques / contractors in <place>" (en, te, kn, hi; "జయనగర్‌లో కొత్త రీటైలర్లను వెతకండి", "ಜಯನಗರದಲ್ಲಿ ಹೊಸ ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ", "अनंतपुर में नए ठेकेदार ढूंढो").
 The router sees it first (no model call): the stream is `intent {kind: "action"}`, `step`, `text` (one sentence in the chat language that ends "Shall I search?"), then
@@ -119,15 +122,16 @@ PUT sends any subset. Ranges: bar 50 to 100, cap 0 to 500, hours 9 to 21 (India 
 After a practice call that QUALIFIED (`prospect.status: "qualified"`, it has a `lead_id`), the prospect's page shows **"Make the draft quote"**.
 - `GET /prospects/{id}/quote-draft` (Owner, Admin, Sales) -> the PREVIEW, nothing stored:
 ```json
-{ "prospect_id": "uuid", "lead_id": "uuid", "ready": true, "made": false, "quote_id": "uuid",
+{ "prospect_id": "uuid", "lead_id": "uuid", "ready": true, "made": false, "quote_id": "uuid", "enquiry_id": "uuid",
   "lines": [ { "item": "Kanchi Pattu Bridal", "item_type_code": "LF-1A2B3C4D", "qty": 40, "unit_price_paise": 850000, "quantity_said": "About forty pieces a month, more in the season." } ],
   "left_out": [ { "item": "Soft Silk Daily", "reason": "no_price | no_quantity | not_in_stock | not_in_catalogue | too_many_lines | item_type_off" } ] }
 ```
   Show each line (item × qty at ₹price, and "they said: …"), and each left-out item with its reason in words: "no exact price set" (no_price), "they said no number" (no_quantity), "not in stock now"
   (not_in_stock), "no longer in the catalogue" (not_in_catalogue), "a draft holds five lines" (too_many_lines), "its item type is switched off" (item_type_off). Show the button only when `ready`; when `made`, show
   "Open the draft quote" instead. A textiles draft lives on its ENQUIRY's page, `/app/tenants/{t}/enquiries/{enquiry_id}` (the Quote tab), not on `/quotes/{id}` (that page is the building-materials
-  quote): the POST answer carries `enquiry_id`, and `GET /quotes/{quote_id}` gives it too. (Checked on staging, 4 Nov 2026: quote 52 of the textiles demo renders there with "Typed prices" and "Approve".) 409 `not_qualified` for any other call.
-- `POST /prospects/{id}/quote-draft` `{ "customer_kind": "new" | "repeat", "delivery_state": "KA" | null }` (Owner, Admin, **with the second factor**: 403 `mfa_required` otherwise) -> 201 (200 on a repeat)
+  quote): the preview and the POST answer both carry `enquiry_id`. (Checked on staging, 4 Nov 2026: quote 52 of the textiles demo renders there with "Typed prices" and "Approve".) 409 `not_qualified` for any other call.
+- `POST /prospects/{id}/quote-draft` `{ "customer_kind": "new" | "repeat", "delivery_state": "KA" | null }`. Send `"new"`: a prospect is never an existing customer (the search leaves
+  customers out), so "repeat" is only for a case the screens do not have today (Owner, Admin, **with the second factor**: 403 `mfa_required` otherwise) -> 201 (200 on a repeat)
 ```json
 { "quote_id": "uuid", "quote_no": 21, "enquiry_id": "uuid", "status": "draft", "total_paise": 40120000, "needs_owner_approval": false, "lines": [...], "left_out": [...], "replayed": false }
 ```
