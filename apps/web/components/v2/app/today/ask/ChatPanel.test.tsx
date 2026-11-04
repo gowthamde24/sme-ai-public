@@ -673,8 +673,24 @@ describe("the command bar (owner's design C) and the language pill", () => {
     const fetchMock = globalThis.fetch as unknown as { mock: { calls: [string, { body?: string }][] } };
     const saved = fetchMock.mock.calls.find((c) => c[0] === "/app/tenants/t/chat-language");
     expect(JSON.parse(saved![1].body!)).toEqual({ language: "kn" });
-    expect(window.localStorage.getItem("sme_chat_lang")).toBe("kn");
+    expect(window.localStorage.getItem("sme_chat_lang:t")).toBe("kn"); // this browser's copy belongs to THIS workspace
     voiceOverride = {};
+    window.localStorage.removeItem("sme_chat_lang:t");
+  });
+  it("each workspace keeps its own choice: Telugu picked in one does not follow you into another, which starts on its own profile's Auto (owner, 4 Nov)", async () => {
+    voiceOverride = { chatLanguage: null, chatLanguageUrl: "/app/tenants/a/chat-language" };
+    draw({ variant: "bar" });
+    await act(async () => void fireEvent.change(screen.getByRole("combobox", { name: "Language" }), { target: { value: "te" } }));
+    cleanup();
+    voiceOverride = { chatLanguage: "auto", chatLanguageUrl: "/app/tenants/b/chat-language" };
+    draw({ variant: "bar" });
+    expect((screen.getByRole("combobox", { name: "Language" }) as HTMLSelectElement).value).toBe("auto");
+    cleanup();
+    voiceOverride = { chatLanguage: null, chatLanguageUrl: "/app/tenants/a/chat-language" };
+    draw({ variant: "bar" });
+    expect((screen.getByRole("combobox", { name: "Language" }) as HTMLSelectElement).value).toBe("te"); // and the first one kept its own
+    voiceOverride = {};
+    window.localStorage.removeItem("sme_chat_lang:a");
   });
   it("a typed question carries the pill: Telugu is asked in Telugu, Auto sends the word auto", async () => {
     window.localStorage.setItem("sme_chat_lang", "te");

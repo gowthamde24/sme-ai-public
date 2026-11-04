@@ -111,13 +111,14 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(document.querySelectorAll("[data-needs-row]")).toHaveLength(5); // the count is the rows (three show, the rest wait behind "See all")
     expect(needs.getByText(/ఈ చీర ధర 500/)).toBeInTheDocument(); // the exact words of the message, read from the outbox
     expect(needs.getByText(/asked for a call/)).toBeInTheDocument(); // the row of the call request (its topics are named from the translations)
-    expect(needs.getByText("Quote 1 for ₹50,400.00 is ready for your approval.")).toBeInTheDocument(); // the API's own sentence
+    expect(needs.getByText(/₹50,400\.00/)).toBeInTheDocument(); // the row is short: the amount, not the API's whole sentence (owner, 4 Nov)
+    expect(needs.queryByText("Quote 1 for ₹50,400.00 is ready for your approval.")).toBeNull();
     expect(listOutboxApprovals).toHaveBeenCalledTimes(1);
     expect(listCallRequests).toHaveBeenCalledWith("tok", TENANT, { status: "requested", limit: 100 });
     expect(screen.getByRole("heading", { name: "Done while you slept" })).toBeInTheDocument();
     const team = within(screen.getByRole("heading", { name: "Your team" }).closest("section")!);
     expect(team.getByText(/Quote Writer/)).toBeInTheDocument();
-    expect(team.getByText(/Lead Finder/)).toBeInTheDocument();
+    expect(team.queryByText(/Lead Finder/)).toBeNull(); // not built yet: not named (owner, 4 Nov)
   });
   it("'Open' goes where the item's target says: the order, the lead, and for a quote the enquiry it belongs to", async () => {
     await show();

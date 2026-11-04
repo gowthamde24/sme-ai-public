@@ -104,6 +104,18 @@ describe("the example-data banner", () => {
     rerender(<ExampleBanner state="available" notice="removed" kept={3} load={a.load} remove={a.remove} t={t} />);
     expect(screen.getByRole("status")).toHaveTextContent("3 example rows stay because you have used them.");
   });
+  it("offers 'Remove and load it again' next to the removal only when a reset is given, and says when it was done", () => {
+    const a = actions();
+    const reset = vi.fn(async () => undefined);
+    const { rerender } = render(<ExampleBanner state="loaded" notice={null} load={a.load} remove={a.remove} t={t} />);
+    expect(screen.queryByRole("button", { name: "Remove and load it again" })).toBeNull();
+    rerender(<ExampleBanner state="loaded" notice="reset" load={a.load} remove={a.remove} reset={reset} t={t} />);
+    expect(screen.getByRole("button", { name: "Remove and load it again" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Yes, remove the example data" })).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Example data removed and loaded again.");
+    rerender(<ExampleBanner state="loaded" notice="reset" kept={2} load={a.load} remove={a.remove} reset={reset} t={t} />);
+    expect(screen.getByRole("status")).toHaveTextContent("2 example rows stayed as they were because you have used them.");
+  });
 });
 
 describe("the business name and city question", () => {

@@ -12,11 +12,11 @@ export { poseOf };
  * main assistant, the icon of its job for a helper), its name and its state in words, and a dot for the state. A helper that is working has its circle moving (the main assistant) or a pulsing dot; one that is switched off or not built yet is
  * faded and still. Tapping a tile (a real button) chooses the helper, as the list's cards do. Plain DOM and CSS, no script of its own beyond the choice.
  */
-export function TeamBoard({ poses, names, stateText, selected, onSelect, label, hint }: { poses: Record<AgentId, Pose>; names: Record<AgentId, string>; stateText: Record<AgentId, string>; selected: AgentId | null; onSelect: (id: AgentId | null) => void; label: string; hint: string }) {
+export function TeamBoard({ poses, names, stateText, selected, onSelect, label, hint, shown = ALL_AGENT_IDS }: { poses: Record<AgentId, Pose>; names: Record<AgentId, string>; stateText: Record<AgentId, string>; selected: AgentId | null; onSelect: (id: AgentId | null) => void; label: string; hint: string; /** The tiles to draw, in seat order (a helper that is not built yet has none). */ shown?: readonly AgentId[] }) {
   return (
     <div data-office="team">
       <ul role="group" aria-label={label} className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {ALL_AGENT_IDS.map((id) => {
+        {shown.map((id) => {
           const on = selected === id;
           const pose = poses[id];
           return (
