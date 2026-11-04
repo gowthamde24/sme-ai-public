@@ -9,7 +9,7 @@ import { FOR_GOOD, reasonLine, type ActionResult, type CallLanguage, type Person
 import { FailureNote } from "../cc/FailureNote";
 import { card, danger, muted, pillClass, secondary, type Failed, type Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
-import { GoogleMark } from "./FinderBox";
+import { GoogleMark } from "./SearchCards";
 import { PracticeCall } from "./PracticeCall";
 
 export type ListActions = {

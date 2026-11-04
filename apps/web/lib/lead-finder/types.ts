@@ -62,6 +62,18 @@ export type Search = {
   finishedAt: string | null;
 };
 
+/**
+ * The card a chat reply carries (contract section 1b): the event `lead_finder` of a turn (typed or spoken) and `lead_finder` on a message of the conversation's history. The search's state says which card it is: `planned` = the plan
+ * card (OK / Cancel), `done` = the result card, `failed` / `cancelled` = a closed card. `canApprove`: the Owner or an Admin (a Sales member sees the plan; the owner says OK).
+ */
+export type LeadFinderCard = { search: Search; canApprove: boolean };
+
+/** How far a search has gone: a card never goes back (a replayed `planned` never hides a `done` already shown). */
+export const searchRank = (s: SearchState): number => (s === "planned" ? 0 : s === "approved" ? 1 : 2);
+
+/** The words the chat's Lead Finder card draws (the chat panel is given only these and its own `bv.*` words). */
+export const isChatCardWord = (k: string): boolean => k.startsWith("lf.plan.") || k.startsWith("lf.result.") || k === "lf.demo" || k === "lf.working" || k === "lf.chat.card" || k === "lf.err.cap" || k === "lf.err.off" || k === "lf.err.state";
+
 export type StockMatch = { matched: string[]; low: string[]; enough: boolean };
 export type QuoteLine = { item: string; unit: string; pricePaise: number | null; moq: number | null; quantitySaid: string };
 export type Qualification = { summary: string; captured: Partial<Record<CapturedKey, string>>; language: string; whatsappOk: boolean; callback: boolean; pitched: string[]; quoteSuggestion: QuoteLine[]; simulated: true };

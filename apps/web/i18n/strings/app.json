@@ -76514,6 +76514,17 @@
    "kn": "draft"
   }
  },
+ "lf.chat.card": {
+  "en": "Search for new businesses",
+  "te": "కొత్త వ్యాపారాల కోసం సెర్చ్",
+  "hi": "नए कारोबारों की खोज",
+  "kn": "ಹೊಸ ವ್ಯಾಪಾರಗಳಿಗಾಗಿ ಸರ್ಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "lf.err.cap": {
   "en": "Today's searches are used up. Try again tomorrow, or change the limit in Settings.",
   "te": "ఈరోజు సెర్చ్‌లు అయిపోయాయి. రేపు మళ్ళీ చూడండి, లేదా సెట్టింగ్స్‌లో లిమిట్ మార్చండి.",
