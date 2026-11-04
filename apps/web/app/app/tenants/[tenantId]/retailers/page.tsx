@@ -18,7 +18,7 @@ import { getProspect, getProspectStats, listProspects, readAvailability, redecid
 import { STATUS_FILTER, type ProspectPage, type ProspectStats, type ProspectStatus } from "@/lib/lead-finder/types";
 import { requireUser } from "@/lib/auth/session";
 
-import { approveSearchAction, cancelSearchAction, planSearchAction, practiceCallAction, prospectActionsAction } from "./actions";
+import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
 
 export const metadata = { title: `Prospects · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -147,7 +147,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
           ) : page.items.length === 0 ? (
             gone ? null : <p className={mutedText}>{t(status ? "lf.none.filter" : "lf.none")}</p>
           ) : (
-            <ProspectList items={page.items} words={words} base={base} canPractice={admin} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId) }} />
+            <ProspectList items={page.items} words={words} base={base} canPractice={admin} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId), quoteDraft: quoteDraftAction.bind(null, tenantId), makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId) }} />
           )}
           {page?.nextCursor ? (
             <p>

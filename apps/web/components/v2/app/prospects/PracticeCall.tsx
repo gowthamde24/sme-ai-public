@@ -3,20 +3,22 @@
 import Link from "next/link";
 import { useId, useState } from "react";
 
-import { CALL_LANGUAGES, PERSONAS, rupees, type CallLanguage, type Persona, type PracticeCall as Call, type Prospect } from "@/lib/lead-finder/types";
+import { CALL_LANGUAGES, PERSONAS, rupees, type CallLanguage, type Persona, type PracticeCall as Call, type Prospect, type QuoteDraftMade, type QuoteDraftView } from "@/lib/lead-finder/types";
 
 import { FailureNote } from "../cc/FailureNote";
 import { h3, label as labelClass, muted, pillClass, primary, selectClass, type Failed, type Reply } from "../cc/kit";
 import { makeT, type Words } from "../words";
+import { QuoteDraft } from "./QuoteDraft";
 
 const OUTCOME_TONE = { qualified: "green", contacted: "brand", not_interested: "neutral", do_not_call: "red" } as const;
 
 /**
  * The practice call of a Ready to call business (job lead-finder part D, contract section 5; Owner and Admin): our assistant against a made-up shopkeeper (the persona), in English or Telugu, IN THE SIMULATOR. It is labelled
  * "Practice call (simulated): nothing was dialled" before and after. The answer shows the outcome, the three-line summary and what was said (returned once, kept nowhere), and the quote suggestion as a DRAFT for the Owner's OK:
- * its prices are the catalogue's, and a missing price says "you give the price" (never a guess).
+ * its prices are the catalogue's, and a missing price says "you give the price" (never a guess). A call that QUALIFIED then shows its draft quote at once (contract section 7): the preview and "Make the draft quote".
  */
-export function PracticeCall({ prospect, words, base, langNames, run }: { prospect: Pick<Prospect, "id" | "name">; words: Words; base: string; langNames: Record<CallLanguage, string>; run: (persona: Persona, language: CallLanguage) => Promise<Reply<Call>> }) {
+type Draft = { preview: (prospectId: string) => Promise<Reply<QuoteDraftView>>; make: (prospectId: string) => Promise<Reply<QuoteDraftMade>> };
+export function PracticeCall({ prospect, words, base, langNames, run, draft }: { prospect: Pick<Prospect, "id" | "name">; words: Words; base: string; langNames: Record<CallLanguage, string>; run: (persona: Persona, language: CallLanguage) => Promise<Reply<Call>>; /** The draft quote of a call that qualified (the practice call is the Owner's or an Admin's, who may make it). */ draft?: Draft }) {
   const t = makeT(words);
   const id = useId();
   const [persona, setPersona] = useState<Persona>("interested");
@@ -78,6 +80,7 @@ export function PracticeCall({ prospect, words, base, langNames, run }: { prospe
         </div>
         <FailureNote failure={failure} words={words} />
         {call ? <CallResult call={call} words={words} base={base} /> : null}
+        {call && draft && call.outcome === "qualified" && call.prospect.leadId ? <QuoteDraft key={call.callId} words={words} base={base} canMake open actions={{ preview: () => draft.preview(call.prospect.id), make: () => draft.make(call.prospect.id) }} /> : null}
       </div>
     </details>
   );

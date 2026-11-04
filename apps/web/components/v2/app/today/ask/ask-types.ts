@@ -1,4 +1,5 @@
 import type { ConfirmAction } from "@/lib/api/turns";
+import type { LeadFinderCard } from "@/lib/lead-finder/types";
 import type { TaskError, TaskOut } from "@/lib/tasks/types";
 
 /**
@@ -25,6 +26,8 @@ export type AskEvent =
   | { type: "done"; conversationId?: string | null }
   /** An ACTION is proposed (the router decided the message was one): the plan, and one tap to approve it. Nothing has run. */
   | { type: "confirm_action"; action: ConfirmAction }
+  /** The Lead Finder's card (docs/contracts/lead-finder.md section 1b): the plan of a search for new businesses (nothing searched yet), or its result. Only where the Lead Finder is available (the API sends none elsewhere). */
+  | { type: "lead_finder"; card: LeadFinderCard }
   /** Voice only (job BF): the words the recording was heard as. The box shows them as the person's own message. */
   | { type: "heard"; text: string }
   /** Voice only: the spoken answer (base64, after the written one). The written answer stands without it. */

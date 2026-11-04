@@ -11,7 +11,7 @@ export const POLICY = "99999999-9999-4999-8999-999999999999";
 export const REQ = "66666666-6666-4666-8666-666666666666";
 export const QUESTION = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1";
 export const HASH = "a".repeat(64);
-export const BODY_TEXT = "Hello, I am following up on my earlier message about your saree requirement.";
+export const BODY_TEXT = "Hello, I am following up on my earlier message about your enquiry.";
 
 export const TOUCH_JSON = {
   id: TOUCH, lead_id: LEAD, contact_id: CONTACT, direction: "out", channel: "email", occurred_at: "2026-10-02T06:30:00+00:00", draft_id: null, recorded_by: PERSON, recorded_at: "2026-10-02T06:30:01+00:00",

@@ -24,6 +24,11 @@ import { useDictation } from "./use-dictation";
 import { useKeyboardInset } from "./use-keyboard-inset";
 import type { ConfirmAction } from "@/lib/api/turns";
 import { useChatWork, WorkCards, type WorkEnv } from "./work";
+import type { LeadFinderCard, Search } from "@/lib/lead-finder/types";
+
+import type { Words } from "../../words";
+import { ChatFinderCard } from "./ChatFinderCard";
+import { finderCards } from "./lead-finder-cards";
 
 const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 const bubble = "max-w-[92%] rounded-2xl px-3.5 py-2.5";
@@ -76,7 +81,7 @@ function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: str
   );
 }
 
-function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, work }: { /** The assistant does the work: the environment of the work cards (null = the feature is off). */ work?: WorkEnv | null; /** The way to ask the same question again, for the exchange that is on screen and failed. */ onRetry?: (() => void) | undefined; mis: { endpoint: string; language: VoiceLang } | null; x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void }) {
+function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, finder, words, onSearch, work }: { /** The assistant does the work: the environment of the work cards (null = the feature is off). */ work?: WorkEnv | null; /** The way to ask the same question again, for the exchange that is on screen and failed. */ onRetry?: (() => void) | undefined; mis: { endpoint: string; language: VoiceLang } | null; x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void; /** The Lead Finder's card this exchange draws (one per search: see lead-finder-cards.ts), or null. */ finder: LeadFinderCard | null; words: Words; onSearch: (search: Search) => void }) {
   const [copied, setCopied] = React.useState(false);
   const copy = () => {
     void navigator.clipboard?.writeText(x.answer).then(() => setCopied(true), () => undefined);
@@ -104,6 +109,11 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, work }: {
           {mis && x.heardByVoice ? <Mispronounced text={x.answer} language={mis.language} endpoint={mis.endpoint} c={c} /> : null}
           <Sources sources={x.sources} w={w} />
           <Drafts drafts={x.drafts} w={w} />
+        </div>
+      ) : null}
+      {finder ? (
+        <div className={`${bubble} self-start bg-surface-2`}>
+          <ChatFinderCard card={finder} words={words} base={base} onSearch={onSearch} />
         </div>
       ) : null}
       {x.plan ? (
@@ -169,7 +179,11 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   const { w } = s;
   // "Mispronounced?" under spoken messages: the Owner and Admin teach the words through the pronunciation route
   const mis = voice.pronunciation ? { endpoint: `${s.base}/pronunciation`, language: voice.language } : null;
-  const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, plan: s.plan, work: s.work } : null;
+  const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, plan: s.plan, leadFinder: s.leadFinder, work: s.work } : null;
+  // the Lead Finder's cards: one per search, on the reply that first showed it, with the furthest state seen (a later "yes" turn, a replay, the card's own OK)
+  const [ownSearch, setOwnSearch] = React.useState<Record<string, Search>>({});
+  const onSearch = React.useCallback((search: Search) => setOwnSearch((m) => ({ ...m, [search.id]: search })), []);
+  const finders = finderCards([...s.earlier.map((x) => x.leadFinder), ...(current ? [current.leadFinder] : [])], ownSearch);
   const dictating = dict.state !== "idle";
   const empty = s.earlier.length === 0 && current === null && !talk.live;
   const bar = variant === "bar";
@@ -431,9 +445,9 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           ) : null}
           <ul data-chat="thread" className="flex flex-col gap-4">
             {s.earlier.map((x, i) => (
-              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} work={work.env} />
+              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[i]} words={voice.words} onSearch={onSearch} work={work.env} />
             ))}
-            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} work={work.env} onRetry={current.failed && !current.answer && !current.heardByVoice && current.asked !== "" && !current.task ? s.retry : undefined} /> : null}
+            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[s.earlier.length] ?? null} words={voice.words} onSearch={onSearch} work={work.env} onRetry={current.failed && !current.answer && !current.heardByVoice && current.asked !== "" && !current.task ? s.retry : undefined} /> : null}
             {talk.state === "listening" && !talk.live?.asked ? (
               <li data-chat="wave" aria-hidden="true" className={`${bubble} flex h-11 items-center gap-1 self-end border border-dashed border-brand-edge bg-surface`}>
                 {["", "[animation-delay:120ms]", "[animation-delay:240ms]", "[animation-delay:360ms]", "[animation-delay:480ms]"].map((delay) => (

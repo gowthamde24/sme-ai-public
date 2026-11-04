@@ -9,9 +9,10 @@ import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { failureOf } from "@/lib/api/failure";
-import { actOnProspects, approveSearch, cancelSearch, planSearch, practiceCall } from "@/lib/api/lead-finder";
+import { actOnProspects, approveSearch, cancelSearch, getQuoteDraft, makeQuoteDraft, planSearch, practiceCall } from "@/lib/api/lead-finder";
+import { fetchQuote } from "@/lib/api/quotes";
 import { requireUser } from "@/lib/auth/session";
-import { ACTIONS, CALL_LANGUAGES, MAX_BULK, PERSONAS, searchTextProblem, type ActionResult, type CallLanguage, type Persona, type PracticeCall, type ProspectAction, type Search } from "@/lib/lead-finder/types";
+import { ACTIONS, CALL_LANGUAGES, MAX_BULK, PERSONAS, searchTextProblem, type ActionResult, type CallLanguage, type Persona, type PracticeCall, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
 
 /**
  * The changes of the Prospects tab (job lead-finder part D; docs/contracts/lead-finder.md): plan a search from the owner's words, the OK (Owner, Admin) that runs it, Cancel, the bulk buttons, and the practice call (Owner, Admin) IN THE
@@ -44,6 +45,9 @@ function refusal(error: unknown, t: AppT, lang: string): Refused {
   if (f.code === "not_a_search") return { ...f, error: lang === "en" && api && api.message.length > 0 && api.message.length <= 300 ? api.message : t("lf.err.not_a_search") };
   if (f.code === "search_cap_reached") return { ...f, error: t("lf.err.cap") };
   if (f.code === "lead_finder_off" || f.code === "lead_finder_not_available") return { ...f, error: t("lf.err.off") };
+  if (f.code === "nothing_to_quote") return { ...f, error: t("lf.qd.err.nothing") };
+  if (f.code === "quote_draft_exists") return { ...f, error: t("lf.qd.err.exists") };
+  if (f.code === "not_qualified") return { ...f, error: t("lf.qd.err.not_qualified") };
   return f;
 }
 const touch = (tenantId: string) => revalidatePath(`/app/tenants/${tenantId}/retailers`);
@@ -117,5 +121,47 @@ export async function practiceCallAction(tenantId: string, prospectId: string, p
   } catch (error) {
     const f = refusal(error, ctx.t, await getLang());
     return f.code === "prospect_state" ? { ...f, error: ctx.t("lf.pc.only") } : f;
+  }
+}
+
+/**
+ * The PREVIEW of the draft quote a qualified call suggests (contract section 7; Owner, Admin and Sales): nothing is stored. Once the draft is made, the enquiry it lives on is looked up (`GET /quotes/{id}`), so "Open the draft quote"
+ * goes to that enquiry's page; null when it cannot be read (the screen then opens the list of quotes).
+ */
+export async function quoteDraftAction(tenantId: string, prospectId: string): Promise<Reply<QuoteDraftView>> {
+  const ctx = await who(tenantId, STAFF);
+  if ("ok" in ctx) return ctx;
+  if (typeof prospectId !== "string" || !isCanonicalUuid(prospectId)) return invalid(ctx.t);
+  try {
+    const preview = await getQuoteDraft(ctx.token, tenantId, prospectId);
+    // the preview names the enquiry itself (#305); an older API does not, and then the quote is read once to find it
+    let enquiryId: string | null = preview.enquiryId;
+    if (preview.made && enquiryId === null) {
+      try {
+        const enquiry = (await fetchQuote(ctx.token, tenantId, preview.quoteId)).enquiry_id;
+        enquiryId = isCanonicalUuid(enquiry) ? enquiry : null;
+      } catch (error) {
+        if (error instanceof ApiAuthError) throw error; // a rejected session goes to sign in (below); any other failure leaves the link to the list of quotes
+      }
+    }
+    return { ok: true, data: { ...preview, enquiryId } };
+  } catch (error) {
+    return refusal(error, ctx.t, await getLang());
+  }
+}
+
+/**
+ * "Make the draft quote" (Owner and Admin; the API wants the second factor, and a missing one comes back as the way to Security): ONE enquiry on the call's lead and ONE draft quote at the Owner's own catalogue prices. NOTHING is
+ * approved or sent: the quote is approved on its enquiry's page like any other. The buyer is a NEW customer (a business the Lead Finder found; one already a customer is never a prospect), and where it is delivered is left to the quote
+ * page (no state), where the GST supply is decided.
+ */
+export async function makeQuoteDraftAction(tenantId: string, prospectId: string): Promise<Reply<QuoteDraftMade>> {
+  const ctx = await who(tenantId, DECIDERS);
+  if ("ok" in ctx) return ctx;
+  if (typeof prospectId !== "string" || !isCanonicalUuid(prospectId)) return invalid(ctx.t);
+  try {
+    return { ok: true, data: await makeQuoteDraft(ctx.token, tenantId, prospectId, { customerKind: "new", deliveryState: null }) };
+  } catch (error) {
+    return refusal(error, ctx.t, await getLang());
   }
 }

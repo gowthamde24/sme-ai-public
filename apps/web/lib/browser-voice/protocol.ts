@@ -1,4 +1,6 @@
+import { readChatCard } from "@/lib/api/lead-finder-card";
 import type { ConfirmAction } from "@/lib/api/turns";
+import type { LeadFinderCard } from "@/lib/lead-finder/types";
 
 /**
  * "Talk to your assistant" in the browser (job DV, C1's contract-browser-voice.md, ADR 0118): the messages of the WebSocket `wss://<api>/v1/tenants/{id}/voice-chat`, checked as they arrive (the API's words are untrusted text and are drawn as plain text),
@@ -26,6 +28,8 @@ export type ServerMessage =
   | { type: "transcript"; text: string; final: boolean }
   /** An ACTION is proposed: the plan waits for the owner's yes (a tap, or a spoken "yes" the API recognises). */
   | { type: "confirm_action"; action: ConfirmAction }
+  /** The Lead Finder's card (docs/contracts/lead-finder.md 1b): a search's plan waiting for the OK, or its result after a spoken "yes". Read with the same SearchOut reader as the typed chat's. */
+  | { type: "lead_finder"; card: LeadFinderCard }
   /** The owner's answer to a plan went through (by tap or by voice). */
   | { type: "action"; actionId: string; status: "confirmed" | "declined" | "expired" }
   | { type: "audio_end"; turn: number }
@@ -74,6 +78,10 @@ export function parseServerMessage(raw: unknown): ServerMessage | null {
     case "confirm_action": {
       const action = parsePlan(json);
       return action === null ? null : { type: "confirm_action", action };
+    }
+    case "lead_finder": {
+      const card = readChatCard(json);
+      return card === null ? null : { type: "lead_finder", card };
     }
     case "action":
       return typeof json.action_id === "string" && UUID.test(json.action_id) && (json.status === "confirmed" || json.status === "declined" || json.status === "expired") ? { type: "action", actionId: json.action_id, status: json.status } : null;

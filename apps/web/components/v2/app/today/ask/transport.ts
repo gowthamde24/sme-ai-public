@@ -1,5 +1,7 @@
 import type { ConfirmAction } from "@/lib/api/turns";
 
+import { isFinderCard } from "./lead-finder-cards";
+
 import type { AskEvent, AskTransport, VoiceStatus, VoiceTransport } from "./ask-types";
 
 const AUDIO_TYPE = /^audio\/(wav|x-wav|wave|mpeg|mp3|ogg|webm|mp4|aac)$/; // the same nine as lib/api/voice.ts
@@ -35,6 +37,8 @@ export function parseLine(raw: string): AskEvent | null {
       return r.action instanceof Object ? { type: "confirm_action", action: r.action as ConfirmAction } : null; // the route made it from the API's plan, already read there
     case "work_card":
       return typeof r.card === "object" && r.card !== null && !Array.isArray(r.card) ? { type: "work_card", card: r.card } : null; // read strictly by the session (parseWorkCard)
+    case "lead_finder":
+      return isFinderCard(r.card) ? { type: "lead_finder", card: r.card } : null; // the route read it from the API's card; checked again for its shape, a card that is off is never drawn
     case "done":
       return { type: "done", conversationId: s(r.conversationId) };
     default:
