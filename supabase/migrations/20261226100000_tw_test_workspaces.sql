@@ -71,14 +71,15 @@ security definer
 set search_path = ''
 as $$
 declare
-  v_batch   packs.example_batches;
-  r         record;
-  v_removed jsonb := jsonb_build_object('companies', 0, 'contacts', 0, 'leads', 0, 'products', 0, 'other', 0);
-  v_kept    jsonb := jsonb_build_object('companies', 0, 'contacts', 0, 'leads', 0, 'products', 0, 'other', 0);
-  v_hash    text;
-  v_pass    integer := 0;
+  v_batch    packs.example_batches;
+  r          record;
+  v_removed  jsonb := jsonb_build_object('companies', 0, 'contacts', 0, 'leads', 0, 'products', 0, 'other', 0);
+  v_kept     jsonb := jsonb_build_object('companies', 0, 'contacts', 0, 'leads', 0, 'products', 0, 'other', 0);
+  v_hash     text;
+  v_pass     integer := 0;
   v_progress boolean := true;
-  v_key     text;
+  v_key      text;
+  v_state    jsonb := '{}'::jsonb;   -- "table|row id" -> {t, r, s}: s = left | kept | gone | removed (no temporary table: this runs as the API's role through PostgREST)
 begin
   if auth.uid() is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin']::public.app_role[]) then
     raise exception 'not allowed' using errcode = '42501';
@@ -88,37 +89,34 @@ begin
   if not found then
     return jsonb_build_object('removed', v_removed, 'kept', v_kept, 'batch_id', null);
   end if;
-  create temp table if not exists pg_temp.example_left (table_name text, row_id uuid, made_hash text, state text) on commit drop;
-  delete from pg_temp.example_left;
-  insert into pg_temp.example_left select x.table_name, x.row_id, x.made_hash, 'left' from packs.example_rows x where x.batch_id = v_batch.id;
   -- changed (or already gone) rows are decided once, before any delete
-  for r in select * from pg_temp.example_left loop
+  for r in select x.table_name, x.row_id, x.made_hash from packs.example_rows x where x.batch_id = v_batch.id loop
     execute format('select md5((to_jsonb(t) - ''updated_at'')::text) from public.%I t where t.tenant_id = $1 and t.id = $2', r.table_name) into v_hash using p_tenant_id, r.row_id;
-    update pg_temp.example_left e set state = case when v_hash is null then 'gone' when v_hash <> r.made_hash then 'kept' else 'left' end
-     where e.table_name = r.table_name and e.row_id = r.row_id;
+    v_state := v_state || jsonb_build_object(r.table_name || '|' || r.row_id::text,
+                 jsonb_build_object('t', r.table_name, 'r', r.row_id, 's', case when v_hash is null then 'gone' when v_hash <> r.made_hash then 'kept' else 'left' end));
   end loop;
   -- unchanged rows: dependants first by the usual order, then pass again for whatever a sample row still pointed at
   while v_progress and v_pass < 8 loop
     v_progress := false;
     v_pass := v_pass + 1;
-    for r in select * from pg_temp.example_left e where e.state = 'left'
-              order by case e.table_name when 'lead_profiles' then 1 when 'lead_arrivals' then 1 when 'requirement_fields' then 1 when 'knowledge_facts' then 1 when 'requirements' then 2
-                                         when 'enquiries' then 3 when 'knowledge_sources' then 3 when 'leads' then 4 when 'contacts' then 5 when 'companies' then 6 else 7 end, e.row_id loop
+    for r in select e.key, e.value ->> 't' as t, (e.value ->> 'r')::uuid as rid from jsonb_each(v_state) e where e.value ->> 's' = 'left'
+              order by case e.value ->> 't' when 'lead_profiles' then 1 when 'lead_arrivals' then 1 when 'requirement_fields' then 1 when 'knowledge_facts' then 1 when 'requirements' then 2
+                                            when 'enquiries' then 3 when 'knowledge_sources' then 3 when 'leads' then 4 when 'contacts' then 5 when 'companies' then 6 else 7 end, e.key loop
       begin
-        execute format('delete from public.%I where tenant_id = $1 and id = $2', r.table_name) using p_tenant_id, r.row_id;
-        update pg_temp.example_left e set state = 'removed' where e.table_name = r.table_name and e.row_id = r.row_id;
+        execute format('delete from public.%I where tenant_id = $1 and id = $2', r.t) using p_tenant_id, r.rid;
+        v_state := jsonb_set(v_state, array[r.key, 's'], '"removed"'::jsonb);
         v_progress := true;
       exception when foreign_key_violation then
         null;   -- something still points at it: maybe a sample row of a later pass, maybe a row of the person's own
       end;
     end loop;
   end loop;
-  for r in select e.table_name, e.state, count(*) as n from pg_temp.example_left e where e.state in ('removed', 'left', 'kept') group by 1, 2 loop
-    v_key := case when r.table_name in ('companies', 'contacts', 'leads', 'products') then r.table_name else 'other' end;
-    if r.state = 'removed' then
-      v_removed := jsonb_set(v_removed, array[v_key], to_jsonb((v_removed ->> v_key)::integer + r.n));
+  for r in select e.value ->> 't' as t, e.value ->> 's' as st from jsonb_each(v_state) e where e.value ->> 's' in ('removed', 'left', 'kept') loop
+    v_key := case when r.t in ('companies', 'contacts', 'leads', 'products') then r.t else 'other' end;
+    if r.st = 'removed' then
+      v_removed := jsonb_set(v_removed, array[v_key], to_jsonb((v_removed ->> v_key)::integer + 1));
     else
-      v_kept := jsonb_set(v_kept, array[v_key], to_jsonb((v_kept ->> v_key)::integer + r.n));   -- changed, or used by a row outside the sample
+      v_kept := jsonb_set(v_kept, array[v_key], to_jsonb((v_kept ->> v_key)::integer + 1));   -- changed, or used by a row outside the sample
     end if;
   end loop;
   update packs.example_batches set removed_at = now(), removed_by = auth.uid() where id = v_batch.id;
