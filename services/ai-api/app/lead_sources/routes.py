@@ -3,6 +3,7 @@
   POST /tenants/{t}/lead-imports/read|preview     Owner, Admin, Sales   what is in a file / sheet / pasted list / vCard; counts and an estimate (nothing is written)
   POST /tenants/{t}/lead-imports                  Owner, Admin, Sales   import (idempotent on import_id)
   GET  /tenants/{t}/lead-imports[/{id}]           Owner, Admin, Sales   the history of imports
+  POST /tenants/{t}/lead-imports/{id}/undo        Owner, Admin          archive what an import created and nobody worked on since (job assistant-does-the-work A2)
   GET|POST /tenants/{t}/lead-sheet-links[...]     Owner, Admin          a Google Sheet kept in sync
   GET|POST /tenants/{t}/lead-sources[...]         Owner, Admin          live sources: website form, webhook, e-mail forwarding, Meta, IndiaMART
   GET  /tenants/{t}/leads/{lead}/touches          Owner, Admin, Sales   every time the same person arrived
@@ -34,6 +35,7 @@ from app.lead_sources.models import (
     ImportIn,
     ImportOut,
     ImportsOut,
+    ImportUndoOut,
     IndiaMartPullOut,
     MailIn,
     MailOut,
@@ -102,6 +104,12 @@ def import_leads(body: ImportIn, response: Response, ctx: Importer, runtime: Run
     if replayed:
         response.status_code = 200
     return out
+
+
+@router.post("/lead-imports/{import_id}/undo", response_model=ImportUndoOut)
+def undo_import(import_id: str, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    """Undo an import: what it created and nobody has worked on since is archived; the rest stays (counted). Owner or Admin (archiving is theirs). A second undo changes nothing."""
+    return _service(runtime).undo_import(ctx.principal.token, ctx.tenant.id, _id(import_id))
 
 
 @router.get("/lead-imports", response_model=ImportsOut)

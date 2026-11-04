@@ -356,6 +356,11 @@ class LeadSourcesService:
         totals, problems, replayed = self._apply(token, tenant_id, import_id, loaded.kind, tag, consent_id, prepared, body.cost_per_lead_paise, False, False)
         return {"import_id": str(import_id), "status": "done", "source": tag, "consent_id": str(consent_id) if consent_id else None, "counts": self._counts(totals, prepared.in_file), "problems": problems, "created_at": datetime.now(UTC).isoformat()}, replayed
 
+    def undo_import(self, token: str, tenant_id: uuid.UUID, import_id: uuid.UUID) -> dict[str, Any]:
+        """Archives what the import created and nobody worked on since; the rest stays and is counted (the database decides: public.lead_import_undo). Once."""
+        out = self.repo.import_undo(token, tenant_id, import_id)
+        return {"import_id": str(import_id), "archived": int(out.get("archived") or 0), "kept": int(out.get("kept") or 0), "already_undone": bool(out.get("already_undone"))}
+
     def imports(self, token: str, tenant_id: uuid.UUID, limit: int, before: datetime | None) -> list[dict[str, Any]]:
         out = []
         for item in self.repo.intakes(token, tenant_id, limit, before):

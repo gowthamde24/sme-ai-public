@@ -368,6 +368,8 @@ select is(
         'public.own_voice_sentence', 'public.own_voice_get', 'public.own_voice_private', 'public.own_voice_ensure_bucket', 'public.own_voice_begin', 'public.own_voice_ready', 'public.own_voice_failed', 'public.own_voice_deleted',
         -- job DQ part 3: every member reads the assistant's name
         'public.assistant_name_get',
+        -- job assistant-does-the-work A2: the chat's files (only the person who dropped one reads it back), plan cards (compare-and-set moves), the action log and an import's undo
+        'public.assistant_file_put', 'public.assistant_file_get', 'public.assistant_file_drop', 'public.scheduler_assistant_files_purge', 'public.assistant_plan_put', 'public.assistant_plan_get', 'public.assistant_plans_for_messages', 'public.assistant_plan_move', 'public.assistant_action_record', 'public.assistant_action_mark_undone', 'public.lead_import_undo',
         'app.edu_terms_valid',  -- a CHECK on institution_profiles.terms runs with the writer's rights
         -- the proof-photo bucket's storage rules are evaluated as the caller, who must be able to run this one
         'app.pod_bucket_tenant',
@@ -450,6 +452,8 @@ select is(
                      'public.own_voice_sentence', 'public.own_voice_get', 'public.own_voice_private', 'public.own_voice_ensure_bucket', 'public.own_voice_begin', 'public.own_voice_ready', 'public.own_voice_failed', 'public.own_voice_deleted',
                      -- job DQ part 3: every member reads the assistant's name
                      'public.assistant_name_get',
+                     -- job assistant-does-the-work A2
+                     'public.assistant_file_put', 'public.assistant_file_get', 'public.assistant_file_drop', 'public.scheduler_assistant_files_purge', 'public.assistant_plan_put', 'public.assistant_plan_get', 'public.assistant_plans_for_messages', 'public.assistant_plan_move', 'public.assistant_action_record', 'public.assistant_action_mark_undone', 'public.lead_import_undo',
                      'public.catalogue_material_save', 'public.site_save', 'public.site_get', 'public.sites_list', 'public.invoice_record', 'public.invoices_import', 'public.invoice_void', 'public.payment_record', 'public.payment_void', 'public.credit_limit_set', 'public.dues_statement', 'public.dues_summary', 'public.credit_check', 'public.dues_ledger', 'public.material_item_inputs', 'public.material_policy_create', 'public.material_policy_get', 'public.material_quote_build', 'public.material_quote_draft', 'public.material_quote_approve', 'public.material_quote_reject', 'public.material_quote_get', 'public.material_quotes_list', 'public.create_order_from_material_quote', 'public.trip_plan', 'public.trip_update', 'public.trip_set_status', 'public.trip_deliver', 'public.pod_ensure_bucket', 'public.trip_get', 'public.trips_list', 'public.delivery_challan_get', 'public.trip_update_submit',
                      -- job RESEND: the trial reminder e-mails
                      'public.scheduler_billing_trial_due', 'public.scheduler_billing_trial_mark',

@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 ActionStatus = Literal["proposed", "confirmed", "declined", "expired", "running", "done"]
 
@@ -25,6 +25,9 @@ class TurnIn(_Strict):
     language_hint: Literal["en", "te", "hi", "kn"] | None = None
     # the language chosen on the assistant bar (owner, 31 Oct 2026): a language = the reply is in THAT language whatever the words inside it are; absent or "auto" = detected from the message, as before
     language: Literal["auto", "te", "en", "hi", "kn", "ta", "ml"] | None = None
+    # job assistant-does-the-work A2: files dropped in the chat with this message (each a `file_id` of POST /assistant/files, the caller's own, not expired). The router reads what each is and answers
+    # with a `work_card` (a file's preview with its plan, or "can't do yet"); nothing is written before the plan's OK
+    attachment_ids: Annotated[list[uuid.UUID], Field(max_length=5)] = Field(default_factory=list)
 
 
 class ConfirmIn(_Strict):
