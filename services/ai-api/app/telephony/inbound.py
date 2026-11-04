@@ -1,6 +1,6 @@
 """Inbound calls on the Exotel sandbox (job phone-calls part 5; owner, 4 Nov 2026: "TELEPHONY_MODE on in staging ONLY for inbound calls from +919502380998 into the Owner Test workspace; everything else off").
 
-  GET|POST /v1/telephony/exotel/stream-url   what the Voicebot applet's URL field holds. Exotel asks it once per call and gets {"url": "wss://<api>/v1/telephony/exotel/stream?sample-rate=16000&t=<token>"}:
+  GET|POST /v1/telephony/exotel/stream-url   what the Voicebot applet's URL field holds. Exotel asks it once per call and gets {"url": "wss://<api>/v1/telephony/exotel/stream/<token>?sample-rate=16000"}:
                                              the token is minted for THIS call, lives 120 seconds and is signed with EXOTEL_STREAM_SECRET (Secret Manager; never in the dashboard). Nothing secret sits in the
                                              dashboard: the URL field is a plain address.
   WS /v1/telephony/exotel/stream             the call. Nothing is heard or said until, in order:
@@ -41,6 +41,7 @@ from app.telephony.line import PhoneLine
 log = logging.getLogger("app.telephony.inbound")
 
 TOKEN_TTL_S = 120
+LOOKUP_RETRIES_S = (0.6, 1.2)   # Exotel's call lookup: asked again twice on a 404 (about 2 s in all) before the call is refused
 STREAM_PATH = "/v1/telephony/exotel/stream"
 
 
@@ -88,9 +89,18 @@ def fresh(token: str, now: float) -> bool:
 
 
 def stream_url(public_base: str, token: str, sample_rate: int = 16000) -> str:
+    """The token rides in the PATH: on the 17:07 UTC call (4 Nov 2026) Exotel opened the stream with the query string dropped (no `t`, no `sample-rate`), so the call was refused `bad_token`. A path
+    survives that. `?t=` is still accepted on the stream (the 13:29 UTC call kept its query)."""
     base = public_base.rstrip("/")
     base = "wss://" + base.split("://", 1)[1] if "://" in base else "wss://" + base
-    return f"{base}{STREAM_PATH}?sample-rate={sample_rate}&t={token}"
+    return f"{base}{STREAM_PATH}/{token}?sample-rate={sample_rate}"
+
+
+def fingerprint(secret: bytes, value: str) -> str:
+    """A call id in the log as 8 hex characters of an HMAC with the stream secret: two log lines (or a Call SID from the dashboard) can be compared, the id itself is never written."""
+    if not value:
+        return "-"
+    return hmac.new(secret, b"fp:" + value.encode("utf-8"), hashlib.sha256).hexdigest()[:8] + f"/{len(value)}"
 
 
 def first(params: dict[str, str], *names: str) -> str:
@@ -121,16 +131,24 @@ class ExotelCalls:
     def __repr__(self) -> str:
         return "ExotelCalls(<keys hidden>)"
 
-    async def get(self, call_sid: str) -> ProviderCall | None:
+    async def get(self, call_sid: str, *, retries_s: tuple[float, ...] = LOOKUP_RETRIES_S) -> ProviderCall | None:
+        """A 404 is asked again after a short wait (the record of a call that has just been answered can lag behind its stream); anything else is final."""
         if not call_sid or not all(c.isalnum() or c in "-_" for c in call_sid) or len(call_sid) > 80:
             return None
-        try:
-            response = await self._client.get(f"{self._url}/{call_sid}.json", auth=self._auth)
-        except httpx.HTTPError as exc:
-            log.warning("exotel_call_check_unreachable %s", exc.__class__.__name__)
-            return None
-        if response.status_code != 200:
-            log.warning("exotel_call_check_status %s", response.status_code)
+        response = None
+        for attempt, wait in enumerate((0.0, *retries_s)):
+            if wait:
+                await asyncio.sleep(wait)
+            try:
+                response = await self._client.get(f"{self._url}/{call_sid}.json", auth=self._auth)
+            except httpx.HTTPError as exc:
+                log.warning("exotel_call_check_unreachable %s", exc.__class__.__name__)
+                return None
+            log.info("exotel_call_check attempt=%d status=%s", attempt + 1, response.status_code)
+            if response.status_code != 404:
+                break
+        if response is None or response.status_code != 200:
+            log.warning("exotel_call_check_status %s", response.status_code if response is not None else "none")
             return None
         try:
             call = response.json().get("Call") or {}
@@ -144,7 +162,7 @@ class ExotelCalls:
 class TrialRule:
     """Owner, 4 Nov 2026: Exotel's SHARED trial number (PIN routing) records its calls under Exotel's trial host account, so the lookup of step 3 can never confirm one. On THAT number only, and only
     in sandbox mode, a call is admitted instead when ALL hold: our per-call signed token (checked before admit), the one caller, the start message's account_sid = ours, its app id = ours, no other
-    call open, at most `max_calls_per_day` a day (India time); the call is cut at `max_call_s`. Every other number keeps the strict Exotel lookup. The counts are this server's (staging runs at most
+    call open, at most `max_calls_per_day` a day (India time). The app id is checked when Exotel names one (it does not, on the trial number: then it is not a condition); the call is cut at `max_call_s`. Every other number keeps the strict Exotel lookup. The counts are this server's (staging runs at most
     two instances)."""
 
     number: str           # normalised (+91...)
@@ -215,7 +233,12 @@ async def admit(start: exotel.Start, settings: gate.Settings, *, find_line: Call
     found = await asyncio.to_thread(find_line, line_no)
     if not found:
         return gate.Refused("no_such_line")
-    if trial is not None and line_no == trial.number:
+    on_trial = trial is not None and line_no == trial.number
+    if on_trial and calls is not None:
+        looked = await calls.get(start.call_sid, retries_s=())   # once, no wait: if Exotel does know the call, the strict rule admits it
+        if looked is not None and looked.status in ("in-progress", "in_progress", "ringing") and looked.from_number == caller:
+            on_trial = False
+    if on_trial and trial is not None:
         return _admit_trial(start, settings, trial, trial_count, found=found, caller=caller, line_no=line_no, active_calls=active_calls, now=now, hours=hours)
     if calls is None:
         return gate.Refused("telephony_off")   # without our Exotel key the call cannot be confirmed: fail closed
@@ -237,7 +260,7 @@ def _admit_trial(start: exotel.Start, settings: gate.Settings, trial: TrialRule,
         return gate.Refused("trial_caller")
     if _match(trial.account_sid, start.account_sid) != "yes":
         return gate.Refused("trial_account")
-    if _match(trial.app_id, start.app_id) != "yes":
+    if _match(trial.app_id, start.app_id) == "no":   # owner, 4 Nov 2026: checked when Exotel names an app id; Exotel's start message names none, so absent is not a refusal (a DIFFERENT id is)
         return gate.Refused("trial_app_id")
     if active_calls >= trial.max_concurrent:
         return gate.Refused("trial_busy")
