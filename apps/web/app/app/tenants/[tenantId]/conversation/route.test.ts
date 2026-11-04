@@ -1,9 +1,10 @@
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), list: vi.fn(), history: vi.fn(), archive: vi.fn(), confirm: vi.fn() }));
+const h = vi.hoisted(() => ({ user: vi.fn(), tenant: vi.fn(), list: vi.fn(), history: vi.fn(), archive: vi.fn(), confirm: vi.fn(), approve: vi.fn(), cancel: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => h.user() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => h.tenant(...a) }));
+vi.mock("@/lib/api/lead-finder", () => ({ approveSearch: (...a: unknown[]) => h.approve(...a), cancelSearch: (...a: unknown[]) => h.cancel(...a) }));
 vi.mock("@/lib/api/turns", () => ({ listConversations: (...a: unknown[]) => h.list(...a), getHistory: (...a: unknown[]) => h.history(...a), archiveConversation: (...a: unknown[]) => h.archive(...a), confirmAction: (...a: unknown[]) => h.confirm(...a) }));
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
@@ -18,7 +19,7 @@ beforeEach(() => {
   vi.stubEnv("BROWSER_VOICE", "1");
   h.user.mockReset().mockResolvedValue({ accessToken: "tok" });
   h.tenant.mockReset().mockResolvedValue({ role: "owner" });
-  for (const f of [h.list, h.history, h.archive, h.confirm]) f.mockReset();
+  for (const f of [h.list, h.history, h.archive, h.confirm, h.approve, h.cancel]) f.mockReset();
 });
 
 describe("POST conversation (the panel's side calls)", () => {
@@ -56,5 +57,27 @@ describe("POST conversation (the panel's side calls)", () => {
     expect((await post({ op: "confirm", actionId: A, decision: "maybe" })).status).toBe(400);
     h.tenant.mockResolvedValue({ role: "sales" });
     expect(await (await post({ op: "confirm", actionId: A, decision: "yes" })).json()).toEqual({ ok: false, error: "forbidden" });
+  });
+  it("the Lead Finder card's OK and Cancel go to the API with the person's own token (Owner, Admin); refusals become closed words; Sales is refused before any call", async () => {
+    const S = "a1a1a1a1-0000-4000-8000-000000000001";
+    h.approve.mockResolvedValue({ id: S, state: "done" });
+    expect(await (await post({ op: "lf_approve", searchId: S })).json()).toEqual({ ok: true, search: { id: S, state: "done" } });
+    expect(h.approve).toHaveBeenCalledWith("tok", T, S);
+    h.cancel.mockResolvedValue({ id: S, state: "cancelled" });
+    h.tenant.mockResolvedValue({ role: "admin" });
+    expect(await (await post({ op: "lf_cancel", searchId: S })).json()).toEqual({ ok: true, search: { id: S, state: "cancelled" } });
+    expect(h.cancel).toHaveBeenCalledWith("tok", T, S);
+    for (const [error, word] of [[new ApiRequestError(429, "search_cap_reached", "x"), "cap"], [new ApiRequestError(409, "prospect_state", "x"), "state"], [new ApiRequestError(409, "lead_finder_off", "x"), "off"], [new ApiRequestError(403, "lead_finder_not_available", "x"), "off"], [new ApiRequestError(403, "forbidden", "x"), "forbidden"], [new Error("down"), "down"]] as const) {
+      h.approve.mockRejectedValueOnce(error);
+      expect(await (await post({ op: "lf_approve", searchId: S })).json()).toEqual({ ok: false, error: word });
+    }
+    h.approve.mockRejectedValueOnce(new ApiAuthError("x"));
+    expect((await post({ op: "lf_approve", searchId: S })).status).toBe(401);
+    expect((await post({ op: "lf_approve", searchId: "nope" })).status).toBe(400);
+    h.tenant.mockResolvedValue({ role: "sales" });
+    h.approve.mockClear();
+    expect(await (await post({ op: "lf_approve", searchId: S })).json()).toEqual({ ok: false, error: "forbidden" });
+    expect(await (await post({ op: "lf_cancel", searchId: S })).json()).toEqual({ ok: false, error: "forbidden" });
+    expect(h.approve).not.toHaveBeenCalled();
   });
 });

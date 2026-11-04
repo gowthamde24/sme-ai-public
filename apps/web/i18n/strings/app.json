@@ -2041,6 +2041,17 @@
    "kn": "draft"
   }
  },
+ "today.customer.new": {
+  "en": "New enquiry",
+  "te": "కొత్త విచారణ",
+  "hi": "नई पूछताछ",
+  "kn": "ಹೊಸ ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.goes": {
   "en": "Goes out in {language}",
   "te": "Goes out in {language}",
@@ -75392,6 +75403,28 @@
    "kn": "draft"
   }
  },
+ "today.visits.title.pack": {
+  "en": "{visits} today",
+  "te": "ఈ రోజు {visits}",
+  "hi": "आज {visits}",
+  "kn": "ಇಂದು {visits}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.visit.pack": {
+  "en": "{visit} instead",
+  "te": "బదులుగా {visit}",
+  "hi": "इसके बदले {visit}",
+  "kn": "ಬದಲಿಗೆ {visit}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.act.visit@programmes": {
   "en": "Offer a campus visit",
   "te": "క్యాంపస్ విజిట్ ఆఫర్ చేయండి",
@@ -75441,6 +75474,116 @@
   "te": "చూడండి",
   "hi": "देखें",
   "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.campaign": {
+  "en": "Campaign draft",
+  "te": "క్యాంపెయిన్ డ్రాఫ్ట్",
+  "hi": "कैंपेन ड्राफ़्ट",
+  "kn": "ಕ್ಯಾಂಪೇನ್ ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.campaign.row": {
+  "en": "Campaign",
+  "te": "క్యాంపెయిన్",
+  "hi": "कैंपेन",
+  "kn": "ಕ್ಯಾಂಪೇನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.campaign": {
+  "en": "Check the campaign",
+  "te": "క్యాంపెయిన్ చూడండి",
+  "hi": "कैंपेन देखिए",
+  "kn": "ಕ್ಯಾಂಪೇನ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.campaign.row": {
+  "en": "Review",
+  "te": "చూడండి",
+  "hi": "देखिए",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.fees": {
+  "en": "Fees overdue",
+  "te": "బాకీ ఫీజులు",
+  "hi": "बकाया फ़ीस",
+  "kn": "ಬಾಕಿ ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.fees.row": {
+  "en": "Fees",
+  "te": "ఫీజులు",
+  "hi": "फ़ीस",
+  "kn": "ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.fees": {
+  "en": "See who has not paid",
+  "te": "ఎవరు కట్టలేదో చూడండి",
+  "hi": "देखिए किसने नहीं भरी",
+  "kn": "ಯಾರು ಕಟ್ಟಿಲ್ಲ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.fees.row": {
+  "en": "See who",
+  "te": "చూడండి",
+  "hi": "देखिए",
+  "kn": "ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.fact.campaign": {
+  "en": "Campaign",
+  "te": "క్యాంపెయిన్",
+  "hi": "कैंपेन",
+  "kn": "ಕ್ಯಾಂಪೇನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.fact.what": {
+  "en": "What",
+  "te": "ఏమిటి",
+  "hi": "क्या",
+  "kn": "ಏನು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -76569,6 +76712,17 @@
    "kn": "draft"
   }
  },
+ "lf.chat.card": {
+  "en": "Search for new businesses",
+  "te": "కొత్త వ్యాపారాల కోసం సెర్చ్",
+  "hi": "नए कारोबारों की खोज",
+  "kn": "ಹೊಸ ವ್ಯಾಪಾರಗಳಿಗಾಗಿ ಸರ್ಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "lf.err.cap": {
   "en": "Today's searches are used up. Try again tomorrow, or change the limit in Settings.",
   "te": "ఈరోజు సెర్చ్‌లు అయిపోయాయి. రేపు మళ్ళీ చూడండి, లేదా సెట్టింగ్స్‌లో లిమిట్ మార్చండి.",
@@ -76761,6 +76915,204 @@
   "te": "ఇది డ్రాఫ్ట్ మాత్రమే: ధరలు మీ క్యాటలాగ్ నుంచి. ఏదీ పంపలేదు.",
   "hi": "यह सिर्फ़ ड्राफ्ट है: दाम आपके कैटलॉग से हैं। कुछ नहीं भेजा गया।",
   "kn": "ಇದು ಡ್ರಾಫ್ಟ್ ಮಾತ್ರ: ಬೆಲೆಗಳು ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನಿಂದ. ಏನೂ ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.open": {
+  "en": "Draft a quote",
+  "te": "కొటేషన్ డ్రాఫ్ట్",
+  "hi": "कोटेशन का ड्राफ़्ट",
+  "kn": "ಕೊಟೇಶನ್ ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.line": {
+  "en": "{item} × {qty} at {price}",
+  "te": "{item} × {qty}, {price} చొప్పున",
+  "hi": "{item} × {qty}, {price} के भाव से",
+  "kn": "{item} × {qty}, {price} ದರದಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.left": {
+  "en": "Left out of the draft",
+  "te": "డ్రాఫ్ట్‌లో వేయనివి",
+  "hi": "ड्राफ़्ट में नहीं डाले",
+  "kn": "ಡ್ರಾಫ್ಟ್‌ನಲ್ಲಿ ಸೇರಿಸದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.reason.no_price": {
+  "en": "no exact price set",
+  "te": "సరైన ధర పెట్టలేదు",
+  "hi": "सही दाम तय नहीं है",
+  "kn": "ಸರಿಯಾದ ಬೆಲೆ ಇಟ್ಟಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.reason.no_quantity": {
+  "en": "they said no number",
+  "te": "వాళ్ళు సంఖ్య చెప్పలేదు",
+  "hi": "उन्होंने कोई संख्या नहीं बताई",
+  "kn": "ಅವರು ಸಂಖ್ಯೆ ಹೇಳಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.reason.not_in_stock": {
+  "en": "not in stock now",
+  "te": "ఇప్పుడు స్టాక్‌లో లేదు",
+  "hi": "अभी स्टॉक में नहीं है",
+  "kn": "ಈಗ ಸ್ಟಾಕ್‌ನಲ್ಲಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.reason.not_in_catalogue": {
+  "en": "no longer in the catalogue",
+  "te": "ఇప్పుడు క్యాటలాగ్‌లో లేదు",
+  "hi": "अब कैटलॉग में नहीं है",
+  "kn": "ಈಗ ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.reason.too_many_lines": {
+  "en": "a draft holds five lines",
+  "te": "ఒక డ్రాఫ్ట్‌లో ఐదు లైన్లే పడతాయి",
+  "hi": "एक ड्राफ़्ट में पाँच लाइनें ही आती हैं",
+  "kn": "ಒಂದು ಡ್ರಾಫ್ಟ್‌ನಲ್ಲಿ ಐದು ಸಾಲುಗಳು ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.reason.item_type_off": {
+  "en": "its item type is switched off",
+  "te": "దాని ఐటెమ్ టైప్ ఆఫ్‌లో ఉంది",
+  "hi": "इसका आइटम टाइप बंद है",
+  "kn": "ಅದರ ಐಟಂ ಟೈಪ್ ಆಫ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.make": {
+  "en": "Make the draft quote",
+  "te": "డ్రాఫ్ట్ కొటేషన్ తయారు చేయండి",
+  "hi": "ड्राफ़्ट कोटेशन बनाएँ",
+  "kn": "ಡ್ರಾಫ್ಟ್ ಕೊಟೇಶನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.open_quote": {
+  "en": "Open the draft quote",
+  "te": "డ్రాఫ్ట్ కొటేషన్ తెరవండి",
+  "hi": "ड्राफ़्ट कोटेशन खोलें",
+  "kn": "ಡ್ರಾಫ್ಟ್ ಕೊಟೇಶನ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.made": {
+  "en": "Draft quote made. Nothing was approved or sent.",
+  "te": "డ్రాఫ్ట్ కొటేషన్ తయారైంది. ఏదీ అప్రూవ్ చేయలేదు, పంపలేదు.",
+  "hi": "ड्राफ़्ट कोटेशन बन गया। कुछ भी अप्रूव या भेजा नहीं गया।",
+  "kn": "ಡ್ರಾಫ್ಟ್ ಕೊಟೇಶನ್ ಆಯಿತು. ಏನೂ ಅಪ್ರೂವ್ ಮಾಡಿಲ್ಲ, ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.note": {
+  "en": "A draft only, at your own catalogue prices. Nothing is approved or sent: you approve it on the quote page.",
+  "te": "ఇది డ్రాఫ్ట్ మాత్రమే, మీ క్యాటలాగ్ ధరలతో. ఏదీ అప్రూవ్ అవ్వదు, పంపబడదు: కొటేషన్ పేజీలో మీరే అప్రూవ్ చేస్తారు.",
+  "hi": "यह सिर्फ़ ड्राफ़्ट है, आपके कैटलॉग के दामों पर। कुछ अप्रूव या भेजा नहीं जाता: कोटेशन पेज पर आप ही अप्रूव करते हैं।",
+  "kn": "ಇದು ಡ್ರಾಫ್ಟ್ ಮಾತ್ರ, ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್ ಬೆಲೆಗಳಲ್ಲಿ. ಏನೂ ಅಪ್ರೂವ್ ಆಗುವುದಿಲ್ಲ, ಕಳುಹಿಸುವುದಿಲ್ಲ: ಕೊಟೇಶನ್ ಪುಟದಲ್ಲಿ ನೀವೇ ಅಪ್ರೂವ್ ಮಾಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.owner": {
+  "en": "Only the owner or an admin can make the draft quote.",
+  "te": "డ్రాఫ్ట్ కొటేషన్‌ని ఓనర్ లేదా అడ్మిన్ మాత్రమే తయారు చేయగలరు.",
+  "hi": "ड्राफ़्ट कोटेशन सिर्फ़ ओनर या एडमिन बना सकते हैं।",
+  "kn": "ಡ್ರಾಫ್ಟ್ ಕೊಟೇಶನ್ ಅನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.none": {
+  "en": "No line can go in a draft yet.",
+  "te": "ఇంకా డ్రాఫ్ట్‌లో ఏ లైనూ వేయలేము.",
+  "hi": "अभी ड्राफ़्ट में कोई लाइन नहीं डाली जा सकती।",
+  "kn": "ಇನ್ನೂ ಡ್ರಾಫ್ಟ್‌ನಲ್ಲಿ ಯಾವ ಸಾಲೂ ಸೇರಿಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.err.nothing": {
+  "en": "Nothing from this call can go in a draft: no item has both an exact price and a number.",
+  "te": "ఈ కాల్‌లోంచి ఏదీ డ్రాఫ్ట్‌లో వేయలేము: ఏ ఐటెమ్‌కీ సరైన ధర, సంఖ్య రెండూ లేవు.",
+  "hi": "इस कॉल से कुछ भी ड्राफ़्ट में नहीं जा सकता: किसी आइटम का सही दाम और संख्या दोनों नहीं हैं।",
+  "kn": "ಈ ಕಾಲ್‌ನಿಂದ ಏನೂ ಡ್ರಾಫ್ಟ್‌ಗೆ ಸೇರಿಸಲಾಗದು: ಯಾವ ಐಟಂಗೂ ಸರಿಯಾದ ಬೆಲೆ ಮತ್ತು ಸಂಖ್ಯೆ ಎರಡೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.err.exists": {
+  "en": "A draft from this call was already made with other prices. Open it instead.",
+  "te": "ఈ కాల్ నుంచి వేరే ధరలతో ఇప్పటికే ఒక డ్రాఫ్ట్ తయారైంది. దాన్నే తెరవండి.",
+  "hi": "इस कॉल से दूसरे दामों पर एक ड्राफ़्ट पहले ही बन चुका है। उसी को खोलें।",
+  "kn": "ಈ ಕಾಲ್‌ನಿಂದ ಬೇರೆ ಬೆಲೆಗಳಲ್ಲಿ ಈಗಾಗಲೇ ಒಂದು ಡ್ರಾಫ್ಟ್ ಆಗಿದೆ. ಅದನ್ನೇ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.qd.err.not_qualified": {
+  "en": "Only a call that qualified has a draft quote.",
+  "te": "క్వాలిఫై అయిన కాల్‌కి మాత్రమే డ్రాఫ్ట్ కొటేషన్ ఉంటుంది.",
+  "hi": "सिर्फ़ क्वालिफ़ाई हुई कॉल का ड्राफ़्ट कोटेशन बनता है।",
+  "kn": "ಕ್ವಾಲಿಫೈ ಆದ ಕಾಲ್‌ಗೆ ಮಾತ್ರ ಡ್ರಾಫ್ಟ್ ಕೊಟೇಶನ್ ಇರುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

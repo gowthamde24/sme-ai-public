@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
-import { P1, P2, S1, T } from "@/lib/api/lead-finder-fixtures";
+import { E1, P1, P2, Q1, S1, T } from "@/lib/api/lead-finder-fixtures";
 
-const h = vi.hoisted(() => ({ tenant: vi.fn(), plan: vi.fn(), approve: vi.fn(), cancel: vi.fn(), act: vi.fn(), practice: vi.fn(), revalidate: vi.fn() }));
+const h = vi.hoisted(() => ({ tenant: vi.fn(), plan: vi.fn(), approve: vi.fn(), cancel: vi.fn(), act: vi.fn(), practice: vi.fn(), revalidate: vi.fn(), preview: vi.fn(), make: vi.fn(), quote: vi.fn() }));
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`NEXT_REDIRECT:${to}`); } }));
 vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => h.revalidate(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: async () => ({ id: "u", email: "e@example.test", accessToken: "tok" }) }));
@@ -15,9 +15,12 @@ vi.mock("@/lib/api/lead-finder", async (orig) => ({
   cancelSearch: (...a: unknown[]) => h.cancel(...a),
   actOnProspects: (...a: unknown[]) => h.act(...a),
   practiceCall: (...a: unknown[]) => h.practice(...a),
+  getQuoteDraft: (...a: unknown[]) => h.preview(...a),
+  makeQuoteDraft: (...a: unknown[]) => h.make(...a),
 }));
+vi.mock("@/lib/api/quotes", () => ({ fetchQuote: (...a: unknown[]) => h.quote(...a) }));
 
-import { approveSearchAction, cancelSearchAction, planSearchAction, practiceCallAction, prospectActionsAction } from "./actions";
+import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
 
 const as = (role: string) => h.tenant.mockResolvedValue({ id: T, name: "Acme Silks", slug: "acme-silks", role });
 const SEARCH = { id: S1, state: "planned" };
@@ -121,5 +124,54 @@ describe("the practice call (simulated; Owner and Admin)", () => {
     expect(h.practice).not.toHaveBeenCalled();
     h.practice.mockRejectedValueOnce(new ApiRequestError(409, "prospect_state", "x"));
     expect(await practiceCallAction(T, P1, "interested", "en")).toMatchObject({ ok: false, error: "Only a business marked Ready to call can have a practice call." });
+  });
+});
+
+describe("the draft quote of a qualified call", () => {
+  const PREVIEW = { prospectId: P1, leadId: P2, ready: true, made: false, quoteId: Q1, enquiryId: null, lines: [], leftOut: [] };
+  it("the preview is for the Owner, Admin and Sales; nothing is looked up before the draft is made", async () => {
+    as("sales");
+    h.preview.mockResolvedValue(PREVIEW);
+    expect(await quoteDraftAction(T, P1)).toEqual({ ok: true, data: { ...PREVIEW, enquiryId: null } });
+    expect(h.preview).toHaveBeenCalledWith("tok", T, P1);
+    expect(h.quote).not.toHaveBeenCalled();
+    as("viewer");
+    expect(await quoteDraftAction(T, P1)).toMatchObject({ ok: false, kind: "forbidden" });
+    expect(await quoteDraftAction(T, "nope")).toMatchObject({ ok: false });
+  });
+  it("once made, the preview's own enquiry id (#305) is the link, and nothing else is read", async () => {
+    h.preview.mockResolvedValueOnce({ ...PREVIEW, made: true, enquiryId: E1 });
+    expect(await quoteDraftAction(T, P1)).toMatchObject({ ok: true, data: { made: true, enquiryId: E1 } });
+    expect(h.quote).not.toHaveBeenCalled();
+  });
+  it("an older API without it: the draft's enquiry is looked up once for the link; a lookup that fails leaves it null; a call that did not qualify says so", async () => {
+    h.preview.mockResolvedValue({ ...PREVIEW, made: true });
+    h.quote.mockResolvedValueOnce({ id: Q1, enquiry_id: E1 });
+    expect(await quoteDraftAction(T, P1)).toMatchObject({ ok: true, data: { made: true, enquiryId: E1 } });
+    expect(h.quote).toHaveBeenCalledWith("tok", T, Q1);
+    h.quote.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x"));
+    expect(await quoteDraftAction(T, P1)).toMatchObject({ ok: true, data: { enquiryId: null } });
+    h.quote.mockRejectedValueOnce(new ApiAuthError("x"));
+    await expect(quoteDraftAction(T, P1)).rejects.toThrow("NEXT_REDIRECT:/login");
+    h.preview.mockRejectedValueOnce(new ApiRequestError(409, "not_qualified", "x"));
+    expect(await quoteDraftAction(T, P1)).toMatchObject({ ok: false, error: "Only a call that qualified has a draft quote." });
+  });
+  it("making it is the Owner's or an Admin's: a NEW customer, no delivery state; nothing is approved or sent", async () => {
+    h.make.mockResolvedValue({ quoteId: Q1, enquiryId: E1, status: "draft" });
+    as("admin");
+    expect(await makeQuoteDraftAction(T, P1)).toEqual({ ok: true, data: { quoteId: Q1, enquiryId: E1, status: "draft" } });
+    expect(h.make).toHaveBeenCalledWith("tok", T, P1, { customerKind: "new", deliveryState: null });
+    h.make.mockClear();
+    as("sales");
+    expect(await makeQuoteDraftAction(T, P1)).toMatchObject({ ok: false, kind: "forbidden" });
+    expect(h.make).not.toHaveBeenCalled();
+  });
+  it("the second factor shows the way to Security; nothing to quote and a draft made before say so in plain words", async () => {
+    h.make.mockRejectedValueOnce(new ApiRequestError(403, "mfa_required", "x"));
+    expect(await makeQuoteDraftAction(T, P1)).toMatchObject({ ok: false, kind: "mfa", mfa: true });
+    h.make.mockRejectedValueOnce(new ApiRequestError(422, "nothing_to_quote", "x"));
+    expect(await makeQuoteDraftAction(T, P1)).toMatchObject({ ok: false, code: "nothing_to_quote", error: "Nothing from this call can go in a draft: no item has both an exact price and a number." });
+    h.make.mockRejectedValueOnce(new ApiRequestError(409, "quote_draft_exists", "x"));
+    expect(await makeQuoteDraftAction(T, P1)).toMatchObject({ ok: false, code: "quote_draft_exists", error: "A draft from this call was already made with other prices. Open it instead." });
   });
 });

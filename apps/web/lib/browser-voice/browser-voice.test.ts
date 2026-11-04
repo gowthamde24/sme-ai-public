@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { VoiceClient, SPEECH_FRAMES, SPEECH_LEVEL, type AudioIO, type SocketLike } from "./client";
 import { fromPcm16, level, toPcm16At16k } from "./pcm";
 import { BARGE_IN, BARGE_IN_VERIFY, endWordOf, parseServerMessage, setLanguageMessage, startMessage, voiceSocketUrl } from "./protocol";
+import { S1, SEARCH_DONE, SEARCH_PLANNED } from "@/lib/api/lead-finder-fixtures";
 
 const json = (o: unknown): string => JSON.stringify(o);
 
@@ -339,5 +340,13 @@ describe("a session", () => {
     ws.say("garbage");
     ws.onclose?.({ code: 4429, reason: "busy" });
     expect(client.snapshot.end).toBe("busy");
+  });
+});
+
+describe("the Lead Finder's card on the voice socket (docs/contracts/lead-finder.md 1b)", () => {
+  it("reads the card with the same SearchOut reader as the typed chat; a card that is off is no message", () => {
+    expect(parseServerMessage(JSON.stringify({ type: "lead_finder", search: SEARCH_PLANNED, can_approve: true }))).toMatchObject({ type: "lead_finder", card: { canApprove: true, search: { id: S1, state: "planned", maxResults: 20 } } });
+    expect(parseServerMessage(JSON.stringify({ type: "lead_finder", search: SEARCH_DONE, can_approve: false }))).toMatchObject({ type: "lead_finder", card: { canApprove: false, search: { state: "done", counts: { needs_owner: 11 } } } });
+    for (const bad of [{ type: "lead_finder" }, { type: "lead_finder", search: { ...SEARCH_PLANNED, state: "x" }, can_approve: true }, { type: "lead_finder", search: SEARCH_PLANNED }]) expect(parseServerMessage(JSON.stringify(bad))).toBeNull();
   });
 });
