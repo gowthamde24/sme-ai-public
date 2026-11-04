@@ -171,6 +171,10 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `TELEPHONY_LLM` | plain | api | Who speaks on a call: `haiku` (default) or `sarvam` (Sarvam 105B first, behind a first-token deadline that falls back to Haiku). Measured 31 Oct 2026: `docs/runbooks/phone-model.md`. |
 | `TELEPHONY_FIRST_TOKEN_MS` | plain | api | With `sarvam`: if no first piece of text arrives within this many ms (default `1200`, kept between 500 and 4000) the same turn goes to Haiku. |
 | `TELEPHONY_COST_PAISE_PER_MINUTE` | plain | api | What a started minute of a call costs, in paise: a configurable ESTIMATE until the owner has Exotel's price (default `100`). |
+| `TELEPHONY_OUTBOUND` | plain | api | `false` (default): the gate refuses every outbound call (an inbound-only deployment; there is no dialer yet). |
+| `EXOTEL_STREAM_SECRET` | secret | api | Signs the per-call token of the Voicebot URL (`docs/runbooks/phone-inbound-sandbox.md`), 32+ characters. Secret Manager: `sme-exotel-stream-secret` (made by C1, 4 Nov 2026). |
+| `TELEPHONY_INBOUND_LANGUAGE` | plain | api | The language of an inbound call's opening line (`en` default; staging `te`); the call then follows the language spoken. |
+| `TELEPHONY_INBOUND_BUSINESS` | plain | api | The business the inbound opening line names (staging `Stack19`). |
 | `BROWSER_VOICE_STT_MODES` | plain | api | What the speech recogniser writes per language, over the built-in defaults: `te=transcribe,kn=transcribe,en=transcribe,ta=transcribe,hi=verbatim,ml=verbatim`. Empty = the defaults. A language or mode it does not know is ignored. |
 | `BROWSER_VOICE_DAY_TTS_CHARS` | plain | api | Characters a workspace may send to the voice engines per day. Default `6000`. |
 | `BROWSER_VOICE_SESSIONS_PER_MINUTE` | plain | api | Sessions a workspace may open per minute (one runs at a time). Default `6`. |

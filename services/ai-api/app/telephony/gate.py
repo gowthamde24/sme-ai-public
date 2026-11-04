@@ -62,6 +62,7 @@ class Settings:
     live_confirmed: bool = False
     sandbox_numbers: frozenset[str] = frozenset()   # +91... forms; the only numbers a sandbox call may ring
     max_concurrent: int = 2
+    outbound: bool = True   # False (TELEPHONY_OUTBOUND unset): an inbound-only deployment; every outbound call is refused as telephony_off
 
 
 @dataclass(frozen=True)
@@ -111,7 +112,7 @@ def has_ai_disclosure(line: str) -> bool:
 
 
 def check_outbound(settings: Settings, f: OutboundFacts) -> Allowed | Refused:
-    if settings.mode == "off":
+    if settings.mode == "off" or not settings.outbound:
         return Refused("telephony_off")
     if settings.mode == "live" and not settings.live_confirmed:
         return Refused("live_not_confirmed")
@@ -173,6 +174,7 @@ class InboundFacts:
     hours: Hours | None = None      # inside these the assistant talks; outside it only leaves a short message (see InboundDecision)
     blocked_caller: bool = False
     active_calls_total: int = 0
+    from_number: str | None = None   # the caller (None: not known; a sandbox then relies on the stream's own check)
 
 
 @dataclass(frozen=True)
@@ -184,6 +186,8 @@ class InboundDecision:
 def check_inbound(settings: Settings, f: InboundFacts) -> InboundDecision | Refused:
     if settings.mode == "off":
         return Refused("telephony_off")
+    if settings.mode == "sandbox" and f.from_number is not None and normalise(f.from_number) not in settings.sandbox_numbers:
+        return Refused("not_on_sandbox_list")   # a sandbox answers only the numbers on its list
     if settings.mode == "live" and not settings.live_confirmed:
         return Refused("live_not_confirmed")
     if not f.line_known:
