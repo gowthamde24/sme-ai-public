@@ -357,6 +357,8 @@ class Settings(BaseSettings):
     exotel_stream_secret: SecretStr | None = None
     telephony_inbound_language: str = "en"
     telephony_inbound_business: str = "the business"
+    # how the Voicebot URL answers: json ({"url": "wss://..."}) | text (the bare address)
+    exotel_stream_url_format: str = "json"
     browser_voice_day_seconds: int = 7200
     # "hi=transcribe,ml=verbatim": the recogniser mode per language, over the built-in defaults
     browser_voice_stt_modes: str = ""
