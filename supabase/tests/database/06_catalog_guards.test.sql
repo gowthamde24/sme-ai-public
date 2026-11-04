@@ -368,6 +368,8 @@ select is(
         'public.own_voice_sentence', 'public.own_voice_get', 'public.own_voice_private', 'public.own_voice_ensure_bucket', 'public.own_voice_begin', 'public.own_voice_ready', 'public.own_voice_failed', 'public.own_voice_deleted',
         -- job DQ part 3: every member reads the assistant's name
         'public.assistant_name_get',
+        -- plans as feature switches (owner decision 4 Nov 2026): every member reads the workspace's
+        'public.workspace_entitlements',
         'app.edu_terms_valid',  -- a CHECK on institution_profiles.terms runs with the writer's rights
         -- the proof-photo bucket's storage rules are evaluated as the caller, who must be able to run this one
         'app.pod_bucket_tenant',
@@ -450,6 +452,7 @@ select is(
                      'public.own_voice_sentence', 'public.own_voice_get', 'public.own_voice_private', 'public.own_voice_ensure_bucket', 'public.own_voice_begin', 'public.own_voice_ready', 'public.own_voice_failed', 'public.own_voice_deleted',
                      -- job DQ part 3: every member reads the assistant's name
                      'public.assistant_name_get',
+                     'public.workspace_entitlements',
                      'public.catalogue_material_save', 'public.site_save', 'public.site_get', 'public.sites_list', 'public.invoice_record', 'public.invoices_import', 'public.invoice_void', 'public.payment_record', 'public.payment_void', 'public.credit_limit_set', 'public.dues_statement', 'public.dues_summary', 'public.credit_check', 'public.dues_ledger', 'public.material_item_inputs', 'public.material_policy_create', 'public.material_policy_get', 'public.material_quote_build', 'public.material_quote_draft', 'public.material_quote_approve', 'public.material_quote_reject', 'public.material_quote_get', 'public.material_quotes_list', 'public.create_order_from_material_quote', 'public.trip_plan', 'public.trip_update', 'public.trip_set_status', 'public.trip_deliver', 'public.pod_ensure_bucket', 'public.trip_get', 'public.trips_list', 'public.delivery_challan_get', 'public.trip_update_submit',
                      -- job RESEND: the trial reminder e-mails
                      'public.scheduler_billing_trial_due', 'public.scheduler_billing_trial_mark',
