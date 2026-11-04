@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { E1, P1, P2, Q1, S1, T } from "@/lib/api/lead-finder-fixtures";
 
+const langNow = vi.hoisted(() => ({ v: "en" as "en" | "te" }));
+vi.mock("@/i18n/get-lang", () => ({ getLang: async () => langNow.v }));
 const h = vi.hoisted(() => ({ tenant: vi.fn(), plan: vi.fn(), approve: vi.fn(), cancel: vi.fn(), act: vi.fn(), practice: vi.fn(), revalidate: vi.fn(), preview: vi.fn(), make: vi.fn(), quote: vi.fn() }));
 vi.mock("next/navigation", () => ({ redirect: (to: string) => { throw new Error(`NEXT_REDIRECT:${to}`); } }));
 vi.mock("next/cache", () => ({ revalidatePath: (...a: unknown[]) => h.revalidate(...a) }));
@@ -173,5 +175,26 @@ describe("the draft quote of a qualified call", () => {
     expect(await makeQuoteDraftAction(T, P1)).toMatchObject({ ok: false, code: "nothing_to_quote", error: "Nothing from this call can go in a draft: no item has both an exact price and a number." });
     h.make.mockRejectedValueOnce(new ApiRequestError(409, "quote_draft_exists", "x"));
     expect(await makeQuoteDraftAction(T, P1)).toMatchObject({ ok: false, code: "quote_draft_exists", error: "A draft from this call was already made with other prices. Open it instead." });
+  });
+});
+
+describe("a search that names people (C1, 5 Nov: 422 individuals_not_allowed)", () => {
+  const EN = "The Lead Finder looks for organisations, not for people. Try apartment associations or coaching centres.";
+  const TE = "లీడ్ ఫైండర్ సంస్థల కోసం మాత్రమే, వ్యక్తుల కోసం కాదు.";
+  it("the API's polite sentence when it is in the person's language", async () => {
+    h.plan.mockRejectedValueOnce(new ApiRequestError(422, "individuals_not_allowed", EN));
+    expect(await planSearchAction(T, "parents in Anantapur")).toMatchObject({ ok: false, code: "individuals_not_allowed", error: EN });
+    langNow.v = "te";
+    h.plan.mockRejectedValueOnce(new ApiRequestError(422, "individuals_not_allowed", TE));
+    expect(await planSearchAction(T, "parents in Anantapur")).toMatchObject({ ok: false, error: TE });
+    langNow.v = "en";
+  });
+  it("our own words when the API's sentence is in another language (never the raw error)", async () => {
+    langNow.v = "te";
+    h.plan.mockRejectedValueOnce(new ApiRequestError(422, "individuals_not_allowed", EN));
+    expect(await planSearchAction(T, "parents in Anantapur")).toMatchObject({ ok: false, error: "లీడ్ ఫైండర్ సంస్థలను మాత్రమే వెతుకుతుంది, వ్యక్తులను కాదు. స్కూల్ దగ్గర అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు లేదా కోచింగ్ సెంటర్లు వెతకండి." });
+    langNow.v = "en";
+    h.plan.mockRejectedValueOnce(new ApiRequestError(422, "individuals_not_allowed", ""));
+    expect(await planSearchAction(T, "families near the school")).toMatchObject({ ok: false, error: "The Lead Finder finds organisations only, not people. Try apartment associations, companies or coaching centres near the school." });
   });
 });

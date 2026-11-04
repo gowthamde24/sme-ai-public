@@ -28,6 +28,7 @@ import { requireUser } from "@/lib/auth/session";
 import { readFinderAccessCached, readPlanCached, readUsageCached } from "../../../frame-data";
 import { TierCard } from "@/components/v2/app/plan/TierCard";
 import type { Included } from "@/lib/plan/tier";
+import { audienceModules } from "@/lib/lead-finder/types";
 import { FinderSettingsForm } from "@/components/v2/app/prospects/FinderSettingsForm";
 import { getFinderSettings } from "@/lib/api/lead-finder";
 import type { FinderSettings } from "@/lib/lead-finder/types";
@@ -484,7 +485,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         ) : null}
         {section === "plan" && showTier && finder ? (
           <TierCard
-            words={wordsFor(lang, ["tier."])}
+            words={withModuleWords(wordsFor(lang, ["tier."]), audienceModules(finder.audience))}
             plan={finder.plan}
             items={includedFor(pack?.modules ?? null, finder.access !== "hidden")}
             move={tenant.role !== "owner" ? null : planScreens() !== "off" ? { kind: "plans", href: `${base}/plans` } : { kind: "write", email: ADDRESSES.billing }}
@@ -628,7 +629,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             <SchedulerCard words={words} status={scheduler} now={clock()} />
           </div>
         ) : null}
-        {section === "leadfinder" ? finderSettings ? <FinderSettingsForm words={wordsFor(lang, ["lf.set.", "apierr."], ["lf.working"])} initial={finderSettings} save={saveFinderSettingsAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} /> : null}
+        {section === "leadfinder" ? finderSettings ? <FinderSettingsForm words={withModuleWords(wordsFor(lang, ["lf.set.", "apierr."], ["lf.working"]), audienceModules(finder?.audience ?? "businesses"))} initial={finderSettings} save={saveFinderSettingsAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} /> : null}
         {section === "security" ? (
           <section className={`${surface} flex flex-col gap-3`} aria-label={t("settings.security.title")}>
             <h2 className="text-xl font-semibold">{t("settings.security.title")}</h2>

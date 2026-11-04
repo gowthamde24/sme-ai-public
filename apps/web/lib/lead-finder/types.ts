@@ -34,7 +34,25 @@ export const CAPTURED = ["sells", "price", "quantity", "supplier", "timing", "de
 export type CapturedKey = (typeof CAPTURED)[number];
 
 export const AVAILABILITY_REASONS = ["ok", "not_for_this_business", "switched_off", "not_for_your_role", "not_in_plan"] as const;
-export type Availability = { available: boolean; source: Provider | null; /** `not_for_your_role`: a Viewer (#298); hidden like any other `available: false`. `not_in_plan`: the workspace is on Lead Desk (the Lead Finder is part of AI Workforce): the upgrade card is shown instead. */ reason: (typeof AVAILABILITY_REASONS)[number] };
+export const AUDIENCES = ["businesses", "organisations"] as const;
+/** Whom the Lead Finder finds (C1, 5 Nov): `businesses` (a saree wholesaler's retailers, a builder's contractors) or `organisations` (a school: apartment associations, companies, coaching centres and vendors near it; NEVER parents or families). */
+export type Audience = (typeof AUDIENCES)[number];
+export type Availability = {
+  available: boolean;
+  source: Provider | null;
+  /** `not_for_your_role`: a Viewer (#298); hidden like any other `available: false`. `not_in_plan`: the workspace is on Lead Desk (the Lead Finder is part of AI Workforce): the upgrade card is shown instead. */
+  reason: (typeof AVAILABILITY_REASONS)[number];
+  /** The API's `audience`; absent when the API did not say (or said a word this screen does not know): see `audienceOf`. */
+  audience?: Audience;
+};
+
+/**
+ * Whose words the Lead Finder's screens speak: the API's `audience`; when it does not say, `businesses`, except for a business type with the school's module `programmes` (a fallback for an API from before `audience`: a school
+ * must never be told about retailers, shops or stock). Nothing here names a business type.
+ */
+export const audienceOf = (a: Pick<Availability, "audience"> | null, modules: readonly string[] | null | undefined): Audience => a?.audience ?? (modules?.includes("programmes") ? "organisations" : "businesses");
+/** The pseudo-module of the organisation words: a key `some.key@organisations` replaces `some.key` where the audience is organisations (lib/packs/module-words.ts, the same mechanism as a business type's `@programmes`). */
+export const audienceModules = (audience: Audience): { modules: string[] } => ({ modules: audience === "organisations" ? ["organisations"] : [] });
 
 /**
  * What the screens do with the Lead Finder (owner decision 4 Nov: plan tiers): `on` = it is here and works; `upsell` = this business would have it but its plan (Lead Desk) does not: the Prospects tab, the chat and Today show the
@@ -86,7 +104,8 @@ export type LeadFinderCard = { search: Search; canApprove: boolean };
 export const searchRank = (s: SearchState): number => (s === "planned" ? 0 : s === "approved" ? 1 : 2);
 
 /** The words the chat's Lead Finder card draws (the chat panel is given only these and its own `bv.*` words). */
-export const isChatCardWord = (k: string): boolean => k.startsWith("lf.plan.") || k.startsWith("lf.result.") || k === "lf.demo" || k === "lf.working" || k === "lf.chat.card" || k === "lf.err.cap" || k === "lf.err.off" || k === "lf.err.state" || k.startsWith("tier.upsell.");
+export const isChatCardWord = (key: string): boolean => isCardKey(key.replace(/@[a-z_]+$/, "")); // a `key@organisations` variant travels with its key
+const isCardKey = (k: string): boolean => k.startsWith("lf.plan.") || k.startsWith("lf.result.") || k === "lf.demo" || k === "lf.working" || k === "lf.chat.card" || k === "lf.err.cap" || k === "lf.err.off" || k === "lf.err.state" || k.startsWith("tier.upsell.");
 
 export type StockMatch = { matched: string[]; low: string[]; enough: boolean };
 export type QuoteLine = { item: string; unit: string; pricePaise: number | null; moq: number | null; quantitySaid: string };
@@ -214,4 +233,16 @@ export function withFinder<A extends { agent: string; state: string }>(team: rea
   if (team === null) return null;
   if (!available) return [...team];
   return team.map((a) => (a.agent === "lead_finder" && a.state === "not_available" ? { ...a, state: "idle" } : a));
+}
+
+const SCRIPT: Record<string, RegExp> = { te: /[\u0C00-\u0C7F]/, hi: /[\u0900-\u097F]/, kn: /[\u0C80-\u0CFF]/ };
+const INDIC = /[\u0900-\u0DFF]/;
+/**
+ * Is the API's own sentence in the person's language (C1, 5 Nov: `individuals_not_allowed` carries a polite sentence)? English: letters and no Indian script; Telugu, Hindi, Kannada: the language's own script. A sentence that is
+ * empty, too long or in another language is not shown: the screen says it in its own words instead.
+ */
+export function sentenceIn(text: unknown, lang: string): text is string {
+  if (typeof text !== "string" || text.trim().length < 2 || text.length > 300) return false;
+  const own = SCRIPT[lang];
+  return own ? own.test(text) : lang === "en" && /[A-Za-z]/.test(text) && !INDIC.test(text);
 }

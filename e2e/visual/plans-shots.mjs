@@ -65,7 +65,7 @@ const sse = (res, events) => {
 const SCENES = {
   ld: { env: { PLAN_TIER_SCREENS: "mock", PLAN_TIER_MOCK: "lead_desk" }, pack: null, availability: { available: true, source: "fixture", reason: "ok" } },
   aw: { env: { PLAN_TIER_SCREENS: "mock" }, pack: null, availability: { available: true, source: "fixture", reason: "ok" } },
-  school: { env: { PLAN_TIER_SCREENS: "mock" }, pack: "education", availability: { available: true, source: "fixture", reason: "ok" } },
+  school: { env: { PLAN_TIER_SCREENS: "mock" }, pack: "education", availability: { available: true, source: "fixture", reason: "ok", audience: "organisations" } },
 };
 const SCREENS = [
   { id: "plan-ld", scene: "ld", path: `${T}/settings?section=plan` },

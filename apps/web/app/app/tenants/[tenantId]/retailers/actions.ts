@@ -13,7 +13,7 @@ import { actOnProspects, approveSearch, cancelSearch, getQuoteDraft, makeQuoteDr
 import { fetchQuote } from "@/lib/api/quotes";
 import { requireUser } from "@/lib/auth/session";
 import { readEntitlements } from "@/lib/plan/tier-source";
-import { ACTIONS, CALL_LANGUAGES, MAX_BULK, PERSONAS, searchTextProblem, type ActionResult, type CallLanguage, type Persona, type PracticeCall, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
+import { ACTIONS, CALL_LANGUAGES, MAX_BULK, PERSONAS, searchTextProblem, sentenceIn, type ActionResult, type CallLanguage, type Persona, type PracticeCall, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
 
 /**
  * The changes of the Prospects tab (job lead-finder part D; docs/contracts/lead-finder.md): plan a search from the owner's words, the OK (Owner, Admin) that runs it, Cancel, the bulk buttons, and the practice call (Owner, Admin) IN THE
@@ -49,6 +49,8 @@ function refusal(error: unknown, t: AppT, lang: string): Refused {
   if (f.code === "search_cap_reached") return { ...f, error: t("lf.err.cap") };
   if (f.code === "lead_finder_off" || f.code === "lead_finder_not_available") return { ...f, error: t("lf.err.off") };
   if (f.code === "not_in_plan") return { ...f, error: t("tier.upsell.title") };
+  // a search for people ("parents in Anantapur", C1 5 Nov): the API's polite sentence when it is in the person's language, else ours; never the raw error
+  if (f.code === "individuals_not_allowed") return { ...f, error: sentenceIn(api?.message, lang) ? (api as ApiRequestError).message : t("lf.err.individuals") };
   if (f.code === "nothing_to_quote") return { ...f, error: t("lf.qd.err.nothing") };
   if (f.code === "quote_draft_exists") return { ...f, error: t("lf.qd.err.exists") };
   if (f.code === "not_qualified") return { ...f, error: t("lf.qd.err.not_qualified") };

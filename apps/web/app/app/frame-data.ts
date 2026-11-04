@@ -6,7 +6,10 @@ import { getPlan } from "@/lib/api/plan";
 import { getAiUsage } from "@/lib/api/ai-usage";
 import { getWorkspaceProfile } from "@/lib/api/workspace";
 import { readAvailability } from "@/lib/api/lead-finder";
-import { finderAccess, type Availability, type FinderAccess } from "@/lib/lead-finder/types";
+import { audienceModules, audienceOf, finderAccess, type Audience, type Availability, type FinderAccess } from "@/lib/lead-finder/types";
+import { appDict } from "@/i18n/app";
+import { LANGS, type Lang } from "@/i18n/lang";
+import { withModuleWords } from "@/lib/packs/module-words";
 import { readEntitlements } from "@/lib/plan/tier-source";
 import { LEAD_DESK, type Entitlements } from "@/lib/plan/tier";
 import { readPackCached } from "@/lib/packs/read";
@@ -29,12 +32,12 @@ export const readFinderCached = cache((accessToken: string, tenantId: string) =>
 export const readEntitlementsCached = cache((accessToken: string, tenantId: string) => readEntitlements(accessToken, tenantId));
 /**
  * What the screens do with the Lead Finder (`on`, `upsell` or `hidden`: lib/lead-finder/types.ts `finderAccess`), from its availability and the plan tier, once per request: the frame, Today, the Prospects tab, Settings and the
- * chat all ask. Only a rejected session is thrown.
+ * chat all ask. `audience`: whose words its screens speak (a school's are organisations: `audienceOf`). Only a rejected session is thrown.
  */
-export const readFinderAccessCached = cache(async (accessToken: string, tenantId: string): Promise<{ access: FinderAccess; availability: Availability | null; plan: Entitlements }> => {
-  const [availability, plan] = await Promise.all([readFinderCached(accessToken, tenantId), readEntitlementsCached(accessToken, tenantId)]);
+export const readFinderAccessCached = cache(async (accessToken: string, tenantId: string): Promise<{ access: FinderAccess; availability: Availability | null; plan: Entitlements; audience: Audience }> => {
+  const [availability, plan, pack] = await Promise.all([readFinderCached(accessToken, tenantId), readEntitlementsCached(accessToken, tenantId), readPackCached(accessToken, tenantId).catch(() => null)]);
   // the Lead Finder's own `not_in_plan` (C1's #317) means the plan is Lead Desk even where the tier is not read (the flag is off): the badge and the card agree
-  return { access: finderAccess(availability, plan.features.leadFinder), availability, plan: availability?.reason === "not_in_plan" && plan.features.leadFinder ? LEAD_DESK : plan };
+  return { access: finderAccess(availability, plan.features.leadFinder), availability, plan: availability?.reason === "not_in_plan" && plan.features.leadFinder ? LEAD_DESK : plan, audience: audienceOf(availability, pack?.modules) };
 });
 
 /**
@@ -47,7 +50,9 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
   // the Lead Finder (its Prospects tab) only where the API says it is available, or where only the plan keeps it away (Lead Desk: the tab opens the "part of AI Workforce" card); a business type without it, a switched-off one
   // or one that cannot be told is hidden like a module the business type does not have
   const finderOn = finder.status === "fulfilled" && finder.value.access !== "hidden";
-  const frame = pack.status === "fulfilled" && pack.value ? packFrame(pack.value, lang) : null;
+  const packed = pack.status === "fulfilled" && pack.value ? packFrame(pack.value, lang) : null;
+  // the API decides where the Lead Finder is (a school gets it on AI Workforce, C1 5 Nov: its pack does not list the module), and an organisations Lead Finder's tab says "Find organisations", never "retailers" or the pack's own word
+  const frame = packed && finderOn && finder.status === "fulfilled" ? withFinderTab(packed, finder.value.audience, lang) : packed;
   return {
     plan: plan.status === "fulfilled" ? plan.value : null,
     usage: usage.status === "fulfilled" ? usage.value : null,
@@ -58,4 +63,13 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
     logoUrl: profile.status === "fulfilled" ? profile.value.logoUrl : null,
     pack: frame && !finderOn && frame.modules.includes("lead_finder") ? { ...frame, modules: frame.modules.filter((m) => m !== "lead_finder") } : frame,
   };
+}
+
+/** The frame with the Lead Finder's tab: its module on (the API said it is here), and for an organisations Lead Finder the tab's own word (`nav.item.retailers@organisations`). */
+function withFinderTab<F extends { modules: readonly string[]; labels: Readonly<Record<string, string>> }>(frame: F, audience: Audience, lang: string): F {
+  const modules = frame.modules.includes("lead_finder") ? frame.modules : [...frame.modules, "lead_finder"];
+  if (audience !== "organisations") return { ...frame, modules };
+  const dict = appDict((LANGS as readonly string[]).includes(lang) ? (lang as Lang) : "en") as Record<string, string>;
+  const word = withModuleWords({ "nav.item.retailers": dict["nav.item.retailers"], "nav.item.retailers@organisations": dict["nav.item.retailers@organisations"] }, audienceModules(audience))["nav.item.retailers"];
+  return { ...frame, modules, labels: { ...frame.labels, "nav.item.retailers": word } };
 }

@@ -204,3 +204,36 @@ describe("the Lead Finder's card (docs/contracts/lead-finder.md 1b)", () => {
     expect(out).toEqual([{ type: "text", delta: "Shall I search?" }, { type: "lead_finder", card }, DONE_OUT]);
   });
 });
+
+describe("a Lead Finder search that names people in the chat (C1, 5 Nov: individuals_not_allowed)", () => {
+  const words = (m: string) => (m.startsWith("The Lead Finder") ? m : "OURS");
+  const collect = async (events: AsyncIterable<AssistantEvent>) => {
+    const out: AskEvent[] = [];
+    for await (const e of toAskEvents(events, B, none, { individuals: words })) out.push(e);
+    return out;
+  };
+  it("the refusal is said as the reply (the API's sentence or ours) and no card is drawn", async () => {
+    async function* gen(): AsyncGenerator<AssistantEvent> {
+      yield { type: "error", code: "individuals_not_allowed", message: "The Lead Finder looks for organisations only." };
+    }
+    expect(await collect(gen())).toEqual([{ type: "text", delta: "The Lead Finder looks for organisations only." }, { type: "done" }]);
+    async function* other(): AsyncGenerator<AssistantEvent> {
+      yield { type: "error", code: "individuals_not_allowed", message: "ఇది తెలుగు" };
+    }
+    expect(await collect(other())).toEqual([{ type: "text", delta: "OURS" }, { type: "done" }]);
+  });
+  it("the same when the API refused the turn before it began (a 422)", async () => {
+    async function* refused(): AsyncGenerator<AssistantEvent> {
+      throw Object.assign(new Error("The Lead Finder looks for organisations only."), { code: "individuals_not_allowed", status: 422 });
+    }
+    expect(await collect(refused())).toEqual([{ type: "text", delta: "The Lead Finder looks for organisations only." }, { type: "done" }]);
+  });
+  it("without the words (the written Ask) it stays an error, and other errors are untouched", async () => {
+    async function* gen(): AsyncGenerator<AssistantEvent> {
+      yield { type: "error", code: "individuals_not_allowed", message: "x" };
+    }
+    const out: AskEvent[] = [];
+    for await (const e of toAskEvents(gen(), B, none)) out.push(e);
+    expect(out).toEqual([{ type: "error", code: undefined }]);
+  });
+});
