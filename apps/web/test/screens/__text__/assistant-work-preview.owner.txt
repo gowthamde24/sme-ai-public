@@ -15,8 +15,8 @@ Ask or tell your assistant anything…
 {label="What I found in leads-guntur-nov.xlsx"}
 ### What I found in leads-guntur-nov.xlsx
 38 found · 4 already exist · 2 no phone · 1 looks like a supplier A few rows
-- Name : Lakshmi Prasanna Phone : +91 98480 1XXXX Town : Guntur Wants : Kanchi pattu, 40 sarees
-- Name : Venkata Ramana Rao Phone : +91 94401 2XXXX Town : Tenali Wants : Wedding set
+- Name : Lakshmi Prasanna Phone : +00 000 000 6701 Town : Guntur Wants : Kanchi pattu, 40 sarees
+- Name : Venkata Ramana Rao Phone : +00 000 000 6702 Town : Tenali Wants : Wedding set
 - Name : Sravani Reddy Town : Narasaraopet Wants : Gadwal silk
 Goes to: Leads Nobody is messaged or called because of this. Your usual follow-up rules apply.
 {label="A plan, waiting for you"}

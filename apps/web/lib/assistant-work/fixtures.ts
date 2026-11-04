@@ -38,8 +38,8 @@ export const PREVIEW_JSON = {
   counts: { found: 38, existing: 4, no_phone: 2, supplier: 1 },
   columns: ["Name", "Phone", "Town", "Wants"],
   sample_rows: [
-    ["Lakshmi Prasanna", "+91 98480 1XXXX", "Guntur", "Kanchi pattu, 40 sarees"],
-    ["Venkata Ramana Rao", "+91 94401 2XXXX", "Tenali", "Wedding set"],
+    ["Lakshmi Prasanna", "+00 000 000 6701", "Guntur", "Kanchi pattu, 40 sarees"],
+    ["Venkata Ramana Rao", "+00 000 000 6702", "Tenali", "Wedding set"],
     ["Sravani Reddy", "", "Narasaraopet", "Gadwal silk"],
   ],
   plan: IMPORT_PLAN_JSON,

@@ -122,7 +122,7 @@ export const NAV: readonly NavGroup[] = [
 
 /** Below the scrolling part of the menu: Settings (its tabs hold the business and plan, the members, language and look, security and privacy). */
 export const FOOT: readonly NavItem[] = [
-  { id: "settings", label: "Settings", icon: "settings", path: "/settings", also: ["/plans", "/privacy", "/suppression"], roles: ALL_ROLES },
+  { id: "settings", label: "Settings", icon: "settings", path: "/settings", also: ["/plans", "/privacy", "/suppression", "/assistant-work-preview"], roles: ALL_ROLES }, // the assistant-work preview (flag-only, mock) sits under Settings, next to Activity
 ];
 
 export type VisibleGroup = { id: string; label: string; items: NavItem[] };

@@ -38,7 +38,7 @@ describe("the cards of a turn (ASSUMED shapes)", () => {
     if (card?.kind !== "file_preview") return;
     expect(card.facts).toEqual([{ code: "found", n: 38 }, { code: "existing", n: 4 }, { code: "no_phone", n: 2 }, { code: "supplier", n: 1 }]);
     expect(card.rows).toHaveLength(3);
-    expect(card.rows[0]).toEqual(["Lakshmi Prasanna", "+91 98480 1XXXX", "Guntur", "Kanchi pattu, 40 sarees"]);
+    expect(card.rows[0]).toEqual(["Lakshmi Prasanna", "+00 000 000 6701", "Guntur", "Kanchi pattu, 40 sarees"]);
     expect(card.destination).toBe("leads");
     expect(card.plan?.steps).toHaveLength(2);
   });
