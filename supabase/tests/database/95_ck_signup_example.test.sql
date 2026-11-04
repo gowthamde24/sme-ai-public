@@ -161,14 +161,14 @@ select is((select count(*) from public.companies where tenant_id = tests.tid('a'
 select is((select count(*) from public.audit_events where tenant_id = tests.tid('a') and action = 'example_data.remove'), 1::bigint, 'D25 the removal is audited');
 select is(tests.scalar_as(tests.uid('a_viewer'), format($$select (public.example_data_status(%L) ->> 'loaded')$$, tests.tid('a'))), 'false', 'D26 the status says removed');
 select is(pg_temp.at('aal2', 'a_sales', format($$select public.example_data_remove(%L)$$, tests.tid('a'))), '42501', 'D27 DENY: Sales cannot remove it');
-select is(tests.scalar_as(tests.uid('a_owner'), format($$select (public.example_data_remove(%L) -> 'removed')::text$$, tests.tid('a'))), '{"leads": 0, "contacts": 0, "products": 0, "companies": 0}', 'D28 a second removal removes nothing');
+select is(tests.scalar_as(tests.uid('a_owner'), format($$select (public.example_data_remove(%L) -> 'removed')::text$$, tests.tid('a'))), '{"leads": 0, "other": 0, "contacts": 0, "products": 0, "companies": 0}', 'D28 a second removal removes nothing');
 select is(pg_temp.at('aal2', 'a_admin', format($$select public.example_data_load(%L)$$, tests.tid('a'))), 'ok', 'D29 ALLOW: it can be loaded again after a removal (a new batch)');
 select is((select count(*) from packs.example_batches where tenant_id = tests.tid('a')), 2::bigint, 'D30 two batches are on record');
 -- the other packs have their own sample
 select is(tests.scalar_as(tests.uid('edu'), format($$select (public.example_data_load(%L) -> 'counts')::text$$, pg_temp.biz('edu'))), '{"leads": 0, "contacts": 3, "products": 0, "companies": 0}', 'D32 ALLOW: education loads three sample contacts and nothing it has no module for');
 select is(tests.scalar_as(tests.uid('con'), format($$select (public.example_data_load(%L) -> 'counts')::text$$, pg_temp.biz('con'))), '{"leads": 2, "contacts": 3, "products": 6, "companies": 3}', 'D33 ALLOW: construction loads its contractors and six products');
 select is((select string_agg(distinct unit, ',' order by unit) from public.products where tenant_id = pg_temp.biz('con') and sku like 'EX-%'), 'bag,piece,sq_ft,tonne,truckload', 'D34 in construction units');
-select is(tests.scalar_as(tests.uid('con'), format($$select (public.example_data_remove(%L) -> 'removed')::text$$, pg_temp.biz('con'))), '{"leads": 2, "contacts": 3, "products": 6, "companies": 3}', 'D35 and removes all of it again (nothing was changed or used)');
+select is(tests.scalar_as(tests.uid('con'), format($$select (public.example_data_remove(%L) -> 'removed')::text$$, pg_temp.biz('con'))), '{"leads": 2, "other": 0, "contacts": 3, "products": 6, "companies": 3}', 'D35 and removes all of it again (nothing was changed or used)');
 select is((select count(*) from public.companies where tenant_id = pg_temp.biz('con')), 0::bigint, 'D36 leaving the business exactly as it was');
 -- an update never trips a module guard, even when the pack has since lost the module
 update packs.workspace_pack set pack_code = 'education', pack_version = 1 where tenant_id = tests.tid('b');

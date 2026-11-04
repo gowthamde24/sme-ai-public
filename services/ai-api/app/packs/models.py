@@ -79,6 +79,8 @@ class ExampleCountsOut(_Out):
     contacts: int
     leads: int
     products: int
+    # job test-workspaces: enquiries, requirements, knowledge, lead arrivals and profiles an operator marked as example data
+    other: int = 0
 
 
 class ExampleDataStatusOut(_Out):
@@ -98,6 +100,14 @@ class ExampleDataRemoveOut(_Out):
     batch_id: uuid.UUID | None
     removed: ExampleCountsOut
     kept: ExampleCountsOut
+
+
+class ExampleDataResetOut(_Out):
+    """POST /v1/tenants/{id}/example-data/reset: removed and kept (as for remove), then the sample loaded again, in one step."""
+
+    removed: ExampleCountsOut
+    kept: ExampleCountsOut
+    status: ExampleDataStatusOut
 
 
 class AuthProvidersOut(_Out):

@@ -7,6 +7,7 @@
   GET    /v1/tenants/{t}/modules                every member: the 25 modules and which are on.
   GET    /v1/tenants/{t}/example-data           every member: is the labelled sample loaded.
   POST   /v1/tenants/{t}/example-data           Owner or Admin: load the sample (409 `example_data_loaded` when it already is).
+  POST   /v1/tenants/{t}/example-data/reset     Owner or Admin: remove (as below) and load it again in one step (job test-workspaces).
   POST   /v1/tenants/{t}/example-data/remove    Owner or Admin: remove the sample rows that are untouched and unused; the others are KEPT and counted. (A POST, not a DELETE: this API has no
                                                 DELETE endpoint at all, tests/test_crm_routes.py; this removes only rows the load itself made.)
 
@@ -31,6 +32,7 @@ from app.packs.models import (
     AuthProvidersOut,
     ExampleCountsOut,
     ExampleDataRemoveOut,
+    ExampleDataResetOut,
     ExampleDataStatusOut,
     LanguageReview,
     ModuleStateOut,
@@ -118,7 +120,7 @@ def get_modules(ctx: AnyMember, runtime: RuntimeDep) -> WorkspaceModulesOut:
 
 def _counts(raw: Any) -> ExampleCountsOut:
     src = raw if isinstance(raw, dict) else {}
-    return ExampleCountsOut(**{k: int(src.get(k, 0) or 0) for k in ("companies", "contacts", "leads", "products")})
+    return ExampleCountsOut(**{k: int(src.get(k, 0) or 0) for k in ("companies", "contacts", "leads", "products", "other")})
 
 
 def _status(row: dict[str, Any]) -> ExampleDataStatusOut:
@@ -142,6 +144,13 @@ def example_load(ctx: OwnerOrAdmin, runtime: RuntimeDep) -> ExampleDataStatusOut
 def example_remove(ctx: OwnerOrAdmin, runtime: RuntimeDep) -> ExampleDataRemoveOut:
     row = _repo(runtime).example_remove(ctx.principal.token, ctx.tenant.id)
     return ExampleDataRemoveOut(batch_id=row.get("batch_id"), removed=_counts(row.get("removed")), kept=_counts(row.get("kept")))
+
+
+@router.post("/example-data/reset", response_model=ExampleDataResetOut)
+def example_reset(ctx: OwnerOrAdmin, runtime: RuntimeDep) -> ExampleDataResetOut:
+    """Remove the sample (changed or used rows are kept and counted) and load it again, in one transaction."""
+    row = _repo(runtime).example_reset(ctx.principal.token, ctx.tenant.id)
+    return ExampleDataResetOut(removed=_counts(row.get("removed")), kept=_counts(row.get("kept")), status=_status(row.get("status") or {}))
 
 
 __all__ = ["public_router", "router"]

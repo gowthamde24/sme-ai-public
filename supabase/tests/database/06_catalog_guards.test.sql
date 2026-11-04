@@ -321,7 +321,7 @@ select is(
         -- entity to fill in), and the example data (Owner / Admin). Each proves the role first; the pack tables themselves have no client grant.
         'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue',
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
-        'public.example_data_status', 'public.example_data_load', 'public.example_data_remove',
+        'public.example_data_status', 'public.example_data_load', 'public.example_data_remove', 'public.example_data_reset',
         -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)
         'public.phone_call_begin', 'public.phone_call_update', 'public.phone_call_finish', 'public.phone_calls_list', 'public.phone_call_get', 'public.phone_calls_stats', 'public.phone_line_find',
         'public.task_context', 'public.task_save', 'public.task_get', 'public.tasks_list', 'public.task_contacts_list', 'public.task_report', 'public.task_exclude', 'public.task_approve', 'public.task_set_cap', 'public.task_set_state', 'public.task_claim', 'public.task_contact_result',
@@ -373,6 +373,8 @@ select is(
         'app.erasure_door_open',
         -- Today runs as the caller and asks for the usage notices of the caller's own workspace (job DS part E2)
         'app.today_usage_items',
+        -- Today runs as the caller and asks whether the workspace is a school (no outreach items for a school; job test-workspaces)
+        'app.today_is_school',
         -- the own-voice bucket's storage rules are evaluated as the caller, who must be able to run this one (job DP part 5)
         'app.ovc_bucket_tenant')),
   '', 'authenticated can execute only the allow-listed functions');
@@ -437,7 +439,7 @@ select is(
         -- entity to fill in), and the example data (Owner / Admin). Each proves the role first; the pack tables themselves have no client grant.
         'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue',
         'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
-        'public.example_data_status', 'public.example_data_load', 'public.example_data_remove',
+        'public.example_data_status', 'public.example_data_load', 'public.example_data_remove', 'public.example_data_reset',
         -- job DR B1: "Ask Vijaya to do it" (Owner/Admin/Sales plan, the Owner approves with a second factor, Owner/Admin run)
         'public.phone_call_begin', 'public.phone_call_update', 'public.phone_call_finish', 'public.phone_calls_list', 'public.phone_call_get', 'public.phone_calls_stats', 'public.phone_line_find',
         'public.task_context', 'public.task_save', 'public.task_get', 'public.tasks_list', 'public.task_contacts_list', 'public.task_report', 'public.task_exclude', 'public.task_approve', 'public.task_set_cap', 'public.task_set_state', 'public.task_claim', 'public.task_contact_result',

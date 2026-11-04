@@ -72,6 +72,11 @@ class FakePacks:
         self.loaded = False
         return {"batch_id": str(uuid.UUID(int=7)), "removed": {"companies": 2, "contacts": 3, "leads": 2, "products": 5}, "kept": {"companies": 1}}
 
+    def example_reset(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        self._go("example_reset", token)
+        self.loaded = True
+        return {"removed": {"companies": 2, "other": 4}, "kept": {"contacts": 1}, "status": self.example_status(token, tenant_id)}
+
 
 def _fields() -> list[dict[str, Any]]:
     return [
@@ -267,7 +272,7 @@ def test_owner_and_admin_load_and_remove_the_sample_and_everyone_can_see_its_sta
     again = client.post(url, headers=auth("a_admin"))
     assert again.status_code == 409 and again.json()["error"]["code"] == "example_data_loaded"
     removed = client.post(url + "/remove", headers=auth("a_admin"))
-    assert removed.status_code == 200 and removed.json()["removed"]["products"] == 5 and removed.json()["kept"] == {"companies": 1, "contacts": 0, "leads": 0, "products": 0}
+    assert removed.status_code == 200 and removed.json()["removed"]["products"] == 5 and removed.json()["kept"] == {"companies": 1, "contacts": 0, "leads": 0, "products": 0, "other": 0}
     assert client.get(url, headers=auth("a_owner")).json()["loaded"] is False
 
 
@@ -502,3 +507,17 @@ def test_the_pack_says_itself_whether_it_ships_example_data() -> None:
     client, _ = make_client(packs=Says())
     r = client.get(f"/v1/tenants/{A}/pack", headers=auth("a_owner"))
     assert r.status_code == 200 and r.json()["has_example_data"] is True
+
+
+def test_reset_removes_and_loads_again_in_one_call_owner_and_admin_only() -> None:
+    """Job test-workspaces: "Reset test data" is one call; what an operator marked from the test week is counted under `other`."""
+    packs = FakePacks()
+    client, _ = make_client(packs=packs)
+    url = f"/v1/tenants/{A}/example-data/reset"
+    for user in ("a_sales", "a_viewer"):
+        assert client.post(url, headers=auth(user)).status_code == 403, user
+    r = client.post(url, headers=auth("a_admin"))
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["removed"]["other"] == 4 and body["removed"]["companies"] == 2 and body["kept"]["contacts"] == 1 and body["status"]["loaded"] is True
+    assert client.post(f"/v1/tenants/{A}/example-data/remove", headers=auth("a_owner")).json()["removed"]["other"] == 0

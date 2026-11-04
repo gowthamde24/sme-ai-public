@@ -84,6 +84,7 @@ export interface ExampleCountsOut {
   contacts: number;
   leads: number;
   products: number;
+  other?: number;
 }
 
 export interface ExampleDataRemoveOut {
