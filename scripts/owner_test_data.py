@@ -379,8 +379,8 @@ def textiles(s: Seeder) -> None:
             s.made["quotes approved"] += 1
         quotes[key] = qid
 
-    for spec in T_QUOTES:
-        s.piece(f"quote {spec[0]}", lambda spec=spec: quote(spec))  # type: ignore[misc]
+    for t_spec in T_QUOTES:
+        s.piece(f"quote {t_spec[0]}", lambda t_spec=t_spec: quote(t_spec))  # type: ignore[misc]
     # two more enquiries that are not quoted yet (one waits for the size, one only asked for the catalogue)
     s.piece("enquiry srinivas", lambda: s.enquiry("t-e6", people["srinivas"]["lead"], "email", s.at(2, 16, 5), "Pattu sarees: rates and catalogue",
                                                   "Sir, please send the catalogue and rates of your Dharmavaram pattu range. We may take 15 to 20 pieces after Deepavali for our Kurnool showroom."))
@@ -565,8 +565,8 @@ def construction(s: Seeder) -> None:
             q = s.req("material quote", "GET", f"/materials/quotes/{qid}")
         mquotes[key] = q
 
-    for spec in C_QUOTES:
-        s.piece(f"material quote {spec[0]}", lambda spec=spec: mquote(spec))  # type: ignore[misc]
+    for c_spec in C_QUOTES:
+        s.piece(f"material quote {c_spec[0]}", lambda c_spec=c_spec: mquote(c_spec))  # type: ignore[misc]
 
     # orders (records of what happened), trips, the balance invoice
     s.piece("order policy", lambda: s.order_policy("c"))
@@ -807,8 +807,8 @@ def education(s: Seeder) -> None:
                 body["lost_reason"] = lost
             s.req("admission stage", "POST", f"{INST}/admissions/{aid}/stage", body)
 
-    for spec in ADMISSIONS:
-        s.piece(f"admission {spec[0]}", lambda spec=spec: admission(spec))  # type: ignore[misc]
+    for a_spec in ADMISSIONS:
+        s.piece(f"admission {a_spec[0]}", lambda a_spec=a_spec: admission(a_spec))  # type: ignore[misc]
     s.notes["admissions"] = f"{len(ADMISSIONS)} enquiries: " + ", ".join(f"{sum(1 for a in ADMISSIONS if a[5] == st)} {st.replace('_', ' ')}" for st in ("enquiry", "campus_visit", "application", "lost"))
 
     def needs_lead(key: str) -> str:

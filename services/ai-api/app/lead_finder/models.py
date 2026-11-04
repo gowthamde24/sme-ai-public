@@ -31,7 +31,8 @@ class AvailabilityOut(_Out):
     available: bool
     # fixture = made-up businesses (demo workspaces and every workspace until Google is ready); places = Google Maps
     source: Literal["fixture", "places"] | None
-    reason: Literal["ok", "not_for_this_business", "switched_off"]
+    # not_for_your_role: a Viewer (who reads no prospect): hide the feature for them
+    reason: Literal["ok", "not_for_this_business", "switched_off", "not_for_your_role"]
 
 
 class SettingsIn(_In):
@@ -217,8 +218,9 @@ class QuoteDraftPreviewOut(_Out):
     ready: bool
     lines: list[QuoteLineOut]
     left_out: list[QuoteLeftOutOut]
-    # the id the draft has (made) or will have; open /quotes/{quote_id} once `made`
+    # the ids the draft has (made) or will have. Once `made`, open the ENQUIRY's page (/enquiries/{enquiry_id}, Quote tab): a textiles draft lives there
     quote_id: uuid.UUID
+    enquiry_id: uuid.UUID
     made: bool
 
 

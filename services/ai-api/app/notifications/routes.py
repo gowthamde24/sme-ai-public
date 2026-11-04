@@ -19,7 +19,7 @@ from app.auth.deps import PrincipalDep, Runtime, TenantContext, get_runtime, req
 from app.errors import ApiError
 from app.notifications.models import PushEnabledIn, PushSubscriptionIn, RemoveSubscriptionIn
 from app.notifications.runtime import NotificationsRuntime
-from app.today.service import needs_item
+from app.today.service import needs_items
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["notifications"])
 me_router = APIRouter(prefix="/v1", tags=["notifications"])
@@ -53,10 +53,13 @@ def unsubscribe(body: RemoveSubscriptionIn, principal: PrincipalDep, runtime: Ru
 @router.get("/notifications")
 def feed(ctx: AnyMember, runtime: RuntimeDep, limit: Annotated[int, Query(ge=1, le=50)] = 20) -> dict[str, Any]:
     raw = _n(runtime).repository.feed(ctx.principal.token, ctx.tenant.id, limit)
+    rows = [r for r in raw.get("items") or [] if isinstance(r, dict)]
+    shown = needs_items(rows)   # a kind this API does not know yet is left out, never a failed feed
+    by_id = {str(r.get("id")): r for r in rows}
     items = []
-    for row in raw.get("items") or []:
-        item = needs_item(row).model_dump(mode="json")
-        item["unread"] = row.get("unread") is True
+    for one in shown:
+        item = one.model_dump(mode="json")
+        item["unread"] = by_id.get(str(one.id), {}).get("unread") is True
         items.append(item)
     return {"total": raw.get("total", 0), "unread_count": raw.get("unread_count", 0), "last_seen_at": raw.get("last_seen_at"), "items": items}
 

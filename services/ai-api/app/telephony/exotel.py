@@ -28,6 +28,9 @@ class Connected:
     pass
 
 
+APP_ID_FIELDS = ("app_id", "appid", "AppId", "flow_id", "FlowId", "flowid")
+
+
 @dataclass(frozen=True)
 class Start:
     stream_sid: str
@@ -37,6 +40,8 @@ class Start:
     to_number: str
     custom: dict[str, str] = field(default_factory=dict)
     sample_rate: int = DEFAULT_RATE
+    fields: tuple[str, ...] = ()   # the names (never the values) of the start body's fields, for the diagnostic log line
+    app_id: str = ""               # the flow (app) id, when Exotel names one in the start body or its custom parameters
 
 
 @dataclass(frozen=True)
@@ -103,8 +108,14 @@ def parse(raw: str | bytes) -> Event:
             rate = int(fmt.get("sample_rate", DEFAULT_RATE))
         except (TypeError, ValueError):
             rate = DEFAULT_RATE
+        app_id = ""
+        for source in (body, custom):
+            for key in APP_ID_FIELDS:
+                raw_id: Any = source.get(key)
+                if raw_id and not app_id and isinstance(raw_id, (str, int)) and not isinstance(raw_id, bool):
+                    app_id = _s(str(raw_id), 40)
         return Start(_s(body.get("stream_sid") or msg.get("stream_sid"), 100), _s(body.get("call_sid"), 100), _s(body.get("account_sid"), 100), _s(body.get("from"), 40), _s(body.get("to"), 40), custom,
-                     rate if rate in RATES else DEFAULT_RATE)
+                     rate if rate in RATES else DEFAULT_RATE, tuple(sorted(_s(k, 40) for k in body if isinstance(k, str)))[:30], app_id)
     if event == "media":
         body = _d(msg, "media")
         try:
