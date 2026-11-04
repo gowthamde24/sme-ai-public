@@ -40,6 +40,8 @@ import { readSetupFacts } from "./setup-data";
 import { topupsToday } from "./topups-today";
 import { setupWords } from "./setup-words";
 import { readLeadDesk, sourceNameOf } from "./lead-desk-today";
+import { readFinderNeeds } from "./lead-finder-today";
+import { readFinderCached } from "../../frame-data";
 import { readTemplates } from "@/lib/lead-desk/source";
 import { mergeDesk, readDisplayName, readToday } from "./today-data";
 import { cancelVisitAction, confirmVisitAction, moveVisitAction, saveHoursAction, slotsAction } from "./visits/visits-actions";
@@ -70,7 +72,8 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     // the Owner of a workspace that is not set up yet sees the setup wizard / checklist (job BJ): its facts are read here, with existing endpoints only
     // what Lead Desk adds (hot leads, plans waiting, callbacks due, limits reached) joins "Needs you" in any workspace; its workers replace the shop's helpers only in a business type that has a lead template (the API's own list: no type is named here)
     let desk: Awaited<ReturnType<typeof readLeadDesk>>;
-    [data, name, setup, activation, sample, packCards, desk] = await Promise.all([
+    let finder: Awaited<ReturnType<typeof readFinderNeeds>>;
+    [data, name, setup, activation, sample, packCards, desk, finder] = await Promise.all([
       readToday(accessToken, tenantId, role),
       readDisplayName(accessToken, tenantId, userId),
       role === "owner" && !usesChecklist(pack) ? readSetupFacts(accessToken, tenantId, shop) : Promise.resolve(null),
@@ -78,11 +81,13 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
       manages && pack ? getExampleStatus(accessToken, tenantId) : Promise.resolve(null),
       readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupees }),
       readLeadDesk({ token: accessToken, tenantId, userId }, role, base, tt, (tag) => sourceNameOf(tt, tag), now, deskPack),
+      // the Lead Finder's businesses that need a person (only where the Lead Finder is available: the frame's answer, read once per request; one that cannot be told adds nothing)
+      role === "viewer" ? Promise.resolve([]) : readFinderCached(accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)).then((a) => readFinderNeeds({ token: accessToken, tenantId }, role, a, base, tt)),
     ]);
     // the steps the person put away from Today (a cookie of this browser) are not drawn; they stay in Settings
     if (activation) activation = withoutHidden(activation, await readHidden(tenantId));
     // Lead Desk's items and workers join what the API said (the merge keeps one card per thing and counts only what the API did not)
-    data = mergeDesk(data, { needs: desk.needs, team: deskPack ? desk.team : [] });
+    data = mergeDesk(data, { needs: [...desk.needs, ...finder], team: deskPack ? desk.team : [] });
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     escalate(error);

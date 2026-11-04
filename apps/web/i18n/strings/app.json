@@ -77064,17 +77064,6 @@
    "kn": "draft"
   }
  },
- "today.sum.prospect": {
-  "en": "fit {fit} · {reason}",
-  "te": "ఫిట్ {fit} · {reason}",
-  "hi": "फिट {fit} · {reason}",
-  "kn": "ಫಿಟ್ {fit} · {reason}",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "today.prospect.more": {
   "en": "{n} more prospects",
   "te": "ఇంకా {n} ప్రాస్పెక్ట్స్",

@@ -720,7 +720,9 @@ add({ id: "catalogue-edit", roles: ["owner", "admin", "sales"], render: async ()
 void summaryJson;
 
 // ---- the Prospects tab (job lead-finder part D; it replaced job CC's map search at /retailers) ------------------------------------------
-const prospectRows = (...rows: unknown[]) => ({ items: rows.map(parseProspect), nextCursor: null });
+function prospectRows(...rows: unknown[]) {
+  return { items: rows.map(parseProspect), nextCursor: null };
+}
 const finderHandlers = (availability: unknown, rows: unknown[]) => (role: Role) => ({
   ...base(role),
   readAvailability: () => (availability === null ? null : parseAvailability(availability)),
@@ -802,6 +804,8 @@ add({ id: "start-classic", roles: ["owner"], render: startPage, handlers: (role)
 add({ id: "start-construction", roles: ["owner", "sales"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), getProfile: PROFILE_NEW, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
 add({ id: "start-education-done-profile", roles: ["admin"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), getProfile: PROFILE_DONE, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
 add({ id: "today-default-pack", roles: ["owner"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+// the Lead Finder's businesses that need a person join "Needs you" (job lead-finder part D): one short row each, and one for the rest
+add({ id: "today-prospects", roles: ["owner", "sales"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE, readAvailability: () => parseAvailability(LF.AVAILABLE), listProspects: () => prospectRows(LF.PROSPECT_LOW, { ...LF.PROSPECT, status: "needs_owner" }), getProspectStats: () => parseProspectStats({ total: 18, by_status: { needs_owner: 11, skipped: 7 } }) }) });
 add({ id: "today-construction", roles: ["owner", "sales"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
 add({ id: "today-education-example-loaded", roles: ["owner"], render: todayPage({ example: "loaded" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(EDUCATION), ...eduCardReads, getExampleStatus: SAMPLE_LOADED, getProfile: PROFILE_DONE }) });
 add({ id: "today-no-example-data", roles: ["owner"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(NO_EXAMPLES), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
