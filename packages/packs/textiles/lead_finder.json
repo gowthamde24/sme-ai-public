@@ -1,0 +1,55 @@
+{
+  "$comment": "Lead Finder data for this business type (ADR 0119). Read by app/lead_finder/packdata.py; a pack without this file has no Lead Finder. Every prospect in `fixture` is INVENTED: synthetic names, '+00' numbers (the reserved demo range), no real business.",
+  "default_query": {"en": "saree shops", "te": "చీరల షాపులు"},
+  "category_hint": "retailer",
+  "buyer_types": [
+    {"code": "saree_retailer", "label": "Saree shop", "weight": 40, "words": ["saree", "sari", "sarees", "silk house", "silks", "pattu", "చీర", "ಸೀರೆ", "साड़ी"], "likely": ["silk", "pattu", "kanchi", "dharmavaram", "soft silk"]},
+    {"code": "boutique", "label": "Boutique", "weight": 36, "words": ["boutique", "designer", "bridal"], "likely": ["silk", "soft silk", "banarasi", "georgette"]},
+    {"code": "textile_shop", "label": "Textile shop", "weight": 30, "words": ["textile", "textiles", "cloth", "fabrics", "vastra", "bazaar"], "likely": ["cotton", "cotton silk", "silk"]}
+  ],
+  "related_types": [
+    {"code": "tailor", "label": "Tailor", "weight": 12, "words": ["tailor", "stitching", "blouse"]},
+    {"code": "clothing_store", "label": "Clothing store", "weight": 18, "words": ["clothing", "garments", "fashion", "apparel", "ethnic wear"]}
+  ],
+  "competitor_words": ["wholesale", "wholesaler", "wholesalers", "manufacturer", "manufacturers", "weavers", "weaving", "mills", "handloom society", "distributor"],
+  "very_large_words": ["mall", "hypermarket", "chain", "showroom chain", "emporium"],
+  "very_large_reviews": 1500,
+  "call": {
+    "purpose": {"en": "We supply silk sarees to shops in your area.", "te": "మీ ఏరియాలో షాపులకి మేము పట్టు చీరలు supply చేస్తాం."},
+    "questions": {
+      "sells":     {"en": "What kind of sarees do you mostly sell?", "te": "మీరు ఎక్కువగా ఏ రకం చీరలు అమ్ముతారు?"},
+      "price":     {"en": "What price range sells best in your shop?", "te": "మీ షాపులో ఏ price range చీరలు ఎక్కువ అమ్ముడవుతాయి?"},
+      "quantity":  {"en": "Roughly how many pieces do you buy in a month?", "te": "నెలకి సుమారు ఎన్ని pieces తీసుకుంటారు?"},
+      "supplier":  {"en": "Where do you buy from now?", "te": "ఇప్పుడు ఎవరి దగ్గర తీసుకుంటున్నారు?"},
+      "timing":    {"en": "When do you stock up for the wedding season?", "te": "పెళ్ళిళ్ళ season కి ఎప్పుడు stock తీసుకుంటారు?"},
+      "decision":  {"en": "Who decides on new stock in your shop?", "te": "మీ షాపులో కొత్త stock గురించి ఎవరు decide చేస్తారు?"}
+    }
+  },
+  "fixture": {
+    "$comment": "INVENTED businesses for demo workspaces. {area} is the searched area. kind: buyer | related | competitor | very_large | not_buyer | no_phone.",
+    "templates": [
+      {"name": "Sri Lakshmi Sarees", "category": "Saree shop", "kind": "buyer", "rating": 4.5, "reviews": 312},
+      {"name": "{area} Silk House", "category": "Saree shop", "kind": "buyer", "rating": 4.3, "reviews": 188},
+      {"name": "Vasavi Pattu Centre", "category": "Saree shop", "kind": "buyer", "rating": 4.6, "reviews": 96},
+      {"name": "Meenakshi Silks", "category": "Saree shop", "kind": "buyer", "rating": 4.1, "reviews": 240},
+      {"name": "Anjali Designer Boutique", "category": "Boutique", "kind": "buyer", "rating": 4.7, "reviews": 64},
+      {"name": "Kaveri Textiles", "category": "Textile shop", "kind": "buyer", "rating": 4.0, "reviews": 152},
+      {"name": "Sri Venkateswara Sarees", "category": "Saree shop", "kind": "buyer", "rating": 4.4, "reviews": 420},
+      {"name": "Padmavathi Silk Emporium", "category": "Saree shop", "kind": "buyer", "rating": 3.9, "reviews": 75},
+      {"name": "Nandini Bridal Boutique", "category": "Boutique", "kind": "buyer", "rating": 4.8, "reviews": 41},
+      {"name": "Gayatri Saree Point", "category": "Saree shop", "kind": "buyer", "rating": 4.2, "reviews": 133},
+      {"name": "{area} Ethnic Wear", "category": "Clothing store", "kind": "related", "rating": 4.1, "reviews": 210},
+      {"name": "Sai Ram Tailors", "category": "Tailor", "kind": "related", "rating": 4.3, "reviews": 58},
+      {"name": "Krishna Handloom Weavers", "category": "Handloom weavers and wholesale", "kind": "competitor", "rating": 4.2, "reviews": 88},
+      {"name": "Royal Silk Mills Wholesale", "category": "Wholesaler", "kind": "competitor", "rating": 4.0, "reviews": 140},
+      {"name": "Grand {area} Fashion Mall", "category": "Shopping mall", "kind": "very_large", "rating": 4.4, "reviews": 9800},
+      {"name": "Swathi Cotton Sarees", "category": "Saree shop", "kind": "buyer", "rating": 3.6, "reviews": 12},
+      {"name": "Annapurna Sweets", "category": "Sweet shop", "kind": "not_buyer", "rating": 4.5, "reviews": 900},
+      {"name": "City Mobile Care", "category": "Mobile phone repair", "kind": "not_buyer", "rating": 4.0, "reviews": 70},
+      {"name": "Durga Sarees and Matching", "category": "Saree shop", "kind": "no_phone", "rating": 4.1, "reviews": 30},
+      {"name": "Lalitha Silk Sarees", "category": "Saree shop", "kind": "buyer", "rating": 4.5, "reviews": 205},
+      {"name": "Mahalakshmi Textiles", "category": "Textile shop", "kind": "buyer", "rating": 4.2, "reviews": 118},
+      {"name": "Sree Durga Boutique", "category": "Boutique", "kind": "buyer", "rating": 4.6, "reviews": 52}
+    ]
+  }
+}

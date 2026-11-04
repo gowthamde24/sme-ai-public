@@ -491,6 +491,10 @@ begin
     'prospects', coalesce((select jsonb_agg(jsonb_build_object('place_id', p.place_id, 'phone_key', p.phone_key, 'name_key', p.name_key, 'area', p.area, 'suppressed', p.suppressed,
                                                                 'last_contacted_at', p.last_contacted_at)) from (
         select * from public.prospects z where z.tenant_id = p_tenant_id order by z.created_at desc limit 5000) p), '[]'::jsonb),
+    'real_data_open', app.real_data_gate_open(p_tenant_id),
+    'approved_by_search', coalesce((select jsonb_object_agg(z.search_id, z.n) from (
+        select p.search_id, count(*) as n from public.prospects p where p.tenant_id = p_tenant_id and p.owner_approved and p.search_id is not null group by p.search_id) z), '{}'::jsonb),
+    'ready_waiting', (select count(*) from public.prospects z where z.tenant_id = p_tenant_id and z.status = 'call_ready'),
     'searches_today', app.lf_searches_today(p_tenant_id),
     'calls_today', (select count(*) from public.prospects z where z.tenant_id = p_tenant_id and z.last_contacted_at is not null and (z.last_contacted_at at time zone 'Asia/Kolkata')::date = v_today));
 end;
