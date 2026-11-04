@@ -117,7 +117,7 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(screen.getByRole("heading", { name: "Done while you slept" })).toBeInTheDocument();
     const team = within(screen.getByRole("heading", { name: "Your team" }).closest("section")!);
     expect(team.getByText(/Quote Writer/)).toBeInTheDocument();
-    expect(team.getByText(/Lead Finder/)).toBeInTheDocument();
+    expect(team.queryByText(/Lead Finder/)).toBeNull(); // not built yet: not named (owner, 4 Nov)
   });
   it("'Open' goes where the item's target says: the order, the lead, and for a quote the enquiry it belongs to", async () => {
     await show();

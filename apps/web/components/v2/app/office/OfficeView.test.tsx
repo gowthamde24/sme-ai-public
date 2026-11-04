@@ -36,15 +36,19 @@ describe("OfficeView", () => {
   it("draws one card per agent, by name, with its state, what it does and its last event; each is a real link to its own detail", () => {
     view(sample);
     const items = cards();
-    expect(items).toHaveLength(7);
+    expect(items).toHaveLength(6);
     expect(items[0]).toHaveTextContent("Your assistantIdleJob of main.");
-    expect(items[4]).toHaveTextContent("Quote WriterWorkingPrepares a quote from the prices you set.Prepared quote 3 · 3h");
-    expect(items[1]).toHaveTextContent("Lead FinderNot available yetFinds new businesses that may want to buy. Not built yet.");
-    expect(within(items[4]).getByRole("link")).toHaveAttribute("href", "/app/tenants/T/office?agent=quote_writer");
+    expect(items[3]).toHaveTextContent("Quote WriterWorkingPrepares a quote from the prices you set.Prepared quote 3 · 3h");
+    expect(within(items[3]).getByRole("link")).toHaveAttribute("href", "/app/tenants/T/office?agent=quote_writer");
+  });
+  it("a helper that is not built yet (the Lead Finder) has no card and no tile: its name is nowhere (owner, 4 Nov)", () => {
+    view(sample);
+    expect(screen.queryByText(/Lead Finder/)).toBeNull();
+    expect(document.querySelector('[data-agent="lead_finder"]')).toBeNull();
   });
   it("a helper whose switch is off says 'Switched off', not 'Not available yet'", () => {
     view(sample);
-    expect(cards()[2]).toHaveTextContent("ResearcherSwitched offReads public pages about a lead.");
+    expect(cards()[1]).toHaveTextContent("ResearcherSwitched offReads public pages about a lead.");
     expect(within(cards()[2]).queryByText("Not available yet")).toBeNull();
   });
   it("the chosen agent's job and latest event are read beside the cards; with none chosen it says how to choose", () => {

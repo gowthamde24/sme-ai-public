@@ -41,7 +41,7 @@ export async function saveProfileAction(tenantId: string, _prev: ProfileState, f
   }
 }
 
-async function exampleAction(tenantId: string, run: (token: string, id: string) => Promise<{ result: ExampleResult; kept?: number }>, done: "loaded" | "removed"): Promise<void> {
+async function exampleAction(tenantId: string, run: (token: string, id: string) => Promise<{ result: ExampleResult; kept?: number }>, done: "loaded" | "removed" | "reset"): Promise<void> {
   let notice: string = "failed";
   let kept = 0;
   try {
@@ -71,5 +71,18 @@ export async function removeExampleAction(tenantId: string): Promise<void> {
       return { result: out.result, kept: k ? k.companies + k.contacts + k.leads + k.products : 0 };
     },
     "removed",
+  );
+}
+/** "Remove and load it again" (owner, 4 Nov: test workspaces are re-seedable): the same removal (used rows stay and are counted), then a fresh sample. One press, two API calls; a failed removal loads nothing. */
+export async function resetExampleAction(tenantId: string): Promise<void> {
+  return exampleAction(
+    tenantId,
+    async (token, id) => {
+      const out = await removeExampleData(token, id);
+      if (out.result !== "ok") return { result: out.result };
+      const k = out.removed?.kept;
+      return { result: await loadExampleData(token, id), kept: k ? k.companies + k.contacts + k.leads + k.products : 0 };
+    },
+    "reset",
   );
 }

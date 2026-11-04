@@ -4,9 +4,11 @@ Tuesday, 6 October
 summary:
 ## You are looking at example data
 · Remove example data
-form:
 This removes only the example rows. Your own work stays.
+form:
 [button type=submit: Yes, remove the example data]
+form:
+[button type=submit: Remove and load it again]
 {role=status} Example data loaded.
 {role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
 {label="Needs you"}
@@ -47,7 +49,7 @@ Not available yet
 Replied to 2 customers on WhatsApp · Sent shop information to 1 customer · Held 1 message until 12:00 (quiet hours) [See everything in the outbox](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent)
 {label="Your team"}
 ## Your team
-Admissions Desk · Researcher · Enquiry Analyst · Fee Desk · Follow-up Desk · Notice Desk [Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
+Researcher · Enquiry Analyst · Fee Desk · Follow-up Desk · Notice Desk [Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
 {label="Your business today"} [Fees collected today ₹37,000.00 4 receipts today](/app/tenants/22222222-2222-2222-2222-222222222222/fees) [Reminders running 3 3 campaigns are sending on their days](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns) [Campus visits today 0 No campus visit today](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 {label="Finish setting up"}
 ## Finish setting up
