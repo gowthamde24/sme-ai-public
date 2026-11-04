@@ -111,7 +111,7 @@ summary: TradeIndia
 - 1 Copy the snippet below.
 - 2 Paste it into your website, where the form should be.
 - 3 Send a test lead from your website.
-Website snippet <script src="https://forms.example.test/f.js" data-form="sri-lakshmi-silks" async></script>
+Website snippet <iframe src="https://forms.example.test/f/sri-lakshmi-silks" width="100%" height="480" title="Enquiry form"></iframe>
 [button type=button: Copy]
 [button type=button: Send a test lead]
 {role=status} It works. A test lead from sri-lakshmi-silks.example.test arrived at 2:41 pm.

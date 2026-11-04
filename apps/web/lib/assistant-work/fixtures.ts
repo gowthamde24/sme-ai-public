@@ -130,7 +130,7 @@ export const SETUP_FORM_JSON = {
   setup: "website_form",
   title: "Connect your website form",
   steps: ["Copy the snippet below.", "Paste it into your website, where the form should be.", "Send a test lead from your website."],
-  copy: [{ label: "Website snippet", value: '<script src="https://forms.example.test/f.js" data-form="sri-lakshmi-silks" async></script>', code: true }],
+  copy: [{ label: "Website snippet", value: '<iframe src="https://forms.example.test/f/sri-lakshmi-silks" width="100%" height="480" title="Enquiry form"></iframe>', code: true }],
   test: "send_test_lead",
   last_test: { ok: true, reason: null, detail: "A test lead from sri-lakshmi-silks.example.test arrived at 2:41 pm.", at: "2026-11-04T09:11:00Z" },
 };
