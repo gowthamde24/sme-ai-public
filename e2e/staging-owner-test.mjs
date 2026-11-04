@@ -25,7 +25,7 @@ mkdirSync(OUT, { recursive: true });
 const SIZES = { desktop: { width: 1440, height: 1000 }, phone: { width: 390, height: 844 }, phone360: { width: 360, height: 780 } };
 const SHORT = { textiles: "silks", construction_materials: "cements", education: "school" };
 // the pack's own card: the page that holds the pack's own work
-const OWN = { textiles: ["quotes", "/quotes"], construction_materials: ["trips", "/deliveries"], education: ["fees", "/fees"] };
+const OWN = { textiles: ["quotes", "/quotes"], construction_materials: ["trips", "/orders/trips"], education: ["fees", "/fees"] };
 
 const secret = (name) => execFileSync("gcloud", ["secrets", "versions", "access", "latest", `--secret=${name}`, `--project=${GCP_PROJECT}`], { encoding: "utf8" }).trim();
 function totp(b32, offset = 0) {
@@ -89,7 +89,7 @@ try {
       const tenant = /\/app\/tenants\/([0-9a-f-]{36})/.exec(href || page.url())?.[1];
       if (!tenant) throw new Error(`no workspace for ${pack}`);
       const base = `${WEB}/app/tenants/${tenant}`;
-      const list = MODE === "switcher" ? [] : PAGES.length ? PAGES.map((p) => [p.replace(/\W+/g, "-") || "today", p === "today" ? "" : p]) : size === "desktop" ? [["today", ""], ["customers", "/lead-desk"], OWN[pack], ["office", "/office"]] : [["today", ""], ["customers", "/lead-desk"], OWN[pack]];
+      const list = MODE === "switcher" || MODE === "verify" || MODE === "more" ? [] : PAGES.length ? PAGES.map((p) => [p.replace(/\W+/g, "-") || "today", p === "today" ? "" : p]) : size === "desktop" ? [["today", ""], ["customers", "/lead-desk"], OWN[pack], ["office", "/office"]] : [["today", ""], ["customers", "/lead-desk"], OWN[pack]];
       for (const [name, p] of list) {
         const res = await page.goto(`${base}${p}`, { waitUntil: "domcontentloaded" });
         await settle(page);
@@ -124,6 +124,74 @@ try {
         await page.screenshot({ path: path.join(OUT, `switcher-${SHORT[pack]}-${size === "desktop" ? "1440-light" : "390"}.png`), fullPage: false });
         report.push({ pack, size, page: "switcher", path: "/", status: has ? 200 : 0, url: new URL(page.url()).pathname, flags: has ? [] : ["no switcher"], errors: [], workspaces: names.map((n) => n.replace(/\s+/g, " ").trim()) });
         console.log(`switcher ${pack}/${size}: ${has ? names.map((n) => n.replace(/\s+/g, " ").trim()).join(" | ") : "none"}`);
+      }
+      if (MODE === "more") {
+        // the phone: what the More sheet offers (is there a way to another workspace?)
+        await page.goto(base, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        await page.getByRole("button", { name: /^More/ }).last().click().catch((e) => console.log("more: " + String(e).slice(0, 100)));
+        await page.waitForTimeout(800);
+        const links = await page.$$eval("a[href], button", (as) => as.filter((a) => a.offsetParent !== null).map((a) => `${(a.innerText || a.getAttribute("aria-label") || "").trim().replace(/\s+/g, " ")} -> ${a.getAttribute("href") ?? "(button)"}`));
+        console.log(`more ${pack}/${size}: ${links.map((l) => l.replace(/\/app\/tenants\/[0-9a-f-]+/, "")).join(" | ")}`);
+        await page.screenshot({ path: path.join(OUT, `more-${SHORT[pack]}-390.png`), fullPage: false });
+      }
+      if (MODE === "verify") {
+        // the steps of the owner's 10-minute script, as far as they can be checked WITHOUT using them up: two typed questions (en, te), the first Needs-you item opened (its Approve
+        // button is looked at, never pressed), the Lead Desk, the pack's own page, the example-data line (Remove / Remove and load it again are looked at, never pressed)
+        const v = (step, ok, note) => {
+          report.push({ pack, size, page: `verify:${step}`, path: "", status: ok ? 200 : 0, url: "", flags: ok ? [] : [note], errors: [] });
+          console.log(`${ok ? "PASS" : "FAIL"} ${pack}/${size} ${step} :: ${String(note).replace(/\s+/g, " ").slice(0, 300)}`);
+        };
+        const ask = async (q) => {
+          await page.goto(base, { waitUntil: "domcontentloaded" });
+          await settle(page);
+          const box = page.locator('[data-chat="form"] textarea').first();
+          await box.fill(q);
+          await box.press("Enter");
+          const answer = page.locator('[data-chat="assistant"]').last();
+          await answer.waitFor({ timeout: 60000 }).catch(() => null);
+          await page.waitForFunction(() => { const a = [...document.querySelectorAll('[data-chat="assistant"]')].pop(); return a && a.innerText.trim().length > 20 && !/…$/.test(a.innerText.trim()); }, null, { timeout: 90000 }).catch(() => null);
+          await page.waitForTimeout(2500);
+          return ((await answer.innerText().catch(() => "")) || "").trim();
+        };
+        const en = await ask("What needs me today?");
+        v("ask-en", en.length > 20 && !/couldn't answer/i.test(en), en || "no answer");
+        await page.screenshot({ path: path.join(OUT, `verify-${SHORT[pack]}-ask-en.png`), fullPage: false });
+        // the owner's pill is on Auto (their profile in each test workspace); the helper has none, so its pill shows the app language: put it on Auto as the owner has it
+        await page.goto(base, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        await page.locator('[data-chat="form"] [data-chat="language"] select').first().selectOption("auto").catch((e) => console.log("pill: " + String(e).slice(0, 120)));
+        await page.waitForTimeout(800);
+        const te = await ask("ఈ రోజు నేను ఏమి చేయాలి?");
+        v("ask-te", /[ఀ-౿]/.test(te) && !/couldn't answer/i.test(te), te || "no answer");
+        await page.screenshot({ path: path.join(OUT, `verify-${SHORT[pack]}-ask-te.png`), fullPage: false });
+        await page.goto(base, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        const rows = await page.locator('[data-part="needs"] li, section[aria-labelledby="needs-heading"] li').count().catch(() => 0);
+        const review = page.getByRole("link", { name: /^Review$/ }).first();
+        if (await review.count()) {
+          const href = await review.getAttribute("href");
+          await page.goto(`${WEB}${href}`, { waitUntil: "domcontentloaded" });
+          await settle(page);
+          const body = await text(page);
+          v("needs-you-open", /Approve|Send|Review/i.test(body) && !/not found|went wrong/i.test(body), `${rows} rows; opened ${href?.replace(/\/app\/tenants\/[0-9a-f-]+/, "")}; ${/Approve/.test(body) ? "an Approve button is there" : "no Approve word"}`);
+          await page.screenshot({ path: path.join(OUT, `verify-${SHORT[pack]}-needs-open.png`), fullPage: false });
+        } else {
+          const call = page.getByRole("button", { name: /^Approve( call)?$/ }).first();
+          v("needs-you-open", (await call.count()) > 0, `${rows} rows; a call request with Approve and Store visit on the row itself`);
+        }
+        for (const [step, p, want] of [["lead-desk", "/lead-desk", /lead|enquir/i], ["pack-page", OWN[pack][1], /.{200}/s]]) {
+          const res = await page.goto(`${base}${p}`, { waitUntil: "domcontentloaded" });
+          await settle(page);
+          const body = await text(page);
+          v(step, res?.status() === 200 && want.test(body) && !/not found|went wrong/i.test(body), `${p} ${res?.status()} ${body.length} characters`);
+        }
+        await page.goto(base, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        await page.locator('[data-example="loaded"] summary').first().click().catch(() => null);
+        const resetBtn = await page.getByRole("button", { name: "Remove and load it again" }).count();
+        const removeBtn = await page.getByRole("button", { name: "Yes, remove the example data" }).count();
+        v("example-reset", resetBtn > 0 && removeBtn > 0, `Remove: ${removeBtn}, Remove and load it again: ${resetBtn} (looked at, not pressed)`);
       }
       await context.close();
     }

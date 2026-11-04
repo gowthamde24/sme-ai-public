@@ -40,6 +40,7 @@ WORKSPACES = [
     ("construction_materials", "Sri Sai Cements (test)"),
     ("education", "Vidya Public School (test)"),
 ]
+TOWNS = {"textiles": "Dharmavaram", "construction_materials": "Anantapur", "education": "Anantapur"}
 REASON = "Owner's own test workspace, made at the owner's written request of 4 Nov 2026 (job test-workspaces); the account already exists"
 
 
@@ -105,8 +106,11 @@ class OwnerTest(ss.Seeder):
             raise SeedError(f"The first-login setup failed for {pack} (HTTP {st}).")
         tenant = str(setup["tenant_id"])
         st, prof = self.call(token, "GET", f"/v1/tenants/{tenant}/profile")
+        change = {k: v for k, v in (("name", name), ("town", TOWNS[pack])) if st == 200 and isinstance(prof, dict) and not prof.get(k)} if st == 200 else {}
         if st == 200 and isinstance(prof, dict) and prof.get("name") != name:
-            st, _ = self.call(token, "PUT", f"/v1/tenants/{tenant}/profile", {"name": name})
+            change["name"] = name
+        if change:   # the name, and the town only when none is set (a town the owner typed is never overwritten)
+            st, _ = self.call(token, "PUT", f"/v1/tenants/{tenant}/profile", change)
             if st != 200:
                 raise SeedError(f"Naming the workspace failed for {pack} (HTTP {st}).")
         slug = sql(f"select slug from public.tenants where id = {q(tenant)}")[0]["slug"]
