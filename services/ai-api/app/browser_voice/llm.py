@@ -108,8 +108,8 @@ class AskLlm:
                 written.append(str(data.get("delta", "")))
             elif kind in ("source", "draft", "step"):
                 self._emit(kind, data)
-            elif kind in ("confirm_action", "clarify"):
-                late.append((kind, data))   # said first, shown after: the plan card follows the spoken plan
+            elif kind in ("confirm_action", "clarify", "lead_finder"):
+                late.append((kind, data))   # said first, shown after: the plan card (or the Lead Finder's card) follows the spoken words
             elif kind == "done":
                 if str(data.get("kind", "answer")) == "answer":
                     late.append(("reply", {"kind": "answer"}))
