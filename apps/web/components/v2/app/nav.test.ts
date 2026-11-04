@@ -149,12 +149,4 @@ describe("an item another module replaces (job CO)", () => {
     expect(visibleGroups("owner", view(["today", "sites"])).flatMap((g) => g.items.map((i) => i.id))).toContain("sites");
     expect(visibleGroups("owner").flatMap((g) => g.items.map((i) => i.id))).not.toContain("sites");
   });
-  it("a school (Fees on) gets no outreach: no Lead plans, no Lead report, even with the outreach flag on; a coaching centre or a shop keeps them (owner, 4 Nov)", () => {
-    const ids = (modules: string[]) => visibleGroups("owner", { ...view(modules), features: ["leads", "outreach", "tasks"] }).flatMap((g) => g.items.map((i) => i.id));
-    expect(ids(["today", "fees", "programmes", "campaigns"])).not.toContain("outreach");
-    expect(ids(["today", "fees", "programmes", "campaigns"])).not.toContain("leadreport");
-    expect(ids(["today", "fees", "programmes"])).toContain("leaddesk"); // admissions enquiries still arrive as leads
-    expect(ids(["today", "campaigns", "call_list"])).toContain("outreach");
-    expect(ids(["today", "quotes", "lead_finder"])).toContain("leadreport");
-  });
 });

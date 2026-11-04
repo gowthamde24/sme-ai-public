@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { loadExampleData, removeExampleData, type ExampleResult } from "@/lib/api/example-data";
+import { countAll, loadExampleData, removeExampleData, resetExampleData, type ExampleResult } from "@/lib/api/example-data";
 import { saveProfile } from "@/lib/api/profile";
 import { requireUser } from "@/lib/auth/session";
 
@@ -67,22 +67,12 @@ export async function removeExampleAction(tenantId: string): Promise<void> {
     tenantId,
     async (token, id) => {
       const out = await removeExampleData(token, id);
-      const k = out.removed?.kept;
-      return { result: out.result, kept: k ? k.companies + k.contacts + k.leads + k.products : 0 };
+      return { result: out.result, kept: countAll(out.removed?.kept) };
     },
     "removed",
   );
 }
-/** "Remove and load it again" (owner, 4 Nov: test workspaces are re-seedable): the same removal (used rows stay and are counted), then a fresh sample. One press, two API calls; a failed removal loads nothing. */
+/** "Remove and load it again" (owner, 4 Nov: test workspaces are re-seedable): the API's one-step reset (used rows stay and are counted), or remove then load on an older API. */
 export async function resetExampleAction(tenantId: string): Promise<void> {
-  return exampleAction(
-    tenantId,
-    async (token, id) => {
-      const out = await removeExampleData(token, id);
-      if (out.result !== "ok") return { result: out.result };
-      const k = out.removed?.kept;
-      return { result: await loadExampleData(token, id), kept: k ? k.companies + k.contacts + k.leads + k.products : 0 };
-    },
-    "reset",
-  );
+  return exampleAction(tenantId, (token, id) => resetExampleData(token, id), "reset");
 }
