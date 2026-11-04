@@ -43,8 +43,17 @@ WORKSPACES = [
 REASON = "Owner's own test workspace, made at the owner's written request of 4 Nov 2026 (job test-workspaces); the account already exists"
 
 
-def helper_email(pack: str) -> str:
-    return f"owner-test-{pack.replace('_', '-')}@{HELPER_DOMAIN}"
+def helper_key(pack: str, gen: int = 1) -> str:
+    """The helper's name part: `textiles` for the first generation, `textiles-g2` for the helper of a rebuilt workspace (C1's "rebuild test workspace" makes a new one each time)."""
+    return pack if gen <= 1 else f"{pack}-g{gen}"
+
+
+def helper_email(pack: str, gen: int = 1) -> str:
+    return f"owner-test-{helper_key(pack, gen).replace('_', '-')}@{HELPER_DOMAIN}"
+
+
+EXAMPLE_TABLES = ("companies", "contacts", "leads", "products", "enquiries", "requirements", "requirement_fields", "knowledge_sources", "knowledge_facts", "lead_arrivals", "lead_profiles")
+MARK_REASON = "Owner test workspace: the seeded week is example data (job test-workspaces, 4 Nov 2026)"
 
 
 def sql(query: str) -> list[dict[str, Any]]:
@@ -57,14 +66,14 @@ def q(value: str) -> str:
 
 
 class OwnerTest(ss.Seeder):
-    def second_factor_for(self, pack: str, session: dict[str, Any]) -> str:
-        """Like Seeder.second_factor, with this job's own secret names (sme-owner-test-<pack>-totp)."""
+    def second_factor_for(self, pack: str, session: dict[str, Any], gen: int = 1) -> str:
+        """Like Seeder.second_factor, with this job's own secret names (sme-owner-test-<pack>[-gN]-totp)."""
         token = session["access_token"]
-        name = f"sme-owner-test-{pack}-totp"
+        name = f"sme-owner-test-{helper_key(pack, gen)}-totp"
         secret = ss.secret_get(name)
         factor_id = next((f["id"] for f in session["user"].get("factors", []) or [] if f.get("factor_type") == "totp" and f.get("status") == "verified"), None)
         if factor_id is None:
-            st, enrol = ss.http("POST", f"{self.sb}/auth/v1/factors", self.pub_headers(token), {"factor_type": "totp", "friendly_name": f"owner-test-{pack}", "issuer": "stack19-staging-owner-test"})
+            st, enrol = ss.http("POST", f"{self.sb}/auth/v1/factors", self.pub_headers(token), {"factor_type": "totp", "friendly_name": f"owner-test-{helper_key(pack, gen)}", "issuer": "stack19-staging-owner-test"})
             if st != 200 or not isinstance(enrol, dict):
                 raise SeedError(f"Could not enrol the authenticator for {pack} (HTTP {st}).")
             factor_id, secret = enrol["id"], enrol["totp"]["secret"]
@@ -79,18 +88,18 @@ class OwnerTest(ss.Seeder):
             raise SeedError(f"The authenticator code was refused for {pack} (HTTP {st}).")
         return str(ver["access_token"])
 
-    def helper_token(self, pack: str, name: str, terms: dict[str, str]) -> str:
-        email = helper_email(pack)
-        pw_name = f"sme-owner-test-{pack}-password"
+    def helper_token(self, pack: str, name: str, terms: dict[str, str], gen: int = 1) -> str:
+        email = helper_email(pack, gen)
+        pw_name = f"sme-owner-test-{helper_key(pack, gen)}-password"
         password = ss.secret_get(pw_name)
         if password is None:
             password = ss.new_password()
             ss.secret_put(pw_name, password)
         self.create_user(email, password, {"terms_version": terms["terms"], "business_name": name})
-        return self.second_factor_for(pack, self.sign_in(email, password))
+        return self.second_factor_for(pack, self.sign_in(email, password), gen)
 
-    def provision(self, pack: str, name: str, terms: dict[str, str]) -> dict[str, Any]:
-        token = self.helper_token(pack, name, terms)
+    def provision(self, pack: str, name: str, terms: dict[str, str], gen: int = 1) -> dict[str, Any]:
+        token = self.helper_token(pack, name, terms, gen)
         st, setup = self.call(token, "POST", "/v1/account/setup", {"business_type": pack, "language": "en", "accepted_terms_version": terms["terms"], "accepted_privacy_version": terms["privacy"]})
         if st != 200 or not isinstance(setup, dict):
             raise SeedError(f"The first-login setup failed for {pack} (HTTP {st}).")
@@ -117,11 +126,62 @@ class OwnerTest(ss.Seeder):
         gate = sql(f"select real_data_allowed from public.tenant_data_policy where tenant_id = {q(tenant)}")
         if gate and gate[0]["real_data_allowed"]:
             raise SeedError(f"The real-data gate of {name} is OPEN: refusing (a test workspace is synthetic only).")
-        return {"pack": pack, "workspace": name, "tenant_id": tenant, "slug": slug, "helper": helper_email(pack), "owner_added": not already}
+        return {"pack": pack, "workspace": name, "tenant_id": tenant, "slug": slug, "helper": helper_email(pack, gen), "owner_added": not already}
+
+
+def tenant_of(name: str) -> str:
+    """The workspace by its exact name (C1's archive renames an old one "... (archived YYYY-MM-DD)", so the name stays unique)."""
+    rows = sql(f"select id from public.tenants where name = {q(name)}")
+    if len(rows) != 1:
+        raise SeedError(f"Expected one workspace named {name}, found {len(rows)}.")
+    return str(rows[0]["id"])
+
+
+def mark_example(tenant: str) -> dict[str, int]:
+    """Register every row of the kinds the example batch can hold (app.operator_mark_example, #287) that is not in the live batch yet, so "Remove example data" / reset reach the week.
+    Quotes, orders, ledger, calls, fees and students are never deleted by the database (append-only), so they are not marked; a marked row they use is KEPT and counted by the removal.
+    One statement per table; a re-run marks nothing new."""
+    out: dict[str, int] = {}
+    for table in EXAMPLE_TABLES:
+        rows = sql(
+            f"select count(app.operator_mark_example({q(tenant)}::uuid, {q(table)}, t.id, {q(MARK_REASON)}))::int as n from public.{table} t "
+            f"where t.tenant_id = {q(tenant)}::uuid and not exists (select 1 from packs.example_rows r join packs.example_batches b on b.id = r.batch_id and b.removed_at is null "
+            f"where r.tenant_id = t.tenant_id and r.table_name = {q(table)} and r.row_id = t.id)"
+        )
+        out[table] = int(rows[0]["n"]) if rows else 0
+    return out
+
+
+def provision(s: OwnerTest, pack: str, name: str, terms: dict[str, str], gen: int = 1) -> dict[str, Any]:
+    return s.provision(pack, name, terms, gen)
+
+
+def seed(s: OwnerTest, pack: str, name: str, terms: dict[str, str], gen: int = 1) -> dict[str, Any]:
+    import owner_test_data  # noqa: PLC0415 - only the seed phase needs it
+
+    token = s.helper_token(pack, name, terms, gen)
+    tenant = tenant_of(name)
+    seeded = owner_test_data.seed(pack, lambda m, p, b=None, raw=None, _t=token, _id=tenant: s.call(_t, m, f"/v1/tenants/{_id}{p}", b, raw))
+    st, cur = s.call(token, "GET", f"/v1/tenants/{tenant}/example-data")
+    if st == 200 and isinstance(cur, dict) and not cur.get("loaded"):
+        s.call(token, "POST", f"/v1/tenants/{tenant}/example-data")  # the pack's labelled sample, so the batch exists and Today offers Remove / Remove and load it again
+    return {"pack": pack, "seeded": seeded, "marked_example": mark_example(tenant)}
+
+
+def handover(s: OwnerTest, pack: str, name: str, terms: dict[str, str], gen: int = 1) -> dict[str, Any]:
+    """The helper leaves (a person may always remove themselves; the reason is one of the API's codes). Run LAST: seeding again needs the helper re-added (app.operator_add_member as admin)."""
+    tenant = tenant_of(name)
+    token = s.helper_token(pack, name, terms, gen)
+    helper_id = sql(f"select id from auth.users where email = {q(helper_email(pack, gen))}")[0]["id"]
+    st, _ = s.call(token, "POST", f"/v1/tenants/{tenant}/members/{helper_id}/remove", {"reason": "left"})
+    return {"pack": pack, "helper": helper_email(pack, gen), "helper_removed": st in (200, 204), "http": st}
 
 
 def guard(args: argparse.Namespace) -> None:
     ss.guard(args)
+
+
+PHASES = {"provision": provision, "seed": seed, "handover": handover}
 
 
 def main() -> int:
@@ -129,34 +189,20 @@ def main() -> int:
     ap.add_argument("--i-know-this-loads-demo-data-into-staging", action="store_true")
     ap.add_argument("--project-ref", required=True)
     ap.add_argument("--api-url", required=True)
-    ap.add_argument("--phase", choices=["provision", "seed", "handover", "all"], default="all")
+    ap.add_argument("--phase", choices=["provision", "seed", "handover", "all"], default="all", help="all = provision then seed (never the hand-over)")
     ap.add_argument("--only", choices=[p for p, _ in WORKSPACES], help="run the phase for this one pack only")
+    ap.add_argument("--generation", type=int, default=1, help="the helper generation (C1's rebuild: 2, 3, ...); 1 = the first helpers")
     args = ap.parse_args()
     try:
         guard(args)
         s = OwnerTest(args.api_url)
         terms = s.terms()
-        out: list[dict[str, Any]] = []
+        phases = ["provision", "seed"] if args.phase == "all" else [args.phase]
         for pack, name in WORKSPACES:
             if args.only and pack != args.only:
                 continue
-            if args.phase in ("provision", "all"):
-                out.append(s.provision(pack, name, terms))
-            if args.phase in ("seed", "all"):
-                import owner_test_data  # noqa: PLC0415 - only the seed phase needs it
-
-                token = s.helper_token(pack, name, terms)
-                tenant = sql(f"select t.id from public.tenants t where t.name = {q(name)}")[0]["id"]
-                out.append({"pack": pack, "seeded": owner_test_data.seed(pack, lambda m, p, b=None, raw=None, _t=token, _id=tenant: s.call(_t, m, f"/v1/tenants/{_id}{p}", b, raw))})
-            if args.phase == "handover":
-                tenant = sql(f"select t.id from public.tenants t where t.name = {q(name)}")[0]["id"]
-                token = s.helper_token(pack, name, terms)
-                helper_id = sql(f"select id from auth.users where email = {q(helper_email(pack))}")[0]["id"]
-                # the helper leaves (a person may always remove themselves); the reason is one of the API's codes
-                st, body = s.call(token, "POST", f"/v1/tenants/{tenant}/members/{helper_id}/remove", {"reason": "left"})
-                out.append({"pack": pack, "helper_removed": st in (200, 204), "http": st})
-        for row in out:
-            print(json.dumps(row, default=str))
+            for phase in phases:
+                print(json.dumps(PHASES[phase](s, pack, name, terms, args.generation), default=str), flush=True)
     except SeedError as e:
         print(f"seed-owner-test: {e}", file=sys.stderr)
         return 1
