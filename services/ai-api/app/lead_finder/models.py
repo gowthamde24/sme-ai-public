@@ -31,7 +31,8 @@ class AvailabilityOut(_Out):
     available: bool
     # fixture = made-up businesses (demo workspaces and every workspace until Google is ready); places = Google Maps
     source: Literal["fixture", "places"] | None
-    reason: Literal["ok", "not_for_this_business", "switched_off"]
+    # not_for_your_role: a Viewer (who reads no prospect): hide the feature for them
+    reason: Literal["ok", "not_for_this_business", "switched_off", "not_for_your_role"]
 
 
 class SettingsIn(_In):
