@@ -327,6 +327,14 @@ class Settings(BaseSettings):
     # until TELEPHONY_LIVE_CONFIRMED is true (set after the legal answers). In sandbox only the
     # numbers in TELEPHONY_SANDBOX_NUMBERS (comma separated, +91...) can be rung.
     telephony_mode: str = "off"
+    # Lead Finder (ADR 0119): off | fixture | places. `fixture` = synthetic businesses only
+    # (demo workspaces, tests). `places` uses Google Places API (New) Text Search ONLY in a
+    # workspace whose real-data gate is open AND only when GOOGLE_PLACES_API_KEY is set (Secret
+    # Manager: sme-google-places-api-key, the owner's step); elsewhere it falls back to the
+    # fixture. The cost per search is an ESTIMATE in paise.
+    # The key is the one setting below (google_places_api_key), shared with the web-search lane.
+    lead_finder: str = "fixture"
+    lead_finder_places_cost_paise: int = 300
     telephony_live_confirmed: bool = False
     telephony_sandbox_numbers: str = ""
     telephony_max_concurrent: int = 2
