@@ -218,8 +218,9 @@ class QuoteDraftPreviewOut(_Out):
     ready: bool
     lines: list[QuoteLineOut]
     left_out: list[QuoteLeftOutOut]
-    # the id the draft has (made) or will have; open /quotes/{quote_id} once `made`
+    # the ids the draft has (made) or will have. Once `made`, open the ENQUIRY's page (/enquiries/{enquiry_id}, Quote tab): a textiles draft lives there
     quote_id: uuid.UUID
+    enquiry_id: uuid.UUID
     made: bool
 
 
