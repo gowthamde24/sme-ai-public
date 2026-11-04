@@ -143,9 +143,11 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   facts.push([say(words, "today.fact.when"), ago(item.at, ctx.now)]);
   const [open, setOpen] = React.useState(false);
   const name = item.customer === "" ? say(words, "today.customer.unknown") : item.customer;
+  // the row is SHORT (owner, 4 Nov: "Quote | Lakshmi · ₹40,000"): the amount when there is one, the hot lead's own gist (English only, as before), else just the name; the API's full sentence is in the opened card
+  const reason = item.amount_paise !== null ? formatINR(item.amount_paise / 100, { decimals: 2 }) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : "";
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={k.tone} label={say(words, `${k.kind}.row`)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={ctx.lang === "en" ? item.summary : ""} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone={k.tone} label={say(words, `${k.kind}.row`)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={reason} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
         <Link href={item.href} className={rowPrimary}>
           {say(words, `${k.step}.row`)}
         </Link>

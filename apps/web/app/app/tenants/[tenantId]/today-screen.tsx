@@ -30,7 +30,7 @@ import { readOutcomeTotals } from "@/lib/outcomes/source";
 import { formatRupees } from "@/lib/money";
 import { withModuleT } from "@/lib/packs/module-words";
 import { withPackT } from "@/lib/packs/resolve";
-import { loadExampleAction, removeExampleAction } from "./start/actions";
+import { loadExampleAction, removeExampleAction, resetExampleAction } from "./start/actions";
 
 import { approveCallAction, approveMessageAction, editMessageAction, offerVisitAction, rejectMessageAction } from "./today-actions";
 import { SetupGate } from "@/components/v2/app/setup/SetupGate";
@@ -106,9 +106,9 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const demo = await readIsDemo(accessToken, tenantId, shop);
   // the "example data" banner (blueprint 3.2) is the first-run offer of a workspace made with a chosen business type; a workspace that existed before business types sees it only while a sample is loaded (so it can be removed)
   const showSample = sample !== null && (sample.loaded || (usesChecklist(pack) && pack?.hasExampleData !== false));
-  const notice: ExampleNotice = example === "loaded" || example === "removed" || example === "unavailable" || example === "failed" ? example : null;
+  const notice: ExampleNotice = example === "loaded" || example === "removed" || example === "reset" || example === "unavailable" || example === "failed" ? example : null;
   // the example-data notice is ONE slim line under the greeting; "Finish setting up" comes under the cards (owner review, 1 Nov): what needs the person is the first thing on Today, whatever the workspace's age
-  const exampleLine = showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} t={t} /> : null;
+  const exampleLine = showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} reset={resetExampleAction.bind(null, tenantId)} t={t} /> : null;
   const intro = activation && activation.done < activation.total ? <div data-part="start"><ActivationCard collapse activation={activation} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /></div> : null;
   const view = (
       <TodayView demo={demo} exampleLine={exampleLine} intro={intro} live={live} outcomes={outcomes} packCards={<PackCards cards={packCards} t={(key, vars) => t(key as "frame.notyet", vars)} />} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />

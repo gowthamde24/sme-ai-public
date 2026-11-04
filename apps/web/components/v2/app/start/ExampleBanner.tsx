@@ -1,16 +1,17 @@
 import type { AppT } from "@/i18n/app";
 
-import { danger, errorLine, okLine } from "../visits/styles";
+import { danger, errorLine, okLine, secondary } from "../visits/styles";
 
 export type ExampleState = "available" | "loaded";
-export type ExampleNotice = "loaded" | "removed" | "unavailable" | "failed" | null;
+export type ExampleNotice = "loaded" | "removed" | "reset" | "unavailable" | "failed" | null;
 
 /**
  * "See how it works with example data" (job CL, blueprint 3.2): a banner at the top of Today. One press loads a small sample workspace that is clearly labelled as example; another removes it (after one confirming
  * press: it deletes rows, and only the sample's own rows that nobody has used; the others stay, and `kept` says how many). Two plain forms posting to server actions: no script. Drawn only when the server can say whether a
- * sample is loaded; nothing is invented. `notice` = the result of the last press (carried in the address by the action).
+ * sample is loaded; nothing is invented. `notice` = the result of the last press (carried in the address by the action). With `reset` (owner, 4 Nov: test workspaces are re-seedable), the confirming step also offers
+ * "Remove and load it again": the same removal, then a fresh sample.
  */
-export function ExampleBanner({ state, notice, kept = 0, load, remove, t }: { state: ExampleState; notice: ExampleNotice; /** How many sample rows stayed because they were used (with `removed`). */ kept?: number; load: () => Promise<void>; remove: () => Promise<void>; t: AppT }) {
+export function ExampleBanner({ state, notice, kept = 0, load, remove, reset = null, t }: { state: ExampleState; notice: ExampleNotice; /** How many sample rows stayed because they were used (with `removed`). */ kept?: number; load: () => Promise<void>; remove: () => Promise<void>; /** Remove, then load a fresh sample, in one press. */ reset?: (() => Promise<void>) | null; t: AppT }) {
   const message =
     notice === "loaded" ? (
       <p role="status" className={okLine}>
@@ -19,6 +20,10 @@ export function ExampleBanner({ state, notice, kept = 0, load, remove, t }: { st
     ) : notice === "removed" ? (
       <p role="status" className={okLine}>
         {kept > 0 ? t("start.example.done.kept", { n: kept }) : t("start.example.done.removed")}
+      </p>
+    ) : notice === "reset" ? (
+      <p role="status" className={okLine}>
+        {kept > 0 ? t("start.example.done.resetkept", { n: kept }) : t("start.example.done.reset")}
       </p>
     ) : notice === "unavailable" ? (
       <p role="alert" className={errorLine}>
@@ -53,12 +58,21 @@ export function ExampleBanner({ state, notice, kept = 0, load, remove, t }: { st
             <span aria-hidden="true" className="max-sm:hidden">·</span>
             <span className="font-semibold text-brand-text hover:underline">{t("start.example.remove")}</span>
           </summary>
-          <form action={remove} className="mt-1 flex flex-wrap items-center gap-3">
+          <div className="mt-1 flex flex-wrap items-center gap-3">
             <p className="text-sm">{t("start.example.confirm")}</p>
-            <button type="submit" className={danger}>
-              {t("start.example.confirm.go")}
-            </button>
-          </form>
+            <form action={remove}>
+              <button type="submit" className={danger}>
+                {t("start.example.confirm.go")}
+              </button>
+            </form>
+            {reset ? (
+              <form action={reset}>
+                <button type="submit" className={secondary}>
+                  {t("start.example.reset.go")}
+                </button>
+              </form>
+            ) : null}
+          </div>
         </details>
       )}
       {message}
