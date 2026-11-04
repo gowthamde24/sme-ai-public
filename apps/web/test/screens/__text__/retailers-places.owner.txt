@@ -15,14 +15,15 @@ Tick all on this page
 [button type=button: Skip]
 [button type=button: Not interested]
 [button type=button: Do not call]
+In stock: Kanchi Pattu Bridal
 -
 <checkbox label="Tick Sri Lakshmi Sarees">
 Tick Sri Lakshmi Sarees
 ### Sri Lakshmi Sarees
-Needs you Google Maps Saree shop · Jayanagar fit 82 · first calls of a new search wait for you Saree shop; we have Kanchi Pattu Bridal, Dharmavaram Silk Classic in stock; 312 reviews Google Maps search 'saree shops Jayanagar', 2 Nov
+Needs you Google Maps Saree shop · Jayanagar · ★ 4.5 · 312 reviews fit 82 · 1 of the first 10 calls — needs your OK Google Maps search 'saree shops Jayanagar', 2 Nov
 -
 <checkbox label="Tick Sri Sai Constructions">
 Tick Sri Sai Constructions
 ### Sri Sai Constructions
-Needs you Made-up businesses for the demo Hardware dealer · Basavanagudi fit 64 · low stock Dealer; only some items in stock Example search (made-up businesses) 'saree shops Jayanagar Bengaluru', 6 Oct
+Needs you Made-up businesses for the demo Hardware dealer · Basavanagudi · ★ 4.5 · 40 reviews fit 64 · low stock Example search (made-up businesses) 'saree shops Jayanagar Bengaluru', 6 Oct
 No real call is ever placed from here: a call is a practice call (simulated) for now.
