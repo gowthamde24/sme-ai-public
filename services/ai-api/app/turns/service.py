@@ -260,6 +260,10 @@ def _dispatch(
             outcome = lf_turn.plan_turn(service, ctx, body.text, language, runner, emit, reply_id)
             if outcome is not None:
                 return outcome
+        elif lf_turn.not_in_plan(runtime, ctx):   # a Lead Desk workspace (owner decision 4 Nov 2026): the friendly "part of AI Workforce" card, nothing searched
+            emit("intent", {"type": "intent", "kind": "action"})
+            logger.info("assistant turn: kind=action reason=find_new_customers not_in_plan language=%s", language)
+            return lf_turn.upgrade_turn(language, runner, emit, reply_id)
         # no Lead Finder here (a school, or switched off): the words are decided again without rule 0 and answered as they always were
         intent = classify(body.text, _previous_kind(last), find=False)
     emit("intent", {"type": "intent", "kind": intent.kind})

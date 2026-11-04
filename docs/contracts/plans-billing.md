@@ -70,3 +70,19 @@ The worker never runs a read-only or waiting workspace, and the outbox's claim a
 **`POST /v1/tenants/{tenant_id}/billing/resume`** (Owner, second factor): body `ResumeIn` `{plan_id, checkout_ref}` (same values as the trial's) -> `BillingOut` with `subscription.status` `active`, `can_resume` false, `access` `full`. A paid plan starts **at once with no new trial**: the first month is recorded as paid, the period runs one month, the provider's next charge is one month ahead. Works from read-only (it is under `/billing`). Errors: **409 `not_lapsed`** (a trial is running, a plan is active, the workspace waits for WhatsApp, or it is exempt), 422 `plan_unknown`, 402 `payment_method_declined` (nothing starts), 403 `mfa_required`, 403 for anyone but the Owner. Example request: `resume_request`.
 
 **Exempt workspaces** (Customer Zero and the demo workspaces) never lapse: `access` is always `full` and `can_resume` false. The operator switch is `app.operator_billing_exempt(tenant, true)` (docs/runbooks/billing-exempt.md).
+
+## Plans as feature switches: AI Workforce and Lead Desk (owner decision 4 Nov 2026; catalogue version 4)
+
+Two subscriptions, switches not prices (nothing is charged or enforced beyond these switches until Customer Zero):
+- **AI Workforce**: every feature. Plans: `free_trial`, `starter`, `growth`, `business`.
+- **Lead Desk**: every feature except the Lead Finder. Plans: `calls_payg`, `calls_300`, `calls_1000` (the plans already named "Lead Desk").
+
+The catalogue file (`packages/plans/plans.json`, version 4; its manifest is synced to the database) gains `products: { ai_workforce: { name, features }, lead_desk: { name, features } }` and each plan's `product`. `GET /v1/plans` is unchanged; a workspace's product and switches come from the route below.
+
+`GET /v1/tenants/{t}/billing/entitlements` (any member) ->
+```json
+{ "plan": "calls_300", "product": "lead_desk", "product_name": { "en": "Lead Desk" }, "features": { "lead_desk": true, "lead_finder": false },
+  "upgrade": { "product": "ai_workforce", "product_name": { "en": "AI Workforce" }, "features": ["lead_finder"] } }
+```
+`upgrade` is null on AI Workforce. For the screens: the **plan badge** in Settings shows `product_name`; where a feature is off, the **upgrade card** says it is part of AI Workforce and links to
+`/plans` (no price, no checkout). The Lead Finder's own refusals: `docs/contracts/lead-finder.md` section 0.

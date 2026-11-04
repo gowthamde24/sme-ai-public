@@ -163,6 +163,28 @@ class UsageViewOut(_Strict):
     queued_calls: int = 0
 
 
+class EntitlementFeaturesOut(_Strict):
+    lead_desk: bool
+    lead_finder: bool
+
+
+class EntitlementUpgradeOut(_Strict):
+    product: Literal["ai_workforce"]
+    product_name: dict[str, str]
+    features: list[Literal["lead_finder"]]
+
+
+class EntitlementsOut(_Strict):
+    """Owner decision 4 Nov 2026: two subscriptions as feature switches, no price. AI Workforce has every feature; Lead Desk every feature except the Lead Finder. `upgrade`: what has the
+    features that are off here (the screens' upgrade card; nothing is charged)."""
+
+    plan: str
+    product: Literal["ai_workforce", "lead_desk"]
+    product_name: dict[str, str]
+    features: EntitlementFeaturesOut
+    upgrade: EntitlementUpgradeOut | None
+
+
 class AccessOut(_Strict):
     """Whether the workspace can be changed. `access` is `read_only` after the trial (or the paid period) ended unpaid: signing in, viewing and exporting stay; sending, AI, calls and every change stop,
     so the web shows view and export only and switches the edit buttons off. Always `full` while the platform's billing switch is off. The data is kept until `delete_on` (90 days after
