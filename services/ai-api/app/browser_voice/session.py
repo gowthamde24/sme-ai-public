@@ -46,8 +46,9 @@ from app.conversation.turntaking import (
     soft_warning_due,
     stop_word_heard,
 )
+from app.turns.intent import Intent, classify, is_yes_no, normalise
 from app.turns.intent import Kind as TurnKind
-from app.turns.intent import classify, is_yes_no, normalise
+from app.turns.lead_finder import is_answer as lf_is_answer
 
 log = logging.getLogger("app.browser_voice")
 
@@ -183,6 +184,7 @@ class VoiceSession:
         self._voice = speaker.new_session_voice(speaker.load(limits.speaker_model)) if limits.speaker_check in ("shadow", "on") and mode == "live" and not getattr(self, "is_phone", False) else None
         self._previous: TurnKind | None = None
         self.pending_action: uuid.UUID | None = None
+        self.pending_search = False   # the Lead Finder's plan card waits for the owner's OK: a bare yes or no goes to the chat's own turn (app/turns/lead_finder.py), never to the fast tier
         self._utterance_at: float | None = None
         self._tr_seq = 0
         self._tr_sent_at = 0.0
@@ -227,6 +229,8 @@ class VoiceSession:
             if kind == "confirm_action" and str(data.get("status", "proposed")) == "proposed":
                 with suppress(ValueError):
                     self.pending_action = uuid.UUID(str(data.get("action_id")))
+            if kind == "lead_finder":
+                self.pending_search = str((data.get("search") or {}).get("state")) == "planned"
         asyncio.ensure_future(self._send(message))
 
     def _on_stt(self, ev: SttEvent) -> None:
@@ -278,13 +282,15 @@ class VoiceSession:
 
     def _can_speculate(self, text: str) -> bool:
         """May the model be started on these words before they are final? Only small talk and general help on the fast tier (a pure check: nothing is sent to the screen and the router's memory is not touched)."""
-        return bool(self.parts.fast_smalltalk) and classify(text, self._previous).kind in ("smalltalk", "general") and not self.pending_action
+        return bool(self.parts.fast_smalltalk) and classify(text, self._previous).kind in ("smalltalk", "general") and not self.pending_action and not self.pending_search
 
     # ---- the router: the SAME one as the written chat (job EA) -------------------------------------------------------------------------------------
 
     def _route(self, text: str, tools_available: bool, turn_number: int) -> Tier:
         """Small talk and general help are answered by the fast model, spoken; a question about the records and an instruction go to the tool path / the planner (which decides again, the same way)."""
         intent = classify(text, self._previous)
+        if self.pending_search and lf_is_answer(text):
+            intent = Intent("action", "lead_finder_answer")   # the OK to the plan card on the screen: the chat's turn runs the search
         self._previous = intent.kind
         asyncio.ensure_future(self._send({"type": "intent", "kind": intent.kind}))
         if self.parts.one_thread and not self.parts.fast_smalltalk:
