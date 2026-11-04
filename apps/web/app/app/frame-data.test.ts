@@ -11,6 +11,8 @@ vi.mock("@/lib/api/ai-usage", () => ({ getAiUsage: (...a: unknown[]) => getAiUsa
 const readPack = vi.fn();
 vi.mock("@/lib/packs/read", () => ({ readPackCached: (...a: unknown[]) => readPack(...a) }));
 vi.mock("./tenants/[tenantId]/today-read", () => ({ readTodayCached: (...a: unknown[]) => readToday(...a) }));
+const readAvailability = vi.fn();
+vi.mock("@/lib/api/lead-finder", () => ({ readAvailability: (...a: unknown[]) => readAvailability(...a) }));
 
 import { ApiAuthError, ApiContractError, ApiRequestError } from "@/lib/api/client";
 
@@ -31,6 +33,7 @@ describe("readFrameData", () => {
   beforeEach(() => {
     readPack.mockResolvedValue(FIXTURE);
     getWorkspaceProfile.mockResolvedValue({ logoUrl: LOGO });
+    readAvailability.mockResolvedValue({ available: true, source: "fixture", reason: "ok" });
   });
   it("brings in the plan, the usage and the waiting count with the person's token", async () => {
     getPlan.mockResolvedValue(PLAN);
@@ -72,5 +75,21 @@ describe("readFrameData", () => {
     readToday.mockResolvedValue(TODAY);
     readPack.mockRejectedValue(new ApiAuthError("rejected"));
     expect(await readFrameData("tok", T)).toEqual({ plan: PLAN, usage: USAGE, waiting: 3, ready: true, showUsage: true, live: false, logoUrl: LOGO, pack: null });
+  });
+  it("keeps the Lead Finder's tab only where the API says it is available (switched off, or cannot be told: the module is dropped from the menu)", async () => {
+    getPlan.mockResolvedValue(PLAN);
+    getAiUsage.mockResolvedValue(USAGE);
+    readToday.mockResolvedValue(TODAY);
+    expect(FIXTURE.modules).toContain("lead_finder");
+    expect((await readFrameData("tok", T)).pack?.modules).toContain("lead_finder");
+    expect(readAvailability).toHaveBeenCalledWith("tok", T);
+    readAvailability.mockResolvedValue({ available: false, source: null, reason: "switched_off" });
+    const off = await readFrameData("tok", T);
+    expect(off.pack?.modules).not.toContain("lead_finder");
+    expect(off.pack?.modules.length).toBe(PACK.modules.length - 1);
+    readAvailability.mockResolvedValue(null);
+    expect((await readFrameData("tok", T)).pack?.modules).not.toContain("lead_finder");
+    readAvailability.mockRejectedValue(new ApiAuthError("rejected"));
+    expect((await readFrameData("tok", T)).pack?.modules).not.toContain("lead_finder");
   });
 });
