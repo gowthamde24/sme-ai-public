@@ -136,7 +136,8 @@ def test_the_owners_button_makes_one_enquiry_and_one_draft_and_nothing_is_approv
     assert json.loads(made[0]["p_request_text"])["as_of"]
     assert not any(n in ("approve", "send") for n, _ in quotes.calls), "a draft: the Owner approves it on the quote page"
     # the preview now says it is made
-    assert client.get(f"{URL}/prospects/{pid}/quote-draft", headers=auth("a_owner")).json()["made"] is True
+    after = client.get(f"{URL}/prospects/{pid}/quote-draft", headers=auth("a_owner")).json()
+    assert after["made"] is True and after["enquiry_id"] == out["enquiry_id"], "the preview names the enquiry whose page shows the draft"
     # the same button again: the same enquiry and the same draft, nothing new
     again = client.post(f"{URL}/prospects/{pid}/quote-draft", json={"customer_kind": "new"}, headers=auth("a_owner"))
     assert again.status_code == 200 and again.json()["replayed"] is True and again.json()["quote_id"] == out["quote_id"]

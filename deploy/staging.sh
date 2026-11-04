@@ -107,10 +107,25 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
       LI_SECRETS="$LI_SECRETS,LEAD_RESEND_API_KEY=sme-resend-leads-api-key:latest,LEAD_RESEND_WEBHOOK_SECRET=sme-resend-webhook-secret:latest"
     fi
   fi
+  # Inbound phone calls on the Exotel SANDBOX (job phone-calls part 5, owner 4 Nov 2026): only with TELEPHONY_INBOUND=1. Inbound ONLY (TELEPHONY_OUTBOUND stays false: the gate refuses every outbound call),
+  # ONLY the numbers in TELEPHONY_SANDBOX_NUMBERS (default: the owner's +919502380998). A secret is mounted only when sme-api-run may read it (the grants are owner steps,
+  # ~/Desktop/stack19-jobs/phone-calls-check/owner-steps-inbound.md); without the stream secret or Exotel's key the API logs "inbound calls stay off" and refuses every call.
+  TEL_ENV="" TEL_SECRETS=""
+  if [ "${TELEPHONY_INBOUND:-0}" = 1 ]; then
+    can_read() { gcloud secrets get-iam-policy "$1" --project "$PROJECT_ID" --format=json 2>/dev/null | grep -q "serviceAccount:sme-api-run@"; }
+    TEL_ENV="TELEPHONY_MODE=sandbox,TELEPHONY_OUTBOUND=false,TELEPHONY_SANDBOX_NUMBERS=${TELEPHONY_SANDBOX_NUMBERS:-+919502380998},TELEPHONY_MAX_CONCURRENT=1,TELEPHONY_INBOUND_LANGUAGE=${TELEPHONY_INBOUND_LANGUAGE:-te},TELEPHONY_INBOUND_BUSINESS=${TELEPHONY_INBOUND_BUSINESS:-Stack19},EXOTEL_TRIAL_NUMBER=${EXOTEL_TRIAL_NUMBER:-09513886363},EXOTEL_TRIAL_CALLER=${EXOTEL_TRIAL_CALLER:-+919502380998},EXOTEL_TRIAL_APP_ID=${EXOTEL_TRIAL_APP_ID:-1371752},EXOTEL_TRIAL_CALLS_PER_DAY=10,EXOTEL_TRIAL_MAX_CALL_S=180"
+    if [ "${API_LEAD_INTAKE:-0}" != 1 ]; then
+      TEL_ENV="$TEL_ENV,SCHEDULER_EMAIL=${SCHEDULER_EMAIL:-scheduler@demo.example.test},PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://sme-api-620338396268.asia-south1.run.app}"
+      TEL_SECRETS=",SCHEDULER_PASSWORD=sme-scheduler-password:latest"
+    fi
+    for pair in EXOTEL_STREAM_SECRET=sme-exotel-stream-secret EXOTEL_SID=sme-exotel-sid EXOTEL_API_KEY=sme-exotel-api-key EXOTEL_API_TOKEN=sme-exotel-api-token; do
+      if can_read "${pair#*=}"; then TEL_SECRETS="$TEL_SECRETS,${pair}:latest"; else echo "inbound calls: sme-api-run cannot read ${pair#*=} yet (owner step); left out" >&2; fi
+    done
+  fi
   RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=0 \
     EXTRA_ENV="$WA_ENV,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_SPEAKER_CHECK=shadow,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam,EXOTEL_API_BASE=https://api.exotel.com,AUTH_GOOGLE_CLIENT_ID=620338396268-k9tj60ci8equ4lsc120djtggj87ph66s.apps.googleusercontent.com" \
-    EXTRA_ENV_2="$EXTRA_ENV_2${LI_ENV:+,$LI_ENV}" \
-    EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS$LI_SECRETS" \
+    EXTRA_ENV_2="$EXTRA_ENV_2${LI_ENV:+,$LI_ENV}${TEL_ENV:+,$TEL_ENV}" \
+    EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS$LI_SECRETS$TEL_SECRETS" \
     ./deploy/cloudrun.sh api $execute
 fi
 # The nightly pronunciation round trip (docs/runbooks/pronunciation-nightly-qa.md) is a Cloud Run job on the API's image, created by the owner. Once it exists, every API deploy moves it to the new image, so each night tests the

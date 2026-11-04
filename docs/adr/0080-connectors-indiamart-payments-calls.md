@@ -50,6 +50,7 @@ IndiaMART help.indiamart.com/knowledge-base/lms-crm-integration-v2 and /im-lms-l
   Singapore cluster.
 * The REST base is now one setting, `EXOTEL_API_BASE` (`https://` and a host only; it wins over `EXOTEL_SUBDOMAIN`, whose default `api.in.exotel.com` is unchanged when it is unset). Staging sets
   `EXOTEL_API_BASE=https://api.exotel.com`. `CALLS_PROVIDER` and `TELEPHONY_MODE` stay off; nothing dials.
-* The owner has asked Exotel whether the account can be served from Mumbai (data residency and latency for Indian calls). Until Exotel answers, Singapore is the base; moving is a change of this one setting.
+* **A Mumbai-cluster account is a decision for before Customer Zero** (owner, 4 Nov 2026): latency for Indian callers, and the lawyer's view on where call data is processed. Until then the sandbox runs on
+  Singapore; moving is a change of this one setting (and, if Exotel moves the account, of its keys).
 * Still not known from that check (the balance answer does not carry them): the account's status, whether an ExoPhone or a trial number is assigned, and whether AgentStream / Voicebot is enabled. The phone-calls
   job's part 4 waits for Exotel to enable AgentStream.

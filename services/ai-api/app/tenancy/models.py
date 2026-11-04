@@ -48,7 +48,10 @@ class TenantDetailOut(TenantOut):
 class TenantPlanOut(_Out):
     """The plan of a business (job AD / D1). Read-only for clients: only the operator changes it."""
 
-    plan: Literal["free_trial"]
+    # the plan id (tenants.plan, a key of billing.plans): free_trial, starter, growth, business
+    # or a calls plan. It was Literal["free_trial"] until 4 Nov 2026: a test workspace moved to
+    # growth made GET /v1/tenants/{id} answer 500.
+    plan: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{1,39}$")]
     workspace_limit: int
     trial_started_at: datetime
 
