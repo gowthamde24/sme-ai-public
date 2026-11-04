@@ -59,3 +59,10 @@ export const autoReplyScreens = (value: string | undefined = process.env.AUTO_RE
 
 /** Settings > AI assistant > "Pronunciation" (job pronunciation-quality, owner 30 Oct): the words the assistant must say a certain way (word + "sounds like" + Hear it in the chosen voice), and the "Mispronounced?" action on spoken chat messages. C1's API (`/ai-assistant/pronunciation`, lib/api/pronunciation.ts has the assumed contract): `mock` = the list kept in a cookie of the browser (the sounds are tones), `1` = the API, unset = the part is not there. */
 export const pronunciationScreens = (value: string | undefined = process.env.PRONUNCIATION_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * "The assistant does the work" (job assistant-does-the-work, C2): files in the chat ("+" > Add a file, drag-and-drop), the work cards (a file's preview, plans with Do it / Change / Cancel and Undo, the secure key box,
+ * guided setups with a live test, "can't do yet") and Settings > Activity. C1's API is ASSUMED until docs/contracts/assistant-tools.md: `mock` = made-up answers in the browser and fixtures on the server (no file leaves
+ * the page, nothing is stored), `1` = the API through this workspace's own routes, unset = the part is not there (the chat as before).
+ */
+export const assistantWorkScreens = (value: string | undefined = process.env.ASSISTANT_WORK_SCREENS): ScreenMode => screenMode(value);
