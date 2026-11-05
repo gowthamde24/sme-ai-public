@@ -37,7 +37,9 @@ export type TurnEvent =
   | { type: "confirm_action"; action: ConfirmAction }
   | { type: "clarify"; question: string; actionId: string | null }
   /** The Lead Finder's plan card (or, after a "yes" in the chat, its result card) under the reply's sentence (docs/contracts/lead-finder.md section 1b). */
-  | { type: "lead_finder"; card: LeadFinderCard };
+  | { type: "lead_finder"; card: LeadFinderCard }
+  /** The assistant does the work (C1's contract, docs/contracts/assistant-tools.md): a work card, as the API wrote it; the browser reads it strictly (parseWorkCard). */
+  | { type: "work_card"; card: Record<string, unknown> };
 
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 const bad = (what: string): never => {
@@ -80,6 +82,9 @@ export function parseTurnEvent(name: string, data: unknown): TurnEvent | null {
       return { type: "confirm_action", action: parseConfirmAction(data) };
     case "clarify":
       return { type: "clarify", question: text(data.question, "question", 1000), actionId: typeof data.action_id === "string" && isCanonicalUuid(data.action_id) ? data.action_id : null };
+    case "work_card":
+      // the assistant does the work (C1's contract, docs/contracts/assistant-tools.md): the card goes on as the API wrote it; the browser reads it strictly (lib/assistant-work/types.ts parseWorkCard)
+      return isRec(data.card) ? { type: "work_card", card: data.card } : null;
     case "lead_finder": {
       // a card that is not the contract's shape is left out (never drawn); the reply's sentence still stands
       const card = readChatCard(data);
@@ -97,14 +102,14 @@ export function parseTurnEvent(name: string, data: unknown): TurnEvent | null {
 /** `language`: the chat's language pill: "auto" (the API detects it, as always) or the language the reply is written in, whatever the words are. */
 export const REPLY_LANGUAGES = ["auto", "te", "en", "hi", "kn", "ta", "ml"] as const;
 export type ReplyLanguage = (typeof REPLY_LANGUAGES)[number];
-export type TurnInput = { messageId: string; conversationId: string | null; text: string; languageHint?: AssistantLanguage | null; language?: ReplyLanguage | null };
+export type TurnInput = { messageId: string; conversationId: string | null; text: string; languageHint?: AssistantLanguage | null; language?: ReplyLanguage | null; /** C1's contract, docs/contracts/assistant-tools.md: the uploaded files that go with the message (`attachment_ids`, at most 5). */ attachmentIds?: readonly string[] };
 const LANGS = ["te", "en", "hi", "kn"];
 
 export async function* sendTurn(token: string, tenantId: string, input: TurnInput): AsyncGenerator<TurnEvent> {
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(input.messageId) || (input.conversationId !== null && !isCanonicalUuid(input.conversationId))) throw new ApiContractError("id");
   const t = input.text.trim();
   if (t.length < 1 || t.length > 4000) throw new ApiContractError("text");
-  const response = await apiStreamRequest(`/v1/tenants/${tenantId}/assistant/turns`, token, { message_id: input.messageId, conversation_id: input.conversationId, text: t, language_hint: input.languageHint && LANGS.includes(input.languageHint) ? input.languageHint : null, ...(input.language ? { language: input.language } : {}) });
+  const response = await apiStreamRequest(`/v1/tenants/${tenantId}/assistant/turns`, token, { message_id: input.messageId, conversation_id: input.conversationId, text: t, language_hint: input.languageHint && LANGS.includes(input.languageHint) ? input.languageHint : null, ...(input.language ? { language: input.language } : {}), ...(input.attachmentIds && input.attachmentIds.length > 0 ? { attachment_ids: input.attachmentIds.filter(isCanonicalUuid).slice(0, 5) } : {}) });
   for await (const { name, data } of readSse(response.body as ReadableStream<Uint8Array>)) {
     const event = parseTurnEvent(name, data);
     if (event !== null) yield event;

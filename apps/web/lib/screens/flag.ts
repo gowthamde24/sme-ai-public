@@ -59,3 +59,22 @@ export const autoReplyScreens = (value: string | undefined = process.env.AUTO_RE
 
 /** Settings > AI assistant > "Pronunciation" (job pronunciation-quality, owner 30 Oct): the words the assistant must say a certain way (word + "sounds like" + Hear it in the chosen voice), and the "Mispronounced?" action on spoken chat messages. C1's API (`/ai-assistant/pronunciation`, lib/api/pronunciation.ts has the assumed contract): `mock` = the list kept in a cookie of the browser (the sounds are tones), `1` = the API, unset = the part is not there. */
 export const pronunciationScreens = (value: string | undefined = process.env.PRONUNCIATION_SCREENS): ScreenMode => screenMode(value);
+
+/**
+ * "The assistant does the work" (job assistant-does-the-work, C2): files in the chat ("+" > Add a file, drag-and-drop), the work cards (a file's preview, plans with Do it / Change / Cancel and Undo, the secure key box,
+ * guided setups with a live test, "can't do yet") and Settings > Activity. C1's API follows its contract docs/contracts/assistant-tools.md: `mock` = made-up answers in the browser and fixtures on the server (no file leaves
+ * the page, nothing is stored), `1` = the API through this workspace's own routes, unset = the part is not there (the chat as before).
+ */
+export function assistantWorkScreens(tenantId: string, value: string | undefined = process.env.ASSISTANT_WORK_SCREENS, tenants: string | undefined = process.env.ASSISTANT_WORK_TENANTS): ScreenMode {
+  return assistantWorkTenantListed(tenantId, tenants) ? screenMode(value) : "off";
+}
+
+/**
+ * ASSISTANT_WORK_TENANTS (C1, 5 Nov; the same meaning in the API): which workspaces get "the assistant does the work", since one web serves every workspace. Unset = every workspace (local, tests);
+ * workspace ids separated by ";" or "," = only those (case and spaces do not matter); set but empty, or "none" = no workspace.
+ */
+export function assistantWorkTenantListed(tenantId: string, tenants: string | undefined): boolean {
+  if (tenants === undefined) return true;
+  const ids = tenants.split(/[;,]/).map((t) => t.trim().toLowerCase()).filter((t) => t !== "" && t !== "none");
+  return ids.includes(tenantId.trim().toLowerCase());
+}
