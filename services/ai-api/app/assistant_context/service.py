@@ -81,7 +81,7 @@ TEST_TOOL = ToolSpec(
         "type": "object",
         "properties": {
             "text": {"type": "string", "maxLength": 600},
-            "language": {"type": "string", "enum": ["en", "te", "hi", "kn", "ta", "ml"]},
+            "language": {"type": "string", "enum": ["en", "te", "hi", "kn", "ta", "ml", "mr"]},
             "used": {"type": "array", "maxItems": 5, "items": {"type": "string", "maxLength": 200}},
             "confidence": {"type": "number", "minimum": 0, "maximum": 1},
             "wants_person": {"type": "boolean"},
@@ -102,6 +102,7 @@ HOLD_LINE: dict[str, str] = {
     "kn": "ಮಾಲೀಕರನ್ನು ಕೇಳಿ ನಿಮಗೆ ತಿಳಿಸುತ್ತೇನೆ.",
     "ta": "உரிமையாளரிடம் கேட்டுவிட்டு உங்களுக்குச் சொல்கிறேன்.",
     "ml": "ഉടമയോട് ചോദിച്ച് ഞാൻ നിങ്ങളെ അറിയിക്കാം.",
+    "mr": "मी मालकांना विचारून तुम्हाला सांगतो.",
 }
 
 

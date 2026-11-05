@@ -35,7 +35,7 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}/ai-assistant/pronunciation", 
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
-Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 Word = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=60)]
 Sound = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)]
 
@@ -43,7 +43,7 @@ IST = timezone(timedelta(hours=5, minutes=30))
 PREVIEW_PER_MINUTE = 6
 PREVIEW_DAILY_CHARS = 1500
 _CARRIER = {   # a short sentence around the word, so the voice has a context to say it in
-    "en": "This is a call from {w}.", "te": "{w} నుంచి మాట్లాడుతున్నాను.", "hi": "यह {w} से कॉल है।", "kn": "{w} ಇಂದ ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ.", "ta": "{w} இலிருந்து பேசுகிறேன்.", "ml": "{w} ൽ നിന്ന് വിളിക്കുന്നു.",
+    "en": "This is a call from {w}.", "te": "{w} నుంచి మాట్లాడుతున్నాను.", "hi": "यह {w} से कॉल है।", "kn": "{w} ಇಂದ ಮಾತಾಡ್ತಾ ಇದ್ದೀನಿ.", "ta": "{w} இலிருந்து பேசுகிறேன்.", "ml": "{w} ൽ നിന്ന് വിളിക്കുന്നു.", "mr": "हा {w} कडून कॉल आहे.",
 }
 _COMMON = frozenset("and the store stores shop shops traders trading enterprises silks sarees saree textiles school schools college academy constructions construction materials hardware pvt ltd limited company co".split())
 _minute = SlidingWindow(PREVIEW_PER_MINUTE, 60.0)
@@ -125,7 +125,7 @@ def post_word(body: WordIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[str, o
 @router.post("/preview")
 async def preview(body: PreviewIn, ctx: OwnerAdmin, runtime: RuntimeDep) -> Response:
     bv = runtime.browser_voice
-    if bv is None:
+    if bv is None or not bv.config.has_voices(body.language):   # job M1: a language with no voice yet (Marathi) has nothing to play; nothing is spent
         raise ApiError(404, "no_sample", "There is no preview for this voice.")
     text = _CARRIER[body.language].format(w=body.word)
     day = (ctx.tenant.id, datetime.now(IST).date().isoformat())   # a daily counter per workspace (in memory, reset on a restart: a cap on a paid voice, not an audit)

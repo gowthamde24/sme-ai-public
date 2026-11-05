@@ -18,7 +18,7 @@ export interface AssistantOut {
 export interface AssistantSettings {
   name: string;
   voice_persona: "female_warm" | "female_clear" | "male_calm" | "male_lively" | "own_voice";
-  main_language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  main_language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   auto_switch_language: boolean;
   allow_english_mixing: boolean;
   style: "warm" | "respectful" | "quick";
@@ -39,7 +39,7 @@ export interface AssistantSettings {
 export interface AssistantSettingsRead {
   name: string;
   voice_persona: "female_warm" | "female_clear" | "male_calm" | "male_lively" | "own_voice";
-  main_language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  main_language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   auto_switch_language: boolean;
   allow_english_mixing: boolean;
   style: "warm" | "respectful" | "quick";
@@ -83,7 +83,7 @@ export interface PersonaOut {
 }
 
 export interface PreviewOut {
-  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   style: "warm" | "respectful" | "quick";
   name: string;
   text: string;
