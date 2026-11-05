@@ -81,6 +81,10 @@ for c in d["spec"]["template"]["spec"]["template"]["spec"]["containers"]:
 fi
 WHATSAPP_ALLOWED_RECIPIENTS="${WHATSAPP_ALLOWED_RECIPIENTS-}"
 
+# The assistant does the work (chat files, plan cards, the router, Settings > Activity): ONLY in these workspaces (owner, 5 Nov 2026: the owner's three test workspaces, Lakshmi Silks (test),
+# Sri Sai Cements (test), Vidya Public School (test)). The API refuses it elsewhere (404, the turn as before); the web reads the same list (sme-web env, docs/ops/staging.md). ; between ids (gcloud splits on commas).
+ASSISTANT_WORK_TENANTS="${ASSISTANT_WORK_TENANTS-c029cba3-d2f8-4923-8c5a-630852797fd3;7013c5ff-7f60-4b9e-ba9b-ac7bbc32651e;5717d629-9289-4480-b895-59abb65ce2ce}"
+
 if [ "$what" = "api" ] || [ "$what" = "all" ]; then
   # WhatsApp Cloud API (job DU, docs/runbooks/whatsapp-staging.md). Ids are not secrets; the token and the app secret are read by Cloud Run from Secret Manager (sme-api-run needs secretAccessor on them).
   # The webhook verify token and the channel account (the API's sign-in for handing a webhook to the database) are mounted only once their secrets exist, so a deploy never fails on a missing one.
@@ -123,7 +127,7 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
     done
   fi
   RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=0 \
-    EXTRA_ENV="$WA_ENV,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_SPEAKER_CHECK=shadow,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam,EXOTEL_API_BASE=https://api.exotel.com,AUTH_GOOGLE_CLIENT_ID=620338396268-k9tj60ci8equ4lsc120djtggj87ph66s.apps.googleusercontent.com" \
+    EXTRA_ENV="$WA_ENV,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_SPEAKER_CHECK=shadow,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam,EXOTEL_API_BASE=https://api.exotel.com,AUTH_GOOGLE_CLIENT_ID=620338396268-k9tj60ci8equ4lsc120djtggj87ph66s.apps.googleusercontent.com,ASSISTANT_WORK_TENANTS=$ASSISTANT_WORK_TENANTS" \
     EXTRA_ENV_2="$EXTRA_ENV_2${LI_ENV:+,$LI_ENV}${TEL_ENV:+,$TEL_ENV}" \
     EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS$LI_SECRETS$TEL_SECRETS" \
     ./deploy/cloudrun.sh api $execute

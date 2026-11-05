@@ -23,6 +23,7 @@ from app.assistant_settings.repository import PostgrestAssistantSettingsReposito
 from app.assistant_settings.routes import router as assistant_settings_router
 from app.assistant_settings.service import AssistantSettingsService
 from app.assistant_tools.routes import router as assistant_tools_router
+from app.assistant_work.enabled import parse_tenants
 from app.assistant_work.extract import FileReader, LocalTools
 from app.assistant_work.routes import router as assistant_work_router
 from app.assistant_work.store import PostgrestWorkStore
@@ -350,6 +351,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
         assistant_work=PostgrestWorkStore(config.rest_url, config.anon_key),
         assistant_file_reader=FileReader(LocalTools()),
+        assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
         lead_finder=LeadFinderService(
             PostgrestLeadFinderRepository(config.rest_url, config.anon_key),
             mode=settings.lead_finder,

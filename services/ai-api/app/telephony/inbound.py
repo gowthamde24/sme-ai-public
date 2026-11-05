@@ -54,29 +54,42 @@ def _unb64(text: str) -> bytes:
     return base64.urlsafe_b64decode(text + "=" * (-len(text) % 4))
 
 
-def mint(secret: bytes, now: float, call_sid: str = "") -> str:
-    """expires (4 bytes) + nonce (6) + HMAC-SHA256 over both and the call's id when Exotel gave one (16): 35 URL-safe characters, well inside the applet's parameter limit."""
+TRIAL_MARK = "trial"   # the stream-url request named the shared trial number as its `To`: the token says so, signed (the start message's `to` is the line the call LANDED on, 5 Nov 2026)
+
+
+def _mac(secret: bytes, head: bytes, call_sid: str, mark: str) -> bytes:
+    return hmac.new(secret, head + call_sid.encode("utf-8") + (b"\x00" + mark.encode("ascii") if mark else b""), hashlib.sha256).digest()[:16]
+
+
+def mint(secret: bytes, now: float, call_sid: str = "", mark: str = "") -> str:
+    """expires (4 bytes) + nonce (6) + HMAC-SHA256 over both, the call's id when Exotel gave one and the mark when there is one (16): 35 URL-safe characters, well inside the applet's parameter
+    limit. The mark is never readable from the token, only provable with the secret."""
     head = struct.pack(">I", int(now) + TOKEN_TTL_S) + os.urandom(6)
-    mac = hmac.new(secret, head + call_sid.encode("utf-8"), hashlib.sha256).digest()[:16]
-    return _b64(head + mac)
+    return _b64(head + _mac(secret, head, call_sid, mark))
+
+
+def verify_mark(secret: bytes, token: str, now: float, call_sid: str = "") -> str | None:
+    """The token's mark ("" or TRIAL_MARK) for a token this deployment minted that has not expired; None otherwise. A token minted for a call id is good only for that call."""
+    try:
+        raw = _unb64(token)
+    except (ValueError, TypeError):
+        return None
+    if len(raw) != 26:
+        return None
+    head, mac = raw[:10], raw[10:]
+    (expires,) = struct.unpack(">I", head[:4])
+    if now > expires:
+        return None
+    for bound in (call_sid, ""):
+        for mark in ("", TRIAL_MARK):
+            if hmac.compare_digest(mac, _mac(secret, head, bound, mark)):
+                return mark
+    return None
 
 
 def verify(secret: bytes, token: str, now: float, call_sid: str = "") -> bool:
     """True for a token this deployment minted that has not expired. A token minted for a call id is good only for that call (when the id was known at mint time it is bound)."""
-    try:
-        raw = _unb64(token)
-    except (ValueError, TypeError):
-        return False
-    if len(raw) != 26:
-        return False
-    head, mac = raw[:10], raw[10:]
-    (expires,) = struct.unpack(">I", head[:4])
-    if now > expires:
-        return False
-    for bound in (call_sid, ""):
-        if hmac.compare_digest(mac, hmac.new(secret, head + bound.encode("utf-8"), hashlib.sha256).digest()[:16]):
-            return True
-    return False
+    return verify_mark(secret, token, now, call_sid) is not None
 
 
 def fresh(token: str, now: float) -> bool:
@@ -244,19 +257,25 @@ class Admitted:
 
 
 async def admit(start: exotel.Start, settings: gate.Settings, *, find_line: Callable[[str], dict[str, Any] | None], calls: ExotelCalls | None, active_calls: int,
-                now: datetime, hours: gate.Hours | None = None, our_sid: str | None = None, trial: TrialRule | None = None, trial_count: DayCount | None = None) -> Admitted | gate.Refused:
-    """Steps 2 to 4 of the module note; on the shared trial number in sandbox mode, the trial rule (TrialRule) instead. Refusals are the gate's closed words."""
+                now: datetime, hours: gate.Hours | None = None, our_sid: str | None = None, trial: TrialRule | None = None, trial_count: DayCount | None = None,
+                trial_by_url: bool = False) -> Admitted | gate.Refused:
+    """Steps 2 to 4 of the module note; on the shared trial number in sandbox mode, the trial rule (TrialRule) instead. Refusals are the gate's closed words.
+
+    The call is on the trial number when the start message's `to` is it, OR when the stream-url request named it as its `To` (`trial_by_url`: proven by the signed token's mark). The 10:15 UTC call
+    of 5 Nov 2026 had `To` = the trial number on the stream-url request but `to` = the line it landed on in the start message, and was refused `no_such_line`."""
     caller, line_no = normalise(start.from_number), normalise(start.to_number)
-    on_trial = trial is not None and line_no == trial.number
+    by_to = trial is not None and line_no == trial.number
+    on_trial = trial is not None and (by_to or trial_by_url)
     ours = trial.caller if trial is not None and trial.caller else (next(iter(sorted(settings.sandbox_numbers)), None) if settings.sandbox_numbers else None)
-    log.info("exotel_start fields=%s custom=%s account_matches=%s app_id_matches=%s trial_number=%s %s", ",".join(start.fields) or "-", ",".join(sorted(start.custom)) or "-",
-             _match(our_sid, start.account_sid), _match(trial.app_id if trial and trial.app_id else None, start.app_id), "yes" if on_trial else "no", caller_diagnosis(start.from_number, ours))
+    log.info("exotel_start fields=%s custom=%s account_matches=%s app_id_matches=%s trial_number=%s to_shape=%s %s", ",".join(start.fields) or "-", ",".join(sorted(start.custom)) or "-",
+             _match(our_sid, start.account_sid), _match(trial.app_id if trial and trial.app_id else None, start.app_id), "to" if by_to else "url" if on_trial else "no",
+             number_shape(start.to_number), caller_diagnosis(start.from_number, ours))
     if settings.mode == "off":
         return gate.Refused("telephony_off")
+    if on_trial and trial is not None:   # the trial number's own line, whatever the start message's `to` says
+        return await _admit_trial(start, settings, trial, trial_count, find_line=find_line, calls=calls, line_no=trial.number, active_calls=active_calls, now=now, hours=hours)
     if line_no is None:
         return gate.Refused("bad_number")
-    if on_trial and trial is not None:
-        return await _admit_trial(start, settings, trial, trial_count, find_line=find_line, calls=calls, line_no=line_no, active_calls=active_calls, now=now, hours=hours)
     if caller is None:
         return gate.Refused("bad_number")
     if settings.mode == "sandbox" and caller not in settings.sandbox_numbers:
@@ -331,7 +350,10 @@ class TimedLine(PhoneLine):
 def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_paise: int, outcome: str | None) -> dict[str, Any]:
     p50, p95 = percentile(line.first_sound_ms, 0.5), percentile(line.first_sound_ms, 0.95)
     return {"call": str(call_id), "turns": len(line.first_sound_ms), "first_sound_p50_ms": None if p50 is None else round(p50), "first_sound_p95_ms": None if p95 is None else round(p95),
-            "duration_s": round(duration_s, 1), "cost_paise_estimate": cost_paise, "outcome": outcome, "end": line.end_reason}
+            "duration_s": round(duration_s, 1), "cost_paise_estimate": cost_paise, "outcome": outcome, "end": line.end_reason,
+            # how it ended and what went each way (5 Nov 2026): names and numbers only
+            "end_how": line.end_how, "stop_reason": line.stop_reason, "close_code": getattr(getattr(line, "_wire", None), "close_code", None), "events": dict(sorted(line.events.items())),
+            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000)}
 
 
 def log_call(numbers: dict[str, Any]) -> None:
