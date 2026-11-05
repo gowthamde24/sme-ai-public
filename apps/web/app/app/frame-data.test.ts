@@ -94,12 +94,11 @@ describe("readFrameData", () => {
     readAvailability.mockRejectedValue(new ApiAuthError("rejected"));
     expect((await readFrameData("tok", T)).pack?.modules).not.toContain("lead_finder");
   });
-  it("a school gets the Lead Finder's tab where the API says it is available (its pack does not list the module), and the tab says Find organisations", async () => {
+  it("a school gets the Lead Finder's tab only where the API says it is available (its pack lists the module since #319), and the tab says Find organisations", async () => {
     getPlan.mockResolvedValue(PLAN);
     getAiUsage.mockResolvedValue(USAGE);
     readToday.mockResolvedValue(TODAY);
     const school = workspacePack("education");
-    expect(school.modules).not.toContain("lead_finder");
     readPack.mockResolvedValue(school);
     readAvailability.mockResolvedValue({ available: false, source: null, reason: "not_for_this_business" });
     expect((await readFrameData("tok", T)).pack?.modules).not.toContain("lead_finder");
