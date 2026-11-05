@@ -3,7 +3,7 @@
 import * as React from "react";
 
 import type { ConfirmAction } from "@/lib/api/turns";
-import { parseWorkCard, type WorkCard } from "@/lib/assistant-work/types";
+import type { WorkCard } from "@/lib/assistant-work/types";
 import type { LeadFinderCard } from "@/lib/lead-finder/types";
 
 import { aiMood, type AiMood } from "../../mark/mood";
@@ -63,6 +63,9 @@ async function* withLocal(source: AsyncIterable<AskEvent>, extra: readonly AskEv
 export type AskPhase = "idle" | "asking" | "done" | "error";
 export type AskProblem = RecorderProblem | null;
 /** One question and its answer, as the thread keeps it. */
+/** The kinds of work card (C1's contract): a card of another kind is not drawn and does not count as an answer. */
+const WORK_KINDS: readonly unknown[] = ["file_preview", "plan", "secret", "setup", "cant_do"];
+
 export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The person spoke over the spoken answer: only part of it was heard (the thread marks it "Interrupted"). */ interrupted?: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** The Lead Finder's card under the reply (a search's plan, or its result). */ leadFinder?: LeadFinderCard | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null; /** The assistant does the work: the cards of the answer (a file's preview, a plan, a key box, a setup, "can't do yet"). */ work?: WorkCard[] };
 
 export type AskSessionOptions = {
@@ -257,10 +260,14 @@ export function useAskSession({ lang, base, words, availability, transport: give
         } else if (e.type === "confirm_action") {
           setPlan(e.action);
         } else if (e.type === "work_card") {
-          const card = parseWorkCard(e.card, base); // untrusted: read strictly, a card that does not parse is not drawn
-          if (card) {
+          // untrusted: read strictly, a card that does not parse is not drawn. The parser (lib/assistant-work/types.ts) loads with the first card, so the chat in every page's first load does not carry it.
+          const raw = e.card;
+          if (typeof raw === "object" && raw !== null && WORK_KINDS.includes((raw as { kind?: unknown }).kind)) {
             said = true;
-            setWork((list) => (list.length >= 6 || list.some((x) => x.id === card.id) ? list : [...list, card]));
+            void import("@/lib/assistant-work/types").then(({ parseWorkCard }) => {
+              const card = parseWorkCard(raw, base);
+              if (card) setWork((list) => (list.length >= 6 || list.some((x) => x.id === card.id) ? list : [...list, card]));
+            });
           }
         } else if (e.type === "lead_finder") {
           setLeadFinder(e.card); // a replay of the same reply sends it again: still one card

@@ -1,6 +1,6 @@
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import * as React from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { appDict } from "@/i18n/app";
 import type { AudioIO, SocketLike } from "@/lib/browser-voice/client";
@@ -12,11 +12,16 @@ import { ChatPanel } from "../ChatPanel";
 import { useAskSession, type AskSession } from "../use-ask-session";
 import type { WorkOptions } from "./use-chat-work";
 
+// the made-up answers are a chunk of their own (loaded on first use): loaded once here, so each test sees answers at the pace it expects
+beforeAll(async () => void (await import("@/lib/assistant-work/fixture-transport")));
+
 // the browser's made-up answers without their pauses
 vi.mock("@/lib/assistant-work/client", async (orig) => {
   const real = await orig<typeof import("@/lib/assistant-work/client")>();
   return { ...real, fixtureTransport: (o: Parameters<typeof real.fixtureTransport>[0] = {}, p?: Parameters<typeof real.fixtureTransport>[1]) => real.fixtureTransport({ ...o, delay: 0 }, p) };
 });
+// the chat loads its cards on demand (LazyWorkCards): here they are the cards themselves (with the props recorder below)
+vi.mock("./LazyWorkCards", async () => ({ WorkCards: (await import("./WorkCards")).WorkCards }));
 // every set of props the thread hands to the work cards, as text (the secret must never be in one)
 const cardProps: string[] = [];
 vi.mock("./WorkCards", async (orig) => {

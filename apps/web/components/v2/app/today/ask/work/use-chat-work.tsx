@@ -4,8 +4,7 @@ import { Contact, File as FileIcon, FileImage, FileSpreadsheet, FileText, FileTy
 import * as React from "react";
 
 import { fixtureTransport, routeTransport, type WorkTransport } from "@/lib/assistant-work/client";
-import { notYetFileJson } from "@/lib/assistant-work/fixtures";
-import { checkFile, FILE_ACCEPT, fileKindOf, MAX_FILE_MB, MAX_FILES, NOT_YET_KINDS, sizeLabel, type FileKind, type FileRefusal } from "@/lib/assistant-work/types";
+import { checkFile, FILE_ACCEPT, fileKindOf, MAX_FILE_MB, MAX_FILES, NOT_YET_KINDS, notYetFileJson, sizeLabel, type FileKind, type FileRefusal } from "@/lib/assistant-work/files";
 
 import type { AskEvent, LocalAnswer } from "../ask-types";
 

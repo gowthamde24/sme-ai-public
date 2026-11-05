@@ -1,3 +1,5 @@
+import { notYetFileJson } from "./files";
+
 /**
  * Synthetic answers for the assistant's work cards and Settings > Activity, in the API's wire shape (C1's contract, docs/contracts/assistant-tools.md, field for field), so every fixture goes through
  * the real parser. Used by the tests, the screen snapshot, the fixture-only preview page and the "mock" mode of ASSISTANT_WORK_SCREENS. Every name, number and key is made up.
@@ -182,11 +184,11 @@ export const planCardJson = (plan: Record<string, unknown>) => ({ kind: "plan", 
  * The contract's answer to a PDF, a photo or a Word file in the chat until C1's file reading lands (section 1: pdf, image, doc -> `cant_do`, `not_yet`, screen `/settings/knowledge`). In mock mode the
  * chat answers such a file with this card (built in the browser, nothing uploaded); `what` and the label are the person's language, as the API writes them. `n` makes each card's id.
  */
-export const notYetFileJson = (n: number, what: string, label: string) => ({ kind: "cant_do", id: `e3000000-0000-4000-8000-${String(n).padStart(12, "0")}`, reason: "not_yet", what, screen: { label, href: "/settings/knowledge" } });
 /** The contract's answer to a sheet of prices (no phone or e-mail column): "adding a price list from a file" is not built yet. */
 export const PRICE_LIST_NOT_YET_JSON = { kind: "cant_do", id: "e1000000-0000-4000-8000-000000000003", reason: "not_yet", what: "Adding a price list from a file", screen: { label: "Catalogue", href: "/catalogue" } };
 /** C1's PR #317: "find new retailers ..." on a Lead Desk workspace. Finding new customers is part of AI Workforce: the Plans link, no price. */
 export const NOT_IN_PLAN_JSON = { kind: "cant_do", id: "e1000000-0000-4000-8000-000000000004", reason: "not_in_plan", what: "Finding new retailers in Guntur", screen: { label: "Plans", href: "/plans" }, upgrade_to: "ai_workforce" };
+export { notYetFileJson };
 export const PDF_NOT_YET_JSON = notYetFileJson(1, "Reading leads or details from brochure-diwali.pdf (a PDF)", "About my business");
 
 export const ACTIVITY_JSON = {

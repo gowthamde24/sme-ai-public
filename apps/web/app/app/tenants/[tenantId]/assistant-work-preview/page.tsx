@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { AssistantActivity } from "@/components/v2/app/settings/AssistantActivity";
-import { WorkPreview } from "@/components/v2/app/today/ask/work/WorkPreview";
+import { WorkPreview } from "@/components/v2/app/today/ask/work/LazyWorkPreview";
 import { pageMain } from "@/components/v2/app/ui";
 import { PageTop } from "@/components/v2/app/parts";
 import { wordsFor } from "@/i18n/app-words";

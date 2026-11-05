@@ -1,5 +1,5 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
 import { appDict } from "@/i18n/app";
 import { fixtureTransport, type WorkTransport } from "@/lib/assistant-work/client";
@@ -8,6 +8,9 @@ import { parseActivity } from "@/lib/assistant-work/types";
 import { readActivity } from "@/lib/assistant-work/source";
 
 import { AssistantActivity, whenText } from "./AssistantActivity";
+
+// the made-up answers are a chunk of their own (loaded on first use): loaded once here, so each test sees answers at the pace it expects
+beforeAll(async () => void (await import("@/lib/assistant-work/fixture-transport")));
 
 const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("asstact.")));
 const TE = Object.fromEntries(Object.entries(appDict("te") as Record<string, string>).filter(([k]) => k.startsWith("asstact.")));
