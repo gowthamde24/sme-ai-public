@@ -75,12 +75,15 @@ const pointerScript = (phone) => `(() => {
     c.id = "dv-pointer";
     c.setAttribute("aria-hidden", "true");
     const size = ${phone ? 46 : 24};
-    Object.assign(c.style, { position: "fixed", left: "-100px", top: "-100px", width: size + "px", height: size + "px", marginLeft: "${phone ? "-23px" : "-3px"}", marginTop: "${phone ? "-23px" : "-2px"}", zIndex: "2147483647", pointerEvents: "none", transition: "transform 110ms ease-out" });
+    Object.assign(c.style, { position: "fixed", left: "-100px", top: "-100px", width: size + "px", height: size + "px", marginLeft: "${phone ? "-23px" : "-3px"}", marginTop: "${phone ? "-23px" : "-2px"}", zIndex: "2147483647", pointerEvents: "none", transition: "transform 110ms ease-out, opacity 220ms ease-out", opacity: "${phone ? "0" : "1"}" });
+    // a finger is not on the glass between taps: the dot shows while it moves and taps, and fades a moment after
+    let idle = 0;
+    const seen = () => { ${phone ? 'c.style.opacity = "1"; clearTimeout(idle); idle = setTimeout(() => (c.style.opacity = "0"), 650);' : ""} };
     c.innerHTML = ${phone ? `'<div style="width:100%;height:100%;border-radius:50%;background:rgba(30,30,30,.22);border:2px solid rgba(255,255,255,.95);box-shadow:0 1px 8px rgba(0,0,0,.35)"></div>'` : `'<svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 2 L3 19 L7.6 14.8 L10.8 21.6 L13.7 20.4 L10.6 13.7 L16.8 13.7 Z" fill="#111" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg>'`};
     document.documentElement.appendChild(c);
-    addEventListener("mousemove", (e) => { c.style.left = e.clientX + "px"; c.style.top = e.clientY + "px"; }, true);
-    addEventListener("mousedown", () => { c.style.transform = "scale(0.8)"; }, true);
-    addEventListener("mouseup", () => { c.style.transform = "scale(1)"; }, true);
+    addEventListener("mousemove", (e) => { c.style.left = e.clientX + "px"; c.style.top = e.clientY + "px"; seen(); }, true);
+    addEventListener("mousedown", () => { c.style.transform = "scale(0.8)"; seen(); }, true);
+    addEventListener("mouseup", () => { c.style.transform = "scale(1)"; seen(); }, true);
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", add); else add();
 })();`;
@@ -191,6 +194,8 @@ async function record(browser, run, cookie, tmp, sharp) {
   for (const scene of SCENES) {
     await page.waitForSelector(scene.wait, { timeout: 20_000 });
     const start = (Date.now() - t0) / 1000;
+    // the end: the pointer leaves the picture
+    if (scene === SCENES[SCENES.length - 1]) await page.mouse.move(run.viewport.width - 4, run.viewport.height - 4, { steps: 20 });
     if (scene.until) for (let i = 0; i < 100 && !(await scene.until(page)); i++) await page.waitForTimeout(60);
     if (scene.then) await page.waitForSelector(scene.then, { timeout: 15_000 });
     await page.waitForTimeout(scene.hold);
