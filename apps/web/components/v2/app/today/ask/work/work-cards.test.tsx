@@ -193,6 +193,18 @@ describe("the secure key box", () => {
     expect(save).not.toHaveBeenCalled();
     expect(screen.getByRole("alert").textContent).toBe("This box can't take the key any more. Ask me again for a new card.");
   });
+  it("'Set up IndiaMART' (C1 #358): a key with a setup offers 'Pull now' only after the key is saved, and runs that setup's test", async () => {
+    const SETUP = "c3000000-0000-4000-8000-000000000003";
+    const transport = fixtureTransport({ delay: 0 });
+    const test = vi.spyOn(transport, "liveTest");
+    draw([card({ ...SECRET_JSON, setup_id: SETUP, test: "pull_now" })], { transport });
+    expect(screen.queryByRole("button", { name: /Pull now/ })).toBeNull();
+    fireEvent.change(screen.getByLabelText("IndiaMART CRM key", { selector: "input" }), { target: { value: KEY } });
+    await click("Save securely");
+    expect(document.querySelector('[data-work="secret-saved"]')?.textContent).toBe("Saved · ••••7781");
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /Pull now/ })));
+    expect(test).toHaveBeenCalledWith(SETUP, "pull_now");
+  });
   it("only the Owner sees the box", () => {
     draw([card(SECRET_JSON)], { role: "admin" });
     expect(screen.queryByLabelText("IndiaMART CRM key")).toBeNull();
@@ -206,8 +218,11 @@ describe("guided setup cards", () => {
     const setup = screen.getByRole("article", { name: "Connect IndiaMART" });
     expect(within(setup).getAllByRole("listitem").length).toBeGreaterThanOrEqual(4);
     expect(within(setup).getByLabelText("IndiaMART CRM key")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Pull now" })).toBeNull(); // a test is offered once the key is saved (C1 #358): before it, it could only say "no key"
+    fireEvent.change(within(setup).getByLabelText("IndiaMART CRM key"), { target: { value: "IM-CRM-test-only-5511" } });
+    await click("Save securely");
     await click("Pull now");
-    expect(screen.getByRole("status").textContent).toContain("It didn’t work: the key was not accepted.");
+    expect(document.querySelector('[data-work="test-result"]')?.textContent).toContain("It didn’t work: the key was not accepted.");
     expect(within(setup).getByRole("link", { name: "Open Lead sources" }).getAttribute("href")).toBe(`${TENANT_BASE}/lead-sources`);
   });
   it("the forwarding address to copy, per-portal steps and the last failed test with its detail", async () => {
