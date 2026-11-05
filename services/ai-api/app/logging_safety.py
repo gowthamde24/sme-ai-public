@@ -30,6 +30,7 @@ ROUTE_WORDS = frozenset(
         # Lead Finder (ADR 0119)
         "lead-finder", "availability", "searches", "prospects", "redecide", "simulated-call",
         "telephony", "stream", "stream-url", "tools",
+        "files", "undo",  # job assistant-does-the-work A2
         "entitlements",  # plans as feature switches
         "stats", "quote-draft",
         # job voice-picker

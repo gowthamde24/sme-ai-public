@@ -137,6 +137,7 @@ def start_turn(
     *,
     charge: Callable[[AssistantDb], None] | None = None,
     on_reply: Callable[[AssistantDb, str, str], None] | None = None,
+    app: Any = None,
 ) -> Iterator[str]:
     """Begin one turn and return its stream of server-sent events. Everything that can refuse does so HERE, before any byte is streamed (the same refusals as the written Ask).
     Events: intent, step, text, source, draft, confirm_action | clarify, done (with the typed `kind`) or error."""
@@ -153,7 +154,8 @@ def start_turn(
             message_id=body.message_id,
             text=body.text,
             language=language,
-            input_sha256=_sha({"conversation": str(conversation_id), "message": str(body.message_id), "text": body.text}),
+            input_sha256=_sha({"conversation": str(conversation_id), "message": str(body.message_id), "text": body.text,
+                               **({"attachments": [str(a) for a in body.attachment_ids]} if body.attachment_ids else {})}),
             light=_is_light(body.text),
         )
     except AgentDbError as exc:
@@ -198,7 +200,7 @@ def start_turn(
 
     def work() -> None:
         try:
-            outcome_box.append(_dispatch(runtime, ctx, db, body, language, history, last, runner, emit, reply_id))
+            outcome_box.append(_dispatch(runtime, ctx, db, body, language, history, last, runner, emit, reply_id, app=app, conversation_id=conversation_id))
         except Exception as exc:   # last resort: only the class is kept; the stream ends with a fixed error
             logger.error("assistant turn %s crashed: %s", run_id, exc.__class__.__name__)
             outcome_box.append(Outcome("failed", "tool_failed"))
@@ -240,8 +242,16 @@ def _dispatch(
     runner: AssistantRunner,
     emit: Callable[[str, dict[str, Any]], None],
     reply_id: uuid.UUID,
+    *,
+    app: Any = None,
+    conversation_id: uuid.UUID | None = None,
 ) -> Outcome:
     """Decide the kind, tell the client first, then run the path."""
+    # job assistant-does-the-work A2: files dropped with the message: what each is and what to propose, decided by code (no model call); nothing is written before the plan's OK
+    if body.attachment_ids:
+        emit("intent", {"type": "intent", "kind": "action"})
+        logger.info("assistant turn: kind=action reason=files files=%d language=%s", len(body.attachment_ids), language)
+        return _file_turn(runtime, ctx, body, language, runner, emit, reply_id, app, conversation_id)
     # the owner's yes or no to the Lead Finder's plan card that the last reply showed (typed, or said to the voice): the search runs or is cancelled, no model call
     if last is not None and last.get("kind") in (None, "answer") and not last.get("task_id") and not last.get("sources") and lf_turn.is_answer(body.text):
         service = lf_turn.available(runtime, ctx)
@@ -281,6 +291,29 @@ def _dispatch(
     if intent.kind == "business":
         return runner.run(question=body.text, language=language, history=history[-BUSINESS_HISTORY:], emit=emit, message_id=reply_id)
     return _run_action(runtime, ctx, body, language, pending, runner, emit, reply_id)
+
+
+def _file_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: Language, runner: AssistantRunner, emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID,
+               app: Any, conversation_id: uuid.UUID | None) -> Outcome:
+    from app.assistant_work.service import FileTurn, Tools, words
+
+    store = getattr(runtime, "assistant_work", None)
+    if store is None or app is None:
+        return runner.finish_with(Reply(words("gone", language), language, "answer"), reply_id, emit)
+    emit("step", {"type": "step", "step": "working"})
+    turn = FileTurn(store, Tools(app), runtime.lead_sources)
+    sentences: list[str] = []
+    cards: list[tuple[str, dict[str, Any]]] = []
+    for file_id in body.attachment_ids[:5]:
+        try:
+            sentence, card = turn.answer(ctx.principal.token, ctx.tenant.id, file_id, message_id=reply_id, conversation_id=conversation_id, language=language)
+        except Exception as exc:   # one file that could not be handled does not lose the others
+            logger.warning("assistant file turn failed: %s", exc.__class__.__name__)
+            sentence, card = words("unreadable", language, name="file"), None
+        sentences.append(sentence)
+        if card is not None:
+            cards.append(("work_card", {"card": card}))
+    return runner.finish_with(Reply(" ".join(sentences), language, "answer"), reply_id, emit, extra=tuple(cards))
 
 
 def _assistant_name(runtime: Runtime, ctx: TenantContext) -> str:
@@ -372,6 +405,10 @@ def _replay(
         elif kind == "answer" and not reply.get("sources"):
             for lf_card in lf_turn.cards_for(runtime, ctx, [str(reply["id"])]).values():
                 yield _sse("lead_finder", {"type": "lead_finder", **lf_card})
+            from app.assistant_work.service import cards_for as work_cards_for
+
+            for work_card in work_cards_for(runtime, ctx, [str(reply["id"])]).get(str(reply["id"]), []):
+                yield _sse("work_card", {"type": "work_card", "card": work_card})
         yield _sse("done", {"type": "done", "message_id": str(reply["id"]), "conversation_id": str(conversation_id), "language": reply.get("language"), "kind": kind})
 
     return replay()
