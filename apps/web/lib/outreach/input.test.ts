@@ -39,8 +39,11 @@ describe("a standing rule as a form sends it", () => {
     expect(parseRuleInput({ ...rule, source: "website_form" })?.source).toBe("website_form");
     expect(parseRuleInput({ ...rule, action: "email_first" })).toBeNull();
   });
-  it("a rule that messages first needs its words", () => {
-    expect(parseRuleInput({ ...rule, action: "whatsapp_first", channel: "whatsapp", messageText: null })).toBeNull();
-    expect(parseRuleInput({ ...rule, action: "whatsapp_then_call", channel: "both", messageText: "Hi, we will call you shortly." })?.action).toBe("whatsapp_then_call");
+  it("call first (owner, 5 Nov): no WhatsApp-first rule and no WhatsApp-only rule; a rule that may send WhatsApp on request needs its words", () => {
+    expect(parseRuleInput({ ...rule, action: "whatsapp_first", channel: "both", messageText: "Hi" })).toBeNull();
+    expect(parseRuleInput({ ...rule, action: "whatsapp_then_call", channel: "both", messageText: "Hi, we will call you shortly." })).toBeNull();
+    expect(parseRuleInput({ ...rule, channel: "whatsapp", messageText: "Hi, here is our catalogue." })).toBeNull();
+    expect(parseRuleInput({ ...rule, channel: "both", messageText: null })).toBeNull();
+    expect(parseRuleInput({ ...rule, channel: "both", messageText: "Here is our catalogue, as you asked." })?.channel).toBe("both");
   });
 });
