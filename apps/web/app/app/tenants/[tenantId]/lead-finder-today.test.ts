@@ -53,8 +53,26 @@ describe("the Lead Finder's Needs-you rows (contract section 3)", () => {
     const finder = finderCards([row(5), row(4)], 2, BASE, t);
     const merged = mergeDesk(today, { needs: [...finder], team: [] });
     expect(merged.cards.waiting).toBe(3);
-    expect(merged.needs?.map((c) => c.key)).toEqual([finder[0].key, finder[1].key, "quote_approval-q1"]);
+    // the customers' things first, then the new businesses, each newest first (owner, 5 Nov: a fresh search buried the quotes)
+    expect(merged.needs?.map((c) => c.key)).toEqual(["quote_approval-q1", finder[0].key, finder[1].key]);
     expect(mergeDesk({ ...today, needs: null }, { needs: finder, team: [] }).cards.waiting).toBe(1);
+  });
+  it("the count is of things, not rows: the 'N more' row adds N (Lakshmi Silks test said 10 for 4 + 5 + 11 = 20)", () => {
+    const api = (n: number): NeedsCard => ({ type: "item", key: `quote_approval-q${n}`, at: "2026-11-01T03:00:00Z", item: { kind: "quote_approval", id: `q${n}`, customer: "Ravi", city: null, agent: "quote_writer", summary: "x", at: "2026-11-01T03:00:00Z", amount_paise: null, href: "x" } });
+    const today: TodayData = { ...NOTHING_TODAY, cards: { waiting: 4, money_held_paise: 0, orders_open: 0 }, needs: [api(1), api(2), api(3), api(4)] };
+    const finder = finderCards(Array.from({ length: 5 }, (_, i) => row(i + 1)), 16, BASE, t);
+    expect(finder).toHaveLength(6);
+    expect(finder[5].type === "item" && finder[5].item.count).toBe(11);
+    const merged = mergeDesk(today, { needs: finder, team: [] });
+    expect(merged.cards.waiting).toBe(20);
+    expect(merged.needs?.slice(0, 4).map((c) => c.key)).toEqual(["quote_approval-q1", "quote_approval-q2", "quote_approval-q3", "quote_approval-q4"]);
+  });
+  it("a row says where and how good, with 'Needs OK' for the first calls (owner, 5 Nov), and the opened card keeps the whole line", () => {
+    const [first] = finderCards([row(1, { area: "Jayanagar", rating: 4.6, decision_reason: "first_calls", fit_score: 93 })], 1, BASE, t);
+    expect(first.type === "item" && first.item).toMatchObject({ rowLine: "Jayanagar · 4.6★", summary: "fit 93 · 1 of the first 10 calls — needs your OK", prospect: { area: "Jayanagar", rating: 4.6, needsOk: true } });
+    const [low] = finderCards([parseProspect(PROSPECT_LOW)], 1, BASE, t);
+    expect(low.type === "item" && low.item.prospect?.needsOk).toBe(false);
+    expect(low.type === "item" && low.item.rowLine).toMatch(/low stock$/);
   });
 });
 
