@@ -301,7 +301,12 @@ def _file_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: Lan
     if store is None or app is None:
         return runner.finish_with(Reply(words("gone", language), language, "answer"), reply_id, emit)
     emit("step", {"type": "step", "step": "working"})
-    turn = FileTurn(store, Tools(app), runtime.lead_sources)
+    from app.assistant_work.vision import model_vision
+
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    tasks = runtime.tasks
+    # owner rules (5 Nov 2026): a scanned page is read by local OCR first; the AI model reads it only when that found nothing, and never in a school's workspace
+    turn = FileTurn(store, Tools(app), runtime.lead_sources, reader=getattr(runtime, "assistant_file_reader", None), school=(lambda: tasks is None or tasks.is_school(runtime, token, tenant)), vision=model_vision(runtime, token, tenant))
     sentences: list[str] = []
     cards: list[tuple[str, dict[str, Any]]] = []
     for file_id in body.attachment_ids[:5]:

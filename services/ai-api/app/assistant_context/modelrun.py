@@ -47,8 +47,9 @@ def run(
     max_output_tokens: int,
     charge: Callable[[Any], None] | None = None,
     attachments: tuple[Attachment, ...] = (),
+    meta: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """The structured result of one call, or an ApiError (the day's allowance, the model busy or not set up)."""
+    """The structured result of one call, or an ApiError (the day's allowance, the model busy or not set up). `meta` gets the model's id (for a log line that names the provider, never the content)."""
     from app.assistant.routes import (
         _refusal,  # (imported here: the routes import the runtime, which holds this module's service)
     )
@@ -73,6 +74,8 @@ def run(
         router = as_router(factory())
         request = LlmRequest(blocks=tuple(blocks), tools=(), max_output_tokens=max_output_tokens, task_class=TaskClass.SIMPLE, final_result=final, attachments=attachments)
         llm = router.choose(request.task_class, db.ai_mode)
+        if meta is not None:
+            meta["model"] = str(getattr(llm, "model_id", "") or "")
         if attachments and not getattr(llm, "supports_attachments", False):
             raise ApiError(503, "vision_unavailable", "Reading pictures and PDFs is not switched on for this system. Paste the text instead.")
         try:
