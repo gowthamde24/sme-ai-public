@@ -1,4 +1,4 @@
-"""Numbers as people SAY them, in the six languages (job pronunciation-quality). Indian grouping (thousand, lakh, crore). Pure text in, text out: no network, no key.
+"""Numbers as people SAY them, in the seven languages (job pronunciation-quality; Marathi job M1). Indian grouping (thousand, lakh, crore). Pure text in, text out: no network, no key.
 
 English uses the words of app/conversation/pronounce.py. The other five are written out from small tables: the words 0 to 19, the tens, the hundreds, and the names of the places (thousand, lakh, crore). The lines are
 DRAFTS for a native reader (the weekly review, app/pronunciation/README in the job notes); the nightly round trip (speech -> Sarvam -> text) catches the gross errors."""
@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from app.conversation.pronounce import indian_words
 
-LANGS = ("en", "te", "hi", "kn", "ta", "ml")
+LANGS = ("en", "te", "hi", "kn", "ta", "ml", "mr")
 
 _TE_UNITS = ["సున్నా", "ఒకటి", "రెండు", "మూడు", "నాలుగు", "ఐదు", "ఆరు", "ఏడు", "ఎనిమిది", "తొమ్మిది", "పది", "పదకొండు", "పన్నెండు", "పదమూడు", "పద్నాలుగు", "పదిహేను", "పదహారు", "పదిహేడు", "పద్దెనిమిది", "పంతొమ్మిది"]
 _TE_TENS = {2: "ఇరవై", 3: "ముప్పై", 4: "నలభై", 5: "యాభై", 6: "అరవై", 7: "డెబ్బై", 8: "ఎనభై", 9: "తొంభై"}
@@ -28,13 +28,25 @@ _HI = (
 ).split()
 if len(_HI) != 100:
     raise RuntimeError("the Hindi number table must have 100 words")
+# Marathi (job M1): like Hindi, every number to 99 is its own word. A DRAFT for a native reader.
+_MR = (
+    "शून्य एक दोन तीन चार पाच सहा सात आठ नऊ दहा अकरा बारा तेरा चौदा पंधरा सोळा सतरा अठरा एकोणीस वीस एकवीस बावीस तेवीस चोवीस पंचवीस सव्वीस सत्तावीस अठ्ठावीस एकोणतीस "
+    "तीस एकतीस बत्तीस तेहेतीस चौतीस पस्तीस छत्तीस सदतीस अडतीस एकोणचाळीस चाळीस एक्केचाळीस बेचाळीस त्रेचाळीस चव्वेचाळीस पंचेचाळीस सेहेचाळीस सत्तेचाळीस अठ्ठेचाळीस एकोणपन्नास "
+    "पन्नास एक्कावन्न बावन्न त्रेपन्न चोपन्न पंचावन्न छप्पन्न सत्तावन्न अठ्ठावन्न एकोणसाठ साठ एकसष्ठ बासष्ठ त्रेसष्ठ चौसष्ठ पासष्ठ सहासष्ठ सदुसष्ठ अडुसष्ठ एकोणसत्तर "
+    "सत्तर एक्काहत्तर बाहत्तर त्र्याहत्तर चौऱ्याहत्तर पंच्याहत्तर शहात्तर सत्याहत्तर अठ्ठ्याहत्तर एकोणऐंशी ऐंशी एक्क्याऐंशी ब्याऐंशी त्र्याऐंशी चौऱ्याऐंशी पंच्याऐंशी शहाऐंशी सत्त्याऐंशी अठ्ठ्याऐंशी एकोणनव्वद "
+    "नव्वद एक्क्याण्णव ब्याण्णव त्र्याण्णव चौऱ्याण्णव पंच्याण्णव शहाण्णव सत्त्याण्णव अठ्ठ्याण्णव नव्याण्णव"
+).split()
+if len(_MR) != 100:
+    raise RuntimeError("the Marathi number table must have 100 words")
 
-# the words for 100 to 900 where the language joins them into one word (Kannada, Tamil, Malayalam); Telugu and Hindi say "<n> hundreds"
+# the words for 100 to 900 where the language joins them into one word (Kannada, Tamil, Malayalam, Marathi); Telugu and Hindi say "<n> hundreds"
 _HUNDREDS: dict[str, list[str]] = {
     "kn": ["", "ನೂರು", "ಇನ್ನೂರು", "ಮುನ್ನೂರು", "ನಾನೂರು", "ಐನೂರು", "ಆರುನೂರು", "ಏಳುನೂರು", "ಎಂಟುನೂರು", "ಒಂಬೈನೂರು"],
     "ta": ["", "நூறு", "இருநூறு", "முந்நூறு", "நானூறு", "ஐந்நூறு", "அறுநூறு", "எழுநூறு", "எண்ணூறு", "தொளாயிரம்"],
     "ml": ["", "നൂറ്", "ഇരുന്നൂറ്", "മുന്നൂറ്", "നാനൂറ്", "അഞ്ഞൂറ്", "അറുനൂറ്", "എഴുനൂറ്", "എണ്ണൂറ്", "തൊള്ളായിരം"],
+    "mr": ["", "शंभर", "दोनशे", "तीनशे", "चारशे", "पाचशे", "सहाशे", "सातशे", "आठशे", "नऊशे"],   # 150 is "एकशे पन्नास" (_MR_ONE_HUNDRED_BEFORE_MORE)
 }
+_MR_ONE_HUNDRED_BEFORE_MORE = "एकशे"
 # (word for 1, word for more than 1) of thousand, lakh, crore; hundred for the two languages that count hundreds
 _PLACES: dict[str, dict[str, tuple[str, str]]] = {
     "te": {"hundred": ("వంద", "వందలు"), "thousand": ("వెయ్యి", "వేలు"), "lakh": ("లక్ష", "లక్షలు"), "crore": ("కోటి", "కోట్లు")},
@@ -42,16 +54,19 @@ _PLACES: dict[str, dict[str, tuple[str, str]]] = {
     "kn": {"thousand": ("ಸಾವಿರ", "ಸಾವಿರ"), "lakh": ("ಲಕ್ಷ", "ಲಕ್ಷ"), "crore": ("ಕೋಟಿ", "ಕೋಟಿ")},
     "ta": {"thousand": ("ஆயிரம்", "ஆயிரம்"), "lakh": ("லட்சம்", "லட்சம்"), "crore": ("கோடி", "கோடி")},
     "ml": {"thousand": ("ആയിരം", "ആയിരം"), "lakh": ("ലക്ഷം", "ലക്ഷം"), "crore": ("കോടി", "കോടി")},
+    "mr": {"thousand": ("हजार", "हजार"), "lakh": ("लाख", "लाख"), "crore": ("कोटी", "कोटी")},
 }
 _ONE_WORD = {"ta": "ஒரு", "ml": "ഒരു"}   # the "a/one" that goes before a place name
 # Telugu puts the name of a place in the genitive when more of the number follows: "రెండు వేల ఆరు వందలు", "రెండు వందల యాభై"
 _TE_BEFORE_MORE = {"వందలు": "వందల", "వేలు": "వేల", "లక్షలు": "లక్షల", "కోట్లు": "కోట్ల"}
-POINT = {"en": "point", "te": "పాయింట్", "hi": "दशमलव", "kn": "ಪಾಯಿಂಟ್", "ta": "புள்ளி", "ml": "പോയിന്റ്"}
+POINT = {"en": "point", "te": "పాయింట్", "hi": "दशमलव", "kn": "ಪಾಯಿಂಟ್", "ta": "புள்ளி", "ml": "പോയിന്റ്", "mr": "पूर्णांक"}
 
 
 def _under_100(n: int, lang: str) -> str:
     if lang == "hi":
         return _HI[n]
+    if lang == "mr":
+        return _MR[n]
     units = {"te": _TE_UNITS, "kn": _KN_UNITS, "ta": _TA_UNITS, "ml": _ML_UNITS}[lang]
     if n < 20:
         return units[n]
@@ -67,7 +82,9 @@ def _under_1000(n: int, lang: str, more: bool = False) -> str:
     hundreds, rest = divmod(n, 100)
     parts = []
     if hundreds:
-        if lang in _HUNDREDS:
+        if lang == "mr" and hundreds == 1 and rest:
+            parts.append(_MR_ONE_HUNDRED_BEFORE_MORE)
+        elif lang in _HUNDREDS:
             parts.append(_HUNDREDS[lang][hundreds])
         else:
             one, many = _PLACES[lang]["hundred"]

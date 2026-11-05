@@ -2,14 +2,15 @@
   "$schema": "./assistant.schema.json",
   "version": 1,
   "status": "draft",
-  "note": "DRAFT for native review (job DM, 25 Oct 2026). The wording of every language is a first draft written without a native reader; a person who reads Telugu, Hindi and Kannada should check it before a real customer hears it. Defaults are per business type, so an owner can skip Settings > AI assistant.",
+  "note": "DRAFT for native review (job DM, 25 Oct 2026). The wording of every language is a first draft written without a native reader; a person who reads Telugu, Hindi and Kannada should check it before a real customer hears it. Defaults are per business type, so an owner can skip Settings > AI assistant. Marathi (mr, job M1, owner decision 5 Nov 2026) is a first DRAFT too, written without a native reader.",
   "languages": [
     "en",
     "te",
     "hi",
     "kn",
     "ta",
-    "ml"
+    "ml",
+    "mr"
   ],
   "personas": [
     {
@@ -93,7 +94,8 @@
     "hi": "{business} से AI assistant {name}",
     "kn": "{business} ನಿಂದ AI assistant {name}",
     "ta": "{business} ல இருந்து AI assistant {name}",
-    "ml": "{business} ൽ നിന്ന് AI assistant {name}"
+    "ml": "{business} ൽ നിന്ന് AI assistant {name}",
+    "mr": "{business} कडून AI assistant {name}"
   },
   "samples": {
     "textiles": {
@@ -126,6 +128,11 @@
         "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. പുതിയ sarees വന്നിട്ടുണ്ട്, കുറച്ച് photos അയക്കട്ടെ?",
         "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ പുതിയ collection നെ പറ്റി ഒരു minute പറയട്ടെ?",
         "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. പുതിയ sarees വന്നു. WhatsApp ൽ photos അയക്കട്ടെ?"
+      },
+      "mr": {
+        "warm": "नमस्कार, मी {name}, {business} कडून AI assistant बोलतेय. नवीन sarees आल्या आहेत, काही photos पाठवू का?",
+        "respectful": "नमस्कार, मी {name}, {business} कडून AI assistant बोलतेय. आमच्या नवीन collection बद्दल एक minute सांगू का?",
+        "quick": "हाय, {business} कडून AI assistant {name}. नवीन sarees आल्या आहेत. WhatsApp वर photos पाठवू का?"
       }
     },
     "construction_materials": {
@@ -158,6 +165,11 @@
         "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. പുതിയ stock വന്നിട്ടുണ്ട്, rates, photos WhatsApp ൽ അയക്കട്ടെ?",
         "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ പുതിയ stock, rates നെ പറ്റി ഒരു minute പറയട്ടെ?",
         "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. പുതിയ stock വന്നു. WhatsApp ൽ rates അയക്കട്ടെ?"
+      },
+      "mr": {
+        "warm": "नमस्कार, मी {name}, {business} कडून AI assistant बोलतेय. नवीन stock आला आहे, rates आणि photos WhatsApp वर पाठवू का?",
+        "respectful": "नमस्कार, मी {name}, {business} कडून AI assistant बोलतेय. आमच्या नवीन stock आणि rates बद्दल एक minute सांगू का?",
+        "quick": "हाय, {business} कडून AI assistant {name}. नवीन stock आला आहे. WhatsApp वर rates पाठवू का?"
       }
     },
     "education": {
@@ -190,6 +202,11 @@
         "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. അടുത്ത year admissions open ആയിട്ടുണ്ട്, details WhatsApp ൽ അയക്കട്ടെ?",
         "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. ഞങ്ങളുടെ admissions നെ പറ്റി ഒരു minute പറയട്ടെ?",
         "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. Admissions open ആയി. WhatsApp ൽ details അയക്കട്ടെ?"
+      },
+      "mr": {
+        "warm": "नमस्कार, मी {name}, {business} कडून AI assistant बोलतेय. पुढच्या वर्षाचे admissions सुरू झाले आहेत, details WhatsApp वर पाठवू का?",
+        "respectful": "नमस्कार, मी {name}, {business} कडून AI assistant बोलतेय. आमच्या admissions बद्दल एक minute सांगू का?",
+        "quick": "हाय, {business} कडून AI assistant {name}. Admissions सुरू झाले आहेत. WhatsApp वर details पाठवू का?"
       }
     },
     "leads": {
@@ -222,6 +239,11 @@
         "warm": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. നിങ്ങളുടെ enquiry ക്ക് thanks, നിങ്ങൾക്ക് എന്താണ് വേണ്ടതെന്ന് രണ്ട് കാര്യം ചോദിക്കട്ടെ?",
         "respectful": "നമസ്കാരം, ഞാൻ {name}, {business} ൽ നിന്ന് AI assistant ആണ്. നിങ്ങൾ enquiry ചെയ്തിരുന്നല്ലോ, നിങ്ങളുടെ requirement നെ പറ്റി ഒരു minute സംസാരിക്കാമോ?",
         "quick": "ഹായ്, {business} ൽ നിന്ന് AI assistant {name}. നിങ്ങളുടെ enquiry യെ പറ്റി രണ്ട് quick questions ചോദിക്കട്ടെ?"
+      },
+      "mr": {
+        "warm": "नमस्कार, मी {name}, {business} कडून AI assistant बोलतेय. तुमच्या enquiry साठी thanks, तुम्हाला काय हवं आहे ते समजण्यासाठी दोन प्रश्न विचारू का?",
+        "respectful": "नमस्कार, मी {name}, {business} कडून AI assistant बोलतेय. तुम्ही enquiry केली होती, तुमच्या requirement बद्दल एक minute बोलू का?",
+        "quick": "हाय, {business} कडून AI assistant {name}. तुमच्या enquiry बद्दल दोन quick प्रश्न विचारू का?"
       }
     }
   },

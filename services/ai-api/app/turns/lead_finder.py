@@ -146,6 +146,11 @@ def upgrade_card() -> dict[str, Any]:
             "screen": {"label": "Plans", "href": "/plans"}}
 
 
+def _words_in(language: Language) -> Language:
+    """The language these fixed words are written in: the turn's own, or English for a language with no words here yet (job M1: Marathi; the lead finder's texts are not part of M1)."""
+    return language if language in FAILED else "en"
+
+
 def upgrade_turn(language: Language, runner: AssistantRunner, emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID) -> Outcome:
     return runner.finish_with(Reply(UPGRADE.get(language, UPGRADE["en"]), language, "answer"), reply_id, emit, extra=(("work_card", {"card": upgrade_card()}),))
 
@@ -191,6 +196,7 @@ def _shown_query(service: LeadFinderService, ctx: TenantContext, search: SearchO
 
 
 def plan_words(service: LeadFinderService, ctx: TenantContext, search: SearchOut, language: Language) -> str:
+    language = _words_in(language)
     template = (PLAN_PLACES if search.provider == "places" else PLAN_FIXTURE)[language]
     cost = f"{search.est_cost_paise / 100:.0f}" if search.est_cost_paise % 100 == 0 else f"{search.est_cost_paise / 100:.2f}"
     text = (template.replace("{query}", _shown_query(service, ctx, search, language)).replace("{area}", search.area or "")
@@ -201,6 +207,7 @@ def plan_words(service: LeadFinderService, ctx: TenantContext, search: SearchOut
 
 
 def result_words(search: SearchOut, language: Language) -> str:
+    language = _words_in(language)
     counts = search.counts or {}
     area = search.area or ""
     if search.state == "failed":
@@ -237,6 +244,7 @@ INDIVIDUALS: dict[str, dict[str, str]] = {
 def plan_turn(service: LeadFinderService, ctx: TenantContext, text: str, language: Language, runner: AssistantRunner,
               emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID) -> Outcome | None:
     """The plan card for the owner's words, or the question "where?" when they named no place. None = not a search after all (the router answers as usual)."""
+    language = _words_in(language)
     token, tenant = ctx.principal.token, ctx.tenant.id
     if lf_intent.names_individuals(text):   # refused before asking "where?": the Lead Finder never looks for people or families
         audience = service.availability(token, tenant).audience
@@ -266,6 +274,7 @@ def plan_turn(service: LeadFinderService, ctx: TenantContext, text: str, languag
 def answer_turn(service: LeadFinderService, ctx: TenantContext, search: SearchOut, text: str, language: Language, runner: AssistantRunner,
                 emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID) -> Outcome:
     """The owner's yes or no to the plan card the last reply showed. Yes runs the search exactly as the card's OK does (Owner or Admin); no cancels it."""
+    language = _words_in(language)
     token, tenant = ctx.principal.token, ctx.tenant.id
     decision = polarity(text)
     if ctx.role not in (Role.OWNER, Role.ADMIN):
