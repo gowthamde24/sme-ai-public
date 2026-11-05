@@ -50,6 +50,12 @@ class PackLeadFinder:
     purpose: dict[str, str]
     questions: dict[str, dict[str, str]]
     fixture: tuple[FixtureTemplate, ...] = field(default_factory=tuple)
+    # who may be found (owner decision 4 Nov 2026): "businesses" (a shop's buyers) or "organisations" (a school: associations, companies, coaching centres, vendors, institutions; never individuals)
+    audience: str = "businesses"
+    # whether a prospect is matched against our stock (a school sells no stock: fit is the kind of organisation, its size and distance)
+    uses_stock: bool = True
+    # the scripted persona of the simulated qualifying call (app/lead_finder/qualify.py): "" = decided by the category hint (textile / materials)
+    persona: str = ""
 
 
 def _types(rows: list[dict[str, Any]]) -> tuple[BuyerType, ...]:
@@ -70,6 +76,9 @@ def parse(pack_id: str, raw: dict[str, Any]) -> PackLeadFinder:
         purpose={str(k): str(v) for k, v in call["purpose"].items()},
         questions={str(k): {str(lk): str(lv) for lk, lv in v.items()} for k, v in call["questions"].items()},
         fixture=tuple(FixtureTemplate(name=str(t["name"]), category=str(t["category"]), kind=str(t["kind"]), rating=t.get("rating"), reviews=t.get("reviews")) for t in raw.get("fixture", {}).get("templates", [])),
+        audience="organisations" if raw.get("audience") == "organisations" else "businesses",
+        uses_stock=raw.get("uses_stock") is not False,
+        persona=str(raw.get("persona") or ""),
     )
 
 

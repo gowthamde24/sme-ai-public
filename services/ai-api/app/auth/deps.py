@@ -176,6 +176,8 @@ class Runtime:
     tasks: TasksService | None = None
     # Lead Finder (ADR 0119): find new businesses, decide, the simulated qualifying call
     lead_finder: LeadFinderService | None = None
+    # job assistant-does-the-work A2: chat files, plan cards, action log (assistant_work)
+    assistant_work: Any = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)

@@ -175,9 +175,9 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `EXOTEL_STREAM_SECRET` | secret | api | Signs the per-call token of the Voicebot URL (`docs/runbooks/phone-inbound-sandbox.md`), 32+ characters. Secret Manager: `sme-exotel-stream-secret` (made by C1, 4 Nov 2026). |
 | `TELEPHONY_INBOUND_LANGUAGE` | plain | api | The language of an inbound call's opening line (`en` default; staging `te`); the call then follows the language spoken. |
 | `EXOTEL_STREAM_URL_FORMAT` | plain | api | How the Voicebot URL answers: `json` (default, `{"url": "wss://..."}`) or `text` (the bare `wss://` address). |
-| `EXOTEL_TRIAL_NUMBER` | plain | api | Sandbox only: Exotel's SHARED trial ExoPhone (PIN routing). Its calls are recorded under Exotel's trial host account, so the call lookup cannot confirm them; with the next two set, a call to it is admitted by the trial rule instead (`app/telephony/inbound.py` `TrialRule`). Empty: no trial rule. |
-| `EXOTEL_TRIAL_CALLER` | plain | api | Sandbox only: the one caller the trial rule admits (staging: the owner's number). |
-| `EXOTEL_TRIAL_APP_ID` | plain | api | Sandbox only: the Voicebot flow's app id; the start message must name it, and its account_sid must equal `EXOTEL_SID`. |
+| `EXOTEL_TRIAL_NUMBER` | plain | api | Sandbox only: Exotel's SHARED trial ExoPhone (PIN routing). A caller it does not recognise (a roaming phone's number arrives altered) enters the PIN, so the caller is not a condition there: a call is admitted when the token, the start message's account_sid (= `EXOTEL_SID`) and Exotel's own record of the CallSid under our account hold, one call at a time, N a day, a short cut (`app/telephony/inbound.py` `TrialRule`). Empty: no trial rule. |
+| `EXOTEL_TRIAL_CALLER` | plain | api | Sandbox only: the owner's number, compared with the arriving caller for the LOG only (yes / no and a shape, never the digits); not a condition. |
+| `EXOTEL_TRIAL_APP_ID` | plain | api | Sandbox only: the Voicebot flow's app id; compared when the start message names one (a different one is refused; Exotel's names none). |
 | `EXOTEL_TRIAL_CALLS_PER_DAY` | plain | api | Sandbox only: calls the trial rule admits per India day, per server instance (default 10). |
 | `EXOTEL_TRIAL_MAX_CALL_S` | plain | api | Sandbox only: a trial call is cut at this many seconds (default 180, never more). |
 | `TELEPHONY_INBOUND_BUSINESS` | plain | api | The business the inbound opening line names (staging `Stack19`). |

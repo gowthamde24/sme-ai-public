@@ -39,7 +39,7 @@ select is(app.module_enabled(tests.tid('a'), 'no_such_module'), false, 'A7 an un
 select is(app.module_enabled(tests.tid('a'), 'quotes'), true, 'B1 textiles still has quotes');
 select pg_temp.pack('a', 'education');
 select is(app.module_enabled(tests.tid('a'), 'quotes'), false, 'B2 a school still does not');
-select is(app.module_enabled(tests.tid('a'), 'lead_finder'), false, 'B3 ... and still has no lead finding');
+select is(app.module_enabled(tests.tid('a'), 'lead_finder'), true, 'B3 ... but has the Lead Finder since pack version 3 (owner decision 4 Nov 2026: organisations only, decided by the API)');
 select is(app.module_enabled(tests.tid('a'), 'research'), false, 'B4 ... nor research');
 select is(app.module_enabled(tests.tid('a'), 'lead_desk'), true, 'B5 but Lead Desk is on for it (admission enquiries)');
 

@@ -130,16 +130,19 @@ def distance_points(km: float | None) -> int:
     return 15 if km <= 5 else 10 if km <= 15 else 6 if km <= 40 else 2
 
 
-def fit_score(buyer: BuyerType | None, place: Place, stock: StockMatch, km: float | None) -> int:
+def fit_score(buyer: BuyerType | None, place: Place, stock: StockMatch, km: float | None, *, uses_stock: bool = True) -> int:
     category = buyer.weight if buyer else 0
-    stock_pts = 25 if stock.enough else 12 if stock.low else 0
+    # a business type that sells no stock (a school): the kind of organisation, its size and its distance decide; the stock's 25 points go to a known kind
+    stock_pts = (25 if buyer else 0) if not uses_stock else 25 if stock.enough else 12 if stock.low else 0
     return max(0, min(100, category + size_points(place) + distance_points(km) + stock_pts))
 
 
-def reason_line(buyer: BuyerType | None, stock: StockMatch, place: Place) -> str:
+def reason_line(buyer: BuyerType | None, stock: StockMatch, place: Place, *, uses_stock: bool = True) -> str:
     """One line, built from closed words and our own item names only (no personal data, no model)."""
     who = buyer.label if buyer else (place.category or "Business")
-    if stock.enough:
+    if not uses_stock:
+        line = who if buyer else f"{who}; not an organisation we look for"
+    elif stock.enough:
         have = ", ".join(stock.matched[:2])
         line = f"{who}; we have {have} in stock"
     elif stock.low:
@@ -162,8 +165,8 @@ def decide(place: Place, data: PackLeadFinder, stock: list[StockLine], settings:
            suppressed: bool = False, last_contacted_at: datetime | None = None, owner_approved: bool = False) -> Decision:
     buyer, _main = buyer_type_of(place, data)
     match = stock_match(buyer, stock)
-    fit = fit_score(buyer, place, match, km)
-    line = reason_line(buyer, match, place)
+    fit = fit_score(buyer, place, match, km, uses_stock=data.uses_stock)
+    line = reason_line(buyer, match, place, uses_stock=data.uses_stock)
     btype = buyer.code if buyer else None
 
     def out(status: Status, reason: str) -> Decision:
@@ -188,7 +191,7 @@ def decide(place: Place, data: PackLeadFinder, stock: list[StockLine], settings:
         return out("needs_owner", "very_large")
     if fit < settings.fit_bar:
         return out("needs_owner", "fit_middle")
-    if not match.enough:
+    if data.uses_stock and not match.enough:
         return out("needs_owner", "low_stock" if match.low else "no_stock_match")
     if not owner_approved and situation.approved_in_search < FIRST_CALLS:
         return out("needs_owner", "first_calls")

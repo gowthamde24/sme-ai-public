@@ -1,9 +1,9 @@
 {
  "$schema": "./plans.schema.json",
- "version": 3,
+ "version": 4,
  "status": "draft",
  "currency": "INR",
- "note": "DRAFT of 23 Oct 2026 (owner decisions, job DI); version 2 of 25 Oct 2026 (evening): the trial is 14 days, counted from the day the workspace's WhatsApp is connected. Version 3 of 26 Oct 2026: only the names of the three calls plans change (Lead Desk 300, Lead Desk 1,000, Pay as you go). Prices are NOT decided: every price is null until the owner sets it from the usage tests. A published version is never edited: raise `version` and run `make plans-migration`.",
+ "note": "DRAFT of 23 Oct 2026 (owner decisions, job DI); version 2 of 25 Oct 2026 (evening): the trial is 14 days, counted from the day the workspace's WhatsApp is connected. Version 3 of 26 Oct 2026: only the names of the three calls plans change (Lead Desk 300, Lead Desk 1,000, Pay as you go). Version 4 (5 Nov 2026): each plan names its product (AI Workforce: every feature; Lead Desk: all but the Lead Finder). Prices are NOT decided: every price is null until the owner sets it from the usage tests. Never edit a published version: raise `version`, run `make plans-migration`.",
  "trial": {
   "plan": "free_trial",
   "days": 14,
@@ -12,10 +12,30 @@
   "payment_method_at_start": true,
   "grace_days_after_failed_payment": 7
  },
+ "products": {
+  "ai_workforce": {
+   "name": {
+    "en": "AI Workforce"
+   },
+   "features": [
+    "lead_desk",
+    "lead_finder"
+   ]
+  },
+  "lead_desk": {
+   "name": {
+    "en": "Lead Desk"
+   },
+   "features": [
+    "lead_desk"
+   ]
+  }
+ },
  "plans": [
   {
    "id": "free_trial",
    "kind": "trial",
+   "product": "ai_workforce",
    "sort": 0,
    "name": {
     "en": "Free trial"
@@ -34,6 +54,7 @@
   {
    "id": "starter",
    "kind": "main",
+   "product": "ai_workforce",
    "sort": 10,
    "name": {
     "en": "Starter"
@@ -52,6 +73,7 @@
   {
    "id": "growth",
    "kind": "main",
+   "product": "ai_workforce",
    "sort": 20,
    "name": {
     "en": "Growth"
@@ -70,6 +92,7 @@
   {
    "id": "business",
    "kind": "main",
+   "product": "ai_workforce",
    "sort": 30,
    "name": {
     "en": "Business"
@@ -88,6 +111,7 @@
   {
    "id": "calls_payg",
    "kind": "calls",
+   "product": "lead_desk",
    "sort": 40,
    "name": {
     "en": "Pay as you go"
@@ -108,6 +132,7 @@
   {
    "id": "calls_300",
    "kind": "calls",
+   "product": "lead_desk",
    "sort": 50,
    "name": {
     "en": "Lead Desk 300"
@@ -126,6 +151,7 @@
   {
    "id": "calls_1000",
    "kind": "calls",
+   "product": "lead_desk",
    "sort": 60,
    "name": {
     "en": "Lead Desk 1,000"
