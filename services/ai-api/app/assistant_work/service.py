@@ -843,10 +843,18 @@ class PlanRunner:
             raise ApiError(409, "plan_state", "Only a plan that ran can be undone.")
         steps = [dict(s) for s in plan.get("steps") or []]
         message_id = uuid.UUID(str(plan["message_id"]))
+        try:   # a step undone one by one from Settings -> Activity is not undone again (the log is the Owner's and an Admin's; for anyone else the steps' own state decides)
+            logged = {int(a["step_no"]): str(a.get("status")) for a in self.store.actions_list(token, tenant_id, None, None, 20, None, plan_id)}
+        except Exception:
+            logged = {}
         undone = 0
         for index in range(len(steps) - 1, -1, -1):   # newest first
             step = steps[index]
             how = step.get("undo")
+            if logged.get(index + 1) == "undone":
+                step["status"], step["error"] = "undone", None
+                undone += 1
+                continue
             if step.get("status") != "done" or not isinstance(how, dict):
                 continue
             try:
@@ -870,6 +878,34 @@ class PlanRunner:
             raise ApiError(403 if failed == "forbidden" else 409, "forbidden" if failed == "forbidden" else "nothing_to_undo",
                            "Only the Owner or an Admin can undo this." if failed == "forbidden" else "Nothing here can be undone.")
         return self._move(token, tenant_id, plan_id, str(plan["status"]), "undone", steps)
+
+
+async def undo_action(store: WorkStore, tools: Tools, token: str, tenant_id: uuid.UUID, action_id: uuid.UUID) -> dict[str, Any]:
+    """Settings -> Activity's Undo of ONE logged step (docs/contracts/assistant-tools.md section 3): its plan's own stored undo, run through the step's undo route with the caller's token; the
+    database marks it undone (the Owner, or whoever said "Do it"). Offered for 7 days."""
+    rows = store.actions_list(token, tenant_id, None, None, 1, action_id)
+    if not rows:
+        raise ApiError(404, "not_found", "Not found.")
+    row = rows[0]
+    if row.get("undo") != "available":
+        raise ApiError(409, "nothing_to_undo" if row.get("undo") in ("none", "done") else "undo_expired",
+                       "This change cannot be undone." if row.get("undo") == "none" else "This change was undone already." if row.get("undo") == "done" else "The undo for this change has expired (7 days).")
+    plan_id = uuid.UUID(str(row["plan_id"]))
+    plan = store.plan_get(token, tenant_id, plan_id)
+    steps = [dict(x) for x in plan.get("steps") or []]
+    no = int(row["step_no"])
+    how = steps[no - 1].get("undo") if 0 < no <= len(steps) else None
+    if not isinstance(how, dict):
+        raise ApiError(409, "nothing_to_undo", "This change cannot be undone.")
+    try:
+        result = await tools.undo(tenant_id, token, how, uuid.UUID(str(plan["message_id"])))
+    except executor.ToolRefused:
+        raise ApiError(409, "nothing_to_undo", "This change cannot be undone.") from None
+    if not result.ok:
+        raise ApiError(403 if result.error == "forbidden" else 409, "forbidden" if result.error == "forbidden" else "undo_failed",
+                       "Only the Owner or an Admin can undo this." if result.error == "forbidden" else "The undo did not go through; nothing else was changed.")
+    store.action_undone(token, tenant_id, plan_id, no)
+    return store.actions_list(token, tenant_id, None, None, 1, action_id)[0]
 
 
 def _changed(tool: Any, answer: Any) -> dict[str, Any]:

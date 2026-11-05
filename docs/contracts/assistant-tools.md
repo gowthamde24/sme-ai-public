@@ -174,10 +174,13 @@ feature is part of AI Workforce and this workspace is on Lead Desk ("find new re
 
 ## 3. Settings -> Activity (design 6)
 - `GET /assistant/actions?since=<iso>&before=<iso>&limit=50` -> `{ items: [ { action_id, tool, summary, changed, requested_by, message_id, at, status: "done" | "failed" | "undone", undo: "available" | "done" | "none" | "expired" } ], next_before }`
-  (Owner, Admin). Every entry is "by the assistant, on <requested_by>'s request". **Built: the log is written** (one row per step that ran, with its undo for 7 days); the list and its undo
-  routes are the next part. **CHANGED:** the change's own audit row is the person's (the route ran with their token); the request carries `X-Assistant-Message: <message id>`, and the action log
+  (Owner, Admin; Sales and Viewer get 403). Every entry is "by the assistant, on <requested_by>'s request". **Built (migration 20261231110000, `public.assistant_actions_list`):**
+  - **The list:** newest first. Each item also has `plan_id`, `step_no`, `decided_by`, `error` and `undone_at`; the stored undo itself is never returned, only its state.
+  - **Paging and errors:** `next_before` is set when the page is full. `since` and `before` are ISO times; anything else gets 422. **CHANGED:** the change's own audit row is the person's (the route ran with their token); the request carries `X-Assistant-Message: <message id>`, and the action log
   row carries the `message_id`. Writing it into the audit row too is a later part.
-- `POST /assistant/actions/{action_id}/undo` -> the entry. An undo is offered for 7 days, then `undo: "expired"`.
+- `POST /assistant/actions/{action_id}/undo` (Owner, Admin) -> the entry, now `status: "undone"`, `undo: "done"`. It runs that ONE step's own undo route with the caller's token. It is offered for
+  7 days, then `undo: "expired"` and 409 `undo_expired`. A step with no undo, or one already undone: 409 `nothing_to_undo`. The route refusing: 403 `forbidden`, or 409 `undo_failed` (nothing else
+  changed). A plan's Undo afterwards skips the steps already undone one by one.
 - "What did you change today?" in the chat is answered from the same list.
 
 ## 4. Never

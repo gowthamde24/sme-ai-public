@@ -32,6 +32,7 @@ class WorkStore(Protocol):
     def plan_move(self, token: str, tenant_id: uuid.UUID, plan_id: uuid.UUID, expect: str, status: str, steps: list[dict[str, Any]] | None = None, *, file_gone: bool = False) -> dict[str, Any]: ...
     def action_record(self, token: str, tenant_id: uuid.UUID, plan_id: uuid.UUID, step_no: int, tool: str, summary: str, status: str, error: str | None, changed: dict[str, Any], undo: dict[str, Any] | None) -> dict[str, Any]: ...
     def action_undone(self, token: str, tenant_id: uuid.UUID, plan_id: uuid.UUID, step_no: int) -> bool: ...
+    def actions_list(self, token: str, tenant_id: uuid.UUID, since: str | None, before: str | None, limit: int, action_id: uuid.UUID | None = None, plan_id: uuid.UUID | None = None) -> list[dict[str, Any]]: ...
 
 
 class PostgrestWorkStore:
@@ -68,3 +69,7 @@ class PostgrestWorkStore:
 
     def action_undone(self, token: str, tenant_id: uuid.UUID, plan_id: uuid.UUID, step_no: int) -> bool:
         return bool(self._rpc.call(token, "assistant_action_mark_undone", {"p_tenant_id": str(tenant_id), "p_plan_id": str(plan_id), "p_step_no": step_no}))
+
+    def actions_list(self, token: str, tenant_id: uuid.UUID, since: str | None, before: str | None, limit: int, action_id: uuid.UUID | None = None, plan_id: uuid.UUID | None = None) -> list[dict[str, Any]]:
+        return self._rpc.array(token, "assistant_actions_list", {"p_tenant_id": str(tenant_id), "p_since": since, "p_before": before, "p_limit": limit,
+                                                                 "p_action_id": str(action_id) if action_id else None, "p_plan_id": str(plan_id) if plan_id else None})
