@@ -39,6 +39,36 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
     What was read is kept as a small CSV under the same 24 h rule and the file itself is deleted at once; "Do it" imports exactly what the card showed. A price table -> `cant_do` (price list,
     `/catalogue`); a long document with nobody in it -> `cant_do` (`/settings/knowledge`). The log names how it was read and, for the model, the model and the size, never the content.
 
+### A request about the file (A2b, owner 5 Nov 2026: "files in chat must go beyond import")
+The turn's `text` says what to do with the file(s). A plain "add these to my leads" (or no words at all) is the import path above, **with no model call**. Anything else is planned:
+1. **Understanding, by code**: what the file looks like (a list of people, a visiting card, a price list, an enquiry, an order, a brochure, other), its tables, the people in it, the amounts and the
+   dates, and its text. Nothing is invented.
+2. **One planner call**, cost-accounted under the day's cap. It gets the request (trusted), the understanding (DATA between delimiters: a file's words are never instructions) and a CLOSED list of
+   actions. It answers:
+   - **answer**: read-only ("summarise this", "what is the price of X?"). No card, just the sentence. Every number in it must be in the file or the request, otherwise the answer is not used and the
+     sentence says so;
+   - **do**: the actions in order, as ONE plan card. **The model names the action; code builds every argument from the file** (the people code found, the file's own text): it never writes a phone
+     number, a price or an id. Today's actions:
+     - `add_people`: the lead import above, as a `file_preview` card;
+     - `add_to_knowledge`: `knowledge.add_source` (About my business), as a `plan` card or as a second step of the `file_preview` plan. Undo is the source's discard route.
+   - **clarify**: one question, as a sentence;
+   - **cant_do**: `not_yet` with the screen's link. The codes and screens are:
+     - `quote_from_enquiry` → `/enquiries`;
+     - `order_from_file` → `/orders`;
+     - `update_prices` → `/catalogue`;
+     - `follow_up` → `/followups`;
+     - `other` → no screen.
+     A part of a request that cannot be done yet is said in the sentence next to the plan, never left out.
+3. **A school's file never reaches the planner** (it fails closed). It takes the deterministic path above.
+4. Nobody is messaged or called because of any of this. Every write is a plan card, then "Do it", then Undo where the step declares one.
+
+**Not yet** (next parts):
+- an enquiry plus a draft quote from the catalogue;
+- an order plus a stock check;
+- catalogue prices, previewed old → new;
+- a follow-up or a task for the new lead;
+- later turns about the same file.
+
 ## 2. The cards: the turn's `work_card` event
 `event: work_card` / `data: { "type": "work_card", "card": <one of the kinds below> }`, after the sentence, before `done`. The card's `id` is stable. A replay and `GET /assistant/conversations/{id}`
 (`message.work_cards: [...]`) give the cards again, in their state now.
@@ -58,6 +88,7 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
   About my business (`/knowledge`).
 
 ### plan
+A plan that adds no people (saving a brochure to About my business) comes as this card on its own. A replay and the stored chat give it again in its state now.
 ```json
 { "kind": "plan", "id": "uuid", "plan": {
   "plan_id": "uuid", "title": "Add 34 leads from 'march leads.xlsx'", "status": "proposed",
