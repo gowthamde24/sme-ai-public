@@ -13,7 +13,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 
 # milliseconds of silence that end a turn, per language (everyday Telugu and Hindi turns are short and fast; Tamil and Malayalam sentences trail longer)
-SILENCE_MS: dict[str, int] = {"te": 350, "hi": 350, "kn": 380, "ta": 420, "ml": 420, "en": 300}
+SILENCE_MS: dict[str, int] = {"te": 350, "hi": 350, "kn": 380, "ta": 420, "ml": 420, "mr": 350, "en": 300}   # mr: the same as Hindi until a bake-off measures it (job M1)
 DEFAULT_SILENCE_MS = 350
 LOWEST_MS, HIGHEST_MS = 200, 800  # what a configured value may be
 

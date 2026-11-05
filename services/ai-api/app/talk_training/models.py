@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, StringConstraints, field_validator
 from app.leadspack.models import PRICE_OR_PROMISE
 
 Address = Literal["plain", "sir_madam", "garu", "ji"]
-Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 Short = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=80)]
 Ask = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=160)]
 Said = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=200)]

@@ -60,6 +60,17 @@ def _int(value: Any, what: str) -> int:
     return value
 
 
+def _india_time(iso: str) -> str:
+    """An ISO time as India time in plain words: "Tue 3 Nov, 10:00"."""
+    from datetime import datetime, timedelta, timezone
+
+    try:
+        t = datetime.fromisoformat(iso).astimezone(timezone(timedelta(hours=5, minutes=30)))
+    except ValueError:
+        return "a time to confirm"
+    return f"{t.strftime('%a')} {t.day} {t.strftime('%b')}, {t.strftime('%H:%M')}"
+
+
 def _summary(kind: str, ref: str, amount: int | None) -> str:
     if kind == "quote_approval":
         total = format_rupees(amount) if amount is not None else "an amount to check"
@@ -83,6 +94,8 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         return f"Materials quote {ref} for {total} is ready for your approval."
     if kind == "campaign_approval":
         return f"A {_CAMPAIGN_WORDS.get(ref, 'message campaign')} is drafted and waiting for your approval. Nothing is sent before you approve it."
+    if kind == "visit_requested":
+        return f"A caller wants to visit on {_india_time(ref)}. Book it in Visits, then mark it done."
     if kind == "person_requested":
         return "A caller asked to talk to a person. Call them back, then mark it done."
     if kind == "fees_overdue":

@@ -11,6 +11,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
+from app.assistant.language import devanagari_language
+
 FIELDS = ("need", "quantity", "area", "city", "budget", "timeline", "urgency", "language")
 MAX = {"need": 200, "quantity": 100, "area": 100, "city": 100, "budget": 100, "timeline": 100, "campaign": 120}
 
@@ -76,7 +78,7 @@ def clean_value(value: str, limit: int) -> str | None:
 
 
 def language_of(text: str) -> tuple[str, str] | None:
-    """(code, confidence): by script (Telugu, Kannada, Hindi, Tamil, Malayalam) when at least three letters of it are present, else English by Latin letters."""
+    """(code, confidence): by script (Telugu, Kannada, Hindi or Marathi, Tamil, Malayalam) when at least three letters of it are present, else English by Latin letters."""
     counts = {code: 0 for code, _, _ in _SCRIPTS}
     latin = 0
     for ch in text[:2000]:
@@ -90,7 +92,7 @@ def language_of(text: str) -> tuple[str, str] | None:
                 latin += 1
     best = max(counts, key=lambda c: counts[c])
     if counts[best] >= 3 and counts[best] * 2 >= latin:
-        return best, "medium"
+        return (devanagari_language(text[:2000]) if best == "hi" else best), "medium"   # Devanagari: Hindi or Marathi, by a few common words (job M1)
     if latin >= 6:
         return "en", "medium" if counts[best] == 0 else "low"
     return None

@@ -21,7 +21,7 @@ from functools import lru_cache
 from pathlib import Path
 
 DATA = Path(__file__).resolve().parent / "data" / "lexicon.json"
-LANGUAGES = ("en", "te", "hi", "kn", "ta", "ml")
+LANGUAGES = ("en", "te", "hi", "kn", "ta", "ml", "mr")
 _LETTERS = r"\wऀ-෿‌‍"   # a letter of any script, its signs, and the joiners
 SOUND_MAX = 80
 

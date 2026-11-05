@@ -102,7 +102,8 @@ class Result:
 def score(item_id: str, language: str, voice: str, kind: str, written: str, spoken: str, heard: str, spellings: list[str] | None = None) -> Result:
     """One clip. A sentence is compared without its Latin words; a text with numbers by the numbers the recogniser wrote back; a lexicon word by its accepted spellings IN THE SCRIPT THE VOICE'S LANGUAGE USES (a Hindi voice that was
     given a Latin name has no Devanagari spelling to look for: the word is then not checked on its own, the sentence score stands)."""
-    own = [sp for sp in (spellings or []) if _script_of(sp) == ("latin" if language == "en" else language) or (language != "en" and _script_of(sp) == "latin" and _script_of(heard) == "latin")]
+    script = "latin" if language == "en" else ("hi" if language == "mr" else language)   # Marathi is written in Devanagari (job M1)
+    own = [sp for sp in (spellings or []) if _script_of(sp) == script or (language != "en" and _script_of(sp) == "latin" and _script_of(heard) == "latin")]
     base = similarity(spoken, heard, native_only=language != "en")
     if kind == "normaliser":
         base = max(base, numbers_heard(written, heard) * 0.95 if _NUMBER.search(written) else base)

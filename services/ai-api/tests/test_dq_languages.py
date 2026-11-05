@@ -29,6 +29,8 @@ from app.visits import texts as visit_texts
 from tests.fakes import TENANT_A, auth, make_client
 
 SIX = ("en", "te", "hi", "kn", "ta", "ml")
+# job M1 (owner decision 5 Nov 2026): Marathi joins the core call / assistant texts as a draft; the feature texts (visits, deliveries, quotes, marks) stay six until their own job
+SEVEN = (*SIX, "mr")
 MALAYALAM = re.compile(r"[ഀ-ൿ]")
 TAMIL = re.compile(r"[஀-௿]")
 PLACEHOLDER = re.compile(r"\{([a-z_]+)\}")
@@ -74,9 +76,9 @@ def test_the_quote_words_have_six_languages() -> None:
 
 def test_the_connector_sentences_have_six_languages() -> None:
     for table in (connector_texts.PAY_REQUEST, connector_texts.MISSED_CALL_REPLY):
-        assert set(table) == set(SIX)
-    assert _holes(connector_texts.PAY_REQUEST["ml"]) == _holes(connector_texts.PAY_REQUEST["en"])
-    assert tuple(connector_texts.LANGUAGES) == SIX
+        assert set(table) == set(SEVEN)
+    assert _holes(connector_texts.PAY_REQUEST["ml"]) == _holes(connector_texts.PAY_REQUEST["en"]) == _holes(connector_texts.PAY_REQUEST["mr"])
+    assert tuple(connector_texts.LANGUAGES) == SEVEN
 
 
 def test_the_marks_templates_have_six_languages_and_stay_fixed_text() -> None:
@@ -91,8 +93,8 @@ def test_the_marks_templates_have_six_languages_and_stay_fixed_text() -> None:
 
 # ============================================================================ B. the checks and the detector
 def test_the_language_types_name_six() -> None:
-    assert get_args(OutboxLanguage) == SIX
-    assert get_args(settings_models.LanguageWord) == SIX
+    assert get_args(OutboxLanguage) == SEVEN
+    assert get_args(settings_models.LanguageWord) == SEVEN
 
 
 def test_a_malayalam_message_is_detected_and_a_reply_must_be_in_malayalam() -> None:
@@ -102,18 +104,18 @@ def test_a_malayalam_message_is_detected_and_a_reply_must_be_in_malayalam() -> N
     assert not assistant_language.reply_matches("This is in English", "ml")
     assert not assistant_language.reply_matches("இது தமிழ்", "ml"), "a Tamil reply is not a Malayalam one"
     for table in (assistant_language.NO_ANSWER, assistant_language.PLAIN_WORDS, assistant_language.WEB_SOURCES, assistant_language.SEE_CARDS, assistant_language.WAITING_ALSO):
-        assert set(table) == set(SIX)
+        assert set(table) == set(SEVEN)
         assert assistant_language.reply_matches(table["ml"], "ml") or len(table["ml"]) < 14
 
 
 # ============================================================================ C. the assistant settings
 def test_the_assistant_settings_list_six_languages_with_introductions_and_samples() -> None:
-    assert settings_service.LANGUAGES == SIX
-    assert set(settings_service.NATIVE) == set(SIX)
-    assert set(settings_service.CUSTOMER_LINES) == set(SIX) and set(settings_service.CONFIRM_LINES) == set(SIX)
+    assert settings_service.LANGUAGES == SEVEN
+    assert set(settings_service.NATIVE) == set(SEVEN)
+    assert set(settings_service.CUSTOMER_LINES) == set(SEVEN) and set(settings_service.CONFIRM_LINES) == set(SEVEN)
     data = settings_data.load()
-    assert data["languages"] == list(SIX)
-    for language in SIX:
+    assert data["languages"] == list(SEVEN)
+    for language in SEVEN:
         word = settings_data.ASSISTANT_WORD[language]
         line = settings_data.intro(language, "Vijaya", "Demo Store")
         assert "AI" in line and word in line and "Vijaya" in line, language
@@ -160,7 +162,7 @@ def test_the_name_is_read_with_the_callers_own_token_through_the_one_function() 
     assert empty.get_assistant_name("user.jwt", tenant) is None
 
 
-@pytest.mark.parametrize("language", SIX)
+@pytest.mark.parametrize("language", SEVEN)
 def test_the_samples_never_promise_a_human(language: str) -> None:
     line = settings_data.sample("textiles", language, "warm", "Vijaya", "Demo Store")
     assert "AI" in line, "the call always says it is an AI assistant"

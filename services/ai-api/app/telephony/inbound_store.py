@@ -36,6 +36,11 @@ class InboundStore:
     def for_call(self, tenant_id: uuid.UUID) -> CallRow:
         return CallRow(self, tenant_id)
 
+    def visit_slots(self, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
+        """The next free visit slots for this call (empty without the visits module)."""
+        out = self._call("visit_slots_for_call", {"p_tenant_id": str(tenant_id)})
+        return [s for s in out if isinstance(s, dict)] if isinstance(out, list) else []
+
     def talk_training(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """The Owner's "How I talk to customers" for this call (the scheduler account reads it); None when nothing is saved."""
         out = self._call("talk_training_for_call", {"p_tenant_id": str(tenant_id)})

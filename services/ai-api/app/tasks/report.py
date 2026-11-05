@@ -34,6 +34,7 @@ def _row_outcome(row: dict[str, Any]) -> str:
 
 def build(raw: dict[str, Any], language: str) -> dict[str, Any]:
     """`raw` is the answer of the database's task_report: the task and its rows. Returns the body of GET /tasks/{id}/report."""
+    language = language if language in NONE_YET else "en"   # job M1: a language with no words here yet (Marathi) gets the English ones
     plan = raw.get("plan") or {}
     questions = plan.get("questions") or []
     amount_key = next((q["key"] for q in questions if q.get("type") == "amount"), None)

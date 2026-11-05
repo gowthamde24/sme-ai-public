@@ -27,7 +27,7 @@ from tests.test_oq_no_gendered_address import ABOUT_THE_WORDS, APP, _strings
 
 ROOT = Path(__file__).resolve().parents[3]
 CASES = [json.loads(line) for line in (ROOT / "tests" / "evals" / "regression" / "cases.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
-SCRIPT_RANGE = {"te": (0x0C00, 0x0C7F), "hi": (0x0900, 0x097F), "kn": (0x0C80, 0x0CFF), "ta": (0x0B80, 0x0BFF), "ml": (0x0D00, 0x0D7F)}
+SCRIPT_RANGE = {"te": (0x0C00, 0x0C7F), "hi": (0x0900, 0x097F), "kn": (0x0C80, 0x0CFF), "ta": (0x0B80, 0x0BFF), "ml": (0x0D00, 0x0D7F), "mr": (0x0900, 0x097F)}
 RETIRED = re.compile(r"(?<![A-Za-z])(?:Tara|Vani|Vijaya|Vijay)(?![A-Za-z])|(?<![ಀ-೿])(?:ವಿಜಯ|ವಾಣಿ)(?![ಀ-೿])|విజయ(?![ా-ౌ-ఀ-౿ం])|वाणी|विजया|விஜயா|வாணி|വിജയ|వాణి")
 
 

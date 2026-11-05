@@ -75,7 +75,7 @@ export interface SendOut {
 
 export interface TemplateOut {
   kind: "marks" | "report_ready";
-  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   template_id: string;
   columns: string[];
   example_text: string;
@@ -83,7 +83,7 @@ export interface TemplateOut {
 
 export interface TemplatesOut {
   kinds: ("marks" | "report_ready")[];
-  languages: ("en" | "te" | "hi" | "kn" | "ta" | "ml")[];
+  languages: ("en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr")[];
   templates: TemplateOut[];
   aliases: Record<string, string[]>;
   max_rows: number;

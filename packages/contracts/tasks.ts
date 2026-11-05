@@ -36,7 +36,7 @@ export interface FollowUp {
 export interface PlanIn {
   task_id?: string | null;
   instruction: string;
-  language?: "en" | "te" | "hi" | "kn" | "ta" | "ml" | null;
+  language?: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr" | null;
   contacts?: ProvidedContact[] | null;
 }
 
@@ -141,7 +141,7 @@ export interface TaskOut {
   id: string;
   status: "needs_answer" | "planned" | "approved" | "running" | "paused" | "done" | "cancelled";
   instruction: string;
-  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   template: "call_new_leads" | "reengage_old_leads" | "confirm_appointments" | "collect_feedback" | "payment_reminder" | "supplier_price_enquiry" | "offer_invite" | "custom";
   question: string | null;
   plan: PlanOut | null;

@@ -11,7 +11,7 @@ from typing import Any
 from app.pronunciation.lexicon import OwnerWord
 
 logger = logging.getLogger("app.pronunciation")
-LANGUAGES = ("en", "te", "hi", "kn", "ta", "ml")
+LANGUAGES = ("en", "te", "hi", "kn", "ta", "ml", "mr")
 
 
 def owner_words(runtime: Any, token: str, tenant_id: uuid.UUID) -> list[OwnerWord]:
