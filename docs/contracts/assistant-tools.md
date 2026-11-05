@@ -4,6 +4,10 @@ Status: **published 4 Nov 2026, stable for the shapes below**; the routes land i
 Errors always have the one shape `{error:{code,message,retry_after,request_id}}`. JSON is snake_case. This **confirms C2's assumed shapes** (`apps/web/lib/assistant-work/types.ts`, PR #302) with the
 changes marked **CHANGED**; everything else is exactly as C2 assumed.
 
+**Which workspaces have it (5 Nov 2026).** `ASSISTANT_WORK_TENANTS`: workspace ids separated by `;` (or `,`). Unset = every workspace (local, tests); set = only those; set but empty or `none` = none.
+On staging it is the owner's three test workspaces (`deploy/staging.sh`). Elsewhere every route below answers **404** (as if it were not there), and the chat turn goes on exactly as before: no
+router call, no file turn, no `work_card`. **The web reads the same variable with the same meaning** (sme-web env, beside `ASSISTANT_WORK_SCREENS`), so no button shows where the API would refuse.
+
 ## 0. The tools (A1, merged first)
 - `GET /assistant/tools` -> `{ items: [ { name, method, path, level: "read" | "write" | "sensitive", sensitive: "money" | "sending" | "members" | "deleting" | "billing" | "secrets" | null, undo: "snapshot" | "inverse" | "none", summary } ], screen_only: [ { method, path, reason } ] }`
   (Owner, Admin, Sales). The same list the planner uses. You need it only for Settings -> Activity's labels and for a debug screen; the cards carry their own words.
@@ -155,6 +159,14 @@ A plan that adds no people (saving a brochure to About my business) comes as thi
   - It is **never** in the conversation, in a turn's history, in the model's input, in a log, an audit row or an error.
   - A test pins all of this. The answer says at most the last four characters.
   - A request is good for 15 minutes, and once.
+- **Built (5 Nov 2026, owner decision: Secret Manager, one secret per workspace and kind):** `secret: "indiamart_key"` only, for now. The card also carries `expires_at`.
+  - "Set up IndiaMART with my key" (and "add my IndiaMART CRM key", "connect IndiaMART") is routed to this card. A non-Owner is told only the Owner can; with the store off it is `cant_do`
+    `not_yet` with the Lead sources link.
+  - `POST /assistant/secrets/{request_id}` `{value}`: 8 to 200 letters, digits and `. _ ~ + / = : -`, no spaces (trimmed). Answers: `200 {saved, last4}` (`last4` null for a key under 12
+    characters), `422 secret_invalid` (the value is never echoed), `404` (not this Owner's request), `409 secret_request_used`, `410 secret_request_expired`, `503 secret_not_saved` /
+    `secrets_unavailable`. A refused or failed save needs a new card.
+  - The secret is `sme-ws-<workspace id>-indiamart` in Secret Manager (asia-south1, only the newest version kept). The database holds the name, the last four and a fingerprint.
+  - `POST /lead-sources/indiamart/pull` then uses the workspace's own key; a workspace without one keeps the installation's key (if it is that workspace).
 
 ### setup
 ```json
