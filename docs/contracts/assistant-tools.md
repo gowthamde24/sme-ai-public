@@ -58,6 +58,20 @@ The turn's `text` says what to do with the file(s). A plain "add these to my lea
        - **The plan:** one `catalogue.put_item` step per changed item (at most 20), each "Name: ₹old → ₹new". **Money:** `sensitive: "money"`, `owner_only`, `needs_second_factor` (the database asks for it) and the card's second tap.
        - **Undo:** every item is put back as it was (the catalogue's snapshot).
        - **When nothing is proposed:** a price list with nothing different gets the card with `plan: null`; a workspace without a catalogue gets `cant_do`.
+     - `capture_enquiry` (part 3): an enquiry letter from ONE sender with a phone number. It is a `file_preview` card (the sender's import preview) with three steps:
+       1. `lead-imports.import_leads`: added if new, merged if known; undoable;
+       2. `contacts.contact_by_phone`: found by the number in the letter;
+       3. `leads.capture_enquiry`: the letter saved as their enquiry. The enquiry route removes numbers and addresses from the stored text. No undo.
+       If the sender is already a lead, it is a `plan` card with steps 2 and 3 only. If nobody is found by the number, step 3 fails `not_found` (nothing is guessed). **The draft quote** needs
+       the requirement confirmed on the enquiry's screen first, and the sentence says so.
+     - `check_stock` (part 4): an order in a file (a purchase order, items with quantities) gets a **read-only answer** with no card. It lists each line, matched to the catalogue by name, with
+       the catalogue's stock word: in stock / few left (check before you promise) / made to order (not in stock) / not in your catalogue. Then "N of them may be short". The catalogue keeps a
+       word, not a count, so no number is claimed. **The order itself** starts from an approved quote, and the sentence says so. With `capture_enquiry`, the stock answer comes first, then the
+       enquiry plan.
+   - **Values a step reads at run time**, so they never sit in the stored plan:
+     - `{"$cell": [row, column]}` reads a cell of the step's kept CSV (`cells_from`);
+     - `{"$ref": [step_no, key, …]}` reads an earlier step's answer;
+     - `file_field` puts the kept text into that body field.
    - **clarify**: one question, as a sentence;
    - **cant_do**: `not_yet` with the screen's link. The codes and screens are:
      - `quote_from_enquiry` → `/enquiries`;
@@ -70,10 +84,28 @@ The turn's `text` says what to do with the file(s). A plain "add these to my lea
 4. Nobody is messaged or called because of any of this. Every write is a plan card, then "Do it", then Undo where the step declares one.
 
 **Not yet** (next parts):
-- an enquiry plus a draft quote from the catalogue;
-- an order plus a stock check;
+- the draft quote itself, once the requirement is confirmed;
 - a follow-up or a task for the new lead;
 - later turns about the same file.
+
+### The router for typed requests (owner, 5 Nov 2026: "then the router, starting with the common-actions list")
+1. **Code decides** whether a typed request is about one of the common actions (closed words in en, te, hi and kn: calling hours, auto-reply, pause or resume a source, add a lead, example data,
+   billing, deleting the workspace, real data). Anything else keeps the turn's existing path, with no extra call.
+2. **One model call** picks the action and its arguments from the owner's words, asks one question, says it is screen-only, or says `not_mine` (then the existing path answers).
+3. **Code checks every argument against the words.** An hour must be written there ("10 to 7" → 10:00–19:00 is fine; 09:30 is not, if "9:30" was never said); a name, a phone number and an
+   e-mail must be what was typed; a choice must be on its closed list. Code then builds the step from the state read through the screen's own route.
+4. **The card is a `plan` card** (`card.destination: "settings"`). Its words are code's, old → new.
+
+| action | step | undo | rule |
+|---|---|---|---|
+| calling hours | `call-settings.put_settings` (the hours only change) | snapshot | Owner, second factor |
+| auto-reply on/off | `ai-assistant.put_auto_reply` | snapshot | Owner, second factor; switching ON is `sensitive: "sending"` |
+| pause / resume a lead source (matched by its label) | `lead-sources.pause_source` / `resume_source` | inverse | Owner, Admin |
+| add one typed lead | the lead import, one row (dedupe), as a `file_preview` | the import's undo | as the import |
+| remove the example data | `example-data.example_remove` | none | `sensitive: "deleting"`, Owner |
+| billing, deleting the workspace, real data, erasing a person | none: `cant_do` (`screen_only`) with the screen's link | | always a person |
+
+Already so → a sentence and no card. An unknown source → the real source names.
 
 ## 2. The cards: the turn's `work_card` event
 `event: work_card` / `data: { "type": "work_card", "card": <one of the kinds below> }`, after the sentence, before `done`. The card's `id` is stable. A replay and `GET /assistant/conversations/{id}`
@@ -145,10 +177,13 @@ feature is part of AI Workforce and this workspace is on Lead Desk ("find new re
 
 ## 3. Settings -> Activity (design 6)
 - `GET /assistant/actions?since=<iso>&before=<iso>&limit=50` -> `{ items: [ { action_id, tool, summary, changed, requested_by, message_id, at, status: "done" | "failed" | "undone", undo: "available" | "done" | "none" | "expired" } ], next_before }`
-  (Owner, Admin). Every entry is "by the assistant, on <requested_by>'s request". **Built: the log is written** (one row per step that ran, with its undo for 7 days); the list and its undo
-  routes are the next part. **CHANGED:** the change's own audit row is the person's (the route ran with their token); the request carries `X-Assistant-Message: <message id>`, and the action log
+  (Owner, Admin; Sales and Viewer get 403). Every entry is "by the assistant, on <requested_by>'s request". **Built (migration 20261231110000, `public.assistant_actions_list`):**
+  - **The list:** newest first. Each item also has `plan_id`, `step_no`, `decided_by`, `error` and `undone_at`; the stored undo itself is never returned, only its state.
+  - **Paging and errors:** `next_before` is set when the page is full. `since` and `before` are ISO times; anything else gets 422. **CHANGED:** the change's own audit row is the person's (the route ran with their token); the request carries `X-Assistant-Message: <message id>`, and the action log
   row carries the `message_id`. Writing it into the audit row too is a later part.
-- `POST /assistant/actions/{action_id}/undo` -> the entry. An undo is offered for 7 days, then `undo: "expired"`.
+- `POST /assistant/actions/{action_id}/undo` (Owner, Admin) -> the entry, now `status: "undone"`, `undo: "done"`. It runs that ONE step's own undo route with the caller's token. It is offered for
+  7 days, then `undo: "expired"` and 409 `undo_expired`. A step with no undo, or one already undone: 409 `nothing_to_undo`. The route refusing: 403 `forbidden`, or 409 `undo_failed` (nothing else
+  changed). A plan's Undo afterwards skips the steps already undone one by one.
 - "What did you change today?" in the chat is answered from the same list.
 
 ## 4. Never
