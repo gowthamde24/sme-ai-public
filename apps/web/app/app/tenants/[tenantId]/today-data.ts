@@ -1,6 +1,6 @@
 import { readMyProfileCached } from "../../me-read";
 import type { ClassicKind, NeedsCard, NeedsYouItem, RecentItem, Role, TodayData } from "@/components/v2/app/today/types";
-import { NOTHING_TODAY } from "@/components/v2/app/today/types";
+import { NOTHING_TODAY, weightOf } from "@/components/v2/app/today/types";
 import { ApiAuthError } from "@/lib/api/client";
 import { getCallBrief, type CallBrief } from "@/lib/api/calls";
 import { listCallRequests, listOutboxApprovals, type CallRequest, type OutboxMessage } from "@/lib/api/outbox";
@@ -96,8 +96,11 @@ export function mergeDesk(base: TodayData, desk: LeadDeskToday): TodayData {
   });
   const have = new Set(data.needs.map((c) => c.key));
   const added = desk.needs.filter((c) => !have.has(c.key));
-  data.needs = [...merged, ...added].sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
-  data.cards = { ...data.cards, waiting: (data.cards.waiting ?? 0) + added.length };
+  // newest first, but the Lead Finder's new businesses after the customers' things (owner, 5 Nov: a fresh search buried two quotes and two follow-ups under its prospects)
+  const later = (c: NeedsCard) => (c.type === "item" && c.item.kind === "prospect_waiting" ? 1 : 0);
+  data.needs = [...merged, ...added].sort((a, b) => later(a) - later(b) || Date.parse(b.at) - Date.parse(a.at));
+  // the count is of THINGS, not rows: the "11 more prospects" row adds 11 (it said 10 for 4 + 5 + 11 = 20)
+  data.cards = { ...data.cards, waiting: (data.cards.waiting ?? 0) + added.reduce((n, c) => n + weightOf(c), 0) };
   return data;
 }
 

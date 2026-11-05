@@ -2,7 +2,11 @@ import { act, cleanup, fireEvent, render, screen, within } from "@testing-librar
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const refresh = vi.fn();
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push: () => undefined }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
+const push = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
+
+// the lazy picker (Today's first load) is the real one in a test
+vi.mock("../visits/LazySlotPicker", async () => ({ SlotPicker: (await import("../visits/SlotPicker")).SlotPicker }));
 
 import { appDict } from "@/i18n/app";
 
@@ -560,5 +564,65 @@ describe("Needs you: a caller who asked for a person (C1 #347)", () => {
     expect(row).toHaveTextContent("Person");
     expect(within(row).getByRole("link", { name: "Call back" })).toBeInTheDocument();
     expect(within(row).getByRole("button", { name: "Done, we called back" })).toHaveTextContent("Done");
+
+describe("Needs you: the Lead Finder's rows and See all (owner, 5 Nov)", () => {
+  const P = "b1b1b1b1-0000-4000-8000-000000000001";
+  const prospect = (n: number, over: Partial<Extract<NeedsCard, { type: "item" }>["item"]> = {}): NeedsCard => {
+    const id = `b1b1b1b1-0000-4000-8000-00000000000${n}`;
+    return classic({ kind: "prospect_waiting", id, customer: `Boutique ${n}`, city: null, agent: "lead_finder", summary: "fit 93 · 1 of the first 10 calls — needs your OK", rowLine: "Jayanagar · 4.6★ · fit 93", prospect: { area: "Jayanagar", rating: 4.6, needsOk: true }, amount_paise: null, href: `/app/tenants/T/retailers?id=${id}`, ...over }) as NeedsCard;
+  };
+  const keyed = (cards: NeedsCard[]) => cards.map((c, i) => ({ ...c, key: `k${i}` }) as NeedsCard);
+  const rowsOf = () => [...document.querySelectorAll("[data-needs-row]")] as HTMLElement[];
+  it("a prospect row says where and how good, 'Needs OK' is a small badge, and it has Call and Skip instead of Decide", () => {
+    compactNext = true;
+    board([prospect(1)]);
+    const row = rowsOf()[0];
+    expect(within(row).getByRole("heading", { level: 3 })).toHaveTextContent(/^Boutique 1$/);
+    expect(row).toHaveTextContent("Jayanagar · 4.6★ · fit 93");
+    expect(row).not.toHaveTextContent("first 10 calls");
+    expect(row.querySelector("[data-needs-tag]")).toHaveTextContent("Needs OK");
+    expect(within(row).getByRole("button", { name: "Call" })).toBeInTheDocument();
+    expect(within(row).getByRole("button", { name: "Skip" })).toBeInTheDocument();
+    expect(within(row).queryByRole("link", { name: "Decide" })).toBeNull();
+  });
+  it("Call is the Owner's yes and then opens that business's practice call; Skip takes the row off; a refusal puts it back", async () => {
+    compactNext = true;
+    const { actions } = board(keyed([prospect(1), prospect(2)]));
+    await act(async () => void fireEvent.click(within(rowsOf()[0]).getByRole("button", { name: "Call" })));
+    expect(actions.prospect.call).toHaveBeenCalledWith(P);
+    expect(push).toHaveBeenCalledWith(`/app/tenants/T/retailers?id=${P}&practice=1`);
+    expect(screen.getByRole("status")).toHaveTextContent("Yes to calling");
+    await act(async () => void fireEvent.click(within(rowsOf()[0]).getByRole("button", { name: "Skip" })));
+    expect(actions.prospect.skip).toHaveBeenCalledWith("b1b1b1b1-0000-4000-8000-000000000002");
+    expect(rowsOf()).toHaveLength(0);
+    cleanup();
+    const no = vi.fn(async () => ({ ok: false as const, error: "Someone decided this meanwhile.", stale: true }));
+    const refused = fakeActions();
+    refused.prospect.skip = no;
+    board([prospect(1)], { actions: refused });
+    await act(async () => void fireEvent.click(within(rowsOf()[0]).getByRole("button", { name: "Skip" })));
+    expect(rowsOf()).toHaveLength(1);
+    expect(push).toHaveBeenCalledTimes(1);
+  });
+  it("the 'N more' row and a person with no prospect buttons keep 'Decide'", () => {
+    compactNext = true;
+    board([prospect(1, { id: "more", customer: "11 more prospects", prospect: undefined, rowLine: undefined, count: 11, summary: "need you on the Prospects tab", href: "/app/tenants/T/retailers?status=needs_owner" })]);
+    expect(within(rowsOf()[0]).getByRole("link", { name: "Decide" })).toHaveAttribute("href", "/app/tenants/T/retailers?status=needs_owner");
+    cleanup();
+    board([prospect(1)], { actions: { ...fakeActions(), prospect: null } as never });
+    expect(within(rowsOf()[0]).getByRole("link", { name: "Decide" })).toBeInTheDocument();
+    expect(within(rowsOf()[0]).queryByRole("button", { name: "Call" })).toBeNull();
+  });
+  it("the count is of things: 4 quotes + 5 businesses + '11 more' says 20, and See all (20) opens every row", () => {
+    compactNext = true;
+    const quotes = [1, 2, 3, 4].map((n) => classic({ id: `q${n}` }));
+    const more = prospect(6, { id: "more", customer: "11 more prospects", prospect: undefined, rowLine: undefined, count: 11 });
+    board(keyed([...quotes, ...[1, 2, 3, 4, 5].map((n) => prospect(n)), more]), { waiting: 20 });
+    expect(count()).toHaveTextContent("20");
+    const all = screen.getByRole("button", { name: "See all (20)" });
+    expect(all).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(all);
+    expect(within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("listitem").filter((li) => li.className.includes("hidden"))).toHaveLength(0);
+    expect(screen.queryByText(/Showing the newest/)).toBeNull();
   });
 });

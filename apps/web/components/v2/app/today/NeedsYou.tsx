@@ -11,7 +11,8 @@ import { looksLikeId } from "@/lib/lead-desk/leads";
 import { FreshPhotos } from "../catalogue/FreshPhotos";
 import { MessagePhotos } from "../catalogue/MessagePhotos";
 import { dayShort, todayInIndia } from "../visits/dates";
-import { SlotPicker, type SlotChoice } from "../visits/SlotPicker";
+import { SlotPicker } from "../visits/LazySlotPicker";
+import type { SlotChoice } from "../visits/SlotPicker";
 import type { DecisionResult, TodayActions } from "./actions-types";
 import { useNeeds } from "./needs-store";
 import { whenLabel, ago, indiaClock, indiaDay as indiaDayOf } from "./time";
@@ -56,7 +57,7 @@ const rowPrimary = "inline-flex min-h-9 max-md:min-h-11 items-center justify-cen
 const rowQuiet = "inline-flex min-h-9 max-md:min-h-11 items-center justify-center rounded-full border border-edge bg-transparent px-3.5 text-sm font-semibold whitespace-nowrap text-ink hover:bg-surface-2 disabled:opacity-60";
 
 /** One thing that waits, as one line on a desktop (the owner's target, 31 Oct): its badge, "title · reason" as one line, the quick buttons on the right. The words open the whole card (with every button it has); "Details" stays for the keyboard and screen readers. The rows share ONE card (see `NeedsYou`). */
-function CompactRow({ cardKey, tone, label, title, reason, at, ctx, children, onOpen }: { cardKey: string; tone: string; label: string; title: string; reason: string; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
+function CompactRow({ cardKey, tone, label, title, reason, tag = null, at, ctx, children, onOpen }: { cardKey: string; tone: string; label: string; title: string; reason: string; /** A small badge after the words (a prospect's "Needs OK"). */ tag?: string | null; at: string; ctx: Ctx; children?: React.ReactNode; onOpen: () => void }) {
   // a phone: the badge and the words (two lines at most) on the first line, the buttons on the line under them; a desktop: all on one line
   return (
     <div data-needs-row={cardKey} data-write className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 md:min-h-14 md:flex-nowrap md:py-2">
@@ -75,6 +76,12 @@ function CompactRow({ cardKey, tone, label, title, reason, at, ctx, children, on
         ) : null}
       </div>
       <div className="flex shrink-0 items-center gap-2 max-md:basis-full max-md:justify-end">
+        {/* the small badge sits with the buttons: beside them on a desktop, on their line on a phone (never a line of its own) */}
+        {tag ? (
+          <span data-needs-tag="" className={`${badge} shrink-0 !py-0.5 !text-xs bg-amber-bg text-amber-text max-md:mr-auto`}>
+            {tag}
+          </span>
+        ) : null}
         {children}
         <button type="button" data-needs="details" aria-expanded="false" aria-controls={`needs-full-${cardKey}`} onClick={onOpen} className="sr-only">
           {say(ctx.words, "today.row.details")}
@@ -141,8 +148,32 @@ function Head({ tone, label, at, ctx, onCollapse }: { tone: string; label: strin
   );
 }
 
+/** Where a prospect's Call goes once the Owner said yes: its own row on the Prospects page with the practice call open (nothing is dialled). */
+export const practiceHref = (href: string): string => `${href}${href.includes("?") ? "&" : "?"}practice=1`;
+
 function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: Ctx }) {
   const { words } = ctx;
+  const decide = useDecide(c);
+  const router = useRouter();
+  // a Lead Finder business (not the "N more" row): Call and Skip, as on the Prospects page (owner, 5 Nov)
+  const acts = item.kind === "prospect_waiting" && item.prospect && ctx.actions?.prospect ? ctx.actions.prospect : null;
+  const call = () => void decide(async () => {
+    const r = await acts!.call(item.id);
+    if (r.ok) router.push(practiceHref(item.href));
+    return r;
+  });
+  const skip = () => void decide(() => acts!.skip(item.id));
+  const prospectButtons = (row: boolean) =>
+    acts ? (
+      <>
+        <button type="button" data-needs="call" onClick={call} className={row ? rowPrimary : `${primary} max-md:grow`}>
+          {say(words, "lf.act.call")}
+        </button>
+        <button type="button" data-needs="skip" onClick={skip} className={row ? rowQuiet : quiet}>
+          {say(words, "lf.act.skip")}
+        </button>
+      </>
+    ) : null;
   const k = KIND[item.kind];
   const facts: [string, string][] = [[say(words, k.who), customerName(item.customer, words)]];
   if (item.city) facts.push([say(words, "today.fact.city"), item.city]);
@@ -152,13 +183,18 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   const name = customerName(item.customer, words);
   // the row is SHORT (owner, 4 Nov: "Quote | Lakshmi · ₹40,000"): the amount when there is one, the hot lead's own gist (English only, as before), else just the name; the API's full sentence is in the opened card
   // a kind whose summary is OUR words (OWN_WORDS: the Lead Finder's "fit 64 · low stock") is short already and shown in every language
-  const reason = OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatINR(item.amount_paise / 100, { decimals: 2 }) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : "";
+  const reason = item.rowLine !== undefined ? item.rowLine : OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatINR(item.amount_paise / 100, { decimals: 2 }) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : "";
+  const tag = item.prospect?.needsOk ? say(words, "today.prospect.needsok") : null;
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={k.tone} label={say(words, `${k.kind}.row`)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={reason} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
-        <Link href={item.href} className={rowPrimary}>
-          {say(words, `${k.step}.row`)}
-        </Link>
+      <CompactRow cardKey={c.key} tone={k.tone} label={say(words, `${k.kind}.row`)} title={`${name}${item.city ? `, ${item.city}` : ""}`} reason={reason} tag={tag} at={item.at} ctx={ctx} onOpen={() => setOpen(true)}>
+        {acts ? (
+          prospectButtons(true)
+        ) : (
+          <Link href={item.href} className={rowPrimary}>
+            {say(words, `${k.step}.row`)}
+          </Link>
+        )}
       </CompactRow>
     );
   }
@@ -181,10 +217,15 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
           </div>
         ))}
       </dl>
+      <Note id={c.key} words={words} />
       <div className="flex flex-wrap items-center gap-2">
-        <Link href={item.href} className={primary}>
-          {say(words, k.step)}
-        </Link>
+        {acts ? (
+          prospectButtons(false)
+        ) : (
+          <Link href={item.href} className={primary}>
+            {say(words, k.step)}
+          </Link>
+        )}
         <Link href={item.href} className={`${quiet} ml-auto gap-1.5 text-brand-text`}>
           {say(words, "common.open")}
           <ArrowRight className="size-4" aria-hidden="true" />
@@ -601,9 +642,10 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
             <span className="sr-only">{say(words, "today.needs.count", { n: total })}</span>
           </span>
         ) : null}
-        {cards !== null && cards.length > 3 ? (
-          <button type="button" aria-expanded={all} onClick={() => setAll((v) => !v)} className="ml-auto inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text hover:underline">
-            {all ? say(words, "today.seeless") : say(words, "today.seeall", { n: cards.length })}
+        {/* "See all (10)" whenever more rows wait than the three shown (owner, 5 Nov); its number is the badge's, the count of THINGS (a "11 more prospects" row is 11) */}
+        {cards !== null && total !== null && cards.length > 3 ? (
+          <button type="button" data-needs="see-all" aria-expanded={all} aria-controls="needs-you-list" onClick={() => setAll((v) => !v)} className="ml-auto inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text hover:underline">
+            {all ? say(words, "today.seeless") : say(words, "today.seeall", { n: total })}
           </button>
         ) : null}
       </div>
@@ -618,14 +660,14 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
         </p>
       ) : (
         <>
-          <ul className={compact ? "flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0" : "flex flex-col gap-2.5"}>
+          <ul id="needs-you-list" className={compact ? "flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface [&_article]:rounded-none [&_article]:border-0" : "flex flex-col gap-2.5"}>
             {cards.map((c, i) => (
               <li key={c.key} className={!all && i >= 3 ? "hidden" : ""}>
                 {draw(c, ctx)}
               </li>
             ))}
           </ul>
-          {extra > 0 ? <p className="text-sm text-muted">{say(words, "today.needs.more", { shown: cards.length, total: cards.length + extra })}</p> : null}
+          {extra > 0 && (all || cards.length <= 3) ? <p className="text-sm text-muted">{say(words, "today.needs.more", { shown: (total ?? 0) - extra, total: total ?? 0 })}</p> : null}
         </>
       )}
       <Toast words={words} />

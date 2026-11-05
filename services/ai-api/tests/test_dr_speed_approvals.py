@@ -189,9 +189,13 @@ def test_a_rule_with_a_senseless_combination_is_refused(extra: dict[str, Any]) -
     assert client.post(f"{BASE}/rules", json=rule_body(**extra), headers=auth("a_owner")).status_code == 422
 
 
-def test_a_whatsapp_first_rule_with_its_text_is_accepted() -> None:
+def test_call_first_a_whatsapp_first_or_message_only_rule_is_refused_and_a_call_rule_with_text_is_accepted() -> None:
+    """Owner, 5 Nov 2026: a new lead is called; WhatsApp only when the customer asks or agrees on the call (the text is what goes then)."""
     client, repo = world()
-    r = client.post(f"{BASE}/rules", json=rule_body(action="whatsapp_then_call", channel="both", message_text="Hello {name}, thank you for your interest"), headers=auth("a_owner"))
+    for action, channel in (("whatsapp_then_call", "both"), ("whatsapp_first", "both"), ("call_within_minutes", "whatsapp")):
+        r = client.post(f"{BASE}/rules", json=rule_body(action=action, channel=channel, message_text="Hello {name}, thank you for your interest"), headers=auth("a_owner"))
+        assert r.status_code == 422, (action, channel, r.text)
+    r = client.post(f"{BASE}/rules", json=rule_body(action="call_within_minutes", channel="both", message_text="Hello {name}, here are the details you asked for"), headers=auth("a_owner"))
     assert r.status_code == 201, r.text
 
 

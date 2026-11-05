@@ -22,7 +22,9 @@ describe("the menu's shape", () => {
   });
   it("every entry opens a page that exists (no entry for a page that is not built)", () => {
     for (const i of [...NAV.flatMap((g) => g.items), ...FOOT]) {
-      const file = i.path === "" ? path.join(TENANT, "page.tsx") : path.join(TENANT, i.path, "page.tsx");
+      // a link to a Settings section ("/settings?section=assistant") opens the Settings page
+      const p = i.path.split("?")[0];
+      const file = p === "" ? path.join(TENANT, "page.tsx") : path.join(TENANT, p, "page.tsx");
       expect(fs.existsSync(file), `${i.id}: ${file}`).toBe(true);
     }
   });

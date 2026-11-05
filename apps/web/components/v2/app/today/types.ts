@@ -12,7 +12,20 @@ export type { NeedsYouKind } from "@/lib/api/today";
  */
 export type ClassicKind = "quote_approval" | "followup_due" | "order_money_held" | "hot_lead_waiting" | "plan_waiting" | "callback_due" | "outreach_paused" | "prospect_waiting" | "material_quote_approval" | "campaign_approval" | "fees_overdue";
 /** `prospect_waiting` (the Lead Finder, job lead-finder part D): a new business the Researcher left for the person ("Sri Sai Constructions · fit 64 · low stock"); read by the page's data file (`lead-finder-today.ts`), its helper is the Lead Finder. */
-export type NeedsYouItem = Omit<ApiNeedsYouItem, "kind" | "target" | "agent"> & { kind: ClassicKind; agent: ApiNeedsYouItem["agent"] | "lead_finder"; href: string; target?: ApiNeedsYouItem["target"] };
+export type NeedsYouItem = Omit<ApiNeedsYouItem, "kind" | "target" | "agent"> & {
+  kind: ClassicKind;
+  agent: ApiNeedsYouItem["agent"] | "lead_finder";
+  href: string;
+  target?: ApiNeedsYouItem["target"];
+  /** How many things the row stands for (the Lead Finder's "11 more prospects" row: 11); absent = 1. The count of "Needs you" adds these, so it is the number of things that wait, not of rows. */
+  count?: number;
+  /** The short line of the one-line row when it is not `summary` (a prospect: "Jayanagar · 4.6★ · fit 93"; the opened card keeps `summary`). */
+  rowLine?: string;
+  /** A Lead Finder business (owner, 5 Nov): its area, rating and fit after the name ("Jayanagar · 4.6★ · fit 93"), "Needs OK" as a small badge when it is one of the first calls, and Call / Skip on the row. */
+  prospect?: { area: string | null; rating: number | null; needsOk: boolean };
+};
+/** How many things a card stands for in the count of "Needs you". */
+export const weightOf = (c: NeedsCard): number => (c.type === "item" && typeof c.item.count === "number" && c.item.count > 0 ? c.item.count : 1);
 export type RecentItem = RecentStep & { href: string };
 export type AgentRow = AgentStatus;
 /**

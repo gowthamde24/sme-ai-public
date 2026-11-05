@@ -8,6 +8,7 @@ import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
+import { actOnProspects } from "@/lib/api/lead-finder";
 import { OUTBOX_LANGUAGES, approveCallRequest, approveOutboxMessage, editOutboxMessage, rejectOutboxMessage, type OutboxLanguage } from "@/lib/api/outbox";
 import { markCallHandled } from "@/lib/api/calls";
 import { offerStoreVisit } from "@/lib/api/visits";
@@ -107,7 +108,30 @@ export async function offerVisitAction(tenantId: string, id: string, language: O
   }
 }
 
-/** "Done" on a caller who asked for a person (C1 #347): the team called back, the call leaves Needs you. Owner, Admin and Sales (the API checks); `id` is the call's. A call already marked, or another workspace's, puts the card back as out of date. */
+/**
+ * A Lead Finder business on its "Needs you" row (owner, 5 Nov), the same as the Prospects page's buttons (`POST /prospects/actions`, Owner, Admin and Sales; the API checks again): Call = the Owner's yes (it becomes ready to call; the
+ * row then opens its practice call, which dials nobody), Skip. A business that was decided meanwhile, or is suppressed, answers `prospect_state`: the row is put back and the page read again.
+ */
+async function prospect(tenantId: string, id: string, action: "call" | "skip"): Promise<DecisionResult> {
+  const { user, t, valid } = await context(tenantId, id);
+  if (!valid) return { ok: false, error: t("today.err.state"), stale: true };
+  try {
+    const [result] = await actOnProspects(user.accessToken, tenantId, [id], action);
+    if (!result?.ok) return { ok: false, error: t("today.err.state"), stale: true };
+    refresh(tenantId);
+    return { ok: true, message: t(action === "call" ? "today.toast.prospect.call" : "today.toast.prospect.skip") };
+  } catch (error) {
+    return failure(error, t);
+  }
+}
+export async function callProspectAction(tenantId: string, id: string): Promise<DecisionResult> {
+  return prospect(tenantId, id, "call");
+}
+export async function skipProspectAction(tenantId: string, id: string): Promise<DecisionResult> {
+  return prospect(tenantId, id, "skip");
+}
+
+/** "Done" on a caller who asked for a person or agreed a visit (C1 #347, #354): the team called back, the call leaves Needs you. Owner, Admin and Sales (the API checks); `id` is the call's. A call already marked, or another workspace's, puts the card back as out of date. */
 export async function callHandledAction(tenantId: string, id: string): Promise<DecisionResult> {
   const { user, t, valid } = await context(tenantId, id);
   if (!valid) return { ok: false, error: t("today.err.state"), stale: true };

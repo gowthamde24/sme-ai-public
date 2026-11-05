@@ -1,10 +1,10 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 import { BRAND_NAME } from "@/design/brand";
 
+import { SpriteIcon } from "./icons";
 import type { PackFrame, Plan } from "./contract";
 import { Disclosure } from "./Disclosure";
 import { BrandMark, NotYetText, planText } from "./frame-parts";
@@ -51,7 +51,7 @@ export function WorkspaceSwitcher({ memberships, labels, plan, loading = false, 
       summary={
         <>
           {body}
-          <ChevronDown className="size-4 shrink-0" aria-hidden="true" />
+          <SpriteIcon id="chevron-down" className="size-4 shrink-0" />
           <span className="sr-only">{word(labels, "frame.switch", "Switch workspace")}</span>
         </>
       }
