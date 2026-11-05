@@ -10,6 +10,9 @@ import { requireUser } from "@/lib/auth/session";
 
 import { fromThisSite, ndjsonResponse } from "./ask-response";
 import { knownCode, toAskEvents, type QuoteLookup } from "./ask-stream";
+import { appT } from "@/i18n/app";
+import { getLang } from "@/i18n/get-lang";
+import { politeSentence } from "@/lib/lead-finder/types";
 
 export const dynamic = "force-dynamic";
 
@@ -82,7 +85,15 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
   // where the conversation panel is on (BROWSER_VOICE) the ONE conversation endpoint decides what the message is (answer, plan to confirm, one question); otherwise the written Ask as before
   const events = browserVoice()
-    ? toAskEvents(turnOrMessage(user.accessToken, tenantId, { messageId, conversationId: typeof conversationId === "string" ? conversationId : null, text, ...(language ? { language } : {}) }), base, enquiryOfQuote)
+    ? toAskEvents(turnOrMessage(user.accessToken, tenantId, { messageId, conversationId: typeof conversationId === "string" ? conversationId : null, text, ...(language ? { language } : {}) }), base, enquiryOfQuote, { individuals: await individualsWords(language) })
     : toAskEvents(sendAssistantMessage(user.accessToken, tenantId, { messageId, conversationId: typeof conversationId === "string" ? conversationId : undefined, text }), base, enquiryOfQuote);
   return ndjsonResponse(events, (error) => (error instanceof ApiRequestError ? (error.status === 403 ? "forbidden" : knownCode(error.code)) : undefined));
+}
+
+/** The reply to a Lead Finder search that names people (C1 #319: 422 `individuals_not_allowed`, any business type): the API's polite sentence as it is; ours (in the chat's language, else the person's) only when it gave none. */
+async function individualsWords(pill: ReplyLanguage | null): Promise<(message: string) => string> {
+  const app = await getLang();
+  const lang = pill && pill !== "auto" ? pill : app;
+  const ours = appT((["en", "te", "hi", "kn"] as const).find((l) => l === lang) ?? app)("lf.err.individuals");
+  return (message) => politeSentence(message) ?? ours;
 }

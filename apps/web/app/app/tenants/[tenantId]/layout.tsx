@@ -21,7 +21,7 @@ import { getLang } from "@/i18n/get-lang";
 import { fetchTenant, publicApiBase } from "@/lib/api/client";
 import { isVoiceLang, voiceSocketUrl, VOICE_LANGS } from "@/lib/browser-voice/protocol";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
-import { isChatCardWord } from "@/lib/lead-finder/types";
+import { audienceModules, isChatCardWord, type Audience } from "@/lib/lead-finder/types";
 import { requireUser } from "@/lib/auth/session";
 import { browserVoice, guidedDemo, pronunciationScreens, taskScreens } from "@/lib/screens/flag";
 import { readIsDemo } from "./today-read";
@@ -30,7 +30,8 @@ import { GuidedDemo } from "@/components/v2/app/guided-demo/LazyGuidedDemo";
 import { runDemoStepAction } from "./guided-demo-actions";
 import { ADDRESSES } from "@/lib/site/business";
 
-import { readFrameData } from "../../frame-data";
+import { readFinderAccessCached, readFrameData } from "../../frame-data";
+import { upgradeHref } from "@/lib/plan/tier-source";
 import { turnOnAssistantAction } from "./ask-switch-actions";
 import { boundTaskActions } from "./tasks-bound";
 import { topupLayoutBanner } from "./topup-banner";
@@ -65,7 +66,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales); its words, and those of the Lead Finder's card in the chat
   const url = browserVoice() && isCanonicalUuid(tenantId) ? voiceSocketUrl(publicApiBase(), tenantId) : null;
   const voice = url && (await mayTalk(user.accessToken, tenantId))
-    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || isChatCardWord(k))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language` }
+    ? { words: withModuleWords(Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || isChatCardWord(k))), audienceModules(await chatAudience(user.accessToken, tenantId))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language`, finderUpsell: await chatUpsell(user.accessToken, tenantId) }
     : null;
   const topupBanner = isCanonicalUuid(tenantId) ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
   return (
@@ -98,6 +99,25 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
       {demoRoutes ? <GuidedDemo words={Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("gd.")))} routes={demoRoutes} actions={{ run: runDemoStepAction.bind(null, tenantId) }} /> : null}
     </>
   );
+}
+
+/** Plan tiers (owner decision 4 Nov): in the chat, is a Lead Finder card the "Finding new customers is part of AI Workforce" card (a Lead Desk plan), and where does its link go (Settings -> Plan, for the Owner and Admin)? A failed read: the cards as before. */
+async function chatUpsell(accessToken: string, tenantId: string): Promise<{ on: boolean; planHref: string | null }> {
+  const planHref = upgradeHref(`/app/tenants/${tenantId}`, (await mayTurnOn(accessToken, tenantId)) ? "admin" : "sales");
+  try {
+    return { on: (await readFinderAccessCached(accessToken, tenantId)).access === "upsell", planHref };
+  } catch {
+    return { on: false, planHref };
+  }
+}
+
+/** Whose words the chat's Lead Finder card speaks (a school's: organisations, C1 5 Nov). A failed read: the business words. */
+async function chatAudience(accessToken: string, tenantId: string): Promise<Audience> {
+  try {
+    return (await readFinderAccessCached(accessToken, tenantId)).audience;
+  } catch {
+    return "businesses";
+  }
 }
 
 /** May this person talk to the assistant by voice? Owner, Admin or Sales (the API checks again); a failed read is "no". */

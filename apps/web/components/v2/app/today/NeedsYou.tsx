@@ -38,9 +38,10 @@ const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: str
   material_quote_approval: { kind: "today.kind.quote", step: "today.step.quote", tone: "bg-brand-bg text-brand-text", who: "today.fact.customer" },
   campaign_approval: { kind: "today.kind.campaign", step: "today.step.campaign", tone: "bg-brand-bg text-brand-text", who: "today.fact.campaign" },
   fees_overdue: { kind: "today.kind.fees", step: "today.step.fees", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
+  plan_upsell: { kind: "today.kind.upsell", step: "today.step.upsell", tone: "bg-surface-2 text-ink", who: "today.fact.what" },
 };
 /** The kinds whose one-line reason is made in the person's language by the server (the others' reasons are the API's English): their row shows it in every language. */
-const OWN_WORDS: readonly NeedsYouItem["kind"][] = ["prospect_waiting"];
+const OWN_WORDS: readonly NeedsYouItem["kind"][] = ["prospect_waiting", "plan_upsell"];
 
 /** Which badge a message wears: what makes it wait for a person (money first, then a promise, then a complaint). */
 function badgeOf(m: OutboxCardMessage | null): { key: string; tone: string } {
@@ -173,6 +174,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
         {say(words, `agent.${item.agent}`)} · {ago(item.at, ctx.now)}
       </p>
       <p className="whitespace-pre-wrap [overflow-wrap:anywhere]">{item.summary}</p>
+      {item.kind === "plan_upsell" ? null : (
       <dl className="flex flex-wrap gap-x-6 gap-y-2 rounded-2xl bg-surface-2 p-3">
         {facts.map(([label, value]) => (
           <div key={label} className="min-w-0 max-w-full">
@@ -181,6 +183,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
           </div>
         ))}
       </dl>
+      )}
       <div className="flex flex-wrap items-center gap-2">
         <Link href={item.href} className={primary}>
           {say(words, k.step)}
@@ -190,7 +193,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
           <ArrowRight className="size-4" aria-hidden="true" />
         </Link>
       </div>
-      <p className="text-sm text-muted">{say(words, "today.hint.nothingSent")}</p>
+      {item.kind === "plan_upsell" ? null : <p className="text-sm text-muted">{say(words, "today.hint.nothingSent")}</p>}
     </article>
   );
 }

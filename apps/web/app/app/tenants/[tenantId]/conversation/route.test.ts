@@ -80,4 +80,15 @@ describe("POST conversation (the panel's side calls)", () => {
     expect(await (await post({ op: "lf_cancel", searchId: S })).json()).toEqual({ ok: false, error: "forbidden" });
     expect(h.approve).not.toHaveBeenCalled();
   });
+  it("a Lead Desk plan (owner decision 4 Nov): no search runs from the chat, the card is told `plan`; the API's own 403 not_in_plan is `plan` too", async () => {
+    const S = "a1a1a1a1-0000-4000-8000-000000000001";
+    h.tenant.mockResolvedValue({ role: "owner" });
+    vi.stubEnv("PLAN_TIER_SCREENS", "mock");
+    vi.stubEnv("PLAN_TIER_MOCK", "lead_desk");
+    expect(await (await post({ op: "lf_approve", searchId: S })).json()).toEqual({ ok: false, error: "plan" });
+    expect(h.approve).not.toHaveBeenCalled();
+    vi.stubEnv("PLAN_TIER_SCREENS", "");
+    h.approve.mockRejectedValueOnce(new ApiRequestError(403, "not_in_plan", "x"));
+    expect(await (await post({ op: "lf_approve", searchId: S })).json()).toEqual({ ok: false, error: "plan" });
+  });
 });

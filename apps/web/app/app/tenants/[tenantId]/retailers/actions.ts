@@ -12,7 +12,8 @@ import { failureOf } from "@/lib/api/failure";
 import { actOnProspects, approveSearch, cancelSearch, getQuoteDraft, makeQuoteDraft, planSearch, practiceCall } from "@/lib/api/lead-finder";
 import { fetchQuote } from "@/lib/api/quotes";
 import { requireUser } from "@/lib/auth/session";
-import { ACTIONS, CALL_LANGUAGES, MAX_BULK, PERSONAS, searchTextProblem, type ActionResult, type CallLanguage, type Persona, type PracticeCall, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
+import { readEntitlements } from "@/lib/plan/tier-source";
+import { ACTIONS, CALL_LANGUAGES, MAX_BULK, PERSONAS, searchTextProblem, politeSentence, type ActionResult, type CallLanguage, type Persona, type PracticeCall, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
 
 /**
  * The changes of the Prospects tab (job lead-finder part D; docs/contracts/lead-finder.md): plan a search from the owner's words, the OK (Owner, Admin) that runs it, Cancel, the bulk buttons, and the practice call (Owner, Admin) IN THE
@@ -31,6 +32,8 @@ async function who(tenantId: string, allowed: readonly Role[]): Promise<{ token:
   try {
     const tenant = await fetchTenant(user.accessToken, tenantId);
     if (!(allowed as readonly string[]).includes(tenant.role)) return { ok: false, kind: "forbidden", error: t("apierr.forbidden") };
+    // a Lead Desk plan (owner decision 4 Nov) has no Lead Finder: nothing of it runs from here, whatever the API would say (it refuses too: 403 not_in_plan)
+    if (!(await readEntitlements(user.accessToken, tenantId)).features.leadFinder) return { ok: false, kind: "forbidden", error: t("tier.upsell.title") };
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     return failureOf(error, t);
@@ -45,6 +48,9 @@ function refusal(error: unknown, t: AppT, lang: string): Refused {
   if (f.code === "not_a_search") return { ...f, error: lang === "en" && api && api.message.length > 0 && api.message.length <= 300 ? api.message : t("lf.err.not_a_search") };
   if (f.code === "search_cap_reached") return { ...f, error: t("lf.err.cap") };
   if (f.code === "lead_finder_off" || f.code === "lead_finder_not_available") return { ...f, error: t("lf.err.off") };
+  if (f.code === "not_in_plan") return { ...f, error: t("tier.upsell.title") };
+  // a search for people ("parents in Anantapur", C1 #319, any business type): the API's polite sentence as it is; ours only when it gave none
+  if (f.code === "individuals_not_allowed") return { ...f, error: politeSentence(api?.message) ?? t("lf.err.individuals") };
   if (f.code === "nothing_to_quote") return { ...f, error: t("lf.qd.err.nothing") };
   if (f.code === "quote_draft_exists") return { ...f, error: t("lf.qd.err.exists") };
   if (f.code === "not_qualified") return { ...f, error: t("lf.qd.err.not_qualified") };
