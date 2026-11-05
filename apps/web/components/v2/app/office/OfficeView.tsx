@@ -4,7 +4,7 @@ import Link from "next/link";
 import { pageH1 } from "../ui";
 import { ago } from "../today/time";
 import type { AgentRow, T } from "../today/types";
-import { OfficeRoom, type RoomRow, type Words } from "./OfficeRoom";
+import { OfficeRoom, type RoomRow, type TeamExtras, type Words } from "./OfficeRoom";
 import { ALL_AGENT_IDS, type AgentId } from "./ids";
 
 const card = "rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)]";
@@ -12,6 +12,7 @@ const card = "rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shad
 const WORD_KEYS = [
   "office.title", "office.sub", "office.idle", "office.working", "office.switchedoff", "frame.notyet", "office.latest", "office.noevents", "office.pick", "office.runs",
   "office.viewroom", "office.viewlist", "office.listintro", "office.viewswitch", "office.hint", "office.feed",
+  "office.settings", "office.switch", "office.done.one", "office.done.other", "office.locked.platform", "office.locked.workspace_off", "office.sw.on", "office.sw.off", "office.sw.err.forbidden", "office.sw.err.locked", "office.sw.err.down",
   ...ALL_AGENT_IDS.map((id) => `agent.${id}`),
 ];
 
@@ -21,7 +22,7 @@ const WORD_KEYS = [
  * each says so, on its tag and its card. The chosen helper is `?agent=` (a real link). "Runs and cost" is the existing page of agent runs. The server draws the List; OfficeRoom (client)
  * draws the room (plain DOM and CSS, so the server draws it too) or the list, and keeps the person's choice.
  */
-export function OfficeView({ agents, selected, base, t, links = {} }: { agents: AgentRow[] | null; selected: string | null; base: string; t: T; links?: Readonly<Record<string, string>> }) {
+export function OfficeView({ agents, selected, base, t, links = {}, team }: { agents: AgentRow[] | null; selected: string | null; base: string; t: T; links?: Readonly<Record<string, string>>; team?: TeamExtras }) {
   if (agents === null) {
     return (
       <div data-screen="office">
@@ -46,5 +47,5 @@ export function OfficeView({ agents, selected, base, t, links = {} }: { agents: 
   // a helper that is not built yet (`not_available`: the Lead Finder until its job ships) has no seat and no card (owner, 4 Nov): the office shows the team that exists
   const rows: RoomRow[] = agents.filter((a) => a.agent === "main" || a.state !== "not_available").map((a) => ({ agent: a.agent, state: a.state, job: a.job, event: a.last_event ? { text: a.last_event.text, ago: ago(a.last_event.at), at: a.last_event.at, href: links[a.agent] ?? null } : null }));
   const chosen = selected !== null && (ALL_AGENT_IDS as readonly string[]).includes(selected) ? (selected as AgentId) : null;
-  return <OfficeRoom rows={rows} selected={chosen} base={base} words={words} />;
+  return <OfficeRoom rows={rows} selected={chosen} base={base} words={words} team={team} />;
 }

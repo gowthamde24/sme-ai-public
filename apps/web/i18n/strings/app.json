@@ -274,6 +274,17 @@
    "kn": "draft"
   }
  },
+ "frame.search": {
+  "en": "Search or ask anything",
+  "te": "ఏదైనా వెతకండి లేదా అడగండి",
+  "hi": "कुछ भी खोजें या पूछें",
+  "kn": "ಏನನ್ನಾದರೂ ಹುಡುಕಿ ಅಥವಾ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "frame.notyet": {
   "en": "Not available yet",
   "te": "ఇంకా అందుబాటులో లేదు",
@@ -984,10 +995,10 @@
   "humanOnly": true
  },
  "office.title": {
-  "en": "Agent office",
-  "te": "ఏజెంట్ ఆఫీస్",
-  "hi": "एजेंट ऑफ़िस",
-  "kn": "ಏಜೆಂಟ್ ಆಫೀಸ್",
+  "en": "My AI team",
+  "te": "నా AI టీమ్",
+  "hi": "मेरी AI टीम",
+  "kn": "ನನ್ನ AI ತಂಡ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1186,6 +1197,127 @@
   "te": "ఈవెంట్ ఫీడ్",
   "hi": "इवेंट फ़ीड",
   "kn": "ಈವೆಂಟ್ ಫೀಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.settings": {
+  "en": "Settings",
+  "te": "సెట్టింగ్స్",
+  "hi": "सेटिंग्स",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.switch": {
+  "en": "On or off",
+  "te": "ఆన్ లేదా ఆఫ్",
+  "hi": "चालू या बंद",
+  "kn": "ಆನ್ ಅಥವಾ ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.done.one": {
+  "en": "1 done today",
+  "te": "ఈరోజు 1 పూర్తి",
+  "hi": "आज 1 पूरा",
+  "kn": "ಇಂದು 1 ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.done.other": {
+  "en": "{n} done today",
+  "te": "ఈరోజు {n} పూర్తి",
+  "hi": "आज {n} पूरे",
+  "kn": "ಇಂದು {n} ಮುಗಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.locked.platform": {
+  "en": "Switched off for everyone for now",
+  "te": "ప్రస్తుతం అందరికీ ఆఫ్‌లో ఉంది",
+  "hi": "अभी सबके लिए बंद है",
+  "kn": "ಸದ್ಯಕ್ಕೆ ಎಲ್ಲರಿಗೂ ಆಫ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.locked.workspace_off": {
+  "en": "AI helpers are off in Settings",
+  "te": "సెట్టింగ్స్‌లో AI సహాయకులు ఆఫ్‌లో ఉన్నారు",
+  "hi": "सेटिंग्स में AI हेल्पर बंद हैं",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ AI ಸಹಾಯಕರು ಆಫ್ ಆಗಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sw.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sw.off": {
+  "en": "Off",
+  "te": "ఆఫ్",
+  "hi": "बंद",
+  "kn": "ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sw.err.forbidden": {
+  "en": "Only the owner can switch helpers on or off.",
+  "te": "సహాయకులను ఓనర్ మాత్రమే ఆన్ లేదా ఆఫ్ చేయగలరు.",
+  "hi": "हेल्पर को सिर्फ़ मालिक चालू या बंद कर सकते हैं।",
+  "kn": "ಸಹಾಯಕರನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಆನ್ ಅಥವಾ ಆಫ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sw.err.locked": {
+  "en": "This helper has no switch of its own yet.",
+  "te": "ఈ సహాయకుడికి ఇంకా సొంత స్విచ్ లేదు.",
+  "hi": "इस हेल्पर का अपना स्विच अभी नहीं है।",
+  "kn": "ಈ ಸಹಾಯಕರಿಗೆ ಇನ್ನೂ ಸ್ವಂತ ಸ್ವಿಚ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sw.err.down": {
+  "en": "That didn't change. Please try again.",
+  "te": "అది మారలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "वह नहीं बदला। फिर कोशिश करें।",
+  "kn": "ಅದು ಬದಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",

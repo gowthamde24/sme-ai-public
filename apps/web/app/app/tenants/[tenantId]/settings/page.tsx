@@ -293,7 +293,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     ...(hasFields ? [{ key: "fields", label: t("settings.tab.fields") }] : []),
     { key: "data", label: t("settings.tab.data") },
     { key: "language", label: t("settings.tab.language") },
-    ...(hasAssistant ? [{ key: "assistant", label: t("asst.tab") }] : []),
+    // sidebar v2 (owner, 5 Nov): "Train how it talks" is in the menu (AI team), so its tab shows only while it is the open section
+    ...(hasAssistant && section === "assistant" ? [{ key: "assistant", label: t("asst.tab") }] : []),
     ...(hasActivity ? [{ key: "activity", label: t("settings.tab.activity") }] : []),
     ...(tenant.role === "owner" ? [{ key: "agent", label: t("settings.tab.agent") }] : []),
     ...(hasLeadFinder ? [{ key: "leadfinder", label: t("lf.set.tab") }] : []),
