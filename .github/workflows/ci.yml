@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  # the merge queue (owner, 5 Nov 2026: instead of "require branches to be up to date"): every required check also runs on the queue's merge commit, so main only ever gets a commit that passed them
+  merge_group:
 
 permissions:
   contents: read
@@ -48,14 +50,15 @@ jobs:
       - id: decide
         env:
           EVENT: ${{ github.event_name }}
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          # a pull request compares its base with its head; a merge-queue run compares main with the queue's merge commit (the same rule for both)
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.event.merge_group.head_sha }}
         run: |
           set -euo pipefail
-          if [ "$EVENT" != "pull_request" ]; then
+          if [ "$EVENT" != "pull_request" ] && [ "$EVENT" != "merge_group" ]; then
             echo "db=true" >> "$GITHUB_OUTPUT"
             echo "web=true" >> "$GITHUB_OUTPUT"
-            echo "db job: RUNS (a push to main runs every job)" >> "$GITHUB_STEP_SUMMARY"
+            echo "db job: RUNS (a push to main or any other event runs every job)" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           files=$(git diff --name-only --no-renames "$BASE_SHA...$HEAD_SHA")
