@@ -115,7 +115,7 @@ class FakeDeveloperRepo:
         if dup is not None:
             return {"status": "duplicate", "lead": dup["out"]}
         now = datetime.now(UTC).isoformat()
-        out = {"id": str(uuid.uuid4()), "mode": "test", **{f: lead.get(f) for f in ("name", "phone", "email", "source", "language", "notes", "custom_fields", "next_step", "next_step_at", "blocked")},
+        out: dict[str, Any] = {"id": str(uuid.uuid4()), "mode": "test", **{f: lead.get(f) for f in ("name", "phone", "email", "source", "language", "notes", "custom_fields", "next_step", "next_step_at", "blocked")},
                "status": "new", "outcome": None, "created_at": now, "updated_at": now, "calls": []}
         self.leads.append({"key": k["id"], "tenant": k["tenant"], "idem": idem_key, "sha": body_sha, "out": out, "consent": lead["consent"]})
         return {"status": "created", "lead": out}

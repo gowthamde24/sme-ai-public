@@ -629,6 +629,12 @@ begin
     (tests.rid(p || '_er_aplan'), t, tests.rid(p || '_er_amsg'), tests.uid(p || '_owner'), 'Add 1 lead from ''Awfq7 leads.csv''', 'Awfq7 leads.csv', '[{"tool": "lead-imports.import_leads"}]'::jsonb, now() + interval '10 minutes');
   insert into public.assistant_work_actions (id, tenant_id, plan_id, step_no, tool, summary, requested_by, decided_by, message_id, status) values
     (tests.rid(p || '_er_aact'), t, tests.rid(p || '_er_aplan'), 1, 'lead-imports.import_leads', 'Added 1 lead from Awfq7 leads.csv', tests.uid(p || '_owner'), tests.uid(p || '_owner'), tests.rid(p || '_er_amsg'), 'done');
+  -- the developer API (ADR 0121): a TEST lead a program posted (its name, number, e-mail, notes, free fields and consent) carries a business canary, erased with the workspace and swept
+  insert into public.developer_api_keys (id, tenant_id, name, key_hash, prefix, last4, scopes, created_by) values
+    (tests.rid(p || '_er_dkey'), t, 'Dvaq7 key', encode(sha256(convert_to(p || '_er_dkey', 'UTF8')), 'hex'), 'sk_test_dvaq', 'q7q7', array['leads:write'], tests.uid(p || '_owner'));
+  insert into public.developer_sandbox_leads (id, tenant_id, key_id, idem_key, body_sha, name, phone, email, notes, custom_fields, consent, next_step) values
+    (tests.rid(p || '_er_dlead'), t, tests.rid(p || '_er_dkey'), 'dvaq7', repeat('d', 64), 'Dvaq7 Kumar', '+919845012346', 'dvaq7@example.test', 'Dvaq7 wants 40 sarees',
+     '{"budget": "Dvaq7"}'::jsonb, '{"given": true, "text": "Dvaq7 agreed"}'::jsonb, 'none');
 end $$;
 
 -- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).

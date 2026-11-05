@@ -55,8 +55,8 @@ create table public.developer_sandbox_leads (
   source         text check (char_length(source) between 1 and 40 and app.text_is_clean(source)),
   language       text check (language in ('en', 'te', 'hi', 'kn', 'ta', 'ml', 'mr')),
   notes          text check (char_length(notes) <= 2000 and app.text_is_clean(notes)),
-  custom_fields  jsonb not null default '{}' check (jsonb_typeof(custom_fields) = 'object' and octet_length(custom_fields::text) <= 12000 and app.text_is_clean(custom_fields)),
-  consent        jsonb not null check (jsonb_typeof(consent) = 'object' and consent -> 'given' = 'true'::jsonb and octet_length(consent::text) <= 2000 and app.text_is_clean(consent)),
+  custom_fields  jsonb default '{}' check (custom_fields is null or (jsonb_typeof(custom_fields) = 'object' and octet_length(custom_fields::text) <= 12000 and app.text_is_clean(custom_fields))),
+  consent        jsonb check (consent is null or (jsonb_typeof(consent) = 'object' and octet_length(consent::text) <= 2000 and app.text_is_clean(consent))),   -- required at creation (developer_sandbox_lead_create); null only once erased
   status         text not null default 'new' check (status in ('new', 'contacted', 'interested', 'not_interested', 'visit_booked', 'won', 'lost')),
   outcome        text check (outcome in ('interested', 'not_interested', 'callback', 'no_answer', 'visit_booked')),
   next_step      text not null check (next_step in ('call', 'call_at', 'follow_up', 'none')),
@@ -64,7 +64,6 @@ create table public.developer_sandbox_leads (
   blocked        text check (blocked in ('dnd', 'calling_hours')),
   created_at     timestamptz not null default now(),
   updated_at     timestamptz not null default now(),
-  check (phone is not null or email is not null),
   foreign key (tenant_id, key_id) references public.developer_api_keys (tenant_id, id),
   unique (key_id, idem_key)
 );
@@ -94,6 +93,18 @@ create trigger audit_developer_sandbox_leads after insert or update or delete on
 grant select on public.developer_sandbox_leads to authenticated;
 create policy developer_sandbox_leads_select on public.developer_sandbox_leads for select to authenticated
   using (tenant_id = any (((select app.my_tenant_ids_with_role(array['owner', 'admin']::public.app_role[])))::uuid[]));
+-- erasure (ADR 0014): a test lead's personal columns are wiped with the workspace and swept for an erased person's identifiers
+insert into erasure.registry (table_name, column_name, scope, strategy, replacement) values
+  ('developer_sandbox_leads', 'name',          'tenant', 'tombstone', 'erased:1'),
+  ('developer_sandbox_leads', 'name',          'sweep',  'substring', 'erased:1'),
+  ('developer_sandbox_leads', 'phone',         'tenant', 'null',      'erased:1'),
+  ('developer_sandbox_leads', 'phone',         'sweep',  'substring', 'erased:1'),
+  ('developer_sandbox_leads', 'email',         'tenant', 'null',      'erased:1'),
+  ('developer_sandbox_leads', 'email',         'sweep',  'substring', 'erased:1'),
+  ('developer_sandbox_leads', 'notes',         'tenant', 'null',      'erased:1'),
+  ('developer_sandbox_leads', 'notes',         'sweep',  'substring', 'erased:1'),
+  ('developer_sandbox_leads', 'custom_fields', 'tenant', 'null',      'erased:1'),
+  ('developer_sandbox_leads', 'consent',       'tenant', 'null',      'erased:1');
 create index developer_sandbox_leads_changed on public.developer_sandbox_leads (tenant_id, updated_at, id);
 create index developer_sandbox_leads_phone on public.developer_sandbox_leads (tenant_id, phone) where phone is not null;
 create index developer_sandbox_leads_email on public.developer_sandbox_leads (tenant_id, lower(email)) where email is not null;
@@ -133,7 +144,7 @@ security definer
 set search_path = ''
 as $$
   select jsonb_build_object('id', l.id, 'mode', 'test', 'name', l.name, 'phone', l.phone, 'email', l.email, 'source', l.source, 'language', l.language, 'notes', l.notes,
-                            'custom_fields', l.custom_fields, 'status', l.status, 'outcome', l.outcome, 'next_step', l.next_step, 'next_step_at', l.next_step_at, 'blocked', l.blocked,
+                            'custom_fields', coalesce(l.custom_fields, '{}'::jsonb), 'status', l.status, 'outcome', l.outcome, 'next_step', l.next_step, 'next_step_at', l.next_step_at, 'blocked', l.blocked,
                             'created_at', l.created_at, 'updated_at', l.updated_at, 'calls', '[]'::jsonb)
 $$;
 revoke all on function app.developer_lead_json(public.developer_sandbox_leads) from public;
@@ -331,8 +342,9 @@ begin
   if k.id is null then
     perform app.scheduler_error('deny');
   end if;
-  if p_lead is null or jsonb_typeof(p_lead) <> 'object' then
-    perform app.scheduler_error('invalid');
+  if p_lead is null or jsonb_typeof(p_lead) <> 'object' or p_lead -> 'consent' -> 'given' is distinct from 'true'::jsonb
+     or (nullif(p_lead ->> 'phone', '') is null and nullif(p_lead ->> 'email', '') is null) then
+    perform app.scheduler_error('invalid');   -- consent, and a phone or an e-mail, are required (the API says so first)
   end if;
   perform pg_advisory_xact_lock(hashtextextended('developer_sandbox_lead:' || k.tenant_id::text, 0));   -- one create at a time per workspace: the dedupe holds
   select * into v from public.developer_sandbox_leads l where l.key_id = k.id and l.idem_key = p_idem_key;
