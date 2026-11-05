@@ -2,7 +2,7 @@
  * The suggestion chips of each screen (job DQ part 0): the same few questions the assistant always answers (what needs me today, who to call first, how much customer money is held, which quotes wait, what the team did), in the
  * order that fits the screen the person is on. Pure: the keys are words of the string store, resolved by the caller in the person's language (and for the business type: `ask.chip.quotes@programmes`). Nothing here names a business type.
  */
-export type ChipKey = "ask.chip.needs" | "ask.chip.call" | "ask.chip.money" | "ask.chip.quotes" | "ask.chip.team";
+export type ChipKey = "ask.chip.needs" | "ask.chip.call" | "ask.chip.money" | "ask.chip.quotes" | "ask.chip.team" | "ask.chip.find" | "ask.chip.import";
 
 const SCREENS: Readonly<Record<string, readonly ChipKey[]>> = {
   // customers: leads, customers, find retailers, students, sites
@@ -42,6 +42,14 @@ const FALLBACK: readonly ChipKey[] = ["ask.chip.needs", "ask.chip.call", "ask.ch
 
 /** The chips of Today's card: the three questions that must always work. */
 export const TODAY_CHIPS: readonly ChipKey[] = ["ask.chip.needs", "ask.chip.call", "ask.chip.money"];
+
+/**
+ * Today's four chips (sidebar v2, owner 5 Nov): the three that always work, then one the workspace can really do: find new customers where the Lead Finder is available ("Find new contractors near me" for a business that sells
+ * materials), else add leads from a file where the assistant does the work in the chat, else the quotes that wait. Never a chip the assistant would answer with "can't do yet".
+ */
+export function todayChips({ finder, files }: { finder: boolean; files: boolean }): readonly ChipKey[] {
+  return [...TODAY_CHIPS, finder ? "ask.chip.find" : files ? "ask.chip.import" : "ask.chip.quotes"];
+}
 
 /** The chips for a path under the workspace (`/leads`, `/quotes/…`): by its first segment; the three common ones where the screen has none of its own. The workspace home with a records tab (`?tab=leads`, `?tab=companies`) is the Customers screen. */
 export function chipsForPath(rest: string, tab: string | null = null): readonly ChipKey[] {

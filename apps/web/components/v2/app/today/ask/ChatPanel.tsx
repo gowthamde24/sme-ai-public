@@ -300,7 +300,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   const caption = talk.connecting ? c("bv.connecting") : !talk.active ? c("bv.orb.tap") : talk.state === "speaking" ? c("bv.orb.speaking") : talk.state === "thinking" ? c("bv.thinking") : talk.state === "paused" ? c("bv.live.paused") : c("bv.listening");
   /* The orb IS the Talk button (owner 31 Oct): a hands-free spoken conversation; it listens again after every answer, you may speak over it, and a tap again (or about 30 s of silence) ends it. The ring around it is its voice: still when idle, pulsing with the sound while it listens or speaks. */
   const talkOrb = (px: number, withCaption: boolean) => (
-    <div className={`flex shrink-0 flex-col items-center gap-1.5 ${withCaption ? "w-[84px]" : ""}`}>
+    <div className={`flex shrink-0 flex-col items-center gap-1.5 ${withCaption ? "w-[96px]" : ""}`}>
       <button
         type="button"
         data-chat="live-talk"
@@ -384,7 +384,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
         readOnly={dictating}
         autoComplete="off"
         enterKeyHint="send"
-        className="block min-h-11 w-full min-w-0 max-h-40 resize-none overflow-y-auto bg-transparent px-1 py-2 text-base leading-6 text-ink outline-none placeholder:text-muted focus:outline-none focus-visible:outline-none"
+        className={`block ${bar ? "min-h-16" : "min-h-11"} w-full min-w-0 max-h-40 resize-none overflow-y-auto bg-transparent px-1 py-2 text-base leading-6 text-ink outline-none placeholder:text-muted focus:outline-none focus-visible:outline-none`}
       />
       <div data-chat="toolbar" className="flex items-center gap-1">
         {plusEl}
@@ -535,7 +535,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   );
   return variant === "bar" ? (
     <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="bar" onKeyDown={onKeyDown} className="flex items-start gap-4">
-      {talkOrb(64, true)}
+      {/* the same composer, a little bigger (owner, 5 Nov): the orb 80 px, two lines of text in view */}
+      {talkOrb(80, true)}
       <div className="flex min-w-0 flex-1 flex-col gap-2.5">
         {composerEl}
         {chipsEl}
