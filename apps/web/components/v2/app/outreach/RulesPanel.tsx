@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { CALL_LANGS, CHANNELS, GOALS, RULE_ACTIONS, RULE_SOURCES, type CallLang, type Channel, type Done, type Goal, type Rule, type RuleAction, type SourceTag } from "@/lib/outreach/types";
+import { CALL_LANGS, GOALS, RULE_CHANNELS, RULE_SOURCES, type CallLang, type Channel, type Done, type Goal, type Rule, type RuleAction, type SourceTag } from "@/lib/outreach/types";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, formStack, mutedText, okBox, pillAmber, pillGreen, surface } from "../ui";
 import { makeT, type Words } from "../words";
@@ -23,8 +23,9 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
   const [note, setNote] = React.useState<string | null>(null);
   const [saved, setSaved] = React.useState(false);
 
-  const sentence = (r: Pick<Rule, "source" | "action" | "withinMinutes">): string =>
-    t(`ol.rule.sentence.${r.action}` as "ol.rule.sentence.call_within_minutes", { source: sourceNames[r.source] ?? r.source, n: r.withinMinutes });
+  // call first (owner, 5 Nov): every rule calls; "both" adds WhatsApp only when the customer asks for it on the call
+  const sentence = (r: Pick<Rule, "source" | "withinMinutes" | "channel">): string =>
+    t(r.channel === "call" ? "ol.rule.sentence.call_within_minutes" : "ol.rule.sentence.call_then_ask", { source: sourceNames[r.source] ?? r.source, n: r.withinMinutes });
 
   const toggle = async (r: Rule) => {
     setBusy(r.id);
@@ -46,7 +47,7 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
               <span className={r.active ? pillGreen : pillAmber}>{r.active ? t("ol.rule.on") : r.pausedReason === "cap_calls" ? t("ol.paused.cap_calls") : r.pausedReason === "cap_minutes" ? t("ol.paused.cap_minutes") : t("ol.rule.paused")}</span>
             </div>
             <p className={`${mutedText} !mt-0`}>
-              {goalNames[r.goal] ?? r.goal} · {t(`pc.channel.${r.channel}` as "pc.channel.call")} · {languageNames[r.language] ?? r.language}
+              {goalNames[r.goal] ?? r.goal} · {t(r.channel === "call" ? "ol.rule.channel.call" : "ol.rule.channel.both")} · {languageNames[r.language] ?? r.language}
               {r.maxCallsPerDay ? ` · ${t("pc.limits.calls", { n: r.maxCallsPerDay })}` : ""}
               {r.maxTotalMinutes ? ` · ${t("pc.limits.minutes", { n: r.maxTotalMinutes })}` : ""}
             </p>
@@ -101,11 +102,11 @@ export function RulesPanel({ words, rules, canAdd, canControl, sourceNames, goal
   );
 }
 
-function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguage, sentence, save, securityHref, onDone, onCancel }: { words: Words; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; defaultLanguage: CallLang; sentence: (r: { source: string; action: RuleAction; withinMinutes: number }) => string; save: RuleActions["save"]; securityHref: string; onDone: () => void; onCancel: () => void }) {
+function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguage, sentence, save, securityHref, onDone, onCancel }: { words: Words; sourceNames: Readonly<Record<string, string>>; goalNames: Readonly<Record<string, string>>; languageNames: Readonly<Record<string, string>>; defaultLanguage: CallLang; sentence: (r: { source: string; withinMinutes: number; channel: Channel }) => string; save: RuleActions["save"]; securityHref: string; onDone: () => void; onCancel: () => void }) {
   const t = makeT(words);
   const [id] = React.useState(() => crypto.randomUUID());
   const [source, setSource] = React.useState<SourceTag>("meta_lead_ads");
-  const [action, setAction] = React.useState<RuleAction>("call_within_minutes");
+  const action: RuleAction = "call_within_minutes";
   const [minutes, setMinutes] = React.useState(2);
   const [goal, setGoal] = React.useState<Goal>("general");
   const [channel, setChannel] = React.useState<Channel>("call");
@@ -117,7 +118,7 @@ function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguag
   const [busy, setBusy] = React.useState(false);
   const [error, setError] = React.useState<{ text: string; mfa: boolean } | null>(null);
   const num = (v: string): number | null => (v.trim() === "" ? null : Number(v));
-  const needsMessage = action !== "call_within_minutes" || channel !== "call";
+  const needsMessage = channel === "both";
 
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
@@ -144,15 +145,11 @@ function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguag
           ))}
         </select>
       </div>
-      <fieldset className="flex flex-col gap-1">
-        <legend className={fieldLabel}>{t("ol.rule.action")}</legend>
-        {RULE_ACTIONS.map((a) => (
-          <label key={a} className="flex min-h-11 items-center gap-3 text-base">
-            <input type="radio" name="rf-action" className="size-5 accent-brand-text" checked={action === a} onChange={() => (setAction(a), a !== "call_within_minutes" && setChannel("both"))} />
-            {t(`ol.rule.action.${a}` as "ol.rule.action.call_within_minutes")}
-          </label>
-        ))}
-      </fieldset>
+      {/* call first (owner, 5 Nov): a new lead is always called; there is no WhatsApp-first rule to choose */}
+      <div>
+        <p className={fieldLabel}>{t("ol.rule.action")}</p>
+        <p className="text-base">{t("ol.rule.action.call_within_minutes")}</p>
+      </div>
       <div>
         <label htmlFor="rf-min" className={fieldLabel}>
           {t("ol.rule.within")}
@@ -174,10 +171,10 @@ function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguag
       </div>
       <fieldset className="flex flex-col gap-1">
         <legend className={fieldLabel}>{t("pc.channel")}</legend>
-        {CHANNELS.map((c) => (
+        {RULE_CHANNELS.map((c) => (
           <label key={c} className="flex min-h-11 items-center gap-3 text-base">
             <input type="radio" name="rf-channel" className="size-5 accent-brand-text" checked={channel === c} onChange={() => setChannel(c)} />
-            {t(`pc.channel.${c}` as "pc.channel.call")}
+            {t(c === "call" ? "ol.rule.channel.call" : "ol.rule.channel.both")}
           </label>
         ))}
       </fieldset>
@@ -206,7 +203,7 @@ function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguag
             {t("ol.new.message")}
           </label>
           <textarea id="rf-m" className={fieldTextarea} rows={3} maxLength={600} required value={message} onChange={(e) => setMessage(e.target.value)} />
-          <p className={fieldHelp}>{t("ol.new.message.help")}</p>
+          <p className={fieldHelp}>{t("ol.rule.message.help")}</p>
         </div>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2">
@@ -224,7 +221,7 @@ function RuleForm({ words, sourceNames, goalNames, languageNames, defaultLanguag
         </div>
       </div>
       <p data-part="rule-sentence" className="rounded-lg border border-line bg-surface-2 p-3 text-base font-semibold">
-        {sentence({ source, action, withinMinutes: minutes })}
+        {sentence({ source, withinMinutes: minutes, channel })}
       </p>
       <p className={fieldHelp}>{t("ol.rule.approve.help")}</p>
       {error ? (

@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 Confidence = Literal["high", "medium", "low"]
 Urgency = Literal["low", "normal", "high"]
-Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 JunkReason = Literal["spam", "test", "no_contact", "abuse"]
 Short = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
 

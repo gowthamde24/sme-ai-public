@@ -51,7 +51,7 @@ PROFILE_TOOL = ToolSpec(
                         "ref": {"type": "integer"},
                         "need": {"type": "string", "maxLength": 200}, "quantity": {"type": "string", "maxLength": 100}, "area": {"type": "string", "maxLength": 100},
                         "city": {"type": "string", "maxLength": 100}, "budget": {"type": "string", "maxLength": 100}, "timeline": {"type": "string", "maxLength": 100},
-                        "urgency": {"type": "string", "enum": ["low", "normal", "high"]}, "language": {"type": "string", "enum": ["en", "te", "hi", "kn", "ta", "ml"]},
+                        "urgency": {"type": "string", "enum": ["low", "normal", "high"]}, "language": {"type": "string", "enum": ["en", "te", "hi", "kn", "ta", "ml", "mr"]},
                     },
                     "required": ["ref"],
                 },
@@ -226,7 +226,7 @@ class LeadProfileService:
             fields[name] = clean
         if entry.get("urgency") in ("low", "normal", "high"):
             fields["urgency"] = str(entry["urgency"])
-        if entry.get("language") in ("en", "te", "hi", "kn", "ta", "ml"):
+        if entry.get("language") in ("en", "te", "hi", "kn", "ta", "ml", "mr"):
             fields["language"] = str(entry["language"])
         return fields
 

@@ -20,7 +20,7 @@ from app.knowledge.prompt import facts_block
 
 logger = logging.getLogger("app.autoreply.drafter")
 ANTHROPIC = "https://api.anthropic.com/v1/messages"
-LANGUAGE_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam"}
+LANGUAGE_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam", "mr": "Marathi"}
 
 
 # when the assistant cannot give what was asked (a price, stock, a date) the lead must still move: it says the owner will reply AND asks the one or two things the owner needs to answer well

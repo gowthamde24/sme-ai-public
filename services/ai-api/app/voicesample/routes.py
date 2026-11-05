@@ -32,7 +32,7 @@ def voice_sample(
     ctx: OwnerAdmin,
     runtime: RuntimeDep,
     voice: Annotated[Literal["female_warm", "female_clear", "male_calm", "male_lively"], Query()],
-    language: Annotated[Literal["en", "te", "hi", "kn", "ta", "ml"], Query()],
+    language: Annotated[Literal["en", "te", "hi", "kn", "ta", "ml", "mr"], Query()],
     style: Annotated[Literal["warm", "quick"], Query()] = "warm",
     name: Annotated[str | None, Query(max_length=24)] = None,
 ) -> Response:
@@ -51,7 +51,7 @@ def voice_sample(
 
 
 PreviewVoice = Annotated[Literal["female_warm", "female_clear", "male_calm", "male_lively"], Query()]
-PreviewLanguage = Annotated[Literal["en", "te", "hi", "kn", "ta", "ml"], Query()]
+PreviewLanguage = Annotated[Literal["en", "te", "hi", "kn", "ta", "ml", "mr"], Query()]
 
 
 @router.get("/voice-preview")
