@@ -12,7 +12,7 @@ import { appDict } from "@/i18n/app";
 
 import { NeedsYou } from "./NeedsYou";
 import { NeedsProvider } from "./needs-store";
-import { todayWords } from "./today-words";
+import { todayWords } from "./today-word-keys";
 import { CALL_ID, MESSAGE_ID, NOW, U, VISIT_ID, WORDS, call, classic, fakeActions, outbox, proposal } from "./today-test-kit";
 import type { NeedsCard, OutboxCardMessage, Role } from "./types";
 
