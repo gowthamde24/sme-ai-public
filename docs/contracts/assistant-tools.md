@@ -88,6 +88,25 @@ The turn's `text` says what to do with the file(s). A plain "add these to my lea
 - a follow-up or a task for the new lead;
 - later turns about the same file.
 
+### The router for typed requests (owner, 5 Nov 2026: "then the router, starting with the common-actions list")
+1. **Code decides** whether a typed request is about one of the common actions (closed words in en, te, hi and kn: calling hours, auto-reply, pause or resume a source, add a lead, example data,
+   billing, deleting the workspace, real data). Anything else keeps the turn's existing path, with no extra call.
+2. **One model call** picks the action and its arguments from the owner's words, asks one question, says it is screen-only, or says `not_mine` (then the existing path answers).
+3. **Code checks every argument against the words.** An hour must be written there ("10 to 7" → 10:00–19:00 is fine; 09:30 is not, if "9:30" was never said); a name, a phone number and an
+   e-mail must be what was typed; a choice must be on its closed list. Code then builds the step from the state read through the screen's own route.
+4. **The card is a `plan` card** (`card.destination: "settings"`). Its words are code's, old → new.
+
+| action | step | undo | rule |
+|---|---|---|---|
+| calling hours | `call-settings.put_settings` (the hours only change) | snapshot | Owner, second factor |
+| auto-reply on/off | `ai-assistant.put_auto_reply` | snapshot | Owner, second factor; switching ON is `sensitive: "sending"` |
+| pause / resume a lead source (matched by its label) | `lead-sources.pause_source` / `resume_source` | inverse | Owner, Admin |
+| add one typed lead | the lead import, one row (dedupe), as a `file_preview` | the import's undo | as the import |
+| remove the example data | `example-data.example_remove` | none | `sensitive: "deleting"`, Owner |
+| billing, deleting the workspace, real data, erasing a person | none: `cant_do` (`screen_only`) with the screen's link | | always a person |
+
+Already so → a sentence and no card. An unknown source → the real source names.
+
 ## 2. The cards: the turn's `work_card` event
 `event: work_card` / `data: { "type": "work_card", "card": <one of the kinds below> }`, after the sentence, before `done`. The card's `id` is stable. A replay and `GET /assistant/conversations/{id}`
 (`message.work_cards: [...]`) give the cards again, in their state now.
