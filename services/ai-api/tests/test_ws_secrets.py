@@ -263,8 +263,8 @@ def test_the_wiring() -> None:
     assert build_workspace_secrets(Settings(), "http://rest", "anon") is None
     assert build_workspace_secrets(Settings(workspace_secrets="fake"), "http://rest", "anon") is not None
     with pytest.raises(ConfigurationError, match="SUPPRESSION_HMAC_KEY"):
-        build_workspace_secrets(Settings(workspace_secrets="gcp", workspace_secrets_project="project-2757c07e-37d2-4167-88f"), "http://rest", "anon")
+        build_workspace_secrets(Settings(workspace_secrets="gcp", workspace_secrets_project="example-project-1234"), "http://rest", "anon")
     with pytest.raises(ConfigurationError, match="project id"):
-        build_workspace_secrets(Settings(workspace_secrets="gcp", workspace_secrets_project="Bad Project", suppression_hmac_key="k" * 32), "http://rest", "anon")  # type: ignore[arg-type]
+        build_workspace_secrets(Settings(workspace_secrets="gcp", workspace_secrets_project="Bad Project", suppression_hmac_key="test-only-" + "k" * 22), "http://rest", "anon")  # type: ignore[arg-type]
     with pytest.raises(ConfigurationError, match="off, fake or gcp"):
         build_workspace_secrets(Settings(workspace_secrets="vault"), "http://rest", "anon")
