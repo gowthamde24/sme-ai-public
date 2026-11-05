@@ -265,6 +265,7 @@ def make_client(
     lead_finder: Any = None,
     assistant_work: Any = None,
     assistant_file_reader: Any = None,
+    talk_training: Any = None,
     phone_inbound: Any = None,
     rate_limit: bool = False,
 ) -> tuple[TestClient, FakeRepository]:
@@ -336,6 +337,7 @@ def make_client(
             lead_finder=lead_finder,
             assistant_work=assistant_work,
             assistant_file_reader=assistant_file_reader,
+            talk_training=talk_training,
             phone_inbound=phone_inbound,
             tasks=tasks,
             calls=calls,

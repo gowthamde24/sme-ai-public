@@ -509,6 +509,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with l as (insert into public.leads (id, tenant_id, company_id, contact_id) values (gen_random_uuid(), %1$L, %3$L, %4$L) returning id)
      insert into public.lead_intake_created (id, tenant_id, import_id, contact_id, lead_id) select %2$L, %1$L, %2$L, %4$L, l.id from l$$,
    'created_at = created_at', $$delete from public.lead_intake_created where id = %2$L$$, false),
+  -- how the assistant talks on calls (migration 20261231150000): one document per workspace, written only by talk_training_save
+  ('talk_training',
+   $$insert into public.talk_training (id, tenant_id, doc, updated_by) values (%2$L, %1$L, '{"address": "plain"}'::jsonb, %5$L) on conflict (tenant_id) do update set id = excluded.id$$,
+   'doc = doc', $$delete from public.talk_training where id = %2$L$$, false),
   ('marks_send_log',
    $$insert into public.marks_send_log (id, tenant_id, batch_id, seq, contact_id, template_id, status, reason, approved_by) values (%2$L, %1$L, %2$L, 1, %4$L, 'marks.en', 'blocked', 'suppressed', %5$L)$$,
    'status = status', $$delete from public.marks_send_log where id = %2$L$$, true),
@@ -864,6 +868,8 @@ select t, r, s, i, u, d from (values
   ('assistant_work_plans', 'sales', false, false, false, false), ('assistant_work_plans', 'viewer', false, false, false, false),
   ('assistant_work_actions', 'owner', true, false, false, false), ('assistant_work_actions', 'admin', true, false, false, false),
   ('assistant_work_actions', 'sales', false, false, false, false), ('assistant_work_actions', 'viewer', false, false, false, false),
+  ('talk_training', 'owner', true, false, false, false), ('talk_training', 'admin', true, false, false, false),
+  ('talk_training', 'sales', false, false, false, false), ('talk_training', 'viewer', false, false, false, false),
   ('lead_intake_created', 'owner', true, false, false, false), ('lead_intake_created', 'admin', true, false, false, false),
   ('lead_intake_created', 'sales', false, false, false, false), ('lead_intake_created', 'viewer', false, false, false, false),
   ('campaigns', 'owner', true, false, false, false), ('campaigns', 'admin', true, false, false, false),
