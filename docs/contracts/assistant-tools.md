@@ -30,7 +30,14 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
   - sheet (.xlsx, .xls, .csv, .tsv, .ods), contacts (.vcf), text: read and previewed by the lead import's own routes -> `file_preview` (destination `leads`) with its plan, or with `plan: null`
     when nobody new is in it;
   - a sheet with no phone or e-mail column whose headers look like prices -> `cant_do` (`not_yet`, "adding a price list from a file", screen `/catalogue`);
-  - pdf, image, doc -> `cant_do` (`not_yet`, screen `/settings/knowledge`). Brochures into About my business and price lists into the catalogue are later parts.
+  - pdf, image, doc (job A3, owner decisions 5 Nov 2026) -> the **extraction step** first, then the SAME lead-import path as a sheet (preview card -> Do it -> Undo):
+    1. a Word file (.docx): its tables and paragraphs (an old .doc, .odt or .rtf: "save it as .docx"); a PDF with a text layer: its text (`pdftotext -layout`), tables found by their columns;
+    2. a scanned PDF (first 10 pages) or a photo (.jpg, .png, .webp, .gif; HEIC: "send it as a JPG"): **local OCR first** (Tesseract on our server, English, Telugu, Hindi, Kannada; nothing leaves it);
+    3. only if local OCR found neither a table nor a phone or an e-mail: the AI model reads the **page images** (never the PDF itself), under the day's spending cap, asked to copy the text out and
+       nothing else. **Never for a school** (children's details): a school's scan that local OCR cannot read gets "I can't read scanned files yet: please upload it as Excel or CSV" (`cant_do`).
+    People are then found by code (the table with the most phones and e-mails, else line by line, a visiting card as one person); every value is a piece of what was read, a missing one stays empty.
+    What was read is kept as a small CSV under the same 24 h rule and the file itself is deleted at once; "Do it" imports exactly what the card showed. A price table -> `cant_do` (price list,
+    `/catalogue`); a long document with nobody in it -> `cant_do` (`/settings/knowledge`). The log names how it was read and, for the model, the model and the size, never the content.
 
 ## 2. The cards: the turn's `work_card` event
 `event: work_card` / `data: { "type": "work_card", "card": <one of the kinds below> }`, after the sentence, before `done`. The card's `id` is stable. A replay and `GET /assistant/conversations/{id}`
@@ -38,10 +45,12 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
 
 ### file_preview
 ```json
-{ "kind": "file_preview", "id": "uuid", "file_name": "march leads.xlsx", "destination": "leads" | "catalogue" | "knowledge" | "customer", "customer_name": null,
+{ "kind": "file_preview", "id": "uuid", "file_name": "march leads.xlsx", "destination": "leads" | "catalogue" | "knowledge" | "customer", "customer_name": null, "read_by": "file",
   "facts": [ { "code": "found", "n": 38 }, { "code": "existing", "n": 4 }, { "code": "no_phone", "n": 2 }, { "code": "supplier", "n": 1 } ],
   "columns": ["Name", "Phone", "Area"], "rows": [["Ravi Textiles", "+00 000 000 1234", "Jayanagar"]], "plan": <plan, below> | null }
 ```
+- `read_by` (job A3): `file` (the file's own cells or text) | `local_ocr` (our server read a scan or a photo) | `ai` (the AI model read the page images). For `local_ocr` and `ai` the sentence asks
+  the person to check the names and numbers before saying yes, and the card should say "Read from the picture".
 - `facts` codes: found, existing, no_phone, supplier, no_price, duplicate, unreadable, too_many (today: found = new + existing, existing, no_phone, duplicate, unreadable, too_many). At most 5
   sample `rows`, with phone numbers as written in the file, **at the turn only**: the rows are not kept (DPDP), so a replay and `GET /assistant/conversations/{id}` give the card with `rows: []`.
   The card's `id` is stable (derived from its plan). A `cant_do` card and a preview with `plan: null` are not stored: a replay gives the sentence only.

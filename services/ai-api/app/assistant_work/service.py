@@ -15,16 +15,21 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import csv
+import io
 import logging
 import re
 import uuid
+from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Any
 
 import httpx
 
+from app.agent_runs import pause
 from app.assistant.language import Language
 from app.assistant_tools import executor
+from app.assistant_work import extract
 from app.assistant_work.files import MAX_LEADS_FILE_BYTES, MAX_ROWS
 from app.assistant_work.store import PlanExpiredError, PlanStateError, WorkStore
 from app.errors import ApiError
@@ -96,10 +101,46 @@ WORDS: dict[str, dict[str, str]] = {
         "kn": "'{name}' ಜೊತೆ ಇದನ್ನು ನಾನು ಇನ್ನೂ ಮಾಡಲಾರೆ: {what}. ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಮಾಡಬಹುದು.",
     },
     "unreadable": {
-        "en": "I couldn't read '{name}'. A sheet (.xlsx or .csv), a contacts file (.vcf) or a text list works.",
-        "te": "'{name}' చదవలేకపోయాను. షీట్ (.xlsx లేదా .csv), కాంటాక్ట్స్ ఫైల్ (.vcf) లేదా టెక్స్ట్ జాబితా పనిచేస్తుంది.",
-        "hi": "'{name}' पढ़ नहीं पाई। शीट (.xlsx या .csv), कॉन्टैक्ट फ़ाइल (.vcf) या टेक्स्ट सूची चलेगी।",
-        "kn": "'{name}' ಓದಲಾಗಲಿಲ್ಲ. ಶೀಟ್ (.xlsx ಅಥವಾ .csv), ಕಾಂಟ್ಯಾಕ್ಟ್ ಫೈಲ್ (.vcf) ಅಥವಾ ಪಠ್ಯ ಪಟ್ಟಿ ಆಗುತ್ತದೆ.",
+        "en": "I couldn't read '{name}'. A sheet (.xlsx or .csv), a contacts file (.vcf), a text list, a PDF, a Word file (.docx) or a photo (.jpg, .png) works.",
+        "te": "'{name}' చదవలేకపోయాను. షీట్ (.xlsx లేదా .csv), కాంటాక్ట్స్ ఫైల్ (.vcf), టెక్స్ట్ జాబితా, PDF, Word ఫైల్ (.docx) లేదా ఫోటో (.jpg, .png) పనిచేస్తుంది.",
+        "hi": "'{name}' पढ़ नहीं पाई। शीट (.xlsx या .csv), कॉन्टैक्ट फ़ाइल (.vcf), टेक्स्ट सूची, PDF, Word फ़ाइल (.docx) या फ़ोटो (.jpg, .png) चलेगी।",
+        "kn": "'{name}' ಓದಲಾಗಲಿಲ್ಲ. ಶೀಟ್ (.xlsx ಅಥವಾ .csv), ಕಾಂಟ್ಯಾಕ್ಟ್ ಫೈಲ್ (.vcf), ಪಠ್ಯ ಪಟ್ಟಿ, PDF, Word ಫೈಲ್ (.docx) ಅಥವಾ ಫೋಟೋ (.jpg, .png) ಆಗುತ್ತದೆ.",
+    },
+    "from_picture": {
+        "en": " I read it from the picture: please check the names and numbers before you say yes.",
+        "te": " ఇది చిత్రం నుండి చదివాను: అవును అనే ముందు పేర్లు, నంబర్లు ఒకసారి చూడండి.",
+        "hi": " यह मैंने तस्वीर से पढ़ा है: हाँ कहने से पहले नाम और नंबर एक बार देख लें।",
+        "kn": " ಇದನ್ನು ಚಿತ್ರದಿಂದ ಓದಿದೆ: ಹೌದು ಎನ್ನುವ ಮೊದಲು ಹೆಸರುಗಳು, ನಂಬರ್‌ಗಳನ್ನು ಒಮ್ಮೆ ನೋಡಿ.",
+    },
+    "doc_format": {
+        "en": "I can read Word files saved as .docx. Save '{name}' as .docx (or as Excel or CSV) and drop it again, please.",
+        "te": ".docx గా సేవ్ చేసిన Word ఫైల్స్ చదవగలను. దయచేసి '{name}' ను .docx గా (లేదా Excel, CSV గా) సేవ్ చేసి మళ్ళీ వేయండి.",
+        "hi": "मैं .docx में सेव की गई Word फ़ाइलें पढ़ सकती हूँ। कृपया '{name}' को .docx (या Excel, CSV) में सेव करके फिर से डालें।",
+        "kn": ".docx ಆಗಿ ಸೇವ್ ಮಾಡಿದ Word ಫೈಲ್‌ಗಳನ್ನು ಓದಬಲ್ಲೆ. ದಯವಿಟ್ಟು '{name}' ಅನ್ನು .docx (ಅಥವಾ Excel, CSV) ಆಗಿ ಸೇವ್ ಮಾಡಿ ಮತ್ತೆ ಹಾಕಿ.",
+    },
+    "scanned_school": {
+        "en": "I can't read scanned files yet: please upload '{name}' as Excel or CSV.",
+        "te": "స్కాన్ చేసిన ఫైల్స్ నేను ఇంకా చదవలేను: దయచేసి '{name}' ను Excel లేదా CSV గా అప్‌లోడ్ చేయండి.",
+        "hi": "स्कैन की गई फ़ाइलें मैं अभी नहीं पढ़ सकती: कृपया '{name}' को Excel या CSV में अपलोड करें।",
+        "kn": "ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಫೈಲ್‌ಗಳನ್ನು ನಾನು ಇನ್ನೂ ಓದಲಾರೆ: ದಯವಿಟ್ಟು '{name}' ಅನ್ನು Excel ಅಥವಾ CSV ಆಗಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.",
+    },
+    "no_reader": {
+        "en": "I couldn't read the scanned pages of '{name}' right now. Please upload it as Excel or CSV, or try again later.",
+        "te": "'{name}' లోని స్కాన్ చేసిన పేజీలు ఇప్పుడు చదవలేకపోయాను. దయచేసి Excel లేదా CSV గా అప్‌లోడ్ చేయండి, లేదా కాసేపు తర్వాత ప్రయత్నించండి.",
+        "hi": "'{name}' के स्कैन किए पन्ने अभी नहीं पढ़ पाई। कृपया इसे Excel या CSV में अपलोड करें, या थोड़ी देर बाद फिर कोशिश करें।",
+        "kn": "'{name}' ನ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಪುಟಗಳನ್ನು ಈಗ ಓದಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು Excel ಅಥವಾ CSV ಆಗಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ಅಥವಾ ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+    },
+    "ai_limit": {
+        "en": "Today's AI allowance is used up, so I couldn't read the scanned pages of '{name}'. Please upload it as Excel or CSV, or try again tomorrow.",
+        "te": "ఈరోజు AI పరిమితి అయిపోయింది, అందుకే '{name}' లోని స్కాన్ చేసిన పేజీలు చదవలేకపోయాను. దయచేసి Excel లేదా CSV గా అప్‌లోడ్ చేయండి, లేదా రేపు ప్రయత్నించండి.",
+        "hi": "आज की AI सीमा पूरी हो गई है, इसलिए '{name}' के स्कैन किए पन्ने नहीं पढ़ पाई। कृपया इसे Excel या CSV में अपलोड करें, या कल फिर कोशिश करें।",
+        "kn": "ಇಂದಿನ AI ಮಿತಿ ಮುಗಿದಿದೆ, ಹಾಗಾಗಿ '{name}' ನ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಪುಟಗಳನ್ನು ಓದಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು Excel ಅಥವಾ CSV ಆಗಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ಅಥವಾ ನಾಳೆ ಪ್ರಯತ್ನಿಸಿ.",
+    },
+    "heic": {
+        "en": "I can't open HEIC photos. Send '{name}' as a JPG or PNG, please (a screenshot works too).",
+        "te": "HEIC ఫోటోలు నేను తెరవలేను. దయచేసి '{name}' ను JPG లేదా PNG గా పంపండి (స్క్రీన్‌షాట్ కూడా పనిచేస్తుంది).",
+        "hi": "HEIC फ़ोटो मैं नहीं खोल सकती। कृपया '{name}' को JPG या PNG में भेजें (स्क्रीनशॉट भी चलेगा)।",
+        "kn": "HEIC ಫೋಟೋಗಳನ್ನು ನಾನು ತೆರೆಯಲಾರೆ. ದಯವಿಟ್ಟು '{name}' ಅನ್ನು JPG ಅಥವಾ PNG ಆಗಿ ಕಳುಹಿಸಿ (ಸ್ಕ್ರೀನ್‌ಶಾಟ್ ಕೂಡ ಆಗುತ್ತದೆ).",
     },
     "gone": {
         "en": "That file is no longer here (files are kept for a day). Drop it again, please.",
@@ -112,6 +153,7 @@ WHAT = {
     "price_list": {"en": "adding a price list from a file", "te": "ఫైల్ నుండి ధరల జాబితా చేర్చడం", "hi": "फ़ाइल से कीमतों की सूची जोड़ना", "kn": "ಫೈಲ್‌ನಿಂದ ಬೆಲೆ ಪಟ್ಟಿ ಸೇರಿಸುವುದು"},
     "document": {"en": "reading a document or a picture into your business", "te": "డాక్యుమెంట్ లేదా చిత్రాన్ని మీ వ్యాపారంలోకి చదవడం", "hi": "दस्तावेज़ या तस्वीर को आपके कारोबार में पढ़ना", "kn": "ದಾಖಲೆ ಅಥವಾ ಚಿತ್ರವನ್ನು ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಓದುವುದು"},
     "too_big": {"en": "importing a list bigger than 3 MB", "te": "3 MB కంటే పెద్ద జాబితాను దిగుమతి చేయడం", "hi": "3 MB से बड़ी सूची आयात करना", "kn": "3 MB ಗಿಂತ ದೊಡ್ಡ ಪಟ್ಟಿಯನ್ನು ಆಮದು ಮಾಡುವುದು"},
+    "scanned": {"en": "reading scanned pages", "te": "స్కాన్ చేసిన పేజీలు చదవడం", "hi": "स्कैन किए पन्ने पढ़ना", "kn": "ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಪುಟಗಳನ್ನು ಓದುವುದು"},
     "too_many": {"en": "importing more than 5,000 rows at once", "te": "ఒకేసారి 5,000 వరుసలకంటే ఎక్కువ దిగుమతి చేయడం", "hi": "एक बार में 5,000 से ज़्यादा पंक्तियाँ आयात करना", "kn": "ಒಮ್ಮೆಗೆ 5,000 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಸಾಲುಗಳನ್ನು ಆಮದು ಮಾಡುವುದು"},
 }
 TITLE = {"en": "Add {n} leads from '{name}'"}
@@ -141,7 +183,7 @@ def card_of_plan(plan: dict[str, Any], rows: list[list[str]] | None = None) -> d
     """The `file_preview` card of a stored plan (a replay and the stored chat show it in its state now; the file's rows only while the file is there, at the turn)."""
     card = plan.get("card") or {}
     return {"kind": "file_preview", "id": str(uuid.uuid5(_NS, str(plan["plan_id"]))), "file_name": plan.get("file_name") or "", "destination": card.get("destination", "leads"), "customer_name": None,
-            "facts": card.get("facts") or [], "columns": card.get("columns") or [], "rows": rows or [], "plan": public_plan(plan)}
+            "read_by": card.get("read_by") or "file", "facts": card.get("facts") or [], "columns": card.get("columns") or [], "rows": rows or [], "plan": public_plan(plan)}
 
 
 def cant_do(reason: str, what_words: str, screen: dict[str, str] | None) -> dict[str, Any]:
@@ -165,11 +207,21 @@ def facts_of(counts: dict[str, Any], problems: list[dict[str, Any]], rows_read: 
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- 2. a file in the turn
-class FileTurn:
-    """What the assistant answers for ONE file of a turn: (the sentence, the card)."""
+AI_ALLOWANCE_CODES = ("run_limit_reached", pause.CODE)
+READ_BY = {"docx": "file", "text_layer": "file", "local_ocr": "local_ocr", "ai_vision": "ai"}
 
-    def __init__(self, store: WorkStore, tools: Tools, lead_sources: Any) -> None:
+
+class FileTurn:
+    """What the assistant answers for ONE file of a turn: (the sentence, the card).
+
+    `school` says whether the workspace is a school (asked only for a scanned file); `vision` is the AI reader of page images (None: switched off). The extraction step (app/assistant_work/extract.py)
+    decides when either is used."""
+
+    def __init__(self, store: WorkStore, tools: Tools, lead_sources: Any, *, reader: extract.FileReader | None = None, school: Callable[[], bool] | None = None,
+                 vision: extract.Vision | None = None) -> None:
         self.store, self.tools, self.lead_sources = store, tools, lead_sources
+        self.reader = reader if reader is not None else extract.FileReader(None)
+        self.school, self.vision = school, vision
 
     def answer(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, *, message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
         try:
@@ -178,12 +230,69 @@ class FileTurn:
             return words("gone", language), None
         name, kind, size = str(f.get("name") or "file"), str(f.get("kind") or ""), int(f.get("size_bytes") or 0)
         if kind in ("pdf", "image", "doc"):
-            return words("cant", language, name=name, what=what("document", language)), cant_do("not_yet", what("document", language), {"label": "About my business", "href": "/settings/knowledge"})
+            return self._document(token, tenant_id, file_id, name, kind, str(f.get("data_base64") or ""), message_id=message_id, conversation_id=conversation_id, language=language)
         if kind not in READ_KIND_OF:
             return words("unreadable", language, name=name), None
         if size > MAX_LEADS_FILE_BYTES:
             return words("cant", language, name=name, what=what("too_big", language)), cant_do("not_yet", what("too_big", language), {"label": "Lead Desk", "href": "/leads/import"})
-        body = self._read_body(kind, name, str(f.get("data_base64") or ""))
+        return self._lead_list(token, tenant_id, file_id, name, kind, str(f.get("data_base64") or ""), message_id=message_id, conversation_id=conversation_id, language=language)
+
+    # ---- a PDF, a Word file, a photo: read into text and tables first, then the same lead-import path as a sheet
+    def _document(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, kind: str, data_base64: str, *, message_id: uuid.UUID, conversation_id: uuid.UUID | None,
+                  language: Language) -> tuple[str, dict[str, Any] | None]:
+        try:
+            data = base64.b64decode(data_base64)
+        except ValueError:
+            return words("unreadable", language, name=name), None
+        try:
+            read = self.reader.read(kind, data, school=self._is_school, vision=self.vision)
+        except extract.ReadRefused as exc:
+            return self._refused(exc.code, name, language)
+        except ApiError as exc:   # the AI reader: the day's allowance, the model busy or not set up
+            logger.info("assistant file not read by the AI model: %s", exc.code)
+            key = "ai_limit" if exc.code in AI_ALLOWANCE_CODES else "no_reader"
+            return words(key, language, name=name), cant_do("not_yet", what("scanned", language), {"label": "Lead Desk", "href": "/leads/import"})
+        logger.info("assistant file read: kind=%s how=%s pages=%d tables=%d", kind, read.how, read.pages, len(read.grids))
+        grid = _people_grid(read)
+        if grid is None:
+            if any(g and any(_PRICE_WORDS.search(h) for h in g[0]) for g in read.grids):
+                return words("cant", language, name=name, what=what("price_list", language)), cant_do("not_yet", what("price_list", language), {"label": "Catalogue", "href": "/catalogue"})
+            if read.how in ("docx", "text_layer") and len(read.text) > 200:
+                return words("cant", language, name=name, what=what("document", language)), cant_do("not_yet", what("document", language), {"label": "About my business", "href": "/settings/knowledge"})
+            return words("nobody", language, name=name), None
+        # what was read is kept as a small CSV (the same 24 h rule) and the file itself is deleted now: the plan's "Do it" imports exactly what the card showed
+        out = io.StringIO()
+        csv.writer(out).writerows(grid[: MAX_ROWS + 1])
+        sheet_b64 = base64.b64encode(out.getvalue().encode("utf-8")).decode("ascii")
+        derived = self.store.file_put(token, tenant_id, (name.rsplit(".", 1)[0] or "file")[:190] + ".csv", "text/csv", "sheet", sheet_b64)
+        try:
+            self.store.file_drop(token, tenant_id, file_id)
+        except Exception as exc:   # the sweep deletes it at the latest after a day
+            logger.warning("assistant file not deleted after reading: %s", exc.__class__.__name__)
+        return self._lead_list(token, tenant_id, uuid.UUID(str(derived["file_id"])), name, "sheet", sheet_b64, message_id=message_id, conversation_id=conversation_id, language=language,
+                               read_by=READ_BY[read.how])
+
+    def _is_school(self) -> bool:
+        """Fails closed: a workspace whose kind cannot be read is treated as a school, so its pictures stay here."""
+        if self.school is None:
+            return False
+        try:
+            return bool(self.school())
+        except Exception:
+            return True
+
+    def _refused(self, code: str, name: str, language: Language) -> tuple[str, dict[str, Any] | None]:
+        screen = {"label": "Lead Desk", "href": "/leads/import"}
+        if code in ("doc_format", "scanned_school", "heic", "no_reader"):
+            return words(code, language, name=name), cant_do("not_yet", what("scanned", language) if code in ("scanned_school", "no_reader") else what("document", language), screen)
+        if code == "too_big":
+            return words("cant", language, name=name, what=what("too_big", language)), cant_do("not_yet", what("too_big", language), screen)
+        return words("unreadable", language, name=name), None
+
+    # ---- a list of people (a sheet, a vCard, a text list, or what was read from a document): the lead import's own read and preview
+    def _lead_list(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, kind: str, data_base64: str, *, message_id: uuid.UUID, conversation_id: uuid.UUID | None,
+                   language: Language, read_by: str = "file") -> tuple[str, dict[str, Any] | None]:
+        body = self._read_body(kind, name, data_base64)
         read = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool=READ_TOOL, body={**body, "use_ai": True}), message_id))
         if not read.ok and read.error == "limit":   # the AI column matcher is over the day's allowance: the rules alone
             read = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool=READ_TOOL, body={**body, "use_ai": False}), message_id))
@@ -209,20 +318,22 @@ class FileTurn:
         existing = next(x["n"] for x in facts if x["code"] == "existing")
         found = next(x["n"] for x in facts if x["code"] == "found")
         rows = self._sample_rows(kind, body)
+        picture = words("from_picture", language) if read_by in ("local_ocr", "ai") else ""
         if new == 0:
             sentence = words("nobody", language, name=name) if found == 0 else words("nothing_new", language, name=name, found=found)
-            return sentence, {"kind": "file_preview", "id": str(uuid.uuid4()), "file_name": name, "destination": "leads", "customer_name": None, "facts": facts, "columns": columns, "rows": rows, "plan": None}
+            return sentence, {"kind": "file_preview", "id": str(uuid.uuid4()), "file_name": name, "destination": "leads", "customer_name": None, "read_by": read_by, "facts": facts, "columns": columns,
+                              "rows": rows, "plan": None}
         plan_id = uuid.uuid4()
         step_body = {k: v for k, v in preview_body.items() if k not in ("content_base64", "text")}
         step_body["import_id"] = str(uuid.uuid5(_NS, f"import:{plan_id}"))   # idempotent: a retried run replays the same import
         plan = self.store.plan_put(token, tenant_id, {
             "plan_id": str(plan_id), "message_id": str(message_id), "conversation_id": str(conversation_id) if conversation_id else None, "file_id": str(file_id),
             "title": TITLE["en"].format(n=new, name=name)[:200], "file_name": name,
-            "card": {"destination": "leads", "facts": facts, "columns": columns[:40]},
+            "card": {"destination": "leads", "read_by": read_by, "facts": facts, "columns": columns[:40]},
             "steps": [{"tool": IMPORT_TOOL, "summary": STEP["en"].format(n=new, existing=existing), "undoable": True, "status": "proposed", "error": None,
                        "call": {"path": {}, "body": step_body, "file": kind}}],
         })
-        return words("offer", language, name=name, found=found, existing=existing, new=new), card_of_plan(plan, rows)
+        return words("offer", language, name=name, found=found, existing=existing, new=new) + picture, card_of_plan(plan, rows)
 
     def _read_body(self, kind: str, name: str, data_base64: str) -> dict[str, Any]:
         if kind == "text":
@@ -242,6 +353,38 @@ class FileTurn:
         if loaded.grid is not None:
             return [[str(v)[:60] for v in r] for r in loaded.grid.rows[:5]]
         return [[str(r.get("name") or "")[:60], str(r.get("phone") or "")[:32], str(r.get("email") or "")[:60]] for r in (loaded.rows or [])[:5]]
+
+
+def _contact_cells(grid: extract.Grid) -> int:
+    return sum(1 for row in grid for cell in row if extract.phones_in(cell) or "@" in cell)
+
+
+def _headed(grid: extract.Grid) -> extract.Grid:
+    """A table whose first row is already people gets a header named by what its columns hold (Phone, Email, Name), so the column matcher finds them; a real header stays as it is."""
+    if not (extract.phones_in(" ".join(grid[0])) or any("@" in c for c in grid[0])):
+        return grid
+    width = max(len(r) for r in grid)
+    header: list[str] = []
+    for col in range(width):
+        cells = [r[col] for r in grid if col < len(r)]
+        if sum(1 for c in cells if extract.phones_in(c)) * 2 >= len(cells):
+            header.append("Phone" if "Phone" not in header else f"Phone {col + 1}")
+        elif sum(1 for c in cells if "@" in c) * 2 >= len(cells):
+            header.append("Email" if "Email" not in header else f"Email {col + 1}")
+        elif "Name" not in header and sum(1 for c in cells if sum(ch.isalpha() for ch in c) >= 3) * 2 >= len(cells):
+            header.append("Name")
+        else:
+            header.append(f"Column {col + 1}")
+    return [header, *[r + [""] * (width - len(r)) for r in grid]]
+
+
+def _people_grid(read: extract.Extracted) -> extract.Grid | None:
+    """The table of people in what was read: the table with the most phones and e-mails in it, else the people found line by line, else None."""
+    tables = sorted((g for g in read.grids if _contact_cells(g) > 0), key=_contact_cells, reverse=True)
+    if tables:
+        return _headed(tables[0])
+    people = extract.people_of_text(read.text)
+    return people or None
 
 
 def _text_of(data_base64: str) -> str:
