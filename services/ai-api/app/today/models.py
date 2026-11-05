@@ -148,6 +148,7 @@ class NavCountsOut(_Out):
 
     needs_you: int | None
     prospects_needing_owner: int | None
+    lead_desk_waiting: int | None = None   # Lead Desk's own rows Today adds (plans to approve, callbacks due, paused rules/tasks, new hot leads)
     new_leads: int | None
     live_calls: int | None
     unread_chats: int | None
