@@ -10,6 +10,7 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
 - Every user-facing operation of the API is decided by `app/assistant_tools/catalog.py`. The table is `docs/assistant-tools-coverage.md`, generated from the live routes (527 operations: 480 tools; 93.6% of
   the non-forbidden ones). **A tool is a thin wrapper over the SAME route the screens call**, run with the person's own token: the same row-level security, validation, role rules and audit. There is no
   back door, so a Sales member's plan can only do what Sales may do (a step the route refuses is `failed` with `error: "forbidden"`).
+- **A write whose undo is a snapshot is never sent without it:** if the state before cannot be read, the step fails (`down` or the read's own error) and nothing is written.
 - **Levels**:
   - read: runs at once, with no card;
   - write: a plan card, then the OK, then the run, then "Done · Undo";
@@ -30,7 +31,49 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
   - sheet (.xlsx, .xls, .csv, .tsv, .ods), contacts (.vcf), text: read and previewed by the lead import's own routes -> `file_preview` (destination `leads`) with its plan, or with `plan: null`
     when nobody new is in it;
   - a sheet with no phone or e-mail column whose headers look like prices -> `cant_do` (`not_yet`, "adding a price list from a file", screen `/catalogue`);
-  - pdf, image, doc -> `cant_do` (`not_yet`, screen `/settings/knowledge`). Brochures into About my business and price lists into the catalogue are later parts.
+  - pdf, image, doc (job A3, owner decisions 5 Nov 2026) -> the **extraction step** first, then the SAME lead-import path as a sheet (preview card -> Do it -> Undo):
+    1. a Word file (.docx): its tables and paragraphs (an old .doc, .odt or .rtf: "save it as .docx"); a PDF with a text layer: its text (`pdftotext -layout`), tables found by their columns;
+    2. a scanned PDF (first 10 pages) or a photo (.jpg, .png, .webp, .gif; HEIC: "send it as a JPG"): **local OCR first** (Tesseract on our server, English, Telugu, Hindi, Kannada; nothing leaves it);
+    3. only if local OCR found neither a table nor a phone or an e-mail: the AI model reads the **page images** (never the PDF itself), under the day's spending cap, asked to copy the text out and
+       nothing else. **Never for a school** (children's details): a school's scan that local OCR cannot read gets "I can't read scanned files yet: please upload it as Excel or CSV" (`cant_do`).
+    People are then found by code (the table with the most phones and e-mails, else line by line, a visiting card as one person); every value is a piece of what was read, a missing one stays empty.
+    What was read is kept as a small CSV under the same 24 h rule and the file itself is deleted at once; "Do it" imports exactly what the card showed. A price table -> `cant_do` (price list,
+    `/catalogue`); a long document with nobody in it -> `cant_do` (`/settings/knowledge`). The log names how it was read and, for the model, the model and the size, never the content.
+
+### A request about the file (A2b, owner 5 Nov 2026: "files in chat must go beyond import")
+The turn's `text` says what to do with the file(s). A plain "add these to my leads" (or no words at all) is the import path above, **with no model call**. Anything else is planned:
+1. **Understanding, by code**: what the file looks like (a list of people, a visiting card, a price list, an enquiry, an order, a brochure, other), its tables, the people in it, the amounts and the
+   dates, and its text. Nothing is invented.
+2. **One planner call**, cost-accounted under the day's cap. It gets the request (trusted), the understanding (DATA between delimiters: a file's words are never instructions) and a CLOSED list of
+   actions. It answers:
+   - **answer**: read-only ("summarise this", "what is the price of X?"). No card, just the sentence. Every number in it must be in the file or the request, otherwise the answer is not used and the
+     sentence says so;
+   - **do**: the actions in order, as ONE plan card. **The model names the action; code builds every argument from the file** (the people code found, the file's own text): it never writes a phone
+     number, a price or an id. Today's actions:
+     - `add_people`: the lead import above, as a `file_preview` card;
+     - `add_to_knowledge`: `knowledge.add_source` (About my business), as a `plan` card or as a second step of the `file_preview` plan. Undo is the source's discard route.
+     - `update_prices` (part 2): a `file_preview` card with `destination: "catalogue"`.
+       - **What it shows:** `columns: ["Item", "Now", "New"]` and up to 5 sample `rows` (old → new in rupees), with `facts` `found`, `changed`, `unchanged` and `not_in_catalogue`.
+       - **How rows are matched:** by code, by the item's name (no guessing: an unknown name is counted, not matched).
+       - **The plan:** one `catalogue.put_item` step per changed item (at most 20), each "Name: ₹old → ₹new". **Money:** `sensitive: "money"`, `owner_only`, `needs_second_factor` (the database asks for it) and the card's second tap.
+       - **Undo:** every item is put back as it was (the catalogue's snapshot).
+       - **When nothing is proposed:** a price list with nothing different gets the card with `plan: null`; a workspace without a catalogue gets `cant_do`.
+   - **clarify**: one question, as a sentence;
+   - **cant_do**: `not_yet` with the screen's link. The codes and screens are:
+     - `quote_from_enquiry` → `/enquiries`;
+     - `order_from_file` → `/orders`;
+     - `update_prices` → `/catalogue` (only when the workspace has no catalogue, or more than 20 prices change);
+     - `follow_up` → `/followups`;
+     - `other` → no screen.
+     A part of a request that cannot be done yet is said in the sentence next to the plan, never left out.
+3. **A school's file never reaches the planner** (it fails closed). It takes the deterministic path above.
+4. Nobody is messaged or called because of any of this. Every write is a plan card, then "Do it", then Undo where the step declares one.
+
+**Not yet** (next parts):
+- an enquiry plus a draft quote from the catalogue;
+- an order plus a stock check;
+- a follow-up or a task for the new lead;
+- later turns about the same file.
 
 ## 2. The cards: the turn's `work_card` event
 `event: work_card` / `data: { "type": "work_card", "card": <one of the kinds below> }`, after the sentence, before `done`. The card's `id` is stable. A replay and `GET /assistant/conversations/{id}`
@@ -38,10 +81,12 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
 
 ### file_preview
 ```json
-{ "kind": "file_preview", "id": "uuid", "file_name": "march leads.xlsx", "destination": "leads" | "catalogue" | "knowledge" | "customer", "customer_name": null,
+{ "kind": "file_preview", "id": "uuid", "file_name": "march leads.xlsx", "destination": "leads" | "catalogue" | "knowledge" | "customer", "customer_name": null, "read_by": "file",
   "facts": [ { "code": "found", "n": 38 }, { "code": "existing", "n": 4 }, { "code": "no_phone", "n": 2 }, { "code": "supplier", "n": 1 } ],
   "columns": ["Name", "Phone", "Area"], "rows": [["Ravi Textiles", "+00 000 000 1234", "Jayanagar"]], "plan": <plan, below> | null }
 ```
+- `read_by` (job A3): `file` (the file's own cells or text) | `local_ocr` (our server read a scan or a photo) | `ai` (the AI model read the page images). For `local_ocr` and `ai` the sentence asks
+  the person to check the names and numbers before saying yes, and the card should say "Read from the picture".
 - `facts` codes: found, existing, no_phone, supplier, no_price, duplicate, unreadable, too_many (today: found = new + existing, existing, no_phone, duplicate, unreadable, too_many). At most 5
   sample `rows`, with phone numbers as written in the file, **at the turn only**: the rows are not kept (DPDP), so a replay and `GET /assistant/conversations/{id}` give the card with `rows: []`.
   The card's `id` is stable (derived from its plan). A `cant_do` card and a preview with `plan: null` are not stored: a replay gives the sentence only.
@@ -49,6 +94,7 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
   About my business (`/knowledge`).
 
 ### plan
+A plan that adds no people (saving a brochure to About my business) comes as this card on its own. A replay and the stored chat give it again in its state now.
 ```json
 { "kind": "plan", "id": "uuid", "plan": {
   "plan_id": "uuid", "title": "Add 34 leads from 'march leads.xlsx'", "status": "proposed",
