@@ -83,6 +83,8 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         return f"Materials quote {ref} for {total} is ready for your approval."
     if kind == "campaign_approval":
         return f"A {_CAMPAIGN_WORDS.get(ref, 'message campaign')} is drafted and waiting for your approval. Nothing is sent before you approve it."
+    if kind == "person_requested":
+        return "A caller asked to talk to a person. Call them back, then mark it done."
     if kind == "fees_overdue":
         total = format_rupees(amount) if amount is not None else "fees"
         accounts = "1 fee account" if ref == "1" else f"{ref} fee accounts"

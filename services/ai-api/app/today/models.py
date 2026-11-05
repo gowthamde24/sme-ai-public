@@ -46,7 +46,7 @@ class Target(_Out):
     """Where "Open" goes for an item: a quote, a lead (its follow-ups), an enquiry, an order, a message held for approval or a call request."""
 
     # material_quote: the building-materials quote; campaign: a message campaign; fees: the school's fee list (the id is the workspace's)
-    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "billing", "material_quote", "campaign", "fees"]
+    type: Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "outreach_batch", "billing", "material_quote", "campaign", "fees", "phone_call"]
     id: uuid.UUID
 
 
@@ -65,6 +65,8 @@ class NeedsYouItem(_Out):
         "material_quote_approval",
         "campaign_approval",
         "fees_overdue",
+        # 5 Nov 2026 (migration 20261231160000): a caller asked for a person; the team calls back (POST /calls/{id}/handled takes it off)
+        "person_requested",
     ]
     id: uuid.UUID
     customer: str
