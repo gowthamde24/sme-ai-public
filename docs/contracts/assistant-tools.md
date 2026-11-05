@@ -58,6 +58,16 @@ The turn's `text` says what to do with the file(s). A plain "add these to my lea
        - **The plan:** one `catalogue.put_item` step per changed item (at most 20), each "Name: ₹old → ₹new". **Money:** `sensitive: "money"`, `owner_only`, `needs_second_factor` (the database asks for it) and the card's second tap.
        - **Undo:** every item is put back as it was (the catalogue's snapshot).
        - **When nothing is proposed:** a price list with nothing different gets the card with `plan: null`; a workspace without a catalogue gets `cant_do`.
+     - `capture_enquiry` (part 3): an enquiry letter from ONE sender with a phone number. It is a `file_preview` card (the sender's import preview) with three steps:
+       1. `lead-imports.import_leads`: added if new, merged if known; undoable;
+       2. `contacts.contact_by_phone`: found by the number in the letter;
+       3. `leads.capture_enquiry`: the letter saved as their enquiry. The enquiry route removes numbers and addresses from the stored text. No undo.
+       If the sender is already a lead, it is a `plan` card with steps 2 and 3 only. If nobody is found by the number, step 3 fails `not_found` (nothing is guessed). **The draft quote** needs
+       the requirement confirmed on the enquiry's screen first, and the sentence says so.
+   - **Values a step reads at run time**, so they never sit in the stored plan:
+     - `{"$cell": [row, column]}` reads a cell of the step's kept CSV (`cells_from`);
+     - `{"$ref": [step_no, key, …]}` reads an earlier step's answer;
+     - `file_field` puts the kept text into that body field.
    - **clarify**: one question, as a sentence;
    - **cant_do**: `not_yet` with the screen's link. The codes and screens are:
      - `quote_from_enquiry` → `/enquiries`;
@@ -70,7 +80,7 @@ The turn's `text` says what to do with the file(s). A plain "add these to my lea
 4. Nobody is messaged or called because of any of this. Every write is a plan card, then "Do it", then Undo where the step declares one.
 
 **Not yet** (next parts):
-- an enquiry plus a draft quote from the catalogue;
+- the draft quote itself, once the requirement is confirmed;
 - an order plus a stock check;
 - a follow-up or a task for the new lead;
 - later turns about the same file.
