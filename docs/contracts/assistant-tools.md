@@ -64,6 +64,10 @@ The turn's `text` says what to do with the file(s). A plain "add these to my lea
        3. `leads.capture_enquiry`: the letter saved as their enquiry. The enquiry route removes numbers and addresses from the stored text. No undo.
        If the sender is already a lead, it is a `plan` card with steps 2 and 3 only. If nobody is found by the number, step 3 fails `not_found` (nothing is guessed). **The draft quote** needs
        the requirement confirmed on the enquiry's screen first, and the sentence says so.
+     - `check_stock` (part 4): an order in a file (a purchase order, items with quantities) gets a **read-only answer** with no card. It lists each line, matched to the catalogue by name, with
+       the catalogue's stock word: in stock / few left (check before you promise) / made to order (not in stock) / not in your catalogue. Then "N of them may be short". The catalogue keeps a
+       word, not a count, so no number is claimed. **The order itself** starts from an approved quote, and the sentence says so. With `capture_enquiry`, the stock answer comes first, then the
+       enquiry plan.
    - **Values a step reads at run time**, so they never sit in the stored plan:
      - `{"$cell": [row, column]}` reads a cell of the step's kept CSV (`cells_from`);
      - `{"$ref": [step_no, key, …]}` reads an earlier step's answer;
@@ -81,7 +85,6 @@ The turn's `text` says what to do with the file(s). A plain "add these to my lea
 
 **Not yet** (next parts):
 - the draft quote itself, once the requirement is confirmed;
-- an order plus a stock check;
 - a follow-up or a task for the new lead;
 - later turns about the same file.
 

@@ -211,6 +211,7 @@ WHAT = {
     "document": {"en": "reading a document or a picture into your business", "te": "డాక్యుమెంట్ లేదా చిత్రాన్ని మీ వ్యాపారంలోకి చదవడం", "hi": "दस्तावेज़ या तस्वीर को आपके कारोबार में पढ़ना", "kn": "ದಾಖಲೆ ಅಥವಾ ಚಿತ್ರವನ್ನು ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಓದುವುದು"},
     "too_big": {"en": "importing a list bigger than 3 MB", "te": "3 MB కంటే పెద్ద జాబితాను దిగుమతి చేయడం", "hi": "3 MB से बड़ी सूची आयात करना", "kn": "3 MB ಗಿಂತ ದೊಡ್ಡ ಪಟ್ಟಿಯನ್ನು ಆಮದು ಮಾಡುವುದು"},
     "scanned": {"en": "reading scanned pages", "te": "స్కాన్ చేసిన పేజీలు చదవడం", "hi": "स्कैन किए पन्ने पढ़ना", "kn": "ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಪುಟಗಳನ್ನು ಓದುವುದು"},
+    "order_needs_quote": {"en": "the order itself: an order starts from an approved quote", "te": "ఆర్డర్: ఆర్డర్ ఆమోదించిన కొటేషన్ నుండే మొదలవుతుంది", "hi": "ऑर्डर ख़ुद: ऑर्डर मंज़ूर कोटेशन से ही शुरू होता है", "kn": "ಆರ್ಡರ್: ಆರ್ಡರ್ ಅನುಮೋದಿತ ಕೊಟೇಶನ್‌ನಿಂದಲೇ ಶುರುವಾಗುತ್ತದೆ"},
     "quote_after_enquiry": {"en": "the draft quote: confirm the requirement on the enquiry's screen first", "te": "డ్రాఫ్ట్ కొటేషన్: ముందు ఎంక్వైరీ స్క్రీన్‌లో అవసరాన్ని నిర్ధారించండి", "hi": "ड्राफ़्ट कोटेशन: पहले पूछताछ की स्क्रीन पर ज़रूरत पक्की करें", "kn": "ಡ್ರಾಫ್ಟ್ ಕೊಟೇಶನ್: ಮೊದಲು ವಿಚಾರಣೆಯ ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಅಗತ್ಯವನ್ನು ಖಚಿತಪಡಿಸಿ"},
     "quote_from_enquiry": {"en": "making an enquiry and a quote from a letter", "te": "లేఖ నుండి ఎంక్వైరీ, కొటేషన్ తయారు చేయడం", "hi": "चिट्ठी से पूछताछ और कोटेशन बनाना", "kn": "ಪತ್ರದಿಂದ ವಿಚಾರಣೆ ಮತ್ತು ಕೊಟೇಶನ್ ಮಾಡುವುದು"},
     "order_from_file": {"en": "making an order from a file and checking the stock", "te": "ఫైల్ నుండి ఆర్డర్ చేయడం, స్టాక్ చూడడం", "hi": "फ़ाइल से ऑर्डर बनाना और स्टॉक देखना", "kn": "ಫೈಲ್‌ನಿಂದ ಆರ್ಡರ್ ಮಾಡುವುದು ಮತ್ತು ಸ್ಟಾಕ್ ನೋಡುವುದು"},
@@ -407,7 +408,9 @@ class FileTurn:
             return words("cant", language, name=name, what=w), cant_do("not_yet", w, SCREEN_OF.get(planned.cant))
         sentence, card = self._do(token, tenant_id, file_id, name, kind, data_base64, u, planned, message_id=message_id, conversation_id=conversation_id, language=language)
         if planned.cant:
-            part = "quote_after_enquiry" if planned.cant == "quote_from_enquiry" and any(a["action"] == "capture_enquiry" for a in planned.actions) else planned.cant
+            acting = {a["action"] for a in planned.actions}
+            part = ("quote_after_enquiry" if planned.cant == "quote_from_enquiry" and "capture_enquiry" in acting
+                    else "order_needs_quote" if planned.cant == "order_from_file" and "check_stock" in acting else planned.cant)
             sentence += words("cant_part", language, what=what(part, language))
         return sentence, card
 
@@ -415,8 +418,12 @@ class FileTurn:
             conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
         names = [a["action"] for a in planned.actions]
         plan_id = uuid.uuid4()
+        stock = self._stock(token, tenant_id, name, u, message_id=message_id, language=language) if "check_stock" in names else ""
         if "capture_enquiry" in names:
-            return self._enquiry(token, tenant_id, file_id, name, u, plan_id, message_id=message_id, conversation_id=conversation_id, language=language)
+            sentence, card = self._enquiry(token, tenant_id, file_id, name, u, plan_id, message_id=message_id, conversation_id=conversation_id, language=language)
+            return (f"{stock}\n\n{sentence}" if stock else sentence), card
+        if "check_stock" in names:
+            return stock, None
         if "update_prices" in names:
             return self._prices(token, tenant_id, file_id, name, kind, u, plan_id, message_id=message_id, conversation_id=conversation_id, language=language)
         knowledge = [self._knowledge_step(token, tenant_id, plan_id, u, next((a["title"] for a in planned.actions if a["action"] == "add_to_knowledge"), ""))] if "add_to_knowledge" in names else []
@@ -498,6 +505,17 @@ class FileTurn:
                     lambda with_import: words("enquiry_offer" if with_import else "enquiry_offer_known", language, name=name, who=who))
         return self._lead_list(token, tenant_id, uuid.UUID(sheet_id), name, "sheet", sheet_b64, message_id=message_id, conversation_id=conversation_id, language=language, read_by=u.read_by,
                                more=more)
+
+    def _stock(self, token: str, tenant_id: uuid.UUID, name: str, u: Understanding, *, message_id: uuid.UUID, language: Language) -> str:
+        """Read-only: the order's lines against the catalogue's stock words (app/assistant_work/stock.py)."""
+        from app.assistant_work import stock as st
+
+        items = self._catalogue_items(token, tenant_id, message_id)
+        if items is None:
+            return words("cant", language, name=name, what=what("order_from_file", language))
+        answer, short = st.check(st.order_lines(u), items, name, language)
+        logger.info("assistant file stock check: lines=%d short=%d", len(st.order_lines(u)), short)
+        return answer
 
     def _catalogue_items(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID) -> list[dict[str, Any]] | None:
         """Every catalogue item (the screen's own list route, page by page; at most 1,000), or None when the workspace has no catalogue or the list cannot be read."""
