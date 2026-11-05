@@ -35,8 +35,8 @@ describe("sidebar v2 (owner-approved design, 5 Nov 2026): five groups", () => {
     expect(all.every((i) => i.id.startsWith("m-") || i.id === "settings")).toBe(true);
   });
 
-  it("Overview is Today and Talk to assistant (the assistant's box on Today, #ask)", () => {
-    expect(ids("owner", TEXTILES, "overview")).toEqual(["m-today", "m-assistant"]);
+  it("Overview is Today, Reports and Talk to assistant (the assistant's box on Today, #ask)", () => {
+    expect(ids("owner", TEXTILES, "overview")).toEqual(["m-today", "m-reports", "m-assistant"]); // Reports under Today (owner, 5 Nov)
     expect(hrefOf(rows("owner", TEXTILES).find((i) => i.id === "m-assistant")!, T)).toBe(`/app/tenants/${T}#ask`);
     expect(activeMenuId(`/app/tenants/${T}`, null)).toBe("m-today");
   });
@@ -48,9 +48,9 @@ describe("sidebar v2 (owner-approved design, 5 Nov 2026): five groups", () => {
   });
 
   it("Business follows the business type: sarees, building materials, a school", () => {
-    expect(ids("owner", TEXTILES, "business")).toEqual(["m-catalogue", "m-quotes", "m-orders", "m-reports"]);
-    expect(ids("owner", CONSTRUCTION, "business")).toEqual(["m-catalogue", "m-quotes", "m-orders", "m-trips", "m-dues", "m-reports"]);
-    expect(ids("owner", EDUCATION, "business")).toEqual(["m-catalogue", "m-admissions", "m-students", "m-fees", "m-notices", "m-reports"]);
+    expect(ids("owner", TEXTILES, "business")).toEqual(["m-catalogue", "m-quotes", "m-orders"]);
+    expect(ids("owner", CONSTRUCTION, "business")).toEqual(["m-catalogue", "m-quotes", "m-orders", "m-trips", "m-dues"]);
+    expect(ids("owner", EDUCATION, "business")).toEqual(["m-catalogue", "m-admissions", "m-students", "m-fees", "m-notices"]);
     // the business type's own word wins for the rows that have one: "Campus visits", "Programmes"
     const school = rows("owner", EDUCATION);
     expect(school.find((i) => i.id === "m-visits")?.labelOf).toBe("visits");
@@ -62,7 +62,7 @@ describe("sidebar v2 (owner-approved design, 5 Nov 2026): five groups", () => {
     expect(ids("admin", TEXTILES, "aiteam")).toEqual(["m-aiteam", "m-phone"]);
     expect(ids("sales", TEXTILES, "aiteam")).toEqual(["m-aiteam"]);
     expect(hrefOf(rows("owner", TEXTILES).find((i) => i.id === "m-train")!, T)).toBe(`/app/tenants/${T}/settings?section=assistant`);
-    expect(hrefOf(rows("owner", TEXTILES).find((i) => i.id === "m-phone")!, T)).toBe(`/app/tenants/${T}/integrations/whatsapp`);
+    expect(hrefOf(rows("owner", TEXTILES).find((i) => i.id === "m-phone")!, T)).toBe(`/app/tenants/${T}/phone-number`); // the calling number, not WhatsApp (owner, 5 Nov)
     expect(ids("owner", TEXTILES, "setup")).toEqual(["settings"]);
     expect(ids("owner", { ...TEXTILES, features: ["leads"] }, "setup")).toEqual(["m-sources", "settings"]);
   });
@@ -100,6 +100,7 @@ describe("sidebar v2 (owner-approved design, 5 Nov 2026): five groups", () => {
     expect(at("/agents")).toBe("m-aiteam");
     expect(at("/integrations")).toBe("m-phone");
     expect(at("/integrations/whatsapp")).toBe("m-phone");
+    expect(at("/phone-number")).toBe("m-phone");
     expect(at("/settings")).toBe("settings");
     expect(at("/team")).toBe("settings");
     expect(at("/plans")).toBe("settings");

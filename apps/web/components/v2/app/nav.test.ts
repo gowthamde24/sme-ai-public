@@ -29,7 +29,7 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
     ["Team", "/team", "team", [true, true, true, true]],
     ["Office", "/office", "office", [true, true, true, true]],
     ["Train how it talks", "/settings?section=assistant", "train", [true, false, false, false]],
-    ["Phone number", "/integrations/whatsapp", "phone", [true, true, false, false]],
+    ["Phone number", "/phone-number", "phone", [true, true, false, false]],
   ],
   Connect: [["Integrations", "/integrations", "integrations", [true, true, false, false]]],
 };

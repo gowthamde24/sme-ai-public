@@ -116,9 +116,9 @@ export const NAV: readonly NavGroup[] = [
       // job CC: the people in the business, with their owls; everyone sees who is on the team, the Owner and Admin manage it
       { id: "team", label: "Team", icon: "team", path: "/team", roles: ALL_ROLES },
       { id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, module: "office", roles: ALL_ROLES },
-      // sidebar v2: how the assistant talks (Settings > AI assistant, the Owner's) and the business's WhatsApp number (Integrations > WhatsApp)
+      // sidebar v2: how the assistant talks (Settings > AI assistant, the Owner's) and the number it calls from (its own page; "not set up yet" until telephony exists; the WhatsApp number is Integrations > WhatsApp)
       { id: "train", label: "Train how it talks", icon: "train", path: "/settings?section=assistant", roles: ["owner"] },
-      { id: "phone", label: "Phone number", icon: "phone", path: "/integrations/whatsapp", module: "integrations", roles: ADMINS },
+      { id: "phone", label: "Phone number", icon: "phone", path: "/phone-number", roles: ADMINS },
     ],
   },
   {
@@ -140,8 +140,8 @@ export const FOOT: readonly NavItem[] = [
 export type VisibleGroup = { id: string; label: string; items: NavItem[] };
 
 /**
- * THE MENU, sidebar v2 (owner-approved design, 5 Nov 2026; job-sidebar-v2.md): five groups, each with its heading and each one can be folded: OVERVIEW (Today, Talk to assistant), SELL (Leads, Find customers, Calls, Chats,
- * Follow-ups, Visits), BUSINESS (what the business type has: Catalogue & stock, Quotes, Orders for sarees; Materials, Quotes, Trips, Dues for building materials; Admissions, Students, Fees, Notices for a school; then Reports),
+ * THE MENU, sidebar v2 (owner-approved design, 5 Nov 2026; job-sidebar-v2.md): five groups, each with its heading and each one can be folded: OVERVIEW (Today, Reports, Talk to assistant), SELL (Leads, Find customers, Calls, Chats,
+ * Follow-ups, Visits), BUSINESS (what the business type has: Catalogue & stock, Quotes, Orders for sarees; Materials, Quotes, Trips, Dues for building materials; Admissions, Students, Fees, Notices for a school),
  * AI TEAM (My AI team, Train how it talks, Phone number) and SETUP (Lead sources, Settings). Each row is a group of the pages above (shown as tabs when it has more than one, components/v2/app/GroupTabs.tsx), so no page and no address
  * is lost: a page that the business type or the role does not have is simply not a tab, and a row with no page at all is not in the menu (that is how BUSINESS follows the business type). `members` are NAV item ids in the order of
  * the tabs; the first one the person is offered is where the row goes. Row ids are `m-<id>` (their words are `nav.item.m-<id>`); `count` names the number the row shows (C1's nav-counts, components/v2/app/nav-badges.ts);
@@ -160,6 +160,8 @@ export const MENU_GROUPS: readonly { id: MenuGroupId; label: string }[] = [
 ];
 export const MENU: readonly MenuEntry[] = [
   { id: "today", group: "overview", label: "Today", icon: "today", members: ["today"], bar: true, count: "today" },
+  // Reports sits under Today (owner's review, 5 Nov)
+  { id: "reports", group: "overview", label: "Reports", icon: "report", members: ["report", "leadreport"] },
   { id: "assistant", group: "overview", label: "Talk to assistant", icon: "assistant", members: ["assistant"] },
   { id: "leads", group: "sell", label: "Leads", icon: "leads", members: ["leaddesk", "leads", "customers", "import", "sites"], bar: true, count: "leads" },
   { id: "find", group: "sell", label: "Find customers", icon: "find", members: ["retailers"] },
@@ -176,7 +178,6 @@ export const MENU: readonly MenuEntry[] = [
   { id: "students", group: "business", label: "Students", icon: "students", members: ["students"] },
   { id: "fees", group: "business", label: "Fees", icon: "fees", members: ["fees"] },
   { id: "notices", group: "business", label: "Notices", icon: "announcements", members: ["announcements"] },
-  { id: "reports", group: "business", label: "Reports", icon: "report", members: ["report", "leadreport"] },
   { id: "aiteam", group: "aiteam", label: "My AI team", icon: "aiteam", members: ["office"], count: "aiteam" },
   { id: "train", group: "aiteam", label: "Train how it talks", icon: "train", members: ["train"] },
   { id: "phone", group: "aiteam", label: "Phone number", icon: "phone", members: ["phone", "integrations"] },
