@@ -18,7 +18,7 @@ function sareePicture(n) {
 }
 
 /**
- * `extraRoutes` (job DH): `[method, pattern, handler(req, res, match)]` for the few requests that are not a plain GET of a fixture (a slow streamed answer for the Ask box). Checked before the "only looks" refusal below;
+ * `extraRoutes` (job DH): `[method, pattern, handler(req, res, match)]` for the few requests that are not a plain GET of a fixture (a slow streamed answer for the Ask box); a handler that answers `false` passes the request on. Checked before the "only looks" refusal below;
  * the visual tests pass none, so they behave as they always did.
  */
 export function startStandIn({ port, certPath, keyPath, delayMs = 0, trace = null, extraRoutes = [] }) {
@@ -49,7 +49,8 @@ export function startStandIn({ port, certPath, keyPath, delayMs = 0, trace = nul
     if (!PUBLIC_API_PATHS.has(url.pathname) && !/^Bearer .+/.test(req.headers.authorization ?? "")) return send(401, { error: { code: "unauthorized", message: "stand-in: no token" } });
     for (const [method, pattern, handler] of extraRoutes) {
       const m = req.method === method ? pattern.exec(url.pathname) : null;
-      if (m) return void handler(req, res, m);
+      // a handler that answers `false` passes the request on to the fixtures (a screenshot run that changes one answer only for one business type)
+      if (m && handler(req, res, m) !== false) return;
     }
     if (req.method !== "GET") return send(405, { error: { code: "method_not_allowed", message: "stand-in: the visual tests only look" } });
     for (const [pattern, answer] of API_ROUTES) {

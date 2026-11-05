@@ -11,17 +11,3 @@
 [button type=button: Continue setup]
 Tuesday, 6 October
 # Good morning
-{label="Needs you"}
-## Needs you
-Not available yet
-{role=status}
-Not available yet
-{label="At the store today"}
-## At the store today
-Not available yet
-{label="Done while you slept"}
-## Done while you slept
-Not available yet [See everything in the outbox](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent)
-{label="Your team"}
-## Your team
-Not available yet [Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
