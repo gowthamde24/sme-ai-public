@@ -567,6 +567,8 @@ describe("Needs you: a caller who asked for a person (C1 #347)", () => {
     expect(row).toHaveTextContent("Person");
     expect(within(row).getByRole("link", { name: "Call back" })).toBeInTheDocument();
     expect(within(row).getByRole("button", { name: "Done, we called back" })).toHaveTextContent("Done");
+  });
+});
 
 describe("Needs you: the Lead Finder's rows and See all (owner, 5 Nov)", () => {
   const P = "b1b1b1b1-0000-4000-8000-000000000001";
