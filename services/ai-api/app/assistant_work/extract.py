@@ -45,6 +45,7 @@ _EMAIL = re.compile(r"[^\s@,;|<>()]+@[^\s@,;|<>()]+\.[A-Za-z]{2,}")
 _LABEL = re.compile(r"(?i)\b(?:(?:mob(?:ile)?|ph(?:one)?|tel|cell|off(?:ice)?|whatsapp|contact|e-?mail|mail|res)\b\s*(?:no\.?|number)?\s*[:.\-]*|[mopw]\s*:)")
 _COMPANY = re.compile(r"(?i)\b(pvt|private|ltd|limited|llp|traders?|trading|enterprises?|industries|agenc(?:y|ies)|stores?|silks?|sarees?|textiles?|fabrics|emporium|& ?co|company|associates|exports?|imports?|mart|bazaar|centre|center|solutions|technologies|school|academy|travels|caterers)\b")
 _ROLE = re.compile(r"(?i)\b(proprietor|propr?\.|owner|manager|director|partner|ceo|md|sales|executive|founder|marketing|dealer|distributor|wholesale|retail)\b")
+_SIGN_OFF = re.compile(r"(?i)\b(regards|best regards|warm regards|thanks|thank you|thanking you|yours (?:sincerely|faithfully|truly)|sincerely|from|name)\b[\s,:.-]*")
 _SPLIT = re.compile(r"\s*\|\s*|\t+| {2,}")
 
 
@@ -251,6 +252,7 @@ def _strip(line: str, *, phones: Sequence[str], emails: Sequence[str]) -> str:
     for e in emails:
         line = line.replace(e, " ")
     line = _LABEL.sub(" ", line)
+    line = _SIGN_OFF.sub(" ", line)
     return " ".join(re.sub(r"[|:;,/]+", " ", line).split()).strip(" -.")
 
 
