@@ -15,9 +15,11 @@ const stub = (body: unknown) => {
 describe("the calls a Needs-you card makes (C1's /calls)", () => {
   it("reads the lead and the short summary of a call, nothing else", async () => {
     stub({ id: C, lead_id: L, summary_short: "Wants to talk about a bulk order.", transcript: [{ who: "caller", text: "x" }] });
-    expect(await getCallBrief("tok", T, C)).toEqual({ leadId: L, gist: "Wants to talk about a bulk order." });
-    stub({ id: C, lead_id: null, summary_short: null });
-    expect(await getCallBrief("tok", T, C)).toEqual({ leadId: null, gist: null });
+    expect(await getCallBrief("tok", T, C)).toEqual({ leadId: L, gist: "Wants to talk about a bulk order.", visitAt: null });
+    stub({ id: C, lead_id: null, summary_short: null, captured: { visit_at: "2026-11-03T10:00:00+05:30" } });
+    expect(await getCallBrief("tok", T, C)).toEqual({ leadId: null, gist: null, visitAt: "2026-11-03T10:00:00+05:30" });
+    stub({ id: C, lead_id: null, summary_short: null, captured: { visit_at: "Tuesday" } });
+    expect((await getCallBrief("tok", T, C)).visitAt).toBeNull();
   });
   it("refuses another call's body, and an id that is not one is never asked for", async () => {
     stub({ id: L });

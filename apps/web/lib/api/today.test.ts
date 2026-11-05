@@ -76,7 +76,8 @@ describe("Today", () => {
   });
   it("reads a caller who asked for a person (C1 #347): its target is the call", () => {
     const PERSON = { ...OUTBOX, kind: "person_requested", summary: "A caller asked to talk to a person. Call them back, then mark it done.", target: { type: "phone_call", id: ID } };
-    expect(parseToday({ ...TODAY, needs_you: [PERSON] }).needs_you.map((i) => [i.kind, i.target.type])).toEqual([["person_requested", "phone_call"]]);
+    const VISIT = { ...PERSON, kind: "visit_requested", summary: "A caller wants to visit on Tue 3 Nov, 10:00. Book it in Visits, then mark it done." };
+    expect(parseToday({ ...TODAY, needs_you: [PERSON, VISIT] }).needs_you.map((i) => [i.kind, i.target.type])).toEqual([["person_requested", "phone_call"], ["visit_requested", "phone_call"]]);
   });
   it("a message or a call about a lead with no company has no customer name: the item says so with an empty name, the other kinds still need one", () => {
     expect(parseNeedsYouItem({ ...OUTBOX, customer: null }).customer).toBe("");

@@ -15,12 +15,13 @@ const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "obj
 const shortText = (v: unknown, max: number): string | null => (typeof v === "string" && v.trim() !== "" && v.length <= max ? v.trim() : null);
 
 /** What the "asked for a person" card needs of a call: the lead to call back from (null: the call has none) and the call's own short summary (English, the API's; shown in English only). */
-export type CallBrief = { leadId: string | null; gist: string | null };
+export type CallBrief = { leadId: string | null; gist: string | null; /** The visit time the caller agreed on the call (C1 #354: `captured.visit_at`, one of the times offered), ISO; null when none. */ visitAt: string | null };
 
 export async function getCallBrief(token: string, tenantId: string, callId: string): Promise<CallBrief> {
   const json = await apiRequest(path(tenantId, callId), token);
   if (!isRecord(json) || json.id !== callId) throw new ApiContractError("Unexpected call body.");
-  return { leadId: typeof json.lead_id === "string" && isCanonicalUuid(json.lead_id) ? json.lead_id : null, gist: shortText(json.summary_short, 300) };
+  const at = isRecord(json.captured) ? json.captured.visit_at : null;
+  return { leadId: typeof json.lead_id === "string" && isCanonicalUuid(json.lead_id) ? json.lead_id : null, gist: shortText(json.summary_short, 300), visitAt: typeof at === "string" && at.length <= 40 && !Number.isNaN(Date.parse(at)) ? at : null };
 }
 
 export async function markCallHandled(token: string, tenantId: string, callId: string): Promise<void> {

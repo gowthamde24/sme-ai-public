@@ -396,13 +396,17 @@ function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx
   const done = role !== "viewer" && actions?.callHandled ? actions.callHandled : null;
   const gist = c.gist && ctx.lang === "en" ? c.gist : "";
   const [open, setOpen] = React.useState(false);
-  const tone = "bg-red-bg text-red-text";
+  const visit = c.bookHref !== null; // a caller who agreed a visit time (C1 #354): Book is the first move
+  const tone = visit ? "bg-amber-bg text-amber-text" : "bg-red-bg text-red-text";
+  const when = c.visitAt ? `${dayShort(indiaDayOf(c.visitAt), ctx.lang)}, ${indiaClock(c.visitAt)}` : null;
+  const title = visit ? (when ? say(words, "today.title.visitcall", { customer, when }) : say(words, "today.title.visitcall.notime", { customer })) : say(words, "today.title.person", { customer });
+  const first = visit ? { href: c.bookHref as string, label: say(words, "today.act.book") } : c.leadHref ? { href: c.leadHref, label: say(words, "today.act.callback") } : null;
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={tone} label={say(words, "today.badge.person.row")} title={say(words, "today.title.person", { customer })} reason={gist} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
-        {c.leadHref ? (
-          <Link href={c.leadHref} className={rowPrimary}>
-            {say(words, "today.act.callback")}
+      <CompactRow cardKey={c.key} tone={tone} label={say(words, visit ? "today.badge.visit.row" : "today.badge.person.row")} title={title} reason={gist} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+        {first ? (
+          <Link href={first.href} className={rowPrimary}>
+            {first.label}
           </Link>
         ) : null}
         {done ? (
@@ -415,18 +419,18 @@ function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx
   }
   return (
     <article id={`needs-full-${c.key}`} aria-labelledby={`needs-${c.key}`} data-write className={card}>
-      <Head tone={tone} label={say(words, "today.badge.person")} at={c.at} ctx={ctx} onCollapse={ctx.compact ? () => setOpen(false) : undefined} />
+      <Head tone={tone} label={say(words, visit ? "today.badge.visit" : "today.badge.person")} at={c.at} ctx={ctx} onCollapse={ctx.compact ? () => setOpen(false) : undefined} />
       <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
-        {say(words, "today.title.person", { customer })}
+        {title}
         {c.city ? <span className="font-normal text-muted"> · {c.city}</span> : null}
       </h3>
       {gist ? <p lang="en" className="text-base text-muted [overflow-wrap:anywhere]">{gist}</p> : null}
-      <p className="text-sm text-muted">{say(words, "today.person.hint")}</p>
+      <p className="text-sm text-muted">{say(words, visit ? "today.visitcall.hint" : "today.person.hint")}</p>
       <Note id={c.key} words={words} />
       <div className="flex flex-wrap gap-2">
-        {c.leadHref ? (
-          <Link href={c.leadHref} className={`${primary} max-md:grow`}>
-            {say(words, "today.act.callback")}
+        {first ? (
+          <Link href={first.href} className={`${primary} max-md:grow`}>
+            {first.label}
           </Link>
         ) : null}
         {done ? (

@@ -2041,6 +2041,50 @@
    "kn": "draft"
   }
  },
+ "today.title.visitcall": {
+  "en": "{customer} wants to visit on {when}",
+  "te": "{customer} {when}కి రావాలనుకుంటున్నారు",
+  "hi": "{customer} {when} को आना चाहते हैं",
+  "kn": "{customer} {when}ಕ್ಕೆ ಬರಲು ಬಯಸುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.title.visitcall.notime": {
+  "en": "{customer} wants to visit",
+  "te": "{customer} రావాలనుకుంటున్నారు",
+  "hi": "{customer} आना चाहते हैं",
+  "kn": "{customer} ಬರಲು ಬಯಸುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visitcall.hint": {
+  "en": "Book it in Visits, then mark it done.",
+  "te": "విజిట్స్‌లో బుక్ చేసి, ఆ తర్వాత అయిపోయిందని గుర్తు పెట్టండి.",
+  "hi": "विज़िट्स में बुक करें, फिर हो गया मार्क करें।",
+  "kn": "ವಿಸಿಟ್ಸ್‌ನಲ್ಲಿ ಬುಕ್ ಮಾಡಿ, ನಂತರ ಆಯಿತು ಎಂದು ಗುರುತಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.book": {
+  "en": "Book",
+  "te": "బుక్ చేయండి",
+  "hi": "बुक करें",
+  "kn": "ಬುಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.title.reply_to_inbound": {
   "en": "Reply to {customer}",
   "te": "{customer} కి జవాబు",

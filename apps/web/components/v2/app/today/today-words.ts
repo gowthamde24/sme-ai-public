@@ -12,6 +12,8 @@ export const TODAY_WORD_KEYS = [
   "today.needs.count", "today.needs.more", "today.seeall", "today.seeless", "today.row.details", "today.row.less", "today.empty", "today.badge.price", "today.badge.promise",
   // a caller who asked for a person (C1 #347)
   "today.badge.person", "today.badge.person.row", "today.title.person", "today.person.hint", "today.act.callback", "today.act.handled", "today.act.handled.row",
+  // a caller who agreed a visit time (C1 #354)
+  "today.title.visitcall", "today.title.visitcall.notime", "today.visitcall.hint", "today.act.book",
   "today.badge.complaint", "today.badge.message", "today.badge.call", "today.title.reply_to_inbound", "today.title.info", "today.title.visit", "today.title.followup",
   "today.title.order_status", "today.title.other", "today.title.call", "today.customer.unknown", "today.customer.new", "today.goes", "today.why", "today.lang.en", "today.lang.te",
   "today.lang.hi", "today.lang.kn", "today.lang.ta", "today.act.approve", "today.act.edit", "today.act.notnow", "today.act.save", "today.act.cancel", "today.act.callok",

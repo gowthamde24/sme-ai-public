@@ -11,6 +11,7 @@ import { readDigest } from "./outbox-digest";
 import { readProposals, readSending, readStore, readWeek } from "./today-visits";
 import { targetPaths } from "./target-path";
 import { readAgentsCached, readTodayCached } from "./today-read";
+import { indiaClock, indiaDay } from "@/components/v2/app/today/time";
 import type { LeadDeskToday } from "./lead-desk-today";
 
 const CLASSIC: readonly string[] = ["quote_approval", "followup_due", "order_money_held", "material_quote_approval", "campaign_approval", "fees_overdue"];
@@ -50,7 +51,7 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
     const wantsMessages = t.needs_you.some((i) => i.kind === "outbox_approval");
     const wantsCalls = t.needs_you.some((i) => i.kind === "call_approval");
     // a caller who asked for a person: the call says which lead to call back from (at most ten are read; one that cannot be read keeps its card, without Call back)
-    const asked = t.needs_you.filter((i) => i.kind === "person_requested").slice(0, 10);
+    const asked = t.needs_you.filter((i) => i.kind === "person_requested" || i.kind === "visit_requested").slice(0, 10);
     const [where, messages, calls, briefs] = await Promise.all([
       targetPaths(accessToken, tenantId, [...t.needs_you.filter(isClassic).map((i) => i.target), ...t.recent.map((r) => r.target)]),
       wantsMessages ? listOutboxApprovals(accessToken, tenantId, { limit: 100 }).then((p) => new Map<string, OutboxMessage>(p.items.map((m) => [m.id, m]))).catch(rethrowAuth) : Promise.resolve(null),
@@ -66,9 +67,10 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
         const m = messages?.get(i.id);
         return { type: "outbox", key, at: i.at, id: i.id, customer, city: i.city, message: m ? { text: m.text, language: m.language, category: m.category, flags: m.flags, reasonText: m.reason_text, gloss: m.gloss_en, media: m.media.map((x) => ({ position: x.position, thumb_url: x.thumb_url })) } : null };
       }
-      if (i.kind === "person_requested") {
+      if (i.kind === "person_requested" || i.kind === "visit_requested") {
         const b = briefs.get(i.id);
-        return { type: "person", key, at: i.at, id: i.target.id, customer, city: i.city, leadHref: b?.leadId ? `/app/tenants/${tenantId}/leads/${b.leadId}` : null, gist: b?.gist ?? null };
+        const visitAt = i.kind === "visit_requested" ? (b?.visitAt ?? null) : null;
+        return { type: "person", key, at: i.at, id: i.target.id, customer, city: i.city, leadHref: b?.leadId ? `/app/tenants/${tenantId}/leads/${b.leadId}` : null, gist: b?.gist ?? null, visitAt, bookHref: i.kind === "visit_requested" ? bookHref(tenantId, visitAt, b?.leadId ?? null) : null };
       }
       const c = calls?.get(i.id);
       return { type: "call", key, at: i.at, id: i.id, customer, city: i.city, request: c ? { reason: c.reason, language: c.language } : null };
@@ -97,6 +99,18 @@ export function mergeDesk(base: TodayData, desk: LeadDeskToday): TodayData {
   data.needs = [...merged, ...added].sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
   data.cards = { ...data.cards, waiting: (data.cards.waiting ?? 0) + added.length };
   return data;
+}
+
+/** "Book" on a caller's visit: Visits on that India day with the time and the lead filled in (the page reads ?date, ?time and ?lead); without a time, Visits on today. */
+function bookHref(tenantId: string, visitAt: string | null, leadId: string | null): string {
+  const q = new URLSearchParams();
+  if (visitAt) {
+    q.set("date", indiaDay(visitAt));
+    q.set("time", indiaClock(visitAt).padStart(5, "0"));
+  }
+  if (leadId) q.set("lead", leadId);
+  const s = q.toString();
+  return `/app/tenants/${tenantId}/visits${s ? `?${s}` : ""}`;
 }
 
 /** Keeps a read that failed from taking the others with it, except a rejected session (which sends the person to sign in). */
