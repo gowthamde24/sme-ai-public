@@ -153,6 +153,14 @@ def _sensitive(op: Operation) -> Sensitive | None:
 def _undo(op: Operation, by_key: dict[tuple[str, str], Operation]) -> tuple[Undo, str | None]:
     if op.method == "PUT" and ("GET", op.path) in by_key:
         return "snapshot", by_key[("GET", op.path)].name    # read it first, put it back
+    # an import: its undo archives what it created (POST /lead-imports/{import_id}/undo; the id is the import's own `import_id`, from its body)
+    if op.method == "POST" and tail(op.path) == "/lead-imports" and ("POST", op.path + "/{import_id}/undo") in by_key:
+        return "inverse", by_key[("POST", op.path + "/{import_id}/undo")].name
+    # a created thing whose id is the caller's (in the body) and that has its own discard route: About my business's sources (POST /knowledge/sources -> /knowledge/sources/{source_id}/discard)
+    if op.method == "POST":
+        discard = next((k for k in by_key if k[0] == "POST" and re.fullmatch(re.escape(op.path) + r"/\{[a-z_]+_id\}/discard", k[1])), None)
+        if discard is not None:
+            return "inverse", by_key[discard].name
     if op.method == "POST" and op.path.endswith("/archive"):
         back = op.path[: -len("/archive")] + "/restore"
         if ("POST", back) in by_key:

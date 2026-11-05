@@ -93,6 +93,18 @@ class FakeLeadSourcesRepository:
             self.parts[args["p_intake_id"]] = {"sha": sha, "out": out, "import_id": args["p_import_id"], "kind": args["p_kind"], "tag": args["p_tag"], "consent": args["p_consent_id"], "rows": len(args["p_rows"]), "cost": args["p_cost_paise"], "at": datetime.now(UTC).isoformat()}
         return {"replayed": False, **out, "rows_read": len(args["p_rows"])}
 
+    def import_undo(self, token: str, tenant_id: uuid.UUID, import_id: uuid.UUID) -> dict[str, Any]:
+        self.calls.append("import_undo")
+        parts = [v for v in self.parts.values() if str(v["import_id"]) == str(import_id)]
+        if not parts:
+            raise NotFoundError("23503")
+        if any(v.get("undone") for v in parts):
+            return {"already_undone": True, **parts[0]["undone"]}
+        counts = {"archived": sum(int(v["out"]["counts"].get("ready", 0)) for v in parts), "kept": 0}
+        for v in parts:
+            v["undone"] = counts
+        return {"already_undone": False, **counts}
+
     def intakes(self, token: str, tenant_id: uuid.UUID, limit: int, before: datetime | None) -> list[dict[str, Any]]:
         by_import: dict[str, dict[str, Any]] = {}
         for v in self.parts.values():

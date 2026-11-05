@@ -14,7 +14,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Any
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Query, Response
+from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request, Response
 from fastapi.responses import StreamingResponse
 
 from app.agents.errors import AgentDbError
@@ -35,9 +35,9 @@ OwnerOnly = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER))]
 
 
 @router.post("/assistant/turns")
-def send_turn(body: TurnIn, ctx: SalesPlus, runtime: RuntimeDep) -> StreamingResponse:
+def send_turn(body: TurnIn, request: Request, ctx: SalesPlus, runtime: RuntimeDep) -> StreamingResponse:
     """One turn. Every refusal (switches, limits, the day's cost cap, a message id used for other words) is an ordinary error BEFORE the stream starts."""
-    return StreamingResponse(start_turn(runtime, ctx, body), media_type="text/event-stream", headers=SSE_HEADERS)
+    return StreamingResponse(start_turn(runtime, ctx, body, app=request.app), media_type="text/event-stream", headers=SSE_HEADERS)
 
 
 @router.get("/assistant/conversations", response_model=ConversationListOut)

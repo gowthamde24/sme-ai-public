@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 from app.assistant.language import Language
 from app.lead_finder.models import ChatCardOut
@@ -125,6 +125,8 @@ class MessageOut(_Strict):
     action: ActionRefOut | None = None
     # the Lead Finder's plan or result card this reply showed (ADR 0119; the same as the turn's `lead_finder` event, its state read now); null for every other reply
     lead_finder: ChatCardOut | None = None
+    # job assistant-does-the-work A2: the work cards this reply showed (a file's preview with its plan), in their state now (the turn's `work_card` events); empty for every other reply
+    work_cards: list[dict[str, Any]] = Field(default_factory=list)
 
 
 class ConversationOut(_Strict):

@@ -390,6 +390,14 @@ def get_conversation(conversation_id: str, ctx: SalesPlus, runtime: RuntimeDep) 
         for m in messages:
             if str(m.id) == found_id:
                 m.lead_finder = ChatCardOut.model_validate(lf_card)
+    # the work cards (a file's preview and its plan, job assistant-does-the-work A2), by the reply that showed them
+    from app.assistant_work.service import cards_for as work_cards_for
+
+    replies = [str(m.id) for m in messages if m.role == "assistant"]
+    for found_id, cards in work_cards_for(runtime, ctx, replies).items():
+        for m in messages:
+            if str(m.id) == found_id:
+                m.work_cards = cards
     return ConversationOut(
         id=row["id"], created_at=row["created_at"], updated_at=row["updated_at"], messages=messages
     )

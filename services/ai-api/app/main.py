@@ -23,6 +23,9 @@ from app.assistant_settings.repository import PostgrestAssistantSettingsReposito
 from app.assistant_settings.routes import router as assistant_settings_router
 from app.assistant_settings.service import AssistantSettingsService
 from app.assistant_tools.routes import router as assistant_tools_router
+from app.assistant_work.extract import FileReader, LocalTools
+from app.assistant_work.routes import router as assistant_work_router
+from app.assistant_work.store import PostgrestWorkStore
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.autoreply.repository import PostgrestAutoReplySwitch
@@ -345,6 +348,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         outreach=build_outreach(config.rest_url, config.anon_key),
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
+        assistant_work=PostgrestWorkStore(config.rest_url, config.anon_key),
+        assistant_file_reader=FileReader(LocalTools()),
         lead_finder=LeadFinderService(
             PostgrestLeadFinderRepository(config.rest_url, config.anon_key),
             mode=settings.lead_finder,
@@ -863,6 +868,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "lead_finder_not_available",
         "Finding new customers is not available for this business.",
     ),
+    lead_finder_errors.NotInPlanError: ApiError(
+        403,
+        "not_in_plan",
+        "Finding new customers is part of AI Workforce.",
+        extra={"feature": "lead_finder", "upgrade_to": "ai_workforce"},
+    ),
     lead_finder_errors.SearchCapError: ApiError(
         429, "search_cap_reached", "Today's searches are used up. Try again tomorrow."
     ),
@@ -1301,6 +1312,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_playbook_router)
     app.include_router(knowledge_router)
     app.include_router(lead_sources_router)
+    app.include_router(assistant_work_router)
     app.include_router(lead_profile_router)
     app.include_router(lead_intake_router)
     app.include_router(outreach_router)
