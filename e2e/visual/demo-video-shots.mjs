@@ -158,7 +158,7 @@ async function main() {
       // a screen other than Today asked with ?demo=video starts the story at step 1
       await page.goto(`${WEB_URL}/app/tenants/${TENANT}/retailers?demo=video`, { waitUntil: "networkidle", timeout: 60_000 });
       const landed = new URL(page.url());
-      if (landed.pathname !== `/app/tenants/${TENANT}` || landed.searchParams.get("demo") !== "video") {
+      if (landed.pathname !== `/app/tenants/${TENANT}/demo-video`) {
         rows.push(`CHECK ${size}-${scheme}: the other screen did not start the story (${landed.pathname}${landed.search})`);
         failed = true;
       }

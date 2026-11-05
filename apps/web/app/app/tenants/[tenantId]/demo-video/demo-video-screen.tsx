@@ -2,7 +2,7 @@ import { DemoVideo } from "@/components/v2/app/demo-video/LazyDemoVideo";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 
-import { readFrameData } from "../../frame-data";
+import { readFrameData } from "../../../frame-data";
 
 /** The words the story's screens draw: Today (its cards, the assistant's bar, the side cards), the WhatsApp chat, Prospects (the Lead Finder, the practice call, the draft quote) and the shared parts. */
 const PREFIXES = ["today.", "agent.", "frame.", "ask.", "bv.", "owl.", "office.", "nav.item.", "visits.", "outbox.", "catalogue.", "common.", "wa.", "lf.", "dta.btn.", "apierr.", "problem."] as const;

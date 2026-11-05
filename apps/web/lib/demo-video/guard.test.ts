@@ -53,21 +53,22 @@ describe("the demo-video guard: who may open the mode", () => {
 });
 
 describe("the address of the mode", () => {
-  it("is ?demo=video on a workspace's Today", () => {
-    expect(videoHref(T)).toBe(`/app/tenants/${T}?demo=video`);
-    expect(videoAddress(videoHref(T))).toEqual({ tenantId: T, today: true });
-    expect(videoAddress(`/app/tenants/${T}/?demo=video&lang=en`)).toEqual({ tenantId: T, today: true });
+  it("is the story's own page in a workspace (the hidden address)", () => {
+    expect(videoHref(T)).toBe(`/app/tenants/${T}/demo-video`);
+    expect(videoAddress(videoHref(T))).toEqual({ tenantId: T, stage: true });
+    expect(videoAddress(`/app/tenants/${T}/demo-video/?lang=en`)).toEqual({ tenantId: T, stage: true });
   });
-  it("on any other screen of the workspace asks for it too, but not as Today (the layout starts the story at step 1)", () => {
-    expect(videoAddress(`/app/tenants/${T}/retailers?demo=video`)).toEqual({ tenantId: T, today: false });
-    expect(videoAddress(`/app/tenants/${T}?tab=leads&demo=video`)).toEqual({ tenantId: T, today: false });
+  it("is asked for with ?demo=video on any screen of the workspace, Today included (the layout sends it to the story's page, step 1)", () => {
+    expect(videoAddress(`/app/tenants/${T}?demo=video`)).toEqual({ tenantId: T, stage: false });
+    expect(videoAddress(`/app/tenants/${T}/retailers?demo=video`)).toEqual({ tenantId: T, stage: false });
+    expect(videoAddress(`/app/tenants/${T}?tab=leads&demo=video`)).toEqual({ tenantId: T, stage: false });
   });
   it("is not asked for without the exact word, or outside a workspace", () => {
-    for (const p of [`/app/tenants/${T}`, `/app/tenants/${T}?demo=1`, `/app/tenants/${T}?demo=VIDEO`, "/app?demo=video", "/app/tenants/not-a-uuid?demo=video", "/landing?demo=video", "", null, undefined]) expect(videoAddress(p)).toBeNull();
+    for (const p of [`/app/tenants/${T}`, `/app/tenants/${T}/demo-videos`, `/app/demo-video`, `/app/tenants/${T}?demo=1`, `/app/tenants/${T}?demo=VIDEO`, "/app?demo=video", "/app/tenants/not-a-uuid?demo=video", "/landing?demo=video", "", null, undefined]) expect(videoAddress(p)).toBeNull();
   });
   it("is read from the proxy's own header, and is none outside a request", async () => {
     headersGet.mockImplementation((k: string) => (k === "x-sme-path" ? `/app/tenants/${T}?demo=video` : null));
-    expect(await requestVideoAddress()).toEqual({ tenantId: T, today: true });
+    expect(await requestVideoAddress()).toEqual({ tenantId: T, stage: false });
     headersGet.mockImplementation(() => {
       throw new Error("outside a request");
     });

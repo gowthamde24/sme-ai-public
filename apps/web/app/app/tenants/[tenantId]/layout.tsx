@@ -49,10 +49,10 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   const { tenantId } = await params;
   const user = await requireUser();
   const lang = await getLang();
-  // the demo-video mode (job demo-video, lib/demo-video/guard.ts): its story is on Today only, so any other screen asked with ?demo=video starts it at step 1; while it plays, nothing of the workspace's own moves on screen (no "Live now", no notices, no guided demo)
+  // the demo-video mode (job demo-video, lib/demo-video/guard.ts): its story has its own page (/demo-video), so any other screen asked with ?demo=video starts it at step 1; while it plays, nothing of the workspace's own moves on screen (no "Live now", no notices, no guided demo)
   const asked = await requestVideoAddress();
   const video = asked !== null && asked.tenantId.toLowerCase() === tenantId.toLowerCase() && (await demoVideoAllowed(user.accessToken, tenantId));
-  if (video && !asked.today) redirect(videoHref(tenantId));
+  if (video && !asked.stage) redirect(videoHref(tenantId));
   const read = isCanonicalUuid(tenantId) ? await readFrameData(user.accessToken, tenantId, lang) : NO_FRAME_DATA;
   const data = video ? { ...read, live: false } : read;
   // the 403 page for a MOVE inside the app to a part the business type does not have (job CL; a typed address is judged by template.tsx): made here, in the person's language, and drawn by the gate only when needed

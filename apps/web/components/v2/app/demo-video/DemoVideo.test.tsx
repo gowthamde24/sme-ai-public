@@ -72,7 +72,7 @@ describe("the demo video: each step on the real screens, from fixtures", () => {
     await key("ArrowRight");
     expect(step()).toBe(2);
     const row = document.querySelector('[data-needs-row^="outbox_approval-"]')!;
-    expect(row).toHaveTextContent("Reply to Padmavathi Rao");
+    expect(row).toHaveTextContent("Reply to Lakshmi");
     expect(frameSeen().waiting).toBe(3);
     clean();
 
@@ -85,7 +85,7 @@ describe("the demo video: each step on the real screens, from fixtures", () => {
 
     // 4. the owner approves: the card leaves, the toast says it went, then the chat shows her message, the reply, and her answer
     await key("ArrowRight");
-    await waitFor(() => expect(screen.getByText("Sent to Padmavathi Rao.")).toBeInTheDocument(), LONG);
+    await waitFor(() => expect(screen.getByText("Sent to Lakshmi.")).toBeInTheDocument(), LONG);
     expect(step()).toBe(4);
     await waitFor(() => expect(beat()).toBe("chat"), LONG);
     expect(screen.getByText(ASKED_TE)).toBeInTheDocument();
@@ -93,18 +93,20 @@ describe("the demo video: each step on the real screens, from fixtures", () => {
     await waitFor(() => expect(screen.getByText(ANSWER_TE)).toBeInTheDocument(), LONG);
     clean();
 
-    // 5. the Lead Finder: the box already says what to find; the plan card; OK; the result card and the businesses found
+    // 5. the owner asks the Lead Finder: the question is typed into the box a letter at a time; the plan card; OK; the result card and the businesses found
     await key("ArrowRight");
     expect(step()).toBe(5);
-    expect(screen.getByRole("textbox")).toHaveValue("saree shops in Guntur");
-    await key("ArrowRight");
+    await waitFor(() => expect((screen.getByRole("textbox") as HTMLInputElement).value.length).toBeGreaterThan(3), LONG);
+    expect("find new boutiques in Jayanagar, Bengaluru".startsWith((screen.getByRole("textbox") as HTMLInputElement).value)).toBe(true);
+    await key("ArrowRight"); // the rest of the question at once, then "Plan the search"
+    expect(screen.getByRole("textbox")).toHaveValue("find new boutiques in Jayanagar, Bengaluru");
     await waitFor(() => expect(document.querySelector("[data-plan-card]")).not.toBeNull(), LONG);
     expect(beat()).toBe("plan");
     clean();
     await key("ArrowRight");
-    await waitFor(() => expect(document.querySelector("[data-result-card]")).toHaveTextContent("Found 18 · 6 call-ready · 4 need you · 8 skipped"), LONG);
+    await waitFor(() => expect(document.querySelector("[data-result-card]")).toHaveTextContent("Found 16 · 5 call-ready · 3 need you · 8 skipped"), LONG);
     expect(beat()).toBe("found");
-    expect(screen.getByText("Sri Durga Silk House")).toBeInTheDocument();
+    expect(screen.getByText("Mallige Silk Boutique")).toBeInTheDocument();
     expect(refresh).not.toHaveBeenCalled(); // the OK reads no page again
     clean();
 
@@ -132,7 +134,7 @@ describe("the demo video: each step on the real screens, from fixtures", () => {
     await key("ArrowRight");
     expect(step()).toBe(8);
     await waitFor(() => expect(document.querySelector('[data-part="done"]')).toHaveTextContent("Replied to 7 customers on WhatsApp"), LONG);
-    expect(screen.getByText("Sri Durga Silk House, Guntur")).toBeInTheDocument();
+    expect(screen.getByText("Mallige Silk Boutique, Bengaluru")).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled(); // no link of the story ever navigated
     clean();
     // the end stays the end
@@ -164,7 +166,7 @@ describe("the demo video: each step on the real screens, from fixtures", () => {
     other.dispatchEvent(ev);
     expect(ev.defaultPrevented).toBe(true);
     expect(beat()).toBe("lead");
-    expect(screen.queryByText("Sent to Padmavathi Rao.")).toBeNull();
+    expect(screen.queryByText("Sent to Lakshmi.")).toBeNull();
     // the beat's own click works
     await act(async () => void fireEvent.click(document.querySelector<HTMLElement>('[data-needs-row^="outbox_approval-"] [title]')!));
     await waitFor(() => expect(beat()).toBe("reply"));

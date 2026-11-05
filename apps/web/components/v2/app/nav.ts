@@ -54,7 +54,7 @@ export const NAV: readonly NavGroup[] = [
     id: "work",
     label: "Work",
     items: [
-      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start", "/lead-setup"], bar: true, roles: ALL_ROLES },
+      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start", "/lead-setup", "/demo-video"], bar: true, roles: ALL_ROLES }, // the demo video (DEMO_VIDEO, demo workspaces only) is a story on Today's screens
       { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/suggestions", "/requirements"], bar: true, module: "enquiries", unlessModule: "lead_desk", roles: ALL_ROLES },
       // job DQ part 0: the follow-ups were reached from Leads; they are the first part of Calls now
       { id: "followups", label: "Follow-ups", icon: "calls", path: "/followups", module: "enquiries", roles: ALL_ROLES },

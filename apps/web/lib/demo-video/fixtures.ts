@@ -30,11 +30,11 @@ export const IDS = {
 export const MESSAGE_KEY = `outbox_approval-${IDS.message}`;
 
 /** The new lead and what was said (Telugu: the customer wrote in Telugu, the assistant answers in Telugu; the English is the gloss the card shows under it). */
-export const LEAD = { name: "Padmavathi Rao", city: "Guntur" } as const;
-export const ASKED_TE = "నమస్కారం అండి. మా అమ్మాయి పెళ్లికి 20 కంచి పట్టు చీరలు కావాలి. ధరలు చెప్పగలరా?";
-export const REPLY_TE = "నమస్కారం పద్మావతి గారు! పెళ్లి శుభాకాంక్షలు. మా దగ్గర కంచి పట్టు చీరలు ₹8,500 నుండి ₹24,000 వరకు ఉన్నాయి. శనివారం షాప్‌కి వచ్చి చూడగలరా?";
-export const REPLY_EN = "Namaskaram Padmavathi garu! Congratulations on the wedding. We have Kanchi silk sarees from ₹8,500 to ₹24,000. Could you come to the shop on Saturday to see them?";
-export const ANSWER_TE = "సరే అండి, శనివారం ఉదయం 11 గంటలకు వస్తాను.";
+export const LEAD = { name: "Lakshmi", city: "Hyderabad" } as const;
+export const ASKED_TE = "నమస్కారం అండి. మా బొటీక్ కోసం 40 పట్టు చీరలు కావాలి. ధరలు చెప్పగలరా?";
+export const REPLY_TE = "నమస్కారం లక్ష్మి గారు! మా దగ్గర కంచి పట్టు చీరలు ఒక్కొక్కటి ₹8,500, బనారసి పట్టు చీరలు ₹6,200. 40 చీరల కొటేషన్ ఈ రోజే పంపిస్తాము. ఫోటోలు కూడా పంపమంటారా?";
+export const REPLY_EN = "Namaskaram Lakshmi garu! Our Kanchi silk sarees are ₹8,500 each and Banarasi silk sarees ₹6,200. We will send the quote for 40 sarees today. Shall we send photos too?";
+export const ANSWER_TE = "అవునండి, ఫోటోలు పంపండి. ధన్యవాదాలు!";
 
 /** A promise React can read at once (`use()` sees it settled): the "Done while you slept" card then never flashes its loading lines when the screen is drawn again. */
 function settled<T>(value: T): Promise<T> {
@@ -68,7 +68,7 @@ function needs(now: number, base: string, phase: TodayPhase): NeedsCard[] {
     city: LEAD.city,
     message: { text: REPLY_TE, language: "te", category: "reply_to_inbound", flags: ["money"], reasonText: "Mentions a price", gloss: REPLY_EN, media: [] },
   };
-  const made: NeedsCard = { type: "item", key: `quote_approval-${IDS.newQuote}`, at: at(now, 0), item: { kind: "quote_approval", id: IDS.newQuote, customer: "Sri Durga Silk House", city: "Guntur", agent: "quote_writer", summary: "Quote 5 for ₹3,79,000.00 is ready for your approval.", at: at(now, 0), amount_paise: 37_900_000, href: `${base}/quotes` } };
+  const made: NeedsCard = { type: "item", key: `quote_approval-${IDS.newQuote}`, at: at(now, 0), item: { kind: "quote_approval", id: IDS.newQuote, customer: "Mallige Silk Boutique", city: "Bengaluru", agent: "quote_writer", summary: "Quote 5 for ₹3,05,500.00 is ready for your approval.", at: at(now, 0), amount_paise: 30_550_000, href: `${base}/quotes` } };
   if (phase === "lead") return [message, quote, followup];
   if (phase === "done") return [made, quote, followup];
   return [quote, followup];
@@ -110,13 +110,13 @@ export function chatThread(now: number, answered: boolean): Thread {
   return { lead_id: IDS.lead, name: LEAD.name, display_name: LEAD.name, stopped: false, whatsapp_consent: "granted", window_open: true, window_expires_at: new Date(now + 23 * 60 * MIN).toISOString(), next_before: null, items };
 }
 
-/** The words the owner typed in the Lead Finder's box (already there: the video does not wait for typing). */
-export const FINDER_TEXT = "saree shops in Guntur";
+/** What the owner asks the Lead Finder (typed into its box on screen, a letter at a time, as the step begins). */
+export const FINDER_TEXT = "find new boutiques in Jayanagar, Bengaluru";
 
 const SEARCH: Omit<Search, "state" | "counts" | "found" | "approvedAt" | "finishedAt" | "costPaise"> = {
   id: IDS.search,
-  query: "Saree shops",
-  area: "Guntur",
+  query: "Boutiques",
+  area: "Jayanagar, Bengaluru",
   categoryHint: "retailer",
   maxResults: 20,
   // not "fixture": that word draws the "made-up businesses" label of the demo workspaces; the attribution is left out because these businesses are invented, not Google's
@@ -133,19 +133,19 @@ export function plannedSearch(now: number): Search {
   return { ...SEARCH, createdAt: at(now, 0), state: "planned", counts: null, found: 0, approvedAt: null, finishedAt: null, costPaise: 0 };
 }
 export function doneSearch(now: number): Search {
-  return { ...SEARCH, createdAt: at(now, 0), state: "done", found: 18, costPaise: 3_400, approvedAt: at(now, 0), finishedAt: at(now, 0), counts: { found: 18, new: 18, duplicates: 0, call_ready: 6, needs_owner: 4, skipped: 8, researching: 0, duplicate_customer: 0, duplicate_company: 0, duplicate_prospect: 0, duplicate_suppressed: 0 } };
+  return { ...SEARCH, createdAt: at(now, 0), state: "done", found: 16, costPaise: 3_400, approvedAt: at(now, 0), finishedAt: at(now, 0), counts: { found: 16, new: 16, duplicates: 0, call_ready: 5, needs_owner: 3, skipped: 8, researching: 0, duplicate_customer: 0, duplicate_company: 0, duplicate_prospect: 0, duplicate_suppressed: 0 } };
 }
 
 const prospect = (now: number, over: Partial<Prospect> & Pick<Prospect, "id" | "name">): Prospect => ({
   searchId: IDS.search,
-  category: "Saree shop",
-  area: "Guntur",
+  category: "Boutique",
+  area: "Jayanagar",
   phone: null,
   website: null,
   rating: null,
   reviewCount: null,
   source: "google_maps",
-  sourceLabel: "Lead Finder · Guntur",
+  sourceLabel: "Lead Finder · Jayanagar, Bengaluru",
   attribution: null,
   status: "call_ready",
   decisionReason: "fit_high",
@@ -166,14 +166,14 @@ const prospect = (now: number, over: Partial<Prospect> & Pick<Prospect, "id" | "
 /** The businesses the search found, best fit first (the first one gets the practice call). */
 export function prospects(now: number): Prospect[] {
   return [
-    prospect(now, { id: IDS.prospects[0], name: "Sri Durga Silk House", area: "Brodipet, Guntur", rating: 4.6, reviewCount: 212, fitScore: 86 }),
-    prospect(now, { id: IDS.prospects[1], name: "Lakshmi Ganapathi Sarees", area: "Arundelpet, Guntur", rating: 4.4, reviewCount: 98, fitScore: 78 }),
-    prospect(now, { id: IDS.prospects[2], name: "Navya Boutique", category: "Boutique", area: "Lakshmipuram, Guntur", rating: 4.2, reviewCount: 41, status: "needs_owner", decisionReason: "first_calls", fitScore: 71, stockMatch: { matched: ["Banarasi silk sarees"], low: [], enough: true } }),
+    prospect(now, { id: IDS.prospects[0], name: "Mallige Silk Boutique", area: "4th Block, Jayanagar", rating: 4.6, reviewCount: 184, fitScore: 88 }),
+    prospect(now, { id: IDS.prospects[1], name: "Ananya Sarees & Boutique", area: "9th Block, Jayanagar", rating: 4.4, reviewCount: 96, fitScore: 79 }),
+    prospect(now, { id: IDS.prospects[2], name: "Navya Designer Boutique", area: "3rd Block, Jayanagar", rating: 4.2, reviewCount: 38, status: "needs_owner", decisionReason: "first_calls", fitScore: 70, stockMatch: { matched: ["Banarasi silk sarees"], low: [], enough: true } }),
   ];
 }
 
-const KANCHI = { item: "Kanchi silk saree, zari border", itemTypeCode: "saree", unit: "piece", price: 850_000, said: "about 30" };
-const BANARASI = { item: "Banarasi silk saree", itemTypeCode: "saree", unit: "piece", price: 620_000, said: "15 or 20" };
+const KANCHI = { item: "Kanchi silk saree, zari border", itemTypeCode: "saree", unit: "piece", price: 850_000, said: "about 25" };
+const BANARASI = { item: "Banarasi silk saree", itemTypeCode: "saree", unit: "piece", price: 620_000, said: "about 15" };
 
 /** The practice call with the first business (simulated: nothing is dialled); it qualifies, so its draft quote opens under it. */
 export function practiceCall(now: number): PracticeCall {
@@ -186,7 +186,7 @@ export function practiceCall(now: number): PracticeCall {
     language: "en",
     outcome: "qualified",
     endReason: "goodbye",
-    summary: "Srinivas, the owner, is stocking up for the wedding season: about 30 Kanchi silk sarees and 15 to 20 Banarasi. He wants the quote on WhatsApp and may order this week.",
+    summary: "About: Shwetha, the owner, is stocking up for the wedding season: about 25 Kanchi silk sarees and 15 Banarasi. She wants the quote on WhatsApp and may order this week.",
     whatsappOk: true,
     pitched: ["Kanchi silk sarees", "Banarasi silk sarees"],
     quoteSuggestion: [
@@ -194,10 +194,10 @@ export function practiceCall(now: number): PracticeCall {
       { item: BANARASI.item, unit: BANARASI.unit, pricePaise: BANARASI.price, moq: 10, quantitySaid: BANARASI.said },
     ],
     transcript: [
-      { who: "assistant", text: "Namaskaram! I am calling for Sri Venkateswara Silks, Vijayawada. Am I speaking with the owner of Sri Durga Silk House?", t: 0 },
-      { who: "business", text: "Yes, Srinivas here. Tell me.", t: 6 },
+      { who: "assistant", text: "Namaskara! I am calling for Sri Venkateswara Silks, Vijayawada. Am I speaking with the owner of Mallige Silk Boutique?", t: 0 },
+      { who: "business", text: "Yes, Shwetha here. Tell me.", t: 6 },
       { who: "assistant", text: "We supply Kanchi and Banarasi silk sarees wholesale. Are you stocking up for the wedding season?", t: 9 },
-      { who: "business", text: "Yes. Kanchi silk sells best here, I need about 30. Maybe 15 or 20 Banarasi also.", t: 16 },
+      { who: "business", text: "Yes. Kanchi silk sells best here, I need about 25. Maybe 15 Banarasi also.", t: 16 },
       { who: "assistant", text: "Our Kanchi silk with zari border is ₹8,500 a piece, from 10 pieces. Shall I send the quote on WhatsApp?", t: 24 },
       { who: "business", text: "Yes, send it on WhatsApp. If the price is right I will order this week.", t: 33 },
     ],
@@ -206,10 +206,10 @@ export function practiceCall(now: number): PracticeCall {
 }
 
 const LINES = [
-  { item: KANCHI.item, itemTypeCode: KANCHI.itemTypeCode, qty: 30, unitPricePaise: KANCHI.price, quantitySaid: KANCHI.said },
-  { item: BANARASI.item, itemTypeCode: BANARASI.itemTypeCode, qty: 20, unitPricePaise: BANARASI.price, quantitySaid: BANARASI.said },
+  { item: KANCHI.item, itemTypeCode: KANCHI.itemTypeCode, qty: 25, unitPricePaise: KANCHI.price, quantitySaid: KANCHI.said },
+  { item: BANARASI.item, itemTypeCode: BANARASI.itemTypeCode, qty: 15, unitPricePaise: BANARASI.price, quantitySaid: BANARASI.said },
 ];
 /** The draft quote's preview: each line at the catalogue's own price (the numbers are fixed here, never worked out by a model). */
 export const QUOTE_PREVIEW: QuoteDraftView = { prospectId: IDS.prospects[0], leadId: IDS.prospectLead, ready: true, made: false, quoteId: IDS.newQuote, enquiryId: null, lines: LINES, leftOut: [] };
-/** 30 x ₹8,500 + 20 x ₹6,200 = ₹3,79,000: a draft only, waiting for the owner's approval on Today. */
-export const QUOTE_MADE: QuoteDraftMade = { quoteId: IDS.newQuote, quoteNo: 5, enquiryId: IDS.enquiry, status: "draft", totalPaise: 37_900_000, needsOwnerApproval: true, lines: LINES, leftOut: [], replayed: false };
+/** 25 x ₹8,500 + 15 x ₹6,200 = ₹3,05,500: a draft only, waiting for the owner's approval on Today. */
+export const QUOTE_MADE: QuoteDraftMade = { quoteId: IDS.newQuote, quoteNo: 5, enquiryId: IDS.enquiry, status: "draft", totalPaise: 30_550_000, needsOwnerApproval: true, lines: LINES, leftOut: [], replayed: false };

@@ -24,13 +24,21 @@ const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 const ok = <T,>(data: T): Reply<T> => ({ ok: true, data });
 /** How long each fake answer "takes": long enough to see the button say it is working, short enough for a 60-second video. */
 const WAIT = { approve: 450, plan: 550, search: 1200, call: 1800, preview: 350, make: 650, answer: 1700 } as const;
+/** The owner's question is typed into the Lead Finder's box a letter at a time (ms per letter), as the step begins. */
+const TYPE_MS = 45;
+
+/** Puts words into a React-controlled field the way typing does (the field's own onChange sees an input event). */
+function typeInto(input: HTMLInputElement, value: string) {
+  Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set?.call(input, value);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+}
 /** The menu's count on Today follows the story (what Needs you shows). */
 const WAITING: Record<Screen, number> = { "today-calm": 2, "today-lead": 3, chat: 2, prospects: 2, "today-done": 3 };
 
 export type DemoVideoProps = { words: Words; base: string; lang: string; /** The moment the page was drawn (ms): every time on the screens is relative to it. */ now: number; /** The frame's real numbers (plan, AI usage, the menu of the business type): the story only changes the count on Today and switches "Live now" off. */ frame: FrameData };
 
 /**
- * The demo video (job demo-video): an eight-step story on the REAL screens, for a screen recording. Today -> a new WhatsApp lead (a reply drafted in Telugu, with its English) -> the owner approves -> the chat -> a Lead Finder search ->
+ * The demo video (job demo-video): an eight-step story on the REAL screens, for a screen recording. Today -> a new WhatsApp lead (a reply drafted in Telugu, with its English) -> the owner approves -> the chat -> the owner asks the Lead Finder (the question typed on screen) ->
  * a practice call -> the draft quote -> "Done while you slept". Every screen is the product's own component fed by fixtures (lib/demo-video/fixtures.ts) with fake answers made right here, in the browser: nothing is read for it, sent,
  * saved or dialled. The presenter paces it: the one thing to click in each beat reacts (lib/demo-video/script.ts); a click on the page, the right arrow, Page Down or N goes on; R or Home starts again at step 1 at once; Escape leaves.
  * Links never navigate here (the menu's included), so a slip of the mouse does not leave the story. Drawn only after the server's guard (lib/demo-video/guard.ts) said yes.
@@ -62,8 +70,18 @@ export default function DemoVideo({ words, base, lang, now, frame }: DemoVideoPr
     },
     [go],
   );
+  const typed = React.useRef(0);
+  const finderInput = () => stage.current?.querySelector<HTMLInputElement>("[data-finder] input") ?? null;
   const next = React.useCallback(() => {
     const b = BEATS[indexRef.current];
+    // the question is still being typed: the rest of it at once, then the button
+    if (b.id === "finder" && typed.current < F.FINDER_TEXT.length) {
+      const input = finderInput();
+      typed.current = F.FINDER_TEXT.length;
+      if (input) typeInto(input, F.FINDER_TEXT);
+      window.setTimeout(() => stage.current?.querySelector<HTMLElement>(b.target ?? "")?.click(), 120);
+      return;
+    }
     const el = b.target ? stage.current?.querySelector<HTMLElement>(b.target) : null;
     if (el) el.click();
     else go(nextIndex(indexRef.current));
@@ -187,6 +205,18 @@ export default function DemoVideo({ words, base, lang, now, frame }: DemoVideoPr
     if (sel) later(() => bring(12), 260);
     if (beat.auto) later(() => advanceFrom(beat.id, runRef.current), beat.auto);
     if (beat.id === "chat") later(() => setAnswered(true), WAIT.answer);
+    // the owner asks: the question appears in the Lead Finder's box a letter at a time
+    if (beat.id === "finder") {
+      typed.current = 0;
+      const step = () => {
+        const input = finderInput();
+        if (!input || typed.current >= F.FINDER_TEXT.length) return;
+        typed.current += 1;
+        typeInto(input, F.FINDER_TEXT.slice(0, typed.current));
+        later(step, TYPE_MS);
+      };
+      later(step, 500);
+    }
   }, [beat, run, later, advanceFrom]);
 
   // a click in the stage: the beat's one target works; a link never navigates; anything else is held still, and in a beat without a target the click moves the story on
@@ -234,12 +264,12 @@ export default function DemoVideo({ words, base, lang, now, frame }: DemoVideoPr
         <main key={`${run}-prospects`} data-dv-screen="prospects" className={pageMain} lang={lang}>
           <PageTop title={t("lf.title")} sub={t("lf.sub")} />
           <div className="mt-4 flex max-w-3xl flex-col gap-4">
-            <FinderBox words={words} canApprove base={base} actions={actions.finder} initialText={F.FINDER_TEXT} onApproved={() => undefined} />
+            <FinderBox words={words} canApprove base={base} actions={actions.finder} initialText="" onApproved={() => undefined} />
             {found ? (
               <div data-dv-appear="" className="flex flex-col gap-4">
                 <nav aria-label={t("lf.f.label")} className="flex flex-wrap gap-2" data-filter="">
                   {[null, "needs_owner", "call_ready", "skipped"].map((s) => {
-                    const n = s === null ? 18 : s === "needs_owner" ? 4 : s === "call_ready" ? 6 : 8;
+                    const n = s === null ? 16 : s === "needs_owner" ? 3 : s === "call_ready" ? 5 : 8;
                     const word = s ? t(`lf.status.${s}`) : t("lf.f.all");
                     return (
                       <a key={s ?? "all"} href={`${base}/retailers${s ? `?status=${s}` : ""}`} aria-current={s === null ? "page" : undefined} className={`${pillLinkBase} ${s === null ? pillLinkInfo : pillLinkQuiet}`}>
