@@ -76,6 +76,7 @@ def test_every_route_without_a_sign_in_has_a_rate_rule_and_is_on_the_known_list(
         "/v1/packs", "/v1/auth/providers",  # job CK: the sign-up cards and the sign-up providers (public by design, no tenant data)
         "/v1/webhooks/whatsapp", "/v1/webhooks/razorpay", "/v1/webhooks/cashfree", "/v1/webhooks/fake-payments",  # jobs BR, BZ: signed or secret-path webhooks
         "/v1/webhooks/exotel/{token}/missed-call", "/v1/webhooks/exotel/{token}/call-status",
+        "/api/v1/leads", "/api/v1/leads/{lead_id}", "/api/v1/usage",  # ADR 0121: the developer API (a key is the credential, checked by the database; rate rule developer_api)
         "/v1/telephony/exotel/stream-url",  # job phone-calls part 5: the Voicebot applet asks it once per call for the call's own stream address (rate limited; the stream checks its token and Exotel's own record)
     }
     metrics_route = {"/metrics"}
