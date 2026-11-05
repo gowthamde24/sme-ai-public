@@ -134,6 +134,13 @@ class ImportOut(_Strict):
     created_at: datetime
 
 
+class ImportUndoOut(_Strict):
+    import_id: ApiUuid
+    archived: int        # created by the import, untouched since: archived now
+    kept: int            # created by the import and worked on since (a message, a touch, a second arrival, a stage, a quote): left as it is
+    already_undone: bool
+
+
 class ImportItem(_Strict):
     import_id: ApiUuid
     kind: str

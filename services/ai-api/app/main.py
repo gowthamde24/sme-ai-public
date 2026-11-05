@@ -23,6 +23,8 @@ from app.assistant_settings.repository import PostgrestAssistantSettingsReposito
 from app.assistant_settings.routes import router as assistant_settings_router
 from app.assistant_settings.service import AssistantSettingsService
 from app.assistant_tools.routes import router as assistant_tools_router
+from app.assistant_work.routes import router as assistant_work_router
+from app.assistant_work.store import PostgrestWorkStore
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.autoreply.repository import PostgrestAutoReplySwitch
@@ -345,6 +347,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         outreach=build_outreach(config.rest_url, config.anon_key),
         tasks=TasksService(PostgrestTasksRepository(config.rest_url, config.anon_key)),
+        assistant_work=PostgrestWorkStore(config.rest_url, config.anon_key),
         lead_finder=LeadFinderService(
             PostgrestLeadFinderRepository(config.rest_url, config.anon_key),
             mode=settings.lead_finder,
@@ -1307,6 +1310,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_playbook_router)
     app.include_router(knowledge_router)
     app.include_router(lead_sources_router)
+    app.include_router(assistant_work_router)
     app.include_router(lead_profile_router)
     app.include_router(lead_intake_router)
     app.include_router(outreach_router)

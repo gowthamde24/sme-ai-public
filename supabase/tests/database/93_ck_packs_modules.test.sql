@@ -146,6 +146,8 @@ insert into exempt (tbl, why) values
   ('public.phone_calls', 'phone calls: every business type may be called by the assistant (job phone-calls)'), ('public.phone_numbers', 'phone numbers of a workspace (job phone-calls)'),
   ('public.lead_finder_settings', 'lead finder: guarded by the module lead_finder inside every function (ADR 0119)'), ('public.prospect_searches', 'lead finder: guarded inside the functions (ADR 0119)'),
   ('public.prospects', 'lead finder: guarded inside the functions (ADR 0119)'),
+  ('public.assistant_files', 'the assistant does the work: core, every business type (no module)'), ('public.assistant_work_plans', 'the assistant does the work: core, every business type (no module)'),
+  ('public.assistant_work_actions', 'the assistant does the work: core, every business type (no module)'), ('public.lead_intake_created', 'Lead Desk imports: core for every business type (the lead_desk module is on for every pack)'),
   ('public.outbox_settings', 'the outbox'), ('public.scheduler_runs', 'the scheduler'), ('public.scheduler_settings', 'the scheduler'), ('public.tenant_agent_settings', 'agent switches'),
   ('public.tenant_data_policy', 'the real-data gate'), ('suppression.contact_keys', 'suppression applies to every business'), ('suppression.key_events', 'suppression'),
   ('team.invitations', 'the team'), ('workspace.profiles', 'the workspace profile'),
