@@ -61,5 +61,5 @@ def build_lead_sources(settings: Settings, rest_url: str, auth_url: str, anon_ke
         inbound_secret=settings.lead_inbound_secret.get_secret_value() if settings.lead_inbound_secret else None,
         public_base_url=base,
         service_account_email=settings.google_sheets_service_account_email,
-        indiamart_available=settings.indiamart_provider != "off",
+        indiamart_available=settings.indiamart_provider != "off" or (settings.workspace_secrets or "off") != "off",   # the installation's key, or each workspace's own
     )
