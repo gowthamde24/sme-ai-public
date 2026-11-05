@@ -22,8 +22,9 @@ from app.agents.llm.interface import Block, LlmRequest, TaskClass, ToolSpec, Tru
 
 JOBS = ("call_turn", "whatsapp_reply")
 LANG_COUNTS = {"te": 12, "hi": 12, "kn": 6, "ta": 5, "ml": 5}
-LANG_NAMES = {"te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam"}
-SCRIPT_RANGES = {"te": (0x0C00, 0x0C7F), "hi": (0x0900, 0x097F), "kn": (0x0C80, 0x0CFF), "ta": (0x0B80, 0x0BFF), "ml": (0x0D00, 0x0D7F)}
+LANG_NAMES = {"te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam", "mr": "Marathi"}
+# Marathi is Devanagari like Hindi (job M1); the set has no Marathi conversation yet (LANG_COUNTS), so the entry only keeps the rule from failing on one
+SCRIPT_RANGES = {"te": (0x0C00, 0x0C7F), "hi": (0x0900, 0x097F), "kn": (0x0C80, 0x0CFF), "ta": (0x0B80, 0x0BFF), "ml": (0x0D00, 0x0D7F), "mr": (0x0900, 0x097F)}
 SARVAM_TOKEN_CAP = 150_000
 HAIKU_ONLY = "claude-haiku-5-5"   # the only Claude model the script will call
 

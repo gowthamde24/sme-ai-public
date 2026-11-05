@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import Any
 
 from app.agents.register.address import gendered_words
+from app.assistant.language import devanagari_language
 from app.conversation.fakes import FakeLlm, FakePlayout, FakeTts, ScriptedStt, Segment
 from app.conversation.parts import Session, TurnTimings
 from app.conversation.pipeline import Conversation
@@ -178,7 +179,9 @@ def dominant_script(text: str) -> str:
         else:
             latin += ch.isascii() and ch.isalpha()
     best = max(counts, key=lambda c: counts[c])
-    return best if counts[best] >= 3 and counts[best] >= latin else "en"
+    if not (counts[best] >= 3 and counts[best] >= latin):
+        return "en"
+    return devanagari_language(text) if best == "hi" else best   # Devanagari: Hindi or Marathi, by a few common words (job M1)
 
 
 def style_problems(answer: str, checks: list[str], language: str, keys: list[str] | None = None) -> list[str]:

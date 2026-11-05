@@ -14,7 +14,7 @@ from typing import Literal
 from app.today.service import format_rupees
 
 IST = timezone(timedelta(hours=5, minutes=30))
-Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 Kind = Literal["confirmation", "reminder", "offer"]
 
 # languages whose templates a native reader has read. Empty until the owner's family has: every non-English message waits for a person.
@@ -102,6 +102,7 @@ def render(
     kind: Kind, language: str, starts_at: datetime | None = None, advance_paise: int | None = None
 ) -> str:
     """The words. A confirmation and a reminder need the visit's start; the offer does not. An advance (confirmation only) adds the amount, which makes the outbox hold the message."""
+    language = language if language in TEMPLATES else "en"   # job M1: a language with no words here yet (Marathi) gets the English ones (and is not a checked language either)
     words = TEMPLATES[language]
     if kind == "offer":
         return words["offer"]

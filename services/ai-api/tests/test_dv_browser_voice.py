@@ -684,7 +684,7 @@ def test_the_owner_hears_a_short_hello_of_their_own_not_the_customer_call_line_a
         assert greeting == OWNER_GREETING[language] and "enquiry" not in greeting.lower() and "calling" not in greeting.lower()
         assert f"Your opening line was: {greeting}" in parts.system_for(language), "the model is told what it said"
         assert "good time to talk" not in parts.system_for(language)
-    assert parts.greeting_for("ta") == OWNER_GREETING["ta"] and parts.greeting_for("ml") == OWNER_GREETING["ml"] and parts.greeting_for("mr") == "Hi, how can I help?", "a language without its own hello falls back to English"
+    assert parts.greeting_for("ta") == OWNER_GREETING["ta"] and parts.greeting_for("ml") == OWNER_GREETING["ml"] and parts.greeting_for("mr") == OWNER_GREETING["mr"] and parts.greeting_for("bn") == "Hi, how can I help?", "a language without its own hello falls back to English"
     assert OWNER_SILENCE_MS == 900
     assert parts.stt_for("en")._silence_ms == 900  # type: ignore[attr-defined]
     stt = parts.stt_for("te")

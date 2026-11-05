@@ -27,6 +27,8 @@ ROUTE_WORDS = frozenset(
         "secrets",
         # 5 Nov 2026 (C1): the developer API (ADR 0121): /api/v1/... and Settings -> Developers
         "api", "developer", "keys",
+        # 5 Nov 2026 (C1): guided setups (POST /assistant/setups/{id}/test)
+        "setups",
         # 5 Nov 2026 (C1): a hand-over call was dealt with
         "handled",
         # 5 Nov 2026 (C1): "talk-training"

@@ -35,7 +35,7 @@ from app.tasks.resolver import ContactSource, DbContactSource, Person, resolve
 logger = logging.getLogger("app.tasks.planner")
 IST = timezone(timedelta(hours=5, minutes=30))
 MAX_ROUNDS = 4
-LANGUAGE_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam"}
+LANGUAGE_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam", "mr": "Marathi"}
 _HIDE_AI = re.compile(r"(pretend|claim|say|tell|act|sound)\b[^.]{0,60}\b(human|real person|not (an? )?(ai|robot|bot|machine))|do not (say|mention|reveal)[^.]{0,40}\b(ai|robot|bot)\b|without (saying|mentioning)[^.]{0,30}\b(ai|robot)\b", re.IGNORECASE)
 _NUMBER = re.compile(r"\d[\d,]*")
 

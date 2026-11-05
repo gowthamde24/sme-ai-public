@@ -12,7 +12,7 @@ from tests.today_fakes import FakeTodayRepository
 
 URL = f"/v1/tenants/{TENANT_A.id}/nav-counts"
 BODY: dict[str, Any] = {
-    "needs_you": 4, "prospects_needing_owner": 16, "new_leads": 3, "live_calls": 0, "unread_chats": 2, "followups_due": 5, "visits_today": 1, "quotes_waiting": 2, "ai_team_working": 1,
+    "needs_you": 4, "prospects_needing_owner": 16, "lead_desk_waiting": 1, "new_leads": 3, "live_calls": 0, "unread_chats": 2, "followups_due": 5, "visits_today": 1, "quotes_waiting": 2, "ai_team_working": 1,
     "call_minutes": {"used": 12, "total": 100}, "ai_usage": {"used_paise": 4100, "allowance_paise": 90000, "period": "month"}, "plan": "growth", "as_of": "2026-11-05T12:00:00+00:00",
 }
 

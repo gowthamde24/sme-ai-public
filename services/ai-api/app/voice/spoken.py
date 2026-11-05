@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from app.agents import register
 from app.voice.samples import LANG_NAMES, LINES
 
-SPOKEN_LANGS: tuple[str, ...] = ("te", "hi", "kn", "ta", "ml")
+SPOKEN_LANGS: tuple[str, ...] = ("te", "hi", "kn", "ta", "ml")   # not Marathi (job M1): a capped, paid provider run (SPOKEN_CHAR_CAP); its spoken samples come with its voice job
 SPOKEN_CHAR_CAP = 3000
 SPOKEN_VOICE = "ritu"        # the voice of the night-3 "warm" samples, so only the text and the pace differ
 SPOKEN_PACE = 1.08

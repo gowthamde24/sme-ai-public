@@ -46,13 +46,15 @@ from app.conversation.turntaking import (
     soft_warning_due,
     stop_word_heard,
 )
+from app.conversation.voices import SPEAKS_INSTEAD
 from app.turns.intent import Intent, classify, is_yes_no, normalise
 from app.turns.intent import Kind as TurnKind
 from app.turns.lead_finder import is_answer as lf_is_answer
+from app.voice.interface import VoiceError
 
 log = logging.getLogger("app.browser_voice")
 
-LANGUAGES = ("te", "en", "hi", "kn", "ta", "ml")
+LANGUAGES = ("te", "en", "hi", "kn", "ta", "ml", "mr")
 START_WITHIN_S = 10.0
 MODES = ("live", "dictate")
 LIVE_IDLE_S = 30.0   # live talk: no speech for this long and the session ends (`limit` idle); it listens again after every reply until then
@@ -61,10 +63,10 @@ DICTATE_SILENCE_S = 4.0   # dictate: this long without a sound after a final tra
 MAX_STT_FAILURES = 3
 FLUSH_EVERY_S = 15.0
 TRANSCRIPT_EVERY_S = 0.25   # an interim transcript at most this often (the newest of the recogniser's partials)
-_NO_WORDS = frozenset({"no", "nope", "n", "cancel", "don't", "dont", "stop", "kaadu", "nahi", "nahin", "illa", "కాదు", "వద్దు", "नहीं", "नही", "मत", "ಇಲ್ಲ", "ಬೇಡ"})
+_NO_WORDS = frozenset({"no", "nope", "n", "cancel", "don't", "dont", "stop", "kaadu", "nahi", "nahin", "illa", "కాదు", "వద్దు", "नहीं", "नही", "मत", "ಇಲ್ಲ", "ಬೇಡ", "नको", "नाही"})
 SAID = {
-    "yes": {"en": "Okay, I will go ahead.", "te": "సరే, కొనసాగిస్తాను.", "hi": "ठीक है, मैं आगे बढ़ता हूँ।", "kn": "ಸರಿ, ಮುಂದುವರಿಯುತ್ತೇನೆ.", "ta": "சரி, தொடர்கிறேன்.", "ml": "ശരി, തുടരാം."},
-    "no": {"en": "Okay, I will not do it.", "te": "సరే, చేయను.", "hi": "ठीक है, मैं नहीं करूँगा।", "kn": "ಸರಿ, ಮಾಡುವುದಿಲ್ಲ.", "ta": "சரி, செய்யமாட்டேன்.", "ml": "ശരി, ചെയ്യില്ല."},
+    "yes": {"en": "Okay, I will go ahead.", "te": "సరే, కొనసాగిస్తాను.", "hi": "ठीक है, मैं आगे बढ़ता हूँ।", "kn": "ಸರಿ, ಮುಂದುವರಿಯುತ್ತೇನೆ.", "ta": "சரி, தொடர்கிறேன்.", "ml": "ശരി, തുടരാം.", "mr": "ठीक आहे, मी पुढे जातो."},
+    "no": {"en": "Okay, I will not do it.", "te": "సరే, చేయను.", "hi": "ठीक है, मैं नहीं करूँगा।", "kn": "ಸರಿ, ಮಾಡುವುದಿಲ್ಲ.", "ta": "சரி, செய்யமாட்டேன்.", "ml": "ശരി, ചെയ്യില്ല.", "mr": "ठीक आहे, मी ते करणार नाही."},
 }
 Kind = Literal["text", "bytes", "close"]
 
@@ -156,7 +158,7 @@ class VoiceSession:
         self.session_id = uuid.uuid4()
         self.bus = FrameBus(clock)
         self.playout = BrowserPlayout(socket.send_bytes, self._send_stop, clock, ahead_s=limits.audio_ahead_ms / 1000.0 if limits.audio_ahead_ms > 0 else None)
-        self.language = language if language in LANGUAGES else "en"
+        self.language = self._speakable(language) if language in LANGUAGES else "en"
         self.tts = CountingTts(parts.tts, usage, lambda n: ledger.add_chars(tenant_id, n))
         self.conv = Conversation(
             stt=parts.stt_for(self.language),
@@ -399,8 +401,19 @@ class VoiceSession:
             self.conv.stt = self.parts.stt_for(self.language)
             await self._send({"type": "language", "language": self.language, "pinned": False})
             return
+        choice = self._speakable(choice)
         self.parts.set_pin(choice)
         await self._set_language(choice)
+
+    def _speakable(self, language: str) -> str:
+        """Job M1: a language with no voice in the catalogue yet (Marathi) is listened to, answered and spoken as the language of the same script that has voices (Hindi), exactly as before Marathi was a
+        language: the session never switches to a language it cannot say a word in. A language with voices is itself."""
+        if language in SPEAKS_INSTEAD:
+            try:
+                self.parts.voice_for(language)
+            except VoiceError:
+                return SPEAKS_INSTEAD[language]
+        return language
 
     async def _set_language(self, language: str) -> None:
         """The language the assistant listens for, answers in and speaks (its voice, its fillers, the pronunciation map) from now on."""
@@ -442,7 +455,8 @@ class VoiceSession:
         """The reply is in the language of the owner's LAST turn (also romanised Telugu): the voice, the filler and the answer all follow it. A short English word ("ok") does not switch a Telugu chat back."""
         if self.parts.pinned_language() is not None:
             return   # the person chose the language on the assistant bar: nothing the caller says changes it
-        found = detect_owner_language(text)
+        found: str = detect_owner_language(text)
+        found = self._speakable(found) if found in LANGUAGES else found
         if found == self.language or found not in LANGUAGES:
             return
         if found == "en" and len(text.split()) < 3:

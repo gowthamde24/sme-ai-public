@@ -17,6 +17,7 @@ FILLER_EXAMPLES: dict[str, str] = {
     "kn": "“ಹೌದು…”, “ಅಯ್ಯೋ”, “ಓ… ಸರಿ”, “hmm”",
     "ta": "“ஆமாங்க…”, “ஓ… சரி”, “hmm”",
     "ml": "“ഹാ…”, “ഓ… ശരി”, “hmm”",
+    "mr": "“हो…”, “बरं”, “ओह, ठीक आहे”, “hmm”",
     "en": "“Hmm…”, “Oh, okay”, “Right”",
 }
 REACTIONS: dict[str, str] = {
@@ -25,6 +26,7 @@ REACTIONS: dict[str, str] = {
     "kn": "“ಹೌದಾ!”, “ಸೂಪರ್”, “ಅಯ್ಯೋ”",
     "ta": "“அப்படியா!”, “சூப்பர் ங்க”, “ஐயோ”",
     "ml": "“അങ്ങനെയോ!”, “സൂപ്പർ”, “അയ്യോ”",
+    "mr": "“अरे वा!”, “मस्त”, “अरेरे”",
     "en": "“Oh nice!”, “Great”, “Oh no”",
 }
 NUMBERS: dict[str, str] = {
@@ -33,6 +35,7 @@ NUMBERS: dict[str, str] = {
     "kn": "say a price the way people say it (“ಎರಡು ಸಾವಿರದ ಆರು ನೂರು”), never digit by digit",
     "ta": "say a price the way people say it, never digit by digit",
     "ml": "say a price the way people say it, never digit by digit",
+    "mr": "say a price the way people say it (“दोन हजार सहाशे”), never digit by digit",
     "en": "say a price the way people say it (“two thousand six hundred”), never digit by digit",
 }
 

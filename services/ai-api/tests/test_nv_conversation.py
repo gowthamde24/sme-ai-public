@@ -225,7 +225,7 @@ def test_there_is_at_most_one_filler_per_turn_and_not_the_same_one_twice_in_a_ro
 
 
 def test_every_language_has_fillers_and_they_are_short() -> None:
-    assert set(FILLERS) == {"te", "hi", "kn", "ta", "ml", "en"}
+    assert set(FILLERS) == {"te", "hi", "kn", "ta", "ml", "mr", "en"}
     assert all(len(t) <= 20 for fs in FILLERS.values() for t in fs)
 
 
