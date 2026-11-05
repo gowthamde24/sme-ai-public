@@ -169,6 +169,7 @@ const asked: Record<TaskLang, string> = {
   kn: "ವಿಜಯ ಯಾರನ್ನು ಸಂಪರ್ಕಿಸಬೇಕು, ಯಾವುದರ ಬಗ್ಗೆ?",
   ta: `Who should ${currentAssistantName()} contact, and about what?`,
   ml: `Who should ${currentAssistantName()} contact, and about what?`,
+  mr: `Who should ${currentAssistantName()} contact, and about what?`,
 };
 
 function planOf(m: MockTask): PlanOut | null {

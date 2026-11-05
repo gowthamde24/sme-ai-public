@@ -35,7 +35,7 @@ describe("a line and its placeholders", () => {
   });
   it("every default of the mock is a valid line in each of the six languages", () => {
     for (const text of Object.values(MOCK_DEFAULTS)) expect(validLine(text)).toBe(true);
-    expect(Object.keys(MOCK_DEFAULTS).sort()).toEqual(["en", "hi", "kn", "ml", "ta", "te"]);
+    expect(Object.keys(MOCK_DEFAULTS).sort()).toEqual(["en", "hi", "kn", "ml", "mr", "ta", "te"]); // Marathi joins as a draft (C1 #355)
   });
 });
 
