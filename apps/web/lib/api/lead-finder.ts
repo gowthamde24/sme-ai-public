@@ -1,5 +1,6 @@
 import {
   ACTIONS,
+  AVAILABILITY_REASONS,
   CALL_LANGUAGES,
   CAPTURED,
   DECISION_REASONS,
@@ -56,12 +57,14 @@ const optNum = (v: unknown, what: string, min: number, max: number): number | nu
 
 /** Is this the refusal of a business type without the Lead Finder (a school)? */
 export const notAvailable = (e: unknown): boolean => e instanceof ApiRequestError && e.status === 403 && e.code === "lead_finder_not_available";
+/** Is this the refusal of a workspace whose plan (Lead Desk) does not have the Lead Finder (C1's draft: 403 `not_in_plan`)? */
+export const notInPlan = (e: unknown): boolean => e instanceof ApiRequestError && e.status === 403 && e.code === "not_in_plan";
 
 // ---------------------------------------------------------------------------------------------------------------- 0. availability
 export function parseAvailability(json: unknown): Availability {
   const x = rec(json, "availability");
   const available = bool(x.available, "available");
-  return { available, source: x.source === null || x.source === undefined ? null : oneOf(x.source, PROVIDERS, "source"), reason: oneOf(x.reason, ["ok", "not_for_this_business", "switched_off", "not_for_your_role"] as const, "reason") };
+  return { available, source: x.source === null || x.source === undefined ? null : oneOf(x.source, PROVIDERS, "source"), reason: oneOf(x.reason, AVAILABILITY_REASONS, "reason") };
 }
 export async function getAvailability(token: string, tenantId: string): Promise<Availability> {
   return parseAvailability(await apiRequest(`${base(tenantId)}/lead-finder/availability`, token));
@@ -76,6 +79,7 @@ export async function readAvailability(token: string, tenantId: string): Promise
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
     if (notAvailable(error)) return { available: false, source: null, reason: "not_for_this_business" };
+    if (notInPlan(error)) return { available: false, source: null, reason: "not_in_plan" };
     return null;
   }
 }

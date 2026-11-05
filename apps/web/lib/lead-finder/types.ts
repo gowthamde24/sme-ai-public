@@ -33,7 +33,21 @@ export const END_REASONS = ["goodbye", "caller_hung_up", "we_hung_up", "stopped"
 export const CAPTURED = ["sells", "price", "quantity", "supplier", "timing", "decision"] as const;
 export type CapturedKey = (typeof CAPTURED)[number];
 
-export type Availability = { available: boolean; source: Provider | null; /** `not_for_your_role`: a Viewer (#298); hidden like any other `available: false`. */ reason: "ok" | "not_for_this_business" | "switched_off" | "not_for_your_role" };
+export const AVAILABILITY_REASONS = ["ok", "not_for_this_business", "switched_off", "not_for_your_role", "not_in_plan"] as const;
+export type Availability = { available: boolean; source: Provider | null; /** `not_for_your_role`: a Viewer (#298); hidden like any other `available: false`. `not_in_plan`: the workspace is on Lead Desk (the Lead Finder is part of AI Workforce): the upgrade card is shown instead. */ reason: (typeof AVAILABILITY_REASONS)[number] };
+
+/**
+ * What the screens do with the Lead Finder (owner decision 4 Nov: plan tiers): `on` = it is here and works; `upsell` = this business would have it but its plan (Lead Desk) does not: the Prospects tab, the chat and Today show the
+ * friendly "Finding new customers is part of AI Workforce" card instead, and nothing of the Lead Finder does any work; `hidden` = not here at all (a business type without it, a Viewer, switched off, or it cannot be told).
+ * The API's own answer `not_in_plan` and the web's tier reader (lib/plan/tier.ts) both lead to `upsell`: the plan wins over an `available: true`, so a Lead Desk workspace never runs a search.
+ */
+export type FinderAccess = "on" | "upsell" | "hidden";
+export function finderAccess(a: Availability | null, inPlan: boolean): FinderAccess {
+  if (a?.reason === "not_in_plan") return "upsell";
+  if (a === null || a.reason === "not_for_this_business" || a.reason === "not_for_your_role") return "hidden";
+  if (!inPlan) return "upsell";
+  return a.available ? "on" : "hidden";
+}
 
 /** The keys of a done search's counts (contract section 2); an absent key is 0. */
 export const COUNT_KEYS = ["found", "new", "duplicates", "call_ready", "needs_owner", "skipped", "researching", "duplicate_customer", "duplicate_company", "duplicate_prospect", "duplicate_suppressed"] as const;
@@ -72,7 +86,7 @@ export type LeadFinderCard = { search: Search; canApprove: boolean };
 export const searchRank = (s: SearchState): number => (s === "planned" ? 0 : s === "approved" ? 1 : 2);
 
 /** The words the chat's Lead Finder card draws (the chat panel is given only these and its own `bv.*` words). */
-export const isChatCardWord = (k: string): boolean => k.startsWith("lf.plan.") || k.startsWith("lf.result.") || k === "lf.demo" || k === "lf.working" || k === "lf.chat.card" || k === "lf.err.cap" || k === "lf.err.off" || k === "lf.err.state";
+export const isChatCardWord = (k: string): boolean => k.startsWith("lf.plan.") || k.startsWith("lf.result.") || k === "lf.demo" || k === "lf.working" || k === "lf.chat.card" || k === "lf.err.cap" || k === "lf.err.off" || k === "lf.err.state" || k.startsWith("tier.upsell.");
 
 export type StockMatch = { matched: string[]; low: string[]; enough: boolean };
 export type QuoteLine = { item: string; unit: string; pricePaise: number | null; moq: number | null; quantitySaid: string };

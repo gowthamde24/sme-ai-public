@@ -11,7 +11,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
 import { readAgentsStatus, readEventLinks } from "./office-data";
-import { readFinderCached } from "../../../frame-data";
+import { readFinderAccessCached } from "../../../frame-data";
 import { withFinder } from "@/lib/lead-finder/types";
 import { partsWords } from "@/i18n/app-words";
 import { readPackCached } from "@/lib/packs/read";
@@ -46,7 +46,7 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
   let links: Record<string, string>;
   try {
     // the Lead Finder has a seat exactly where its own API says it is available (C1, 4 Nov); the helpers' status may still say "not built" for it
-    const finderOn = (await readFinderCached(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)))?.available === true;
+    const finderOn = (await readFinderAccessCached(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)))?.access === "on";
     agents = withFinder(await readAgentsStatus(user.accessToken, tenantId), finderOn);
     links = await readEventLinks(user.accessToken, tenantId, agents);
   } catch (error) {

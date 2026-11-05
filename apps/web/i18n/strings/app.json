@@ -77525,5 +77525,302 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tier.title": {
+  "en": "What's included",
+  "te": "మీ ప్లాన్‌లో ఉన్నవి",
+  "hi": "आपके प्लान में क्या है",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇರುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.badge": {
+  "en": "Your plan",
+  "te": "మీ ప్లాన్",
+  "hi": "आपका प्लान",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.sub.ai_workforce": {
+  "en": "Every feature, the Lead Finder too.",
+  "te": "అన్ని ఫీచర్లు, లీడ్ ఫైండర్ కూడా.",
+  "hi": "हर फ़ीचर, लीड फ़ाइंडर भी।",
+  "kn": "ಎಲ್ಲಾ ಫೀಚರ್‌ಗಳು, ಲೀಡ್ ಫೈಂಡರ್ ಕೂಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.sub.lead_desk": {
+  "en": "Everything except the Lead Finder.",
+  "te": "లీడ్ ఫైండర్ తప్ప మిగతావన్నీ.",
+  "hi": "लीड फ़ाइंडर को छोड़कर सब कुछ।",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ಬಿಟ್ಟು ಉಳಿದೆಲ್ಲವೂ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.leads": {
+  "en": "Leads from every source, in one list",
+  "te": "అన్ని చోట్ల నుంచి వచ్చే లీడ్స్, ఒకే లిస్ట్‌లో",
+  "hi": "हर जगह से आने वाली लीड्स, एक ही लिस्ट में",
+  "kn": "ಎಲ್ಲಾ ಕಡೆಯಿಂದ ಬರುವ ಲೀಡ್‌ಗಳು, ಒಂದೇ ಪಟ್ಟಿಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.followups": {
+  "en": "Follow-ups on WhatsApp and calls",
+  "te": "WhatsApp, కాల్స్‌లో ఫాలో-అప్‌లు",
+  "hi": "WhatsApp और कॉल से फ़ॉलो-अप",
+  "kn": "WhatsApp ಮತ್ತು ಕಾಲ್‌ಗಳಲ್ಲಿ ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.quotes": {
+  "en": "Quotes from your own prices",
+  "te": "మీ సొంత ధరలతో కొటేషన్లు",
+  "hi": "आपकी अपनी कीमतों से कोटेशन",
+  "kn": "ನಿಮ್ಮದೇ ಬೆಲೆಗಳಿಂದ ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.assistant": {
+  "en": "The assistant: ask it, or ask it to do the work",
+  "te": "అసిస్టెంట్: అడగండి, లేదా పని చేయమనండి",
+  "hi": "असिस्टेंट: पूछिए, या काम करने को कहिए",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್: ಕೇಳಿ, ಅಥವಾ ಕೆಲಸ ಮಾಡಲು ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.reports": {
+  "en": "The weekly report",
+  "te": "వారపు రిపోర్ట్",
+  "hi": "हफ़्ते की रिपोर्ट",
+  "kn": "ವಾರದ ರಿಪೋರ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.finder": {
+  "en": "Lead Finder: new businesses that may buy from you",
+  "te": "లీడ్ ఫైండర్: మీ దగ్గర కొనే అవకాశం ఉన్న కొత్త వ్యాపారాలు",
+  "hi": "लीड फ़ाइंडर: नए बिज़नेस जो आपसे खरीद सकते हैं",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್: ನಿಮ್ಮಿಂದ ಕೊಳ್ಳಬಹುದಾದ ಹೊಸ ವ್ಯಾಪಾರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.finder.off": {
+  "en": "Lead Finder: part of AI Workforce",
+  "te": "లీడ్ ఫైండర్: AI Workforce లో భాగం",
+  "hi": "लीड फ़ाइंडर: AI Workforce का हिस्सा",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್: AI Workforce ನ ಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.inc.no": {
+  "en": "Not in your plan",
+  "te": "మీ ప్లాన్‌లో లేదు",
+  "hi": "आपके प्लान में नहीं",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.move.plans": {
+  "en": "See the plans",
+  "te": "ప్లాన్లు చూడండి",
+  "hi": "प्लान देखें",
+  "kn": "ಪ್ಲಾನ್‌ಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.move.write": {
+  "en": "To move to AI Workforce, write to us:",
+  "te": "AI Workforce కి మారాలంటే మాకు రాయండి:",
+  "hi": "AI Workforce पर जाने के लिए हमें लिखें:",
+  "kn": "AI Workforce ಗೆ ಬದಲಾಗಲು ನಮಗೆ ಬರೆಯಿರಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.move.free": {
+  "en": "Nothing is charged here.",
+  "te": "ఇక్కడ ఏ ఛార్జీ పడదు.",
+  "hi": "यहाँ कोई पैसा नहीं कटता।",
+  "kn": "ಇಲ್ಲಿ ಯಾವ ಶುಲ್ಕವೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.move.owner": {
+  "en": "Only the owner can change the plan.",
+  "te": "ప్లాన్‌ని ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "प्लान सिर्फ़ ओनर बदल सकते हैं।",
+  "kn": "ಪ್ಲಾನ್ ಅನ್ನು ಓನರ್ ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.title": {
+  "en": "Finding new customers is part of AI Workforce",
+  "te": "కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం",
+  "hi": "नए ग्राहक ढूँढना AI Workforce का हिस्सा है",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು AI Workforce ನ ಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.finder": {
+  "en": "The Lead Finder finds new businesses near you that may buy, checks each one and gets the best ones ready to call.",
+  "te": "లీడ్ ఫైండర్ మీ చుట్టుపక్కల కొనే అవకాశం ఉన్న కొత్త వ్యాపారాలను వెతికి, ఒక్కొక్కటీ చూసి, బాగున్నవాటిని కాల్‌కి రెడీ చేస్తుంది.",
+  "hi": "लीड फ़ाइंडर आपके आसपास नए बिज़नेस ढूँढता है जो खरीद सकते हैं, हर एक को देखता है और सबसे अच्छे बिज़नेस को कॉल के लिए तैयार करता है।",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್ ನಿಮ್ಮ ಸುತ್ತಮುತ್ತ ಕೊಳ್ಳಬಹುದಾದ ಹೊಸ ವ್ಯಾಪಾರಗಳನ್ನು ಹುಡುಕಿ, ಒಂದೊಂದನ್ನೂ ನೋಡಿ, ಒಳ್ಳೆಯವನ್ನು ಕಾಲ್‌ಗೆ ರೆಡಿ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.now": {
+  "en": "This workspace is on Lead Desk: everything else works as it does.",
+  "te": "ఈ వర్క్‌స్పేస్ Lead Desk లో ఉంది: మిగతావన్నీ ఎప్పటిలాగే పనిచేస్తాయి.",
+  "hi": "यह वर्कस्पेस Lead Desk पर है: बाकी सब पहले जैसा चलता है।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ Lead Desk ನಲ್ಲಿದೆ: ಉಳಿದೆಲ್ಲವೂ ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.see": {
+  "en": "See what's in each plan",
+  "te": "ఏ ప్లాన్‌లో ఏముందో చూడండి",
+  "hi": "किस प्लान में क्या है, देखें",
+  "kn": "ಯಾವ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಏನಿದೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tier.upsell.who": {
+  "en": "Only the owner can change the plan. Ask them if you need it.",
+  "te": "ప్లాన్‌ని ఓనర్ మాత్రమే మార్చగలరు. కావాలంటే వాళ్ళని అడగండి.",
+  "hi": "प्लान सिर्फ़ ओनर बदल सकते हैं। ज़रूरत हो तो उनसे पूछें।",
+  "kn": "ಪ್ಲಾನ್ ಅನ್ನು ಓನರ್ ಮಾತ್ರ ಬದಲಾಯಿಸಬಹುದು. ಬೇಕಿದ್ದರೆ ಅವರನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.upsell": {
+  "en": "Your plan",
+  "te": "మీ ప్లాన్",
+  "hi": "आपका प्लान",
+  "kn": "ನಿಮ್ಮ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.upsell.row": {
+  "en": "Plan",
+  "te": "ప్లాన్",
+  "hi": "प्लान",
+  "kn": "ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.upsell": {
+  "en": "See what's in each plan",
+  "te": "ఏ ప్లాన్‌లో ఏముందో చూడండి",
+  "hi": "किस प्लान में क्या है, देखें",
+  "kn": "ಯಾವ ಪ್ಲಾನ್‌ನಲ್ಲಿ ಏನಿದೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.upsell.row": {
+  "en": "See plans",
+  "te": "ప్లాన్లు చూడండి",
+  "hi": "प्लान देखें",
+  "kn": "ಪ್ಲಾನ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.upsell.title": {
+  "en": "Find new retailers near you",
+  "te": "మీ చుట్టుపక్కల కొత్త రిటైలర్లను వెతకండి",
+  "hi": "अपने आसपास नए रिटेलर ढूँढें",
+  "kn": "ನಿಮ್ಮ ಸುತ್ತಮುತ್ತ ಹೊಸ ರಿಟೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.upsell.sum": {
+  "en": "part of AI Workforce",
+  "te": "AI Workforce లో భాగం",
+  "hi": "AI Workforce का हिस्सा",
+  "kn": "AI Workforce ನ ಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

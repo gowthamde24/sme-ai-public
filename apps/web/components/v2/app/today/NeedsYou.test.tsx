@@ -517,3 +517,26 @@ describe("Needs you: a new business from the Lead Finder (job lead-finder part D
     expect(row.textContent).toContain("Sri Sai Constructions · ఫిట్ 64 · స్టాక్ తక్కువ");
   });
 });
+
+describe("Needs you: a Lead Desk plan's one upsell row (owner decision 4 Nov)", () => {
+  const upsell: NeedsCard = { type: "item", key: "plan_upsell-lead_finder", at: "2026-10-11T03:12:00Z", item: { kind: "plan_upsell", id: "lead_finder", customer: "Find new retailers near you", city: null, agent: "lead_finder", summary: "part of AI Workforce", at: "2026-10-11T03:12:00Z", amount_paise: null, href: "/app/tenants/T/settings?section=plan" } };
+  it("is one short row, 'Find new retailers near you · part of AI Workforce', that opens Settings -> Plan", () => {
+    compactNext = true;
+    board([upsell]);
+    const row = document.querySelector('[data-needs-row="plan_upsell-lead_finder"]') as HTMLElement;
+    expect(row.textContent).toContain("Plan");
+    expect(row.textContent).toContain("Find new retailers near you · part of AI Workforce");
+    expect(within(row).getByRole("link", { name: "See plans" })).toHaveAttribute("href", "/app/tenants/T/settings?section=plan");
+  });
+  it("is not counted as something that waits", () => {
+    const many = [classic(), outbox(), call(), classic({ id: "x2" })].map((c, i) => ({ ...c, key: `k${i}` }) as NeedsCard);
+    const { container } = board([...many, upsell], { waiting: 4 });
+    expect(container.querySelector("[data-count]")).toHaveAttribute("data-count", "4");
+  });
+  it("opened (a phone) it is the same few words and one link: no facts, no 'nothing is sent' line", () => {
+    board([upsell]);
+    const card = document.getElementById("needs-full-plan_upsell-lead_finder") as HTMLElement;
+    expect(within(card).getByRole("link", { name: "See what's in each plan" })).toHaveAttribute("href", "/app/tenants/T/settings?section=plan");
+    expect(card.querySelector("dl")).toBeNull();
+  });
+});
