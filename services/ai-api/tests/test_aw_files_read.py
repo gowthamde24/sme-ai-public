@@ -295,3 +295,34 @@ def test_the_days_ai_allowance_used_up_is_said_plainly_and_nothing_is_read() -> 
     f = fid(client, "card.jpg", png(), "image/jpeg")
     evs = turn(client, "add", [f])
     assert "AI allowance is used up" in text_of(evs) and cards_of(evs)[0]["kind"] == "cant_do" and llm.requests == []
+
+
+def text_pdf(rows: list[list[str]]) -> bytes:
+    """A one-page PDF with a real text layer (Helvetica), written by hand: each cell placed at its column, as a spreadsheet saved as PDF does."""
+    ops = "BT /F1 12 Tf " + " ".join(f"1 0 0 1 {50 + 160 * c} {750 - 18 * r} Tm ({cell}) Tj" for r, row in enumerate(rows) for c, cell in enumerate(row)) + " ET"
+    objs = ["<< /Type /Catalog /Pages 2 0 R >>", "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+            "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>",
+            f"<< /Length {len(ops)} >>\nstream\n{ops}\nendstream", "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"]
+    out, offsets = b"%PDF-1.4\n", []
+    for i, o in enumerate(objs, start=1):
+        offsets.append(len(out))
+        out += f"{i} 0 obj\n{o}\nendobj\n".encode()
+    xref = len(out)
+    out += f"xref\n0 {len(objs) + 1}\n0000000000 65535 f \n".encode() + b"".join(f"{o:010d} 00000 n \n".encode() for o in offsets)
+    return out + f"trailer\n<< /Size {len(objs) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n".encode()
+
+
+@pytest.mark.skipif(shutil.which("pdftotext") is None, reason="poppler is not installed here")
+def test_the_real_pdftotext_reads_a_table_from_a_pdf() -> None:
+    data = text_pdf([["Name", "Phone", "City"], ["Ravi Kumar", "98765 43210", "Hyderabad"], ["Anita Reddy", "91234 56789", "Guntur"]])
+    read = FileReader(LocalTools()).read("pdf", data, school=lambda: True, vision=None)
+    assert read.how == "text_layer" and read.grids and any("98765 43210" in row for row in read.grids[0]), read.text
+
+
+@pytest.mark.skipif(shutil.which("pdftoppm") is None or shutil.which("tesseract") is None, reason="poppler or Tesseract is not installed here")
+def test_a_real_scanned_pdf_is_read_by_local_ocr_and_never_leaves_the_server() -> None:
+    page = Image.open(io.BytesIO(png("Ravi Kumar   98765 43210\nAnita Reddy   91234 56789", size=(1400, 400))))
+    buf = io.BytesIO()
+    page.convert("RGB").save(buf, format="PDF")   # a PDF that is only a picture: no text layer
+    read = FileReader(LocalTools(languages=["eng"])).read("pdf", buf.getvalue(), school=lambda: True, vision=lambda pages: pytest.fail("sent to the model"))
+    assert read.how == "local_ocr" and read.pages == 1 and len(extract.phones_in(read.text)) == 2, read.text
