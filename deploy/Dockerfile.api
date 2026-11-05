@@ -51,4 +51,8 @@ FROM base AS api
 USER root
 COPY deploy/fetch_audio_turn_model.py /tmp/fetch_audio_turn_model.py
 RUN pip install ".[audio-turn,speaker]" && python /tmp/fetch_audio_turn_model.py /srv/models && rm /tmp/fetch_audio_turn_model.py
+# Job assistant-does-the-work A3 (owner decision 5 Nov 2026): a PDF, a scan or a photo dropped in the chat is read ON THIS SERVER first. poppler's pdftotext (a PDF's own text) and pdftoppm (its pages as
+# images), and Tesseract with English, Telugu, Hindi and Kannada (local OCR: nothing leaves the server). Debian's packages, no recommended packages, about 45 MB. The AI model reads page images only
+# when this found nothing, and never for a school (app/assistant_work/extract.py). Without them the API still starts: a PDF's text is read by the standard library and a scan goes to the model.
+RUN apt-get update && apt-get install -y --no-install-recommends poppler-utils tesseract-ocr tesseract-ocr-eng tesseract-ocr-tel tesseract-ocr-hin tesseract-ocr-kan && rm -rf /var/lib/apt/lists/*
 USER 10001

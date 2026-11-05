@@ -130,9 +130,15 @@ async def run(client: httpx.AsyncClient, cat: Catalogue, tenant_id: uuid.UUID, t
     undo: dict[str, Any] | None = None
     if d.undo == "snapshot" and d.undo_via:
         before = await client.get(url, params=call.query or None, headers=headers)
-        if before.status_code == 200 and isinstance(before.json(), dict):
+        state = before.json() if before.status_code == 200 and before.headers.get("content-type", "").startswith("application/json") else None
+        if before.status_code == 404:
+            pass   # nothing there yet: the write creates it (its undo is "none" for this step)
+        elif not isinstance(state, dict):
+            # the state before could not be read: the write would lose its declared undo, so it is not sent
+            return Result(ok=False, status=before.status_code, error=error_of(before.status_code) or "down", answer=None, undo=None)
+        else:
             keep = cat.put_fields(d.op.name)
-            undo = {"kind": "snapshot", "tool": d.op.name, "path": dict(call.path), "body": {k: v for k, v in before.json().items() if k in keep}}
+            undo = {"kind": "snapshot", "tool": d.op.name, "path": dict(call.path), "body": {k: v for k, v in state.items() if k in keep}}
     elif d.undo == "inverse" and d.undo_via:
         undo = {"kind": "inverse", "tool": d.undo_via, "path": inverse_path(cat, d.undo_via, call)}
     response = await client.request(d.op.method, url, params=call.query or None, json=call.body if d.op.method != "GET" else None, headers=headers)

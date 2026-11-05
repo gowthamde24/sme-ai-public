@@ -301,12 +301,25 @@ def _file_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: Lan
     if store is None or app is None:
         return runner.finish_with(Reply(words("gone", language), language, "answer"), reply_id, emit)
     emit("step", {"type": "step", "step": "working"})
-    turn = FileTurn(store, Tools(app), runtime.lead_sources)
+    from app.assistant_work.planner import plan as plan_file
+    from app.assistant_work.planner import wants_import
+    from app.assistant_work.vision import model_vision
+
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    tasks = runtime.tasks
+    # owner rules (5 Nov 2026): a scanned page is read by local OCR first; the AI model reads it only when that found nothing, and never in a school's workspace
+    turn = FileTurn(store, Tools(app), runtime.lead_sources, reader=getattr(runtime, "assistant_file_reader", None), school=(lambda: tasks is None or tasks.is_school(runtime, token, tenant)), vision=model_vision(runtime, token, tenant))
     sentences: list[str] = []
     cards: list[tuple[str, dict[str, Any]]] = []
+    # job A2b (owner, 5 Nov 2026): a request that is not plainly "add these" is planned with the model from what the file holds; a school's files never reach the model (fails closed)
+    planned = not wants_import(body.text) and not (tasks is None or _school_or_unknown(tasks, runtime, token, tenant))
     for file_id in body.attachment_ids[:5]:
         try:
-            sentence, card = turn.answer(ctx.principal.token, ctx.tenant.id, file_id, message_id=reply_id, conversation_id=conversation_id, language=language)
+            if planned:
+                sentence, card = turn.with_request(token, tenant, file_id, body.text or "", plan_with=lambda u, req, lang: plan_file(runtime, token, tenant, u, req, lang), message_id=reply_id,
+                                                   conversation_id=conversation_id, language=language)
+            else:
+                sentence, card = turn.answer(ctx.principal.token, ctx.tenant.id, file_id, message_id=reply_id, conversation_id=conversation_id, language=language)
         except Exception as exc:   # one file that could not be handled does not lose the others
             logger.warning("assistant file turn failed: %s", exc.__class__.__name__)
             sentence, card = words("unreadable", language, name="file"), None
@@ -314,6 +327,13 @@ def _file_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: Lan
         if card is not None:
             cards.append(("work_card", {"card": card}))
     return runner.finish_with(Reply(" ".join(sentences), language, "answer"), reply_id, emit, extra=tuple(cards))
+
+
+def _school_or_unknown(tasks: Any, runtime: Runtime, token: str, tenant: uuid.UUID) -> bool:
+    try:
+        return bool(tasks.is_school(runtime, token, tenant))
+    except Exception:
+        return True
 
 
 def _assistant_name(runtime: Runtime, ctx: TenantContext) -> str:
