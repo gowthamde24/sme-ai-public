@@ -70,6 +70,8 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
   const status = (STATUS_FILTER as readonly string[]).includes(statusRaw ?? "") ? (statusRaw as ProspectStatus) : null;
   const idRaw = one(query.id);
   const onlyId = idRaw && isCanonicalUuid(idRaw) ? idRaw : null;
+  // Today's "Call" on one business (owner, 5 Nov): its practice call opens at once
+  const practiceOpen = onlyId && one(query.practice) === "1" ? onlyId : null;
   const cursorRaw = one(query.cursor);
   const cursor = cursorRaw && cursorRaw.length <= 80 ? cursorRaw : null;
 
@@ -147,7 +149,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
           ) : page.items.length === 0 ? (
             gone ? null : <p className={mutedText}>{t(status ? "lf.none.filter" : "lf.none")}</p>
           ) : (
-            <ProspectList items={page.items} words={words} base={base} canPractice={admin} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId), quoteDraft: quoteDraftAction.bind(null, tenantId), makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId) }} />
+            <ProspectList practiceOpen={practiceOpen} items={page.items} words={words} base={base} canPractice={admin} labelFixture={finder.source !== "fixture"} langNames={{ en: CALL_LANG_NAMES.en, te: CALL_LANG_NAMES.te }} actions={{ act: prospectActionsAction.bind(null, tenantId), practice: practiceCallAction.bind(null, tenantId), quoteDraft: quoteDraftAction.bind(null, tenantId), makeQuoteDraft: makeQuoteDraftAction.bind(null, tenantId) }} />
           )}
           {page?.nextCursor ? (
             <p>

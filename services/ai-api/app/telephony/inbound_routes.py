@@ -63,6 +63,7 @@ class StarletteWire:
 
     def __init__(self, ws: WebSocket) -> None:
         self._ws = ws
+        self.close_code: int | None = None   # the WebSocket close code when the provider closed it (for the end-of-call log)
 
     async def send_text(self, data: str) -> None:
         await self._ws.send_text(data)
@@ -73,6 +74,8 @@ class StarletteWire:
         except (WebSocketDisconnect, RuntimeError):
             return None
         if message.get("type") == "websocket.disconnect":
+            code = message.get("code")
+            self.close_code = code if isinstance(code, int) else None
             return None
         text = message.get("text")
         if text is None and message.get("bytes") is not None:
@@ -120,7 +123,11 @@ async def stream_url(request: Request) -> Response:
         raise ApiError(403, "not_on_sandbox_list", "This number is not answered here.")
     call_sid = inbound.first(params, "CallSid", "call_sid", "CallSID")
     log.info("exotel_stream_url call_sid_fp=%s", inbound.fingerprint(service.secret, call_sid))
-    token = inbound.mint(service.secret, inbound.monotonic(), call_sid)
+    # the shared trial number is in `To` here, while the start message's `to` is the line the call landed on (5 Nov 2026): the token carries "this call came in on the trial number", signed
+    to_trial = service.trial is not None and normalise(inbound.first(params, "To", "to")) == service.trial.number
+    log.info("exotel_stream_url to_is_trial=%s callto_is_trial=%s", "yes" if to_trial else "no",
+             "yes" if service.trial is not None and normalise(params.get("CallTo", "")) == service.trial.number else "no")
+    token = inbound.mint(service.secret, inbound.monotonic(), call_sid, inbound.TRIAL_MARK if to_trial else "")
     url = inbound.stream_url(service.public_base, token)
     log.info("exotel_stream_url issued format=%s token_in=path url_chars=%d", service.url_format, len(url))
     if service.url_format == "text":
@@ -128,7 +135,7 @@ async def stream_url(request: Request) -> Response:
     return JSONResponse({"url": url})
 
 
-def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str) -> tuple[Parts, str]:
+def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None) -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in auto (the caller may answer in any of the six languages), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
     if llm_choice == "sarvam":
@@ -136,13 +143,17 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str)
         model = "sarvam-105b"
     else:
         llm, model = AnthropicStream(bv.anthropic_key or "", client=bv.client), bv.fast_model
-    tts = FallbackTts(bv.config, bv.factory, chosen={}, gender="female", pronunciations=default_pronunciations())
+    from app.talk_training.guard import GuardedTts
+    from app.talk_training.prompt import greeting as trained_greeting
+
+    # the never-say list is a HARD rule: every sentence is checked by code before the voice speaks it
+    tts: Any = GuardedTts(FallbackTts(bv.config, bv.factory, chosen={}, gender="female", pronunciations=default_pronunciations()), (training or {}).get("never_say") or [])
     parts = Parts(
         stt_for=lambda lang: SarvamRealtimeStt(bv.sarvam_key, language="auto", silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(lang, bv.stt_modes)),
         tts=tts,
         llm=llm,
-        system_for=lambda lang: persona.system_prompt(business=business, assistant=None, language=lang, purpose="inbound", facts=[], customer_first_name=None),
-        greeting_for=lambda lang: persona.opening_line(lang, business=business, assistant=None, customer=None, inbound=True),
+        system_for=lambda lang: persona.system_prompt(business=business, assistant=None, language=lang, purpose="inbound", facts=[], customer_first_name=None, training=training),
+        greeting_for=lambda lang: persona.opening_line(lang, business=business, assistant=None, customer=None, inbound=True, greeting=trained_greeting(training, lang)),
         models={"fast": model, "strong": model},
         voice_for=lambda lang: bv.config.resolve(lang, None, "female").id,
         voice_name=lambda lang: bv.config.resolve(lang, None, "female").name,
@@ -196,10 +207,11 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
         log.info("exotel_inbound refused=no_start")
         return await _close(wire)
     log.info("exotel_stream start call_sid_fp=%s stream_sid_fp=%s", inbound.fingerprint(service.secret, start.call_sid), inbound.fingerprint(service.secret, start.stream_sid))
-    if not inbound.verify(service.secret, token, inbound.monotonic(), start.call_sid):
+    mark = inbound.verify_mark(service.secret, token, inbound.monotonic(), start.call_sid)
+    if mark is None:
         return await _refuse(wire, line, "bad_token")
     decision = await inbound.admit(start, service.gate_settings, find_line=service.store.line_find, calls=service.calls, active_calls=live.count() if live is not None else 0, now=inbound.now_utc(),
-                                   our_sid=service.our_sid, trial=service.trial, trial_count=service.trial_count)
+                                   our_sid=service.our_sid, trial=service.trial, trial_count=service.trial_count, trial_by_url=mark == inbound.TRIAL_MARK)
     if isinstance(decision, gate.Refused):
         return await _refuse(wire, line, decision.reason)
     log.info("exotel_inbound admitted rule=%s", decision.rule)
@@ -210,7 +222,17 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     except Exception as exc:  # noqa: BLE001 - no row, no call
         log.warning("exotel_inbound begin_failed %s", exc.__class__.__name__)
         return await _refuse(wire, line, "begin_failed")
-    parts, model = (service.parts_for or phone_parts)(bv, service.business, service.language, service.llm_choice)
+    training: dict[str, Any] | None = None
+    talk = getattr(service.store, "talk_training", None)
+    if talk is not None:
+        try:
+            training = await asyncio.to_thread(talk, tenant)
+        except Exception as exc:  # noqa: BLE001 - a call without the training still follows every platform rule
+            log.warning("exotel_inbound training_unreadable %s", exc.__class__.__name__)
+    if service.parts_for is None:
+        parts, model = phone_parts(bv, service.business, service.language, service.llm_choice, training)
+    else:
+        parts, model = service.parts_for(bv, service.business, service.language, service.llm_choice)
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="inbound", language=service.language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute)
     if live is not None:

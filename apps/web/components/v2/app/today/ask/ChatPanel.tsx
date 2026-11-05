@@ -23,6 +23,7 @@ import { usePanelVoice, type PanelVoiceOptions } from "./use-panel-voice";
 import { useDictation } from "./use-dictation";
 import { useKeyboardInset } from "./use-keyboard-inset";
 import type { ConfirmAction } from "@/lib/api/turns";
+import { useChatWork, WorkCards, type WorkEnv } from "./work";
 import type { LeadFinderCard, Search } from "@/lib/lead-finder/types";
 
 import type { Words } from "../../words";
@@ -80,7 +81,7 @@ function PlanCard({ plan, c, base, onStatus }: { plan: ConfirmAction; c: (k: str
   );
 }
 
-function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, finder, words, onSearch }: { /** The way to ask the same question again, for the exchange that is on screen and failed. */ onRetry?: (() => void) | undefined; mis: { endpoint: string; language: VoiceLang } | null; x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void; /** The Lead Finder's card this exchange draws (one per search: see lead-finder-cards.ts), or null. */ finder: LeadFinderCard | null; words: Words; onSearch: (search: Search) => void }) {
+function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, finder, words, onSearch, work }: { /** The assistant does the work: the environment of the work cards (null = the feature is off). */ work?: WorkEnv | null; /** The way to ask the same question again, for the exchange that is on screen and failed. */ onRetry?: (() => void) | undefined; mis: { endpoint: string; language: VoiceLang } | null; x: Exchange; w: (k: string) => string; c: (k: string) => string; onEdit: (text: string) => void; base: string; onStatus: (id: string, status: ConfirmAction["status"]) => void; /** The Lead Finder's card this exchange draws (one per search: see lead-finder-cards.ts), or null. */ finder: LeadFinderCard | null; words: Words; onSearch: (search: Search) => void }) {
   const [copied, setCopied] = React.useState(false);
   const copy = () => {
     void navigator.clipboard?.writeText(x.answer).then(() => setCopied(true), () => undefined);
@@ -118,6 +119,11 @@ function ExchangeView({ x, w, c, onEdit, base, onStatus, mis, onRetry, finder, w
       {x.plan ? (
         <div className={`${bubble} self-start bg-surface-2`}>
           <PlanCard plan={x.plan} c={c} base={base} onStatus={onStatus} />
+        </div>
+      ) : null}
+      {work && x.work && x.work.length > 0 ? (
+        <div data-chat="work" className={`${bubble} w-full self-start bg-surface-2`}>
+          <WorkCards cards={x.work} env={work} />
         </div>
       ) : null}
       {x.failed && !x.answer ? (
@@ -173,7 +179,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   const { w } = s;
   // "Mispronounced?" under spoken messages: the Owner and Admin teach the words through the pronunciation route
   const mis = voice.pronunciation ? { endpoint: `${s.base}/pronunciation`, language: voice.language } : null;
-  const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, plan: s.plan, leadFinder: s.leadFinder } : null;
+  const current: Exchange | null = s.phase !== "idle" ? { asked: s.asked, heardByVoice: s.heardByVoice, answer: s.answer, sources: s.sources, drafts: s.drafts, errorCode: s.errorCode, failed: s.phase === "error", task: null, plan: s.plan, leadFinder: s.leadFinder, work: s.work } : null;
   // the Lead Finder's cards: one per search, on the reply that first showed it, with the furthest state seen (a later "yes" turn, a replay, the card's own OK)
   const [ownSearch, setOwnSearch] = React.useState<Record<string, Search>>({});
   const onSearch = React.useCallback((search: Search) => setOwnSearch((m) => ({ ...m, [search.id]: search })), []);
@@ -226,6 +232,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
     s.setText(text);
     input.current?.focus();
   };
+  // the assistant does the work (ASSISTANT_WORK_SCREENS): files beside a message and the work cards of the answers; every slot is empty when it is off
+  const work = useChatWork(voice.work, s.base, voice.words, edit);
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
       if (variant !== "panel") return talk.stop();
@@ -283,7 +291,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
       <Square className="size-4" aria-hidden="true" />
     </button>
   ) : (
-    <button type="submit" disabled={s.text.trim() === "" || dictating} aria-label={c("bv.chat.send")} title={c("bv.chat.send")} className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border border-brand-edge bg-brand text-on-brand disabled:opacity-50`}>
+    <button type="submit" disabled={(s.text.trim() === "" && !work.hasReady) || dictating || work.uploading} aria-label={c("bv.chat.send")} title={c("bv.chat.send")} className={`inline-flex ${btn} shrink-0 items-center justify-center rounded-full border border-brand-edge bg-brand text-on-brand disabled:opacity-50`}>
       <ArrowUp className="size-5" aria-hidden="true" />
     </button>
   );
@@ -292,7 +300,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   const caption = talk.connecting ? c("bv.connecting") : !talk.active ? c("bv.orb.tap") : talk.state === "speaking" ? c("bv.orb.speaking") : talk.state === "thinking" ? c("bv.thinking") : talk.state === "paused" ? c("bv.live.paused") : c("bv.listening");
   /* The orb IS the Talk button (owner 31 Oct): a hands-free spoken conversation; it listens again after every answer, you may speak over it, and a tap again (or about 30 s of silence) ends it. The ring around it is its voice: still when idle, pulsing with the sound while it listens or speaks. */
   const talkOrb = (px: number, withCaption: boolean) => (
-    <div className={`flex shrink-0 flex-col items-center gap-1.5 ${withCaption ? "w-[84px]" : ""}`}>
+    <div className={`flex shrink-0 flex-col items-center gap-1.5 ${withCaption ? "w-[96px]" : ""}`}>
       <button
         type="button"
         data-chat="live-talk"
@@ -325,6 +333,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
       </button>
       {plusOpen ? (
         <div role="menu" data-chat="plus-menu" className={`absolute left-0 z-20 flex min-w-56 flex-col rounded-xl border border-line bg-surface p-1 shadow-[var(--v2-shadow-pop)] ${bar ? "top-full mt-2" : "bottom-full mb-2"}`}>
+          {/* "Add a file" first when the assistant does the work (owner, 5 Nov), then New conversation and Earlier conversations */}
+          {work.menuItem(() => setPlusOpen(false))}
           <button type="button" role="menuitem" data-chat="new" onClick={() => { setPlusOpen(false); talk.stop(); s.newChat(); setView("chat"); }} className="flex min-h-10 items-center gap-2 rounded-lg px-3 text-left text-sm font-semibold hover:bg-surface-2">
             <Plus className="size-4" aria-hidden="true" />
             {c("bv.chat.new")}
@@ -343,11 +353,16 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
       data-write
       data-chat="form"
       className="flex min-w-0 flex-col gap-1 rounded-[16px] border border-edge bg-surface p-2.5 focus-within:border-brand-edge"
+      {...work.dropProps}
       onSubmit={(e) => {
         e.preventDefault();
-        void s.ask(s.text, chat.pill);
+        if (work.uploading) return;
+        const sent = work.take(s.text);
+        void s.ask(sent.text, chat.pill, sent.ids, sent.local);
       }}
     >
+      {work.chips}
+      {work.input}
       <label htmlFor="chat-input" className="sr-only">
         {c("bv.chat.placeholder")}
       </label>
@@ -369,7 +384,7 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
         readOnly={dictating}
         autoComplete="off"
         enterKeyHint="send"
-        className="block min-h-11 w-full min-w-0 max-h-40 resize-none overflow-y-auto bg-transparent px-1 py-2 text-base leading-6 text-ink outline-none placeholder:text-muted focus:outline-none focus-visible:outline-none"
+        className={`block ${bar ? "min-h-16" : "min-h-11"} w-full min-w-0 max-h-40 resize-none overflow-y-auto bg-transparent px-1 py-2 text-base leading-6 text-ink outline-none placeholder:text-muted focus:outline-none focus-visible:outline-none`}
       />
       <div data-chat="toolbar" className="flex items-center gap-1">
         {plusEl}
@@ -431,9 +446,9 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
           ) : null}
           <ul data-chat="thread" className="flex flex-col gap-4">
             {s.earlier.map((x, i) => (
-              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[i]} words={voice.words} onSearch={onSearch} />
+              <ExchangeView key={i} x={x} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[i]} words={voice.words} onSearch={onSearch} work={work.env} />
             ))}
-            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[s.earlier.length] ?? null} words={voice.words} onSearch={onSearch} onRetry={current.failed && !current.answer && !current.heardByVoice && current.asked !== "" && !current.task ? s.retry : undefined} /> : null}
+            {current ? <ExchangeView x={current} w={w} c={c} onEdit={edit} base={s.base} onStatus={setActionStatus} mis={mis} finder={finders[s.earlier.length] ?? null} words={voice.words} onSearch={onSearch} work={work.env} onRetry={current.failed && !current.answer && !current.heardByVoice && current.asked !== "" && !current.task ? s.retry : undefined} /> : null}
             {talk.state === "listening" && !talk.live?.asked ? (
               <li data-chat="wave" aria-hidden="true" className={`${bubble} flex h-11 items-center gap-1 self-end border border-dashed border-brand-edge bg-surface`}>
                 {["", "[animation-delay:120ms]", "[animation-delay:240ms]", "[animation-delay:360ms]", "[animation-delay:480ms]"].map((delay) => (
@@ -520,7 +535,8 @@ export function ChatPanel({ session, chips, voice, onClose, voiceOptions, varian
   );
   return variant === "bar" ? (
     <div ref={box} role="region" aria-label={c("bv.chat.title")} data-chat="bar" onKeyDown={onKeyDown} className="flex items-start gap-4">
-      {talkOrb(64, true)}
+      {/* the same composer, a little bigger (owner, 5 Nov): the orb 80 px, two lines of text in view */}
+      {talkOrb(80, true)}
       <div className="flex min-w-0 flex-1 flex-col gap-2.5">
         {composerEl}
         {chipsEl}

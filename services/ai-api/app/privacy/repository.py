@@ -35,7 +35,10 @@ _ERRORS: dict[str, type[RepositoryError]] = {
 
 # a table whose columns are not all granted to a member reads the granted ones: a file dropped in the chat (job assistant-does-the-work A2) gives its name, type and size; its bytes are read back
 # only by the person who dropped it and are deleted within a day
-SELECT_OF: dict[str, str] = {"assistant_files": "id,tenant_id,created_by,name,content_type,kind,size_bytes,sha256,expires_at,created_at"}
+SELECT_OF: dict[str, str] = {
+    "assistant_files": "id,tenant_id,created_by,name,content_type,kind,size_bytes,sha256,expires_at,created_at",
+    "workspace_secrets": "id,tenant_id,kind,secret_name,last4,set_by,set_at",   # where the key is; never the key, never the fingerprint (no column grant)
+}
 
 class PrivacyRepository(Protocol):
     # data exports

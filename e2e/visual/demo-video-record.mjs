@@ -110,13 +110,49 @@ async function waitForPort(port, ms = 90_000) {
 }
 
 // the API's own word that this is a demo workspace (the guard's third question)
+/** The web server's voice probe (app/.../ask/voice/route.ts `probeVoice`): an EMPTY recording POSTed to the voice route, which the API refuses before it hears or charges anything. Answered as the API does (422 voice_too_short);
+ * counted apart, so the "nothing but reads" check still fails for any POST that carries a body. */
+let voiceProbes = 0;
+let voiceWithBody = 0;
 const extraRoutes = [
+  [
+    "POST",
+    new RegExp(`^/v1/tenants/${TENANT}/assistant/voice$`),
+    (req, res) => {
+      let size = 0;
+      req.on("data", (c) => (size += c.length));
+      req.on("end", () => {
+        if (size === 0) voiceProbes += 1;
+        else voiceWithBody += 1;
+        res.writeHead(422, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
+        res.end(JSON.stringify({ error: { code: "voice_too_short", message: "The recording is empty." } }));
+      });
+    },
+  ],
   [
     "GET",
     new RegExp(`^/v1/tenants/${TENANT}/billing/access$`),
     (_req, res) => {
       res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
       res.end(JSON.stringify({ access: "full", read_only_since: null, delete_on: null, data_days_left: null, can_resume: false, sending: "on", waiting_for: null, demo: true }));
+    },
+  ],
+  [
+    // the assistant is ON (the stand-in's own list says "not built yet"), so Today draws its composer (orb, box, + and the language pill, the chips) as staging does; no events, so nothing here disagrees with the story's own numbers
+    "GET",
+    new RegExp(`^/v1/tenants/${TENANT}/agents/status$`),
+    (_req, res) => {
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
+      res.end(JSON.stringify(["main", "lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"].map((agent) => ({ agent, state: "idle", job: "Ready.", last_event: null }))));
+    },
+  ],
+  [
+    // the menu's numbers (sidebar v2): the story's own "Needs you" count changes from scene to scene, so the menu's Today badge is "not known" (no badge) rather than a number that disagrees with the page
+    "GET",
+    new RegExp(`^/v1/tenants/${TENANT}/nav-counts$`),
+    (_req, res) => {
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
+      res.end(JSON.stringify({ needs_you: null, prospects_needing_owner: null, new_leads: 3, live_calls: 0, unread_chats: 2, followups_due: 5, visits_today: 2, quotes_waiting: 1, ai_team_working: 2, call_minutes: { used: 412, total: 600 }, ai_usage: { used_paise: 6800, allowance_paise: 30000, period: "month" }, plan: "free_trial", as_of: "2026-10-14T05:00:00Z" }));
     },
   ],
 ];
@@ -249,7 +285,8 @@ async function main() {
   const nextBin = path.join(WEB_DIR, "node_modules", "next", "dist", "bin", "next");
   const web = spawn(process.execPath, [nextBin, "start", "-p", String(WEB_PORT), "-H", "127.0.0.1"], {
     cwd: WEB_DIR,
-    env: { ...process.env, ...webEnv, NODE_ENV: "production", NEXT_TELEMETRY_DISABLED: "1", NODE_EXTRA_CA_CERTS: path.join(tmp, "c.pem"), NODE_OPTIONS: `--require ${path.join(HERE, "fake-clock.cjs")}`, VISUAL_FIXED_NOW: String(FIXED_NOW) },
+    // BROWSER_VOICE (read by the server at request time): Today draws the assistant's composer with the orb, as staging does
+    env: { ...process.env, ...webEnv, BROWSER_VOICE: "1", NODE_ENV: "production", NEXT_TELEMETRY_DISABLED: "1", NODE_EXTRA_CA_CERTS: path.join(tmp, "c.pem"), NODE_OPTIONS: `--require ${path.join(HERE, "fake-clock.cjs")}`, VISUAL_FIXED_NOW: String(FIXED_NOW) },
     stdio: ["ignore", "pipe", "pipe"],
   });
   let log = "";
@@ -303,7 +340,10 @@ async function main() {
     ].join("\n");
     writeFileSync(path.join(OUT, "scenes.md"), md);
     copyFileSync(fileURLToPath(import.meta.url), path.join(OUT, "demo-video-record.mjs"));
-    const sent = standIn.hits.filter((h) => !h.startsWith("GET "));
+    // the empty voice probes are not changes (see voiceProbes); a voice POST with a body would be, and keeps the check failing
+    const probe = (h) => voiceWithBody === 0 && h.startsWith(`POST /v1/tenants/${TENANT}/assistant/voice`);
+    const sent = standIn.hits.filter((h) => !h.startsWith("GET ") && !probe(h));
+    if (voiceProbes > 0) console.log(`demo-video-record: ${voiceProbes} empty voice probe(s) (refused before anything is heard), not counted as changes`);
     console.log(sent.length ? `\ndemo-video-record: CHECK the stand-in was asked to change something:\n  ${sent.join("\n  ")}` : "\ndemo-video-record: nothing but reads reached the stand-in (no POST/PUT/DELETE)");
     if (sent.length) failed = true;
     console.log(`demo-video-record: ${readdirSync(OUT).filter((f) => f.endsWith(".webm")).join(", ")} in ${OUT}`);

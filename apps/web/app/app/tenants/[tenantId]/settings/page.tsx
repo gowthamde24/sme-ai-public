@@ -110,12 +110,15 @@ import { Avatar } from "@/components/v2/app/Avatar";
 import { lettersOf } from "@/components/v2/app/letters";
 import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person } from "@/lib/api/me";
 import { signOutEverywhereAction } from "../../../actions";
+import { AssistantActivity } from "@/components/v2/app/settings/AssistantActivity";
+import { readActivity } from "@/lib/assistant-work/source";
+import { assistantWorkScreens } from "@/lib/screens/flag";
 
 export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "agent", "leadfinder", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+const SECTIONS = ["business", "profile", "plan", "members", "fields", "data", "language", "assistant", "activity", "agent", "leadfinder", "security", "privacy"] as const; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -177,9 +180,12 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
   // Settings > AI assistant (job DM): only while its flag is on, and only for the Owner (the people who run the business may be admins, but the assistant is the Owner's to set up)
   const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off" || voicePickerScreens() !== "off" || aboutBusinessScreens() !== "off" || autoReplyScreens() !== "off" || pronunciationScreens() !== "off");
+  // Settings > Activity (the assistant does the work, ASSISTANT_WORK_SCREENS): what the assistant changed on request, for the people who run the business
+  const workMode = assistantWorkScreens(tenantId);
+  const hasActivity = admin && workMode !== "off";
   // Settings > Lead Finder (job lead-finder part D): for the Owner and Admin, only where the API says the Lead Finder is available (a school never; switched off or cannot be told: hidden)
   const hasLeadFinder = admin && (await readFinderCached(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)))?.available === true;
-  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "leadfinder" && !hasLeadFinder) && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
+  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "activity" && !hasActivity) && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "leadfinder" && !hasLeadFinder) && !(wanted === "fields" && !hasFields) && !(wanted === "plan" && !hasPlan) && !(wanted === "assistant" && !hasAssistant) ? (wanted as Section) : "business"; // plan-id-ok: "business" is the Business settings tab, not the Business plan
 
   const finderSettings: FinderSettings | null = section === "leadfinder" ? await getFinderSettings(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   let members: Member[] | null = null;
@@ -193,8 +199,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     }
   }
   // Settings > My profile: the person's own name, language and picture (any member)
-  let mine: MyProfileData | null = null;
-  if (section === "profile") mine = await getMyProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null));
+  // a failed read says so (with "Try again"), never "Not available yet": My profile is personal and open to every member on every plan
+  let mine: Part<MyProfileData> | null = null;
+  if (section === "profile") mine = await settle(() => getMyProfile(user.accessToken, tenantId)).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : Promise.reject(e)));
   let plan: Plan | null = null;
   let usage: AiUsage | null = null;
   let profile: Part<Awaited<ReturnType<typeof getBusinessProfile>>> | null = null;
@@ -276,6 +283,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   } catch {
     /* outside a request: follow the system */
   }
+  const activityRange: "today" | "week" = pick(query.range) === "week" ? "week" : "today";
+  const activity = section === "activity" && workMode !== "off" ? { mode: workMode, range: activityRange, entries: await readActivity(workMode, { token: user.accessToken, tenantId }, activityRange).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) } : null;
   const tabs = [
     { key: "business", label: t("settings.tab.business") },
     { key: "profile", label: t("settings.tab.profile") },
@@ -285,6 +294,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     { key: "data", label: t("settings.tab.data") },
     { key: "language", label: t("settings.tab.language") },
     ...(hasAssistant ? [{ key: "assistant", label: t("asst.tab") }] : []),
+    ...(hasActivity ? [{ key: "activity", label: t("settings.tab.activity") }] : []),
     ...(tenant.role === "owner" ? [{ key: "agent", label: t("settings.tab.agent") }] : []),
     ...(hasLeadFinder ? [{ key: "leadfinder", label: t("lf.set.tab") }] : []),
     { key: "security", label: t("settings.tab.security") },
@@ -459,22 +469,22 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         ) : null}
         {section === "profile" ? (
           <section className={surface} aria-label={t("settings.tab.profile")}>
-            {mine ? (
+            {mine?.ok ? (
               <MyProfile
                 words={wordsFor(lang, ["settings.me."])}
-                name={mine.displayName ?? ""}
-                addressAs={mine.addressAs}
-                language={mine.language ?? lang}
+                name={mine.data.displayName ?? ""}
+                addressAs={mine.data.addressAs}
+                language={mine.data.language ?? lang}
                 choices={PROFILE_LANGUAGES}
-                pictureUrl={mine.pictureUrl}
-                own={mine.picture === "own"}
+                pictureUrl={mine.data.pictureUrl}
+                own={mine.data.picture === "own"}
                 email={user.email}
                 save={saveMyProfileAction.bind(null, tenantId)}
                 picture={pictureAction.bind(null, tenantId)}
               />
-            ) : (
-              <p className="text-sm text-muted">{t("frame.notyet")}</p>
-            )}
+            ) : mine ? (
+              <PartProblem kind={mine.kind} retryAfter={mine.retryAfter} words={wordsFor(lang, ["apierr.", "problem."])} title={t("settings.tab.profile")} />
+            ) : null}
           </section>
         ) : null}
         {section === "plan" && planScreens() !== "off" ? (
@@ -644,6 +654,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               </button>
             </form>
           </section>
+        ) : null}
+        {section === "activity" && activity ? (
+          <AssistantActivity entries={activity.entries} range={activity.range} words={wordsFor(lang, ["asstact.", "bv.work.step.err."])} lang={lang} base={base} canUndo={tenant.role === "owner"} mode={activity.mode} />
         ) : null}
         {section === "privacy" && privacy ? (
           <PrivacySection

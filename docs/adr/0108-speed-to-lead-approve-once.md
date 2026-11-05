@@ -17,3 +17,7 @@ Status: built on branch `api/dr-speed-approvals` (27 Oct 2026), stacked on `api/
 - A second migration cannot change an approved plan's meaning: the hash is recomputed by the same function (`app.outreach_plan_sha`); changing it later would need a new version marker.
 - When telephony exists, a real dialer replaces the fake behind the same interface and the same two door functions (`scheduler_outreach_run`, `outreach_item_result`); the database rules do not change.
 - `lead_source_costs` is shared with part A2 (lead sources tag every lead with a source string, `excel_upload`, `indiamart`, `meta_lead_ads`, ...); either branch creates it with `create table if not exists`.
+
+## Amendment (owner, 5 Nov 2026): call first replaces part of decision 3
+
+After hours there is no WhatsApp now: only the next morning's call. After the last unanswered attempt the lead stops: no WhatsApp. Retries follow the call settings per kind (busy, no answer, call me later) instead of one `retry_gap_hours`. `whatsapp_first` and `whatsapp_then_call` are refused. WhatsApp goes only on the customer's request or yes on the call. See `docs/decisions/call-first-auto-send.md`.

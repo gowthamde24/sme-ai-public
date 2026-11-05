@@ -658,6 +658,8 @@ add({ id: "office", render: async () => (await import("@/app/app/tenants/[tenant
 add({ id: "office-agent-chosen", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({}, { agent: "quote_writer" })), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
 add({ id: "office-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 add({ id: "integrations", render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/page")).default(props({})), handlers: (role) => base(role) });
+// sidebar v2 (5 Nov): the business's calling number, honestly "not set up yet" until telephony exists
+add({ id: "phone-number", render: async () => (await import("@/app/app/tenants/[tenantId]/phone-number/page")).default(props({})), handlers: (role) => base(role) });
 for (const section of ["business", "language", "security"] as const) {
   add({ id: `settings-${section}`, roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section })), handlers: (role) => ({ ...base(role), getBusinessProfile: () => ({ gstin: "27AAPFU0939F1ZV", state: "Maharashtra" }) }) });
 }
@@ -689,6 +691,7 @@ add({ id: "settings-profile", roles: ROLES, render: async () => (await import("@
 add({ id: "settings-data", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "data" })), handlers: (role) => ({ ...base(role), ...DATA_HANDLERS }) });
 add({ id: "settings-privacy", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "privacy" })), handlers: (role) => ({ ...base(role), ...PRIVACY_HANDLERS }) });
 add({ id: "settings-members", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "members" })), handlers: (role) => ({ ...base(role), fetchMembers: () => parseMembers(MEMBERS_JSON) }) });
+add({ id: "settings-profile-unreadable", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "profile" })), handlers: (role) => ({ ...base(role), getMyProfile: () => { throw new ApiRequestError(502, "upstream_error", "x"); } }) });
 add({ id: "settings-members-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "members" })), handlers: (role) => ({ ...base(role), fetchMembers: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 
 // ---- the saree catalogue (job BC) ----------------------------------------------------------------------------------------------
@@ -1162,3 +1165,9 @@ for (const step of [1, 2, 3, 4, 5, 6]) {
   });
 }
 
+
+// the assistant does the work (C2, ASSISTANT_WORK_SCREENS=mock): Settings > Activity with its example entries (Owner with Undo, Admin without), and the fixture-only preview of the chat's work cards
+const WORK_ENV = { ASSISTANT_WORK_SCREENS: "mock" };
+add({ id: "settings-activity", roles: ["owner", "admin"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "activity" }))), handlers: (role) => base(role) });
+add({ id: "settings-activity-today", roles: ["owner"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "activity", range: "today" }))), handlers: (role) => base(role) });
+add({ id: "assistant-work-preview", roles: ["owner"], render: () => withEnv(WORK_ENV, async () => (await import("@/app/app/tenants/[tenantId]/assistant-work-preview/page")).default(props({}))), handlers: (role) => base(role) });

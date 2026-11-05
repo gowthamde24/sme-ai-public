@@ -49,6 +49,25 @@ def test_a_settings_write_runs_through_the_route_keeps_a_snapshot_and_undo_puts_
     assert back.ok and repo.settings["fit_bar"] == 70
 
 
+def test_a_write_whose_state_before_cannot_be_read_is_not_sent_so_it_never_loses_its_undo() -> None:
+    from app.tenancy.repository import UpstreamError
+
+    client, cat, repo = world()
+    written: list[dict[str, object]] = []
+
+    def down(token: str, tenant_id: uuid.UUID) -> dict[str, object]:
+        raise UpstreamError("08000")
+
+    def record(token: str, tenant_id: uuid.UUID, settings: dict[str, object]) -> dict[str, object]:
+        written.append(settings)
+        return {}
+
+    repo.settings_get = down  # type: ignore[method-assign]
+    repo.settings_set = record  # type: ignore[method-assign]
+    out = asyncio.run(_run(client, cat, "a_owner", executor.Call(tool="lead-finder.put_settings", body={"fit_bar": 85})))
+    assert not out.ok and out.undo is None and out.error in ("down", "invalid") and written == [], "no snapshot, no write"
+
+
 def test_the_routes_own_role_rule_applies_a_sales_member_cannot_change_the_settings() -> None:
     client, cat, repo = world()
     out = asyncio.run(_run(client, cat, "a_sales", executor.Call(tool="lead-finder.put_settings", body={"fit_bar": 85})))

@@ -65,7 +65,9 @@ describe("every page of a workspace has been decided (a new page must say whethe
   const routes = walk(TENANT).map((f) => "/" + path.relative(TENANT, path.dirname(f)).replace(/\\/g, "/")).map((r) => (r === "/" ? "" : r));
   // Pages that need NO module on purpose: Today and its Start page, Settings, Help, the privacy and suppression pages, the team, the outbox: the places every business type has (the closed module list of packages/packs has no module for them), and the pages behind a feature flag (night 4: /tasks; each answers 404 itself while its flag is off).
   // night 4: Lead Desk and "Ask your assistant to do it" are CORE for every business type: they are gated by their feature flags (LEADS_SCREENS, OUTREACH_SCREENS, TASK_SCREENS), never by a pack module
-  const OPEN = ["", "/demo-video", "/help", "/help/[guide]", "/import", "/lead-desk", "/lead-report", "/lead-setup", "/lead-sources", "/outbox", "/outreach", "/outreach/batches/[batchId]", "/outreach/new", "/plans", "/privacy", "/settings", "/start", "/suppression", "/tasks", "/tasks/[taskId]", "/team"];
+  // "the assistant does the work" (4 Nov): its preview page is gated by its own flag (ASSISTANT_WORK_SCREENS=mock), never by a pack module
+  // sidebar v2 (5 Nov): the business's calling number ("not set up yet" until telephony exists) is every business type's
+  const OPEN = ["", "/assistant-work-preview", "/demo-video", "/help", "/help/[guide]", "/import", "/lead-desk", "/lead-report", "/lead-setup", "/lead-sources", "/outbox", "/outreach", "/outreach/batches/[batchId]", "/outreach/new", "/phone-number", "/plans", "/privacy", "/settings", "/start", "/suppression", "/tasks", "/tasks/[taskId]", "/team"];
   it("finds the pages", () => {
     expect(routes.length).toBeGreaterThan(30);
   });

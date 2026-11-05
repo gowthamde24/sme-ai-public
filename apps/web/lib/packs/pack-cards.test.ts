@@ -9,7 +9,8 @@ import { parseQuoteList } from "@/lib/api/materials";
 import { QUOTE_LIST_JSON } from "@/lib/api/materials-fixtures";
 import { formatRupees } from "@/lib/money";
 
-const api = { trips: vi.fn(), quotes: vi.fn(), dues: vi.fn(), report: vi.fn(), campaigns: vi.fn(), visits: vi.fn() };
+const api = { trips: vi.fn(), quotes: vi.fn(), dues: vi.fn(), report: vi.fn(), campaigns: vi.fn(), visits: vi.fn(), admissions: vi.fn() };
+vi.mock("@/lib/api/education", async (o) => ({ ...(await o<typeof import("@/lib/api/education")>()), listAdmissions: (...a: unknown[]) => api.admissions(...a) }));
 vi.mock("@/lib/api/deliveries", async (o) => ({ ...(await o<typeof import("@/lib/api/deliveries")>()), listTrips: (...a: unknown[]) => api.trips(...a) }));
 vi.mock("@/lib/api/materials", async (o) => ({ ...(await o<typeof import("@/lib/api/materials")>()), listMaterialQuotes: (...a: unknown[]) => api.quotes(...a) }));
 vi.mock("@/lib/api/ledger", async (o) => ({ ...(await o<typeof import("@/lib/api/ledger")>()), getLedgerSummary: (...a: unknown[]) => api.dues(...a) }));
@@ -36,6 +37,7 @@ beforeEach(() => {
   api.report.mockResolvedValue(parseReport(TODAY_REPORT_JSON));
   api.campaigns.mockResolvedValue(parseCampaignList({ ...LIST_JSON, items: LIST_JSON.items.filter((c) => c.status === "running") }));
   api.visits.mockResolvedValue({ from: "2026-10-06", to: "2026-10-06", items: [{ status: "confirmed" }, { status: "cancelled" }, { status: "arrived" }, { status: "no_show" }] });
+  api.admissions.mockResolvedValue({ items: [{ stage: "enquiry" }, { stage: "campus_visit" }, { stage: "application" }, { stage: "admitted" }, { stage: "lost" }], next_cursor: null });
 });
 
 describe("the cards a business type adds to Today", () => {
@@ -48,21 +50,25 @@ describe("the cards a business type adds to Today", () => {
     expect(cards[2]).toMatchObject({ tone: "red", subVars: { amount: "₹50,000.00" } });
     expect(api.trips).toHaveBeenCalledWith("tok", T, { date: "2026-10-06" });
   });
-  it("a school: what was collected today, the reminder campaigns running and the campus visits of the day", async () => {
+  it("a school: what was collected today, the reminder campaigns running, the campus visits of the day and the admissions waiting", async () => {
     const cards = await readPackCards(input(["fees", "dues", "programmes", "campaigns", "visits"]));
-    expect(cards.map((c) => c.id)).toEqual(["collection", "reminders", "campus"]);
+    expect(cards.map((c) => c.id)).toEqual(["collection", "reminders", "campus", "admissions"]);
     expect(cards[0]).toMatchObject({ value: "₹37,000.00", subKey: "today.pack.collection.sub", subVars: { n: 4 }, href: `/app/tenants/${T}/fees` });
-    expect(cards[1]).toMatchObject({ value: "1", subKey: "today.pack.reminders.sub" });
+    expect(cards[1]).toMatchObject({ value: "1", subKey: "today.pack.reminders.one" }); // "1 campaign is sending", never "1 campaigns"
     expect(cards[2]).toMatchObject({ value: "2", subKey: "today.pack.campus.sub" });
     expect(api.report).toHaveBeenCalledWith("tok", T, "education.today");
     expect(api.campaigns).toHaveBeenCalledWith("tok", T, { status: "running", limit: 50 });
     expect(api.visits).toHaveBeenCalledWith("tok", T, { from: "2026-10-06", to: "2026-10-06" });
   });
-  it("Sales do not see the reminder card; a card whose read fails says so and does not blank the rest", async () => {
-    expect((await readPackCards(input(["fees", "programmes", "campaigns", "visits"], "sales"))).map((c) => c.id)).toEqual(["collection", "campus"]);
+  it("Sales do not see the reminder card; a card whose read fails is left out (Today never says 'Not available yet') and does not blank the rest", async () => {
+    expect((await readPackCards(input(["fees", "programmes", "campaigns", "visits"], "sales"))).map((c) => c.id)).toEqual(["collection", "campus", "admissions"]);
     api.report.mockRejectedValue(new Error("down"));
     const cards = await readPackCards(input(["fees", "programmes", "visits"]));
-    expect(cards.map((c) => [c.id, c.value])).toEqual([["collection", null], ["campus", "2"]]);
+    expect(cards.map((c) => [c.id, c.value])).toEqual([["campus", "2"], ["admissions", "3"]]);
+  });
+  it("a school's admissions that wait for a decision: enquiries, campus visits and applications (owner's review, 5 Nov)", async () => {
+    const card = (await readPackCards(input(["programmes"]))).find((c) => c.id === "admissions");
+    expect(card).toMatchObject({ value: "3", subKey: "today.pack.admissions.sub", tone: "amber", href: `/app/tenants/${T}/admissions` });
   });
   it("a card exists only for a module the business type has", async () => {
     expect((await readPackCards(input(["deliveries"]))).map((c) => c.id)).toEqual(["trips"]);
@@ -78,10 +84,10 @@ describe("the cards a business type adds to Today", () => {
     expect(await readPackCards(input(["deliveries"], "viewer"))).toEqual([]);
     expect(api.trips).not.toHaveBeenCalled();
   });
-  it("a read that fails leaves a card that says so; the others still show", async () => {
+  it("a read that fails leaves its card out; the others still show", async () => {
     api.trips.mockRejectedValue(new Error("boom"));
     const cards = await readPackCards(input(["deliveries", "materials"]));
-    expect(cards.find((c) => c.id === "trips")).toMatchObject({ value: null, subKey: null });
+    expect(cards.find((c) => c.id === "trips")).toBeUndefined();
     expect(cards.find((c) => c.id === "quotes")?.value).toBe("1");
   });
   it("a rejected session is thrown, not hidden", async () => {

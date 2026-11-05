@@ -8,14 +8,16 @@ export const ALL_ROLES: readonly Role[] = ["owner", "admin", "sales", "viewer"];
 export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 
-export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats" | "fees" | "campaigns" | "sites" | "dues" | "calls" | "students" | "admissions" | "announcements" | "programmes";
+export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats" | "fees" | "campaigns" | "sites" | "dues" | "calls" | "students" | "admissions" | "announcements" | "programmes" | "assistant" | "find" | "followups" | "trips" | "aiteam" | "train" | "phone" | "sources";
 
 export type NavItem = {
   id: string;
   label: string;
   icon: IconKey;
-  /** "" = the workspace home. */
+  /** "" = the workspace home. A path with "?" (a Settings section) is a link only: no page is "under" it, so it never takes the current marker from the page it opens. */
   path: string;
+  /** A place on the page to go to (`#ask`: the assistant's box on Today). */
+  hash?: string;
   /** The home's records tab (`?tab=`) that makes this item the current one: "" = the home with no tab. */
   tab?: string;
   /** Other home tabs (`?tab=`) that belong to this item too. */
@@ -54,7 +56,13 @@ export const NAV: readonly NavGroup[] = [
     id: "work",
     label: "Work",
     items: [
-      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start", "/lead-setup", "/demo-video"], bar: true, roles: ALL_ROLES }, // the demo video (DEMO_VIDEO, demo workspaces only) is a story on Today's screens
+      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start", "/lead-setup", "/demo-video"], bar: true, roles: ALL_ROLES }, // the demo video (DEMO_VIDEO, demo workspaces only) is a story on Today
+      // sidebar v2 (owner, 5 Nov): "Talk to assistant" is the assistant's box on Today (its own place, `#ask`), not a page of its own
+      { id: "assistant", label: "Talk to assistant", icon: "assistant", path: "", hash: "ask", roles: ALL_ROLES },
+      // sidebar v2: the call that is going on ("● 1 live"): the Office's live page, the last tab of Calls
+      { id: "live", label: "Live calls", icon: "calls", path: "/office/live", module: "office", roles: WRITERS },
+      // sidebar v2: a builder's merchant's delivery trips (the construction pack's own page)
+      { id: "trips", label: "Trips", icon: "trips", path: "/orders/trips", module: "deliveries", packOnly: true, roles: WRITERS },
       { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/suggestions", "/requirements"], bar: true, module: "enquiries", unlessModule: "lead_desk", roles: ALL_ROLES },
       // job DQ part 0: the follow-ups were reached from Leads; they are the first part of Calls now
       { id: "followups", label: "Follow-ups", icon: "calls", path: "/followups", module: "enquiries", roles: ALL_ROLES },
@@ -92,7 +100,7 @@ export const NAV: readonly NavGroup[] = [
   },
   {
     id: "business",
-    label: "Your business",
+    label: "Business",
     items: [
       // the saree photo catalogue (job BC): every member reads it, Owner and Admin keep it. On the phone it lives in "More": the bar is full at five tabs and these are tabs for what needs a person today
       { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", also: ["/materials"], module: "catalogue", roles: ALL_ROLES },
@@ -108,6 +116,9 @@ export const NAV: readonly NavGroup[] = [
       // job CC: the people in the business, with their owls; everyone sees who is on the team, the Owner and Admin manage it
       { id: "team", label: "Team", icon: "team", path: "/team", roles: ALL_ROLES },
       { id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, module: "office", roles: ALL_ROLES },
+      // sidebar v2: how the assistant talks (Settings > AI assistant, the Owner's) and the number it calls from (its own page; "not set up yet" until telephony exists; the WhatsApp number is Integrations > WhatsApp)
+      { id: "train", label: "Train how it talks", icon: "train", path: "/settings?section=assistant", roles: ["owner"] },
+      { id: "phone", label: "Phone number", icon: "phone", path: "/phone-number", roles: ADMINS },
     ],
   },
   {
@@ -123,77 +134,116 @@ export const NAV: readonly NavGroup[] = [
 
 /** Below the scrolling part of the menu: Settings (its tabs hold the business and plan, the members, language and look, security and privacy). */
 export const FOOT: readonly NavItem[] = [
-  { id: "settings", label: "Settings", icon: "settings", path: "/settings", also: ["/plans", "/privacy", "/suppression"], roles: ALL_ROLES },
+  { id: "settings", label: "Settings", icon: "settings", path: "/settings", also: ["/plans", "/privacy", "/suppression", "/assistant-work-preview"], roles: ALL_ROLES }, // the assistant-work preview (flag-only, mock) sits under Settings, next to Activity
 ];
 
 export type VisibleGroup = { id: string; label: string; items: NavItem[] };
 
 /**
- * THE MENU (job DQ part 0, owner decision of 26 Oct 2026): seven items, the same for all three business types, instead of the twenty-odd pages of NAV. Each item is a group of the pages above, shown as tabs when it is open
- * (components/v2/app/GroupTabs.tsx), so no page and no address is lost: a page that the business type or the role does not have is simply not a tab, and an item with no page at all is not in the menu. Team, Office and Integrations are
- * parts of Settings. `members` are NAV (and FOOT) item ids, in the order of the tabs; the first one the person is offered is where the menu item goes. The ids of the menu items are `m-<id>` (their words are `nav.item.m-<id>`).
+ * THE MENU, sidebar v2 (owner-approved design, 5 Nov 2026; job-sidebar-v2.md): five groups, each with its heading and each one can be folded: OVERVIEW (Today, Reports, Talk to assistant), SELL (Leads, Find customers, Calls, Chats,
+ * Follow-ups, Visits), BUSINESS (what the business type has: Catalogue & stock, Quotes, Orders for sarees; Materials, Quotes, Trips, Dues for building materials; Admissions, Students, Fees, Notices for a school),
+ * AI TEAM (My AI team, Train how it talks, Phone number) and SETUP (Lead sources, Settings). Each row is a group of the pages above (shown as tabs when it has more than one, components/v2/app/GroupTabs.tsx), so no page and no address
+ * is lost: a page that the business type or the role does not have is simply not a tab, and a row with no page at all is not in the menu (that is how BUSINESS follows the business type). `members` are NAV item ids in the order of
+ * the tabs; the first one the person is offered is where the row goes. Row ids are `m-<id>` (their words are `nav.item.m-<id>`); `count` names the number the row shows (C1's nav-counts, components/v2/app/nav-badges.ts);
+ * `labelOf` = a page whose business-type word wins when the business type has one (Visits: "Campus visits" for a school; Catalogue & stock: "Materials", "Programmes").
  */
-export type MenuId = "today" | "customers" | "chats" | "calls" | "sales" | "catalogue" | "reports" | "settings";
-export type MenuEntry = { id: MenuId; label: string; icon: IconKey; members: readonly string[]; /** A tab of the phone's bottom bar (the rest are in "More"). */ bar?: boolean };
-export const MENU: readonly MenuEntry[] = [
-  { id: "today", label: "Today", icon: "today", members: ["today"], bar: true },
-  { id: "customers", label: "Customers", icon: "customers", members: ["leaddesk", "leads", "customers", "import", "retailers", "students", "sites"], bar: true },
-  { id: "chats", label: "Chats", icon: "chats", members: ["chats", "outbox", "announcements"], bar: true },
-  { id: "calls", label: "Calls", icon: "calls", members: ["followups", "calllist", "campaigns", "outreach", "tasks"] },
-  { id: "sales", label: "Sales", icon: "quotes", members: ["quotes", "visits", "orders", "fees", "admissions", "dues"], bar: true },
-  { id: "catalogue", label: "Catalogue", icon: "sarees", members: ["sarees", "catalogue", "programmes"] },
-  { id: "reports", label: "Reports", icon: "report", members: ["report", "leadreport"] },
-  // Settings is the foot of the menu (FOOT), not one of the seven; its tabs are Settings itself and the three parts that moved into it
-  { id: "settings", label: "Settings", icon: "settings", members: ["settings", "team", "office", "integrations", "lead-sources"] },
+export type MenuGroupId = "overview" | "sell" | "business" | "aiteam" | "setup";
+export type CountKey = "today" | "leads" | "calls" | "chats" | "followups" | "visits" | "quotes" | "aiteam";
+export type MenuId = "today" | "assistant" | "leads" | "find" | "calls" | "chats" | "followups" | "visits" | "catalogue" | "quotes" | "orders" | "trips" | "dues" | "admissions" | "students" | "fees" | "notices" | "reports" | "aiteam" | "train" | "phone" | "sources" | "settings";
+export type MenuEntry = { id: MenuId; group: MenuGroupId; label: string; icon: IconKey; members: readonly string[]; /** A tab of the phone's bottom bar (the rest are in "More"). */ bar?: boolean; count?: CountKey; labelOf?: string };
+export const MENU_GROUPS: readonly { id: MenuGroupId; label: string }[] = [
+  { id: "overview", label: "Overview" },
+  { id: "sell", label: "Sell" },
+  { id: "business", label: "Business" },
+  { id: "aiteam", label: "AI team" },
+  { id: "setup", label: "Setup" },
 ];
-/** The ids of the seven items above the foot (Settings is the foot): a test pins "at most seven". */
-export const MENU_ITEMS: readonly MenuEntry[] = MENU.filter((m) => m.id !== "settings");
+export const MENU: readonly MenuEntry[] = [
+  { id: "today", group: "overview", label: "Today", icon: "today", members: ["today"], bar: true, count: "today" },
+  // Reports sits under Today (owner's review, 5 Nov)
+  { id: "reports", group: "overview", label: "Reports", icon: "report", members: ["report", "leadreport"] },
+  { id: "assistant", group: "overview", label: "Talk to assistant", icon: "assistant", members: ["assistant"] },
+  { id: "leads", group: "sell", label: "Leads", icon: "leads", members: ["leaddesk", "leads", "customers", "import", "sites"], bar: true, count: "leads" },
+  { id: "find", group: "sell", label: "Find customers", icon: "find", members: ["retailers"] },
+  { id: "calls", group: "sell", label: "Calls", icon: "calls", members: ["outreach", "calllist", "campaigns", "tasks", "live"], bar: true, count: "calls" },
+  { id: "chats", group: "sell", label: "Chats", icon: "chats", members: ["chats", "outbox"], bar: true, count: "chats" },
+  { id: "followups", group: "sell", label: "Follow-ups", icon: "followups", members: ["followups"], count: "followups" },
+  { id: "visits", group: "sell", label: "Store visits", icon: "visits", members: ["visits"], count: "visits", labelOf: "visits" },
+  { id: "catalogue", group: "business", label: "Catalogue & stock", icon: "catalogue", members: ["sarees", "catalogue", "programmes"], labelOf: "sarees" },
+  { id: "quotes", group: "business", label: "Quotes", icon: "quotes", members: ["quotes"], count: "quotes" },
+  { id: "orders", group: "business", label: "Orders", icon: "orders", members: ["orders"] },
+  { id: "trips", group: "business", label: "Trips", icon: "trips", members: ["trips"] },
+  { id: "dues", group: "business", label: "Dues", icon: "dues", members: ["dues"] },
+  { id: "admissions", group: "business", label: "Admissions", icon: "admissions", members: ["admissions"] },
+  { id: "students", group: "business", label: "Students", icon: "students", members: ["students"] },
+  { id: "fees", group: "business", label: "Fees", icon: "fees", members: ["fees"] },
+  { id: "notices", group: "business", label: "Notices", icon: "announcements", members: ["announcements"] },
+  { id: "aiteam", group: "aiteam", label: "My AI team", icon: "aiteam", members: ["office"], count: "aiteam" },
+  { id: "train", group: "aiteam", label: "Train how it talks", icon: "train", members: ["train"] },
+  { id: "phone", group: "aiteam", label: "Phone number", icon: "phone", members: ["phone", "integrations"] },
+  { id: "sources", group: "setup", label: "Lead sources", icon: "sources", members: ["lead-sources"] },
+  // Settings: the business and plan, members, language and look, security and privacy, My profile (always there for everyone); Team is its tab
+  { id: "settings", group: "setup", label: "Settings", icon: "settings", members: ["settings", "team"] },
+];
+/** Every row of the menu (Settings is one of them now: the foot of the menu is the meters and the person). */
+export const MENU_ITEMS: readonly MenuEntry[] = MENU;
 
 const PAGES = (): readonly NavItem[] => [...NAV.flatMap((g) => g.items), ...FOOT];
-/** The menu item a page (a NAV item id) belongs to, or null (a page no menu item holds). */
+/** The menu row a page (a NAV item id) belongs to, or null (a page no menu row holds). */
 export function menuOfPage(pageId: string): MenuEntry | null {
   return MENU.find((m) => m.members.includes(pageId)) ?? null;
 }
-/** The id the menu draws for an entry: `m-<id>`, and `settings` for the foot (the id of its own row). */
+/** The id the menu draws for a row: `m-<id>`, and `settings` for Settings (the id of its own row since the first menu). */
 export const menuItemId = (m: MenuEntry): string => (m.id === "settings" ? "settings" : `m-${m.id}`);
 
-/** The pages of a menu item that this role and business type are offered, in the order of the tabs. */
+/** The pages of a menu row that this role and business type are offered, in the order of the tabs. */
 export function tabsOf(menu: MenuEntry, role: Role, view?: PackFrame | null): NavItem[] {
   const pages = PAGES();
   return menu.members.flatMap((id) => pages.filter((p) => p.id === id)).filter((p) => p.roles.includes(role) && offered(p, view));
 }
 
-/** One menu row as a NavItem: it goes to the first page the person is offered, and belongs to all of the group's paths (`also`), so the marker and the way back stay right. */
-function menuRow(menu: MenuEntry, role: Role, view?: PackFrame | null): NavItem | null {
+/** A menu row as a NavItem (with what the row needs: its count and the page whose word wins): it goes to the first page the person is offered, and belongs to all of its pages' paths (`also`), so the marker and the way back stay right. */
+export type MenuRow = NavItem & { count?: CountKey; labelOf?: string; group: MenuGroupId };
+function menuRow(menu: MenuEntry, role: Role, view?: PackFrame | null): MenuRow | null {
   const tabs = tabsOf(menu, role, view);
   const first = tabs[0];
   if (!first) return null;
-  return { id: menuItemId(menu), label: menu.label, icon: menu.icon, path: first.path, ...(first.tab !== undefined ? { tab: first.tab } : {}), also: tabs.flatMap((t) => [t.path, ...(t.also ?? [])]).filter((p) => p !== ""), bar: menu.bar, roles: ALL_ROLES };
+  return {
+    id: menuItemId(menu),
+    label: menu.label,
+    icon: menu.icon,
+    path: first.path,
+    ...(first.tab !== undefined ? { tab: first.tab } : {}),
+    ...(first.hash !== undefined ? { hash: first.hash } : {}),
+    also: tabs.flatMap((t) => [t.path, ...(t.also ?? [])]).filter((p) => p !== "" && !p.includes("?")),
+    bar: menu.bar,
+    roles: ALL_ROLES,
+    group: menu.group,
+    ...(menu.count ? { count: menu.count } : {}),
+    ...(menu.labelOf ? { labelOf: menu.labelOf } : {}),
+  };
 }
 
-/** The seven menu items a role is offered, drawn as one plain list (no group headings). An item whose pages the role or the business type does not have is left out. */
-export function menuGroups(role: Role, view?: PackFrame | null): VisibleGroup[] {
-  const items = MENU_ITEMS.map((m) => menuRow(m, role, view)).filter((i): i is NavItem => i !== null);
-  return items.length ? [{ id: "menu", label: "", items }] : [];
+export type MenuGroup = { id: MenuGroupId; label: string; items: MenuRow[] };
+/** The groups of the menu a role is offered, each with the rows it has; a group with no row (a school's SELL has no Find customers ... but never none) is left out. */
+export function menuGroups(role: Role, view?: PackFrame | null): MenuGroup[] {
+  return MENU_GROUPS.map((g) => ({ id: g.id, label: g.label, items: MENU.filter((m) => m.group === g.id).map((m) => menuRow(m, role, view)).filter((i): i is MenuRow => i !== null) })).filter((g) => g.items.length > 0);
 }
 
-/** The foot of the menu: Settings (Team, Office and Integrations are its tabs), when the role is offered any page of it. */
-export function menuFoot(role: Role, view?: PackFrame | null): NavItem[] {
-  const settings = MENU.find((m) => m.id === "settings")!;
-  const row = menuRow(settings, role, view);
-  return row ? [{ ...row, label: settings.label }] : [];
-}
-
-/** The menu row the current page belongs to (`m-sales`, `settings`), or null. */
+/** The menu row the current page belongs to (`m-quotes`, `settings`), or null. */
 export function activeMenuId(pathname: string, tab: string | null): string | null {
   const page = itemFor(pathname, tab);
   const menu = page ? menuOfPage(page.item.id) : null;
   return menu ? menuItemId(menu) : null;
 }
 
-/** The phone's bottom bar: Today, Customers, Chats and Sales (and More, which holds Calls, Catalogue, Reports and Settings), only those the role is offered. */
-export function menuBar(role: Role, view?: PackFrame | null): NavItem[] {
-  return menuGroups(role, view).flatMap((g) => g.items).filter((i) => i.bar);
+/** The phone's bottom bar (sidebar v2): Today, Leads, Chats and Calls (then More, which holds every other row and the meters), only those the role is offered. */
+export function menuBar(role: Role, view?: PackFrame | null): MenuRow[] {
+  const order: readonly string[] = ["m-today", "m-leads", "m-chats", "m-calls"];
+  return menuGroups(role, view)
+    .flatMap((g) => g.items)
+    .filter((i) => i.bar)
+    .sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
 }
 
 /**
@@ -260,9 +310,10 @@ export function barItems(role: Role, view?: PackFrame | null): NavItem[] {
 
 /** Where a nav item goes, for a workspace. */
 export function hrefOf(item: NavItem, tenantId: string): string {
-  if (item.path.startsWith("/app")) return item.path;
+  const hash = item.hash ? `#${item.hash}` : "";
+  if (item.path.startsWith("/app")) return `${item.path}${hash}`;
   const base = `/app/tenants/${tenantId}${item.path}`;
-  return item.tab ? `${base}?tab=${item.tab}` : base;
+  return `${item.tab ? `${base}?tab=${item.tab}` : base}${hash}`;
 }
 
 const TENANT_PATH = /^\/app\/tenants\/([0-9a-fA-F-]{36})(\/[^?#]*)?/;
@@ -287,7 +338,7 @@ export function itemFor(pathname: string, tab: string | null): { group: NavGroup
   }
   // the longest matching path wins (/followups/policy is under Leads through its own prefix; /agents is under Office)
   const hits = all
-    .flatMap((x) => [x.item.path, ...(x.item.also ?? [])].filter((p) => p !== "" && !p.startsWith("/app") && under(ws.rest, p)).map((p) => ({ x, len: p.length })))
+    .flatMap((x) => [x.item.path, ...(x.item.also ?? [])].filter((p) => p !== "" && !p.startsWith("/app") && !p.includes("?") && under(ws.rest, p)).map((p) => ({ x, len: p.length })))
     .sort((a, b) => b.len - a.len);
   return hits[0]?.x ?? null;
 }

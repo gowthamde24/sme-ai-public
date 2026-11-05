@@ -21,6 +21,7 @@ import logging
 import re
 import uuid
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 
@@ -31,7 +32,9 @@ from app.assistant.language import Language
 from app.assistant_tools import executor
 from app.assistant_work import extract
 from app.assistant_work.files import MAX_LEADS_FILE_BYTES, MAX_ROWS
+from app.assistant_work.planner import Planned
 from app.assistant_work.store import PlanExpiredError, PlanStateError, WorkStore
+from app.assistant_work.understand import Understanding, understand
 from app.errors import ApiError
 
 logger = logging.getLogger("app.assistant_work")
@@ -136,6 +139,60 @@ WORDS: dict[str, dict[str, str]] = {
         "hi": "आज की AI सीमा पूरी हो गई है, इसलिए '{name}' के स्कैन किए पन्ने नहीं पढ़ पाई। कृपया इसे Excel या CSV में अपलोड करें, या कल फिर कोशिश करें।",
         "kn": "ಇಂದಿನ AI ಮಿತಿ ಮುಗಿದಿದೆ, ಹಾಗಾಗಿ '{name}' ನ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಪುಟಗಳನ್ನು ಓದಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು Excel ಅಥವಾ CSV ಆಗಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ಅಥವಾ ನಾಳೆ ಪ್ರಯತ್ನಿಸಿ.",
     },
+    "also_knowledge": {
+        "en": " I'll also save its text to About my business.",
+        "te": " దాని టెక్స్ట్‌ను 'నా వ్యాపారం గురించి' లో కూడా సేవ్ చేస్తాను.",
+        "hi": " इसका टेक्स्ट 'मेरे कारोबार के बारे में' में भी सेव कर दूँगी।",
+        "kn": " ಅದರ ಪಠ್ಯವನ್ನು 'ನನ್ನ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ' ಯಲ್ಲೂ ಸೇವ್ ಮಾಡುತ್ತೇನೆ.",
+    },
+    "cant_part": {
+        "en": " I can't do the rest yet ({what}): the screen can.",
+        "te": " మిగతాది ({what}) నేను ఇంకా చేయలేను: స్క్రీన్‌లో చేయవచ్చు.",
+        "hi": " बाकी ({what}) मैं अभी नहीं कर सकती: स्क्रीन पर हो सकता है।",
+        "kn": " ಉಳಿದದ್ದನ್ನು ({what}) ನಾನು ಇನ್ನೂ ಮಾಡಲಾರೆ: ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಮಾಡಬಹುದು.",
+    },
+    "prices_offer": {
+        "en": "I read '{name}': {found} prices, {changed} different from your catalogue ({unchanged} the same, {missing} not in your catalogue). Shall I change those {changed}? The card shows each old and new price. Only the Owner can do this, with the sign-in's second step.",
+        "te": "'{name}' చదివాను: {found} ధరలు, వాటిలో {changed} మీ కేటలాగ్‌కు భిన్నంగా ఉన్నాయి ({unchanged} అలాగే ఉన్నాయి, {missing} కేటలాగ్‌లో లేవు). ఆ {changed} మార్చమంటారా? కార్డులో ప్రతి పాత, కొత్త ధర చూపిస్తాను. ఇది ఓనర్ మాత్రమే, సైన్-ఇన్ రెండో దశతో చేయగలరు.",
+        "hi": "'{name}' पढ़ ली: {found} कीमतें, जिनमें {changed} आपके कैटलॉग से अलग हैं ({unchanged} वही हैं, {missing} कैटलॉग में नहीं हैं)। क्या वे {changed} बदल दूँ? कार्ड पर हर पुरानी और नई कीमत दिखेगी। यह सिर्फ़ ओनर, साइन-इन के दूसरे चरण के साथ कर सकते हैं।",
+        "kn": "'{name}' ಓದಿದೆ: {found} ಬೆಲೆಗಳು, ಅವುಗಳಲ್ಲಿ {changed} ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ಗಿಂತ ಬೇರೆ ಇವೆ ({unchanged} ಹಾಗೆಯೇ ಇವೆ, {missing} ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿ ಇಲ್ಲ). ಆ {changed} ಬದಲಿಸಲೇ? ಕಾರ್ಡ್‌ನಲ್ಲಿ ಪ್ರತಿ ಹಳೆಯ ಮತ್ತು ಹೊಸ ಬೆಲೆ ತೋರಿಸುತ್ತೇನೆ. ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ, ಸೈನ್-ಇನ್‌ನ ಎರಡನೇ ಹಂತದೊಂದಿಗೆ ಮಾಡಬಹುದು.",
+    },
+    "prices_nothing": {
+        "en": "I read '{name}': {found} prices, and none is different from your catalogue ({missing} not in your catalogue). Nothing to change.",
+        "te": "'{name}' చదివాను: {found} ధరలు, ఏదీ మీ కేటలాగ్‌కు భిన్నంగా లేదు ({missing} కేటలాగ్‌లో లేవు). మార్చడానికి ఏమీ లేదు.",
+        "hi": "'{name}' पढ़ ली: {found} कीमतें, कोई भी आपके कैटलॉग से अलग नहीं है ({missing} कैटलॉग में नहीं हैं)। बदलने को कुछ नहीं है।",
+        "kn": "'{name}' ಓದಿದೆ: {found} ಬೆಲೆಗಳು, ಯಾವುದೂ ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ಗಿಂತ ಬೇರೆ ಇಲ್ಲ ({missing} ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿ ಇಲ್ಲ). ಬದಲಿಸಲು ಏನೂ ಇಲ್ಲ.",
+    },
+    "enquiry_offer": {
+        "en": "I read '{name}': an enquiry from {who}. Shall I add {who} to your leads and save the letter as the enquiry? Nobody is sent anything.",
+        "te": "'{name}' చదివాను: {who} నుండి ఎంక్వైరీ. {who} ను మీ లీడ్స్‌లో చేర్చి, ఈ లేఖను ఎంక్వైరీగా సేవ్ చేయమంటారా? ఎవరికీ ఏమీ పంపను.",
+        "hi": "'{name}' पढ़ ली: {who} की पूछताछ। क्या {who} को आपकी लीड्स में जोड़कर इस चिट्ठी को पूछताछ के रूप में सेव कर दूँ? किसी को कुछ नहीं भेजा जाएगा।",
+        "kn": "'{name}' ಓದಿದೆ: {who} ಅವರಿಂದ ವಿಚಾರಣೆ. {who} ಅವರನ್ನು ನಿಮ್ಮ ಲೀಡ್‌ಗಳಿಗೆ ಸೇರಿಸಿ, ಈ ಪತ್ರವನ್ನು ವಿಚಾರಣೆಯಾಗಿ ಸೇವ್ ಮಾಡಲೇ? ಯಾರಿಗೂ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+    },
+    "enquiry_offer_known": {
+        "en": "I read '{name}': an enquiry from {who}, who is already in your leads. Shall I save the letter as their enquiry? Nobody is sent anything.",
+        "te": "'{name}' చదివాను: {who} నుండి ఎంక్వైరీ, వారు ఇప్పటికే మీ లీడ్స్‌లో ఉన్నారు. ఈ లేఖను వారి ఎంక్వైరీగా సేవ్ చేయమంటారా? ఎవరికీ ఏమీ పంపను.",
+        "hi": "'{name}' पढ़ ली: {who} की पूछताछ, जो पहले से आपकी लीड्स में हैं। क्या इस चिट्ठी को उनकी पूछताछ के रूप में सेव कर दूँ? किसी को कुछ नहीं भेजा जाएगा।",
+        "kn": "'{name}' ಓದಿದೆ: {who} ಅವರಿಂದ ವಿಚಾರಣೆ, ಅವರು ಈಗಾಗಲೇ ನಿಮ್ಮ ಲೀಡ್‌ಗಳಲ್ಲಿ ಇದ್ದಾರೆ. ಈ ಪತ್ರವನ್ನು ಅವರ ವಿಚಾರಣೆಯಾಗಿ ಸೇವ್ ಮಾಡಲೇ? ಯಾರಿಗೂ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+    },
+    "knowledge_offer": {
+        "en": "I read '{name}'. Shall I save its text to About my business, so I can answer customers from it? Nothing is sent to anyone.",
+        "te": "'{name}' చదివాను. దాని టెక్స్ట్‌ను 'నా వ్యాపారం గురించి' లో సేవ్ చేయమంటారా, కస్టమర్లకు దాని నుండి జవాబు చెప్పడానికి? ఎవరికీ ఏమీ పంపను.",
+        "hi": "'{name}' पढ़ ली। क्या इसका टेक्स्ट 'मेरे कारोबार के बारे में' में सेव कर दूँ, ताकि ग्राहकों को इससे जवाब दे सकूँ? किसी को कुछ नहीं भेजा जाएगा।",
+        "kn": "'{name}' ಓದಿದೆ. ಅದರ ಪಠ್ಯವನ್ನು 'ನನ್ನ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ' ಯಲ್ಲಿ ಸೇವ್ ಮಾಡಲೇ, ಗ್ರಾಹಕರಿಗೆ ಅದರಿಂದ ಉತ್ತರಿಸಲು? ಯಾರಿಗೂ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+    },
+    "clarify": {
+        "en": "I read '{name}' (it looks like {looks}). What shall I do with it? I can add the people in it to your leads, save it to About my business, or tell you what is in it.",
+        "te": "'{name}' చదివాను (ఇది {looks} లా ఉంది). దీనితో ఏం చేయమంటారు? అందులోని వ్యక్తులను మీ లీడ్స్‌లో చేర్చగలను, 'నా వ్యాపారం గురించి' లో సేవ్ చేయగలను, లేదా అందులో ఏముందో చెప్పగలను.",
+        "hi": "'{name}' पढ़ ली (यह {looks} जैसी लगती है)। इसका क्या करूँ? इसमें के लोगों को आपकी लीड्स में जोड़ सकती हूँ, 'मेरे कारोबार के बारे में' में सेव कर सकती हूँ, या बता सकती हूँ कि इसमें क्या है।",
+        "kn": "'{name}' ಓದಿದೆ (ಇದು {looks} ತರಹ ಇದೆ). ಇದನ್ನು ಏನು ಮಾಡಲಿ? ಇದರಲ್ಲಿರುವವರನ್ನು ನಿಮ್ಮ ಲೀಡ್‌ಗಳಿಗೆ ಸೇರಿಸಬಹುದು, 'ನನ್ನ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ' ಯಲ್ಲಿ ಸೇವ್ ಮಾಡಬಹುದು, ಅಥವಾ ಇದರಲ್ಲಿ ಏನಿದೆ ಎಂದು ಹೇಳಬಹುದು.",
+    },
+    "unsure_answer": {
+        "en": "I read '{name}' (it looks like {looks}), but I could not give a sure answer from it. Ask me in other words, or open the file.",
+        "te": "'{name}' చదివాను (ఇది {looks} లా ఉంది), కానీ దాని నుండి ఖచ్చితమైన జవాబు ఇవ్వలేకపోయాను. వేరే మాటల్లో అడగండి, లేదా ఫైల్ తెరిచి చూడండి.",
+        "hi": "'{name}' पढ़ ली (यह {looks} जैसी लगती है), पर इससे पक्का जवाब नहीं दे पाई। दूसरे शब्दों में पूछिए, या फ़ाइल खोलकर देखिए।",
+        "kn": "'{name}' ಓದಿದೆ (ಇದು {looks} ತರಹ ಇದೆ), ಆದರೆ ಅದರಿಂದ ಖಚಿತ ಉತ್ತರ ಕೊಡಲಾಗಲಿಲ್ಲ. ಬೇರೆ ಮಾತುಗಳಲ್ಲಿ ಕೇಳಿ, ಅಥವಾ ಫೈಲ್ ತೆರೆದು ನೋಡಿ.",
+    },
     "heic": {
         "en": "I can't open HEIC photos. Send '{name}' as a JPG or PNG, please (a screenshot works too).",
         "te": "HEIC ఫోటోలు నేను తెరవలేను. దయచేసి '{name}' ను JPG లేదా PNG గా పంపండి (స్క్రీన్‌షాట్ కూడా పనిచేస్తుంది).",
@@ -154,9 +211,34 @@ WHAT = {
     "document": {"en": "reading a document or a picture into your business", "te": "డాక్యుమెంట్ లేదా చిత్రాన్ని మీ వ్యాపారంలోకి చదవడం", "hi": "दस्तावेज़ या तस्वीर को आपके कारोबार में पढ़ना", "kn": "ದಾಖಲೆ ಅಥವಾ ಚಿತ್ರವನ್ನು ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಓದುವುದು"},
     "too_big": {"en": "importing a list bigger than 3 MB", "te": "3 MB కంటే పెద్ద జాబితాను దిగుమతి చేయడం", "hi": "3 MB से बड़ी सूची आयात करना", "kn": "3 MB ಗಿಂತ ದೊಡ್ಡ ಪಟ್ಟಿಯನ್ನು ಆಮದು ಮಾಡುವುದು"},
     "scanned": {"en": "reading scanned pages", "te": "స్కాన్ చేసిన పేజీలు చదవడం", "hi": "स्कैन किए पन्ने पढ़ना", "kn": "ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಪುಟಗಳನ್ನು ಓದುವುದು"},
+    "order_needs_quote": {"en": "the order itself: an order starts from an approved quote", "te": "ఆర్డర్: ఆర్డర్ ఆమోదించిన కొటేషన్ నుండే మొదలవుతుంది", "hi": "ऑर्डर ख़ुद: ऑर्डर मंज़ूर कोटेशन से ही शुरू होता है", "kn": "ಆರ್ಡರ್: ಆರ್ಡರ್ ಅನುಮೋದಿತ ಕೊಟೇಶನ್‌ನಿಂದಲೇ ಶುರುವಾಗುತ್ತದೆ"},
+    "quote_after_enquiry": {"en": "the draft quote: confirm the requirement on the enquiry's screen first", "te": "డ్రాఫ్ట్ కొటేషన్: ముందు ఎంక్వైరీ స్క్రీన్‌లో అవసరాన్ని నిర్ధారించండి", "hi": "ड्राफ़्ट कोटेशन: पहले पूछताछ की स्क्रीन पर ज़रूरत पक्की करें", "kn": "ಡ್ರಾಫ್ಟ್ ಕೊಟೇಶನ್: ಮೊದಲು ವಿಚಾರಣೆಯ ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಅಗತ್ಯವನ್ನು ಖಚಿತಪಡಿಸಿ"},
+    "quote_from_enquiry": {"en": "making an enquiry and a quote from a letter", "te": "లేఖ నుండి ఎంక్వైరీ, కొటేషన్ తయారు చేయడం", "hi": "चिट्ठी से पूछताछ और कोटेशन बनाना", "kn": "ಪತ್ರದಿಂದ ವಿಚಾರಣೆ ಮತ್ತು ಕೊಟೇಶನ್ ಮಾಡುವುದು"},
+    "order_from_file": {"en": "making an order from a file and checking the stock", "te": "ఫైల్ నుండి ఆర్డర్ చేయడం, స్టాక్ చూడడం", "hi": "फ़ाइल से ऑर्डर बनाना और स्टॉक देखना", "kn": "ಫೈಲ್‌ನಿಂದ ಆರ್ಡರ್ ಮಾಡುವುದು ಮತ್ತು ಸ್ಟಾಕ್ ನೋಡುವುದು"},
+    "update_prices": {"en": "updating catalogue prices from a file", "te": "ఫైల్ నుండి కేటలాగ్ ధరలు మార్చడం", "hi": "फ़ाइल से कैटलॉग की कीमतें बदलना", "kn": "ಫೈಲ್‌ನಿಂದ ಕ್ಯಾಟಲಾಗ್ ಬೆಲೆಗಳನ್ನು ಬದಲಿಸುವುದು"},
+    "too_many_prices": {"en": "changing more than 20 prices at once", "te": "ఒకేసారి 20 కంటే ఎక్కువ ధరలు మార్చడం", "hi": "एक बार में 20 से ज़्यादा कीमतें बदलना", "kn": "ಒಮ್ಮೆಗೆ 20 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಬೆಲೆಗಳನ್ನು ಬದಲಿಸುವುದು"},
+    "follow_up": {"en": "setting a follow-up from a file", "te": "ఫైల్ నుండి ఫాలో-అప్ పెట్టడం", "hi": "फ़ाइल से फ़ॉलो-अप लगाना", "kn": "ಫೈಲ್‌ನಿಂದ ಫಾಲೋ-ಅಪ್ ಇಡುವುದು"},
+    "other": {"en": "doing that with a file", "te": "ఫైల్‌తో అది చేయడం", "hi": "फ़ाइल से वह करना", "kn": "ಫೈಲ್‌ನಿಂದ ಅದನ್ನು ಮಾಡುವುದು"},
     "too_many": {"en": "importing more than 5,000 rows at once", "te": "ఒకేసారి 5,000 వరుసలకంటే ఎక్కువ దిగుమతి చేయడం", "hi": "एक बार में 5,000 से ज़्यादा पंक्तियाँ आयात करना", "kn": "ಒಮ್ಮೆಗೆ 5,000 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಸಾಲುಗಳನ್ನು ಆಮದು ಮಾಡುವುದು"},
 }
 TITLE = {"en": "Add {n} leads from '{name}'"}
+LOOKS = {
+    "lead_list": {"en": "a list of people", "te": "వ్యక్తుల జాబితా", "hi": "लोगों की सूची", "kn": "ಜನರ ಪಟ್ಟಿ"},
+    "visiting_card": {"en": "a visiting card", "te": "విజిటింగ్ కార్డు", "hi": "विज़िटिंग कार्ड", "kn": "ವಿಸಿಟಿಂಗ್ ಕಾರ್ಡ್"},
+    "price_list": {"en": "a price list", "te": "ధరల జాబితా", "hi": "कीमतों की सूची", "kn": "ಬೆಲೆ ಪಟ್ಟಿ"},
+    "enquiry": {"en": "an enquiry", "te": "ఎంక్వైరీ", "hi": "पूछताछ", "kn": "ವಿಚಾರಣೆ"},
+    "order": {"en": "an order", "te": "ఆర్డర్", "hi": "ऑर्डर", "kn": "ಆರ್ಡರ್"},
+    "brochure": {"en": "a brochure or a document", "te": "బ్రోచర్ లేదా డాక్యుమెంట్", "hi": "ब्रोशर या दस्तावेज़", "kn": "ಬ್ರೋಷರ್ ಅಥವಾ ದಾಖಲೆ"},
+    "other": {"en": "a document", "te": "డాక్యుమెంట్", "hi": "दस्तावेज़", "kn": "ದಾಖಲೆ"},
+}
+SCREEN_OF = {"quote_from_enquiry": {"label": "Enquiries", "href": "/enquiries"}, "order_from_file": {"label": "Orders", "href": "/orders"},
+             "update_prices": {"label": "Catalogue", "href": "/catalogue"}, "follow_up": {"label": "Follow-ups", "href": "/followups"}, "other": None}
+KNOWLEDGE_TOOL = "knowledge.add_source"
+LOOKUP_TOOL = "contacts.contact_by_phone"
+ENQUIRY_TOOL = "leads.capture_enquiry"
+CATALOGUE_LIST_TOOL = "catalogue.list_items"
+PRICE_TOOL = "catalogue.put_item"
+MAX_KNOWLEDGE_CHARS = 60_000
 STEP = {"en": "Add {n} new leads ({existing} already exist, left as they are)"}
 
 
@@ -180,8 +262,11 @@ def public_plan(plan: dict[str, Any]) -> dict[str, Any]:
 
 
 def card_of_plan(plan: dict[str, Any], rows: list[list[str]] | None = None) -> dict[str, Any]:
-    """The `file_preview` card of a stored plan (a replay and the stored chat show it in its state now; the file's rows only while the file is there, at the turn)."""
+    """The `file_preview` card of a stored plan (a replay and the stored chat show it in its state now; the file's rows only while the file is there, at the turn), or a `plan` card for a plan that
+    adds no people (saving a brochure to About my business)."""
     card = plan.get("card") or {}
+    if card.get("kind") == "plan":
+        return {"kind": "plan", "id": str(uuid.uuid5(_NS, str(plan["plan_id"]))), "plan": public_plan(plan)}
     return {"kind": "file_preview", "id": str(uuid.uuid5(_NS, str(plan["plan_id"]))), "file_name": plan.get("file_name") or "", "destination": card.get("destination", "leads"), "customer_name": None,
             "read_by": card.get("read_by") or "file", "facts": card.get("facts") or [], "columns": card.get("columns") or [], "rows": rows or [], "plan": public_plan(plan)}
 
@@ -261,9 +346,7 @@ class FileTurn:
                 return words("cant", language, name=name, what=what("document", language)), cant_do("not_yet", what("document", language), {"label": "About my business", "href": "/settings/knowledge"})
             return words("nobody", language, name=name), None
         # what was read is kept as a small CSV (the same 24 h rule) and the file itself is deleted now: the plan's "Do it" imports exactly what the card showed
-        out = io.StringIO()
-        csv.writer(out).writerows(grid[: MAX_ROWS + 1])
-        sheet_b64 = base64.b64encode(out.getvalue().encode("utf-8")).decode("ascii")
+        sheet_b64 = _csv_b64(grid)
         derived = self.store.file_put(token, tenant_id, (name.rsplit(".", 1)[0] or "file")[:190] + ".csv", "text/csv", "sheet", sheet_b64)
         try:
             self.store.file_drop(token, tenant_id, file_id)
@@ -289,9 +372,206 @@ class FileTurn:
             return words("cant", language, name=name, what=what("too_big", language)), cant_do("not_yet", what("too_big", language), screen)
         return words("unreadable", language, name=name), None
 
+    # ---- a request about the file (job A2b): understand it by code, plan with the model, show the card
+    def with_request(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, request: str, *, plan_with: Callable[[Understanding, str, Language], Planned], message_id: uuid.UUID,
+                     conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
+        """`plan_with` is the planner (app/assistant_work/planner.plan, bound to the turn). A school's file never comes here (the turn decides)."""
+        try:
+            f = self.store.file_get(token, tenant_id, file_id)
+        except Exception:
+            return words("gone", language), None
+        name, kind = str(f.get("name") or "file"), str(f.get("kind") or "")
+        data_base64 = str(f.get("data_base64") or "")
+        try:
+            u = self._understand(name, kind, data_base64)
+        except extract.ReadRefused as exc:
+            return self._refused(exc.code, name, language)
+        except ApiError as exc:
+            logger.info("assistant file not read by the AI model: %s", exc.code)
+            return words("ai_limit" if exc.code in AI_ALLOWANCE_CODES else "no_reader", language, name=name), cant_do("not_yet", what("scanned", language), {"label": "Lead Desk", "href": "/leads/import"})
+        if u is None:
+            return words("unreadable", language, name=name), None
+        looks = LOOKS[u.kind].get(language, LOOKS[u.kind]["en"])
+        try:
+            planned = plan_with(u, request, language)
+        except ApiError as exc:   # the model: the deterministic path still works for a list of people
+            logger.info("assistant file plan not made: %s", exc.code)
+            if u.kind in ("lead_list", "visiting_card"):
+                return self.answer(token, tenant_id, file_id, message_id=message_id, conversation_id=conversation_id, language=language)
+            return words("ai_limit" if exc.code in AI_ALLOWANCE_CODES else "no_reader", language, name=name), None
+        if planned.decision == "answer":
+            return (planned.answer or words("unsure_answer", language, name=name, looks=looks)), None
+        if planned.decision == "clarify":
+            return (planned.question or words("clarify", language, name=name, looks=looks)), None
+        if planned.decision == "cant_do":
+            w = what(planned.cant, language)
+            return words("cant", language, name=name, what=w), cant_do("not_yet", w, SCREEN_OF.get(planned.cant))
+        sentence, card = self._do(token, tenant_id, file_id, name, kind, data_base64, u, planned, message_id=message_id, conversation_id=conversation_id, language=language)
+        if planned.cant:
+            acting = {a["action"] for a in planned.actions}
+            part = ("quote_after_enquiry" if planned.cant == "quote_from_enquiry" and "capture_enquiry" in acting
+                    else "order_needs_quote" if planned.cant == "order_from_file" and "check_stock" in acting else planned.cant)
+            sentence += words("cant_part", language, what=what(part, language))
+        return sentence, card
+
+    def _do(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, kind: str, data_base64: str, u: Understanding, planned: Planned, *, message_id: uuid.UUID,
+            conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
+        names = [a["action"] for a in planned.actions]
+        plan_id = uuid.uuid4()
+        stock = self._stock(token, tenant_id, name, u, message_id=message_id, language=language) if "check_stock" in names else ""
+        if "capture_enquiry" in names:
+            sentence, card = self._enquiry(token, tenant_id, file_id, name, u, plan_id, message_id=message_id, conversation_id=conversation_id, language=language)
+            return (f"{stock}\n\n{sentence}" if stock else sentence), card
+        if "check_stock" in names:
+            return stock, None
+        if "update_prices" in names:
+            return self._prices(token, tenant_id, file_id, name, kind, u, plan_id, message_id=message_id, conversation_id=conversation_id, language=language)
+        knowledge = [self._knowledge_step(token, tenant_id, plan_id, u, next((a["title"] for a in planned.actions if a["action"] == "add_to_knowledge"), ""))] if "add_to_knowledge" in names else []
+        if "add_people" in names:
+            if kind in READ_KIND_OF:
+                return self._lead_list(token, tenant_id, file_id, name, kind, data_base64, message_id=message_id, conversation_id=conversation_id, language=language, extra_steps=knowledge)
+            sheet_b64 = _csv_b64(_headed(u.people) if u.people else [])
+            derived = self.store.file_put(token, tenant_id, (name.rsplit(".", 1)[0] or "file")[:190] + ".csv", "text/csv", "sheet", sheet_b64)
+            self._drop_quietly(token, tenant_id, file_id)
+            return self._lead_list(token, tenant_id, uuid.UUID(str(derived["file_id"])), name, "sheet", sheet_b64, message_id=message_id, conversation_id=conversation_id, language=language,
+                                   read_by=u.read_by, extra_steps=knowledge)
+        step = {k: v for k, v in knowledge[0].items() if k != "plan_id"}
+        plan = self.store.plan_put(token, tenant_id, {
+            "plan_id": str(plan_id), "message_id": str(message_id), "conversation_id": str(conversation_id) if conversation_id else None, "file_id": step["call"]["file_id"],
+            "title": f"Save '{name}' to About my business"[:200], "file_name": name, "card": {"kind": "plan", "destination": "knowledge", "read_by": u.read_by}, "steps": [step],
+        })
+        if kind not in READ_KIND_OF:
+            self._drop_quietly(token, tenant_id, file_id)
+        picture = words("from_picture", language) if u.read_by in ("local_ocr", "ai") else ""
+        return words("knowledge_offer", language, name=name) + picture, card_of_plan(plan)
+
+    def _prices(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, kind: str, u: Understanding, plan_id: uuid.UUID, *, message_id: uuid.UUID,
+                conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
+        """The file's prices against the catalogue, old -> new, as a MONEY plan (the Owner's, with the second factor and the card's second tap). Undo: each item put back as it was."""
+        from app.assistant_work import prices as pr
+
+        screen = {"label": "Catalogue", "href": "/catalogue"}
+        rows = pr.price_rows(u)
+        items = self._catalogue_items(token, tenant_id, message_id)
+        if items is None:
+            return words("cant", language, name=name, what=what("update_prices", language)), cant_do("not_yet", what("update_prices", language), screen)
+        changes, unchanged, missing = pr.match(rows, items)
+        facts = [{"code": "found", "n": len(rows)}, {"code": "changed", "n": len(changes)}, *([{"code": "unchanged", "n": unchanged}] if unchanged else []),
+                 *([{"code": "not_in_catalogue", "n": missing}] if missing else [])]
+        sample = [[c.item.get("name") or "", pr.rupees(c.old), pr.rupees(c.new)] for c in changes[:5]]
+        if kind not in READ_KIND_OF:
+            self._drop_quietly(token, tenant_id, file_id)
+        if not changes:
+            return words("prices_nothing", language, name=name, found=len(rows), missing=missing), {
+                "kind": "file_preview", "id": str(uuid.uuid4()), "file_name": name, "destination": "catalogue", "customer_name": None, "read_by": u.read_by, "facts": facts,
+                "columns": ["Item", "Now", "New"], "rows": [], "plan": None}
+        if len(changes) > pr.MAX_CHANGES:
+            return words("cant", language, name=name, what=what("too_many_prices", language)), cant_do("not_yet", what("too_many_prices", language), screen)
+        steps = [{"tool": PRICE_TOOL, "summary": f"{str(c.item.get('name') or '')[:120]}: {pr.rupees(c.old)} → {pr.rupees(c.new)}", "undoable": True, "status": "proposed", "error": None,
+                  "call": {"path": {"item_id": str(c.item["id"])}, "body": pr.put_body(c.item, c.new)}} for c in changes]
+        plan = self.store.plan_put(token, tenant_id, {
+            "plan_id": str(plan_id), "message_id": str(message_id), "conversation_id": str(conversation_id) if conversation_id else None, "file_id": str(file_id) if kind in READ_KIND_OF else None,
+            "title": f"Change {len(changes)} catalogue price{'s' if len(changes) != 1 else ''} from '{name}'"[:200], "file_name": name,
+            "sensitive": "money", "owner_only": True, "needs_second_factor": True,
+            "card": {"destination": "catalogue", "read_by": u.read_by, "facts": facts, "columns": ["Item", "Now", "New"]}, "steps": steps,
+        })
+        picture = words("from_picture", language) if u.read_by in ("local_ocr", "ai") else ""
+        return words("prices_offer", language, name=name, found=len(rows), changed=len(changes), unchanged=unchanged, missing=missing) + picture, card_of_plan(plan, sample)
+
+    def _enquiry(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, u: Understanding, plan_id: uuid.UUID, *, message_id: uuid.UUID, conversation_id: uuid.UUID | None,
+                 language: Language) -> tuple[str, dict[str, Any] | None]:
+        """An enquiry letter: its sender through the lead import (added if new, merged if known; Undo), then found by the number in the letter, then the letter saved as their enquiry (the
+        enquiry route scrubs numbers and addresses from the text before storing it). The number is read from the kept CSV at run time and the letter from the kept text: neither sits in the plan."""
+        who = (u.people[1][0] or u.people[1][2])[:80]
+        sheet_b64 = _csv_b64(u.people[:2])
+        sheet = self.store.file_put(token, tenant_id, (name.rsplit(".", 1)[0] or "file")[:190] + ".csv", "text/csv", "sheet", sheet_b64)
+        letter = self.store.file_put(token, tenant_id, (name.rsplit(".", 1)[0] or "file")[:190] + ".txt", "text/plain", "text", base64.b64encode(u.text[:200_000].encode("utf-8")).decode("ascii"))
+        self._drop_quietly(token, tenant_id, file_id)
+        sheet_id, letter_id = str(sheet["file_id"]), str(letter["file_id"])
+        enquiry_id = str(uuid.uuid5(_NS, f"enquiry:{plan_id}"))   # idempotent: a retried run replays the same enquiry
+
+        def steps(before: int) -> list[dict[str, Any]]:
+            lookup_no = before + 1
+            return [
+                {"tool": LOOKUP_TOOL, "summary": f"Find {who} by the number in the letter"[:300], "undoable": False, "status": "proposed", "error": None,
+                 "call": {"path": {}, "query": {"phone": {"$cell": [1, 2]}}, "cells_from": sheet_id}},
+                {"tool": ENQUIRY_TOOL, "summary": f"Save '{name}' as {who}'s enquiry (numbers and addresses are removed from the stored text)"[:300], "undoable": False, "status": "proposed",
+                 "error": None, "call": {"path": {"lead_id": {"$ref": [lookup_no, "lead_ids", 0]}}, "body": {"id": enquiry_id, "channel": "other", "received_at": now_utc().isoformat(),
+                                                                                                         "subject": f"From the file '{name}'"[:200]},
+                                         "file": "text", "file_id": letter_id, "file_field": "text"}},
+            ]
+
+        more = More(plan_id, f"Save the enquiry from {who} ('{name}')", "leads", steps,
+                    lambda with_import: words("enquiry_offer" if with_import else "enquiry_offer_known", language, name=name, who=who))
+        return self._lead_list(token, tenant_id, uuid.UUID(sheet_id), name, "sheet", sheet_b64, message_id=message_id, conversation_id=conversation_id, language=language, read_by=u.read_by,
+                               more=more)
+
+    def _stock(self, token: str, tenant_id: uuid.UUID, name: str, u: Understanding, *, message_id: uuid.UUID, language: Language) -> str:
+        """Read-only: the order's lines against the catalogue's stock words (app/assistant_work/stock.py)."""
+        from app.assistant_work import stock as st
+
+        items = self._catalogue_items(token, tenant_id, message_id)
+        if items is None:
+            return words("cant", language, name=name, what=what("order_from_file", language))
+        answer, short = st.check(st.order_lines(u), items, name, language)
+        logger.info("assistant file stock check: lines=%d short=%d", len(st.order_lines(u)), short)
+        return answer
+
+    def _catalogue_items(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID) -> list[dict[str, Any]] | None:
+        """Every catalogue item (the screen's own list route, page by page; at most 1,000), or None when the workspace has no catalogue or the list cannot be read."""
+        items: list[dict[str, Any]] = []
+        after: str | None = None
+        for _ in range(20):
+            query = {"include_inactive": "true", "limit": "50", **({"after": after} if after else {})}
+            got = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool=CATALOGUE_LIST_TOOL, query=query), message_id))
+            if not got.ok or not isinstance(got.answer, dict):
+                return None
+            items.extend(i for i in got.answer.get("items") or [] if isinstance(i, dict))
+            after = got.answer.get("next_cursor")
+            if not after:
+                break
+        return items
+
+    def _understand(self, name: str, kind: str, data_base64: str) -> Understanding | None:
+        """The file, understood by code (no model, except the extraction step's AI reader of page images, under the owner's rules)."""
+        if kind in ("pdf", "image", "doc"):
+            read = self.reader.read(kind, base64.b64decode(data_base64), school=self._is_school, vision=self.vision)
+            return understand(name, READ_BY[read.how], read.text, read.grids)
+        if kind == "text":
+            return understand(name, "file", _text_of(data_base64), [])
+        if self.lead_sources is None or kind not in READ_KIND_OF:
+            return None
+        from types import SimpleNamespace
+
+        try:
+            loaded = self.lead_sources.load(SimpleNamespace(kind=READ_KIND_OF[kind], content_base64=data_base64, text=None, sheet_url=None))
+        except Exception:
+            return None
+        if loaded.grid is not None:
+            table = [list(loaded.grid.header), *[list(r) for r in loaded.grid.rows]]
+            return understand(name, "file", "\n".join(" | ".join(r) for r in table[:200]), [table])
+        people = [["Name", "Company", "Phone", "Email"], *[[str(r.get("name") or ""), "", str(r.get("phone") or ""), str(r.get("email") or "")] for r in loaded.rows or []]]
+        return understand(name, "file", "\n".join(" | ".join(r) for r in people[:200]), [], people)
+
+    def _knowledge_step(self, token: str, tenant_id: uuid.UUID, plan_id: uuid.UUID, u: Understanding, title: str) -> dict[str, Any]:
+        """Saving the file's text to About my business (the knowledge sources' own route; the text waits as a small file under the 24 h rule and is read again only by "Do it")."""
+        text = u.text[:MAX_KNOWLEDGE_CHARS]
+        derived = self.store.file_put(token, tenant_id, (u.file_name.rsplit(".", 1)[0] or "file")[:190] + ".txt", "text/plain", "text", base64.b64encode(text.encode("utf-8")).decode("ascii"))
+        source_id = str(uuid.uuid5(_NS, f"knowledge:{plan_id}"))   # idempotent: a retried run replays the same source
+        return {"plan_id": str(plan_id), "tool": KNOWLEDGE_TOOL, "summary": f"Save the text of '{u.file_name}' to About my business ({len(text):,} characters)"[:300], "undoable": True,
+                "status": "proposed", "error": None,
+                "call": {"path": {}, "body": {"source_id": source_id, "kind": "paste", "title": (title or u.file_name)[:120]}, "file": "text", "file_id": str(derived["file_id"])}}
+
+    def _drop_quietly(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID) -> None:
+        try:
+            self.store.file_drop(token, tenant_id, file_id)
+        except Exception as exc:   # the sweep deletes it at the latest after a day
+            logger.warning("assistant file not deleted after reading: %s", exc.__class__.__name__)
+
     # ---- a list of people (a sheet, a vCard, a text list, or what was read from a document): the lead import's own read and preview
     def _lead_list(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, kind: str, data_base64: str, *, message_id: uuid.UUID, conversation_id: uuid.UUID | None,
-                   language: Language, read_by: str = "file") -> tuple[str, dict[str, Any] | None]:
+                   language: Language, read_by: str = "file", extra_steps: list[dict[str, Any]] | None = None, more: More | None = None) -> tuple[str, dict[str, Any] | None]:
+        """`extra_steps` follow the import (About my business); `more` is a plan that goes on after the import, or alone when everybody is already a lead (an enquiry's lookup and capture)."""
         body = self._read_body(kind, name, data_base64)
         read = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool=READ_TOOL, body={**body, "use_ai": True}), message_id))
         if not read.ok and read.error == "limit":   # the AI column matcher is over the day's allowance: the rules alone
@@ -319,21 +599,31 @@ class FileTurn:
         found = next(x["n"] for x in facts if x["code"] == "found")
         rows = self._sample_rows(kind, body)
         picture = words("from_picture", language) if read_by in ("local_ocr", "ai") else ""
+        if new == 0 and more is not None and found > 0:   # the sender is already a lead: only the rest of the plan
+            plan = self.store.plan_put(token, tenant_id, {
+                "plan_id": str(more.plan_id), "message_id": str(message_id), "conversation_id": str(conversation_id) if conversation_id else None, "file_id": str(file_id),
+                "title": more.title[:200], "file_name": name, "card": {"kind": "plan", "destination": more.destination, "read_by": read_by}, "steps": more.steps(0),
+            })
+            return more.sentence(False) + picture, card_of_plan(plan)
         if new == 0:
             sentence = words("nobody", language, name=name) if found == 0 else words("nothing_new", language, name=name, found=found)
             return sentence, {"kind": "file_preview", "id": str(uuid.uuid4()), "file_name": name, "destination": "leads", "customer_name": None, "read_by": read_by, "facts": facts, "columns": columns,
                               "rows": rows, "plan": None}
-        plan_id = uuid.uuid4()
+        plan_id = more.plan_id if more is not None else (uuid.UUID(str(extra_steps[0]["plan_id"])) if extra_steps else uuid.uuid4())
         step_body = {k: v for k, v in preview_body.items() if k not in ("content_base64", "text")}
         step_body["import_id"] = str(uuid.uuid5(_NS, f"import:{plan_id}"))   # idempotent: a retried run replays the same import
         plan = self.store.plan_put(token, tenant_id, {
             "plan_id": str(plan_id), "message_id": str(message_id), "conversation_id": str(conversation_id) if conversation_id else None, "file_id": str(file_id),
-            "title": TITLE["en"].format(n=new, name=name)[:200], "file_name": name,
+            "title": (more.title if more is not None else TITLE["en"].format(n=new, name=name) + (" and save it to About my business" if extra_steps else ""))[:200], "file_name": name,
             "card": {"destination": "leads", "read_by": read_by, "facts": facts, "columns": columns[:40]},
             "steps": [{"tool": IMPORT_TOOL, "summary": STEP["en"].format(n=new, existing=existing), "undoable": True, "status": "proposed", "error": None,
-                       "call": {"path": {}, "body": step_body, "file": kind}}],
+                       "call": {"path": {}, "body": step_body, "file": kind}},
+                      *[{k: v for k, v in x.items() if k != "plan_id"} for x in extra_steps or []], *(more.steps(1) if more is not None else [])],
         })
-        return words("offer", language, name=name, found=found, existing=existing, new=new) + picture, card_of_plan(plan, rows)
+        if more is not None:
+            return more.sentence(True) + picture, card_of_plan(plan, rows)
+        also = words("also_knowledge", language) if extra_steps else ""
+        return words("offer", language, name=name, found=found, existing=existing, new=new) + also + picture, card_of_plan(plan, rows)
 
     def _read_body(self, kind: str, name: str, data_base64: str) -> dict[str, Any]:
         if kind == "text":
@@ -353,6 +643,51 @@ class FileTurn:
         if loaded.grid is not None:
             return [[str(v)[:60] for v in r] for r in loaded.grid.rows[:5]]
         return [[str(r.get("name") or "")[:60], str(r.get("phone") or "")[:32], str(r.get("email") or "")[:60]] for r in (loaded.rows or [])[:5]]
+
+
+@dataclass(frozen=True)
+class More:
+    """The rest of a plan after the import of its people: `steps(n)` with n = how many steps come before (a `$ref` names its step by number); `sentence(with_import)`."""
+
+    plan_id: uuid.UUID
+    title: str
+    destination: str
+    steps: Callable[[int], list[dict[str, Any]]]
+    sentence: Callable[[bool], str]
+
+
+def _resolved(values: dict[str, Any], answers: dict[int, Any], cells: list[list[str]] | None = None) -> dict[str, str]:
+    """A step's path or query, with each `{"$ref": [step_no, key, index, ...]}` replaced by that value of an earlier step's answer, and each `{"$cell": [row, column]}` by that cell of the step's
+    kept CSV (LookupError when it is not there)."""
+    out: dict[str, str] = {}
+    for name, value in values.items():
+        if isinstance(value, dict) and isinstance(value.get("$cell"), list) and len(value["$cell"]) == 2:
+            row, col = (int(x) for x in value["$cell"])
+            if not cells or row >= len(cells) or col >= len(cells[row]) or not cells[row][col].strip():
+                raise LookupError(name)
+            out[name] = cells[row][col].strip()
+        elif isinstance(value, dict) and isinstance(value.get("$ref"), list) and value["$ref"]:
+            ref = value["$ref"]
+            got: Any = answers[int(ref[0])]
+            for key in ref[1:]:
+                if isinstance(got, dict) and isinstance(key, str):
+                    got = got[key]
+                elif isinstance(got, list) and isinstance(key, int):
+                    got = got[key]
+                else:
+                    raise LookupError(name)
+            if got is None or isinstance(got, (dict, list)):
+                raise LookupError(name)
+            out[name] = str(got)
+        else:
+            out[name] = str(value)
+    return out
+
+
+def _csv_b64(grid: extract.Grid) -> str:
+    out = io.StringIO()
+    csv.writer(out).writerows(grid[: MAX_ROWS + 1])
+    return base64.b64encode(out.getvalue().encode("utf-8")).decode("ascii")
 
 
 def _contact_cells(grid: extract.Grid) -> int:
@@ -420,6 +755,11 @@ class PlanRunner:
         except PlanExpiredError:
             raise ApiError(409, "plan_expired", "This plan has expired. Ask again and I will make a new one.") from None
 
+    def _drop_all(self, token: str, tenant_id: uuid.UUID, plan: dict[str, Any]) -> None:
+        ids = {str(plan.get("file_id") or "")} | {str((s.get("call") or {}).get("file_id") or "") for s in plan.get("steps") or []}
+        for file_id in sorted(i for i in ids if i):
+            self._drop(token, tenant_id, file_id)
+
     def _drop(self, token: str, tenant_id: uuid.UUID, file_id: Any) -> None:
         if not file_id:
             return
@@ -432,7 +772,7 @@ class PlanRunner:
         plan = self._get(token, tenant_id, plan_id)
         if decision == "cancel":
             moved = self._move(token, tenant_id, plan_id, "proposed", "cancelled", file_gone=True)
-            self._drop(token, tenant_id, plan.get("file_id"))
+            self._drop_all(token, tenant_id, plan)
             return moved
         if plan.get("owner_only") and not is_owner:
             raise ApiError(403, "forbidden", "Only the Owner can do this.")
@@ -441,7 +781,8 @@ class PlanRunner:
         self._move(token, tenant_id, plan_id, "proposed", "running")
         steps = [dict(s) for s in plan.get("steps") or []]
         message_id = uuid.UUID(str(plan["message_id"]))
-        data: dict[str, Any] | None = None
+        files_read: dict[str, dict[str, Any]] = {}
+        answers: dict[int, Any] = {}   # each step's answer, for a later step that names it ({"$ref": [step, key, ...]})
         failed = False
         for no, step in enumerate(steps, start=1):
             if failed:
@@ -450,27 +791,48 @@ class PlanRunner:
             call_spec = step.get("call") or {}
             body = dict(call_spec.get("body") or {}) if isinstance(call_spec.get("body"), dict) else None
             if call_spec.get("file") and body is not None:
-                if data is None:
+                step_file = call_spec.get("file_id") or plan.get("file_id")   # a plan of several steps may read a different file per step (the people as a CSV, the text for About my business)
+                if str(step_file) not in files_read:
                     try:
-                        data = self.store.file_get(token, tenant_id, uuid.UUID(str(plan.get("file_id"))))
+                        files_read[str(step_file)] = self.store.file_get(token, tenant_id, uuid.UUID(str(step_file)))
                     except Exception:
-                        data = {}
+                        files_read[str(step_file)] = {}
+                data = files_read[str(step_file)]
                 raw = str(data.get("data_base64") or "")
                 if not raw:
                     step["status"], step["error"], failed = "failed", "not_found", True
                     self._log(token, tenant_id, plan_id, no, step, None, {})
                     continue
-                if body.get("kind") == "paste":
+                if call_spec.get("file_field"):   # the step's text field is the kept file's text (an enquiry's letter): it never sits in the plan itself
+                    body[str(call_spec["file_field"])] = _text_of(raw)
+                elif body.get("kind") == "paste":
                     body["text"] = _text_of(raw)
                 else:
                     body["content_base64"] = raw
-            call = executor.Call(tool=str(step.get("tool")), path=dict(call_spec.get("path") or {}), query=dict(call_spec.get("query") or {}), body=body)
+            cells: list[list[str]] = []
+            if call_spec.get("cells_from"):   # a value read from the kept CSV at run time (a phone number never sits in the plan itself)
+                cells_file = str(call_spec["cells_from"])
+                if cells_file not in files_read:
+                    try:
+                        files_read[cells_file] = self.store.file_get(token, tenant_id, uuid.UUID(cells_file))
+                    except Exception:
+                        files_read[cells_file] = {}
+                cells = list(csv.reader(io.StringIO(_text_of(str(files_read[cells_file].get("data_base64") or "")))))
+            try:
+                path = _resolved(dict(call_spec.get("path") or {}), answers, cells)
+                query = _resolved(dict(call_spec.get("query") or {}), answers, cells)
+            except LookupError:   # a value from an earlier step that is not there (nobody found by that number)
+                step["status"], step["error"], failed = "failed", "not_found", True
+                self._log(token, tenant_id, plan_id, no, step, None, {})
+                continue
+            call = executor.Call(tool=str(step.get("tool")), path=path, query=query, body=body)
             try:
                 result = await self.tools.run(tenant_id, token, call, message_id)
             except executor.ToolRefused:
                 step["status"], step["error"], failed = "failed", "invalid", True
                 self._log(token, tenant_id, plan_id, no, step, None, {})
                 continue
+            answers[no] = result.answer
             step["status"] = "done" if result.ok else "failed"
             step["error"] = result.error
             step["undo"] = result.undo
@@ -482,7 +844,7 @@ class PlanRunner:
         done = sum(1 for s in steps if s.get("status") == "done")
         final = "done" if done == len(steps) else ("partly_done" if done else "failed")
         moved = self._move(token, tenant_id, plan_id, "running", final, steps, file_gone=True)
-        self._drop(token, tenant_id, plan.get("file_id"))
+        self._drop_all(token, tenant_id, plan)
         logger.info("assistant plan ran: steps=%d done=%d status=%s", len(steps), done, final)
         return moved
 
@@ -499,10 +861,18 @@ class PlanRunner:
             raise ApiError(409, "plan_state", "Only a plan that ran can be undone.")
         steps = [dict(s) for s in plan.get("steps") or []]
         message_id = uuid.UUID(str(plan["message_id"]))
+        try:   # a step undone one by one from Settings -> Activity is not undone again (the log is the Owner's and an Admin's; for anyone else the steps' own state decides)
+            logged = {int(a["step_no"]): str(a.get("status")) for a in self.store.actions_list(token, tenant_id, None, None, 20, None, plan_id)}
+        except Exception:
+            logged = {}
         undone = 0
         for index in range(len(steps) - 1, -1, -1):   # newest first
             step = steps[index]
             how = step.get("undo")
+            if logged.get(index + 1) == "undone":
+                step["status"], step["error"] = "undone", None
+                undone += 1
+                continue
             if step.get("status") != "done" or not isinstance(how, dict):
                 continue
             try:
@@ -526,6 +896,34 @@ class PlanRunner:
             raise ApiError(403 if failed == "forbidden" else 409, "forbidden" if failed == "forbidden" else "nothing_to_undo",
                            "Only the Owner or an Admin can undo this." if failed == "forbidden" else "Nothing here can be undone.")
         return self._move(token, tenant_id, plan_id, str(plan["status"]), "undone", steps)
+
+
+async def undo_action(store: WorkStore, tools: Tools, token: str, tenant_id: uuid.UUID, action_id: uuid.UUID) -> dict[str, Any]:
+    """Settings -> Activity's Undo of ONE logged step (docs/contracts/assistant-tools.md section 3): its plan's own stored undo, run through the step's undo route with the caller's token; the
+    database marks it undone (the Owner, or whoever said "Do it"). Offered for 7 days."""
+    rows = store.actions_list(token, tenant_id, None, None, 1, action_id)
+    if not rows:
+        raise ApiError(404, "not_found", "Not found.")
+    row = rows[0]
+    if row.get("undo") != "available":
+        raise ApiError(409, "nothing_to_undo" if row.get("undo") in ("none", "done") else "undo_expired",
+                       "This change cannot be undone." if row.get("undo") == "none" else "This change was undone already." if row.get("undo") == "done" else "The undo for this change has expired (7 days).")
+    plan_id = uuid.UUID(str(row["plan_id"]))
+    plan = store.plan_get(token, tenant_id, plan_id)
+    steps = [dict(x) for x in plan.get("steps") or []]
+    no = int(row["step_no"])
+    how = steps[no - 1].get("undo") if 0 < no <= len(steps) else None
+    if not isinstance(how, dict):
+        raise ApiError(409, "nothing_to_undo", "This change cannot be undone.")
+    try:
+        result = await tools.undo(tenant_id, token, how, uuid.UUID(str(plan["message_id"])))
+    except executor.ToolRefused:
+        raise ApiError(409, "nothing_to_undo", "This change cannot be undone.") from None
+    if not result.ok:
+        raise ApiError(403 if result.error == "forbidden" else 409, "forbidden" if result.error == "forbidden" else "undo_failed",
+                       "Only the Owner or an Admin can undo this." if result.error == "forbidden" else "The undo did not go through; nothing else was changed.")
+    store.action_undone(token, tenant_id, plan_id, no)
+    return store.actions_list(token, tenant_id, None, None, 1, action_id)[0]
 
 
 def _changed(tool: Any, answer: Any) -> dict[str, Any]:

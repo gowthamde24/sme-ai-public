@@ -4,12 +4,17 @@ Status: **published 4 Nov 2026, stable for the shapes below**; the routes land i
 Errors always have the one shape `{error:{code,message,retry_after,request_id}}`. JSON is snake_case. This **confirms C2's assumed shapes** (`apps/web/lib/assistant-work/types.ts`, PR #302) with the
 changes marked **CHANGED**; everything else is exactly as C2 assumed.
 
+**Which workspaces have it (5 Nov 2026).** `ASSISTANT_WORK_TENANTS`: workspace ids separated by `;` (or `,`). Unset = every workspace (local, tests); set = only those; set but empty or `none` = none.
+On staging it is the owner's three test workspaces (`deploy/staging.sh`). Elsewhere every route below answers **404** (as if it were not there), and the chat turn goes on exactly as before: no
+router call, no file turn, no `work_card`. **The web reads the same variable with the same meaning** (sme-web env, beside `ASSISTANT_WORK_SCREENS`), so no button shows where the API would refuse.
+
 ## 0. The tools (A1, merged first)
 - `GET /assistant/tools` -> `{ items: [ { name, method, path, level: "read" | "write" | "sensitive", sensitive: "money" | "sending" | "members" | "deleting" | "billing" | "secrets" | null, undo: "snapshot" | "inverse" | "none", summary } ], screen_only: [ { method, path, reason } ] }`
   (Owner, Admin, Sales). The same list the planner uses. You need it only for Settings -> Activity's labels and for a debug screen; the cards carry their own words.
 - Every user-facing operation of the API is decided by `app/assistant_tools/catalog.py`. The table is `docs/assistant-tools-coverage.md`, generated from the live routes (527 operations: 480 tools; 93.6% of
   the non-forbidden ones). **A tool is a thin wrapper over the SAME route the screens call**, run with the person's own token: the same row-level security, validation, role rules and audit. There is no
   back door, so a Sales member's plan can only do what Sales may do (a step the route refuses is `failed` with `error: "forbidden"`).
+- **A write whose undo is a snapshot is never sent without it:** if the state before cannot be read, the step fails (`down` or the read's own error) and nothing is written.
 - **Levels**:
   - read: runs at once, with no card;
   - write: a plan card, then the OK, then the run, then "Done · Undo";
@@ -39,6 +44,73 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
     What was read is kept as a small CSV under the same 24 h rule and the file itself is deleted at once; "Do it" imports exactly what the card showed. A price table -> `cant_do` (price list,
     `/catalogue`); a long document with nobody in it -> `cant_do` (`/settings/knowledge`). The log names how it was read and, for the model, the model and the size, never the content.
 
+### A request about the file (A2b, owner 5 Nov 2026: "files in chat must go beyond import")
+The turn's `text` says what to do with the file(s). A plain "add these to my leads" (or no words at all) is the import path above, **with no model call**. Anything else is planned:
+1. **Understanding, by code**: what the file looks like (a list of people, a visiting card, a price list, an enquiry, an order, a brochure, other), its tables, the people in it, the amounts and the
+   dates, and its text. Nothing is invented.
+2. **One planner call**, cost-accounted under the day's cap. It gets the request (trusted), the understanding (DATA between delimiters: a file's words are never instructions) and a CLOSED list of
+   actions. It answers:
+   - **answer**: read-only ("summarise this", "what is the price of X?"). No card, just the sentence. Every number in it must be in the file or the request, otherwise the answer is not used and the
+     sentence says so;
+   - **do**: the actions in order, as ONE plan card. **The model names the action; code builds every argument from the file** (the people code found, the file's own text): it never writes a phone
+     number, a price or an id. Today's actions:
+     - `add_people`: the lead import above, as a `file_preview` card;
+     - `add_to_knowledge`: `knowledge.add_source` (About my business), as a `plan` card or as a second step of the `file_preview` plan. Undo is the source's discard route.
+     - `update_prices` (part 2): a `file_preview` card with `destination: "catalogue"`.
+       - **What it shows:** `columns: ["Item", "Now", "New"]` and up to 5 sample `rows` (old → new in rupees), with `facts` `found`, `changed`, `unchanged` and `not_in_catalogue`.
+       - **How rows are matched:** by code, by the item's name (no guessing: an unknown name is counted, not matched).
+       - **The plan:** one `catalogue.put_item` step per changed item (at most 20), each "Name: ₹old → ₹new". **Money:** `sensitive: "money"`, `owner_only`, `needs_second_factor` (the database asks for it) and the card's second tap.
+       - **Undo:** every item is put back as it was (the catalogue's snapshot).
+       - **When nothing is proposed:** a price list with nothing different gets the card with `plan: null`; a workspace without a catalogue gets `cant_do`.
+     - `capture_enquiry` (part 3): an enquiry letter from ONE sender with a phone number. It is a `file_preview` card (the sender's import preview) with three steps:
+       1. `lead-imports.import_leads`: added if new, merged if known; undoable;
+       2. `contacts.contact_by_phone`: found by the number in the letter;
+       3. `leads.capture_enquiry`: the letter saved as their enquiry. The enquiry route removes numbers and addresses from the stored text. No undo.
+       If the sender is already a lead, it is a `plan` card with steps 2 and 3 only. If nobody is found by the number, step 3 fails `not_found` (nothing is guessed). **The draft quote** needs
+       the requirement confirmed on the enquiry's screen first, and the sentence says so.
+     - `check_stock` (part 4): an order in a file (a purchase order, items with quantities) gets a **read-only answer** with no card. It lists each line, matched to the catalogue by name, with
+       the catalogue's stock word: in stock / few left (check before you promise) / made to order (not in stock) / not in your catalogue. Then "N of them may be short". The catalogue keeps a
+       word, not a count, so no number is claimed. **The order itself** starts from an approved quote, and the sentence says so. With `capture_enquiry`, the stock answer comes first, then the
+       enquiry plan.
+   - **Values a step reads at run time**, so they never sit in the stored plan:
+     - `{"$cell": [row, column]}` reads a cell of the step's kept CSV (`cells_from`);
+     - `{"$ref": [step_no, key, …]}` reads an earlier step's answer;
+     - `file_field` puts the kept text into that body field.
+   - **clarify**: one question, as a sentence;
+   - **cant_do**: `not_yet` with the screen's link. The codes and screens are:
+     - `quote_from_enquiry` → `/enquiries`;
+     - `order_from_file` → `/orders`;
+     - `update_prices` → `/catalogue` (only when the workspace has no catalogue, or more than 20 prices change);
+     - `follow_up` → `/followups`;
+     - `other` → no screen.
+     A part of a request that cannot be done yet is said in the sentence next to the plan, never left out.
+3. **A school's file never reaches the planner** (it fails closed). It takes the deterministic path above.
+4. Nobody is messaged or called because of any of this. Every write is a plan card, then "Do it", then Undo where the step declares one.
+
+**Not yet** (next parts):
+- the draft quote itself, once the requirement is confirmed;
+- a follow-up or a task for the new lead;
+- later turns about the same file.
+
+### The router for typed requests (owner, 5 Nov 2026: "then the router, starting with the common-actions list")
+1. **Code decides** whether a typed request is about one of the common actions (closed words in en, te, hi and kn: calling hours, auto-reply, pause or resume a source, add a lead, example data,
+   billing, deleting the workspace, real data). Anything else keeps the turn's existing path, with no extra call.
+2. **One model call** picks the action and its arguments from the owner's words, asks one question, says it is screen-only, or says `not_mine` (then the existing path answers).
+3. **Code checks every argument against the words.** An hour must be written there ("10 to 7" → 10:00–19:00 is fine; 09:30 is not, if "9:30" was never said); a name, a phone number and an
+   e-mail must be what was typed; a choice must be on its closed list. Code then builds the step from the state read through the screen's own route.
+4. **The card is a `plan` card** (`card.destination: "settings"`). Its words are code's, old → new.
+
+| action | step | undo | rule |
+|---|---|---|---|
+| calling hours | `call-settings.put_settings` (the hours only change) | snapshot | Owner, second factor |
+| auto-reply on/off | `ai-assistant.put_auto_reply` | snapshot | Owner, second factor; switching ON is `sensitive: "sending"` |
+| pause / resume a lead source (matched by its label) | `lead-sources.pause_source` / `resume_source` | inverse | Owner, Admin |
+| add one typed lead | the lead import, one row (dedupe), as a `file_preview` | the import's undo | as the import |
+| remove the example data | `example-data.example_remove` | none | `sensitive: "deleting"`, Owner |
+| billing, deleting the workspace, real data, erasing a person | none: `cant_do` (`screen_only`) with the screen's link | | always a person |
+
+Already so → a sentence and no card. An unknown source → the real source names.
+
 ## 2. The cards: the turn's `work_card` event
 `event: work_card` / `data: { "type": "work_card", "card": <one of the kinds below> }`, after the sentence, before `done`. The card's `id` is stable. A replay and `GET /assistant/conversations/{id}`
 (`message.work_cards: [...]`) give the cards again, in their state now.
@@ -58,6 +130,7 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
   About my business (`/knowledge`).
 
 ### plan
+A plan that adds no people (saving a brochure to About my business) comes as this card on its own. A replay and the stored chat give it again in its state now.
 ```json
 { "kind": "plan", "id": "uuid", "plan": {
   "plan_id": "uuid", "title": "Add 34 leads from 'march leads.xlsx'", "status": "proposed",
@@ -86,6 +159,14 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
   - It is **never** in the conversation, in a turn's history, in the model's input, in a log, an audit row or an error.
   - A test pins all of this. The answer says at most the last four characters.
   - A request is good for 15 minutes, and once.
+- **Built (5 Nov 2026, owner decision: Secret Manager, one secret per workspace and kind):** `secret: "indiamart_key"` only, for now. The card also carries `expires_at`.
+  - "Set up IndiaMART with my key" (and "add my IndiaMART CRM key", "connect IndiaMART") is routed to this card. A non-Owner is told only the Owner can; with the store off it is `cant_do`
+    `not_yet` with the Lead sources link.
+  - `POST /assistant/secrets/{request_id}` `{value}`: 8 to 200 letters, digits and `. _ ~ + / = : -`, no spaces (trimmed). Answers: `200 {saved, last4}` (`last4` null for a key under 12
+    characters), `422 secret_invalid` (the value is never echoed), `404` (not this Owner's request), `409 secret_request_used`, `410 secret_request_expired`, `503 secret_not_saved` /
+    `secrets_unavailable`. A refused or failed save needs a new card.
+  - The secret is `sme-ws-<workspace id>-indiamart` in Secret Manager (asia-south1, only the newest version kept). The database holds the name, the last four and a fingerprint.
+  - `POST /lead-sources/indiamart/pull` then uses the workspace's own key; a workspace without one keeps the installation's key (if it is that workspace).
 
 ### setup
 ```json
@@ -108,10 +189,13 @@ feature is part of AI Workforce and this workspace is on Lead Desk ("find new re
 
 ## 3. Settings -> Activity (design 6)
 - `GET /assistant/actions?since=<iso>&before=<iso>&limit=50` -> `{ items: [ { action_id, tool, summary, changed, requested_by, message_id, at, status: "done" | "failed" | "undone", undo: "available" | "done" | "none" | "expired" } ], next_before }`
-  (Owner, Admin). Every entry is "by the assistant, on <requested_by>'s request". **Built: the log is written** (one row per step that ran, with its undo for 7 days); the list and its undo
-  routes are the next part. **CHANGED:** the change's own audit row is the person's (the route ran with their token); the request carries `X-Assistant-Message: <message id>`, and the action log
+  (Owner, Admin; Sales and Viewer get 403). Every entry is "by the assistant, on <requested_by>'s request". **Built (migration 20261231110000, `public.assistant_actions_list`):**
+  - **The list:** newest first. Each item also has `plan_id`, `step_no`, `decided_by`, `error` and `undone_at`; the stored undo itself is never returned, only its state.
+  - **Paging and errors:** `next_before` is set when the page is full. `since` and `before` are ISO times; anything else gets 422. **CHANGED:** the change's own audit row is the person's (the route ran with their token); the request carries `X-Assistant-Message: <message id>`, and the action log
   row carries the `message_id`. Writing it into the audit row too is a later part.
-- `POST /assistant/actions/{action_id}/undo` -> the entry. An undo is offered for 7 days, then `undo: "expired"`.
+- `POST /assistant/actions/{action_id}/undo` (Owner, Admin) -> the entry, now `status: "undone"`, `undo: "done"`. It runs that ONE step's own undo route with the caller's token. It is offered for
+  7 days, then `undo: "expired"` and 409 `undo_expired`. A step with no undo, or one already undone: 409 `nothing_to_undo`. The route refusing: 403 `forbidden`, or 409 `undo_failed` (nothing else
+  changed). A plan's Undo afterwards skips the steps already undone one by one.
 - "What did you change today?" in the chat is answered from the same list.
 
 ## 4. Never

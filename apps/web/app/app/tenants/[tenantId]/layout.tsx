@@ -24,7 +24,7 @@ import { isVoiceLang, voiceSocketUrl, VOICE_LANGS } from "@/lib/browser-voice/pr
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
 import { isChatCardWord } from "@/lib/lead-finder/types";
 import { requireUser } from "@/lib/auth/session";
-import { browserVoice, guidedDemo, pronunciationScreens, taskScreens } from "@/lib/screens/flag";
+import { assistantWorkScreens, browserVoice, guidedDemo, pronunciationScreens, taskScreens } from "@/lib/screens/flag";
 import { readIsDemo } from "./today-read";
 import { routesFor } from "@/lib/guided-demo/script";
 import { GuidedDemo } from "@/components/v2/app/guided-demo/LazyGuidedDemo";
@@ -72,7 +72,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales); its words, and those of the Lead Finder's card in the chat
   const url = browserVoice() && isCanonicalUuid(tenantId) ? voiceSocketUrl(publicApiBase(), tenantId) : null;
   const voice = url && (await mayTalk(user.accessToken, tenantId))
-    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || isChatCardWord(k))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language` }
+    ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || isChatCardWord(k))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language`, ...(await workFor(user.accessToken, tenantId)) }
     : null;
   const topupBanner = isCanonicalUuid(tenantId) && !video ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
   return (
@@ -105,6 +105,18 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
       {demoRoutes ? <GuidedDemo words={Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("gd.")))} routes={demoRoutes} actions={{ run: runDemoStepAction.bind(null, tenantId) }} /> : null}
     </>
   );
+}
+
+/** The assistant does the work in the chat (ASSISTANT_WORK_SCREENS): the mode and the person's role (the cards say "Only the owner can approve this"; the API checks again). Off, or a failed read: nothing. */
+async function workFor(accessToken: string, tenantId: string): Promise<{ work?: { mode: "on" | "mock"; role: "owner" | "admin" | "sales" | "viewer" } }> {
+  const mode = assistantWorkScreens(tenantId);
+  if (mode === "off") return {};
+  try {
+    const role = (await fetchTenant(accessToken, tenantId)).role;
+    return role === "owner" || role === "admin" || role === "sales" || role === "viewer" ? { work: { mode, role } } : {};
+  } catch {
+    return {};
+  }
 }
 
 /** May this person talk to the assistant by voice? Owner, Admin or Sales (the API checks again); a failed read is "no". */

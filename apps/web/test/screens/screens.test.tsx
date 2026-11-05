@@ -22,6 +22,7 @@ vi.mock("@/components/v2/app/assistant/LazyCallSettingsAdvanced", async () => ({
 vi.mock("@/lib/api/outreach", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/outreach")>(), ["listBatches", "getBatch", "getBatchItems", "listRules", "listHandoffs", "getOutreachReport", "getPolicy"]));
 vi.mock("@/lib/api/lead-desk", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-desk")>(), ["listDeskLeads", "getTouches"]));
 vi.mock("@/components/v2/app/lead-desk/LazyImportScreen", async () => ({ LazyImportScreen: (await import("@/components/v2/app/lead-desk/ImportScreen")).ImportScreen }));
+vi.mock("@/components/v2/app/today/ask/work/LazyWorkPreview", async () => ({ WorkPreview: (await import("@/components/v2/app/today/ask/work/WorkPreview")).WorkPreview }));
 vi.mock("@/components/v2/app/lead-desk/LazyLeadSources", async () => ({ LazyLeadSources: (await import("@/components/v2/app/lead-desk/LeadSources")).LeadSources }));
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => {
@@ -170,14 +171,14 @@ describe("the default business type is the product as it was (job CL: textiles m
 });
 
 describe("Today with nothing waiting, for the business types with their own pages, with the Lead Desk parts on (the staging crash)", () => {
-  it.each(["textiles", "construction", "education"])("%s: the page is drawn (no 'Something went wrong'), no Lead Desk card or worker, and 'Your team' is the shop's helpers, never the Lead Desk workers", async (name) => {
+  it.each(["textiles", "construction", "education"])("%s: the page is drawn (no 'Something went wrong'), no Lead Desk card or worker, and 'My AI team' is the shop's helpers, never the Lead Desk workers", async (name) => {
     const fs = await import("node:fs");
     for (const role of ["owner", "admin"]) {
       const text = fs.readFileSync(path.join(DIR, `today-empty-${name}.${role}.txt`), "utf8");
       expect(text).toMatch(/Needs you/);
       expect(text).not.toMatch(/Something went wrong|Hot lead|Plan to approve/);
       expect(text).not.toMatch(/Lead catcher|Standing rules|Task helper/);
-      expect(text).toMatch(/Your team/);
+      expect(text).toMatch(/My AI team/);
     }
   });
 });
