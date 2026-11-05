@@ -156,3 +156,14 @@ def test_a_sales_member_cannot_run_an_owner_plan() -> None:
 def test_telugu() -> None:
     client, _, _, _, _ = world({"decision": "do", "action": "pause_source", "args": {"source": "IndiaMART"}})
     assert "మార్పు ఇది" in text_of(say(client, "IndiaMART ని ఆపండి", language="te"))
+
+
+def test_the_live_eval_requests_meant_for_an_action_all_pass_the_word_gate() -> None:
+    """scripts/eval_aw_router.py's 30 requests: every one meant for a common action (or screen-only) reaches the router; the ones that are not are left to the model's own "not_mine"."""
+    from pathlib import Path
+
+    source = (Path(__file__).resolve().parents[3] / "scripts" / "eval_aw_router.py").read_text()
+    cases = eval(source[source.index("CASES: list[tuple[str, str, str, str]] = ") + len("CASES: list[tuple[str, str, str, str]] = "): source.index("\n]\n") + 2])  # noqa: S307  the file's own literal list
+    assert len(cases) == 30 and sum(1 for _, lang, _, _ in cases if lang == "te") >= 8
+    missed = [text for text, _, expected, _ in cases if expected != "not_mine" and not touches(text)]
+    assert missed == []

@@ -34,10 +34,10 @@ DAYS = {"mon": 1, "tue": 2, "wed": 3, "thu": 4, "fri": 5, "sat": 6, "sun": 7}
 
 # closed words that make a request one of the common actions (en, te, hi, kn); without one of them the turn goes on as before
 _TOUCHES = re.compile(
-    r"(?i)\b(call(ing)? (hours|times?|time)|hours? (for|of) call|call (only )?(from|between)|auto[- ]?repl(y|ies)|pause|resume|un-?pause|stop (taking|getting|the) (leads|indiamart|justdial)|"
+    r"(?i)\b(call(ing)? (hours|times?|time)|hours? (for|of) call|calls? (\w+ )?(only )?(from|between)|auto(matic)?[- ]?repl(y|ies)|pause|resume|un-?pause|stop (taking|getting|the) (leads|indiamart|justdial)|"
     r"(indiamart|justdial|just dial|99acres|magicbricks|housing\.com|meta|facebook|website form|google sheet)\b.{0,30}\b(on|off|stop|start|pause|resume)|"
     r"add\b.{0,40}\b(as a |as )?(lead|customer|contact)|new lead|example data|sample data|demo data|delete (my |the )?(workspace|account)|billing|subscription|cancel (my )?plan|real[- ]data)\b"
-    r"|కాల్ సమయ|కాల్స్ సమయం|ఆటో రిప్లై|ఆపండి|లీడ్‌గా చేర్చ|కాల్ का समय|कॉल का समय|ऑटो रिप्लाई|रोक दो|लीड में जोड़|ಕರೆ ಸಮಯ|ಆಟೋ ರಿಪ್ಲೈ",
+    r"|కాల్ సమయ|కాల్స్ సమయం|ఆటో రిప్లై|ఆపండి|లీడ్‌గా చేర్చ|వర్క్‌స్పేస్|డిలీట్|ప్లాన్ రద్దు|కాల్ का समय|कॉल का समय|ऑटो रिप्लाई|रोक दो|लीड में जोड़|वर्कस्पेस|ಕರೆ ಸಮಯ|ಆಟೋ ರಿಪ್ಲೈ|ವರ್ಕ್‌ಸ್ಪೇಸ್",
 )
 
 SYSTEM = """You route ONE request of the owner of a small Indian business to the app's own settings. You never answer the request yourself.
