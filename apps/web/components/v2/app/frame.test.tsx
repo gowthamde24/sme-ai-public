@@ -9,6 +9,10 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: vi.fn() }),
 }));
 
+// the lazy chunks of the menu (the More sheet, the foot's meters) are the real ones in a test
+vi.mock("./LazyMoreSheet", async () => ({ MoreSheet: (await import("./MoreSheet")).MoreSheet }));
+vi.mock("./LazyNavMeters", async () => ({ NavMeters: (await import("./NavMeters")).NavMeters }));
+
 import { defaultWorkspacePack, otherPackIds, workspacePack } from "@/lib/packs/pack-test-kit";
 import { packFrame } from "@/lib/packs/resolve";
 
@@ -21,6 +25,7 @@ import { SideNav } from "./SideNav";
 import { TabBar } from "./TabBar";
 import type { Membership } from "./use-workspace";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
+import { resetNavCountsForTests } from "./use-nav-counts";
 
 /** The round mark the layout draws on the server (its letters here): a slot of the menu parts. */
 const MARK = <span aria-hidden="true">OW</span>;
@@ -34,8 +39,17 @@ beforeEach(() => {
   nav.pathname = `/app/tenants/${A}/orders`;
   nav.search = "";
   window.matchMedia = vi.fn().mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
+  resetNavCountsForTests();
+  // the menu's numbers (C1's nav-counts) are not known unless a test says so
+  vi.stubGlobal("fetch", vi.fn(async () => new Response("no", { status: 503 })));
 });
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
+/** The nav-counts answer of the contract's example (docs/contracts/nav-counts.md). */
+const COUNTS = { needs_you: 3, prospects_needing_owner: 2, new_leads: 12, live_calls: 1, unread_chats: 2, followups_due: 5, visits_today: 2, quotes_waiting: 1, ai_team_working: 4, call_minutes: { used: 412, total: 600 }, ai_usage: { used_paise: 6800, allowance_paise: 30000, period: "month" }, plan: "ai_workforce", as_of: "2026-11-05T11:42:07Z" };
+const withCounts = (body: unknown = COUNTS) => vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ counts: (await import("@/lib/nav-counts")).parseNavCounts(body) }), { status: 200 })));
 
 const none: FrameData = NO_FRAME_DATA;
 const loaded: FrameData = { plan: { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }, usage: { today_percent: 38, month_percent: 12, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }, waiting: 5, ready: true, showUsage: true, live: false, logoUrl: null, pack: null };
@@ -44,24 +58,52 @@ const side = (memberships: Membership[], frame = none, email: string | null = "o
 const bar = (memberships: Membership[], frame = none) => render(<TabBar memberships={memberships} frame={frame} email="o@example.test" signOut={noSignOut} mark={MARK} />);
 
 describe("SideNav", () => {
-  it("lists the groups for the role, marks the current page, and links inside the workspace", () => {
+  it("lists the five groups for the role (sidebar v2), marks the current page, and links inside the workspace", () => {
     side(owner);
     const menu = screen.getByRole("navigation", { name: "Workspace menu" });
-    expect(within(menu).getByRole("link", { name: "Sales" })).toHaveAttribute("aria-current", "page"); // Orders is a tab of Sales
-    expect(within(menu).getByRole("link", { name: "Sales" })).toHaveAttribute("href", `/app/tenants/${A}/quotes`);
-    expect(within(menu).queryByRole("group")).toBeNull(); // seven rows in one plain list (job DQ part 0)
-    expect(within(menu).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", "Calls", "Sales", "Catalogue", "Reports"]);
+    expect(within(menu).getByRole("link", { name: "Orders" })).toHaveAttribute("aria-current", "page");
+    expect(within(menu).getByRole("link", { name: "Orders" })).toHaveAttribute("href", `/app/tenants/${A}/orders`);
+    expect(within(menu).getAllByRole("group").map((g) => g.getAttribute("aria-label"))).toEqual(["Overview", "Sell", "Business", "AI team", "Setup"]);
+    expect(within(menu).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Reports", "Talk to assistant", "Leads", "Find customers", "Calls", "Chats", "Follow-ups", "Store visits", "Catalogue & stock", "Quotes", "Orders", "My AI team", "Train how it talks", "Phone number", "Settings"]);
   });
-  it("the foot holds Settings, Help (a link to the guides), the user card and Collapse menu; the AI usage card is not there any more (it is in Settings, Plan and usage)", () => {
+  it("the foot holds Top up · Plan & usage · Help, the user card and Collapse menu; no meter until the numbers are known; Today shows the frame's count meanwhile", () => {
     side(owner, loaded);
     expect(screen.queryByText("AI usage today")).toBeNull();
     expect(screen.queryByRole("meter")).toBeNull();
     expect(screen.getByRole("link", { name: "Settings" })).toHaveAttribute("href", `/app/tenants/${A}/settings`);
     expect(screen.getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
-    expect(screen.queryByRole("button", { name: /^Help/ })).toBeNull();
+    expect(screen.getByRole("link", { name: "Top up" })).toHaveAttribute("href", `/app/tenants/${A}/settings?section=plan`);
+    expect(screen.getByRole("link", { name: "Plan & usage" })).toBeInTheDocument();
     expect(screen.getAllByText("o@example.test").length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: "Collapse menu" })).toBeInTheDocument();
-    expect(within(screen.getByRole("navigation", { name: "Workspace menu" })).getByRole("link", { name: /Today/ })).toHaveTextContent("Waiting for you: 5");
+    expect(document.querySelector('[data-nav-badge="m-today"]')).toHaveTextContent("5");
+  });
+  it("asks for the menu's numbers after the first paint and fills the badges and the two meters (Owner)", async () => {
+    withCounts();
+    const { act } = await import("@testing-library/react");
+    side(only("owner"), loaded);
+    expect(document.querySelector('[data-nav-badge="m-leads"]')).toBeNull(); // not before the answer
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 5));
+    });
+    expect(fetch).toHaveBeenCalledWith(`/app/tenants/${A}/nav-counts`, expect.objectContaining({ cache: "no-store" }));
+    expect(document.querySelector('[data-nav-badge="m-today"]')).toHaveTextContent("5"); // 3 customers' things + 2 businesses
+    expect(document.querySelector('[data-nav-badge="m-leads"]')).toHaveTextContent("12 new");
+    expect(document.querySelector('[data-nav-badge="m-calls"]')).toHaveTextContent("1 live");
+    expect(document.querySelector('[data-nav-badge="m-aiteam"]')).toHaveTextContent("4 working");
+    expect(screen.getByRole("meter", { name: "Call minutes" })).toHaveAttribute("aria-valuetext", "412 / 600");
+    expect(screen.getByRole("meter", { name: "AI usage" })).toHaveAttribute("aria-valuetext", "₹68 / ₹300");
+  });
+  it("a role the API gives no minutes or rupees to sees no meter, and no Top up", async () => {
+    withCounts({ ...COUNTS, call_minutes: null, ai_usage: null });
+    const { act } = await import("@testing-library/react");
+    side(only("sales"), loaded);
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 5));
+    });
+    expect(screen.queryByRole("meter")).toBeNull();
+    expect(screen.queryByRole("link", { name: "Top up" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Help" })).toBeInTheDocument();
   });
   it("says 'Not available yet' for the plan and the count while they cannot be read, and invents nothing", () => {
     side(owner);
@@ -108,8 +150,8 @@ describe("SideNav", () => {
   });
   it("a viewer is not offered what the plan hides from them, and a workspace not in the list gets no menu", () => {
     side(only("viewer"));
-    for (const hidden of ["Chats", "Reports"]) expect(screen.queryByRole("link", { name: hidden })).toBeNull();
-    expect(screen.getByRole("link", { name: "Customers" })).toBeInTheDocument();
+    for (const hidden of ["Chats", "Reports", "Calls", "Quotes"]) expect(screen.queryByRole("link", { name: hidden })).toBeNull();
+    expect(screen.getByRole("link", { name: "Leads" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Settings" })).toBeInTheDocument();
     cleanup();
     nav.pathname = `/app/tenants/${B}`;
@@ -117,11 +159,11 @@ describe("SideNav", () => {
     // outside a workspace of the person's: only the two account pages, no workspace menu
     expect(within(screen.getByRole("navigation", { name: "Workspace menu" })).getAllByRole("link").map((a) => a.textContent)).toEqual(["All workspaces", "Security"]);
   });
-  it("on the workspace home with a records tab, 'Customers' (or 'Leads') is current, not 'Today'", () => {
+  it("on the workspace home with a records tab, 'Leads' is current, not 'Today'", () => {
     nav.pathname = `/app/tenants/${A}`;
     nav.search = "tab=contacts";
     side(owner);
-    expect(screen.getByRole("link", { name: "Customers" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Leads" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "Today" })).not.toHaveAttribute("aria-current");
   });
   it("collapses to a narrow rail and back, and remembers the choice in this browser", () => {
@@ -137,19 +179,19 @@ describe("SideNav", () => {
 });
 
 describe("TabBar", () => {
-  it("shows the five daily tabs (the phone calls Store visits \"Visits\") and More, then the rest of the menu in a sheet that closes with Escape", () => {
+  it("shows Today, Leads, Chats and Calls with their badges, and More: the other rows in their groups, the meters' links, in a sheet that closes with Escape", () => {
     bar(owner, loaded);
     const quick = screen.getByRole("navigation", { name: "Quick menu" });
-    expect(within(quick).getAllByRole("link").map((a) => a.textContent)).toEqual(["Waiting for you: 5Today", "Customers", "Chats", "Sales"]);
-    expect(within(quick).getByRole("link", { name: "Sales" })).toHaveAttribute("href", `/app/tenants/${A}/quotes`);
-    expect(within(quick).getByRole("link", { name: "Sales" })).toHaveAttribute("aria-current", "page"); // Orders (the page we are on) is a tab of Sales
-    expect(within(quick).getByRole("button", { name: "More" }).className).not.toContain("text-brand-text");
+    expect(within(quick).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today: 5Today", "Leads", "Chats", "Calls"]);
+    expect(within(quick).getByRole("link", { name: "Calls" })).toHaveAttribute("href", `/app/tenants/${A}/office/live`);
+    expect(within(quick).getByRole("button", { name: "More" }).className).toContain("text-brand-text"); // Orders (the page we are on) is in More
     fireEvent.click(within(quick).getByRole("button", { name: "More" }));
     const dialog = screen.getByRole("dialog", { name: "All of the menu" });
-    expect(within(dialog).getAllByRole("link").map((a) => a.textContent).slice(0, 5)).toEqual(["Calls", "Catalogue", "Reports", "Settings", "Help"]);
-    expect(within(dialog).getByRole("link", { name: "Calls" })).not.toHaveAttribute("aria-current");
+    expect(within(dialog).getAllByRole("group").map((g) => g.getAttribute("aria-label"))).toEqual(["Overview", "Sell", "Business", "AI team", "Setup"]);
+    expect(within(dialog).getByRole("link", { name: "Orders" })).toHaveAttribute("aria-current", "page");
     expect(within(dialog).getByRole("link", { name: "Settings" })).toHaveAttribute("href", `/app/tenants/${A}/settings`);
-    expect(within(dialog).queryByText("AI usage today")).toBeNull(); // the usage is in Settings, Plan and usage now
+    expect(within(dialog).queryByRole("link", { name: "Leads" })).toBeNull(); // a tab of the bar, not in the sheet
+    expect(within(dialog).getByRole("link", { name: "Top up" })).toBeInTheDocument();
     expect(within(dialog).getByText("Powered by Stack19")).toBeInTheDocument(); // the small credit at the foot of the sheet (owner 31 Oct)
     expect(within(dialog).getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
     expect(within(dialog).getByRole("button", { name: "Sign out" })).toHaveAttribute("type", "submit");
@@ -160,10 +202,10 @@ describe("TabBar", () => {
   it("a viewer has only the tabs their role is offered, and one business has no list in the sheet", () => {
     bar(only("viewer"));
     const quick = screen.getByRole("navigation", { name: "Quick menu" });
-    expect(within(quick).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Sales"]);
+    expect(within(quick).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads"]);
     fireEvent.click(within(quick).getByRole("button", { name: "More" }));
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getAllByRole("link").map((a) => a.textContent)).toEqual(["Calls", "Catalogue", "Settings", "Help"]);
+    expect(within(dialog).getAllByRole("link").map((a) => a.textContent)).toEqual(["Talk to assistant", "Follow-ups", "Store visits", "Catalogue & stock", "My AI team", "Settings", "Help"]);
     expect(within(dialog).queryByText("Your workspaces")).toBeNull();
   });
   it("draws nothing outside a workspace", () => {
@@ -273,9 +315,10 @@ describe("the menu of a business type (job CL)", () => {
   const names = () => within(screen.getByRole("navigation", { name: "Workspace menu" })).getAllByRole("link").map((a) => a.textContent);
   it("shows the pack's words, leaves out the modules it does not have, and offers what only a pack brings", () => {
     side(only("owner"), view());
-    // the menu is the same seven items for every business type; the pack's own words are the tabs inside them (GroupTabs.test.tsx)
-    expect(names()).toEqual(["Today", "Customers", "Chats", "Calls", "Sales", "Catalogue", "Reports"]);
+    // Business follows the business type: a builder's merchant's rows, and none of a school's
+    expect(names()).toEqual(expect.arrayContaining(["Quotes", "Trips", "Dues", "Reports"]));
     expect(names()).not.toContain("Fees");
+    expect(names()).not.toContain("Admissions");
   });
   it("leaves out a part whose module is off", () => {
     side(only("owner"), view({ modules: real.modules.filter((m) => m !== "reports") }));
@@ -292,13 +335,13 @@ describe("the menu of a business type (job CL)", () => {
   it("draws the phone's four tabs (the same words for every business type), then More with the rest", () => {
     bar(only("owner"), view());
     const tabs = within(screen.getByRole("navigation", { name: "Quick menu" }));
-    expect(tabs.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", "Sales"]); // the same four words for every business type (the owner's list); the pack's own word for its core work is the tab inside Sales
+    expect(tabs.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads", "Chats", "Calls"]); // the same four for every business type
     expect(tabs.getByRole("button", { name: "More" })).toBeInTheDocument();
     fireEvent.click(tabs.getByRole("button", { name: "More" }));
     const sheet = within(screen.getByRole("dialog"));
-    expect(sheet.getByRole("link", { name: "Calls" })).toBeInTheDocument(); // Campaigns is a tab of Calls
+    expect(sheet.getByRole("link", { name: "Trips" })).toBeInTheDocument();
     expect(sheet.getByRole("link", { name: "Reports" })).toBeInTheDocument();
-    expect(sheet.queryByRole("link", { name: "Sales" })).toBeNull(); // it is a tab of the bar, not in the sheet
+    expect(sheet.queryByRole("link", { name: "Calls" })).toBeNull(); // it is a tab of the bar, not in the sheet
   });
   it("the default pack's frame is the menu the product always had, with the same four tabs", () => {
     const defaultView = { ...NO_FRAME_DATA, pack: packFrame(defaultWorkspacePack(), "en") };
@@ -309,7 +352,7 @@ describe("the menu of a business type (job CL)", () => {
     expect(names()).toEqual(plain);
     cleanup();
     bar(owner, defaultView);
-    expect(within(screen.getByRole("navigation", { name: "Quick menu" })).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customers", "Chats", "Sales"]);
+    expect(within(screen.getByRole("navigation", { name: "Quick menu" })).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads", "Chats", "Calls"]);
   });
   it("is what the workspace's slot brought in that wins over what the first paint had (no flash of the wrong menu after the client takes over)", async () => {
     const { act } = await import("@testing-library/react");

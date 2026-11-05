@@ -22,65 +22,49 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-describe("the tabs of a menu item (job DQ part 0)", () => {
-  it("Sales: Quotes, Store visits and Orders, the page we are on marked, every tab a plain link inside the workspace", () => {
+describe("the tabs of a menu row (sidebar v2)", () => {
+  it("Leads: Leads and Customers, the page we are on marked, every tab a plain link inside the workspace", () => {
+    nav.pathname = `/app/tenants/${A}`;
+    nav.search = "tab=companies";
     draw("owner");
-    expect(tabs().map((a) => a.textContent)).toEqual(["Quotes", "Store visits", "Orders"]);
-    expect(tabs().map((a) => a.getAttribute("href"))).toEqual([`/app/tenants/${A}/quotes`, `/app/tenants/${A}/visits`, `/app/tenants/${A}/orders`]);
-    expect(screen.getByRole("link", { name: "Orders" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Quotes" })).not.toHaveAttribute("aria-current");
+    expect(tabs().map((a) => a.textContent)).toEqual(["Leads", "Customers"]);
+    expect(tabs().map((a) => a.getAttribute("href"))).toEqual([`/app/tenants/${A}/review`, `/app/tenants/${A}?tab=companies`]);
+    expect(screen.getByRole("link", { name: "Customers" })).toHaveAttribute("aria-current", "page");
   });
-  it("is the same strip on every page of the item, and the Customers tabs are reached from the records tab of the home", () => {
+  it("is the same strip on every page of the row: Chats, Catalogue & stock, Phone number, Settings", () => {
     nav.pathname = `/app/tenants/${A}/outbox`;
     draw("owner");
     expect(tabs().map((a) => a.textContent)).toEqual(["Customer chats", "Outbox"]);
     cleanup();
-    nav.pathname = `/app/tenants/${A}`;
-    nav.search = "tab=companies";
+    nav.pathname = `/app/tenants/${A}/price-list`;
     draw("owner");
-    expect(tabs().map((a) => a.textContent)).toEqual(["Leads", "Customers", "Find retailers"]);
-    expect(screen.getByRole("link", { name: "Customers" })).toHaveAttribute("aria-current", "page");
-  });
-  it("Settings holds Team, Office and Integrations: they are tabs of Settings, with the address of each page unchanged", () => {
+    expect(tabs().map((a) => a.textContent)).toEqual(["Catalogue", "Prices and products"]);
+    cleanup();
+    nav.pathname = `/app/tenants/${A}/integrations`;
+    draw("owner");
+    expect(tabs().map((a) => a.textContent)).toEqual(["Phone number", "Integrations"]);
+    expect(screen.getByRole("link", { name: "Integrations" })).toHaveAttribute("aria-current", "page");
+    cleanup();
     nav.pathname = `/app/tenants/${A}/team`;
-    draw("owner");
-    expect(tabs().map((a) => a.textContent)).toEqual(["Settings", "Team", "Office", "Integrations"]);
-    expect(screen.getByRole("link", { name: "Team" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: "Integrations" })).toHaveAttribute("href", `/app/tenants/${A}/integrations`);
-    cleanup();
     draw("sales");
-    expect(tabs().map((a) => a.textContent)).toEqual(["Settings", "Team", "Office"]); // Integrations is for the Owner and Admin
+    expect(tabs().map((a) => a.textContent)).toEqual(["Settings", "Team"]);
   });
-  it("is not drawn when the item has only one page for this role (Today, Reports, a viewer's Sales), or on a page no item holds", () => {
-    nav.pathname = `/app/tenants/${A}`;
-    draw("owner");
-    expect(screen.queryByRole("navigation")).toBeNull();
-    cleanup();
-    nav.pathname = `/app/tenants/${A}/report`;
-    draw("owner");
-    expect(screen.queryByRole("navigation")).toBeNull();
-    cleanup();
-    nav.pathname = `/app/tenants/${A}/orders`;
-    draw("viewer");
-    expect(screen.queryByRole("navigation")).toBeNull();
-    cleanup();
-    nav.pathname = `/app/tenants/${A}/help`;
-    draw("owner");
-    expect(screen.queryByRole("navigation")).toBeNull();
+  it("is not drawn when the row has only one page for this role (Today, Orders, Reports), or on a page no row holds", () => {
+    for (const p of ["", "/orders", "/report", "/help"]) {
+      nav.pathname = `/app/tenants/${A}${p}`;
+      draw("owner");
+      expect(screen.queryByRole("navigation"), p).toBeNull();
+      cleanup();
+    }
   });
-  it("a business type brings its own pages and its own words into the tabs (a school: Fees and the Admission board under Sales)", () => {
-    const kind = otherPackIds().find((i) => workspacePack(i).coreTab === "orders")!;
-    const real = packFrame(workspacePack(kind, "signup"), "en");
-    draw("owner", real);
-    expect(tabs().map((a) => a.textContent)).toContain(real.labels["nav.item.orders"]);
-    cleanup();
+  it("a business type brings its own words into the tabs (a school: its words for Leads and Customers)", () => {
     const school = otherPackIds().find((i) => workspacePack(i).coreTab === "fees")!;
     const frame = packFrame(workspacePack(school, "signup"), "en");
-    nav.pathname = `/app/tenants/${A}/fees`;
+    nav.pathname = `/app/tenants/${A}`;
+    nav.search = "tab=companies";
     draw("owner", frame);
     const names = tabs().map((a) => a.textContent);
-    expect(names).toContain(frame.labels["nav.item.fees"] ?? "Fees");
-    expect(names).toContain("Admission board");
+    expect(names).toContain(frame.labels["nav.item.customers"] ?? "Customers");
     expect(names).not.toContain("Quotes");
   });
 });
