@@ -67,7 +67,7 @@ export function fakeVisitActions() {
   };
 }
 
-export function fakeActions(over: Partial<Record<Exclude<keyof TodayActions, "visit">, ReturnType<typeof vi.fn>>> & { visit?: ReturnType<typeof fakeVisitActions> | null } = {}) {
+export function fakeActions(over: Partial<Record<Exclude<keyof TodayActions, "visit" | "prospect">, ReturnType<typeof vi.fn>>> & { visit?: ReturnType<typeof fakeVisitActions> | null } = {}) {
   const ok = (message: string) => vi.fn(async () => ({ ok: true as const, message }));
   const actions = {
     approveMessage: over.approveMessage ?? ok("Sent to Lakshmi R."),
@@ -76,6 +76,7 @@ export function fakeActions(over: Partial<Record<Exclude<keyof TodayActions, "vi
     approveCall: over.approveCall ?? ok("Call approved for Suresh K. Nothing is dialled by this app."),
     offerVisit: over.offerVisit ?? ok("The call is declined and the visit offer is queued in the outbox."),
     visit: over.visit === undefined ? fakeVisitActions() : over.visit,
+    prospect: { call: ok("Yes to calling. The practice call opens next: nothing is dialled."), skip: ok("Skipped. It will not be called.") },
   };
-  return actions as unknown as TodayActions & Record<Exclude<keyof TodayActions, "visit">, ReturnType<typeof vi.fn>> & { visit: ReturnType<typeof fakeVisitActions> };
+  return actions as unknown as TodayActions & Record<Exclude<keyof TodayActions, "visit" | "prospect">, ReturnType<typeof vi.fn>> & { visit: ReturnType<typeof fakeVisitActions>; prospect: { call: ReturnType<typeof vi.fn>; skip: ReturnType<typeof vi.fn> } };
 }

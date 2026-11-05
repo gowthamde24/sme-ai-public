@@ -79604,5 +79604,49 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.prospect.needsok": {
+  "en": "Needs OK",
+  "te": "మీ OK కావాలి",
+  "hi": "आपकी OK चाहिए",
+  "kn": "ನಿಮ್ಮ OK ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.toast.prospect.call": {
+  "en": "Yes to calling. The practice call opens next: nothing is dialled.",
+  "te": "కాల్ చేయడానికి సరే. తర్వాత ప్రాక్టీస్ కాల్ తెరుచుకుంటుంది: ఎవరికీ ఫోన్ వెళ్ళదు.",
+  "hi": "कॉल करने के लिए हाँ। आगे प्रैक्टिस कॉल खुलेगी: किसी को फ़ोन नहीं जाता।",
+  "kn": "ಕರೆ ಮಾಡಲು ಸರಿ. ಮುಂದೆ ಅಭ್ಯಾಸ ಕರೆ ತೆರೆಯುತ್ತದೆ: ಯಾರಿಗೂ ಫೋನ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.toast.prospect.skip": {
+  "en": "Skipped. It will not be called.",
+  "te": "వదిలేశాం. దానికి కాల్ చేయం.",
+  "hi": "छोड़ दिया। उसे कॉल नहीं किया जाएगा।",
+  "kn": "ಬಿಟ್ಟೆವು. ಅದಕ್ಕೆ ಕರೆ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.team.more": {
+  "en": "+{n} more",
+  "te": "+ఇంకా {n}",
+  "hi": "+{n} और",
+  "kn": "+ಇನ್ನೂ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

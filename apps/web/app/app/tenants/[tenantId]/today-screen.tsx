@@ -33,7 +33,7 @@ import { withPackT } from "@/lib/packs/resolve";
 import { withVisitWords } from "@/lib/packs/visit-words";
 import { loadExampleAction, removeExampleAction, resetExampleAction } from "./start/actions";
 
-import { approveCallAction, approveMessageAction, editMessageAction, offerVisitAction, rejectMessageAction } from "./today-actions";
+import { approveCallAction, approveMessageAction, callProspectAction, editMessageAction, offerVisitAction, rejectMessageAction, skipProspectAction } from "./today-actions";
 import { SetupGate } from "@/components/v2/app/setup/SetupGate";
 import type { SetupActions } from "@/components/v2/app/setup/types";
 import { saveItemAction } from "./catalogue/catalogue-actions";
@@ -109,6 +109,8 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     approveCall: approveCallAction.bind(null, tenantId),
     offerVisit: offerVisitAction.bind(null, tenantId),
     visit: { confirm: confirmVisitAction.bind(null, tenantId), move: moveVisitAction.bind(null, tenantId), cancel: cancelVisitAction.bind(null, tenantId), slots: slotsAction.bind(null, tenantId) },
+    // the Lead Finder's rows: Owner, Admin and Sales act on prospects (a Viewer is never shown them)
+    prospect: role === "viewer" ? null : { call: callProspectAction.bind(null, tenantId), skip: skipProspectAction.bind(null, tenantId) },
   };
   // today's totals of what happened after the calls and follow-ups (job DM): drawn only when the flag is on (OUTCOME_SCREENS); a role that is not Owner, Admin or Sales does not see them
   const totals = role === "viewer" ? ({ mode: "off" } as const) : await readOutcomeTotals({ token: accessToken, tenantId });
