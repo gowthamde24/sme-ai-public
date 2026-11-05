@@ -10,6 +10,7 @@ changes marked **CHANGED**; everything else is exactly as C2 assumed.
 - Every user-facing operation of the API is decided by `app/assistant_tools/catalog.py`. The table is `docs/assistant-tools-coverage.md`, generated from the live routes (527 operations: 480 tools; 93.6% of
   the non-forbidden ones). **A tool is a thin wrapper over the SAME route the screens call**, run with the person's own token: the same row-level security, validation, role rules and audit. There is no
   back door, so a Sales member's plan can only do what Sales may do (a step the route refuses is `failed` with `error: "forbidden"`).
+- **A write whose undo is a snapshot is never sent without it:** if the state before cannot be read, the step fails (`down` or the read's own error) and nothing is written.
 - **Levels**:
   - read: runs at once, with no card;
   - write: a plan card, then the OK, then the run, then "Done · Undo";
@@ -51,11 +52,17 @@ The turn's `text` says what to do with the file(s). A plain "add these to my lea
      number, a price or an id. Today's actions:
      - `add_people`: the lead import above, as a `file_preview` card;
      - `add_to_knowledge`: `knowledge.add_source` (About my business), as a `plan` card or as a second step of the `file_preview` plan. Undo is the source's discard route.
+     - `update_prices` (part 2): a `file_preview` card with `destination: "catalogue"`.
+       - **What it shows:** `columns: ["Item", "Now", "New"]` and up to 5 sample `rows` (old → new in rupees), with `facts` `found`, `changed`, `unchanged` and `not_in_catalogue`.
+       - **How rows are matched:** by code, by the item's name (no guessing: an unknown name is counted, not matched).
+       - **The plan:** one `catalogue.put_item` step per changed item (at most 20), each "Name: ₹old → ₹new". **Money:** `sensitive: "money"`, `owner_only`, `needs_second_factor` (the database asks for it) and the card's second tap.
+       - **Undo:** every item is put back as it was (the catalogue's snapshot).
+       - **When nothing is proposed:** a price list with nothing different gets the card with `plan: null`; a workspace without a catalogue gets `cant_do`.
    - **clarify**: one question, as a sentence;
    - **cant_do**: `not_yet` with the screen's link. The codes and screens are:
      - `quote_from_enquiry` → `/enquiries`;
      - `order_from_file` → `/orders`;
-     - `update_prices` → `/catalogue`;
+     - `update_prices` → `/catalogue` (only when the workspace has no catalogue, or more than 20 prices change);
      - `follow_up` → `/followups`;
      - `other` → no screen.
      A part of a request that cannot be done yet is said in the sentence next to the plan, never left out.
@@ -65,7 +72,6 @@ The turn's `text` says what to do with the file(s). A plain "add these to my lea
 **Not yet** (next parts):
 - an enquiry plus a draft quote from the catalogue;
 - an order plus a stock check;
-- catalogue prices, previewed old → new;
 - a follow-up or a task for the new lead;
 - later turns about the same file.
 

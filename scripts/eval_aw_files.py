@@ -74,7 +74,7 @@ def card_png() -> bytes:
     return buf.getvalue()
 
 
-# (name, file name, bytes, content type, request, language, expected: answer | plan:<tool> | preview | cant:<code> | clarify)
+# (name, file name, bytes, content type, request, language, expected: answer | plan:<tool> | preview | prices | cant:<code> | clarify)
 def cases() -> list[tuple[str, str, bytes, str, str, str, str]]:
     brochure, prices, enquiry, order = text_pdf(wrap(BROCHURE)), text_pdf(PRICES), text_pdf([[x] for x in ENQUIRY]), text_pdf(ORDER)
     card, injection = card_png(), text_pdf(wrap(INJECTION))
@@ -82,8 +82,8 @@ def cases() -> list[tuple[str, str, bytes, str, str, str, str]]:
     return [
         ("enquiry letter -> quote (en)", "enquiry.pdf", enquiry, pdf, "make an enquiry and a draft quote from this letter", "en", "cant:quote_from_enquiry"),
         ("enquiry letter -> quote (te)", "enquiry.pdf", enquiry, pdf, "ఈ లేఖ నుండి ఎంక్వైరీ, కొటేషన్ తయారు చేయండి", "te", "cant:quote_from_enquiry"),
-        ("price list -> catalogue (en)", "prices.pdf", prices, pdf, "update my catalogue prices from this list", "en", "cant:update_prices"),
-        ("price list -> catalogue (te)", "prices.pdf", prices, pdf, "ఈ ధరలను కేటలాగ్‌లో మార్చండి", "te", "cant:update_prices"),
+        ("price list -> catalogue (en)", "prices.pdf", prices, pdf, "update my catalogue prices from this list", "en", "prices"),
+        ("price list -> catalogue (te)", "prices.pdf", prices, pdf, "ఈ ధరలను కేటలాగ్‌లో మార్చండి", "te", "prices"),
         ("brochure -> knowledge (en)", "about us.pdf", brochure, pdf, "add this to About my business", "en", "plan:knowledge.add_source"),
         ("brochure -> knowledge (te)", "about us.pdf", brochure, pdf, "దీన్ని 'నా వ్యాపారం గురించి' లో సేవ్ చేయండి", "te", "plan:knowledge.add_source"),
         ("order pdf -> order + shortage (en)", "po 2231.pdf", order, pdf, "make this order and tell me what is short in stock", "en", "cant:order_from_file"),
@@ -119,7 +119,7 @@ def score(evs: list[tuple[str, dict]], expected: str) -> tuple[bool, str]:
     if cards and cards[0]["kind"] == "plan":
         got = f"plan:{cards[0]['plan']['steps'][0]['tool']}"
     elif cards and cards[0]["kind"] == "file_preview":
-        got = "preview"
+        got = "prices" if cards[0].get("destination") == "catalogue" else "preview"
     elif cards and cards[0]["kind"] == "cant_do":
         got = "cant:" + {"an enquiry and a quote": "quote_from_enquiry", "making an order": "order_from_file", "updating catalogue prices": "update_prices"}.get(
             next((k for k in ("an enquiry and a quote", "making an order", "updating catalogue prices") if k in cards[0]["what"]), ""), "other")
