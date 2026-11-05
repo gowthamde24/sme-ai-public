@@ -25,6 +25,8 @@ class TodayRepository(Protocol):
 
     def agents_status(self, token: str, tenant_id: uuid.UUID) -> Any: ...
 
+    def nav_counts(self, token: str, tenant_id: uuid.UUID) -> Any: ...
+
     def ai_usage(self, token: str, tenant_id: uuid.UUID) -> Any: ...
 
     def ai_usage_percent(self, token: str, tenant_id: uuid.UUID) -> Any: ...
@@ -73,6 +75,10 @@ class PostgrestTodayRepository:
 
     def agents_status(self, token: str, tenant_id: uuid.UUID) -> Any:
         return self._rpc("agents_status", token, tenant_id)
+
+    def nav_counts(self, token: str, tenant_id: uuid.UUID) -> Any:
+        """Any member: the sidebar's counts, each by the caller's role (docs/contracts/nav-counts.md)."""
+        return self._rpc("nav_counts", token, tenant_id)
 
     def ai_usage(self, token: str, tenant_id: uuid.UUID) -> Any:
         return self._rpc("ai_usage_today", token, tenant_id)

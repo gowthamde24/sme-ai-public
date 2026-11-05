@@ -27,6 +27,8 @@ ROUTE_WORDS = frozenset(
         "handled",
         # 5 Nov 2026 (C1): "talk-training"
         "talk-training",
+        # 5 Nov 2026 (C1): "nav-counts"
+        "nav-counts",
         # job DT (ADR 0115, 0116): the business profile, pictures, people and the opening line
         "workspace", "logo", "picture", "people", "voice-preview", "opening-line", "mention-ai",
         "resolved",
