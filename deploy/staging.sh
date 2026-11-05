@@ -64,6 +64,9 @@ export MAIL_DOMAIN="${MAIL_DOMAIN:-stack19.com}"   # the domain verified at the 
 export PRIVACY_EMAIL="${PRIVACY_EMAIL:-privacy@${MAIL_DOMAIN}}" HELLO_EMAIL="${HELLO_EMAIL:-hello@${MAIL_DOMAIN}}"   # the inboxes of the privacy notice and the waitlist (job DQ, DPDP)
 # the privacy notices (a full export or a deletion of the workspace is e-mailed to the Owner afterwards, job DT) are sent by the API with the same provider settings as the worker (cloudrun.sh adds EXTRA_ENV_2 to the API)
 export EXTRA_ENV_2="BILLING_EMAIL_SENDER=resend,MAIL_FROM=noreply@${MAIL_DOMAIN},MAIL_REPLY_TO=support@${MAIL_DOMAIN}"
+# A workspace's own keys (owner decision, 5 Nov 2026): Secret Manager in this project, one secret sme-ws-<workspace>-<kind> per workspace and kind (the assistant's secure card writes it; the
+# IndiaMART pull reads it). sme-api-run holds the conditional sme-ws-* bindings (smeSecretCreator; smeWorkspaceSecretWriter and smeWorkspaceSecretReader on sme-ws-* only).
+EXTRA_ENV_2="$EXTRA_ENV_2,WORKSPACE_SECRETS=${WORKSPACE_SECRETS:-gcp},WORKSPACE_SECRETS_PROJECT=$PROJECT_ID"
 export WEB_ORIGIN="${WEB_ORIGIN:-https://staging.stack19.com}"   # the address the web is served from (the API's CORS fence, the sitemap): the custom domain, a Cloudflare Worker in front of the run.app address (docs/ops/staging.md)
 export BUILD_SA="sme-build@$PROJECT_ID.iam.gserviceaccount.com"
 dirty=""; git diff --quiet HEAD -- . 2>/dev/null || dirty="-dirty$(date +%H%M%S)"

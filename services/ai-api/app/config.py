@@ -341,6 +341,11 @@ class Settings(BaseSettings):
     lead_finder_places_cost_paise: int = 300
     telephony_live_confirmed: bool = False
     telephony_sandbox_numbers: str = ""
+    # A workspace's own keys (owner, 5 Nov 2026; app/workspace_secrets.py): off (default) | fake |
+    # gcp = Secret Manager in WORKSPACE_SECRETS_PROJECT, one secret per workspace and kind
+    # (sme-ws-<workspace>-<kind>), the instance's own identity; fingerprint: SUPPRESSION_HMAC_KEY.
+    workspace_secrets: str = "off"
+    workspace_secrets_project: str | None = None
     telephony_max_concurrent: int = 2
     # The assistant does the work (chat files, plan cards, the router, Settings > Activity): which
     # workspaces have it. Unset = every workspace (local, tests); ids separated by ; or , = only
