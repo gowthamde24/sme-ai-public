@@ -175,6 +175,24 @@ describe("the secure key box", () => {
     expect(input.value).toBe("");
     expect(container.innerHTML).not.toContain(KEY);
   });
+  it("a box that was used, ran out or was not saved takes nothing more: the form goes, and it says to ask again (C1, 5 Nov)", async () => {
+    const transport: WorkTransport = { ...fixtureTransport({ delay: 0 }), saveSecret: async () => ({ ok: false, error: "renew" }) };
+    const { container } = draw([card(SECRET_JSON)], { transport });
+    fireEvent.change(screen.getByLabelText("IndiaMART CRM key"), { target: { value: KEY } });
+    await click("Save securely");
+    expect(screen.getByRole("alert").textContent).toBe("This box can't take the key any more. Ask me again for a new card.");
+    expect(screen.queryByLabelText("IndiaMART CRM key")).toBeNull();
+    expect(container.innerHTML).not.toContain(KEY);
+  });
+  it("a box past its time says so without sending the value", async () => {
+    const transport = fixtureTransport({ delay: 0 });
+    const save = vi.spyOn(transport, "saveSecret");
+    draw([card({ ...SECRET_JSON, expires_at: "2020-01-01T00:00:00Z" })], { transport });
+    fireEvent.change(screen.getByLabelText("IndiaMART CRM key"), { target: { value: KEY } });
+    await click("Save securely");
+    expect(save).not.toHaveBeenCalled();
+    expect(screen.getByRole("alert").textContent).toBe("This box can't take the key any more. Ask me again for a new card.");
+  });
   it("only the Owner sees the box", () => {
     draw([card(SECRET_JSON)], { role: "admin" });
     expect(screen.queryByLabelText("IndiaMART CRM key")).toBeNull();
