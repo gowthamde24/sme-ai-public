@@ -8,7 +8,7 @@ from pydantic import Field, StringConstraints, model_validator
 
 from app.crm.models import _Strict
 
-Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 
 
 class ProfileIn(_Strict):

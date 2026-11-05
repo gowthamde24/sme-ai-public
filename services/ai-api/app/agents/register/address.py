@@ -10,13 +10,14 @@ from __future__ import annotations
 
 import re
 
-# The polite word that is right for everyone, per language (the owner's list): te "అండీ", hi "जी", kn none / "ಹೇಳಿ" / the name with "ಅವರೇ", ta the "-ங்க" ending, ml none, en none.
+# The polite word that is right for everyone, per language (the owner's list): te "అండీ", hi "जी", kn none / "ಹೇಳಿ" / the name with "ಅವರೇ", ta the "-ங்க" ending, ml none, mr none (job M1 draft), en none.
 NEUTRAL: dict[str, str] = {
     "te": "అండీ",
     "hi": "जी",
     "kn": "ಹೇಳಿ",
     "ta": "-ங்க (an ending: ஆமாங்க, சொல்லுங்க)",
     "ml": "no form of address",
+    "mr": "no form of address (the polite plural तुम्ही is enough)",
     "en": "no form of address",
 }
 

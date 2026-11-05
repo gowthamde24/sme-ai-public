@@ -10,7 +10,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 UsageState = Literal["ok", "warn", "paused"]
 
 

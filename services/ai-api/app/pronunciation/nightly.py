@@ -37,6 +37,7 @@ from app.pronunciation.speech import SpeechText
 RATE = 24000
 THRESHOLD = 300   # 16-bit amplitude under which a sample counts as silence at the ends
 KEEP_MS = 60
+# not Marathi yet (job M1): the nightly round trip speaks with a catalogue voice and Marathi has none; it joins with its voice job (round_trip also skips a language with no voice)
 ALL_LANGUAGES = ("te", "en", "kn", "hi", "ta", "ml")
 
 
@@ -50,7 +51,7 @@ def trim(pcm: bytes) -> bytes:
     return samples[max(0, loud[0] - keep) : min(len(samples), loud[-1] + keep)].tobytes()
 
 
-STT_CODE = {"en": "en-IN", "te": "te-IN", "hi": "hi-IN", "kn": "kn-IN", "ta": "ta-IN", "ml": "ml-IN"}
+STT_CODE = {"en": "en-IN", "te": "te-IN", "hi": "hi-IN", "kn": "kn-IN", "ta": "ta-IN", "ml": "ml-IN", "mr": "mr-IN"}
 NUMERIC = {   # sentences with numbers, money, dates, times, phone numbers and units, around a word of the language
     "en": ["The price is ₹1,20,000 for 2000 sq ft.", "Call 98765 43210 on 30/10/2026 at 6:30 pm.", "GST is 18% and EMI starts at Rs. 2,600."],
     "te": ["ధర ₹2,600 అండీ, GST 18%.", "30/10/2026 సాయంత్రం 6:30 కి కాల్ చేస్తాను.", "2000 sq ft స్థలం ₹1,20,000."],
@@ -58,6 +59,7 @@ NUMERIC = {   # sentences with numbers, money, dates, times, phone numbers and u
     "kn": ["ಬೆಲೆ ₹2,600, GST 18%.", "30/10/2026 ಸಂಜೆ 6:30 ಕ್ಕೆ call ಮಾಡ್ತೀನಿ.", "2000 sq ft ಜಾಗ ₹1,20,000."],
     "ta": ["விலை ₹2,600, GST 18%.", "30/10/2026 மாலை 6:30 மணிக்கு call பண்றேன்.", "2000 sq ft இடம் ₹1,20,000."],
     "ml": ["വില ₹12,000, GST 18%.", "30/10/2026 വൈകുന്നേരം 6:30 ന് വിളിക്കാം.", "2000 sq ft സ്ഥലം ₹1,20,000."],
+    "mr": ["किंमत ₹1,500 आहे, GST 18%.", "30/10/2026 ला संध्याकाळी 6:30 वाजता कॉल करते.", "2000 sq ft जागा ₹1,20,000 ची आहे."],
 }
 
 
@@ -115,6 +117,9 @@ async def round_trip(languages: list[str], per_language: int, only_lexicon: bool
     sent = 0
     async with httpx.AsyncClient(timeout=60) as http:
         for language in languages:
+            if not cfg.has_voices(language):
+                print(f"skipping {language}: no voice in the catalogue yet")   # job M1: Marathi is a language before it has a voice
+                continue
             voice = cfg.resolve(language, None, "female")
             choice = voice.voices.primary
             engine = CartesiaStreamTts(ck, voice_id=choice.voice, model=choice.model)

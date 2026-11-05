@@ -22,7 +22,7 @@ from pydantic import (
 from app.crm.models import ApiUuid
 from app.display_name import lead_title, without_display_name
 
-Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 TemplateId = Literal["call_new_leads", "reengage_old_leads", "confirm_appointments", "collect_feedback", "payment_reminder", "supplier_price_enquiry", "offer_invite", "custom"]
 Channel = Literal["call", "whatsapp", "both"]
 Status = Literal["needs_answer", "planned", "approved", "running", "paused", "done", "cancelled"]
