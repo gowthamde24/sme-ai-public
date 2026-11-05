@@ -33,22 +33,23 @@ Any member of the workspace (Owner, Admin, Sales, Viewer). One call for the whol
 | field | what it counts | same number as | who sees it |
 |---|---|---|---|
 | `needs_you` | the customer items waiting for a decision (quotes, follow-up drafts, messages, call requests, money held, proposed visits ...) | Today's `cards.waiting` | everyone (each role's own items, as Today) |
-| `prospects_needing_owner` | Lead Finder prospects in `needs_owner` | `prospect_stats.by_status.needs_owner` | Owner, Admin, Sales; null without the Lead Finder |
-| `new_leads` | leads that arrived and nobody has opened yet | the Lead Desk's "New leads" card | Owner, Admin, Sales |
+| `prospects_needing_owner` | Lead Finder prospects in `needs_owner`, not snoozed by "ask me later" | `prospect_stats.by_status.needs_owner` (that one includes the snoozed) | Owner, Admin, Sales; null without the Lead Finder |
+| `new_leads` | leads of the last 7 days that THIS person has not opened yet (not archived, not junk; `POST /leads/{id}/seen` opens one) | the Lead Desk list's "New" | Owner, Admin, Sales |
 | `live_calls` | phone calls in progress now | Calls, "● N live" | Owner, Admin, Sales |
 | `unread_chats` | conversations whose last inbound message nobody has read | Chats | Owner, Admin, Sales |
-| `followups_due` | leads due a follow-up today | the follow-up due list (capped at 99: show "99+") | Owner, Admin, Sales |
+| `followups_due` | follow-up drafts waiting for a decision (the due list itself runs the cadence engine in the API, too heavy for a badge); capped at 99: show "99+" | Follow-ups | Owner, Admin, Sales |
 | `visits_today` | visits booked for today (India time) | Visits | Owner, Admin, Sales |
 | `quotes_waiting` | draft quotes (sarees) or draft material quotes (building materials) awaiting approval | the quote list's drafts | Owner, Admin; null for a school |
-| `ai_team_working` | helpers busy right now (agent runs running or queued) | My AI team | everyone |
+| `ai_team_working` | helpers busy right now: agent runs running (an Owner or Admin counts everyone's, others their own), tasks and calling plans running, Lead Finder searches under way | My AI team | everyone |
 | `call_minutes` | `{used, total}` whole minutes this billing month | Plan & usage | Owner, Admin |
 | `ai_usage` | `{used_paise, allowance_paise, period}`: this month's AI spend and allowance | Plan & usage | Owner, Admin (others: null; they see the percent on Plan & usage) |
 | `plan` | `ai_workforce`, `lead_desk`, `free_trial` ... | Settings -> Plan | everyone |
 
 Rules:
 - `needs_you` does **not** include `prospects_needing_owner`. The web adds them for Today's "Needs you" ("See all (N)" uses the sum), so the two numbers are never counted twice.
-- `as_of` is when the numbers were read. They are cached **30 s per workspace and role**: a decision taken on a page updates that page at once, and the sidebar within 30 s.
+- `as_of` is when the numbers were read. They are kept **30 s per person and workspace** (`new_leads` is per person): a decision taken on a page updates that page at once, and the sidebar within 30 s.
 - Read-only. Row-level security applies as on every route (the caller's own token). Nothing is written, no model is called, nothing is sent.
-- `429` when called more than about once a second by the same person (the cache answers anyway; the web should poll at most every 30 s and on focus).
+- Calling more often costs nothing: within 30 s the kept answer is returned. The web polls at most every 30 s and on focus.
+- The AI meter is an amount in paise (owner, 5 Nov 2026), for the Owner and an Admin only; everywhere else the AI allowance stays a percentage.
 
 Not yet: a push of the counts (the web polls). Fields may be **added** later; none is renamed or removed without a new contract note here.
