@@ -4,6 +4,8 @@
   GET  /assistant/plans/{plan_id}           Owner, Admin, Sales   a plan card in its state now (the requester's; the Owner and an Admin see every plan)
   POST /assistant/plans/{plan_id}/decide    Owner, Admin, Sales   {decision: do | cancel, confirmed} -> the plan. A sensitive plan needs confirmed=true and the Owner
   POST /assistant/plans/{plan_id}/undo      Owner, Admin, Sales   the done steps that declare an undo, newest first -> the plan (the database decides who: the Owner, or whoever said "Do it")
+  GET  /assistant/actions                   Owner, Admin          Settings -> Activity: the action log, newest first ({items, next_before}); never the stored undo, only its state
+  POST /assistant/actions/{action_id}/undo  Owner, Admin          undo ONE logged step (its route's undo), offered for 7 days -> the entry
 The files and the plans are screen-only for the assistant itself (app/assistant_tools/catalog.py: `assistant_itself`): it never calls its own doors.
 
 NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint signatures at registration)."""
@@ -13,13 +15,14 @@ NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint s
 import base64
 import binascii
 import uuid
+from datetime import datetime
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 from app.assistant_work.files import MAX_FILE_BYTES, clean_name, content_type_of, kind_of
-from app.assistant_work.service import PlanRunner, Tools, public_plan
+from app.assistant_work.service import PlanRunner, Tools, public_plan, undo_action
 from app.assistant_work.store import WorkStore
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
@@ -29,6 +32,7 @@ from app.tenancy.models import Role
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["assistant"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 Worker = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
+Manager = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
 
 
 class _Strict(BaseModel):
@@ -110,3 +114,22 @@ async def decide_plan(plan_id: str, body: DecideIn, request: Request, ctx: Worke
 async def undo_plan(plan_id: str, request: Request, ctx: Worker, runtime: RuntimeDep) -> dict[str, Any]:
     runner = PlanRunner(_store(runtime), Tools(request.app))
     return _card(await runner.undo(ctx.principal.token, ctx.tenant.id, _plan_id(plan_id)))
+
+
+@router.get("/assistant/actions")
+def list_actions(ctx: Manager, runtime: RuntimeDep, since: Annotated[str | None, Query(max_length=40)] = None, before: Annotated[str | None, Query(max_length=40)] = None,
+                 limit: Annotated[int, Query(ge=1, le=100)] = 50) -> dict[str, Any]:
+    """Every entry is "by the assistant, on <requested_by>'s request", with the chat message it came from. `next_before`: pass it as `before` for the next page."""
+    for value in (since, before):
+        if value is not None:
+            try:
+                datetime.fromisoformat(value.replace("Z", "+00:00"))
+            except ValueError:
+                raise ApiError(422, "validation_error", "since and before are ISO times.") from None
+    items = _store(runtime).actions_list(ctx.principal.token, ctx.tenant.id, since, before, limit)
+    return {"items": items, "next_before": items[-1]["at"] if len(items) == limit else None}
+
+
+@router.post("/assistant/actions/{action_id}/undo")
+async def undo_one_action(action_id: str, request: Request, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    return await undo_action(_store(runtime), Tools(request.app), ctx.principal.token, ctx.tenant.id, _plan_id(action_id))

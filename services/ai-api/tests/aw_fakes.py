@@ -34,6 +34,7 @@ class FakeWorkStore:
         self.plans: dict[str, dict[str, Any]] = {}
         self.actions: list[dict[str, Any]] = []
         self.calls: list[str] = []
+        self.owners_and_admins = {"a_owner", "a_admin"}
 
     def file_put(self, token: str, tenant_id: uuid.UUID, name: str, content_type: str, kind: str, data_base64: str) -> dict[str, Any]:
         self.calls.append("file_put")
@@ -115,7 +116,8 @@ class FakeWorkStore:
         if p["status"] != "running" or p["decided_by"] != _uid(token):
             raise PlanStateError("SM981")
         row = {"action_id": str(uuid.uuid4()), "plan_id": str(plan_id), "step_no": step_no, "tool": tool, "summary": summary, "status": status, "error": error, "changed": changed, "undo": undo,
-               "requested_by": p["requested_by"], "decided_by": _uid(token), "message_id": p["message_id"]}
+               "requested_by": p["requested_by"], "decided_by": _uid(token), "message_id": p["message_id"], "at": datetime.now(UTC).isoformat(),
+               "undo_until": (datetime.now(UTC) + timedelta(days=7)).isoformat() if undo else None}
         self.actions.append(row)
         return {"action_id": row["action_id"]}
 
@@ -125,3 +127,17 @@ class FakeWorkStore:
                 a["status"] = "undone"
                 return True
         return False
+
+    def actions_list(self, token: str, tenant_id: uuid.UUID, since: str | None, before: str | None, limit: int, action_id: uuid.UUID | None = None, plan_id: uuid.UUID | None = None) -> list[dict[str, Any]]:
+        """Like the database (Owner and Admin only; never the stored undo, only its state)."""
+        if _uid(token) not in self.owners_and_admins:
+            from app.tenancy.repository import Forbidden
+
+            raise Forbidden("42501")
+        out = []
+        for a in sorted(self.actions, key=lambda x: x["at"], reverse=True):
+            if (since and a["at"] < since) or (before and a["at"] >= before) or (action_id and a["action_id"] != str(action_id)) or (plan_id and a["plan_id"] != str(plan_id)):
+                continue
+            state = "done" if a["status"] == "undone" else "none" if not a["undo"] or a["status"] != "done" else "expired" if a["undo_until"] and a["undo_until"] < datetime.now(UTC).isoformat() else "available"
+            out.append({k: v for k, v in a.items() if k not in ("undo", "undo_until")} | {"undo": state, "undone_at": None})
+        return out[:limit]
