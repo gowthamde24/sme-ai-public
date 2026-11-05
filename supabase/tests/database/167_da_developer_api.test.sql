@@ -29,6 +29,10 @@ select is(pg_temp.q('a_owner', $q$select jsonb_array_length(public.developer_key
 select is(pg_temp.q('a_owner', $q$select (public.developer_keys_list(%L) -> 0) ? 'key_hash'$q$::text), 'false', 'A8 ... never with the hash');
 select is(pg_temp.q('b_owner', format($q$select jsonb_array_length(public.developer_keys_list(%L))::text$q$, tests.tid('a'))), 'ERR:42501', 'A9 another workspace''s Owner sees nothing');
 select is((select count(*)::text from public.developer_api_keys where key_hash = pg_temp.h('k1') and tenant_id = tests.tid('a')), '1', 'A10 stored: the hash');
+select is(pg_temp.q('a_owner', $q$select count(*)::text from (select id, tenant_id, name, mode, prefix, last4, scopes, ip_allow, created_by, created_at, rotated_at, revoked_at from public.developer_api_keys where tenant_id = %L) x$q$),
+          '2', 'A11 the Owner reads the keys (the privacy export''s column list, app/privacy/repository.py SELECT_OF)');
+select is(pg_temp.q('a_owner', $q$select count(key_hash)::text from public.developer_api_keys where tenant_id = %L$q$), 'ERR:42501', 'A12 ... never the hash');
+select is(pg_temp.q('a_sales', $q$select count(*)::text from (select id from public.developer_api_keys where tenant_id = %L) x$q$), '0', 'A13 Sales sees no key');
 
 -- ---- the worker's key check
 select is(pg_temp.q('x5', format($q$select public.developer_api_auth(%L, 'leads:write', null) ->> 'ok'$q$, pg_temp.h('k1'))), 'true', 'B1 a good key with the scope');
