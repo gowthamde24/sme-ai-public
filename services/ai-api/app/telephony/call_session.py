@@ -121,6 +121,9 @@ async def run_call(
         if name == "stop":
             flags["stop"] = True
             line.hang_up_after_next_turn("goodbye")
+        elif name == "handover":
+            flags["handover"] = True
+            line.hang_up_after_next_turn("handover")
         elif name == "voicemail":
             flags["voicemail"] = True
             if plan.voicemail_action == "leave_message":
