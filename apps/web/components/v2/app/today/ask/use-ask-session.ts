@@ -3,11 +3,12 @@
 import * as React from "react";
 
 import type { ConfirmAction } from "@/lib/api/turns";
+import type { WorkCard } from "@/lib/assistant-work/types";
 import type { LeadFinderCard } from "@/lib/lead-finder/types";
 
 import { aiMood, type AiMood } from "../../mark/mood";
 import { defaultAutoplay, makeAnswerPlayer, markNoticeSeen, noticeSeen, readAutoplay, saveAutoplay, subscribeStore, type AnswerPlayer } from "./answer-audio";
-import { ERROR_CODES, type AskDraft, type AskEvent, type AskSource, type AskTransport, type Availability, type VoiceStatus, type VoiceTransport } from "./ask-types";
+import { ERROR_CODES, type AskDraft, type AskEvent, type AskSource, type AskTransport, type Availability, type LocalAnswer, type VoiceStatus, type VoiceTransport } from "./ask-types";
 import type { AskWords } from "./ask-words";
 import { canRecord } from "./recorder";
 import { fetchVoiceStatus, makeAskTransport, makeVoiceTransport } from "./transport";
@@ -41,10 +42,31 @@ export function insideWorkspace(href: string, base: string): string | null {
   }
 }
 
+/** An answer made in the browser (LocalAnswer with `alone`), ended like a real one. */
+async function* localEvents(events: readonly AskEvent[]): AsyncGenerator<AskEvent> {
+  yield* events;
+  yield { type: "done" };
+}
+/** The transport's answer with the browser's own events added before its `done` (or at its end, when it has none). */
+async function* withLocal(source: AsyncIterable<AskEvent>, extra: readonly AskEvent[]): AsyncGenerator<AskEvent> {
+  let added = false;
+  for await (const e of source) {
+    if (e.type === "done" && !added) {
+      added = true;
+      yield* extra;
+    }
+    yield e;
+  }
+  if (!added) yield* extra;
+}
+
 export type AskPhase = "idle" | "asking" | "done" | "error";
 export type AskProblem = RecorderProblem | null;
 /** One question and its answer, as the thread keeps it. */
-export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The person spoke over the spoken answer: only part of it was heard (the thread marks it "Interrupted"). */ interrupted?: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** The Lead Finder's card under the reply (a search's plan, or its result). */ leadFinder?: LeadFinderCard | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null };
+/** The kinds of work card (C1's contract): a card of another kind is not drawn and does not count as an answer. */
+const WORK_KINDS: readonly unknown[] = ["file_preview", "plan", "secret", "setup", "cant_do"];
+
+export type Exchange = { asked: string; heardByVoice: boolean; answer: string; sources: AskSource[]; drafts: AskDraft[]; errorCode: string | null; failed: boolean; /** The person spoke over the spoken answer: only part of it was heard (the thread marks it "Interrupted"). */ interrupted?: boolean; /** The router proposed an ACTION: the plan waits for Yes / No (or shows its state). */ plan?: ConfirmAction | null; /** The Lead Finder's card under the reply (a search's plan, or its result). */ leadFinder?: LeadFinderCard | null; /** "Do it" mode: this exchange was a task (or the reason a plan could not be made). */ task: TaskEntry | null; /** The assistant does the work: the cards of the answer (a file's preview, a plan, a key box, a setup, "can't do yet"). */ work?: WorkCard[] };
 
 export type AskSessionOptions = {
   lang: string;
@@ -81,6 +103,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   const [voiceOpen, setVoiceOpen] = React.useState(false); // voice mode (job DM): the full-screen circle over the box, opened by the microphone
   const [earlier, setEarlier] = React.useState<Exchange[]>([]);
   const [plan, setPlan] = React.useState<ConfirmAction | null>(null); // the router proposed an action: the plan waits for Yes / No
+  const [work, setWork] = React.useState<WorkCard[]>([]); // the work cards of the answer on screen
   const [leadFinder, setLeadFinder] = React.useState<LeadFinderCard | null>(null); // the Lead Finder's card under the reply (docs/contracts/lead-finder.md 1b)
   const convRef = React.useRef<string | null>(null); // the conversation the next message continues (null starts a new one)
   const doIt = useDoIt(doItOptions);
@@ -115,7 +138,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
   // the exchange on screen, readable from a handler made by an earlier render (a recording finishes long after the render that started it)
   const current = React.useRef<Exchange | null>(null);
   React.useEffect(() => {
-    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, plan, leadFinder };
+    current.current = { asked, heardByVoice, answer, sources, drafts, errorCode, failed: phase === "error", task: taskEntry, plan, leadFinder, work };
     modeRef.current = doIt ? mode : "ask";
   });
   const voiceEndpoint = `${base}/ask/voice`;
@@ -207,6 +230,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setSources([]);
     setDrafts([]);
     setPlan(null);
+    setWork([]);
     setLeadFinder(null);
     setTaskEntry(null);
     setAudioPending(voice && speak);
@@ -235,6 +259,16 @@ export function useAskSession({ lang, base, words, availability, transport: give
             );
         } else if (e.type === "confirm_action") {
           setPlan(e.action);
+        } else if (e.type === "work_card") {
+          // untrusted: read strictly, a card that does not parse is not drawn. The parser (lib/assistant-work/types.ts) loads with the first card, so the chat in every page's first load does not carry it.
+          const raw = e.card;
+          if (typeof raw === "object" && raw !== null && WORK_KINDS.includes((raw as { kind?: unknown }).kind)) {
+            said = true;
+            void import("@/lib/assistant-work/types").then(({ parseWorkCard }) => {
+              const card = parseWorkCard(raw, base);
+              if (card) setWork((list) => (list.length >= 6 || list.some((x) => x.id === card.id) ? list : [...list, card]));
+            });
+          }
         } else if (e.type === "lead_finder") {
           setLeadFinder(e.card); // a replay of the same reply sends it again: still one card
         } else if (e.type === "error") {
@@ -326,7 +360,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     yield* planEvents(heard, crypto.randomUUID(), signal);
   }
 
-  const ask = async (raw: string, replyLanguage?: string | null) => {
+  const ask = async (raw: string, replyLanguage?: string | null, attachmentIds?: readonly string[], local?: LocalAnswer | null) => {
     const question = raw.trim().slice(0, MAX_QUESTION);
     if (!question) return;
     if (modeRef.current === "do" && doIt) {
@@ -334,9 +368,14 @@ export function useAskSession({ lang, base, words, availability, transport: give
       await run(question, (signal) => planEvents(question, taskId, signal), false, false);
       return;
     }
+    if (local?.alone) {
+      await run(question, () => localEvents(local.events), false, false); // made here: nothing reaches the network
+      return;
+    }
     if (transport === null) return;
     lastTyped.current = { question, replyLanguage };
-    await run(question, (signal) => transport({ question, lang, signal, conversationId: convRef.current, replyLanguage }), false, false);
+    const asked = (signal: AbortSignal) => transport({ question, lang, signal, conversationId: convRef.current, replyLanguage, ...(attachmentIds && attachmentIds.length > 0 ? { attachmentIds } : {}) });
+    await run(question, local && local.events.length > 0 ? (signal) => withLocal(asked(signal), local.events) : asked, false, false);
   };
   /** The typed question that was asked last, so a failed answer has "Try again". */
   const lastTyped = React.useRef<{ question: string; replyLanguage?: string | null } | null>(null);
@@ -368,6 +407,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
     setErrorCode(null);
     setPhase("idle");
     setPlan(null);
+    setWork([]);
     setLeadFinder(null);
   };
   /** The conversation panel: a turn that was spoken (the socket's captions) joins the thread like a typed one, and "new conversation" empties it. */
@@ -444,7 +484,7 @@ export function useAskSession({ lang, base, words, availability, transport: give
       if (convRef.current === null) convRef.current = id;
     },
     recorder, recording, voiceOpen, setVoiceOpen, voicePhase, startVoice, micClick, micDown, micUp,
-    ask, retry, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, leadFinder, setEarlier,
+    ask, retry, stop, togglePlay, runs, addExchange, newChat, voiceOrb, setVoiceOrb, plan, setPlan, leadFinder, work, setEarlier,
     /** What the floating circle does: the spoken conversation's state, else the typed answer's. */
     floatOrb: (voiceOrb ?? (phase === "asking" && !answer ? "think" : playing || phase === "asking" ? "speak" : "ambient")) as "listen" | "think" | "speak" | "ambient",
     asking: phase === "asking",

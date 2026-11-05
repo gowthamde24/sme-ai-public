@@ -112,6 +112,9 @@ export async function* toAskEvents(events: AsyncIterable<VoiceAssistantEvent | T
       case "confirm_action":
         yield { type: "confirm_action", action: e.action };
         break;
+      case "work_card":
+        yield { type: "work_card", card: e.card }; // read strictly in the browser (parseWorkCard), with this workspace's base for its links
+        break;
       case "lead_finder":
         yield { type: "lead_finder", card: e.card }; // already read by the SearchOut reader (lib/api/lead-finder-card.ts); its links are built by the card itself from the workspace's own address
         break;

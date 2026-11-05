@@ -1,5 +1,6 @@
 // The owner's three TEST workspaces on staging (job test-workspaces, 4 Nov 2026): look at them in a real browser as their Owner and take the pictures the owner's reviewer asked for.
-//   node e2e/staging-owner-test.mjs [--only textiles,construction_materials,education] [--size desktop|phone|both] [--mode shots|dump] [--out DIR]
+//   node e2e/staging-owner-test.mjs [--only textiles,construction_materials,education] [--size desktop|phone|both] [--mode shots|dump|settings] [--out DIR]
+//   --mode settings: every Settings tab in every workspace of the account; exits 1 when My profile has no form anywhere (e.g. --who demo, --who owner-test)
 // Staging only (https://staging.stack19.com), synthetic data only. It signs in as each workspace's HELPER account (owner-test-<pack>@demo.example.test, made by scripts/seed_owner_test.py), which is an Owner
 // of the workspace until the hand-over, so it sees what the owner sees. Passwords and authenticator secrets come from Google Secret Manager into this process's memory only; nothing secret is printed or photographed.
 // It never presses a button that sends, approves, removes or spends: it opens pages and reads them. `dump` prints each page's visible text (for checks); `shots` saves the pictures.
@@ -90,9 +91,16 @@ try {
       await page.goto(`${WEB}/app`, { waitUntil: "domcontentloaded" });
       const href = await page.locator('a[href^="/app/tenants/"]').first().getAttribute("href").catch(() => null);
       const tenant = /\/app\/tenants\/([0-9a-f-]{36})/.exec(href || page.url())?.[1];
+      if (!tenant && MODE === "settings") {
+        // a helper that was taken out of its workspace at the hand-over: nothing to open (said, not a failure)
+        report.push({ pack, size, page: "settings", path: "/", status: 0, url: new URL(page.url()).pathname, flags: [], errors: [], note: `${WHO}-${pack}: in no workspace (skipped)` });
+        console.log(`settings ${WHO}-${pack}: in no workspace (skipped)`);
+        await context.close();
+        continue;
+      }
       if (!tenant) throw new Error(`no workspace for ${pack}`);
       const base = `${WEB}/app/tenants/${tenant}`;
-      const list = ["switcher", "verify", "more", "finder", "chatcard"].includes(MODE) ? [] : PAGES.length ? PAGES.map((p) => [p.replace(/\W+/g, "-") || "today", p === "today" ? "" : p]) : size === "desktop" ? [["today", ""], ["customers", "/lead-desk"], OWN[pack], ["office", "/office"]] : [["today", ""], ["customers", "/lead-desk"], OWN[pack]];
+      const list = ["switcher", "verify", "more", "finder", "chatcard", "settings"].includes(MODE) ? [] : PAGES.length ? PAGES.map((p) => [p.replace(/\W+/g, "-") || "today", p === "today" ? "" : p]) : size === "desktop" ? [["today", ""], ["customers", "/lead-desk"], OWN[pack], ["office", "/office"]] : [["today", ""], ["customers", "/lead-desk"], OWN[pack]];
       for (const [name, p] of list) {
         const res = await page.goto(`${base}${p}`, { waitUntil: "domcontentloaded" });
         await settle(page);
@@ -210,6 +218,49 @@ try {
         console.log(`more ${pack}/${size}: ${links.map((l) => l.replace(/\/app\/tenants\/[0-9a-f-]+/, "")).join(" | ")}`);
         await page.screenshot({ path: path.join(OUT, `more-${SHORT[pack]}-390.png`), fullPage: false });
       }
+      if (MODE === "settings") {
+        // a slow staging answer is tried once more before it counts
+        const open = async (url) => {
+          for (let i = 1; ; i++) {
+            try {
+              return await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
+            } catch (e) {
+              if (i === 2) throw e;
+            }
+          }
+        };
+        // Settings, every tab, in EVERY workspace this account is in (owner bug, 5 Nov 2026: My profile said "Not available yet"). My profile is personal: it must show the name form for
+        // every member on every plan; any other tab that says "Not available yet" or "could not be loaded" is listed. Reads only: nothing is saved.
+        const ids = new Set([tenant]);
+        await open(`${base}/settings?section=profile`);
+        for (const h of await page.$$eval('a[href^="/app/tenants/"]', (as) => as.map((a) => a.getAttribute("href") || "")).catch(() => [])) {
+          const id = /^\/app\/tenants\/([0-9a-f-]{36})/.exec(h)?.[1];
+          if (id) ids.add(id);
+        }
+        for (const id of ids) {
+          const wsBase = `${WEB}/app/tenants/${id}`;
+          await open(`${wsBase}/settings?section=profile`);
+          await settle(page);
+          const tabs = await page.$$eval('nav[aria-label="Parts of Settings"] a[href*="section="]', (as) => as.map((a) => new URL(a.href).searchParams.get("section"))).catch(() => []);
+          const flagsOut = [];
+          for (const section of tabs.length ? tabs : ["profile"]) {
+            const res = await open(`${wsBase}/settings?section=${section}`).catch((e) => (flagsOut.push(String(e.message).split("\n")[0]), null));
+            await settle(page);
+            const body = await text(page);
+            const flags = flagsOut.splice(0);
+            if (new URL(page.url()).searchParams.get("section") !== section && section !== "business") flags.push(`opened ${new URL(page.url()).search} instead`);
+            if (/Not available yet/i.test(body)) flags.push(`says "Not available yet" (${(body.match(/Not available yet/gi) || []).length}x)`);
+            if (/could not be loaded/i.test(body)) flags.push("a part could not be loaded");
+            if (section === "profile") {
+              const name = await page.getByLabel("Your name").count();
+              const lang = await page.getByText("Your language").count();
+              if (!name || !lang) flags.push(`My profile has no ${!name ? "name field" : "language"} (the form is missing)`);
+            }
+            report.push({ pack, size, page: `settings-${section}`, path: `/settings?section=${section}`, status: res?.status(), url: `workspace ${id.slice(0, 8)}`, flags, errors: [...errors], profile: section === "profile" });
+            errors.length = 0;
+          }
+        }
+      }
       if (MODE === "verify") {
         // the steps of the owner's 10-minute script, as far as they can be checked WITHOUT using them up: two typed questions (en, te), the first Needs-you item opened (its Approve
         // button is looked at, never pressed), the Lead Desk, the pack's own page, the example-data line (Remove / Remove and load it again are looked at, never pressed)
@@ -276,3 +327,10 @@ try {
 }
 writeFileSync(path.join(OUT, `report-${MODE}.json`), JSON.stringify(report, null, 1));
 for (const r of report) console.log(`${r.flags.length || r.errors.length ? "CHECK" : "ok   "} ${r.pack}/${r.size}/${r.page} ${r.status} ${r.url} ${[...r.flags, ...r.errors].join(" | ")}`);
+// settings mode is a test: it fails when My profile is missing anywhere (the other tabs are listed, not failed)
+if (MODE === "settings") {
+  const broken = report.filter((r) => r.profile && r.flags.length);
+  const seen = report.filter((r) => r.profile).length;
+  console.log(`\nsettings: My profile opened in ${seen} workspace(s); ${broken.length ? `MISSING in ${broken.length}: ${broken.map((r) => r.url).join(", ")}` : seen ? "the form is there in every one" : "no workspace to open (this run proves nothing)"}`);
+  if (broken.length || seen === 0) process.exitCode = 1;
+}
