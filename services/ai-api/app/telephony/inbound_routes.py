@@ -135,7 +135,7 @@ async def stream_url(request: Request) -> Response:
     return JSONResponse({"url": url})
 
 
-def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str) -> tuple[Parts, str]:
+def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None) -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in auto (the caller may answer in any of the six languages), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
     if llm_choice == "sarvam":
@@ -143,13 +143,17 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str)
         model = "sarvam-105b"
     else:
         llm, model = AnthropicStream(bv.anthropic_key or "", client=bv.client), bv.fast_model
-    tts = FallbackTts(bv.config, bv.factory, chosen={}, gender="female", pronunciations=default_pronunciations())
+    from app.talk_training.guard import GuardedTts
+    from app.talk_training.prompt import greeting as trained_greeting
+
+    # the never-say list is a HARD rule: every sentence is checked by code before the voice speaks it
+    tts: Any = GuardedTts(FallbackTts(bv.config, bv.factory, chosen={}, gender="female", pronunciations=default_pronunciations()), (training or {}).get("never_say") or [])
     parts = Parts(
         stt_for=lambda lang: SarvamRealtimeStt(bv.sarvam_key, language="auto", silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(lang, bv.stt_modes)),
         tts=tts,
         llm=llm,
-        system_for=lambda lang: persona.system_prompt(business=business, assistant=None, language=lang, purpose="inbound", facts=[], customer_first_name=None),
-        greeting_for=lambda lang: persona.opening_line(lang, business=business, assistant=None, customer=None, inbound=True),
+        system_for=lambda lang: persona.system_prompt(business=business, assistant=None, language=lang, purpose="inbound", facts=[], customer_first_name=None, training=training),
+        greeting_for=lambda lang: persona.opening_line(lang, business=business, assistant=None, customer=None, inbound=True, greeting=trained_greeting(training, lang)),
         models={"fast": model, "strong": model},
         voice_for=lambda lang: bv.config.resolve(lang, None, "female").id,
         voice_name=lambda lang: bv.config.resolve(lang, None, "female").name,
@@ -218,7 +222,17 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     except Exception as exc:  # noqa: BLE001 - no row, no call
         log.warning("exotel_inbound begin_failed %s", exc.__class__.__name__)
         return await _refuse(wire, line, "begin_failed")
-    parts, model = (service.parts_for or phone_parts)(bv, service.business, service.language, service.llm_choice)
+    training: dict[str, Any] | None = None
+    talk = getattr(service.store, "talk_training", None)
+    if talk is not None:
+        try:
+            training = await asyncio.to_thread(talk, tenant)
+        except Exception as exc:  # noqa: BLE001 - a call without the training still follows every platform rule
+            log.warning("exotel_inbound training_unreadable %s", exc.__class__.__name__)
+    if service.parts_for is None:
+        parts, model = phone_parts(bv, service.business, service.language, service.llm_choice, training)
+    else:
+        parts, model = service.parts_for(bv, service.business, service.language, service.llm_choice)
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="inbound", language=service.language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute)
     if live is not None:

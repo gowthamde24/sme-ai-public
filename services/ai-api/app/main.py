@@ -197,6 +197,8 @@ from app.speaking.service import SpeakingService
 from app.suppression.repository import PostgrestSuppressionRepository
 from app.suppression.routes import router as suppression_router
 from app.suppression.wiring import build_key_ring
+from app.talk_training.repository import PostgrestTalkTraining
+from app.talk_training.routes import router as talk_training_router
 from app.tasks import errors as task_errors
 from app.tasks.repository import PostgrestTasksRepository
 from app.tasks.routes import router as tasks_router
@@ -354,6 +356,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_file_reader=FileReader(LocalTools()),
         assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
         workspace_secrets=build_workspace_secrets(settings, config.rest_url, config.anon_key),
+        talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
         lead_finder=LeadFinderService(
             PostgrestLeadFinderRepository(config.rest_url, config.anon_key),
             mode=settings.lead_finder,
@@ -1317,6 +1320,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(knowledge_router)
     app.include_router(lead_sources_router)
     app.include_router(assistant_work_router)
+    app.include_router(talk_training_router)
     app.include_router(lead_profile_router)
     app.include_router(lead_intake_router)
     app.include_router(outreach_router)
