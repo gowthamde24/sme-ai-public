@@ -79142,5 +79142,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.work.pv.fact.changed": {
+  "en": "{n} prices change",
+  "te": "{n} ధరలు మారుతాయి",
+  "hi": "{n} दाम बदलेंगे",
+  "kn": "{n} ಬೆಲೆಗಳು ಬದಲಾಗುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.pv.fact.changed.one": {
+  "en": "{n} price changes",
+  "te": "{n} ధర మారుతుంది",
+  "hi": "{n} दाम बदलेगा",
+  "kn": "{n} ಬೆಲೆ ಬದಲಾಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.pv.fact.unchanged": {
+  "en": "{n} stay the same",
+  "te": "{n} అలాగే ఉంటాయి",
+  "hi": "{n} वैसे ही रहेंगे",
+  "kn": "{n} ಹಾಗೆಯೇ ಇರುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.pv.fact.unchanged.one": {
+  "en": "{n} stays the same",
+  "te": "{n} అలాగే ఉంటుంది",
+  "hi": "{n} वैसा ही रहेगा",
+  "kn": "{n} ಹಾಗೆಯೇ ಇರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.pv.fact.not_in_catalogue": {
+  "en": "{n} not in your catalogue",
+  "te": "{n} మీ కేటలాగ్‌లో లేవు",
+  "hi": "{n} आपके कैटलॉग में नहीं हैं",
+  "kn": "{n} ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.pv.fact.not_in_catalogue.one": {
+  "en": "{n} not in your catalogue",
+  "te": "{n} మీ కేటలాగ్‌లో లేదు",
+  "hi": "{n} आपके कैटलॉग में नहीं है",
+  "kn": "{n} ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

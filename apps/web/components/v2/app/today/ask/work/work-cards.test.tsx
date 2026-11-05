@@ -47,6 +47,11 @@ describe("the file preview card", () => {
       expect(document.querySelector("[data-read-by]")).toBeNull();
     }
   });
+  it("a price list says what changes: Item, Now and New, and the counts in their own words", () => {
+    draw([card({ ...CATALOGUE_PREVIEW_JSON, facts: [{ code: "not_in_catalogue", n: 1 }, { code: "unchanged", n: 12 }, { code: "changed", n: 6 }, { code: "found", n: 19 }], columns: ["Item", "Now", "New"], rows: [["Kanjivaram Red", "—", "₹12,000"]] })]);
+    expect(screen.getByText("19 found · 6 prices change · 12 stay the same · 1 not in your catalogue")).toBeTruthy();
+    expect(document.querySelector('[data-work="rows"]')?.textContent).toContain("New: ₹12,000");
+  });
   it("a catalogue preview is a money plan: the Owner confirms twice", async () => {
     draw([card(CATALOGUE_PREVIEW_JSON)]);
     expect(screen.getByText(/24 found · 18 already exist · 2 no price/)).toBeTruthy();

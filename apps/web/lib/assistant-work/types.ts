@@ -92,7 +92,7 @@ export const DESTINATIONS = ["leads", "catalogue", "knowledge", "customer"] as c
 export type Destination = (typeof DESTINATIONS)[number];
 
 /** The counts a preview may say, each with its own words ("38 found · 4 already exist · 2 no phone · 1 looks like a supplier"). A code this screen does not know is left out. */
-export const PREVIEW_FACTS = ["found", "existing", "no_phone", "supplier", "no_price", "duplicate", "unreadable", "too_many"] as const;
+export const PREVIEW_FACTS = ["found", "changed", "unchanged", "not_in_catalogue", "existing", "no_phone", "supplier", "no_price", "duplicate", "unreadable", "too_many"] as const; // changed / unchanged / not_in_catalogue: a price list (C1 aw-files-prices)
 export type PreviewFact = (typeof PREVIEW_FACTS)[number];
 
 /** Why a plan is sensitive (job: money, sending/calling, members/roles, deleting, billing, secrets). A sensitive plan needs the Owner's explicit second confirm. */
