@@ -12,7 +12,7 @@ NOTE: no `from __future__ import annotations` here (request models are attached 
 
 import uuid
 from datetime import datetime
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Query, Response
 
@@ -62,6 +62,17 @@ def get_call(call_id: str, ctx: Reader, runtime: RuntimeDep, response: Response)
     if ctx.role not in (Role.OWNER, Role.ADMIN):
         out.transcript = None   # the database already withholds it from Sales; this is the second lock
     return out
+
+
+@router.post("/{call_id}/handled")
+def mark_handled(call_id: str, ctx: Reader, runtime: RuntimeDep) -> dict[str, Any]:
+    """A caller asked for a person and the team called them back: the call leaves Today's "Needs you" (Owner, Admin, Sales; once; 404 for another workspace's call)."""
+    from app.crm.repository import NotFoundError
+
+    try:
+        return _service(runtime).handled(ctx.principal.token, ctx.tenant.id, _id(call_id))
+    except NotFoundError:
+        raise not_found() from None
 
 
 @router.post("/{call_id}/hang-up", status_code=202)

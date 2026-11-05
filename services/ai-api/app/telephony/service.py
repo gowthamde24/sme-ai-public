@@ -56,6 +56,10 @@ class CallsService:
         cursor = page[-1]["created_at"] if more and page else None
         return CallsOut(items=items, next_cursor=cursor, updated_at=now, poll_after_s=POLL_AFTER_S)
 
+    def handled(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any]:
+        out = self._repo.handled(token, tenant_id, call_id)
+        return {"call_id": str(out["call_id"]), "handled_at": out["handled_at"]}
+
     def get(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> CallDetailOut:
         row = self._repo.get(token, tenant_id, call_id)
         base = shape(row, self._clock())

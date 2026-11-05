@@ -2,6 +2,7 @@ import { addDays, dayInIndia } from "@/components/v2/app/deliveries/trip-logic";
 import { ApiAuthError } from "@/lib/api/client";
 import { listTrips } from "@/lib/api/deliveries";
 import { listCampaigns } from "@/lib/api/campaigns";
+import { listAdmissions } from "@/lib/api/education";
 import { getLedgerSummary } from "@/lib/api/ledger";
 import { listMaterialQuotes } from "@/lib/api/materials";
 import { settle } from "@/lib/api/part";
@@ -92,7 +93,7 @@ export async function readPackCards(input: PackCardInput): Promise<PackCard[]> {
         const href = `${base}/campaigns`;
         if (!r.ok) return { id: "reminders", titleKey: "today.pack.reminders.title", value: null, subKey: null, subVars: {}, href, tone: "neutral" };
         const n = r.data.items.length;
-        return { id: "reminders", titleKey: "today.pack.reminders.title", value: String(n), subKey: n === 0 ? "today.pack.reminders.none" : "today.pack.reminders.sub", subVars: { n }, href, tone: "neutral" };
+        return { id: "reminders", titleKey: "today.pack.reminders.title", value: String(n), subKey: n === 0 ? "today.pack.reminders.none" : n === 1 ? "today.pack.reminders.one" : "today.pack.reminders.sub", subVars: { n }, href, tone: "neutral" };
       }),
     );
   }
@@ -106,6 +107,18 @@ export async function readPackCards(input: PackCardInput): Promise<PackCard[]> {
       }),
     );
   }
-  const out = (await Promise.all(jobs.map((j) => j.catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null))))).filter((c): c is PackCard => c !== null);
+  // a school's admissions that wait for a decision (owner's review, 5 Nov): enquiries, campus visits and applications not yet admitted or lost
+  if (hasModule(pack, "programmes")) {
+    jobs.push(
+      settle(() => listAdmissions(accessToken, tenantId, { limit: 100 })).then((r): PackCard => {
+        const href = `${base}/admissions`;
+        if (!r.ok) return { id: "admissions", titleKey: "today.pack.admissions.title", value: null, subKey: null, subVars: {}, href, tone: "neutral" };
+        const n = r.data.items.filter((a) => a.stage === "enquiry" || a.stage === "campus_visit" || a.stage === "application").length;
+        return { id: "admissions", titleKey: "today.pack.admissions.title", value: r.data.next_cursor && n >= 100 ? "100+" : String(n), subKey: n === 0 ? "today.pack.admissions.none" : "today.pack.admissions.sub", subVars: { n }, href, tone: n > 0 ? "amber" : "neutral" };
+      }),
+    );
+  }
+  // a card whose read failed is left out (owner's review, 5 Nov: Today never says "Not available yet"; it hides the card)
+  const out = (await Promise.all(jobs.map((j) => j.catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null))))).filter((c): c is PackCard => c !== null && c.value !== null);
   return out;
 }
