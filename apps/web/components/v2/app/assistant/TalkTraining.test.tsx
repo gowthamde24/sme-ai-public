@@ -53,7 +53,8 @@ describe("How I talk to customers", () => {
     fireEvent.change(screen.getByLabelText("Never say 1"), { target: { value: "lowest price" } });
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Please take out amounts, percentages and promises"));
-    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    // the button says "Saving…" until the first answer has settled (a slow machine): press it again only once it is "Save" again
+    fireEvent.click(await screen.findByRole("button", { name: "Save" }));
     await waitFor(() => expect(screen.getByRole("link", { name: "Open Security" })).toHaveAttribute("href", "/app/security"));
   });
 
