@@ -52,6 +52,10 @@ function deskLine(w: DeskWorker, t: T, now: number): string {
  * "Your team" (job AU; the owner's target, 31 Oct): the title, ONE line with the helpers' names ("Lead catcher · Caller · Follow-ups"), and the link to the Office, where each helper has its own row with its state and what it did last. Agent OWL itself is the card above, so it
  * is not repeated here. `team` null (could not be read) says so.
  */
+/** How many helpers "Your team" names before "+N more". */
+export const TEAM_NAMES = 3;
+export const teamLine = (names: readonly string[], t: T): string => (names.length <= TEAM_NAMES ? names.join(" · ") : `${names.slice(0, TEAM_NAMES).join(" · ")} · ${t("today.team.more", { n: names.length - TEAM_NAMES })}`);
+
 export function TeamSection({ team, deskTeam = null, base, t }: { team: readonly AgentRow[] | null; /** A Lead Desk workspace's workers, named instead of the shop's helpers (which are not its team). */ deskTeam?: readonly DeskWorker[] | null; base: string; t: T; now?: number }) {
   // a helper that is not built yet (`not_available`, e.g. the Lead Finder until its job ships) is not named: the line lists the team that exists (owner, 4 Nov)
   const helpers = team?.filter((a) => a.agent !== "main" && a.state !== "not_available") ?? null;
@@ -61,8 +65,9 @@ export function TeamSection({ team, deskTeam = null, base, t }: { team: readonly
       <h2 id="team-heading" className={SIDE_TITLE}>
         {t("today.team")}
       </h2>
-      <p data-part="team-list" data-team={deskTeam !== null ? "lead-desk" : undefined} className={SIDE_LINE}>
-        {names === null || names.length === 0 ? t("frame.notyet") : names.join(" · ")}
+      {/* three names, then "+3 more" (owner, 5 Nov: the line was cut off); never one truncated line, at most two */}
+      <p data-part="team-list" data-team={deskTeam !== null ? "lead-desk" : undefined} title={names && names.length > TEAM_NAMES ? names.join(" · ") : undefined} className="line-clamp-2 text-base text-muted [overflow-wrap:anywhere]">
+        {names === null || names.length === 0 ? t("frame.notyet") : teamLine(names, t)}
       </p>
       <Link href={`${base}/office`} className={linkClass}>
         {t("today.team.open")}

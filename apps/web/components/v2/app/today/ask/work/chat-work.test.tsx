@@ -87,6 +87,8 @@ describe("files in the chat", () => {
     render(<Harness work={{ mode: "mock", role: "owner" }} />);
     await openPlus();
     const item = screen.getByRole("menuitem", { name: "Add a file" });
+    // first in the menu, before New conversation and Earlier conversations (owner, 5 Nov)
+    expect(screen.getAllByRole("menuitem").map((m) => /^(Add a file|New conversation|Earlier conversations)/.exec(m.textContent ?? "")?.[1])).toEqual(["Add a file", "New conversation", "Earlier conversations"]);
     const click = vi.spyOn(fileInput() as HTMLInputElement, "click");
     await act(async () => void fireEvent.click(item));
     expect(click).toHaveBeenCalled();
