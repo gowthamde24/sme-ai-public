@@ -88,7 +88,7 @@ def test_code_checks_the_planners_answer() -> None:
     assert check({"decision": "do", "actions": [{"action": "send_whatsapp"}]}, u, "").decision == "clarify", "an action that is not on the list is never run"
     assert check({"decision": "do", "actions": [{"action": "add_people"}]}, u, "").decision == "clarify", "no people in a brochure: nothing to add"
     assert check({"decision": "nonsense"}, u, "").decision == "clarify"
-    assert set(FINAL.input_schema["properties"]["actions"]["items"]["properties"]["action"]["enum"]) == {"add_people", "add_to_knowledge", "update_prices", "capture_enquiry"}
+    assert set(FINAL.input_schema["properties"]["actions"]["items"]["properties"]["action"]["enum"]) == {"add_people", "add_to_knowledge", "update_prices", "capture_enquiry", "check_stock"}
 
 
 # ============================================================================ in the chat
@@ -205,8 +205,8 @@ EVALS: list[tuple[str, str, str, str, dict[str, Any], str]] = [
     ("price list, te", PRICES, "ఈ ధరలు కేటలాగ్‌లో మార్చండి", "te", {"decision": "do", "actions": [{"action": "update_prices"}]}, "prices"),
     ("brochure, knowledge", BROCHURE, "add this to About my business", "en", {"decision": "do", "actions": [{"action": "add_to_knowledge"}]}, "plan:knowledge.add_source"),
     ("brochure, knowledge te", BROCHURE, "దీన్ని నా వ్యాపారం గురించి లో పెట్టండి", "te", {"decision": "do", "actions": [{"action": "add_to_knowledge"}]}, "plan:knowledge.add_source"),
-    ("order pdf", ORDER, "make this order and tell me what is short", "en", {"decision": "cant_do", "cant": "order_from_file"}, "cant:order_from_file"),
-    ("order pdf te", ORDER, "ఈ ఆర్డర్ చేసి స్టాక్ చూడండి", "te", {"decision": "cant_do", "cant": "order_from_file"}, "cant:order_from_file"),
+    ("order pdf", ORDER, "make this order and tell me what is short", "en", {"decision": "do", "actions": [{"action": "check_stock"}], "cant": "order_from_file"}, "stock"),
+    ("order pdf te", ORDER, "ఈ ఆర్డర్ చేసి స్టాక్ చూడండి", "te", {"decision": "do", "actions": [{"action": "check_stock"}], "cant": "order_from_file"}, "stock"),
     ("visiting card + follow-up", CARD, "add him and follow up", "en", {"decision": "do", "actions": [{"action": "add_people"}], "cant": "follow_up"}, "preview"),
     ("visiting card te", CARD, "ఇతన్ని చేర్చి ఫాలో అప్ చేయండి", "te", {"decision": "do", "actions": [{"action": "add_people"}], "cant": "follow_up"}, "preview"),
     ("summarise brochure", BROCHURE, "summarise this", "en", {"decision": "answer", "answer": "Kanchipuram silk weavers since 1952; open 10 am to 8 pm."}, "answer"),
@@ -230,6 +230,8 @@ def test_a2b_evals_code_side(name: str, text: str, request_words: str, language:
         assert cards == [] and text_of(evs)
     elif expected == "preview":
         assert cards[0]["kind"] == "file_preview" and cards[0]["plan"]["status"] == "proposed"
+    elif expected == "stock":
+        assert cards == [] and ("may be short" in text_of(evs) or "తక్కువ పడ" in text_of(evs) or "Nothing looks short" in text_of(evs) or "ఏదీ తక్కువ" in text_of(evs))
     elif expected == "enquiry":
         assert cards[0]["plan"]["steps"][-1]["tool"] == "leads.capture_enquiry" and ("confirm the requirement" in text_of(evs) or "అవసరాన్ని" in text_of(evs))
     elif expected == "prices":
