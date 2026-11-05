@@ -62,7 +62,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "agent_runs", "agent_run_steps", "agent_cost_reservations", "tenant_agent_settings", "tenant_data_policy",
     "tasks", "task_contacts", "phone_calls", "phone_numbers",
     "prospect_searches", "prospects", "lead_finder_settings",
-    "assistant_files", "assistant_work_plans", "assistant_work_actions", "lead_intake_created", "workspace_secrets", "secret_requests", "talk_training",
+    "assistant_files", "assistant_work_plans", "assistant_work_actions", "lead_intake_created", "tenant_agent_switches", "workspace_secrets", "secret_requests", "talk_training",
     "data_exports", "erasure_requests", "memberships", "audit_events", "business_profile",
 )  # fmt: skip
 # the tables whose primary key is the workspace id itself (no `id` column)
