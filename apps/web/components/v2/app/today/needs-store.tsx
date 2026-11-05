@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import type { NeedsCard } from "./types";
+import { weightOf, type NeedsCard } from "./types";
 
 /** A refusal kept for a card that was taken off the list while its request was out and then put back. */
 export type Note = { text: string; mfa: boolean };
@@ -38,14 +38,15 @@ export function NeedsProvider({ initial, waiting, children }: { initial: NeedsCa
   const [cards, setCards] = React.useState<NeedsCard[] | null>(initial);
   const [notes, setNotes] = React.useState<Record<string, Note>>({});
   const [toast, setToast] = React.useState<Toast | null>(null);
-  const extra = initial !== null && waiting !== null ? Math.max(0, waiting - initial.length) : 0;
+  // the rows stand for this many things (a "11 more prospects" row is 11): what the count says beyond them is `extra`
+  const extra = initial !== null && waiting !== null ? Math.max(0, waiting - initial.reduce((n, c) => n + weightOf(c), 0)) : 0;
   const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   React.useEffect(() => () => void (timer.current && clearTimeout(timer.current)), []);
 
   const store = React.useMemo<Store>(
     () => ({
       cards,
-      total: cards === null ? null : cards.length + extra,
+      total: cards === null ? null : cards.reduce((n, c) => n + weightOf(c), 0) + extra,
       extra,
       notes,
       toast,

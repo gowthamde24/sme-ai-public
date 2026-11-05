@@ -71,6 +71,24 @@ WORDS: dict[str, dict[str, str]] = {
         "hi": "इस वर्कस्पेस में कोई उदाहरण डेटा नहीं है।",
         "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ನಲ್ಲಿ ಉದಾಹರಣೆ ಡೇಟಾ ಇಲ್ಲ.",
     },
+    "key_card": {
+        "en": "Paste your IndiaMART CRM key on the card below. It goes straight to a locked store: it is never in this chat, never shown again (only its last four), and nobody is messaged.",
+        "te": "మీ IndiaMART CRM కీని కింది కార్డులో పేస్ట్ చేయండి. అది నేరుగా లాక్ చేసిన స్టోర్‌కు వెళ్తుంది: ఈ చాట్‌లో ఉండదు, మళ్ళీ చూపించను (చివరి నాలుగు అక్షరాలు మాత్రమే), ఎవరికీ మెసేజ్ వెళ్ళదు.",
+        "hi": "अपनी IndiaMART CRM key नीचे के कार्ड में पेस्ट करें। यह सीधे एक बंद स्टोर में जाती है: इस चैट में नहीं आती, दोबारा नहीं दिखती (सिर्फ़ आख़िरी चार अक्षर), और किसी को मैसेज नहीं जाता।",
+        "kn": "ನಿಮ್ಮ IndiaMART CRM ಕೀಯನ್ನು ಕೆಳಗಿನ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ. ಅದು ನೇರವಾಗಿ ಲಾಕ್ ಮಾಡಿದ ಸ್ಟೋರ್‌ಗೆ ಹೋಗುತ್ತದೆ: ಈ ಚಾಟ್‌ನಲ್ಲಿ ಇರುವುದಿಲ್ಲ, ಮತ್ತೆ ತೋರಿಸುವುದಿಲ್ಲ (ಕೊನೆಯ ನಾಲ್ಕು ಅಕ್ಷರ ಮಾತ್ರ), ಯಾರಿಗೂ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ.",
+    },
+    "key_owner_only": {
+        "en": "Only the owner can add the business's IndiaMART key.",
+        "te": "వ్యాపారం IndiaMART కీని యజమాని మాత్రమే చేర్చగలరు.",
+        "hi": "बिज़नेस की IndiaMART key सिर्फ़ मालिक जोड़ सकते हैं।",
+        "kn": "ವ್ಯಾಪಾರದ IndiaMART ಕೀಯನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಸೇರಿಸಬಹುದು.",
+    },
+    "key_not_yet": {
+        "en": "I can't take your own IndiaMART key here yet. Lead sources shows how IndiaMART leads come in now.",
+        "te": "మీ సొంత IndiaMART కీని ఇక్కడ ఇంకా తీసుకోలేను. IndiaMART లీడ్స్ ఇప్పుడు ఎలా వస్తాయో లీడ్ సోర్స్‌లలో చూడవచ్చు.",
+        "hi": "आपकी अपनी IndiaMART key मैं यहाँ अभी नहीं ले सकती। IndiaMART लीड अभी कैसे आती हैं, यह लीड सोर्स में दिखता है।",
+        "kn": "ನಿಮ್ಮ ಸ್ವಂತ IndiaMART ಕೀಯನ್ನು ಇಲ್ಲಿ ಇನ್ನೂ ತೆಗೆದುಕೊಳ್ಳಲಾರೆ. IndiaMART ಲೀಡ್‌ಗಳು ಈಗ ಹೇಗೆ ಬರುತ್ತವೆ ಎಂದು ಲೀಡ್ ಸೋರ್ಸ್‌ಗಳಲ್ಲಿ ನೋಡಬಹುದು.",
+    },
     "unavailable": {
         "en": "I can't change that from the chat right now. The screen can.",
         "te": "అది ఇప్పుడు చాట్ నుండి మార్చలేను. స్క్రీన్‌లో మార్చవచ్చు.",
@@ -100,8 +118,8 @@ def hours_words(hours: dict[str, Any] | None) -> str:
 class RouteTurn:
     """What the assistant answers for a routed request: (the sentence, the card)."""
 
-    def __init__(self, store: WorkStore, tools: Tools, lead_sources: Any) -> None:
-        self.store, self.tools, self.lead_sources = store, tools, lead_sources
+    def __init__(self, store: WorkStore, tools: Tools, lead_sources: Any, secrets: Any = None) -> None:
+        self.store, self.tools, self.lead_sources, self.secrets = store, tools, lead_sources, secrets
 
     def _read(self, tenant_id: uuid.UUID, token: str, tool: str, message_id: uuid.UUID) -> Any | None:
         got = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool=tool), message_id))
@@ -134,7 +152,27 @@ class RouteTurn:
             return self._add_lead(token, tenant_id, routed.args, message_id, conversation_id, language)
         if a == "remove_example_data":
             return self._example(token, tenant_id, message_id, conversation_id, language)
+        if a == "source_key":
+            return self._source_key(token, tenant_id, message_id, language)
         return w("clarify", language), None
+
+    def _source_key(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, language: Language) -> tuple[str, dict[str, Any] | None]:
+        """The secure card (contract section 2, `secret`): a request the Owner's card sends the key to, good for 15 minutes and once. The key never comes back here."""
+        sources = {"label": "Lead sources", "href": "/lead-sources"}
+        if self.secrets is None:
+            return w("key_not_yet", language), cant_do("not_yet", "your own IndiaMART key", sources)
+        from app.tenancy.repository import Forbidden
+
+        try:
+            opened = self.secrets.open(token, tenant_id, "indiamart_key", message_id)
+        except Forbidden:
+            return w("key_owner_only", language), None
+        saved = opened.get("saved")
+        return w("key_card", language), {
+            "kind": "secret", "id": str(uuid.uuid4()), "request_id": str(opened["request_id"]), "secret": "indiamart_key", "title": "Your IndiaMART CRM key",
+            "hint": "IndiaMART Lead Manager -> Settings -> CRM key (Import/Export Leads)", "expires_at": str(opened.get("expires_at") or ""),
+            "saved": {"last4": saved.get("last4")} if isinstance(saved, dict) else None,
+        }
 
     def _calling_hours(self, token: str, tenant_id: uuid.UUID, args: dict[str, Any], message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
         read = self._read(tenant_id, token, "call-settings.get_settings", message_id)

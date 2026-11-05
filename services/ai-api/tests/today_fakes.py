@@ -18,6 +18,7 @@ class FakeTodayRepository:
         self.percent: dict[uuid.UUID, Any] = {}
         self.paused: dict[uuid.UUID, Any] = {}
         self.week: dict[uuid.UUID, Any] = {}
+        self.nav: dict[uuid.UUID, Any] = {}
         self.calls: list[tuple[str, str, uuid.UUID]] = []
         self.raise_on_next: RepositoryError | None = None
 
@@ -33,6 +34,9 @@ class FakeTodayRepository:
 
     def agents_status(self, token: str, tenant_id: uuid.UUID) -> Any:
         return self._go("agents_status", token, tenant_id, self.agents)
+
+    def nav_counts(self, token: str, tenant_id: uuid.UUID) -> Any:
+        return self._go("nav_counts", token, tenant_id, self.nav)
 
     def ai_usage(self, token: str, tenant_id: uuid.UUID) -> Any:
         return self._go("ai_usage", token, tenant_id, self.cost)
