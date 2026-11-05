@@ -2019,6 +2019,105 @@
    "kn": "draft"
   }
  },
+ "today.sum.price": {
+  "en": "Price reply",
+  "te": "ధర జవాబు",
+  "hi": "कीमत का जवाब",
+  "kn": "ಬೆಲೆ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.promise": {
+  "en": "A promise to check",
+  "te": "సరిచూడాల్సిన హామీ",
+  "hi": "जाँचने वाला वादा",
+  "kn": "ಪರಿಶೀಲಿಸಬೇಕಾದ ಭರವಸೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.complaint": {
+  "en": "Reply to a complaint",
+  "te": "ఫిర్యాదుకు జవాబు",
+  "hi": "शिकायत का जवाब",
+  "kn": "ದೂರಿಗೆ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.reply_to_inbound": {
+  "en": "Reply",
+  "te": "జవాబు",
+  "hi": "जवाब",
+  "kn": "ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.info": {
+  "en": "Shop information",
+  "te": "షాప్ సమాచారం",
+  "hi": "दुकान की जानकारी",
+  "kn": "ಅಂಗಡಿ ಮಾಹಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.visit": {
+  "en": "Visit invitation",
+  "te": "విజిట్ ఆహ్వానం",
+  "hi": "विज़िट का न्योता",
+  "kn": "ಭೇಟಿ ಆಹ್ವಾನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.followup": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.order_status": {
+  "en": "Order update",
+  "te": "ఆర్డర్ అప్‌డేట్",
+  "hi": "ऑर्डर अपडेट",
+  "kn": "ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.other": {
+  "en": "Message",
+  "te": "మెసేజ్",
+  "hi": "मैसेज",
+  "kn": "ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.title.call": {
   "en": "{customer} asked for a call",
   "te": "{customer} కాల్ అడిగారు",
@@ -52121,6 +52220,17 @@
    "kn": "draft"
   }
  },
+ "today.pack.reminders.one": {
+  "en": "1 campaign is sending on its days",
+  "te": "1 క్యాంపెయిన్ దాని రోజుల్లో పంపుతోంది",
+  "hi": "1 कैंपेन अपने दिनों पर भेज रहा है",
+  "kn": "1 ಕ್ಯಾಂಪೇನ್ ಅದರ ದಿನಗಳಲ್ಲಿ ಕಳುಹಿಸುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.pack.campus.title": {
   "en": "Campus visits today",
   "te": "ఈ రోజు క్యాంపస్ సందర్శనలు",
@@ -52148,6 +52258,39 @@
   "te": "{n} కుటుంబాలు వస్తున్నాయి",
   "hi": "{n} परिवार आ रहे हैं",
   "kn": "{n} ಕುಟುಂಬಗಳು ಬರುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.admissions.title": {
+  "en": "Admissions waiting",
+  "te": "ఎదురుచూస్తున్న అడ్మిషన్లు",
+  "hi": "इंतज़ार में दाखिले",
+  "kn": "ಕಾಯುತ್ತಿರುವ ಪ್ರವೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.admissions.none": {
+  "en": "No admission waits for you",
+  "te": "మీ కోసం ఏ అడ్మిషన్ ఎదురుచూడటం లేదు",
+  "hi": "कोई दाखिला आपका इंतज़ार नहीं कर रहा",
+  "kn": "ಯಾವ ಪ್ರವೇಶವೂ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.admissions.sub": {
+  "en": "Enquiries, visits and applications to decide",
+  "te": "నిర్ణయించాల్సిన ఎంక్వైరీలు, విజిట్‌లు, అప్లికేషన్లు",
+  "hi": "तय करने वाली पूछताछ, विज़िट और आवेदन",
+  "kn": "ತೀರ್ಮಾನಿಸಬೇಕಾದ ವಿಚಾರಣೆಗಳು, ಭೇಟಿಗಳು, ಅರ್ಜಿಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -75782,6 +75925,28 @@
   "te": "కొత్త లీడ్స్",
   "hi": "नई पूछताछ",
   "kn": "ಹೊಸ ಲೀಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.leads.count": {
+  "en": "Not opened yet, from the last 7 days",
+  "te": "గత 7 రోజుల నుండి, ఇంకా తెరవలేదు",
+  "hi": "पिछले 7 दिनों से, अभी खोले नहीं",
+  "kn": "ಕಳೆದ 7 ದಿನಗಳಿಂದ, ಇನ್ನೂ ತೆರೆದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.leads.count.none": {
+  "en": "Every new lead has been opened",
+  "te": "ప్రతి కొత్త లీడ్ తెరిచారు",
+  "hi": "हर नया लीड खोला जा चुका है",
+  "kn": "ಪ್ರತಿ ಹೊಸ ಲೀಡ್ ತೆರೆಯಲಾಗಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

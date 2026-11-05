@@ -4,7 +4,8 @@
 //   node e2e/visual/shell-shots.mjs [--no-build] [--out DIR]
 //
 // Writes to DIR (default /Volumes/Stack19/stack19/v2-overnight/shots-shell):
-//   desktop-<pack>-<light|dark>-<en|te>.png   Today at 1440 x 1000, the first screenful (sarees in Telugu too)
+//   desktop-<pack>-<light|dark>-<en|te>.png   Today at 1440 x 900, the first screenful (sarees in Telugu too); desktop-<pack>-full-en.png the whole page
+//   laptop-<pack>-light-en.png, laptop-<pack>-menu-end-en.png   Today at 1366 x 768, and with the side menu scrolled to its end
 //   phone-<pack>-today-<en|te>.png, phone-<pack>-more-<en|te>.png   Today at 390 x 844, and with More open
 // Same ports as run.mjs (54999, 3014); it stops only its own processes. It only looks: nothing is pressed but More.
 import { execFileSync, spawn } from "node:child_process";
@@ -55,12 +56,36 @@ const AGENTS_ON = [
   { agent: "followup_desk", state: "working", job: "Drafts follow-ups.", last_event: { text: "5 due today, next at 16:00", at: "2026-10-14T04:30:00Z" } },
   { agent: "order_desk", state: "switched_off", job: "Keeps orders in order.", last_event: null },
 ];
+// a SCHOOL's own Today (owner's review, 5 Nov: never another business type's rows or cards): two things that wait (a fee reminder plan to approve, a follow-up to an admission enquiry), today's fee report, a reminder
+// campaign running, admissions at each stage. Invented names; the stand-in's own Today is a saree shop's and is never shown for the school.
+const SCHOOL_TODAY = {
+  cards: { waiting: 2, money_held_paise: 0, orders_open: 0 },
+  needs_you: [
+    { kind: "campaign_approval", id: "ca000000-0000-4000-8000-000000000001", customer: "October fee reminders", city: null, agent: "followup_desk", summary: "A fee reminder plan for 18 parents is waiting for your approval.", at: "2026-10-14T04:20:00Z", amount_paise: 41250000, target: { type: "campaign", id: "ca000000-0000-4000-8000-000000000001" } },
+    { kind: "followup_due", id: "f0000000-0000-4000-8000-000000000001", customer: "Lakshmi Devi (parent)", city: "Anantapur", agent: "followup_desk", summary: "A follow-up message (number 1) is drafted and waiting for your approval.", at: "2026-10-14T03:40:00Z", amount_paise: null, target: { type: "lead", id: "1ead0000-0000-4000-8000-000000000001" } },
+  ],
+  recent: [],
+};
+const SCHOOL_REPORT = { report: "education.today", as_of: "2026-10-14", from: "2026-10-14", to: "2026-10-14", kpis: [{ key: "collected_paise", value: 3700000, unit: "paise" }, { key: "receipts", value: 4, unit: "count" }], tables: [], series: [] };
+const CAMPAIGN = {
+  id: "ca000000-0000-4000-8000-000000000002", name: "October fee reminders", kind: "fee_due", status: "running", language: "en", wa_template_id: "7e000000-0000-4000-8000-000000000001",
+  message_text: "Hello {{name}}, the fee of {{amount}} for {{reference}} is due on {{due_date}}. {{business}}", steps: [{ offset_days: -3, time: "10:00" }, { offset_days: 0, time: "10:00" }],
+  call_after_step: 2, call_wait_hours: 24, audience_kind: "filter", audience_filter: { due_from: "2026-10-01", due_to: "2026-10-31" }, approved_by: "11111111-1111-4111-8111-111111111111", approved_at: "2026-10-12T06:00:00+00:00", approved_recipients: 18, approved_total_paise: 41250000,
+  created_at: "2026-10-10T05:00:00+00:00", updated_at: "2026-10-12T05:00:00+00:00", paused_at: null, cancelled_at: null, completed_at: null, recipients: 18, total_amount_paise: 41250000,
+};
+const admission = (n, name, stage) => ({ id: `ad000000-0000-4000-8000-00000000000${n}`, lead_id: `1ead0000-0000-4000-8000-00000000000${n}`, contact_id: `c0000000-0000-4000-8000-00000000000${n}`, contact_name: name, programme_id: "b0000000-0000-4000-8000-000000000001", programme_name: "Class 1", source: "whatsapp", stage, lost_reason: null, student_id: null, stage_at: "2026-10-10T05:00:00+00:00", created_at: "2026-10-08T05:00:00+00:00", visits: 0, next_visit: null });
+const ADMISSIONS = { items: [admission(1, "Lakshmi Devi (parent)", "enquiry"), admission(2, "Ravi Kumar (parent)", "campus_visit"), admission(3, "Suresh Babu (parent)", "application"), admission(4, "Meena (parent)", "admitted")], next_cursor: null };
+const school = () => current.id === "education";
 const extraRoutes = [
+  ["GET", new RegExp(`^/v1/tenants/${TENANT}/today$`), (req, res) => (school() ? json(SCHOOL_TODAY)(req, res) : false)],
+  ["GET", new RegExp(`^/v1/tenants/${TENANT}/reports/run/education\\.today$`), json(SCHOOL_REPORT)],
+  ["GET", new RegExp(`^/v1/tenants/${TENANT}/campaigns$`), json({ items: [CAMPAIGN], next_cursor: null })],
+  ["GET", new RegExp(`^/v1/tenants/${TENANT}/institution/admissions$`), json(ADMISSIONS)],
   ["GET", new RegExp(`^/v1/tenants/${TENANT}/agents/status$`), json(() => AGENTS_ON)],
   ["GET", /^\/v1\/me$/, json(() => ({ user_id: USER_ID, memberships: [{ role: "owner", tenant: { id: TENANT, name: current.name, slug: "example" } }] }))],
   ["GET", new RegExp(`^${T}$`), json(() => ({ id: TENANT, name: current.name, slug: "example", role: "owner", plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-09-20T00:00:00Z" }))],
   ["GET", new RegExp(`^${T}/lead-finder/availability$`), json(() => (current.finder ? { available: true, source: "fixture", reason: "ok", upgrade_to: null, audience: "businesses" } : { available: false, source: null, reason: "not_for_this_business", upgrade_to: null, audience: "organisations" }))],
-  ["GET", new RegExp(`^${T}/nav-counts$`), json(() => ({ needs_you: 5, prospects_needing_owner: current.finder ? 0 : null, new_leads: 12, live_calls: 1, unread_chats: 2, followups_due: 5, visits_today: 2, quotes_waiting: current.id === "education" ? null : 1, ai_team_working: 4, call_minutes: { used: 412, total: 600 }, ai_usage: { used_paise: 6800, allowance_paise: 30000, period: "month" }, plan: "ai_workforce", as_of: "2026-10-14T05:00:00Z" }))],
+  ["GET", new RegExp(`^${T}/nav-counts$`), json(() => ({ needs_you: school() ? 3 : 5, prospects_needing_owner: current.finder ? 0 : null, new_leads: 12, live_calls: 1, unread_chats: 2, followups_due: 5, visits_today: 2, quotes_waiting: current.id === "education" ? null : 1, ai_team_working: 4, call_minutes: { used: 412, total: 600 }, ai_usage: { used_paise: 6800, allowance_paise: 30000, period: "month" }, plan: "ai_workforce", as_of: "2026-10-14T05:00:00Z" }))],
 ];
 
 const b64url = (s) => Buffer.from(s).toString("base64url");
@@ -83,18 +108,32 @@ async function waitForPort(port, ms = 90_000) {
   throw new Error(`nothing listening on ${port} after ${ms} ms`);
 }
 
-async function shot(browser, cookie, { file, viewport, scheme, lang, more = false, full = false }) {
+async function shot(browser, cookie, { file, viewport, scheme, lang, more = false, full = false, menuEnd = false }) {
   const context = await browser.newContext({ viewport, deviceScaleFactor: 2, ignoreHTTPSErrors: true, colorScheme: scheme, timezoneId: "Asia/Kolkata" });
   await context.addCookies([{ name: "sme_consent", value: "1.a0", url: WEB_URL }, { name: "sme_lang", value: lang, url: WEB_URL }, { name: "sme_theme", value: scheme, url: WEB_URL }, { name: "sb-127-auth-token", value: cookie, url: WEB_URL }]);
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(String(e)));
-  await page.goto(`${WEB_URL}/app/tenants/${TENANT}`, { waitUntil: "networkidle", timeout: 60_000 });
+  await page.goto(`${WEB_URL}/app/tenants/${TENANT}`, { waitUntil: "domcontentloaded", timeout: 60_000 });
+  // then the network quiet (a part that polls every few seconds may keep it from ever being fully idle: wait at most 15 s)
+  const open = new Map();
+  page.on("request", (r) => open.set(r, new URL(r.url()).pathname + new URL(r.url()).search));
+  page.on("requestfinished", (r) => open.delete(r));
+  page.on("requestfailed", (r) => open.delete(r));
+  await page.waitForLoadState("networkidle", { timeout: 15_000 }).catch(() => errors.push(`network never idle (still open: ${[...open.values()].slice(0, 4).join(", ")})`));
   // the counts arrive after the first paint: wait for one badge (desktop menu or phone bar)
   await page.waitForSelector(viewport.width >= 768 ? '[data-nav-badge="m-leads"]' : '[data-bar-badge="m-leads"]', { timeout: 15_000 }).catch(() => errors.push("no count badge"));
   // the horizontal scroll check of the quality bar
   const wide = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
   if (wide) errors.push("horizontal scroll");
+  // the side menu scrolled to its end (AI team and Setup above the fixed foot)
+  if (menuEnd) {
+    await page.evaluate(() => {
+      const nav = document.querySelector("[data-nav-scroll]");
+      if (nav) nav.scrollTop = nav.scrollHeight;
+    });
+    await page.waitForTimeout(200);
+  }
   if (more) {
     await page.click('[data-bar-tab="more"]');
     await page.waitForSelector("[data-more-sheet]");
@@ -120,7 +159,8 @@ async function main() {
     cwd: WEB_DIR,
     // BROWSER_VOICE (read by the server at request time): Today draws the assistant's composer with the orb, as staging does
     env: { ...process.env, ...webEnv, BROWSER_VOICE: "1", NODE_ENV: "production", NEXT_TELEMETRY_DISABLED: "1", NODE_EXTRA_CA_CERTS: path.join(tmp, "c.pem"), NODE_OPTIONS: `--require ${path.join(HERE, "fake-clock.cjs")}`, VISUAL_FIXED_NOW: String(FIXED_NOW) },
-    stdio: ["ignore", "ignore", "ignore"],
+    // SHOTS_DEBUG=1: the web server's own output on this terminal (a page that does not finish loading)
+    stdio: process.env.SHOTS_DEBUG ? ["ignore", "inherit", "inherit"] : ["ignore", "ignore", "ignore"],
   });
   let failed = false;
   try {
@@ -128,7 +168,9 @@ async function main() {
     mkdirSync(OUT, { recursive: true });
     const browser = await chromium.launch();
     const cookie = sessionCookieValue();
-    const desktop = { width: 1440, height: 1000 };
+    // the review's sizes (owner's review, 5 Nov): 1440 x 900 and 1366 x 768 (a common laptop)
+    const desktop = { width: 1440, height: 900 };
+    const laptop = { width: 1366, height: 768 };
     const phone = { width: 390, height: 844 };
     for (const p of PACKS) {
       current = p;
@@ -138,6 +180,8 @@ async function main() {
         { file: `desktop-${p.short}-light-en.png`, viewport: desktop, scheme: "light", lang: "en" },
         { file: `desktop-${p.short}-dark-en.png`, viewport: desktop, scheme: "dark", lang: "en" },
         { file: `desktop-${p.short}-full-en.png`, viewport: desktop, scheme: "light", lang: "en", full: true },
+        { file: `laptop-${p.short}-light-en.png`, viewport: laptop, scheme: "light", lang: "en" },
+        { file: `laptop-${p.short}-menu-end-en.png`, viewport: laptop, scheme: "light", lang: "en", menuEnd: true },
         ...(p.short === "sarees" ? [{ file: `desktop-${p.short}-light-te.png`, viewport: desktop, scheme: "light", lang: "te" }] : []),
         { file: `phone-${p.short}-today-en.png`, viewport: phone, scheme: "light", lang: "en" },
         { file: `phone-${p.short}-more-en.png`, viewport: phone, scheme: "light", lang: "en", more: true },

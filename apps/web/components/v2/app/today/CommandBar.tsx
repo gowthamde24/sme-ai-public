@@ -62,6 +62,8 @@ export function CommandBar({ lang, base, availability, words, chips }: { lang: s
   const voice = React.useContext(AskVoiceContext);
   // a phone never mounts it (its chat is the floating orb's sheet: two chats at once would share ids and the microphone); until the browser says it is a desktop an empty bar of its own height stands in, so nothing jumps
   const desktop = React.useSyncExternalStore(subscribe, desktopNow, () => false);
+  // an assistant that is not built here: no bar (owner's review, 5 Nov: Today never says "Not available yet")
+  if (availability === "not_available") return null;
   if (!desktop) return <div aria-hidden="true" data-part="command-bar" className="h-[12rem] rounded-2xl border border-line bg-surface max-md:hidden" />;
   if (provided && shared?.live && voice) {
     return (

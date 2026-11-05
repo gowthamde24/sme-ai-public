@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
-import { formatINR } from "@/design/format";
+import { formatRupeesShort } from "@/lib/money";
 import { looksLikeId } from "@/lib/lead-desk/leads";
 
 import { FreshPhotos } from "../catalogue/FreshPhotos";
@@ -177,13 +177,13 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   const k = KIND[item.kind];
   const facts: [string, string][] = [[say(words, k.who), customerName(item.customer, words)]];
   if (item.city) facts.push([say(words, "today.fact.city"), item.city]);
-  if (item.amount_paise !== null) facts.push([say(words, "today.fact.amount"), formatINR(item.amount_paise / 100, { decimals: 2 })]);
+  if (item.amount_paise !== null) facts.push([say(words, "today.fact.amount"), formatRupeesShort(item.amount_paise)]);
   facts.push([say(words, "today.fact.when"), ago(item.at, ctx.now)]);
   const [open, setOpen] = React.useState(false);
   const name = customerName(item.customer, words);
   // the row is SHORT (owner, 4 Nov: "Quote | Lakshmi · ₹40,000"): the amount when there is one, the hot lead's own gist (English only, as before), else just the name; the API's full sentence is in the opened card
   // a kind whose summary is OUR words (OWN_WORDS: the Lead Finder's "fit 64 · low stock") is short already and shown in every language
-  const reason = item.rowLine !== undefined ? item.rowLine : OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatINR(item.amount_paise / 100, { decimals: 2 }) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : "";
+  const reason = item.rowLine !== undefined ? item.rowLine : OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatRupeesShort(item.amount_paise) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : "";
   const tag = item.prospect?.needsOk ? say(words, "today.prospect.needsok") : null;
   if (ctx.compact && !open) {
     return (
@@ -236,6 +236,28 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   );
 }
 
+/** An amount the message names ("₹500", "Rs 500", "500 రూపాయలు"), as "₹500", or null: the row says the price without showing the message. */
+const AMOUNT: readonly RegExp[] = [/₹\s?(\d[\d,]*(?:\.\d{1,2})?)/, /\brs\.?\s?(\d[\d,]*)/i, /(\d[\d,]*)\s*(?:rupees?|రూపాయ|रुपय|रुपए|रुपये|ರೂಪಾಯ)/i];
+export function amountIn(text: string): string | null {
+  for (const re of AMOUNT) {
+    const m = re.exec(text);
+    if (!m) continue;
+    const n = Number(m[1].replace(/,/g, ""));
+    if (Number.isFinite(n) && n > 0) return `₹${n.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+  }
+  return null;
+}
+
+/**
+ * The one line of a held message's row (owner's review, 5 Nov): never the message's own words (they open with the row), a short summary in the person's language: what it is ("Price reply", "Follow-up", "Order update") and the amount
+ * it names when it names one ("Price reply · ₹500").
+ */
+export function messageSummary(m: OutboxCardMessage, words: TodayWords): string {
+  const what = m.flags.includes("money") ? "today.sum.price" : m.flags.includes("commitment") ? "today.sum.promise" : m.flags.includes("complaint") ? "today.sum.complaint" : `today.sum.${m.category}`;
+  const amount = m.flags.includes("money") ? amountIn(m.text) : null;
+  return amount ? `${say(words, what)} · ${amount}` : say(words, what);
+}
+
 function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx: Ctx }) {
   const { words, actions, role } = ctx;
   const decide = useDecide(c);
@@ -273,7 +295,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
 
   if (ctx.compact && !open) {
     return (
-      <CompactRow cardKey={c.key} tone={b.tone} label={say(words, `${b.key}.row`)} title={title} reason={m ? m.text.replace(/\s+/g, " ") : say(words, "today.notext")} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+      <CompactRow cardKey={c.key} tone={b.tone} label={say(words, `${b.key}.row`)} title={title} reason={m ? messageSummary(m, words) : say(words, "today.notext")} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
         {may ? (
           <>
             <button type="button" onClick={() => void decide(() => actions.approveMessage(c.id))} className={rowPrimary} aria-label={say(words, "today.act.approve")}>
@@ -572,6 +594,8 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
   const draw = (c: NeedsCard, cx: Ctx) => (c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={cx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={cx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={cx} /> : <CallCard c={c} ctx={cx} />);
   // the photo links of a catalogue send run out after ten minutes: while a card shows photos, the page reads its data again before they do
   const hasPhotos = cards?.some((c) => c.type === "outbox" && (c.message?.media.length ?? 0) > 0) === true;
+  // a list that cannot be read: no section (owner's review, 5 Nov: Today never says "Not available yet"; the count in the menu stays the API's)
+  if (cards === null) return null;
   return (
     <FreshPhotos seconds={hasPhotos ? 600 : null}>
     <section id="needs-you" aria-labelledby="needs-you-heading" className="flex min-w-0 scroll-mt-24 flex-col gap-3">
@@ -586,17 +610,13 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
           </span>
         ) : null}
         {/* "See all (10)" whenever more rows wait than the three shown (owner, 5 Nov); its number is the badge's, the count of THINGS (a "11 more prospects" row is 11) */}
-        {cards !== null && total !== null && cards.length > 3 ? (
+        {total !== null && cards.length > 3 ? (
           <button type="button" data-needs="see-all" aria-expanded={all} aria-controls="needs-you-list" onClick={() => setAll((v) => !v)} className="ml-auto inline-flex min-h-11 items-center px-1 text-sm font-semibold text-brand-text hover:underline">
             {all ? say(words, "today.seeless") : say(words, "today.seeall", { n: total })}
           </button>
         ) : null}
       </div>
-      {cards === null ? (
-        <div className={card}>
-          <p className="text-sm text-muted">{say(words, "frame.notyet")}</p>
-        </div>
-      ) : cards.length === 0 && extra === 0 ? (
+      {cards.length === 0 && extra === 0 ? (
         <p data-empty="needs" className="flex items-center gap-2 text-sm font-medium text-muted">
           <Check className="size-4 shrink-0 text-green-text" aria-hidden="true" />
           {say(words, "today.empty")}

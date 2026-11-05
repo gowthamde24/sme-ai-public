@@ -10,7 +10,7 @@ Tuesday, 6 October
 [button type=button: See all (4)]
 - Price
 ### Reply to Synthetic Buyer
-· ఈ చీర ధర 500 రూపాయలు మాత్రమే. ఈ సందేశం వ్యాపారం యొక్క AI సహాయకుడి నుండి వచ్చింది.
+· Price reply · ₹500
 [button type=button: Approve and send]
 [button type=button: Not now]
 [button type=button: Details]
@@ -20,7 +20,7 @@ Tuesday, 6 October
 [button type=button: Details]
 - Quote
 ### Synthetic Buyer, Hyderabad
-· ₹50,400.00 [Review](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888)
+· ₹50,400 [Review](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888)
 [button type=button: Details]
 - Visit
 ### Your assistant proposed a visit for Priya S.
@@ -28,7 +28,6 @@ Tuesday, 6 October
 [button type=button: Confirm the visit]
 [button type=button: Details]
 {role=status}
-Not available yet
 {label="At the store today"}
 ## At the store today
 3 visits · 10:30 Anita R. [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)

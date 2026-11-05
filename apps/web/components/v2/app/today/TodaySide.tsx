@@ -12,15 +12,8 @@ import type { AgentRow, DeskWorker, T, TodayData } from "./types";
  */
 export function StoreVisits({ store, calendarHref, bookHref, t }: { store: TodayData["store"]; calendarHref: string; bookHref: string | null; t: T }) {
   if (store === null) return null;
-  if (store.state === "error")
-    return (
-      <section aria-labelledby="visits-heading" data-part="visits" className={card}>
-        <h2 id="visits-heading" className={SIDE_TITLE}>
-          {t("today.visits.title")}
-        </h2>
-        <p className="text-sm text-muted">{t("frame.notyet")}</p>
-      </section>
-    );
+  // a calendar that cannot be read: no card (owner's review, 5 Nov: Today never says "Not available yet")
+  if (store.state === "error") return null;
   const sorted = [...store.visits].sort((a, b) => Date.parse(a.starts_at) - Date.parse(b.starts_at));
   const first = sorted[0];
   const count = sorted.length === 1 ? t("today.visits.one") : t("today.visits.other", { n: sorted.length });
@@ -62,7 +55,8 @@ export const TEAM_CARDS = 4;
  */
 export function teamCards(team: readonly AgentRow[] | null, deskTeam: readonly DeskWorker[] | null, waitingFor: ReadonlySet<string>, t: T, now: number): TeamCard[] | null {
   if (deskTeam !== null) {
-    return deskTeam.map((w): TeamCard => ({ key: w.key, name: w.name, status: w.state === "working" ? "working" : w.state === "off" ? "off" : "idle", line: deskLine(w, t, now) })).sort((a, b) => RANK[a.status] - RANK[b.status]);
+    // a worker whose part cannot be read is left out (Today never says "Not available yet")
+    return deskTeam.filter((w) => w.state !== "not_available" && w.text !== null).map((w): TeamCard => ({ key: w.key, name: w.name, status: w.state === "working" ? "working" : w.state === "off" ? "off" : "idle", line: deskLine(w, t, now) })).sort((a, b) => RANK[a.status] - RANK[b.status]);
   }
   if (team === null) return null;
   return team
@@ -83,6 +77,8 @@ export function teamCards(team: readonly AgentRow[] | null, deskTeam: readonly D
  */
 export function TeamStrip({ team, deskTeam = null, waitingFor = new Set<string>(), base, t, now }: { team: readonly AgentRow[] | null; deskTeam?: readonly DeskWorker[] | null; waitingFor?: ReadonlySet<string>; base: string; t: T; now: number }) {
   const cards = teamCards(team, deskTeam, waitingFor, t, now);
+  // helpers that cannot be read: no strip (owner's review, 5 Nov: Today never says "Not available yet")
+  if (cards === null || cards.length === 0) return null;
   const status = (s: TeamCard["status"]) => t(s === "working" ? "office.working" : s === "waiting" ? "today.aiteam.waiting" : s === "off" ? "today.aiteam.off" : "office.idle");
   return (
     <section aria-labelledby="team-heading" data-part="team" className="flex min-w-0 flex-col gap-3">
@@ -94,9 +90,7 @@ export function TeamStrip({ team, deskTeam = null, waitingFor = new Set<string>(
           {cards && cards.length > TEAM_CARDS ? t("today.team.more", { n: cards.length - TEAM_CARDS }) : t("today.aiteam.open")}
         </Link>
       </div>
-      {cards === null || cards.length === 0 ? (
-        <p className="text-sm text-muted">{t("frame.notyet")}</p>
-      ) : (
+      {cards === null || cards.length === 0 ? null : (
         <ul data-part="team-list" data-team={deskTeam !== null ? "lead-desk" : undefined} className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {cards.slice(0, TEAM_CARDS).map((c) => (
             <li key={c.key} data-helper={c.key} data-status={c.status} className="flex min-w-0 flex-col gap-1.5 rounded-2xl border border-line bg-surface px-4 py-3">
@@ -134,16 +128,19 @@ export function MoneyHeld({ cards, base, t, money }: { cards: TodayData["cards"]
 }
 
 /** "New leads" (the owner's target, 31 Oct), for a workspace that catches leads: the newest one and where it came from (the Lead catcher's own line), and the link to the Leads. Not drawn for a business type without Lead Desk. */
-export function NewLeads({ deskTeam, base, t, now }: { deskTeam: readonly DeskWorker[] | null; base: string; t: T; now: number }) {
-  const worker = deskTeam?.find((w) => w.key === "leads");
-  if (!worker) return null;
+export function NewLeads({ deskTeam, count = null, base, t, now }: { deskTeam: readonly DeskWorker[] | null; /** Leads not opened yet in the last 7 days (C1's nav-counts); null = not known. */ count?: number | null; base: string; t: T; now: number }) {
+  const worker = deskTeam?.find((w) => w.key === "leads" && w.state !== "not_available" && w.text !== null);
+  // every business that gets leads has the card (owner's review, 5 Nov), from the count when there is no Lead Desk; nothing known: no card
+  if (!worker && count === null) return null;
   return (
     <section aria-labelledby="leads-heading" data-part="new-leads" className={card}>
       <h2 id="leads-heading" className={SIDE_TITLE}>
         {t("today.leads.title")}
       </h2>
-      <p className={SIDE_LINE}>{deskLine(worker, t, now)}</p>
-      <Link href={`${base}/leads`} className={linkClass}>
+      {count !== null ? <p className="font-display text-3xl font-semibold tabular-nums">{count}</p> : null}
+      <p className={SIDE_LINE}>{worker ? deskLine(worker, t, now) : t(count === 0 ? "today.leads.count.none" : "today.leads.count", { n: count ?? 0 })}</p>
+      {/* the Leads row's own page: Lead Desk where it is on, else the review list (there is no page at /leads) */}
+      <Link href={deskTeam !== null ? `${base}/lead-desk` : `${base}/review`} className={linkClass}>
         {t("today.leads.open")}
       </Link>
     </section>

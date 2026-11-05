@@ -20,7 +20,6 @@ import { getExampleStatus } from "@/lib/api/example-data";
 import { readPackCached } from "@/lib/packs/read";
 import { readIsDemo } from "./today-read";
 import { readPackCards } from "@/lib/packs/pack-cards";
-import { PackCards } from "@/components/v2/app/today/PackCards";
 import { LiveNowCard } from "@/components/v2/app/call/LiveNowCard";
 import { MOCK_CALL } from "@/lib/calls/mock";
 import { LANGUAGE_NAMES } from "@/i18n/lang";
@@ -28,7 +27,8 @@ import { assistantWorkScreens, callScreens } from "@/lib/screens/flag";
 import { OutcomesToday } from "@/components/v2/app/outcomes/OutcomesToday";
 import { wordsFor } from "@/i18n/app-words";
 import { readOutcomeTotals } from "@/lib/outcomes/source";
-import { formatRupees } from "@/lib/money";
+import { getNavCounts } from "@/lib/api/nav-counts";
+import { formatRupeesShort } from "@/lib/money";
 import { withModuleT } from "@/lib/packs/module-words";
 import { withPackT } from "@/lib/packs/resolve";
 import { withVisitWords } from "@/lib/packs/visit-words";
@@ -67,6 +67,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const now = clock();
   let data, name, setup = null, activation: Activation | null = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
   let chipKeys: readonly ChipKey[] | null = null;
+  let newLeads: number | null = null;
   const base = `/app/tenants/${tenantId}`;
   const manages = role === "owner" || role === "admin";
   const ownSteps = manages && usesChecklist(pack);
@@ -78,17 +79,21 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     // what Lead Desk adds (hot leads, plans waiting, callbacks due, limits reached) joins "Needs you" in any workspace; its workers replace the shop's helpers only in a business type that has a lead template (the API's own list: no type is named here)
     let desk: Awaited<ReturnType<typeof readLeadDesk>>;
     let finder: Awaited<ReturnType<typeof readFinderNeeds>>;
-    [data, name, setup, activation, sample, packCards, desk, finder] = await Promise.all([
+    let counts: Awaited<ReturnType<typeof getNavCounts>> | null;
+    [data, name, setup, activation, sample, packCards, desk, finder, counts] = await Promise.all([
       readToday(accessToken, tenantId, role),
       readDisplayName(accessToken, tenantId, userId),
       role === "owner" && !usesChecklist(pack) ? readSetupFacts(accessToken, tenantId, shop) : Promise.resolve(null),
       ownSteps && pack ? leadDeskSteps(pack).then((lead) => readActivation(accessToken, tenantId, pack, t, lead)) : Promise.resolve(null),
       manages && pack ? getExampleStatus(accessToken, tenantId) : Promise.resolve(null),
-      readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupees }),
+      readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupeesShort }),
       readLeadDesk({ token: accessToken, tenantId, userId }, role, base, tt, (tag) => sourceNameOf(tt, tag), now, deskPack),
       // the Lead Finder's businesses that need a person (only where the Lead Finder is available: the frame's answer, read once per request; one that cannot be told adds nothing)
       role === "viewer" ? Promise.resolve([]) : readFinderCached(accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)).then((a) => readFinderNeeds({ token: accessToken, tenantId }, role, a, base, tt)),
+      // the menu's numbers (C1's nav-counts, cached 30 s by the API): Today's New leads card when the workspace has no Lead Desk; one that cannot be read is no card
+      getNavCounts(accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)),
     ]);
+    newLeads = counts?.newLeads ?? null;
     // the steps the person put away from Today (a cookie of this browser) are not drawn; they stay in Settings
     if (activation) activation = withoutHidden(activation, await readHidden(tenantId));
     // Lead Desk's items and workers join what the API said (the merge keeps one card per thing and counts only what the API did not)
@@ -117,7 +122,8 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   };
   // today's totals of what happened after the calls and follow-ups (job DM): drawn only when the flag is on (OUTCOME_SCREENS); a role that is not Owner, Admin or Sales does not see them
   const totals = role === "viewer" ? ({ mode: "off" } as const) : await readOutcomeTotals({ token: accessToken, tenantId });
-  const outcomes = totals.mode === "off" ? null : <OutcomesToday words={wordsFor(lang, ["outcome.today."], ["frame.notyet"])} totals={totals.mode === "ok" ? totals.data : null} />;
+  // totals that cannot be read are not drawn (owner's review, 5 Nov: Today never says "Not available yet")
+  const outcomes = totals.mode === "ok" ? <OutcomesToday words={wordsFor(lang, ["outcome.today."], ["frame.notyet"])} totals={totals.data} /> : null;
   // "Live now" (job DM): a call that is going on. There is no telephony yet, so only the pretend call of CALL_SCREENS=mock is ever shown; nothing is drawn with the flag off
   const live = callScreens() === "mock" && role !== "viewer" ? <LiveNowCard words={wordsFor(lang, ["call.now."])} callee={MOCK_CALL.callee} info={`${t(`call.kind.${MOCK_CALL.kind}` as "call.kind.followup")} · ${LANGUAGE_NAMES[MOCK_CALL.lang].native}`} href={`/app/tenants/${tenantId}/office/live`} /> : null;
   const topups = manages ? await topupsToday({ token: accessToken, tenantId, lang, owner: role === "owner" }) : null;
@@ -129,7 +135,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const exampleLine = showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} reset={resetExampleAction.bind(null, tenantId)} t={t} /> : null;
   const intro = activation && activation.done < activation.total ? <div data-part="start"><ActivationCard collapse activation={activation} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /></div> : null;
   const view = (
-      <TodayView chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live} outcomes={outcomes} packCards={<PackCards cards={packCards} t={(key, vars) => t(key as "frame.notyet", vars)} />} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
+      <TodayView chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live} outcomes={outcomes} packCards={packCards} newLeads={newLeads} hasOrders={!pack || pack.modules.includes("orders")} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
   );
   const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   return (

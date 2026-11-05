@@ -4,7 +4,6 @@ Tuesday, 6 October
 ## Needs you
 0 0 waiting for you All clear. I will tell you the moment something needs you.
 {role=status}
-Not available yet
 {label="At the store today"}
 ## At the store today
 3 visits · 10:30 Anita R. [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)

@@ -81,9 +81,10 @@ describe("Today: the command bar", () => {
     expect(form.closest('[data-part="command-bar"]')).not.toBeNull();
     expect(document.querySelector('[data-screen="today"] form.fixed')).toBeNull();
   });
-  it("is 'Not available yet' while your assistant is not built and 'Switched off' when its switch is off", async () => {
+  it("is not drawn while your assistant is not built (Today never says 'Not available yet'), and says 'Switched off' when its switch is off", async () => {
     await view(data({ team: TEAM!.map((a) => (a.agent === "main" ? { ...a, state: "not_available" as const } : a)) }));
-    expect(document.querySelector('[data-ask="unavailable"]')).toHaveTextContent("Not available yet");
+    expect(document.querySelector('[data-part="command-bar"]')).toBeNull();
+    expect(screen.queryByText("Not available yet")).toBeNull();
     cleanup();
     await view(data({ team: TEAM!.map((a) => (a.agent === "main" ? { ...a, state: "switched_off" as const } : a)) }));
     expect(document.querySelector('[data-ask="unavailable"]')).toHaveTextContent("Switched off");
@@ -127,12 +128,12 @@ describe("Today: the order of the page (owner review, 1 Nov)", () => {
 });
 
 describe("Today: the side sections", () => {
-  it("'At the store today' is not drawn when it was not asked, and says so when it could not be read", async () => {
+  it("'At the store today' is not drawn when it was not asked, nor when it could not be read (Today never says 'Not available yet')", async () => {
     await view(data({ store: null }));
     expect(document.querySelector('[data-part="visits"]')).toBeNull();
     cleanup();
     await view(data({ store: { state: "error" } }));
-    expect(within(document.querySelector('[data-part="visits"]') as HTMLElement).getByText("Not available yet")).toBeInTheDocument();
+    expect(document.querySelector('[data-part="visits"]')).toBeNull();
   });
   it("'At the store today' is the title, ONE line (how many and the next one, in time order) and ONE link: the calendar", async () => {
     await view(
@@ -174,7 +175,7 @@ describe("Today: the side sections", () => {
     await view(data({ digest: Promise.resolve(lines) }), { outboxHref: "/app/tenants/T/outbox" });
     expect(screen.getByRole("link", { name: "See everything in the outbox" })).toHaveAttribute("href", "/app/tenants/T/outbox");
   });
-  it("'Done while you slept' has a loading state, an empty state, an error state, and is not drawn for someone who may not read the log", async () => {
+  it("'Done while you slept' has a loading state and an empty state, and is not drawn when the log cannot be read or for someone who may not read it", async () => {
     await view(data({ digest: new Promise<Digest>(() => {}) }));
     expect(document.querySelector('[data-part="done"]')).toBeNull();
     expect(screen.getByRole("heading", { name: "Done while you slept" }).closest("section")).toHaveAttribute("aria-busy", "true");
@@ -183,7 +184,7 @@ describe("Today: the side sections", () => {
     expect(within(document.querySelector('[data-part="done"]') as HTMLElement).getByText("Nothing was sent in the last 24 hours.")).toBeInTheDocument();
     cleanup();
     await view(data({ digest: Promise.resolve({ state: "error" }) }));
-    expect(within(document.querySelector('[data-part="done"]') as HTMLElement).getByText("Not available yet")).toBeInTheDocument();
+    expect(document.querySelector('[data-part="done"]')).toBeNull();
     cleanup();
     await view(data({ digest: Promise.resolve({ state: "none" }) }));
     expect(screen.queryByRole("heading", { name: "Done while you slept" })).toBeNull();
@@ -208,13 +209,14 @@ describe("Today: the side sections", () => {
       { key: "tasks", state: "not_available", name: "Task helper", text: null, at: null },
     ] }));
     const s = screen.getByRole("heading", { name: "My AI team" }).closest("section")!;
-    expect([...s.querySelectorAll("[data-helper]")].map((c) => c.textContent)).toEqual(["CallerWorkingCalling Diwali leads: 12 of 40 done", "Lead catcherIdleLast lead: Anita R. from IndiaMART · 20m", "Task helperIdleNot available yet", "Standing rulesOffNo rule is on"]);
+    // a worker whose part cannot be read (the Task helper here) is left out: Today never says "Not available yet"
+    expect([...s.querySelectorAll("[data-helper]")].map((c) => c.textContent)).toEqual(["CallerWorkingCalling Diwali leads: 12 of 40 done", "Lead catcherIdleLast lead: Anita R. from IndiaMART · 20m", "Standing rulesOffNo rule is on"]);
     expect(within(s).queryByText(/Quote Writer/)).toBeNull();
     expect(within(s).getByRole("link", { name: "Open my AI team" })).toHaveAttribute("href", "/app/tenants/T/office");
     const n = document.querySelector('[data-part="new-leads"]') as HTMLElement;
     expect(within(n).getByRole("heading", { name: "New leads" })).toBeInTheDocument();
     expect(n).toHaveTextContent("Last lead: Anita R. from IndiaMART · 20m");
-    expect(within(n).getByRole("link", { name: "Open leads" })).toHaveAttribute("href", "/app/tenants/T/leads");
+    expect(within(n).getByRole("link", { name: "Open leads" })).toHaveAttribute("href", "/app/tenants/T/lead-desk"); // there is no page at /leads
   });
   it("'Money held' is for the people who run the business, only when money is held or an order is open", async () => {
     await view(data({ cards: { waiting: 3, money_held_paise: 12000000, orders_open: 3 } }));
@@ -231,9 +233,9 @@ describe("Today: the side sections", () => {
     await view(data());
     expect(document.querySelector('[data-part="new-leads"]')).toBeNull();
   });
-  it("'My AI team' says 'Not available yet' when the helpers could not be read", async () => {
+  it("'My AI team' is not drawn when the helpers could not be read (Today never says 'Not available yet')", async () => {
     await view(data({ team: null }));
-    expect(within(screen.getByRole("heading", { name: "My AI team" }).closest("section")!).getByText("Not available yet")).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "My AI team" })).toBeNull();
   });
 });
 
@@ -275,12 +277,12 @@ describe("Today: sending stopped", () => {
 });
 
 describe("Today: sections that have no data are not drawn, and nothing is invented", () => {
-  it("with nothing readable it still draws the header, the card and the two honest places", async () => {
+  it("with nothing readable it still draws the header, and no part says 'Not available yet' (owner's review, 5 Nov: hide it instead)", async () => {
     await view({ ...NOTHING_TODAY }, { name: null });
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
     expect(document.querySelector('[data-part="visits"]')).toBeNull();
     expect(document.querySelector('[data-part="done"]')).toBeNull();
-    expect(screen.getAllByText("Not available yet").length).toBeGreaterThanOrEqual(3);
+    expect(screen.queryByText("Not available yet")).toBeNull();
     expect(screen.queryByText(/₹/)).toBeNull();
   });
 });
