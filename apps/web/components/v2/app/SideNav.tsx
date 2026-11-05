@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
+
 
 import { AccountMenu } from "./AccountMenu";
 import type { FrameData } from "./contract";
@@ -32,11 +33,17 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   const [collapsed, toggle] = useCollapsed();
   const aria = word(labels, "frame.menu.workspace", "Workspace menu");
   const counts = useNavCounts(current?.id ?? null);
+  // the current row in view (a page of AI team or Setup on a short window)
+  const navRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    navRef.current?.querySelector<HTMLElement>('[aria-current="page"]')?.scrollIntoView?.({ block: "nearest" });
+  }, [activeMenu]);
   const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
   return (
     <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[256px]"} print:hidden`}>
       <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} logoUrl={frame.logoUrl} />
-      <nav aria-label={aria} className="min-h-0 flex-1 overflow-y-auto p-2">
+      {/* the rows scroll on their own above the fixed foot (owner's review, 5 Nov: AI team and Setup must never sit hidden under the meters): a soft shadow at an edge says there is more; the current row is scrolled into view */}
+      <nav ref={navRef} aria-label={aria} data-nav-scroll="" className="v2-scroll-hint min-h-0 flex-1 overflow-y-auto overscroll-contain p-2">
         {current ? (
           <NavGroups groups={menuGroups(current.role, frame.pack)} tenantId={current.id} activeItemId={activeMenu} labels={labels} waiting={frame.waiting} counts={counts} collapsed={collapsed} own={ownWords(frame.pack, given_labels)} />
         ) : (
@@ -61,11 +68,13 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
         ) : null}
         {current && !collapsed ? <NavMeters counts={counts} tenantId={current.id} labels={labels} manages={(ADMINS as readonly string[]).includes(current.role)} /> : null}
         <AccountMenu email={email} role={current?.role ?? null} signOut={signOut} labels={labels} collapsed={collapsed} several={memberships.length > 1} mark={mark} />
-        <button type="button" onClick={toggle} aria-label={collapsed ? word(labels, "frame.expand", "Expand menu") : word(labels, "frame.collapse", "Collapse menu")} className={`${itemBase} w-full ${itemIdle} ${collapsed ? "justify-center px-0" : ""}`}>
-          {collapsed ? <SpriteIcon id="panel-left-open" /> : <SpriteIcon id="panel-left-close" />}
-          {collapsed ? null : <span>{word(labels, "frame.collapse", "Collapse menu")}</span>}
-        </button>
-        <PoweredBy labels={labels} compact={collapsed} />
+        {/* the foot is short, so the rows above get the room: "Powered by" and the collapse button share one line */}
+        <div className={`flex items-center gap-1 ${collapsed ? "flex-col" : "justify-between"}`}>
+          <PoweredBy labels={labels} compact={collapsed} />
+          <button type="button" onClick={toggle} aria-label={collapsed ? word(labels, "frame.expand", "Expand menu") : word(labels, "frame.collapse", "Collapse menu")} title={collapsed ? word(labels, "frame.expand", "Expand menu") : word(labels, "frame.collapse", "Collapse menu")} className={`inline-flex size-11 shrink-0 items-center justify-center rounded-lg ${itemIdle}`}>
+            {collapsed ? <SpriteIcon id="panel-left-open" /> : <SpriteIcon id="panel-left-close" />}
+          </button>
+        </div>
       </div>
     </aside>
   );

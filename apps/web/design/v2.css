@@ -87,3 +87,16 @@
     }
   }
 }
+
+/*
+ * A list that scrolls on its own (the side menu's rows, sidebar v2): a soft shadow at the top or bottom edge while there is more to scroll that way, none at the very top or bottom. Pure CSS (the two covers move with the
+ * content, the two shadows stay at the edges), so it costs no script and works in light and dark.
+ */
+[data-ui="v2"] .v2-scroll-hint {
+  background:
+    linear-gradient(var(--v2-surface) 30%, transparent) top / 100% 28px no-repeat local,
+    linear-gradient(transparent, var(--v2-surface) 70%) bottom / 100% 28px no-repeat local,
+    linear-gradient(color-mix(in srgb, var(--v2-ink) 14%, transparent), transparent) top / 100% 12px no-repeat scroll,
+    linear-gradient(transparent, color-mix(in srgb, var(--v2-ink) 14%, transparent)) bottom / 100% 12px no-repeat scroll;
+  background-color: var(--v2-surface);
+}
