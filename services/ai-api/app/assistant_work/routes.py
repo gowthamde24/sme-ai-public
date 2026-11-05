@@ -23,6 +23,7 @@ from typing import Annotated, Any, Literal
 from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
+from app.assistant_work.enabled import enabled
 from app.assistant_work.files import MAX_FILE_BYTES, clean_name, content_type_of, kind_of
 from app.assistant_work.service import PlanRunner, Tools, public_plan, undo_action
 from app.assistant_work.store import WorkStore
@@ -62,7 +63,9 @@ class DecideIn(_Strict):
     confirmed: bool = False
 
 
-def _store(runtime: Runtime) -> WorkStore:
+def _store(runtime: Runtime, ctx: TenantContext) -> WorkStore:
+    if not enabled(runtime, ctx.tenant.id):   # not this workspace's (ASSISTANT_WORK_TENANTS): as if it were not there
+        raise not_found()
     store: WorkStore | None = getattr(runtime, "assistant_work", None)
     if store is None:
         raise ApiError(503, "assistant_work_unavailable", "This is not available right now.")
@@ -83,6 +86,7 @@ def _card(plan: dict[str, Any]) -> dict[str, Any]:
 @router.post("/assistant/files", response_model=FileOut, status_code=201)
 def drop_file(body: FileIn, ctx: Worker, runtime: RuntimeDep) -> dict[str, Any]:
     """A file dropped in the chat. Nothing is read or written anywhere else: the turn that names it decides what it is and what to propose."""
+    store = _store(runtime, ctx)
     try:
         data = base64.b64decode(body.data_base64, validate=True)
     except (binascii.Error, ValueError):
@@ -96,26 +100,26 @@ def drop_file(body: FileIn, ctx: Worker, runtime: RuntimeDep) -> dict[str, Any]:
     kind = kind_of(name, content_type, data[:64])
     if kind is None:
         raise ApiError(415, "file_type", "That kind of file is not taken here. A sheet (.xlsx, .csv), a contacts file (.vcf), a PDF, a picture, a document or a text file works.")
-    out = _store(runtime).file_put(ctx.principal.token, ctx.tenant.id, name, content_type, kind, base64.b64encode(data).decode("ascii"))
+    out = store.file_put(ctx.principal.token, ctx.tenant.id, name, content_type, kind, base64.b64encode(data).decode("ascii"))
     return {"file_id": out["file_id"], "name": out["name"], "size_bytes": out["size_bytes"], "kind": out["kind"], "expires_at": str(out["expires_at"])}
 
 
 @router.get("/assistant/plans/{plan_id}")
 def get_plan(plan_id: str, ctx: Worker, runtime: RuntimeDep) -> dict[str, Any]:
-    return _card(_store(runtime).plan_get(ctx.principal.token, ctx.tenant.id, _plan_id(plan_id)))
+    return _card(_store(runtime, ctx).plan_get(ctx.principal.token, ctx.tenant.id, _plan_id(plan_id)))
 
 
 @router.post("/assistant/plans/{plan_id}/decide")
 async def decide_plan(plan_id: str, body: DecideIn, request: Request, ctx: Worker, runtime: RuntimeDep) -> dict[str, Any]:
     """The card's "Do it" or "Cancel". The steps run through the application's own routes with the caller's token (each refuses what the caller may not do: that step fails `forbidden`)."""
-    runner = PlanRunner(_store(runtime), Tools(request.app))
+    runner = PlanRunner(_store(runtime, ctx), Tools(request.app))
     plan = await runner.decide(ctx.principal.token, ctx.tenant.id, _plan_id(plan_id), decision=body.decision, confirmed=body.confirmed, is_owner=ctx.role == Role.OWNER)
     return _card(plan)
 
 
 @router.post("/assistant/plans/{plan_id}/undo")
 async def undo_plan(plan_id: str, request: Request, ctx: Worker, runtime: RuntimeDep) -> dict[str, Any]:
-    runner = PlanRunner(_store(runtime), Tools(request.app))
+    runner = PlanRunner(_store(runtime, ctx), Tools(request.app))
     return _card(await runner.undo(ctx.principal.token, ctx.tenant.id, _plan_id(plan_id)))
 
 
@@ -129,13 +133,13 @@ def list_actions(ctx: Manager, runtime: RuntimeDep, since: Annotated[str | None,
                 datetime.fromisoformat(value.replace("Z", "+00:00"))
             except ValueError:
                 raise ApiError(422, "validation_error", "since and before are ISO times.") from None
-    items = _store(runtime).actions_list(ctx.principal.token, ctx.tenant.id, since, before, limit)
+    items = _store(runtime, ctx).actions_list(ctx.principal.token, ctx.tenant.id, since, before, limit)
     return {"items": items, "next_before": items[-1]["at"] if len(items) == limit else None}
 
 
 @router.post("/assistant/actions/{action_id}/undo")
 async def undo_one_action(action_id: str, request: Request, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
-    return await undo_action(_store(runtime), Tools(request.app), ctx.principal.token, ctx.tenant.id, _plan_id(action_id))
+    return await undo_action(_store(runtime, ctx), Tools(request.app), ctx.principal.token, ctx.tenant.id, _plan_id(action_id))
 
 
 @router.post("/assistant/secrets/{request_id}")

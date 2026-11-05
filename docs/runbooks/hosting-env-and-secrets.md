@@ -135,6 +135,7 @@ Off or fake by default. The rehearsal sets none of them. A provider named withou
 | `METALS_PROVIDER` | plain | api | `off` (default) | `metals_dev`. Gold and silver reference prices. |
 | `METALS_DEV_API_KEY` | secret | api | Only with `metals_dev`. |
 | `WEB_FETCH` | plain | api | `off` (default) | `real` (the guarded page reader: robots.txt, no private addresses, size and time limits). |
+| `ASSISTANT_WORK_TENANTS` | plain | api | Which workspaces have "the assistant does the work" (chat files, plan cards, the router, Settings > Activity). Unset = every workspace (local, tests); ids separated by `;` = only those; set but empty or `none` = none; a bad entry stops the API at start. Staging: the owner's three test workspaces (`deploy/staging.sh`). The web reads the same variable (below). |
 
 ## D. Optional: channels and connectors (each off until named)
 
