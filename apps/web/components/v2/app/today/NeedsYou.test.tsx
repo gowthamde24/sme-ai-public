@@ -526,7 +526,7 @@ describe("Needs you: the Lead Finder's rows and See all (owner, 5 Nov)", () => {
   const P = "b1b1b1b1-0000-4000-8000-000000000001";
   const prospect = (n: number, over: Partial<Extract<NeedsCard, { type: "item" }>["item"]> = {}): NeedsCard => {
     const id = `b1b1b1b1-0000-4000-8000-00000000000${n}`;
-    return classic({ kind: "prospect_waiting", id, customer: `Boutique ${n}`, city: null, agent: "lead_finder", summary: "fit 93 · 1 of the first 10 calls — needs your OK", rowLine: "Jayanagar · 4.6★", prospect: { area: "Jayanagar", rating: 4.6, needsOk: true }, amount_paise: null, href: `/app/tenants/T/retailers?id=${id}`, ...over }) as NeedsCard;
+    return classic({ kind: "prospect_waiting", id, customer: `Boutique ${n}`, city: null, agent: "lead_finder", summary: "fit 93 · 1 of the first 10 calls — needs your OK", rowLine: "Jayanagar · 4.6★ · fit 93", prospect: { area: "Jayanagar", rating: 4.6, needsOk: true }, amount_paise: null, href: `/app/tenants/T/retailers?id=${id}`, ...over }) as NeedsCard;
   };
   const keyed = (cards: NeedsCard[]) => cards.map((c, i) => ({ ...c, key: `k${i}` }) as NeedsCard);
   const rowsOf = () => [...document.querySelectorAll("[data-needs-row]")] as HTMLElement[];
@@ -535,7 +535,7 @@ describe("Needs you: the Lead Finder's rows and See all (owner, 5 Nov)", () => {
     board([prospect(1)]);
     const row = rowsOf()[0];
     expect(within(row).getByRole("heading", { level: 3 })).toHaveTextContent(/^Boutique 1$/);
-    expect(row).toHaveTextContent("Jayanagar · 4.6★");
+    expect(row).toHaveTextContent("Jayanagar · 4.6★ · fit 93");
     expect(row).not.toHaveTextContent("first 10 calls");
     expect(row.querySelector("[data-needs-tag]")).toHaveTextContent("Needs OK");
     expect(within(row).getByRole("button", { name: "Call" })).toBeInTheDocument();

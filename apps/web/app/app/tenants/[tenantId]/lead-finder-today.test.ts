@@ -69,7 +69,7 @@ describe("the Lead Finder's Needs-you rows (contract section 3)", () => {
   });
   it("a row says where and how good, with 'Needs OK' for the first calls (owner, 5 Nov), and the opened card keeps the whole line", () => {
     const [first] = finderCards([row(1, { area: "Jayanagar", rating: 4.6, decision_reason: "first_calls", fit_score: 93 })], 1, BASE, t);
-    expect(first.type === "item" && first.item).toMatchObject({ rowLine: "Jayanagar · 4.6★", summary: "fit 93 · 1 of the first 10 calls — needs your OK", prospect: { area: "Jayanagar", rating: 4.6, needsOk: true } });
+    expect(first.type === "item" && first.item).toMatchObject({ rowLine: "Jayanagar · 4.6★ · fit 93", summary: "fit 93 · 1 of the first 10 calls — needs your OK", prospect: { area: "Jayanagar", rating: 4.6, needsOk: true } });
     const [low] = finderCards([parseProspect(PROSPECT_LOW)], 1, BASE, t);
     expect(low.type === "item" && low.item.prospect?.needsOk).toBe(false);
     expect(low.type === "item" && low.item.rowLine).toMatch(/low stock$/);

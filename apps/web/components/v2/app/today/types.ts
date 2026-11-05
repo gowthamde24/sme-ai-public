@@ -19,9 +19,9 @@ export type NeedsYouItem = Omit<ApiNeedsYouItem, "kind" | "target" | "agent"> & 
   target?: ApiNeedsYouItem["target"];
   /** How many things the row stands for (the Lead Finder's "11 more prospects" row: 11); absent = 1. The count of "Needs you" adds these, so it is the number of things that wait, not of rows. */
   count?: number;
-  /** The short line of the one-line row when it is not `summary` (a prospect: "Jayanagar · 4.6★"; the opened card keeps `summary`). */
+  /** The short line of the one-line row when it is not `summary` (a prospect: "Jayanagar · 4.6★ · fit 93"; the opened card keeps `summary`). */
   rowLine?: string;
-  /** A Lead Finder business (owner, 5 Nov): its area and rating after the name ("Jayanagar · 4.6★"), "Needs OK" as a small badge when it is one of the first calls, and Call / Skip on the row. */
+  /** A Lead Finder business (owner, 5 Nov): its area, rating and fit after the name ("Jayanagar · 4.6★ · fit 93"), "Needs OK" as a small badge when it is one of the first calls, and Call / Skip on the row. */
   prospect?: { area: string | null; rating: number | null; needsOk: boolean };
 };
 /** How many things a card stands for in the count of "Needs you". */

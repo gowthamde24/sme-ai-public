@@ -10,10 +10,10 @@ import { reasonKey, reasonLine, type Availability, type Prospect } from "@/lib/l
  */
 export const MAX_ROWS = 5;
 
-/** A prospect's short row line: "Jayanagar · 4.6★", then the decision in a few words unless it is the first-calls rule (that one is the "Needs OK" badge). */
-export function rowLineOf(p: Pick<Prospect, "area" | "rating" | "decisionReason">, t: T): string {
+/** A prospect's short row line (owner, 5 Nov: "area · rating · fit"): "Jayanagar · 4.6★ · fit 93", then the decision in a few words unless it is the first-calls rule (that one is the "Needs OK" badge). */
+export function rowLineOf(p: Pick<Prospect, "area" | "rating" | "fitScore" | "decisionReason">, t: T): string {
   const why = p.decisionReason === "first_calls" ? null : reasonKey(p.decisionReason);
-  const parts = [p.area, p.rating !== null ? `${p.rating.toLocaleString("en-IN", { maximumFractionDigits: 1 })}★` : null, why ? t(why) : null];
+  const parts = [p.area, p.rating !== null ? `${p.rating.toLocaleString("en-IN", { maximumFractionDigits: 1 })}★` : null, p.fitScore !== null ? t("lf.fit", { n: p.fitScore }) : null, why ? t(why) : null];
   return parts.filter((x): x is string => typeof x === "string" && x.trim() !== "").join(" · ");
 }
 
@@ -29,7 +29,7 @@ export function finderCards(rows: readonly Prospect[], waiting: number, base: st
       customer: p.name,
       city: null,
       agent: "lead_finder",
-      // the row says where and how good (owner, 5 Nov: "Jayanagar · 4.6★"); "1 of the first 10 calls" is the small "Needs OK" badge; any other reason keeps its few words; the opened card keeps the whole line with the fit
+      // the row says where and how good (owner, 5 Nov: "Jayanagar · 4.6★ · fit 93"); "1 of the first 10 calls" is the small "Needs OK" badge; any other reason keeps its few words; the opened card keeps the whole line with the fit
       summary: reasonLine(p, (k, v) => t(k, v)),
       rowLine: rowLineOf(p, t),
       prospect: { area: p.area, rating: p.rating, needsOk: p.decisionReason === "first_calls" },
