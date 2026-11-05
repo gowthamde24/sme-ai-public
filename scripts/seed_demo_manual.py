@@ -31,8 +31,8 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import httpx  # noqa: E402
-from seed_demo import (  # noqa: E402
+import httpx
+from seed_demo import (
     DEMO_EMAIL,
     DEMO_WORKSPACE_NAME,
     DEMO_WORKSPACE_SLUG,
@@ -181,6 +181,12 @@ class ManualDemoSeeder(Seeder):
         return r
 
     def _manual_quote(self, quote: str, enquiry: str, qty: int, price: int) -> None:
+        """Make the quote once. A later run finds it by its fixed id and leaves it as it is: a quote is dated (today in India), so the same id asked for again on another day is a
+        different request and the database refuses it as a conflict (seen in CI 4 Nov 2026: the catalogue seed made the quote at 23:56 IST, the manual seed asked again at 00:03 IST -> 409)."""
+        found = self._api("GET", f"/v1/tenants/{self.tenant_id}/quotes/{quote}")
+        if found.status_code == 200:
+            self.summary.reused += 1
+            return
         self._post(
             f"/v1/tenants/{self.tenant_id}/enquiries/{enquiry}/manual-quotes",
             {"id": quote, "customer_kind": "new", "lines": [{"item_type_code": "DEMO-01", "qty": qty, "unit_price_paise": price}]},

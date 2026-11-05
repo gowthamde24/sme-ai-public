@@ -91,6 +91,16 @@ class FakeBillingRepository:
             return {"access": "read_only", "read_only_since": "2026-10-14", "delete_on": "2027-01-12", "data_days_left": 79, "can_resume": self.can_resume(tenant_id), "sending": "off", "waiting_for": waiting}
         return {"access": "full", "read_only_since": None, "delete_on": None, "data_days_left": None, "can_resume": self.can_resume(tenant_id), "sending": "off" if waiting else "on", "waiting_for": waiting}
 
+    def entitlements(self, token: str, tenant_id: uuid.UUID) -> dict[str, Any]:
+        """The plan's product from the catalogue (plans.json version 4): the main plans and the trial are AI Workforce, the calls plans Lead Desk."""
+        sub = self.subs.get(tenant_id)
+        plan = sub["plan_id"] if sub is not None else "free_trial"
+        kind = next((p.get("kind") for p in self.catalogue["plans"] if p["id"] == plan), "trial")
+        product = next((p.get("product") for p in self.catalogue["plans"] if p["id"] == plan), None) or ("lead_desk" if kind == "calls" else "ai_workforce")
+        finder = product == "ai_workforce"
+        return {"plan": plan, "product": product, "product_name": {"en": "AI Workforce" if finder else "Lead Desk"}, "features": {"lead_desk": True, "lead_finder": finder},
+                "upgrade": None if finder else {"product": "ai_workforce", "product_name": {"en": "AI Workforce"}, "features": ["lead_finder"]}}
+
     def can_resume(self, tenant_id: uuid.UUID) -> bool:
         sub = self.subs.get(tenant_id)
         if sub is None:

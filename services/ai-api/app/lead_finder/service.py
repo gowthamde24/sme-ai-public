@@ -63,6 +63,23 @@ def not_available() -> ApiError:
     return ApiError(403, "lead_finder_not_available", "Finding new customers is not available for this business.")
 
 
+def not_in_plan() -> ApiError:
+    """The workspace's plan (Lead Desk) does not have the Lead Finder: it is part of AI Workforce. No charge: the screen shows an upgrade link."""
+    return ApiError(403, "not_in_plan", "Finding new customers is part of AI Workforce.", extra={"feature": "lead_finder", "upgrade_to": "ai_workforce"})
+
+
+INDIVIDUALS = {
+    "businesses": "I find businesses and organisations only, never individual people or families.",
+    "organisations": ("I find organisations only, never individual people or families: for example apartment associations, companies, coaching centres or transport and event vendors near the "
+                      "school. Families are reached only from the school's own enquiry list."),
+}
+
+
+def individuals_not_allowed(data: packdata.PackLeadFinder) -> ApiError:
+    """Owner decision 4 Nov 2026: the Lead Finder never looks for individual people or families ("parents in Anantapur"); a school finds organisations only."""
+    return ApiError(422, "individuals_not_allowed", INDIVIDUALS[data.audience], extra={"audience": data.audience})
+
+
 def source_label(provider: str, query: str, area: str | None, now: datetime) -> str:
     what = f"{query} {area}" if area else query
     where = "Google Maps search" if provider == "places" else "Example search (made-up businesses)"
@@ -117,7 +134,13 @@ class LeadFinderService:
         data = packdata.for_pack(self.repo.pack_id(token, tenant_id))
         if data is None:
             raise not_available()
+        if not self.repo.entitled(token, tenant_id):
+            raise not_in_plan()
         return data
+
+    def _stock(self, token: str, tenant_id: uuid.UUID, data: packdata.PackLeadFinder) -> list[decide.StockLine]:
+        """Our stock, when this business type matches prospects against it (a school sells no stock: nothing is read)."""
+        return stock_lines(self.repo.stock(token, tenant_id)) if data.uses_stock else []
 
     def source_for(self, data: packdata.PackLeadFinder, real_data_open: bool) -> ProspectSource:
         """Google only where real data is allowed AND the flag says places AND a key exists; otherwise the synthetic fixture (a demo never reaches Google)."""
@@ -129,11 +152,12 @@ class LeadFinderService:
         try:
             data = self.data_for(token, tenant_id)
         except ApiError as exc:
-            return AvailabilityOut(available=False, source=None, reason="switched_off" if exc.code == "lead_finder_off" else "not_for_this_business")
+            reason = {"lead_finder_off": "switched_off", "not_in_plan": "not_in_plan"}.get(exc.code, "not_for_this_business")
+            return AvailabilityOut(available=False, source=None, reason=reason, upgrade_to="ai_workforce" if reason == "not_in_plan" else None)  # type: ignore[arg-type]
         except NotForThisBusinessError:
             return AvailabilityOut(available=False, source=None, reason="not_for_this_business")
         ctx = self.repo.context(token, tenant_id)
-        return AvailabilityOut(available=True, source=self.source_for(data, bool(ctx.get("real_data_open"))).provider, reason="ok")  # type: ignore[arg-type]
+        return AvailabilityOut(available=True, source=self.source_for(data, bool(ctx.get("real_data_open"))).provider, reason="ok", audience=data.audience)  # type: ignore[arg-type]
 
     # ------------------------------------------------------------------------------------------------------------------- settings
     def settings(self, token: str, tenant_id: uuid.UUID) -> SettingsOut:
@@ -152,6 +176,8 @@ class LeadFinderService:
     def plan(self, token: str, tenant_id: uuid.UUID, body: PlanIn, *, search_id: uuid.UUID | None = None) -> SearchOut:
         """`search_id`: the chat gives the plan the id of the reply that shows it (app/turns/lead_finder.py), so a later "yes" and a replay find it again. A screen leaves it out."""
         data = self.data_for(token, tenant_id)
+        if intent.names_individuals(body.text or body.query or ""):
+            raise individuals_not_allowed(data)
         if body.text:
             parsed = intent.parse(body.text, data)
             if parsed is None:
@@ -191,7 +217,7 @@ class LeadFinderService:
             return search_out(self.repo.search_finish(token, tenant_id, search_id, [], "failed", 0, {"error": 1}))
         known = dedupe.Known.from_context(ctx)
         fresh, dups = dedupe.split(result.places, known)
-        stock = stock_lines(self.repo.stock(token, tenant_id))
+        stock = self._stock(token, tenant_id, data)
         settings = decide.Settings.from_row(self.repo.settings_get(token, tenant_id))
         situation = decide.Situation(now=self._clock(), calls_today=int(ctx.get("calls_today", 0)), ready_waiting=int(ctx.get("ready_waiting", 0)),
                                      approved_in_search=int((ctx.get("approved_by_search") or {}).get(str(search_id), 0)))
@@ -265,7 +291,7 @@ class LeadFinderService:
         data = self.data_for(token, tenant_id)
         ctx = self.repo.context(token, tenant_id)
         settings = decide.Settings.from_row(self.repo.settings_get(token, tenant_id))
-        stock = stock_lines(self.repo.stock(token, tenant_id))
+        stock = self._stock(token, tenant_id, data)
         waiting = int(ctx.get("ready_waiting", 0))
         approved = ctx.get("approved_by_search") or {}
         items: list[dict[str, Any]] = []
@@ -289,9 +315,9 @@ class LeadFinderService:
         row = self.repo.prospect_get(token, tenant_id, prospect_id)
         if row.get("status") != "call_ready" or row.get("suppressed"):
             raise ApiError(409, "prospect_state", "Only a business marked ready to call can be called.")
-        stock = stock_lines(self.repo.stock(token, tenant_id))
+        stock = self._stock(token, tenant_id, data)
         buyer, _main = decide.buyer_type_of(place_of(row), data)
-        domain = "materials" if data.category_hint in ("contractor", "builder") else "textile"
+        domain = data.persona or ("materials" if data.category_hint in ("contractor", "builder") else "textile")
         result = qualify.simulate(business=business, data=data, stock=stock, language=body.language, persona=body.persona, domain=domain, likely=buyer.likely if buyer else ())
         checks = qualify.evaluate(result, stock)
         call_id = uuid.uuid4()
