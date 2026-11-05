@@ -239,7 +239,8 @@ function HelperFoot({ agent, team, w }: { agent: AgentId; team?: TeamExtras; w: 
         {sw?.canSwitch ? (
           <label htmlFor={id} className="ml-auto inline-flex min-h-11 items-center gap-2 text-sm font-semibold">
             {w(sw.enabled ? "office.sw.on" : "office.sw.off")}
-            <input id={id} type="checkbox" role="switch" aria-label={`${w("office.switch")}: ${w(`agent.${agent}`)}`} checked={sw.enabled} disabled={!team?.toggle || busy} onChange={flip} className="size-6 shrink-0 accent-brand-text" />
+            {/* an on/off toggle, never a tick box (owner, 5 Nov: no checkbox-like squares) */}
+            <input id={id} type="checkbox" role="switch" aria-label={`${w("office.switch")}: ${w(`agent.${agent}`)}`} checked={sw.enabled} disabled={!team?.toggle || busy} onChange={flip} className="relative h-7 w-12 shrink-0 cursor-pointer appearance-none rounded-full border border-edge bg-surface-2 transition-colors before:absolute before:left-0.5 before:top-0.5 before:size-[1.375rem] before:rounded-full before:bg-surface before:shadow before:transition-transform before:content-[''] checked:border-brand-edge checked:bg-brand checked:before:translate-x-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-edge disabled:cursor-default disabled:opacity-60" />
           </label>
         ) : locked ? (
           <span className="ml-auto text-sm text-muted">{w(`office.locked.${locked}`)}</span>
