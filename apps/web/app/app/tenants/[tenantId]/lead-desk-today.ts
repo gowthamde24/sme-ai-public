@@ -29,7 +29,9 @@ const settled = <V>(r: PromiseSettledResult<V>): V | null => {
  * The plain name of a lead source for a line of Today. Only the tags Lead Desk knows (`SOURCE_TAGS`) have a word in the dictionary; any other source a CRM lead may carry (a WhatsApp enquiry, something typed by hand, a tag
  * from before Lead Desk) is shown as it is, with the underscores taken out. Never a dictionary lookup that can miss: a missing key made Today fail for every business type with its own pages.
  */
-export const sourceNameOf = (t: T, tag: string): string => ((SOURCE_TAGS as readonly string[]).includes(tag) ? t(`ld.source.${tag}`) : tag.replace(/_/g, " "));
+/** Where a lead came from that is not an import source: the Lead Finder, a campaign, a WhatsApp message (staging, 4 Nov: "from lead finder" was the raw tag). */
+const OTHER_SOURCES = ["lead_finder", "campaign", "whatsapp"] as const;
+export const sourceNameOf = (t: T, tag: string): string => ((SOURCE_TAGS as readonly string[]).includes(tag) ? t(`ld.source.${tag}`) : (OTHER_SOURCES as readonly string[]).includes(tag) ? t(`ld.from.${tag}`) : tag.replace(/_/g, " "));
 
 const CAPS = ["cap_calls", "cap_minutes"] as const;
 const isCap = (reason: string | null): boolean => reason !== null && (CAPS as readonly string[]).includes(reason);
@@ -115,7 +117,7 @@ export function teamOf(parts: Parts & { lead: { name: string; source: string | n
 }
 
 /**
- * Reads what Lead Desk adds to Today. `withTeam` is false for a business type that has no Lead Desk template: its Today gets the cards but its "Your team" is the shop's helpers, so the leads are not even read. Each part is read once, on its own (a part whose flag is off is not asked), and one that fails adds nothing and is `not_available` in the team. `sourceName` is the plain name of a lead source ("IndiaMART").
+ * Reads what Lead Desk adds to Today. `withTeam` false skips the leads (Today passes true in every workspace since 4 Nov: the "New leads" card is on everywhere; `mergeDesk` decides whether the workers are "Your team"). Each part is read once, on its own (a part whose flag is off is not asked), and one that fails adds nothing and is `not_available` in the team. `sourceName` is the plain name of a lead source ("IndiaMART").
  * Callbacks are counted from the items of the (at most five) running plans, the newest first: a plan with callbacks due is one card with the number. `base` is the workspace's address.
  */
 export async function readLeadDesk(ctx: Ctx, role: Role, base: string, t: T, sourceName: (tag: string) => string, now: number = Date.now(), withTeam = true): Promise<LeadDeskToday> {

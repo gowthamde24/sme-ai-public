@@ -197,11 +197,24 @@ describe("Lead Desk's items join Today's own, and the count is the truth", () =>
   it("does not change a Today that Lead Desk adds nothing to, and a Today that could not be read stays unread", () => {
     const today = base();
     expect(mergeDesk(today, { needs: [], team: [] })).toMatchObject({ needs: today.needs, cards: today.cards, deskTeam: null });
+    const catcher = { key: "leads", state: "idle", name: "Lead catcher", text: "No new leads yet", at: null } as const;
+    // a business type without a lead template: its helpers stay "Your team", the Lead catcher's line still makes the "New leads" card (owner, 4 Nov)
+    expect(mergeDesk(today, { needs: [], team: [catcher], teamShown: false })).toMatchObject({ deskTeam: null, newLeads: catcher });
+    expect(mergeDesk(today, { needs: [], team: [catcher] })).toMatchObject({ deskTeam: [catcher], newLeads: catcher });
     expect(mergeDesk({ ...today, needs: null }, { needs: needsOf({ ...none, handoffs: [handoff(3)] }, "owner", BASE, t, sourceName), team: [] }).needs).toBeNull();
   });
   it("carries the workers for 'Your team' only when there are some", () => {
     const team = [{ key: "calls" as const, state: "idle" as const, name: "Caller", text: "No calling plan yet", at: null }];
     expect(mergeDesk(base(), { needs: [], team }).deskTeam).toEqual(team);
     expect(mergeDesk(base(), { needs: [], team: [] }).deskTeam).toBeNull();
+  });
+});
+
+describe("sourceNameOf", () => {
+  it("names the Lead Finder, a campaign and WhatsApp in words, never the raw tag", async () => {
+    const { sourceNameOf: name } = await import("./lead-desk-today");
+    const words: Record<string, string> = { "ld.from.lead_finder": "the Lead Finder", "ld.from.campaign": "a campaign", "ld.from.whatsapp": "WhatsApp", "ld.source.indiamart": "IndiaMART" };
+    const tt = (k: string) => words[k] ?? k;
+    expect(["lead_finder", "campaign", "whatsapp", "indiamart", "some_new_tag"].map((x) => name(tt, x))).toEqual(["the Lead Finder", "a campaign", "WhatsApp", "IndiaMART", "some new tag"]);
   });
 });

@@ -211,9 +211,16 @@ describe("Today: the side sections", () => {
     expect(n).toHaveTextContent("Last lead: Anita R. from IndiaMART · 20m");
     expect(within(n).getByRole("link", { name: "Open leads" })).toHaveAttribute("href", "/app/tenants/T/leads");
   });
-  it("no 'New leads' card for a business type without Lead Desk", async () => {
+  it("no 'New leads' card when the leads were not read (a Sales person, a Viewer, a failed read)", async () => {
     await view(data());
     expect(document.querySelector('[data-part="new-leads"]')).toBeNull();
+  });
+  it("the 'New leads' card is on in every workspace (owner, 4 Nov): a business type without a lead template keeps its helpers as 'Your team' and still gets the card", async () => {
+    await view(data({ newLeads: { key: "leads", state: "idle", name: "Lead catcher", text: "No new leads yet", at: null } }));
+    expect(screen.getByRole("heading", { name: "Your team" }).closest("section")!.querySelector("[data-part=team-list]")).toHaveTextContent(/Quote Writer/);
+    const n = document.querySelector('[data-part="new-leads"]') as HTMLElement;
+    expect(n).toHaveTextContent("No new leads yet");
+    expect(within(n).getByRole("link", { name: "Open leads" })).toHaveAttribute("href", "/app/tenants/T/leads");
   });
   it("'Your team' says 'Not available yet' when the helpers could not be read", async () => {
     await view(data({ team: null }));

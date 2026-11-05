@@ -69,7 +69,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const manages = role === "owner" || role === "admin";
   const ownSteps = manages && usesChecklist(pack);
   const tt: T = (key, vars) => t(key as "frame.notyet", vars);
-  // does this business type have a lead template (the API's own list)? Only then does "Your team" show the Lead Desk workers (and are the leads read for it)
+  // does this business type have a lead template (the API's own list)? Only then does "Your team" show the Lead Desk workers; the leads are read in every workspace for the "New leads" card (owner, 4 Nov: Lead Desk on everywhere)
   const deskPack = pack ? (await readTemplates()).some((x) => x.packId === pack.packId) : false;
   try {
     // the Owner of a workspace that is not set up yet sees the setup wizard / checklist (job BJ): its facts are read here, with existing endpoints only
@@ -83,14 +83,14 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
       ownSteps && pack ? leadDeskSteps(pack).then((lead) => readActivation(accessToken, tenantId, pack, t, lead)) : Promise.resolve(null),
       manages && pack ? getExampleStatus(accessToken, tenantId) : Promise.resolve(null),
       readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupees }),
-      readLeadDesk({ token: accessToken, tenantId, userId }, role, base, tt, (tag) => sourceNameOf(tt, tag), now, deskPack),
+      readLeadDesk({ token: accessToken, tenantId, userId }, role, base, tt, (tag) => sourceNameOf(tt, tag), now),
       // the Lead Finder's businesses that need a person (only where the Lead Finder is available: the frame's answer, read once per request; one that cannot be told adds nothing)
       role === "viewer" ? Promise.resolve([]) : readFinderCached(accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? Promise.reject(e) : null)).then((a) => readFinderNeeds({ token: accessToken, tenantId }, role, a, base, tt)),
     ]);
     // the steps the person put away from Today (a cookie of this browser) are not drawn; they stay in Settings
     if (activation) activation = withoutHidden(activation, await readHidden(tenantId));
     // Lead Desk's items and workers join what the API said (the merge keeps one card per thing and counts only what the API did not)
-    data = mergeDesk(data, { needs: [...desk.needs, ...finder], team: deskPack ? desk.team : [] });
+    data = mergeDesk(data, { needs: [...desk.needs, ...finder], team: desk.team, teamShown: deskPack });
     // a business whose own card counts its visits (a school's "Campus visits today") does not also get the shop's "At the store today" (owner, 4 Nov: no shop words for a school)
     if (packCards.some((c) => c.id === "campus")) data = { ...data, store: null };
     // the Lead Finder is named in "Your team" exactly where its own API says it is available (C1, 4 Nov): the helpers' status may still say "not built" for it
