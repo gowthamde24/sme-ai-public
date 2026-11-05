@@ -29,7 +29,7 @@ function refusal(error: unknown): "size" | "type" | "empty" | "forbidden" | "dow
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
-  if (assistantWorkScreens() !== "on" || !isCanonicalUuid(tenantId) || !fromThisSite(request)) return new NextResponse(null, { status: 404, headers: HEADERS });
+  if (assistantWorkScreens(tenantId) !== "on" || !isCanonicalUuid(tenantId) || !fromThisSite(request)) return new NextResponse(null, { status: 404, headers: HEADERS });
   const name = (request.nextUrl.searchParams.get("name") ?? "").slice(0, 200);
   const contentType = (request.headers.get("content-type") ?? "application/octet-stream").slice(0, 100);
   if (fileKindOf(name, contentType) === null) return NextResponse.json({ ok: false, error: "type" }, { headers: HEADERS });

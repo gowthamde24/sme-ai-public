@@ -102,7 +102,7 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
 
 /** The assistant does the work in the chat (ASSISTANT_WORK_SCREENS): the mode and the person's role (the cards say "Only the owner can approve this"; the API checks again). Off, or a failed read: nothing. */
 async function workFor(accessToken: string, tenantId: string): Promise<{ work?: { mode: "on" | "mock"; role: "owner" | "admin" | "sales" | "viewer" } }> {
-  const mode = assistantWorkScreens();
+  const mode = assistantWorkScreens(tenantId);
   if (mode === "off") return {};
   try {
     const role = (await fetchTenant(accessToken, tenantId)).role;

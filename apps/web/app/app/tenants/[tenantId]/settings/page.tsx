@@ -181,7 +181,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // Settings > AI assistant (job DM): only while its flag is on, and only for the Owner (the people who run the business may be admins, but the assistant is the Owner's to set up)
   const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off" || voicePickerScreens() !== "off" || aboutBusinessScreens() !== "off" || autoReplyScreens() !== "off" || pronunciationScreens() !== "off");
   // Settings > Activity (the assistant does the work, ASSISTANT_WORK_SCREENS): what the assistant changed on request, for the people who run the business
-  const workMode = assistantWorkScreens();
+  const workMode = assistantWorkScreens(tenantId);
   const hasActivity = admin && workMode !== "off";
   // Settings > Lead Finder (job lead-finder part D): for the Owner and Admin, only where the API says the Lead Finder is available (a school never; switched off or cannot be told: hidden)
   const hasLeadFinder = admin && (await readFinderCached(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)))?.available === true;

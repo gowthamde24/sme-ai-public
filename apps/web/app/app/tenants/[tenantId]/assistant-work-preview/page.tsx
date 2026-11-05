@@ -22,9 +22,9 @@ export const dynamic = "force-dynamic";
  * only for a member of the workspace, and linked from no menu. Nothing here reads or writes the workspace's data.
  */
 export default async function AssistantWorkPreview({ params }: PageProps<"/app/tenants/[tenantId]/assistant-work-preview">) {
-  if (assistantWorkScreens() !== "mock") notFound();
-  const user = await requireUser();
   const { tenantId } = await params;
+  if (assistantWorkScreens(tenantId) !== "mock") notFound();
+  const user = await requireUser();
   if (!isCanonicalUuid(tenantId)) notFound();
   try {
     await fetchTenant(user.accessToken, tenantId);

@@ -38,7 +38,7 @@ function word(error: unknown): string {
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;
-  if (assistantWorkScreens() !== "on" || !isCanonicalUuid(tenantId) || !fromThisSite(request)) return new NextResponse(null, { status: 404, headers: HEADERS });
+  if (assistantWorkScreens(tenantId) !== "on" || !isCanonicalUuid(tenantId) || !fromThisSite(request)) return new NextResponse(null, { status: 404, headers: HEADERS });
   let user;
   try {
     user = await requireUser();

@@ -34,6 +34,16 @@ describe("POST /app/tenants/[id]/assistant-work", () => {
     vi.stubEnv("ASSISTANT_WORK_SCREENS", "1");
     expect((await post({ op: "undo", planId: P }, { origin: "https://evil.example", host: HOST })).status).toBe(404);
   });
+  it("is not there for a workspace outside ASSISTANT_WORK_TENANTS (one web serves every workspace), and is for one in it", async () => {
+    h.undo.mockResolvedValue(plan);
+    vi.stubEnv("ASSISTANT_WORK_TENANTS", "c029cba3-d2f8-4923-8c5a-630852797fd3");
+    expect((await post({ op: "undo", planId: P })).status).toBe(404);
+    expect(h.undo).not.toHaveBeenCalled();
+    vi.stubEnv("ASSISTANT_WORK_TENANTS", "");
+    expect((await post({ op: "undo", planId: P })).status).toBe(404);
+    vi.stubEnv("ASSISTANT_WORK_TENANTS", `c029cba3-d2f8-4923-8c5a-630852797fd3;${T}`);
+    expect((await post({ op: "undo", planId: P })).status).toBe(200);
+  });
   it("Do it passes the decision and the Owner's confirm; a refusal is a closed word", async () => {
     h.decide.mockResolvedValue(plan);
     expect(await (await post({ op: "decide", planId: P, decision: "do", confirmed: true })).json()).toEqual({ ok: true, plan });
