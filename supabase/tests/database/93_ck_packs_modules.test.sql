@@ -123,7 +123,7 @@ select pg_temp.set_pack('b', 'textiles');
 -- ============================================================================ F. every tenant table is guarded or exempt, with a reason
 create temp table exempt (tbl text primary key, why text not null);
 insert into exempt (tbl, why) values
-  ('integrations.lead_items', 'lead sources: the idempotency ledger, every business type (job DR)'), ('integrations.calendar_tokens', 'the calendar feed: a credential, not a module'), ('integrations.call_bridges', 'telephony account settings'), ('integrations.missed_calls', 'inbound calls are recorded whatever the pack'),
+  ('integrations.lead_items', 'lead sources: the idempotency ledger, every business type (job DR)'), ('integrations.developer_api_usage', 'the developer API''s rate and usage counter: every business type'), ('integrations.calendar_tokens', 'the calendar feed: a credential, not a module'), ('integrations.call_bridges', 'telephony account settings'), ('integrations.missed_calls', 'inbound calls are recorded whatever the pack'),
   ('integrations.pull_state', 'connector cursor'), ('integrations.wa_conversation_state', 'inbox: inbound messages are never refused'), ('integrations.wa_events', 'inbox: inbound events are never refused'),
   ('integrations.wa_message_status', 'delivery receipts'), ('integrations.wa_templates', 'WhatsApp templates'), ('integrations.whatsapp_accounts', 'the WhatsApp connection (second factor)'),
   ('notify.member_state', 'notifications'), ('notify.push_prefs', 'notifications'), ('notify.push_sent', 'notifications'),
@@ -147,6 +147,8 @@ insert into exempt (tbl, why) values
   ('public.lead_finder_settings', 'lead finder: guarded by the module lead_finder inside every function (ADR 0119)'), ('public.prospect_searches', 'lead finder: guarded inside the functions (ADR 0119)'),
   ('public.prospects', 'lead finder: guarded inside the functions (ADR 0119)'),
   ('public.talk_training', 'how the assistant talks on calls: core, every business type (no module)'),
+  ('public.developer_api_keys', 'the developer API''s keys: core, every business type (no module)'),
+  ('public.developer_sandbox_leads', 'the developer API''s test-mode leads: core, every business type (no module)'),
   ('public.tenant_agent_switches', 'a switch per helper: core, every business type (no module)'),
   ('public.assistant_files', 'the assistant does the work: core, every business type (no module)'), ('public.assistant_work_plans', 'the assistant does the work: core, every business type (no module)'),
   ('public.workspace_secrets', 'a workspace''s own keys: where the key is (core, every business type, no module)'), ('public.secret_requests', 'the secure card''s requests (core, every business type, no module)'),
