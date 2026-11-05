@@ -22,6 +22,6 @@ Not available yet
 {label="Done while you slept"}
 ## Done while you slept
 Not available yet [See everything in the outbox](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent)
-{label="Your team"}
-## Your team
-Not available yet [Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
+{label="My AI team"}
+## My AI team
+[Open my AI team](/app/tenants/22222222-2222-2222-2222-222222222222/office) Not available yet

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { todayChips, type ChipKey } from "@/components/v2/app/today/ask/ask-chips";
 import { TodayView } from "@/components/v2/app/today/TodayView";
 import type { TodayActions } from "@/components/v2/app/today/actions-types";
 import type { Role, T } from "@/components/v2/app/today/types";
@@ -23,7 +24,7 @@ import { PackCards } from "@/components/v2/app/today/PackCards";
 import { LiveNowCard } from "@/components/v2/app/call/LiveNowCard";
 import { MOCK_CALL } from "@/lib/calls/mock";
 import { LANGUAGE_NAMES } from "@/i18n/lang";
-import { callScreens } from "@/lib/screens/flag";
+import { assistantWorkScreens, callScreens } from "@/lib/screens/flag";
 import { OutcomesToday } from "@/components/v2/app/outcomes/OutcomesToday";
 import { wordsFor } from "@/i18n/app-words";
 import { readOutcomeTotals } from "@/lib/outcomes/source";
@@ -65,6 +66,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const t = pack ? withVisitWords(withPackT(withModuleT(appT(lang), pack, appDict(lang)), pack, lang), pack, lang) : appT(lang);
   const now = clock();
   let data, name, setup = null, activation: Activation | null = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
+  let chipKeys: readonly ChipKey[] | null = null;
   const base = `/app/tenants/${tenantId}`;
   const manages = role === "owner" || role === "admin";
   const ownSteps = manages && usesChecklist(pack);
@@ -95,6 +97,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     if (packCards.some((c) => c.id === "campus")) data = { ...data, store: null };
     // the Lead Finder is named in "Your team" exactly where its own API says it is available (C1, 4 Nov): the helpers' status may still say "not built" for it
     const finderOn = (await readFinderCached(accessToken, tenantId).catch(() => null))?.available === true;
+    chipKeys = todayChips({ finder: finderOn && role !== "viewer", files: assistantWorkScreens(tenantId) !== "off" && role !== "viewer" });
     data = { ...data, team: withFinder(data.team, finderOn) };
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
@@ -126,7 +129,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const exampleLine = showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} reset={resetExampleAction.bind(null, tenantId)} t={t} /> : null;
   const intro = activation && activation.done < activation.total ? <div data-part="start"><ActivationCard collapse activation={activation} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /></div> : null;
   const view = (
-      <TodayView demo={demo} exampleLine={exampleLine} intro={intro} live={live} outcomes={outcomes} packCards={<PackCards cards={packCards} t={(key, vars) => t(key as "frame.notyet", vars)} />} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
+      <TodayView chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live} outcomes={outcomes} packCards={<PackCards cards={packCards} t={(key, vars) => t(key as "frame.notyet", vars)} />} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
   );
   const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   return (

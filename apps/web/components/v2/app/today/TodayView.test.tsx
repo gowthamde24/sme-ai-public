@@ -188,39 +188,52 @@ describe("Today: the side sections", () => {
     await view(data({ digest: Promise.resolve({ state: "none" }) }));
     expect(screen.queryByRole("heading", { name: "Done while you slept" })).toBeNull();
   });
-  it("'Your team' is the title, ONE line with the helpers' names (not your assistant itself) and the link to the Office", async () => {
+  it("'My AI team': a card per helper with where it stands and one line (those that wait for the person, then those working, first), four at most, then '+N more' and the link", async () => {
     await view(data());
-    const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
-    // the Lead Finder is not built yet (not_available): it is not named (owner, 4 Nov)
-    // three names, then "+2 more" (owner, 5 Nov: the one line was cut off); the whole list is the line's title
-    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent(/^Researcher · Requirement Analyst · Quote Writer · \+2 more$/);
-    expect(s.querySelector("[data-part=team-list]")).toHaveAttribute("title", "Researcher · Requirement Analyst · Quote Writer · Follow-up Desk · Order Desk");
+    const s = screen.getByRole("heading", { name: "My AI team" }).closest("section")!;
+    // the Lead Finder is not built yet (not_available): it is not named (owner, 4 Nov); the assistant itself is the card above
+    const cards = [...s.querySelectorAll("[data-helper]")].map((c) => [c.getAttribute("data-helper"), c.getAttribute("data-status")]);
+    expect(cards).toEqual([["quote_writer", "waiting"], ["followup_desk", "waiting"], ["researcher", "working"], ["order_desk", "idle"]]);
+    expect(within(s.querySelector('[data-helper="quote_writer"]') as HTMLElement).getByText("Waiting for you")).toBeInTheDocument();
+    expect(s.querySelector('[data-helper="quote_writer"]')).toHaveTextContent("Prepared quote 3");
+    expect(within(s.querySelector('[data-helper="researcher"]') as HTMLElement).getAllByText("Working").length).toBeGreaterThan(0);
     expect(within(s).queryByText("Your assistant")).toBeNull();
-    expect(within(s).getByRole("link", { name: /Open the office/ })).toHaveAttribute("href", "/app/tenants/T/office");
+    expect(within(s).getByRole("link", { name: "+1 more" })).toHaveAttribute("href", "/app/tenants/T/office");
   });
-  it("a Lead Desk workspace names its own workers (never the shop's helpers) and has a 'New leads' card with the newest lead and a link to the Leads", async () => {
+  it("a Lead Desk workspace's strip is its own workers (never the shop's helpers), and it has a 'New leads' card with the newest lead and a link to the Leads", async () => {
     await view(data({ deskTeam: [
       { key: "leads", state: "idle", name: "Lead catcher", text: "Last lead: Anita R. from IndiaMART", at: "2026-10-11T04:40:00Z" },
       { key: "calls", state: "working", name: "Caller", text: "Calling Diwali leads: 12 of 40 done", at: null },
       { key: "rules", state: "off", name: "Standing rules", text: "No rule is on", at: null },
       { key: "tasks", state: "not_available", name: "Task helper", text: null, at: null },
     ] }));
-    const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
-    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent("Lead catcher · Caller · Standing rules · +1 more");
-    expect(s.querySelector("[data-part=team-list]")).toHaveAttribute("title", "Lead catcher · Caller · Standing rules · Task helper");
+    const s = screen.getByRole("heading", { name: "My AI team" }).closest("section")!;
+    expect([...s.querySelectorAll("[data-helper]")].map((c) => c.textContent)).toEqual(["CallerWorkingCalling Diwali leads: 12 of 40 done", "Lead catcherIdleLast lead: Anita R. from IndiaMART · 20m", "Task helperIdleNot available yet", "Standing rulesOffNo rule is on"]);
     expect(within(s).queryByText(/Quote Writer/)).toBeNull();
+    expect(within(s).getByRole("link", { name: "Open my AI team" })).toHaveAttribute("href", "/app/tenants/T/office");
     const n = document.querySelector('[data-part="new-leads"]') as HTMLElement;
     expect(within(n).getByRole("heading", { name: "New leads" })).toBeInTheDocument();
     expect(n).toHaveTextContent("Last lead: Anita R. from IndiaMART · 20m");
     expect(within(n).getByRole("link", { name: "Open leads" })).toHaveAttribute("href", "/app/tenants/T/leads");
   });
+  it("'Money held' is for the people who run the business, only when money is held or an order is open", async () => {
+    await view(data({ cards: { waiting: 3, money_held_paise: 12000000, orders_open: 3 } }));
+    const m = document.querySelector('[data-part="money"]') as HTMLElement;
+    expect(within(m).getByRole("heading", { name: "Money held" })).toBeInTheDocument();
+    expect(m).toHaveTextContent("₹1,20,000");
+    expect(m).toHaveTextContent("3 orders open");
+    expect(within(m).getByRole("link", { name: "Open orders" })).toHaveAttribute("href", "/app/tenants/T/orders");
+    cleanup();
+    await view(data());
+    expect(document.querySelector('[data-part="money"]')).toBeNull(); // nothing held, nothing open
+  });
   it("no 'New leads' card for a business type without Lead Desk", async () => {
     await view(data());
     expect(document.querySelector('[data-part="new-leads"]')).toBeNull();
   });
-  it("'Your team' says 'Not available yet' when the helpers could not be read", async () => {
+  it("'My AI team' says 'Not available yet' when the helpers could not be read", async () => {
     await view(data({ team: null }));
-    expect(within(screen.getByRole("heading", { name: "Your team" }).closest("section")!).getByText("Not available yet")).toBeInTheDocument();
+    expect(within(screen.getByRole("heading", { name: "My AI team" }).closest("section")!).getByText("Not available yet")).toBeInTheDocument();
   });
 });
 

@@ -45,7 +45,18 @@ const json = (body) => (_req, res) => {
   res.end(JSON.stringify(typeof body === "function" ? body() : body));
 };
 const T = `/v1/tenants/${TENANT}`;
+// the assistant is on (the stand-in's own list says "not built yet"), so Today draws its composer and chips
+const AGENTS_ON = [
+  { agent: "main", state: "idle", job: "Answers and does what you ask.", last_event: null },
+  { agent: "lead_finder", state: "idle", job: "Finds new businesses that may want to buy.", last_event: { text: "Found 18 boutiques; 3 need your OK", at: "2026-10-14T04:10:00Z" } },
+  { agent: "researcher", state: "working", job: "Reads public pages about a lead.", last_event: { text: "Reading 2 new IndiaMART enquiries", at: "2026-10-14T04:55:00Z" } },
+  { agent: "requirement_analyst", state: "idle", job: "Reads an enquiry.", last_event: null },
+  { agent: "quote_writer", state: "idle", job: "Prepares a quote.", last_event: { text: "Prepared quote 3", at: "2026-10-14T02:00:00Z" } },
+  { agent: "followup_desk", state: "working", job: "Drafts follow-ups.", last_event: { text: "5 due today, next at 16:00", at: "2026-10-14T04:30:00Z" } },
+  { agent: "order_desk", state: "switched_off", job: "Keeps orders in order.", last_event: null },
+];
 const extraRoutes = [
+  ["GET", new RegExp(`^/v1/tenants/${TENANT}/agents/status$`), json(() => AGENTS_ON)],
   ["GET", /^\/v1\/me$/, json(() => ({ user_id: USER_ID, memberships: [{ role: "owner", tenant: { id: TENANT, name: current.name, slug: "example" } }] }))],
   ["GET", new RegExp(`^${T}$`), json(() => ({ id: TENANT, name: current.name, slug: "example", role: "owner", plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-09-20T00:00:00Z" }))],
   ["GET", new RegExp(`^${T}/lead-finder/availability$`), json(() => (current.finder ? { available: true, source: "fixture", reason: "ok", upgrade_to: null, audience: "businesses" } : { available: false, source: null, reason: "not_for_this_business", upgrade_to: null, audience: "organisations" }))],
@@ -72,7 +83,7 @@ async function waitForPort(port, ms = 90_000) {
   throw new Error(`nothing listening on ${port} after ${ms} ms`);
 }
 
-async function shot(browser, cookie, { file, viewport, scheme, lang, more = false }) {
+async function shot(browser, cookie, { file, viewport, scheme, lang, more = false, full = false }) {
   const context = await browser.newContext({ viewport, deviceScaleFactor: 2, ignoreHTTPSErrors: true, colorScheme: scheme, timezoneId: "Asia/Kolkata" });
   await context.addCookies([{ name: "sme_consent", value: "1.a0", url: WEB_URL }, { name: "sme_lang", value: lang, url: WEB_URL }, { name: "sme_theme", value: scheme, url: WEB_URL }, { name: "sb-127-auth-token", value: cookie, url: WEB_URL }]);
   const page = await context.newPage();
@@ -89,7 +100,7 @@ async function shot(browser, cookie, { file, viewport, scheme, lang, more = fals
     await page.waitForSelector("[data-more-sheet]");
     await page.waitForTimeout(300);
   }
-  await page.screenshot({ path: path.join(OUT, file) });
+  await page.screenshot({ path: path.join(OUT, file), fullPage: full });
   await context.close();
   return errors;
 }
@@ -107,7 +118,8 @@ async function main() {
   const nextBin = path.join(WEB_DIR, "node_modules", "next", "dist", "bin", "next");
   const web = spawn(process.execPath, [nextBin, "start", "-p", String(WEB_PORT), "-H", "127.0.0.1"], {
     cwd: WEB_DIR,
-    env: { ...process.env, ...webEnv, NODE_ENV: "production", NEXT_TELEMETRY_DISABLED: "1", NODE_EXTRA_CA_CERTS: path.join(tmp, "c.pem"), NODE_OPTIONS: `--require ${path.join(HERE, "fake-clock.cjs")}`, VISUAL_FIXED_NOW: String(FIXED_NOW) },
+    // BROWSER_VOICE (read by the server at request time): Today draws the assistant's composer with the orb, as staging does
+    env: { ...process.env, ...webEnv, BROWSER_VOICE: "1", NODE_ENV: "production", NEXT_TELEMETRY_DISABLED: "1", NODE_EXTRA_CA_CERTS: path.join(tmp, "c.pem"), NODE_OPTIONS: `--require ${path.join(HERE, "fake-clock.cjs")}`, VISUAL_FIXED_NOW: String(FIXED_NOW) },
     stdio: ["ignore", "ignore", "ignore"],
   });
   let failed = false;
@@ -125,6 +137,7 @@ async function main() {
       const runs = [
         { file: `desktop-${p.short}-light-en.png`, viewport: desktop, scheme: "light", lang: "en" },
         { file: `desktop-${p.short}-dark-en.png`, viewport: desktop, scheme: "dark", lang: "en" },
+        { file: `desktop-${p.short}-full-en.png`, viewport: desktop, scheme: "light", lang: "en", full: true },
         ...(p.short === "sarees" ? [{ file: `desktop-${p.short}-light-te.png`, viewport: desktop, scheme: "light", lang: "te" }] : []),
         { file: `phone-${p.short}-today-en.png`, viewport: phone, scheme: "light", lang: "en" },
         { file: `phone-${p.short}-more-en.png`, viewport: phone, scheme: "light", lang: "en", more: true },

@@ -1,13 +1,16 @@
 import type { ReactNode } from "react";
 
+import { formatINR } from "@/design/format";
+
 
 import { LiveNow } from "../live/LazyLiveNow";
 import { CommandBar } from "./CommandBar";
 import { DoneSection } from "./DoneSection";
 import { NeedsYou } from "./NeedsYou";
-import { NewLeads, StoreVisits, TeamSection } from "./TodaySide";
+import { MoneyHeld, NewLeads, StoreVisits, TeamStrip } from "./TodaySide";
+import { SIDE_GRID } from "./side-card";
 import type { TodayActions } from "./actions-types";
-import { TODAY_CHIPS } from "./ask/ask-chips";
+import { TODAY_CHIPS, type ChipKey } from "./ask/ask-chips";
 import { ASK_WORD_KEYS } from "./ask/ask-words";
 import type { Availability } from "./ask/ask-types";
 import { SendingBanner } from "../outbox/SendingBanner";
@@ -25,19 +28,24 @@ export function dayLine(now: number, lang: string): string {
   return dayText(lang, y, m, d, { weekday: "long", month: "long" });
 }
 
+/** The helpers that have something in "Needs you" (the row's agent; a held message or a call request is the Follow-up Desk's, a visit the assistant proposed is the assistant's own): their card says "Waiting for you". */
+function waitingFor(needs: TodayData["needs"]): ReadonlySet<string> {
+  return new Set((needs ?? []).map((c) => (c.type === "item" ? c.item.agent : c.type === "visit" ? "main" : "followup_desk")));
+}
+
 /**
  * The Today screen (job AU), as the owner-approved design draws it: the date and greeting with the usage card; the Agent OWL card (the plush owl and its mood, one sentence built from the real list,
  * the overnight line, the Ask box and three chips); "Needs you" with one card per thing that waits (WhatsApp messages held for approval, calls, and the older kinds); and, beside it (below it on a
  * phone), "At the store today", "Done while you slept" and "Your team". It only draws what `data` holds: a null part says "Not available yet"; a section with no data is not drawn. `actions` are the
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
-export function TodayView({ intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = null, demo = false }: { /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS), drawn first in the side column. */ packCards?: React.ReactNode; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
+export function TodayView({ chipKeys = null, intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = null, demo = false }: { /** The assistant's chips (`todayChips`): the four this workspace can do; null = the three that always work. */ chipKeys?: readonly ChipKey[] | null; /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS), drawn first in the side column. */ packCards?: React.ReactNode; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
   const { cards, needs, team, deskTeam, store, sending, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
   const greet = t(hour < 12 ? "today.greeting.morning" : hour < 17 ? "today.greeting.afternoon" : "today.greeting.evening");
   const words = todayWords(t);
-  const chips = TODAY_CHIPS.map((k) => t(k));
+  const chips = (chipKeys ?? TODAY_CHIPS).map((k) => t(k));
   return (
     <div data-screen="today" className="flex flex-col gap-4 md:gap-5">
       <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
@@ -56,15 +64,16 @@ export function TodayView({ intro = null, exampleLine = null, live = null, outco
         <CommandBar lang={lang} base={base} availability={availability} words={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} chips={chips} />
         {live}
         {outcomes}
-        {/* the other cards, two by two */}
-        <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-2">
+        {/* the summary cards, side by side (four on a wide screen) */}
+        <div className={SIDE_GRID}>
+          <NewLeads deskTeam={deskTeam} base={base} t={t} now={now} />
           <StoreVisits store={store} calendarHref={calendarHref ?? `${base}/visits`} bookHref={role === "viewer" ? null : `${base}/visits#book`} t={t} />
           <DoneSection digest={digest} words={words} outboxHref={outboxHref} />
-          <NewLeads deskTeam={deskTeam} base={base} t={t} now={now} />
-          <TeamSection team={team} deskTeam={deskTeam} base={base} t={t} now={now} />
+          {role === "owner" || role === "admin" ? <MoneyHeld cards={cards} base={base} t={t} money={(p) => formatINR(p / 100)} /> : null}
         </div>
         {/* what a business type adds (trips, quotes, dues...) sits under the four cards, side by side */}
         {packCards}
+        <TeamStrip team={team} deskTeam={deskTeam} waitingFor={waitingFor(needs)} base={base} t={t} now={now} />
         {intro}
       </NeedsProvider>
     </div>
