@@ -1,0 +1,19 @@
+{
+  "textiles": [
+    "What is the saree for: a wedding, a function or daily wear?",
+    "Which colours or fabric do you like?",
+    "Roughly what budget do you have in mind?",
+    "When do you need it?"
+  ],
+  "construction_materials": [
+    "Which material do you need?",
+    "Roughly how much quantity?",
+    "Where is the site?",
+    "When do you need the delivery?"
+  ],
+  "education": [
+    "Which class is the admission for?",
+    "Which area do you live in?",
+    "When would you like to visit the campus?"
+  ]
+}

@@ -36,6 +36,11 @@ class InboundStore:
     def for_call(self, tenant_id: uuid.UUID) -> CallRow:
         return CallRow(self, tenant_id)
 
+    def talk_training(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
+        """The Owner's "How I talk to customers" for this call (the scheduler account reads it); None when nothing is saved."""
+        out = self._call("talk_training_for_call", {"p_tenant_id": str(tenant_id)})
+        return out if isinstance(out, dict) else None
+
 
 class CallRow:
     """`CallStore` (app/telephony/call_session.py) for one call of one workspace."""

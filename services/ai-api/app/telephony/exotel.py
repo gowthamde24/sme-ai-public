@@ -13,6 +13,7 @@ from __future__ import annotations
 import base64
 import binascii
 import json
+import re
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -135,6 +136,24 @@ def parse(raw: str | bytes) -> Event:
         body = _d(msg, "mark")
         return Mark(_s(body.get("name"), 100))
     return Unknown()
+
+
+def event_name(raw: str) -> str:
+    """The event's name for the log: a short lower-case word, `other` for anything else, `unreadable` when the frame is not JSON. Never a value."""
+    try:
+        msg = json.loads(raw)
+    except ValueError:
+        return "unreadable"
+    name = msg.get("event") if isinstance(msg, dict) else None
+    return name if isinstance(name, str) and re.fullmatch(r"[a-z_]{1,20}", name) else "other"
+
+
+def closed_word(text: str | None) -> str | None:
+    """A provider's reason as a short closed word (letters, _ - and spaces, at most 40), else `other`. Never free text with a number in it."""
+    if not text:
+        return None
+    word = text.strip()[:40]
+    return word if re.fullmatch(r"[A-Za-z_ -]{1,40}", word) else "other"
 
 
 def media_message(stream_sid: str, pcm: bytes, seq: int) -> str:

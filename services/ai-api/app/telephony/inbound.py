@@ -350,7 +350,10 @@ class TimedLine(PhoneLine):
 def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_paise: int, outcome: str | None) -> dict[str, Any]:
     p50, p95 = percentile(line.first_sound_ms, 0.5), percentile(line.first_sound_ms, 0.95)
     return {"call": str(call_id), "turns": len(line.first_sound_ms), "first_sound_p50_ms": None if p50 is None else round(p50), "first_sound_p95_ms": None if p95 is None else round(p95),
-            "duration_s": round(duration_s, 1), "cost_paise_estimate": cost_paise, "outcome": outcome, "end": line.end_reason}
+            "duration_s": round(duration_s, 1), "cost_paise_estimate": cost_paise, "outcome": outcome, "end": line.end_reason,
+            # how it ended and what went each way (5 Nov 2026): names and numbers only
+            "end_how": line.end_how, "stop_reason": line.stop_reason, "close_code": getattr(getattr(line, "_wire", None), "close_code", None), "events": dict(sorted(line.events.items())),
+            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000)}
 
 
 def log_call(numbers: dict[str, Any]) -> None:

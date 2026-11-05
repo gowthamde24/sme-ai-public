@@ -31,14 +31,32 @@ def row_of(lead: Any) -> dict[str, Any]:
     return row
 
 
+def _source(runtime: Runtime, token: str, tenant: uuid.UUID) -> tuple[Any, Any]:
+    """The workspace's OWN key when it saved one (Secret Manager, owner decision 5 Nov 2026), else the installation's key for its one workspace, as before."""
+    from app.workspace_secrets import SecretStoreError
+
+    secrets = getattr(runtime, "workspace_secrets", None)
+    if secrets is not None:
+        try:
+            own = secrets.key(token, tenant, "indiamart_key")
+        except SecretStoreError:
+            raise ApiError(503, "indiamart_key_unreadable", "Your IndiaMART key could not be read right now. Try again in a minute.") from None
+        if own:
+            from app.connectors.indiamart import IndiaMartPull
+
+            return secrets.connectors, IndiaMartPull(own)
+    c = connectors_for(runtime, tenant, "indiamart")
+    return c.repo, c.leads
+
+
 def pull(runtime: Runtime, service: LeadSourcesService, ctx: TenantContext) -> dict[str, Any]:
-    c = connectors_for(runtime, ctx.tenant.id, "indiamart")
     token, tenant = ctx.principal.token, ctx.tenant.id
-    window = c.repo.call(token, "indiamart_pull_begin", tenant_args(tenant))   # refuses a second call within five minutes
+    repo, source = _source(runtime, token, tenant)
+    window = repo.call(token, "indiamart_pull_begin", tenant_args(tenant))   # refuses a second call within five minutes
     start, end = (datetime.fromisoformat(str(window[k])) for k in ("start", "end"))
-    assert c.leads is not None  # noqa: S101 - connectors_for checked it
+    assert source is not None  # noqa: S101 - connectors_for checked it
     try:
-        leads = c.leads.pull(start, end)
+        leads = source.pull(start, end)
     except ProviderError as exc:
         raise ApiError(502, f"indiamart_{exc.code}", "IndiaMART could not be reached or refused the request.") from None
     # the consent the owner confirmed when registering the IndiaMART source, if any
@@ -50,7 +68,7 @@ def pull(runtime: Runtime, service: LeadSourcesService, ctx: TenantContext) -> d
     import_id = uuid.uuid5(_NS, f"{tenant}:{end.isoformat()}")
     totals, _problems, _replayed = service._apply(token, tenant, import_id, "indiamart", "indiamart", consent_id, prepared, None, False, False)  # noqa: SLF001
     if totals.get("blocked", 0) == 0 and totals.get("invalid", 0) == 0:   # a window with a lead that was not taken is asked for again
-        c.repo.call(token, "indiamart_pull_finish", tenant_args(tenant, end=end.isoformat(), count=len(leads)))
+        repo.call(token, "indiamart_pull_finish", tenant_args(tenant, end=end.isoformat(), count=len(leads)))
     return {
         "fetched": len(leads),
         "created": totals.get("ready", 0),
