@@ -215,7 +215,9 @@ async def test_a_call_from_the_owner_is_answered_by_the_ai_and_finished_with_its
     first = next(t["text"] for t in outcome.transcript if t["who"] == "assistant")
     assert "AI" in first or "ai" in first.lower(), "the first thing said is that it is an AI"
     numbers = svc.last_numbers
-    assert numbers is not None and set(numbers) == {"call", "turns", "first_sound_p50_ms", "first_sound_p95_ms", "duration_s", "cost_paise_estimate", "outcome", "end"}
+    assert numbers is not None and set(numbers) == {"call", "turns", "first_sound_p50_ms", "first_sound_p95_ms", "duration_s", "cost_paise_estimate", "outcome", "end",
+                                                 "end_how", "stop_reason", "close_code", "events", "bytes_in", "bytes_out", "first_out_ms"}
+    assert numbers["bytes_out"] > 0 and numbers["first_out_ms"] is not None and numbers["events"].get("start") == 1, "our audio went out, and when"
     assert numbers["cost_paise_estimate"] == 100, "one started minute at the estimate"
     line = next(r for r in records if r.startswith("phone_call_numbers "))
     assert OWNER not in line and "9502380998" not in line and "open" not in line, "no number and no word of the caller in the log"

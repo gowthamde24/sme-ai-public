@@ -63,6 +63,7 @@ class StarletteWire:
 
     def __init__(self, ws: WebSocket) -> None:
         self._ws = ws
+        self.close_code: int | None = None   # the WebSocket close code when the provider closed it (for the end-of-call log)
 
     async def send_text(self, data: str) -> None:
         await self._ws.send_text(data)
@@ -73,6 +74,8 @@ class StarletteWire:
         except (WebSocketDisconnect, RuntimeError):
             return None
         if message.get("type") == "websocket.disconnect":
+            code = message.get("code")
+            self.close_code = code if isinstance(code, int) else None
             return None
         text = message.get("text")
         if text is None and message.get("bytes") is not None:
