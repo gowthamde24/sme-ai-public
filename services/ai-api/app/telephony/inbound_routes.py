@@ -120,7 +120,11 @@ async def stream_url(request: Request) -> Response:
         raise ApiError(403, "not_on_sandbox_list", "This number is not answered here.")
     call_sid = inbound.first(params, "CallSid", "call_sid", "CallSID")
     log.info("exotel_stream_url call_sid_fp=%s", inbound.fingerprint(service.secret, call_sid))
-    token = inbound.mint(service.secret, inbound.monotonic(), call_sid)
+    # the shared trial number is in `To` here, while the start message's `to` is the line the call landed on (5 Nov 2026): the token carries "this call came in on the trial number", signed
+    to_trial = service.trial is not None and normalise(inbound.first(params, "To", "to")) == service.trial.number
+    log.info("exotel_stream_url to_is_trial=%s callto_is_trial=%s", "yes" if to_trial else "no",
+             "yes" if service.trial is not None and normalise(params.get("CallTo", "")) == service.trial.number else "no")
+    token = inbound.mint(service.secret, inbound.monotonic(), call_sid, inbound.TRIAL_MARK if to_trial else "")
     url = inbound.stream_url(service.public_base, token)
     log.info("exotel_stream_url issued format=%s token_in=path url_chars=%d", service.url_format, len(url))
     if service.url_format == "text":
@@ -196,10 +200,11 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
         log.info("exotel_inbound refused=no_start")
         return await _close(wire)
     log.info("exotel_stream start call_sid_fp=%s stream_sid_fp=%s", inbound.fingerprint(service.secret, start.call_sid), inbound.fingerprint(service.secret, start.stream_sid))
-    if not inbound.verify(service.secret, token, inbound.monotonic(), start.call_sid):
+    mark = inbound.verify_mark(service.secret, token, inbound.monotonic(), start.call_sid)
+    if mark is None:
         return await _refuse(wire, line, "bad_token")
     decision = await inbound.admit(start, service.gate_settings, find_line=service.store.line_find, calls=service.calls, active_calls=live.count() if live is not None else 0, now=inbound.now_utc(),
-                                   our_sid=service.our_sid, trial=service.trial, trial_count=service.trial_count)
+                                   our_sid=service.our_sid, trial=service.trial, trial_count=service.trial_count, trial_by_url=mark == inbound.TRIAL_MARK)
     if isinstance(decision, gate.Refused):
         return await _refuse(wire, line, decision.reason)
     log.info("exotel_inbound admitted rule=%s", decision.rule)
