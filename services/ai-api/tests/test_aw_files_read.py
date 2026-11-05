@@ -7,7 +7,6 @@ readers and model; one test runs the real Tesseract when the machine has it."""
 
 from __future__ import annotations
 
-import base64
 import io
 import logging
 import shutil
@@ -19,7 +18,14 @@ import pytest
 from PIL import Image, ImageDraw, ImageFont
 
 from app.assistant_work import extract
-from app.assistant_work.extract import FileReader, LocalTools, ReadRefused, grids_of_text, people_of_text, read_docx
+from app.assistant_work.extract import (
+    FileReader,
+    LocalTools,
+    ReadRefused,
+    grids_of_text,
+    people_of_text,
+    read_docx,
+)
 from app.lead_sources.service import LeadSourcesService
 from app.tasks.dialer import FakeDialer
 from app.tasks.knowledge import FixedKnowledge
@@ -28,9 +34,8 @@ from tests.aw_fakes import FakeWorkStore
 from tests.dr_sources_fakes import FakeLeadSourcesRepository, Receiver
 from tests.dr_tasks_fakes import FakeTasksRepository, Scripted
 from tests.ea_fakes import FakeTurnDb
-from tests.fakes import make_client
-from tests.test_aw_files import MATCHER, BASE, cards_of, drop, text_of, turn
-from tests.fakes import auth
+from tests.fakes import auth, make_client
+from tests.test_aw_files import BASE, MATCHER, cards_of, drop, text_of, turn
 
 REGISTER = """Visitors register - Sri Lakshmi Silks
 1. Ravi Kumar      98765 43210    Hyderabad
@@ -171,7 +176,11 @@ def test_a_scan_goes_to_local_ocr_first_and_the_model_is_not_asked_when_ocr_foun
 def test_the_model_reads_only_the_page_images_and_only_when_local_ocr_found_nothing() -> None:
     sent: list[Any] = []
     local = FakeLocal(text_layer="", ocr="~~ ,,, ~~", pages=3)
-    read = FileReader(local).read("pdf", b"%PDF-1.7 scan", school=lambda: False, vision=lambda pages: sent.extend(pages) or REGISTER)
+    def vision(pages: Any) -> str:
+        sent.extend(pages)
+        return REGISTER
+
+    read = FileReader(local).read("pdf", b"%PDF-1.7 scan", school=lambda: False, vision=vision)
     assert read.how == "ai_vision" and len(sent) == 3 and all(p.media_type == "image/png" and not p.data.startswith(b"%PDF") for p in sent), "page images, never the PDF itself"
 
 
