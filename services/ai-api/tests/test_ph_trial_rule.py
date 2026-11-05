@@ -245,7 +245,7 @@ async def test_a_whole_trial_call_is_answered_and_the_log_names_the_rule_but_no_
     assert store.begun == [(TENANT, "en")]
     assert "exotel_inbound admitted rule=trial_pin_path" in records
     diag = next(r for r in records if r.startswith("exotel_start "))
-    assert "account_matches=yes" in diag and "app_id_matches=absent" in diag and "trial_number=yes" in diag and "custom=-" in diag and "caller_matches=no caller_shape=plus13 caller_india=no" in diag
+    assert "account_matches=yes" in diag and "app_id_matches=absent" in diag and "trial_number=to" in diag and "custom=-" in diag and "caller_matches=no caller_shape=plus13 caller_india=no" in diag
     assert all(v not in r for r in records for v in (APP, "sim ", OWNER, "9502380998", "CA123", "4915112345678")), "names and yes/no only, never a value"
     assert any(r.startswith("exotel_stream start call_sid_fp=") and r.split("call_sid_fp=")[1].split(" ")[0] == inbound.fingerprint(SECRET, "CA123") for r in records)
 
@@ -271,3 +271,98 @@ def test_on_the_trial_number_an_altered_caller_still_gets_the_stream_address_and
     line = [m for m in records if m.startswith("exotel_stream_url caller_matches=")][-1]
     assert line == "exotel_stream_url caller_matches=no caller_shape=plus13 caller_india=no from_vs_callfrom=same"
     assert "4915112345678" not in " ".join(records)
+
+
+# ---------------------------------------------------------------------------------------------------------------------------------- 5 Nov 2026, 10:15 UTC
+LANDED = "08037091588"   # the line the call landed on: the start message's `to` (the stream-url request's CallTo); the trial number was only in its `To`
+
+
+class OnlyTrialLine(FakeStore):
+    """Staging's lines: the trial number only (Stack19 Owner Test)."""
+
+    def line_find(self, number: str) -> dict[str, Any] | None:
+        self.asked.append(number)
+        return self.line if number == EXOPHONE else None
+
+
+@arun
+async def test_the_trial_number_named_only_on_the_stream_url_request_still_takes_the_trial_rule_with_the_trial_line() -> None:
+    store = OnlyTrialLine()
+    refused = await inbound.admit(start(to_number=LANDED), GS, find_line=store.line_find, calls=FakeCalls(from_number=None), active_calls=0, now=NOW, our_sid=OUR_SID,  # type: ignore[arg-type]
+                                  trial=rule(number=EXOPHONE), trial_count=inbound.DayCount())
+    assert isinstance(refused, gate.Refused) and refused.reason == "no_such_line", "the 10:15 call, without the mark"
+    store = OnlyTrialLine()
+    calls = FakeCalls(from_number=None)
+    out = await inbound.admit(start(to_number=LANDED, from_number="+4915112345678"), GS, find_line=store.line_find, calls=calls, active_calls=0, now=NOW, our_sid=OUR_SID,  # type: ignore[arg-type]
+                              trial=rule(number=EXOPHONE), trial_count=inbound.DayCount(), trial_by_url=True)
+    assert isinstance(out, inbound.Admitted) and out.rule == "trial_pin_path" and out.max_call_s == 180
+    assert store.asked == [EXOPHONE] and calls.asked == ["CA9"], "the trial number's own line, and Exotel's record under our account is still required"
+    none = await inbound.admit(start(to_number=LANDED), GS, find_line=OnlyTrialLine().line_find, calls=NoRecord(), active_calls=0, now=NOW, our_sid=OUR_SID,  # type: ignore[arg-type]
+                               trial=rule(number=EXOPHONE), trial_count=inbound.DayCount(), trial_by_url=True)
+    assert isinstance(none, gate.Refused) and none.reason == "not_approved"
+    other = await inbound.admit(start(to_number=LANDED, account_sid="someone-else"), GS, find_line=OnlyTrialLine().line_find, calls=FakeCalls(), active_calls=0, now=NOW, our_sid=OUR_SID,  # type: ignore[arg-type]
+                                trial=rule(number=EXOPHONE), trial_count=inbound.DayCount(), trial_by_url=True)
+    assert isinstance(other, gate.Refused) and other.reason == "trial_account"
+    no_rule = await inbound.admit(start(to_number=LANDED), GS, find_line=OnlyTrialLine().line_find, calls=FakeCalls(), active_calls=0, now=NOW, our_sid=OUR_SID, trial=None, trial_by_url=True)  # type: ignore[arg-type]
+    assert isinstance(no_rule, gate.Refused) and no_rule.reason == "no_such_line", "no trial rule (live mode): the mark means nothing"
+
+
+def test_the_trial_mark_is_signed_bound_to_the_call_and_not_readable() -> None:
+    now = inbound.monotonic()
+    marked, plain = inbound.mint(SECRET, now, "CA9", inbound.TRIAL_MARK), inbound.mint(SECRET, now, "CA9")
+    assert inbound.verify_mark(SECRET, marked, now, "CA9") == inbound.TRIAL_MARK and inbound.verify_mark(SECRET, plain, now, "CA9") == ""
+    assert inbound.verify(SECRET, marked, now, "CA9") and len(marked) == len(plain) == 35
+    assert inbound.verify_mark(SECRET, marked, now, "CA8") is None, "bound to its call"
+    assert inbound.verify_mark(b"another secret", marked, now, "CA9") is None
+    assert inbound.verify_mark(SECRET, marked, now + inbound.TOKEN_TTL_S + 5, "CA9") is None
+
+
+def test_the_stream_url_marks_the_token_when_exotel_names_the_trial_number_as_to() -> None:
+    from tests.test_ph_inbound import _client
+
+    records: list[str] = []
+    handler = logging.Handler()
+    handler.emit = lambda record: records.append(record.getMessage())  # type: ignore[method-assign]
+    log = logging.getLogger("app.telephony.inbound")
+    log.addHandler(handler)
+    log.setLevel(logging.INFO)
+    svc = service()
+    svc.trial = rule(number=EXOPHONE)
+    try:
+        exo = {"CallSid": "CA9", "CallFrom": "09502380998", "From": "09502380998", "CallTo": LANDED, "Direction": "incoming"}
+        marked = _client(svc).get("/v1/telephony/exotel/stream-url", params={**exo, "To": "09513886363"}).json()["url"]
+        plain = _client(svc).get("/v1/telephony/exotel/stream-url", params={**exo, "To": LANDED}).json()["url"]
+    finally:
+        log.removeHandler(handler)
+    assert inbound.verify_mark(SECRET, _token_of(marked), inbound.monotonic(), "CA9") == inbound.TRIAL_MARK
+    assert inbound.verify_mark(SECRET, _token_of(plain), inbound.monotonic(), "CA9") == ""
+    assert "exotel_stream_url to_is_trial=yes callto_is_trial=no" in records and "exotel_stream_url to_is_trial=no callto_is_trial=no" in records
+    assert all("9513886363" not in r and "8037091588" not in r for r in records), "names and yes/no only"
+
+
+def _token_of(url: str) -> str:
+    return url.split("/stream/")[1].split("?")[0]
+
+
+@arun
+async def test_a_whole_call_like_the_one_at_10_15_is_now_answered_by_the_trial_rule() -> None:
+    records: list[str] = []
+    handler = logging.Handler()
+    handler.emit = lambda record: records.append(record.getMessage())  # type: ignore[method-assign]
+    log = logging.getLogger("app.telephony.inbound")
+    log.addHandler(handler)
+    log.setLevel(logging.INFO)
+    store = OnlyTrialLine()
+    svc = service(store=store, calls=FakeCalls(from_number=None))
+    svc.our_sid = "sim"
+    svc.trial = inbound.trial_rule(EXOPHONE, OWNER, "sim", APP)
+    try:
+        sim, task = await _call(svc, inbound.mint(SECRET, inbound.monotonic(), "CA123", inbound.TRIAL_MARK), {"to_number": "+918037091588"})
+        await asyncio.sleep(0.5)
+        await sim.hang_up()
+        await asyncio.wait_for(task, 10)
+    finally:
+        log.removeHandler(handler)
+    assert store.begun == [(TENANT, "en")] and "exotel_inbound admitted rule=trial_pin_path" in records
+    diag = next(r for r in records if r.startswith("exotel_start "))
+    assert "trial_number=url to_shape=plus12" in diag
