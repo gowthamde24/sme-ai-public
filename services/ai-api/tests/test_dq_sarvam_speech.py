@@ -85,7 +85,7 @@ def test_the_fake_switch_keeps_a_worker_that_has_a_key_silent() -> None:
 
 # ------------------------------------------------------------------------------------ six languages
 def test_malayalam_and_tamil_are_voice_languages() -> None:
-    assert set(LANGUAGES) == {"en", "te", "hi", "kn", "ta", "ml"} and TAGS["ml"] == "ml-IN"
+    assert set(LANGUAGES) == {"en", "te", "hi", "kn", "ta", "ml", "mr"} and TAGS["ml"] == "ml-IN" and TAGS["mr"] == "mr-IN"   # mr: job M1
 
 
 @pytest.mark.parametrize(("lang", "tag"), [("en", "en-IN"), ("te", "te-IN"), ("hi", "hi-IN"), ("kn", "kn-IN"), ("ta", "ta-IN"), ("ml", "ml-IN")])

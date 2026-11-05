@@ -22,6 +22,7 @@ from app.conversation.pipeline import Conversation
 from app.conversation.voices import (
     CALL_LANGUAGES,
     DEFAULT_FILE,
+    VOICED_LANGUAGES,
     VoiceChoice,
     default_config,
     load_config,
@@ -39,8 +40,9 @@ def run(coro: Any) -> Any:
 
 def test_the_default_config_has_cartesia_first_and_bulbul_v4_flash_behind_it_for_every_call_language() -> None:
     cfg = default_config()
-    assert set(cfg.languages) >= set(CALL_LANGUAGES) == {"te", "en", "hi", "kn", "ta", "ml"}
-    for lang in CALL_LANGUAGES:
+    assert set(CALL_LANGUAGES) == {"te", "en", "hi", "kn", "ta", "ml", "mr"}
+    assert set(cfg.languages) == set(VOICED_LANGUAGES) == set(CALL_LANGUAGES) - {"mr"}, "Marathi is a call language with no voice yet (job M1)"
+    for lang in VOICED_LANGUAGES:
         v = cfg.for_language(lang)
         assert v.primary.engine == "cartesia" and v.primary.model == "sonic-3.6"
         assert v.fallback.engine == "sarvam_v4" and v.fallback.model == "bulbul:v4-flash" and v.fallback.voice.endswith(("_conversation", "_conversational", "_customer", "_narration"))

@@ -17,7 +17,7 @@ from app.integrations.ratelimit import SlidingWindow
 from app.voice.interface import Speech, TextToSpeech, VoiceError
 
 PERSONAS = ("female_warm", "female_clear", "male_calm", "male_lively")
-LANGUAGES = ("en", "te", "hi", "kn", "ta", "ml")
+LANGUAGES = ("en", "te", "hi", "kn", "ta", "ml", "mr")
 # the four personas on Sarvam Bulbul v3 speakers (docs.sarvam.ai lists no genders; chosen by name, to be confirmed by a native listener)
 SPEAKERS = {"female_warm": "ritu", "female_clear": "priya", "male_calm": "aditya", "male_lively": "rahul"}
 # "warm": normal pace, more expressive; "quick": faster and steadier (listening only: nothing is saved)

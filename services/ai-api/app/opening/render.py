@@ -54,7 +54,7 @@ _OPENERS: dict[str, dict[str, str]] = {
 
 
 # Where an Owner's own line says {assistant} but the Owner never named the assistant: a phrase, never a made-up name and never a hole ("this is  of X"). The same words stand in the settings' samples and previews.
-NO_NAME_PHRASE = {"en": "your assistant", "te": "మీ అసిస్టెంట్", "hi": "आपकी असिस्टेंट", "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್"}
+NO_NAME_PHRASE = {"en": "your assistant", "te": "మీ అసిస్టెంట్", "hi": "आपकी असिस्टेंट", "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್", "mr": "तुमची असिस्टंट"}
 
 
 def no_name_phrase(language: str) -> str:

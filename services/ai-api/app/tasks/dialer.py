@@ -82,6 +82,7 @@ class FakeDialer:
 
     def call(self, *, business: str, language: str, questions: list[dict[str, Any]], template: str, seed: str) -> CallResult:
         self.calls.append(seed)
+        language = language if language in OPENERS else "en"   # job M1: a language with no words here yet (Marathi) gets the English ones
         h = _h(seed)
         bucket = h % 10
         if template == "supplier_price_enquiry":
