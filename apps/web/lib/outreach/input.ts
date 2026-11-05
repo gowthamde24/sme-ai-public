@@ -1,4 +1,4 @@
-import { CALL_LANGS, CHANNELS, GOALS, RULE_ACTIONS, RULE_SOURCES, isSourceTag, type BatchInput, type RuleInput, type SourceTag, type Who } from "./types";
+import { CALL_LANGS, CHANNELS, GOALS, RULE_ACTIONS, RULE_CHANNELS, RULE_SOURCES, isSourceTag, type BatchInput, type RuleInput, type SourceTag, type Who } from "./types";
 
 /**
  * What a form (or a forged post) sends for a batch plan or a standing rule, checked HERE before anything goes to the API (the API checks again): closed words only, bounded text, bounded numbers. Pure.
@@ -73,7 +73,7 @@ export function parseRuleInput(value: unknown): RuleInput | null {
   const action = oneOf(value.action, RULE_ACTIONS);
   const withinMinutes = typeof value.withinMinutes === "number" && Number.isInteger(value.withinMinutes) && value.withinMinutes >= 1 && value.withinMinutes <= 120 ? value.withinMinutes : null;
   const goal = oneOf(value.goal, GOALS);
-  const channel = oneOf(value.channel, CHANNELS);
+  const channel = oneOf(value.channel, RULE_CHANNELS); // call first: never a WhatsApp-only rule
   const language = oneOf(value.language, CALL_LANGS);
   const questions = questionsOf(value.questions);
   const messageText = value.messageText === null || value.messageText === undefined || value.messageText === "" ? null : plain(value.messageText, 3, 600);
@@ -81,7 +81,7 @@ export function parseRuleInput(value: unknown): RuleInput | null {
   const maxTotalMinutes = cap(value.maxTotalMinutes);
   if (!ruleId || !source || !action || withinMinutes === null || !goal || !channel || !language || !questions || maxCallsPerDay === undefined || maxTotalMinutes === undefined) return null;
   if (value.messageText && messageText === null) return null;
-  // a rule that sends a WhatsApp message first needs its words; a rule that only calls does not
-  if ((action !== "call_within_minutes" || channel !== "call") && messageText === null) return null;
+  // a rule that may send WhatsApp (when the customer asks for it on the call) needs its words; a rule that only calls does not
+  if (channel === "both" && messageText === null) return null;
   return { ruleId, source, action, withinMinutes, goal, channel, language, questions, messageText, maxCallsPerDay, maxTotalMinutes };
 }
