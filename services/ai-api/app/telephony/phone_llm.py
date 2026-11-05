@@ -4,7 +4,7 @@
   * "do not call me again" -> the fixed acknowledgement, and the call ends after it;
   * a voicemail or phone-menu greeting in the first lines -> nothing is said to it (or, if the workspace asked for a message, one short fixed message), and the call ends;
 and, after the model, it cuts any reply that starts to claim it is human and puts the honest answer in its place.
-`on_event("stop" | "voicemail")` tells the call session, which closes the line after the audio of this turn has played."""
+`on_event("stop" | "voicemail" | "handover")` tells the call session, which closes the line after the audio of this turn has played."""
 
 # ruff: noqa: E501
 from __future__ import annotations
@@ -41,9 +41,19 @@ class PhoneLlm:
             if self._voicemail_action == "leave_message":
                 yield persona.VOICEMAIL_MESSAGE.get(language, persona.VOICEMAIL_MESSAGE["en"]).replace("{business}", self._business)
             return
+        if triggers.person_asked_explicitly(last):
+            # "let me talk to a person" (owner, 5 Nov 2026): the fixed hand-over line, and the call ends after it; the team calls back (Today shows the call); checked AFTER the identity question, which is answered honestly
+            self._event("handover")
+            yield persona.HANDOVER_ACK.get(language, persona.HANDOVER_ACK["en"])
+            return
         if is_identity_question(last):
             self.honest_answers += 1
             yield honest_answer(language, self._business)
+            return
+        if triggers.person_requested(last):
+            # "let me talk to a person" (owner, 5 Nov 2026): the fixed hand-over line, and the call ends after it; the team calls back (Today shows the call); checked AFTER the identity question, which is answered honestly
+            self._event("handover")
+            yield persona.HANDOVER_ACK.get(language, persona.HANDOVER_ACK["en"])
             return
         said = ""
         async for piece in self._inner.stream(system, messages, model):

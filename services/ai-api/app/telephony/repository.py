@@ -21,6 +21,7 @@ class CallStateError(RepositoryError):
 class CallsRepository(Protocol):
     def list_calls(self, token: str, tenant_id: uuid.UUID, state: str, limit: int, before: datetime | None) -> list[dict[str, Any]]: ...
     def get(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any]: ...
+    def handled(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any]: ...
 
 
 class PostgrestCallsRepository:
@@ -35,3 +36,7 @@ class PostgrestCallsRepository:
 
     def get(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any]:
         return self._rpc.object(token, "phone_call_get", {"p_tenant_id": str(tenant_id), "p_call_id": str(call_id)})
+
+    def handled(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any]:
+        """A hand-over call was dealt with (the caller was called back): it leaves Today (migration 20261231160000)."""
+        return self._rpc.object(token, "phone_call_handled", {"p_tenant_id": str(tenant_id), "p_call_id": str(call_id)})
