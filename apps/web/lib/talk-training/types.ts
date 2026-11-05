@@ -97,10 +97,16 @@ export function cleanEdit(input: unknown): { ok: true; data: TalkTraining } | { 
   if (Array.isArray(n) && n.length > LIMITS.neverSay.count) return { ok: false, error: "too_many_never_say" };
   if (Array.isArray(o) && o.length > LIMITS.objection.count) return { ok: false, error: "too_many_objections" };
   if (Array.isArray(e) && e.length > LIMITS.example.count) return { ok: false, error: "too_many_examples" };
-  const greeting: Record<string, unknown> = {};
-  if (isRecord(input.greeting)) for (const [l, v] of Object.entries(input.greeting)) if (typeof v === "string" && v.trim() !== "") greeting[l] = v.trim();
+  // only the six call languages are read (a key the browser sends is never used as a property name); any other key refuses the whole
+  const sent = isRecord(input.greeting) ? input.greeting : {};
+  if (Object.keys(sent).some((l) => !(CALL_LANGS as readonly string[]).includes(l))) return { ok: false, error: "invalid" };
+  const greeting: Partial<Record<CallLang, string>> = {};
+  for (const l of CALL_LANGS) {
+    const v = sent[l];
+    if (typeof v === "string" && v.trim() !== "") greeting[l] = v.trim();
+  }
   const doc = fromApi({ greeting, address: input.address, questions: q, never_say: n, objections: Array.isArray(o) ? o.map((p) => (isRecord(p) ? { hears: p.a, answer: p.b } : p)) : o, examples: Array.isArray(e) ? e.map((p) => (isRecord(p) ? { customer: p.a, answer: p.b } : p)) : e });
-  if (!doc || Object.keys(greeting).some((l) => !(CALL_LANGS as readonly string[]).includes(l))) return { ok: false, error: "invalid" };
+  if (!doc) return { ok: false, error: "invalid" };
   const said = doc.neverSay.map(sameWords);
   const asked = doc.questions.map(sameWords);
   if (new Set(said).size !== said.length || new Set(asked).size !== asked.length) return { ok: false, error: "duplicate" };
