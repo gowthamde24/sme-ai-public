@@ -88,7 +88,7 @@ def test_code_checks_the_planners_answer() -> None:
     assert check({"decision": "do", "actions": [{"action": "send_whatsapp"}]}, u, "").decision == "clarify", "an action that is not on the list is never run"
     assert check({"decision": "do", "actions": [{"action": "add_people"}]}, u, "").decision == "clarify", "no people in a brochure: nothing to add"
     assert check({"decision": "nonsense"}, u, "").decision == "clarify"
-    assert set(FINAL.input_schema["properties"]["actions"]["items"]["properties"]["action"]["enum"]) == {"add_people", "add_to_knowledge", "update_prices"}
+    assert set(FINAL.input_schema["properties"]["actions"]["items"]["properties"]["action"]["enum"]) == {"add_people", "add_to_knowledge", "update_prices", "capture_enquiry"}
 
 
 # ============================================================================ in the chat
@@ -199,8 +199,8 @@ def test_the_model_down_still_imports_a_list_of_people() -> None:
 # CODE makes of it: the right card, the right step, nothing written before the OK, nothing invented. The live-model run of the same table is scripts/eval_aw_files.py (staging, opt-in).
 EVALS: list[tuple[str, str, str, str, dict[str, Any], str]] = [
     # (name, file text, request, language, the model's decision, expected: answer | plan:<tool> | preview | cant:<code> | clarify)
-    ("enquiry letter, quote", ENQUIRY, "make an enquiry and a quote", "en", {"decision": "cant_do", "cant": "quote_from_enquiry"}, "cant:quote_from_enquiry"),
-    ("enquiry letter, te", ENQUIRY, "ఈ లేఖ నుండి కొటేషన్ చేయండి", "te", {"decision": "cant_do", "cant": "quote_from_enquiry"}, "cant:quote_from_enquiry"),
+    ("enquiry letter, quote", ENQUIRY, "make an enquiry and a quote", "en", {"decision": "do", "actions": [{"action": "capture_enquiry"}], "cant": "quote_from_enquiry"}, "enquiry"),
+    ("enquiry letter, te", ENQUIRY, "ఈ లేఖ నుండి కొటేషన్ చేయండి", "te", {"decision": "do", "actions": [{"action": "capture_enquiry"}], "cant": "quote_from_enquiry"}, "enquiry"),
     ("price list, update", PRICES, "update catalogue prices from this", "en", {"decision": "do", "actions": [{"action": "update_prices"}]}, "prices"),
     ("price list, te", PRICES, "ఈ ధరలు కేటలాగ్‌లో మార్చండి", "te", {"decision": "do", "actions": [{"action": "update_prices"}]}, "prices"),
     ("brochure, knowledge", BROCHURE, "add this to About my business", "en", {"decision": "do", "actions": [{"action": "add_to_knowledge"}]}, "plan:knowledge.add_source"),
@@ -230,6 +230,8 @@ def test_a2b_evals_code_side(name: str, text: str, request_words: str, language:
         assert cards == [] and text_of(evs)
     elif expected == "preview":
         assert cards[0]["kind"] == "file_preview" and cards[0]["plan"]["status"] == "proposed"
+    elif expected == "enquiry":
+        assert cards[0]["plan"]["steps"][-1]["tool"] == "leads.capture_enquiry" and ("confirm the requirement" in text_of(evs) or "అవసరాన్ని" in text_of(evs))
     elif expected == "prices":
         assert cards[0]["kind"] == "file_preview" and cards[0]["destination"] == "catalogue" and cards[0]["plan"]["sensitive"] == "money"
     elif expected.startswith("plan:"):
