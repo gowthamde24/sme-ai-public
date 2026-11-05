@@ -28,7 +28,7 @@ Any member of the workspace (Owner, Admin, Sales, Viewer). One call for the whol
 **Every number may be `null`: "not known or not for you", draw no badge.** `0` means "known, none". A field is null when:
 - the caller's role may not see it (see the table);
 - the workspace's pack or plan doesn't have that part (a school has no quotes; Lead Desk has no Lead Finder);
-- its source failed. One failing count never fails the call: the others are still returned.
+- If the database cannot answer at all, the call is `502` and the web draws no badges (the page itself never waits for it).
 
 | field | what it counts | same number as | who sees it |
 |---|---|---|---|
@@ -38,17 +38,17 @@ Any member of the workspace (Owner, Admin, Sales, Viewer). One call for the whol
 | `live_calls` | phone calls in progress now | Calls, "● N live" | Owner, Admin, Sales |
 | `unread_chats` | conversations whose last inbound message nobody has read | Chats | Owner, Admin, Sales |
 | `followups_due` | follow-up drafts waiting for a decision (the due list itself runs the cadence engine in the API, too heavy for a badge); capped at 99: show "99+" | Follow-ups | Owner, Admin, Sales |
-| `visits_today` | visits booked for today (India time) | Visits | Owner, Admin, Sales |
+| `visits_today` | visits booked, confirmed or arrived today (India time); null without the visits part | Visits | everyone |
 | `quotes_waiting` | draft quotes (sarees) or draft material quotes (building materials) awaiting approval | the quote list's drafts | Owner, Admin; null for a school |
 | `ai_team_working` | helpers busy right now: agent runs running (an Owner or Admin counts everyone's, others their own), tasks and calling plans running, Lead Finder searches under way | My AI team | everyone |
 | `call_minutes` | `{used, total}` whole minutes this billing month | Plan & usage | Owner, Admin |
 | `ai_usage` | `{used_paise, allowance_paise, period}`: this month's AI spend and allowance | Plan & usage | Owner, Admin (others: null; they see the percent on Plan & usage) |
-| `plan` | `ai_workforce`, `lead_desk`, `free_trial` ... | Settings -> Plan | everyone |
+| `plan` | the plan id: `free_trial`, `starter`, `growth`, `business`, `calls_payg`, `calls_300`, `calls_1000` | Settings -> Plan | everyone |
 
 Rules:
 - `needs_you` does **not** include `prospects_needing_owner`. The web adds them for Today's "Needs you" ("See all (N)" uses the sum), so the two numbers are never counted twice.
 - `as_of` is when the numbers were read. They are kept **30 s per person and workspace** (`new_leads` is per person): a decision taken on a page updates that page at once, and the sidebar within 30 s.
-- Read-only. Row-level security applies as on every route (the caller's own token). Nothing is written, no model is called, nothing is sent.
+- Read-only, with the caller's own token. Each field follows the same role rule as the screen that shows it, checked in the database (`public.nav_counts`). Nothing is written, no model is called, nothing is sent.
 - Calling more often costs nothing: within 30 s the kept answer is returned. The web polls at most every 30 s and on focus.
 - The AI meter is an amount in paise (owner, 5 Nov 2026), for the Owner and an Admin only; everywhere else the AI allowance stays a percentage.
 
