@@ -15,6 +15,7 @@ from typing import Any
 
 from app.assistant.language import Language
 from app.assistant_tools import executor
+from app.assistant_work import setups
 from app.assistant_work.router import Routed
 from app.assistant_work.service import FileTurn, Tools, cant_do, card_of_plan
 from app.assistant_work.store import WorkStore
@@ -89,6 +90,24 @@ WORDS: dict[str, dict[str, str]] = {
         "hi": "आपकी अपनी IndiaMART key मैं यहाँ अभी नहीं ले सकती। IndiaMART लीड अभी कैसे आती हैं, यह लीड सोर्स में दिखता है।",
         "kn": "ನಿಮ್ಮ ಸ್ವಂತ IndiaMART ಕೀಯನ್ನು ಇಲ್ಲಿ ಇನ್ನೂ ತೆಗೆದುಕೊಳ್ಳಲಾರೆ. IndiaMART ಲೀಡ್‌ಗಳು ಈಗ ಹೇಗೆ ಬರುತ್ತವೆ ಎಂದು ಲೀಡ್ ಸೋರ್ಸ್‌ಗಳಲ್ಲಿ ನೋಡಬಹುದು.",
     },
+    "setup": {
+        "en": "Here are the steps for this, on the card. I set up what I can; the rest is a few taps on your side.",
+        "te": "దీనికి స్టెప్స్ కార్డులో ఉన్నాయి. నేను చేయగలిగింది చేశాను; మిగతాది మీ వైపు కొన్ని ట్యాప్‌లు మాత్రమే.",
+        "hi": "इसके स्टेप कार्ड पर हैं। जो मैं कर सकती थी, कर दिया; बाकी आपकी तरफ़ बस कुछ टैप हैं।",
+        "kn": "ಇದಕ್ಕೆ ಹಂತಗಳು ಕಾರ್ಡ್‌ನಲ್ಲಿವೆ. ನಾನು ಮಾಡಬಹುದಾದ್ದನ್ನು ಮಾಡಿದ್ದೇನೆ; ಉಳಿದದ್ದು ನಿಮ್ಮ ಕಡೆ ಕೆಲವು ಟ್ಯಾಪ್‌ಗಳು ಮಾತ್ರ.",
+    },
+    "setup_screen": {
+        "en": "That is done on its screen; the steps and the link are on the card.",
+        "te": "అది దాని స్క్రీన్‌లో చేయాలి; స్టెప్స్, లింక్ కార్డులో ఉన్నాయి.",
+        "hi": "यह उसकी स्क्रीन पर होता है; स्टेप और लिंक कार्ड पर हैं।",
+        "kn": "ಅದು ಅದರ ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಆಗುತ್ತದೆ; ಹಂತಗಳು ಮತ್ತು ಲಿಂಕ್ ಕಾರ್ಡ್‌ನಲ್ಲಿವೆ.",
+    },
+    "setup_manager_only": {
+        "en": "Only the owner or an admin can set that up.",
+        "te": "దాన్ని యజమాని లేదా అడ్మిన్ మాత్రమే సెటప్ చేయగలరు.",
+        "hi": "इसे सिर्फ़ मालिक या एडमिन सेट कर सकते हैं।",
+        "kn": "ಅದನ್ನು ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಹೊಂದಿಸಬಹುದು.",
+    },
     "unavailable": {
         "en": "I can't change that from the chat right now. The screen can.",
         "te": "అది ఇప్పుడు చాట్ నుండి మార్చలేను. స్క్రీన్‌లో మార్చవచ్చు.",
@@ -134,7 +153,8 @@ class RouteTurn:
             "steps": [{"status": "proposed", "error": None, **step}],
         })
 
-    def answer(self, token: str, tenant_id: uuid.UUID, routed: Routed, *, message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
+    def answer(self, token: str, tenant_id: uuid.UUID, routed: Routed, *, message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language,
+               manager: bool = True) -> tuple[str, dict[str, Any] | None]:
         if routed.decision == "clarify":
             return routed.question or w("clarify", language), None
         if routed.decision == "cant_do":
@@ -154,6 +174,8 @@ class RouteTurn:
             return self._example(token, tenant_id, message_id, conversation_id, language)
         if a == "source_key":
             return self._source_key(token, tenant_id, message_id, language)
+        if a == "setup":
+            return self._setup(token, tenant_id, str(routed.args.get("setup") or ""), language, manager=manager)
         return w("clarify", language), None
 
     def _source_key(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, language: Language) -> tuple[str, dict[str, Any] | None]:
@@ -172,7 +194,43 @@ class RouteTurn:
             "kind": "secret", "id": str(uuid.uuid4()), "request_id": str(opened["request_id"]), "secret": "indiamart_key", "title": "Your IndiaMART CRM key",
             "hint": "IndiaMART Lead Manager -> Settings -> CRM key (Import/Export Leads)", "expires_at": str(opened.get("expires_at") or ""),
             "saved": {"last4": saved.get("last4")} if isinstance(saved, dict) else None,
+            "setup_id": str(setups.setup_id(tenant_id, "indiamart")), "test": "pull_now",   # the guided setup's test, run with POST /assistant/setups/{setup_id}/test once the key is saved
         }
+
+    def _setup(self, token: str, tenant_id: uuid.UUID, kind: str, language: Language, *, manager: bool) -> tuple[str, dict[str, Any] | None]:
+        """A guided setup card (contract section 2, `setup`). The two that need something made (the forwarding address, the website form) are made through the Lead sources service, the
+        same call as the screen's (made on first use, the same one shown again after); the rest are the steps and the screen's link."""
+        from app.errors import ApiError
+        from app.tenancy.repository import Forbidden
+
+        if kind not in setups.KINDS or kind == "indiamart":
+            return w("clarify", language), None
+        screen = setups.SCREENS[kind]
+        if kind not in ("email_forward", "website_form"):
+            return w("setup_screen", language), setups.card(tenant_id, kind)
+        if not manager:   # the screen's own rule (Owner or Admin); the database refuses too
+            return w("setup_manager_only", language), None
+        if self.lead_sources is None:
+            return w("unavailable", language), cant_do("not_yet", setups.TITLES[kind], screen)
+        try:
+            if kind == "email_forward":
+                got = self.lead_sources.email_address(token, tenant_id)
+                copy = [{"label": "Your lead address", "value": str(got["address"]), "code": False}]
+                confirmation = got.get("gmail_confirmation")
+                if isinstance(confirmation, dict) and confirmation.get("code"):
+                    copy.append({"label": "Gmail's confirmation code", "value": str(confirmation["code"]), "code": False})
+                steps = ["Copy your lead address below.", *[str(g["text"]) for g in got.get("gmail_filter_guide") or []], "Then press 'Check' after the next lead e-mail."]
+                return w("setup", language), setups.card(tenant_id, kind, copy=copy, portals=setups.PORTALS, test="send_test_mail", steps=steps)
+            got = self.lead_sources.website(token, tenant_id)
+            copy = [{"label": "The form code", "value": str(got["snippet"]), "code": True}, {"label": "The form link (no website needed)", "value": str(got["form_link"]), "code": False},
+                    {"label": "For your developer: the webhook address", "value": str(got["webhook_url"]), "code": False}]
+            return w("setup", language), setups.card(tenant_id, kind, copy=copy, test="send_test_lead")
+        except Forbidden:
+            return w("setup_manager_only", language), None
+        except ApiError as exc:
+            if exc.status_code == 503:
+                return w("unavailable", language), cant_do("not_yet", setups.TITLES[kind], screen)
+            raise
 
     def _calling_hours(self, token: str, tenant_id: uuid.UUID, args: dict[str, Any], message_id: uuid.UUID, conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
         read = self._read(tenant_id, token, "call-settings.get_settings", message_id)

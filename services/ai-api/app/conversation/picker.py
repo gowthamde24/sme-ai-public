@@ -42,7 +42,7 @@ public_router = APIRouter(prefix="/v1/voice-samples", tags=["ai-assistant"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
 OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
-Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 Gender = Literal["female", "male"]
 SAMPLE_URL = "/v1/voice-samples/{id}.mp3"
 
@@ -106,6 +106,8 @@ def out(config: VoiceConfig, choices: dict[str, str], gender: str = "female") ->
     """The catalogue with this workspace's choices. A stored choice that is not (any longer) a catalogue voice of its language AND of the workspace's gender is reported as no choice."""
     rows: list[LanguageOut] = []
     for lang in CALL_LANGUAGES:
+        if not config.has_voices(lang):
+            continue   # a call language with no voice in the catalogue yet (job M1: Marathi): nothing to choose
         default = config.default_for(lang, gender)
         picked = config.catalogue.get(choices.get(lang, ""))
         chosen = picked.id if picked is not None and picked.language == lang and picked.gender == gender else None
@@ -201,7 +203,7 @@ async def _speak_opening(runtime: Runtime, ctx: TenantContext, body: PreviewIn) 
         raise ApiError(422, "invalid_text", "The opening line must be 10 to 300 characters and may use only {customer}, {assistant}, {business} and {agent_role}.", extra={"fields": ["text"]})
     spoken, _ = rendered_opening(runtime, ctx, body.language, str(body.campaign_id) if body.campaign_id else None, None, None, line=body.text, mention_ai=body.mention_ai, name=body.assistant_name)
     found = detect_language(spoken)
-    if found != "en" and found != body.language:
+    if found != "en" and found != body.language and {found, body.language} != {"hi", "mr"}:   # Hindi and Marathi share a script: a short line cannot always tell them apart
         raise ApiError(422, "language_mismatch", "This line is written in a different language from the one chosen.", extra={"fields": ["language"]})
     choices, gender = voice_state(runtime, ctx)
     try:

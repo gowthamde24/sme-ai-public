@@ -137,7 +137,7 @@ export interface LeadProfileOut {
   budget?: string | null;
   timeline?: string | null;
   urgency?: "low" | "normal" | "high" | null;
-  language?: "en" | "te" | "hi" | "kn" | "ta" | "ml" | null;
+  language?: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr" | null;
   source?: string | null;
   campaign?: string | null;
   original_text?: string | null;

@@ -49,7 +49,7 @@ TEMPLATES: dict[str, dict[str, str]] = {
 def compose(kind: str, language: str, vehicle: str | None, eta: str | None) -> str:
     """The text of one update. The vehicle number is the trip's own; the time is what the person typed (digits, a colon, am or pm only)."""
     key = "left_no_eta" if kind == "left" and not eta else kind
-    template = TEMPLATES[key][language]
+    template = TEMPLATES[key].get(language, TEMPLATES[key]["en"])   # job M1: a language with no words here yet (Marathi) gets the English ones
     v = vehicle.strip() if vehicle else ""
     text = template.format(v=v, eta=eta or "")
     return " ".join(text.split())  # a missing vehicle number leaves no double space

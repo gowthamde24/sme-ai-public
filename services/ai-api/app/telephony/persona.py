@@ -13,7 +13,7 @@ from app.agents.register import register_block
 from app.knowledge.prompt import facts_block
 from app.opening.render import compose_opening
 
-LANGUAGE_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam"}
+LANGUAGE_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam", "mr": "Marathi"}
 
 GOALS: dict[str, str] = {
     "sales_followup": "Find out whether they are still interested in what they asked about, what exactly they need, and offer to arrange a visit or a call back from the team.",
@@ -25,18 +25,22 @@ GOALS: dict[str, str] = {
 }
 
 STOP_ACK = {"en": "Understood, we will not call you again. Sorry to disturb you. Thank you!", "te": "అర్థమైందండీ, మళ్ళీ కాల్ చేయం. disturb చేసినందుకు sorry. Thank you!", "hi": "समझ गए जी, दोबारा कॉल नहीं करेंगे। परेशान करने के लिए sorry। Thank you!",
-            "kn": "ಅರ್ಥ ಆಯ್ತು, ಮತ್ತೆ ಕಾಲ್ ಮಾಡಲ್ಲ. ತೊಂದರೆ ಕೊಟ್ಟಿದ್ದಕ್ಕೆ sorry. Thank you!", "ta": "புரிந்தது, மறுபடி கால் பண்ண மாட்டோம். தொந்தரவுக்கு sorry. Thank you!", "ml": "മനസ്സിലായി, ഇനി വിളിക്കില്ല. ബുദ്ധിമുട്ടിച്ചതിന് sorry. Thank you!"}
+            "kn": "ಅರ್ಥ ಆಯ್ತು, ಮತ್ತೆ ಕಾಲ್ ಮಾಡಲ್ಲ. ತೊಂದರೆ ಕೊಟ್ಟಿದ್ದಕ್ಕೆ sorry. Thank you!", "ta": "புரிந்தது, மறுபடி கால் பண்ண மாட்டோம். தொந்தரவுக்கு sorry. Thank you!", "ml": "മനസ്സിലായി, ഇനി വിളിക്കില്ല. ബുദ്ധിമുട്ടിച്ചതിന് sorry. Thank you!",
+            "mr": "समजलं, आम्ही पुन्हा कॉल करणार नाही. त्रास दिल्याबद्दल sorry. Thank you!"}
 HANDOVER_ACK = {"en": "Sure, someone from the team will call you back soon. Thank you!", "te": "సరేనండీ, మా టీమ్ నుంచి ఎవరైనా త్వరలో కాల్ చేస్తారు. Thank you!", "hi": "ठीक है जी, हमारी टीम से कोई जल्दी आपको कॉल करेगा। Thank you!",
-                "kn": "ಸರಿ ರೀ, ನಮ್ಮ ಟೀಮ್ ನಿಂದ ಯಾರಾದರೂ ಬೇಗ ಕಾಲ್ ಮಾಡ್ತಾರೆ. Thank you!", "ta": "சரிங்க, எங்க டீம்ல இருந்து யாராவது சீக்கிரம் கூப்பிடுவாங்க. Thank you!", "ml": "ശരി, ഞങ്ങളുടെ ടീമിൽ നിന്ന് ആരെങ്കിലും ഉടൻ വിളിക്കും. Thank you!"}
+                "kn": "ಸರಿ ರೀ, ನಮ್ಮ ಟೀಮ್ ನಿಂದ ಯಾರಾದರೂ ಬೇಗ ಕಾಲ್ ಮಾಡ್ತಾರೆ. Thank you!", "ta": "சரிங்க, எங்க டீம்ல இருந்து யாராவது சீக்கிரம் கூப்பிடுவாங்க. Thank you!", "ml": "ശരി, ഞങ്ങളുടെ ടീമിൽ നിന്ന് ആരെങ്കിലും ഉടൻ വിളിക്കും. Thank you!",
+                "mr": "ठीक आहे, आमच्या टीममधून कोणीतरी लवकरच तुम्हाला कॉल करेल. Thank you!"}
 VOICEMAIL_MESSAGE = {"en": "Hello, this is the AI assistant of {business}. Sorry we missed you. We will try again later. Thank you!", "te": "నమస్కారం, నేను {business} నుంచి AI assistant ని. మిమ్మల్ని కలవలేకపోయాం. తర్వాత మళ్ళీ ప్రయత్నిస్తాం. Thank you!",
                      "hi": "नमस्ते, मैं {business} की AI assistant हूँ। आपसे बात नहीं हो पाई। हम बाद में फिर कोशिश करेंगे। Thank you!", "kn": "ನಮಸ್ಕಾರ, ನಾನು {business} ನಿಂದ AI assistant. ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಲಾಗಲಿಲ್ಲ. ಆಮೇಲೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸ್ತೇವೆ. Thank you!",
-                     "ta": "வணக்கம், நான் {business} ல இருந்து AI assistant. உங்களை தொடர்பு கொள்ள முடியலை. அப்புறம் மறுபடி முயற்சி பண்றோம். Thank you!", "ml": "നമസ്കാരം, ഞാൻ {business} ൽ നിന്നുള്ള AI assistant ആണ്. നിങ്ങളെ കിട്ടിയില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കാം. Thank you!"}
+                     "ta": "வணக்கம், நான் {business} ல இருந்து AI assistant. உங்களை தொடர்பு கொள்ள முடியலை. அப்புறம் மறுபடி முயற்சி பண்றோம். Thank you!", "ml": "നമസ്കാരം, ഞാൻ {business} ൽ നിന്നുള്ള AI assistant ആണ്. നിങ്ങളെ കിട്ടിയില്ല. പിന്നീട് വീണ്ടും ശ്രമിക്കാം. Thank you!",
+                     "mr": "नमस्कार, मी {business} ची AI assistant आहे. तुमच्याशी बोलणं झालं नाही. आम्ही नंतर पुन्हा प्रयत्न करू. Thank you!"}
 AFTER_HOURS = {"en": "Thank you for calling {business}. We are closed right now. Please call again during working hours, or leave a message on WhatsApp, and the team will get back to you.",
                "te": "{business} కి కాల్ చేసినందుకు thank you. ఇప్పుడు మేము మూసి ఉన్నాం. పని వేళల్లో మళ్ళీ కాల్ చేయండి, లేదా WhatsApp లో message పెట్టండి, మా టీమ్ మీకు తిరిగి చేస్తుంది.",
                "hi": "{business} को कॉल करने के लिए thank you. अभी हम बंद हैं। कृपया काम के समय में फिर कॉल करें, या WhatsApp पर message छोड़ें, हमारी टीम आपसे संपर्क करेगी।",
                "kn": "{business} ಗೆ ಕಾಲ್ ಮಾಡಿದ್ದಕ್ಕೆ thank you. ಈಗ ನಾವು ಮುಚ್ಚಿದ್ದೇವೆ. ಕೆಲಸದ ಸಮಯದಲ್ಲಿ ಮತ್ತೆ ಕಾಲ್ ಮಾಡಿ, ಅಥವಾ WhatsApp ನಲ್ಲಿ message ಕಳಿಸಿ, ನಮ್ಮ ಟೀಮ್ ಸಂಪರ್ಕಿಸುತ್ತದೆ.",
                "ta": "{business} க்கு கால் பண்ணதுக்கு thank you. இப்போ நாங்க மூடியிருக்கோம். வேலை நேரத்துல மறுபடி கால் பண்ணுங்க, இல்ல WhatsApp ல message அனுப்புங்க, எங்க டீம் தொடர்பு கொள்ளும்.",
-               "ml": "{business} ലേക്ക് വിളിച്ചതിന് thank you. ഇപ്പോൾ ഞങ്ങൾ അടച്ചിരിക്കുകയാണ്. പ്രവൃത്തി സമയത്ത് വീണ്ടും വിളിക്കൂ, അല്ലെങ്കിൽ WhatsApp ൽ message അയക്കൂ, ഞങ്ങളുടെ ടീം ബന്ധപ്പെടും."}
+               "ml": "{business} ലേക്ക് വിളിച്ചതിന് thank you. ഇപ്പോൾ ഞങ്ങൾ അടച്ചിരിക്കുകയാണ്. പ്രവൃത്തി സമയത്ത് വീണ്ടും വിളിക്കൂ, അല്ലെങ്കിൽ WhatsApp ൽ message അയക്കൂ, ഞങ്ങളുടെ ടീം ബന്ധപ്പെടും.",
+               "mr": "{business} ला कॉल केल्याबद्दल thank you. आत्ता आम्ही बंद आहोत. कृपया कामाच्या वेळेत पुन्हा कॉल करा, किंवा WhatsApp वर message ठेवा, आमची टीम तुमच्याशी संपर्क करेल."}
 
 
 # the person rang US: no "I am calling about your enquiry"; it says it is an AI and asks how it can help (drafts for a native reader, like the other fixed words)
@@ -47,6 +51,7 @@ INBOUND_OPENING = {
     "kn": "ನಮಸ್ಕಾರ, ನಾನು {business} ನ AI assistant. ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
     "ta": "வணக்கம், நான் {business} ன் AI assistant. உங்களுக்கு எப்படி உதவலாம்?",
     "ml": "നമസ്കാരം, ഞാൻ {business} ന്റെ AI assistant ആണ്. എങ്ങനെ സഹായിക്കാം?",
+    "mr": "नमस्कार, मी {business} ची AI assistant आहे. सांगा, मी तुमची काय मदत करू?",   # job M1: a draft for a native reader
 }
 
 

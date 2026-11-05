@@ -19,6 +19,7 @@ from app.conversation.voices import (
     CALL_LANGUAGES,
     DEFAULT_FILE,
     TAGS,
+    VOICED_LANGUAGES,
     VoiceChoice,
     default_config,
     parse_config,
@@ -68,8 +69,9 @@ RENDERED = {"en-janvi", "hi-sanya", "hi-esha", "hi-meera", "kn-disha", "kn-divya
 
 def test_the_catalogue_has_native_voices_of_both_genders_in_all_six_languages_with_one_default_each() -> None:
     cfg = default_config()
-    assert CALL_LANGUAGES == ("te", "en", "hi", "kn", "ta", "ml")
-    for lang in CALL_LANGUAGES:
+    assert CALL_LANGUAGES == ("te", "en", "hi", "kn", "ta", "ml", "mr")
+    assert VOICED_LANGUAGES == ("te", "en", "hi", "kn", "ta", "ml") and not cfg.has_voices("mr"), "Marathi (job M1) is a call language with no voice yet"
+    for lang in VOICED_LANGUAGES:
         for gender in ("female", "male"):
             group = cfg.voices_of(lang, gender)
             assert group, (lang, gender)
@@ -178,7 +180,8 @@ def test_owner_and_admin_choose_others_are_refused_and_the_choice_is_ticked_and_
         {"language": "te", "voice_id": "te-nobody"},  # not in the catalogue
         {"language": "te", "voice_id": "hi-esha"},  # another language's voice
         {"language": "te", "voice_id": "TE-Ramya"},  # badly formed
-        {"language": "mr", "voice_id": "mr-x"},  # a language outside the call set
+        {"language": "bn", "voice_id": "bn-x"},  # a language outside the call set
+        {"language": "mr", "voice_id": "mr-x"},  # a call language with no voice in the catalogue yet (job M1)
         {"language": "te", "voice_id": "te-charan"},  # a male voice in a female workspace
         {"gender": "male", "language": "te", "voice_id": "te-charan"},  # both forms at once
         {"gender": "other"},
@@ -314,6 +317,7 @@ def test_the_preview_route_needs_owner_or_admin_speaks_the_opening_line_and_is_4
     assert client.get(f"{BASE}/voices/preview?language=te", headers=auth("a_admin")).status_code == 200
     assert ("cartesia", default_config().catalogue["te-sindhu"].voices.primary.voice) in built
     assert r.headers["x-voice-id"] == "en-janvi" and client.get(f"{BASE}/voices/preview?language=te", headers=auth("a_owner")).headers["x-voice-id"] == "te-sindhu"
-    assert client.get(f"{BASE}/voices/preview?language=mr", headers=auth("a_owner")).status_code == 422
+    assert client.get(f"{BASE}/voices/preview?language=bn", headers=auth("a_owner")).status_code == 422
+    assert client.get(f"{BASE}/voices/preview?language=mr", headers=auth("a_owner")).status_code == 404, "job M1: a call language with no voice yet has no preview"
     off, _ = make_client(workspace=FakeChoices())
     assert off.get(q, headers=auth("a_owner")).status_code == 404

@@ -20,6 +20,7 @@ FILLERS: dict[str, tuple[str, ...]] = {
     "kn": ("ಹೌದು…", "ಒಂದು ನಿಮಿಷ"),
     "ta": ("ஆமாங்க…", "ஒரு நிமிஷங்க"),
     "ml": ("ഹാ…", "ഒരു മിനിറ്റ്"),
+    "mr": ("हं…", "एक मिनिट"),
     "en": ("Hmm…", "One moment"),
 }
 
@@ -32,9 +33,13 @@ BANK_LINES: dict[str, tuple[str, ...]] = {
     "kn": ("ಒಂದು ನಿಮಿಷ, ನೋಡ್ತೀನಿ.", "ಹೂಂ, ಸ್ವಲ್ಪ ಇರಿ.", "ಒಂದು ಸೆಕೆಂಡ್, check ಮಾಡ್ತೀನಿ."),
     "ta": ("ஒரு நிமிடம், பார்த்து சொல்கிறேன்.", "சரி, ஒரு நொடி.", "கொஞ்சம் இருங்கள், check செய்கிறேன்."),
     "ml": ("ഒരു നിമിഷം, നോക്കി പറയാം.", "ശരി, ഒരു സെക്കൻഡ്.", "ഒന്ന് നോക്കട്ടെ, check ചെയ്യാം."),
+    "mr": ("एक मिनिट, मी check करते.", "हो, एक सेकंद.", "हं, आत्ता बघते."),   # job M1 drafts; no Marathi voice yet, so nothing is rendered
 }
-# Hindi verbs carry the speaker's gender: a man's voice says "karta", a woman's "karti" (the other languages' lines are the same for both)
-MALE_BANK_LINES: dict[str, tuple[str, ...]] = {"hi": ("एक मिनट जी, मैं चेक करता हूँ।", "जी, एक सेकंड।", "हाँ जी, अभी देखता हूँ।")}
+# Hindi and Marathi verbs carry the speaker's gender: a man's voice says "karta" / "karto", a woman's "karti" / "karte" (the other languages' lines are the same for both)
+MALE_BANK_LINES: dict[str, tuple[str, ...]] = {
+    "hi": ("एक मिनट जी, मैं चेक करता हूँ।", "जी, एक सेकंड।", "हाँ जी, अभी देखता हूँ।"),
+    "mr": ("एक मिनिट, मी check करतो.", "हो, एक सेकंद.", "हं, आत्ता बघतो."),
+}
 
 
 def bank_lines(language: str, gender: str = "female") -> tuple[str, ...]:

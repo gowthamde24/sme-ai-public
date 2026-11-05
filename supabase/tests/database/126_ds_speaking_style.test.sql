@@ -16,7 +16,7 @@ create function pg_temp.setit(p_user text, p_tenant text, p_doc text, p_aal text
 select is(pg_temp.val('a_viewer', format($q$select (public.speaking_style_get(%L) -> 'languages' -> 'te' ->> 'style')$q$, tests.tid('a'))), 'everyday_mixed', 'A1 before any save: everyday_mixed (a Viewer reads it)');
 select is(pg_temp.val('a_sales', format($q$select (public.speaking_style_get(%L) -> 'languages' -> 'te' ->> 'region')$q$, tests.tid('a'))), 'neutral', 'A2 ... neutral region (Sales reads it)');
 select is(pg_temp.val('a_owner', format($q$select (public.speaking_style_get(%L) -> 'languages' -> 'te' ->> 'saved')$q$, tests.tid('a'))), 'false', 'A3 ... and says it was not saved');
-select is(pg_temp.val('a_owner', format($q$select (select count(*) from jsonb_object_keys(public.speaking_style_get(%L) -> 'languages'))::text$q$, tests.tid('a'))), '6', 'A4 all six languages are listed');
+select is(pg_temp.val('a_owner', format($q$select (select count(*) from jsonb_object_keys(public.speaking_style_get(%L) -> 'languages'))::text$q$, tests.tid('a'))), '7', 'A4 all seven languages are listed (Marathi joined in 20261231190000)');
 
 -- ============================================================================ B. who may set
 select is(pg_temp.setit('a_owner', 'a', '{"languages": {"te": {"style": "everyday_mixed", "region": "telangana"}, "ta": {"style": "everyday_pure"}}}') is not null, true, 'B1 the Owner sets it');
