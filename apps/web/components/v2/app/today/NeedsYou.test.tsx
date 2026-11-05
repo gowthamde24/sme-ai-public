@@ -14,7 +14,7 @@ import { NeedsYou } from "./NeedsYou";
 import { NeedsProvider } from "./needs-store";
 import { todayWords } from "./today-words";
 import { CALL_ID, MESSAGE_ID, NOW, U, VISIT_ID, WORDS, call, classic, fakeActions, outbox, proposal } from "./today-test-kit";
-import type { NeedsCard, Role } from "./types";
+import type { NeedsCard, OutboxCardMessage, Role } from "./types";
 
 // the tests of the cards draw the full cards at once; a test of the rows says so with `desktop()` (rows are what every screen draws, phone included)
 let compactNext = false;
@@ -89,7 +89,7 @@ describe("Needs you: each kind of card", () => {
     board([classic(), classic({ kind: "order_money_held", id: "o1", agent: "order_desk", href: "/app/tenants/T/orders/O" })].map((c, i) => (i === 1 ? { ...c, key: "order_money_held-o1" } : c)));
     const a = screen.getAllByRole("article")[0];
     expect(within(a).getByText("Quote draft")).toBeInTheDocument();
-    expect(within(a).getByText("₹14,175.00")).toBeInTheDocument();
+    expect(within(a).getByText("₹14,175")).toBeInTheDocument(); // whole rupees: no ".00" (owner's review, 5 Nov)
     expect(within(a).getByRole("link", { name: "Check the quote" })).toHaveAttribute("href", "/app/tenants/T/enquiries/E");
     expect(within(a).getByRole("link", { name: /Open/ })).toHaveAttribute("href", "/app/tenants/T/enquiries/E");
     expect(within(a).getByText("Nothing is sent, approved or recorded by opening this.")).toBeInTheDocument();
@@ -266,9 +266,10 @@ describe("Needs you: empty, unreadable, and the phone", () => {
     expect(screen.queryByRole("article")).toBeNull();
     expect(count()).toHaveTextContent("0");
   });
-  it("an unreadable Today says 'Not available yet' and draws no count", () => {
+  it("an unreadable Today draws no section at all: never 'Not available yet' (owner's review, 5 Nov)", () => {
     const { container } = board(null);
-    expect(screen.getByText("Not available yet")).toBeInTheDocument();
+    expect(screen.queryByText("Not available yet")).toBeNull();
+    expect(screen.queryByRole("heading", { name: "Needs you" })).toBeNull();
     expect(container.querySelector("[data-count]")).toBeNull();
   });
   it("at most three rows show (a phone as a desktop), and 'See all' shows the rest (and 'Show fewer' hides them again)", () => {
@@ -435,7 +436,9 @@ describe("Needs you on a desktop: one compact row per thing (owner 31 Oct)", () 
     const message = rows()[1];
     expect(within(message).getByText("Price")).toBeInTheDocument(); // the short badge, not "Price · needs your OK"
     expect(within(message).getByRole("heading", { level: 3 })).toHaveTextContent("Reply to Lakshmi R.");
-    expect(within(message).getByText(/ఈ చీర ధర 500/)).toBeInTheDocument(); // the first words of the message, one line
+    // a short summary in the person's language, never the message's own words (owner's review, 5 Nov): they open with the row
+    expect(message).toHaveTextContent("Price reply · ₹500");
+    expect(message).not.toHaveTextContent(/ఈ చీర ధర/);
     expect(within(message).getByRole("button", { name: "Approve and send" })).toHaveTextContent(/^Approve$/); // short on the row, the full words for a screen reader
     expect(within(message).getByRole("button", { name: "Not now" })).toBeInTheDocument();
     expect(within(message).getByRole("button", { name: "Details" })).toHaveAttribute("aria-expanded", "false");
@@ -581,5 +584,19 @@ describe("Needs you: the Lead Finder's rows and See all (owner, 5 Nov)", () => {
     fireEvent.click(all);
     expect(within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByRole("listitem").filter((li) => li.className.includes("hidden"))).toHaveLength(0);
     expect(screen.queryByText(/Showing the newest/)).toBeNull();
+  });
+});
+
+describe("Needs you: a held message's row summary (owner's review, 5 Nov)", () => {
+  it("says what the message is and the amount it names, in the person's language, never its words", async () => {
+    const { amountIn, messageSummary } = await import("./NeedsYou");
+    expect(amountIn("ఈ చీర ధర 500 రూపాయలు మాత్రమే.")).toBe("₹500");
+    expect(amountIn("Total ₹ 1,20,000 for 40 sarees")).toBe("₹1,20,000");
+    expect(amountIn("Rs. 850 per piece")).toBe("₹850");
+    expect(amountIn("We will call you at 4")).toBeNull();
+    const m: OutboxCardMessage = { text: "ఈ చీర ధర 500 రూపాయలు", language: "te", category: "reply_to_inbound", flags: ["money"], reasonText: "x", gloss: null, media: [] };
+    expect(messageSummary(m, WORDS)).toBe("Price reply · ₹500");
+    expect(messageSummary({ ...m, flags: [] }, WORDS)).toBe("Reply");
+    expect(messageSummary({ ...m, flags: [], category: "order_status" }, WORDS)).toBe("Order update");
   });
 });
