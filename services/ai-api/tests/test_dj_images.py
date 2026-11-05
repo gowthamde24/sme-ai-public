@@ -24,7 +24,16 @@ def test_the_dockerfile_has_a_base_a_worker_and_a_last_stage_for_the_api() -> No
 def test_ffmpeg_is_installed_in_the_worker_stage_and_nowhere_else() -> None:
     s = stages()
     assert "ffmpeg" in s["worker"] and "--no-install-recommends" in s["worker"]
-    assert "apt-get" not in s["base"] and "apt-get" not in s["api"]
+    assert "apt-get" not in s["base"] and "ffmpeg" not in s["api"]
+
+
+def test_the_chat_file_readers_are_installed_in_the_api_stage_only() -> None:
+    """Job A3 (owner decision 5 Nov 2026): poppler and Tesseract (English, Telugu, Hindi, Kannada) read a PDF, a scan or a photo on the API's own server; the worker never reads chat files."""
+    s = stages()
+    for package in ("poppler-utils", "tesseract-ocr", "tesseract-ocr-tel", "tesseract-ocr-hin", "tesseract-ocr-kan"):
+        assert package in s["api"], package
+        assert package not in s["worker"] and package not in s["base"], package
+    assert "--no-install-recommends" in s["api"] and s_last_user(s["api"]) == "10001", "back to the non-root user after installing"
 
 
 def test_the_worker_image_runs_as_the_same_non_root_user() -> None:

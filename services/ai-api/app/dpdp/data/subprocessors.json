@@ -39,9 +39,9 @@
   {
    "id": "anthropic",
    "name": "Anthropic",
-   "purpose": "The AI that drafts replies and answers questions, when you switch it on",
+   "purpose": "The AI that drafts replies and answers questions, when you switch it on, and reads a file you upload in the chat when our own server cannot (a scan or a photo)",
    "country": "United States",
-   "data": "The words of a question or message and the business facts needed to answer it; no payment details",
+   "data": "The words of a question or message and the business facts needed to answer it; the page images of a file you upload for an import, only when our server's own reading found nothing (never for a school); no payment details",
    "link": "https://www.anthropic.com/legal/dpa"
   },
   {
