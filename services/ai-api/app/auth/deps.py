@@ -181,6 +181,9 @@ class Runtime:
     # job assistant-does-the-work A3: reads a PDF, a Word file or a photo
     # (app/assistant_work/extract.FileReader; None: the file's own text only, no OCR)
     assistant_file_reader: Any = None
+    # which workspaces have it (ASSISTANT_WORK_TENANTS, app/assistant_work/enabled.py):
+    # None = every workspace (local, tests), a set = only those
+    assistant_work_tenants: frozenset[uuid.UUID] | None = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
