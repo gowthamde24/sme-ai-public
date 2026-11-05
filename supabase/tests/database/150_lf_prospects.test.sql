@@ -1,5 +1,5 @@
 -- Lead Finder (migration 20261226090000, ADR 0119): searches, prospects, the Owner's answers, the call result.
---   A catalog and grants   B a search from plan to done (dedupe by place, the daily cap)   C roles   D one workspace only   E the module (a school is refused)   F suppression is for good   G a qualified call makes a lead
+--   A catalog and grants   B a search from plan to done (dedupe by place, the daily cap)   C roles   D one workspace only   E the module (a business type without it is refused; a school has it)   F suppression is for good   G a qualified call makes a lead
 begin;
 select no_plan();
 select tests.seed_two_tenants();
@@ -82,10 +82,13 @@ select is(pg_temp.sc('b_owner', format($q$select public.prospects_list(%L)::text
 select is(pg_temp.sc('b_owner', format($q$select count(*)::text from public.prospects where tenant_id = %L$q$, tests.tid('a'))), '0', 'D2: and sees no row');
 select is(pg_temp.sc('b_owner', format($q$select public.prospect_act(%L, (select id from public.prospects where place_id = 'fx_p1' and tenant_id = %L), 'call')::text$q$, tests.tid('b'), tests.tid('a'))), 'ERR:23503', 'D3: a prospect of another workspace is not found');
 
--- E: the module (a school has no Lead Finder)
-select tests.cp_pack('b', 'education');
-select is(pg_temp.sc('b_owner', format($q$select public.prospect_search_plan(%L, %L, 'schools', null, null, 5, 'fixture', 'fixture', 0, 'x')::text$q$, tests.tid('b'), tests.rid('sb'))), 'ERR:SM971', 'E1: a school cannot search');
+-- E: the module. A business type without it is refused; a school has it since its pack version 3 (owner decision 4 Nov 2026: organisations only, decided by the API's words)
+select tests.cp_pack('b', 'general_business');
+select is(pg_temp.sc('b_owner', format($q$select public.prospect_search_plan(%L, %L, 'shops', null, null, 5, 'fixture', 'fixture', 0, 'x')::text$q$, tests.tid('b'), tests.rid('sb'))), 'ERR:SM971', 'E1: a business type without the module cannot search');
 select is(pg_temp.sc('b_owner', format($q$select public.lead_finder_settings_get(%L)::text$q$, tests.tid('b'))), 'ERR:SM971', 'E2: nor read the settings');
+select tests.cp_pack('b', 'education');
+select ok(pg_temp.sc('b_owner', format($q$select public.lead_finder_settings_get(%L)::text$q$, tests.tid('b'))) like '{%', 'E3: a school has the Lead Finder (pack version 3)');
+select tests.cp_pack('b', 'textiles');
 
 -- F: the Owner's answers; suppression is for good
 create temp table pids as select place_id, id from public.prospects where tenant_id = tests.tid('a');

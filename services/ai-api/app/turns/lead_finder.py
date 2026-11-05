@@ -119,6 +119,37 @@ def available(runtime: Runtime, ctx: TenantContext) -> LeadFinderService | None:
         return None
 
 
+def not_in_plan(runtime: Runtime, ctx: TenantContext) -> bool:
+    """True when this business would have the Lead Finder but its plan (Lead Desk) does not (owner decision 4 Nov 2026). A failure to tell is a no."""
+    service = runtime.lead_finder
+    if service is None:
+        return False
+    try:
+        return service.availability(ctx.principal.token, ctx.tenant.id).reason == "not_in_plan"
+    except Exception:
+        return False
+
+
+UPGRADE: dict[str, str] = {
+    "en": "Finding new customers is part of AI Workforce. This workspace is on Lead Desk, and everything else works as it does. The plans are on the Plans page.",
+    "te": "కొత్త కస్టమర్లను వెతకడం AI Workforce లో భాగం. ఈ వర్క్‌స్పేస్ Lead Desk లో ఉంది, మిగతావన్నీ ఎప్పటిలాగే పనిచేస్తాయి. ప్లాన్లు Plans పేజీలో ఉన్నాయి.",
+    "hi": "नए ग्राहक ढूँढना AI Workforce का हिस्सा है। यह वर्कस्पेस Lead Desk पर है, और बाकी सब पहले जैसा चलता है। प्लान Plans पेज पर हैं।",
+    "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕುವುದು AI Workforce ನ ಭಾಗ. ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ Lead Desk ನಲ್ಲಿದೆ, ಉಳಿದೆಲ್ಲವೂ ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಪ್ಲಾನ್‌ಗಳು Plans ಪುಟದಲ್ಲಿವೆ.",
+    "ta": "புதிய வாடிக்கையாளர்களைத் தேடுவது AI Workforce இன் ஒரு பகுதி. இந்த பணியிடம் Lead Desk இல் உள்ளது; மற்ற அனைத்தும் வழக்கம் போல் இயங்கும். திட்டங்கள் Plans பக்கத்தில் உள்ளன.",
+    "ml": "പുതിയ ഉപഭോക്താക്കളെ കണ്ടെത്തുന്നത് AI Workforce ന്റെ ഭാഗമാണ്. ഈ വർക്ക്‌സ്‌പേസ് Lead Desk ലാണ്; ബാക്കിയെല്ലാം പതിവുപോലെ പ്രവർത്തിക്കും. പ്ലാനുകൾ Plans പേജിലുണ്ട്.",
+}
+
+
+def upgrade_card() -> dict[str, Any]:
+    """The friendly "part of AI Workforce" card (docs/contracts/assistant-tools.md `cant_do`, reason `not_in_plan`): no price, no charge, the Plans page's link."""
+    return {"kind": "cant_do", "id": str(uuid.uuid4()), "reason": "not_in_plan", "what": "Finding new customers (the Lead Finder)", "upgrade_to": "ai_workforce",
+            "screen": {"label": "Plans", "href": "/plans"}}
+
+
+def upgrade_turn(language: Language, runner: AssistantRunner, emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID) -> Outcome:
+    return runner.finish_with(Reply(UPGRADE.get(language, UPGRADE["en"]), language, "answer"), reply_id, emit, extra=(("work_card", {"card": upgrade_card()}),))
+
+
 def is_answer(text: str) -> bool:
     """A bare yes or no to a plan card, in any of the six languages (a short message only)."""
     from app.turns.intent import is_yes_no, normalise
@@ -183,10 +214,33 @@ def result_words(search: SearchOut, language: Language) -> str:
     return f"{head} {', '.join(parts)}. {RESULT_TAIL[language]}" if parts else f"{head} {RESULT_TAIL[language]}"
 
 
+INDIVIDUALS: dict[str, dict[str, str]] = {
+    "businesses": {
+        "en": "I find businesses and organisations only, never individual people or families.",
+        "te": "నేను వ్యాపారాలను, సంస్థలను మాత్రమే వెతుకుతాను; వ్యక్తులను లేదా కుటుంబాలను ఎప్పుడూ వెతకను.",
+        "hi": "मैं केवल व्यवसाय और संस्थाएँ ढूँढती हूँ, कभी किसी व्यक्ति या परिवार को नहीं।",
+        "kn": "ನಾನು ವ್ಯಾಪಾರಗಳು ಮತ್ತು ಸಂಸ್ಥೆಗಳನ್ನು ಮಾತ್ರ ಹುಡುಕುತ್ತೇನೆ; ವ್ಯಕ್ತಿಗಳನ್ನು ಅಥವಾ ಕುಟುಂಬಗಳನ್ನು ಎಂದಿಗೂ ಹುಡುಕುವುದಿಲ್ಲ.",
+    },
+    "organisations": {
+        "en": ("I find organisations only, never individual people or families: for example apartment associations, companies, coaching centres or transport and event vendors near the "
+               "school. Families are reached only from the school's own enquiry list."),
+        "te": ("నేను సంస్థలను మాత్రమే వెతుకుతాను, వ్యక్తులను లేదా కుటుంబాలను ఎప్పుడూ కాదు: ఉదాహరణకి స్కూల్ దగ్గరలోని అపార్ట్‌మెంట్ అసోసియేషన్లు, కంపెనీలు, కోచింగ్ సెంటర్లు, transport లేదా events vendors. "
+               "కుటుంబాలను స్కూల్ సొంత enquiry list నుండి మాత్రమే సంప్రదిస్తాం."),
+        "hi": ("मैं केवल संस्थाएँ ढूँढती हूँ, कभी किसी व्यक्ति या परिवार को नहीं: जैसे स्कूल के पास की अपार्टमेंट एसोसिएशन, कंपनियाँ, कोचिंग सेंटर या ट्रांसपोर्ट और इवेंट वेंडर। "
+               "परिवारों से संपर्क केवल स्कूल की अपनी enquiry सूची से होता है।"),
+        "kn": ("ನಾನು ಸಂಸ್ಥೆಗಳನ್ನು ಮಾತ್ರ ಹುಡುಕುತ್ತೇನೆ, ವ್ಯಕ್ತಿಗಳನ್ನು ಅಥವಾ ಕುಟುಂಬಗಳನ್ನು ಎಂದಿಗೂ ಅಲ್ಲ: ಉದಾಹರಣೆಗೆ ಶಾಲೆಯ ಹತ್ತಿರದ ಅಪಾರ್ಟ್‌ಮೆಂಟ್ ಅಸೋಸಿಯೇಷನ್‌ಗಳು, ಕಂಪನಿಗಳು, ಕೋಚಿಂಗ್ ಸೆಂಟರ್‌ಗಳು ಅಥವಾ ಸಾರಿಗೆ ಮತ್ತು ಈವೆಂಟ್ ವೆಂಡರ್‌ಗಳು. "
+               "ಕುಟುಂಬಗಳನ್ನು ಶಾಲೆಯ ಸ್ವಂತ enquiry ಪಟ್ಟಿಯಿಂದ ಮಾತ್ರ ಸಂಪರ್ಕಿಸಲಾಗುತ್ತದೆ."),
+    },
+}
+
+
 def plan_turn(service: LeadFinderService, ctx: TenantContext, text: str, language: Language, runner: AssistantRunner,
               emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID) -> Outcome | None:
     """The plan card for the owner's words, or the question "where?" when they named no place. None = not a search after all (the router answers as usual)."""
     token, tenant = ctx.principal.token, ctx.tenant.id
+    if lf_intent.names_individuals(text):   # refused before asking "where?": the Lead Finder never looks for people or families
+        audience = service.availability(token, tenant).audience
+        return runner.finish_with(Reply(INDIVIDUALS[audience].get(language, INDIVIDUALS[audience]["en"]), language, "answer"), reply_id, emit)
     if lf_intent.area_of(text) is None:
         return runner.finish_with(Reply(WHERE[language], language, "answer"), reply_id, emit)
     emit("step", {"type": "step", "step": "working"})
@@ -195,6 +249,9 @@ def plan_turn(service: LeadFinderService, ctx: TenantContext, text: str, languag
     except ApiError as exc:
         if exc.code == "not_a_search":
             return None
+        if exc.code == "individuals_not_allowed":   # owner decision 4 Nov 2026: never individual people or families; a school finds organisations only
+            audience = "organisations" if (exc.extra or {}).get("audience") == "organisations" else "businesses"
+            return runner.finish_with(Reply(INDIVIDUALS[audience].get(language, INDIVIDUALS[audience]["en"]), language, "answer"), reply_id, emit)
         logger.warning("lead finder plan refused in the chat: %s", exc.code)
         return None
     except NotForThisBusinessError:
