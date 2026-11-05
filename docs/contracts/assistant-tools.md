@@ -4,6 +4,10 @@ Status: **published 4 Nov 2026, stable for the shapes below**; the routes land i
 Errors always have the one shape `{error:{code,message,retry_after,request_id}}`. JSON is snake_case. This **confirms C2's assumed shapes** (`apps/web/lib/assistant-work/types.ts`, PR #302) with the
 changes marked **CHANGED**; everything else is exactly as C2 assumed.
 
+**Which workspaces have it (5 Nov 2026).** `ASSISTANT_WORK_TENANTS`: workspace ids separated by `;` (or `,`). Unset = every workspace (local, tests); set = only those; set but empty or `none` = none.
+On staging it is the owner's three test workspaces (`deploy/staging.sh`). Elsewhere every route below answers **404** (as if it were not there), and the chat turn goes on exactly as before: no
+router call, no file turn, no `work_card`. **The web reads the same variable with the same meaning** (sme-web env, beside `ASSISTANT_WORK_SCREENS`), so no button shows where the API would refuse.
+
 ## 0. The tools (A1, merged first)
 - `GET /assistant/tools` -> `{ items: [ { name, method, path, level: "read" | "write" | "sensitive", sensitive: "money" | "sending" | "members" | "deleting" | "billing" | "secrets" | null, undo: "snapshot" | "inverse" | "none", summary } ], screen_only: [ { method, path, reason } ] }`
   (Owner, Admin, Sales). The same list the planner uses. You need it only for Settings -> Activity's labels and for a debug screen; the cards carry their own words.
