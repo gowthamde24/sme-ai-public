@@ -360,7 +360,7 @@ def _route_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: La
     logger.info("assistant turn: kind=action reason=routed decision=%s action=%s language=%s", routed.decision, routed.action or "-", language)
     emit("step", {"type": "step", "step": "working"})
     try:
-        sentence, card = RouteTurn(runtime.assistant_work, Tools(app), runtime.lead_sources).answer(token, tenant, routed, message_id=reply_id, conversation_id=conversation_id, language=language)
+        sentence, card = RouteTurn(runtime.assistant_work, Tools(app), runtime.lead_sources, getattr(runtime, "workspace_secrets", None)).answer(token, tenant, routed, message_id=reply_id, conversation_id=conversation_id, language=language)
     except Exception as exc:   # a step that could not be prepared: said plainly, nothing done
         logger.warning("assistant routed request not prepared: %s", exc.__class__.__name__)
         from app.assistant_work.routed import w

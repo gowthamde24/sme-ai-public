@@ -509,6 +509,13 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with l as (insert into public.leads (id, tenant_id, company_id, contact_id) values (gen_random_uuid(), %1$L, %3$L, %4$L) returning id)
      insert into public.lead_intake_created (id, tenant_id, import_id, contact_id, lead_id) select %2$L, %1$L, %2$L, %4$L, l.id from l$$,
    'created_at = created_at', $$delete from public.lead_intake_created where id = %2$L$$, false),
+  -- a workspace's own keys (migration 20261231120000): WHERE the key is and the secure card's request, never a key. Written only by definer functions
+  ('workspace_secrets',
+   $$insert into public.workspace_secrets (id, tenant_id, kind, secret_name, last4, fingerprint, set_by) values (%2$L, %1$L, 'indiamart_key', 'sme-ws-' || %1$L || '-indiamart', 'A0sZ', '0123456789abcdef', %5$L) on conflict (tenant_id, kind) do update set id = excluded.id$$,
+   'kind = kind', $$delete from public.workspace_secrets where id = %2$L$$, false),
+  ('secret_requests',
+   $$insert into public.secret_requests (id, tenant_id, kind, requested_by) values (%2$L, %1$L, 'indiamart_key', %5$L)$$,
+   'kind = kind', $$delete from public.secret_requests where id = %2$L$$, true),
   -- how the assistant talks on calls (migration 20261231150000): one document per workspace, written only by talk_training_save
   ('talk_training',
    $$insert into public.talk_training (id, tenant_id, doc, updated_by) values (%2$L, %1$L, '{"address": "plain"}'::jsonb, %5$L) on conflict (tenant_id) do update set id = excluded.id$$,
@@ -868,6 +875,10 @@ select t, r, s, i, u, d from (values
   ('assistant_work_plans', 'sales', false, false, false, false), ('assistant_work_plans', 'viewer', false, false, false, false),
   ('assistant_work_actions', 'owner', true, false, false, false), ('assistant_work_actions', 'admin', true, false, false, false),
   ('assistant_work_actions', 'sales', false, false, false, false), ('assistant_work_actions', 'viewer', false, false, false, false),
+  ('workspace_secrets', 'owner', true, false, false, false), ('workspace_secrets', 'admin', true, false, false, false),
+  ('workspace_secrets', 'sales', false, false, false, false), ('workspace_secrets', 'viewer', false, false, false, false),
+  ('secret_requests', 'owner', true, false, false, false), ('secret_requests', 'admin', false, false, false, false),
+  ('secret_requests', 'sales', false, false, false, false), ('secret_requests', 'viewer', false, false, false, false),
   ('talk_training', 'owner', true, false, false, false), ('talk_training', 'admin', true, false, false, false),
   ('talk_training', 'sales', false, false, false, false), ('talk_training', 'viewer', false, false, false, false),
   ('lead_intake_created', 'owner', true, false, false, false), ('lead_intake_created', 'admin', true, false, false, false),

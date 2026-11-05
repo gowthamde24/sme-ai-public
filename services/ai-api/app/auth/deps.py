@@ -184,6 +184,8 @@ class Runtime:
     # which workspaces have it (ASSISTANT_WORK_TENANTS, app/assistant_work/enabled.py):
     # None = every workspace (local, tests), a set = only those
     assistant_work_tenants: frozenset[uuid.UUID] | None = None
+    # a workspace's own keys (app/workspace_secrets.WorkspaceSecrets; None: WORKSPACE_SECRETS=off)
+    workspace_secrets: Any = None
     # how the assistant talks on calls (app/talk_training: the Owner's training)
     talk_training: Any = None
     calls: CallsService | None = None

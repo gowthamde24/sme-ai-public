@@ -21,6 +21,8 @@ from typing import Any
 ROUTE_WORDS = frozenset(
     {
         "v1", "me", "tenants", "members", "audit-events", "health",
+        # 5 Nov 2026 (C1): "secrets"
+        "secrets",
         # 5 Nov 2026 (C1): "talk-training"
         "talk-training",
         # job DT (ADR 0115, 0116): the business profile, pictures, people and the opening line

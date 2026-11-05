@@ -239,6 +239,7 @@ from app.whatsapp.wiring import build_whatsapp
 from app.workspace.business import router as workspace_business_router
 from app.workspace.repository import PostgrestWorkspaceRepository
 from app.workspace.routes import router as workspace_router
+from app.workspace_secrets_wiring import build_workspace_secrets
 
 SERVICE_NAME = "ai-api"
 SERVICE_VERSION = "0.1.0"
@@ -354,6 +355,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_work=PostgrestWorkStore(config.rest_url, config.anon_key),
         assistant_file_reader=FileReader(LocalTools()),
         assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
+        workspace_secrets=build_workspace_secrets(settings, config.rest_url, config.anon_key),
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
         lead_finder=LeadFinderService(
             PostgrestLeadFinderRepository(config.rest_url, config.anon_key),
