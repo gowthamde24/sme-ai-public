@@ -178,6 +178,9 @@ class Runtime:
     lead_finder: LeadFinderService | None = None
     # job assistant-does-the-work A2: chat files, plan cards, action log (assistant_work)
     assistant_work: Any = None
+    # job assistant-does-the-work A3: reads a PDF, a Word file or a photo
+    # (app/assistant_work/extract.FileReader; None: the file's own text only, no OCR)
+    assistant_file_reader: Any = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
