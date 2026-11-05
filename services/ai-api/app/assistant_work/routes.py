@@ -7,6 +7,7 @@
   GET  /assistant/actions                   Owner, Admin          Settings -> Activity: the action log, newest first ({items, next_before}); never the stored undo, only its state
   POST /assistant/actions/{action_id}/undo  Owner, Admin          undo ONE logged step (its route's undo), offered for 7 days -> the entry
   POST /assistant/secrets/{request_id}      Owner                 the secure card's key -> Secret Manager ({value} -> {saved, last4}); the request is good for 15 minutes and once
+  POST /assistant/setups/{setup_id}/test   Owner, Admin          a guided setup's test ({test: pull_now | send_test_mail | send_test_lead} -> {ok, reason, detail, at}); read-only or passive: nothing is sent
 The files and the plans are screen-only for the assistant itself (app/assistant_tools/catalog.py: `assistant_itself`): it never calls its own doors.
 
 NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint signatures at registration)."""
@@ -170,3 +171,32 @@ async def save_secret(request_id: str, request: Request, ctx: Owner, runtime: Ru
         raise ApiError(410, "secret_request_expired", "This card is older than 15 minutes. Ask me again for a new one.") from None
     except SecretStoreError:
         raise ApiError(503, "secret_not_saved", "The key could not be saved right now. Nothing was kept; ask me again for a new card.") from None
+
+
+class SetupTestIn(_Strict):
+    test: Literal["pull_now", "send_test_mail", "send_test_lead"]
+
+
+_TEST_OF = {"indiamart": "pull_now", "email_forward": "send_test_mail", "website_form": "send_test_lead"}
+
+
+@router.post("/assistant/setups/{setup_id}/test")
+async def run_setup_test(setup_id: str, body: SetupTestIn, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
+    """A guided setup's test (docs/contracts/assistant-tools.md section 2, `setup`). The setup id is the workspace's own (made from the workspace and the kind), so another workspace's id is
+    not found. pull_now: IndiaMART with the workspace's own key (a check only while the workspace takes example data); the other two look at what has arrived: nothing is sent to anyone."""
+    from app.assistant_work import setups
+    from app.lead_sources import indiamart
+    from app.lead_sources.routes import _service
+
+    _store(runtime, ctx)   # the workspace switch: not this workspace's, not found
+    kind = setups.kind_of(ctx.tenant.id, _plan_id(setup_id))
+    if kind is None or _TEST_OF.get(kind) != body.test:
+        raise not_found()
+    service = _service(runtime)
+    if body.test == "pull_now":
+        got = await asyncio.to_thread(indiamart.check, runtime, service, ctx)
+        return setups.result(bool(got["ok"]), got.get("reason"), str(got["detail"]))
+    sources = await asyncio.to_thread(service.sources, ctx.principal.token, ctx.tenant.id)
+    if body.test == "send_test_mail":
+        return setups.received_test(sources, "email_forward", "forwarding address")
+    return setups.received_test(sources, "website_form", "website form")
