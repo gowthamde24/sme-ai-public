@@ -41,12 +41,10 @@ describe("GET /app/tenants/[id]/nav-counts (the menu's numbers)", () => {
     expect((await get()).status).toBe(401);
     expect(h.counts).not.toHaveBeenCalled();
   });
-  it("a rejected session is a 401; any other failure is 'nothing known' (no badges), never an error page", async () => {
+  it("a rejected session is a 401; the API's 502 (its database cannot answer) is a 503, so the menu keeps the numbers it had", async () => {
     h.counts.mockRejectedValueOnce(new ApiAuthError("x"));
     expect((await get()).status).toBe(401);
-    h.counts.mockRejectedValueOnce(new ApiRequestError(503, "api_unreachable", "x"));
-    const r = await get();
-    expect(r.status).toBe(200);
-    expect(await r.json()).toEqual({ counts: NO_COUNTS });
+    h.counts.mockRejectedValueOnce(new ApiRequestError(502, "db_unavailable", "x"));
+    expect((await get()).status).toBe(503);
   });
 });
