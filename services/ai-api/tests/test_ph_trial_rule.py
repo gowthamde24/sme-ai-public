@@ -366,3 +366,36 @@ async def test_a_whole_call_like_the_one_at_10_15_is_now_answered_by_the_trial_r
     assert store.begun == [(TENANT, "en")] and "exotel_inbound admitted rule=trial_pin_path" in records
     diag = next(r for r in records if r.startswith("exotel_start "))
     assert "trial_number=url to_shape=plus12" in diag
+
+
+@arun
+async def test_the_end_of_call_line_says_how_it_ended_and_what_went_each_way_names_and_numbers_only() -> None:
+    """5 Nov 2026, 11:57 UTC: Exotel ended the stream 0.4 s after admission, and the log could not say whether it sent `stop` or dropped the socket, nor whether our greeting had gone out."""
+    records: list[str] = []
+    handler = logging.Handler()
+    handler.emit = lambda record: records.append(record.getMessage())  # type: ignore[method-assign]
+    log = logging.getLogger("app.telephony.inbound")
+    log.addHandler(handler)
+    log.setLevel(logging.INFO)
+    svc = service(store=FakeStore(), calls=FakeCalls(from_number=None))
+    svc.our_sid = "sim"
+    svc.trial = inbound.trial_rule(EXOPHONE, OWNER, "sim", APP)
+    try:
+        sim, task = await _call(svc, inbound.mint(SECRET, inbound.monotonic(), "CA123", inbound.TRIAL_MARK), {"to_number": "+918037091588"})
+        await asyncio.sleep(0.5)
+        await sim.hang_up("callended 4 from +919502380998")
+        await asyncio.wait_for(task, 10)
+    finally:
+        log.removeHandler(handler)
+    line = next(r for r in records if r.startswith("phone_call_numbers "))
+    numbers = json.loads(line.split(" ", 1)[1])
+    assert numbers["end"] == "caller_hung_up" and numbers["end_how"] == "stop" and numbers["stop_reason"] == "other", "a reason with a number in it is never logged as it is"
+    assert numbers["events"].get("start") == 1 and numbers["events"].get("stop") == 1 and set(numbers) >= {"bytes_in", "bytes_out", "first_out_ms", "close_code"}
+    assert "9502380998" not in line
+
+
+def test_event_names_and_reasons_are_closed_words() -> None:
+    from app.telephony import exotel as ex
+
+    assert ex.event_name('{"event": "media"}') == "media" and ex.event_name('{"event": "Error 42"}') == "other" and ex.event_name("not json") == "unreadable"
+    assert ex.closed_word("callended") == "callended" and ex.closed_word("call ended by +91 95") == "other" and ex.closed_word(None) is None
