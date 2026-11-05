@@ -4,13 +4,13 @@
 
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 from app.talk_training.models import TalkTraining
 
-QUESTIONS: dict[str, list[str]] = {
-    "textiles": ["What is the saree for: a wedding, a function or daily wear?", "Which colours or fabric do you like?", "Roughly what budget do you have in mind?", "When do you need it?"],
-    "construction_materials": ["Which material do you need?", "Roughly how much quantity?", "Where is the site?", "When do you need the delivery?"],
-    "education": ["Which class is the admission for?", "Which area do you live in?", "When would you like to visit the campus?"],
-}
+# the default questions per business type (pack id -> questions) live in data/questions.json: the code never names a pack (tests/test_ck_packs_data.py)
+QUESTIONS: dict[str, list[str]] = json.loads((Path(__file__).parent / "data" / "questions.json").read_text(encoding="utf-8"))
 GENERIC = ["What are you looking for?", "When do you need it?", "What is the best time to call you back?"]
 NEVER_SAY: list[str] = ["guaranteed", "100% sure", "best price in the market"]
 

@@ -10,7 +10,7 @@ NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint s
 
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Body, Depends
 from pydantic import ValidationError
 
 from app.auth.deps import OwnerOrAdmin, Runtime, TenantContext, get_runtime, require_tenant_role
@@ -56,9 +56,10 @@ def get_talk_training(ctx: OwnerOrAdmin, runtime: RuntimeDep) -> TalkTrainingOut
 
 
 @router.put("/talk-training", response_model=TalkTrainingOut)
-async def put_talk_training(request: Request, ctx: Owner, runtime: RuntimeDep) -> TalkTrainingOut:
+def put_talk_training(ctx: Owner, runtime: RuntimeDep, doc: Annotated[dict[str, Any], Body()]) -> TalkTrainingOut:
+    """The whole document. A body that is not a JSON object is the standard 422 naming the field; a document that breaks a rule is 422 talk_training_invalid with a closed `reason`."""
     try:
-        body = TalkTraining.model_validate(await request.json())
+        body = TalkTraining.model_validate(doc)
     except ValidationError as exc:
         words = " ".join(str(e.get("msg", "")) for e in exc.errors())
         reason = next((r for r in REASONS if r in words), "invalid")
