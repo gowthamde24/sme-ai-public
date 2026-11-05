@@ -66,6 +66,8 @@ Created by `./deploy/cloudrun.sh secrets` (the suppression key is generated and 
 | `SCHEDULER_PASSWORD` | secret | worker | Secret `sme-scheduler-password`. The password of the scheduler account; typed hidden. |
 | `SUPPRESSION_HMAC_KEY_VERSION` | plain | api, worker | `1`; raised by one when the key is rotated. |
 | `SUPPRESSION_HMAC_KEY_PREVIOUS` | secret | api, worker | Only during a rotation: the old key, kept so old keys still match (matching only). |
+| `WORKSPACE_SECRETS` | plain | api | A workspace's own keys (owner, 5 Nov 2026): `off` (default), `fake` (in memory, local) or `gcp` (Secret Manager, one secret `sme-ws-<workspace>-<kind>` per workspace and kind, written from the assistant's secure card). Needs `SUPPRESSION_HMAC_KEY` for the fingerprint. |
+| `WORKSPACE_SECRETS_PROJECT` | plain | api | With `gcp`: the Google Cloud project id. The API's service account needs the conditional `sme-ws-*` bindings (create; write and read only `sme-ws-*`). |
 | `SUPPRESSION_HMAC_KEY_PREVIOUS_VERSION` | plain | api, worker | Only during a rotation: the old key's version. |
 
 ## C. Optional on the API: switch on one at a time, each with its own approval

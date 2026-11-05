@@ -181,6 +181,8 @@ class Runtime:
     # job assistant-does-the-work A3: reads a PDF, a Word file or a photo
     # (app/assistant_work/extract.FileReader; None: the file's own text only, no OCR)
     assistant_file_reader: Any = None
+    # a workspace's own keys (app/workspace_secrets.WorkspaceSecrets; None: WORKSPACE_SECRETS=off)
+    workspace_secrets: Any = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
