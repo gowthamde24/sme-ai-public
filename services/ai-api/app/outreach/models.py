@@ -133,8 +133,9 @@ class RuleIn(_Strict):
 
     @model_validator(mode="after")
     def _the_combination_makes_sense(self) -> RuleIn:
-        if self.action in ("whatsapp_first", "whatsapp_then_call") and (self.channel == "call" or not self.message_text):
-            raise ValueError("a WhatsApp action needs the WhatsApp channel and the approved text")
+        if self.action in ("whatsapp_first", "whatsapp_then_call") or self.channel == "whatsapp":
+            # call first (owner, 5 Nov 2026): a new lead is called; WhatsApp only when the customer asks or agrees on the call (the database refuses it too)
+            raise ValueError("call first: a new lead is called; WhatsApp only when the customer asks for it on the call")
         if self.channel in ("whatsapp", "both") and not self.message_text:
             raise ValueError("a WhatsApp step needs the approved text")
         return self

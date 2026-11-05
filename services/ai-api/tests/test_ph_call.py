@@ -271,3 +271,20 @@ async def test_the_phone_model_answers_the_fixed_cases_itself_and_tells_the_sess
     events.clear()
     assert await ask(llm(), "hi", "tell me", "more", "leave a message after the tone") == "model said this" and events == [], "a mailbox greeting is only believed in the first lines"
     assert inner.models == ["m"], "the model was asked only for the ordinary turn"
+
+
+def test_call_first_the_whatsapp_signal_is_only_asked_or_agreed() -> None:
+    """Owner, 5 Nov 2026: the ONE signal that lets a WhatsApp go after a call is the customer's own request (asked) or yes when they could not talk (agreed)."""
+    import json
+
+    from app.telephony.outcome import prompt, validate
+
+    asked = validate('{"summary": "Wants photos.", "outcome": "positive", "category": "interested", "captured": {"product": "silk"}, "whatsapp": "asked"}')
+    assert asked is not None and asked["captured"] == {"product": "silk", "whatsapp": "asked"}
+    agreed = validate('{"outcome": "unclear", "category": "call_back_later", "whatsapp": "agreed"}')
+    assert agreed is not None and agreed["captured"] == {"whatsapp": "agreed"}
+    for word in ("yes", "maybe", True, None):
+        got = validate(json.dumps({"outcome": "positive", "category": "interested", "whatsapp": word, "captured": {"whatsapp": "asked"}}))
+        assert got is not None and "whatsapp" not in got.get("captured", {}), "only the top-level asked/agreed counts; a captured key of that name is dropped"
+    system, _ = prompt([{"who": "caller", "text": "send me photos on WhatsApp"}], "te", "2026-11-05")
+    assert '"asked" ONLY' in system and "Never \"asked\" or \"agreed\" because the assistant mentioned WhatsApp" in system
