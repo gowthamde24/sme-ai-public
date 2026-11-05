@@ -248,7 +248,10 @@ def _dispatch(
 ) -> Outcome:
     """Decide the kind, tell the client first, then run the path."""
     # job assistant-does-the-work A2: files dropped with the message: what each is and what to propose, decided by code (no model call); nothing is written before the plan's OK
-    if body.attachment_ids:
+    from app.assistant_work.enabled import enabled
+
+    work_on = enabled(runtime, ctx.tenant.id)   # ASSISTANT_WORK_TENANTS: the files and the router only in the workspaces that have them; elsewhere the turn is as before
+    if body.attachment_ids and work_on:
         emit("intent", {"type": "intent", "kind": "action"})
         logger.info("assistant turn: kind=action reason=files files=%d language=%s", len(body.attachment_ids), language)
         return _file_turn(runtime, ctx, body, language, runner, emit, reply_id, app, conversation_id)
@@ -264,7 +267,7 @@ def _dispatch(
     intent = Intent("action", "answers_question") if pending is not None else classify(body.text, _previous_kind(last))
     # job assistant-does-the-work, the router (owner, 5 Nov 2026): a request about one of the common actions (calling hours, auto-reply, a lead source, one lead, the example data, the screen-only
     # ones) is routed with ONE checked model call to a plan card; anything else, or a request the router says is not its own, goes on exactly as before
-    if pending is None and intent.reason != "find_new_customers" and app is not None and getattr(runtime, "assistant_work", None) is not None:
+    if work_on and pending is None and intent.reason != "find_new_customers" and app is not None and getattr(runtime, "assistant_work", None) is not None:
         from app.assistant_work.router import touches
 
         if touches(body.text):
@@ -357,7 +360,7 @@ def _route_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: La
     logger.info("assistant turn: kind=action reason=routed decision=%s action=%s language=%s", routed.decision, routed.action or "-", language)
     emit("step", {"type": "step", "step": "working"})
     try:
-        sentence, card = RouteTurn(runtime.assistant_work, Tools(app), runtime.lead_sources).answer(token, tenant, routed, message_id=reply_id, conversation_id=conversation_id, language=language)
+        sentence, card = RouteTurn(runtime.assistant_work, Tools(app), runtime.lead_sources, getattr(runtime, "workspace_secrets", None)).answer(token, tenant, routed, message_id=reply_id, conversation_id=conversation_id, language=language)
     except Exception as exc:   # a step that could not be prepared: said plainly, nothing done
         logger.warning("assistant routed request not prepared: %s", exc.__class__.__name__)
         from app.assistant_work.routed import w

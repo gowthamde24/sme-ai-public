@@ -28,6 +28,19 @@ _VOICEMAIL_INDIAN = (
     "ನೀವು ಡಯಲ್ ಮಾಡಿದ", "ಲಭ್ಯವಿಲ್ಲ", "ಸ್ವಿಚ್ ಆಫ್", "ಸಂದೇಶ ಬಿಡಿ",
     "நீங்கள் அழைத்த", "தொடர்பு கொள்ள முடியவில்லை", "ஸ்விட்ச் ஆஃப்", "ബീപ്പ്", "നിങ്ങൾ വിളിച്ച", "ലഭ്യമല്ല",
 )
+# "let me talk to a person" (owner, 5 Nov 2026; calls-like-a-pro part 4): the caller asks for a human, the owner or the manager; the call hands over (the team calls back)
+_PERSON_LATIN = re.compile(
+    r"\b(?:(?:talk|speak)\s+(?:to|with)\s+(?:a\s+|some\s?one\s+|an?\s+)?(?:real\s+)?(?:person|human|someone|somebody|owner|manager|staff|team|boss|sales\s?person)|"
+    r"(?:connect|transfer|put)\s+me\s+(?:to|through|with)|(?:i\s+want|give\s+me|get\s+me)\s+(?:a\s+|the\s+)?(?:person|human|owner|manager)|"
+    r"(?:manager|owner)\s+(?:ki|ko)\s+(?:phone|call)|(?:manager|owner|insaan)\s+se\s+baat|manishi\s+tho\s+matladali)\b"
+)
+_PERSON_INDIAN = (
+    "మనిషితో మాట్లాడాలి", "మనిషితో మాట్లాడతాను", "ఓనర్ తో మాట్లాడాలి", "ఓనర్‌తో మాట్లాడాలి", "మేనేజర్ తో మాట్లాడాలి", "మేనేజర్‌తో మాట్లాడాలి", "ఎవరైనా మనిషి", "మీ ఓనర్ కి ఇవ్వండి",
+    "किसी इंसान से बात", "इंसान से बात", "मैनेजर से बात", "मालिक से बात", "ओनर से बात", "किसी आदमी से बात",
+    "ಮನುಷ್ಯರ ಜೊತೆ ಮಾತಾಡ", "ಮ್ಯಾನೇಜರ್ ಜೊತೆ ಮಾತಾಡ", "ಮಾಲೀಕರ ಜೊತೆ ಮಾತಾಡ", "ಓನರ್ ಜೊತೆ ಮಾತಾಡ",
+    "மனிதரிடம் பேச", "மேனேஜரிடம் பேச", "ஓனரிடம் பேச", "മനുഷ്യനോട് സംസാരിക്കണം", "മാനേജരോട് സംസാരിക്കണം",
+)
+_REAL_PERSON = re.compile(r"\b(?:real|actual)\s+(?:person|human)\b")   # "a real person": a request, unless it is the identity question ("are you a real person?")
 _ZERO_WIDTH = dict.fromkeys(map(ord, "​‌‍⁠﻿"))
 
 
@@ -45,3 +58,14 @@ def voicemail_greeting(text: str) -> bool:
     """The "person" is a mailbox, a network message or a phone menu."""
     t = _norm(text)
     return bool(_VOICEMAIL_LATIN.search(t)) or any(w in t for w in _VOICEMAIL_INDIAN)
+
+
+def person_asked_explicitly(text: str) -> bool:
+    """The caller asks to TALK to a human (a person, the owner, the manager): always a hand-over, even when the sentence also says "human"."""
+    t = _norm(text)
+    return bool(_PERSON_LATIN.search(t)) or any(_norm(w) in t for w in _PERSON_INDIAN)
+
+
+def person_requested(text: str) -> bool:
+    """Any request for a person: the explicit ones, or "a real person" (the caller checks the identity question first for that one)."""
+    return person_asked_explicitly(text) or bool(_REAL_PERSON.search(_norm(text)))
