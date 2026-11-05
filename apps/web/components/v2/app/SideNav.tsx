@@ -35,9 +35,10 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   const counts = useNavCounts(current?.id ?? null);
   // the current row in view (a page of AI team or Setup on a short window)
   const navRef = useRef<HTMLElement>(null);
+  // again once the business type's menu has arrived (its rows are drawn then: on a first paint the current row may not exist yet)
   useEffect(() => {
     navRef.current?.querySelector<HTMLElement>('[aria-current="page"]')?.scrollIntoView?.({ block: "nearest" });
-  }, [activeMenu]);
+  }, [activeMenu, frame.ready, frame.pack]);
   const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
   return (
     <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[256px]"} print:hidden`}>
