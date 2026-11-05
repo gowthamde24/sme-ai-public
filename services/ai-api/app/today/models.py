@@ -126,3 +126,32 @@ class AgentStatusOut(_Out):
     state: Literal["idle", "working", "not_available", "switched_off"]
     job: str
     last_event: LastEvent | None
+
+
+class CallMinutes(_Out):
+    used: int
+    total: int | None   # None: no ceiling (pay as you go)
+
+
+class AiUsageMeter(_Out):
+    used_paise: int
+    allowance_paise: int | None
+    period: Literal["month"]
+
+
+class NavCountsOut(_Out):
+    """The sidebar's counts (docs/contracts/nav-counts.md). Every number may be null: not known, or not for this person; 0 means known, none."""
+
+    needs_you: int | None
+    prospects_needing_owner: int | None
+    new_leads: int | None
+    live_calls: int | None
+    unread_chats: int | None
+    followups_due: int | None
+    visits_today: int | None
+    quotes_waiting: int | None
+    ai_team_working: int | None
+    call_minutes: CallMinutes | None
+    ai_usage: AiUsageMeter | None
+    plan: str | None
+    as_of: datetime
