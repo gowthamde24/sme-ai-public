@@ -31,7 +31,9 @@ from app.assistant.language import Language
 from app.assistant_tools import executor
 from app.assistant_work import extract
 from app.assistant_work.files import MAX_LEADS_FILE_BYTES, MAX_ROWS
+from app.assistant_work.planner import Planned
 from app.assistant_work.store import PlanExpiredError, PlanStateError, WorkStore
+from app.assistant_work.understand import Understanding, understand
 from app.errors import ApiError
 
 logger = logging.getLogger("app.assistant_work")
@@ -136,6 +138,36 @@ WORDS: dict[str, dict[str, str]] = {
         "hi": "आज की AI सीमा पूरी हो गई है, इसलिए '{name}' के स्कैन किए पन्ने नहीं पढ़ पाई। कृपया इसे Excel या CSV में अपलोड करें, या कल फिर कोशिश करें।",
         "kn": "ಇಂದಿನ AI ಮಿತಿ ಮುಗಿದಿದೆ, ಹಾಗಾಗಿ '{name}' ನ ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಪುಟಗಳನ್ನು ಓದಲಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು Excel ಅಥವಾ CSV ಆಗಿ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ಅಥವಾ ನಾಳೆ ಪ್ರಯತ್ನಿಸಿ.",
     },
+    "also_knowledge": {
+        "en": " I'll also save its text to About my business.",
+        "te": " దాని టెక్స్ట్‌ను 'నా వ్యాపారం గురించి' లో కూడా సేవ్ చేస్తాను.",
+        "hi": " इसका टेक्स्ट 'मेरे कारोबार के बारे में' में भी सेव कर दूँगी।",
+        "kn": " ಅದರ ಪಠ್ಯವನ್ನು 'ನನ್ನ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ' ಯಲ್ಲೂ ಸೇವ್ ಮಾಡುತ್ತೇನೆ.",
+    },
+    "cant_part": {
+        "en": " I can't do the rest yet ({what}): the screen can.",
+        "te": " మిగతాది ({what}) నేను ఇంకా చేయలేను: స్క్రీన్‌లో చేయవచ్చు.",
+        "hi": " बाकी ({what}) मैं अभी नहीं कर सकती: स्क्रीन पर हो सकता है।",
+        "kn": " ಉಳಿದದ್ದನ್ನು ({what}) ನಾನು ಇನ್ನೂ ಮಾಡಲಾರೆ: ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಮಾಡಬಹುದು.",
+    },
+    "knowledge_offer": {
+        "en": "I read '{name}'. Shall I save its text to About my business, so I can answer customers from it? Nothing is sent to anyone.",
+        "te": "'{name}' చదివాను. దాని టెక్స్ట్‌ను 'నా వ్యాపారం గురించి' లో సేవ్ చేయమంటారా, కస్టమర్లకు దాని నుండి జవాబు చెప్పడానికి? ఎవరికీ ఏమీ పంపను.",
+        "hi": "'{name}' पढ़ ली। क्या इसका टेक्स्ट 'मेरे कारोबार के बारे में' में सेव कर दूँ, ताकि ग्राहकों को इससे जवाब दे सकूँ? किसी को कुछ नहीं भेजा जाएगा।",
+        "kn": "'{name}' ಓದಿದೆ. ಅದರ ಪಠ್ಯವನ್ನು 'ನನ್ನ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ' ಯಲ್ಲಿ ಸೇವ್ ಮಾಡಲೇ, ಗ್ರಾಹಕರಿಗೆ ಅದರಿಂದ ಉತ್ತರಿಸಲು? ಯಾರಿಗೂ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+    },
+    "clarify": {
+        "en": "I read '{name}' (it looks like {looks}). What shall I do with it? I can add the people in it to your leads, save it to About my business, or tell you what is in it.",
+        "te": "'{name}' చదివాను (ఇది {looks} లా ఉంది). దీనితో ఏం చేయమంటారు? అందులోని వ్యక్తులను మీ లీడ్స్‌లో చేర్చగలను, 'నా వ్యాపారం గురించి' లో సేవ్ చేయగలను, లేదా అందులో ఏముందో చెప్పగలను.",
+        "hi": "'{name}' पढ़ ली (यह {looks} जैसी लगती है)। इसका क्या करूँ? इसमें के लोगों को आपकी लीड्स में जोड़ सकती हूँ, 'मेरे कारोबार के बारे में' में सेव कर सकती हूँ, या बता सकती हूँ कि इसमें क्या है।",
+        "kn": "'{name}' ಓದಿದೆ (ಇದು {looks} ತರಹ ಇದೆ). ಇದನ್ನು ಏನು ಮಾಡಲಿ? ಇದರಲ್ಲಿರುವವರನ್ನು ನಿಮ್ಮ ಲೀಡ್‌ಗಳಿಗೆ ಸೇರಿಸಬಹುದು, 'ನನ್ನ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ' ಯಲ್ಲಿ ಸೇವ್ ಮಾಡಬಹುದು, ಅಥವಾ ಇದರಲ್ಲಿ ಏನಿದೆ ಎಂದು ಹೇಳಬಹುದು.",
+    },
+    "unsure_answer": {
+        "en": "I read '{name}' (it looks like {looks}), but I could not give a sure answer from it. Ask me in other words, or open the file.",
+        "te": "'{name}' చదివాను (ఇది {looks} లా ఉంది), కానీ దాని నుండి ఖచ్చితమైన జవాబు ఇవ్వలేకపోయాను. వేరే మాటల్లో అడగండి, లేదా ఫైల్ తెరిచి చూడండి.",
+        "hi": "'{name}' पढ़ ली (यह {looks} जैसी लगती है), पर इससे पक्का जवाब नहीं दे पाई। दूसरे शब्दों में पूछिए, या फ़ाइल खोलकर देखिए।",
+        "kn": "'{name}' ಓದಿದೆ (ಇದು {looks} ತರಹ ಇದೆ), ಆದರೆ ಅದರಿಂದ ಖಚಿತ ಉತ್ತರ ಕೊಡಲಾಗಲಿಲ್ಲ. ಬೇರೆ ಮಾತುಗಳಲ್ಲಿ ಕೇಳಿ, ಅಥವಾ ಫೈಲ್ ತೆರೆದು ನೋಡಿ.",
+    },
     "heic": {
         "en": "I can't open HEIC photos. Send '{name}' as a JPG or PNG, please (a screenshot works too).",
         "te": "HEIC ఫోటోలు నేను తెరవలేను. దయచేసి '{name}' ను JPG లేదా PNG గా పంపండి (స్క్రీన్‌షాట్ కూడా పనిచేస్తుంది).",
@@ -154,9 +186,27 @@ WHAT = {
     "document": {"en": "reading a document or a picture into your business", "te": "డాక్యుమెంట్ లేదా చిత్రాన్ని మీ వ్యాపారంలోకి చదవడం", "hi": "दस्तावेज़ या तस्वीर को आपके कारोबार में पढ़ना", "kn": "ದಾಖಲೆ ಅಥವಾ ಚಿತ್ರವನ್ನು ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಓದುವುದು"},
     "too_big": {"en": "importing a list bigger than 3 MB", "te": "3 MB కంటే పెద్ద జాబితాను దిగుమతి చేయడం", "hi": "3 MB से बड़ी सूची आयात करना", "kn": "3 MB ಗಿಂತ ದೊಡ್ಡ ಪಟ್ಟಿಯನ್ನು ಆಮದು ಮಾಡುವುದು"},
     "scanned": {"en": "reading scanned pages", "te": "స్కాన్ చేసిన పేజీలు చదవడం", "hi": "स्कैन किए पन्ने पढ़ना", "kn": "ಸ್ಕ್ಯಾನ್ ಮಾಡಿದ ಪುಟಗಳನ್ನು ಓದುವುದು"},
+    "quote_from_enquiry": {"en": "making an enquiry and a quote from a letter", "te": "లేఖ నుండి ఎంక్వైరీ, కొటేషన్ తయారు చేయడం", "hi": "चिट्ठी से पूछताछ और कोटेशन बनाना", "kn": "ಪತ್ರದಿಂದ ವಿಚಾರಣೆ ಮತ್ತು ಕೊಟೇಶನ್ ಮಾಡುವುದು"},
+    "order_from_file": {"en": "making an order from a file and checking the stock", "te": "ఫైల్ నుండి ఆర్డర్ చేయడం, స్టాక్ చూడడం", "hi": "फ़ाइल से ऑर्डर बनाना और स्टॉक देखना", "kn": "ಫೈಲ್‌ನಿಂದ ಆರ್ಡರ್ ಮಾಡುವುದು ಮತ್ತು ಸ್ಟಾಕ್ ನೋಡುವುದು"},
+    "update_prices": {"en": "updating catalogue prices from a file", "te": "ఫైల్ నుండి కేటలాగ్ ధరలు మార్చడం", "hi": "फ़ाइल से कैटलॉग की कीमतें बदलना", "kn": "ಫೈಲ್‌ನಿಂದ ಕ್ಯಾಟಲಾಗ್ ಬೆಲೆಗಳನ್ನು ಬದಲಿಸುವುದು"},
+    "follow_up": {"en": "setting a follow-up from a file", "te": "ఫైల్ నుండి ఫాలో-అప్ పెట్టడం", "hi": "फ़ाइल से फ़ॉलो-अप लगाना", "kn": "ಫೈಲ್‌ನಿಂದ ಫಾಲೋ-ಅಪ್ ಇಡುವುದು"},
+    "other": {"en": "doing that with a file", "te": "ఫైల్‌తో అది చేయడం", "hi": "फ़ाइल से वह करना", "kn": "ಫೈಲ್‌ನಿಂದ ಅದನ್ನು ಮಾಡುವುದು"},
     "too_many": {"en": "importing more than 5,000 rows at once", "te": "ఒకేసారి 5,000 వరుసలకంటే ఎక్కువ దిగుమతి చేయడం", "hi": "एक बार में 5,000 से ज़्यादा पंक्तियाँ आयात करना", "kn": "ಒಮ್ಮೆಗೆ 5,000 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಸಾಲುಗಳನ್ನು ಆಮದು ಮಾಡುವುದು"},
 }
 TITLE = {"en": "Add {n} leads from '{name}'"}
+LOOKS = {
+    "lead_list": {"en": "a list of people", "te": "వ్యక్తుల జాబితా", "hi": "लोगों की सूची", "kn": "ಜನರ ಪಟ್ಟಿ"},
+    "visiting_card": {"en": "a visiting card", "te": "విజిటింగ్ కార్డు", "hi": "विज़िटिंग कार्ड", "kn": "ವಿಸಿಟಿಂಗ್ ಕಾರ್ಡ್"},
+    "price_list": {"en": "a price list", "te": "ధరల జాబితా", "hi": "कीमतों की सूची", "kn": "ಬೆಲೆ ಪಟ್ಟಿ"},
+    "enquiry": {"en": "an enquiry", "te": "ఎంక్వైరీ", "hi": "पूछताछ", "kn": "ವಿಚಾರಣೆ"},
+    "order": {"en": "an order", "te": "ఆర్డర్", "hi": "ऑर्डर", "kn": "ಆರ್ಡರ್"},
+    "brochure": {"en": "a brochure or a document", "te": "బ్రోచర్ లేదా డాక్యుమెంట్", "hi": "ब्रोशर या दस्तावेज़", "kn": "ಬ್ರೋಷರ್ ಅಥವಾ ದಾಖಲೆ"},
+    "other": {"en": "a document", "te": "డాక్యుమెంట్", "hi": "दस्तावेज़", "kn": "ದಾಖಲೆ"},
+}
+SCREEN_OF = {"quote_from_enquiry": {"label": "Enquiries", "href": "/enquiries"}, "order_from_file": {"label": "Orders", "href": "/orders"},
+             "update_prices": {"label": "Catalogue", "href": "/catalogue"}, "follow_up": {"label": "Follow-ups", "href": "/followups"}, "other": None}
+KNOWLEDGE_TOOL = "knowledge.add_source"
+MAX_KNOWLEDGE_CHARS = 60_000
 STEP = {"en": "Add {n} new leads ({existing} already exist, left as they are)"}
 
 
@@ -180,8 +230,11 @@ def public_plan(plan: dict[str, Any]) -> dict[str, Any]:
 
 
 def card_of_plan(plan: dict[str, Any], rows: list[list[str]] | None = None) -> dict[str, Any]:
-    """The `file_preview` card of a stored plan (a replay and the stored chat show it in its state now; the file's rows only while the file is there, at the turn)."""
+    """The `file_preview` card of a stored plan (a replay and the stored chat show it in its state now; the file's rows only while the file is there, at the turn), or a `plan` card for a plan that
+    adds no people (saving a brochure to About my business)."""
     card = plan.get("card") or {}
+    if card.get("kind") == "plan":
+        return {"kind": "plan", "id": str(uuid.uuid5(_NS, str(plan["plan_id"]))), "plan": public_plan(plan)}
     return {"kind": "file_preview", "id": str(uuid.uuid5(_NS, str(plan["plan_id"]))), "file_name": plan.get("file_name") or "", "destination": card.get("destination", "leads"), "customer_name": None,
             "read_by": card.get("read_by") or "file", "facts": card.get("facts") or [], "columns": card.get("columns") or [], "rows": rows or [], "plan": public_plan(plan)}
 
@@ -261,9 +314,7 @@ class FileTurn:
                 return words("cant", language, name=name, what=what("document", language)), cant_do("not_yet", what("document", language), {"label": "About my business", "href": "/settings/knowledge"})
             return words("nobody", language, name=name), None
         # what was read is kept as a small CSV (the same 24 h rule) and the file itself is deleted now: the plan's "Do it" imports exactly what the card showed
-        out = io.StringIO()
-        csv.writer(out).writerows(grid[: MAX_ROWS + 1])
-        sheet_b64 = base64.b64encode(out.getvalue().encode("utf-8")).decode("ascii")
+        sheet_b64 = _csv_b64(grid)
         derived = self.store.file_put(token, tenant_id, (name.rsplit(".", 1)[0] or "file")[:190] + ".csv", "text/csv", "sheet", sheet_b64)
         try:
             self.store.file_drop(token, tenant_id, file_id)
@@ -289,9 +340,107 @@ class FileTurn:
             return words("cant", language, name=name, what=what("too_big", language)), cant_do("not_yet", what("too_big", language), screen)
         return words("unreadable", language, name=name), None
 
+    # ---- a request about the file (job A2b): understand it by code, plan with the model, show the card
+    def with_request(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, request: str, *, plan_with: Callable[[Understanding, str, Language], Planned], message_id: uuid.UUID,
+                     conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
+        """`plan_with` is the planner (app/assistant_work/planner.plan, bound to the turn). A school's file never comes here (the turn decides)."""
+        try:
+            f = self.store.file_get(token, tenant_id, file_id)
+        except Exception:
+            return words("gone", language), None
+        name, kind = str(f.get("name") or "file"), str(f.get("kind") or "")
+        data_base64 = str(f.get("data_base64") or "")
+        try:
+            u = self._understand(name, kind, data_base64)
+        except extract.ReadRefused as exc:
+            return self._refused(exc.code, name, language)
+        except ApiError as exc:
+            logger.info("assistant file not read by the AI model: %s", exc.code)
+            return words("ai_limit" if exc.code in AI_ALLOWANCE_CODES else "no_reader", language, name=name), cant_do("not_yet", what("scanned", language), {"label": "Lead Desk", "href": "/leads/import"})
+        if u is None:
+            return words("unreadable", language, name=name), None
+        looks = LOOKS[u.kind].get(language, LOOKS[u.kind]["en"])
+        try:
+            planned = plan_with(u, request, language)
+        except ApiError as exc:   # the model: the deterministic path still works for a list of people
+            logger.info("assistant file plan not made: %s", exc.code)
+            if u.kind in ("lead_list", "visiting_card"):
+                return self.answer(token, tenant_id, file_id, message_id=message_id, conversation_id=conversation_id, language=language)
+            return words("ai_limit" if exc.code in AI_ALLOWANCE_CODES else "no_reader", language, name=name), None
+        if planned.decision == "answer":
+            return (planned.answer or words("unsure_answer", language, name=name, looks=looks)), None
+        if planned.decision == "clarify":
+            return (planned.question or words("clarify", language, name=name, looks=looks)), None
+        if planned.decision == "cant_do":
+            w = what(planned.cant, language)
+            return words("cant", language, name=name, what=w), cant_do("not_yet", w, SCREEN_OF.get(planned.cant))
+        sentence, card = self._do(token, tenant_id, file_id, name, kind, data_base64, u, planned, message_id=message_id, conversation_id=conversation_id, language=language)
+        if planned.cant:
+            sentence += words("cant_part", language, what=what(planned.cant, language))
+        return sentence, card
+
+    def _do(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, kind: str, data_base64: str, u: Understanding, planned: Planned, *, message_id: uuid.UUID,
+            conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
+        names = [a["action"] for a in planned.actions]
+        plan_id = uuid.uuid4()
+        knowledge = [self._knowledge_step(token, tenant_id, plan_id, u, next((a["title"] for a in planned.actions if a["action"] == "add_to_knowledge"), ""))] if "add_to_knowledge" in names else []
+        if "add_people" in names:
+            if kind in READ_KIND_OF:
+                return self._lead_list(token, tenant_id, file_id, name, kind, data_base64, message_id=message_id, conversation_id=conversation_id, language=language, extra_steps=knowledge)
+            sheet_b64 = _csv_b64(_headed(u.people) if u.people else [])
+            derived = self.store.file_put(token, tenant_id, (name.rsplit(".", 1)[0] or "file")[:190] + ".csv", "text/csv", "sheet", sheet_b64)
+            self._drop_quietly(token, tenant_id, file_id)
+            return self._lead_list(token, tenant_id, uuid.UUID(str(derived["file_id"])), name, "sheet", sheet_b64, message_id=message_id, conversation_id=conversation_id, language=language,
+                                   read_by=u.read_by, extra_steps=knowledge)
+        step = {k: v for k, v in knowledge[0].items() if k != "plan_id"}
+        plan = self.store.plan_put(token, tenant_id, {
+            "plan_id": str(plan_id), "message_id": str(message_id), "conversation_id": str(conversation_id) if conversation_id else None, "file_id": step["call"]["file_id"],
+            "title": f"Save '{name}' to About my business"[:200], "file_name": name, "card": {"kind": "plan", "destination": "knowledge", "read_by": u.read_by}, "steps": [step],
+        })
+        if kind not in READ_KIND_OF:
+            self._drop_quietly(token, tenant_id, file_id)
+        picture = words("from_picture", language) if u.read_by in ("local_ocr", "ai") else ""
+        return words("knowledge_offer", language, name=name) + picture, card_of_plan(plan)
+
+    def _understand(self, name: str, kind: str, data_base64: str) -> Understanding | None:
+        """The file, understood by code (no model, except the extraction step's AI reader of page images, under the owner's rules)."""
+        if kind in ("pdf", "image", "doc"):
+            read = self.reader.read(kind, base64.b64decode(data_base64), school=self._is_school, vision=self.vision)
+            return understand(name, READ_BY[read.how], read.text, read.grids)
+        if kind == "text":
+            return understand(name, "file", _text_of(data_base64), [])
+        if self.lead_sources is None or kind not in READ_KIND_OF:
+            return None
+        from types import SimpleNamespace
+
+        try:
+            loaded = self.lead_sources.load(SimpleNamespace(kind=READ_KIND_OF[kind], content_base64=data_base64, text=None, sheet_url=None))
+        except Exception:
+            return None
+        if loaded.grid is not None:
+            table = [list(loaded.grid.header), *[list(r) for r in loaded.grid.rows]]
+            return understand(name, "file", "\n".join(" | ".join(r) for r in table[:200]), [table])
+        people = [["Name", "Company", "Phone", "Email"], *[[str(r.get("name") or ""), "", str(r.get("phone") or ""), str(r.get("email") or "")] for r in loaded.rows or []]]
+        return understand(name, "file", "\n".join(" | ".join(r) for r in people[:200]), [], people)
+
+    def _knowledge_step(self, token: str, tenant_id: uuid.UUID, plan_id: uuid.UUID, u: Understanding, title: str) -> dict[str, Any]:
+        """Saving the file's text to About my business (the knowledge sources' own route; the text waits as a small file under the 24 h rule and is read again only by "Do it")."""
+        text = u.text[:MAX_KNOWLEDGE_CHARS]
+        derived = self.store.file_put(token, tenant_id, (u.file_name.rsplit(".", 1)[0] or "file")[:190] + ".txt", "text/plain", "text", base64.b64encode(text.encode("utf-8")).decode("ascii"))
+        source_id = str(uuid.uuid5(_NS, f"knowledge:{plan_id}"))   # idempotent: a retried run replays the same source
+        return {"plan_id": str(plan_id), "tool": KNOWLEDGE_TOOL, "summary": f"Save the text of '{u.file_name}' to About my business ({len(text):,} characters)"[:300], "undoable": True,
+                "status": "proposed", "error": None,
+                "call": {"path": {}, "body": {"source_id": source_id, "kind": "paste", "title": (title or u.file_name)[:120]}, "file": "text", "file_id": str(derived["file_id"])}}
+
+    def _drop_quietly(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID) -> None:
+        try:
+            self.store.file_drop(token, tenant_id, file_id)
+        except Exception as exc:   # the sweep deletes it at the latest after a day
+            logger.warning("assistant file not deleted after reading: %s", exc.__class__.__name__)
+
     # ---- a list of people (a sheet, a vCard, a text list, or what was read from a document): the lead import's own read and preview
     def _lead_list(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, kind: str, data_base64: str, *, message_id: uuid.UUID, conversation_id: uuid.UUID | None,
-                   language: Language, read_by: str = "file") -> tuple[str, dict[str, Any] | None]:
+                   language: Language, read_by: str = "file", extra_steps: list[dict[str, Any]] | None = None) -> tuple[str, dict[str, Any] | None]:
         body = self._read_body(kind, name, data_base64)
         read = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool=READ_TOOL, body={**body, "use_ai": True}), message_id))
         if not read.ok and read.error == "limit":   # the AI column matcher is over the day's allowance: the rules alone
@@ -323,17 +472,19 @@ class FileTurn:
             sentence = words("nobody", language, name=name) if found == 0 else words("nothing_new", language, name=name, found=found)
             return sentence, {"kind": "file_preview", "id": str(uuid.uuid4()), "file_name": name, "destination": "leads", "customer_name": None, "read_by": read_by, "facts": facts, "columns": columns,
                               "rows": rows, "plan": None}
-        plan_id = uuid.uuid4()
+        plan_id = uuid.UUID(str(extra_steps[0]["plan_id"])) if extra_steps else uuid.uuid4()
         step_body = {k: v for k, v in preview_body.items() if k not in ("content_base64", "text")}
         step_body["import_id"] = str(uuid.uuid5(_NS, f"import:{plan_id}"))   # idempotent: a retried run replays the same import
         plan = self.store.plan_put(token, tenant_id, {
             "plan_id": str(plan_id), "message_id": str(message_id), "conversation_id": str(conversation_id) if conversation_id else None, "file_id": str(file_id),
-            "title": TITLE["en"].format(n=new, name=name)[:200], "file_name": name,
+            "title": (TITLE["en"].format(n=new, name=name) + (" and save it to About my business" if extra_steps else ""))[:200], "file_name": name,
             "card": {"destination": "leads", "read_by": read_by, "facts": facts, "columns": columns[:40]},
             "steps": [{"tool": IMPORT_TOOL, "summary": STEP["en"].format(n=new, existing=existing), "undoable": True, "status": "proposed", "error": None,
-                       "call": {"path": {}, "body": step_body, "file": kind}}],
+                       "call": {"path": {}, "body": step_body, "file": kind}},
+                      *[{k: v for k, v in x.items() if k != "plan_id"} for x in extra_steps or []]],
         })
-        return words("offer", language, name=name, found=found, existing=existing, new=new) + picture, card_of_plan(plan, rows)
+        also = words("also_knowledge", language) if extra_steps else ""
+        return words("offer", language, name=name, found=found, existing=existing, new=new) + also + picture, card_of_plan(plan, rows)
 
     def _read_body(self, kind: str, name: str, data_base64: str) -> dict[str, Any]:
         if kind == "text":
@@ -353,6 +504,12 @@ class FileTurn:
         if loaded.grid is not None:
             return [[str(v)[:60] for v in r] for r in loaded.grid.rows[:5]]
         return [[str(r.get("name") or "")[:60], str(r.get("phone") or "")[:32], str(r.get("email") or "")[:60]] for r in (loaded.rows or [])[:5]]
+
+
+def _csv_b64(grid: extract.Grid) -> str:
+    out = io.StringIO()
+    csv.writer(out).writerows(grid[: MAX_ROWS + 1])
+    return base64.b64encode(out.getvalue().encode("utf-8")).decode("ascii")
 
 
 def _contact_cells(grid: extract.Grid) -> int:
@@ -420,6 +577,11 @@ class PlanRunner:
         except PlanExpiredError:
             raise ApiError(409, "plan_expired", "This plan has expired. Ask again and I will make a new one.") from None
 
+    def _drop_all(self, token: str, tenant_id: uuid.UUID, plan: dict[str, Any]) -> None:
+        ids = {str(plan.get("file_id") or "")} | {str((s.get("call") or {}).get("file_id") or "") for s in plan.get("steps") or []}
+        for file_id in sorted(i for i in ids if i):
+            self._drop(token, tenant_id, file_id)
+
     def _drop(self, token: str, tenant_id: uuid.UUID, file_id: Any) -> None:
         if not file_id:
             return
@@ -432,7 +594,7 @@ class PlanRunner:
         plan = self._get(token, tenant_id, plan_id)
         if decision == "cancel":
             moved = self._move(token, tenant_id, plan_id, "proposed", "cancelled", file_gone=True)
-            self._drop(token, tenant_id, plan.get("file_id"))
+            self._drop_all(token, tenant_id, plan)
             return moved
         if plan.get("owner_only") and not is_owner:
             raise ApiError(403, "forbidden", "Only the Owner can do this.")
@@ -441,7 +603,7 @@ class PlanRunner:
         self._move(token, tenant_id, plan_id, "proposed", "running")
         steps = [dict(s) for s in plan.get("steps") or []]
         message_id = uuid.UUID(str(plan["message_id"]))
-        data: dict[str, Any] | None = None
+        files_read: dict[str, dict[str, Any]] = {}
         failed = False
         for no, step in enumerate(steps, start=1):
             if failed:
@@ -450,11 +612,13 @@ class PlanRunner:
             call_spec = step.get("call") or {}
             body = dict(call_spec.get("body") or {}) if isinstance(call_spec.get("body"), dict) else None
             if call_spec.get("file") and body is not None:
-                if data is None:
+                step_file = call_spec.get("file_id") or plan.get("file_id")   # a plan of several steps may read a different file per step (the people as a CSV, the text for About my business)
+                if str(step_file) not in files_read:
                     try:
-                        data = self.store.file_get(token, tenant_id, uuid.UUID(str(plan.get("file_id"))))
+                        files_read[str(step_file)] = self.store.file_get(token, tenant_id, uuid.UUID(str(step_file)))
                     except Exception:
-                        data = {}
+                        files_read[str(step_file)] = {}
+                data = files_read[str(step_file)]
                 raw = str(data.get("data_base64") or "")
                 if not raw:
                     step["status"], step["error"], failed = "failed", "not_found", True
@@ -482,7 +646,7 @@ class PlanRunner:
         done = sum(1 for s in steps if s.get("status") == "done")
         final = "done" if done == len(steps) else ("partly_done" if done else "failed")
         moved = self._move(token, tenant_id, plan_id, "running", final, steps, file_gone=True)
-        self._drop(token, tenant_id, plan.get("file_id"))
+        self._drop_all(token, tenant_id, plan)
         logger.info("assistant plan ran: steps=%d done=%d status=%s", len(steps), done, final)
         return moved
 
