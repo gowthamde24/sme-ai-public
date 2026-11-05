@@ -47,9 +47,12 @@ def world(local: FakeLocal | None, *answers: Any, school: bool = False) -> tuple
     agents = SimpleNamespace(assistant_db=lambda token, run_id: db, assistant_llm=lambda: llm, llm_for=lambda job: (lambda: llm), unavailable=None)
     tasks = TasksService(FakeTasksRepository(school=school), FakeDialer(), FixedKnowledge([]))
     from app.assistant_work.extract import FileReader
+    from tests.catalogue_fakes import FakeCatalogue, FakeStorage, item_row
 
+    cat = FakeCatalogue()
+    cat.items["11111111-1111-4111-8111-111111111111"] = item_row("11111111-1111-4111-8111-111111111111", name="Kanjivaram red", price_paise=1_100_000)
     client, _ = make_client(agents=agents, tasks=tasks, lead_sources=LeadSourcesService(FakeLeadSourcesRepository(), receiver=Receiver(), matcher=MATCHER), assistant_work=store,  # type: ignore[arg-type]
-                            knowledge=KnowledgeService(knowledge), assistant_file_reader=FileReader(local))
+                            knowledge=KnowledgeService(knowledge), assistant_file_reader=FileReader(local), catalogue=cat, catalogue_storage=FakeStorage())
     return client, llm, store, knowledge
 
 
@@ -85,7 +88,7 @@ def test_code_checks_the_planners_answer() -> None:
     assert check({"decision": "do", "actions": [{"action": "send_whatsapp"}]}, u, "").decision == "clarify", "an action that is not on the list is never run"
     assert check({"decision": "do", "actions": [{"action": "add_people"}]}, u, "").decision == "clarify", "no people in a brochure: nothing to add"
     assert check({"decision": "nonsense"}, u, "").decision == "clarify"
-    assert set(FINAL.input_schema["properties"]["actions"]["items"]["properties"]["action"]["enum"]) == {"add_people", "add_to_knowledge"}
+    assert set(FINAL.input_schema["properties"]["actions"]["items"]["properties"]["action"]["enum"]) == {"add_people", "add_to_knowledge", "update_prices"}
 
 
 # ============================================================================ in the chat
@@ -198,8 +201,8 @@ EVALS: list[tuple[str, str, str, str, dict[str, Any], str]] = [
     # (name, file text, request, language, the model's decision, expected: answer | plan:<tool> | preview | cant:<code> | clarify)
     ("enquiry letter, quote", ENQUIRY, "make an enquiry and a quote", "en", {"decision": "cant_do", "cant": "quote_from_enquiry"}, "cant:quote_from_enquiry"),
     ("enquiry letter, te", ENQUIRY, "ఈ లేఖ నుండి కొటేషన్ చేయండి", "te", {"decision": "cant_do", "cant": "quote_from_enquiry"}, "cant:quote_from_enquiry"),
-    ("price list, update", PRICES, "update catalogue prices from this", "en", {"decision": "cant_do", "cant": "update_prices"}, "cant:update_prices"),
-    ("price list, te", PRICES, "ఈ ధరలు కేటలాగ్‌లో మార్చండి", "te", {"decision": "cant_do", "cant": "update_prices"}, "cant:update_prices"),
+    ("price list, update", PRICES, "update catalogue prices from this", "en", {"decision": "do", "actions": [{"action": "update_prices"}]}, "prices"),
+    ("price list, te", PRICES, "ఈ ధరలు కేటలాగ్‌లో మార్చండి", "te", {"decision": "do", "actions": [{"action": "update_prices"}]}, "prices"),
     ("brochure, knowledge", BROCHURE, "add this to About my business", "en", {"decision": "do", "actions": [{"action": "add_to_knowledge"}]}, "plan:knowledge.add_source"),
     ("brochure, knowledge te", BROCHURE, "దీన్ని నా వ్యాపారం గురించి లో పెట్టండి", "te", {"decision": "do", "actions": [{"action": "add_to_knowledge"}]}, "plan:knowledge.add_source"),
     ("order pdf", ORDER, "make this order and tell me what is short", "en", {"decision": "cant_do", "cant": "order_from_file"}, "cant:order_from_file"),
@@ -227,6 +230,8 @@ def test_a2b_evals_code_side(name: str, text: str, request_words: str, language:
         assert cards == [] and text_of(evs)
     elif expected == "preview":
         assert cards[0]["kind"] == "file_preview" and cards[0]["plan"]["status"] == "proposed"
+    elif expected == "prices":
+        assert cards[0]["kind"] == "file_preview" and cards[0]["destination"] == "catalogue" and cards[0]["plan"]["sensitive"] == "money"
     elif expected.startswith("plan:"):
         assert cards[0]["kind"] == "plan" and cards[0]["plan"]["steps"][0]["tool"] == expected[5:]
     else:

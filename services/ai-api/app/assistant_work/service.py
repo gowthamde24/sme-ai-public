@@ -150,6 +150,18 @@ WORDS: dict[str, dict[str, str]] = {
         "hi": " बाकी ({what}) मैं अभी नहीं कर सकती: स्क्रीन पर हो सकता है।",
         "kn": " ಉಳಿದದ್ದನ್ನು ({what}) ನಾನು ಇನ್ನೂ ಮಾಡಲಾರೆ: ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಮಾಡಬಹುದು.",
     },
+    "prices_offer": {
+        "en": "I read '{name}': {found} prices, {changed} different from your catalogue ({unchanged} the same, {missing} not in your catalogue). Shall I change those {changed}? The card shows each old and new price. Only the Owner can do this, with the sign-in's second step.",
+        "te": "'{name}' చదివాను: {found} ధరలు, వాటిలో {changed} మీ కేటలాగ్‌కు భిన్నంగా ఉన్నాయి ({unchanged} అలాగే ఉన్నాయి, {missing} కేటలాగ్‌లో లేవు). ఆ {changed} మార్చమంటారా? కార్డులో ప్రతి పాత, కొత్త ధర చూపిస్తాను. ఇది ఓనర్ మాత్రమే, సైన్-ఇన్ రెండో దశతో చేయగలరు.",
+        "hi": "'{name}' पढ़ ली: {found} कीमतें, जिनमें {changed} आपके कैटलॉग से अलग हैं ({unchanged} वही हैं, {missing} कैटलॉग में नहीं हैं)। क्या वे {changed} बदल दूँ? कार्ड पर हर पुरानी और नई कीमत दिखेगी। यह सिर्फ़ ओनर, साइन-इन के दूसरे चरण के साथ कर सकते हैं।",
+        "kn": "'{name}' ಓದಿದೆ: {found} ಬೆಲೆಗಳು, ಅವುಗಳಲ್ಲಿ {changed} ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ಗಿಂತ ಬೇರೆ ಇವೆ ({unchanged} ಹಾಗೆಯೇ ಇವೆ, {missing} ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿ ಇಲ್ಲ). ಆ {changed} ಬದಲಿಸಲೇ? ಕಾರ್ಡ್‌ನಲ್ಲಿ ಪ್ರತಿ ಹಳೆಯ ಮತ್ತು ಹೊಸ ಬೆಲೆ ತೋರಿಸುತ್ತೇನೆ. ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ, ಸೈನ್-ಇನ್‌ನ ಎರಡನೇ ಹಂತದೊಂದಿಗೆ ಮಾಡಬಹುದು.",
+    },
+    "prices_nothing": {
+        "en": "I read '{name}': {found} prices, and none is different from your catalogue ({missing} not in your catalogue). Nothing to change.",
+        "te": "'{name}' చదివాను: {found} ధరలు, ఏదీ మీ కేటలాగ్‌కు భిన్నంగా లేదు ({missing} కేటలాగ్‌లో లేవు). మార్చడానికి ఏమీ లేదు.",
+        "hi": "'{name}' पढ़ ली: {found} कीमतें, कोई भी आपके कैटलॉग से अलग नहीं है ({missing} कैटलॉग में नहीं हैं)। बदलने को कुछ नहीं है।",
+        "kn": "'{name}' ಓದಿದೆ: {found} ಬೆಲೆಗಳು, ಯಾವುದೂ ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ಗಿಂತ ಬೇರೆ ಇಲ್ಲ ({missing} ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿ ಇಲ್ಲ). ಬದಲಿಸಲು ಏನೂ ಇಲ್ಲ.",
+    },
     "knowledge_offer": {
         "en": "I read '{name}'. Shall I save its text to About my business, so I can answer customers from it? Nothing is sent to anyone.",
         "te": "'{name}' చదివాను. దాని టెక్స్ట్‌ను 'నా వ్యాపారం గురించి' లో సేవ్ చేయమంటారా, కస్టమర్లకు దాని నుండి జవాబు చెప్పడానికి? ఎవరికీ ఏమీ పంపను.",
@@ -189,6 +201,7 @@ WHAT = {
     "quote_from_enquiry": {"en": "making an enquiry and a quote from a letter", "te": "లేఖ నుండి ఎంక్వైరీ, కొటేషన్ తయారు చేయడం", "hi": "चिट्ठी से पूछताछ और कोटेशन बनाना", "kn": "ಪತ್ರದಿಂದ ವಿಚಾರಣೆ ಮತ್ತು ಕೊಟೇಶನ್ ಮಾಡುವುದು"},
     "order_from_file": {"en": "making an order from a file and checking the stock", "te": "ఫైల్ నుండి ఆర్డర్ చేయడం, స్టాక్ చూడడం", "hi": "फ़ाइल से ऑर्डर बनाना और स्टॉक देखना", "kn": "ಫೈಲ್‌ನಿಂದ ಆರ್ಡರ್ ಮಾಡುವುದು ಮತ್ತು ಸ್ಟಾಕ್ ನೋಡುವುದು"},
     "update_prices": {"en": "updating catalogue prices from a file", "te": "ఫైల్ నుండి కేటలాగ్ ధరలు మార్చడం", "hi": "फ़ाइल से कैटलॉग की कीमतें बदलना", "kn": "ಫೈಲ್‌ನಿಂದ ಕ್ಯಾಟಲಾಗ್ ಬೆಲೆಗಳನ್ನು ಬದಲಿಸುವುದು"},
+    "too_many_prices": {"en": "changing more than 20 prices at once", "te": "ఒకేసారి 20 కంటే ఎక్కువ ధరలు మార్చడం", "hi": "एक बार में 20 से ज़्यादा कीमतें बदलना", "kn": "ಒಮ್ಮೆಗೆ 20 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಬೆಲೆಗಳನ್ನು ಬದಲಿಸುವುದು"},
     "follow_up": {"en": "setting a follow-up from a file", "te": "ఫైల్ నుండి ఫాలో-అప్ పెట్టడం", "hi": "फ़ाइल से फ़ॉलो-अप लगाना", "kn": "ಫೈಲ್‌ನಿಂದ ಫಾಲೋ-ಅಪ್ ಇಡುವುದು"},
     "other": {"en": "doing that with a file", "te": "ఫైల్‌తో అది చేయడం", "hi": "फ़ाइल से वह करना", "kn": "ಫೈಲ್‌ನಿಂದ ಅದನ್ನು ಮಾಡುವುದು"},
     "too_many": {"en": "importing more than 5,000 rows at once", "te": "ఒకేసారి 5,000 వరుసలకంటే ఎక్కువ దిగుమతి చేయడం", "hi": "एक बार में 5,000 से ज़्यादा पंक्तियाँ आयात करना", "kn": "ಒಮ್ಮೆಗೆ 5,000 ಕ್ಕಿಂತ ಹೆಚ್ಚು ಸಾಲುಗಳನ್ನು ಆಮದು ಮಾಡುವುದು"},
@@ -206,6 +219,8 @@ LOOKS = {
 SCREEN_OF = {"quote_from_enquiry": {"label": "Enquiries", "href": "/enquiries"}, "order_from_file": {"label": "Orders", "href": "/orders"},
              "update_prices": {"label": "Catalogue", "href": "/catalogue"}, "follow_up": {"label": "Follow-ups", "href": "/followups"}, "other": None}
 KNOWLEDGE_TOOL = "knowledge.add_source"
+CATALOGUE_LIST_TOOL = "catalogue.list_items"
+PRICE_TOOL = "catalogue.put_item"
 MAX_KNOWLEDGE_CHARS = 60_000
 STEP = {"en": "Add {n} new leads ({existing} already exist, left as they are)"}
 
@@ -383,6 +398,8 @@ class FileTurn:
             conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
         names = [a["action"] for a in planned.actions]
         plan_id = uuid.uuid4()
+        if "update_prices" in names:
+            return self._prices(token, tenant_id, file_id, name, kind, u, plan_id, message_id=message_id, conversation_id=conversation_id, language=language)
         knowledge = [self._knowledge_step(token, tenant_id, plan_id, u, next((a["title"] for a in planned.actions if a["action"] == "add_to_knowledge"), ""))] if "add_to_knowledge" in names else []
         if "add_people" in names:
             if kind in READ_KIND_OF:
@@ -401,6 +418,54 @@ class FileTurn:
             self._drop_quietly(token, tenant_id, file_id)
         picture = words("from_picture", language) if u.read_by in ("local_ocr", "ai") else ""
         return words("knowledge_offer", language, name=name) + picture, card_of_plan(plan)
+
+    def _prices(self, token: str, tenant_id: uuid.UUID, file_id: uuid.UUID, name: str, kind: str, u: Understanding, plan_id: uuid.UUID, *, message_id: uuid.UUID,
+                conversation_id: uuid.UUID | None, language: Language) -> tuple[str, dict[str, Any] | None]:
+        """The file's prices against the catalogue, old -> new, as a MONEY plan (the Owner's, with the second factor and the card's second tap). Undo: each item put back as it was."""
+        from app.assistant_work import prices as pr
+
+        screen = {"label": "Catalogue", "href": "/catalogue"}
+        rows = pr.price_rows(u)
+        items = self._catalogue_items(token, tenant_id, message_id)
+        if items is None:
+            return words("cant", language, name=name, what=what("update_prices", language)), cant_do("not_yet", what("update_prices", language), screen)
+        changes, unchanged, missing = pr.match(rows, items)
+        facts = [{"code": "found", "n": len(rows)}, {"code": "changed", "n": len(changes)}, *([{"code": "unchanged", "n": unchanged}] if unchanged else []),
+                 *([{"code": "not_in_catalogue", "n": missing}] if missing else [])]
+        sample = [[c.item.get("name") or "", pr.rupees(c.old), pr.rupees(c.new)] for c in changes[:5]]
+        if kind not in READ_KIND_OF:
+            self._drop_quietly(token, tenant_id, file_id)
+        if not changes:
+            return words("prices_nothing", language, name=name, found=len(rows), missing=missing), {
+                "kind": "file_preview", "id": str(uuid.uuid4()), "file_name": name, "destination": "catalogue", "customer_name": None, "read_by": u.read_by, "facts": facts,
+                "columns": ["Item", "Now", "New"], "rows": [], "plan": None}
+        if len(changes) > pr.MAX_CHANGES:
+            return words("cant", language, name=name, what=what("too_many_prices", language)), cant_do("not_yet", what("too_many_prices", language), screen)
+        steps = [{"tool": PRICE_TOOL, "summary": f"{str(c.item.get('name') or '')[:120]}: {pr.rupees(c.old)} → {pr.rupees(c.new)}", "undoable": True, "status": "proposed", "error": None,
+                  "call": {"path": {"item_id": str(c.item["id"])}, "body": pr.put_body(c.item, c.new)}} for c in changes]
+        plan = self.store.plan_put(token, tenant_id, {
+            "plan_id": str(plan_id), "message_id": str(message_id), "conversation_id": str(conversation_id) if conversation_id else None, "file_id": str(file_id) if kind in READ_KIND_OF else None,
+            "title": f"Change {len(changes)} catalogue price{'s' if len(changes) != 1 else ''} from '{name}'"[:200], "file_name": name,
+            "sensitive": "money", "owner_only": True, "needs_second_factor": True,
+            "card": {"destination": "catalogue", "read_by": u.read_by, "facts": facts, "columns": ["Item", "Now", "New"]}, "steps": steps,
+        })
+        picture = words("from_picture", language) if u.read_by in ("local_ocr", "ai") else ""
+        return words("prices_offer", language, name=name, found=len(rows), changed=len(changes), unchanged=unchanged, missing=missing) + picture, card_of_plan(plan, sample)
+
+    def _catalogue_items(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID) -> list[dict[str, Any]] | None:
+        """Every catalogue item (the screen's own list route, page by page; at most 1,000), or None when the workspace has no catalogue or the list cannot be read."""
+        items: list[dict[str, Any]] = []
+        after: str | None = None
+        for _ in range(20):
+            query = {"include_inactive": "true", "limit": "50", **({"after": after} if after else {})}
+            got = asyncio.run(self.tools.run(tenant_id, token, executor.Call(tool=CATALOGUE_LIST_TOOL, query=query), message_id))
+            if not got.ok or not isinstance(got.answer, dict):
+                return None
+            items.extend(i for i in got.answer.get("items") or [] if isinstance(i, dict))
+            after = got.answer.get("next_cursor")
+            if not after:
+                break
+        return items
 
     def _understand(self, name: str, kind: str, data_base64: str) -> Understanding | None:
         """The file, understood by code (no model, except the extraction step's AI reader of page images, under the owner's rules)."""
