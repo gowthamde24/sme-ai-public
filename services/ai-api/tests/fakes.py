@@ -266,6 +266,7 @@ def make_client(
     assistant_work: Any = None,
     assistant_file_reader: Any = None,
     assistant_work_tenants: frozenset[uuid.UUID] | None = None,
+    talk_training: Any = None,
     phone_inbound: Any = None,
     rate_limit: bool = False,
 ) -> tuple[TestClient, FakeRepository]:
@@ -338,6 +339,7 @@ def make_client(
             assistant_work=assistant_work,
             assistant_file_reader=assistant_file_reader,
             assistant_work_tenants=assistant_work_tenants,
+            talk_training=talk_training,
             phone_inbound=phone_inbound,
             tasks=tasks,
             calls=calls,

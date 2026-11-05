@@ -186,6 +186,8 @@ class Runtime:
     assistant_work_tenants: frozenset[uuid.UUID] | None = None
     # a workspace's own keys (app/workspace_secrets.WorkspaceSecrets; None: WORKSPACE_SECRETS=off)
     workspace_secrets: Any = None
+    # how the assistant talks on calls (app/talk_training: the Owner's training)
+    talk_training: Any = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
