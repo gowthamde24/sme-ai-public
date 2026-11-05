@@ -157,3 +157,19 @@ class NavCountsOut(_Out):
     ai_usage: AiUsageMeter | None
     plan: str | None
     as_of: datetime
+
+
+class AgentSwitchOut(_Out):
+    """One helper's own switch for this workspace (docs/contracts/agents-switches.md). `can_switch` false: `reason_locked` says why (`platform`: the platform has it off; `workspace_off`: the
+    workspace's AI helpers are off; `not_built`: this helper is a feature, not an agent, and has no switch of its own yet)."""
+
+    agent: AgentKey
+    enabled: bool
+    can_switch: bool
+    reason_locked: Literal["platform", "workspace_off", "not_built"] | None
+    done_today: int | None
+
+
+class AgentSwitchIn(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)   # only true or false: "no" or 0 is refused
+    enabled: bool
