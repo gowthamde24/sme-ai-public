@@ -6,12 +6,14 @@
   POST /assistant/plans/{plan_id}/undo      Owner, Admin, Sales   the done steps that declare an undo, newest first -> the plan (the database decides who: the Owner, or whoever said "Do it")
   GET  /assistant/actions                   Owner, Admin          Settings -> Activity: the action log, newest first ({items, next_before}); never the stored undo, only its state
   POST /assistant/actions/{action_id}/undo  Owner, Admin          undo ONE logged step (its route's undo), offered for 7 days -> the entry
+  POST /assistant/secrets/{request_id}      Owner                 the secure card's key -> Secret Manager ({value} -> {saved, last4}); the request is good for 15 minutes and once
 The files and the plans are screen-only for the assistant itself (app/assistant_tools/catalog.py: `assistant_itself`): it never calls its own doors.
 
 NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint signatures at registration)."""
 
 # ruff: noqa: E501
 
+import asyncio
 import base64
 import binascii
 import uuid
@@ -34,6 +36,7 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["assistant"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 Worker = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))]
 Manager = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
+Owner = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER))]
 
 
 class _Strict(BaseModel):
@@ -137,3 +140,33 @@ def list_actions(ctx: Manager, runtime: RuntimeDep, since: Annotated[str | None,
 @router.post("/assistant/actions/{action_id}/undo")
 async def undo_one_action(action_id: str, request: Request, ctx: Manager, runtime: RuntimeDep) -> dict[str, Any]:
     return await undo_action(_store(runtime, ctx), Tools(request.app), ctx.principal.token, ctx.tenant.id, _plan_id(action_id))
+
+
+@router.post("/assistant/secrets/{request_id}")
+async def save_secret(request_id: str, request: Request, ctx: Owner, runtime: RuntimeDep) -> dict[str, Any]:
+    """The secure card's key (docs/contracts/assistant-tools.md section 2, `secret`). The body is read by hand, so a refused value is never echoed back in a validation error; the key is never
+    logged, stored in the database, put in a turn or shown again (only its last four characters)."""
+    from app.assistant_work.store import PlanExpiredError, PlanStateError
+    from app.crm.repository import NotFoundError
+    from app.workspace_secrets import SecretStoreError, clean_value
+
+    secrets = getattr(runtime, "workspace_secrets", None)
+    if secrets is None:
+        raise ApiError(503, "secrets_unavailable", "Keys can't be saved here yet.")
+    try:
+        body = await request.json()
+    except ValueError:
+        body = None
+    value = clean_value(body.get("value") if isinstance(body, dict) and set(body) == {"value"} else None)
+    if value is None:
+        raise ApiError(422, "secret_invalid", "That doesn't look like a key: 8 to 200 letters, digits and . _ - + / = : ~, without spaces.")
+    try:
+        return dict(await asyncio.to_thread(secrets.save, ctx.principal.token, ctx.tenant.id, _plan_id(request_id), value))
+    except NotFoundError:
+        raise not_found() from None
+    except PlanStateError:
+        raise ApiError(409, "secret_request_used", "This card was already used. Ask me again for a new one.") from None
+    except PlanExpiredError:
+        raise ApiError(410, "secret_request_expired", "This card is older than 15 minutes. Ask me again for a new one.") from None
+    except SecretStoreError:
+        raise ApiError(503, "secret_not_saved", "The key could not be saved right now. Nothing was kept; ask me again for a new card.") from None
