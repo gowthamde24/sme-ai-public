@@ -34,7 +34,7 @@ const listCatalogueItems = vi.fn();
 const getOutboxSettings = vi.fn();
 
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock(), useRouter: () => ({ refresh: () => undefined, push: () => undefined }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
-vi.mock("./today-actions", () => ({ approveMessageAction: vi.fn(), rejectMessageAction: vi.fn(), editMessageAction: vi.fn(), approveCallAction: vi.fn(), offerVisitAction: vi.fn() }));
+vi.mock("./today-actions", () => ({ approveMessageAction: vi.fn(), rejectMessageAction: vi.fn(), editMessageAction: vi.fn(), approveCallAction: vi.fn(), offerVisitAction: vi.fn(), callProspectAction: vi.fn(), skipProspectAction: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("@/lib/api/orders", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/orders")>()), fetchMembers: (...a: unknown[]) => fetchMembers(...a) }));
@@ -109,14 +109,14 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(document.querySelector("[data-count]")).toHaveAttribute("data-count", "5");
     const needs = within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!);
     expect(document.querySelectorAll("[data-needs-row]")).toHaveLength(5); // the count is the rows (three show, the rest wait behind "See all")
-    expect(needs.getByText(/ఈ చీర ధర 500/)).toBeInTheDocument(); // the exact words of the message, read from the outbox
+    expect(needs.getByText(/Price reply · ₹500/)).toBeInTheDocument(); // a short summary of the message, read from the outbox; its words open with the row (owner's review, 5 Nov)
     expect(needs.getByText(/asked for a call/)).toBeInTheDocument(); // the row of the call request (its topics are named from the translations)
-    expect(needs.getByText(/₹50,400\.00/)).toBeInTheDocument(); // the row is short: the amount, not the API's whole sentence (owner, 4 Nov)
+    expect(needs.getByText(/₹50,400$/)).toBeInTheDocument(); // the row is short: the amount (whole rupees, no ".00"), not the API's whole sentence (owner, 4 Nov)
     expect(needs.queryByText("Quote 1 for ₹50,400.00 is ready for your approval.")).toBeNull();
     expect(listOutboxApprovals).toHaveBeenCalledTimes(1);
     expect(listCallRequests).toHaveBeenCalledWith("tok", TENANT, { status: "requested", limit: 100 });
     expect(screen.getByRole("heading", { name: "Done while you slept" })).toBeInTheDocument();
-    const team = within(screen.getByRole("heading", { name: "Your team" }).closest("section")!);
+    const team = within(screen.getByRole("heading", { name: "My AI team" }).closest("section")!);
     expect(team.getByText(/Quote Writer/)).toBeInTheDocument();
     expect(team.queryByText(/Lead Finder/)).toBeNull(); // not built yet: not named (owner, 4 Nov)
   });
@@ -160,22 +160,21 @@ describe("the workspace home with no ?tab= is Today", () => {
     await show();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/^Good (morning|afternoon|evening), Asha Rao$/);
   });
-  it("a read that fails leaves only its own part at 'Not available yet'", async () => {
+  it("a read that fails takes only its own part away (Today never says 'Not available yet': the part is not drawn)", async () => {
     getToday.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
     fetchMembers.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
     await show();
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
-    const needs = within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!);
-    expect(needs.getByText("Not available yet")).toBeInTheDocument();
-    expect(needs.queryByRole("article")).toBeNull();
-    const team = within(screen.getByRole("heading", { name: "Your team" }).closest("section")!);
+    expect(screen.queryByRole("heading", { name: "Needs you" })).toBeNull();
+    expect(screen.queryByText("Not available yet")).toBeNull();
+    const team = within(screen.getByRole("heading", { name: "My AI team" }).closest("section")!);
     expect(team.getByText(/Researcher/)).toBeInTheDocument(); // the team was read on its own
     document.body.innerHTML = "";
     getToday.mockResolvedValue(todayFor("owner"));
     getAgentsStatus.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
     await show();
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
-    expect(within(screen.getByRole("heading", { name: "Your team" }).closest("section")!).getByText("Not available yet")).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "My AI team" })).toBeNull();
     expect(within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByText(/./).length).toBeGreaterThan(5);
     expect(document.querySelectorAll("[data-needs-row]")).toHaveLength(5);
   });
@@ -187,10 +186,10 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(needs.queryByRole("button", { name: "Approve and send" })).toBeNull();
     expect(needs.getByRole("button", { name: "Approve call" })).toBeInTheDocument();
   });
-  it("the outbox log failing leaves the rest of Today alone, with its own two places saying so", async () => {
+  it("the outbox log failing leaves the rest of Today alone; its card is not drawn", async () => {
     listOutboxMessages.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
     await show();
-    expect(within(document.querySelector('[data-part="done"]') as HTMLElement).getByText("Not available yet")).toBeInTheDocument();
+    expect(document.querySelector('[data-part="done"]')).toBeNull();
     expect(within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!).getAllByText(/./).length).toBeGreaterThan(5);
     expect(document.querySelectorAll("[data-needs-row]")).toHaveLength(5);
   });

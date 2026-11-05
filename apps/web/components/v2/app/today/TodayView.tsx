@@ -1,13 +1,18 @@
 import type { ReactNode } from "react";
 
+import type { PackCard } from "@/lib/packs/pack-cards";
+import { formatRupeesShort } from "@/lib/money";
 
-import { LiveNow } from "../live/LiveNow";
+
+import { LiveNow } from "../live/LazyLiveNow";
 import { CommandBar } from "./CommandBar";
 import { DoneSection } from "./DoneSection";
 import { NeedsYou } from "./NeedsYou";
-import { NewLeads, StoreVisits, TeamSection } from "./TodaySide";
+import { PackCardItem } from "./PackCards";
+import { MoneyHeld, NewLeads, StoreVisits, TeamStrip } from "./TodaySide";
+import { SIDE_GRID } from "./side-card";
 import type { TodayActions } from "./actions-types";
-import { TODAY_CHIPS } from "./ask/ask-chips";
+import { TODAY_CHIPS, type ChipKey } from "./ask/ask-chips";
 import { ASK_WORD_KEYS } from "./ask/ask-words";
 import type { Availability } from "./ask/ask-types";
 import { SendingBanner } from "../outbox/SendingBanner";
@@ -25,19 +30,43 @@ export function dayLine(now: number, lang: string): string {
   return dayText(lang, y, m, d, { weekday: "long", month: "long" });
 }
 
+/** The most cards the summary row holds. */
+const SUMMARY = 4;
+type RowInput = { packCards: readonly PackCard[]; deskTeam: TodayData["deskTeam"]; newLeads: number | null; store: TodayData["store"]; digest: TodayData["digest"]; cards: TodayData["cards"]; role: Role; hasOrders: boolean; base: string; t: T; now: number; words: ReturnType<typeof todayWords>; outboxHref: string | null; calendarHref: string | null };
+/**
+ * The cards of the summary row, in order: the business type's own (each one whose figure could be read), then New leads, At the store today (not where the business type counts its own visits), Done while you slept and Money held (only
+ * a business that takes orders; the Owner and Admin), up to four. A part that cannot be read, or that does not exist for this business, is no card at all.
+ */
+function summaryRow(r: RowInput) {
+  const own = r.packCards.filter((c) => c.value !== null).map((c) => <PackCardItem key={`pack-${c.id}`} card={c} t={r.t} />);
+  const leads = r.deskTeam?.some((w) => w.key === "leads") || r.newLeads !== null;
+  const shop = [
+    leads ? <NewLeads key="leads" deskTeam={r.deskTeam} count={r.newLeads} base={r.base} t={r.t} now={r.now} /> : null,
+    r.store !== null && r.store.state === "ready" && !r.packCards.some((c) => c.id === "campus") ? <StoreVisits key="store" store={r.store} calendarHref={r.calendarHref ?? `${r.base}/visits`} bookHref={r.role === "viewer" ? null : `${r.base}/visits#book`} t={r.t} /> : null,
+    r.digest !== null ? <DoneSection key="done" digest={r.digest} words={r.words} outboxHref={r.outboxHref} /> : null,
+    r.hasOrders && (r.role === "owner" || r.role === "admin") ? <MoneyHeld key="money" cards={r.cards} base={r.base} t={r.t} money={formatRupeesShort} /> : null,
+  ].filter((c) => c !== null);
+  return [...own, ...shop].slice(0, SUMMARY);
+}
+
+/** The helpers that have something in "Needs you" (the row's agent; a held message or a call request is the Follow-up Desk's, a visit the assistant proposed is the assistant's own): their card says "Waiting for you". */
+function waitingFor(needs: TodayData["needs"]): ReadonlySet<string> {
+  return new Set((needs ?? []).map((c) => (c.type === "item" ? c.item.agent : c.type === "visit" ? "main" : "followup_desk")));
+}
+
 /**
  * The Today screen (job AU), as the owner-approved design draws it: the date and greeting with the usage card; the Agent OWL card (the plush owl and its mood, one sentence built from the real list,
  * the overnight line, the Ask box and three chips); "Needs you" with one card per thing that waits (WhatsApp messages held for approval, calls, and the older kinds); and, beside it (below it on a
  * phone), "At the store today", "Done while you slept" and "Your team". It only draws what `data` holds: a null part says "Not available yet"; a section with no data is not drawn. `actions` are the
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
-export function TodayView({ intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = null, demo = false }: { /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS), drawn first in the side column. */ packCards?: React.ReactNode; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
+export function TodayView({ chipKeys = null, newLeads = null, hasOrders = true, intro = null, exampleLine = null, live = null, outcomes = null, data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null, packCards = [], demo = false }: { /** The assistant's chips (`todayChips`): the four this workspace can do; null = the three that always work. */ chipKeys?: readonly ChipKey[] | null; /** New leads not opened yet (C1's nav-counts, server side); null = not known: no New leads card unless Lead Desk says it. */ newLeads?: number | null; /** The business takes orders (its pack has the module): the Money held card. */ hasOrders?: boolean; /** "Finish setting up": drawn under the cards. */ intro?: ReactNode; /** The example-data notice, ONE slim line under the greeting. */ exampleLine?: ReactNode; /** A demo workspace (lib/workspace-demo.ts): the sending banner says so. */ demo?: boolean; /** A call that is going on (job DM), drawn under the assistant card; null = not drawn. */ live?: React.ReactNode; /** Today's totals of what happened after the calls and follow-ups (job DM), drawn under the assistant card; null = not drawn. */ outcomes?: React.ReactNode; /** The cards a business type adds (jobs CO, CS): the first cards of the summary row. */ packCards?: readonly PackCard[]; /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
   const { cards, needs, team, deskTeam, store, sending, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
   const greet = t(hour < 12 ? "today.greeting.morning" : hour < 17 ? "today.greeting.afternoon" : "today.greeting.evening");
   const words = todayWords(t);
-  const chips = TODAY_CHIPS.map((k) => t(k));
+  const chips = (chipKeys ?? TODAY_CHIPS).map((k) => t(k));
   return (
     <div data-screen="today" className="flex flex-col gap-4 md:gap-5">
       <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
@@ -56,15 +85,10 @@ export function TodayView({ intro = null, exampleLine = null, live = null, outco
         <CommandBar lang={lang} base={base} availability={availability} words={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} chips={chips} />
         {live}
         {outcomes}
-        {/* the other cards, two by two */}
-        <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-2">
-          <StoreVisits store={store} calendarHref={calendarHref ?? `${base}/visits`} bookHref={role === "viewer" ? null : `${base}/visits#book`} t={t} />
-          <DoneSection digest={digest} words={words} outboxHref={outboxHref} />
-          <NewLeads deskTeam={deskTeam} base={base} t={t} now={now} />
-          <TeamSection team={team} deskTeam={deskTeam} base={base} t={t} now={now} />
-        </div>
-        {/* what a business type adds (trips, quotes, dues...) sits under the four cards, side by side */}
-        {packCards}
+        {/* the summary cards, side by side (four on a wide screen) */}
+        {/* the summary row (owner's review, 5 Nov): the business type's own cards first (a school: fees collected, reminders, campus visits, admissions waiting), then the shop's, four at most; never another business type's card */}
+        <div className={SIDE_GRID}>{summaryRow({ packCards, deskTeam, newLeads, store, digest, cards, role, hasOrders, base, t, now, words, outboxHref, calendarHref })}</div>
+        <TeamStrip team={team} deskTeam={deskTeam} waitingFor={waitingFor(needs)} base={base} t={t} now={now} />
         {intro}
       </NeedsProvider>
     </div>
