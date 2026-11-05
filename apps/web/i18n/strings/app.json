@@ -79131,5 +79131,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "bv.work.pv.picture": {
+  "en": "Read from the picture: check the names and numbers before you say yes.",
+  "te": "ఫోటో నుండి చదివినవి: అవును అనే ముందు పేర్లు, నంబర్లు ఒకసారి చూసుకోండి.",
+  "hi": "तस्वीर से पढ़ा गया: हाँ कहने से पहले नाम और नंबर जाँच लें।",
+  "kn": "ಚಿತ್ರದಿಂದ ಓದಿದ್ದು: ಹೌದು ಎನ್ನುವ ಮೊದಲು ಹೆಸರು ಮತ್ತು ಸಂಖ್ಯೆಗಳನ್ನು ಒಮ್ಮೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

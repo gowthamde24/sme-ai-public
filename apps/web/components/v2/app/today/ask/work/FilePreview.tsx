@@ -31,6 +31,11 @@ export function FilePreview({ card, env }: { card: FilePreviewCard; env: WorkEnv
           {card.facts.map((f) => factText(t, f.code, f.n)).join(" · ")}
         </p>
       ) : null}
+      {card.readBy !== "file" ? (
+        <p data-work="read-by" data-read-by={card.readBy} className="mt-1 text-sm font-semibold text-amber-text">
+          {t("bv.work.pv.picture")}
+        </p>
+      ) : null}
       {card.rows.length > 0 ? (
         <div className="mt-2">
           <p className="text-xs font-semibold text-muted">{t("bv.work.pv.sample")}</p>

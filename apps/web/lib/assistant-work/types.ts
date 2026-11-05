@@ -130,6 +130,8 @@ export type WorkPlan = {
  * The preview of a file: what was found, a few sample rows, where it will go, and the plan that would put it there (`null` when nobody new is in it). The rows come at the turn only: a replay
  * gives `rows: []` (DPDP).
  */
+export const READ_BY = ["file", "local_ocr", "ai"] as const;
+export type ReadBy = (typeof READ_BY)[number];
 export type FilePreviewCard = {
   kind: "file_preview";
   id: string;
@@ -137,6 +139,8 @@ export type FilePreviewCard = {
   destination: Destination;
   /** "attach to a customer": whose file it becomes. */
   customerName: string | null;
+  /** How it was read (job A3): the file's own cells or text, our server reading a scan or photo (`local_ocr`), or the AI model reading the page images (`ai`). An older card has none: `file`. */
+  readBy: ReadBy;
   facts: { code: PreviewFact; n: number }[];
   columns: string[];
   rows: string[][];
@@ -311,7 +315,7 @@ export function parseWorkCard(json: unknown, base: string): WorkCard | null {
       const rows = Array.isArray(json.rows) ? json.rows.slice(0, 5).filter(Array.isArray).map((r) => (r as unknown[]).slice(0, columns.length || 8).map((c) => (typeof c === "string" ? c.slice(0, 120) : typeof c === "number" ? String(c) : ""))) : [];
       const plan = json.plan === null || json.plan === undefined ? null : parsePlan(json.plan);
       if (plan === null && json.plan !== null && json.plan !== undefined) return null; // a plan that does not read is not shown as "nobody new in it"
-      return { kind: "file_preview", id: cardId, fileName, destination, customerName: destination === "customer" ? str(json.customer_name, 120) : null, facts, columns, rows, plan };
+      return { kind: "file_preview", id: cardId, fileName, destination, customerName: destination === "customer" ? str(json.customer_name, 120) : null, readBy: one(READ_BY, json.read_by) ?? "file", facts, columns, rows, plan };
     }
     case "plan": {
       const plan = parsePlan(json.plan);

@@ -35,6 +35,18 @@ describe("the file preview card", () => {
     expect(pv.textContent).toContain("Nobody is messaged or called because of this.");
     expect(within(pv).getByRole("button", { name: "Do it" })).toBeTruthy();
   });
+  it("a file read from a picture (a scan or a photo) asks to check the names and numbers; a file's own cells, or an older card without read_by, does not", () => {
+    for (const readBy of ["local_ocr", "ai"]) {
+      cleanup();
+      draw([card({ ...PREVIEW_JSON, read_by: readBy })]);
+      expect(document.querySelector(`[data-read-by="${readBy}"]`)?.textContent).toBe("Read from the picture: check the names and numbers before you say yes.");
+    }
+    for (const json of [{ ...PREVIEW_JSON, read_by: "file" }, PREVIEW_JSON, { ...PREVIEW_JSON, read_by: "something_new" }]) {
+      cleanup();
+      draw([card(json)]);
+      expect(document.querySelector("[data-read-by]")).toBeNull();
+    }
+  });
   it("a catalogue preview is a money plan: the Owner confirms twice", async () => {
     draw([card(CATALOGUE_PREVIEW_JSON)]);
     expect(screen.getByText(/24 found · 18 already exist · 2 no price/)).toBeTruthy();
