@@ -192,7 +192,9 @@ describe("Today: the side sections", () => {
     await view(data());
     const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
     // the Lead Finder is not built yet (not_available): it is not named (owner, 4 Nov)
-    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent(/^Researcher · Requirement Analyst · Quote Writer · Follow-up Desk · Order Desk$/);
+    // three names, then "+2 more" (owner, 5 Nov: the one line was cut off); the whole list is the line's title
+    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent(/^Researcher · Requirement Analyst · Quote Writer · \+2 more$/);
+    expect(s.querySelector("[data-part=team-list]")).toHaveAttribute("title", "Researcher · Requirement Analyst · Quote Writer · Follow-up Desk · Order Desk");
     expect(within(s).queryByText("Your assistant")).toBeNull();
     expect(within(s).getByRole("link", { name: /Open the office/ })).toHaveAttribute("href", "/app/tenants/T/office");
   });
@@ -204,7 +206,8 @@ describe("Today: the side sections", () => {
       { key: "tasks", state: "not_available", name: "Task helper", text: null, at: null },
     ] }));
     const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
-    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent("Lead catcher · Caller · Standing rules · Task helper");
+    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent("Lead catcher · Caller · Standing rules · +1 more");
+    expect(s.querySelector("[data-part=team-list]")).toHaveAttribute("title", "Lead catcher · Caller · Standing rules · Task helper");
     expect(within(s).queryByText(/Quote Writer/)).toBeNull();
     const n = document.querySelector('[data-part="new-leads"]') as HTMLElement;
     expect(within(n).getByRole("heading", { name: "New leads" })).toBeInTheDocument();
