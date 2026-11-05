@@ -8,6 +8,8 @@ const T = "22222222-2222-2222-2222-222222222222";
 const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, boolean]][]> = {
   Work: [
     ["Today", "", "today", [true, true, true, true]],
+    ["Talk to assistant", "", "assistant", [true, true, true, true]],
+    ["Live calls", "/office/live", "live", [true, true, true, false]],
     ["Leads", "/review", "leads", [true, true, true, true]],
     ["Follow-ups", "/followups", "followups", [true, true, true, true]],
     ["Quotes", "/quotes", "quotes", [true, true, true, false]],
@@ -19,13 +21,15 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
     ["Customers", "", "customers", [true, true, true, true]],
     ["Find retailers", "/retailers", "retailers", [true, true, true, false]],
   ],
-  "Your business": [
+  Business: [
     ["Catalogue", "/catalogue", "sarees", [true, true, true, true]],
     ["Prices and products", "/item-types", "catalogue", [true, true, true, false]],
   ],
   "Your team": [
     ["Team", "/team", "team", [true, true, true, true]],
     ["Office", "/office", "office", [true, true, true, true]],
+    ["Train how it talks", "/settings?section=assistant", "train", [true, false, false, false]],
+    ["Phone number", "/integrations/whatsapp", "phone", [true, true, false, false]],
   ],
   Connect: [["Integrations", "/integrations", "integrations", [true, true, false, false]]],
 };
@@ -49,10 +53,10 @@ describe("the menu table", () => {
   });
 
   it("hides a group with nothing in it (a viewer has no Connect, a sales person no Connect); every role reads the saree Catalogue, so Your business stays for all", () => {
-    expect(visibleGroups("viewer").map((g) => g.label)).toEqual(["Work", "Your business", "Your team"]);
+    expect(visibleGroups("viewer").map((g) => g.label)).toEqual(["Work", "Business", "Your team"]);
     expect(visibleGroups("viewer").find((g) => g.id === "business")?.items.map((i) => i.id)).toEqual(["sarees"]);
-    expect(visibleGroups("sales").map((g) => g.label)).toEqual(["Work", "Your business", "Your team"]);
-    expect(visibleGroups("owner").map((g) => g.label)).toEqual(["Work", "Your business", "Your team", "Connect"]);
+    expect(visibleGroups("sales").map((g) => g.label)).toEqual(["Work", "Business", "Your team"]);
+    expect(visibleGroups("owner").map((g) => g.label)).toEqual(["Work", "Business", "Your team", "Connect"]);
   });
 
   it("the phone's tabs are the daily pages (Today, Leads, Quotes, Visits, Office), then More (Orders is in More)", () => {
@@ -78,7 +82,7 @@ describe("the menu table", () => {
 describe("the items only a business type brings (job CL)", () => {
   const flat = NAV.flatMap((g) => g.items);
   it("are Fees, Campaigns, Sites and Dues, each tied to a module, and absent from the menu of a workspace with no pack", () => {
-    expect(flat.filter((i) => i.packOnly).map((i) => [i.id, i.path, i.module])).toEqual([["fees", "/fees", "fees"], ["students", "/students", "programmes"], ["admissions", "/admissions", "programmes"], ["announcements", "/announcements", "programmes"], ["campaigns", "/campaigns", "campaigns"], ["calllist", "/call-list", "campaigns"], ["sites", "/sites", "sites"], ["dues", "/dues", "dues"], ["programmes", "/programmes", "programmes"]]);
+    expect(flat.filter((i) => i.packOnly).map((i) => [i.id, i.path, i.module])).toEqual([["trips", "/orders/trips", "deliveries"], ["fees", "/fees", "fees"], ["students", "/students", "programmes"], ["admissions", "/admissions", "programmes"], ["announcements", "/announcements", "programmes"], ["campaigns", "/campaigns", "campaigns"], ["calllist", "/call-list", "campaigns"], ["sites", "/sites", "sites"], ["dues", "/dues", "dues"], ["programmes", "/programmes", "programmes"]]);
     for (const role of ROLES) expect(visibleGroups(role).flatMap((g) => g.items.map((i) => i.id))).not.toEqual(expect.arrayContaining(["fees"]));
   });
   it("show when the pack has the module on, and only then", () => {

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 
-import { LiveNow } from "../live/LiveNow";
+import { LiveNow } from "../live/LazyLiveNow";
 import { CommandBar } from "./CommandBar";
 import { DoneSection } from "./DoneSection";
 import { NeedsYou } from "./NeedsYou";

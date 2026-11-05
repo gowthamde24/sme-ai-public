@@ -72,3 +72,18 @@
 [data-ui="v2"] [data-accent="rose_silk"] { --pack-text: var(--v2-pack-rose-text); --pack-bg: var(--v2-pack-rose-bg); --pack-edge: var(--v2-pack-rose-edge); }
 [data-ui="v2"] [data-accent="terracotta"] { --pack-text: var(--v2-pack-terracotta-text); --pack-bg: var(--v2-pack-terracotta-bg); --pack-edge: var(--v2-pack-terracotta-edge); }
 [data-ui="v2"] [data-accent="sky_blue"] { --pack-text: var(--v2-pack-sky-text); --pack-bg: var(--v2-pack-sky-bg); --pack-edge: var(--v2-pack-sky-edge); }
+
+/*
+ * Sidebar v2 (owner, 5 Nov 2026): frosted glass ONLY on the floating layers (the phone's bottom bar, the More sheet, the top bar once the page scrolls, the open assistant panel). Content cards stay solid.
+ * Solid by default; frosted only where the browser can blur AND the person has not asked for less transparency. The dots of the background show faintly through it.
+ */
+[data-ui="v2"] .v2-glass { background-color: var(--v2-surface); }
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  @media not (prefers-reduced-transparency: reduce) {
+    [data-ui="v2"] .v2-glass {
+      background-color: color-mix(in srgb, var(--v2-surface) 78%, transparent);
+      -webkit-backdrop-filter: blur(14px) saturate(1.15);
+      backdrop-filter: blur(14px) saturate(1.15);
+    }
+  }
+}

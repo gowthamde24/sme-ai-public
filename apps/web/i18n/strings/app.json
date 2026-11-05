@@ -11,10 +11,10 @@
   }
  },
  "nav.group.business": {
-  "en": "Your business",
-  "te": "మీ వ్యాపారం",
-  "hi": "आपका व्यापार",
-  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ",
+  "en": "Business",
+  "te": "వ్యాపారం",
+  "hi": "कारोबार",
+  "kn": "ವ್ಯಾಪಾರ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -57899,10 +57899,10 @@
   }
  },
  "nav.item.m-catalogue": {
-  "en": "Catalogue",
-  "te": "క్యాటలాగ్",
-  "hi": "कैटलॉग",
-  "kn": "ಕ್ಯಾಟಲಾಗ್",
+  "en": "Catalogue & stock",
+  "te": "క్యాటలాగ్ & స్టాక్",
+  "hi": "कैटलॉग और स्टॉक",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಸ್ಟಾಕ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -79214,6 +79214,391 @@
   "te": "కారణం: {why}",
   "hi": "वजह: {why}",
   "kn": "ಕಾರಣ: {why}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.overview": {
+  "en": "Overview",
+  "te": "అవలోకనం",
+  "hi": "एक नज़र में",
+  "kn": "ಅವಲೋಕನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.sell": {
+  "en": "Sell",
+  "te": "అమ్మకం",
+  "hi": "बिक्री",
+  "kn": "ಮಾರಾಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.aiteam": {
+  "en": "AI team",
+  "te": "AI టీమ్",
+  "hi": "AI टीम",
+  "kn": "AI ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.setup": {
+  "en": "Setup",
+  "te": "సెటప్",
+  "hi": "सेटअप",
+  "kn": "ಸೆಟಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-assistant": {
+  "en": "Talk to assistant",
+  "te": "అసిస్టెంట్‌తో మాట్లాడండి",
+  "hi": "असिस्टेंट से बात करें",
+  "kn": "ಸಹಾಯಕರ ಜೊತೆ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-leads": {
+  "en": "Leads",
+  "te": "లీడ్స్",
+  "hi": "लीड्स",
+  "kn": "ಲೀಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-find": {
+  "en": "Find customers",
+  "te": "కొత్త కస్టమర్లను వెతకండి",
+  "hi": "नए ग्राहक खोजें",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-followups": {
+  "en": "Follow-ups",
+  "te": "ఫాలో-అప్‌లు",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-visits": {
+  "en": "Store visits",
+  "te": "స్టోర్ విజిట్‌లు",
+  "hi": "स्टोर विज़िट",
+  "kn": "ಸ್ಟೋರ್ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-quotes": {
+  "en": "Quotes",
+  "te": "కొటేషన్లు",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-orders": {
+  "en": "Orders",
+  "te": "ఆర్డర్లు",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-trips": {
+  "en": "Trips",
+  "te": "ట్రిప్‌లు",
+  "hi": "ट्रिप",
+  "kn": "ಟ್ರಿಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-dues": {
+  "en": "Dues",
+  "te": "బాకీలు",
+  "hi": "बकाया",
+  "kn": "ಬಾಕಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-admissions": {
+  "en": "Admissions",
+  "te": "అడ్మిషన్లు",
+  "hi": "दाखिले",
+  "kn": "ಪ್ರವೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-students": {
+  "en": "Students",
+  "te": "విద్యార్థులు",
+  "hi": "छात्र",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-fees": {
+  "en": "Fees",
+  "te": "ఫీజులు",
+  "hi": "फ़ीस",
+  "kn": "ಶುಲ್ಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-notices": {
+  "en": "Notices",
+  "te": "నోటీసులు",
+  "hi": "सूचनाएँ",
+  "kn": "ಸೂಚನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-aiteam": {
+  "en": "My AI team",
+  "te": "నా AI టీమ్",
+  "hi": "मेरी AI टीम",
+  "kn": "ನನ್ನ AI ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-train": {
+  "en": "Train how it talks",
+  "te": "ఎలా మాట్లాడాలో నేర్పండి",
+  "hi": "बात करने का तरीका सिखाएँ",
+  "kn": "ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-phone": {
+  "en": "Phone number",
+  "te": "ఫోన్ నంబర్",
+  "hi": "फ़ोन नंबर",
+  "kn": "ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-sources": {
+  "en": "Lead sources",
+  "te": "లీడ్ సోర్సులు",
+  "hi": "लीड के स्रोत",
+  "kn": "ಲೀಡ್ ಮೂಲಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.assistant": {
+  "en": "Talk to assistant",
+  "te": "అసిస్టెంట్‌తో మాట్లాడండి",
+  "hi": "असिस्टेंट से बात करें",
+  "kn": "ಸಹಾಯಕರ ಜೊತೆ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.live": {
+  "en": "Live calls",
+  "te": "జరుగుతున్న కాల్స్",
+  "hi": "चल रही कॉल",
+  "kn": "ನಡೆಯುತ್ತಿರುವ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.trips": {
+  "en": "Trips",
+  "te": "ట్రిప్‌లు",
+  "hi": "ट्रिप",
+  "kn": "ಟ್ರಿಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.train": {
+  "en": "Train how it talks",
+  "te": "ఎలా మాట్లాడాలో నేర్పండి",
+  "hi": "बात करने का तरीका सिखाएँ",
+  "kn": "ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.phone": {
+  "en": "Phone number",
+  "te": "ఫోన్ నంబర్",
+  "hi": "फ़ोन नंबर",
+  "kn": "ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.count.new": {
+  "en": "{n} new",
+  "te": "{n} కొత్తవి",
+  "hi": "{n} नए",
+  "kn": "{n} ಹೊಸದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.count.live": {
+  "en": "{n} live",
+  "te": "{n} లైవ్",
+  "hi": "{n} लाइव",
+  "kn": "{n} ಲೈವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.count.due": {
+  "en": "{n} due",
+  "te": "{n} చేయాలి",
+  "hi": "{n} बाकी",
+  "kn": "{n} ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.count.today": {
+  "en": "{n} today",
+  "te": "ఈరోజు {n}",
+  "hi": "आज {n}",
+  "kn": "ಇಂದು {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.count.working": {
+  "en": "{n} working",
+  "te": "{n} పనిలో",
+  "hi": "{n} काम पर",
+  "kn": "{n} ಕೆಲಸದಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.meter.minutes": {
+  "en": "Call minutes",
+  "te": "కాల్ నిమిషాలు",
+  "hi": "कॉल मिनट",
+  "kn": "ಕರೆ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.meter.ai": {
+  "en": "AI usage",
+  "te": "AI వాడకం",
+  "hi": "AI इस्तेमाल",
+  "kn": "AI ಬಳಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.link.topup": {
+  "en": "Top up",
+  "te": "టాప్ అప్",
+  "hi": "टॉप अप",
+  "kn": "ಟಾಪ್ ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.link.plan": {
+  "en": "Plan & usage",
+  "te": "ప్లాన్ & వాడకం",
+  "hi": "प्लान और इस्तेमाल",
+  "kn": "ಪ್ಲಾನ್ ಮತ್ತು ಬಳಕೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

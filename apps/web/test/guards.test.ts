@@ -229,7 +229,10 @@ describe("server-only code stays on the server", () => {
     const CHAT_LANGUAGE_POST = path.join("components", "v2", "app", "today", "ask", "chat-language-post.ts");
     // And the assistant's work cards (job assistant-does-the-work): Do it / Undo / the secure key / a setup's test post to this app's OWN route `<workspace>/assistant-work` (a path it is given): no token, never the API.
     const WORK_POST = path.join("lib", "assistant-work", "client.ts");
-    expect(callers).toEqual([ACTIVITY_POLL, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, WORK_POST, path.join("lib", "api", "client.ts")].sort());
+    // And the menu's numbers (sidebar v2): this app's OWN route `<workspace>/nav-counts` every 30 seconds while the tab is in front (a path built from the workspace id): no token, never the API.
+    const NAV_COUNTS = path.join("components", "v2", "app", "use-nav-counts.ts");
+    expect(read(path.join(WEB_ROOT, NAV_COUNTS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
+    expect(callers).toEqual([NAV_COUNTS, ACTIVITY_POLL, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, WORK_POST, path.join("lib", "api", "client.ts")].sort());
     expect(read(path.join(WEB_ROOT, WORK_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, CONVERSATION_CALLS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, CONTEXT_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
