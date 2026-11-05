@@ -61,6 +61,12 @@ class PhoneLine:
         self._vad = EnergyEndpointer(min_speech_ms=barge_ms, threshold=barge_threshold)
         self._vad_buf = bytearray()
         self._closed = False
+        # how the call ended, for the end-of-call log (names and numbers only, 5 Nov 2026: the 11:57 UTC call ended 0.4 s after admission and the log could not say whether Exotel sent `stop` or dropped
+        # the socket, nor whether any of our audio had gone out)
+        self.end_how: str | None = None          # stop | socket_closed
+        self.stop_reason: str | None = None      # Exotel's `stop.reason`, as a short closed word
+        self.events: dict[str, int] = {}         # how many of each event name the provider sent
+        self.first_out_s: float | None = None    # seconds from the line's start to our first audio chunk
 
     # ---- opening ---------------------------------------------------------------------------------------------------------------------------------
 
@@ -70,7 +76,10 @@ class PhoneLine:
             while True:
                 raw = await self._wire.receive_text()
                 if raw is None:
+                    self.end_how = "socket_closed"
                     return None
+                name = exotel.event_name(raw)
+                self.events[name] = self.events.get(name, 0) + 1
                 event = exotel.parse(raw)
                 if isinstance(event, exotel.Start):
                     return event
@@ -91,8 +100,11 @@ class PhoneLine:
         while True:
             raw = await self._wire.receive_text()
             if raw is None:
+                self.end_how = self.end_how or "socket_closed"
                 self._finish("caller_hung_up")
                 return
+            name = exotel.event_name(raw)
+            self.events[name] = self.events.get(name, 0) + 1
             self._on_event(exotel.parse(raw))
             if self._closed:
                 return
@@ -130,6 +142,8 @@ class PhoneLine:
             self.dtmf.append(event.digit)
             self._q.put_nowait(("text", {"type": "dtmf", "digit": event.digit}))
         elif isinstance(event, exotel.Stop):
+            self.end_how = self.end_how or "stop"
+            self.stop_reason = exotel.closed_word(event.reason)
             self._finish("caller_hung_up")
 
     def _watch_for_barge_in(self, pcm: bytes) -> None:
@@ -183,6 +197,8 @@ class PhoneLine:
         assert self.start is not None   # noqa: S101 - callers check
         self._seq += 1
         self.bytes_out += len(chunk)
+        if self.first_out_s is None:
+            self.first_out_s = self._clock() - self._began
         now = self._clock()
         self._play_until = max(self._play_until, now) + len(chunk) / 2 / self.rate
         await self._wire.send_text(exotel.media_message(self.start.stream_sid, chunk, self._seq))
