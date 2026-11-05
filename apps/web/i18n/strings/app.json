@@ -11,10 +11,10 @@
   }
  },
  "nav.group.business": {
-  "en": "Your business",
-  "te": "మీ వ్యాపారం",
-  "hi": "आपका व्यापार",
-  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ",
+  "en": "Business",
+  "te": "వ్యాపారం",
+  "hi": "कारोबार",
+  "kn": "ವ್ಯಾಪಾರ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -2019,6 +2019,105 @@
    "kn": "draft"
   }
  },
+ "today.sum.price": {
+  "en": "Price reply",
+  "te": "ధర జవాబు",
+  "hi": "कीमत का जवाब",
+  "kn": "ಬೆಲೆ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.promise": {
+  "en": "A promise to check",
+  "te": "సరిచూడాల్సిన హామీ",
+  "hi": "जाँचने वाला वादा",
+  "kn": "ಪರಿಶೀಲಿಸಬೇಕಾದ ಭರವಸೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.complaint": {
+  "en": "Reply to a complaint",
+  "te": "ఫిర్యాదుకు జవాబు",
+  "hi": "शिकायत का जवाब",
+  "kn": "ದೂರಿಗೆ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.reply_to_inbound": {
+  "en": "Reply",
+  "te": "జవాబు",
+  "hi": "जवाब",
+  "kn": "ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.info": {
+  "en": "Shop information",
+  "te": "షాప్ సమాచారం",
+  "hi": "दुकान की जानकारी",
+  "kn": "ಅಂಗಡಿ ಮಾಹಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.visit": {
+  "en": "Visit invitation",
+  "te": "విజిట్ ఆహ్వానం",
+  "hi": "विज़िट का न्योता",
+  "kn": "ಭೇಟಿ ಆಹ್ವಾನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.followup": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.order_status": {
+  "en": "Order update",
+  "te": "ఆర్డర్ అప్‌డేట్",
+  "hi": "ऑर्डर अपडेट",
+  "kn": "ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sum.other": {
+  "en": "Message",
+  "te": "మెసేజ్",
+  "hi": "मैसेज",
+  "kn": "ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.title.call": {
   "en": "{customer} asked for a call",
   "te": "{customer} కాల్ అడిగారు",
@@ -2834,6 +2933,94 @@
   "te": "ఆఫీస్ తెరవండి",
   "hi": "ऑफ़िस खोलें",
   "kn": "ಆಫೀಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.aiteam.title": {
+  "en": "My AI team",
+  "te": "నా AI టీమ్",
+  "hi": "मेरी AI टीम",
+  "kn": "ನನ್ನ AI ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.aiteam.waiting": {
+  "en": "Waiting for you",
+  "te": "మీ కోసం ఎదురుచూస్తోంది",
+  "hi": "आपका इंतज़ार",
+  "kn": "ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.aiteam.off": {
+  "en": "Off",
+  "te": "ఆఫ్",
+  "hi": "बंद",
+  "kn": "ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.aiteam.open": {
+  "en": "Open my AI team",
+  "te": "నా AI టీమ్ తెరవండి",
+  "hi": "मेरी AI टीम खोलें",
+  "kn": "ನನ್ನ AI ತಂಡ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.money.title": {
+  "en": "Money held",
+  "te": "దగ్గర ఉన్న డబ్బు",
+  "hi": "रुका हुआ पैसा",
+  "kn": "ಹಿಡಿದಿರುವ ಹಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.money.one": {
+  "en": "1 order open",
+  "te": "1 ఆర్డర్ తెరిచి ఉంది",
+  "hi": "1 ऑर्डर खुला है",
+  "kn": "1 ಆರ್ಡರ್ ತೆರೆದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.money.other": {
+  "en": "{n} orders open",
+  "te": "{n} ఆర్డర్లు తెరిచి ఉన్నాయి",
+  "hi": "{n} ऑर्डर खुले हैं",
+  "kn": "{n} ಆರ್ಡರ್‌ಗಳು ತೆರೆದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.money.open": {
+  "en": "Open orders",
+  "te": "ఆర్డర్లు తెరవండి",
+  "hi": "ऑर्डर खोलें",
+  "kn": "ಆರ್ಡರ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -52033,6 +52220,17 @@
    "kn": "draft"
   }
  },
+ "today.pack.reminders.one": {
+  "en": "1 campaign is sending on its days",
+  "te": "1 క్యాంపెయిన్ దాని రోజుల్లో పంపుతోంది",
+  "hi": "1 कैंपेन अपने दिनों पर भेज रहा है",
+  "kn": "1 ಕ್ಯಾಂಪೇನ್ ಅದರ ದಿನಗಳಲ್ಲಿ ಕಳುಹಿಸುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.pack.campus.title": {
   "en": "Campus visits today",
   "te": "ఈ రోజు క్యాంపస్ సందర్శనలు",
@@ -52060,6 +52258,39 @@
   "te": "{n} కుటుంబాలు వస్తున్నాయి",
   "hi": "{n} परिवार आ रहे हैं",
   "kn": "{n} ಕುಟುಂಬಗಳು ಬರುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.admissions.title": {
+  "en": "Admissions waiting",
+  "te": "ఎదురుచూస్తున్న అడ్మిషన్లు",
+  "hi": "इंतज़ार में दाखिले",
+  "kn": "ಕಾಯುತ್ತಿರುವ ಪ್ರವೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.admissions.none": {
+  "en": "No admission waits for you",
+  "te": "మీ కోసం ఏ అడ్మిషన్ ఎదురుచూడటం లేదు",
+  "hi": "कोई दाखिला आपका इंतज़ार नहीं कर रहा",
+  "kn": "ಯಾವ ಪ್ರವೇಶವೂ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.admissions.sub": {
+  "en": "Enquiries, visits and applications to decide",
+  "te": "నిర్ణయించాల్సిన ఎంక్వైరీలు, విజిట్‌లు, అప్లికేషన్లు",
+  "hi": "तय करने वाली पूछताछ, विज़िट और आवेदन",
+  "kn": "ತೀರ್ಮಾನಿಸಬೇಕಾದ ವಿಚಾರಣೆಗಳು, ಭೇಟಿಗಳು, ಅರ್ಜಿಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -52269,6 +52500,50 @@
   "te": "ఈ రోజు ఎవరికి తిరిగి కాల్ చేయాలి?",
   "hi": "आज किसे वापस कॉल करना है?",
   "kn": "ಇಂದು ಯಾರಿಗೆ ಮರಳಿ ಕರೆ ಮಾಡಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.chip.find": {
+  "en": "Find new customers near me",
+  "te": "నా దగ్గర కొత్త కస్టమర్లను వెతుకు",
+  "hi": "मेरे पास नए ग्राहक खोजो",
+  "kn": "ನನ್ನ ಹತ್ತಿರ ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.chip.find@materials": {
+  "en": "Find new contractors near me",
+  "te": "నా దగ్గర కొత్త కాంట్రాక్టర్లను వెతుకు",
+  "hi": "मेरे पास नए ठेकेदार खोजो",
+  "kn": "ನನ್ನ ಹತ್ತಿರ ಹೊಸ ಕಾಂಟ್ರಾಕ್ಟರ್‌ಗಳನ್ನು ಹುಡುಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.chip.import": {
+  "en": "Add these leads from my Excel",
+  "te": "నా Excel నుండి ఈ లీడ్స్ చేర్చు",
+  "hi": "मेरी Excel से ये लीड्स जोड़ो",
+  "kn": "ನನ್ನ Excel ನಿಂದ ಈ ಲೀಡ್‌ಗಳನ್ನು ಸೇರಿಸು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.chip.import@programmes": {
+  "en": "Add these enquiries from my Excel",
+  "te": "నా Excel నుండి ఈ ఎంక్వైరీలు చేర్చు",
+  "hi": "मेरी Excel से ये पूछताछ जोड़ो",
+  "kn": "ನನ್ನ Excel ನಿಂದ ಈ ವಿಚಾರಣೆಗಳನ್ನು ಸೇರಿಸು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -57899,10 +58174,10 @@
   }
  },
  "nav.item.m-catalogue": {
-  "en": "Catalogue",
-  "te": "క్యాటలాగ్",
-  "hi": "कैटलॉग",
-  "kn": "ಕ್ಯಾಟಲಾಗ್",
+  "en": "Catalogue & stock",
+  "te": "క్యాటలాగ్ & స్టాక్",
+  "hi": "कैटलॉग और स्टॉक",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಸ್ಟಾಕ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -57914,6 +58189,446 @@
   "te": "రిపోర్టులు",
   "hi": "रिपोर्ट",
   "kn": "ವರದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.overview": {
+  "en": "Overview",
+  "te": "అవలోకనం",
+  "hi": "एक नज़र में",
+  "kn": "ಅವಲೋಕನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.sell": {
+  "en": "Sell",
+  "te": "అమ్మకం",
+  "hi": "बिक्री",
+  "kn": "ಮಾರಾಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.aiteam": {
+  "en": "AI team",
+  "te": "AI టీమ్",
+  "hi": "AI टीम",
+  "kn": "AI ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.setup": {
+  "en": "Setup",
+  "te": "సెటప్",
+  "hi": "सेटअप",
+  "kn": "ಸೆಟಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-assistant": {
+  "en": "Talk to assistant",
+  "te": "అసిస్టెంట్‌తో మాట్లాడండి",
+  "hi": "असिस्टेंट से बात करें",
+  "kn": "ಸಹಾಯಕರ ಜೊತೆ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-leads": {
+  "en": "Leads",
+  "te": "లీడ్స్",
+  "hi": "लीड्स",
+  "kn": "ಲೀಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-find": {
+  "en": "Find customers",
+  "te": "కొత్త కస్టమర్లను వెతకండి",
+  "hi": "नए ग्राहक खोजें",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-followups": {
+  "en": "Follow-ups",
+  "te": "ఫాలో-అప్‌లు",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-visits": {
+  "en": "Store visits",
+  "te": "స్టోర్ విజిట్‌లు",
+  "hi": "स्टोर विज़िट",
+  "kn": "ಸ್ಟೋರ್ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-quotes": {
+  "en": "Quotes",
+  "te": "కొటేషన్లు",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-orders": {
+  "en": "Orders",
+  "te": "ఆర్డర్లు",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-trips": {
+  "en": "Trips",
+  "te": "ట్రిప్‌లు",
+  "hi": "ट्रिप",
+  "kn": "ಟ್ರಿಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-dues": {
+  "en": "Dues",
+  "te": "బాకీలు",
+  "hi": "बकाया",
+  "kn": "ಬಾಕಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-admissions": {
+  "en": "Admissions",
+  "te": "అడ్మిషన్లు",
+  "hi": "दाखिले",
+  "kn": "ಪ್ರವೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-students": {
+  "en": "Students",
+  "te": "విద్యార్థులు",
+  "hi": "छात्र",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-fees": {
+  "en": "Fees",
+  "te": "ఫీజులు",
+  "hi": "फ़ीस",
+  "kn": "ಶುಲ್ಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-notices": {
+  "en": "Notices",
+  "te": "నోటీసులు",
+  "hi": "सूचनाएँ",
+  "kn": "ಸೂಚನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-aiteam": {
+  "en": "My AI team",
+  "te": "నా AI టీమ్",
+  "hi": "मेरी AI टीम",
+  "kn": "ನನ್ನ AI ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-train": {
+  "en": "Train how it talks",
+  "te": "ఎలా మాట్లాడాలో నేర్పండి",
+  "hi": "बात करने का तरीका सिखाएँ",
+  "kn": "ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-phone": {
+  "en": "Phone number",
+  "te": "ఫోన్ నంబర్",
+  "hi": "फ़ोन नंबर",
+  "kn": "ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-sources": {
+  "en": "Lead sources",
+  "te": "లీడ్ సోర్సులు",
+  "hi": "लीड के स्रोत",
+  "kn": "ಲೀಡ್ ಮೂಲಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.assistant": {
+  "en": "Talk to assistant",
+  "te": "అసిస్టెంట్‌తో మాట్లాడండి",
+  "hi": "असिस्टेंट से बात करें",
+  "kn": "ಸಹಾಯಕರ ಜೊತೆ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.live": {
+  "en": "Live calls",
+  "te": "జరుగుతున్న కాల్స్",
+  "hi": "चल रही कॉल",
+  "kn": "ನಡೆಯುತ್ತಿರುವ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.trips": {
+  "en": "Trips",
+  "te": "ట్రిప్‌లు",
+  "hi": "ट्रिप",
+  "kn": "ಟ್ರಿಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.train": {
+  "en": "Train how it talks",
+  "te": "ఎలా మాట్లాడాలో నేర్పండి",
+  "hi": "बात करने का तरीका सिखाएँ",
+  "kn": "ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.phone": {
+  "en": "Phone number",
+  "te": "ఫోన్ నంబర్",
+  "hi": "फ़ोन नंबर",
+  "kn": "ಫೋನ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.count.new": {
+  "en": "{n} new",
+  "te": "{n} కొత్తవి",
+  "hi": "{n} नए",
+  "kn": "{n} ಹೊಸದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.count.live": {
+  "en": "{n} live",
+  "te": "{n} లైవ్",
+  "hi": "{n} लाइव",
+  "kn": "{n} ಲೈವ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.count.due": {
+  "en": "{n} due",
+  "te": "{n} చేయాలి",
+  "hi": "{n} बाकी",
+  "kn": "{n} ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.count.today": {
+  "en": "{n} today",
+  "te": "ఈరోజు {n}",
+  "hi": "आज {n}",
+  "kn": "ಇಂದು {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.count.working": {
+  "en": "{n} working",
+  "te": "{n} పనిలో",
+  "hi": "{n} काम पर",
+  "kn": "{n} ಕೆಲಸದಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.meter.minutes": {
+  "en": "Call minutes",
+  "te": "కాల్ నిమిషాలు",
+  "hi": "कॉल मिनट",
+  "kn": "ಕರೆ ನಿಮಿಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.meter.ai": {
+  "en": "AI usage",
+  "te": "AI వాడకం",
+  "hi": "AI इस्तेमाल",
+  "kn": "AI ಬಳಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.link.topup": {
+  "en": "Top up",
+  "te": "టాప్ అప్",
+  "hi": "टॉप अप",
+  "kn": "ಟಾಪ್ ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.link.plan": {
+  "en": "Plan & usage",
+  "te": "ప్లాన్ & వాడకం",
+  "hi": "प्लान और इस्तेमाल",
+  "kn": "ಪ್ಲಾನ್ ಮತ್ತು ಬಳಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.title": {
+  "en": "Your business number",
+  "te": "మీ వ్యాపార నంబర్",
+  "hi": "आपका कारोबार नंबर",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.sub": {
+  "en": "The number your assistant calls customers from.",
+  "te": "మీ అసిస్టెంట్ కస్టమర్లకు కాల్ చేసే నంబర్.",
+  "hi": "वह नंबर जिससे आपका असिस्टेंट ग्राहकों को कॉल करता है।",
+  "kn": "ನಿಮ್ಮ ಸಹಾಯಕರು ಗ್ರಾಹಕರಿಗೆ ಕರೆ ಮಾಡುವ ನಂಬರ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.status.title": {
+  "en": "Calling number",
+  "te": "కాల్ చేసే నంబర్",
+  "hi": "कॉल करने का नंबर",
+  "kn": "ಕರೆ ಮಾಡುವ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.status.none": {
+  "en": "Not set up yet · coming soon",
+  "te": "ఇంకా సెటప్ కాలేదు · త్వరలో",
+  "hi": "अभी सेट नहीं · जल्द आ रहा है",
+  "kn": "ಇನ್ನೂ ಸೆಟಪ್ ಆಗಿಲ್ಲ · ಶೀಘ್ರದಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "phone.status.body": {
+  "en": "Calls to customers are not switched on yet. When they are, your business number shows here. Nothing is called until then.",
+  "te": "కస్టమర్లకు కాల్స్ ఇంకా ఆన్ కాలేదు. ఆన్ అయినప్పుడు మీ వ్యాపార నంబర్ ఇక్కడ కనిపిస్తుంది. అప్పటి వరకు ఎవరికీ కాల్ చేయం.",
+  "hi": "ग्राहकों को कॉल अभी चालू नहीं हैं। चालू होने पर आपका कारोबार नंबर यहाँ दिखेगा। तब तक किसी को कॉल नहीं किया जाता।",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಕರೆಗಳು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ. ಆನ್ ಆದಾಗ ನಿಮ್ಮ ವ್ಯಾಪಾರ ನಂಬರ್ ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ. ಅಲ್ಲಿಯವರೆಗೆ ಯಾರಿಗೂ ಕರೆ ಮಾಡುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -59772,28 +60487,6 @@
    "kn": "draft"
   }
  },
- "ol.rule.action.whatsapp_first": {
-  "en": "WhatsApp first",
-  "te": "ముందు వాట్సాప్",
-  "hi": "पहले व्हाट्सऐप",
-  "kn": "ಮೊದಲು ವಾಟ್ಸಾಪ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ol.rule.action.whatsapp_then_call": {
-  "en": "WhatsApp first, then call",
-  "te": "ముందు వాట్సాప్, తర్వాత కాల్",
-  "hi": "पहले व्हाट्सऐप, फिर कॉल",
-  "kn": "ಮೊದಲು ವಾಟ್ಸಾಪ್, ನಂತರ ಕಾಲ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "ol.rule.within": {
   "en": "Minutes before the first call",
   "te": "మొదటి కాల్‌కి ముందు నిమిషాలు",
@@ -59806,10 +60499,10 @@
   }
  },
  "ol.rule.within.help": {
-  "en": "Calls only go out in your calling hours. After hours a lead gets a WhatsApp message now and a call the next morning.",
-  "te": "కాల్స్ మీ కాలింగ్ టైమ్‌లోనే వెళ్తాయి. టైమ్ దాటాక వచ్చిన లీడ్‌కి ఇప్పుడు వాట్సాప్ మెసేజ్, మర్నాడు ఉదయం కాల్ వెళ్తాయి.",
-  "hi": "कॉल सिर्फ़ आपके कॉलिंग टाइम में जाती हैं। टाइम के बाद आए लीड को अभी व्हाट्सऐप मैसेज और अगली सुबह कॉल जाती है।",
-  "kn": "ಕಾಲ್‌ಗಳು ನಿಮ್ಮ ಕಾಲಿಂಗ್ ಟೈಮ್‌ನಲ್ಲಿ ಮಾತ್ರ ಹೋಗುತ್ತವೆ. ಟೈಮ್ ಮುಗಿದ ಮೇಲೆ ಬಂದ ಲೀಡ್‌ಗೆ ಈಗ ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್, ಮರುದಿನ ಬೆಳಿಗ್ಗೆ ಕಾಲ್ ಹೋಗುತ್ತದೆ.",
+  "en": "Calls only go out in your calling hours. After hours the lead is called the next morning: nothing is sent at night.",
+  "te": "మీ కాల్ సమయాల్లోనే కాల్స్ వెళ్తాయి. ఆ సమయం దాటితే లీడ్‌కి మరుసటి ఉదయం కాల్ చేస్తాం: రాత్రి ఏమీ పంపం.",
+  "hi": "कॉल सिर्फ़ आपके कॉल के समय में जाती हैं। समय के बाद लीड को अगली सुबह कॉल किया जाता है: रात में कुछ नहीं भेजा जाता।",
+  "kn": "ನಿಮ್ಮ ಕರೆ ಸಮಯದಲ್ಲಿ ಮಾತ್ರ ಕರೆಗಳು ಹೋಗುತ್ತವೆ. ಸಮಯ ಮೀರಿದರೆ ಲೀಡ್‌ಗೆ ಮರುದಿನ ಬೆಳಿಗ್ಗೆ ಕರೆ ಮಾಡುತ್ತೇವೆ: ರಾತ್ರಿ ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -59871,22 +60564,44 @@
    "kn": "draft"
   }
  },
- "ol.rule.sentence.whatsapp_first": {
-  "en": "New leads from {source}: send a WhatsApp message first, within {n} minutes.",
-  "te": "{source} నుంచి వచ్చే కొత్త లీడ్‌లు: ముందు {n} నిమిషాల్లో వాట్సాప్ మెసేజ్ పంపండి.",
-  "hi": "{source} से आए नए लीड: पहले {n} मिनट के अंदर व्हाट्सऐप मैसेज भेजें।",
-  "kn": "{source} ನಿಂದ ಬಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಮೊದಲು {n} ನಿಮಿಷದೊಳಗೆ ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್ ಕಳುಹಿಸಿ.",
+ "ol.rule.sentence.call_then_ask": {
+  "en": "New leads from {source}: call within {n} minutes, in calling hours; WhatsApp only if they ask for it.",
+  "te": "{source} నుండి కొత్త లీడ్స్: కాల్ సమయాల్లో {n} నిమిషాల్లో కాల్; వాళ్ళు అడిగితేనే వాట్సాప్.",
+  "hi": "{source} से नए लीड: कॉल के समय में {n} मिनट में कॉल; वाट्सऐप सिर्फ़ उनके माँगने पर।",
+  "kn": "{source} ನಿಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕರೆ ಸಮಯದಲ್ಲಿ {n} ನಿಮಿಷಗಳಲ್ಲಿ ಕರೆ; ಅವರು ಕೇಳಿದರೆ ಮಾತ್ರ ವಾಟ್ಸಾಪ್.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "ol.rule.sentence.whatsapp_then_call": {
-  "en": "New leads from {source}: send a WhatsApp message, then call within {n} minutes.",
-  "te": "{source} నుంచి వచ్చే కొత్త లీడ్‌లు: వాట్సాప్ మెసేజ్ పంపి, తర్వాత {n} నిమిషాల్లో కాల్ చేయండి.",
-  "hi": "{source} से आए नए लीड: व्हाट्सऐप मैसेज भेजें, फिर {n} मिनट के अंदर कॉल करें।",
-  "kn": "{source} ನಿಂದ ಬಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್ ಕಳುಹಿಸಿ, ನಂತರ {n} ನಿಮಿಷದೊಳಗೆ ಕಾಲ್ ಮಾಡಿ.",
+ "ol.rule.channel.call": {
+  "en": "Call only",
+  "te": "కాల్ మాత్రమే",
+  "hi": "सिर्फ़ कॉल",
+  "kn": "ಕರೆ ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.channel.both": {
+  "en": "Call, and WhatsApp if they ask for it",
+  "te": "కాల్, వాళ్ళు అడిగితే వాట్సాప్",
+  "hi": "कॉल, और माँगने पर वाट्सऐप",
+  "kn": "ಕರೆ, ಅವರು ಕೇಳಿದರೆ ವಾಟ್ಸಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.message.help": {
+  "en": "These words go on WhatsApp only when the customer asks for it or agrees to it on the call. Nothing is sent before the call.",
+  "te": "కాల్‌లో కస్టమర్ అడిగినప్పుడు లేదా ఒప్పుకున్నప్పుడు మాత్రమే ఈ మాటలు వాట్సాప్‌లో వెళ్తాయి. కాల్‌కి ముందు ఏమీ పంపం.",
+  "hi": "ये शब्द वाट्सऐप पर तभी जाते हैं जब ग्राहक कॉल पर माँगे या हाँ कहे। कॉल से पहले कुछ नहीं भेजा जाता।",
+  "kn": "ಕರೆಯಲ್ಲಿ ಗ್ರಾಹಕರು ಕೇಳಿದಾಗ ಅಥವಾ ಒಪ್ಪಿದಾಗ ಮಾತ್ರ ಈ ಮಾತುಗಳು ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಹೋಗುತ್ತವೆ. ಕರೆಯ ಮೊದಲು ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -60015,10 +60730,10 @@
   }
  },
  "ol.policy.night": {
-  "en": "A lead that arrives after hours gets a WhatsApp message now and a call the next morning at {time}.",
-  "te": "టైమ్ దాటాక వచ్చిన లీడ్‌కి ఇప్పుడు వాట్సాప్ మెసేజ్, మర్నాడు ఉదయం {time}కి కాల్ వెళ్తాయి.",
-  "hi": "टाइम के बाद आए लीड को अभी व्हाट्सऐप मैसेज और अगली सुबह {time} बजे कॉल जाती है।",
-  "kn": "ಟೈಮ್ ಮುಗಿದ ಮೇಲೆ ಬಂದ ಲೀಡ್‌ಗೆ ಈಗ ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್, ಮರುದಿನ ಬೆಳಿಗ್ಗೆ {time} ಕ್ಕೆ ಕಾಲ್ ಹೋಗುತ್ತದೆ.",
+  "en": "A lead that arrives after hours is called the next morning at {time}. Nothing is sent at night.",
+  "te": "సమయం దాటిన తర్వాత వచ్చిన లీడ్‌కి మరుసటి ఉదయం {time}కి కాల్ చేస్తాం. రాత్రి ఏమీ పంపం.",
+  "hi": "समय के बाद आए लीड को अगली सुबह {time} बजे कॉल किया जाता है। रात में कुछ नहीं भेजा जाता।",
+  "kn": "ಸಮಯ ಮೀರಿ ಬಂದ ಲೀಡ್‌ಗೆ ಮರುದಿನ ಬೆಳಿಗ್ಗೆ {time}ಕ್ಕೆ ಕರೆ ಮಾಡುತ್ತೇವೆ. ರಾತ್ರಿ ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -75210,6 +75925,28 @@
   "te": "కొత్త లీడ్స్",
   "hi": "नई पूछताछ",
   "kn": "ಹೊಸ ಲೀಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.leads.count": {
+  "en": "Not opened yet, from the last 7 days",
+  "te": "గత 7 రోజుల నుండి, ఇంకా తెరవలేదు",
+  "hi": "पिछले 7 दिनों से, अभी खोले नहीं",
+  "kn": "ಕಳೆದ 7 ದಿನಗಳಿಂದ, ಇನ್ನೂ ತೆರೆದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.leads.count.none": {
+  "en": "Every new lead has been opened",
+  "te": "ప్రతి కొత్త లీడ్ తెరిచారు",
+  "hi": "हर नया लीड खोला जा चुका है",
+  "kn": "ಪ್ರತಿ ಹೊಸ ಲೀಡ್ ತೆರೆಯಲಾಗಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

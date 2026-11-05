@@ -20,12 +20,11 @@ function Title({ words }: { words: TodayWords }) {
 function Loaded({ digest, words, outboxHref }: { digest: Promise<Digest>; words: TodayWords; outboxHref: string | null }) {
   const d = React.use(digest);
   if (d.state === "none") return null; // a person who may not read the outbox is not shown the section
+  if (d.state === "error") return null; // a log that cannot be read: no card (owner's review, 5 Nov: Today never says "Not available yet")
   return (
     <section aria-labelledby="done-heading" data-part="done" className={card}>
       <Title words={words} />
-      {d.state === "error" ? (
-        <p className="text-sm text-muted">{say(words, "frame.notyet")}</p>
-      ) : d.lines.length === 0 ? (
+      {d.lines.length === 0 ? (
         <p className={SIDE_LINE}>{say(words, "today.done.empty")}</p>
       ) : (
         // the owner's target (31 Oct): ONE line, what was done, as short sentences side by side

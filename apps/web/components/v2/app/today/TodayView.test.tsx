@@ -81,9 +81,10 @@ describe("Today: the command bar", () => {
     expect(form.closest('[data-part="command-bar"]')).not.toBeNull();
     expect(document.querySelector('[data-screen="today"] form.fixed')).toBeNull();
   });
-  it("is 'Not available yet' while your assistant is not built and 'Switched off' when its switch is off", async () => {
+  it("is not drawn while your assistant is not built (Today never says 'Not available yet'), and says 'Switched off' when its switch is off", async () => {
     await view(data({ team: TEAM!.map((a) => (a.agent === "main" ? { ...a, state: "not_available" as const } : a)) }));
-    expect(document.querySelector('[data-ask="unavailable"]')).toHaveTextContent("Not available yet");
+    expect(document.querySelector('[data-part="command-bar"]')).toBeNull();
+    expect(screen.queryByText("Not available yet")).toBeNull();
     cleanup();
     await view(data({ team: TEAM!.map((a) => (a.agent === "main" ? { ...a, state: "switched_off" as const } : a)) }));
     expect(document.querySelector('[data-ask="unavailable"]')).toHaveTextContent("Switched off");
@@ -127,12 +128,12 @@ describe("Today: the order of the page (owner review, 1 Nov)", () => {
 });
 
 describe("Today: the side sections", () => {
-  it("'At the store today' is not drawn when it was not asked, and says so when it could not be read", async () => {
+  it("'At the store today' is not drawn when it was not asked, nor when it could not be read (Today never says 'Not available yet')", async () => {
     await view(data({ store: null }));
     expect(document.querySelector('[data-part="visits"]')).toBeNull();
     cleanup();
     await view(data({ store: { state: "error" } }));
-    expect(within(document.querySelector('[data-part="visits"]') as HTMLElement).getByText("Not available yet")).toBeInTheDocument();
+    expect(document.querySelector('[data-part="visits"]')).toBeNull();
   });
   it("'At the store today' is the title, ONE line (how many and the next one, in time order) and ONE link: the calendar", async () => {
     await view(
@@ -174,7 +175,7 @@ describe("Today: the side sections", () => {
     await view(data({ digest: Promise.resolve(lines) }), { outboxHref: "/app/tenants/T/outbox" });
     expect(screen.getByRole("link", { name: "See everything in the outbox" })).toHaveAttribute("href", "/app/tenants/T/outbox");
   });
-  it("'Done while you slept' has a loading state, an empty state, an error state, and is not drawn for someone who may not read the log", async () => {
+  it("'Done while you slept' has a loading state and an empty state, and is not drawn when the log cannot be read or for someone who may not read it", async () => {
     await view(data({ digest: new Promise<Digest>(() => {}) }));
     expect(document.querySelector('[data-part="done"]')).toBeNull();
     expect(screen.getByRole("heading", { name: "Done while you slept" }).closest("section")).toHaveAttribute("aria-busy", "true");
@@ -183,44 +184,58 @@ describe("Today: the side sections", () => {
     expect(within(document.querySelector('[data-part="done"]') as HTMLElement).getByText("Nothing was sent in the last 24 hours.")).toBeInTheDocument();
     cleanup();
     await view(data({ digest: Promise.resolve({ state: "error" }) }));
-    expect(within(document.querySelector('[data-part="done"]') as HTMLElement).getByText("Not available yet")).toBeInTheDocument();
+    expect(document.querySelector('[data-part="done"]')).toBeNull();
     cleanup();
     await view(data({ digest: Promise.resolve({ state: "none" }) }));
     expect(screen.queryByRole("heading", { name: "Done while you slept" })).toBeNull();
   });
-  it("'Your team' is the title, ONE line with the helpers' names (not your assistant itself) and the link to the Office", async () => {
+  it("'My AI team': a card per helper with where it stands and one line (those that wait for the person, then those working, first), four at most, then '+N more' and the link", async () => {
     await view(data());
-    const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
-    // the Lead Finder is not built yet (not_available): it is not named (owner, 4 Nov)
-    // three names, then "+2 more" (owner, 5 Nov: the one line was cut off); the whole list is the line's title
-    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent(/^Researcher · Requirement Analyst · Quote Writer · \+2 more$/);
-    expect(s.querySelector("[data-part=team-list]")).toHaveAttribute("title", "Researcher · Requirement Analyst · Quote Writer · Follow-up Desk · Order Desk");
+    const s = screen.getByRole("heading", { name: "My AI team" }).closest("section")!;
+    // the Lead Finder is not built yet (not_available): it is not named (owner, 4 Nov); the assistant itself is the card above
+    const cards = [...s.querySelectorAll("[data-helper]")].map((c) => [c.getAttribute("data-helper"), c.getAttribute("data-status")]);
+    expect(cards).toEqual([["quote_writer", "waiting"], ["followup_desk", "waiting"], ["researcher", "working"], ["order_desk", "idle"]]);
+    expect(within(s.querySelector('[data-helper="quote_writer"]') as HTMLElement).getByText("Waiting for you")).toBeInTheDocument();
+    expect(s.querySelector('[data-helper="quote_writer"]')).toHaveTextContent("Prepared quote 3");
+    expect(within(s.querySelector('[data-helper="researcher"]') as HTMLElement).getAllByText("Working").length).toBeGreaterThan(0);
     expect(within(s).queryByText("Your assistant")).toBeNull();
-    expect(within(s).getByRole("link", { name: /Open the office/ })).toHaveAttribute("href", "/app/tenants/T/office");
+    expect(within(s).getByRole("link", { name: "+1 more" })).toHaveAttribute("href", "/app/tenants/T/office");
   });
-  it("a Lead Desk workspace names its own workers (never the shop's helpers) and has a 'New leads' card with the newest lead and a link to the Leads", async () => {
+  it("a Lead Desk workspace's strip is its own workers (never the shop's helpers), and it has a 'New leads' card with the newest lead and a link to the Leads", async () => {
     await view(data({ deskTeam: [
       { key: "leads", state: "idle", name: "Lead catcher", text: "Last lead: Anita R. from IndiaMART", at: "2026-10-11T04:40:00Z" },
       { key: "calls", state: "working", name: "Caller", text: "Calling Diwali leads: 12 of 40 done", at: null },
       { key: "rules", state: "off", name: "Standing rules", text: "No rule is on", at: null },
       { key: "tasks", state: "not_available", name: "Task helper", text: null, at: null },
     ] }));
-    const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
-    expect(s.querySelector("[data-part=team-list]")).toHaveTextContent("Lead catcher · Caller · Standing rules · +1 more");
-    expect(s.querySelector("[data-part=team-list]")).toHaveAttribute("title", "Lead catcher · Caller · Standing rules · Task helper");
+    const s = screen.getByRole("heading", { name: "My AI team" }).closest("section")!;
+    // a worker whose part cannot be read (the Task helper here) is left out: Today never says "Not available yet"
+    expect([...s.querySelectorAll("[data-helper]")].map((c) => c.textContent)).toEqual(["CallerWorkingCalling Diwali leads: 12 of 40 done", "Lead catcherIdleLast lead: Anita R. from IndiaMART · 20m", "Standing rulesOffNo rule is on"]);
     expect(within(s).queryByText(/Quote Writer/)).toBeNull();
+    expect(within(s).getByRole("link", { name: "Open my AI team" })).toHaveAttribute("href", "/app/tenants/T/office");
     const n = document.querySelector('[data-part="new-leads"]') as HTMLElement;
     expect(within(n).getByRole("heading", { name: "New leads" })).toBeInTheDocument();
     expect(n).toHaveTextContent("Last lead: Anita R. from IndiaMART · 20m");
-    expect(within(n).getByRole("link", { name: "Open leads" })).toHaveAttribute("href", "/app/tenants/T/leads");
+    expect(within(n).getByRole("link", { name: "Open leads" })).toHaveAttribute("href", "/app/tenants/T/lead-desk"); // there is no page at /leads
+  });
+  it("'Money held' is for the people who run the business, only when money is held or an order is open", async () => {
+    await view(data({ cards: { waiting: 3, money_held_paise: 12000000, orders_open: 3 } }));
+    const m = document.querySelector('[data-part="money"]') as HTMLElement;
+    expect(within(m).getByRole("heading", { name: "Money held" })).toBeInTheDocument();
+    expect(m).toHaveTextContent("₹1,20,000");
+    expect(m).toHaveTextContent("3 orders open");
+    expect(within(m).getByRole("link", { name: "Open orders" })).toHaveAttribute("href", "/app/tenants/T/orders");
+    cleanup();
+    await view(data());
+    expect(document.querySelector('[data-part="money"]')).toBeNull(); // nothing held, nothing open
   });
   it("no 'New leads' card for a business type without Lead Desk", async () => {
     await view(data());
     expect(document.querySelector('[data-part="new-leads"]')).toBeNull();
   });
-  it("'Your team' says 'Not available yet' when the helpers could not be read", async () => {
+  it("'My AI team' is not drawn when the helpers could not be read (Today never says 'Not available yet')", async () => {
     await view(data({ team: null }));
-    expect(within(screen.getByRole("heading", { name: "Your team" }).closest("section")!).getByText("Not available yet")).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "My AI team" })).toBeNull();
   });
 });
 
@@ -262,12 +277,12 @@ describe("Today: sending stopped", () => {
 });
 
 describe("Today: sections that have no data are not drawn, and nothing is invented", () => {
-  it("with nothing readable it still draws the header, the card and the two honest places", async () => {
+  it("with nothing readable it still draws the header, and no part says 'Not available yet' (owner's review, 5 Nov: hide it instead)", async () => {
     await view({ ...NOTHING_TODAY }, { name: null });
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
     expect(document.querySelector('[data-part="visits"]')).toBeNull();
     expect(document.querySelector('[data-part="done"]')).toBeNull();
-    expect(screen.getAllByText("Not available yet").length).toBeGreaterThanOrEqual(3);
+    expect(screen.queryByText("Not available yet")).toBeNull();
     expect(screen.queryByText(/₹/)).toBeNull();
   });
 });
