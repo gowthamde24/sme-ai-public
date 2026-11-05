@@ -78,3 +78,44 @@ def pull(runtime: Runtime, service: LeadSourcesService, ctx: TenantContext) -> d
         "window_start": start,
         "window_end": end,
     }
+
+
+def check(runtime: Runtime, service: LeadSourcesService, ctx: TenantContext) -> dict[str, Any]:
+    """The setup card's "Pull now" (owner, 5 Nov 2026). With the workspace's OWN key only. While the workspace takes synthetic data only (the real-data gate is closed, or cannot be read: closed),
+    the key is CHECKED with one read of the last day and NOTHING is imported; with the gate open, the ordinary pull runs. Answers the setup test's shape {ok, reason, detail} (no key, no lead)."""
+    from datetime import timedelta
+
+    from app.workspace_secrets import SecretStoreError
+
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    secrets = getattr(runtime, "workspace_secrets", None)
+    if secrets is None:
+        return {"ok": False, "reason": "no_key", "detail": "Your own IndiaMART key can't be saved here yet."}
+    try:
+        own = secrets.key(token, tenant, "indiamart_key")
+    except SecretStoreError:
+        return {"ok": False, "reason": "not_reachable", "detail": "Your key could not be read right now. Try again in a minute."}
+    if not own:
+        return {"ok": False, "reason": "no_key", "detail": "Paste your IndiaMART CRM key first."}
+    gate_open = False
+    erasure = getattr(runtime, "erasure", None)
+    if erasure is not None:
+        try:
+            gate_open = bool(erasure.data_policy(token, tenant).real_data_allowed)
+        except Exception:   # noqa: BLE001 - unreadable = closed
+            gate_open = False
+    if gate_open:
+        try:
+            out = pull(runtime, service, ctx)
+        except ApiError as exc:
+            return {"ok": False, "reason": "key_rejected" if exc.code == "indiamart_unauthorized" else "not_reachable", "detail": "IndiaMART did not accept the pull right now."}
+        return {"ok": True, "reason": None, "detail": f"It works: {out['fetched']} enquiries read, {out['created']} new leads added."}
+    from app.connectors.indiamart import IndiaMartPull
+
+    end = datetime.now(UTC)
+    try:
+        leads = IndiaMartPull(own).pull(end - timedelta(days=1), end)
+    except ProviderError as exc:
+        reason = "key_rejected" if exc.code == "unauthorized" else "timeout" if exc.code == "timeout" else "not_reachable"
+        return {"ok": False, "reason": reason, "detail": "IndiaMART did not accept this key." if reason == "key_rejected" else "IndiaMART could not be reached right now. Try again later."}
+    return {"ok": True, "reason": None, "detail": f"Your key works: IndiaMART has {len(leads)} enquiries from the last day. Nothing was imported: this workspace takes example data only."}
