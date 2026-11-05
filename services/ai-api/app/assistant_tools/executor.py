@@ -6,7 +6,7 @@ that asked for it) so the action log can name it.
 
 Undo (declared by the catalogue):
   * snapshot  before a settings PUT, the matching GET is read and kept, reduced to the fields the PUT accepts; undo PUTs it back;
-  * inverse   archive -> restore, pause -> resume, disable -> enable, with the same path;
+  * inverse   archive -> restore, pause -> resume, disable -> enable, with the same path; an import -> its undo (by its import_id);
   * none      no clean way back: the plan card says so before the OK.
 A screen-only operation, or a name that is not in the catalogue, is refused here before anything is sent."""
 
@@ -109,6 +109,17 @@ def url_of(d: catalog.Decision, tenant_id: uuid.UUID, path: dict[str, str]) -> s
     return out
 
 
+def inverse_path(cat: Catalogue, tool: str, call: Call) -> dict[str, str]:
+    """The undo route's path parameters: the step's own, and any other from its body (an import's undo is addressed by the import's `import_id`)."""
+    d = cat.by_name.get(tool)
+    names = [n for n in PARAM.findall(d.op.path) if n != "tenant_id"] if d is not None else []
+    out = {n: call.path[n] for n in names if n in call.path}
+    for n in names:
+        if n not in out and isinstance(call.body, dict) and call.body.get(n) is not None:
+            out[n] = str(call.body[n])
+    return out
+
+
 async def run(client: httpx.AsyncClient, cat: Catalogue, tenant_id: uuid.UUID, token: str, call: Call, message_id: uuid.UUID | None = None) -> Result:
     """Send the tool's request through the application. `client` is an AsyncClient on the app's own ASGI transport (or, in a test, the TestClient's)."""
     d = cat.tool(call.tool)
@@ -123,7 +134,7 @@ async def run(client: httpx.AsyncClient, cat: Catalogue, tenant_id: uuid.UUID, t
             keep = cat.put_fields(d.op.name)
             undo = {"kind": "snapshot", "tool": d.op.name, "path": dict(call.path), "body": {k: v for k, v in before.json().items() if k in keep}}
     elif d.undo == "inverse" and d.undo_via:
-        undo = {"kind": "inverse", "tool": d.undo_via, "path": dict(call.path)}
+        undo = {"kind": "inverse", "tool": d.undo_via, "path": inverse_path(cat, d.undo_via, call)}
     response = await client.request(d.op.method, url, params=call.query or None, json=call.body if d.op.method != "GET" else None, headers=headers)
     try:
         answer: Any = response.json()

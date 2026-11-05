@@ -109,13 +109,20 @@ async def stream_url(request: Request) -> Response:
     if service is None or service.gate_settings.mode == "off":
         log.info("exotel_stream_url refused=off")
         raise ApiError(403, "telephony_off", "Phone calls are not answered here.")
-    caller = normalise(inbound.first(params, "CallFrom", "From", "from"))
-    if caller is not None and service.gate_settings.mode == "sandbox" and caller not in service.gate_settings.sandbox_numbers:
+    raw_caller = inbound.first(params, "CallFrom", "From", "from")
+    caller = normalise(raw_caller)
+    ours = service.trial.caller if service.trial is not None and service.trial.caller else next(iter(sorted(service.gate_settings.sandbox_numbers)), None)
+    log.info("exotel_stream_url %s from_vs_callfrom=%s", inbound.caller_diagnosis(raw_caller, ours),
+             "same" if normalise(params.get("From", "")) == normalise(params.get("CallFrom", "")) else "differ")
+    # the shared trial number may pass on an altered caller number (the stream decides there, without the caller); every other number: a named caller off the sandbox list gets no address
+    if caller is not None and service.trial is None and service.gate_settings.mode == "sandbox" and caller not in service.gate_settings.sandbox_numbers:
         log.info("exotel_stream_url refused=not_on_sandbox_list")
         raise ApiError(403, "not_on_sandbox_list", "This number is not answered here.")
-    token = inbound.mint(service.secret, inbound.monotonic(), inbound.first(params, "CallSid", "call_sid", "CallSID"))
+    call_sid = inbound.first(params, "CallSid", "call_sid", "CallSID")
+    log.info("exotel_stream_url call_sid_fp=%s", inbound.fingerprint(service.secret, call_sid))
+    token = inbound.mint(service.secret, inbound.monotonic(), call_sid)
     url = inbound.stream_url(service.public_base, token)
-    log.info("exotel_stream_url issued format=%s query_chars=%d", service.url_format, len(url.split("?", 1)[1]))
+    log.info("exotel_stream_url issued format=%s token_in=path url_chars=%d", service.url_format, len(url))
     if service.url_format == "text":
         return PlainTextResponse(url)
     return JSONResponse({"url": url})
@@ -160,11 +167,22 @@ async def _refuse(wire: Any, line: Any, reason: str) -> None:
 
 @router.websocket("/stream")
 async def stream(ws: WebSocket) -> None:
+    await _stream(ws, "")
+
+
+@router.websocket("/stream/{token}")
+async def stream_with_token(ws: WebSocket, token: str) -> None:
+    """The token in the path (the address the Voicebot URL answers): it survives a provider that drops the query string."""
+    await _stream(ws, token)
+
+
+async def _stream(ws: WebSocket, path_token: str) -> None:
     runtime = getattr(ws.app.state, "runtime", None)
-    log.info("exotel_stream open headers=%s params=%s", ",".join(sorted(k.lower() for k in ws.headers.keys())), ",".join(sorted(ws.query_params.keys())) or "-")
+    log.info("exotel_stream open headers=%s params=%s path_token=%s", ",".join(sorted(k.lower() for k in ws.headers.keys())), ",".join(sorted(ws.query_params.keys())) or "-",
+             "yes" if path_token else "no")
     await ws.accept()
     await handle(_service(ws.app), getattr(runtime, "browser_voice", None) if runtime is not None else None, getattr(runtime, "live_calls", None) if runtime is not None else None,
-                 ws.query_params.get("t") or "", StarletteWire(ws))
+                 path_token or ws.query_params.get("t") or "", StarletteWire(ws))
 
 
 async def handle(service: InboundService | None, bv: Any, live: Any, token: str, wire: Any, *, open_timeout: float = 10.0) -> None:
@@ -177,6 +195,7 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     if start is None:
         log.info("exotel_inbound refused=no_start")
         return await _close(wire)
+    log.info("exotel_stream start call_sid_fp=%s stream_sid_fp=%s", inbound.fingerprint(service.secret, start.call_sid), inbound.fingerprint(service.secret, start.stream_sid))
     if not inbound.verify(service.secret, token, inbound.monotonic(), start.call_sid):
         return await _refuse(wire, line, "bad_token")
     decision = await inbound.admit(start, service.gate_settings, find_line=service.store.line_find, calls=service.calls, active_calls=live.count() if live is not None else 0, now=inbound.now_utc(),

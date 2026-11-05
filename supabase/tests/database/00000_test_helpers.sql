@@ -622,6 +622,13 @@ begin
   insert into public.prospects (id, tenant_id, search_id, name, name_key, area, phone, phone_key, source, source_label, place_id, qualification) values
     (tests.rid(p || '_er_prosp'), t, tests.rid(p || '_er_psrch'), 'Lfdq7 Silks', 'lfdq7 silks', 'Lfdq7 Jayanagar', '+91 98450 12345', '919845012345', 'fixture', 'Lfdq7 search, 2 Nov',
      'fx_' || p || '_er_prosp', '{"summary": "Lfdq7 wants 40 sarees a month"}'::jsonb);
+  -- job assistant-does-the-work A2: a file dropped in the chat (its name and its bytes), a plan card (its title and the file's name) and a step of the action log carry a business canary
+  insert into public.assistant_files (id, tenant_id, created_by, name, content_type, kind, size_bytes, sha256, data, expires_at) values
+    (tests.rid(p || '_er_afile'), t, tests.uid(p || '_owner'), 'Awfq7 leads.csv', 'text/csv', 'sheet', 22, repeat('0', 64), convert_to('name,phone' || chr(10) || 'Awfq7,90001', 'UTF8'), now() + interval '1 hour');
+  insert into public.assistant_work_plans (id, tenant_id, message_id, requested_by, title, file_name, steps, expires_at) values
+    (tests.rid(p || '_er_aplan'), t, tests.rid(p || '_er_amsg'), tests.uid(p || '_owner'), 'Add 1 lead from ''Awfq7 leads.csv''', 'Awfq7 leads.csv', '[{"tool": "lead-imports.import_leads"}]'::jsonb, now() + interval '10 minutes');
+  insert into public.assistant_work_actions (id, tenant_id, plan_id, step_no, tool, summary, requested_by, decided_by, message_id, status) values
+    (tests.rid(p || '_er_aact'), t, tests.rid(p || '_er_aplan'), 1, 'lead-imports.import_leads', 'Added 1 lead from Awfq7 leads.csv', tests.uid(p || '_owner'), tests.uid(p || '_owner'), tests.rid(p || '_er_amsg'), 'done');
 end $$;
 
 -- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).

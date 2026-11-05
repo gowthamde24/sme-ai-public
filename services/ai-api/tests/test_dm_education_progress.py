@@ -143,7 +143,11 @@ def test_marks_are_not_stored_and_no_campaign_kind_carries_them_yet() -> None:
     assert not re.search(r"\b(marks|grade|score|attendance)\b", json.dumps(pack.get("custom_fields", {})).lower()), "the pack's own fields hold no marks either"
 
 
-def test_the_education_pack_has_no_lead_finding_and_no_research() -> None:
+def test_the_education_pack_has_no_research_and_finds_organisations_only() -> None:
     pack = json.loads((PACKS / "education" / "pack.json").read_text())
-    assert not {"lead_finder", "research", "companies", "catalogue", "quotes", "orders"} & set(pack["modules"])
+    assert not {"research", "companies", "catalogue", "quotes", "orders"} & set(pack["modules"])
+    # owner decision 4 Nov 2026: the Lead Finder for a school finds ORGANISATIONS only, never individuals or families
+    assert "lead_finder" in pack["modules"]
+    finder = json.loads((PACKS / "education" / "lead_finder.json").read_text())
+    assert finder["audience"] == "organisations" and finder["uses_stock"] is False
     assert {"enquiries", "fees", "campaigns", "followups", "voice_notes", "programmes", "call_list"} <= set(pack["modules"]), "what a school does: admission enquiries, fee reminders, messages to parents"

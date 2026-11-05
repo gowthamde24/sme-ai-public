@@ -1,0 +1,45 @@
+{
+ "$comment": "Lead Finder data for a school (ADR 0119; owner decision 4 Nov 2026): ORGANISATIONS ONLY (associations, companies and their HR, coaching centres, transport and event vendors, institutions), never individuals or families. Families are reached only from the school's own enquiry list. Read by app/lead_finder/packdata.py. Every prospect in `fixture` is INVENTED: synthetic names, '+00' numbers (the reserved demo range), no real organisation.",
+ "audience": "organisations",
+ "uses_stock": false,
+ "persona": "organisation",
+ "default_query": {"en": "apartment associations", "te": "అపార్ట్‌మెంట్ అసోసియేషన్లు"},
+ "category_hint": "other",
+ "buyer_types": [
+  {"code": "residents_association", "label": "Residents' association", "weight": 40, "words": ["association", "apartment", "apartments", "residents", "welfare", "gated community", "owners association", "society", "అసోసియేషన్", "संघ", "एसोसिएशन", "ಸಂಘ", "ಅಸೋಸಿಯೇಷನ್"]},
+  {"code": "company_hr", "label": "Company (HR)", "weight": 36, "words": ["company", "pvt", "private limited", "ltd", "technologies", "solutions", "software", "industries", "corporate", "office", "hr", "కంపెనీ", "कंपनी", "ಕಂಪನಿ"]},
+  {"code": "coaching_centre", "label": "Coaching centre", "weight": 30, "words": ["coaching", "tuition", "tutorial", "academy", "classes", "కోచింగ్", "कोचिंग", "ಕೋಚಿಂಗ್"]},
+  {"code": "institution", "label": "Institution", "weight": 30, "words": ["college", "foundation", "trust", "ngo", "club", "library", "community centre", "సంస్థ", "संस्था", "ಸಂಸ್ಥೆ"]},
+  {"code": "vendor", "label": "Transport or event vendor", "weight": 24, "words": ["transport", "travels", "bus", "cab", "events", "event management", "caterers", "decorators", "tent house"]}
+ ],
+ "related_types": [],
+ "competitor_words": ["school", "schools", "vidyalaya", "public school", "international school", "high school", "convent"],
+ "very_large_words": ["university", "multinational", "group of companies"],
+ "very_large_reviews": 3000,
+ "call": {
+  "purpose": {"en": "We are a school near you, and we would like to tell your members about admissions and work together on events.", "te": "మేము మీ దగ్గరలోని స్కూల్. admissions గురించి మీ members కి చెప్పాలని, events లో కలిసి పనిచేయాలని అనుకుంటున్నాం."},
+  "questions": {
+   "sells": {"en": "What does your organisation do, and roughly how many members or employees does it have?", "te": "మీ సంస్థ ఏం చేస్తుంది, సుమారు ఎంత మంది members లేదా employees ఉన్నారు?"},
+   "price": {"en": "Do your members or employees have children of school age?", "te": "మీ members లేదా employees కి స్కూల్ వయసు పిల్లలు ఉన్నారా?"},
+   "quantity": {"en": "Would a notice or a short talk for your members be possible?", "te": "మీ members కోసం ఒక notice లేదా చిన్న talk పెట్టే వీలుందా?"},
+   "supplier": {"en": "Do you work with any school already?", "te": "ఇప్పటికే ఏదైనా స్కూల్‌తో కలిసి పనిచేస్తున్నారా?"},
+   "timing": {"en": "When would be a good time, before admissions open?", "te": "admissions మొదలయ్యే ముందు ఏ సమయం బాగుంటుంది?"},
+   "decision": {"en": "Who decides on this in your organisation?", "te": "మీ సంస్థలో దీని గురించి ఎవరు decide చేస్తారు?"}
+  }
+ },
+ "fixture": {
+  "$comment": "INVENTED organisations for demo workspaces. {area} is the searched area. kind: buyer | related | competitor | very_large | not_buyer | no_phone.",
+  "templates": [
+   {"name": "{area} Residents Welfare Association", "category": "Residents' association", "kind": "buyer", "rating": 4.4, "reviews": 85},
+   {"name": "Green Meadows Apartment Owners Association", "category": "Residents' association", "kind": "buyer", "rating": 4.2, "reviews": 40},
+   {"name": "Sunrise Technologies Pvt Ltd", "category": "Software company", "kind": "buyer", "rating": 4.1, "reviews": 210},
+   {"name": "Vikas Coaching Academy", "category": "Coaching centre", "kind": "buyer", "rating": 4.5, "reviews": 132},
+   {"name": "Sri Sai Travels", "category": "Bus and cab service", "kind": "buyer", "rating": 4.0, "reviews": 64},
+   {"name": "Udaya Foundation", "category": "Charitable trust", "kind": "buyer", "rating": 4.6, "reviews": 22},
+   {"name": "{area} Public School", "category": "School", "kind": "competitor", "rating": 4.3, "reviews": 410},
+   {"name": "Annapurna Caterers", "category": "Caterer", "kind": "buyer", "rating": 3.9, "reviews": 18},
+   {"name": "City Mall", "category": "Shopping mall", "kind": "not_buyer", "rating": 4.2, "reviews": 5200},
+   {"name": "Lakshmi Function Hall", "category": "Function hall", "kind": "no_phone", "rating": 4.1, "reviews": 75}
+  ]
+ }
+}

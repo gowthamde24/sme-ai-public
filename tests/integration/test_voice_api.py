@@ -155,10 +155,12 @@ def test_the_recording_is_never_stored(harness: Harness) -> None:
         operator_sql.sql("select count(*) from public.assistant_messages where body like 'RIFF%'")
         == rows
     )
-    # and no column anywhere holds audio: the only tables the request touched keep text
+    # and no column anywhere holds audio: the only tables the request touched keep text. One named exception: a file dropped in the chat (assistant_files.data, job
+    # assistant-does-the-work A2) holds a sheet, a PDF, a picture, a document, a contacts file or a text list for at most 24 hours; audio is refused at the door (415) and by its closed `kind`
     assert (
         operator_sql.sql(
             "select count(*) from information_schema.columns where table_schema = 'public' and (column_name like '%audio%' or data_type = 'bytea')"
+            " and not (table_name = 'assistant_files' and column_name = 'data')"
         )
         == "0"
     )

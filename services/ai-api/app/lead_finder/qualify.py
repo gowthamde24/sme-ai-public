@@ -48,6 +48,8 @@ L: dict[str, dict[str, str]] = {
         "close_q": "Thank you, the owner will call you with a quote. Have a good day!",
         "close": "Thank you for your time. Have a good day!",
         "repeat": "Sorry, I did not catch that.",
+        "org_offer": "Shall someone from {business} call you to plan a short visit or a notice for your members?",
+        "org_close_q": "Thank you, someone from {business} will call you to plan it. Have a good day!",
     },
     "te": {
         "intro": "నమస్కారం అండీ, నేను {business} నుంచి AI assistant ని మాట్లాడుతున్నాను. {purpose} రెండు నిమిషాలు మాట్లాడొచ్చా?",
@@ -69,6 +71,8 @@ L: dict[str, dict[str, str]] = {
         "close_q": "థాంక్యూ అండీ, owner గారు quote తో మీకు call చేస్తారు. మంచి రోజు!",
         "close": "మీ time కి థాంక్యూ అండీ. మంచి రోజు!",
         "repeat": "Sorry అండీ, సరిగ్గా వినపడలేదు.",
+        "org_offer": "మీ members కోసం ఒక చిన్న visit లేదా notice plan చేయడానికి {business} నుంచి ఎవరైనా మీకు call చేయమంటారా?",
+        "org_close_q": "థాంక్యూ అండీ, {business} నుంచి ఎవరైనా plan చేయడానికి మీకు call చేస్తారు. మంచి రోజు!",
     },
 }
 
@@ -193,6 +197,9 @@ class Qualifier:
         return self.available[:3]
 
     def _pitch(self) -> tuple[str, str]:
+        if not self.data.uses_stock:   # an organisation (a school's Lead Finder): no stock to offer; the offer is a visit or a notice for its members
+            self.state = "offer"
+            return self._w("org_offer"), "pitch"
         items = self._pitch_items()
         self.pitched = [s.name for s in items]
         if not items:
@@ -279,7 +286,7 @@ class Qualifier:
                 if said:
                     return said
             if intent in ("yes", "answer"):
-                return self._end("close_q", "qualified", "goodbye")
+                return self._end("close_q" if self.data.uses_stock else "org_close_q", "qualified", "goodbye")
             return self._end("close", "qualified" if self.captured else "contacted", "goodbye")
         return self._end("close", "contacted", "goodbye")
 
@@ -292,6 +299,12 @@ _ANSWERS: dict[str, dict[str, dict[str, str]]] = {
                "supplier": "We buy from a wholesaler in Chickpet.", "timing": "We stock up in September for the wedding season.", "decision": "I decide, I am the owner."},
         "te": {"sells": "ఎక్కువగా పట్టు, soft silk చీరలు, కొన్ని cotton.", "price": "మూడు వేల నుంచి ఎనిమిది వేల మధ్య ఎక్కువ అమ్ముడవుతాయి.", "quantity": "నెలకి సుమారు నలభై pieces, season లో ఎక్కువ.",
                "supplier": "Chickpet లో ఒక wholesaler దగ్గర తీసుకుంటాం.", "timing": "పెళ్ళిళ్ళ season కి September లో stock తీసుకుంటాం.", "decision": "నేనే decide చేస్తాను, నేనే owner ని."},
+    },
+    "organisation": {
+        "en": {"sells": "We are the residents' association of about two hundred flats.", "price": "Yes, many families here have school-age children.", "quantity": "A notice on our board is possible, and a talk on a Sunday.",
+               "supplier": "No, we do not work with any school.", "timing": "Before March would be good.", "decision": "The committee decides; I am the secretary."},
+        "te": {"sells": "మేము సుమారు రెండు వందల flats ఉన్న residents' association.", "price": "అవును, ఇక్కడ చాలా కుటుంబాల్లో స్కూల్ వయసు పిల్లలు ఉన్నారు.", "quantity": "మా board మీద notice పెట్టొచ్చు, ఆదివారం ఒక talk కూడా.",
+               "supplier": "లేదు, ఏ స్కూల్‌తోనూ కలిసి పనిచేయడం లేదు.", "timing": "March ముందు అయితే బాగుంటుంది.", "decision": "committee decide చేస్తుంది; నేను secretary ని."},
     },
     "materials": {
         "en": {"sells": "Two independent houses and one small apartment.", "price": "We get cement at around the market rate.", "quantity": "About two hundred bags of cement a month.",
@@ -380,13 +393,19 @@ def simulate(*, business: str, data: PackLeadFinder, stock: list[StockLine], lan
     if result.outcome == "qualified":
         qty = q.captured.get("quantity", "")
         result.quote_suggestion = [{"item": s.name, "unit": s.unit, "price_paise": s.price_paise, "moq": s.moq, "quantity_said": qty[:120]} for s in stock if s.name in q.pitched]
-    result.summary = summary(result)
+    result.summary = summary(result, organisation=not data.uses_stock)
     return result
 
 
-def summary(r: CallResult) -> str:
-    """Three short lines from the captured answers only (no model): what they sell, how much and when, the result."""
+def summary(r: CallResult, *, organisation: bool = False) -> str:
+    """Three short lines from the captured answers only (no model): what they sell, how much and when, the result. An organisation (a school's Lead Finder): who they are, what is possible, when."""
     c = r.captured
+    if organisation:
+        first = f"About: {c['sells']}" if c.get("sells") else "Did not say who they are."
+        second = "; ".join(x for x in (c.get("quantity") and f"Possible: {c['quantity']}", c.get("timing") and f"Timing: {c['timing']}", c.get("supplier") and f"Works with a school: {c['supplier']}") if x) or "Nothing agreed yet."
+        third = {"qualified": "Interested: someone from the school should call to plan a visit or a notice.", "contacted": "Asked to be called later." if r.callback else "Call ended without interest.",
+                 "not_interested": "Not interested: will not be called again.", "do_not_call": "Asked not to be called again."}[r.outcome]
+        return f"{first}\n{second}\n{third}"[:1200]
     first = f"Sells: {c['sells']}" if c.get("sells") else "Did not say what they sell."
     second = "; ".join(x for x in (c.get("quantity") and f"Quantity: {c['quantity']}", c.get("timing") and f"Timing: {c['timing']}", c.get("supplier") and f"Buys from: {c['supplier']}") if x) or "No quantity or timing given."
     third = {"qualified": "Interested: the owner should call with a quote.", "contacted": "Asked to be called later." if r.callback else "Call ended without interest.",

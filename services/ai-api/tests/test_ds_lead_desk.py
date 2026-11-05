@@ -35,7 +35,7 @@ def test_lead_desk_is_in_the_closed_list_of_modules_and_no_pack_lists_it() -> No
 def test_the_calls_plans_carry_the_lead_desk_names_and_the_web_copy_is_the_same_file() -> None:
     plans = json.loads((ROOT / "packages" / "plans" / "plans.json").read_text(encoding="utf-8"))
     names = {p["id"]: p["name"]["en"] for p in plans["plans"]}
-    assert plans["version"] == 3
+    assert plans["version"] >= 4
     assert names["calls_payg"] == "Pay as you go" and names["calls_300"] == "Lead Desk 300" and names["calls_1000"] == "Lead Desk 1,000"
     assert names["starter"] == "Starter" and names["growth"] == "Growth" and names["business"] == "Business", "the main plans keep their names"
     assert json.loads((ROOT / "apps" / "web" / "lib" / "plan" / "plans.draft.json").read_text(encoding="utf-8")) == plans

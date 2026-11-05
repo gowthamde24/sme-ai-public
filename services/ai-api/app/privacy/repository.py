@@ -32,6 +32,11 @@ _ERRORS: dict[str, type[RepositoryError]] = {
 }
 
 
+
+# a table whose columns are not all granted to a member reads the granted ones: a file dropped in the chat (job assistant-does-the-work A2) gives its name, type and size; its bytes are read back
+# only by the person who dropped it and are deleted within a day
+SELECT_OF: dict[str, str] = {"assistant_files": "id,tenant_id,created_by,name,content_type,kind,size_bytes,sha256,expires_at,created_at"}
+
 class PrivacyRepository(Protocol):
     # data exports
     def export_request(self, token: str, export_id: uuid.UUID, scope: str, tenant_id: uuid.UUID | None) -> dict[str, Any]: ...
@@ -150,7 +155,7 @@ class PostgrestPrivacyRepository:
     def read_table_page(self, token: str, table: str, tenant_id: uuid.UUID, order: str, offset: int, limit: int) -> list[dict[str, Any]]:
         result = self._send(
             "GET", f"/{table}", token,
-            params={"tenant_id": f"eq.{tenant_id}", "select": "*", "order": order, "offset": str(offset), "limit": str(limit)},
+            params={"tenant_id": f"eq.{tenant_id}", "select": SELECT_OF.get(table, "*"), "order": order, "offset": str(offset), "limit": str(limit)},
         )  # fmt: skip
         if not isinstance(result, list):
             raise UpstreamError("unexpected table result")
