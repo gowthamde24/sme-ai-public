@@ -655,7 +655,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
           </section>
         ) : null}
         {section === "activity" && activity ? (
-          <AssistantActivity entries={activity.entries} range={activity.range} words={wordsFor(lang, ["asstact."])} lang={lang} base={base} canUndo={tenant.role === "owner"} mode={activity.mode} />
+          <AssistantActivity entries={activity.entries} range={activity.range} words={wordsFor(lang, ["asstact.", "bv.work.step.err."])} lang={lang} base={base} canUndo={tenant.role === "owner"} mode={activity.mode} />
         ) : null}
         {section === "privacy" && privacy ? (
           <PrivacySection

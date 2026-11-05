@@ -42,7 +42,7 @@ export default async function AssistantWorkPreview({ params }: PageProps<"/app/t
       <div className="mt-6 flex flex-col gap-8">
         <WorkPreview words={wordsFor(lang, ["bv.work.", "awp."], ["bv.bar.placeholder", "bv.chat.err.mfa", "bv.chat.err.forbidden", "bv.chat.err.down"])} base={base} />
         <div className="max-w-3xl">
-          <AssistantActivity entries={entries} range="week" words={wordsFor(lang, ["asstact."])} lang={lang} base={base} canUndo mode="mock" />
+          <AssistantActivity entries={entries} range="week" words={wordsFor(lang, ["asstact.", "bv.work.step.err."])} lang={lang} base={base} canUndo mode="mock" />
         </div>
       </div>
     </main>

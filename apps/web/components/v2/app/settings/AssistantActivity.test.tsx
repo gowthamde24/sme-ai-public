@@ -4,7 +4,7 @@ import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { appDict } from "@/i18n/app";
 import { fixtureTransport, type WorkTransport } from "@/lib/assistant-work/client";
 import { ACTIVITY_JSON, FIXTURE_NOW, TENANT_BASE } from "@/lib/assistant-work/fixtures";
-import { parseActivity } from "@/lib/assistant-work/types";
+import { parseActivity, parseActivityEntry } from "@/lib/assistant-work/types";
 import { readActivity } from "@/lib/assistant-work/source";
 
 import { AssistantActivity, whenText } from "./AssistantActivity";
@@ -12,7 +12,7 @@ import { AssistantActivity, whenText } from "./AssistantActivity";
 // the made-up answers are a chunk of their own (loaded on first use): loaded once here, so each test sees answers at the pace it expects
 beforeAll(async () => void (await import("@/lib/assistant-work/fixture-transport")));
 
-const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("asstact.")));
+const WORDS = Object.fromEntries(Object.entries(appDict("en") as Record<string, string>).filter(([k]) => k.startsWith("asstact.") || k.startsWith("bv.work.step.err.")));
 const TE = Object.fromEntries(Object.entries(appDict("te") as Record<string, string>).filter(([k]) => k.startsWith("asstact.")));
 const ENTRIES = parseActivity(ACTIVITY_JSON)?.items ?? [];
 const draw = (p: Partial<Parameters<typeof AssistantActivity>[0]> = {}) => render(<AssistantActivity entries={ENTRIES} range="week" words={WORDS} lang="en" base={TENANT_BASE} canUndo mode="on" transport={fixtureTransport({ delay: 0 })} {...p} />);
@@ -62,5 +62,13 @@ describe("Settings > Activity", () => {
   it("the mock list is judged against the fixtures' own clock: today is today's, the week is the week's", async () => {
     expect((await readActivity("mock", { token: "t", tenantId: "x" }, "today"))?.map((e) => e.tool)).toEqual(["lead-imports.commit", "calls.set_hours"]);
     expect(await readActivity("mock", { token: "t", tenantId: "x" }, "week", FIXTURE_NOW)).toHaveLength(4);
+  });
+  it("a failed action says why, in a plain word (C1 #332 `error`); one that did not fail, or an unknown code, says nothing more", () => {
+    draw();
+    const failed = document.querySelector('[data-status="failed"]')!;
+    expect(failed.querySelector('[data-activity="error"]')?.textContent).toBe("Why: some details were not right");
+    expect(document.querySelectorAll('[data-activity="error"]')).toHaveLength(1);
+    expect(parseActivityEntry({ ...ACTIVITY_JSON.items[4], error: "something_new" })?.error).toBeNull();
+    expect(parseActivityEntry({ ...ACTIVITY_JSON.items[0], error: "down" })?.error).toBeNull(); // only a failed one keeps its reason
   });
 });

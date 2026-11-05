@@ -145,7 +145,7 @@ export type UndoState = (typeof UNDO_STATES)[number];
  * The contract, section 3: `GET /assistant/actions?since=<iso>&before=<iso>&limit=50` -> `{items: [{action_id, tool, summary, changed, requested_by, message_id, at, status, undo}], next_before}`
  * (Owner, Admin). Every entry is "by the assistant, on <requested_by>'s request". Undo: `POST /assistant/actions/{action_id}/undo` -> the entry (offered for 7 days, then `undo: "expired"`).
  */
-export type ActivityEntry = { actionId: string; tool: string; summary: string; changed: string | null; requestedBy: string | null; messageId: string | null; at: string; status: "done" | "failed" | "undone"; undo: UndoState };
+export type ActivityEntry = { actionId: string; tool: string; summary: string; changed: string | null; requestedBy: string | null; messageId: string | null; at: string; status: "done" | "failed" | "undone"; undo: UndoState ; /** Why a failed action did not go through (C1 #332): a closed code drawn as a plain word; null when it did not fail or the API gave none. */ error: StepError | null };
 
 // ---- parsers ----------------------------------------------------------------------------------------------------------
 
@@ -297,7 +297,7 @@ export function parseActivityEntry(json: unknown): ActivityEntry | null {
   const at = str(json.at, 60);
   const status = one(["done", "failed", "undone"] as const, json.status);
   if (!actionId || !tool || !summary || !at || Number.isNaN(Date.parse(at)) || !status) return null;
-  return { actionId, tool, summary, changed: str(json.changed, 400), requestedBy: str(json.requested_by, 120), messageId: id(json.message_id), at, status, undo: one(UNDO_STATES, json.undo) ?? "none" };
+  return { actionId, tool, summary, changed: str(json.changed, 400), requestedBy: str(json.requested_by, 120), messageId: id(json.message_id), at, status, undo: one(UNDO_STATES, json.undo) ?? "none", error: status === "failed" ? one(STEP_ERRORS, json.error) : null };
 }
 
 export function parseActivity(json: unknown): { items: ActivityEntry[]; nextBefore: string | null } | null {

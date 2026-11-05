@@ -197,7 +197,7 @@ export const ACTIVITY_JSON = {
     { action_id: "f1000000-0000-4000-8000-000000000002", tool: "calls.set_hours", summary: "Changed calling hours", changed: "9:30 am – 8:00 pm → 10:00 am – 7:00 pm", requested_by: "Srinivas Reddy", message_id: "f2000000-0000-4000-8000-000000000002", at: "2026-11-04T06:05:00Z", status: "done", undo: "available" },
     { action_id: "f1000000-0000-4000-8000-000000000003", tool: "team.invite", summary: "Invited Ravi Kumar as Staff", changed: null, requested_by: "Srinivas Reddy", message_id: null, at: "2026-11-03T12:20:00Z", status: "done", undo: "none" },
     { action_id: "f1000000-0000-4000-8000-000000000004", tool: "voice.set", summary: "Switched the voice to a male Telugu voice", changed: "Ramya → Kiran", requested_by: "Srinivas Reddy", message_id: null, at: "2026-11-02T10:00:00Z", status: "undone", undo: "done" },
-    { action_id: "f1000000-0000-4000-8000-000000000005", tool: "catalogue.update_prices", summary: "Tried to update 18 prices", changed: "Nothing changed: the price list had no prices in one column", requested_by: "Kavya Gowda", message_id: null, at: "2026-11-01T09:30:00Z", status: "failed", undo: "none" },
+    { action_id: "f1000000-0000-4000-8000-000000000005", tool: "catalogue.update_prices", summary: "Tried to update 18 prices", changed: "Nothing changed: the price list had no prices in one column", requested_by: "Kavya Gowda", message_id: null, at: "2026-11-01T09:30:00Z", status: "failed", undo: "none", error: "invalid" },
   ],
   next_before: null,
 };

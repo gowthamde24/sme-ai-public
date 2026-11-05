@@ -79208,5 +79208,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "asstact.error": {
+  "en": "Why: {why}",
+  "te": "కారణం: {why}",
+  "hi": "वजह: {why}",
+  "kn": "ಕಾರಣ: {why}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

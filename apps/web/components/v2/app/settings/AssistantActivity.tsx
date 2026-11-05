@@ -72,6 +72,11 @@ export function AssistantActivity({ entries, range, words, lang, base, canUndo, 
                   <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-sm font-semibold ${pillOf[e.status]}`}>{t(`asstact.status.${e.status}`)}</span>
                 </div>
                 {e.changed ? <p className="mt-1 text-sm [overflow-wrap:anywhere]">{t("asstact.changed", { what: e.changed })}</p> : null}
+                {e.status === "failed" && e.error ? (
+                  <p data-activity="error" className="mt-1 text-sm font-medium text-red-text">
+                    {t("asstact.error", { why: t(`bv.work.step.err.${e.error}`) })}
+                  </p>
+                ) : null}
                 <p className="mt-1 text-sm text-muted">
                   {e.requestedBy ? t("asstact.by", { name: e.requestedBy }) : t("asstact.by.you")}
                   {" · "}
