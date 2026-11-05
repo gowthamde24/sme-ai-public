@@ -193,8 +193,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     }
   }
   // Settings > My profile: the person's own name, language and picture (any member)
-  let mine: MyProfileData | null = null;
-  if (section === "profile") mine = await getMyProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null));
+  // a failed read says so (with "Try again"), never "Not available yet": My profile is personal and open to every member on every plan
+  let mine: Part<MyProfileData> | null = null;
+  if (section === "profile") mine = await settle(() => getMyProfile(user.accessToken, tenantId)).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : Promise.reject(e)));
   let plan: Plan | null = null;
   let usage: AiUsage | null = null;
   let profile: Part<Awaited<ReturnType<typeof getBusinessProfile>>> | null = null;
@@ -459,22 +460,22 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         ) : null}
         {section === "profile" ? (
           <section className={surface} aria-label={t("settings.tab.profile")}>
-            {mine ? (
+            {mine?.ok ? (
               <MyProfile
                 words={wordsFor(lang, ["settings.me."])}
-                name={mine.displayName ?? ""}
-                addressAs={mine.addressAs}
-                language={mine.language ?? lang}
+                name={mine.data.displayName ?? ""}
+                addressAs={mine.data.addressAs}
+                language={mine.data.language ?? lang}
                 choices={PROFILE_LANGUAGES}
-                pictureUrl={mine.pictureUrl}
-                own={mine.picture === "own"}
+                pictureUrl={mine.data.pictureUrl}
+                own={mine.data.picture === "own"}
                 email={user.email}
                 save={saveMyProfileAction.bind(null, tenantId)}
                 picture={pictureAction.bind(null, tenantId)}
               />
-            ) : (
-              <p className="text-sm text-muted">{t("frame.notyet")}</p>
-            )}
+            ) : mine ? (
+              <PartProblem kind={mine.kind} retryAfter={mine.retryAfter} words={wordsFor(lang, ["apierr.", "problem."])} title={t("settings.tab.profile")} />
+            ) : null}
           </section>
         ) : null}
         {section === "plan" && planScreens() !== "off" ? (
