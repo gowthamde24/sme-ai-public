@@ -18,4 +18,6 @@ export type TodayActions = {
   offerVisit: (id: string, language: OutboxLanguage) => Promise<DecisionResult>;
   /** Confirm, move or cancel a visit Agent OWL proposed (and the free times to move it to). null: the cards offer no buttons. */
   visit: ProposalActions | null;
+  /** "Done" on a caller who asked for a person (C1 #347): the team called back. Optional: a screen without it offers no Done. */
+  callHandled?: (id: string) => Promise<DecisionResult>;
 };

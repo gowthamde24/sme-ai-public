@@ -2,6 +2,7 @@ import { readMyProfileCached } from "../../me-read";
 import type { ClassicKind, NeedsCard, NeedsYouItem, RecentItem, Role, TodayData } from "@/components/v2/app/today/types";
 import { NOTHING_TODAY } from "@/components/v2/app/today/types";
 import { ApiAuthError } from "@/lib/api/client";
+import { getCallBrief, type CallBrief } from "@/lib/api/calls";
 import { listCallRequests, listOutboxApprovals, type CallRequest, type OutboxMessage } from "@/lib/api/outbox";
 import { fetchMembers } from "@/lib/api/orders";
 import type { NeedsYouItem as ApiItem } from "@/lib/api/today";
@@ -48,10 +49,13 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
     const t = today.value;
     const wantsMessages = t.needs_you.some((i) => i.kind === "outbox_approval");
     const wantsCalls = t.needs_you.some((i) => i.kind === "call_approval");
-    const [where, messages, calls] = await Promise.all([
+    // a caller who asked for a person: the call says which lead to call back from (at most ten are read; one that cannot be read keeps its card, without Call back)
+    const asked = t.needs_you.filter((i) => i.kind === "person_requested").slice(0, 10);
+    const [where, messages, calls, briefs] = await Promise.all([
       targetPaths(accessToken, tenantId, [...t.needs_you.filter(isClassic).map((i) => i.target), ...t.recent.map((r) => r.target)]),
       wantsMessages ? listOutboxApprovals(accessToken, tenantId, { limit: 100 }).then((p) => new Map<string, OutboxMessage>(p.items.map((m) => [m.id, m]))).catch(rethrowAuth) : Promise.resolve(null),
       wantsCalls ? listCallRequests(accessToken, tenantId, { status: "requested", limit: 100 }).then((p) => new Map<string, CallRequest>(p.items.map((c) => [c.id, c]))).catch(rethrowAuth) : Promise.resolve(null),
+      Promise.all(asked.map((i) => getCallBrief(accessToken, tenantId, i.target.id).then((b): [string, CallBrief] => [i.id, b]).catch(rethrowAuth))).then((all) => new Map(all.filter((x): x is [string, CallBrief] => x !== null))),
     ]);
     data.cards = { waiting: Math.max(0, t.cards.waiting - (t.skipped ?? 0)), money_held_paise: t.cards.money_held_paise, orders_open: t.cards.orders_open };
     data.needs = t.needs_you.map((i): NeedsCard => {
@@ -61,6 +65,10 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
       if (i.kind === "outbox_approval") {
         const m = messages?.get(i.id);
         return { type: "outbox", key, at: i.at, id: i.id, customer, city: i.city, message: m ? { text: m.text, language: m.language, category: m.category, flags: m.flags, reasonText: m.reason_text, gloss: m.gloss_en, media: m.media.map((x) => ({ position: x.position, thumb_url: x.thumb_url })) } : null };
+      }
+      if (i.kind === "person_requested") {
+        const b = briefs.get(i.id);
+        return { type: "person", key, at: i.at, id: i.target.id, customer, city: i.city, leadHref: b?.leadId ? `/app/tenants/${tenantId}/leads/${b.leadId}` : null, gist: b?.gist ?? null };
       }
       const c = calls?.get(i.id);
       return { type: "call", key, at: i.at, id: i.id, customer, city: i.city, request: c ? { reason: c.reason, language: c.language } : null };

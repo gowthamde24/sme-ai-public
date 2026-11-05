@@ -74,6 +74,10 @@ describe("Today", () => {
     const today = parseToday({ ...TODAY, needs_you: [OUTBOX, CALL, ITEM] });
     expect(today.needs_you.map((i) => [i.kind, i.target.type, i.agent, i.amount_paise])).toEqual([["outbox_approval", "outbox_message", "followup_desk", null], ["call_approval", "call_request", "followup_desk", null], ["quote_approval", "quote", "quote_writer", 500_000]]);
   });
+  it("reads a caller who asked for a person (C1 #347): its target is the call", () => {
+    const PERSON = { ...OUTBOX, kind: "person_requested", summary: "A caller asked to talk to a person. Call them back, then mark it done.", target: { type: "phone_call", id: ID } };
+    expect(parseToday({ ...TODAY, needs_you: [PERSON] }).needs_you.map((i) => [i.kind, i.target.type])).toEqual([["person_requested", "phone_call"]]);
+  });
   it("a message or a call about a lead with no company has no customer name: the item says so with an empty name, the other kinds still need one", () => {
     expect(parseNeedsYouItem({ ...OUTBOX, customer: null }).customer).toBe("");
     expect(parseNeedsYouItem({ ...CALL, customer: null }).customer).toBe("");

@@ -9,6 +9,7 @@ import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { OUTBOX_LANGUAGES, approveCallRequest, approveOutboxMessage, editOutboxMessage, rejectOutboxMessage, type OutboxLanguage } from "@/lib/api/outbox";
+import { markCallHandled } from "@/lib/api/calls";
 import { offerStoreVisit } from "@/lib/api/visits";
 import { requireUser } from "@/lib/auth/session";
 
@@ -101,6 +102,19 @@ export async function offerVisitAction(tenantId: string, id: string, language: O
     const offer = await offerStoreVisit(user.accessToken, tenantId, id, (OUTBOX_LANGUAGES as readonly string[]).includes(language) ? language : "en");
     refresh(tenantId);
     return { ok: true, message: offeredToast(offer, t) };
+  } catch (error) {
+    return failure(error, t);
+  }
+}
+
+/** "Done" on a caller who asked for a person (C1 #347): the team called back, the call leaves Needs you. Owner, Admin and Sales (the API checks); `id` is the call's. A call already marked, or another workspace's, puts the card back as out of date. */
+export async function callHandledAction(tenantId: string, id: string): Promise<DecisionResult> {
+  const { user, t, valid } = await context(tenantId, id);
+  if (!valid) return { ok: false, error: t("today.err.state"), stale: true };
+  try {
+    await markCallHandled(user.accessToken, tenantId, id);
+    refresh(tenantId);
+    return { ok: true, message: t("today.toast.handled") };
   } catch (error) {
     return failure(error, t);
   }

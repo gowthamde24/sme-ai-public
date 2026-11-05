@@ -1953,6 +1953,94 @@
   },
   "humanOnly": true
  },
+ "today.badge.person": {
+  "en": "Asked for a person",
+  "te": "మనిషితో మాట్లాడాలన్నారు",
+  "hi": "इंसान से बात चाहते हैं",
+  "kn": "ವ್ಯಕ್ತಿಯ ಜೊತೆ ಮಾತು ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.badge.person.row": {
+  "en": "Person",
+  "te": "మనిషి",
+  "hi": "इंसान",
+  "kn": "ವ್ಯಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.title.person": {
+  "en": "{customer} asked to talk to a person",
+  "te": "{customer} మనిషితో మాట్లాడాలన్నారు",
+  "hi": "{customer} किसी इंसान से बात करना चाहते हैं",
+  "kn": "{customer} ವ್ಯಕ್ತಿಯ ಜೊತೆ ಮಾತಾಡಬೇಕು ಎಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.person.hint": {
+  "en": "Call them back, then mark it done.",
+  "te": "వారికి తిరిగి కాల్ చేసి, ఆ తర్వాత అయిపోయిందని గుర్తు పెట్టండి.",
+  "hi": "उन्हें वापस कॉल करें, फिर हो गया मार्क करें।",
+  "kn": "ಅವರಿಗೆ ಮರಳಿ ಕಾಲ್ ಮಾಡಿ, ನಂತರ ಆಯಿತು ಎಂದು ಗುರುತಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.callback": {
+  "en": "Call back",
+  "te": "తిరిగి కాల్ చేయండి",
+  "hi": "वापस कॉल करें",
+  "kn": "ಮರಳಿ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.handled": {
+  "en": "Done, we called back",
+  "te": "అయింది, తిరిగి కాల్ చేశాం",
+  "hi": "हो गया, वापस कॉल कर दिया",
+  "kn": "ಆಯಿತು, ಮರಳಿ ಕಾಲ್ ಮಾಡಿದೆವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.handled.row": {
+  "en": "Done",
+  "te": "అయింది",
+  "hi": "हो गया",
+  "kn": "ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.toast.handled": {
+  "en": "Marked as done. It's off your list.",
+  "te": "అయిందని గుర్తు పెట్టాం. మీ లిస్ట్ నుంచి తీసేశాం.",
+  "hi": "हो गया मार्क किया। आपकी लिस्ट से हट गया।",
+  "kn": "ಆಯಿತು ಎಂದು ಗುರುತಿಸಲಾಗಿದೆ. ನಿಮ್ಮ ಪಟ್ಟಿಯಿಂದ ತೆಗೆಯಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.title.reply_to_inbound": {
   "en": "Reply to {customer}",
   "te": "{customer} కి జవాబు",
