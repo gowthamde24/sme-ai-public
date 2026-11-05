@@ -6,6 +6,10 @@ vi.mock("@/design/fonts", () => ({ v2FontClassName: (lang?: string) => `font-${l
 const nav = { pathname: "/app/tenants/22222222-2222-2222-2222-222222222222/orders" };
 vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname, useSearchParams: () => new URLSearchParams(), useRouter: () => ({ refresh: vi.fn() }) }));
 
+// the lazy chunks of the menu (the More sheet, the foot's meters) are the real ones in a test
+vi.mock("./LazyMoreSheet", async () => ({ MoreSheet: (await import("./MoreSheet")).MoreSheet }));
+vi.mock("./LazyNavMeters", async () => ({ NavMeters: (await import("./NavMeters")).NavMeters }));
+
 import { frameLabels } from "@/i18n/app";
 
 import { AccountMenu } from "./AccountMenu";
@@ -51,18 +55,19 @@ describe("the frame in Telugu", () => {
     nav.pathname = `/app/tenants/${A}/orders`;
     const { container } = frame("te");
     const menu = screen.getByRole("navigation", { name: "వర్క్‌స్పేస్ మెనూ" });
-    expect(within(menu).getByRole("link", { name: "సేల్స్" })).toHaveAttribute("href", `/app/tenants/${A}/quotes`); // Sales: Quotes, Store visits and Orders are its tabs
+    expect(within(menu).getByRole("link", { name: "ఆర్డర్లు" })).toHaveAttribute("href", `/app/tenants/${A}/orders`);
     expect(container.querySelector("[data-ui='v2']")).toHaveAttribute("lang", "te");
     expect(container.querySelector("#main-content")).toHaveAttribute("lang", "en");
     expect(screen.queryByRole("region", { name: "అనువాద సూచన" })).toBeNull();
     expect(container.textContent).not.toMatch(/యంత్రం రాసిన|machine/i);
     expect(screen.getByText("The page")).toBeInTheDocument();
   });
-  it("draws the words of the new frame in Telugu too: the seven items, the foot and Help", () => {
+  it("draws the words of the new frame in Telugu too: the groups, the rows, the foot and Help", () => {
     nav.pathname = `/app/tenants/${A}/orders`;
     frame("te");
     const menu = screen.getByRole("navigation", { name: "వర్క్‌స్పేస్ మెనూ" });
-    for (const word of ["ఈరోజు", "కస్టమర్లు", "చాట్‌లు", "కాల్స్", "సేల్స్", "క్యాటలాగ్", "రిపోర్టులు"]) expect(within(menu).getByRole("link", { name: word })).toBeInTheDocument();
+    for (const group of ["అవలోకనం", "అమ్మకం", "వ్యాపారం", "AI టీమ్", "సెటప్"]) expect(within(menu).getByRole("group", { name: group })).toBeInTheDocument();
+    for (const word of ["ఈరోజు", "లీడ్స్", "చాట్‌లు", "కాల్స్", "ఆర్డర్లు", "రిపోర్టులు", "నా AI టీమ్"]) expect(within(menu).getByRole("link", { name: word })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "సెట్టింగ్స్" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "సహాయం" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
   });
