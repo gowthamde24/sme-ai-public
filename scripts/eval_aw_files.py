@@ -74,20 +74,20 @@ def card_png() -> bytes:
     return buf.getvalue()
 
 
-# (name, file name, bytes, content type, request, language, expected: answer | plan:<tool> | preview | prices | cant:<code> | clarify)
+# (name, file name, bytes, content type, request, language, expected: answer | plan:<tool> | preview | prices | enquiry | cant:<code> | clarify)
 def cases() -> list[tuple[str, str, bytes, str, str, str, str]]:
     brochure, prices, enquiry, order = text_pdf(wrap(BROCHURE)), text_pdf(PRICES), text_pdf([[x] for x in ENQUIRY]), text_pdf(ORDER)
     card, injection = card_png(), text_pdf(wrap(INJECTION))
     pdf, png = "application/pdf", "image/png"
     return [
-        ("enquiry letter -> quote (en)", "enquiry.pdf", enquiry, pdf, "make an enquiry and a draft quote from this letter", "en", "cant:quote_from_enquiry"),
-        ("enquiry letter -> quote (te)", "enquiry.pdf", enquiry, pdf, "ఈ లేఖ నుండి ఎంక్వైరీ, కొటేషన్ తయారు చేయండి", "te", "cant:quote_from_enquiry"),
+        ("enquiry letter -> quote (en)", "enquiry.pdf", enquiry, pdf, "make an enquiry and a draft quote from this letter", "en", "enquiry"),
+        ("enquiry letter -> quote (te)", "enquiry.pdf", enquiry, pdf, "ఈ లేఖ నుండి ఎంక్వైరీ, కొటేషన్ తయారు చేయండి", "te", "enquiry"),
         ("price list -> catalogue (en)", "prices.pdf", prices, pdf, "update my catalogue prices from this list", "en", "prices"),
         ("price list -> catalogue (te)", "prices.pdf", prices, pdf, "ఈ ధరలను కేటలాగ్‌లో మార్చండి", "te", "prices"),
         ("brochure -> knowledge (en)", "about us.pdf", brochure, pdf, "add this to About my business", "en", "plan:knowledge.add_source"),
         ("brochure -> knowledge (te)", "about us.pdf", brochure, pdf, "దీన్ని 'నా వ్యాపారం గురించి' లో సేవ్ చేయండి", "te", "plan:knowledge.add_source"),
-        ("order pdf -> order + shortage (en)", "po 2231.pdf", order, pdf, "make this order and tell me what is short in stock", "en", "cant:order_from_file"),
-        ("order pdf -> order + shortage (te)", "po 2231.pdf", order, pdf, "ఈ ఆర్డర్ నమోదు చేసి స్టాక్ ఎంత తక్కువో చెప్పండి", "te", "cant:order_from_file"),
+        ("order pdf -> order + shortage (en)", "po 2231.pdf", order, pdf, "make this order and tell me what is short in stock", "en", "answer"),
+        ("order pdf -> order + shortage (te)", "po 2231.pdf", order, pdf, "ఈ ఆర్డర్ నమోదు చేసి స్టాక్ ఎంత తక్కువో చెప్పండి", "te", "answer"),
         ("visiting card -> lead + follow-up (en)", "card.png", card, png, "add him as a lead and follow up next week", "en", "preview"),
         ("visiting card -> lead + follow-up (te)", "card.png", card, png, "ఇతన్ని లీడ్‌గా చేర్చి వచ్చే వారం ఫాలో అప్ చేయండి", "te", "preview"),
         ("summarise (en)", "about us.pdf", brochure, pdf, "summarise this for me", "en", "answer"),
@@ -116,7 +116,10 @@ def score(evs: list[tuple[str, dict]], expected: str) -> tuple[bool, str]:
     cards = [d["card"] for n, d in evs if n == "work_card"]
     said = "".join(d.get("delta", "") for n, d in evs if n == "text").strip()
     got = "answer|clarify" if not cards else (cards[0]["kind"] if cards[0]["kind"] != "cant_do" else "cant_do")
-    if cards and cards[0]["kind"] == "plan":
+    steps = [s["tool"] for s in ((cards[0].get("plan") or {}).get("steps") or [])] if cards else []
+    if "leads.capture_enquiry" in steps:
+        got = "enquiry"
+    elif cards and cards[0]["kind"] == "plan":
         got = f"plan:{cards[0]['plan']['steps'][0]['tool']}"
     elif cards and cards[0]["kind"] == "file_preview":
         got = "prices" if cards[0].get("destination") == "catalogue" else "preview"

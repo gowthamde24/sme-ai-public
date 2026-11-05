@@ -138,6 +138,8 @@ async def run(client: httpx.AsyncClient, cat: Catalogue, tenant_id: uuid.UUID, t
             return Result(ok=False, status=before.status_code, error=error_of(before.status_code) or "down", answer=None, undo=None)
         else:
             keep = cat.put_fields(d.op.name)
+            if not (set(keep) & state.keys()) and isinstance(state.get("settings"), dict):   # a read that wraps the saved shape (GET /call-settings -> {settings, defaults, ...})
+                state = state["settings"]
             undo = {"kind": "snapshot", "tool": d.op.name, "path": dict(call.path), "body": {k: v for k, v in state.items() if k in keep}}
     elif d.undo == "inverse" and d.undo_via:
         undo = {"kind": "inverse", "tool": d.undo_via, "path": inverse_path(cat, d.undo_via, call)}

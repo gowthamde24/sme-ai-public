@@ -262,6 +262,15 @@ def _dispatch(
             return lf_turn.answer_turn(service, ctx, search, body.text, language, runner, emit, reply_id)
     pending = _pending_question(runtime, ctx, last)
     intent = Intent("action", "answers_question") if pending is not None else classify(body.text, _previous_kind(last))
+    # job assistant-does-the-work, the router (owner, 5 Nov 2026): a request about one of the common actions (calling hours, auto-reply, a lead source, one lead, the example data, the screen-only
+    # ones) is routed with ONE checked model call to a plan card; anything else, or a request the router says is not its own, goes on exactly as before
+    if pending is None and intent.reason != "find_new_customers" and app is not None and getattr(runtime, "assistant_work", None) is not None:
+        from app.assistant_work.router import touches
+
+        if touches(body.text):
+            outcome = _route_turn(runtime, ctx, body, language, runner, emit, reply_id, app, conversation_id)
+            if outcome is not None:
+                return outcome
     if intent.reason == "find_new_customers":
         service = lf_turn.available(runtime, ctx)
         if service is not None:
@@ -327,6 +336,35 @@ def _file_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: Lan
         if card is not None:
             cards.append(("work_card", {"card": card}))
     return runner.finish_with(Reply(" ".join(sentences), language, "answer"), reply_id, emit, extra=tuple(cards))
+
+
+def _route_turn(runtime: Runtime, ctx: TenantContext, body: TurnIn, language: Language, runner: AssistantRunner, emit: Callable[[str, dict[str, Any]], None], reply_id: uuid.UUID,
+                app: Any, conversation_id: uuid.UUID | None) -> Outcome | None:
+    """The router's answer, or None when the request is not one of the common actions (or the router cannot be asked): the turn then goes on as before."""
+    from app.assistant_work.routed import RouteTurn
+    from app.assistant_work.router import route
+    from app.assistant_work.service import Tools
+
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    try:
+        routed = route(runtime, token, tenant, body.text, language)
+    except ApiError as exc:
+        logger.info("assistant route not asked: %s", exc.code)
+        return None
+    if routed.decision == "not_mine":
+        return None
+    emit("intent", {"type": "intent", "kind": "action"})
+    logger.info("assistant turn: kind=action reason=routed decision=%s action=%s language=%s", routed.decision, routed.action or "-", language)
+    emit("step", {"type": "step", "step": "working"})
+    try:
+        sentence, card = RouteTurn(runtime.assistant_work, Tools(app), runtime.lead_sources).answer(token, tenant, routed, message_id=reply_id, conversation_id=conversation_id, language=language)
+    except Exception as exc:   # a step that could not be prepared: said plainly, nothing done
+        logger.warning("assistant routed request not prepared: %s", exc.__class__.__name__)
+        from app.assistant_work.routed import w
+
+        sentence, card = w("unavailable", language), None
+    kind = "clarify" if routed.decision == "clarify" else "answer"
+    return runner.finish_with(Reply(sentence, language, kind), reply_id, emit, extra=(("work_card", {"card": card}),) if card is not None else ())
 
 
 def _school_or_unknown(tasks: Any, runtime: Runtime, token: str, tenant: uuid.UUID) -> bool:
