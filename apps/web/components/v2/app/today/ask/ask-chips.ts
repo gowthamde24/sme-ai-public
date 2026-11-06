@@ -64,5 +64,6 @@ export const isTodayHome = (rest: string, tab: string | null = null): boolean =>
 /** Where the floating orb is not drawn on a desktop: Today (its command bar is the assistant) and the live call. On a phone the orb is on every screen, Today included. */
 export function orbHidden(rest: string, tab: string | null = null): boolean {
   if (rest === "" || rest === "/") return !tab;
-  return rest === "/office/live" || rest.startsWith("/office/live/");
+  // "Talk to assistant" is the conversation itself: no second assistant floating over it
+  return rest === "/office/live" || rest.startsWith("/office/live/") || rest === "/talk";
 }

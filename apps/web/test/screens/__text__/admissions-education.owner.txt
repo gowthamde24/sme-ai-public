@@ -1,4 +1,4 @@
-# Admission board
+# Admissions
 From the first enquiry to admission: enquiry, campus visit, application, admitted or lost. [New enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/admissions/new)
 {role=status} Saved.
 {label="Filter the students"} Class or course

@@ -19,6 +19,7 @@ import { getOfferedSources } from "@/lib/api/lead-sources";
 
 import { leadContext } from "../lead-context";
 import { assignLeadAction } from "../lead-desk-actions";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Leads · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -54,7 +55,7 @@ export default async function LeadDeskPage({ params, searchParams }: PageProps<"
   const date = (iso: string) => (iso ? new Date(iso).toLocaleDateString(lang, { day: "numeric", month: "short", timeZone: "Asia/Kolkata" }) : "");
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={words["ld.desk.title"] ?? "Leads"} sub={words["ld.desk.sub"] ?? ""} />
+      <PageTop title={await menuTitle("leads", lang, accessToken, tenantId)} sub={words["ld.desk.sub"] ?? ""} />
       {leadsScreens() === "mock" ? (
         <p role="note" className="mt-3 text-sm text-muted">
           {words["ld.desk.mock"]}

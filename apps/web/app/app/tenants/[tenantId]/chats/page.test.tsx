@@ -29,7 +29,7 @@ beforeEach(() => {
 describe("/chats", () => {
   it("lists the chats and links to older ones with the API's cursor", async () => {
     render(await ChatsPage(props()));
-    expect(screen.getByRole("heading", { level: 1, name: "Customer chats" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Chats" })).toBeInTheDocument();
     expect(screen.getByText("Ravi")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Older chats" })).toHaveAttribute("href", `/app/tenants/${TENANT}/chats?before=2026-10-12T07%3A00%3A00Z`);
     expect(listConversations).toHaveBeenCalledWith("tok", TENANT, { limit: 30, before: null });

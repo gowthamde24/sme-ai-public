@@ -71,9 +71,14 @@ export function TodayView({ chipKeys = null, newLeads = null, hasOrders = true, 
     <div data-screen="today" className="flex flex-col gap-4 md:gap-5">
       <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
         <div>
-          <p className="text-sm text-muted">{dayLine(now, lang)}</p>
+          {/* the page's H1 is the menu's word, "Today" (owner rule, 6 Nov: every menu item opens its own page with the menu's word as its H1), beside the date; the greeting stays the big line */}
+          <div className="flex flex-wrap items-baseline gap-x-1.5 text-sm text-muted">
+            <h1 className="font-semibold text-ink">{t("nav.item.m-today")}</h1>
+            <span aria-hidden="true">·</span>
+            <span>{dayLine(now, lang)}</span>
+          </div>
           {/* the member's own name (My profile), with the respectful form of the language (Telugu "గారు", Hindi "जी", Kannada "ಅವರೇ"; English the name alone: never sir or madam); none when they have no name */}
-          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? t("today.greeting.named", { greet, name }) : greet}</h1>
+          <h2 data-part="greeting" className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? t("today.greeting.named", { greet, name }) : greet}</h2>
         </div>
         <LiveNow tenantId={base.split("/").pop() ?? ""} />
       </header>

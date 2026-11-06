@@ -1,0 +1,2 @@
+# Talk to assistant
+Ask or tell your assistant anything, by typing or by voice. Your earlier conversations and files are under +. Your assistant is switched off for your workspace. Turn it on and you can type or speak here.

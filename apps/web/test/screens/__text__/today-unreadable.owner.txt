@@ -9,5 +9,6 @@
 -
 [button type=button: See what your assistant doesTo do]
 [button type=button: Continue setup]
-Tuesday, 6 October
-# Good morning
+# Today
+· Tuesday, 6 October
+## Good morning

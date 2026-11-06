@@ -19,6 +19,7 @@ import { readCatalogue } from "./catalogue-data";
 import { catalogueWords } from "./catalogue-words";
 import { partsWords } from "@/i18n/app-words";
 import { BRAND_NAME } from "@/design/brand";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Catalogue · ${BRAND_NAME}` };
 // Per-user data from the API (and links that run out): never statically rendered or cached.
@@ -64,7 +65,7 @@ export default async function CataloguePage({ params, searchParams }: PageProps<
   }
   return (
     <main className={pageMain} lang={lang}>
-      <CatalogueView help={helpTipFor(lang, `/app/tenants/${tenantId}`, "catalogue")} base={`/app/tenants/${tenantId}`} words={catalogueWords(lang)} role={tenant.role} query={query} items={data.items} more={data.more} lead={lead} />
+      <CatalogueView title={await menuTitle("catalogue", lang, user.accessToken, tenantId)} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "catalogue")} base={`/app/tenants/${tenantId}`} words={catalogueWords(lang)} role={tenant.role} query={query} items={data.items} more={data.more} lead={lead} />
     </main>
   );
 }

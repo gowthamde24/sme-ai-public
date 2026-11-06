@@ -1,5 +1,6 @@
-Tuesday, 6 October
-# Good morning
+# Today
+· Tuesday, 6 October
+## Good morning
 {label="See how it works with example data"}
 form:
 ## See how it works with example data
@@ -46,7 +47,7 @@ form:
 3 visits · 10:30 Anita R. [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits)
 {label="My AI team"}
 ## My AI team
-[+1 more](/app/tenants/22222222-2222-2222-2222-222222222222/office)
+[+1 more](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team)
 - Quote Writer Waiting for you Prepared quote 3 · 2h
 - Follow-up Desk Waiting for you Drafted follow-up message number 2 · 1m
 - Dispatch Desk Waiting for you Order started · 30m

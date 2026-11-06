@@ -19,6 +19,7 @@ import { readPackCached } from "@/lib/packs/read";
 import { notifyTripAction, setTripStatusAction } from "./trip-actions";
 import { tripWords } from "./trip-words";
 import { BRAND_NAME } from "@/design/brand";
+import { menuTitle } from "../../menu-title";
 
 export const metadata = { title: `Deliveries · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -60,6 +61,7 @@ export default async function TripsPage({ params, searchParams }: PageProps<"/ap
   return (
     <main className={pageMain} lang={lang}>
       <TripBoard
+title={await menuTitle("trips", lang, user.accessToken, tenantId)}
         base={`/app/tenants/${tenantId}`}
         words={words}
         role={tenant.role}

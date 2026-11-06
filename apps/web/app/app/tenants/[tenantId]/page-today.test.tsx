@@ -105,7 +105,7 @@ describe("the workspace home with no ?tab= is Today", () => {
     await show();
     expect(getToday).toHaveBeenCalledWith("tok", TENANT);
     expect(getAgentsStatus).toHaveBeenCalledWith("tok", TENANT);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/^Good (morning|afternoon|evening)$/); // no display name on record
+    expect(document.querySelector<HTMLElement>("[data-part=\"greeting\"]")!).toHaveTextContent(/^Good (morning|afternoon|evening)$/); // no display name on record
     expect(document.querySelector("[data-count]")).toHaveAttribute("data-count", "5");
     const needs = within(screen.getByRole("heading", { name: "Needs you" }).closest("section")!);
     expect(document.querySelectorAll("[data-needs-row]")).toHaveLength(5); // the count is the rows (three show, the rest wait behind "See all")
@@ -158,7 +158,7 @@ describe("the workspace home with no ?tab= is Today", () => {
   it("greets the person by the display name the members list has for them", async () => {
     fetchMembers.mockResolvedValue([{ user_id: "other", role: "sales", display_name: "Someone Else" }, { user_id: "user-1", role: "owner", display_name: "Asha Rao" }]);
     await show();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/^Good (morning|afternoon|evening), Asha Rao$/);
+    expect(document.querySelector<HTMLElement>("[data-part=\"greeting\"]")!).toHaveTextContent(/^Good (morning|afternoon|evening), Asha Rao$/);
   });
   it("a read that fails takes only its own part away (Today never says 'Not available yet': the part is not drawn)", async () => {
     getToday.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));

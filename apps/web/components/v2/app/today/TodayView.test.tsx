@@ -47,14 +47,15 @@ describe("dayLine", () => {
 describe("Today: the header", () => {
   it("greets by the hour and by name, with the date", async () => {
     await view(data(), { name: "Asha", hour: 9 });
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Good morning, Asha");
+    expect(document.querySelector<HTMLElement>("[data-part=\"greeting\"]")!).toHaveTextContent("Good morning, Asha");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Today"); // the H1 is the menu's word (owner rule, 6 Nov); the greeting is the big line under it
     expect(screen.getByText("Sunday, 11 October")).toBeInTheDocument();
     cleanup();
     await view(data(), { name: null, hour: 14 });
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/^Good afternoon$/);
+    expect(document.querySelector<HTMLElement>("[data-part=\"greeting\"]")!).toHaveTextContent(/^Good afternoon$/);
     cleanup();
     await view(data(), { name: "Asha", hour: 20 });
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Good evening, Asha");
+    expect(document.querySelector<HTMLElement>("[data-part=\"greeting\"]")!).toHaveTextContent("Good evening, Asha");
   });
 });
 
@@ -201,7 +202,7 @@ describe("Today: the side sections", () => {
     expect(s.querySelector('[data-helper="quote_writer"]')).toHaveTextContent("Prepared quote 3");
     expect(within(s.querySelector('[data-helper="researcher"]') as HTMLElement).getAllByText("Working").length).toBeGreaterThan(0);
     expect(within(s).queryByText("Your assistant")).toBeNull();
-    expect(within(s).getByRole("link", { name: "+1 more" })).toHaveAttribute("href", "/app/tenants/T/office");
+    expect(within(s).getByRole("link", { name: "+1 more" })).toHaveAttribute("href", "/app/tenants/T/ai-team");
   });
   it("a Lead Desk workspace's strip is its own workers (never the shop's helpers), and it has a 'New leads' card with the newest lead and a link to the Leads", async () => {
     await view(data({ deskTeam: [
@@ -214,7 +215,7 @@ describe("Today: the side sections", () => {
     // a worker whose part cannot be read (the Task helper here) is left out: Today never says "Not available yet"
     expect([...s.querySelectorAll("[data-helper]")].map((c) => c.textContent)).toEqual(["CallerWorkingCalling Diwali leads: 12 of 40 done", "Lead catcherIdleLast lead: Anita R. from IndiaMART · 20m", "Standing rulesOffNo rule is on"]);
     expect(within(s).queryByText(/Quote Writer/)).toBeNull();
-    expect(within(s).getByRole("link", { name: "Open my AI team" })).toHaveAttribute("href", "/app/tenants/T/office");
+    expect(within(s).getByRole("link", { name: "Open my AI team" })).toHaveAttribute("href", "/app/tenants/T/ai-team");
     const n = document.querySelector('[data-part="new-leads"]') as HTMLElement;
     expect(within(n).getByRole("heading", { name: "New leads" })).toBeInTheDocument();
     expect(n).toHaveTextContent("Last lead: Anita R. from IndiaMART · 20m");
@@ -292,16 +293,16 @@ describe("Today: sections that have no data are not drawn, and nothing is invent
 describe("Today: the greeting names the member, respectfully, in their language (owner 31 Oct)", () => {
   it("English: the name alone, never sir or madam; Telugu: గారు; Hindi: जी; Kannada: ಅವರೇ; none when there is no name", async () => {
     await view(data(), { name: "Gowtham Reddy", hour: 20 });
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Good evening, Gowtham Reddy");
-    expect(screen.getByRole("heading", { level: 1 }).textContent).not.toMatch(/sir|madam/i);
+    expect(document.querySelector<HTMLElement>("[data-part=\"greeting\"]")!).toHaveTextContent("Good evening, Gowtham Reddy");
+    expect(document.querySelector<HTMLElement>("[data-part=\"greeting\"]")!.textContent).not.toMatch(/sir|madam/i);
     for (const [lang, tail] of [["te", "గారు"], ["hi", "जी"], ["kn", "ಅವರೇ"]] as const) {
       cleanup();
       await view(data(), { name: "Gowtham", hour: 20, lang });
-      expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(`${appT(lang)("today.greeting.evening")}, Gowtham ${tail}`);
+      expect(document.querySelector<HTMLElement>("[data-part=\"greeting\"]")!.textContent).toBe(`${appT(lang)("today.greeting.evening")}, Gowtham ${tail}`);
     }
     cleanup();
     await view(data(), { name: null, hour: 20, lang: "te" });
-    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe(appT("te")("today.greeting.evening"));
+    expect(document.querySelector<HTMLElement>("[data-part=\"greeting\"]")!.textContent).toBe(appT("te")("today.greeting.evening"));
   });
   it("the Live now pill sits on the greeting row (the same header as the heading), not in the top bar", async () => {
     await view(data());

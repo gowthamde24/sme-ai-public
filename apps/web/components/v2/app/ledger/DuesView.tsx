@@ -15,12 +15,12 @@ import { totals } from "./ledger-logic";
  * What customers owe (job CO): the total, how much of it is overdue, how old it is, and the customers with the largest balance first; a customer over the credit limit is marked. The numbers are the ledger's own;
  * nothing is worked out here but their sum. A customer opens to the account, where a payment is written down. Owner, Admin and Sales; a Viewer reads no money.
  */
-export function DuesView({ base, words, rows, more, help }: { base: string; words: TodayWords; rows: readonly SummaryRowOut[] | null; more: string | null; help?: React.ReactNode }) {
+export function DuesView({ title = null, base, words, rows, more, help }: { /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null; base: string; words: TodayWords; rows: readonly SummaryRowOut[] | null; more: string | null; help?: React.ReactNode }) {
   const t = rows ? totals(rows) : null;
   return (
     <div data-screen="dues" className="flex flex-col gap-5">
       <header className="flex flex-col gap-1">
-        <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{say(words, "nav.item.dues")}</h1>
+        <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, "nav.item.dues")}</h1>
         <p className="text-base text-muted">{say(words, "due.sub")}</p>
       </header>
       {help}

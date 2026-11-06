@@ -17,7 +17,7 @@ import { VisitCard } from "./VisitCard";
 const FINISHED: ReadonlySet<Visit["status"]> = new Set(["completed", "no_show", "cancelled"]);
 const navButton = "inline-flex size-11 items-center justify-center rounded-full border border-edge bg-surface hover:bg-surface-2";
 
-export type VisitsViewProps = {
+export type VisitsViewProps = { /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null;
   /** The "?" tip of the screen (job BT): drawn under the heading. */
   help?: React.ReactNode;
   view: "day" | "hours";
@@ -58,7 +58,7 @@ export function VisitsView(p: VisitsViewProps) {
   return (
     <div data-screen="visits" className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{say(words, "nav.item.visits")}</h1>
+        <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{p.title ?? say(words, "nav.item.visits")}</h1>
         <p className="text-base text-muted">{say(words, "visits.sub")}</p>
       </header>
       {p.help}

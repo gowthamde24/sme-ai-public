@@ -17,6 +17,7 @@ import { readUsageCached } from "@/lib/topups/source";
 
 import { handoffActedAction, ruleControlAction, saveRuleAction } from "../outreach-actions";
 import { leadContext } from "../lead-context";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Lead plans · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -47,7 +48,7 @@ export default async function OutreachPage({ params }: PageProps<"/app/tenants/[
   const statusPill = (s: string) => (s === "running" || s === "done" ? pillGreen : s === "paused" ? pillAmber : s === "planned" ? pillBrand : pillNeutral);
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={words["ol.title"] ?? "Lead plans"} sub={words["ol.sub"] ?? ""} />
+      <PageTop title={await menuTitle("calls", lang, accessToken, tenantId)} sub={words["ol.sub"] ?? ""} />
       {mock ? (
         <p role="note" className="mt-3 text-sm text-muted">
           {words["ol.mock"]}

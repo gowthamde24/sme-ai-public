@@ -9,8 +9,9 @@
 -
 [button type=button: See what your assistant doesTo do]
 [button type=button: Continue setup]
-Tuesday, 6 October
-# Good morning
+# Today
+· Tuesday, 6 October
+## Good morning
 {role=status} Sending is stopped Nothing goes out and everything waits until our team switches sending back on. You can still read and edit messages.
 {label="Needs you"}
 ## Needs you
@@ -57,7 +58,7 @@ Replied to 2 customers on WhatsApp · Sent shop information to 1 customer · Hel
 ₹400 1 order open [Open orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
 {label="My AI team"}
 ## My AI team
-[+1 more](/app/tenants/22222222-2222-2222-2222-222222222222/office)
+[+1 more](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team)
 - Quote Writer Waiting for you Prepared quote 3 · 2h
 - Follow-up Desk Waiting for you Drafted follow-up message number 2 · 1m
 - Order Desk Waiting for you Order started · 30m

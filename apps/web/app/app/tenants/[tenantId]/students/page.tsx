@@ -11,6 +11,7 @@ import { marksScreens } from "@/lib/screens/flag";
 
 import { eduContext, eduWords } from "../education-kit";
 import { BRAND_NAME } from "@/design/brand";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Students · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -45,6 +46,7 @@ export default async function StudentsRoute({ params, searchParams }: PageProps<
   return (
     <main className={pageMain} lang={lang}>
       <StudentsView
+title={await menuTitle("students", lang, accessToken, tenantId)}
         base={base}
         words={eduWords(lang)}
         role={tenant.role}

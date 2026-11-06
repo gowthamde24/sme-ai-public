@@ -1,4 +1,4 @@
-# Customer chats
+# Chats
 The people who wrote to your WhatsApp number or were written to, newest first. Open a chat to read it and reply.
 ## Customer chats
 Too many tries. Wait 30 seconds, then try again. Nothing you typed is lost.
