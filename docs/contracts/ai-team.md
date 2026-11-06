@@ -32,7 +32,8 @@ School workspaces get `lead_catcher`, `caller`, `followups`, `admissions`, `fee_
   "day": { "opens": "09:00", "closes": "20:00", "source": "default" | "business_hours" },
   "lanes": [
     { "helper": "caller",
-      "status_now": { "kind": "busy" | "due" | "waiting" | "idle" | "off", "text_key": "on_call" | "due_next" | "waiting_for_you" | "idle" | "off",
+      "enabled": true,
+      "status_now": { "kind": "paused" | "busy" | "due" | "waiting" | "idle", "text_key": "paused" | "on_call" | "due_next" | "waiting_for_you" | "idle",
                       "count": 5, "at": "2026-11-06T16:00:00+05:30" | null, "who": "Ramesh" | null, "since": "2026-11-06T14:11:18+05:30" | null },
       "count_today": 23,
       "marks": [
@@ -56,7 +57,8 @@ School workspaces get `lead_catcher`, `caller`, `followups`, `admissions`, `fee_
   - `busy`: "on call · Ramesh 0:42"; `since` is when the call started, so the timer runs on the web.
   - `due`: "5 due · next 16:00"; `count` is how many, `at` is the next one.
   - `waiting`: "1 waiting for you"; `count`.
-  - `idle`; `off` (its switch is off).
+  - `idle`.
+  - `paused`: the helper is switched off (it comes first, whatever else is true). `count` is what still waits for the Owner; `since` is when it was switched off.
   - The web words the `text_key` in en/te/hi/kn/ta/ml/mr.
 - **`flow.steps`** is ordered and clickable (the web filters the timeline by the step's mark kinds).
   - **Business:** `leads_in`, `called` (distinct leads called), `interested` (calls with outcome interested), `quotes`, `orders`.
@@ -68,7 +70,7 @@ School workspaces get `lead_catcher`, `caller`, `followups`, `admissions`, `fee_
 ## 2. GET /ai-team/{helper}
 The side panel. Owner, Admin, Sales; `404` for a helper that is not active here.
 ```json
-{ "helper": "caller", "status_now": { … as above … }, "enabled": true, "can_switch": true | false, "reason_locked": null | "not_built" | "owner_only",
+{ "helper": "caller", "status_now": { … as above … }, "enabled": true, "can_switch": true | false, "reason_locked": null | "owner_or_admin",
   "recent": [ { …a mark… } ],
   "today": { "count": 23, "numbers": [ { "key": "connected_percent", "value": 71 }, { "key": "interested", "value": 7 }, { "key": "minutes", "value": 31 } ] },
   "cost_today": { "paise": 9300 } | null,
@@ -88,7 +90,18 @@ The side panel. Owner, Admin, Sales; `404` for a helper that is not active here.
   | `lead_finder` | `searches`, `found`, `called` |
   | school helpers | their own counts |
 
-- The on/off switch is the existing one: `PUT /agents/{agent}/switch` (docs/contracts/agents-switches.md). `can_switch: false` with `reason_locked: "not_built"` for a helper without a switch of its own yet; the panel shows the switch disabled with a reason.
+- **The switch (owner review, 6 Nov): `PUT /ai-team/{helper}/switch` `{enabled: bool}`**
+  - Who: the Owner or an Admin, with the second factor (else `403 mfa_required`). Answers `{helper, enabled}`. It is audit-logged.
+  - Off means the helper does not act automatically. What it would have done **waits**, and goes when it is switched on again. A person acting by hand is never blocked. Nothing is lost from Needs you.
+    - `caller`: no call; queued calls wait.
+    - `followups`: nothing is sent automatically; a person's own message, or one a person approved, still goes.
+    - `lead_finder`: no new search; approving one gets `409 helper_off`.
+    - `quote_writer`: no AI drafts.
+    - `order_desk`: no automatic order action (there is none today).
+    - `lead_catcher`: leads are still saved, with no auto-reply and no auto-call.
+    - `fee_reminders` and `notices`: their campaign steps wait.
+  - `can_switch` is true for the Owner and an Admin, else `reason_locked: "owner_or_admin"`.
+  - `GET /agents/switches` (the sidebar's assistant, researcher and requirement reader) is unchanged and separate.
 - `settings` are read-only, each with a link to its screen. `value` is null for now (the screen shows its own). Nothing is changed here.
 - `ref.href` paths are C1's best guess at the app's routes; tell C1 any that differ (`HREF` in app/ai_team/service.py).
 
@@ -115,9 +128,10 @@ A 30 to 45-second spoken summary, in the Owner's language:
 ```
 - `lines[].source` says which data each line came from; `numbers` lists every number spoken, for the transcript and the eval.
 - `audio.url` is the API path of the WAV (`GET /ai-team/standup/audio?date=&language=`, Owner and Admin, the person's own token, `audio/wav`, cached 24 h). Fetch it with the token and play the blob.
+- `draft: true` marks words not yet read by a native speaker: Kannada for now (owner, 6 Nov). Tamil and Malayalam come next, also as drafts. Show a small "draft" mark.
 - `audio` is null when speech is unavailable (`audio_reason`: `unavailable`, or `limit` when the day's speech allowance is used up); the transcript still shows.
 - The voice is the workspace's assistant voice (Settings → AI assistant): Cartesia, with the same voice settings, in the Owner's language.
-- Send `language` as the Owner's app language (`?language=` on GET, `{language}` on POST). The words exist in `en`, `te` and `hi`; any other language gets English for now.
+- Send `language` as the Owner's app language (`?language=` on GET, `{language}` on POST). The words exist in `en`, `te`, `hi` and `kn` (draft); any other language gets English for now.
 - The morning one is made on the **first read (GET) after the business's opening time**, with `by: "schedule"`; it doesn't count toward the 3. Before opening time, `404 not_generated`.
 - "Ask a follow-up" opens the assistant with the stand-up's date. No API change is needed for it.
 
