@@ -11,7 +11,7 @@ What "website only" is: the same web image, started with one setting, `SITE_MODE
    - **B:** write down, in the repository (a short line in `docs/ops/staging.md`), that the owner opens the gate for the waitlist table alone, on staging, with DPDP consent records; then `WAITLIST=1` on the site service with the API's address. Staging has no backups of its own (Free plan); say so in the same line.
 2. **The privacy notice** must be the new one (job DQ part 2, branch `web/dq-dpdp`) before the site goes live: the website links to it from the form and from every footer. Merge the night PR first.
 3. **Native review.** The Telugu, Hindi and Kannada pages carry a visible "machine-written draft" banner. They can go live with it; remove the banner only after a native reader has signed the kit.
-4. **The owner's WhatsApp number** for the contact page's chat (`STACK19_WHATSAPP`, digits with the country code). Without it the contact page says the chat is not available and shows the e-mail addresses.
+4. **The owner's WhatsApp number** (done, 6 Nov 2026): it is set once in the code, `SITE_WHATSAPP` in `apps/web/lib/site/whatsapp.ts`, for the home page's footer, the contact page's chat and the calculator. There is no setting for it on the service.
 
 ## Step 1. Merge the night PR and build the web image
 
@@ -32,7 +32,7 @@ gcloud run deploy sme-site --project $PROJECT --region $REGION --image $IMAGE \
   --cpu 1 --memory 512Mi --min-instances 0 --max-instances 3 --concurrency 40 --timeout 300 --port 8080 \
   --startup-probe=httpGet.path=/login,httpGet.port=8080,timeoutSeconds=1,periodSeconds=2,failureThreshold=30 \
   --allow-unauthenticated --service-account sme-web-run@$PROJECT.iam.gserviceaccount.com \
-  --set-env-vars SITE_MODE=website,WAITLIST=off,STACK19_WHATSAPP=<digits or leave this variable out>
+  --set-env-vars SITE_MODE=website,WAITLIST=off
 ```
 Notes:
 - The startup probe asks for `/login`: in website mode that address answers 200 with the "Opening soon" page, so the probe still passes.

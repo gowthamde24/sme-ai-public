@@ -4,6 +4,7 @@ import { EmailAddress } from "@/components/v2/site/EmailAddress";
 import { emailWords } from "@/components/v2/site/email-words";
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { container } from "@/components/v2/site/ui";
+import { HomeFooter } from "@/components/v2/site/home2/HomeFooter";
 import { Wordmark } from "@/components/v2/Wordmark";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
@@ -19,7 +20,8 @@ const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.
 /** The name of each language in that language, for the footer's language links (the same page in each). */
 const LANG_NAME: Record<(typeof LANGS)[number], string> = { en: "English", te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ" };
 
-export function SiteFooter({ t, lang, target = { kind: "home" } }: { t: SiteT; lang: Lang; target?: SiteTarget }) {
+export function SiteFooter({ t, lang, target = { kind: "home" }, early }: { t: SiteT; lang: Lang; target?: SiteTarget; /** The home page's "Get early access" (landing v2): its footer is the new one. */ early?: { href: string; label: string } }) {
+  if (target.kind === "home" && early) return <HomeFooter t={t} lang={lang} early={early} />;
   return (
     <footer className="border-t border-line bg-surface">
       <div className={`${container} grid gap-8 py-10 md:grid-cols-4`}>

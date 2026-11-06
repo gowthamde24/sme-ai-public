@@ -1,0 +1,96 @@
+/* ==========================================================================
+   The public home page, landing v2 (job landing-v2, owner approved the design 6 Nov 2026). Motion that needs no script: the headline's words rise out of a blur once, the hero fades in, a dot blinks, an outcome lights,
+   the header's scroll-progress line (scroll-driven where the browser has it, absent where not). Every selector starts with [data-ui="v2"] (audit:leaks); every keyframe carries the h2- prefix.
+   "Reduce motion": nothing moves, everything shows at once. Glass only on floating layers (.h2-glass: the stage's chips, the caption, the try-it bar, the number card).
+   ========================================================================== */
+[data-ui="v2"] .h2-wd { display: inline-block; opacity: 0; filter: blur(10px); transform: translateY(16px); animation: h2-wd-in 900ms cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+@keyframes h2-wd-in { to { opacity: 1; filter: blur(0); transform: none; } }
+[data-ui="v2"] .h2-fadein { opacity: 0; animation: h2-fade-in 900ms cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+@keyframes h2-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+[data-ui="v2"] .h2-blink { width: 7px; height: 7px; border-radius: 50%; background: #ff773c; flex: none; animation: h2-blink 1.2s ease-in-out infinite; }
+@keyframes h2-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+/* glass: the floating layers of the home page */
+[data-ui="v2"] .h2-glass { background: color-mix(in srgb, var(--v2-surface) 66%, transparent); -webkit-backdrop-filter: blur(16px) saturate(1.5); backdrop-filter: blur(16px) saturate(1.5); border: 1px solid color-mix(in srgb, var(--v2-surface) 95%, transparent); box-shadow: 0 1px 0 color-mix(in srgb, var(--v2-surface) 90%, transparent) inset, 0 0 0 1px color-mix(in srgb, var(--v2-border) 55%, transparent), 0 18px 40px -22px rgba(30, 30, 36, 0.32); }
+@media (prefers-reduced-transparency: reduce) { [data-ui="v2"] .h2-glass { background: var(--v2-surface); -webkit-backdrop-filter: none; backdrop-filter: none; } }
+[data-ui="v2"] .h2-try { box-shadow: 0 1px 0 color-mix(in srgb, var(--v2-surface) 90%, transparent) inset, 0 0 0 1px rgba(255, 119, 60, 0.35), 0 24px 50px -24px rgba(255, 119, 60, 0.55); }
+
+/* the stage's chips: a source or an outcome; an outcome lights when one arrives */
+[data-ui="v2"] .h2-node { display: flex; align-items: center; gap: 10px; border-radius: 14px; padding: 9px 14px 9px 10px; font-size: 14px; font-weight: 700; white-space: nowrap; color: var(--v2-ink); }
+[data-ui="v2"] .h2-ico { flex: none; width: 30px; height: 30px; border-radius: 9px; display: flex; align-items: center; justify-content: center; background: var(--v2-brand-bg); color: var(--v2-brand-text); }
+[data-ui="v2"] .h2-out .h2-ico { background: #1e1e24; color: #ff9a6b; }
+[data-ui="v2"] .h2-out { transition: box-shadow 300ms ease, transform 300ms cubic-bezier(0.23, 1, 0.32, 1); }
+[data-ui="v2"] .h2-out[data-lit] { transform: scale(1.06); box-shadow: 0 0 0 2px #ec486e, 0 0 0 8px rgba(236, 72, 110, 0.14), 0 24px 50px -20px rgba(236, 72, 110, 0.6); }
+[data-ui="v2"] .h2-orbwrap { border-radius: 50%; box-shadow: 0 40px 90px -30px rgba(194, 65, 12, 0.55), 0 0 0 1px rgba(255, 150, 100, 0.2); }
+[data-ui="v2"] .h2-glow { border-radius: 50%; background: radial-gradient(circle, rgba(255, 140, 90, 0.18), rgba(236, 72, 110, 0.05) 45%, rgba(255, 140, 90, 0) 68%); pointer-events: none; }
+
+/* a caption word: grey until said, ink once said, the word being said on a soft orange */
+[data-ui="v2"] .h2-w { border-radius: 6px; padding: 0 2px; color: color-mix(in srgb, var(--v2-ink) 25%, transparent); transition: color 200ms ease, background-color 200ms ease; }
+[data-ui="v2"] .h2-w[data-said] { color: var(--v2-ink); }
+[data-ui="v2"] .h2-w[data-now] { color: #1e1e24; background: #ffe2d3; }
+
+/* the header's scroll-progress line: drawn by the scroll where the browser can, absent where it cannot */
+[data-ui="v2"] .h2-prog { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, #ff9a6b, #ff773c, #ec486e); transform-origin: left; transform: scaleX(0); }
+@keyframes h2-prog { to { transform: scaleX(1); } }
+@supports (animation-timeline: scroll()) { [data-ui="v2"] .h2-prog { animation: h2-prog linear both; animation-timeline: scroll(); } }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-ui="v2"] .h2-wd, [data-ui="v2"] .h2-fadein { opacity: 1; filter: none; transform: none; animation: none; }
+  [data-ui="v2"] .h2-blink, [data-ui="v2"] .h2-prog { animation: none; }
+  [data-ui="v2"] .h2-out, [data-ui="v2"] .h2-w { transition: none; }
+}
+
+/* the headline's words rise one after another (a class per delay: no inline style on a classed element) */
+[data-ui="v2"] .h2-d1 { animation-delay: 60ms; } [data-ui="v2"] .h2-d2 { animation-delay: 110ms; } [data-ui="v2"] .h2-d3 { animation-delay: 160ms; }
+[data-ui="v2"] .h2-d4 { animation-delay: 260ms; } [data-ui="v2"] .h2-d5 { animation-delay: 310ms; } [data-ui="v2"] .h2-d6 { animation-delay: 360ms; }
+[data-ui="v2"] .h2-d7 { animation-delay: 410ms; } [data-ui="v2"] .h2-d8 { animation-delay: 450ms; }
+
+/* the greetings band: the seven greetings in huge outlined type, drifting; a filled copy shows only through a soft window in the middle, so the word passing the centre glows orange (CSS only) */
+[data-ui="v2"] .h2-gband { position: relative; overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+[data-ui="v2"] .h2-gtrack { display: flex; gap: 40px; width: max-content; padding: 0 20px; animation: h2-gmarq 48s linear infinite; }
+@media (min-width: 1024px) { [data-ui="v2"] .h2-gtrack { gap: 72px; padding: 0 36px; } }
+@keyframes h2-gmarq { to { transform: translateX(-50%); } }
+[data-ui="v2"] .h2-gw { font-family: var(--v2-font-display-stack); font-size: 72px; line-height: 1.15; font-weight: 800; letter-spacing: -0.03em; white-space: nowrap; color: transparent; -webkit-text-stroke: 1.5px color-mix(in srgb, var(--v2-ink) 20%, transparent); }
+@media (min-width: 1024px) { [data-ui="v2"] .h2-gw { font-size: 150px; } }
+[data-ui="v2"] .h2-gspot { position: absolute; inset: 0; pointer-events: none; -webkit-mask-image: linear-gradient(90deg, transparent 33%, #000 45%, #000 55%, transparent 67%); mask-image: linear-gradient(90deg, transparent 33%, #000 45%, #000 55%, transparent 67%); }
+[data-ui="v2"] .h2-gspot .h2-gw { -webkit-text-stroke: 0; background: linear-gradient(90deg, #c2410c, #ff773c 45%, #ec486e); -webkit-background-clip: text; background-clip: text; filter: drop-shadow(0 10px 30px rgba(255, 119, 60, 0.35)); }
+@media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h2-gtrack { animation: none; } }
+
+/* something new on the page pops in (an outcome, a found business) */
+[data-ui="v2"] .h2-pop { animation: h2-pop 420ms cubic-bezier(0.23, 1, 0.32, 1) both; }
+@keyframes h2-pop { from { opacity: 0; transform: translateY(8px) scale(0.97); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
+@media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h2-pop { animation: none; } }
+
+/* "You, teaching it": the rule types itself in and out, revealed left to right over its full width (the pill is sized to the whole rule, so nothing is ever cut); on a narrow screen it wraps and stands still, as it does with "reduce motion" */
+[data-ui="v2"] .h2-typeline { white-space: nowrap; clip-path: inset(0 100% 0 0); animation: h2-type 2.8s steps(40) 0.4s infinite alternate; }
+@keyframes h2-type { to { clip-path: inset(0 0 0 0); } }
+@media (max-width: 1023px) { [data-ui="v2"] .h2-typeline { white-space: normal; clip-path: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h2-typeline { clip-path: none; animation: none; } }
+
+/* the business number: the KYC steps light up in turn, the bar fills, the number comes into focus */
+[data-ui="v2"] .h2-kbar { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #ff9a6b, #ff773c, #ec486e); transform-origin: left; animation: h2-kbar 7s cubic-bezier(0.77, 0, 0.175, 1) infinite; }
+@keyframes h2-kbar { 0% { transform: scaleX(0); } 55%, 90% { transform: scaleX(1); } 100% { transform: scaleX(0); } }
+[data-ui="v2"] .h2-kdot { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--v2-surface-2); color: var(--v2-muted); animation: h2-kdot 7s ease infinite; }
+[data-ui="v2"] .h2-kdot-2 { animation-delay: 1.3s; } [data-ui="v2"] .h2-kdot-3 { animation-delay: 2.7s; }
+@keyframes h2-kdot { 0%, 8% { background: var(--v2-surface-2); color: var(--v2-muted); } 14%, 90% { background: #1e1e24; color: #ff9a6b; } 100% { background: var(--v2-surface-2); color: var(--v2-muted); } }
+[data-ui="v2"] .h2-knum { animation: h2-knum 7s ease infinite; }
+@keyframes h2-knum { 0%, 58% { filter: blur(6px); opacity: 0.35; } 64%, 90% { filter: none; opacity: 1; } 100% { filter: blur(6px); opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h2-kbar { animation: none; transform: scaleX(1); } [data-ui="v2"] .h2-kdot { animation: none; background: #1e1e24; color: #ff9a6b; } [data-ui="v2"] .h2-knum { animation: none; } }
+
+/* the finale's orb: three rings spreading out */
+[data-ui="v2"] .h2-ring { border: 1.5px solid rgba(255, 119, 60, 0.4); animation: h2-ring 4.5s cubic-bezier(0.23, 1, 0.32, 1) infinite; pointer-events: none; }
+[data-ui="v2"] .h2-ring-2 { animation-delay: 1.5s; } [data-ui="v2"] .h2-ring-3 { animation-delay: 3s; }
+@keyframes h2-ring { from { transform: scale(1); opacity: 0.9; } to { transform: scale(2.1); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h2-ring { animation: none; opacity: 0; } }
+
+/* a jump to a part of the home page lands below the sticky header (its height + 16 px) */
+[data-ui="v2"] [data-page="home"] section[id], [data-ui="v2"] [data-page="home"] footer[id] { scroll-margin-top: 88px; }
+
+/* the leak's sliders (owner review, 6 Nov): orange up to the value (--p, set on the slider's wrapper), the light neutral track (--v2-border) after it, an orange thumb ringed in the surface colour */
+[data-ui="v2"] .h2-range { -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
+[data-ui="v2"] .h2-range::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: linear-gradient(90deg, #ff773c var(--p, 0%), var(--v2-border) var(--p, 0%)); }
+[data-ui="v2"] .h2-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; background: #ff773c; border: 3px solid var(--v2-surface); box-shadow: 0 1px 4px rgba(30, 30, 36, 0.28); }
+[data-ui="v2"] .h2-range::-moz-range-track { height: 6px; border-radius: 999px; background: var(--v2-border); }
+[data-ui="v2"] .h2-range::-moz-range-progress { height: 6px; border-radius: 999px; background: #ff773c; }
+[data-ui="v2"] .h2-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #ff773c; border: 3px solid var(--v2-surface); box-shadow: 0 1px 4px rgba(30, 30, 36, 0.28); }
+[data-ui="v2"] .h2-range:focus-visible { outline: 2.5px solid #c2410c; outline-offset: 3px; border-radius: 999px; }
