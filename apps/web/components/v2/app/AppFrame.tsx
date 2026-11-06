@@ -20,7 +20,7 @@ import { LabelsProvider } from "./robust/labels-context";
 import { RobustShell } from "./robust/RobustShell";
 import { SideNav } from "./SideNav";
 import { TabBar } from "./TabBar";
-import { HideOnPhoneInV4, TopBar } from "./TopBar";
+import { TopBar } from "./TopBar";
 import type { Membership } from "./use-workspace";
 
 /**
@@ -57,11 +57,9 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
             <span lang={lang}>
               <LangSelect lang={lang} label={t("lang.label")} />
             </span>
-            <HideOnPhoneInV4 frame={frame}>
-              <span lang={lang}>
-                <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
-              </span>
-            </HideOnPhoneInV4>
+            <span lang={lang}>
+              <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
+            </span>
           </TopBar>
           <RobustShell labels={labels} />
           <div id="main-content" lang="en" tabIndex={-1} className="min-w-0 flex-1 outline-none">

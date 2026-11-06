@@ -159,7 +159,10 @@ describe("app v4: five groups (job-app-v4.md part 1, owner 6 Nov 2026)", () => {
   const T = "11111111-1111-4111-8111-111111111111";
   it("Today, Customers, Sales, AI team and Settings, and every menu row is in exactly one of them (no page is lost)", () => {
     expect(MENU_V4.map((g) => g.id)).toEqual(["today", "customers", "sales", "aiteam", "settings"]);
-    for (const m of MENU) expect(MENU_V4.filter((g) => g.sections.includes(m.id)).length, m.id).toBe(1);
+    for (const m of MENU) expect(MENU_V4.filter((g) => g.sections.includes(m.id) || (g.quiet ?? []).includes(m.id)).length, m.id).toBe(1);
+    // "Talk to assistant" is Today's orb and composer, not a tab (owner, 6 Nov 2026): it still marks Today
+    expect(MENU_V4[0].sections).toEqual(["today", "reports"]);
+    expect(activeV4Id(`/app/tenants/${T}/talk`, null)).toBe("v4-today");
   });
   it("Customers holds Leads, Calls, Chats, Follow-ups, Store visits and Find customers; Sales holds Quotes, Orders, Catalogue & stock and the money pages; AI team holds My AI team, Train how it talks and Phone number; Settings holds Lead sources", () => {
     const of = (id: string) => MENU_V4.find((g) => g.id === id)!.sections;

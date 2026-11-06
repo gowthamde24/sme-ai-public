@@ -32,12 +32,33 @@ export function TopBar({ memberships, labels, email, signOut, mark, children, pa
       <div className="ml-auto flex items-center gap-2">
         {/* "Start demo" (a demo workspace only) is drawn here by the guided demo */}
         <span id="demo-start-slot" className="contents" />
-        {current ? <HelpButton base={`/app/tenants/${current.id}`} labels={labels} /> : null}
+        {current ? (
+          <span className={v4 ? "max-md:hidden" : "contents"}>
+            <HelpButton base={`/app/tenants/${current.id}`} labels={labels} />
+          </span>
+        ) : null}
         {current ? <NotificationBell key={current.id} tenantId={current.id} labels={labels} still={still} /> : null}
-        {children}
+        <span className={v4 ? "contents max-md:hidden" : "contents"}>{children}</span>
         {current && !v4 ? null : (
           <div className="md:hidden">
-            <AccountMenu email={email} signOut={signOut} labels={labels} down several={memberships.length > 1} mark={mark} />
+            <AccountMenu
+              email={email}
+              signOut={signOut}
+              labels={labels}
+              down
+              several={memberships.length > 1}
+              mark={mark}
+              extra={
+                v4 && current ? (
+                  <div className="flex flex-col gap-2 border-y border-line px-3 py-2" data-part="person-menu-extra">
+                    <div className="flex flex-wrap items-center gap-2">{children}</div>
+                    <Link href={`/app/tenants/${current.id}/help`} className="inline-flex min-h-11 items-center text-sm font-semibold text-ink underline-offset-4 hover:underline">
+                      {word(labels, "frame.help", "Help")}
+                    </Link>
+                  </div>
+                ) : null
+              }
+            />
           </div>
         )}
       </div>
@@ -45,8 +66,3 @@ export function TopBar({ memberships, labels, email, signOut, mark, children, pa
   );
 }
 
-/** App v4 on a phone: the light/dark button gives its place to the person (whose menu moved here from "More"); Settings > Language and look keeps the choice. Without v4, or from a tablet up, it is drawn as before. */
-export function HideOnPhoneInV4({ frame: given, children }: { frame: FrameData; children: ReactNode }) {
-  const frame = useFrameData(given);
-  return frame.v4 ? <span className="max-md:hidden">{children}</span> : <>{children}</>;
-}

@@ -392,3 +392,26 @@ describe("app v4: the menu is five groups (job-app-v4.md part 1)", () => {
     expect(document.querySelector("[data-nav-row^='v4-']")).toBeNull();
   });
 });
+
+describe("app v4: the phone's top bar (owner, 6 Nov 2026)", () => {
+  it("keeps search, the bell and the person; the language, the theme and Help are in the person's menu on a phone", async () => {
+    const { TopBar } = await import("./TopBar");
+    nav.pathname = `/app/tenants/${A}/orders`;
+    render(
+      <TopBar memberships={only("owner")} email="o@example.test" signOut={noSignOut} mark={MARK} frame={{ ...NO_FRAME_DATA, v4: true }}>
+        <span data-testid="lang-and-theme">language and theme</span>
+      </TopBar>,
+    );
+    const extra = document.querySelector('[data-part="person-menu-extra"]');
+    expect(extra).not.toBeNull();
+    expect(within(extra as HTMLElement).getByTestId("lang-and-theme")).toBeInTheDocument();
+    expect(within(extra as HTMLElement).getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
+    cleanup();
+    render(
+      <TopBar memberships={only("owner")} email="o@example.test" signOut={noSignOut} mark={MARK} frame={NO_FRAME_DATA}>
+        <span>language and theme</span>
+      </TopBar>,
+    );
+    expect(document.querySelector('[data-part="person-menu-extra"]')).toBeNull();
+  });
+});

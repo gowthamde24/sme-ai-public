@@ -151,7 +151,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     <main className={pageMain} lang={lang}>
       {topups}
       {setup ? (
-        <SetupGate tenantId={tenantId} base={`/app/tenants/${tenantId}`} lang={lang} facts={setup} words={setupWords(lang)} actions={setupActions}>
+        <SetupGate tenantId={tenantId} base={`/app/tenants/${tenantId}`} lang={lang} facts={setup} words={setupWords(lang)} actions={setupActions} slim={appV4()}>
           {view}
         </SetupGate>
       ) : (

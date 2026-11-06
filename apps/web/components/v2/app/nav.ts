@@ -254,9 +254,9 @@ export function menuBar(role: Role, view?: PackFrame | null): MenuRow[] {
  * ⌘K reaches every page. A section the role or the business type does not have is simply not a tab, and a group with none is not in the menu. Money (Sales) is the dues or fees page of the business type until part 6 brings its own.
  */
 export type V4Id = "today" | "customers" | "sales" | "aiteam" | "settings";
-export type V4Entry = { id: V4Id; label: string; icon: IconKey; sections: readonly MenuId[]; count?: CountKey };
+export type V4Entry = { id: V4Id; label: string; icon: IconKey; sections: readonly MenuId[]; /** Rows that belong to the group (its menu marker) but are not a tab of it: Today's "Talk to assistant" is the orb and the composer on Today itself (owner, 6 Nov 2026). */ quiet?: readonly MenuId[]; count?: CountKey };
 export const MENU_V4: readonly V4Entry[] = [
-  { id: "today", label: "Today", icon: "today", sections: ["today", "reports", "assistant"], count: "today" },
+  { id: "today", label: "Today", icon: "today", sections: ["today", "reports"], quiet: ["assistant"], count: "today" },
   { id: "customers", label: "Customers", icon: "customers", sections: ["leads", "calls", "chats", "followups", "visits", "find"], count: "leads" },
   { id: "sales", label: "Sales", icon: "quotes", sections: ["quotes", "orders", "catalogue", "dues", "fees", "trips", "admissions", "students", "notices"], count: "quotes" },
   { id: "aiteam", label: "AI team", icon: "aiteam", sections: ["aiteam", "train", "phone"], count: "aiteam" },
@@ -266,7 +266,7 @@ export const MENU_V4: readonly V4Entry[] = [
 export const v4ItemId = (id: V4Id): string => `v4-${id}`;
 /** The v4 group a menu row (a section) belongs to, or null. */
 export function v4OfMenu(menuId: MenuId): V4Entry | null {
-  return MENU_V4.find((g) => g.sections.includes(menuId)) ?? null;
+  return MENU_V4.find((g) => g.sections.includes(menuId) || (g.quiet ?? []).includes(menuId)) ?? null;
 }
 /** The sections of a v4 group this role and business type are offered, in their order (each a menu row: it goes to its own first page). */
 export function v4Sections(group: V4Entry, role: Role, view?: PackFrame | null): MenuRow[] {

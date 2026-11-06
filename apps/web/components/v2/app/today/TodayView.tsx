@@ -6,6 +6,7 @@ import { formatRupeesShort } from "@/lib/money";
 
 import { LiveNow } from "../live/LazyLiveNow";
 import { CommandBar } from "./CommandBar";
+import { SetupSlot } from "../setup/SetupGate";
 import { DoneSection } from "./DoneSection";
 import { NeedsYou } from "./NeedsYou";
 import { PackCardItem } from "./PackCards";
@@ -78,7 +79,8 @@ export function TodayView({ hero = null, plan = null, chipKeys = null, newLeads 
             <span>{dayLine(now, lang)}</span>
           </div>
           {/* the member's own name (My profile), with the respectful form of the language (Telugu "గారు", Hindi "जी", Kannada "ಅವರೇ"; English the name alone: never sir or madam); none when they have no name */}
-          <h2 data-part="greeting" className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? t("today.greeting.named", { greet, name }) : greet}</h2>
+          {/* app v4: the assistant's hero is the first thing on Today (owner, 6 Nov 2026): the big greeting gives way to it (the hero's own sentence speaks), and "Today · the date" stays as the page's heading */}
+          {hero ? null : <h2 data-part="greeting" className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? t("today.greeting.named", { greet, name }) : greet}</h2>}
         </div>
         <LiveNow tenantId={base.split("/").pop() ?? ""} />
       </header>
@@ -92,6 +94,8 @@ export function TodayView({ hero = null, plan = null, chipKeys = null, newLeads 
         <CommandBar lang={lang} base={base} availability={availability} words={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} chips={chips} />
         {hero ? plan : null}
         {hero ? <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} /> : null}
+        {/* app v4: "Finish setting up" comes here as one slim line (the setup's own component puts it here) */}
+        {hero ? <SetupSlot /> : null}
         {live}
         {outcomes}
         {/* the summary cards, side by side (four on a wide screen) */}
