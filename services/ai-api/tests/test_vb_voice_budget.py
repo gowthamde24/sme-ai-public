@@ -153,3 +153,31 @@ def test_the_warning_reads_plainly_in_needs_you() -> None:
     assert item.kind == "voice_credits" and item.customer == "Voice credits" and "80 percent of today's limit" in item.summary and "Sarvam" in item.summary
     for ref, words in (("day_100", "reached today's limit"), ("month_80", "80 percent of this month's credits"), ("month_100", "Overage charges apply now")):
         assert words in needs_item({**row, "ref": ref}).summary
+
+
+# ---- Marathi (6 Nov 2026): Sarvam only, so the Cartesia cap never touches it ------------------------------------------------------------------
+def build_marathi(primary: Engine, fallback: Engine) -> FallbackTts:
+    cfg = dataclasses.replace(default_config(), first_audio_timeout_ms=800)
+    return FallbackTts(cfg, lambda choice, language: primary if choice.voice == "ishita_mr_conversational" else fallback)
+
+
+def test_a_marathi_call_is_not_capped_or_counted_by_the_cartesia_allowance() -> None:
+    primary, fallback = Engine("ishita"), Engine("neha")
+    tts = build_marathi(primary, fallback)
+    tts.set_primary_budget(0)   # no Cartesia allowance left at all
+    tts.begin_turn()
+    assert run(speak(tts, "नमस्कार, एक मिनिट.", "mr")) and primary.calls and not fallback.calls
+    assert tts.served_engine == "sarvam_v4" and tts.served_primary and tts.primary_chars == 0 and not tts.primary_off, "Sarvam speaks Marathi; nothing is counted against Cartesia"
+
+
+def test_a_marathi_voice_that_fails_falls_back_to_the_other_sarvam_voice_and_a_kept_greeting_is_only_the_primarys() -> None:
+    primary, fallback = Engine("ishita", "error"), Engine("neha")
+    tts = build_marathi(primary, fallback)
+    tts.begin_turn()
+    assert run(speak(tts, "नमस्कार", "mr")) and fallback.calls and not tts.served_primary and tts.primary_off == "error"
+    from app.telephony.greeting_audio import OUT_RATE, GreetingAudio
+
+    kept = GreetingAudio()
+    assert not kept.keep("mr", "नमस्कार", b"\x01\x00" * 800, rate=OUT_RATE, engine="sarvam_v4", primary=False), "the fallback's voice is never kept"
+    assert kept.keep("mr", "नमस्कार", b"\x01\x00" * 800, rate=OUT_RATE, engine="sarvam_v4", primary=True), "Marathi's primary is Sarvam: its greeting is kept"
+    assert not kept.keep("te", "హలో", b"\x01\x00" * 800, rate=OUT_RATE, engine="sarvam_v4"), "without the flag, the old rule: only Cartesia"

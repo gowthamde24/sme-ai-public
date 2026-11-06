@@ -1,5 +1,5 @@
 {
- "$comment": "The voices a workspace owner can choose from for their assistant on calls and in previews (job voice-picker, owner decision 28 Oct; Bulbul v3 is dropped). Data, not code: the CATALOGUE is the list of allowed voices, one entry marked default per language (the default is what speaks until the owner chooses). Each entry names its Cartesia voice and a Bulbul v4 Flash FALLBACK voice of the SAME gender (checked on load). Ids are '<language>-<name>'. Add or remove a voice here and render its sample with scripts/voice_catalogue_samples.py. Labels are plain words for the screen. Voice system v2 (29 Oct 2026): native Cartesia voices of both genders in te, en, hi, kn, ta, ml, built by scripts/voice_catalogue_build.py; tags in plain words; recommended = the best three by a speech-to-text round trip.",
+ "$comment": "The voices a workspace owner can choose from for their assistant on calls and in previews (job voice-picker, owner decision 28 Oct; Bulbul v3 is dropped). Data, not code: the CATALOGUE is the list of allowed voices, one entry marked default per language (the default is what speaks until the owner chooses). Each entry names its Cartesia voice and a Bulbul v4 Flash FALLBACK voice of the SAME gender (checked on load). Ids are '<language>-<name>'. Add or remove a voice here and render its sample with scripts/voice_catalogue_samples.py. Labels are plain words for the screen. Voice system v2 (29 Oct 2026): native Cartesia voices of both genders in te, en, hi, kn, ta, ml, built by scripts/voice_catalogue_build.py; tags in plain words; recommended = the best three by a speech-to-text round trip. Marathi (6 Nov 2026, a DRAFT until a native speaker reviews it): Sarvam Bulbul v4 Flash voices only, the fallback a second Sarvam Marathi voice (app/conversation/voices.py ONE_ENGINE_LANGUAGES); Cartesia is never used for Marathi, so the Cartesia cap does not apply.",
  "first_audio_timeout_ms": 800,
  "cooldown_s": 30,
  "catalogue": [
@@ -1155,6 +1155,59 @@
     "gender": "male",
     "label": "kabir"
    }
+  },
+  {
+   "id": "mr-ishita",
+   "language": "mr",
+   "name": "Ishita",
+   "label": "Warm",
+   "gender": "female",
+   "tags": [
+    "warm",
+    "bright"
+   ],
+   "recommended": true,
+   "default": true,
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "ishita_mr_conversational",
+    "label": "Ishita"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "neha_mr_narration",
+    "gender": "female",
+    "label": "neha"
+   },
+   "note": "DRAFT (6 Nov 2026): Sarvam only (Cartesia is not used for Marathi). The genders of the Sarvam voices are not published; they are to be confirmed by listening, with the Marathi wording, by a native speaker."
+  },
+  {
+   "id": "mr-nilesh",
+   "language": "mr",
+   "name": "Nilesh",
+   "label": "Warm",
+   "gender": "male",
+   "tags": [
+    "warm"
+   ],
+   "recommended": true,
+   "default": true,
+   "primary": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "nilesh_mr_conversation",
+    "label": "Nilesh"
+   },
+   "fallback": {
+    "engine": "sarvam_v4",
+    "model": "bulbul:v4-flash",
+    "voice": "soham_mr_narration",
+    "gender": "male",
+    "label": "soham"
+   },
+   "note": "DRAFT (6 Nov 2026): see mr-ishita."
   }
  ]
 }

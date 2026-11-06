@@ -18,6 +18,7 @@ from app.conversation.preview import PREVIEW_DAILY_CHARS, CallVoicePreview
 from app.conversation.voices import (
     CALL_LANGUAGES,
     DEFAULT_FILE,
+    ONE_ENGINE_LANGUAGES,
     TAGS,
     VOICED_LANGUAGES,
     VoiceChoice,
@@ -70,7 +71,7 @@ RENDERED = {"en-janvi", "hi-sanya", "hi-esha", "hi-meera", "kn-disha", "kn-divya
 def test_the_catalogue_has_native_voices_of_both_genders_in_all_six_languages_with_one_default_each() -> None:
     cfg = default_config()
     assert CALL_LANGUAGES == ("te", "en", "hi", "kn", "ta", "ml", "mr")
-    assert VOICED_LANGUAGES == ("te", "en", "hi", "kn", "ta", "ml") and not cfg.has_voices("mr"), "Marathi (job M1) is a call language with no voice yet"
+    assert VOICED_LANGUAGES == ("te", "en", "hi", "kn", "ta", "ml", "mr") and cfg.has_voices("mr"), "Marathi has Sarvam voices since 6 Nov 2026"
     for lang in VOICED_LANGUAGES:
         for gender in ("female", "male"):
             group = cfg.voices_of(lang, gender)
@@ -81,7 +82,8 @@ def test_the_catalogue_has_native_voices_of_both_genders_in_all_six_languages_wi
     assert {lang: cfg.default_for(lang).name for lang in CALL_LANGUAGES[:4]} == {"te": "Ramya", "en": "Janvi", "hi": "Sanya", "kn": "Disha"}, "the voices that have always spoken stay the defaults"
     assert cfg.catalogue["kn-prakash"].gender == "male"
     for c in cfg.catalogue.values():
-        assert c.id.startswith(f"{c.language}-") and c.voices.primary.engine == "cartesia" and c.voices.fallback.engine == "sarvam_v4" and 0 < len(c.label) <= 20
+        primary = "sarvam_v4" if c.language in ONE_ENGINE_LANGUAGES else "cartesia"   # Marathi: Sarvam only (6 Nov 2026)
+        assert c.id.startswith(f"{c.language}-") and c.voices.primary.engine == primary and c.voices.fallback.engine == "sarvam_v4" and 0 < len(c.label) <= 20
         assert c.tags and set(c.tags) <= set(TAGS) and c.label == c.tags[0].capitalize(), c.id
     assert RENDERED <= set(cfg.catalogue), "the voices that already had audio are still in the catalogue (no workspace's choice breaks)"
 
@@ -149,7 +151,7 @@ def test_any_member_reads_the_catalogue_with_sample_urls_and_the_default_active(
     client, _ = world()
     r = client.get(f"{BASE}/voices", headers=auth("a_viewer"))
     body = r.json()
-    assert r.status_code == 200 and body["gender"] == "female" and [x["language"] for x in body["languages"]] == ["te", "en", "hi", "kn", "ta", "ml"]
+    assert r.status_code == 200 and body["gender"] == "female" and [x["language"] for x in body["languages"]] == ["te", "en", "hi", "kn", "ta", "ml", "mr"]
     te = body["languages"][0]
     assert te["default_id"] == "te-ramya" and te["chosen_id"] is None and te["active_id"] == "te-ramya"
     assert {v["gender"] for v in te["voices"]} == {"female", "male"}, "voices of both genders: the screen filters"
@@ -318,6 +320,6 @@ def test_the_preview_route_needs_owner_or_admin_speaks_the_opening_line_and_is_4
     assert ("cartesia", default_config().catalogue["te-sindhu"].voices.primary.voice) in built
     assert r.headers["x-voice-id"] == "en-janvi" and client.get(f"{BASE}/voices/preview?language=te", headers=auth("a_owner")).headers["x-voice-id"] == "te-sindhu"
     assert client.get(f"{BASE}/voices/preview?language=bn", headers=auth("a_owner")).status_code == 422
-    assert client.get(f"{BASE}/voices/preview?language=mr", headers=auth("a_owner")).status_code == 404, "job M1: a call language with no voice yet has no preview"
+    assert client.get(f"{BASE}/voices/preview?language=mr", headers=auth("a_owner")).status_code == 200, "Marathi has its (Sarvam) voices since 6 Nov 2026"
     off, _ = make_client(workspace=FakeChoices())
     assert off.get(q, headers=auth("a_owner")).status_code == 404

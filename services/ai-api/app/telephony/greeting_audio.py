@@ -49,11 +49,13 @@ class GreetingAudio:
             self._cache.move_to_end(k)
         return pcm
 
-    def keep(self, language: str, text: str, pcm: bytes, *, rate: int, engine: str = "") -> bool:
+    def keep(self, language: str, text: str, pcm: bytes, *, rate: int, engine: str = "", primary: bool | None = None) -> bool:
         """Keep audio a real call has just spoken (no extra voice request, no extra credits). Only the primary voice at the line's input rate is kept, so a later call never greets in the
-        fallback's voice and then answers in the primary's."""
+        fallback's voice and then answers in the primary's. `primary` says whether the language's primary voice spoke it (Cartesia for most languages, Sarvam for Marathi); without it, only
+        Cartesia audio is kept (the rule before Marathi had a voice)."""
         pcm = strip_wav(pcm)
-        if rate != OUT_RATE or not pcm or (engine and engine != "cartesia"):
+        not_primary = (primary is False) if primary is not None else bool(engine and engine != "cartesia")
+        if rate != OUT_RATE or not pcm or not_primary:
             return False
         k = self.key(language, text)
         if k not in self._cache:

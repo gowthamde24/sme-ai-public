@@ -241,10 +241,10 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
             except Exception:  # noqa: BLE001 - not ready in time: the opening is streamed
                 pcm = None
             if pcm:
-                GREETINGS.keep(service.language, text, pcm, rate=OUT_RATE, engine="cartesia")
+                GREETINGS.keep(service.language, text, pcm, rate=OUT_RATE, primary=True)   # stored only after the primary spoke it
 
-        def keep_and_store(language: str, said: str, pcm: bytes, *, rate: int, engine: str = "") -> bool:
-            kept = GREETINGS.keep(language, said, pcm, rate=rate, engine=engine)
+        def keep_and_store(language: str, said: str, pcm: bytes, *, rate: int, engine: str = "", primary: bool | None = None) -> bool:
+            kept = GREETINGS.keep(language, said, pcm, rate=rate, engine=engine, primary=primary)
             if kept and language == service.language and said == text:
                 asyncio.ensure_future(asyncio.to_thread(store.put, path, pcm))   # after the call spoke it: never before admission
             return kept
