@@ -188,6 +188,9 @@ class Runtime:
     workspace_secrets: Any = None
     # how the assistant talks on calls (app/talk_training: the Owner's training)
     talk_training: Any = None
+    # the developer API (app/developer_api.DeveloperApi)
+    # None: DEVELOPER_API=off, every route answers 404
+    developer_api: Any = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)

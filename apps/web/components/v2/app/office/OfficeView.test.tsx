@@ -22,7 +22,7 @@ const sample: AgentRow[] = set("quote_writer", { state: "working", job: "Prepare
   r.agent === "lead_finder" ? { ...r, state: "not_available" as const, job: "Finds new businesses that may want to buy. Not built yet." } : r.agent === "researcher" ? { ...r, state: "switched_off" as const, job: "Reads public pages about a lead." } : r,
 );
 const view = (agents: AgentRow[] | null, selected: string | null = null) => render(<OfficeView agents={agents} selected={selected} base="/app/tenants/T" t={t} />);
-const cards = () => within(screen.getByRole("region", { name: "Agent office" })).getAllByRole("listitem");
+const cards = () => within(screen.getByRole("region", { name: "My AI team" })).getAllByRole("listitem");
 afterEach(cleanup);
 
 describe("OfficeView", () => {
@@ -70,6 +70,6 @@ describe("OfficeView", () => {
   });
   it("cards are tall enough to touch (44px)", () => {
     view(sample);
-    for (const a of within(screen.getByRole("region", { name: "Agent office" })).getAllByRole("link")) expect(a.className).toContain("min-h-24");
+    for (const a of within(screen.getByRole("region", { name: "My AI team" })).getAllByRole("link")) expect(a.className).toContain("min-h-24");
   });
 });

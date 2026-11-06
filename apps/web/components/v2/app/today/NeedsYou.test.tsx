@@ -525,6 +525,51 @@ describe("Needs you: a new business from the Lead Finder (job lead-finder part D
   });
 });
 
+describe("Needs you: a caller who asked for a person (C1 #347)", () => {
+  const LEAD = "/app/tenants/11111111-1111-4111-8111-111111111111/leads/22222222-2222-4222-8222-222222222222";
+  const person = (over: Partial<Extract<NeedsCard, { type: "person" }>> = {}): NeedsCard => ({ type: "person", key: `person_requested-${CALL_ID}`, at: new Date(NOW - 10 * 60_000).toISOString(), id: CALL_ID, customer: "Ravi K.", city: "Guntur", leadHref: LEAD, gist: "Wants to talk about a bulk order.", visitAt: null, bookHref: null, ...over });
+  it("says who asked, with Call back (the lead) and Done; Done takes it off and says so", async () => {
+    const { actions } = board([person()]);
+    const a = cardOf(/^Ravi K\. asked to talk to a person/);
+    expect(within(a).getByText("Wants to talk about a bulk order.")).toHaveAttribute("lang", "en");
+    expect(within(a).getByRole("link", { name: "Call back" })).toHaveAttribute("href", LEAD);
+    await act(async () => fireEvent.click(within(a).getByRole("button", { name: "Done, we called back" })));
+    expect(actions.callHandled).toHaveBeenCalledWith(CALL_ID);
+    expect(screen.queryByRole("article")).toBeNull();
+    expect(screen.getByRole("status")).toHaveTextContent("Marked as done. It's off your list.");
+  });
+  it("a call with no lead has no Call back; a Viewer gets no Done", () => {
+    board([person({ leadHref: null })], { role: "viewer" });
+    const a = cardOf(/asked to talk to a person/);
+    expect(within(a).queryByRole("link", { name: "Call back" })).toBeNull();
+    expect(within(a).queryByRole("button", { name: /Done/ })).toBeNull();
+  });
+  it("a refusal puts the card back with the reason", async () => {
+    board([person()], { actions: fakeActions({ callHandled: vi.fn(async () => ({ ok: false as const, error: "This changed meanwhile.", stale: true })) }) });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Done, we called back" })));
+    expect(cardOf(/asked to talk to a person/)).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("This changed meanwhile.");
+  });
+  it("a caller who agreed a visit time (C1 #354): the day and time in the title, Book opens Visits on that time, Done as before", async () => {
+    const book = "/app/tenants/T/visits?date=2026-11-03&time=10:00&lead=22222222-2222-4222-8222-222222222222";
+    const { actions } = board([person({ key: `visit_requested-${CALL_ID}`, visitAt: "2026-11-03T04:30:00Z", bookHref: book })]);
+    const a = cardOf(/^Ravi K\. wants to visit on .*10:00/);
+    expect(within(a).getByRole("link", { name: "Book" })).toHaveAttribute("href", book);
+    expect(within(a).queryByRole("link", { name: "Call back" })).toBeNull();
+    expect(within(a).getByText("Book it in Visits, then mark it done.")).toBeInTheDocument();
+    await act(async () => fireEvent.click(within(a).getByRole("button", { name: "Done, we called back" })));
+    expect(actions.callHandled).toHaveBeenCalledWith(CALL_ID);
+  });
+  it("as a row: the short badge, the title, Call back and Done", () => {
+    compactNext = true;
+    board([person()]);
+    const row = document.querySelector(`[data-needs-row="person_requested-${CALL_ID}"]`) as HTMLElement;
+    expect(row).toHaveTextContent("Person");
+    expect(within(row).getByRole("link", { name: "Call back" })).toBeInTheDocument();
+    expect(within(row).getByRole("button", { name: "Done, we called back" })).toHaveTextContent("Done");
+  });
+});
+
 describe("Needs you: the Lead Finder's rows and See all (owner, 5 Nov)", () => {
   const P = "b1b1b1b1-0000-4000-8000-000000000001";
   const prospect = (n: number, over: Partial<Extract<NeedsCard, { type: "item" }>["item"]> = {}): NeedsCard => {

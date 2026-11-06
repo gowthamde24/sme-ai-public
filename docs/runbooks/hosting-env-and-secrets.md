@@ -246,6 +246,7 @@ Change only when the published terms or privacy notice change.
 | `TERMS_EFFECTIVE_FROM` | plain | api | A date; empty = at once. |
 | `PRIVACY_EFFECTIVE_FROM` | plain | api | A date; empty = at once. |
 | `POLICY_ENFORCE` | plain | api | `false` until the first real version change is published. |
+| `DEVELOPER_API` | plain | api | The developer API (ADR 0121): `off` (default; Settings -> Developers and `/api/v1` answer 404) or `test` (test-mode keys and the sandbox: no live keys exist, nothing is ever called or sent). The program's requests run as the worker account, so it needs `SCHEDULER_EMAIL` and `SCHEDULER_PASSWORD` (otherwise 503). |
 
 ## The web (Cloud Run or Vercel)
 

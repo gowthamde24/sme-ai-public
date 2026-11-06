@@ -82,6 +82,13 @@ const extraRoutes = [
   ["GET", new RegExp(`^/v1/tenants/${TENANT}/campaigns$`), json({ items: [CAMPAIGN], next_cursor: null })],
   ["GET", new RegExp(`^/v1/tenants/${TENANT}/institution/admissions$`), json(ADMISSIONS)],
   ["GET", new RegExp(`^/v1/tenants/${TENANT}/agents/status$`), json(() => AGENTS_ON)],
+  // C1's switches (docs/contracts/agents-switches.md): the assistant and the researcher switchable (it is the one working), the requirement reader locked by the platform, the features without a switch of their own
+  ["GET", new RegExp(`^/v1/tenants/${TENANT}/agents/switches$`), json(() => [
+    { agent: "main", enabled: true, can_switch: true, reason_locked: null, done_today: 12 },
+    { agent: "researcher", enabled: true, can_switch: true, reason_locked: null, done_today: 3 },
+    { agent: "requirement_analyst", enabled: true, can_switch: false, reason_locked: "platform", done_today: 0 },
+    ...["lead_finder", "quote_writer", "followup_desk", "order_desk"].map((agent) => ({ agent, enabled: true, can_switch: false, reason_locked: "not_built", done_today: null })),
+  ])],
   ["GET", /^\/v1\/me$/, json(() => ({ user_id: USER_ID, memberships: [{ role: "owner", tenant: { id: TENANT, name: current.name, slug: "example" } }] }))],
   ["GET", new RegExp(`^${T}$`), json(() => ({ id: TENANT, name: current.name, slug: "example", role: "owner", plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-09-20T00:00:00Z" }))],
   ["GET", new RegExp(`^${T}/lead-finder/availability$`), json(() => (current.finder ? { available: true, source: "fixture", reason: "ok", upgrade_to: null, audience: "businesses" } : { available: false, source: null, reason: "not_for_this_business", upgrade_to: null, audience: "organisations" }))],
@@ -108,13 +115,13 @@ async function waitForPort(port, ms = 90_000) {
   throw new Error(`nothing listening on ${port} after ${ms} ms`);
 }
 
-async function shot(browser, cookie, { file, viewport, scheme, lang, more = false, full = false, menuEnd = false }) {
+async function shot(browser, cookie, { file, viewport, scheme, lang, more = false, full = false, menuEnd = false, at = "" }) {
   const context = await browser.newContext({ viewport, deviceScaleFactor: 2, ignoreHTTPSErrors: true, colorScheme: scheme, timezoneId: "Asia/Kolkata" });
   await context.addCookies([{ name: "sme_consent", value: "1.a0", url: WEB_URL }, { name: "sme_lang", value: lang, url: WEB_URL }, { name: "sme_theme", value: scheme, url: WEB_URL }, { name: "sb-127-auth-token", value: cookie, url: WEB_URL }]);
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(String(e)));
-  await page.goto(`${WEB_URL}/app/tenants/${TENANT}`, { waitUntil: "domcontentloaded", timeout: 60_000 });
+  await page.goto(`${WEB_URL}/app/tenants/${TENANT}${at}`, { waitUntil: "domcontentloaded", timeout: 60_000 });
   // then the network quiet (a part that polls every few seconds may keep it from ever being fully idle: wait at most 15 s)
   const open = new Map();
   page.on("request", (r) => open.set(r, new URL(r.url()).pathname + new URL(r.url()).search));
@@ -181,7 +188,10 @@ async function main() {
         { file: `desktop-${p.short}-dark-en.png`, viewport: desktop, scheme: "dark", lang: "en" },
         { file: `desktop-${p.short}-full-en.png`, viewport: desktop, scheme: "light", lang: "en", full: true },
         { file: `laptop-${p.short}-light-en.png`, viewport: laptop, scheme: "light", lang: "en" },
+        { file: `laptop-${p.short}-dark-en.png`, viewport: laptop, scheme: "dark", lang: "en" },
         { file: `laptop-${p.short}-menu-end-en.png`, viewport: laptop, scheme: "light", lang: "en", menuEnd: true },
+        // sidebar v2 part 3: My AI team (a card per helper, its own switch where it has one)
+        ...(p.short === "sarees" ? [{ file: `desktop-${p.short}-aiteam-en.png`, viewport: desktop, scheme: "light", lang: "en", at: "/office" }, { file: `phone-${p.short}-aiteam-en.png`, viewport: phone, scheme: "light", lang: "en", at: "/office", full: true }] : []),
         ...(p.short === "sarees" ? [{ file: `desktop-${p.short}-light-te.png`, viewport: desktop, scheme: "light", lang: "te" }] : []),
         { file: `phone-${p.short}-today-en.png`, viewport: phone, scheme: "light", lang: "en" },
         { file: `phone-${p.short}-more-en.png`, viewport: phone, scheme: "light", lang: "en", more: true },

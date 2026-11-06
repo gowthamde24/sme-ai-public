@@ -274,6 +274,17 @@
    "kn": "draft"
   }
  },
+ "frame.search": {
+  "en": "Search or ask anything",
+  "te": "ఏదైనా వెతకండి లేదా అడగండి",
+  "hi": "कुछ भी खोजें या पूछें",
+  "kn": "ಏನನ್ನಾದರೂ ಹುಡುಕಿ ಅಥವಾ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "frame.notyet": {
   "en": "Not available yet",
   "te": "ఇంకా అందుబాటులో లేదు",
@@ -984,10 +995,10 @@
   "humanOnly": true
  },
  "office.title": {
-  "en": "Agent office",
-  "te": "ఏజెంట్ ఆఫీస్",
-  "hi": "एजेंट ऑफ़िस",
-  "kn": "ಏಜೆಂಟ್ ಆಫೀಸ್",
+  "en": "My AI team",
+  "te": "నా AI టీమ్",
+  "hi": "मेरी AI टीम",
+  "kn": "ನನ್ನ AI ತಂಡ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1192,11 +1203,132 @@
    "kn": "draft"
   }
  },
+ "office.settings": {
+  "en": "Settings",
+  "te": "సెట్టింగ్స్",
+  "hi": "सेटिंग्स",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.switch": {
+  "en": "On or off",
+  "te": "ఆన్ లేదా ఆఫ్",
+  "hi": "चालू या बंद",
+  "kn": "ಆನ್ ಅಥವಾ ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.done.one": {
+  "en": "1 done today",
+  "te": "ఈరోజు 1 పూర్తి",
+  "hi": "आज 1 पूरा",
+  "kn": "ಇಂದು 1 ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.done.other": {
+  "en": "{n} done today",
+  "te": "ఈరోజు {n} పూర్తి",
+  "hi": "आज {n} पूरे",
+  "kn": "ಇಂದು {n} ಮುಗಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.locked.platform": {
+  "en": "Switched off for everyone for now",
+  "te": "ప్రస్తుతం అందరికీ ఆఫ్‌లో ఉంది",
+  "hi": "अभी सबके लिए बंद है",
+  "kn": "ಸದ್ಯಕ್ಕೆ ಎಲ್ಲರಿಗೂ ಆಫ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.locked.workspace_off": {
+  "en": "AI helpers are off in Settings",
+  "te": "సెట్టింగ్స్‌లో AI సహాయకులు ఆఫ్‌లో ఉన్నారు",
+  "hi": "सेटिंग्स में AI हेल्पर बंद हैं",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ AI ಸಹಾಯಕರು ಆಫ್ ಆಗಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sw.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sw.off": {
+  "en": "Off",
+  "te": "ఆఫ్",
+  "hi": "बंद",
+  "kn": "ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sw.err.forbidden": {
+  "en": "Only the owner can switch helpers on or off.",
+  "te": "సహాయకులను ఓనర్ మాత్రమే ఆన్ లేదా ఆఫ్ చేయగలరు.",
+  "hi": "हेल्पर को सिर्फ़ मालिक चालू या बंद कर सकते हैं।",
+  "kn": "ಸಹಾಯಕರನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಆನ್ ಅಥವಾ ಆಫ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sw.err.locked": {
+  "en": "This helper has no switch of its own yet.",
+  "te": "ఈ సహాయకుడికి ఇంకా సొంత స్విచ్ లేదు.",
+  "hi": "इस हेल्पर का अपना स्विच अभी नहीं है।",
+  "kn": "ಈ ಸಹಾಯಕರಿಗೆ ಇನ್ನೂ ಸ್ವಂತ ಸ್ವಿಚ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sw.err.down": {
+  "en": "That didn't change. Please try again.",
+  "te": "అది మారలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "वह नहीं बदला। फिर कोशिश करें।",
+  "kn": "ಅದು ಬದಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "office.listintro": {
-  "en": "The same information as the board, as text.",
-  "te": "బోర్డ్‌లోని సమాచారమే, టెక్స్ట్‌గా.",
-  "hi": "बोर्ड वाली वही जानकारी, टेक्स्ट में।",
-  "kn": "ಬೋರ್ಡ್‌ನಲ್ಲಿರುವ ಅದೇ ಮಾಹಿತಿ, ಪಠ್ಯವಾಗಿ.",
+  "en": "One card per helper: what it is doing now, what it did today, and its settings.",
+  "te": "ప్రతి సహాయకుడికి ఒక కార్డ్: ఇప్పుడు ఏం చేస్తోంది, ఈరోజు ఏం చేసింది, దాని సెట్టింగ్స్.",
+  "hi": "हर हेल्पर का एक कार्ड: अभी क्या कर रहा है, आज क्या किया, और उसकी सेटिंग्स।",
+  "kn": "ಪ್ರತಿ ಸಹಾಯಕರಿಗೆ ಒಂದು ಕಾರ್ಡ್: ಈಗ ಏನು ಮಾಡುತ್ತಿದೆ, ಇಂದು ಏನು ಮಾಡಿತು, ಅದರ ಸೆಟ್ಟಿಂಗ್ಸ್.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1952,6 +2084,138 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "today.badge.person": {
+  "en": "Asked for a person",
+  "te": "మనిషితో మాట్లాడాలన్నారు",
+  "hi": "इंसान से बात चाहते हैं",
+  "kn": "ವ್ಯಕ್ತಿಯ ಜೊತೆ ಮಾತು ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.badge.person.row": {
+  "en": "Person",
+  "te": "మనిషి",
+  "hi": "इंसान",
+  "kn": "ವ್ಯಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.title.person": {
+  "en": "{customer} asked to talk to a person",
+  "te": "{customer} మనిషితో మాట్లాడాలన్నారు",
+  "hi": "{customer} किसी इंसान से बात करना चाहते हैं",
+  "kn": "{customer} ವ್ಯಕ್ತಿಯ ಜೊತೆ ಮಾತಾಡಬೇಕು ಎಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.person.hint": {
+  "en": "Call them back, then mark it done.",
+  "te": "వారికి తిరిగి కాల్ చేసి, ఆ తర్వాత అయిపోయిందని గుర్తు పెట్టండి.",
+  "hi": "उन्हें वापस कॉल करें, फिर हो गया मार्क करें।",
+  "kn": "ಅವರಿಗೆ ಮರಳಿ ಕಾಲ್ ಮಾಡಿ, ನಂತರ ಆಯಿತು ಎಂದು ಗುರುತಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.callback": {
+  "en": "Call back",
+  "te": "తిరిగి కాల్ చేయండి",
+  "hi": "वापस कॉल करें",
+  "kn": "ಮರಳಿ ಕಾಲ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.handled": {
+  "en": "Done, we called back",
+  "te": "అయింది, తిరిగి కాల్ చేశాం",
+  "hi": "हो गया, वापस कॉल कर दिया",
+  "kn": "ಆಯಿತು, ಮರಳಿ ಕಾಲ್ ಮಾಡಿದೆವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.handled.row": {
+  "en": "Done",
+  "te": "అయింది",
+  "hi": "हो गया",
+  "kn": "ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.toast.handled": {
+  "en": "Marked as done. It's off your list.",
+  "te": "అయిందని గుర్తు పెట్టాం. మీ లిస్ట్ నుంచి తీసేశాం.",
+  "hi": "हो गया मार्क किया। आपकी लिस्ट से हट गया।",
+  "kn": "ಆಯಿತು ಎಂದು ಗುರುತಿಸಲಾಗಿದೆ. ನಿಮ್ಮ ಪಟ್ಟಿಯಿಂದ ತೆಗೆಯಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.title.visitcall": {
+  "en": "{customer} wants to visit on {when}",
+  "te": "{customer} {when}కి రావాలనుకుంటున్నారు",
+  "hi": "{customer} {when} को आना चाहते हैं",
+  "kn": "{customer} {when}ಕ್ಕೆ ಬರಲು ಬಯಸುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.title.visitcall.notime": {
+  "en": "{customer} wants to visit",
+  "te": "{customer} రావాలనుకుంటున్నారు",
+  "hi": "{customer} आना चाहते हैं",
+  "kn": "{customer} ಬರಲು ಬಯಸುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visitcall.hint": {
+  "en": "Book it in Visits, then mark it done.",
+  "te": "విజిట్స్‌లో బుక్ చేసి, ఆ తర్వాత అయిపోయిందని గుర్తు పెట్టండి.",
+  "hi": "विज़िट्स में बुक करें, फिर हो गया मार्क करें।",
+  "kn": "ವಿಸಿಟ್ಸ್‌ನಲ್ಲಿ ಬುಕ್ ಮಾಡಿ, ನಂತರ ಆಯಿತು ಎಂದು ಗುರುತಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.book": {
+  "en": "Book",
+  "te": "బుక్ చేయండి",
+  "hi": "बुक करें",
+  "kn": "ಬುಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  },
  "today.title.reply_to_inbound": {
   "en": "Reply to {customer}",
@@ -79863,6 +80127,17 @@
   "te": "ఆ కీ ఒప్పుకోలేదు. చూసి మళ్లీ ప్రయత్నించండి.",
   "hi": "वह की नहीं मानी गई। जाँचकर फिर से कोशिश करें।",
   "kn": "ಆ ಕೀ ಒಪ್ಪಿಕೊಳ್ಳಲಿಲ್ಲ. ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.secret.err.renew": {
+  "en": "This box can't take the key any more. Ask me again for a new card.",
+  "te": "ఈ బాక్స్ ఇక కీని తీసుకోదు. కొత్త కార్డ్ కోసం నన్ను మళ్ళీ అడగండి.",
+  "hi": "यह बॉक्स अब की नहीं ले सकता। नए कार्ड के लिए मुझसे फिर पूछें।",
+  "kn": "ಈ ಬಾಕ್ಸ್ ಇನ್ನು ಕೀ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ. ಹೊಸ ಕಾರ್ಡ್‌ಗಾಗಿ ನನ್ನನ್ನು ಮತ್ತೆ ಕೇಳಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",

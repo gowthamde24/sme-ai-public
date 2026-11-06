@@ -520,6 +520,15 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('talk_training',
    $$insert into public.talk_training (id, tenant_id, doc, updated_by) values (%2$L, %1$L, '{"address": "plain"}'::jsonb, %5$L) on conflict (tenant_id) do update set id = excluded.id$$,
    'doc = doc', $$delete from public.talk_training where id = %2$L$$, false),
+  -- the developer API, D1: 'integrations.developer_api_usage' (a counter per key and minute outside the public schema: no client can reach it, no audit trigger because of its volume, no personal data) is classified here by this note
+  -- the developer API, D1 (migration 20261231210000): keys (written only by developer_key_*), and the TEST sandbox leads (written only by developer_sandbox_lead_create, as the worker)
+  ('developer_api_keys',
+   $$insert into public.developer_api_keys (id, tenant_id, name, key_hash, prefix, last4, scopes, created_by) values (%2$L, %1$L, 'Generic key', encode(sha256(convert_to(%2$L, 'UTF8')), 'hex'), 'sk_test_abcd', 'wxyz', array['leads:read'], %5$L)$$,
+   'name = name', $$delete from public.developer_api_keys where id = %2$L$$, true),
+  ('developer_sandbox_leads',
+   $$with k as (insert into public.developer_api_keys (tenant_id, name, key_hash, prefix, last4, scopes, created_by) values (%1$L, 'Generic key', encode(sha256(convert_to(%2$L || 'k', 'UTF8')), 'hex'), 'sk_test_abcd', 'wxyz', array['leads:write'], %5$L) returning id)
+     insert into public.developer_sandbox_leads (id, tenant_id, key_id, idem_key, body_sha, name, phone, consent, next_step) select %2$L, %1$L, k.id, 'idem', repeat('a', 64), 'Generic lead', '+919800000001', '{"given": true}'::jsonb, 'none' from k$$,
+   'status = status', $$delete from public.developer_sandbox_leads where id = %2$L$$, true),
   -- a workspace's own switch per helper (migration 20261231170000): written only by agent_switch_set
   ('tenant_agent_switches',
    $$insert into public.tenant_agent_switches (id, tenant_id, agent_name, enabled, updated_by) values (%2$L, %1$L, 'research', false, %5$L) on conflict (tenant_id, agent_name) do update set id = excluded.id$$,
@@ -885,6 +894,10 @@ select t, r, s, i, u, d from (values
   ('secret_requests', 'sales', false, false, false, false), ('secret_requests', 'viewer', false, false, false, false),
   ('talk_training', 'owner', true, false, false, false), ('talk_training', 'admin', true, false, false, false),
   ('talk_training', 'sales', false, false, false, false), ('talk_training', 'viewer', false, false, false, false),
+  ('developer_api_keys', 'owner', true, false, false, false), ('developer_api_keys', 'admin', true, false, false, false),
+  ('developer_api_keys', 'sales', false, false, false, false), ('developer_api_keys', 'viewer', false, false, false, false),
+  ('developer_sandbox_leads', 'owner', true, false, false, false), ('developer_sandbox_leads', 'admin', true, false, false, false),
+  ('developer_sandbox_leads', 'sales', false, false, false, false), ('developer_sandbox_leads', 'viewer', false, false, false, false),
   ('tenant_agent_switches', 'owner', true, false, false, false), ('tenant_agent_switches', 'admin', true, false, false, false),
   ('tenant_agent_switches', 'sales', false, false, false, false), ('tenant_agent_switches', 'viewer', false, false, false, false),
   ('lead_intake_created', 'owner', true, false, false, false), ('lead_intake_created', 'admin', true, false, false, false),

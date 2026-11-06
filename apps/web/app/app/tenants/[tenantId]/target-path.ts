@@ -32,6 +32,7 @@ export async function targetPaths(accessToken: string, tenantId: string, targets
         return `${base}/fees/pending`;
       case "outbox_message":
       case "call_request":
+      case "phone_call":
         return `${base}#needs-you`; // decided on Today itself (job AU)
     }
   };

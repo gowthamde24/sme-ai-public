@@ -42,7 +42,7 @@ describe("the Office", () => {
   it("lists the helpers from the API for any member; your assistant says when it is not available, a helper that is not built (the Lead Finder) is left out", async () => {
     render(await OfficePage(props()));
     expect(getAgentsStatus).toHaveBeenCalledWith("tok", TENANT);
-    const items = within(screen.getByRole("region", { name: "Agent office" })).getAllByRole("listitem");
+    const items = within(screen.getByRole("region", { name: "My AI team" })).getAllByRole("listitem");
     expect(items).toHaveLength(6);
     expect(items[0]).toHaveTextContent("Your assistantNot available yet");
     expect(screen.queryByText(/Lead Finder/)).toBeNull();

@@ -263,7 +263,7 @@ select is(pg_temp.val('a_sales', format($q$select jsonb_array_length(public.outr
 update public.contacts set phone_consent = 'withdrawn' where id = tests.rid('m2');
 select is((select status from public.outreach_items where lead_id = tests.rid('lm1')), 'waiting', 'G23 (m2 still waits; consent is checked again at dial time)');
 select pg_temp.pin('2026-11-06T10:05:00+05:30'::timestamptz);
-update public.outreach_items set next_at = now() where lead_id = tests.rid('lm1');
+update public.outreach_items set next_at = app.outbox_now() where lead_id = tests.rid('lm1');   -- the PINNED clock (real now() passed the pin on 6 Nov 2026)
 select pg_temp.sch('select public.scheduler_outreach_run(10)::text');
 select is((select status || ':' || reason from public.outreach_items where lead_id = tests.rid('lm1')), 'stopped:stopped', 'G24 a customer who withdrew consent is stopped at dial time');
 
