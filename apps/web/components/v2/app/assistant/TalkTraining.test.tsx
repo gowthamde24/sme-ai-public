@@ -120,6 +120,25 @@ describe("How I talk to customers", () => {
     expect(document.querySelector('[data-part="tt-practice-turns"]')).toBeNull();
   });
 
+  it("app v4: practice by voice opens the Live talk socket in practice_call mode with the chosen language; End stops it; unsaved changes are pointed out", async () => {
+    const sent: string[] = [];
+    const socket = { binaryType: "", readyState: 0, send: (d: unknown) => void sent.push(String(d)), close: vi.fn(), onopen: null as null | (() => void), onmessage: null, onclose: null as null | ((e: { code: number; reason: string }) => void), onerror: null };
+    const audio = { startMic: vi.fn(async () => undefined), stopMic: vi.fn(), play: vi.fn(), flush: vi.fn(), playing: () => false, close: vi.fn(), analyser: () => null };
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(JSON.stringify({ token: "tok" }), { status: 200, headers: { "content-type": "application/json" } })));
+    const { VoicePractice } = await import("./VoicePractice");
+    const W = { "tt.voice.start": "Practice by voice", "tt.voice.stop": "End the practice call", "tt.voice.unsaved": "You have changes that are not saved", "tt.voice.connecting": "Connecting…" };
+    render(<VoicePractice w={W} url="wss://api/v1/tenants/t/voice-chat" tokenUrl="/t" language="te" unsaved audioFactory={() => audio} socketFactory={() => socket as never} />);
+    expect(screen.getByText("You have changes that are not saved")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Practice by voice" }));
+    await waitFor(() => expect(socket.onopen).not.toBeNull());
+    socket.readyState = 1;
+    socket.onopen?.();
+    expect(JSON.parse(sent[0])).toMatchObject({ type: "start", access_token: "tok", language: "te", mode: "practice_call" });
+    fireEvent.click(await screen.findByRole("button", { name: "End the practice call" }));
+    expect(sent.some((m) => m.includes('"stop"'))).toBe(true);
+    vi.unstubAllGlobals();
+  });
+
   it("an Admin reads it and changes nothing", () => {
     show(SAVED, undefined, false);
     expect(screen.getByText("Only the owner can change this.")).toBeInTheDocument();

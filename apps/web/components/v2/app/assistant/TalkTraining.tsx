@@ -6,6 +6,7 @@ import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import type { PracticeTurn } from "@/lib/api/talk-training";
 import { ADDRESSES, LIMITS, sayLikeLine, type Pair, type SayLike, type TalkError, type TalkTraining as Doc, type TalkTrainingState } from "@/lib/talk-training/types";
 
+import { VoicePractice } from "./VoicePractice";
 import { alertBox, btnMain, btnQuiet, checkRow, fieldHelp, fieldInput, fieldLabel, fieldTextarea, okBox, surface } from "../ui";
 import { makeT, type Words } from "../words";
 
@@ -23,7 +24,7 @@ const PRACTICE_TURNS = 20; // the contract's limit on turns sent at once
  * questions to ask one at a time, the words it must never say (checked by code before every line it speaks), answers to objections and a few good examples. The platform's own rules are listed read-only. One Save sends the whole document;
  * "Use the suggested ones" goes back to the defaults. Both need the Owner's second factor (the screen says so). An Admin reads it. What is shown after a save is what the API answered.
  */
-export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null, v4 = false, practice = null }: { words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null; /** app v4 (APP_V4): "Say it like this", what goes into the instructions, and practice calls. (The say-like list is kept in every save either way.) */ v4?: boolean; practice?: PracticeFn | null }) {
+export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null, v4 = false, practice = null, voice = null }: { words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null; /** app v4 (APP_V4): "Say it like this", what goes into the instructions, and practice calls. (The say-like list is kept in every save either way.) */ v4?: boolean; practice?: PracticeFn | null; /** app v4: practice by voice (C1 #402): the Live talk socket's address and the route that gives its sign-in; null = not offered */ voice?: { url: string; tokenUrl: string } | null }) {
   const t = makeT(words);
   const [state, setState] = React.useState(initial);
   const [doc, setDoc] = React.useState<Doc>(initial.training);
@@ -165,7 +166,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
           ) : null}
         </p>
       ) : null}
-      {v4 && practice ? <Practice t={t} doc={dirty ? doc : null} langNames={langNames} first={lang} practice={practice} /> : null}
+      {v4 && practice ? <Practice t={t} doc={dirty ? doc : null} langNames={langNames} first={lang} practice={practice} voice={voice} unsaved={dirty} words={words} /> : null}
     </section>
   );
 }
@@ -238,7 +239,7 @@ function Instructions({ t, doc }: { t: T; doc: Doc }) {
 }
 
 /** A practice call in text (app v4): the Owner types as the customer; the assistant answers with the same prompt and rules as a real call (C1's practice endpoint). Nothing is sent or kept. */
-function Practice({ t, doc, langNames, first, practice }: { t: T; doc: Doc | null; langNames: Record<CallLang, string>; first: CallLang; practice: PracticeFn }) {
+function Practice({ t, doc, langNames, first, practice, voice, unsaved, words }: { t: T; doc: Doc | null; langNames: Record<CallLang, string>; first: CallLang; practice: PracticeFn; voice: { url: string; tokenUrl: string } | null; unsaved: boolean; words?: Words }) {
   const [lang, setLang] = React.useState<CallLang>(first);
   const [turns, setTurns] = React.useState<PracticeTurn[]>([]);
   const [text, setText] = React.useState("");
@@ -325,6 +326,7 @@ function Practice({ t, doc, langNames, first, practice }: { t: T; doc: Doc | nul
           {t("tt.practice.again")}
         </button>
       ) : null}
+      {voice ? <VoicePractice w={words ?? {}} url={voice.url} tokenUrl={voice.tokenUrl} language={lang} unsaved={unsaved} /> : null}
     </div>
   );
 }

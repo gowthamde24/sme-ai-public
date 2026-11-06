@@ -8,7 +8,8 @@ import { appT } from "@/i18n/app";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { CALL_LANG_NAMES } from "@/lib/assistant/types";
-import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError, fetchTenant, publicApiBase } from "@/lib/api/client";
+import { voiceSocketUrl } from "@/lib/browser-voice/protocol";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { getTalkTraining } from "@/lib/api/talk-training";
@@ -44,6 +45,8 @@ export default async function TrainingPage({ params }: PageProps<"/app/tenants/[
   const t = appT(lang);
   const title = await menuTitle("train", lang, user.accessToken, tenantId);
   if (tenant.role !== "owner") return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={title} message={t("tt.owneronly")} />;
+  // practice by voice (app v4, C1 #402): the Live talk socket of this workspace
+  const voiceUrl = appV4() ? voiceSocketUrl(publicApiBase(), tenantId) : null;
   const training = talkTrainingScreens() ? await getTalkTraining(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   return (
     <main className={pageMain} lang={lang}>
@@ -51,7 +54,7 @@ export default async function TrainingPage({ params }: PageProps<"/app/tenants/[
       <div className="mt-6 max-w-3xl">
         {training ? (
           <TalkTraining
-            words={wordsFor(lang, ["tt."], ["today.err.mfa.link"])}
+            words={wordsFor(lang, ["tt.", "bv.end."], ["today.err.mfa.link"])}
             initial={training}
             langNames={CALL_LANG_NAMES}
             canEdit
@@ -60,6 +63,7 @@ export default async function TrainingPage({ params }: PageProps<"/app/tenants/[
             actions={{ save: saveTalkTrainingAction.bind(null, tenantId), reset: resetTalkTrainingAction.bind(null, tenantId) }}
             v4={appV4()}
             practice={appV4() ? practiceCallAction.bind(null, tenantId) : null}
+            voice={voiceUrl ? { url: voiceUrl, tokenUrl: `/app/tenants/${tenantId}/ai-team/training/practice-token` } : null}
           />
         ) : (
           <section className={surface} data-part="tt-unread">
