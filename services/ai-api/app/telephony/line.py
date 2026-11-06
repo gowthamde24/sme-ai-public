@@ -79,6 +79,12 @@ class PhoneLine:
         self._stopped_run = False
         self._sent = bytearray()   # the last KEEP_SENT_S of audio we sent (line rate), to fade from
         self.interruptions: dict[str, int] = {"stopped": 0, "ignored": 0}
+        self.whispers: list[str] = []
+        # Take over (app v4): an Owner or Admin talks to the caller from the app. While it lasts the AI does not answer, the caller's audio goes to them, their audio goes to the caller.
+        self.taken_over = False
+        self._owner_q: asyncio.Queue[bytes] | None = None
+        self._owner_down: Resampler | None = None
+        self._owner_pending = bytearray()   # the owner's notes for the AI during this call (app v4: Whisper); the session takes them before its next reply
         self.fade_ms: list[int] = []
         self._closed = False
         # how the call ended, for the end-of-call log (names and numbers only, 5 Nov 2026: the 11:57 UTC call ended 0.4 s after admission and the log could not say whether Exotel sent `stop` or dropped
@@ -154,6 +160,13 @@ class PhoneLine:
                 return
             self.bytes_in += len(pcm)
             self._q.put_nowait(("bytes", pcm))
+            if self._owner_q is not None:   # the person who took over hears the caller (16 kHz)
+                if self._owner_q.full():
+                    with suppress(asyncio.QueueEmpty):
+                        self._owner_q.get_nowait()   # a slow listener loses the oldest audio, never blocks the call
+                self._owner_q.put_nowait(pcm)
+            if self.taken_over:
+                return   # no barge-in while a person talks: the caller may talk over them
             if self._clock() < self._play_until:
                 self._watch_for_barge_in(pcm)
             else:
@@ -186,6 +199,37 @@ class PhoneLine:
                 self._gap_ms += 20
                 if self._gap_ms >= SPEECH_GAP_MS:
                     self._end_sound_run()
+
+    def closed(self) -> bool:
+        return self._closed
+
+    def take_over(self) -> asyncio.Queue[bytes]:
+        """A person takes the call (app v4): the AI's voice fades out (the same stop as a barge-in), the AI answers no more until `hand_back`, and the caller's audio (16 kHz PCM) goes to the queue."""
+        self.taken_over = True
+        self._owner_q = asyncio.Queue(maxsize=250)   # about 5 s of 20 ms frames
+        self._owner_down = Resampler(STT_RATE, self.rate)
+        self._owner_pending.clear()
+        self._q.put_nowait(("text", {"type": "barge_in", "verify": False}))
+        log.info("phone_take_over started")
+        return self._owner_q
+
+    def hand_back(self) -> None:
+        """The person hands the call back: the AI answers the caller's next words."""
+        if self.taken_over:
+            log.info("phone_take_over ended")
+        self.taken_over = False
+        self._owner_q = None
+        self._owner_pending.clear()
+
+    async def send_owner_audio(self, pcm16: bytes) -> None:
+        """The person's microphone (16-bit mono PCM at 16 kHz) to the caller, in the provider's chunks, at the pace it plays."""
+        if not self.taken_over or self.start is None or self._closed or self._owner_down is None:
+            return
+        self._owner_pending += self._owner_down.process(pcm16)
+        while len(self._owner_pending) >= self.chunk and not self._closed:
+            part = bytes(self._owner_pending[: self.chunk])
+            del self._owner_pending[: self.chunk]
+            await self._emit(part, keep=False)
 
     def _end_sound_run(self) -> None:
         if self._talk_ms >= MIN_SOUND_MS and not self._stopped_run:

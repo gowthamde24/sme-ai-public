@@ -360,6 +360,13 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
                     cost_paise_per_minute=service.cost_paise_per_minute, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")))
     if live is not None:
         live.add(tenant, call_id, line)
+        registry, temp_id = live, call_id
+
+        def known(fut: asyncio.Future[uuid.UUID]) -> None:   # (6 Nov 2026: since the row is written in the background, the live call was reachable only by a temporary id)
+            if not fut.cancelled() and fut.exception() is None:
+                registry.also_known_as(temp_id, fut.result())
+
+        begin_row.add_done_callback(known)
     began = inbound.monotonic()
     outcome_name: str | None = None
     cost = 0
@@ -373,6 +380,8 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
             live.remove(call_id)
         if begin_row.done() and not begin_row.cancelled() and begin_row.exception() is None:
             call_id = begin_row.result()
+            if live is not None:
+                live.remove(call_id)
         if reserving is not None and budget is not None:   # what the call did not use goes back to the day
             with suppress(Exception):
                 hold = await reserving
