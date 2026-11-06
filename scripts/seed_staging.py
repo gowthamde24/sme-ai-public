@@ -66,6 +66,9 @@ BUSINESSES = [
     ("coaching", "DEMO Vidya Coaching Centre (synthetic)", "en"),
 ]
 LEAD_DESK_PACKS = ("real_estate", "coaching")
+# One demo owner looks like a Google sign-in with a photo (C2, 5 Nov 2026: My profile once failed for every such account, and no account we can sign in as had one). A synthetic address: nothing is fetched.
+GOOGLE_PHOTO_PACK = "textiles"
+GOOGLE_PHOTO = "https://lh3.googleusercontent.com/a/synthetic-demo=s96-c"
 # A demo workspace must never carry a real business's name. A staging workspace once renamed to a real shop is set back through the app's own PUT /profile (as the demo owner);
 # only a name listed here is changed, so any other name a person chose is left alone. The made-up name is the one the pack's demo uses.
 RETIRED_NAMES = {"Lakshmi Narasimha Silks": "Neelambari Silks (demo)"}
@@ -170,6 +173,15 @@ class Seeder:
             return False
         raise SeedError(f"Could not create {email} (HTTP {st}).")
 
+    def google_photo(self, session: dict[str, Any]) -> None:
+        """The synthetic Google photo in the account's metadata (raw_user_meta_data.picture), set once; the other metadata keys stay (the admin update merges them)."""
+        user = session.get("user") or {}
+        if (user.get("user_metadata") or {}).get("picture") == GOOGLE_PHOTO:
+            return
+        st, _ = http("PUT", f"{self.sb}/auth/v1/admin/users/{user['id']}", self.admin_headers(), {"user_metadata": {"picture": GOOGLE_PHOTO}})
+        if st != 200:
+            raise SeedError(f"Could not give the demo owner its Google photo (HTTP {st}).")
+
     def sign_in(self, email: str, password: str) -> dict[str, Any]:
         st, body = http("POST", f"{self.sb}/auth/v1/token?grant_type=password", self.pub_headers(), {"email": email, "password": password})
         if st != 200 or not isinstance(body, dict):
@@ -218,7 +230,10 @@ class Seeder:
             password = new_password()
             secret_put(f"sme-demo-{pack}-password", password)
         created = self.create_user(email, password, {"terms_version": terms["terms"], "business_name": name})
-        token = self.second_factor(pack, self.sign_in(email, password))
+        session = self.sign_in(email, password)
+        if pack == GOOGLE_PHOTO_PACK:
+            self.google_photo(session)
+        token = self.second_factor(pack, session)
         st, setup = self.call(token, "POST", "/v1/account/setup", {
             "business_type": pack, "language": language, "accepted_terms_version": terms["terms"], "accepted_privacy_version": terms["privacy"]})
         if st != 200 or not isinstance(setup, dict):

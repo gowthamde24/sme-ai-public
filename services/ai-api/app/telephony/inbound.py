@@ -353,6 +353,9 @@ class TimedLine(PhoneLine):
         self.first_sound_ms: list[float] = []
         self.admitted_ms: int | None = None   # from the stream's start to the call's admission (our line and Exotel's record, read together)
         self.greeting_ready: bool | None = None   # the greeting was already spoken into memory when the call was admitted
+        self.voice_budget: dict[str, Any] | None = None   # our Cartesia cap for this call: granted, used, the day's total after it, the day's limit
+        self.voice_chars: dict[str, int] = {}             # characters each voice engine spoke in this call
+        self.voice_primary_off = ""                       # why the primary voice was switched off for the rest of the call ("" when it was not)
 
     async def send_json(self, message: dict[str, Any]) -> None:
         if message.get("type") == "timings" and isinstance(message.get("first_sound_ms"), (int, float)) and not message.get("interrupted"):
@@ -374,7 +377,7 @@ def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_pa
             "duration_s": round(duration_s, 1), "cost_paise_estimate": cost_paise, "outcome": outcome, "end": line.end_reason,
             # how it ended and what went each way (5 Nov 2026): names and numbers only
             "end_how": line.end_how, "stop_reason": line.stop_reason, "close_code": getattr(getattr(line, "_wire", None), "close_code", None), "events": dict(sorted(line.events.items())),
-            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "line_rate": getattr(line, "rate", None), **voice_numbers(line, duration_s), "out_chunk_bytes": getattr(line, "chunk", None), "chunks_out": getattr(line, "chunks_out", None), "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
+            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "line_rate": getattr(line, "rate", None), **voice_numbers(line, duration_s), "voice_budget": getattr(line, "voice_budget", None), "out_chunk_bytes": getattr(line, "chunk", None), "chunks_out": getattr(line, "chunks_out", None), "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
             # owner, 6 Nov 2026: targets 1.5 s for both (logged for every call)
             "pickup_to_first_sound_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
             "admitted_ms": line.admitted_ms, "greeting_ready": line.greeting_ready,

@@ -21,7 +21,7 @@ const noSub = () => () => undefined;
  * Data: a poll of the workspace's own notifications route, paused while the tab is hidden (see use-notifications.ts). "New" is per device (device.ts). Browser notifications are OFF until the person turns them on
  * in the panel and allows them in the browser; they speak only of "needs you" and only as a count, never a name; with no push service (it needs an API we do not have) they work while a tab of the app is open.
  */
-export function NotificationBell({ tenantId, labels }: { tenantId: string; labels?: Labels }) {
+export function NotificationBell({ tenantId, labels, still = false }: { tenantId: string; labels?: Labels; /** The demo video (job demo-video): nothing is asked and no count is shown, so the workspace's real notices never reach the recording. */ still?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
   const id = useId();
@@ -58,7 +58,7 @@ export function NotificationBell({ tenantId, labels }: { tenantId: string; label
     },
     [optIn, permission, tenantId, labels, router],
   );
-  const { items, status, refresh } = useNotifications(tenantId, optIn && permission === "granted", announce);
+  const { items, status, refresh } = useNotifications(tenantId, optIn && permission === "granted", announce, !still);
 
   const seenList = useMemo(() => parseSeen(seen), [seen]);
   const unread = unreadOf(items, seenList);

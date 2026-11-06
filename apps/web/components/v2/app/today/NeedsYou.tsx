@@ -366,7 +366,7 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
       <Note id={c.key} words={words} />
       {may && !editing ? (
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={() => void decide(() => actions.approveMessage(c.id))} className={`${primary} max-md:grow`}>
+          <button type="button" data-needs="approve" onClick={() => void decide(() => actions.approveMessage(c.id))} className={`${primary} max-md:grow`}>
             {say(words, "today.act.approve")}
           </button>
           <button

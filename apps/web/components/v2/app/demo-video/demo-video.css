@@ -1,0 +1,71 @@
+/* The demo video's few movements (job demo-video): a screen fades in, a new thing rises into place, the new WhatsApp lead and the new draft quote come in lit, and "Done while you slept" glows once at the end.
+   Scoped to the stage of the demo video (data-dv-*), so no other screen moves. Nothing moves for a person who asked for less motion. */
+[data-dv-screen] {
+  animation: dv-fade 220ms ease-out both;
+}
+[data-dv-stage] [data-result-card],
+[data-dv-stage] [data-plan-card],
+[data-dv-stage] [data-practice-result],
+[data-dv-stage] [data-draft-lines],
+[data-dv-stage] [data-draft-made],
+[data-dv-appear] {
+  animation: dv-rise 360ms ease-out both;
+}
+[data-dv-beat="lead"] [data-needs-row^="outbox_approval-"],
+[data-dv-beat="done"] [data-needs-row="quote_approval-d0d0d0d0-0001-4000-8000-000000000004"] {
+  animation: dv-new 2s ease-out both;
+}
+[data-dv-answered] [data-chat="thread"] ol > li:last-child {
+  animation: dv-rise 420ms ease-out both;
+}
+[data-dv-beat="done"] [data-part="done"] {
+  animation: dv-glow 2.8s ease-out both;
+}
+@keyframes dv-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dv-new {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+    background-color: var(--v2-brand-bg);
+  }
+  25% {
+    opacity: 1;
+    transform: none;
+    background-color: var(--v2-brand-bg);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+@keyframes dv-glow {
+  0%,
+  45% {
+    box-shadow: 0 0 0 3px var(--v2-brand);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-dv-stage] *,
+  [data-dv-screen] {
+    animation: none !important;
+  }
+}
