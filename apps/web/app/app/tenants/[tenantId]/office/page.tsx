@@ -11,6 +11,9 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
 import { readAgentsStatus, readEventLinks } from "./office-data";
+import { setAgentSwitchAction } from "./switch-actions";
+import { getAgentSwitches, type AgentSwitch } from "@/lib/api/agent-switches";
+import type { TeamExtras } from "@/components/v2/app/office/OfficeRoom";
 import { readFinderCached } from "../../../frame-data";
 import { withFinder } from "@/lib/lead-finder/types";
 import { partsWords } from "@/i18n/app-words";
@@ -18,7 +21,7 @@ import { readPackCached } from "@/lib/packs/read";
 import { withPackT } from "@/lib/packs/resolve";
 import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: `Office · ${BRAND_NAME}` };
+export const metadata = { title: `My AI team · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
@@ -30,8 +33,9 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
   const { tenantId } = await params;
   const query = await searchParams;
   if (!isCanonicalUuid(tenantId)) notFound();
+  let role: string;
   try {
-    await fetchTenant(user.accessToken, tenantId);
+    role = (await fetchTenant(user.accessToken, tenantId)).role;
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
@@ -54,10 +58,20 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
     escalate(error);
     throw error;
   }
+  const base = `/app/tenants/${tenantId}`;
+  const manages = role === "owner" || role === "admin";
+  // each helper's own switch (C1's agents-switches, Owner and Admin): one that cannot be read is simply not drawn (no made-up switch)
+  const switches = manages ? await getAgentSwitches(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  // where each helper's own settings are (the assistant's tabs and Automation are the Owner's)
+  const own = role === "owner";
+  const settings: Record<string, string> = manages
+    ? { ...(own ? { main: `${base}/settings?section=assistant`, researcher: `${base}/settings?section=agent`, requirement_analyst: `${base}/settings?section=agent` } : {}), lead_finder: `${base}/settings?section=leadfinder`, quote_writer: `${base}/quote-policy`, followup_desk: `${base}/followups/policy` }
+    : {};
+  const team: TeamExtras = { switches: switches ? (Object.fromEntries(switches.map((s) => [s.agent, s])) as Record<string, AgentSwitch>) : null, settings, toggle: own ? setAgentSwitchAction.bind(null, tenantId) : null };
   const wanted = pick(query.agent);
   return (
     <main className={pageMain} lang={lang}>
-      <OfficeView agents={agents} selected={wanted && agents?.some((a) => a.agent === wanted) ? wanted : null} links={links} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} />
+      <OfficeView agents={agents} selected={wanted && agents?.some((a) => a.agent === wanted) ? wanted : null} links={links} team={team} base={base} t={(key, vars) => t(key as "frame.notyet", vars)} />
     </main>
   );
 }

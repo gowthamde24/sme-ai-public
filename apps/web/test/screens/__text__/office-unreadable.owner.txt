@@ -1,2 +1,2 @@
-# Agent office
+# My AI team
 Your AI team and what each one is doing. Not available yet [Runs and cost](/app/tenants/22222222-2222-2222-2222-222222222222/agents)
