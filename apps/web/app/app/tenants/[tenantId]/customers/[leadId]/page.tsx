@@ -13,7 +13,7 @@ import { fetchLeadFollowup } from "@/lib/api/followups";
 import { requireUser } from "@/lib/auth/session";
 import { appV4 } from "@/lib/screens/flag";
 
-import { asFilter, customerStatus, customerWants, mainAction, timelineHref, waitingQuote } from "./customer-logic";
+import { asFilter, businessName, customerStatus, customerWants, mainAction, sourceWords, timelineHref, waitingQuote } from "./customer-logic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 const clock = (): number => Date.now();
@@ -64,8 +64,7 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
       language = null;
     }
   }
-  const sourceCode = lead.source;
-  const source = sourceCode ? w[`ld.source.${sourceCode}`] || sourceCode : null;
+  const source = sourceWords(lead.source, w);
   const items = page?.items ?? null;
   const quoteId = before ? null : waitingQuote(items); // only the newest page knows what is waiting now
   const action = decision?.action ?? null;
@@ -78,7 +77,7 @@ export default async function CustomerPage({ params, searchParams }: PageProps<"
     <main className={pageMain} lang={lang}>
       <CustomerView
         name={lead.name}
-        business={company?.name ?? null}
+        business={businessName(company?.name)}
         language={language}
         source={source}
         status={customerStatus({ items, urgency: profile?.urgency, leadStatus: lead.status, now: clock() }, w)}

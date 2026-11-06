@@ -1,7 +1,7 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { asFilter, customerStatus, customerWants, mainAction, timelineHref, waitingQuote } from "@/app/app/tenants/[tenantId]/customers/[leadId]/customer-logic";
+import { asFilter, businessName, customerStatus, customerWants, mainAction, sourceWords, timelineHref, waitingQuote } from "@/app/app/tenants/[tenantId]/customers/[leadId]/customer-logic";
 import { wordsFor } from "@/i18n/app-words";
 import { parseCustomerHead, parseTimeline, type TimelineItem } from "@/lib/api/customer-timeline";
 import { parseProfile } from "@/lib/lead-desk/profile";
@@ -62,6 +62,17 @@ describe("customer page logic", () => {
     expect(waitingQuote([item("quote", "2026-11-06T00:00:00Z", { detail: { status: "draft" } })])).toBe(Q);
     expect(waitingQuote([item("quote", "2026-11-06T00:00:00Z", { target: { type: "material_quote", id: Q }, detail: { status: "draft" } })])).toBeNull();
     expect(waitingQuote(null)).toBeNull();
+  });
+
+  it("never shows a made-up business name or a source code (staging, 7 Nov)", () => {
+    expect(businessName("Enquiry 92e730")).toBeNull();
+    expect(businessName("Lakshmi Textiles")).toBe("Lakshmi Textiles");
+    expect(businessName(null)).toBeNull();
+    expect(sourceWords("indiamart", W)).toBe("IndiaMART");
+    expect(sourceWords("lead_finder", W)).toBe("Find customers");
+    expect(sourceWords("whatsapp", W)).toBe("WhatsApp");
+    expect(sourceWords("some_new_source", W)).toBe("some new source");
+    expect(sourceWords(null, W)).toBeNull();
   });
 
   it("lists only what the profile has", () => {

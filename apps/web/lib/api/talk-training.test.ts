@@ -20,7 +20,8 @@ describe("the talk-training document (C1's docs/contracts/talk-training.md)", ()
     const doc = fromApi(DOC)!;
     expect(doc.greeting).toEqual({ en: DOC.greeting.en });
     expect(doc.objections).toEqual([{ a: "Too costly", b: DOC.objections[0].answer }]);
-    expect(toApi(doc)).toEqual({ ...DOC, greeting: { en: DOC.greeting.en }, say_like: [] }); // an API without "say it like this" is read as none
+    expect(doc.sayLike).toBeNull(); // an API without "say it like this": the field is neither shown nor sent (it refuses unknown fields)
+    expect(toApi(doc)).toEqual({ ...DOC, greeting: { en: DOC.greeting.en } });
   });
 
   it('"Say it like this" (app v4, C1 #392): read, written back whole, checked again; a save always carries it', () => {
@@ -30,6 +31,7 @@ describe("the talk-training document (C1's docs/contracts/talk-training.md)", ()
     expect(toApi(doc).say_like).toEqual(say_like);
     expect(fromApi({ ...DOC, say_like: Array(21).fill({ say: "pattu", instead_of: null }) })).toBeNull();
     expect(fromApi({ ...DOC, say_like: [{ say: "x", instead_of: null }] })).toBeNull();
+    expect(toApi(fromApi({ ...DOC, say_like: [] })!).say_like).toEqual([]); // known and emptied: sent empty, so it is cleared
     const base = { greeting: {}, address: "plain", questions: [], neverSay: [], objections: [], examples: [] };
     expect(cleanEdit({ ...base, sayLike: [{ say: " pattu cheera ", insteadOf: "  " }, { say: "", insteadOf: "dropped" }] })).toMatchObject({ ok: true, data: { sayLike: [{ say: "pattu cheera", insteadOf: null }] } });
     expect(cleanEdit({ ...base, sayLike: [{ say: "Pattu", insteadOf: null }, { say: "pattu", insteadOf: "silk" }] })).toEqual({ ok: false, error: "duplicate" });
@@ -45,7 +47,7 @@ describe("the talk-training document (C1's docs/contracts/talk-training.md)", ()
 
   it("checks what the browser sends again: trims, drops empty rows, refuses too many and the same line twice", () => {
     const base = { greeting: { en: "  Hello from {business}, the AI assistant.  " }, address: "garu", questions: [" Which colour? ", ""], neverSay: ["guaranteed"], objections: [{ a: "", b: "" }], examples: [] };
-    expect(cleanEdit(base)).toEqual({ ok: true, data: { greeting: { en: "Hello from {business}, the AI assistant." }, address: "garu", questions: ["Which colour?"], neverSay: ["guaranteed"], objections: [], examples: [], sayLike: [] } });
+    expect(cleanEdit(base)).toEqual({ ok: true, data: { greeting: { en: "Hello from {business}, the AI assistant." }, address: "garu", questions: ["Which colour?"], neverSay: ["guaranteed"], objections: [], examples: [], sayLike: null } });
     expect(cleanEdit({ ...base, questions: Array(9).fill("Which colour?") })).toEqual({ ok: false, error: "too_many_questions" });
     expect(cleanEdit({ ...base, neverSay: ["Free delivery", "free  delivery!"] })).toEqual({ ok: false, error: "duplicate" });
     expect(cleanEdit({ ...base, address: "boss" })).toEqual({ ok: false, error: "invalid" });

@@ -37,7 +37,7 @@ describe("How I talk to customers: the Owner's moves", () => {
     expect(await saveTalkTrainingAction(T, { ...EDIT, neverSay: ["Free", "free!"] })).toEqual({ ok: false, error: "duplicate" });
     expect(h.put).not.toHaveBeenCalled();
     expect(await saveTalkTrainingAction(T, EDIT)).toEqual({ ok: true, data: STATE });
-    expect(h.put).toHaveBeenCalledWith("tok", T, { ...EDIT, sayLike: [] });
+    expect(h.put).toHaveBeenCalledWith("tok", T, { ...EDIT, sayLike: null });
     expect(h.revalidate).toHaveBeenCalledWith(`/app/tenants/${T}/settings`);
   });
   it("answers the API's refusals as closed words: the second factor, the contract's reasons, anything else", async () => {
@@ -56,7 +56,7 @@ describe("How I talk to customers: the Owner's moves", () => {
     expect(await practiceCallAction(T, "te", turns, null)).toEqual({ ok: true, data: { reply: "Namaste!", ended: false, handover: false } });
     expect(h.practice).toHaveBeenLastCalledWith("tok", T, "te", [{ who: "customer", text: "Hello" }], null);
     expect(await practiceCallAction(T, "te", turns, EDIT)).toMatchObject({ ok: true });
-    expect(h.practice).toHaveBeenLastCalledWith("tok", T, "te", expect.anything(), { ...EDIT, sayLike: [] });
+    expect(h.practice).toHaveBeenLastCalledWith("tok", T, "te", expect.anything(), { ...EDIT, sayLike: null });
     h.tenant.mockResolvedValue({ role: "admin" });
     expect(await practiceCallAction(T, "te", turns, null)).toMatchObject({ ok: true });
     h.tenant.mockResolvedValue({ role: "sales" });

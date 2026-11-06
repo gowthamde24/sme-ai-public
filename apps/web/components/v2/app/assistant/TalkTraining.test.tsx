@@ -78,6 +78,17 @@ describe("How I talk to customers", () => {
     await waitFor(() => expect(save).toHaveBeenCalledWith({ ...DOC, sayLike: [{ say: "pattu cheera", insteadOf: "silk saree" }] }));
   });
 
+  it("app v4 with an API that does not know \"Say it like this\" yet: no editor for it, and a save does not send it", async () => {
+    const save = vi.fn(async () => ({ ok: true as const, data: SAVED }));
+    const older: TalkTrainingState = { ...DEFAULTS, training: { ...DOC, sayLike: null } };
+    render(<TalkTraining initial={older} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" actions={{ save, reset: vi.fn() }} v4 />);
+    expect(document.querySelector('[data-part="tt-say"]')).toBeNull();
+    expect(document.querySelector('[data-part="tt-preview"]')).not.toHaveTextContent("Say it like this");
+    fireEvent.click(screen.getByRole("radio", { name: /Garu/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(save).toHaveBeenCalledWith({ ...DOC, sayLike: null, address: "garu" }));
+  });
+
   it("without v4 there is no say-like editor, no instructions box and no practice", () => {
     render(<TalkTraining initial={DEFAULTS} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" actions={{ save: vi.fn(), reset: vi.fn() }} practice={vi.fn()} />);
     for (const part of ["tt-say", "tt-preview", "tt-practice"]) expect(document.querySelector(`[data-part="${part}"]`)).toBeNull();

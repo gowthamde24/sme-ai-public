@@ -9,6 +9,8 @@ import { listDeskLeads } from "@/lib/api/lead-desk";
 import type { OutcomeTotals } from "@/lib/outcomes/types";
 import { leadsScreens } from "@/lib/screens/flag";
 
+import { sourceWords } from "./customers/[leadId]/customer-logic";
+
 type Role = "owner" | "admin" | "sales" | "viewer";
 
 /**
@@ -27,7 +29,7 @@ export async function todayHero({ token, tenantId, lang, data, totals, role }: {
     incoming = (page?.leads ?? [])
       .filter((l) => l.name.trim() !== "")
       .slice(0, 3)
-      .map((l) => ({ id: l.id, name: l.name, source: (l.source && w[`ld.source.${l.source}`]) || l.source || "", href: `${base}/customers/${l.id}` }));
+      .map((l) => ({ id: l.id, name: l.name, source: sourceWords(l.source, w) ?? "", href: `${base}/customers/${l.id}` }));
   }
   const called = totals.mode === "ok" && "data" in totals ? totals.data.positive + totals.data.negative + totals.data.unclear + totals.data.notInterested : null;
   const quotes = data.needs ? data.needs.filter((c) => c.type === "item" && c.item.kind === "quote_approval").length : null;

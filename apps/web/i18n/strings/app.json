@@ -84301,5 +84301,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ld.source.whatsapp": {
+  "en": "WhatsApp",
+  "te": "వాట్సాప్",
+  "hi": "व्हाट्सऐप",
+  "kn": "ವಾಟ್ಸಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ld.source.lead_finder": {
+  "en": "Find customers",
+  "te": "కొత్త కస్టమర్లను వెతకండి",
+  "hi": "नए ग्राहक खोजें",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -108,7 +108,7 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
 
       <List id="questions" t={t} items={doc.questions} max={LIMITS.question.count} length={LIMITS.question.max} off={off} onChange={(questions) => change({ questions })} numbered />
       <List id="never" t={t} items={doc.neverSay} max={LIMITS.neverSay.count} length={LIMITS.neverSay.max} off={off} onChange={(neverSay) => change({ neverSay })} />
-      {v4 ? <SayLikes t={t} items={doc.sayLike} off={off} onChange={(sayLike) => change({ sayLike })} /> : null}
+      {v4 && doc.sayLike !== null ? <SayLikes t={t} items={doc.sayLike} off={off} onChange={(sayLike) => change({ sayLike })} /> : null}
       <Pairs id="objections" t={t} items={doc.objections} max={LIMITS.objection.count} length={LIMITS.objection.max} off={off} onChange={(objections) => change({ objections })} />
       <Pairs id="examples" t={t} items={doc.examples} max={LIMITS.example.count} length={LIMITS.example.max} off={off} onChange={(examples) => change({ examples })} />
 
@@ -208,7 +208,7 @@ function SayLikes({ t, items, off, onChange }: { t: T; items: SayLike[]; off: bo
 /** What goes into every call's instructions about words (the contract: one line per item), read-only, from what is on the page. */
 function Instructions({ t, doc }: { t: T; doc: Doc }) {
   const never = doc.neverSay.map((x) => x.trim()).filter((x) => x.length >= 2);
-  const say = doc.sayLike.filter((p) => p.say.trim().length >= 2).map((p) => sayLikeLine({ say: p.say.trim(), insteadOf: p.insteadOf?.trim() || null }));
+  const say = (doc.sayLike ?? []).filter((p) => p.say.trim().length >= 2).map((p) => sayLikeLine({ say: p.say.trim(), insteadOf: p.insteadOf?.trim() || null }));
   const block = (title: string, lines: string[]) => (
     <div>
       <p className="m-0 text-xs font-extrabold uppercase tracking-wide text-muted">{title}</p>
@@ -232,7 +232,7 @@ function Instructions({ t, doc }: { t: T; doc: Doc }) {
         <p className={fieldHelp}>{t("tt.preview.help")}</p>
       </div>
       {block(t("tt.preview.never"), never.map((x) => `"${x}"`))}
-      {block(t("tt.preview.say"), say)}
+      {doc.sayLike === null ? null : block(t("tt.preview.say"), say)}
     </div>
   );
 }

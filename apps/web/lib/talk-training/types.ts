@@ -18,8 +18,8 @@ export type TalkTraining = {
   objections: Pair[];
   /** {a: the customer's line, b: the Owner's good answer} */
   examples: Pair[];
-  /** at most 20; an API that predates the field is read as none */
-  sayLike: SayLike[];
+  /** at most 20; null = the API predates the field (it refuses unknown fields), so it is neither shown nor sent */
+  sayLike: SayLike[] | null;
 };
 export type TalkTrainingState = { training: TalkTraining; saved: boolean; defaults: TalkTraining; rules: string[]; updatedAt: string | null };
 
@@ -83,8 +83,8 @@ export function fromApi(v: unknown): TalkTraining | null {
   const neverSay = strings(v.never_say ?? [], LIMITS.neverSay.min, LIMITS.neverSay.max, LIMITS.neverSay.count);
   const objections = pairs(v.objections ?? [], ["hears", "answer"], LIMITS.objection.max, LIMITS.objection.count);
   const examples = pairs(v.examples ?? [], ["customer", "answer"], LIMITS.example.max, LIMITS.example.count);
-  const sayLike = sayLikes(v.say_like ?? []);
-  if (!address || !questions || !neverSay || !objections || !examples || !sayLike) return null;
+  const sayLike = v.say_like === undefined || v.say_like === null ? null : sayLikes(v.say_like);
+  if (!address || !questions || !neverSay || !objections || !examples || (sayLike === null && v.say_like !== undefined && v.say_like !== null)) return null;
   return { greeting, address, questions, neverSay, objections, examples, sayLike };
 }
 
@@ -95,7 +95,8 @@ export const toApi = (t: TalkTraining) => ({
   never_say: t.neverSay,
   objections: t.objections.map((p) => ({ hears: p.a, answer: p.b })),
   examples: t.examples.map((p) => ({ customer: p.a, answer: p.b })),
-  say_like: t.sayLike.map((p) => ({ say: p.say, instead_of: p.insteadOf })),
+  // only to an API that knows the field (an older one refuses any field it does not know)
+  ...(t.sayLike === null ? {} : { say_like: t.sayLike.map((p) => ({ say: p.say, instead_of: p.insteadOf })) }),
 });
 
 /** How "Say it like this" goes into the call's instructions (the contract: one line per item, under "SAY IT LIKE THIS"): shown read-only so the Owner sees what the assistant is told. */
@@ -121,7 +122,7 @@ export function cleanEdit(input: unknown): { ok: true; data: TalkTraining } | { 
         const insteadOf = typeof p.insteadOf === "string" ? p.insteadOf.trim() || null : (p.insteadOf ?? null);
         return say === "" ? [] : [{ say, instead_of: insteadOf }];
       })
-    : (input.sayLike ?? []);
+    : (input.sayLike ?? null);
   if (Array.isArray(q) && q.length > LIMITS.question.count) return { ok: false, error: "too_many_questions" };
   if (Array.isArray(n) && n.length > LIMITS.neverSay.count) return { ok: false, error: "too_many_never_say" };
   if (Array.isArray(o) && o.length > LIMITS.objection.count) return { ok: false, error: "too_many_objections" };
@@ -139,7 +140,7 @@ export function cleanEdit(input: unknown): { ok: true; data: TalkTraining } | { 
   if (!doc) return { ok: false, error: "invalid" };
   const said = doc.neverSay.map(sameWords);
   const asked = doc.questions.map(sameWords);
-  const says = doc.sayLike.map((p) => p.say.toLowerCase());
+  const says = (doc.sayLike ?? []).map((p) => p.say.toLowerCase());
   if (new Set(said).size !== said.length || new Set(asked).size !== asked.length || new Set(says).size !== says.length) return { ok: false, error: "duplicate" };
   return { ok: true, data: doc };
 }
