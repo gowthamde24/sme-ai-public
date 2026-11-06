@@ -1,6 +1,8 @@
 """Search for the ⌘K palette (docs/contracts/search.md). The database (pgTAP 173) proves the matching, the role filtering and the timing; here the route: any member, q 2 to 80 characters, the
 answer passed through."""
 
+# ruff: noqa: E501
+
 from __future__ import annotations
 
 import uuid
