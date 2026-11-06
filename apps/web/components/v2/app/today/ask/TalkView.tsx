@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import * as React from "react";
 
 import { AskCard } from "./LazyAskCard";
@@ -19,6 +20,19 @@ export function TalkView({ lang, base, availability, words, chips }: { lang: str
   const provided = React.useContext(AskProvidedContext);
   const shared = useStoredAsk();
   const voice = React.useContext(AskVoiceContext);
+  // "Ask the assistant: <text>" from the command palette (/talk?ask=...): asked once, then the address loses it (a refresh does not ask again)
+  const asked = useSearchParams()?.get("ask") ?? null;
+  const router = useRouter();
+  const pathname = usePathname() ?? "";
+  const sent = React.useRef(false);
+  React.useEffect(() => {
+    if (!asked || sent.current || !shared?.live) return;
+    const text = asked.trim().slice(0, 2000);
+    if (!text) return;
+    sent.current = true;
+    shared.ask(text);
+    router.replace(pathname);
+  }, [asked, shared, router, pathname]);
   if (availability === "not_available") return <p className="text-base text-muted">{words["ask.off.line"] ?? ""}</p>;
   if (provided && shared?.live && voice) {
     return (
