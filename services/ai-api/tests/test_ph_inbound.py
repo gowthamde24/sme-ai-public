@@ -216,7 +216,11 @@ async def test_a_call_from_the_owner_is_answered_by_the_ai_and_finished_with_its
     assert "AI" in first or "ai" in first.lower(), "the first thing said is that it is an AI"
     numbers = svc.last_numbers
     assert numbers is not None and set(numbers) == {"call", "turns", "first_sound_p50_ms", "first_sound_p95_ms", "duration_s", "cost_paise_estimate", "outcome", "end",
-                                                 "end_how", "stop_reason", "close_code", "events", "bytes_in", "bytes_out", "first_out_ms"}
+                                                 "end_how", "stop_reason", "close_code", "events", "bytes_in", "bytes_out", "first_out_ms",
+                                                 # owner, 6 Nov 2026: both target times logged for every call
+                                                 "pickup_to_first_sound_ms", "admitted_ms", "greeting_ready", "reply_ms_p50", "reply_ms_p95", "reply_ms_max",
+                                                 "first_sound_within_target", "replies_within_target"}
+    assert numbers["admitted_ms"] is not None and numbers["greeting_ready"] is True, "admitted, with the greeting already spoken into memory"
     assert numbers["bytes_out"] > 0 and numbers["first_out_ms"] is not None and numbers["events"].get("start") == 1, "our audio went out, and when"
     assert numbers["cost_paise_estimate"] == 100, "one started minute at the estimate"
     line = next(r for r in records if r.startswith("phone_call_numbers "))

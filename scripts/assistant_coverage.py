@@ -27,6 +27,7 @@ REASON_WORDS = {
     "assistant_itself": "the assistant's own chat and voice doors",
     "internal": "the worker's and the agent runtime's own doors",
     "binary_upload": "a file's bytes: they come in through the chat's file drop (A2)",
+    "developer_keys": "an API key: its secret is shown once, on the screen (Settings -> Developers), never in the chat",
 }
 
 

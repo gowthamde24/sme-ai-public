@@ -171,6 +171,8 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `TELEPHONY_LIVE_CONFIRMED` | plain | api | `true` only after the owner has the lawyer's answers (TRAI/DLT, disclosure, recording). Default `false`. |
 | `TELEPHONY_SANDBOX_NUMBERS` | plain | api | Comma-separated `+91...` numbers of the verified users of the provider's trial account: the only numbers a sandbox call may ring. |
 | `TELEPHONY_MAX_CONCURRENT` | plain | api | Calls at once, all workspaces. Default `2`. |
+| `TELEPHONY_MAX_CALL_S` | plain | api | The longest an inbound call may run, in seconds (default 300, never more, at least 30). Staging: 180 on the business's own ExoPhone (owner, 6 Nov 2026). |
+| `sme-telephony-sandbox-numbers` | secret | api | Staging (6 Nov 2026): the callers allowed in, comma-separated E.164 (the owner's own number and the next tester's). Mounted as `TELEPHONY_SANDBOX_NUMBERS` when `sme-api-run` may read it, otherwise the plain list applies. **The owner writes it himself** with `read -s` (docs/runbooks/phone-inbound-sandbox.md), so no number is in a chat, a log or the script. |
 | `TELEPHONY_LLM` | plain | api | Who speaks on a call: `haiku` (default) or `sarvam` (Sarvam 105B first, behind a first-token deadline that falls back to Haiku). Measured 31 Oct 2026: `docs/runbooks/phone-model.md`. |
 | `TELEPHONY_FIRST_TOKEN_MS` | plain | api | With `sarvam`: if no first piece of text arrives within this many ms (default `1200`, kept between 500 and 4000) the same turn goes to Haiku. |
 | `TELEPHONY_COST_PAISE_PER_MINUTE` | plain | api | What a started minute of a call costs, in paise: a configurable ESTIMATE until the owner has Exotel's price (default `100`). |
@@ -178,7 +180,7 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `EXOTEL_STREAM_SECRET` | secret | api | Signs the per-call token of the Voicebot URL (`docs/runbooks/phone-inbound-sandbox.md`), 32+ characters. Secret Manager: `sme-exotel-stream-secret` (made by C1, 4 Nov 2026). |
 | `TELEPHONY_INBOUND_LANGUAGE` | plain | api | The language of an inbound call's opening line (`en` default; staging `te`); the call then follows the language spoken. |
 | `EXOTEL_STREAM_URL_FORMAT` | plain | api | How the Voicebot URL answers: `json` (default, `{"url": "wss://..."}`) or `text` (the bare `wss://` address). |
-| `EXOTEL_TRIAL_NUMBER` | plain | api | Sandbox only: Exotel's SHARED trial ExoPhone (PIN routing). A caller it does not recognise (a roaming phone's number arrives altered) enters the PIN, so the caller is not a condition there: a call is admitted when the token, the start message's account_sid (= `EXOTEL_SID`) and Exotel's own record of the CallSid under our account hold, one call at a time, N a day, a short cut (`app/telephony/inbound.py` `TrialRule`). Empty: no trial rule. |
+| `EXOTEL_TRIAL_NUMBER` | plain | api | Sandbox only: Exotel's SHARED trial ExoPhone (PIN routing). **Staging: empty since 6 Nov 2026** (the bought ExoPhone 04045903172 has the strict rule). A caller it does not recognise (a roaming phone's number arrives altered) enters the PIN, so the caller is not a condition there: a call is admitted when the token, the start message's account_sid (= `EXOTEL_SID`) and Exotel's own record of the CallSid under our account hold, one call at a time, N a day, a short cut (`app/telephony/inbound.py` `TrialRule`). Empty: no trial rule. |
 | `EXOTEL_TRIAL_CALLER` | plain | api | Sandbox only: the owner's number, compared with the arriving caller for the LOG only (yes / no and a shape, never the digits); not a condition. |
 | `EXOTEL_TRIAL_APP_ID` | plain | api | Sandbox only: the Voicebot flow's app id; compared when the start message names one (a different one is refused; Exotel's names none). |
 | `EXOTEL_TRIAL_CALLS_PER_DAY` | plain | api | Sandbox only: calls the trial rule admits per India day, per server instance (default 10). |
@@ -246,6 +248,7 @@ Change only when the published terms or privacy notice change.
 | `TERMS_EFFECTIVE_FROM` | plain | api | A date; empty = at once. |
 | `PRIVACY_EFFECTIVE_FROM` | plain | api | A date; empty = at once. |
 | `POLICY_ENFORCE` | plain | api | `false` until the first real version change is published. |
+| `DEVELOPER_API` | plain | api | The developer API (ADR 0121): `off` (default; Settings -> Developers and `/api/v1` answer 404) or `test` (test-mode keys and the sandbox: no live keys exist, nothing is ever called or sent). The program's requests run as the worker account, so it needs `SCHEDULER_EMAIL` and `SCHEDULER_PASSWORD` (otherwise 503). |
 
 ## The web (Cloud Run or Vercel)
 

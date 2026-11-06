@@ -10,6 +10,7 @@ NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint s
 
 import asyncio
 import logging
+import uuid
 from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import dataclass, field
@@ -23,13 +24,14 @@ from app.browser_voice.limits import Ledger
 from app.browser_voice.routes import OWNER_SILENCE_MS, stt_mode_for
 from app.browser_voice.runtime import BrowserVoice
 from app.browser_voice.session import Parts
-from app.connectors.phone import normalise
+from app.connectors.phone import normalise, normalise_line
 from app.conversation.fallback import FallbackTts
 from app.conversation.pronounce import default_pronunciations
 from app.conversation.providers import AnthropicStream, SarvamChatStream, SarvamRealtimeStt
 from app.errors import ApiError
 from app.telephony import gate, inbound, persona
 from app.telephony.call_session import CallPlan, run_call
+from app.telephony.greeting_audio import GREETINGS
 from app.telephony.inbound_store import InboundStore
 
 log = logging.getLogger("app.telephony.inbound")
@@ -124,9 +126,9 @@ async def stream_url(request: Request) -> Response:
     call_sid = inbound.first(params, "CallSid", "call_sid", "CallSID")
     log.info("exotel_stream_url call_sid_fp=%s", inbound.fingerprint(service.secret, call_sid))
     # the shared trial number is in `To` here, while the start message's `to` is the line the call landed on (5 Nov 2026): the token carries "this call came in on the trial number", signed
-    to_trial = service.trial is not None and normalise(inbound.first(params, "To", "to")) == service.trial.number
+    to_trial = service.trial is not None and normalise_line(inbound.first(params, "To", "to")) == service.trial.number
     log.info("exotel_stream_url to_is_trial=%s callto_is_trial=%s", "yes" if to_trial else "no",
-             "yes" if service.trial is not None and normalise(params.get("CallTo", "")) == service.trial.number else "no")
+             "yes" if service.trial is not None and normalise_line(params.get("CallTo", "")) == service.trial.number else "no")
     token = inbound.mint(service.secret, inbound.monotonic(), call_sid, inbound.TRIAL_MARK if to_trial else "")
     url = inbound.stream_url(service.public_base, token)
     log.info("exotel_stream_url issued format=%s token_in=path url_chars=%d", service.url_format, len(url))
@@ -171,6 +173,67 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
         fillers=bv.fillers,
     )
     return parts, model
+
+
+@dataclass
+class Prepared:
+    tenant_id: uuid.UUID | None
+    parts: Any
+    model: str
+    slots: list[dict[str, Any]]
+    text: str | None = None
+    rendering: "asyncio.Future[bytes | None] | None" = None
+
+
+async def _prepare(service: InboundService, bv: Any, start: Any) -> Prepared | None:
+    """While the call is checked: which workspace the line is (a read), its training and visit slots (reads), the voice, and the greeting's rendering started. Never writes, never sends audio."""
+    line_no = normalise_line(start.to_number)
+    if line_no is None:
+        return None
+    found = await asyncio.to_thread(service.store.line_find, line_no)
+    if not found or not found.get("tenant_id"):
+        return None
+    return await _prepare_for(service, bv, uuid.UUID(str(found["tenant_id"])))
+
+
+async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID) -> Prepared:
+    async def read(name: str, default: Any) -> Any:
+        fn = getattr(service.store, name, None)
+        if fn is None:
+            return default
+        try:
+            return await asyncio.to_thread(fn, tenant)
+        except Exception as exc:  # noqa: BLE001 - a call without the training or the slots still follows every platform rule
+            log.warning("exotel_inbound %s_unreadable %s", name, exc.__class__.__name__)
+            return default
+
+    training, slots = await asyncio.gather(read("talk_training", None), read("visit_slots", []))
+    slots = list(slots or [])
+    labels = tuple(visit_label(sl) for sl in slots)
+    if service.parts_for is None:
+        parts, model = phone_parts(bv, service.business, service.language, service.llm_choice, training, labels)
+    else:
+        parts, model = service.parts_for(bv, service.business, service.language, service.llm_choice)
+    text = parts.greeting_for(service.language)
+    rendering: asyncio.Future[bytes | None] | None = None
+    if text and GREETINGS.get(service.language, text) is None:
+        # rendered in the background (kept for the next call too); the call never waits for it beyond a short grace (see `_greeting_ready`)
+        rendering = asyncio.ensure_future(GREETINGS.render(parts.tts, service.language, text))
+    parts.greeting_audio = GREETINGS.get
+    return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering)
+
+
+GRACE_S = 0.25
+
+
+async def _greeting_ready(prepared: Prepared, language: str) -> bool:
+    """After admission: is the greeting already in memory? A rendering still under way gets a short grace; past it the line speaks the greeting the usual way (streamed)."""
+    if not prepared.text:
+        return False
+    if prepared.rendering is not None and not prepared.rendering.done():
+        with suppress(Exception):
+            await asyncio.wait_for(asyncio.shield(prepared.rendering), GRACE_S)
+    return GREETINGS.get(language, prepared.text) is not None
 
 
 async def _close(wire: Any) -> None:
@@ -221,37 +284,32 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     mark = inbound.verify_mark(service.secret, token, inbound.monotonic(), start.call_sid)
     if mark is None:
         return await _refuse(wire, line, "bad_token")
-    decision = await inbound.admit(start, service.gate_settings, find_line=service.store.line_find, calls=service.calls, active_calls=live.count() if live is not None else 0, now=inbound.now_utc(),
-                                   our_sid=service.our_sid, trial=service.trial, trial_count=service.trial_count, trial_by_url=mark == inbound.TRIAL_MARK)
+    # owner, 6 Nov 2026: the first sound within 1.5 s of pickup. Admission (our line and Exotel's own record, read together) and the PREPARATION of the call (the workspace's training and visit
+    # slots, the voice, the greeting rendered into memory) run AT THE SAME TIME. Nothing is written and no audio is sent before the call is admitted.
+    began_check = inbound.monotonic()
+    admitting = asyncio.ensure_future(inbound.admit(start, service.gate_settings, find_line=service.store.line_find, calls=service.calls, active_calls=live.count() if live is not None else 0,
+                                                    now=inbound.now_utc(), our_sid=service.our_sid, trial=service.trial, trial_count=service.trial_count, trial_by_url=mark == inbound.TRIAL_MARK))
+    preparing = asyncio.ensure_future(_prepare(service, bv, start))
+    decision = await admitting
     if isinstance(decision, gate.Refused):
+        preparing.cancel()
         return await _refuse(wire, line, decision.reason)
+    line.admitted_ms = round((inbound.monotonic() - began_check) * 1000)
     log.info("exotel_inbound admitted rule=%s", decision.rule)
     tenant = decision.tenant_id
     max_call_s = min(service.max_call_s, decision.max_call_s) if decision.max_call_s else service.max_call_s
     try:
-        call_id = await asyncio.to_thread(service.store.begin, tenant, service.language)
-    except Exception as exc:  # noqa: BLE001 - no row, no call
-        log.warning("exotel_inbound begin_failed %s", exc.__class__.__name__)
-        return await _refuse(wire, line, "begin_failed")
-    training: dict[str, Any] | None = None
-    talk = getattr(service.store, "talk_training", None)
-    if talk is not None:
-        try:
-            training = await asyncio.to_thread(talk, tenant)
-        except Exception as exc:  # noqa: BLE001 - a call without the training still follows every platform rule
-            log.warning("exotel_inbound training_unreadable %s", exc.__class__.__name__)
-    slots: list[dict[str, Any]] = []
-    read_slots = getattr(service.store, "visit_slots", None)
-    if read_slots is not None:
-        try:
-            slots = await asyncio.to_thread(read_slots, tenant)
-        except Exception as exc:  # noqa: BLE001 - a call without visit slots simply does not offer a visit
-            log.warning("exotel_inbound visit_slots_unreadable %s", exc.__class__.__name__)
-    labels = tuple(visit_label(sl) for sl in slots)
-    if service.parts_for is None:
-        parts, model = phone_parts(bv, service.business, service.language, service.llm_choice, training, labels)
-    else:
-        parts, model = service.parts_for(bv, service.business, service.language, service.llm_choice)
+        prepared = await preparing
+    except Exception as exc:  # noqa: BLE001 - prepared the slow way below
+        log.warning("exotel_inbound prepare_failed %s", exc.__class__.__name__)
+        prepared = None
+    if prepared is None or prepared.tenant_id != tenant:
+        prepared = await _prepare_for(service, bv, tenant)
+    parts, model, slots = prepared.parts, prepared.model, prepared.slots
+    line.greeting_ready = await _greeting_ready(prepared, service.language)
+    # the call's row is written while the greeting already plays (no row, no call: run_call ends the call if it cannot be written)
+    begin_row = asyncio.ensure_future(asyncio.to_thread(service.store.begin, tenant, service.language))
+    call_id = uuid.uuid4()   # replaced by the row's id for the database; only names this call in memory until then
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="inbound", language=service.language, business=service.business, max_call_s=max_call_s,
                     cost_paise_per_minute=service.cost_paise_per_minute, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")))
     if live is not None:
@@ -260,13 +318,15 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     outcome_name: str | None = None
     cost = 0
     try:
-        result = await run_call(plan, line, parts, service.store.for_call(tenant), ledger=Ledger(bv.limits), model=model)
+        result = await run_call(plan, line, parts, service.store.for_call(tenant), ledger=Ledger(bv.limits), model=model, call_id_ready=begin_row)
         outcome_name, cost = result.outcome or result.state, result.cost_paise
     except Exception as exc:  # noqa: BLE001 - only the class is kept
         log.error("exotel_inbound crashed %s", exc.__class__.__name__)
     finally:
         if live is not None:
             live.remove(call_id)
+        if begin_row.done() and not begin_row.cancelled() and begin_row.exception() is None:
+            call_id = begin_row.result()
         service.last_numbers = inbound.call_numbers(call_id, line, inbound.monotonic() - began, cost, outcome_name)
         inbound.log_call(service.last_numbers)
         await _close(wire)

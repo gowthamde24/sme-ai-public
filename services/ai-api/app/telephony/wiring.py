@@ -39,6 +39,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         secret=secret.encode("utf-8"), public_base=base, gate_settings=gs, store=InboundStore(RpcClient(rest_url, anon_key), principal), calls=calls,
         cost_paise_per_minute=settings.telephony_cost_paise_per_minute, language=settings.telephony_inbound_language if settings.telephony_inbound_language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "en",
         llm_choice=settings.telephony_llm, business=settings.telephony_inbound_business,
+        max_call_s=max(30, min(int(settings.telephony_max_call_s), 300)),
         url_format="text" if settings.exotel_stream_url_format == "text" else "json",
         our_sid=settings.exotel_sid or None,
         trial=trial_rule(settings.exotel_trial_number, settings.exotel_trial_caller, settings.exotel_sid, settings.exotel_trial_app_id,

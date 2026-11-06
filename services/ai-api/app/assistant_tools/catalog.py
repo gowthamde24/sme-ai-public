@@ -22,7 +22,7 @@ from app.billing.gate import classify as billing_classify
 
 Level = Literal["read", "write", "sensitive"]
 Sensitive = Literal["money", "sending", "members", "deleting", "billing", "secrets"]
-ScreenOnly = Literal["real_data_gate", "billing", "workspace_deletion", "erasure", "assistant_itself", "internal", "binary_upload"]
+ScreenOnly = Literal["real_data_gate", "billing", "workspace_deletion", "erasure", "assistant_itself", "internal", "binary_upload", "developer_keys"]
 Undo = Literal["snapshot", "inverse", "none"]
 
 TENANT = "/v1/tenants/{tenant_id}"
@@ -34,6 +34,7 @@ SCREEN_ONLY_RULES: tuple[tuple[str, re.Pattern[str], ScreenOnly], ...] = (
     ("W", re.compile(r"^/billing(/|$)"), "billing"),                                         # a plan, a trial, a payment method, a cancel: never the assistant's
     ("W", re.compile(r"^/deletion-requests"), "workspace_deletion"),                         # deleting the workspace
     ("W", re.compile(r"^/erasure-requests"), "erasure"),                                     # erasing a person's data (DPDP): a person decides, with a reason
+    ("W", re.compile(r"^/developer/keys(/|$)"), "developer_keys"),                          # making, rotating or revoking an API key: its secret is shown once, on the screen, never in the chat
     ("*", re.compile(r"^/(assistant|conversations)(/|$)"), "assistant_itself"),              # the chat and the voice themselves (the assistant does not call its own door)
     ("*", re.compile(r"^/(scheduler|agent-runs|agent-claims|claims|agent-cost)(/|$)"), "internal"),   # the worker's and the agent runtime's own doors
     ("W", re.compile(r"/photos($|/)|/voice-clone/samples|/upload$|/files$|/audio$"), "binary_upload"),  # a file's bytes: they come in through the chat's file drop (A2), not as a tool argument

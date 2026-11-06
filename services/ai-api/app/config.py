@@ -1,7 +1,7 @@
 import re
 from datetime import date
 from functools import lru_cache
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -347,10 +347,16 @@ class Settings(BaseSettings):
     workspace_secrets: str = "off"
     workspace_secrets_project: str | None = None
     telephony_max_concurrent: int = 2
+    # the longest an inbound call may run, in seconds (never above 300);
+    # owner, 6 Nov 2026: 180 on staging's own number
+    telephony_max_call_s: int = 300
     # The assistant does the work (chat files, plan cards, the router, Settings > Activity): which
     # workspaces have it. Unset = every workspace (local, tests); ids separated by ; or , = only
     # those (staging: the owner's test workspaces, 5 Nov 2026); set but empty or "none" = none.
     assistant_work_tenants: str | None = None
+    # The developer API (ADR 0121; docs/contracts/developer-api.md): off (default) |
+    # test (test-mode keys and the sandbox; no live keys exist)
+    developer_api: Literal["off", "test"] = "off"
     # Who speaks on a call: haiku (default, steady) | sarvam (Sarvam 105B first, ~320 ms faster
     # to the first word, behind a first-token deadline that falls back to Haiku).
     # Measured 31 Oct 2026: docs/runbooks/phone-model.md.
