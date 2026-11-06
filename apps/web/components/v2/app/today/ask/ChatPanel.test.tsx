@@ -646,7 +646,7 @@ describe("the command bar (owner's design C) and the language pill", () => {
   it("the language pill offers Auto, Telugu, English, Hindi, Kannada, Tamil, Malayalam, starts on Auto (never chosen) and remembers the choice", async () => {
     draw({ variant: "bar" });
     const pill = screen.getByRole("combobox", { name: "Language" }) as HTMLSelectElement;
-    expect([...pill.options].map((o) => o.text)).toEqual(["Auto", "తెలుగు", "English", "हिंदी", "ಕನ್ನಡ", "தமிழ்", "മലയാളം"]);
+    expect([...pill.options].map((o) => o.text)).toEqual(["Auto", "తెలుగు", "English", "हिंदी", "ಕನ್ನಡ", "தமிழ்", "മലയാളം", "मराठी (draft)"]); // Marathi joins as a draft (C1 #355)
     expect(pill.value).toBe("auto"); // never chosen = Auto (owner, 4 Nov)
     await act(async () => void fireEvent.change(pill, { target: { value: "te" } }));
     expect(window.localStorage.getItem("sme_chat_lang")).toBe("te");

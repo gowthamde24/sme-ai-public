@@ -80,6 +80,15 @@ describe("POST /app/tenants/[id]/assistant-work", () => {
     const refused = await (await post({ op: "secret", requestId: S, value: KEY })).text();
     expect(JSON.parse(refused)).toEqual({ ok: false, error: "rejected" });
     expect(refused).not.toContain(KEY);
+    // a request used, run out, not this Owner's or not saved: the card asks for a new one (C1, 5 Nov)
+    for (const [status, code] of [[409, "secret_request_used"], [410, "secret_request_expired"], [404, "not_found"], [503, "secret_not_saved"], [503, "secrets_unavailable"]] as const) {
+      h.secret.mockRejectedValueOnce(new ApiRequestError(status, code, `x ${KEY}`));
+      const said = await (await post({ op: "secret", requestId: S, value: KEY })).text();
+      expect(JSON.parse(said), code).toEqual({ ok: false, error: "renew" });
+      expect(said).not.toContain(KEY);
+    }
+    h.secret.mockRejectedValueOnce(new ApiRequestError(503, "upstream_down", "x"));
+    expect(await (await post({ op: "secret", requestId: S, value: KEY })).json()).toEqual({ ok: false, error: "down" });
     h.role = "sales";
     h.secret.mockReset();
     expect(await (await post({ op: "secret", requestId: S, value: KEY })).json()).toEqual({ ok: false, error: "forbidden" });

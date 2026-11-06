@@ -19,6 +19,8 @@ export function SecretBox({ card, env, inline = false }: { card: SecretCard; env
   const field = React.useRef<HTMLInputElement>(null);
   const [busy, setBusy] = React.useState(false);
   const [problem, setProblem] = React.useState<string | null>(null);
+  // a box that cannot take the value any more (used, run out, not saved): no form, only "ask me again for a new card"
+  const [spent, setSpent] = React.useState(false);
   const inputId = `secret-${card.id}`;
   const label = card.secret === "other" ? card.title : t(`bv.work.secret.kind.${card.secret}`);
   const submit = async (e: React.FormEvent) => {
@@ -28,19 +30,26 @@ export function SecretBox({ card, env, inline = false }: { card: SecretCard; env
     const value = el.value; // read once, here only
     el.value = "";
     if (value.trim() === "") return setProblem("bv.work.secret.err.empty");
+    if (card.expiresAt && Date.parse(card.expiresAt) <= Date.now()) {
+      setSpent(true);
+      return setProblem("bv.work.secret.err.renew");
+    }
     setBusy(true);
     setProblem(null);
     const out = await env.transport.saveSecret(card.requestId, value);
     setBusy(false);
     if (out.ok) env.store.set(card.id, { secret: { last4: out.last4 } });
-    else setProblem(`bv.work.secret.err.${out.error}`);
+    else {
+      if (out.error === "renew") setSpent(true);
+      setProblem(`bv.work.secret.err.${out.error}`);
+    }
   };
   const body = saved ? (
     <p data-work="secret-saved" role="status" className="inline-flex items-center gap-1.5 text-sm font-semibold text-green-text">
       <Check className="size-4" aria-hidden="true" />
       {saved.last4 ? t("bv.work.secret.saved", { last4: saved.last4 }) : t("bv.work.secret.saved.plain")}
     </p>
-  ) : env.role !== "owner" ? (
+  ) : spent ? null : env.role !== "owner" ? (
     <p data-work="owner-only" role="note" className="text-sm font-semibold text-amber-text">
       {t("bv.work.secret.err.forbidden")}
     </p>

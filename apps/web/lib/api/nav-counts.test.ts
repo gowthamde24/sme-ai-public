@@ -12,7 +12,7 @@ const T = "11111111-1111-4111-8111-111111111111";
 
 describe("the menu's numbers (C1's nav-counts contract)", () => {
   it("reads the contract's example", () => {
-    expect(parseNavCounts(EXAMPLE)).toEqual({ needsYou: 4, prospectsNeedingOwner: 16, newLeads: 3, liveCalls: 0, unreadChats: 2, followupsDue: 5, visitsToday: 1, quotesWaiting: 2, aiTeamWorking: 1, callMinutes: { used: 12, total: 100 }, aiUsage: { usedPaise: 410000, allowancePaise: 3000000, period: "month" }, plan: "ai_workforce", asOf: "2026-11-05T11:42:07Z" });
+    expect(parseNavCounts(EXAMPLE)).toEqual({ needsYou: 4, prospectsNeedingOwner: 16, leadDeskWaiting: null, newLeads: 3, liveCalls: 0, unreadChats: 2, followupsDue: 5, visitsToday: 1, quotesWaiting: 2, aiTeamWorking: 1, callMinutes: { used: 12, total: 100 }, aiUsage: { usedPaise: 410000, allowancePaise: 3000000, period: "month" }, plan: "ai_workforce", asOf: "2026-11-05T11:42:07Z" });
   });
   it("null is 'not known or not for you'; 0 is known, none; one bad field never takes the others with it", () => {
     const c = parseNavCounts({ ...EXAMPLE, quotes_waiting: null, new_leads: -1, unread_chats: 2.5, live_calls: "3", call_minutes: null, ai_usage: { used_paise: 1, allowance_paise: 0, period: "month" }, plan: "<b>" });
@@ -26,6 +26,10 @@ describe("the menu's numbers (C1's nav-counts contract)", () => {
     expect(todayCount(parseNavCounts(EXAMPLE))).toBe(20);
     expect(todayCount(parseNavCounts({ needs_you: 4 }))).toBe(4);
     expect(todayCount(NO_COUNTS)).toBeNull();
+    // Lead Desk's own things (C1 #356) are part of Today too: 4 + 1 + 16; before #356 the field is absent and counts 0
+    expect(todayCount(parseNavCounts({ ...EXAMPLE, lead_desk_waiting: 1 }))).toBe(21);
+    expect(parseNavCounts(EXAMPLE).leadDeskWaiting).toBeNull();
+    expect(todayCount(parseNavCounts({ lead_desk_waiting: 2 }))).toBe(2);
   });
   it("asks with the person's token; a server without the route (404) is 'nothing known'; anything else is thrown", async () => {
     apiRequest.mockResolvedValueOnce(EXAMPLE);
