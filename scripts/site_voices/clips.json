@@ -1,0 +1,67 @@
+{
+  "$comment": "The landing page's spoken lines (job landing-v2, part F1). The words are the approved design's (~/Desktop/stack19-jobs/landing-v2/Main.dc.html: HERO, LANGS[].line, BIZ[].lines, MEETALL), except the Telugu stand-up, written by C1 from the English and marked draft. Voices are the app's catalogue voices (services/ai-api/app/conversation/data/voices.json). draft: true = not yet checked by a native speaker. Every business named is a sample.",
+  "voices": {
+    "te": {"id": "te-ramya", "name": "Ramya", "cartesia": "cf061d8b-a752-4865-81a2-57570a6e0565", "language": "te", "draft": false},
+    "en": {"id": "en-janvi", "name": "Janvi", "cartesia": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8", "language": "en", "draft": false},
+    "hi": {"id": "hi-sanya", "name": "Sanya", "cartesia": "432fc642-6a83-4975-b77a-c605903b5ba6", "language": "hi", "draft": false},
+    "kn": {"id": "kn-disha", "name": "Disha", "cartesia": "4c00ff98-199c-4967-99ae-7b69125edcff", "language": "kn", "draft": false},
+    "ta": {"id": "ta-janani", "name": "Janani", "cartesia": "fb7d8d97-9730-4165-bd79-36b5ce61b5f2", "language": "ta", "draft": true},
+    "ml": {"id": "ml-latha", "name": "Latha", "cartesia": "b426013c-002b-4e89-8874-8cd20b68373a", "language": "ml", "draft": true},
+    "mr": {"id": "hi-sanya", "name": "Sanya (speaking Marathi)", "cartesia": "432fc642-6a83-4975-b77a-c605903b5ba6", "language": "mr", "draft": true},
+    "te-customer": {"id": "te-sindhu", "name": "Sindhu", "cartesia": "07bc462a-c644-49f1-baf7-82d5599131be", "language": "te", "draft": false},
+    "hi-customer": {"id": "hi-rohan", "name": "Rohan", "cartesia": "4877b818-c7fe-4c89-b1cf-eadf8e23da72", "language": "hi", "draft": false},
+    "en-customer": {"id": "en-daniel", "name": "Daniel", "cartesia": "47c38ca4-5f35-497b-b1a3-415245fb35e1", "language": "en", "draft": false}
+  },
+  "clips": [
+    {"id": "hero-te", "group": "hero", "voice": "te", "text": "నమస్కారం! మీరు అడిగిన దాని గురించి కాల్ చేస్తున్నాను."},
+    {"id": "hero-ta", "group": "hero", "voice": "ta", "text": "வணக்கம்! நீங்கள் கேட்டதைப் பற்றி அழைக்கிறேன்."},
+    {"id": "hero-kn", "group": "hero", "voice": "kn", "text": "ನಮಸ್ಕಾರ! ನೀವು ಕೇಳಿದ್ದರ ಬಗ್ಗೆ ಕಾಲ್ ಮಾಡುತ್ತಿದ್ದೇನೆ."},
+    {"id": "hero-ml", "group": "hero", "voice": "ml", "text": "നമസ്കാരം! നിങ്ങൾ ചോദിച്ചതിനെക്കുറിച്ച് വിളിക്കുന്നു."},
+    {"id": "hero-hi", "group": "hero", "voice": "hi", "text": "नमस्ते! आपने जो पूछा, उसी बारे में कॉल कर रही हूँ।"},
+    {"id": "hero-mr", "group": "hero", "voice": "mr", "text": "नमस्कार! तुम्ही विचारलेल्या गोष्टीबद्दल कॉल करत आहे."},
+    {"id": "hero-en", "group": "hero", "voice": "en", "text": "Hello! I am calling about what you just asked."},
+
+    {"id": "try-te", "group": "try", "voice": "te", "text": "నమస్కారం! మీరు ఇప్పుడే పంపిన ఎంక్వైరీ గురించి కాల్ చేస్తున్నాను. ఇప్పుడు మాట్లాడొచ్చా?"},
+    {"id": "try-ta", "group": "try", "voice": "ta", "text": "வணக்கம்! நீங்கள் இப்போது அனுப்பிய விசாரணை பற்றி அழைக்கிறேன். இப்போது பேசலாமா?"},
+    {"id": "try-kn", "group": "try", "voice": "kn", "text": "ನಮಸ್ಕಾರ! ನೀವು ಈಗ ಕಳಿಸಿದ ವಿಚಾರಣೆಯ ಬಗ್ಗೆ ಕರೆ ಮಾಡುತ್ತಿದ್ದೇನೆ. ಈಗ ಮಾತಾಡಬಹುದಾ?"},
+    {"id": "try-ml", "group": "try", "voice": "ml", "text": "നമസ്കാരം! നിങ്ങൾ ഇപ്പോൾ അയച്ച അന്വേഷണത്തെക്കുറിച്ചാണ് വിളിക്കുന്നത്. ഇപ്പോൾ സംസാരിക്കാമോ?"},
+    {"id": "try-hi", "group": "try", "voice": "hi", "text": "नमस्ते! आपने अभी जो पूछताछ भेजी, उसी के बारे में कॉल कर रही हूँ। अभी बात कर सकते हैं?"},
+    {"id": "try-mr", "group": "try", "voice": "mr", "text": "नमस्कार! तुम्ही आत्ता पाठवलेल्या चौकशीबद्दल कॉल करत आहे. आता बोलू शकतो का?"},
+    {"id": "try-en", "group": "try", "voice": "en", "text": "Hello! I am calling about the enquiry you just sent. Is now a good time to talk?"},
+
+    {"id": "call-saree-1", "group": "call-saree", "voice": "te", "speaker": "assistant", "text": "నమస్కారం! నేను పద్మ సిల్క్స్ AI అసిస్టెంట్‌ని. మీరు పట్టు చీరల గురించి అడిగారు కదా?"},
+    {"id": "call-saree-2", "group": "call-saree", "voice": "te-customer", "speaker": "customer", "text": "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి. బడ్జెట్ పదిహేను వేల వరకు."},
+    {"id": "call-saree-3", "group": "call-saree", "voice": "te", "speaker": "assistant", "text": "చాలా బాగుంది. ఏ రంగు ఇష్టం? ఎరుపు, ఆకుపచ్చ, లేక పసుపు?"},
+    {"id": "call-saree-4", "group": "call-saree", "voice": "te-customer", "speaker": "customer", "text": "ఎరుపు. ఫోటోలు వాట్సాప్‌లో పంపగలరా?"},
+    {"id": "call-saree-5", "group": "call-saree", "voice": "te", "speaker": "assistant", "text": "తప్పకుండా, ఇప్పుడే పంపుతాను. శనివారం షాప్‌కి వచ్చి చూస్తారా?"},
+    {"id": "call-saree-6", "group": "call-saree", "voice": "te-customer", "speaker": "customer", "text": "సరే, పదకొండు గంటలకు వస్తాను."},
+
+    {"id": "call-build-1", "group": "call-build", "voice": "hi", "speaker": "assistant", "text": "नमस्ते! मैं गंगा पेवर्स की AI असिस्टेंट हूँ। आपने पेवर ब्लॉक्स के बारे में पूछा था?"},
+    {"id": "call-build-2", "group": "call-build", "voice": "hi-customer", "speaker": "customer", "text": "हाँ, 1,200 स्क्वेयर फ़ीट पार्किंग के लिए चाहिए।"},
+    {"id": "call-build-3", "group": "call-build", "voice": "hi", "speaker": "assistant", "text": "ठीक है। गाड़ियों के लिए 80 mm मोटाई चलेगी?"},
+    {"id": "call-build-4", "group": "call-build", "voice": "hi-customer", "speaker": "customer", "text": "हाँ। डिलीवरी व्हाइटफ़ील्ड में होगी।"},
+    {"id": "call-build-5", "group": "call-build", "voice": "hi", "speaker": "assistant", "text": "नोट कर लिया। कोटेशन बनाकर, मालिक के OK के बाद भेज दूँगी।"},
+
+    {"id": "call-coach-1", "group": "call-coach", "voice": "en", "speaker": "assistant", "text": "Hi Rahul, I am the AI assistant of Bright Path Academy. You asked about the evening CA Foundation batch?"},
+    {"id": "call-coach-2", "group": "call-coach", "voice": "en-customer", "speaker": "customer", "text": "Yes, I work during the day. What are the timings?"},
+    {"id": "call-coach-3", "group": "call-coach", "voice": "en", "speaker": "assistant", "text": "Evening batches run 6:30 to 8:30 pm, Monday to Friday. Would you like a free demo class first?"},
+    {"id": "call-coach-4", "group": "call-coach", "voice": "en-customer", "speaker": "customer", "text": "Yes, Wednesday. Send me the address on WhatsApp."},
+    {"id": "call-coach-5", "group": "call-coach", "voice": "en", "speaker": "assistant", "text": "Done, the address is on its way. See you Wednesday at 6:30."},
+
+    {"id": "standup-en-1", "group": "standup-en", "voice": "en", "speaker": "Caller", "text": "I called 14 new enquiries today, each within 2 minutes. 9 picked up."},
+    {"id": "standup-en-2", "group": "standup-en", "voice": "en", "speaker": "Lead Finder", "text": "I found 9 saree retailers near Ameerpet. 4 are worth a call tomorrow."},
+    {"id": "standup-en-3", "group": "standup-en", "voice": "en", "speaker": "Researcher", "text": "Red Kanchi sarees are in stock. Two customers asked for them today."},
+    {"id": "standup-en-4", "group": "standup-en", "voice": "en", "speaker": "Quote Writer", "text": "Two quotes are ready. They go out after your OK."},
+    {"id": "standup-en-5", "group": "standup-en", "voice": "en", "speaker": "Follow-up Desk", "text": "Five follow-ups done. Lakshmi confirmed her Saturday visit."},
+    {"id": "standup-en-6", "group": "standup-en", "voice": "en", "speaker": "Order Desk", "text": "One order recorded, number 214. Stock is updated."},
+    {"id": "standup-en-7", "group": "standup-en", "voice": "en", "speaker": "Everyone", "text": "Needs you tomorrow: two quotes to approve and one boutique to decide on. Good night!"},
+
+    {"id": "standup-te-1", "group": "standup-te", "voice": "te", "speaker": "Caller", "draft": true, "text": "ఈరోజు 14 కొత్త ఎంక్వైరీలకు కాల్ చేశాను, ఒక్కోదానికీ 2 నిమిషాల్లోపే. 9 మంది ఫోన్ ఎత్తారు."},
+    {"id": "standup-te-2", "group": "standup-te", "voice": "te", "speaker": "Lead Finder", "draft": true, "text": "అమీర్‌పేట దగ్గర 9 చీరల షాపులు కనిపించాయి. వాటిలో 4 షాపులకు రేపు కాల్ చేయొచ్చు."},
+    {"id": "standup-te-3", "group": "standup-te", "voice": "te", "speaker": "Researcher", "draft": true, "text": "ఎరుపు కంచి చీరలు స్టాక్‌లో ఉన్నాయి. ఈరోజు ఇద్దరు కస్టమర్లు వాటి గురించి అడిగారు."},
+    {"id": "standup-te-4", "group": "standup-te", "voice": "te", "speaker": "Quote Writer", "draft": true, "text": "రెండు కోట్స్ సిద్ధంగా ఉన్నాయి. మీరు OK చెప్పాకే అవి వెళ్తాయి."},
+    {"id": "standup-te-5", "group": "standup-te", "voice": "te", "speaker": "Follow-up Desk", "draft": true, "text": "ఐదు ఫాలో-అప్‌లు పూర్తయ్యాయి. లక్ష్మి శనివారం వస్తానని కన్ఫర్మ్ చేశారు."},
+    {"id": "standup-te-6", "group": "standup-te", "voice": "te", "speaker": "Order Desk", "draft": true, "text": "ఒక ఆర్డర్ నమోదైంది, నంబర్ 214. స్టాక్ అప్‌డేట్ అయింది."},
+    {"id": "standup-te-7", "group": "standup-te", "voice": "te", "speaker": "Everyone", "draft": true, "text": "రేపు మీ కోసం: ఆమోదించాల్సిన రెండు కోట్స్, నిర్ణయించాల్సిన ఒక బొటీక్. శుభరాత్రి!"}
+  ]
+}
