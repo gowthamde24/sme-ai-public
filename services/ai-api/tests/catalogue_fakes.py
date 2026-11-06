@@ -142,6 +142,15 @@ class FakeCatalogue:
             raise InvalidReferenceError("23503")
         return dict(self.items[str(item_id)])
 
+    def set_quantity(
+        self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID, quantity: int | None
+    ) -> dict[str, Any]:
+        self._log(
+            "catalogue_quantity_set", token, {"p_item_id": str(item_id), "p_quantity": quantity}
+        )
+        self.items[str(item_id)]["quantity"] = quantity
+        return dict(self.items[str(item_id)])
+
     def search(
         self, token: str, tenant_id: uuid.UUID, args: dict[str, Any], kind: str = "saree"
     ) -> list[dict[str, Any]]:
