@@ -144,6 +144,10 @@ class ExotelCalls:
     def __repr__(self) -> str:
         return "ExotelCalls(<keys hidden>)"
 
+    async def warm(self) -> None:
+        """One read of our own account (no call), so the connection to Exotel is open before a call needs it."""
+        await self._client.get(self._url.rsplit("/Calls", 1)[0] + ".json", auth=self._auth)
+
     async def get(self, call_sid: str, *, retries_s: tuple[float, ...] = LOOKUP_RETRIES_S) -> ProviderCall | None:
         """A 404 is asked again after a short wait (the record of a call that has just been answered can lag behind its stream); anything else is final."""
         if not call_sid or not all(c.isalnum() or c in "-_" for c in call_sid) or len(call_sid) > 80:
@@ -280,12 +284,19 @@ async def admit(start: exotel.Start, settings: gate.Settings, *, find_line: Call
         return gate.Refused("bad_number")
     if settings.mode == "sandbox" and caller not in settings.sandbox_numbers:
         return gate.Refused("not_on_sandbox_list")
-    found = await asyncio.to_thread(find_line, line_no)
-    if not found:
-        return gate.Refused("no_such_line")
     if calls is None:
         return gate.Refused("telephony_off")   # without our Exotel key the call cannot be confirmed: fail closed
-    confirmed = await calls.get(start.call_sid)
+    # our line and Exotel's own record of the call are read AT THE SAME TIME (owner, 6 Nov 2026: the first sound within 1.5 s of pickup); both must hold
+    began = time.monotonic()
+
+    async def timed(coro: Any) -> tuple[Any, float]:
+        out = await coro
+        return out, (time.monotonic() - began) * 1000
+
+    (found, line_ms), (confirmed, exotel_ms) = await asyncio.gather(timed(asyncio.to_thread(find_line, line_no)), timed(calls.get(start.call_sid)))
+    log.info("exotel_admit_timing line_ms=%d exotel_ms=%d", round(line_ms), round(exotel_ms))
+    if not found:
+        return gate.Refused("no_such_line")
     if confirmed is None or confirmed.status not in ("in-progress", "in_progress", "ringing") or confirmed.from_number != caller:
         log.warning("exotel_call_not_confirmed status=%s", confirmed.status if confirmed else "none")
         return gate.Refused("not_approved")
@@ -340,6 +351,8 @@ class TimedLine(PhoneLine):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.first_sound_ms: list[float] = []
+        self.admitted_ms: int | None = None   # from the stream's start to the call's admission (our line and Exotel's record, read together)
+        self.greeting_ready: bool | None = None   # the greeting was already spoken into memory when the call was admitted
 
     async def send_json(self, message: dict[str, Any]) -> None:
         if message.get("type") == "timings" and isinstance(message.get("first_sound_ms"), (int, float)) and not message.get("interrupted"):
@@ -353,7 +366,14 @@ def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_pa
             "duration_s": round(duration_s, 1), "cost_paise_estimate": cost_paise, "outcome": outcome, "end": line.end_reason,
             # how it ended and what went each way (5 Nov 2026): names and numbers only
             "end_how": line.end_how, "stop_reason": line.stop_reason, "close_code": getattr(getattr(line, "_wire", None), "close_code", None), "events": dict(sorted(line.events.items())),
-            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000)}
+            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
+            # owner, 6 Nov 2026: targets 1.5 s for both (logged for every call)
+            "pickup_to_first_sound_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
+            "admitted_ms": line.admitted_ms, "greeting_ready": line.greeting_ready,
+            "reply_ms_p50": None if p50 is None else round(p50), "reply_ms_p95": None if p95 is None else round(p95),
+            "reply_ms_max": round(max(line.first_sound_ms)) if line.first_sound_ms else None,
+            "first_sound_within_target": None if line.first_out_s is None else line.first_out_s <= 1.5,
+            "replies_within_target": None if p95 is None else p95 <= 1500}
 
 
 def log_call(numbers: dict[str, Any]) -> None:
