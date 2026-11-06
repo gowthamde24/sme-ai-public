@@ -47,7 +47,12 @@ export type NeedsCard =
   | { type: "item"; key: string; at: string; item: NeedsYouItem }
   | { type: "outbox"; key: string; at: string; id: string; customer: string | null; city: string | null; message: OutboxCardMessage | null }
   | { type: "call"; key: string; at: string; id: string; customer: string | null; city: string | null; request: CallCardRequest | null }
-  | { type: "visit"; key: string; at: string; id: string; visit: ProposedVisit };
+  | { type: "visit"; key: string; at: string; id: string; visit: ProposedVisit }
+  /**
+   * A caller asked to talk to a person (C1 #347; `visitAt` null) or agreed a visit time on the call (C1 #354; `visitAt` the ISO time, `bookHref` Visits on that day and time). Call back opens the lead (null: the call has no lead),
+   * Done takes it off. `gist`: the call's short summary (the API's English), null when unknown.
+   */
+  | { type: "person"; key: string; at: string; id: string; customer: string | null; city: string | null; leadHref: string | null; gist: string | null; visitAt: string | null; bookHref: string | null };
 
 /**
  * The outbox log of the last 24 hours, boiled down (components/v2/app/today/digest.ts). `none` = the person may not read the log (a Viewer); `error` = it could not be read.
