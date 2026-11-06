@@ -65,6 +65,7 @@ try {
           { width: 1440, theme: "light", lang: "en" },
           { width: 390, theme: "light", lang: "en", height: 844 },
           { width: 360, theme: "light", lang: "en", height: 800 }, // the narrow Android phone (owner, 6 Nov 2026)
+          { width: 360, theme: "dark", lang: "en", height: 800 }, // and in dark (the core-and-orbit AI team and the Lead Finder carousel, owner 6 Nov 2026)
         ];
   for (const v of views) {
     const { ctx, p } = await open(browser, v);
@@ -95,6 +96,32 @@ try {
     await shot(p, `${name}-page-end`);
     await ctx.close();
   }
+  // the phone's meeting scene (#team) and radar (#finder), the desktop's designs scaled (owner, 6 Nov 2026), at 320-412 px and with Android's large text (115%): no two helper names touch, no name touches
+  // another helper, and nothing in either section reaches past the screen
+  for (const width of [320, 360, 375, 390, 412])
+    for (const big of [false, true]) {
+      const { ctx, p } = await open(browser, { width, height: 800 });
+      if (big) await p.evaluate(() => { const els = [...document.querySelectorAll("body *")]; const fs = els.map((el) => parseFloat(getComputedStyle(el).fontSize)); els.forEach((el, i) => el.style.setProperty("font-size", `${fs[i] * 1.15}px`)); });
+      await p.locator("#team").scrollIntoViewIfNeeded();
+      await p.waitForTimeout(600);
+      const r = await p.evaluate((W) => {
+        const box = (el) => el.getBoundingClientRect();
+        const hit = (a, b) => a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5;
+        const labels = [...document.querySelectorAll("[data-seat-label]")].map(box);
+        const seats = [...document.querySelectorAll("[data-seat-phone]")].map(box);
+        let touch = 0;
+        for (let i = 0; i < labels.length; i++) {
+          for (let j = i + 1; j < labels.length; j++) if (hit(labels[i], labels[j])) touch++;
+          seats.forEach((s, j) => { if (j !== i && hit(labels[i], s)) touch++; });
+        }
+        const wide = ["#team", "#finder"].flatMap((id) => [...document.querySelectorAll(`${id} *`)].filter((el) => { const b = box(el); if (!b.width || el.closest('[class*="overflow-x-auto"]') || el.closest('[aria-hidden="true"]') || (b.width <= 1 && b.height <= 1)) return false; return b.right > W + 1 || b.left < -1; }).map((el) => `${id} ${el.tagName.toLowerCase()} "${(el.textContent || "").trim().slice(0, 24)}"`));
+        return { labels: labels.length, touch, wide: wide.slice(0, 4) };
+      }, width);
+      const tag = `${width}${big ? " at 115% text" : ""}`;
+      check(r.labels === 6 && r.touch === 0, `${tag}: the six helper names under the phone's meeting scene touch nothing (${r.touch} touching)`);
+      check(r.wide.length === 0, `${tag}: nothing in the AI team or the Lead Finder is wider than the screen${r.wide.length ? ` (${r.wide.join("; ")})` : ""}`);
+      await ctx.close();
+    }
   // the phone header (landing v2 phone design): the one button stays in the bar in every language, nothing spills past the edge; the language and the theme are in the menu
   for (const width of [360, 390])
     for (const lang of ["en", "te", "hi", "kn"]) {

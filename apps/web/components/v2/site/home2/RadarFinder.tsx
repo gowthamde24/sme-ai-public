@@ -57,6 +57,9 @@ export function sweepAt(t: number, since: number): { a: number; fresh: boolean }
 
 function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look, state: { city: City; since: number }, crop: boolean, sans: string): void {
   const k = crop ? W / 520 : W / 780;
+  // the phone draws the square at about 0.6 of the desktop's size: its words, pins and tags are scaled back up to the desktop's sizes on screen (f: map units per CSS pixel; u: the pins)
+  const f = crop ? 520 / (W / look.dpr) : 1;
+  const u = crop ? Math.max(1, f * 0.9) : 1;
   const cx = 390;
   const cy = 260;
   const R = 240;
@@ -98,7 +101,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
     ctx.lineWidth = 3;
     ctx.stroke();
   }
-  ctx.font = `600 11px ${sans}`;
+  ctx.font = `600 ${11 * f}px ${sans}`;
   ctx.textAlign = "left";
   (
     [
@@ -115,7 +118,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = "rgba(194,65,12,.75)";
-    ctx.fillText(label, cx + 6, cy - rr - 6);
+    ctx.fillText(label, cx + 6 * f, cy - rr - 6 * f);
   });
   ctx.strokeStyle = "rgba(194,65,12,.12)";
   ctx.lineWidth = 1;
@@ -188,35 +191,39 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
     }
     ctx.fillStyle = look.dark ? "#1f1e23" : "#fff";
     ctx.beginPath();
-    ctx.arc(p.x, p.y, 9, 0, TAU);
+    ctx.arc(p.x, p.y, 9 * u, 0, TAU);
     ctx.fill();
     if (p.d === "ask") {
       ctx.strokeStyle = `rgb(${ink})`;
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = 2.5 * u;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 5.5, 0, TAU);
+      ctx.arc(p.x, p.y, 5.5 * u, 0, TAU);
       ctx.stroke();
     } else {
       ctx.fillStyle = `rgb(${col})`;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 6.5, 0, TAU);
+      ctx.arc(p.x, p.y, 6.5 * u, 0, TAU);
       ctx.fill();
     }
-    ctx.font = `700 12px ${sans}`;
+    ctx.font = `700 ${12 * f}px ${sans}`;
     const label = names[p.id];
     const tw = ctx.measureText(label).width;
-    const bx = p.x + 14;
-    const by = p.y - 26;
+    const bw = tw + 16 * f;
+    // the tag sits up and right of its pin; where the radar's edge would cut it off it flips to the pin's left, level with the pin (so it never lands on a neighbour's tag above)
+    const right = crop ? 650 : 780;
+    const flip = p.x + 14 * u + bw > right - 6 * f;
+    const bx = flip ? p.x - 14 * u - bw : p.x + 14 * u;
+    const by = flip ? p.y - 11 * f : p.y - 26 * f;
     ctx.fillStyle = look.dark ? "rgba(39,38,44,.95)" : "rgba(255,255,255,.95)";
     ctx.shadowColor = "rgba(30,30,36,.18)";
     ctx.shadowBlur = 10;
     ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(bx, by, tw + 16, 22, 8);
-    else ctx.rect(bx, by, tw + 16, 22);
+    if (ctx.roundRect) ctx.roundRect(bx, by, bw, 22 * f, 8 * f);
+    else ctx.rect(bx, by, bw, 22 * f);
     ctx.fill();
     ctx.shadowBlur = 0;
     ctx.fillStyle = look.dark ? "#f4f2ee" : "#1e1e24";
-    ctx.fillText(label, bx + 8, by + 15);
+    ctx.fillText(label, bx + 8 * f, by + 15 * f);
   }
 }
 
@@ -269,6 +276,16 @@ export function RadarFinder({ w }: { w: W }) {
       ))}
     </div>
   );
+  // the phone's city tabs: one row that scrolls sideways above the radar, never wider than the screen
+  const cityTabs = (
+    <div role="radiogroup" aria-label={w["h2.finder.city"]} className="flex min-w-0 gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-part="city-tabs">
+      {CITIES.map((c) => (
+        <button key={c} type="button" role="radio" aria-checked={city === c} onClick={() => pick(c)} data-city={c} className={`min-h-11 shrink-0 whitespace-nowrap rounded-full px-3.5 text-[13px] font-extrabold ${city === c ? "bg-ink text-bg" : "text-muted hover:text-ink"}`}>
+          {c}
+        </button>
+      ))}
+    </div>
+  );
   const legend = (
     <div className="flex gap-3.5 text-xs font-bold">
       <span className="inline-flex items-center gap-1.5">
@@ -304,26 +321,23 @@ export function RadarFinder({ w }: { w: W }) {
           </div>
           <div className="h2-glass absolute bottom-[18px] right-[18px] rounded-[14px] px-3.5 py-2.5">{legend}</div>
         </div>
-        {/* phone: square, cropped to the rings */}
+        {/* phone: the desktop's radar, square, the card's full width (owner, 6 Nov 2026): the city tabs scroll above it; "Saree retailers near" and "Checked" sit on the map as on the desktop; the legend is under it */}
         <div className="lg:hidden">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line p-3">
-            <span className="inline-flex items-center gap-2 text-sm font-bold">
-              <span className="h2-blink" />
-              {fill(w["h2.finder.near"], { city })}
-            </span>
-            {/* the city buttons wrap inside the card on a narrow phone (no fixed width: the card is the screen's width from 320 px up) */}
-            <div className="min-w-0 max-w-full">{cities}</div>
-          </div>
+          <div className="border-b border-line p-2">{cityTabs}</div>
           <div className="relative aspect-square w-full overflow-hidden bg-[radial-gradient(circle_at_50%_50%,var(--v2-surface),var(--v2-surface-2)_70%)]">
             <canvas ref={phone} aria-hidden="true" className="absolute inset-0 block size-full" />
             <span className="absolute left-1/2 top-1/2 block size-10 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full shadow-[0_0_0_5px_rgba(255,255,255,.8),0_10px_24px_-8px_rgba(194,65,12,.7)]">
               <AssistantOrb state="thinking" />
             </span>
+            <div className="h2-glass absolute left-2.5 top-2.5 flex max-w-[calc(100%-20px)] items-center gap-2 rounded-xl px-3 py-1.5 text-[13px] font-bold">
+              <span className="h2-blink shrink-0" />
+              {fill(w["h2.finder.near"], { city })}
+            </div>
+            <div className="h2-glass absolute bottom-2.5 left-2.5 max-w-[calc(100%-20px)] rounded-xl px-3 py-1.5 text-[13px] font-semibold tabular-nums" data-part="checked-phone">
+              {fill(w["h2.finder.checked"], { n: String(checked), worth: String(worth) })}
+            </div>
           </div>
-          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line p-3 text-sm font-semibold tabular-nums">
-            <span>{fill(w["h2.finder.checked"], { n: String(checked), worth: String(worth) })}</span>
-            {legend}
-          </div>
+          <div className="flex flex-wrap items-center gap-2 border-t border-line p-3">{legend}</div>
         </div>
       </div>
       <div className="flex min-w-0 flex-col gap-2.5 border-line bg-surface-2/50 p-4 max-lg:border-t sm:p-[22px] lg:border-l" aria-live="polite">

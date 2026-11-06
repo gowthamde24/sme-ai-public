@@ -9014,5 +9014,27 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "h2.meet.4.short": {
+  "en": "Quotes",
+  "te": "కోట్స్",
+  "hi": "कोट्स",
+  "kn": "ಕೋಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.meet.5.short": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
