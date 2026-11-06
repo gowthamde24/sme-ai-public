@@ -11,6 +11,7 @@ import { runReport } from "@/lib/api/reports";
 import { eduContext, eduWords } from "../education-kit";
 import { postLateFeesAction } from "./actions";
 import { BRAND_NAME } from "@/design/brand";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Fees · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -41,7 +42,7 @@ export default async function FeesRoute({ params }: PageProps<"/app/tenants/[ten
   ]);
   return (
     <main className={pageMain} lang={lang}>
-      <FeesDashboard base={`/app/tenants/${tenantId}`} words={eduWords(lang)} role={tenant.role} collection={collection} today={today} plans={plans === null ? null : plans.length} lateFees={late} postLateFees={postLateFeesAction.bind(null, tenantId)} />
+      <FeesDashboard title={await menuTitle("fees", lang, accessToken, tenantId)} base={`/app/tenants/${tenantId}`} words={eduWords(lang)} role={tenant.role} collection={collection} today={today} plans={plans === null ? null : plans.length} lateFees={late} postLateFees={postLateFeesAction.bind(null, tenantId)} />
     </main>
   );
 }

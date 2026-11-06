@@ -1,4 +1,4 @@
-# Prospects
+# Find customers
 New businesses that may buy from you, best fit first.
 {label="Find new retailers in …"}
 form:

@@ -18,7 +18,7 @@ const h3 = "text-base font-semibold text-ink";
  * questions to ask one at a time, the words it must never say (checked by code before every line it speaks), answers to objections and a few good examples. The platform's own rules are listed read-only. One Save sends the whole document;
  * "Use the suggested ones" goes back to the defaults. Both need the Owner's second factor (the screen says so). An Admin reads it. What is shown after a save is what the API answered.
  */
-export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions }: { words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions }) {
+export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null }: { words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null }) {
   const t = makeT(words);
   const [state, setState] = React.useState(initial);
   const [doc, setDoc] = React.useState<Doc>(initial.training);
@@ -69,13 +69,14 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
         <label htmlFor="tt-greeting" className="sr-only">
           {t("tt.greeting")}
         </label>
+        {/* the hint is the standard inbound greeting the API suggests (C1 #364), with the name of the business for reading; what is saved keeps {business} */}
         <textarea
           id="tt-greeting"
           lang={lang}
           rows={2}
           maxLength={LIMITS.greeting.max}
           value={doc.greeting[lang] ?? ""}
-          placeholder={state.defaults.greeting[lang] ?? ""}
+          placeholder={(state.defaults.greeting[lang] ?? "").replaceAll("{business}", business ?? "{business}")}
           disabled={off}
           onChange={(e) => {
             const greeting = { ...doc.greeting };

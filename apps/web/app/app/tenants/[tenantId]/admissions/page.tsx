@@ -10,6 +10,7 @@ import { escalate } from "@/lib/api/failure";
 
 import { eduContext, eduWords } from "../education-kit";
 import { BRAND_NAME } from "@/design/brand";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Admissions · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
@@ -38,7 +39,7 @@ export default async function AdmissionsRoute({ params, searchParams }: PageProp
   }
   return (
     <main className={pageMain} lang={lang}>
-      <AdmissionsBoard base={`/app/tenants/${tenantId}`} words={eduWords(lang)} role={tenant.role} admissions={page?.items ?? null} programmes={programmes} programme={programme} source={source} more={page?.next_cursor != null} saved={pick(raw.saved) === "1"} />
+      <AdmissionsBoard title={await menuTitle("admissions", lang, accessToken, tenantId)} base={`/app/tenants/${tenantId}`} words={eduWords(lang)} role={tenant.role} admissions={page?.items ?? null} programmes={programmes} programme={programme} source={source} more={page?.next_cursor != null} saved={pick(raw.saved) === "1"} />
     </main>
   );
 }

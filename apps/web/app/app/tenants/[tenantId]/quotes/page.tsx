@@ -1,3 +1,4 @@
+import { menuTitle } from "../menu-title";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -61,7 +62,7 @@ export default async function QuotesPage({ params }: PageProps<"/app/tenants/[te
   return (
     <main className={pageMain} lang={lang}>
       <PageTop
-        title={t("enq.quotes")}
+        title={await menuTitle("quotes", lang, user.accessToken, tenantId)}
         sub={t("enq.prices_come_from_your_price_list")}
         action={
           <Link href={`${base}/review`} className={`${btnMain} gap-2`}>

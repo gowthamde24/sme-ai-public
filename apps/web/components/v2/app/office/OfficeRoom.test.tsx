@@ -144,7 +144,7 @@ describe("OfficeRoom: choosing a helper, the feed, the switch", () => {
     h.env = { ...CAPABLE, remembered: "list" };
     room(mixed);
     const link = screen.getByRole("link", { name: /Quote Writer/ });
-    expect(link).toHaveAttribute("href", "/app/tenants/T/office?agent=quote_writer");
+    expect(link).toHaveAttribute("href", "/app/tenants/T/ai-team?agent=quote_writer");
     expect(fireEvent.click(link)).toBe(false); // default prevented: handled here
     expect(screen.getByRole("heading", { level: 2, name: "Quote Writer" })).toBeInTheDocument();
     expect(fireEvent.click(screen.getByRole("link", { name: /Researcher/ }), { ctrlKey: true })).toBe(true); // left to the browser

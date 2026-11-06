@@ -1,4 +1,4 @@
-# Prospects
+# Find customers
 New businesses that may buy from you, best fit first.
 {role=note} Made-up businesses for the demo
 {label="Find new retailers in …"}

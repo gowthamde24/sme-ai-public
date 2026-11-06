@@ -12,12 +12,12 @@ import { card, primary, secondary } from "../visits/styles";
 const TONE = { draft: "neutral", approved: "green", rejected: "red", superseded: "amber" } as const;
 
 /** The building-materials quotes, newest first (job CO): the number, who it is for, the total, the state and how long it is good for. Each row opens the quote. A quote is started from an enquiry whose requirement a person has approved. */
-export function QuotesListView({ base, words, quotes, customers }: { base: string; words: TodayWords; quotes: readonly MaterialQuoteOut[] | null; customers: Readonly<Record<string, string>> }) {
+export function QuotesListView({ title = null, base, words, quotes, customers }: { /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null; base: string; words: TodayWords; quotes: readonly MaterialQuoteOut[] | null; customers: Readonly<Record<string, string>> }) {
   return (
     <div data-screen="material-quotes" className="flex flex-col gap-5">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{say(words, "nav.item.quotes")}</h1>
+          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, "nav.item.quotes")}</h1>
           <p className="text-base text-muted">{say(words, "mat.ql.sub")}</p>
         </div>
         <Link href={`${base}/review`} className={primary}>{say(words, "mat.ql.start")}</Link>

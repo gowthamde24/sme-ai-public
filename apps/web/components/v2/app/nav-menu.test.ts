@@ -35,9 +35,9 @@ describe("sidebar v2 (owner-approved design, 5 Nov 2026): five groups", () => {
     expect(all.every((i) => i.id.startsWith("m-") || i.id === "settings")).toBe(true);
   });
 
-  it("Overview is Today, Reports and Talk to assistant (the assistant's box on Today, #ask)", () => {
+  it("Overview is Today, Reports and Talk to assistant (a page of its own, owner rule 6 Nov)", () => {
     expect(ids("owner", TEXTILES, "overview")).toEqual(["m-today", "m-reports", "m-assistant"]); // Reports under Today (owner, 5 Nov)
-    expect(hrefOf(rows("owner", TEXTILES).find((i) => i.id === "m-assistant")!, T)).toBe(`/app/tenants/${T}#ask`);
+    expect(hrefOf(rows("owner", TEXTILES).find((i) => i.id === "m-assistant")!, T)).toBe(`/app/tenants/${T}/talk`);
     expect(activeMenuId(`/app/tenants/${T}`, null)).toBe("m-today");
   });
 
@@ -61,7 +61,7 @@ describe("sidebar v2 (owner-approved design, 5 Nov 2026): five groups", () => {
     expect(ids("owner", TEXTILES, "aiteam")).toEqual(["m-aiteam", "m-train", "m-phone"]);
     expect(ids("admin", TEXTILES, "aiteam")).toEqual(["m-aiteam", "m-phone"]);
     expect(ids("sales", TEXTILES, "aiteam")).toEqual(["m-aiteam"]);
-    expect(hrefOf(rows("owner", TEXTILES).find((i) => i.id === "m-train")!, T)).toBe(`/app/tenants/${T}/settings?section=assistant`);
+    expect(hrefOf(rows("owner", TEXTILES).find((i) => i.id === "m-train")!, T)).toBe(`/app/tenants/${T}/ai-team/training`);
     expect(hrefOf(rows("owner", TEXTILES).find((i) => i.id === "m-phone")!, T)).toBe(`/app/tenants/${T}/phone-number`); // the calling number, not WhatsApp (owner, 5 Nov)
     expect(ids("owner", TEXTILES, "setup")).toEqual(["settings"]);
     expect(ids("owner", { ...TEXTILES, features: ["leads"] }, "setup")).toEqual(["m-sources", "settings"]);
@@ -96,7 +96,10 @@ describe("sidebar v2 (owner-approved design, 5 Nov 2026): five groups", () => {
     expect(at("/price-list")).toBe("m-catalogue");
     expect(at("/materials")).toBe("m-catalogue");
     expect(at("/report")).toBe("m-reports");
-    expect(at("/office")).toBe("m-aiteam");
+    expect(at("/office")).toBe("m-aiteam"); // the old address (it redirects to /ai-team)
+    expect(at("/ai-team")).toBe("m-aiteam");
+    expect(at("/ai-team/training")).toBe("m-train");
+    expect(at("/talk")).toBe("m-assistant");
     expect(at("/agents")).toBe("m-aiteam");
     expect(at("/integrations")).toBe("m-phone");
     expect(at("/integrations/whatsapp")).toBe("m-phone");

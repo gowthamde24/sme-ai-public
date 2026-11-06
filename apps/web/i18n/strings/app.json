@@ -1346,6 +1346,17 @@
    "kn": "draft"
   }
  },
+ "talk.sub": {
+  "en": "Ask or tell your assistant anything, by typing or by voice. Your earlier conversations and files are under +.",
+  "te": "టైప్ చేసి లేదా మాట్లాడి మీ అసిస్టెంట్‌ను ఏదైనా అడగండి లేదా చెప్పండి. మీ పాత సంభాషణలు, ఫైళ్లు + కింద ఉంటాయి.",
+  "hi": "टाइप करके या बोलकर अपने असिस्टेंट से कुछ भी पूछें या कहें। आपकी पिछली बातचीत और फ़ाइलें + में हैं।",
+  "kn": "ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಮಾತನಾಡಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಏನನ್ನಾದರೂ ಕೇಳಿ ಅಥವಾ ಹೇಳಿ. ನಿಮ್ಮ ಹಿಂದಿನ ಸಂಭಾಷಣೆಗಳು, ಫೈಲ್‌ಗಳು + ಅಡಿಯಲ್ಲಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "ask.sub": {
   "en": "Answers from your own records. It changes nothing.",
   "te": "Answers from your own records. It changes nothing.",
@@ -74572,6 +74583,39 @@
   "te": "కస్టమర్లతో నేను ఎలా మాట్లాడతాను",
   "hi": "मैं ग्राहकों से कैसे बात करूँ",
   "kn": "ಗ್ರಾಹಕರ ಜೊತೆ ನಾನು ಹೇಗೆ ಮಾತಾಡುತ್ತೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.unread": {
+  "en": "Your training can't be read right now. Please try again in a minute.",
+  "te": "మీ ట్రైనింగ్ ఇప్పుడు చదవలేకపోతున్నాం. ఒక నిమిషంలో మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आपकी ट्रेनिंग अभी पढ़ी नहीं जा सकती। एक मिनट बाद फिर कोशिश करें।",
+  "kn": "ನಿಮ್ಮ ತರಬೇತಿಯನ್ನು ಈಗ ಓದಲಾಗುತ್ತಿಲ್ಲ. ಒಂದು ನಿಮಿಷದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.open": {
+  "en": "How I talk to customers is on its own page now: AI team → Train how it talks.",
+  "te": "కస్టమర్లతో ఎలా మాట్లాడాలి అనేది ఇప్పుడు దాని సొంత పేజీలో ఉంది: AI టీమ్ → ఎలా మాట్లాడాలో నేర్పండి.",
+  "hi": "ग्राहकों से कैसे बात करूँ अब अपने पेज पर है: AI टीम → कैसे बात करे, सिखाएँ।",
+  "kn": "ಗ್ರಾಹಕರ ಜೊತೆ ಹೇಗೆ ಮಾತಾಡಬೇಕು ಈಗ ತನ್ನದೇ ಪುಟದಲ್ಲಿದೆ: AI ತಂಡ → ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಕಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.open.link": {
+  "en": "Open Train how it talks",
+  "te": "ఎలా మాట్లాడాలో నేర్పండి తెరవండి",
+  "hi": "कैसे बात करे, सिखाएँ खोलें",
+  "kn": "ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಕಲಿಸಿ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",

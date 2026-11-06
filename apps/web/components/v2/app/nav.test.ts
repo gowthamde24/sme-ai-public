@@ -8,7 +8,7 @@ const T = "22222222-2222-2222-2222-222222222222";
 const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, boolean]][]> = {
   Work: [
     ["Today", "", "today", [true, true, true, true]],
-    ["Talk to assistant", "", "assistant", [true, true, true, true]],
+    ["Talk to assistant", "/talk", "assistant", [true, true, true, true]],
     ["Live calls", "/office/live", "live", [true, true, true, false]],
     ["Leads", "/review", "leads", [true, true, true, true]],
     ["Follow-ups", "/followups", "followups", [true, true, true, true]],
@@ -27,8 +27,8 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
   ],
   "Your team": [
     ["Team", "/team", "team", [true, true, true, true]],
-    ["Office", "/office", "office", [true, true, true, true]],
-    ["Train how it talks", "/settings?section=assistant", "train", [true, false, false, false]],
+    ["Office", "/ai-team", "office", [true, true, true, true]],
+    ["Train how it talks", "/ai-team/training", "train", [true, false, false, false]],
     ["Phone number", "/phone-number", "phone", [true, true, false, false]],
   ],
   Connect: [["Integrations", "/integrations", "integrations", [true, true, false, false]]],

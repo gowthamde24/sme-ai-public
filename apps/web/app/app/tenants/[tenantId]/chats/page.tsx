@@ -15,6 +15,7 @@ import { settle } from "@/lib/api/part";
 import { listConversations } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
 import { BRAND_NAME } from "@/design/brand";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Customer chats · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -57,7 +58,7 @@ export default async function ChatsPage({ params, searchParams }: PageProps<"/ap
   const words = wordsFor(lang, ["wa.", "apierr.", "problem."]);
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={t("wa.chats.title")} sub={t("wa.chats.sub")} />
+      <PageTop title={await menuTitle("chats", lang, user.accessToken, tenantId)} sub={t("wa.chats.sub")} />
       <div className="mt-6 max-w-3xl">
         {page.ok ? (
           <ChatList tenantId={tenantId} words={words} page={page.data} now={clock()} olderHref={page.data.next_before ? `/app/tenants/${tenantId}/chats?before=${encodeURIComponent(page.data.next_before)}` : null} />

@@ -13,7 +13,7 @@ import { makeT, sayText, type Words } from "@/components/v2/app/words";
  * asking for a draft makes the database decide again. One row per LEAD: it names the state of each channel (when the API reported them) and the row opens the lead on the channel to start with. The list is one PAGE,
  * oldest last message first; leads that need no follow-up are not listed; a link goes to the next page; a note says how many candidates of this page could not be shown. Nothing here sends a message.
  */
-export function DueView({ tenantId, list, tabs = null, words }: { tenantId: string; list: DueList; tabs?: ReactNode; words?: Words; }) {
+export function DueView({ title = null, tenantId, list, tabs = null, words }: { /** The page's H1: its menu row's word (owner rule, 6 Nov); null = the view's own. */ title?: string | null; tenantId: string; list: DueList; tabs?: ReactNode; words?: Words; }) {
   const t = makeT(words);
   const base = `/app/tenants/${tenantId}`;
   const { items } = list;
@@ -21,7 +21,7 @@ export function DueView({ tenantId, list, tabs = null, words }: { tenantId: stri
   const leftOut = leftOutLine(list.left_out, t);
   return (
     <section aria-labelledby="due-heading">
-      <h1 id="due-heading" className={pageH1}>{t("fu.follow_ups_due")}</h1>
+      <h1 id="due-heading" className={pageH1}>{title ?? t("fu.follow_ups_due")}</h1>
       {tabs}
       <p role="note" className={mutedText}>
         {t("fu.worked_out_when_you_opened_this")}

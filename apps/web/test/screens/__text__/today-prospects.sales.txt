@@ -1,5 +1,6 @@
-Tuesday, 6 October
-# Good morning
+# Today
+· Tuesday, 6 October
+## Good morning
 {label="Needs you"}
 ## Needs you
 12 12 waiting for you
@@ -34,7 +35,7 @@ Tuesday, 6 October
 Replied to 2 customers on WhatsApp · Sent shop information to 1 customer · Held 1 message until 12:00 (quiet hours) [See everything in the outbox](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent)
 {label="My AI team"}
 ## My AI team
-[+2 more](/app/tenants/22222222-2222-2222-2222-222222222222/office)
+[+2 more](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team)
 - Lead Finder Waiting for you Idle
 - Requirement Analyst Working Working
 - Researcher Idle Idle

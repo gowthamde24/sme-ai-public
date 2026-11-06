@@ -19,6 +19,7 @@ import { withModuleWords } from "@/lib/packs/module-words";
 import { readPackCached } from "@/lib/packs/read";
 import { partsWords } from "@/i18n/app-words";
 import { BRAND_NAME } from "@/design/brand";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Store visits · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -96,6 +97,7 @@ export default async function VisitsPage({ params, searchParams }: PageProps<"/a
   return (
     <main className={pageMain} lang={lang}>
       <VisitsView
+title={await menuTitle("visits", lang, user.accessToken, tenantId)}
         help={helpTipFor(lang, `/app/tenants/${tenantId}`, "visits")}
         view={view}
         day={day}

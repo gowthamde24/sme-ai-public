@@ -19,6 +19,7 @@ import { formFields } from "@/lib/packs/form-fields";
 
 import { materialWords } from "./words";
 import { removeMaterialPhotoAction, reorderMaterialPhotosAction, saveMaterialAction, saveMaterialCustomAction } from "./actions";
+import { menuTitle } from "../menu-title";
 
 type Tenant = Awaited<ReturnType<typeof fetchTenant>>;
 type Who = { accessToken: string; tenantId: string; tenant: Tenant };
@@ -41,7 +42,7 @@ export async function MaterialProductsPage({ accessToken, tenantId, tenant, raw 
   }
   return (
     <main className={pageMain} lang={lang}>
-      <ProductsView base={`/app/tenants/${tenantId}`} words={materialWords(lang)} role={tenant.role} items={page?.items ?? null} more={page?.next_cursor ?? null} inStockOnly={inStock} />
+      <ProductsView title={await menuTitle("catalogue", lang, accessToken, tenantId)} base={`/app/tenants/${tenantId}`} words={materialWords(lang)} role={tenant.role} items={page?.items ?? null} more={page?.next_cursor ?? null} inStockOnly={inStock} />
     </main>
   );
 }

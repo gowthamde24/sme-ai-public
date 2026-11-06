@@ -4,12 +4,12 @@ Your AI team and what each one is doing.
 [button type=button: Board view]
 [button type=button: List view]
 {label="My AI team"} One card per helper: what it is doing now, what it did today, and its settings.
-- [Your assistant Not available yet Coordinates the other helpers. Not built yet.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=main) [Settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=assistant)
-- [Researcher Idle Reads public pages about a lead and writes down what it finds, with sources.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=researcher) [Settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent)
-- [Requirement Analyst Working Reads an enquiry and lists what the customer asked for, to be checked.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=requirement_analyst) [Settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent)
-- [Quote Writer Idle Prepares a quote from the prices you set. A person approves it. Prepared quote 3 · 2h](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=quote_writer current=true) [Settings](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy)
-- [Follow-up Desk Idle Drafts follow-up messages. A person approves and sends them. Drafted follow-up message number 2 · 1m](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=followup_desk) [Settings](/app/tenants/22222222-2222-2222-2222-222222222222/followups/policy)
-- [Order Desk Idle Keeps each order's steps, payments and refunds in order. Order started · 30m](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=order_desk)
+- [Your assistant Not available yet Coordinates the other helpers. Not built yet.](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team?agent=main) [Settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=assistant)
+- [Researcher Idle Reads public pages about a lead and writes down what it finds, with sources.](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team?agent=researcher) [Settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent)
+- [Requirement Analyst Working Reads an enquiry and lists what the customer asked for, to be checked.](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team?agent=requirement_analyst) [Settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent)
+- [Quote Writer Idle Prepares a quote from the prices you set. A person approves it. Prepared quote 3 · 2h](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team?agent=quote_writer current=true) [Settings](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy)
+- [Follow-up Desk Idle Drafts follow-up messages. A person approves and sends them. Drafted follow-up message number 2 · 1m](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team?agent=followup_desk) [Settings](/app/tenants/22222222-2222-2222-2222-222222222222/followups/policy)
+- [Order Desk Idle Keeps each order's steps, payments and refunds in order. Order started · 30m](/app/tenants/22222222-2222-2222-2222-222222222222/ai-team?agent=order_desk)
 {label="Event feed"}
 ## Event feed
 - 1m · Follow-up Desk Drafted follow-up message number 2

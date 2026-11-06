@@ -34,6 +34,7 @@ async function asOwner(tenantId: string, act: (token: string) => Promise<TalkTra
     if ((await fetchTenant(user.accessToken, tenantId)).role !== "owner") return { ok: false, error: "forbidden" };
     const data = await act(user.accessToken);
     revalidatePath(`/app/tenants/${tenantId}/settings`);
+    revalidatePath(`/app/tenants/${tenantId}/ai-team/training`);
     return { ok: true, data };
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");

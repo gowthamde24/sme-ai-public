@@ -1,3 +1,4 @@
+import { menuTitle } from "../menu-title";
 import { ArrowRight, Plus, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -77,7 +78,7 @@ export default async function OrdersPage({ params, searchParams }: PageProps<"/a
     <main className={pageMain} lang={lang}>
       {tabs ? <SectionTabs label={tt("trip.tabs")} items={[{ key: "orders", label: tt("nav.item.orders"), href: here, current: true }, { key: "trips", label: tt("trip.board.title"), href: `${here}/trips`, current: false }]} /> : null}
       <PageTop
-        title={t("orders.orders")}
+        title={await menuTitle("orders", lang, user.accessToken, tenantId)}
         sub={<span role="note">{t("orders.nothing_is_sent_by_this_system")}</span>}
         action={
           <Link href={`/app/tenants/${tenantId}/quotes`} className={`${btnMain} gap-2`}>

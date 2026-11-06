@@ -1,4 +1,4 @@
-# This week
+# Reports
 Mon, 5 Oct to Sun, 11 Oct What happened in your shop this week, Monday to Sunday, from the records you and your assistant keep.
 {label="Store visits"}
 ## Store visits

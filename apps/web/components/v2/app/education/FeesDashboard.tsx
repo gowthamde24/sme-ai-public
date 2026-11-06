@@ -16,7 +16,7 @@ import { card, primary, secondary } from "../visits/styles";
  * day by day. Every figure is a sum of entries the school made (the report's own; this page adds nothing). A concession counts as settled, so the percentage can rise without money coming in. The buttons go to the pending list,
  * the fee plans and, for the Owner and Admin, a reminder campaign. A school with no plan yet is pointed at the plan first.
  */
-export function FeesDashboard({ base, words, role, collection, today, plans, lateFees, postLateFees }: { base: string; words: TodayWords; role: Role; collection: Report | null; today: Report | null; plans: number | null; lateFees: LateFeesPreviewOut | null; postLateFees: LateFeesAction }) {
+export function FeesDashboard({ title = null, base, words, role, collection, today, plans, lateFees, postLateFees }: { /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null; base: string; words: TodayWords; role: Role; collection: Report | null; today: Report | null; plans: number | null; lateFees: LateFeesPreviewOut | null; postLateFees: LateFeesAction }) {
   const writer = role === "owner" || role === "admin";
   const noPlans = plans === 0;
   const todayCollected = today?.kpis.find((k) => k.key === "collected_paise") ?? null;
@@ -25,7 +25,7 @@ export function FeesDashboard({ base, words, role, collection, today, plans, lat
     <div data-screen="fees" className="flex flex-col gap-5">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{say(words, "nav.item.fees")}</h1>
+          <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, "nav.item.fees")}</h1>
           <p className="text-base text-muted">{say(words, "edu.fees.sub")}</p>
         </div>
         <div className="flex flex-wrap gap-2">
