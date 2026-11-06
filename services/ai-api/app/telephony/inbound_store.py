@@ -57,6 +57,11 @@ class InboundStore:
         out = self._call("visit_slots_for_call", {"p_tenant_id": str(tenant_id)})
         return [s for s in out if isinstance(s, dict)] if isinstance(out, list) else []
 
+    def call_corrections(self, tenant_id: uuid.UUID) -> list[str]:
+        """The owner's latest notes from "Correct it" (app v4; migration 20261231330000): how to talk, never a caller's details; at most five, newest first."""
+        out = self._call("call_corrections_for_call", {"p_tenant_id": str(tenant_id)})
+        return [str(x) for x in out][:5] if isinstance(out, list) else []
+
     def talk_training(self, tenant_id: uuid.UUID) -> dict[str, Any] | None:
         """The Owner's "How I talk to customers" for this call (the scheduler account reads it); None when nothing is saved."""
         out = self._call("talk_training_for_call", {"p_tenant_id": str(tenant_id)})

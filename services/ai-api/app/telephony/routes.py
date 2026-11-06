@@ -22,7 +22,7 @@ from pydantic import BaseModel, ConfigDict, StringConstraints
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
-from app.telephony.models import CallDetailOut, CallsOut
+from app.telephony.models import CallDetailOut, CallsOut, CorrectionIn, CorrectionOut
 from app.telephony.repository import CallStateError
 from app.telephony.service import CallsService
 from app.tenancy.models import Role
@@ -99,6 +99,23 @@ async def whisper(call_id: str, ctx: OwnerAdmin, runtime: RuntimeDep, body: Whis
     if not live.whisper(ctx.tenant.id, cid, body.text):
         raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
     return {"status": "sent"}
+
+
+@router.post("/{call_id}/correction", response_model=CorrectionOut)
+def correct_call(call_id: str, ctx: Reader, runtime: RuntimeDep, body: CorrectionIn) -> CorrectionOut:
+    """"Correct it" after a call (app v4; Owner, Admin, Sales): the summary, the answers, and a note about how to talk. The note goes into later calls' instructions, so it may not hold a
+    phone number or an e-mail address (422 correction_invalid). 404 for another workspace's call."""
+    from app.crm.repository import NotFoundError
+    from app.telephony.repository import CorrectionInvalid
+
+    if body.summary is None and body.captured is None and body.note is None:
+        raise ApiError(422, "validation_error", "Say what to correct.", extra={"fields": ["summary", "captured", "note"]})
+    try:
+        return _service(runtime).correct(ctx.principal.token, ctx.tenant.id, _id(call_id), body)
+    except NotFoundError:
+        raise not_found() from None
+    except CorrectionInvalid:
+        raise ApiError(422, "correction_invalid", "A note can't hold a phone number or an e-mail address.") from None
 
 
 @router.post("/{call_id}/hang-up", status_code=202)

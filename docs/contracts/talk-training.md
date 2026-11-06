@@ -29,3 +29,25 @@ Settings -> AI assistant -> "How I talk to customers". The Owner trains how the 
 - Tone, language, discount limit and handover stay in `GET/PUT /ai-assistant` (unchanged).
 
 Not yet: the practice call with "What I'd change" (next part), recorded example answers (typed only for now).
+
+## App v4 additions (6 Nov 2026)
+
+### "Say it like this": `say_like`
+- **Shape:** a list in the training document (GET/PUT `/talk-training`), at most 20 items: `[{"say": "pattu cheera", "instead_of": "silk saree"}, {"say": "మా షాప్", "instead_of": null}]`.
+- **Fields:** `say` is 2–80 characters and never a price or a promise; `instead_of` is optional (2–80 characters).
+- **Errors:** on PUT, 422 `talk_training_invalid` with `reason`:
+  - `too_many_say_like` for more than 20 items;
+  - `duplicate` for the same `say` twice (case ignored);
+  - `price_or_promise`.
+- **In the call prompt:** "SAY IT LIKE THIS, the business's own words …", one line per item. This is the text to show in the prompt preview.
+- `never_say` is unchanged: in the prompt, and enforced by code on every spoken line.
+
+### Practice calls in text: `POST /talk-training/practice` (Owner, Admin)
+- **Request:** `{"language": "te", "turns": [{"who": "customer" | "assistant", "text": "…"}], "training": <optional unsaved training document>}`.
+  - 1–20 turns, each 1–400 characters.
+  - The LAST turn must be the customer's; otherwise 422 `validation_error`.
+- **Response:** `{"reply": "…", "ended": false, "handover": false, "simulated": true}`. Send the next request with the reply appended as an `assistant` turn.
+- **Same as a real call:** the same call prompt, honesty, stop and hand-over rules. A "bye" is answered with the fixed closing line and `ended: true`.
+- **Draft training:** `training` lets the owner try unsaved changes. Without it, the saved training (or the defaults) is used.
+- **Nothing is stored or sent, and there is no voice.**
+- **Errors:** 503 `practice_unavailable` when no model is configured or it did not answer; 429 `practice_busy` past 120 turns an hour in a workspace.

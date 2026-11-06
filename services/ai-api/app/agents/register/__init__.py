@@ -31,6 +31,9 @@ def data() -> dict[str, Any]:
 STYLES: tuple[str, ...] = tuple(data()["styles"])
 DEFAULT_STYLE: str = data()["default_style"]
 REGIONS: dict[str, tuple[str, ...]] = {lang: tuple(v) for lang, v in data()["regions"].items()}
+# the data files per language, by a FIXED name: a language that is not one of ours never reaches a path (a request's value is only ever a key into this map)
+_ANCHOR_FILES: dict[str, Path] = {lang: HERE / "data" / "anchors" / f"{lang}.json" for lang in LANGUAGES}
+_LINE_FILES: dict[str, Path] = {lang: HERE / "data" / "native_lines" / f"{lang}.md" for lang in LANGUAGES}
 NUMBERED = re.compile(r"^\s*(\d+)\.\s+([^:]{1,40}):\s*(.+?)\s*$")
 BULLET = re.compile(r"^\s*-\s+(.+?)\s*$")
 
@@ -38,8 +41,8 @@ BULLET = re.compile(r"^\s*-\s+(.+?)\s*$")
 @cache
 def anchors(language: str) -> tuple[tuple[str, str], ...]:
     """The lines a native reviewer heard and approved (data/anchors/<lang>.json), as (label, text). They are the style anchors of the prompt and the cases of the language's eval; none = the language has no reviewed set."""
-    path = HERE / "data" / "anchors" / f"{language}.json"
-    if not path.is_file():
+    path = _ANCHOR_FILES.get(language)
+    if path is None or not path.is_file():
         return ()
     doc = json.loads(path.read_text(encoding="utf-8"))
     return tuple((str(a["label"]), str(a["text"])) for a in doc["anchors"])
@@ -48,8 +51,8 @@ def anchors(language: str) -> tuple[tuple[str, str], ...]:
 @cache
 def examples(language: str) -> tuple[tuple[str, str], ...]:
     """The example lines of a language as (label, text), in the file's order. A missing file gives no examples (the rules alone are used and the block says so)."""
-    path = HERE / "data" / "native_lines" / f"{language}.md"
-    if not path.is_file():
+    path = _LINE_FILES.get(language)
+    if path is None or not path.is_file():
         return ()
     out: list[tuple[str, str]] = []
     for raw in path.read_text(encoding="utf-8").splitlines():
