@@ -99,10 +99,11 @@ export function NavGroups({ groups, tenantId, activeItemId, labels, waiting = nu
       {groups.map((g, gi) => {
         const heading = word(labels, `nav.group.${g.id}`, g.label);
         const holdsCurrent = g.items.some((i) => i.id === activeItemId);
-        const isFolded = foldable && !collapsed && folded.includes(g.id) && !holdsCurrent;
+        // app v4's one group has no heading, so it never folds
+        const isFolded = foldable && g.label !== "" && !collapsed && folded.includes(g.id) && !holdsCurrent;
         return (
           <div key={g.id} role="group" aria-label={heading} data-nav-group={g.id}>
-            {collapsed ? (
+            {g.label === "" ? null : collapsed ? (
               gi > 0 ? <hr className="mx-3 my-1 border-line" /> : null
             ) : foldable ? (
               <button type="button" onClick={() => toggle(g.id)} aria-expanded={!isFolded} className="flex min-h-9 w-full items-center justify-between gap-2 rounded-md px-3 text-xs font-semibold uppercase tracking-wider text-muted hover:text-ink">

@@ -23,6 +23,8 @@ export type FrameData = {
   logoUrl: string | null;
   /** The business type of the workspace as the menu needs it (job CL): modules, phone tabs and changed words. null = not known (the menu is the one the product always had). */
   pack: PackFrame | null;
+  /** App v4 is on (APP_V4): the five-group menu (components/v2/app/nav.ts, MENU_V4) and the parts that follow. Absent = off. */
+  v4?: boolean;
 };
 /** Every part unreadable: the frame says "Not available yet" in each place. */
 export const NO_FRAME_DATA: FrameData = { plan: null, usage: null, waiting: null, ready: true, showUsage: true, live: false, logoUrl: null, pack: null };

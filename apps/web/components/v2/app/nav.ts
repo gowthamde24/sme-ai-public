@@ -149,7 +149,7 @@ export type VisibleGroup = { id: string; label: string; items: NavItem[] };
  * the tabs; the first one the person is offered is where the row goes. Row ids are `m-<id>` (their words are `nav.item.m-<id>`); `count` names the number the row shows (C1's nav-counts, components/v2/app/nav-badges.ts);
  * `labelOf` = a page whose business-type word wins when the business type has one (Visits: "Campus visits" for a school; Catalogue & stock: "Materials", "Programmes").
  */
-export type MenuGroupId = "overview" | "sell" | "business" | "aiteam" | "setup";
+export type MenuGroupId = "overview" | "sell" | "business" | "aiteam" | "setup" | "v4";
 export type CountKey = "today" | "leads" | "calls" | "chats" | "followups" | "visits" | "quotes" | "aiteam";
 export type MenuId = "today" | "assistant" | "leads" | "find" | "calls" | "chats" | "followups" | "visits" | "catalogue" | "quotes" | "orders" | "trips" | "dues" | "admissions" | "students" | "fees" | "notices" | "reports" | "aiteam" | "train" | "phone" | "sources" | "settings";
 export type MenuEntry = { id: MenuId; group: MenuGroupId; label: string; icon: IconKey; members: readonly string[]; /** A tab of the phone's bottom bar (the rest are in "More"). */ bar?: boolean; count?: CountKey; labelOf?: string };
@@ -246,6 +246,62 @@ export function menuBar(role: Role, view?: PackFrame | null): MenuRow[] {
     .flatMap((g) => g.items)
     .filter((i) => i.bar)
     .sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+}
+
+/**
+ * APP v4 (job-app-v4.md part 1, owner 6 Nov 2026; only while APP_V4 is on): the menu is five groups, Today, Customers, Sales, AI team and Settings. Each group is made of the menu rows above (its sections, drawn as tabs at the top of
+ * the page), and each section keeps its own pages (a second row of tabs when it has more than one), so every page keeps its address: nothing moves, so nothing needs a redirect. The phone's bar is the five groups, with no "More";
+ * ⌘K reaches every page. A section the role or the business type does not have is simply not a tab, and a group with none is not in the menu. Money (Sales) is the dues or fees page of the business type until part 6 brings its own.
+ */
+export type V4Id = "today" | "customers" | "sales" | "aiteam" | "settings";
+export type V4Entry = { id: V4Id; label: string; icon: IconKey; sections: readonly MenuId[]; count?: CountKey };
+export const MENU_V4: readonly V4Entry[] = [
+  { id: "today", label: "Today", icon: "today", sections: ["today", "reports", "assistant"], count: "today" },
+  { id: "customers", label: "Customers", icon: "customers", sections: ["leads", "calls", "chats", "followups", "visits", "find"], count: "leads" },
+  { id: "sales", label: "Sales", icon: "quotes", sections: ["quotes", "orders", "catalogue", "dues", "fees", "trips", "admissions", "students", "notices"], count: "quotes" },
+  { id: "aiteam", label: "AI team", icon: "aiteam", sections: ["aiteam", "train", "phone"], count: "aiteam" },
+  { id: "settings", label: "Settings", icon: "settings", sections: ["sources", "settings"] },
+];
+/** The id the menu draws for a v4 group (`v4-sales`; its word is `nav.item.v4-sales`). */
+export const v4ItemId = (id: V4Id): string => `v4-${id}`;
+/** The v4 group a menu row (a section) belongs to, or null. */
+export function v4OfMenu(menuId: MenuId): V4Entry | null {
+  return MENU_V4.find((g) => g.sections.includes(menuId)) ?? null;
+}
+/** The sections of a v4 group this role and business type are offered, in their order (each a menu row: it goes to its own first page). */
+export function v4Sections(group: V4Entry, role: Role, view?: PackFrame | null): MenuRow[] {
+  return group.sections.flatMap((id) => MENU.filter((m) => m.id === id)).map((m) => menuRow(m, role, view)).filter((r): r is MenuRow => r !== null);
+}
+/** The v4 menu as ONE group without a heading (the five rows), in the shape the menu drawing takes; a group with no section offered is left out. */
+export function menuGroupsV4(role: Role, view?: PackFrame | null): MenuGroup[] {
+  const items = MENU_V4.flatMap((g): MenuRow[] => {
+    const sections = v4Sections(g, role, view);
+    const first = sections[0];
+    if (!first) return [];
+    return [
+      {
+        id: v4ItemId(g.id),
+        label: g.label,
+        icon: g.icon,
+        path: first.path,
+        ...(first.tab !== undefined ? { tab: first.tab } : {}),
+        ...(first.hash !== undefined ? { hash: first.hash } : {}),
+        also: sections.flatMap((s) => [s.path, ...(s.also ?? [])]).filter((p) => p !== "" && !p.includes("?")),
+        bar: true,
+        roles: ALL_ROLES,
+        group: "v4",
+        ...(g.count ? { count: g.count } : {}),
+      },
+    ];
+  });
+  return items.length ? [{ id: "v4", label: "", items }] : [];
+}
+/** The v4 group the current page belongs to (`v4-customers`), or null. */
+export function activeV4Id(pathname: string, tab: string | null): string | null {
+  const page = itemFor(pathname, tab);
+  const menu = page ? menuOfPage(page.item.id) : null;
+  const group = menu ? v4OfMenu(menu.id) : null;
+  return group ? v4ItemId(group.id) : null;
 }
 
 /**

@@ -20,7 +20,7 @@ import { LabelsProvider } from "./robust/labels-context";
 import { RobustShell } from "./robust/RobustShell";
 import { SideNav } from "./SideNav";
 import { TabBar } from "./TabBar";
-import { TopBar } from "./TopBar";
+import { HideOnPhoneInV4, TopBar } from "./TopBar";
 import type { Membership } from "./use-workspace";
 
 /**
@@ -53,13 +53,15 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
         </a>
         <SideNav memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} mark={small} still={still} />
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small} palette={paletteNames(lang)} still={still}>
+          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small} palette={paletteNames(lang)} still={still} frame={frame}>
             <span lang={lang}>
               <LangSelect lang={lang} label={t("lang.label")} />
             </span>
-            <span lang={lang}>
-              <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
-            </span>
+            <HideOnPhoneInV4 frame={frame}>
+              <span lang={lang}>
+                <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
+              </span>
+            </HideOnPhoneInV4>
           </TopBar>
           <RobustShell labels={labels} />
           <div id="main-content" lang="en" tabIndex={-1} className="min-w-0 flex-1 outline-none">

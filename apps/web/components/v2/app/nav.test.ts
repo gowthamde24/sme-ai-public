@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { FOOT, NAV, barItems, footItems, hrefOf, itemFor, visibleGroups, workspaceOf, type Role } from "./nav";
+import { FOOT, NAV, barItems, footItems, hrefOf, itemFor, visibleGroups, workspaceOf, type Role, MENU, MENU_V4, menuGroupsV4, v4Sections, v4ItemId, activeV4Id } from "./nav";
 
 const T = "22222222-2222-2222-2222-222222222222";
 
@@ -152,5 +152,40 @@ describe("an item another module replaces (job CO)", () => {
   it("Sites needs its module and is absent from the menu of a workspace with no pack", () => {
     expect(visibleGroups("owner", view(["today", "sites"])).flatMap((g) => g.items.map((i) => i.id))).toContain("sites");
     expect(visibleGroups("owner").flatMap((g) => g.items.map((i) => i.id))).not.toContain("sites");
+  });
+});
+
+describe("app v4: five groups (job-app-v4.md part 1, owner 6 Nov 2026)", () => {
+  const T = "11111111-1111-4111-8111-111111111111";
+  it("Today, Customers, Sales, AI team and Settings, and every menu row is in exactly one of them (no page is lost)", () => {
+    expect(MENU_V4.map((g) => g.id)).toEqual(["today", "customers", "sales", "aiteam", "settings"]);
+    for (const m of MENU) expect(MENU_V4.filter((g) => g.sections.includes(m.id)).length, m.id).toBe(1);
+  });
+  it("Customers holds Leads, Calls, Chats, Follow-ups, Store visits and Find customers; Sales holds Quotes, Orders, Catalogue & stock and the money pages; AI team holds My AI team, Train how it talks and Phone number; Settings holds Lead sources", () => {
+    const of = (id: string) => MENU_V4.find((g) => g.id === id)!.sections;
+    expect(of("customers")).toEqual(["leads", "calls", "chats", "followups", "visits", "find"]);
+    expect(of("sales").slice(0, 4)).toEqual(["quotes", "orders", "catalogue", "dues"]);
+    expect(of("aiteam")).toEqual(["aiteam", "train", "phone"]);
+    expect(of("settings")).toEqual(["sources", "settings"]);
+  });
+  it("the five rows a role is offered, each going to its first section's first page; a group with nothing offered is left out", () => {
+    const owner = menuGroupsV4("owner");
+    expect(owner).toHaveLength(1);
+    expect(owner[0].label).toBe("");
+    expect(owner[0].items.map((i) => i.id)).toEqual(["v4-today", "v4-customers", "v4-sales", "v4-aiteam", "v4-settings"]);
+    expect(owner[0].items.every((i) => i.bar)).toBe(true);
+    expect(hrefOf(owner[0].items[0], T)).toBe(`/app/tenants/${T}`);
+    // a Viewer is not offered Quotes or Orders (writers only): Sales then opens on what a Viewer may see, or is not there at all
+    const viewer = menuGroupsV4("viewer")[0].items;
+    for (const row of viewer) expect(v4Sections(MENU_V4.find((g) => v4ItemId(g.id) === row.id)!, "viewer").length, row.id).toBeGreaterThan(0);
+  });
+  it("a page belongs to its group: Follow-ups and Store visits are Customers, Quotes is Sales, Train how it talks is AI team, Lead sources is Settings, Today is Today", () => {
+    expect(activeV4Id(`/app/tenants/${T}`, null)).toBe("v4-today");
+    expect(activeV4Id(`/app/tenants/${T}/followups`, null)).toBe("v4-customers");
+    expect(activeV4Id(`/app/tenants/${T}/visits`, null)).toBe("v4-customers");
+    expect(activeV4Id(`/app/tenants/${T}/quotes`, null)).toBe("v4-sales");
+    expect(activeV4Id(`/app/tenants/${T}/ai-team/training`, null)).toBe("v4-aiteam");
+    expect(activeV4Id(`/app/tenants/${T}/lead-sources`, null)).toBe("v4-settings");
+    expect(activeV4Id(`/app/tenants/${T}/settings`, null)).toBe("v4-settings");
   });
 });

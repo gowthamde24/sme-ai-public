@@ -10,7 +10,7 @@ import { MoreSheet } from "./LazyMoreSheet";
 import { ownWords, rowWord } from "./NavGroups";
 import { word, withPackWords, type Labels } from "./labels";
 import { barNumber } from "./nav-badges";
-import { hrefOf, menuBar, menuGroups } from "./nav";
+import { hrefOf, menuBar, menuGroupsV4, menuGroups } from "./nav";
 import { useNavCounts } from "./use-nav-counts";
 import { useWorkspace, type Membership } from "./use-workspace";
 
@@ -23,7 +23,7 @@ const COLS: Record<number, string> = { 2: "grid-cols-2", 3: "grid-cols-3", 4: "g
  * The bar and the sheet are frosted glass (solid where the browser cannot blur or the person asked for less transparency). Respects the phone's safe area. Outside a workspace the bar is not drawn.
  */
 export function TabBar({ memberships, labels: given_labels, frame: given, email, signOut, mark: accountMark }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void>; /** The round mark, drawn by the server (the person's picture over their letters, or the letters of the e-mail address). */ mark: ReactNode }) {
-  const { current, pathname, activeMenu } = useWorkspace(memberships);
+  const { current, pathname, activeMenu, activeV4 } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const labels = withPackWords(given_labels, frame.pack);
   const [open, setOpen] = useState(false);
@@ -41,19 +41,22 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
   }, []);
   const counts = useNavCounts(current?.id ?? null);
   if (!current) return null;
-  const tabs = menuBar(current.role, frame.pack);
+  // app v4: the bar is the five groups and there is no "More" (⌘K reaches every page; the person and Sign out are in the top bar)
+  const v4 = frame.v4 === true;
+  const tabs = v4 ? (menuGroupsV4(current.role, frame.pack)[0]?.items ?? []) : menuBar(current.role, frame.pack);
+  const activeId = v4 ? activeV4 : activeMenu;
   // the More sheet: every other row, in its groups (Overview's "Talk to assistant" too: the orb is on every page, but a word helps)
-  const rest = menuGroups(current.role, frame.pack)
+  const rest = (v4 ? [] : menuGroups(current.role, frame.pack))
     .map((g) => ({ ...g, items: g.items.filter((i) => !tabs.some((t) => t.id === i.id)) }))
     .filter((g) => g.items.length > 0);
-  const moreOn = activeMenu ? rest.some((g) => g.items.some((i) => i.id === activeMenu)) : false;
+  const moreOn = activeId ? rest.some((g) => g.items.some((i) => i.id === activeId)) : false;
   const mark = <span aria-hidden="true" className="absolute inset-x-3 top-0 h-0.5 rounded-b-full bg-brand-edge" />;
   const own = ownWords(frame.pack, given_labels);
   return (
     <>
-      <nav aria-label={word(labels, "frame.menu.quick", "Quick menu")} className={`v2-glass grid border-t border-line pb-[env(safe-area-inset-bottom)] ${COLS[tabs.length + 1] ?? "grid-cols-6"}`}>
+      <nav aria-label={word(labels, "frame.menu.quick", "Quick menu")} className={`v2-glass grid border-t border-line pb-[env(safe-area-inset-bottom)] ${COLS[tabs.length + (v4 ? 0 : 1)] ?? "grid-cols-6"}`}>
         {tabs.map((i) => {
-          const on = activeMenu === i.id;
+          const on = activeId === i.id;
           const n = barNumber(i.count, counts, frame.waiting);
           const text = word(labels, `nav.tab.${i.id}`, rowWord(i, labels, own));
           return (
@@ -72,13 +75,15 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
             </Link>
           );
         })}
-        <button ref={moreRef} type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open} data-bar-tab="more" className={`${cell} ${moreOn ? "text-brand-text" : "text-muted"}`}>
-          {moreOn ? mark : null}
-          <SpriteIcon id="menu" className="size-6" />
-          <span>{word(labels, "frame.more", "More")}</span>
-        </button>
+        {v4 ? null : (
+          <button ref={moreRef} type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open} data-bar-tab="more" className={`${cell} ${moreOn ? "text-brand-text" : "text-muted"}`}>
+            {moreOn ? mark : null}
+            <SpriteIcon id="menu" className="size-6" />
+            <span>{word(labels, "frame.more", "More")}</span>
+          </button>
+        )}
       </nav>
-      {open ? (
+      {open && !v4 ? (
         <MoreSheet current={current} memberships={memberships} email={email} signOut={signOut} accountMark={accountMark} labels={labels} rest={rest} activeMenu={activeMenu} waiting={frame.waiting} counts={counts} own={own} onClose={close} />
       ) : null}
     </>

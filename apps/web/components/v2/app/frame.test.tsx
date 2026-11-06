@@ -369,3 +369,26 @@ describe("the menu of a business type (job CL)", () => {
     expect(names()).not.toContain("Reports");
   });
 });
+
+describe("app v4: the menu is five groups (job-app-v4.md part 1)", () => {
+  const V4: FrameData = { ...NO_FRAME_DATA, v4: true };
+  it("the phone's bar is Today, Customers, Sales, AI team and Settings, with no More, and the current page's group is marked", () => {
+    nav.pathname = `/app/tenants/${A}/orders`;
+    bar(only("owner"), V4);
+    const tabs = within(screen.getByRole("navigation", { name: "Quick menu" })).getAllByRole("link");
+    expect(tabs.map((a) => a.getAttribute("data-bar-tab"))).toEqual(["v4-today", "v4-customers", "v4-sales", "v4-aiteam", "v4-settings"]);
+    expect(screen.queryByRole("button", { name: "More" })).toBeNull();
+    expect(tabs.find((a) => a.getAttribute("aria-current") === "page")?.getAttribute("data-bar-tab")).toBe("v4-sales");
+  });
+  it("the side menu is the same five rows, with no group headings; without v4 it is the menu as it was", () => {
+    nav.pathname = `/app/tenants/${A}/followups`;
+    side(only("owner"), V4);
+    const rows = [...document.querySelectorAll("[data-nav-row]")].map((r) => r.getAttribute("data-nav-row"));
+    expect(rows).toEqual(["v4-today", "v4-customers", "v4-sales", "v4-aiteam", "v4-settings"]);
+    expect(document.querySelector('[data-nav-row="v4-customers"]')?.getAttribute("aria-current")).toBe("page");
+    expect(screen.queryByRole("button", { name: /^Sell$/i })).toBeNull();
+    cleanup();
+    side(only("owner"));
+    expect(document.querySelector("[data-nav-row^='v4-']")).toBeNull();
+  });
+});

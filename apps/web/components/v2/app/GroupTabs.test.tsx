@@ -68,3 +68,24 @@ describe("the tabs of a menu row (sidebar v2)", () => {
     expect(names).not.toContain("Quotes");
   });
 });
+
+describe("app v4: the sections of the page's group, above its own tabs (job-app-v4.md part 1)", () => {
+  const v4 = (role: Membership["role"]) => render(<GroupTabs memberships={only(role)} frame={{ ...NO_FRAME_DATA, v4: true }} />);
+  const sections = () => within(screen.getByRole("navigation", { name: "Sections" })).getAllByRole("link");
+  it("a Follow-ups page shows Customers' sections, Follow-ups marked, each a plain link to its own first page", () => {
+    nav.pathname = `/app/tenants/${A}/followups`;
+    v4("owner");
+    const links = sections();
+    expect(links.map((a) => a.textContent)).toEqual(["Leads", "Calls", "Chats", "Follow-ups", "Store visits", "Find customers"].filter((x) => links.some((a) => a.textContent === x)));
+    expect(links.find((a) => a.getAttribute("aria-current") === "page")?.textContent).toBe("Follow-ups");
+    for (const a of links) expect(a.getAttribute("href")).toMatch(new RegExp(`^/app/tenants/${A}`));
+  });
+  it("a Quotes page shows Sales' sections; without v4 the same page has no sections row", () => {
+    nav.pathname = `/app/tenants/${A}/quotes`;
+    v4("owner");
+    expect(sections().map((a) => a.textContent)).toContain("Quotes");
+    cleanup();
+    draw("owner");
+    expect(screen.queryByRole("navigation", { name: "Sections" })).toBeNull();
+  });
+});

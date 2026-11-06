@@ -12,7 +12,7 @@ import { SpriteIcon } from "./icons";
 import { itemBase, itemCurrent, itemIdle, NavGroups, ownWords } from "./NavGroups";
 import { NavMeters } from "./LazyNavMeters";
 import { word, withPackWords, type Labels } from "./labels";
-import { ADMINS, menuGroups } from "./nav";
+import { ADMINS, menuGroups, menuGroupsV4 } from "./nav";
 import { useNavCounts } from "./use-nav-counts";
 import { PoweredBy } from "./frame-parts";
 import { useCollapsed } from "./use-collapsed";
@@ -27,7 +27,7 @@ export { itemCurrent };
  * person and "Collapse menu". Outside a workspace the groups give way to the two account pages.
  */
 export function SideNav({ memberships, labels: given_labels, frame: given, email, signOut, mark, still = false }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void>; mark: ReactNode; /** The demo video (job demo-video): no plan line under the business name. */ still?: boolean }) {
-  const { current, pathname, activeMenu } = useWorkspace(memberships);
+  const { current, pathname, activeMenu, activeV4 } = useWorkspace(memberships);
   const frame = useFrameData(given);
   const labels = withPackWords(given_labels, frame.pack);
   const [collapsed, toggle] = useCollapsed();
@@ -38,7 +38,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   // again once the business type's menu has arrived (its rows are drawn then: on a first paint the current row may not exist yet)
   useEffect(() => {
     navRef.current?.querySelector<HTMLElement>('[aria-current="page"]')?.scrollIntoView?.({ block: "nearest" });
-  }, [activeMenu, frame.ready, frame.pack]);
+  }, [activeMenu, activeV4, frame.ready, frame.pack]);
   const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
   return (
     <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[256px]"} print:hidden`}>
@@ -46,7 +46,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
       {/* the rows scroll on their own above the fixed foot (owner's review, 5 Nov: AI team and Setup must never sit hidden under the meters): a soft shadow at an edge says there is more; the current row is scrolled into view */}
       <nav ref={navRef} aria-label={aria} data-nav-scroll="" className="v2-scroll-hint min-h-0 flex-1 overflow-y-auto overscroll-contain p-2">
         {current ? (
-          <NavGroups groups={menuGroups(current.role, frame.pack)} tenantId={current.id} activeItemId={activeMenu} labels={labels} waiting={frame.waiting} counts={counts} collapsed={collapsed} own={ownWords(frame.pack, given_labels)} />
+          <NavGroups groups={frame.v4 ? menuGroupsV4(current.role, frame.pack) : menuGroups(current.role, frame.pack)} tenantId={current.id} activeItemId={frame.v4 ? activeV4 : activeMenu} labels={labels} waiting={frame.waiting} counts={counts} collapsed={collapsed} own={ownWords(frame.pack, given_labels)} />
         ) : (
           <div className="space-y-1">
             {[

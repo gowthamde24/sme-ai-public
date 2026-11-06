@@ -82376,5 +82376,71 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.v4-today": {
+  "en": "Today",
+  "te": "ఈరోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v4-customers": {
+  "en": "Customers",
+  "te": "కస్టమర్లు",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v4-sales": {
+  "en": "Sales",
+  "te": "సేల్స్",
+  "hi": "बिक्री",
+  "kn": "ಮಾರಾಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v4-aiteam": {
+  "en": "AI team",
+  "te": "AI టీమ్",
+  "hi": "AI टीम",
+  "kn": "AI ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v4-settings": {
+  "en": "Settings",
+  "te": "సెట్టింగ్స్",
+  "hi": "सेटिंग्स",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.v4.sections": {
+  "en": "Sections",
+  "te": "విభాగాలు",
+  "hi": "हिस्से",
+  "kn": "ವಿಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
