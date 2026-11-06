@@ -98,7 +98,7 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     expect(text(faq)).toContain("What is the evening stand-up?");
     expect(text(faq)).not.toContain("KYC");
     const join = home.match(/<section id="(demo|join)"[\s\S]*?<\/section>/)![0];
-    expect(text(join)).toContain("Your next enquiry deserves a call in 2 minutes.");
+    expect(text(join)).toContain("Your next enquiry deserves a call back within minutes.");
     expect(text(join)).toContain("Or WhatsApp us on +91 95023 80998");
     expect(home).not.toContain("[WHATSAPP NUMBER]");
     expect(text(join)).toContain("We call you once from our business number. No marketing messages.");
@@ -108,7 +108,7 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     expect(text(h1).trim()).toBe("Every enquiry answered. New customers found.");
     expect(h1.match(/class="h2-wd h2-d\d"/g)).toHaveLength(6);
     const t = text(home);
-    for (const x of ["Stack19 is an AI workforce for Indian small businesses", "within 2 minutes, in the customer's own language", "Hear a call", "Log in"]) expect(t, x).toContain(x);
+    for (const x of ["Stack19 is an AI workforce for Indian small businesses", "built to call back every enquiry from any source within minutes, in the customer's own language", "now in early access", "Hear a call", "Log in"]) expect(t, x).toContain(x);
     // no trial length and no GST until the lawyer's review (owner, 6 Nov 2026; SITE_TRIAL_COPY=1 turns them on)
     expect(t).not.toMatch(/14-day|day trial|GST included|card or UPI/);
     expect(t).toContain("Two plans, priced in rupees.");
@@ -138,7 +138,7 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
   it("landing v2: the hero stage is in the page without script: the six sources, the Lead Finder counter, the caption, three outcomes and Try it (three businesses, seven languages, real radio buttons)", () => {
     const stage = home.match(/data-part="hero-stage"[\s\S]*$/)![0];
     expect(stage.match(/data-source="\d"/g)).toHaveLength(6);
-    for (const x of ["Facebook and Instagram ads", "IndiaMART, JustDial", "Your website", "WhatsApp messages", "Missed calls", "Emails, sheets, walk-ins", "Lead Finder: scanning nearby", "Called back in 1 min 52 s", "Quote ready", "Shop visit booked", "Try it", "Send an enquiry"]) expect(text(stage), x).toContain(x);
+    for (const x of ["Facebook and Instagram ads", "IndiaMART, JustDial", "Your website", "WhatsApp messages", "Missed calls", "Emails, sheets, walk-ins", "Lead Finder: scanning nearby", "Called back within minutes", "Quote ready", "Shop visit booked", "Try it", "Send an enquiry"]) expect(text(stage), x).toContain(x);
     expect(stage.match(/data-try-biz=/g)).toHaveLength(6); // the desktop bar and the phone card
     expect(stage.match(/data-try-lang=/g)).toHaveLength(14);
     expect(stage).toMatch(/role="radio" aria-checked="true"[^>]*data-try-biz="saree"/);
@@ -162,7 +162,8 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
   });
   it("landing v2: the Lead Finder radar with the four cities (Hyderabad first, its own area names), the legend and the found list", () => {
     const finder = home.match(/<section id="finder"[\s\S]*?<\/section>/)![0];
-    expect(text(finder)).toContain("It also goes looking for your next customers.");
+    expect(text(finder)).toContain("Coming soon: it also goes looking for your next customers.");
+    expect(text(finder)).toContain("In early access.");
     expect(finder.match(/role="radio"[^>]*data-city="(Hyderabad|Bengaluru|Chennai|Vijayawada)"/g)).toHaveLength(8); // the desktop map and the phone's
     expect(finder).toMatch(/role="radio" aria-checked="true"[^>]*data-city="Hyderabad"/);
     for (const x of ["Saree retailers near Hyderabad", "Call now", "Ask you first", "Skip", "Found on this sweep"]) expect(text(finder), x).toContain(x);
@@ -198,9 +199,10 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     expect(t).not.toMatch(/live now|stored in (india|mumbai)|\d\s?%|guarantee|testimonial|trusted by|used by|customers love|incl\w* GST|most popular/i);
     expect(t).not.toMatch(/\d[\d,]*\+?\s+(customers|businesses|leads called|calls a day)/i);
   });
-  it("the older pages' words say the first call is 'right away'; the landing v2 words say 'within 2 minutes' (the owner approved that design on 6 Nov 2026, superseding the 28 Oct rule for the home page)", () => {
+  it("the older pages' words say the first call is 'right away'; the landing v2 words say 'within minutes', built to (owner, 6 Nov 2026: no measured time until the live pipeline calls)", () => {
     expect(siteDict("en")["v3.row.5.d"]).toMatch(/called right away, within your calling hours/);
-    expect(siteDict("en")["h2.hero.sub"]).toMatch(/within 2 minutes/);
+    expect(siteDict("en")["h2.hero.sub"]).toMatch(/built to call back every enquiry from any source within minutes/);
+    for (const lang of ["en", "te", "hi", "kn"] as const) for (const k of ["h2.hero.sub", "h2.hero.sub.phone", "h2.plans.f.1", "h2.join.title", "h2.out.1.t"] as const) expect(siteDict(lang)[k], `${lang} ${k}`).not.toMatch(/\b2 minutes|1 min 52|2 నిమిషా|2 मिनट|2 ನಿಮಿಷ|Marathi|మరాఠీ|मराठी|ಮರಾಠಿ/);
     for (const lang of ["en", "te", "hi", "kn"] as const) {
       const dict = siteDict(lang);
       for (const [k, v] of Object.entries(dict)) if (!/^(h2\.|hm\.pl\.f\.|v3\.plan|v3\.faq\.5|v3\.plans\.small)/.test(k)) expect(v, `${lang} ${k}`).not.toMatch(/\b(1|2|one|two)[- ]minutes?\b|\bminute after\b|\bwithin minutes\b|ఒక నిమిషం|2 నిమిషా|1 मिनट|2 मिनट|ಒಂದು ನಿಮಿಷ|2 ನಿಮಿಷ/i);

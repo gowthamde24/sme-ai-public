@@ -37,15 +37,11 @@ describe("the public site's routes", () => {
     await expect(run(await SiteSecondPage(second("te", "nonsense")))).rejects.toThrow("NEXT_NOT_FOUND");
     await expect(run(await SiteSecondPage(second("pricing", "te")))).rejects.toThrow("NEXT_NOT_FOUND");
   });
-  it("tell the page whether our number is set up, and pass the two server actions", async () => {
-    delete process.env.STACK19_WHATSAPP;
-    expect((await run(await SiteFirstPage(first("contact")))).props.actions.chatAvailable).toBe(false);
-    process.env.STACK19_WHATSAPP = "919876543210";
+  it("tell the page our number is set up (SITE_WHATSAPP), and pass the two server actions", async () => {
     const props = (await run(await SiteFirstPage(first("contact")))).props;
-    delete process.env.STACK19_WHATSAPP;
     expect(props.actions.chatAvailable).toBe(true);
     expect(typeof props.actions.contactChat).toBe("function");
-    expect(JSON.stringify(props)).not.toContain("919876543210"); // the number itself never goes to the page
+    expect(JSON.stringify(props)).not.toContain("919502380998"); // the number itself never goes to the page
   });
   it("give each page its own head: title, canonical, the other languages, a share picture (a business type's own), noindex until the switch is on", async () => {
     const slug = SITE_PACKS[0].slug;
