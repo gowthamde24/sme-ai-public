@@ -100,7 +100,7 @@ import { topupsPart } from "./topups-part";
 import { BusinessForm, BusinessLogo } from "@/components/v2/app/settings/BusinessForm";
 import { getWorkspaceProfile, type WorkspaceProfile } from "@/lib/api/workspace";
 import { readTypeList } from "@/lib/packs/type-list";
-import { getProfile, PROFILE_LANGUAGES, type BusinessProfile } from "@/lib/api/profile";
+import { BUSINESS_LANGUAGES, getProfile, PROFILE_LANGUAGES, type BusinessProfile } from "@/lib/api/profile";
 import { logoAction, saveBusinessAction } from "./business-actions";
 import { ActivationCard } from "@/components/v2/app/start/ActivationCard";
 import { readActivation, type Activation } from "@/lib/packs/activation";
@@ -173,7 +173,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // the business name, city and languages are editable by the people who run the business (read here; a failed read leaves the plain name)
   const onBusiness = wanted === undefined || wanted === "business";
   const workspace: WorkspaceProfile | null = admin && onBusiness ? await getWorkspaceProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
-  const businessProfile: BusinessProfile | null = workspace ? { name: workspace.name, town: workspace.city, languages: workspace.languages.filter((l) => (PROFILE_LANGUAGES as readonly string[]).includes(l)), setupComplete: true } : admin && onBusiness ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const businessProfile: BusinessProfile | null = workspace ? { name: workspace.name, town: workspace.city, languages: workspace.languages.filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)), setupComplete: true } : admin && onBusiness ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const typeList = workspace && tenant.role === "owner" ? await readTypeList(lang) : null;
   // the steps still to do of "Finish setting up", all of them (the ones put away from Today are marked, with the way back)
   const finish: Activation | null = admin && onBusiness && pack && usesChecklist(pack) ? await readActivation(user.accessToken, tenantId, pack, t, await leadDeskSteps(pack)).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
@@ -439,7 +439,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                   name={businessProfile.name}
                   town={businessProfile.town ?? ""}
                   languages={businessProfile.languages.length > 0 ? businessProfile.languages : [lang]}
-                  choices={PROFILE_LANGUAGES}
+                  choices={BUSINESS_LANGUAGES}
                   usedIn={workspace?.nameUsedIn ?? []}
                   owner={workspace && typeList && typeList.groups.length > 0 ? { groups: typeList.groups, typeWords: typeList.words, otherId: typeList.otherId, type: workspace.type, typeLabel: workspace.typeLabel ?? "", phone: workspace.phone ?? "" } : null}
                 />

@@ -6,7 +6,8 @@ import type { LeadFinderCard } from "@/lib/lead-finder/types";
  * "Talk to your assistant" in the browser (job DV, C1's contract-browser-voice.md, ADR 0118): the messages of the WebSocket `wss://<api>/v1/tenants/{id}/voice-chat`, checked as they arrive (the API's words are untrusted text and are drawn as plain text),
  * and the closed words for every refusal. Text frames are JSON; binary frames are audio (to the API: PCM 16-bit little-endian, 16 kHz, mono; from it: PCM 16-bit LE, 24 kHz, mono).
  */
-export const VOICE_LANGS = ["te", "en", "hi", "kn", "ta", "ml"] as const;
+// mr (6 Nov, C1 #355): the chat pill offers it; Live talk answers a Marathi speaker in Hindi until there are Marathi voices (C1's M2)
+export const VOICE_LANGS = ["te", "en", "hi", "kn", "ta", "ml", "mr"] as const;
 export type VoiceLang = (typeof VOICE_LANGS)[number];
 export const isVoiceLang = (v: unknown): v is VoiceLang => (VOICE_LANGS as readonly unknown[]).includes(v);
 
