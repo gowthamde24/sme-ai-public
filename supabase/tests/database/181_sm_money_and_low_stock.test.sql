@@ -18,9 +18,10 @@ begin
 exception when others then return 'ERR:' || sqlstate;
 end $$;
 
-select pg_temp.rec('m1', 'charge', '2026-10-01', 1000000, '2026-10-10', 'INV-1');
-select pg_temp.rec('m2', 'charge', '2026-10-20', 500000, '2026-11-30', 'INV-2');
-select pg_temp.rec('m3', 'payment', '2026-11-03', 300000, null, null, 'upi');
+-- (the set-up is asserted too: a bare select of 'ok' would read as a TAP line)
+select is(pg_temp.rec('m1', 'charge', '2026-10-01', 1000000, '2026-10-10', 'INV-1'), 'ok', 'S1 a charge');
+select is(pg_temp.rec('m2', 'charge', '2026-10-20', 500000, '2026-11-30', 'INV-2'), 'ok', 'S2 another charge');
+select is(pg_temp.rec('m3', 'payment', '2026-11-03', 300000, null, null, 'upi'), 'ok', 'S3 a payment');
 
 select is(pg_temp.m('a_owner', 'owed_paise', '2026-11-06'), '1200000', 'A1 owed across customers: 15,000 invoiced - 3,000 paid = 12,000');
 select is(pg_temp.m('a_owner', 'overdue_paise', '2026-11-06'), '700000', 'A2 overdue: the first invoice, after the payment went to it (the ledger''s own rule)');
