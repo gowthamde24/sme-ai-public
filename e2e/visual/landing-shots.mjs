@@ -71,14 +71,27 @@ try {
     check(await noSideScroll(p), `${name}: no horizontal page scroll`);
     await shot(p, `${name}-top`);
     await shot(p, `${name}-full`, true);
-    // each section on its own (scrolled into view, a moment to draw)
+    // each section on its own (scrolled into view, a moment to draw; the footer's wordmark takes about 2.5 s to assemble). The sticky header is hidden for these pictures only: in a section picture it would sit
+    // over the section's top, which a visitor never sees that way (the real scroll is checked below, with the header in place)
+    await p.evaluate(() => void (document.querySelector("header").style.visibility = "hidden"));
     for (const sel of ['[data-part="greetings"]', "#call", "#finder", "#team", "#after", "#number", "#calc", "#plans", "#faq", "#demo", "footer"]) {
       const el = p.locator(sel).first();
       if (!(await el.count())) continue;
       await el.scrollIntoViewIfNeeded();
-      await p.waitForTimeout(1800);
+      await p.waitForTimeout(sel === "footer" ? 3200 : 1800);
       await el.screenshot({ path: path.join(OUT, `${TAG}${name}-${sel.replace(/[^a-z]/g, "") || "section"}.png`) });
     }
+    await p.evaluate(() => void (document.querySelector("header").style.visibility = ""));
+    // the real scroll: an anchor jump with the sticky header in place, the picture of the screen as a visitor sees it
+    for (const id of ["calc", "end"]) {
+      await p.evaluate((h) => document.getElementById(h)?.scrollIntoView({ behavior: "instant", block: "start" }), id);
+      await p.waitForTimeout(id === "end" ? 3200 : 1200);
+      await shot(p, `${name}-at-${id}`);
+    }
+    // the very end of the page as a visitor scrolls to it: on a phone the footer is taller than the screen, so its section picture above can show the wordmark's canvas before it has drawn (off screen, it waits)
+    await p.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
+    await p.waitForTimeout(3600);
+    await shot(p, `${name}-page-end`);
     await ctx.close();
   }
   // the phone header (landing v2 phone design): the one button stays in the bar in every language, nothing spills past the edge; the language and the theme are in the menu

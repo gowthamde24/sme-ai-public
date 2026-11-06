@@ -85,3 +85,12 @@
 
 /* a jump to a part of the home page lands below the sticky header (its height + 16 px) */
 [data-ui="v2"] [data-page="home"] section[id], [data-ui="v2"] [data-page="home"] footer[id] { scroll-margin-top: 88px; }
+
+/* the leak's sliders (owner review, 6 Nov): orange up to the value (--p, set on the slider's wrapper), the light neutral track (--v2-border) after it, an orange thumb ringed in the surface colour */
+[data-ui="v2"] .h2-range { -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
+[data-ui="v2"] .h2-range::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: linear-gradient(90deg, #ff773c var(--p, 0%), var(--v2-border) var(--p, 0%)); }
+[data-ui="v2"] .h2-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; margin-top: -8px; border-radius: 50%; background: #ff773c; border: 3px solid var(--v2-surface); box-shadow: 0 1px 4px rgba(30, 30, 36, 0.28); }
+[data-ui="v2"] .h2-range::-moz-range-track { height: 6px; border-radius: 999px; background: var(--v2-border); }
+[data-ui="v2"] .h2-range::-moz-range-progress { height: 6px; border-radius: 999px; background: #ff773c; }
+[data-ui="v2"] .h2-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #ff773c; border: 3px solid var(--v2-surface); box-shadow: 0 1px 4px rgba(30, 30, 36, 0.28); }
+[data-ui="v2"] .h2-range:focus-visible { outline: 2.5px solid #c2410c; outline-offset: 3px; border-radius: 999px; }

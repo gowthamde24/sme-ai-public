@@ -8763,10 +8763,10 @@
   }
  },
  "h2.join.sub": {
-  "en": "Be one of the first businesses on {brand}. We set it up with you, in your language. Or WhatsApp us on [WHATSAPP NUMBER].",
-  "te": "{brand}లో మొదటి వ్యాపారాల్లో మీరూ ఒకరు కండి. మీతో కలిసి, మీ భాషలో సెటప్ చేస్తాం. లేదా [WHATSAPP NUMBER]కి వాట్సాప్ చేయండి.",
-  "hi": "{brand} पर शुरुआती कारोबारों में से एक बनिए। हम आपके साथ, आपकी भाषा में सेट अप करते हैं। या हमें [WHATSAPP NUMBER] पर वॉट्सऐप करें।",
-  "kn": "{brand}ನಲ್ಲಿ ಮೊದಲ ವ್ಯಾಪಾರಗಳಲ್ಲಿ ನೀವೂ ಒಬ್ಬರಾಗಿ. ನಿಮ್ಮೊಂದಿಗೆ, ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ಸೆಟಪ್ ಮಾಡುತ್ತೇವೆ. ಅಥವಾ [WHATSAPP NUMBER]ಗೆ ವಾಟ್ಸಾಪ್ ಮಾಡಿ.",
+  "en": "Be one of the first businesses on {brand}. We set it up with you, in your language. Or WhatsApp us on {whatsapp}.",
+  "te": "{brand}లో మొదటి వ్యాపారాల్లో మీరూ ఒకరు కండి. మీతో కలిసి, మీ భాషలో సెటప్ చేస్తాం. లేదా {whatsapp}కి వాట్సాప్ చేయండి.",
+  "hi": "{brand} पर शुरुआती कारोबारों में से एक बनिए। हम आपके साथ, आपकी भाषा में सेट अप करते हैं। या हमें {whatsapp} पर वॉट्सऐप करें।",
+  "kn": "{brand}ನಲ್ಲಿ ಮೊದಲ ವ್ಯಾಪಾರಗಳಲ್ಲಿ ನೀವೂ ಒಬ್ಬರಾಗಿ. ನಿಮ್ಮೊಂದಿಗೆ, ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ಸೆಟಪ್ ಮಾಡುತ್ತೇವೆ. ಅಥವಾ {whatsapp}ಗೆ ವಾಟ್ಸಾಪ್ ಮಾಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -8895,10 +8895,10 @@
   }
  },
  "h2.foot.whatsapp": {
-  "en": "WhatsApp [WHATSAPP NUMBER]",
-  "te": "వాట్సాప్ [WHATSAPP NUMBER]",
-  "hi": "वॉट्सऐप [WHATSAPP NUMBER]",
-  "kn": "ವಾಟ್ಸಾಪ್ [WHATSAPP NUMBER]",
+  "en": "WhatsApp {whatsapp}",
+  "te": "వాట్సాప్ {whatsapp}",
+  "hi": "वॉट्सऐप {whatsapp}",
+  "kn": "ವಾಟ್ಸಾಪ್ {whatsapp}",
   "status": {
    "te": "draft",
    "hi": "draft",

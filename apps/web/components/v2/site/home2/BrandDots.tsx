@@ -9,8 +9,8 @@ import { addScene, fontOf, isCalm, type Look } from "./scene";
 const TAU = 6.2832;
 type Dot = { x: number; y: number; sx: number; sy: number; dl: number; o: boolean; light: boolean };
 
-/** The wordmark as dots (the page's own dot grid): the three bars and the brand name drawn once on a hidden canvas, then sampled every 7 px. Each dot gets a place to fly in from. */
-function brandDots(family: string): Dot[] {
+/** The wordmark as dots (the page's own dot grid): the three bars and the brand name drawn once on a hidden canvas, then sampled on a grid (`step`: 7 units on a wide screen, 14 on a phone, where the drawing is a third of its size and 7 would make dots too small to see). Each dot gets a place to fly in from. */
+function brandDots(family: string, step: number): Dot[] {
   const W = 1240;
   const H = 300;
   const c = document.createElement("canvas");
@@ -47,8 +47,9 @@ function brandDots(family: string): Dot[] {
     seed = (seed * 16807) % 2147483647;
     return seed / 2147483647;
   };
-  for (let yy = 3; yy < H; yy += 7)
-    for (let xx = 3; xx < W; xx += 7) {
+  const o = Math.floor(step / 2);
+  for (let yy = o; yy < H; yy += step)
+    for (let xx = o; xx < W; xx += step) {
       const i = (yy * W + xx) * 4;
       if (d[i + 3] < 128) continue;
       const orange = d[i] > 180 && d[i + 2] < 140;
@@ -65,7 +66,7 @@ function brandDots(family: string): Dot[] {
  */
 export function BrandDots({ label, rebuild }: { label: string; rebuild: string }) {
   const canvas = React.useRef<HTMLCanvasElement>(null);
-  const state = React.useRef<{ pts: Dot[] | null; font: boolean; start: number | null; mx: number; my: number; seen: boolean }>({ pts: null, font: false, start: null, mx: -9999, my: -9999, seen: false });
+  const state = React.useRef<{ pts: Dot[] | null; font: boolean; step: number; start: number | null; mx: number; my: number; seen: boolean }>({ pts: null, font: false, step: 7, start: null, mx: -9999, my: -9999, seen: false });
   React.useEffect(() => {
     const el = canvas.current;
     if (!el) return;
@@ -88,10 +89,14 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
     const off = addScene(el, (ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look) => {
       const family = fontOf(el, "display");
       const fontReady = document.fonts?.check?.(`800 40px ${family}`) === true;
-      if (!s.pts || (!s.font && fontReady)) {
+      // fewer, larger dots on a phone (under 640 px wide), so the wordmark still reads at a third of its size
+      const step = el.clientWidth < 640 ? 14 : 7;
+      if (!s.pts || (!s.font && fontReady) || s.step !== step) {
         s.font = fontReady;
-        s.pts = brandDots(family);
+        s.step = step;
+        s.pts = brandDots(family, step);
       }
+      const big = step / 7;
       const k = W / 1240;
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, W, H);
@@ -118,14 +123,14 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
           y += (dy / (dd || 1)) * heat * 30;
         }
         let col: string;
-        let rad = 2.6;
+        let rad = 2.6 * big;
         if (p.o) col = p.light ? `rgba(255,154,107,${0.75 + 0.25 * wv})` : `rgba(255,119,60,${0.8 + 0.2 * wv})`;
         else if (heat > 0.05) col = `rgba(${Math.round(30 + 225 * heat)},${Math.round(30 + 89 * heat)},${Math.round(36 + 24 * heat)},.95)`;
         else if (wv > 0.965 && !look.calm) col = "rgba(255,119,60,.9)";
         else col = `rgba(${ink},${0.5 + 0.45 * wv})`;
         if (u < 1) {
           col = p.o ? `rgba(255,119,60,${0.3 + 0.7 * e})` : `rgba(${ink},${0.15 + 0.8 * e})`;
-          rad = 1.4 + 1.2 * e;
+          rad = (1.4 + 1.2 * e) * big;
         }
         ctx.fillStyle = col;
         ctx.beginPath();

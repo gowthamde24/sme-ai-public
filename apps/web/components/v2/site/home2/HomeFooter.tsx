@@ -9,6 +9,8 @@ import { isServed } from "@/lib/site/mode";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { sitePath, SITE_PAGES, type SitePage } from "@/lib/site/paths";
 
+import { WithWhatsapp } from "./WithWhatsapp";
+
 const link = "inline-flex min-h-11 items-center text-[15px] font-semibold text-muted hover:text-ink";
 const head = "mb-1.5 text-[13px] font-extrabold text-brand-text";
 const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.contact" | "nav.help"> = { pricing: "nav.pricing", "how-it-works": "nav.how", security: "nav.security", contact: "nav.contact", help: "nav.help" };
@@ -59,7 +61,9 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
         </div>
         <div className="flex flex-col gap-2.5">
           <span className={head}>{t("h2.foot.talk")}</span>
-          <p className="m-0 text-[15px] font-semibold">{t("h2.foot.whatsapp")}</p>
+          <p className="m-0 text-[15px] font-semibold">
+            <WithWhatsapp text={t("h2.foot.whatsapp")} />
+          </p>
           <Link href={early.href} className="inline-flex min-h-11 self-start items-center rounded-full bg-ink px-5 text-sm font-extrabold text-bg">
             {early.label}
           </Link>

@@ -11,6 +11,8 @@ import { websiteOnly } from "@/lib/site/mode";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { WAITLIST_LANGS, WAITLIST_LANG_NAMES } from "@/lib/waitlist/types";
 
+import { WithWhatsapp } from "./WithWhatsapp";
+
 type K = Parameters<SiteT>[0];
 const k = (s: string) => s as K;
 const h2 = "m-0 font-display text-[34px] font-extrabold leading-[1.04] tracking-[-0.04em] lg:text-[56px] lg:leading-[1.02]";
@@ -139,7 +141,9 @@ export function Finale({ t, lang, action, start }: { t: SiteT; lang: Lang; actio
         <h2 id="join-title" className="m-0 font-display text-[40px] font-extrabold leading-none tracking-[-0.045em] lg:text-[72px]">
           {t("h2.join.title")}
         </h2>
-        <p className="m-0 max-w-[620px] text-base leading-relaxed text-muted lg:text-lg">{t("h2.join.sub")}</p>
+        <p className="m-0 max-w-[620px] text-base leading-relaxed text-muted lg:text-lg">
+          <WithWhatsapp text={t("h2.join.sub")} />
+        </p>
         {form ? (
           <WaitlistForm
             variant="bar"

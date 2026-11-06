@@ -77,7 +77,8 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     expect(home.indexOf("<footer")).toBeGreaterThan(at[10]);
     expect(foot).toContain('data-part="home-footer"');
     expect(foot).toMatch(/<canvas[^>]*role="img"[^>]*aria-label="Stack19"/);
-    for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "Back to the top", "WhatsApp [WHATSAPP NUMBER]"]) expect(text(foot), l).toContain(l);
+    for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "Back to the top", "WhatsApp +91 95023 80998"]) expect(text(foot), l).toContain(l);
+    expect(foot).toContain('href="https://wa.me/919502380998?text=Hi%20Stack19%2C%20I&#x27;d%20like%20early%20access."');
     for (const gone of ["sources", "day", "leaddesk", "industries", "trust", "start"]) expect(home, gone).not.toContain(`id="${gone}"`);
     expect(home.match(/id="top"/g)).toHaveLength(1);
   });
@@ -98,7 +99,8 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     expect(text(faq)).not.toContain("KYC");
     const join = home.match(/<section id="(demo|join)"[\s\S]*?<\/section>/)![0];
     expect(text(join)).toContain("Your next enquiry deserves a call in 2 minutes.");
-    expect(text(join)).toContain("[WHATSAPP NUMBER]");
+    expect(text(join)).toContain("Or WhatsApp us on +91 95023 80998");
+    expect(home).not.toContain("[WHATSAPP NUMBER]");
     expect(text(join)).toContain("We call you once from our business number. No marketing messages.");
   });
   it("landing v2: the headline in two lines, each word rising out of a blur, the line under it, the trial button and Hear a call; branded Stack19 (no working name)", () => {

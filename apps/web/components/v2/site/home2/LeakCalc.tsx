@@ -105,7 +105,10 @@ export function LeakCalc({ w }: { w: W }) {
         </label>
         <span className="font-display text-xl font-extrabold tabular-nums">{show}</span>
       </div>
-      <input id={id} type="range" min={min} max={max} step={step} value={value} onChange={(e) => set(Number(e.target.value))} className="h-11 w-full accent-[#ff773c]" />
+      {/* the filled part is orange up to the value, the rest the light neutral track (home2.css .h2-range); the share filled comes in as --p on this wrapper */}
+      <div style={{ "--p": `${((value - min) / (max - min)) * 100}%` } as React.CSSProperties}>
+        <input id={id} type="range" min={min} max={max} step={step} value={value} onChange={(e) => set(Number(e.target.value))} className="h2-range block h-11 w-full" />
+      </div>
     </div>
   );
   return (
@@ -123,10 +126,8 @@ export function LeakCalc({ w }: { w: W }) {
             <label htmlFor="h2-avg" className="font-bold">
               {w["h2.leak.avg"]}
             </label>
-            <span className="inline-flex items-baseline gap-1">
-              <span className="font-display text-xl font-extrabold">₹</span>
-              <input id="h2-avg" type="text" inputMode="numeric" autoComplete="off" value={avg.toLocaleString("en-IN")} onChange={(e) => setAvg(Math.min(10_000_000, Number(e.target.value.replace(/[^\d]/g, "")) || 0))} className="min-h-11 w-[130px] border-0 bg-transparent text-right font-display text-xl font-extrabold tabular-nums text-ink" />
-            </span>
+            {/* "₹8,000": the sign is part of the field's text, right next to the number and right-aligned like the other values; only the digits are read back */}
+            <input id="h2-avg" type="text" inputMode="numeric" autoComplete="off" value={`₹${avg.toLocaleString("en-IN")}`} onChange={(e) => setAvg(Math.min(10_000_000, Number(e.target.value.replace(/[^\d]/g, "")) || 0))} className="min-h-11 w-[150px] border-0 bg-transparent text-right font-display text-xl font-extrabold tabular-nums text-ink" />
           </div>
         </div>
       </div>
