@@ -122,7 +122,8 @@ export function AssistantOrb({ state: given = "idle", size, still = false, analy
     const start = performance.now();
     const paint = (now: number) => {
       const w = Math.round((el.clientWidth || size || 40) * dpr);
-      if (el.width !== w) el.width = el.height = w;
+      // both sides: at a device pixel ratio of 1 a 300 px orb wants 300, which is also a canvas's default WIDTH, so a width-only check left the default height of 150 (a stretched egg)
+      if (el.width !== w || el.height !== w) el.width = el.height = w;
       const { state: s, analyser: a } = live.current;
       draw(ctx, w, calm ? 1.3 : (now - start) / 1000, s, level(a, buf));
     };

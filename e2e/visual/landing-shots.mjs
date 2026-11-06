@@ -96,6 +96,21 @@ try {
     await shot(p, `${name}-page-end`);
     await ctx.close();
   }
+  // every orb's canvas is square and as big as its box times the pixel ratio, at a device pixel ratio of 1 and of 2 (owner, 6 Nov 2026: at DPR 1 the closing orb kept a 300 x 150 bitmap)
+  for (const dpr of [1, 2])
+    for (const width of [1440, 390]) {
+      const ctx = await browser.newContext({ viewport: { width, height: 900 }, deviceScaleFactor: dpr });
+      await ctx.addCookies([{ name: "sme_consent", value: "1.a0", url: WEB_URL }]);
+      const p = await ctx.newPage();
+      await p.goto(`${WEB_URL}/`, { waitUntil: "domcontentloaded", timeout: 60_000 });
+      await p.waitForTimeout(1500);
+      for (let y = 0; y < 16000; y += 700) { await p.evaluate((yy) => window.scrollTo(0, yy), y); await p.waitForTimeout(100); }
+      await p.waitForTimeout(800);
+      const bad = await p.evaluate((d) => [...document.querySelectorAll("canvas[data-assistant-orb]")].filter((c) => c.clientWidth > 0).filter((c) => c.width !== c.height || Math.abs(c.width - Math.round(c.clientWidth * Math.min(d, 2))) > 1).map((c) => `${c.closest("section,footer,header")?.id || "?"} ${c.width}x${c.height} for ${c.clientWidth}x${c.clientHeight}`), dpr);
+      const n = await p.evaluate(() => document.querySelectorAll("canvas[data-assistant-orb]").length);
+      check(n > 0 && bad.length === 0, `${width} at DPR ${dpr}: all ${n} orb canvases are square and sized to their box${bad.length ? ` (${bad.join("; ")})` : ""}`);
+      await ctx.close();
+    }
   // the phone's meeting scene (#team) and radar (#finder), the desktop's designs scaled (owner, 6 Nov 2026), at 320-412 px and with Android's large text (115%): no two helper names touch, no name touches
   // another helper, and nothing in either section reaches past the screen
   for (const width of [320, 360, 375, 390, 412])
