@@ -289,6 +289,7 @@ class Settings(BaseSettings):
     # BROWSER_VOICE_ENABLED=true and the keys it speaks with are set (SARVAM_API_KEY,
     # CARTESIA_API_KEY, ANTHROPIC_API_KEY for the default turn model). Caps are per workspace.
     browser_voice_enabled: bool = False
+    voice_talk_primary: bool = False   # VOICE_TALK_PRIMARY: Live talk may speak with Cartesia (owner, 6 Nov 2026: off until the owner says so)
     browser_voice_session_seconds: int = 3600
     # Live conversation standard (owner, 31 Oct 2026): an unfinished thought is not
     # answered (A1/A2);

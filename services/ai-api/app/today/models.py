@@ -69,6 +69,8 @@ class NeedsYouItem(_Out):
         "person_requested",
         # 5 Nov 2026 (migration 20261231180000): a caller picked a free visit slot; a member books it in Visits, then marks the call done
         "visit_requested",
+        # 6 Nov 2026 (migration 20261231280000): our Cartesia cap, in the platform owner's workspace only: the day at 80 / 100 percent of its limit, the month at 80 / 100 percent of the plan
+        "voice_credits",
     ]
     id: uuid.UUID
     customer: str

@@ -17,7 +17,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import time
-from collections.abc import AsyncIterator, Callable, Mapping
+from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
 from contextlib import suppress
 from typing import Any
 
@@ -30,6 +30,7 @@ from app.pronunciation.speech import SpeechText
 from app.voice.interface import VoiceError
 
 log = logging.getLogger("app.conversation.voice")
+BUDGET_WAIT_S = 1.5
 
 EngineFactory = Callable[[VoiceChoice, str], StreamingTts]  # (the chosen voice, the language) -> a ready engine
 
@@ -56,7 +57,19 @@ class FallbackTts:
         self.served_engine = ""  # the engine that spoke the most recent piece: cartesia | sarvam_v4
         self.fallback_reason = ""  # "", "error", "timeout", "cooldown", "mid_stream"
         self.first_audio_ms: float | None = None
-        self.primary_off = ""  # why the primary is off for the rest of this call ("" while it is on): error | timeout | mid_stream, with the engine's code in the log
+        self.primary_off = ""  # why the primary is off for the rest of this call ("" while it is on): error | timeout | mid_stream | budget, with the engine's code in the log
+        # our spending cap on the primary (app/voice/budget.py): how many characters it may speak in this call. None: no cap is wired (a local run, a test). A pending reservation is awaited
+        # (briefly) before the primary's first sentence; past its allowance the call speaks with the fallback.
+        self.primary_budget: int | None = None
+        self.primary_chars = 0
+        self._budget_wait: Awaitable[int] | None = None
+
+    def set_primary_budget(self, budget: int | Awaitable[int]) -> None:
+        """The characters the primary may speak in this call: a number, or a reservation still on its way (awaited at most BUDGET_WAIT_S before the primary's first sentence; 0 if late)."""
+        if isinstance(budget, int):
+            self.primary_budget, self._budget_wait = max(0, budget), None
+        else:
+            self._budget_wait = budget
 
     def set_owner_words(self, words: list[OwnerWord]) -> None:
         """The workspace's own pronunciation words (Settings > Pronunciation): the next piece speaks with them."""
@@ -98,6 +111,16 @@ class FallbackTts:
         fallback_text = self._speech.prepare(text, language, voices.fallback.engine)
         now = self._clock()
         use_primary = not self.primary_off and not self._fallback_in_turn and now >= self._skip_primary_until.get(language, 0.0)
+        if use_primary and self._budget_wait is not None:
+            wait, self._budget_wait = self._budget_wait, None
+            try:
+                self.primary_budget = max(0, int(await asyncio.wait_for(asyncio.shield(asyncio.ensure_future(wait)), BUDGET_WAIT_S)))
+            except Exception:  # noqa: BLE001 - no allowance in time: the fallback speaks (never over the cap)
+                self.primary_budget = 0
+        if use_primary and self.primary_budget is not None and self.primary_chars + len(primary_text) > self.primary_budget:
+            use_primary = False
+            self._off_for_call("budget", voices.primary.engine, tag, None)
+            self.fallback_reason = "budget"
         if not use_primary and not self._fallback_in_turn:
             self.fallback_reason = self.fallback_reason or ("for_call" if self.primary_off else "cooldown")
         if use_primary:
@@ -119,6 +142,7 @@ class FallbackTts:
                 self._off_for_call("error", voices.primary.engine, tag, err)
             else:
                 self.served_engine = voices.primary.engine
+                self.primary_chars += len(primary_text)   # what the primary bills: the characters it was given, once it has started speaking them
                 self.first_audio_ms = self.first_audio_ms if self.first_audio_ms is not None else (time.perf_counter() - started) * 1000.0
                 yield first
                 died = False
