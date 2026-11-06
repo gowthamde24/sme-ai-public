@@ -102,6 +102,31 @@ try {
       }
       if (!tenant) throw new Error(`no workspace for ${pack}`);
       const base = `${WEB}/app/tenants/${tenant}`;
+      if (MODE === "appv4-check") {
+        // the owner's re-check (7 Nov): the first customer's timeline reads, and ONE practice line gets an answer (the only button pressed: Send in "Practice a call"; nothing is sent to anyone or kept)
+        await page.goto(base, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        const customer = (await page.locator('a[href*="/customers/"]').evaluateAll((as) => as.map((a) => a.getAttribute("href")))).find((h) => /[0-9a-f]{8}-[0-9a-f-]{27}$/.test(h ?? ""));
+        if (customer) {
+          await page.goto(`${WEB}${customer}`, { waitUntil: "domcontentloaded" });
+          await settle(page);
+          const rows = await page.locator('[data-part="customer-timeline"] > li').count();
+          const unread = await page.getByText("The timeline could not be read just now.").count();
+          console.log(`timeline: ${rows} rows${unread ? ", COULD NOT BE READ" : ""}`);
+          await page.screenshot({ path: path.join(OUT, `${SHORT[pack]}-customer-check-${size}.png`), fullPage: true });
+        } else console.log("timeline: Today links to no customer");
+        await page.goto(`${base}/ai-team/training`, { waitUntil: "domcontentloaded" });
+        await settle(page);
+        await page.getByLabel("What the customer says").fill("Do you have Kanchi silk sarees?");
+        await page.getByRole("button", { name: "Send" }).click();
+        const answer = page.locator('[data-part="tt-practice-turns"] [data-who="assistant"]').first();
+        const refusal = page.locator('[data-part="tt-practice"] [role="alert"]').first();
+        await Promise.race([answer.waitFor({ timeout: 45000 }), refusal.waitFor({ timeout: 45000 })]).catch(() => null);
+        console.log((await answer.count()) ? `practice: answered (${(await answer.innerText()).replace(/\s+/g, " ").slice(0, 160)})` : (await refusal.count()) ? `practice: refused (${await refusal.innerText()})` : "practice: no answer within 45 s");
+        await page.locator('[data-part="tt-practice"]').screenshot({ path: path.join(OUT, `${SHORT[pack]}-practice-check-${size}.png`) }).catch(() => null);
+        await context.close();
+        continue;
+      }
       if (MODE === "appv4") {
         // the pages, in order; a customer and a call are the first ones their list links to (none: that picture is left out, and said)
         const sz = size === "desktop" ? "1440" : size === "phone" ? "390" : "360";
