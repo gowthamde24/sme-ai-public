@@ -1,4 +1,4 @@
-# Catalogue
+# Catalogue & stock
 Your sarees, with photos. Show them to customers or send them in a message.
 {role=search} Search by name
 <search name=q label="Search by name" placeholder="Name, fabric or border" maxlength=100>

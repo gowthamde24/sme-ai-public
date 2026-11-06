@@ -368,7 +368,9 @@ def voice_numbers(line: Any, duration_s: float) -> dict[str, Any]:
     chars = {str(k): int(v) for k, v in sorted((getattr(line, "voice_chars", None) or {}).items())}
     total = sum(chars.values())
     return {"voice_chars": chars, "voice_chars_total": total, "voice_chars_per_min": round(total / (duration_s / 60), 1) if duration_s >= 1 else None,
-            "voice_primary_off": getattr(line, "voice_primary_off", "") or ""}
+            "voice_primary_off": getattr(line, "voice_primary_off", "") or "",
+            # owner, 6 Nov 2026: what the recogniser and the model were set to: the call's language (the recogniser follows it; never "auto"), and every switch with its reason
+            "languages": getattr(line, "languages", None)}
 
 
 def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_paise: int, outcome: str | None) -> dict[str, Any]:

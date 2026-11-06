@@ -9,6 +9,7 @@ import { listMaterialQuotes } from "@/lib/api/materials";
 
 import { readLeadLabel } from "../visits/visits-data";
 import { quoteWords } from "./material-words";
+import { menuTitle } from "../menu-title";
 
 /** The material quotes of a workspace, newest first (job CO), with the customer's name for each (a name that cannot be read is simply missing). */
 export async function MaterialQuotesPage({ accessToken, tenantId, lang }: { accessToken: string; tenantId: string; lang: Lang }) {
@@ -25,7 +26,7 @@ export async function MaterialQuotesPage({ accessToken, tenantId, lang }: { acce
   }
   return (
     <main className={pageMain} lang={lang}>
-      <QuotesListView base={`/app/tenants/${tenantId}`} words={quoteWords(lang)} quotes={quotes} customers={customers} />
+      <QuotesListView title={await menuTitle("quotes", lang, accessToken, tenantId)} base={`/app/tenants/${tenantId}`} words={quoteWords(lang)} quotes={quotes} customers={customers} />
     </main>
   );
 }

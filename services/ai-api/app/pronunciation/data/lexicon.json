@@ -2284,15 +2284,34 @@
    "word": "Stack19",
    "kind": "brand",
    "forms": {
-    "en": "Stack19"
+    "en": "Stack19",
+    "te": "Stack19",
+    "hi": "Stack19",
+    "kn": "Stack19",
+    "ta": "Stack19",
+    "ml": "Stack19",
+    "mr": "Stack19"
    },
    "aliases": [
     "Stack 19",
     "Stack-19"
    ],
-   "verified": [],
+   "verified": [
+    "en",
+    "te",
+    "hi",
+    "kn",
+    "ta",
+    "ml"
+   ],
    "sounds_like": {
-    "en": "Stack nineteen"
+    "en": "Stack Nineteen",
+    "te": "Stack Nineteen",
+    "hi": "Stack Nineteen",
+    "kn": "Stack Nineteen",
+    "ta": "Stack Nineteen",
+    "ml": "Stack Nineteen",
+    "mr": "Stack Nineteen"
    }
   },
   {

@@ -12,7 +12,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator, Callable
 
 from app.conversation.parts import StreamingLlm
-from app.opening.honesty import claims_to_be_human, honest_answer, is_identity_question
+from app.opening.honesty import claims_to_be_human, is_identity_question
 from app.telephony import persona, triggers
 
 VOICEMAIL_LOOKS = 2   # only the first lines of a call can be a mailbox greeting
@@ -48,7 +48,7 @@ class PhoneLlm:
             return
         if is_identity_question(last):
             self.honest_answers += 1
-            yield honest_answer(language, self._business)
+            yield persona.HONEST_AI.get(language, persona.HONEST_AI["en"])   # the owner's short, warm words (6 Nov 2026): honest, never claims to be human
             return
         if triggers.person_requested(last):
             # "let me talk to a person" (owner, 5 Nov 2026): the fixed hand-over line, and the call ends after it; the team calls back (Today shows the call); checked AFTER the identity question, which is answered honestly
@@ -59,7 +59,7 @@ class PhoneLlm:
         async for piece in self._inner.stream(system, messages, model):
             if claims_to_be_human(said + piece):
                 self.honest_answers += 1
-                yield honest_answer(language, self._business)
+                yield persona.HONEST_AI.get(language, persona.HONEST_AI["en"])   # the owner's short, warm words (6 Nov 2026): honest, never claims to be human
                 return
             said += piece
             yield piece

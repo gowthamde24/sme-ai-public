@@ -12,7 +12,7 @@ import { badgesOf, perUnit, soonest } from "./mat-logic";
 
 const BADGE_TONE = { inactive: "bg-surface-2 text-ink border border-edge", few_left: "bg-amber-bg text-amber-text", made_to_order: "bg-info-bg text-info-text" } as const;
 
-export type ProductsViewProps = {
+export type ProductsViewProps = { /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null;
   help?: React.ReactNode;
   base: string;
   words: TodayWords;
@@ -24,7 +24,7 @@ export type ProductsViewProps = {
 };
 
 /** The products of a business that sells building materials (job CO): a photo grid with the price per unit, the stock state and what a product lacks. Owner and Admin also see the hidden ones and can add a product. */
-export function ProductsView({ base, words, role, items, more, inStockOnly, help }: ProductsViewProps) {
+export function ProductsView({ title = null, base, words, role, items, more, inStockOnly, help }: ProductsViewProps) {
   const admin = role === "owner" || role === "admin";
   const first = items !== null && items.length === 0 && !inStockOnly;
   const toggle = inStockOnly ? base + "/materials" : base + "/materials?stock=1";
@@ -33,7 +33,7 @@ export function ProductsView({ base, words, role, items, more, inStockOnly, help
       <div data-screen="products" className="flex flex-col gap-5">
         <header className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-1">
-            <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{say(words, "nav.item.sarees")}</h1>
+            <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, "nav.item.sarees")}</h1>
             <p className="text-base text-muted">{say(words, "mat.products.sub")}</p>
           </div>
           {admin && !first ? (

@@ -113,8 +113,9 @@ def test_the_prompt_carries_the_training_and_the_greeting_always_says_it_is_an_a
     en = persona.opening_line("en", business="Lakshmi Silks", assistant=None, customer=None, inbound=True, greeting=greeting(doc, "en"))
     te = persona.opening_line("te", business="Lakshmi Silks", assistant=None, customer=None, inbound=True, greeting=greeting(doc, "te"))
     assert en == RULES["greeting"]["en"], "the Owner's greeting already says AI"
-    assert te.startswith(RULES["greeting"]["te"]) and "AI assistant" in te, "a greeting without 'AI' is followed by the standard opening, which says it"
-    assert persona.opening_line("hi", business="X", assistant=None, customer=None, inbound=True, greeting=greeting(doc, "hi")) == persona.INBOUND_OPENING["hi"].replace("{business}", "X")
+    # owner, 6 Nov 2026: the AI disclosure is in the FIRST sentence, so a greeting without 'AI' comes AFTER the standard opening's first sentence
+    assert te.endswith(RULES["greeting"]["te"]) and "AI" in persona.first_sentence(te), "a greeting without 'AI' follows the disclosure, never before it"
+    assert persona.opening_line("hi", business="X", assistant=None, customer=None, inbound=True, greeting=greeting(doc, "hi")) == persona.INBOUND_OPENING["hi"].replace("{business}", "X").replace("{assistant}", persona.DEFAULT_ASSISTANT)
 
 
 def test_never_say_matches_whole_words_whatever_the_case_spaces_or_punctuation() -> None:

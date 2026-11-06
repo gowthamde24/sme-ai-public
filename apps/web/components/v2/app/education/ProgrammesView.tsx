@@ -34,7 +34,7 @@ const MAX_TERMS = 6;
  * leaving a student's record is erased (with the authenticator code). A programme is a set of classes or a course, divided into sections, years, semesters or batches or nothing; it is never deleted, only made inactive. Owner and Admin write;
  * Sales read. The record of a student is the minimum, and nothing on this page names one.
  */
-export function ProgrammesView({ profile, programmes, role, words, actions, base }: { profile: ProfileOut; programmes: readonly ProgrammeOut[]; role: Role; words: TodayWords; actions: ProgrammesActions; base: string }) {
+export function ProgrammesView({ title = null, profile, programmes, role, words, actions, base }: { /** The page's H1: its menu row's word (owner rule, 6 Nov: the H1 is the menu's word); null = the view's own. */ title?: string | null; profile: ProfileOut; programmes: readonly ProgrammeOut[]; role: Role; words: TodayWords; actions: ProgrammesActions; base: string }) {
   const router = useRouter();
   const writer = role === "owner" || role === "admin";
   const [type, setType] = React.useState<string>(profile.institution_type ?? "school");
@@ -106,7 +106,7 @@ export function ProgrammesView({ profile, programmes, role, words, actions, base
   return (
     <div data-screen="programmes" className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{say(words, "nav.item.programmes")}</h1>
+        <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{title ?? say(words, "nav.item.programmes")}</h1>
         <p className="text-base text-muted">{say(words, "edu.prog.sub")}</p>
       </header>
 

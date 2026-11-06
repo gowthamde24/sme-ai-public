@@ -66,8 +66,6 @@ import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
 import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
 import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
-import { TalkTraining } from "@/components/v2/app/assistant/LazyTalkTraining";
-import { getTalkTraining } from "@/lib/api/talk-training";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
 import { Pronunciation } from "@/components/v2/app/assistant/LazyPronunciation";
@@ -85,7 +83,6 @@ import { chooseVoiceAction, chooseVoiceGenderAction } from "../voice-picker-acti
 import { readOpeningLine } from "@/lib/opening-line/source";
 import { currentAssistantName } from "@/lib/assistant/name";
 import { previewOpeningLineAction, saveOpeningLineAction } from "../opening-line-actions";
-import { resetTalkTrainingAction, saveTalkTrainingAction } from "../talk-training-actions";
 import { readConsents } from "@/lib/dpdp/source";
 import { RESPONSE_DAYS } from "@/lib/site/business";
 import { grievanceAction, setMarketingAction } from "../dpdp-actions";
@@ -276,8 +273,6 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const autoReply = section === "assistant" && autoReplyScreens() !== "off" ? await readAutoReply(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const pronunciation = section === "assistant" && pronunciationScreens() !== "off" ? await readPronunciation(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const openingLine = section === "assistant" && openingLineScreens() !== "off" ? await readOpeningLine(assistantCtx) : null;
-  // "How I talk to customers" (C1's talk-training): a part the API cannot read is left out, never a "Not available yet"
-  const talk = section === "assistant" && talkTrainingScreens() ? await getTalkTraining(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   // the voice picker (owner decision 28 Oct): one block per language the business talks in (its own languages and the assistant's main one, else the one in use) that the catalogue has a row for
   const voicePicker = section === "assistant" && voicePickerScreens() !== "off" ? await readVoicePicker(assistantCtx) : null;
   const pickerLangs: PickerLang[] = section === "assistant" && voicePicker?.mode === "ok" ? await getWorkspaceProfile(user.accessToken, tenantId).then((p) => p.languages, (e) => (e instanceof ApiAuthError ? redirect("/login") : [] as string[])).then((own) => pickerOrder([...own, ...(assistant?.mode === "ok" ? [assistant.settings.lang] : own.length === 0 ? [lang] : [])])) : [];
@@ -355,15 +350,13 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                   ) : null,
                   behaviour: (
                     <>
-                    {talk ? (
-                      <TalkTraining
-                        words={wordsFor(lang, ["tt."], ["today.err.mfa.link"])}
-                        initial={talk}
-                        langNames={CALL_LANG_NAMES}
-                        canEdit={tenant.role === "owner"}
-                        securityHref="/app/security"
-                        actions={{ save: saveTalkTrainingAction.bind(null, tenantId), reset: resetTalkTrainingAction.bind(null, tenantId) }}
-                      />
+                    {talkTrainingScreens() && tenant.role === "owner" ? (
+                      <section className={surface} data-part="tt-moved">
+                        <p className="text-base">{t("tt.open")}</p>
+                        <Link href={`${base}/ai-team/training`} className="mt-2 inline-flex min-h-11 items-center font-semibold text-brand-text underline underline-offset-2">
+                          {t("tt.open.link")}
+                        </Link>
+                      </section>
                     ) : null}
                     {autoReply?.mode === "ok" ? (
                       <AutoReply

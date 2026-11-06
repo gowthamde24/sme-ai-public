@@ -39,7 +39,7 @@ describe("OfficeView", () => {
     expect(items).toHaveLength(6);
     expect(items[0]).toHaveTextContent("Your assistantIdleJob of main.");
     expect(items[3]).toHaveTextContent("Quote WriterWorkingPrepares a quote from the prices you set.Prepared quote 3 · 3h");
-    expect(within(items[3]).getByRole("link")).toHaveAttribute("href", "/app/tenants/T/office?agent=quote_writer");
+    expect(within(items[3]).getByRole("link")).toHaveAttribute("href", "/app/tenants/T/ai-team?agent=quote_writer");
   });
   it("a helper that is not built yet (the Lead Finder) has no card and no tile: its name is nowhere (owner, 4 Nov)", () => {
     view(sample);

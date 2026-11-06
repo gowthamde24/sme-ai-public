@@ -19,6 +19,7 @@ import { STATUS_FILTER, type ProspectPage, type ProspectStats, type ProspectStat
 import { requireUser } from "@/lib/auth/session";
 
 import { approveSearchAction, cancelSearchAction, makeQuoteDraftAction, planSearchAction, practiceCallAction, prospectActionsAction, quoteDraftAction } from "./actions";
+import { menuTitle } from "../menu-title";
 
 export const metadata = { title: `Prospects · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -109,7 +110,7 @@ export default async function ProspectsPage({ params, searchParams }: PageProps<
   const count = (s: ProspectStatus) => stats?.byStatus[s];
   return (
     <main className={pageMain} lang={lang}>
-      <PageTop title={t("lf.title")} sub={t("lf.sub")} />
+      <PageTop title={await menuTitle("find", lang, token, tenantId)} sub={t("lf.sub")} />
       {finder?.source === "fixture" ? (
         <p role="note" className="mt-3 text-sm font-semibold text-info-text" data-demo="">
           {t("lf.demo")}

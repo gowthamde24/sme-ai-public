@@ -30,6 +30,8 @@ export async function targetPaths(accessToken: string, tenantId: string, targets
         return `${base}/campaigns/${target.id}`;
       case "fees": // the school's list of who has fees pending (the id is the workspace's own)
         return `${base}/fees/pending`;
+      case "billing": // the voice credits' warning (the id is the workspace's own): Settings > Plan & usage
+        return `${base}/settings?section=plan`;
       case "outbox_message":
       case "call_request":
       case "phone_call":

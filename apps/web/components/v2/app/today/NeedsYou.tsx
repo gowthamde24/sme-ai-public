@@ -39,6 +39,8 @@ const KIND: Record<NeedsYouItem["kind"], { kind: string; step: string; tone: str
   material_quote_approval: { kind: "today.kind.quote", step: "today.step.quote", tone: "bg-brand-bg text-brand-text", who: "today.fact.customer" },
   campaign_approval: { kind: "today.kind.campaign", step: "today.step.campaign", tone: "bg-brand-bg text-brand-text", who: "today.fact.campaign" },
   fees_overdue: { kind: "today.kind.fees", step: "today.step.fees", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
+  // Cartesia voice near or past its limit (C1, 6 Nov): the API's own sentence, and Plan & usage
+  voice_credits: { kind: "today.kind.voice", step: "today.step.voice", tone: "bg-amber-bg text-amber-text", who: "today.fact.what" },
 };
 /** The kinds whose one-line reason is made in the person's language by the server (the others' reasons are the API's English): their row shows it in every language. */
 const OWN_WORDS: readonly NeedsYouItem["kind"][] = ["prospect_waiting"];
@@ -183,7 +185,7 @@ function ClassicCard({ c, item, ctx }: { c: NeedsCard; item: NeedsYouItem; ctx: 
   const name = customerName(item.customer, words);
   // the row is SHORT (owner, 4 Nov: "Quote | Lakshmi · ₹40,000"): the amount when there is one, the hot lead's own gist (English only, as before), else just the name; the API's full sentence is in the opened card
   // a kind whose summary is OUR words (OWN_WORDS: the Lead Finder's "fit 64 · low stock") is short already and shown in every language
-  const reason = item.rowLine !== undefined ? item.rowLine : OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatRupeesShort(item.amount_paise) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : "";
+  const reason = item.rowLine !== undefined ? item.rowLine : OWN_WORDS.includes(item.kind) ? item.summary : item.amount_paise !== null ? formatRupeesShort(item.amount_paise) : item.kind === "hot_lead_waiting" && ctx.lang === "en" ? item.summary : item.kind === "voice_credits" ? item.summary : "";
   const tag = item.prospect?.needsOk ? say(words, "today.prospect.needsok") : null;
   if (ctx.compact && !open) {
     return (
