@@ -15,7 +15,8 @@ class FakeGlance:
         return {"as_of": str(as_of or "2026-11-06"), "owed_paise": 1200000, "overdue_paise": 700000, "customers_owing": 1, "customers_overdue": 1, "paid_this_month_paise": 300000, "top": [], "complete": True}
 
     def low_stock(self, token: str, tenant_id: Any) -> list[dict[str, Any]]:
-        return [{"id": "x", "name": "Red Kanchi silk", "stock_status": "few_left", "asked_this_week": 3, "asked_is_approximate": True}]
+        return [{"id": "x", "name": "Red Kanchi silk", "stock_status": "few_left", "quantity": None, "asked_this_week": 3, "asked_is_approximate": True},
+                {"id": "y", "name": "Cotton daily wear", "stock_status": "in_stock", "quantity": 2, "asked_this_week": 0, "asked_is_approximate": True}]
 
 
 def test_money_for_sellers_and_low_stock_for_every_member() -> None:
@@ -25,6 +26,7 @@ def test_money_for_sellers_and_low_stock_for_every_member() -> None:
     assert money.status_code == 200 and money.json()["owed_paise"] == 1200000 and money.json()["as_of"] == "2026-11-06"
     assert client.get(f"{base}/money/summary", headers=auth("a_viewer")).status_code == 403, "a Viewer reads no money"
     stock = client.get(f"{base}/catalogue/low-stock", headers=auth("a_viewer"))
-    assert stock.status_code == 200 and stock.json() == {"items": [{"id": "x", "name": "Red Kanchi silk", "stock_status": "few_left", "asked_this_week": 3, "asked_is_approximate": True}], "counts_available": False}
+    assert stock.status_code == 200 and stock.json()["counts_available"] is True
+    assert [(i["name"], i["quantity"]) for i in stock.json()["items"]] == [("Red Kanchi silk", None), ("Cotton daily wear", 2)], "a count when one is set ('2 left'), else the 'few left' status"
     off, _ = make_client()
     assert off.get(f"{base}/catalogue/low-stock", headers=auth("a_owner")).json()["error"]["code"] == "glance_unavailable"

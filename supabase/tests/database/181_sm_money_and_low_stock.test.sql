@@ -36,11 +36,25 @@ set local session_replication_role = replica;   -- fixture only: two active item
 insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, stock_status, active, item_kind, created_by, updated_by)
 values (tests.rid('i1'), tests.tid('a'), 'Red Kanchi silk', 'kanchi_pattu', array['red'], '10k_25k', 'few_left', true, 'saree', tests.uid('a_owner'), tests.uid('a_owner')),
        (tests.rid('i2'), tests.tid('a'), 'Cotton daily wear', 'cotton_silk', array['yellow'], 'under_5k', 'in_stock', true, 'saree', tests.uid('a_owner'), tests.uid('a_owner'));
+insert into public.catalogue_photos (id, tenant_id, item_id, position, bucket, path, thumb_path, content_type, width, height, bytes, thumb_bytes, created_by)
+select f.id, tests.tid('a'), f.item, 1, app.catalogue_bucket(tests.tid('a')), f.item::text || '/' || f.id::text || '.jpg', f.item::text || '/' || f.id::text || '_t.jpg', 'image/jpeg', 800, 1200, 1000, 100, tests.uid('a_owner')
+  from (select x as item, gen_random_uuid() as id from unnest(array[tests.rid('i1'), tests.rid('i2')]) x) f;
 set local session_replication_role = origin;
 insert into public.lead_profiles (tenant_id, lead_id, need) values (tests.tid('a'), tests.rid('a_lead'), 'Looking for a kanchi silk saree for a wedding');
 select is(tests.scalar_as(tests.uid('a_viewer'), format($q$select string_agg((x ->> 'name') || ':' || (x ->> 'asked_this_week'), ',') from jsonb_array_elements(public.catalogue_low_stock(%L)) x$q$, tests.tid('a'))),
           'Red Kanchi silk:1', 'C1 only "few left" items, each with how many asked this week (any member)');
 select throws_ok(format($q$select tests.scalar_as(%L, %L)$q$, tests.uid('b_owner'), format('select public.catalogue_low_stock(%L)::text', tests.tid('a'))), '42501', null, 'C2 another workspace: refused');
+
+-- D: the optional count (migration 20261231350000): when set, it decides ("2 left"); 3 or fewer is low
+select is(tests.scalar_as(tests.uid('a_admin'), format($q$select public.catalogue_quantity_set(%L, %L, 2) ->> 'quantity'$q$, tests.tid('a'), tests.rid('i2'))), '2', 'D1 an Admin counts the cotton sarees: 2');
+select is(tests.scalar_as(tests.uid('a_owner'), format($q$select public.catalogue_quantity_set(%L, %L, 12) ->> 'quantity'$q$, tests.tid('a'), tests.rid('i1'))), '12', 'D2 ... and the Kanchi silks: 12');
+select is(tests.scalar_as(tests.uid('a_viewer'), format($q$select string_agg((x ->> 'name') || ':' || coalesce(x ->> 'quantity', '-'), ',') from jsonb_array_elements(public.catalogue_low_stock(%L)) x$q$, tests.tid('a'))),
+          'Cotton daily wear:2', 'D3 the count decides: 2 left is low (whatever the status), 12 is not (whatever the status)');
+select is(tests.scalar_as(tests.uid('a_owner'), format($q$select public.catalogue_quantity_set(%L, %L, null) ->> 'quantity'$q$, tests.tid('a'), tests.rid('i1'))), null, 'D4 null stops counting');
+select is(tests.scalar_as(tests.uid('a_viewer'), format($q$select count(*)::text from jsonb_array_elements(public.catalogue_low_stock(%L)) x$q$, tests.tid('a'))), '2', 'D5 ... then the status decides again for that item');
+select throws_ok(format($q$select tests.scalar_as(%L, %L)$q$, tests.uid('a_sales'), format('select public.catalogue_quantity_set(%L, %L, 1)::text', tests.tid('a'), tests.rid('i1'))), '42501', null, 'D6 Sales cannot change the count');
+select throws_ok(format($q$select tests.scalar_as(%L, %L)$q$, tests.uid('a_owner'), format('select public.catalogue_quantity_set(%L, %L, -1)::text', tests.tid('a'), tests.rid('i1'))), '22023', null, 'D7 never below zero');
+select throws_ok(format($q$select tests.scalar_as(%L, %L)$q$, tests.uid('b_owner'), format('select public.catalogue_quantity_set(%L, %L, 1)::text', tests.tid('b'), tests.rid('i1'))), 'P0002', null, 'D8 another workspace''s item is not found from your own');
 
 select * from finish();
 rollback;

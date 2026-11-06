@@ -82,7 +82,7 @@ ROUTE_WORDS = frozenset(
         "topups", "upgrade", "upgrade-preview",
         "calculate", "materials", "sites", "dues", "customers", "invoices", "payments",
         "credit-limit", "credit-check", "ledger", "items", "photos", "order", "trips", "delivered",
-        "challan", "notify", "policy", "orders", "catalogue", "void",
+        "challan", "notify", "policy", "orders", "catalogue", "void", "quantity",
         # job CP: the shared ledger, reminder campaigns, the call list
         "statement", "entries", "charges", "receipts", "campaigns", "recipients", "from-ledger",
         "clear", "results", "call-list", "outcome",
