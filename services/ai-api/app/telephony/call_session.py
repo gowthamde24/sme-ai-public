@@ -55,8 +55,21 @@ class CallStore(Protocol):
 
 class CallVoiceSession(VoiceSession):
     is_phone = True   # a phone call never gets the speaker check (owner decision 31 Oct 2026: off until the December lawyer review)
-    # silence on a phone (owner, 6 Nov 2026): about 4 s quiet, one "హలో, ఉన్నారా?"; about 8 s in all, a short bye and the hang-up
-    silence_s = (4.0, 8.0)
+    # silence on a phone (owner, 6 Nov 2026): about 4 s quiet, one "హలో, ఉన్నారా?"; about 8 s in all, a short bye and the hang-up. Not while a person has taken the call over.
+    PHONE_SILENCE_S = (4.0, 8.0)
+
+    @property
+    def silence_s(self) -> tuple[float, float]:   # type: ignore[override]
+        return (1e9, 1e9) if self._taken_over() else self.PHONE_SILENCE_S
+
+    def _taken_over(self) -> bool:
+        return bool(getattr(getattr(getattr(self, "socket", None), "_line", None), "taken_over", False))
+
+    async def _answer(self, text: str, tm: Any) -> None:
+        """While a person has taken the call over, the AI does not answer (the caller's words still reach the transcript)."""
+        if self._taken_over():
+            return
+        await super()._answer(text, tm)
 
     def check_in_words(self) -> dict[str, str]:
         return persona.CALL_CHECK_IN

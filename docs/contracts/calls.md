@@ -73,3 +73,16 @@ While a call is live it also appears in `GET /assistant/activity` as a `call` it
 - **Also fixed:** a live call is reachable by its real id. Since 6 Nov its database row is written while the greeting plays, so Hang up and Whisper could not find it by that id before.
 
 Take over (the owner talks to the caller from the app) and Transfer (to a phone number) are not here yet. Transfer needs Exotel: our stream ends, and a Connect applet after it in the call flow dials the number. That's a real call leg and waits for the owner's decision.
+
+## Take over a live call from the app (app v4, 6 Nov 2026)
+
+WebSocket `wss://<api>/v1/tenants/{t}/calls/{id}/take-over` (Owner, Admin).
+1. **Sign in:** the first message is `{"type": "start", "access_token": "<the session's token>"}`, within 10 s. A browser cannot put a header on a WebSocket.
+2. **Server:** answers `{"type": "ready", "audio_in": {"format": "pcm_s16le", "sample_rate": 16000, "channels": 1}, "audio_out": {…16000…}}`.
+   - The AI's voice fades out, and it doesn't answer while the person is on.
+   - The call's silence hang-up pauses, but the call's length cap still applies.
+3. **Audio:** the server sends binary frames of the caller's audio (16-bit mono PCM, 16 kHz). The browser sends its microphone the same way, and the line resamples it to the call's rate. The caller may talk over the person, and nothing cuts them off.
+4. **Hand back:** `{"type": "hand_back"}`, or closing the socket, gives the call back to the AI, which answers the caller's next words.
+5. **Call over:** `{"type": "ended"}` when the call itself ends.
+6. **Errors:** `{"type": "error", "code": "unauthorized" | "forbidden" | "not_found" | "call_not_here" | "unavailable"}`, then the socket closes. `call_not_here` means the call runs on another server; try again.
+7. **Nothing is recorded.**

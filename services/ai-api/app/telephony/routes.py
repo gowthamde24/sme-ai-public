@@ -10,11 +10,13 @@ NOTE: no `from __future__ import annotations` here (request models are attached 
 
 # ruff: noqa: E501
 
+import asyncio
 import uuid
+from contextlib import suppress
 from datetime import datetime
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Depends, Query, Response
+from fastapi import APIRouter, Depends, Query, Response, WebSocket
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
@@ -112,3 +114,83 @@ async def hang_up(call_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> dict[st
     if not await live.hang_up(ctx.tenant.id, cid):
         raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
     return {"status": "ending"}
+
+
+@router.websocket("/{call_id}/take-over")
+async def take_over(ws: WebSocket, tenant_id: str, call_id: str) -> None:
+    """Take over a live call from the app (app v4; Owner, Admin). A browser cannot put a header on a WebSocket, so the FIRST message is {"type": "start", "access_token": ...} (within 10 s).
+    Then the AI's voice fades out and it answers no more; the server sends {"type": "ready", ...} and binary frames of the caller's audio (16-bit mono PCM, 16 kHz); the browser sends its
+    microphone the same way. {"type": "hand_back"}, or closing the socket, gives the call back to the AI. {"type": "ended"} when the call itself ends. Nothing is recorded."""
+    from fastapi.concurrency import run_in_threadpool
+    from starlette.websockets import WebSocketDisconnect
+
+    from app.browser_voice.routes import _authenticate
+
+    runtime: Runtime | None = getattr(ws.app.state, "runtime", None)
+    await ws.accept()
+
+    async def refuse(code: int, word: str) -> None:
+        with suppress(Exception):
+            await ws.send_json({"type": "error", "code": word})
+            await ws.close(code=code)
+
+    live = getattr(runtime, "live_calls", None) if runtime is not None else None
+    if runtime is None or live is None:
+        return await refuse(4503, "unavailable")
+    bv = getattr(runtime, "browser_voice", None)
+    origin = ws.headers.get("origin")
+    if origin and bv is not None and bv.allowed_origins and origin not in bv.allowed_origins:
+        return await refuse(4403, "forbidden")
+    try:
+        first = await asyncio.wait_for(ws.receive_json(), timeout=10.0)
+    except (TimeoutError, WebSocketDisconnect, ValueError, RuntimeError):
+        return await refuse(4401, "unauthorized")
+    token = first.get("access_token") if isinstance(first, dict) else None
+    if not isinstance(first, dict) or first.get("type") != "start" or not isinstance(token, str) or not token.strip():
+        return await refuse(4401, "unauthorized")
+    ctx = await run_in_threadpool(_authenticate, runtime, token.strip(), tenant_id)
+    if isinstance(ctx, tuple):
+        return await refuse(ctx[0], ctx[1])
+    if ctx.role not in (Role.OWNER, Role.ADMIN):
+        return await refuse(4403, "forbidden")
+    try:
+        cid = uuid.UUID(call_id)
+        await run_in_threadpool(_service(runtime).get, ctx.principal.token, ctx.tenant.id, cid)   # proves the call is this workspace's
+    except Exception:   # noqa: BLE001 - not a call of this workspace (or no such call)
+        return await refuse(4404, "not_found")
+    line = live.line_of(ctx.tenant.id, cid)
+    if line is None:
+        return await refuse(4409, "call_not_here")
+    caller = line.take_over()
+    await ws.send_json({"type": "ready", "audio_in": {"format": "pcm_s16le", "sample_rate": 16000, "channels": 1},
+                        "audio_out": {"format": "pcm_s16le", "sample_rate": 16000, "channels": 1}})
+
+    async def to_person() -> None:
+        while not line.closed():
+            try:
+                pcm = await asyncio.wait_for(caller.get(), 0.5)
+            except TimeoutError:
+                continue
+            await ws.send_bytes(pcm)
+        with suppress(Exception):
+            await ws.send_json({"type": "ended"})
+
+    sender = asyncio.ensure_future(to_person())
+    try:
+        while not line.closed():
+            message = await ws.receive()
+            if message.get("type") == "websocket.disconnect":
+                break
+            if message.get("bytes"):
+                await line.send_owner_audio(message["bytes"])
+            elif message.get("text") and '"hand_back"' in message["text"]:
+                break
+    except (WebSocketDisconnect, RuntimeError):
+        pass
+    finally:
+        line.hand_back()
+        sender.cancel()
+        with suppress(asyncio.CancelledError, Exception):
+            await sender
+        with suppress(Exception):
+            await ws.close()

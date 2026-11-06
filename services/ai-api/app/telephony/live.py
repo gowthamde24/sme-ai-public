@@ -25,6 +25,11 @@ class LiveCalls:
         if entry is not None:
             self._lines[row_id] = entry
 
+    def line_of(self, tenant_id: uuid.UUID, call_id: uuid.UUID) -> PhoneLine | None:
+        """The line of a call running here, for this workspace only (Take over)."""
+        entry = self._lines.get(call_id)
+        return entry[1] if entry is not None and entry[0] == tenant_id else None
+
     def whisper(self, tenant_id: uuid.UUID, call_id: uuid.UUID, text: str) -> bool:
         """Owner, Admin: a note only the AI hears, followed from its next sentence (app v4). False when the call is not here (another instance, or it ended)."""
         entry = self._lines.get(call_id)

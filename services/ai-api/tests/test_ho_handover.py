@@ -141,3 +141,75 @@ def test_the_whisper_route() -> None:
     assert c.post(url, json={"text": ""}, headers=auth("a_owner")).status_code == 422
     live.remove(DONE_ID)
     assert c.post(url, json={"text": "x"}, headers=auth("a_owner")).json()["error"]["code"] == "call_not_here"
+
+
+def test_while_a_person_has_the_call_the_ai_neither_answers_nor_hangs_up_for_silence() -> None:
+    from app.telephony.call_session import CallVoiceSession
+
+    session: Any = CallVoiceSession.__new__(CallVoiceSession)
+    line = type("L", (), {"taken_over": True, "whispers": []})()
+    session.socket = type("S", (), {"_line": line})()
+    assert session.silence_s == (1e9, 1e9)
+    asked: list[str] = []
+
+    async def base(self: Any, text: str, tm: Any) -> None:
+        asked.append(text)
+
+    import app.browser_voice.session as S
+
+    saved = S.VoiceSession._answer
+    S.VoiceSession._answer = base  # type: ignore[method-assign]
+    try:
+        asyncio.run(session._answer("hello?", None))
+        line.taken_over = False
+        asyncio.run(session._answer("hello again", None))
+    finally:
+        S.VoiceSession._answer = saved  # type: ignore[method-assign]
+    assert asked == ["hello again"] and session.silence_s == (4.0, 8.0)
+
+
+def test_the_take_over_socket_checks_the_sign_in_the_role_and_that_the_call_is_here() -> None:
+    from app.telephony.live import LiveCalls
+
+    class Line:
+        def __init__(self) -> None:
+            self.taken_over, self._closed = False, False
+            self.heard: list[bytes] = []
+            import asyncio as aio
+
+            self.q: aio.Queue[bytes] = aio.Queue()
+
+        def take_over(self) -> Any:
+            self.taken_over = True
+            self.q.put_nowait(b"\x01\x00" * 160)
+            return self.q
+
+        def hand_back(self) -> None:
+            self.taken_over = False
+
+        async def send_owner_audio(self, pcm: bytes) -> None:
+            self.heard.append(pcm)
+
+        def closed(self) -> bool:
+            return self._closed
+
+    live, line = LiveCalls(), Line()
+    live.add(TENANT_A.id, DONE_ID, line)  # type: ignore[arg-type]
+    c, _ = make_client(calls=CallsService(FakeCallsRepo(), clock=lambda: NOW), live_calls=live)
+    url = f"/v1/tenants/{TENANT_A.id}/calls/{DONE_ID}/take-over"
+    token = auth("a_owner")["Authorization"].split(" ", 1)[1]
+    with c.websocket_connect(url) as ws:
+        ws.send_json({"type": "start", "access_token": token})
+        assert ws.receive_json()["type"] == "ready" and line.taken_over
+        assert ws.receive_bytes() == b"\x01\x00" * 160, "the caller's audio"
+        ws.send_bytes(b"\x02\x00" * 320)
+        ws.send_json({"type": "hand_back"})
+    assert line.heard == [b"\x02\x00" * 320] and not line.taken_over, "the person's audio went to the call, then the call was handed back"
+    sales = auth("a_sales")["Authorization"].split(" ", 1)[1]
+    with c.websocket_connect(url) as ws:
+        ws.send_json({"type": "start", "access_token": sales})
+        assert ws.receive_json() == {"type": "error", "code": "forbidden"}
+    live.remove(DONE_ID)
+    with c.websocket_connect(url) as ws:
+        ws.send_json({"type": "start", "access_token": token})
+        assert ws.receive_json() == {"type": "error", "code": "call_not_here"}
