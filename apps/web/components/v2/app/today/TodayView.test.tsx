@@ -311,3 +311,36 @@ describe("Today: the greeting names the member, respectfully, in their language 
     expect(header.className).toContain("md:justify-between");
   });
 });
+
+describe("app v4: Today's hero (job-app-v4.md part 2)", () => {
+  const WORDS = { label: "Your assistant at work", coming: "Coming in", done: "Done today", talk: "Talk to your assistant", emptyIn: "No leads yet.", connect: "Connect a lead source" };
+  it("shows only real rows: the newest leads with their source, the counts that could be read, the sentence; the orb opens the conversation", async () => {
+    const { TodayHero } = await import("./hero/TodayHero");
+    render(
+      <TodayHero
+        incoming={[{ id: "l1", name: "Lakshmi Silks", source: "IndiaMART", href: "/app/tenants/t/leads/l1" }]}
+        results={[{ key: "quotes", text: "1,204 quotes waiting for your OK", href: "/app/tenants/t/quotes" }]}
+        sentence="I called back 14 enquiries today. 2 things need your OK."
+        words={WORDS}
+        talkHref="/app/tenants/t/talk"
+        connectHref={null}
+      />,
+    );
+    const hero = screen.getByRole("region", { name: "Your assistant at work" });
+    expect(within(hero).getAllByText("Lakshmi Silks").length).toBeGreaterThan(0);
+    expect(within(hero).getAllByText("IndiaMART").length).toBeGreaterThan(0);
+    expect(within(hero).getAllByText("1,204 quotes waiting for your OK").length).toBeGreaterThan(0);
+    expect(within(hero).getAllByText("I called back 14 enquiries today. 2 things need your OK.").length).toBeGreaterThan(0);
+    for (const a of within(hero).getAllByRole("link", { name: "Talk to your assistant" })) expect(a.getAttribute("href")).toBe("/app/tenants/t/talk");
+    expect(hero.querySelector('[data-hero-in="none"]')).toBeNull();
+  });
+  it("no leads: one row that says so, with one action for the people who may connect a source (and none for the others)", async () => {
+    const { TodayHero } = await import("./hero/TodayHero");
+    render(<TodayHero incoming={[]} results={[]} sentence="" words={WORDS} talkHref="/x" connectHref="/app/tenants/t/lead-sources" />);
+    expect(screen.getAllByText("No leads yet.").length).toBeGreaterThan(0);
+    for (const a of screen.getAllByRole("link", { name: "Connect a lead source" })) expect(a.getAttribute("href")).toBe("/app/tenants/t/lead-sources");
+    cleanup();
+    render(<TodayHero incoming={[]} results={[]} sentence="" words={WORDS} talkHref="/x" connectHref={null} />);
+    expect(screen.queryByRole("link", { name: "Connect a lead source" })).toBeNull();
+  });
+});

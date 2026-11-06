@@ -82442,5 +82442,280 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.v4.label": {
+  "en": "Your assistant at work",
+  "te": "పనిలో మీ అసిస్టెంట్",
+  "hi": "काम पर आपका असिस्टेंट",
+  "kn": "ಕೆಲಸದಲ್ಲಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.coming": {
+  "en": "Coming in",
+  "te": "వస్తున్నవి",
+  "hi": "आ रही पूछताछ",
+  "kn": "ಬರುತ್ತಿರುವವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.done": {
+  "en": "Done today",
+  "te": "ఈరోజు జరిగినవి",
+  "hi": "आज हुआ काम",
+  "kn": "ಇಂದು ಆದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.talk": {
+  "en": "Talk to your assistant",
+  "te": "మీ అసిస్టెంట్‌తో మాట్లాడండి",
+  "hi": "अपने असिस्टेंट से बात करें",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಜೊತೆ ಮಾತಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.empty.in": {
+  "en": "No leads yet.",
+  "te": "ఇంకా లీడ్స్ లేవు.",
+  "hi": "अभी कोई लीड नहीं।",
+  "kn": "ಇನ್ನೂ ಲೀಡ್‌ಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.connect": {
+  "en": "Connect a lead source",
+  "te": "లీడ్ సోర్స్ కనెక్ట్ చేయండి",
+  "hi": "लीड सोर्स जोड़ें",
+  "kn": "ಲೀಡ್ ಮೂಲ ಜೋಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.out.called.one": {
+  "en": "{n} called back today",
+  "te": "ఈరోజు {n} మందికి తిరిగి కాల్",
+  "hi": "आज {n} को कॉल बैक",
+  "kn": "ಇಂದು {n} ಮಂದಿಗೆ ಮರಳಿ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.out.called.other": {
+  "en": "{n} called back today",
+  "te": "ఈరోజు {n} మందికి తిరిగి కాల్",
+  "hi": "आज {n} को कॉल बैक",
+  "kn": "ಇಂದು {n} ಮಂದಿಗೆ ಮರಳಿ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.out.quotes.one": {
+  "en": "{n} quote waiting for your OK",
+  "te": "మీ OK కోసం {n} కొటేషన్",
+  "hi": "आपकी OK के लिए {n} कोटेशन",
+  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ {n} ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.out.quotes.other": {
+  "en": "{n} quotes waiting for your OK",
+  "te": "మీ OK కోసం {n} కొటేషన్లు",
+  "hi": "आपकी OK के लिए {n} कोटेशन",
+  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ {n} ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.out.visits.one": {
+  "en": "{n} store visit today",
+  "te": "ఈరోజు {n} స్టోర్ విజిట్",
+  "hi": "आज {n} स्टोर विज़िट",
+  "kn": "ಇಂದು {n} ಅಂಗಡಿ ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.out.visits.other": {
+  "en": "{n} store visits today",
+  "te": "ఈరోజు {n} స్టోర్ విజిట్లు",
+  "hi": "आज {n} स्टोर विज़िट",
+  "kn": "ಇಂದು {n} ಅಂಗಡಿ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.say.called.one": {
+  "en": "I called back {n} enquiry today.",
+  "te": "ఈరోజు {n} ఎంక్వైరీకి తిరిగి కాల్ చేశాను.",
+  "hi": "आज मैंने {n} पूछताछ पर कॉल बैक किया।",
+  "kn": "ಇಂದು {n} ವಿಚಾರಣೆಗೆ ಮರಳಿ ಕರೆ ಮಾಡಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.say.called.other": {
+  "en": "I called back {n} enquiries today.",
+  "te": "ఈరోజు {n} ఎంక్వైరీలకు తిరిగి కాల్ చేశాను.",
+  "hi": "आज मैंने {n} पूछताछ पर कॉल बैक किया।",
+  "kn": "ಇಂದು {n} ವಿಚಾರಣೆಗಳಿಗೆ ಮರಳಿ ಕರೆ ಮಾಡಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.say.waiting.one": {
+  "en": "{n} thing needs your OK.",
+  "te": "{n} విషయానికి మీ OK కావాలి.",
+  "hi": "{n} काम के लिए आपकी OK चाहिए।",
+  "kn": "{n} ವಿಷಯಕ್ಕೆ ನಿಮ್ಮ OK ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.say.waiting.other": {
+  "en": "{n} things need your OK.",
+  "te": "{n} విషయాలకు మీ OK కావాలి.",
+  "hi": "{n} कामों के लिए आपकी OK चाहिए।",
+  "kn": "{n} ವಿಷಯಗಳಿಗೆ ನಿಮ್ಮ OK ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.say.none": {
+  "en": "Nothing needs your OK right now.",
+  "te": "ఇప్పుడు మీ OK కావాల్సింది ఏమీ లేదు.",
+  "hi": "अभी किसी काम के लिए आपकी OK नहीं चाहिए।",
+  "kn": "ಈಗ ನಿಮ್ಮ OK ಬೇಕಾದದ್ದು ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.plan.title": {
+  "en": "Today's plan",
+  "te": "ఈరోజు ప్లాన్",
+  "hi": "आज की योजना",
+  "kn": "ಇಂದಿನ ಯೋಜನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.plan.calls.one": {
+  "en": "{n} call waiting for your OK",
+  "te": "మీ OK కోసం {n} కాల్",
+  "hi": "आपकी OK के लिए {n} कॉल",
+  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ {n} ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.plan.calls.other": {
+  "en": "{n} calls waiting for your OK",
+  "te": "మీ OK కోసం {n} కాల్స్",
+  "hi": "आपकी OK के लिए {n} कॉल",
+  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ {n} ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.plan.empty": {
+  "en": "Nothing planned yet. New enquiries will show here.",
+  "te": "ఇంకా ప్లాన్ ఏమీ లేదు. కొత్త ఎంక్వైరీలు ఇక్కడ కనిపిస్తాయి.",
+  "hi": "अभी कुछ तय नहीं। नई पूछताछ यहाँ दिखेगी।",
+  "kn": "ಇನ್ನೂ ಯೋಜನೆ ಇಲ್ಲ. ಹೊಸ ವಿಚಾರಣೆಗಳು ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.plan.start": {
+  "en": "Start",
+  "te": "ప్రారంభించండి",
+  "hi": "शुरू करें",
+  "kn": "ಪ್ರಾರಂಭಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.report.title": {
+  "en": "Your team's report",
+  "te": "మీ టీమ్ రిపోర్ట్",
+  "hi": "आपकी टीम की रिपोर्ट",
+  "kn": "ನಿಮ್ಮ ತಂಡದ ವರದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.report.body": {
+  "en": "Hear what each helper did today and what needs you tomorrow.",
+  "te": "ఈరోజు ప్రతి సహాయకుడు ఏం చేశాడో, రేపు మీకు ఏం కావాలో వినండి.",
+  "hi": "सुनें कि आज हर हेल्पर ने क्या किया और कल आपको क्या करना है।",
+  "kn": "ಇಂದು ಪ್ರತಿ ಸಹಾಯಕ ಏನು ಮಾಡಿದರು, ನಾಳೆ ನಿಮಗೆ ಏನು ಬೇಕು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.v4.report.open": {
+  "en": "Open the stand-up",
+  "te": "స్టాండ్-అప్ తెరవండి",
+  "hi": "स्टैंड-अप खोलें",
+  "kn": "ಸ್ಟ್ಯಾಂಡ್-ಅಪ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

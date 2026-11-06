@@ -23,7 +23,9 @@ import { readPackCards } from "@/lib/packs/pack-cards";
 import { LiveNowCard } from "@/components/v2/app/call/LiveNowCard";
 import { MOCK_CALL } from "@/lib/calls/mock";
 import { LANGUAGE_NAMES } from "@/i18n/lang";
-import { aiTeamScreens, assistantWorkScreens, callScreens } from "@/lib/screens/flag";
+import { aiTeamScreens, appV4, assistantWorkScreens, callScreens } from "@/lib/screens/flag";
+
+import { planOrReport, todayHero } from "./today-hero";
 import { OutcomesToday } from "@/components/v2/app/outcomes/OutcomesToday";
 import { wordsFor } from "@/i18n/app-words";
 import { readOutcomeTotals } from "@/lib/outcomes/source";
@@ -132,6 +134,9 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const standup = manages && aiTeamScreens() !== "off" ? await standupToday(tenantId, lang) : null;
   const topups = manages ? await topupsToday({ token: accessToken, tenantId, lang, owner: role === "owner" }) : null;
   const demo = await readIsDemo(accessToken, tenantId, shop);
+  // app v4 (APP_V4): the hero above the composer (part 2), from the real data read above
+  const hero = appV4() ? await todayHero({ token: accessToken, tenantId, lang, data, totals, role }) : null;
+  const plan = appV4() ? planOrReport({ tenantId, lang, data, hour: hourInIndia(), standup: manages && aiTeamScreens() !== "off" }) : null;
   // the "example data" banner (blueprint 3.2) is the first-run offer of a workspace made with a chosen business type; a workspace that existed before business types sees it only while a sample is loaded (so it can be removed)
   const showSample = sample !== null && (sample.loaded || (usesChecklist(pack) && pack?.hasExampleData !== false));
   const notice: ExampleNotice = example === "loaded" || example === "removed" || example === "reset" || example === "unavailable" || example === "failed" ? example : null;
@@ -139,7 +144,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const exampleLine = showSample && sample ? <ExampleBanner state={sample.loaded ? "loaded" : "available"} notice={notice} kept={kept} load={loadExampleAction.bind(null, tenantId)} remove={removeExampleAction.bind(null, tenantId)} reset={resetExampleAction.bind(null, tenantId)} t={t} /> : null;
   const intro = activation && activation.done < activation.total ? <div data-part="start"><ActivationCard collapse activation={activation} base={`/app/tenants/${tenantId}`} t={t} hide={setStepHiddenAction.bind(null, tenantId)} /></div> : null;
   const view = (
-      <TodayView chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live || standup ? <>{live}{standup}</> : null} outcomes={outcomes} packCards={packCards} newLeads={newLeads} hasOrders={!pack || pack.modules.includes("orders")} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
+      <TodayView hero={hero} plan={plan} chipKeys={chipKeys} demo={demo} exampleLine={exampleLine} intro={intro} live={live || standup ? <>{live}{standup}</> : null} outcomes={outcomes} packCards={packCards} newLeads={newLeads} hasOrders={!pack || pack.modules.includes("orders")} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
   );
   const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   return (
