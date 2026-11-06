@@ -285,6 +285,182 @@
    "kn": "draft"
   }
  },
+ "palette.goto": {
+  "en": "Go to",
+  "te": "వెళ్లండి",
+  "hi": "यहाँ जाएँ",
+  "kn": "ಇಲ್ಲಿಗೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.recent": {
+  "en": "Recent",
+  "te": "ఇటీవల",
+  "hi": "हाल के",
+  "kn": "ಇತ್ತೀಚಿನವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.pages": {
+  "en": "Pages",
+  "te": "పేజీలు",
+  "hi": "पेज",
+  "kn": "ಪುಟಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.records": {
+  "en": "Records",
+  "te": "రికార్డులు",
+  "hi": "रिकॉर्ड",
+  "kn": "ದಾಖಲೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.actions": {
+  "en": "Actions",
+  "te": "చర్యలు",
+  "hi": "काम",
+  "kn": "ಕ್ರಿಯೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.ask": {
+  "en": "Ask the assistant: {text}",
+  "te": "అసిస్టెంట్‌ను అడగండి: {text}",
+  "hi": "असिस्टेंट से पूछें: {text}",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಕೇಳಿ: {text}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.none": {
+  "en": "Nothing matches. Press Enter to ask your assistant.",
+  "te": "ఏదీ సరిపోలలేదు. అసిస్టెంట్‌ను అడగడానికి Enter నొక్కండి.",
+  "hi": "कुछ नहीं मिला। असिस्टेंट से पूछने के लिए Enter दबाएँ।",
+  "kn": "ಏನೂ ಹೊಂದಿಕೆಯಾಗಲಿಲ್ಲ. ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಕೇಳಲು Enter ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.keys": {
+  "en": "↑↓ to move · Enter to open · Esc to close",
+  "te": "↑↓ కదలడానికి · తెరవడానికి Enter · మూసివేయడానికి Esc",
+  "hi": "↑↓ चलने के लिए · खोलने के लिए Enter · बंद करने के लिए Esc",
+  "kn": "↑↓ ಸರಿಸಲು · ತೆರೆಯಲು Enter · ಮುಚ್ಚಲು Esc",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.searching": {
+  "en": "Searching…",
+  "te": "వెతుకుతోంది…",
+  "hi": "खोज रहे हैं…",
+  "kn": "ಹುಡುಕುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.add_lead": {
+  "en": "Add a lead",
+  "te": "లీడ్ జోడించండి",
+  "hi": "लीड जोड़ें",
+  "kn": "ಲೀಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.upload": {
+  "en": "Upload a file",
+  "te": "ఫైల్ అప్‌లోడ్ చేయండి",
+  "hi": "फ़ाइल अपलोड करें",
+  "kn": "ಫೈಲ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.find": {
+  "en": "Find new customers",
+  "te": "కొత్త కస్టమర్లను వెతకండి",
+  "hi": "नए ग्राहक खोजें",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.hours": {
+  "en": "Change calling hours",
+  "te": "కాల్ సమయాలు మార్చండి",
+  "hi": "कॉल का समय बदलें",
+  "kn": "ಕಾಲ್ ಸಮಯ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.train": {
+  "en": "Train how it talks",
+  "te": "ఎలా మాట్లాడాలో నేర్పండి",
+  "hi": "बात करने का तरीका सिखाएँ",
+  "kn": "ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "palette.act.topup": {
+  "en": "Top up",
+  "te": "టాప్ అప్",
+  "hi": "टॉप अप",
+  "kn": "ಟಾಪ್ ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "frame.notyet": {
   "en": "Not available yet",
   "te": "ఇంకా అందుబాటులో లేదు",

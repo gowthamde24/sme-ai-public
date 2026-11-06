@@ -79,6 +79,12 @@ const REPORTS = fx("reports");
 const MATERIALS = fx("materials");
 const EDU = fx("education");
 const extraRoutes = [
+  // C1's records search (docs/contracts/search.md), for the ⌘K palette: one lead of the stand-in's own, when its name is typed
+  ["GET", new RegExp(`^/v1/tenants/${TENANT}/search$`), (req, res) => {
+    const q = new URL(req.url, "https://x").searchParams.get("q") ?? "";
+    const hit = /anjali/i.test(q);
+    return json({ groups: hit ? [{ kind: "lead", items: [{ id: "55555555-5555-4555-8555-555555555555", title: "Anjali Boutique (example)", sub: "Hyderabad" }] }] : [] })(req, res);
+  }],
   ["GET", new RegExp(`^/v1/tenants/${TENANT}/orders$`), json(() => ({ items: [ORDERS.ORDER_JSON], next_cursor: null }))],
   ["GET", new RegExp(`^/v1/tenants/${TENANT}/followups/due$`), json(() => FOLLOWUPS.DUE_LIST_JSON)],
   ["GET", new RegExp(`^/v1/tenants/${TENANT}/trips$`), json(() => TRIPS.TRIP_LIST_JSON)],

@@ -6,6 +6,7 @@ import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { InstallHint } from "@/components/v2/pwa/LazyInstallHint";
 import { V2Root } from "@/components/v2/V2Root";
 import { frameLabels } from "@/i18n/app";
+import { paletteNames } from "./palette/names";
 import { authT } from "@/i18n/auth";
 import type { Lang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
@@ -52,7 +53,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
         </a>
         <SideNav memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} mark={small} />
         <div className="flex min-w-0 flex-1 flex-col">
-          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small}>
+          <TopBar memberships={list} labels={labels} email={email} signOut={signOut} mark={small} palette={paletteNames(lang)}>
             <span lang={lang}>
               <LangSelect lang={lang} label={t("lang.label")} />
             </span>

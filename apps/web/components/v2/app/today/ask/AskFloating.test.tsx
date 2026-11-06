@@ -186,18 +186,16 @@ describe("the floating orb (job DQ part 0)", () => {
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
   });
 
-  it("keyboard: '/' and Cmd or Ctrl+K open the panel; '/' typed into a field does not; on Today (a desktop) they put the cursor in the command bar's own line", async () => {
+  it("keyboard: '/' opens the panel; Cmd or Ctrl+K do not (the command palette's, owner 6 Nov); '/' typed into a field does not; on Today (a desktop) it puts the cursor in the command bar's own line", async () => {
     const { rerender } = render(harness(playing(ANSWER)));
     fireEvent.keyDown(window, { key: "/" });
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
     fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
     expect(screen.queryByRole("dialog")).toBeNull();
     fireEvent.keyDown(window, { key: "k", ctrlKey: true });
-    expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
     fireEvent.keyDown(window, { key: "k", metaKey: true });
-    expect(await screen.findByRole("dialog")).toBeInTheDocument();
-    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+    await new Promise((r) => setTimeout(r, 50));
+    expect(screen.queryByRole("dialog")).toBeNull();
     const field = document.createElement("input");
     document.body.appendChild(field);
     field.focus();
