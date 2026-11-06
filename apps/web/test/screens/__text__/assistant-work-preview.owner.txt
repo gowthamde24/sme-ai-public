@@ -85,7 +85,6 @@ form:
 IndiaMART CRM key
 <password label="IndiaMART CRM key" autocomplete=off described-by="Typed here only. It is never shown in the chat, never sent to the AI and never kept in the conversation.">
 [button type=submit: Save securely]
-[button type=button: Pull now]
 [Open Lead sources](/app/tenants/22222222-2222-2222-2222-222222222222/lead-sources)
 {label="Forward your lead e-mails here"}
 ### Forward your lead e-mails here

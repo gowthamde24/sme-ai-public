@@ -79869,6 +79869,17 @@
    "kn": "draft"
   }
  },
+ "bv.work.secret.err.renew": {
+  "en": "This box can't take the key any more. Ask me again for a new card.",
+  "te": "ఈ బాక్స్ ఇక కీని తీసుకోదు. కొత్త కార్డ్ కోసం నన్ను మళ్ళీ అడగండి.",
+  "hi": "यह बॉक्स अब की नहीं ले सकता। नए कार्ड के लिए मुझसे फिर पूछें।",
+  "kn": "ಈ ಬಾಕ್ಸ್ ಇನ್ನು ಕೀ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ. ಹೊಸ ಕಾರ್ಡ್‌ಗಾಗಿ ನನ್ನನ್ನು ಮತ್ತೆ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "bv.work.secret.err.forbidden": {
   "en": "Only the owner can save keys.",
   "te": "కీలను ఓనర్ మాత్రమే సేవ్ చేయగలరు.",
