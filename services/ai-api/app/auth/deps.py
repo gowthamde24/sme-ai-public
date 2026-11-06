@@ -188,6 +188,8 @@ class Runtime:
     workspace_secrets: Any = None
     # how the assistant talks on calls (app/talk_training: the Owner's training)
     talk_training: Any = None
+    # the ⌘K palette's search (app/search: one database read, the caller's own RLS)
+    search: Any = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
