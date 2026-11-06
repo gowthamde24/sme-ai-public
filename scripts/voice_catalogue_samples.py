@@ -3,6 +3,9 @@
 when someone clicks play (cost and caps). Run it again only when the catalogue (services/ai-api/app/conversation/data/voices.json) changes.
 
     CARTESIA_API_KEY=... [SARVAM_API_KEY=... --check-fallbacks] python scripts/voice_catalogue_samples.py [--only te-sindhu] [--check-fallbacks]
+    SARVAM_API_KEY=... python scripts/voice_catalogue_samples.py --only mr-ishita      # a voice whose PRIMARY is Sarvam (Marathi, 6 Nov 2026) is rendered with Sarvam
+
+Each voice is rendered by ITS primary engine, and only when that engine's key is in the environment (no Cartesia key: no Cartesia request at all). Sarvam renders stop before --sarvam-cap characters.
 
 Writes services/ai-api/app/conversation/data/samples/<voice id>.mp3: the spoken-style line of app.conversation.voices.SAMPLE_LINES in the voice's language with a neutral business name ("Sample Stores") and no person's name, one MP3 (44.1 kHz, 96 kbps, mono)
 per voice. Keys come from the environment only. Characters sent are counted and printed; `--check-fallbacks` sends a few words (about 60 characters in all) to each distinct Bulbul v4 Flash fallback voice to prove it exists."""
@@ -30,15 +33,35 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", help="one voice id")
     ap.add_argument("--check-fallbacks", action="store_true")
+    ap.add_argument("--sarvam-cap", type=int, default=400, help="characters the Sarvam-primary samples may send in this run")
     args = ap.parse_args()
     cfg = default_config()
     SAMPLES.mkdir(parents=True, exist_ok=True)
     chars = 0
     key = os.environ.get("CARTESIA_API_KEY", "")
+    sarvam_key, sarvam_chars = os.environ.get("SARVAM_API_KEY", ""), 0
+    if sarvam_key:
+        with httpx.Client(timeout=60) as client:
+            for c in cfg.catalogue.values():
+                if (args.only and c.id != args.only) or c.voices.primary.engine != "sarvam_v4":
+                    continue
+                text = sample_text(c.language)
+                if sarvam_chars + len(text) > args.sarvam_cap:
+                    print(f"stopping before {c.id}: {sarvam_chars} + {len(text)} characters would pass the Sarvam cap of {args.sarvam_cap}")
+                    break
+                p = c.voices.primary
+                r = client.post("https://api.sarvam.ai/text-to-speech", headers={"api-subscription-key": sarvam_key},
+                                json={"text": text, "language_code": TAG[c.language], "model": p.model, "speaker": p.voice, "pace": 1.05, "speech_sample_rate": 44100, "output_audio_codec": "mp3"})
+                sarvam_chars += len(text)
+                r.raise_for_status()
+                audio = base64.b64decode(r.json()["audios"][0])
+                c.sample_file.write_bytes(audio)
+                print(f"{c.id}: {len(audio) // 1024} KB (Sarvam {p.voice})")
+        print("characters sent to Sarvam for samples:", sarvam_chars)
     if key:
         with httpx.Client(timeout=60) as client:
             for c in cfg.catalogue.values():
-                if args.only and c.id != args.only:
+                if (args.only and c.id != args.only) or c.voices.primary.engine != "cartesia":
                     continue
                 text = sample_text(c.language)
                 chars += len(text)

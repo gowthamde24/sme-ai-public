@@ -1,6 +1,9 @@
 """Render the browser voice's 'one moment' lines once, for every voice of the catalogue (job DV follow-up). OPT-IN: it spends Cartesia characters; the key comes from the environment (CARTESIA_API_KEY) and is never printed.
 
   CARTESIA_API_KEY=... python scripts/voice_filler_bank.py [--cap 2500] [--only te-ramya]
+  SARVAM_API_KEY=... python scripts/voice_filler_bank.py --only mr-ishita --cap 200     # a voice whose PRIMARY is Sarvam (Marathi) speaks its lines with Sarvam
+
+Each voice speaks with ITS primary engine, and only when that engine's key is in the environment (no Cartesia key: no Cartesia request at all). The cap counts every engine's characters.
 
 For each catalogue voice it speaks the 3 to 4 lines of fillers.BANK_LINES for the voice's language through the SAME Cartesia engine class and pronunciation map that speak live (so the filler sounds like the voice),
 trims the silence at both ends, and writes raw 16-bit 24 kHz mono PCM to app/conversation/data/fillers/<voice>-<n>.pcm plus index.json. Characters are counted in code and the run stops before the cap (default 2,500)."""
@@ -16,8 +19,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
 from app.conversation.fillers import BANK_DIR, bank_lines  # noqa: E402
-from app.conversation.providers import CartesiaStreamTts  # noqa: E402
 from app.conversation.pronounce import default_pronunciations  # noqa: E402
+from app.conversation.providers import CartesiaStreamTts, SarvamStreamTts  # noqa: E402
 from app.conversation.voices import default_config  # noqa: E402
 
 RATE = 24000
@@ -44,9 +47,9 @@ async def main() -> int:
     ap.add_argument("--only", help="one catalogue voice id")
     ap.add_argument("--force", action="store_true", help="render again even when the lines are already there")
     args = ap.parse_args()
-    key = os.environ.get("CARTESIA_API_KEY", "")
-    if not key:
-        print("voice-filler-bank: set CARTESIA_API_KEY in the environment", file=sys.stderr)
+    key, sarvam_key = os.environ.get("CARTESIA_API_KEY", ""), os.environ.get("SARVAM_API_KEY", "")
+    if not key and not sarvam_key:
+        print("voice-filler-bank: set CARTESIA_API_KEY (or SARVAM_API_KEY for a Sarvam-primary voice) in the environment", file=sys.stderr)
         return 2
     cfg, pron = default_config(), default_pronunciations()
     BANK_DIR.mkdir(parents=True, exist_ok=True)
@@ -63,10 +66,17 @@ async def main() -> int:
             print(f"stopping before {voice.id}: {spent} + {need} characters would pass the cap of {args.cap}")
             break
         choice = voice.voices.primary
-        engine = CartesiaStreamTts(key, voice_id=choice.voice, model=choice.model)
+        if choice.engine == "sarvam_v4":
+            if not sarvam_key:
+                continue
+            engine: CartesiaStreamTts | SarvamStreamTts = SarvamStreamTts(sarvam_key, speaker=choice.voice, language=voice.language, model=choice.model)
+        else:
+            if not key:
+                continue
+            engine = CartesiaStreamTts(key, voice_id=choice.voice, model=choice.model)
         entries = []
         for n, text in enumerate(lines, start=1):
-            chunks = [c async for c in engine.stream(pron.apply(text, voice.language, "cartesia"), voice.language)]
+            chunks = [c async for c in engine.stream(pron.apply(text, voice.language, choice.engine), voice.language)]
             spent += len(text)
             pcm = trim(b"".join(chunks))
             name = f"{voice.id}-{n}.pcm"
@@ -75,7 +85,7 @@ async def main() -> int:
             print(f"{voice.id} {n}: {len(pcm) / 2 / RATE:.2f} s")
         index[voice.id] = {"language": voice.language, "lines": entries}
     (BANK_DIR / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-    print("characters sent to Cartesia:", spent)
+    print("characters sent (Cartesia and Sarvam):", spent)
     return 0
 
 

@@ -8,6 +8,8 @@ the live talk, to "unsupported_language" elsewhere, never to an error); the feat
 
 from __future__ import annotations
 
+import copy
+import json
 import re
 from pathlib import Path
 from types import SimpleNamespace
@@ -24,7 +26,7 @@ from app.browser_voice.session import SAID, VoiceSession
 from app.conversation import fillers, style, turntaking
 from app.conversation.picker import out as voices_out
 from app.conversation.voices import (
-    CALL_LANGUAGES,
+    DEFAULT_FILE,
     SPEAKS_INSTEAD,
     default_config,
     parse_config,
@@ -204,14 +206,36 @@ def test_marathi_has_the_style_and_filler_words_of_a_call() -> None:
     assert "mr" in sample_text("mr") or DEVANAGARI.search(sample_text("mr"))
 
 
-# ------------------------------------------------------------------------------------------------ no voice yet: safe
-def test_a_call_language_without_a_voice_loads_and_is_unsupported() -> None:
+# ------------------------------------------------------------------------------------------------ Marathi's voices (6 Nov 2026: Sarvam only, a draft)
+def test_marathi_speaks_with_sarvam_only_and_its_fallback_is_another_sarvam_voice() -> None:
     cfg = default_config()
-    assert "mr" in CALL_LANGUAGES and not cfg.has_voices("mr")
-    with pytest.raises(VoiceError) as err:
-        cfg.default_for("mr")
-    assert err.value.code == "unsupported_language"
-    assert "mr" not in [row.language for row in voices_out(cfg, {}).languages], "GET /voices lists only languages with voices"
+    assert cfg.has_voices("mr") and "mr" in [row.language for row in voices_out(cfg, {}).languages]
+    for gender in ("female", "male"):
+        v = cfg.for_language("mr", None, gender)
+        assert v.primary.engine == v.fallback.engine == "sarvam_v4" and "_mr_" in v.primary.voice and "_mr_" in v.fallback.voice
+        assert v.primary.voice != v.fallback.voice and v.fallback.gender == gender
+
+
+def test_marathi_now_must_keep_its_voices_and_a_session_without_one_still_speaks_hindi() -> None:
+    raw = json.loads(DEFAULT_FILE.read_text(encoding="utf-8"))
+    raw["catalogue"] = [c for c in raw["catalogue"] if c["language"] != "mr"]
+    with pytest.raises(ValueError, match="language mr needs exactly one"):
+        parse_config(raw)
+    assert SPEAKS_INSTEAD == {"mr": "hi"}, "a voice lookup that fails for Marathi still answers in Hindi rather than in silence (app/browser_voice/session.py _speakable)"
+
+
+def test_only_a_one_engine_language_may_fall_back_to_the_same_engine_and_never_to_the_same_voice() -> None:
+    raw = json.loads(DEFAULT_FILE.read_text(encoding="utf-8"))
+    same_voice = copy.deepcopy(raw)
+    mr = next(c for c in same_voice["catalogue"] if c["language"] == "mr")
+    mr["fallback"]["voice"] = mr["primary"]["voice"]
+    with pytest.raises(ValueError, match="different"):
+        parse_config(same_voice)
+    telugu_on_sarvam = copy.deepcopy(raw)
+    te = next(c for c in telugu_on_sarvam["catalogue"] if c["language"] == "te")
+    te["primary"] = {"engine": "sarvam_v4", "model": "bulbul:v4-flash", "voice": "tarun_te_narration"}
+    with pytest.raises(ValueError, match="different engine"):
+        parse_config(telugu_on_sarvam)
 
 
 def test_the_six_voiced_languages_still_need_their_defaults() -> None:
@@ -227,10 +251,10 @@ def test_the_six_voiced_languages_still_need_their_defaults() -> None:
          "primary": {"engine": c.voices.primary.engine, "model": c.voices.primary.model, "voice": c.voices.primary.voice},
          "fallback": {"engine": c.voices.fallback.engine, "model": c.voices.fallback.model, "voice": c.voices.fallback.voice, "gender": c.voices.fallback.gender}}
         for c in cfg.catalogue.values() if c.language == "ml"]]]}
-    assert not parse_config(everything).has_voices("mr"), "the real catalogue, rebuilt: loads without a Marathi voice"
-    one_mr = dict(raw["catalogue"][0], id="mr-test", language="mr", default=False)
+    assert parse_config(everything).has_voices("mr"), "the real catalogue, rebuilt: Marathi has its voices"
+    one_mr = dict(raw["catalogue"][0], id="mr-test", language="mr", default=True)
     with pytest.raises(ValueError, match="language mr needs exactly one"):
-        parse_config({"catalogue": [*everything["catalogue"], one_mr]})   # once Marathi has a voice, it needs its defaults like every language
+        parse_config({"catalogue": [*everything["catalogue"], one_mr]})   # Marathi needs exactly one default per gender, like every language
 
 
 def _parts(voiced: set[str]) -> SimpleNamespace:
@@ -258,3 +282,10 @@ def test_the_feature_texts_outside_m1_fall_back_to_english() -> None:
     assert ask_text("mr", "Sample Stores") == ask_text("en", "Sample Stores")
     at = datetime(2026, 11, 10, 6, 30, tzinfo=UTC)
     assert visit_text("reminder", "mr", at) == visit_text("reminder", "en", at)
+
+
+def test_a_marathi_call_listens_for_marathi_in_its_own_script() -> None:
+    from app.browser_voice.routes import stt_mode_for
+    from app.voice.interface import TAGS as LANGUAGE_TAGS
+
+    assert LANGUAGE_TAGS["mr"] == "mr-IN" and stt_mode_for("mr") == "verbatim", "the phone recogniser is pinned to the call's language: mr-IN, Devanagari as said (like Hindi)"

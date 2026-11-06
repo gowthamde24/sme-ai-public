@@ -814,7 +814,7 @@ class VoiceSession:
                     await self.playout.write(pcm)
                 if self.parts.greeting_keep is not None and spoken and not getattr(self.tts, "primary_off", ""):
                     with suppress(Exception):
-                        self.parts.greeting_keep(self.language, text, bytes(spoken), rate=self.tts.sample_rate, engine=str(getattr(self.tts, "served_engine", "") or ""))
+                        self.parts.greeting_keep(self.language, text, bytes(spoken), rate=self.tts.sample_rate, engine=str(getattr(self.tts, "served_engine", "") or ""), primary=getattr(self.tts, "served_primary", None))
             await self._audio_end(0)
 
         self._greeting = asyncio.ensure_future(speak())

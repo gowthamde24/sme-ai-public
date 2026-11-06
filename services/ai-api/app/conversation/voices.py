@@ -17,10 +17,12 @@ from app.voice.interface import VoiceError
 
 ENGINES: tuple[str, ...] = ("cartesia", "sarvam_v4")
 CALL_LANGUAGES: tuple[str, ...] = ("te", "en", "hi", "kn", "ta", "ml", "mr")
-# The call languages that MUST have voices in the catalogue. Marathi (job M1, owner decision 5 Nov 2026) is a call language with no voice yet: the file may add its voices later (then, like every
-# language, exactly one default per gender); until then GET /voices does not list it and `default_for("mr")` is "unsupported_language", the way any language without a voice was before.
-VOICED_LANGUAGES: tuple[str, ...] = ("te", "en", "hi", "kn", "ta", "ml")
-# where a language has no voice yet, the live talk listens and answers in the language of the same script that has voices (what a Marathi speaker got before Marathi was a language)
+# The call languages that MUST have voices in the catalogue (exactly one default per gender). Marathi (job M1, owner decision 5 Nov 2026) has Sarvam voices since 6 Nov 2026 (owner's queue:
+# "Marathi on calls via Sarvam", a draft until a native speaker reviews it).
+VOICED_LANGUAGES: tuple[str, ...] = ("te", "en", "hi", "kn", "ta", "ml", "mr")
+# languages only ONE engine speaks well enough today: their fallback is a DIFFERENT VOICE of the same engine (an outage of that engine silences both; the call loop then says its hand-over line)
+ONE_ENGINE_LANGUAGES: tuple[str, ...] = ("mr",)
+# where a language has no voice (a catalogue file without Marathi voices), the live talk listens and answers in the language of the same script that has voices
 SPEAKS_INSTEAD: dict[str, str] = {"mr": "hi"}
 TAGS: tuple[str, ...] = ("calm", "warm", "deep", "bright", "young", "mature", "energetic")
 GENDERS: tuple[str, ...] = ("female", "male")
@@ -150,8 +152,8 @@ def parse_config(data: object) -> VoiceConfig:
         if gender not in GENDERS or not 0 < len(label) <= 20 or not name:
             raise ValueError(f"{where}: name, a label of at most 20 characters and a gender ({GENDERS}) are required")
         primary, fallback = _choice(raw.get("primary"), f"{where}.primary"), _choice(raw.get("fallback"), f"{where}.fallback", fallback=True)
-        if primary.engine == fallback.engine:
-            raise ValueError(f"{where}: the fallback must be a different engine from the primary")
+        if primary.engine == fallback.engine and (lang not in ONE_ENGINE_LANGUAGES or primary.voice == fallback.voice):
+            raise ValueError(f"{where}: the fallback must be a different engine from the primary (or, for {ONE_ENGINE_LANGUAGES}, a different voice)")
         if fallback.gender != gender:
             raise ValueError(f"{where}: the fallback voice must be the same gender as the voice")
         tags = tuple(str(t) for t in raw.get("tags", ()))

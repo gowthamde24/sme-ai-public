@@ -31,6 +31,7 @@ from app.voice.interface import VoiceError
 
 log = logging.getLogger("app.conversation.voice")
 BUDGET_WAIT_S = 1.5
+BUDGETED_ENGINE = "cartesia"   # our spending cap (app/voice/budget.py) is on this engine only: a language whose primary is Sarvam (Marathi) is never counted or capped
 
 EngineFactory = Callable[[VoiceChoice, str], StreamingTts]  # (the chosen voice, the language) -> a ready engine
 
@@ -55,6 +56,7 @@ class FallbackTts:
         self._skip_primary_until: dict[str, float] = {}
         self._fallback_in_turn = False
         self.served_engine = ""  # the engine that spoke the most recent piece: cartesia | sarvam_v4
+        self.served_primary = False  # the most recent piece came from the language's PRIMARY voice (what a kept greeting must be)
         self.fallback_reason = ""  # "", "error", "timeout", "cooldown", "mid_stream"
         self.first_audio_ms: float | None = None
         self.primary_off = ""  # why the primary is off for the rest of this call ("" while it is on): error | timeout | mid_stream | budget, with the engine's code in the log
@@ -88,6 +90,7 @@ class FallbackTts:
     def begin_turn(self) -> None:
         self._fallback_in_turn = False
         self.served_engine = self.fallback_reason = ""
+        self.served_primary = False
         self.first_audio_ms = None
 
     def _engine(self, choice: VoiceChoice, language: str) -> StreamingTts:
@@ -111,13 +114,14 @@ class FallbackTts:
         fallback_text = self._speech.prepare(text, language, voices.fallback.engine)
         now = self._clock()
         use_primary = not self.primary_off and not self._fallback_in_turn and now >= self._skip_primary_until.get(language, 0.0)
-        if use_primary and self._budget_wait is not None:
+        budgeted = voices.primary.engine == BUDGETED_ENGINE
+        if use_primary and budgeted and self._budget_wait is not None:
             wait, self._budget_wait = self._budget_wait, None
             try:
                 self.primary_budget = max(0, int(await asyncio.wait_for(asyncio.shield(asyncio.ensure_future(wait)), BUDGET_WAIT_S)))
             except Exception:  # noqa: BLE001 - no allowance in time: the fallback speaks (never over the cap)
                 self.primary_budget = 0
-        if use_primary and self.primary_budget is not None and self.primary_chars + len(primary_text) > self.primary_budget:
+        if use_primary and budgeted and self.primary_budget is not None and self.primary_chars + len(primary_text) > self.primary_budget:
             use_primary = False
             self._off_for_call("budget", voices.primary.engine, tag, None)
             self.fallback_reason = "budget"
@@ -141,8 +145,9 @@ class FallbackTts:
                 log.warning("tts_primary_failed engine=%s language=%s code=%s", voices.primary.engine, tag, getattr(err, "code", type(err).__name__))
                 self._off_for_call("error", voices.primary.engine, tag, err)
             else:
-                self.served_engine = voices.primary.engine
-                self.primary_chars += len(primary_text)   # what the primary bills: the characters it was given, once it has started speaking them
+                self.served_engine, self.served_primary = voices.primary.engine, True
+                if budgeted:
+                    self.primary_chars += len(primary_text)   # what the capped engine bills: the characters it was given, once it has started speaking them
                 self.first_audio_ms = self.first_audio_ms if self.first_audio_ms is not None else (time.perf_counter() - started) * 1000.0
                 yield first
                 died = False
@@ -185,7 +190,7 @@ class FallbackTts:
             async for chunk in self._engine(voices.fallback, language).stream(fallback_text, language):
                 if not spoke:
                     spoke = True
-                    self.served_engine = voices.fallback.engine
+                    self.served_engine, self.served_primary = voices.fallback.engine, False
                     self.first_audio_ms = self.first_audio_ms if self.first_audio_ms is not None else (time.perf_counter() - started) * 1000.0
                 yield chunk
         except Exception as err:
