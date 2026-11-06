@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -1072,7 +1073,20 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+        # phone calls (owner, 6 Nov 2026: the first sound within 1.5 s of pickup):
+        # greetings rendered and connections opened in the background, then kept warm
+        stop_warm = asyncio.Event()
+        warming: asyncio.Task[None] | None = None
+        phone = getattr(runtime, "phone_inbound", None) if runtime is not None else None
+        voice = getattr(runtime, "browser_voice", None) if runtime is not None else None
+        if phone is not None and voice is not None:
+            from app.telephony.greeting_audio import start_warm
+
+            warming = asyncio.create_task(start_warm(phone, voice, stop=stop_warm))
         yield
+        stop_warm.set()
+        if warming is not None:
+            warming.cancel()
         if runtime is not None:
             if runtime.agents is not None and runtime.agents.executor is not None:
                 runtime.agents.executor.shutdown()
