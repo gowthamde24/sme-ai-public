@@ -62,7 +62,7 @@ describe("Calls > Phone calls", () => {
 describe("one call", () => {
   const detail = (over: Record<string, unknown> = {}) => parseCallDetail({ ...ROW, summary: "Lakshmi wants a red Kanchi silk saree for a wedding.", captured: { saree: "Kanchi silk", visit_day: "Saturday" }, transcript: [{ who: "assistant", text: "Hello! I am the AI assistant.", t: 1 }, { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి.", t: 4 }], correction: null, ...over }, C);
   it("live: the newest line biggest and whole, in its own language; what they want; where they are; no Listen, Whisper or Take over", () => {
-    render(<CallView call={detail({ live: true, state: "in_progress", elapsed_s: 4 })} base={BASE} w={W} when={when} language="Telugu" stages={stagesDone(["arrival"], true)} end={<button type="button">End call</button>} correct={null} />);
+    render(<CallView call={detail({ live: true, state: "in_progress", elapsed_s: 4 })} base={BASE} w={W} when={when} language="Telugu" canRead stages={stagesDone(["arrival"], true)} end={<button type="button">End call</button>} correct={null} />);
     const lines = document.querySelectorAll('[data-part="call-captions"] li');
     expect(lines).toHaveLength(2);
     expect(lines[1].querySelector("span[lang]")).toHaveAttribute("lang", "te");
@@ -73,7 +73,7 @@ describe("one call", () => {
     expect(document.querySelector('[data-part="call-summary"]')).toBeNull();
   });
   it("finished: the correction first with the assistant's words beside it, the note, the transcript; Sales reads no transcript", () => {
-    render(<CallView call={detail({ correction: { summary: "Wants two sarees.", captured: { visit_day: "Sunday" }, note: "Kanchi pattu means Kanchipuram silk", corrected_at: "2026-11-06T06:00:00Z" } })} base={BASE} w={W} when={when} language="Telugu" stages={null} end={null} correct={<span data-correct />} />);
+    render(<CallView call={detail({ correction: { summary: "Wants two sarees.", captured: { visit_day: "Sunday" }, note: "Kanchi pattu means Kanchipuram silk", corrected_at: "2026-11-06T06:00:00Z" } })} base={BASE} w={W} when={when} language="Telugu" canRead stages={null} end={null} correct={<span data-correct />} />);
     const summary = document.querySelector('[data-part="call-summary"]')!;
     expect(summary).toHaveTextContent("Wants two sarees.");
     expect(summary).toHaveTextContent("You corrected this.");
@@ -83,8 +83,12 @@ describe("one call", () => {
     expect(document.querySelector('[data-part="call-transcript"]')).not.toBeNull();
     expect(document.querySelector('[data-part="call-where"]')).toBeNull();
     cleanup();
-    render(<CallView call={detail({ transcript: null, live: true, state: "in_progress" })} base={BASE} w={W} when={when} language={null} stages={null} end={null} correct={null} />);
+    render(<CallView call={detail({ transcript: null, live: true, state: "in_progress" })} base={BASE} w={W} when={when} language={null} stages={null} end={null} correct={null} canRead={false} />);
     expect(screen.getByText("Only the owner and admins read what is said on a call.")).toBeInTheDocument();
+    cleanup();
+    // an Owner whose request reached another server: no lines yet (C1 #405), never "not yours"
+    render(<CallView call={detail({ transcript: null, live: true, state: "in_progress" })} base={BASE} w={W} when={when} language={null} stages={null} end={null} correct={null} canRead />);
+    expect(screen.getByText("Nothing said yet.")).toBeInTheDocument();
   });
 });
 
@@ -101,7 +105,7 @@ describe("Show English (owner, 7 Nov 2026)", () => {
     };
   afterEach(() => window.localStorage.clear());
   it("the English line sits under each line that is not English, on by default; the switch is remembered for this person", () => {
-    render(<CallView call={withEnglish()} base={BASE} w={W} when={when} language="Telugu" stages={null} end={null} correct={null} english={english("u1")} />);
+    render(<CallView call={withEnglish()} base={BASE} w={W} when={when} language="Telugu" canRead stages={null} end={null} correct={null} english={english("u1")} />);
     const lines = document.querySelectorAll('[data-part="call-captions"] li');
     expect(lines[1].querySelector("[data-en]")).toHaveTextContent("Yes, I need a Kanchi silk saree for a wedding.");
     expect(lines[1].querySelector("[data-en]")).toHaveAttribute("lang", "en");
@@ -114,14 +118,14 @@ describe("Show English (owner, 7 Nov 2026)", () => {
     expect(window.localStorage.getItem("sme.calls.showEnglish.u1")).toBe("0");
     cleanup();
     // the same person again: still off; another person: on
-    render(<CallView call={withEnglish()} base={BASE} w={W} when={when} language="Telugu" stages={null} end={null} correct={null} english={english("u1")} />);
+    render(<CallView call={withEnglish()} base={BASE} w={W} when={when} language="Telugu" canRead stages={null} end={null} correct={null} english={english("u1")} />);
     expect(screen.getByRole("switch", { name: "Show English" })).toHaveAttribute("aria-checked", "false");
     cleanup();
-    render(<CallView call={withEnglish()} base={BASE} w={W} when={when} language="Telugu" stages={null} end={null} correct={null} english={english("u2")} />);
+    render(<CallView call={withEnglish()} base={BASE} w={W} when={when} language="Telugu" canRead stages={null} end={null} correct={null} english={english("u2")} />);
     expect(screen.getByRole("switch", { name: "Show English" })).toHaveAttribute("aria-checked", "true");
   });
   it("no English line anywhere: no switch", () => {
-    render(<CallView call={withEnglish({ transcript: [{ who: "caller", text: "Yes, Saturday.", t: 1, text_en: null }] })} base={BASE} w={W} when={when} language={null} stages={null} end={null} correct={null} english={english("u1")} />);
+    render(<CallView call={withEnglish({ transcript: [{ who: "caller", text: "Yes, Saturday.", t: 1, text_en: null }] })} base={BASE} w={W} when={when} language={null} canRead stages={null} end={null} correct={null} english={english("u1")} />);
     expect(screen.queryByRole("switch")).toBeNull();
     expect(document.querySelector("[data-en]")).toBeNull();
   });

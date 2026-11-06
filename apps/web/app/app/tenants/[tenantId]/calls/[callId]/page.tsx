@@ -65,6 +65,7 @@ export default async function CallPage({ params }: PageProps<"/app/tenants/[tena
         when={when}
         language={language}
         stages={timeline ? stagesDone(timeline.items.map((i) => i.kind), call.live) : null}
+        canRead={role === "owner" || role === "admin"}
         english={(has, lines) => (
           <EnglishLines userId={user.id} label={w["ph.en.show"]} has={has}>
             {lines}

@@ -17,6 +17,8 @@ export type CallViewProps = {
   language: string | null;
   /** the customer's steps that are done (from their timeline); null = the call has no customer, or the timeline could not be read: the strip is not drawn */
   stages: ReadonlySet<Stage> | null;
+  /** the person may read what is said (Owner, Admin): a missing transcript is then "nothing yet" (C1 #405: a live call answered by another server has none until it ends), not "not yours" */
+  canRead: boolean;
   /** wraps what is said with the "Show English" switch (a client island the page hands in; none = the English lines always show) */
   english?: (has: boolean, lines: ReactNode) => ReactNode;
   /** End call (Owner, Admin, while live); Correct it (Owner, Admin, Sales): client islands the page hands in */
@@ -32,7 +34,7 @@ const card = "rounded-[22px] border border-line bg-surface p-4 md:p-5";
  * Below both: Where X is now, the customer's steps their timeline shows. The transcript is the Owner's and Admin's (the API gives Sales none, and the screen says so). Listen, Whisper, Take over and Transfer are not drawn: the API
  * has none of them yet.
  */
-export function CallView({ call, base, w, when, language, stages, end, correct, english = (_has, lines) => lines }: CallViewProps) {
+export function CallView({ call, base, w, when, language, stages, end, correct, canRead, english = (_has, lines) => lines }: CallViewProps) {
   const name = call.who || w["ph.dir.inbound"];
   const say = (key: string) => (w[key] ?? "").replace("{name}", name);
   const facts = { ...call.captured, ...(call.correction?.captured ?? {}) };
@@ -70,9 +72,9 @@ export function CallView({ call, base, w, when, language, stages, end, correct, 
       <h2 id="call-captions" className="m-0 text-sm font-bold text-muted">
         {w["ph.captions"]}
       </h2>
-      {lines === null ? (
+      {lines === null && !canRead ? (
         <p className="m-0 text-sm text-muted">{w["ph.captions.hidden"]}</p>
-      ) : lines.length === 0 ? (
+      ) : lines === null || lines.length === 0 ? (
         <p className="m-0 text-sm text-muted">{w["ph.captions.none"]}</p>
       ) : (
         english(hasEnglish,
