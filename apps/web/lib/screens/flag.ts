@@ -81,3 +81,7 @@ export function assistantWorkTenantListed(tenantId: string, tenants: string | un
   const ids = tenants.split(/[;,]/).map((t) => t.trim().toLowerCase()).filter((t) => t !== "" && t !== "none");
   return ids.includes(tenantId.trim().toLowerCase());
 }
+
+/** My AI team v2 (job ai-team-v2, owner 6 Nov 2026; C1's docs/contracts/ai-team.md): the day's shift timeline, the flow strip, the daily stand-up and the helper panel on /ai-team (and the stand-up card on Today). `mock` = the made-up day of
+ * lib/api/ai-team-fixtures.ts with the switches kept in a cookie (nothing is sent; the stand-up's sound is a tone), `1` = the API, unset = the page the product had (the helpers' room). */
+export const aiTeamScreens = (value: string | undefined = process.env.AI_TEAM_SCREENS): ScreenMode => screenMode(value);
