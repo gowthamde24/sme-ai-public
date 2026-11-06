@@ -247,12 +247,21 @@ jobs:
           path: ~/apt-archives
           key: apt-ffmpeg-poppler-tesseract-${{ runner.os }}-v1
       - name: ffmpeg, poppler and Tesseract (the voice-note converter and the chat file reader run the real programs; REQUIRE_FFMPEG makes a missing ffmpeg a failure)
+        # apt's own timeout does not catch a mirror that trickles (this step sat 28 minutes on #399's first run): each attempt has a hard limit, three attempts, and the step stops at 12 minutes
+        timeout-minutes: 12
         run: |
           set -euo pipefail
           mkdir -p ~/apt-archives/partial
           APT="-o Dir::Cache::Archives=$HOME/apt-archives -o Acquire::Retries=3 -o Acquire::http::Timeout=20"
-          sudo apt-get update -o Acquire::Retries=3 -o Acquire::http::Timeout=20
-          sudo apt-get install -y --no-install-recommends $APT ffmpeg poppler-utils tesseract-ocr tesseract-ocr-eng
+          ok=0
+          for attempt in 1 2 3; do
+            if sudo timeout 90 apt-get update -o Acquire::Retries=3 -o Acquire::http::Timeout=20 \
+               && sudo timeout 150 apt-get install -y --no-install-recommends $APT ffmpeg poppler-utils tesseract-ocr tesseract-ocr-eng; then
+              ok=1; break
+            fi
+            echo "apt attempt $attempt did not finish in time; trying again"
+          done
+          [ "$ok" = 1 ]
           sudo chown -R "$USER" ~/apt-archives
       - run: pip install -e ".[dev]"
       - name: Unit tests, part ${{ matrix.part }} of 3
