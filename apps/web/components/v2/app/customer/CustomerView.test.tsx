@@ -120,7 +120,15 @@ describe("CustomerView", () => {
     const rows = Array.from(document.querySelectorAll('[data-part="customer-timeline"] > li')).map((li) => li.getAttribute("data-kind"));
     expect(rows).toEqual(["call", "quote", "message_in"]);
     expect(screen.getByRole("link", { name: /Quote 12/ }).getAttribute("href")).toBe(`${BASE}/quotes/${Q}`);
-    expect(document.querySelectorAll('[data-part="customer-main"]')).toHaveLength(1);
+    // ONE main button: drawn once for a phone (right under the header) and once in the side card; CSS shows one of them
+    const mains = Array.from(document.querySelectorAll('[data-part="customer-main"]'));
+    expect(mains.map((m) => m.getAttribute("data-at"))).toEqual(["phone", "side"]);
+    expect(new Set(mains.map((m) => m.getAttribute("href")))).toEqual(new Set([`${BASE}/quotes/${Q}`]));
+    expect(document.querySelector('[data-part="customer-phone"]')?.className).toContain("sm:hidden");
+    // the phone's order: the button, What they want as chips, What's next as one line, then the timeline
+    const phone = document.querySelector('[data-part="customer-phone"]')!;
+    expect(Array.from(phone.children).map((c) => c.getAttribute("data-part"))).toEqual(["customer-main", "customer-want-chips", "customer-next-line"]);
+    expect(phone.querySelector('[data-part="customer-next-line"]')?.textContent).toBe("What's next · Follow-up · 7 Nov, 10:00 am");
     expect(screen.getByRole("link", { name: "Show older" }).getAttribute("href")).toBe("/c?before=x");
     const nav = screen.getByRole("navigation", { name: "Show" });
     expect(within(nav).getByRole("link", { name: "All" }).getAttribute("aria-current")).toBe("page");
@@ -137,6 +145,8 @@ describe("CustomerView", () => {
     expect(screen.getByText("The timeline could not be read just now.")).toBeTruthy();
     expect(screen.getByText("Nothing noted yet.")).toBeTruthy();
     expect(screen.getByText("Nothing planned.")).toBeTruthy();
+    expect(document.querySelector('[data-part="customer-want-chips"]')).toBeNull();
+    expect(document.querySelector('[data-part="customer-next-line"]')?.textContent).toBe("What's next · Nothing planned.");
     expect(screen.queryByRole("link", { name: "Show older" })).toBeNull();
   });
 });

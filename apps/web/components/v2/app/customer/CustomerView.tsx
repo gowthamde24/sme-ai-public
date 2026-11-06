@@ -65,7 +65,7 @@ export function CustomerView(p: CustomerViewProps) {
         ) : (
           <p className="m-0 mt-2 text-sm text-muted">{w["cust.v4.next.none"]}</p>
         )}
-        <Link href={p.main.href} className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#ff773c] px-5 font-extrabold text-[#1e1e24]" data-part="customer-main">
+        <Link href={p.main.href} className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#ff773c] px-5 font-extrabold text-[#1e1e24]" data-part="customer-main" data-at="side">
           {p.main.label}
         </Link>
       </section>
@@ -89,9 +89,29 @@ export function CustomerView(p: CustomerViewProps) {
           {p.status}
         </p>
       </header>
+      {/* a phone (owner, 7 Nov): the main button, What they want as one row of chips that scrolls sideways, What's next as one line, then the timeline (it starts above the fold on 360 x 780) */}
+      <div className="flex flex-col gap-3 sm:hidden" data-part="customer-phone">
+        <Link href={p.main.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-[#ff773c] px-5 font-extrabold text-[#1e1e24]" data-part="customer-main" data-at="phone">
+          {p.main.label}
+        </Link>
+        {p.want.length ? (
+          <ul aria-label={w["cust.v4.want.title"]} className="m-0 flex list-none gap-1.5 overflow-x-auto p-0 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" data-part="customer-want-chips">
+            {p.want.map((r) => (
+              <li key={r.label} className="shrink-0 whitespace-nowrap rounded-full border border-line bg-surface px-3 py-1.5 text-sm">
+                <span className="text-muted">{r.label} </span>
+                <span className="font-semibold text-ink">{r.value}</span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <p className="m-0 truncate text-sm" data-part="customer-next-line">
+          <span className="font-bold text-ink">{w["cust.v4.next.title"]}</span>
+          <span className="text-muted"> · {p.next ? [p.next.what, p.next.when].filter(Boolean).join(" · ") : w["cust.v4.next.none"]}</span>
+        </p>
+      </div>
       <div className="grid grid-cols-[minmax(0,1fr)] gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-        {/* on a phone What they want and What's next come first; beside the timeline from a wide screen */}
-        <div className="lg:order-2">{side}</div>
+        {/* a tablet: What they want and What's next above the timeline; a wide screen: beside it */}
+        <div className="max-sm:hidden lg:order-2">{side}</div>
         <section aria-labelledby="cust-timeline" className="flex min-w-0 flex-col gap-3 lg:order-1">
           <h2 id="cust-timeline" className="sr-only">
             {w["cust.v4.timeline"]}
