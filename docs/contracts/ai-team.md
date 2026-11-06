@@ -109,13 +109,16 @@ A 30 to 45-second spoken summary, in the Owner's language:
 { "date": "2026-11-06", "language": "te", "generated_at": "iso", "by": "schedule" | "owner",
   "text": "…", "lines": [ { "text": "…", "source": "yesterday.calls" } ],
   "numbers": [ { "key": "yesterday.calls", "value": 23 } ],
-  "audio": { "url": "https://…signed, 24 h", "seconds": 38, "voice": "the workspace's assistant voice" } | null,
+  "audio": { "url": "/v1/tenants/{t}/ai-team/standup/audio?date=…&language=te", "seconds": 38 } | null,
   "audio_reason": null | "voice_off" | "limit" | "unavailable",
   "left_today": 2 }
 ```
 - `lines[].source` says which data each line came from; `numbers` lists every number spoken, for the transcript and the eval.
-- `audio` is null when speech is unavailable; the transcript still shows.
-- The voice is the workspace's assistant voice (Settings → AI assistant): Cartesia, with the same voice settings, in the Owner's language. `language` is the Owner's app language.
+- `audio.url` is the API path of the WAV (`GET /ai-team/standup/audio?date=&language=`, Owner and Admin, the person's own token, `audio/wav`, cached 24 h). Fetch it with the token and play the blob.
+- `audio` is null when speech is unavailable (`audio_reason`: `unavailable`, or `limit` when the day's speech allowance is used up); the transcript still shows.
+- The voice is the workspace's assistant voice (Settings → AI assistant): Cartesia, with the same voice settings, in the Owner's language.
+- Send `language` as the Owner's app language (`?language=` on GET, `{language}` on POST). The words exist in `en`, `te` and `hi`; any other language gets English for now.
+- The morning one is made on the **first read (GET) after the business's opening time**, with `by: "schedule"`; it doesn't count toward the 3. Before opening time, `404 not_generated`.
 - "Ask a follow-up" opens the assistant with the stand-up's date. No API change is needed for it.
 
 ## 4. Never
