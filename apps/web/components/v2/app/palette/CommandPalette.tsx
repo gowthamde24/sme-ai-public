@@ -138,7 +138,7 @@ export function CommandPalette({ tenantId, role, pack, labels, names, words, rec
   };
 
   let index = -1;
-  // drawn on the page's body, not inside the top bar (a sticky header is its own layer: the phone's bottom bar and the orb would sit over it); above the menus and panels, under the live voice and the cookie banner
+  // drawn at the top of the app's root, not inside the top bar (a sticky header is its own layer: the phone's bottom bar and the orb would sit over it); above the menus and panels, under the live voice and the cookie banner
   return createPortal(
     <div className="fixed inset-0 z-[65]" data-palette="" onKeyDown={onKey}>
       <div aria-hidden="true" className="absolute inset-0 bg-charcoal/30" onClick={onClose} />
@@ -195,6 +195,7 @@ export function CommandPalette({ tenantId, role, pack, labels, names, words, rec
         <p className="hidden border-t border-line px-4 py-2 text-xs text-muted md:block">{w("palette.keys")}</p>
       </div>
     </div>,
-    document.body,
+    // inside the app's own root (its theme, fonts and styles live there), not the bare body
+    document.querySelector('[data-ui="v2"]') ?? document.body,
   );
 }
