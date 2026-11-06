@@ -24,7 +24,7 @@ const TEAM: TodayData["team"] = [
 const CARDS: NeedsCard[] = [outbox(), call(), classic()];
 const ready = (visits: StoreVisit[], over: Partial<StoreToday> = {}): TodayData["store"] => ({ state: "ready", visits, slots: "unknown", nextFree: null, ...over });
 const data = (over: Partial<TodayData> = {}): TodayData => ({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: CARDS, recent: [], team: TEAM, deskTeam: null, store: null, week: null, sending: null, digest: Promise.resolve(READY), ...over });
-const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; demo?: boolean; outboxHref?: string | null; calendarHref?: string | null; intro?: React.ReactNode; exampleLine?: React.ReactNode } = {}) => {
+const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; demo?: boolean; outboxHref?: string | null; calendarHref?: string | null; intro?: React.ReactNode; exampleLine?: React.ReactNode; hero?: React.ReactNode } = {}) => {
   const words = rest.lang && rest.lang !== "en" ? appT(rest.lang as "te") : null;
   // rendered inside an awaited act, so the parts that read a promise (use) settle before the test looks
   let out!: ReturnType<typeof render>;
@@ -342,5 +342,22 @@ describe("app v4: Today's hero (job-app-v4.md part 2)", () => {
     cleanup();
     render(<TodayHero incoming={[]} results={[]} sentence="" words={WORDS} talkHref="/x" connectHref={null} />);
     expect(screen.queryByRole("link", { name: "Connect a lead source" })).toBeNull();
+  });
+});
+
+describe("app v4: the greeting is small, on the slim line with the date (owner, 6 Nov 2026)", () => {
+  it("draws \"Good morning, Asha · <the day>\" on one line above the hero, with the page's H1 still the menu's word; without the hero, Today is as it was", async () => {
+    await view({ ...NOTHING_TODAY, needs: [] }, { hero: <section aria-label="hero">hero</section> });
+    const line = document.querySelector('[data-part="v4-heading"]') as HTMLElement;
+    expect(line).not.toBeNull();
+    expect(within(line).getByText("Good morning, Asha")).toBeInTheDocument();
+    expect(within(line).getByRole("heading", { level: 1 })).toHaveTextContent("Today");
+    expect(line.textContent).toContain(dayLine(NOW, "en"));
+    // the hero comes after the slim line, and there is no big greeting
+    expect(line.compareDocumentPosition(screen.getByRole("region", { name: "hero" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(document.querySelectorAll('[data-part="greeting"]')).toHaveLength(1);
+    cleanup();
+    await view({ ...NOTHING_TODAY, needs: [] });
+    expect(document.querySelector('[data-part="v4-heading"]')).toBeNull();
   });
 });

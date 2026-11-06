@@ -73,13 +73,28 @@ export function TodayView({ hero = null, plan = null, chipKeys = null, newLeads 
       <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between md:gap-4">
         <div>
           {/* the page's H1 is the menu's word, "Today" (owner rule, 6 Nov: every menu item opens its own page with the menu's word as its H1), beside the date; the greeting stays the big line */}
-          <div className="flex flex-wrap items-baseline gap-x-1.5 text-sm text-muted">
-            <h1 className="font-semibold text-ink">{t("nav.item.m-today")}</h1>
-            <span aria-hidden="true">·</span>
-            <span>{dayLine(now, lang)}</span>
-          </div>
+          {hero ? (
+            // app v4 (owner, 6 Nov 2026): the greeting, small, on the one slim line with the date ("Good evening, Gowtham · Friday, 6 November"); the page's H1 is still the menu's word, for a screen reader;
+            // the line never wraps: a long name shortens the date, and under 360 px the date drops
+            <div className="flex min-w-0 items-baseline gap-x-1.5 whitespace-nowrap text-sm text-muted" data-part="v4-heading">
+              <h1 className="sr-only">{t("nav.item.m-today")}</h1>
+              <span data-part="greeting" className="shrink-0 font-semibold text-ink">
+                {name ? t("today.greeting.named", { greet, name }) : greet}
+              </span>
+              <span aria-hidden="true" className="max-[359px]:hidden">
+                ·
+              </span>
+              <span className="min-w-0 truncate max-[359px]:hidden">{dayLine(now, lang)}</span>
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-baseline gap-x-1.5 text-sm text-muted">
+              <h1 className="font-semibold text-ink">{t("nav.item.m-today")}</h1>
+              <span aria-hidden="true">·</span>
+              <span>{dayLine(now, lang)}</span>
+            </div>
+          )}
           {/* the member's own name (My profile), with the respectful form of the language (Telugu "గారు", Hindi "जी", Kannada "ಅವರೇ"; English the name alone: never sir or madam); none when they have no name */}
-          {/* app v4: the assistant's hero is the first thing on Today (owner, 6 Nov 2026): the big greeting gives way to it (the hero's own sentence speaks), and "Today · the date" stays as the page's heading */}
+          {/* app v4: the assistant's hero is the first thing on Today (owner, 6 Nov 2026): the greeting is small, on the slim line above */}
           {hero ? null : <h2 data-part="greeting" className="font-display text-[26px] font-semibold leading-[1.15] md:text-[32px] md:leading-[1.1]">{name ? t("today.greeting.named", { greet, name }) : greet}</h2>}
         </div>
         <LiveNow tenantId={base.split("/").pop() ?? ""} />
