@@ -22,4 +22,9 @@ The manifest, one entry per clip:
   - `hero` and `try` (te, ta, kn, ml, hi, mr, en, the design's order);
   - `call-saree`, `call-build` and `call-coach` (the lines in order; `speaker` is `assistant` or `customer`);
   - `standup-en` and `standup-te` (7 parts each; `speaker` is the helper's name).
+- **`draft` is the owner's switchboard** (owner rule, 6 Nov).
+  - The page gives a draft clip no "Hear it" button; its silent captions still run.
+  - After native review the owner sets that clip's `draft` to `false` in `manifest.json` itself.
+  - A re-render keeps the manifest entry, the owner's `draft: false` included, while the clip's words and voice are unchanged.
+  - A clip whose words or voice change is rendered again and goes back to its `clips.json` flag, so a changed line is reviewed again.
 - Owner recordings never go in the repository.
