@@ -1,7 +1,7 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { asFilter, businessName, customerStatus, customerWants, mainAction, sourceWords, timelineHref, waitingQuote } from "@/app/app/tenants/[tenantId]/customers/[leadId]/customer-logic";
+import { asFilter, businessName, customerStatus, customerWants, mainAction, rowHeading, sourceWords, timelineHref, waitingQuote } from "@/app/app/tenants/[tenantId]/customers/[leadId]/customer-logic";
 import { wordsFor } from "@/i18n/app-words";
 import { parseCustomerHead, parseTimeline, type TimelineItem } from "@/lib/api/customer-timeline";
 import { parseProfile } from "@/lib/lead-desk/profile";
@@ -62,6 +62,14 @@ describe("customer page logic", () => {
     expect(waitingQuote([item("quote", "2026-11-06T00:00:00Z", { detail: { status: "draft" } })])).toBe(Q);
     expect(waitingQuote([item("quote", "2026-11-06T00:00:00Z", { target: { type: "material_quote", id: Q }, detail: { status: "draft" } })])).toBeNull();
     expect(waitingQuote(null)).toBeNull();
+  });
+
+  it("a quote or an order says its amount and where it stands, in sentence case (owner, 7 Nov); other rows keep their text", () => {
+    expect(rowHeading(item("quote", "2026-11-06T00:00:00Z", { text: "Quote 3", detail: { status: "draft", total_paise: 4_800_000 } }), W)).toEqual({ head: "Quote · ₹48,000 · waiting for your OK", body: null });
+    expect(rowHeading(item("order", "2026-11-06T00:00:00Z", { text: "Order 7", detail: { state: "advance_paid", total_paise: 12_000_050 } }), W)).toEqual({ head: "Order · ₹1,20,000.50 · advance paid, rest owed", body: null });
+    expect(rowHeading(item("order", "2026-11-06T00:00:00Z", { detail: { state: "closed_paid", total_paise: 100 } }), W).head).toBe("Order · ₹1 · paid");
+    expect(rowHeading(item("quote", "2026-11-06T00:00:00Z", { text: "Quote 3", detail: { status: "something_new", total_paise: "lots" } }), W)).toEqual({ head: "Quote", body: "Quote 3" });
+    expect(rowHeading(item("message_out", "2026-11-06T00:00:00Z", { text: "Here are the photos" }), W)).toEqual({ head: "Our message", body: "Here are the photos" });
   });
 
   it("never shows a made-up business name or a source code (staging, 7 Nov)", () => {

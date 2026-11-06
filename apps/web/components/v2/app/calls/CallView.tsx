@@ -17,6 +17,8 @@ export type CallViewProps = {
   language: string | null;
   /** the customer's steps that are done (from their timeline); null = the call has no customer, or the timeline could not be read: the strip is not drawn */
   stages: ReadonlySet<Stage> | null;
+  /** wraps what is said with the "Show English" switch (a client island the page hands in; none = the English lines always show) */
+  english?: (has: boolean, lines: ReactNode) => ReactNode;
   /** End call (Owner, Admin, while live); Correct it (Owner, Admin, Sales): client islands the page hands in */
   end: ReactNode;
   correct: ReactNode;
@@ -30,12 +32,20 @@ const card = "rounded-[22px] border border-line bg-surface p-4 md:p-5";
  * Below both: Where X is now, the customer's steps their timeline shows. The transcript is the Owner's and Admin's (the API gives Sales none, and the screen says so). Listen, Whisper, Take over and Transfer are not drawn: the API
  * has none of them yet.
  */
-export function CallView({ call, base, w, when, language, stages, end, correct }: CallViewProps) {
+export function CallView({ call, base, w, when, language, stages, end, correct, english = (_has, lines) => lines }: CallViewProps) {
   const name = call.who || w["ph.dir.inbound"];
   const say = (key: string) => (w[key] ?? "").replace("{name}", name);
   const facts = { ...call.captured, ...(call.correction?.captured ?? {}) };
   const factRows = Object.entries(facts);
   const lines = call.transcript;
+  const hasEnglish = !!lines?.some((l) => l.textEn);
+  // the English line under a line that is not in English (owner, 7 Nov 2026); hidden while "Show English" is off
+  const englishLine = (l: { textEn: string | null }, big: boolean) =>
+    l.textEn ? (
+      <span lang="en" data-en className={`mt-1 block [overflow-wrap:break-word] [[data-show-en=off]_&]:hidden ${big ? "text-base text-ink" : "text-sm text-muted"}`}>
+        {l.textEn}
+      </span>
+    ) : null;
   const wants = (
     <section aria-labelledby="call-wants" className="flex flex-col gap-2" data-part="call-wants">
       <h2 id="call-wants" className="m-0 font-display text-lg font-bold">
@@ -57,7 +67,7 @@ export function CallView({ call, base, w, when, language, stages, end, correct }
   );
   const captions = (
     <section aria-labelledby="call-captions" className="flex min-w-0 flex-col gap-3" data-part="call-captions">
-      <h2 id="call-captions" className="m-0 text-xs font-extrabold uppercase tracking-wide text-muted">
+      <h2 id="call-captions" className="m-0 text-sm font-bold text-muted">
         {w["ph.captions"]}
       </h2>
       {lines === null ? (
@@ -65,6 +75,7 @@ export function CallView({ call, base, w, when, language, stages, end, correct }
       ) : lines.length === 0 ? (
         <p className="m-0 text-sm text-muted">{w["ph.captions.none"]}</p>
       ) : (
+        english(hasEnglish,
         <ol aria-live="polite" className="m-0 flex list-none flex-col gap-3 p-0">
           {lines.slice(-6).map((l, i, all) => {
             const newest = i === all.length - 1;
@@ -75,10 +86,11 @@ export function CallView({ call, base, w, when, language, stages, end, correct }
                 <span lang={l.who === "caller" && call.language ? call.language : undefined} className={`block [overflow-wrap:break-word] ${newest ? "font-display text-xl font-semibold text-ink md:text-2xl" : "text-base text-muted"}`}>
                   {l.text}
                 </span>
+                {englishLine(l, newest)}
               </li>
             );
           })}
-        </ol>
+        </ol>)
       )}
     </section>
   );
@@ -91,6 +103,7 @@ export function CallView({ call, base, w, when, language, stages, end, correct }
             <li key={`${l.t}-${i}`} data-who={l.who}>
               <span className="font-bold text-muted">{l.who === "assistant" ? w["ph.ai"] : name}: </span>
               <span lang={l.who === "caller" && call.language ? call.language : undefined}>{l.text}</span>
+              {englishLine(l, false)}
             </li>
           ))}
         </ol>

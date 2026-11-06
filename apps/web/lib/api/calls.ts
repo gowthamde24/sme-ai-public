@@ -59,7 +59,9 @@ export type CallRow = {
 };
 export type Captured = Readonly<Record<string, string>>;
 export type Correction = { summary: string | null; captured: Captured; note: string | null; correctedAt: string };
-export type CallDetail = CallRow & { summary: string | null; endReason: string | null; captured: Captured; transcript: { who: "assistant" | "caller"; text: string; t: number }[] | null; correction: Correction | null };
+/** A line of what was said; `textEn` = the same line in English (the API's `text_en`; null when the line is English or not translated yet). */
+export type TranscriptLine = { who: "assistant" | "caller"; text: string; t: number; textEn: string | null };
+export type CallDetail = CallRow & { summary: string | null; endReason: string | null; captured: Captured; transcript: TranscriptLine[] | null; correction: Correction | null };
 export type CallsPage = { items: CallRow[]; nextCursor: string | null; pollAfterS: number };
 
 const iso = (v: unknown): string | null => (typeof v === "string" && v.length <= 40 && !Number.isNaN(Date.parse(v)) ? v : null);
@@ -112,7 +114,7 @@ export function parseCallDetail(json: unknown, callId: string): CallDetail {
   const row = parseCallRow(json);
   if (!row || row.id !== callId || !isRecord(json)) throw new ApiContractError("Unexpected call body.");
   const transcript = Array.isArray(json.transcript)
-    ? json.transcript.flatMap((x) => (isRecord(x) && (x.who === "assistant" || x.who === "caller") && typeof x.text === "string" && x.text.trim() !== "" ? [{ who: x.who as "assistant" | "caller", text: x.text.slice(0, 2000), t: typeof x.t === "number" && x.t >= 0 ? x.t : 0 }] : [])).slice(0, 500)
+    ? json.transcript.flatMap((x) => (isRecord(x) && (x.who === "assistant" || x.who === "caller") && typeof x.text === "string" && x.text.trim() !== "" ? [{ who: x.who as "assistant" | "caller", text: x.text.slice(0, 2000), t: typeof x.t === "number" && x.t >= 0 ? x.t : 0, textEn: typeof x.text_en === "string" && x.text_en.trim() !== "" && x.text_en.trim() !== x.text.trim() ? x.text_en.slice(0, 2000) : null }] : [])).slice(0, 500)
     : null;
   const c = isRecord(json.correction) ? json.correction : null;
   const correctedAt = c ? iso(c.corrected_at) : null;

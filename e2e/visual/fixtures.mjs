@@ -192,8 +192,8 @@ export const API_ROUTES = [
   // app v4 part 4: the phone calls (synthetic): one live, one finished, one refused
   route("/calls", { items: [CALL_LIVE_JSON, CALL_DONE_JSON, { ...CALL_DONE_JSON, id: "99999999-9999-4999-8999-0000000000c3", who: "Anita Textiles", lead_id: null, state: "refused", refuse_reason: "outside_hours", outcome: null, category: null, summary_short: null, elapsed_s: 0, created_at: "2026-10-13T16:10:00Z" }], next_cursor: null, updated_at: "2026-10-14T05:00:00Z", poll_after_s: 5 }),
   route(`/calls/${CALL_LIVE}`, { ...CALL_LIVE_JSON, summary: null, end_reason: null, captured: { occasion: "Wedding", saree: "Kanchi silk", budget: "up to 15,000" }, transcript: [
-    { who: "assistant", text: "Hello! I am the AI assistant of Sri Visual Silks. You asked about silk sarees, right?", t: 1 },
-    { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి. బడ్జెట్ పదిహేను వేల వరకు.", t: 4 },
+    { who: "assistant", text: "Hello! I am the AI assistant of Sri Visual Silks. You asked about silk sarees, right?", t: 1, text_en: null },
+    { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి. బడ్జెట్ పదిహేను వేల వరకు.", t: 4, text_en: "Yes, I need a Kanchi silk saree for a wedding. Budget up to fifteen thousand." },
   ], correction: null }),
   route(`/calls/${CALL_DONE}`, { ...CALL_DONE_JSON, summary: "Meena wants 20 Kanchi silk sarees for a wedding on 2 November and will visit the store on Saturday.", end_reason: "goodbye", captured: { saree: "Kanchi silk", quantity: "20 pieces", visit_day: "Saturday" }, transcript: [
     { who: "assistant", text: "Namaste! I am the AI assistant of Sri Visual Silks. How can I help?", t: 1 },
@@ -207,6 +207,7 @@ export const API_ROUTES = [
     { kind: "call", at: "2026-10-14T04:40:00Z", text: "Wants 20 Kanchi silk sarees for a wedding; will visit the store on Saturday", target: { type: "phone_call", id: "c1" }, detail: { direction: "inbound", duration_s: 126, outcome: "positive" } },
     { kind: "visit", at: "2026-10-13T09:00:00Z", text: "See the wedding collection", target: { type: "visit", id: "v1" }, detail: { status: "booked" } },
     { kind: "quote", at: "2026-10-13T05:20:00Z", text: "Quote 3", target: { type: "quote", id: QUOTE_ID }, detail: { status: "draft", total_paise: 5040000 } },
+    { kind: "order", at: "2026-10-12T09:00:00Z", text: "Order 2", target: { type: "order", id: "66666666-6666-4666-8666-666666666699" }, detail: { state: "advance_paid", total_paise: 12000000 } },
     { kind: "message_out", at: "2026-10-12T06:00:00Z", text: "Hello, here are the photos of the Kanchi silk sarees you asked about.", target: { type: "outbox_message", id: "m1" }, detail: { channel: "whatsapp", status: "sent" } },
     { kind: "message_in", at: "2026-10-12T05:30:00Z", text: "Price for 20 pieces please, wedding on 2 November", target: { type: "enquiry", id: "e1" }, detail: { channel: "whatsapp" } },
     { kind: "arrival", at: "2026-10-12T05:28:00Z", text: "IndiaMART", target: { type: "lead", id: LEAD }, detail: { source: "indiamart", how: "first" } },

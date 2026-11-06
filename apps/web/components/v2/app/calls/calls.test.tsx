@@ -1,3 +1,4 @@
+import type * as React from "react";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -10,7 +11,7 @@ import { wordsFor } from "@/i18n/app-words";
 import { parseCallDetail, parseCallsPage } from "@/lib/api/calls";
 import { stagesDone } from "@/lib/calls/view";
 
-import { CorrectIt, EndCall, Repoll } from "./CallClient";
+import { CorrectIt, EndCall, EnglishLines, Repoll } from "./CallClient";
 import { CallsList } from "./CallsList";
 import { CallView } from "./CallView";
 
@@ -84,6 +85,45 @@ describe("one call", () => {
     cleanup();
     render(<CallView call={detail({ transcript: null, live: true, state: "in_progress" })} base={BASE} w={W} when={when} language={null} stages={null} end={null} correct={null} />);
     expect(screen.getByText("Only the owner and admins read what is said on a call.")).toBeInTheDocument();
+  });
+});
+
+describe("Show English (owner, 7 Nov 2026)", () => {
+  const withEnglish = (over: Record<string, unknown> = {}) =>
+    parseCallDetail({ ...ROW, live: true, state: "in_progress", captured: {}, transcript: [{ who: "assistant", text: "నమస్తే! నేను AI అసిస్టెంట్‌ని.", t: 1, text_en: "Namaste! I am the AI assistant." }, { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి.", t: 4, text_en: "Yes, I need a Kanchi silk saree for a wedding." }], correction: null, ...over }, C);
+  const english = (userId: string) =>
+    function WithEnglish(has: boolean, lines: React.ReactNode) {
+      return (
+        <EnglishLines userId={userId} label="Show English" has={has}>
+          {lines}
+        </EnglishLines>
+      );
+    };
+  afterEach(() => window.localStorage.clear());
+  it("the English line sits under each line that is not English, on by default; the switch is remembered for this person", () => {
+    render(<CallView call={withEnglish()} base={BASE} w={W} when={when} language="Telugu" stages={null} end={null} correct={null} english={english("u1")} />);
+    const lines = document.querySelectorAll('[data-part="call-captions"] li');
+    expect(lines[1].querySelector("[data-en]")).toHaveTextContent("Yes, I need a Kanchi silk saree for a wedding.");
+    expect(lines[1].querySelector("[data-en]")).toHaveAttribute("lang", "en");
+    expect(lines[0].querySelector("[data-en]")).toHaveTextContent("Namaste! I am the AI assistant.");
+    const sw = screen.getByRole("switch", { name: "Show English" });
+    expect(sw).toHaveAttribute("aria-checked", "true");
+    expect(document.querySelector("[data-show-en]")).toHaveAttribute("data-show-en", "on");
+    fireEvent.click(sw);
+    expect(document.querySelector("[data-show-en]")).toHaveAttribute("data-show-en", "off");
+    expect(window.localStorage.getItem("sme.calls.showEnglish.u1")).toBe("0");
+    cleanup();
+    // the same person again: still off; another person: on
+    render(<CallView call={withEnglish()} base={BASE} w={W} when={when} language="Telugu" stages={null} end={null} correct={null} english={english("u1")} />);
+    expect(screen.getByRole("switch", { name: "Show English" })).toHaveAttribute("aria-checked", "false");
+    cleanup();
+    render(<CallView call={withEnglish()} base={BASE} w={W} when={when} language="Telugu" stages={null} end={null} correct={null} english={english("u2")} />);
+    expect(screen.getByRole("switch", { name: "Show English" })).toHaveAttribute("aria-checked", "true");
+  });
+  it("no English line anywhere: no switch", () => {
+    render(<CallView call={withEnglish({ transcript: [{ who: "caller", text: "Yes, Saturday.", t: 1, text_en: null }] })} base={BASE} w={W} when={when} language={null} stages={null} end={null} correct={null} english={english("u1")} />);
+    expect(screen.queryByRole("switch")).toBeNull();
+    expect(document.querySelector("[data-en]")).toBeNull();
   });
 });
 

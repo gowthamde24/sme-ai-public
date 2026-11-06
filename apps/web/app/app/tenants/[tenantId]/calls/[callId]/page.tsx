@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 
-import { CorrectIt, EndCall, Repoll } from "@/components/v2/app/calls/CallClient";
+import { CorrectIt, EndCall, EnglishLines, Repoll } from "@/components/v2/app/calls/CallClient";
 import { CallView } from "@/components/v2/app/calls/CallView";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import { pageMain } from "@/components/v2/app/ui";
@@ -65,6 +65,11 @@ export default async function CallPage({ params }: PageProps<"/app/tenants/[tena
         when={when}
         language={language}
         stages={timeline ? stagesDone(timeline.items.map((i) => i.kind), call.live) : null}
+        english={(has, lines) => (
+          <EnglishLines userId={user.id} label={w["ph.en.show"]} has={has}>
+            {lines}
+          </EnglishLines>
+        )}
         end={canEnd ? <EndCall w={w} end={hangUpCallAction.bind(null, tenantId, callId)} /> : null}
         correct={
           call.live ? null : (

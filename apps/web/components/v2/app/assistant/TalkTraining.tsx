@@ -211,7 +211,7 @@ function Instructions({ t, doc }: { t: T; doc: Doc }) {
   const say = (doc.sayLike ?? []).filter((p) => p.say.trim().length >= 2).map((p) => sayLikeLine({ say: p.say.trim(), insteadOf: p.insteadOf?.trim() || null }));
   const block = (title: string, lines: string[]) => (
     <div>
-      <p className="m-0 text-xs font-extrabold uppercase tracking-wide text-muted">{title}</p>
+      <p className="m-0 text-sm font-bold text-muted">{title}</p>
       {lines.length ? (
         <ul className="m-0 mt-1 list-none p-0 font-mono text-sm text-ink">
           {lines.map((l) => (

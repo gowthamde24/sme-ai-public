@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { rowHeading } from "@/app/app/tenants/[tenantId]/customers/[leadId]/customer-logic";
 import type { TimelineItem, TimelineKind } from "@/lib/api/customer-timeline";
 
 /**
@@ -131,17 +132,18 @@ export function CustomerView(p: CustomerViewProps) {
             <ol className="m-0 flex list-none flex-col gap-2 p-0" data-part="customer-timeline">
               {shown.map((i) => {
                 const href = p.itemHref(i);
+                const { head, body: text } = rowHeading(i, w);
                 const body = (
                   <>
                     <span aria-hidden="true" className={`mt-1.5 size-2.5 shrink-0 rounded-full ${KIND_DOT[i.kind]}`} />
                     <span className="min-w-0 flex-1">
                       <span className="flex flex-wrap items-baseline justify-between gap-x-3">
-                        <span className="text-xs font-extrabold uppercase tracking-wide text-muted">{w[`cust.v4.kind.${i.kind}`]}</span>
+                        <span className="text-sm font-bold text-ink">{head}</span>
                         <time dateTime={i.at} className="text-xs tabular-nums text-muted">
                           {p.when(i.at)}
                         </time>
                       </span>
-                      <span className="mt-0.5 block text-sm text-ink [overflow-wrap:anywhere]">{i.text}</span>
+                      {text ? <span className="mt-0.5 block text-sm text-muted [overflow-wrap:anywhere]">{text}</span> : null}
                     </span>
                   </>
                 );

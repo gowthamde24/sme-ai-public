@@ -54,12 +54,16 @@ describe("the Calls pages' reads and moves", () => {
     stub({ ...ROW, summary: "Lakshmi wants a red Kanchi silk saree.", end_reason: "goodbye", captured: { visit_day: "Saturday", budget: 15000, "Bad Key": "x" }, transcript: [{ who: "caller", text: "అవును", t: 4.2 }, { who: "robot", text: "x" }], correction: { summary: "Wants two sarees.", captured: { visit_day: "Sunday" }, note: "Kanchi pattu means Kanchipuram silk", corrected_at: "2026-11-06T06:00:00Z" } });
     const call = await getCall("tok", T, C);
     expect(call.captured).toEqual({ visit_day: "Saturday", budget: "15000" });
-    expect(call.transcript).toEqual([{ who: "caller", text: "అవును", t: 4.2 }]);
+    expect(call.transcript).toEqual([{ who: "caller", text: "అవును", t: 4.2, textEn: null }]);
     expect(call.correction).toEqual({ summary: "Wants two sarees.", captured: { visit_day: "Sunday" }, note: "Kanchi pattu means Kanchipuram silk", correctedAt: "2026-11-06T06:00:00Z" });
     stub({ ...ROW, transcript: null, correction: null });
     expect(await getCall("tok", T, C)).toMatchObject({ transcript: null, correction: null, captured: {} });
     stub({ ...ROW, id: L });
     await expect(getCall("tok", T, C)).rejects.toThrow(); // another call's body
+  });
+  it("a line's English (text_en) comes along; none when it is empty or the same line", async () => {
+    stub({ ...ROW, transcript: [{ who: "caller", text: "అవును, కంచి పట్టు", t: 1, text_en: "Yes, Kanchi silk" }, { who: "assistant", text: "Hello!", t: 2, text_en: "Hello!" }, { who: "caller", text: "సరే", t: 3, text_en: " " }] });
+    expect((await getCall("tok", T, C)).transcript!.map((l) => l.textEn)).toEqual(["Yes, Kanchi silk", null, null]);
   });
   it("Correct it and End call: POST to the call's own address", async () => {
     const f = stub({ summary: "Wants two sarees.", captured: {}, note: null, corrected_at: "2026-11-06T06:00:00Z" });

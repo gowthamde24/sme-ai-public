@@ -153,3 +153,53 @@ export function CorrectIt({ w, start: given, labels, correct }: { w: W; start: F
     </form>
   );
 }
+
+const EN_EVENT = "sme:show-english";
+const enKey = (userId: string) => `sme.calls.showEnglish.${userId}`;
+function readEnglish(userId: string): boolean {
+  try {
+    return window.localStorage.getItem(enKey(userId)) !== "0";
+  } catch {
+    return true; // storage blocked: the default, on
+  }
+}
+
+/**
+ * "Show English" on a call (owner, 7 Nov 2026): the English line under each line that is not in English (the API's `text_en`), on by default and remembered for this person on this device. The lines are drawn by the server;
+ * this switch only shows or hides them (`data-show-en` on the wrapper; an English line hides itself under `off`). Drawn only when a line has an English version.
+ */
+export function EnglishLines({ userId, label, has, children }: { userId: string; label: string; has: boolean; children: React.ReactNode }) {
+  const on = React.useSyncExternalStore(
+    (cb) => {
+      window.addEventListener(EN_EVENT, cb);
+      window.addEventListener("storage", cb);
+      return () => {
+        window.removeEventListener(EN_EVENT, cb);
+        window.removeEventListener("storage", cb);
+      };
+    },
+    () => readEnglish(userId),
+    () => true,
+  );
+  const flip = () => {
+    try {
+      window.localStorage.setItem(enKey(userId), on ? "0" : "1");
+    } catch {
+      // not remembered; the page still switches below
+    }
+    window.dispatchEvent(new Event(EN_EVENT));
+  };
+  return (
+    <div data-show-en={on ? "on" : "off"} className="flex min-w-0 flex-col gap-3">
+      {has ? (
+        <button type="button" role="switch" aria-checked={on} onClick={flip} className="inline-flex min-h-11 items-center gap-2 self-end text-sm font-semibold text-ink" data-part="show-english">
+          <span aria-hidden="true" className={`relative inline-block h-6 w-10 rounded-full transition-colors ${on ? "bg-[#ff773c]" : "bg-surface-2 shadow-[inset_0_0_0_1.5px_var(--v2-border)]"}`}>
+            <span className={`absolute top-1 size-4 rounded-full bg-white shadow transition-[left] ${on ? "left-5" : "left-1"}`} />
+          </span>
+          {label}
+        </button>
+      ) : null}
+      {children}
+    </div>
+  );
+}

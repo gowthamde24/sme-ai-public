@@ -84323,5 +84323,137 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "cust.v4.quote.draft": {
+  "en": "waiting for your OK",
+  "te": "మీ OK కోసం వేచి ఉంది",
+  "hi": "आपके OK का इंतज़ार",
+  "kn": "ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.quote.approved": {
+  "en": "approved",
+  "te": "ఆమోదించారు",
+  "hi": "मंज़ूर",
+  "kn": "ಅನುಮೋದಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.quote.rejected": {
+  "en": "turned down",
+  "te": "తిరస్కరించారు",
+  "hi": "नामंज़ूर",
+  "kn": "ತಿರಸ್ಕರಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.quote.superseded": {
+  "en": "replaced by a newer one",
+  "te": "కొత్తదానితో మార్చారు",
+  "hi": "नए से बदला गया",
+  "kn": "ಹೊಸದರಿಂದ ಬದಲಾಯಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.order.paid": {
+  "en": "paid",
+  "te": "చెల్లించారు",
+  "hi": "भुगतान हो गया",
+  "kn": "ಪಾವತಿಯಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.order.part": {
+  "en": "advance paid, rest owed",
+  "te": "అడ్వాన్స్ చెల్లించారు, మిగతాది బాకీ",
+  "hi": "एडवांस दिया, बाकी देना है",
+  "kn": "ಮುಂಗಡ ಪಾವತಿ, ಉಳಿದದ್ದು ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.order.owed": {
+  "en": "owed",
+  "te": "బాకీ",
+  "hi": "बाकी है",
+  "kn": "ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.order.open": {
+  "en": "not confirmed yet",
+  "te": "ఇంకా ఖరారు కాలేదు",
+  "hi": "अभी पक्का नहीं",
+  "kn": "ಇನ್ನೂ ಖಚಿತವಾಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.order.declined": {
+  "en": "declined",
+  "te": "నిరాకరించారు",
+  "hi": "मना किया",
+  "kn": "ನಿರಾಕರಿಸಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.order.expired": {
+  "en": "expired",
+  "te": "గడువు ముగిసింది",
+  "hi": "समय निकल गया",
+  "kn": "ಅವಧಿ ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.order.cancelled": {
+  "en": "cancelled",
+  "te": "రద్దు",
+  "hi": "रद्द",
+  "kn": "ರದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.en.show": {
+  "en": "Show English",
+  "te": "ఇంగ్లీష్ చూపించు",
+  "hi": "अंग्रेज़ी दिखाएँ",
+  "kn": "ಇಂಗ್ಲಿಷ್ ತೋರಿಸು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
