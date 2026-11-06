@@ -38,6 +38,13 @@ def _repo(runtime: Runtime) -> Any:
     return repo
 
 
+def training_for(runtime: Runtime, ctx: TenantContext) -> dict[str, Any]:
+    """The workspace's saved training (or its pack's defaults): what a practice call (text or voice) talks with."""
+    row = _repo(runtime).get(ctx.principal.token, ctx.tenant.id)
+    training = TalkTraining.model_validate(row["doc"]) if row is not None and isinstance(row.get("doc"), dict) else _defaults(runtime, ctx)
+    return training.model_dump(mode="json")
+
+
 def _defaults(runtime: Runtime, ctx: TenantContext) -> TalkTraining:
     pack: str | None = None
     packs = getattr(runtime, "packs", None)
