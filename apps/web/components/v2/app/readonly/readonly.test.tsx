@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const nav = vi.hoisted(() => ({ path: "/app/tenants/T/quotes", search: "" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, push: () => undefined }), usePathname: () => nav.path, useSearchParams: () => new URLSearchParams(nav.search) }));
+// the Ask box is a lazy chunk (next/dynamic): draw the box itself, always
+vi.mock("@/components/v2/app/today/ask/LazyAskCard", async () => ({ AskCard: (await import("@/components/v2/app/today/ask/AskCard")).AskCard }));
 
 import { parseAccess } from "@/lib/api/billing-access";
 import { ADDRESSES } from "@/lib/site/business";

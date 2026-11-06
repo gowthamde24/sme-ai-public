@@ -12,7 +12,7 @@ from app.opening.render import NO_NAME_PHRASE
 
 DATA = Path(__file__).resolve().parent / "data" / "assistant.json"
 # the assistant word in each language: every introduction and every sample must contain it (and "AI")
-ASSISTANT_WORD = {lang: "assistant" for lang in ("en", "te", "hi", "kn", "ta", "ml")}   # job DS: in everyday speech the word stays in English (Latin letters) in every language
+ASSISTANT_WORD = {lang: "assistant" for lang in ("en", "te", "hi", "kn", "ta", "ml", "mr")}   # job DS: in everyday speech the word stays in English (Latin letters) in every language
 
 
 @lru_cache(maxsize=1)
@@ -34,7 +34,7 @@ NO_NAME = NO_NAME_PHRASE   # (one list of the phrases: the opening line and the 
 # the fixed introduction when there is no name: the business and "AI assistant" (every language states both)
 INTRO_UNNAMED = {
     "en": "The AI assistant of {business}", "te": "{business} నుంచి AI assistant", "hi": "{business} की AI assistant", "kn": "{business} ಇಂದ AI assistant",
-    "ta": "{business} இன் AI assistant", "ml": "{business} ന്റെ AI assistant",
+    "ta": "{business} இன் AI assistant", "ml": "{business} ന്റെ AI assistant", "mr": "{business} ची AI assistant",
 }
 
 

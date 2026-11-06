@@ -42,6 +42,8 @@ class CallPlan:
     max_call_s: int = 180
     voicemail_action: str = "hang_up"   # hang_up | leave_message | retry_later
     cost_paise_per_minute: int = 0
+    # the free visit slots offered on this call (ISO starts_at, India time; job calls-like-a-pro part 5): the outcome keeps a visit time only if it is one of them
+    visit_slots: tuple[str, ...] = ()
 
 
 class CallStore(Protocol):
@@ -160,7 +162,7 @@ async def run_call(
     result = outcome_mod.deterministic(answered=True, transcript=line.transcript, end_reason=line.end_reason, voicemail=flags["voicemail"], stop_requested=flags["stop"], handover=flags["handover"])
     result.cost_paise = outcome_mod.cost_paise(duration, plan.cost_paise_per_minute)
     if outcome_llm is not None:
-        result = await outcome_mod.from_model(outcome_llm, model, result, plan.language, today())
+        result = await outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots)
     try:
         await asyncio.to_thread(store.finish, plan.call_id, result, duration)
     except Exception:   # noqa: BLE001 - the call is over either way; the worker's sweep closes a row that stayed open

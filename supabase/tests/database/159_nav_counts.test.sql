@@ -12,7 +12,7 @@ exception when others then return 'ERR:' || sqlstate;
 end $$;
 
 select ok(pg_temp.q('a_owner', $q$select public.nav_counts(%L)::text$q$) like '{%', 'A1 the Owner reads the counts');
-select is(pg_temp.q('a_owner', $q$select (select count(*) from jsonb_object_keys(public.nav_counts(%L)))::text$q$), '13', 'A2 the thirteen fields of the contract');
+select is(pg_temp.q('a_owner', $q$select (select count(*) from jsonb_object_keys(public.nav_counts(%L)))::text$q$), '14', 'A2 the fourteen fields of the contract');
 select is(pg_temp.q('b_owner', format($q$select public.nav_counts(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'A3 another workspace''s Owner: refused');
 select is(pg_temp.q('outsider', $q$select public.nav_counts(%L)::text$q$), 'ERR:42501', 'A4 a non-member: refused');
 
@@ -27,6 +27,13 @@ select ok(pg_temp.q('a_viewer', $q$select (public.nav_counts(%L) ->> 'needs_you'
 select is(pg_temp.q('a_owner', $q$select (public.nav_counts(%L) ->> 'needs_you')$q$), pg_temp.q('a_owner', $q$select public.today_summary(%L) -> 'cards' ->> 'waiting'$q$), 'C1 needs_you is Today''s own number');
 select ok((pg_temp.q('a_owner', $q$select (public.nav_counts(%L) ->> 'new_leads')$q$))::int >= 0, 'C2 new leads: a number for the Owner');
 select is(pg_temp.q('a_owner', $q$select (public.nav_counts(%L) ->> 'live_calls')$q$), '0', 'C3 no call in progress');
+
+-- Lead Desk's own waiting rows (migration 20261231200000)
+insert into public.outreach_batches (id, tenant_id, name, goal, channel, language, status, created_by, plan_sha256)
+values (tests.rid('nb1'), tests.tid('a'), 'Call the new leads', 'general', 'call', 'en', 'planned', tests.uid('a_owner'), repeat('a', 64));
+select is(pg_temp.q('a_owner', $q$select (public.nav_counts(%L) ->> 'lead_desk_waiting')$q$), '1', 'D1 a calling plan waiting for the Owner''s approval counts for the Owner');
+select is(pg_temp.q('a_admin', $q$select (public.nav_counts(%L) ->> 'lead_desk_waiting')$q$), '0', 'D2 ... not for an Admin (only the Owner approves)');
+select is(pg_temp.q('a_viewer', $q$select (public.nav_counts(%L) ->> 'lead_desk_waiting')$q$), '0', 'D3 nor a Viewer');
 
 select * from finish();
 rollback;

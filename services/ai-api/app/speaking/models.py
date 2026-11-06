@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, model_validator
 
 from app.agents import register
 
-Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 Style = Literal["everyday_mixed", "everyday_pure", "formal"]
 Region = Literal["neutral", "coastal", "telangana", "rayalaseema", "chennai", "kongu", "bengaluru", "north_karnataka"]
 

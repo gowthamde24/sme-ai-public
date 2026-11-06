@@ -88,7 +88,7 @@ class FallbackTts:
     # ---- one piece of text ----------------------------------------------------------------------------------------------------------------
 
     async def stream(self, text: str, language: str) -> AsyncIterator[bytes]:
-        tag = language if language in ("en", "te", "hi", "kn", "ta", "ml") else "other"   # what the log says about the language is one of ours, never the caller's string
+        tag = language if language in ("en", "te", "hi", "kn", "ta", "ml", "mr") else "other"   # what the log says about the language is one of ours, never the caller's string
         text = address.clean(text, self.address_allow)   # the last gate: nothing says sir / madam aloud unless the person asked for it
         voices = self.config.for_language(language, self._chosen.get(language), self.gender)
         primary_text = self._speech.prepare(text, language, voices.primary.engine)

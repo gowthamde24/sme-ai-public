@@ -181,7 +181,7 @@ class GooglePlacesSource:
 
     def search(self, request: SearchRequest) -> SourceResult:
         text = request.query.strip() if not request.area else f"{request.query.strip()} in {request.area.strip()}"
-        payload = {"textQuery": text[:250], "pageSize": max(1, min(request.max_results, MAX_RESULTS)), "regionCode": "IN", "languageCode": request.language if request.language in ("en", "hi", "te", "kn", "ta", "ml") else "en"}
+        payload = {"textQuery": text[:250], "pageSize": max(1, min(request.max_results, MAX_RESULTS)), "regionCode": "IN", "languageCode": request.language if request.language in ("en", "hi", "te", "kn", "ta", "ml", "mr") else "en"}
         headers = {"X-Goog-Api-Key": self._key, "X-Goog-FieldMask": FIELD_MASK, "Content-Type": "application/json"}
         try:
             response = self._client.post(TEXT_SEARCH_URL, json=payload, headers=headers)
