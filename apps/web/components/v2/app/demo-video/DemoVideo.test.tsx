@@ -61,7 +61,8 @@ describe("the demo video: each step on the real screens, from fixtures", () => {
     await draw();
     // 1. Today, a calm morning
     expect(step()).toBe(1);
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Good morning, Ravi");
+    expect(document.querySelector<HTMLElement>('[data-part="greeting"]')!).toHaveTextContent("Good morning, Ravi");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Today"); // the H1 is the menu's word (owner rule, 6 Nov); the greeting is the big line under it
     expect(screen.getByText("Kalyani Textiles, Vijayawada")).toBeInTheDocument();
     clean();
     // the frame: the count on Today follows the story, and "Live now" stays off (it would read the workspace's real activity)
