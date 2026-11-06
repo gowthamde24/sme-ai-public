@@ -4,7 +4,7 @@ import type { CallLang, Style } from "./types";
 /**
  * The example line the assistant would say on a first call, for each language of the call and way of talking (job DM, the preview of Settings > AI assistant). They are the CONTENT of a call, in the language of the call, so they
  * are not interface strings (the interface words are in app.json). {name} is the assistant's name and {shop} the business's. The words "AI assistant" are in every line: they are always said. Neutral on purpose (an enquiry, the details
- * on WhatsApp): the lines name no product and no price. The Telugu, Hindi, Kannada, Tamil and Malayalam lines are drafts for a native speaker to review.
+ * on WhatsApp): the lines name no product and no price. The Telugu, Hindi, Kannada, Tamil, Malayalam and Marathi lines are drafts for a native speaker to review.
  */
 export const LINES: Record<CallLang, Record<Style, string>> = {
   te: {
@@ -31,6 +31,12 @@ export const LINES: Record<CallLang, Record<Style, string>> = {
     warm: "ഹലോ! ഞാൻ {shop}-ന്റെ AI അസിസ്റ്റന്റ് {name}. നിങ്ങളുടെ അന്വേഷണത്തെക്കുറിച്ച് വിളിക്കുകയാണ്. വിവരങ്ങൾ വാട്സ്ആപ്പിൽ അയയ്ക്കട്ടേ?",
     resp: "നമസ്കാരം, ഞാൻ {shop}-ന്റെ AI അസിസ്റ്റന്റ് {name}. നിങ്ങളുടെ അന്വേഷണത്തെക്കുറിച്ച് ഒരു മിനിറ്റ് സംസാരിക്കാമോ?",
     quick: "ഹായ്, {shop}-ന്റെ AI അസിസ്റ്റന്റ് {name}. നിങ്ങളുടെ അന്വേഷണത്തെക്കുറിച്ചുള്ള വിളി. വിവരം വാട്സ്ആപ്പിൽ അയയ്ക്കട്ടേ?",
+  },
+  // Marathi (6 Nov, C1 #355): a DRAFT for a native reader, like the others
+  mr: {
+    warm: "नमस्कार! मी {shop} चा AI असिस्टंट {name}. तुमच्या चौकशीबद्दल फोन केला आहे. माहिती व्हॉट्सअ‍ॅपवर पाठवू का?",
+    resp: "नमस्कार, मी {shop} चा AI असिस्टंट {name}. तुमच्या चौकशीबद्दल एक मिनिट बोलू शकतो का?",
+    quick: "हाय, {shop} चा AI असिस्टंट {name}. तुमच्या चौकशीबद्दल फोन. माहिती व्हॉट्सअ‍ॅपवर पाठवू का?",
   },
   en: {
     warm: "Hello! I'm {name}, the AI assistant at {shop}. I'm calling about your enquiry. Shall I send the details on WhatsApp?",

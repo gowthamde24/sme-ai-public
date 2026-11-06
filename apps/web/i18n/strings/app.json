@@ -60619,28 +60619,6 @@
    "kn": "draft"
   }
  },
- "ol.rule.action.whatsapp_first": {
-  "en": "WhatsApp first",
-  "te": "ముందు వాట్సాప్",
-  "hi": "पहले व्हाट्सऐप",
-  "kn": "ಮೊದಲು ವಾಟ್ಸಾಪ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ol.rule.action.whatsapp_then_call": {
-  "en": "WhatsApp first, then call",
-  "te": "ముందు వాట్సాప్, తర్వాత కాల్",
-  "hi": "पहले व्हाट्सऐप, फिर कॉल",
-  "kn": "ಮೊದಲು ವಾಟ್ಸಾಪ್, ನಂತರ ಕಾಲ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "ol.rule.within": {
   "en": "Minutes before the first call",
   "te": "మొదటి కాల్‌కి ముందు నిమిషాలు",
@@ -60653,10 +60631,10 @@
   }
  },
  "ol.rule.within.help": {
-  "en": "Calls only go out in your calling hours. After hours a lead gets a WhatsApp message now and a call the next morning.",
-  "te": "కాల్స్ మీ కాలింగ్ టైమ్‌లోనే వెళ్తాయి. టైమ్ దాటాక వచ్చిన లీడ్‌కి ఇప్పుడు వాట్సాప్ మెసేజ్, మర్నాడు ఉదయం కాల్ వెళ్తాయి.",
-  "hi": "कॉल सिर्फ़ आपके कॉलिंग टाइम में जाती हैं। टाइम के बाद आए लीड को अभी व्हाट्सऐप मैसेज और अगली सुबह कॉल जाती है।",
-  "kn": "ಕಾಲ್‌ಗಳು ನಿಮ್ಮ ಕಾಲಿಂಗ್ ಟೈಮ್‌ನಲ್ಲಿ ಮಾತ್ರ ಹೋಗುತ್ತವೆ. ಟೈಮ್ ಮುಗಿದ ಮೇಲೆ ಬಂದ ಲೀಡ್‌ಗೆ ಈಗ ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್, ಮರುದಿನ ಬೆಳಿಗ್ಗೆ ಕಾಲ್ ಹೋಗುತ್ತದೆ.",
+  "en": "Calls only go out in your calling hours. After hours the lead is called the next morning: nothing is sent at night.",
+  "te": "మీ కాల్ సమయాల్లోనే కాల్స్ వెళ్తాయి. ఆ సమయం దాటితే లీడ్‌కి మరుసటి ఉదయం కాల్ చేస్తాం: రాత్రి ఏమీ పంపం.",
+  "hi": "कॉल सिर्फ़ आपके कॉल के समय में जाती हैं। समय के बाद लीड को अगली सुबह कॉल किया जाता है: रात में कुछ नहीं भेजा जाता।",
+  "kn": "ನಿಮ್ಮ ಕರೆ ಸಮಯದಲ್ಲಿ ಮಾತ್ರ ಕರೆಗಳು ಹೋಗುತ್ತವೆ. ಸಮಯ ಮೀರಿದರೆ ಲೀಡ್‌ಗೆ ಮರುದಿನ ಬೆಳಿಗ್ಗೆ ಕರೆ ಮಾಡುತ್ತೇವೆ: ರಾತ್ರಿ ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -60718,22 +60696,44 @@
    "kn": "draft"
   }
  },
- "ol.rule.sentence.whatsapp_first": {
-  "en": "New leads from {source}: send a WhatsApp message first, within {n} minutes.",
-  "te": "{source} నుంచి వచ్చే కొత్త లీడ్‌లు: ముందు {n} నిమిషాల్లో వాట్సాప్ మెసేజ్ పంపండి.",
-  "hi": "{source} से आए नए लीड: पहले {n} मिनट के अंदर व्हाट्सऐप मैसेज भेजें।",
-  "kn": "{source} ನಿಂದ ಬಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಮೊದಲು {n} ನಿಮಿಷದೊಳಗೆ ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್ ಕಳುಹಿಸಿ.",
+ "ol.rule.sentence.call_then_ask": {
+  "en": "New leads from {source}: call within {n} minutes, in calling hours; WhatsApp only if they ask for it.",
+  "te": "{source} నుండి కొత్త లీడ్స్: కాల్ సమయాల్లో {n} నిమిషాల్లో కాల్; వాళ్ళు అడిగితేనే వాట్సాప్.",
+  "hi": "{source} से नए लीड: कॉल के समय में {n} मिनट में कॉल; वाट्सऐप सिर्फ़ उनके माँगने पर।",
+  "kn": "{source} ನಿಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ಕರೆ ಸಮಯದಲ್ಲಿ {n} ನಿಮಿಷಗಳಲ್ಲಿ ಕರೆ; ಅವರು ಕೇಳಿದರೆ ಮಾತ್ರ ವಾಟ್ಸಾಪ್.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "ol.rule.sentence.whatsapp_then_call": {
-  "en": "New leads from {source}: send a WhatsApp message, then call within {n} minutes.",
-  "te": "{source} నుంచి వచ్చే కొత్త లీడ్‌లు: వాట్సాప్ మెసేజ్ పంపి, తర్వాత {n} నిమిషాల్లో కాల్ చేయండి.",
-  "hi": "{source} से आए नए लीड: व्हाट्सऐप मैसेज भेजें, फिर {n} मिनट के अंदर कॉल करें।",
-  "kn": "{source} ನಿಂದ ಬಂದ ಹೊಸ ಲೀಡ್‌ಗಳು: ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್ ಕಳುಹಿಸಿ, ನಂತರ {n} ನಿಮಿಷದೊಳಗೆ ಕಾಲ್ ಮಾಡಿ.",
+ "ol.rule.channel.call": {
+  "en": "Call only",
+  "te": "కాల్ మాత్రమే",
+  "hi": "सिर्फ़ कॉल",
+  "kn": "ಕರೆ ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.channel.both": {
+  "en": "Call, and WhatsApp if they ask for it",
+  "te": "కాల్, వాళ్ళు అడిగితే వాట్సాప్",
+  "hi": "कॉल, और माँगने पर वाट्सऐप",
+  "kn": "ಕರೆ, ಅವರು ಕೇಳಿದರೆ ವಾಟ್ಸಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ol.rule.message.help": {
+  "en": "These words go on WhatsApp only when the customer asks for it or agrees to it on the call. Nothing is sent before the call.",
+  "te": "కాల్‌లో కస్టమర్ అడిగినప్పుడు లేదా ఒప్పుకున్నప్పుడు మాత్రమే ఈ మాటలు వాట్సాప్‌లో వెళ్తాయి. కాల్‌కి ముందు ఏమీ పంపం.",
+  "hi": "ये शब्द वाट्सऐप पर तभी जाते हैं जब ग्राहक कॉल पर माँगे या हाँ कहे। कॉल से पहले कुछ नहीं भेजा जाता।",
+  "kn": "ಕರೆಯಲ್ಲಿ ಗ್ರಾಹಕರು ಕೇಳಿದಾಗ ಅಥವಾ ಒಪ್ಪಿದಾಗ ಮಾತ್ರ ಈ ಮಾತುಗಳು ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಹೋಗುತ್ತವೆ. ಕರೆಯ ಮೊದಲು ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -60862,10 +60862,10 @@
   }
  },
  "ol.policy.night": {
-  "en": "A lead that arrives after hours gets a WhatsApp message now and a call the next morning at {time}.",
-  "te": "టైమ్ దాటాక వచ్చిన లీడ్‌కి ఇప్పుడు వాట్సాప్ మెసేజ్, మర్నాడు ఉదయం {time}కి కాల్ వెళ్తాయి.",
-  "hi": "टाइम के बाद आए लीड को अभी व्हाट्सऐप मैसेज और अगली सुबह {time} बजे कॉल जाती है।",
-  "kn": "ಟೈಮ್ ಮುಗಿದ ಮೇಲೆ ಬಂದ ಲೀಡ್‌ಗೆ ಈಗ ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್, ಮರುದಿನ ಬೆಳಿಗ್ಗೆ {time} ಕ್ಕೆ ಕಾಲ್ ಹೋಗುತ್ತದೆ.",
+  "en": "A lead that arrives after hours is called the next morning at {time}. Nothing is sent at night.",
+  "te": "సమయం దాటిన తర్వాత వచ్చిన లీడ్‌కి మరుసటి ఉదయం {time}కి కాల్ చేస్తాం. రాత్రి ఏమీ పంపం.",
+  "hi": "समय के बाद आए लीड को अगली सुबह {time} बजे कॉल किया जाता है। रात में कुछ नहीं भेजा जाता।",
+  "kn": "ಸಮಯ ಮೀರಿ ಬಂದ ಲೀಡ್‌ಗೆ ಮರುದಿನ ಬೆಳಿಗ್ಗೆ {time}ಕ್ಕೆ ಕರೆ ಮಾಡುತ್ತೇವೆ. ರಾತ್ರಿ ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -74435,6 +74435,589 @@
    "kn": "draft"
   }
  },
+ "tt.title": {
+  "en": "How I talk to customers",
+  "te": "కస్టమర్లతో నేను ఎలా మాట్లాడతాను",
+  "hi": "मैं ग्राहकों से कैसे बात करूँ",
+  "kn": "ಗ್ರಾಹಕರ ಜೊತೆ ನಾನು ಹೇಗೆ ಮಾತಾಡುತ್ತೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.sub": {
+  "en": "Teach your assistant how to speak on calls: how to greet, what to ask, and what never to say.",
+  "te": "కాల్స్‌లో ఎలా మాట్లాడాలో మీ అసిస్టెంట్‌కు నేర్పండి: ఎలా పలకరించాలి, ఏమి అడగాలి, ఏమి ఎప్పుడూ అనకూడదు.",
+  "hi": "अपने असिस्टेंट को सिखाएँ कि कॉल पर कैसे बोले: कैसे नमस्ते करे, क्या पूछे और क्या कभी न कहे।",
+  "kn": "ಕಾಲ್‌ಗಳಲ್ಲಿ ಹೇಗೆ ಮಾತಾಡಬೇಕೆಂದು ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಕಲಿಸಿ: ಹೇಗೆ ಸ್ವಾಗತಿಸಬೇಕು, ಏನು ಕೇಳಬೇಕು, ಏನನ್ನು ಎಂದೂ ಹೇಳಬಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.defaults": {
+  "en": "These are the suggested answers for your kind of business. Change anything and save.",
+  "te": "ఇవి మీ రకం వ్యాపారానికి సూచించిన సమాధానాలు. ఏదైనా మార్చి సేవ్ చేయండి.",
+  "hi": "ये आपके तरह के कारोबार के लिए सुझाए गए जवाब हैं। कुछ भी बदलें और सेव करें।",
+  "kn": "ಇವು ನಿಮ್ಮ ರೀತಿಯ ವ್ಯಾಪಾರಕ್ಕೆ ಸೂಚಿಸಿದ ಉತ್ತರಗಳು. ಏನನ್ನಾದರೂ ಬದಲಿಸಿ ಸೇವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.owneronly": {
+  "en": "Only the owner can change this.",
+  "te": "దీన్ని ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ मालिक बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.greeting": {
+  "en": "Greeting",
+  "te": "పలకరింపు",
+  "hi": "नमस्ते का तरीका",
+  "kn": "ಸ್ವಾಗತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.greeting.lang": {
+  "en": "Greeting language",
+  "te": "పలకరింపు భాష",
+  "hi": "नमस्ते की भाषा",
+  "kn": "ಸ್ವಾಗತದ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.greeting.help": {
+  "en": "{business} becomes your business name. Leave it empty to use the suggested greeting. Your assistant always says it is an AI.",
+  "te": "{business} మీ వ్యాపారం పేరుగా మారుతుంది. సూచించిన పలకరింపు కావాలంటే ఖాళీగా వదలండి. మీ అసిస్టెంట్ తాను AI అని ఎప్పుడూ చెబుతుంది.",
+  "hi": "{business} आपके कारोबार का नाम बन जाता है। सुझाया गया तरीका चाहिए तो खाली छोड़ें। आपका असिस्टेंट हमेशा बताता है कि वह AI है।",
+  "kn": "{business} ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಹೆಸರಾಗುತ್ತದೆ. ಸೂಚಿಸಿದ ಸ್ವಾಗತ ಬೇಕಿದ್ದರೆ ಖಾಲಿ ಬಿಡಿ. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ತಾನು AI ಎಂದು ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.address": {
+  "en": "How to address customers",
+  "te": "కస్టమర్లను ఎలా పిలవాలి",
+  "hi": "ग्राहकों को कैसे बुलाएँ",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ಹೇಗೆ ಕರೆಯಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.address.plain": {
+  "en": "Plainly: their first name at most once (never \"sir\" or \"madam\")",
+  "te": "సాధారణంగా: మొదటి పేరు ఒక్కసారి మాత్రమే (\"సార్\", \"మేడమ్\" ఎప్పుడూ కాదు)",
+  "hi": "सीधे: पहला नाम ज़्यादा से ज़्यादा एक बार (\"सर\" या \"मैडम\" कभी नहीं)",
+  "kn": "ಸರಳವಾಗಿ: ಮೊದಲ ಹೆಸರು ಒಮ್ಮೆ ಮಾತ್ರ (\"ಸರ್\", \"ಮೇಡಂ\" ಎಂದೂ ಇಲ್ಲ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.address.sir_madam": {
+  "en": "\"Sir\" or \"Madam\"",
+  "te": "\"సార్\" లేదా \"మేడమ్\"",
+  "hi": "\"सर\" या \"मैडम\"",
+  "kn": "\"ಸರ್\" ಅಥವಾ \"ಮೇಡಂ\"",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.address.garu": {
+  "en": "\"Garu\" after the name (Telugu)",
+  "te": "పేరు తర్వాత \"గారు\" (తెలుగు)",
+  "hi": "नाम के बाद \"गारू\" (तेलुगु)",
+  "kn": "ಹೆಸರಿನ ನಂತರ \"ಗಾರು\" (ತೆಲುಗು)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.address.ji": {
+  "en": "\"Ji\" after the name (Hindi)",
+  "te": "పేరు తర్వాత \"జీ\" (హిందీ)",
+  "hi": "नाम के बाद \"जी\" (हिंदी)",
+  "kn": "ಹೆಸರಿನ ನಂತರ \"ಜೀ\" (ಹಿಂದಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.questions": {
+  "en": "Questions to ask",
+  "te": "అడగాల్సిన ప్రశ్నలు",
+  "hi": "पूछने वाले सवाल",
+  "kn": "ಕೇಳಬೇಕಾದ ಪ್ರಶ್ನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.questions.help": {
+  "en": "What to find out, one at a time, in this order. Up to {n}.",
+  "te": "ఏమి తెలుసుకోవాలి, ఒక్కొక్కటిగా, ఈ వరుసలో. గరిష్టం {n}.",
+  "hi": "क्या पता करना है, एक-एक करके, इसी क्रम में। ज़्यादा से ज़्यादा {n}।",
+  "kn": "ಏನು ತಿಳಿಯಬೇಕು, ಒಂದೊಂದಾಗಿ, ಈ ಕ್ರಮದಲ್ಲಿ. ಗರಿಷ್ಠ {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.questions.one": {
+  "en": "Question {n}",
+  "te": "ప్రశ్న {n}",
+  "hi": "सवाल {n}",
+  "kn": "ಪ್ರಶ್ನೆ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.questions.add": {
+  "en": "Add a question",
+  "te": "ప్రశ్న జోడించండి",
+  "hi": "सवाल जोड़ें",
+  "kn": "ಪ್ರಶ್ನೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.never": {
+  "en": "Never say",
+  "te": "ఎప్పుడూ అనకూడనివి",
+  "hi": "कभी न कहें",
+  "kn": "ಎಂದೂ ಹೇಳಬಾರದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.never.help": {
+  "en": "Words or phrases your assistant must never speak. Every line is checked before it is said; if one is in it, the assistant says it will check with the team instead. Up to {n}.",
+  "te": "మీ అసిస్టెంట్ ఎప్పుడూ అనకూడని పదాలు. ప్రతి వాక్యం చెప్పే ముందు చెక్ అవుతుంది; అందులో ఇవి ఉంటే, టీమ్‌తో చెక్ చేస్తానని చెబుతుంది. గరిష్టం {n}.",
+  "hi": "ऐसे शब्द जो आपका असिस्टेंट कभी न बोले। हर लाइन बोलने से पहले जाँची जाती है; उसमें इनमें से कोई हो तो असिस्टेंट कहता है कि वह टीम से पूछकर बताएगा। ज़्यादा से ज़्यादा {n}।",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಎಂದೂ ಹೇಳಬಾರದ ಪದಗಳು. ಪ್ರತಿ ವಾಕ್ಯವನ್ನು ಹೇಳುವ ಮೊದಲು ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ; ಅದರಲ್ಲಿ ಇವು ಇದ್ದರೆ, ತಂಡದ ಜೊತೆ ಪರಿಶೀಲಿಸುತ್ತೇನೆ ಎಂದು ಹೇಳುತ್ತದೆ. ಗರಿಷ್ಠ {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.never.one": {
+  "en": "Never say {n}",
+  "te": "అనకూడనిది {n}",
+  "hi": "कभी न कहें {n}",
+  "kn": "ಹೇಳಬಾರದ್ದು {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.never.add": {
+  "en": "Add a phrase",
+  "te": "పదం జోడించండి",
+  "hi": "शब्द जोड़ें",
+  "kn": "ಪದ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.objections": {
+  "en": "When a customer says…",
+  "te": "కస్టమర్ ఇలా అంటే…",
+  "hi": "जब ग्राहक कहे…",
+  "kn": "ಗ್ರಾಹಕರು ಹೀಗೆ ಹೇಳಿದರೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.objections.help": {
+  "en": "Your answer to what customers often say. No prices, percentages or promises. Up to {n}.",
+  "te": "కస్టమర్లు తరచూ అనేదానికి మీ సమాధానం. ధరలు, శాతాలు, హామీలు వద్దు. గరిష్టం {n}.",
+  "hi": "ग्राहक अक्सर जो कहते हैं, उसका आपका जवाब। कोई दाम, प्रतिशत या वादा नहीं। ज़्यादा से ज़्यादा {n}।",
+  "kn": "ಗ್ರಾಹಕರು ಆಗಾಗ ಹೇಳುವುದಕ್ಕೆ ನಿಮ್ಮ ಉತ್ತರ. ಬೆಲೆ, ಶೇಕಡಾ, ಭರವಸೆ ಬೇಡ. ಗರಿಷ್ಠ {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.objections.a": {
+  "en": "The customer says",
+  "te": "కస్టమర్ అంటారు",
+  "hi": "ग्राहक कहता है",
+  "kn": "ಗ್ರಾಹಕರು ಹೇಳುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.objections.b": {
+  "en": "Your assistant answers",
+  "te": "మీ అసిస్టెంట్ సమాధానం",
+  "hi": "आपका असिस्टेंट जवाब देता है",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.objections.add": {
+  "en": "Add an answer",
+  "te": "సమాధానం జోడించండి",
+  "hi": "जवाब जोड़ें",
+  "kn": "ಉತ್ತರ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.examples": {
+  "en": "Good answers",
+  "te": "మంచి సమాధానాలు",
+  "hi": "अच्छे जवाब",
+  "kn": "ಒಳ್ಳೆಯ ಉತ್ತರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.examples.help": {
+  "en": "A few answers the way you would give them. Your assistant copies the tone and length, not the words. Up to {n}.",
+  "te": "మీరు ఇచ్చే విధంగా కొన్ని సమాధానాలు. మీ అసిస్టెంట్ పదాలు కాదు, తీరు మరియు పొడవు నేర్చుకుంటుంది. గరిష్టం {n}.",
+  "hi": "कुछ जवाब, जैसे आप देते हैं। आपका असिस्टेंट शब्द नहीं, लहजा और लंबाई सीखता है। ज़्यादा से ज़्यादा {n}।",
+  "kn": "ನೀವು ಕೊಡುವ ರೀತಿಯಲ್ಲಿ ಕೆಲವು ಉತ್ತರಗಳು. ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಪದಗಳನ್ನಲ್ಲ, ಧಾಟಿ ಮತ್ತು ಉದ್ದವನ್ನು ಕಲಿಯುತ್ತದೆ. ಗರಿಷ್ಠ {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.examples.a": {
+  "en": "The customer asks",
+  "te": "కస్టమర్ అడుగుతారు",
+  "hi": "ग्राहक पूछता है",
+  "kn": "ಗ್ರಾಹಕರು ಕೇಳುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.examples.b": {
+  "en": "A good answer",
+  "te": "మంచి సమాధానం",
+  "hi": "अच्छा जवाब",
+  "kn": "ಒಳ್ಳೆಯ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.examples.add": {
+  "en": "Add an example",
+  "te": "ఉదాహరణ జోడించండి",
+  "hi": "उदाहरण जोड़ें",
+  "kn": "ಉದಾಹರಣೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.remove": {
+  "en": "Remove",
+  "te": "తీసేయండి",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.remove.n": {
+  "en": "Remove {n}",
+  "te": "{n} తీసేయండి",
+  "hi": "{n} हटाएँ",
+  "kn": "{n} ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.rules": {
+  "en": "Always on (you can't change these)",
+  "te": "ఎప్పుడూ ఆన్‌లో ఉంటాయి (ఇవి మార్చలేరు)",
+  "hi": "हमेशा चालू (इन्हें बदल नहीं सकते)",
+  "kn": "ಯಾವಾಗಲೂ ಆನ್ (ಇವನ್ನು ಬದಲಿಸಲಾಗದು)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.saving": {
+  "en": "Saving…",
+  "te": "సేవ్ అవుతోంది…",
+  "hi": "सेव हो रहा है…",
+  "kn": "ಸೇವ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.saved": {
+  "en": "Saved. Your assistant talks this way from the next call.",
+  "te": "సేవ్ అయింది. తర్వాతి కాల్ నుంచి మీ అసిస్టెంట్ ఇలా మాట్లాడుతుంది.",
+  "hi": "सेव हो गया। अगली कॉल से आपका असिस्टेंट ऐसे ही बात करेगा।",
+  "kn": "ಸೇವ್ ಆಯಿತು. ಮುಂದಿನ ಕಾಲ್‌ನಿಂದ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಹೀಗೆ ಮಾತಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.reset": {
+  "en": "Use the suggested ones",
+  "te": "సూచించినవే వాడండి",
+  "hi": "सुझाए गए ही इस्तेमाल करें",
+  "kn": "ಸೂಚಿಸಿದವನ್ನೇ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.reset.sure": {
+  "en": "Remove your changes and use the suggested ones?",
+  "te": "మీ మార్పులు తీసేసి సూచించినవే వాడాలా?",
+  "hi": "अपने बदलाव हटाकर सुझाए गए इस्तेमाल करें?",
+  "kn": "ನಿಮ್ಮ ಬದಲಾವಣೆಗಳನ್ನು ತೆಗೆದು ಸೂಚಿಸಿದವನ್ನೇ ಬಳಸಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.reset.yes": {
+  "en": "Yes, use the suggested ones",
+  "te": "అవును, సూచించినవే",
+  "hi": "हाँ, सुझाए गए",
+  "kn": "ಹೌದು, ಸೂಚಿಸಿದವೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.reset.no": {
+  "en": "Keep mine",
+  "te": "నావే ఉంచండి",
+  "hi": "मेरे वाले रखें",
+  "kn": "ನನ್ನವೇ ಇರಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.reset.done": {
+  "en": "Back to the suggested ones.",
+  "te": "సూచించినవి మళ్ళీ వచ్చాయి.",
+  "hi": "सुझाए गए वापस आ गए।",
+  "kn": "ಸೂಚಿಸಿದವು ಮತ್ತೆ ಬಂದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.price_or_promise": {
+  "en": "Please take out amounts, percentages and promises: your assistant never states them. The team gives prices.",
+  "te": "దయచేసి మొత్తాలు, శాతాలు, హామీలు తీసేయండి: మీ అసిస్టెంట్ వాటిని ఎప్పుడూ చెప్పదు. ధరలు టీమ్ చెబుతుంది.",
+  "hi": "कृपया रकम, प्रतिशत और वादे हटा दें: आपका असिस्टेंट इन्हें कभी नहीं कहता। दाम टीम बताती है।",
+  "kn": "ದಯವಿಟ್ಟು ಮೊತ್ತ, ಶೇಕಡಾ, ಭರವಸೆಗಳನ್ನು ತೆಗೆಯಿರಿ: ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಅವನ್ನು ಎಂದೂ ಹೇಳುವುದಿಲ್ಲ. ಬೆಲೆಯನ್ನು ತಂಡ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.too_many_questions": {
+  "en": "At most 8 questions.",
+  "te": "గరిష్టం 8 ప్రశ్నలు.",
+  "hi": "ज़्यादा से ज़्यादा 8 सवाल।",
+  "kn": "ಗರಿಷ್ಠ 8 ಪ್ರಶ್ನೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.too_many_never_say": {
+  "en": "At most 20 phrases to never say.",
+  "te": "అనకూడనివి గరిష్టం 20.",
+  "hi": "कभी न कहने वाले ज़्यादा से ज़्यादा 20।",
+  "kn": "ಹೇಳಬಾರದವು ಗರಿಷ್ಠ 20.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.too_many_objections": {
+  "en": "At most 8 answers.",
+  "te": "గరిష్టం 8 సమాధానాలు.",
+  "hi": "ज़्यादा से ज़्यादा 8 जवाब।",
+  "kn": "ಗರಿಷ್ಠ 8 ಉತ್ತರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.too_many_examples": {
+  "en": "At most 5 examples.",
+  "te": "గరిష్టం 5 ఉదాహరణలు.",
+  "hi": "ज़्यादा से ज़्यादा 5 उदाहरण।",
+  "kn": "ಗರಿಷ್ಠ 5 ಉದಾಹರಣೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.duplicate": {
+  "en": "The same line is there twice. Please remove one.",
+  "te": "ఒకే వాక్యం రెండుసార్లు ఉంది. ఒకటి తీసేయండి.",
+  "hi": "एक ही लाइन दो बार है। कृपया एक हटाएँ।",
+  "kn": "ಒಂದೇ ವಾಕ್ಯ ಎರಡು ಬಾರಿ ಇದೆ. ಒಂದನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.invalid": {
+  "en": "Something here is too short or too long. Each line needs at least 2 letters.",
+  "te": "ఇక్కడ ఏదో చాలా చిన్నది లేదా పొడవుగా ఉంది. ప్రతి వాక్యానికి కనీసం 2 అక్షరాలు కావాలి.",
+  "hi": "यहाँ कुछ बहुत छोटा या बहुत लंबा है। हर लाइन में कम से कम 2 अक्षर चाहिए।",
+  "kn": "ಇಲ್ಲಿ ಏನೋ ತುಂಬಾ ಚಿಕ್ಕದು ಅಥವಾ ಉದ್ದವಾಗಿದೆ. ಪ್ರತಿ ವಾಕ್ಯಕ್ಕೆ ಕನಿಷ್ಠ 2 ಅಕ್ಷರ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.forbidden": {
+  "en": "Only the owner can change this.",
+  "te": "దీన్ని ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ मालिक बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.read_only": {
+  "en": "This workspace is read-only right now. Nothing was changed.",
+  "te": "ఈ వర్క్‌స్పేస్ ఇప్పుడు చదవడానికి మాత్రమే. ఏదీ మారలేదు.",
+  "hi": "यह वर्कस्पेस अभी सिर्फ़ पढ़ने के लिए है। कुछ नहीं बदला।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಈಗ ಓದಲು ಮಾತ್ರ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.not_available": {
+  "en": "This isn't switched on yet.",
+  "te": "ఇది ఇంకా ఆన్ కాలేదు.",
+  "hi": "यह अभी चालू नहीं है।",
+  "kn": "ಇದು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.down": {
+  "en": "That didn't save. Please try again in a minute. Nothing was changed.",
+  "te": "సేవ్ కాలేదు. ఒక నిమిషంలో మళ్ళీ ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "सेव नहीं हुआ। एक मिनट बाद फिर कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಸೇವ್ ಆಗಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.mfa": {
+  "en": "This needs your two-step code first. Sign in again with the code from your authenticator app, then try once more. Nothing was changed.",
+  "te": "దీనికి ముందుగా మీ టూ-స్టెప్ కోడ్ కావాలి. ఆథెంటికేటర్ యాప్ కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, ఇంకోసారి ప్రయత్నించండి. ఏదీ మారలేదు.",
+  "hi": "इसके लिए पहले आपका टू-स्टेप कोड चाहिए। ऑथेंटिकेटर ऐप के कोड से फिर साइन इन करके दोबारा कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಇದಕ್ಕೆ ಮೊದಲು ನಿಮ್ಮ ಟೂ-ಸ್ಟೆಪ್ ಕೋಡ್ ಬೇಕು. ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಕೋಡ್‌ನಿಂದ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "ar.title": {
   "en": "Automatic replies",
   "te": "ఆటోమేటిక్ రిప్లైలు",
@@ -79412,6 +79995,17 @@
   "te": "ఆ కీ ఒప్పుకోలేదు. చూసి మళ్లీ ప్రయత్నించండి.",
   "hi": "वह की नहीं मानी गई। जाँचकर फिर से कोशिश करें।",
   "kn": "ಆ ಕೀ ಒಪ್ಪಿಕೊಳ್ಳಲಿಲ್ಲ. ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "bv.work.secret.err.renew": {
+  "en": "This box can't take the key any more. Ask me again for a new card.",
+  "te": "ఈ బాక్స్ ఇక కీని తీసుకోదు. కొత్త కార్డ్ కోసం నన్ను మళ్ళీ అడగండి.",
+  "hi": "यह बॉक्स अब की नहीं ले सकता। नए कार्ड के लिए मुझसे फिर पूछें।",
+  "kn": "ಈ ಬಾಕ್ಸ್ ಇನ್ನು ಕೀ ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ. ಹೊಸ ಕಾರ್ಡ್‌ಗಾಗಿ ನನ್ನನ್ನು ಮತ್ತೆ ಕೇಳಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",

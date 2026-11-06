@@ -23,11 +23,16 @@ beforeEach(() => {
 });
 
 describe("the opening-line client (C1's API: job DT)", () => {
-  it("reads the workspace's own lines (not a campaign's), the default of each language as the switch stands, and leaves mr and bn out", async () => {
+  it("a draft language the API has no default for yet (Marathi before C1 #355) takes the English default: the editor is never refused for it", async () => {
+    const DEF = Object.fromEntries(["en", "te", "hi", "kn", "ta", "ml"].map((l) => [l, { with_ai: `${l}: hello {customer}. I'm an AI assistant.`, without_ai: `${l}: hello {customer}.` }]));
+    apiRequest.mockResolvedValue(body({ defaults: DEF }));
+    expect((await getOpeningLine("tok", T)).defaults.mr).toBe("en: hello {customer}. I'm an AI assistant.");
+  });
+  it("reads the workspace's own lines (not a campaign's), the default of each language as the switch stands; Marathi is read (a draft, C1 #355), bn is still left out", async () => {
     apiRequest.mockResolvedValue(body({ lines: [{ language: "en", campaign_id: null, text: EN }, { language: "en", campaign_id: C, text: CAMP }, { language: "mr", campaign_id: null, text: "नमस्कार {customer}, मी {assistant}." }] }));
     const got = await getOpeningLine("tok", T);
     expect(apiRequest).toHaveBeenCalledWith(`${AI}/opening-line`, "tok");
-    expect(got.lines).toEqual({ en: EN });
+    expect(got.lines).toEqual({ en: EN, mr: "नमस्कार {customer}, मी {assistant}." });
     expect(got.mentionAi).toBe(true);
     expect(got.defaults.te).toBe("te: hello {customer}. I'm an AI assistant.");
     apiRequest.mockResolvedValue(body({ mention_ai: false }));

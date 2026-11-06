@@ -554,7 +554,7 @@ export interface QuotePreviewOut {
 }
 
 export interface QuoteTextOut {
-  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   language_review: "reviewed" | "draft";
   text: string;
 }
@@ -737,7 +737,7 @@ export interface TripNotifyIn {
   message_id: string;
   kind: "left" | "soon" | "delivered" | "delay";
   eta?: string | null;
-  language?: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  language?: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
 }
 
 export interface TripOut {

@@ -8,11 +8,16 @@ export const VOICES = ["female_warm", "female_clear", "male_calm", "male_lively"
 export type Voice = (typeof VOICES)[number];
 export const STYLES = ["warm", "resp", "quick"] as const;
 export type Style = (typeof STYLES)[number];
-/** The languages a call or a voice message can be in: the three of the app, English, and (job DQ part 3) Tamil and Malayalam. The app's own screens stay in en, te, hi and kn; these two are for calls and messages only. */
-export const CALL_LANGS = ["te", "hi", "kn", "en", "ta", "ml"] as const;
+/** The languages a call or a voice message can be in: the three of the app, English, (job DQ part 3) Tamil and Malayalam, and (6 Nov, a draft) Marathi. The app's own screens stay in en, te, hi and kn; these two are for calls and messages only. */
+export const CALL_LANGS = ["te", "hi", "kn", "en", "ta", "ml", "mr"] as const;
 export type CallLang = (typeof CALL_LANGS)[number];
 /** Each call language in its own script (the language chips of Settings > AI assistant). */
-export const CALL_LANG_NAMES: Record<CallLang, string> = { te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ", en: "English", ta: "தமிழ்", ml: "മലയാളം" };
+/**
+ * Languages whose words a native reader has not checked yet (owner, 6 Nov: Marathi joins as a DRAFT, C1 #355). Their name carries "(draft)" wherever it is drawn, until C1 says a reader approved them. The API has no
+ * per-language draft field, so this list is the one place that says it.
+ */
+export const DRAFT_LANGS: readonly CallLang[] = ["mr"];
+export const CALL_LANG_NAMES: Record<CallLang, string> = { te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ", en: "English", ta: "தமிழ்", ml: "മലയാളം", mr: "मराठी (draft)" };
 export const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
 export type Day = (typeof DAYS)[number];
 

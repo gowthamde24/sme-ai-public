@@ -91,7 +91,7 @@ export type SecretKind = (typeof SECRET_KINDS)[number];
  * -> `{saved: true, last4: "1a2b" | null}` (Owner only; good for 15 minutes, once), through `<base>/assistant-work` (the token stays on the server). It is never part of the conversation, never
  * sent to the model, never logged; the card knows "saved" and at most the last four.
  */
-export type SecretCard = { kind: "secret"; id: string; requestId: string; secret: SecretKind; title: string; hint: string | null; saved: { last4: string | null } | null };
+export type SecretCard = { kind: "secret"; id: string; requestId: string; secret: SecretKind; title: string; hint: string | null; saved: { last4: string | null } | null; /** ISO time after which the box takes nothing (a request is good for 15 minutes, once); absent = not said. */ expiresAt?: string | null; /** "Set up IndiaMART" (C1 #358): the setup this key belongs to and the live test to offer once the key is saved ("Pull now"). */ setupId?: string | null; test?: LiveTest | null };
 
 /** The guided setups (job design 4). */
 export const SETUP_KINDS = ["indiamart", "email_forward", "website_form", "google_sheet", "voice_language", "calling_hours", "followup_rules", "team_invite"] as const;
@@ -215,7 +215,7 @@ function parseSecret(v: Record<string, unknown>): SecretCard | null {
   const title = str(v.title, 200);
   if (!cardId || !requestId || !secret || !title) return null;
   const last4 = isRec(v.saved) && typeof v.saved.last4 === "string" && /^[\w-]{4}$/.test(v.saved.last4) ? v.saved.last4 : null;
-  return { kind: "secret", id: cardId, requestId, secret, title, hint: str(v.hint, 400), saved: isRec(v.saved) ? { last4 } : null };
+  return { kind: "secret", id: cardId, requestId, secret, title, hint: str(v.hint, 400), saved: isRec(v.saved) ? { last4 } : null, expiresAt: typeof v.expires_at === "string" && !Number.isNaN(Date.parse(v.expires_at)) ? v.expires_at : null, setupId: id(v.setup_id), test: v.test === null || v.test === undefined ? null : one(LIVE_TESTS, v.test) };
 }
 
 export function parseTestResult(json: unknown): TestResult | null {

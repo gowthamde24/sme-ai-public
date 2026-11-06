@@ -184,7 +184,8 @@
                 "hi",
                 "kn",
                 "ta",
-                "ml"
+                "ml",
+                "mr"
               ],
               "type": "string"
             },
@@ -843,7 +844,8 @@
             "hi",
             "kn",
             "ta",
-            "ml"
+            "ml",
+            "mr"
           ],
           "title": "Language",
           "type": "string"

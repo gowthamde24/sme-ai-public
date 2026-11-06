@@ -25,6 +25,8 @@ ROUTE_WORDS = frozenset(
         "switches", "switch",
         # 5 Nov 2026 (C1): "secrets"
         "secrets",
+        # 5 Nov 2026 (C1): guided setups (POST /assistant/setups/{id}/test)
+        "setups",
         # 5 Nov 2026 (C1): a hand-over call was dealt with
         "handled",
         # 5 Nov 2026 (C1): "talk-training"

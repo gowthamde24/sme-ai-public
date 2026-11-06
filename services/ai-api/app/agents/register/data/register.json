@@ -8,9 +8,10 @@
   "kn": ["neutral", "bengaluru", "north_karnataka"],
   "hi": ["neutral"],
   "ml": ["neutral"],
+  "mr": ["neutral"],
   "en": ["neutral"]
  },
- "status": {"te": "approved", "hi": "draft", "kn": "approved", "ta": "draft", "ml": "draft", "en": "draft"},
+ "status": {"te": "approved", "hi": "draft", "kn": "approved", "ta": "draft", "ml": "draft", "mr": "draft", "en": "draft"},
  "common": {
   "everyday_mixed": [
    "Talk the way people talk on the phone or in a WhatsApp chat, not the way a book is written.",
@@ -44,6 +45,7 @@
   ],
   "ta": ["Tamil: neutral spoken forms such as 'பேசுறேன்', 'சொல்றேன்', 'இருக்கு', 'அனுப்பவா' with 'ங்க'; not 'பேசுகிறேன்', 'அனுப்புகிறேன்', 'உள்ளது', 'தயவுசெய்து'."],
   "ml": ["Malayalam: spoken forms such as 'പറയാം', 'അയക്കാം', 'ഉണ്ട്', 'അയക്കട്ടെ'; not 'അറിയിക്കുക', 'ലഭ്യമാണ്', 'ദയവായി', 'ചെയ്യുക'."],
+  "mr": ["Marathi (draft, job M1): everyday Marathi with the English words people use and the polite plural 'तुम्ही' (no 'जी'); 'कृपया', 'धन्यवाद', 'उपलब्ध', 'प्रवेश' are written forms: say 'please', 'thank you', 'available', 'admission' in English as people do, or rephrase. Marathi is not Hindi: never 'है', 'नहीं', 'आप', 'मैं' (say 'आहे', 'नाही', 'तुम्ही', 'मी'). Verbs carry the speaker's gender ('सांगते' for a woman's voice, 'सांगतो' for a man's)."],
   "en": ["English: contractions, plain words, no 'kindly' or 'do the needful'."]
  },
  "regions_hint": {
@@ -57,6 +59,7 @@
   "kn": ["ದಯವಿಟ್ಟು", "ಧನ್ಯವಾದ", "ಮಾತನಾಡ", "ಕಳುಹಿಸುತ್ತೇನೆ", "ಸಂಪರ್ಕಿಸ", "ತೆರೆದಿದೆ", "ಅರ್ಜಿ", "ಮಾಡುತ್ತೇನೆ", "ಹೇಳುತ್ತೇನೆ", "ತಿಳಿಸುತ್ತೇನೆ"],
   "ta": ["தயவுசெய்து", "தயவு செய்து", "தெரிவிக்க", "அனுப்புகிறேன்", "உள்ளது", "திறந்துள்ளது", "கையிருப்பில்", "விரும்பிய", "பேசுகிறேன்"],
   "ml": ["ദയവായി", "ചെയ്യുക", "അറിയിക്കുക", "ലഭ്യമാണ്", "തുറന്നിട്ടുണ്ട്", "സമ്പർക്ക"],
+  "mr": ["कृपया", "धन्यवाद", "अवश्य", "सूचित", "उपलब्ध", "निवेदन", "प्रवेश", "इयत्ता"],
   "en": ["kindly", "do the needful", "please be informed", "herewith"]
  }
 }

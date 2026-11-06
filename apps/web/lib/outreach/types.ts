@@ -12,8 +12,13 @@ export const BATCH_STATUSES = ["planned", "running", "paused", "done", "cancelle
 export type BatchStatus = (typeof BATCH_STATUSES)[number];
 export const PAUSE_REASONS = ["owner", "cap_calls", "cap_minutes", "billing"] as const;
 export type PauseReason = (typeof PAUSE_REASONS)[number];
-export const RULE_ACTIONS = ["call_within_minutes", "whatsapp_first", "whatsapp_then_call"] as const;
+/**
+ * Call first (owner decision 5 Nov 2026, docs/decisions/call-first-auto-send.md): a standing rule CALLS a new lead; WhatsApp-first rules are refused by the API and the database. A rule's channel is a call, or "both" = a call, and
+ * WhatsApp only when the customer asks for it or agrees to it on the call (its message is the words that then go). A batch's "whatsapp" (the Owner's own message campaign to a list) is unchanged.
+ */
+export const RULE_ACTIONS = ["call_within_minutes"] as const;
 export type RuleAction = (typeof RULE_ACTIONS)[number];
+export const RULE_CHANNELS = ["call", "both"] as const satisfies readonly Channel[];
 export { CALL_LANGS };
 export type { CallLang };
 

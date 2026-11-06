@@ -26,7 +26,7 @@ import { type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
 
 import { readFinderCached, readPlanCached, readUsageCached } from "../../../frame-data";
-import { FinderSettingsForm } from "@/components/v2/app/prospects/FinderSettingsForm";
+import { FinderSettingsForm } from "@/components/v2/app/prospects/LazyFinderSettingsForm";
 import { getFinderSettings } from "@/lib/api/lead-finder";
 import type { FinderSettings } from "@/lib/lead-finder/types";
 import { saveFinderSettingsAction } from "./lead-finder-actions";
@@ -64,8 +64,10 @@ import { readAssistant } from "@/lib/assistant/source";
 import { CALL_LANG_NAMES, CALL_LANGS, type CallLang } from "@/lib/assistant/types";
 import { readCallSettings } from "@/lib/call-settings/source";
 import { readOwnVoice } from "@/lib/own-voice/source";
-import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
+import { aboutBusinessScreens, assistantScreens, autoReplyScreens, callSettingsScreens, dpdpScreens, leadsScreens, openingLineScreens, ownVoiceScreens, pronunciationScreens, talkTrainingScreens, topupScreens, voicePickerScreens, voiceSampleScreens } from "@/lib/screens/flag";
 import { OpeningLine } from "@/components/v2/app/assistant/LazyOpeningLine";
+import { TalkTraining } from "@/components/v2/app/assistant/LazyTalkTraining";
+import { getTalkTraining } from "@/lib/api/talk-training";
 import { AboutBusiness } from "@/components/v2/app/assistant/LazyAboutBusiness";
 import { AutoReply } from "@/components/v2/app/assistant/LazyAutoReply";
 import { Pronunciation } from "@/components/v2/app/assistant/LazyPronunciation";
@@ -83,6 +85,7 @@ import { chooseVoiceAction, chooseVoiceGenderAction } from "../voice-picker-acti
 import { readOpeningLine } from "@/lib/opening-line/source";
 import { currentAssistantName } from "@/lib/assistant/name";
 import { previewOpeningLineAction, saveOpeningLineAction } from "../opening-line-actions";
+import { resetTalkTrainingAction, saveTalkTrainingAction } from "../talk-training-actions";
 import { readConsents } from "@/lib/dpdp/source";
 import { RESPONSE_DAYS } from "@/lib/site/business";
 import { grievanceAction, setMarketingAction } from "../dpdp-actions";
@@ -97,7 +100,7 @@ import { topupsPart } from "./topups-part";
 import { BusinessForm, BusinessLogo } from "@/components/v2/app/settings/BusinessForm";
 import { getWorkspaceProfile, type WorkspaceProfile } from "@/lib/api/workspace";
 import { readTypeList } from "@/lib/packs/type-list";
-import { getProfile, PROFILE_LANGUAGES, type BusinessProfile } from "@/lib/api/profile";
+import { BUSINESS_LANGUAGES, getProfile, PROFILE_LANGUAGES, type BusinessProfile } from "@/lib/api/profile";
 import { logoAction, saveBusinessAction } from "./business-actions";
 import { ActivationCard } from "@/components/v2/app/start/ActivationCard";
 import { readActivation, type Activation } from "@/lib/packs/activation";
@@ -110,7 +113,7 @@ import { Avatar } from "@/components/v2/app/Avatar";
 import { lettersOf } from "@/components/v2/app/letters";
 import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person } from "@/lib/api/me";
 import { signOutEverywhereAction } from "../../../actions";
-import { AssistantActivity } from "@/components/v2/app/settings/AssistantActivity";
+import { AssistantActivity } from "@/components/v2/app/settings/LazyAssistantActivity";
 import { readActivity } from "@/lib/assistant-work/source";
 import { assistantWorkScreens } from "@/lib/screens/flag";
 
@@ -170,7 +173,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // the business name, city and languages are editable by the people who run the business (read here; a failed read leaves the plain name)
   const onBusiness = wanted === undefined || wanted === "business";
   const workspace: WorkspaceProfile | null = admin && onBusiness ? await getWorkspaceProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
-  const businessProfile: BusinessProfile | null = workspace ? { name: workspace.name, town: workspace.city, languages: workspace.languages.filter((l) => (PROFILE_LANGUAGES as readonly string[]).includes(l)), setupComplete: true } : admin && onBusiness ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  const businessProfile: BusinessProfile | null = workspace ? { name: workspace.name, town: workspace.city, languages: workspace.languages.filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)), setupComplete: true } : admin && onBusiness ? await getProfile(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const typeList = workspace && tenant.role === "owner" ? await readTypeList(lang) : null;
   // the steps still to do of "Finish setting up", all of them (the ones put away from Today are marked, with the way back)
   const finish: Activation | null = admin && onBusiness && pack && usesChecklist(pack) ? await readActivation(user.accessToken, tenantId, pack, t, await leadDeskSteps(pack)).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
@@ -179,7 +182,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   // the Plan part (job DK): only while the feature flag is on, and only for the people who run the business
   const hasPlan = admin && (planScreens() !== "off" || topupScreens() !== "off");
   // Settings > AI assistant (job DM): only while its flag is on, and only for the Owner (the people who run the business may be admins, but the assistant is the Owner's to set up)
-  const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off" || voicePickerScreens() !== "off" || aboutBusinessScreens() !== "off" || autoReplyScreens() !== "off" || pronunciationScreens() !== "off");
+  const hasAssistant = tenant.role === "owner" && (assistantScreens() !== "off" || ownVoiceScreens() !== "off" || callSettingsScreens() !== "off" || openingLineScreens() !== "off" || voicePickerScreens() !== "off" || aboutBusinessScreens() !== "off" || autoReplyScreens() !== "off" || pronunciationScreens() !== "off" || talkTrainingScreens());
   // Settings > Activity (the assistant does the work, ASSISTANT_WORK_SCREENS): what the assistant changed on request, for the people who run the business
   const workMode = assistantWorkScreens(tenantId);
   const hasActivity = admin && workMode !== "off";
@@ -273,6 +276,8 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const autoReply = section === "assistant" && autoReplyScreens() !== "off" ? await readAutoReply(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const pronunciation = section === "assistant" && pronunciationScreens() !== "off" ? await readPronunciation(assistantCtx).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   const openingLine = section === "assistant" && openingLineScreens() !== "off" ? await readOpeningLine(assistantCtx) : null;
+  // "How I talk to customers" (C1's talk-training): a part the API cannot read is left out, never a "Not available yet"
+  const talk = section === "assistant" && talkTrainingScreens() ? await getTalkTraining(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
   // the voice picker (owner decision 28 Oct): one block per language the business talks in (its own languages and the assistant's main one, else the one in use) that the catalogue has a row for
   const voicePicker = section === "assistant" && voicePickerScreens() !== "off" ? await readVoicePicker(assistantCtx) : null;
   const pickerLangs: PickerLang[] = section === "assistant" && voicePicker?.mode === "ok" ? await getWorkspaceProfile(user.accessToken, tenantId).then((p) => p.languages, (e) => (e instanceof ApiAuthError ? redirect("/login") : [] as string[])).then((own) => pickerOrder([...own, ...(assistant?.mode === "ok" ? [assistant.settings.lang] : own.length === 0 ? [lang] : [])])) : [];
@@ -349,6 +354,16 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                   ) : null,
                   behaviour: (
                     <>
+                    {talk ? (
+                      <TalkTraining
+                        words={wordsFor(lang, ["tt."], ["today.err.mfa.link"])}
+                        initial={talk}
+                        langNames={CALL_LANG_NAMES}
+                        canEdit={tenant.role === "owner"}
+                        securityHref="/app/security"
+                        actions={{ save: saveTalkTrainingAction.bind(null, tenantId), reset: resetTalkTrainingAction.bind(null, tenantId) }}
+                      />
+                    ) : null}
                     {autoReply?.mode === "ok" ? (
                       <AutoReply
                         words={wordsFor(lang, ["ar."], ["today.err.mfa.link"])}
@@ -424,7 +439,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                   name={businessProfile.name}
                   town={businessProfile.town ?? ""}
                   languages={businessProfile.languages.length > 0 ? businessProfile.languages : [lang]}
-                  choices={PROFILE_LANGUAGES}
+                  choices={BUSINESS_LANGUAGES}
                   usedIn={workspace?.nameUsedIn ?? []}
                   owner={workspace && typeList && typeList.groups.length > 0 ? { groups: typeList.groups, typeWords: typeList.words, otherId: typeList.otherId, type: workspace.type, typeLabel: workspace.typeLabel ?? "", phone: workspace.phone ?? "" } : null}
                 />

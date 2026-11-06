@@ -10,7 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_vali
 
 Goal = Literal["site_visit", "counselling", "appointment", "qualify", "test_drive", "site_measurement", "quote", "trial", "callback", "general"]
 Channel = Literal["call", "whatsapp", "both"]
-Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
+Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 Action = Literal["call_within_minutes", "whatsapp_first", "whatsapp_then_call"]
 Source = Annotated[str, StringConstraints(pattern=r"^[a-z0-9_.-]{1,64}$")]
 Question = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=160)]
