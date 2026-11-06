@@ -186,7 +186,7 @@ export function HeroStage({ w }: { w: W }) {
           <Place s={{ left: "50%", top: 0, transform: "translateX(-50%)" }}>
             <div className="h2-glass h2-node" data-part="found">
               <span className="h2-blink" />
-              {fill(w["h2.hero.found"], { n: String(found) })}
+              {found === 0 ? w["h2.hero.scanning"] : found === 1 ? w["h2.hero.found.one"] : fill(w["h2.hero.found"], { n: String(found) })}
             </div>
           </Place>
           <Place s={{ left: "50%", top: pct(130, STAGE_H), width: pct(280, STAGE_W), aspectRatio: "1", transform: "translateX(-50%)" }}>

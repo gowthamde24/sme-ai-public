@@ -4,7 +4,7 @@ import * as React from "react";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
 
-import { addScene, isCalm, sceneTime, type Look } from "./scene";
+import { addScene, fontOf, isCalm, sceneTime, type Look } from "./scene";
 
 type W = Readonly<Record<string, string>>;
 const fill = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (m, k: string) => v[k] ?? m);
@@ -55,7 +55,7 @@ export function sweepAt(t: number, since: number): { a: number; fresh: boolean }
   return { a: A - cyc * TAU, fresh: cyc % 3 === 0 };
 }
 
-function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look, state: { city: City; since: number }, crop: boolean): void {
+function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: Look, state: { city: City; since: number }, crop: boolean, sans: string): void {
   const k = crop ? W / 520 : W / 780;
   const cx = 390;
   const cy = 260;
@@ -98,7 +98,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
     ctx.lineWidth = 3;
     ctx.stroke();
   }
-  ctx.font = '600 11px "Plus Jakarta Sans", system-ui, sans-serif';
+  ctx.font = `600 11px ${sans}`;
   ctx.textAlign = "left";
   (
     [
@@ -202,7 +202,7 @@ function drawRadar(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
       ctx.arc(p.x, p.y, 6.5, 0, TAU);
       ctx.fill();
     }
-    ctx.font = '700 12px "Plus Jakarta Sans", system-ui, sans-serif';
+    ctx.font = `700 12px ${sans}`;
     const label = names[p.id];
     const tw = ctx.measureText(label).width;
     const bx = p.x + 14;
@@ -241,7 +241,8 @@ export function RadarFinder({ w }: { w: W }) {
   const desk = React.useRef<HTMLCanvasElement>(null);
   const phone = React.useRef<HTMLCanvasElement>(null);
   React.useEffect(() => {
-    const offs = [desk.current && addScene(desk.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, false)), phone.current && addScene(phone.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, true))];
+    const sans = desk.current ? fontOf(desk.current, "sans") : '"Plus Jakarta Sans", system-ui, sans-serif';
+    const offs = [desk.current && addScene(desk.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, false, sans)), phone.current && addScene(phone.current, (c, W, H, t, look) => drawRadar(c, W, H, t, look, live.current, true, sans))];
     return () => offs.forEach((o) => o?.());
   }, []);
   // the found list follows the sweep: read its angle a few times a second

@@ -81,3 +81,9 @@ export function assistantWorkTenantListed(tenantId: string, tenants: string | un
   const ids = tenants.split(/[;,]/).map((t) => t.trim().toLowerCase()).filter((t) => t !== "" && t !== "none");
   return ids.includes(tenantId.trim().toLowerCase());
 }
+
+/** The home page's business-number section (landing v2): "KYC done online" and its three KYC steps only once Exotel confirms customers can do the number's KYC online (owner, 6 Nov 2026). Off unless `1`: the section says "Your own business number", with no KYC line. */
+export const siteKycCopy = (value: string | undefined = process.env.SITE_KYC_COPY): boolean => value === "1";
+
+/** The home page's trial and GST words (landing v2): "Start 14-day trial", "Two plans. Rupees, GST included." and the trial's terms. Off until the lawyer's review and the GST registration are confirmed (owner, 6 Nov 2026): unset = "Get early access", "Two plans, priced in rupees.", "Free trial at launch. Details when we open." `1` = the later words. */
+export const siteTrialCopy = (value: string | undefined = process.env.SITE_TRIAL_COPY): boolean => value === "1";

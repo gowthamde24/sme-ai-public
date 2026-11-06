@@ -15,3 +15,7 @@ export const WaitlistForm = dynamic(() => import("./WaitlistForm").then((m) => m
 export const HeroStage = dynamic(() => import("./home2/HeroStage").then((m) => m.HeroStage));
 export const CallDemo = dynamic(() => import("./home2/CallDemo").then((m) => m.CallDemo));
 export const RadarFinder = dynamic(() => import("./home2/RadarFinder").then((m) => m.RadarFinder));
+export const StandupTable = dynamic(() => import("./home2/StandupTable").then((m) => m.StandupTable));
+export const Journey = dynamic(() => import("./home2/Journey").then((m) => m.Journey));
+export const LeakCalc = dynamic(() => import("./home2/LeakCalc").then((m) => m.LeakCalc));
+export const BrandDots = dynamic(() => import("./home2/BrandDots").then((m) => m.BrandDots));

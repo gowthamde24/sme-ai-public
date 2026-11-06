@@ -14,7 +14,7 @@ const WEB_DIR = path.join(HERE, "..", "..", "apps", "web");
 const PORT = 3016;
 const WEB_URL = `http://127.0.0.1:${PORT}`;
 // the public home page reads no API and no session: the build only needs addresses to exist (nothing listens there)
-const ENV = { NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54998", NEXT_PUBLIC_SUPABASE_ANON_KEY: "landing-anon", NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:54998", WAITLIST: "mock" };
+const ENV = { NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54998", NEXT_PUBLIC_SUPABASE_ANON_KEY: "landing-anon", NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:54998", WAITLIST: "mock", SITE_KYC_COPY: process.env.SITE_KYC_COPY ?? "1" };
 const busy = (port) => new Promise((res) => { const s = net.connect(port, "127.0.0.1"); s.once("connect", () => { s.destroy(); res(true); }); s.once("error", () => res(false)); });
 async function startApp({ build, log }) {
   if (await busy(PORT)) throw new Error(`port ${PORT} is already in use (it is not killed: free it or wait)`);
@@ -92,6 +92,52 @@ try {
     check(said.startsWith("नमस्ते! आपने अभी जो पूछताछ भेजी"), `Try it: the caption says the Hindi line (${said.slice(0, 40)})`);
     check((await p.locator('[data-out="1"][data-lit]').count()) === 1, "Try it: the quote outcome lights");
     await shot(p, "try-pavers-hindi");
+    await ctx.close();
+  }
+  // Hear a call: the tabs change the call (Building materials is in Hindi; Colleges in English)
+  {
+    const { ctx, p } = await open(browser, { width: 1440 });
+    await p.locator("#call").scrollIntoViewIfNeeded();
+    await p.click('[data-call-tab="build"]');
+    await p.waitForTimeout(400);
+    check((await p.locator('[data-part="call-demo"][data-biz="build"] [lang="hi"][data-part="call-words"]').count()) === 1, "call tabs: Building materials shows the Hindi call");
+    await p.click('[data-call-tab="coach"]');
+    await p.waitForTimeout(400);
+    check((await p.locator('[data-part="call-demo"][data-biz="coach"]').count()) === 1 && (await p.locator('[data-call-tab="coach"][aria-selected="true"]').count()) === 1, "call tabs: Colleges is selected");
+    // the radar: another city, its own area names
+    await p.locator("#finder").scrollIntoViewIfNeeded();
+    await p.click('[data-part="radar"] .lg\\:block [data-city="Chennai"]');
+    await p.waitForTimeout(6000); // one sweep finds them again
+    const found = await p.locator("#finder [data-found]").allTextContents();
+    check(found.some((x) => /T\. Nagar|Velachery|Mylapore|Anna Nagar/.test(x)) && !found.some((x) => /Ameerpet|Kukatpally/.test(x)), `radar: Chennai's own areas (${found.length} found)`);
+    await shot(p, "radar-chennai");
+    // the questions open and close
+    const q = p.locator('#faq [data-faq="8"]');
+    await q.locator("summary").click();
+    check(await q.evaluate((d) => d.open), "FAQ: a question opens");
+    await q.locator("summary").click();
+    check(!(await q.evaluate((d) => d.open)), "FAQ: and closes again");
+    // the closing form: the mock waitlist takes it and thanks the visitor
+    const form = p.locator('[data-part="waitlist"][data-variant="bar"]');
+    await form.scrollIntoViewIfNeeded();
+    await form.locator("#join-name").fill("Lakshmi (example)");
+    await form.locator("#join-contact").fill("+91 90000 00000");
+    await form.locator("#join-city").fill("Vijayawada");
+    await form.locator('button[type="submit"]').click();
+    await p.waitForSelector('[data-part="waitlist-thanks"]', { timeout: 15_000 }).catch(() => null);
+    check((await p.locator('[data-part="waitlist-thanks"]').count()) === 1, "waitlist: the closing form is sent and says thank you");
+    await shot(p, "join-thanks");
+    await ctx.close();
+  }
+  // a jump to a part of the page lands below the sticky header (scroll-margin-top)
+  {
+    const { ctx, p } = await open(browser, { width: 1440 });
+    for (const id of ["finder", "team", "end"]) {
+      await p.evaluate((x) => { location.hash = ""; location.hash = x; }, id);
+      await p.waitForTimeout(600);
+      const gap = await p.evaluate((x) => document.getElementById(x).getBoundingClientRect().top - document.querySelector("header").getBoundingClientRect().bottom, id);
+      check(gap >= 0, `#${id}: lands below the header (${Math.round(gap)} px)`);
+    }
     await ctx.close();
   }
   // reduced motion: one still frame, the whole line shown

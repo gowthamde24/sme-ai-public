@@ -235,12 +235,12 @@ export function Journey({ w }: { w: W }) {
       </div>
       {/* you, teaching it */}
       <div className="mt-6 flex justify-center">
-        <div className="h2-glass inline-flex max-w-[760px] items-center gap-3.5 rounded-full py-2 pl-2 pr-[22px]" data-part="teach">
+        <div className="h2-glass inline-flex max-w-full flex-wrap items-center gap-x-3.5 gap-y-1 rounded-[22px] p-3 lg:flex-nowrap lg:rounded-full lg:py-2 lg:pl-2 lg:pr-[22px]" data-part="teach">
           <span className="block size-10 shrink-0 overflow-hidden rounded-full">
             <AssistantOrb state="listening" />
           </span>
           <span className="whitespace-nowrap text-sm font-bold text-brand-text">{w["h2.after.teach"]}</span>
-          <span className="h2-typeline text-base font-semibold">{w["h2.after.rule"]}</span>
+          <span className="h2-typeline basis-full text-base font-semibold lg:basis-auto">{w["h2.after.rule"]}</span>
         </div>
       </div>
     </div>

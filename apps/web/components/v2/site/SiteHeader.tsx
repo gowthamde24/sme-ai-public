@@ -43,7 +43,7 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
   // (website mode keeps its "Book a demo"; with the app open, the home page's form is "Get early access")
   const early = !web && onHome && waitlistMode() !== "off" ? { href: "#demo", label: t("h2.nav.early"), short: t("h2.nav.early.short") } : { href: start.href, label: start.label, short: start.label };
   return (
-    <header className="[position:sticky] top-0 z-30 border-b border-line bg-bg/75 backdrop-blur-lg backdrop-saturate-150">
+    <header className="[position:sticky] top-0 z-30 border-b border-line bg-bg/[0.86] backdrop-blur-lg backdrop-saturate-150">
       {/* the scroll's progress, a thin line under the bar (drawn by the scroll where the browser can; none where it cannot) */}
       <span aria-hidden="true" className="h2-prog" />
       <div className={`${container} flex min-h-16 items-center gap-2 py-2 sm:gap-3`}>

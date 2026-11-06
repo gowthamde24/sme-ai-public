@@ -195,7 +195,7 @@ export function StandupTable({ w, clipGroup }: { w: W; clipGroup: string | null 
         </ul>
       </div>
       {/* the subtitles and the stand-up's progress */}
-      <div className="relative mt-6 flex flex-col items-center gap-4 lg:-mt-10">
+      <div className="relative mt-6 flex flex-col items-center gap-4 lg:mt-2">
         <div className="h2-glass flex min-h-32 w-full max-w-[860px] flex-col gap-2 rounded-[28px] px-5 py-5 lg:px-[30px]" aria-live="polite">
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-extrabold text-brand-text" data-part="meet-who">

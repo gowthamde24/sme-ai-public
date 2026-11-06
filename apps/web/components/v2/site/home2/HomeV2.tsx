@@ -1,12 +1,19 @@
 import Link from "next/link";
 
-import { CallDemo, HeroStage, RadarFinder } from "@/components/v2/site/LazyIslands";
+import { CallDemo, HeroStage, Journey, LeakCalc, RadarFinder, StandupTable } from "@/components/v2/site/LazyIslands";
+import type { WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import { startEntry } from "@/lib/site/entry";
 import { websiteOnly } from "@/lib/site/mode";
 
+import { siteKycCopy, siteTrialCopy } from "@/lib/screens/flag";
+
+import { homeEarly } from "./early";
+
 import { GreetingsBand } from "./GreetingsBand";
+import { FaqList, Finale, PlansSlab } from "./EndSections";
+import { NumberSection } from "./NumberCard";
 
 /** The words a client island of the home page needs, already filled ({brand}, {trial_days}); the others stay as placeholders for the island to fill. Server side: the site's dictionaries never reach the browser whole. */
 export function islandWords(t: SiteT, keys: readonly string[]): Record<string, string> {
@@ -14,6 +21,8 @@ export function islandWords(t: SiteT, keys: readonly string[]): Record<string, s
 }
 const HERO_KEYS = [
   "h2.hero.found",
+  "h2.hero.scanning",
+  "h2.hero.found.one",
   "h2.mode.picked",
   "h2.mode.listening",
   "h2.mode.in",
@@ -43,6 +52,12 @@ const CALL_KEYS = [
   "h2.hear.on",
 ] as const;
 const FINDER_KEYS = [...["city", "near", "checked", "call", "ask", "skip", "list", "of", "empty"].map((k) => `h2.finder.${k}`), ...[1, 2, 3, 4].flatMap((i) => [`h2.finder.pin.${i}.what`, `h2.finder.pin.${i}.why`])] as const;
+const LEAK_KEYS = ["title", "sub", "enq", "miss", "buy", "avg", "warm", "cold", "note", "in"].map((k) => `h2.leak.${k}`);
+const MEET_KEYS = [...["live", "reporting", "closing", "pos", "progress", "hear", "note"].map((k) => `h2.meet.${k}`), ...[1, 2, 3, 4, 5, 6, 7].flatMap((i) => [`h2.meet.${i}.name`, `h2.meet.${i}.text`]), "h2.hear.on"] as const;
+const AFTER_KEYS = [...["stop", "wait", "approve", "approved", "teach", "rule"].map((k) => `h2.after.${k}`), ...[1, 2, 3, 4, 5, 6].flatMap((i) => [`h2.after.${i}.name`, `h2.after.${i}.desc`, `h2.after.${i}.tag`])] as const;
+/** The stand-up's recording in the site's language: English, and Telugu (a draft until a native speaker approves it; the manifest says so and no button is drawn); none for the others. */
+const standupClips = (lang: Lang): string | null => (lang === "en" ? "standup-en" : lang === "te" ? "standup-te" : null);
+
 /** The English under a sample call's line is in the site's language; under a call already in the site's language it would only repeat the line, so it is left out. */
 function callWords(t: SiteT, lang: Lang): Record<string, string> {
   const w = islandWords(t, CALL_KEYS);
@@ -80,9 +95,9 @@ function Headline({ t }: { t: SiteT }) {
  * The public home page, landing v2 (job landing-v2; the owner approved the design on 6 Nov 2026). Sections in the design's order; each moving scene is a client island loaded as its own chunk, and every word and the layout are server
  * markup, so the page reads fully with JavaScript off. Built in order: the hero and "Try it" first.
  */
-export function HomeV2({ t, lang, hasForm }: { t: SiteT; lang: Lang; hasForm: boolean }) {
-  // the trial button (website mode: "Book a demo", to the form; lib/site/entry.ts)
-  const start = startEntry(t, lang, t("h2.hero.start"), { hasForm });
+export function HomeV2({ t, lang, hasForm, waitlist }: { t: SiteT; lang: Lang; hasForm: boolean; waitlist?: WaitlistAction }) {
+  // the main button: "Get early access" to the closing form (website mode: "Book a demo"; no form: where "start" leads; home2/early.ts). With SITE_TRIAL_COPY=1 (after the lawyer's review): "Start 14-day trial", to sign-up
+  const start = siteTrialCopy() ? startEntry(t, lang, t("h2.later.start"), { hasForm }) : homeEarly(t, lang);
   return (
     <>
       <HomeHero t={t} start={start} />
@@ -104,13 +119,48 @@ export function HomeV2({ t, lang, hasForm }: { t: SiteT; lang: Lang; hasForm: bo
           <p className="m-0 text-sm text-muted">{t("h2.finder.note")}</p>
         </div>
       </section>
+      <section id="team" aria-labelledby="team-title" className="relative overflow-hidden px-4 pb-16 pt-10 lg:px-8 lg:pb-24 lg:pt-16">
+        <div className="mx-auto flex max-w-[1240px] flex-col gap-2">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+            <h2 id="team-title" className="m-0 max-w-[760px] font-display text-[34px] font-extrabold leading-[1.04] tracking-[-0.04em] lg:text-[56px] lg:leading-[1.02]">
+              {t("h2.meet.title")}
+            </h2>
+            <p className="m-0 max-w-[400px] text-[15px] leading-relaxed text-muted lg:text-[17px]">{t("h2.meet.sub")}</p>
+          </div>
+          <div className="mt-5 lg:mt-0">
+            <StandupTable w={islandWords(t, MEET_KEYS)} clipGroup={standupClips(lang)} />
+          </div>
+        </div>
+      </section>
+      <section id="after" aria-labelledby="after-title" className="relative px-4 pb-10 pt-10 lg:px-8 lg:pt-14">
+        <div className="mx-auto flex max-w-[1240px] flex-col gap-2">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+            <h2 id="after-title" className="m-0 max-w-[820px] font-display text-[34px] font-extrabold leading-[1.04] tracking-[-0.04em] lg:text-[56px] lg:leading-[1.02]">
+              <span className="lg:hidden">{t("h2.after.title.phone")}</span>
+              <span className="max-lg:hidden">{t("h2.after.title")}</span>
+            </h2>
+            <p className="m-0 max-w-[360px] text-[15px] leading-relaxed text-muted max-lg:hidden lg:text-[17px]">{t("h2.after.sub")}</p>
+          </div>
+          <Journey w={islandWords(t, AFTER_KEYS)} />
+          <p className="m-0 mt-3 text-center text-sm text-muted">{t("h2.after.note")}</p>
+        </div>
+      </section>
+      <NumberSection t={t} kyc={siteKycCopy()} />
+      <section id="calc" aria-labelledby="calc-title" className="px-4 pb-10 pt-16 lg:px-8 lg:pt-28">
+        <div className="mx-auto max-w-[1240px]">
+          <LeakCalc w={islandWords(t, LEAK_KEYS)} />
+        </div>
+      </section>
+      <PlansSlab t={t} start={start} />
+      <FaqList t={t} kyc={siteKycCopy()} />
+      <Finale t={t} lang={lang} action={waitlist} start={start} />
     </>
   );
 }
 
 function HomeHero({ t, start }: { t: SiteT; start: { href: string; label: string } }) {
   return (
-    <section id="top" aria-labelledby="h1" className="relative overflow-hidden px-4 pb-2 pt-7 lg:px-8 lg:pb-10 lg:pt-11">
+    <section aria-labelledby="h1" className="relative overflow-hidden px-4 pb-2 pt-7 lg:px-8 lg:pb-10 lg:pt-11">
       <span aria-hidden="true" className="absolute left-1/2 top-[300px] block size-[560px] -translate-x-1/2 lg:top-[360px] lg:size-[1000px]">
         <span className="h2-glow block size-full" />
       </span>

@@ -61,11 +61,11 @@
 @keyframes h2-pop { from { opacity: 0; transform: translateY(8px) scale(0.97); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
 @media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h2-pop { animation: none; } }
 
-/* "You, teaching it": the rule types itself in and out (the whole rule stands still with "reduce motion") */
-[data-ui="v2"] .h2-typeline { overflow: hidden; white-space: nowrap; max-width: 0; animation: h2-type 2.8s steps(40) 0.4s infinite alternate; }
-@keyframes h2-type { to { max-width: 40em; } }
-@media (max-width: 1023px) { [data-ui="v2"] .h2-typeline { white-space: normal; max-width: none; animation: none; } }
-@media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h2-typeline { max-width: none; animation: none; } }
+/* "You, teaching it": the rule types itself in and out, revealed left to right over its full width (the pill is sized to the whole rule, so nothing is ever cut); on a narrow screen it wraps and stands still, as it does with "reduce motion" */
+[data-ui="v2"] .h2-typeline { white-space: nowrap; clip-path: inset(0 100% 0 0); animation: h2-type 2.8s steps(40) 0.4s infinite alternate; }
+@keyframes h2-type { to { clip-path: inset(0 0 0 0); } }
+@media (max-width: 1023px) { [data-ui="v2"] .h2-typeline { white-space: normal; clip-path: none; animation: none; } }
+@media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h2-typeline { clip-path: none; animation: none; } }
 
 /* the business number: the KYC steps light up in turn, the bar fills, the number comes into focus */
 [data-ui="v2"] .h2-kbar { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #ff9a6b, #ff773c, #ec486e); transform-origin: left; animation: h2-kbar 7s cubic-bezier(0.77, 0, 0.175, 1) infinite; }
@@ -76,3 +76,12 @@
 [data-ui="v2"] .h2-knum { animation: h2-knum 7s ease infinite; }
 @keyframes h2-knum { 0%, 58% { filter: blur(6px); opacity: 0.35; } 64%, 90% { filter: none; opacity: 1; } 100% { filter: blur(6px); opacity: 0.35; } }
 @media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h2-kbar { animation: none; transform: scaleX(1); } [data-ui="v2"] .h2-kdot { animation: none; background: #1e1e24; color: #ff9a6b; } [data-ui="v2"] .h2-knum { animation: none; } }
+
+/* the finale's orb: three rings spreading out */
+[data-ui="v2"] .h2-ring { border: 1.5px solid rgba(255, 119, 60, 0.4); animation: h2-ring 4.5s cubic-bezier(0.23, 1, 0.32, 1) infinite; pointer-events: none; }
+[data-ui="v2"] .h2-ring-2 { animation-delay: 1.5s; } [data-ui="v2"] .h2-ring-3 { animation-delay: 3s; }
+@keyframes h2-ring { from { transform: scale(1); opacity: 0.9; } to { transform: scale(2.1); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { [data-ui="v2"] .h2-ring { animation: none; opacity: 0; } }
+
+/* a jump to a part of the home page lands below the sticky header (its height + 16 px) */
+[data-ui="v2"] [data-page="home"] section[id], [data-ui="v2"] [data-page="home"] footer[id] { scroll-margin-top: 88px; }
