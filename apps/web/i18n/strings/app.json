@@ -82717,5 +82717,467 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "cust.v4.filter.all": {
+  "en": "All",
+  "te": "అన్నీ",
+  "hi": "सब",
+  "kn": "ಎಲ್ಲಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.filter.call": {
+  "en": "Calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.filter.message": {
+  "en": "Messages",
+  "te": "మెసేజ్‌లు",
+  "hi": "मैसेज",
+  "kn": "ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.filter.quote": {
+  "en": "Quotes",
+  "te": "కొటేషన్లు",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.filter.visit": {
+  "en": "Visits",
+  "te": "విజిట్లు",
+  "hi": "विज़िट",
+  "kn": "ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.filter.order": {
+  "en": "Orders",
+  "te": "ఆర్డర్లు",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.filter.follow_up": {
+  "en": "Follow-ups",
+  "te": "ఫాలో-అప్‌లు",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.filters": {
+  "en": "Show",
+  "te": "చూపించు",
+  "hi": "दिखाएँ",
+  "kn": "ತೋರಿಸು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.want.title": {
+  "en": "What they want",
+  "te": "వాళ్లకు ఏం కావాలి",
+  "hi": "उन्हें क्या चाहिए",
+  "kn": "ಅವರಿಗೆ ಏನು ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.want.need": {
+  "en": "Wants",
+  "te": "కావాల్సింది",
+  "hi": "चाहिए",
+  "kn": "ಬೇಕಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.want.quantity": {
+  "en": "How much",
+  "te": "ఎంత",
+  "hi": "कितना",
+  "kn": "ಎಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.want.budget": {
+  "en": "Budget",
+  "te": "బడ్జెట్",
+  "hi": "बजट",
+  "kn": "ಬಜೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.want.timeline": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.want.place": {
+  "en": "Where",
+  "te": "ఎక్కడ",
+  "hi": "कहाँ",
+  "kn": "ಎಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.want.none": {
+  "en": "Nothing noted yet.",
+  "te": "ఇంకా ఏమీ నమోదు కాలేదు.",
+  "hi": "अभी कुछ लिखा नहीं गया।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಬರೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.next.title": {
+  "en": "What's next",
+  "te": "తర్వాత ఏంటి",
+  "hi": "आगे क्या",
+  "kn": "ಮುಂದೇನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.next.none": {
+  "en": "Nothing planned.",
+  "te": "ఏమీ ప్లాన్ కాలేదు.",
+  "hi": "कुछ तय नहीं।",
+  "kn": "ಏನೂ ಯೋಜನೆ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.next.followup": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.status.quote": {
+  "en": "Waiting for your quote",
+  "te": "మీ కొటేషన్ కోసం ఎదురుచూస్తున్నారు",
+  "hi": "आपके कोटेशन का इंतज़ार",
+  "kn": "ನಿಮ್ಮ ಕೊಟೇಶನ್‌ಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.status.hot": {
+  "en": "Hot: wants to buy soon",
+  "te": "హాట్: త్వరలో కొనాలనుకుంటున్నారు",
+  "hi": "हॉट: जल्द खरीदना चाहते हैं",
+  "kn": "ಹಾಟ್: ಬೇಗ ಕೊಳ್ಳಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.status.quiet.one": {
+  "en": "Quiet for {n} day",
+  "te": "{n} రోజుగా మాట లేదు",
+  "hi": "{n} दिन से बात नहीं",
+  "kn": "{n} ದಿನದಿಂದ ಮಾತಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.status.quiet.other": {
+  "en": "Quiet for {n} days",
+  "te": "{n} రోజులుగా మాట లేదు",
+  "hi": "{n} दिनों से बात नहीं",
+  "kn": "{n} ದಿನಗಳಿಂದ ಮಾತಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.status.new": {
+  "en": "New enquiry",
+  "te": "కొత్త ఎంక్వైరీ",
+  "hi": "नई पूछताछ",
+  "kn": "ಹೊಸ ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.status.active": {
+  "en": "In touch",
+  "te": "టచ్‌లో ఉన్నారు",
+  "hi": "संपर्क में",
+  "kn": "ಸಂಪರ್ಕದಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.from": {
+  "en": "Came from {source}",
+  "te": "{source} నుంచి వచ్చారు",
+  "hi": "{source} से आए",
+  "kn": "{source} ಮೂಲಕ ಬಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.main.quote": {
+  "en": "Review the quote",
+  "te": "కొటేషన్ చూడండి",
+  "hi": "कोटेशन देखें",
+  "kn": "ಕೊಟೇಶನ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.main.followup": {
+  "en": "Open the follow-up",
+  "te": "ఫాలో-అప్ తెరవండి",
+  "hi": "फ़ॉलो-अप खोलें",
+  "kn": "ಫಾಲೋ-ಅಪ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.main.lead": {
+  "en": "Open the full lead",
+  "te": "పూర్తి లీడ్ తెరవండి",
+  "hi": "पूरी लीड खोलें",
+  "kn": "ಪೂರ್ಣ ಲೀಡ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.kind.call": {
+  "en": "Call",
+  "te": "కాల్",
+  "hi": "कॉल",
+  "kn": "ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.kind.message_in": {
+  "en": "Message from them",
+  "te": "వాళ్ల మెసేజ్",
+  "hi": "उनका मैसेज",
+  "kn": "ಅವರ ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.kind.arrival": {
+  "en": "First enquiry",
+  "te": "మొదటి ఎంక్వైరీ",
+  "hi": "पहली पूछताछ",
+  "kn": "ಮೊದಲ ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.kind.message_out": {
+  "en": "Our message",
+  "te": "మన మెసేజ్",
+  "hi": "हमारा मैसेज",
+  "kn": "ನಮ್ಮ ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.kind.quote": {
+  "en": "Quote",
+  "te": "కొటేషన్",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.kind.visit": {
+  "en": "Store visit",
+  "te": "స్టోర్ విజిట్",
+  "hi": "स्टोर विज़िट",
+  "kn": "ಅಂಗಡಿ ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.kind.order": {
+  "en": "Order",
+  "te": "ఆర్డర్",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.kind.follow_up": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.kind.outcome": {
+  "en": "Outcome",
+  "te": "ఫలితం",
+  "hi": "नतीजा",
+  "kn": "ಫಲಿತಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.empty": {
+  "en": "Nothing has happened with this customer yet.",
+  "te": "ఈ కస్టమర్‌తో ఇంకా ఏమీ జరగలేదు.",
+  "hi": "इस ग्राहक के साथ अभी कुछ नहीं हुआ।",
+  "kn": "ಈ ಗ್ರಾಹಕರೊಂದಿಗೆ ಇನ್ನೂ ಏನೂ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.older": {
+  "en": "Show older",
+  "te": "పాతవి చూపించు",
+  "hi": "पुराने दिखाएँ",
+  "kn": "ಹಳೆಯವು ತೋರಿಸು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.timeline": {
+  "en": "Timeline",
+  "te": "టైమ్‌లైన్",
+  "hi": "टाइमलाइन",
+  "kn": "ಟೈಮ್‌ಲೈನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.unreadable": {
+  "en": "The timeline could not be read just now.",
+  "te": "టైమ్‌లైన్ ఇప్పుడు చదవలేకపోయాం.",
+  "hi": "टाइमलाइन अभी पढ़ी नहीं जा सकी।",
+  "kn": "ಟೈಮ್‌ಲೈನ್ ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cust.v4.open": {
+  "en": "Customer page",
+  "te": "కస్టమర్ పేజీ",
+  "hi": "ग्राहक पेज",
+  "kn": "ಗ್ರಾಹಕರ ಪುಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -105,7 +105,7 @@ const ITEMS = [
 
 // ---- a lead -------------------------------------------------------------------------------------------------------------------------------
 const COMPANY = "55555555-5555-4555-8555-555555555551";
-const LEAD_JSON = { id: LEAD, company_id: COMPANY, contact_id: CONTACT, status: "in_review", source: "csv import", created_via: "import", created_at: "2026-10-02T05:00:00+00:00" };
+const LEAD_JSON = { id: LEAD, company_id: COMPANY, contact_id: CONTACT, status: "in_review", source: "csv import", created_via: "import", created_at: "2026-10-02T05:00:00+00:00", display_name: "Meena Sarees", profile: { need: "Kanchi silk sarees for a wedding", quantity: "20 pieces", budget: "₹2,000 to ₹2,500 each", area: "Brodipet", city: "Guntur", language: "te", source: "indiamart" } };
 const COMPANY_JSON = { id: COMPANY, name: "Sri Lakshmi Silks", type: "customer", website: "https://sri-lakshmi.example.test", country: "India", city: "Hyderabad", industry: "Textiles", created_via: "manual", created_at: "2026-10-01T05:00:00+00:00" };
 
 // ---- the business type of the workspace (job CL, on top of job CK) --------------------------------------------------------------------------------
@@ -183,6 +183,15 @@ export const API_ROUTES = [
     { id: "77777777-0000-4000-8000-000000000002", evidence: { kind: "note", provider: "owner note", url: null, reference: "called on Monday", snippet: "Asked for 20 pieces before the festival.", retrieved_at: "2026-10-03T05:00:00+00:00", published_at: null, created_via: "manual" } },
   ], next_cursor: null }),
   route(`/leads/${LEAD}/enquiries`, []),
+  // app v4 part 3: one customer's timeline (synthetic), newest first
+  route(`/customers/${LEAD}/timeline`, { items: [
+    { kind: "call", at: "2026-10-14T04:40:00Z", text: "Wants 20 Kanchi silk sarees for a wedding; will visit the store on Saturday", target: { type: "phone_call", id: "c1" }, detail: { direction: "inbound", duration_s: 126, outcome: "positive" } },
+    { kind: "visit", at: "2026-10-13T09:00:00Z", text: "See the wedding collection", target: { type: "visit", id: "v1" }, detail: { status: "booked" } },
+    { kind: "quote", at: "2026-10-13T05:20:00Z", text: "Quote 3", target: { type: "quote", id: QUOTE_ID }, detail: { status: "draft", total_paise: 5040000 } },
+    { kind: "message_out", at: "2026-10-12T06:00:00Z", text: "Hello, here are the photos of the Kanchi silk sarees you asked about.", target: { type: "outbox_message", id: "m1" }, detail: { channel: "whatsapp", status: "sent" } },
+    { kind: "message_in", at: "2026-10-12T05:30:00Z", text: "Price for 20 pieces please, wedding on 2 November", target: { type: "enquiry", id: "e1" }, detail: { channel: "whatsapp" } },
+    { kind: "arrival", at: "2026-10-12T05:28:00Z", text: "IndiaMART", target: { type: "lead", id: LEAD }, detail: { source: "indiamart", how: "first" } },
+  ], next_before: null }),
   route(`/leads/${LEAD}/claims`, [
     { id: "88888888-0000-4000-8000-000000000001", company_id: COMPANY, lead_id: null, predicate: "buyer_type", value: "wholesale", confidence: "medium", claim_confidence: "medium", created_via: "agent", agent_run_id: "99999999-0000-4000-8000-000000000001", created_by: null, created_at: "2026-10-04T05:00:00+00:00", review_state: "unreviewed", review_confidence: null, reviewed_by: null, reviewed_at: null, counts_toward_score: false, company_name: "Sri Lakshmi Silks", evidence: [{ kind: "web_page", stance: "supports", provider: "company website", host: "sri-lakshmi.example.test", path: "/about", quote: "Family wholesale silk sarees since 1962." }] },
   ]),

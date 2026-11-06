@@ -88,4 +88,14 @@ describe("app v4: the sections of the page's group, above its own tabs (job-app-
     draw("owner");
     expect(screen.queryByRole("navigation", { name: "Sections" })).toBeNull();
   });
+  it("one customer's own page (part 3) shows the sections, Leads marked, and no page tabs", () => {
+    nav.pathname = `/app/tenants/${A}/customers/22222222-2222-4222-8222-222222222222`;
+    v4("owner");
+    expect(sections().find((a) => a.getAttribute("aria-current") === "page")?.textContent).toBe("Leads");
+    expect(screen.getAllByRole("navigation")).toHaveLength(1);
+    cleanup();
+    nav.pathname = `/app/tenants/${A}/customers/new`;
+    v4("owner");
+    expect(screen.getAllByRole("navigation").length).toBeGreaterThan(1);
+  });
 });

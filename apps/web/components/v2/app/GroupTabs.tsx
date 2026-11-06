@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 
 import type { FrameData } from "./contract";
 import { useFrameData } from "./frame-store";
@@ -23,11 +24,14 @@ function toCurrent(el: HTMLDivElement | null): void {
 export function GroupTabs({ memberships, labels: given_labels, frame: given }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData }) {
   const { current, active } = useWorkspace(memberships);
   const frame = useFrameData(given);
+  const path = usePathname() ?? "";
   const labels = withPackWords(given_labels, frame.pack);
   if (!current || !active) return null;
   const menu = menuOfPage(active.item.id);
   if (!menu) return null;
-  const tabs: NavItem[] = tabsOf(menu, current.role, frame.pack);
+  // app v4: one customer's own page draws no page tabs (only the sections): it is one person, not one of the Customers pages
+  const own = frame.v4 && /\/customers\/[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(path);
+  const tabs: NavItem[] = own ? [] : tabsOf(menu, current.role, frame.pack);
   // app v4: first the sections of the page's group (Customers: Leads, Calls, Chats ...), then, when the section has more than one page, its pages
   const group = frame.v4 ? v4OfMenu(menu.id) : null;
   const sections = group ? v4Sections(group, current.role, frame.pack) : [];

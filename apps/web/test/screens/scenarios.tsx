@@ -264,6 +264,27 @@ add({
     fetchLeadContactId: () => CONTACT,
   }),
 });
+// app v4 part 3: one page per customer (only with APP_V4)
+const CUSTOMER_TIMELINE = {
+  items: [
+    { kind: "call", at: "2026-10-06T05:10:00Z", text: "Wants 20 Kanchi silk sarees for a wedding, visiting Saturday", target: { type: "phone_call", id: "c1" }, detail: { direction: "inbound", duration_s: 126, outcome: "positive" } },
+    { kind: "quote", at: "2026-10-05T09:00:00Z", text: "Quote 12", target: { type: "quote", id: "99999999-9999-4999-8999-999999999912" }, detail: { status: "draft", total_paise: 4_800_000 } },
+    { kind: "message_in", at: "2026-10-04T08:00:00Z", text: "Price for 20 pieces please", target: { type: "enquiry", id: "e1" }, detail: { channel: "whatsapp" } },
+    { kind: "arrival", at: "2026-10-04T07:58:00Z", text: "IndiaMART", target: { type: "lead", id: LEAD }, detail: { source: "indiamart", how: "first" } },
+  ],
+  next_before: null,
+};
+add({
+  id: "customer",
+  render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/customers/[leadId]/page")).default(props({ leadId: LEAD }))),
+  handlers: (role) => ({
+    ...base(role),
+    fetchCustomerHead: async () => (await import("@/lib/api/customer-timeline")).parseCustomerHead({ ...LEAD_JSON, display_name: "Priya S. (synthetic)", profile: { need: "Kanchi silk sarees", quantity: "20 pieces", city: "Guntur", language: "te", source: "indiamart" } }),
+    fetchTimeline: async () => (await import("@/lib/api/customer-timeline")).parseTimeline(CUSTOMER_TIMELINE),
+    fetchCompany: () => parsePage("companies", { items: [COMPANY_JSON], next_cursor: null }).items[0],
+    fetchLeadFollowup: () => parseLeadFollowup(FOLLOWUP_JSON),
+  }),
+});
 add({
   id: "consent",
   render: async () => (await import("@/app/app/tenants/[tenantId]/contacts/[contactId]/consent/page")).default(props({ contactId: CONTACT })),

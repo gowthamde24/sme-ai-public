@@ -10,6 +10,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { getMaterialQuote } from "@/lib/api/materials";
 import { getSite } from "@/lib/api/sites";
+import { appV4 } from "@/lib/screens/flag";
 import { requireUser } from "@/lib/auth/session";
 import { hasModule } from "@/lib/packs/has";
 import { readPackCached } from "@/lib/packs/read";
@@ -69,7 +70,7 @@ export default async function MaterialQuotePage({ params, searchParams }: PagePr
   };
   return (
     <main className={pageMain} lang={lang}>
-      <QuoteDetailView base={`/app/tenants/${tenantId}`} words={words} role={tenant.role} quote={quote} customer={lead?.label ?? null} site={site ? [site.name, site.city].filter(Boolean).join(", ") : null} actions={actions} secondFactorMissing={secondFactorNeeded(user)} made={pick(raw.made) === "1"} />
+      <QuoteDetailView base={`/app/tenants/${tenantId}`} words={words} role={tenant.role} quote={quote} customer={lead?.label ?? null} customerHref={appV4() && quote.lead_id ? `/app/tenants/${tenantId}/customers/${quote.lead_id}` : null} site={site ? [site.name, site.city].filter(Boolean).join(", ") : null} actions={actions} secondFactorMissing={secondFactorNeeded(user)} made={pick(raw.made) === "1"} />
     </main>
   );
 }

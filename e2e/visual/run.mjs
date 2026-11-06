@@ -51,7 +51,9 @@ const SCREENS = [
   { id: "settings", path: `/app/tenants/${TENANT}/settings`, signedIn: true },
   { id: "office", path: `/app/tenants/${TENANT}/office`, signedIn: true }, // the plush office (job CJ): stills only here (the layer files are refused), so the picture is the same every run
   { id: "landing", path: "/", signedIn: false },
-];
+  // app v4 (APP_V4=1 only: the page is a 404 without it)
+  { id: "customer", path: `/app/tenants/${TENANT}/customers/${LEAD}`, signedIn: true, v4: true },
+].filter((s) => !s.v4 || process.env.APP_V4 === "1");
 const SIZES = { phone: { width: 360, height: 780 }, desktop: { width: 1280, height: 800 } };
 const SCHEMES = ["light", "dark"];
 const LANGS = ["en", "te"];
