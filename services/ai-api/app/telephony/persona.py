@@ -173,7 +173,7 @@ def examples_block(language: str, business: str) -> str:
 
 
 def system_prompt(*, business: str, assistant: str | None, language: str, purpose: str, facts: Sequence[dict[str, Any]], customer_first_name: str | None, goal: str | None = None, notes: str = "",
-                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = ()) -> str:
+                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = (), corrections: Sequence[str] = ()) -> str:
     """The rules of a phone call. The customer's words are DATA between a per-call delimiter."""
     marker = secrets.token_hex(6)
     who = assistant or "the assistant"
@@ -198,6 +198,10 @@ def system_prompt(*, business: str, assistant: str | None, language: str, purpos
     from app.talk_training.prompt import blocks as training_blocks
 
     lines.extend(training_blocks(training))
+    notes_fixed = [str(n).strip() for n in corrections if str(n).strip()][:5]
+    if notes_fixed:
+        # app v4 [C1]: "Feed the corrections into how it talks": the owner's notes after recent calls (about how to talk; never facts about a caller)
+        lines.append("THE OWNER'S CORRECTIONS FROM RECENT CALLS. Follow them in this call:\n" + "\n".join(f"- {n}" for n in notes_fixed))
     if visit_slots:
         # visit booking (calls-like-a-pro part 5): the business's next FREE slots; the customer picks one, a person confirms it
         lines.append("If the customer wants to visit, offer ONLY these free times, one or two at a time: " + "; ".join(visit_slots)

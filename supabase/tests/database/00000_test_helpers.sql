@@ -614,8 +614,9 @@ begin
     (tests.rid(p || '_er_taskc'), t, tests.rid(p || '_er_task'), k, l, '{"price": "Tskq7"}'::jsonb, '[{"who": "contact", "text": "Tskq7 here"}]'::jsonb);
   -- job phone-calls part 1: what an AI call captured, its summary and its transcript carry a business canary, erased with the workspace and swept
   insert into public.phone_numbers (id, tenant_id, number, label) values (tests.rid(p || '_er_pnum'), t, '+9180' || substr(translate(tests.rid(p || '_er_pnum')::text, 'abcdef-', '1234567'), 1, 8), 'Phcq7 shop line');
-  insert into public.phone_calls (id, tenant_id, direction, provider, state, contact_id, lead_id, captured, summary, transcript) values
-    (tests.rid(p || '_er_call'), t, 'outbound', 'sandbox', 'queued', k, l, '{"price": "Phcq7"}'::jsonb, 'Phcq7 wants a visit on Saturday', '[{"who": "caller", "text": "Phcq7 here"}]'::jsonb);
+  insert into public.phone_calls (id, tenant_id, direction, provider, state, contact_id, lead_id, captured, summary, transcript, summary_corrected, captured_corrected) values
+    (tests.rid(p || '_er_call'), t, 'outbound', 'sandbox', 'queued', k, l, '{"price": "Phcq7"}'::jsonb, 'Phcq7 wants a visit on Saturday', '[{"who": "caller", "text": "Phcq7 here"}]'::jsonb,
+     'Phcq7 wants a red silk on Sunday', '{"price": "Phcq7 fixed"}'::jsonb);
   -- Lead Finder (ADR 0119): a search's words and a found business (its name, area, number and what it said on the call) carry a business canary, erased with the workspace and swept
   insert into public.prospect_searches (id, tenant_id, query, area, max_results, provider, sku, state, source_label, created_by) values
     (tests.rid(p || '_er_psrch'), t, 'Lfdq7 saree shops', 'Lfdq7 Jayanagar', 20, 'fixture', 'fixture', 'done', 'Lfdq7 search, 2 Nov', tests.uid(p || '_owner'));
