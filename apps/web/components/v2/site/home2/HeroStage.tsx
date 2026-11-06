@@ -232,7 +232,7 @@ export function HeroStage({ w }: { w: W }) {
         {/* the desktop stage's six sources and the Lead Finder's counter, on a phone too (owner, 6 Nov 2026: the phone shows everything the desktop shows); chips at their own width, wrapping */}
         <div className="mt-[18px] flex flex-wrap justify-center gap-2" data-part="sources-phone">
           {SRC_Y.map((_, i) => (
-            <div key={i} className="h2-glass h2-node min-w-0 max-w-full whitespace-normal text-[13px]" data-source-phone={i}>
+            <div key={i} className="h2-glass h2-node min-w-0 max-w-full gap-2 whitespace-normal rounded-full py-1.5 pl-1.5 pr-3 text-[13px] [&_.h2-ico]:size-6" data-source-phone={i}>
               <Ico>{ICONS[i]}</Ico>
               <span className="min-w-0">{w[`h2.src.${i + 1}`]}</span>
             </div>
