@@ -19,6 +19,7 @@ export const CHAT_LANGS: readonly { code: ChatLang; native: string | null }[] = 
   { code: "kn", native: "ಕನ್ನಡ" },
   { code: "ta", native: "தமிழ்" },
   { code: "ml", native: "മലയാളം" },
+  { code: "mr", native: "मराठी (draft)" }, // a draft (C1 #355): no Marathi voice yet, the spoken reply is Hindi until C1's M2
 ];
 export type ChatLanguage = { pill: ChatLang; /** The language to answer and speak in (Auto: the app's). */ reply: VoiceLang; /** The language to pin the recogniser to; null = detect (Auto). */ stt: VoiceLang | null };
 

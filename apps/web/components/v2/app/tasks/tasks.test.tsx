@@ -288,7 +288,7 @@ describe("the task page", () => {
     const a = actions();
     draw(task(), a);
     const select = screen.getByLabelText("Choose another language") as HTMLSelectElement;
-    expect([...select.options].map((o) => o.value).sort()).toEqual(["en", "hi", "kn", "ml", "ta", "te"]);
+    expect([...select.options].map((o) => o.value).sort()).toEqual(["en", "hi", "kn", "ml", "mr", "ta", "te"]); // Marathi joins as a draft (C1 #355)
     expect(screen.getByRole("button", { name: "Plan again in this language" })).toBeDisabled();
     fireEvent.change(select, { target: { value: "ta" } });
     await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Plan again in this language" })));
@@ -323,7 +323,7 @@ describe("the Tasks page parts", () => {
     const box = screen.getByLabelText("What should your assistant do?");
     expect(box).toHaveValue("Call my suppliers");
     expect(box).toHaveFocus();
-    expect([...(screen.getByLabelText("Customers' language") as HTMLSelectElement).options].map((o) => o.value)).toEqual(["auto", "te", "hi", "kn", "en", "ta", "ml"]);
+    expect([...(screen.getByLabelText("Customers' language") as HTMLSelectElement).options].map((o) => o.value)).toEqual(["auto", "te", "hi", "kn", "en", "ta", "ml", "mr"]);
   });
   it("makes the plan once with one id (a retry is a replay), in the chosen language, and opens it", async () => {
     const a = actions({ plan: vi.fn().mockResolvedValueOnce({ ok: false, error: "down" }).mockResolvedValue({ ok: true, task: task({ id: "66666666-6666-4666-8666-666666666666" }) }) });

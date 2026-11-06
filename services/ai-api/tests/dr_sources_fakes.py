@@ -128,7 +128,7 @@ class FakeLeadSourcesRepository:
 
     def _src(self, sid: str) -> dict[str, Any]:
         s = self.sources_[sid]
-        return {"id": s["id"], "kind": s["kind"], "tag": s["tag"], "label": s["label"], "status": s["status"], "created_at": "2026-10-27T10:00:00+00:00", "last_received_at": None, "received_count": s["received_count"], "token_hint": s["token_hint"], "cost_per_lead_paise": None, "consent_confirmed": bool(s["consent_id"]), "consent_id": s["consent_id"]}
+        return {"id": s["id"], "kind": s["kind"], "tag": s["tag"], "label": s["label"], "status": s["status"], "created_at": "2026-10-27T10:00:00+00:00", "last_received_at": s.get("last_received_at"), "received_count": s["received_count"], "token_hint": s["token_hint"], "cost_per_lead_paise": None, "consent_confirmed": bool(s["consent_id"]), "consent_id": s["consent_id"]}
 
     def sources(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
         return [self._src(s) for s in self.sources_]

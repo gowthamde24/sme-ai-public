@@ -26,7 +26,7 @@ function bad(what: string): never {
   throw new ApiContractError(`Unexpected ${what} in a profile response.`);
 }
 const KINDS: readonly unknown[] = ["own", "google", "none"];
-export const CHAT_LANGUAGES: readonly string[] = ["auto", "te", "en", "hi", "kn", "ta", "ml"];
+export const CHAT_LANGUAGES: readonly string[] = ["auto", "te", "en", "hi", "kn", "ta", "ml", "mr"];
 const maybe = (v: unknown, what: string, max: number): string | null => (v === null || v === undefined ? null : typeof v === "string" && v.length <= max ? v : bad(what));
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 

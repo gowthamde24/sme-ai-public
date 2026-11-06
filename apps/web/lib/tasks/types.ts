@@ -4,7 +4,7 @@
  */
 export const TASK_STATUSES = ["needs_answer", "planned", "approved", "running", "paused", "done", "cancelled"] as const;
 export type TaskStatus = (typeof TASK_STATUSES)[number];
-export const TASK_LANGS = ["en", "te", "hi", "kn", "ta", "ml"] as const;
+export const TASK_LANGS = ["en", "te", "hi", "kn", "ta", "ml", "mr"] as const;
 export type TaskLang = (typeof TASK_LANGS)[number];
 export const TASK_TEMPLATES = ["call_new_leads", "reengage_old_leads", "confirm_appointments", "collect_feedback", "payment_reminder", "supplier_price_enquiry", "offer_invite", "custom"] as const;
 export type TaskTemplateId = (typeof TASK_TEMPLATES)[number];

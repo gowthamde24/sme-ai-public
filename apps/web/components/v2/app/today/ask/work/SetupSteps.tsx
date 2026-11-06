@@ -32,6 +32,9 @@ function CopyRow({ label, value, code, t }: { label: string; value: string; code
 export function SetupSteps({ card, env }: { card: SetupCard; env: WorkEnv }) {
   const { t } = env;
   const result = useCardState(env.store, card.id)?.test ?? card.lastTest;
+  // a setup with a key box tests only once the key is saved (C1 #358: "Pull now" after the key)
+  const keyState = useCardState(env.store, card.secret?.id ?? "")?.secret;
+  const keyReady = card.secret === null || (keyState ?? card.secret.saved) != null;
   const [busy, setBusy] = React.useState(false);
   const [problem, setProblem] = React.useState<string | null>(null);
   const runTest = async () => {
@@ -81,7 +84,7 @@ export function SetupSteps({ card, env }: { card: SetupCard; env: WorkEnv }) {
         </div>
       ) : null}
       {card.secret ? <SecretBox card={card.secret} env={env} inline /> : null}
-      {card.test ? (
+      {card.test && keyReady ? (
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <button type="button" data-work="test" data-write disabled={busy} onClick={() => void runTest()} className={btnSmall}>
             {busy ? t("bv.work.setup.testing") : t(`bv.work.setup.test.${card.test}`)}

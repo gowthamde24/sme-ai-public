@@ -19,7 +19,9 @@ English
 <checkbox name=languages label="தமிழ்" value=ta>
 தமிழ்
 <checkbox name=languages label="മലയാളം" value=ml>
-മലയാളം Pick at least one.
+മലയാളം
+<checkbox name=languages label="मराठी (draft)" value=mr>
+मराठी (draft) Pick at least one.
 [button type=submit: Save]
 ### Where this name shows
 - The menu and the title of every page of your workspace

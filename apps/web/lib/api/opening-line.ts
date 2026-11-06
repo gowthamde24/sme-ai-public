@@ -1,4 +1,4 @@
-import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
+import { CALL_LANGS, DRAFT_LANGS, type CallLang } from "@/lib/assistant/types";
 import { validLine, type CampaignOpeningLine, type Lines, type OpeningLine, type Preview } from "@/lib/opening-line/types";
 
 import { ApiContractError, ApiRequestError, apiBinaryRequest, apiRequest } from "./client";
@@ -49,7 +49,8 @@ export function parseRaw(json: unknown): Raw {
   }
   const defaults = {} as Raw["defaults"];
   for (const l of CALL_LANGS) {
-    const d = json.defaults[l];
+    // a draft language the API has no default for yet (Marathi before C1 #355): the English default stands in, never a refusal of the whole editor
+    const d = json.defaults[l] === undefined && DRAFT_LANGS.includes(l) ? json.defaults.en : json.defaults[l];
     if (!isRecord(d) || typeof d.with_ai !== "string" || typeof d.without_ai !== "string" || d.with_ai.length < 1 || d.without_ai.length < 1) return bad();
     defaults[l] = { withAi: d.with_ai, withoutAi: d.without_ai };
   }

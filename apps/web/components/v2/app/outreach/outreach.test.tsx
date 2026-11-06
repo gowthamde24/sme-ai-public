@@ -135,7 +135,7 @@ describe("making the plan", () => {
     expect(screen.getByLabelText("The WhatsApp message")).toBeRequired();
     expect(screen.getByRole("button", { name: "Make the plan" })).toBeDisabled();
     const options = within(screen.getByLabelText("Language of the calls and messages")).getAllByRole("option").map((o) => o.getAttribute("value"));
-    expect(options).toEqual(["te", "hi", "kn", "en", "ta", "ml"]);
+    expect(options).toEqual(["te", "hi", "kn", "en", "ta", "ml", "mr"]); // Marathi joins as a draft (C1 #355)
   });
   it("says so when the plan could not be made, and sends nothing twice", async () => {
     const plan = draw(vi.fn(async (): Promise<Done<BatchAnswer>> => ({ ok: false, error: "invalid" })));
