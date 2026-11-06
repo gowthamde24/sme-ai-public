@@ -61,3 +61,26 @@ To change it later: the same, with `gcloud secrets versions add sme-telephony-sa
 
 ## Switch it off
 `make deploy-staging WHAT=api` without `TELEPHONY_INBOUND=1`: `TELEPHONY_MODE` goes back to off and both addresses answer "off". Or `update public.phone_numbers set inbound_on = false where number = '+914045903172';`.
+
+## The voice budget: our cap on Cartesia (migration 20261231280000)
+
+Cartesia has no spending cap of its own, so we enforce one: **2,000 Cartesia characters a call and 20,000 a day** across all calls. Past either limit, the call speaks with Sarvam Bulbul for the rest of the call. Live talk speaks with Sarvam unless `VOICE_TALK_PRIMARY=true`.
+
+Each call logs `voice_budget` (granted, used, the day's total, the limit) and `voice_chars` per engine in `phone_call_numbers`.
+
+**Operator steps** (SQL editor, as `postgres`; nothing here is reachable from a client):
+
+```sql
+-- the workspace whose Today shows the warnings (the platform owner's: Stack19 Owner Test)
+update public.voice_budget set notice_tenant = '<tenant id>', updated_at = now() where engine = 'cartesia';
+
+-- count characters spent outside the API into the month (local renders; or the gap to the Cartesia dashboard's own figure)
+select app.voice_usage_add_script('2026-11-06', 'cartesia', <characters>);
+
+-- change a limit (owner's decision only)
+update public.voice_budget set daily_chars = 20000, per_call_chars = 2000, monthly_credits = 100000, period_day = 29, updated_at = now() where engine = 'cartesia';
+
+-- the day's and the period's totals
+select source, chars from public.voice_usage_days where engine = 'cartesia' and day = app.voice_day();
+select sum(chars) from public.voice_usage_days where engine = 'cartesia' and day >= app.voice_period_start(app.voice_day(), 29::smallint);
+```

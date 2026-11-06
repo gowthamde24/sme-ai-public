@@ -36,6 +36,8 @@ class BrowserVoice:
     fast_smalltalk: bool = True  # casual turns on the fast tier, written into the same thread (owner decision, 31 Oct 2026)
     input_micros_per_mtok: int = 0   # what the fast model costs (settings LLM_INPUT/OUTPUT_MICROS_PER_MTOK): the day's cap sees the fast turns
     output_micros_per_mtok: int = 0
+    # owner, 6 Nov 2026: "Don't spend Cartesia credits on anything except real test calls until I say so". Live talk speaks with the fallback (Sarvam Bulbul) unless VOICE_TALK_PRIMARY is on.
+    talk_primary: bool = False
 
     def fast_llm(self) -> StreamingLlm:
         if self.turn_model == "sarvam":
