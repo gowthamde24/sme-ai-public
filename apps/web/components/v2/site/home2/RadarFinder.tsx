@@ -261,7 +261,7 @@ export function RadarFinder({ w }: { w: W }) {
     setSince(sceneTime());
   };
   const cities = (
-    <div role="radiogroup" aria-label={w["h2.finder.city"]} className="flex gap-0.5">
+    <div role="radiogroup" aria-label={w["h2.finder.city"]} className="flex flex-wrap gap-0.5">
       {CITIES.map((c) => (
         <button key={c} type="button" role="radio" aria-checked={city === c} onClick={() => pick(c)} data-city={c} className={`min-h-11 rounded-full px-3 text-[13px] font-extrabold ${city === c ? "bg-ink text-bg" : "text-muted hover:text-ink"}`}>
           {c}
@@ -286,8 +286,8 @@ export function RadarFinder({ w }: { w: W }) {
     </div>
   );
   return (
-    <div className="grid overflow-hidden rounded-[28px] border border-line bg-surface shadow-[0_60px_120px_-70px_rgba(30,30,36,.5)] lg:grid-cols-[minmax(0,780px)_minmax(0,1fr)]" data-part="radar" data-city={city}>
-      <div className="bg-[radial-gradient(circle_at_50%_50%,var(--v2-surface),var(--v2-surface-2)_70%)] lg:flex lg:items-center">
+    <div className="grid grid-cols-[minmax(0,1fr)] overflow-hidden rounded-[28px] border border-line bg-surface shadow-[0_60px_120px_-70px_rgba(30,30,36,.5)] lg:grid-cols-[minmax(0,780px)_minmax(0,1fr)]" data-part="radar" data-city={city}>
+      <div className="min-w-0 bg-[radial-gradient(circle_at_50%_50%,var(--v2-surface),var(--v2-surface-2)_70%)] lg:flex lg:items-center">
         {/* desktop: the full map */}
         <div className="relative hidden aspect-[780/520] w-full overflow-hidden lg:block">
           <canvas ref={desk} aria-hidden="true" className="absolute inset-0 block size-full" />
@@ -311,7 +311,8 @@ export function RadarFinder({ w }: { w: W }) {
               <span className="h2-blink" />
               {fill(w["h2.finder.near"], { city })}
             </span>
-            <div className="overflow-x-auto">{cities}</div>
+            {/* the city buttons wrap inside the card on a narrow phone (no fixed width: the card is the screen's width from 320 px up) */}
+            <div className="min-w-0 max-w-full">{cities}</div>
           </div>
           <div className="relative aspect-square w-full overflow-hidden bg-[radial-gradient(circle_at_50%_50%,var(--v2-surface),var(--v2-surface-2)_70%)]">
             <canvas ref={phone} aria-hidden="true" className="absolute inset-0 block size-full" />
@@ -325,7 +326,7 @@ export function RadarFinder({ w }: { w: W }) {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-2.5 border-line bg-surface-2/50 p-[22px] max-lg:border-t lg:border-l" aria-live="polite">
+      <div className="flex min-w-0 flex-col gap-2.5 border-line bg-surface-2/50 p-4 max-lg:border-t sm:p-[22px] lg:border-l" aria-live="polite">
         <div className="mb-1 flex items-center justify-between">
           <p className="m-0 font-extrabold">{w["h2.finder.list"]}</p>
           <span className="text-[13px] tabular-nums text-muted">{fill(w["h2.finder.of"], { n: String(seen.length) })}</span>
@@ -333,9 +334,9 @@ export function RadarFinder({ w }: { w: W }) {
         {[...seen]
           .sort((a, b) => a.id - b.id)
           .map((p) => (
-            <div key={`${city}-${p.id}`} className="h2-pop flex flex-col gap-2 rounded-2xl border border-line bg-surface px-4 py-3.5" data-found={p.id}>
-              <div className="flex items-center justify-between gap-2">
-                <p className="m-0 text-[15px] font-extrabold">
+            <div key={`${city}-${p.id}`} className="h2-pop flex min-w-0 flex-col gap-2 rounded-2xl border border-line bg-surface px-4 py-3.5" data-found={p.id}>
+              <div className="flex items-start justify-between gap-2">
+                <p className="m-0 min-w-0 text-[15px] font-extrabold">
                   {w[`h2.finder.pin.${p.id + 1}.what`]}, {AREAS[city][p.id]}
                 </p>
                 <span className="whitespace-nowrap text-xs tabular-nums text-muted">{p.km}</span>

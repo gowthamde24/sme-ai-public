@@ -30,12 +30,10 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
   // website mode (job DQ): the app is closed, so there is no sign-in and the one button is "Book a demo" (to the form on the pages that have it)
   const web = websiteOnly();
   const start = startEntry(t, lang, t("nav.start"), { hasForm: waitlistMode() !== "off" && (target.kind !== "page" || target.page === "contact") });
-  // landing v2 (owner approved 6 Nov 2026): the six parts of the home page; from another page they lead back to it
+  // landing v2: four parts of the home page (owner, 6 Nov 2026: fewer links in the bar; the Lead Finder and the business number are in the footer); from another page they lead back to it
   const nav = [
     { href: `${base}#call`, label: t("h2.nav.call"), here: false },
-    { href: `${base}#finder`, label: t("h2.nav.finder"), here: false },
     { href: `${base}#team`, label: t("h2.nav.team"), here: false },
-    { href: `${base}#number`, label: t("h2.nav.number"), here: false },
     { href: onHome ? "#plans" : pricingPage, label: t("h2.nav.plans"), here: target.kind === "page" && target.page === "pricing" },
     { href: `${base}#faq`, label: t("h2.nav.faq"), here: false },
   ];
@@ -47,7 +45,8 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
       {/* the scroll's progress, a thin line under the bar (drawn by the scroll where the browser can; none where it cannot) */}
       <span aria-hidden="true" className="h2-prog" />
       <div className={`${container} flex min-h-16 items-center gap-2 py-2 sm:gap-3`}>
-        <Link href={home} className="shrink-0 whitespace-nowrap rounded-md" aria-label={BRAND_NAME}>
+        {/* under 360 px the name is a size smaller, so the bar still fits with large text (Android 115%) */}
+        <Link href={home} className="shrink-0 whitespace-nowrap rounded-md max-[359px]:[&_.font-display]:text-xl" aria-label={BRAND_NAME}>
           <Wordmark />
         </Link>
         <nav aria-label={t("nav.sections")} className="ml-4 hidden items-center gap-1 lg:flex">

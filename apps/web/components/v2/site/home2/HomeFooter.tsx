@@ -25,7 +25,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
     <footer id="end" className="relative overflow-hidden px-4 pt-8 lg:px-8 lg:pt-20" data-part="home-footer">
       {/* the soft floor light: an oval light that is fully gone at its own edge (closest-side), so no edge of its box can show */}
       <span aria-hidden="true" className="absolute bottom-[-380px] left-1/2 block h-[760px] w-[1400px] -translate-x-1/2 bg-[radial-gradient(closest-side,rgba(255,140,90,.28),rgba(236,72,110,.08)_55%,rgba(255,140,90,0))]" />
-      <div className="relative mx-auto grid max-w-[1240px] gap-8 border-b border-line pb-9 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.4fr)_repeat(4,minmax(0,1fr))] lg:gap-12">
+      <div className="relative mx-auto grid grid-cols-[minmax(0,1fr)] max-w-[1240px] gap-8 border-b border-line pb-9 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.4fr)_repeat(4,minmax(0,1fr))] lg:gap-12">
         <div className="flex flex-col gap-3.5">
           <p className="m-0 max-w-[380px] font-display text-[28px] font-extrabold leading-[1.15] tracking-[-0.02em]">
             {t("h2.hero.l1")} {t("h2.hero.l2")}
@@ -69,8 +69,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
           </Link>
         </div>
       </div>
-      <BrandDots label={BRAND_NAME} rebuild={t("h2.foot.rebuild")} />
-      <div className="relative mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-x-6 gap-y-2 pb-7 pt-[18px] text-[13px] text-muted">
+      <div className="relative mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-x-6 gap-y-2 pt-[18px] text-[13px] text-muted">
         <span>{t("h2.foot.copy")}</span>
         <nav aria-label={t("nav.languages")}>
           <ul className="m-0 flex list-none flex-wrap p-0" data-part="foot-langs">
@@ -90,6 +89,8 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
           </svg>
         </a>
       </div>
+      {/* the dot wordmark is the very last thing on the page, its letters on the bottom edge (owner, 6 Nov 2026) */}
+      <BrandDots label={BRAND_NAME} rebuild={t("h2.foot.rebuild")} />
     </footer>
   );
 }

@@ -112,7 +112,7 @@ export function LeakCalc({ w }: { w: W }) {
     </div>
   );
   return (
-    <div className="grid items-center gap-8 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-14" data-part="leak">
+    <div className="grid grid-cols-[minmax(0,1fr)] items-center gap-8 lg:grid-cols-[420px_minmax(0,1fr)] lg:gap-14" data-part="leak">
       <div className="flex flex-col gap-6">
         <h2 id="calc-title" className="m-0 font-display text-[34px] font-extrabold leading-[1.04] tracking-[-0.04em] lg:text-5xl lg:leading-[1.02]">
           {w["h2.leak.title"]}
@@ -134,9 +134,9 @@ export function LeakCalc({ w }: { w: W }) {
       <div className="relative">
         <div className="relative h-[250px] lg:h-[520px]">
           <canvas ref={canvas} aria-hidden="true" className="absolute inset-0 block size-full" />
-          <div className="absolute right-[14%] top-0 text-right max-lg:hidden">
-            <p className="m-0 text-[15px] font-bold text-muted">{w["h2.leak.warm"]}</p>
-            <p className="m-0 mt-0.5 font-display text-[44px] font-extrabold tabular-nums tracking-[-0.03em]" data-part="warm">
+          <div className="absolute right-0 top-0 text-right lg:right-[14%]">
+            <p className="m-0 text-[13px] font-bold text-muted lg:text-[15px]">{w["h2.leak.warm"]}</p>
+            <p className="m-0 mt-0.5 font-display text-[28px] font-extrabold tabular-nums tracking-[-0.03em] lg:text-[44px]" data-part="warm">
               {(enq - cold).toLocaleString("en-IN")}
             </p>
           </div>

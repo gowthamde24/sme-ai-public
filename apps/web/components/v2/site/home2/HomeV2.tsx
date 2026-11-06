@@ -102,12 +102,12 @@ export function HomeV2({ t, lang, hasForm, waitlist }: { t: SiteT; lang: Lang; h
     <>
       <HomeHero t={t} start={start} />
       <GreetingsBand label={t("h2.greet.label")} line={t("h2.greet.line")} />
-      <section id="call" aria-labelledby="call-title" className="px-4 py-14 lg:px-8 lg:py-24">
+      <section id="call" aria-labelledby="call-title" className="px-4 pb-0 pt-14 lg:px-8 lg:py-24">
         <div className="mx-auto max-w-[1240px]">
           <CallDemo w={callWords(t, lang)} />
         </div>
       </section>
-      <section id="finder" aria-labelledby="finder-title" className="px-4 pb-16 pt-6 lg:px-8 lg:pb-24 lg:pt-10">
+      <section id="finder" aria-labelledby="finder-title" className="px-4 pb-0 pt-16 lg:px-8 lg:pb-24 lg:pt-10">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-6 lg:gap-8">
           <div className="flex flex-col gap-3.5 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
             <h2 id="finder-title" className="m-0 max-w-[740px] font-display text-[34px] font-extrabold leading-[1.04] tracking-[-0.04em] lg:text-[56px] lg:leading-[1.02]">
@@ -119,7 +119,7 @@ export function HomeV2({ t, lang, hasForm, waitlist }: { t: SiteT; lang: Lang; h
           <p className="m-0 text-sm text-muted">{t("h2.finder.note")}</p>
         </div>
       </section>
-      <section id="team" aria-labelledby="team-title" className="relative overflow-hidden px-4 pb-16 pt-10 lg:px-8 lg:pb-24 lg:pt-16">
+      <section id="team" aria-labelledby="team-title" className="relative overflow-hidden px-4 pb-0 pt-16 lg:px-8 lg:pb-24 lg:pt-16">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-2">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
             <h2 id="team-title" className="m-0 max-w-[760px] font-display text-[34px] font-extrabold leading-[1.04] tracking-[-0.04em] lg:text-[56px] lg:leading-[1.02]">
@@ -132,21 +132,20 @@ export function HomeV2({ t, lang, hasForm, waitlist }: { t: SiteT; lang: Lang; h
           </div>
         </div>
       </section>
-      <section id="after" aria-labelledby="after-title" className="relative px-4 pb-10 pt-10 lg:px-8 lg:pt-14">
+      <section id="after" aria-labelledby="after-title" className="relative px-4 pb-0 pt-16 lg:px-8 lg:pb-10 lg:pt-14">
         <div className="mx-auto flex max-w-[1240px] flex-col gap-2">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
             <h2 id="after-title" className="m-0 max-w-[820px] font-display text-[34px] font-extrabold leading-[1.04] tracking-[-0.04em] lg:text-[56px] lg:leading-[1.02]">
-              <span className="lg:hidden">{t("h2.after.title.phone")}</span>
-              <span className="max-lg:hidden">{t("h2.after.title")}</span>
+              {t("h2.after.title")}
             </h2>
-            <p className="m-0 max-w-[360px] text-[15px] leading-relaxed text-muted max-lg:hidden lg:text-[17px]">{t("h2.after.sub")}</p>
+            <p className="m-0 max-w-[360px] text-[15px] leading-relaxed text-muted lg:text-[17px]">{t("h2.after.sub")}</p>
           </div>
           <Journey w={islandWords(t, AFTER_KEYS)} />
           <p className="m-0 mt-3 text-center text-sm text-muted">{t("h2.after.note")}</p>
         </div>
       </section>
       <NumberSection t={t} kyc={siteKycCopy()} />
-      <section id="calc" aria-labelledby="calc-title" className="px-4 pb-10 pt-16 lg:px-8 lg:pt-28">
+      <section id="calc" aria-labelledby="calc-title" className="px-4 pb-0 pt-16 lg:px-8 lg:pb-10 lg:pt-28">
         <div className="mx-auto max-w-[1240px]">
           <LeakCalc w={islandWords(t, LEAK_KEYS)} />
         </div>
@@ -164,12 +163,12 @@ function HomeHero({ t, start }: { t: SiteT; start: { href: string; label: string
       <span aria-hidden="true" className="absolute left-1/2 top-[300px] block size-[560px] -translate-x-1/2 lg:top-[360px] lg:size-[1000px]">
         <span className="h2-glow block size-full" />
       </span>
-      <div className="relative mx-auto grid max-w-[1240px] items-end gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-14">
+      <div className="relative mx-auto grid grid-cols-[minmax(0,1fr)] max-w-[1240px] items-end gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-14">
         <Headline t={t} />
         <div className="h2-fadein h2-d8 flex flex-col gap-5 pb-1.5">
           <p className="m-0 text-base leading-relaxed text-muted lg:text-lg">
-            <span className="lg:hidden">{t("h2.hero.sub.phone")}</span>
-            <span className="max-lg:hidden">{t("h2.hero.sub")}</span>
+            {/* one sentence for every screen (owner, 6 Nov 2026: the phone shows everything the desktop shows) */}
+            {t("h2.hero.sub")}
           </p>
           <div className="flex gap-2.5 max-lg:hidden">
             <Link href={start.href} className={btnMain}>

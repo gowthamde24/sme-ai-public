@@ -1,6 +1,6 @@
 // The public home page, landing v2 (job landing-v2): pictures and the page's own checks, on a production build (the visual tests' stand-in answers anything the server asks; the home page asks nothing).
 //   node e2e/visual/landing-shots.mjs [--no-build] [--out DIR] [--set quick|full]
-// quick (the default): 1440 and 390, light, English. full: 1440, 1366, 390 and 360, light and dark, English and Telugu, and a reduced-motion set.
+// quick (the default): 1440, 390 and 360, light, English. full: 1440, 1366, 390 and 360, light and dark, English and Telugu, and a reduced-motion set.
 // Checks: no horizontal page scroll (360 above all); Try it (a business and a language, then Send: the caption says that language's line, the matching outcome lights); the page reads without script. Exit 1 when a check fails.
 import { execFileSync, spawn } from "node:child_process";
 import { existsSync, mkdirSync } from "node:fs";
@@ -64,6 +64,7 @@ try {
       : [
           { width: 1440, theme: "light", lang: "en" },
           { width: 390, theme: "light", lang: "en", height: 844 },
+          { width: 360, theme: "light", lang: "en", height: 800 }, // the narrow Android phone (owner, 6 Nov 2026)
         ];
   for (const v of views) {
     const { ctx, p } = await open(browser, v);

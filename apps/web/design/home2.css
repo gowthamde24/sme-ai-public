@@ -94,3 +94,18 @@
 [data-ui="v2"] .h2-range::-moz-range-progress { height: 6px; border-radius: 999px; background: #ff773c; }
 [data-ui="v2"] .h2-range::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #ff773c; border: 3px solid var(--v2-surface); box-shadow: 0 1px 4px rgba(30, 30, 36, 0.28); }
 [data-ui="v2"] .h2-range:focus-visible { outline: 2.5px solid #c2410c; outline-offset: 3px; border-radius: 999px; }
+
+/* the page fits the window (owner, 6 Nov 2026): on a laptop or desktop window shorter than 1,100 px, the whole home page (header, sections, footer) scales down in 50 px steps of window
+ * height, the way the 1440 design would look shrunk to fit; the hero stage shrinks a little more and the hero's top spacing tightens, so the headline and the whole stage (with Try it) are on the
+ * first screen. CSS only, no script: nothing moves after the page loads. Phones and tablets (under 1024 px wide) are unchanged; a browser without `zoom` shows the page at its full size. */
+/* in the utilities layer: the page's own utility classes (lg:pt-11, mt-7) are !important there, and a layered !important outranks an unlayered one; inside the same layer this more specific rule wins */
+@layer utilities { @media (min-width: 1024px) and (max-height: 1099.98px) { [data-ui="v2"] [data-page="home"] section[aria-labelledby="h1"] { padding-top: 24px !important; } [data-ui="v2"] [data-page="home"] [data-part="hero-stage"] > div:first-child { margin-top: 12px !important; } } }
+@media (min-width: 1024px) and (max-height: 699.98px) { [data-ui="v2"] [data-page="home"] { zoom: 0.79; } [data-ui="v2"] [data-page="home"] [data-part="hero-stage"] { zoom: 0.62; } }
+@media (min-width: 1024px) and (min-height: 700px) and (max-height: 749.98px) { [data-ui="v2"] [data-page="home"] { zoom: 0.82; } [data-ui="v2"] [data-page="home"] [data-part="hero-stage"] { zoom: 0.67; } }
+@media (min-width: 1024px) and (min-height: 750px) and (max-height: 799.98px) { [data-ui="v2"] [data-page="home"] { zoom: 0.85; } [data-ui="v2"] [data-page="home"] [data-part="hero-stage"] { zoom: 0.71; } }
+@media (min-width: 1024px) and (min-height: 800px) and (max-height: 849.98px) { [data-ui="v2"] [data-page="home"] { zoom: 0.88; } [data-ui="v2"] [data-page="home"] [data-part="hero-stage"] { zoom: 0.75; } }
+@media (min-width: 1024px) and (min-height: 850px) and (max-height: 899.98px) { [data-ui="v2"] [data-page="home"] { zoom: 0.91; } [data-ui="v2"] [data-page="home"] [data-part="hero-stage"] { zoom: 0.79; } }
+@media (min-width: 1024px) and (min-height: 900px) and (max-height: 949.98px) { [data-ui="v2"] [data-page="home"] { zoom: 0.94; } [data-ui="v2"] [data-page="home"] [data-part="hero-stage"] { zoom: 0.83; } }
+@media (min-width: 1024px) and (min-height: 950px) and (max-height: 999.98px) { [data-ui="v2"] [data-page="home"] { zoom: 0.97; } [data-ui="v2"] [data-page="home"] [data-part="hero-stage"] { zoom: 0.86; } }
+@media (min-width: 1024px) and (min-height: 1000px) and (max-height: 1049.98px) { [data-ui="v2"] [data-page="home"] [data-part="hero-stage"] { zoom: 0.89; } }
+@media (min-width: 1024px) and (min-height: 1050px) and (max-height: 1099.98px) { [data-ui="v2"] [data-page="home"] [data-part="hero-stage"] { zoom: 0.97; } }

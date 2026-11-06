@@ -227,6 +227,8 @@ export function Journey({ w }: { w: W }) {
               <div className="flex flex-col gap-1">
                 <p className={`m-0 font-display text-[17px] font-extrabold ${reached(i) ? "text-ink" : "text-muted/70"}`}>{w[`h2.after.${i + 1}.name`]}</p>
                 <p className="m-0 text-sm text-muted">{w[`h2.after.${i + 1}.desc`]}</p>
+                {/* the desktop road's grey branch after the call, as words on a phone */}
+                {i === 1 ? <p className="m-0 text-[13px] font-semibold text-muted/80" data-part="stop-phone">{w["h2.after.stop"]}</p> : null}
                 {Math.floor(j.cur / 60) === i ? <span className="h2-glass h2-pop self-start rounded-full px-3 py-1.5 text-[13px] font-bold">{tagOf(i)}</span> : null}
               </div>
             </li>

@@ -126,21 +126,24 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     vi.unstubAllEnvs();
     for (const x of ["Start 14-day trial", "Two plans. Rupees, GST included.", "14 days free, counted from the day your WhatsApp is connected."]) expect(on, x).toContain(x);
   });
-  it("landing v2: the sticky glass header with its scroll line, the three-bar logo, Hear a call, Lead Finder, AI team, Business number, Plans, Questions, Log in and Get early access", () => {
+  it("landing v2: the sticky glass header with its scroll line, the three-bar logo, Hear a call, AI team, Plans, Questions, Log in and Get early access", () => {
     const nav = home.match(/<header[\s\S]*?<\/header>/)![0];
     expect(nav).toMatch(/\[position:sticky\]/);
     expect(nav).toContain('class="h2-prog"');
-    for (const href of ['href="#call"', 'href="#finder"', 'href="#team"', 'href="#number"', 'href="#plans"', 'href="#faq"', 'href="/login"']) expect(nav, href).toContain(href);
-    for (const x of ["Hear a call", "Lead Finder", "AI team", "Business number", "Plans", "Questions", "Log in"]) expect(text(nav), x).toContain(x);
+    for (const href of ['href="#call"', 'href="#team"', 'href="#plans"', 'href="#faq"', 'href="/login"']) expect(nav, href).toContain(href);
+    for (const x of ["Hear a call", "AI team", "Plans", "Questions", "Log in"]) expect(text(nav), x).toContain(x);
+    // four links, not six (owner, 6 Nov 2026); the Lead Finder and the business number are in the footer
+    for (const gone of ['href="#finder"', 'href="#number"']) expect(nav, gone).not.toContain(gone);
     expect(nav).toContain("data-mark");
     expect(nav).not.toContain("data-orb");
   });
-  it("landing v2: the hero stage is in the page without script: the six sources, the Lead Finder counter, the caption, three outcomes and Try it (three businesses, seven languages, real radio buttons)", () => {
+  it("landing v2: the hero stage is in the page without script: the six sources, the Lead Finder counter, the caption, three outcomes and Try it (three businesses, six languages (no Marathi yet), real radio buttons)", () => {
     const stage = home.match(/data-part="hero-stage"[\s\S]*$/)![0];
     expect(stage.match(/data-source="\d"/g)).toHaveLength(6);
     for (const x of ["Facebook and Instagram ads", "IndiaMART, JustDial", "Your website", "WhatsApp messages", "Missed calls", "Emails, sheets, walk-ins", "Lead Finder: scanning nearby", "Called back within minutes", "Quote ready", "Shop visit booked", "Try it", "Send an enquiry"]) expect(text(stage), x).toContain(x);
     expect(stage.match(/data-try-biz=/g)).toHaveLength(6); // the desktop bar and the phone card
-    expect(stage.match(/data-try-lang=/g)).toHaveLength(14);
+    expect(stage.match(/data-try-lang=/g)).toHaveLength(12); // six languages, twice (no Marathi in Try it until it has a call voice; owner, 6 Nov 2026)
+    expect(stage).not.toContain('data-try-lang="mr"');
     expect(stage).toMatch(/role="radio" aria-checked="true"[^>]*data-try-biz="saree"/);
     expect(stage).toContain('aria-live="polite"');
     expect(stage).toMatch(/<canvas[^>]*aria-hidden="true"/);
