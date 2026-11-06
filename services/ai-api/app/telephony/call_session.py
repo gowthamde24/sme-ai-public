@@ -23,8 +23,8 @@ from app.browser_voice.limits import Ledger, Limits, Usage
 from app.browser_voice.llm import CaptionLlm
 from app.browser_voice.session import Kind, Parts, VoiceSession
 from app.conversation.parts import StreamingLlm
+from app.telephony import language_rule, persona
 from app.telephony import outcome as outcome_mod
-from app.telephony import persona
 from app.telephony.line import PhoneLine
 from app.telephony.outcome import CallOutcome
 from app.telephony.phone_llm import PhoneLlm
@@ -55,6 +55,23 @@ class CallStore(Protocol):
 
 class CallVoiceSession(VoiceSession):
     is_phone = True   # a phone call never gets the speaker check (owner decision 31 Oct 2026: off until the December lawyer review)
+
+    async def _follow_language(self, text: str) -> None:
+        """The phone's own language rule (app/telephony/language_rule.py, owner, 6 Nov 2026): start in the line's language and stay; fillers ("hello", "ok") and code-mixed speech never switch it;
+        a request, a full sentence of 3+ words, or 2 turns in a row in another language do. Each switch is logged (codes and the reason, never the words)."""
+        streak = getattr(self, "_language_streak", (None, 0))
+        decision = language_rule.decide(self.language, text, streak)
+        self._language_streak = decision.streak
+        if decision.switch_to is None:
+            return
+        target = self._speakable(decision.switch_to)
+        if target == self.language:
+            return
+        switches: list[dict[str, str]] = getattr(self, "language_switches", [])
+        switches.append({"from": self.language, "to": target, "why": decision.why})
+        self.language_switches = switches
+        log.info("phone_language_switch from=%s to=%s why=%s", self.language, target, decision.why)
+        await self._set_language(target)
 
     async def speak_and_hang_up(self, text: str, reason: str) -> None:
         """Stop whatever is being said, say one fixed line, let it finish playing, close the line."""
@@ -176,6 +193,9 @@ async def run_call(
         with suppress(Exception):
             setattr(line, "voice_chars", dict(usage.tts_chars))  # noqa: B010 - the phone line's own record (TimedLine); other lines simply carry it
             setattr(line, "voice_primary_off", str(getattr(parts.tts, "primary_off", "") or ""))  # noqa: B010
+        with suppress(Exception):
+            # the call's languages (owner, 6 Nov 2026): where it started, where it ended, every switch with its reason; the recogniser follows the call's language
+            setattr(line, "languages", {"start": plan.language, "end": session.language, "switches": list(getattr(session, "language_switches", []))})  # noqa: B010
         await line.close()
         for fut in acted:
             with suppress(asyncio.CancelledError, Exception):
