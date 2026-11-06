@@ -66,7 +66,7 @@ export function PlansSlab({ t, start }: { t: SiteT; start: { href: string; label
     </div>
   );
   return (
-    <section id="plans" aria-labelledby="plans-title" className="px-4 pb-10 pt-16 lg:px-8 lg:pt-28">
+    <section id="plans" aria-labelledby="plans-title" className="px-4 pb-0 pt-16 lg:px-8 lg:pb-10 lg:pt-28">
       <div className="mx-auto flex max-w-[1240px] flex-col gap-6 lg:gap-9">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-10">
           <h2 id="plans-title" className={h2}>
@@ -76,7 +76,7 @@ export function PlansSlab({ t, start }: { t: SiteT; start: { href: string; label
         </div>
         <div className="relative">
           <span aria-hidden="true" className="absolute left-[6%] top-[-60px] block size-[520px] rounded-full bg-[radial-gradient(circle,rgba(255,119,60,.28),rgba(236,72,110,.10)_45%,rgba(255,119,60,0)_70%)] blur-[10px]" />
-          <div className="h2-glass relative grid rounded-[28px] lg:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)] lg:rounded-[36px]">
+          <div className="h2-glass relative grid grid-cols-[minmax(0,1fr)] rounded-[28px] lg:grid-cols-[minmax(0,1fr)_1px_minmax(0,1fr)] lg:rounded-[36px]">
             {plan(t("h2.plans.ws"), t("h2.plans.ws.sub"), true, false, true)}
             <span aria-hidden="true" className="block h-px bg-[linear-gradient(90deg,transparent,rgba(255,119,60,.55),rgba(236,72,110,.4),transparent)] lg:h-auto lg:w-px lg:bg-[linear-gradient(transparent,rgba(255,119,60,.55),rgba(236,72,110,.4),transparent)]" />
             {plan(t("h2.plans.ld"), t("h2.plans.ld.sub"), false, true, false)}
@@ -90,8 +90,8 @@ export function PlansSlab({ t, start }: { t: SiteT; start: { href: string; label
 /** Questions (landing v2 part B.11): an open list with hairline dividers, native disclosures (no script). The business-number answer names the KYC only with SITE_KYC_COPY=1. */
 export function FaqList({ t, kyc }: { t: SiteT; kyc: boolean }) {
   return (
-    <section id="faq" aria-labelledby="faq-title" className="px-4 pb-10 pt-16 lg:px-8 lg:pt-28">
-      <div className="mx-auto grid max-w-[1240px] items-start gap-6 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-16">
+    <section id="faq" aria-labelledby="faq-title" className="px-4 pb-0 pt-16 lg:px-8 lg:pb-10 lg:pt-28">
+      <div className="mx-auto grid grid-cols-[minmax(0,1fr)] max-w-[1240px] items-start gap-6 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)] lg:gap-16">
         <h2 id="faq-title" className={`${h2} lg:sticky lg:top-[110px]`}>
           {t("h2.faq.title")}
         </h2>

@@ -126,11 +126,11 @@ export function CallDemo({ w }: { w: W }) {
       </div>
 
       <div id="call-panel" role="tabpanel" aria-labelledby="call-title" className="overflow-hidden rounded-[28px] border border-line bg-surface shadow-[0_60px_120px_-70px_rgba(30,30,36,.55)]">
-        <div className="flex items-center gap-3.5 border-b border-line px-[22px] py-3.5">
+        <div className="flex flex-wrap items-center gap-x-3.5 gap-y-2 border-b border-line px-[22px] py-3.5">
           <Mark px={20} />
           <span className="font-extrabold">{w["h2.call.calls"]}</span>
           <span className="text-muted">/</span>
-          <span className="truncate font-semibold text-muted">
+          <span className="min-w-0 font-semibold text-muted [overflow-wrap:anywhere]">
             {call.lead}, {w[`h2.call.${biz}.source`]}
           </span>
           <span className="ml-auto inline-flex shrink-0 items-center gap-2 rounded-full bg-brand-bg px-3 py-1.5 text-[13px] font-bold text-brand-text" data-part="call-mode">
@@ -138,7 +138,7 @@ export function CallDemo({ w }: { w: W }) {
             {modeWord}
           </span>
         </div>
-        <div className="grid lg:grid-cols-[300px_minmax(0,1fr)_340px]">
+        <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[300px_minmax(0,1fr)_340px]">
           <div className="flex flex-col items-center gap-[18px] border-line bg-[radial-gradient(circle_at_50%_38%,var(--v2-brand-bg),var(--v2-surface)_70%)] px-7 py-8 max-lg:border-b lg:border-r">
             <div className="relative size-[200px] lg:size-[250px]">
               <canvas ref={ring} aria-hidden="true" className="absolute inset-0 block size-full" />
@@ -185,7 +185,7 @@ export function CallDemo({ w }: { w: W }) {
               <span className={`absolute top-10 block w-[calc(50%-20px)] transition-[left,transform] duration-[900ms] ease-[cubic-bezier(.77,0,.175,1)] ${col === 0 ? "left-2 -rotate-2" : "left-[calc(50%+4px)]"}`} data-part="lead-card" data-col={col}>
                 <span className="block rounded-xl border border-line bg-surface px-3 py-2.5 shadow-[0_16px_30px_-16px_rgba(30,30,36,.4)]">
                   <span className="block text-sm font-extrabold">{call.lead}</span>
-                  <span className="block truncate text-xs text-muted">{status}</span>
+                  <span className="block text-xs text-muted">{status}</span>
                 </span>
               </span>
             </div>

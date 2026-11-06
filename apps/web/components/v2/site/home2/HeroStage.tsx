@@ -150,7 +150,8 @@ export function HeroStage({ w }: { w: W }) {
         ))}
       </div>
       <div role="radiogroup" aria-label={w["h2.try.lang"]} className={`flex gap-0.5 ${wrap}`}>
-        {DEMO_LANGS.map((l, i) => (
+        {/* no Marathi in Try it until it has a call voice (owner, 6 Nov 2026); the greetings band and the hero's own greeting keep it. The index stays the list's, so nothing else moves */}
+        {DEMO_LANGS.map((l, i) => l.code === "mr" ? null : (
           <button key={l.code} type="button" role="radio" aria-checked={lang === i} onClick={() => setLang(i)} lang={l.code} data-try-lang={l.code} className={`min-h-11 rounded-full px-2.5 text-sm font-extrabold ${lang === i ? "bg-ink text-bg" : "text-muted hover:text-ink"}`}>
             {l.label}
           </button>
@@ -228,11 +229,27 @@ export function HeroStage({ w }: { w: W }) {
 
       {/* phone: the orb with its spectrum ring, the caption, "Try it" as a card, the outcomes as a list */}
       <div className="lg:hidden">
-        <div className="relative mx-auto mt-[18px] size-[300px]">
+        {/* the desktop stage's six sources and the Lead Finder's counter, on a phone too (owner, 6 Nov 2026: the phone shows everything the desktop shows); chips at their own width, wrapping */}
+        <div className="mt-[18px] flex flex-wrap justify-center gap-2" data-part="sources-phone">
+          {SRC_Y.map((_, i) => (
+            <div key={i} className="h2-glass h2-node min-w-0 max-w-full whitespace-normal text-[13px]" data-source-phone={i}>
+              <Ico>{ICONS[i]}</Ico>
+              <span className="min-w-0">{w[`h2.src.${i + 1}`]}</span>
+            </div>
+          ))}
+        </div>
+        <div className="mt-2.5 flex justify-center">
+          <div className="h2-glass h2-node whitespace-normal" data-part="found-phone">
+            <span className="h2-blink" />
+            {found === 0 ? w["h2.hero.scanning"] : found === 1 ? w["h2.hero.found.one"] : fill(w["h2.hero.found"], { n: String(found) })}
+          </div>
+        </div>
+        {/* fluid from 320 px: at most 300 px, never wider than the screen; the orb is the middle 60% */}
+        <div className="relative mx-auto mt-[18px] aspect-square w-full max-w-[300px]">
           <Place s={{ inset: 0 }}>
             <canvas ref={ringEl} aria-hidden="true" className="block size-full" />
           </Place>
-          <Place s={{ left: 60, top: 60, width: 180, height: 180 }}>
+          <Place s={{ left: "20%", top: "20%", width: "60%", height: "60%" }}>
             <div className="h2-orbwrap size-full overflow-hidden">
               <AssistantOrb state={motion} />
             </div>

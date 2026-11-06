@@ -13,8 +13,8 @@ const Tick = () => (
  */
 export function NumberSection({ t, kyc }: { t: SiteT; kyc: boolean }) {
   return (
-    <section id="number" aria-labelledby="number-title" className="relative px-4 pb-10 pt-16 lg:px-8 lg:pt-28" data-kyc={kyc ? "on" : "off"}>
-      <div className="mx-auto grid max-w-[1240px] items-center gap-8 lg:grid-cols-2 lg:gap-16">
+    <section id="number" aria-labelledby="number-title" className="relative px-4 pb-0 pt-16 lg:px-8 lg:pb-10 lg:pt-28" data-kyc={kyc ? "on" : "off"}>
+      <div className="mx-auto grid grid-cols-[minmax(0,1fr)] max-w-[1240px] items-center gap-8 lg:grid-cols-2 lg:gap-16">
         <div className="flex flex-col gap-5">
           <h2 id="number-title" className="m-0 font-display text-[34px] font-extrabold leading-[1.04] tracking-[-0.04em] lg:text-[56px] lg:leading-[1.02]">
             {kyc ? t("h2.num.title.kyc") : t("h2.num.title")}
@@ -50,7 +50,7 @@ export function NumberSection({ t, kyc }: { t: SiteT; kyc: boolean }) {
                         <Tick />
                       </span>
                       <span className="text-[13px] font-extrabold lg:text-base">{t(`h2.num.step.${i}` as "h2.num.step.1")}</span>
-                      <span className="text-[13px] text-muted max-lg:hidden">{t(`h2.num.step.${i}.d` as "h2.num.step.1.d")}</span>
+                      <span className="text-[13px] text-muted">{t(`h2.num.step.${i}.d` as "h2.num.step.1.d")}</span>
                     </li>
                   ))}
                 </ol>

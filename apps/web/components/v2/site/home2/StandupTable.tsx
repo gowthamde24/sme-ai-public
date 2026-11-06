@@ -178,6 +178,13 @@ export function StandupTable({ w, clipGroup }: { w: W; clipGroup: string | null 
       </div>
       {/* phone: the orb and a row of the helpers */}
       <div className="lg:hidden">
+        {/* the desktop scene's "live" chip, on a phone too (owner, 6 Nov 2026: the phone shows everything the desktop shows) */}
+        <div className="mb-4 flex justify-center">
+          <span className="h2-glass inline-flex max-w-full items-center gap-2.5 rounded-full px-4 py-2 text-sm font-bold">
+            <span className="h2-blink shrink-0" />
+            {w["h2.meet.live"]}
+          </span>
+        </div>
         <div className="mx-auto size-[130px]">
           <span className="h2-orbwrap block size-full overflow-hidden">
             <AssistantOrb state={orbState} />
@@ -223,7 +230,8 @@ export function StandupTable({ w, clipGroup }: { w: W; clipGroup: string | null 
                     <span className="block size-full rounded-full bg-[linear-gradient(90deg,#ff9a6b,#ff773c,#ec486e)]" />
                   </span>
                 </span>
-                <span className={`truncate text-xs font-bold ${i === su ? "text-brand-text" : i < su ? "text-ink" : "text-muted"}`}>{i === 6 ? w["h2.meet.7.name"] : name(i)}</span>
+                {/* on a phone the bar is the seven parts without their names (the phone design; seven names do not fit 360 px), and the name of the one speaking is above the words; a screen reader still hears every name */}
+                <span className={`truncate text-xs font-bold max-lg:sr-only ${i === su ? "text-brand-text" : i < su ? "text-ink" : "text-muted"}`}>{i === 6 ? w["h2.meet.7.name"] : name(i)}</span>
               </li>
             );
           })}

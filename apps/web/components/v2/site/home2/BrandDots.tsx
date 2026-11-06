@@ -61,7 +61,7 @@ function brandDots(family: string, step: number): Dot[] {
 }
 
 /**
- * The footer's wordmark (landing v2 part B.13): the brand name with its three bars, built from the page's own dots. It assembles the first time it is seen, stands on a reflecting floor with a light that travels along it; the cursor pushes
+ * The footer's wordmark (landing v2 part B.13): the brand name with its three bars, built from the page's own dots. It assembles the first time it is seen, stands on the page's bottom edge with a light that travels along it; the cursor pushes
  * the dots away and lights them; a click (or Enter on the button) builds it again. One image to a screen reader (its name). Reduced motion: it simply stands there. No cursor play on touch screens (nothing follows a finger).
  */
 export function BrandDots({ label, rebuild }: { label: string; rebuild: string }) {
@@ -154,12 +154,12 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
       fl.addColorStop(0.5, "rgba(255,119,60,.55)");
       fl.addColorStop(1, "rgba(255,119,60,0)");
       ctx.fillStyle = fl;
-      ctx.fillRect(0, 271, 1240, 1.5);
+      ctx.fillRect(0, 264, 1240, 1.5);
       if (!look.calm) {
         const lx = ((t * 0.18) % 1) * 1400 - 80;
         // a soft glow travelling along the floor: an ellipse filled with a radial light, no hard edges
         ctx.save();
-        ctx.translate(lx, 272);
+        ctx.translate(lx, 265);
         ctx.scale(1, 0.14);
         const lg = ctx.createRadialGradient(0, 0, 0, 0, 0, 90);
         lg.addColorStop(0, "rgba(255,119,60,.55)");
@@ -184,7 +184,8 @@ export function BrandDots({ label, rebuild }: { label: string; rebuild: string }
     state.current.seen = true;
   };
   return (
-    <div className="relative mx-auto mt-5 h-[116px] max-w-[1240px] lg:h-[400px]">
+    <div className="relative mx-auto mt-6 aspect-[1240/266] w-full max-w-[1240px] lg:mt-10">
+      {/* as tall as the drawing down to the letters' foot (266 of 300 units): the letters stand on the page's bottom edge, with the floor line just under them */}
       <canvas ref={canvas} role="img" aria-label={label} onClick={again} className="absolute inset-0 block size-full cursor-pointer" data-part="brand-dots" />
       <button type="button" onClick={again} className="sr-only focus:not-sr-only focus:absolute focus:right-0 focus:top-0 focus:rounded-lg focus:bg-surface focus:px-3 focus:py-2">
         {rebuild}
