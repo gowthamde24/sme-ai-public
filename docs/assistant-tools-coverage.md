@@ -491,6 +491,7 @@ Levels: read 219, sensitive:deleting 14, sensitive:members 4, sensitive:money 22
 | `suppression.suppression_status` | GET | `/suppression/status` | read |  | Suppression Status |
 | `talk-training.get_talk_training` | GET | `/talk-training` | read |  | Get Talk Training |
 | `talk-training.put_talk_training` | PUT | `/talk-training` | write | snapshot (talk-training.get_talk_training) | Put Talk Training |
+| `talk-training.practice_talk_training` | POST | `/talk-training/practice` | write | none | Practice Talk Training |
 | `talk-training.reset_talk_training` | POST | `/talk-training/reset` | write | none | Reset Talk Training |
 | `tasks.list_tasks` | GET | `/tasks` | read |  | List Tasks |
 | `tasks.plan` | POST | `/tasks/plan` | sensitive (sending) | none | Plan |
