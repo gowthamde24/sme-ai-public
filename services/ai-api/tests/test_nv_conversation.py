@@ -126,6 +126,7 @@ def make(llm: FakeLlm | None = None, tts: FakeTts | None = None, playout: FakePl
     return conv, llm, tts, playout
 
 
+@pytest.mark.serial   # real-time budgets: run alone, not next to three busy workers
 def test_every_component_stays_inside_its_budget_and_the_first_audio_beats_the_end_of_the_reply() -> None:
     async def go() -> list[Any]:
         out = []

@@ -12,6 +12,7 @@ from app.scheduler.session import PrincipalSession
 from app.telephony.inbound import ExotelCalls, trial_rule
 from app.telephony.inbound_routes import InboundService
 from app.telephony.inbound_store import InboundStore
+from app.telephony.opening_store import OpeningStore
 from app.telephony.settings import gate_settings
 from app.voice.budget import RpcVoiceBudget
 
@@ -44,6 +45,7 @@ def build_phone_inbound(settings: Settings, rest_url: str, supabase_url: str, an
         url_format="text" if settings.exotel_stream_url_format == "text" else "json",
         our_sid=settings.exotel_sid or None,
         budget=RpcVoiceBudget(RpcClient(rest_url, anon_key), principal.token),
+        opening_store=OpeningStore(f"{supabase_url}/storage/v1", anon_key, principal.token),
         trial=trial_rule(settings.exotel_trial_number, settings.exotel_trial_caller, settings.exotel_sid, settings.exotel_trial_app_id,
                          max_calls_per_day=settings.exotel_trial_calls_per_day, max_call_s=settings.exotel_trial_max_call_s) if gs.mode == "sandbox" else None,
     )

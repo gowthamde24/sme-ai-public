@@ -20,6 +20,7 @@ from fastapi import APIRouter, Request, WebSocket
 from fastapi.responses import JSONResponse, PlainTextResponse, Response
 from starlette.websockets import WebSocketDisconnect
 
+from app.browser_voice.audio import OUT_RATE
 from app.browser_voice.limits import Ledger
 from app.browser_voice.routes import OWNER_SILENCE_MS, stt_mode_for
 from app.browser_voice.runtime import BrowserVoice
@@ -33,6 +34,7 @@ from app.telephony import gate, inbound, persona
 from app.telephony.call_session import CallPlan, run_call
 from app.telephony.greeting_audio import GREETINGS
 from app.telephony.inbound_store import InboundStore
+from app.telephony.opening_store import OpeningStore, opening_path
 from app.voice.budget import PER_CALL, Hold, VoiceBudget
 
 log = logging.getLogger("app.telephony.inbound")
@@ -60,6 +62,7 @@ class InboundService:
     trial: inbound.TrialRule | None = None   # the shared trial number's rule (sandbox only; app/telephony/inbound.py TrialRule)
     trial_count: inbound.DayCount = field(default_factory=inbound.DayCount)
     budget: VoiceBudget | None = None   # our cap on Cartesia (app/voice/budget.py); None only where no database is wired (tests that do not test it)
+    opening_store: OpeningStore | None = None   # the opening kept across restarts (Supabase Storage, `call-openings`); None: memory only
 
 
 class StarletteWire:
@@ -228,10 +231,32 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
     rendering: asyncio.Future[bytes | None] | None = None   # never rendered ahead (no credits spent outside a real call): the greeting this call speaks is kept for the next one
     parts.greeting_audio = GREETINGS.get
     parts.greeting_keep = GREETINGS.keep
+    store = service.opening_store
+    if text and store is not None:
+        # the opening kept ready across restarts (owner, 6 Nov 2026; app/telephony/opening_store.py): read while the call is admitted (a read only), stored when a call has just spoken it
+        voice_for = getattr(parts, "voice_for", None)
+        voice = str(voice_for(service.language)) if callable(voice_for) else ""
+        path = opening_path(tenant, service.language, voice, text)
+        if GREETINGS.get(service.language, text) is None:
+            try:
+                pcm = await asyncio.wait_for(asyncio.to_thread(store.get, path), OPENING_READ_S)
+            except Exception:  # noqa: BLE001 - not ready in time: the opening is streamed
+                pcm = None
+            if pcm:
+                GREETINGS.keep(service.language, text, pcm, rate=OUT_RATE, engine="cartesia")
+
+        def keep_and_store(language: str, said: str, pcm: bytes, *, rate: int, engine: str = "") -> bool:
+            kept = GREETINGS.keep(language, said, pcm, rate=rate, engine=engine)
+            if kept and language == service.language and said == text:
+                asyncio.ensure_future(asyncio.to_thread(store.put, path, pcm))   # after the call spoke it: never before admission
+            return kept
+
+        parts.greeting_keep = keep_and_store
     return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering)
 
 
 GRACE_S = 0.25
+OPENING_READ_S = 0.6
 
 
 async def _greeting_ready(prepared: Prepared, language: str) -> bool:
