@@ -22,12 +22,16 @@ class Resampler:
         self._pos = 0.0                    # position of the next output sample in self._buf
         self._carry: list[int] = []        # raw samples waiting for a full boxcar window
         self._first = True
+        self._odd = b""                    # half a sample left over from the last piece (6 Nov 2026: dropping it shifted every later sample by one byte: loud noise)
 
     def process(self, pcm: bytes) -> bytes:
+        pcm = self._odd + pcm
+        self._odd = pcm[len(pcm) // 2 * 2:]
+        pcm = pcm[: len(pcm) // 2 * 2]
         if self.src == self.dst:
             return pcm
         samples = array.array("h")
-        samples.frombytes(pcm[: len(pcm) // 2 * 2])
+        samples.frombytes(pcm)
         raw = self._carry + list(samples)
         if self._width > 1:
             n = len(raw) // self._width * self._width

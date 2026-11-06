@@ -2,7 +2,9 @@
 
   In   connected | start (stream_sid, call_sid, account_sid, from, to, custom_parameters, media_format) | media (base64 raw 16-bit mono little-endian PCM at the rate in `?sample-rate=`, 8000 default) | dtmf | stop | mark
   Out  media | mark | clear (drops audio that was sent but not played yet: the barge-in)
-  Chunks we send: a multiple of 320 bytes, at least 3200 bytes (100 ms at 16 kHz), at most 100 KB; smaller or odd sizes cause gaps.
+  Chunks we send: 100 ms of audio at the call's rate (1600 bytes at 8 kHz), a multiple of 320 bytes, at most 100 KB, sent at the pace they play.
+  Messages we send have EXACTLY the documented shape (developer.exotel.com, Stream and Voicebot applet, read 6 Nov 2026): media {"event","stream_sid","media":{"payload"}}, mark {"event","stream_sid","mark":{"name"}},
+  clear {"event","stream_sid"}. (6 Nov 2026: our media also carried a numeric `sequence_number` and `media.chunk`; on both real calls Exotel closed the stream right after our first audio.)
 
 Parsing never trusts the wire: a message that is not JSON, has no known event or carries a bad payload becomes `Unknown` and is ignored."""
 
@@ -17,7 +19,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-MIN_CHUNK = 3200
+CHUNK_MS = 100
 CHUNK_UNIT = 320
 MAX_CHUNK = 100_000
 DEFAULT_RATE = 8000
@@ -156,12 +158,17 @@ def closed_word(text: str | None) -> str | None:
     return word if re.fullmatch(r"[A-Za-z_ -]{1,40}", word) else "other"
 
 
-def media_message(stream_sid: str, pcm: bytes, seq: int) -> str:
-    return json.dumps({"event": "media", "sequence_number": seq, "stream_sid": stream_sid, "media": {"chunk": seq, "payload": base64.b64encode(pcm).decode()}}, separators=(",", ":"))
+def chunk_bytes(rate: int) -> int:
+    """100 ms of 16-bit mono audio at `rate`: 1600 bytes at 8 kHz, 3200 at 16 kHz, 4800 at 24 kHz (each a multiple of 320)."""
+    return rate * 2 * CHUNK_MS // 1000
 
 
-def mark_message(stream_sid: str, name: str, seq: int) -> str:
-    return json.dumps({"event": "mark", "sequence_number": seq, "stream_sid": stream_sid, "mark": {"name": name}}, separators=(",", ":"))
+def media_message(stream_sid: str, pcm: bytes) -> str:
+    return json.dumps({"event": "media", "stream_sid": stream_sid, "media": {"payload": base64.b64encode(pcm).decode()}}, separators=(",", ":"))
+
+
+def mark_message(stream_sid: str, name: str) -> str:
+    return json.dumps({"event": "mark", "stream_sid": stream_sid, "mark": {"name": name}}, separators=(",", ":"))
 
 
 def clear_message(stream_sid: str) -> str:
