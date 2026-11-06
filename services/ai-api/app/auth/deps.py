@@ -188,6 +188,8 @@ class Runtime:
     workspace_secrets: Any = None
     # how the assistant talks on calls (app/talk_training: the Owner's training)
     talk_training: Any = None
+    # My AI team v2 (app/ai_team: the day view and the panels, one database read)
+    ai_team: Any = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
