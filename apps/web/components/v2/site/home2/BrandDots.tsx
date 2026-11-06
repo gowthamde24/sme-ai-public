@@ -2,12 +2,14 @@
 
 import * as React from "react";
 
+import { BRAND_NAME } from "@/design/brand";
+
 import { addScene, fontOf, isCalm, type Look } from "./scene";
 
 const TAU = 6.2832;
 type Dot = { x: number; y: number; sx: number; sy: number; dl: number; o: boolean; light: boolean };
 
-/** The wordmark as dots (the page's own dot grid): the three bars and "Stack19" drawn once on a hidden canvas, then sampled every 7 px. Each dot gets a place to fly in from. */
+/** The wordmark as dots (the page's own dot grid): the three bars and the brand name drawn once on a hidden canvas, then sampled every 7 px. Each dot gets a place to fly in from. */
 function brandDots(family: string): Dot[] {
   const W = 1240;
   const H = 300;
@@ -37,7 +39,7 @@ function brandDots(family: string): Dot[] {
   } catch {
     // an older browser draws the name with its normal spacing
   }
-  x.fillText("Stack19", 236, 262);
+  x.fillText(BRAND_NAME, 236, 262);
   const d = x.getImageData(0, 0, W, H).data;
   const pts: Dot[] = [];
   let seed = 11;
@@ -58,8 +60,8 @@ function brandDots(family: string): Dot[] {
 }
 
 /**
- * The footer's wordmark (landing v2 part B.13): "Stack19" with its three bars, built from the page's own dots. It assembles the first time it is seen, stands on a reflecting floor with a light that travels along it; the cursor pushes
- * the dots away and lights them; a click (or Enter on the button) builds it again. One image to a screen reader ("Stack19"). Reduced motion: it simply stands there. No cursor play on touch screens (nothing follows a finger).
+ * The footer's wordmark (landing v2 part B.13): the brand name with its three bars, built from the page's own dots. It assembles the first time it is seen, stands on a reflecting floor with a light that travels along it; the cursor pushes
+ * the dots away and lights them; a click (or Enter on the button) builds it again. One image to a screen reader (its name). Reduced motion: it simply stands there. No cursor play on touch screens (nothing follows a finger).
  */
 export function BrandDots({ label, rebuild }: { label: string; rebuild: string }) {
   const canvas = React.useRef<HTMLCanvasElement>(null);

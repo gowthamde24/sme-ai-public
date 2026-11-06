@@ -115,6 +115,9 @@ describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt ar
     expect(t).not.toMatch(/working name|Sme-?AI/i);
     expect(home.match(/<h1[\s>]/g)).toHaveLength(1);
   });
+  it("landing v2 keeps the live page's call-first rule (owner, 6 Nov, #378): no WhatsApp-first promise and no \"Frievening\"", () => {
+    expect(text(home)).not.toMatch(/WhatsApp now|carries on over WhatsApp|WhatsApp message straight away|WhatsApp to Ravi|get WhatsApp only|Here is the brochure|Frievening/);
+  });
   it("landing v2: with SITE_TRIAL_COPY=1 the later words come back (the 14-day trial, GST included)", () => {
     vi.stubEnv("SITE_TRIAL_COPY", "1");
     const on = text(render("en", { kind: "home" }));

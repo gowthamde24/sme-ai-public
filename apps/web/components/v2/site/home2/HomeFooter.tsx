@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { BrandDots } from "@/components/v2/site/LazyIslands";
+import { BRAND_NAME } from "@/design/brand";
 import type { SiteT } from "@/i18n/site";
 import { LANGS, type Lang } from "@/i18n/lang";
 import { isServed } from "@/lib/site/mode";
@@ -64,7 +65,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
           </Link>
         </div>
       </div>
-      <BrandDots label="Stack19" rebuild={t("h2.foot.rebuild")} />
+      <BrandDots label={BRAND_NAME} rebuild={t("h2.foot.rebuild")} />
       <div className="relative mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-x-6 gap-y-2 pb-7 pt-[18px] text-[13px] text-muted">
         <span>{t("h2.foot.copy")}</span>
         <nav aria-label={t("nav.languages")}>

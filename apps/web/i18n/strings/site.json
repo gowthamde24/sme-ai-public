@@ -4242,10 +4242,10 @@
   }
  },
  "v3.hero.sub": {
-  "en": "{brand} is an AI workforce for Indian businesses. Its assistant calls every lead in their own language, carries on over WhatsApp and keeps following up, so your team only talks to people who are ready to buy.",
-  "te": "{brand} భారతీయ వ్యాపారాల కోసం AI వర్క్‌ఫోర్స్. దీని అసిస్టెంట్ ప్రతి లీడ్‌కి వాళ్ల భాషలోనే కాల్ చేస్తుంది, WhatsApp లో కొనసాగిస్తుంది, ఫాలో అప్ చేస్తూనే ఉంటుంది. అందువల్ల మీ టీమ్ కొనడానికి సిద్ధంగా ఉన్నవారితోనే మాట్లాడుతుంది.",
-  "hi": "{brand} भारतीय कारोबारों के लिए AI वर्कफ़ोर्स है। इसकी असिस्टेंट हर लीड को उनकी अपनी भाषा में कॉल करती है, WhatsApp पर बात आगे बढ़ाती है और फ़ॉलो-अप करती रहती है, ताकि आपकी टीम सिर्फ़ खरीदने को तैयार लोगों से बात करे।",
-  "kn": "{brand} ಭಾರತೀಯ ವ್ಯಾಪಾರಗಳಿಗಾಗಿ AI ವರ್ಕ್‌ಫೋರ್ಸ್. ಇದರ ಅಸಿಸ್ಟೆಂಟ್ ಪ್ರತಿ ಲೀಡ್‌ಗೆ ಅವರದೇ ಭಾಷೆಯಲ್ಲಿ ಕರೆ ಮಾಡುತ್ತದೆ, WhatsApp ನಲ್ಲಿ ಮುಂದುವರಿಸುತ್ತದೆ ಮತ್ತು ಫಾಲೋ ಅಪ್ ಮಾಡುತ್ತಲೇ ಇರುತ್ತದೆ. ಹೀಗಾಗಿ ನಿಮ್ಮ ತಂಡ ಖರೀದಿಸಲು ಸಿದ್ಧರಾದವರೊಂದಿಗೆ ಮಾತ್ರ ಮಾತನಾಡುತ್ತದೆ.",
+  "en": "{brand} is an AI workforce for Indian businesses. Its assistant calls every lead in their own language, sends details on WhatsApp when the customer asks and keeps following up, so your team only talks to people who are ready to buy.",
+  "te": "{brand} భారతీయ వ్యాపారాల కోసం AI వర్క్‌ఫోర్స్. దీని అసిస్టెంట్ ప్రతి లీడ్‌కి వాళ్ల భాషలోనే కాల్ చేస్తుంది, కస్టమర్ అడిగినప్పుడు WhatsApp లో వివరాలు పంపుతుంది, ఫాలో అప్ చేస్తూనే ఉంటుంది. అందువల్ల మీ టీమ్ కొనడానికి సిద్ధంగా ఉన్నవారితోనే మాట్లాడుతుంది.",
+  "hi": "{brand} भारतीय कारोबारों के लिए AI वर्कफ़ोर्स है। इसकी असिस्टेंट हर लीड को उनकी अपनी भाषा में कॉल करती है, ग्राहक के माँगने पर WhatsApp पर जानकारी भेजती है और फ़ॉलो-अप करती रहती है, ताकि आपकी टीम सिर्फ़ खरीदने को तैयार लोगों से बात करे।",
+  "kn": "{brand} ಭಾರತೀಯ ವ್ಯಾಪಾರಗಳಿಗಾಗಿ AI ವರ್ಕ್‌ಫೋರ್ಸ್. ಇದರ ಅಸಿಸ್ಟೆಂಟ್ ಪ್ರತಿ ಲೀಡ್‌ಗೆ ಅವರದೇ ಭಾಷೆಯಲ್ಲಿ ಕರೆ ಮಾಡುತ್ತದೆ, ಗ್ರಾಹಕರು ಕೇಳಿದಾಗ WhatsApp ನಲ್ಲಿ ವಿವರ ಕಳುಹಿಸುತ್ತದೆ ಮತ್ತು ಫಾಲೋ ಅಪ್ ಮಾಡುತ್ತಲೇ ಇರುತ್ತದೆ. ಹೀಗಾಗಿ ನಿಮ್ಮ ತಂಡ ಖರೀದಿಸಲು ಸಿದ್ಧರಾದವರೊಂದಿಗೆ ಮಾತ್ರ ಮಾತನಾಡುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4572,10 +4572,10 @@
   }
  },
  "v3.day.2.d": {
-  "en": "Ravi filled in your Meta ad form. It's after calling hours, so {assistant} sends a WhatsApp message straight away and books the call for the morning.",
-  "te": "రవి మీ Meta యాడ్ ఫారం నింపాడు. కాలింగ్ సమయం అయిపోయింది, అందుకే {assistant} వెంటనే WhatsApp మెసేజ్ పంపి, కాల్‌ని ఉదయానికి బుక్ చేస్తుంది.",
-  "hi": "रवि ने आपका Meta विज्ञापन फ़ॉर्म भरा। कॉलिंग का समय निकल चुका है, इसलिए {assistant} तुरंत WhatsApp मैसेज भेजती है और कॉल सुबह के लिए बुक कर देती है।",
-  "kn": "ರವಿ ನಿಮ್ಮ Meta ಜಾಹೀರಾತು ಫಾರ್ಮ್ ಭರ್ತಿ ಮಾಡಿದರು. ಕರೆ ಸಮಯ ಮುಗಿದಿದೆ, ಹಾಗಾಗಿ {assistant} ತಕ್ಷಣ WhatsApp ಮೆಸೇಜ್ ಕಳುಹಿಸಿ ಕರೆಯನ್ನು ಬೆಳಿಗ್ಗೆಗೆ ಬುಕ್ ಮಾಡುತ್ತದೆ.",
+  "en": "Ravi filled in your Meta ad form. It's after calling hours, so {assistant} books the call for first thing in the morning. A WhatsApp goes only if Ravi asks for one.",
+  "te": "రవి మీ Meta యాడ్ ఫారం నింపాడు. కాలింగ్ సమయం అయిపోయింది, అందుకే {assistant} ఉదయమే మొదట కాల్‌ని బుక్ చేస్తుంది. రవి అడిగితేనే WhatsApp వెళ్తుంది.",
+  "hi": "रवि ने आपका Meta विज्ञापन फ़ॉर्म भरा। कॉलिंग का समय निकल चुका है, इसलिए {assistant} सुबह सबसे पहले के लिए कॉल बुक कर देती है। WhatsApp तभी जाता है जब रवि माँगे।",
+  "kn": "ರವಿ ನಿಮ್ಮ Meta ಜಾಹೀರಾತು ಫಾರ್ಮ್ ಭರ್ತಿ ಮಾಡಿದರು. ಕರೆ ಸಮಯ ಮುಗಿದಿದೆ, ಹಾಗಾಗಿ {assistant} ಬೆಳಿಗ್ಗೆ ಮೊದಲಿಗೆ ಕರೆಯನ್ನು ಬುಕ್ ಮಾಡುತ್ತದೆ. ರವಿ ಕೇಳಿದರೆ ಮಾತ್ರ WhatsApp ಹೋಗುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4583,10 +4583,10 @@
   }
  },
  "v3.day.2.who": {
-  "en": "WhatsApp to Ravi",
-  "te": "రవికి WhatsApp",
-  "hi": "रवि को WhatsApp",
-  "kn": "ರವಿಗೆ WhatsApp",
+  "en": "Call booked for the morning",
+  "te": "ఉదయానికి కాల్ బుక్",
+  "hi": "सुबह के लिए कॉल बुक",
+  "kn": "ಬೆಳಿಗ್ಗೆಗೆ ಕರೆ ಬುಕ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4594,10 +4594,10 @@
   }
  },
  "v3.day.2.ui": {
-  "en": "Thanks for asking about Sri Sai Homes. I'll call you tomorrow at 9:30. Here is the brochure.",
-  "te": "శ్రీ సాయి హోమ్స్ గురించి అడిగినందుకు థాంక్స్. రేపు 9:30 కి కాల్ చేస్తాను. బ్రోషర్ ఇదిగో.",
-  "hi": "श्री साई होम्स के बारे में पूछने के लिए धन्यवाद। मैं कल 9:30 बजे कॉल करूँगी। यह रहा ब्रोशर।",
-  "kn": "ಶ್ರೀ ಸಾಯಿ ಹೋಮ್ಸ್ ಬಗ್ಗೆ ವಿಚಾರಿಸಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದ. ನಾಳೆ 9:30 ಕ್ಕೆ ಕರೆ ಮಾಡುತ್ತೇನೆ. ಬ್ರೋಷರ್ ಇಲ್ಲಿದೆ.",
+  "en": "Ravi, Meta ad · call at 9:30 tomorrow, in Telugu. No message sent tonight.",
+  "te": "రవి, Meta యాడ్ · రేపు 9:30 కి కాల్, తెలుగులో. ఈ రాత్రి మెసేజ్ ఏదీ వెళ్లలేదు.",
+  "hi": "रवि, Meta विज्ञापन · कल 9:30 बजे कॉल, तेलुगु में। आज रात कोई मैसेज नहीं गया।",
+  "kn": "ರವಿ, Meta ಜಾಹೀರಾತು · ನಾಳೆ 9:30 ಕ್ಕೆ ಕರೆ, ತೆಲುಗಿನಲ್ಲಿ. ಇಂದು ರಾತ್ರಿ ಯಾವ ಮೆಸೇಜ್ ಹೋಗಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -4869,10 +4869,10 @@
   }
  },
  "v3.plan.leads.v": {
-  "en": "412 ready. 23 duplicates merged, 31 on DND get WhatsApp only.",
-  "te": "412 సిద్ధం. 23 డూప్లికేట్లు కలిపారు, DND లో ఉన్న 31 మందికి WhatsApp మాత్రమే.",
-  "hi": "412 तैयार। 23 डुप्लिकेट मिलाए गए, DND वाले 31 को सिर्फ़ WhatsApp।",
-  "kn": "412 ಸಿದ್ಧ. 23 ಡುಪ್ಲಿಕೇಟ್ ವಿಲೀನ, DND ಯಲ್ಲಿರುವ 31 ಜನರಿಗೆ WhatsApp ಮಾತ್ರ.",
+  "en": "412 ready. 23 duplicates merged, 31 on DND left out.",
+  "te": "412 సిద్ధం. 23 డూప్లికేట్‌లు కలిపాం, DND లో ఉన్న 31 వదిలేశాం.",
+  "hi": "412 तैयार। 23 डुप्लिकेट जोड़े, DND वाले 31 छोड़े।",
+  "kn": "412 ಸಿದ್ಧ. 23 ಡೂಪ್ಲಿಕೇಟ್ ಸೇರಿಸಿದೆವು, DND ಯಲ್ಲಿರುವ 31 ಬಿಟ್ಟಿದ್ದೇವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5232,10 +5232,10 @@
   }
  },
  "v3.speed.4.v": {
-  "en": "WhatsApp now, call in the morning",
-  "te": "ఇప్పుడే WhatsApp, ఉదయం కాల్",
-  "hi": "अभी WhatsApp, सुबह कॉल",
-  "kn": "ಈಗಲೇ WhatsApp, ಬೆಳಿಗ್ಗೆ ಕರೆ",
+  "en": "Called first thing in the morning",
+  "te": "ఉదయమే ముందుగా కాల్",
+  "hi": "सुबह सबसे पहले कॉल",
+  "kn": "ಬೆಳಿಗ್ಗೆ ಮೊದಲಿಗೆ ಕರೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

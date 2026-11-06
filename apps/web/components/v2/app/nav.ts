@@ -56,7 +56,7 @@ export const NAV: readonly NavGroup[] = [
     id: "work",
     label: "Work",
     items: [
-      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start", "/lead-setup"], bar: true, roles: ALL_ROLES },
+      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start", "/lead-setup", "/demo-video"], bar: true, roles: ALL_ROLES }, // the demo video (DEMO_VIDEO, demo workspaces only) is a story on Today
       // sidebar v2 (owner, 5 Nov): "Talk to assistant" is the assistant's box on Today (its own place, `#ask`), not a page of its own
       { id: "assistant", label: "Talk to assistant", icon: "assistant", path: "", hash: "ask", roles: ALL_ROLES },
       // sidebar v2: the call that is going on ("● 1 live"): the Office's live page, the last tab of Calls

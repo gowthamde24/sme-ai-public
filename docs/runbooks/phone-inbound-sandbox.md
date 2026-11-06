@@ -11,7 +11,7 @@ outbound call), no recording, no other number.
 ## How a call gets in
 1. The caller dials the ExoPhone 040 4590 3172 (until 6 Nov: the trial ExoPhone 09513886363 with a PIN). Exotel runs app 1371752: Call Start → **Voicebot** → Hangup.
 2. The Voicebot applet's URL field is **`https://sme-api-620338396268.asia-south1.run.app/v1/telephony/exotel/stream-url`**: a plain address, with no secret in it. Exotel asks it once per call; it answers
-   `{"url": "wss://…/v1/telephony/exotel/stream/<token>?sample-rate=16000"}`. The token is signed with `sme-exotel-stream-secret`, lives 120 s and is bound to the call's id when Exotel sends one. The token rides in the PATH (on 4 Nov Exotel opened one stream with the query string dropped); `?t=` is still accepted. The log carries call ids only as `call_sid_fp` (8 hex of an HMAC with the stream secret), so a Call SID from the dashboard can be matched without writing it down.
+   `{"url": "wss://…/v1/telephony/exotel/stream/<token>?sample-rate=8000"}`. The token is signed with `sme-exotel-stream-secret`, lives 120 s and is bound to the call's id when Exotel sends one. The token rides in the PATH (on 4 Nov Exotel opened one stream with the query string dropped); `?t=` is still accepted. The log carries call ids only as `call_sid_fp` (8 hex of an HMAC with the stream secret), so a Call SID from the dashboard can be matched without writing it down.
    A caller who is named and not on the list gets 403.
 3. On the stream, before any audio:
    - the token's signature and expiry;
@@ -61,3 +61,26 @@ To change it later: the same, with `gcloud secrets versions add sme-telephony-sa
 
 ## Switch it off
 `make deploy-staging WHAT=api` without `TELEPHONY_INBOUND=1`: `TELEPHONY_MODE` goes back to off and both addresses answer "off". Or `update public.phone_numbers set inbound_on = false where number = '+914045903172';`.
+
+## The voice budget: our cap on Cartesia (migration 20261231280000)
+
+Cartesia has no spending cap of its own, so we enforce one: **2,000 Cartesia characters a call and 20,000 a day** across all calls. Past either limit, the call speaks with Sarvam Bulbul for the rest of the call. Live talk speaks with Sarvam unless `VOICE_TALK_PRIMARY=true`.
+
+Each call logs `voice_budget` (granted, used, the day's total, the limit) and `voice_chars` per engine in `phone_call_numbers`.
+
+**Operator steps** (SQL editor, as `postgres`; nothing here is reachable from a client):
+
+```sql
+-- the workspace whose Today shows the warnings (the platform owner's: Stack19 Owner Test)
+update public.voice_budget set notice_tenant = '<tenant id>', updated_at = now() where engine = 'cartesia';
+
+-- count characters spent outside the API into the month (local renders; or the gap to the Cartesia dashboard's own figure)
+select app.voice_usage_add_script('2026-11-06', 'cartesia', <characters>);
+
+-- change a limit (owner's decision only)
+update public.voice_budget set daily_chars = 20000, per_call_chars = 2000, monthly_credits = 100000, period_day = 29, updated_at = now() where engine = 'cartesia';
+
+-- the day's and the period's totals
+select source, chars from public.voice_usage_days where engine = 'cartesia' and day = app.voice_day();
+select sum(chars) from public.voice_usage_days where engine = 'cartesia' and day >= app.voice_period_start(app.voice_day(), 29::smallint);
+```

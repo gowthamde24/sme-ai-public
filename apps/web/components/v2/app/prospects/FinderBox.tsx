@@ -20,11 +20,11 @@ export type FinderActions = {
  * The box on the Prospects tab (job lead-finder part D, contract sections 1 and 2): the owner's words ("find new retailers in Jayanagar") -> the PLAN CARD (what, where, at most how many, the cost, the searches left today) -> OK
  * (Owner, Admin) -> the RESULT CARD ("Found 18 · 0 call-ready · 11 need you · 7 skipped"). Nothing is searched before the OK; Cancel throws the plan away. A Sales member can plan and is told who can OK it.
  */
-export function FinderBox({ words, canApprove, base, actions }: { words: Words; canApprove: boolean; base: string; actions: FinderActions }) {
+export function FinderBox({ words, canApprove, base, actions, initialText = "", onApproved }: { words: Words; canApprove: boolean; base: string; actions: FinderActions; /** The words already in the box (the demo video: it does not wait for typing). */ initialText?: string; /** After an OK: the page is read again (the default), or this instead (the demo video, which has no page to read). */ onApproved?: () => void }) {
   const t = makeT(words);
   const id = useId();
   const router = useRouter();
-  const [text, setText] = useState("");
+  const [text, setText] = useState(initialText);
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
   const [failure, setFailure] = useState<Failed | null>(null);
@@ -79,7 +79,7 @@ export function FinderBox({ words, canApprove, base, actions }: { words: Words; 
         ) : null}
       </form>
       <FailureNote failure={failure} words={words} />
-      {search?.state === "planned" ? <PlanCard search={search} words={words} canApprove={canApprove} busy={busy} onOk={() => void run(() => actions.approve(search.id), () => router.refresh())} onCancel={() => (canApprove ? void run(() => actions.cancel(search.id)) : setSearch(null))} /> : null}
+      {search?.state === "planned" ? <PlanCard search={search} words={words} canApprove={canApprove} busy={busy} onOk={() => void run(() => actions.approve(search.id), () => (onApproved ? onApproved() : router.refresh()))} onCancel={() => (canApprove ? void run(() => actions.cancel(search.id)) : setSearch(null))} /> : null}
       {search && search.state !== "planned" ? <ResultCard search={search} words={words} base={base} /> : null}
     </section>
   );

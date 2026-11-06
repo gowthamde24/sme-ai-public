@@ -1,5 +1,6 @@
 import { NO_FRAME_DATA } from "@/components/v2/app/contract";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { btnMain } from "@/components/v2/app/ui";
 import { ReadOnlyBanner } from "@/components/v2/app/readonly/ReadOnlyBanner";
@@ -29,6 +30,7 @@ import { routesFor } from "@/lib/guided-demo/script";
 import { GuidedDemo } from "@/components/v2/app/guided-demo/LazyGuidedDemo";
 import { runDemoStepAction } from "./guided-demo-actions";
 import { ADDRESSES } from "@/lib/site/business";
+import { demoVideoAllowed, requestVideoAddress, videoHref } from "@/lib/demo-video/guard";
 
 import { readFrameData } from "../../frame-data";
 import { turnOnAssistantAction } from "./ask-switch-actions";
@@ -47,7 +49,12 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   const { tenantId } = await params;
   const user = await requireUser();
   const lang = await getLang();
-  const data = isCanonicalUuid(tenantId) ? await readFrameData(user.accessToken, tenantId, lang) : NO_FRAME_DATA;
+  // the demo-video mode (job demo-video, lib/demo-video/guard.ts): its story has its own page (/demo-video), so any other screen asked with ?demo=video starts it at step 1; while it plays, nothing of the workspace's own moves on screen (no "Live now", no notices, no guided demo)
+  const asked = await requestVideoAddress();
+  const video = asked !== null && asked.tenantId.toLowerCase() === tenantId.toLowerCase() && (await demoVideoAllowed(user.accessToken, tenantId));
+  if (video && !asked.stage) redirect(videoHref(tenantId));
+  const read = isCanonicalUuid(tenantId) ? await readFrameData(user.accessToken, tenantId, lang) : NO_FRAME_DATA;
+  const data = video ? { ...read, live: false } : read;
   // the 403 page for a MOVE inside the app to a part the business type does not have (job CL; a typed address is judged by template.tsx): made here, in the person's language, and drawn by the gate only when needed
   const dict = appDict(lang) as Record<string, string>;
   const labels = Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("problem.")));
@@ -61,13 +68,13 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   // the suggestion chips of the screens, in the person's language and for the business type (`ask.chip.quotes@programmes`)
   const chipWords = withModuleWords(Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("ask.chip."))), data.pack);
   // the guided demo (GUIDED_DEMO): only in a workspace that says it is a DEMO one, for its Owner and Admins
-  const demoRoutes = guidedDemo() && isCanonicalUuid(tenantId) ? await demoRoutesFor(user.accessToken, tenantId, data.pack?.modules ?? null) : null;
+  const demoRoutes = guidedDemo() && !video && isCanonicalUuid(tenantId) ? await demoRoutesFor(user.accessToken, tenantId, data.pack?.modules ?? null) : null;
   // "Talk to your assistant" (BROWSER_VOICE): the orb opens the voice chat for the people who may use it (Owner, Admin, Sales); its words, and those of the Lead Finder's card in the chat
   const url = browserVoice() && isCanonicalUuid(tenantId) ? voiceSocketUrl(publicApiBase(), tenantId) : null;
   const voice = url && (await mayTalk(user.accessToken, tenantId))
     ? { words: Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("bv.") || isChatCardWord(k))), url, language: isVoiceLang(lang) ? lang : ("en" as const), languageNames: Object.fromEntries(VOICE_LANGS.map((l) => [l, CALL_LANG_NAMES[l]])) as Record<(typeof VOICE_LANGS)[number], string>, tokenUrl: `/app/tenants/${tenantId}/voice-token`, pronunciation: pronunciationScreens() !== "off" && (await mayTurnOn(user.accessToken, tenantId)), chatLanguage: (await readMyProfileCached(user.accessToken, tenantId).catch(() => null))?.preferredChatLanguage ?? null, chatLanguageUrl: `/app/tenants/${tenantId}/chat-language`, ...(await workFor(user.accessToken, tenantId)) }
     : null;
-  const topupBanner = isCanonicalUuid(tenantId) ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
+  const topupBanner = isCanonicalUuid(tenantId) && !video ? await topupLayoutBanner({ token: user.accessToken, tenantId, lang }) : null;
   return (
     <>
       <FrameDataSlot data={data} />
