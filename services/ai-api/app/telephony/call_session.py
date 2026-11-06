@@ -104,11 +104,29 @@ async def run_call(
     on_do_not_call: Callable[[], Awaitable[None] | None] | None = None,
     on_handover: Callable[[], Awaitable[None] | None] | None = None,
     clock: Callable[[], float] | None = None,
+    call_id_ready: Awaitable[uuid.UUID] | None = None,
 ) -> CallOutcome:
+    """`call_id_ready` (owner, 6 Nov 2026: the first word must not wait for the database): the call's row is still being written; the greeting starts at once and the row is marked in progress
+    (and finished) with the id when it is ready. If the row cannot be written, the call is ended: no row, no call."""
     if line.start is None:
         raise ValueError("the line has not been opened")
     sid = line.start.call_sid or None
-    await asyncio.to_thread(store.mark_in_progress, plan.call_id, sid)
+
+    async def begin_and_mark() -> uuid.UUID:
+        cid = await call_id_ready if call_id_ready is not None else plan.call_id
+        await asyncio.to_thread(store.mark_in_progress, cid, sid)
+        return cid
+
+    marking = asyncio.ensure_future(begin_and_mark())
+    if call_id_ready is None:
+        await marking   # as before: the row is in progress before the first word
+
+    def no_row(fut: asyncio.Future[uuid.UUID]) -> None:
+        if not fut.cancelled() and fut.exception() is not None:
+            log.warning("phone_call_row_failed %s", fut.exception().__class__.__name__)
+            asyncio.ensure_future(line.hang_up("stopped"))
+
+    marking.add_done_callback(no_row)
     flags = {"voicemail": False, "stop": False, "handover": False}
     acted: list[asyncio.Future[None]] = []
     holder: dict[str, CallVoiceSession] = {}
@@ -154,6 +172,10 @@ async def run_call(
     try:
         await session.run()
     finally:
+        # owner, 6 Nov 2026: the characters each voice engine spoke in this call, so the real cost per minute is known (a greeting played from memory costs none)
+        with suppress(Exception):
+            setattr(line, "voice_chars", dict(usage.tts_chars))  # noqa: B010 - the phone line's own record (TimedLine); other lines simply carry it
+            setattr(line, "voice_primary_off", str(getattr(parts.tts, "primary_off", "") or ""))  # noqa: B010
         await line.close()
         for fut in acted:
             with suppress(asyncio.CancelledError, Exception):
@@ -164,7 +186,8 @@ async def run_call(
     if outcome_llm is not None:
         result = await outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots)
     try:
-        await asyncio.to_thread(store.finish, plan.call_id, result, duration)
+        call_id = await marking
+        await asyncio.to_thread(store.finish, call_id, result, duration)
     except Exception:   # noqa: BLE001 - the call is over either way; the worker's sweep closes a row that stayed open
         log.warning("phone_call_finish_failed")
     for hook, wanted in ((on_do_not_call, result.do_not_call), (on_handover, result.handover)):

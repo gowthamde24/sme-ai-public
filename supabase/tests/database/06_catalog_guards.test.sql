@@ -198,6 +198,8 @@ select is(
         'app.export_bucket_owner',  -- job BN: evaluated by the storage rules as the signed-in caller (the person's own export bucket) and the worker's rule for an EXPIRED export file
         'app.worker_may_delete_export',
         'app.agent_switch_on',
+        'app.search_key',  -- the ⌘K search: lower-case, no spaces, NFC (pure)
+        'app.search_is_school',  -- the ⌘K search: the school pack, for a member of the workspace only
         'app.is_tenant_member',
         'app.has_tenant_role',
         'app.my_tenant_ids',
@@ -369,7 +371,9 @@ select is(
         -- job DQ part 3: every member reads the assistant's name
         'public.assistant_name_get',
         -- job assistant-does-the-work A2: the chat's files (only the person who dropped one reads it back), plan cards (compare-and-set moves), the action log and an import's undo
-        'public.assistant_file_put', 'public.assistant_file_get', 'public.assistant_file_drop', 'public.scheduler_assistant_files_purge', 'public.assistant_plan_put', 'public.assistant_plan_get', 'public.assistant_plans_for_messages', 'public.assistant_plan_move', 'public.assistant_action_record', 'public.assistant_action_mark_undone', 'public.assistant_actions_list', 'public.secret_request_open', 'public.secret_request_use', 'public.workspace_secret_record', 'public.workspace_secret_get', 'public.phone_call_handled', 'public.agent_switches_get', 'public.agent_switch_set', 'public.visit_slots_for_call', 'public.talk_training_get', 'public.talk_training_save', 'public.talk_training_reset', 'public.talk_training_for_call', 'public.nav_counts', 'public.lead_import_undo',
+        'public.assistant_file_put', 'public.assistant_file_get', 'public.assistant_file_drop', 'public.scheduler_assistant_files_purge', 'public.assistant_plan_put', 'public.assistant_plan_get', 'public.assistant_plans_for_messages', 'public.assistant_plan_move', 'public.assistant_action_record', 'public.assistant_action_mark_undone', 'public.assistant_actions_list', 'public.secret_request_open', 'public.secret_request_use', 'public.workspace_secret_record', 'public.workspace_secret_get', 'public.phone_call_handled', 'public.agent_switches_get', 'public.agent_switch_set', 'public.visit_slots_for_call', 'public.talk_training_get', 'public.talk_training_save', 'public.talk_training_reset', 'public.talk_training_for_call', 'public.nav_counts', 'public.lead_import_undo', 'public.workspace_search', 'public.developer_keys_list', 'public.developer_key_create', 'public.developer_key_rotate', 'public.developer_key_revoke', 'public.developer_usage', 'public.developer_api_auth', 'public.developer_sandbox_lead_create', 'public.developer_sandbox_lead_get', 'public.developer_sandbox_leads_list', 'public.developer_api_usage', 'public.scheduler_developer_purge',
+        -- job voice-budget (6 Nov 2026): our hard cap on Cartesia; a call reserves its allowance and gives back what it did not use
+        'public.voice_budget_reserve', 'public.voice_budget_release',
         -- plans as feature switches (owner decision 4 Nov 2026): every member reads the workspace's
         'public.workspace_entitlements',
         'app.edu_terms_valid',  -- a CHECK on institution_profiles.terms runs with the writer's rights
@@ -379,6 +383,7 @@ select is(
         'app.erasure_door_open',
         -- Today runs as the caller and asks for the usage notices of the caller's own workspace (job DS part E2)
         'app.today_usage_items',
+        'app.today_voice_budget_items',   -- Needs you (migration 20261231280000): the Cartesia cap's warnings, in the notice workspace only, for its Owner and Admin
         'app.today_fees_overdue',   -- Needs you (migration 20261228100000): a school's overdue fees as a count and a total, for its Owner and Admin
         -- the own-voice bucket's storage rules are evaluated as the caller, who must be able to run this one (job DP part 5)
         'app.ovc_bucket_tenant')),
@@ -455,7 +460,9 @@ select is(
                      -- job DQ part 3: every member reads the assistant's name
                      'public.assistant_name_get',
                      -- job assistant-does-the-work A2
-                     'public.assistant_file_put', 'public.assistant_file_get', 'public.assistant_file_drop', 'public.scheduler_assistant_files_purge', 'public.assistant_plan_put', 'public.assistant_plan_get', 'public.assistant_plans_for_messages', 'public.assistant_plan_move', 'public.assistant_action_record', 'public.assistant_action_mark_undone', 'public.assistant_actions_list', 'public.secret_request_open', 'public.secret_request_use', 'public.workspace_secret_record', 'public.workspace_secret_get', 'public.phone_call_handled', 'public.agent_switches_get', 'public.agent_switch_set', 'public.visit_slots_for_call', 'public.talk_training_get', 'public.talk_training_save', 'public.talk_training_reset', 'public.talk_training_for_call', 'public.nav_counts', 'public.lead_import_undo',
+                     'public.assistant_file_put', 'public.assistant_file_get', 'public.assistant_file_drop', 'public.scheduler_assistant_files_purge', 'public.assistant_plan_put', 'public.assistant_plan_get', 'public.assistant_plans_for_messages', 'public.assistant_plan_move', 'public.assistant_action_record', 'public.assistant_action_mark_undone', 'public.assistant_actions_list', 'public.secret_request_open', 'public.secret_request_use', 'public.workspace_secret_record', 'public.workspace_secret_get', 'public.phone_call_handled', 'public.agent_switches_get', 'public.agent_switch_set', 'public.visit_slots_for_call', 'public.talk_training_get', 'public.talk_training_save', 'public.talk_training_reset', 'public.talk_training_for_call', 'public.nav_counts', 'public.lead_import_undo', 'public.workspace_search', 'public.developer_keys_list', 'public.developer_key_create', 'public.developer_key_rotate', 'public.developer_key_revoke', 'public.developer_usage', 'public.developer_api_auth', 'public.developer_sandbox_lead_create', 'public.developer_sandbox_lead_get', 'public.developer_sandbox_leads_list', 'public.developer_api_usage', 'public.scheduler_developer_purge',
+        -- job voice-budget (6 Nov 2026): our hard cap on Cartesia; a call reserves its allowance and gives back what it did not use
+        'public.voice_budget_reserve', 'public.voice_budget_release',
                      'public.workspace_entitlements',
                      'public.catalogue_material_save', 'public.site_save', 'public.site_get', 'public.sites_list', 'public.invoice_record', 'public.invoices_import', 'public.invoice_void', 'public.payment_record', 'public.payment_void', 'public.credit_limit_set', 'public.dues_statement', 'public.dues_summary', 'public.credit_check', 'public.dues_ledger', 'public.material_item_inputs', 'public.material_policy_create', 'public.material_policy_get', 'public.material_quote_build', 'public.material_quote_draft', 'public.material_quote_approve', 'public.material_quote_reject', 'public.material_quote_get', 'public.material_quotes_list', 'public.create_order_from_material_quote', 'public.trip_plan', 'public.trip_update', 'public.trip_set_status', 'public.trip_deliver', 'public.pod_ensure_bucket', 'public.trip_get', 'public.trips_list', 'public.delivery_challan_get', 'public.trip_update_submit',
                      -- job RESEND: the trial reminder e-mails

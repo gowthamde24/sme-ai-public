@@ -17,7 +17,7 @@ import { useWorkspace, type Membership } from "./use-workspace";
  * (`children`, drawn by the server in the chosen language). Outside a workspace the phone has no bottom bar, so the user menu sits here instead.
  * Sidebar v2: in a workspace a desktop has "Search or ask anything ⌘K" and a phone a search button; both (and ⌘K / Ctrl+K) open the command palette (owner, 6 Nov 2026), never the assistant on its own; the bar is solid at the top of the page and frosted (`.v2-glass`, with its solid fallback) once the page scrolls under it.
  */
-export function TopBar({ memberships, labels, email, signOut, mark, children, palette = null }: { memberships: readonly Membership[]; labels?: Labels; email: string | null; signOut: () => Promise<void>; mark: ReactNode; children: ReactNode; /** The command palette's words (palette/names.ts); null = no palette (a frame drawn without them, a test). */ palette?: PaletteSetup | null }) {
+export function TopBar({ memberships, labels, email, signOut, mark, children, palette = null, still = false }: { memberships: readonly Membership[]; labels?: Labels; email: string | null; signOut: () => Promise<void>; mark: ReactNode; children: ReactNode; /** The command palette's words (palette/names.ts); null = no palette (a frame drawn without them, a test). */ palette?: PaletteSetup | null; /** The demo video (job demo-video): the bell asks nothing and shows no count. */ still?: boolean }) {
   const { current } = useWorkspace(memberships);
   return (
     <header data-scrolled="false" className="print:hidden sticky top-0 z-30 flex min-h-16 items-center gap-2 border-b border-transparent bg-bg px-4 md:px-8">
@@ -29,7 +29,7 @@ export function TopBar({ memberships, labels, email, signOut, mark, children, pa
         {/* "Start demo" (a demo workspace only) is drawn here by the guided demo */}
         <span id="demo-start-slot" className="contents" />
         {current ? <HelpButton base={`/app/tenants/${current.id}`} labels={labels} /> : null}
-        {current ? <NotificationBell key={current.id} tenantId={current.id} labels={labels} /> : null}
+        {current ? <NotificationBell key={current.id} tenantId={current.id} labels={labels} still={still} /> : null}
         {children}
         {current ? null : (
           <div className="md:hidden">

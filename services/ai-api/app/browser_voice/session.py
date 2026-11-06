@@ -101,6 +101,10 @@ class Parts:
     pinned_language: Callable[[], str | None] = lambda: None
     set_pin: Callable[[str | None], None] = lambda language: None
     conversation_id: str | None = None   # the thread (sent to the browser in `ready`)
+    # the opening line already spoken (app/telephony/greeting_audio.py): (language, text) -> 16-bit PCM at the voice's rate, or None. A phone call plays it the moment it is admitted.
+    greeting_audio: Callable[[str, str], bytes | None] | None = None
+    # keeps the greeting a call has just spoken, for the next call: (language, text, pcm, rate=, engine=) -> kept?
+    greeting_keep: Callable[..., bool] | None = None
 
 
 class CountingTts:
@@ -785,9 +789,21 @@ class VoiceSession:
         await self._announce_voice(0)
         await self._send({"type": "caption", "who": "assistant", "text": text, "final": True, "spoken": True})
 
+        ready = self.parts.greeting_audio(self.language, text) if self.parts.greeting_audio is not None else None
+
         async def speak() -> None:
-            async for pcm in self.tts.stream(text, self.language):
-                await self.playout.write(pcm)
+            if ready:   # rendered before the call was admitted: no wait for the voice engine
+                step = 4_800   # about 100 ms of 24 kHz 16-bit audio per write
+                for i in range(0, len(ready), step):
+                    await self.playout.write(ready[i:i + step])
+            else:
+                spoken = bytearray()
+                async for pcm in self.tts.stream(text, self.language):
+                    spoken += pcm
+                    await self.playout.write(pcm)
+                if self.parts.greeting_keep is not None and spoken and not getattr(self.tts, "primary_off", ""):
+                    with suppress(Exception):
+                        self.parts.greeting_keep(self.language, text, bytes(spoken), rate=self.tts.sample_rate, engine=str(getattr(self.tts, "served_engine", "") or ""))
             await self._audio_end(0)
 
         self._greeting = asyncio.ensure_future(speak())
