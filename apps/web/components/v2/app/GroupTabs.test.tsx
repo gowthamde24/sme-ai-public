@@ -97,5 +97,10 @@ describe("app v4: the sections of the page's group, above its own tabs (job-app-
     nav.pathname = `/app/tenants/${A}/customers/new`;
     v4("owner");
     expect(screen.getAllByRole("navigation").length).toBeGreaterThan(1);
+    cleanup();
+    // one call's page (part 4): the sections only, too
+    nav.pathname = `/app/tenants/${A}/calls/33333333-3333-4333-8333-333333333333`;
+    v4("owner");
+    expect(screen.getAllByRole("navigation")).toHaveLength(1);
   });
 });

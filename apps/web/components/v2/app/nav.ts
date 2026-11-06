@@ -44,6 +44,8 @@ export type NavItem = {
   unlessModule?: string;
   /** A part that exists only while its feature flag is on (night 4: Lead Desk, Ask Vijaya to do it). Offered only when the workspace's frame lists the feature; the page itself answers 404 when the flag is off. */
   feature?: string;
+  /** Hidden while this feature is on (app v4: the old pretend live-call page gives way to Phone calls). */
+  unlessFeature?: string;
 };
 export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
 
@@ -62,7 +64,9 @@ export const NAV: readonly NavGroup[] = [
       // sidebar v2 (owner, 5 Nov): "Talk to assistant" is the assistant's box on Today (its own place, `#ask`), not a page of its own
       { id: "assistant", label: "Talk to assistant", icon: "assistant", path: "/talk", roles: ALL_ROLES }, // its own page (owner rule, 6 Nov: every menu item opens its own page)
       // sidebar v2: the call that is going on ("● 1 live"): the Office's live page, the last tab of Calls
-      { id: "live", label: "Live calls", icon: "calls", path: "/office/live", module: "office", roles: WRITERS },
+      { id: "live", label: "Live calls", icon: "calls", path: "/office/live", module: "office", unlessFeature: "app_v4", roles: WRITERS },
+      // app v4 part 4: the assistant's phone calls, live first, then finished (GET /calls); each opens its own page. Only while APP_V4 is on (the feature `app_v4`); the first tab of Calls then
+      { id: "phonecalls", label: "Phone calls", icon: "calls", path: "/calls", feature: "app_v4", roles: WRITERS },
       // sidebar v2: a builder's merchant's delivery trips (the construction pack's own page)
       { id: "trips", label: "Trips", icon: "trips", path: "/orders/trips", module: "deliveries", packOnly: true, roles: WRITERS },
       { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/suggestions", "/requirements"], bar: true, module: "enquiries", unlessModule: "lead_desk", roles: ALL_ROLES },
@@ -167,7 +171,7 @@ export const MENU: readonly MenuEntry[] = [
   { id: "assistant", group: "overview", label: "Talk to assistant", icon: "assistant", members: ["assistant"] },
   { id: "leads", group: "sell", label: "Leads", icon: "leads", members: ["leaddesk", "leads", "customers", "import", "sites"], bar: true, count: "leads" },
   { id: "find", group: "sell", label: "Find customers", icon: "find", members: ["retailers"] },
-  { id: "calls", group: "sell", label: "Calls", icon: "calls", members: ["outreach", "calllist", "campaigns", "tasks", "live"], bar: true, count: "calls" },
+  { id: "calls", group: "sell", label: "Calls", icon: "calls", members: ["phonecalls", "outreach", "calllist", "campaigns", "tasks", "live"], bar: true, count: "calls" },
   { id: "chats", group: "sell", label: "Chats", icon: "chats", members: ["chats", "outbox"], bar: true, count: "chats" },
   { id: "followups", group: "sell", label: "Follow-ups", icon: "followups", members: ["followups"], count: "followups" },
   { id: "visits", group: "sell", label: "Store visits", icon: "visits", members: ["visits"], count: "visits", labelOf: "visits" },
@@ -328,6 +332,7 @@ export type PackFrame = {
 /** Is this item offered to a business of this type? Absent pack: everything but the items that only exist with a pack. */
 export function offered(item: NavItem, view?: PackFrame | null): boolean {
   if (item.feature !== undefined && !(view?.features ?? []).includes(item.feature)) return false;
+  if (item.unlessFeature !== undefined && (view?.features ?? []).includes(item.unlessFeature)) return false;
   if (!view) return !item.packOnly;
   if (item.unlessModule !== undefined && view.modules.includes(item.unlessModule)) return false;
   return item.module === undefined || view.modules.includes(item.module);

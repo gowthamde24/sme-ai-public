@@ -1,0 +1,23 @@
+[All calls](/app/tenants/22222222-2222-2222-2222-222222222222/calls)
+# Priya S. (synthetic)
+Finished Test call Called in · Telugu · 6 Oct, 10:40 am · 02:06 [Customer page](/app/tenants/22222222-2222-2222-2222-222222222222/customers/33333333-3333-3333-3333-333333333333)
+{label="What happened on this call"}
+## What happened on this call
+Visit booked Priya wants 20 Kanchi silk sarees for a wedding on 2 November and will visit on Saturday.
+[button type=button: Correct it]
+{label="What Priya S. (synthetic) wants"}
+## What Priya S. (synthetic) wants
+Saree
+Kanchi silk
+Quantity
+20
+Visit day
+Saturday
+{label="Where Priya S. (synthetic) is now"}
+## Where Priya S. (synthetic) is now
+- Enquiry (done)
+- The call (done)
+- The quote (done)
+- The visit
+- Follow-ups
+- The order

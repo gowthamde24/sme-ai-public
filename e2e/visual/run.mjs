@@ -3,7 +3,7 @@
 //
 //   node e2e/visual/run.mjs                 # compare with the baselines (exit 1 if a picture changed)
 //   node e2e/visual/run.mjs --update        # (re)write the baselines of this platform
-//   options: --only today,landing   --no-build (reuse the last visual build)   --out DIR (where changed pictures and diffs go; default e2e/visual/out, git-ignored)
+//   options: --only today,landing   --no-build (reuse the last visual build)   --out DIR (where changed pictures and diffs go; default e2e/visual/out, git-ignored)   --full (whole-page pictures for a review; never with --update)
 //
 // What it starts, all on this machine, all stopped again by its own process ids: the stand-in backend (https, port 54999), the web app built with the stand-in's addresses (port 3014, `next start`).
 // The browser clock and the server clock are both pinned to 14 Oct 2026 10:30 India time; the language, the colour scheme, the cookie notice and the signed-in session are set by cookies and media features, never by clicking.
@@ -15,7 +15,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { FIXED_NOW, LEAD, SESSION_USER, TENANT } from "./fixtures.mjs";
+import { CALL_DONE, CALL_LIVE, FIXED_NOW, LEAD, SESSION_USER, TENANT } from "./fixtures.mjs";
 import { startStandIn } from "./stand-in.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -53,6 +53,11 @@ const SCREENS = [
   { id: "landing", path: "/", signedIn: false },
   // app v4 (APP_V4=1 only: the page is a 404 without it)
   { id: "customer", path: `/app/tenants/${TENANT}/customers/${LEAD}`, signedIn: true, v4: true },
+  { id: "calls", path: `/app/tenants/${TENANT}/calls`, signedIn: true, v4: true },
+  { id: "call-live", path: `/app/tenants/${TENANT}/calls/${CALL_LIVE}`, signedIn: true, v4: true },
+  { id: "call-done", path: `/app/tenants/${TENANT}/calls/${CALL_DONE}`, signedIn: true, v4: true },
+  // Train how it talks also needs TALK_TRAINING_SCREENS=1
+  { id: "training", path: `/app/tenants/${TENANT}/ai-team/training`, signedIn: true, v4: true },
 ].filter((s) => !s.v4 || process.env.APP_V4 === "1");
 const SIZES = { phone: { width: 360, height: 780 }, desktop: { width: 1280, height: 800 } };
 const SCHEMES = ["light", "dark"];
@@ -206,7 +211,8 @@ async function main() {
               status = res?.status() ?? 0;
               await page.evaluate(() => document.fonts.ready);
               await page.waitForTimeout(250);
-              const shot = await page.screenshot({ type: "jpeg", quality: 70, animations: "disabled", caret: "hide" });
+              // --full (review pictures only, never with --update): the whole page, not the first screen
+              const shot = await page.screenshot({ type: "jpeg", quality: 70, animations: "disabled", caret: "hide", fullPage: flag("full") && !UPDATE });
               const file = path.join(BASELINES, `${name}.jpg`);
               if (UPDATE) {
                 writeFileSync(file, shot);

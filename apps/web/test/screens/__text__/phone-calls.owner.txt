@@ -1,0 +1,9 @@
+# Phone calls
+Every call your assistant makes or takes. Open one to read along, or to correct what it understood.
+{label="Live now"}
+## Live now
+- [Priya S. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999932) ● On the call · 00:42 Called in · Telugu Test call [Customer page](/app/tenants/22222222-2222-2222-2222-222222222222/customers/33333333-3333-3333-3333-333333333333)
+{label="Earlier calls"}
+## Earlier calls
+- [Priya S. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999931) 6 Oct, 10:40 am · 02:06 Called in · Telugu Test call Visit booked Wants 20 Kanchi silk sarees for a wedding, visiting Saturday [Customer page](/app/tenants/22222222-2222-2222-2222-222222222222/customers/33333333-3333-3333-3333-333333333333)
+- [Priya S. (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/calls/99999999-9999-4999-8999-999999999933) 6 Oct, 10:40 am Called in · Telugu Test call Not called: outside the hours or days it may call. [Customer page](/app/tenants/22222222-2222-2222-2222-222222222222/customers/33333333-3333-3333-3333-333333333333)

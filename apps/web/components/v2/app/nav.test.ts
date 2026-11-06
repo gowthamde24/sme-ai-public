@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { FOOT, NAV, barItems, footItems, hrefOf, itemFor, visibleGroups, workspaceOf, type Role, MENU, MENU_V4, menuGroupsV4, v4Sections, v4ItemId, activeV4Id } from "./nav";
+import { FOOT, NAV, barItems, footItems, hrefOf, itemFor, visibleGroups, workspaceOf, type Role, MENU, MENU_V4, menuGroupsV4, v4Sections, v4ItemId, activeV4Id, tabsOf } from "./nav";
 
 const T = "22222222-2222-2222-2222-222222222222";
 
@@ -190,5 +190,13 @@ describe("app v4: five groups (job-app-v4.md part 1, owner 6 Nov 2026)", () => {
     expect(activeV4Id(`/app/tenants/${T}/ai-team/training`, null)).toBe("v4-aiteam");
     expect(activeV4Id(`/app/tenants/${T}/lead-sources`, null)).toBe("v4-settings");
     expect(activeV4Id(`/app/tenants/${T}/settings`, null)).toBe("v4-settings");
+  });
+  it("part 4: Phone calls is the first page of Calls only while app v4 is on, and then the pretend Live calls page is not offered", () => {
+    const calls = MENU.find((m) => m.id === "calls")!;
+    const view = (features: string[]) => ({ modules: ["office"], features }) as unknown as Parameters<typeof tabsOf>[2];
+    expect(tabsOf(calls, "owner", view(["app_v4"])).map((t) => t.id)).toEqual(["phonecalls"]);
+    expect(tabsOf(calls, "owner", view([])).map((t) => t.id)).toEqual(["live"]);
+    expect(tabsOf(calls, "viewer", view(["app_v4"]))).toEqual([]); // a Viewer has no calls
+    expect(activeV4Id(`/app/tenants/${T}/calls`, null)).toBe("v4-customers");
   });
 });

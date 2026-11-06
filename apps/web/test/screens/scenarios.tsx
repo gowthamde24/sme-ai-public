@@ -285,6 +285,29 @@ add({
     fetchLeadFollowup: () => parseLeadFollowup(FOLLOWUP_JSON),
   }),
 });
+// app v4 part 4: the phone calls (only with APP_V4; a Viewer has none)
+const CALL_ID = "99999999-9999-4999-8999-999999999931";
+const CALL_ROW = { id: CALL_ID, direction: "inbound", state: "completed", live: false, who: "Priya S. (synthetic)", purpose: "inbound", language: "te", created_at: "2026-10-06T05:10:00Z", answered_at: "2026-10-06T05:10:04Z", ended_at: "2026-10-06T05:12:10Z", elapsed_s: 126, outcome: "positive", category: "visit_booked", summary_short: "Wants 20 Kanchi silk sarees for a wedding, visiting Saturday", refuse_reason: null, lead_id: LEAD, sandbox: true, simulated: false };
+const callsModule = () => import("@/lib/api/calls");
+add({
+  id: "phone-calls",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/calls/page")).default(props({}))),
+  handlers: (role) => ({
+    ...base(role),
+    listCalls: async () => (await callsModule()).parseCallsPage({ items: [{ ...CALL_ROW, id: "99999999-9999-4999-8999-999999999932", live: true, state: "in_progress", elapsed_s: 42, outcome: null, category: null, summary_short: null }, CALL_ROW, { ...CALL_ROW, id: "99999999-9999-4999-8999-999999999933", state: "refused", refuse_reason: "outside_hours", outcome: null, category: null, summary_short: null, elapsed_s: 0 }], next_cursor: null, poll_after_s: 5 }),
+  }),
+});
+add({
+  id: "phone-call",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/calls/[callId]/page")).default(props({ callId: CALL_ID }))),
+  handlers: (role) => ({
+    ...base(role),
+    getCall: async () => (await callsModule()).parseCallDetail({ ...CALL_ROW, summary: "Priya wants 20 Kanchi silk sarees for a wedding on 2 November and will visit on Saturday.", captured: { saree: "Kanchi silk", quantity: "20", visit_day: "Saturday" }, transcript: role === "sales" ? null : [{ who: "assistant", text: "Namaste! I am the AI assistant of Demo Silks.", t: 1 }, { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీరలు కావాలి.", t: 5 }], correction: null }, CALL_ID),
+    fetchTimeline: async () => (await import("@/lib/api/customer-timeline")).parseTimeline(CUSTOMER_TIMELINE),
+  }),
+});
 add({
   id: "consent",
   render: async () => (await import("@/app/app/tenants/[tenantId]/contacts/[contactId]/consent/page")).default(props({ contactId: CONTACT })),

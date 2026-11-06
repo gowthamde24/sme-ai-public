@@ -46,6 +46,7 @@ vi.mock("@/lib/auth/session", async () => {
 vi.mock("@/lib/api/client", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/client")>(), ["fetchMe", "fetchTenant"]));
 vi.mock("@/lib/api/agents", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/agents")>(), ["fetchAgentSettings", "fetchRuns", "fetchClaims", "fetchAgentClaims", "fetchAgentCost"]));
 vi.mock("@/lib/api/crm", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/crm")>(), ["fetchPage", "fetchCompany", "fetchContact", "fetchLead"]));
+vi.mock("@/lib/api/calls", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/calls")>(), ["listCalls", "getCall"]));
 vi.mock("@/lib/api/customer-timeline", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/customer-timeline")>(), ["fetchCustomerHead", "fetchTimeline"]));
 vi.mock("@/lib/api/enquiries", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/enquiries")>(), ["fetchLeadEnquiries", "fetchEnquiry", "fetchRequirement"]));
 vi.mock("@/lib/api/erasure", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/erasure")>(), ["fetchErasureRequests", "fetchDataPolicy", "confirmationPhrase"]));

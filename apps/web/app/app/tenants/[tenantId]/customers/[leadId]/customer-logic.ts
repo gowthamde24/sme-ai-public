@@ -49,9 +49,10 @@ export function mainAction(o: { base: string; leadId: string; quoteId: string | 
   return { href: `${o.base}/leads/${o.leadId}`, label: w["cust.v4.main.lead"] };
 }
 
-/** Where a timeline row opens: a quote, an order or the store visits of that day; the rest have no page of their own yet. */
+/** Where a timeline row opens: a call (its own page, part 4), a quote, an order or the store visits of that day; the rest have no page of their own yet. */
 export function timelineHref(base: string, i: TimelineItem): string | null {
   const safe = /^[0-9a-f-]{36}$/i.test(i.target.id);
+  if (i.kind === "call" && i.target.type === "phone_call" && safe) return `${base}/calls/${i.target.id}`;
   if (i.kind === "quote" && i.target.type === "quote" && safe) return `${base}/quotes/${i.target.id}`;
   if (i.kind === "order" && safe) return `${base}/orders/${i.target.id}`;
   if (i.kind === "visit") return `${base}/visits`;

@@ -2,6 +2,9 @@
 // FIXED_NOW in run.mjs), so a picture never depends on the day it is taken.
 export const TENANT = "11111111-1111-4111-8111-111111111111";
 export const LEAD = "55555555-5555-4555-8555-555555555555";
+// app v4 part 4: two synthetic phone calls (one live, one finished)
+export const CALL_LIVE = "99999999-9999-4999-8999-0000000000c1";
+export const CALL_DONE = "99999999-9999-4999-8999-0000000000c2";
 export const USER_ID = "22222222-2222-4222-8222-222222222222";
 export const FIXED_NOW = "2026-10-14T05:00:00.000Z"; // Wednesday 14 October 2026, 10:30 in India
 
@@ -105,6 +108,9 @@ const ITEMS = [
 
 // ---- a lead -------------------------------------------------------------------------------------------------------------------------------
 const COMPANY = "55555555-5555-4555-8555-555555555551";
+const CALL_DONE_JSON = { id: CALL_DONE, direction: "inbound", state: "completed", live: false, who: "Meena Sarees", purpose: "inbound", language: "te", created_at: "2026-10-14T04:40:00Z", answered_at: "2026-10-14T04:40:04Z", ended_at: "2026-10-14T04:42:10Z", elapsed_s: 126, duration_s: 126, outcome: "positive", category: "visit_booked", summary_short: "Wants 20 Kanchi silk sarees for a wedding; visiting Saturday", refuse_reason: null, lead_id: LEAD, task_id: null, sandbox: true, simulated: false, ai_disclosed: true, recorded: false, cost_paise: 0, callback_at: null };
+const CALL_LIVE_JSON = { ...CALL_DONE_JSON, id: CALL_LIVE, who: "Lakshmi", state: "in_progress", live: true, created_at: "2026-10-14T04:59:50Z", answered_at: "2026-10-14T04:59:56Z", ended_at: null, elapsed_s: 4, duration_s: null, outcome: null, category: null, summary_short: null };
+const TALK = { greeting: { en: "Namaste! Thanks for calling {business}, I am the AI assistant." }, address: "plain", questions: ["What is the saree for?", "Which colours do you like?", "When do you need it?"], never_say: ["guaranteed", "best price in the market"], objections: [{ hears: "Too costly", answer: "We have sarees in many ranges; the team can show you options that fit." }], examples: [], say_like: [{ say: "pattu cheera", instead_of: "silk saree" }, { say: "Kanchi pattu", instead_of: null }] };
 const LEAD_JSON = { id: LEAD, company_id: COMPANY, contact_id: CONTACT, status: "in_review", source: "csv import", created_via: "import", created_at: "2026-10-02T05:00:00+00:00", display_name: "Meena Sarees", profile: { need: "Kanchi silk sarees for a wedding", quantity: "20 pieces", budget: "₹2,000 to ₹2,500 each", area: "Brodipet", city: "Guntur", language: "te", source: "indiamart" } };
 const COMPANY_JSON = { id: COMPANY, name: "Sri Lakshmi Silks", type: "customer", website: "https://sri-lakshmi.example.test", country: "India", city: "Hyderabad", industry: "Textiles", created_via: "manual", created_at: "2026-10-01T05:00:00+00:00" };
 
@@ -183,6 +189,19 @@ export const API_ROUTES = [
     { id: "77777777-0000-4000-8000-000000000002", evidence: { kind: "note", provider: "owner note", url: null, reference: "called on Monday", snippet: "Asked for 20 pieces before the festival.", retrieved_at: "2026-10-03T05:00:00+00:00", published_at: null, created_via: "manual" } },
   ], next_cursor: null }),
   route(`/leads/${LEAD}/enquiries`, []),
+  // app v4 part 4: the phone calls (synthetic): one live, one finished, one refused
+  route("/calls", { items: [CALL_LIVE_JSON, CALL_DONE_JSON, { ...CALL_DONE_JSON, id: "99999999-9999-4999-8999-0000000000c3", who: "Anita Textiles", lead_id: null, state: "refused", refuse_reason: "outside_hours", outcome: null, category: null, summary_short: null, elapsed_s: 0, created_at: "2026-10-13T16:10:00Z" }], next_cursor: null, updated_at: "2026-10-14T05:00:00Z", poll_after_s: 5 }),
+  route(`/calls/${CALL_LIVE}`, { ...CALL_LIVE_JSON, summary: null, end_reason: null, captured: { occasion: "Wedding", saree: "Kanchi silk", budget: "up to 15,000" }, transcript: [
+    { who: "assistant", text: "Hello! I am the AI assistant of Sri Visual Silks. You asked about silk sarees, right?", t: 1 },
+    { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి. బడ్జెట్ పదిహేను వేల వరకు.", t: 4 },
+  ], correction: null }),
+  route(`/calls/${CALL_DONE}`, { ...CALL_DONE_JSON, summary: "Meena wants 20 Kanchi silk sarees for a wedding on 2 November and will visit the store on Saturday.", end_reason: "goodbye", captured: { saree: "Kanchi silk", quantity: "20 pieces", visit_day: "Saturday" }, transcript: [
+    { who: "assistant", text: "Namaste! I am the AI assistant of Sri Visual Silks. How can I help?", t: 1 },
+    { who: "caller", text: "I need 20 Kanchi silk sarees for a wedding.", t: 5 },
+    { who: "assistant", text: "Lovely. Would you like to see them at the store? We are open on Saturday.", t: 11 },
+    { who: "caller", text: "Yes, Saturday works.", t: 16 },
+  ], correction: { summary: null, captured: {}, note: "Kanchi pattu means Kanchipuram silk", corrected_at: "2026-10-14T06:00:00Z" } }),
+  route("/talk-training", { training: TALK, saved: true, defaults: TALK, rules: ["Always says it is an AI.", "Never states a price; the team gives prices."], updated_at: "2026-10-13T05:00:00Z", wording: "draft" }),
   // app v4 part 3: one customer's timeline (synthetic), newest first
   route(`/customers/${LEAD}/timeline`, { items: [
     { kind: "call", at: "2026-10-14T04:40:00Z", text: "Wants 20 Kanchi silk sarees for a wedding; will visit the store on Saturday", target: { type: "phone_call", id: "c1" }, detail: { direction: "inbound", duration_s: 126, outcome: "positive" } },
