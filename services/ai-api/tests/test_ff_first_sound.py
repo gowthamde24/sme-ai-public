@@ -125,7 +125,7 @@ async def test_the_row_is_written_while_the_greeting_plays_and_no_row_means_no_c
 
     # the helper that run_call uses: mark only when the row exists, and end the call if it never does (tested on its own: the session itself is covered by the call tests)
     async def begin_and_mark(ready: Any) -> uuid.UUID:
-        cid = await ready
+        cid: uuid.UUID = await ready
         await asyncio.to_thread(Store().mark_in_progress, cid, "CA1")
         return cid
 
@@ -156,7 +156,7 @@ async def test_after_admission_a_slow_rendering_is_not_waited_for() -> None:
     from app.telephony import inbound_routes as R
 
     G.GREETINGS = GreetingAudio()
-    R.GREETINGS = G.GREETINGS
+    setattr(R, "GREETINGS", G.GREETINGS)  # noqa: B010 - the module's own name for the cache
     slow = R.Prepared(tenant_id=TENANT, parts=None, model="m", slots=[], text="Hello", rendering=asyncio.ensure_future(G.GREETINGS.render(SlowTts(2.0), "en", "Hello")))
     began = time.monotonic()
     assert await R._greeting_ready(slow, "en") is False and time.monotonic() - began < 0.5, "past the grace the greeting is streamed, not waited for"
