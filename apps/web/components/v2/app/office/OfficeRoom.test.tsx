@@ -1,42 +1,52 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { appT } from "@/i18n/app";
 import { AGENT_KEYS } from "@/lib/api/today";
 
-import { OfficeRoom, type RoomRow } from "./OfficeRoom";
+import type { AgentSwitch } from "@/lib/api/agent-switches";
+
+import { OfficeRoom, type RoomRow, type TeamExtras } from "./OfficeRoom";
 import type { ClientEnv } from "./view";
 
 const h = vi.hoisted(() => ({ env: {} as Record<string, unknown> }));
 vi.mock("./view", async (orig) => ({ ...(await orig<typeof import("./view")>()), readClientEnv: () => h.env }));
 const en = appT("en");
 const W = (k: string) => en(k as "frame.notyet");
-const KEYS = ["office.title", "office.sub", "office.idle", "office.working", "office.switchedoff", "frame.notyet", "office.latest", "office.noevents", "office.pick", "office.runs", "office.viewroom", "office.viewlist", "office.listintro", "office.viewswitch", "office.hint", "office.feed", ...AGENT_KEYS.map((a) => `agent.${a}`)];
+const KEYS = ["office.title", "office.sub", "office.idle", "office.working", "office.switchedoff", "frame.notyet", "office.latest", "office.noevents", "office.pick", "office.runs", "office.viewroom", "office.viewlist", "office.listintro", "office.viewswitch", "office.hint", "office.feed", "office.settings", "office.switch", "office.done.one", "office.done.other", "office.locked.platform", "office.locked.workspace_off", "office.sw.on", "office.sw.off", "office.sw.err.forbidden", "office.sw.err.locked", "office.sw.err.down", ...AGENT_KEYS.map((a) => `agent.${a}`)];
 const WORDS = Object.fromEntries(KEYS.map((k) => [k, W(k)]));
 const NOW = Date.UTC(2026, 9, 9, 12, 0, 0);
 const at = (minutesAgo: number) => new Date(NOW - minutesAgo * 60_000).toISOString();
 const rows = (patch: Partial<Record<(typeof AGENT_KEYS)[number], Partial<RoomRow>>> = {}): RoomRow[] =>
   AGENT_KEYS.map((agent) => ({ agent, state: "idle" as const, job: `Job of ${agent}.`, event: null, ...patch[agent] }));
 const CAPABLE: ClientEnv = { reducedMotion: false, lite: false, remembered: null };
+/** The board's own tests start on the board (a person who chose it before): My AI team opens on the cards (sidebar v2). */
+const ON_BOARD: ClientEnv = { ...CAPABLE, remembered: "room" };
 const room = (r: RoomRow[] = rows(), selected: RoomRow["agent"] | null = null) => render(<OfficeRoom rows={r} selected={selected} base="/app/tenants/T" words={WORDS} />);
 const switchBtn = (name: string) => screen.getByRole("button", { name });
 const seat = (id: string) => document.querySelector<HTMLElement>(`[data-office="team"] li[data-agent="${id}"]`)!;
 const tag = (id: string, text: string) => within(seat(id)).getByRole("button", { name: text });
 
 beforeEach(() => {
-  h.env = { ...CAPABLE };
+  h.env = { ...ON_BOARD };
   window.localStorage.clear();
   window.history.replaceState(null, "", "/app/tenants/T/office");
 });
 afterEach(cleanup);
 
 describe("OfficeRoom: which view first", () => {
-  it("the team board is the first view on every device, and the switch says so", () => {
+  it("My AI team opens on one card per helper (owner, 5 Nov), and the switch says so; the board is one press away", () => {
+    h.env = { ...CAPABLE };
+    room();
+    expect(screen.getByRole("region", { name: "My AI team" })).toBeInTheDocument();
+    expect(switchBtn("List view")).toHaveAttribute("aria-pressed", "true");
+    expect(switchBtn("Board view")).toHaveAttribute("aria-pressed", "false");
+    expect(document.querySelector('[data-office="team"]')).toBeNull();
+  });
+  it("the board, once chosen, is remembered", () => {
     room();
     expect(document.querySelector('[data-office="team"]')).not.toBeNull();
     expect(switchBtn("Board view")).toHaveAttribute("aria-pressed", "true");
-    expect(switchBtn("List view")).toHaveAttribute("aria-pressed", "false");
-    expect(screen.queryByRole("region", { name: "Agent office" })).toBeNull();
   });
   it("the server's first paint (no browser facts yet) is the room too, so the page and the hydrated page agree", () => {
     h.env = null as unknown as Record<string, unknown>;
@@ -52,7 +62,7 @@ describe("OfficeRoom: which view first", () => {
     room();
     fireEvent.click(switchBtn("List view"));
     expect(document.querySelector('[data-office="team"]')).toBeNull();
-    expect(screen.getByRole("region", { name: "Agent office" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "My AI team" })).toBeInTheDocument();
     expect(window.localStorage.getItem("sme_office_view")).toBe("list");
     fireEvent.click(switchBtn("Board view"));
     expect(document.querySelector('[data-office="team"]')).not.toBeNull();
@@ -61,12 +71,12 @@ describe("OfficeRoom: which view first", () => {
   it("what the person chose last time wins; the old view's name (3d) is forgotten, not an error", () => {
     h.env = { ...CAPABLE, remembered: "list" };
     room();
-    expect(screen.getByRole("region", { name: "Agent office" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "My AI team" })).toBeInTheDocument();
     cleanup();
     h.env = { ...CAPABLE, remembered: null };
     window.localStorage.setItem("sme_office_view", "3d");
     room();
-    expect(document.querySelector('[data-office="team"]')).not.toBeNull();
+    expect(screen.getByRole("region", { name: "My AI team" })).toBeInTheDocument(); // the cards, the default
   });
 });
 
@@ -100,7 +110,7 @@ describe("OfficeRoom: the pose of each helper follows the API's state", () => {
   it("the List says 'Switched off' for a switched-off helper and 'Not available yet' for one that is not built", () => {
     h.env = { ...CAPABLE, remembered: "list" };
     room(mixed);
-    const items = within(screen.getByRole("region", { name: "Agent office" })).getAllByRole("listitem");
+    const items = within(screen.getByRole("region", { name: "My AI team" })).getAllByRole("listitem");
     expect(items[2]).toHaveTextContent("ResearcherSwitched off");
     expect(items[1]).toHaveTextContent("Lead FinderNot available yet");
   });
@@ -191,7 +201,59 @@ describe("OfficeRoom: the switch", () => {
       throw new Error("blocked");
     });
     expect(() => fireEvent.click(switchBtn("List view"))).not.toThrow();
-    expect(screen.getByRole("region", { name: "Agent office" })).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "My AI team" })).toBeInTheDocument();
     spy.mockRestore();
+  });
+});
+
+describe("My AI team: each helper's own switch, today's work and settings (C1's agents-switches)", () => {
+  const SW = (agent: string, over: Partial<AgentSwitch> = {}): AgentSwitch => ({ agent: agent as AgentSwitch["agent"], enabled: true, canSwitch: true, reasonLocked: null, doneToday: 0, ...over });
+  const SWITCHES = {
+    main: SW("main", { doneToday: 3 }),
+    researcher: SW("researcher", { enabled: false, doneToday: 1 }),
+    requirement_analyst: SW("requirement_analyst", { canSwitch: false, reasonLocked: "workspace_off" }),
+    quote_writer: SW("quote_writer", { canSwitch: false, reasonLocked: "not_built", doneToday: null }),
+  };
+  const team = (over: Partial<TeamExtras> = {}): TeamExtras => ({ switches: SWITCHES, settings: { main: "/app/tenants/T/settings?section=assistant", quote_writer: "/app/tenants/T/quote-policy" }, toggle: vi.fn(async (agent: string, enabled: boolean) => ({ ok: true as const, data: SW(agent, { enabled, doneToday: 1 }) })), ...over });
+  const cardOf = (id: string) => document.querySelector<HTMLElement>(`li[data-helper="${id}"]`)!;
+  const show = (t: TeamExtras) => {
+    h.env = { ...CAPABLE };
+    render(<OfficeRoom rows={rows()} selected={null} base="/app/tenants/T" words={WORDS} team={t} />);
+  };
+
+  it("a switch only where the helper has one; a helper switched off by the workspace says so; a feature with none shows no toggle", () => {
+    show(team());
+    expect(within(cardOf("main")).getByRole("switch", { name: "On or off: " + W("agent.main") })).toBeChecked();
+    expect(within(cardOf("main")).getByText("3 done today")).toBeInTheDocument();
+    expect(within(cardOf("researcher")).getByRole("switch")).not.toBeChecked();
+    expect(within(cardOf("researcher")).getByText("1 done today")).toBeInTheDocument();
+    expect(within(cardOf("requirement_analyst")).queryByRole("switch")).toBeNull();
+    expect(within(cardOf("requirement_analyst")).getByText("AI helpers are off in Settings")).toBeInTheDocument();
+    expect(within(cardOf("quote_writer")).queryByRole("switch")).toBeNull();
+    expect(within(cardOf("quote_writer")).getByRole("link", { name: "Settings" })).toHaveAttribute("href", "/app/tenants/T/quote-policy");
+    expect(within(cardOf("order_desk")).queryByRole("link", { name: "Settings" })).toBeNull();
+  });
+
+  it("the Owner turns a helper on; the card shows what the API answered", async () => {
+    const t = team();
+    show(t);
+    await act(async () => fireEvent.click(within(cardOf("researcher")).getByRole("switch")));
+    expect(t.toggle).toHaveBeenCalledWith("researcher", true);
+    expect(within(cardOf("researcher")).getByRole("switch")).toBeChecked();
+  });
+
+  it("a refusal is said in words and the switch stays as it was; an Admin sees the switch but cannot move it", async () => {
+    show(team({ toggle: vi.fn(async () => ({ ok: false as const, error: "down" })) }));
+    await act(async () => fireEvent.click(within(cardOf("main")).getByRole("switch")));
+    expect(within(cardOf("main")).getByRole("alert")).toHaveTextContent("That didn't change. Please try again.");
+    expect(within(cardOf("main")).getByRole("switch")).toBeChecked();
+    cleanup();
+    show(team({ toggle: null }));
+    expect(within(cardOf("main")).getByRole("switch")).toBeDisabled();
+  });
+
+  it("switches that cannot be read draw no switch at all", () => {
+    show(team({ switches: null }));
+    expect(screen.queryByRole("switch")).toBeNull();
   });
 });

@@ -9,6 +9,7 @@ import { Orb } from "@/components/v2/Orb";
 import { workspaceOf } from "../../nav";
 import { orbStateOf } from "../../mark/orb-state";
 import { chipsForPath, isTodayHome, orbHidden } from "./ask-chips";
+import { ASK_EVENT } from "./ask-event";
 import { useStoredAsk } from "./ask-store";
 import type { AskWords } from "./ask-words";
 import type { BrowserVoice } from "./browser-voice";
@@ -56,18 +57,29 @@ export function AskFloating({ words, chipWords, voice }: { words: AskWords; chip
     window.setTimeout(() => orbRef.current?.focus(), 0);
   }, [finished]);
   React.useEffect(() => {
+    const go = () => {
+      if (today && (typeof window.matchMedia !== "function" || window.matchMedia("(min-width: 768px)").matches)) (document.getElementById("chat-input") ?? document.getElementById("ask-input"))?.focus(); // Today on a desktop: the command bar's own line
+      else if (here) openPanel();
+      else document.getElementById("ask-input")?.focus(); // (the live call: no orb)
+    };
     const onKey = (e: KeyboardEvent) => {
       const cmdK = (e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey && e.key.toLowerCase() === "k";
       const slash = e.key === "/" && !e.metaKey && !e.ctrlKey && !e.altKey && !typing(e.target);
       if (!cmdK && !slash) return;
       if (rest === null) return;
       e.preventDefault();
-      if (today && (typeof window.matchMedia !== "function" || window.matchMedia("(min-width: 768px)").matches)) (document.getElementById("chat-input") ?? document.getElementById("ask-input"))?.focus(); // Today on a desktop: the command bar's own line
-      else if (here) openPanel();
-      else document.getElementById("ask-input")?.focus(); // (the live call: no orb)
+      go();
+    };
+    // the top bar's "Search or ask anything" (sidebar v2) asks for the same as ⌘K
+    const onAsk = () => {
+      if (rest !== null) go();
     };
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener(ASK_EVENT, onAsk);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener(ASK_EVENT, onAsk);
+    };
   }, [rest, here, today, openPanel]);
   if (!here || (session && !session.live)) return null; // (a conversation that has nothing to ask with draws no orb)
   const w = (key: string) => words[key] ?? key;

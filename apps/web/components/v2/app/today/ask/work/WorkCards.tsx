@@ -48,7 +48,12 @@ export function WorkCards({ cards, env }: { cards: readonly WorkCard[]; env: Wor
               </article>
             );
           case "secret":
-            return <SecretBox key={card.id} card={card} env={env} />;
+            // "Set up IndiaMART" (C1 #358): a key that belongs to a setup is the setup's card, with the key box in it and "Pull now" once the key is saved
+            return card.setupId && card.test ? (
+              <SetupSteps key={card.id} card={{ kind: "setup", id: card.setupId, setup: "indiamart", title: card.title, steps: [], copy: [], portals: [], secret: card, test: card.test, lastTest: null, screen: null }} env={env} />
+            ) : (
+              <SecretBox key={card.id} card={card} env={env} />
+            );
           case "setup":
             return <SetupSteps key={card.id} card={card} env={env} />;
           case "cant_do":

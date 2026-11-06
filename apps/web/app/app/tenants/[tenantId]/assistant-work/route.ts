@@ -27,6 +27,18 @@ function word(error: unknown): string {
 }
 
 /**
+ * The secure box's refusals (C1, 5 Nov): 422 `secret_invalid` = "check it and try again" (the value is never echoed); a request already used (409 `secret_request_used`), run out (410 `secret_request_expired`), not this Owner's (404) or not
+ * saved (503 `secret_not_saved` / `secrets_unavailable`) cannot take the value again: `renew`, the card says "ask me again for a new card".
+ */
+const RENEW = ["secret_request_used", "secret_request_expired", "secret_not_saved", "secrets_unavailable"];
+function secretWord(error: unknown): string {
+  if (!(error instanceof ApiRequestError)) return "down";
+  if (error.status === 422) return "rejected";
+  if (RENEW.includes(error.code) || error.status === 404 || error.status === 409 || error.status === 410) return "renew";
+  return word(error);
+}
+
+/**
  * POST /app/tenants/[tenantId]/assistant-work: the side calls of the chat's work cards and of Settings > Activity, one JSON request each, with this person's own token (it stays here), only while
  * ASSISTANT_WORK_SCREENS is `1` (in `mock` the browser answers itself: nothing reaches this route) and only from this site. C1's contract, docs/contracts/assistant-tools.md (lib/api/assistant-work.ts):
  *   {op: "decide", planId, decision: "do" | "cancel", confirmed}     a plan's Do it / Cancel (a sensitive plan needs `confirmed`; the API checks the role and the second step again)
@@ -80,7 +92,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         const value = typeof body.value === "string" ? body.value : "";
         if (!requestId || value.trim() === "" || value.length > 4000) return new NextResponse(null, { status: 400, headers: HEADERS });
         if (role !== "owner") return NextResponse.json({ ok: false, error: "forbidden" }, { headers: HEADERS });
-        return ok({ last4: (await saveAssistantSecret(user.accessToken, tenantId, requestId, value)).last4 });
+        try {
+          return ok({ last4: (await saveAssistantSecret(user.accessToken, tenantId, requestId, value)).last4 });
+        } catch (error) {
+          if (error instanceof ApiAuthError) throw error;
+          return NextResponse.json({ ok: false, error: secretWord(error) }, { headers: HEADERS }); // a closed word only: never the error, which could carry the request
+        }
       }
       case "test": {
         const setupId = id("setupId");

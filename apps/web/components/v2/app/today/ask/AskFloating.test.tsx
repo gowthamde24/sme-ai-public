@@ -28,6 +28,7 @@ vi.setConfig({ testTimeout: 15000 });
 
 import { AskCard } from "./AskCard";
 import { AskProvider } from "./AskProvider";
+import { ASK_EVENT } from "./ask-event";
 import { ASK_WORD_KEYS } from "./ask-words";
 import type { AskEvent, AskTransport } from "./ask-types";
 
@@ -177,6 +178,12 @@ describe("the floating orb (job DQ part 0)", () => {
     fireEvent.click(screen.getByRole("button", { name: /Ask your assistant/ }));
     await screen.findByRole("dialog");
     expect(document.querySelector('[data-ask="dot"]')).toBeNull();
+  });
+
+  it("the top bar's 'Search or ask anything' (sidebar v2) opens the panel like Cmd+K", async () => {
+    render(harness(playing(ANSWER)));
+    act(() => void window.dispatchEvent(new Event(ASK_EVENT)));
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
   });
 
   it("keyboard: '/' and Cmd or Ctrl+K open the panel; '/' typed into a field does not; on Today (a desktop) they put the cursor in the command bar's own line", async () => {

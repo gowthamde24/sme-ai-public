@@ -28,8 +28,8 @@ export function parseTestCall(json: unknown): TestCall | null {
   return { note: json.note, transcript, outcome };
 }
 
-const YES: Record<CallLang, string> = { en: "Yes, please send it.", te: "అవును, పంపండి.", hi: "हाँ, भेज दीजिए।", kn: "ಹೌದು, ಕಳುಹಿಸಿ.", ta: "ஆம், அனுப்புங்கள்.", ml: "ശരി, അയയ്ക്കൂ." };
-const DONE: Record<CallLang, string> = { en: "I have sent it on WhatsApp. Thank you!", te: "వాట్సాప్‌లో పంపాను. ధన్యవాదాలు!", hi: "व्हाट्सऐप पर भेज दिया। धन्यवाद!", kn: "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಕಳುಹಿಸಿದ್ದೇನೆ. ಧನ್ಯವಾದಗಳು!", ta: "வாட்ஸ்அப்பில் அனுப்பினேன். நன்றி!", ml: "വാട്സ്ആപ്പിൽ അയച്ചിട്ടുണ്ട്. നന്ദി!" };
+const YES: Record<CallLang, string> = { en: "Yes, please send it.", te: "అవును, పంపండి.", hi: "हाँ, भेज दीजिए।", kn: "ಹೌದು, ಕಳುಹಿಸಿ.", ta: "ஆம், அனுப்புங்கள்.", ml: "ശരി, അയയ്ക്കൂ.", mr: "हो, पाठवा." };
+const DONE: Record<CallLang, string> = { en: "I have sent it on WhatsApp. Thank you!", te: "వాట్సాప్‌లో పంపాను. ధన్యవాదాలు!", hi: "व्हाट्सऐप पर भेज दिया। धन्यवाद!", kn: "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಕಳುಹಿಸಿದ್ದೇನೆ. ಧನ್ಯವಾದಗಳು!", ta: "வாட்ஸ்அப்பில் அனுப்பினேன். நன்றி!", ml: "വാട്സ്ആപ്പിൽ അയച്ചിട്ടുണ്ട്. നന്ദി!", mr: "व्हॉट्सअ‍ॅपवर पाठवले आहे. धन्यवाद!" };
 
 /** The fake of the test screens (ASSISTANT_SCREENS=mock): the opening line of the saved settings, a yes, a thank-you, and the outcome it would record. Nothing is called. */
 export function mockTestCall(s: AssistantSettings, shop: string): TestCall {
