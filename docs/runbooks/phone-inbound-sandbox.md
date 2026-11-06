@@ -33,6 +33,21 @@ outbound call), no recording, no other number.
    - The cost is the configured estimate (`TELEPHONY_COST_PAISE_PER_MINUTE`, 100 paise a started minute), not a quote.
    - Read it with `gcloud logging read 'resource.labels.service_name="sme-api" AND textPayload:"phone_call_numbers"' --project project-2757c07e-37d2-4167-88f --limit 5`.
 
+## Who may call in: the allowed list, kept out of every chat and log
+The callers allowed in are the secret `sme-telephony-sandbox-numbers` (comma-separated E.164). The owner writes it himself in his own terminal (zsh): the number is typed hidden, never shown, never in the shell history, never in a chat.
+```
+read -s "BRO?Second tester's mobile, 10 digits (hidden): "; echo
+if [[ "$BRO" =~ '^[6-9][0-9]{9}$' ]]; then
+  printf '%s' "+919502380998,+91$BRO" | gcloud secrets create sme-telephony-sandbox-numbers --project project-2757c07e-37d2-4167-88f \
+      --replication-policy=user-managed --locations=asia-south1 --data-file=- \
+    && gcloud secrets add-iam-policy-binding sme-telephony-sandbox-numbers --project project-2757c07e-37d2-4167-88f \
+      --member=serviceAccount:sme-api-run@project-2757c07e-37d2-4167-88f.iam.gserviceaccount.com --role=roles/secretmanager.secretAccessor --condition=None --format=none \
+    && echo "Saved. The next API deploy uses it."
+else echo "Not a 10-digit Indian mobile; nothing saved."; fi
+unset BRO
+```
+To change it later: the same, with `gcloud secrets versions add sme-telephony-sandbox-numbers --project project-2757c07e-37d2-4167-88f --data-file=-` in place of `create` (and no binding); then redeploy the API.
+
 ## Switch it on (staging only)
 1. The owner's IAM grants: `sme-api-run` reads `sme-exotel-stream-secret`, `sme-exotel-sid`, `sme-exotel-api-key`, `sme-exotel-api-token`. The exact lines are in `~/Desktop/stack19-jobs/phone-calls-check/owner-steps-inbound.md`.
 2. The line, once, as the operator:

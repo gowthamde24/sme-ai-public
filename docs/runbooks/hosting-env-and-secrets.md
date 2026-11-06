@@ -172,6 +172,7 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `TELEPHONY_SANDBOX_NUMBERS` | plain | api | Comma-separated `+91...` numbers of the verified users of the provider's trial account: the only numbers a sandbox call may ring. |
 | `TELEPHONY_MAX_CONCURRENT` | plain | api | Calls at once, all workspaces. Default `2`. |
 | `TELEPHONY_MAX_CALL_S` | plain | api | The longest an inbound call may run, in seconds (default 300, never more, at least 30). Staging: 180 on the business's own ExoPhone (owner, 6 Nov 2026). |
+| `sme-telephony-sandbox-numbers` | secret | api | Staging (6 Nov 2026): the callers allowed in, comma-separated E.164 (the owner's own number and the next tester's). Mounted as `TELEPHONY_SANDBOX_NUMBERS` when `sme-api-run` may read it, otherwise the plain list applies. **The owner writes it himself** with `read -s` (docs/runbooks/phone-inbound-sandbox.md), so no number is in a chat, a log or the script. |
 | `TELEPHONY_LLM` | plain | api | Who speaks on a call: `haiku` (default) or `sarvam` (Sarvam 105B first, behind a first-token deadline that falls back to Haiku). Measured 31 Oct 2026: `docs/runbooks/phone-model.md`. |
 | `TELEPHONY_FIRST_TOKEN_MS` | plain | api | With `sarvam`: if no first piece of text arrives within this many ms (default `1200`, kept between 500 and 4000) the same turn goes to Haiku. |
 | `TELEPHONY_COST_PAISE_PER_MINUTE` | plain | api | What a started minute of a call costs, in paise: a configurable ESTIMATE until the owner has Exotel's price (default `100`). |

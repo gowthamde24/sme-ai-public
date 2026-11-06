@@ -120,7 +120,12 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
   TEL_ENV="" TEL_SECRETS=""
   if [ "${TELEPHONY_INBOUND:-0}" = 1 ]; then
     can_read() { gcloud secrets get-iam-policy "$1" --project "$PROJECT_ID" --format=json 2>/dev/null | grep -q "serviceAccount:sme-api-run@"; }
-    TEL_ENV="TELEPHONY_MODE=sandbox,TELEPHONY_OUTBOUND=false,TELEPHONY_SANDBOX_NUMBERS=${TELEPHONY_SANDBOX_NUMBERS:-+919502380998},TELEPHONY_MAX_CONCURRENT=1,TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-180},TELEPHONY_INBOUND_LANGUAGE=${TELEPHONY_INBOUND_LANGUAGE:-te},TELEPHONY_INBOUND_BUSINESS=${TELEPHONY_INBOUND_BUSINESS:-Stack19},EXOTEL_TRIAL_NUMBER=${EXOTEL_TRIAL_NUMBER-},EXOTEL_TRIAL_CALLER=${EXOTEL_TRIAL_CALLER:-+919502380998},EXOTEL_TRIAL_APP_ID=${EXOTEL_TRIAL_APP_ID:-1371752},EXOTEL_TRIAL_CALLS_PER_DAY=10,EXOTEL_TRIAL_MAX_CALL_S=180"
+    # the callers allowed in: the secret sme-telephony-sandbox-numbers when sme-api-run may read it (the owner writes it himself, so no number is
+    # ever in a chat, a log or this script; docs/runbooks/phone-inbound-sandbox.md), else the plain list (default: the owner's own number)
+    SANDBOX_NUMBERS_ENV="TELEPHONY_SANDBOX_NUMBERS=${TELEPHONY_SANDBOX_NUMBERS:-+919502380998},"
+    SANDBOX_NUMBERS_SECRET=""
+    if can_read sme-telephony-sandbox-numbers; then SANDBOX_NUMBERS_ENV=""; SANDBOX_NUMBERS_SECRET=",TELEPHONY_SANDBOX_NUMBERS=sme-telephony-sandbox-numbers:latest"; fi
+    TEL_ENV="TELEPHONY_MODE=sandbox,TELEPHONY_OUTBOUND=false,${SANDBOX_NUMBERS_ENV}TELEPHONY_MAX_CONCURRENT=1,TELEPHONY_MAX_CALL_S=${TELEPHONY_MAX_CALL_S:-180},TELEPHONY_INBOUND_LANGUAGE=${TELEPHONY_INBOUND_LANGUAGE:-te},TELEPHONY_INBOUND_BUSINESS=${TELEPHONY_INBOUND_BUSINESS:-Stack19},EXOTEL_TRIAL_NUMBER=${EXOTEL_TRIAL_NUMBER-},EXOTEL_TRIAL_CALLER=${EXOTEL_TRIAL_CALLER:-+919502380998},EXOTEL_TRIAL_APP_ID=${EXOTEL_TRIAL_APP_ID:-1371752},EXOTEL_TRIAL_CALLS_PER_DAY=10,EXOTEL_TRIAL_MAX_CALL_S=180"
     if [ "${API_LEAD_INTAKE:-0}" != 1 ]; then
       TEL_ENV="$TEL_ENV,SCHEDULER_EMAIL=${SCHEDULER_EMAIL:-scheduler@demo.example.test},PUBLIC_BASE_URL=${PUBLIC_BASE_URL:-https://sme-api-620338396268.asia-south1.run.app}"
       TEL_SECRETS=",SCHEDULER_PASSWORD=sme-scheduler-password:latest"
@@ -128,6 +133,7 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
     for pair in EXOTEL_STREAM_SECRET=sme-exotel-stream-secret EXOTEL_SID=sme-exotel-sid EXOTEL_API_KEY=sme-exotel-api-key EXOTEL_API_TOKEN=sme-exotel-api-token; do
       if can_read "${pair#*=}"; then TEL_SECRETS="$TEL_SECRETS,${pair}:latest"; else echo "inbound calls: sme-api-run cannot read ${pair#*=} yet (owner step); left out" >&2; fi
     done
+    TEL_SECRETS="$TEL_SECRETS$SANDBOX_NUMBERS_SECRET"
   fi
   RUN_SA="sme-api-run@$PROJECT_ID.iam.gserviceaccount.com" AGENTS_ENABLED=true CPU_ALWAYS=true MIN_INSTANCES=0 \
     EXTRA_ENV="$WA_ENV,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_SPEAKER_CHECK=shadow,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam,EXOTEL_API_BASE=https://api.exotel.com,AUTH_GOOGLE_CLIENT_ID=620338396268-k9tj60ci8equ4lsc120djtggj87ph66s.apps.googleusercontent.com,ASSISTANT_WORK_TENANTS=$ASSISTANT_WORK_TENANTS" \
