@@ -235,10 +235,13 @@ describe("server-only code stays on the server", () => {
     // And the ⌘K palette's records (owner, 6 Nov): this app's OWN route `<workspace>/search?q=` a moment after the typing stops (a path built from the workspace id): no token, never the API.
     const PALETTE_SEARCH = path.join("components", "v2", "app", "palette", "CommandPalette.tsx");
     expect(read(path.join(WEB_ROOT, PALETTE_SEARCH))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
+    // And My AI team v2 (job ai-team-v2): the day's poll every 20 s, a helper's panel and the stand-up's sound, from this app's OWN routes `<workspace>/ai-team/day|panel|standup-audio` (paths built from the workspace id): no token, never the API.
+    const AITEAM = ["AiTeamView.tsx", "HelperPanel.tsx", "StandupCard.tsx"].map((f) => path.join("components", "v2", "app", "aiteam", f));
+    for (const f of AITEAM) expect(read(path.join(WEB_ROOT, f))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     // And the home page's voices (landing v2): the manifest of the recorded clips, a static file of this site (`/audio/site/manifest.json`), read once the page is idle: no token, never the API.
     const SITE_VOICES = path.join("components", "v2", "site", "home2", "voice.ts");
     expect(read(path.join(WEB_ROOT, SITE_VOICES))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
-    expect(callers).toEqual([NAV_COUNTS, PALETTE_SEARCH, SITE_VOICES, ACTIVITY_POLL, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, WORK_POST, path.join("lib", "api", "client.ts")].sort());
+    expect(callers).toEqual([...AITEAM, NAV_COUNTS, PALETTE_SEARCH, SITE_VOICES, ACTIVITY_POLL, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, WORK_POST, path.join("lib", "api", "client.ts")].sort());
     expect(read(path.join(WEB_ROOT, WORK_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, CONVERSATION_CALLS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, CONTEXT_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
