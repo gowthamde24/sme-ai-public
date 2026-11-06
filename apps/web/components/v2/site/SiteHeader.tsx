@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
-import { btnPrimary, container } from "@/components/v2/site/ui";
+import { container } from "@/components/v2/site/ui";
 import { Wordmark } from "@/components/v2/Wordmark";
 import { BRAND_NAME } from "@/design/brand";
 import type { SiteT } from "@/i18n/site";
@@ -30,15 +30,22 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
   // website mode (job DQ): the app is closed, so there is no sign-in and the one button is "Book a demo" (to the form on the pages that have it)
   const web = websiteOnly();
   const start = startEntry(t, lang, t("nav.start"), { hasForm: waitlistMode() !== "off" && (target.kind !== "page" || target.page === "contact") });
+  // landing v2 (owner approved 6 Nov 2026): the six parts of the home page; from another page they lead back to it
   const nav = [
-    { href: `${base}#day`, label: t("nav.how"), here: false },
-    { href: `${base}#leaddesk`, label: t("nav.leaddesk"), here: false },
-    { href: `${base}#industries`, label: t("nav.industries"), here: false },
-    { href: onHome ? "#plans" : pricingPage, label: t("nav.pricing"), here: target.kind === "page" && target.page === "pricing" },
-    { href: `${base}#faq`, label: t("nav.faq"), here: false },
+    { href: `${base}#call`, label: t("h2.nav.call"), here: false },
+    { href: `${base}#finder`, label: t("h2.nav.finder"), here: false },
+    { href: `${base}#team`, label: t("h2.nav.team"), here: false },
+    { href: `${base}#number`, label: t("h2.nav.number"), here: false },
+    { href: onHome ? "#plans" : pricingPage, label: t("h2.nav.plans"), here: target.kind === "page" && target.page === "pricing" },
+    { href: `${base}#faq`, label: t("h2.nav.faq"), here: false },
   ];
+  // "Get early access": the home page's closing form; on a page without the form, where "start" leads today
+  // (website mode keeps its "Book a demo"; with the app open, the home page's form is "Get early access")
+  const early = !web && onHome && waitlistMode() !== "off" ? { href: "#demo", label: t("h2.nav.early"), short: t("h2.nav.early.short") } : { href: start.href, label: start.label, short: start.label };
   return (
-    <header className="[position:sticky] top-0 z-30 border-b border-line bg-bg/90 backdrop-blur">
+    <header className="[position:sticky] top-0 z-30 border-b border-line bg-bg/75 backdrop-blur-lg backdrop-saturate-150">
+      {/* the scroll's progress, a thin line under the bar (drawn by the scroll where the browser can; none where it cannot) */}
+      <span aria-hidden="true" className="h2-prog" />
       <div className={`${container} flex min-h-16 items-center gap-2 py-2 sm:gap-3`}>
         <Link href={home} className="shrink-0 whitespace-nowrap rounded-md" aria-label={BRAND_NAME}>
           <Wordmark />
@@ -53,14 +60,15 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
           {web ? null : (
             <Link href="/login" className="hidden min-h-11 min-w-11 shrink-0 items-center justify-center whitespace-nowrap rounded-lg px-3 text-[15px] font-bold text-ink hover:bg-surface-2 md:inline-flex">
-              {t("nav.signin")}
+              {t("h2.nav.login")}
             </Link>
           )}
           <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} />
           <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
           <span className="hidden sm:block">
-            <Link href={start.href} className={`${btnPrimary} !min-h-11 whitespace-nowrap px-[18px] text-[15px] font-bold`}>
-              {start.label}
+            <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-ink px-[18px] text-[15px] font-bold text-bg">
+              <span className="xl:hidden">{early.short}</span>
+              <span className="max-xl:hidden">{early.label}</span>
             </Link>
           </span>
           <details className="group relative lg:hidden">
@@ -80,13 +88,13 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
                 {web ? null : (
                   <li>
                     <Link href="/login" className={`${link} w-full text-brand-text`}>
-                      {t("nav.signin")}
+                      {t("h2.nav.login")}
                     </Link>
                   </li>
                 )}
                 <li className="sm:hidden">
-                  <Link href={start.href} className={`${link} w-full font-semibold text-brand-text`}>
-                    {start.label}
+                  <Link href={early.href} className={`${link} w-full font-semibold text-brand-text`}>
+                    {early.label}
                   </Link>
                 </li>
               </ul>

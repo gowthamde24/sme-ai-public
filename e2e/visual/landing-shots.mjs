@@ -1,0 +1,117 @@
+// The public home page, landing v2 (job landing-v2): pictures and the page's own checks, on a production build (the visual tests' stand-in answers anything the server asks; the home page asks nothing).
+//   node e2e/visual/landing-shots.mjs [--no-build] [--out DIR] [--set quick|full]
+// quick (the default): 1440 and 390, light, English. full: 1440, 1366, 390 and 360, light and dark, English and Telugu, and a reduced-motion set.
+// Checks: no horizontal page scroll (360 above all); Try it (a business and a language, then Send: the caption says that language's line, the matching outcome lights); the page reads without script. Exit 1 when a check fails.
+import { execFileSync, spawn } from "node:child_process";
+import { existsSync, mkdirSync } from "node:fs";
+import { createRequire } from "node:module";
+import net from "node:net";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const WEB_DIR = path.join(HERE, "..", "..", "apps", "web");
+const PORT = 3016;
+const WEB_URL = `http://127.0.0.1:${PORT}`;
+// the public home page reads no API and no session: the build only needs addresses to exist (nothing listens there)
+const ENV = { NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:54998", NEXT_PUBLIC_SUPABASE_ANON_KEY: "landing-anon", NEXT_PUBLIC_API_BASE_URL: "http://127.0.0.1:54998", WAITLIST: "mock" };
+const busy = (port) => new Promise((res) => { const s = net.connect(port, "127.0.0.1"); s.once("connect", () => { s.destroy(); res(true); }); s.once("error", () => res(false)); });
+async function startApp({ build, log }) {
+  if (await busy(PORT)) throw new Error(`port ${PORT} is already in use (it is not killed: free it or wait)`);
+  if (build) {
+    console.log(`${log}: building the web app`);
+    execFileSync("npm", ["run", "build"], { cwd: WEB_DIR, env: { ...process.env, ...ENV }, stdio: ["ignore", "ignore", "inherit"] });
+  } else if (!existsSync(path.join(WEB_DIR, ".next", "BUILD_ID"))) throw new Error("--no-build, but there is no build");
+  const web = spawn(process.execPath, [path.join(WEB_DIR, "node_modules", "next", "dist", "bin", "next"), "start", "-p", String(PORT), "-H", "127.0.0.1"], { cwd: WEB_DIR, env: { ...process.env, ...ENV }, stdio: "ignore" });
+  for (let i = 0; i < 120 && !(await busy(PORT)); i++) await new Promise((r) => setTimeout(r, 500));
+  return { close: async () => void web.kill("SIGTERM") };
+}
+
+const require = createRequire(import.meta.url);
+const { chromium } = require(path.join(WEB_DIR, "node_modules", "playwright-core"));
+const arg = (name, fallback) => {
+  const i = process.argv.indexOf(`--${name}`);
+  return i > 0 ? process.argv[i + 1] : fallback;
+};
+const OUT = path.resolve(arg("out", "/Volumes/Stack19/stack19/v2-overnight/shots-landing"));
+const SET = arg("set", "quick");
+const TAG = arg("tag", "");
+const fails = [];
+const check = (ok, what) => {
+  console.log(`${ok ? "ok  " : "FAIL"} ${what}`);
+  if (!ok) fails.push(what);
+};
+
+async function open(browser, { width, height = 900, theme = "light", lang = "en", motion = "no-preference", script = true }) {
+  const ctx = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 2, colorScheme: theme, reducedMotion: motion, javaScriptEnabled: script, timezoneId: "Asia/Kolkata" });
+  await ctx.addCookies([{ name: "sme_consent", value: "1.a0", url: WEB_URL }, { name: "sme_lang", value: lang, url: WEB_URL }, { name: "sme_theme", value: theme, url: WEB_URL }]);
+  const p = await ctx.newPage();
+  await p.goto(`${WEB_URL}/`, { waitUntil: "domcontentloaded", timeout: 60_000 });
+  await p.waitForLoadState("networkidle", { timeout: 15_000 }).catch(() => null);
+  await p.waitForTimeout(script ? 2600 : 300); // the headline's rise and the stage's start-up
+  return { ctx, p };
+}
+const noSideScroll = (p) => p.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
+const shot = (p, name, full = false) => p.screenshot({ path: path.join(OUT, `${TAG}${name}.png`), fullPage: full });
+
+const { close } = await startApp({ build: !process.argv.includes("--no-build"), log: "landing-shots" });
+try {
+  mkdirSync(OUT, { recursive: true });
+  const browser = await chromium.launch();
+  const views =
+    SET === "full"
+      ? [1440, 1366, 390, 360].flatMap((width) => ["light", "dark"].flatMap((theme) => ["en", "te"].map((lang) => ({ width, theme, lang, height: width < 768 ? 844 : 900 }))))
+      : [
+          { width: 1440, theme: "light", lang: "en" },
+          { width: 390, theme: "light", lang: "en", height: 844 },
+        ];
+  for (const v of views) {
+    const { ctx, p } = await open(browser, v);
+    const name = `${v.width}-${v.theme}-${v.lang}`;
+    check(await noSideScroll(p), `${name}: no horizontal page scroll`);
+    await shot(p, `${name}-top`);
+    await shot(p, `${name}-full`, true);
+    // each section on its own (scrolled into view, a moment to draw)
+    for (const sel of ['[data-part="greetings"]', "#call", "#finder", "#team", "#after", "#number", "#calc", "#plans", "#faq", "#demo", "footer"]) {
+      const el = p.locator(sel).first();
+      if (!(await el.count())) continue;
+      await el.scrollIntoViewIfNeeded();
+      await p.waitForTimeout(1800);
+      await el.screenshot({ path: path.join(OUT, `${TAG}${name}-${sel.replace(/[^a-z]/g, "") || "section"}.png`) });
+    }
+    await ctx.close();
+  }
+  // Try it: Pavers, Hindi, Send -> the caption says the Hindi line, and the quote outcome lights
+  {
+    const { ctx, p } = await open(browser, { width: 1440 });
+    await p.click('[data-part="try"] [data-try-biz="build"]');
+    await p.click('[data-part="try"] [data-try-lang="hi"]');
+    await p.click('[data-part="try"] [data-part="send"]');
+    await p.waitForFunction(() => document.querySelector('[data-part="hero-stage"]')?.getAttribute("data-lit-out") === "1", null, { timeout: 30_000 }).catch(() => null);
+    const said = await p.evaluate(() => document.querySelector('[data-part="caption"] [data-part="caption-words"]')?.textContent?.trim() ?? "");
+    check(said.startsWith("नमस्ते! आपने अभी जो पूछताछ भेजी"), `Try it: the caption says the Hindi line (${said.slice(0, 40)})`);
+    check((await p.locator('[data-out="1"][data-lit]').count()) === 1, "Try it: the quote outcome lights");
+    await shot(p, "try-pavers-hindi");
+    await ctx.close();
+  }
+  // reduced motion: one still frame, the whole line shown
+  {
+    const { ctx, p } = await open(browser, { width: 1440, motion: "reduce" });
+    const said = await p.evaluate(() => [...document.querySelectorAll('[data-part="caption"] .h2-w')].every((e) => e.hasAttribute("data-said")));
+    check(said, "reduced motion: the caption's whole line is shown");
+    await shot(p, "1440-reduced-motion-top");
+    await ctx.close();
+  }
+  // no script: the words are all there
+  {
+    const { ctx, p } = await open(browser, { width: 1440, script: false });
+    const t = await p.evaluate(() => document.body.innerText);
+    check(t.includes("Every enquiry answered.") && t.includes("Send an enquiry") && t.includes("Facebook and Instagram ads"), "without script: the hero reads fully");
+    await ctx.close();
+  }
+  await browser.close();
+  console.log(`landing-shots: pictures in ${OUT}`);
+} finally {
+  await close();
+}
+if (fails.length) process.exitCode = 1;

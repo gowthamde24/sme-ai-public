@@ -1,5 +1,6 @@
 import { JsonLd } from "@/components/v2/site/JsonLd";
-import { CloseBand, DaySection, FaqBand, HomeHero, IndustriesSection, LeadDeskRows, PlansBand, PromisesBand, SourcesBand } from "@/components/v2/site/HomeSections";
+import { HomeV2 } from "@/components/v2/site/home2/HomeV2";
+import { CloseBand, DaySection, FaqBand, IndustriesSection, LeadDeskRows, PlansBand, PromisesBand, SourcesBand } from "@/components/v2/site/HomeSections";
 import { hasWaitlist, WaitlistSection, type WaitlistAction } from "@/components/v2/site/WaitlistSection";
 import { BRAND_NAME } from "@/design/brand";
 import { fillPlain } from "@/i18n/fill";
@@ -18,7 +19,7 @@ import { sitePath } from "@/lib/site/paths";
 export function HomePage({ t, lang, waitlist }: { t: SiteT; lang: Lang; waitlist?: WaitlistAction }) {
   return (
     <>
-      <HomeHero t={t} lang={lang} hasForm={hasWaitlist(waitlist)} />
+      <HomeV2 t={t} lang={lang} hasForm={hasWaitlist(waitlist)} />
       <SourcesBand t={t} />
       <DaySection t={t} />
       <LeadDeskRows t={t} />

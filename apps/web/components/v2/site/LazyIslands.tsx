@@ -11,3 +11,7 @@ export const PaverCalculator = dynamic(() => import("./PaverCalculator").then((m
 export const ContactForm = dynamic(() => import("./ContactForm").then((m) => m.ContactForm));
 // job DQ: the "book a demo" form is on the home page, the business types' pages and the contact page; it is a chunk of its own like the contact form
 export const WaitlistForm = dynamic(() => import("./WaitlistForm").then((m) => m.WaitlistForm));
+// landing v2 (job landing-v2): each moving scene of the home page is a chunk of its own, rendered on the server too, so its words are in the page before the chunk arrives
+export const HeroStage = dynamic(() => import("./home2/HeroStage").then((m) => m.HeroStage));
+export const CallDemo = dynamic(() => import("./home2/CallDemo").then((m) => m.CallDemo));
+export const RadarFinder = dynamic(() => import("./home2/RadarFinder").then((m) => m.RadarFinder));

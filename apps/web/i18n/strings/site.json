@@ -6000,5 +6000,1600 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "h2.nav.call": {
+  "en": "Hear a call",
+  "te": "కాల్ వినండి",
+  "hi": "कॉल सुनें",
+  "kn": "ಕರೆ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.nav.finder": {
+  "en": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
+  "hi": "लीड फ़ाइंडर",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.nav.team": {
+  "en": "AI team",
+  "te": "AI టీమ్",
+  "hi": "AI टीम",
+  "kn": "AI ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.nav.number": {
+  "en": "Business number",
+  "te": "బిజినెస్ నంబర్",
+  "hi": "बिज़नेस नंबर",
+  "kn": "ಬಿಸಿನೆಸ್ ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.nav.plans": {
+  "en": "Plans",
+  "te": "ప్లాన్‌లు",
+  "hi": "प्लान",
+  "kn": "ಪ್ಲಾನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.nav.faq": {
+  "en": "Questions",
+  "te": "ప్రశ్నలు",
+  "hi": "सवाल",
+  "kn": "ಪ್ರಶ್ನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.nav.login": {
+  "en": "Log in",
+  "te": "లాగిన్",
+  "hi": "लॉग इन",
+  "kn": "ಲಾಗಿನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.nav.early": {
+  "en": "Get early access",
+  "te": "ముందస్తు యాక్సెస్ పొందండి",
+  "hi": "अर्ली ऐक्सेस पाएँ",
+  "kn": "ಮುಂಚಿತ ಪ್ರವೇಶ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.nav.early.short": {
+  "en": "Early access",
+  "te": "ముందస్తు యాక్సెస్",
+  "hi": "अर्ली ऐक्सेस",
+  "kn": "ಮುಂಚಿತ ಪ್ರವೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.hero.l1": {
+  "en": "Every enquiry answered.",
+  "te": "ప్రతి ఎంక్వైరీకి జవాబు.",
+  "hi": "हर पूछताछ का जवाब।",
+  "kn": "ಪ್ರತಿ ವಿಚಾರಣೆಗೆ ಉತ್ತರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.hero.l2": {
+  "en": "New customers found.",
+  "te": "కొత్త కస్టమర్లు దొరుకుతారు.",
+  "hi": "नए ग्राहक ढूँढे गए।",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರು ಸಿಗುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.hero.sub": {
+  "en": "{brand} is an AI workforce for Indian small businesses. An enquiry from any source gets a call back within 2 minutes, in the customer's own language. Meanwhile the Lead Finder looks for new buyers near you.",
+  "te": "{brand} భారతదేశ చిన్న వ్యాపారాల కోసం ఒక AI వర్క్‌ఫోర్స్. ఏ మార్గం నుంచి వచ్చిన ఎంక్వైరీకైనా 2 నిమిషాల్లో, కస్టమర్ సొంత భాషలో తిరిగి కాల్ వెళ్తుంది. అదే సమయంలో లీడ్ ఫైండర్ మీ దగ్గర కొత్త కొనుగోలుదారుల కోసం వెతుకుతుంది.",
+  "hi": "{brand} भारत के छोटे कारोबारों के लिए एक AI वर्कफ़ोर्स है। किसी भी जगह से आई पूछताछ पर 2 मिनट के अंदर, ग्राहक की अपनी भाषा में कॉल बैक होता है। साथ ही लीड फ़ाइंडर आपके पास नए खरीदार ढूँढता है।",
+  "kn": "{brand} ಭಾರತದ ಸಣ್ಣ ವ್ಯಾಪಾರಗಳಿಗಾಗಿ ಒಂದು AI ವರ್ಕ್‌ಫೋರ್ಸ್. ಯಾವುದೇ ಮೂಲದಿಂದ ಬಂದ ವಿಚಾರಣೆಗೆ 2 ನಿಮಿಷಗಳೊಳಗೆ, ಗ್ರಾಹಕರ ಸ್ವಂತ ಭಾಷೆಯಲ್ಲಿ ಮರಳಿ ಕರೆ ಹೋಗುತ್ತದೆ. ಅದೇ ಸಮಯದಲ್ಲಿ ಲೀಡ್ ಫೈಂಡರ್ ನಿಮ್ಮ ಹತ್ತಿರ ಹೊಸ ಖರೀದಿದಾರರನ್ನು ಹುಡುಕುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.hero.sub.phone": {
+  "en": "An enquiry from any source gets a call back within 2 minutes, in the customer's own language. The Lead Finder looks for new buyers near you.",
+  "te": "ఏ మార్గం నుంచి వచ్చిన ఎంక్వైరీకైనా 2 నిమిషాల్లో, కస్టమర్ సొంత భాషలో తిరిగి కాల్ వెళ్తుంది. లీడ్ ఫైండర్ మీ దగ్గర కొత్త కొనుగోలుదారుల కోసం వెతుకుతుంది.",
+  "hi": "किसी भी जगह से आई पूछताछ पर 2 मिनट के अंदर, ग्राहक की अपनी भाषा में कॉल बैक होता है। लीड फ़ाइंडर आपके पास नए खरीदार ढूँढता है।",
+  "kn": "ಯಾವುದೇ ಮೂಲದಿಂದ ಬಂದ ವಿಚಾರಣೆಗೆ 2 ನಿಮಿಷಗಳೊಳಗೆ, ಗ್ರಾಹಕರ ಸ್ವಂತ ಭಾಷೆಯಲ್ಲಿ ಮರಳಿ ಕರೆ ಹೋಗುತ್ತದೆ. ಲೀಡ್ ಫೈಂಡರ್ ನಿಮ್ಮ ಹತ್ತಿರ ಹೊಸ ಖರೀದಿದಾರರನ್ನು ಹುಡುಕುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.hero.start": {
+  "en": "Start {trial_days}-day trial",
+  "te": "{trial_days} రోజుల ట్రయల్ మొదలుపెట్టండి",
+  "hi": "{trial_days} दिन का ट्रायल शुरू करें",
+  "kn": "{trial_days} ದಿನಗಳ ಟ್ರಯಲ್ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.hero.hear": {
+  "en": "Hear a call",
+  "te": "కాల్ వినండి",
+  "hi": "कॉल सुनें",
+  "kn": "ಕರೆ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.src.1": {
+  "en": "Facebook and Instagram ads",
+  "te": "ఫేస్‌బుక్, ఇన్‌స్టాగ్రామ్ యాడ్స్",
+  "hi": "फ़ेसबुक और इंस्टाग्राम विज्ञापन",
+  "kn": "ಫೇಸ್‌ಬುಕ್, ಇನ್‌ಸ್ಟಾಗ್ರಾಮ್ ಜಾಹೀರಾತುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.src.2": {
+  "en": "IndiaMART, JustDial",
+  "te": "ఇండియామార్ట్, జస్ట్‌డయల్",
+  "hi": "इंडियामार्ट, जस्टडायल",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್, ಜಸ್ಟ್‌ಡಯಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.src.3": {
+  "en": "Your website",
+  "te": "మీ వెబ్‌సైట్",
+  "hi": "आपकी वेबसाइट",
+  "kn": "ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.src.4": {
+  "en": "WhatsApp messages",
+  "te": "వాట్సాప్ మెసేజ్‌లు",
+  "hi": "वॉट्सऐप मैसेज",
+  "kn": "ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.src.5": {
+  "en": "Missed calls",
+  "te": "మిస్డ్ కాల్స్",
+  "hi": "मिस्ड कॉल",
+  "kn": "ಮಿಸ್ಡ್ ಕಾಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.src.6": {
+  "en": "Emails, sheets, walk-ins",
+  "te": "ఈమెయిల్స్, షీట్లు, నేరుగా వచ్చేవాళ్లు",
+  "hi": "ईमेल, शीट, दुकान पर आए लोग",
+  "kn": "ಇಮೇಲ್, ಶೀಟ್, ನೇರವಾಗಿ ಬಂದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.hero.found": {
+  "en": "Lead Finder: {n} new businesses found nearby",
+  "te": "లీడ్ ఫైండర్: దగ్గర్లో {n} కొత్త వ్యాపారాలు దొరికాయి",
+  "hi": "लीड फ़ाइंडर: पास में {n} नए कारोबार मिले",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್: ಹತ್ತಿರ {n} ಹೊಸ ವ್ಯಾಪಾರಗಳು ಸಿಕ್ಕಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.mode.picked": {
+  "en": "Customer picked up",
+  "te": "కస్టమర్ ఫోన్ ఎత్తారు",
+  "hi": "ग्राहक ने फ़ोन उठाया",
+  "kn": "ಗ್ರಾಹಕರು ಫೋನ್ ಎತ್ತಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.mode.listening": {
+  "en": "Listening",
+  "te": "వింటోంది",
+  "hi": "सुन रही है",
+  "kn": "ಕೇಳುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.mode.in": {
+  "en": "Your enquiry is in. Calling you",
+  "te": "మీ ఎంక్వైరీ వచ్చింది. మీకు కాల్ చేస్తోంది",
+  "hi": "आपकी पूछताछ आ गई। आपको कॉल कर रही है",
+  "kn": "ನಿಮ್ಮ ವಿಚಾರಣೆ ಬಂದಿದೆ. ನಿಮಗೆ ಕರೆ ಮಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.mode.calling": {
+  "en": "Calling you in {lang}",
+  "te": "{lang}లో మీకు కాల్ చేస్తోంది",
+  "hi": "{lang} में आपको कॉल कर रही है",
+  "kn": "{lang}ದಲ್ಲಿ ನಿಮಗೆ ಕರೆ ಮಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.mode.wait": {
+  "en": "Waiting for your reply",
+  "te": "మీ జవాబు కోసం చూస్తోంది",
+  "hi": "आपके जवाब का इंतज़ार",
+  "kn": "ನಿಮ್ಮ ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.lang.te": {
+  "en": "Telugu",
+  "te": "తెలుగు",
+  "hi": "तेलुगु",
+  "kn": "ತೆಲುಗು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.lang.ta": {
+  "en": "Tamil",
+  "te": "తమిళం",
+  "hi": "तमिल",
+  "kn": "ತಮಿಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.lang.kn": {
+  "en": "Kannada",
+  "te": "కన్నడ",
+  "hi": "कन्नड़",
+  "kn": "ಕನ್ನಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.lang.ml": {
+  "en": "Malayalam",
+  "te": "మలయాళం",
+  "hi": "मलयालम",
+  "kn": "ಮಲಯಾಳಂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.lang.hi": {
+  "en": "Hindi",
+  "te": "హిందీ",
+  "hi": "हिन्दी",
+  "kn": "ಹಿಂದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.lang.mr": {
+  "en": "Marathi",
+  "te": "మరాఠీ",
+  "hi": "मराठी",
+  "kn": "ಮರಾಠಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.lang.en": {
+  "en": "English",
+  "te": "ఇంగ్లీష్",
+  "hi": "अंग्रेज़ी",
+  "kn": "ಇಂಗ್ಲಿಷ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.out.1.t": {
+  "en": "Called back in 1 min 52 s",
+  "te": "1 నిమి 52 సెకన్లలో తిరిగి కాల్",
+  "hi": "1 मिनट 52 सेकंड में कॉल बैक",
+  "kn": "1 ನಿಮಿ 52 ಸೆಕೆಂಡಿನಲ್ಲಿ ಮರಳಿ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.out.1.d": {
+  "en": "In the customer's language",
+  "te": "కస్టమర్ భాషలో",
+  "hi": "ग्राहक की भाषा में",
+  "kn": "ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.out.2.t": {
+  "en": "Quote ready",
+  "te": "కోట్ సిద్ధం",
+  "hi": "कोटेशन तैयार",
+  "kn": "ಕೋಟ್ ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.out.2.d": {
+  "en": "Waiting for your OK",
+  "te": "మీ OK కోసం చూస్తోంది",
+  "hi": "आपके OK का इंतज़ार",
+  "kn": "ನಿಮ್ಮ OKಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.out.3.t": {
+  "en": "Shop visit booked",
+  "te": "షాప్ విజిట్ బుక్ అయింది",
+  "hi": "दुकान पर आना तय",
+  "kn": "ಅಂಗಡಿ ಭೇಟಿ ಬುಕ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.out.3.d": {
+  "en": "Saturday, 11 am",
+  "te": "శనివారం, ఉదయం 11",
+  "hi": "शनिवार, सुबह 11 बजे",
+  "kn": "ಶನಿವಾರ, ಬೆಳಿಗ್ಗೆ 11",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try": {
+  "en": "Try it",
+  "te": "ప్రయత్నించండి",
+  "hi": "आज़माएँ",
+  "kn": "ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.biz": {
+  "en": "Your business",
+  "te": "మీ వ్యాపారం",
+  "hi": "आपका कारोबार",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.lang": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.saree": {
+  "en": "Sarees",
+  "te": "చీరలు",
+  "hi": "साड़ियाँ",
+  "kn": "ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.build": {
+  "en": "Pavers",
+  "te": "పేవర్లు",
+  "hi": "पेवर",
+  "kn": "ಪೇವರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.coach": {
+  "en": "College",
+  "te": "కాలేజ్",
+  "hi": "कॉलेज",
+  "kn": "ಕಾಲೇಜು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.send": {
+  "en": "Send an enquiry",
+  "te": "ఎంక్వైరీ పంపండి",
+  "hi": "पूछताछ भेजें",
+  "kn": "ವಿಚಾರಣೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.note": {
+  "en": "Pick a business and a language, send an enquiry, and watch it get a call back.",
+  "te": "ఒక వ్యాపారం, ఒక భాష ఎంచుకుని ఎంక్వైరీ పంపండి. దానికి తిరిగి కాల్ ఎలా వెళ్తుందో చూడండి.",
+  "hi": "एक कारोबार और भाषा चुनें, पूछताछ भेजें और देखें कि उस पर कॉल बैक कैसे होता है।",
+  "kn": "ಒಂದು ವ್ಯಾಪಾರ ಮತ್ತು ಭಾಷೆ ಆರಿಸಿ, ವಿಚಾರಣೆ ಕಳುಹಿಸಿ, ಅದಕ್ಕೆ ಮರಳಿ ಕರೆ ಹೇಗೆ ಹೋಗುತ್ತದೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.sent": {
+  "en": "Your enquiry from {src}: “{ask}”",
+  "te": "{src} నుంచి మీ ఎంక్వైరీ: “{ask}”",
+  "hi": "{src} से आपकी पूछताछ: “{ask}”",
+  "kn": "{src} ಇಂದ ನಿಮ್ಮ ವಿಚಾರಣೆ: “{ask}”",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.src.saree": {
+  "en": "an Instagram ad",
+  "te": "ఇన్‌స్టాగ్రామ్ యాడ్",
+  "hi": "इंस्टाग्राम विज्ञापन",
+  "kn": "ಇನ್‌ಸ್ಟಾಗ್ರಾಮ್ ಜಾಹೀರಾತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.src.build": {
+  "en": "IndiaMART",
+  "te": "ఇండియామార్ట్",
+  "hi": "इंडियामार्ट",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.src.coach": {
+  "en": "your website",
+  "te": "మీ వెబ్‌సైట్",
+  "hi": "आपकी वेबसाइट",
+  "kn": "ನಿಮ್ಮ ವೆಬ್‌ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.ask.saree": {
+  "en": "A Kanchi silk saree for a wedding, under ₹15,000",
+  "te": "పెళ్లికి కంచి పట్టు చీర, ₹15,000 లోపు",
+  "hi": "शादी के लिए कांजीवरम सिल्क साड़ी, ₹15,000 के अंदर",
+  "kn": "ಮದುವೆಗೆ ಕಂಚಿ ರೇಷ್ಮೆ ಸೀರೆ, ₹15,000 ಒಳಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.ask.build": {
+  "en": "1,200 sq ft of paver blocks for parking",
+  "te": "పార్కింగ్‌కి 1,200 చ.అ. పేవర్ బ్లాకులు",
+  "hi": "पार्किंग के लिए 1,200 वर्ग फ़ुट पेवर ब्लॉक",
+  "kn": "ಪಾರ್ಕಿಂಗ್‌ಗೆ 1,200 ಚ.ಅ. ಪೇವರ್ ಬ್ಲಾಕ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.ask.coach": {
+  "en": "The evening CA Foundation batch",
+  "te": "సాయంత్రం CA ఫౌండేషన్ బ్యాచ్",
+  "hi": "शाम का CA फ़ाउंडेशन बैच",
+  "kn": "ಸಂಜೆಯ CA ಫೌಂಡೇಶನ್ ಬ್ಯಾಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.out.saree.t": {
+  "en": "Shop visit booked",
+  "te": "షాప్ విజిట్ బుక్ అయింది",
+  "hi": "दुकान पर आना तय",
+  "kn": "ಅಂಗಡಿ ಭೇಟಿ ಬುಕ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.out.saree.d": {
+  "en": "Saturday, 11 am",
+  "te": "శనివారం, ఉదయం 11",
+  "hi": "शनिवार, सुबह 11 बजे",
+  "kn": "ಶನಿವಾರ, ಬೆಳಿಗ್ಗೆ 11",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.out.build.t": {
+  "en": "Quote ready",
+  "te": "కోట్ సిద్ధం",
+  "hi": "कोटेशन तैयार",
+  "kn": "ಕೋಟ್ ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.out.build.d": {
+  "en": "Waiting for your OK",
+  "te": "మీ OK కోసం చూస్తోంది",
+  "hi": "आपके OK का इंतज़ार",
+  "kn": "ನಿಮ್ಮ OKಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.out.coach.t": {
+  "en": "Demo class booked",
+  "te": "డెమో క్లాస్ బుక్ అయింది",
+  "hi": "डेमो क्लास तय",
+  "kn": "ಡೆಮೊ ತರಗತಿ ಬುಕ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.try.out.coach.d": {
+  "en": "Wednesday, 6:30 pm",
+  "te": "బుధవారం, సాయంత్రం 6:30",
+  "hi": "बुधवार, शाम 6:30",
+  "kn": "ಬುಧವಾರ, ಸಂಜೆ 6:30",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.hear": {
+  "en": "Hear it",
+  "te": "వినండి",
+  "hi": "सुनें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.hear.on": {
+  "en": "Sound on",
+  "te": "శబ్దం ఆన్",
+  "hi": "आवाज़ चालू",
+  "kn": "ಧ್ವನಿ ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.greet.label": {
+  "en": "Seven languages",
+  "te": "ఏడు భాషలు",
+  "hi": "सात भाषाएँ",
+  "kn": "ಏಳು ಭಾಷೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.greet.line": {
+  "en": "It answers in the language the customer speaks, including the mixed way people really talk.",
+  "te": "కస్టమర్ మాట్లాడే భాషలోనే జవాబిస్తుంది, జనం నిజంగా కలిపి మాట్లాడే తీరులో కూడా.",
+  "hi": "ग्राहक जिस भाषा में बोले, उसी में जवाब देती है, लोग जैसे मिला-जुलाकर बोलते हैं वैसे भी।",
+  "kn": "ಗ್ರಾಹಕರು ಮಾತಾಡುವ ಭಾಷೆಯಲ್ಲೇ ಉತ್ತರಿಸುತ್ತದೆ, ಜನ ನಿಜವಾಗಿ ಬೆರೆಸಿ ಮಾತಾಡುವ ರೀತಿಯಲ್ಲೂ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.title": {
+  "en": "Hear a call, or just read it.",
+  "te": "కాల్ వినండి, లేదా చదవండి.",
+  "hi": "कॉल सुनें, या बस पढ़ें।",
+  "kn": "ಕರೆ ಕೇಳಿ, ಇಲ್ಲವೇ ಓದಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.sub": {
+  "en": "The orb listens while the customer talks and comes alive when the assistant answers. Every word lights up as it is said, with English underneath.",
+  "te": "కస్టమర్ మాట్లాడేటప్పుడు ఆర్బ్ వింటుంది, అసిస్టెంట్ జవాబిచ్చేటప్పుడు కదులుతుంది. ప్రతి మాట పలికినప్పుడు వెలుగుతుంది, కింద అర్థం కూడా ఉంటుంది.",
+  "hi": "ग्राहक बोलते समय ऑर्ब सुनता है और असिस्टेंट के जवाब पर जाग उठता है। हर शब्द बोलते ही चमकता है, नीचे उसका मतलब भी।",
+  "kn": "ಗ್ರಾಹಕರು ಮಾತಾಡುವಾಗ ಆರ್ಬ್ ಕೇಳುತ್ತದೆ, ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಿಸುವಾಗ ಜೀವ ಪಡೆಯುತ್ತದೆ. ಪ್ರತಿ ಪದ ಹೇಳಿದಾಗ ಬೆಳಗುತ್ತದೆ, ಕೆಳಗೆ ಅರ್ಥವೂ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.tabs": {
+  "en": "Your business",
+  "te": "మీ వ్యాపారం",
+  "hi": "आपका कारोबार",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.tab.saree": {
+  "en": "Sarees",
+  "te": "చీరలు",
+  "hi": "साड़ियाँ",
+  "kn": "ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.tab.build": {
+  "en": "Building materials",
+  "te": "బిల్డింగ్ మెటీరియల్స్",
+  "hi": "बिल्डिंग मटीरियल",
+  "kn": "ಕಟ್ಟಡ ಸಾಮಗ್ರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.tab.coach": {
+  "en": "Colleges",
+  "te": "కాలేజీలు",
+  "hi": "कॉलेज",
+  "kn": "ಕಾಲೇಜುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.calls": {
+  "en": "Calls",
+  "te": "కాల్స్",
+  "hi": "कॉल",
+  "kn": "ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.ai": {
+  "en": "AI assistant",
+  "te": "AI అసిస్టెంట్",
+  "hi": "AI असिस्टेंट",
+  "kn": "AI ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.ai.speaking": {
+  "en": "AI assistant, speaking",
+  "te": "AI అసిస్టెంట్ మాట్లాడుతోంది",
+  "hi": "AI असिस्टेंट बोल रही है",
+  "kn": "AI ಅಸಿಸ್ಟೆಂಟ್ ಮಾತಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.listening": {
+  "en": "{name}, the assistant is listening",
+  "te": "{name}, అసిస్టెంట్ వింటోంది",
+  "hi": "{name}, असिस्टेंट सुन रही है",
+  "kn": "{name}, ಅಸಿಸ್ಟೆಂಟ್ ಕೇಳುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.mode.listening": {
+  "en": "Listening",
+  "te": "వింటోంది",
+  "hi": "सुन रही है",
+  "kn": "ಕೇಳುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.mode.speaking": {
+  "en": "Speaking",
+  "te": "మాట్లాడుతోంది",
+  "hi": "बोल रही है",
+  "kn": "ಮಾತಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.mode.thinking": {
+  "en": "Thinking",
+  "te": "ఆలోచిస్తోంది",
+  "hi": "सोच रही है",
+  "kn": "ಯೋಚಿಸುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.mode.ended": {
+  "en": "Call ended",
+  "te": "కాల్ ముగిసింది",
+  "hi": "कॉल खत्म",
+  "kn": "ಕರೆ ಮುಗಿಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.speaking": {
+  "en": "Speaking {lang}",
+  "te": "{lang}లో మాట్లాడుతోంది",
+  "hi": "{lang} में बात",
+  "kn": "{lang}ದಲ್ಲಿ ಮಾತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.board": {
+  "en": "Leads board",
+  "te": "లీడ్స్ బోర్డ్",
+  "hi": "लीड बोर्ड",
+  "kn": "ಲೀಡ್ ಬೋರ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.talking": {
+  "en": "Talking now",
+  "te": "ఇప్పుడు మాట్లాడుతోంది",
+  "hi": "अभी बात हो रही है",
+  "kn": "ಈಗ ಮಾತಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.none": {
+  "en": "After the call, each next step appears here.",
+  "te": "కాల్ అయ్యాక, తర్వాతి ప్రతి పని ఇక్కడ కనిపిస్తుంది.",
+  "hi": "कॉल के बाद, हर अगला कदम यहाँ दिखेगा।",
+  "kn": "ಕರೆ ಮುಗಿದ ಮೇಲೆ, ಮುಂದಿನ ಪ್ರತಿ ಕೆಲಸ ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.replay": {
+  "en": "Replay the call",
+  "te": "కాల్ మళ్లీ చూడండి",
+  "hi": "कॉल फिर से चलाएँ",
+  "kn": "ಕರೆ ಮತ್ತೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.endnote": {
+  "en": "Call ended. The next steps are already happening on the right.",
+  "te": "కాల్ ముగిసింది. తర్వాతి పనులు కుడివైపు ఇప్పటికే జరుగుతున్నాయి.",
+  "hi": "कॉल खत्म। अगले कदम दाईं ओर पहले से हो रहे हैं।",
+  "kn": "ಕರೆ ಮುಗಿಯಿತು. ಮುಂದಿನ ಕೆಲಸಗಳು ಬಲಭಾಗದಲ್ಲಿ ಈಗಾಗಲೇ ನಡೆಯುತ್ತಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.note": {
+  "en": "Example calls for sample businesses. The names are made up.",
+  "te": "ఇవి నమూనా వ్యాపారాల ఉదాహరణ కాల్స్. పేర్లు కల్పితం.",
+  "hi": "ये नमूना कारोबारों की उदाहरण कॉल हैं। नाम बनावटी हैं।",
+  "kn": "ಇವು ಮಾದರಿ ವ್ಯಾಪಾರಗಳ ಉದಾಹರಣೆ ಕರೆಗಳು. ಹೆಸರುಗಳು ಕಲ್ಪಿತ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.source": {
+  "en": "IndiaMART enquiry",
+  "te": "ఇండియామార్ట్ ఎంక్వైరీ",
+  "hi": "इंडियामार्ट पूछताछ",
+  "kn": "ಇಂಡಿಯಾಮಾರ್ಟ್ ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.source": {
+  "en": "website form",
+  "te": "వెబ్‌సైట్ ఫారం",
+  "hi": "वेबसाइट फ़ॉर्म",
+  "kn": "ವೆಬ್‌ಸೈಟ್ ಫಾರ್ಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.coach.source": {
+  "en": "Instagram ad",
+  "te": "ఇన్‌స్టాగ్రామ్ యాడ్",
+  "hi": "इंस्टाग्राम विज्ञापन",
+  "kn": "ಇನ್‌ಸ್ಟಾಗ್ರಾಮ್ ಜಾಹೀರಾತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.col.1": {
+  "en": "On the call",
+  "te": "కాల్‌లో",
+  "hi": "कॉल पर",
+  "kn": "ಕರೆಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.col.2": {
+  "en": "Visit booked",
+  "te": "విజిట్ బుక్ అయింది",
+  "hi": "आना तय",
+  "kn": "ಭೇಟಿ ಬುಕ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.col.1": {
+  "en": "On the call",
+  "te": "కాల్‌లో",
+  "hi": "कॉल पर",
+  "kn": "ಕರೆಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.col.2": {
+  "en": "Quote waiting",
+  "te": "కోట్ ఎదురుచూస్తోంది",
+  "hi": "कोटेशन इंतज़ार में",
+  "kn": "ಕೋಟ್ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.coach.col.1": {
+  "en": "On the call",
+  "te": "కాల్‌లో",
+  "hi": "कॉल पर",
+  "kn": "ಕರೆಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.coach.col.2": {
+  "en": "Demo booked",
+  "te": "డెమో బుక్ అయింది",
+  "hi": "डेमो तय",
+  "kn": "ಡೆಮೊ ಬುಕ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.out.1.t": {
+  "en": "6 red Kanchi sarees on WhatsApp",
+  "te": "వాట్సాప్‌లో 6 ఎరుపు కంచి చీరలు",
+  "hi": "वॉट्सऐप पर 6 लाल कांजीवरम साड़ियाँ",
+  "kn": "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ 6 ಕೆಂಪು ಕಂಚಿ ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.out.1.d": {
+  "en": "Under ₹15,000, from your catalogue, because she asked.",
+  "te": "₹15,000 లోపు, మీ కేటలాగ్ నుంచి, ఆమె అడిగినందుకు.",
+  "hi": "₹15,000 के अंदर, आपके कैटलॉग से, क्योंकि उन्होंने माँगा।",
+  "kn": "₹15,000 ಒಳಗೆ, ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನಿಂದ, ಅವರು ಕೇಳಿದ್ದಕ್ಕೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.out.2.t": {
+  "en": "Shop visit, Saturday 11 am",
+  "te": "షాప్ విజిట్, శనివారం ఉదయం 11",
+  "hi": "दुकान पर आना, शनिवार सुबह 11",
+  "kn": "ಅಂಗಡಿ ಭೇಟಿ, ಶನಿವಾರ ಬೆಳಿಗ್ಗೆ 11",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.out.2.d": {
+  "en": "Reminder goes to Lakshmi on Friday evening.",
+  "te": "శుక్రవారం సాయంత్రం లక్ష్మికి గుర్తు చేస్తుంది.",
+  "hi": "शुक्रवार शाम लक्ष्मी को याद दिलाया जाएगा।",
+  "kn": "ಶುಕ್ರವಾರ ಸಂಜೆ ಲಕ್ಷ್ಮಿಗೆ ನೆನಪಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.out.3.t": {
+  "en": "Saved with the full call",
+  "te": "పూర్తి కాల్‌తో సేవ్ అయింది",
+  "hi": "पूरी कॉल के साथ सेव",
+  "kn": "ಪೂರ್ತಿ ಕರೆಯೊಂದಿಗೆ ಸೇವ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.out.3.d": {
+  "en": "Budget, colour, occasion and the recording.",
+  "te": "బడ్జెట్, రంగు, సందర్భం, రికార్డింగ్.",
+  "hi": "बजट, रंग, मौका और रिकॉर्डिंग।",
+  "kn": "ಬಜೆಟ್, ಬಣ್ಣ, ಸಂದರ್ಭ ಮತ್ತು ರೆಕಾರ್ಡಿಂಗ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.out.1.t": {
+  "en": "Quote drafted for your OK",
+  "te": "మీ OK కోసం కోట్ సిద్ధం",
+  "hi": "आपके OK के लिए कोटेशन तैयार",
+  "kn": "ನಿಮ್ಮ OKಗಾಗಿ ಕೋಟ್ ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.out.1.d": {
+  "en": "Pieces from 1,200 sq ft, transport to Whitefield added.",
+  "te": "1,200 చ.అ.కు ముక్కలు, వైట్‌ఫీల్డ్‌కి రవాణా కలిపి.",
+  "hi": "1,200 वर्ग फ़ुट के हिसाब से पीस, व्हाइटफ़ील्ड तक ढुलाई जोड़ी।",
+  "kn": "1,200 ಚ.ಅ.ಗೆ ತುಂಡುಗಳು, ವೈಟ್‌ಫೀಲ್ಡ್‌ಗೆ ಸಾಗಣೆ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.out.2.t": {
+  "en": "Waiting in Needs you",
+  "te": "'మీ కోసం'లో ఎదురుచూస్తోంది",
+  "hi": "'आपके लिए' में इंतज़ार",
+  "kn": "'ನಿಮಗಾಗಿ'ಯಲ್ಲಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.out.2.d": {
+  "en": "Nothing about money goes out before your tap.",
+  "te": "మీరు నొక్కే వరకు డబ్బు విషయం ఏదీ బయటికి వెళ్లదు.",
+  "hi": "आपके टैप से पहले पैसे की कोई बात बाहर नहीं जाती।",
+  "kn": "ನೀವು ಒತ್ತುವವರೆಗೆ ಹಣದ ವಿಷಯ ಏನೂ ಹೊರಗೆ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.out.3.t": {
+  "en": "Follow-up tomorrow, 10 am",
+  "te": "రేపు ఉదయం 10కి ఫాలో-అప్",
+  "hi": "कल सुबह 10 बजे फ़ॉलो-अप",
+  "kn": "ನಾಳೆ ಬೆಳಿಗ್ಗೆ 10ಕ್ಕೆ ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.out.3.d": {
+  "en": "Only if Imran has not replied.",
+  "te": "ఇమ్రాన్ జవాబివ్వకపోతేనే.",
+  "hi": "सिर्फ़ तब, जब इमरान ने जवाब न दिया हो।",
+  "kn": "ಇಮ್ರಾನ್ ಉತ್ತರಿಸದಿದ್ದರೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.coach.out.1.t": {
+  "en": "Address sent on WhatsApp",
+  "te": "వాట్సాప్‌లో అడ్రస్ పంపింది",
+  "hi": "वॉट्सऐप पर पता भेजा",
+  "kn": "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ವಿಳಾಸ ಕಳುಹಿಸಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.coach.out.1.d": {
+  "en": "Because Rahul asked for it.",
+  "te": "రాహుల్ అడిగినందుకు.",
+  "hi": "क्योंकि राहुल ने माँगा।",
+  "kn": "ರಾಹುಲ್ ಕೇಳಿದ್ದಕ್ಕೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.coach.out.2.t": {
+  "en": "Demo class, Wednesday 6:30 pm",
+  "te": "డెమో క్లాస్, బుధవారం సాయంత్రం 6:30",
+  "hi": "डेमो क्लास, बुधवार शाम 6:30",
+  "kn": "ಡೆಮೊ ತರಗತಿ, ಬುಧವಾರ ಸಂಜೆ 6:30",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.coach.out.2.d": {
+  "en": "On your calendar.",
+  "te": "మీ క్యాలెండర్‌లో.",
+  "hi": "आपके कैलेंडर में।",
+  "kn": "ನಿಮ್ಮ ಕ್ಯಾಲೆಂಡರ್‌ನಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.coach.out.3.t": {
+  "en": "Reminder scheduled",
+  "te": "రిమైండర్ పెట్టింది",
+  "hi": "रिमाइंडर तय",
+  "kn": "ರಿಮೈಂಡರ್ ಇಟ್ಟಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.coach.out.3.d": {
+  "en": "Wednesday 4 pm, with a call-back if needed.",
+  "te": "బుధవారం సాయంత్రం 4కి, అవసరమైతే మళ్లీ కాల్‌తో.",
+  "hi": "बुधवार शाम 4 बजे, ज़रूरत हो तो कॉल बैक के साथ।",
+  "kn": "ಬುಧವಾರ ಸಂಜೆ 4ಕ್ಕೆ, ಬೇಕಿದ್ದರೆ ಮರಳಿ ಕರೆಯೊಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.1.en": {
+  "en": "Hello! I am the AI assistant of Padma Silks. You asked about silk sarees, right?",
+  "te": "నమస్కారం! నేను పద్మ సిల్క్స్ AI అసిస్టెంట్‌ని. మీరు పట్టు చీరల గురించి అడిగారు కదా?",
+  "hi": "नमस्ते! मैं पद्मा सिल्क्स की AI असिस्टेंट हूँ। आपने सिल्क साड़ियों के बारे में पूछा था न?",
+  "kn": "ನಮಸ್ಕಾರ! ನಾನು ಪದ್ಮ ಸಿಲ್ಕ್ಸ್‌ನ AI ಅಸಿಸ್ಟೆಂಟ್. ನೀವು ರೇಷ್ಮೆ ಸೀರೆಗಳ ಬಗ್ಗೆ ಕೇಳಿದ್ದೀರಿ ಅಲ್ವಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.2.en": {
+  "en": "Yes, I need a Kanchi silk saree for a wedding. Budget up to fifteen thousand.",
+  "te": "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి. బడ్జెట్ పదిహేను వేల వరకు.",
+  "hi": "हाँ, शादी के लिए कांजीवरम सिल्क साड़ी चाहिए। बजट पंद्रह हज़ार तक।",
+  "kn": "ಹೌದು, ಮದುವೆಗೆ ಕಂಚಿ ರೇಷ್ಮೆ ಸೀರೆ ಬೇಕು. ಬಜೆಟ್ ಹದಿನೈದು ಸಾವಿರದವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.3.en": {
+  "en": "Lovely. Which colour do you like: red, green or yellow?",
+  "te": "చాలా బాగుంది. ఏ రంగు ఇష్టం? ఎరుపు, ఆకుపచ్చ, లేక పసుపు?",
+  "hi": "बहुत बढ़िया। कौन सा रंग पसंद है: लाल, हरा या पीला?",
+  "kn": "ತುಂಬಾ ಚೆನ್ನಾಗಿದೆ. ಯಾವ ಬಣ್ಣ ಇಷ್ಟ: ಕೆಂಪು, ಹಸಿರು ಅಥವಾ ಹಳದಿ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.4.en": {
+  "en": "Red. Can you send photos on WhatsApp?",
+  "te": "ఎరుపు. ఫోటోలు వాట్సాప్‌లో పంపగలరా?",
+  "hi": "लाल। क्या फ़ोटो वॉट्सऐप पर भेज सकते हैं?",
+  "kn": "ಕೆಂಪು. ಫೋಟೋಗಳನ್ನು ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಕಳುಹಿಸಬಹುದಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.5.en": {
+  "en": "Of course, sending them now. Would you like to see them at the shop on Saturday?",
+  "te": "తప్పకుండా, ఇప్పుడే పంపుతాను. శనివారం షాప్‌కి వచ్చి చూస్తారా?",
+  "hi": "ज़रूर, अभी भेजती हूँ। शनिवार को दुकान पर आकर देखना चाहेंगी?",
+  "kn": "ಖಂಡಿತ, ಈಗಲೇ ಕಳುಹಿಸುತ್ತೇನೆ. ಶನಿವಾರ ಅಂಗಡಿಗೆ ಬಂದು ನೋಡುತ್ತೀರಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.saree.6.en": {
+  "en": "Okay, I will come at eleven.",
+  "te": "సరే, పదకొండు గంటలకు వస్తాను.",
+  "hi": "ठीक है, मैं ग्यारह बजे आऊँगी।",
+  "kn": "ಸರಿ, ಹನ್ನೊಂದು ಗಂಟೆಗೆ ಬರುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.1.en": {
+  "en": "Hello! I am the AI assistant of Ganga Pavers. You asked about paver blocks?",
+  "te": "నమస్కారం! నేను గంగా పేవర్స్ AI అసిస్టెంట్‌ని. మీరు పేవర్ బ్లాకుల గురించి అడిగారా?",
+  "hi": "नमस्ते! मैं गंगा पेवर्स की AI असिस्टेंट हूँ। आपने पेवर ब्लॉक्स के बारे में पूछा था?",
+  "kn": "ನಮಸ್ಕಾರ! ನಾನು ಗಂಗಾ ಪೇವರ್ಸ್‌ನ AI ಅಸಿಸ್ಟೆಂಟ್. ನೀವು ಪೇವರ್ ಬ್ಲಾಕ್‌ಗಳ ಬಗ್ಗೆ ಕೇಳಿದ್ದೀರಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.2.en": {
+  "en": "Yes, I need them for 1,200 square feet of parking.",
+  "te": "అవును, 1,200 చదరపు అడుగుల పార్కింగ్‌కి కావాలి.",
+  "hi": "हाँ, 1,200 स्क्वेयर फ़ीट पार्किंग के लिए चाहिए।",
+  "kn": "ಹೌದು, 1,200 ಚದರ ಅಡಿ ಪಾರ್ಕಿಂಗ್‌ಗೆ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.3.en": {
+  "en": "Okay. Will 80 mm thickness work for cars?",
+  "te": "సరే. కార్ల కోసం 80 mm మందం సరిపోతుందా?",
+  "hi": "ठीक है। गाड़ियों के लिए 80 mm मोटाई चलेगी?",
+  "kn": "ಸರಿ. ಕಾರುಗಳಿಗೆ 80 mm ದಪ್ಪ ಸಾಕಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.4.en": {
+  "en": "Yes. Delivery is in Whitefield.",
+  "te": "అవును. డెలివరీ వైట్‌ఫీల్డ్‌లో.",
+  "hi": "हाँ। डिलीवरी व्हाइटफ़ील्ड में होगी।",
+  "kn": "ಹೌದು. ಡೆಲಿವರಿ ವೈಟ್‌ಫೀಲ್ಡ್‌ನಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.build.5.en": {
+  "en": "Noted. I will prepare the quote and send it once the owner OKs it.",
+  "te": "రాసుకున్నాను. కోట్ తయారు చేసి, యజమాని OK చెప్పాక పంపుతాను.",
+  "hi": "नोट कर लिया। कोटेशन बनाकर, मालिक के OK के बाद भेज दूँगी।",
+  "kn": "ಬರೆದುಕೊಂಡೆ. ಕೋಟ್ ಮಾಡಿ, ಮಾಲೀಕರು OK ಹೇಳಿದ ಮೇಲೆ ಕಳುಹಿಸುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.title": {
+  "en": "It also goes looking for your next customers.",
+  "te": "మీ తర్వాతి కస్టమర్ల కోసం అది వెతుకుతుంది కూడా.",
+  "hi": "यह आपके अगले ग्राहक भी ढूँढने निकलती है।",
+  "kn": "ಇದು ನಿಮ್ಮ ಮುಂದಿನ ಗ್ರಾಹಕರನ್ನೂ ಹುಡುಕುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.sub": {
+  "en": "Tell the Lead Finder who buys from you. It scans Google Maps around you, checks every business it finds, and decides who is worth a call and who needs your say first. Businesses only, never families.",
+  "te": "మీ దగ్గర ఎవరు కొంటారో లీడ్ ఫైండర్‌కి చెప్పండి. అది మీ చుట్టూ గూగుల్ మ్యాప్స్‌లో వెతుకుతుంది, దొరికిన ప్రతి వ్యాపారాన్ని చూస్తుంది, ఎవరికి కాల్ చేయాలో, ఎవరి గురించి ముందు మిమ్మల్ని అడగాలో నిర్ణయిస్తుంది. వ్యాపారాలు మాత్రమే, కుటుంబాలు ఎప్పుడూ కాదు.",
+  "hi": "लीड फ़ाइंडर को बताइए कि आपसे कौन खरीदता है। यह आपके आसपास गूगल मैप्स में खोजती है, मिले हर कारोबार को जाँचती है, और तय करती है कि किसे कॉल करना है और किसके लिए पहले आपसे पूछना है। सिर्फ़ कारोबार, परिवार कभी नहीं।",
+  "kn": "ನಿಮ್ಮಿಂದ ಯಾರು ಕೊಳ್ಳುತ್ತಾರೆ ಎಂದು ಲೀಡ್ ಫೈಂಡರ್‌ಗೆ ಹೇಳಿ. ಅದು ನಿಮ್ಮ ಸುತ್ತ ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್‌ನಲ್ಲಿ ಹುಡುಕುತ್ತದೆ, ಸಿಕ್ಕ ಪ್ರತಿ ವ್ಯಾಪಾರವನ್ನು ನೋಡುತ್ತದೆ, ಯಾರಿಗೆ ಕರೆ ಮಾಡಬೇಕು, ಯಾರ ಬಗ್ಗೆ ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳಬೇಕು ಎಂದು ತೀರ್ಮಾನಿಸುತ್ತದೆ. ವ್ಯಾಪಾರಗಳು ಮಾತ್ರ, ಕುಟುಂಬಗಳು ಎಂದಿಗೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.city": {
+  "en": "City",
+  "te": "నగరం",
+  "hi": "शहर",
+  "kn": "ನಗರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.near": {
+  "en": "Saree retailers near {city}",
+  "te": "{city} దగ్గర చీరల షాపులు",
+  "hi": "{city} के पास साड़ी की दुकानें",
+  "kn": "{city} ಹತ್ತಿರ ಸೀರೆ ಅಂಗಡಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.checked": {
+  "en": "Checked {n} businesses. {worth} worth a call.",
+  "te": "{n} వ్యాపారాలు చూసింది. {worth} కి కాల్ చేయొచ్చు.",
+  "hi": "{n} कारोबार जाँचे। {worth} को कॉल करना ठीक।",
+  "kn": "{n} ವ್ಯಾಪಾರಗಳನ್ನು ನೋಡಿತು. {worth} ಕ್ಕೆ ಕರೆ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.call": {
+  "en": "Call now",
+  "te": "ఇప్పుడే కాల్",
+  "hi": "अभी कॉल",
+  "kn": "ಈಗಲೇ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.ask": {
+  "en": "Ask you first",
+  "te": "ముందు మిమ్మల్ని అడుగుతుంది",
+  "hi": "पहले आपसे पूछे",
+  "kn": "ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.skip": {
+  "en": "Skip",
+  "te": "వదిలేయండి",
+  "hi": "छोड़ें",
+  "kn": "ಬಿಟ್ಟುಬಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.list": {
+  "en": "Found on this sweep",
+  "te": "ఈ రౌండ్‌లో దొరికినవి",
+  "hi": "इस चक्कर में मिले",
+  "kn": "ಈ ಸುತ್ತಿನಲ್ಲಿ ಸಿಕ್ಕವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.of": {
+  "en": "{n} of 4",
+  "te": "4లో {n}",
+  "hi": "4 में से {n}",
+  "kn": "4ರಲ್ಲಿ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.empty": {
+  "en": "Businesses appear here as the sweep finds them.",
+  "te": "రౌండ్‌లో దొరికిన వ్యాపారాలు ఇక్కడ కనిపిస్తాయి.",
+  "hi": "चक्कर में मिलते ही कारोबार यहाँ दिखेंगे।",
+  "kn": "ಸುತ್ತಿನಲ್ಲಿ ಸಿಕ್ಕ ವ್ಯಾಪಾರಗಳು ಇಲ್ಲಿ ಕಾಣುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.pin.1.what": {
+  "en": "Saree retailer",
+  "te": "చీరల షాపు",
+  "hi": "साड़ी की दुकान",
+  "kn": "ಸೀರೆ ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.pin.1.why": {
+  "en": "Sells silk sarees. No supplier named on its listing.",
+  "te": "పట్టు చీరలు అమ్ముతుంది. దాని లిస్టింగ్‌లో సప్లయర్ పేరు లేదు.",
+  "hi": "सिल्क साड़ियाँ बेचती है। लिस्टिंग में किसी सप्लायर का नाम नहीं।",
+  "kn": "ರೇಷ್ಮೆ ಸೀರೆ ಮಾರುತ್ತದೆ. ಲಿಸ್ಟಿಂಗ್‌ನಲ್ಲಿ ಸಪ್ಲೈಯರ್ ಹೆಸರಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.pin.2.what": {
+  "en": "Textile shop",
+  "te": "బట్టల షాపు",
+  "hi": "कपड़े की दुकान",
+  "kn": "ಬಟ್ಟೆ ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.pin.2.why": {
+  "en": "Sells sarees, open today, well reviewed.",
+  "te": "చీరలు అమ్ముతుంది, ఈ రోజు తెరిచి ఉంది, మంచి పేరు ఉంది.",
+  "hi": "साड़ियाँ बेचती है, आज खुली है, अच्छे रिव्यू।",
+  "kn": "ಸೀರೆ ಮಾರುತ್ತದೆ, ಇಂದು ತೆರೆದಿದೆ, ಒಳ್ಳೆಯ ಹೆಸರಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.pin.3.what": {
+  "en": "Saree retailer",
+  "te": "చీరల షాపు",
+  "hi": "साड़ी की दुकान",
+  "kn": "ಸೀರೆ ಅಂಗಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.pin.3.why": {
+  "en": "Already in your leads.",
+  "te": "ఇప్పటికే మీ లీడ్స్‌లో ఉంది.",
+  "hi": "पहले से आपकी लीड में है।",
+  "kn": "ಈಗಾಗಲೇ ನಿಮ್ಮ ಲೀಡ್‌ಗಳಲ್ಲಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.pin.4.what": {
+  "en": "Boutique",
+  "te": "బొటీక్",
+  "hi": "बुटीक",
+  "kn": "ಬೊಟಿಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.pin.4.why": {
+  "en": "A bigger shop. Worth a word from you before the first call.",
+  "te": "పెద్ద షాపు. మొదటి కాల్‌కి ముందు మీరు ఒక మాట చెబితే మంచిది.",
+  "hi": "बड़ी दुकान है। पहली कॉल से पहले आपकी एक राय ठीक रहेगी।",
+  "kn": "ದೊಡ್ಡ ಅಂಗಡಿ. ಮೊದಲ ಕರೆಗೆ ಮುಂಚೆ ನಿಮ್ಮ ಒಂದು ಮಾತು ಒಳ್ಳೆಯದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.finder.note": {
+  "en": "An example sweep for a sample saree shop. The areas are real; the businesses are examples.",
+  "te": "ఇది ఒక నమూనా చీరల షాపు కోసం ఉదాహరణ రౌండ్. ప్రాంతాలు నిజం; వ్యాపారాలు ఉదాహరణలు.",
+  "hi": "यह एक नमूना साड़ी दुकान के लिए उदाहरण चक्कर है। इलाके असली हैं; कारोबार उदाहरण हैं।",
+  "kn": "ಇದು ಒಂದು ಮಾದರಿ ಸೀರೆ ಅಂಗಡಿಗಾಗಿ ಉದಾಹರಣೆ ಸುತ್ತು. ಪ್ರದೇಶಗಳು ನಿಜ; ವ್ಯಾಪಾರಗಳು ಉದಾಹರಣೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "h2.call.endnote.phone": {
+  "en": "Call ended. The next steps are already happening below.",
+  "te": "కాల్ ముగిసింది. తర్వాతి పనులు కింద ఇప్పటికే జరుగుతున్నాయి.",
+  "hi": "कॉल खत्म। अगले कदम नीचे पहले से हो रहे हैं।",
+  "kn": "ಕರೆ ಮುಗಿಯಿತು. ಮುಂದಿನ ಕೆಲಸಗಳು ಕೆಳಗೆ ಈಗಾಗಲೇ ನಡೆಯುತ್ತಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

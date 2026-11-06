@@ -232,7 +232,10 @@ describe("server-only code stays on the server", () => {
     // And the menu's numbers (sidebar v2): this app's OWN route `<workspace>/nav-counts` every 30 seconds while the tab is in front (a path built from the workspace id): no token, never the API.
     const NAV_COUNTS = path.join("components", "v2", "app", "use-nav-counts.ts");
     expect(read(path.join(WEB_ROOT, NAV_COUNTS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
-    expect(callers).toEqual([NAV_COUNTS, ACTIVITY_POLL, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, WORK_POST, path.join("lib", "api", "client.ts")].sort());
+    // And the home page's voices (landing v2): the manifest of the recorded clips, a static file of this site (`/audio/site/manifest.json`), read once the page is idle: no token, never the API.
+    const SITE_VOICES = path.join("components", "v2", "site", "home2", "voice.ts");
+    expect(read(path.join(WEB_ROOT, SITE_VOICES))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
+    expect(callers).toEqual([NAV_COUNTS, SITE_VOICES, ACTIVITY_POLL, ASK_TRANSPORT, CHAT_LANGUAGE_POST, AUTHORIZE_PROBE, BELL_POLL, CARDS_POST, CC_POST, CONTEXT_POST, CONVERSATION_CALLS, LEAD_IMPORT, PREVIEW_WORDS, PRON_POST, SESSION_CHECK, VOICE_CHAT, WORK_POST, path.join("lib", "api", "client.ts")].sort());
     expect(read(path.join(WEB_ROOT, WORK_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, CONVERSATION_CALLS))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     expect(read(path.join(WEB_ROOT, CONTEXT_POST))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);

@@ -52,12 +52,14 @@ describe("honesty: no claims we cannot prove today", () => {
   // the words as a page draws them: {trial_days} is the plans data's number (lib/plan/trial-days.ts)
   const en = Object.fromEntries(Object.entries(dictFor(site, "en") as Record<string, string>).map(([k, v]) => [k, withTrialDays(v)]));
   it("no public English copy says we find or discover leads (owner, 28 Oct: leads come from the website forms, WhatsApp, missed calls, spreadsheets and Meta lead ads; nothing is searched for), and no portal is named as a source", () => {
-    const claims = Object.entries(en).filter(([, v]) => /\bfinds? (your |new |more )?(leads|customers|buyers)\b|\bfinding (new )?(leads|customers)\b|lead finder|lead finding|leads we find|new customers found|find leads|discover(s|ing)? (new )?leads/i.test(v));
+    // landing v2 (the owner approved the design on 6 Nov 2026): the Lead Finder is a product now and its words (h2.*) say it finds new businesses; the older pages' words still never do
+    const claims = Object.entries(en).filter(([k]) => !k.startsWith("h2.")).filter(([, v]) => /\bfinds? (your |new |more )?(leads|customers|buyers)\b|\bfinding (new )?(leads|customers)\b|lead finder|lead finding|leads we find|new customers found|find leads|discover(s|ing)? (new )?leads/i.test(v));
     expect(claims.map(([k]) => k)).toEqual([]);
     expect(Object.entries(en).filter(([k, v]) => !k.startsWith("ld.src.") && /99acres|MagicBricks/.test(v))).toEqual([]);
   });
   it("no public page names a trial length or a price (owner, 28 Oct: pricing is undecided): no '14 days', no 'free trial', no 'Most popular', no rupee amount, no assistant name", () => {
-    const hits = Object.entries(en).filter(([k, v]) => !/^(ld\.src\.|legal\.)/.test(k) && /\b\d+[- ]days?\b.*\btrial|\btrial\b|free trial|most popular|₹\s?\d|\bRs\.? ?\d/i.test(v)).map(([k]) => k);
+    // landing v2 (owner, 6 Nov 2026): the home page's trial button names the trial's length ({trial_days}), and its examples name a customer's own budget (not a price of ours); "Price at launch" stays
+    const hits = Object.entries(en).filter(([k, v]) => !/^(ld\.src\.|legal\.|h2\.)/.test(k) && /\b\d+[- ]days?\b.*\btrial|\btrial\b|free trial|most popular|₹\s?\d|\bRs\.? ?\d/i.test(v)).map(([k]) => k);
     expect(hits).toEqual([]);
     expect(Object.entries(en).filter(([, v]) => /\byour assistant\b|\bTara\b/.test(v))).toEqual([]);
   });
@@ -68,7 +70,7 @@ describe("honesty: no claims we cannot prove today", () => {
     expect(en["hero.note"]).toBe("Money reminders and discounts wait for your approval."); // owner, 28 Oct: no trial length or price on any screen until pricing is set
     expect(en["hm.pl.sub"]).toBe("Prices are announced at launch.");
     // "early access" is said only where it is true: the AI calls (job DM); nothing says sign-up is by invitation
-    const EARLY_OK = new Set(["hm.demo.note", "hm.wf.early"]);
+    const EARLY_OK = new Set(["hm.demo.note", "hm.wf.early", "h2.nav.early", "h2.nav.early.short"]); // landing v2 (owner, 6 Nov 2026): "Get early access" is the home page's form
     for (const k of Object.keys(en)) {
       expect(en[k], k).not.toMatch(/invitation only|by invitation/i);
       if (!EARLY_OK.has(k)) expect(en[k], k).not.toMatch(/early access/i);
@@ -82,7 +84,8 @@ describe("honesty: no claims we cannot prove today", () => {
       for (const lang of LANGS) {
         const d = dictFor(set as never, lang) as Record<string, string>;
         for (const [k, v] of Object.entries(d)) {
-          expect(v, `${lang}:${k}`).not.toMatch(/\bno card\b|without a card|no credit card|Nothing is charged|₹/i);
+          // landing v2's examples (h2.*: a customer's budget, the visitor's own estimate) may show rupees; none is a price of ours
+          expect(v, `${lang}:${k}`).not.toMatch(k.startsWith("h2.") ? /\bno card\b|without a card|no credit card|Nothing is charged/i : /\bno card\b|without a card|no credit card|Nothing is charged|₹/i);
           expect(v, `${lang}:${k}`).not.toMatch(/Sme-?AI|working name/i);
         }
       }
