@@ -260,6 +260,44 @@ class Admitted:
     max_call_s: int | None = None   # a tighter cut than the deployment's, when the rule has one
 
 
+LINE_LOOKUP_S = 3.0
+
+
+def exotel_flow_ms(created: str | None, current: str | None) -> int | None:
+    """Exotel's `Created` (the call began) to its `CurrentTime` (it asks us for the stream): its own connect-and-flow time, in ms. Both in Exotel's format ("2026-11-06 18:56:10"); None if unreadable."""
+    from datetime import datetime
+
+    def parse(value: str | None) -> datetime | None:
+        if not value:
+            return None
+        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S", "%a, %d %b %Y %H:%M:%S", "%d/%m/%Y %H:%M:%S"):
+            try:
+                return datetime.strptime(str(value).strip()[:24].split("+")[0].strip(), fmt)
+            except ValueError:
+                continue
+        return None
+
+    a, b = parse(created), parse(current)
+    if a is None or b is None:
+        return None
+    ms = round((b - a).total_seconds() * 1000)
+    return ms if 0 <= ms <= 120_000 else None
+
+
+async def find_line_quick(find_line: Callable[[str], dict[str, Any] | None], line_no: str) -> dict[str, Any] | None:
+    """Our line's row, without letting a cold connection hold the call (owner's test call, 6 Nov 2026: the lookup took 11 s after a few idle minutes). At most LINE_LOOKUP_S, then ONE more try
+    (on another connection: the stuck one is still busy). A second failure raises, and the call is refused like any lookup failure."""
+    for attempt in (1, 2):
+        began = time.monotonic()
+        try:
+            return await asyncio.wait_for(asyncio.to_thread(find_line, line_no), LINE_LOOKUP_S)
+        except TimeoutError:
+            log.warning("exotel_line_lookup_slow attempt=%d ms=%d", attempt, round((time.monotonic() - began) * 1000))
+            if attempt == 2:
+                raise
+    return None
+
+
 async def admit(start: exotel.Start, settings: gate.Settings, *, find_line: Callable[[str], dict[str, Any] | None], calls: ExotelCalls | None, active_calls: int,
                 now: datetime, hours: gate.Hours | None = None, our_sid: str | None = None, trial: TrialRule | None = None, trial_count: DayCount | None = None,
                 trial_by_url: bool = False) -> Admitted | gate.Refused:
@@ -293,7 +331,7 @@ async def admit(start: exotel.Start, settings: gate.Settings, *, find_line: Call
         out = await coro
         return out, (time.monotonic() - began) * 1000
 
-    (found, line_ms), (confirmed, exotel_ms) = await asyncio.gather(timed(asyncio.to_thread(find_line, line_no)), timed(calls.get(start.call_sid)))
+    (found, line_ms), (confirmed, exotel_ms) = await asyncio.gather(timed(find_line_quick(find_line, line_no)), timed(calls.get(start.call_sid)))
     log.info("exotel_admit_timing line_ms=%d exotel_ms=%d", round(line_ms), round(exotel_ms))
     if not found:
         return gate.Refused("no_such_line")
@@ -318,7 +356,7 @@ async def _admit_trial(start: exotel.Start, settings: gate.Settings, trial: Tria
         return gate.Refused("trial_busy")
     if count is None or count.count(now) >= trial.max_calls_per_day:
         return gate.Refused("trial_day_limit")
-    found = await asyncio.to_thread(find_line, line_no)
+    found = await find_line_quick(find_line, line_no)
     if not found:
         return gate.Refused("no_such_line")
     if calls is None:
@@ -379,7 +417,7 @@ def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_pa
             "duration_s": round(duration_s, 1), "cost_paise_estimate": cost_paise, "outcome": outcome, "end": line.end_reason,
             # how it ended and what went each way (5 Nov 2026): names and numbers only
             "end_how": line.end_how, "stop_reason": line.stop_reason, "close_code": getattr(getattr(line, "_wire", None), "close_code", None), "events": dict(sorted(line.events.items())),
-            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "line_rate": getattr(line, "rate", None), **voice_numbers(line, duration_s), "voice_budget": getattr(line, "voice_budget", None), "out_chunk_bytes": getattr(line, "chunk", None), "chunks_out": getattr(line, "chunks_out", None), "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
+            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "line_rate": getattr(line, "rate", None), **voice_numbers(line, duration_s), "voice_budget": getattr(line, "voice_budget", None), "interruptions": getattr(line, "interruptions", None), "fade_ms": getattr(line, "fade_ms", None), "out_chunk_bytes": getattr(line, "chunk", None), "chunks_out": getattr(line, "chunks_out", None), "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
             # owner, 6 Nov 2026: targets 1.5 s for both (logged for every call)
             "pickup_to_first_sound_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
             "admitted_ms": line.admitted_ms, "greeting_ready": line.greeting_ready,

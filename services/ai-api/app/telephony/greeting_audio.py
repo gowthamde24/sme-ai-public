@@ -19,7 +19,8 @@ from app.browser_voice.audio import OUT_RATE
 
 log = logging.getLogger("app.telephony.greeting_audio")
 MAX_ENTRIES = 64
-KEEP_WARM_S = 240.0
+WARM_NUMBER = "+910000000000"
+KEEP_WARM_S = 60.0   # (owner's test call, 6 Nov 2026: after 4 idle minutes the database path took 11 s; every minute keeps it, and the sign-in, warm)
 
 
 def strip_wav(pcm: bytes) -> bytes:
@@ -152,9 +153,18 @@ async def start_warm(service: Any, bv: Any, *, stop: asyncio.Event) -> None:
     # owner, 6 Nov 2026: "Don't spend Cartesia credits on anything except real test calls ... no renders, warm-ups or checks". So nothing is rendered here: the first real call streams its
     # greeting as usual and keeps that very audio (GreetingAudio.keep), and every later call plays it from memory.
 
+    store = getattr(service, "store", None)
+
     async def ping() -> None:
-        # Exotel's account record only (free). No voice request: every call builds its own voice client, so a synthesis here would cost credits and keep nothing warm.
+        # Exotel's account record and one tiny database read (the line lookup of a number that is no line: it also refreshes the worker's sign-in when due). Both free. No voice request: every
+        # call builds its own voice client, so a synthesis here would cost credits and keep nothing warm.
         if calls is not None:
             await calls.warm()
+        if store is not None:
+            began = time.monotonic()
+            await asyncio.wait_for(asyncio.to_thread(store.line_find, WARM_NUMBER), 10.0)
+            ms = round((time.monotonic() - began) * 1000)
+            if ms > 1000:
+                log.info("keep_warm_db_slow ms=%d", ms)
 
     await keep_warm(ping, every_s=KEEP_WARM_S, stop=stop)

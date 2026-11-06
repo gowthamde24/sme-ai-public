@@ -37,6 +37,7 @@ RESPECT = {"te": ("అండీ", "అండి", "మీరు", "మీకు"
            "ml": ("നിങ്ങൾ", "താങ്കൾ", "നിങ്ങളുടെ"), "mr": ("तुम्ही", "तुमच", "तुम्हाला", "जी"), "en": ("please", "thank", "sorry", "you", "sure")}
 SORRY = {"te": ("క్షమించ", "సారీ", "sorry", "అర్థమైంది", "అర్థం"), "hi": ("माफ़", "माफ", "क्षमा", "sorry", "समझ"), "kn": ("ಕ್ಷಮಿಸಿ", "sorry", "ಅರ್ಥ"), "ta": ("மன்னிக்க", "sorry", "புரியுது", "புரிகிறது"),
          "ml": ("ക്ഷമിക്കണം", "sorry", "മനസ്സിലാ"), "mr": ("माफ", "क्षमस्व", "sorry", "समजल"), "en": ("sorry", "apolog", "understand")}
+HONORIFIC = {"te": "అండీ", "hi": "जी", "kn": "ರೀ", "ta": "ங்க", "ml": "സാർ", "mr": "जी", "en": "ma'am"}   # the respectful word that should NOT be in every reply to a casual caller
 HUMAN_CLAIM = re.compile(r"\bI\s*(am|'m)\s+(a\s+)?(real\s+)?(human|person)\b|నేను మనిషిని|मैं इंसान हूँ|ನಾನು ಮನುಷ್ಯ|நான் மனிதர்|ഞാൻ മനുഷ്യ|मी माणूस आहे", re.IGNORECASE)
 NOT_BRAND = re.compile(r"స్టాక్|स्टैक|स्टॅक|ಸ್ಟಾಕ್|ஸ்டாக்|സ്റ്റാക്ക|stack\s*(పంతొమ్మిది|పందొమ్మిది|उन्नीस|ಹತ್ತೊಂಬತ್ತು|பத்தொன்பது|പത്തൊമ്പത്|nineteen)|stack\s+19", re.IGNORECASE)
 ROBOT = re.compile(r"robot|రోబో|रोबोट|ರೋಬೋ|ரோபோ|റോബോ|human|మనిష|इंसान|ಮನುಷ್ಯ|மனித|മനുഷ്യ|माणूस")
@@ -66,7 +67,7 @@ def short(text: str) -> bool:
     return len(text.split()) <= 25 and len([s for s in SENTENCE_END.split(text) if s.strip()]) <= 2 and not re.search(r"^\s*([-*•]|\d+[.)])\s", text, re.MULTILINE) and not re.search(r"\d{4,}", text)
 
 
-def score(lang: str, persona: str, opening: str, turns: list[tuple[str, str]], spoken: list[str]) -> dict[str, Any]:
+def score(lang: str, persona: str, opening: str, turns: list[tuple[str, str]], spoken: list[str], ended: bool | None = None) -> dict[str, Any]:
     replies = [r for _, r in turns]
     kept = sum(1 for r in replies if in_language(r, lang)) / max(1, len(replies))
     robot = [r for c, r in turns if ROBOT.search(c)]
@@ -76,11 +77,16 @@ def score(lang: str, persona: str, opening: str, turns: list[tuple[str, str]], s
     tone = bool(respectful and respectful[0])
     if persona == "elder":
         tone = sum(respectful) >= 0.75 * len(replies)
+    if persona == "casual":   # mirror a casual caller: polite, but not the respectful word in every single reply (owner, 6 Nov 2026)
+        tone = len(replies) > 1 and not all(HONORIFIC[lang] in r for r in replies)
     if persona == "angry":
         tone = tone and any(w.casefold() in replies[0].casefold() for w in SORRY[lang]) if replies else False
     brand_written = not any(NOT_BRAND.search(t) for t in [opening, *replies])
     brand_spoken = all("Stack Nineteen" in s for s in spoken)
-    return {"language_kept": round(kept, 2), "disclosure": disclosure, "tone_matched": tone, "short_turns": all(short(r) for r in replies), "brand_right": brand_written and brand_spoken}
+    out: dict[str, Any] = {"language_kept": round(kept, 2), "disclosure": disclosure, "tone_matched": tone, "short_turns": all(short(r) for r in replies), "brand_right": brand_written and brand_spoken}
+    if ended is not None:   # the caller said bye: a short natural closing line, and the call ends (owner, 6 Nov 2026)
+        out["goodbye_ended"] = ended and bool(replies) and "bye" in replies[-1].casefold()
+    return out
 
 
 async def run(code: Path, languages: list[str], model: str, key: str) -> dict[str, Any]:
@@ -89,6 +95,7 @@ async def run(code: Path, languages: list[str], model: str, key: str) -> dict[st
     phone_llm = importlib.import_module("app.telephony.phone_llm")
     providers = importlib.import_module("app.conversation.providers")
     speech = importlib.import_module("app.pronunciation.speech")
+    turntaking = importlib.import_module("app.conversation.turntaking")
     import httpx
 
     personas = json.loads(PERSONAS_FILE.read_text(encoding="utf-8"))["languages"]
@@ -103,10 +110,17 @@ async def run(code: Path, languages: list[str], model: str, key: str) -> dict[st
             except TypeError:
                 opening = persona.opening_line(lang, business=BUSINESS, assistant=None, customer=None, inbound=True)
             system = persona.system_prompt(business=BUSINESS, assistant=ASSISTANT, language=lang, purpose="inbound", facts=[], customer_first_name=None)
-            llm = phone_llm.PhoneLlm(inner, BUSINESS, lambda lang=lang: lang)
+            events: list[str] = []
+            llm = phone_llm.PhoneLlm(inner, BUSINESS, lambda lang=lang: lang, on_event=events.append)
+            ended: bool | None = None
             messages: list[dict[str, str]] = []   # as on a live call: the history holds caller/assistant pairs; the opening is spoken, not sent
             turns: list[tuple[str, str]] = []
             for line in lines:
+                if turntaking.is_goodbye(line):   # as on a live call: the session answers a bye itself (a fixed closing line) and hangs up; the model is not asked
+                    bye = getattr(persona, "CALL_BYE", None) or getattr(turntaking, "GOODBYE_REPLY", {})
+                    turns.append((line, str(bye.get(lang) or bye.get("en") or "")))
+                    ended = True
+                    break
                 messages.append({"role": "user", "content": line})
                 reply = ""
                 for attempt in range(3):
@@ -119,16 +133,22 @@ async def run(code: Path, languages: list[str], model: str, key: str) -> dict[st
                         await asyncio.sleep(2 * (attempt + 1))
                 messages.append({"role": "assistant", "content": reply})
                 turns.append((line, reply))
+                if "end" in events:   # the model ended the call ([END] after its closing line)
+                    ended = True
+                    break
+            if who == "casual" and ended is None:
+                ended = False
             spoken = [spoken_text.prepare(t, lang, "cartesia") for t in [opening, *[r for _, r in turns]] if re.search(r"stack|స్టాక్|स्टैक|ಸ್ಟಾಕ್|ஸ்டாக்|സ്റ്റാക്ക", t, re.IGNORECASE)]
-            calls.append({"language": lang, "persona": who, "opening": opening, "turns": [{"caller": c, "assistant": r} for c, r in turns], "scores": score(lang, who, opening, turns, spoken)})
+            calls.append({"language": lang, "persona": who, "opening": opening, "turns": [{"caller": c, "assistant": r} for c, r in turns], "scores": score(lang, who, opening, turns, spoken, ended)})
             print(f"{lang} {who}: {calls[-1]['scores']}", flush=True)
     await client.aclose()
     return {"code": str(code), "model": model, "calls": calls, "summary": summarise(calls)}
 
 
 def summarise(calls: list[dict[str, Any]]) -> dict[str, Any]:
-    keys = ("language_kept", "disclosure", "tone_matched", "short_turns", "brand_right")
+    keys = ("language_kept", "disclosure", "tone_matched", "short_turns", "brand_right", "goodbye_ended")
     def avg(rows: list[dict[str, Any]], k: str) -> float:
+        rows = [r for r in rows if k in r["scores"]]
         return round(sum(float(r["scores"][k]) for r in rows) / max(1, len(rows)), 2)
     by_lang = {lang: {k: avg([c for c in calls if c["language"] == lang], k) for k in keys} for lang in dict.fromkeys(c["language"] for c in calls)}
     overall = {k: avg(calls, k) for k in keys}

@@ -163,3 +163,26 @@ async def test_after_admission_a_slow_rendering_is_not_waited_for() -> None:
     fast = R.Prepared(tenant_id=TENANT, parts=None, model="m", slots=[], text="Namaste", rendering=asyncio.ensure_future(G.GREETINGS.render(SlowTts(0.05), "hi", "Namaste")))
     assert await R._greeting_ready(fast, "hi") is True, "a rendering about to finish is used"
     slow.rendering.cancel()  # type: ignore[union-attr]
+
+
+def test_a_found_line_is_remembered_so_admission_does_not_wait_for_the_database() -> None:
+    """Owner, 6 Nov 2026 (a call waited 11 s on the line lookup): a found line is kept for a few minutes; an unknown number is always asked again."""
+    from app.telephony import inbound_store as S
+
+    asked: list[str] = []
+
+    class Rpc:
+        def call(self, token: str, function: str, args: dict[str, Any]) -> Any:
+            asked.append(args["p_number"])
+            return {"tenant_id": str(TENANT), "inbound_on": True} if args["p_number"] == LINE else None
+
+    class Principal:
+        def token(self) -> str:
+            return "t"
+
+        def invalidate(self) -> None:
+            return None
+
+    store = S.InboundStore(Rpc(), Principal())  # type: ignore[arg-type]
+    assert store.line_find(LINE) == store.line_find(LINE) and asked == [LINE], "asked once"
+    assert store.line_find("+910000000000") is None and store.line_find("+910000000000") is None and asked.count("+910000000000") == 2, "an unknown number: asked every time"

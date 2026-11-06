@@ -170,7 +170,7 @@ def test_both_voice_engines_receive_stack_nineteen_through_the_call_voice() -> N
 def test_the_model_is_told_the_languages_the_brand_honesty_tone_and_short_turns() -> None:
     prompt = persona.system_prompt(business="Stack19", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None)
     for words in ("NEVER say you cannot speak", "Telugu, Kannada, Tamil, Malayalam, Hindi, English and Marathi", 'written exactly "Stack19"', "Never translate it", "never write its number as a word",
-                  "నేను AI అసిస్టెంట్‌ని అండీ", "Never claim to be human", "mirror the caller", "అండీ, మీరు", "about 25 words", "ONE question", "own script"):
+                  "నేను AI అసిస్టెంట్‌ని అండీ", "Never claim to be human", "Mirror the caller", "friendly shop assistant", "NOT in every sentence", "INTERRUPTED", "ఆ, చెప్పండి", "[END]", "సరే అండీ, bye!", "about 25 words", "ONE question", "own script"):
         assert words in prompt, words
     assert "Speak Telugu" in prompt
 
@@ -180,3 +180,52 @@ def test_the_language_rule_never_reads_the_words_into_a_log() -> None:
 
     src = inspect.getsource(CallVoiceSession._follow_language)
     assert "text" not in src.split("log.info(", 1)[1].split(")", 1)[0], "only codes and the reason are logged"
+
+
+
+# ---- how a call ends (owner, 6 Nov 2026) ------------------------------------------------------------------------------------------------------
+
+@pytest.mark.parametrize("said", ["ok bye", "ఓకే బాయ్", "థాంక్స్, బాయ్!", "సరే, ఉంటాను", "ఉంటానండి", "ठीक है जी, बाय", "ठीक है, रखता हूँ", "ಸರಿ, ಓಕೆ ಬಾಯ್!", "thanks, bye"])
+def test_the_ways_people_say_bye_end_the_call(said: str) -> None:
+    from app.conversation.turntaking import is_goodbye
+
+    assert is_goodbye(said)
+
+
+@pytest.mark.parametrize("said", ["నేను ఇంట్లో ఉంటాను", "నాకు బాయ్ ఫ్రెండ్ కోసం చీర కావాలి", "sare", "avunu", "ok"])
+def test_words_that_only_look_like_bye_do_not(said: str) -> None:
+    from app.conversation.turntaking import is_goodbye
+
+    assert not is_goodbye(said)
+
+
+@pytest.mark.parametrize("lang", ["te", "hi", "kn", "ta", "ml", "mr", "en"])
+def test_the_closing_words_are_a_natural_bye_never_a_literal_one(lang: str) -> None:
+    for line in (persona.CALL_BYE[lang], persona.CALL_BYE_QUIET[lang]):
+        assert "bye" in line.casefold() and "మంచిరోజు" not in line and "शुभ" not in line
+    assert persona.CALL_BYE["te"] == "సరే అండీ, bye!" and persona.CALL_CHECK_IN["te"] == "హలో, ఉన్నారా?"
+    assert CallVoiceSession.silence_s == (4.0, 8.0), "about 4 s quiet: one check; about 8 s in all: bye and hang up"
+
+
+@arun
+async def test_the_end_mark_is_never_spoken_and_ends_the_call_after_the_line() -> None:
+    from app.telephony.phone_llm import PhoneLlm
+
+    class Model:
+        async def stream(self, system: str, messages: list[dict[str, str]], model: str) -> Any:
+            for piece in ("సరే అండీ, ", "bye! [E", "ND]"):
+                yield piece
+
+    events: list[str] = []
+    llm = PhoneLlm(Model(), "Stack19", lambda: "te", on_event=events.append)
+    said = "".join([p async for p in llm.stream("s", [{"role": "user", "content": "ఇంక చాలు అనుకుంటా"}], "m")])
+    assert said == "సరే అండీ, bye! " and events == ["end"], "the mark is cut out even when it arrives in pieces, and the call ends after the line"
+
+    class Plain:
+        async def stream(self, system: str, messages: list[dict[str, str]], model: str) -> Any:
+            for piece in ("ధర [", "team] చెప్తారు"):
+                yield piece
+
+    events.clear()
+    llm = PhoneLlm(Plain(), "Stack19", lambda: "te", on_event=events.append)
+    assert "".join([p async for p in llm.stream("s", [{"role": "user", "content": "ధర?"}], "m")]) == "ధర [team] చెప్తారు" and events == [], "a bracket that is not the mark is spoken"

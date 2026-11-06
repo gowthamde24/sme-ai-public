@@ -56,10 +56,30 @@ class PhoneLlm:
             yield persona.HANDOVER_ACK.get(language, persona.HANDOVER_ACK["en"])
             return
         said = ""
+        held = ""   # text that may be the start of the end mark ("[EN" ... "D]"): held back until it is clear
+        mark = persona.END_MARK
         async for piece in self._inner.stream(system, messages, model):
             if claims_to_be_human(said + piece):
                 self.honest_answers += 1
                 yield persona.HONEST_AI.get(language, persona.HONEST_AI["en"])   # the owner's short, warm words (6 Nov 2026): honest, never claims to be human
                 return
             said += piece
-            yield piece
+            held += piece
+            if mark in held:
+                # the model says the conversation is over (owner, 6 Nov 2026): this line is the last, and the call ends right after it has played
+                before = held.split(mark, 1)[0]
+                if before:
+                    yield before
+                held = ""
+                self._event("end")
+                continue
+            cut = held.rfind("[")
+            if cut >= 0 and mark.startswith(held[cut:]):
+                if held[:cut]:
+                    yield held[:cut]
+                held = held[cut:]
+            else:
+                yield held
+                held = ""
+        if held and held != mark:
+            yield held

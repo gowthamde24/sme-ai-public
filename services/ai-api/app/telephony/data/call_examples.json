@@ -1,441 +1,866 @@
 {
-  "$comment": "Few-shot example calls for the inbound phone assistant, five per language (elder, casual, confused, annoyed, robot); no opening greeting; {business} and {assistant} are placeholders; kn, ta, ml, mr are drafts awaiting native review.",
-  "version": 1,
-  "draft": ["kn", "ta", "ml", "mr"],
-  "languages": {
-    "te": [
-      {
-        "id": "te-elder",
-        "persona": "elder",
-        "turns": [
-          {"caller": "నమస్కారం అండీ. మా మనవరాలి పెళ్ళికి పట్టు చీరలు చూడాలి, మీ దగ్గర ఉంటాయా?"},
-          {"assistant": "నమస్కారం అండీ, సంతోషం. పెళ్ళి చీరల వివరాలు మా team మీకు చెప్తారు, మీరు ఏ రంగులు చూస్తున్నారో చెప్తారా?"},
-          {"caller": "ఎరుపు, బంగారు అంచు ఉంటే మంచిది. ఆ saree price ఎంత ఉంటుందండీ?"},
-          {"assistant": "అలాగా, ఎరుపు మీద బంగారు అంచు చాలా బాగుంటుంది అండీ. Price వివరాలు మా team ఫోన్ చేసి చెప్తారు, ఈ నంబర్‌కే చేయమంటారా?"},
-          {"caller": "సరే, ఈ నంబర్‌కే చేయమనండి."},
-          {"assistant": "తప్పకుండా అండీ, మీ వివరాలు team కి పంపిస్తాను. వాళ్ళు మీకు ఫోన్ చేసి అన్నీ చెప్తారు."}
-        ]
-      },
-      {
-        "id": "te-casual",
-        "persona": "casual",
-        "turns": [
-          {"caller": "హాయ్ హాయ్! మీ దగ్గర కొత్త collection ఏమైనా వచ్చిందా?"},
-          {"assistant": "హాయ్ అండీ, కొత్త collection వివరాలు మా team మీకు పంపిస్తారు. ఏ type చీరలు చూస్తున్నారు?"},
-          {"caller": "ఏదైనా light weight, office కి వేసుకునేది. Friend పెళ్ళికి కూడా పనికొస్తే best."},
-          {"assistant": "ఓహ్ సూపర్, రెండింటికీ పనికొచ్చేది అంటే మంచి choice. మీ పేరు చెప్తారా, team కి note చేస్తాను?"},
-          {"caller": "నా పేరు దివ్య. WhatsApp లో photos పంపిస్తారా?"},
-          {"assistant": "సరే దివ్య గారూ, photos పంపమని team కి చెప్తాను. ఈ నంబరే మీ WhatsApp నంబరా?"}
-        ]
-      },
-      {
-        "id": "te-confused",
-        "persona": "confused",
-        "turns": [
-          {"caller": "హలో, ఇది ఏ నంబర్ అండీ? ఎవరో ఈ నంబర్ ఇచ్చారు, ఎందుకో గుర్తులేదు."},
-          {"assistant": "పర్లేదు అండీ, ఇది {business} నంబర్. మీరు ఏదైనా కొనాలనుకుంటున్నారా?"},
-          {"caller": "ఆ, మా అక్క చెప్పింది, ఏదో చీర గురించి అనుకుంటా."},
-          {"assistant": "అలాగా, అయితే చీర కోసమే అయ్యుంటుంది. ఏదైనా function కోసం చూస్తున్నారా?"},
-          {"caller": "అవును, గృహప్రవేశం ఉంది."},
-          {"assistant": "చాలా సంతోషం అండీ. మీ వివరాలు team కి ఇస్తాను, వాళ్ళు ఫోన్ చేసి అన్నీ వివరంగా చెప్తారు."}
-        ]
-      },
-      {
-        "id": "te-annoyed",
-        "persona": "annoyed",
-        "turns": [
-          {"caller": "ఎవరండీ మీరు? నా నంబర్ మీకు ఎవరిచ్చారు?"},
-          {"assistant": "క్షమించండి అండీ, ఇబ్బంది పెట్టాలని కాదు. మీరు {business} నంబర్‌కి ఫోన్ చేశారు, ఏమైనా సహాయం కావాలా?"},
-          {"caller": "నేను missed call చూసి చేశా అంతే. నాకేం వద్దు, మళ్ళీ calls చేయొద్దు."},
-          {"assistant": "అర్థమైంది అండీ, మళ్ళీ సారీ. మీ నంబర్ తీసేయమని మా team కి చెప్పమంటారా?"},
-          {"caller": "సరే, అలా చేయండి."},
-          {"assistant": "తప్పకుండా, మీ నంబర్ తీసేయమని team కి note చేశాను. ధన్యవాదాలు అండీ."}
-        ]
-      },
-      {
-        "id": "te-robot",
-        "persona": "robot",
-        "turns": [
-          {"caller": "మీరు మనిషా లేక robot ఆ? మాట తీరు కొంచెం వేరేగా ఉంది."},
-          {"assistant": "నేను AI అసిస్టెంట్‌ని అండీ, కానీ మీ పని పూర్తిగా చేసి పెడతాను. మీకు ఏం కావాలో చెప్తారా?"},
-          {"caller": "ఓహో, సరే. నాకు booking చేయాలి, రేపు shop కి రావచ్చా?"},
-          {"assistant": "సరే అండీ, ఎప్పుడు రావచ్చో మా team ఫోన్ చేసి చెప్తారు. మీ పేరు చెప్తారా?"},
-          {"caller": "రమేష్. మనిషితో మాట్లాడాలంటే ఎలా?"},
-          {"assistant": "అలాగే రమేష్ గారూ, మా team లో ఒకరు మీకు తిరిగి ఫోన్ చేస్తారు. ఈ నంబర్‌కే చేయమంటారా?"}
-        ]
-      }
-    ],
-    "hi": [
-      {
-        "id": "hi-elder",
-        "persona": "elder",
-        "turns": [
-          {"caller": "नमस्ते जी। हमें बनारसी साड़ी देखनी थी, आपकी दुकान कितने बजे खुलती है?"},
-          {"assistant": "नमस्ते जी, आपका स्वागत है। दुकान की timing हमारी team आपको फ़ोन करके बता देगी, क्या इसी नंबर पर करें?"},
-          {"caller": "हाँ, इसी नंबर पर। और साड़ी का price लगभग कितना होगा?"},
-          {"assistant": "जी बिल्कुल, price की पूरी जानकारी team ही देगी। साड़ी किस मौके के लिए चाहिए?"},
-          {"caller": "पोती की शादी है।"},
-          {"assistant": "अरे वाह, बहुत बधाई हो आपको। आपकी बात team तक पहुँच जाएगी, वो आपसे फ़ोन पर बात करेंगे।"}
-        ]
-      },
-      {
-        "id": "hi-casual",
-        "persona": "casual",
-        "turns": [
-          {"caller": "हाय! यार, तुम लोगों के पास नया collection आया क्या?"},
-          {"assistant": "अरे हाय! नए collection की details team आपको भेज देगी, बताइए किस type का चाहिए?"},
-          {"caller": "कुछ हल्का सा, college farewell के लिए। ज़्यादा भारी नहीं चाहिए।"},
-          {"assistant": "अच्छा, farewell के लिए हल्का और stylish, बढ़िया choice है। Team के लिए आपका नाम क्या लिखूँ?"},
-          {"caller": "प्रिया। और photos WhatsApp पे भेज दोगे?"},
-          {"assistant": "हाँ जी प्रिया, photos के लिए team को बता दिया जाएगा। क्या यही नंबर WhatsApp पर है?"}
-        ]
-      },
-      {
-        "id": "hi-confused",
-        "persona": "confused",
-        "turns": [
-          {"caller": "हैलो? ये किसका नंबर है? किसी ने दिया था, याद नहीं क्यों।"},
-          {"assistant": "कोई बात नहीं जी, ये {business} का नंबर है। क्या आपको कुछ खरीदना है?"},
-          {"caller": "शायद, मेरी भाभी ने कहा था, कुछ साड़ी वगैरह के लिए।"},
-          {"assistant": "अच्छा, तो शायद साड़ी के लिए ही होगा। कोई खास मौका है क्या?"},
-          {"caller": "हाँ, घर में मुंडन है।"},
-          {"assistant": "बहुत बढ़िया जी। आपकी details team तक पहुँच जाएँगी, वो फ़ोन करके सब बता देंगे।"}
-        ]
-      },
-      {
-        "id": "hi-annoyed",
-        "persona": "annoyed",
-        "turns": [
-          {"caller": "कौन बोल रहा है? मेरा नंबर आपको किसने दिया?"},
-          {"assistant": "माफ़ कीजिए जी, परेशान करने का इरादा नहीं था। आपने {business} की line पर call किया है, कोई मदद चाहिए?"},
-          {"caller": "मैंने तो missed call देखकर किया था। मुझे कुछ नहीं चाहिए, बार-बार call मत करो।"},
-          {"assistant": "जी, बात समझ में आ गई। क्या आपका नंबर हमारी list से हटवा दें?"},
-          {"caller": "हाँ, हटा दो।"},
-          {"assistant": "ठीक है, नंबर हटाने के लिए team को note भेज दिया है। आपका दिन अच्छा रहे।"}
-        ]
-      },
-      {
-        "id": "hi-robot",
-        "persona": "robot",
-        "turns": [
-          {"caller": "एक बात बताओ, आप इंसान हो या robot?"},
-          {"assistant": "जी, मैं AI assistant हूँ, इंसान नहीं। लेकिन आपका काम पूरा हो जाएगा, बताइए क्या चाहिए?"},
-          {"caller": "अच्छा ठीक है। मेरा order कब तक deliver होगा?"},
-          {"assistant": "हाँ जी, delivery की जानकारी team देखकर बताएगी। आपका order किस नाम से है?"},
-          {"caller": "सुनील शर्मा के नाम से।"},
-          {"assistant": "अच्छा सुनील जी, team इसी नंबर पर call करके delivery की जानकारी देगी। और कुछ पूछना है?"}
-        ]
-      }
-    ],
-    "kn": [
-      {
-        "id": "kn-elder",
-        "persona": "elder",
-        "turns": [
-          {"caller": "ನಮಸ್ಕಾರ. ನಮಗೆ ರೇಷ್ಮೆ ಸೀರೆ ಬೇಕಿತ್ತು, ನಿಮ್ಮ ಅಂಗಡಿ ಎಷ್ಟು ಗಂಟೆಗೆ ತೆರೆಯುತ್ತೆ?"},
-          {"assistant": "ನಮಸ್ಕಾರ, ಖಂಡಿತ ಸಹಾಯ ಮಾಡ್ತೀನಿ. ಅಂಗಡಿ timing ನಮ್ಮ team ಫೋನ್ ಮಾಡಿ ತಿಳಿಸ್ತಾರೆ, ಇದೇ ನಂಬರ್‌ಗೆ ಮಾಡಬಹುದಾ?"},
-          {"caller": "ಹೌದು, ಇದೇ ನಂಬರ್. ಆ ಸೀರೆ price ಎಷ್ಟಾಗುತ್ತೆ?"},
-          {"assistant": "ಸರಿ, price ವಿವರ ನಮ್ಮ team ಅವರೇ ಹೇಳ್ತಾರೆ. ಸೀರೆ ಯಾವ ಸಮಾರಂಭಕ್ಕೆ ಬೇಕು ಅಂತ ಹೇಳ್ತೀರಾ?"},
-          {"caller": "ಮೊಮ್ಮಗಳ ಮದುವೆಗೆ."},
-          {"assistant": "ಓಹ್, ತುಂಬಾ ಸಂತೋಷ. ನಿಮ್ಮ ವಿವರ team ಗೆ ತಿಳಿಸ್ತೀನಿ, ಅವರು ನಿಮಗೆ ಕರೆ ಮಾಡ್ತಾರೆ."}
-        ]
-      },
-      {
-        "id": "kn-casual",
-        "persona": "casual",
-        "turns": [
-          {"caller": "ಹಾಯ್! ಏನ್ ಸಮಾಚಾರ? ಹೊಸ collection ಏನಾದ್ರೂ ಬಂದಿದ್ಯಾ?"},
-          {"assistant": "ಹಾಯ್, ಹೇಳಿ! ಹೊಸ collection ವಿವರ team ನಿಮಗೆ ಕಳಿಸ್ತಾರೆ, ಯಾವ type ಬೇಕು?"},
-          {"caller": "ಸ್ವಲ್ಪ light ಆಗಿರೋದು, office ಗೆ ಹಾಕೋಕೆ."},
-          {"assistant": "ಓಹ್ ಸೂಪರ್, office wear ಗೆ ಒಳ್ಳೆ choice. ನಿಮ್ಮ ಹೆಸರು ಹೇಳ್ತೀರಾ?"},
-          {"caller": "ಕಾವ್ಯ. Photos WhatsApp ಮಾಡ್ತೀರಾ?"},
-          {"assistant": "ಆಯ್ತು ಕಾವ್ಯ ಅವರೇ, photos ಕಳಿಸೋಕೆ team ಗೆ ಹೇಳ್ತೀನಿ. ಇದೇ ನಂಬರ್ WhatsApp ನಲ್ಲಿ ಇದೆಯಾ?"}
-        ]
-      },
-      {
-        "id": "kn-confused",
-        "persona": "confused",
-        "turns": [
-          {"caller": "ಹಲೋ, ಇದು ಯಾರ ನಂಬರ್ ರೀ? ಯಾರೋ ಕೊಟ್ಟಿದ್ರು, ಯಾಕೆ ಅಂತ ನೆನಪಿಲ್ಲ."},
-          {"assistant": "ಪರವಾಗಿಲ್ಲ, ಇದು {business} ನಂಬರ್. ನಿಮಗೆ ಏನಾದ್ರೂ ಖರೀದಿ ಮಾಡಬೇಕಿತ್ತಾ?"},
-          {"caller": "ಗೊತ್ತಿಲ್ಲ, ನಮ್ಮ ಅಕ್ಕ ಏನೋ ಸೀರೆ ಬಗ್ಗೆ ಹೇಳಿದ್ರು ಅನ್ಸುತ್ತೆ."},
-          {"assistant": "ಓ ಹೌದಾ, ಹಾಗಾದ್ರೆ ಸೀರೆ ಬಗ್ಗೆನೇ ಇರಬೇಕು. ಯಾವುದಾದ್ರೂ function ಗೆ ಬೇಕಾ?"},
-          {"caller": "ಹೌದು, ಗೃಹಪ್ರವೇಶ ಇದೆ."},
-          {"assistant": "ತುಂಬಾ ಸಂತೋಷ. ನಿಮ್ಮ ವಿವರ team ಗೆ ಕೊಡ್ತೀನಿ, ಅವರು ಕರೆ ಮಾಡಿ ಎಲ್ಲಾ ಹೇಳ್ತಾರೆ."}
-        ]
-      },
-      {
-        "id": "kn-annoyed",
-        "persona": "annoyed",
-        "turns": [
-          {"caller": "ಯಾರ್ರೀ ನೀವು? ನನ್ನ ನಂಬರ್ ನಿಮಗೆ ಯಾರು ಕೊಟ್ರು?"},
-          {"assistant": "ಕ್ಷಮಿಸಿ, ತೊಂದರೆ ಕೊಡೋ ಉದ್ದೇಶ ಇಲ್ಲ. ನೀವು {business} ನಂಬರ್‌ಗೆ ಕರೆ ಮಾಡಿದ್ದೀರಿ, ಏನಾದ್ರೂ ಸಹಾಯ ಬೇಕಾ?"},
-          {"caller": "Missed call ನೋಡಿ ಮಾಡಿದೆ ಅಷ್ಟೇ. ನನಗೆ ಏನೂ ಬೇಡ, ಮತ್ತೆ call ಮಾಡ್ಬೇಡಿ."},
-          {"assistant": "ಅರ್ಥ ಆಯ್ತು, ಮತ್ತೆ ಕ್ಷಮೆ ಇರಲಿ. ನಿಮ್ಮ ನಂಬರ್ ತೆಗೆಯೋಕೆ team ಗೆ ಹೇಳಲಾ?"},
-          {"caller": "ಹೂಂ, ಹೇಳಿ."},
-          {"assistant": "ಆಯ್ತು, ನಂಬರ್ ತೆಗೆಯೋಕೆ team ಗೆ note ಮಾಡಿದ್ದೀನಿ. ಧನ್ಯವಾದ."}
-        ]
-      },
-      {
-        "id": "kn-robot",
-        "persona": "robot",
-        "turns": [
-          {"caller": "ನೀವು ಮನುಷ್ಯರಾ ಅಥವಾ robot ಆ?"},
-          {"assistant": "ನಾನು AI ಅಸಿಸ್ಟೆಂಟ್, ಆದ್ರೆ ನಿಮ್ಮ ಕೆಲಸ ಪೂರ್ತಿ ಮಾಡಿಕೊಡ್ತೀನಿ. ಏನು ಬೇಕು ಹೇಳಿ?"},
-          {"caller": "ಸರಿ. ನನ್ನ order delivery ಯಾವಾಗ ಆಗುತ್ತೆ?"},
-          {"assistant": "ಓಕೆ, delivery ವಿವರ team ನೋಡಿ ಹೇಳ್ತಾರೆ. Order ಯಾರ ಹೆಸರಲ್ಲಿದೆ?"},
-          {"caller": "ಸುರೇಶ್ ಹೆಸರಲ್ಲಿ."},
-          {"assistant": "ಆಯ್ತು ಸುರೇಶ್ ಅವರೇ, team ಇದೇ ನಂಬರ್‌ಗೆ ಕರೆ ಮಾಡಿ delivery ವಿವರ ಹೇಳ್ತಾರೆ. ಇನ್ನೇನಾದ್ರೂ ಬೇಕಾ?"}
-        ]
-      }
-    ],
-    "ta": [
-      {
-        "id": "ta-elder",
-        "persona": "elder",
-        "turns": [
-          {"caller": "வணக்கம். எங்களுக்கு பட்டுப் புடவை பாக்கணும், கடை எத்தனை மணிக்கு திறப்பீங்க?"},
-          {"assistant": "வணக்கம்ங்க, கண்டிப்பா உதவி பண்றேன். கடை timing எங்க team call பண்ணி சொல்லுவாங்க, இந்த நம்பருக்கே பண்ணலாமா?"},
-          {"caller": "ஆமா, இதே நம்பர் தான். அந்த புடவை price எவ்வளவு ஆகும்?"},
-          {"assistant": "சரிங்க, price விவரம் எங்க team தான் சொல்லுவாங்க. புடவை எந்த விசேஷத்துக்கு வேணும்ங்க?"},
-          {"caller": "பேத்தி கல்யாணத்துக்கு."},
-          {"assistant": "ரொம்ப சந்தோஷம்ங்க. உங்க விவரத்தை team கிட்ட சொல்றேன், அவங்க உங்களுக்கு call பண்ணுவாங்க."}
-        ]
-      },
-      {
-        "id": "ta-casual",
-        "persona": "casual",
-        "turns": [
-          {"caller": "ஹாய்! என்ன, புது collection ஏதாவது வந்திருக்கா?"},
-          {"assistant": "ஹாய், சொல்லுங்க! புது collection விவரம் team அனுப்புவாங்க, எந்த type வேணும்?"},
-          {"caller": "கொஞ்சம் light-ஆ, office-க்கு போட்டுக்கிற மாதிரி."},
-          {"assistant": "சூப்பர், office-க்கு நல்ல choice. உங்க பேர் என்ன?"},
-          {"caller": "ப்ரியா. Photos WhatsApp-ல அனுப்புவீங்களா?"},
-          {"assistant": "ஓகே ப்ரியா, photos அனுப்ப team கிட்ட சொல்றேன். இதே நம்பர்ல WhatsApp இருக்கா?"}
-        ]
-      },
-      {
-        "id": "ta-confused",
-        "persona": "confused",
-        "turns": [
-          {"caller": "ஹலோ, இது யாரோட நம்பர்? யாரோ குடுத்தாங்க, எதுக்குன்னு ஞாபகம் இல்ல."},
-          {"assistant": "பரவாயில்லைங்க, இது {business} நம்பர். ஏதாவது வாங்கணும்னு நினைச்சீங்களா?"},
-          {"caller": "தெரியல, எங்க friend ஒருத்தங்க ஏதோ புடவை பத்தி சொன்னாங்கன்னு நினைக்கிறேன்."},
-          {"assistant": "ஓ அப்படியா, அப்போ புடவைக்காக தான் இருக்கும். ஏதாவது விசேஷத்துக்கா?"},
-          {"caller": "ஆமா, கிரகப்பிரவேசம் இருக்கு."},
-          {"assistant": "ரொம்ப சந்தோஷம்ங்க. உங்க விவரத்தை team கிட்ட குடுக்கறேன், அவங்க call பண்ணி எல்லாம் சொல்லுவாங்க."}
-        ]
-      },
-      {
-        "id": "ta-annoyed",
-        "persona": "annoyed",
-        "turns": [
-          {"caller": "யாருங்க நீங்க? என் நம்பர் உங்களுக்கு யார் குடுத்தா?"},
-          {"assistant": "மன்னிக்கணும்ங்க, தொந்தரவு பண்ற எண்ணம் இல்ல. நீங்க {business} நம்பருக்கு call பண்ணியிருக்கீங்க, ஏதாவது உதவி வேணுமா?"},
-          {"caller": "Missed call பாத்துட்டு பண்ணேன், அவ்வளவுதான். எனக்கு எதுவும் வேணாம், திரும்ப call பண்ணாதீங்க."},
-          {"assistant": "புரியுதுங்க, மறுபடியும் மன்னிக்கணும். உங்க நம்பரை எடுத்துடச் சொல்லி team கிட்ட சொல்லட்டுமா?"},
-          {"caller": "சரி, சொல்லுங்க."},
-          {"assistant": "கண்டிப்பா, நம்பரை எடுக்க team-க்கு note போட்டுட்டேன். நன்றிங்க."}
-        ]
-      },
-      {
-        "id": "ta-robot",
-        "persona": "robot",
-        "turns": [
-          {"caller": "நீங்க மனுஷங்களா இல்ல robot-ஆ?"},
-          {"assistant": "நான் ஒரு AI assistant தாங்க, ஆனா உங்க வேலையை முழுசா முடிச்சு தருவேன். என்ன வேணும் சொல்லுங்க?"},
-          {"caller": "சரி. என் order delivery எப்போ வரும்?"},
-          {"assistant": "ஓகேங்க, delivery விவரம் team பாத்து சொல்லுவாங்க. Order யார் பேர்ல இருக்கு?"},
-          {"caller": "சுரேஷ் பேர்ல."},
-          {"assistant": "சரிங்க சுரேஷ், team இதே நம்பருக்கு call பண்ணி delivery விவரம் சொல்லுவாங்க. வேற ஏதாவது வேணுமா?"}
-        ]
-      }
-    ],
-    "ml": [
-      {
-        "id": "ml-elder",
-        "persona": "elder",
-        "turns": [
-          {"caller": "നമസ്കാരം. ഞങ്ങൾക്ക് ഒരു പട്ടുസാരി നോക്കണം, കട എത്ര മണിക്ക് തുറക്കും?"},
-          {"assistant": "നമസ്കാരം, തീർച്ചയായും സഹായിക്കാം. കടയുടെ timing ഞങ്ങളുടെ team വിളിച്ച് പറയും, ഈ നമ്പറിൽ തന്നെ വിളിക്കട്ടെ?"},
-          {"caller": "അതെ, ഈ നമ്പർ മതി. ആ സാരിക്ക് price എത്ര ആകും?"},
-          {"assistant": "ശരി, price വിവരങ്ങൾ team തന്നെ പറയും. ഏത് ചടങ്ങിനാണ് സാരി വേണ്ടത്?"},
-          {"caller": "കൊച്ചുമകളുടെ കല്യാണത്തിന്."},
-          {"assistant": "വളരെ സന്തോഷം. നിങ്ങളുടെ വിവരങ്ങൾ team-നെ അറിയിക്കാം, അവർ നിങ്ങളെ വിളിക്കും."}
-        ]
-      },
-      {
-        "id": "ml-casual",
-        "persona": "casual",
-        "turns": [
-          {"caller": "ഹായ്! പുതിയ collection എന്തെങ്കിലും വന്നിട്ടുണ്ടോ?"},
-          {"assistant": "ഹായ്, പറഞ്ഞോളൂ! പുതിയ collection വിവരങ്ങൾ team അയച്ചുതരും, ഏത് type ആണ് വേണ്ടത്?"},
-          {"caller": "കുറച്ച് light ആയിട്ടുള്ളത്, office-ൽ ഇടാൻ."},
-          {"assistant": "അടിപൊളി, office-ന് നല്ല choice ആണ്. പേര് എന്താ?"},
-          {"caller": "അനു. Photos WhatsApp ചെയ്യാമോ?"},
-          {"assistant": "ഓക്കെ അനു, photos അയക്കാൻ team-നോട് പറയാം. ഈ നമ്പറിൽ തന്നെയാണോ WhatsApp?"}
-        ]
-      },
-      {
-        "id": "ml-confused",
-        "persona": "confused",
-        "turns": [
-          {"caller": "ഹലോ, ഇത് ആരുടെ നമ്പറാ? ആരോ തന്നതാ, എന്തിനാണെന്ന് ഓർമ്മയില്ല."},
-          {"assistant": "കുഴപ്പമില്ല, ഇത് {business} നമ്പറാണ്. എന്തെങ്കിലും വാങ്ങാൻ ഉദ്ദേശിച്ചിരുന്നോ?"},
-          {"caller": "അറിയില്ല, എന്റെ ഒരു friend എന്തോ സാരിയുടെ കാര്യം പറഞ്ഞിരുന്നു."},
-          {"assistant": "ആണോ, എങ്കിൽ സാരിയുടെ കാര്യമായിരിക്കും. എന്തെങ്കിലും ചടങ്ങിനാണോ?"},
-          {"caller": "അതെ, ഒരു ഗൃഹപ്രവേശം ഉണ്ട്."},
-          {"assistant": "വളരെ സന്തോഷം. വിവരങ്ങൾ team-ന് കൈമാറാം, അവർ വിളിച്ച് എല്ലാം പറയും."}
-        ]
-      },
-      {
-        "id": "ml-annoyed",
-        "persona": "annoyed",
-        "turns": [
-          {"caller": "ആരാ ഇത്? എന്റെ നമ്പർ നിങ്ങൾക്ക് ആരാ തന്നത്?"},
-          {"assistant": "ക്ഷമിക്കണം, ബുദ്ധിമുട്ടിക്കാൻ ഉദ്ദേശിച്ചില്ല. നിങ്ങൾ വിളിച്ചത് {business} നമ്പറിലേക്കാണ്, എന്തെങ്കിലും സഹായം വേണോ?"},
-          {"caller": "Missed call കണ്ടിട്ട് വിളിച്ചതാ. എനിക്ക് ഒന്നും വേണ്ട, ഇനി വിളിക്കരുത്."},
-          {"assistant": "മനസ്സിലായി, വീണ്ടും ക്ഷമ ചോദിക്കുന്നു. നിങ്ങളുടെ നമ്പർ മാറ്റാൻ team-നോട് പറയട്ടെ?"},
-          {"caller": "ശരി, പറഞ്ഞോളൂ."},
-          {"assistant": "തീർച്ചയായും, നമ്പർ മാറ്റാൻ team-ന് note ഇട്ടിട്ടുണ്ട്. നന്ദി."}
-        ]
-      },
-      {
-        "id": "ml-robot",
-        "persona": "robot",
-        "turns": [
-          {"caller": "നിങ്ങൾ മനുഷ്യനാണോ അതോ robot ആണോ?"},
-          {"assistant": "ഞാൻ ഒരു AI അസിസ്റ്റന്റ് ആണ്, പക്ഷേ നിങ്ങളുടെ കാര്യം മുഴുവൻ ചെയ്തുതരാം. എന്താണ് വേണ്ടത്?"},
-          {"caller": "ശരി. എന്റെ order delivery എപ്പോഴാ?"},
-          {"assistant": "ഓക്കെ, delivery വിവരം team നോക്കി പറയും. Order ആരുടെ പേരിലാണ്?"},
-          {"caller": "സുരേഷിന്റെ പേരിൽ."},
-          {"assistant": "ശരി, team ഈ നമ്പറിൽ വിളിച്ച് delivery വിവരം പറയും. വേറെ എന്തെങ്കിലും വേണോ?"}
-        ]
-      }
-    ],
-    "en": [
-      {
-        "id": "en-elder",
-        "persona": "elder",
-        "turns": [
-          {"caller": "Good morning. I wanted to ask about silk sarees. What time does your shop open?"},
-          {"assistant": "Good morning, happy to help. Our team will call you with the shop timings, shall they call this same number?"},
-          {"caller": "Yes, this number is fine. And roughly what would a good silk saree cost?"},
-          {"assistant": "Sure, the team will share the prices with you directly. May I know what occasion the saree is for?"},
-          {"caller": "My granddaughter's wedding."},
-          {"assistant": "How lovely, congratulations. I'll pass your details to the team and they'll call you."}
-        ]
-      },
-      {
-        "id": "en-casual",
-        "persona": "casual",
-        "turns": [
-          {"caller": "Hey! Anything new in the collection these days?"},
-          {"assistant": "Hey there! The team will send you details of the new collection, what kind are you looking for?"},
-          {"caller": "Something light, for office wear. Nothing too heavy yaar."},
-          {"assistant": "Got it, light office wear is a great pick. What name should I note down for the team?"},
-          {"caller": "Neha. Can you send photos on WhatsApp?"},
-          {"assistant": "Sure Neha, I'll ask the team to send photos. Is this number on WhatsApp?"}
-        ]
-      },
-      {
-        "id": "en-confused",
-        "persona": "confused",
-        "turns": [
-          {"caller": "Hello, umm, whose number is this? Someone gave it to me, I don't remember why."},
-          {"assistant": "No problem at all, this is {business}. Were you thinking of buying something?"},
-          {"caller": "Not sure. My sister said something about sarees, I think."},
-          {"assistant": "Ah okay, then it's probably about sarees. Is there a special occasion coming up?"},
-          {"caller": "Yes, a housewarming."},
-          {"assistant": "That's wonderful. I'll pass your details to the team and they'll call you to explain everything."}
-        ]
-      },
-      {
-        "id": "en-annoyed",
-        "persona": "annoyed",
-        "turns": [
-          {"caller": "Who is this? Who gave you my number?"},
-          {"assistant": "Sorry for the trouble, that wasn't the intention. You've reached {business}, is there anything I can help with?"},
-          {"caller": "I only called back because of a missed call. I don't need anything, don't call me again."},
-          {"assistant": "Understood, and apologies again. Shall I ask the team to remove your number?"},
-          {"caller": "Yes, please do."},
-          {"assistant": "Of course, I've noted that for the team. Thank you, and have a good day."}
-        ]
-      },
-      {
-        "id": "en-robot",
-        "persona": "robot",
-        "turns": [
-          {"caller": "Wait, am I talking to a person or a robot?"},
-          {"assistant": "I'm an AI assistant, not a person, but I'll make sure your work gets done. What can I help you with?"},
-          {"caller": "Okay. When will my order be delivered?"},
-          {"assistant": "Sure, the team will check and tell you about the delivery. Whose name is the order under?"},
-          {"caller": "Suresh Kumar."},
-          {"assistant": "Thanks, Suresh. The team will call you on this number with the delivery details."}
-        ]
-      }
-    ],
-    "mr": [
-      {
-        "id": "mr-elder",
-        "persona": "elder",
-        "turns": [
-          {"caller": "नमस्कार. आम्हाला पैठणी साडी बघायची होती, दुकान किती वाजता उघडतं?"},
-          {"assistant": "नमस्कार, नक्की मदत करेन. दुकानाची timing आमची team फोन करून सांगेल, याच नंबरवर फोन करायचा का?"},
-          {"caller": "हो, याच नंबरवर. त्या साडीची price किती असेल?"},
-          {"assistant": "बरं, price ची माहिती team च सांगेल. साडी कोणत्या कार्यक्रमासाठी हवी आहे?"},
-          {"caller": "नातीच्या लग्नासाठी."},
-          {"assistant": "अरे वा, खूप आनंद झाला. तुमची माहिती team ला कळवेन, ते तुम्हाला फोन करतील."}
-        ]
-      },
-      {
-        "id": "mr-casual",
-        "persona": "casual",
-        "turns": [
-          {"caller": "हाय! काय म्हणता? नवीन collection आलंय का?"},
-          {"assistant": "हाय, बोला की! नवीन collection ची माहिती team पाठवेल, कोणता type हवाय?"},
-          {"caller": "थोडं light, office ला घालायला."},
-          {"assistant": "मस्त, office साठी छान choice आहे. तुमचं नाव काय?"},
-          {"caller": "स्नेहा. Photos WhatsApp कराल का?"},
-          {"assistant": "ओके स्नेहा, photos पाठवायला team ला सांगेन. हाच नंबर WhatsApp वर आहे का?"}
-        ]
-      },
-      {
-        "id": "mr-confused",
-        "persona": "confused",
-        "turns": [
-          {"caller": "हॅलो, हा कोणाचा नंबर आहे? कोणीतरी दिला होता, कशासाठी ते आठवत नाही."},
-          {"assistant": "काही हरकत नाही, हा {business} चा नंबर आहे. तुम्हाला काही खरेदी करायची होती का?"},
-          {"caller": "माहीत नाही, माझ्या ताईने साडीबद्दल काहीतरी सांगितलं होतं बहुतेक."},
-          {"assistant": "अच्छा, मग साडीसाठीच असेल. काही खास कार्यक्रम आहे का?"},
-          {"caller": "हो, गृहप्रवेश आहे."},
-          {"assistant": "छान, खूप आनंद झाला. तुमची माहिती team ला देईन, ते फोन करून सगळं सांगतील."}
-        ]
-      },
-      {
-        "id": "mr-annoyed",
-        "persona": "annoyed",
-        "turns": [
-          {"caller": "कोण बोलतंय? माझा नंबर तुम्हाला कोणी दिला?"},
-          {"assistant": "माफ करा, त्रास देण्याचा हेतू नव्हता. तुम्ही {business} च्या नंबरवर फोन केला आहे, काही मदत हवी आहे का?"},
-          {"caller": "Missed call बघून केला फक्त. मला काही नको, परत call करू नका."},
-          {"assistant": "समजलं, पुन्हा एकदा क्षमस्व. तुमचा नंबर काढून टाकायला team ला सांगू का?"},
-          {"caller": "हो, सांगा."},
-          {"assistant": "नक्की, नंबर काढण्यासाठी team ला note दिली आहे. धन्यवाद."}
-        ]
-      },
-      {
-        "id": "mr-robot",
-        "persona": "robot",
-        "turns": [
-          {"caller": "तुम्ही माणूस आहात की robot?"},
-          {"assistant": "मी एक AI असिस्टंट आहे, पण तुमचं काम पूर्ण करून देईन. बोला, काय हवंय?"},
-          {"caller": "बरं. माझी order delivery कधी होईल?"},
-          {"assistant": "ठीक आहे, delivery ची माहिती team बघून सांगेल. Order कोणाच्या नावावर आहे?"},
-          {"caller": "सुरेश पाटील यांच्या नावावर."},
-          {"assistant": "बरं, team याच नंबरवर फोन करून delivery ची माहिती देईल. अजून काही हवं आहे का?"}
-        ]
-      }
+ "$comment": "Few-shot example calls for the inbound phone assistant, five per language (elder, casual, confused, annoyed, robot); no opening greeting; {business} and {assistant} are placeholders; kn, ta, ml, mr are drafts awaiting native review.",
+ "version": 1,
+ "draft": [
+  "kn",
+  "ta",
+  "ml",
+  "mr"
+ ],
+ "languages": {
+  "te": [
+   {
+    "id": "te-elder",
+    "persona": "elder",
+    "turns": [
+     {
+      "caller": "నమస్కారం అండీ. మా మనవరాలి పెళ్ళికి పట్టు చీరలు చూడాలి, మీ దగ్గర ఉంటాయా?"
+     },
+     {
+      "assistant": "నమస్కారం అండీ, సంతోషం. పెళ్ళి చీరల వివరాలు మా team మీకు చెప్తారు, మీరు ఏ రంగులు చూస్తున్నారో చెప్తారా?"
+     },
+     {
+      "caller": "ఎరుపు, బంగారు అంచు ఉంటే మంచిది. ఆ saree price ఎంత ఉంటుందండీ?"
+     },
+     {
+      "assistant": "అలాగా, ఎరుపు మీద బంగారు అంచు చాలా బాగుంటుంది అండీ. Price వివరాలు మా team ఫోన్ చేసి చెప్తారు, ఈ నంబర్‌కే చేయమంటారా?"
+     },
+     {
+      "caller": "సరే, ఈ నంబర్‌కే చేయమనండి."
+     },
+     {
+      "assistant": "తప్పకుండా అండీ, మీ వివరాలు team కి పంపిస్తాను. వాళ్ళు మీకు ఫోన్ చేసి అన్నీ చెప్తారు."
+     }
     ]
-  }
+   },
+   {
+    "id": "te-casual",
+    "persona": "casual",
+    "turns": [
+     {
+      "caller": "హాయ్ హాయ్! మీ దగ్గర కొత్త collection ఏమైనా వచ్చిందా?"
+     },
+     {
+      "assistant": "హాయ్, కొత్త collection వివరాలు మా team పంపిస్తారు. ఏ type చీరలు చూస్తున్నారు?"
+     },
+     {
+      "caller": "ఏదైనా light weight, office కి వేసుకునేది. Friend పెళ్ళికి కూడా పనికొస్తే best."
+     },
+     {
+      "assistant": "ఓహ్ సూపర్, రెండింటికీ పనికొచ్చేది అంటే మంచి choice. మీ పేరు చెప్తారా, team కి note చేస్తాను?"
+     },
+     {
+      "caller": "నా పేరు దివ్య. WhatsApp లో photos పంపిస్తారా?"
+     },
+     {
+      "assistant": "సరే దివ్య, photos పంపమని team కి చెప్తాను. ఈ నంబరే మీ WhatsApp ఆ?"
+     }
+    ]
+   },
+   {
+    "id": "te-confused",
+    "persona": "confused",
+    "turns": [
+     {
+      "caller": "హలో, ఇది ఏ నంబర్ అండీ? ఎవరో ఈ నంబర్ ఇచ్చారు, ఎందుకో గుర్తులేదు."
+     },
+     {
+      "assistant": "పర్లేదు, ఇది {business} నంబర్. ఏమైనా కొనాలనుకుంటున్నారా?"
+     },
+     {
+      "caller": "ఆ, మా అక్క చెప్పింది, ఏదో చీర గురించి అనుకుంటా."
+     },
+     {
+      "assistant": "అలాగా, అయితే చీర కోసమే అయ్యుంటుంది. ఏదైనా function కోసం చూస్తున్నారా?"
+     },
+     {
+      "caller": "అవును, గృహప్రవేశం ఉంది."
+     },
+     {
+      "assistant": "సూపర్! మీ వివరాలు team కి ఇస్తాను, వాళ్ళు కాల్ చేసి అన్నీ చెప్తారు."
+     }
+    ]
+   },
+   {
+    "id": "te-annoyed",
+    "persona": "annoyed",
+    "turns": [
+     {
+      "caller": "ఎవరండీ మీరు? నా నంబర్ మీకు ఎవరిచ్చారు?"
+     },
+     {
+      "assistant": "సారీ అండీ, ఇబ్బంది పెట్టాలని కాదు. మీరు {business} నంబర్‌కి కాల్ చేశారు, ఏమైనా కావాలా?"
+     },
+     {
+      "caller": "నేను missed call చూసి చేశా అంతే. నాకేం వద్దు, మళ్ళీ calls చేయొద్దు."
+     },
+     {
+      "assistant": "అర్థమైంది, మళ్ళీ సారీ. మీ నంబర్ తీసేయమని team కి చెప్పనా?"
+     },
+     {
+      "caller": "సరే, అలా చేయండి."
+     },
+     {
+      "assistant": "సరే, మీ నంబర్ తీసేయమని team కి చెప్పాను. Thank you, bye! [END]"
+     }
+    ]
+   },
+   {
+    "id": "te-robot",
+    "persona": "robot",
+    "turns": [
+     {
+      "caller": "మీరు మనిషా లేక robot ఆ? మాట తీరు కొంచెం వేరేగా ఉంది."
+     },
+     {
+      "assistant": "నేను AI అసిస్టెంట్‌ని అండీ, కానీ మీ పని పూర్తిగా చేసి పెడతాను. మీకు ఏం కావాలో చెప్తారా?"
+     },
+     {
+      "caller": "ఓహో, సరే. నాకు booking చేయాలి, రేపు shop కి రావచ్చా?"
+     },
+     {
+      "assistant": "సరే, ఎప్పుడు రావచ్చో మా team కాల్ చేసి చెప్తారు. మీ పేరు?"
+     },
+     {
+      "caller": "రమేష్. మనిషితో మాట్లాడాలంటే ఎలా?"
+     },
+     {
+      "assistant": "ఓకే రమేష్ గారూ, మా team లో ఒకరు మీకు కాల్ చేస్తారు. ఈ నంబర్‌కేనా?"
+     }
+    ]
+   }
+  ],
+  "hi": [
+   {
+    "id": "hi-elder",
+    "persona": "elder",
+    "turns": [
+     {
+      "caller": "नमस्ते जी। हमें बनारसी साड़ी देखनी थी, आपकी दुकान कितने बजे खुलती है?"
+     },
+     {
+      "assistant": "नमस्ते जी, आपका स्वागत है। दुकान की timing हमारी team आपको फ़ोन करके बता देगी, क्या इसी नंबर पर करें?"
+     },
+     {
+      "caller": "हाँ, इसी नंबर पर। और साड़ी का price लगभग कितना होगा?"
+     },
+     {
+      "assistant": "जी बिल्कुल, price की पूरी जानकारी team ही देगी। साड़ी किस मौके के लिए चाहिए?"
+     },
+     {
+      "caller": "पोती की शादी है।"
+     },
+     {
+      "assistant": "अरे वाह, बहुत बधाई हो आपको। आपकी बात team तक पहुँच जाएगी, वो आपसे फ़ोन पर बात करेंगे।"
+     }
+    ]
+   },
+   {
+    "id": "hi-casual",
+    "persona": "casual",
+    "turns": [
+     {
+      "caller": "हाय! यार, तुम लोगों के पास नया collection आया क्या?"
+     },
+     {
+      "assistant": "अरे हाय! नए collection की details team आपको भेज देगी, बताइए किस type का चाहिए?"
+     },
+     {
+      "caller": "कुछ हल्का सा, college farewell के लिए। ज़्यादा भारी नहीं चाहिए।"
+     },
+     {
+      "assistant": "अच्छा, farewell के लिए हल्का और stylish, बढ़िया choice है। Team के लिए आपका नाम क्या लिखूँ?"
+     },
+     {
+      "caller": "प्रिया। और photos WhatsApp पे भेज दोगे?"
+     },
+     {
+      "assistant": "हाँ जी प्रिया, photos के लिए team को बता दिया जाएगा। क्या यही नंबर WhatsApp पर है?"
+     }
+    ]
+   },
+   {
+    "id": "hi-confused",
+    "persona": "confused",
+    "turns": [
+     {
+      "caller": "हैलो? ये किसका नंबर है? किसी ने दिया था, याद नहीं क्यों।"
+     },
+     {
+      "assistant": "कोई बात नहीं जी, ये {business} का नंबर है। क्या आपको कुछ खरीदना है?"
+     },
+     {
+      "caller": "शायद, मेरी भाभी ने कहा था, कुछ साड़ी वगैरह के लिए।"
+     },
+     {
+      "assistant": "अच्छा, तो शायद साड़ी के लिए ही होगा। कोई खास मौका है क्या?"
+     },
+     {
+      "caller": "हाँ, घर में मुंडन है।"
+     },
+     {
+      "assistant": "बहुत बढ़िया जी। आपकी details team तक पहुँच जाएँगी, वो फ़ोन करके सब बता देंगे।"
+     }
+    ]
+   },
+   {
+    "id": "hi-annoyed",
+    "persona": "annoyed",
+    "turns": [
+     {
+      "caller": "कौन बोल रहा है? मेरा नंबर आपको किसने दिया?"
+     },
+     {
+      "assistant": "माफ़ कीजिए जी, परेशान करने का इरादा नहीं था। आपने {business} की line पर call किया है, कोई मदद चाहिए?"
+     },
+     {
+      "caller": "मैंने तो missed call देखकर किया था। मुझे कुछ नहीं चाहिए, बार-बार call मत करो।"
+     },
+     {
+      "assistant": "जी, बात समझ में आ गई। क्या आपका नंबर हमारी list से हटवा दें?"
+     },
+     {
+      "caller": "हाँ, हटा दो।"
+     },
+     {
+      "assistant": "ठीक है, नंबर हटाने के लिए team को note भेज दिया है। आपका दिन अच्छा रहे।"
+     }
+    ]
+   },
+   {
+    "id": "hi-robot",
+    "persona": "robot",
+    "turns": [
+     {
+      "caller": "एक बात बताओ, आप इंसान हो या robot?"
+     },
+     {
+      "assistant": "जी, मैं AI assistant हूँ, इंसान नहीं। लेकिन आपका काम पूरा हो जाएगा, बताइए क्या चाहिए?"
+     },
+     {
+      "caller": "अच्छा ठीक है। मेरा order कब तक deliver होगा?"
+     },
+     {
+      "assistant": "हाँ जी, delivery की जानकारी team देखकर बताएगी। आपका order किस नाम से है?"
+     },
+     {
+      "caller": "सुनील शर्मा के नाम से।"
+     },
+     {
+      "assistant": "अच्छा सुनील जी, team इसी नंबर पर call करके delivery की जानकारी देगी। और कुछ पूछना है?"
+     }
+    ]
+   }
+  ],
+  "kn": [
+   {
+    "id": "kn-elder",
+    "persona": "elder",
+    "turns": [
+     {
+      "caller": "ನಮಸ್ಕಾರ. ನಮಗೆ ರೇಷ್ಮೆ ಸೀರೆ ಬೇಕಿತ್ತು, ನಿಮ್ಮ ಅಂಗಡಿ ಎಷ್ಟು ಗಂಟೆಗೆ ತೆರೆಯುತ್ತೆ?"
+     },
+     {
+      "assistant": "ನಮಸ್ಕಾರ, ಖಂಡಿತ ಸಹಾಯ ಮಾಡ್ತೀನಿ. ಅಂಗಡಿ timing ನಮ್ಮ team ಫೋನ್ ಮಾಡಿ ತಿಳಿಸ್ತಾರೆ, ಇದೇ ನಂಬರ್‌ಗೆ ಮಾಡಬಹುದಾ?"
+     },
+     {
+      "caller": "ಹೌದು, ಇದೇ ನಂಬರ್. ಆ ಸೀರೆ price ಎಷ್ಟಾಗುತ್ತೆ?"
+     },
+     {
+      "assistant": "ಸರಿ, price ವಿವರ ನಮ್ಮ team ಅವರೇ ಹೇಳ್ತಾರೆ. ಸೀರೆ ಯಾವ ಸಮಾರಂಭಕ್ಕೆ ಬೇಕು ಅಂತ ಹೇಳ್ತೀರಾ?"
+     },
+     {
+      "caller": "ಮೊಮ್ಮಗಳ ಮದುವೆಗೆ."
+     },
+     {
+      "assistant": "ಓಹ್, ತುಂಬಾ ಸಂತೋಷ. ನಿಮ್ಮ ವಿವರ team ಗೆ ತಿಳಿಸ್ತೀನಿ, ಅವರು ನಿಮಗೆ ಕರೆ ಮಾಡ್ತಾರೆ."
+     }
+    ]
+   },
+   {
+    "id": "kn-casual",
+    "persona": "casual",
+    "turns": [
+     {
+      "caller": "ಹಾಯ್! ಏನ್ ಸಮಾಚಾರ? ಹೊಸ collection ಏನಾದ್ರೂ ಬಂದಿದ್ಯಾ?"
+     },
+     {
+      "assistant": "ಹಾಯ್, ಹೇಳಿ! ಹೊಸ collection ವಿವರ team ನಿಮಗೆ ಕಳಿಸ್ತಾರೆ, ಯಾವ type ಬೇಕು?"
+     },
+     {
+      "caller": "ಸ್ವಲ್ಪ light ಆಗಿರೋದು, office ಗೆ ಹಾಕೋಕೆ."
+     },
+     {
+      "assistant": "ಓಹ್ ಸೂಪರ್, office wear ಗೆ ಒಳ್ಳೆ choice. ನಿಮ್ಮ ಹೆಸರು ಹೇಳ್ತೀರಾ?"
+     },
+     {
+      "caller": "ಕಾವ್ಯ. Photos WhatsApp ಮಾಡ್ತೀರಾ?"
+     },
+     {
+      "assistant": "ಆಯ್ತು ಕಾವ್ಯ ಅವರೇ, photos ಕಳಿಸೋಕೆ team ಗೆ ಹೇಳ್ತೀನಿ. ಇದೇ ನಂಬರ್ WhatsApp ನಲ್ಲಿ ಇದೆಯಾ?"
+     }
+    ]
+   },
+   {
+    "id": "kn-confused",
+    "persona": "confused",
+    "turns": [
+     {
+      "caller": "ಹಲೋ, ಇದು ಯಾರ ನಂಬರ್ ರೀ? ಯಾರೋ ಕೊಟ್ಟಿದ್ರು, ಯಾಕೆ ಅಂತ ನೆನಪಿಲ್ಲ."
+     },
+     {
+      "assistant": "ಪರವಾಗಿಲ್ಲ, ಇದು {business} ನಂಬರ್. ನಿಮಗೆ ಏನಾದ್ರೂ ಖರೀದಿ ಮಾಡಬೇಕಿತ್ತಾ?"
+     },
+     {
+      "caller": "ಗೊತ್ತಿಲ್ಲ, ನಮ್ಮ ಅಕ್ಕ ಏನೋ ಸೀರೆ ಬಗ್ಗೆ ಹೇಳಿದ್ರು ಅನ್ಸುತ್ತೆ."
+     },
+     {
+      "assistant": "ಓ ಹೌದಾ, ಹಾಗಾದ್ರೆ ಸೀರೆ ಬಗ್ಗೆನೇ ಇರಬೇಕು. ಯಾವುದಾದ್ರೂ function ಗೆ ಬೇಕಾ?"
+     },
+     {
+      "caller": "ಹೌದು, ಗೃಹಪ್ರವೇಶ ಇದೆ."
+     },
+     {
+      "assistant": "ತುಂಬಾ ಸಂತೋಷ. ನಿಮ್ಮ ವಿವರ team ಗೆ ಕೊಡ್ತೀನಿ, ಅವರು ಕರೆ ಮಾಡಿ ಎಲ್ಲಾ ಹೇಳ್ತಾರೆ."
+     }
+    ]
+   },
+   {
+    "id": "kn-annoyed",
+    "persona": "annoyed",
+    "turns": [
+     {
+      "caller": "ಯಾರ್ರೀ ನೀವು? ನನ್ನ ನಂಬರ್ ನಿಮಗೆ ಯಾರು ಕೊಟ್ರು?"
+     },
+     {
+      "assistant": "ಕ್ಷಮಿಸಿ, ತೊಂದರೆ ಕೊಡೋ ಉದ್ದೇಶ ಇಲ್ಲ. ನೀವು {business} ನಂಬರ್‌ಗೆ ಕರೆ ಮಾಡಿದ್ದೀರಿ, ಏನಾದ್ರೂ ಸಹಾಯ ಬೇಕಾ?"
+     },
+     {
+      "caller": "Missed call ನೋಡಿ ಮಾಡಿದೆ ಅಷ್ಟೇ. ನನಗೆ ಏನೂ ಬೇಡ, ಮತ್ತೆ call ಮಾಡ್ಬೇಡಿ."
+     },
+     {
+      "assistant": "ಅರ್ಥ ಆಯ್ತು, ಮತ್ತೆ ಕ್ಷಮೆ ಇರಲಿ. ನಿಮ್ಮ ನಂಬರ್ ತೆಗೆಯೋಕೆ team ಗೆ ಹೇಳಲಾ?"
+     },
+     {
+      "caller": "ಹೂಂ, ಹೇಳಿ."
+     },
+     {
+      "assistant": "ಆಯ್ತು, ನಂಬರ್ ತೆಗೆಯೋಕೆ team ಗೆ note ಮಾಡಿದ್ದೀನಿ. ಧನ್ಯವಾದ."
+     }
+    ]
+   },
+   {
+    "id": "kn-robot",
+    "persona": "robot",
+    "turns": [
+     {
+      "caller": "ನೀವು ಮನುಷ್ಯರಾ ಅಥವಾ robot ಆ?"
+     },
+     {
+      "assistant": "ನಾನು AI ಅಸಿಸ್ಟೆಂಟ್, ಆದ್ರೆ ನಿಮ್ಮ ಕೆಲಸ ಪೂರ್ತಿ ಮಾಡಿಕೊಡ್ತೀನಿ. ಏನು ಬೇಕು ಹೇಳಿ?"
+     },
+     {
+      "caller": "ಸರಿ. ನನ್ನ order delivery ಯಾವಾಗ ಆಗುತ್ತೆ?"
+     },
+     {
+      "assistant": "ಓಕೆ, delivery ವಿವರ team ನೋಡಿ ಹೇಳ್ತಾರೆ. Order ಯಾರ ಹೆಸರಲ್ಲಿದೆ?"
+     },
+     {
+      "caller": "ಸುರೇಶ್ ಹೆಸರಲ್ಲಿ."
+     },
+     {
+      "assistant": "ಆಯ್ತು ಸುರೇಶ್ ಅವರೇ, team ಇದೇ ನಂಬರ್‌ಗೆ ಕರೆ ಮಾಡಿ delivery ವಿವರ ಹೇಳ್ತಾರೆ. ಇನ್ನೇನಾದ್ರೂ ಬೇಕಾ?"
+     }
+    ]
+   }
+  ],
+  "ta": [
+   {
+    "id": "ta-elder",
+    "persona": "elder",
+    "turns": [
+     {
+      "caller": "வணக்கம். எங்களுக்கு பட்டுப் புடவை பாக்கணும், கடை எத்தனை மணிக்கு திறப்பீங்க?"
+     },
+     {
+      "assistant": "வணக்கம்ங்க, கண்டிப்பா உதவி பண்றேன். கடை timing எங்க team call பண்ணி சொல்லுவாங்க, இந்த நம்பருக்கே பண்ணலாமா?"
+     },
+     {
+      "caller": "ஆமா, இதே நம்பர் தான். அந்த புடவை price எவ்வளவு ஆகும்?"
+     },
+     {
+      "assistant": "சரிங்க, price விவரம் எங்க team தான் சொல்லுவாங்க. புடவை எந்த விசேஷத்துக்கு வேணும்ங்க?"
+     },
+     {
+      "caller": "பேத்தி கல்யாணத்துக்கு."
+     },
+     {
+      "assistant": "ரொம்ப சந்தோஷம்ங்க. உங்க விவரத்தை team கிட்ட சொல்றேன், அவங்க உங்களுக்கு call பண்ணுவாங்க."
+     }
+    ]
+   },
+   {
+    "id": "ta-casual",
+    "persona": "casual",
+    "turns": [
+     {
+      "caller": "ஹாய்! என்ன, புது collection ஏதாவது வந்திருக்கா?"
+     },
+     {
+      "assistant": "ஹாய், சொல்லுங்க! புது collection விவரம் team அனுப்புவாங்க, எந்த type வேணும்?"
+     },
+     {
+      "caller": "கொஞ்சம் light-ஆ, office-க்கு போட்டுக்கிற மாதிரி."
+     },
+     {
+      "assistant": "சூப்பர், office-க்கு நல்ல choice. உங்க பேர் என்ன?"
+     },
+     {
+      "caller": "ப்ரியா. Photos WhatsApp-ல அனுப்புவீங்களா?"
+     },
+     {
+      "assistant": "ஓகே ப்ரியா, photos அனுப்ப team கிட்ட சொல்றேன். இதே நம்பர்ல WhatsApp இருக்கா?"
+     }
+    ]
+   },
+   {
+    "id": "ta-confused",
+    "persona": "confused",
+    "turns": [
+     {
+      "caller": "ஹலோ, இது யாரோட நம்பர்? யாரோ குடுத்தாங்க, எதுக்குன்னு ஞாபகம் இல்ல."
+     },
+     {
+      "assistant": "பரவாயில்லைங்க, இது {business} நம்பர். ஏதாவது வாங்கணும்னு நினைச்சீங்களா?"
+     },
+     {
+      "caller": "தெரியல, எங்க friend ஒருத்தங்க ஏதோ புடவை பத்தி சொன்னாங்கன்னு நினைக்கிறேன்."
+     },
+     {
+      "assistant": "ஓ அப்படியா, அப்போ புடவைக்காக தான் இருக்கும். ஏதாவது விசேஷத்துக்கா?"
+     },
+     {
+      "caller": "ஆமா, கிரகப்பிரவேசம் இருக்கு."
+     },
+     {
+      "assistant": "ரொம்ப சந்தோஷம்ங்க. உங்க விவரத்தை team கிட்ட குடுக்கறேன், அவங்க call பண்ணி எல்லாம் சொல்லுவாங்க."
+     }
+    ]
+   },
+   {
+    "id": "ta-annoyed",
+    "persona": "annoyed",
+    "turns": [
+     {
+      "caller": "யாருங்க நீங்க? என் நம்பர் உங்களுக்கு யார் குடுத்தா?"
+     },
+     {
+      "assistant": "மன்னிக்கணும்ங்க, தொந்தரவு பண்ற எண்ணம் இல்ல. நீங்க {business} நம்பருக்கு call பண்ணியிருக்கீங்க, ஏதாவது உதவி வேணுமா?"
+     },
+     {
+      "caller": "Missed call பாத்துட்டு பண்ணேன், அவ்வளவுதான். எனக்கு எதுவும் வேணாம், திரும்ப call பண்ணாதீங்க."
+     },
+     {
+      "assistant": "புரியுதுங்க, மறுபடியும் மன்னிக்கணும். உங்க நம்பரை எடுத்துடச் சொல்லி team கிட்ட சொல்லட்டுமா?"
+     },
+     {
+      "caller": "சரி, சொல்லுங்க."
+     },
+     {
+      "assistant": "கண்டிப்பா, நம்பரை எடுக்க team-க்கு note போட்டுட்டேன். நன்றிங்க."
+     }
+    ]
+   },
+   {
+    "id": "ta-robot",
+    "persona": "robot",
+    "turns": [
+     {
+      "caller": "நீங்க மனுஷங்களா இல்ல robot-ஆ?"
+     },
+     {
+      "assistant": "நான் ஒரு AI assistant தாங்க, ஆனா உங்க வேலையை முழுசா முடிச்சு தருவேன். என்ன வேணும் சொல்லுங்க?"
+     },
+     {
+      "caller": "சரி. என் order delivery எப்போ வரும்?"
+     },
+     {
+      "assistant": "ஓகேங்க, delivery விவரம் team பாத்து சொல்லுவாங்க. Order யார் பேர்ல இருக்கு?"
+     },
+     {
+      "caller": "சுரேஷ் பேர்ல."
+     },
+     {
+      "assistant": "சரிங்க சுரேஷ், team இதே நம்பருக்கு call பண்ணி delivery விவரம் சொல்லுவாங்க. வேற ஏதாவது வேணுமா?"
+     }
+    ]
+   }
+  ],
+  "ml": [
+   {
+    "id": "ml-elder",
+    "persona": "elder",
+    "turns": [
+     {
+      "caller": "നമസ്കാരം. ഞങ്ങൾക്ക് ഒരു പട്ടുസാരി നോക്കണം, കട എത്ര മണിക്ക് തുറക്കും?"
+     },
+     {
+      "assistant": "നമസ്കാരം, തീർച്ചയായും സഹായിക്കാം. കടയുടെ timing ഞങ്ങളുടെ team വിളിച്ച് പറയും, ഈ നമ്പറിൽ തന്നെ വിളിക്കട്ടെ?"
+     },
+     {
+      "caller": "അതെ, ഈ നമ്പർ മതി. ആ സാരിക്ക് price എത്ര ആകും?"
+     },
+     {
+      "assistant": "ശരി, price വിവരങ്ങൾ team തന്നെ പറയും. ഏത് ചടങ്ങിനാണ് സാരി വേണ്ടത്?"
+     },
+     {
+      "caller": "കൊച്ചുമകളുടെ കല്യാണത്തിന്."
+     },
+     {
+      "assistant": "വളരെ സന്തോഷം. നിങ്ങളുടെ വിവരങ്ങൾ team-നെ അറിയിക്കാം, അവർ നിങ്ങളെ വിളിക്കും."
+     }
+    ]
+   },
+   {
+    "id": "ml-casual",
+    "persona": "casual",
+    "turns": [
+     {
+      "caller": "ഹായ്! പുതിയ collection എന്തെങ്കിലും വന്നിട്ടുണ്ടോ?"
+     },
+     {
+      "assistant": "ഹായ്, പറഞ്ഞോളൂ! പുതിയ collection വിവരങ്ങൾ team അയച്ചുതരും, ഏത് type ആണ് വേണ്ടത്?"
+     },
+     {
+      "caller": "കുറച്ച് light ആയിട്ടുള്ളത്, office-ൽ ഇടാൻ."
+     },
+     {
+      "assistant": "അടിപൊളി, office-ന് നല്ല choice ആണ്. പേര് എന്താ?"
+     },
+     {
+      "caller": "അനു. Photos WhatsApp ചെയ്യാമോ?"
+     },
+     {
+      "assistant": "ഓക്കെ അനു, photos അയക്കാൻ team-നോട് പറയാം. ഈ നമ്പറിൽ തന്നെയാണോ WhatsApp?"
+     }
+    ]
+   },
+   {
+    "id": "ml-confused",
+    "persona": "confused",
+    "turns": [
+     {
+      "caller": "ഹലോ, ഇത് ആരുടെ നമ്പറാ? ആരോ തന്നതാ, എന്തിനാണെന്ന് ഓർമ്മയില്ല."
+     },
+     {
+      "assistant": "കുഴപ്പമില്ല, ഇത് {business} നമ്പറാണ്. എന്തെങ്കിലും വാങ്ങാൻ ഉദ്ദേശിച്ചിരുന്നോ?"
+     },
+     {
+      "caller": "അറിയില്ല, എന്റെ ഒരു friend എന്തോ സാരിയുടെ കാര്യം പറഞ്ഞിരുന്നു."
+     },
+     {
+      "assistant": "ആണോ, എങ്കിൽ സാരിയുടെ കാര്യമായിരിക്കും. എന്തെങ്കിലും ചടങ്ങിനാണോ?"
+     },
+     {
+      "caller": "അതെ, ഒരു ഗൃഹപ്രവേശം ഉണ്ട്."
+     },
+     {
+      "assistant": "വളരെ സന്തോഷം. വിവരങ്ങൾ team-ന് കൈമാറാം, അവർ വിളിച്ച് എല്ലാം പറയും."
+     }
+    ]
+   },
+   {
+    "id": "ml-annoyed",
+    "persona": "annoyed",
+    "turns": [
+     {
+      "caller": "ആരാ ഇത്? എന്റെ നമ്പർ നിങ്ങൾക്ക് ആരാ തന്നത്?"
+     },
+     {
+      "assistant": "ക്ഷമിക്കണം, ബുദ്ധിമുട്ടിക്കാൻ ഉദ്ദേശിച്ചില്ല. നിങ്ങൾ വിളിച്ചത് {business} നമ്പറിലേക്കാണ്, എന്തെങ്കിലും സഹായം വേണോ?"
+     },
+     {
+      "caller": "Missed call കണ്ടിട്ട് വിളിച്ചതാ. എനിക്ക് ഒന്നും വേണ്ട, ഇനി വിളിക്കരുത്."
+     },
+     {
+      "assistant": "മനസ്സിലായി, വീണ്ടും ക്ഷമ ചോദിക്കുന്നു. നിങ്ങളുടെ നമ്പർ മാറ്റാൻ team-നോട് പറയട്ടെ?"
+     },
+     {
+      "caller": "ശരി, പറഞ്ഞോളൂ."
+     },
+     {
+      "assistant": "തീർച്ചയായും, നമ്പർ മാറ്റാൻ team-ന് note ഇട്ടിട്ടുണ്ട്. നന്ദി."
+     }
+    ]
+   },
+   {
+    "id": "ml-robot",
+    "persona": "robot",
+    "turns": [
+     {
+      "caller": "നിങ്ങൾ മനുഷ്യനാണോ അതോ robot ആണോ?"
+     },
+     {
+      "assistant": "ഞാൻ ഒരു AI അസിസ്റ്റന്റ് ആണ്, പക്ഷേ നിങ്ങളുടെ കാര്യം മുഴുവൻ ചെയ്തുതരാം. എന്താണ് വേണ്ടത്?"
+     },
+     {
+      "caller": "ശരി. എന്റെ order delivery എപ്പോഴാ?"
+     },
+     {
+      "assistant": "ഓക്കെ, delivery വിവരം team നോക്കി പറയും. Order ആരുടെ പേരിലാണ്?"
+     },
+     {
+      "caller": "സുരേഷിന്റെ പേരിൽ."
+     },
+     {
+      "assistant": "ശരി, team ഈ നമ്പറിൽ വിളിച്ച് delivery വിവരം പറയും. വേറെ എന്തെങ്കിലും വേണോ?"
+     }
+    ]
+   }
+  ],
+  "en": [
+   {
+    "id": "en-elder",
+    "persona": "elder",
+    "turns": [
+     {
+      "caller": "Good morning. I wanted to ask about silk sarees. What time does your shop open?"
+     },
+     {
+      "assistant": "Good morning, happy to help. Our team will call you with the shop timings, shall they call this same number?"
+     },
+     {
+      "caller": "Yes, this number is fine. And roughly what would a good silk saree cost?"
+     },
+     {
+      "assistant": "Sure, the team will share the prices with you directly. May I know what occasion the saree is for?"
+     },
+     {
+      "caller": "My granddaughter's wedding."
+     },
+     {
+      "assistant": "How lovely, congratulations. I'll pass your details to the team and they'll call you."
+     }
+    ]
+   },
+   {
+    "id": "en-casual",
+    "persona": "casual",
+    "turns": [
+     {
+      "caller": "Hey! Anything new in the collection these days?"
+     },
+     {
+      "assistant": "Hey there! The team will send you details of the new collection, what kind are you looking for?"
+     },
+     {
+      "caller": "Something light, for office wear. Nothing too heavy yaar."
+     },
+     {
+      "assistant": "Got it, light office wear is a great pick. What name should I note down for the team?"
+     },
+     {
+      "caller": "Neha. Can you send photos on WhatsApp?"
+     },
+     {
+      "assistant": "Sure Neha, I'll ask the team to send photos. Is this number on WhatsApp?"
+     }
+    ]
+   },
+   {
+    "id": "en-confused",
+    "persona": "confused",
+    "turns": [
+     {
+      "caller": "Hello, umm, whose number is this? Someone gave it to me, I don't remember why."
+     },
+     {
+      "assistant": "No problem at all, this is {business}. Were you thinking of buying something?"
+     },
+     {
+      "caller": "Not sure. My sister said something about sarees, I think."
+     },
+     {
+      "assistant": "Ah okay, then it's probably about sarees. Is there a special occasion coming up?"
+     },
+     {
+      "caller": "Yes, a housewarming."
+     },
+     {
+      "assistant": "That's wonderful. I'll pass your details to the team and they'll call you to explain everything."
+     }
+    ]
+   },
+   {
+    "id": "en-annoyed",
+    "persona": "annoyed",
+    "turns": [
+     {
+      "caller": "Who is this? Who gave you my number?"
+     },
+     {
+      "assistant": "Sorry for the trouble, that wasn't the intention. You've reached {business}, is there anything I can help with?"
+     },
+     {
+      "caller": "I only called back because of a missed call. I don't need anything, don't call me again."
+     },
+     {
+      "assistant": "Understood, and apologies again. Shall I ask the team to remove your number?"
+     },
+     {
+      "caller": "Yes, please do."
+     },
+     {
+      "assistant": "Of course, I've noted that for the team. Thank you, and have a good day."
+     }
+    ]
+   },
+   {
+    "id": "en-robot",
+    "persona": "robot",
+    "turns": [
+     {
+      "caller": "Wait, am I talking to a person or a robot?"
+     },
+     {
+      "assistant": "I'm an AI assistant, not a person, but I'll make sure your work gets done. What can I help you with?"
+     },
+     {
+      "caller": "Okay. When will my order be delivered?"
+     },
+     {
+      "assistant": "Sure, the team will check and tell you about the delivery. Whose name is the order under?"
+     },
+     {
+      "caller": "Suresh Kumar."
+     },
+     {
+      "assistant": "Thanks, Suresh. The team will call you on this number with the delivery details."
+     }
+    ]
+   }
+  ],
+  "mr": [
+   {
+    "id": "mr-elder",
+    "persona": "elder",
+    "turns": [
+     {
+      "caller": "नमस्कार. आम्हाला पैठणी साडी बघायची होती, दुकान किती वाजता उघडतं?"
+     },
+     {
+      "assistant": "नमस्कार, नक्की मदत करेन. दुकानाची timing आमची team फोन करून सांगेल, याच नंबरवर फोन करायचा का?"
+     },
+     {
+      "caller": "हो, याच नंबरवर. त्या साडीची price किती असेल?"
+     },
+     {
+      "assistant": "बरं, price ची माहिती team च सांगेल. साडी कोणत्या कार्यक्रमासाठी हवी आहे?"
+     },
+     {
+      "caller": "नातीच्या लग्नासाठी."
+     },
+     {
+      "assistant": "अरे वा, खूप आनंद झाला. तुमची माहिती team ला कळवेन, ते तुम्हाला फोन करतील."
+     }
+    ]
+   },
+   {
+    "id": "mr-casual",
+    "persona": "casual",
+    "turns": [
+     {
+      "caller": "हाय! काय म्हणता? नवीन collection आलंय का?"
+     },
+     {
+      "assistant": "हाय, बोला की! नवीन collection ची माहिती team पाठवेल, कोणता type हवाय?"
+     },
+     {
+      "caller": "थोडं light, office ला घालायला."
+     },
+     {
+      "assistant": "मस्त, office साठी छान choice आहे. तुमचं नाव काय?"
+     },
+     {
+      "caller": "स्नेहा. Photos WhatsApp कराल का?"
+     },
+     {
+      "assistant": "ओके स्नेहा, photos पाठवायला team ला सांगेन. हाच नंबर WhatsApp वर आहे का?"
+     }
+    ]
+   },
+   {
+    "id": "mr-confused",
+    "persona": "confused",
+    "turns": [
+     {
+      "caller": "हॅलो, हा कोणाचा नंबर आहे? कोणीतरी दिला होता, कशासाठी ते आठवत नाही."
+     },
+     {
+      "assistant": "काही हरकत नाही, हा {business} चा नंबर आहे. तुम्हाला काही खरेदी करायची होती का?"
+     },
+     {
+      "caller": "माहीत नाही, माझ्या ताईने साडीबद्दल काहीतरी सांगितलं होतं बहुतेक."
+     },
+     {
+      "assistant": "अच्छा, मग साडीसाठीच असेल. काही खास कार्यक्रम आहे का?"
+     },
+     {
+      "caller": "हो, गृहप्रवेश आहे."
+     },
+     {
+      "assistant": "छान, खूप आनंद झाला. तुमची माहिती team ला देईन, ते फोन करून सगळं सांगतील."
+     }
+    ]
+   },
+   {
+    "id": "mr-annoyed",
+    "persona": "annoyed",
+    "turns": [
+     {
+      "caller": "कोण बोलतंय? माझा नंबर तुम्हाला कोणी दिला?"
+     },
+     {
+      "assistant": "माफ करा, त्रास देण्याचा हेतू नव्हता. तुम्ही {business} च्या नंबरवर फोन केला आहे, काही मदत हवी आहे का?"
+     },
+     {
+      "caller": "Missed call बघून केला फक्त. मला काही नको, परत call करू नका."
+     },
+     {
+      "assistant": "समजलं, पुन्हा एकदा क्षमस्व. तुमचा नंबर काढून टाकायला team ला सांगू का?"
+     },
+     {
+      "caller": "हो, सांगा."
+     },
+     {
+      "assistant": "नक्की, नंबर काढण्यासाठी team ला note दिली आहे. धन्यवाद."
+     }
+    ]
+   },
+   {
+    "id": "mr-robot",
+    "persona": "robot",
+    "turns": [
+     {
+      "caller": "तुम्ही माणूस आहात की robot?"
+     },
+     {
+      "assistant": "मी एक AI असिस्टंट आहे, पण तुमचं काम पूर्ण करून देईन. बोला, काय हवंय?"
+     },
+     {
+      "caller": "बरं. माझी order delivery कधी होईल?"
+     },
+     {
+      "assistant": "ठीक आहे, delivery ची माहिती team बघून सांगेल. Order कोणाच्या नावावर आहे?"
+     },
+     {
+      "caller": "सुरेश पाटील यांच्या नावावर."
+     },
+     {
+      "assistant": "बरं, team याच नंबरवर फोन करून delivery ची माहिती देईल. अजून काही हवं आहे का?"
+     }
+    ]
+   }
+  ]
+ }
 }

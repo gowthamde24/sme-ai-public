@@ -665,20 +665,31 @@ class VoiceSession:
                 if done:
                     return task.result()
                 quiet = self.clock() - max(started, self._last_sound)
-                action = silence_action(quiet, self._checked_in) if self.idle_s >= 15 else ("end" if quiet >= self.idle_s else "wait")
+                if self.silence_s is not None:   # a phone call's own timings (check-in, end), owner 6 Nov 2026
+                    check_after, end_after = self.silence_s
+                    action = "end" if quiet >= end_after else ("check_in" if quiet >= check_after and not self._checked_in else "wait")
+                else:
+                    check_after = 8.0
+                    action = silence_action(quiet, self._checked_in) if self.idle_s >= 15 else ("end" if quiet >= self.idle_s else "wait")
                 if action == "end":
                     raise TimeoutError
                 if action == "check_in":
                     self._checked_in = True
-                    await self._say(CHECK_IN.get(self.language, CHECK_IN["en"]))
+                    await self._say(self.check_in_words().get(self.language) or CHECK_IN.get(self.language, CHECK_IN["en"]))
                     self.bus.drop_before(0.0)   # our own question came back through the microphone
-                    started = self.clock() - 8.0   # (the quiet clock goes on from where it was: the end still comes at ~30 s in all)
-                    self._last_sound = self.clock() - 8.0
+                    started = self.clock() - check_after   # (the quiet clock goes on from where it was: the end still comes at the same time in all)
+                    self._last_sound = self.clock() - check_after
         finally:
             if not task.done():
                 task.cancel()
                 with suppress(asyncio.CancelledError, Exception):
                     await task
+
+    # how long the line may be quiet: None = Live talk's own (check-in at ~8 s, end at the idle limit); a phone call sets (check-in after, end after) in seconds
+    silence_s: tuple[float, float] | None = None
+
+    def check_in_words(self) -> dict[str, str]:
+        return CHECK_IN
 
     async def _end_for_silence(self) -> None:
         self._ended = "idle"

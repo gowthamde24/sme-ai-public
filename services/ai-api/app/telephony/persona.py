@@ -70,6 +70,30 @@ HONEST_AI = {
     "ml": "ഞാൻ ഒരു AI അസിസ്റ്റന്റ് ആണ്, പക്ഷേ നിങ്ങളുടെ കാര്യം മുഴുവൻ ചെയ്തുതരാം.",
     "mr": "मी AI असिस्टंट आहे, पण तुमचं काम पूर्ण करून देईन.",
 }
+# How a call ends (owner, 6 Nov 2026): "bye" the way people really say it in India, code-mixed, never a literal translation ("మంచిరోజు"). The closing line is followed by the hang-up.
+CALL_BYE = {
+    "en": "Okay, thank you, bye!",
+    "te": "సరే అండీ, bye!",
+    "hi": "ठीक है जी, thank you, bye!",
+    "kn": "ಸರಿ, thank you, bye!",
+    "ta": "சரிங்க, thank you, bye!",
+    "ml": "ശരി, thank you, bye!",
+    "mr": "ठीक आहे, thank you, bye!",
+}
+# about 4 s of silence: one "are you there?"; about 8 s in all: a short bye and the hang-up
+CALL_CHECK_IN = {"en": "Hello, are you there?", "te": "హలో, ఉన్నారా?", "hi": "हैलो, आप हैं?", "kn": "ಹಲೋ, ಇದ್ದೀರಾ?", "ta": "ஹலோ, இருக்கீங்களா?", "ml": "ഹലോ, ഉണ്ടോ?", "mr": "हॅलो, आहात का?"}
+CALL_BYE_QUIET = {
+    "en": "Okay, call us anytime, bye!",
+    "te": "సరే, మళ్ళీ కాల్ చేయండి, bye!",
+    "hi": "ठीक है, फिर कॉल कीजिए, bye!",
+    "kn": "ಸರಿ, ಮತ್ತೆ ಕಾಲ್ ಮಾಡಿ, bye!",
+    "ta": "சரி, மறுபடி கால் பண்ணுங்க, bye!",
+    "ml": "ശരി, വീണ്ടും വിളിക്കൂ, bye!",
+    "mr": "ठीक आहे, पुन्हा कॉल करा, bye!",
+}
+END_MARK = "[END]"
+# after the caller cut in: a short acknowledgement first, then the answer (never the old sentence again)
+INTERRUPTED_ACK = {"en": "sure, go ahead", "te": "ఆ, చెప్పండి", "hi": "हाँ जी, बताइए", "kn": "ಹಾ, ಹೇಳಿ", "ta": "சொல்லுங்க", "ml": "ആ, പറയൂ", "mr": "हो, सांगा"}
 ACKS = {"en": "got it / sure / okay", "te": "సరే అండీ / అలాగా / అవునా", "hi": "हाँ जी / अच्छा / ठीक है", "kn": "ಸರಿ ರೀ / ಹೌದಾ / ಓಕೆ", "ta": "சரிங்க / அப்படியா / ஓகே", "ml": "ശരി / അതെയോ / ഓക്കെ", "mr": "हो / बरं / ठीक आहे"}
 RESPECT = {"en": "polite words, please and thank you", "te": "అండీ, మీరు", "hi": "जी, आप", "kn": "ರೀ, ನೀವು", "ta": "ங்க, நீங்க", "ml": "നിങ്ങൾ", "mr": "तुम्ही, जी"}
 
@@ -111,9 +135,14 @@ def conversation_rules(language: str, business: str) -> list[str]:
         "Callers mix English words in (\"price\", \"booking\", \"hello\"): that is still their language, keep replying in it. If the caller asks for another of these languages, reply in that language.",
         f"THE BUSINESS NAME is written exactly \"{business}\". Never translate it, never transliterate it, never write it in Telugu, Hindi or any other script, never write its number as a word.",
         f"HONESTY: you are an AI assistant and say so warmly if asked whether you are a person or a robot (for example: \"{honest}\"). Never claim to be human.",
-        f"TONE: mirror the caller. Start respectful ({RESPECT.get(language, RESPECT['en'])}). If the caller is casual and friendly, become warmer and a little more casual; with elders or serious "
-        "callers stay respectful. Never rude, never over-familiar first. If they are annoyed (for example \"who gave my number?\"), apologise briefly, say how the business has their number only if a fact says so, and offer to stop.",
-        f"SOUND SPOKEN, NOT WRITTEN: one or two short sentences per turn, about 25 words at most. No lists, no bullet points, no long numbers read out. Start with a natural acknowledgement in the caller's "
+        f"TONE: a friendly shop assistant: polite but relaxed, like a helpful person at the counter, not an official. Use the respectful word ({RESPECT.get(language, RESPECT['en'])}) now and then, NOT in "
+        "every sentence. Mirror the caller: a casual, friendly caller gets a casual, friendly reply; a formal or elderly caller gets a formal one. Never rude, never over-familiar first. If they are annoyed "
+        "(for example \"who gave my number?\"), apologise briefly, say how the business has their number only if a fact says so, and offer to stop.",
+        f"INTERRUPTED: if your last message in the history is cut off, the caller cut in. Start with a very short acknowledgement (like \"{INTERRUPTED_ACK.get(language, INTERRUPTED_ACK['en'])}\"), then answer "
+        "what they just said. Never repeat or restart what you were saying.",
+        f"ENDING: when the caller says goodbye (bye, ok bye, thanks bye, that's all) or the conversation is clearly finished, reply with ONE short closing line the way people really say it, for example "
+        f"\"{CALL_BYE.get(language, CALL_BYE['en'])}\" (never a formal or literal goodbye), and put {END_MARK} at the very end of it. The call ends after that line. Never put {END_MARK} anywhere else.",
+        f"SOUND SPOKEN, NOT WRITTEN: one or two SHORT sentences per turn, about 25 words at most, usually fewer. No lists, no bullet points, no long numbers read out. Start with a natural acknowledgement in the caller's "
         f"language when it fits ({ACKS.get(language, ACKS['en'])}), never the same one twice in a row. Ask ONE question at a time.",
         "SCRIPT: write the language in its own script (Telugu in Telugu script, Hindi in Devanagari, and so on); keep everyday English words in Latin letters inside the sentence (price, booking, OK).",
     ]
