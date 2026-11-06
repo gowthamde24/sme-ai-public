@@ -103,6 +103,8 @@ from app.followups import errors as followup_errors
 from app.followups.messages import FOLLOWUP_REFUSALS
 from app.followups.repository import PostgrestFollowupsRepository
 from app.followups.routes import router as followups_router
+from app.glance.routes import PostgrestGlance
+from app.glance.routes import router as glance_router
 from app.hardening.headers import SecurityHeadersMiddleware
 from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
 from app.hardening.ops_routes import build_router as build_ops_router
@@ -367,6 +369,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
         search=PostgrestSearch(config.rest_url, config.anon_key),
         timeline=PostgrestTimeline(config.rest_url, config.anon_key),
+        glance=PostgrestGlance(config.rest_url, config.anon_key),
         developer_api=build_developer_api(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
         ),
@@ -1350,6 +1353,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(talk_training_router)
     app.include_router(search_router)
     app.include_router(timeline_router)
+    app.include_router(glance_router)
     app.include_router(developer_router)
     app.include_router(developer_api_router)
     app.include_router(lead_profile_router)

@@ -23,6 +23,9 @@ ROUTE_WORDS = frozenset(
         "practice",   # POST /talk-training/practice (app v4)
         "timeline",   # GET /customers/{id}/timeline (app v4)
         "correction",   # POST /calls/{id}/correction (app v4)
+        "take-over",   # WS /calls/{id}/take-over (app v4)
+        "whisper",   # POST /calls/{id}/whisper (app v4)
+        "money", "low-stock",   # GET /money/summary, /catalogue/low-stock (app v4)
         "v1", "me", "tenants", "members", "audit-events", "health",
         # 5 Nov 2026 (C1): a switch per helper
         "switches", "switch",
