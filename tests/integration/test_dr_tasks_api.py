@@ -94,7 +94,11 @@ def test_a_task_is_planned_reviewed_approved_once_run_and_reported(client: Any, 
     body = report.json()
     assert body["simulated"] is True and body["short_answer"] and body["totals"]["contacts"] == 2
     assert all(row["simulated"] and row["recording_url"] is None for row in body["rows"])
-    assert any(row["transcript"] and row["transcript"][0]["who"] == "assistant" for row in body["rows"]), "a call opens with the assistant (and its AI line)"
+    # every ANSWERED call opens with the assistant (and its AI line). Not "at least one call has a transcript": the fake dialer leaves 2 calls in 10 unanswered, picked by a hash of the task's
+    # and the contact's random ids, so with two people that failed about 1 run in 25, when both were unanswered (#364, #370, #383; the same cause as #165 in the unit test).
+    answered = [row for row in body["rows"] if row["transcript"]]
+    assert all(row["transcript"][0]["who"] == "assistant" for row in answered), "a call opens with the assistant (and its AI line)"
+    assert all(row["outcome"] == "no_answer" for row in body["rows"] if not row["transcript"]), "a call without a transcript is one nobody answered"
 
     # a finished task is final; a second approval and a plan of the same id are refused
     assert client.post(f"{base}/{task_id}/approve", json={"plan_sha256": out.json()["plan_sha256"]}, headers=bearer(a.users["owner"])).json()["error"]["code"] == "task_state"
