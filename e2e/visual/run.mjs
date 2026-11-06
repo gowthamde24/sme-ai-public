@@ -204,6 +204,13 @@ async function main() {
               status = res?.status() ?? 0;
               await page.evaluate(() => document.fonts.ready);
               await page.waitForTimeout(250);
+              // the sidebar scrolls its current row into view when the menu's data arrives, and where it ends depends on which data came first: from the top again, then the same "nearest" scroll the app does, so a picture is the same every run
+              await page.evaluate(() => {
+                const box = document.querySelector("aside nav");
+                if (!box) return;
+                box.scrollTop = 0;
+                box.querySelector('[aria-current="page"]')?.scrollIntoView({ block: "nearest" });
+              });
               const shot = await page.screenshot({ type: "jpeg", quality: 70, animations: "disabled", caret: "hide" });
               const file = path.join(BASELINES, `${name}.jpg`);
               if (UPDATE) {
