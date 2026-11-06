@@ -57,9 +57,9 @@ update public.voice_usage_days set chars = 0 where engine = 'cartesia';
 select is(pg_temp.items('a_owner', 'a'), '', 'F1 no notice workspace set: no warning anywhere');
 update public.voice_budget set notice_tenant = tests.tid('a') where engine = 'cartesia';
 select is(pg_temp.items('a_owner', 'a'), '', 'F2 nothing spent: no warning');
-select app.voice_usage_add_script(app.voice_day(), 'cartesia', 16000);
-select is(pg_temp.items('a_owner', 'a'), 'day_80', 'F3 16,000 today: the day at 80 percent');
-select app.voice_usage_add_script(app.voice_day(), 'cartesia', 4000);
+insert into public.voice_usage_days (day, engine, source, chars) values (app.voice_day(), 'cartesia', 'call', 16000) on conflict (day, engine, source) do update set chars = excluded.chars;
+select is(pg_temp.items('a_owner', 'a'), 'day_80', 'F3 16,000 today on calls: the day at 80 percent');
+update public.voice_usage_days set chars = chars + 4000 where day = app.voice_day() and engine = 'cartesia' and source = 'call';
 select is(pg_temp.items('a_admin', 'a'), 'day_100', 'F4 20,000: the day reached its limit (for an Admin too)');
 select app.voice_usage_add_script(app.voice_period_start(app.voice_day(), 29::smallint), 'cartesia', 60000);
 select is(pg_temp.items('a_owner', 'a'), 'day_100,month_80', 'F5 80,000 this period: the month at 80 percent (script renders count)');
@@ -71,6 +71,12 @@ select app.voice_usage_add_script(app.voice_period_start(app.voice_day(), 29::sm
 select is(pg_temp.items('a_owner', 'a'), 'day_100,month_100', 'F9 the day before the period does not count (still exactly the same warnings)');
 
 -- G: the period starts on the 29th (clamped to the month's length)
+-- H: characters counted in by the operator (renders, the dashboard's gap) count for the MONTH only, never for the day's limit (migration 20261231300000)
+update public.voice_usage_days set chars = 0 where engine = 'cartesia';
+select app.voice_usage_add_script(app.voice_day(), 'cartesia', 97672);
+select is(pg_temp.items('a_owner', 'a'), 'month_80', 'H1 the month''s 97,672 counted in today: the month at 80 percent, the day untouched');
+select is(pg_temp.q('b_admin', $$select (public.voice_budget_reserve('cartesia', 2000, 'call') ->> 'granted')$$), '2000', 'H2 ... and a call still gets its full allowance');
+
 select is(app.voice_period_start('2026-11-29', 29::smallint)::text, '2026-11-29', 'G1 the 29th starts a period');
 select is(app.voice_period_start('2026-11-28', 29::smallint)::text, '2026-10-29', 'G2 the 28th belongs to the period that began on 29 Oct');
 select is(app.voice_period_start('2027-03-01', 29::smallint)::text, '2027-02-28', 'G3 February has no 29th in 2027: the period began on the 28th');
