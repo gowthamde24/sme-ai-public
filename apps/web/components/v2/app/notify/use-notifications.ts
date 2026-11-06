@@ -15,7 +15,7 @@ const STALE_MS = 20_000;
  * minutes), not at all while the tab is hidden (unless browser notifications are on: then every five minutes) or while the phone is offline, and straight away when the tab or the connection comes back.
  * One question at a time; leaving the page stops it. A rejected session (401) stops it for good: the page sends the person to sign in on its next move. `onFresh` gets each good answer.
  */
-export function useNotifications(tenantId: string, browserOptIn: boolean, onFresh: (items: Notice[]) => void) {
+export function useNotifications(tenantId: string, browserOptIn: boolean, onFresh: (items: Notice[]) => void, /** false: nothing is asked at all (the demo video) and the list stays empty. */ enabled = true) {
   const base = `/app/tenants/${tenantId}`;
   const [items, setItems] = useState<Notice[]>([]);
   const [status, setStatus] = useState<NotifyStatus>("loading");
@@ -28,6 +28,7 @@ export function useNotifications(tenantId: string, browserOptIn: boolean, onFres
   });
 
   useEffect(() => {
+    if (!enabled) return;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let controller: AbortController | null = null;
     let failures = 0;
@@ -86,7 +87,7 @@ export function useNotifications(tenantId: string, browserOptIn: boolean, onFres
       window.removeEventListener("online", onNet);
       window.removeEventListener("offline", schedule);
     };
-  }, [base]);
+  }, [base, enabled]);
 
   const refresh = useCallback(() => askNow.current(), []);
   return { items, status, refresh };

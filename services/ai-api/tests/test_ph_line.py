@@ -86,10 +86,11 @@ def test_the_start_message_survives_odd_values() -> None:
 
 def test_outgoing_messages_and_the_chunk_rule() -> None:
     pcm = b"\x00\x01" * 1600
-    msg = json.loads(exotel.media_message("XP1", pcm, 7))
+    msg = json.loads(exotel.media_message("XP1", pcm))
     assert msg["event"] == "media" and msg["stream_sid"] == "XP1" and base64.b64decode(msg["media"]["payload"]) == pcm
+    assert set(msg) == {"event", "stream_sid", "media"} and set(msg["media"]) == {"payload"}, "exactly Exotel's documented shape: no sequence_number, no chunk"
     assert json.loads(exotel.clear_message("XP1")) == {"event": "clear", "stream_sid": "XP1"}
-    assert json.loads(exotel.mark_message("XP1", "t", 3))["mark"] == {"name": "t"}
+    assert json.loads(exotel.mark_message("XP1", "t")) == {"event": "mark", "stream_sid": "XP1", "mark": {"name": "t"}}
     assert exotel.valid_out_chunk(b"\x00" * 3200) and exotel.valid_out_chunk(b"\x00" * 320) and not exotel.valid_out_chunk(b"\x00" * 321) and not exotel.valid_out_chunk(b"\x00" * 100_160)
 
 
