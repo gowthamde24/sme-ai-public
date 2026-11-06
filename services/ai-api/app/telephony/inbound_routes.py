@@ -155,7 +155,8 @@ def visit_label(slot: dict[str, Any]) -> str:
         return str(slot.get("start") or "")
 
 
-def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None, visit_labels: tuple[str, ...] = (), assistant: str | None = None) -> tuple[Parts, str]:
+def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None, visit_labels: tuple[str, ...] = (), assistant: str | None = None,
+                corrections: tuple[str, ...] = ()) -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in the CALL's language (te-IN on a Telugu line; owner, 6 Nov 2026: "auto" let a caller's "hello" turn a Telugu call English),
     following the call when it switches (app/telephony/language_rule.py), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
@@ -173,7 +174,8 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
         stt_for=lambda lang: SarvamRealtimeStt(bv.sarvam_key, language=lang, silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(lang, bv.stt_modes)),
         tts=tts,
         llm=llm,
-        system_for=lambda lang: persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose="inbound", facts=[], customer_first_name=None, training=training, visit_slots=visit_labels),
+        system_for=lambda lang: persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose="inbound", facts=[], customer_first_name=None, training=training, visit_slots=visit_labels,
+                                                      corrections=corrections),
         greeting_for=lambda lang: persona.opening_line(lang, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, lang)),
         models={"fast": model, "strong": model},
         voice_for=lambda lang: bv.config.resolve(lang, None, "female").id,
@@ -218,11 +220,11 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
             log.warning("exotel_inbound %s_unreadable %s", name, exc.__class__.__name__)
             return default
 
-    training, slots = await asyncio.gather(read("talk_training", None), read("visit_slots", []))
+    training, slots, corrections = await asyncio.gather(read("talk_training", None), read("visit_slots", []), read("call_corrections", []))
     slots = list(slots or [])
     labels = tuple(visit_label(sl) for sl in slots)
     if service.parts_for is None:
-        parts, model = phone_parts(bv, business, service.language, service.llm_choice, training, labels, assistant=assistant)
+        parts, model = phone_parts(bv, business, service.language, service.llm_choice, training, labels, assistant=assistant, corrections=tuple(corrections or ()))
     else:
         parts, model = service.parts_for(bv, business, service.language, service.llm_choice)
     text = parts.greeting_for(service.language)

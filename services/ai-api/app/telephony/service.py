@@ -10,7 +10,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from app.display_name import lead_title
-from app.telephony.models import CallDetailOut, CallOut, CallsOut
+from app.telephony.models import CallDetailOut, CallOut, CallsOut, CorrectionIn, CorrectionOut
 
 LIVE = ("queued", "ringing", "in_progress")
 POLL_AFTER_S = 5
@@ -56,6 +56,9 @@ class CallsService:
         cursor = page[-1]["created_at"] if more and page else None
         return CallsOut(items=items, next_cursor=cursor, updated_at=now, poll_after_s=POLL_AFTER_S)
 
+    def correct(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, body: CorrectionIn) -> CorrectionOut:
+        return CorrectionOut.model_validate(self._repo.correct(token, tenant_id, call_id, body.summary, body.captured, body.note))
+
     def handled(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID) -> dict[str, Any]:
         out = self._repo.handled(token, tenant_id, call_id)
         return {"call_id": str(out["call_id"]), "handled_at": out["handled_at"]}
@@ -65,6 +68,7 @@ class CallsService:
         base = shape(row, self._clock())
         transcript = row.get("transcript")
         captured = row.get("captured")
-        return CallDetailOut(**base, summary=row.get("summary"), end_reason=row.get("end_reason"),
+        fixed = row.get("correction")
+        return CallDetailOut(**base, summary=row.get("summary"), end_reason=row.get("end_reason"), correction=CorrectionOut.model_validate(fixed) if isinstance(fixed, dict) else None,
                              captured={str(k): str(v) for k, v in captured.items()} if isinstance(captured, dict) else None,
                              transcript=[t for t in transcript if isinstance(t, dict)] if isinstance(transcript, list) else None)  # type: ignore[misc]
