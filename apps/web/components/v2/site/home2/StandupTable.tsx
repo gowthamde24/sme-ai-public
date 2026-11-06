@@ -10,37 +10,43 @@ import { HearIt, useVoice } from "./use-voice";
 
 type W = Readonly<Record<string, string>>;
 const TAU = 6.2832;
-// the table in the design's 1240 × 560 space: a lit ellipse in perspective, the six helpers around it (back to front), the orb above on a cone of light
-const CX = 620;
-const CY = 370;
-const RX = 430;
-const RY = 130;
-const ORB_BOTTOM: Pt = [CX, 272];
-const SEATS = Array.from({ length: 6 }, (_, i) => {
-  const th = ((60 + i * 60) * Math.PI) / 180;
-  const depth = (Math.sin(th) + 1) / 2;
-  return { i, x: CX + Math.cos(th) * RX * 0.92, y: CY + Math.sin(th) * RY * 0.92, size: 70 + depth * 34, depth };
-});
+// the table: a lit ellipse in perspective, the six helpers around it (back to front), the orb above on a cone of light. One drawing, two sizes of the same layout: the desktop's 1240 × 560 space, and the phone's
+// 360 × 330 (owner, 6 Nov 2026: the phone uses the desktop's design, scaled: the orb about 110 px, the helpers about 54 px, the table 92% of the width, the same tilt). `u` scales the details (cone, beams, light).
+type Seat = { i: number; x: number; y: number; size: number; depth: number };
+type Geo = { w: number; h: number; cx: number; cy: number; rx: number; ry: number; orbBottom: Pt; orb: { x: number; y: number; size: number }; seats: Seat[]; u: number; dot: number; amp: number; bars: number };
+function geo(w: number, h: number, cx: number, cy: number, rx: number, ry: number, orb: { y: number; size: number }, seat: [number, number], u: number, dot: number, amp: number, bars: number): Geo {
+  const seats = Array.from({ length: 6 }, (_, i) => {
+    const th = ((60 + i * 60) * Math.PI) / 180;
+    const depth = (Math.sin(th) + 1) / 2;
+    return { i, x: cx + Math.cos(th) * rx * 0.92, y: cy + Math.sin(th) * ry * 0.92, size: seat[0] + depth * seat[1], depth };
+  });
+  return { w, h, cx, cy, rx, ry, orbBottom: [cx, orb.y + orb.size], orb: { x: cx, ...orb }, seats, u, dot, amp, bars };
+}
+const DESK = geo(1240, 560, 620, 370, 430, 130, { y: 96, size: 176 }, [70, 34], 1, 3.5, 16, 64);
+const PHONE = geo(360, 330, 180, 225, 166, 50, { y: 8, size: 110 }, [46, 16], 0.386, 3, 9, 48);
+const SEATS = DESK.seats;
 const PARTS = 7; // six helpers, then everyone
 
-function drawTable(ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: { dark: boolean; calm: boolean; dpr: number }, su: number): void {
-  const k = W / 1240;
+function drawTable(ctx: CanvasRenderingContext2D, W: number, H: number, t: number, look: { dark: boolean; calm: boolean; dpr: number }, su: number, g: Geo = DESK): void {
+  const k = W / g.w;
+  const { cx: CX, cy: CY, rx: RX, ry: RY, orbBottom: ORB_BOTTOM, u } = g;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, W, H);
   ctx.setTransform(k, 0, 0, k, 0, 0);
   const ink = inkOf(look);
-  const cone = ctx.createLinearGradient(0, 180, 0, CY);
+  const coneTop = ORB_BOTTOM[1] - 72 * u;
+  const cone = ctx.createLinearGradient(0, coneTop - 20 * u, 0, CY);
   cone.addColorStop(0, "rgba(255,140,90,0)");
   cone.addColorStop(1, "rgba(255,140,90,.20)");
   ctx.fillStyle = cone;
   ctx.beginPath();
-  ctx.moveTo(CX - 60, 200);
-  ctx.lineTo(CX + 60, 200);
-  ctx.lineTo(CX + 150, CY);
-  ctx.lineTo(CX - 150, CY);
+  ctx.moveTo(CX - 60 * u, coneTop);
+  ctx.lineTo(CX + 60 * u, coneTop);
+  ctx.lineTo(CX + 150 * u, CY);
+  ctx.lineTo(CX - 150 * u, CY);
   ctx.closePath();
   ctx.fill();
-  const tg = ctx.createRadialGradient(CX, CY, 10, CX, CY, RX);
+  const tg = ctx.createRadialGradient(CX, CY, 10 * u, CX, CY, RX);
   tg.addColorStop(0, "rgba(255,170,130,.35)");
   tg.addColorStop(0.5, look.dark ? "rgba(255,140,90,.12)" : "rgba(255,240,230,.55)");
   tg.addColorStop(1, look.dark ? "rgba(255,140,90,.04)" : "rgba(255,255,255,.2)");
@@ -64,18 +70,18 @@ function drawTable(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
   const ra = t * 0.6;
   const lx = CX + Math.cos(ra) * RX;
   const ly = CY + Math.sin(ra) * RY;
-  const g2 = ctx.createRadialGradient(lx, ly, 0, lx, ly, 60);
+  const g2 = ctx.createRadialGradient(lx, ly, 0, lx, ly, 60 * u);
   g2.addColorStop(0, "rgba(255,119,60,.5)");
   g2.addColorStop(1, "rgba(255,119,60,0)");
   ctx.fillStyle = g2;
   ctx.beginPath();
-  ctx.arc(lx, ly, 60, 0, TAU);
+  ctx.arc(lx, ly, 60 * u, 0, TAU);
   ctx.fill();
   const active = su < 6 ? su : -1;
-  for (const st of [...SEATS].sort((a, b) => a.y - b.y)) {
+  for (const st of [...g.seats].sort((a, b) => a.y - b.y)) {
     const on = st.i === active || su === 6;
-    const c1: Pt = [st.x, st.y - 120];
-    const c2: Pt = [ORB_BOTTOM[0] + (st.x - CX) * 0.2, ORB_BOTTOM[1] + 40];
+    const c1: Pt = [st.x, st.y - 120 * u];
+    const c2: Pt = [ORB_BOTTOM[0] + (st.x - CX) * 0.2, ORB_BOTTOM[1] + 40 * u];
     const p0: Pt = [st.x, st.y - st.size / 2];
     ctx.strokeStyle = on ? "rgba(255,119,60,.55)" : `rgba(${ink},.08)`;
     ctx.lineWidth = on ? 2 : 1;
@@ -90,7 +96,7 @@ function drawTable(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
         ctx.shadowColor = "rgba(255,119,60,1)";
         ctx.shadowBlur = 12;
         ctx.beginPath();
-        ctx.arc(p[0], p[1], 3.5, 0, TAU);
+        ctx.arc(p[0], p[1], g.dot, 0, TAU);
         ctx.fill();
         ctx.shadowBlur = 0;
       }
@@ -99,7 +105,7 @@ function drawTable(ctx: CanvasRenderingContext2D, W: number, H: number, t: numbe
     ctx.beginPath();
     ctx.ellipse(st.x, st.y + st.size * 0.42, st.size * 0.45, st.size * 0.12, 0, 0, TAU);
     ctx.fill();
-    if (st.i === active) spectrum(ctx, st.x, st.y, st.size / 2 + 4, 16, t, 64, 1);
+    if (st.i === active) spectrum(ctx, st.x, st.y, st.size / 2 + 4 * Math.max(u, 0.6), g.amp, t, g.bars, 1);
   }
 }
 
@@ -145,7 +151,11 @@ export function StandupTable({ w, clipGroup }: { w: W; clipGroup: string | null 
     live.current = su;
   });
   const canvas = React.useRef<HTMLCanvasElement>(null);
-  React.useEffect(() => (canvas.current ? addScene(canvas.current, (c, W, H, t, look) => drawTable(c, W, H, t, look, live.current)) : undefined), []);
+  const phoneCanvas = React.useRef<HTMLCanvasElement>(null);
+  React.useEffect(() => {
+    const offs = [canvas.current && addScene(canvas.current, (c, W, H, t, look) => drawTable(c, W, H, t, look, live.current, DESK)), phoneCanvas.current && addScene(phoneCanvas.current, (c, W, H, t, look) => drawTable(c, W, H, t, look, live.current, PHONE))];
+    return () => offs.forEach((o) => o?.());
+  }, []);
   const words = wordsOf(text(su));
   const shown = calm ? words.length : m.mw;
   const orbState = su === 6 ? (shown < words.length ? "speaking" : "idle") : "listening";
@@ -176,30 +186,40 @@ export function StandupTable({ w, clipGroup }: { w: W; clipGroup: string | null 
         ))}
         </div>
       </div>
-      {/* phone: the orb and a row of the helpers */}
+      {/* phone: the desktop's meeting scene, the same layout scaled to the phone's width (owner, 6 Nov 2026): the orb at the top, the six helpers round the lit table, the beam and dots from the one
+          reporting to the orb, its glow and spectrum ring. Names under each helper (at least 11 px); under 380 px the two longest are shortened so no two touch. */}
       <div className="lg:hidden">
-        {/* the desktop scene's "live" chip, on a phone too (owner, 6 Nov 2026: the phone shows everything the desktop shows) */}
-        <div className="mb-4 flex justify-center">
+        <div className="mb-3 flex justify-center">
           <span className="h2-glass inline-flex max-w-full items-center gap-2.5 rounded-full px-4 py-2 text-sm font-bold">
             <span className="h2-blink shrink-0" />
             {w["h2.meet.live"]}
           </span>
         </div>
-        <div className="mx-auto size-[130px]">
-          <span className="h2-orbwrap block size-full overflow-hidden">
-            <AssistantOrb state={orbState} />
+        <div style={{ position: "relative", width: "100%", aspectRatio: `${PHONE.w} / ${PHONE.h}` }} data-part="meet-scene-phone">
+          <canvas ref={phoneCanvas} aria-hidden="true" className="absolute inset-0 block size-full" />
+          <span style={{ position: "absolute", left: pct(PHONE.orb.x - PHONE.orb.size / 2, PHONE.w), top: pct(PHONE.orb.y, PHONE.h), width: pct(PHONE.orb.size, PHONE.w), aspectRatio: "1" }}>
+            <span className="h2-orbwrap block size-full overflow-hidden">
+              <AssistantOrb state={orbState} />
+            </span>
           </span>
-        </div>
-        <ul className="mt-5 grid grid-cols-3 gap-3">
-          {SEATS.map((st) => (
-            <li key={st.i} className="flex flex-col items-center gap-1.5">
-              <span className={`block size-12 overflow-hidden rounded-full ${st.i === su ? "shadow-[0_0_0_2px_#ff773c,0_0_0_7px_rgba(255,119,60,.16)]" : "opacity-60"}`}>
+          {PHONE.seats.map((st) => (
+            <div key={st.i} style={{ position: "absolute", left: pct(st.x - st.size / 2, PHONE.w), top: pct(st.y - st.size / 2, PHONE.h), width: pct(st.size, PHONE.w) }}>
+              <span className={`block aspect-square overflow-hidden rounded-full transition-[opacity,box-shadow] duration-500 ${st.i === su ? "shadow-[0_0_22px_rgba(255,119,60,.8)]" : su === 6 ? "" : "opacity-70"}`} data-seat-phone={st.i} data-on={st.i === su ? "" : undefined}>
                 <AssistantOrb state={st.i === su ? "speaking" : "idle"} />
               </span>
-              <span className={`text-center text-xs ${st.i === su ? "font-extrabold text-brand-text" : "font-bold text-muted"}`}>{name(st.i)}</span>
-            </li>
+              <span className={`absolute left-1/2 top-full block -translate-x-1/2 whitespace-nowrap text-center text-[11px] leading-tight ${st.i === su ? "mt-2.5 font-extrabold text-brand-text" : "mt-1 font-bold text-muted"}`} data-seat-label={st.i}>
+                {st.i === 3 || st.i === 4 ? (
+                  <>
+                    <span className="max-[379px]:hidden">{name(st.i)}</span>
+                    <span className="min-[380px]:hidden">{w[`h2.meet.${st.i + 1}.short`]}</span>
+                  </>
+                ) : (
+                  name(st.i)
+                )}
+              </span>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
       {/* the subtitles and the stand-up's progress */}
       <div className="relative mt-6 flex flex-col items-center gap-4 lg:mt-2">
@@ -220,18 +240,18 @@ export function StandupTable({ w, clipGroup }: { w: W; clipGroup: string | null 
             ))}
           </p>
         </div>
-        <ol className="grid w-full max-w-[860px] grid-cols-7 gap-1.5" aria-label={w["h2.meet.progress"]}>
+        {/* the seven parts with their names, as on the desktop; on a phone the row scrolls sideways */}
+        <ol className="flex w-full max-w-[860px] gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] lg:grid lg:grid-cols-7 lg:overflow-visible lg:pb-0 [&::-webkit-scrollbar]:hidden" aria-label={w["h2.meet.progress"]}>
           {Array.from({ length: PARTS }, (_, i) => {
             const fill = i < su ? 1 : i > su ? 0 : Math.min(1, (shown + (calm ? 0 : m.hold * 0.2)) / (words.length + 2.2));
             return (
-              <li key={i} className="flex min-w-0 flex-col gap-1.5">
+              <li key={i} className="flex min-w-[88px] shrink-0 flex-col gap-1.5 lg:min-w-0 lg:shrink">
                 <span className="block h-1 overflow-hidden rounded-full bg-ink/10">
                   <span style={{ display: "block", height: "100%", transformOrigin: "left", transform: `scaleX(${calm && i <= su ? 1 : fill})` }}>
                     <span className="block size-full rounded-full bg-[linear-gradient(90deg,#ff9a6b,#ff773c,#ec486e)]" />
                   </span>
                 </span>
-                {/* on a phone the bar is the seven parts without their names (the phone design; seven names do not fit 360 px), and the name of the one speaking is above the words; a screen reader still hears every name */}
-                <span className={`truncate text-xs font-bold max-lg:sr-only ${i === su ? "text-brand-text" : i < su ? "text-ink" : "text-muted"}`}>{i === 6 ? w["h2.meet.7.name"] : name(i)}</span>
+                <span className={`whitespace-nowrap text-xs font-bold lg:truncate ${i === su ? "text-brand-text" : i < su ? "text-ink" : "text-muted"}`}>{i === 6 ? w["h2.meet.7.name"] : name(i)}</span>
               </li>
             );
           })}

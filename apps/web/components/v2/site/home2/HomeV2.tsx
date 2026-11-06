@@ -53,7 +53,7 @@ const CALL_KEYS = [
 ] as const;
 const FINDER_KEYS = [...["city", "near", "checked", "call", "ask", "skip", "list", "of", "empty"].map((k) => `h2.finder.${k}`), ...[1, 2, 3, 4].flatMap((i) => [`h2.finder.pin.${i}.what`, `h2.finder.pin.${i}.why`])] as const;
 const LEAK_KEYS = ["title", "sub", "enq", "miss", "buy", "avg", "warm", "cold", "note", "in"].map((k) => `h2.leak.${k}`);
-const MEET_KEYS = [...["live", "reporting", "closing", "pos", "progress", "hear", "note"].map((k) => `h2.meet.${k}`), ...[1, 2, 3, 4, 5, 6, 7].flatMap((i) => [`h2.meet.${i}.name`, `h2.meet.${i}.text`]), "h2.hear.on"] as const;
+const MEET_KEYS = [...["live", "reporting", "closing", "pos", "progress", "hear", "note"].map((k) => `h2.meet.${k}`), ...[1, 2, 3, 4, 5, 6, 7].flatMap((i) => [`h2.meet.${i}.name`, `h2.meet.${i}.text`]), "h2.meet.4.short", "h2.meet.5.short", "h2.hear.on"] as const;
 const AFTER_KEYS = [...["stop", "wait", "approve", "approved", "teach", "rule"].map((k) => `h2.after.${k}`), ...[1, 2, 3, 4, 5, 6].flatMap((i) => [`h2.after.${i}.name`, `h2.after.${i}.desc`, `h2.after.${i}.tag`])] as const;
 /** The stand-up's recording in the site's language: English, and Telugu (a draft until a native speaker approves it; the manifest says so and no button is drawn); none for the others. */
 const standupClips = (lang: Lang): string | null => (lang === "en" ? "standup-en" : lang === "te" ? "standup-te" : null);
