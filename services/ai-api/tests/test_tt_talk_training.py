@@ -162,3 +162,14 @@ def test_thirty_simulated_calls_with_ten_owner_rules_say_no_never_say_phrase() -
     assert len(voice.spoken) == 90
     assert sum(violates(s, never) for s in voice.spoken) == 0, "never-say: 0 violations"
     assert guarded.blocked == 60 and sum(s in clean for s in voice.spoken) == 30, "every clean line is spoken as written"
+
+
+def test_the_default_greeting_is_what_an_inbound_call_says_today_in_every_language() -> None:
+    """C2, 6 Nov: the greeting box showed nothing for te. The defaults now carry the standard inbound opening per language, the line a call uses when the Owner has no greeting."""
+    from app.talk_training.defaults import defaults_for
+    from app.telephony.persona import INBOUND_OPENING, opening_line
+
+    got = defaults_for(None).greeting
+    assert set(got) == {"en", "te", "hi", "kn", "ta", "ml", "mr"} and all("AI" in g and "{business}" in g for g in got.values())
+    for lang, line in got.items():
+        assert opening_line(lang, business="Lakshmi Silks", assistant=None, customer=None, inbound=True, greeting=line) == INBOUND_OPENING[lang].replace("{business}", "Lakshmi Silks")

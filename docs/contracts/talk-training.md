@@ -21,7 +21,7 @@ Settings -> AI assistant -> "How I talk to customers". The Owner trains how the 
   "examples": [{ "customer": "Do you have Kanjivaram?", "answer": "Yes, we keep Kanjivaram silks; would you like to visit or see photos?" }]
 }
 ```
-- `greeting`: per language (`en te hi kn ta ml`), 2 to 200 characters each, optional. `{business}` is replaced by the business name. **The assistant always says it is an AI**: a greeting without the word "AI" is followed by the standard opening, which says it.
+- `greeting`: per language (`en te hi kn ta ml mr`), 2 to 200 characters each, optional. `{business}` is replaced by the business name. **`defaults.greeting` has every language** (6 Nov): the standard inbound opening, which is exactly what an inbound call says when the Owner has no greeting. Show it as the suggestion; saving it unchanged changes nothing. **The assistant always says it is an AI**: a greeting without the word "AI" is followed by the standard opening, which says it.
 - `address`: `plain` (default: the first name at most once, **never "sir / madam"**), `sir_madam`, `garu` (Telugu), `ji` (Hindi).
 - `questions`: at most 8, 2 to 160 characters: what to find out, one at a time, in this order. Defaults per business type (sarees, building materials, school; others: generic).
 - `never_say`: at most 20 phrases, 2 to 80 characters, no duplicates. **A hard rule enforced by code**: every line the assistant is about to speak is checked (case, spaces and punctuation don't matter, whole words); a line that holds one is not spoken, a short "let me check with the team" is said instead. Defaults: "guaranteed", "100% sure", "best price in the market".
