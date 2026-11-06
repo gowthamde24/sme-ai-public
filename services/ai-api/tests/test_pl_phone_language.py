@@ -178,7 +178,7 @@ def test_the_model_is_told_the_languages_the_brand_honesty_tone_and_short_turns(
 def test_the_language_rule_never_reads_the_words_into_a_log() -> None:
     import inspect
 
-    src = inspect.getsource(CallVoiceSession._follow_language)
+    src = inspect.getsource(CallVoiceSession._follow_language_rule)
     assert "text" not in src.split("log.info(", 1)[1].split(")", 1)[0], "only codes and the reason are logged"
 
 
@@ -204,7 +204,7 @@ def test_the_closing_words_are_a_natural_bye_never_a_literal_one(lang: str) -> N
     for line in (persona.CALL_BYE[lang], persona.CALL_BYE_QUIET[lang]):
         assert "bye" in line.casefold() and "మంచిరోజు" not in line and "शुभ" not in line
     assert persona.CALL_BYE["te"] == "సరే అండీ, bye!" and persona.CALL_CHECK_IN["te"] == "హలో, ఉన్నారా?"
-    assert CallVoiceSession.silence_s == (4.0, 8.0), "about 4 s quiet: one check; about 8 s in all: bye and hang up"
+    assert CallVoiceSession.PHONE_SILENCE_S == (4.0, 8.0), "about 4 s quiet: one check; about 8 s in all: bye and hang up"
 
 
 @arun

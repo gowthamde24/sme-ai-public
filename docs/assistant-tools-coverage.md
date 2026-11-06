@@ -110,6 +110,7 @@ Levels: read 221, sensitive:deleting 14, sensitive:members 4, sensitive:money 22
 | `calls.correct_call` | POST | `/calls/{call_id}/correction` | write | none | Correct Call |
 | `calls.mark_handled` | POST | `/calls/{call_id}/handled` | write | none | Mark Handled |
 | `calls.hang_up` | POST | `/calls/{call_id}/hang-up` | write | none | Hang Up |
+| `calls.whisper` | POST | `/calls/{call_id}/whisper` | write | none | Whisper |
 | `campaigns.list_campaigns` | GET | `/campaigns` | read |  | List Campaigns |
 | `campaigns.get_campaign` | GET | `/campaigns/{campaign_id}` | read |  | Get Campaign |
 | `campaigns.put_campaign` | PUT | `/campaigns/{campaign_id}` | write | snapshot (campaigns.get_campaign) | Put Campaign |
