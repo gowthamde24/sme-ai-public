@@ -26,7 +26,7 @@ import { type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
 
 import { readFinderCached, readPlanCached, readUsageCached } from "../../../frame-data";
-import { FinderSettingsForm } from "@/components/v2/app/prospects/FinderSettingsForm";
+import { FinderSettingsForm } from "@/components/v2/app/prospects/LazyFinderSettingsForm";
 import { getFinderSettings } from "@/lib/api/lead-finder";
 import type { FinderSettings } from "@/lib/lead-finder/types";
 import { saveFinderSettingsAction } from "./lead-finder-actions";
@@ -113,7 +113,7 @@ import { Avatar } from "@/components/v2/app/Avatar";
 import { lettersOf } from "@/components/v2/app/letters";
 import { getMyProfile, getPeople, type MyProfile as MyProfileData, type Person } from "@/lib/api/me";
 import { signOutEverywhereAction } from "../../../actions";
-import { AssistantActivity } from "@/components/v2/app/settings/AssistantActivity";
+import { AssistantActivity } from "@/components/v2/app/settings/LazyAssistantActivity";
 import { readActivity } from "@/lib/assistant-work/source";
 import { assistantWorkScreens } from "@/lib/screens/flag";
 

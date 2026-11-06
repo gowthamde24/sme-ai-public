@@ -45,6 +45,10 @@ const getFinderSettings = vi.fn<(...a: unknown[]) => Promise<unknown>>(async () 
 vi.mock("@/lib/api/lead-finder", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/lead-finder")>()), readAvailability: (...a: unknown[]) => readAvailability(...a), getFinderSettings: (...a: unknown[]) => getFinderSettings(...a) }));
 vi.mock("@/lib/api/gstin", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/gstin")>()), getBusinessProfile: (...a: unknown[]) => getBusinessProfile(...a) }));
 
+// the lazy parts of Settings (next/dynamic): draw the part itself, always
+vi.mock("@/components/v2/app/prospects/LazyFinderSettingsForm", async () => ({ FinderSettingsForm: (await import("@/components/v2/app/prospects/FinderSettingsForm")).FinderSettingsForm }));
+vi.mock("@/components/v2/app/settings/LazyAssistantActivity", async () => ({ AssistantActivity: (await import("@/components/v2/app/settings/AssistantActivity")).AssistantActivity }));
+
 import SettingsPage from "./page";
 
 const props = (query: Record<string, string> = {}) => ({ params: Promise.resolve({ tenantId: TENANT }), searchParams: Promise.resolve(query) }) as unknown as Parameters<typeof SettingsPage>[0];
