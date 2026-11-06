@@ -320,3 +320,51 @@ async def test_the_greeting_a_call_speaks_is_kept_and_the_next_call_plays_it_fro
         cache._cache.clear()
     assert seen[0][0] is False and seen[1][0] is True, "the first call streamed its greeting, the second played it from memory"
     assert seen[1][1] < seen[0][1], "the second call's greeting cost no voice characters"
+
+
+@arun
+async def test_the_opening_is_kept_across_restarts_in_storage_and_read_while_the_call_is_admitted() -> None:
+    """Owner, 6 Nov 2026: a call after a restart (nothing in memory) plays the stored opening at once; a call that had to stream it stores exactly what it spoke (no extra voice request)."""
+    from app.conversation import fakes
+    from app.telephony import inbound_routes as R
+
+    cache = vars(R)["GREETINGS"]
+
+    class Store:
+        def __init__(self) -> None:
+            self.files: dict[str, bytes] = {}
+            self.reads: list[str] = []
+
+        def get(self, path: str) -> bytes | None:
+            self.reads.append(path)
+            return self.files.get(path)
+
+        def put(self, path: str, pcm: bytes) -> bool:
+            self.files[path] = pcm
+            return True
+
+    store = Store()
+    saved = fakes.FakeTts.sample_rate, getattr(fakes.FakeTts, "served_engine", None)
+    fakes.FakeTts.sample_rate = 24000
+    fakes.FakeTts.served_engine = "cartesia"  # type: ignore[attr-defined]
+    seen = []
+    try:
+        for _ in range(2):
+            cache._cache.clear()   # a fresh instance: nothing in memory
+            svc = service(store=FakeStore())
+            svc.opening_store = store  # type: ignore[assignment]
+            sim, task = await _call(svc, inbound.mint(SECRET, inbound.monotonic(), "CA123"))
+            heard = sim.heard
+            await until(lambda: bool(heard.marks), 5)  # noqa: B023 - awaited inside this iteration
+            await sim.hang_up()
+            await asyncio.wait_for(task, 10)
+            await asyncio.sleep(0.05)   # (the store's write runs in the background)
+            assert svc.last_numbers is not None
+            seen.append(svc.last_numbers["greeting_ready"])
+    finally:
+        fakes.FakeTts.sample_rate = saved[0]
+        if saved[1] is None:
+            del fakes.FakeTts.served_engine  # type: ignore[attr-defined]
+        cache._cache.clear()
+    assert seen == [False, True], "the first call streamed and stored it; after a 'restart' the next call read it during admission and played it at once"
+    assert len(store.files) == 1 and len(store.reads) == 2 and all(p.startswith(f"{TENANT}/") and p.endswith(".pcm") for p in store.files)
