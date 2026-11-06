@@ -13,13 +13,15 @@ export interface BusinessProfile {
 }
 
 export const PROFILE_LANGUAGES = ["en", "te", "hi", "kn", "ta", "ml"] as const;
+/** The languages a BUSINESS may talk to customers in (Settings > Business): the six and, as a draft (C1 #355, at most 7), Marathi. My profile's own language stays PROFILE_LANGUAGES. */
+export const BUSINESS_LANGUAGES = [...PROFILE_LANGUAGES, "mr"] as const;
 
 export function parseProfile(json: unknown): BusinessProfile {
   if (typeof json !== "object" || json === null || Array.isArray(json)) throw new ApiContractError("Unexpected body in a profile response.");
   const r = json as Record<string, unknown>;
   if (typeof r.name !== "string" || r.name.length < 1 || r.name.length > 200) throw new ApiContractError("Unexpected name in a profile response.");
   if (r.town !== null && r.town !== undefined && (typeof r.town !== "string" || r.town.length > 200)) throw new ApiContractError("Unexpected town in a profile response.");
-  const languages = Array.isArray(r.languages) ? r.languages.filter((l): l is string => typeof l === "string" && (PROFILE_LANGUAGES as readonly string[]).includes(l)) : [];
+  const languages = Array.isArray(r.languages) ? r.languages.filter((l): l is string => typeof l === "string" && (BUSINESS_LANGUAGES as readonly string[]).includes(l)) : [];
   return { name: r.name, town: typeof r.town === "string" && r.town.trim() !== "" ? r.town : null, languages, setupComplete: r.setup_complete === true };
 }
 

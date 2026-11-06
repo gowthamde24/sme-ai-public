@@ -18,7 +18,7 @@ from typing import Any
 from app.agents.register.address import address_rule
 
 HERE = Path(__file__).resolve().parent
-LANGUAGES: tuple[str, ...] = ("en", "te", "hi", "kn", "ta", "ml")
+LANGUAGES: tuple[str, ...] = ("en", "te", "hi", "kn", "ta", "ml", "mr")
 EXAMPLES_PER_BLOCK = 7   # keeps the block short: a prompt is paid for by the token
 
 

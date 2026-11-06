@@ -2,6 +2,8 @@ import { act, cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, push: () => undefined }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
+// the Ask box is a lazy chunk (next/dynamic): draw the box itself, always
+vi.mock("./ask/LazyAskCard", async () => ({ AskCard: (await import("./ask/AskCard")).AskCard }));
 
 import { appT } from "@/i18n/app";
 

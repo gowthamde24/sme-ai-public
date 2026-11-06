@@ -66,6 +66,9 @@ export const autoReplyScreens = (value: string | undefined = process.env.AUTO_RE
 /** Settings > AI assistant > "Pronunciation" (job pronunciation-quality, owner 30 Oct): the words the assistant must say a certain way (word + "sounds like" + Hear it in the chosen voice), and the "Mispronounced?" action on spoken chat messages. C1's API (`/ai-assistant/pronunciation`, lib/api/pronunciation.ts has the assumed contract): `mock` = the list kept in a cookie of the browser (the sounds are tones), `1` = the API, unset = the part is not there. */
 export const pronunciationScreens = (value: string | undefined = process.env.PRONUNCIATION_SCREENS): ScreenMode => screenMode(value);
 
+/** Settings > AI assistant > "How I talk to customers" (calls-like-a-pro part 3, C1's docs/contracts/talk-training.md): the greeting, how to address people, the questions to ask, the words never to say, answers to objections and good examples. The API exists, so there is no made-up mode: `1` = the API, anything else = the part is not there. */
+export const talkTrainingScreens = (value: string | undefined = process.env.TALK_TRAINING_SCREENS): boolean => value === "1";
+
 /**
  * "The assistant does the work" (job assistant-does-the-work, C2): files in the chat ("+" > Add a file, drag-and-drop), the work cards (a file's preview, plans with Do it / Change / Cancel and Undo, the secure key box,
  * guided setups with a live test, "can't do yet") and Settings > Activity. C1's API follows its contract docs/contracts/assistant-tools.md: `mock` = made-up answers in the browser and fixtures on the server (no file leaves

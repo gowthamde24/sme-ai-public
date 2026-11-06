@@ -135,7 +135,18 @@ async def stream_url(request: Request) -> Response:
     return JSONResponse({"url": url})
 
 
-def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None) -> tuple[Parts, str]:
+def visit_label(slot: dict[str, Any]) -> str:
+    """A slot as the assistant says it: "Tue 3 Nov 10:00" (India time)."""
+    from datetime import date
+
+    try:
+        day = date.fromisoformat(str(slot.get("date")))
+        return f"{day.strftime('%a')} {day.day} {day.strftime('%b')} {slot.get('start')}"
+    except ValueError:
+        return str(slot.get("start") or "")
+
+
+def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str, training: dict[str, Any] | None = None, visit_labels: tuple[str, ...] = ()) -> tuple[Parts, str]:
     """The Live-talk parts for a phone caller: the recogniser in auto (the caller may answer in any of the six languages), the workspace's default voices, the phone model (Haiku unless TELEPHONY_LLM=sarvam),
     the phone persona's system prompt (approved facts only: none yet for an inbound sandbox call, so it answers what it can and offers to pass on the rest) and the inbound opening line, which says it is an AI."""
     if llm_choice == "sarvam":
@@ -152,7 +163,7 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
         stt_for=lambda lang: SarvamRealtimeStt(bv.sarvam_key, language="auto", silence_ms=OWNER_SILENCE_MS, mode=stt_mode_for(lang, bv.stt_modes)),
         tts=tts,
         llm=llm,
-        system_for=lambda lang: persona.system_prompt(business=business, assistant=None, language=lang, purpose="inbound", facts=[], customer_first_name=None, training=training),
+        system_for=lambda lang: persona.system_prompt(business=business, assistant=None, language=lang, purpose="inbound", facts=[], customer_first_name=None, training=training, visit_slots=visit_labels),
         greeting_for=lambda lang: persona.opening_line(lang, business=business, assistant=None, customer=None, inbound=True, greeting=trained_greeting(training, lang)),
         models={"fast": model, "strong": model},
         voice_for=lambda lang: bv.config.resolve(lang, None, "female").id,
@@ -229,12 +240,20 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
             training = await asyncio.to_thread(talk, tenant)
         except Exception as exc:  # noqa: BLE001 - a call without the training still follows every platform rule
             log.warning("exotel_inbound training_unreadable %s", exc.__class__.__name__)
+    slots: list[dict[str, Any]] = []
+    read_slots = getattr(service.store, "visit_slots", None)
+    if read_slots is not None:
+        try:
+            slots = await asyncio.to_thread(read_slots, tenant)
+        except Exception as exc:  # noqa: BLE001 - a call without visit slots simply does not offer a visit
+            log.warning("exotel_inbound visit_slots_unreadable %s", exc.__class__.__name__)
+    labels = tuple(visit_label(sl) for sl in slots)
     if service.parts_for is None:
-        parts, model = phone_parts(bv, service.business, service.language, service.llm_choice, training)
+        parts, model = phone_parts(bv, service.business, service.language, service.llm_choice, training, labels)
     else:
         parts, model = service.parts_for(bv, service.business, service.language, service.llm_choice)
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="inbound", language=service.language, business=service.business, max_call_s=max_call_s,
-                    cost_paise_per_minute=service.cost_paise_per_minute)
+                    cost_paise_per_minute=service.cost_paise_per_minute, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")))
     if live is not None:
         live.add(tenant, call_id, line)
     began = inbound.monotonic()

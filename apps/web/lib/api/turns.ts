@@ -100,7 +100,7 @@ export function parseTurnEvent(name: string, data: unknown): TurnEvent | null {
 }
 
 /** `language`: the chat's language pill: "auto" (the API detects it, as always) or the language the reply is written in, whatever the words are. */
-export const REPLY_LANGUAGES = ["auto", "te", "en", "hi", "kn", "ta", "ml"] as const;
+export const REPLY_LANGUAGES = ["auto", "te", "en", "hi", "kn", "ta", "ml", "mr"] as const;
 export type ReplyLanguage = (typeof REPLY_LANGUAGES)[number];
 export type TurnInput = { messageId: string; conversationId: string | null; text: string; languageHint?: AssistantLanguage | null; language?: ReplyLanguage | null; /** C1's contract, docs/contracts/assistant-tools.md: the uploaded files that go with the message (`attachment_ids`, at most 5). */ attachmentIds?: readonly string[] };
 const LANGS = ["te", "en", "hi", "kn"];

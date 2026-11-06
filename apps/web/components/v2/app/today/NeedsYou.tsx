@@ -448,6 +448,63 @@ function CallCard({ c, ctx }: { c: Extract<NeedsCard, { type: "call" }>; ctx: Ct
   );
 }
 
+/**
+ * A caller asked to talk to a person (C1 #347). "Call back" opens the lead the call belongs to (the number is there); "Done" says the team called back and takes the card off (Owner, Admin, Sales; the API checks). A call with no lead has no
+ * Call back, only Done. The call's own short summary is the API's English: shown in English only, like a call request's reason.
+ */
+function PersonCard({ c, ctx }: { c: Extract<NeedsCard, { type: "person" }>; ctx: Ctx }) {
+  const { words, actions, role } = ctx;
+  const decide = useDecide(c);
+  const customer = customerName(c.customer, words);
+  const done = role !== "viewer" && actions?.callHandled ? actions.callHandled : null;
+  const gist = c.gist && ctx.lang === "en" ? c.gist : "";
+  const [open, setOpen] = React.useState(false);
+  const visit = c.bookHref !== null; // a caller who agreed a visit time (C1 #354): Book is the first move
+  const tone = visit ? "bg-amber-bg text-amber-text" : "bg-red-bg text-red-text";
+  const when = c.visitAt ? `${dayShort(indiaDayOf(c.visitAt), ctx.lang)}, ${indiaClock(c.visitAt)}` : null;
+  const title = visit ? (when ? say(words, "today.title.visitcall", { customer, when }) : say(words, "today.title.visitcall.notime", { customer })) : say(words, "today.title.person", { customer });
+  const first = visit ? { href: c.bookHref as string, label: say(words, "today.act.book") } : c.leadHref ? { href: c.leadHref, label: say(words, "today.act.callback") } : null;
+  if (ctx.compact && !open) {
+    return (
+      <CompactRow cardKey={c.key} tone={tone} label={say(words, visit ? "today.badge.visit.row" : "today.badge.person.row")} title={title} reason={gist} at={c.at} ctx={ctx} onOpen={() => setOpen(true)}>
+        {first ? (
+          <Link href={first.href} className={rowPrimary}>
+            {first.label}
+          </Link>
+        ) : null}
+        {done ? (
+          <button type="button" onClick={() => void decide(() => done(c.id))} className={rowQuiet} aria-label={say(words, "today.act.handled")}>
+            {say(words, "today.act.handled.row")}
+          </button>
+        ) : null}
+      </CompactRow>
+    );
+  }
+  return (
+    <article id={`needs-full-${c.key}`} aria-labelledby={`needs-${c.key}`} data-write className={card}>
+      <Head tone={tone} label={say(words, visit ? "today.badge.visit" : "today.badge.person")} at={c.at} ctx={ctx} onCollapse={ctx.compact ? () => setOpen(false) : undefined} />
+      <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug">
+        {title}
+        {c.city ? <span className="font-normal text-muted"> · {c.city}</span> : null}
+      </h3>
+      {gist ? <p lang="en" className="text-base text-muted [overflow-wrap:anywhere]">{gist}</p> : null}
+      <p className="text-sm text-muted">{say(words, visit ? "today.visitcall.hint" : "today.person.hint")}</p>
+      <Note id={c.key} words={words} />
+      <div className="flex flex-wrap gap-2">
+        {first ? (
+          <Link href={first.href} className={`${primary} max-md:grow`}>
+            {first.label}
+          </Link>
+        ) : null}
+        {done ? (
+          <button type="button" onClick={() => void decide(() => done(c.id))} className={secondary}>
+            {say(words, "today.act.handled")}
+          </button>
+        ) : null}
+      </div>
+    </article>
+  );
+}
 
 /** Moves the time shown on a proposal after a move: the day and the slot are India time. */
 const startsAt = (date: string, slot: string) => new Date(`${date}T${slot}:00+05:30`).toISOString();
@@ -591,7 +648,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en", compact = tru
   const { cards, total, extra } = useNeeds();
   const [all, setAll] = React.useState(false);
   const ctx: Ctx = { words, now, role, actions, lang, compact };
-  const draw = (c: NeedsCard, cx: Ctx) => (c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={cx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={cx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={cx} /> : <CallCard c={c} ctx={cx} />);
+  const draw = (c: NeedsCard, cx: Ctx) => (c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={cx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={cx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={cx} /> : c.type === "person" ? <PersonCard c={c} ctx={cx} /> : <CallCard c={c} ctx={cx} />);
   // the photo links of a catalogue send run out after ten minutes: while a card shows photos, the page reads its data again before they do
   const hasPhotos = cards?.some((c) => c.type === "outbox" && (c.message?.media.length ?? 0) > 0) === true;
   // a list that cannot be read: no section (owner's review, 5 Nov: Today never says "Not available yet"; the count in the menu stays the API's)

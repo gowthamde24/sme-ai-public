@@ -101,7 +101,7 @@ def test_what_is_stored_is_what_was_heard() -> None:
 def test_the_check_in_comes_once_after_eight_seconds_and_the_end_after_thirty() -> None:
     assert [tt.silence_action(q, False) for q in (1, 7.9, 8, 20)] == ["wait", "wait", "check_in", "check_in"]
     assert [tt.silence_action(q, True) for q in (8, 29.9, 30, 60)] == ["wait", "wait", "end", "end"]
-    assert all(len(v) > 3 for table in (tt.CHECK_IN, tt.GOODBYE_QUIET, tt.GOODBYE_REPLY, tt.SOFT_WARNING) for v in table.values()) and set(tt.CHECK_IN) == {"en", "te", "hi", "kn", "ta", "ml"}
+    assert all(len(v) > 3 for table in (tt.CHECK_IN, tt.GOODBYE_QUIET, tt.GOODBYE_REPLY, tt.SOFT_WARNING) for v in table.values()) and set(tt.CHECK_IN) == {"en", "te", "hi", "kn", "ta", "ml", "mr"}
 
 
 @pytest.mark.parametrize("text", ["bye", "thank you, that's all", "Thanks, that is all", "ఇంక చాలు అండీ", "బై అండీ", "बस इतना ही", "ठीक है, बाय", "ಸಾಕು ಧನ್ಯವಾದ", "போதும்", "മതി"])

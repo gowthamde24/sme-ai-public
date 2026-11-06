@@ -90,7 +90,7 @@ class MePatch(_Strict):
     display_name: PersonName | None = None
     language: Language | None = None
     address_as: Annotated[str, StringConstraints(strip_whitespace=True, max_length=30)] | None = None   # "How should I address you?" (a word or two); empty clears it
-    preferred_chat_language: Literal["auto", "te", "en", "hi", "kn", "ta", "ml"] | None = None   # the language pill of the assistant bar; "auto" follows the person's own words
+    preferred_chat_language: Literal["auto", "te", "en", "hi", "kn", "ta", "ml", "mr"] | None = None   # the language pill of the assistant bar; "auto" follows the person's own words
 
     @model_validator(mode="after")
     def _shape(self) -> MePatch:

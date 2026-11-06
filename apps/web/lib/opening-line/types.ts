@@ -1,4 +1,4 @@
-import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
+import { CALL_LANGS, DRAFT_LANGS, type CallLang } from "@/lib/assistant/types";
 
 /**
  * The opening line of a call (night 5, Settings > AI assistant > "Opening line"; job-landing-v2 C2 part 3). One text per call language, with four placeholders the call fills in: {customer} (the person called), {assistant} (the assistant's
@@ -47,6 +47,7 @@ function parseLines(v: unknown, what: string): Lines {
 }
 function parseFull(v: unknown, what: string): Record<CallLang, string> {
   const lines = parseLines(v, what);
+  if (lines.en !== undefined) for (const l of DRAFT_LANGS) lines[l] ??= lines.en; // a draft language with no default yet (Marathi before C1 #355): the English one
   for (const l of CALL_LANGS) if (lines[l] === undefined) throw new Error(what);
   return lines as Record<CallLang, string>;
 }
@@ -82,7 +83,7 @@ export function parsePreview(json: unknown): Preview | null {
 }
 
 /** The made-up values the preview and the placeholders' hint use, in each language: a customer's first name, what the assistant is, and a business. The assistant's name and the business are the workspace's own. */
-export const SAMPLE_CUSTOMER: Record<CallLang, string> = { te: "రవి", hi: "रवि", kn: "ರವಿ", en: "Ravi", ta: "ரவி", ml: "രവി" };
+export const SAMPLE_CUSTOMER: Record<CallLang, string> = { te: "రవి", hi: "रवि", kn: "ರವಿ", en: "Ravi", ta: "ரவி", ml: "രവി", mr: "रवी" };
 
 /** The texts a mock keeps before the API is live (CALL: the real defaults come from C1). */
 export const MOCK_DEFAULTS: Record<CallLang, string> = {
@@ -92,7 +93,8 @@ export const MOCK_DEFAULTS: Record<CallLang, string> = {
   kn: "ನಮಸ್ಕಾರ {customer} ಅವರೇ, ನಾನು {assistant}, {business} ನ {agent_role}. ಒಂದು ನಿಮಿಷ ಮಾತನಾಡಬಹುದೇ?",
   ta: "வணக்கம் {customer}, நான் {assistant}, {business} நிறுவனத்தின் {agent_role}. ஒரு நிமிடம் பேசலாமா?",
   ml: "നമസ്കാരം {customer}, ഞാൻ {assistant}, {business} ന്റെ {agent_role}. ഒരു മിനിറ്റ് സംസാരിക്കാമോ?",
+  mr: "नमस्कार {customer}, मी {assistant}, {business} चा {agent_role}. एक मिनिट बोलू शकतो का?", // a draft (C1 #355)
 };
 
 /** What the assistant is, in each language, for {agent_role} in the preview (the call says it in the language it speaks). */
-export const SAMPLE_ROLE: Record<CallLang, string> = { en: "AI assistant", te: "AI అసిస్టెంట్", hi: "AI असिस्टेंट", kn: "AI ಅಸಿಸ್ಟೆಂಟ್", ta: "AI உதவியாளர்", ml: "AI അസിസ്റ്റന്റ്" };
+export const SAMPLE_ROLE: Record<CallLang, string> = { en: "AI assistant", te: "AI అసిస్టెంట్", hi: "AI असिस्टेंट", kn: "AI ಅಸಿಸ್ಟೆಂಟ್", ta: "AI உதவியாளர்", ml: "AI അസിസ്റ്റന്റ്", mr: "AI असिस्टंट" };

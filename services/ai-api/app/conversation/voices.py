@@ -16,7 +16,12 @@ from pathlib import Path
 from app.voice.interface import VoiceError
 
 ENGINES: tuple[str, ...] = ("cartesia", "sarvam_v4")
-CALL_LANGUAGES: tuple[str, ...] = ("te", "en", "hi", "kn", "ta", "ml")
+CALL_LANGUAGES: tuple[str, ...] = ("te", "en", "hi", "kn", "ta", "ml", "mr")
+# The call languages that MUST have voices in the catalogue. Marathi (job M1, owner decision 5 Nov 2026) is a call language with no voice yet: the file may add its voices later (then, like every
+# language, exactly one default per gender); until then GET /voices does not list it and `default_for("mr")` is "unsupported_language", the way any language without a voice was before.
+VOICED_LANGUAGES: tuple[str, ...] = ("te", "en", "hi", "kn", "ta", "ml")
+# where a language has no voice yet, the live talk listens and answers in the language of the same script that has voices (what a Marathi speaker got before Marathi was a language)
+SPEAKS_INSTEAD: dict[str, str] = {"mr": "hi"}
 TAGS: tuple[str, ...] = ("calm", "warm", "deep", "bright", "young", "mature", "energetic")
 GENDERS: tuple[str, ...] = ("female", "male")
 DATA = Path(__file__).resolve().parent / "data"
@@ -33,6 +38,7 @@ SAMPLE_LINES: dict[str, str] = {
     "en": "Hello, this is the assistant from {b}. One moment, I'll check and tell you. Shall I call you after six?",
     "ta": "வணக்கம், நான் {b} இலிருந்து பேசுகிறேன். ஒரு நிமிடம், check செய்து சொல்கிறேன். மாலை ஆறு மணிக்கு call செய்யலாமா?",
     "ml": "നമസ്കാരം, ഞാൻ {b} ൽ നിന്ന് സംസാരിക്കുന്നു. ഒരു നിമിഷം, check ചെയ്ത് പറയാം. വൈകുന്നേരം ആറ് മണിക്ക് call ചെയ്യട്ടെ?",
+    "mr": "नमस्कार, {b} कडून बोलत आहे. एक मिनिट, check करून सांगू. संध्याकाळी सहा वाजता call करू का?",   # job M1 draft; no Marathi voice renders it yet
 }
 
 
@@ -86,6 +92,10 @@ class VoiceConfig:
         """The default (female) voices per language."""
         return {c.language: c.voices for c in self.catalogue.values() if c.default and c.gender == "female"}
 
+    def has_voices(self, language: str) -> bool:
+        """Does the catalogue have any voice of this language (job M1: Marathi has none yet)?"""
+        return any(c.language == language for c in self.catalogue.values())
+
     def voices_of(self, language: str, gender: str | None = None) -> list[CatalogueVoice]:
         """The catalogue of a language (of one gender when given): women's voices first, in each gender the default first, then the recommended ones."""
         return sorted((c for c in self.catalogue.values() if c.language == language and (gender is None or c.gender == gender)), key=lambda c: (c.gender == "male", not c.default, not c.recommended, c.name))
@@ -120,7 +130,7 @@ def _choice(raw: object, where: str, *, fallback: bool = False) -> VoiceChoice:
 
 
 def parse_config(data: object) -> VoiceConfig:
-    """Check a loaded file. Every call language has a catalogue with exactly one default; ids are '<language>-<name>' and unique; a fallback is a DIFFERENT engine from its primary and has the SAME gender as the voice it backs up; the timeout is sane."""
+    """Check a loaded file. Every call language that has voices (always the VOICED_LANGUAGES) has a catalogue with exactly one default per gender; ids are '<language>-<name>' and unique; a fallback is a DIFFERENT engine from its primary and has the SAME gender as the voice it backs up; the timeout is sane."""
     if not isinstance(data, dict) or not isinstance(data.get("catalogue"), list):
         raise ValueError("voices: 'catalogue' is required")
     timeout = int(data.get("first_audio_timeout_ms", 800))
@@ -149,6 +159,8 @@ def parse_config(data: object) -> VoiceConfig:
             raise ValueError(f"{where}: tags are at most three of {TAGS}")
         catalogue[vid] = CatalogueVoice(vid, lang, name, label, gender, bool(raw.get("default", False)), LanguageVoices(primary, fallback), tags, bool(raw.get("recommended", False)))
     for lang in CALL_LANGUAGES:
+        if lang not in VOICED_LANGUAGES and not any(c.language == lang for c in catalogue.values()):
+            continue   # a language with no voice yet (job M1): nothing to check until the file gives it one
         for gender in GENDERS:
             defaults = [c for c in catalogue.values() if c.language == lang and c.gender == gender and c.default]
             if len(defaults) != 1:

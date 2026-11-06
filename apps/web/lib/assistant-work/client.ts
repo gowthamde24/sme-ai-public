@@ -9,7 +9,7 @@ import { parseActivityEntry, parsePlan, parseTestResult, parseUploadedFile, type
  */
 export type PlanOutcome = { ok: true; plan: WorkPlan } | { ok: false; error: "mfa" | "forbidden" | "expired" | "state" | "down" };
 export type UploadOutcome = { ok: true; file: UploadedFile } | { ok: false; error: "size" | "type" | "empty" | "forbidden" | "down" | "aborted" };
-export type SecretOutcome = { ok: true; last4: string | null } | { ok: false; error: "rejected" | "forbidden" | "down" };
+export type SecretOutcome = { ok: true; last4: string | null } | { ok: false; error: "rejected" | "forbidden" | "renew" | "down" };
 export type TestOutcome = { ok: true; result: TestResult } | { ok: false; error: "forbidden" | "down" };
 export type UndoOutcome = { ok: true; entry: ActivityEntry } | { ok: false; error: "expired" | "forbidden" | "down" };
 
@@ -82,7 +82,7 @@ export function routeTransport(base: string, fetcher: typeof fetch = (...a) => f
     saveSecret: async (requestId, value) => {
       const json = await op(base, { op: "secret", requestId, value }, fetcher);
       if (json?.ok === true) return { ok: true, last4: typeof json.last4 === "string" && /^[\w-]{4}$/.test(json.last4) ? json.last4 : null };
-      return { ok: false, error: json?.error === "rejected" || json?.error === "forbidden" ? json.error : "down" };
+      return { ok: false, error: json?.error === "rejected" || json?.error === "forbidden" || json?.error === "renew" ? json.error : "down" };
     },
     liveTest: async (setupId, test) => {
       const json = await op(base, { op: "test", setupId, test }, fetcher);

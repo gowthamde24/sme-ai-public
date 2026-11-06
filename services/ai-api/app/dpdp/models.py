@@ -32,7 +32,7 @@ class WaitlistIn(_Strict):
     city: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=80)]
     phone: Annotated[str, StringConstraints(strip_whitespace=True, min_length=7, max_length=30)] | None = None
     email: Annotated[str, StringConstraints(strip_whitespace=True, min_length=5, max_length=200)] | None = None
-    language: Literal["en", "te", "hi", "kn", "ta", "ml"]
+    language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
     marketing_opt_in: bool = False
     notice_version: Version
     captcha_token: Captcha | None = None

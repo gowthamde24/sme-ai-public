@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { PROFILE_LANGUAGES, saveProfile } from "@/lib/api/profile";
+import { BUSINESS_LANGUAGES, saveProfile } from "@/lib/api/profile";
 import { getWorkspaceProfile, patchWorkspaceProfile, removeLogo, uploadLogo, type WorkspacePatch } from "@/lib/api/workspace";
 import { requireUser } from "@/lib/auth/session";
 import { pictureProblem } from "@/lib/picture";
@@ -28,7 +28,7 @@ export async function saveBusinessAction(tenantId: string, _prev: unknown, formD
   const phone = formData.has("phone") ? String(formData.get("phone") ?? "").trim() : null;
   const type = String(formData.get("type") ?? "").trim();
   const label = String(formData.get("other_label") ?? "").trim();
-  const languages = [...new Set(formData.getAll("languages").map(String).filter((l) => (PROFILE_LANGUAGES as readonly string[]).includes(l)))];
+  const languages = [...new Set(formData.getAll("languages").map(String).filter((l) => (BUSINESS_LANGUAGES as readonly string[]).includes(l)))];
   if (name.length < 1 || name.length > 120 || (town !== "" && (town.length < 2 || town.length > 80)) || languages.length < 1) return { ok: false, error: "invalid" };
   if (phone !== null && phone !== "" && !PHONE.test(phone)) return { ok: false, error: "invalid" };
   try {

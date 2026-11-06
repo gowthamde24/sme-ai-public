@@ -20,4 +20,6 @@ export type TodayActions = {
   visit: ProposalActions | null;
   /** A Lead Finder business on its row (owner, 5 Nov), as on the Prospects page: Call = the Owner's yes (it becomes ready to call and its practice call opens: nothing is dialled), Skip. Absent or null: the rows offer no buttons. */
   prospect?: { call: (id: string) => Promise<DecisionResult>; skip: (id: string) => Promise<DecisionResult> } | null;
+  /** "Done" on a caller who asked for a person or agreed a visit (C1 #347, #354): the team called back. Optional: a screen without it offers no Done. */
+  callHandled?: (id: string) => Promise<DecisionResult>;
 };

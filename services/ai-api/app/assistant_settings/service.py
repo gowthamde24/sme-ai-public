@@ -23,10 +23,10 @@ from app.assistant_settings.models import (
 from app.assistant_settings.repository import AssistantSettingsRepository
 from app.errors import ApiError
 
-LANGUAGES: tuple[LanguageWord, ...] = ("en", "te", "hi", "kn", "ta", "ml")
-NATIVE = {"en": "English", "te": "తెలుగు", "hi": "हिंदी", "kn": "ಕನ್ನಡ", "ta": "தமிழ்", "ml": "മലയാളം"}
+LANGUAGES: tuple[LanguageWord, ...] = ("en", "te", "hi", "kn", "ta", "ml", "mr")
+NATIVE = {"en": "English", "te": "తెలుగు", "hi": "हिंदी", "kn": "ಕನ್ನಡ", "ta": "தமிழ்", "ml": "മലയാളം", "mr": "मराठी"}
 # the customer's side of the SIMULATED test call (a draft for native review, like every line here)
-CUSTOMER_LINES = {"en": "Yes, please send them.", "te": "అవును, పంపండి.", "hi": "हाँ, भेज दीजिए।", "kn": "ಹೌದು, ಕಳುಹಿಸಿ.", "ta": "ஆம், அனுப்புங்கள்.", "ml": "അതെ, അയക്കൂ."}
+CUSTOMER_LINES = {"en": "Yes, please send them.", "te": "అవును, పంపండి.", "hi": "हाँ, भेज दीजिए।", "kn": "ಹೌದು, ಕಳುಹಿಸಿ.", "ta": "ஆம், அனுப்புங்கள்.", "ml": "അതെ, അയക്കൂ.", "mr": "हो, पाठवा."}
 CONFIRM_LINES = {
     "en": "Sent on WhatsApp. Thank you!",
     "te": "వాట్సాప్‌లో పంపాను. ధన్యవాదాలు!",
@@ -34,6 +34,7 @@ CONFIRM_LINES = {
     "kn": "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಕಳುಹಿಸಿದ್ದೇನೆ. ಧನ್ಯವಾದ!",
     "ta": "வாட்ஸ்அப்பில் அனுப்பிவிட்டேன். நன்றி!",
     "ml": "വാട്സാപ്പിൽ അയച്ചിട്ടുണ്ട്. നന്ദി!",
+    "mr": "WhatsApp वर पाठवलं. धन्यवाद!",
 }
 TEST_CALL_NOTE = "This is a simulation. No call was made and nothing was sent or stored. A real test call to your own phone needs telephony, which is not built yet."
 
