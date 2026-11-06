@@ -5,8 +5,11 @@ That is the whole of what a stranger on the line can ever learn from it."""
 # ruff: noqa: E501
 from __future__ import annotations
 
+import json
 import secrets
 from collections.abc import Sequence
+from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 from app.agents.register import register_block
@@ -44,27 +47,100 @@ AFTER_HOURS = {"en": "Thank you for calling {business}. We are closed right now.
 
 
 # the person rang US: no "I am calling about your enquiry"; it says it is an AI and asks how it can help (drafts for a native reader, like the other fixed words)
+# Every call, every language (owner, 6 Nov 2026): the assistant's name (Settings > Assistant, default Priya), the business (the workspace's name), and "AI assistant" IN THE FIRST SENTENCE;
+# then one short question. The written text keeps the business as it is written ("Stack19"); the voice says it in English (app/pronunciation/brand.py). Drafts for a native reader except te.
 INBOUND_OPENING = {
-    "en": "Hello, this is the AI assistant of {business}. How can I help you?",
-    "te": "నమస్కారం అండీ, నేను {business} AI assistant ని. మీకు ఎలా సహాయం చేయగలను?",
-    "hi": "नमस्ते, मैं {business} की AI assistant हूँ। बताइए, आपकी क्या मदद करूँ?",
-    "kn": "ನಮಸ್ಕಾರ, ನಾನು {business} ನ AI assistant. ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?",
-    "ta": "வணக்கம், நான் {business} ன் AI assistant. உங்களுக்கு எப்படி உதவலாம்?",
-    "ml": "നമസ്കാരം, ഞാൻ {business} ന്റെ AI assistant ആണ്. എങ്ങനെ സഹായിക്കാം?",
-    "mr": "नमस्कार, मी {business} ची AI assistant आहे. सांगा, मी तुमची काय मदत करू?",   # job M1: a draft for a native reader
+    "en": "Hello, I'm {assistant}, the AI assistant from {business}. Do you have a minute to talk?",
+    "te": "హలో, నేను {business} నుంచి {assistant}, AI అసిస్టెంట్‌ని. ఇప్పుడు ఒక నిమిషం మాట్లాడొచ్చా?",
+    "hi": "नमस्ते जी, मैं {business} से {assistant}, AI असिस्टेंट बोल रही हूँ। क्या अभी एक मिनट बात कर सकते हैं?",
+    "kn": "ಹಲೋ, ನಾನು {business} ಇಂದ {assistant}, AI ಅಸಿಸ್ಟೆಂಟ್. ಈಗ ಒಂದು ನಿಮಿಷ ಮಾತಾಡಬಹುದಾ?",
+    "ta": "ஹலோ, நான் {business} லிருந்து {assistant}, AI அசிஸ்டென்ட். இப்போ ஒரு நிமிஷம் பேசலாமா?",
+    "ml": "ഹലോ, ഞാൻ {business} ൽ നിന്ന് {assistant}, AI അസിസ്റ്റന്റ് ആണ്. ഇപ്പോൾ ഒരു മിനിറ്റ് സംസാരിക്കാമോ?",
+    "mr": "नमस्कार, मी {business} कडून {assistant}, AI असिस्टंट बोलतेय. आत्ता एक मिनिट बोलू शकतो का?",
 }
+DEFAULT_ASSISTANT = "Priya"
+
+# "Are you a person / a robot?": honest and warm, never claiming to be human (owner, 6 Nov 2026)
+HONEST_AI = {
+    "en": "I'm an AI assistant, but I'll get your work done properly.",
+    "te": "నేను AI అసిస్టెంట్‌ని అండీ, కానీ మీ పని పూర్తిగా చేసి పెడతాను.",
+    "hi": "जी, मैं AI असिस्टेंट हूँ, पर आपका काम पूरा करवा दूँगी।",
+    "kn": "ನಾನು AI ಅಸಿಸ್ಟೆಂಟ್ ಅಂಡಿ, ಆದರೆ ನಿಮ್ಮ ಕೆಲಸ ಪೂರ್ತಿ ಮಾಡಿಕೊಡ್ತೀನಿ.",
+    "ta": "நான் AI அசிஸ்டென்ட் தாங்க, ஆனா உங்க வேலையை முழுசா முடிச்சு தரேன்.",
+    "ml": "ഞാൻ ഒരു AI അസിസ്റ്റന്റ് ആണ്, പക്ഷേ നിങ്ങളുടെ കാര്യം മുഴുവൻ ചെയ്തുതരാം.",
+    "mr": "मी AI असिस्टंट आहे, पण तुमचं काम पूर्ण करून देईन.",
+}
+ACKS = {"en": "got it / sure / okay", "te": "సరే అండీ / అలాగా / అవునా", "hi": "हाँ जी / अच्छा / ठीक है", "kn": "ಸರಿ ರೀ / ಹೌದಾ / ಓಕೆ", "ta": "சரிங்க / அப்படியா / ஓகே", "ml": "ശരി / അതെയോ / ഓക്കെ", "mr": "हो / बरं / ठीक आहे"}
+RESPECT = {"en": "polite words, please and thank you", "te": "అండీ, మీరు", "hi": "जी, आप", "kn": "ರೀ, ನೀವು", "ta": "ங்க, நீங்க", "ml": "നിങ്ങൾ", "mr": "तुम्ही, जी"}
+
+
+def first_sentence(text: str) -> str:
+    """Up to and including the first sentence end (. ! ? or the danda), or all of it. A one- or two-word salutation ("Namaste!", "Hello!") is part of the sentence that follows it."""
+    def end(t: str) -> int:
+        ends = [k for k in (t.find(mark) for mark in (".", "!", "?", "।")) if k >= 0]
+        return min(ends) if ends else -1
+
+    k = end(text)
+    if k < 0:
+        return text
+    if len(text[:k].split()) <= 2:
+        rest = text[k + 1:]
+        k2 = end(rest)
+        return text if k2 < 0 else text[: k + 1 + k2 + 1]
+    return text[: k + 1]
 
 
 def opening_line(language: str, *, business: str, assistant: str | None, customer: str | None, owner_line: str | None = None, inbound: bool = False, greeting: str | None = None) -> str:
-    """What the person hears first. ALWAYS says it is an AI (the gate refuses an outbound call whose line does not); on an inbound call the Owner's switch decides, defaulting to saying it.
-    An inbound call without the Owner's own line is answered, not called: it asks how it can help. The Owner's trained greeting (talk training) is used when it says "AI"; otherwise the standard
-    opening (which does) follows it."""
+    """What the person hears first. ALWAYS says it is an AI, in the FIRST sentence (owner, 6 Nov 2026). On an inbound call: the standard opening (the assistant's name, the business, "AI assistant", one
+    question). The Owner's trained greeting (talk training) is used when its first sentence says "AI"; otherwise the standard opening's first sentence goes BEFORE it."""
+    name = assistant or DEFAULT_ASSISTANT
+    standard = INBOUND_OPENING.get(language, INBOUND_OPENING["en"]).replace("{business}", business).replace("{assistant}", name)
     if inbound and greeting:
-        said = greeting.replace("{business}", business)
-        return said if "AI" in said else f"{said} {INBOUND_OPENING.get(language, INBOUND_OPENING['en']).replace('{business}', business)}"
+        said = greeting.replace("{business}", business).replace("{assistant}", name).strip()
+        return said if "AI" in first_sentence(said) else f"{first_sentence(standard)} {said}"
     if inbound and not owner_line:
-        return INBOUND_OPENING.get(language, INBOUND_OPENING["en"]).replace("{business}", business)
+        return standard
     return compose_opening(language, owner_line=owner_line, mention_ai=True, assistant=assistant, business=business, customer=customer, agent_role=None)
+
+
+def conversation_rules(language: str, business: str) -> list[str]:
+    """How a call sounds (owner, 6 Nov 2026): the languages it speaks, the brand, honesty, the caller's tone, spoken-not-written turns, and the script the voice is given."""
+    honest = HONEST_AI.get(language, HONEST_AI["en"])
+    return [
+        "LANGUAGES: you speak Telugu, Kannada, Tamil, Malayalam, Hindi, English and Marathi. NEVER say you cannot speak one of them. Reply in the language named above (the call's language). "
+        "Callers mix English words in (\"price\", \"booking\", \"hello\"): that is still their language, keep replying in it. If the caller asks for another of these languages, reply in that language.",
+        f"THE BUSINESS NAME is written exactly \"{business}\". Never translate it, never transliterate it, never write it in Telugu, Hindi or any other script, never write its number as a word.",
+        f"HONESTY: you are an AI assistant and say so warmly if asked whether you are a person or a robot (for example: \"{honest}\"). Never claim to be human.",
+        f"TONE: mirror the caller. Start respectful ({RESPECT.get(language, RESPECT['en'])}). If the caller is casual and friendly, become warmer and a little more casual; with elders or serious "
+        "callers stay respectful. Never rude, never over-familiar first. If they are annoyed (for example \"who gave my number?\"), apologise briefly, say how the business has their number only if a fact says so, and offer to stop.",
+        f"SOUND SPOKEN, NOT WRITTEN: one or two short sentences per turn, about 25 words at most. No lists, no bullet points, no long numbers read out. Start with a natural acknowledgement in the caller's "
+        f"language when it fits ({ACKS.get(language, ACKS['en'])}), never the same one twice in a row. Ask ONE question at a time.",
+        "SCRIPT: write the language in its own script (Telugu in Telugu script, Hindi in Devanagari, and so on); keep everyday English words in Latin letters inside the sentence (price, booking, OK).",
+    ]
+
+
+EXAMPLES_FILE = Path(__file__).with_name("data") / "call_examples.json"
+PERSONA_WORDS = {"elder": "a polite elder", "casual": "a casual young caller", "confused": "a confused caller", "annoyed": "an annoyed caller", "robot": "\"are you a robot?\""}
+
+
+@lru_cache(maxsize=1)
+def _examples() -> dict[str, list[dict[str, Any]]]:
+    data = json.loads(EXAMPLES_FILE.read_text(encoding="utf-8"))
+    return dict(data.get("languages") or {})
+
+
+def examples_block(language: str, business: str) -> str:
+    """Five short example calls in the call's language (owner, 6 Nov 2026), as few-shot STYLE: tone, length, acknowledgements, honesty. Never a source of facts."""
+    calls = _examples().get(language) or _examples().get("en") or []
+    if not calls:
+        return ""
+    out = [f"EXAMPLES of how calls in this language sound. Copy the STYLE only (tone, length, acknowledgements, honesty); never copy a fact, a name, a price or a promise from them. Here the business is {business}."]
+    for n, call in enumerate(calls, 1):
+        out.append(f"Example {n} ({PERSONA_WORDS.get(str(call.get('persona')), 'a caller')}):")
+        for turn in call.get("turns") or []:
+            for who, text in turn.items():
+                out.append(f"{'Caller' if who == 'caller' else 'You'}: {str(text).replace('{business}', business).replace('{assistant}', DEFAULT_ASSISTANT)}")
+    return "\n".join(out)
 
 
 def system_prompt(*, business: str, assistant: str | None, language: str, purpose: str, facts: Sequence[dict[str, Any]], customer_first_name: str | None, goal: str | None = None, notes: str = "",
@@ -74,13 +150,15 @@ def system_prompt(*, business: str, assistant: str | None, language: str, purpos
     who = assistant or "the assistant"
     lines = [
         f"You are {who}, the AI assistant of {business}, on a PHONE CALL with a customer, on behalf of the owner. Speak {LANGUAGE_NAMES.get(language, 'English')} (the customer's language; English words they use may stay). "
-        "This is spoken aloud: one or two short sentences per turn, about twenty words at most, plain and warm, no lists, no markup, no emoji. Ask at most ONE question at a time. Let the customer finish.",
+        "This is spoken aloud: plain and warm, no markup, no emoji. Let the customer finish.",
+        *conversation_rules(language, business),
         f"The goal of this call: {goal or GOALS.get(purpose, GOALS['inbound'])}",
         "You are an AI and you say so at once if asked; never claim to be a person, never deny being an AI. If they ask for a person, or are upset, say the team will call them back.",
         "Answer ONLY from the approved facts below. If the answer is not there, say the team will get back to them. NEVER state a price, a discount, a total, a date or a delivery time you were not given, and NEVER promise anything "
         "(stock, delivery, a visit time, a refund). You cannot see any record, order or payment: do not pretend to. Never ask for an OTP, a card or bank detail, a password, an Aadhaar or any ID.",
         "If they ask you not to call again, say you will not and end politely. When the goal is done or they want to go, say a short goodbye.",
         register_block(language),
+        examples_block(language, business),
         facts_block(facts, allow_prices=False),
     ]
     if customer_first_name:

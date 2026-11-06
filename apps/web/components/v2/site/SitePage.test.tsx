@@ -4,7 +4,7 @@ vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
 
 // next/dynamic loads a chunk on the client; a test renders the real components at once
-vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm }));
+vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverCalculator")).PaverCalculator, ContactForm: (await import("./ContactForm")).ContactForm, WaitlistForm: (await import("./WaitlistForm")).WaitlistForm, HeroStage: (await import("./home2/HeroStage")).HeroStage, CallDemo: (await import("./home2/CallDemo")).CallDemo, RadarFinder: (await import("./home2/RadarFinder")).RadarFinder, StandupTable: (await import("./home2/StandupTable")).StandupTable, Journey: (await import("./home2/Journey")).Journey, LeakCalc: (await import("./home2/LeakCalc")).LeakCalc, BrandDots: (await import("./home2/BrandDots")).BrandDots }));
 
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -66,127 +66,146 @@ describe("the business type pages come from the pack data", () => {
   });
 });
 
-describe("the home page (landing v3, night 5)", () => {
+describe("the home page (landing v2, 6 Nov 2026; the sections not yet rebuilt are still landing v3)", () => {
   const home = render("en", { kind: "home" });
   const text = (html: string) => html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/&#x27;/g, "'").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/\s+/g, " ");
-  it("has the sections in order: hero, where leads come from, a day, Lead Desk, industries, plans, promises, questions, the closing band, then the footer", () => {
-    const at = ["h1", "sources", "day", "leaddesk", "industries", "plans", "trust", "faq", "start"].map((id) => home.indexOf(`id="${id}"`));
-    expect(at.every((i) => i > 0)).toBe(true);
+  it("landing v2: the sections in the design's order, then the footer with the dot wordmark; the old landing v3 sections are gone", () => {
+    const at = ["h1", "greetings", "call", "finder", "team", "after", "number", "calc", "plans", "faq", "join"].map((id) => (id === "greetings" ? home.indexOf('data-part="greetings"') : home.indexOf(`id="${id}"`))); // (without the waitlist the closing section is #join; with it, #demo)
+    expect(at.every((i) => i > 0), JSON.stringify(at)).toBe(true);
     expect([...at].sort((x, y) => x - y)).toEqual(at);
-    expect(home.indexOf("<footer")).toBeGreaterThan(at[8]);
-    for (const gone of ["how", "business", "pricing", "workforce", "voice"]) expect(home, gone).not.toContain(`<section id="${gone}"`);
+    const foot = home.match(/<footer[\s\S]*?<\/footer>/)![0];
+    expect(home.indexOf("<footer")).toBeGreaterThan(at[10]);
+    expect(foot).toContain('data-part="home-footer"');
+    expect(foot).toMatch(/<canvas[^>]*role="img"[^>]*aria-label="Stack19"/);
+    for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ", "Back to the top", "WhatsApp +91 95023 80998"]) expect(text(foot), l).toContain(l);
+    expect(foot).toContain('href="https://wa.me/919502380998?text=Hi%20Stack19%2C%20I&#x27;d%20like%20early%20access."');
+    for (const gone of ["sources", "day", "leaddesk", "industries", "trust", "start"]) expect(home, gone).not.toContain(`id="${gone}"`);
+    expect(home.match(/id="top"/g)).toHaveLength(1);
   });
-  it("says the headline in three lines (no number), what it is, the two buttons and the trial line, and brands itself Stack19 (no working name)", () => {
+  it("landing v2: the leak (real labelled sliders, the visitor's own estimate), the two plans ('Price at launch', the Lead Finder crossed out in Lead Desk), nine questions as native disclosures, and the closing form on joinWaitlist", () => {
+    const calc = home.match(/<section id="calc"[\s\S]*?<\/section>/)![0];
+    expect(calc.match(/type="range"/g)).toHaveLength(3);
+    for (const id of ["h2-enq", "h2-miss", "h2-buy", "h2-avg"]) expect(calc).toContain(`for="${id}"`);
+    expect(text(calc)).toContain("Not a promise, your own estimate.");
+    const plans = home.match(/<section id="plans"[\s\S]*?<\/section>/)![0];
+    expect(text(plans).match(/Price at launch/g)).toHaveLength(2);
+    expect(plans.match(/data-plan="(workforce|leaddesk)"/g)).toHaveLength(2);
+    expect(plans).toMatch(/data-plan="leaddesk"[\s\S]*data-feature="2" data-off=""/);
+    expect(text(plans)).not.toMatch(/most popular|best value|recommended/i);
+    const faq = home.match(/<section id="faq"[\s\S]*?<\/section>/)![0];
+    expect(faq.match(/<details/g)).toHaveLength(9);
+    expect(faq).not.toMatch(/<details[^>]*\sopen/);
+    expect(text(faq)).toContain("What is the evening stand-up?");
+    expect(text(faq)).not.toContain("KYC");
+    const join = home.match(/<section id="(demo|join)"[\s\S]*?<\/section>/)![0];
+    expect(text(join)).toContain("Your next enquiry deserves a call back within minutes.");
+    expect(text(join)).toContain("Or WhatsApp us on +91 95023 80998");
+    expect(home).not.toContain("[WHATSAPP NUMBER]");
+    expect(text(join)).toContain("We call you once from our business number. No marketing messages.");
+  });
+  it("landing v2: the headline in two lines, each word rising out of a blur, the line under it, the trial button and Hear a call; branded Stack19 (no working name)", () => {
     const h1 = home.match(/<h1[\s\S]*?<\/h1>/)![0];
-    expect([...h1.matchAll(/<span class="block">([^<]+)<\/span>/g)].map((m) => m[1])).toEqual(["Catches every lead.", "Calls them right away.", "Follows up until they decide."]);
+    expect(text(h1).trim()).toBe("Every enquiry answered. New customers found.");
+    expect(h1.match(/class="h2-wd h2-d\d"/g)).toHaveLength(6);
     const t = text(home);
-    for (const x of ["Stack19 is an AI workforce for Indian businesses", "Its assistant calls every lead in their own language", "Get started", "See a day with Stack19", "Telugu, Tamil, Kannada, Malayalam, Hindi and English.", "Sign in", "Get started"]) expect(t, x).toContain(x);
-    expect(t).not.toMatch(/working name|Sme-?AI|30-day|30 day|within 2 minutes|in 2 minutes/i);
+    for (const x of ["Stack19 is an AI workforce for Indian small businesses", "built to call back every enquiry from any source within minutes, in the customer's own language", "now in early access", "Hear a call", "Log in"]) expect(t, x).toContain(x);
+    // no trial length and no GST until the lawyer's review (owner, 6 Nov 2026; SITE_TRIAL_COPY=1 turns them on)
+    expect(t).not.toMatch(/14-day|day trial|GST included|card or UPI/);
+    expect(t).toContain("Two plans, priced in rupees.");
+    expect(t).toContain("Free trial at launch. Details when we open.");
+    expect(t).toContain("Lead Finder: scanning nearby");
+    expect(t).not.toMatch(/working name|Sme-?AI/i);
     expect(home.match(/<h1[\s>]/g)).toHaveLength(1);
   });
-  it("has the sticky nav: the three-bar logo, How it works, Lead Desk, Industries, Pricing, Questions, Sign in and Get started (each link goes to a section that is on the page)", () => {
+  it("landing v2 keeps the live page's call-first rule (owner, 6 Nov, #378): no WhatsApp-first promise and no \"Frievening\"", () => {
+    expect(text(home)).not.toMatch(/WhatsApp now|carries on over WhatsApp|WhatsApp message straight away|WhatsApp to Ravi|get WhatsApp only|Here is the brochure|Frievening/);
+  });
+  it("landing v2: with SITE_TRIAL_COPY=1 the later words come back (the 14-day trial, GST included)", () => {
+    vi.stubEnv("SITE_TRIAL_COPY", "1");
+    const on = text(render("en", { kind: "home" }));
+    vi.unstubAllEnvs();
+    for (const x of ["Start 14-day trial", "Two plans. Rupees, GST included.", "14 days free, counted from the day your WhatsApp is connected."]) expect(on, x).toContain(x);
+  });
+  it("landing v2: the sticky glass header with its scroll line, the three-bar logo, Hear a call, Lead Finder, AI team, Business number, Plans, Questions, Log in and Get early access", () => {
     const nav = home.match(/<header[\s\S]*?<\/header>/)![0];
     expect(nav).toMatch(/\[position:sticky\]/);
-    for (const href of ['href="#day"', 'href="#leaddesk"', 'href="#industries"', 'href="#plans"', 'href="#faq"', 'href="/login"', 'href="/signup"']) expect(nav, href).toContain(href);
-    for (const m of nav.matchAll(/href="#([a-z-]+)"/g)) expect(home, m[1]).toContain(`id="${m[1]}"`);
-    expect(nav).toContain("data-mark"); // the logo is three bars, not the circle
+    expect(nav).toContain('class="h2-prog"');
+    for (const href of ['href="#call"', 'href="#finder"', 'href="#team"', 'href="#number"', 'href="#plans"', 'href="#faq"', 'href="/login"']) expect(nav, href).toContain(href);
+    for (const x of ["Hear a call", "Lead Finder", "AI team", "Business number", "Plans", "Questions", "Log in"]) expect(text(nav), x).toContain(x);
+    expect(nav).toContain("data-mark");
     expect(nav).not.toContain("data-orb");
   });
-  it("draws no owl, no picture file and no play or pause button; the circle is the assistant's (the hero and the closing band)", () => {
-    expect(home).not.toMatch(/owl/i);
-    expect(home.match(/<img/g)).toBeNull();
-    expect(home).not.toMatch(/aria-pressed|role="tab"|Pause the example|Play the example/);
-    expect(home).toContain('data-part="hero-orb"');
-    expect(home.match(/data-orb="speak"/g)).toHaveLength(1); // the closing band
+  it("landing v2: the hero stage is in the page without script: the six sources, the Lead Finder counter, the caption, three outcomes and Try it (three businesses, seven languages, real radio buttons)", () => {
+    const stage = home.match(/data-part="hero-stage"[\s\S]*$/)![0];
+    expect(stage.match(/data-source="\d"/g)).toHaveLength(6);
+    for (const x of ["Facebook and Instagram ads", "IndiaMART, JustDial", "Your website", "WhatsApp messages", "Missed calls", "Emails, sheets, walk-ins", "Lead Finder: scanning nearby", "Called back within minutes", "Quote ready", "Shop visit booked", "Try it", "Send an enquiry"]) expect(text(stage), x).toContain(x);
+    expect(stage.match(/data-try-biz=/g)).toHaveLength(6); // the desktop bar and the phone card
+    expect(stage.match(/data-try-lang=/g)).toHaveLength(14);
+    expect(stage).toMatch(/role="radio" aria-checked="true"[^>]*data-try-biz="saree"/);
+    expect(stage).toContain('aria-live="polite"');
+    expect(stage).toMatch(/<canvas[^>]*aria-hidden="true"/);
+    expect(stage).not.toMatch(/data-hear=/); // no "Hear it" until the voices' manifest says a clip may be heard
   });
-  it("has the example call: Telugu lines with the English under each, a clock, the result, all said to be made up", () => {
-    const call = home.match(/data-part="hero-call"[\s\S]*?made-up names[^<]*<\/p>/)![0];
-    expect(call.match(/data-line=/g)).toHaveLength(4);
-    expect(call.match(/lang="te"/g)).toHaveLength(4);
-    expect(text(call)).toContain("Ravi Kumar");
-    expect(text(call)).toContain("Hello, this is Sri Sai Homes. Do you have a minute?");
-    expect(text(call)).toContain("Site visit booked, Saturday 11:00");
-    expect(call).toMatch(/data-part="clock">01:48</);
-    expect(text(call)).toContain("Example with made-up names. AI calls are in early access.");
+  it("landing v2: the seven greetings band (CSS only, the lit copy hidden from screen readers), then Hear a call with its three tabs and the sample call in Telugu with English under it", () => {
+    const band = home.match(/data-part="greetings"[\s\S]*?<\/section>/)![0];
+    for (const g of ["నమస్కారం", "வணக்கம்", "ನಮಸ್ಕಾರ", "നമസ്കാരം", "नमस्ते", "नमस्कार", "Hello"]) expect(band, g).toContain(g);
+    expect(band).toContain('class="h2-gspot" aria-hidden="true"');
+    const call = home.match(/<section id="call"[\s\S]*?<\/section>/)![0];
+    expect(text(call)).toContain("Hear a call, or just read it.");
+    expect(call.match(/role="tab"/g)).toHaveLength(3);
+    expect(call).toMatch(/role="tab" aria-selected="true"[^>]*data-call-tab="saree"/);
+    expect(call).toMatch(/lang="te" data-part="call-words"/);
+    expect(text(call)).toContain("Hello! I am the AI assistant of Padma Silks. You asked about silk sarees, right?");
+    expect(text(call)).toContain("Example calls for sample businesses. The names are made up.");
+    expect(text(call)).toContain("Leads board");
+    expect(call).not.toMatch(/data-hear=/);
   });
-  it("has leads from your own lists and leads you already get, as plain text chips (no logo, no picture, no link)", () => {
-    const section = home.match(/<section id="sources"[\s\S]*?<\/section>/)![0];
-    const find = section.match(/data-part="find"[\s\S]*?<\/ul>/)![0];
-    expect([...find.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["An Excel or Google Sheets file", "A pasted list of names and numbers", "Contacts from your phone"]);
-    const chips = section.match(/<ul[^>]*data-part="sources"[\s\S]*?<\/ul>/)![0];
-    expect([...chips.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["Your website forms", "WhatsApp", "Missed calls", "Meta lead ads", "Excel and Google Sheets import", "IndiaMART (coming soon)"]);
-    expect(section).not.toMatch(/<img|<svg|<a[\s>]|<picture/);
+  it("landing v2: the Lead Finder radar with the four cities (Hyderabad first, its own area names), the legend and the found list", () => {
+    const finder = home.match(/<section id="finder"[\s\S]*?<\/section>/)![0];
+    expect(text(finder)).toContain("Coming soon: it also goes looking for your next customers.");
+    expect(text(finder)).toContain("In early access.");
+    expect(finder.match(/role="radio"[^>]*data-city="(Hyderabad|Bengaluru|Chennai|Vijayawada)"/g)).toHaveLength(8); // the desktop map and the phone's
+    expect(finder).toMatch(/role="radio" aria-checked="true"[^>]*data-city="Hyderabad"/);
+    for (const x of ["Saree retailers near Hyderabad", "Call now", "Ask you first", "Skip", "Found on this sweep"]) expect(text(finder), x).toContain(x);
+    expect(text(finder)).toContain("Businesses only, never families.");
+    expect(text(finder)).toContain("An example sweep for a sample saree shop.");
   });
-  it("has a day with Stack19: six moments in order, with the workers named and a small example under three of them", () => {
-    const day = home.match(/<section id="day"[\s\S]*?<\/section>/)![0];
-    const list = day.match(/<ol[^>]*data-part="day"[\s\S]*?<\/ol>/)![0];
-    expect(list.match(/<li[\s>]/g)).toHaveLength(6);
-    expect([...list.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1])).toEqual(["New leads caught", "A lead arrives late", "Your assistant calls", "The outcome is saved", "Your salesperson takes over", "Follow-up, without reminders from you"]);
-    expect([...list.matchAll(/<time[^>]*>([^<]+)/g)].map((m) => m[1].trim())).toEqual(["6:00", "9:47", "9:30", "9:32", "9:33", "Fri"]);
-    expect(text(list)).toContain("Leads from your website forms, WhatsApp, missed calls and Meta lead ads land in one list");
-    expect(list.match(/<strong[^>]*>/g)!.length).toBeGreaterThanOrEqual(2);
+  it("landing v2: the evening stand-up (the six helpers as real orbs around the table, subtitles, a seven-part bar, said to be an example), the journey's six stops with the calling tools' stop, and You, teaching it", () => {
+    const team = home.match(/<section id="team"[\s\S]*?<\/section>/)![0];
+    expect(text(team)).toContain("Every evening, your AI team meets and reports to you.");
+    expect(team.match(/data-seat="\d"/g)).toHaveLength(6);
+    for (const x of ["Caller", "Lead Finder", "Researcher", "Quote Writer", "Follow-up Desk", "Order Desk", "Caller is reporting", "1 of 7", "Example stand-up for a sample shop, in your language."]) expect(text(team), x).toContain(x);
+    expect(team).not.toMatch(/data-hear=/);
+    const after = home.match(/<section id="after"[\s\S]*?<\/section>/)![0];
+    for (const x of ["Enquiry", "The call", "The quote", "The visit", "Follow-ups", "The order", "Calling tools stop here", "You, teaching it:", "Never promise delivery before Monday. Ask the budget first.", "One example enquiry for a sample business."]) expect(text(after), x).toContain(x);
+    expect(after.match(/data-stop="\d"/g)).toHaveLength(6);
   });
-  it("calls first (owner, 6 Nov): after hours the call is booked for the morning and WhatsApp goes only when the customer asks; the day's last moment reads \"Fri evening\", with a space", () => {
-    const t = text(home);
-    for (const x of ["Called first thing in the morning", "sends details on WhatsApp when the customer asks", "books the call for first thing in the morning. A WhatsApp goes only if Ravi asks for one.", "Call booked for the morning", "call at 9:30 tomorrow, in Telugu. No message sent tonight.", "31 on DND left out."]) expect(t, x).toContain(x);
-    expect(t).not.toMatch(/WhatsApp now|carries on over WhatsApp|WhatsApp message straight away|WhatsApp to Ravi|get WhatsApp only|Here is the brochure|Frievening/);
-    expect(home).toMatch(/Fri <small/);
-  });
-  it("has Lead Desk in five rows: approve all, tell the assistant, languages, your opening line, speed by source", () => {
-    const section = home.match(/<section id="leaddesk"[\s\S]*?<\/section>/)![0];
-    expect([...section.matchAll(/data-row="(\d)"/g)].map((m) => m[1])).toEqual(["1", "2", "3", "4", "5"]);
-    for (const x of ["Approve a whole list in one go", "Approve all", "Tell your assistant what you need", "Talks the way your customers talk", "నమస్కారం", "வணக்கம்", "ನಮಸ್ಕಾರ", "നമസ്കാരം", "नमस्ते", "Your words open every call", "Fast, while they're still interested", "right away", "Called first thing in the morning"]) expect(text(section), x).toContain(x);
-    // the opening line shows its placeholders as they are typed
-    for (const v of ["{customer}", "{business}"]) expect(text(section.match(/data-part="opening-example"[\s\S]*?<\/p>/)![0])).toContain(v);
-  });
-  it("has the three industries as columns with their own pages (sarees, building materials, schools), four things each, and the other businesses as nine chips", () => {
-    const section = home.match(/<section id="industries"[\s\S]*?<\/section>/)![0];
-    expect(text(section)).toContain("Built deeper for three industries");
-    const cards = section.match(/<ul[^>]*data-part="pack-cards"[\s\S]*?<\/ul>\s*<div/)![0];
-    expect(cards.match(/data-pack-card=/g)).toHaveLength(SITE_PACKS.length);
-    expect(SITE_PACKS).toHaveLength(3);
-    for (const p of SITE_PACKS) expect(cards, p.slug).toContain(`href="/${p.slug}"`);
-    for (const x of ["Sarees and textiles", "Building materials", "Schools", "Catches every enquiry, even missed calls", "Catches every builder and contractor enquiry", "Admission enquiries called the same day", "Fee reminders from your fixed templates", "never written by the AI"]) expect(text(cards), x).toContain(x);
-    const chips = section.match(/data-part="industries"[\s\S]*?<\/ul>/)![0];
-    expect([...chips.matchAll(/<li[^>]*>([^<]+)<\/li>/g)].map((m) => m[1])).toEqual(["Real estate", "Coaching", "Clinics", "Insurance and loans", "Auto dealers", "Interiors and solar", "Travel", "Gyms", "Wholesale"]);
-  });
-  it("has two ways to start, with the plan names from the plans data; 'Price at launch' on both, no amount, none 'most popular'", () => {
-    const plans = home.match(/<section id="plans"[\s\S]*?<\/section>/)![0];
-    expect(plans.match(/data-plan-card=""/g)).toHaveLength(2);
-    expect([...plans.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1])).toEqual(["Lead Desk", "AI workforce"]);
-    expect(text(plans)).toContain("Pay as you go, Lead Desk 300 or Lead Desk 1,000");
-    expect(text(plans)).toContain("Starter, Growth or Business");
-    expect(text(plans).match(/Price at launch/g)).toHaveLength(2);
-    expect(text(plans)).not.toMatch(/most popular|best value|recommended/i);
-  });
-  it("has four promises in plain words and five questions as native disclosures, then the closing band with the assistant's orb", () => {
-    const trust = home.match(/<section id="trust"[\s\S]*?<\/section>/)![0];
-    for (const x of ["You decide the rules", "Honest on every call", "DND respected", "Your data stays yours"]) expect(text(trust), x).toContain(x);
-    const faq = home.match(/<section id="faq"[\s\S]*?<\/section>/)![0];
-    expect(faq.match(/<details/g)).toHaveLength(5);
-    expect(faq).not.toMatch(/<details[^>]*\sopen/);
-    const end = home.match(/<section id="start"[\s\S]*?<\/section>/)![0];
-    expect(text(end)).toContain("Let your assistant call your next hundred leads");
-    expect(end).toContain('data-orb="speak"');
-    const foot = home.match(/<footer[\s\S]*?<\/footer>/)![0];
-    for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ"]) expect(foot, l).toContain(l);
-  });
-  it("uses the type scale the owner chose: Bricolage at its normal width, heavy, tight, in fluid sizes (40 px to 64 px for the headline)", () => {
-    expect(home).toMatch(/<h1[^>]*font-display[^>]*font-extrabold[^>]*clamp\(40px,calc\(4vw_\+_8px\),64px\)/);
-    expect(home).toMatch(/<h2[^>]*clamp\(32px,calc\(2\.6vw_\+_14px\),52px\)/);
-    expect(home).not.toMatch(/wdth/i);
+  it("landing v2: the business number says 'KYC done online' and shows the KYC steps only with SITE_KYC_COPY=1", () => {
+    const num = (html: string) => html.match(/<section id="number"[\s\S]*?<\/section>/)![0];
+    const off = num(home);
+    expect(off).toContain('data-kyc="off"');
+    expect(text(off)).toContain("Your own business number");
+    expect(text(off)).not.toMatch(/KYC|Business PAN|Udyam/);
+    vi.stubEnv("SITE_KYC_COPY", "1");
+    const on = num(render("en", { kind: "home" }));
+    vi.unstubAllEnvs();
+    expect(text(on)).toContain("Your own business number. KYC done online.");
+    for (const x of ["Business PAN", "GST or Udyam", "Number live"]) expect(text(on), x).toContain(x);
+    expect(on.match(/class="h2-kdot h2-kdot-\d"/g)).toHaveLength(3);
   });
   it("says nothing it cannot back: no 'live now', no data-region claim, no percentage, no invented number, no customer logos or praise, no GST claim", () => {
-    const t = text(home);
+    // landing v2's example scenes count what the example does ("Checked 46 businesses", "0 new businesses found nearby"); every other word of the page must name no number of businesses or customers
+    const t = text(home.replace(/data-part="hero-stage"[\s\S]*?data-part="try-phone"/, "").replace(/data-part="radar"[\s\S]*?<\/section>/, "").replace(/data-part="leak"[\s\S]*?<\/section>/, ""));
     expect(t).not.toMatch(/live now|stored in (india|mumbai)|\d\s?%|guarantee|testimonial|trusted by|used by|customers love|incl\w* GST|most popular/i);
     expect(t).not.toMatch(/\d[\d,]*\+?\s+(customers|businesses|leads called|calls a day)/i);
   });
-  it("the first call is 'right away', never a number of minutes (owner, 28 Oct: no speed claim until it is measured), in no headline, row or page description", () => {
+  it("the older pages' words say the first call is 'right away'; the landing v2 words say 'within minutes', built to (owner, 6 Nov 2026: no measured time until the live pipeline calls)", () => {
     expect(siteDict("en")["v3.row.5.d"]).toMatch(/called right away, within your calling hours/);
-    expect(siteDict("en")["meta.description"]).toMatch(/calls your leads right away, in calling hours/);
+    expect(siteDict("en")["h2.hero.sub"]).toMatch(/built to call back every enquiry from any source within minutes/);
+    for (const lang of ["en", "te", "hi", "kn"] as const) for (const k of ["h2.hero.sub", "h2.hero.sub.phone", "h2.plans.f.1", "h2.join.title", "h2.out.1.t"] as const) expect(siteDict(lang)[k], `${lang} ${k}`).not.toMatch(/\b2 minutes|1 min 52|2 నిమిషా|2 मिनट|2 ನಿಮಿಷ|Marathi|మరాఠీ|मराठी|ಮರಾಠಿ/);
     for (const lang of ["en", "te", "hi", "kn"] as const) {
       const dict = siteDict(lang);
-      for (const [k, v] of Object.entries(dict)) if (!/^(hm\.pl\.f\.|v3\.plan|v3\.faq\.5|v3\.plans\.small)/.test(k)) expect(v, `${lang} ${k}`).not.toMatch(/\b(1|2|one|two)[- ]minutes?\b|\bminute after\b|\bwithin minutes\b|ఒక నిమిషం|2 నిమిషా|1 मिनट|2 मिनट|ಒಂದು ನಿಮಿಷ|2 ನಿಮಿಷ/i);
+      for (const [k, v] of Object.entries(dict)) if (!/^(h2\.|hm\.pl\.f\.|v3\.plan|v3\.faq\.5|v3\.plans\.small)/.test(k)) expect(v, `${lang} ${k}`).not.toMatch(/\b(1|2|one|two)[- ]minutes?\b|\bminute after\b|\bwithin minutes\b|ఒక నిమిషం|2 నిమిషా|1 मिनट|2 मिनट|ಒಂದು ನಿಮಿಷ|2 ನಿಮಿಷ/i);
     }
   });
   it("carries application data and no FAQ data or offers (there is no price)", () => {
@@ -249,15 +268,16 @@ describe("Lead Desk on the business pages and the other pages (night 4, F1)", ()
   it.each(["te", "hi", "kn"] as const)("%s: the new home sections read in the language (no English headline, no raw key)", (lang) => {
     const html = render(lang, { kind: "home" });
     const d = siteDict(lang);
-    for (const k of ["v3.h1.1", "v3.src.find.t", "v3.src.have.t", "v3.lead.t", "v3.ind.t", "v3.plans.t", "v3.faq.t"] as const) expect(text(html), k).toContain(d[k].replace(/&/g, "&amp;").replace(/&amp;/g, "&"));
-    expect(text(html)).not.toContain("Built deeper for three industries");
+    for (const k of ["h2.hero.l1", "h2.call.title", "h2.finder.title", "h2.meet.title", "h2.leak.title", "h2.plans.ws", "h2.faq.title", "h2.join.title"] as const) expect(text(html), k).toContain(d[k].replace(/&/g, "&amp;").replace(/&amp;/g, "&"));
+    expect(text(html)).not.toContain("Every enquiry answered.");
     expect(text(html)).not.toMatch(/\b(ld|v3)\.[a-z0-9_.]+\b/);
   });
 });
 
 describe("no price and no 'no card' anywhere on the public site (job CX: the owner decides prices after usage tests; the trial takes a payment method)", () => {
   it.each(cases)("%s: no amount, no price word with a number, no card claim", (_n, lang, target) => {
-    const html = render(lang, target);
+    // landing v2's labelled examples show a customer's own budget and the visitor's own estimate in rupees (never a price of ours): the hero stage, the sample call and the leak; every other word of every page names no amount
+    const html = render(lang, target).replace(/data-part="hero-stage"[\s\S]*?data-part="try-phone"[\s\S]*?<\/section>/, "").replace(/data-part="call-demo"[\s\S]*?<\/section>/, "").replace(/data-part="leak"[\s\S]*?<\/section>/, "");
     const text = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ");
     expect(text).not.toMatch(/₹|\bRs\.?\s?\d|\bINR\b|रुपये\s?\d|\d\s?रुपये|రూపాయలు\s?\d/);
     expect(text).not.toMatch(/\bno card\b|without a card|no credit card/i);

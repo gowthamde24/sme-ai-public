@@ -14,7 +14,7 @@ import { readAgentsCached, readTodayCached } from "./today-read";
 import { indiaClock, indiaDay } from "@/components/v2/app/today/time";
 import type { LeadDeskToday } from "./lead-desk-today";
 
-const CLASSIC: readonly string[] = ["quote_approval", "followup_due", "order_money_held", "material_quote_approval", "campaign_approval", "fees_overdue"];
+const CLASSIC: readonly string[] = ["quote_approval", "followup_due", "order_money_held", "material_quote_approval", "campaign_approval", "fees_overdue", "voice_credits"];
 const isClassic = (i: ApiItem): i is ApiItem & { kind: ClassicKind } => CLASSIC.includes(i.kind);
 
 /**
