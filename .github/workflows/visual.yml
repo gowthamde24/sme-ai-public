@@ -25,7 +25,7 @@ jobs:
         id: baselines
         run: |
           if ls e2e/visual/baselines/linux/*.jpg >/dev/null 2>&1; then echo "have=true" >> "$GITHUB_OUTPUT"; else echo "have=false" >> "$GITHUB_OUTPUT"; echo "No Linux baselines are committed yet: the visual comparison is skipped. Run this workflow by hand with update ticked to make them." >> "$GITHUB_STEP_SUMMARY"; fi
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         if: ${{ inputs.update || steps.baselines.outputs.have == 'true' }}
         with:
           node-version-file: .nvmrc
