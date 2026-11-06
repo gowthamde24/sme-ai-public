@@ -175,7 +175,8 @@ def test_a_marathi_voice_that_fails_falls_back_to_the_other_sarvam_voice_and_a_k
     tts = build_marathi(primary, fallback)
     tts.begin_turn()
     assert run(speak(tts, "नमस्कार", "mr")) and fallback.calls and not tts.served_primary and tts.primary_off == "error"
-    from app.telephony.greeting_audio import OUT_RATE, GreetingAudio
+    from app.browser_voice.audio import OUT_RATE
+    from app.telephony.greeting_audio import GreetingAudio
 
     kept = GreetingAudio()
     assert not kept.keep("mr", "नमस्कार", b"\x01\x00" * 800, rate=OUT_RATE, engine="sarvam_v4", primary=False), "the fallback's voice is never kept"
