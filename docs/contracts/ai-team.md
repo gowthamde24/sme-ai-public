@@ -37,7 +37,7 @@ School workspaces get `lead_catcher`, `caller`, `followups`, `admissions`, `fee_
                       "count": 5, "at": "2026-11-06T16:00:00+05:30" | null, "who": "Ramesh" | null, "since": "2026-11-06T14:11:18+05:30" | null },
       "count_today": 23,
       "marks": [
-        { "id": "phone_call:2b1c…", "t": "2026-11-06T10:42:07+05:30", "kind": "call", "seconds": 84 | null, "label": "Ramesh K · interested", "ref": { "type": "call" | "lead" | "quote" | "order" | "visit" | "prospect" | "student" | "campaign" | "intake", "id": "uuid", "href": "/app/tenants/{t}/…" }, "needs_owner": false }
+        { "id": "phone_call:2b1c…", "t": "2026-11-06T10:42:07+05:30", "kind": "call", "seconds": 84 | null, "label": "Ramesh K · interested", "ref": { "type": "lead" | "call" | "quote" | "order" | "visit" | "prospect" | "prospect_search" | "student" | "admission" | "campaign", "id": "uuid", "href": "…" | null }, "needs_owner": false }
       ] }
   ],
   "flow": { "steps": [ { "key": "leads_in", "count": 41 }, { "key": "called", "count": 23 }, { "key": "interested", "count": 7 }, { "key": "quotes", "count": 3 }, { "key": "orders", "count": 1 } ],
@@ -103,7 +103,7 @@ The side panel. Owner, Admin, Sales; `404` for a helper that is not active here.
   - `can_switch` is true for the Owner and an Admin, else `reason_locked: "owner_or_admin"`.
   - `GET /agents/switches` (the sidebar's assistant, researcher and requirement reader) is unchanged and separate.
 - `settings` are read-only, each with a link to its screen. `value` is null for now (the screen shows its own). Nothing is changed here.
-- `ref.href` paths are C1's best guess at the app's routes; tell C1 any that differ (`HREF` in app/ai_team/service.py).
+- Route a mark by `ref.type` + `ref.id` (C2 does): a call mark carries its **lead** when it has one (else `call`); an admissions mark carries the **student** once there is one (else `admission`). `ref.href` is informative only and may be null.
 
 ## 3. The daily stand-up
 A 30 to 45-second spoken summary, in the Owner's language:
