@@ -3,8 +3,9 @@ timeout (800 ms by default), speak the same text with the fallback engine (Sarva
 
   * Per language and from data (voices.py): `stream(text, language)` looks the voices up each time, so the Conversation needs no engine knowledge.
   * Within one turn the voice does not change back and forth: once the fallback has spoken in a turn, the rest of that turn stays on it.
-  * After a primary failure the primary is skipped for `cooldown_s` (a bad minute then costs one slow sentence, not 800 ms on every sentence); a primary that works again is tried after the cooldown.
-  * A failure AFTER the first audio of a piece cannot be hidden (the caller already heard half a sentence): the piece ends there, the failure is counted, and the next piece goes to the fallback.
+  * After ANY primary failure (an error such as no credits, a timeout, a failure mid-sentence) the rest of THIS call speaks with the fallback (owner, 6 Nov 2026: "if Cartesia fails for any reason,
+    including no credits, the call must switch automatically to Sarvam Bulbul for that call, not go silent"). One FallbackTts is one call (or one browser talk), so the next call tries the primary again.
+  * A failure AFTER the first audio of a piece: the fallback speaks the whole piece again (the caller hears the sentence restart rather than lose the rest of it, which might be a price or a time).
   * Both engines failing is `VoiceError("tts_unavailable")`: the loop above decides what to say (a filler, a hand-over).
 
 Logs carry only engine ids, language, voice labels and milliseconds: never text, audio or a key."""
@@ -18,6 +19,7 @@ import logging
 import time
 from collections.abc import AsyncIterator, Callable, Mapping
 from contextlib import suppress
+from typing import Any
 
 from app.agents.register import address
 from app.conversation.parts import StreamingTts
@@ -54,6 +56,7 @@ class FallbackTts:
         self.served_engine = ""  # the engine that spoke the most recent piece: cartesia | sarvam_v4
         self.fallback_reason = ""  # "", "error", "timeout", "cooldown", "mid_stream"
         self.first_audio_ms: float | None = None
+        self.primary_off = ""  # why the primary is off for the rest of this call ("" while it is on): error | timeout | mid_stream, with the engine's code in the log
 
     def set_owner_words(self, words: list[OwnerWord]) -> None:
         """The workspace's own pronunciation words (Settings > Pronunciation): the next piece speaks with them."""
@@ -94,9 +97,9 @@ class FallbackTts:
         primary_text = self._speech.prepare(text, language, voices.primary.engine)
         fallback_text = self._speech.prepare(text, language, voices.fallback.engine)
         now = self._clock()
-        use_primary = not self._fallback_in_turn and now >= self._skip_primary_until.get(language, 0.0)
+        use_primary = not self.primary_off and not self._fallback_in_turn and now >= self._skip_primary_until.get(language, 0.0)
         if not use_primary and not self._fallback_in_turn:
-            self.fallback_reason = self.fallback_reason or "cooldown"
+            self.fallback_reason = self.fallback_reason or ("for_call" if self.primary_off else "cooldown")
         if use_primary:
             reason = ""
             started = time.perf_counter()
@@ -113,25 +116,44 @@ class FallbackTts:
             except Exception as err:
                 reason = "error"
                 log.warning("tts_primary_failed engine=%s language=%s code=%s", voices.primary.engine, tag, getattr(err, "code", type(err).__name__))
+                self._off_for_call("error", voices.primary.engine, tag, err)
             else:
                 self.served_engine = voices.primary.engine
                 self.first_audio_ms = self.first_audio_ms if self.first_audio_ms is not None else (time.perf_counter() - started) * 1000.0
                 yield first
+                died = False
                 try:
                     async for chunk in agen:
                         yield chunk
                 except Exception as err:
-                    self._skip_primary_until[language] = self._clock() + self.config.cooldown_s
+                    died = True
+                    self._off_for_call("mid_stream", voices.primary.engine, tag, err)
                     self.fallback_reason = "mid_stream"
-                    log.warning("tts_primary_failed_mid_piece engine=%s language=%s code=%s", voices.primary.engine, tag, getattr(err, "code", type(err).__name__))
                 finally:
                     await _close(agen)
+                if not died:
+                    return
+                # the rest of the sentence is not lost: the fallback speaks the whole piece again
+                async for chunk in self._fallback_piece(voices, language, fallback_text, tag):
+                    yield chunk
                 return
             await _close(agen)
             self._skip_primary_until[language] = self._clock() + self.config.cooldown_s
+            if not self.primary_off:
+                self._off_for_call(reason, voices.primary.engine, tag, None)
             self.fallback_reason = reason
             self._fallback_in_turn = True
             log.warning("tts_fallback engine=%s language=%s reason=%s timeout_ms=%s", voices.fallback.engine, tag, reason, self.config.first_audio_timeout_ms)
+        async for chunk in self._fallback_piece(voices, language, fallback_text, tag):
+            yield chunk
+
+    def _off_for_call(self, reason: str, engine: str, tag: str, err: BaseException | None) -> None:
+        if self.primary_off:
+            return
+        self.primary_off = reason
+        log.warning("tts_primary_off_for_call engine=%s language=%s reason=%s code=%s", engine, tag, reason, getattr(err, "code", type(err).__name__) if err is not None else reason)
+
+    async def _fallback_piece(self, voices: Any, language: str, fallback_text: str, tag: str) -> AsyncIterator[bytes]:
         self._fallback_in_turn = True
         started = time.perf_counter()
         spoke = False
