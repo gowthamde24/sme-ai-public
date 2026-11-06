@@ -84455,5 +84455,159 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ph.take": {
+  "en": "Take over (you talk)",
+  "te": "మీరు మాట్లాడండి",
+  "hi": "आप बात करें",
+  "kn": "ನೀವು ಮಾತನಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.connecting": {
+  "en": "Connecting you to the call…",
+  "te": "మిమ్మల్ని కాల్‌కు కలుపుతోంది…",
+  "hi": "आपको कॉल से जोड़ रहे हैं…",
+  "kn": "ನಿಮ್ಮನ್ನು ಕರೆಗೆ ಸೇರಿಸುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.on": {
+  "en": "You're on the call. Your assistant is quiet while you talk.",
+  "te": "మీరు కాల్‌లో ఉన్నారు. మీరు మాట్లాడేటప్పుడు అసిస్టెంట్ మౌనంగా ఉంటుంది.",
+  "hi": "आप कॉल पर हैं। आपके बोलते समय असिस्टेंट चुप रहेगा।",
+  "kn": "ನೀವು ಕರೆಯಲ್ಲಿದ್ದೀರಿ. ನೀವು ಮಾತನಾಡುವಾಗ ಅಸಿಸ್ಟೆಂಟ್ ಮೌನವಾಗಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.back": {
+  "en": "Hand back to the assistant",
+  "te": "అసిస్టెంట్‌కు తిరిగి ఇవ్వండి",
+  "hi": "असिस्टेंट को वापस दें",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹಿಂತಿರುಗಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.back.done": {
+  "en": "Your assistant has the call again.",
+  "te": "కాల్ మళ్ళీ మీ అసిస్టెంట్ దగ్గర ఉంది.",
+  "hi": "कॉल फिर से आपके असिस्टेंट के पास है।",
+  "kn": "ಕರೆ ಮತ್ತೆ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಬಳಿ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.ended": {
+  "en": "The call has ended.",
+  "te": "కాల్ ముగిసింది.",
+  "hi": "कॉल ख़त्म हो गई।",
+  "kn": "ಕರೆ ಮುಗಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.note": {
+  "en": "Nothing is recorded.",
+  "te": "ఏదీ రికార్డ్ చేయబడదు.",
+  "hi": "कुछ भी रिकॉर्ड नहीं होता।",
+  "kn": "ಏನೂ ರೆಕಾರ್ಡ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.err.mic": {
+  "en": "Your microphone is blocked. Allow it for this site, then try again.",
+  "te": "మీ మైక్రోఫోన్ బ్లాక్ అయింది. ఈ సైట్‌కు అనుమతించి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आपका माइक्रोफ़ोन बंद है। इस साइट के लिए अनुमति दें, फिर कोशिश करें।",
+  "kn": "ನಿಮ್ಮ ಮೈಕ್ರೊಫೋನ್ ನಿರ್ಬಂಧಿಸಲಾಗಿದೆ. ಈ ಸೈಟ್‌ಗೆ ಅನುಮತಿಸಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.err.unauthorized": {
+  "en": "Please sign in again, then try once more.",
+  "te": "దయచేసి మళ్ళీ సైన్ ఇన్ చేసి ప్రయత్నించండి.",
+  "hi": "कृपया फिर से साइन इन करें, फिर कोशिश करें।",
+  "kn": "ದಯವಿಟ್ಟು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.err.forbidden": {
+  "en": "Only the owner or an admin can take over a call.",
+  "te": "ఓనర్ లేదా అడ్మిన్ మాత్రమే కాల్ తీసుకోగలరు.",
+  "hi": "सिर्फ़ मालिक या एडमिन कॉल ले सकते हैं।",
+  "kn": "ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಕರೆ ತೆಗೆದುಕೊಳ್ಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.err.not_found": {
+  "en": "This call has ended or can't be found.",
+  "te": "ఈ కాల్ ముగిసింది లేదా కనిపించలేదు.",
+  "hi": "यह कॉल ख़त्म हो गई या मिली नहीं।",
+  "kn": "ಈ ಕರೆ ಮುಗಿದಿದೆ ಅಥವಾ ಸಿಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.err.call_not_here": {
+  "en": "The call is on another server just now. Please try again.",
+  "te": "కాల్ ఇప్పుడు వేరే సర్వర్‌లో ఉంది. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "कॉल अभी दूसरे सर्वर पर है। फिर कोशिश करें।",
+  "kn": "ಕರೆ ಈಗ ಬೇರೆ ಸರ್ವರ್‌ನಲ್ಲಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.err.unavailable": {
+  "en": "Taking over isn't available right now.",
+  "te": "ఇప్పుడు కాల్ తీసుకోవడం అందుబాటులో లేదు.",
+  "hi": "अभी कॉल लेना उपलब्ध नहीं है।",
+  "kn": "ಈಗ ಕರೆ ತೆಗೆದುಕೊಳ್ಳುವುದು ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.take.err.down": {
+  "en": "That didn't connect. Please try again.",
+  "te": "కనెక్ట్ కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "जुड़ नहीं पाया। फिर कोशिश करें।",
+  "kn": "ಸಂಪರ್ಕ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

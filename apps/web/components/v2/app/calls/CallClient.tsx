@@ -3,6 +3,10 @@
 import { useRouter } from "next/navigation";
 import * as React from "react";
 
+import { browserAudio } from "@/lib/browser-voice/audio-io";
+import type { AudioIO, SocketLike } from "@/lib/browser-voice/client";
+import { askVoiceToken } from "@/lib/browser-voice/token";
+import { startTakeOver, TAKE_OVER_RATE, type TakeOverState } from "@/lib/calls/take-over";
 import { correctionBody } from "@/lib/calls/view";
 
 import { alertBox, btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, fieldTextarea, okBox } from "../ui";
@@ -200,6 +204,64 @@ export function EnglishLines({ userId, label, has, children }: { userId: string;
         </button>
       ) : null}
       {children}
+    </div>
+  );
+}
+
+/**
+ * "Take over (you talk)" on a live call (app v4 part 4; Owner and Admin): the person's microphone goes to the caller and the caller's voice plays here, while the assistant is quiet; "Hand back to the assistant" gives the call back
+ * (lib/calls/take-over.ts has the socket). Shown only where the API has it (the page passes the socket's address). Nothing is recorded. The audio and the socket can be handed in for tests.
+ */
+export function TakeOver({ w, url, tokenUrl, audioFactory, socketFactory }: { w: W; url: string; tokenUrl: string; audioFactory?: () => AudioIO; socketFactory?: (u: string) => SocketLike }) {
+  const [state, setState] = React.useState<TakeOverState>({ phase: "idle", error: null });
+  const session = React.useRef<{ handBack: () => void; stop: () => void } | null>(null);
+  React.useEffect(() => () => session.current?.stop(), []); // leaving the page gives the call back
+  const start = () => {
+    session.current = startTakeOver({
+      url,
+      token: async () => {
+        const t = await askVoiceToken(tokenUrl);
+        return t.ok ? t.token : null;
+      },
+      audio: (audioFactory ?? (() => browserAudio(TAKE_OVER_RATE)))(),
+      socket: socketFactory ?? ((u) => new WebSocket(u) as unknown as SocketLike),
+      onChange: setState,
+    });
+  };
+  const { phase, error } = state;
+  if (phase === "connecting" || phase === "on")
+    return (
+      <div className="flex flex-col items-start gap-2 md:items-end" data-part="take-over" data-phase={phase}>
+        <p role="status" className="m-0 text-sm font-semibold text-brand-text">
+          {phase === "on" ? w["ph.take.on"] : w["ph.take.connecting"]}
+        </p>
+        <button type="button" className={btnMain} onClick={() => session.current?.handBack()}>
+          {w["ph.take.back"]}
+        </button>
+        <p className="m-0 text-xs text-muted">{w["ph.take.note"]}</p>
+      </div>
+    );
+  if (phase === "ended")
+    return (
+      <p role="status" className="m-0 text-sm font-semibold text-muted" data-part="take-over" data-phase="ended">
+        {w["ph.take.ended"]}
+      </p>
+    );
+  return (
+    <div className="flex flex-col items-start gap-2 md:items-end" data-part="take-over" data-phase={phase}>
+      <button type="button" className="inline-flex min-h-11 items-center rounded-full border-2 border-ink px-5 font-extrabold text-ink hover:bg-surface-2" onClick={start}>
+        {w["ph.take"]}
+      </button>
+      {phase === "back" ? (
+        <p role="status" className="m-0 text-sm text-muted">
+          {w["ph.take.back.done"]}
+        </p>
+      ) : null}
+      {phase === "error" && error ? (
+        <p role="alert" className={`${alertBox} m-0`}>
+          {w[`ph.take.err.${error}`] ?? w["ph.take.err.down"]}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -11,7 +11,7 @@ import { wordsFor } from "@/i18n/app-words";
 import { parseCallDetail, parseCallsPage } from "@/lib/api/calls";
 import { stagesDone } from "@/lib/calls/view";
 
-import { CorrectIt, EndCall, EnglishLines, Repoll } from "./CallClient";
+import { CorrectIt, EndCall, EnglishLines, Repoll, TakeOver } from "./CallClient";
 import { CallsList } from "./CallsList";
 import { CallView } from "./CallView";
 
@@ -132,6 +132,29 @@ describe("Show English (owner, 7 Nov 2026)", () => {
 });
 
 describe("the call's moves", () => {
+  it("Take over: you talk while the assistant is quiet, then hand back; a refused microphone says so", async () => {
+    const sent: unknown[] = [];
+    const socket = { binaryType: "", readyState: 0, send: (d: unknown) => void sent.push(d), close: vi.fn(), onopen: null as null | (() => void), onmessage: null as null | ((e: { data: unknown }) => void), onclose: null, onerror: null };
+    const audio = { startMic: vi.fn(async () => undefined), stopMic: vi.fn(), play: vi.fn(), flush: vi.fn(), playing: () => false, close: vi.fn(), analyser: () => null };
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ token: "tok" }), { status: 200, headers: { "content-type": "application/json" } }));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<TakeOver w={W} url="wss://api/x" tokenUrl="/t" audioFactory={() => audio} socketFactory={() => socket as never} />);
+    fireEvent.click(screen.getByRole("button", { name: "Take over (you talk)" }));
+    await waitFor(() => expect(socket.onopen).not.toBeNull());
+    socket.readyState = 1;
+    act(() => socket.onopen?.());
+    act(() => socket.onmessage?.({ data: JSON.stringify({ type: "ready" }) }));
+    expect(screen.getByRole("status")).toHaveTextContent("You're on the call. Your assistant is quiet while you talk.");
+    fireEvent.click(screen.getByRole("button", { name: "Hand back to the assistant" }));
+    expect(sent.at(-1)).toBe(JSON.stringify({ type: "hand_back" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Your assistant has the call again.");
+    cleanup();
+    const denied = { ...audio, startMic: vi.fn(async () => Promise.reject(new Error("no"))) };
+    render(<TakeOver w={W} url="wss://api/x" tokenUrl="/t" audioFactory={() => denied} socketFactory={() => socket as never} />);
+    fireEvent.click(screen.getByRole("button", { name: "Take over (you talk)" }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("Your microphone is blocked."));
+    vi.unstubAllGlobals();
+  });
   it("End call asks twice, then says it is ending; a refusal says so", async () => {
     const end = vi.fn().mockResolvedValueOnce({ ok: false, error: "not_here" }).mockResolvedValueOnce({ ok: true });
     render(<EndCall w={W} end={end} />);

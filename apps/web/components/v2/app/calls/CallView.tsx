@@ -140,7 +140,7 @@ export function CallView({ call, base, w, when, language, stages, end, correct, 
               {w["ph.customer"]}
             </Link>
           ) : null}
-          {end}
+          {end ? <div className="flex flex-wrap items-start gap-3 md:flex-col md:items-end">{end}</div> : null}
         </div>
       </header>
       {call.live ? (

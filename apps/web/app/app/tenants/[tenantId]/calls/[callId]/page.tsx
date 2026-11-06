@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 
-import { CorrectIt, EndCall, EnglishLines, Repoll } from "@/components/v2/app/calls/CallClient";
+import { CorrectIt, EndCall, EnglishLines, Repoll, TakeOver } from "@/components/v2/app/calls/CallClient";
 import { CallView } from "@/components/v2/app/calls/CallView";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import { pageMain } from "@/components/v2/app/ui";
@@ -8,11 +8,12 @@ import { BRAND_NAME } from "@/design/brand";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { getCall, type CallDetail } from "@/lib/api/calls";
-import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError, fetchTenant, publicApiBase } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchTimeline } from "@/lib/api/customer-timeline";
 import { escalate } from "@/lib/api/failure";
 import { requireUser } from "@/lib/auth/session";
+import { takeOverSocketUrl } from "@/lib/calls/take-over";
 import { capturedLabel, stagesDone } from "@/lib/calls/view";
 import { appV4 } from "@/lib/screens/flag";
 
@@ -56,6 +57,8 @@ export default async function CallPage({ params }: PageProps<"/app/tenants/[tena
   }
   const facts = { ...call.captured, ...(call.correction?.captured ?? {}) };
   const canEnd = call.live && (role === "owner" || role === "admin");
+  // Take over (C1 #398): the Owner and an Admin, on a call that is live and answered (not while it still rings)
+  const takeOverUrl = canEnd && call.state === "in_progress" ? takeOverSocketUrl(publicApiBase(), tenantId, callId) : null;
   return (
     <main className={pageMain} lang={lang}>
       <CallView
@@ -71,7 +74,14 @@ export default async function CallPage({ params }: PageProps<"/app/tenants/[tena
             {lines}
           </EnglishLines>
         )}
-        end={canEnd ? <EndCall w={w} end={hangUpCallAction.bind(null, tenantId, callId)} /> : null}
+        end={
+          canEnd ? (
+            <>
+              {takeOverUrl ? <TakeOver w={w} url={takeOverUrl} tokenUrl={`/app/tenants/${tenantId}/calls/${callId}/take-over-token`} /> : null}
+              <EndCall w={w} end={hangUpCallAction.bind(null, tenantId, callId)} />
+            </>
+          ) : null
+        }
         correct={
           call.live ? null : (
             <CorrectIt

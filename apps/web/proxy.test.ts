@@ -92,6 +92,18 @@ describe("proxy", () => {
     expect((await proxy(request("/auth/mfa"))).headers.get("location")).toBeNull();
   });
 
+  it("the API's socket is in connect-src only where Talk to your assistant (BROWSER_VOICE) or app v4 (taking over a call) is on", async () => {
+    refreshSession.mockResolvedValue(signedIn());
+    vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "https://api.example.test");
+    const connect = async () => ((await proxy(request("/app"))).headers.get("Content-Security-Policy") ?? "").split(";").map((d) => d.trim()).find((d) => d.startsWith("connect-src"));
+    vi.stubEnv("BROWSER_VOICE", "");
+    vi.stubEnv("APP_V4", "");
+    expect(await connect()).not.toContain("wss://api.example.test");
+    vi.stubEnv("APP_V4", "1");
+    expect(await connect()).toContain("wss://api.example.test");
+    vi.unstubAllEnvs();
+  });
+
   it("every page gets a Content-Security-Policy with a fresh nonce, redirects included", async () => {
     refreshSession.mockResolvedValue(signedOut());
     const nonces = new Set<string>();

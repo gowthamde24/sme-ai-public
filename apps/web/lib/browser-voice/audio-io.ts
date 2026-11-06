@@ -6,7 +6,7 @@ import { OUT_RATE } from "./protocol";
  * The browser's half of "Talk to your assistant": the microphone (echo cancelling and noise suppression on, one channel), cut into 16 kHz PCM16 frames, and a queue that plays the assistant's 24 kHz voice as it arrives and can be emptied at once (barge-in).
  * Made on the person's tap (a phone's audio context only starts after one). A ScriptProcessor takes the frames: an audio worklet would need a script address the page's content-security-policy does not give. CLIENT ONLY.
  */
-export function browserAudio(): AudioIO {
+export function browserAudio(outRate: number = OUT_RATE): AudioIO {
   let ctx: AudioContext | null = null;
   let stream: MediaStream | null = null;
   let micNode: MediaStreamAudioSourceNode | null = null;
@@ -53,7 +53,7 @@ export function browserAudio(): AudioIO {
       if (!ctx || !voiceGain) return;
       const floats = fromPcm16(pcm);
       if (floats.length === 0) return;
-      const buffer = ctx.createBuffer(1, floats.length, OUT_RATE);
+      const buffer = ctx.createBuffer(1, floats.length, outRate); // the assistant's voice is 24 kHz; a call taken over (app v4) is 16 kHz
       buffer.copyToChannel(floats as Float32Array<ArrayBuffer>, 0);
       const src = ctx.createBufferSource();
       src.buffer = buffer;
