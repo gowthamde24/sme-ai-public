@@ -13,7 +13,7 @@ import { withModuleWords } from "@/lib/packs/module-words";
 import { AssistantSettings } from "./AssistantSettings";
 
 const raw = (lang: "en" | "te" | "hi" | "kn", modules: string[] | null) => withModuleWords(Object.fromEntries(Object.entries(appDict(lang) as Record<string, string>).filter(([k]) => k.startsWith("asst.") || k === "bv.speaking.in")), modules ? { modules } : null);
-const langs = { te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ", en: "English", ta: "தமிழ்", ml: "മലയാളം" };
+const langs = { te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ", en: "English", ta: "தமிழ்", ml: "മലയാളം", mr: "मराठी (draft)" };
 const openTab = (name: string) => fireEvent.click(screen.getByRole("tab", { name }));
 const draw = (over: Partial<{ modules: string[] | null; canEdit: boolean; saved: boolean; save: (i: unknown) => Promise<{ ok: true } | { ok: false; error: string }>; samples: { endpoint: string; mock: boolean } | null; voiceInUse: { name: string; label: string } | null; defaultName: string; initialName: string; openingLine: { lines: Record<string, string>; defaults: Record<string, string> }; testCall: () => Promise<TestCallResult>; extras: React.ComponentProps<typeof AssistantSettings>["extras"] }> = {}) => {
   const modules = over.modules === undefined ? null : over.modules;

@@ -6,7 +6,7 @@ import { getTalkTraining, parseTalkTraining, putTalkTraining, resetTalkTraining 
 
 const T = "11111111-1111-4111-8111-111111111111";
 const DOC = {
-  greeting: { en: "Namaste! Thanks for calling {business}, I am the AI assistant.", mr: "not drawn" },
+  greeting: { en: "Namaste! Thanks for calling {business}, I am the AI assistant.", bn: "not drawn" },
   address: "plain",
   questions: ["What is the saree for?", "Which colours do you like?"],
   never_say: ["guaranteed", "free delivery"],
