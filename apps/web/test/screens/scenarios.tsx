@@ -1097,6 +1097,8 @@ const withEnv = async <T,>(vars: Record<string, string>, run: () => Promise<T>):
 };
 // (the Plan part's own fake provider reads a cookie without a guard, so these scenarios turn only TOPUP_SCREENS on: Settings then shows just the usage and top-ups)
 const TOPUP_ENV = { TOPUP_SCREENS: "mock" };
+// the demo video's own page (DEMO_VIDEO, a demo workspace only): with the flag off, as everywhere but staging, it is the normal Today
+add({ id: "demo-video-off", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/demo-video/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "settings-plan-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "plan" }))), handlers: (role) => ({ ...base(role), getBusinessProfile: () => ({ gstin: null, state: null }) }) });
 add({ id: "today-topups", roles: ["owner", "admin"], render: () => withEnv(TOPUP_ENV, todayPage()), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 // -- scenarios: lead desk site (web/ds-lead-desk)

@@ -52,6 +52,22 @@ async function ready() {
   });
 }
 
+describe("NotificationBell in the demo video (still)", () => {
+  it("asks nothing and shows no count, even after a long while", async () => {
+    render(
+      <div data-ui="v2">
+        <NotificationBell tenantId={T} still />
+      </div>,
+    );
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(120_000);
+    });
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(bell()).toHaveAccessibleName("Notifications");
+    expect(bell().querySelector('[data-notify="count"]')).toBeNull();
+  });
+});
+
 describe("NotificationBell", () => {
   it("shows how many are new on this device, as a name for screen readers and a number for the eye", async () => {
     await ready();

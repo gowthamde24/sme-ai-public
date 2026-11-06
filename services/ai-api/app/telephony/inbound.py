@@ -1,6 +1,6 @@
 """Inbound calls on the Exotel sandbox (job phone-calls part 5; owner, 4 Nov 2026: "TELEPHONY_MODE on in staging ONLY for inbound calls from +919502380998 into the Owner Test workspace; everything else off").
 
-  GET|POST /v1/telephony/exotel/stream-url   what the Voicebot applet's URL field holds. Exotel asks it once per call and gets {"url": "wss://<api>/v1/telephony/exotel/stream/<token>?sample-rate=16000"}:
+  GET|POST /v1/telephony/exotel/stream-url   what the Voicebot applet's URL field holds. Exotel asks it once per call and gets {"url": "wss://<api>/v1/telephony/exotel/stream/<token>?sample-rate=8000"}:
                                              the token is minted for THIS call, lives 120 seconds and is signed with EXOTEL_STREAM_SECRET (Secret Manager; never in the dashboard). Nothing secret sits in the
                                              dashboard: the URL field is a plain address.
   WS /v1/telephony/exotel/stream             the call. Nothing is heard or said until, in order:
@@ -101,7 +101,7 @@ def fresh(token: str, now: float) -> bool:
     return len(raw) == 26 and now <= struct.unpack(">I", raw[:4])[0]
 
 
-def stream_url(public_base: str, token: str, sample_rate: int = 16000) -> str:
+def stream_url(public_base: str, token: str, sample_rate: int = 8000) -> str:
     """The token rides in the PATH: on the 17:07 UTC call (4 Nov 2026) Exotel opened the stream with the query string dropped (no `t`, no `sample-rate`), so the call was refused `bad_token`. A path
     survives that. `?t=` is still accepted on the stream (the 13:29 UTC call kept its query)."""
     base = public_base.rstrip("/")
@@ -271,7 +271,7 @@ async def admit(start: exotel.Start, settings: gate.Settings, *, find_line: Call
     by_to = trial is not None and line_no == trial.number
     on_trial = trial is not None and (by_to or trial_by_url)
     ours = trial.caller if trial is not None and trial.caller else (next(iter(sorted(settings.sandbox_numbers)), None) if settings.sandbox_numbers else None)
-    log.info("exotel_start fields=%s custom=%s account_matches=%s app_id_matches=%s trial_number=%s to_shape=%s %s", ",".join(start.fields) or "-", ",".join(sorted(start.custom)) or "-",
+    log.info("exotel_start fields=%s custom=%s rate=%d account_matches=%s app_id_matches=%s trial_number=%s to_shape=%s %s", ",".join(start.fields) or "-", ",".join(sorted(start.custom)) or "-", start.sample_rate,
              _match(our_sid, start.account_sid), _match(trial.app_id if trial and trial.app_id else None, start.app_id), "to" if by_to else "url" if on_trial else "no",
              number_shape(start.to_number), caller_diagnosis(start.from_number, ours))
     if settings.mode == "off":
@@ -353,11 +353,22 @@ class TimedLine(PhoneLine):
         self.first_sound_ms: list[float] = []
         self.admitted_ms: int | None = None   # from the stream's start to the call's admission (our line and Exotel's record, read together)
         self.greeting_ready: bool | None = None   # the greeting was already spoken into memory when the call was admitted
+        self.voice_budget: dict[str, Any] | None = None   # our Cartesia cap for this call: granted, used, the day's total after it, the day's limit
+        self.voice_chars: dict[str, int] = {}             # characters each voice engine spoke in this call
+        self.voice_primary_off = ""                       # why the primary voice was switched off for the rest of the call ("" when it was not)
 
     async def send_json(self, message: dict[str, Any]) -> None:
         if message.get("type") == "timings" and isinstance(message.get("first_sound_ms"), (int, float)) and not message.get("interrupted"):
             self.first_sound_ms.append(float(message["first_sound_ms"]))
         await super().send_json(message)
+
+
+def voice_numbers(line: Any, duration_s: float) -> dict[str, Any]:
+    """Characters spoken per voice engine in this call, their total, the total per minute of call, and why the primary voice was switched off for the call ("" when it was not)."""
+    chars = {str(k): int(v) for k, v in sorted((getattr(line, "voice_chars", None) or {}).items())}
+    total = sum(chars.values())
+    return {"voice_chars": chars, "voice_chars_total": total, "voice_chars_per_min": round(total / (duration_s / 60), 1) if duration_s >= 1 else None,
+            "voice_primary_off": getattr(line, "voice_primary_off", "") or ""}
 
 
 def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_paise: int, outcome: str | None) -> dict[str, Any]:
@@ -366,7 +377,7 @@ def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_pa
             "duration_s": round(duration_s, 1), "cost_paise_estimate": cost_paise, "outcome": outcome, "end": line.end_reason,
             # how it ended and what went each way (5 Nov 2026): names and numbers only
             "end_how": line.end_how, "stop_reason": line.stop_reason, "close_code": getattr(getattr(line, "_wire", None), "close_code", None), "events": dict(sorted(line.events.items())),
-            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
+            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "line_rate": getattr(line, "rate", None), **voice_numbers(line, duration_s), "voice_budget": getattr(line, "voice_budget", None), "out_chunk_bytes": getattr(line, "chunk", None), "chunks_out": getattr(line, "chunks_out", None), "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
             # owner, 6 Nov 2026: targets 1.5 s for both (logged for every call)
             "pickup_to_first_sound_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
             "admitted_ms": line.admitted_ms, "greeting_ready": line.greeting_ready,

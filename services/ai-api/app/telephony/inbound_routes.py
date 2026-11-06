@@ -1,7 +1,7 @@
 """Exotel's Voicebot applet -> our phone assistant, INBOUND only (app/telephony/inbound.py has the rules). Two public addresses (no sign-in: Exotel cannot sign in; the token and Exotel's own confirmation are the
 fence):
 
-  GET|POST /v1/telephony/exotel/stream-url   -> 200 {"url": "wss://.../v1/telephony/exotel/stream?sample-rate=16000&t=<token>"}; 403 {"error": ...} while inbound is off or the caller is not on the sandbox list
+  GET|POST /v1/telephony/exotel/stream-url   -> 200 {"url": "wss://.../v1/telephony/exotel/stream?sample-rate=8000&t=<token>"}; 403 {"error": ...} while inbound is off or the caller is not on the sandbox list
   WS       /v1/telephony/exotel/stream?t=...  the call itself
 
 NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint signatures at registration)."""
@@ -33,6 +33,7 @@ from app.telephony import gate, inbound, persona
 from app.telephony.call_session import CallPlan, run_call
 from app.telephony.greeting_audio import GREETINGS
 from app.telephony.inbound_store import InboundStore
+from app.voice.budget import PER_CALL, Hold, VoiceBudget
 
 log = logging.getLogger("app.telephony.inbound")
 router = APIRouter(prefix="/v1/telephony/exotel", tags=["telephony"])
@@ -58,6 +59,7 @@ class InboundService:
     our_sid: str | None = None   # EXOTEL_SID: the start message's account_sid is compared with it (yes / no in the log, never the value)
     trial: inbound.TrialRule | None = None   # the shared trial number's rule (sandbox only; app/telephony/inbound.py TrialRule)
     trial_count: inbound.DayCount = field(default_factory=inbound.DayCount)
+    budget: VoiceBudget | None = None   # our cap on Cartesia (app/voice/budget.py); None only where no database is wired (tests that do not test it)
 
 
 class StarletteWire:
@@ -215,11 +217,9 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID) -> P
     else:
         parts, model = service.parts_for(bv, service.business, service.language, service.llm_choice)
     text = parts.greeting_for(service.language)
-    rendering: asyncio.Future[bytes | None] | None = None
-    if text and GREETINGS.get(service.language, text) is None:
-        # rendered in the background (kept for the next call too); the call never waits for it beyond a short grace (see `_greeting_ready`)
-        rendering = asyncio.ensure_future(GREETINGS.render(parts.tts, service.language, text))
+    rendering: asyncio.Future[bytes | None] | None = None   # never rendered ahead (no credits spent outside a real call): the greeting this call speaks is kept for the next one
     parts.greeting_audio = GREETINGS.get
+    parts.greeting_keep = GREETINGS.keep
     return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering)
 
 
@@ -297,6 +297,9 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     line.admitted_ms = round((inbound.monotonic() - began_check) * 1000)
     log.info("exotel_inbound admitted rule=%s", decision.rule)
     tenant = decision.tenant_id
+    # our cap on Cartesia (app/voice/budget.py): the call's allowance is reserved now, AFTER admission (a refused call writes nothing), while the call is being set up and the greeting starts
+    budget = service.budget
+    reserving: asyncio.Future[Hold] | None = asyncio.ensure_future(asyncio.to_thread(budget.reserve, PER_CALL, "call")) if budget is not None else None
     max_call_s = min(service.max_call_s, decision.max_call_s) if decision.max_call_s else service.max_call_s
     try:
         prepared = await preparing
@@ -306,6 +309,15 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     if prepared is None or prepared.tenant_id != tenant:
         prepared = await _prepare_for(service, bv, tenant)
     parts, model, slots = prepared.parts, prepared.model, prepared.slots
+    if reserving is not None:
+        held = reserving
+
+        async def allowance() -> int:
+            return (await held).granted
+
+        set_budget = getattr(parts.tts, "set_primary_budget", None)
+        if set_budget is not None:
+            set_budget(asyncio.ensure_future(allowance()))
     line.greeting_ready = await _greeting_ready(prepared, service.language)
     # the call's row is written while the greeting already plays (no row, no call: run_call ends the call if it cannot be written)
     begin_row = asyncio.ensure_future(asyncio.to_thread(service.store.begin, tenant, service.language))
@@ -327,6 +339,12 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
             live.remove(call_id)
         if begin_row.done() and not begin_row.cancelled() and begin_row.exception() is None:
             call_id = begin_row.result()
+        if reserving is not None and budget is not None:   # what the call did not use goes back to the day
+            with suppress(Exception):
+                hold = await reserving
+                used = int(getattr(parts.tts, "primary_chars", 0) or 0)
+                back = await asyncio.to_thread(budget.release, hold, used)
+                line.voice_budget = {"granted": hold.granted, "used": used, "day_used": (back or {}).get("day_used", hold.day_used), "day_limit": hold.day_limit}
         service.last_numbers = inbound.call_numbers(call_id, line, inbound.monotonic() - began, cost, outcome_name)
         inbound.log_call(service.last_numbers)
         await _close(wire)

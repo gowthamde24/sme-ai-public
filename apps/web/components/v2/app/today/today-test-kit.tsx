@@ -5,7 +5,7 @@ import { PRICE_JSON } from "@/lib/api/outbox-fixtures";
 import { slotsJson } from "@/lib/api/visits-fixtures";
 
 import type { TodayActions } from "./actions-types";
-import { todayWords } from "./today-words";
+import { todayWords } from "./today-word-keys";
 import type { NeedsCard, T } from "./types";
 import { vi } from "vitest";
 

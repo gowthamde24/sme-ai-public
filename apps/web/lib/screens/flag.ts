@@ -45,6 +45,12 @@ export const voicePickerScreens = (value: string | undefined = process.env.VOICE
 /** The guided demo (owner request 28 Oct, job-guided-demo.md): a "Start demo" button in the DEMO workspaces plays a short story over the real screens, with made-up data only. Off unless `1`. */
 export const guidedDemo = (value: string | undefined = process.env.GUIDED_DEMO): boolean => value === "1";
 
+/**
+ * The demo-video mode (job demo-video): a scripted, click-paced story on Today for a screen recording, drawn from fixtures in the browser (nothing is read for it, sent or saved). Reachable only with `?demo=video`, only where this flag
+ * is `on` (or `1`), and only for the Owner or an Admin of a workspace the API itself calls a demo one (lib/demo-video/guard.ts). Off unless set.
+ */
+export const demoVideo = (value: string | undefined = process.env.DEMO_VIDEO): boolean => value === "on" || value === "1";
+
 /** "Talk to your assistant" in the browser (job DV, ADR 0118): the orb becomes a microphone and the assistant answers aloud over a WebSocket to the API. Off unless `1`. */
 export const browserVoice = (value: string | undefined = process.env.BROWSER_VOICE): boolean => value === "1";
 

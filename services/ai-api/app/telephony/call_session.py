@@ -172,6 +172,10 @@ async def run_call(
     try:
         await session.run()
     finally:
+        # owner, 6 Nov 2026: the characters each voice engine spoke in this call, so the real cost per minute is known (a greeting played from memory costs none)
+        with suppress(Exception):
+            setattr(line, "voice_chars", dict(usage.tts_chars))  # noqa: B010 - the phone line's own record (TimedLine); other lines simply carry it
+            setattr(line, "voice_primary_off", str(getattr(parts.tts, "primary_off", "") or ""))  # noqa: B010
         await line.close()
         for fut in acted:
             with suppress(asyncio.CancelledError, Exception):

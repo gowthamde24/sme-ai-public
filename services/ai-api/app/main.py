@@ -1051,6 +1051,7 @@ def _browser_voice(settings: Settings, config: AuthConfig) -> BrowserVoice | Non
         output_micros_per_mtok=settings.llm_output_micros_per_mtok or 0,
         allowed_origins=tuple(o.strip() for o in settings.api_cors_origins.split(",") if o.strip()),
         client=httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0)),
+        talk_primary=settings.voice_talk_primary,
     )
 
 

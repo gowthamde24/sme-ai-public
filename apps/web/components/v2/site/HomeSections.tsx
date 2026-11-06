@@ -115,6 +115,8 @@ export function DaySection({ t }: { t: SiteT }) {
             <li key={b.n} className="relative grid grid-cols-[70px_minmax(0,1fr)] gap-x-[26px] pb-11 last:pb-0 sm:grid-cols-[92px_minmax(0,1fr)] sm:gap-x-9 after:absolute after:left-16 after:top-[9px] after:size-3.5 after:rounded-full after:border-[3px] after:border-brand-text after:bg-surface-2 sm:after:left-[86px]">
               <time className="pr-4 text-right font-display text-lg font-bold leading-tight tabular-nums sm:pr-[22px] sm:text-[22px]">
                 {t(`v3.day.${b.n}.time`)}
+                {/* a space between the day and its "evening" ("Fri evening"), so the words never run together ("Frievening") where the small line does not stack */}
+                {b.small ? " " : null}
                 {b.small ? <small className={`block font-sans text-[13px] font-medium ${slate}`}>{t(`v3.day.${b.n}.small` as "v3.day.1.small")}</small> : null}
               </time>
               <div>

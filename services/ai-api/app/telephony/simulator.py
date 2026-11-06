@@ -86,7 +86,9 @@ class SimulatedExotel:
                 if not isinstance(event_obj, exotel.Media):
                     self.heard.problems.append("media that does not decode")
                     continue
-                if not exotel.valid_out_chunk(event_obj.pcm) or len(event_obj.pcm) < exotel.MIN_CHUNK:
+                if set(msg) != {"event", "stream_sid", "media"} or set(msg.get("media") or {}) != {"payload"}:
+                    self.heard.problems.append("media message not in Exotel's documented shape")
+                if not exotel.valid_out_chunk(event_obj.pcm):
                     self.heard.problems.append(f"chunk of {len(event_obj.pcm)} bytes")
                 self.heard.media.append((now, event_obj.pcm))
             elif event == "mark":

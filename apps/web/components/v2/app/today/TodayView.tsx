@@ -19,7 +19,7 @@ import { SendingBanner } from "../outbox/SendingBanner";
 import { NeedsProvider } from "./needs-store";
 import { dayText } from "../date-words";
 import { ago, indiaDay } from "./time";
-import { todayWords } from "./today-words";
+import { todayWords } from "./today-word-keys";
 import type { Role, T, TodayData } from "./types";
 
 export { ago };
