@@ -14,6 +14,8 @@ from app.agent_runs import repository as runs_repo
 from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agent_runs.routes import router as agent_runs_router
 from app.agent_runs.wiring import build_agents_runtime
+from app.ai_team.repository import PostgrestAiTeamRepository
+from app.ai_team.routes import router as ai_team_router
 from app.assistant.routes import router as assistant_router
 from app.assistant_activity.routes import router as activity_router
 from app.assistant_context.repository import PostgrestContextRepository
@@ -362,6 +364,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
         workspace_secrets=build_workspace_secrets(settings, config.rest_url, config.anon_key),
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
+        ai_team=PostgrestAiTeamRepository(config.rest_url, config.anon_key),
         search=PostgrestSearch(config.rest_url, config.anon_key),
         developer_api=build_developer_api(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
@@ -1330,6 +1333,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_sources_router)
     app.include_router(assistant_work_router)
     app.include_router(talk_training_router)
+    app.include_router(ai_team_router)
     app.include_router(search_router)
     app.include_router(developer_router)
     app.include_router(developer_api_router)

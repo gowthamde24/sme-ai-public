@@ -29,6 +29,8 @@ ROUTE_WORDS = frozenset(
         "api", "developer", "keys",
         # 5 Nov 2026 (C1): guided setups (POST /assistant/setups/{id}/test)
         "setups",
+        # 6 Nov 2026 (C1): My AI team v2 (/ai-team/day, /ai-team/{helper}, /ai-team/standup)
+        "ai-team", "day", "standup",
         # 5 Nov 2026 (C1): a hand-over call was dealt with
         "handled",
         # 5 Nov 2026 (C1): "talk-training"
