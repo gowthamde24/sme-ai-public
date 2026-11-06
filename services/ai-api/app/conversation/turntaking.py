@@ -37,6 +37,7 @@ _DANGLING = {
     "kn": "ಮತ್ತು ಆದರೆ ಅಥವಾ ಹಾಗಾದರೆ ಏಕೆಂದರೆ ಎಂದು ಅಂದರೆ ಗೆ ಅನ್ನು ಜೊತೆ ಬಗ್ಗೆ ಕ್ಕೆ ನಲ್ಲಿ ಇಂದ ಮೇಲೆ ಇನ್ನೂ ಆಮೇಲೆ ಮತ್ತೆ ಅಂದ್ರೆ ಅಲ್ಲಿ".split(),
     "ta": "மற்றும் ஆனால் அல்லது என்றால் ஏனெனில் என்று க்கு உடன் பற்றி இல் இருந்து மேல் இன்னும் பிறகு அப்புறம் அதாவது".split(),
     "ml": "ഉം എന്നാൽ പക്ഷേ അല്ലെങ്കിൽ കാരണം എന്ന് ലേക്ക് കൂടെ കുറിച്ച് ഇൽ നിന്ന് പിന്നെ അതായത്".split(),
+    "mr": "आणि पण किंवा कारण जर जेव्हा ला चा ची चे च्या मध्ये पासून बरोबर साठी बद्दल मग म्हणजे जसे माझा माझी तुमचा पर्यंत".split(),
     # Telugu / Hindi / Kannada typed in English letters
     "rom": "ki ku ni nu tho toh to ni lo nundi nunchi gurinchi kosam mariyu kani leda ante endukante anni inka alage appudu mari aa pai meeda daggara aur lekin ya kyunki agar jab ke ko ka ki mein se par saath liye phir matlab jaise ye woh mera meri tak bhi hi kuch mattu aadare ge alli".split(),
 }
@@ -220,14 +221,15 @@ def looks_english(text: str | None) -> bool:
     return bool(letters) and sum(1 for t in letters if t.strip("'’").rstrip("s") in _ENGLISH_COMMON or t in _ENGLISH_COMMON or t.replace("’", "'") in _ENGLISH_COMMON) / len(tokens) >= _ENGLISH_SHARE
 
 
-_INDIAN_SCRIPTS = {"te": (0x0C00, 0x0C7F), "hi": (0x0900, 0x097F), "kn": (0x0C80, 0x0CFF), "ta": (0x0B80, 0x0BFF), "ml": (0x0D00, 0x0D7F)}
+_INDIAN_SCRIPTS = {"te": (0x0C00, 0x0C7F), "hi": (0x0900, 0x097F), "kn": (0x0C80, 0x0CFF), "ta": (0x0B80, 0x0BFF), "ml": (0x0D00, 0x0D7F)}   # (Marathi: Devanagari, the "hi" block)
 
 
 def foreign_to_pin(text: str | None, pin: str | None) -> bool:
     """With the language pill set to `pin`: is what was heard clearly in ANOTHER language (so, while the assistant speaks, probably the TV or someone else)? Pin "en": speech in an Indian script. Pin an Indian language: clear English in Latin
     letters, or a different Indian script. Tenglish in Latin never counts. Pin None (auto) or unknown: never."""
-    if not pin or not text or pin not in ("en", *_INDIAN_SCRIPTS):
+    if not pin or not text or pin not in ("en", "mr", *_INDIAN_SCRIPTS):
         return False
+    pin = "hi" if pin == "mr" else pin   # Marathi is written in Devanagari, like Hindi (job M1): heard Hindi is not "another script" for a Marathi pill
     scripts = {lang for lang, (lo, hi) in _INDIAN_SCRIPTS.items() if any(lo <= ord(ch) <= hi for ch in text)}
     if pin == "en":
         return bool(scripts)
@@ -289,6 +291,7 @@ CHECK_IN: dict[str, str] = {
     "kn": "ಇದ್ದೀರಾ?",
     "ta": "இருக்கீங்களா?",
     "ml": "അവിടെയുണ്ടോ?",
+    "mr": "तुम्ही आहात ना?",
 }
 GOODBYE_QUIET: dict[str, str] = {
     "en": "I'll close this now. Tap Live whenever you want to talk again.",
@@ -297,6 +300,7 @@ GOODBYE_QUIET: dict[str, str] = {
     "kn": "ಸರಿ, ಈಗ ಮುಗಿಸುತ್ತೇನೆ. ಮತ್ತೆ ಮಾತಾಡಲು Live ಒತ್ತಿ.",
     "ta": "சரிங்க, இப்போ முடிக்கிறேன். மறுபடி பேச Live தட்டுங்க.",
     "ml": "ശരി, ഇപ്പോൾ അവസാനിപ്പിക്കുന്നു. വീണ്ടും സംസാരിക്കാൻ Live അമർത്തുക.",
+    "mr": "ठीक आहे, आता बंद करते. पुन्हा बोलायचं असेल तर Live दाबा.",
 }
 GOODBYE_REPLY: dict[str, str] = {
     "en": "Bye, talk soon.",
@@ -305,6 +309,7 @@ GOODBYE_REPLY: dict[str, str] = {
     "kn": "ಸರಿ, ಮತ್ತೆ ಮಾತಾಡೋಣ.",
     "ta": "சரிங்க, அப்புறம் பேசலாம்.",
     "ml": "ശരി, പിന്നെ സംസാരിക്കാം.",
+    "mr": "ठीक आहे, नंतर बोलूया.",
 }
 SOFT_WARNING: dict[str, str] = {
     "en": "We have about two minutes left in this session.",
@@ -313,6 +318,7 @@ SOFT_WARNING: dict[str, str] = {
     "kn": "ಈ ಸೆಷನ್ ನಲ್ಲಿ ಇನ್ನು ಎರಡು ನಿಮಿಷ ಮಾತ್ರ ಇದೆ.",
     "ta": "இந்த செஷன்ல இன்னும் இரண்டு நிமிஷம் தான் இருக்கு.",
     "ml": "ഈ സെഷനിൽ ഏകദേശം രണ്ടു മിനിറ്റ് ബാക്കിയുണ്ട്.",
+    "mr": "या सेशनमध्ये साधारण दोन मिनिटं उरली आहेत.",
 }
 _GOODBYE = [
     r"\bbye\b", r"\bgoodbye\b", r"\bthat'?s all\b", r"\bthat is all\b", r"\bthank(?:s| you),? (?:that'?s|that is) (?:all|it)\b", r"\bwe'?re done\b", r"\bsee you\b", r"\bstop (?:now|listening)\b",

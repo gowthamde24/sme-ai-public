@@ -16,7 +16,7 @@ export interface BatchIn {
   name: string;
   goal: "site_visit" | "counselling" | "appointment" | "qualify" | "test_drive" | "site_measurement" | "quote" | "trial" | "callback" | "general";
   channel: "call" | "whatsapp" | "both";
-  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   who: WhoContacts | WhoLeads | WhoSource;
   questions?: string[];
   message_text?: string | null;
@@ -32,7 +32,7 @@ export interface BatchOut {
   paused_reason: "owner" | "cap_calls" | "cap_minutes" | "billing" | null;
   goal: "site_visit" | "counselling" | "appointment" | "qualify" | "test_drive" | "site_measurement" | "quote" | "trial" | "callback" | "general";
   channel: "call" | "whatsapp" | "both";
-  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   questions: string[];
   message_text: string | null;
   window_days: number;
@@ -171,7 +171,7 @@ export interface RuleIn {
   within_minutes?: number;
   goal: "site_visit" | "counselling" | "appointment" | "qualify" | "test_drive" | "site_measurement" | "quote" | "trial" | "callback" | "general";
   channel: "call" | "whatsapp" | "both";
-  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   questions?: string[];
   message_text?: string | null;
   max_calls_per_day?: number | null;
@@ -185,7 +185,7 @@ export interface RuleOut {
   within_minutes: number;
   goal: "site_visit" | "counselling" | "appointment" | "qualify" | "test_drive" | "site_measurement" | "quote" | "trial" | "callback" | "general";
   channel: "call" | "whatsapp" | "both";
-  language: "en" | "te" | "hi" | "kn" | "ta" | "ml";
+  language: "en" | "te" | "hi" | "kn" | "ta" | "ml" | "mr";
   questions: string[];
   message_text: string | null;
   max_calls_per_day: number | null;

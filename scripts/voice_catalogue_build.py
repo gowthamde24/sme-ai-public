@@ -28,10 +28,10 @@ import httpx
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "services" / "ai-api"))
 from app.conversation.voices import DEFAULT_FILE, SAMPLES, sample_text  # noqa: E402
 
-LANGS = ("te", "en", "hi", "kn", "ta", "ml")
+LANGS = ("te", "en", "hi", "kn", "ta", "ml", "mr")   # mr (job M1): no Marathi voice is in the catalogue yet; a run with --write picks them (never in CI)
 GENDER = {"feminine": "female", "masculine": "male"}
 MODEL = "sonic-3.6"
-STT_TAG = {"te": "te-IN", "en": "en-IN", "hi": "hi-IN", "kn": "kn-IN", "ta": "ta-IN", "ml": "ml-IN"}
+STT_TAG = {"te": "te-IN", "en": "en-IN", "hi": "hi-IN", "kn": "kn-IN", "ta": "ta-IN", "ml": "ml-IN", "mr": "mr-IN"}
 KEEP_FIRST = {"en-janvi": "7ea5e9c2-b719-4dc3-b870-5ba5f14d31d8"}   # the English default that has always been Janvi
 
 # the Bulbul v4 Flash voice behind each (language, gender) for an outage. Bulbul v3 is never used (owner decision 28 Oct): Malayalam and Tamil women have no v4 voice of their own, so a Hindi v4 voice of the same gender backs them up (an approximate outage fallback; verify when Sarvam credits allow)
@@ -42,6 +42,8 @@ FALLBACK = {
     ("kn", "female"): ("bulbul:v4-flash", "chaitra_kn_conversation"), ("kn", "male"): ("bulbul:v4-flash", "chetan_kn_conversation"),
     ("ta", "female"): ("bulbul:v4-flash", "roopa_hi_conversational"), ("ta", "male"): ("bulbul:v4-flash", "gokul_ta_narration"),
     ("ml", "female"): ("bulbul:v4-flash", "roopa_hi_conversational"), ("ml", "male"): ("bulbul:v4-flash", "kabir_hi_conversational"),
+    # Marathi (job M1): the Hindi v4 voices of the same gender (the same script) until a bake-off picks Marathi ones
+    ("mr", "female"): ("bulbul:v4-flash", "kavya_hi_conversational"), ("mr", "male"): ("bulbul:v4-flash", "kabir_hi_conversational"),
 }
 
 KEYWORDS = {

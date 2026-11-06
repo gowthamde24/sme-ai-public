@@ -34,6 +34,7 @@ Any member of the workspace (Owner, Admin, Sales, Viewer). One call for the whol
 |---|---|---|---|
 | `needs_you` | the customer items waiting for a decision (quotes, follow-up drafts, messages, call requests, money held, proposed visits ...) | Today's `cards.waiting` | everyone (each role's own items, as Today) |
 | `prospects_needing_owner` | Lead Finder prospects in `needs_owner`, not snoozed by "ask me later" | `prospect_stats.by_status.needs_owner` (that one includes the snoozed) | Owner, Admin, Sales; null without the Lead Finder |
+| `lead_desk_waiting` | Lead Desk's own waiting rows that Today's `cards.waiting` does not count, by the same rules as Today's screen: calling plans and tasks waiting for the Owner's approval (the Owner), callbacks due per batch and standing rules / tasks paused at their limit (the Owner and Admins), hot leads whose reminder has not gone yet (the Owner and Admins; Sales their own) | Today's Lead Desk rows | everyone (0 where the role sees none) |
 | `new_leads` | leads of the last 7 days that THIS person has not opened yet (not archived, not junk; `POST /leads/{id}/seen` opens one) | the Lead Desk list's "New" | Owner, Admin, Sales |
 | `live_calls` | phone calls in progress now | Calls, "● N live" | Owner, Admin, Sales |
 | `unread_chats` | conversations whose last inbound message nobody has read | Chats | Owner, Admin, Sales |
@@ -46,7 +47,7 @@ Any member of the workspace (Owner, Admin, Sales, Viewer). One call for the whol
 | `plan` | the plan id: `free_trial`, `starter`, `growth`, `business`, `calls_payg`, `calls_300`, `calls_1000` | Settings -> Plan | everyone |
 
 Rules:
-- `needs_you` does **not** include `prospects_needing_owner`. The web adds them for Today's "Needs you" ("See all (N)" uses the sum), so the two numbers are never counted twice.
+- `needs_you` does **not** include `prospects_needing_owner` or `lead_desk_waiting`. **Today's badge = `needs_you` + `lead_desk_waiting` + `prospects_needing_owner`** (added 5 Nov 2026: the badge said 52 while Today showed 53).
 - `as_of` is when the numbers were read. They are kept **30 s per person and workspace** (`new_leads` is per person): a decision taken on a page updates that page at once, and the sidebar within 30 s.
 - Read-only, with the caller's own token. Each field follows the same role rule as the screen that shows it, checked in the database (`public.nav_counts`). Nothing is written, no model is called, nothing is sent.
 - Calling more often costs nothing: within 30 s the kept answer is returned. The web polls at most every 30 s and on focus.

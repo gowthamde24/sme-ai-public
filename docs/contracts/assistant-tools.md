@@ -1,6 +1,6 @@
 # The assistant does the work: the API contract (C1 -> C2)
 
-Status: **published 4 Nov 2026, stable for the shapes below**; the routes land in parts (each section says which PR). **Built (5 Nov): sections 0, 1 (files -> leads) and 2's `file_preview`, `plan`, `cant_do`, decide and undo.** Not yet: the secret and setup cards, the router's do / clarify for typed requests, section 3's list. Job `~/Desktop/stack19-jobs/job-assistant-does-the-work.md`. Base `/v1/tenants/{tenant_id}`.
+Status: **published 4 Nov 2026, stable for the shapes below**; the routes land in parts (each section says which PR). **Built (5 Nov): sections 0, 1 (files -> leads) and 2's `file_preview`, `plan`, `cant_do`, decide and undo.** Then built: the router, the `secret` card and the `setup` card (see each). Not yet: section 3's list. Job `~/Desktop/stack19-jobs/job-assistant-does-the-work.md`. Base `/v1/tenants/{tenant_id}`.
 Errors always have the one shape `{error:{code,message,retry_after,request_id}}`. JSON is snake_case. This **confirms C2's assumed shapes** (`apps/web/lib/assistant-work/types.ts`, PR #302) with the
 changes marked **CHANGED**; everything else is exactly as C2 assumed.
 
@@ -178,6 +178,20 @@ A plan that adds no people (saving a brochure to About my business) comes as thi
 - `POST /assistant/setups/{setup_id}/test` `{ test }` -> `{ ok, reason: null | "no_key" | "key_rejected" | "nothing_arrived" | "form_not_found" | "sheet_not_shared" | "not_reachable" | "timeout" | "other", detail, at }`.
   - `detail` is plain words, never a key.
   - `test_call` is the existing simulated test call: nothing is dialled.
+- **Built (5 Nov 2026, C1):**
+  - The router's `setup` action. Typed words like "forward my JustDial lead e-mails", "put a lead form on my website", "invite my team", "set up the voice and language", "set up follow-up
+    rules", "leads from my Google Sheet". "Set up IndiaMART" stays the `secret` card above, which now also carries `setup_id` and `test: "pull_now"` (run the test after the key is saved).
+  - `setup: "email_forward"` (Owner, Admin): the workspace's lead address, made on first use through the Lead sources service (the same one the screen shows; asked again, the same address).
+    `copy`: the address, plus Gmail's confirmation code once it has arrived. `steps`: the Gmail filter guide. `portals`: JustDial, IndiaMART e-mail, 99acres, MagicBricks, Sulekha with what to do in
+    each. `test: "send_test_mail"`.
+  - `setup: "website_form"` (Owner, Admin): `copy` is the form code (`code: true`, plain HTML, no script), the form link (works with no website) and the webhook address. `test: "send_test_lead"`.
+  - `team_invite`, `voice_language`, `followup_rules`, `google_sheet`: the steps and the screen's link (`test: null`, `copy: []`). They are done on their screens.
+  - A Sales member gets a sentence and no card. With forwarding or the form not switched on for the installation: `cant_do` `not_yet` with the Lead sources link.
+  - `id` is stable per workspace and kind (no table). `last_test` is always null in the card; the test's answer is the result.
+  - `POST /assistant/setups/{setup_id}/test` (Owner, Admin). The test must be the card's own (otherwise 404, as is another workspace's id). Nothing is sent to anyone:
+    - `pull_now`: IndiaMART with the workspace's OWN key. While the workspace takes example data only (the real-data gate closed), the key is CHECKED with one read of the last day and nothing is
+      imported (`detail` says how many enquiries IndiaMART has); with the gate open, the ordinary pull runs. `no_key`, `key_rejected`, `timeout`, `not_reachable`.
+    - `send_test_mail` / `send_test_lead`: has anything arrived through the address / the form in the last 24 hours? `ok`, or `nothing_arrived` ("send one yourself, then check again").
 
 ### cant_do (A6)
 ```json

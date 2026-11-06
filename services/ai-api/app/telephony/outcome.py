@@ -21,7 +21,7 @@ from app.conversation.parts import StreamingLlm
 
 OUTCOMES = ("positive", "negative", "unclear", "no_answer", "failed")
 CATEGORIES = ("interested", "visit_booked", "order_likely", "not_interested", "wrong_number", "too_costly", "call_back_later", "already_bought", "do_not_call")
-LANGUAGE_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam"}
+LANGUAGE_NAMES = {"en": "English", "te": "Telugu", "hi": "Hindi", "kn": "Kannada", "ta": "Tamil", "ml": "Malayalam", "mr": "Marathi"}
 MAX_SUMMARY = 600
 MAX_CAPTURED_KEYS = 6
 MAX_CAPTURED_VALUE = 80

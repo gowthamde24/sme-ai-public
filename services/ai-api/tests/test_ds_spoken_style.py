@@ -99,9 +99,9 @@ def test_every_member_reads_the_defaults_with_the_options_and_the_state_of_the_e
     for user in ("a_owner", "a_admin", "a_sales", "a_viewer"):
         body = client.get(URL, headers=auth(user)).json()
         assert body["languages"]["te"] == {"style": "everyday_mixed", "region": "neutral", "saved": False, "examples": "approved"}, user
-        assert body["languages"]["ml"]["examples"] == "draft"
+        assert body["languages"]["ml"]["examples"] == "draft" and body["languages"]["mr"]["examples"] == "draft"
     assert body["options"]["styles"] == ["everyday_mixed", "everyday_pure", "formal"] and body["options"]["regions"]["ta"] == ["neutral", "chennai", "kongu"]
-    assert set(body["languages"]) == {"en", "te", "hi", "kn", "ta", "ml"}
+    assert set(body["languages"]) == {"en", "te", "hi", "kn", "ta", "ml", "mr"} and body["options"]["regions"]["mr"] == ["neutral"]
     assert client.get(URL).status_code == 401
     assert client.get(f"/v1/tenants/{uuid_other()}/speaking-style", headers=auth("a_owner")).status_code == 404
 

@@ -15,10 +15,10 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
-Language = Literal["en", "te", "hi", "kn", "ta", "ml"]
-LANGUAGES: tuple[str, ...] = ("en", "te", "hi", "kn", "ta", "ml")
+Language = Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
+LANGUAGES: tuple[str, ...] = ("en", "te", "hi", "kn", "ta", "ml", "mr")
 # the BCP-47 tags the providers use
-TAGS: dict[str, str] = {"en": "en-IN", "te": "te-IN", "hi": "hi-IN", "kn": "kn-IN", "ta": "ta-IN", "ml": "ml-IN"}
+TAGS: dict[str, str] = {"en": "en-IN", "te": "te-IN", "hi": "hi-IN", "kn": "kn-IN", "ta": "ta-IN", "ml": "ml-IN", "mr": "mr-IN"}
 
 
 class VoiceError(Exception):
