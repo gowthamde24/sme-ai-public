@@ -89,3 +89,55 @@ def test_today_says_it_plainly() -> None:
     item = needs_item({"kind": "person_requested", "id": str(uuid.uuid4()), "customer": "A caller", "city": None, "agent": "followup_desk", "ref": "call", "amount_paise": None,
                        "at": NOW.isoformat(), "target": {"type": "phone_call", "id": str(uuid.uuid4())}})
     assert item.kind == "person_requested" and "asked to talk to a person" in item.summary and item.target.type == "phone_call"
+
+
+# ---- Whisper during a live call (app v4) and the live call reachable by its real id ------------------------------------------------------
+
+def test_a_live_call_is_reachable_by_its_row_id_and_a_whisper_reaches_its_line() -> None:
+    from app.telephony.live import LiveCalls
+
+    class Line:
+        def __init__(self) -> None:
+            self.whispers: list[str] = []
+
+    live, line, temp, real = LiveCalls(), Line(), uuid.uuid4(), uuid.uuid4()
+    live.add(TENANT_A.id, temp, line)  # type: ignore[arg-type]
+    live.also_known_as(temp, real)
+    assert live.whisper(TENANT_A.id, real, "Offer the Saturday visit") and line.whispers == ["Offer the Saturday visit"]
+    assert not live.whisper(uuid.uuid4(), real, "x"), "another workspace never reaches it"
+    live.remove(temp)
+    live.remove(real)
+    assert not live.whisper(TENANT_A.id, real, "x") and live.count() == 0
+
+
+def test_the_ai_follows_a_whisper_from_its_next_reply_even_after_a_language_switch() -> None:
+    from app.telephony.call_session import CallVoiceSession
+
+    session: Any = CallVoiceSession.__new__(CallVoiceSession)
+    line = type("L", (), {"whispers": ["Offer the Saturday visit"]})()
+    session.socket = type("S", (), {"_line": line})()
+    session.language = "te"
+    session.parts = type("P", (), {"system_for": lambda self, lang: f"BASE-{lang}"})()
+    session.conv = type("C", (), {"session": type("X", (), {"system": "BASE-te"})()})()
+    session._apply_whispers()
+    assert session.conv.session.system.startswith("BASE-te") and "- Offer the Saturday visit" in session.conv.session.system and "caller cannot hear" in session.conv.session.system
+    assert line.whispers == [], "taken from the line once"
+    session.language = "en"
+    session.conv.session.system = "BASE-en"
+    session._apply_whispers()
+    assert session.conv.session.system.startswith("BASE-en") and "- Offer the Saturday visit" in session.conv.session.system, "kept after a switch"
+
+
+def test_the_whisper_route() -> None:
+    from app.telephony.live import LiveCalls
+
+    live = LiveCalls()
+    line = type("L", (), {"whispers": []})()
+    live.add(TENANT_A.id, DONE_ID, line)
+    c, _ = make_client(calls=CallsService(FakeCallsRepo(), clock=lambda: NOW), live_calls=live)
+    url = f"/v1/tenants/{TENANT_A.id}/calls/{DONE_ID}/whisper"
+    assert c.post(url, json={"text": "Offer the Saturday visit"}, headers=auth("a_admin")).status_code == 202 and line.whispers == ["Offer the Saturday visit"]
+    assert c.post(url, json={"text": "x"}, headers=auth("a_sales")).status_code == 403, "Owner and Admin only"
+    assert c.post(url, json={"text": ""}, headers=auth("a_owner")).status_code == 422
+    live.remove(DONE_ID)
+    assert c.post(url, json={"text": "x"}, headers=auth("a_owner")).json()["error"]["code"] == "call_not_here"

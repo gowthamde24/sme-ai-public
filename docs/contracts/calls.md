@@ -62,3 +62,14 @@ While a call is live it also appears in `GET /assistant/activity` as a `call` it
 ## Not in this version
 
 `POST /calls/stop` (pause all calling) arrives with the outbound wiring, because the pause flag belongs to the outreach plans (part 4). Call recording: none.
+
+## Whisper during a live call (app v4, 6 Nov 2026)
+
+`POST /v1/tenants/{t}/calls/{id}/whisper` (Owner, Admin).
+- **Request:** `{"text": "Offer the Saturday visit"}` (1–300 characters).
+- **What happens:** only the AI gets it; the caller hears nothing. The AI follows it from its next sentence, also after a language switch. At most the last five whispers are kept, for that call only, and nothing is stored.
+- **Response:** 202 `{"status": "sent"}`.
+- **Errors:** 409 `call_not_here` (the call runs on another server or has ended; ask again); 404 for another workspace's call; 403 for Sales or a Viewer.
+- **Also fixed:** a live call is reachable by its real id. Since 6 Nov its database row is written while the greeting plays, so Hang up and Whisper could not find it by that id before.
+
+Take over (the owner talks to the caller from the app) and Transfer (to a phone number) are not here yet. Transfer needs Exotel: our stream ends, and a Connect applet after it in the call flow dials the number. That's a real call leg and waits for the owner's decision.

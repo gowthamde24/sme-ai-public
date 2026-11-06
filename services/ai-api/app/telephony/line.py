@@ -79,6 +79,7 @@ class PhoneLine:
         self._stopped_run = False
         self._sent = bytearray()   # the last KEEP_SENT_S of audio we sent (line rate), to fade from
         self.interruptions: dict[str, int] = {"stopped": 0, "ignored": 0}
+        self.whispers: list[str] = []   # the owner's notes for the AI during this call (app v4: Whisper); the session takes them before its next reply
         self.fade_ms: list[int] = []
         self._closed = False
         # how the call ended, for the end-of-call log (names and numbers only, 5 Nov 2026: the 11:57 UTC call ended 0.4 s after admission and the log could not say whether Exotel sent `stop` or dropped

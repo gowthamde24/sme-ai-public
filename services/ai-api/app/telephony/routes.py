@@ -15,6 +15,7 @@ from datetime import datetime
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Query, Response
+from pydantic import BaseModel, ConfigDict, StringConstraints
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
@@ -73,6 +74,29 @@ def mark_handled(call_id: str, ctx: Reader, runtime: RuntimeDep) -> dict[str, An
         return _service(runtime).handled(ctx.principal.token, ctx.tenant.id, _id(call_id))
     except NotFoundError:
         raise not_found() from None
+
+
+class WhisperIn(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    text: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=300)]
+
+
+@router.post("/{call_id}/whisper", status_code=202)
+async def whisper(call_id: str, ctx: OwnerAdmin, runtime: RuntimeDep, body: WhisperIn) -> dict[str, str]:
+    """Whisper (app v4; Owner, Admin): a note only the AI hears during a live call ("offer the Saturday visit"); it follows it from its next sentence. Nothing is said to the caller and
+    nothing is stored. 409 call_not_here when the call is on another server or has ended; 404 for another workspace's call."""
+    cid = _id(call_id)
+    live = runtime.live_calls
+    if live is None:
+        raise ApiError(503, "calls_unavailable", "Calls are not available right now.")
+    try:
+        _service(runtime).get(ctx.principal.token, ctx.tenant.id, cid)   # proves the call is this workspace's
+    except CallStateError:
+        raise not_found() from None
+    if not live.whisper(ctx.tenant.id, cid, body.text):
+        raise ApiError(409, "call_not_here", "That call is not on this server, or it has already ended.")
+    return {"status": "sent"}
 
 
 @router.post("/{call_id}/hang-up", status_code=202)

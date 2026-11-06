@@ -178,7 +178,7 @@ def test_the_model_is_told_the_languages_the_brand_honesty_tone_and_short_turns(
 def test_the_language_rule_never_reads_the_words_into_a_log() -> None:
     import inspect
 
-    src = inspect.getsource(CallVoiceSession._follow_language)
+    src = inspect.getsource(CallVoiceSession._follow_language_rule)
     assert "text" not in src.split("log.info(", 1)[1].split(")", 1)[0], "only codes and the reason are logged"
 
 

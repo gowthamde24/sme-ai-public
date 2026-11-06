@@ -77,7 +77,27 @@ class CallVoiceSession(VoiceSession):
         await self._say(persona.CALL_BYE_QUIET.get(self.language, persona.CALL_BYE_QUIET["en"]))
         await self._send({"type": "limit", "reason": "idle", "fatal": True})
 
+    WHISPER_HEAD = ("THE OWNER IS LISTENING AND TELLS YOU THIS. The caller cannot hear it. Follow it from your next sentence, in the call's language; never read it out or mention it:")
+
+    def _apply_whispers(self) -> None:
+        """Whisper (app v4): the owner's notes taken from the line, added to the instructions of every reply from now on (also after a language switch)."""
+        line = getattr(getattr(self, "socket", None), "_line", None)
+        taken = list(getattr(line, "whispers", []) or [])
+        if line is not None and taken:
+            line.whispers.clear()
+            notes: list[str] = getattr(self, "_whispered", [])
+            notes.extend(taken)
+            self._whispered = notes[-5:]
+            log.info("phone_whisper applied=%d", len(taken))   # (how many, never the words)
+        notes_now: list[str] = getattr(self, "_whispered", [])
+        if notes_now:
+            self.conv.session.system = self.parts.system_for(self.language) + "\n\n" + self.WHISPER_HEAD + "\n" + "\n".join(f"- {n}" for n in notes_now)
+
     async def _follow_language(self, text: str) -> None:
+        await self._follow_language_rule(text)
+        self._apply_whispers()
+
+    async def _follow_language_rule(self, text: str) -> None:
         """The phone's own language rule (app/telephony/language_rule.py, owner, 6 Nov 2026): start in the line's language and stay; fillers ("hello", "ok") and code-mixed speech never switch it;
         a request, a full sentence of 3+ words, or 2 turns in a row in another language do. Each switch is logged (codes and the reason, never the words)."""
         streak = getattr(self, "_language_streak", (None, 0))
