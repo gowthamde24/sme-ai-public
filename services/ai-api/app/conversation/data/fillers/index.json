@@ -803,5 +803,39 @@
     "file": "ml-vijay-3.pcm"
    }
   ]
+ },
+ "mr-ishita": {
+  "language": "mr",
+  "lines": [
+   {
+    "text": "एक मिनिट, मी check करते.",
+    "file": "mr-ishita-1.pcm"
+   },
+   {
+    "text": "हो, एक सेकंद.",
+    "file": "mr-ishita-2.pcm"
+   },
+   {
+    "text": "हं, आत्ता बघते.",
+    "file": "mr-ishita-3.pcm"
+   }
+  ]
+ },
+ "mr-nilesh": {
+  "language": "mr",
+  "lines": [
+   {
+    "text": "एक मिनिट, मी check करतो.",
+    "file": "mr-nilesh-1.pcm"
+   },
+   {
+    "text": "हो, एक सेकंद.",
+    "file": "mr-nilesh-2.pcm"
+   },
+   {
+    "text": "हं, आत्ता बघतो.",
+    "file": "mr-nilesh-3.pcm"
+   }
+  ]
  }
 }

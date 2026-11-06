@@ -121,7 +121,7 @@ def test_a_broken_catalogue_is_refused(mutate: Any, message: str) -> None:
 def test_every_catalogue_voice_has_a_pre_rendered_sample_file_of_sane_size() -> None:
     for c in default_config().catalogue.values():
         assert c.sample_file.is_file(), c.id
-        assert 20_000 < c.sample_file.stat().st_size < 400_000 and c.sample_file.read_bytes()[:3] in (b"ID3", b"\xff\xfb", b"\xff\xf3", b"\xff\xf2"), c.id
+        assert 20_000 < c.sample_file.stat().st_size < 400_000 and c.sample_file.read_bytes().startswith((b"ID3", b"\xff\xfb", b"\xff\xf3", b"\xff\xf2")), c.id   # an ID3 tag (Cartesia) or a bare MPEG frame (Sarvam)
 
 
 # ---- resolving a choice -------------------------------------------------------------------------------------------------------------------------------
