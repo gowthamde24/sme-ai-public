@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Lint and type-check what this push changes, BEFORE it reaches CI (owner, 6 Nov 2026: "Run lint and type-check locally before every push"). Install once per clone: `make hooks`.
+#
+#   API (services/ai-api, tests/integration, tests/rehearsal, scripts/*.py, tools/)   ruff (the same paths as `make lint`) + mypy (the project's own config)
+#   web (apps/web)                                                                     eslint + tsc (npm run lint, npm run typecheck)
+#   contracts (packages/contracts)                                                     tsc -p packages/contracts
+#
+# Only the parts the push touches are checked (compared with origin/main). It runs no tests, needs no database and no network, and spends nothing.
+# A missing tool is a failure with the command that installs it. In an emergency `git push --no-verify` skips the hook; CI still runs every check.
+set -uo pipefail
+
+ROOT=$(git rev-parse --show-toplevel)
+cd "$ROOT" || exit 1
+BASE=$(git merge-base HEAD origin/main 2>/dev/null || echo "")
+if [ -z "$BASE" ]; then
+  echo "pre-push: origin/main is unknown here (run: git fetch origin main); checking everything"
+  CHANGED=$(git ls-files)
+else
+  CHANGED=$( { git diff --name-only "$BASE" HEAD; git diff --name-only; git diff --name-only --cached; } | sort -u )
+fi
+
+has() { printf '%s\n' "$CHANGED" | grep -qE "$1"; }
+FAILED=()
+run() {   # run <label> <command...>: print the time it took; remember a failure
+  local label=$1; shift
+  local t0=$SECONDS
+  if "$@"; then echo "pre-push: $label ok ($((SECONDS - t0)) s)"; else echo "pre-push: $label FAILED"; FAILED+=("$label"); fi
+}
+
+API_TOOLS=""
+for cand in "${SME_VENV:-}" "$ROOT/services/ai-api/.venv" "$ROOT/../venv313"; do
+  if [ -n "$cand" ] && [ -x "$cand/bin/ruff" ] && [ -x "$cand/bin/mypy" ]; then API_TOOLS="$cand/bin"; break; fi
+done
+
+if has '^(services/ai-api/|tests/integration/|tests/rehearsal/|scripts/.*\.py$|tools/)'; then
+  if [ -z "$API_TOOLS" ]; then
+    echo "pre-push: ruff/mypy not found (make install, or set SME_VENV to a venv that has them)"; FAILED+=("api tools")
+  else
+    LINT_PATHS=$(awk -F'ruff check ' '/\.venv\/bin\/ruff check/ {print $2; exit}' Makefile)
+    # shellcheck disable=SC2086
+    run "api ruff" bash -c "cd services/ai-api && '$API_TOOLS/ruff' check ${LINT_PATHS:-.}"
+    run "api mypy" bash -c "cd services/ai-api && PYTHONPATH=\$PWD '$API_TOOLS/mypy'"
+  fi
+fi
+
+if has '^apps/web/'; then
+  if [ ! -d apps/web/node_modules ]; then
+    echo "pre-push: apps/web/node_modules is missing (cd apps/web && npm ci)"; FAILED+=("web tools")
+  else
+    run "web eslint" bash -c "cd apps/web && npm run -s lint"
+    run "web tsc" bash -c "cd apps/web && npm run -s typecheck"
+  fi
+fi
+
+if has '^packages/contracts/' && [ -d apps/web/node_modules ]; then
+  run "contracts tsc" bash -c "cd apps/web && npx tsc --noEmit -p ../../packages/contracts/tsconfig.json"
+fi
+
+if [ ${#FAILED[@]} -gt 0 ]; then
+  echo "pre-push: NOT pushed. Fix: ${FAILED[*]} (or, in an emergency, git push --no-verify; CI still checks everything)"
+  exit 1
+fi
+exit 0
