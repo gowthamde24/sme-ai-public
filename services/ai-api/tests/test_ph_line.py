@@ -281,3 +281,27 @@ async def test_a_closed_line_sends_nothing_more() -> None:
     await asyncio.sleep(0.05)
     assert sim.heard.audio_bytes == 0
     await sim.close()
+
+
+@arun
+async def test_a_person_takes_the_call_over_and_hands_it_back() -> None:
+    """Take over (app v4): the AI stops (the same faded stop), the caller's audio reaches the person, the person's audio reaches the caller at the call's rate, no barge-in meanwhile; hand back ends it."""
+    line, sim = await connected(8000)
+    await line.send_bytes(tone(300.0, 2000, OUT_RATE))   # the AI is talking
+    caller = line.take_over()
+    seen = await drain(line, 0.1)
+    assert ("text", {"type": "barge_in", "verify": False}) in seen, "the AI's voice stops"
+    await sim.speak_for(800)                               # the caller talks over the person: never a barge-in
+    seen = await drain(line, 0.1)
+    assert not any(k == "text" for k, _ in seen) and caller.qsize() > 0, "the caller's audio goes to the person"
+    before = sim.heard.audio_bytes
+    await line.send_owner_audio(tone(250.0, 500, 16000))  # half a second of the person's voice (16 kHz)
+    await asyncio.sleep(0.3)
+    assert abs((sim.heard.audio_bytes - before) / 2 / 8000 - 0.5) < 0.15 and sim.heard.problems == [], "it reaches the caller at 8 kHz, in Exotel's chunks"
+    line.hand_back()
+    await sim.speak_for(100)
+    assert not line.taken_over and caller.qsize() >= 0
+    before = sim.heard.audio_bytes
+    await line.send_owner_audio(tone(250.0, 300, 16000))
+    assert sim.heard.audio_bytes == before, "after hand back the person's audio goes nowhere"
+    await sim.close()

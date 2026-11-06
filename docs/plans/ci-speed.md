@@ -49,4 +49,17 @@ Sources: 13 successful PR runs and 15 runs on `main` of `.github/workflows/ci.ym
 **Expected result:** a normal PR in about 12 min (the integration groups plus the queue), and a fast-lane PR in about 6 min.
 
 ## After
-(Filled in as each part lands: the same measurements on the PRs that follow.)
+
+**Part 2 (#393), measured on its own CI run, 6 Nov 2026:**
+
+| Job | Before (median) | After |
+|---|---:|---:|
+| `api` (sum of api-static + 3 test parts) | 31.9 min | parts 4.8 / 40.9* / 3.2 min; tests alone about 3 min each |
+| `web` (sum of web-static + 2 test parts) | 10.9 min | static 2.5, tests 4.7 / 3.8 min |
+| db-integration-1..4 | 7.8 / 8.9 / 12.9 / 9.6 min | 7.5 / 7.5 / 9.7 / 9.8 min |
+| db-pgtap | 2.8 min | 2.9 min |
+| Whole run | 34 min | 42.9 min* |
+
+*One part waited 37 minutes for Ubuntu's package mirror while installing ffmpeg and Tesseract; the same step took 17 s before. Its tests took 3 minutes. Part 3 (this file's next PR) caches those packages.
+
+Without that stall, the longest job is integration group 4 at 9.8 min, so a PR run takes about 10–12 min plus the wait for a free machine. With 7 PRs open at once, that wait was the main delay: about 16 jobs per run against the account's ~20 concurrent jobs.
