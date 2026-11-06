@@ -20,6 +20,7 @@ from typing import Any
 # complete), plus the framework's documentation routes. Anything else in a path is user-supplied.
 ROUTE_WORDS = frozenset(
     {
+        "timeline",   # GET /customers/{id}/timeline (app v4)
         "take-over",   # WS /calls/{id}/take-over (app v4)
         "whisper",   # POST /calls/{id}/whisper (app v4)
         "v1", "me", "tenants", "members", "audit-events", "health",
