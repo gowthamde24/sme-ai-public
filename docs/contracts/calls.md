@@ -102,3 +102,12 @@ WebSocket `wss://<api>/v1/tenants/{t}/calls/{id}/take-over` (Owner, Admin).
   - 422 `validation_error` (nothing to correct);
   - 404 for another workspace's call;
   - 403 for a Viewer.
+
+## The English line under the captions (owner, 7 Nov 2026)
+
+`GET /v1/tenants/{t}/calls/{id}`: every `transcript` item now has `text_en: string | null`.
+- **When it's filled:** for a line that isn't English (the caller's words, or the AI's when it speaks another language), the fast model translates it in the background. It arrives a few seconds after the line itself. The 5 s refresh picks it up.
+- **When it's null:** the line is English already (no letter outside the Latin script), it isn't translated yet, the translation failed, or the call passed its cap of 80 translated lines.
+- **Format:** plain text, at most 2,000 characters. It's a reading aid only: the caller's words stay as said, and the web shows the English under them.
+- **A live call's lines:** while the call runs on the server that answers the request, Owner and Admin get the lines so far, with their English as it arrives. Sales never get a transcript, live or not. On another server, or once the call ends, it's the saved transcript, which keeps each `text_en`.
+- **Cost:** one short fast-model request per non-English line. Nothing is logged but counts.

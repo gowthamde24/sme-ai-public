@@ -55,6 +55,7 @@ class InboundService:
     llm_choice: str = "haiku"
     business: str = "the business"   # what the opening line names (TELEPHONY_INBOUND_BUSINESS; the scheduler account does not read workspace names)
     max_call_s: int = 300
+    english_lines: bool = False   # the English line under each non-English caption (owner, 7 Nov 2026): on in the real wiring; off in tests, so no test ever asks a real model
     url_format: str = "json"   # EXOTEL_STREAM_URL_FORMAT: json ({"url": ...}, the documented form) | text (the bare wss address)
     parts_for: Callable[[Any, str, str, str], tuple[Parts, str]] | None = None   # tests: fake recogniser, voice and model
     last_numbers: dict[str, Any] | None = None   # the numbers of the last call (the log line's), for the sandbox report
@@ -255,6 +256,18 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
     return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering)
 
 
+def english_lines(bv: Any) -> Any:
+    """The English line under each non-English caption (owner, 7 Nov 2026), by the fast model; None when no model key is set."""
+    from app.conversation.providers import AnthropicStream, SarvamChatStream
+    from app.telephony.translate import LineTranslator
+
+    if getattr(bv, "turn_model", "") == "sarvam" and getattr(bv, "sarvam_key", ""):
+        return LineTranslator(SarvamChatStream(bv.sarvam_key, max_tokens=400, client=bv.client), "sarvam-105b")
+    if not getattr(bv, "anthropic_key", ""):
+        return None
+    return LineTranslator(AnthropicStream(bv.anthropic_key, max_tokens=400, client=bv.client), bv.fast_model)
+
+
 GRACE_S = 0.25
 OPENING_READ_S = 0.6
 
@@ -328,6 +341,8 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
         preparing.cancel()
         return await _refuse(wire, line, decision.reason)
     line.admitted_ms = round((inbound.monotonic() - began_check) * 1000)
+    if service.english_lines:
+        line.translator = english_lines(bv)
     log.info("exotel_inbound admitted rule=%s", decision.rule)
     tenant = decision.tenant_id
     # our cap on Cartesia (app/voice/budget.py): the call's allowance is reserved now, AFTER admission (a refused call writes nothing), while the call is being set up and the greeting starts
