@@ -122,14 +122,20 @@ describe("the home page (landing v3, night 5)", () => {
     const list = day.match(/<ol[^>]*data-part="day"[\s\S]*?<\/ol>/)![0];
     expect(list.match(/<li[\s>]/g)).toHaveLength(6);
     expect([...list.matchAll(/<h3[^>]*>([^<]+)<\/h3>/g)].map((m) => m[1])).toEqual(["New leads caught", "A lead arrives late", "Your assistant calls", "The outcome is saved", "Your salesperson takes over", "Follow-up, without reminders from you"]);
-    expect([...list.matchAll(/<time[^>]*>([^<]+)/g)].map((m) => m[1])).toEqual(["6:00", "9:47", "9:30", "9:32", "9:33", "Fri"]);
+    expect([...list.matchAll(/<time[^>]*>([^<]+)/g)].map((m) => m[1].trim())).toEqual(["6:00", "9:47", "9:30", "9:32", "9:33", "Fri"]);
     expect(text(list)).toContain("Leads from your website forms, WhatsApp, missed calls and Meta lead ads land in one list");
     expect(list.match(/<strong[^>]*>/g)!.length).toBeGreaterThanOrEqual(2);
+  });
+  it("calls first (owner, 6 Nov): after hours the call is booked for the morning and WhatsApp goes only when the customer asks; the day's last moment reads \"Fri evening\", with a space", () => {
+    const t = text(home);
+    for (const x of ["Called first thing in the morning", "sends details on WhatsApp when the customer asks", "books the call for first thing in the morning. A WhatsApp goes only if Ravi asks for one.", "Call booked for the morning", "call at 9:30 tomorrow, in Telugu. No message sent tonight.", "31 on DND left out."]) expect(t, x).toContain(x);
+    expect(t).not.toMatch(/WhatsApp now|carries on over WhatsApp|WhatsApp message straight away|WhatsApp to Ravi|get WhatsApp only|Here is the brochure|Frievening/);
+    expect(home).toMatch(/Fri <small/);
   });
   it("has Lead Desk in five rows: approve all, tell the assistant, languages, your opening line, speed by source", () => {
     const section = home.match(/<section id="leaddesk"[\s\S]*?<\/section>/)![0];
     expect([...section.matchAll(/data-row="(\d)"/g)].map((m) => m[1])).toEqual(["1", "2", "3", "4", "5"]);
-    for (const x of ["Approve a whole list in one go", "Approve all", "Tell your assistant what you need", "Talks the way your customers talk", "నమస్కారం", "வணக்கம்", "ನಮಸ್ಕಾರ", "നമസ്കാരം", "नमस्ते", "Your words open every call", "Fast, while they're still interested", "right away", "WhatsApp now, call in the morning"]) expect(text(section), x).toContain(x);
+    for (const x of ["Approve a whole list in one go", "Approve all", "Tell your assistant what you need", "Talks the way your customers talk", "నమస్కారం", "வணக்கம்", "ನಮಸ್ಕಾರ", "നമസ്കാരം", "नमस्ते", "Your words open every call", "Fast, while they're still interested", "right away", "Called first thing in the morning"]) expect(text(section), x).toContain(x);
     // the opening line shows its placeholders as they are typed
     for (const v of ["{customer}", "{business}"]) expect(text(section.match(/data-part="opening-example"[\s\S]*?<\/p>/)![0])).toContain(v);
   });
