@@ -191,6 +191,8 @@ from app.reports.repository import PostgrestReportsRepository
 from app.reports.routes import router as reports_router
 from app.scheduler.repository import PostgrestSchedulerRepository
 from app.scheduler.routes import router as scheduler_router
+from app.search.routes import PostgrestSearch
+from app.search.routes import router as search_router
 from app.sites import errors as site_errors
 from app.sites.repository import PostgrestSitesRepository
 from app.sites.routes import router as sites_router
@@ -360,6 +362,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         assistant_work_tenants=parse_tenants(settings.assistant_work_tenants),
         workspace_secrets=build_workspace_secrets(settings, config.rest_url, config.anon_key),
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
+        search=PostgrestSearch(config.rest_url, config.anon_key),
         developer_api=build_developer_api(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
         ),
@@ -1327,6 +1330,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(lead_sources_router)
     app.include_router(assistant_work_router)
     app.include_router(talk_training_router)
+    app.include_router(search_router)
     app.include_router(developer_router)
     app.include_router(developer_api_router)
     app.include_router(lead_profile_router)
