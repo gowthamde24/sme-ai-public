@@ -104,7 +104,7 @@ def test_a_token_is_good_for_its_call_until_it_expires_and_cannot_be_forged() ->
 
 def test_the_stream_address_is_wss_on_our_host_inside_the_applets_limits() -> None:
     url = inbound.stream_url("https://sme-api-620338396268.asia-south1.run.app/", inbound.mint(SECRET, NOW))
-    assert url.startswith("wss://sme-api-620338396268.asia-south1.run.app/v1/telephony/exotel/stream/") and url.endswith("?sample-rate=16000")
+    assert url.startswith("wss://sme-api-620338396268.asia-south1.run.app/v1/telephony/exotel/stream/") and url.endswith("?sample-rate=8000")
     assert len(url) < 200 and url.count("&") == 0, "the token in the path (a dropped query string cannot lose it), one parameter, a short address"
 
 
@@ -219,8 +219,10 @@ async def test_a_call_from_the_owner_is_answered_by_the_ai_and_finished_with_its
                                                  "end_how", "stop_reason", "close_code", "events", "bytes_in", "bytes_out", "first_out_ms",
                                                  # owner, 6 Nov 2026: both target times logged for every call
                                                  "pickup_to_first_sound_ms", "admitted_ms", "greeting_ready", "reply_ms_p50", "reply_ms_p95", "reply_ms_max",
-                                                 "first_sound_within_target", "replies_within_target"}
-    assert numbers["admitted_ms"] is not None and numbers["greeting_ready"] is True, "admitted, with the greeting already spoken into memory"
+                                                 "first_sound_within_target", "replies_within_target",
+                                                 "line_rate", "out_chunk_bytes", "chunks_out"}
+    assert numbers["admitted_ms"] is not None and numbers["greeting_ready"] is False, "the fake voice is 16 kHz, so its greeting is never kept (the line expects 24 kHz) and is streamed instead"
+    assert numbers["line_rate"] == 16000 and numbers["out_chunk_bytes"] == 3200 and numbers["chunks_out"] >= 1
     assert numbers["bytes_out"] > 0 and numbers["first_out_ms"] is not None and numbers["events"].get("start") == 1, "our audio went out, and when"
     assert numbers["cost_paise_estimate"] == 100, "one started minute at the estimate"
     line = next(r for r in records if r.startswith("phone_call_numbers "))

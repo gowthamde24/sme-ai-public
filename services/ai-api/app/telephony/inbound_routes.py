@@ -1,7 +1,7 @@
 """Exotel's Voicebot applet -> our phone assistant, INBOUND only (app/telephony/inbound.py has the rules). Two public addresses (no sign-in: Exotel cannot sign in; the token and Exotel's own confirmation are the
 fence):
 
-  GET|POST /v1/telephony/exotel/stream-url   -> 200 {"url": "wss://.../v1/telephony/exotel/stream?sample-rate=16000&t=<token>"}; 403 {"error": ...} while inbound is off or the caller is not on the sandbox list
+  GET|POST /v1/telephony/exotel/stream-url   -> 200 {"url": "wss://.../v1/telephony/exotel/stream?sample-rate=8000&t=<token>"}; 403 {"error": ...} while inbound is off or the caller is not on the sandbox list
   WS       /v1/telephony/exotel/stream?t=...  the call itself
 
 NOTE: no `from __future__ import annotations` here (FastAPI reads the endpoint signatures at registration)."""

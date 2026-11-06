@@ -1,7 +1,7 @@
 """The phone line as a socket (job phone-calls part 2): the same `Socket` the browser WebSocket is to the Live-talk session, so a call runs the same session loop, with a different wire.
 
   from the provider   media (any line rate) -> 16 kHz PCM frames for the recogniser;  dtmf -> {"type": "dtmf"};  stop or a closed wire -> close
-  to the provider     the voice's 24 kHz audio -> the line rate, in chunks the provider accepts (multiples of 320 bytes, 3200 or more);  audio_stop -> `clear` (the barge-in);  audio_end -> the rest of the audio and a mark
+  to the provider     the voice's 24 kHz audio -> the line rate, in 100 ms chunks (multiples of 320 bytes), never more than LEAD_S ahead of what has played (real-time pace, also for a greeting already in memory);  audio_stop -> `clear` (the barge-in);  audio_end -> the rest of the audio and a mark
   from the session    only `caption` lines with final=True are kept (the transcript); every other message of the browser protocol means nothing on a phone and is dropped
   barge-in            a browser decides when the caller starts talking over the assistant; on a phone the line does: sound above a threshold, for long enough, while our audio is still playing, becomes {"type": "barge_in",
                       "verify": true}, and the session's own verification (the recogniser must hear words) decides whether it was a person, a cough or the line's echo
@@ -27,6 +27,7 @@ Kind = Literal["text", "bytes", "close"]
 STT_RATE = 16000
 FRAME_BYTES = STT_RATE * 2 * 20 // 1000   # 20 ms at 16 kHz
 OPEN_TIMEOUT_S = 10.0
+LEAD_S = 0.3   # how far ahead of the caller's ear we may send: a small cushion for the network, never a burst of the whole clip
 
 
 class Wire(Protocol):
@@ -44,11 +45,13 @@ class PhoneLine:
         self.end_reason: str | None = None       # why the call ended, in the words of phone_calls.end_reason: caller_hung_up | goodbye | silence | longest_call | stopped | error
         self._forced_rate = line_rate
         self.rate = line_rate or exotel.DEFAULT_RATE
+        self.chunk = exotel.chunk_bytes(self.rate)
         self.start: exotel.Start | None = None
         self.transcript: list[dict[str, Any]] = []
         self.dtmf: list[str] = []
         self.bytes_in = 0
         self.bytes_out = 0
+        self.chunks_out = 0
         self._q: asyncio.Queue[tuple[Kind, Any]] = asyncio.Queue()   # what the session reads: filled by the pump, and by us when we hang up
         self._pump_task: asyncio.Future[None] | None = None
         self._hang_up_after_audio_end: str | None = None
@@ -90,6 +93,7 @@ class PhoneLine:
         if start is not None:
             self.start = start
             self.rate = self._forced_rate or start.sample_rate
+            self.chunk = exotel.chunk_bytes(self.rate)
             self._down = Resampler(OUT_RATE, self.rate)
             self._up = Resampler(self.rate, STT_RATE) if self.rate != STT_RATE else None
             self._pump_task = asyncio.ensure_future(self._pump())
@@ -160,9 +164,10 @@ class PhoneLine:
         if self.start is None or self._down is None or self._closed:
             return
         self._pending += self._down.process(data)
-        while len(self._pending) >= exotel.MIN_CHUNK:
-            await self._emit(bytes(self._pending[: exotel.MIN_CHUNK]))
-            del self._pending[: exotel.MIN_CHUNK]
+        while len(self._pending) >= self.chunk and not self._closed:
+            part = bytes(self._pending[: self.chunk])
+            del self._pending[: self.chunk]
+            await self._emit(part)
 
     async def send_json(self, message: dict[str, Any]) -> None:
         kind = message.get("type")
@@ -186,22 +191,29 @@ class PhoneLine:
         if self.start is None or self._closed:
             return
         if self._pending:
-            chunk = pad_to_multiple(bytes(self._pending), exotel.MIN_CHUNK)
+            chunk = pad_to_multiple(bytes(self._pending), self.chunk)
             self._pending.clear()
-            for i in range(0, len(chunk), exotel.MIN_CHUNK):
-                await self._emit(chunk[i : i + exotel.MIN_CHUNK])
+            for i in range(0, len(chunk), self.chunk):
+                await self._emit(chunk[i : i + self.chunk])
+        if self._closed:
+            return
         self._seq += 1
-        await self._wire.send_text(exotel.mark_message(self.start.stream_sid, f"turn-{self._seq}", self._seq))
+        await self._wire.send_text(exotel.mark_message(self.start.stream_sid, f"turn-{self._seq}"))
 
     async def _emit(self, chunk: bytes) -> None:
         assert self.start is not None   # noqa: S101 - callers check
-        self._seq += 1
+        ahead = self._play_until - self._clock()
+        if ahead > LEAD_S:   # real-time pace: wait until what was sent has (nearly) played
+            await self._sleep(ahead - LEAD_S)
+            if self._closed:
+                return
         self.bytes_out += len(chunk)
+        self.chunks_out += 1
         if self.first_out_s is None:
             self.first_out_s = self._clock() - self._began
         now = self._clock()
         self._play_until = max(self._play_until, now) + len(chunk) / 2 / self.rate
-        await self._wire.send_text(exotel.media_message(self.start.stream_sid, chunk, self._seq))
+        await self._wire.send_text(exotel.media_message(self.start.stream_sid, chunk))
 
     async def hang_up(self, reason: str) -> None:
         """We end the call: first let the provider finish playing what we sent (a goodbye cut in half is rude), then close. The session's reader sees the close and the session ends."""

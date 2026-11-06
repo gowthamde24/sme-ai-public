@@ -1,6 +1,6 @@
 """The opening line, already spoken (owner, 6 Nov 2026: "first sound within 1.5 s of pickup"). A greeting is rendered once per language and wording, kept in this process, and played the
-moment a call is admitted, with no wait for the voice engine. The default greetings of every language are rendered when the process starts; a workspace's own trained greeting is rendered
-while the call is being checked (in parallel with Exotel's record), so it is ready by admission, and kept for the next call. A small request now and then keeps the voice engine's connection warm.
+moment a call is admitted, with no wait for the voice engine. The default greeting of the line's language is rendered when the process starts; a workspace's own trained greeting is rendered
+while the call is being checked (in parallel with Exotel's record), so it is ready by admission, and kept for the next call. Exotel's connection is kept warm with a free account read; the voice engine is never pinged (it would bill, and each call opens its own client).
 
 Nothing here sends audio to anyone: it only prepares it. The line plays it only after the call is admitted."""
 
@@ -16,9 +16,19 @@ from collections import OrderedDict
 from collections.abc import Callable
 from typing import Any
 
+from app.browser_voice.audio import OUT_RATE
+
 log = logging.getLogger("app.telephony.greeting_audio")
 MAX_ENTRIES = 64
 KEEP_WARM_S = 240.0
+
+
+def strip_wav(pcm: bytes) -> bytes:
+    """Raw 16-bit PCM only: a WAV header (RIFF ... data <size>) is dropped, so the line never plays a header as noise."""
+    if pcm[:4] != b"RIFF" or pcm[8:12] != b"WAVE":
+        return pcm
+    at = pcm.find(b"data", 12)
+    return pcm[at + 8:] if at >= 0 else pcm
 
 
 class GreetingAudio:
@@ -61,7 +71,12 @@ class GreetingAudio:
                 return b"".join([chunk async for chunk in tts.stream(text, language)])
 
             pcm = await asyncio.wait_for(collect(), timeout_s) or None
+            rate = getattr(tts, "sample_rate", OUT_RATE)
+            if pcm and rate != OUT_RATE:   # the line resamples from the voice's 24 kHz; a voice at another rate is streamed, never kept
+                log.warning("greeting_not_kept language=%s rate=%s", language, rate)
+                pcm = None
             if pcm:
+                pcm = strip_wav(pcm)
                 self._cache[k] = pcm
                 while len(self._cache) > self._max:
                     self._cache.popitem(last=False)
@@ -80,7 +95,7 @@ GREETINGS = GreetingAudio()
 
 
 async def prewarm(tts_for: Callable[[str], Any], texts: dict[str, str]) -> int:
-    """At start-up: render each language's default greeting (one after another, so a cold start does not hit the voice engine with seven requests at once)."""
+    """At start-up: render the given greetings one after another (never several voice requests at once)."""
     made = 0
     for language, text in texts.items():
         if await GREETINGS.render(tts_for(language), language, text) is not None:
@@ -90,7 +105,7 @@ async def prewarm(tts_for: Callable[[str], Any], texts: dict[str, str]) -> int:
 
 
 async def keep_warm(ping: Callable[[], Any], *, every_s: float = KEEP_WARM_S, stop: asyncio.Event | None = None) -> None:
-    """Every few minutes, one tiny request to the voice engine and to Exotel, so their connections stay open (a cold TLS handshake is what made the first word late)."""
+    """Every few minutes, one free request (Exotel's account record), so that connection stays open."""
     while stop is None or not stop.is_set():
         try:
             await asyncio.wait_for(stop.wait(), every_s) if stop is not None else await asyncio.sleep(every_s)
@@ -107,8 +122,8 @@ async def keep_warm(ping: Callable[[], Any], *, every_s: float = KEEP_WARM_S, st
 
 
 async def start_warm(service: Any, bv: Any, *, stop: asyncio.Event) -> None:
-    """At start-up, in the background (the API answers at once): sign the worker account in, open Exotel's connection, render every language's default greeting; then keep the voice engine and
-    Exotel warm. Only for a process that takes phone calls."""
+    """At start-up, in the background (the API answers at once): sign the worker account in, open Exotel's connection, render the line language's greeting; then keep Exotel warm.
+    Only for a process that takes phone calls."""
     from app.telephony import persona
     from app.telephony.inbound_routes import phone_parts
 
@@ -127,14 +142,12 @@ async def start_warm(service: Any, bv: Any, *, stop: asyncio.Event) -> None:
             await calls.warm()
         except Exception as exc:  # noqa: BLE001
             log.info("warm_exotel_failed %s", exc.__class__.__name__)
-    languages = list(dict.fromkeys([service.language, "te", "en", "hi", "kn", "ta", "ml", "mr"]))
-    await prewarm(tts_for, {lang: persona.opening_line(lang, business=service.business, assistant=None, customer=None, inbound=True) for lang in languages})
+    # only the language the line answers in (owner, 6 Nov 2026: no voice credits to spare): one rendering per revision start, not seven
+    await prewarm(tts_for, {service.language: persona.opening_line(service.language, business=service.business, assistant=None, customer=None, inbound=True)})
 
     async def ping() -> None:
-        tts = tts_for(service.language)
-        async for _ in tts.stream("ok", service.language):
-            break
+        # Exotel's account record only (free). No voice request: every call builds its own voice client, so a synthesis here would cost credits and keep nothing warm.
         if calls is not None:
             await calls.warm()
 
-    await keep_warm(ping, stop=stop)
+    await keep_warm(ping, every_s=KEEP_WARM_S, stop=stop)
