@@ -91,6 +91,16 @@ begin
   end loop;
 end $$;
 
+-- the developer API, D1: a test lead references its key; the generic attack needs a tenant-B key to aim at
+do $$
+declare
+  r record;
+begin
+  for r in select * from tests.tenant_table_registry where table_name in ('developer_api_keys') order by table_name loop
+    execute format(r.insert_sql, tests.tid('b'), gen_random_uuid(), tests.rid('b_company'), tests.rid('b_contact'), tests.pool_uid(3));
+  end loop;
+end $$;
+
 -- privileged equivalent of tests.error_shape_as
 create function pg_temp.err_shape(p_sql text) returns text
 language plpgsql as $$
