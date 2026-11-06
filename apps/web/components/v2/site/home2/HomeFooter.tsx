@@ -20,7 +20,8 @@ const LANG_NAME: Record<Lang, string> = { en: "English", te: "తెలుగు
 export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { href: string; label: string } }) {
   return (
     <footer id="end" className="relative overflow-hidden px-4 pt-8 lg:px-8 lg:pt-20" data-part="home-footer">
-      <span aria-hidden="true" className="absolute bottom-[-380px] left-1/2 block h-[760px] w-[1400px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,140,90,.28),rgba(236,72,110,.08)_40%,rgba(255,140,90,0)_66%)]" />
+      {/* the soft floor light: an oval light that is fully gone at its own edge (closest-side), so no edge of its box can show */}
+      <span aria-hidden="true" className="absolute bottom-[-380px] left-1/2 block h-[760px] w-[1400px] -translate-x-1/2 bg-[radial-gradient(closest-side,rgba(255,140,90,.28),rgba(236,72,110,.08)_55%,rgba(255,140,90,0))]" />
       <div className="relative mx-auto grid max-w-[1240px] gap-8 border-b border-line pb-9 sm:grid-cols-2 lg:grid-cols-[minmax(0,1.4fr)_repeat(4,minmax(0,1fr))] lg:gap-12">
         <div className="flex flex-col gap-3.5">
           <p className="m-0 max-w-[380px] font-display text-[28px] font-extrabold leading-[1.15] tracking-[-0.02em]">
@@ -53,7 +54,7 @@ export function HomeFooter({ t, lang, early }: { t: SiteT; lang: Lang; early: { 
               </Link>
             ))}
           </nav>
-          <LegalLinks lang={lang} direction="column" contact={false} />
+          <LegalLinks lang={lang} direction="column" contact={false} linkClass={link} />
         </div>
         <div className="flex flex-col gap-2.5">
           <span className={head}>{t("h2.foot.talk")}</span>

@@ -31,7 +31,12 @@ export function parseManifest(json: unknown): Manifest | null {
 /** The manifest (once per page; null when it cannot be read: every "Hear it" then stays hidden). */
 export function loadManifest(): Promise<Manifest | null> {
   pending ??= fetch(MANIFEST, { credentials: "same-origin" })
-    .then((r) => (r.ok ? r.json() : null))
+    .then((r) => {
+      if (r.ok) return r.json();
+      // a missing manifest is the site's large 404 page: cancel it, or the browser keeps the unread answer open (the page never goes quiet)
+      void r.body?.cancel().catch(() => undefined);
+      return null;
+    })
     .then(parseManifest)
     .catch(() => null);
   return pending;

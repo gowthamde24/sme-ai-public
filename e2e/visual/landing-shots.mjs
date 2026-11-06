@@ -81,6 +81,23 @@ try {
     }
     await ctx.close();
   }
+  // the phone header (landing v2 phone design): the one button stays in the bar in every language, nothing spills past the edge; the language and the theme are in the menu
+  for (const width of [360, 390])
+    for (const lang of ["en", "te", "hi", "kn"]) {
+      const { ctx, p } = await open(browser, { width, height: 844, lang });
+      const fit = await p.evaluate(() => {
+        const bar = document.querySelector("header");
+        const btn = [...(bar?.querySelectorAll('a[href="#demo"]') ?? [])].find((a) => a.getBoundingClientRect().width > 0);
+        const r = btn?.getBoundingClientRect();
+        return { btn: Boolean(r && r.right <= window.innerWidth - 8 && r.left >= 0), row: [...(bar?.querySelectorAll("*") ?? [])].every((el) => el.getBoundingClientRect().right <= window.innerWidth + 1 || el.closest("details nav")) };
+      });
+      check(fit.btn && fit.row, `${width}-${lang}: the header's button is in the bar and nothing spills over`);
+      await p.click("header summary");
+      await p.waitForTimeout(300);
+      check(await p.locator("header details nav select").isVisible(), `${width}-${lang}: the menu holds the language`);
+      await p.screenshot({ path: path.join(OUT, `${TAG}${width}-${lang}-menu.png`) });
+      await ctx.close();
+    }
   // Try it: Pavers, Hindi, Send -> the caption says the Hindi line, and the quote outcome lights
   {
     const { ctx, p } = await open(browser, { width: 1440 });

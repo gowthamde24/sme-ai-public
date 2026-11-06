@@ -19,7 +19,7 @@ const link = "inline-flex min-h-11 items-center whitespace-nowrap rounded-lg px-
 /**
  * The header of every public page (jobs CM, CX, DM; the three-bar logo and five links in night 5): the logo and the name, five links (How it works, Lead Desk, Industries, Pricing, Questions: the sections of the home page, so from another page they lead back to it; Pricing leads
  * to the plans page there), Sign in, the language (this page in the other languages), the theme, and the one button of the site, "Start trial". From 1024 px the links sit in the bar; below that they are a native
- * disclosure (`<details>`, no script); the language, theme and the button stay in the bar.
+ * disclosure (`<details>`, no script); the button stays in the bar, and the language and theme stay there from 640 px (below that they are in the menu).
  */
 export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; theme?: Theme; target: SiteTarget }) {
   const hrefs = Object.fromEntries(LANGS.map((l) => [l, sitePath(l, target)])) as Record<Lang, string>;
@@ -63,14 +63,15 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
               {t("h2.nav.login")}
             </Link>
           )}
-          <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} />
-          <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
-          <span className="hidden sm:block">
-            <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-ink px-[18px] text-[15px] font-bold text-bg">
-              <span className="xl:hidden">{early.short}</span>
-              <span className="max-xl:hidden">{early.label}</span>
-            </Link>
+          {/* a phone keeps the one button in the bar (the landing v2 phone design) and finds the language and the theme in the menu */}
+          <span className="hidden items-center gap-2 sm:flex">
+            <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} />
+            <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
           </span>
+          <Link href={early.href} className="inline-flex min-h-11 items-center whitespace-nowrap rounded-full bg-ink px-3.5 text-sm font-bold text-bg sm:px-[18px] sm:text-[15px]">
+            <span className="xl:hidden">{early.short}</span>
+            <span className="max-xl:hidden">{early.label}</span>
+          </Link>
           <details className="group relative lg:hidden">
             <summary className="inline-flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center rounded-lg border border-edge bg-surface text-ink hover:bg-surface-2 [&::-webkit-details-marker]:hidden">
               <Menu className="size-5" aria-hidden="true" />
@@ -92,10 +93,9 @@ export function SiteHeader({ t, lang, theme, target }: { t: SiteT; lang: Lang; t
                     </Link>
                   </li>
                 )}
-                <li className="sm:hidden">
-                  <Link href={early.href} className={`${link} w-full font-semibold text-brand-text`}>
-                    {early.label}
-                  </Link>
+                <li className="mt-1 flex items-center gap-2 border-t border-line px-1 pt-2 sm:hidden">
+                  <LangSelect lang={lang} label={t("lang.label")} hrefs={hrefs} />
+                  <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
                 </li>
               </ul>
             </nav>

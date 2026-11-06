@@ -139,7 +139,8 @@ export function LeakCalc({ w }: { w: W }) {
               {(enq - cold).toLocaleString("en-IN")}
             </p>
           </div>
-          <p className="absolute left-0 top-[34%] m-0 text-[13px] font-bold text-muted">{w["h2.leak.in"]}</p>
+          {/* above the stream: on a phone the stream runs at about 40% of the drawing's height, on a wide screen at about 44% */}
+          <p className="absolute left-0 top-[22%] m-0 text-[13px] font-bold text-muted lg:top-[34%]">{w["h2.leak.in"]}</p>
         </div>
         <div className="lg:absolute lg:bottom-2 lg:left-[44%]" aria-live="polite">
           <p className="m-0 text-sm font-bold text-muted lg:text-[15px]">{w["h2.leak.cold"]}</p>
