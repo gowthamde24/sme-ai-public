@@ -68,13 +68,15 @@ begin
     -- Caller: a call (its length), a visit booked; today: asked for a person, asked for a visit, a call to approve, a paused list, a visit the assistant proposed
     union all
     select 'caller', 'phone_call:' || c.id, c.created_at, 'call', c.duration_s,
-           left(coalesce(k.full_name, case c.direction when 'inbound' then 'A caller' else 'A lead' end), 40) || ' · ' || coalesce(c.category, c.outcome, c.state), 'call', c.id, false, true
+           left(coalesce(k.full_name, case c.direction when 'inbound' then 'A caller' else 'A lead' end), 40) || ' · ' || coalesce(c.category, c.outcome, c.state),
+           case when c.lead_id is not null then 'lead' else 'call' end, coalesce(c.lead_id, c.id), false, true
       from public.phone_calls c
       left join public.contacts k on k.tenant_id = c.tenant_id and k.id = c.contact_id
      where c.tenant_id = p_tenant_id and c.created_at >= v_from and c.created_at < v_to
     union all
     select 'caller', 'phone_call:' || c.id, coalesce(c.ended_at, c.created_at), 'call', c.duration_s,
-           left(coalesce(k.full_name, 'A caller'), 40) || case when c.end_reason = 'handover' then ' · asked for a person' else ' · asked for a visit' end, 'call', c.id, true, false
+           left(coalesce(k.full_name, 'A caller'), 40) || case when c.end_reason = 'handover' then ' · asked for a person' else ' · asked for a visit' end,
+           case when c.lead_id is not null then 'lead' else 'call' end, coalesce(c.lead_id, c.id), true, false
       from public.phone_calls c
       left join public.contacts k on k.tenant_id = c.tenant_id and k.id = c.contact_id
      where v_today and v_reader and c.tenant_id = p_tenant_id and c.handled_at is null and c.created_at >= now() - interval '7 days'
@@ -169,7 +171,7 @@ begin
     -- School: admissions moved, fee payments, notices and marks messages; today: a campaign to approve, fees overdue
     union all
     select 'admissions', 'admission_event:' || e.id, e.at, case when e.stage = 'admitted' then 'admission' when e.stage = 'campus_visit' then 'visit' else 'lead_in' end, null,
-           left(coalesce(k.full_name, 'A family'), 40) || ' · ' || e.stage, 'student', a.id, false, true
+           left(coalesce(k.full_name, 'A family'), 40) || ' · ' || e.stage, case when a.student_id is not null then 'student' else 'admission' end, coalesce(a.student_id, a.id), false, true
       from public.admission_events e
       join public.admissions a on a.tenant_id = e.tenant_id and a.id = e.admission_id
       left join public.contacts k on k.tenant_id = a.tenant_id and k.id = a.contact_id

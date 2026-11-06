@@ -16,9 +16,10 @@ HELPERS = frozenset(BUSINESS + SCHOOL)
 MAX_MARKS = 200
 DEFAULT_OPENS, DEFAULT_CLOSES = "09:00", "20:00"
 # where a mark opens in the app (C2 may ask for other paths)
+# (C2, 6 Nov: the web routes a mark by ref.type + ref.id; these are the same paths, for anything else that wants a link. A school record has no href here.)
 HREF = {
-    "lead": "leads/{id}", "call": "calls/{id}", "quote": "quotes/{id}", "order": "orders/{id}", "visit": "visits", "prospect": "lead-finder", "prospect_search": "lead-finder",
-    "campaign": "campaigns", "student": "admissions", "intake": "lead-sources",
+    "lead": "leads/{id}", "call": "office/live?call={id}", "quote": "quotes/{id}", "order": "orders/{id}", "visit": "visits?visit={id}", "prospect": "retailers?prospect={id}",
+    "prospect_search": "retailers", "campaign": "campaigns/{id}", "intake": "lead-desk?intake={id}",
 }
 SETTINGS = {
     "caller": [("calling_hours", "settings/calls")], "followups": [("followup_rules", "lead-desk/rules")], "lead_catcher": [("lead_sources", "lead-sources")],
