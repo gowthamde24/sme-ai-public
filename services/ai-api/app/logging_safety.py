@@ -25,6 +25,8 @@ ROUTE_WORDS = frozenset(
         "switches", "switch",
         # 5 Nov 2026 (C1): "secrets"
         "secrets",
+        # 5 Nov 2026 (C1): the developer API (ADR 0121): /api/v1/... and Settings -> Developers
+        "api", "developer", "keys",
         # 5 Nov 2026 (C1): guided setups (POST /assistant/setups/{id}/test)
         "setups",
         # 6 Nov 2026 (C1): My AI team v2 (/ai-team/day, /ai-team/{helper}, /ai-team/standup)

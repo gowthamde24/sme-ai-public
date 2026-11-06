@@ -190,6 +190,9 @@ class Runtime:
     talk_training: Any = None
     # My AI team v2 (app/ai_team: the day view and the panels, one database read)
     ai_team: Any = None
+    # the developer API (app/developer_api.DeveloperApi)
+    # None: DEVELOPER_API=off, every route answers 404
+    developer_api: Any = None
     calls: CallsService | None = None
     live_calls: LiveCalls | None = None
     # job DS: the voice picker's listening sample (one short clip, cached, capped)
