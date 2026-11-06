@@ -6,8 +6,9 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import cast
 
-from app.talk_training.models import TalkTraining
+from app.talk_training.models import Language, TalkTraining
 from app.telephony.persona import INBOUND_OPENING
 
 # the default questions per business type (pack id -> questions) live in data/questions.json: the code never names a pack (tests/test_ck_packs_data.py)
@@ -28,4 +29,4 @@ RULES = [
 def defaults_for(pack: str | None, playbook_questions: list[str] | None = None) -> TalkTraining:
     questions = playbook_questions or QUESTIONS.get(pack or "", GENERIC)
     # the suggested greeting per language is what an inbound call says today when the Owner has none: the standard opening (it says "AI"; {business} is the business's name)
-    return TalkTraining(greeting=dict(INBOUND_OPENING), address="plain", questions=questions[:8], never_say=list(NEVER_SAY))
+    return TalkTraining(greeting=cast("dict[Language, str]", dict(INBOUND_OPENING)), address="plain", questions=questions[:8], never_say=list(NEVER_SAY))
