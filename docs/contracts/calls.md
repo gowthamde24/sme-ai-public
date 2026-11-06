@@ -73,3 +73,19 @@ While a call is live it also appears in `GET /assistant/activity` as a `call` it
 - **Also fixed:** a live call is reachable by its real id. Since 6 Nov its database row is written while the greeting plays, so Hang up and Whisper could not find it by that id before.
 
 Take over (the owner talks to the caller from the app) and Transfer (to a phone number) are not here yet. Transfer needs Exotel: our stream ends, and a Connect applet after it in the call flow dials the number. That's a real call leg and waits for the owner's decision.
+
+## "Correct it" (app v4, 6 Nov 2026)
+
+`POST /v1/tenants/{t}/calls/{id}/correction` (Owner, Admin, Sales).
+- **Request:** `{"summary"?: string ≤600, "captured"?: {key: value}, "note"?: string ≤300}`.
+  - Send at least one field; a missing field keeps what is there.
+  - An empty string (or `{}`) clears that field.
+- **Response:** `{"summary", "captured", "note", "corrected_at"}`.
+- **What is kept:** the AI's own `summary` and `captured` stay as they were. The correction is shown next to them.
+- **`GET /calls/{id}`** now has `correction: {summary, captured, note, corrected_at} | null`.
+- **The note:** what the AI should know about how to talk or what it misunderstood (e.g. "Kanchi pattu means Kanchipuram silk"). The latest five notes go into later calls' instructions, so a note may not hold a phone number or an e-mail address.
+- **Errors:**
+  - 422 `correction_invalid` (a contact in the note);
+  - 422 `validation_error` (nothing to correct);
+  - 404 for another workspace's call;
+  - 403 for a Viewer.
