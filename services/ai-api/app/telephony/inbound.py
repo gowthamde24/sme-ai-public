@@ -360,13 +360,21 @@ class TimedLine(PhoneLine):
         await super().send_json(message)
 
 
+def voice_numbers(line: Any, duration_s: float) -> dict[str, Any]:
+    """Characters spoken per voice engine in this call, their total, the total per minute of call, and why the primary voice was switched off for the call ("" when it was not)."""
+    chars = {str(k): int(v) for k, v in sorted((getattr(line, "voice_chars", None) or {}).items())}
+    total = sum(chars.values())
+    return {"voice_chars": chars, "voice_chars_total": total, "voice_chars_per_min": round(total / (duration_s / 60), 1) if duration_s >= 1 else None,
+            "voice_primary_off": getattr(line, "voice_primary_off", "") or ""}
+
+
 def call_numbers(call_id: uuid.UUID, line: TimedLine, duration_s: float, cost_paise: int, outcome: str | None) -> dict[str, Any]:
     p50, p95 = percentile(line.first_sound_ms, 0.5), percentile(line.first_sound_ms, 0.95)
     return {"call": str(call_id), "turns": len(line.first_sound_ms), "first_sound_p50_ms": None if p50 is None else round(p50), "first_sound_p95_ms": None if p95 is None else round(p95),
             "duration_s": round(duration_s, 1), "cost_paise_estimate": cost_paise, "outcome": outcome, "end": line.end_reason,
             # how it ended and what went each way (5 Nov 2026): names and numbers only
             "end_how": line.end_how, "stop_reason": line.stop_reason, "close_code": getattr(getattr(line, "_wire", None), "close_code", None), "events": dict(sorted(line.events.items())),
-            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "line_rate": getattr(line, "rate", None), "out_chunk_bytes": getattr(line, "chunk", None), "chunks_out": getattr(line, "chunks_out", None), "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
+            "bytes_in": line.bytes_in, "bytes_out": line.bytes_out, "line_rate": getattr(line, "rate", None), **voice_numbers(line, duration_s), "out_chunk_bytes": getattr(line, "chunk", None), "chunks_out": getattr(line, "chunks_out", None), "first_out_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
             # owner, 6 Nov 2026: targets 1.5 s for both (logged for every call)
             "pickup_to_first_sound_ms": None if line.first_out_s is None else round(line.first_out_s * 1000),
             "admitted_ms": line.admitted_ms, "greeting_ready": line.greeting_ready,

@@ -1,6 +1,5 @@
-"""The opening line, already spoken (owner, 6 Nov 2026: "first sound within 1.5 s of pickup"). A greeting is rendered once per language and wording, kept in this process, and played the
-moment a call is admitted, with no wait for the voice engine. The default greeting of the line's language is rendered when the process starts; a workspace's own trained greeting is rendered
-while the call is being checked (in parallel with Exotel's record), so it is ready by admission, and kept for the next call. Exotel's connection is kept warm with a free account read; the voice engine is never pinged (it would bill, and each call opens its own client).
+"""The opening line, already spoken (owner, 6 Nov 2026: "first sound within 1.5 s of pickup"). The greeting a real call speaks is kept (per language and wording) in this process and played
+from memory, with no wait for the voice engine, the moment the NEXT call is admitted. Nothing is rendered just to fill the cache (owner, 6 Nov 2026: Cartesia credits are spent only on real calls). Exotel's connection is kept warm with a free account read; the voice engine is never pinged (it would bill, and each call opens its own client).
 
 Nothing here sends audio to anyone: it only prepares it. The line plays it only after the call is admitted."""
 
@@ -48,6 +47,20 @@ class GreetingAudio:
         if pcm is not None:
             self._cache.move_to_end(k)
         return pcm
+
+    def keep(self, language: str, text: str, pcm: bytes, *, rate: int, engine: str = "") -> bool:
+        """Keep audio a real call has just spoken (no extra voice request, no extra credits). Only the primary voice at the line's input rate is kept, so a later call never greets in the
+        fallback's voice and then answers in the primary's."""
+        pcm = strip_wav(pcm)
+        if rate != OUT_RATE or not pcm or (engine and engine != "cartesia"):
+            return False
+        k = self.key(language, text)
+        if k not in self._cache:
+            self._cache[k] = pcm
+            while len(self._cache) > self._max:
+                self._cache.popitem(last=False)
+            log.info("greeting_kept language=%s bytes=%d", language, len(pcm))
+        return True
 
     def __len__(self) -> int:
         return len(self._cache)
@@ -122,14 +135,8 @@ async def keep_warm(ping: Callable[[], Any], *, every_s: float = KEEP_WARM_S, st
 
 
 async def start_warm(service: Any, bv: Any, *, stop: asyncio.Event) -> None:
-    """At start-up, in the background (the API answers at once): sign the worker account in, open Exotel's connection, render the line language's greeting; then keep Exotel warm.
+    """At start-up, in the background (the API answers at once): sign the worker account in, open Exotel's connection; then keep it warm (no voice request: credits only for real calls).
     Only for a process that takes phone calls."""
-    from app.telephony import persona
-    from app.telephony.inbound_routes import phone_parts
-
-    def tts_for(language: str) -> Any:
-        return phone_parts(bv, service.business, language, service.llm_choice)[0].tts
-
     principal = getattr(getattr(service, "store", None), "_principal", None)
     if principal is not None:
         try:
@@ -142,8 +149,8 @@ async def start_warm(service: Any, bv: Any, *, stop: asyncio.Event) -> None:
             await calls.warm()
         except Exception as exc:  # noqa: BLE001
             log.info("warm_exotel_failed %s", exc.__class__.__name__)
-    # only the language the line answers in (owner, 6 Nov 2026: no voice credits to spare): one rendering per revision start, not seven
-    await prewarm(tts_for, {service.language: persona.opening_line(service.language, business=service.business, assistant=None, customer=None, inbound=True)})
+    # owner, 6 Nov 2026: "Don't spend Cartesia credits on anything except real test calls ... no renders, warm-ups or checks". So nothing is rendered here: the first real call streams its
+    # greeting as usual and keeps that very audio (GreetingAudio.keep), and every later call plays it from memory.
 
     async def ping() -> None:
         # Exotel's account record only (free). No voice request: every call builds its own voice client, so a synthesis here would cost credits and keep nothing warm.

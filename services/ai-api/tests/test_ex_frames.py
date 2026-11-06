@@ -156,7 +156,7 @@ def test_a_wav_header_is_never_played_and_another_rate_is_never_kept() -> None:
 
 @arun
 async def test_the_warm_up_never_asks_the_voice_engine_after_start() -> None:
-    """Owner, 6 Nov 2026: no voice credits to spare. Start-up renders ONE greeting (the line's language); the keep-warm ping only reads Exotel's account record."""
+    """Owner, 6 Nov 2026: "Don't spend Cartesia credits on anything except real test calls ... no renders, warm-ups or checks". Start-up and the keep-warm ping only read Exotel's account record."""
     from app.telephony import greeting_audio as G
 
     asked: list[str] = []
@@ -191,5 +191,5 @@ async def test_the_warm_up_never_asks_the_voice_engine_after_start() -> None:
     finally:
         R.phone_parts = original
         G.KEEP_WARM_S = original_every
-    assert asked == ["te"], "one rendering at start, in the line's language, and no voice request while keeping warm"
+    assert asked == [], "no voice request at start or while keeping warm (credits only for real calls)"
     assert len(warmed) >= 3

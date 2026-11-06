@@ -215,11 +215,9 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID) -> P
     else:
         parts, model = service.parts_for(bv, service.business, service.language, service.llm_choice)
     text = parts.greeting_for(service.language)
-    rendering: asyncio.Future[bytes | None] | None = None
-    if text and GREETINGS.get(service.language, text) is None:
-        # rendered in the background (kept for the next call too); the call never waits for it beyond a short grace (see `_greeting_ready`)
-        rendering = asyncio.ensure_future(GREETINGS.render(parts.tts, service.language, text))
+    rendering: asyncio.Future[bytes | None] | None = None   # never rendered ahead (no credits spent outside a real call): the greeting this call speaks is kept for the next one
     parts.greeting_audio = GREETINGS.get
+    parts.greeting_keep = GREETINGS.keep
     return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering)
 
 
