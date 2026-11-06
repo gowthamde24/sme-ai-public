@@ -35,6 +35,7 @@ dev = [
     "mypy>=1.11",
     "jsonschema>=4.23",
     "types-jsonschema>=4.23",
+    "pytest-xdist>=3.6",   # CI speed (owner, 6 Nov 2026): each CI test part uses the runner's 4 CPUs; locally `pytest -n 4` is optional
 ]
 
 [build-system]
@@ -46,6 +47,7 @@ include = ["app*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["serial: measures real time, so it runs on its own after the parallel tests (CI runs them with -p no:xdist)"]
 
 [tool.ruff]
 line-length = 100

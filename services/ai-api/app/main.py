@@ -224,6 +224,8 @@ from app.telephony.wiring import build_phone_inbound
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
+from app.timeline.routes import PostgrestTimeline
+from app.timeline.routes import router as timeline_router
 from app.today.repository import PostgrestTodayRepository
 from app.today.routes import router as today_router
 from app.turns.routes import router as turns_router
@@ -366,6 +368,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         workspace_secrets=build_workspace_secrets(settings, config.rest_url, config.anon_key),
         talk_training=PostgrestTalkTraining(config.rest_url, config.anon_key),
         search=PostgrestSearch(config.rest_url, config.anon_key),
+        timeline=PostgrestTimeline(config.rest_url, config.anon_key),
         glance=PostgrestGlance(config.rest_url, config.anon_key),
         developer_api=build_developer_api(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
@@ -1349,6 +1352,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(assistant_work_router)
     app.include_router(talk_training_router)
     app.include_router(search_router)
+    app.include_router(timeline_router)
     app.include_router(glance_router)
     app.include_router(developer_router)
     app.include_router(developer_api_router)
