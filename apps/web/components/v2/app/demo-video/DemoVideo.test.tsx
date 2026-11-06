@@ -114,8 +114,8 @@ describe("the demo video: each step on the real screens, from fixtures", () => {
     await key("ArrowRight");
     expect(step()).toBe(6);
     expect(beat()).toBe("call");
-    await key("ArrowRight"); // unfolds "Practice call"
-    expect(beat()).toBe("start");
+    await key("ArrowRight"); // unfolds "Practice call" (the step moves on from the click on it, which may land a moment later)
+    await waitFor(() => expect(beat()).toBe("start"), LONG);
     await key("ArrowRight");
     await waitFor(() => expect(document.querySelector("[data-practice-result]")).not.toBeNull(), LONG);
     expect(document.querySelector('[data-outcome="qualified"]')).not.toBeNull();
