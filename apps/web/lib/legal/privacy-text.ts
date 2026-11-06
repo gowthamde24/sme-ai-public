@@ -85,6 +85,7 @@ export const PRIVACY: LegalText = {
       blocks: [
         { p: "The list in section 5 gives the country of each provider. Where it is not India, the data that provider needs leaves India. That is a transfer abroad. The DPDP Act allows it except to countries the Government of India restricts. For visitors in the EU or UK we use the safeguards the GDPR requires." },
         { p: "A provider only gets what it needs for its purpose. WhatsApp, run by Meta, is used only when a business connects its own WhatsApp number: the message text and the recipient's number go through it to the customer." },
+        { p: "Files you upload in the chat for an import may be read by our AI provider to take out the rows, only when our own server cannot read them (a scan or a photo); they are deleted within 24 hours. A school's files are never sent." },
       ],
     },
     {
