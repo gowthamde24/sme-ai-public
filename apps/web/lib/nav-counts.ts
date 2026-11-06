@@ -7,6 +7,8 @@ export type NavCounts = {
   /** Today's `cards.waiting`: the customers' things. It does NOT hold the Lead Finder's prospects: the menu adds `prospectsNeedingOwner` itself. */
   needsYou: number | null;
   prospectsNeedingOwner: number | null;
+  /** Lead Desk's own things that wait for a person (C1 #356): planned batches and tasks, callbacks due, rules and tasks paused at their cap, hot leads not reminded yet. Absent before #356: null, counted as 0. */
+  leadDeskWaiting: number | null;
   newLeads: number | null;
   liveCalls: number | null;
   unreadChats: number | null;
@@ -20,7 +22,7 @@ export type NavCounts = {
   plan: string | null;
   asOf: string | null;
 };
-export const NO_COUNTS: NavCounts = { needsYou: null, prospectsNeedingOwner: null, newLeads: null, liveCalls: null, unreadChats: null, followupsDue: null, visitsToday: null, quotesWaiting: null, aiTeamWorking: null, callMinutes: null, aiUsage: null, plan: null, asOf: null };
+export const NO_COUNTS: NavCounts = { needsYou: null, prospectsNeedingOwner: null, leadDeskWaiting: null, newLeads: null, liveCalls: null, unreadChats: null, followupsDue: null, visitsToday: null, quotesWaiting: null, aiTeamWorking: null, callMinutes: null, aiUsage: null, plan: null, asOf: null };
 
 const isRec = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
 /** A count, or null: a field that is missing, null or not a whole number from 0 is "not known" (one bad field never takes the others with it, as the contract says of the API's own sources). */
@@ -40,6 +42,7 @@ export function parseNavCounts(json: unknown): NavCounts {
   return {
     needsYou: count(json.needs_you),
     prospectsNeedingOwner: count(json.prospects_needing_owner),
+    leadDeskWaiting: count(json.lead_desk_waiting),
     newLeads: count(json.new_leads),
     liveCalls: count(json.live_calls),
     unreadChats: count(json.unread_chats),
@@ -54,8 +57,11 @@ export function parseNavCounts(json: unknown): NavCounts {
   };
 }
 
-/** The number on Today in the menu: the customers' things plus the Lead Finder's businesses (the contract keeps them apart so neither is counted twice); null when neither is known. */
+/**
+ * The number on Today in the menu, the same things Today's "Needs you" counts: the customers' things, Lead Desk's own (C1 #356: its plans, callbacks, paused rules and hot leads, which /today's `waiting` does not hold) and the Lead
+ * Finder's businesses (the contract keeps the three apart so none is counted twice); null when none is known.
+ */
 export function todayCount(c: NavCounts): number | null {
-  if (c.needsYou === null && c.prospectsNeedingOwner === null) return null;
-  return (c.needsYou ?? 0) + (c.prospectsNeedingOwner ?? 0);
+  if (c.needsYou === null && c.prospectsNeedingOwner === null && c.leadDeskWaiting === null) return null;
+  return (c.needsYou ?? 0) + (c.leadDeskWaiting ?? 0) + (c.prospectsNeedingOwner ?? 0);
 }

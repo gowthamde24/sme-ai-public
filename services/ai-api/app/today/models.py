@@ -67,6 +67,8 @@ class NeedsYouItem(_Out):
         "fees_overdue",
         # 5 Nov 2026 (migration 20261231160000): a caller asked for a person; the team calls back (POST /calls/{id}/handled takes it off)
         "person_requested",
+        # 5 Nov 2026 (migration 20261231180000): a caller picked a free visit slot; a member books it in Visits, then marks the call done
+        "visit_requested",
     ]
     id: uuid.UUID
     customer: str
@@ -146,6 +148,7 @@ class NavCountsOut(_Out):
 
     needs_you: int | None
     prospects_needing_owner: int | None
+    lead_desk_waiting: int | None = None   # Lead Desk's own rows Today adds (plans to approve, callbacks due, paused rules/tasks, new hot leads)
     new_leads: int | None
     live_calls: int | None
     unread_chats: int | None

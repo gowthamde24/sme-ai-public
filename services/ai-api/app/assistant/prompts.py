@@ -25,6 +25,7 @@ LANGUAGE_NAMES: dict[str, str] = {
     "kn": "Kannada",
     "ta": "Tamil",
     "ml": "Malayalam",
+    "mr": "Marathi",
 }
 
 
@@ -48,7 +49,7 @@ class FinalReply(BaseModel):
         if not value.strip():   # only spaces / new lines: the same as no answer (an empty bubble, owner 1 Nov 2026)
             raise ValueError("blank answer")
         return value
-    language: Literal["en", "te", "hi", "kn", "ta", "ml"]
+    language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
     # the handles (s1, s2, ...) of the tool results the answer rests on
     sources: list[str] = Field(default_factory=list, max_length=20)
 
@@ -138,7 +139,7 @@ class ChatReply(BaseModel):
         if not value.strip():   # only spaces / new lines: the same as no answer (an empty bubble, owner 1 Nov 2026)
             raise ValueError("blank answer")
         return value
-    language: Literal["en", "te", "hi", "kn", "ta", "ml"]
+    language: Literal["en", "te", "hi", "kn", "ta", "ml", "mr"]
 
 
 CHAT_REPLY = ToolSpec("reply", "Give your reply to the owner.", compact_schema(ChatReply.model_json_schema()))

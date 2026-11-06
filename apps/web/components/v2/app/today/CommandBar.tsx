@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import * as React from "react";
 
-import { AskCard } from "./ask/AskCard";
+import { AskCard } from "./ask/LazyAskCard";
 import type { Availability } from "./ask/ask-types";
 import type { AskWords } from "./ask/ask-words";
 import { AskProvidedContext, AskVoiceContext, useStoredAsk } from "./ask/ask-store";

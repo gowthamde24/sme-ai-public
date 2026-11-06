@@ -1,10 +1,12 @@
 """(b) Mid-call language switch and (j) Marathi and Bengali: detect the language the customer is speaking from the script of what they said, and decide whether to switch. The voice persona never changes on a
-switch ("same voice"). Marathi shares Devanagari with Hindi: a few very common Marathi words decide. Pure."""
+switch ("same voice"). Marathi shares Devanagari with Hindi: a few very common Marathi words decide (the one shared rule, app.assistant.language.devanagari_language). Pure."""
 
 from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+
+from app.assistant.language import devanagari_language
 
 SCRIPTS = (
     ("te", re.compile(r"[ఀ-౿]")),
@@ -14,7 +16,6 @@ SCRIPTS = (
     ("bn", re.compile(r"[ঀ-৿]")),
 )
 DEVANAGARI = re.compile(r"[ऀ-ॿ]")
-MARATHI_WORDS = re.compile(r"(आहे|आहेत|नाही|काय|तुम्ही|मला|आम्ही|करा|होय|कुठे|किती)")
 LATIN = re.compile(r"[A-Za-z]")
 
 
@@ -27,7 +28,7 @@ def detect_language(text: str) -> str | None:
     if counts[best] >= 3 and counts[best] >= dev:
         return best
     if dev >= 3:
-        return "mr" if MARATHI_WORDS.search(text) else "hi"
+        return devanagari_language(text)
     if latin >= 8 and not any(counts.values()) and not dev:
         return "en"
     return None

@@ -32,8 +32,8 @@ def message_id(task_id: uuid.UUID, contact_id: uuid.UUID, kind: str = "task") ->
 
 
 def ask_text(language: str, business: str) -> str:
-    return ASK[language].format(business=business)
+    return ASK.get(language, ASK["en"]).format(business=business)   # job M1: a language with no words here yet (Marathi) gets the English ones
 
 
 def summary_text(language: str, business: str) -> str:
-    return SUMMARY[language].format(business=business)
+    return SUMMARY.get(language, SUMMARY["en"]).format(business=business)

@@ -13,8 +13,9 @@ import re
 import wave
 from dataclasses import dataclass
 
+# Marathi (job M1) has its lines below but is NOT in the plan: these listening samples are a capped, paid provider run (TTS_CHAR_CAP); Marathi's are rendered with its voice job, not in M1
 LANGS: tuple[str, ...] = ("en", "te", "hi", "kn", "ta", "ml")
-LANG_NAMES = {"en": "English", "te": "తెలుగు (Telugu)", "hi": "हिन्दी (Hindi)", "kn": "ಕನ್ನಡ (Kannada)", "ta": "தமிழ் (Tamil)", "ml": "മലയാളം (Malayalam)"}
+LANG_NAMES = {"en": "English", "te": "తెలుగు (Telugu)", "hi": "हिन्दी (Hindi)", "kn": "ಕನ್ನಡ (Kannada)", "ta": "தமிழ் (Tamil)", "ml": "മലയാളം (Malayalam)", "mr": "मराठी (Marathi)"}
 # Bulbul v3 speakers (docs.sarvam.ai); a v3 voice speaks any of the languages. Three, chosen by name only.
 VOICES: tuple[str, ...] = ("ritu", "kavya", "aditya")
 # "styles" are what v3 offers: pace and temperature (it has no style switch)
@@ -55,6 +56,11 @@ LINES: dict[str, tuple[str, str, str]] = {
         "നമസ്കാരം, ഞാൻ ലക്ഷ്മി സാരീസിന്റെ AI അസിസ്റ്റന്റ്. ഇപ്പോൾ സംസാരിക്കാമോ?",
         "നിങ്ങൾക്ക് ഇഷ്ടപ്പെട്ട പച്ച പട്ടുസാരി ഇപ്പോഴും സ്റ്റോക്കിലുണ്ട്. വാട്സാപ്പിൽ ഫോട്ടോ അയയ്ക്കട്ടെ?",
         "സൺറൈസ് സ്കൂളിൽ ഒന്നാം ക്ലാസ് പ്രവേശനം തുറന്നിട്ടുണ്ട്. അപേക്ഷ വാട്സാപ്പിൽ അയയ്ക്കാം.",
+    ),
+    "mr": (   # job M1: drafts for a native reader
+        "नमस्कार, मी लक्ष्मी साडीजची AI असिस्टंट आहे. आत्ता बोलायला वेळ आहे का?",
+        "तुम्हाला आवडलेली हिरवी रेशमी साडी अजून स्टॉकमध्ये आहे. व्हॉट्सॲपवर फोटो पाठवू का?",
+        "सनराइज स्कूलमध्ये पहिलीसाठी प्रवेश सुरू आहेत. फॉर्म व्हॉट्सॲपवर पाठवते.",
     ),
 }
 
