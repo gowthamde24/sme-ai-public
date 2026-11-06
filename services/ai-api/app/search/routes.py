@@ -1,4 +1,4 @@
-"""GET /v1/tenants/{tenant_id}/search?q=   any member   leads, customers, quotes, orders and (school) students that match, at most 5 a kind (docs/contracts/search.md)
+"""GET /v1/tenants/{tenant_id}/search?q=   any member   leads, customers, quotes, orders and (school pack) pupils' records that match, at most 5 a kind (docs/contracts/search.md)
 
 The database function public.workspace_search is SECURITY INVOKER: the person's own row-level security decides every row. NOTE: no `from __future__ import annotations` (FastAPI)."""
 
