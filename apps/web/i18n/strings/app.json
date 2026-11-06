@@ -77141,6 +77141,50 @@
    "kn": "draft"
   }
  },
+ "today.kind.voice": {
+  "en": "Voice credits",
+  "te": "వాయిస్ క్రెడిట్స్",
+  "hi": "वॉइस क्रेडिट",
+  "kn": "ವಾಯ್ಸ್ ಕ್ರೆಡಿಟ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.voice": {
+  "en": "See Plan & usage",
+  "te": "ప్లాన్ & వాడకం చూడండి",
+  "hi": "प्लान और इस्तेमाल देखें",
+  "kn": "ಪ್ಲಾನ್ & ಬಳಕೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.voice.row": {
+  "en": "Voice",
+  "te": "వాయిస్",
+  "hi": "वॉइस",
+  "kn": "ವಾಯ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.voice.row": {
+  "en": "Plan & usage",
+  "te": "ప్లాన్ & వాడకం",
+  "hi": "प्लान और इस्तेमाल",
+  "kn": "ಪ್ಲಾನ್ & ಬಳಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "today.step.fees.row": {
   "en": "See who",
   "te": "చూడండి",
