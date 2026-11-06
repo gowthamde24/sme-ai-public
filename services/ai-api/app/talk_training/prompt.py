@@ -27,6 +27,10 @@ def blocks(training: dict[str, Any] | None) -> list[str]:
     examples = [e for e in training.get("examples") or [] if isinstance(e, dict)][:5]
     if examples:
         out.append("The owner's own good answers, as a guide to TONE and length only (never take a fact, a price or a promise from them):\n" + "\n".join(f"- Customer: {e.get('customer')} / Answer: {e.get('answer')}" for e in examples))
+    say_like = [x for x in training.get("say_like") or [] if isinstance(x, dict) and x.get("say")][:20]
+    if say_like:
+        out.append("SAY IT LIKE THIS, the business's own words (use them, in the caller's language and script where it fits):\n"
+                   + "\n".join(f"- say \"{x.get('say')}\"" + (f" instead of \"{x.get('instead_of')}\"" if x.get("instead_of") else "") for x in say_like))
     never = [str(p) for p in training.get("never_say") or []][:20]
     if never:
         out.append("NEVER say any of these words or phrases, in any language: " + "; ".join(f'"{p}"' for p in never) + ".")

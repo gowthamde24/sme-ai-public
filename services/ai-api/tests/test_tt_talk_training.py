@@ -163,3 +163,59 @@ def test_thirty_simulated_calls_with_ten_owner_rules_say_no_never_say_phrase() -
     assert len(voice.spoken) == 90
     assert sum(violates(s, never) for s in voice.spoken) == 0, "never-say: 0 violations"
     assert guarded.blocked == 60 and sum(s in clean for s in voice.spoken) == 30, "every clean line is spoken as written"
+
+
+# ============================================================================ app v4 (owner, 6 Nov 2026): "Say it like this", and practice calls in text
+
+def test_say_it_like_this_is_saved_checked_and_reaches_the_prompt() -> None:
+    client, _ = world()
+    doc = {**RULES, "say_like": [{"say": "pattu cheera", "instead_of": "silk saree"}, {"say": "మా షాప్"}]}
+    out = client.put(URL, json=doc, headers=auth("a_owner"))
+    assert out.status_code == 200 and out.json()["training"]["say_like"] == [{"say": "pattu cheera", "instead_of": "silk saree"}, {"say": "మా షాప్", "instead_of": None}]
+    too_many = {**RULES, "say_like": [{"say": f"word {i}"} for i in range(21)]}
+    assert client.put(URL, json=too_many, headers=auth("a_owner")).json()["error"]["reason"] == "too_many_say_like"
+    twice = {**RULES, "say_like": [{"say": "pattu cheera"}, {"say": "Pattu Cheera"}]}
+    assert client.put(URL, json=twice, headers=auth("a_owner")).json()["error"]["reason"] == "duplicate"
+    promise = {**RULES, "say_like": [{"say": "free delivery guaranteed"}]}
+    assert client.put(URL, json=promise, headers=auth("a_owner")).json()["error"]["reason"] == "price_or_promise"
+    prompt = "\n".join(blocks(doc))
+    assert 'say "pattu cheera" instead of "silk saree"' in prompt and 'say "మా షాప్"' in prompt
+
+
+class FakeVoice:
+    def __init__(self, pieces: list[str]) -> None:
+        self.pieces = pieces
+        self.systems: list[str] = []
+
+    def fast_llm(self) -> Any:
+        voice = self
+
+        class Model:
+            async def stream(self, system: str, messages: list[dict[str, str]], model: str) -> Any:
+                voice.systems.append(system)
+                for piece in voice.pieces:
+                    yield piece
+
+        return Model()
+
+    def model_ids(self) -> dict[str, str]:
+        return {"fast": "m", "strong": "m"}
+
+
+def test_a_practice_call_answers_like_a_real_call_and_can_try_an_unsaved_training() -> None:
+    voice = FakeVoice(["సరే, ", "ఏ రంగు చీర కావాలి?"])
+    client, _ = make_client(talk_training=FakeRepo(), packs=FakePacks(), browser_voice=voice)
+    turns = [{"who": "customer", "text": "పట్టు చీరలు ఉన్నాయా?"}]
+    out = client.post(f"{URL}/practice", json={"language": "te", "turns": turns, "training": {**RULES, "say_like": [{"say": "pattu cheera"}]}}, headers=auth("a_admin"))
+    assert out.status_code == 200 and out.json() == {"reply": "సరే, ఏ రంగు చీర కావాలి?", "ended": False, "handover": False, "simulated": True}
+    assert 'say "pattu cheera"' in voice.systems[0] and "NEVER say" in voice.systems[0], "the draft training is what the practice call uses"
+    bye = client.post(f"{URL}/practice", json={"language": "te", "turns": [{"who": "customer", "text": "ఓకే బాయ్"}]}, headers=auth("a_owner"))
+    assert bye.json()["ended"] is True and bye.json()["reply"] == "సరే అండీ, bye!", "a bye ends it with the natural closing line, as on a call"
+    ended = FakeVoice(["సరే, Thank you, bye! [END]"])
+    client2, _ = make_client(talk_training=FakeRepo(), packs=FakePacks(), browser_voice=ended)
+    closing = client2.post(f"{URL}/practice", json={"language": "te", "turns": turns}, headers=auth("a_owner")).json()
+    assert closing["ended"] is True and "[END]" not in closing["reply"]
+    assert client.post(f"{URL}/practice", json={"turns": [{"who": "assistant", "text": "hi"}]}, headers=auth("a_owner")).status_code == 422, "the last turn must be the customer's"
+    assert client.post(f"{URL}/practice", json={"turns": turns}, headers=auth("a_sales")).status_code == 403
+    off, _ = make_client(talk_training=FakeRepo(), packs=FakePacks())
+    assert off.post(f"{URL}/practice", json={"turns": turns}, headers=auth("a_owner")).json()["error"]["code"] == "practice_unavailable"

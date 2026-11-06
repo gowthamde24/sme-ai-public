@@ -89,3 +89,43 @@ def test_today_says_it_plainly() -> None:
     item = needs_item({"kind": "person_requested", "id": str(uuid.uuid4()), "customer": "A caller", "city": None, "agent": "followup_desk", "ref": "call", "amount_paise": None,
                        "at": NOW.isoformat(), "target": {"type": "phone_call", "id": str(uuid.uuid4())}})
     assert item.kind == "person_requested" and "asked to talk to a person" in item.summary and item.target.type == "phone_call"
+
+
+# ---- "Correct it" after a call (app v4, migration 20261231330000) -----------------------------------------------------------------------
+
+class CorrectingRepo(FakeCallsRepo):
+    def __init__(self) -> None:
+        super().__init__()
+        self.fixed: dict[uuid.UUID, dict[str, Any]] = {}
+
+    def correct(self, token: str, tenant_id: uuid.UUID, call_id: uuid.UUID, summary: str | None, captured: dict[str, str] | None, note: str | None) -> dict[str, Any]:
+        from app.telephony.repository import CorrectionInvalid
+
+        if call_id not in self.rows:
+            raise NotFoundError("23503")
+        if note and "@" in note:
+            raise CorrectionInvalid("23514")
+        row = self.fixed.setdefault(call_id, {})
+        for key, value in (("summary", summary), ("captured", captured), ("note", note)):
+            if value is not None:
+                row[key] = value or None
+        return {**row, "corrected_at": NOW.isoformat()}
+
+
+def test_a_member_corrects_a_call_and_the_note_must_not_hold_a_contact() -> None:
+    c, _ = make_client(calls=CallsService(CorrectingRepo(), clock=lambda: NOW))
+    url = f"/v1/tenants/{TENANT_A.id}/calls/{DONE_ID}/correction"
+    got = c.post(url, json={"summary": "Wants a red Kanchi silk, visiting Saturday", "note": "Kanchi pattu means Kanchipuram silk"}, headers=auth("a_sales"))
+    assert got.status_code == 200 and got.json()["summary"] == "Wants a red Kanchi silk, visiting Saturday" and got.json()["note"] == "Kanchi pattu means Kanchipuram silk"
+    bad = c.post(url, json={"note": "mail me at ramesh@example.com"}, headers=auth("a_owner"))
+    assert bad.status_code == 422 and bad.json()["error"]["code"] == "correction_invalid"
+    assert c.post(url, json={}, headers=auth("a_owner")).json()["error"]["code"] == "validation_error", "say what to correct"
+    assert c.post(url, json={"note": "x"}, headers=auth("a_viewer")).status_code == 403
+    assert c.post(f"/v1/tenants/{TENANT_A.id}/calls/{uuid.uuid4()}/correction", json={"note": "Pattu means silk"}, headers=auth("a_owner")).status_code == 404
+
+
+def test_the_owners_notes_reach_the_next_calls_instructions() -> None:
+    prompt = persona.system_prompt(business="Padma Silks", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None,
+                                   corrections=["Kanchi pattu means Kanchipuram silk, not cotton", "  "])
+    assert "THE OWNER'S CORRECTIONS FROM RECENT CALLS" in prompt and "- Kanchi pattu means Kanchipuram silk, not cotton" in prompt
+    assert "THE OWNER'S CORRECTIONS" not in persona.system_prompt(business="Padma Silks", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None)

@@ -4,9 +4,9 @@ NOTE: no `from __future__ import annotations` (the models are attached to endpoi
 
 # ruff: noqa: E501
 from datetime import datetime
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, StringConstraints
 
 CallState = Literal["queued", "ringing", "in_progress", "completed", "no_answer", "busy", "voicemail", "failed", "refused", "cancelled"]
 
@@ -53,7 +53,29 @@ class CallsOut(BaseModel):
     poll_after_s: int = 5
 
 
+class CorrectionOut(BaseModel):
+    """"Correct it" (app v4): what a person fixed after the call. The AI's own summary and answers stay as they were."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    summary: str | None = None
+    captured: dict[str, str] | None = None
+    note: str | None = None          # the person's note about how to talk / what the AI misunderstood: it goes into later calls' instructions
+    corrected_at: datetime | None = None
+
+
+class CorrectionIn(BaseModel):
+    """Any of the three (at least one); an empty string or {} clears that field; a missing one keeps what is there."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    summary: Annotated[str, StringConstraints(strip_whitespace=True, max_length=600)] | None = None
+    captured: dict[Annotated[str, StringConstraints(min_length=1, max_length=40)], Annotated[str, StringConstraints(max_length=200)]] | None = None
+    note: Annotated[str, StringConstraints(strip_whitespace=True, max_length=300)] | None = None
+
+
 class CallDetailOut(CallOut):
+    correction: CorrectionOut | None = None
     summary: str | None = None
     captured: dict[str, str] | None = None
     transcript: list[TurnOut] | None = None   # Owner and Admin only; Sales get null
