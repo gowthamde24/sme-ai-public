@@ -282,3 +282,10 @@ def test_the_feature_texts_outside_m1_fall_back_to_english() -> None:
     assert ask_text("mr", "Sample Stores") == ask_text("en", "Sample Stores")
     at = datetime(2026, 11, 10, 6, 30, tzinfo=UTC)
     assert visit_text("reminder", "mr", at) == visit_text("reminder", "en", at)
+
+
+def test_a_marathi_call_listens_for_marathi_in_its_own_script() -> None:
+    from app.browser_voice.routes import stt_mode_for
+    from app.voice.interface import TAGS as LANGUAGE_TAGS
+
+    assert LANGUAGE_TAGS["mr"] == "mr-IN" and stt_mode_for("mr") == "verbatim", "the phone recogniser is pinned to the call's language: mr-IN, Devanagari as said (like Hindi)"
