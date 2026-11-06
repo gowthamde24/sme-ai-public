@@ -361,6 +361,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                         langNames={CALL_LANG_NAMES}
                         canEdit={tenant.role === "owner"}
                         securityHref="/app/security"
+                        business={tenant.name}
                         actions={{ save: saveTalkTrainingAction.bind(null, tenantId), reset: resetTalkTrainingAction.bind(null, tenantId) }}
                       />
                     ) : null}

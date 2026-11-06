@@ -25,6 +25,13 @@ describe("How I talk to customers", () => {
     expect(screen.queryByRole("button", { name: "Use the suggested ones" })).toBeNull(); // nothing of the owner's to remove
   });
 
+  it("the suggested greeting's hint names the business (C1 #364); {business} stays in what is saved", () => {
+    const withBiz: TalkTrainingState = { ...DEFAULTS, defaults: { ...DEFAULTS.defaults, greeting: { te: "నమస్కారం, నేను {business} AI assistant ని." } } };
+    render(<TalkTraining initial={withBiz} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" business="Lakshmi Silks" actions={{ save: vi.fn(), reset: vi.fn() }} />);
+    expect(screen.getByLabelText("Greeting")).toHaveAttribute("placeholder", "నమస్కారం, నేను Lakshmi Silks AI assistant ని.");
+    expect(screen.getByLabelText("Greeting")).toHaveValue("");
+  });
+
   it("adds a question, saves the whole document and shows what the API answered", async () => {
     const save = vi.fn(async () => ({ ok: true as const, data: SAVED }));
     show(DEFAULTS, { save, reset: vi.fn() });
