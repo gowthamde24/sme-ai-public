@@ -326,13 +326,20 @@ _GOODBYE = [
     r"बस इतना ही", r"बस इतना", r"बाय(?=\s|$|[.,!?।])", r"अलविदा", r"ठीक है,? चलता हूँ", r"धन्यवाद,? बस",
     r"ಸಾಕು", r"ಬೈ(?=\s|$|[.,!?])", r"ಮತ್ತೆ ಸಿಗೋಣ", r"போதும்", r"பை(?=\s|$|[.,!?])", r"മതി(?=\s|$|[.,!?])", r"ബൈ(?=\s|$|[.,!?])",
     r"\bbye bye\b", r"\bbaye\b", r"\binka chalu\b", r"\bcalu andi\b", r"\bsaaku\b", r"\bbas itna\b",
+    # how the recognisers spell "bye" in each script (owner, 6 Nov 2026: a caller's "ok bye" did not end the call)
+    # (only at the END of what they said: "బాయ్ ఫ్రెండ్ కోసం చీర" is a saree for a boyfriend, not a goodbye)
+    r"(?:బాయ్|बाय|ಬಾಯ್|பாய்|ബായ്)(?:\s+(?:బాయ్|बाय|ಬಾಯ್|பாய்|ബായ്|అండీ|जी|ರೀ|ங்க))?\W*$",
 ]
+# "I'll keep the phone now" ends a call only when it is the whole (short) reply: "నేను ఇంట్లో ఉంటాను" (I'll be at home) must never hang up
+_SHORT_BYE = re.compile(r"^\W*(?:(?:సరే|ok|okay|ఓకే|thanks|thank you|థాంక్స్|థ్యాంక్స్|ठीक है|ಸರಿ|சரி|ശരി|ठीक आहे)\W*)?"
+                        r"(?:ఉంటాను|ఉంటానండి|ఉంటానండీ|ఉంటా|untanu|untanandi|ఫోన్ పెడతాను|పెట్టేస్తాను|रखता हूँ|रखती हूँ|रखता हूं|रखती हूं|ಇಡ್ತೀನಿ|ಇಡ್ತೀನಿ ರೀ|வைக்கிறேன்|வெச்சிடறேன்|വെക്കട്ടെ|ठेवतो|ठेवते)\W*$",
+                        re.IGNORECASE)
 _GOODBYE_RE = re.compile("|".join(_GOODBYE), re.IGNORECASE)
 
 
 def is_goodbye(text: str) -> bool:
     """'bye', 'thank you that's all', 'ఇంక చాలు', 'बस इतना ही', 'ಸಾಕು': the caller is done."""
-    return bool(text) and len(text) <= 120 and _GOODBYE_RE.search(text) is not None
+    return bool(text) and len(text) <= 120 and (_GOODBYE_RE.search(text) is not None or _SHORT_BYE.search(text.strip()) is not None)
 
 
 SilenceAction = Literal["wait", "check_in", "end"]

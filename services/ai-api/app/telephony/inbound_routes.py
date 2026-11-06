@@ -113,6 +113,8 @@ async def stream_url(request: Request) -> Response:
     params = await _params(request)
     # what Exotel sends, NAMES only (never a value: a caller's number is in there): to learn the request's shape on the first real calls
     log.info("exotel_stream_url request method=%s headers=%s params=%s", request.method, ",".join(sorted(k.lower() for k in request.headers.keys())), ",".join(sorted(params)) or "-")
+    flow_ms = inbound.exotel_flow_ms(params.get("Created"), params.get("CurrentTime"))
+    log.info("exotel_flow_timing flow_ms=%s", "unknown" if flow_ms is None else flow_ms)   # Exotel's own time from the call's start to asking us (its connect and its flow)
     if service is None or service.gate_settings.mode == "off":
         log.info("exotel_stream_url refused=off")
         raise ApiError(403, "telephony_off", "Phone calls are not answered here.")
@@ -193,7 +195,7 @@ async def _prepare(service: InboundService, bv: Any, start: Any) -> Prepared | N
     line_no = normalise_line(start.to_number)
     if line_no is None:
         return None
-    found = await asyncio.to_thread(service.store.line_find, line_no)
+    found = await inbound.find_line_quick(service.store.line_find, line_no)
     if not found or not found.get("tenant_id"):
         return None
     return await _prepare_for(service, bv, uuid.UUID(str(found["tenant_id"])), business=found.get("business"), assistant=found.get("assistant"))

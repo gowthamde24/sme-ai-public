@@ -12,14 +12,16 @@ Nothing is logged here and no audio is kept."""
 
 from __future__ import annotations
 
+import array
 import asyncio
+import logging
 import time
 from collections.abc import Awaitable, Callable
 from contextlib import suppress
 from typing import Any, Literal, Protocol
 
 from app.browser_voice.audio import OUT_RATE
-from app.conversation.endpointing import EnergyEndpointer
+from app.conversation.endpointing import rms
 from app.telephony import exotel
 from app.telephony.pcm import Resampler, pad_to_multiple
 
@@ -27,6 +29,14 @@ Kind = Literal["text", "bytes", "close"]
 STT_RATE = 16000
 FRAME_BYTES = STT_RATE * 2 * 20 // 1000   # 20 ms at 16 kHz
 OPEN_TIMEOUT_S = 10.0
+# natural barge-in (owner, 6 Nov 2026): while we talk, the caller's sound is judged by its LENGTH. "haa", "hmm", "avunu", "sare", "ji", a cough: shorter than STOP_SPEECH_MS, ignored, we keep
+# talking. Real speech longer than that: we stop, and the voice FADES out over FADE_MS (ending in a quiet moment between words when there is one) instead of a hard cut.
+STOP_SPEECH_MS = 600
+SPEECH_GAP_MS = 140    # a short dip inside speech does not end it
+MIN_SOUND_MS = 100     # shorter than this is not logged at all (a click)
+FADE_MS = 200
+KEEP_SENT_S = 1.0      # how much of what we sent is kept, to fade from where the caller's ear is
+log = logging.getLogger("app.telephony.line")
 LEAD_S = 0.3   # how far ahead of the caller's ear we may send: a small cushion for the network, never a burst of the whole clip
 
 
@@ -61,8 +71,15 @@ class PhoneLine:
         self._up: Resampler | None = None
         self._play_until = 0.0         # when the provider will have played everything we sent
         self._began = clock()
-        self._vad = EnergyEndpointer(min_speech_ms=barge_ms, threshold=barge_threshold)
+        self._barge_threshold = barge_threshold
+        self.stop_speech_ms = STOP_SPEECH_MS if barge_ms == 160 else barge_ms   # (barge_ms: tests may set their own)
         self._vad_buf = bytearray()
+        self._talk_ms = 0          # the caller's sound while we talk, in this run
+        self._gap_ms = 0
+        self._stopped_run = False
+        self._sent = bytearray()   # the last KEEP_SENT_S of audio we sent (line rate), to fade from
+        self.interruptions: dict[str, int] = {"stopped": 0, "ignored": 0}
+        self.fade_ms: list[int] = []
         self._closed = False
         # how the call ended, for the end-of-call log (names and numbers only, 5 Nov 2026: the 11:57 UTC call ended 0.4 s after admission and the log could not say whether Exotel sent `stop` or dropped
         # the socket, nor whether any of our audio had gone out)
@@ -140,7 +157,7 @@ class PhoneLine:
             if self._clock() < self._play_until:
                 self._watch_for_barge_in(pcm)
             else:
-                self._vad = EnergyEndpointer(min_speech_ms=self._vad.min_speech_ms, threshold=self._vad.threshold)
+                self._end_sound_run()
                 self._vad_buf.clear()
         elif isinstance(event, exotel.Dtmf):
             self.dtmf.append(event.digit)
@@ -151,12 +168,65 @@ class PhoneLine:
             self._finish("caller_hung_up")
 
     def _watch_for_barge_in(self, pcm: bytes) -> None:
+        """The caller's sound while we talk: a run of voiced 20 ms frames (short dips allowed). At STOP_SPEECH_MS it is an interruption: the session stops the voice (it fades, see `_fade_out`).
+        A shorter run (a backchannel, a cough) changes nothing; both are logged with their length."""
         self._vad_buf += pcm
         while len(self._vad_buf) >= FRAME_BYTES:
             frame = bytes(self._vad_buf[:FRAME_BYTES])
             del self._vad_buf[:FRAME_BYTES]
-            if "speech_start" in self._vad.feed(frame):
-                self._q.put_nowait(("text", {"type": "barge_in", "verify": True}))
+            if rms(frame) >= self._barge_threshold:
+                self._talk_ms += 20
+                self._gap_ms = 0
+                if self._talk_ms >= self.stop_speech_ms and not self._stopped_run:
+                    self._stopped_run = True
+                    self.interruptions["stopped"] += 1
+                    log.info("phone_interruption decision=stopped speech_ms=%d", self._talk_ms)
+                    self._q.put_nowait(("text", {"type": "barge_in", "verify": False}))
+            elif self._talk_ms:
+                self._gap_ms += 20
+                if self._gap_ms >= SPEECH_GAP_MS:
+                    self._end_sound_run()
+
+    def _end_sound_run(self) -> None:
+        if self._talk_ms >= MIN_SOUND_MS and not self._stopped_run:
+            self.interruptions["ignored"] += 1
+            log.info("phone_interruption decision=ignored speech_ms=%d", self._talk_ms)   # a backchannel or a noise: we kept talking
+        self._talk_ms, self._gap_ms, self._stopped_run = 0, 0, False
+
+    async def _fade_out(self) -> int:
+        """Stop the voice the way a person does: what the provider had queued is cleared, and the next FADE_MS of the audio the caller was about to hear is sent again with the volume going down to
+        silence, cut at a quiet moment between words when there is one in that window. Returns how long the fade is, in ms (0: nothing was playing)."""
+        assert self.start is not None   # noqa: S101 - callers check
+        now = self._clock()
+        unplayed = max(0.0, self._play_until - now)
+        self._pending.clear()
+        await self._wire.send_text(exotel.clear_message(self.start.stream_sid))
+        self._play_until = now
+        if unplayed < 0.04 or not self._sent:
+            return 0
+        at = max(0, len(self._sent) - int(unplayed * self.rate) * 2)
+        window = bytes(self._sent[at : at + int(self.rate * 0.25) * 2])
+        frame = int(self.rate * 0.02) * 2
+        cut = min(len(window), int(self.rate * FADE_MS / 1000) * 2)
+        loudness = [rms(window[i : i + frame]) for i in range(0, len(window) - frame + 1, frame)]
+        if loudness:
+            mean = sum(loudness) / len(loudness)
+            for k in range(3, len(loudness)):   # a quiet frame from 60 ms on: the end of a word
+                if loudness[k] < 0.2 * mean:
+                    cut = min(len(window), (k + 1) * frame)
+                    break
+        samples = array.array("h")
+        samples.frombytes(window[: cut // 2 * 2])
+        n = len(samples)
+        for i in range(n):
+            samples[i] = int(samples[i] * (1.0 - (i + 1) / n))
+        tail = pad_to_multiple(samples.tobytes(), self.chunk)
+        for i in range(0, len(tail), self.chunk):
+            await self._emit(tail[i : i + self.chunk], keep=False)
+        ms = round(n / self.rate * 1000)
+        self.fade_ms.append(ms)
+        log.info("phone_interruption fade_ms=%d", ms)
+        return ms
 
     # ---- the Socket the session writes -----------------------------------------------------------------------------------------------------------
 
@@ -175,10 +245,11 @@ class PhoneLine:
             who = "caller" if message.get("who") == "user" else "assistant"
             self.transcript.append({"who": who, "text": str(message["text"]).strip(), "t": round(self._clock() - self._began, 1)})
         elif kind == "audio_stop":
-            self._pending.clear()
-            self._play_until = 0.0
             if self.start is not None and not self._closed:
-                await self._wire.send_text(exotel.clear_message(self.start.stream_sid))
+                await self._fade_out()
+            else:
+                self._pending.clear()
+                self._play_until = 0.0
         elif kind == "audio_end":
             await self.flush()
             if self._hang_up_after_audio_end is not None:
@@ -200,7 +271,7 @@ class PhoneLine:
         self._seq += 1
         await self._wire.send_text(exotel.mark_message(self.start.stream_sid, f"turn-{self._seq}"))
 
-    async def _emit(self, chunk: bytes) -> None:
+    async def _emit(self, chunk: bytes, *, keep: bool = True) -> None:
         assert self.start is not None   # noqa: S101 - callers check
         ahead = self._play_until - self._clock()
         if ahead > LEAD_S:   # real-time pace: wait until what was sent has (nearly) played
@@ -209,6 +280,9 @@ class PhoneLine:
                 return
         self.bytes_out += len(chunk)
         self.chunks_out += 1
+        if keep:
+            self._sent += chunk
+            del self._sent[: max(0, len(self._sent) - int(self.rate * KEEP_SENT_S) * 2)]
         if self.first_out_s is None:
             self.first_out_s = self._clock() - self._began
         now = self._clock()

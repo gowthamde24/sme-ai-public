@@ -26,7 +26,7 @@ import call_persona_eval as E  # noqa: E402
 def test_five_example_calls_per_language_and_every_assistant_line_keeps_the_rules(lang: str) -> None:
     calls = EXAMPLES["languages"][lang]
     assert [c["persona"] for c in calls] == ["elder", "casual", "confused", "annoyed", "robot"]
-    said = [t["assistant"] for c in calls for t in c["turns"] if "assistant" in t]
+    said = [t["assistant"].replace(persona.END_MARK, "").strip() for c in calls for t in c["turns"] if "assistant" in t]
     assert said and all(E.short(s) for s in said), "at most 25 words, 2 sentences, no list, no long number"
     assert not any(re.search(r"\d", s) for s in said), "no digits read out"
     assert all(E.in_language(s, lang) for s in said), "every reply in the call's language"
@@ -48,6 +48,9 @@ def test_the_eval_callers_cover_every_persona_ask_the_robot_question_and_name_th
     assert set(script) == {"angry", "confused", "code_mixed", "elder", "casual"} and all(len(lines) == 4 for lines in script.values())
     lines = [x for v in script.values() for x in v]
     assert any(E.ROBOT.search(x) for x in lines) and any("Stack19" in x for x in lines)
+    from app.conversation.turntaking import is_goodbye
+
+    assert is_goodbye(script["casual"][3]), "the casual caller ends with a bye (the eval checks the call ends)"
 
 
 def test_the_scorer_catches_each_kind_of_failure() -> None:

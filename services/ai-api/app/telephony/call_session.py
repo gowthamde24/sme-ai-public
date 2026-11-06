@@ -55,6 +55,27 @@ class CallStore(Protocol):
 
 class CallVoiceSession(VoiceSession):
     is_phone = True   # a phone call never gets the speaker check (owner decision 31 Oct 2026: off until the December lawyer review)
+    # silence on a phone (owner, 6 Nov 2026): about 4 s quiet, one "హలో, ఉన్నారా?"; about 8 s in all, a short bye and the hang-up
+    silence_s = (4.0, 8.0)
+
+    def check_in_words(self) -> dict[str, str]:
+        return persona.CALL_CHECK_IN
+
+    async def _say_goodbye(self, text: str) -> None:
+        """The caller said bye: one short closing line the way people really say it ("సరే అండీ, bye!"), then the line closes as soon as it has played (within about a second)."""
+        self._turn_active = True
+        try:
+            await self._follow_language(text)
+            await self._say(persona.CALL_BYE.get(self.language, persona.CALL_BYE["en"]))
+        finally:
+            await self._end_turn()
+        self._ended = "goodbye"
+        await self._send({"type": "limit", "reason": "goodbye", "fatal": True})
+
+    async def _end_for_silence(self) -> None:
+        self._ended = "idle"
+        await self._say(persona.CALL_BYE_QUIET.get(self.language, persona.CALL_BYE_QUIET["en"]))
+        await self._send({"type": "limit", "reason": "idle", "fatal": True})
 
     async def _follow_language(self, text: str) -> None:
         """The phone's own language rule (app/telephony/language_rule.py, owner, 6 Nov 2026): start in the line's language and stay; fillers ("hello", "ok") and code-mixed speech never switch it;
@@ -161,6 +182,8 @@ async def run_call(
         elif name == "handover":
             flags["handover"] = True
             line.hang_up_after_next_turn("handover")
+        elif name == "end":
+            line.hang_up_after_next_turn("goodbye")   # the closing line plays, then the line closes (owner, 6 Nov 2026)
         elif name == "voicemail":
             flags["voicemail"] = True
             if plan.voicemail_action == "leave_message":
