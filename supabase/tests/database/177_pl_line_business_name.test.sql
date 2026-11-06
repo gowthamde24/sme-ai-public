@@ -13,6 +13,10 @@ insert into public.assistant_settings (tenant_id, assistant_name, voice_persona,
                                       may_talk_dues, max_discount_percent, handover_owner_asked, handover_upset, call_days, call_from_minute, call_to_minute)
 values (tests.tid('a'), 'Lakshmi', 'female_warm', 'te', true, true, 'warm', 1.0, false, false, false, false, 0, true, true, array[1, 2, 3, 4, 5, 6]::smallint[], 600, 1140);
 select is(tests.scalar_as(tests.uid('outsider'), $$select public.phone_line_find('+914045903172') ->> 'assistant'$$), 'Lakshmi', 'A6 the workspace''s assistant name');
+select is(tests.scalar_as(tests.uid('outsider'), $$select public.phone_line_find('+914045903172') ->> 'business'$$), (select name from public.tenants where id = tests.tid('a')), 'A7 no spoken name: the workspace''s name');
+update public.phone_numbers set spoken_business_name = 'Stack19' where number = '+914045903172';
+select is(tests.scalar_as(tests.uid('outsider'), $$select public.phone_line_find('+914045903172') ->> 'business'$$), 'Stack19', 'A8 the spoken business name wins');
+select throws_ok($$update public.phone_numbers set spoken_business_name = '  ' where number = '+914045903172'$$, '23514', null, 'A9 a blank spoken name is refused');
 select throws_ok(format($$select tests.scalar_as(%L, 'select public.phone_line_find(''+914045903172'')')$$, tests.uid('a_owner')), null, null, 'A4 an Owner is not the worker: refused');
 
 select * from finish();
