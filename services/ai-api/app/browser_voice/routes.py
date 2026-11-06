@@ -250,6 +250,33 @@ def _authenticate(runtime: Runtime, token: str, tenant_id: str) -> TenantContext
     return TenantContext(principal=principal, tenant=membership.tenant, role=membership.role)
 
 
+PRACTICE_MODE = "practice_call"
+
+
+class PracticeCallSession(VoiceSession):
+    """A practice call by voice (app v4 [C1], Train how it talks): the owner plays the customer and hears the phone assistant exactly as a caller would (the call's prompt, its training, its opening
+    line, its recogniser pinned to the language). No speaker check (the person is not the one being recognised), nothing is stored: the phone parts have no conversation store."""
+
+    is_practice = True
+
+
+def practice_parts(bv: BrowserVoice, runtime: Runtime, ctx: TenantContext, language: str) -> Parts:
+    """The phone call's parts for a practice call. The voice is Sarvam only (owner, 6 Nov 2026: Cartesia only on real test calls)."""
+    from app.talk_training.routes import training_for
+    from app.telephony.inbound_routes import phone_parts
+
+    try:
+        training: dict[str, Any] | None = training_for(runtime, ctx)
+    except Exception:   # noqa: BLE001 - the training cannot be read: the defaults of the call prompt
+        training = None
+    choice = str(getattr(getattr(runtime, "phone_inbound", None), "llm_choice", "haiku") or "haiku")   # the model real calls use (TELEPHONY_LLM)
+    parts, _ = phone_parts(bv, ctx.tenant.name, language, choice, training)
+    set_budget = getattr(parts.tts, "set_primary_budget", None)
+    if callable(set_budget):
+        set_budget(0)
+    return parts
+
+
 @router.websocket("/v1/tenants/{tenant_id}/voice-chat")
 async def voice_chat(ws: WebSocket, tenant_id: str) -> None:
     runtime: Runtime | None = getattr(ws.app.state, "runtime", None)
@@ -271,6 +298,9 @@ async def voice_chat(ws: WebSocket, tenant_id: str) -> None:
     if isinstance(ctx, tuple):
         return await _refuse(ws, ctx[0], ctx[1], "Not allowed.")
     language = first.get("language") if first.get("language") in LANGUAGES else "en"
+    practice = first.get("mode") == PRACTICE_MODE   # app v4 [C1]: a practice CALL by voice: the owner plays the customer, the phone assistant answers (Owner, Admin)
+    if practice and ctx.role not in (Role.OWNER, Role.ADMIN):
+        return await _refuse(ws, 4403, "forbidden", "Not allowed.")
     mode = first.get("mode") if first.get("mode") in MODES else "live"   # live = the hands-free conversation; dictate = words only (no assistant, no voice, nothing stored)
     pin = first.get("stt_language") if first.get("stt_language") in LANGUAGES else None   # an explicit choice of the person ("I am dictating in Telugu"): the recogniser then writes native script from the first word. Absent / "auto": it detects the language
     thread: uuid.UUID | None = None
@@ -289,8 +319,12 @@ async def voice_chat(ws: WebSocket, tenant_id: str) -> None:
         def count_ask() -> None:
             usage.ask_turns += 1
 
-        parts = await run_in_threadpool(build_parts, bv, runtime, ctx, lambda kind, data: box["emit"](kind, data), count_ask, thread, str(pin) if pin else None)
-        session = VoiceSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage, token=ctx.principal.token, mode=str(mode))
+        if practice:
+            parts = await run_in_threadpool(practice_parts, bv, runtime, ctx, str(language))
+            session: VoiceSession = PracticeCallSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage, token=ctx.principal.token, mode="live")
+        else:
+            parts = await run_in_threadpool(build_parts, bv, runtime, ctx, lambda kind, data: box["emit"](kind, data), count_ask, thread, str(pin) if pin else None)
+            session = VoiceSession(StarletteSocket(ws), parts, tenant_id=ctx.tenant.id, user_id=ctx.principal.user_id, language=str(language), limits=bv.limits, ledger=bv.ledger, usage=usage, token=ctx.principal.token, mode=str(mode))
         box["emit"] = session.emit
         await session.run()
     except Exception as err:  # noqa: BLE001 - only the class is kept

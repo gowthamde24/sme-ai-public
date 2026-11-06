@@ -51,3 +51,18 @@ Not yet: the practice call with "What I'd change" (next part), recorded example 
 - **Draft training:** `training` lets the owner try unsaved changes. Without it, the saved training (or the defaults) is used.
 - **Nothing is stored or sent, and there is no voice.**
 - **Errors:** 503 `practice_unavailable` when no model is configured or it did not answer; 429 `practice_busy` past 120 turns an hour in a workspace.
+
+## Practice call by voice (app v4 [C1], 6 Nov 2026)
+
+The same Live talk socket, `wss://<api>/v1/tenants/{t}/voice-chat`, with a new mode.
+- **Start:** `{"type": "start", "access_token": "…", "language": "te", "mode": "practice_call"}`.
+- **Who:** Owner and Admin. Anyone else gets close code 4403 (`forbidden`).
+- **What the person hears:** the phone assistant exactly as a caller would.
+  - It uses the call's prompt with the workspace's saved training ("Never say", "Say it like this").
+  - It opens with the inbound opening line (it says it's an AI).
+  - The recogniser is set to the chosen language.
+  - A "bye" ends it, as on a call.
+- **Voice:** Sarvam only. Cartesia is kept for real test calls.
+- **Nothing is stored:** no conversation, no call row.
+- **Limits:** it counts against the workspace's Live talk time like any session.
+- **The rest of the protocol** (audio frames, `ready`, captions, `end`) is the same as Live talk.
