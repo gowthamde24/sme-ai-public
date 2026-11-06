@@ -34,7 +34,7 @@ from typing import Any
 
 import httpx
 
-from app.connectors.phone import normalise
+from app.connectors.phone import normalise, normalise_line
 from app.telephony import exotel, gate
 from app.telephony.line import PhoneLine
 
@@ -167,7 +167,7 @@ class ExotelCalls:
             call = response.json().get("Call") or {}
         except ValueError:
             return None
-        return ProviderCall(status=str(call.get("Status") or "").lower(), from_number=normalise(call.get("From")), to_number=normalise(call.get("To")))
+        return ProviderCall(status=str(call.get("Status") or "").lower(), from_number=normalise(call.get("From")), to_number=normalise_line(call.get("To")))
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------- the shared trial number (sandbox only)
@@ -213,7 +213,7 @@ class DayCount:
 
 def trial_rule(number: str, caller: str, account_sid: str | None, app_id: str, *, max_calls_per_day: int = 10, max_call_s: int = 180) -> TrialRule | None:
     """The rule from the settings, or None without the number or our account (then the trial number gets the strict rule like every other number)."""
-    n = normalise(number)
+    n = normalise_line(number)
     if not (n and account_sid):
         return None
     return TrialRule(number=n, account_sid=account_sid, app_id=app_id.strip(), caller=normalise(caller), max_calls_per_day=max(0, max_calls_per_day), max_call_s=max(30, min(max_call_s, 180)))
@@ -263,7 +263,7 @@ async def admit(start: exotel.Start, settings: gate.Settings, *, find_line: Call
 
     The call is on the trial number when the start message's `to` is it, OR when the stream-url request named it as its `To` (`trial_by_url`: proven by the signed token's mark). The 10:15 UTC call
     of 5 Nov 2026 had `To` = the trial number on the stream-url request but `to` = the line it landed on in the start message, and was refused `no_such_line`."""
-    caller, line_no = normalise(start.from_number), normalise(start.to_number)
+    caller, line_no = normalise(start.from_number), normalise_line(start.to_number)   # our line may be a landline (040...)
     by_to = trial is not None and line_no == trial.number
     on_trial = trial is not None and (by_to or trial_by_url)
     ours = trial.caller if trial is not None and trial.caller else (next(iter(sorted(settings.sandbox_numbers)), None) if settings.sandbox_numbers else None)

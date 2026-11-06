@@ -347,6 +347,9 @@ class Settings(BaseSettings):
     workspace_secrets: str = "off"
     workspace_secrets_project: str | None = None
     telephony_max_concurrent: int = 2
+    # the longest an inbound call may run, in seconds (never above 300);
+    # owner, 6 Nov 2026: 180 on staging's own number
+    telephony_max_call_s: int = 300
     # The assistant does the work (chat files, plan cards, the router, Settings > Activity): which
     # workspaces have it. Unset = every workspace (local, tests); ids separated by ; or , = only
     # those (staging: the owner's test workspaces, 5 Nov 2026); set but empty or "none" = none.
