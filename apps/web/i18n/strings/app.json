@@ -83179,5 +83179,324 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "tt.say": {
+  "en": "Say it like this",
+  "te": "ఇలా చెప్పండి",
+  "hi": "ऐसे कहें",
+  "kn": "ಹೀಗೆ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.say.help": {
+  "en": "Your business's own words, used on every call. If you like, also the word each one replaces. Up to {n}.",
+  "te": "మీ వ్యాపారం సొంత పదాలు, ప్రతి కాల్‌లో వాడతారు. కావాలంటే, అవి ఏ పదానికి బదులో కూడా రాయండి. గరిష్టంగా {n}.",
+  "hi": "आपके कारोबार के अपने शब्द, हर कॉल में इस्तेमाल होते हैं। चाहें तो यह भी लिखें कि ये किस शब्द की जगह हैं। ज़्यादा से ज़्यादा {n}।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಸ್ವಂತ ಪದಗಳು, ಪ್ರತಿ ಕರೆಯಲ್ಲಿ ಬಳಸುತ್ತದೆ. ಬೇಕಿದ್ದರೆ, ಅವು ಯಾವ ಪದದ ಬದಲು ಎಂದೂ ಬರೆಯಿರಿ. ಗರಿಷ್ಠ {n}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.say.say": {
+  "en": "Say",
+  "te": "చెప్పండి",
+  "hi": "कहें",
+  "kn": "ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.say.instead": {
+  "en": "Instead of (optional)",
+  "te": "దీనికి బదులు (ఐచ్ఛికం)",
+  "hi": "इसकी जगह (वैकल्पिक)",
+  "kn": "ಇದರ ಬದಲು (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.say.add": {
+  "en": "Add a word",
+  "te": "పదం జోడించండి",
+  "hi": "शब्द जोड़ें",
+  "kn": "ಪದ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.err.too_many_say_like": {
+  "en": "At most 20 words to say.",
+  "te": "గరిష్టంగా 20 పదాలు.",
+  "hi": "ज़्यादा से ज़्यादा 20 शब्द।",
+  "kn": "ಗರಿಷ್ಠ 20 ಪದಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.preview": {
+  "en": "In its instructions",
+  "te": "దాని సూచనల్లో",
+  "hi": "इसके निर्देशों में",
+  "kn": "ಅದರ ಸೂಚನೆಗಳಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.preview.help": {
+  "en": "What your assistant is told about words on every call. A saved change counts from the next call.",
+  "te": "ప్రతి కాల్‌లో పదాల గురించి మీ అసిస్టెంట్‌కు చెప్పేది ఇది. సేవ్ చేసిన మార్పు తర్వాతి కాల్ నుంచి పనిచేస్తుంది.",
+  "hi": "हर कॉल में शब्दों के बारे में आपके असिस्टेंट को यही बताया जाता है। सेव किया गया बदलाव अगली कॉल से लागू होता है।",
+  "kn": "ಪ್ರತಿ ಕರೆಯಲ್ಲಿ ಪದಗಳ ಬಗ್ಗೆ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ಹೇಳುವುದು ಇದು. ಉಳಿಸಿದ ಬದಲಾವಣೆ ಮುಂದಿನ ಕರೆಯಿಂದ ಜಾರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.preview.never": {
+  "en": "Never say",
+  "te": "ఎప్పుడూ చెప్పకూడనివి",
+  "hi": "कभी न कहें",
+  "kn": "ಎಂದಿಗೂ ಹೇಳಬಾರದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.preview.say": {
+  "en": "Say it like this",
+  "te": "ఇలా చెప్పండి",
+  "hi": "ऐसे कहें",
+  "kn": "ಹೀಗೆ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.preview.none": {
+  "en": "Nothing yet.",
+  "te": "ఇంకా ఏమీ లేదు.",
+  "hi": "अभी कुछ नहीं।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice": {
+  "en": "Practice a call",
+  "te": "కాల్ ప్రాక్టీస్ చేయండి",
+  "hi": "कॉल की प्रैक्टिस करें",
+  "kn": "ಕರೆ ಅಭ್ಯಾಸ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.help": {
+  "en": "You play the customer and type. Your assistant answers as it would on a real call, with what is on this page, saved or not. Nothing is sent and nothing is kept. Text only for now.",
+  "te": "మీరు కస్టమర్‌లా టైప్ చేయండి. ఈ పేజీలో ఉన్నదాంతో (సేవ్ చేసినా చేయకపోయినా) నిజమైన కాల్‌లోలాగే మీ అసిస్టెంట్ జవాబిస్తుంది. ఏమీ పంపదు, ఏమీ దాచదు. ప్రస్తుతానికి టెక్స్ట్ మాత్రమే.",
+  "hi": "आप ग्राहक बनकर लिखें। इस पेज पर जो है (सेव हो या नहीं), उसी से आपका असिस्टेंट असली कॉल की तरह जवाब देता है। कुछ भेजा या रखा नहीं जाता। अभी सिर्फ़ टेक्स्ट।",
+  "kn": "ನೀವು ಗ್ರಾಹಕರಾಗಿ ಟೈಪ್ ಮಾಡಿ. ಈ ಪುಟದಲ್ಲಿರುವುದರಿಂದ (ಉಳಿಸಿದರೂ ಇಲ್ಲದಿದ್ದರೂ) ನಿಜ ಕರೆಯಂತೆ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಉತ್ತರಿಸುತ್ತದೆ. ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ, ಇಟ್ಟುಕೊಳ್ಳುವುದಿಲ್ಲ. ಸದ್ಯಕ್ಕೆ ಪಠ್ಯ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.lang": {
+  "en": "Language of the call",
+  "te": "కాల్ భాష",
+  "hi": "कॉल की भाषा",
+  "kn": "ಕರೆಯ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.you": {
+  "en": "You, as the customer",
+  "te": "మీరు, కస్టమర్‌గా",
+  "hi": "आप, ग्राहक के रूप में",
+  "kn": "ನೀವು, ಗ್ರಾಹಕರಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.ai": {
+  "en": "Your assistant",
+  "te": "మీ అసిస్టెంట్",
+  "hi": "आपका असिस्टेंट",
+  "kn": "ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.input": {
+  "en": "What the customer says",
+  "te": "కస్టమర్ ఏం అంటారు",
+  "hi": "ग्राहक क्या कहता है",
+  "kn": "ಗ್ರಾಹಕರು ಏನು ಹೇಳುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.send": {
+  "en": "Send",
+  "te": "పంపండి",
+  "hi": "भेजें",
+  "kn": "ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.sending": {
+  "en": "Answering…",
+  "te": "జవాబిస్తోంది…",
+  "hi": "जवाब दे रहा है…",
+  "kn": "ಉತ್ತರಿಸುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.again": {
+  "en": "Start again",
+  "te": "మళ్ళీ మొదలుపెట్టండి",
+  "hi": "फिर से शुरू करें",
+  "kn": "ಮತ್ತೆ ಪ್ರಾರಂಭಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.ended": {
+  "en": "The call ended here.",
+  "te": "కాల్ ఇక్కడ ముగిసింది.",
+  "hi": "कॉल यहाँ ख़त्म हुई।",
+  "kn": "ಕರೆ ಇಲ್ಲಿ ಮುಗಿಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.handover": {
+  "en": "Here your assistant would hand the call to your team.",
+  "te": "ఇక్కడ మీ అసిస్టెంట్ కాల్‌ను మీ టీమ్‌కు ఇస్తుంది.",
+  "hi": "यहाँ आपका असिस्टेंट कॉल आपकी टीम को सौंप देता।",
+  "kn": "ಇಲ್ಲಿ ನಿಮ್ಮ ಅಸಿಸ್ಟೆಂಟ್ ಕರೆಯನ್ನು ನಿಮ್ಮ ತಂಡಕ್ಕೆ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.full": {
+  "en": "That is as long as a practice call goes. Start again to try more.",
+  "te": "ప్రాక్టీస్ కాల్ ఇంతవరకే. ఇంకా ప్రయత్నించాలంటే మళ్ళీ మొదలుపెట్టండి.",
+  "hi": "प्रैक्टिस कॉल इतनी ही लंबी होती है। और आज़माने के लिए फिर से शुरू करें।",
+  "kn": "ಅಭ್ಯಾಸ ಕರೆ ಇಷ್ಟೇ. ಇನ್ನಷ್ಟು ಪ್ರಯತ್ನಿಸಲು ಮತ್ತೆ ಪ್ರಾರಂಭಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.err.unavailable": {
+  "en": "Practice isn't available right now. Please try again later.",
+  "te": "ప్రాక్టీస్ ఇప్పుడు అందుబాటులో లేదు. తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "प्रैक्टिस अभी उपलब्ध नहीं है। बाद में फिर कोशिश करें।",
+  "kn": "ಅಭ್ಯಾಸ ಈಗ ಲಭ್ಯವಿಲ್ಲ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.err.busy": {
+  "en": "That's a lot of practice this hour. Please try again in a while.",
+  "te": "ఈ గంటలో చాలా ప్రాక్టీస్ అయింది. కాసేపటి తర్వాత ప్రయత్నించండి.",
+  "hi": "इस घंटे बहुत प्रैक्टिस हो गई। थोड़ी देर बाद कोशिश करें।",
+  "kn": "ಈ ಗಂಟೆಯಲ್ಲಿ ತುಂಬಾ ಅಭ್ಯಾಸ ಆಯಿತು. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.err.invalid": {
+  "en": "That couldn't be sent. Each line needs 1 to 400 characters, and the lists above must be ready to save.",
+  "te": "అది పంపలేకపోయాం. ప్రతి లైన్‌లో 1 నుంచి 400 అక్షరాలు ఉండాలి, పైన ఉన్న జాబితాలు సేవ్ చేయడానికి సిద్ధంగా ఉండాలి.",
+  "hi": "यह भेजा नहीं जा सका। हर लाइन में 1 से 400 अक्षर हों, और ऊपर की सूचियाँ सेव होने लायक हों।",
+  "kn": "ಅದನ್ನು ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ. ಪ್ರತಿ ಸಾಲಿನಲ್ಲಿ 1 ರಿಂದ 400 ಅಕ್ಷರಗಳು ಇರಬೇಕು, ಮೇಲಿನ ಪಟ್ಟಿಗಳು ಉಳಿಸಲು ಸಿದ್ಧವಾಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.err.forbidden": {
+  "en": "Only the owner or an admin can practise.",
+  "te": "ఓనర్ లేదా అడ్మిన్ మాత్రమే ప్రాక్టీస్ చేయగలరు.",
+  "hi": "सिर्फ़ मालिक या एडमिन प्रैक्टिस कर सकते हैं।",
+  "kn": "ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಅಭ್ಯಾಸ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.err.not_available": {
+  "en": "This isn't switched on yet.",
+  "te": "ఇది ఇంకా ఆన్ కాలేదు.",
+  "hi": "यह अभी चालू नहीं है।",
+  "kn": "ಇದು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "tt.practice.err.down": {
+  "en": "No answer came back. Please try again in a minute.",
+  "te": "జవాబు రాలేదు. ఒక నిమిషంలో మళ్ళీ ప్రయత్నించండి.",
+  "hi": "कोई जवाब नहीं आया। एक मिनट में फिर कोशिश करें।",
+  "kn": "ಉತ್ತರ ಬರಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

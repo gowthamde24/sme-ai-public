@@ -13,10 +13,10 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { getTalkTraining } from "@/lib/api/talk-training";
 import { requireUser } from "@/lib/auth/session";
-import { talkTrainingScreens } from "@/lib/screens/flag";
+import { appV4, talkTrainingScreens } from "@/lib/screens/flag";
 
 import { menuTitle } from "../../menu-title";
-import { resetTalkTrainingAction, saveTalkTrainingAction } from "../../talk-training-actions";
+import { practiceCallAction, resetTalkTrainingAction, saveTalkTrainingAction } from "../../talk-training-actions";
 
 export const metadata = { title: `Train how it talks · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
@@ -58,6 +58,8 @@ export default async function TrainingPage({ params }: PageProps<"/app/tenants/[
             securityHref="/app/security"
             business={tenant.name}
             actions={{ save: saveTalkTrainingAction.bind(null, tenantId), reset: resetTalkTrainingAction.bind(null, tenantId) }}
+            v4={appV4()}
+            practice={appV4() ? practiceCallAction.bind(null, tenantId) : null}
           />
         ) : (
           <section className={surface} data-part="tt-unread">

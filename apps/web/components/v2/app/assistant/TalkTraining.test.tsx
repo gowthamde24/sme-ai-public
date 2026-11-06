@@ -6,7 +6,7 @@ import type { TalkTrainingState } from "@/lib/talk-training/types";
 
 import { TalkTraining } from "./TalkTraining";
 
-const DOC = { greeting: {}, address: "plain" as const, questions: ["What is the saree for?"], neverSay: ["guaranteed"], objections: [{ a: "Too costly", b: "We have sarees in many ranges." }], examples: [] };
+const DOC = { greeting: {}, address: "plain" as const, questions: ["What is the saree for?"], neverSay: ["guaranteed"], objections: [{ a: "Too costly", b: "We have sarees in many ranges." }], examples: [], sayLike: [] };
 const DEFAULTS: TalkTrainingState = { training: DOC, defaults: { ...DOC, greeting: { te: "నమస్తే, నేను AI అసిస్టెంట్‌ని." } }, saved: false, rules: ["Always says it is an AI."], updatedAt: null };
 const SAVED: TalkTrainingState = { ...DEFAULTS, saved: true, training: { ...DOC, questions: ["What is the saree for?", "Which colours?"] } };
 afterEach(cleanup);
@@ -63,6 +63,50 @@ describe("How I talk to customers", () => {
     // the button says "Saving…" until the first answer has settled (a slow machine): press it again only once it is "Save" again
     fireEvent.click(await screen.findByRole("button", { name: "Save" }));
     await waitFor(() => expect(screen.getByRole("link", { name: "Open Security" })).toHaveAttribute("href", "/app/security"));
+  });
+
+  it("app v4: \"Say it like this\" is edited, saved with the rest, and shown in what goes into the instructions", async () => {
+    const save = vi.fn(async () => ({ ok: true as const, data: SAVED }));
+    render(<TalkTraining initial={DEFAULTS} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" actions={{ save, reset: vi.fn() }} v4 />);
+    const preview = () => document.querySelector('[data-part="tt-preview"]')!;
+    expect(preview()).toHaveTextContent('"guaranteed"');
+    fireEvent.click(screen.getByRole("button", { name: "Add a word" }));
+    fireEvent.change(screen.getByLabelText("Say"), { target: { value: "pattu cheera" } });
+    fireEvent.change(screen.getByLabelText("Instead of (optional)"), { target: { value: "silk saree" } });
+    expect(preview()).toHaveTextContent('"pattu cheera" (not "silk saree")');
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() => expect(save).toHaveBeenCalledWith({ ...DOC, sayLike: [{ say: "pattu cheera", insteadOf: "silk saree" }] }));
+  });
+
+  it("without v4 there is no say-like editor, no instructions box and no practice", () => {
+    render(<TalkTraining initial={DEFAULTS} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" actions={{ save: vi.fn(), reset: vi.fn() }} practice={vi.fn()} />);
+    for (const part of ["tt-say", "tt-preview", "tt-practice"]) expect(document.querySelector(`[data-part="${part}"]`)).toBeNull();
+  });
+
+  it("app v4: a practice call in text, with the unsaved changes; a refusal puts the line back", async () => {
+    const practice = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, data: { reply: "Namaste! Which saree are you looking for?", ended: false, handover: false } })
+      .mockResolvedValueOnce({ ok: false, error: "busy" })
+      .mockResolvedValueOnce({ ok: true, data: { reply: "Thank you for calling. Bye!", ended: true, handover: false } });
+    render(<TalkTraining initial={DEFAULTS} langNames={CALL_LANG_NAMES} canEdit securityHref="/app/security" actions={{ save: vi.fn(), reset: vi.fn() }} v4 practice={practice} />);
+    const box = () => screen.getByLabelText("What the customer says");
+    fireEvent.change(box(), { target: { value: "Do you have Kanchi silk?" } });
+    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    await waitFor(() => expect(screen.getByText("Namaste! Which saree are you looking for?")).toBeInTheDocument());
+    expect(practice).toHaveBeenLastCalledWith("te", [{ who: "customer", text: "Do you have Kanchi silk?" }], null); // nothing changed: the saved training
+    fireEvent.change(screen.getByLabelText("Never say 1"), { target: { value: "lowest price" } });
+    fireEvent.change(box(), { target: { value: "Too costly" } });
+    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("That's a lot of practice this hour."));
+    expect(box()).toHaveValue("Too costly");
+    expect(practice.mock.calls[1][2]).toMatchObject({ neverSay: ["lowest price"] }); // the unsaved change is tried
+    fireEvent.click(await screen.findByRole("button", { name: "Send" }));
+    await waitFor(() => expect(screen.getByText("The call ended here.")).toBeInTheDocument());
+    expect(screen.queryByLabelText("What the customer says")).toBeNull();
+    expect(Array.from(document.querySelectorAll('[data-part="tt-practice-turns"] > li')).map((li) => li.getAttribute("data-who"))).toEqual(["customer", "assistant", "customer", "assistant"]);
+    fireEvent.click(screen.getByRole("button", { name: "Start again" }));
+    expect(document.querySelector('[data-part="tt-practice-turns"]')).toBeNull();
   });
 
   it("an Admin reads it and changes nothing", () => {
