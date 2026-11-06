@@ -229,6 +229,11 @@ describe("WorkspaceSwitcher", () => {
     expect(within(list).getByRole("link", { name: /Second Shop/ })).toHaveTextContent("viewer");
     expect(screen.getByRole("link", { name: "All workspaces" })).toHaveAttribute("href", "/app");
   });
+  it("in the demo video (still) it names the business alone: no plan line on camera", () => {
+    render(<WorkspaceSwitcher memberships={only("owner")} plan={loaded.plan} still />);
+    expect(screen.getByRole("link")).toHaveTextContent(/Acme Silks$/);
+    expect(screen.queryByText("Free trial plan")).toBeNull();
+  });
   it("outside a workspace it names the product and has no plan line", () => {
     nav.pathname = "/app";
     render(<WorkspaceSwitcher memberships={only("owner")} plan={loaded.plan} />);
