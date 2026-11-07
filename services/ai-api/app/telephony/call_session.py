@@ -20,7 +20,6 @@ from dataclasses import dataclass
 from typing import Any, Protocol
 
 from app.browser_voice.limits import Ledger, Limits, Usage
-from app.browser_voice.llm import CaptionLlm
 from app.browser_voice.session import Kind, Parts, VoiceSession
 from app.conversation.parts import StreamingLlm
 from app.telephony import language_rule, persona
@@ -30,6 +29,7 @@ from app.telephony.outcome import CallOutcome
 from app.telephony.phone_llm import PhoneLlm
 
 log = logging.getLogger("app.telephony.call")
+SUMMARY_TIMEOUT_S = 25.0
 
 
 @dataclass(frozen=True)
@@ -44,6 +44,7 @@ class CallPlan:
     cost_paise_per_minute: int = 0
     # the free visit slots offered on this call (ISO starts_at, India time; job calls-like-a-pro part 5): the outcome keeps a visit time only if it is one of them
     visit_slots: tuple[str, ...] = ()
+    caller_ending: str | None = None   # the caller's last three digits, for the Calls list ("Caller ending 998"); never the whole number
 
 
 class CallStore(Protocol):
@@ -69,7 +70,16 @@ class CallVoiceSession(VoiceSession):
         """While a person has taken the call over, the AI does not answer (the caller's words still reach the transcript)."""
         if self._taken_over():
             return
-        await super()._answer(text, tm)
+        line = getattr(getattr(self, "socket", None), "_line", None)
+        add_turn = getattr(line, "add_turn", None)
+        index, began = (len(line.transcript), line.elapsed()) if callable(add_turn) and line is not None else (0, 0.0)
+        try:
+            await super()._answer(text, tm)
+        finally:
+            # one line per turn: the whole reply, or (after a barge-in) what the caller actually heard of it, cut between words (the pipeline's spoken_text)
+            said = str(getattr(tm, "spoken_text", "") or "") or ("" if getattr(tm, "interrupted", False) else str(getattr(tm, "reply_text", "") or ""))
+            if callable(add_turn) and said:
+                add_turn(said, index=index, t=began)
 
     def check_in_words(self) -> dict[str, str]:
         return persona.CALL_CHECK_IN
@@ -240,7 +250,7 @@ async def run_call(
     session = CallVoiceSession(DtmfSocket(line, on_digit), parts, tenant_id=plan.tenant_id, user_id=plan.call_id, language=plan.language, limits=limits, ledger=ledger, usage=usage, token="", mode="live", **kwargs)
     holder["s"] = session
     phone_llm = PhoneLlm(parts.llm, plan.business, lambda: session.language, on_event=on_event, voicemail_action=plan.voicemail_action)
-    session.conv.llm = CaptionLlm(phone_llm, session.emit)   # the assistant's sentences reach the line as captions, which is how the transcript is written
+    session.conv.llm = phone_llm   # the transcript gets one line per turn when the turn ends (CallVoiceSession._answer); the model's streaming pieces are never lines
     started = (clock or asyncio.get_running_loop().time)()
     try:
         await session.run()
@@ -264,7 +274,12 @@ async def run_call(
     result = outcome_mod.deterministic(answered=True, transcript=line.transcript, end_reason=line.end_reason, voicemail=flags["voicemail"], stop_requested=flags["stop"], handover=flags["handover"])
     result.cost_paise = outcome_mod.cost_paise(duration, plan.cost_paise_per_minute)
     if outcome_llm is not None:
-        result = await outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots)
+        try:
+            result = await asyncio.wait_for(outcome_mod.from_model(outcome_llm, model, result, plan.language, today(), offered_slots=plan.visit_slots), SUMMARY_TIMEOUT_S)
+        except TimeoutError:
+            log.warning("phone_call_summary_timeout")   # the record is written without a summary rather than not at all
+    if plan.caller_ending:
+        result.captured = {**result.captured, "caller_ending": plan.caller_ending}
     try:
         call_id = await marking
         await asyncio.to_thread(store.finish, call_id, result, duration)

@@ -76,7 +76,9 @@ def prompt(transcript: Sequence[dict[str, Any]], language: str, today: str, offe
     marker = secrets.token_hex(6)
     system = "\n".join([
         f"You write the record of a phone call between a business's AI assistant and a customer. Today is {today}. Use ONLY what the transcript says: never add a fact, a price, a name, a date or a promise that is not in it.",
-        f"Answer with ONLY a JSON object: {{\"summary\": at most three short sentences in {LANGUAGE_NAMES.get(language, 'English')}, \"outcome\": one of {list(OUTCOMES[:3])}, \"category\": one of {list(CATEGORIES)} or null, "
+        f"Answer with ONLY a JSON object: {{\"summary\": one short line of at most 14 words in English for the owner's list of calls, saying what the customer wanted and what happens next (the conversation may be in {LANGUAGE_NAMES.get(language, 'English')}), "
+        f"\"outcome\": one of {list(OUTCOMES[:3])} (positive: the customer showed interest, asked about products or prices, or wants a visit or a call back; negative: they said they are not interested; unclear: ONLY when neither can be told), \"category\": one of {list(CATEGORIES)} or null, "
+        "\"caller_name\": the name the customer gave for THEMSELVES, in Latin letters, else null (never the assistant's or the business's name), "
         "\"callback_at\": an ISO 8601 date-time if the customer asked to be called back at a time (resolve words like 'tomorrow evening' from today's date, evening = 18:00, morning = 10:00), else null, "
         f"\"captured\": an object of at most {MAX_CAPTURED_KEYS} short string facts the customer gave (for example budget, area, product, visit_day), else {{}}, "
         "\"whatsapp\": \"asked\" ONLY if the customer asked to be sent something on WhatsApp (photos, the quote, details, 'message me'), \"agreed\" ONLY if they could not talk now and said yes to "
@@ -122,6 +124,9 @@ def validate(raw: str) -> dict[str, Any] | None:
         clean = {str(k)[:30]: " ".join(str(v).split())[:MAX_CAPTURED_VALUE] for k, v in list(captured.items())[:MAX_CAPTURED_KEYS]
                  if isinstance(k, str) and k != "whatsapp" and isinstance(v, str | int | float) and str(v).strip()}
         out["captured"] = clean
+    name = data.get("caller_name")
+    if isinstance(name, str) and 1 < len(name.strip()) <= MAX_CAPTURED_VALUE and not re.search(r"[0-9@]", name):
+        out["captured"] = {**out.get("captured", {}), "name": " ".join(name.split())}
     # call first (owner, 5 Nov 2026): the ONE signal that lets a WhatsApp go after a call; only these two words count (the database checks them again)
     if isinstance(data.get("visit_at"), str):
         out["visit_at"] = data["visit_at"]

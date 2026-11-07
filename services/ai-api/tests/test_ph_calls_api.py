@@ -130,3 +130,12 @@ def test_the_live_registry_never_reaches_another_workspaces_call() -> None:
     assert asyncio.run(live.hang_up(uuid.uuid4(), LIVE_ID)) is False and live.count() == 1 and live.count_for(TENANT_A.id) == 1
     live.remove(LIVE_ID)
     assert live.count() == 0
+
+
+def test_the_list_names_a_call_from_the_call_else_by_a_masked_number_and_never_shows_the_marker() -> None:
+    from app.telephony.service import _who
+
+    assert _who({"contact_name": "Lakshmi", "captured": {"name": "Other", "caller_ending": "998"}}) == "Lakshmi", "a known contact comes first"
+    assert _who({"captured": {"name": "Ramesh", "caller_ending": "998"}}) == "Ramesh"
+    assert _who({"captured": {"caller_ending": "998"}}) == "Caller ending 998"
+    assert _who({"captured": None}) == "New enquiry", "an older call"
