@@ -3,22 +3,28 @@
 import * as React from "react";
 
 import { CALL_LANGS, type CallLang } from "@/lib/assistant/types";
-import { ADDRESSES, LIMITS, type Pair, type TalkError, type TalkTraining as Doc, type TalkTrainingState } from "@/lib/talk-training/types";
+import type { PracticeTurn } from "@/lib/api/talk-training";
+import { ADDRESSES, LIMITS, sayLikeLine, type Pair, type SayLike, type TalkError, type TalkTraining as Doc, type TalkTrainingState } from "@/lib/talk-training/types";
 
+import { VoicePractice } from "./VoicePractice";
 import { alertBox, btnMain, btnQuiet, checkRow, fieldHelp, fieldInput, fieldLabel, fieldTextarea, okBox, surface } from "../ui";
 import { makeT, type Words } from "../words";
 
 type Out = { ok: true; data: TalkTrainingState } | { ok: false; error: TalkError };
 export type TalkTrainingActions = { save: (input: unknown) => Promise<Out>; reset: () => Promise<Out> };
+export type PracticeError = "forbidden" | "invalid" | "unavailable" | "busy" | "not_available" | "down";
+/** A practice call's next answer (app v4): the language, the turns so far (the last the customer's) and the unsaved training (null = the saved one). */
+export type PracticeFn = (language: CallLang, turns: PracticeTurn[], training: Doc | null) => Promise<{ ok: true; data: { reply: string; ended: boolean; handover: boolean } } | { ok: false; error: PracticeError }>;
 const chip = (on: boolean) => `min-h-11 rounded-full border px-4 text-sm font-semibold ${on ? "border-ink bg-ink text-bg" : "border-edge bg-surface text-muted hover:bg-surface-2"}`;
 const h3 = "text-base font-semibold text-ink";
+const PRACTICE_TURNS = 20; // the contract's limit on turns sent at once
 
 /**
  * Settings > AI assistant > "How I talk to customers" (calls-like-a-pro part 3, C1's docs/contracts/talk-training.md). The Owner teaches the assistant: the greeting per language, how to address people (never "sir / madam" unless chosen), the
  * questions to ask one at a time, the words it must never say (checked by code before every line it speaks), answers to objections and a few good examples. The platform's own rules are listed read-only. One Save sends the whole document;
  * "Use the suggested ones" goes back to the defaults. Both need the Owner's second factor (the screen says so). An Admin reads it. What is shown after a save is what the API answered.
  */
-export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null }: { words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null }) {
+export function TalkTraining({ words, initial, langNames, canEdit, securityHref, actions, business = null, v4 = false, practice = null, voice = null }: { words?: Words; initial: TalkTrainingState; langNames: Record<CallLang, string>; canEdit: boolean; securityHref: string; actions: TalkTrainingActions; /** The business's name, for the suggested greeting's hint only ({business} stays in what is saved). */ business?: string | null; /** app v4 (APP_V4): "Say it like this", what goes into the instructions, and practice calls. (The say-like list is kept in every save either way.) */ v4?: boolean; practice?: PracticeFn | null; /** app v4: practice by voice (C1 #402): the Live talk socket's address and the route that gives its sign-in; null = not offered */ voice?: { url: string; tokenUrl: string } | null }) {
   const t = makeT(words);
   const [state, setState] = React.useState(initial);
   const [doc, setDoc] = React.useState<Doc>(initial.training);
@@ -103,8 +109,11 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
 
       <List id="questions" t={t} items={doc.questions} max={LIMITS.question.count} length={LIMITS.question.max} off={off} onChange={(questions) => change({ questions })} numbered />
       <List id="never" t={t} items={doc.neverSay} max={LIMITS.neverSay.count} length={LIMITS.neverSay.max} off={off} onChange={(neverSay) => change({ neverSay })} />
+      {v4 && doc.sayLike !== null ? <SayLikes t={t} items={doc.sayLike} off={off} onChange={(sayLike) => change({ sayLike })} /> : null}
       <Pairs id="objections" t={t} items={doc.objections} max={LIMITS.objection.count} length={LIMITS.objection.max} off={off} onChange={(objections) => change({ objections })} />
       <Pairs id="examples" t={t} items={doc.examples} max={LIMITS.example.count} length={LIMITS.example.max} off={off} onChange={(examples) => change({ examples })} />
+
+      {v4 ? <Instructions t={t} doc={doc} /> : null}
 
       {state.rules.length > 0 ? (
         <div className="rounded-xl bg-surface-2 p-4" data-part="tt-rules">
@@ -157,7 +166,168 @@ export function TalkTraining({ words, initial, langNames, canEdit, securityHref,
           ) : null}
         </p>
       ) : null}
+      {v4 && practice ? <Practice t={t} doc={dirty ? doc : null} langNames={langNames} first={lang} practice={practice} voice={voice} unsaved={dirty} words={words} /> : null}
     </section>
+  );
+}
+
+/** "Say it like this" (app v4): the business's own word, and optionally the word it replaces. */
+function SayLikes({ t, items, off, onChange }: { t: T; items: SayLike[]; off: boolean; onChange: (next: SayLike[]) => void }) {
+  const set = (i: number, next: Partial<SayLike>) => onChange(items.map((p, j) => (j === i ? { ...p, ...next } : p)));
+  return (
+    <div data-part="tt-say">
+      <p className={h3}>{t("tt.say")}</p>
+      <p className={fieldHelp}>{t("tt.say.help", { n: LIMITS.sayLike.count })}</p>
+      <ul className="mt-2 flex flex-col gap-2">
+        {items.map((p, i) => (
+          <li key={i} className="grid items-end gap-2 sm:grid-cols-[1fr_1fr_auto]">
+            <label className="block">
+              <span className={fieldLabel}>{t("tt.say.say")}</span>
+              <input value={p.say} maxLength={LIMITS.sayLike.max} disabled={off} onChange={(e) => set(i, { say: e.target.value })} className={fieldInput} />
+            </label>
+            <label className="block">
+              <span className={fieldLabel}>{t("tt.say.instead")}</span>
+              <input value={p.insteadOf ?? ""} maxLength={LIMITS.sayLike.max} disabled={off} onChange={(e) => set(i, { insteadOf: e.target.value === "" ? null : e.target.value })} className={fieldInput} />
+            </label>
+            {off ? null : (
+              <button type="button" onClick={() => onChange(items.filter((_, j) => j !== i))} className={`${btnQuiet} justify-self-start`} aria-label={t("tt.remove.n", { n: i + 1 })}>
+                {t("tt.remove")}
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      {off || items.length >= LIMITS.sayLike.count ? null : (
+        <button type="button" onClick={() => onChange([...items, { say: "", insteadOf: null }])} className={`${btnQuiet} mt-2`}>
+          {t("tt.say.add")}
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** What goes into every call's instructions about words (the contract: one line per item), read-only, from what is on the page. */
+function Instructions({ t, doc }: { t: T; doc: Doc }) {
+  const never = doc.neverSay.map((x) => x.trim()).filter((x) => x.length >= 2);
+  const say = (doc.sayLike ?? []).filter((p) => p.say.trim().length >= 2).map((p) => sayLikeLine({ say: p.say.trim(), insteadOf: p.insteadOf?.trim() || null }));
+  const block = (title: string, lines: string[]) => (
+    <div>
+      <p className="m-0 text-sm font-bold text-muted">{title}</p>
+      {lines.length ? (
+        <ul className="m-0 mt-1 list-none p-0 font-mono text-sm text-ink">
+          {lines.map((l) => (
+            <li key={l} className="[overflow-wrap:anywhere]">
+              {l}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="m-0 mt-1 text-sm text-muted">{t("tt.preview.none")}</p>
+      )}
+    </div>
+  );
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-dashed border-edge p-4" data-part="tt-preview">
+      <div>
+        <p className={h3}>{t("tt.preview")}</p>
+        <p className={fieldHelp}>{t("tt.preview.help")}</p>
+      </div>
+      {block(t("tt.preview.never"), never.map((x) => `"${x}"`))}
+      {doc.sayLike === null ? null : block(t("tt.preview.say"), say)}
+    </div>
+  );
+}
+
+/** A practice call in text (app v4): the Owner types as the customer; the assistant answers with the same prompt and rules as a real call (C1's practice endpoint). Nothing is sent or kept. */
+function Practice({ t, doc, langNames, first, practice, voice, unsaved, words }: { t: T; doc: Doc | null; langNames: Record<CallLang, string>; first: CallLang; practice: PracticeFn; voice: { url: string; tokenUrl: string } | null; unsaved: boolean; words?: Words }) {
+  const [lang, setLang] = React.useState<CallLang>(first);
+  const [turns, setTurns] = React.useState<PracticeTurn[]>([]);
+  const [text, setText] = React.useState("");
+  const [end, setEnd] = React.useState<"ended" | "handover" | null>(null);
+  const [error, setError] = React.useState<PracticeError | null>(null);
+  const [busy, start] = React.useTransition();
+  const full = turns.length + 1 > PRACTICE_TURNS;
+  const send = () => {
+    const line = text.trim();
+    if (!line || busy || end || full) return;
+    const next: PracticeTurn[] = [...turns, { who: "customer", text: line.slice(0, 400) }];
+    setTurns(next);
+    setText("");
+    setError(null);
+    start(async () => {
+      const out = await practice(lang, next, doc);
+      if (!out.ok) {
+        setError(out.error);
+        setTurns(turns); // the line was not answered: it goes back into the box
+        setText(line);
+        return;
+      }
+      setTurns([...next, { who: "assistant", text: out.data.reply }]);
+      if (out.data.ended) setEnd("ended");
+      else if (out.data.handover) setEnd("handover");
+    });
+  };
+  const again = () => {
+    setTurns([]);
+    setEnd(null);
+    setError(null);
+  };
+  return (
+    <div className="flex flex-col gap-3 border-t border-line pt-5" data-part="tt-practice">
+      <div>
+        <h3 className={`${h3} font-display text-lg`}>{t("tt.practice")}</h3>
+        <p className={fieldHelp}>{t("tt.practice.help")}</p>
+      </div>
+      <div role="group" aria-label={t("tt.practice.lang")} className="flex flex-wrap gap-2">
+        {CALL_LANGS.map((l) => (
+          <button key={l} type="button" aria-pressed={l === lang} disabled={turns.length > 0} onClick={() => setLang(l)} className={chip(l === lang)}>
+            {langNames[l]}
+          </button>
+        ))}
+      </div>
+      {turns.length ? (
+        <ol className="m-0 flex list-none flex-col gap-2 p-0" aria-live="polite" data-part="tt-practice-turns">
+          {turns.map((x, i) => (
+            <li key={i} className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm ${x.who === "customer" ? "self-end bg-surface-2 text-ink" : "self-start border border-line bg-brand-bg text-ink"}`} data-who={x.who}>
+              <span className="block text-xs font-bold text-muted">{x.who === "customer" ? t("tt.practice.you") : t("tt.practice.ai")}</span>
+              <span lang={lang} className="[overflow-wrap:anywhere]">
+                {x.text}
+              </span>
+            </li>
+          ))}
+        </ol>
+      ) : null}
+      {end ? <p className="m-0 text-sm font-semibold text-muted">{t(end === "ended" ? "tt.practice.ended" : "tt.practice.handover")}</p> : null}
+      {full && !end ? <p className="m-0 text-sm text-muted">{t("tt.practice.full")}</p> : null}
+      {error ? (
+        <p role="alert" className={alertBox}>
+          {t(`tt.practice.err.${error}` as "tt.practice.err.down")}
+        </p>
+      ) : null}
+      {end || full ? null : (
+        <form
+          className="flex items-end gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            send();
+          }}
+        >
+          <label className="block min-w-0 flex-1">
+            <span className={fieldLabel}>{t("tt.practice.input")}</span>
+            <input lang={lang} value={text} maxLength={400} disabled={busy} onChange={(e) => setText(e.target.value)} className={fieldInput} />
+          </label>
+          <button type="submit" disabled={busy || text.trim() === ""} className={btnMain}>
+            {busy ? t("tt.practice.sending") : t("tt.practice.send")}
+          </button>
+        </form>
+      )}
+      {turns.length ? (
+        <button type="button" onClick={again} disabled={busy} className={`${btnQuiet} self-start`}>
+          {t("tt.practice.again")}
+        </button>
+      ) : null}
+      {voice ? <VoicePractice w={words ?? {}} url={voice.url} tokenUrl={voice.tokenUrl} language={lang} unsaved={unsaved} /> : null}
+    </div>
   );
 }
 

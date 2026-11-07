@@ -1,3 +1,4 @@
+import { appV4 } from "@/lib/screens/flag";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiDownV2 } from "@/components/v2/app/parts";
@@ -97,6 +98,7 @@ export default async function VisitsPage({ params, searchParams }: PageProps<"/a
   return (
     <main className={pageMain} lang={lang}>
       <VisitsView
+        v4={appV4()}
 title={await menuTitle("visits", lang, user.accessToken, tenantId)}
         help={helpTipFor(lang, `/app/tenants/${tenantId}`, "visits")}
         view={view}

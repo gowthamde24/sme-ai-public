@@ -1,6 +1,9 @@
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+// app v4's day picker opens the day with the router
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
+
 import { LEAD_A, SETTINGS, VISIT_1, VISIT_2, VISIT_3, slotsJson, visit } from "@/lib/api/visits-fixtures";
 
 import type { Role } from "../today/types";
@@ -157,5 +160,15 @@ describe("the Visits page: the phone", () => {
     expect(grid.className).toContain("lg:grid-cols-");
     const form = screen.getByLabelText("Pick a date").closest("form")!;
     expect(form.className).toContain("max-md:basis-full");
+  });
+});
+
+describe("app v4: Store visits (owner, 6 Nov 2026)", () => {
+  it("has no second row of tabs: Store hours is a small link at the top right, and the day opens when it is picked (no Show button)", async () => {
+    await show({ v4: true });
+    expect(screen.queryByRole("navigation", { name: "Store visits" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Store hours" })).toHaveAttribute("href", `${BASE}/visits?view=hours`);
+    expect(screen.queryByRole("button", { name: "Show" })).toBeNull();
+    expect(document.querySelector("input#visits-date")).toHaveAttribute("type", "date");
   });
 });

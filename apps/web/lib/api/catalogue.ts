@@ -256,3 +256,41 @@ export async function removeCataloguePhoto(accessToken: string, tenantId: string
 export async function reorderCataloguePhotos(accessToken: string, tenantId: string, itemId: string, photoIds: readonly string[]): Promise<Item> {
   return parseItem(await apiRequest(tenantPath(tenantId, `items/${idOf(itemId)}/photos/order`), accessToken, { method: "PUT", body: JSON.stringify({ photo_ids: photoIds.map(idOf) }) }));
 }
+
+/**
+ * Low stock and the stock count (app v4 part 6, C1's docs/contracts/money-and-stock.md): `GET /catalogue/low-stock` (any member): the active items that are low, 3 or fewer when a count is kept, else those marked "few left"; counted items
+ * first, lowest first. `askedThisWeek` is how many customers in the last 7 days had a need with a word of the item's name: approximate, so it is said as "about 3 asked". `PUT /catalogue/items/{id}/quantity` (Owner, Admin) sets the count
+ * (a whole number from 0 to 1,000,000) or stops counting (null); the same number again changes nothing. Checked field by field.
+ */
+export type LowStockItem = { id: string; name: string; stockStatus: StockStatus; quantity: number | null; askedThisWeek: number; askedIsApproximate: boolean };
+export type LowStock = { items: LowStockItem[]; countsAvailable: boolean };
+export const MAX_QUANTITY = 1_000_000;
+
+export function parseLowStock(json: unknown): LowStock {
+  if (!isRecord(json) || !Array.isArray(json.items)) return bad("low stock");
+  const items = json.items.slice(0, 100).flatMap((r): LowStockItem[] => {
+    if (!isRecord(r) || typeof r.id !== "string" || !isCanonicalUuid(r.id) || typeof r.name !== "string" || r.name.trim() === "" || !(STOCK_STATUSES as readonly unknown[]).includes(r.stock_status)) return [];
+    const q = r.quantity;
+    const asked = r.asked_this_week;
+    return [
+      {
+        id: r.id,
+        name: r.name.trim().slice(0, MAX_NAME),
+        stockStatus: r.stock_status as StockStatus,
+        quantity: typeof q === "number" && Number.isInteger(q) && q >= 0 && q <= MAX_QUANTITY ? q : null,
+        askedThisWeek: typeof asked === "number" && Number.isInteger(asked) && asked >= 0 && asked <= 100_000 ? asked : 0,
+        askedIsApproximate: r.asked_is_approximate !== false,
+      },
+    ];
+  });
+  return { items, countsAvailable: json.counts_available === true };
+}
+export async function getLowStock(accessToken: string, tenantId: string): Promise<LowStock> {
+  return parseLowStock(await apiRequest(tenantPath(tenantId, "low-stock"), accessToken));
+}
+/** Sets the count (or stops counting with null). The answer is the item; only that it came back is checked. */
+export async function putQuantity(accessToken: string, tenantId: string, itemId: string, quantity: number | null): Promise<void> {
+  if (quantity !== null && (!Number.isInteger(quantity) || quantity < 0 || quantity > MAX_QUANTITY)) throw new ApiContractError("quantity");
+  const json = await apiRequest(tenantPath(tenantId, `items/${idOf(itemId)}/quantity`), accessToken, { method: "PUT", body: JSON.stringify({ quantity }) });
+  if (!isRecord(json) || json.id !== itemId) throw new ApiContractError("Unexpected quantity answer.");
+}

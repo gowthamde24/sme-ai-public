@@ -264,6 +264,50 @@ add({
     fetchLeadContactId: () => CONTACT,
   }),
 });
+// app v4 part 3: one page per customer (only with APP_V4)
+const CUSTOMER_TIMELINE = {
+  items: [
+    { kind: "call", at: "2026-10-06T05:10:00Z", text: "Wants 20 Kanchi silk sarees for a wedding, visiting Saturday", target: { type: "phone_call", id: "c1" }, detail: { direction: "inbound", duration_s: 126, outcome: "positive" } },
+    { kind: "quote", at: "2026-10-05T09:00:00Z", text: "Quote 12", target: { type: "quote", id: "99999999-9999-4999-8999-999999999912" }, detail: { status: "draft", total_paise: 4_800_000 } },
+    { kind: "message_in", at: "2026-10-04T08:00:00Z", text: "Price for 20 pieces please", target: { type: "enquiry", id: "e1" }, detail: { channel: "whatsapp" } },
+    { kind: "arrival", at: "2026-10-04T07:58:00Z", text: "IndiaMART", target: { type: "lead", id: LEAD }, detail: { source: "indiamart", how: "first" } },
+  ],
+  next_before: null,
+};
+add({
+  id: "customer",
+  render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/customers/[leadId]/page")).default(props({ leadId: LEAD }))),
+  handlers: (role) => ({
+    ...base(role),
+    fetchCustomerHead: async () => (await import("@/lib/api/customer-timeline")).parseCustomerHead({ ...LEAD_JSON, display_name: "Priya S. (synthetic)", profile: { need: "Kanchi silk sarees", quantity: "20 pieces", city: "Guntur", language: "te", source: "indiamart" } }),
+    fetchTimeline: async () => (await import("@/lib/api/customer-timeline")).parseTimeline(CUSTOMER_TIMELINE),
+    fetchCompany: () => parsePage("companies", { items: [COMPANY_JSON], next_cursor: null }).items[0],
+    fetchLeadFollowup: () => parseLeadFollowup(FOLLOWUP_JSON),
+  }),
+});
+// app v4 part 4: the phone calls (only with APP_V4; a Viewer has none)
+const CALL_ID = "99999999-9999-4999-8999-999999999931";
+const CALL_ROW = { id: CALL_ID, direction: "inbound", state: "completed", live: false, who: "Priya S. (synthetic)", purpose: "inbound", language: "te", created_at: "2026-10-06T05:10:00Z", answered_at: "2026-10-06T05:10:04Z", ended_at: "2026-10-06T05:12:10Z", elapsed_s: 126, outcome: "positive", category: "visit_booked", summary_short: "Wants 20 Kanchi silk sarees for a wedding, visiting Saturday", refuse_reason: null, lead_id: LEAD, sandbox: true, simulated: false };
+const callsModule = () => import("@/lib/api/calls");
+add({
+  id: "phone-calls",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/calls/page")).default(props({}))),
+  handlers: (role) => ({
+    ...base(role),
+    listCalls: async () => (await callsModule()).parseCallsPage({ items: [{ ...CALL_ROW, id: "99999999-9999-4999-8999-999999999932", live: true, state: "in_progress", elapsed_s: 42, outcome: null, category: null, summary_short: null }, CALL_ROW, { ...CALL_ROW, id: "99999999-9999-4999-8999-999999999933", state: "refused", refuse_reason: "outside_hours", outcome: null, category: null, summary_short: null, elapsed_s: 0 }], next_cursor: null, poll_after_s: 5 }),
+  }),
+});
+add({
+  id: "phone-call",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/calls/[callId]/page")).default(props({ callId: CALL_ID }))),
+  handlers: (role) => ({
+    ...base(role),
+    getCall: async () => (await callsModule()).parseCallDetail({ ...CALL_ROW, summary: "Priya wants 20 Kanchi silk sarees for a wedding on 2 November and will visit on Saturday.", captured: { saree: "Kanchi silk", quantity: "20", visit_day: "Saturday" }, transcript: role === "sales" ? null : [{ who: "assistant", text: "Namaste! I am the AI assistant of Demo Silks.", t: 1 }, { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీరలు కావాలి.", t: 5 }], correction: null }, CALL_ID),
+    fetchTimeline: async () => (await import("@/lib/api/customer-timeline")).parseTimeline(CUSTOMER_TIMELINE),
+  }),
+});
 add({
   id: "consent",
   render: async () => (await import("@/app/app/tenants/[tenantId]/contacts/[contactId]/consent/page")).default(props({ contactId: CONTACT })),
@@ -714,6 +758,16 @@ const catalogueHandlers = (role: Role): Record<string, Handler> => ({
 });
 const cataloguePage = async () => (await import("@/app/app/tenants/[tenantId]/catalogue/page")).default;
 add({ id: "catalogue", render: async () => (await cataloguePage())(props({}, {})), handlers: catalogueHandlers });
+// app v4 part 6: what is running low, in the catalogue (only with APP_V4); the Owner and an Admin may set the count
+add({
+  id: "catalogue-low-stock",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1" }, async () => (await cataloguePage())(props({}, {}))),
+  handlers: (role) => ({
+    ...catalogueHandlers(role),
+    getLowStock: async () => (await import("@/lib/api/catalogue")).parseLowStock({ items: [{ id: ITEM_A, name: "Red Kanchi silk (synthetic)", stock_status: "in_stock", quantity: 2, asked_this_week: 3, asked_is_approximate: true }, { id: "ca000000-0000-4000-8000-0000000000e1", name: "Cotton daily wear (synthetic)", stock_status: "few_left", quantity: null, asked_this_week: 0, asked_is_approximate: true }], counts_available: true }),
+  }),
+});
 add({ id: "catalogue-filtered", roles: ["owner"], render: async () => (await cataloguePage())(props({}, { fabric: "soft_silk", stock: "few_left", q: "blue" })), handlers: catalogueHandlers });
 add({ id: "catalogue-nomatch", roles: ["owner"], render: async () => (await cataloguePage())(props({}, { q: "zzz" })), handlers: catalogueHandlers });
 add({ id: "catalogue-empty", roles: ["owner", "sales"], render: async () => (await cataloguePage())(props({}, {})), handlers: (role) => ({ ...base(role), listCatalogueItems: () => parseItemPage(pageJson([])) }) });
@@ -739,6 +793,42 @@ const finderHandlers = (availability: unknown, rows: unknown[]) => (role: Role) 
 });
 const PROSPECTS = [LF.PROSPECT, LF.PROSPECT_READY, LF.PROSPECT_LOW, LF.PROSPECT_QUALIFIED];
 add({ id: "retailers", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.AVAILABLE, PROSPECTS) });
+// app v4 part 5: the Lead Finder with its radar, the shops it found and how it decides (only with APP_V4); positions that differ, so the radar draws
+const V4_SPREAD = PROSPECTS.map((r, i) => ({ ...r, lat: 17.38 + i * 0.03, lng: 78.4 + (i % 2) * 0.05 }));
+add({
+  id: "retailers-v4",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({}))),
+  handlers: (role) => ({ ...finderHandlers(LF.AVAILABLE, V4_SPREAD)(role), listSearches: async () => [(await import("@/lib/api/lead-finder")).parseSearch({ ...LF.SEARCH_DONE, area: "Hyderabad" })] }),
+});
+// app v4 part 5: Customers > Map, where the customers are (only with APP_V4)
+add({
+  id: "map",
+  render: () => withEnv({ APP_V4: "1", LEADS_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/map/page")).default(props({}))),
+  handlers: (role) => ({
+    ...base(role),
+    listDeskLeads: () => ({
+      leads: [
+        { id: LEAD, contactId: null, name: "Meena Sarees (synthetic)", source: "whatsapp_inbound", status: "new", ownerUserId: null, createdAt: "2026-10-06T04:00:00Z", hot: false, profile: { city: "Guntur", area: "Brodipet" } },
+        { id: "ca000000-0000-4000-8000-0000000000b1", contactId: null, name: "Lakshmi Textiles (synthetic)", source: "indiamart", status: "new", ownerUserId: null, createdAt: "2026-10-06T04:00:00Z", hot: false, profile: { city: "guntur", area: null } },
+        { id: "ca000000-0000-4000-8000-0000000000b2", contactId: null, name: "Ravi K. (synthetic)", source: "indiamart", status: "new", ownerUserId: null, createdAt: "2026-10-06T04:00:00Z", hot: false, profile: { city: "Vijayawada", area: "Benz Circle" } },
+        { id: "ca000000-0000-4000-8000-0000000000b3", contactId: null, name: "Anita (synthetic)", source: "meta_lead_ads", status: "new", ownerUserId: null, createdAt: "2026-10-06T04:00:00Z", hot: false, profile: null },
+      ],
+      nextCursor: null,
+    }),
+    fetchPage: () => parsePage("companies", { items: [{ ...COMPANY_JSON, type: "customer", city: "Tenali" }, { ...COMPANY_JSON, id: "ca000000-0000-4000-8000-0000000000d1", type: "supplier", city: "Chennai" }], next_cursor: null }),
+    listSites: () => ({ items: [{ id: "ca000000-0000-4000-8000-0000000000c1", name: "Lake Road site (synthetic)", address_line: "12 Lake Road", city: "Guntur", pin: "522001" }], next_cursor: null }),
+  }),
+});
+// app v4 part 6: Sales > Money (only with APP_V4): what customers owe, what is overdue, who owes most, Remind
+const MONEY_JSON = { as_of: "2026-10-14", owed_paise: 17500000, overdue_paise: 5000000, customers_owing: 2, customers_overdue: 1, paid_this_month_paise: 7000000, month_from: "2026-10-01", top: [{ account_id: "adadadad-adad-4dad-8dad-adadadadada1", company_id: "11111111-1111-4111-8111-111111111111", contact_id: "ca000000-0000-4000-8000-0000000000f1", name: "Sri Rama Builders (synthetic)", outstanding_paise: 13000000, overdue_paise: 5000000 }, { account_id: "adadadad-adad-4dad-8dad-adadadadada2", company_id: "11111111-1111-4111-8111-111111111112", contact_id: null, name: "Lakshmi Hardware (synthetic)", outstanding_paise: 4500000, overdue_paise: 0 }], complete: true };
+add({
+  id: "money",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/money/page")).default(props({}))),
+  handlers: (role) => ({ ...base(role), getMoneySummary: async () => (await import("@/lib/api/money")).parseMoneySummary(MONEY_JSON) }),
+});
+add({ id: "money-viewer", roles: ["viewer"], render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/money/page")).default(props({}))), handlers: base });
 add({ id: "retailers-places", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.AVAILABLE_PLACES, [{ ...LF.PROSPECT, source: "google_maps", attribution: "Google Maps", source_label: "Google Maps search 'saree shops Jayanagar', 2 Nov" }, LF.PROSPECT_LOW]) });
 add({ id: "retailers-school", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.SCHOOL, []) });
 add({ id: "retailers-unreadable", roles: ["admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(null, []) });

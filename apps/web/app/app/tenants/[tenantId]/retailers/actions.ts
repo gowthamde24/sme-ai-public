@@ -9,9 +9,10 @@ import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { failureOf } from "@/lib/api/failure";
-import { actOnProspects, approveSearch, cancelSearch, getQuoteDraft, makeQuoteDraft, planSearch, practiceCall } from "@/lib/api/lead-finder";
+import { actOnProspects, approveSearch, cancelSearch, getProspect, getQuoteDraft, getSearch, makeQuoteDraft, planSearch, practiceCall } from "@/lib/api/lead-finder";
 import { fetchQuote } from "@/lib/api/quotes";
 import { requireUser } from "@/lib/auth/session";
+import { likeThis } from "@/lib/lead-finder/radar";
 import { ACTIONS, CALL_LANGUAGES, MAX_BULK, PERSONAS, searchTextProblem, type ActionResult, type CallLanguage, type Persona, type PracticeCall, type ProspectAction, type QuoteDraftMade, type QuoteDraftView, type Search } from "@/lib/lead-finder/types";
 
 /**
@@ -63,6 +64,26 @@ export async function planSearchAction(tenantId: string, text: string): Promise<
   const lang = await getLang();
   try {
     return { ok: true, data: await planSearch(ctx.token, tenantId, { text, language: lang }) };
+  } catch (error) {
+    return refusal(error, ctx.t, lang);
+  }
+}
+
+/**
+ * "Find more like this shop" (app v4 part 5): the plan card of a search for this shop's own type, in the area of the search that found it (else the shop's own area). Nothing is searched yet: the plan is free, the OK is the search (Owner and
+ * Admin, as for any plan). A shop with no type has nothing to look for.
+ */
+export async function planLikeThisAction(tenantId: string, prospectId: string): Promise<Reply<Search>> {
+  const ctx = await who(tenantId, STAFF);
+  if ("ok" in ctx) return ctx;
+  if (typeof prospectId !== "string" || !isCanonicalUuid(prospectId)) return invalid(ctx.t);
+  const lang = await getLang();
+  try {
+    const p = await getProspect(ctx.token, tenantId, prospectId);
+    const area = p.searchId ? await getSearch(ctx.token, tenantId, p.searchId).then((s) => s.area, () => null) : null;
+    const words = likeThis(p, area);
+    if (!words || words.area.length < 2) return invalid(ctx.t, "lf.v4.like.none");
+    return { ok: true, data: await planSearch(ctx.token, tenantId, { query: words.query, area: words.area }) };
   } catch (error) {
     return refusal(error, ctx.t, lang);
   }

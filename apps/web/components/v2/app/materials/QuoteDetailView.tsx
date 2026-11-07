@@ -19,6 +19,8 @@ export type QuoteDetailViewProps = {
   role: Role;
   quote: MaterialQuoteDetailOut;
   customer: string | null;
+  /** app v4: the customer's own page (the name becomes a link); null = plain text. */
+  customerHref?: string | null;
   site: string | null;
   actions: QuoteStepActions | null;
   secondFactorMissing: boolean;
@@ -26,7 +28,7 @@ export type QuoteDetailViewProps = {
 };
 
 /** One material quote (job CO): who it is for and where it goes, the figures, why each number is what it is (the engine's own trace), and what can be done next. A viewer reads no money, so this page is not shown to one. */
-export function QuoteDetailView({ base, words, role, quote, customer, site, actions, secondFactorMissing, made }: QuoteDetailViewProps) {
+export function QuoteDetailView({ base, words, role, quote, customer, customerHref = null, site, actions, secondFactorMissing, made }: QuoteDetailViewProps) {
   const figures = figuresFromQuote(quote);
   return (
     <div data-screen="material-quote" className="flex flex-col gap-5">
@@ -40,7 +42,7 @@ export function QuoteDetailView({ base, words, role, quote, customer, site, acti
           <Pill tone={TONE[quote.status]}>{say(words, `mat.status.${quote.status}`)}</Pill>
         </div>
         <dl className="grid grid-cols-[max-content_1fr] gap-x-4 gap-y-1 text-base [&>dt]:text-sm [&>dt]:font-semibold [&>dt]:text-muted">
-          {customer ? (<><dt>{say(words, "mat.s.customer")}</dt><dd className="[overflow-wrap:anywhere]">{customer}</dd></>) : null}
+          {customer ? (<><dt>{say(words, "mat.s.customer")}</dt><dd className="[overflow-wrap:anywhere]">{customerHref ? <Link href={customerHref} className="font-semibold text-brand-text underline underline-offset-4">{customer}</Link> : customer}</dd></>) : null}
           {site ? (<><dt>{say(words, "mat.q.site")}</dt><dd className="[overflow-wrap:anywhere]">{site}</dd></>) : null}
           <dt>{say(words, "mat.q.made.on")}</dt><dd>{quote.as_of}</dd>
           <dt>{say(words, "mat.q.valid")}</dt><dd>{quote.valid_until}</dd>

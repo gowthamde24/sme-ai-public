@@ -21,6 +21,8 @@ export type CatalogueViewProps = { /** The page's H1: its menu row's word (owner
   items: readonly ItemSummary[] | null;
   /** More items exist: the API's cursor for the link (also null when the page has read as many as it will). */
   more: string | null;
+  /** app v4 (part 6): what is running low, drawn under the heading (the page reads and builds it). */
+  top?: React.ReactNode;
   /** The customer a saree is being chosen for (the lead page's "Send a saree"), kept on every link. */
   lead: { leadId: string; label: string } | null;
 };
@@ -38,7 +40,7 @@ function Chip({ href, on, children, words }: { href: string; on: boolean; childr
 }
 
 /** The catalogue page (job BC): search, filters as chips, the photo grid. It only draws what the server read; a catalogue that could not be read says so in its place. */
-export function CatalogueView({ title = null, base, words, role, query, items, more, lead, help }: CatalogueViewProps) {
+export function CatalogueView({ title = null, base, words, role, query, items, more, lead, help, top = null }: CatalogueViewProps) {
   const admin = role === "owner" || role === "admin";
   const leadId = lead?.leadId ?? null;
   const link = (q: CatalogueQuery) => hrefFor(base, q, { lead: leadId });
@@ -66,6 +68,7 @@ export function CatalogueView({ title = null, base, words, role, query, items, m
           ) : null}
         </header>
         {help}
+        {top}
 
         {lead ? (
           <p data-note="lead" className="rounded-2xl bg-surface-2 px-4 py-3 text-base">

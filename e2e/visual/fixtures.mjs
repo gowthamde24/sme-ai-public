@@ -2,6 +2,9 @@
 // FIXED_NOW in run.mjs), so a picture never depends on the day it is taken.
 export const TENANT = "11111111-1111-4111-8111-111111111111";
 export const LEAD = "55555555-5555-4555-8555-555555555555";
+// app v4 part 4: two synthetic phone calls (one live, one finished)
+export const CALL_LIVE = "99999999-9999-4999-8999-0000000000c1";
+export const CALL_DONE = "99999999-9999-4999-8999-0000000000c2";
 export const USER_ID = "22222222-2222-4222-8222-222222222222";
 export const FIXED_NOW = "2026-10-14T05:00:00.000Z"; // Wednesday 14 October 2026, 10:30 in India
 
@@ -105,7 +108,22 @@ const ITEMS = [
 
 // ---- a lead -------------------------------------------------------------------------------------------------------------------------------
 const COMPANY = "55555555-5555-4555-8555-555555555551";
-const LEAD_JSON = { id: LEAD, company_id: COMPANY, contact_id: CONTACT, status: "in_review", source: "csv import", created_via: "import", created_at: "2026-10-02T05:00:00+00:00" };
+const CALL_DONE_JSON = { id: CALL_DONE, direction: "inbound", state: "completed", live: false, who: "Meena Sarees", purpose: "inbound", language: "te", created_at: "2026-10-14T04:40:00Z", answered_at: "2026-10-14T04:40:04Z", ended_at: "2026-10-14T04:42:10Z", elapsed_s: 126, duration_s: 126, outcome: "positive", category: "visit_booked", summary_short: "Wants 20 Kanchi silk sarees for a wedding; visiting Saturday", refuse_reason: null, lead_id: LEAD, task_id: null, sandbox: true, simulated: false, ai_disclosed: true, recorded: false, cost_paise: 0, callback_at: null };
+const CALL_LIVE_JSON = { ...CALL_DONE_JSON, id: CALL_LIVE, who: "Lakshmi", state: "in_progress", live: true, created_at: "2026-10-14T04:59:50Z", answered_at: "2026-10-14T04:59:56Z", ended_at: null, elapsed_s: 4, duration_s: null, outcome: null, category: null, summary_short: null };
+const TALK = { greeting: { en: "Namaste! Thanks for calling {business}, I am the AI assistant." }, address: "plain", questions: ["What is the saree for?", "Which colours do you like?", "When do you need it?"], never_say: ["guaranteed", "best price in the market"], objections: [{ hears: "Too costly", answer: "We have sarees in many ranges; the team can show you options that fit." }], examples: [], say_like: [{ say: "pattu cheera", instead_of: "silk saree" }, { say: "Kanchi pattu", instead_of: null }] };
+const ml = (n, name, city, area) => ({ id: `dddddddd-0000-4000-8000-00000000000${n}`, company_id: null, contact_id: null, owner_user_id: null, status: "new", source: "indiamart", disqualified_reason: null, created_via: "import", created_at: "2026-10-12T05:00:00+00:00", updated_at: "2026-10-12T05:00:00+00:00", archived_at: null, is_new: false, display_name: name, profile: city ? { city, area, name } : { name } });
+const MAP_LEADS = [ml(1, "Meena Sarees (made up)", "Guntur", "Brodipet"), ml(2, "Lakshmi Textiles (made up)", "Guntur", null), ml(3, "Ravi Kumar (made up)", "Vijayawada", "Benz Circle"), ml(4, "Anita Boutique (made up)", "Tenali", null), ml(5, "Kiran Silks (made up)", null, null)];
+const FINDER_SEARCH = { id: "aaaaaaaa-0000-4000-8000-0000000000f1", state: "done", query: "saree shops", area: "Hyderabad", category_hint: "retailer", max_results: 20, provider: "fixture", sku: "fixture", est_cost_paise: 0, cost_paise: 0, cost_is_estimate: false, source_label: "Example search (made-up businesses) 'saree shops Hyderabad', 13 Oct", found: 35, counts: { found: 35, new: 35, duplicates: 0, call_ready: 1, needs_owner: 2, skipped: 32 }, searches_left_today: 4, attribution: null, created_at: "2026-10-13T05:00:00+00:00", approved_at: "2026-10-13T05:00:10+00:00", finished_at: "2026-10-13T05:00:20+00:00" };
+const fp = (n, name, category, area, lat, lng, status, reason, fit, why) => ({ id: `bbbbbbbb-0000-4000-8000-00000000000${n}`, search_id: FINDER_SEARCH.id, name, category, area, phone: "+00 000 5123 4567", website: null, rating: 4.3, review_count: 120 + n * 31, lat, lng, source: "fixture", source_label: FINDER_SEARCH.source_label, attribution: null, status, decision_reason: reason, fit_score: fit, fit_reason: why, stock_match: { matched: ["Kanchi Pattu Bridal"], low: [], enough: true }, owner_approved: false, suppressed: false, ask_after: null, last_contacted_at: null, lead_id: null, qualification: null, created_at: "2026-10-13T05:00:20+00:00", updated_at: "2026-10-13T05:00:20+00:00" });
+const FINDER_PROSPECTS = [
+  fp(1, "Textile shop (made up)", "Saree shop", "Dilsukhnagar", 17.3688, 78.5247, "call_ready", "fit_high", 88, "Sells sarees, open today, well rated."),
+  fp(2, "Boutique (made up)", "Boutique", "Kukatpally", 17.4948, 78.3996, "needs_owner", "first_calls", 71, "A bigger shop. Worth a word from you before the first call."),
+  fp(3, "Saree retailer (made up)", "Saree shop", "Begum Bazar", 17.3745, 78.4764, "needs_owner", "fit_middle", 64, "Saree shop; some of what you stock."),
+  fp(4, "Silk house (made up)", "Saree shop", "Secunderabad", 17.4399, 78.4983, "skipped", "contacted_recently", 80, "Contacted 40 days ago."),
+  fp(5, "Wedding wear (made up)", "Boutique", "Banjara Hills", 17.4156, 78.4347, "skipped", "very_large", 55, "Very large shop."),
+  fp(6, "Cloth stores (made up)", "Cloth store", "Charminar", 17.3616, 78.4747, "skipped", "fit_low", 38, "Poor fit for what you stock."),
+];
+const LEAD_JSON = { id: LEAD, company_id: COMPANY, contact_id: CONTACT, status: "in_review", source: "csv import", created_via: "import", created_at: "2026-10-02T05:00:00+00:00", display_name: "Meena Sarees", profile: { need: "Kanchi silk sarees for a wedding", quantity: "20 pieces", budget: "₹2,000 to ₹2,500 each", area: "Brodipet", city: "Guntur", language: "te", source: "indiamart" } };
 const COMPANY_JSON = { id: COMPANY, name: "Sri Lakshmi Silks", type: "customer", website: "https://sri-lakshmi.example.test", country: "India", city: "Hyderabad", industry: "Textiles", created_via: "manual", created_at: "2026-10-01T05:00:00+00:00" };
 
 // ---- the business type of the workspace (job CL, on top of job CK) --------------------------------------------------------------------------------
@@ -183,6 +201,40 @@ export const API_ROUTES = [
     { id: "77777777-0000-4000-8000-000000000002", evidence: { kind: "note", provider: "owner note", url: null, reference: "called on Monday", snippet: "Asked for 20 pieces before the festival.", retrieved_at: "2026-10-03T05:00:00+00:00", published_at: null, created_via: "manual" } },
   ], next_cursor: null }),
   route(`/leads/${LEAD}/enquiries`, []),
+  // app v4 part 6: Sales > Money and low stock (made-up customers)
+  route("/money/summary", { as_of: "2026-10-14", owed_paise: 17500000, overdue_paise: 5000000, customers_owing: 2, customers_overdue: 1, paid_this_month_paise: 7000000, month_from: "2026-10-01", top: [{ account_id: "adadadad-adad-4dad-8dad-adadadadada1", company_id: COMPANY, contact_id: CONTACT, name: "Sri Rama Builders (made up)", outstanding_paise: 13000000, overdue_paise: 5000000 }, { account_id: "adadadad-adad-4dad-8dad-adadadadada2", company_id: "11111111-1111-4111-8111-111111111112", contact_id: null, name: "Lakshmi Hardware (made up)", outstanding_paise: 4500000, overdue_paise: 0 }], complete: true }),
+  route("/catalogue/low-stock", { items: [{ id: ITEMS[0].id, name: ITEMS[0].name, stock_status: "in_stock", quantity: 2, asked_this_week: 3, asked_is_approximate: true }, { id: ITEMS[1].id, name: ITEMS[1].name, stock_status: "few_left", quantity: null, asked_this_week: 0, asked_is_approximate: true }], counts_available: true }),
+  // app v4 part 5: Customers > Map (made-up customers with a place, and one site; needs LEADS_SCREENS=1 for the run)
+  route("/leads", { items: MAP_LEADS, next_cursor: null }),
+  route("/sites", { items: [{ id: "cccccccc-0000-4000-8000-0000000000c1", company_id: COMPANY, name: "Lake Road site (made up)", address_line: "12 Lake Road", city: "Guntur", pin: "522001", map_lat: null, map_lng: null, distance_km: null, lane_width_ft: null, night_delivery: false, unloading_help: false, access_notes: null, site_contact_id: null, active: true, created_at: "2026-10-02T05:00:00+00:00", updated_at: "2026-10-02T05:00:00+00:00" }], next_cursor: null }),
+  // app v4 part 5: the Lead Finder (made-up businesses around Hyderabad)
+  route("/lead-finder/availability", { available: true, source: "fixture", reason: "ok", upgrade_to: null, audience: "businesses" }),
+  route("/lead-finder/searches", { items: [FINDER_SEARCH] }),
+  route("/prospects/stats", { total: 35, by_status: { call_ready: 1, needs_owner: 2, skipped: 32 } }),
+  route("/prospects", { items: FINDER_PROSPECTS, next_cursor: null }),
+  // app v4 part 4: the phone calls (synthetic): one live, one finished, one refused
+  route("/calls", { items: [CALL_LIVE_JSON, CALL_DONE_JSON, { ...CALL_DONE_JSON, id: "99999999-9999-4999-8999-0000000000c3", who: "Anita Textiles", lead_id: null, state: "refused", refuse_reason: "outside_hours", outcome: null, category: null, summary_short: null, elapsed_s: 0, created_at: "2026-10-13T16:10:00Z" }], next_cursor: null, updated_at: "2026-10-14T05:00:00Z", poll_after_s: 5 }),
+  route(`/calls/${CALL_LIVE}`, { ...CALL_LIVE_JSON, summary: null, end_reason: null, captured: { occasion: "Wedding", saree: "Kanchi silk", budget: "up to 15,000" }, transcript: [
+    { who: "assistant", text: "Hello! I am the AI assistant of Sri Visual Silks. You asked about silk sarees, right?", t: 1, text_en: null },
+    { who: "caller", text: "అవును, పెళ్లి కోసం కంచి పట్టు చీర కావాలి. బడ్జెట్ పదిహేను వేల వరకు.", t: 4, text_en: "Yes, I need a Kanchi silk saree for a wedding. Budget up to fifteen thousand." },
+  ], correction: null }),
+  route(`/calls/${CALL_DONE}`, { ...CALL_DONE_JSON, summary: "Meena wants 20 Kanchi silk sarees for a wedding on 2 November and will visit the store on Saturday.", end_reason: "goodbye", captured: { saree: "Kanchi silk", quantity: "20 pieces", visit_day: "Saturday" }, transcript: [
+    { who: "assistant", text: "Namaste! I am the AI assistant of Sri Visual Silks. How can I help?", t: 1 },
+    { who: "caller", text: "I need 20 Kanchi silk sarees for a wedding.", t: 5 },
+    { who: "assistant", text: "Lovely. Would you like to see them at the store? We are open on Saturday.", t: 11 },
+    { who: "caller", text: "Yes, Saturday works.", t: 16 },
+  ], correction: { summary: null, captured: {}, note: "Kanchi pattu means Kanchipuram silk", corrected_at: "2026-10-14T06:00:00Z" } }),
+  route("/talk-training", { training: TALK, saved: true, defaults: TALK, rules: ["Always says it is an AI.", "Never states a price; the team gives prices."], updated_at: "2026-10-13T05:00:00Z", wording: "draft" }),
+  // app v4 part 3: one customer's timeline (synthetic), newest first
+  route(`/customers/${LEAD}/timeline`, { items: [
+    { kind: "call", at: "2026-10-14T04:40:00Z", text: "Wants 20 Kanchi silk sarees for a wedding; will visit the store on Saturday", target: { type: "phone_call", id: "c1" }, detail: { direction: "inbound", duration_s: 126, outcome: "positive" } },
+    { kind: "visit", at: "2026-10-13T09:00:00Z", text: "See the wedding collection", target: { type: "visit", id: "v1" }, detail: { status: "booked" } },
+    { kind: "quote", at: "2026-10-13T05:20:00Z", text: "Quote 3", target: { type: "quote", id: QUOTE_ID }, detail: { status: "draft", total_paise: 5040000 } },
+    { kind: "order", at: "2026-10-12T09:00:00Z", text: "Order 2", target: { type: "order", id: "66666666-6666-4666-8666-666666666699" }, detail: { state: "advance_paid", total_paise: 12000000 } },
+    { kind: "message_out", at: "2026-10-12T06:00:00Z", text: "Hello, here are the photos of the Kanchi silk sarees you asked about.", target: { type: "outbox_message", id: "m1" }, detail: { channel: "whatsapp", status: "sent" } },
+    { kind: "message_in", at: "2026-10-12T05:30:00Z", text: "Price for 20 pieces please, wedding on 2 November", target: { type: "enquiry", id: "e1" }, detail: { channel: "whatsapp" } },
+    { kind: "arrival", at: "2026-10-12T05:28:00Z", text: "IndiaMART", target: { type: "lead", id: LEAD }, detail: { source: "indiamart", how: "first" } },
+  ], next_before: null }),
   route(`/leads/${LEAD}/claims`, [
     { id: "88888888-0000-4000-8000-000000000001", company_id: COMPANY, lead_id: null, predicate: "buyer_type", value: "wholesale", confidence: "medium", claim_confidence: "medium", created_via: "agent", agent_run_id: "99999999-0000-4000-8000-000000000001", created_by: null, created_at: "2026-10-04T05:00:00+00:00", review_state: "unreviewed", review_confidence: null, reviewed_by: null, reviewed_at: null, counts_toward_score: false, company_name: "Sri Lakshmi Silks", evidence: [{ kind: "web_page", stance: "supports", provider: "company website", host: "sri-lakshmi.example.test", path: "/about", quote: "Family wholesale silk sarees since 1962." }] },
   ]),
