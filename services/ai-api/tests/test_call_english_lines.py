@@ -11,7 +11,7 @@ from typing import Any
 
 from app.telephony.live import LiveCalls
 from app.telephony.service import CallsService
-from app.telephony.translate import SYSTEM, LineTranslator, needs_english
+from app.telephony.translate import SYSTEM, LineTranslator, clean_translation, needs_english
 from tests.fakes import TENANT_A, auth, make_client
 from tests.test_ph_calls_api import DONE_ID, NOW, FakeCallsRepo
 
@@ -66,14 +66,7 @@ def test_a_failure_leaves_it_null_and_a_call_never_asks_past_its_cap() -> None:
 
 
 def test_a_long_answer_is_cut_to_two_thousand_characters() -> None:
-    async def go() -> dict[str, Any]:
-        tr = LineTranslator(Llm(reply="x" * 3000), "fast")
-        line: dict[str, Any] = {"who": "caller", "text": "హలో"}
-        tr.submit(line)
-        await tr.settle()
-        return line
-
-    assert len(asyncio.run(go())["text_en"]) == 2000
+    assert len(clean_translation("x" * 3000, "హ" * 1000) or "") == 2000
 
 
 def test_the_line_hands_each_final_caption_to_its_translator() -> None:
@@ -111,3 +104,23 @@ def test_the_translator_uses_the_fast_model_and_is_off_without_a_key_or_in_tests
     assert isinstance(made, LineTranslator) and made._model == "haiku"  # noqa: SLF001
     assert english_lines(SimpleNamespace(turn_model="claude", anthropic_key="", sarvam_key="", fast_model="haiku", client=None)) is None
     assert InboundService.__dataclass_fields__["english_lines"].default is False, "tests never ask a real model; the real wiring turns it on"
+
+
+def test_only_a_translation_is_kept_never_a_remark_about_the_line() -> None:
+    source = "నాకు ఎరుపు చీర కావాలి"
+    assert clean_translation('"I want a red saree."', source) == "I want a red saree."
+    assert clean_translation("Could you send me photos?", "ఫోటోలు పంపగలరా?") == "Could you send me photos?", "a caller's own question is a translation"
+    assert clean_translation("I can't come today.", "ఈ రోజు రాలేను") == "I can't come today."
+    for bad in ("", "NONE", "None.", "The input is cut off. Could you send the full line?", "This line seems incomplete.", "I'm sorry, but I need more.", "Here is the translation: I want a saree", "నాకు చీర కావాలి", "First line\nSecond line", "x" * 500):
+        assert clean_translation(bad, source) is None, bad
+
+
+def test_a_bad_translation_leaves_the_line_without_english() -> None:
+    async def go() -> dict[str, Any]:
+        tr = LineTranslator(Llm(reply="The input is cut off. Could you send the full line?"), "fast")
+        line: dict[str, Any] = {"who": "assistant", "text": "చ"}
+        tr.submit(line)
+        await tr.settle()
+        return line
+
+    assert asyncio.run(go())["text_en"] is None

@@ -284,6 +284,21 @@ class PhoneLine:
             del self._pending[: self.chunk]
             await self._emit(part)
 
+    def elapsed(self) -> float:
+        """Seconds since the call began, as a transcript line's `t`."""
+        return round(self._clock() - self._began, 1)
+
+    def add_turn(self, text: str, *, index: int, t: float) -> None:
+        """One whole assistant turn (owner, 7 Nov 2026: never one line per streaming piece, which split Telugu letters): what the caller heard of it. It goes where the turn began, so words the
+        caller said over it stay after it."""
+        said = " ".join(text.split())
+        if not said:
+            return
+        item: dict[str, Any] = {"who": "assistant", "text": said, "t": t}
+        self.transcript.insert(min(index, len(self.transcript)), item)
+        if self.translator is not None:
+            self.translator.submit(item)
+
     async def send_json(self, message: dict[str, Any]) -> None:
         kind = message.get("type")
         if kind == "caption" and message.get("final") and str(message.get("text", "")).strip():

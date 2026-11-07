@@ -14,6 +14,7 @@ import uuid
 from collections.abc import Callable
 from contextlib import suppress
 from dataclasses import dataclass, field
+from datetime import timedelta, timezone
 from typing import Any
 
 from fastapi import APIRouter, Request, WebSocket
@@ -55,6 +56,7 @@ class InboundService:
     llm_choice: str = "haiku"
     business: str = "the business"   # what the opening line names (TELEPHONY_INBOUND_BUSINESS; the scheduler account does not read workspace names)
     max_call_s: int = 300
+    call_summaries: bool = False   # the short summary, outcome and name after each call (owner, 7 Nov 2026): on in the real wiring; off in tests, so no test ever asks a real model
     english_lines: bool = False   # the English line under each non-English caption (owner, 7 Nov 2026): on in the real wiring; off in tests, so no test ever asks a real model
     url_format: str = "json"   # EXOTEL_STREAM_URL_FORMAT: json ({"url": ...}, the documented form) | text (the bare wss address)
     parts_for: Callable[[Any, str, str, str], tuple[Parts, str]] | None = None   # tests: fake recogniser, voice and model
@@ -256,16 +258,29 @@ async def _prepare_for(service: InboundService, bv: Any, tenant: uuid.UUID, *, b
     return Prepared(tenant_id=tenant, parts=parts, model=model, slots=slots, text=text, rendering=rendering)
 
 
-def english_lines(bv: Any) -> Any:
-    """The English line under each non-English caption (owner, 7 Nov 2026), by the fast model; None when no model key is set."""
+def caller_ending(number: str | None) -> str | None:
+    """The last three digits of the caller's number: all the Calls list ever shows of it."""
+    digits = "".join(c for c in str(number or "") if c.isdigit())
+    return digits[-3:] if len(digits) >= 6 else None
+
+
+def text_model(bv: Any, *, max_tokens: int) -> tuple[Any, str]:
+    """A short text request after or beside a call (the record of the call, an English line), on the fast model. (None, "") when no key is set."""
     from app.conversation.providers import AnthropicStream, SarvamChatStream
-    from app.telephony.translate import LineTranslator
 
     if getattr(bv, "turn_model", "") == "sarvam" and getattr(bv, "sarvam_key", ""):
-        return LineTranslator(SarvamChatStream(bv.sarvam_key, max_tokens=400, client=bv.client), "sarvam-105b")
+        return SarvamChatStream(bv.sarvam_key, max_tokens=max_tokens, client=bv.client), "sarvam-105b"
     if not getattr(bv, "anthropic_key", ""):
-        return None
-    return LineTranslator(AnthropicStream(bv.anthropic_key, max_tokens=400, client=bv.client), bv.fast_model)
+        return None, ""
+    return AnthropicStream(bv.anthropic_key, max_tokens=max_tokens, client=bv.client), bv.fast_model
+
+
+def english_lines(bv: Any) -> Any:
+    """The English line under each non-English caption (owner, 7 Nov 2026), by the fast model; None when no model key is set. (No temperature setting: this model refuses one, "`temperature` is deprecated for this model", so the strict prompt and clean_translation do that job.)"""
+    from app.telephony.translate import LineTranslator
+
+    llm, model = text_model(bv, max_tokens=400)
+    return LineTranslator(llm, model) if llm is not None else None
 
 
 GRACE_S = 0.25
@@ -372,7 +387,8 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     begin_row = asyncio.ensure_future(asyncio.to_thread(service.store.begin, tenant, service.language))
     call_id = uuid.uuid4()   # replaced by the row's id for the database; only names this call in memory until then
     plan = CallPlan(call_id=call_id, tenant_id=tenant, direction="inbound", language=service.language, business=service.business, max_call_s=max_call_s,
-                    cost_paise_per_minute=service.cost_paise_per_minute, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")))
+                    cost_paise_per_minute=service.cost_paise_per_minute, visit_slots=tuple(str(sl.get("starts_at")) for sl in slots if sl.get("starts_at")),
+                    caller_ending=caller_ending(start.from_number))
     if live is not None:
         live.add(tenant, call_id, line)
         registry, temp_id = live, call_id
@@ -386,7 +402,9 @@ async def handle(service: InboundService | None, bv: Any, live: Any, token: str,
     outcome_name: str | None = None
     cost = 0
     try:
-        result = await run_call(plan, line, parts, service.store.for_call(tenant), ledger=Ledger(bv.limits), model=model, call_id_ready=begin_row)
+        summary_llm, summary_model = text_model(bv, max_tokens=500) if service.call_summaries else (None, model)
+        result = await run_call(plan, line, parts, service.store.for_call(tenant), ledger=Ledger(bv.limits), model=summary_model, call_id_ready=begin_row, outcome_llm=summary_llm,
+                                today=lambda: inbound.now_utc().astimezone(timezone(timedelta(hours=5, minutes=30))).date().isoformat())
         outcome_name, cost = result.outcome or result.state, result.cost_paise
     except Exception as exc:  # noqa: BLE001 - only the class is kept
         log.error("exotel_inbound crashed %s", exc.__class__.__name__)
