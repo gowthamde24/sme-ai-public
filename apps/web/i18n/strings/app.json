@@ -84807,5 +84807,313 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "lf.v4.sub": {
+  "en": "It finds shops that could buy from you and asks you before calling. Businesses only, never families.",
+  "te": "మీ నుంచి కొనగల షాపులను వెతుకుతుంది, కాల్ చేసే ముందు మిమ్మల్ని అడుగుతుంది. వ్యాపారాలు మాత్రమే, కుటుంబాలు కాదు.",
+  "hi": "यह वे दुकानें ढूँढता है जो आपसे खरीद सकती हैं, और कॉल से पहले आपसे पूछता है। सिर्फ़ कारोबार, कभी परिवार नहीं।",
+  "kn": "ನಿಮ್ಮಿಂದ ಖರೀದಿಸಬಹುದಾದ ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕುತ್ತದೆ, ಕರೆ ಮಾಡುವ ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತದೆ. ವ್ಯಾಪಾರಗಳು ಮಾತ್ರ, ಕುಟುಂಬಗಳಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.radar": {
+  "en": "The radar",
+  "te": "రాడార్",
+  "hi": "रडार",
+  "kn": "ರಡಾರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.radar.alt": {
+  "en": "Where {n} of the businesses are, around the middle of the search",
+  "te": "వెతికిన చోటు మధ్యలో చుట్టూ {n} వ్యాపారాలు ఎక్కడ ఉన్నాయో",
+  "hi": "खोज के बीच के आसपास {n} कारोबार कहाँ हैं",
+  "kn": "ಹುಡುಕಾಟದ ಮಧ್ಯದ ಸುತ್ತ {n} ವ್ಯಾಪಾರಗಳು ಎಲ್ಲಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.around": {
+  "en": "Searching around {area}",
+  "te": "{area} చుట్టూ వెతుకుతోంది",
+  "hi": "{area} के आसपास खोज रहा है",
+  "kn": "{area} ಸುತ್ತ ಹುಡುಕುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.km": {
+  "en": "{n} km",
+  "te": "{n} కి.మీ",
+  "hi": "{n} किमी",
+  "kn": "{n} ಕಿ.ಮೀ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.rings": {
+  "en": "Rings are kilometres from the middle of the businesses it found.",
+  "te": "రింగులు దొరికిన వ్యాపారాల మధ్య నుంచి కిలోమీటర్లు.",
+  "hi": "घेरे मिले कारोबारों के बीच से किलोमीटर हैं।",
+  "kn": "ವೃತ್ತಗಳು ಸಿಕ್ಕ ವ್ಯಾಪಾರಗಳ ಮಧ್ಯದಿಂದ ಕಿಲೋಮೀಟರ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.checked": {
+  "en": "Checked {n} businesses. {m} worth a call.",
+  "te": "{n} వ్యాపారాలు చూసింది. {m} కాల్ చేయదగినవి.",
+  "hi": "{n} कारोबार जाँचे। {m} कॉल के लायक।",
+  "kn": "{n} ವ್ಯಾಪಾರಗಳನ್ನು ಪರಿಶೀಲಿಸಿದೆ. {m} ಕರೆಗೆ ಯೋಗ್ಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.found": {
+  "en": "Shops it found. You decide.",
+  "te": "దొరికిన షాపులు. మీరు నిర్ణయించండి.",
+  "hi": "मिली दुकानें। फ़ैसला आपका।",
+  "kn": "ಸಿಕ್ಕ ಅಂಗಡಿಗಳು. ನೀವು ನಿರ್ಧರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.of": {
+  "en": "{n} of {m}",
+  "te": "{m} లో {n}",
+  "hi": "{m} में से {n}",
+  "kn": "{m} ರಲ್ಲಿ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.chip.call_ready": {
+  "en": "Call now",
+  "te": "ఇప్పుడే కాల్",
+  "hi": "अभी कॉल",
+  "kn": "ಈಗ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.chip.needs_owner": {
+  "en": "Ask you first",
+  "te": "ముందు మిమ్మల్ని అడుగుతుంది",
+  "hi": "पहले आपसे पूछेगा",
+  "kn": "ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.chip.skipped": {
+  "en": "Skip",
+  "te": "వదిలేయండి",
+  "hi": "छोड़ें",
+  "kn": "ಬಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.call": {
+  "en": "Call",
+  "te": "కాల్",
+  "hi": "कॉल",
+  "kn": "ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.notnow": {
+  "en": "Not now",
+  "te": "ఇప్పుడు కాదు",
+  "hi": "अभी नहीं",
+  "kn": "ಈಗ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.more": {
+  "en": "More",
+  "te": "మరిన్ని",
+  "hi": "और",
+  "kn": "ಇನ್ನಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.like": {
+  "en": "Find more like this shop",
+  "te": "ఇలాంటి షాపులు ఇంకా వెతకండి",
+  "hi": "ऐसी और दुकानें खोजें",
+  "kn": "ಇಂತಹ ಇನ್ನಷ್ಟು ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.like.none": {
+  "en": "This shop has no type or place to search for.",
+  "te": "ఈ షాపుకు వెతకడానికి రకం లేదా ప్రదేశం లేదు.",
+  "hi": "इस दुकान का खोजने लायक कोई प्रकार या जगह नहीं है।",
+  "kn": "ಈ ಅಂಗಡಿಗೆ ಹುಡುಕಲು ಪ್ರಕಾರ ಅಥವಾ ಸ್ಥಳ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.all": {
+  "en": "Call all suggested shops ({n})",
+  "te": "సూచించిన షాపులన్నింటికీ కాల్ ({n})",
+  "hi": "सुझाई सभी दुकानों को कॉल ({n})",
+  "kn": "ಸೂಚಿಸಿದ ಎಲ್ಲ ಅಂಗಡಿಗಳಿಗೆ ಕರೆ ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.all.sure": {
+  "en": "Say yes to calling these {n} shops?",
+  "te": "ఈ {n} షాపులకు కాల్ చేయడానికి అవును అంటారా?",
+  "hi": "इन {n} दुकानों को कॉल के लिए हाँ कहें?",
+  "kn": "ಈ {n} ಅಂಗಡಿಗಳಿಗೆ ಕರೆ ಮಾಡಲು ಹೌದು ಎನ್ನುವಿರಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.all.yes": {
+  "en": "Yes, call {n}",
+  "te": "అవును, {n} కాల్",
+  "hi": "हाँ, {n} को कॉल",
+  "kn": "ಹೌದು, {n} ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.all.no": {
+  "en": "Not yet",
+  "te": "ఇంకా కాదు",
+  "hi": "अभी नहीं",
+  "kn": "ಇನ್ನೂ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s.label": {
+  "en": "How it decides",
+  "te": "ఇది ఎలా నిర్ణయిస్తుంది",
+  "hi": "यह कैसे तय करता है",
+  "kn": "ಇದು ಹೇಗೆ ನಿರ್ಧರಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s1.t": {
+  "en": "Calls straight away",
+  "te": "వెంటనే కాల్ చేస్తుంది",
+  "hi": "सीधे कॉल करता है",
+  "kn": "ತಕ್ಷಣ ಕರೆ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s1.b": {
+  "en": "Good fits for what you have in stock. The first 10 calls of every new search still wait for you.",
+  "te": "మీ స్టాక్‌కు బాగా సరిపోయేవి. ప్రతి కొత్త వెతుకులాటలో మొదటి 10 కాల్స్ మీ కోసం ఆగుతాయి.",
+  "hi": "आपके स्टॉक के लिए अच्छे मेल। हर नई खोज की पहली 10 कॉल फिर भी आपका इंतज़ार करती हैं।",
+  "kn": "ನಿಮ್ಮ ಸ್ಟಾಕ್‌ಗೆ ಚೆನ್ನಾಗಿ ಹೊಂದುವವು. ಪ್ರತಿ ಹೊಸ ಹುಡುಕಾಟದ ಮೊದಲ 10 ಕರೆಗಳು ಇನ್ನೂ ನಿಮಗಾಗಿ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s2.t": {
+  "en": "Asks you first",
+  "te": "ముందు మిమ్మల్ని అడుగుతుంది",
+  "hi": "पहले आपसे पूछता है",
+  "kn": "ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s2.b": {
+  "en": "Middling fits, shops where your stock is low, and the first 10 calls of every new search.",
+  "te": "మధ్యస్థంగా సరిపోయేవి, మీ స్టాక్ తక్కువ ఉన్న షాపులు, ప్రతి కొత్త వెతుకులాటలో మొదటి 10 కాల్స్.",
+  "hi": "बीच के मेल, वे दुकानें जहाँ आपका स्टॉक कम है, और हर नई खोज की पहली 10 कॉल।",
+  "kn": "ಮಧ್ಯಮ ಹೊಂದಾಣಿಕೆ, ನಿಮ್ಮ ಸ್ಟಾಕ್ ಕಡಿಮೆ ಇರುವ ಅಂಗಡಿಗಳು, ಪ್ರತಿ ಹೊಸ ಹುಡುಕಾಟದ ಮೊದಲ 10 ಕರೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s3.t": {
+  "en": "Skips",
+  "te": "వదిలేస్తుంది",
+  "hi": "छोड़ देता है",
+  "kn": "ಬಿಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lf.v4.s3.b": {
+  "en": "Poor fits, competitors, very large shops, shops with no phone, shops you contacted in the last 90 days, and anyone you asked never to call.",
+  "te": "సరిపోనివి, పోటీదారులు, చాలా పెద్ద షాపులు, ఫోన్ లేనివి, గత 90 రోజుల్లో మీరు సంప్రదించినవి, ఎప్పుడూ కాల్ చేయవద్దన్నవారు.",
+  "hi": "बुरे मेल, प्रतिद्वंद्वी, बहुत बड़ी दुकानें, बिना फ़ोन वाली, पिछले 90 दिनों में आप जिनसे मिले, और जिन्हें कभी कॉल न करने को कहा।",
+  "kn": "ಕೆಟ್ಟ ಹೊಂದಾಣಿಕೆ, ಸ್ಪರ್ಧಿಗಳು, ತುಂಬಾ ದೊಡ್ಡ ಅಂಗಡಿಗಳು, ಫೋನ್ ಇಲ್ಲದವು, ಕಳೆದ 90 ದಿನಗಳಲ್ಲಿ ನೀವು ಸಂಪರ್ಕಿಸಿದವರು, ಎಂದಿಗೂ ಕರೆ ಮಾಡಬೇಡಿ ಎಂದವರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

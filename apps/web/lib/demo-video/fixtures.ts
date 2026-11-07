@@ -144,6 +144,8 @@ const prospect = (now: number, over: Partial<Prospect> & Pick<Prospect, "id" | "
   website: null,
   rating: null,
   reviewCount: null,
+  lat: null,
+  lng: null,
   source: "google_maps",
   sourceLabel: "Lead Finder · Jayanagar, Bengaluru",
   attribution: null,

@@ -783,6 +783,14 @@ const finderHandlers = (availability: unknown, rows: unknown[]) => (role: Role) 
 });
 const PROSPECTS = [LF.PROSPECT, LF.PROSPECT_READY, LF.PROSPECT_LOW, LF.PROSPECT_QUALIFIED];
 add({ id: "retailers", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.AVAILABLE, PROSPECTS) });
+// app v4 part 5: the Lead Finder with its radar, the shops it found and how it decides (only with APP_V4); positions that differ, so the radar draws
+const V4_SPREAD = PROSPECTS.map((r, i) => ({ ...r, lat: 17.38 + i * 0.03, lng: 78.4 + (i % 2) * 0.05 }));
+add({
+  id: "retailers-v4",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({}))),
+  handlers: (role) => ({ ...finderHandlers(LF.AVAILABLE, V4_SPREAD)(role), listSearches: async () => [(await import("@/lib/api/lead-finder")).parseSearch({ ...LF.SEARCH_DONE, area: "Hyderabad" })] }),
+});
 add({ id: "retailers-places", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.AVAILABLE_PLACES, [{ ...LF.PROSPECT, source: "google_maps", attribution: "Google Maps", source_label: "Google Maps search 'saree shops Jayanagar', 2 Nov" }, LF.PROSPECT_LOW]) });
 add({ id: "retailers-school", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.SCHOOL, []) });
 add({ id: "retailers-unreadable", roles: ["admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(null, []) });
