@@ -758,6 +758,16 @@ const catalogueHandlers = (role: Role): Record<string, Handler> => ({
 });
 const cataloguePage = async () => (await import("@/app/app/tenants/[tenantId]/catalogue/page")).default;
 add({ id: "catalogue", render: async () => (await cataloguePage())(props({}, {})), handlers: catalogueHandlers });
+// app v4 part 6: what is running low, in the catalogue (only with APP_V4); the Owner and an Admin may set the count
+add({
+  id: "catalogue-low-stock",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1" }, async () => (await cataloguePage())(props({}, {}))),
+  handlers: (role) => ({
+    ...catalogueHandlers(role),
+    getLowStock: async () => (await import("@/lib/api/catalogue")).parseLowStock({ items: [{ id: ITEM_A, name: "Red Kanchi silk (synthetic)", stock_status: "in_stock", quantity: 2, asked_this_week: 3, asked_is_approximate: true }, { id: "ca000000-0000-4000-8000-0000000000e1", name: "Cotton daily wear (synthetic)", stock_status: "few_left", quantity: null, asked_this_week: 0, asked_is_approximate: true }], counts_available: true }),
+  }),
+});
 add({ id: "catalogue-filtered", roles: ["owner"], render: async () => (await cataloguePage())(props({}, { fabric: "soft_silk", stock: "few_left", q: "blue" })), handlers: catalogueHandlers });
 add({ id: "catalogue-nomatch", roles: ["owner"], render: async () => (await cataloguePage())(props({}, { q: "zzz" })), handlers: catalogueHandlers });
 add({ id: "catalogue-empty", roles: ["owner", "sales"], render: async () => (await cataloguePage())(props({}, {})), handlers: (role) => ({ ...base(role), listCatalogueItems: () => parseItemPage(pageJson([])) }) });

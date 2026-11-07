@@ -85357,5 +85357,192 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ls.title": {
+  "en": "Running low",
+  "te": "తక్కువగా ఉన్నవి",
+  "hi": "कम बचे हैं",
+  "kn": "ಕಡಿಮೆ ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.left": {
+  "en": "{n} left",
+  "te": "{n} మిగిలాయి",
+  "hi": "{n} बचे",
+  "kn": "{n} ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.few": {
+  "en": "Few left",
+  "te": "కొన్ని మాత్రమే మిగిలాయి",
+  "hi": "कुछ ही बचे",
+  "kn": "ಕೆಲವೇ ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.asked.about": {
+  "en": "about {n} asked this week",
+  "te": "ఈ వారం సుమారు {n} మంది అడిగారు",
+  "hi": "इस हफ़्ते करीब {n} ने पूछा",
+  "kn": "ಈ ವಾರ ಸುಮಾರು {n} ಜನ ಕೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.asked": {
+  "en": "{n} asked this week",
+  "te": "ఈ వారం {n} మంది అడిగారు",
+  "hi": "इस हफ़्ते {n} ने पूछा",
+  "kn": "ಈ ವಾರ {n} ಜನ ಕೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.set": {
+  "en": "Set the count",
+  "te": "లెక్క పెట్టండి",
+  "hi": "गिनती डालें",
+  "kn": "ಲೆಕ್ಕ ಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.how_many": {
+  "en": "How many are left",
+  "te": "ఎన్ని మిగిలాయి",
+  "hi": "कितने बचे हैं",
+  "kn": "ಎಷ್ಟು ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.saving": {
+  "en": "Saving…",
+  "te": "సేవ్ అవుతోంది…",
+  "hi": "सेव हो रहा है…",
+  "kn": "ಉಳಿಸುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.stop": {
+  "en": "Stop counting",
+  "te": "లెక్కపెట్టడం ఆపండి",
+  "hi": "गिनना बंद करें",
+  "kn": "ಎಣಿಸುವುದನ್ನು ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.err.invalid": {
+  "en": "Type a whole number, 0 or more.",
+  "te": "0 లేదా అంతకంటే ఎక్కువ పూర్తి సంఖ్య టైప్ చేయండి.",
+  "hi": "0 या उससे ज़्यादा पूरी संख्या लिखें।",
+  "kn": "0 ಅಥವಾ ಹೆಚ್ಚಿನ ಪೂರ್ಣ ಸಂಖ್ಯೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.err.forbidden": {
+  "en": "Only the owner or an admin can change the count.",
+  "te": "ఓనర్ లేదా అడ్మిన్ మాత్రమే లెక్క మార్చగలరు.",
+  "hi": "सिर्फ़ मालिक या एडमिन गिनती बदल सकते हैं।",
+  "kn": "ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಲೆಕ್ಕ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.err.gone": {
+  "en": "That saree is no longer here.",
+  "te": "ఆ చీర ఇక్కడ లేదు.",
+  "hi": "वह साड़ी अब यहाँ नहीं है।",
+  "kn": "ಆ ಸೀರೆ ಈಗ ಇಲ್ಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.err.not_available": {
+  "en": "This isn't switched on yet.",
+  "te": "ఇది ఇంకా ఆన్ కాలేదు.",
+  "hi": "यह अभी चालू नहीं है।",
+  "kn": "ಇದು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.err.down": {
+  "en": "That didn't save. Please try again in a minute. Nothing was changed.",
+  "te": "అది సేవ్ కాలేదు. ఒక నిమిషంలో మళ్ళీ ప్రయత్నించండి. ఏమీ మారలేదు.",
+  "hi": "सेव नहीं हुआ। एक मिनट में फिर कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಅದು ಉಳಿಯಲಿಲ್ಲ. ಒಂದು ನಿಮಿಷದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ls.unread": {
+  "en": "What is running low could not be read just now.",
+  "te": "ఏవి తక్కువగా ఉన్నాయో ఇప్పుడు చదవలేకపోయాం.",
+  "hi": "क्या कम बचा है यह अभी पढ़ा नहीं जा सका।",
+  "kn": "ಏನು ಕಡಿಮೆ ಇದೆ ಎಂದು ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
