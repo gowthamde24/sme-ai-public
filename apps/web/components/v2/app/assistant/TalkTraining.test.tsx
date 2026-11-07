@@ -108,7 +108,7 @@ describe("How I talk to customers", () => {
     expect(practice).toHaveBeenLastCalledWith("te", [{ who: "customer", text: "Do you have Kanchi silk?" }], null); // nothing changed: the saved training
     fireEvent.change(screen.getByLabelText("Never say 1"), { target: { value: "lowest price" } });
     fireEvent.change(box(), { target: { value: "Too costly" } });
-    fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Send" })); // (it says "Answering…" until the first answer has settled)
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("That's a lot of practice this hour."));
     expect(box()).toHaveValue("Too costly");
     expect(practice.mock.calls[1][2]).toMatchObject({ neverSay: ["lowest price"] }); // the unsaved change is tried

@@ -117,7 +117,7 @@ export function NavGroups({ groups, tenantId, activeItemId, labels, waiting = nu
                 <SpriteIcon id="chevron-down" className={`size-4 shrink-0 transition-transform duration-150 ${isFolded ? "-rotate-90" : ""}`} />
               </button>
             ) : (
-              <p aria-hidden="true" className={design ? "px-3 pb-0.5 pt-2.5 text-xs font-medium text-muted" : "px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-muted"}>
+              <p aria-hidden="true" className={design ? "px-3 pb-0 pt-2 text-xs font-medium text-muted" : "px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-muted"}>
                 {heading}
               </p>
             )}

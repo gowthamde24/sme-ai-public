@@ -49,14 +49,14 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   return (
     <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-[256px]"} print:hidden`}>
       {desktop ? (
-        <Link href={`/app/tenants/${current?.id}`} data-part="menu-logo" aria-label={BRAND_NAME} title={collapsed ? BRAND_NAME : undefined} className={`hidden min-h-12 items-center gap-2.5 px-4 pt-2 lg:flex ${collapsed ? "justify-center px-0" : ""}`}>
+        <Link href={`/app/tenants/${current?.id}`} data-part="menu-logo" aria-label={BRAND_NAME} title={collapsed ? BRAND_NAME : undefined} className={`hidden min-h-10 items-center gap-2.5 px-4 pt-2 lg:flex ${collapsed ? "justify-center px-0" : ""}`}>
           <BrandMark px={28} />
           {collapsed ? null : <span className="font-display text-xl font-extrabold tracking-tight">{BRAND_NAME}</span>}
         </Link>
       ) : null}
       <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} logoUrl={frame.logoUrl} still={still} />
       {desktop ? (
-        <div className="hidden px-2 pb-0.5 pt-2 lg:block">
+        <div className="hidden px-2 pb-0.5 pt-1.5 lg:block">
           <button type="button" data-top="menu-search" onClick={() => window.dispatchEvent(new Event(OPEN_PALETTE))} aria-haspopup="dialog" aria-label={word(labels, "frame.search.jump", "Search or jump to")} title={collapsed ? word(labels, "frame.search.jump", "Search or jump to") : undefined} className={`inline-flex min-h-11 w-full items-center gap-2 rounded-xl border border-edge bg-surface px-3 text-left text-sm text-muted hover:border-brand-edge ${collapsed ? "justify-center px-0" : ""}`}>
             <SpriteIcon id="search" className="size-5 shrink-0" />
             {collapsed ? null : (
@@ -69,7 +69,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
         </div>
       ) : null}
       {/* the rows scroll on their own above the fixed foot (owner's review, 5 Nov: AI team and Setup must never sit hidden under the meters): a soft shadow at an edge says there is more; the current row is scrolled into view */}
-      <nav ref={navRef} aria-label={aria} data-nav-scroll="" className="v2-scroll-hint min-h-0 flex-1 overflow-y-auto overscroll-contain p-2">
+      <nav ref={navRef} aria-label={aria} data-nav-scroll="" className="v2-scroll-hint min-h-0 flex-1 overflow-y-auto overscroll-contain p-2 lg:py-1">
         {current && desktop ? (
           <>
             {/* 768 to 1023 px: the five groups, as before */}
