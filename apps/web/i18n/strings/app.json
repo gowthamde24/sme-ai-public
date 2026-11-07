@@ -85115,5 +85115,170 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.map": {
+  "en": "Map",
+  "te": "మ్యాప్",
+  "hi": "नक्शा",
+  "kn": "ನಕ್ಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-map": {
+  "en": "Map",
+  "te": "మ్యాప్",
+  "hi": "नक्शा",
+  "kn": "ನಕ್ಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.sub": {
+  "en": "Where your customers are.",
+  "te": "మీ కస్టమర్లు ఎక్కడ ఉన్నారు.",
+  "hi": "आपके ग्राहक कहाँ हैं।",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರು ಎಲ್ಲಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.honest": {
+  "en": "Only places your customers or you gave are shown. Nothing is looked up, and no map is drawn.",
+  "te": "మీ కస్టమర్లు లేదా మీరు ఇచ్చిన ప్రదేశాలు మాత్రమే చూపిస్తారు. ఏదీ వెతికి తీసుకోరు, మ్యాప్ గీయరు.",
+  "hi": "सिर्फ़ वही जगहें दिखती हैं जो आपके ग्राहकों या आपने दीं। कुछ ढूँढा नहीं जाता, और नक्शा नहीं बनता।",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರು ಅಥವಾ ನೀವು ಕೊಟ್ಟ ಸ್ಥಳಗಳು ಮಾತ್ರ ತೋರಿಸಲಾಗುತ್ತದೆ. ಏನನ್ನೂ ಹುಡುಕಿ ತರುವುದಿಲ್ಲ, ನಕ್ಷೆ ಬರೆಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.empty": {
+  "en": "No customer has given a place yet. They appear here as soon as an enquiry or a site has a city.",
+  "te": "ఇంకా ఏ కస్టమర్ ప్రదేశం ఇవ్వలేదు. ఎంక్వైరీ లేదా సైట్‌లో నగరం ఉన్న వెంటనే ఇక్కడ కనిపిస్తారు.",
+  "hi": "अभी किसी ग्राहक ने जगह नहीं दी। पूछताछ या साइट में शहर आते ही वे यहाँ दिखेंगे।",
+  "kn": "ಇನ್ನೂ ಯಾವ ಗ್ರಾಹಕರೂ ಸ್ಥಳ ಕೊಟ್ಟಿಲ್ಲ. ವಿಚಾರಣೆ ಅಥವಾ ಸೈಟ್‌ನಲ್ಲಿ ನಗರ ಬಂದ ತಕ್ಷಣ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.unread.both": {
+  "en": "The customers and the sites could not be read just now.",
+  "te": "కస్టమర్లను, సైట్‌లను ఇప్పుడు చదవలేకపోయాం.",
+  "hi": "ग्राहक और साइटें अभी पढ़ी नहीं जा सकीं।",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ಮತ್ತು ಸೈಟ್‌ಗಳನ್ನು ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.unread.customers": {
+  "en": "The customers could not be read just now.",
+  "te": "కస్టమర్లను ఇప్పుడు చదవలేకపోయాం.",
+  "hi": "ग्राहक अभी पढ़े नहीं जा सके।",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.unread.sites": {
+  "en": "The sites could not be read just now.",
+  "te": "సైట్‌లను ఇప్పుడు చదవలేకపోయాం.",
+  "hi": "साइटें अभी पढ़ी नहीं जा सकीं।",
+  "kn": "ಸೈಟ್‌ಗಳನ್ನು ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.site": {
+  "en": "site",
+  "te": "సైట్",
+  "hi": "साइट",
+  "kn": "ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.t.customers.one": {
+  "en": "{n} customer",
+  "te": "{n} కస్టమర్",
+  "hi": "{n} ग्राहक",
+  "kn": "{n} ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.t.customers.other": {
+  "en": "{n} customers",
+  "te": "{n} కస్టమర్లు",
+  "hi": "{n} ग्राहक",
+  "kn": "{n} ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.t.sites.one": {
+  "en": "{n} site",
+  "te": "{n} సైట్",
+  "hi": "{n} साइट",
+  "kn": "{n} ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.t.sites.other": {
+  "en": "{n} sites",
+  "te": "{n} సైట్‌లు",
+  "hi": "{n} साइटें",
+  "kn": "{n} ಸೈಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.t.noplace.one": {
+  "en": "{n} customer has no place yet",
+  "te": "{n} కస్టమర్‌కు ఇంకా ప్రదేశం లేదు",
+  "hi": "{n} ग्राहक की जगह अभी नहीं",
+  "kn": "{n} ಗ್ರಾಹಕರಿಗೆ ಇನ್ನೂ ಸ್ಥಳ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "map.t.noplace.other": {
+  "en": "{n} customers have no place yet",
+  "te": "{n} కస్టమర్లకు ఇంకా ప్రదేశం లేదు",
+  "hi": "{n} ग्राहकों की जगह अभी नहीं",
+  "kn": "{n} ಗ್ರಾಹಕರಿಗೆ ಇನ್ನೂ ಸ್ಥಳ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -1,0 +1,13 @@
+# Map
+Where your customers are. Only places your customers or you gave are shown. Nothing is looked up, and no map is drawn.
+-
+{label="Guntur2 customers · 1 site"}
+## Guntur 2 customers · 1 site
+- [Lakshmi Textiles (synthetic) guntur](/app/tenants/22222222-2222-2222-2222-222222222222/customers/ca000000-0000-4000-8000-0000000000b1)
+- [Meena Sarees (synthetic) Brodipet, Guntur](/app/tenants/22222222-2222-2222-2222-222222222222/customers/33333333-3333-3333-3333-333333333333)
+- Lake Road site (synthetic) · site 12 Lake Road, Guntur 522001
+-
+{label="Vijayawada1 customer"}
+## Vijayawada 1 customer
+- [Ravi K. (synthetic) Benz Circle, Vijayawada](/app/tenants/22222222-2222-2222-2222-222222222222/customers/ca000000-0000-4000-8000-0000000000b2)
+3 customers · 1 site · 1 customer has no place yet

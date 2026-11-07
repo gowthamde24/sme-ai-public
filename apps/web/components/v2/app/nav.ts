@@ -91,6 +91,8 @@ export const NAV: readonly NavGroup[] = [
       { id: "report", label: "This week", icon: "report", path: "/report", module: "reports", roles: ADMINS },
       { id: "customers", label: "Customers", short: "Contacts", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], module: "contacts", roles: ALL_ROLES },
       // job CO: a customer's delivery sites, and what customers owe (the shared ledger, ADR 0086); only a pack with the module offers them
+      // app v4 part 5: Customers > Map, where the customers are (a list of real places); only while APP_V4 is on
+      { id: "map", label: "Map", icon: "customers", path: "/map", feature: "app_v4", roles: ALL_ROLES },
       { id: "sites", label: "Sites", icon: "sites", path: "/sites", module: "sites", packOnly: true, roles: ALL_ROLES },
       { id: "dues", label: "Dues", icon: "dues", path: "/dues", module: "dues", unlessModule: "fees", packOnly: true, roles: WRITERS },
       // the Lead Finder (job lead-finder part D, ADR 0119): new businesses that may buy (made-up ones in a demo, Google Maps in the Owner Test workspace only), the Researcher's decision and the practice call. It replaced job CC's
@@ -155,7 +157,7 @@ export type VisibleGroup = { id: string; label: string; items: NavItem[] };
  */
 export type MenuGroupId = "overview" | "sell" | "business" | "aiteam" | "setup" | "v4" | "d-overview" | "d-customers" | "d-sales" | "d-grow" | "d-team" | "d-last";
 export type CountKey = "today" | "leads" | "calls" | "chats" | "followups" | "visits" | "quotes" | "aiteam" | "finder";
-export type MenuId = "today" | "assistant" | "leads" | "find" | "calls" | "chats" | "followups" | "visits" | "catalogue" | "quotes" | "orders" | "trips" | "dues" | "admissions" | "students" | "fees" | "notices" | "reports" | "aiteam" | "train" | "phone" | "sources" | "settings";
+export type MenuId = "today" | "assistant" | "map" | "leads" | "find" | "calls" | "chats" | "followups" | "visits" | "catalogue" | "quotes" | "orders" | "trips" | "dues" | "admissions" | "students" | "fees" | "notices" | "reports" | "aiteam" | "train" | "phone" | "sources" | "settings";
 export type MenuEntry = { id: MenuId; group: MenuGroupId; label: string; icon: IconKey; members: readonly string[]; /** A tab of the phone's bottom bar (the rest are in "More"). */ bar?: boolean; count?: CountKey; labelOf?: string };
 export const MENU_GROUPS: readonly { id: MenuGroupId; label: string }[] = [
   { id: "overview", label: "Overview" },
@@ -175,6 +177,7 @@ export const MENU: readonly MenuEntry[] = [
   { id: "chats", group: "sell", label: "Chats", icon: "chats", members: ["chats", "outbox"], bar: true, count: "chats" },
   { id: "followups", group: "sell", label: "Follow-ups", icon: "followups", members: ["followups"], count: "followups" },
   { id: "visits", group: "sell", label: "Store visits", icon: "visits", members: ["visits"], count: "visits", labelOf: "visits" },
+  { id: "map", group: "sell", label: "Map", icon: "customers", members: ["map"] },
   { id: "catalogue", group: "business", label: "Catalogue & stock", icon: "catalogue", members: ["sarees", "catalogue", "programmes"], labelOf: "sarees" },
   { id: "quotes", group: "business", label: "Quotes", icon: "quotes", members: ["quotes"], count: "quotes" },
   { id: "orders", group: "business", label: "Orders", icon: "orders", members: ["orders"] },
@@ -261,7 +264,7 @@ export type V4Id = "today" | "customers" | "sales" | "aiteam" | "settings";
 export type V4Entry = { id: V4Id; label: string; icon: IconKey; sections: readonly MenuId[]; /** Rows that belong to the group (its menu marker) but are not a tab of it: Today's "Talk to assistant" is the orb and the composer on Today itself (owner, 6 Nov 2026). */ quiet?: readonly MenuId[]; count?: CountKey };
 export const MENU_V4: readonly V4Entry[] = [
   { id: "today", label: "Today", icon: "today", sections: ["today", "reports"], quiet: ["assistant"], count: "today" },
-  { id: "customers", label: "Customers", icon: "customers", sections: ["leads", "calls", "chats", "followups", "visits", "find"], count: "leads" },
+  { id: "customers", label: "Customers", icon: "customers", sections: ["leads", "calls", "chats", "followups", "visits", "map", "find"], count: "leads" },
   { id: "sales", label: "Sales", icon: "quotes", sections: ["quotes", "orders", "catalogue", "dues", "fees", "trips", "admissions", "students", "notices"], count: "quotes" },
   { id: "aiteam", label: "AI team", icon: "aiteam", sections: ["aiteam", "train", "phone"], count: "aiteam" },
   { id: "settings", label: "Settings", icon: "settings", sections: ["sources", "settings"] },
@@ -317,7 +320,7 @@ export function activeV4Id(pathname: string, tab: string | null): string | null 
 export type V4dRow = { sections: readonly MenuId[]; /** Rows that belong to this row (its marker) but are not a tab of it (Today's "Talk to assistant"). */ quiet?: readonly MenuId[]; count?: CountKey; /** A row of its own: its id (`v4d-finder`), word (`nav.item.<id>`) and icon, not its first section's. */ own?: { id: string; label: string; icon: IconKey } };
 export const MENU_V4D: readonly { id: MenuGroupId; label: string; rows: readonly V4dRow[] }[] = [
   { id: "d-overview", label: "Overview", rows: [{ sections: ["today"], quiet: ["assistant"], count: "today" }, { sections: ["reports"] }] },
-  { id: "d-customers", label: "Customers", rows: [{ sections: ["leads", "followups", "visits"], count: "leads" }, { sections: ["chats"], count: "chats" }, { sections: ["calls"], count: "calls" }] },
+  { id: "d-customers", label: "Customers", rows: [{ sections: ["leads", "followups", "visits", "map"], count: "leads" }, { sections: ["chats"], count: "chats" }, { sections: ["calls"], count: "calls" }] },
   { id: "d-sales", label: "Sales", rows: [{ sections: ["quotes"], count: "quotes" }, { sections: ["orders", "trips", "dues", "fees", "admissions", "students", "notices"] }, { sections: ["catalogue"] }] },
   { id: "d-grow", label: "Grow", rows: [{ sections: ["find"], count: "finder", own: { id: "v4d-finder", label: "Lead Finder", icon: "find" } }] },
   { id: "d-team", label: "Team", rows: [{ sections: ["aiteam", "train", "phone"], count: "aiteam" }] },

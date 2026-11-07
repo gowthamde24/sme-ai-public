@@ -166,7 +166,7 @@ describe("app v4: five groups (job-app-v4.md part 1, owner 6 Nov 2026)", () => {
   });
   it("Customers holds Leads, Calls, Chats, Follow-ups, Store visits and Find customers; Sales holds Quotes, Orders, Catalogue & stock and the money pages; AI team holds My AI team, Train how it talks and Phone number; Settings holds Lead sources", () => {
     const of = (id: string) => MENU_V4.find((g) => g.id === id)!.sections;
-    expect(of("customers")).toEqual(["leads", "calls", "chats", "followups", "visits", "find"]);
+    expect(of("customers")).toEqual(["leads", "calls", "chats", "followups", "visits", "map", "find"]);
     expect(of("sales").slice(0, 4)).toEqual(["quotes", "orders", "catalogue", "dues"]);
     expect(of("aiteam")).toEqual(["aiteam", "train", "phone"]);
     expect(of("settings")).toEqual(["sources", "settings"]);
@@ -205,6 +205,7 @@ describe("app v4: five groups (job-app-v4.md part 1, owner 6 Nov 2026)", () => {
     // each row carries the menu rows that mark it: Follow-ups and Store visits mark Leads; Train and Phone mark AI team; the assistant marks Today
     const items = groups.flatMap((g) => g.items);
     expect(items.find((i) => i.id === "m-leads")?.members).toEqual(["m-leads", "m-followups", "m-visits"]);
+    expect(menuGroupsV4D("owner", { ...textiles, features: ["app_v4"] } as PackFrame).flatMap((g) => g.items).find((i) => i.id === "m-leads")?.members).toEqual(["m-leads", "m-followups", "m-visits", "m-map"]); // Map joins Leads while app v4 is on
     expect(items.find((i) => i.id === "m-aiteam")?.members).toEqual(["m-aiteam", "m-train", "m-phone"]);
     expect(items.find((i) => i.id === "m-today")?.members).toEqual(["m-today", "m-assistant"]);
     expect(activeV4dId(groups, "m-visits")).toBe("m-leads");
@@ -213,6 +214,7 @@ describe("app v4: five groups (job-app-v4.md part 1, owner 6 Nov 2026)", () => {
     expect(activeV4dId(groups, null)).toBeNull();
     expect(items.find((i) => i.id === "v4d-finder")).toMatchObject({ label: "Lead Finder", count: "finder", icon: "find" });
     // the sections of Leads are its three menu rows; a viewer has no Orders (writers only), so no Orders row
+    expect(v4dSections(v4dRowOf("followups")!, "owner", { ...textiles, features: ["app_v4"] }).map((s) => s.id)).toEqual(["m-leads", "m-followups", "m-visits", "m-map"]); // the map is a tab only while app v4 is on
     expect(v4dSections(v4dRowOf("followups")!, "owner", textiles).map((s) => s.id)).toEqual(["m-leads", "m-followups", "m-visits"]);
     expect(menuGroupsV4D("viewer", textiles).flatMap((g) => g.items).find((i) => i.members.includes("m-orders"))).toBeUndefined();
     // a school: no quotes or orders; its first money page leads the row

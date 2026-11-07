@@ -791,6 +791,24 @@ add({
   render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({}))),
   handlers: (role) => ({ ...finderHandlers(LF.AVAILABLE, V4_SPREAD)(role), listSearches: async () => [(await import("@/lib/api/lead-finder")).parseSearch({ ...LF.SEARCH_DONE, area: "Hyderabad" })] }),
 });
+// app v4 part 5: Customers > Map, where the customers are (only with APP_V4)
+add({
+  id: "map",
+  render: () => withEnv({ APP_V4: "1", LEADS_SCREENS: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/map/page")).default(props({}))),
+  handlers: (role) => ({
+    ...base(role),
+    listDeskLeads: () => ({
+      leads: [
+        { id: LEAD, contactId: null, name: "Meena Sarees (synthetic)", source: "whatsapp_inbound", status: "new", ownerUserId: null, createdAt: "2026-10-06T04:00:00Z", hot: false, profile: { city: "Guntur", area: "Brodipet" } },
+        { id: "ca000000-0000-4000-8000-0000000000b1", contactId: null, name: "Lakshmi Textiles (synthetic)", source: "indiamart", status: "new", ownerUserId: null, createdAt: "2026-10-06T04:00:00Z", hot: false, profile: { city: "guntur", area: null } },
+        { id: "ca000000-0000-4000-8000-0000000000b2", contactId: null, name: "Ravi K. (synthetic)", source: "indiamart", status: "new", ownerUserId: null, createdAt: "2026-10-06T04:00:00Z", hot: false, profile: { city: "Vijayawada", area: "Benz Circle" } },
+        { id: "ca000000-0000-4000-8000-0000000000b3", contactId: null, name: "Anita (synthetic)", source: "meta_lead_ads", status: "new", ownerUserId: null, createdAt: "2026-10-06T04:00:00Z", hot: false, profile: null },
+      ],
+      nextCursor: null,
+    }),
+    listSites: () => ({ items: [{ id: "ca000000-0000-4000-8000-0000000000c1", name: "Lake Road site (synthetic)", address_line: "12 Lake Road", city: "Guntur", pin: "522001" }], next_cursor: null }),
+  }),
+});
 add({ id: "retailers-places", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.AVAILABLE_PLACES, [{ ...LF.PROSPECT, source: "google_maps", attribution: "Google Maps", source_label: "Google Maps search 'saree shops Jayanagar', 2 Nov" }, LF.PROSPECT_LOW]) });
 add({ id: "retailers-school", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.SCHOOL, []) });
 add({ id: "retailers-unreadable", roles: ["admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(null, []) });
