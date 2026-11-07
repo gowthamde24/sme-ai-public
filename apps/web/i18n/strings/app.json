@@ -84730,5 +84730,82 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.group.d-overview": {
+  "en": "Overview",
+  "te": "అవలోకనం",
+  "hi": "एक नज़र में",
+  "kn": "ಅವಲೋಕನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.d-customers": {
+  "en": "Customers",
+  "te": "కస్టమర్లు",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.d-sales": {
+  "en": "Sales",
+  "te": "సేల్స్",
+  "hi": "बिक्री",
+  "kn": "ಮಾರಾಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.d-grow": {
+  "en": "Grow",
+  "te": "వృద్ధి",
+  "hi": "बढ़ाएँ",
+  "kn": "ಬೆಳೆಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.d-team": {
+  "en": "Team",
+  "te": "టీమ్",
+  "hi": "टीम",
+  "kn": "ಟೀಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.v4d-finder": {
+  "en": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
+  "hi": "लीड फ़ाइंडर",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.search.jump": {
+  "en": "Search or jump to",
+  "te": "వెతకండి లేదా వెళ్ళండి",
+  "hi": "खोजें या सीधे जाएँ",
+  "kn": "ಹುಡುಕಿ ಅಥವಾ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

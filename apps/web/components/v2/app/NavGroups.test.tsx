@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { NO_COUNTS } from "@/lib/nav-counts";
 
 import { NavGroups } from "./NavGroups";
-import { menuGroups, type PackFrame } from "./nav";
+import { menuGroups, menuGroupsV4D, type PackFrame } from "./nav";
 
 const T = "22222222-2222-2222-2222-222222222222";
 const TEXTILES: PackFrame = { name: "Textiles", accent: "rose_silk", validated: true, coreTab: "quotes", modules: ["today", "enquiries", "quotes", "orders", "visits", "office", "contacts", "catalogue", "inbox", "reports", "integrations", "lead_finder"], labels: {} };
@@ -35,6 +35,18 @@ describe("NavGroups (sidebar v2)", () => {
     rerender(<NavGroups groups={menuGroups("owner", TEXTILES)} tenantId={T} activeItemId="m-today" counts={{ ...COUNTS, liveCalls: 0, newLeads: null }}  />);
     expect(badge("m-calls")).toBeNull();
     expect(badge("m-leads")).toBeNull();
+  });
+  it("the desktop menu of app v4 (owner, 7 Nov): small headings that never fold, and the design's chips: numbers, a dot for a live call, \"N new\" for the Lead Finder; none for a 0 or a null", () => {
+    const groups = menuGroupsV4D("owner", TEXTILES);
+    render(<NavGroups design groups={groups} tenantId={T} activeItemId="m-today" counts={COUNTS} />);
+    expect(screen.queryByRole("button")).toBeNull(); // no folding
+    expect(screen.getByRole("group", { name: "Customers" })).toBeInTheDocument();
+    expect([badge("m-today"), badge("m-leads"), badge("m-chats"), badge("m-calls"), badge("m-quotes"), badge("v4d-finder"), badge("m-aiteam"), badge("m-orders"), badge("m-reports"), badge("settings")]).toEqual(["5", "12", "2", "1 live", "1", "2 new", "4 working", null, null, null]);
+    expect(document.querySelector('[data-nav-badge="m-calls"] .sr-only')?.textContent).toBe("1 live"); // the dot says it in words for a screen reader
+    expect(document.querySelector('[data-nav-badge="m-calls"]')?.querySelector('[aria-hidden="true"]')).not.toBeNull();
+    cleanup();
+    render(<NavGroups design groups={groups} tenantId={T} activeItemId="m-today" counts={{ ...COUNTS, liveCalls: 0, newLeads: null, prospectsNeedingOwner: 0 }} />);
+    expect([badge("m-calls"), badge("m-leads"), badge("v4d-finder")]).toEqual([null, null, null]);
   });
   it("a heading folds its group (remembered), but never the group of the current page", () => {
     const { unmount } = render(<NavGroups groups={menuGroups("owner", TEXTILES)} tenantId={T} activeItemId="m-today"  />);

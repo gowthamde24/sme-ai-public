@@ -28,7 +28,7 @@ export function TopBar({ memberships, labels, email, signOut, mark, children, pa
       <Link href={current ? `/app/tenants/${current.id}` : "/app"} className={current ? "inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg max-[380px]:hidden md:hidden" : "inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg md:hidden"} aria-label={current?.name ?? "Home"}>
         <BrandMark px={32} />
       </Link>
-      {current && palette ? <TopSearch label={word(labels, "frame.search", "Search or ask anything")} memberships={memberships} labels={labels} palette={palette} who={email ?? ""} /> : null}
+      {current && palette ? <TopSearch label={word(labels, "frame.search", "Search or ask anything")} memberships={memberships} labels={labels} palette={palette} who={email ?? ""} sidebarAtLg={v4} /> : null}
       <div className="ml-auto flex items-center gap-2">
         {/* "Start demo" (a demo workspace only) is drawn here by the guided demo */}
         <span id="demo-start-slot" className="contents" />

@@ -153,8 +153,8 @@ export type VisibleGroup = { id: string; label: string; items: NavItem[] };
  * the tabs; the first one the person is offered is where the row goes. Row ids are `m-<id>` (their words are `nav.item.m-<id>`); `count` names the number the row shows (C1's nav-counts, components/v2/app/nav-badges.ts);
  * `labelOf` = a page whose business-type word wins when the business type has one (Visits: "Campus visits" for a school; Catalogue & stock: "Materials", "Programmes").
  */
-export type MenuGroupId = "overview" | "sell" | "business" | "aiteam" | "setup" | "v4";
-export type CountKey = "today" | "leads" | "calls" | "chats" | "followups" | "visits" | "quotes" | "aiteam";
+export type MenuGroupId = "overview" | "sell" | "business" | "aiteam" | "setup" | "v4" | "d-overview" | "d-customers" | "d-sales" | "d-grow" | "d-team" | "d-last";
+export type CountKey = "today" | "leads" | "calls" | "chats" | "followups" | "visits" | "quotes" | "aiteam" | "finder";
 export type MenuId = "today" | "assistant" | "leads" | "find" | "calls" | "chats" | "followups" | "visits" | "catalogue" | "quotes" | "orders" | "trips" | "dues" | "admissions" | "students" | "fees" | "notices" | "reports" | "aiteam" | "train" | "phone" | "sources" | "settings";
 export type MenuEntry = { id: MenuId; group: MenuGroupId; label: string; icon: IconKey; members: readonly string[]; /** A tab of the phone's bottom bar (the rest are in "More"). */ bar?: boolean; count?: CountKey; labelOf?: string };
 export const MENU_GROUPS: readonly { id: MenuGroupId; label: string }[] = [
@@ -306,6 +306,63 @@ export function activeV4Id(pathname: string, tab: string | null): string | null 
   const menu = page ? menuOfPage(page.item.id) : null;
   const group = menu ? v4OfMenu(menu.id) : null;
   return group ? v4ItemId(group.id) : null;
+}
+
+/**
+ * APP v4 on a DESKTOP (1024 px and up; owner, 7 Nov 2026, from app-Main.png): the side menu is the design's, with small group headings: Overview (Today, Reports), Customers (Leads, Chats, Calls), Sales (Quotes, Orders, Catalogue),
+ * Grow (Lead Finder), Team (AI team), then Settings. A row holds its other pages as tabs inside its page (`sections`, drawn by GroupTabs): Follow-ups and Store visits under Leads; the money pages (dues, fees, trips) and a school's
+ * admissions, students and notices under Orders; Train how it talks and Phone number under AI team; Lead sources under Settings. A row's word and icon are its first section's the person is offered (a school's Orders row is "Fees"); a row with
+ * no section offered is not in the menu. Narrower than 1024 px nothing changes: the five groups above (menuGroupsV4) and the phone's five tabs. Every page keeps its address.
+ */
+export type V4dRow = { sections: readonly MenuId[]; /** Rows that belong to this row (its marker) but are not a tab of it (Today's "Talk to assistant"). */ quiet?: readonly MenuId[]; count?: CountKey; /** A row of its own: its id (`v4d-finder`), word (`nav.item.<id>`) and icon, not its first section's. */ own?: { id: string; label: string; icon: IconKey } };
+export const MENU_V4D: readonly { id: MenuGroupId; label: string; rows: readonly V4dRow[] }[] = [
+  { id: "d-overview", label: "Overview", rows: [{ sections: ["today"], quiet: ["assistant"], count: "today" }, { sections: ["reports"] }] },
+  { id: "d-customers", label: "Customers", rows: [{ sections: ["leads", "followups", "visits"], count: "leads" }, { sections: ["chats"], count: "chats" }, { sections: ["calls"], count: "calls" }] },
+  { id: "d-sales", label: "Sales", rows: [{ sections: ["quotes"], count: "quotes" }, { sections: ["orders", "trips", "dues", "fees", "admissions", "students", "notices"] }, { sections: ["catalogue"] }] },
+  { id: "d-grow", label: "Grow", rows: [{ sections: ["find"], count: "finder", own: { id: "v4d-finder", label: "Lead Finder", icon: "find" } }] },
+  { id: "d-team", label: "Team", rows: [{ sections: ["aiteam", "train", "phone"], count: "aiteam" }] },
+  { id: "d-last", label: "", rows: [{ sections: ["settings", "sources"] }] },
+];
+/** A desktop row's id is the id of its first section the person is offered (`m-leads`), so its word is that menu row's; `members` are every menu row id that marks it as the current one. */
+export type V4dItem = MenuRow & { members: readonly string[] };
+export type V4dGroup = { id: MenuGroupId; label: string; items: V4dItem[] };
+export function menuGroupsV4D(role: Role, view?: PackFrame | null): V4dGroup[] {
+  return MENU_V4D.flatMap((g): V4dGroup[] => {
+    const items = g.rows.flatMap((r): V4dItem[] => {
+      const rows = r.sections.flatMap((id) => MENU.filter((m) => m.id === id)).map((m) => menuRow(m, role, view)).filter((x): x is MenuRow => x !== null);
+      const first = rows[0];
+      if (!first) return [];
+      const { count: _count, ...rest } = first; // the row's number is its own, not its first section's
+      void _count;
+      return [
+        {
+          ...rest,
+          id: r.own?.id ?? first.id,
+          label: r.own?.label ?? first.label,
+          icon: r.own?.icon ?? first.icon,
+          also: rows.flatMap((s) => [s.path, ...(s.also ?? [])]).filter((p) => p !== "" && !p.includes("?")),
+          bar: false,
+          group: g.id,
+          ...(r.count ? { count: r.count } : {}),
+          members: [...rows.map((s) => s.id), ...(r.quiet ?? []).map((q) => `m-${q}`)],
+        },
+      ];
+    });
+    return items.length ? [{ id: g.id, label: g.label, items }] : [];
+  });
+}
+/** The desktop row (its id) the current menu row (`m-leads`, `settings`) belongs to, or null. */
+export function activeV4dId(groups: readonly V4dGroup[], activeMenu: string | null): string | null {
+  if (!activeMenu) return null;
+  return groups.flatMap((g) => g.items).find((i) => i.members.includes(activeMenu))?.id ?? null;
+}
+/** The desktop row a menu row (a section) belongs to, or null. */
+export function v4dRowOf(menuId: MenuId): V4dRow | null {
+  return MENU_V4D.flatMap((g) => g.rows).find((r) => r.sections.includes(menuId) || (r.quiet ?? []).includes(menuId)) ?? null;
+}
+/** The sections of a desktop row this role and business type are offered (each a menu row: it goes to its own first page). */
+export function v4dSections(row: V4dRow, role: Role, view?: PackFrame | null): MenuRow[] {
+  return row.sections.flatMap((id) => MENU.filter((m) => m.id === id)).map((m) => menuRow(m, role, view)).filter((r): r is MenuRow => r !== null);
 }
 
 /**
