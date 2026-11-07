@@ -155,7 +155,7 @@ export function ProspectCards({ items, words, base, canPractice, canSearch, labe
       </ul>
       <FailureNote failure={failure} words={words} />
       {waiting.length > 0 ? (
-        <div className="sticky bottom-20 flex flex-col gap-2 lg:bottom-3" data-part="call-all">
+        <div className="sticky bottom-20 flex flex-col gap-2 lg:bottom-0" data-part="call-all">
           {all ? (
             <div role="alertdialog" aria-labelledby={`${id}-all`} className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3 shadow-[0_10px_30px_-12px_rgba(30,30,36,.4)]">
               <p id={`${id}-all`} className="m-0 font-semibold">

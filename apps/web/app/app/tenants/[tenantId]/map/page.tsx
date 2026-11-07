@@ -7,7 +7,7 @@ import { BRAND_NAME } from "@/design/brand";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
-import { isCanonicalUuid } from "@/lib/api/crm";
+import { fetchPage, isCanonicalUuid, type CompanyRow } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { listSites } from "@/lib/api/sites";
 import { requireUser } from "@/lib/auth/session";
@@ -58,6 +58,22 @@ export default async function MapPage({ params }: PageProps<"/app/tenants/[tenan
     if (error instanceof ApiAuthError) redirect("/login");
     leadsRead = false;
   }
+  // the CRM's own customers (companies of type customer): the first pages, a part that cannot be read is said
+  const companies: CompanyRow[] = [];
+  let companiesRead = true;
+  try {
+    let cursor: string | null = null;
+    for (let i = 0; i < PAGES; i++) {
+      const page = await fetchPage(user.accessToken, tenantId, "companies", cursor);
+      if (page.entity !== "companies") break;
+      companies.push(...page.items);
+      cursor = page.nextCursor;
+      if (!cursor) break;
+    }
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    companiesRead = false;
+  }
   const sites = await listSites(user.accessToken, tenantId, { limit: 100 }).then(
     (p) => ({ items: p.items, ok: true }),
     (error) => {
@@ -68,12 +84,12 @@ export default async function MapPage({ params }: PageProps<"/app/tenants/[tenan
   );
   const lang = await getLang();
   const w = wordsFor(lang, ["map.", "nav.item.m-map"]);
-  const grouped = groupPlaces(leads, sites.items, `/app/tenants/${tenantId}`);
+  const grouped = groupPlaces(leads, sites.items, `/app/tenants/${tenantId}`, companies);
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={w["nav.item.m-map"]} sub={w["map.sub"]} />
       <div className="mt-4">
-        <CustomerMap {...grouped} w={w} unread={{ customers: !leadsRead, sites: !sites.ok }} />
+        <CustomerMap {...grouped} w={w} unread={{ customers: !leadsRead || !companiesRead, sites: !sites.ok }} />
       </div>
     </main>
   );

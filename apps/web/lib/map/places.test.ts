@@ -27,6 +27,12 @@ describe("the places customers are in", () => {
     expect(guntur.entries.map((e) => [e.kind, e.name, e.line, e.href])).toEqual([["customer", "Meena", "Guntur", `${BASE}/customers/a`], ["site", "Lake Road site", "12 Lake Road, Guntur 522001", null]]);
     expect(r.places.map((p) => p.city)).toContain("Plot 4, NH16");
   });
+  it("the CRM's own customers (companies marked as customers) are placed by their city; a supplier or a company with no city is not", () => {
+    const r = groupPlaces([lead("a", "Meena", "Guntur")], [], BASE, [{ id: "c1", name: "Lakshmi Textiles", type: "customer", city: "Guntur" }, { id: "c2", name: "A supplier", type: "supplier", city: "Chennai" }, { id: "c3", name: "No city", type: "customer", city: null }, { id: "c4", name: "A prospect", type: "prospect", city: "Tenali" }]);
+    expect(r.places.map((p) => [p.city, p.entries.map((e) => e.name)])).toEqual([["Guntur", ["Lakshmi Textiles", "Meena"]]]);
+    expect(r.places[0].entries.find((e) => e.name === "Lakshmi Textiles")?.href).toBe(`${BASE}/companies/c1`);
+    expect(r.customers).toBe(2);
+  });
   it("long free text is cut, and an empty list is an empty answer", () => {
     expect(groupPlaces([lead("a", "N".repeat(300), "C".repeat(300))], [], BASE).places[0].city).toHaveLength(80);
     expect(groupPlaces([], [], BASE)).toEqual({ places: [], customers: 0, withoutPlace: 0, sites: 0 });

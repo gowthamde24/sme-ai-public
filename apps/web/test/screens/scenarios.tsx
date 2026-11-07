@@ -806,6 +806,7 @@ add({
       ],
       nextCursor: null,
     }),
+    fetchPage: () => parsePage("companies", { items: [{ ...COMPANY_JSON, type: "customer", city: "Tenali" }, { ...COMPANY_JSON, id: "ca000000-0000-4000-8000-0000000000d1", type: "supplier", city: "Chennai" }], next_cursor: null }),
     listSites: () => ({ items: [{ id: "ca000000-0000-4000-8000-0000000000c1", name: "Lake Road site (synthetic)", address_line: "12 Lake Road", city: "Guntur", pin: "522001" }], next_cursor: null }),
   }),
 });

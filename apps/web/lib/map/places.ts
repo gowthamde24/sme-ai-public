@@ -5,6 +5,7 @@
 export type PlaceEntry = { kind: "customer" | "site"; id: string; name: string; /** "Brodipet, Guntur" or "12 Lake Road, Guntur 522001" */ line: string; href: string | null };
 export type Place = { key: string; city: string; entries: PlaceEntry[] };
 export type MapLead = { id: string; name: string; profile?: { city: string | null; area: string | null } | null };
+export type MapCompany = { id: string; name: string; type: string; city: string | null };
 export type MapSite = { id: string; name: string; address_line: string | null; city: string | null; pin: string | null };
 
 const cityKey = (c: string): string => c.normalize("NFKC").toLowerCase().replace(/\s+/g, " ").trim();
@@ -13,7 +14,7 @@ const clean = (v: string | null | undefined, max: number): string | null => {
   return t === "" ? null : t.slice(0, max);
 };
 
-export function groupPlaces(leads: readonly MapLead[], sites: readonly MapSite[], base: string): { places: Place[]; customers: number; withoutPlace: number; sites: number } {
+export function groupPlaces(leads: readonly MapLead[], sites: readonly MapSite[], base: string, companies: readonly MapCompany[] = []): { places: Place[]; customers: number; withoutPlace: number; sites: number } {
   const byCity = new Map<string, Place>();
   const put = (city: string, entry: PlaceEntry) => {
     const key = cityKey(city);
@@ -31,6 +32,14 @@ export function groupPlaces(leads: readonly MapLead[], sites: readonly MapSite[]
     }
     const area = clean(l.profile?.area, 80);
     put(city, { kind: "customer", id: l.id, name: clean(l.name, 120) ?? "", line: [area, city].filter(Boolean).join(", "), href: `${base}/customers/${l.id}` });
+    placed += 1;
+  }
+  // the customers of the CRM (companies marked as customers) that gave a city; a company is placed by its city alone
+  for (const c of companies) {
+    if (c.type !== "customer") continue;
+    const city = clean(c.city, 80);
+    if (!city) continue;
+    put(city, { kind: "customer", id: c.id, name: clean(c.name, 120) ?? "", line: city, href: `${base}/companies/${c.id}` });
     placed += 1;
   }
   let siteCount = 0;
