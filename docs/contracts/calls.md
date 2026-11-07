@@ -109,5 +109,11 @@ WebSocket `wss://<api>/v1/tenants/{t}/calls/{id}/take-over` (Owner, Admin).
 - **When it's filled:** for a line that isn't English (the caller's words, or the AI's when it speaks another language), the fast model translates it in the background. It arrives a few seconds after the line itself. The 5 s refresh picks it up.
 - **When it's null:** the line is English already (no letter outside the Latin script), it isn't translated yet, the translation failed, or the call passed its cap of 80 translated lines.
 - **Format:** plain text, at most 2,000 characters. It's a reading aid only: the caller's words stay as said, and the web shows the English under them.
+- **Only translations (7 Nov 2026):** whole lines only. The model answers NONE when it can't translate, and code drops NONE, a remark about the line, an answer still in another script and anything far longer than the line. Then `text_en` stays null.
 - **A live call's lines:** while the call runs on the server that answers the request, Owner and Admin get the lines so far, with their English as it arrives. Sales never get a transcript, live or not. On another server, or once the call ends, it's the saved transcript, which keeps each `text_en`.
 - **Cost:** one short fast-model request per non-English line. Nothing is logged but counts.
+
+## One line per turn, and the record of a call (owner, 7 Nov 2026)
+- **`transcript`:** one item per assistant turn: the whole reply, or after a barge-in what the caller heard of it, cut between words and ending in "…". A line appears when the turn ends, not word by word. Its `t` is when the turn began. Calls made before this were repaired by migration 20261231360000.
+- **`who`:** the contact's name or phone; else the name the caller gave on the call; else "Caller ending 998" (the last three digits); else "New enquiry" (older calls).
+- **`summary_short`, `outcome`, `category`:** set after every inbound call in which the caller spoke. The summary is one short English line. A call where nobody spoke stays `unclear` with no summary. `captured` may hold `name`.

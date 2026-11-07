@@ -56,5 +56,11 @@ select throws_ok(format($q$insert into public.phone_calls (tenant_id, direction,
 select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.phone_call_begin(%L, 'outbound', 'sandbox', true, %L, 'sales_followup', 'te', null, false, 'dnd')::text$q$, tests.tid('a'), tests.rid('a_contact'))), 'state'), 'refused', 'E7: a call the gate refused is kept, with the reason');
 select is(pg_temp.sc('a_owner', format($q$select public.phone_call_begin(%L, 'outbound', 'sandbox', true, %L, 'sales_followup', 'te', null, false, 'because I said so')::text$q$, tests.tid('a'), tests.rid('a_contact'))), 'ERR:22023', 'E8: the reason is one of the closed words');
 select is(pg_temp.sc('a_owner', format($q$select public.phone_call_begin(%L, 'outbound', 'exotel', true, null, 'sales_followup', 'fr')::text$q$, tests.tid('a'))), 'ERR:22023', 'E9: a language outside the six is refused');
+-- the stored streaming pieces of older calls become one line per turn (migration 20261231360000)
+select is(app.phone_transcript_whole_turns('[{"who":"assistant","text":"నమస్కారం?","t":0},{"who":"caller","text":"హలో","t":4},{"who":"assistant","text":"చ","t":6,"text_en":"bad"},{"who":"assistant","text":"ెప్పండి","t":6.1,"text_en":"cut off"},{"who":"assistant","text":" అండీ","t":6.2},{"who":"caller","text":"సరే","t":9}]'::jsonb),
+          '[{"who":"assistant","text":"నమస్కారం?","t":0},{"who":"caller","text":"హలో","t":4},{"who":"assistant","text":"చెప్పండి అండీ","t":6},{"who":"caller","text":"సరే","t":9}]'::jsonb, 'W1: a Telugu turn split into pieces is one line again, without its English from the pieces');
+select is(app.phone_transcript_whole_turns('[{"who":"assistant","text":"Hello?","t":0},{"who":"assistant","text":"Are you there?","t":5}]'::jsonb),
+          '[{"who":"assistant","text":"Hello?","t":0},{"who":"assistant","text":"Are you there?","t":5}]'::jsonb, 'W2: two lines seconds apart stay two lines');
+select is(app.phone_transcript_whole_turns(null), null, 'W3: no transcript stays none');
 select * from finish();
 rollback;

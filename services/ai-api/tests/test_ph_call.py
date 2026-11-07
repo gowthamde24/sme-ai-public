@@ -6,13 +6,16 @@ from __future__ import annotations
 import asyncio
 import uuid
 from datetime import UTC, datetime
+from types import SimpleNamespace
 from typing import Any
+
+import pytest
 
 from app.browser_voice.limits import Ledger, Limits
 from app.browser_voice.session import Parts
 from app.conversation.fakes import FakeLlm, FakeStt, FakeTts
 from app.telephony import outcome, persona, triggers
-from app.telephony.call_session import CallPlan, run_call
+from app.telephony.call_session import CallPlan, CallVoiceSession, run_call
 from app.telephony.line import PhoneLine
 from app.telephony.outcome import CallOutcome
 from app.telephony.phone_llm import PhoneLlm
@@ -288,3 +291,73 @@ def test_call_first_the_whatsapp_signal_is_only_asked_or_agreed() -> None:
         assert got is not None and "whatsapp" not in got.get("captured", {}), "only the top-level asked/agreed counts; a captured key of that name is dropped"
     system, _ = prompt([{"who": "caller", "text": "send me photos on WhatsApp"}], "te", "2026-11-05")
     assert '"asked" ONLY' in system and "Never \"asked\" or \"agreed\" because the assistant mentioned WhatsApp" in system
+
+
+# ---- the record of a call (owner, 7 Nov 2026) -----------------------------------------------------------------------------------------------
+class _TurnLine:
+    def __init__(self) -> None:
+        self.transcript: list[dict[str, Any]] = []
+        self.taken_over = False
+
+    def elapsed(self) -> float:
+        return 6.0
+
+    add_turn = PhoneLine.add_turn
+    translator = None
+
+
+def _session_on(line: _TurnLine) -> Any:
+    session: Any = CallVoiceSession.__new__(CallVoiceSession)
+    session.socket = type("S", (), {"_line": line})()
+    return session
+
+
+def test_a_telugu_turn_streamed_in_pieces_is_one_line_and_a_barge_in_keeps_what_was_heard(monkeypatch: pytest.MonkeyPatch) -> None:
+    import app.browser_voice.session as S
+
+    async def whole(self: Any, text: str, tm: Any) -> None:
+        tm.spoken_text, tm.reply_text, tm.interrupted = "చెప్పండి అండీ, ఏం కావాలి?", "చెప్పండి అండీ, ఏం కావాలి?", False
+
+    monkeypatch.setattr(S.VoiceSession, "_answer", whole)
+    line = _TurnLine()
+    asyncio.run(_session_on(line)._answer("హలో", SimpleNamespace()))
+    assert line.transcript == [{"who": "assistant", "text": "చెప్పండి అండీ, ఏం కావాలి?", "t": 6.0}], "one line for the turn"
+
+    async def cut(self: Any, text: str, tm: Any) -> None:
+        line.transcript.append({"who": "caller", "text": "ఆగండి", "t": 7.0})   # they spoke over it
+        tm.spoken_text, tm.reply_text, tm.interrupted = "చెప్పండి అండీ…", "చెప్పండి అండీ, ఏం కావాలి?", True
+
+    monkeypatch.setattr(S.VoiceSession, "_answer", cut)
+    line = _TurnLine()
+    asyncio.run(_session_on(line)._answer("హలో", SimpleNamespace()))
+    assert [t["text"] for t in line.transcript] == ["చెప్పండి అండీ…", "ఆగండి"], "what was heard, cut between words, before the words said over it"
+
+    async def nothing_heard(self: Any, text: str, tm: Any) -> None:
+        tm.spoken_text, tm.reply_text, tm.interrupted = "", "చెప్పండి", True
+
+    monkeypatch.setattr(S.VoiceSession, "_answer", nothing_heard)
+    line = _TurnLine()
+    asyncio.run(_session_on(line)._answer("హలో", SimpleNamespace()))
+    assert line.transcript == [], "cut before a word was heard: no line"
+
+
+@arun
+async def test_the_models_streaming_pieces_never_become_lines() -> None:
+    plan = CallPlan(call_id=CALL, tenant_id=TENANT, direction="inbound", language="en", business="Sri Textiles", max_call_s=60, caller_ending="998")
+    call = await Call(parts_for(llm=FakeLlm(("చ", "ెప్పండి", " అండీ."))), plan).start()
+    await call.after_opening()
+    await call.say()
+    await until(lambda: sum(1 for t in call.line.transcript if t["who"] == "assistant") >= 2, 5)
+    await call.sim.hang_up()
+    out = await call.result()
+    said = [t["text"] for t in out.transcript if t["who"] == "assistant"][1:]
+    assert said == ["చెప్పండి అండీ."] and out.captured.get("caller_ending") == "998"
+
+
+def test_the_summary_is_one_short_english_line_with_the_callers_name_when_they_gave_it() -> None:
+    system, _ = outcome.prompt([{"who": "caller", "text": "హలో"}], "te", "2026-11-07")
+    assert "at most 14 words in English" in system and "caller_name" in system and "ONLY when neither" in system
+    got = outcome.validate('{"summary": "Asked about silk sarees, wants a visit", "outcome": "positive", "caller_name": " Ramesh  Kumar "}')
+    assert got is not None and got["captured"] == {"name": "Ramesh Kumar"} and got["outcome"] == "positive"
+    for bad in ('{"summary": "x", "caller_name": "98765"}', '{"summary": "x", "caller_name": "a@b.c"}', '{"summary": "x", "caller_name": null}'):
+        assert "name" not in ((outcome.validate(bad) or {}).get("captured") or {}), bad
