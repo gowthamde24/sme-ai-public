@@ -9,6 +9,7 @@ from datetime import UTC, datetime
 from types import SimpleNamespace
 from typing import Any
 
+import httpx
 import pytest
 
 from app.browser_voice.limits import Ledger, Limits
@@ -361,3 +362,59 @@ def test_the_summary_is_one_short_english_line_with_the_callers_name_when_they_g
     assert got is not None and got["captured"] == {"name": "Ramesh Kumar"} and got["outcome"] == "positive"
     for bad in ('{"summary": "x", "caller_name": "98765"}', '{"summary": "x", "caller_name": "a@b.c"}', '{"summary": "x", "caller_name": null}'):
         assert "name" not in ((outcome.validate(bad) or {}).get("captured") or {}), bad
+
+
+def test_the_prompt_tells_the_model_the_opening_was_said_and_writes_the_ai_assistant_word_in_script() -> None:
+    opening = persona.opening_line("te", business="Stack19", assistant="Priya", customer=None, inbound=True)
+    with_opening = persona.system_prompt(business="Stack19", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None, opening=opening)
+    assert "ALREADY SAID" in with_opening and opening in with_opening and "Never introduce yourself" in with_opening
+    assert "ALREADY SAID" not in persona.system_prompt(business="Stack19", assistant="Priya", language="te", purpose="inbound", facts=[], customer_first_name=None), "a call with no opening says nothing of it"
+    assert 'Write "AI assistant" as "AI అసిస్టెంట్"' in with_opening and "leave a space between a Latin-letter word" in with_opening
+    for lang, word in persona.AI_ASSISTANT_WORD.items():
+        assert word.startswith("AI ") and word in persona.system_prompt(business="Stack19", assistant="Priya", language=lang, purpose="inbound", facts=[], customer_first_name=None), lang
+
+
+def test_the_phone_parts_give_the_model_the_same_opening_the_caller_hears() -> None:
+    from app.browser_voice.runtime import BrowserVoice
+    from app.conversation.voices import default_config
+    from app.telephony.inbound_routes import phone_parts
+
+    bv: Any = BrowserVoice(config=default_config(), factory=lambda choice, language: FakeTts(), sarvam_key="k", anthropic_key="k", fast_model="m", turn_model="claude", limits=Limits(greeting=True), ledger=Ledger(Limits(greeting=True)), allowed_origins=(), client=httpx.AsyncClient())
+    parts, _ = phone_parts(bv, "Stack19", "te", "haiku")
+    heard = parts.greeting_for("te")
+    assert heard and heard in parts.system_for("te") and "ALREADY SAID" in parts.system_for("te")
+
+
+def test_a_latin_word_glued_to_a_telugu_word_gets_its_space_in_the_transcript_and_the_voice_text() -> None:
+    from app.pronunciation.speech import SpeechText
+    from app.text_spacing import space_scripts
+
+    glued = "నమస్కారం అండీ, నేను Stack19 నుంచిAI assistant ని మాట్లాడుతున్నాను"
+    assert space_scripts(glued) == "నమస్కారం అండీ, నేను Stack19 నుంచి AI assistant ని మాట్లాడుతున్నాను"
+    assert space_scripts("నేను AI అసిస్టెంట్\u200cని") == "నేను AI అసిస్టెంట్\u200cని", "the zero-width joiner of an ending is left alone"
+    assert space_scripts("2వ తేదీ") == "2వ తేదీ" and space_scripts("hello world") == "hello world"
+    assert " AI " in SpeechText().prepare(glued, "te", "sarvam_v4")
+    line: Any = PhoneLine.__new__(PhoneLine)
+    line.transcript, line.translator = [], None
+    line.add_turn(glued, index=0, t=1.0)
+    assert line.transcript[0]["text"].count("నుంచి AI") == 1
+
+
+@arun
+async def test_the_last_turn_gets_its_english_even_when_the_caller_hangs_up_right_after() -> None:
+    from app.telephony.translate import LineTranslator
+
+    class English:
+        async def stream(self, system: str, messages: list[dict[str, str]], model: str) -> Any:
+            await asyncio.sleep(0.2)   # a translation that is still on its way when the call ends
+            yield "Tell me, what do you need?"
+
+    call = await Call(parts_for(llm=FakeLlm(("చెప్పండి, ", "ఏం కావాలి?")))).start()
+    call.line.translator = LineTranslator(English(), "fast")
+    await call.after_opening()
+    await call.say()
+    await until(lambda: sum(1 for t in call.line.transcript if t["who"] == "assistant") >= 2, 5)
+    await call.sim.hang_up()
+    out = await call.result()
+    last = [t for t in out.transcript if t["who"] == "assistant"][-1]
+    assert last["text"] == "చెప్పండి, ఏం కావాలి?" and last.get("text_en") == "Tell me, what do you need?", "the final line has its English too"

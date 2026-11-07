@@ -139,3 +139,11 @@ def test_the_list_names_a_call_from_the_call_else_by_a_masked_number_and_never_s
     assert _who({"captured": {"name": "Ramesh", "caller_ending": "998"}}) == "Ramesh"
     assert _who({"captured": {"caller_ending": "998"}}) == "Caller ending 998"
     assert _who({"captured": None}) == "New enquiry", "an older call"
+
+
+def test_the_list_carries_a_real_name_or_none_so_a_screen_can_say_the_caller() -> None:
+    from app.telephony.service import _name
+
+    assert _name({"contact_name": "Lakshmi"}) == "Lakshmi"
+    assert _name({"captured": {"name": " Ramesh ", "caller_ending": "998"}}) == "Ramesh"
+    assert _name({"captured": {"caller_ending": "998"}}) is None and _name({"captured": None}) is None and _name({"contact_name": "  "}) is None

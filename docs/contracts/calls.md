@@ -116,4 +116,6 @@ WebSocket `wss://<api>/v1/tenants/{t}/calls/{id}/take-over` (Owner, Admin).
 ## One line per turn, and the record of a call (owner, 7 Nov 2026)
 - **`transcript`:** one item per assistant turn: the whole reply, or after a barge-in what the caller heard of it, cut between words and ending in "…". A line appears when the turn ends, not word by word. Its `t` is when the turn began. Calls made before this were repaired by migration 20261231360000.
 - **`who`:** the contact's name or phone; else the name the caller gave on the call; else "Caller ending 998" (the last three digits); else "New enquiry" (older calls).
+- **`name` (new, 7 Nov 2026):** a REAL name only (the contact's, or one the caller gave on the call), else `null`. Use it for sentences: "What {name} wants" when set, otherwise "What the caller wants". Don't build a sentence from `who`.
+- **Spacing:** the assistant's lines have a space wherever a Latin word meets an Indian-script word ("నుంచి AI assistant ని"). Earlier calls were repaired by migration 20261231370000.
 - **`summary_short`, `outcome`, `category`:** set after every inbound call in which the caller spoke. The summary is one short English line. A call where nobody spoke stays `unclear` with no summary. `captured` may hold `name`.

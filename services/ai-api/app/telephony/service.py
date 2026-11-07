@@ -9,7 +9,7 @@ import uuid
 from datetime import UTC, datetime
 from typing import Any
 
-from app.display_name import lead_title
+from app.display_name import lead_title, real_name
 from app.telephony.models import CallDetailOut, CallOut, CallsOut, CorrectionIn, CorrectionOut
 
 LIVE = ("queued", "ringing", "in_progress")
@@ -26,6 +26,13 @@ def _short(text: Any) -> str | None:
 
 def _parse(value: Any) -> datetime | None:
     return datetime.fromisoformat(value.replace("Z", "+00:00")) if isinstance(value, str) else None
+
+
+def _name(row: dict[str, Any]) -> str | None:
+    """A real name only: the contact's, else the one the caller gave on the call."""
+    raw = row.get("captured")
+    given = raw.get("name") if isinstance(raw, dict) else None
+    return real_name(row.get("contact_name")) or (given.strip() if isinstance(given, str) and given.strip() else None)
 
 
 def _who(row: dict[str, Any]) -> str:
@@ -47,7 +54,7 @@ def shape(row: dict[str, Any], now: datetime) -> dict[str, Any]:
     live = row["state"] in LIVE
     duration = row.get("duration_s")
     return {
-        "id": str(row["id"]), "direction": row["direction"], "state": row["state"], "live": live, "who": _who(row),
+        "id": str(row["id"]), "direction": row["direction"], "state": row["state"], "live": live, "who": _who(row), "name": _name(row),
         "purpose": row.get("purpose"), "language": row.get("language"), "created_at": created, "answered_at": _parse(row.get("answered_at")), "ended_at": _parse(row.get("ended_at")),
         "elapsed_s": max(0, int((now - (_parse(row.get("answered_at")) or created)).total_seconds())) if live else duration, "duration_s": duration,
         "outcome": row.get("outcome"), "category": row.get("category"), "summary_short": _short(row.get("summary")), "refuse_reason": row.get("refuse_reason"),
