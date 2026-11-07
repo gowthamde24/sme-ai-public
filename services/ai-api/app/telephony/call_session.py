@@ -257,6 +257,10 @@ async def run_call(
             with suppress(asyncio.CancelledError, Exception):
                 await fut
     duration = (clock or asyncio.get_running_loop().time)() - started
+    translator = getattr(line, "translator", None)
+    if translator is not None:
+        with suppress(Exception):
+            await translator.settle()   # the last lines' English, so the saved transcript has it too
     result = outcome_mod.deterministic(answered=True, transcript=line.transcript, end_reason=line.end_reason, voicemail=flags["voicemail"], stop_requested=flags["stop"], handover=flags["handover"])
     result.cost_paise = outcome_mod.cost_paise(duration, plan.cost_paise_per_minute)
     if outcome_llm is not None:

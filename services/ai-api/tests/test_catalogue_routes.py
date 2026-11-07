@@ -82,6 +82,7 @@ MATRIX: list[tuple[str, str, Any, tuple[str, ...]]] = [
     ("PUT", f"/items/{NEW}", ITEM, OWNER_ADMIN),
     ("POST", f"/photos/{P1}/remove", None, OWNER_ADMIN),
     ("PUT", f"/items/{I1}/photos/order", {"photo_ids": [P2, P1]}, OWNER_ADMIN),
+    ("PUT", f"/items/{I1}/quantity", {"quantity": 2}, OWNER_ADMIN),
 ]
 IDS = [f"{m} {p.replace(I1, '<i>').replace(P1, '<p>').replace(NEW, '<n>')}" for m, p, *_ in MATRIX]
 
@@ -338,6 +339,42 @@ def test_reordering_sends_the_list_and_returns_the_new_order(w: World) -> None:
         w.call("PUT", f"/items/{I1}/photos/order", "a_owner", {"photo_ids": [P1] * 9}).status_code
         == 422
     )
+
+
+# ---------------------------------------------------------------------------------------------- the stock count
+def test_the_count_is_set_and_the_item_shows_it(w: World) -> None:
+    assert w.call("GET", f"/items/{I1}", "a_owner").json()["quantity"] is None, "not counted yet"
+    r = w.call("PUT", f"/items/{I1}/quantity", "a_admin", {"quantity": 2})
+    assert r.status_code == 200 and r.json()["quantity"] == 2, r.text
+    assert w.db.last("catalogue_quantity_set") == {"p_item_id": I1, "p_quantity": 2}
+    r = w.call("PUT", f"/items/{I1}/quantity", "a_owner", {"quantity": None})
+    assert r.status_code == 200 and r.json()["quantity"] is None, "null stops counting"
+    assert w.db.last("catalogue_quantity_set") == {"p_item_id": I1, "p_quantity": None}
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {},
+        {"quantity": -1},
+        {"quantity": 1_000_001},
+        {"quantity": 1.5},
+        {"quantity": "2"},
+        {"quantity": 2, "extra": 1},
+    ],
+)
+def test_a_bad_count_is_a_422_and_never_reaches_the_database(
+    w: World, body: dict[str, Any]
+) -> None:
+    r = w.call("PUT", f"/items/{I1}/quantity", "a_owner", body)
+    assert r.status_code == 422, (body, r.text)
+    assert "catalogue_quantity_set" not in w.db.names()
+
+
+def test_a_material_is_not_counted_here(w: World) -> None:
+    w.db.items[I1]["item_kind"] = "material"
+    assert w.call("PUT", f"/items/{I1}/quantity", "a_owner", {"quantity": 2}).status_code == 404
+    assert "catalogue_quantity_set" not in w.db.names()
 
 
 def test_an_unavailable_catalogue_says_so() -> None:

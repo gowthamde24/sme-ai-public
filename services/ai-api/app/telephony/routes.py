@@ -22,7 +22,7 @@ from pydantic import BaseModel, ConfigDict, StringConstraints
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
-from app.telephony.models import CallDetailOut, CallsOut, CorrectionIn, CorrectionOut
+from app.telephony.models import CallDetailOut, CallsOut, CorrectionIn, CorrectionOut, TurnOut
 from app.telephony.repository import CallStateError
 from app.telephony.service import CallsService
 from app.tenancy.models import Role
@@ -61,9 +61,15 @@ def list_calls(ctx: Reader, runtime: RuntimeDep, response: Response, state: Lite
 @router.get("/{call_id}", response_model=CallDetailOut)
 def get_call(call_id: str, ctx: Reader, runtime: RuntimeDep, response: Response) -> CallDetailOut:
     response.headers["Cache-Control"] = "no-store"
-    out = _service(runtime).get(ctx.principal.token, ctx.tenant.id, _id(call_id))
+    cid = _id(call_id)
+    out = _service(runtime).get(ctx.principal.token, ctx.tenant.id, cid)
     if ctx.role not in (Role.OWNER, Role.ADMIN):
         out.transcript = None   # the database already withholds it from Sales; this is the second lock
+    else:
+        # a live call's lines (app v4 captions): the transcript is saved when the call ends; while it runs on THIS server, the lines so far, with their English as it arrives
+        live = runtime.live_calls.line_of(ctx.tenant.id, cid) if runtime.live_calls is not None else None
+        if live is not None:
+            out.transcript = [TurnOut.model_validate({k: v for k, v in item.items() if k in ("who", "text", "t", "text_en")}) for item in list(live.transcript)]
     return out
 
 

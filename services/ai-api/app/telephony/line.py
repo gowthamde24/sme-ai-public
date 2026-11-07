@@ -80,6 +80,7 @@ class PhoneLine:
         self._sent = bytearray()   # the last KEEP_SENT_S of audio we sent (line rate), to fade from
         self.interruptions: dict[str, int] = {"stopped": 0, "ignored": 0}
         self.whispers: list[str] = []
+        self.translator: Any = None   # app/telephony/translate.LineTranslator: the English line under each non-English caption (owner, 7 Nov 2026); None: no English lines
         # Take over (app v4): an Owner or Admin talks to the caller from the app. While it lasts the AI does not answer, the caller's audio goes to them, their audio goes to the caller.
         self.taken_over = False
         self._owner_q: asyncio.Queue[bytes] | None = None
@@ -288,6 +289,8 @@ class PhoneLine:
         if kind == "caption" and message.get("final") and str(message.get("text", "")).strip():
             who = "caller" if message.get("who") == "user" else "assistant"
             self.transcript.append({"who": who, "text": str(message["text"]).strip(), "t": round(self._clock() - self._began, 1)})
+            if self.translator is not None:
+                self.translator.submit(self.transcript[-1])
         elif kind == "audio_stop":
             if self.start is not None and not self._closed:
                 await self._fade_out()

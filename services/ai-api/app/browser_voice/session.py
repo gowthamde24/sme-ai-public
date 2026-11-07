@@ -187,7 +187,7 @@ class VoiceSession:
             audio_tail=self.bus.recent,
         )
         # the speaker check (owner, 31 Oct 2026): a signature of this session's speaker, in memory, dropped at the end; browser sessions only (a phone call never has one)
-        self._voice = speaker.new_session_voice(speaker.load(limits.speaker_model)) if limits.speaker_check in ("shadow", "on") and mode == "live" and not getattr(self, "is_phone", False) else None
+        self._voice = speaker.new_session_voice(speaker.load(limits.speaker_model)) if limits.speaker_check in ("shadow", "on") and mode == "live" and not getattr(self, "is_phone", False) and not getattr(self, "is_practice", False) else None
         self._previous: TurnKind | None = None
         self.pending_action: uuid.UUID | None = None
         self.pending_search = False   # the Lead Finder's plan card waits for the owner's OK: a bare yes or no goes to the chat's own turn (app/turns/lead_finder.py), never to the fast tier

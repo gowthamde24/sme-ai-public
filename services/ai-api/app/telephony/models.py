@@ -6,7 +6,7 @@ NOTE: no `from __future__ import annotations` (the models are attached to endpoi
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 CallState = Literal["queued", "ringing", "in_progress", "completed", "no_answer", "busy", "voicemail", "failed", "refused", "cancelled"]
 
@@ -15,6 +15,8 @@ class TurnOut(BaseModel):
     who: Literal["assistant", "caller"]
     text: str
     t: float | None = None
+    # the line in English (owner, 7 Nov 2026): null when the line is English already or not translated yet; it may arrive a few seconds after the line
+    text_en: str | None = Field(default=None, max_length=2000)
 
 
 class CallOut(BaseModel):

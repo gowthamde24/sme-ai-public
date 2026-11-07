@@ -9,7 +9,7 @@ import uuid
 from datetime import datetime
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StringConstraints
 
 from app.catalogue.vocab import Colour, Fabric, Occasion, PriceBand, Stock, Zari
 
@@ -69,6 +69,8 @@ class ItemBase(_Strict):
     price_text: str | None
     stock_status: Stock
     stock_label: str
+    # how many are in stock, when the owner counts them (null: not counted; the stock status says it)
+    quantity: int | None = None
     active: bool
     photo_count: int
     created_at: datetime
@@ -99,3 +101,9 @@ class PhotoResultOut(_Strict):
     photo: PhotoOut
     replayed: bool
     item: CatalogueItemOut
+
+
+class QuantityIn(_Strict):
+    """How many are in stock: a whole number from 0 to 1,000,000, or null to stop counting."""
+
+    quantity: StrictInt | None = Field(ge=0, le=1_000_000)
