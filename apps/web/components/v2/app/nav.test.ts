@@ -81,8 +81,8 @@ describe("the menu table", () => {
 
 describe("the items only a business type brings (job CL)", () => {
   const flat = NAV.flatMap((g) => g.items);
-  it("are Fees, Campaigns, Sites and Dues, each tied to a module, and absent from the menu of a workspace with no pack", () => {
-    expect(flat.filter((i) => i.packOnly).map((i) => [i.id, i.path, i.module])).toEqual([["trips", "/orders/trips", "deliveries"], ["fees", "/fees", "fees"], ["students", "/students", "programmes"], ["admissions", "/admissions", "programmes"], ["announcements", "/announcements", "programmes"], ["campaigns", "/campaigns", "campaigns"], ["calllist", "/call-list", "campaigns"], ["sites", "/sites", "sites"], ["dues", "/dues", "dues"], ["programmes", "/programmes", "programmes"]]);
+  it("are Fees, Campaigns, Sites, Money (app v4) and Dues, each tied to a module, and absent from the menu of a workspace with no pack", () => {
+    expect(flat.filter((i) => i.packOnly).map((i) => [i.id, i.path, i.module])).toEqual([["trips", "/orders/trips", "deliveries"], ["fees", "/fees", "fees"], ["students", "/students", "programmes"], ["admissions", "/admissions", "programmes"], ["announcements", "/announcements", "programmes"], ["campaigns", "/campaigns", "campaigns"], ["calllist", "/call-list", "campaigns"], ["sites", "/sites", "sites"], ["money", "/money", "dues"], ["dues", "/dues", "dues"], ["programmes", "/programmes", "programmes"]]);
     for (const role of ROLES) expect(visibleGroups(role).flatMap((g) => g.items.map((i) => i.id))).not.toEqual(expect.arrayContaining(["fees"]));
   });
   it("show when the pack has the module on, and only then", () => {
@@ -167,7 +167,7 @@ describe("app v4: five groups (job-app-v4.md part 1, owner 6 Nov 2026)", () => {
   it("Customers holds Leads, Calls, Chats, Follow-ups, Store visits and Find customers; Sales holds Quotes, Orders, Catalogue & stock and the money pages; AI team holds My AI team, Train how it talks and Phone number; Settings holds Lead sources", () => {
     const of = (id: string) => MENU_V4.find((g) => g.id === id)!.sections;
     expect(of("customers")).toEqual(["leads", "calls", "chats", "followups", "visits", "map", "find"]);
-    expect(of("sales").slice(0, 4)).toEqual(["quotes", "orders", "catalogue", "dues"]);
+    expect(of("sales").slice(0, 5)).toEqual(["quotes", "orders", "money", "catalogue", "dues"]);
     expect(of("aiteam")).toEqual(["aiteam", "train", "phone"]);
     expect(of("settings")).toEqual(["sources", "settings"]);
   });

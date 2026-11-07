@@ -1,0 +1,8 @@
+# Money
+What customers owe you, what is late, and what came in this month. Owed to you ₹1,75,000 2 customers Overdue ₹50,000 1 customer Paid this month ₹70,000 since 1 Oct
+{label="Who owes the most"}
+## Who owes the most
+- Sri Rama Builders (synthetic) owes ₹1,30,000 · ₹50,000 overdue
+[button type=button: Remind]
+- Lakshmi Hardware (synthetic) owes ₹45,000
+Remind makes a draft for your OK. Nothing is sent until you approve it, and every message still follows the customer's consent and STOP.

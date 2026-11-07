@@ -85544,5 +85544,346 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.money": {
+  "en": "Money",
+  "te": "డబ్బు",
+  "hi": "पैसा",
+  "kn": "ಹಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.m-money": {
+  "en": "Money",
+  "te": "డబ్బు",
+  "hi": "पैसा",
+  "kn": "ಹಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.sub": {
+  "en": "What customers owe you, what is late, and what came in this month.",
+  "te": "కస్టమర్లు మీకు ఎంత బాకీ, ఏది ఆలస్యం, ఈ నెల ఎంత వచ్చింది.",
+  "hi": "ग्राहकों पर आपका कितना बाकी है, क्या देर से है, और इस महीने कितना आया।",
+  "kn": "ಗ್ರಾಹಕರು ನಿಮಗೆ ಎಷ್ಟು ಬಾಕಿ, ಯಾವುದು ತಡ, ಈ ತಿಂಗಳು ಎಷ್ಟು ಬಂದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.owed": {
+  "en": "Owed to you",
+  "te": "మీకు రావాల్సింది",
+  "hi": "आपको मिलना है",
+  "kn": "ನಿಮಗೆ ಬರಬೇಕಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.overdue": {
+  "en": "Overdue",
+  "te": "ఆలస్యమైంది",
+  "hi": "देर से",
+  "kn": "ತಡವಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.paid": {
+  "en": "Paid this month",
+  "te": "ఈ నెల చెల్లించారు",
+  "hi": "इस महीने मिला",
+  "kn": "ಈ ತಿಂಗಳು ಪಾವತಿಯಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.since": {
+  "en": "since {date}",
+  "te": "{date} నుంచి",
+  "hi": "{date} से",
+  "kn": "{date} ರಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.customers.one": {
+  "en": "{n} customer",
+  "te": "{n} కస్టమర్",
+  "hi": "{n} ग्राहक",
+  "kn": "{n} ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.customers.other": {
+  "en": "{n} customers",
+  "te": "{n} కస్టమర్లు",
+  "hi": "{n} ग्राहक",
+  "kn": "{n} ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.none_overdue": {
+  "en": "Nothing is overdue",
+  "te": "ఏదీ ఆలస్యం కాలేదు",
+  "hi": "कुछ भी देर से नहीं",
+  "kn": "ಯಾವುದೂ ತಡವಾಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.top": {
+  "en": "Who owes the most",
+  "te": "ఎక్కువ బాకీ ఎవరు",
+  "hi": "सबसे ज़्यादा किस पर बाकी",
+  "kn": "ಹೆಚ್ಚು ಬಾಕಿ ಯಾರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.all": {
+  "en": "See every account",
+  "te": "అన్ని ఖాతాలు చూడండి",
+  "hi": "सभी खाते देखें",
+  "kn": "ಎಲ್ಲಾ ಖಾತೆಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.owes": {
+  "en": "owes",
+  "te": "బాకీ",
+  "hi": "बाकी",
+  "kn": "ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.overdue_amount": {
+  "en": "{amount} overdue",
+  "te": "{amount} ఆలస్యం",
+  "hi": "{amount} देर से",
+  "kn": "{amount} ತಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.empty": {
+  "en": "Nobody owes anything right now.",
+  "te": "ఇప్పుడు ఎవరూ బాకీ లేరు.",
+  "hi": "अभी किसी पर कुछ बाकी नहीं।",
+  "kn": "ಈಗ ಯಾರೂ ಬಾಕಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.partial": {
+  "en": "Showing the customers who owe the most. There are more.",
+  "te": "ఎక్కువ బాకీ ఉన్న కస్టమర్లను చూపిస్తోంది. ఇంకా ఉన్నారు.",
+  "hi": "सबसे ज़्यादा बाकी वाले ग्राहक दिख रहे हैं। और भी हैं।",
+  "kn": "ಹೆಚ್ಚು ಬಾಕಿ ಇರುವ ಗ್ರಾಹಕರನ್ನು ತೋರಿಸುತ್ತಿದೆ. ಇನ್ನೂ ಇದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.unread": {
+  "en": "The money summary could not be read just now.",
+  "te": "డబ్బు సారాంశం ఇప్పుడు చదవలేకపోయాం.",
+  "hi": "पैसे का सारांश अभी पढ़ा नहीं जा सका।",
+  "kn": "ಹಣದ ಸಾರಾಂಶವನ್ನು ಈಗ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.viewer": {
+  "en": "Money is shown to the owner, admins and sales.",
+  "te": "డబ్బు వివరాలు ఓనర్, అడ్మిన్‌లు, సేల్స్‌కు మాత్రమే కనిపిస్తాయి.",
+  "hi": "पैसे की जानकारी मालिक, एडमिन और सेल्स को दिखती है।",
+  "kn": "ಹಣದ ವಿವರ ಮಾಲೀಕರು, ಅಡ್ಮಿನ್‌ಗಳು ಮತ್ತು ಸೇಲ್ಸ್‌ಗೆ ಮಾತ್ರ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.note": {
+  "en": "Remind makes a draft for your OK. Nothing is sent until you approve it, and every message still follows the customer's consent and STOP.",
+  "te": "గుర్తుచేయండి మీ OK కోసం డ్రాఫ్ట్ చేస్తుంది. మీరు ఆమోదించే వరకు ఏదీ పంపరు, ప్రతి మెసేజ్ కస్టమర్ అనుమతి, STOP పాటిస్తుంది.",
+  "hi": "याद दिलाएँ आपके OK के लिए ड्राफ़्ट बनाता है। आपके मंज़ूर करने तक कुछ नहीं भेजा जाता, और हर मैसेज ग्राहक की सहमति और STOP मानता है।",
+  "kn": "ನೆನಪಿಸಿ ನಿಮ್ಮ OK ಗಾಗಿ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತದೆ. ನೀವು ಅನುಮೋದಿಸುವವರೆಗೆ ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ, ಪ್ರತಿ ಸಂದೇಶ ಗ್ರಾಹಕರ ಒಪ್ಪಿಗೆ ಮತ್ತು STOP ಪಾಲಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.remind": {
+  "en": "Remind",
+  "te": "గుర్తుచేయండి",
+  "hi": "याद दिलाएँ",
+  "kn": "ನೆನಪಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.working": {
+  "en": "Making the draft…",
+  "te": "డ్రాఫ్ట్ చేస్తోంది…",
+  "hi": "ड्राफ़्ट बन रहा है…",
+  "kn": "ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.draft": {
+  "en": "Draft made. Nothing is sent until you approve it.",
+  "te": "డ్రాఫ్ట్ అయింది. మీరు ఆమోదించే వరకు ఏదీ పంపరు.",
+  "hi": "ड्राफ़्ट बन गया। आपके मंज़ूर करने तक कुछ नहीं भेजा जाएगा।",
+  "kn": "ಡ್ರಾಫ್ಟ್ ಆಯಿತು. ನೀವು ಅನುಮೋದಿಸುವವರೆಗೆ ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.open_draft": {
+  "en": "Open the draft",
+  "te": "డ్రాఫ్ట్ తెరవండి",
+  "hi": "ड्राफ़्ट खोलें",
+  "kn": "ಡ್ರಾಫ್ಟ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.no_contact": {
+  "en": "No contact to remind",
+  "te": "గుర్తుచేయడానికి కాంటాక్ట్ లేదు",
+  "hi": "याद दिलाने के लिए कोई संपर्क नहीं",
+  "kn": "ನೆನಪಿಸಲು ಸಂಪರ್ಕ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.err.forbidden": {
+  "en": "Only the owner, an admin or sales can make a reminder draft.",
+  "te": "ఓనర్, అడ్మిన్ లేదా సేల్స్ మాత్రమే రిమైండర్ డ్రాఫ్ట్ చేయగలరు.",
+  "hi": "सिर्फ़ मालिक, एडमिन या सेल्स रिमाइंडर ड्राफ़्ट बना सकते हैं।",
+  "kn": "ಮಾಲೀಕರು, ಅಡ್ಮಿನ್ ಅಥವಾ ಸೇಲ್ಸ್ ಮಾತ್ರ ರಿಮೈಂಡರ್ ಡ್ರಾಫ್ಟ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.err.invalid": {
+  "en": "That draft could not be made. Please open the customer's account and try from there.",
+  "te": "ఆ డ్రాఫ్ట్ చేయలేకపోయాం. కస్టమర్ ఖాతా తెరిచి అక్కడ నుంచి ప్రయత్నించండి.",
+  "hi": "वह ड्राफ़्ट नहीं बन सका। ग्राहक का खाता खोलकर वहाँ से कोशिश करें।",
+  "kn": "ಆ ಡ್ರಾಫ್ಟ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ಗ್ರಾಹಕರ ಖಾತೆ ತೆರೆದು ಅಲ್ಲಿಂದ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.err.no_contact": {
+  "en": "This customer has no contact to remind.",
+  "te": "ఈ కస్టమర్‌కు గుర్తుచేయడానికి కాంటాక్ట్ లేదు.",
+  "hi": "इस ग्राहक का याद दिलाने के लिए कोई संपर्क नहीं।",
+  "kn": "ಈ ಗ್ರಾಹಕರಿಗೆ ನೆನಪಿಸಲು ಸಂಪರ್ಕ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.err.nothing_due": {
+  "en": "Nothing is due for this customer now.",
+  "te": "ఇప్పుడు ఈ కస్టమర్‌కు ఏదీ బాకీ లేదు.",
+  "hi": "अब इस ग्राहक का कुछ बाकी नहीं।",
+  "kn": "ಈಗ ಈ ಗ್ರಾಹಕರಿಗೆ ಏನೂ ಬಾಕಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.err.not_added": {
+  "en": "The customer could not be added to the draft (no number, or no consent). Nothing was made to send.",
+  "te": "కస్టమర్‌ను డ్రాఫ్ట్‌లో చేర్చలేకపోయాం (నంబర్ లేదు లేదా అనుమతి లేదు). పంపడానికి ఏదీ చేయలేదు.",
+  "hi": "ग्राहक को ड्राफ़्ट में जोड़ा नहीं जा सका (नंबर नहीं या सहमति नहीं)। भेजने के लिए कुछ नहीं बना।",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ಡ್ರಾಫ್ಟ್‌ಗೆ ಸೇರಿಸಲಾಗಲಿಲ್ಲ (ಸಂಖ್ಯೆ ಇಲ್ಲ ಅಥವಾ ಒಪ್ಪಿಗೆ ಇಲ್ಲ). ಕಳುಹಿಸಲು ಏನೂ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.err.not_available": {
+  "en": "This isn't switched on yet.",
+  "te": "ఇది ఇంకా ఆన్ కాలేదు.",
+  "hi": "यह अभी चालू नहीं है।",
+  "kn": "ಇದು ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "mo.err.down": {
+  "en": "That didn't work. Nothing was made. Please try again in a minute.",
+  "te": "అది పని చేయలేదు. ఏదీ చేయలేదు. ఒక నిమిషంలో మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हुआ। कुछ नहीं बना। एक मिनट में फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಏನೂ ಮಾಡಿಲ್ಲ. ಒಂದು ನಿಮಿಷದಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -820,6 +820,15 @@ add({
     listSites: () => ({ items: [{ id: "ca000000-0000-4000-8000-0000000000c1", name: "Lake Road site (synthetic)", address_line: "12 Lake Road", city: "Guntur", pin: "522001" }], next_cursor: null }),
   }),
 });
+// app v4 part 6: Sales > Money (only with APP_V4): what customers owe, what is overdue, who owes most, Remind
+const MONEY_JSON = { as_of: "2026-10-14", owed_paise: 17500000, overdue_paise: 5000000, customers_owing: 2, customers_overdue: 1, paid_this_month_paise: 7000000, month_from: "2026-10-01", top: [{ account_id: "adadadad-adad-4dad-8dad-adadadadada1", company_id: "11111111-1111-4111-8111-111111111111", contact_id: "ca000000-0000-4000-8000-0000000000f1", name: "Sri Rama Builders (synthetic)", outstanding_paise: 13000000, overdue_paise: 5000000 }, { account_id: "adadadad-adad-4dad-8dad-adadadadada2", company_id: "11111111-1111-4111-8111-111111111112", contact_id: null, name: "Lakshmi Hardware (synthetic)", outstanding_paise: 4500000, overdue_paise: 0 }], complete: true };
+add({
+  id: "money",
+  roles: ["owner", "sales"],
+  render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/money/page")).default(props({}))),
+  handlers: (role) => ({ ...base(role), getMoneySummary: async () => (await import("@/lib/api/money")).parseMoneySummary(MONEY_JSON) }),
+});
+add({ id: "money-viewer", roles: ["viewer"], render: () => withEnv({ APP_V4: "1" }, async () => (await import("@/app/app/tenants/[tenantId]/money/page")).default(props({}))), handlers: base });
 add({ id: "retailers-places", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.AVAILABLE_PLACES, [{ ...LF.PROSPECT, source: "google_maps", attribution: "Google Maps", source_label: "Google Maps search 'saree shops Jayanagar', 2 Nov" }, LF.PROSPECT_LOW]) });
 add({ id: "retailers-school", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(LF.SCHOOL, []) });
 add({ id: "retailers-unreadable", roles: ["admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: finderHandlers(null, []) });

@@ -54,6 +54,8 @@ const SCREENS = [
   // app v4 (APP_V4=1 only: the page is a 404 without it)
   { id: "customer", path: `/app/tenants/${TENANT}/customers/${LEAD}`, signedIn: true, v4: true },
   { id: "calls", path: `/app/tenants/${TENANT}/calls`, signedIn: true, v4: true },
+  { id: "money", path: `/app/tenants/${TENANT}/money`, signedIn: true, v4: true },
+  { id: "catalogue-low", path: `/app/tenants/${TENANT}/catalogue`, signedIn: true, v4: true },
   { id: "map", path: `/app/tenants/${TENANT}/map`, signedIn: true, v4: true },
   { id: "finder", path: `/app/tenants/${TENANT}/retailers`, signedIn: true, v4: true },
   { id: "call-live", path: `/app/tenants/${TENANT}/calls/${CALL_LIVE}`, signedIn: true, v4: true },
