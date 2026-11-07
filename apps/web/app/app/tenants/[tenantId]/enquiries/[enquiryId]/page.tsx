@@ -16,6 +16,7 @@ import { readPackCached } from "@/lib/packs/read";
 import { LocalTime } from "../../../../local-time";
 import { EnquiryText } from "../enquiry-text";
 import { loadManualQuoteData } from "../manual-quote-data";
+import { appV4 } from "@/lib/screens/flag";
 import { QuotePanel, type ManualQuoteData } from "../quote-panel";
 import { recordQuoteSentAction } from "../sent-on-whatsapp-actions";
 import { loadWhatsappView, type WhatsappView } from "../whatsapp-view";
@@ -211,6 +212,8 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           whatsapp={whatsapp}
           sentOnWhatsapp={selected ? { action: recordQuoteSentAction.bind(null, tenantId, selected.id), touchId: crypto.randomUUID() } : null}
           manual={manual}
+          v4={appV4()}
+          changeHref={canMake ? `${base}?section=make` : null}
           part={section === "all" ? undefined : section}
         />
       ) : null}

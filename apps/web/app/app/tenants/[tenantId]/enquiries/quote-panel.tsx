@@ -21,6 +21,7 @@ import { createManualQuoteAction } from "./manual-quote-actions";
 import { ManualQuoteForm, type GstInForce } from "./manual-quote-form";
 import { QuoteView } from "./quote-view";
 import type { ItemType } from "@/lib/api/item-types";
+import { QuotePreview } from "@/components/v2/app/quotes/QuotePreview";
 import { WhatsappActions, type SentOnWhatsapp } from "./whatsapp-actions";
 import type { WhatsappView } from "./whatsapp-view";
 import { alertBox, bigText, bulletList, hintInline, link, listPlain, mutedText, noteBox, pageH2, pageH3, plainText } from "@/components/v2/app/ui";
@@ -48,6 +49,9 @@ type Props = {
   manual?: ManualQuoteData | null;
   /** Which part of the screen to draw: making a quote, the quote made (its figures and decisions), or what comes after approval (the text for the customer, WhatsApp, the order). Left out: all of it, as always. */
   part?: "make" | "view" | "send"; words?: Words;
+  /** app v4 (part 6): the quote as the customer sees it on WhatsApp, with Send and Change it, above the copy text; `changeHref` = making a new draft (null: the person may not). */
+  v4?: boolean;
+  changeHref?: string | null;
 };
 
 export type ManualQuoteData = { unavailable: false; itemTypes: ItemType[]; gst: GstInForce | null; newQuoteId: string } | { unavailable: true };
@@ -56,7 +60,7 @@ export type ManualQuoteData = { unavailable: false; itemTypes: ItemType[]; gst: 
  * The quote of one enquiry: a person chooses the product for each approved requirement line (the assistant only suggests), makes a DRAFT, and an owner
  * or admin approves it. After approval the customer-facing text is shown to COPY. This application never sends anything, and the screen says so.
  */
-export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, setup, quotes, selected, text, textError, newQuoteId, order = null, newOrderId, whatsapp = null, sentOnWhatsapp = null, manual = null, part, words }: Props) {
+export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, setup, quotes, selected, text, textError, newQuoteId, order = null, newOrderId, whatsapp = null, sentOnWhatsapp = null, manual = null, part, words, v4 = false, changeHref = null }: Props) {
   const t = makeT(words);
   const showIntro = part !== "send";
   const showMake = part === undefined || part === "make";
@@ -166,6 +170,7 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
               <h3 className={pageH3}>{t("enq.text_for_the_customer")}</h3>
               {text ? (
                 <>
+                  {v4 ? <QuotePreview text={text.text} words={words} sendHref={whatsapp && whatsapp.gate === "open" && whatsapp.fits && !whatsapp.expired ? `/app/tenants/${tenantId}/quotes/${selected.id}/whatsapp` : null} changeHref={changeHref} /> : null}
                   <CopyText words={words} text={text.text} />
                   {whatsapp ? <WhatsappActions words={words} tenantId={tenantId} quoteId={selected.id} view={whatsapp} sent={sentOnWhatsapp} /> : null}
                 </>
