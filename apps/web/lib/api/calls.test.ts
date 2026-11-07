@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { callClock, capturedLabel, correctionBody, refuseGroup, splitCalls, stagesDone } from "@/lib/calls/view";
+import { callClock, callerNamed, capturedLabel, correctionBody, refuseGroup, splitCalls, stagesDone } from "@/lib/calls/view";
 
 import { correctCall, getCall, getCallBrief, hangUpCall, listCalls, markCallHandled, parseCallsPage } from "./calls";
 
@@ -97,6 +97,11 @@ describe("the Calls pages' plain words", () => {
     expect(splitCalls(rows)).toMatchObject({ live: [{ live: true }], earlier: [{ id: C }] });
     expect(callClock(126)).toBe("02:06");
     expect(capturedLabel("visit_day")).toBe("Visit day");
+  });
+  it("a caller has a name only when the API gave one: \"New enquiry\", \"Caller ending 998\" and a bare number are not names", () => {
+    expect(callerNamed("Lakshmi")).toBe(true);
+    expect(callerNamed("Ravi Kumar")).toBe(true);
+    for (const who of ["", "New enquiry", "new enquiry", "Caller ending 998", "+91 98480 22338", "098480 22338", null, undefined]) expect(callerNamed(who), String(who)).toBe(false);
   });
   it("a correction sends only what changed; nothing changed is nothing to send", () => {
     const before = { summary: "Wants a red saree.", captured: { visit_day: "Saturday", budget: "15000" }, note: "" };

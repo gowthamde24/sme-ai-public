@@ -33,6 +33,15 @@ export const capturedLabel = (key: string): string => {
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
+/**
+ * Whether the call has a NAME for the caller: the API's `who` is the contact's name, else the number, else "New enquiry" (older calls) or "Caller ending 998" (C1 #406). Those last two are not names: a sentence that says "What {name}
+ * wants" says "What the caller wants" instead (owner, 7 Nov 2026); so does a bare phone number. Wherever a name is only SHOWN (the heading, a list row), the API's own words are used as they are.
+ */
+export const callerNamed = (who: string | null | undefined): boolean => {
+  const w = (who ?? "").trim();
+  return w !== "" && !/^new enquiry$/i.test(w) && !/^caller ending\b/i.test(w) && !/^\+?[\d\s()-]{7,}$/.test(w);
+};
+
 /** mm:ss of a call's length (or of the time since it was answered). */
 export const callClock = (s: number): string => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 

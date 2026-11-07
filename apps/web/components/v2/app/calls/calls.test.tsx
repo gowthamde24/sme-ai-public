@@ -72,6 +72,21 @@ describe("one call", () => {
     for (const word of [/listen/i, /whisper/i, /take over/i, /transfer/i]) expect(screen.queryByRole("button", { name: word })).toBeNull();
     expect(document.querySelector('[data-part="call-summary"]')).toBeNull();
   });
+  it('a caller with no name: "What the caller wants" and "Where the caller is now"; the API\'s own words in the heading and as the speaker (owner, 7 Nov)', () => {
+    render(<CallView call={detail({ who: "Caller ending 998", live: true, state: "in_progress" })} base={BASE} w={W} when={when} language="Telugu" stages={stagesDone(["arrival"], true)} canRead end={null} correct={null} />);
+    expect(screen.getByRole("heading", { level: 1, name: "Caller ending 998" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "What the caller wants" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Where the caller is now" })).toBeInTheDocument();
+    expect(screen.queryByText(/What Caller ending/)).toBeNull();
+    expect(document.querySelector('[data-who="caller"] > span')?.textContent).toBe("Caller ending 998");
+    cleanup();
+    render(<CallView call={detail({ who: "New enquiry" })} base={BASE} w={W} when={when} language={null} stages={null} canRead end={null} correct={null} />);
+    expect(screen.getByRole("heading", { name: "What the caller wants" })).toBeInTheDocument();
+    expect(screen.queryByText(/What New enquiry/)).toBeNull();
+    cleanup();
+    render(<CallView call={detail({ who: "Lakshmi" })} base={BASE} w={W} when={when} language={null} stages={null} canRead end={null} correct={null} />);
+    expect(screen.getByRole("heading", { name: "What Lakshmi wants" })).toBeInTheDocument();
+  });
   it("finished: the correction first with the assistant's words beside it, the note, the transcript; Sales reads no transcript", () => {
     render(<CallView call={detail({ correction: { summary: "Wants two sarees.", captured: { visit_day: "Sunday" }, note: "Kanchi pattu means Kanchipuram silk", corrected_at: "2026-11-06T06:00:00Z" } })} base={BASE} w={W} when={when} language="Telugu" canRead stages={null} end={null} correct={<span data-correct />} />);
     const summary = document.querySelector('[data-part="call-summary"]')!;

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { AssistantOrb } from "@/components/v2/LazyAssistantOrb";
 import type { CallDetail } from "@/lib/api/calls";
-import { STAGES, callClock, capturedLabel, type Stage } from "@/lib/calls/view";
+import { STAGES, callClock, callerNamed, capturedLabel, type Stage } from "@/lib/calls/view";
 
 import { callResult } from "./CallsList";
 
@@ -36,7 +36,11 @@ const card = "rounded-[22px] border border-line bg-surface p-4 md:p-5";
  */
 export function CallView({ call, base, w, when, language, stages, end, correct, canRead, english = (_has, lines) => lines }: CallViewProps) {
   const name = call.who || w["ph.dir.inbound"];
-  const say = (key: string) => (w[key] ?? "").replace("{name}", name);
+  // a sentence about the caller uses their name only when there is one; "Caller ending 998" and "New enquiry" are shown as they are but never inside "What {name} wants"
+  const named = callerNamed(call.who);
+  const say = (key: string) => (named ? (w[key] ?? "").replace("{name}", name) : (w[`${key}.caller`] ?? w[key] ?? "").replace("{name}", name));
+  // who is speaking on a line of the caller's: their name, the API's "Caller ending 998", else just "Caller"
+  const speaker = named || /^caller ending\b/i.test(call.who) ? name : w["ph.caller"];
   const facts = { ...call.captured, ...(call.correction?.captured ?? {}) };
   const factRows = Object.entries(facts);
   const lines = call.transcript;
@@ -83,7 +87,7 @@ export function CallView({ call, base, w, when, language, stages, end, correct, 
             const newest = i === all.length - 1;
             return (
               <li key={`${l.t}-${i}`} data-who={l.who} className={l.who === "caller" ? "text-right" : ""}>
-                <span className="block text-xs font-bold text-muted">{l.who === "assistant" ? w["ph.ai"] : name}</span>
+                <span className="block text-xs font-bold text-muted">{l.who === "assistant" ? w["ph.ai"] : speaker}</span>
                 {/* a whole line, never cut inside a word: Telugu letters stay joined */}
                 <span lang={l.who === "caller" && call.language ? call.language : undefined} className={`block [overflow-wrap:break-word] ${newest ? "font-display text-xl font-semibold text-ink md:text-2xl" : "text-base text-muted"}`}>
                   {l.text}
@@ -103,7 +107,7 @@ export function CallView({ call, base, w, when, language, stages, end, correct, 
         <ol className="m-0 mt-2 flex list-none flex-col gap-2 p-0 text-sm">
           {lines.map((l, i) => (
             <li key={`${l.t}-${i}`} data-who={l.who}>
-              <span className="font-bold text-muted">{l.who === "assistant" ? w["ph.ai"] : name}: </span>
+              <span className="font-bold text-muted">{l.who === "assistant" ? w["ph.ai"] : speaker}: </span>
               <span lang={l.who === "caller" && call.language ? call.language : undefined}>{l.text}</span>
               {englishLine(l, false)}
             </li>

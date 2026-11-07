@@ -85280,5 +85280,38 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "ph.wants.caller": {
+  "en": "What the caller wants",
+  "te": "కాలర్‌కు ఏం కావాలి",
+  "hi": "कॉल करने वाले को क्या चाहिए",
+  "kn": "ಕರೆ ಮಾಡಿದವರಿಗೆ ಏನು ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.where.caller": {
+  "en": "Where the caller is now",
+  "te": "కాలర్ ఇప్పుడు ఎక్కడ ఉన్నారు",
+  "hi": "कॉल करने वाला अभी कहाँ है",
+  "kn": "ಕರೆ ಮಾಡಿದವರು ಈಗ ಎಲ್ಲಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ph.caller": {
+  "en": "Caller",
+  "te": "కాలర్",
+  "hi": "कॉल करने वाला",
+  "kn": "ಕರೆ ಮಾಡಿದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
