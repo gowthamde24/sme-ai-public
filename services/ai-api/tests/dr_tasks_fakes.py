@@ -58,7 +58,7 @@ class FakeDb:
             if "created_at" in params:
                 op, _, stamp = params["created_at"].partition(".")
                 cutoff = datetime.fromisoformat(stamp)
-                rows = [p for p in rows if (NOW - timedelta(days=p["age"]) >= cutoff) == (op == "gte")]
+                rows = [p for p in rows if (datetime.now(UTC) - timedelta(days=p["age"]) >= cutoff) == (op == "gte")]   # the resolver cuts from the real clock: a fixed date here made this fail once the date passed it (7 Nov 2026)
             if params.get("contact_id", "").startswith("in."):
                 ids = set(params["contact_id"][4:-1].split(","))
                 rows = [p for p in rows if uid(p["n"]) in ids]
