@@ -171,6 +171,9 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
     from app.talk_training.guard import GuardedTts
     from app.talk_training.prompt import greeting as trained_greeting
 
+    def opening_for(lang: str) -> str:
+        return persona.opening_line(lang, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, lang))
+
     # the never-say list is a HARD rule: every sentence is checked by code before the voice speaks it
     tts: Any = GuardedTts(FallbackTts(bv.config, bv.factory, chosen={}, gender="female", pronunciations=default_pronunciations()), (training or {}).get("never_say") or [])
     parts = Parts(
@@ -178,8 +181,8 @@ def phone_parts(bv: BrowserVoice, business: str, language: str, llm_choice: str,
         tts=tts,
         llm=llm,
         system_for=lambda lang: persona.system_prompt(business=business, assistant=assistant or persona.DEFAULT_ASSISTANT, language=lang, purpose="inbound", facts=[], customer_first_name=None, training=training, visit_slots=visit_labels,
-                                                      corrections=corrections),
-        greeting_for=lambda lang: persona.opening_line(lang, business=business, assistant=assistant, customer=None, inbound=True, greeting=trained_greeting(training, lang)),
+                                                      corrections=corrections, opening=opening_for(lang)),
+        greeting_for=opening_for,
         models={"fast": model, "strong": model},
         voice_for=lambda lang: bv.config.resolve(lang, None, "female").id,
         voice_name=lambda lang: bv.config.resolve(lang, None, "female").name,

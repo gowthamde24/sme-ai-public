@@ -26,7 +26,8 @@ class CallOut(BaseModel):
     direction: Literal["outbound", "inbound"]
     state: CallState
     live: bool
-    who: str                             # the contact's display name (name, else phone, else "New enquiry")
+    who: str                             # the contact's display name (name, else phone, else "Caller ending 998", else "New enquiry")
+    name: str | None = None              # only a REAL name (a contact's, or one the caller gave on the call): null otherwise, so a screen can say "What the caller wants"
     purpose: str | None
     language: str | None
     created_at: datetime

@@ -62,5 +62,9 @@ select is(app.phone_transcript_whole_turns('[{"who":"assistant","text":"నమ�
 select is(app.phone_transcript_whole_turns('[{"who":"assistant","text":"Hello?","t":0},{"who":"assistant","text":"Are you there?","t":5}]'::jsonb),
           '[{"who":"assistant","text":"Hello?","t":0},{"who":"assistant","text":"Are you there?","t":5}]'::jsonb, 'W2: two lines seconds apart stay two lines');
 select is(app.phone_transcript_whole_turns(null), null, 'W3: no transcript stays none');
+-- a Latin word glued to a Telugu word gets its space; English lines, caller lines, digits and joiners are left (migration 20261231370000)
+select is(app.phone_transcript_space_scripts('[{"who":"assistant","text":"నేను Stack19 నుంచిAI assistant ని","text_en":"I am the AI assistant","t":1},{"who":"caller","text":"హలోhello","t":2},{"who":"assistant","text":"2వ తేదీ AI అసిస్టెంట్\u200cని","t":3}]'::jsonb),
+          '[{"who":"assistant","text":"నేను Stack19 నుంచి AI assistant ని","text_en":"I am the AI assistant","t":1},{"who":"caller","text":"హలోhello","t":2},{"who":"assistant","text":"2వ తేదీ AI అసిస్టెంట్\u200cని","t":3}]'::jsonb, 'W4: the space is added in the assistant''s lines only');
+select is(app.phone_transcript_space_scripts(null), null, 'W5: no transcript stays none');
 select * from finish();
 rollback;

@@ -59,6 +59,8 @@ INBOUND_OPENING = {
     "mr": "नमस्कार, मी {business} कडून {assistant}, AI असिस्टंट बोलतेय. आत्ता एक मिनिट बोलू शकतो का?",
 }
 DEFAULT_ASSISTANT = "Priya"
+# how "AI assistant" is written in each language's own script (owner, 7 Nov 2026: "AI అసిస్టెంట్", never "AI assistant" in Latin letters inside a Telugu sentence); the endings join after a zero-width non-joiner
+AI_ASSISTANT_WORD = {"en": "AI assistant", "te": "AI అసిస్టెంట్", "hi": "AI असिस्टेंट", "kn": "AI ಅಸಿಸ್ಟೆಂಟ್", "ta": "AI அசிஸ்டென்ட்", "ml": "AI അസിസ്റ്റന്റ്", "mr": "AI असिस्टंट"}
 
 # "Are you a person / a robot?": honest and warm, never claiming to be human (owner, 6 Nov 2026)
 HONEST_AI = {
@@ -144,7 +146,8 @@ def conversation_rules(language: str, business: str) -> list[str]:
         f"\"{CALL_BYE.get(language, CALL_BYE['en'])}\" (never a formal or literal goodbye), and put {END_MARK} at the very end of it. The call ends after that line. Never put {END_MARK} anywhere else.",
         f"SOUND SPOKEN, NOT WRITTEN: one or two SHORT sentences per turn, about 25 words at most, usually fewer. No lists, no bullet points, no long numbers read out. Start with a natural acknowledgement in the caller's "
         f"language when it fits ({ACKS.get(language, ACKS['en'])}), never the same one twice in a row. Ask ONE question at a time.",
-        "SCRIPT: write the language in its own script (Telugu in Telugu script, Hindi in Devanagari, and so on); keep everyday English words in Latin letters inside the sentence (price, booking, OK).",
+        "SCRIPT: write the language in its own script (Telugu in Telugu script, Hindi in Devanagari, and so on); keep everyday English words in Latin letters inside the sentence (price, booking, OK). "
+        f"Write \"AI assistant\" as \"{AI_ASSISTANT_WORD.get(language, AI_ASSISTANT_WORD['en'])}\". Always leave a space between a Latin-letter word and the word before or after it.",
     ]
 
 
@@ -173,14 +176,16 @@ def examples_block(language: str, business: str) -> str:
 
 
 def system_prompt(*, business: str, assistant: str | None, language: str, purpose: str, facts: Sequence[dict[str, Any]], customer_first_name: str | None, goal: str | None = None, notes: str = "",
-                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = (), corrections: Sequence[str] = ()) -> str:
-    """The rules of a phone call. The customer's words are DATA between a per-call delimiter."""
+                  training: dict[str, Any] | None = None, visit_slots: Sequence[str] = (), corrections: Sequence[str] = (), opening: str | None = None) -> str:
+    """The rules of a phone call. The customer's words are DATA between a per-call delimiter. `opening`: the line the caller has ALREADY heard (an inbound call opens with it before the model is asked anything)."""
     marker = secrets.token_hex(6)
     who = assistant or "the assistant"
     lines = [
         f"You are {who}, the AI assistant of {business}, on a PHONE CALL with a customer, on behalf of the owner. Speak {LANGUAGE_NAMES.get(language, 'English')} (the customer's language; English words they use may stay). "
         "This is spoken aloud: plain and warm, no markup, no emoji. Let the customer finish.",
         *conversation_rules(language, business),
+        *([f"ALREADY SAID: the call opened with this line, and the customer has heard it: \"{opening}\" Never introduce yourself or say you are an AI assistant again unless they ask, never greet again, never repeat "
+           "the opening or its question: answer what they say, or go straight to your next question."] if opening else []),
         f"The goal of this call: {goal or GOALS.get(purpose, GOALS['inbound'])}",
         "You are an AI and you say so at once if asked; never claim to be a person, never deny being an AI. If they ask for a person, or are upset, say the team will call them back.",
         "Answer ONLY from the approved facts below. If the answer is not there, say the team will get back to them. NEVER state a price, a discount, a total, a date or a delivery time you were not given, and NEVER promise anything "
