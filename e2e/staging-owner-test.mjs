@@ -116,7 +116,7 @@ try {
         }
         await page.goto(`${base}/lead-sources`, { waitUntil: "domcontentloaded" });
         await settle(page);
-        await page.locator("details summary").first().click().catch(() => null);
+        await page.locator("summary", { hasText: "More ways" }).first().click().catch(() => null); // (the older, longer list: Meta, IndiaMART, portals, website form, Google Sheets, webhook)
         console.log(`leadpaths ${pack}/${size}: /lead-sources says: ${(await text(page)).replace(/\s+/g, " ").slice(0, 240)}`);
         await shot("6-lead-sources");
         await page.goto(`${base}/retailers`, { waitUntil: "domcontentloaded" });
