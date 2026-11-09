@@ -1,5 +1,5 @@
 // The owner's three TEST workspaces on staging (job test-workspaces, 4 Nov 2026): look at them in a real browser as their Owner and take the pictures the owner's reviewer asked for.
-//   node e2e/staging-owner-test.mjs [--only textiles,construction_materials,education] [--size desktop|phone|both] [--mode shots|dump|settings] [--out DIR]
+//   node e2e/staging-owner-test.mjs [--only textiles,construction_materials,education] [--size desktop|phone|both] [--mode shots|dump|settings|leadpaths|sidebar|standup-make] [--pages "ai-team,everything,settings?section=limits"] [--out DIR]
 //   --mode settings: every Settings tab in every workspace of the account; exits 1 when My profile has no form anywhere (e.g. --who demo, --who owner-test)
 //   --mode appv4: app v4's pages (Today, the first customer Today links to, Phone calls, the first call, Train how it talks), whole pages; with --scheme light|dark and --lang en|te. Opens pages only.
 // Staging only (https://staging.stack19.com), synthetic data only. It signs in as each workspace's HELPER account (owner-test-<pack>@demo.example.test, made by scripts/seed_owner_test.py), which is an Owner
