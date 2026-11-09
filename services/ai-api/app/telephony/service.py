@@ -11,8 +11,10 @@ from typing import Any
 
 from app.display_name import lead_title, real_name
 from app.telephony.models import CallDetailOut, CallOut, CallsOut, CorrectionIn, CorrectionOut
+from app.telephony.persona import DEFAULT_ASSISTANT
 
 LIVE = ("queued", "ringing", "in_progress")
+LIVE_MAX_S = 600   # a call is never shown as live for longer than 10 minutes (owner, 9 Nov 2026)
 POLL_AFTER_S = 5
 SHORT = 140
 
@@ -51,10 +53,13 @@ def _who(row: dict[str, Any]) -> str:
 def shape(row: dict[str, Any], now: datetime) -> dict[str, Any]:
     created = _parse(row["created_at"])
     assert created is not None   # noqa: S101 - the column is not null
-    live = row["state"] in LIVE
+    # the one definition of "live" is the database's (app.phone_call_is_live: fresh, under 10 minutes old, a heartbeat within 6 minutes); this is the same rule again, so a screen is never told
+    # a stale call is live, whichever repository answered
+    live = bool(row["state"] in LIVE and row.get("live", True) and (now - created).total_seconds() <= LIVE_MAX_S)
     duration = row.get("duration_s")
     return {
         "id": str(row["id"]), "direction": row["direction"], "state": row["state"], "live": live, "who": _who(row), "name": _name(row),
+        "assistant_name": row.get("assistant_name") or DEFAULT_ASSISTANT, "line": row.get("line"), "line_ending": row.get("line_ending"),
         "purpose": row.get("purpose"), "language": row.get("language"), "created_at": created, "answered_at": _parse(row.get("answered_at")), "ended_at": _parse(row.get("ended_at")),
         "elapsed_s": max(0, int((now - (_parse(row.get("answered_at")) or created)).total_seconds())) if live else duration, "duration_s": duration,
         "outcome": row.get("outcome"), "category": row.get("category"), "summary_short": _short(row.get("summary")), "refuse_reason": row.get("refuse_reason"),

@@ -30,11 +30,19 @@ OPENING = persona.opening_line("en", business="Sri Textiles", assistant=None, cu
 class FakeCallStore:
     def __init__(self, boom: bool = False) -> None:
         self.progress: list[tuple[uuid.UUID, str | None]] = []
+        self.noted: list[tuple[uuid.UUID, str | None, str | None]] = []
+        self.beats = 0
         self.finished: list[tuple[uuid.UUID, CallOutcome, float]] = []
         self.boom = boom
 
     def mark_in_progress(self, call_id: uuid.UUID, provider_call_sid: str | None) -> None:
         self.progress.append((call_id, provider_call_sid))
+
+    def note(self, call_id: uuid.UUID, assistant_name: str | None, line_id: str | None) -> None:
+        self.noted.append((call_id, assistant_name, line_id))
+
+    def heartbeat(self, call_id: uuid.UUID) -> None:
+        self.beats += 1
 
     def finish(self, call_id: uuid.UUID, outcome: CallOutcome, duration_s: float) -> None:
         if self.boom:
@@ -418,3 +426,50 @@ async def test_the_last_turn_gets_its_english_even_when_the_caller_hangs_up_righ
     out = await call.result()
     last = [t for t in out.transcript if t["who"] == "assistant"][-1]
     assert last["text"] == "చెప్పండి, ఏం కావాలి?" and last.get("text_en") == "Tell me, what do you need?", "the final line has its English too"
+
+
+@arun
+async def test_a_call_notes_its_assistant_and_line_and_beats_while_it_goes_on_and_stops_when_it_ends() -> None:
+    import app.telephony.call_session as CS
+
+    saved, CS.HEARTBEAT_S = CS.HEARTBEAT_S, 0.05   # (the decorator passes no fixtures)
+    try:
+        plan = CallPlan(call_id=CALL, tenant_id=TENANT, direction="inbound", language="en", business="Sri Textiles", max_call_s=60, assistant_name="Vani", line_id="line-1")
+        call = await Call(parts_for(), plan).start()
+        await call.after_opening()
+        await until(lambda: call.store.beats >= 3, 5)
+        assert call.store.noted == [(CALL, "Vani", "line-1")], "noted once, with the name and the line"
+        await call.sim.hang_up()
+        await call.result()
+        beats = call.store.beats
+        await asyncio.sleep(0.3)
+        assert call.store.beats == beats, "no beat after the call ended"
+    finally:
+        CS.HEARTBEAT_S = saved
+
+
+@arun
+async def test_a_store_that_cannot_note_or_beat_still_runs_the_call() -> None:
+    class Plain:
+        def __init__(self) -> None:
+            self.finished: list[Any] = []
+
+        def mark_in_progress(self, call_id: uuid.UUID, provider_call_sid: str | None) -> None: ...
+        def finish(self, call_id: uuid.UUID, outcome: CallOutcome, duration_s: float) -> None:
+            self.finished.append(call_id)
+
+    class Failing(FakeCallStore):
+        def note(self, *a: Any) -> None:
+            raise RuntimeError("database down")
+
+        def heartbeat(self, call_id: uuid.UUID) -> None:
+            raise RuntimeError("database down")
+
+    for store in (Failing(),):
+        call = await Call(parts_for(), store=store).start()
+        await call.after_opening()
+        await call.say()
+        await call.sim.hang_up()
+        out = await call.result()
+        assert out.state == "completed" and len(store.finished) == 1, "a note or a beat that fails never ends the call"
+

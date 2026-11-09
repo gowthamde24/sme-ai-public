@@ -17,6 +17,14 @@ _NINETEEN = (r"(?:19(?!\d)|१९|౧౯|೧೯|௧௯|൧൯|nineteen|పంత
 _BRAND = re.compile(rf"{_STACK}[\s\-]*{_NINETEEN}", re.IGNORECASE)
 
 
+WRITTEN = "Stack19"
+
+
+def write_brand(text: str) -> str:
+    """Every way a recogniser hears the brand ("Stack 19", "స్టాక్ 19", "Stack Nineteen") -> the way it is written, "Stack19" (typing by voice)."""
+    return _BRAND.sub(WRITTEN, text)
+
+
 def speak_brand(text: str) -> str:
     """Every way of writing the brand -> "Stack Nineteen" (Latin letters, said in English by every voice)."""
     return _BRAND.sub(BRAND_SPOKEN, text)

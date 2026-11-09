@@ -37,7 +37,7 @@ SCREEN_ONLY_RULES: tuple[tuple[str, re.Pattern[str], ScreenOnly], ...] = (
     ("W", re.compile(r"^/developer/keys(/|$)"), "developer_keys"),                          # making, rotating or revoking an API key: its secret is shown once, on the screen, never in the chat
     ("*", re.compile(r"^/(assistant|conversations)(/|$)"), "assistant_itself"),              # the chat and the voice themselves (the assistant does not call its own door)
     ("*", re.compile(r"^/(scheduler|agent-runs|agent-claims|claims|agent-cost)(/|$)"), "internal"),   # the worker's and the agent runtime's own doors
-    ("W", re.compile(r"/photos($|/)|/voice-clone/samples|/upload$|/files$|/audio$"), "binary_upload"),  # a file's bytes: they come in through the chat's file drop (A2), not as a tool argument
+    ("W", re.compile(r"/photos($|/)|/voice-clone/samples|/upload$|/files$|/audio$|/speech/transcribe$"), "binary_upload"),  # a file's bytes: they come in through the chat's file drop (A2), not as a tool argument
 )
 
 # ---- the level of a write (after screen-only): the first matching reason makes it SENSITIVE

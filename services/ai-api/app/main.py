@@ -237,6 +237,7 @@ from app.visits.routes import router as visits_router
 from app.voice.factory import build_voice
 from app.voice.fake import FakeVoiceCloner
 from app.voice.routes import router as voice_router
+from app.voice.transcribe import router as transcribe_router
 from app.voice_notes.repository import PostgrestVoiceNotesRepository
 from app.voice_notes.routes import router as voice_notes_router
 from app.voicesample.routes import router as voice_sample_router
@@ -1313,6 +1314,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(assistant_router)
     app.include_router(turns_router)
     app.include_router(voice_router)
+    app.include_router(transcribe_router)
     app.include_router(connectors_router)
     app.include_router(webhooks_router)
     app.include_router(business_profile_router)

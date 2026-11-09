@@ -59,6 +59,7 @@ from app.scheduler.repository import PostgrestSchedulerRepository, SchedulerRepo
 from app.scheduler.session import PrincipalSession, SignInError
 from app.scheduler.tick import TickResult, run_tick
 from app.suppression.wiring import build_key_ring
+from app.telephony.housekeeping import OrphanCalls
 from app.tenancy.repository import TokenRejected
 from app.voice.factory import build_note_voice
 
@@ -99,6 +100,7 @@ class Worker:
         auto_reply: AutoReplyRunner | None = None,
         lead_reader: LeadReadRunner | None = None,
         places_expiry: PlacesExpiry | None = None,
+        orphan_calls: OrphanCalls | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -135,6 +137,7 @@ class Worker:
         self._lead_reader = lead_reader
         # Lead Finder (ADR 0119): Google Maps fields other than place_id are kept at most 30 days
         self._places_expiry = places_expiry
+        self._orphan_calls = orphan_calls
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -153,6 +156,8 @@ class Worker:
             self._privacy_housekeeping(token)
             if self._places_expiry is not None:
                 self._places_expiry.run_if_due(token)
+            if self._orphan_calls is not None:
+                self._orphan_calls.run(token)   # every tick: the live-calls bar never shows a call nobody is on
             self._push_to_the_team(token)
             self._lead_sheet_sync(token)
             self._billing_reminders(token)
@@ -349,6 +354,7 @@ def build_worker(settings: Settings) -> Worker:
         auto_reply=build_auto_reply(settings, config.rest_url, config.anon_key),
         lead_reader=build_lead_reader(settings, config.rest_url, config.anon_key),
         places_expiry=PlacesExpiry.over_rpc(config.rest_url, config.anon_key),
+        orphan_calls=OrphanCalls.over_rpc(config.rest_url, config.anon_key, int(settings.telephony_max_call_s)),
         usage_alerts=UsageAlerts(PostgrestBillingRepository(config.rest_url, config.anon_key), _billing_sender(settings), FakeOwnerWhatsApp()),
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),

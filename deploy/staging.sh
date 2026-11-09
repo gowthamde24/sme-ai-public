@@ -139,7 +139,7 @@ if [ "$what" = "api" ] || [ "$what" = "all" ]; then
     EXTRA_ENV="$WA_ENV,BROWSER_VOICE_ENABLED=true,BROWSER_VOICE_SPEAKER_CHECK=shadow,BROWSER_VOICE_DAY_SECONDS=3600,TERMS_VERSION=2026-10-27,PRIVACY_VERSION=2026-10-27,LLM_PROVIDER=anthropic,LLM_MODEL=claude-haiku-5-5,LLM_INPUT_MICROS_PER_MTOK=9000000,LLM_OUTPUT_MICROS_PER_MTOK=45000000,LLM_SPEND_CAP_CONFIRMED=true,AGENTS_MAX_WORKERS=1,AGENTS_MAX_QUEUE=4,SPEECH_PROVIDER=sarvam,EXOTEL_API_BASE=https://api.exotel.com,AUTH_GOOGLE_CLIENT_ID=620338396268-k9tj60ci8equ4lsc120djtggj87ph66s.apps.googleusercontent.com,ASSISTANT_WORK_TENANTS=$ASSISTANT_WORK_TENANTS" \
     EXTRA_ENV_2="$EXTRA_ENV_2${LI_ENV:+,$LI_ENV}${TEL_ENV:+,$TEL_ENV}" \
     EXTRA_SECRETS="ANTHROPIC_API_KEY=sme-anthropic-api-key:latest,RESEND_API_KEY=sme-resend-api-key:latest,SARVAM_API_KEY=sme-sarvam-api-key:latest,CARTESIA_API_KEY=sme-cartesia-api-key:latest,$WA_SECRETS$LI_SECRETS$TEL_SECRETS" \
-    ./deploy/cloudrun.sh api $execute
+    API_MAX_INSTANCES="${API_MAX_INSTANCES:-1}" ./deploy/cloudrun.sh api $execute   # ONE server on staging (owner, 9 Nov 2026): a live call lives on the server that answered it, so Take over, Whisper and Hang up only work on that one. Production needs the routing below (docs/pre-pilot-checklist.md)
 fi
 # The nightly pronunciation round trip (docs/runbooks/pronunciation-nightly-qa.md) is a Cloud Run job on the API's image, created by the owner. Once it exists, every API deploy moves it to the new image, so each night tests the
 # lexicon and the speech path that are live. Nothing happens when the job is not there.
